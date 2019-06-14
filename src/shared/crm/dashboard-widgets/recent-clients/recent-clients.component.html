@@ -1,6 +1,16 @@
 <div class="wrapper">
     <header>
-        <h2 class="title"><i class="icon-people"></i>{{ls.l('CRMDashboard_RecentClients')}}<span>{{ls.l('CRMDashboard_LastNClientsRecords', 'CRM',  [recordsCount])}}</span><a routerLink="/app/crm/clients">{{ls.l('CRMDashboard_SeeAllRecords')}} <i class="fa fa-angle-right"></i></a></h2>
+        <h2 class="title">
+            <dx-select-box
+                [items]="selectItems"
+                [displayExpr]="'name'"
+                [value]="selectedItem.value"
+                (onSelectionChanged)="onSelectionChanged($event)">
+            </dx-select-box>
+            <span>{{selectedItem.value.message}}</span>
+            <a routerLink="{{selectedItem.value.allRecordsLink}}">{{ls.l('CRMDashboard_SeeAllRecords')}}<i class="fa fa-angle-right"></i>
+            </a>
+        </h2>
     </header>
 
     <ng-container *ngIf="recentlyCreatedCustomers$ | async as recentlyCreatedCustomers">

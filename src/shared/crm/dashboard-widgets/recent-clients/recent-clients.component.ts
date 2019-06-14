@@ -2,8 +2,8 @@
 import { ChangeDetectionStrategy, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 
 /** Third party imports */
-import { Observable } from 'rxjs';
-import { finalize, switchMap, tap } from 'rxjs/operators';
+import { Observable, BehaviorSubject, combineLatest } from 'rxjs';
+import { finalize, switchMap, tap, distinctUntilChanged } from 'rxjs/operators';
 
 /** Application imports */
 import { DashboardServiceProxy, GetRecentlyCreatedCustomersOutput } from '@shared/service-proxies/service-proxies';
@@ -27,6 +27,26 @@ export class RecentClientsComponent implements OnInit {
     recordsCount = 10;
     formatting = AppConsts.formatting;
     recentlyCreatedCustomers$: Observable<GetRecentlyCreatedCustomersOutput[]>;
+    selectItems = [
+        {
+            name: this.ls.l('CRMDashboard_RecentLeads'),
+            message: this.ls.l('CRMDashboard_LastNLeadsRecords', 'CRM',  [this.recordsCount]),
+            dataLink: '',
+            allRecordsLink: '/app/crm/leads',
+            dataSource: this._dashboardServiceProxy.getRecentlyCreatedCustomers(this.recordsCount, true)
+        },
+        {
+            name: this.ls.l('CRMDashboard_RecentClients'),
+            message: this.ls.l('CRMDashboard_LastNClientsRecords', 'CRM',  [this.recordsCount]),
+            dataLink: 'app/crm/contact',
+            allRecordsLink: '/app/crm/clients',
+            dataSource: this._dashboardServiceProxy.getRecentlyCreatedCustomers(this.recordsCount, false)
+        }
+    ];
+
+    private selectedItem: BehaviorSubject<any> = new BehaviorSubject<any>(this.selectItems[0]);
+    selectedItem$: Observable<any> = this.selectedItem.asObservable().pipe(distinctUntilChanged());
+
     constructor(
         private _dashboardServiceProxy: DashboardServiceProxy,
         private _dashboardWidgetsService: DashboardWidgetsService,
@@ -38,18 +58,28 @@ export class RecentClientsComponent implements OnInit {
     ) {}
 
     ngOnInit() {
-        this.recentlyCreatedCustomers$ = this._dashboardWidgetsService.refresh$.pipe(
+        this.recentlyCreatedCustomers$ = combineLatest(
+            this.selectedItem$,
+            this._dashboardWidgetsService.refresh$
+        ).pipe(
             tap(() => this._loadingService.startLoading(this._elementRef.nativeElement)),
-            switchMap(() => this._dashboardServiceProxy.getRecentlyCreatedCustomers(this.recordsCount).pipe(
+            switchMap(([selectedItem]) => selectedItem.dataSource.pipe(
                 finalize(() => this._loadingService.finishLoading(this._elementRef.nativeElement))
             ))
         );
     }
 
     onCellClick($event) {
-        $event.row && this._router.navigate(
-            ['app/crm/contact', $event.row.data.id],
-            {queryParams: {referrer: this._router.url}}
-        );
+        if (this.selectedItem.value && this.selectedItem.value.dataLink)
+        {
+            $event.row && this._router.navigate(
+                [this.selectedItem.value.dataLink, $event.row.data.id],
+                {queryParams: {referrer: this._router.url}}
+            );
+        }
+    }
+
+    onSelectionChanged($event) {
+        this.selectedItem.next($event.selectedItem);
     }
 }

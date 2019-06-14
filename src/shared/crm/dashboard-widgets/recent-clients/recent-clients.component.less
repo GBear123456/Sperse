@@ -17,21 +17,49 @@
         float: left;
         margin-bottom: 0;
         line-height: 34px;
-        i {
-            margin-right: 10px;
+        display: flex;
+        align-items: center;
+        margin-bottom: 3px;
+
+        /deep/ dx-select-box {
+            width: 180px;
+
+            .dx-texteditor-input {
+                border: 0;
+                font-weight: bold;
+            }
+
+            .dx-dropdowneditor-button {
+                width: 10px;
+                padding: 0;
+                border-radius: 0;
+
+                .dx-dropdowneditor-icon {
+                    background-color: transparent !important;
+
+                    &::before {
+                        content: '\f107';
+                        font-family: FontAwesome !important;
+                    }
+                }
+            }
         }
+
         span {
             font-size: 14px;
             font-weight: 300;
             padding-left: 40px;
         }
+
         a {
             font-size: 16px;
             font-weight: 400;
             color: #17AEEB;
             float: right;
             padding-right: 20px;
+            margin-left: auto;
             cursor: pointer;
+
             i {
                 margin-left: 8px;
             }

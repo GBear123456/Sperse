@@ -10716,12 +10716,15 @@ export class DashboardServiceProxy {
 
     /**
      * @topCount (optional) 
+     * @showProspective (optional) 
      * @return Success
      */
-    getRecentlyCreatedCustomers(topCount: number | null | undefined): Observable<GetRecentlyCreatedCustomersOutput[]> {
+    getRecentlyCreatedCustomers(topCount: number | null | undefined, showProspective: boolean | null | undefined): Observable<GetRecentlyCreatedCustomersOutput[]> {
         let url_ = this.baseUrl + "/api/services/CRM/Dashboard/GetRecentlyCreatedCustomers?";
         if (topCount !== undefined)
             url_ += "topCount=" + encodeURIComponent("" + topCount) + "&"; 
+        if (showProspective !== undefined)
+            url_ += "showProspective=" + encodeURIComponent("" + showProspective) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -10895,6 +10898,68 @@ export class DashboardServiceProxy {
             }));
         }
         return _observableOf<GetContactsByRegionOutput[]>(<any>null);
+    }
+
+    /**
+     * @startDate (optional) 
+     * @endDate (optional) 
+     * @return Success
+     */
+    getLeadsCountByAge(startDate: moment.Moment | null | undefined, endDate: moment.Moment | null | undefined): Observable<GetCountOutput[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/Dashboard/GetLeadsCountByAge?";
+        if (startDate !== undefined)
+            url_ += "StartDate=" + encodeURIComponent(startDate ? "" + startDate.toJSON() : "") + "&"; 
+        if (endDate !== undefined)
+            url_ += "EndDate=" + encodeURIComponent(endDate ? "" + endDate.toJSON() : "") + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetLeadsCountByAge(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetLeadsCountByAge(<any>response_);
+                } catch (e) {
+                    return <Observable<GetCountOutput[]>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<GetCountOutput[]>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetLeadsCountByAge(response: HttpResponseBase): Observable<GetCountOutput[]> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(GetCountOutput.fromJS(item));
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<GetCountOutput[]>(<any>null);
     }
 
     /**
@@ -13634,7 +13699,7 @@ export class InstanceServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    registerMember(input: RegisterMemberInput | null | undefined): Observable<RegisterMemberOutput> {
+    registerMember(input: RegisterMemberInput | null | undefined): Observable<SetupOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/Instance/RegisterMember";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -13657,14 +13722,14 @@ export class InstanceServiceProxy {
                 try {
                     return this.processRegisterMember(<any>response_);
                 } catch (e) {
-                    return <Observable<RegisterMemberOutput>><any>_observableThrow(e);
+                    return <Observable<SetupOutput>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<RegisterMemberOutput>><any>_observableThrow(response_);
+                return <Observable<SetupOutput>><any>_observableThrow(response_);
         }));
     }
 
-    protected processRegisterMember(response: HttpResponseBase): Observable<RegisterMemberOutput> {
+    protected processRegisterMember(response: HttpResponseBase): Observable<SetupOutput> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -13675,7 +13740,7 @@ export class InstanceServiceProxy {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? RegisterMemberOutput.fromJS(resultData200) : new RegisterMemberOutput();
+            result200 = resultData200 ? SetupOutput.fromJS(resultData200) : new SetupOutput();
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -13683,7 +13748,7 @@ export class InstanceServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<RegisterMemberOutput>(<any>null);
+        return _observableOf<SetupOutput>(<any>null);
     }
 
     /**
@@ -46722,46 +46787,6 @@ export interface IRegisterMemberInput {
     contactId: number;
     channelCode: string;
     accountingTreeType: RegisterMemberInputAccountingTreeType | undefined;
-}
-
-export class RegisterMemberOutput implements IRegisterMemberOutput {
-    userId!: number | undefined;
-    alreadyInitialized!: boolean | undefined;
-
-    constructor(data?: IRegisterMemberOutput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.userId = data["userId"];
-            this.alreadyInitialized = data["alreadyInitialized"];
-        }
-    }
-
-    static fromJS(data: any): RegisterMemberOutput {
-        data = typeof data === 'object' ? data : {};
-        let result = new RegisterMemberOutput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["userId"] = this.userId;
-        data["alreadyInitialized"] = this.alreadyInitialized;
-        return data; 
-    }
-}
-
-export interface IRegisterMemberOutput {
-    userId: number | undefined;
-    alreadyInitialized: boolean | undefined;
 }
 
 export class GetUserInstanceInfoOutput implements IGetUserInstanceInfoOutput {
