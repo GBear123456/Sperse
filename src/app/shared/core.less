@@ -1044,31 +1044,14 @@ body > .blockUI.blockOverlay{
     .cdk-overlay-pane.slider {
         transition: margin 1s!important;
         min-width: 40vw;
+        max-width: 100vw !important;
         &.min-width-0 {
             min-width: 0;
-        }
-        &.min-width-810 {
-            min-width: 810px;
-        }
-        &.min-width-910 {
-            min-width: 910px;
         }
         .mat-dialog-container {
             overflow: visible;
             padding: 0;
             margin: 0;
-        }
-        @media(min-width: 1200px) {
-            max-width: 50vw !important;
-            &.max-width-80 {
-                max-width: 80vw !important;
-            }
-            &.max-width-60 {
-                max-width: 60vw !important;
-            }
-            &.width-45 {
-                width: 45vw;
-            }
         }
     }
 }

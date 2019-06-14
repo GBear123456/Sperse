@@ -116,7 +116,6 @@ export class LanguageTextsComponent extends AppComponentBase implements AfterVie
                 caption: 'baseLanguageName',
                 items: {
                     baseLanguageName: new FilterDropDownModel({
-                        displayName: 'Base Language',
                         displayElementExp: 'displayName',
                         valueElementExp: 'name',
                         elements: this.languages,
@@ -130,7 +129,6 @@ export class LanguageTextsComponent extends AppComponentBase implements AfterVie
                 caption: 'targetLanguageName',
                 items: {
                     targetLanguageName: new FilterDropDownModel({
-                        displayName: 'Target Language',
                         displayElementExp: 'displayName',
                         valueElementExp: 'name',
                         elements: this.languages,
@@ -144,7 +142,6 @@ export class LanguageTextsComponent extends AppComponentBase implements AfterVie
                 caption: 'sourceName',
                 items: {
                     sourceName: new FilterDropDownModel({
-                        displayName: 'Source',
                         elements: this.sourceNames,
                         filterField: 'sourceName',
                         value: this.filtersValues.sourceName
@@ -156,7 +153,6 @@ export class LanguageTextsComponent extends AppComponentBase implements AfterVie
                 caption: 'targetValueFilter',
                 items: {
                     targetValueFilter: new FilterDropDownModel({
-                        displayName: 'Target Value',
                         elements: [
                             {
                                 name: this.l('All'),

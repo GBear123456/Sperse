@@ -612,7 +612,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     refreshDataGrid() {
         this.noRefreshedAfterSync = false;
         this.initHeadlineConfig();
-        this._bankAccountsService.load().subscribe(
+        this._bankAccountsService.load(true, false).subscribe(
             () => this.applyTotalBankAccountFilter()
         );
         this.categorizationComponent.refreshCategories(false, false);
@@ -935,7 +935,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                 (($event.column.dataField == 'CashflowCategoryName' && $event.data.CashflowCategoryId) ||
                 ($event.column.dataField == 'CashflowSubCategoryName' && $event.data.CashflowSubCategoryId))) {
                 this.dialog.open(RuleDialogComponent, {
-                    panelClass: [ 'slider', 'max-width-80' ],
+                    panelClass: 'slider',
                     data: {
                         categoryId: $event.column.dataField == 'CashflowCategoryName' ? $event.data.CashflowCategoryId : $event.data.CashflowSubCategoryId,
                         categoryCashflowTypeId: $event.CashFlowTypeId,
@@ -1043,7 +1043,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
 
                     if ($event.showRuleDialog) {
                         this.dialog.open(RuleDialogComponent, {
-                            panelClass: [ 'slider', 'max-width-80' ],
+                            panelClass: 'slider',
                             data: {
                                 categoryId: $event.categoryId,
                                 categoryCashflowTypeId: $event.categoryCashType,
@@ -1124,7 +1124,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
 
     openBankAccountsSelectDialog() {
         this.dialog.open(BankAccountsSelectDialogComponent, {
-            panelClass: ['slider', 'width-45'],
+            panelClass: 'slider',
             data: {
                 highlightedBankAccountIds: this.bankAccounts
             }

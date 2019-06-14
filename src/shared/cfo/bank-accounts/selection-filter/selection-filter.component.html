@@ -26,9 +26,9 @@
             <div *dxTemplate="let tag of 'itemTemplate'">
                 <div class="selection-list-item">
                     <span [title]="tag.name || tag">{{tag.name || tag}}</span>
-                    <span *ngIf="tag.count">
-                    ({{tag.count}})
-                </span>
+                    <span *ngIf="tag.count !== undefined">
+                        ({{tag.count}})
+                    </span>
                 </div>
             </div>
         </dx-tag-box>

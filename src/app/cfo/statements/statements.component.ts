@@ -193,7 +193,7 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
             names: [this.l('Statements')],
             onRefresh: () => {
                 this.refreshData();
-                this.bankAccountsService.load().pipe(
+                this.bankAccountsService.load(true, false).pipe(
                     finalize(() => abp.ui.clearBusy())
                 ).subscribe();
             },
@@ -456,7 +456,7 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
 
     openBankAccountsSelectDialog() {
         this._dialog.open(BankAccountsSelectDialogComponent, {
-            panelClass: ['slider', 'width-45']
+            panelClass: 'slider',
         }).componentInstance.onApply.subscribe(() => {
             this.setBankAccountsFilter(true);
         });

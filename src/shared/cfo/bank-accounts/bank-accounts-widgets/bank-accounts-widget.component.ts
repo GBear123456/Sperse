@@ -149,7 +149,6 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
     }
 
     ngOnInit(): void {
-
         this.syncAccounts$.subscribe((syncAccounts) => {
             this.dataSource = syncAccounts;
         });
@@ -186,12 +185,17 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
     }
 
     expand(expandKey: string) {
-        const visibleRows = this.mainDataGrid.instance.getVisibleRows();
+        /** getVisibleRows() is mutable array and can change in each iteration */
+        const visibleRows = this.mainDataGrid.instance.getVisibleRows().map(row => ({
+            key: row.key,
+            rowType: row.rowType,
+            bankAccountCount: row.data.bankAccounts.length
+        }));
         const method = expandKey === 'expandAll'
               ? this.mainDataGrid.instance.expandRow
               : this.mainDataGrid.instance.collapseRow;
         visibleRows.forEach((row) => {
-            if (row.data.bankAccounts.length) {
+            if (row.rowType === 'data' && row.bankAccountCount) {
                 method(row.key);
             }
         });
@@ -356,6 +360,7 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
             this.dxFormInstance = null;
         }
         this.editingStarted = false;
+        this.mainDataGrid.instance.updateDimensions();
     }
 
     /** Hack to avoid showing of the fields that shouldn't be shown in editing form */

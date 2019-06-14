@@ -1,12 +1,19 @@
-import { Component, Injector, OnInit, ViewContainerRef, NgZone, ViewEncapsulation } from '@angular/core';
+/** Core imports */
+import { Component, Injector, OnInit, NgZone, ViewEncapsulation, HostBinding, HostListener } from '@angular/core';
+import { Router } from '@angular/router';
+
+/** Third party imports */
+import { MatDialog } from '@angular/material/dialog';
+
+/** Application imports */
 import { UrlHelper } from '@shared/helpers/UrlHelper';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { ChatSignalrService } from 'app/shared/layout/chat/chat-signalr.service';
-import { AppComponentBase } from 'shared/common/app-component-base';
+import { AppSessionService } from '@shared/common/session/app-session.service';
 import { PaymentWizardComponent } from './shared/common/payment-wizard/payment-wizard.component';
 import { SignalRHelper } from 'shared/helpers/SignalRHelper';
 import { AppService } from './app.service';
 import { FiltersService } from '@shared/filters/filters.service';
-import { MatDialog } from '@angular/material/dialog';
 
 @Component({
     templateUrl: './app.component.html',
@@ -16,21 +23,28 @@ import { MatDialog } from '@angular/material/dialog';
     ],
     encapsulation: ViewEncapsulation.None
 })
-export class AppComponent extends AppComponentBase implements OnInit {
-
+export class AppComponent implements OnInit {
     installationMode = false;
 
+    @HostBinding('class.fullscreen') isFullscreenMode = false;
+    @HostListener('document:webkitfullscreenchange', ['$event'])
+    @HostListener('document:mozfullscreenchange', ['$event'])
+    @HostListener('document:fullscreenchange', ['$event'])
+    onWebkitFullscreenChange($event) {
+        this.isFullscreenMode = document['fullScreen']
+            || document['mozFullScreen'] || document.webkitIsFullScreen;
+    }
+
     public constructor(
-        injector: Injector,
         private _ngZone: NgZone,
-        private viewContainerRef: ViewContainerRef, // You need this small hack in order to catch application root view container ref (required by ng2 bootstrap modal)
+        private _router: Router,
         private _chatSignalrService: ChatSignalrService,
+        public ls: AppLocalizationService,
+        public appSession: AppSessionService,
         public appService: AppService,
         public filtersService: FiltersService,
         public dialog: MatDialog
     ) {
-        super(injector);
-
         if (!appService.isHostTenant) {
             let paymentDialogTimeout;
             appService.expiredModuleSubscribe((name) => {
@@ -49,7 +63,7 @@ export class AppComponent extends AppComponentBase implements OnInit {
                                 panelClass: ['payment-wizard', 'setup'],
                                 data: {
                                     module: sub.module,
-                                    title: this.l('ModuleExpired', appService.getSubscriptionName(name),
+                                    title: ls.l('ModuleExpired', appService.getSubscriptionName(name),
                                         sub && sub.endDate ? 'subscription' : 'trial')
                                 }
                             }).afterClosed().subscribe(result => {});
@@ -69,5 +83,4 @@ export class AppComponent extends AppComponentBase implements OnInit {
 
         this.installationMode = UrlHelper.isInstallUrl(location.href);
     }
-
 }
