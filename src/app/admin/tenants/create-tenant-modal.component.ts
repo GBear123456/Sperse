@@ -7,7 +7,6 @@ import {
     Output,
     OnInit,
     ViewChild,
-    AfterViewInit,
     ChangeDetectorRef
 } from '@angular/core';
 
@@ -33,15 +32,15 @@ import { NotifyService } from '@abp/notify/notify.service';
 import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
 
+//!!VP should be reimplemnted to use Dx text box instead of inputs
 @Component({
     selector: 'createTenantModal',
     templateUrl: './create-tenant-modal.component.html',
+    styleUrls: ['./create-tenant-modal.component.less'],
     providers: [ TenantsService ],
-//!!VP should be reimplemnted to use Dx text box instead of inputs
-    styles: ['/deep/ .form-control-feedback { color: #f4516c!important; }'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class CreateTenantModalComponent implements OnInit, AfterViewInit {
+export class CreateTenantModalComponent implements OnInit {
     @ViewChild('tenancyNameInput') tenancyNameInput: ElementRef;
     @ViewChild(ModalDialogComponent) modalDialog: ModalDialogComponent;
     @Output() modalSave: EventEmitter<any> = new EventEmitter<any>();
@@ -83,10 +82,6 @@ export class CreateTenantModalComponent implements OnInit, AfterViewInit {
             .subscribe(result => {
                 this.passwordComplexitySetting = result.setting;
             });
-    }
-
-    ngAfterViewInit() {
-        this.modalDialog.addClass('min-width-810');        
     }
 
     init(): void {

@@ -1,6 +1,10 @@
 :host {
     display: block;
     height: 100%;
+    max-width: 80vw;
+    @media (min-width: 1200px) {
+        max-width: 50vw;
+    }
     form {
         padding: 20px 20px 0;
         display: flex;
