@@ -1,5 +1,11 @@
+/** Core imports */
 import { Component, Injector, ElementRef } from '@angular/core';
-import { AppComponentBase } from '@shared/common/app-component-base';
+
+/** Third party imports */
+import capitalize from 'lodash/capitalize';
+
+/** Application imports */
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { FiltersService } from '@shared/filters/filters.service';
 import { FilterModel } from '@shared/filters/models/filter.model';
@@ -18,20 +24,20 @@ import { AppConsts } from '@shared/AppConsts';
         '(mouseout)': 'checkFilterDisable($event)'
     }
 })
-export class SideBarComponent extends AppComponentBase {
+export class SideBarComponent {
     filters: FilterModel[] = [];
     activeFilter: FilterModel;
     disableFilterScroll: boolean;
+    capitalize = capitalize;
+
     constructor(
         private _eref: ElementRef,
         private _appService: AppService,
         private _filtersService: FiltersService,
         private _appSessionService: AppSessionService,
-        injector: Injector,
-        router: Router
+        public ls: AppLocalizationService,
+        public router: Router
     ) {
-        super(injector);
-
         _filtersService.update(filters => {
             this.filters = filters;
         });
@@ -74,7 +80,8 @@ export class SideBarComponent extends AppComponentBase {
 
     showFilterDialog(event, filter) {
         this.activeFilter = filter;
-        this.disableFilterScroll = this.activeFilter && this.activeFilter.items && this.activeFilter.items.element && this.activeFilter.items.element.disableOuterScroll;
+        this.disableFilterScroll = this.activeFilter && this.activeFilter.items &&
+            this.activeFilter.items.element && this.activeFilter.items.element.disableOuterScroll;
         event.stopPropagation();
     }
 
@@ -98,11 +105,14 @@ export class SideBarComponent extends AppComponentBase {
         this._filtersService.preventDisable();
     }
 
-    checkFilterDisable($event) {
-        if (!this._filtersService.fixed)
+    checkFilterDisable(event) {
+        if (!this._filtersService.fixed &&
+            event.path.every(el => el.localName != 'filter')
+        ) {
             this._filtersService.disable(() => {
                 this.activeFilter = undefined;
             });
+        }
     }
 
     itemClick(event, filter) {
