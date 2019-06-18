@@ -50,7 +50,8 @@ export class BankAccountsService {
         ],
         usedBankAccountIds: [],
         visibleBankAccountIds: [],
-        selectedBusinessEntitiesIds: []
+        selectedBusinessEntitiesIds: [],
+        selectedBankAccountTypes: []
     };
     tempState: BankAccountsState;
     filteredBankAccounts$: Observable<BankAccountDto[]>;
@@ -326,8 +327,10 @@ export class BankAccountsService {
 
     loadState(applyFilter = true) {
 
-        /** Get fitler data from cache and apply it to update all accounts */
+        /** Get filter data from cache and apply it to update all accounts */
         this.state = {...this.state, ...this.cacheService.get(this.bankAccountsCacheKey)};
+        this._selectedBankAccountTypes.next(this.state.selectedBankAccountTypes);
+        this.selectedStatuses.next(this.state.statuses);
         this._syncAccountsState.next(this.state);
 
         if (this.acceptFilterOnlyOnApply && (!this.state.selectedBankAccountIds || !this.state.selectedBankAccountIds.length)) {
@@ -554,6 +557,12 @@ export class BankAccountsService {
         } else {
             this.tempState = tempFilter;
         }
+        if (state.hasOwnProperty('selectedBankAccountTypes')) {
+            this._selectedBankAccountTypes.next(tempFilter.selectedBankAccountTypes);
+        }
+        if (state.hasOwnProperty('statuses')) {
+            this.selectedStatuses.next(tempFilter.statuses);
+        }
         this._syncAccountsState.next(tempFilter);
     }
 
@@ -594,8 +603,14 @@ export class BankAccountsService {
         }
     }
 
-    changeBankAccountTypes(types: string[]) {
-        this._selectedBankAccountTypes.next(types);
+    changeBankAccountTypes(types: string[], saveInCache = true) {
+        if (types) {
+            this.changeState(
+                { selectedBankAccountTypes: types },
+                saveInCache
+            );
+            this._selectedBankAccountTypes.next(types);
+        }
     }
 
     changeSearchString(searchValue: string) {
