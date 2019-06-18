@@ -556,6 +556,12 @@ export class BankAccountsService {
         } else {
             this.tempState = tempFilter;
         }
+        if (state.hasOwnProperty('selectedBankAccountTypes')) {
+            this._selectedBankAccountTypes.next(tempFilter.selectedBankAccountTypes);
+        }
+        if (state.hasOwnProperty('statuses')) {
+            this.selectedStatuses.next(tempFilter.statuses);
+        }
         this._syncAccountsState.next(tempFilter);
     }
 

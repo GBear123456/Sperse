@@ -32,7 +32,7 @@
                         (selectionChanged)="bankAccountTypesChanged($event)">
                     </selection-filter>
                 </div>
-                <div class="col-sm-3 is-active-filter">
+                <div class="col-sm-2 is-active-filter">
                     <selection-filter
                         [allItemsText]="l('All_Statuses')"
                         [title]=""
@@ -42,6 +42,9 @@
                         [selectedItems]="bankAccountsService.selectedStatuses$ | async"
                         (selectionChanged)="statusesChanged($event)">
                     </selection-filter>
+                </div>
+                <div class="col-sm-1 clear-button-block">
+                    <button *ngIf="clearButtonIsVisible$ | async" class="button button-primary clear-button" (click)="clearFilters()">{{ l('Clear') }}</button>
                 </div>
             </div>
         </div>

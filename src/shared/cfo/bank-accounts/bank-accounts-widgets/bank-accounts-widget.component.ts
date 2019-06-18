@@ -4,7 +4,7 @@ import { Component, Injector, Input, Output, ViewChild, OnInit, EventEmitter, El
 /** Third party imports */
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import Form from 'devextreme/ui/form';
-import { BehaviorSubject, Observable, forkJoin } from 'rxjs';
+import { BehaviorSubject, Observable, combineLatest, forkJoin } from 'rxjs';
 import { finalize, map } from 'rxjs/operators';
 import * as _ from 'underscore';
 
@@ -133,6 +133,13 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
             return syncAccounts;
         })
     );
+    clearButtonIsVisible$: Observable<boolean> = combineLatest(
+        this.bankAccountsService.selectedBusinessEntitiesIds$,
+        this.bankAccountsService.selectedBankAccountTypes$,
+        this.bankAccountsService.selectedStatuses$
+    ).pipe(map(([selectedBusinessEntities, selectedBankAccountTypes, selectedStatuses]) => {
+        return !!(selectedBusinessEntities.length || selectedBankAccountTypes.length || selectedStatuses.length);
+    }));
 
     constructor(
         injector: Injector,
@@ -527,5 +534,16 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
 
     searchChanged(searchValue: string) {
         this.bankAccountsService.changeSearchString(searchValue);
+    }
+
+    clearFilters() {
+        this.bankAccountsService.changeState(
+            {
+                selectedBankAccountTypes: [],
+                selectedBusinessEntitiesIds: [],
+                statuses: []
+            },
+            this.saveChangesInCache
+        );
     }
 }
