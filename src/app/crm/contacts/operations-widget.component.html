@@ -52,7 +52,7 @@
             [permissionKey]="getAssignmentsPermissionKey()"
             [proxyService]="getProxyService()">
         </crm-user-assignment-list>
-        <crm-rating [selectedKeys]="[contactInfo.id]" [selectedItemKey]="contactInfo?.ratingId" (onRatingUpdated)="updateRating($event)"></crm-rating>
+        <crm-rating [selectedKeys]="[contactInfo.id]" [ratingValue]="contactInfo?.ratingId" (onRatingUpdated)="updateRating($event)"></crm-rating>
         <crm-stars-list [selectedKeys]="[contactInfo.id]" [selectedItemKey]="contactInfo?.starId"></crm-stars-list>
     </ng-container>
 </div>

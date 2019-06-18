@@ -15,17 +15,20 @@ import { AppService } from '@app/app.service';
 import { FiltersService } from '@shared/filters/filters.service';
 import { FilterModel } from '@shared/filters/models/filter.model';
 import {
+    RankRequest,
+    OfferServiceProxy,
     OfferFilterCategory,
     OfferManagementServiceProxy,
     OfferFlag,
     OfferFilter,
     OfferAttribute,
-    OfferFilterStatus,
+    OfferFilterStatus
 } from '@shared/service-proxies/service-proxies';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { FilterCheckBoxesComponent } from '@shared/filters/check-boxes/filter-check-boxes.component';
 import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-boxes.model';
 import { StaticListComponent } from '@app/shared/common/static-list/static-list.component';
+import { AppRatingComponent } from '@app/shared/common/rating/rating.component';
 import { ItemTypeEnum } from '@shared/common/item-details-layout/item-type.enum';
 import { ItemDetailsService } from '@shared/common/item-details-layout/item-details.service';
 import { FilterHelpers } from '@app/crm/shared/helpers/filter.helper';
@@ -33,7 +36,7 @@ import { FilterHelpers } from '@app/crm/shared/helpers/filter.helper';
 @Component({
     templateUrl: './offers.component.html',
     styleUrls: ['./offers.component.less'],
-    providers: [OfferManagementServiceProxy]
+    providers: [OfferServiceProxy, OfferManagementServiceProxy]
 })
 export class OffersComponent extends AppComponentBase implements OnInit, OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
@@ -42,11 +45,13 @@ export class OffersComponent extends AppComponentBase implements OnInit, OnDestr
     @ViewChild('flagsComponent') flagsComponent: StaticListComponent;
     @ViewChild('attributesComponent') attributesComponent: StaticListComponent;
     @ViewChild('statusesComponent') statusesComponent: StaticListComponent;
+    @ViewChild(AppRatingComponent) ratingComponent: AppRatingComponent;
 
     private readonly dataSourceURI = 'Offer';
     private rootComponent: any;
-    public headlineConfig;
     private filters: FilterModel[] = new Array<FilterModel>();
+
+    headlineConfig: any;
     filterModelCategories: FilterModel;
     filterModelFlags: FilterModel;
     filterModelAttributes: FilterModel;
@@ -62,6 +67,7 @@ export class OffersComponent extends AppComponentBase implements OnInit, OnDestr
         private injector: Injector,
         private _appService: AppService,
         private _filtersService: FiltersService,
+        private _offerProxy: OfferServiceProxy,
         private _offersProxy: OfferManagementServiceProxy,
         private itemDetailsService: ItemDetailsService
     ) {
@@ -187,6 +193,14 @@ export class OffersComponent extends AppComponentBase implements OnInit, OnDestr
                             attr: {
                                 'filter-selected': this.filterModelStatuses && this.filterModelStatuses.isSelected
                             }
+                        },
+                        {
+                            name: 'rating',
+                            widget: 'dxButton',
+                            options: {
+                                text: this.l('Rank')
+                            },
+                            action: this.toggleRating.bind(this)
                         }
                     ]
                 },
@@ -223,6 +237,10 @@ export class OffersComponent extends AppComponentBase implements OnInit, OnDestr
                 }
             ]);
         }
+    }
+
+    toggleRating() {
+        this.ratingComponent.toggle();
     }
 
     toggleCategories() {
@@ -474,6 +492,16 @@ export class OffersComponent extends AppComponentBase implements OnInit, OnDestr
             data.id,
             data.bottomInputValue
         ).subscribe(() => {
+            this.notify.info(this.l('AppliedSuccessfully'));
+        });
+    }
+
+    onRankChanged(rank) {
+        this._offerProxy.rank(new RankRequest({
+            ids: this.selectedOfferKeys 
+            rank: rank
+        })).subscribe(() => {
+            this.invalidate();
             this.notify.info(this.l('AppliedSuccessfully'));
         });
     }
