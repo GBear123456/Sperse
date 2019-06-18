@@ -343,6 +343,15 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
 
     editingStart(e) {
         this.editingStarted = true;
+        const syncAccount: SyncAccountBankDto = this.dataSource.find(syncAccount => syncAccount.syncAccountId === e.data.syncAccountId);
+        if (syncAccount.syncTypeId === 'X') {
+            e.component.columnOption(
+                'accountName',
+                'editorOptions',
+                { disabled: true },
+                true
+            );
+        }
         if (this.allowBankAccountsEditing && this.cfoService && this.businessEntities.length === 1 && !this.accountsTypes) {
             this.instanceType = <any>this.cfoService.instanceType;
             this.instanceId = <any>this.cfoService.instanceId;
