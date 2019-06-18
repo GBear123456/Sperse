@@ -6,4 +6,5 @@ export class BankAccountsState {
     usedBankAccountIds?: number[];
     visibleBankAccountIds?: number[];
     selectedBusinessEntitiesIds?: number[];
+    selectedBankAccountTypes?: string[];
 }
