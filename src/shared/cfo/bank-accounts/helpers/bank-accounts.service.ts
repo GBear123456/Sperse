@@ -330,6 +330,7 @@ export class BankAccountsService {
         /** Get filter data from cache and apply it to update all accounts */
         this.state = {...this.state, ...this.cacheService.get(this.bankAccountsCacheKey)};
         this._selectedBankAccountTypes.next(this.state.selectedBankAccountTypes);
+        this.selectedStatuses.next(this.state.statuses);
         this._syncAccountsState.next(this.state);
 
         if (this.acceptFilterOnlyOnApply && (!this.state.selectedBankAccountIds || !this.state.selectedBankAccountIds.length)) {
