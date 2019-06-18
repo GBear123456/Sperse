@@ -1,5 +1,6 @@
 /** Core imports */
 import { ChangeDetectionStrategy, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Router } from '@angular/router';
 
 /** Third party imports */
 import { Observable, BehaviorSubject, combineLatest } from 'rxjs';
@@ -10,10 +11,10 @@ import { DashboardServiceProxy, GetRecentlyCreatedCustomersOutput } from '@share
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { AppConsts } from '@shared/AppConsts';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
-import { Router } from '@angular/router';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { AppHttpInterceptor } from '@shared/http/appHttpInterceptor';
 import { DashboardWidgetsService } from '@shared/crm/dashboard-widgets/dashboard-widgets.service';
+import { IRecentClientsSelectItem } from '@shared/crm/dashboard-widgets/recent-clients/recent-clients-select-item.interface';
 
 @Component({
     selector: 'recent-clients',
@@ -27,7 +28,7 @@ export class RecentClientsComponent implements OnInit {
     recordsCount = 10;
     formatting = AppConsts.formatting;
     recentlyCreatedCustomers$: Observable<GetRecentlyCreatedCustomersOutput[]>;
-    selectItems = [
+    selectItems: IRecentClientsSelectItem[] = [
         {
             name: this.ls.l('CRMDashboard_RecentLeads'),
             message: this.ls.l('CRMDashboard_LastNLeadsRecords', 'CRM',  [this.recordsCount]),
@@ -44,8 +45,8 @@ export class RecentClientsComponent implements OnInit {
         }
     ];
 
-    selectedItem: BehaviorSubject<any> = new BehaviorSubject<any>(this.selectItems[0]);
-    selectedItem$: Observable<any> = this.selectedItem.asObservable().pipe(distinctUntilChanged());
+    private selectedItem: BehaviorSubject<IRecentClientsSelectItem> = new BehaviorSubject<IRecentClientsSelectItem>(this.selectItems[0]);
+    selectedItem$: Observable<IRecentClientsSelectItem> = this.selectedItem.asObservable().pipe(distinctUntilChanged());
 
     constructor(
         private _dashboardServiceProxy: DashboardServiceProxy,
@@ -70,8 +71,7 @@ export class RecentClientsComponent implements OnInit {
     }
 
     onCellClick($event) {
-        if (this.selectedItem.value && this.selectedItem.value.dataLink)
-        {
+        if (this.selectedItem.value && this.selectedItem.value.dataLink) {
             $event.row && this._router.navigate(
                 [this.selectedItem.value.dataLink, $event.row.data.id],
                 {queryParams: {referrer: this._router.url}}
