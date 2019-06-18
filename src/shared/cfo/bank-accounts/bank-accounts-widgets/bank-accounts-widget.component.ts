@@ -275,7 +275,7 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
     }
 
     bankAccountTypesChanged(e) {
-        this.bankAccountsService.changeBankAccountTypes(e);
+        this.bankAccountsService.changeBankAccountTypes(e, this.saveChangesInCache);
     }
 
     statusesChanged(e) {
