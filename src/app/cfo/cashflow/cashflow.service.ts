@@ -2,11 +2,11 @@
 import { Injectable } from '@angular/core';
 
 /** Third party imports */
-import * as _ from 'underscore';
 import * as moment from 'moment-timezone';
 import TextBox from 'devextreme/ui/text_box';
 import NumberBox from 'devextreme/ui/number_box';
 import * as $ from 'jquery';
+import * as _ from 'underscore';
 
 /** Application imports */
 import { CellInfo } from './models/cell-info';
@@ -15,6 +15,7 @@ import { CategorizationPrefixes } from './enums/categorization-prefixes.enum';
 import { BankAccountDto, CategoryDto, GetCategoryTreeOutput } from '@shared/service-proxies/service-proxies';
 import { IModifyingInputOptions } from '@app/cfo/cashflow/modifying-input-options.interface';
 import { IEventDescription } from '@app/cfo/cashflow/models/event-description';
+import { CashflowTypes } from '@app/cfo/cashflow/enums/cashflow-types.enum';
 
 @Injectable()
 export class CashflowService {
@@ -96,14 +97,28 @@ export class CashflowService {
      */
     getCategoryValueByPrefix(path: any[], prefix: CategorizationPrefixes): any {
         let value;
-        path.some(pathItem => {
+        path.some((pathItem, index) => {
             if (pathItem && pathItem.slice(0, 2) === prefix) {
-                value = pathItem.slice(2);
+                value = pathItem !== CategorizationPrefixes.CashflowType + CashflowTypes.CashflowTypeTotal ? pathItem.slice(2) : undefined;
                 return true;
             }
             return false;
         });
         return value;
+    }
+
+    getCashFlowTypeByCategory(categoryId: number, categoryTree: GetCategoryTreeOutput): string {
+        let cashflowType;
+        const accountingTypeId = categoryTree.categories[categoryId] && categoryTree.categories[categoryId].accountingTypeId;
+        if (accountingTypeId) {
+            const accountingType = categoryTree.accountingTypes[accountingTypeId];
+            cashflowType = accountingType && accountingType.typeId;
+        }
+        return cashflowType;
+    }
+
+    getCategoryValueByValue(value: number) {
+        return value > 0 ? CashflowTypes.Income : CashflowTypes.Expense;
     }
 
     /**
