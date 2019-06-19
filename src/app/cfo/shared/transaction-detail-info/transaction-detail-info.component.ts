@@ -34,19 +34,30 @@ import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
 })
 export class TransactionDetailInfoComponent implements OnInit {
     @ViewChild(ModalDialogComponent) modalDialog: ModalDialogComponent;
+
+    TRANSACTION_ACCOUNTING_TYPE_KEY: any;
+    TRANSACTION_CATEGORY_ID: number;
+    TRANSACTION_SUBCATEGORY_ID: number;
+
     transactionId: number;
     newComment = {
         text: '',
         inplaceEdit: false
     };
     transactionInfo = new TransactionDetailsDto();
+    transactionTypeId: string;
     transactionAttributeTypes: any;
     isEditAllowed = false;
     private _itemInEditMode: any;
     categorization: GetCategoryTreeOutput;
     categories: any;
     selectedAccountingType: string;
+    selectedAccountingTypeKey: string;
+    selectedCashflowTypeId: string;
+    selectedCategoryKey: number;
     selectedCategoryId: number;
+    selectedSubCategoryKey: number;
+    selectedSubCategoryId: number;
     accountingTypes: any = [];
     filteredCategory: any = [];
     filteredSubCategory: any = [];
@@ -67,20 +78,78 @@ export class TransactionDetailInfoComponent implements OnInit {
     }
 
     ngOnInit() {
+        this.getCategoryTree();
+        this.getTransactionAttributeTypes();
         this.data.transactionId$.subscribe((id) => {
             this.transactionId = id;
             this.getTransactionDetails();
         });
-        this.getTransactionAttributeTypes();
-        this.getCategoryTree();
     }
 
     getTransactionDetails() {
         this._transactionsService.getTransactionDetails(InstanceType[this._cfoService.instanceType], this._cfoService.instanceId, this.transactionId)
             .subscribe(result => {
                 this.transactionInfo = result.transactionDetails;
-                this._changeDetectorRef.detectChanges();
+
+                if (this.transactionInfo) {
+                    this.TRANSACTION_CATEGORY_ID = this.transactionInfo.cashflowCategoryId;
+                    this.TRANSACTION_SUBCATEGORY_ID = this.transactionInfo.cashflowSubCategoryId;
+                    this.selectedCashflowTypeId = this.transactionInfo.cashFlowTypeId;
+                    this.getAccountingTypes(this.transactionInfo);
+                }
+                if (!this._changeDetectorRef['destroyed']) {
+                    this._changeDetectorRef.detectChanges();
+                }
             });
+    }
+
+    getAccountingTypes(transactionInfo: TransactionDetailsDto) {
+        this.accountingTypes = [];
+        this.categories.filter(category => {
+            if (category['parent'] == 'root') {
+                this.accountingTypes.push(category);
+                this.selectedAccountingType = category['typeId'];
+                if (category.name === transactionInfo.accountingType) {
+                    this.selectedAccountingTypeKey = this.TRANSACTION_ACCOUNTING_TYPE_KEY = category.key;
+                }
+            }
+        });
+        this.getFilteredCategoriesData(transactionInfo, this.selectedAccountingTypeKey);
+        if (!this._changeDetectorRef['destroyed']) {
+            this._changeDetectorRef.detectChanges();
+        }
+    }
+
+    getFilteredCategoriesData(transactionInfo: TransactionDetailsDto, selectedAccountingTypeKey: any) {
+        this.filteredCategory = [];
+        this.selectedCategoryKey = null;
+        this.categories.filter(category => {
+            if (category['parent'] == selectedAccountingTypeKey) {
+                this.filteredCategory.push(category);
+                if (transactionInfo.cashflowCategoryId && category.key === transactionInfo.cashflowCategoryId) {
+                    this.selectedCategoryKey = this.selectedCategoryId = category.key;
+                }
+            }
+        });
+        this.getFilteredSubCategoriesData(transactionInfo, this.selectedCategoryKey);
+        if (!this._changeDetectorRef['destroyed']) {
+            this._changeDetectorRef.detectChanges();
+        }
+    }
+
+    getFilteredSubCategoriesData(transactionInfo: TransactionDetailsDto, selectedCategoryKey: number) {
+        this.filteredSubCategory = [];
+        this.categories.filter(category => {
+            if (category['parent'] == selectedCategoryKey) {
+                this.filteredSubCategory.push(category);
+                if (transactionInfo.cashflowCategoryId && category.key === transactionInfo.cashflowSubCategoryId) {
+                    this.selectedSubCategoryKey = this.selectedSubCategoryId = category.key;
+                }
+            }
+        });
+        if (!this._changeDetectorRef['destroyed']) {
+            this._changeDetectorRef.detectChanges();
+        }
     }
 
     get categoryPathTitle() {
@@ -92,20 +161,42 @@ export class TransactionDetailInfoComponent implements OnInit {
         this._transactionsService.getTransactionAttributeTypes(InstanceType[this._cfoService.instanceType], this._cfoService.instanceId)
             .subscribe(result => {
                 this.transactionAttributeTypes = result.transactionAttributeTypes;
-                this._changeDetectorRef.detectChanges();
+                if (!this._changeDetectorRef['destroyed']) {
+                    this._changeDetectorRef.detectChanges();
+                }
             });
     }
 
-    updateTransactionCategory(e) {
+    confirmUpdateTransactionCategory($event) {
+        if ($event.itemData.parent !== this.TRANSACTION_ACCOUNTING_TYPE_KEY) {
+            abp.message.confirm(this.ls.l('RuleDialog_ChangeCashTypeMessage'), this.ls.l('RuleDialog_ChangeCashTypeTitle'),
+                (result) => {
+                    if (result) {
+                        this.updateTransactionCategory($event);
+                    } else {
+                        if (this.selectedAccountingTypeKey) this.selectedAccountingTypeKey = this.TRANSACTION_ACCOUNTING_TYPE_KEY;
+                        if (this.selectedCategoryKey) this.selectedCategoryKey = this.TRANSACTION_CATEGORY_ID;
+                        if (this.selectedSubCategoryKey) this.selectedSubCategoryKey = this.TRANSACTION_SUBCATEGORY_ID;
+                        this.getFilteredCategoriesData(this.transactionInfo, this.TRANSACTION_ACCOUNTING_TYPE_KEY);
+                        this.getFilteredSubCategoriesData(this.transactionInfo, this.TRANSACTION_CATEGORY_ID);
+                        if (!this._changeDetectorRef['destroyed']) {
+                            this._changeDetectorRef.detectChanges();
+                        }
+                    }
+            });
+        }
+    }
+
+    updateTransactionCategory($event) {
         this._classificationServiceProxy.updateTransactionsCategory(
             InstanceType[this._cfoService.instanceType],
             this._cfoService.instanceId,
             new UpdateTransactionsCategoryInput({
                 transactionIds: [this.transactionId],
-                categoryId: e.itemData.key,
+                categoryId: $event.itemData.key,
                 standardDescriptor: this.transactionInfo.transactionDescriptor,
-                descriptorAttributeTypeId: this.selectedAccountingType,
-                suppressCashflowMismatch: false
+                descriptorAttributeTypeId: undefined,
+                suppressCashflowMismatch: true
             })
         ).subscribe(() => {
             this.refreshParent();
@@ -142,7 +233,7 @@ export class TransactionDetailInfoComponent implements OnInit {
                 if (data.accountingTypes) {
                     _.mapObject(data.accountingTypes, (item, key) => {
                         categories.push({
-                            key: key + item.typeId,
+                            key: item.typeId ? key + item.typeId : key,
                             parent: 'root',
                             coAID: null,
                             name: item.name,
@@ -164,7 +255,9 @@ export class TransactionDetailInfoComponent implements OnInit {
                         }
                     });
                 this.categories = categories;
-                this._changeDetectorRef.detectChanges();
+                if (!this._changeDetectorRef['destroyed']) {
+                    this._changeDetectorRef.detectChanges();
+                }
             });
     }
 
@@ -185,13 +278,17 @@ export class TransactionDetailInfoComponent implements OnInit {
                 this.refreshParent();
                 this.transactionInfo['inplaceEdit'] = false;
                 this._notifyService.info(this.ls.l('SavedSuccessfully'));
-                this._changeDetectorRef.detectChanges();
+                if (!this._changeDetectorRef['destroyed']) {
+                    this._changeDetectorRef.detectChanges();
+                }
             });
     }
 
     inPlaceCreateComment(e) {
         this.newComment.inplaceEdit = true;
-        this._changeDetectorRef.detectChanges();
+        if (!this._changeDetectorRef['destroyed']) {
+            this._changeDetectorRef.detectChanges();
+        }
     }
 
     addNewComment() {
@@ -237,39 +334,6 @@ export class TransactionDetailInfoComponent implements OnInit {
                 this._notifyService.info(this.ls.l('SavedSuccessfully'));
                 this.getTransactionDetails();
             });
-    }
-
-    getAccountingTypes() {
-        this.accountingTypes = [];
-        this.categories.filter(item => {
-            if (item['parent'] == 'root' && item['typeId'] == this.transactionInfo.cashFlowTypeId) {
-                this.accountingTypes.push(item);
-                this.selectedAccountingType = item['typeId'];
-            }
-        });
-        this._changeDetectorRef.detectChanges();
-    }
-
-    filterCategoriesData(e) {
-        this.filteredCategory = [];
-        this.selectedCategoryId = e.value;
-        this.categories.filter(item => {
-            if (item['parent'] == e.value) {
-                this.filteredCategory.push(item);
-            }
-        });
-        this._changeDetectorRef.detectChanges();
-    }
-
-    filterSubCategoriesData(e) {
-        this.filteredSubCategory = [];
-        this.selectedCategoryId = e.value;
-        this.categories.filter(item => {
-            if (item['parent'] == e.value) {
-                this.filteredSubCategory.push(item);
-            }
-        });
-        this._changeDetectorRef.detectChanges();
     }
 
     refreshParent() {
