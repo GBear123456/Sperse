@@ -540,7 +540,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
 
     getUpdatedDataSource() {
         this.loadStatsData();
-        this.bankAccountsService.load().pipe(
+        this.bankAccountsService.load(true, false).pipe(
             finalize(() => abp.ui.clearBusy() )
         )
         .subscribe();
@@ -618,7 +618,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
 
     openBankAccountsSelectDialog() {
         this._dialog.open(BankAccountsSelectDialogComponent, {
-            panelClass: ['slider', 'width-45']
+            panelClass: 'slider',
         }).componentInstance.onApply.subscribe(() => {
             this.setBankAccountsFilter(true);
         });

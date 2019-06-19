@@ -2,7 +2,6 @@
 import {
     Component,
     ChangeDetectionStrategy,
-    AfterViewInit,
     OnInit,
     ViewChild,
     Inject,
@@ -73,7 +72,7 @@ import { ToolbarService } from '@app/shared/common/toolbar/toolbar.service';
     providers: [ CacheHelper, ContactServiceProxy, ContactPhotoServiceProxy, DialogService, LeadServiceProxy, ToolbarService ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class CreateClientDialogComponent implements OnInit, AfterViewInit, OnDestroy {
+export class CreateClientDialogComponent implements OnInit, OnDestroy {
     @ViewChild(ModalDialogComponent) modalDialog: ModalDialogComponent;
     @ViewChild('stagesList') stagesComponent: StaticListComponent;
     @ViewChild(RatingComponent) ratingComponent: RatingComponent;
@@ -202,10 +201,6 @@ export class CreateClientDialogComponent implements OnInit, AfterViewInit, OnDes
         if (this.data.isInLeadMode)
             this.leadStagesLoad();
         this.saveOptionsInit();
-    }
-
-    ngAfterViewInit() {
-        this.modalDialog.addClass('min-width-910');
     }
 
     saveOptionsInit() {

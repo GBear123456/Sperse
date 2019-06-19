@@ -32,9 +32,11 @@ import { NotifyService } from '@abp/notify/notify.service';
 import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
 
+//!!VP should be reimplemnted to use Dx text box instead of inputs
 @Component({
     selector: 'createTenantModal',
     templateUrl: './create-tenant-modal.component.html',
+    styleUrls: ['./create-tenant-modal.component.less'],
     providers: [ TenantsService ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
@@ -105,5 +107,4 @@ export class CreateTenantModalComponent implements OnInit {
                 this.modalSave.emit(null);
             });
     }
-
 }

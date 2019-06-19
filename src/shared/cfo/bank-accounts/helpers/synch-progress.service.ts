@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 
 /** Third party imports */
 import { Observable, Subject } from 'rxjs';
-import { finalize, map, distinctUntilChanged } from 'rxjs/operators';
+import { filter, finalize, map, distinctUntilChanged, skip } from 'rxjs/operators';
 
 /** Application imports */
 import {
@@ -29,6 +29,11 @@ export class SynchProgressService {
 
     private syncCompleted: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
     syncCompleted$ = this.syncCompleted.asObservable();
+    syncCompletedDistinct$ = this.syncCompleted$.pipe(
+        skip(1),
+        distinctUntilChanged(),
+        filter(Boolean)
+    );
 
     private needRefreshSync = new Subject<string>();
     needRefreshSync$ = this.needRefreshSync.asObservable();

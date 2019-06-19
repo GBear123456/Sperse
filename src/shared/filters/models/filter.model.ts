@@ -53,7 +53,7 @@ export class FilterModelBase<T extends FilterItemModel> {
         } else {
             for (let key in this.items) {
                 const propName = key !== 'element' ? camelCase(key) : this.field || this.caption;
-                values[propName] = this.items[key].value;
+                values[propName] = this.items[key].value ? this.items[key].value.value || this.items[key].value : undefined;
             }
         }
         return values;
@@ -102,11 +102,9 @@ export class FilterModel extends FilterModelBase<FilterItemModel> {
             };
             colFilterData.push(el);
         });
-
-        let obj = {
+        return {
             and: colFilterData
         };
-        return obj;
     }
 
     private getFilterByDate(params?) {

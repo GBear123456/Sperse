@@ -76,7 +76,7 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, OnDe
 
     refreshWidgets() {
         /** @todo check requests */
-        this.bankAccountsService.load().subscribe();
+        this.bankAccountsService.load(true, false).subscribe();
     }
 
     periodChanged(period: string) {
@@ -96,7 +96,7 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, OnDe
 
     openBankAccountsSelectDialog() {
         this.dialog.open(BankAccountsSelectDialogComponent, {
-            panelClass: ['slider', 'width-45']
+            panelClass: 'slider',
         });
     }
 

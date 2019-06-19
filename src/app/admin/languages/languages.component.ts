@@ -58,8 +58,7 @@ export class LanguagesComponent extends AppComponentBase implements OnDestroy {
         this.dataSource = new DataSource({
             key: 'id',
             load: () => {
-                return this._languageService.getLanguages(
-                ).toPromise().then(response => {
+                return this._languageService.getLanguages().toPromise().then(response => {
                     this.defaultLanguageName = response.defaultLanguageName;
                     return {
                         data: response.items,
@@ -116,53 +115,6 @@ export class LanguagesComponent extends AppComponentBase implements OnDestroy {
 
     initToolbarConfig() {
         this._appService.updateToolbar([
-            {
-                location: 'before', items: [
-                    {
-                        name: 'filters',
-                        disabled: true,
-                        action: event => {
-                            setTimeout(() => {
-                                this.dataGrid.instance.repaint();
-                            }, 1000);
-                            this._filtersService.fixed = !this._filtersService.fixed;
-                        },
-                        options: {
-                            checkPressed: () => {
-                                return this._filtersService.fixed;
-                            },
-                            mouseover: event => {
-                                this._filtersService.enable();
-                            },
-                            mouseout: event => {
-                                if (!this._filtersService.fixed)
-                                    this._filtersService.disable();
-                            }
-                        },
-                        attr: {
-                            'filter-selected': this._filtersService.hasFilterSelected
-                        }
-                    }
-                ]
-            },
-            {
-                location: 'before',
-                items: [
-                    {
-                        name: 'search',
-                        widget: 'dxTextBox',
-                        options: {
-                            value: this.searchValue,
-                            width: '279',
-                            mode: 'search',
-                            placeholder: this.l('Search') + ' ' + this.l('Languages').toLowerCase(),
-                            onValueChanged: (e) => {
-                                this.searchValueChange(e);
-                            }
-                        }
-                    }
-                ]
-            },
             {
                 location: 'after',
                 locateInMenu: 'auto',
@@ -250,10 +202,6 @@ export class LanguagesComponent extends AppComponentBase implements OnDestroy {
         );
     }
 
-    get multiTenancySideIsHost(): boolean {
-        return !this._sessionService.tenantId;
-    }
-
     showCompactRowsHeight() {
         this.dataGrid.instance.element().classList.toggle('grid-compact-view');
     }
@@ -280,6 +228,10 @@ export class LanguagesComponent extends AppComponentBase implements OnDestroy {
         this._appService.updateToolbar(null);
     }
 
+    sortLanguages = (item1, item2) => {
+        return item1 === this.defaultLanguageName ? -1 : (item2 === this.defaultLanguageName ? 1 : 0);
+    }
+
     openCreateOrEditLanguageModal(languageId?: number) {
         const dialogRef = this._dialog.open(CreateOrEditLanguageModalComponent, {
             panelClass: 'slider',
@@ -292,7 +244,9 @@ export class LanguagesComponent extends AppComponentBase implements OnDestroy {
         });
     }
 
-    onCellPrepared(event) {
-    
+    onRowPrepared(e) {
+        if (e.rowType === 'data' && e.data.name === this.defaultLanguageName) {
+            e.rowElement.classList.add('default');
+        }
     }
 }
