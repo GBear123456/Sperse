@@ -1,27 +1,52 @@
-import { Component, OnInit, Injector } from '@angular/core';
-import { AppConsts } from '@shared/AppConsts';
+/** Core imports */
+import { Component, OnInit, Injector, ViewChild, ElementRef } from '@angular/core';
+
+/** Third party imports */
+import { finalize } from 'rxjs/operators';
+import * as moment from 'moment';
+import startCase from 'lodash/startCase';
+import upperCase from 'lodash/upperCase';
+
+/** Application imports */
+import { ContactGroup } from '@shared/AppEnums';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { ActivatedRoute } from '@angular/router';
-import { LeadServiceProxy, LeadInfoDto, ContactInfoDto, ContactServiceProxy, UpdateLeadInfoInput } from '@shared/service-proxies/service-proxies';
+import { ApplicationServiceProxy, LeadServiceProxy, LeadInfoDto, RegisterApplicantRequestSystemType,
+    ContactInfoDto, ContactServiceProxy, UpdateLeadInfoInput } from '@shared/service-proxies/service-proxies';
 import { ContactsService } from '../contacts.service';
-
-import * as moment from 'moment';
+import { AppConsts } from '@shared/AppConsts';
 
 @Component({
     selector: 'lead-information',
     templateUrl: './lead-information.component.html',
-    styleUrls: ['./lead-information.component.less']
+    styleUrls: ['./lead-information.component.less'],
+    providers: [ApplicationServiceProxy]
 })
 export class LeadInformationComponent extends AppComponentBase implements OnInit {
+    @ViewChild('loaderWrapper') loaderWrapper: ElementRef;
     data: {
         contactInfo: ContactInfoDto,
         leadInfo: LeadInfoDto
     };
+    application: any;
 
+    showApplicationAllowed = false;
+    set selectedTabIndex(val: number) {
+        if (this._selectedTabIndex = val)
+            this.application || this.loadApplication();
+    };
+    get selectedTabIndex(): number {
+        return this._selectedTabIndex;
+    }
+    
     private paramsSubscribe: any = [];
     private formatting = AppConsts.formatting;
+    private _selectedTabIndex = 0;
+    private readonly APP_TAB_INDEX = 1;
 
     isEditAllowed = false;
+    startCase = startCase;
+    upperCase = upperCase;
 
     stages: any[];
     types: any[];
@@ -31,7 +56,7 @@ export class LeadInformationComponent extends AppComponentBase implements OnInit
         {
             sections: [
                 {
-                    name: 'General',
+                    name: '',
                     items: [
                         { name: 'stage', readonly: true },
                         { name: 'amount', readonly: true },
@@ -46,8 +71,8 @@ export class LeadInformationComponent extends AppComponentBase implements OnInit
                 {
                     name: 'TrackingInfo',
                     items: [
-                        { name: 'applicantId', readonly: true },
-                        { name: 'applicationId', readonly: true },
+                        { name: 'applicantId', readonly: true, action: this.showApplications.bind(this) },
+                        { name: 'applicationId', readonly: true, action: this.showApplications.bind(this) },
                         { name: 'clickId', readonly: true },
                         { name: 'siteId', readonly: true },
                         { name: 'siteUrl', readonly: true },
@@ -77,17 +102,35 @@ export class LeadInformationComponent extends AppComponentBase implements OnInit
         private _route: ActivatedRoute,
         private _contactProxy: ContactServiceProxy,
         private _leadService: LeadServiceProxy,
-        private _contactsService: ContactsService
+        private _contactsService: ContactsService,
+        private _applicationProxy: ApplicationServiceProxy
     ) {
         super(injector);
     }
 
     ngOnInit() {
         this.data = this._contactProxy['data'];
-
-        this.isEditAllowed = this._contactsService
-            .checkCGPermission(this.data.contactInfo.groupId);
+        this._contactsService.contactInfoSubscribe((contactInfo) => {            
+            this.data.contactInfo = contactInfo;
+            this.isEditAllowed = this._contactsService.checkCGPermission(contactInfo.groupId);
+            this.showApplicationAllowed = this.isGranted('Pages.PFM.Applications.ViewApplications') &&
+                contactInfo.personContactInfo.userId && contactInfo.groupId == ContactGroup.Client;
+        });
         this._contactsService.loadLeadInfo();
+    }
+
+    loadApplication() {
+        this.startLoading(false, this.loaderWrapper.nativeElement);
+        this._applicationProxy.getInitialMemberApplication(
+            this.data.contactInfo.personContactInfo.userId, 
+            this.data.leadInfo.applicationId).pipe(finalize(() => this.finishLoading(false, this.loaderWrapper.nativeElement))).subscribe((responce) => {
+                this.application = responce;
+            }
+        );
+    }
+
+    showApplications() {
+        this.selectedTabIndex = this.APP_TAB_INDEX;
     }
 
     getPropData(item) {
@@ -120,5 +163,9 @@ export class LeadInformationComponent extends AppComponentBase implements OnInit
         this._leadService.updateLeadInfo(
             UpdateLeadInfoInput.fromJS(this.data.leadInfo)
         ).subscribe(result => {});
+    }
+
+    getObjectKeys(obj) {
+        return obj && Object.keys(obj);
     }
 }

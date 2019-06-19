@@ -1,18 +1,39 @@
-<div class="lead-info row">
-    <div *ngFor="let column of layoutColumns" class="col-md-6">
-        <div *ngFor="let section of column.sections" class="section">
-            <i *ngIf="section.image" class="icons {{section.image}}"></i>
-            <h3 class="lab">{{l('LeadInfoSection_' + section.name)}}</h3>
-            <div *ngFor="let item of section.items" class="section-item">
-                <div *ngIf="!item.hideLabel" class="item-edit-label">{{l(capitalize(item?.name || item))}}:</div>
-                <div *ngIf="!isEditAllowed || item.readonly">{{getPropValue(item.name)}}</div>
-                <ng-container *ngIf="isEditAllowed && !item.readonly">
-                    <div [ngSwitch]="item?.data ? 'select' : 'text'">
-                        <inplace-edit *ngSwitchCase="'text'" [data]="getPropData(item)" (valueChanged)="updateValue($event, item)"></inplace-edit>
-                        <inplace-select *ngSwitchCase="'select'" [data]="item.data" (valueChanged)="item.onChange($event)" ></inplace-select>
+<div #loaderWrapper>
+    <mat-tab-group [(selectedIndex)]="selectedTabIndex">
+        <mat-tab label="General">
+            <dx-scroll-view showScrollbar="onHover">
+                <div class="lead-info row">
+                    <div *ngFor="let column of layoutColumns" class="col-md-6">
+                        <div *ngFor="let section of column.sections" class="section">
+                            <i *ngIf="section.image" class="icons {{section.image}}"></i>
+                            <h3 *ngIf="section.name" class="lab">{{l('LeadInfoSection_' + section.name)}}</h3>
+                            <div *ngFor="let item of section.items" class="section-item">
+                                <div *ngIf="!item.hideLabel" class="item-edit-label">{{l(capitalize(item?.name || item))}}:</div>
+                                <div *ngIf="!isEditAllowed || item.readonly" (click)="showApplicationAllowed && item.action && item.action()" [ngClass]="{'item-link': showApplicationAllowed && item.action}">{{getPropValue(item.name)}}</div>
+                                <ng-container *ngIf="isEditAllowed && !item.readonly">
+                                    <div [ngSwitch]="item?.data ? 'select' : 'text'">
+                                        <inplace-edit *ngSwitchCase="'text'" [data]="getPropData(item)" (valueChanged)="updateValue($event, item)"></inplace-edit>
+                                        <inplace-select *ngSwitchCase="'select'" [data]="item.data" (valueChanged)="item.onChange($event)" ></inplace-select>
+                                    </div>
+                                </ng-container>
+                            </div>
+                        </div>
                     </div>
-                </ng-container>
-            </div>
-        </div>
-    </div>
-</div>  
+                </div>  
+            </dx-scroll-view>
+        </mat-tab>
+        <mat-tab label="Applications" [disabled]="!data?.leadInfo?.applicantId || !showApplicationAllowed">
+            <dx-scroll-view showScrollbar="onHover" *ngIf="application">
+                <div *ngIf="selectedTabIndex" class="app-container">
+                    <div *ngFor="let group of getObjectKeys(application)" class="app-group">
+                        <h3 class="lab">{{upperCase(group)}}</h3>
+                        <div *ngFor="let field of getObjectKeys(application[group])" class="section-item">
+                            <div class="item-edit-label">{{startCase(field)}}:</div>
+                            <div>{{application[group][field]}}</div>
+                        </div>
+                    </div>
+                </div>
+            </dx-scroll-view>
+        </mat-tab>
+    </mat-tab-group>
+</div>
