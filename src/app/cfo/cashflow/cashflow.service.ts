@@ -323,4 +323,5 @@ export class CashflowService {
     elementIsDataCell(element: HTMLElement): boolean {
         return Boolean(element.closest('.dx-area-data-cell'));
     }
+
 }

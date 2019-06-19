@@ -51,6 +51,14 @@
         [targetSelector]="'[aria-label=Status]'"
         [list]="statuses">
     </app-static-list>
+    <app-rating 
+        [title]="l('Rank')" 
+        [allowManage]="true"
+        [targetSelector]="'[aria-label=Rank]'"
+        [selectedKeys]="selectedOfferKeys" 
+        [bulkUpdateMode]="true"
+        (onProcess)="onRankChanged($event)">
+    </app-rating>
 
     <div class="portlet light no-padding margin-bottom-0">
         <div class="main-wrapper">
@@ -79,6 +87,7 @@
                 <dxi-column dataField="CardNetwork" caption="{{l('Offer_Network')}}" [width]="150"></dxi-column>
                 <dxi-column dataField="Categories" caption="{{l('Category')}}" [width]="300" [calculateSortValue]="getCategoryValue" [calculateGroupValue]="getCategoryValue" [calculateCellValue]="getCategoryValue"></dxi-column>
                 <dxi-column dataField="Status" caption="{{l('Offer_Status')}}" [width]="180"></dxi-column>
+                <dxi-column dataField="Rank" caption="{{l('Offer_Rank')}}" dataType="number" alignment="center"></dxi-column>
                 <dxi-column dataField="IsPublished" caption="{{l('Offer_Published')}}" dataType="boolean"></dxi-column>
                 <dxi-column dataField="Created" caption="{{l('Offer_Created')}}" [width]="180" cellTemplate="dateCell"></dxi-column>
 
