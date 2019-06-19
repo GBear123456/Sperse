@@ -11,7 +11,7 @@ import capitalize from 'lodash/capitalize';
 import { AppService } from '@app/app.service';
 import { LayoutService } from '@app/shared/layout/layout.service';
 import { CFOServiceBase } from 'shared/cfo/cfo-service-base';
-import { InstanceServiceProxy, InstanceType, GetStatusOutputStatus, ContactServiceProxy } from 'shared/service-proxies/service-proxies';
+import { InstanceServiceProxy, InstanceType, GetStatusOutputStatus, ContactServiceProxy, GetStatusOutput } from 'shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { AppConsts } from '@shared/AppConsts';
 import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
@@ -20,7 +20,7 @@ import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
 export class CFOService extends CFOServiceBase {
     instanceTypeChanged: Subject<string> = new Subject<null>();
     instanceTypeChanged$: Observable<string> = this.instanceTypeChanged.asObservable();
-    instanceStatus$: Observable<any>;
+    instanceStatus$: Observable<boolean>;
     constructor(
         private _appService: AppService,
         private _appLocalizationService: AppLocalizationService,
@@ -104,14 +104,14 @@ export class CFOService extends CFOServiceBase {
         });
     }
 
-    instanceChangeProcess(invalidateServerCache: boolean = false) {
+    instanceChangeProcess(invalidateServerCache: boolean = false): Observable<boolean> {
         if (this.instanceId) {
             this._appService.setContactInfoVisibility(true);
             this._layoutService.hideDefaultPageHeader();
         }
         if (!this.instanceStatus$)
             this.instanceStatus$ = this._instanceServiceProxy.getStatus(InstanceType[this.instanceType], this.instanceId, invalidateServerCache)
-            .pipe(finalize(() => this.instanceStatus$ = undefined), map((data) => {
+            .pipe(finalize(() => this.instanceStatus$ = undefined), map((data: GetStatusOutput) => {
                 if (this.instanceId && data.userId)
                     this.initContactInfo(data.userId);
                 const status = data.status == GetStatusOutputStatus.Active;
@@ -124,7 +124,7 @@ export class CFOService extends CFOServiceBase {
         return this.instanceStatus$;
     }
 
-    private updateMenuItems(disabled?) {
+    private updateMenuItems(disabled?: boolean) {
         setTimeout(() => {
             let menu = this._appService.topMenu;
             menu && menu.items.forEach((item, i) => {
@@ -133,9 +133,9 @@ export class CFOService extends CFOServiceBase {
                         item.text = this._appLocalizationService.l(this.initialized ? 'Navigation_Dashboard'
                             : 'Navigation_Setup', AppConsts.localization.CFOLocalizationSourceName);
                 } else if (i == 1) {
-                    item.disabled = isNaN(disabled) ? !this.initialized : disabled;
+                    item.disabled = disabled == undefined ? !this.initialized : disabled;
                 } else {
-                    item.disabled = isNaN(disabled) ? !this.hasTransactions : disabled;
+                    item.disabled = disabled == undefined ? !this.hasTransactions : disabled;
                 }
             });
         });

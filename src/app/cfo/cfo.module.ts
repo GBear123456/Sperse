@@ -41,7 +41,7 @@ import { DxPopupModule } from 'devextreme-angular/ui/popup';
 import { DxSelectBoxModule } from 'devextreme-angular/ui/select-box';
 import { ModalModule } from 'ngx-bootstrap';
 import { Observable, of } from 'rxjs';
-import { filter, map, mergeMap } from 'rxjs/operators';
+import { filter, map } from 'rxjs/operators';
 
 /** Application imports */
 import { ReportPeriodComponent } from '@app/cfo/shared/report-period/report-period.component';
@@ -211,9 +211,8 @@ export class CfoModule {
                     route = route.firstChild;
                 return route;
             }),
-            filter(route => route.outlet === 'primary'),
-            mergeMap(route => of(route.params)),
-            filter(params => this.cfoService.checkInstanceChanged(params))
+            filter(route => route.outlet === 'primary' && 
+                this.cfoService.checkInstanceChanged(route.params))
         ).subscribe();
     }
 }
