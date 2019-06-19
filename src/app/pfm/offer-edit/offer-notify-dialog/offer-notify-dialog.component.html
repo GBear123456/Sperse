@@ -17,7 +17,8 @@
                            displayExpr="name"
                            valueExpr="id"
                            [placeholder]="ls.l('OfferNotifyDialog_SelectLeadsList')"
-                           [(value)]="selectedListId">
+                           (onValueChanged)="selectedListId.next($event.value)"
+                           [value]="selectedListId$ | async">
             </dx-select-box>
         </div>
     </ng-container>
@@ -34,7 +35,7 @@
 </div>
 <div mat-dialog-actions>
     <ng-container *ngIf="currentStage === 0; else areYouSureButtons">
-        <button mat-button class="button-layout button-default" [disabled]="selectedService === services.IAge && !selectedListId" (click)="currentStage = 1">{{ ls.l('Confirm') }}</button>
+        <button mat-button class="button-layout button-default" [disabled]="selectedService === services.IAge && !selectedListName" (click)="currentStage = 1">{{ ls.l('Confirm') }}</button>
         <button mat-button class="button-layout button-default" (click)="close()">{{ ls.l('Cancel') }}</button>
     </ng-container>
     <ng-template #areYouSureButtons>

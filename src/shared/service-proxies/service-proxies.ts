@@ -56479,6 +56479,7 @@ export interface IUpdateLanguageTextInput {
 export class CreateLeadInput implements ICreateLeadInput {
     leadTypeId!: number | undefined;
     stageId!: number | undefined;
+    matchByEmail!: boolean | undefined;
     namePrefix!: string | undefined;
     firstName!: string | undefined;
     middleName!: string | undefined;
@@ -56516,6 +56517,7 @@ export class CreateLeadInput implements ICreateLeadInput {
         if (data) {
             this.leadTypeId = data["leadTypeId"];
             this.stageId = data["stageId"];
+            this.matchByEmail = data["matchByEmail"];
             this.namePrefix = data["namePrefix"];
             this.firstName = data["firstName"];
             this.middleName = data["middleName"];
@@ -56581,6 +56583,7 @@ export class CreateLeadInput implements ICreateLeadInput {
         data = typeof data === 'object' ? data : {};
         data["leadTypeId"] = this.leadTypeId;
         data["stageId"] = this.stageId;
+        data["matchByEmail"] = this.matchByEmail;
         data["namePrefix"] = this.namePrefix;
         data["firstName"] = this.firstName;
         data["middleName"] = this.middleName;
@@ -56639,6 +56642,7 @@ export class CreateLeadInput implements ICreateLeadInput {
 export interface ICreateLeadInput {
     leadTypeId: number | undefined;
     stageId: number | undefined;
+    matchByEmail: boolean | undefined;
     namePrefix: string | undefined;
     firstName: string | undefined;
     middleName: string | undefined;

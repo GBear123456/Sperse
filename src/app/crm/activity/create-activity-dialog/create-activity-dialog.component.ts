@@ -174,8 +174,7 @@ export class CreateActivityDialogComponent implements OnInit {
             this.data.appointment.Type = CreateActivityDtoType.Task;
 
         this.data.appointment.Type == 'Event' ? this.activityTypeIndex = 1 : this.activityTypeIndex = 0;
-
-        this.title = this.data.appointment.Title;
+        this.title = this.data.appointment.Title ? this.data.appointment.Title : '';
         this.initToolbarConfig();
         this.saveOptionsInit();
         this.changeDetectorRef.detectChanges();

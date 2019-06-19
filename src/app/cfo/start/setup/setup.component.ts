@@ -2,6 +2,9 @@ import { AfterViewInit, Component, OnInit, Injector, OnDestroy } from '@angular/
 
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 
+import { of } from 'rxjs';
+import { catchError, switchMap } from 'rxjs/operators';
+
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { InstanceServiceProxy, InstanceType, SyncServiceProxy } from 'shared/service-proxies/service-proxies';
@@ -69,10 +72,10 @@ export class SetupComponent extends CFOComponentBase implements AfterViewInit, O
         this.startLoading(false, this.setupContainerElement);
         this.addAccount();
         if (this._cfoService.instanceId == null)
-            this._instanceServiceProxy.setup(InstanceType[this.instanceType], undefined).subscribe(
-                data => { this._cfoService.instanceChangeProcess().subscribe(); },
-                () => this.isDisabled = !this.isInstanceAdmin
-            );
+            this._instanceServiceProxy.setup(InstanceType[this.instanceType], undefined).pipe(
+                switchMap(() => this._cfoService.instanceChangeProcess()),
+                catchError(() => of(this.isDisabled = !this.isInstanceAdmin))
+            ).subscribe();
     }
 
     ngOnDestroy() {
