@@ -4,8 +4,8 @@ import { ChangeDetectionStrategy, Component, ElementRef, Inject, OnInit } from '
 /** Third party imports */
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 import { Store, select } from '@ngrx/store';
-import { Observable } from 'rxjs';
-import { finalize, map } from 'rxjs/operators';
+import { BehaviorSubject, Observable, combineLatest } from 'rxjs';
+import { distinctUntilChanged, finalize, map } from 'rxjs/operators';
 
 /** Application imports */
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -35,7 +35,8 @@ export class OfferNotifyDialogComponent implements OnInit {
     selectedService: SendAnnouncementRequestServiceName = SendAnnouncementRequestServiceName.IAge;
     currentStage = 0;
     lists$: Observable<ContactListInfoDto[]> = this.store$.pipe(select(ListsStoreSelectors.getLists));
-    selectedListId: number;
+    selectedListId: BehaviorSubject<number> = new BehaviorSubject<number>(null);
+    selectedListId$: Observable<number> = this.selectedListId.asObservable().pipe(distinctUntilChanged());
     selectedListName: string;
 
     constructor(
@@ -51,9 +52,12 @@ export class OfferNotifyDialogComponent implements OnInit {
 
     ngOnInit() {
         this.store$.dispatch(new ListsStoreActions.LoadRequestAction(false));
-        this.lists$.pipe(
-            map((lists: ContactListInfoDto[]) => {
-                return this.selectedListId ? lists.find(list => list.id === this.selectedListId).name : '';
+        combineLatest(
+            this.lists$,
+            this.selectedListId$
+        ).pipe(
+            map(([lists, selectedListId]: [ContactListInfoDto[], number]) => {
+                return selectedListId ? lists.find(list => list.id === selectedListId).name : '';
             })
         ).subscribe((listName: string) => {
             this.selectedListName = listName;
