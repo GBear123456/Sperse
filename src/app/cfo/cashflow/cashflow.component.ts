@@ -87,7 +87,7 @@ import {
     UpdateTransactionsCategoryInput,
     UpdateCategoryInput,
     RenameForecastModelInput,
-    CreateForecastModelInput
+    CreateForecastModelInput, SyncAccountBankDto
 } from '@shared/service-proxies/service-proxies';
 import { BankAccountFilterComponent } from 'shared/filters/bank-account-filter/bank-account-filter.component';
 import { BankAccountFilterModel } from 'shared/filters/bank-account-filter/bank-account-filter.model';
@@ -121,20 +121,22 @@ import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
 import { BankAccountStatus } from '@shared/cfo/bank-accounts/helpers/bank-accounts.status.enum';
 
 /** Constants */
-const StartedBalance = 'B',
-      Income         = 'I',
-      Expense        = 'E',
-      Reconciliation = 'D',
-      NetChange      = 'NC',
-      Total          = 'T',
-      GrandTotal     = 'GT';
+const StartedBalance    = 'B',
+      Income            = 'I',
+      Expense           = 'E',
+      CashflowTypeTotal = 'CTT',
+      Reconciliation    = 'D',
+      NetChange         = 'NC',
+      Total             = 'T',
+      GrandTotal        = 'GT';
 
-const PSB = CategorizationPrefixes.CashflowType + StartedBalance,
-      PI  = CategorizationPrefixes.CashflowType + Income,
-      PE  = CategorizationPrefixes.CashflowType + Expense,
-      PR  = CategorizationPrefixes.CashflowType + Reconciliation,
-      PNC = CategorizationPrefixes.CashflowType + NetChange,
-      PT  = CategorizationPrefixes.CashflowType + Total;
+const PSB   = CategorizationPrefixes.CashflowType + StartedBalance,
+      PI    = CategorizationPrefixes.CashflowType + Income,
+      PE    = CategorizationPrefixes.CashflowType + Expense,
+      PCTT  = CategorizationPrefixes.CashflowType + CashflowTypeTotal,
+      PR    = CategorizationPrefixes.CashflowType + Reconciliation,
+      PNC   = CategorizationPrefixes.CashflowType + NetChange,
+      PT    = CategorizationPrefixes.CashflowType + Total;
 
 /** @todo check error cell_options_1.CellOptions is not a constructor when import from separate file */
 export class CellOptions {
@@ -199,7 +201,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     private bankAccounts: BankAccountDto[];
     private activeBankAccounts: BankAccountDto[];
 
-    private syncAccounts: any;
+    private syncAccounts: SyncAccountBankDto[];
 
     /** Source of the cashflow table (data fields descriptions and data) */
     dataSource;
@@ -295,6 +297,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         StartedBalance,
         Income,
         Expense,
+        CashflowTypeTotal,
         NetChange,
         Reconciliation,
         Total
@@ -560,75 +563,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         }
     ];
 
-    categoryToolbarConfig = [
-        {
-            location: 'center', items: [
-                {
-                    name: 'find',
-                    action: (event) => {
-                        event.event.stopPropagation();
-                        event.event.preventDefault();
-                        let toolbarElement = event.element.closest('.dx-area-description-cell');
-                        if (!toolbarElement.querySelector('#findInputBlock')) {
-                            let searchInputBlock = document.createElement('div');
-                            searchInputBlock.id = 'findInputBlock';
-                            searchInputBlock.innerHTML = '<div></div>';
-                            new TextBox(searchInputBlock.children[0], {
-                                showClearButton: true,
-                                mode: 'search',
-                                onFocusOut: () => {
-                                    searchInputBlock.style.display = 'none';
-                                },
-                                onInput: e => {
-                                    clearTimeout(this.filterByChangeTimeout);
-                                    this.filterByChangeTimeout = setTimeout(() => {
-                                        this.cachedRowsFitsToFilter.clear();
-                                        this.filterBy = e.element.querySelector('input').value;
-                                        this.pivotGrid.instance.getDataSource().reload();
-                                        this.pivotGrid.instance.updateDimensions();
-                                    }, 300);
-                                }
-                            });
-                            toolbarElement.appendChild(searchInputBlock);
-                        } else {
-                            toolbarElement.querySelector('#findInputBlock').style.display = '';
-                        }
-                        toolbarElement.querySelector('input').focus();
-                        toolbarElement = null;
-                    }
-                },
-                {
-                    name: 'sort',
-                    widget: 'dxDropDownMenu',
-                    options: {
-                        hint: this.l('Sort'),
-                        items: [{
-                            text: this.ls('Platform', 'SortBy', this.ls('CFO', 'Transactions_CashflowCategoryName')),
-                            action: this.resortPivotGrid.bind(this, {
-                                sortBy: 'displayText',
-                                sortOrder: 'asc'
-                            })
-                        }, {
-                            text: this.ls('Platform', 'SortBy', this.ls('CFO', 'Transactions_Amount')),
-                            action: this.resortPivotGrid.bind(this, {
-                                sortBySummaryField: 'amount',
-                                sortBySummaryPath: [],
-                                sortOrder: 'asc'
-                            })
-                        }]
-                    }
-                },
-                {
-                    name: 'expandTree',
-                    widget: 'dxDropDownMenu',
-                    options: {
-                        hint: this.l('Expand'),
-                        items: this.expandLevels
-                    }
-                }
-            ]
-        }
-    ];
+    categoryToolbarConfig;
 
     footerToolbarConfig = [];
 
@@ -824,6 +759,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     ngOnInit() {
+        this.initCategoryToolbar();
         this.displayedStatsDetails$.subscribe((details) => this.displayedStatsDetails = details);
         this.statsDetailResult$.subscribe(details => {
             let detailsAllowed = this.isInstanceAdmin || this.isMemberAccessManage;
@@ -836,10 +772,9 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         this.store$.pipe(
             select(ForecastModelsStoreSelectors.getSelectedForecastModelId),
             takeUntil(this.destroy$)
-        )
-            .subscribe((selectedForecastModelId: number) => {
-                this.selectedForecastModelId = selectedForecastModelId;
-            });
+        ).subscribe((selectedForecastModelId: number) => {
+            this.selectedForecastModelId = selectedForecastModelId;
+        });
         this.store$.pipe(
             select(ForecastModelsStoreSelectors.getSelectedForecastModelId),
             skip(1),
@@ -919,6 +854,13 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             this.createDragImage();
             document.addEventListener('keydown', this.keyDownEventHandler, true);
         }
+
+        this.userPreferencesService.localPreferences$.pipe(
+            takeUntil(this.destroy$),
+            skip(1)
+        ).subscribe(() => {
+            this.updateCategorizationLevels();
+        });
     }
 
     createDragImage() {
@@ -968,6 +910,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 text = this.cashflowTypes[key];
                 if (key === Income || key === Expense) {
                     text  = `${this.l('Total')} ${text}`;
+                } else if (key === CashflowTypeTotal) {
+                    text = this.l('CashflowTypeTotals');
                 }
                 text = text.toUpperCase();
             }
@@ -1086,7 +1030,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
      * Handle the subscription result from getInitialData Observable
      * @param initialDataResult
      */
-    handleCashFlowInitialResult(initialDataResult, syncAccounts) {
+    handleCashFlowInitialResult(initialDataResult: CashFlowInitialData, syncAccounts: SyncAccountBankDto[]) {
         this.initialData = initialDataResult;
         this.cashflowTypes = this.initialData.cashflowTypes;
         this.addCashflowType(Total, this.l('Ending Cash Balance'));
@@ -1579,6 +1523,13 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         return this.addCategorizationLevels({ ...stubTransaction, ...stubObj });
     }
 
+    updateCategorizationLevels() {
+        this.cashflowData.forEach(cashflowItem => {
+             this.addCategorizationLevels(cashflowItem);
+        });
+        this.dataSource = this.getApiDataSource();
+    }
+
     /**
      * Get the cashflow data from the transactions from the server
      * @param {TransactionStatsDto[]} cashflowData
@@ -1655,6 +1606,16 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     } else {
                         return true;
                     }
+                }
+
+                if (level.prefix === CategorizationPrefixes.CashflowType
+                    && (transactionObj[level.statsKeyName] === Income || transactionObj[level.statsKeyName] === Expense)
+                    && this.userPreferencesService.localPreferences.value.hasOwnProperty('showCashflowTypeTotals')
+                    && !this.userPreferencesService.localPreferences.value.showCashflowTypeTotals
+                ) {
+                    key = PCTT;
+                    transactionObj['levels'][`level${levelNumber++}`] = key;
+                    return true;
                 }
 
                 key = transactionObj[level.statsKeyName] ? level.prefix + transactionObj[level.statsKeyName] : transactionObj[level.statsKeyName];
@@ -2715,7 +2676,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
     isCopyable(cellObj) {
         return this.isInstanceAdmin && cellObj.area === 'data' &&
-            (cellObj.cell.rowPath[0] === PI || cellObj.cell.rowPath[0] === PE) && cellObj.cell.value;
+            (cellObj.cell.rowPath[0] === PI || cellObj.cell.rowPath[0] === PE || cellObj.cell.rowPath[0] === PCTT) && cellObj.cell.value;
     }
 
     isDayCell(cell) {
@@ -2795,7 +2756,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     cellCanBeDragged(cell, area) {
-        return area === 'data' && (cell.rowPath[0] === PI || cell.rowPath[0] === PE) &&
+        return area === 'data' && (cell.rowPath[0] === PI || cell.rowPath[0] === PE || cell.rowPath[0] === PCTT) &&
                !(cell.rowPath.length && cell.rowPath.length === 2 && (cell.rowPath[1] && this.isNotCategoryOrDescriptorCell(cell.rowPath[1]))) &&
                cell.rowPath.length !== 1;
     }
@@ -2848,7 +2809,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     isTransactionRows(cell) {
         return cell.rowPath !== undefined &&
                cell.rowPath.length !== 1 &&
-               (cell.rowPath[0] === PI || cell.rowPath[0] === PE);
+               (cell.rowPath[0] === PI || cell.rowPath[0] === PE || cell.rowPath[0] === PCTT);
     }
 
     isReconciliationRows(cell) {
@@ -4401,7 +4362,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     cellCanBeTargetOfCopy(cellObj): boolean {
         const cellDateInterval = this.formattingDate(cellObj.cell.columnPath);
         const futureForecastsYearsAmount = parseInt(this.feature.getValue('CFO.FutureForecastsYearCount'));
-        return (cellObj.cell.rowPath[0] === PI || cellObj.cell.rowPath[0] === PE)
+        return (cellObj.cell.rowPath[0] === PI || cellObj.cell.rowPath[0] === PE || cellObj.cell.rowPath[0] === PCTT)
             && !this.isCashflowTypeRowTotal(cellObj.cell, cellObj.area)
             && !this.isAccountingRowTotal(cellObj.cell, cellObj.area)
             && this.cellIsNotHistorical(cellObj)
@@ -6185,5 +6146,108 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 transactionId$: of(this.transactionId)
             }
         });
+    }
+
+    private initCategoryToolbar() {
+        this.categoryToolbarConfig = [
+            {
+                location: 'center', items: [
+                    {
+                        name: 'find',
+                        action: (event) => {
+                            event.event.stopPropagation();
+                            event.event.preventDefault();
+                            let toolbarElement = event.element.closest('.dx-area-description-cell');
+                            if (!toolbarElement.querySelector('#findInputBlock')) {
+                                let searchInputBlock = document.createElement('div');
+                                searchInputBlock.id = 'findInputBlock';
+                                searchInputBlock.innerHTML = '<div></div>';
+                                new TextBox(searchInputBlock.children[0], {
+                                    showClearButton: true,
+                                    mode: 'search',
+                                    onFocusOut: () => {
+                                        searchInputBlock.style.display = 'none';
+                                    },
+                                    onInput: e => {
+                                        clearTimeout(this.filterByChangeTimeout);
+                                        this.filterByChangeTimeout = setTimeout(() => {
+                                            this.cachedRowsFitsToFilter.clear();
+                                            this.filterBy = e.element.querySelector('input').value;
+                                            this.pivotGrid.instance.getDataSource().reload();
+                                            this.pivotGrid.instance.updateDimensions();
+                                        }, 300);
+                                    }
+                                });
+                                toolbarElement.appendChild(searchInputBlock);
+                            } else {
+                                toolbarElement.querySelector('#findInputBlock').style.display = '';
+                            }
+                            toolbarElement.querySelector('input').focus();
+                            toolbarElement = null;
+                        }
+                    },
+                    {
+                        name: 'sort',
+                        widget: 'dxDropDownMenu',
+                        options: {
+                            hint: this.l('Sort'),
+                            items: [{
+                                text: this.ls('Platform', 'SortBy', this.ls('CFO', 'Transactions_CashflowCategoryName')),
+                                action: this.resortPivotGrid.bind(this, {
+                                    sortBy: 'displayText',
+                                    sortOrder: 'asc'
+                                })
+                            }, {
+                                text: this.ls('Platform', 'SortBy', this.ls('CFO', 'Transactions_Amount')),
+                                action: this.resortPivotGrid.bind(this, {
+                                    sortBySummaryField: 'amount',
+                                    sortBySummaryPath: [],
+                                    sortOrder: 'asc'
+                                })
+                            }]
+                        }
+                    },
+                    {
+                        name: 'expandTree',
+                        widget: 'dxDropDownMenu',
+                        options: {
+                            hint: this.l('Expand'),
+                            items: this.expandLevels
+                        }
+                    },
+                    {
+                        name: 'follow',
+                        widget: 'dxDropDownMenu',
+                        options: {
+                            hint: this.l('Configuration'),
+                            items: [
+                                {
+                                    type: 'header',
+                                    text: this.l('Configuration'),
+                                    action: (event) => {
+                                        event.event.stopPropagation();
+                                        event.event.preventDefault();
+                                    }
+                                },
+                                {
+                                    type: 'option',
+                                    name: 'showCashflowTypeTotals',
+                                    checked: this.userPreferencesService.localPreferences.value.showCashflowTypeTotals,
+                                    text: this.l('CashflowTypeTotals'),
+                                    action: (event) => {
+                                        this.userPreferencesService.updateLocalPreferences({
+                                            showCashflowTypeTotals: !this.userPreferencesService.localPreferences.value.showCashflowTypeTotals
+                                        });
+                                        this.initCategoryToolbar();
+                                        event.event.stopPropagation();
+                                        event.event.preventDefault();
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        ]
     }
 }
