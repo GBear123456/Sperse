@@ -498,7 +498,7 @@ export class OffersComponent extends AppComponentBase implements OnInit, OnDestr
 
     onRankChanged(rank) {
         this._offerProxy.rank(new RankRequest({
-            ids: this.selectedOfferKeys,
+            ids: this.dataGrid.instance.getSelectedRowKeys().map(item => item.Id),
             rank: rank
         })).subscribe(() => {
             this.invalidate();
