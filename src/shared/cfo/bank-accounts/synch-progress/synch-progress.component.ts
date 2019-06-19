@@ -64,10 +64,10 @@ export class SynchProgressComponent extends CFOComponentBase implements OnInit, 
         setTimeout(() => this.accountProgressTooltip.instance.repaint());
     }
 
-    syncAll() {
+    syncAll(toggleComponent = false) {
         this.showLoader = true;
+        if (toggleComponent) this.toggleComponent();
         this.syncProgressService.startSynchronization(true, false, 'all');
-        this.showProgress = !this.showProgress;
         this.syncProgressService.syncCompleted$.pipe(filter(completed => !completed), first()).subscribe(
             () => this.showLoader = false
         );

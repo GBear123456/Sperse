@@ -1,7 +1,7 @@
 <div class="synch-progress-wrapper">
     <button *ngIf="isSyncAccountButtonShown && !showProgress"
             class="sync-account-button"
-            (click)="syncAll()">
+            (click)="syncAll(true)">
         <img src="./assets/common/icons/sync-account-icon.svg" alt="Sync Accounts">
         {{l('SyncAllAccounts')}}
     </button>
