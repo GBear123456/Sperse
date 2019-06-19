@@ -13699,7 +13699,7 @@ export class InstanceServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    registerMember(input: RegisterMemberInput | null | undefined): Observable<SetupOutput> {
+    registerMember(input: RegisterMemberInput | null | undefined): Observable<RegisterMemberOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/Instance/RegisterMember";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -13722,14 +13722,14 @@ export class InstanceServiceProxy {
                 try {
                     return this.processRegisterMember(<any>response_);
                 } catch (e) {
-                    return <Observable<SetupOutput>><any>_observableThrow(e);
+                    return <Observable<RegisterMemberOutput>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<SetupOutput>><any>_observableThrow(response_);
+                return <Observable<RegisterMemberOutput>><any>_observableThrow(response_);
         }));
     }
 
-    protected processRegisterMember(response: HttpResponseBase): Observable<SetupOutput> {
+    protected processRegisterMember(response: HttpResponseBase): Observable<RegisterMemberOutput> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -13740,7 +13740,7 @@ export class InstanceServiceProxy {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? SetupOutput.fromJS(resultData200) : new SetupOutput();
+            result200 = resultData200 ? RegisterMemberOutput.fromJS(resultData200) : new RegisterMemberOutput();
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -13748,7 +13748,7 @@ export class InstanceServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<SetupOutput>(<any>null);
+        return _observableOf<RegisterMemberOutput>(<any>null);
     }
 
     /**
@@ -37280,6 +37280,8 @@ export class PersonContactInfoDto implements IPersonContactInfoDto {
     jobTitle!: string | undefined;
     orgRelationId!: number | undefined;
     orgRelations!: PersonOrgRelationShortInfo[] | undefined;
+    industry!: string | undefined;
+    interests!: number[] | undefined;
     id!: number | undefined;
     fullName!: string | undefined;
     userId!: number | undefined;
@@ -37307,6 +37309,12 @@ export class PersonContactInfoDto implements IPersonContactInfoDto {
                 this.orgRelations = [];
                 for (let item of data["orgRelations"])
                     this.orgRelations.push(PersonOrgRelationShortInfo.fromJS(item));
+            }
+            this.industry = data["industry"];
+            if (data["interests"] && data["interests"].constructor === Array) {
+                this.interests = [];
+                for (let item of data["interests"])
+                    this.interests.push(item);
             }
             this.id = data["id"];
             this.fullName = data["fullName"];
@@ -37336,6 +37344,12 @@ export class PersonContactInfoDto implements IPersonContactInfoDto {
             for (let item of this.orgRelations)
                 data["orgRelations"].push(item.toJSON());
         }
+        data["industry"] = this.industry;
+        if (this.interests && this.interests.constructor === Array) {
+            data["interests"] = [];
+            for (let item of this.interests)
+                data["interests"].push(item);
+        }
         data["id"] = this.id;
         data["fullName"] = this.fullName;
         data["userId"] = this.userId;
@@ -37353,6 +37367,8 @@ export interface IPersonContactInfoDto {
     jobTitle: string | undefined;
     orgRelationId: number | undefined;
     orgRelations: PersonOrgRelationShortInfo[] | undefined;
+    industry: string | undefined;
+    interests: number[] | undefined;
     id: number | undefined;
     fullName: string | undefined;
     userId: number | undefined;
@@ -37368,8 +37384,22 @@ export class PersonInfoDto implements IPersonInfoDto {
     middleName!: string | undefined;
     nameSuffix!: string | undefined;
     nickName!: string | undefined;
-    timeZone!: string | undefined;
+    dob!: moment.Moment | undefined;
+    ssn!: string | undefined;
     identityConfirmationDate!: moment.Moment | undefined;
+    timeZone!: string | undefined;
+    maritalStatus!: string | undefined;
+    marriageDate!: moment.Moment | undefined;
+    divorceDate!: moment.Moment | undefined;
+    gender!: string | undefined;
+    isUSCitizen!: boolean | undefined;
+    citizenship!: string | undefined;
+    education!: string | undefined;
+    personalProfile!: string | undefined;
+    preferredToD!: PersonInfoDtoPreferredToD | undefined;
+    drivingLicense!: string | undefined;
+    drivingLicenseState!: string | undefined;
+    isActiveMilitaryDuty!: boolean | undefined;
     contactId!: number | undefined;
     firstName!: string | undefined;
     lastName!: string | undefined;
@@ -37389,8 +37419,22 @@ export class PersonInfoDto implements IPersonInfoDto {
             this.middleName = data["middleName"];
             this.nameSuffix = data["nameSuffix"];
             this.nickName = data["nickName"];
-            this.timeZone = data["timeZone"];
+            this.dob = data["dob"] ? moment(data["dob"].toString()) : <any>undefined;
+            this.ssn = data["ssn"];
             this.identityConfirmationDate = data["identityConfirmationDate"] ? moment(data["identityConfirmationDate"].toString()) : <any>undefined;
+            this.timeZone = data["timeZone"];
+            this.maritalStatus = data["maritalStatus"];
+            this.marriageDate = data["marriageDate"] ? moment(data["marriageDate"].toString()) : <any>undefined;
+            this.divorceDate = data["divorceDate"] ? moment(data["divorceDate"].toString()) : <any>undefined;
+            this.gender = data["gender"];
+            this.isUSCitizen = data["isUSCitizen"];
+            this.citizenship = data["citizenship"];
+            this.education = data["education"];
+            this.personalProfile = data["personalProfile"];
+            this.preferredToD = data["preferredToD"];
+            this.drivingLicense = data["drivingLicense"];
+            this.drivingLicenseState = data["drivingLicenseState"];
+            this.isActiveMilitaryDuty = data["isActiveMilitaryDuty"];
             this.contactId = data["contactId"];
             this.firstName = data["firstName"];
             this.lastName = data["lastName"];
@@ -37410,8 +37454,22 @@ export class PersonInfoDto implements IPersonInfoDto {
         data["middleName"] = this.middleName;
         data["nameSuffix"] = this.nameSuffix;
         data["nickName"] = this.nickName;
-        data["timeZone"] = this.timeZone;
+        data["dob"] = this.dob ? this.dob.toISOString() : <any>undefined;
+        data["ssn"] = this.ssn;
         data["identityConfirmationDate"] = this.identityConfirmationDate ? this.identityConfirmationDate.toISOString() : <any>undefined;
+        data["timeZone"] = this.timeZone;
+        data["maritalStatus"] = this.maritalStatus;
+        data["marriageDate"] = this.marriageDate ? this.marriageDate.toISOString() : <any>undefined;
+        data["divorceDate"] = this.divorceDate ? this.divorceDate.toISOString() : <any>undefined;
+        data["gender"] = this.gender;
+        data["isUSCitizen"] = this.isUSCitizen;
+        data["citizenship"] = this.citizenship;
+        data["education"] = this.education;
+        data["personalProfile"] = this.personalProfile;
+        data["preferredToD"] = this.preferredToD;
+        data["drivingLicense"] = this.drivingLicense;
+        data["drivingLicenseState"] = this.drivingLicenseState;
+        data["isActiveMilitaryDuty"] = this.isActiveMilitaryDuty;
         data["contactId"] = this.contactId;
         data["firstName"] = this.firstName;
         data["lastName"] = this.lastName;
@@ -37424,8 +37482,22 @@ export interface IPersonInfoDto {
     middleName: string | undefined;
     nameSuffix: string | undefined;
     nickName: string | undefined;
-    timeZone: string | undefined;
+    dob: moment.Moment | undefined;
+    ssn: string | undefined;
     identityConfirmationDate: moment.Moment | undefined;
+    timeZone: string | undefined;
+    maritalStatus: string | undefined;
+    marriageDate: moment.Moment | undefined;
+    divorceDate: moment.Moment | undefined;
+    gender: string | undefined;
+    isUSCitizen: boolean | undefined;
+    citizenship: string | undefined;
+    education: string | undefined;
+    personalProfile: string | undefined;
+    preferredToD: PersonInfoDtoPreferredToD | undefined;
+    drivingLicense: string | undefined;
+    drivingLicenseState: string | undefined;
+    isActiveMilitaryDuty: boolean | undefined;
     contactId: number | undefined;
     firstName: string | undefined;
     lastName: string | undefined;
@@ -38056,6 +38128,7 @@ export class CreateContactInput implements ICreateContactInput {
     links!: CreateContactLinkInput[] | undefined;
     note!: string | undefined;
     companyName!: string | undefined;
+    industry!: string | undefined;
     photo!: ContactPhotoInput | undefined;
     organizationUnitId!: number | undefined;
     title!: string | undefined;
@@ -38064,6 +38137,7 @@ export class CreateContactInput implements ICreateContactInput {
     assignedUserId!: number | undefined;
     ratingId!: number | undefined;
     contactGroupId!: string;
+    interests!: ContactInterestInput[] | undefined;
     partnerTypeName!: string | undefined;
 
     constructor(data?: ICreateContactInput) {
@@ -38105,6 +38179,7 @@ export class CreateContactInput implements ICreateContactInput {
             }
             this.note = data["note"];
             this.companyName = data["companyName"];
+            this.industry = data["industry"];
             this.photo = data["photo"] ? ContactPhotoInput.fromJS(data["photo"]) : <any>undefined;
             this.organizationUnitId = data["organizationUnitId"];
             this.title = data["title"];
@@ -38121,6 +38196,11 @@ export class CreateContactInput implements ICreateContactInput {
             this.assignedUserId = data["assignedUserId"];
             this.ratingId = data["ratingId"];
             this.contactGroupId = data["contactGroupId"];
+            if (data["interests"] && data["interests"].constructor === Array) {
+                this.interests = [];
+                for (let item of data["interests"])
+                    this.interests.push(ContactInterestInput.fromJS(item));
+            }
             this.partnerTypeName = data["partnerTypeName"];
         }
     }
@@ -38162,6 +38242,7 @@ export class CreateContactInput implements ICreateContactInput {
         }
         data["note"] = this.note;
         data["companyName"] = this.companyName;
+        data["industry"] = this.industry;
         data["photo"] = this.photo ? this.photo.toJSON() : <any>undefined;
         data["organizationUnitId"] = this.organizationUnitId;
         data["title"] = this.title;
@@ -38178,6 +38259,11 @@ export class CreateContactInput implements ICreateContactInput {
         data["assignedUserId"] = this.assignedUserId;
         data["ratingId"] = this.ratingId;
         data["contactGroupId"] = this.contactGroupId;
+        if (this.interests && this.interests.constructor === Array) {
+            data["interests"] = [];
+            for (let item of this.interests)
+                data["interests"].push(item.toJSON());
+        }
         data["partnerTypeName"] = this.partnerTypeName;
         return data; 
     }
@@ -38196,6 +38282,7 @@ export interface ICreateContactInput {
     links: CreateContactLinkInput[] | undefined;
     note: string | undefined;
     companyName: string | undefined;
+    industry: string | undefined;
     photo: ContactPhotoInput | undefined;
     organizationUnitId: number | undefined;
     title: string | undefined;
@@ -38204,6 +38291,7 @@ export interface ICreateContactInput {
     assignedUserId: number | undefined;
     ratingId: number | undefined;
     contactGroupId: string;
+    interests: ContactInterestInput[] | undefined;
     partnerTypeName: string | undefined;
 }
 
@@ -38588,6 +38676,42 @@ export class ContactListInput implements IContactListInput {
 }
 
 export interface IContactListInput {
+    name: string;
+}
+
+export class ContactInterestInput implements IContactInterestInput {
+    name!: string;
+
+    constructor(data?: IContactInterestInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.name = data["name"];
+        }
+    }
+
+    static fromJS(data: any): ContactInterestInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new ContactInterestInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        return data; 
+    }
+}
+
+export interface IContactInterestInput {
     name: string;
 }
 
@@ -39395,7 +39519,12 @@ export class OrganizationBusinessInfo implements IOrganizationBusinessInfo {
     contactPhones!: ContactPhoneInfo[] | undefined;
     contactAddresses!: AddressInfo[] | undefined;
     contactLinks!: ContactLinkInfo[] | undefined;
+    tags!: ContactTag[] | undefined;
+    lists!: ContactList[] | undefined;
+    assignedUserId!: number | undefined;
+    ratingId!: number | undefined;
     userId!: number | undefined;
+    interests!: ContactInterest[] | undefined;
 
     constructor(data?: IOrganizationBusinessInfo) {
         if (data) {
@@ -39473,7 +39602,24 @@ export class OrganizationBusinessInfo implements IOrganizationBusinessInfo {
                 for (let item of data["contactLinks"])
                     this.contactLinks.push(ContactLinkInfo.fromJS(item));
             }
+            if (data["tags"] && data["tags"].constructor === Array) {
+                this.tags = [];
+                for (let item of data["tags"])
+                    this.tags.push(ContactTag.fromJS(item));
+            }
+            if (data["lists"] && data["lists"].constructor === Array) {
+                this.lists = [];
+                for (let item of data["lists"])
+                    this.lists.push(ContactList.fromJS(item));
+            }
+            this.assignedUserId = data["assignedUserId"];
+            this.ratingId = data["ratingId"];
             this.userId = data["userId"];
+            if (data["interests"] && data["interests"].constructor === Array) {
+                this.interests = [];
+                for (let item of data["interests"])
+                    this.interests.push(ContactInterest.fromJS(item));
+            }
         }
     }
 
@@ -39551,7 +39697,24 @@ export class OrganizationBusinessInfo implements IOrganizationBusinessInfo {
             for (let item of this.contactLinks)
                 data["contactLinks"].push(item.toJSON());
         }
+        if (this.tags && this.tags.constructor === Array) {
+            data["tags"] = [];
+            for (let item of this.tags)
+                data["tags"].push(item.toJSON());
+        }
+        if (this.lists && this.lists.constructor === Array) {
+            data["lists"] = [];
+            for (let item of this.lists)
+                data["lists"].push(item.toJSON());
+        }
+        data["assignedUserId"] = this.assignedUserId;
+        data["ratingId"] = this.ratingId;
         data["userId"] = this.userId;
+        if (this.interests && this.interests.constructor === Array) {
+            data["interests"] = [];
+            for (let item of this.interests)
+                data["interests"].push(item.toJSON());
+        }
         return data; 
     }
 }
@@ -39598,7 +39761,12 @@ export interface IOrganizationBusinessInfo {
     contactPhones: ContactPhoneInfo[] | undefined;
     contactAddresses: AddressInfo[] | undefined;
     contactLinks: ContactLinkInfo[] | undefined;
+    tags: ContactTag[] | undefined;
+    lists: ContactList[] | undefined;
+    assignedUserId: number | undefined;
+    ratingId: number | undefined;
     userId: number | undefined;
+    interests: ContactInterest[] | undefined;
 }
 
 export class OrganizationAliasInfo implements IOrganizationAliasInfo {
@@ -39891,6 +40059,8342 @@ export class ContactLinkInfo implements IContactLinkInfo {
 export interface IContactLinkInfo {
     linkTypeId: string | undefined;
     link: string | undefined;
+}
+
+export class ContactTag implements IContactTag {
+    tenantId!: number | undefined;
+    name!: string;
+    contactTagAssignments!: ContactTagAssignment[] | undefined;
+    isDeleted!: boolean | undefined;
+    deleterUserId!: number | undefined;
+    deletionTime!: moment.Moment | undefined;
+    lastModificationTime!: moment.Moment | undefined;
+    lastModifierUserId!: number | undefined;
+    creationTime!: moment.Moment | undefined;
+    creatorUserId!: number | undefined;
+    id!: number | undefined;
+
+    constructor(data?: IContactTag) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.tenantId = data["tenantId"];
+            this.name = data["name"];
+            if (data["contactTagAssignments"] && data["contactTagAssignments"].constructor === Array) {
+                this.contactTagAssignments = [];
+                for (let item of data["contactTagAssignments"])
+                    this.contactTagAssignments.push(ContactTagAssignment.fromJS(item));
+            }
+            this.isDeleted = data["isDeleted"];
+            this.deleterUserId = data["deleterUserId"];
+            this.deletionTime = data["deletionTime"] ? moment(data["deletionTime"].toString()) : <any>undefined;
+            this.lastModificationTime = data["lastModificationTime"] ? moment(data["lastModificationTime"].toString()) : <any>undefined;
+            this.lastModifierUserId = data["lastModifierUserId"];
+            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
+            this.creatorUserId = data["creatorUserId"];
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): ContactTag {
+        data = typeof data === 'object' ? data : {};
+        let result = new ContactTag();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["tenantId"] = this.tenantId;
+        data["name"] = this.name;
+        if (this.contactTagAssignments && this.contactTagAssignments.constructor === Array) {
+            data["contactTagAssignments"] = [];
+            for (let item of this.contactTagAssignments)
+                data["contactTagAssignments"].push(item.toJSON());
+        }
+        data["isDeleted"] = this.isDeleted;
+        data["deleterUserId"] = this.deleterUserId;
+        data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
+        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
+        data["lastModifierUserId"] = this.lastModifierUserId;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        data["creatorUserId"] = this.creatorUserId;
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface IContactTag {
+    tenantId: number | undefined;
+    name: string;
+    contactTagAssignments: ContactTagAssignment[] | undefined;
+    isDeleted: boolean | undefined;
+    deleterUserId: number | undefined;
+    deletionTime: moment.Moment | undefined;
+    lastModificationTime: moment.Moment | undefined;
+    lastModifierUserId: number | undefined;
+    creationTime: moment.Moment | undefined;
+    creatorUserId: number | undefined;
+    id: number | undefined;
+}
+
+export class ContactList implements IContactList {
+    tenantId!: number | undefined;
+    name!: string;
+    contactListAssignments!: ContactListAssignment[] | undefined;
+    isDeleted!: boolean | undefined;
+    deleterUserId!: number | undefined;
+    deletionTime!: moment.Moment | undefined;
+    lastModificationTime!: moment.Moment | undefined;
+    lastModifierUserId!: number | undefined;
+    creationTime!: moment.Moment | undefined;
+    creatorUserId!: number | undefined;
+    id!: number | undefined;
+
+    constructor(data?: IContactList) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.tenantId = data["tenantId"];
+            this.name = data["name"];
+            if (data["contactListAssignments"] && data["contactListAssignments"].constructor === Array) {
+                this.contactListAssignments = [];
+                for (let item of data["contactListAssignments"])
+                    this.contactListAssignments.push(ContactListAssignment.fromJS(item));
+            }
+            this.isDeleted = data["isDeleted"];
+            this.deleterUserId = data["deleterUserId"];
+            this.deletionTime = data["deletionTime"] ? moment(data["deletionTime"].toString()) : <any>undefined;
+            this.lastModificationTime = data["lastModificationTime"] ? moment(data["lastModificationTime"].toString()) : <any>undefined;
+            this.lastModifierUserId = data["lastModifierUserId"];
+            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
+            this.creatorUserId = data["creatorUserId"];
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): ContactList {
+        data = typeof data === 'object' ? data : {};
+        let result = new ContactList();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["tenantId"] = this.tenantId;
+        data["name"] = this.name;
+        if (this.contactListAssignments && this.contactListAssignments.constructor === Array) {
+            data["contactListAssignments"] = [];
+            for (let item of this.contactListAssignments)
+                data["contactListAssignments"].push(item.toJSON());
+        }
+        data["isDeleted"] = this.isDeleted;
+        data["deleterUserId"] = this.deleterUserId;
+        data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
+        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
+        data["lastModifierUserId"] = this.lastModifierUserId;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        data["creatorUserId"] = this.creatorUserId;
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface IContactList {
+    tenantId: number | undefined;
+    name: string;
+    contactListAssignments: ContactListAssignment[] | undefined;
+    isDeleted: boolean | undefined;
+    deleterUserId: number | undefined;
+    deletionTime: moment.Moment | undefined;
+    lastModificationTime: moment.Moment | undefined;
+    lastModifierUserId: number | undefined;
+    creationTime: moment.Moment | undefined;
+    creatorUserId: number | undefined;
+    id: number | undefined;
+}
+
+export class ContactInterest implements IContactInterest {
+    tenantId!: number | undefined;
+    name!: string;
+    contactInterestAssignments!: ContactInterestAssignment[] | undefined;
+    isDeleted!: boolean | undefined;
+    deleterUserId!: number | undefined;
+    deletionTime!: moment.Moment | undefined;
+    lastModificationTime!: moment.Moment | undefined;
+    lastModifierUserId!: number | undefined;
+    creationTime!: moment.Moment | undefined;
+    creatorUserId!: number | undefined;
+    id!: number | undefined;
+
+    constructor(data?: IContactInterest) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.tenantId = data["tenantId"];
+            this.name = data["name"];
+            if (data["contactInterestAssignments"] && data["contactInterestAssignments"].constructor === Array) {
+                this.contactInterestAssignments = [];
+                for (let item of data["contactInterestAssignments"])
+                    this.contactInterestAssignments.push(ContactInterestAssignment.fromJS(item));
+            }
+            this.isDeleted = data["isDeleted"];
+            this.deleterUserId = data["deleterUserId"];
+            this.deletionTime = data["deletionTime"] ? moment(data["deletionTime"].toString()) : <any>undefined;
+            this.lastModificationTime = data["lastModificationTime"] ? moment(data["lastModificationTime"].toString()) : <any>undefined;
+            this.lastModifierUserId = data["lastModifierUserId"];
+            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
+            this.creatorUserId = data["creatorUserId"];
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): ContactInterest {
+        data = typeof data === 'object' ? data : {};
+        let result = new ContactInterest();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["tenantId"] = this.tenantId;
+        data["name"] = this.name;
+        if (this.contactInterestAssignments && this.contactInterestAssignments.constructor === Array) {
+            data["contactInterestAssignments"] = [];
+            for (let item of this.contactInterestAssignments)
+                data["contactInterestAssignments"].push(item.toJSON());
+        }
+        data["isDeleted"] = this.isDeleted;
+        data["deleterUserId"] = this.deleterUserId;
+        data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
+        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
+        data["lastModifierUserId"] = this.lastModifierUserId;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        data["creatorUserId"] = this.creatorUserId;
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface IContactInterest {
+    tenantId: number | undefined;
+    name: string;
+    contactInterestAssignments: ContactInterestAssignment[] | undefined;
+    isDeleted: boolean | undefined;
+    deleterUserId: number | undefined;
+    deletionTime: moment.Moment | undefined;
+    lastModificationTime: moment.Moment | undefined;
+    lastModifierUserId: number | undefined;
+    creationTime: moment.Moment | undefined;
+    creatorUserId: number | undefined;
+    id: number | undefined;
+}
+
+export class ContactTagAssignment implements IContactTagAssignment {
+    tenantId!: number | undefined;
+    contactId!: number | undefined;
+    contactTagId!: number | undefined;
+    contact!: Contact | undefined;
+    contactTag!: ContactTag | undefined;
+    creationTime!: moment.Moment | undefined;
+    creatorUserId!: number | undefined;
+    id!: number | undefined;
+
+    constructor(data?: IContactTagAssignment) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.tenantId = data["tenantId"];
+            this.contactId = data["contactId"];
+            this.contactTagId = data["contactTagId"];
+            this.contact = data["contact"] ? Contact.fromJS(data["contact"]) : <any>undefined;
+            this.contactTag = data["contactTag"] ? ContactTag.fromJS(data["contactTag"]) : <any>undefined;
+            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
+            this.creatorUserId = data["creatorUserId"];
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): ContactTagAssignment {
+        data = typeof data === 'object' ? data : {};
+        let result = new ContactTagAssignment();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["tenantId"] = this.tenantId;
+        data["contactId"] = this.contactId;
+        data["contactTagId"] = this.contactTagId;
+        data["contact"] = this.contact ? this.contact.toJSON() : <any>undefined;
+        data["contactTag"] = this.contactTag ? this.contactTag.toJSON() : <any>undefined;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        data["creatorUserId"] = this.creatorUserId;
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface IContactTagAssignment {
+    tenantId: number | undefined;
+    contactId: number | undefined;
+    contactTagId: number | undefined;
+    contact: Contact | undefined;
+    contactTag: ContactTag | undefined;
+    creationTime: moment.Moment | undefined;
+    creatorUserId: number | undefined;
+    id: number | undefined;
+}
+
+export class ContactListAssignment implements IContactListAssignment {
+    tenantId!: number | undefined;
+    contactId!: number | undefined;
+    contactListId!: number | undefined;
+    contact!: Contact | undefined;
+    contactList!: ContactList | undefined;
+    creationTime!: moment.Moment | undefined;
+    creatorUserId!: number | undefined;
+    id!: number | undefined;
+
+    constructor(data?: IContactListAssignment) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.tenantId = data["tenantId"];
+            this.contactId = data["contactId"];
+            this.contactListId = data["contactListId"];
+            this.contact = data["contact"] ? Contact.fromJS(data["contact"]) : <any>undefined;
+            this.contactList = data["contactList"] ? ContactList.fromJS(data["contactList"]) : <any>undefined;
+            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
+            this.creatorUserId = data["creatorUserId"];
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): ContactListAssignment {
+        data = typeof data === 'object' ? data : {};
+        let result = new ContactListAssignment();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["tenantId"] = this.tenantId;
+        data["contactId"] = this.contactId;
+        data["contactListId"] = this.contactListId;
+        data["contact"] = this.contact ? this.contact.toJSON() : <any>undefined;
+        data["contactList"] = this.contactList ? this.contactList.toJSON() : <any>undefined;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        data["creatorUserId"] = this.creatorUserId;
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface IContactListAssignment {
+    tenantId: number | undefined;
+    contactId: number | undefined;
+    contactListId: number | undefined;
+    contact: Contact | undefined;
+    contactList: ContactList | undefined;
+    creationTime: moment.Moment | undefined;
+    creatorUserId: number | undefined;
+    id: number | undefined;
+}
+
+export class ContactInterestAssignment implements IContactInterestAssignment {
+    tenantId!: number | undefined;
+    contactId!: number | undefined;
+    contactInterestId!: number | undefined;
+    contact!: Contact | undefined;
+    contactInterest!: ContactInterest | undefined;
+    creationTime!: moment.Moment | undefined;
+    creatorUserId!: number | undefined;
+    id!: number | undefined;
+
+    constructor(data?: IContactInterestAssignment) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.tenantId = data["tenantId"];
+            this.contactId = data["contactId"];
+            this.contactInterestId = data["contactInterestId"];
+            this.contact = data["contact"] ? Contact.fromJS(data["contact"]) : <any>undefined;
+            this.contactInterest = data["contactInterest"] ? ContactInterest.fromJS(data["contactInterest"]) : <any>undefined;
+            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
+            this.creatorUserId = data["creatorUserId"];
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): ContactInterestAssignment {
+        data = typeof data === 'object' ? data : {};
+        let result = new ContactInterestAssignment();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["tenantId"] = this.tenantId;
+        data["contactId"] = this.contactId;
+        data["contactInterestId"] = this.contactInterestId;
+        data["contact"] = this.contact ? this.contact.toJSON() : <any>undefined;
+        data["contactInterest"] = this.contactInterest ? this.contactInterest.toJSON() : <any>undefined;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        data["creatorUserId"] = this.creatorUserId;
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface IContactInterestAssignment {
+    tenantId: number | undefined;
+    contactId: number | undefined;
+    contactInterestId: number | undefined;
+    contact: Contact | undefined;
+    contactInterest: ContactInterest | undefined;
+    creationTime: moment.Moment | undefined;
+    creatorUserId: number | undefined;
+    id: number | undefined;
+}
+
+export class Contact implements IContact {
+    isAssignablePermission!: string | undefined;
+    tenantId!: number | undefined;
+    typeId!: string | undefined;
+    groupId!: string | undefined;
+    statusId!: string | undefined;
+    fullName!: string | undefined;
+    terminationDate!: moment.Moment | undefined;
+    comment!: string | undefined;
+    userId!: number | undefined;
+    organizationUnitId!: number | undefined;
+    primaryAddressId!: number | undefined;
+    primaryEmailId!: number | undefined;
+    primaryPhoneId!: number | undefined;
+    primaryPhotoId!: number | undefined;
+    assignedUserId!: number | undefined;
+    starId!: number | undefined;
+    ratingId!: number | undefined;
+    xref!: string | undefined;
+    contactAddresses!: ContactAddress[] | undefined;
+    contactEmails!: ContactEmail[] | undefined;
+    contactLinks!: ContactLink[] | undefined;
+    contactPhones!: ContactPhone[] | undefined;
+    contactPhotos!: ContactPhoto[] | undefined;
+    person!: Person | undefined;
+    organization!: Organization | undefined;
+    status!: ContactStatus | undefined;
+    type!: ContactType | undefined;
+    group!: ContactGroup | undefined;
+    primaryAddress!: ContactAddress | undefined;
+    primaryEmail!: ContactEmail | undefined;
+    primaryPhone!: ContactPhone | undefined;
+    primaryPhoto!: ContactPhoto | undefined;
+    contactOrders!: Order[] | undefined;
+    leads!: Lead[] | undefined;
+    notes!: Note[] | undefined;
+    contactTagAssignments!: ContactTagAssignment[] | undefined;
+    contactListAssignments!: ContactListAssignment[] | undefined;
+    contactInterestAssignments!: ContactInterestAssignment[] | undefined;
+    documents!: Document[] | undefined;
+    star!: ContactStar | undefined;
+    rating!: ContactRating | undefined;
+    partner!: Partner | undefined;
+    assignedUserIds!: number[] | undefined;
+    isDeleted!: boolean | undefined;
+    deleterUserId!: number | undefined;
+    deletionTime!: moment.Moment | undefined;
+    lastModificationTime!: moment.Moment | undefined;
+    lastModifierUserId!: number | undefined;
+    creationTime!: moment.Moment | undefined;
+    creatorUserId!: number | undefined;
+    id!: number | undefined;
+
+    constructor(data?: IContact) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.isAssignablePermission = data["isAssignablePermission"];
+            this.tenantId = data["tenantId"];
+            this.typeId = data["typeId"];
+            this.groupId = data["groupId"];
+            this.statusId = data["statusId"];
+            this.fullName = data["fullName"];
+            this.terminationDate = data["terminationDate"] ? moment(data["terminationDate"].toString()) : <any>undefined;
+            this.comment = data["comment"];
+            this.userId = data["userId"];
+            this.organizationUnitId = data["organizationUnitId"];
+            this.primaryAddressId = data["primaryAddressId"];
+            this.primaryEmailId = data["primaryEmailId"];
+            this.primaryPhoneId = data["primaryPhoneId"];
+            this.primaryPhotoId = data["primaryPhotoId"];
+            this.assignedUserId = data["assignedUserId"];
+            this.starId = data["starId"];
+            this.ratingId = data["ratingId"];
+            this.xref = data["xref"];
+            if (data["contactAddresses"] && data["contactAddresses"].constructor === Array) {
+                this.contactAddresses = [];
+                for (let item of data["contactAddresses"])
+                    this.contactAddresses.push(ContactAddress.fromJS(item));
+            }
+            if (data["contactEmails"] && data["contactEmails"].constructor === Array) {
+                this.contactEmails = [];
+                for (let item of data["contactEmails"])
+                    this.contactEmails.push(ContactEmail.fromJS(item));
+            }
+            if (data["contactLinks"] && data["contactLinks"].constructor === Array) {
+                this.contactLinks = [];
+                for (let item of data["contactLinks"])
+                    this.contactLinks.push(ContactLink.fromJS(item));
+            }
+            if (data["contactPhones"] && data["contactPhones"].constructor === Array) {
+                this.contactPhones = [];
+                for (let item of data["contactPhones"])
+                    this.contactPhones.push(ContactPhone.fromJS(item));
+            }
+            if (data["contactPhotos"] && data["contactPhotos"].constructor === Array) {
+                this.contactPhotos = [];
+                for (let item of data["contactPhotos"])
+                    this.contactPhotos.push(ContactPhoto.fromJS(item));
+            }
+            this.person = data["person"] ? Person.fromJS(data["person"]) : <any>undefined;
+            this.organization = data["organization"] ? Organization.fromJS(data["organization"]) : <any>undefined;
+            this.status = data["status"] ? ContactStatus.fromJS(data["status"]) : <any>undefined;
+            this.type = data["type"] ? ContactType.fromJS(data["type"]) : <any>undefined;
+            this.group = data["group"] ? ContactGroup.fromJS(data["group"]) : <any>undefined;
+            this.primaryAddress = data["primaryAddress"] ? ContactAddress.fromJS(data["primaryAddress"]) : <any>undefined;
+            this.primaryEmail = data["primaryEmail"] ? ContactEmail.fromJS(data["primaryEmail"]) : <any>undefined;
+            this.primaryPhone = data["primaryPhone"] ? ContactPhone.fromJS(data["primaryPhone"]) : <any>undefined;
+            this.primaryPhoto = data["primaryPhoto"] ? ContactPhoto.fromJS(data["primaryPhoto"]) : <any>undefined;
+            if (data["contactOrders"] && data["contactOrders"].constructor === Array) {
+                this.contactOrders = [];
+                for (let item of data["contactOrders"])
+                    this.contactOrders.push(Order.fromJS(item));
+            }
+            if (data["leads"] && data["leads"].constructor === Array) {
+                this.leads = [];
+                for (let item of data["leads"])
+                    this.leads.push(Lead.fromJS(item));
+            }
+            if (data["notes"] && data["notes"].constructor === Array) {
+                this.notes = [];
+                for (let item of data["notes"])
+                    this.notes.push(Note.fromJS(item));
+            }
+            if (data["contactTagAssignments"] && data["contactTagAssignments"].constructor === Array) {
+                this.contactTagAssignments = [];
+                for (let item of data["contactTagAssignments"])
+                    this.contactTagAssignments.push(ContactTagAssignment.fromJS(item));
+            }
+            if (data["contactListAssignments"] && data["contactListAssignments"].constructor === Array) {
+                this.contactListAssignments = [];
+                for (let item of data["contactListAssignments"])
+                    this.contactListAssignments.push(ContactListAssignment.fromJS(item));
+            }
+            if (data["contactInterestAssignments"] && data["contactInterestAssignments"].constructor === Array) {
+                this.contactInterestAssignments = [];
+                for (let item of data["contactInterestAssignments"])
+                    this.contactInterestAssignments.push(ContactInterestAssignment.fromJS(item));
+            }
+            if (data["documents"] && data["documents"].constructor === Array) {
+                this.documents = [];
+                for (let item of data["documents"])
+                    this.documents.push(Document.fromJS(item));
+            }
+            this.star = data["star"] ? ContactStar.fromJS(data["star"]) : <any>undefined;
+            this.rating = data["rating"] ? ContactRating.fromJS(data["rating"]) : <any>undefined;
+            this.partner = data["partner"] ? Partner.fromJS(data["partner"]) : <any>undefined;
+            if (data["assignedUserIds"] && data["assignedUserIds"].constructor === Array) {
+                this.assignedUserIds = [];
+                for (let item of data["assignedUserIds"])
+                    this.assignedUserIds.push(item);
+            }
+            this.isDeleted = data["isDeleted"];
+            this.deleterUserId = data["deleterUserId"];
+            this.deletionTime = data["deletionTime"] ? moment(data["deletionTime"].toString()) : <any>undefined;
+            this.lastModificationTime = data["lastModificationTime"] ? moment(data["lastModificationTime"].toString()) : <any>undefined;
+            this.lastModifierUserId = data["lastModifierUserId"];
+            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
+            this.creatorUserId = data["creatorUserId"];
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): Contact {
+        data = typeof data === 'object' ? data : {};
+        let result = new Contact();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["isAssignablePermission"] = this.isAssignablePermission;
+        data["tenantId"] = this.tenantId;
+        data["typeId"] = this.typeId;
+        data["groupId"] = this.groupId;
+        data["statusId"] = this.statusId;
+        data["fullName"] = this.fullName;
+        data["terminationDate"] = this.terminationDate ? this.terminationDate.toISOString() : <any>undefined;
+        data["comment"] = this.comment;
+        data["userId"] = this.userId;
+        data["organizationUnitId"] = this.organizationUnitId;
+        data["primaryAddressId"] = this.primaryAddressId;
+        data["primaryEmailId"] = this.primaryEmailId;
+        data["primaryPhoneId"] = this.primaryPhoneId;
+        data["primaryPhotoId"] = this.primaryPhotoId;
+        data["assignedUserId"] = this.assignedUserId;
+        data["starId"] = this.starId;
+        data["ratingId"] = this.ratingId;
+        data["xref"] = this.xref;
+        if (this.contactAddresses && this.contactAddresses.constructor === Array) {
+            data["contactAddresses"] = [];
+            for (let item of this.contactAddresses)
+                data["contactAddresses"].push(item.toJSON());
+        }
+        if (this.contactEmails && this.contactEmails.constructor === Array) {
+            data["contactEmails"] = [];
+            for (let item of this.contactEmails)
+                data["contactEmails"].push(item.toJSON());
+        }
+        if (this.contactLinks && this.contactLinks.constructor === Array) {
+            data["contactLinks"] = [];
+            for (let item of this.contactLinks)
+                data["contactLinks"].push(item.toJSON());
+        }
+        if (this.contactPhones && this.contactPhones.constructor === Array) {
+            data["contactPhones"] = [];
+            for (let item of this.contactPhones)
+                data["contactPhones"].push(item.toJSON());
+        }
+        if (this.contactPhotos && this.contactPhotos.constructor === Array) {
+            data["contactPhotos"] = [];
+            for (let item of this.contactPhotos)
+                data["contactPhotos"].push(item.toJSON());
+        }
+        data["person"] = this.person ? this.person.toJSON() : <any>undefined;
+        data["organization"] = this.organization ? this.organization.toJSON() : <any>undefined;
+        data["status"] = this.status ? this.status.toJSON() : <any>undefined;
+        data["type"] = this.type ? this.type.toJSON() : <any>undefined;
+        data["group"] = this.group ? this.group.toJSON() : <any>undefined;
+        data["primaryAddress"] = this.primaryAddress ? this.primaryAddress.toJSON() : <any>undefined;
+        data["primaryEmail"] = this.primaryEmail ? this.primaryEmail.toJSON() : <any>undefined;
+        data["primaryPhone"] = this.primaryPhone ? this.primaryPhone.toJSON() : <any>undefined;
+        data["primaryPhoto"] = this.primaryPhoto ? this.primaryPhoto.toJSON() : <any>undefined;
+        if (this.contactOrders && this.contactOrders.constructor === Array) {
+            data["contactOrders"] = [];
+            for (let item of this.contactOrders)
+                data["contactOrders"].push(item.toJSON());
+        }
+        if (this.leads && this.leads.constructor === Array) {
+            data["leads"] = [];
+            for (let item of this.leads)
+                data["leads"].push(item.toJSON());
+        }
+        if (this.notes && this.notes.constructor === Array) {
+            data["notes"] = [];
+            for (let item of this.notes)
+                data["notes"].push(item.toJSON());
+        }
+        if (this.contactTagAssignments && this.contactTagAssignments.constructor === Array) {
+            data["contactTagAssignments"] = [];
+            for (let item of this.contactTagAssignments)
+                data["contactTagAssignments"].push(item.toJSON());
+        }
+        if (this.contactListAssignments && this.contactListAssignments.constructor === Array) {
+            data["contactListAssignments"] = [];
+            for (let item of this.contactListAssignments)
+                data["contactListAssignments"].push(item.toJSON());
+        }
+        if (this.contactInterestAssignments && this.contactInterestAssignments.constructor === Array) {
+            data["contactInterestAssignments"] = [];
+            for (let item of this.contactInterestAssignments)
+                data["contactInterestAssignments"].push(item.toJSON());
+        }
+        if (this.documents && this.documents.constructor === Array) {
+            data["documents"] = [];
+            for (let item of this.documents)
+                data["documents"].push(item.toJSON());
+        }
+        data["star"] = this.star ? this.star.toJSON() : <any>undefined;
+        data["rating"] = this.rating ? this.rating.toJSON() : <any>undefined;
+        data["partner"] = this.partner ? this.partner.toJSON() : <any>undefined;
+        if (this.assignedUserIds && this.assignedUserIds.constructor === Array) {
+            data["assignedUserIds"] = [];
+            for (let item of this.assignedUserIds)
+                data["assignedUserIds"].push(item);
+        }
+        data["isDeleted"] = this.isDeleted;
+        data["deleterUserId"] = this.deleterUserId;
+        data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
+        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
+        data["lastModifierUserId"] = this.lastModifierUserId;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        data["creatorUserId"] = this.creatorUserId;
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface IContact {
+    isAssignablePermission: string | undefined;
+    tenantId: number | undefined;
+    typeId: string | undefined;
+    groupId: string | undefined;
+    statusId: string | undefined;
+    fullName: string | undefined;
+    terminationDate: moment.Moment | undefined;
+    comment: string | undefined;
+    userId: number | undefined;
+    organizationUnitId: number | undefined;
+    primaryAddressId: number | undefined;
+    primaryEmailId: number | undefined;
+    primaryPhoneId: number | undefined;
+    primaryPhotoId: number | undefined;
+    assignedUserId: number | undefined;
+    starId: number | undefined;
+    ratingId: number | undefined;
+    xref: string | undefined;
+    contactAddresses: ContactAddress[] | undefined;
+    contactEmails: ContactEmail[] | undefined;
+    contactLinks: ContactLink[] | undefined;
+    contactPhones: ContactPhone[] | undefined;
+    contactPhotos: ContactPhoto[] | undefined;
+    person: Person | undefined;
+    organization: Organization | undefined;
+    status: ContactStatus | undefined;
+    type: ContactType | undefined;
+    group: ContactGroup | undefined;
+    primaryAddress: ContactAddress | undefined;
+    primaryEmail: ContactEmail | undefined;
+    primaryPhone: ContactPhone | undefined;
+    primaryPhoto: ContactPhoto | undefined;
+    contactOrders: Order[] | undefined;
+    leads: Lead[] | undefined;
+    notes: Note[] | undefined;
+    contactTagAssignments: ContactTagAssignment[] | undefined;
+    contactListAssignments: ContactListAssignment[] | undefined;
+    contactInterestAssignments: ContactInterestAssignment[] | undefined;
+    documents: Document[] | undefined;
+    star: ContactStar | undefined;
+    rating: ContactRating | undefined;
+    partner: Partner | undefined;
+    assignedUserIds: number[] | undefined;
+    isDeleted: boolean | undefined;
+    deleterUserId: number | undefined;
+    deletionTime: moment.Moment | undefined;
+    lastModificationTime: moment.Moment | undefined;
+    lastModifierUserId: number | undefined;
+    creationTime: moment.Moment | undefined;
+    creatorUserId: number | undefined;
+    id: number | undefined;
+}
+
+export class ContactAddress implements IContactAddress {
+    tenantId!: number | undefined;
+    contactId!: number | undefined;
+    usageTypeId!: string | undefined;
+    ownershipTypeId!: string | undefined;
+    startDate!: moment.Moment | undefined;
+    endDate!: moment.Moment | undefined;
+    isActive!: boolean | undefined;
+    confirmationDate!: moment.Moment | undefined;
+    confirmedByUserId!: number | undefined;
+    comment!: string | undefined;
+    ownershipType!: AddressOwnershipType | undefined;
+    usageType!: AddressUsageType | undefined;
+    contact!: Contact | undefined;
+    contactPrimary!: Contact | undefined;
+    countryId!: string | undefined;
+    stateId!: string | undefined;
+    city!: string | undefined;
+    streetAddress!: string | undefined;
+    zip!: string | undefined;
+    country!: Country | undefined;
+    state!: CountryState | undefined;
+    isDeleted!: boolean | undefined;
+    deleterUserId!: number | undefined;
+    deletionTime!: moment.Moment | undefined;
+    lastModificationTime!: moment.Moment | undefined;
+    lastModifierUserId!: number | undefined;
+    creationTime!: moment.Moment | undefined;
+    creatorUserId!: number | undefined;
+    id!: number | undefined;
+
+    constructor(data?: IContactAddress) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.tenantId = data["tenantId"];
+            this.contactId = data["contactId"];
+            this.usageTypeId = data["usageTypeId"];
+            this.ownershipTypeId = data["ownershipTypeId"];
+            this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
+            this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
+            this.isActive = data["isActive"];
+            this.confirmationDate = data["confirmationDate"] ? moment(data["confirmationDate"].toString()) : <any>undefined;
+            this.confirmedByUserId = data["confirmedByUserId"];
+            this.comment = data["comment"];
+            this.ownershipType = data["ownershipType"] ? AddressOwnershipType.fromJS(data["ownershipType"]) : <any>undefined;
+            this.usageType = data["usageType"] ? AddressUsageType.fromJS(data["usageType"]) : <any>undefined;
+            this.contact = data["contact"] ? Contact.fromJS(data["contact"]) : <any>undefined;
+            this.contactPrimary = data["contactPrimary"] ? Contact.fromJS(data["contactPrimary"]) : <any>undefined;
+            this.countryId = data["countryId"];
+            this.stateId = data["stateId"];
+            this.city = data["city"];
+            this.streetAddress = data["streetAddress"];
+            this.zip = data["zip"];
+            this.country = data["country"] ? Country.fromJS(data["country"]) : <any>undefined;
+            this.state = data["state"] ? CountryState.fromJS(data["state"]) : <any>undefined;
+            this.isDeleted = data["isDeleted"];
+            this.deleterUserId = data["deleterUserId"];
+            this.deletionTime = data["deletionTime"] ? moment(data["deletionTime"].toString()) : <any>undefined;
+            this.lastModificationTime = data["lastModificationTime"] ? moment(data["lastModificationTime"].toString()) : <any>undefined;
+            this.lastModifierUserId = data["lastModifierUserId"];
+            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
+            this.creatorUserId = data["creatorUserId"];
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): ContactAddress {
+        data = typeof data === 'object' ? data : {};
+        let result = new ContactAddress();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["tenantId"] = this.tenantId;
+        data["contactId"] = this.contactId;
+        data["usageTypeId"] = this.usageTypeId;
+        data["ownershipTypeId"] = this.ownershipTypeId;
+        data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
+        data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
+        data["isActive"] = this.isActive;
+        data["confirmationDate"] = this.confirmationDate ? this.confirmationDate.toISOString() : <any>undefined;
+        data["confirmedByUserId"] = this.confirmedByUserId;
+        data["comment"] = this.comment;
+        data["ownershipType"] = this.ownershipType ? this.ownershipType.toJSON() : <any>undefined;
+        data["usageType"] = this.usageType ? this.usageType.toJSON() : <any>undefined;
+        data["contact"] = this.contact ? this.contact.toJSON() : <any>undefined;
+        data["contactPrimary"] = this.contactPrimary ? this.contactPrimary.toJSON() : <any>undefined;
+        data["countryId"] = this.countryId;
+        data["stateId"] = this.stateId;
+        data["city"] = this.city;
+        data["streetAddress"] = this.streetAddress;
+        data["zip"] = this.zip;
+        data["country"] = this.country ? this.country.toJSON() : <any>undefined;
+        data["state"] = this.state ? this.state.toJSON() : <any>undefined;
+        data["isDeleted"] = this.isDeleted;
+        data["deleterUserId"] = this.deleterUserId;
+        data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
+        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
+        data["lastModifierUserId"] = this.lastModifierUserId;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        data["creatorUserId"] = this.creatorUserId;
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface IContactAddress {
+    tenantId: number | undefined;
+    contactId: number | undefined;
+    usageTypeId: string | undefined;
+    ownershipTypeId: string | undefined;
+    startDate: moment.Moment | undefined;
+    endDate: moment.Moment | undefined;
+    isActive: boolean | undefined;
+    confirmationDate: moment.Moment | undefined;
+    confirmedByUserId: number | undefined;
+    comment: string | undefined;
+    ownershipType: AddressOwnershipType | undefined;
+    usageType: AddressUsageType | undefined;
+    contact: Contact | undefined;
+    contactPrimary: Contact | undefined;
+    countryId: string | undefined;
+    stateId: string | undefined;
+    city: string | undefined;
+    streetAddress: string | undefined;
+    zip: string | undefined;
+    country: Country | undefined;
+    state: CountryState | undefined;
+    isDeleted: boolean | undefined;
+    deleterUserId: number | undefined;
+    deletionTime: moment.Moment | undefined;
+    lastModificationTime: moment.Moment | undefined;
+    lastModifierUserId: number | undefined;
+    creationTime: moment.Moment | undefined;
+    creatorUserId: number | undefined;
+    id: number | undefined;
+}
+
+export class ContactEmail implements IContactEmail {
+    tenantId!: number | undefined;
+    contactId!: number | undefined;
+    usageTypeId!: string | undefined;
+    emailAddress!: string | undefined;
+    isActive!: boolean | undefined;
+    confirmationDate!: moment.Moment | undefined;
+    confirmedByUserId!: number | undefined;
+    comment!: string | undefined;
+    usageType!: EmailUsageType | undefined;
+    contact!: Contact | undefined;
+    contactPrimary!: Contact | undefined;
+    isDeleted!: boolean | undefined;
+    deleterUserId!: number | undefined;
+    deletionTime!: moment.Moment | undefined;
+    lastModificationTime!: moment.Moment | undefined;
+    lastModifierUserId!: number | undefined;
+    creationTime!: moment.Moment | undefined;
+    creatorUserId!: number | undefined;
+    id!: number | undefined;
+
+    constructor(data?: IContactEmail) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.tenantId = data["tenantId"];
+            this.contactId = data["contactId"];
+            this.usageTypeId = data["usageTypeId"];
+            this.emailAddress = data["emailAddress"];
+            this.isActive = data["isActive"];
+            this.confirmationDate = data["confirmationDate"] ? moment(data["confirmationDate"].toString()) : <any>undefined;
+            this.confirmedByUserId = data["confirmedByUserId"];
+            this.comment = data["comment"];
+            this.usageType = data["usageType"] ? EmailUsageType.fromJS(data["usageType"]) : <any>undefined;
+            this.contact = data["contact"] ? Contact.fromJS(data["contact"]) : <any>undefined;
+            this.contactPrimary = data["contactPrimary"] ? Contact.fromJS(data["contactPrimary"]) : <any>undefined;
+            this.isDeleted = data["isDeleted"];
+            this.deleterUserId = data["deleterUserId"];
+            this.deletionTime = data["deletionTime"] ? moment(data["deletionTime"].toString()) : <any>undefined;
+            this.lastModificationTime = data["lastModificationTime"] ? moment(data["lastModificationTime"].toString()) : <any>undefined;
+            this.lastModifierUserId = data["lastModifierUserId"];
+            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
+            this.creatorUserId = data["creatorUserId"];
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): ContactEmail {
+        data = typeof data === 'object' ? data : {};
+        let result = new ContactEmail();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["tenantId"] = this.tenantId;
+        data["contactId"] = this.contactId;
+        data["usageTypeId"] = this.usageTypeId;
+        data["emailAddress"] = this.emailAddress;
+        data["isActive"] = this.isActive;
+        data["confirmationDate"] = this.confirmationDate ? this.confirmationDate.toISOString() : <any>undefined;
+        data["confirmedByUserId"] = this.confirmedByUserId;
+        data["comment"] = this.comment;
+        data["usageType"] = this.usageType ? this.usageType.toJSON() : <any>undefined;
+        data["contact"] = this.contact ? this.contact.toJSON() : <any>undefined;
+        data["contactPrimary"] = this.contactPrimary ? this.contactPrimary.toJSON() : <any>undefined;
+        data["isDeleted"] = this.isDeleted;
+        data["deleterUserId"] = this.deleterUserId;
+        data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
+        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
+        data["lastModifierUserId"] = this.lastModifierUserId;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        data["creatorUserId"] = this.creatorUserId;
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface IContactEmail {
+    tenantId: number | undefined;
+    contactId: number | undefined;
+    usageTypeId: string | undefined;
+    emailAddress: string | undefined;
+    isActive: boolean | undefined;
+    confirmationDate: moment.Moment | undefined;
+    confirmedByUserId: number | undefined;
+    comment: string | undefined;
+    usageType: EmailUsageType | undefined;
+    contact: Contact | undefined;
+    contactPrimary: Contact | undefined;
+    isDeleted: boolean | undefined;
+    deleterUserId: number | undefined;
+    deletionTime: moment.Moment | undefined;
+    lastModificationTime: moment.Moment | undefined;
+    lastModifierUserId: number | undefined;
+    creationTime: moment.Moment | undefined;
+    creatorUserId: number | undefined;
+    id: number | undefined;
+}
+
+export class ContactLink implements IContactLink {
+    tenantId!: number | undefined;
+    contactId!: number | undefined;
+    linkTypeId!: string | undefined;
+    url!: string | undefined;
+    isActive!: boolean | undefined;
+    confirmationDate!: moment.Moment | undefined;
+    confirmedByUserId!: number | undefined;
+    comment!: string | undefined;
+    linkType!: ContactLinkType | undefined;
+    contact!: Contact | undefined;
+    isDeleted!: boolean | undefined;
+    deleterUserId!: number | undefined;
+    deletionTime!: moment.Moment | undefined;
+    lastModificationTime!: moment.Moment | undefined;
+    lastModifierUserId!: number | undefined;
+    creationTime!: moment.Moment | undefined;
+    creatorUserId!: number | undefined;
+    id!: number | undefined;
+
+    constructor(data?: IContactLink) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.tenantId = data["tenantId"];
+            this.contactId = data["contactId"];
+            this.linkTypeId = data["linkTypeId"];
+            this.url = data["url"];
+            this.isActive = data["isActive"];
+            this.confirmationDate = data["confirmationDate"] ? moment(data["confirmationDate"].toString()) : <any>undefined;
+            this.confirmedByUserId = data["confirmedByUserId"];
+            this.comment = data["comment"];
+            this.linkType = data["linkType"] ? ContactLinkType.fromJS(data["linkType"]) : <any>undefined;
+            this.contact = data["contact"] ? Contact.fromJS(data["contact"]) : <any>undefined;
+            this.isDeleted = data["isDeleted"];
+            this.deleterUserId = data["deleterUserId"];
+            this.deletionTime = data["deletionTime"] ? moment(data["deletionTime"].toString()) : <any>undefined;
+            this.lastModificationTime = data["lastModificationTime"] ? moment(data["lastModificationTime"].toString()) : <any>undefined;
+            this.lastModifierUserId = data["lastModifierUserId"];
+            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
+            this.creatorUserId = data["creatorUserId"];
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): ContactLink {
+        data = typeof data === 'object' ? data : {};
+        let result = new ContactLink();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["tenantId"] = this.tenantId;
+        data["contactId"] = this.contactId;
+        data["linkTypeId"] = this.linkTypeId;
+        data["url"] = this.url;
+        data["isActive"] = this.isActive;
+        data["confirmationDate"] = this.confirmationDate ? this.confirmationDate.toISOString() : <any>undefined;
+        data["confirmedByUserId"] = this.confirmedByUserId;
+        data["comment"] = this.comment;
+        data["linkType"] = this.linkType ? this.linkType.toJSON() : <any>undefined;
+        data["contact"] = this.contact ? this.contact.toJSON() : <any>undefined;
+        data["isDeleted"] = this.isDeleted;
+        data["deleterUserId"] = this.deleterUserId;
+        data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
+        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
+        data["lastModifierUserId"] = this.lastModifierUserId;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        data["creatorUserId"] = this.creatorUserId;
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface IContactLink {
+    tenantId: number | undefined;
+    contactId: number | undefined;
+    linkTypeId: string | undefined;
+    url: string | undefined;
+    isActive: boolean | undefined;
+    confirmationDate: moment.Moment | undefined;
+    confirmedByUserId: number | undefined;
+    comment: string | undefined;
+    linkType: ContactLinkType | undefined;
+    contact: Contact | undefined;
+    isDeleted: boolean | undefined;
+    deleterUserId: number | undefined;
+    deletionTime: moment.Moment | undefined;
+    lastModificationTime: moment.Moment | undefined;
+    lastModifierUserId: number | undefined;
+    creationTime: moment.Moment | undefined;
+    creatorUserId: number | undefined;
+    id: number | undefined;
+}
+
+export class ContactPhone implements IContactPhone {
+    tenantId!: number | undefined;
+    contactId!: number | undefined;
+    usageTypeId!: string | undefined;
+    phoneNumber!: string | undefined;
+    phoneExtension!: string | undefined;
+    isActive!: boolean | undefined;
+    confirmationDate!: moment.Moment | undefined;
+    confirmedByUserId!: number | undefined;
+    comment!: string | undefined;
+    usageType!: PhoneUsageType | undefined;
+    contact!: Contact | undefined;
+    contactPrimary!: Contact | undefined;
+    notes!: Note[] | undefined;
+    isDeleted!: boolean | undefined;
+    deleterUserId!: number | undefined;
+    deletionTime!: moment.Moment | undefined;
+    lastModificationTime!: moment.Moment | undefined;
+    lastModifierUserId!: number | undefined;
+    creationTime!: moment.Moment | undefined;
+    creatorUserId!: number | undefined;
+    id!: number | undefined;
+
+    constructor(data?: IContactPhone) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.tenantId = data["tenantId"];
+            this.contactId = data["contactId"];
+            this.usageTypeId = data["usageTypeId"];
+            this.phoneNumber = data["phoneNumber"];
+            this.phoneExtension = data["phoneExtension"];
+            this.isActive = data["isActive"];
+            this.confirmationDate = data["confirmationDate"] ? moment(data["confirmationDate"].toString()) : <any>undefined;
+            this.confirmedByUserId = data["confirmedByUserId"];
+            this.comment = data["comment"];
+            this.usageType = data["usageType"] ? PhoneUsageType.fromJS(data["usageType"]) : <any>undefined;
+            this.contact = data["contact"] ? Contact.fromJS(data["contact"]) : <any>undefined;
+            this.contactPrimary = data["contactPrimary"] ? Contact.fromJS(data["contactPrimary"]) : <any>undefined;
+            if (data["notes"] && data["notes"].constructor === Array) {
+                this.notes = [];
+                for (let item of data["notes"])
+                    this.notes.push(Note.fromJS(item));
+            }
+            this.isDeleted = data["isDeleted"];
+            this.deleterUserId = data["deleterUserId"];
+            this.deletionTime = data["deletionTime"] ? moment(data["deletionTime"].toString()) : <any>undefined;
+            this.lastModificationTime = data["lastModificationTime"] ? moment(data["lastModificationTime"].toString()) : <any>undefined;
+            this.lastModifierUserId = data["lastModifierUserId"];
+            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
+            this.creatorUserId = data["creatorUserId"];
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): ContactPhone {
+        data = typeof data === 'object' ? data : {};
+        let result = new ContactPhone();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["tenantId"] = this.tenantId;
+        data["contactId"] = this.contactId;
+        data["usageTypeId"] = this.usageTypeId;
+        data["phoneNumber"] = this.phoneNumber;
+        data["phoneExtension"] = this.phoneExtension;
+        data["isActive"] = this.isActive;
+        data["confirmationDate"] = this.confirmationDate ? this.confirmationDate.toISOString() : <any>undefined;
+        data["confirmedByUserId"] = this.confirmedByUserId;
+        data["comment"] = this.comment;
+        data["usageType"] = this.usageType ? this.usageType.toJSON() : <any>undefined;
+        data["contact"] = this.contact ? this.contact.toJSON() : <any>undefined;
+        data["contactPrimary"] = this.contactPrimary ? this.contactPrimary.toJSON() : <any>undefined;
+        if (this.notes && this.notes.constructor === Array) {
+            data["notes"] = [];
+            for (let item of this.notes)
+                data["notes"].push(item.toJSON());
+        }
+        data["isDeleted"] = this.isDeleted;
+        data["deleterUserId"] = this.deleterUserId;
+        data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
+        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
+        data["lastModifierUserId"] = this.lastModifierUserId;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        data["creatorUserId"] = this.creatorUserId;
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface IContactPhone {
+    tenantId: number | undefined;
+    contactId: number | undefined;
+    usageTypeId: string | undefined;
+    phoneNumber: string | undefined;
+    phoneExtension: string | undefined;
+    isActive: boolean | undefined;
+    confirmationDate: moment.Moment | undefined;
+    confirmedByUserId: number | undefined;
+    comment: string | undefined;
+    usageType: PhoneUsageType | undefined;
+    contact: Contact | undefined;
+    contactPrimary: Contact | undefined;
+    notes: Note[] | undefined;
+    isDeleted: boolean | undefined;
+    deleterUserId: number | undefined;
+    deletionTime: moment.Moment | undefined;
+    lastModificationTime: moment.Moment | undefined;
+    lastModifierUserId: number | undefined;
+    creationTime: moment.Moment | undefined;
+    creatorUserId: number | undefined;
+    id: number | undefined;
+}
+
+export class ContactPhoto implements IContactPhoto {
+    tenantId!: number | undefined;
+    contactId!: number | undefined;
+    publicId!: string | undefined;
+    source!: string | undefined;
+    photoSourceId!: string | undefined;
+    original!: string | undefined;
+    thumbnail!: string | undefined;
+    comment!: string | undefined;
+    contact!: Contact | undefined;
+    contactPrimary!: Contact | undefined;
+    photoSource!: PhotoSource | undefined;
+    isDeleted!: boolean | undefined;
+    deleterUserId!: number | undefined;
+    deletionTime!: moment.Moment | undefined;
+    lastModificationTime!: moment.Moment | undefined;
+    lastModifierUserId!: number | undefined;
+    creationTime!: moment.Moment | undefined;
+    creatorUserId!: number | undefined;
+    id!: number | undefined;
+
+    constructor(data?: IContactPhoto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.tenantId = data["tenantId"];
+            this.contactId = data["contactId"];
+            this.publicId = data["publicId"];
+            this.source = data["source"];
+            this.photoSourceId = data["photoSourceId"];
+            this.original = data["original"];
+            this.thumbnail = data["thumbnail"];
+            this.comment = data["comment"];
+            this.contact = data["contact"] ? Contact.fromJS(data["contact"]) : <any>undefined;
+            this.contactPrimary = data["contactPrimary"] ? Contact.fromJS(data["contactPrimary"]) : <any>undefined;
+            this.photoSource = data["photoSource"] ? PhotoSource.fromJS(data["photoSource"]) : <any>undefined;
+            this.isDeleted = data["isDeleted"];
+            this.deleterUserId = data["deleterUserId"];
+            this.deletionTime = data["deletionTime"] ? moment(data["deletionTime"].toString()) : <any>undefined;
+            this.lastModificationTime = data["lastModificationTime"] ? moment(data["lastModificationTime"].toString()) : <any>undefined;
+            this.lastModifierUserId = data["lastModifierUserId"];
+            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
+            this.creatorUserId = data["creatorUserId"];
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): ContactPhoto {
+        data = typeof data === 'object' ? data : {};
+        let result = new ContactPhoto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["tenantId"] = this.tenantId;
+        data["contactId"] = this.contactId;
+        data["publicId"] = this.publicId;
+        data["source"] = this.source;
+        data["photoSourceId"] = this.photoSourceId;
+        data["original"] = this.original;
+        data["thumbnail"] = this.thumbnail;
+        data["comment"] = this.comment;
+        data["contact"] = this.contact ? this.contact.toJSON() : <any>undefined;
+        data["contactPrimary"] = this.contactPrimary ? this.contactPrimary.toJSON() : <any>undefined;
+        data["photoSource"] = this.photoSource ? this.photoSource.toJSON() : <any>undefined;
+        data["isDeleted"] = this.isDeleted;
+        data["deleterUserId"] = this.deleterUserId;
+        data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
+        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
+        data["lastModifierUserId"] = this.lastModifierUserId;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        data["creatorUserId"] = this.creatorUserId;
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface IContactPhoto {
+    tenantId: number | undefined;
+    contactId: number | undefined;
+    publicId: string | undefined;
+    source: string | undefined;
+    photoSourceId: string | undefined;
+    original: string | undefined;
+    thumbnail: string | undefined;
+    comment: string | undefined;
+    contact: Contact | undefined;
+    contactPrimary: Contact | undefined;
+    photoSource: PhotoSource | undefined;
+    isDeleted: boolean | undefined;
+    deleterUserId: number | undefined;
+    deletionTime: moment.Moment | undefined;
+    lastModificationTime: moment.Moment | undefined;
+    lastModifierUserId: number | undefined;
+    creationTime: moment.Moment | undefined;
+    creatorUserId: number | undefined;
+    id: number | undefined;
+}
+
+export class Person implements IPerson {
+    tenantId!: number | undefined;
+    namePrefix!: string | undefined;
+    firstName!: string | undefined;
+    middleName!: string | undefined;
+    lastName!: string | undefined;
+    nameSuffix!: string | undefined;
+    nickName!: string | undefined;
+    primaryOrgRelationId!: number | undefined;
+    dob!: moment.Moment | undefined;
+    ssn!: string | undefined;
+    identityConfirmationDate!: moment.Moment | undefined;
+    identityConfirmedByUserId!: number | undefined;
+    timeZone!: string | undefined;
+    maritalStatusId!: string | undefined;
+    marriageDate!: moment.Moment | undefined;
+    divorceDate!: moment.Moment | undefined;
+    genderTypeId!: string | undefined;
+    isUSCitizen!: boolean | undefined;
+    citizenship!: string | undefined;
+    education!: string | undefined;
+    personalProfile!: string | undefined;
+    preferredToD!: PersonPreferredToD | undefined;
+    drivingLicense!: string | undefined;
+    drivingLicenseState!: string | undefined;
+    isActiveMilitaryDuty!: boolean | undefined;
+    orgRelations!: PersonOrgRelation[] | undefined;
+    personRelations!: PersonRelation[] | undefined;
+    reverseRelations!: PersonRelation[] | undefined;
+    genderType!: GenderType | undefined;
+    maritalStatus!: MaritalStatus | undefined;
+    contact!: Contact | undefined;
+    citizenshipCountry!: Country | undefined;
+    primaryOrgRelation!: PersonOrgRelation | undefined;
+    isDeleted!: boolean | undefined;
+    deleterUserId!: number | undefined;
+    deletionTime!: moment.Moment | undefined;
+    lastModificationTime!: moment.Moment | undefined;
+    lastModifierUserId!: number | undefined;
+    creationTime!: moment.Moment | undefined;
+    creatorUserId!: number | undefined;
+    id!: number | undefined;
+
+    constructor(data?: IPerson) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.tenantId = data["tenantId"];
+            this.namePrefix = data["namePrefix"];
+            this.firstName = data["firstName"];
+            this.middleName = data["middleName"];
+            this.lastName = data["lastName"];
+            this.nameSuffix = data["nameSuffix"];
+            this.nickName = data["nickName"];
+            this.primaryOrgRelationId = data["primaryOrgRelationId"];
+            this.dob = data["dob"] ? moment(data["dob"].toString()) : <any>undefined;
+            this.ssn = data["ssn"];
+            this.identityConfirmationDate = data["identityConfirmationDate"] ? moment(data["identityConfirmationDate"].toString()) : <any>undefined;
+            this.identityConfirmedByUserId = data["identityConfirmedByUserId"];
+            this.timeZone = data["timeZone"];
+            this.maritalStatusId = data["maritalStatusId"];
+            this.marriageDate = data["marriageDate"] ? moment(data["marriageDate"].toString()) : <any>undefined;
+            this.divorceDate = data["divorceDate"] ? moment(data["divorceDate"].toString()) : <any>undefined;
+            this.genderTypeId = data["genderTypeId"];
+            this.isUSCitizen = data["isUSCitizen"];
+            this.citizenship = data["citizenship"];
+            this.education = data["education"];
+            this.personalProfile = data["personalProfile"];
+            this.preferredToD = data["preferredToD"];
+            this.drivingLicense = data["drivingLicense"];
+            this.drivingLicenseState = data["drivingLicenseState"];
+            this.isActiveMilitaryDuty = data["isActiveMilitaryDuty"];
+            if (data["orgRelations"] && data["orgRelations"].constructor === Array) {
+                this.orgRelations = [];
+                for (let item of data["orgRelations"])
+                    this.orgRelations.push(PersonOrgRelation.fromJS(item));
+            }
+            if (data["personRelations"] && data["personRelations"].constructor === Array) {
+                this.personRelations = [];
+                for (let item of data["personRelations"])
+                    this.personRelations.push(PersonRelation.fromJS(item));
+            }
+            if (data["reverseRelations"] && data["reverseRelations"].constructor === Array) {
+                this.reverseRelations = [];
+                for (let item of data["reverseRelations"])
+                    this.reverseRelations.push(PersonRelation.fromJS(item));
+            }
+            this.genderType = data["genderType"] ? GenderType.fromJS(data["genderType"]) : <any>undefined;
+            this.maritalStatus = data["maritalStatus"] ? MaritalStatus.fromJS(data["maritalStatus"]) : <any>undefined;
+            this.contact = data["contact"] ? Contact.fromJS(data["contact"]) : <any>undefined;
+            this.citizenshipCountry = data["citizenshipCountry"] ? Country.fromJS(data["citizenshipCountry"]) : <any>undefined;
+            this.primaryOrgRelation = data["primaryOrgRelation"] ? PersonOrgRelation.fromJS(data["primaryOrgRelation"]) : <any>undefined;
+            this.isDeleted = data["isDeleted"];
+            this.deleterUserId = data["deleterUserId"];
+            this.deletionTime = data["deletionTime"] ? moment(data["deletionTime"].toString()) : <any>undefined;
+            this.lastModificationTime = data["lastModificationTime"] ? moment(data["lastModificationTime"].toString()) : <any>undefined;
+            this.lastModifierUserId = data["lastModifierUserId"];
+            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
+            this.creatorUserId = data["creatorUserId"];
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): Person {
+        data = typeof data === 'object' ? data : {};
+        let result = new Person();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["tenantId"] = this.tenantId;
+        data["namePrefix"] = this.namePrefix;
+        data["firstName"] = this.firstName;
+        data["middleName"] = this.middleName;
+        data["lastName"] = this.lastName;
+        data["nameSuffix"] = this.nameSuffix;
+        data["nickName"] = this.nickName;
+        data["primaryOrgRelationId"] = this.primaryOrgRelationId;
+        data["dob"] = this.dob ? this.dob.toISOString() : <any>undefined;
+        data["ssn"] = this.ssn;
+        data["identityConfirmationDate"] = this.identityConfirmationDate ? this.identityConfirmationDate.toISOString() : <any>undefined;
+        data["identityConfirmedByUserId"] = this.identityConfirmedByUserId;
+        data["timeZone"] = this.timeZone;
+        data["maritalStatusId"] = this.maritalStatusId;
+        data["marriageDate"] = this.marriageDate ? this.marriageDate.toISOString() : <any>undefined;
+        data["divorceDate"] = this.divorceDate ? this.divorceDate.toISOString() : <any>undefined;
+        data["genderTypeId"] = this.genderTypeId;
+        data["isUSCitizen"] = this.isUSCitizen;
+        data["citizenship"] = this.citizenship;
+        data["education"] = this.education;
+        data["personalProfile"] = this.personalProfile;
+        data["preferredToD"] = this.preferredToD;
+        data["drivingLicense"] = this.drivingLicense;
+        data["drivingLicenseState"] = this.drivingLicenseState;
+        data["isActiveMilitaryDuty"] = this.isActiveMilitaryDuty;
+        if (this.orgRelations && this.orgRelations.constructor === Array) {
+            data["orgRelations"] = [];
+            for (let item of this.orgRelations)
+                data["orgRelations"].push(item.toJSON());
+        }
+        if (this.personRelations && this.personRelations.constructor === Array) {
+            data["personRelations"] = [];
+            for (let item of this.personRelations)
+                data["personRelations"].push(item.toJSON());
+        }
+        if (this.reverseRelations && this.reverseRelations.constructor === Array) {
+            data["reverseRelations"] = [];
+            for (let item of this.reverseRelations)
+                data["reverseRelations"].push(item.toJSON());
+        }
+        data["genderType"] = this.genderType ? this.genderType.toJSON() : <any>undefined;
+        data["maritalStatus"] = this.maritalStatus ? this.maritalStatus.toJSON() : <any>undefined;
+        data["contact"] = this.contact ? this.contact.toJSON() : <any>undefined;
+        data["citizenshipCountry"] = this.citizenshipCountry ? this.citizenshipCountry.toJSON() : <any>undefined;
+        data["primaryOrgRelation"] = this.primaryOrgRelation ? this.primaryOrgRelation.toJSON() : <any>undefined;
+        data["isDeleted"] = this.isDeleted;
+        data["deleterUserId"] = this.deleterUserId;
+        data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
+        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
+        data["lastModifierUserId"] = this.lastModifierUserId;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        data["creatorUserId"] = this.creatorUserId;
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface IPerson {
+    tenantId: number | undefined;
+    namePrefix: string | undefined;
+    firstName: string | undefined;
+    middleName: string | undefined;
+    lastName: string | undefined;
+    nameSuffix: string | undefined;
+    nickName: string | undefined;
+    primaryOrgRelationId: number | undefined;
+    dob: moment.Moment | undefined;
+    ssn: string | undefined;
+    identityConfirmationDate: moment.Moment | undefined;
+    identityConfirmedByUserId: number | undefined;
+    timeZone: string | undefined;
+    maritalStatusId: string | undefined;
+    marriageDate: moment.Moment | undefined;
+    divorceDate: moment.Moment | undefined;
+    genderTypeId: string | undefined;
+    isUSCitizen: boolean | undefined;
+    citizenship: string | undefined;
+    education: string | undefined;
+    personalProfile: string | undefined;
+    preferredToD: PersonPreferredToD | undefined;
+    drivingLicense: string | undefined;
+    drivingLicenseState: string | undefined;
+    isActiveMilitaryDuty: boolean | undefined;
+    orgRelations: PersonOrgRelation[] | undefined;
+    personRelations: PersonRelation[] | undefined;
+    reverseRelations: PersonRelation[] | undefined;
+    genderType: GenderType | undefined;
+    maritalStatus: MaritalStatus | undefined;
+    contact: Contact | undefined;
+    citizenshipCountry: Country | undefined;
+    primaryOrgRelation: PersonOrgRelation | undefined;
+    isDeleted: boolean | undefined;
+    deleterUserId: number | undefined;
+    deletionTime: moment.Moment | undefined;
+    lastModificationTime: moment.Moment | undefined;
+    lastModifierUserId: number | undefined;
+    creationTime: moment.Moment | undefined;
+    creatorUserId: number | undefined;
+    id: number | undefined;
+}
+
+export class Organization implements IOrganization {
+    tenantId!: number | undefined;
+    shortname!: string | undefined;
+    companyName!: string;
+    typeId!: string;
+    industry!: string | undefined;
+    relationship!: string | undefined;
+    primaryFundingType!: string | undefined;
+    referralType!: string | undefined;
+    duns!: string | undefined;
+    ticker!: string | undefined;
+    refID!: string | undefined;
+    rating!: number | undefined;
+    ucc!: number | undefined;
+    ein!: string | undefined;
+    formedCountryId!: string | undefined;
+    formedStateId!: string | undefined;
+    formedDate!: moment.Moment | undefined;
+    annualRevenue!: number | undefined;
+    acceptCc!: boolean | undefined;
+    annualVolumesOnCards!: number | undefined;
+    productServicesSold!: number | undefined;
+    businessSicCode!: number | undefined;
+    sizeFrom!: number | undefined;
+    sizeTo!: number | undefined;
+    countriesServed!: string | undefined;
+    description!: string | undefined;
+    keywordTags!: string | undefined;
+    orgType!: OrganizationType | undefined;
+    contact!: Contact | undefined;
+    formedCountry!: Country | undefined;
+    formedState!: CountryState | undefined;
+    personOrgRelations!: PersonOrgRelation[] | undefined;
+    organizationAliases!: OrganizationAlias[] | undefined;
+    organizationBusinessCategories!: OrganizationBusinessCategory[] | undefined;
+    orders!: Order[] | undefined;
+    isDeleted!: boolean | undefined;
+    deleterUserId!: number | undefined;
+    deletionTime!: moment.Moment | undefined;
+    lastModificationTime!: moment.Moment | undefined;
+    lastModifierUserId!: number | undefined;
+    creationTime!: moment.Moment | undefined;
+    creatorUserId!: number | undefined;
+    id!: number | undefined;
+
+    constructor(data?: IOrganization) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.tenantId = data["tenantId"];
+            this.shortname = data["shortname"];
+            this.companyName = data["companyName"];
+            this.typeId = data["typeId"];
+            this.industry = data["industry"];
+            this.relationship = data["relationship"];
+            this.primaryFundingType = data["primaryFundingType"];
+            this.referralType = data["referralType"];
+            this.duns = data["duns"];
+            this.ticker = data["ticker"];
+            this.refID = data["refID"];
+            this.rating = data["rating"];
+            this.ucc = data["ucc"];
+            this.ein = data["ein"];
+            this.formedCountryId = data["formedCountryId"];
+            this.formedStateId = data["formedStateId"];
+            this.formedDate = data["formedDate"] ? moment(data["formedDate"].toString()) : <any>undefined;
+            this.annualRevenue = data["annualRevenue"];
+            this.acceptCc = data["acceptCc"];
+            this.annualVolumesOnCards = data["annualVolumesOnCards"];
+            this.productServicesSold = data["productServicesSold"];
+            this.businessSicCode = data["businessSicCode"];
+            this.sizeFrom = data["sizeFrom"];
+            this.sizeTo = data["sizeTo"];
+            this.countriesServed = data["countriesServed"];
+            this.description = data["description"];
+            this.keywordTags = data["keywordTags"];
+            this.orgType = data["orgType"] ? OrganizationType.fromJS(data["orgType"]) : <any>undefined;
+            this.contact = data["contact"] ? Contact.fromJS(data["contact"]) : <any>undefined;
+            this.formedCountry = data["formedCountry"] ? Country.fromJS(data["formedCountry"]) : <any>undefined;
+            this.formedState = data["formedState"] ? CountryState.fromJS(data["formedState"]) : <any>undefined;
+            if (data["personOrgRelations"] && data["personOrgRelations"].constructor === Array) {
+                this.personOrgRelations = [];
+                for (let item of data["personOrgRelations"])
+                    this.personOrgRelations.push(PersonOrgRelation.fromJS(item));
+            }
+            if (data["organizationAliases"] && data["organizationAliases"].constructor === Array) {
+                this.organizationAliases = [];
+                for (let item of data["organizationAliases"])
+                    this.organizationAliases.push(OrganizationAlias.fromJS(item));
+            }
+            if (data["organizationBusinessCategories"] && data["organizationBusinessCategories"].constructor === Array) {
+                this.organizationBusinessCategories = [];
+                for (let item of data["organizationBusinessCategories"])
+                    this.organizationBusinessCategories.push(OrganizationBusinessCategory.fromJS(item));
+            }
+            if (data["orders"] && data["orders"].constructor === Array) {
+                this.orders = [];
+                for (let item of data["orders"])
+                    this.orders.push(Order.fromJS(item));
+            }
+            this.isDeleted = data["isDeleted"];
+            this.deleterUserId = data["deleterUserId"];
+            this.deletionTime = data["deletionTime"] ? moment(data["deletionTime"].toString()) : <any>undefined;
+            this.lastModificationTime = data["lastModificationTime"] ? moment(data["lastModificationTime"].toString()) : <any>undefined;
+            this.lastModifierUserId = data["lastModifierUserId"];
+            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
+            this.creatorUserId = data["creatorUserId"];
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): Organization {
+        data = typeof data === 'object' ? data : {};
+        let result = new Organization();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["tenantId"] = this.tenantId;
+        data["shortname"] = this.shortname;
+        data["companyName"] = this.companyName;
+        data["typeId"] = this.typeId;
+        data["industry"] = this.industry;
+        data["relationship"] = this.relationship;
+        data["primaryFundingType"] = this.primaryFundingType;
+        data["referralType"] = this.referralType;
+        data["duns"] = this.duns;
+        data["ticker"] = this.ticker;
+        data["refID"] = this.refID;
+        data["rating"] = this.rating;
+        data["ucc"] = this.ucc;
+        data["ein"] = this.ein;
+        data["formedCountryId"] = this.formedCountryId;
+        data["formedStateId"] = this.formedStateId;
+        data["formedDate"] = this.formedDate ? this.formedDate.toISOString() : <any>undefined;
+        data["annualRevenue"] = this.annualRevenue;
+        data["acceptCc"] = this.acceptCc;
+        data["annualVolumesOnCards"] = this.annualVolumesOnCards;
+        data["productServicesSold"] = this.productServicesSold;
+        data["businessSicCode"] = this.businessSicCode;
+        data["sizeFrom"] = this.sizeFrom;
+        data["sizeTo"] = this.sizeTo;
+        data["countriesServed"] = this.countriesServed;
+        data["description"] = this.description;
+        data["keywordTags"] = this.keywordTags;
+        data["orgType"] = this.orgType ? this.orgType.toJSON() : <any>undefined;
+        data["contact"] = this.contact ? this.contact.toJSON() : <any>undefined;
+        data["formedCountry"] = this.formedCountry ? this.formedCountry.toJSON() : <any>undefined;
+        data["formedState"] = this.formedState ? this.formedState.toJSON() : <any>undefined;
+        if (this.personOrgRelations && this.personOrgRelations.constructor === Array) {
+            data["personOrgRelations"] = [];
+            for (let item of this.personOrgRelations)
+                data["personOrgRelations"].push(item.toJSON());
+        }
+        if (this.organizationAliases && this.organizationAliases.constructor === Array) {
+            data["organizationAliases"] = [];
+            for (let item of this.organizationAliases)
+                data["organizationAliases"].push(item.toJSON());
+        }
+        if (this.organizationBusinessCategories && this.organizationBusinessCategories.constructor === Array) {
+            data["organizationBusinessCategories"] = [];
+            for (let item of this.organizationBusinessCategories)
+                data["organizationBusinessCategories"].push(item.toJSON());
+        }
+        if (this.orders && this.orders.constructor === Array) {
+            data["orders"] = [];
+            for (let item of this.orders)
+                data["orders"].push(item.toJSON());
+        }
+        data["isDeleted"] = this.isDeleted;
+        data["deleterUserId"] = this.deleterUserId;
+        data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
+        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
+        data["lastModifierUserId"] = this.lastModifierUserId;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        data["creatorUserId"] = this.creatorUserId;
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface IOrganization {
+    tenantId: number | undefined;
+    shortname: string | undefined;
+    companyName: string;
+    typeId: string;
+    industry: string | undefined;
+    relationship: string | undefined;
+    primaryFundingType: string | undefined;
+    referralType: string | undefined;
+    duns: string | undefined;
+    ticker: string | undefined;
+    refID: string | undefined;
+    rating: number | undefined;
+    ucc: number | undefined;
+    ein: string | undefined;
+    formedCountryId: string | undefined;
+    formedStateId: string | undefined;
+    formedDate: moment.Moment | undefined;
+    annualRevenue: number | undefined;
+    acceptCc: boolean | undefined;
+    annualVolumesOnCards: number | undefined;
+    productServicesSold: number | undefined;
+    businessSicCode: number | undefined;
+    sizeFrom: number | undefined;
+    sizeTo: number | undefined;
+    countriesServed: string | undefined;
+    description: string | undefined;
+    keywordTags: string | undefined;
+    orgType: OrganizationType | undefined;
+    contact: Contact | undefined;
+    formedCountry: Country | undefined;
+    formedState: CountryState | undefined;
+    personOrgRelations: PersonOrgRelation[] | undefined;
+    organizationAliases: OrganizationAlias[] | undefined;
+    organizationBusinessCategories: OrganizationBusinessCategory[] | undefined;
+    orders: Order[] | undefined;
+    isDeleted: boolean | undefined;
+    deleterUserId: number | undefined;
+    deletionTime: moment.Moment | undefined;
+    lastModificationTime: moment.Moment | undefined;
+    lastModifierUserId: number | undefined;
+    creationTime: moment.Moment | undefined;
+    creatorUserId: number | undefined;
+    id: number | undefined;
+}
+
+export class ContactStatus implements IContactStatus {
+    name!: string | undefined;
+    contacts!: Contact[] | undefined;
+    isDeleted!: boolean | undefined;
+    deleterUserId!: number | undefined;
+    deletionTime!: moment.Moment | undefined;
+    lastModificationTime!: moment.Moment | undefined;
+    lastModifierUserId!: number | undefined;
+    creationTime!: moment.Moment | undefined;
+    creatorUserId!: number | undefined;
+    id!: string | undefined;
+
+    constructor(data?: IContactStatus) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.name = data["name"];
+            if (data["contacts"] && data["contacts"].constructor === Array) {
+                this.contacts = [];
+                for (let item of data["contacts"])
+                    this.contacts.push(Contact.fromJS(item));
+            }
+            this.isDeleted = data["isDeleted"];
+            this.deleterUserId = data["deleterUserId"];
+            this.deletionTime = data["deletionTime"] ? moment(data["deletionTime"].toString()) : <any>undefined;
+            this.lastModificationTime = data["lastModificationTime"] ? moment(data["lastModificationTime"].toString()) : <any>undefined;
+            this.lastModifierUserId = data["lastModifierUserId"];
+            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
+            this.creatorUserId = data["creatorUserId"];
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): ContactStatus {
+        data = typeof data === 'object' ? data : {};
+        let result = new ContactStatus();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        if (this.contacts && this.contacts.constructor === Array) {
+            data["contacts"] = [];
+            for (let item of this.contacts)
+                data["contacts"].push(item.toJSON());
+        }
+        data["isDeleted"] = this.isDeleted;
+        data["deleterUserId"] = this.deleterUserId;
+        data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
+        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
+        data["lastModifierUserId"] = this.lastModifierUserId;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        data["creatorUserId"] = this.creatorUserId;
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface IContactStatus {
+    name: string | undefined;
+    contacts: Contact[] | undefined;
+    isDeleted: boolean | undefined;
+    deleterUserId: number | undefined;
+    deletionTime: moment.Moment | undefined;
+    lastModificationTime: moment.Moment | undefined;
+    lastModifierUserId: number | undefined;
+    creationTime: moment.Moment | undefined;
+    creatorUserId: number | undefined;
+    id: string | undefined;
+}
+
+export class ContactType implements IContactType {
+    name!: string | undefined;
+    contacts!: Contact[] | undefined;
+    isDeleted!: boolean | undefined;
+    deleterUserId!: number | undefined;
+    deletionTime!: moment.Moment | undefined;
+    lastModificationTime!: moment.Moment | undefined;
+    lastModifierUserId!: number | undefined;
+    creationTime!: moment.Moment | undefined;
+    creatorUserId!: number | undefined;
+    id!: string | undefined;
+
+    constructor(data?: IContactType) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.name = data["name"];
+            if (data["contacts"] && data["contacts"].constructor === Array) {
+                this.contacts = [];
+                for (let item of data["contacts"])
+                    this.contacts.push(Contact.fromJS(item));
+            }
+            this.isDeleted = data["isDeleted"];
+            this.deleterUserId = data["deleterUserId"];
+            this.deletionTime = data["deletionTime"] ? moment(data["deletionTime"].toString()) : <any>undefined;
+            this.lastModificationTime = data["lastModificationTime"] ? moment(data["lastModificationTime"].toString()) : <any>undefined;
+            this.lastModifierUserId = data["lastModifierUserId"];
+            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
+            this.creatorUserId = data["creatorUserId"];
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): ContactType {
+        data = typeof data === 'object' ? data : {};
+        let result = new ContactType();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        if (this.contacts && this.contacts.constructor === Array) {
+            data["contacts"] = [];
+            for (let item of this.contacts)
+                data["contacts"].push(item.toJSON());
+        }
+        data["isDeleted"] = this.isDeleted;
+        data["deleterUserId"] = this.deleterUserId;
+        data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
+        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
+        data["lastModifierUserId"] = this.lastModifierUserId;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        data["creatorUserId"] = this.creatorUserId;
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface IContactType {
+    name: string | undefined;
+    contacts: Contact[] | undefined;
+    isDeleted: boolean | undefined;
+    deleterUserId: number | undefined;
+    deletionTime: moment.Moment | undefined;
+    lastModificationTime: moment.Moment | undefined;
+    lastModifierUserId: number | undefined;
+    creationTime: moment.Moment | undefined;
+    creatorUserId: number | undefined;
+    id: string | undefined;
+}
+
+export class ContactGroup implements IContactGroup {
+    name!: string | undefined;
+    contacts!: Contact[] | undefined;
+    leads!: Lead[] | undefined;
+    pipelines!: Pipeline[] | undefined;
+    isDeleted!: boolean | undefined;
+    deleterUserId!: number | undefined;
+    deletionTime!: moment.Moment | undefined;
+    lastModificationTime!: moment.Moment | undefined;
+    lastModifierUserId!: number | undefined;
+    creationTime!: moment.Moment | undefined;
+    creatorUserId!: number | undefined;
+    id!: string | undefined;
+
+    constructor(data?: IContactGroup) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.name = data["name"];
+            if (data["contacts"] && data["contacts"].constructor === Array) {
+                this.contacts = [];
+                for (let item of data["contacts"])
+                    this.contacts.push(Contact.fromJS(item));
+            }
+            if (data["leads"] && data["leads"].constructor === Array) {
+                this.leads = [];
+                for (let item of data["leads"])
+                    this.leads.push(Lead.fromJS(item));
+            }
+            if (data["pipelines"] && data["pipelines"].constructor === Array) {
+                this.pipelines = [];
+                for (let item of data["pipelines"])
+                    this.pipelines.push(Pipeline.fromJS(item));
+            }
+            this.isDeleted = data["isDeleted"];
+            this.deleterUserId = data["deleterUserId"];
+            this.deletionTime = data["deletionTime"] ? moment(data["deletionTime"].toString()) : <any>undefined;
+            this.lastModificationTime = data["lastModificationTime"] ? moment(data["lastModificationTime"].toString()) : <any>undefined;
+            this.lastModifierUserId = data["lastModifierUserId"];
+            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
+            this.creatorUserId = data["creatorUserId"];
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): ContactGroup {
+        data = typeof data === 'object' ? data : {};
+        let result = new ContactGroup();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        if (this.contacts && this.contacts.constructor === Array) {
+            data["contacts"] = [];
+            for (let item of this.contacts)
+                data["contacts"].push(item.toJSON());
+        }
+        if (this.leads && this.leads.constructor === Array) {
+            data["leads"] = [];
+            for (let item of this.leads)
+                data["leads"].push(item.toJSON());
+        }
+        if (this.pipelines && this.pipelines.constructor === Array) {
+            data["pipelines"] = [];
+            for (let item of this.pipelines)
+                data["pipelines"].push(item.toJSON());
+        }
+        data["isDeleted"] = this.isDeleted;
+        data["deleterUserId"] = this.deleterUserId;
+        data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
+        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
+        data["lastModifierUserId"] = this.lastModifierUserId;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        data["creatorUserId"] = this.creatorUserId;
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface IContactGroup {
+    name: string | undefined;
+    contacts: Contact[] | undefined;
+    leads: Lead[] | undefined;
+    pipelines: Pipeline[] | undefined;
+    isDeleted: boolean | undefined;
+    deleterUserId: number | undefined;
+    deletionTime: moment.Moment | undefined;
+    lastModificationTime: moment.Moment | undefined;
+    lastModifierUserId: number | undefined;
+    creationTime: moment.Moment | undefined;
+    creatorUserId: number | undefined;
+    id: string | undefined;
+}
+
+export class Order implements IOrder {
+    pipelinePurposeId!: string | undefined;
+    contactGroupId!: string | undefined;
+    tenantId!: number | undefined;
+    contactId!: number | undefined;
+    organizationId!: number | undefined;
+    typeId!: number | undefined;
+    stageId!: number | undefined;
+    sortOrder!: number | undefined;
+    leadId!: number | undefined;
+    dateProcessed!: moment.Moment | undefined;
+    organizationUnitId!: number | undefined;
+    amount!: number | undefined;
+    systemType!: string | undefined;
+    systemMemberId!: string | undefined;
+    number!: string;
+    cancellationComment!: string | undefined;
+    contact!: Contact | undefined;
+    organization!: Organization | undefined;
+    orderType!: OrderType | undefined;
+    stage!: Stage | undefined;
+    lead!: Lead | undefined;
+    leads!: Lead[] | undefined;
+    orderSubscriptions!: OrderSubscription[] | undefined;
+    invoices!: Invoice[] | undefined;
+    notes!: Note[] | undefined;
+    isDeleted!: boolean | undefined;
+    deleterUserId!: number | undefined;
+    deletionTime!: moment.Moment | undefined;
+    lastModificationTime!: moment.Moment | undefined;
+    lastModifierUserId!: number | undefined;
+    creationTime!: moment.Moment | undefined;
+    creatorUserId!: number | undefined;
+    id!: number | undefined;
+
+    constructor(data?: IOrder) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.pipelinePurposeId = data["pipelinePurposeId"];
+            this.contactGroupId = data["contactGroupId"];
+            this.tenantId = data["tenantId"];
+            this.contactId = data["contactId"];
+            this.organizationId = data["organizationId"];
+            this.typeId = data["typeId"];
+            this.stageId = data["stageId"];
+            this.sortOrder = data["sortOrder"];
+            this.leadId = data["leadId"];
+            this.dateProcessed = data["dateProcessed"] ? moment(data["dateProcessed"].toString()) : <any>undefined;
+            this.organizationUnitId = data["organizationUnitId"];
+            this.amount = data["amount"];
+            this.systemType = data["systemType"];
+            this.systemMemberId = data["systemMemberId"];
+            this.number = data["number"];
+            this.cancellationComment = data["cancellationComment"];
+            this.contact = data["contact"] ? Contact.fromJS(data["contact"]) : <any>undefined;
+            this.organization = data["organization"] ? Organization.fromJS(data["organization"]) : <any>undefined;
+            this.orderType = data["orderType"] ? OrderType.fromJS(data["orderType"]) : <any>undefined;
+            this.stage = data["stage"] ? Stage.fromJS(data["stage"]) : <any>undefined;
+            this.lead = data["lead"] ? Lead.fromJS(data["lead"]) : <any>undefined;
+            if (data["leads"] && data["leads"].constructor === Array) {
+                this.leads = [];
+                for (let item of data["leads"])
+                    this.leads.push(Lead.fromJS(item));
+            }
+            if (data["orderSubscriptions"] && data["orderSubscriptions"].constructor === Array) {
+                this.orderSubscriptions = [];
+                for (let item of data["orderSubscriptions"])
+                    this.orderSubscriptions.push(OrderSubscription.fromJS(item));
+            }
+            if (data["invoices"] && data["invoices"].constructor === Array) {
+                this.invoices = [];
+                for (let item of data["invoices"])
+                    this.invoices.push(Invoice.fromJS(item));
+            }
+            if (data["notes"] && data["notes"].constructor === Array) {
+                this.notes = [];
+                for (let item of data["notes"])
+                    this.notes.push(Note.fromJS(item));
+            }
+            this.isDeleted = data["isDeleted"];
+            this.deleterUserId = data["deleterUserId"];
+            this.deletionTime = data["deletionTime"] ? moment(data["deletionTime"].toString()) : <any>undefined;
+            this.lastModificationTime = data["lastModificationTime"] ? moment(data["lastModificationTime"].toString()) : <any>undefined;
+            this.lastModifierUserId = data["lastModifierUserId"];
+            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
+            this.creatorUserId = data["creatorUserId"];
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): Order {
+        data = typeof data === 'object' ? data : {};
+        let result = new Order();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["pipelinePurposeId"] = this.pipelinePurposeId;
+        data["contactGroupId"] = this.contactGroupId;
+        data["tenantId"] = this.tenantId;
+        data["contactId"] = this.contactId;
+        data["organizationId"] = this.organizationId;
+        data["typeId"] = this.typeId;
+        data["stageId"] = this.stageId;
+        data["sortOrder"] = this.sortOrder;
+        data["leadId"] = this.leadId;
+        data["dateProcessed"] = this.dateProcessed ? this.dateProcessed.toISOString() : <any>undefined;
+        data["organizationUnitId"] = this.organizationUnitId;
+        data["amount"] = this.amount;
+        data["systemType"] = this.systemType;
+        data["systemMemberId"] = this.systemMemberId;
+        data["number"] = this.number;
+        data["cancellationComment"] = this.cancellationComment;
+        data["contact"] = this.contact ? this.contact.toJSON() : <any>undefined;
+        data["organization"] = this.organization ? this.organization.toJSON() : <any>undefined;
+        data["orderType"] = this.orderType ? this.orderType.toJSON() : <any>undefined;
+        data["stage"] = this.stage ? this.stage.toJSON() : <any>undefined;
+        data["lead"] = this.lead ? this.lead.toJSON() : <any>undefined;
+        if (this.leads && this.leads.constructor === Array) {
+            data["leads"] = [];
+            for (let item of this.leads)
+                data["leads"].push(item.toJSON());
+        }
+        if (this.orderSubscriptions && this.orderSubscriptions.constructor === Array) {
+            data["orderSubscriptions"] = [];
+            for (let item of this.orderSubscriptions)
+                data["orderSubscriptions"].push(item.toJSON());
+        }
+        if (this.invoices && this.invoices.constructor === Array) {
+            data["invoices"] = [];
+            for (let item of this.invoices)
+                data["invoices"].push(item.toJSON());
+        }
+        if (this.notes && this.notes.constructor === Array) {
+            data["notes"] = [];
+            for (let item of this.notes)
+                data["notes"].push(item.toJSON());
+        }
+        data["isDeleted"] = this.isDeleted;
+        data["deleterUserId"] = this.deleterUserId;
+        data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
+        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
+        data["lastModifierUserId"] = this.lastModifierUserId;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        data["creatorUserId"] = this.creatorUserId;
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface IOrder {
+    pipelinePurposeId: string | undefined;
+    contactGroupId: string | undefined;
+    tenantId: number | undefined;
+    contactId: number | undefined;
+    organizationId: number | undefined;
+    typeId: number | undefined;
+    stageId: number | undefined;
+    sortOrder: number | undefined;
+    leadId: number | undefined;
+    dateProcessed: moment.Moment | undefined;
+    organizationUnitId: number | undefined;
+    amount: number | undefined;
+    systemType: string | undefined;
+    systemMemberId: string | undefined;
+    number: string;
+    cancellationComment: string | undefined;
+    contact: Contact | undefined;
+    organization: Organization | undefined;
+    orderType: OrderType | undefined;
+    stage: Stage | undefined;
+    lead: Lead | undefined;
+    leads: Lead[] | undefined;
+    orderSubscriptions: OrderSubscription[] | undefined;
+    invoices: Invoice[] | undefined;
+    notes: Note[] | undefined;
+    isDeleted: boolean | undefined;
+    deleterUserId: number | undefined;
+    deletionTime: moment.Moment | undefined;
+    lastModificationTime: moment.Moment | undefined;
+    lastModifierUserId: number | undefined;
+    creationTime: moment.Moment | undefined;
+    creatorUserId: number | undefined;
+    id: number | undefined;
+}
+
+export class Lead implements ILead {
+    pipelinePurposeId!: string | undefined;
+    tenantId!: number | undefined;
+    typeId!: number | undefined;
+    contactGroupId!: string;
+    contactId!: number | undefined;
+    orderId!: number | undefined;
+    primaryLeadRequestId!: number | undefined;
+    stageId!: number | undefined;
+    sortOrder!: number | undefined;
+    dateCompleted!: moment.Moment | undefined;
+    cancellationReasonId!: string | undefined;
+    cancellationComment!: string | undefined;
+    leadType!: LeadType | undefined;
+    contactGroup!: ContactGroup | undefined;
+    customer!: Contact | undefined;
+    order!: Order | undefined;
+    primaryLeadRequest!: LeadRequest | undefined;
+    stage!: Stage | undefined;
+    cancellationReason!: LeadCancellationReason | undefined;
+    leadRequests!: LeadRequest[] | undefined;
+    orders!: Order[] | undefined;
+    isDeleted!: boolean | undefined;
+    deleterUserId!: number | undefined;
+    deletionTime!: moment.Moment | undefined;
+    lastModificationTime!: moment.Moment | undefined;
+    lastModifierUserId!: number | undefined;
+    creationTime!: moment.Moment | undefined;
+    creatorUserId!: number | undefined;
+    id!: number | undefined;
+
+    constructor(data?: ILead) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.pipelinePurposeId = data["pipelinePurposeId"];
+            this.tenantId = data["tenantId"];
+            this.typeId = data["typeId"];
+            this.contactGroupId = data["contactGroupId"];
+            this.contactId = data["contactId"];
+            this.orderId = data["orderId"];
+            this.primaryLeadRequestId = data["primaryLeadRequestId"];
+            this.stageId = data["stageId"];
+            this.sortOrder = data["sortOrder"];
+            this.dateCompleted = data["dateCompleted"] ? moment(data["dateCompleted"].toString()) : <any>undefined;
+            this.cancellationReasonId = data["cancellationReasonId"];
+            this.cancellationComment = data["cancellationComment"];
+            this.leadType = data["leadType"] ? LeadType.fromJS(data["leadType"]) : <any>undefined;
+            this.contactGroup = data["contactGroup"] ? ContactGroup.fromJS(data["contactGroup"]) : <any>undefined;
+            this.customer = data["customer"] ? Contact.fromJS(data["customer"]) : <any>undefined;
+            this.order = data["order"] ? Order.fromJS(data["order"]) : <any>undefined;
+            this.primaryLeadRequest = data["primaryLeadRequest"] ? LeadRequest.fromJS(data["primaryLeadRequest"]) : <any>undefined;
+            this.stage = data["stage"] ? Stage.fromJS(data["stage"]) : <any>undefined;
+            this.cancellationReason = data["cancellationReason"] ? LeadCancellationReason.fromJS(data["cancellationReason"]) : <any>undefined;
+            if (data["leadRequests"] && data["leadRequests"].constructor === Array) {
+                this.leadRequests = [];
+                for (let item of data["leadRequests"])
+                    this.leadRequests.push(LeadRequest.fromJS(item));
+            }
+            if (data["orders"] && data["orders"].constructor === Array) {
+                this.orders = [];
+                for (let item of data["orders"])
+                    this.orders.push(Order.fromJS(item));
+            }
+            this.isDeleted = data["isDeleted"];
+            this.deleterUserId = data["deleterUserId"];
+            this.deletionTime = data["deletionTime"] ? moment(data["deletionTime"].toString()) : <any>undefined;
+            this.lastModificationTime = data["lastModificationTime"] ? moment(data["lastModificationTime"].toString()) : <any>undefined;
+            this.lastModifierUserId = data["lastModifierUserId"];
+            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
+            this.creatorUserId = data["creatorUserId"];
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): Lead {
+        data = typeof data === 'object' ? data : {};
+        let result = new Lead();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["pipelinePurposeId"] = this.pipelinePurposeId;
+        data["tenantId"] = this.tenantId;
+        data["typeId"] = this.typeId;
+        data["contactGroupId"] = this.contactGroupId;
+        data["contactId"] = this.contactId;
+        data["orderId"] = this.orderId;
+        data["primaryLeadRequestId"] = this.primaryLeadRequestId;
+        data["stageId"] = this.stageId;
+        data["sortOrder"] = this.sortOrder;
+        data["dateCompleted"] = this.dateCompleted ? this.dateCompleted.toISOString() : <any>undefined;
+        data["cancellationReasonId"] = this.cancellationReasonId;
+        data["cancellationComment"] = this.cancellationComment;
+        data["leadType"] = this.leadType ? this.leadType.toJSON() : <any>undefined;
+        data["contactGroup"] = this.contactGroup ? this.contactGroup.toJSON() : <any>undefined;
+        data["customer"] = this.customer ? this.customer.toJSON() : <any>undefined;
+        data["order"] = this.order ? this.order.toJSON() : <any>undefined;
+        data["primaryLeadRequest"] = this.primaryLeadRequest ? this.primaryLeadRequest.toJSON() : <any>undefined;
+        data["stage"] = this.stage ? this.stage.toJSON() : <any>undefined;
+        data["cancellationReason"] = this.cancellationReason ? this.cancellationReason.toJSON() : <any>undefined;
+        if (this.leadRequests && this.leadRequests.constructor === Array) {
+            data["leadRequests"] = [];
+            for (let item of this.leadRequests)
+                data["leadRequests"].push(item.toJSON());
+        }
+        if (this.orders && this.orders.constructor === Array) {
+            data["orders"] = [];
+            for (let item of this.orders)
+                data["orders"].push(item.toJSON());
+        }
+        data["isDeleted"] = this.isDeleted;
+        data["deleterUserId"] = this.deleterUserId;
+        data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
+        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
+        data["lastModifierUserId"] = this.lastModifierUserId;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        data["creatorUserId"] = this.creatorUserId;
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface ILead {
+    pipelinePurposeId: string | undefined;
+    tenantId: number | undefined;
+    typeId: number | undefined;
+    contactGroupId: string;
+    contactId: number | undefined;
+    orderId: number | undefined;
+    primaryLeadRequestId: number | undefined;
+    stageId: number | undefined;
+    sortOrder: number | undefined;
+    dateCompleted: moment.Moment | undefined;
+    cancellationReasonId: string | undefined;
+    cancellationComment: string | undefined;
+    leadType: LeadType | undefined;
+    contactGroup: ContactGroup | undefined;
+    customer: Contact | undefined;
+    order: Order | undefined;
+    primaryLeadRequest: LeadRequest | undefined;
+    stage: Stage | undefined;
+    cancellationReason: LeadCancellationReason | undefined;
+    leadRequests: LeadRequest[] | undefined;
+    orders: Order[] | undefined;
+    isDeleted: boolean | undefined;
+    deleterUserId: number | undefined;
+    deletionTime: moment.Moment | undefined;
+    lastModificationTime: moment.Moment | undefined;
+    lastModifierUserId: number | undefined;
+    creationTime: moment.Moment | undefined;
+    creatorUserId: number | undefined;
+    id: number | undefined;
+}
+
+export class Note implements INote {
+    tenantId!: number | undefined;
+    contactId!: number | undefined;
+    contactPhoneId!: number | undefined;
+    orderId!: number | undefined;
+    text!: string | undefined;
+    noteType!: NoteType | undefined;
+    followUpDateTime!: moment.Moment | undefined;
+    dateTime!: moment.Moment | undefined;
+    addedByUserId!: number | undefined;
+    contact!: Contact | undefined;
+    contactPhone!: ContactPhone | undefined;
+    order!: Order | undefined;
+    isDeleted!: boolean | undefined;
+    deleterUserId!: number | undefined;
+    deletionTime!: moment.Moment | undefined;
+    lastModificationTime!: moment.Moment | undefined;
+    lastModifierUserId!: number | undefined;
+    creationTime!: moment.Moment | undefined;
+    creatorUserId!: number | undefined;
+    id!: number | undefined;
+
+    constructor(data?: INote) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.tenantId = data["tenantId"];
+            this.contactId = data["contactId"];
+            this.contactPhoneId = data["contactPhoneId"];
+            this.orderId = data["orderId"];
+            this.text = data["text"];
+            this.noteType = data["noteType"];
+            this.followUpDateTime = data["followUpDateTime"] ? moment(data["followUpDateTime"].toString()) : <any>undefined;
+            this.dateTime = data["dateTime"] ? moment(data["dateTime"].toString()) : <any>undefined;
+            this.addedByUserId = data["addedByUserId"];
+            this.contact = data["contact"] ? Contact.fromJS(data["contact"]) : <any>undefined;
+            this.contactPhone = data["contactPhone"] ? ContactPhone.fromJS(data["contactPhone"]) : <any>undefined;
+            this.order = data["order"] ? Order.fromJS(data["order"]) : <any>undefined;
+            this.isDeleted = data["isDeleted"];
+            this.deleterUserId = data["deleterUserId"];
+            this.deletionTime = data["deletionTime"] ? moment(data["deletionTime"].toString()) : <any>undefined;
+            this.lastModificationTime = data["lastModificationTime"] ? moment(data["lastModificationTime"].toString()) : <any>undefined;
+            this.lastModifierUserId = data["lastModifierUserId"];
+            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
+            this.creatorUserId = data["creatorUserId"];
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): Note {
+        data = typeof data === 'object' ? data : {};
+        let result = new Note();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["tenantId"] = this.tenantId;
+        data["contactId"] = this.contactId;
+        data["contactPhoneId"] = this.contactPhoneId;
+        data["orderId"] = this.orderId;
+        data["text"] = this.text;
+        data["noteType"] = this.noteType;
+        data["followUpDateTime"] = this.followUpDateTime ? this.followUpDateTime.toISOString() : <any>undefined;
+        data["dateTime"] = this.dateTime ? this.dateTime.toISOString() : <any>undefined;
+        data["addedByUserId"] = this.addedByUserId;
+        data["contact"] = this.contact ? this.contact.toJSON() : <any>undefined;
+        data["contactPhone"] = this.contactPhone ? this.contactPhone.toJSON() : <any>undefined;
+        data["order"] = this.order ? this.order.toJSON() : <any>undefined;
+        data["isDeleted"] = this.isDeleted;
+        data["deleterUserId"] = this.deleterUserId;
+        data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
+        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
+        data["lastModifierUserId"] = this.lastModifierUserId;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        data["creatorUserId"] = this.creatorUserId;
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface INote {
+    tenantId: number | undefined;
+    contactId: number | undefined;
+    contactPhoneId: number | undefined;
+    orderId: number | undefined;
+    text: string | undefined;
+    noteType: NoteType | undefined;
+    followUpDateTime: moment.Moment | undefined;
+    dateTime: moment.Moment | undefined;
+    addedByUserId: number | undefined;
+    contact: Contact | undefined;
+    contactPhone: ContactPhone | undefined;
+    order: Order | undefined;
+    isDeleted: boolean | undefined;
+    deleterUserId: number | undefined;
+    deletionTime: moment.Moment | undefined;
+    lastModificationTime: moment.Moment | undefined;
+    lastModifierUserId: number | undefined;
+    creationTime: moment.Moment | undefined;
+    creatorUserId: number | undefined;
+    id: number | undefined;
+}
+
+export class Document implements IDocument {
+    tenantId!: number | undefined;
+    contactId!: number | undefined;
+    fileName!: string;
+    size!: number | undefined;
+    typeId!: number | undefined;
+    contact!: Contact | undefined;
+    documentType!: DocumentType | undefined;
+    isDeleted!: boolean | undefined;
+    deleterUserId!: number | undefined;
+    deletionTime!: moment.Moment | undefined;
+    lastModificationTime!: moment.Moment | undefined;
+    lastModifierUserId!: number | undefined;
+    creationTime!: moment.Moment | undefined;
+    creatorUserId!: number | undefined;
+    id!: string | undefined;
+
+    constructor(data?: IDocument) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.tenantId = data["tenantId"];
+            this.contactId = data["contactId"];
+            this.fileName = data["fileName"];
+            this.size = data["size"];
+            this.typeId = data["typeId"];
+            this.contact = data["contact"] ? Contact.fromJS(data["contact"]) : <any>undefined;
+            this.documentType = data["documentType"] ? DocumentType.fromJS(data["documentType"]) : <any>undefined;
+            this.isDeleted = data["isDeleted"];
+            this.deleterUserId = data["deleterUserId"];
+            this.deletionTime = data["deletionTime"] ? moment(data["deletionTime"].toString()) : <any>undefined;
+            this.lastModificationTime = data["lastModificationTime"] ? moment(data["lastModificationTime"].toString()) : <any>undefined;
+            this.lastModifierUserId = data["lastModifierUserId"];
+            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
+            this.creatorUserId = data["creatorUserId"];
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): Document {
+        data = typeof data === 'object' ? data : {};
+        let result = new Document();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["tenantId"] = this.tenantId;
+        data["contactId"] = this.contactId;
+        data["fileName"] = this.fileName;
+        data["size"] = this.size;
+        data["typeId"] = this.typeId;
+        data["contact"] = this.contact ? this.contact.toJSON() : <any>undefined;
+        data["documentType"] = this.documentType ? this.documentType.toJSON() : <any>undefined;
+        data["isDeleted"] = this.isDeleted;
+        data["deleterUserId"] = this.deleterUserId;
+        data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
+        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
+        data["lastModifierUserId"] = this.lastModifierUserId;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        data["creatorUserId"] = this.creatorUserId;
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface IDocument {
+    tenantId: number | undefined;
+    contactId: number | undefined;
+    fileName: string;
+    size: number | undefined;
+    typeId: number | undefined;
+    contact: Contact | undefined;
+    documentType: DocumentType | undefined;
+    isDeleted: boolean | undefined;
+    deleterUserId: number | undefined;
+    deletionTime: moment.Moment | undefined;
+    lastModificationTime: moment.Moment | undefined;
+    lastModifierUserId: number | undefined;
+    creationTime: moment.Moment | undefined;
+    creatorUserId: number | undefined;
+    id: string | undefined;
+}
+
+export class ContactStar implements IContactStar {
+    tenantId!: number | undefined;
+    name!: string;
+    colorType!: ContactStarColorType | undefined;
+    contacts!: Contact[] | undefined;
+    isDeleted!: boolean | undefined;
+    deleterUserId!: number | undefined;
+    deletionTime!: moment.Moment | undefined;
+    lastModificationTime!: moment.Moment | undefined;
+    lastModifierUserId!: number | undefined;
+    creationTime!: moment.Moment | undefined;
+    creatorUserId!: number | undefined;
+    id!: number | undefined;
+
+    constructor(data?: IContactStar) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.tenantId = data["tenantId"];
+            this.name = data["name"];
+            this.colorType = data["colorType"];
+            if (data["contacts"] && data["contacts"].constructor === Array) {
+                this.contacts = [];
+                for (let item of data["contacts"])
+                    this.contacts.push(Contact.fromJS(item));
+            }
+            this.isDeleted = data["isDeleted"];
+            this.deleterUserId = data["deleterUserId"];
+            this.deletionTime = data["deletionTime"] ? moment(data["deletionTime"].toString()) : <any>undefined;
+            this.lastModificationTime = data["lastModificationTime"] ? moment(data["lastModificationTime"].toString()) : <any>undefined;
+            this.lastModifierUserId = data["lastModifierUserId"];
+            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
+            this.creatorUserId = data["creatorUserId"];
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): ContactStar {
+        data = typeof data === 'object' ? data : {};
+        let result = new ContactStar();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["tenantId"] = this.tenantId;
+        data["name"] = this.name;
+        data["colorType"] = this.colorType;
+        if (this.contacts && this.contacts.constructor === Array) {
+            data["contacts"] = [];
+            for (let item of this.contacts)
+                data["contacts"].push(item.toJSON());
+        }
+        data["isDeleted"] = this.isDeleted;
+        data["deleterUserId"] = this.deleterUserId;
+        data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
+        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
+        data["lastModifierUserId"] = this.lastModifierUserId;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        data["creatorUserId"] = this.creatorUserId;
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface IContactStar {
+    tenantId: number | undefined;
+    name: string;
+    colorType: ContactStarColorType | undefined;
+    contacts: Contact[] | undefined;
+    isDeleted: boolean | undefined;
+    deleterUserId: number | undefined;
+    deletionTime: moment.Moment | undefined;
+    lastModificationTime: moment.Moment | undefined;
+    lastModifierUserId: number | undefined;
+    creationTime: moment.Moment | undefined;
+    creatorUserId: number | undefined;
+    id: number | undefined;
+}
+
+export class ContactRating implements IContactRating {
+    name!: string;
+    contacts!: Contact[] | undefined;
+    creationTime!: moment.Moment | undefined;
+    creatorUserId!: number | undefined;
+    id!: number | undefined;
+
+    constructor(data?: IContactRating) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.name = data["name"];
+            if (data["contacts"] && data["contacts"].constructor === Array) {
+                this.contacts = [];
+                for (let item of data["contacts"])
+                    this.contacts.push(Contact.fromJS(item));
+            }
+            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
+            this.creatorUserId = data["creatorUserId"];
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): ContactRating {
+        data = typeof data === 'object' ? data : {};
+        let result = new ContactRating();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        if (this.contacts && this.contacts.constructor === Array) {
+            data["contacts"] = [];
+            for (let item of this.contacts)
+                data["contacts"].push(item.toJSON());
+        }
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        data["creatorUserId"] = this.creatorUserId;
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface IContactRating {
+    name: string;
+    contacts: Contact[] | undefined;
+    creationTime: moment.Moment | undefined;
+    creatorUserId: number | undefined;
+    id: number | undefined;
+}
+
+export class Partner implements IPartner {
+    tenantId!: number | undefined;
+    typeId!: number | undefined;
+    contact!: Contact | undefined;
+    type!: PartnerType | undefined;
+    lastModificationTime!: moment.Moment | undefined;
+    lastModifierUserId!: number | undefined;
+    creationTime!: moment.Moment | undefined;
+    creatorUserId!: number | undefined;
+    id!: number | undefined;
+
+    constructor(data?: IPartner) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.tenantId = data["tenantId"];
+            this.typeId = data["typeId"];
+            this.contact = data["contact"] ? Contact.fromJS(data["contact"]) : <any>undefined;
+            this.type = data["type"] ? PartnerType.fromJS(data["type"]) : <any>undefined;
+            this.lastModificationTime = data["lastModificationTime"] ? moment(data["lastModificationTime"].toString()) : <any>undefined;
+            this.lastModifierUserId = data["lastModifierUserId"];
+            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
+            this.creatorUserId = data["creatorUserId"];
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): Partner {
+        data = typeof data === 'object' ? data : {};
+        let result = new Partner();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["tenantId"] = this.tenantId;
+        data["typeId"] = this.typeId;
+        data["contact"] = this.contact ? this.contact.toJSON() : <any>undefined;
+        data["type"] = this.type ? this.type.toJSON() : <any>undefined;
+        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
+        data["lastModifierUserId"] = this.lastModifierUserId;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        data["creatorUserId"] = this.creatorUserId;
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface IPartner {
+    tenantId: number | undefined;
+    typeId: number | undefined;
+    contact: Contact | undefined;
+    type: PartnerType | undefined;
+    lastModificationTime: moment.Moment | undefined;
+    lastModifierUserId: number | undefined;
+    creationTime: moment.Moment | undefined;
+    creatorUserId: number | undefined;
+    id: number | undefined;
+}
+
+export class AddressOwnershipType implements IAddressOwnershipType {
+    name!: string | undefined;
+    contactAddresses!: ContactAddress[] | undefined;
+    isDeleted!: boolean | undefined;
+    deleterUserId!: number | undefined;
+    deletionTime!: moment.Moment | undefined;
+    lastModificationTime!: moment.Moment | undefined;
+    lastModifierUserId!: number | undefined;
+    creationTime!: moment.Moment | undefined;
+    creatorUserId!: number | undefined;
+    id!: string | undefined;
+
+    constructor(data?: IAddressOwnershipType) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.name = data["name"];
+            if (data["contactAddresses"] && data["contactAddresses"].constructor === Array) {
+                this.contactAddresses = [];
+                for (let item of data["contactAddresses"])
+                    this.contactAddresses.push(ContactAddress.fromJS(item));
+            }
+            this.isDeleted = data["isDeleted"];
+            this.deleterUserId = data["deleterUserId"];
+            this.deletionTime = data["deletionTime"] ? moment(data["deletionTime"].toString()) : <any>undefined;
+            this.lastModificationTime = data["lastModificationTime"] ? moment(data["lastModificationTime"].toString()) : <any>undefined;
+            this.lastModifierUserId = data["lastModifierUserId"];
+            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
+            this.creatorUserId = data["creatorUserId"];
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): AddressOwnershipType {
+        data = typeof data === 'object' ? data : {};
+        let result = new AddressOwnershipType();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        if (this.contactAddresses && this.contactAddresses.constructor === Array) {
+            data["contactAddresses"] = [];
+            for (let item of this.contactAddresses)
+                data["contactAddresses"].push(item.toJSON());
+        }
+        data["isDeleted"] = this.isDeleted;
+        data["deleterUserId"] = this.deleterUserId;
+        data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
+        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
+        data["lastModifierUserId"] = this.lastModifierUserId;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        data["creatorUserId"] = this.creatorUserId;
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface IAddressOwnershipType {
+    name: string | undefined;
+    contactAddresses: ContactAddress[] | undefined;
+    isDeleted: boolean | undefined;
+    deleterUserId: number | undefined;
+    deletionTime: moment.Moment | undefined;
+    lastModificationTime: moment.Moment | undefined;
+    lastModifierUserId: number | undefined;
+    creationTime: moment.Moment | undefined;
+    creatorUserId: number | undefined;
+    id: string | undefined;
+}
+
+export class AddressUsageType implements IAddressUsageType {
+    name!: string | undefined;
+    isCompany!: boolean | undefined;
+    sortOrder!: number | undefined;
+    contactAddresses!: ContactAddress[] | undefined;
+    isDeleted!: boolean | undefined;
+    deleterUserId!: number | undefined;
+    deletionTime!: moment.Moment | undefined;
+    lastModificationTime!: moment.Moment | undefined;
+    lastModifierUserId!: number | undefined;
+    creationTime!: moment.Moment | undefined;
+    creatorUserId!: number | undefined;
+    id!: string | undefined;
+
+    constructor(data?: IAddressUsageType) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.name = data["name"];
+            this.isCompany = data["isCompany"];
+            this.sortOrder = data["sortOrder"];
+            if (data["contactAddresses"] && data["contactAddresses"].constructor === Array) {
+                this.contactAddresses = [];
+                for (let item of data["contactAddresses"])
+                    this.contactAddresses.push(ContactAddress.fromJS(item));
+            }
+            this.isDeleted = data["isDeleted"];
+            this.deleterUserId = data["deleterUserId"];
+            this.deletionTime = data["deletionTime"] ? moment(data["deletionTime"].toString()) : <any>undefined;
+            this.lastModificationTime = data["lastModificationTime"] ? moment(data["lastModificationTime"].toString()) : <any>undefined;
+            this.lastModifierUserId = data["lastModifierUserId"];
+            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
+            this.creatorUserId = data["creatorUserId"];
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): AddressUsageType {
+        data = typeof data === 'object' ? data : {};
+        let result = new AddressUsageType();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        data["isCompany"] = this.isCompany;
+        data["sortOrder"] = this.sortOrder;
+        if (this.contactAddresses && this.contactAddresses.constructor === Array) {
+            data["contactAddresses"] = [];
+            for (let item of this.contactAddresses)
+                data["contactAddresses"].push(item.toJSON());
+        }
+        data["isDeleted"] = this.isDeleted;
+        data["deleterUserId"] = this.deleterUserId;
+        data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
+        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
+        data["lastModifierUserId"] = this.lastModifierUserId;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        data["creatorUserId"] = this.creatorUserId;
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface IAddressUsageType {
+    name: string | undefined;
+    isCompany: boolean | undefined;
+    sortOrder: number | undefined;
+    contactAddresses: ContactAddress[] | undefined;
+    isDeleted: boolean | undefined;
+    deleterUserId: number | undefined;
+    deletionTime: moment.Moment | undefined;
+    lastModificationTime: moment.Moment | undefined;
+    lastModifierUserId: number | undefined;
+    creationTime: moment.Moment | undefined;
+    creatorUserId: number | undefined;
+    id: string | undefined;
+}
+
+export class Country implements ICountry {
+    name!: string | undefined;
+    countryStates!: CountryState[] | undefined;
+    contactAddresses!: ContactAddress[] | undefined;
+    formedOrganizations!: Organization[] | undefined;
+    isDeleted!: boolean | undefined;
+    deleterUserId!: number | undefined;
+    deletionTime!: moment.Moment | undefined;
+    lastModificationTime!: moment.Moment | undefined;
+    lastModifierUserId!: number | undefined;
+    creationTime!: moment.Moment | undefined;
+    creatorUserId!: number | undefined;
+    id!: string | undefined;
+
+    constructor(data?: ICountry) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.name = data["name"];
+            if (data["countryStates"] && data["countryStates"].constructor === Array) {
+                this.countryStates = [];
+                for (let item of data["countryStates"])
+                    this.countryStates.push(CountryState.fromJS(item));
+            }
+            if (data["contactAddresses"] && data["contactAddresses"].constructor === Array) {
+                this.contactAddresses = [];
+                for (let item of data["contactAddresses"])
+                    this.contactAddresses.push(ContactAddress.fromJS(item));
+            }
+            if (data["formedOrganizations"] && data["formedOrganizations"].constructor === Array) {
+                this.formedOrganizations = [];
+                for (let item of data["formedOrganizations"])
+                    this.formedOrganizations.push(Organization.fromJS(item));
+            }
+            this.isDeleted = data["isDeleted"];
+            this.deleterUserId = data["deleterUserId"];
+            this.deletionTime = data["deletionTime"] ? moment(data["deletionTime"].toString()) : <any>undefined;
+            this.lastModificationTime = data["lastModificationTime"] ? moment(data["lastModificationTime"].toString()) : <any>undefined;
+            this.lastModifierUserId = data["lastModifierUserId"];
+            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
+            this.creatorUserId = data["creatorUserId"];
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): Country {
+        data = typeof data === 'object' ? data : {};
+        let result = new Country();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        if (this.countryStates && this.countryStates.constructor === Array) {
+            data["countryStates"] = [];
+            for (let item of this.countryStates)
+                data["countryStates"].push(item.toJSON());
+        }
+        if (this.contactAddresses && this.contactAddresses.constructor === Array) {
+            data["contactAddresses"] = [];
+            for (let item of this.contactAddresses)
+                data["contactAddresses"].push(item.toJSON());
+        }
+        if (this.formedOrganizations && this.formedOrganizations.constructor === Array) {
+            data["formedOrganizations"] = [];
+            for (let item of this.formedOrganizations)
+                data["formedOrganizations"].push(item.toJSON());
+        }
+        data["isDeleted"] = this.isDeleted;
+        data["deleterUserId"] = this.deleterUserId;
+        data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
+        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
+        data["lastModifierUserId"] = this.lastModifierUserId;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        data["creatorUserId"] = this.creatorUserId;
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface ICountry {
+    name: string | undefined;
+    countryStates: CountryState[] | undefined;
+    contactAddresses: ContactAddress[] | undefined;
+    formedOrganizations: Organization[] | undefined;
+    isDeleted: boolean | undefined;
+    deleterUserId: number | undefined;
+    deletionTime: moment.Moment | undefined;
+    lastModificationTime: moment.Moment | undefined;
+    lastModifierUserId: number | undefined;
+    creationTime: moment.Moment | undefined;
+    creatorUserId: number | undefined;
+    id: string | undefined;
+}
+
+export class CountryState implements ICountryState {
+    id!: string | undefined;
+    countryId!: string | undefined;
+    name!: string | undefined;
+    contactAddresses!: ContactAddress[] | undefined;
+    formedOrganizations!: Organization[] | undefined;
+    country!: Country | undefined;
+    isDeleted!: boolean | undefined;
+    deleterUserId!: number | undefined;
+    deletionTime!: moment.Moment | undefined;
+    lastModificationTime!: moment.Moment | undefined;
+    lastModifierUserId!: number | undefined;
+    creationTime!: moment.Moment | undefined;
+    creatorUserId!: number | undefined;
+
+    constructor(data?: ICountryState) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.countryId = data["countryId"];
+            this.name = data["name"];
+            if (data["contactAddresses"] && data["contactAddresses"].constructor === Array) {
+                this.contactAddresses = [];
+                for (let item of data["contactAddresses"])
+                    this.contactAddresses.push(ContactAddress.fromJS(item));
+            }
+            if (data["formedOrganizations"] && data["formedOrganizations"].constructor === Array) {
+                this.formedOrganizations = [];
+                for (let item of data["formedOrganizations"])
+                    this.formedOrganizations.push(Organization.fromJS(item));
+            }
+            this.country = data["country"] ? Country.fromJS(data["country"]) : <any>undefined;
+            this.isDeleted = data["isDeleted"];
+            this.deleterUserId = data["deleterUserId"];
+            this.deletionTime = data["deletionTime"] ? moment(data["deletionTime"].toString()) : <any>undefined;
+            this.lastModificationTime = data["lastModificationTime"] ? moment(data["lastModificationTime"].toString()) : <any>undefined;
+            this.lastModifierUserId = data["lastModifierUserId"];
+            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
+            this.creatorUserId = data["creatorUserId"];
+        }
+    }
+
+    static fromJS(data: any): CountryState {
+        data = typeof data === 'object' ? data : {};
+        let result = new CountryState();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["countryId"] = this.countryId;
+        data["name"] = this.name;
+        if (this.contactAddresses && this.contactAddresses.constructor === Array) {
+            data["contactAddresses"] = [];
+            for (let item of this.contactAddresses)
+                data["contactAddresses"].push(item.toJSON());
+        }
+        if (this.formedOrganizations && this.formedOrganizations.constructor === Array) {
+            data["formedOrganizations"] = [];
+            for (let item of this.formedOrganizations)
+                data["formedOrganizations"].push(item.toJSON());
+        }
+        data["country"] = this.country ? this.country.toJSON() : <any>undefined;
+        data["isDeleted"] = this.isDeleted;
+        data["deleterUserId"] = this.deleterUserId;
+        data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
+        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
+        data["lastModifierUserId"] = this.lastModifierUserId;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        data["creatorUserId"] = this.creatorUserId;
+        return data; 
+    }
+}
+
+export interface ICountryState {
+    id: string | undefined;
+    countryId: string | undefined;
+    name: string | undefined;
+    contactAddresses: ContactAddress[] | undefined;
+    formedOrganizations: Organization[] | undefined;
+    country: Country | undefined;
+    isDeleted: boolean | undefined;
+    deleterUserId: number | undefined;
+    deletionTime: moment.Moment | undefined;
+    lastModificationTime: moment.Moment | undefined;
+    lastModifierUserId: number | undefined;
+    creationTime: moment.Moment | undefined;
+    creatorUserId: number | undefined;
+}
+
+export class EmailUsageType implements IEmailUsageType {
+    name!: string | undefined;
+    isCompany!: boolean | undefined;
+    sortOrder!: number | undefined;
+    contactEmails!: ContactEmail[] | undefined;
+    isDeleted!: boolean | undefined;
+    deleterUserId!: number | undefined;
+    deletionTime!: moment.Moment | undefined;
+    lastModificationTime!: moment.Moment | undefined;
+    lastModifierUserId!: number | undefined;
+    creationTime!: moment.Moment | undefined;
+    creatorUserId!: number | undefined;
+    id!: string | undefined;
+
+    constructor(data?: IEmailUsageType) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.name = data["name"];
+            this.isCompany = data["isCompany"];
+            this.sortOrder = data["sortOrder"];
+            if (data["contactEmails"] && data["contactEmails"].constructor === Array) {
+                this.contactEmails = [];
+                for (let item of data["contactEmails"])
+                    this.contactEmails.push(ContactEmail.fromJS(item));
+            }
+            this.isDeleted = data["isDeleted"];
+            this.deleterUserId = data["deleterUserId"];
+            this.deletionTime = data["deletionTime"] ? moment(data["deletionTime"].toString()) : <any>undefined;
+            this.lastModificationTime = data["lastModificationTime"] ? moment(data["lastModificationTime"].toString()) : <any>undefined;
+            this.lastModifierUserId = data["lastModifierUserId"];
+            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
+            this.creatorUserId = data["creatorUserId"];
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): EmailUsageType {
+        data = typeof data === 'object' ? data : {};
+        let result = new EmailUsageType();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        data["isCompany"] = this.isCompany;
+        data["sortOrder"] = this.sortOrder;
+        if (this.contactEmails && this.contactEmails.constructor === Array) {
+            data["contactEmails"] = [];
+            for (let item of this.contactEmails)
+                data["contactEmails"].push(item.toJSON());
+        }
+        data["isDeleted"] = this.isDeleted;
+        data["deleterUserId"] = this.deleterUserId;
+        data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
+        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
+        data["lastModifierUserId"] = this.lastModifierUserId;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        data["creatorUserId"] = this.creatorUserId;
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface IEmailUsageType {
+    name: string | undefined;
+    isCompany: boolean | undefined;
+    sortOrder: number | undefined;
+    contactEmails: ContactEmail[] | undefined;
+    isDeleted: boolean | undefined;
+    deleterUserId: number | undefined;
+    deletionTime: moment.Moment | undefined;
+    lastModificationTime: moment.Moment | undefined;
+    lastModifierUserId: number | undefined;
+    creationTime: moment.Moment | undefined;
+    creatorUserId: number | undefined;
+    id: string | undefined;
+}
+
+export class ContactLinkType implements IContactLinkType {
+    name!: string | undefined;
+    isSocialNetwork!: boolean | undefined;
+    links!: ContactLink[] | undefined;
+    isDeleted!: boolean | undefined;
+    deleterUserId!: number | undefined;
+    deletionTime!: moment.Moment | undefined;
+    lastModificationTime!: moment.Moment | undefined;
+    lastModifierUserId!: number | undefined;
+    creationTime!: moment.Moment | undefined;
+    creatorUserId!: number | undefined;
+    id!: string | undefined;
+
+    constructor(data?: IContactLinkType) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.name = data["name"];
+            this.isSocialNetwork = data["isSocialNetwork"];
+            if (data["links"] && data["links"].constructor === Array) {
+                this.links = [];
+                for (let item of data["links"])
+                    this.links.push(ContactLink.fromJS(item));
+            }
+            this.isDeleted = data["isDeleted"];
+            this.deleterUserId = data["deleterUserId"];
+            this.deletionTime = data["deletionTime"] ? moment(data["deletionTime"].toString()) : <any>undefined;
+            this.lastModificationTime = data["lastModificationTime"] ? moment(data["lastModificationTime"].toString()) : <any>undefined;
+            this.lastModifierUserId = data["lastModifierUserId"];
+            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
+            this.creatorUserId = data["creatorUserId"];
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): ContactLinkType {
+        data = typeof data === 'object' ? data : {};
+        let result = new ContactLinkType();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        data["isSocialNetwork"] = this.isSocialNetwork;
+        if (this.links && this.links.constructor === Array) {
+            data["links"] = [];
+            for (let item of this.links)
+                data["links"].push(item.toJSON());
+        }
+        data["isDeleted"] = this.isDeleted;
+        data["deleterUserId"] = this.deleterUserId;
+        data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
+        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
+        data["lastModifierUserId"] = this.lastModifierUserId;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        data["creatorUserId"] = this.creatorUserId;
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface IContactLinkType {
+    name: string | undefined;
+    isSocialNetwork: boolean | undefined;
+    links: ContactLink[] | undefined;
+    isDeleted: boolean | undefined;
+    deleterUserId: number | undefined;
+    deletionTime: moment.Moment | undefined;
+    lastModificationTime: moment.Moment | undefined;
+    lastModifierUserId: number | undefined;
+    creationTime: moment.Moment | undefined;
+    creatorUserId: number | undefined;
+    id: string | undefined;
+}
+
+export class PhoneUsageType implements IPhoneUsageType {
+    name!: string | undefined;
+    isCompany!: boolean | undefined;
+    sortOrder!: number | undefined;
+    phones!: ContactPhone[] | undefined;
+    isDeleted!: boolean | undefined;
+    deleterUserId!: number | undefined;
+    deletionTime!: moment.Moment | undefined;
+    lastModificationTime!: moment.Moment | undefined;
+    lastModifierUserId!: number | undefined;
+    creationTime!: moment.Moment | undefined;
+    creatorUserId!: number | undefined;
+    id!: string | undefined;
+
+    constructor(data?: IPhoneUsageType) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.name = data["name"];
+            this.isCompany = data["isCompany"];
+            this.sortOrder = data["sortOrder"];
+            if (data["phones"] && data["phones"].constructor === Array) {
+                this.phones = [];
+                for (let item of data["phones"])
+                    this.phones.push(ContactPhone.fromJS(item));
+            }
+            this.isDeleted = data["isDeleted"];
+            this.deleterUserId = data["deleterUserId"];
+            this.deletionTime = data["deletionTime"] ? moment(data["deletionTime"].toString()) : <any>undefined;
+            this.lastModificationTime = data["lastModificationTime"] ? moment(data["lastModificationTime"].toString()) : <any>undefined;
+            this.lastModifierUserId = data["lastModifierUserId"];
+            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
+            this.creatorUserId = data["creatorUserId"];
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): PhoneUsageType {
+        data = typeof data === 'object' ? data : {};
+        let result = new PhoneUsageType();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        data["isCompany"] = this.isCompany;
+        data["sortOrder"] = this.sortOrder;
+        if (this.phones && this.phones.constructor === Array) {
+            data["phones"] = [];
+            for (let item of this.phones)
+                data["phones"].push(item.toJSON());
+        }
+        data["isDeleted"] = this.isDeleted;
+        data["deleterUserId"] = this.deleterUserId;
+        data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
+        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
+        data["lastModifierUserId"] = this.lastModifierUserId;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        data["creatorUserId"] = this.creatorUserId;
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface IPhoneUsageType {
+    name: string | undefined;
+    isCompany: boolean | undefined;
+    sortOrder: number | undefined;
+    phones: ContactPhone[] | undefined;
+    isDeleted: boolean | undefined;
+    deleterUserId: number | undefined;
+    deletionTime: moment.Moment | undefined;
+    lastModificationTime: moment.Moment | undefined;
+    lastModifierUserId: number | undefined;
+    creationTime: moment.Moment | undefined;
+    creatorUserId: number | undefined;
+    id: string | undefined;
+}
+
+export class PhotoSource implements IPhotoSource {
+    name!: string | undefined;
+    contactPhotos!: ContactPhoto[] | undefined;
+    isDeleted!: boolean | undefined;
+    deleterUserId!: number | undefined;
+    deletionTime!: moment.Moment | undefined;
+    lastModificationTime!: moment.Moment | undefined;
+    lastModifierUserId!: number | undefined;
+    creationTime!: moment.Moment | undefined;
+    creatorUserId!: number | undefined;
+    id!: string | undefined;
+
+    constructor(data?: IPhotoSource) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.name = data["name"];
+            if (data["contactPhotos"] && data["contactPhotos"].constructor === Array) {
+                this.contactPhotos = [];
+                for (let item of data["contactPhotos"])
+                    this.contactPhotos.push(ContactPhoto.fromJS(item));
+            }
+            this.isDeleted = data["isDeleted"];
+            this.deleterUserId = data["deleterUserId"];
+            this.deletionTime = data["deletionTime"] ? moment(data["deletionTime"].toString()) : <any>undefined;
+            this.lastModificationTime = data["lastModificationTime"] ? moment(data["lastModificationTime"].toString()) : <any>undefined;
+            this.lastModifierUserId = data["lastModifierUserId"];
+            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
+            this.creatorUserId = data["creatorUserId"];
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): PhotoSource {
+        data = typeof data === 'object' ? data : {};
+        let result = new PhotoSource();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        if (this.contactPhotos && this.contactPhotos.constructor === Array) {
+            data["contactPhotos"] = [];
+            for (let item of this.contactPhotos)
+                data["contactPhotos"].push(item.toJSON());
+        }
+        data["isDeleted"] = this.isDeleted;
+        data["deleterUserId"] = this.deleterUserId;
+        data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
+        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
+        data["lastModifierUserId"] = this.lastModifierUserId;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        data["creatorUserId"] = this.creatorUserId;
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface IPhotoSource {
+    name: string | undefined;
+    contactPhotos: ContactPhoto[] | undefined;
+    isDeleted: boolean | undefined;
+    deleterUserId: number | undefined;
+    deletionTime: moment.Moment | undefined;
+    lastModificationTime: moment.Moment | undefined;
+    lastModifierUserId: number | undefined;
+    creationTime: moment.Moment | undefined;
+    creatorUserId: number | undefined;
+    id: string | undefined;
+}
+
+export class PersonOrgRelation implements IPersonOrgRelation {
+    tenantId!: number | undefined;
+    personId!: number | undefined;
+    orgId!: number | undefined;
+    relationTypeId!: string;
+    jobTitle!: string | undefined;
+    startDate!: moment.Moment | undefined;
+    endDate!: moment.Moment | undefined;
+    isActive!: boolean | undefined;
+    confirmationDate!: moment.Moment | undefined;
+    confirmedByUserId!: number | undefined;
+    comment!: string | undefined;
+    person!: Person | undefined;
+    organization!: Organization | undefined;
+    relationType!: PersonOrgRelationType | undefined;
+    isDeleted!: boolean | undefined;
+    deleterUserId!: number | undefined;
+    deletionTime!: moment.Moment | undefined;
+    lastModificationTime!: moment.Moment | undefined;
+    lastModifierUserId!: number | undefined;
+    creationTime!: moment.Moment | undefined;
+    creatorUserId!: number | undefined;
+    id!: number | undefined;
+
+    constructor(data?: IPersonOrgRelation) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.tenantId = data["tenantId"];
+            this.personId = data["personId"];
+            this.orgId = data["orgId"];
+            this.relationTypeId = data["relationTypeId"];
+            this.jobTitle = data["jobTitle"];
+            this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
+            this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
+            this.isActive = data["isActive"];
+            this.confirmationDate = data["confirmationDate"] ? moment(data["confirmationDate"].toString()) : <any>undefined;
+            this.confirmedByUserId = data["confirmedByUserId"];
+            this.comment = data["comment"];
+            this.person = data["person"] ? Person.fromJS(data["person"]) : <any>undefined;
+            this.organization = data["organization"] ? Organization.fromJS(data["organization"]) : <any>undefined;
+            this.relationType = data["relationType"] ? PersonOrgRelationType.fromJS(data["relationType"]) : <any>undefined;
+            this.isDeleted = data["isDeleted"];
+            this.deleterUserId = data["deleterUserId"];
+            this.deletionTime = data["deletionTime"] ? moment(data["deletionTime"].toString()) : <any>undefined;
+            this.lastModificationTime = data["lastModificationTime"] ? moment(data["lastModificationTime"].toString()) : <any>undefined;
+            this.lastModifierUserId = data["lastModifierUserId"];
+            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
+            this.creatorUserId = data["creatorUserId"];
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): PersonOrgRelation {
+        data = typeof data === 'object' ? data : {};
+        let result = new PersonOrgRelation();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["tenantId"] = this.tenantId;
+        data["personId"] = this.personId;
+        data["orgId"] = this.orgId;
+        data["relationTypeId"] = this.relationTypeId;
+        data["jobTitle"] = this.jobTitle;
+        data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
+        data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
+        data["isActive"] = this.isActive;
+        data["confirmationDate"] = this.confirmationDate ? this.confirmationDate.toISOString() : <any>undefined;
+        data["confirmedByUserId"] = this.confirmedByUserId;
+        data["comment"] = this.comment;
+        data["person"] = this.person ? this.person.toJSON() : <any>undefined;
+        data["organization"] = this.organization ? this.organization.toJSON() : <any>undefined;
+        data["relationType"] = this.relationType ? this.relationType.toJSON() : <any>undefined;
+        data["isDeleted"] = this.isDeleted;
+        data["deleterUserId"] = this.deleterUserId;
+        data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
+        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
+        data["lastModifierUserId"] = this.lastModifierUserId;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        data["creatorUserId"] = this.creatorUserId;
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface IPersonOrgRelation {
+    tenantId: number | undefined;
+    personId: number | undefined;
+    orgId: number | undefined;
+    relationTypeId: string;
+    jobTitle: string | undefined;
+    startDate: moment.Moment | undefined;
+    endDate: moment.Moment | undefined;
+    isActive: boolean | undefined;
+    confirmationDate: moment.Moment | undefined;
+    confirmedByUserId: number | undefined;
+    comment: string | undefined;
+    person: Person | undefined;
+    organization: Organization | undefined;
+    relationType: PersonOrgRelationType | undefined;
+    isDeleted: boolean | undefined;
+    deleterUserId: number | undefined;
+    deletionTime: moment.Moment | undefined;
+    lastModificationTime: moment.Moment | undefined;
+    lastModifierUserId: number | undefined;
+    creationTime: moment.Moment | undefined;
+    creatorUserId: number | undefined;
+    id: number | undefined;
+}
+
+export class PersonRelation implements IPersonRelation {
+    tenantId!: number | undefined;
+    personId!: number | undefined;
+    relatedPersonId!: number | undefined;
+    relationTypeId!: string | undefined;
+    startDate!: moment.Moment | undefined;
+    endDate!: moment.Moment | undefined;
+    isActive!: boolean | undefined;
+    confirmationDate!: moment.Moment | undefined;
+    confirmedByUserId!: number | undefined;
+    comment!: string | undefined;
+    relationType!: PersonRelationType | undefined;
+    person!: Person | undefined;
+    relatedPerson!: Person | undefined;
+    isDeleted!: boolean | undefined;
+    deleterUserId!: number | undefined;
+    deletionTime!: moment.Moment | undefined;
+    lastModificationTime!: moment.Moment | undefined;
+    lastModifierUserId!: number | undefined;
+    creationTime!: moment.Moment | undefined;
+    creatorUserId!: number | undefined;
+    id!: number | undefined;
+
+    constructor(data?: IPersonRelation) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.tenantId = data["tenantId"];
+            this.personId = data["personId"];
+            this.relatedPersonId = data["relatedPersonId"];
+            this.relationTypeId = data["relationTypeId"];
+            this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
+            this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
+            this.isActive = data["isActive"];
+            this.confirmationDate = data["confirmationDate"] ? moment(data["confirmationDate"].toString()) : <any>undefined;
+            this.confirmedByUserId = data["confirmedByUserId"];
+            this.comment = data["comment"];
+            this.relationType = data["relationType"] ? PersonRelationType.fromJS(data["relationType"]) : <any>undefined;
+            this.person = data["person"] ? Person.fromJS(data["person"]) : <any>undefined;
+            this.relatedPerson = data["relatedPerson"] ? Person.fromJS(data["relatedPerson"]) : <any>undefined;
+            this.isDeleted = data["isDeleted"];
+            this.deleterUserId = data["deleterUserId"];
+            this.deletionTime = data["deletionTime"] ? moment(data["deletionTime"].toString()) : <any>undefined;
+            this.lastModificationTime = data["lastModificationTime"] ? moment(data["lastModificationTime"].toString()) : <any>undefined;
+            this.lastModifierUserId = data["lastModifierUserId"];
+            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
+            this.creatorUserId = data["creatorUserId"];
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): PersonRelation {
+        data = typeof data === 'object' ? data : {};
+        let result = new PersonRelation();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["tenantId"] = this.tenantId;
+        data["personId"] = this.personId;
+        data["relatedPersonId"] = this.relatedPersonId;
+        data["relationTypeId"] = this.relationTypeId;
+        data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
+        data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
+        data["isActive"] = this.isActive;
+        data["confirmationDate"] = this.confirmationDate ? this.confirmationDate.toISOString() : <any>undefined;
+        data["confirmedByUserId"] = this.confirmedByUserId;
+        data["comment"] = this.comment;
+        data["relationType"] = this.relationType ? this.relationType.toJSON() : <any>undefined;
+        data["person"] = this.person ? this.person.toJSON() : <any>undefined;
+        data["relatedPerson"] = this.relatedPerson ? this.relatedPerson.toJSON() : <any>undefined;
+        data["isDeleted"] = this.isDeleted;
+        data["deleterUserId"] = this.deleterUserId;
+        data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
+        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
+        data["lastModifierUserId"] = this.lastModifierUserId;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        data["creatorUserId"] = this.creatorUserId;
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface IPersonRelation {
+    tenantId: number | undefined;
+    personId: number | undefined;
+    relatedPersonId: number | undefined;
+    relationTypeId: string | undefined;
+    startDate: moment.Moment | undefined;
+    endDate: moment.Moment | undefined;
+    isActive: boolean | undefined;
+    confirmationDate: moment.Moment | undefined;
+    confirmedByUserId: number | undefined;
+    comment: string | undefined;
+    relationType: PersonRelationType | undefined;
+    person: Person | undefined;
+    relatedPerson: Person | undefined;
+    isDeleted: boolean | undefined;
+    deleterUserId: number | undefined;
+    deletionTime: moment.Moment | undefined;
+    lastModificationTime: moment.Moment | undefined;
+    lastModifierUserId: number | undefined;
+    creationTime: moment.Moment | undefined;
+    creatorUserId: number | undefined;
+    id: number | undefined;
+}
+
+export class GenderType implements IGenderType {
+    name!: string | undefined;
+    persons!: Person[] | undefined;
+    isDeleted!: boolean | undefined;
+    deleterUserId!: number | undefined;
+    deletionTime!: moment.Moment | undefined;
+    lastModificationTime!: moment.Moment | undefined;
+    lastModifierUserId!: number | undefined;
+    creationTime!: moment.Moment | undefined;
+    creatorUserId!: number | undefined;
+    id!: string | undefined;
+
+    constructor(data?: IGenderType) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.name = data["name"];
+            if (data["persons"] && data["persons"].constructor === Array) {
+                this.persons = [];
+                for (let item of data["persons"])
+                    this.persons.push(Person.fromJS(item));
+            }
+            this.isDeleted = data["isDeleted"];
+            this.deleterUserId = data["deleterUserId"];
+            this.deletionTime = data["deletionTime"] ? moment(data["deletionTime"].toString()) : <any>undefined;
+            this.lastModificationTime = data["lastModificationTime"] ? moment(data["lastModificationTime"].toString()) : <any>undefined;
+            this.lastModifierUserId = data["lastModifierUserId"];
+            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
+            this.creatorUserId = data["creatorUserId"];
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): GenderType {
+        data = typeof data === 'object' ? data : {};
+        let result = new GenderType();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        if (this.persons && this.persons.constructor === Array) {
+            data["persons"] = [];
+            for (let item of this.persons)
+                data["persons"].push(item.toJSON());
+        }
+        data["isDeleted"] = this.isDeleted;
+        data["deleterUserId"] = this.deleterUserId;
+        data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
+        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
+        data["lastModifierUserId"] = this.lastModifierUserId;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        data["creatorUserId"] = this.creatorUserId;
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface IGenderType {
+    name: string | undefined;
+    persons: Person[] | undefined;
+    isDeleted: boolean | undefined;
+    deleterUserId: number | undefined;
+    deletionTime: moment.Moment | undefined;
+    lastModificationTime: moment.Moment | undefined;
+    lastModifierUserId: number | undefined;
+    creationTime: moment.Moment | undefined;
+    creatorUserId: number | undefined;
+    id: string | undefined;
+}
+
+export class MaritalStatus implements IMaritalStatus {
+    name!: string | undefined;
+    persons!: Person[] | undefined;
+    isDeleted!: boolean | undefined;
+    deleterUserId!: number | undefined;
+    deletionTime!: moment.Moment | undefined;
+    lastModificationTime!: moment.Moment | undefined;
+    lastModifierUserId!: number | undefined;
+    creationTime!: moment.Moment | undefined;
+    creatorUserId!: number | undefined;
+    id!: string | undefined;
+
+    constructor(data?: IMaritalStatus) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.name = data["name"];
+            if (data["persons"] && data["persons"].constructor === Array) {
+                this.persons = [];
+                for (let item of data["persons"])
+                    this.persons.push(Person.fromJS(item));
+            }
+            this.isDeleted = data["isDeleted"];
+            this.deleterUserId = data["deleterUserId"];
+            this.deletionTime = data["deletionTime"] ? moment(data["deletionTime"].toString()) : <any>undefined;
+            this.lastModificationTime = data["lastModificationTime"] ? moment(data["lastModificationTime"].toString()) : <any>undefined;
+            this.lastModifierUserId = data["lastModifierUserId"];
+            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
+            this.creatorUserId = data["creatorUserId"];
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): MaritalStatus {
+        data = typeof data === 'object' ? data : {};
+        let result = new MaritalStatus();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        if (this.persons && this.persons.constructor === Array) {
+            data["persons"] = [];
+            for (let item of this.persons)
+                data["persons"].push(item.toJSON());
+        }
+        data["isDeleted"] = this.isDeleted;
+        data["deleterUserId"] = this.deleterUserId;
+        data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
+        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
+        data["lastModifierUserId"] = this.lastModifierUserId;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        data["creatorUserId"] = this.creatorUserId;
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface IMaritalStatus {
+    name: string | undefined;
+    persons: Person[] | undefined;
+    isDeleted: boolean | undefined;
+    deleterUserId: number | undefined;
+    deletionTime: moment.Moment | undefined;
+    lastModificationTime: moment.Moment | undefined;
+    lastModifierUserId: number | undefined;
+    creationTime: moment.Moment | undefined;
+    creatorUserId: number | undefined;
+    id: string | undefined;
+}
+
+export class OrganizationType implements IOrganizationType {
+    name!: string | undefined;
+    organizations!: Organization[] | undefined;
+    isDeleted!: boolean | undefined;
+    deleterUserId!: number | undefined;
+    deletionTime!: moment.Moment | undefined;
+    lastModificationTime!: moment.Moment | undefined;
+    lastModifierUserId!: number | undefined;
+    creationTime!: moment.Moment | undefined;
+    creatorUserId!: number | undefined;
+    id!: string | undefined;
+
+    constructor(data?: IOrganizationType) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.name = data["name"];
+            if (data["organizations"] && data["organizations"].constructor === Array) {
+                this.organizations = [];
+                for (let item of data["organizations"])
+                    this.organizations.push(Organization.fromJS(item));
+            }
+            this.isDeleted = data["isDeleted"];
+            this.deleterUserId = data["deleterUserId"];
+            this.deletionTime = data["deletionTime"] ? moment(data["deletionTime"].toString()) : <any>undefined;
+            this.lastModificationTime = data["lastModificationTime"] ? moment(data["lastModificationTime"].toString()) : <any>undefined;
+            this.lastModifierUserId = data["lastModifierUserId"];
+            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
+            this.creatorUserId = data["creatorUserId"];
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): OrganizationType {
+        data = typeof data === 'object' ? data : {};
+        let result = new OrganizationType();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        if (this.organizations && this.organizations.constructor === Array) {
+            data["organizations"] = [];
+            for (let item of this.organizations)
+                data["organizations"].push(item.toJSON());
+        }
+        data["isDeleted"] = this.isDeleted;
+        data["deleterUserId"] = this.deleterUserId;
+        data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
+        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
+        data["lastModifierUserId"] = this.lastModifierUserId;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        data["creatorUserId"] = this.creatorUserId;
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface IOrganizationType {
+    name: string | undefined;
+    organizations: Organization[] | undefined;
+    isDeleted: boolean | undefined;
+    deleterUserId: number | undefined;
+    deletionTime: moment.Moment | undefined;
+    lastModificationTime: moment.Moment | undefined;
+    lastModifierUserId: number | undefined;
+    creationTime: moment.Moment | undefined;
+    creatorUserId: number | undefined;
+    id: string | undefined;
+}
+
+export class OrganizationAlias implements IOrganizationAlias {
+    tenantId!: number | undefined;
+    alias!: string;
+    orgId!: number | undefined;
+    organization!: Organization | undefined;
+    isDeleted!: boolean | undefined;
+    deleterUserId!: number | undefined;
+    deletionTime!: moment.Moment | undefined;
+    lastModificationTime!: moment.Moment | undefined;
+    lastModifierUserId!: number | undefined;
+    creationTime!: moment.Moment | undefined;
+    creatorUserId!: number | undefined;
+    id!: number | undefined;
+
+    constructor(data?: IOrganizationAlias) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.tenantId = data["tenantId"];
+            this.alias = data["alias"];
+            this.orgId = data["orgId"];
+            this.organization = data["organization"] ? Organization.fromJS(data["organization"]) : <any>undefined;
+            this.isDeleted = data["isDeleted"];
+            this.deleterUserId = data["deleterUserId"];
+            this.deletionTime = data["deletionTime"] ? moment(data["deletionTime"].toString()) : <any>undefined;
+            this.lastModificationTime = data["lastModificationTime"] ? moment(data["lastModificationTime"].toString()) : <any>undefined;
+            this.lastModifierUserId = data["lastModifierUserId"];
+            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
+            this.creatorUserId = data["creatorUserId"];
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): OrganizationAlias {
+        data = typeof data === 'object' ? data : {};
+        let result = new OrganizationAlias();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["tenantId"] = this.tenantId;
+        data["alias"] = this.alias;
+        data["orgId"] = this.orgId;
+        data["organization"] = this.organization ? this.organization.toJSON() : <any>undefined;
+        data["isDeleted"] = this.isDeleted;
+        data["deleterUserId"] = this.deleterUserId;
+        data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
+        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
+        data["lastModifierUserId"] = this.lastModifierUserId;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        data["creatorUserId"] = this.creatorUserId;
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface IOrganizationAlias {
+    tenantId: number | undefined;
+    alias: string;
+    orgId: number | undefined;
+    organization: Organization | undefined;
+    isDeleted: boolean | undefined;
+    deleterUserId: number | undefined;
+    deletionTime: moment.Moment | undefined;
+    lastModificationTime: moment.Moment | undefined;
+    lastModifierUserId: number | undefined;
+    creationTime: moment.Moment | undefined;
+    creatorUserId: number | undefined;
+    id: number | undefined;
+}
+
+export class OrganizationBusinessCategory implements IOrganizationBusinessCategory {
+    tenantId!: number | undefined;
+    orgId!: number | undefined;
+    businessCategoryId!: number | undefined;
+    organization!: Organization | undefined;
+    businessCategory!: BusinessCategory | undefined;
+    isDeleted!: boolean | undefined;
+    deleterUserId!: number | undefined;
+    deletionTime!: moment.Moment | undefined;
+    lastModificationTime!: moment.Moment | undefined;
+    lastModifierUserId!: number | undefined;
+    creationTime!: moment.Moment | undefined;
+    creatorUserId!: number | undefined;
+    id!: number | undefined;
+
+    constructor(data?: IOrganizationBusinessCategory) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.tenantId = data["tenantId"];
+            this.orgId = data["orgId"];
+            this.businessCategoryId = data["businessCategoryId"];
+            this.organization = data["organization"] ? Organization.fromJS(data["organization"]) : <any>undefined;
+            this.businessCategory = data["businessCategory"] ? BusinessCategory.fromJS(data["businessCategory"]) : <any>undefined;
+            this.isDeleted = data["isDeleted"];
+            this.deleterUserId = data["deleterUserId"];
+            this.deletionTime = data["deletionTime"] ? moment(data["deletionTime"].toString()) : <any>undefined;
+            this.lastModificationTime = data["lastModificationTime"] ? moment(data["lastModificationTime"].toString()) : <any>undefined;
+            this.lastModifierUserId = data["lastModifierUserId"];
+            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
+            this.creatorUserId = data["creatorUserId"];
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): OrganizationBusinessCategory {
+        data = typeof data === 'object' ? data : {};
+        let result = new OrganizationBusinessCategory();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["tenantId"] = this.tenantId;
+        data["orgId"] = this.orgId;
+        data["businessCategoryId"] = this.businessCategoryId;
+        data["organization"] = this.organization ? this.organization.toJSON() : <any>undefined;
+        data["businessCategory"] = this.businessCategory ? this.businessCategory.toJSON() : <any>undefined;
+        data["isDeleted"] = this.isDeleted;
+        data["deleterUserId"] = this.deleterUserId;
+        data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
+        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
+        data["lastModifierUserId"] = this.lastModifierUserId;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        data["creatorUserId"] = this.creatorUserId;
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface IOrganizationBusinessCategory {
+    tenantId: number | undefined;
+    orgId: number | undefined;
+    businessCategoryId: number | undefined;
+    organization: Organization | undefined;
+    businessCategory: BusinessCategory | undefined;
+    isDeleted: boolean | undefined;
+    deleterUserId: number | undefined;
+    deletionTime: moment.Moment | undefined;
+    lastModificationTime: moment.Moment | undefined;
+    lastModifierUserId: number | undefined;
+    creationTime: moment.Moment | undefined;
+    creatorUserId: number | undefined;
+    id: number | undefined;
+}
+
+export class Pipeline implements IPipeline {
+    tenantId!: number | undefined;
+    name!: string;
+    purposeId!: string;
+    contactGroupId!: string | undefined;
+    purpose!: PipelinePurpose | undefined;
+    contactGroup!: ContactGroup | undefined;
+    stages!: Stage[] | undefined;
+    actionTransitionMappings!: ActionTransitionMapping[] | undefined;
+    actionAccessibilityMappings!: ActionAccessibilityMapping[] | undefined;
+    orderTypes!: OrderType[] | undefined;
+    isDeleted!: boolean | undefined;
+    deleterUserId!: number | undefined;
+    deletionTime!: moment.Moment | undefined;
+    lastModificationTime!: moment.Moment | undefined;
+    lastModifierUserId!: number | undefined;
+    creationTime!: moment.Moment | undefined;
+    creatorUserId!: number | undefined;
+    id!: number | undefined;
+
+    constructor(data?: IPipeline) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.tenantId = data["tenantId"];
+            this.name = data["name"];
+            this.purposeId = data["purposeId"];
+            this.contactGroupId = data["contactGroupId"];
+            this.purpose = data["purpose"] ? PipelinePurpose.fromJS(data["purpose"]) : <any>undefined;
+            this.contactGroup = data["contactGroup"] ? ContactGroup.fromJS(data["contactGroup"]) : <any>undefined;
+            if (data["stages"] && data["stages"].constructor === Array) {
+                this.stages = [];
+                for (let item of data["stages"])
+                    this.stages.push(Stage.fromJS(item));
+            }
+            if (data["actionTransitionMappings"] && data["actionTransitionMappings"].constructor === Array) {
+                this.actionTransitionMappings = [];
+                for (let item of data["actionTransitionMappings"])
+                    this.actionTransitionMappings.push(ActionTransitionMapping.fromJS(item));
+            }
+            if (data["actionAccessibilityMappings"] && data["actionAccessibilityMappings"].constructor === Array) {
+                this.actionAccessibilityMappings = [];
+                for (let item of data["actionAccessibilityMappings"])
+                    this.actionAccessibilityMappings.push(ActionAccessibilityMapping.fromJS(item));
+            }
+            if (data["orderTypes"] && data["orderTypes"].constructor === Array) {
+                this.orderTypes = [];
+                for (let item of data["orderTypes"])
+                    this.orderTypes.push(OrderType.fromJS(item));
+            }
+            this.isDeleted = data["isDeleted"];
+            this.deleterUserId = data["deleterUserId"];
+            this.deletionTime = data["deletionTime"] ? moment(data["deletionTime"].toString()) : <any>undefined;
+            this.lastModificationTime = data["lastModificationTime"] ? moment(data["lastModificationTime"].toString()) : <any>undefined;
+            this.lastModifierUserId = data["lastModifierUserId"];
+            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
+            this.creatorUserId = data["creatorUserId"];
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): Pipeline {
+        data = typeof data === 'object' ? data : {};
+        let result = new Pipeline();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["tenantId"] = this.tenantId;
+        data["name"] = this.name;
+        data["purposeId"] = this.purposeId;
+        data["contactGroupId"] = this.contactGroupId;
+        data["purpose"] = this.purpose ? this.purpose.toJSON() : <any>undefined;
+        data["contactGroup"] = this.contactGroup ? this.contactGroup.toJSON() : <any>undefined;
+        if (this.stages && this.stages.constructor === Array) {
+            data["stages"] = [];
+            for (let item of this.stages)
+                data["stages"].push(item.toJSON());
+        }
+        if (this.actionTransitionMappings && this.actionTransitionMappings.constructor === Array) {
+            data["actionTransitionMappings"] = [];
+            for (let item of this.actionTransitionMappings)
+                data["actionTransitionMappings"].push(item.toJSON());
+        }
+        if (this.actionAccessibilityMappings && this.actionAccessibilityMappings.constructor === Array) {
+            data["actionAccessibilityMappings"] = [];
+            for (let item of this.actionAccessibilityMappings)
+                data["actionAccessibilityMappings"].push(item.toJSON());
+        }
+        if (this.orderTypes && this.orderTypes.constructor === Array) {
+            data["orderTypes"] = [];
+            for (let item of this.orderTypes)
+                data["orderTypes"].push(item.toJSON());
+        }
+        data["isDeleted"] = this.isDeleted;
+        data["deleterUserId"] = this.deleterUserId;
+        data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
+        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
+        data["lastModifierUserId"] = this.lastModifierUserId;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        data["creatorUserId"] = this.creatorUserId;
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface IPipeline {
+    tenantId: number | undefined;
+    name: string;
+    purposeId: string;
+    contactGroupId: string | undefined;
+    purpose: PipelinePurpose | undefined;
+    contactGroup: ContactGroup | undefined;
+    stages: Stage[] | undefined;
+    actionTransitionMappings: ActionTransitionMapping[] | undefined;
+    actionAccessibilityMappings: ActionAccessibilityMapping[] | undefined;
+    orderTypes: OrderType[] | undefined;
+    isDeleted: boolean | undefined;
+    deleterUserId: number | undefined;
+    deletionTime: moment.Moment | undefined;
+    lastModificationTime: moment.Moment | undefined;
+    lastModifierUserId: number | undefined;
+    creationTime: moment.Moment | undefined;
+    creatorUserId: number | undefined;
+    id: number | undefined;
+}
+
+export class OrderType implements IOrderType {
+    tenantId!: number | undefined;
+    name!: string;
+    sysId!: string | undefined;
+    pipelineId!: number | undefined;
+    pipeline!: Pipeline | undefined;
+    orders!: Order[] | undefined;
+    isDeleted!: boolean | undefined;
+    deleterUserId!: number | undefined;
+    deletionTime!: moment.Moment | undefined;
+    lastModificationTime!: moment.Moment | undefined;
+    lastModifierUserId!: number | undefined;
+    creationTime!: moment.Moment | undefined;
+    creatorUserId!: number | undefined;
+    id!: number | undefined;
+
+    constructor(data?: IOrderType) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.tenantId = data["tenantId"];
+            this.name = data["name"];
+            this.sysId = data["sysId"];
+            this.pipelineId = data["pipelineId"];
+            this.pipeline = data["pipeline"] ? Pipeline.fromJS(data["pipeline"]) : <any>undefined;
+            if (data["orders"] && data["orders"].constructor === Array) {
+                this.orders = [];
+                for (let item of data["orders"])
+                    this.orders.push(Order.fromJS(item));
+            }
+            this.isDeleted = data["isDeleted"];
+            this.deleterUserId = data["deleterUserId"];
+            this.deletionTime = data["deletionTime"] ? moment(data["deletionTime"].toString()) : <any>undefined;
+            this.lastModificationTime = data["lastModificationTime"] ? moment(data["lastModificationTime"].toString()) : <any>undefined;
+            this.lastModifierUserId = data["lastModifierUserId"];
+            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
+            this.creatorUserId = data["creatorUserId"];
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): OrderType {
+        data = typeof data === 'object' ? data : {};
+        let result = new OrderType();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["tenantId"] = this.tenantId;
+        data["name"] = this.name;
+        data["sysId"] = this.sysId;
+        data["pipelineId"] = this.pipelineId;
+        data["pipeline"] = this.pipeline ? this.pipeline.toJSON() : <any>undefined;
+        if (this.orders && this.orders.constructor === Array) {
+            data["orders"] = [];
+            for (let item of this.orders)
+                data["orders"].push(item.toJSON());
+        }
+        data["isDeleted"] = this.isDeleted;
+        data["deleterUserId"] = this.deleterUserId;
+        data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
+        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
+        data["lastModifierUserId"] = this.lastModifierUserId;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        data["creatorUserId"] = this.creatorUserId;
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface IOrderType {
+    tenantId: number | undefined;
+    name: string;
+    sysId: string | undefined;
+    pipelineId: number | undefined;
+    pipeline: Pipeline | undefined;
+    orders: Order[] | undefined;
+    isDeleted: boolean | undefined;
+    deleterUserId: number | undefined;
+    deletionTime: moment.Moment | undefined;
+    lastModificationTime: moment.Moment | undefined;
+    lastModifierUserId: number | undefined;
+    creationTime: moment.Moment | undefined;
+    creatorUserId: number | undefined;
+    id: number | undefined;
+}
+
+export class Stage implements IStage {
+    tenantId!: number | undefined;
+    pipelineId!: number | undefined;
+    name!: string;
+    color!: string | undefined;
+    sortOrder!: number | undefined;
+    isFinal!: boolean;
+    pipeline!: Pipeline | undefined;
+    actionTransitionMappings!: ActionTransitionMapping[] | undefined;
+    actionAccessibilityMappings!: ActionAccessibilityMapping[] | undefined;
+    leads!: Lead[] | undefined;
+    orders!: Order[] | undefined;
+    isDeleted!: boolean | undefined;
+    deleterUserId!: number | undefined;
+    deletionTime!: moment.Moment | undefined;
+    lastModificationTime!: moment.Moment | undefined;
+    lastModifierUserId!: number | undefined;
+    creationTime!: moment.Moment | undefined;
+    creatorUserId!: number | undefined;
+    id!: number | undefined;
+
+    constructor(data?: IStage) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.tenantId = data["tenantId"];
+            this.pipelineId = data["pipelineId"];
+            this.name = data["name"];
+            this.color = data["color"];
+            this.sortOrder = data["sortOrder"];
+            this.isFinal = data["isFinal"];
+            this.pipeline = data["pipeline"] ? Pipeline.fromJS(data["pipeline"]) : <any>undefined;
+            if (data["actionTransitionMappings"] && data["actionTransitionMappings"].constructor === Array) {
+                this.actionTransitionMappings = [];
+                for (let item of data["actionTransitionMappings"])
+                    this.actionTransitionMappings.push(ActionTransitionMapping.fromJS(item));
+            }
+            if (data["actionAccessibilityMappings"] && data["actionAccessibilityMappings"].constructor === Array) {
+                this.actionAccessibilityMappings = [];
+                for (let item of data["actionAccessibilityMappings"])
+                    this.actionAccessibilityMappings.push(ActionAccessibilityMapping.fromJS(item));
+            }
+            if (data["leads"] && data["leads"].constructor === Array) {
+                this.leads = [];
+                for (let item of data["leads"])
+                    this.leads.push(Lead.fromJS(item));
+            }
+            if (data["orders"] && data["orders"].constructor === Array) {
+                this.orders = [];
+                for (let item of data["orders"])
+                    this.orders.push(Order.fromJS(item));
+            }
+            this.isDeleted = data["isDeleted"];
+            this.deleterUserId = data["deleterUserId"];
+            this.deletionTime = data["deletionTime"] ? moment(data["deletionTime"].toString()) : <any>undefined;
+            this.lastModificationTime = data["lastModificationTime"] ? moment(data["lastModificationTime"].toString()) : <any>undefined;
+            this.lastModifierUserId = data["lastModifierUserId"];
+            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
+            this.creatorUserId = data["creatorUserId"];
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): Stage {
+        data = typeof data === 'object' ? data : {};
+        let result = new Stage();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["tenantId"] = this.tenantId;
+        data["pipelineId"] = this.pipelineId;
+        data["name"] = this.name;
+        data["color"] = this.color;
+        data["sortOrder"] = this.sortOrder;
+        data["isFinal"] = this.isFinal;
+        data["pipeline"] = this.pipeline ? this.pipeline.toJSON() : <any>undefined;
+        if (this.actionTransitionMappings && this.actionTransitionMappings.constructor === Array) {
+            data["actionTransitionMappings"] = [];
+            for (let item of this.actionTransitionMappings)
+                data["actionTransitionMappings"].push(item.toJSON());
+        }
+        if (this.actionAccessibilityMappings && this.actionAccessibilityMappings.constructor === Array) {
+            data["actionAccessibilityMappings"] = [];
+            for (let item of this.actionAccessibilityMappings)
+                data["actionAccessibilityMappings"].push(item.toJSON());
+        }
+        if (this.leads && this.leads.constructor === Array) {
+            data["leads"] = [];
+            for (let item of this.leads)
+                data["leads"].push(item.toJSON());
+        }
+        if (this.orders && this.orders.constructor === Array) {
+            data["orders"] = [];
+            for (let item of this.orders)
+                data["orders"].push(item.toJSON());
+        }
+        data["isDeleted"] = this.isDeleted;
+        data["deleterUserId"] = this.deleterUserId;
+        data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
+        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
+        data["lastModifierUserId"] = this.lastModifierUserId;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        data["creatorUserId"] = this.creatorUserId;
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface IStage {
+    tenantId: number | undefined;
+    pipelineId: number | undefined;
+    name: string;
+    color: string | undefined;
+    sortOrder: number | undefined;
+    isFinal: boolean;
+    pipeline: Pipeline | undefined;
+    actionTransitionMappings: ActionTransitionMapping[] | undefined;
+    actionAccessibilityMappings: ActionAccessibilityMapping[] | undefined;
+    leads: Lead[] | undefined;
+    orders: Order[] | undefined;
+    isDeleted: boolean | undefined;
+    deleterUserId: number | undefined;
+    deletionTime: moment.Moment | undefined;
+    lastModificationTime: moment.Moment | undefined;
+    lastModifierUserId: number | undefined;
+    creationTime: moment.Moment | undefined;
+    creatorUserId: number | undefined;
+    id: number | undefined;
+}
+
+export class OrderSubscription implements IOrderSubscription {
+    tenantId!: number | undefined;
+    startDate!: moment.Moment;
+    endDate!: moment.Moment | undefined;
+    fee!: number;
+    serviceType!: string | undefined;
+    serviceId!: string | undefined;
+    serviceTypeId!: number | undefined;
+    serviceName!: string | undefined;
+    serviceCapacity!: number | undefined;
+    orderId!: number | undefined;
+    frequencyString!: string | undefined;
+    frequency!: OrderSubscriptionFrequency | undefined;
+    trialDayCount!: number | undefined;
+    statusId!: string;
+    isInTrial!: boolean | undefined;
+    isLocked!: boolean;
+    hasRecurringBilling!: boolean | undefined;
+    previousOrderSubscriptionId!: number | undefined;
+    lastExpiryNotificationDate!: moment.Moment | undefined;
+    order!: Order | undefined;
+    status!: SubscriptionStatus | undefined;
+    previousOrderSubscription!: OrderSubscription | undefined;
+    orderSubscriptionPayments!: OrderSubscriptionPayment[] | undefined;
+    isDeleted!: boolean | undefined;
+    deleterUserId!: number | undefined;
+    deletionTime!: moment.Moment | undefined;
+    lastModificationTime!: moment.Moment | undefined;
+    lastModifierUserId!: number | undefined;
+    creationTime!: moment.Moment | undefined;
+    creatorUserId!: number | undefined;
+    id!: number | undefined;
+
+    constructor(data?: IOrderSubscription) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.tenantId = data["tenantId"];
+            this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
+            this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
+            this.fee = data["fee"];
+            this.serviceType = data["serviceType"];
+            this.serviceId = data["serviceId"];
+            this.serviceTypeId = data["serviceTypeId"];
+            this.serviceName = data["serviceName"];
+            this.serviceCapacity = data["serviceCapacity"];
+            this.orderId = data["orderId"];
+            this.frequencyString = data["frequencyString"];
+            this.frequency = data["frequency"];
+            this.trialDayCount = data["trialDayCount"];
+            this.statusId = data["statusId"];
+            this.isInTrial = data["isInTrial"];
+            this.isLocked = data["isLocked"];
+            this.hasRecurringBilling = data["hasRecurringBilling"];
+            this.previousOrderSubscriptionId = data["previousOrderSubscriptionId"];
+            this.lastExpiryNotificationDate = data["lastExpiryNotificationDate"] ? moment(data["lastExpiryNotificationDate"].toString()) : <any>undefined;
+            this.order = data["order"] ? Order.fromJS(data["order"]) : <any>undefined;
+            this.status = data["status"] ? SubscriptionStatus.fromJS(data["status"]) : <any>undefined;
+            this.previousOrderSubscription = data["previousOrderSubscription"] ? OrderSubscription.fromJS(data["previousOrderSubscription"]) : <any>undefined;
+            if (data["orderSubscriptionPayments"] && data["orderSubscriptionPayments"].constructor === Array) {
+                this.orderSubscriptionPayments = [];
+                for (let item of data["orderSubscriptionPayments"])
+                    this.orderSubscriptionPayments.push(OrderSubscriptionPayment.fromJS(item));
+            }
+            this.isDeleted = data["isDeleted"];
+            this.deleterUserId = data["deleterUserId"];
+            this.deletionTime = data["deletionTime"] ? moment(data["deletionTime"].toString()) : <any>undefined;
+            this.lastModificationTime = data["lastModificationTime"] ? moment(data["lastModificationTime"].toString()) : <any>undefined;
+            this.lastModifierUserId = data["lastModifierUserId"];
+            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
+            this.creatorUserId = data["creatorUserId"];
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): OrderSubscription {
+        data = typeof data === 'object' ? data : {};
+        let result = new OrderSubscription();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["tenantId"] = this.tenantId;
+        data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
+        data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
+        data["fee"] = this.fee;
+        data["serviceType"] = this.serviceType;
+        data["serviceId"] = this.serviceId;
+        data["serviceTypeId"] = this.serviceTypeId;
+        data["serviceName"] = this.serviceName;
+        data["serviceCapacity"] = this.serviceCapacity;
+        data["orderId"] = this.orderId;
+        data["frequencyString"] = this.frequencyString;
+        data["frequency"] = this.frequency;
+        data["trialDayCount"] = this.trialDayCount;
+        data["statusId"] = this.statusId;
+        data["isInTrial"] = this.isInTrial;
+        data["isLocked"] = this.isLocked;
+        data["hasRecurringBilling"] = this.hasRecurringBilling;
+        data["previousOrderSubscriptionId"] = this.previousOrderSubscriptionId;
+        data["lastExpiryNotificationDate"] = this.lastExpiryNotificationDate ? this.lastExpiryNotificationDate.toISOString() : <any>undefined;
+        data["order"] = this.order ? this.order.toJSON() : <any>undefined;
+        data["status"] = this.status ? this.status.toJSON() : <any>undefined;
+        data["previousOrderSubscription"] = this.previousOrderSubscription ? this.previousOrderSubscription.toJSON() : <any>undefined;
+        if (this.orderSubscriptionPayments && this.orderSubscriptionPayments.constructor === Array) {
+            data["orderSubscriptionPayments"] = [];
+            for (let item of this.orderSubscriptionPayments)
+                data["orderSubscriptionPayments"].push(item.toJSON());
+        }
+        data["isDeleted"] = this.isDeleted;
+        data["deleterUserId"] = this.deleterUserId;
+        data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
+        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
+        data["lastModifierUserId"] = this.lastModifierUserId;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        data["creatorUserId"] = this.creatorUserId;
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface IOrderSubscription {
+    tenantId: number | undefined;
+    startDate: moment.Moment;
+    endDate: moment.Moment | undefined;
+    fee: number;
+    serviceType: string | undefined;
+    serviceId: string | undefined;
+    serviceTypeId: number | undefined;
+    serviceName: string | undefined;
+    serviceCapacity: number | undefined;
+    orderId: number | undefined;
+    frequencyString: string | undefined;
+    frequency: OrderSubscriptionFrequency | undefined;
+    trialDayCount: number | undefined;
+    statusId: string;
+    isInTrial: boolean | undefined;
+    isLocked: boolean;
+    hasRecurringBilling: boolean | undefined;
+    previousOrderSubscriptionId: number | undefined;
+    lastExpiryNotificationDate: moment.Moment | undefined;
+    order: Order | undefined;
+    status: SubscriptionStatus | undefined;
+    previousOrderSubscription: OrderSubscription | undefined;
+    orderSubscriptionPayments: OrderSubscriptionPayment[] | undefined;
+    isDeleted: boolean | undefined;
+    deleterUserId: number | undefined;
+    deletionTime: moment.Moment | undefined;
+    lastModificationTime: moment.Moment | undefined;
+    lastModifierUserId: number | undefined;
+    creationTime: moment.Moment | undefined;
+    creatorUserId: number | undefined;
+    id: number | undefined;
+}
+
+export class Invoice implements IInvoice {
+    tenantId!: number | undefined;
+    orderId!: number | undefined;
+    status!: InvoiceStatus;
+    number!: string;
+    amount!: number | undefined;
+    date!: moment.Moment | undefined;
+    dueDate!: moment.Moment | undefined;
+    description!: string | undefined;
+    note!: string | undefined;
+    order!: Order | undefined;
+    lines!: InvoiceLine[] | undefined;
+    isDeleted!: boolean | undefined;
+    deleterUserId!: number | undefined;
+    deletionTime!: moment.Moment | undefined;
+    lastModificationTime!: moment.Moment | undefined;
+    lastModifierUserId!: number | undefined;
+    creationTime!: moment.Moment | undefined;
+    creatorUserId!: number | undefined;
+    id!: number | undefined;
+
+    constructor(data?: IInvoice) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.tenantId = data["tenantId"];
+            this.orderId = data["orderId"];
+            this.status = data["status"];
+            this.number = data["number"];
+            this.amount = data["amount"];
+            this.date = data["date"] ? moment(data["date"].toString()) : <any>undefined;
+            this.dueDate = data["dueDate"] ? moment(data["dueDate"].toString()) : <any>undefined;
+            this.description = data["description"];
+            this.note = data["note"];
+            this.order = data["order"] ? Order.fromJS(data["order"]) : <any>undefined;
+            if (data["lines"] && data["lines"].constructor === Array) {
+                this.lines = [];
+                for (let item of data["lines"])
+                    this.lines.push(InvoiceLine.fromJS(item));
+            }
+            this.isDeleted = data["isDeleted"];
+            this.deleterUserId = data["deleterUserId"];
+            this.deletionTime = data["deletionTime"] ? moment(data["deletionTime"].toString()) : <any>undefined;
+            this.lastModificationTime = data["lastModificationTime"] ? moment(data["lastModificationTime"].toString()) : <any>undefined;
+            this.lastModifierUserId = data["lastModifierUserId"];
+            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
+            this.creatorUserId = data["creatorUserId"];
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): Invoice {
+        data = typeof data === 'object' ? data : {};
+        let result = new Invoice();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["tenantId"] = this.tenantId;
+        data["orderId"] = this.orderId;
+        data["status"] = this.status;
+        data["number"] = this.number;
+        data["amount"] = this.amount;
+        data["date"] = this.date ? this.date.toISOString() : <any>undefined;
+        data["dueDate"] = this.dueDate ? this.dueDate.toISOString() : <any>undefined;
+        data["description"] = this.description;
+        data["note"] = this.note;
+        data["order"] = this.order ? this.order.toJSON() : <any>undefined;
+        if (this.lines && this.lines.constructor === Array) {
+            data["lines"] = [];
+            for (let item of this.lines)
+                data["lines"].push(item.toJSON());
+        }
+        data["isDeleted"] = this.isDeleted;
+        data["deleterUserId"] = this.deleterUserId;
+        data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
+        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
+        data["lastModifierUserId"] = this.lastModifierUserId;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        data["creatorUserId"] = this.creatorUserId;
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface IInvoice {
+    tenantId: number | undefined;
+    orderId: number | undefined;
+    status: InvoiceStatus;
+    number: string;
+    amount: number | undefined;
+    date: moment.Moment | undefined;
+    dueDate: moment.Moment | undefined;
+    description: string | undefined;
+    note: string | undefined;
+    order: Order | undefined;
+    lines: InvoiceLine[] | undefined;
+    isDeleted: boolean | undefined;
+    deleterUserId: number | undefined;
+    deletionTime: moment.Moment | undefined;
+    lastModificationTime: moment.Moment | undefined;
+    lastModifierUserId: number | undefined;
+    creationTime: moment.Moment | undefined;
+    creatorUserId: number | undefined;
+    id: number | undefined;
+}
+
+export class LeadType implements ILeadType {
+    tenantId!: number | undefined;
+    name!: string;
+    sysId!: string | undefined;
+    leads!: Lead[] | undefined;
+    isDeleted!: boolean | undefined;
+    deleterUserId!: number | undefined;
+    deletionTime!: moment.Moment | undefined;
+    lastModificationTime!: moment.Moment | undefined;
+    lastModifierUserId!: number | undefined;
+    creationTime!: moment.Moment | undefined;
+    creatorUserId!: number | undefined;
+    id!: number | undefined;
+
+    constructor(data?: ILeadType) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.tenantId = data["tenantId"];
+            this.name = data["name"];
+            this.sysId = data["sysId"];
+            if (data["leads"] && data["leads"].constructor === Array) {
+                this.leads = [];
+                for (let item of data["leads"])
+                    this.leads.push(Lead.fromJS(item));
+            }
+            this.isDeleted = data["isDeleted"];
+            this.deleterUserId = data["deleterUserId"];
+            this.deletionTime = data["deletionTime"] ? moment(data["deletionTime"].toString()) : <any>undefined;
+            this.lastModificationTime = data["lastModificationTime"] ? moment(data["lastModificationTime"].toString()) : <any>undefined;
+            this.lastModifierUserId = data["lastModifierUserId"];
+            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
+            this.creatorUserId = data["creatorUserId"];
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): LeadType {
+        data = typeof data === 'object' ? data : {};
+        let result = new LeadType();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["tenantId"] = this.tenantId;
+        data["name"] = this.name;
+        data["sysId"] = this.sysId;
+        if (this.leads && this.leads.constructor === Array) {
+            data["leads"] = [];
+            for (let item of this.leads)
+                data["leads"].push(item.toJSON());
+        }
+        data["isDeleted"] = this.isDeleted;
+        data["deleterUserId"] = this.deleterUserId;
+        data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
+        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
+        data["lastModifierUserId"] = this.lastModifierUserId;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        data["creatorUserId"] = this.creatorUserId;
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface ILeadType {
+    tenantId: number | undefined;
+    name: string;
+    sysId: string | undefined;
+    leads: Lead[] | undefined;
+    isDeleted: boolean | undefined;
+    deleterUserId: number | undefined;
+    deletionTime: moment.Moment | undefined;
+    lastModificationTime: moment.Moment | undefined;
+    lastModifierUserId: number | undefined;
+    creationTime: moment.Moment | undefined;
+    creatorUserId: number | undefined;
+    id: number | undefined;
+}
+
+export class LeadRequest implements ILeadRequest {
+    tenantId!: number | undefined;
+    leadId!: number | undefined;
+    leadRequestDate!: moment.Moment | undefined;
+    channelCode!: string | undefined;
+    campaignCode!: string | undefined;
+    sourceCode!: string | undefined;
+    affiliateCode!: string | undefined;
+    clientXref!: string | undefined;
+    clientIp!: string | undefined;
+    leadRequestXref!: string | undefined;
+    userAgent!: string | undefined;
+    refererUrl!: string | undefined;
+    entryUrl!: string | undefined;
+    utmParameterId!: number | undefined;
+    gclId!: string | undefined;
+    organizationUnitId!: number | undefined;
+    lastTransactionId!: number | undefined;
+    paymentPeriodType!: LeadRequestPaymentPeriodType | undefined;
+    applicantId!: string | undefined;
+    applicationId!: string | undefined;
+    clickId!: string | undefined;
+    siteId!: string | undefined;
+    siteUrl!: string | undefined;
+    isHelpNeeded!: boolean | undefined;
+    comments!: string | undefined;
+    lead!: Lead | undefined;
+    leadInterests!: LeadInterest[] | undefined;
+    leadPersonalInfo!: LeadPersonalInfo | undefined;
+    leadBusinessInfo!: LeadBusinessInfo | undefined;
+    utmParameter!: UTMParameter | undefined;
+    lastTransaction!: Transaction | undefined;
+    isDeleted!: boolean | undefined;
+    deleterUserId!: number | undefined;
+    deletionTime!: moment.Moment | undefined;
+    lastModificationTime!: moment.Moment | undefined;
+    lastModifierUserId!: number | undefined;
+    creationTime!: moment.Moment | undefined;
+    creatorUserId!: number | undefined;
+    id!: number | undefined;
+
+    constructor(data?: ILeadRequest) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.tenantId = data["tenantId"];
+            this.leadId = data["leadId"];
+            this.leadRequestDate = data["leadRequestDate"] ? moment(data["leadRequestDate"].toString()) : <any>undefined;
+            this.channelCode = data["channelCode"];
+            this.campaignCode = data["campaignCode"];
+            this.sourceCode = data["sourceCode"];
+            this.affiliateCode = data["affiliateCode"];
+            this.clientXref = data["clientXref"];
+            this.clientIp = data["clientIp"];
+            this.leadRequestXref = data["leadRequestXref"];
+            this.userAgent = data["userAgent"];
+            this.refererUrl = data["refererUrl"];
+            this.entryUrl = data["entryUrl"];
+            this.utmParameterId = data["utmParameterId"];
+            this.gclId = data["gclId"];
+            this.organizationUnitId = data["organizationUnitId"];
+            this.lastTransactionId = data["lastTransactionId"];
+            this.paymentPeriodType = data["paymentPeriodType"];
+            this.applicantId = data["applicantId"];
+            this.applicationId = data["applicationId"];
+            this.clickId = data["clickId"];
+            this.siteId = data["siteId"];
+            this.siteUrl = data["siteUrl"];
+            this.isHelpNeeded = data["isHelpNeeded"];
+            this.comments = data["comments"];
+            this.lead = data["lead"] ? Lead.fromJS(data["lead"]) : <any>undefined;
+            if (data["leadInterests"] && data["leadInterests"].constructor === Array) {
+                this.leadInterests = [];
+                for (let item of data["leadInterests"])
+                    this.leadInterests.push(LeadInterest.fromJS(item));
+            }
+            this.leadPersonalInfo = data["leadPersonalInfo"] ? LeadPersonalInfo.fromJS(data["leadPersonalInfo"]) : <any>undefined;
+            this.leadBusinessInfo = data["leadBusinessInfo"] ? LeadBusinessInfo.fromJS(data["leadBusinessInfo"]) : <any>undefined;
+            this.utmParameter = data["utmParameter"] ? UTMParameter.fromJS(data["utmParameter"]) : <any>undefined;
+            this.lastTransaction = data["lastTransaction"] ? Transaction.fromJS(data["lastTransaction"]) : <any>undefined;
+            this.isDeleted = data["isDeleted"];
+            this.deleterUserId = data["deleterUserId"];
+            this.deletionTime = data["deletionTime"] ? moment(data["deletionTime"].toString()) : <any>undefined;
+            this.lastModificationTime = data["lastModificationTime"] ? moment(data["lastModificationTime"].toString()) : <any>undefined;
+            this.lastModifierUserId = data["lastModifierUserId"];
+            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
+            this.creatorUserId = data["creatorUserId"];
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): LeadRequest {
+        data = typeof data === 'object' ? data : {};
+        let result = new LeadRequest();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["tenantId"] = this.tenantId;
+        data["leadId"] = this.leadId;
+        data["leadRequestDate"] = this.leadRequestDate ? this.leadRequestDate.toISOString() : <any>undefined;
+        data["channelCode"] = this.channelCode;
+        data["campaignCode"] = this.campaignCode;
+        data["sourceCode"] = this.sourceCode;
+        data["affiliateCode"] = this.affiliateCode;
+        data["clientXref"] = this.clientXref;
+        data["clientIp"] = this.clientIp;
+        data["leadRequestXref"] = this.leadRequestXref;
+        data["userAgent"] = this.userAgent;
+        data["refererUrl"] = this.refererUrl;
+        data["entryUrl"] = this.entryUrl;
+        data["utmParameterId"] = this.utmParameterId;
+        data["gclId"] = this.gclId;
+        data["organizationUnitId"] = this.organizationUnitId;
+        data["lastTransactionId"] = this.lastTransactionId;
+        data["paymentPeriodType"] = this.paymentPeriodType;
+        data["applicantId"] = this.applicantId;
+        data["applicationId"] = this.applicationId;
+        data["clickId"] = this.clickId;
+        data["siteId"] = this.siteId;
+        data["siteUrl"] = this.siteUrl;
+        data["isHelpNeeded"] = this.isHelpNeeded;
+        data["comments"] = this.comments;
+        data["lead"] = this.lead ? this.lead.toJSON() : <any>undefined;
+        if (this.leadInterests && this.leadInterests.constructor === Array) {
+            data["leadInterests"] = [];
+            for (let item of this.leadInterests)
+                data["leadInterests"].push(item.toJSON());
+        }
+        data["leadPersonalInfo"] = this.leadPersonalInfo ? this.leadPersonalInfo.toJSON() : <any>undefined;
+        data["leadBusinessInfo"] = this.leadBusinessInfo ? this.leadBusinessInfo.toJSON() : <any>undefined;
+        data["utmParameter"] = this.utmParameter ? this.utmParameter.toJSON() : <any>undefined;
+        data["lastTransaction"] = this.lastTransaction ? this.lastTransaction.toJSON() : <any>undefined;
+        data["isDeleted"] = this.isDeleted;
+        data["deleterUserId"] = this.deleterUserId;
+        data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
+        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
+        data["lastModifierUserId"] = this.lastModifierUserId;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        data["creatorUserId"] = this.creatorUserId;
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface ILeadRequest {
+    tenantId: number | undefined;
+    leadId: number | undefined;
+    leadRequestDate: moment.Moment | undefined;
+    channelCode: string | undefined;
+    campaignCode: string | undefined;
+    sourceCode: string | undefined;
+    affiliateCode: string | undefined;
+    clientXref: string | undefined;
+    clientIp: string | undefined;
+    leadRequestXref: string | undefined;
+    userAgent: string | undefined;
+    refererUrl: string | undefined;
+    entryUrl: string | undefined;
+    utmParameterId: number | undefined;
+    gclId: string | undefined;
+    organizationUnitId: number | undefined;
+    lastTransactionId: number | undefined;
+    paymentPeriodType: LeadRequestPaymentPeriodType | undefined;
+    applicantId: string | undefined;
+    applicationId: string | undefined;
+    clickId: string | undefined;
+    siteId: string | undefined;
+    siteUrl: string | undefined;
+    isHelpNeeded: boolean | undefined;
+    comments: string | undefined;
+    lead: Lead | undefined;
+    leadInterests: LeadInterest[] | undefined;
+    leadPersonalInfo: LeadPersonalInfo | undefined;
+    leadBusinessInfo: LeadBusinessInfo | undefined;
+    utmParameter: UTMParameter | undefined;
+    lastTransaction: Transaction | undefined;
+    isDeleted: boolean | undefined;
+    deleterUserId: number | undefined;
+    deletionTime: moment.Moment | undefined;
+    lastModificationTime: moment.Moment | undefined;
+    lastModifierUserId: number | undefined;
+    creationTime: moment.Moment | undefined;
+    creatorUserId: number | undefined;
+    id: number | undefined;
+}
+
+export class LeadCancellationReason implements ILeadCancellationReason {
+    name!: string | undefined;
+    isCommentRequired!: boolean | undefined;
+    sortOrder!: number | undefined;
+    isDeleted!: boolean | undefined;
+    deleterUserId!: number | undefined;
+    deletionTime!: moment.Moment | undefined;
+    lastModificationTime!: moment.Moment | undefined;
+    lastModifierUserId!: number | undefined;
+    creationTime!: moment.Moment | undefined;
+    creatorUserId!: number | undefined;
+    id!: string | undefined;
+
+    constructor(data?: ILeadCancellationReason) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.name = data["name"];
+            this.isCommentRequired = data["isCommentRequired"];
+            this.sortOrder = data["sortOrder"];
+            this.isDeleted = data["isDeleted"];
+            this.deleterUserId = data["deleterUserId"];
+            this.deletionTime = data["deletionTime"] ? moment(data["deletionTime"].toString()) : <any>undefined;
+            this.lastModificationTime = data["lastModificationTime"] ? moment(data["lastModificationTime"].toString()) : <any>undefined;
+            this.lastModifierUserId = data["lastModifierUserId"];
+            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
+            this.creatorUserId = data["creatorUserId"];
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): LeadCancellationReason {
+        data = typeof data === 'object' ? data : {};
+        let result = new LeadCancellationReason();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        data["isCommentRequired"] = this.isCommentRequired;
+        data["sortOrder"] = this.sortOrder;
+        data["isDeleted"] = this.isDeleted;
+        data["deleterUserId"] = this.deleterUserId;
+        data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
+        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
+        data["lastModifierUserId"] = this.lastModifierUserId;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        data["creatorUserId"] = this.creatorUserId;
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface ILeadCancellationReason {
+    name: string | undefined;
+    isCommentRequired: boolean | undefined;
+    sortOrder: number | undefined;
+    isDeleted: boolean | undefined;
+    deleterUserId: number | undefined;
+    deletionTime: moment.Moment | undefined;
+    lastModificationTime: moment.Moment | undefined;
+    lastModifierUserId: number | undefined;
+    creationTime: moment.Moment | undefined;
+    creatorUserId: number | undefined;
+    id: string | undefined;
+}
+
+export class DocumentType implements IDocumentType {
+    tenantId!: number | undefined;
+    name!: string;
+    documents!: Document[] | undefined;
+    isDeleted!: boolean | undefined;
+    deleterUserId!: number | undefined;
+    deletionTime!: moment.Moment | undefined;
+    lastModificationTime!: moment.Moment | undefined;
+    lastModifierUserId!: number | undefined;
+    creationTime!: moment.Moment | undefined;
+    creatorUserId!: number | undefined;
+    id!: number | undefined;
+
+    constructor(data?: IDocumentType) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.tenantId = data["tenantId"];
+            this.name = data["name"];
+            if (data["documents"] && data["documents"].constructor === Array) {
+                this.documents = [];
+                for (let item of data["documents"])
+                    this.documents.push(Document.fromJS(item));
+            }
+            this.isDeleted = data["isDeleted"];
+            this.deleterUserId = data["deleterUserId"];
+            this.deletionTime = data["deletionTime"] ? moment(data["deletionTime"].toString()) : <any>undefined;
+            this.lastModificationTime = data["lastModificationTime"] ? moment(data["lastModificationTime"].toString()) : <any>undefined;
+            this.lastModifierUserId = data["lastModifierUserId"];
+            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
+            this.creatorUserId = data["creatorUserId"];
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): DocumentType {
+        data = typeof data === 'object' ? data : {};
+        let result = new DocumentType();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["tenantId"] = this.tenantId;
+        data["name"] = this.name;
+        if (this.documents && this.documents.constructor === Array) {
+            data["documents"] = [];
+            for (let item of this.documents)
+                data["documents"].push(item.toJSON());
+        }
+        data["isDeleted"] = this.isDeleted;
+        data["deleterUserId"] = this.deleterUserId;
+        data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
+        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
+        data["lastModifierUserId"] = this.lastModifierUserId;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        data["creatorUserId"] = this.creatorUserId;
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface IDocumentType {
+    tenantId: number | undefined;
+    name: string;
+    documents: Document[] | undefined;
+    isDeleted: boolean | undefined;
+    deleterUserId: number | undefined;
+    deletionTime: moment.Moment | undefined;
+    lastModificationTime: moment.Moment | undefined;
+    lastModifierUserId: number | undefined;
+    creationTime: moment.Moment | undefined;
+    creatorUserId: number | undefined;
+    id: number | undefined;
+}
+
+export class PartnerType implements IPartnerType {
+    tenantId!: number | undefined;
+    name!: string | undefined;
+    partners!: Partner[] | undefined;
+    isDeleted!: boolean | undefined;
+    deleterUserId!: number | undefined;
+    deletionTime!: moment.Moment | undefined;
+    lastModificationTime!: moment.Moment | undefined;
+    lastModifierUserId!: number | undefined;
+    creationTime!: moment.Moment | undefined;
+    creatorUserId!: number | undefined;
+    id!: number | undefined;
+
+    constructor(data?: IPartnerType) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.tenantId = data["tenantId"];
+            this.name = data["name"];
+            if (data["partners"] && data["partners"].constructor === Array) {
+                this.partners = [];
+                for (let item of data["partners"])
+                    this.partners.push(Partner.fromJS(item));
+            }
+            this.isDeleted = data["isDeleted"];
+            this.deleterUserId = data["deleterUserId"];
+            this.deletionTime = data["deletionTime"] ? moment(data["deletionTime"].toString()) : <any>undefined;
+            this.lastModificationTime = data["lastModificationTime"] ? moment(data["lastModificationTime"].toString()) : <any>undefined;
+            this.lastModifierUserId = data["lastModifierUserId"];
+            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
+            this.creatorUserId = data["creatorUserId"];
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): PartnerType {
+        data = typeof data === 'object' ? data : {};
+        let result = new PartnerType();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["tenantId"] = this.tenantId;
+        data["name"] = this.name;
+        if (this.partners && this.partners.constructor === Array) {
+            data["partners"] = [];
+            for (let item of this.partners)
+                data["partners"].push(item.toJSON());
+        }
+        data["isDeleted"] = this.isDeleted;
+        data["deleterUserId"] = this.deleterUserId;
+        data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
+        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
+        data["lastModifierUserId"] = this.lastModifierUserId;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        data["creatorUserId"] = this.creatorUserId;
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface IPartnerType {
+    tenantId: number | undefined;
+    name: string | undefined;
+    partners: Partner[] | undefined;
+    isDeleted: boolean | undefined;
+    deleterUserId: number | undefined;
+    deletionTime: moment.Moment | undefined;
+    lastModificationTime: moment.Moment | undefined;
+    lastModifierUserId: number | undefined;
+    creationTime: moment.Moment | undefined;
+    creatorUserId: number | undefined;
+    id: number | undefined;
+}
+
+export class PersonOrgRelationType implements IPersonOrgRelationType {
+    name!: string | undefined;
+    relations!: PersonOrgRelation[] | undefined;
+    isDeleted!: boolean | undefined;
+    deleterUserId!: number | undefined;
+    deletionTime!: moment.Moment | undefined;
+    lastModificationTime!: moment.Moment | undefined;
+    lastModifierUserId!: number | undefined;
+    creationTime!: moment.Moment | undefined;
+    creatorUserId!: number | undefined;
+    id!: string | undefined;
+
+    constructor(data?: IPersonOrgRelationType) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.name = data["name"];
+            if (data["relations"] && data["relations"].constructor === Array) {
+                this.relations = [];
+                for (let item of data["relations"])
+                    this.relations.push(PersonOrgRelation.fromJS(item));
+            }
+            this.isDeleted = data["isDeleted"];
+            this.deleterUserId = data["deleterUserId"];
+            this.deletionTime = data["deletionTime"] ? moment(data["deletionTime"].toString()) : <any>undefined;
+            this.lastModificationTime = data["lastModificationTime"] ? moment(data["lastModificationTime"].toString()) : <any>undefined;
+            this.lastModifierUserId = data["lastModifierUserId"];
+            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
+            this.creatorUserId = data["creatorUserId"];
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): PersonOrgRelationType {
+        data = typeof data === 'object' ? data : {};
+        let result = new PersonOrgRelationType();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        if (this.relations && this.relations.constructor === Array) {
+            data["relations"] = [];
+            for (let item of this.relations)
+                data["relations"].push(item.toJSON());
+        }
+        data["isDeleted"] = this.isDeleted;
+        data["deleterUserId"] = this.deleterUserId;
+        data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
+        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
+        data["lastModifierUserId"] = this.lastModifierUserId;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        data["creatorUserId"] = this.creatorUserId;
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface IPersonOrgRelationType {
+    name: string | undefined;
+    relations: PersonOrgRelation[] | undefined;
+    isDeleted: boolean | undefined;
+    deleterUserId: number | undefined;
+    deletionTime: moment.Moment | undefined;
+    lastModificationTime: moment.Moment | undefined;
+    lastModifierUserId: number | undefined;
+    creationTime: moment.Moment | undefined;
+    creatorUserId: number | undefined;
+    id: string | undefined;
+}
+
+export class PersonRelationType implements IPersonRelationType {
+    name!: string | undefined;
+    reverseId!: string | undefined;
+    relations!: PersonRelation[] | undefined;
+    reverseType!: PersonRelationType | undefined;
+    inverseReverseTypes!: PersonRelationType[] | undefined;
+    isDeleted!: boolean | undefined;
+    deleterUserId!: number | undefined;
+    deletionTime!: moment.Moment | undefined;
+    lastModificationTime!: moment.Moment | undefined;
+    lastModifierUserId!: number | undefined;
+    creationTime!: moment.Moment | undefined;
+    creatorUserId!: number | undefined;
+    id!: string | undefined;
+
+    constructor(data?: IPersonRelationType) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.name = data["name"];
+            this.reverseId = data["reverseId"];
+            if (data["relations"] && data["relations"].constructor === Array) {
+                this.relations = [];
+                for (let item of data["relations"])
+                    this.relations.push(PersonRelation.fromJS(item));
+            }
+            this.reverseType = data["reverseType"] ? PersonRelationType.fromJS(data["reverseType"]) : <any>undefined;
+            if (data["inverseReverseTypes"] && data["inverseReverseTypes"].constructor === Array) {
+                this.inverseReverseTypes = [];
+                for (let item of data["inverseReverseTypes"])
+                    this.inverseReverseTypes.push(PersonRelationType.fromJS(item));
+            }
+            this.isDeleted = data["isDeleted"];
+            this.deleterUserId = data["deleterUserId"];
+            this.deletionTime = data["deletionTime"] ? moment(data["deletionTime"].toString()) : <any>undefined;
+            this.lastModificationTime = data["lastModificationTime"] ? moment(data["lastModificationTime"].toString()) : <any>undefined;
+            this.lastModifierUserId = data["lastModifierUserId"];
+            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
+            this.creatorUserId = data["creatorUserId"];
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): PersonRelationType {
+        data = typeof data === 'object' ? data : {};
+        let result = new PersonRelationType();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        data["reverseId"] = this.reverseId;
+        if (this.relations && this.relations.constructor === Array) {
+            data["relations"] = [];
+            for (let item of this.relations)
+                data["relations"].push(item.toJSON());
+        }
+        data["reverseType"] = this.reverseType ? this.reverseType.toJSON() : <any>undefined;
+        if (this.inverseReverseTypes && this.inverseReverseTypes.constructor === Array) {
+            data["inverseReverseTypes"] = [];
+            for (let item of this.inverseReverseTypes)
+                data["inverseReverseTypes"].push(item.toJSON());
+        }
+        data["isDeleted"] = this.isDeleted;
+        data["deleterUserId"] = this.deleterUserId;
+        data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
+        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
+        data["lastModifierUserId"] = this.lastModifierUserId;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        data["creatorUserId"] = this.creatorUserId;
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface IPersonRelationType {
+    name: string | undefined;
+    reverseId: string | undefined;
+    relations: PersonRelation[] | undefined;
+    reverseType: PersonRelationType | undefined;
+    inverseReverseTypes: PersonRelationType[] | undefined;
+    isDeleted: boolean | undefined;
+    deleterUserId: number | undefined;
+    deletionTime: moment.Moment | undefined;
+    lastModificationTime: moment.Moment | undefined;
+    lastModifierUserId: number | undefined;
+    creationTime: moment.Moment | undefined;
+    creatorUserId: number | undefined;
+    id: string | undefined;
+}
+
+export class BusinessCategory implements IBusinessCategory {
+    tenantId!: number | undefined;
+    name!: string;
+    organizationBusinessCategories!: OrganizationBusinessCategory[] | undefined;
+    isDeleted!: boolean | undefined;
+    deleterUserId!: number | undefined;
+    deletionTime!: moment.Moment | undefined;
+    lastModificationTime!: moment.Moment | undefined;
+    lastModifierUserId!: number | undefined;
+    creationTime!: moment.Moment | undefined;
+    creatorUserId!: number | undefined;
+    id!: number | undefined;
+
+    constructor(data?: IBusinessCategory) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.tenantId = data["tenantId"];
+            this.name = data["name"];
+            if (data["organizationBusinessCategories"] && data["organizationBusinessCategories"].constructor === Array) {
+                this.organizationBusinessCategories = [];
+                for (let item of data["organizationBusinessCategories"])
+                    this.organizationBusinessCategories.push(OrganizationBusinessCategory.fromJS(item));
+            }
+            this.isDeleted = data["isDeleted"];
+            this.deleterUserId = data["deleterUserId"];
+            this.deletionTime = data["deletionTime"] ? moment(data["deletionTime"].toString()) : <any>undefined;
+            this.lastModificationTime = data["lastModificationTime"] ? moment(data["lastModificationTime"].toString()) : <any>undefined;
+            this.lastModifierUserId = data["lastModifierUserId"];
+            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
+            this.creatorUserId = data["creatorUserId"];
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): BusinessCategory {
+        data = typeof data === 'object' ? data : {};
+        let result = new BusinessCategory();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["tenantId"] = this.tenantId;
+        data["name"] = this.name;
+        if (this.organizationBusinessCategories && this.organizationBusinessCategories.constructor === Array) {
+            data["organizationBusinessCategories"] = [];
+            for (let item of this.organizationBusinessCategories)
+                data["organizationBusinessCategories"].push(item.toJSON());
+        }
+        data["isDeleted"] = this.isDeleted;
+        data["deleterUserId"] = this.deleterUserId;
+        data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
+        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
+        data["lastModifierUserId"] = this.lastModifierUserId;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        data["creatorUserId"] = this.creatorUserId;
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface IBusinessCategory {
+    tenantId: number | undefined;
+    name: string;
+    organizationBusinessCategories: OrganizationBusinessCategory[] | undefined;
+    isDeleted: boolean | undefined;
+    deleterUserId: number | undefined;
+    deletionTime: moment.Moment | undefined;
+    lastModificationTime: moment.Moment | undefined;
+    lastModifierUserId: number | undefined;
+    creationTime: moment.Moment | undefined;
+    creatorUserId: number | undefined;
+    id: number | undefined;
+}
+
+export class PipelinePurpose implements IPipelinePurpose {
+    name!: string;
+    pipelines!: Pipeline[] | undefined;
+    isDeleted!: boolean | undefined;
+    deleterUserId!: number | undefined;
+    deletionTime!: moment.Moment | undefined;
+    lastModificationTime!: moment.Moment | undefined;
+    lastModifierUserId!: number | undefined;
+    creationTime!: moment.Moment | undefined;
+    creatorUserId!: number | undefined;
+    id!: string | undefined;
+
+    constructor(data?: IPipelinePurpose) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.name = data["name"];
+            if (data["pipelines"] && data["pipelines"].constructor === Array) {
+                this.pipelines = [];
+                for (let item of data["pipelines"])
+                    this.pipelines.push(Pipeline.fromJS(item));
+            }
+            this.isDeleted = data["isDeleted"];
+            this.deleterUserId = data["deleterUserId"];
+            this.deletionTime = data["deletionTime"] ? moment(data["deletionTime"].toString()) : <any>undefined;
+            this.lastModificationTime = data["lastModificationTime"] ? moment(data["lastModificationTime"].toString()) : <any>undefined;
+            this.lastModifierUserId = data["lastModifierUserId"];
+            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
+            this.creatorUserId = data["creatorUserId"];
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): PipelinePurpose {
+        data = typeof data === 'object' ? data : {};
+        let result = new PipelinePurpose();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        if (this.pipelines && this.pipelines.constructor === Array) {
+            data["pipelines"] = [];
+            for (let item of this.pipelines)
+                data["pipelines"].push(item.toJSON());
+        }
+        data["isDeleted"] = this.isDeleted;
+        data["deleterUserId"] = this.deleterUserId;
+        data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
+        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
+        data["lastModifierUserId"] = this.lastModifierUserId;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        data["creatorUserId"] = this.creatorUserId;
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface IPipelinePurpose {
+    name: string;
+    pipelines: Pipeline[] | undefined;
+    isDeleted: boolean | undefined;
+    deleterUserId: number | undefined;
+    deletionTime: moment.Moment | undefined;
+    lastModificationTime: moment.Moment | undefined;
+    lastModifierUserId: number | undefined;
+    creationTime: moment.Moment | undefined;
+    creatorUserId: number | undefined;
+    id: string | undefined;
+}
+
+export class ActionTransitionMapping implements IActionTransitionMapping {
+    tenantId!: number | undefined;
+    pipelineId!: number | undefined;
+    actionId!: number | undefined;
+    stageId!: number | undefined;
+    pipeline!: Pipeline | undefined;
+    action!: WorkflowAction | undefined;
+    stage!: Stage | undefined;
+    isDeleted!: boolean | undefined;
+    deleterUserId!: number | undefined;
+    deletionTime!: moment.Moment | undefined;
+    lastModificationTime!: moment.Moment | undefined;
+    lastModifierUserId!: number | undefined;
+    creationTime!: moment.Moment | undefined;
+    creatorUserId!: number | undefined;
+    id!: number | undefined;
+
+    constructor(data?: IActionTransitionMapping) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.tenantId = data["tenantId"];
+            this.pipelineId = data["pipelineId"];
+            this.actionId = data["actionId"];
+            this.stageId = data["stageId"];
+            this.pipeline = data["pipeline"] ? Pipeline.fromJS(data["pipeline"]) : <any>undefined;
+            this.action = data["action"] ? WorkflowAction.fromJS(data["action"]) : <any>undefined;
+            this.stage = data["stage"] ? Stage.fromJS(data["stage"]) : <any>undefined;
+            this.isDeleted = data["isDeleted"];
+            this.deleterUserId = data["deleterUserId"];
+            this.deletionTime = data["deletionTime"] ? moment(data["deletionTime"].toString()) : <any>undefined;
+            this.lastModificationTime = data["lastModificationTime"] ? moment(data["lastModificationTime"].toString()) : <any>undefined;
+            this.lastModifierUserId = data["lastModifierUserId"];
+            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
+            this.creatorUserId = data["creatorUserId"];
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): ActionTransitionMapping {
+        data = typeof data === 'object' ? data : {};
+        let result = new ActionTransitionMapping();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["tenantId"] = this.tenantId;
+        data["pipelineId"] = this.pipelineId;
+        data["actionId"] = this.actionId;
+        data["stageId"] = this.stageId;
+        data["pipeline"] = this.pipeline ? this.pipeline.toJSON() : <any>undefined;
+        data["action"] = this.action ? this.action.toJSON() : <any>undefined;
+        data["stage"] = this.stage ? this.stage.toJSON() : <any>undefined;
+        data["isDeleted"] = this.isDeleted;
+        data["deleterUserId"] = this.deleterUserId;
+        data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
+        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
+        data["lastModifierUserId"] = this.lastModifierUserId;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        data["creatorUserId"] = this.creatorUserId;
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface IActionTransitionMapping {
+    tenantId: number | undefined;
+    pipelineId: number | undefined;
+    actionId: number | undefined;
+    stageId: number | undefined;
+    pipeline: Pipeline | undefined;
+    action: WorkflowAction | undefined;
+    stage: Stage | undefined;
+    isDeleted: boolean | undefined;
+    deleterUserId: number | undefined;
+    deletionTime: moment.Moment | undefined;
+    lastModificationTime: moment.Moment | undefined;
+    lastModifierUserId: number | undefined;
+    creationTime: moment.Moment | undefined;
+    creatorUserId: number | undefined;
+    id: number | undefined;
+}
+
+export class ActionAccessibilityMapping implements IActionAccessibilityMapping {
+    tenantId!: number | undefined;
+    pipelineId!: number | undefined;
+    actionId!: number | undefined;
+    stageId!: number | undefined;
+    pipeline!: Pipeline | undefined;
+    action!: WorkflowAction | undefined;
+    stage!: Stage | undefined;
+    isDeleted!: boolean | undefined;
+    deleterUserId!: number | undefined;
+    deletionTime!: moment.Moment | undefined;
+    lastModificationTime!: moment.Moment | undefined;
+    lastModifierUserId!: number | undefined;
+    creationTime!: moment.Moment | undefined;
+    creatorUserId!: number | undefined;
+    id!: number | undefined;
+
+    constructor(data?: IActionAccessibilityMapping) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.tenantId = data["tenantId"];
+            this.pipelineId = data["pipelineId"];
+            this.actionId = data["actionId"];
+            this.stageId = data["stageId"];
+            this.pipeline = data["pipeline"] ? Pipeline.fromJS(data["pipeline"]) : <any>undefined;
+            this.action = data["action"] ? WorkflowAction.fromJS(data["action"]) : <any>undefined;
+            this.stage = data["stage"] ? Stage.fromJS(data["stage"]) : <any>undefined;
+            this.isDeleted = data["isDeleted"];
+            this.deleterUserId = data["deleterUserId"];
+            this.deletionTime = data["deletionTime"] ? moment(data["deletionTime"].toString()) : <any>undefined;
+            this.lastModificationTime = data["lastModificationTime"] ? moment(data["lastModificationTime"].toString()) : <any>undefined;
+            this.lastModifierUserId = data["lastModifierUserId"];
+            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
+            this.creatorUserId = data["creatorUserId"];
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): ActionAccessibilityMapping {
+        data = typeof data === 'object' ? data : {};
+        let result = new ActionAccessibilityMapping();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["tenantId"] = this.tenantId;
+        data["pipelineId"] = this.pipelineId;
+        data["actionId"] = this.actionId;
+        data["stageId"] = this.stageId;
+        data["pipeline"] = this.pipeline ? this.pipeline.toJSON() : <any>undefined;
+        data["action"] = this.action ? this.action.toJSON() : <any>undefined;
+        data["stage"] = this.stage ? this.stage.toJSON() : <any>undefined;
+        data["isDeleted"] = this.isDeleted;
+        data["deleterUserId"] = this.deleterUserId;
+        data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
+        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
+        data["lastModifierUserId"] = this.lastModifierUserId;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        data["creatorUserId"] = this.creatorUserId;
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface IActionAccessibilityMapping {
+    tenantId: number | undefined;
+    pipelineId: number | undefined;
+    actionId: number | undefined;
+    stageId: number | undefined;
+    pipeline: Pipeline | undefined;
+    action: WorkflowAction | undefined;
+    stage: Stage | undefined;
+    isDeleted: boolean | undefined;
+    deleterUserId: number | undefined;
+    deletionTime: moment.Moment | undefined;
+    lastModificationTime: moment.Moment | undefined;
+    lastModifierUserId: number | undefined;
+    creationTime: moment.Moment | undefined;
+    creatorUserId: number | undefined;
+    id: number | undefined;
+}
+
+export class SubscriptionStatus implements ISubscriptionStatus {
+    name!: string;
+    billingSubscriptions!: BillingSubscription[] | undefined;
+    isDeleted!: boolean | undefined;
+    deleterUserId!: number | undefined;
+    deletionTime!: moment.Moment | undefined;
+    lastModificationTime!: moment.Moment | undefined;
+    lastModifierUserId!: number | undefined;
+    creationTime!: moment.Moment | undefined;
+    creatorUserId!: number | undefined;
+    id!: string | undefined;
+
+    constructor(data?: ISubscriptionStatus) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.name = data["name"];
+            if (data["billingSubscriptions"] && data["billingSubscriptions"].constructor === Array) {
+                this.billingSubscriptions = [];
+                for (let item of data["billingSubscriptions"])
+                    this.billingSubscriptions.push(BillingSubscription.fromJS(item));
+            }
+            this.isDeleted = data["isDeleted"];
+            this.deleterUserId = data["deleterUserId"];
+            this.deletionTime = data["deletionTime"] ? moment(data["deletionTime"].toString()) : <any>undefined;
+            this.lastModificationTime = data["lastModificationTime"] ? moment(data["lastModificationTime"].toString()) : <any>undefined;
+            this.lastModifierUserId = data["lastModifierUserId"];
+            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
+            this.creatorUserId = data["creatorUserId"];
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): SubscriptionStatus {
+        data = typeof data === 'object' ? data : {};
+        let result = new SubscriptionStatus();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        if (this.billingSubscriptions && this.billingSubscriptions.constructor === Array) {
+            data["billingSubscriptions"] = [];
+            for (let item of this.billingSubscriptions)
+                data["billingSubscriptions"].push(item.toJSON());
+        }
+        data["isDeleted"] = this.isDeleted;
+        data["deleterUserId"] = this.deleterUserId;
+        data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
+        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
+        data["lastModifierUserId"] = this.lastModifierUserId;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        data["creatorUserId"] = this.creatorUserId;
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface ISubscriptionStatus {
+    name: string;
+    billingSubscriptions: BillingSubscription[] | undefined;
+    isDeleted: boolean | undefined;
+    deleterUserId: number | undefined;
+    deletionTime: moment.Moment | undefined;
+    lastModificationTime: moment.Moment | undefined;
+    lastModifierUserId: number | undefined;
+    creationTime: moment.Moment | undefined;
+    creatorUserId: number | undefined;
+    id: string | undefined;
+}
+
+export class OrderSubscriptionPayment implements IOrderSubscriptionPayment {
+    tenantId!: number | undefined;
+    orderSubscriptionId!: number | undefined;
+    startDate!: moment.Moment;
+    endDate!: moment.Moment | undefined;
+    status!: string | undefined;
+    transactionId!: number | undefined;
+    billingSubscriptionId!: number | undefined;
+    orderSubscription!: OrderSubscription | undefined;
+    transaction!: Transaction | undefined;
+    billingSubscription!: BillingSubscription | undefined;
+    isDeleted!: boolean | undefined;
+    deleterUserId!: number | undefined;
+    deletionTime!: moment.Moment | undefined;
+    lastModificationTime!: moment.Moment | undefined;
+    lastModifierUserId!: number | undefined;
+    creationTime!: moment.Moment | undefined;
+    creatorUserId!: number | undefined;
+    id!: number | undefined;
+
+    constructor(data?: IOrderSubscriptionPayment) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.tenantId = data["tenantId"];
+            this.orderSubscriptionId = data["orderSubscriptionId"];
+            this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
+            this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
+            this.status = data["status"];
+            this.transactionId = data["transactionId"];
+            this.billingSubscriptionId = data["billingSubscriptionId"];
+            this.orderSubscription = data["orderSubscription"] ? OrderSubscription.fromJS(data["orderSubscription"]) : <any>undefined;
+            this.transaction = data["transaction"] ? Transaction.fromJS(data["transaction"]) : <any>undefined;
+            this.billingSubscription = data["billingSubscription"] ? BillingSubscription.fromJS(data["billingSubscription"]) : <any>undefined;
+            this.isDeleted = data["isDeleted"];
+            this.deleterUserId = data["deleterUserId"];
+            this.deletionTime = data["deletionTime"] ? moment(data["deletionTime"].toString()) : <any>undefined;
+            this.lastModificationTime = data["lastModificationTime"] ? moment(data["lastModificationTime"].toString()) : <any>undefined;
+            this.lastModifierUserId = data["lastModifierUserId"];
+            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
+            this.creatorUserId = data["creatorUserId"];
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): OrderSubscriptionPayment {
+        data = typeof data === 'object' ? data : {};
+        let result = new OrderSubscriptionPayment();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["tenantId"] = this.tenantId;
+        data["orderSubscriptionId"] = this.orderSubscriptionId;
+        data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
+        data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
+        data["status"] = this.status;
+        data["transactionId"] = this.transactionId;
+        data["billingSubscriptionId"] = this.billingSubscriptionId;
+        data["orderSubscription"] = this.orderSubscription ? this.orderSubscription.toJSON() : <any>undefined;
+        data["transaction"] = this.transaction ? this.transaction.toJSON() : <any>undefined;
+        data["billingSubscription"] = this.billingSubscription ? this.billingSubscription.toJSON() : <any>undefined;
+        data["isDeleted"] = this.isDeleted;
+        data["deleterUserId"] = this.deleterUserId;
+        data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
+        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
+        data["lastModifierUserId"] = this.lastModifierUserId;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        data["creatorUserId"] = this.creatorUserId;
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface IOrderSubscriptionPayment {
+    tenantId: number | undefined;
+    orderSubscriptionId: number | undefined;
+    startDate: moment.Moment;
+    endDate: moment.Moment | undefined;
+    status: string | undefined;
+    transactionId: number | undefined;
+    billingSubscriptionId: number | undefined;
+    orderSubscription: OrderSubscription | undefined;
+    transaction: Transaction | undefined;
+    billingSubscription: BillingSubscription | undefined;
+    isDeleted: boolean | undefined;
+    deleterUserId: number | undefined;
+    deletionTime: moment.Moment | undefined;
+    lastModificationTime: moment.Moment | undefined;
+    lastModifierUserId: number | undefined;
+    creationTime: moment.Moment | undefined;
+    creatorUserId: number | undefined;
+    id: number | undefined;
+}
+
+export class InvoiceLine implements IInvoiceLine {
+    tenantId!: number | undefined;
+    invoiceId!: number | undefined;
+    quantity!: number | undefined;
+    rate!: number | undefined;
+    unitId!: string;
+    amount!: number | undefined;
+    description!: string | undefined;
+    sortOrder!: number | undefined;
+    invoice!: Invoice | undefined;
+    unit!: InvoiceLineUnit | undefined;
+    isDeleted!: boolean | undefined;
+    deleterUserId!: number | undefined;
+    deletionTime!: moment.Moment | undefined;
+    lastModificationTime!: moment.Moment | undefined;
+    lastModifierUserId!: number | undefined;
+    creationTime!: moment.Moment | undefined;
+    creatorUserId!: number | undefined;
+    id!: number | undefined;
+
+    constructor(data?: IInvoiceLine) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.tenantId = data["tenantId"];
+            this.invoiceId = data["invoiceId"];
+            this.quantity = data["quantity"];
+            this.rate = data["rate"];
+            this.unitId = data["unitId"];
+            this.amount = data["amount"];
+            this.description = data["description"];
+            this.sortOrder = data["sortOrder"];
+            this.invoice = data["invoice"] ? Invoice.fromJS(data["invoice"]) : <any>undefined;
+            this.unit = data["unit"] ? InvoiceLineUnit.fromJS(data["unit"]) : <any>undefined;
+            this.isDeleted = data["isDeleted"];
+            this.deleterUserId = data["deleterUserId"];
+            this.deletionTime = data["deletionTime"] ? moment(data["deletionTime"].toString()) : <any>undefined;
+            this.lastModificationTime = data["lastModificationTime"] ? moment(data["lastModificationTime"].toString()) : <any>undefined;
+            this.lastModifierUserId = data["lastModifierUserId"];
+            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
+            this.creatorUserId = data["creatorUserId"];
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): InvoiceLine {
+        data = typeof data === 'object' ? data : {};
+        let result = new InvoiceLine();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["tenantId"] = this.tenantId;
+        data["invoiceId"] = this.invoiceId;
+        data["quantity"] = this.quantity;
+        data["rate"] = this.rate;
+        data["unitId"] = this.unitId;
+        data["amount"] = this.amount;
+        data["description"] = this.description;
+        data["sortOrder"] = this.sortOrder;
+        data["invoice"] = this.invoice ? this.invoice.toJSON() : <any>undefined;
+        data["unit"] = this.unit ? this.unit.toJSON() : <any>undefined;
+        data["isDeleted"] = this.isDeleted;
+        data["deleterUserId"] = this.deleterUserId;
+        data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
+        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
+        data["lastModifierUserId"] = this.lastModifierUserId;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        data["creatorUserId"] = this.creatorUserId;
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface IInvoiceLine {
+    tenantId: number | undefined;
+    invoiceId: number | undefined;
+    quantity: number | undefined;
+    rate: number | undefined;
+    unitId: string;
+    amount: number | undefined;
+    description: string | undefined;
+    sortOrder: number | undefined;
+    invoice: Invoice | undefined;
+    unit: InvoiceLineUnit | undefined;
+    isDeleted: boolean | undefined;
+    deleterUserId: number | undefined;
+    deletionTime: moment.Moment | undefined;
+    lastModificationTime: moment.Moment | undefined;
+    lastModifierUserId: number | undefined;
+    creationTime: moment.Moment | undefined;
+    creatorUserId: number | undefined;
+    id: number | undefined;
+}
+
+export class LeadInterest implements ILeadInterest {
+    tenantId!: number | undefined;
+    leadRequestId!: number | undefined;
+    productId!: number | undefined;
+    name!: string | undefined;
+    description!: string | undefined;
+    quantity!: number | undefined;
+    amount!: number | undefined;
+    leadRequest!: LeadRequest | undefined;
+    isDeleted!: boolean | undefined;
+    deleterUserId!: number | undefined;
+    deletionTime!: moment.Moment | undefined;
+    lastModificationTime!: moment.Moment | undefined;
+    lastModifierUserId!: number | undefined;
+    creationTime!: moment.Moment | undefined;
+    creatorUserId!: number | undefined;
+    id!: number | undefined;
+
+    constructor(data?: ILeadInterest) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.tenantId = data["tenantId"];
+            this.leadRequestId = data["leadRequestId"];
+            this.productId = data["productId"];
+            this.name = data["name"];
+            this.description = data["description"];
+            this.quantity = data["quantity"];
+            this.amount = data["amount"];
+            this.leadRequest = data["leadRequest"] ? LeadRequest.fromJS(data["leadRequest"]) : <any>undefined;
+            this.isDeleted = data["isDeleted"];
+            this.deleterUserId = data["deleterUserId"];
+            this.deletionTime = data["deletionTime"] ? moment(data["deletionTime"].toString()) : <any>undefined;
+            this.lastModificationTime = data["lastModificationTime"] ? moment(data["lastModificationTime"].toString()) : <any>undefined;
+            this.lastModifierUserId = data["lastModifierUserId"];
+            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
+            this.creatorUserId = data["creatorUserId"];
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): LeadInterest {
+        data = typeof data === 'object' ? data : {};
+        let result = new LeadInterest();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["tenantId"] = this.tenantId;
+        data["leadRequestId"] = this.leadRequestId;
+        data["productId"] = this.productId;
+        data["name"] = this.name;
+        data["description"] = this.description;
+        data["quantity"] = this.quantity;
+        data["amount"] = this.amount;
+        data["leadRequest"] = this.leadRequest ? this.leadRequest.toJSON() : <any>undefined;
+        data["isDeleted"] = this.isDeleted;
+        data["deleterUserId"] = this.deleterUserId;
+        data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
+        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
+        data["lastModifierUserId"] = this.lastModifierUserId;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        data["creatorUserId"] = this.creatorUserId;
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface ILeadInterest {
+    tenantId: number | undefined;
+    leadRequestId: number | undefined;
+    productId: number | undefined;
+    name: string | undefined;
+    description: string | undefined;
+    quantity: number | undefined;
+    amount: number | undefined;
+    leadRequest: LeadRequest | undefined;
+    isDeleted: boolean | undefined;
+    deleterUserId: number | undefined;
+    deletionTime: moment.Moment | undefined;
+    lastModificationTime: moment.Moment | undefined;
+    lastModifierUserId: number | undefined;
+    creationTime: moment.Moment | undefined;
+    creatorUserId: number | undefined;
+    id: number | undefined;
+}
+
+export class LeadPersonalInfo implements ILeadPersonalInfo {
+    tenantId!: number | undefined;
+    namePrefix!: string | undefined;
+    firstName!: string | undefined;
+    middleName!: string | undefined;
+    lastName!: string | undefined;
+    nameSuffix!: string | undefined;
+    nickName!: string | undefined;
+    title!: string | undefined;
+    emailAddress!: string | undefined;
+    phoneNumber!: string | undefined;
+    phoneExtension!: string | undefined;
+    ssn!: string | undefined;
+    dob!: moment.Moment | undefined;
+    genderTypeId!: string | undefined;
+    isUSCitizen!: boolean | undefined;
+    citizenship!: string | undefined;
+    education!: string | undefined;
+    website!: string | undefined;
+    personalProfile!: string | undefined;
+    leadRequest!: LeadRequest | undefined;
+    genderType!: GenderType | undefined;
+    citizenshipCountry!: Country | undefined;
+    countryId!: string | undefined;
+    stateId!: string | undefined;
+    city!: string | undefined;
+    streetAddress!: string | undefined;
+    zip!: string | undefined;
+    country!: Country | undefined;
+    state!: CountryState | undefined;
+    isDeleted!: boolean | undefined;
+    deleterUserId!: number | undefined;
+    deletionTime!: moment.Moment | undefined;
+    lastModificationTime!: moment.Moment | undefined;
+    lastModifierUserId!: number | undefined;
+    creationTime!: moment.Moment | undefined;
+    creatorUserId!: number | undefined;
+    id!: number | undefined;
+
+    constructor(data?: ILeadPersonalInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.tenantId = data["tenantId"];
+            this.namePrefix = data["namePrefix"];
+            this.firstName = data["firstName"];
+            this.middleName = data["middleName"];
+            this.lastName = data["lastName"];
+            this.nameSuffix = data["nameSuffix"];
+            this.nickName = data["nickName"];
+            this.title = data["title"];
+            this.emailAddress = data["emailAddress"];
+            this.phoneNumber = data["phoneNumber"];
+            this.phoneExtension = data["phoneExtension"];
+            this.ssn = data["ssn"];
+            this.dob = data["dob"] ? moment(data["dob"].toString()) : <any>undefined;
+            this.genderTypeId = data["genderTypeId"];
+            this.isUSCitizen = data["isUSCitizen"];
+            this.citizenship = data["citizenship"];
+            this.education = data["education"];
+            this.website = data["website"];
+            this.personalProfile = data["personalProfile"];
+            this.leadRequest = data["leadRequest"] ? LeadRequest.fromJS(data["leadRequest"]) : <any>undefined;
+            this.genderType = data["genderType"] ? GenderType.fromJS(data["genderType"]) : <any>undefined;
+            this.citizenshipCountry = data["citizenshipCountry"] ? Country.fromJS(data["citizenshipCountry"]) : <any>undefined;
+            this.countryId = data["countryId"];
+            this.stateId = data["stateId"];
+            this.city = data["city"];
+            this.streetAddress = data["streetAddress"];
+            this.zip = data["zip"];
+            this.country = data["country"] ? Country.fromJS(data["country"]) : <any>undefined;
+            this.state = data["state"] ? CountryState.fromJS(data["state"]) : <any>undefined;
+            this.isDeleted = data["isDeleted"];
+            this.deleterUserId = data["deleterUserId"];
+            this.deletionTime = data["deletionTime"] ? moment(data["deletionTime"].toString()) : <any>undefined;
+            this.lastModificationTime = data["lastModificationTime"] ? moment(data["lastModificationTime"].toString()) : <any>undefined;
+            this.lastModifierUserId = data["lastModifierUserId"];
+            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
+            this.creatorUserId = data["creatorUserId"];
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): LeadPersonalInfo {
+        data = typeof data === 'object' ? data : {};
+        let result = new LeadPersonalInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["tenantId"] = this.tenantId;
+        data["namePrefix"] = this.namePrefix;
+        data["firstName"] = this.firstName;
+        data["middleName"] = this.middleName;
+        data["lastName"] = this.lastName;
+        data["nameSuffix"] = this.nameSuffix;
+        data["nickName"] = this.nickName;
+        data["title"] = this.title;
+        data["emailAddress"] = this.emailAddress;
+        data["phoneNumber"] = this.phoneNumber;
+        data["phoneExtension"] = this.phoneExtension;
+        data["ssn"] = this.ssn;
+        data["dob"] = this.dob ? this.dob.toISOString() : <any>undefined;
+        data["genderTypeId"] = this.genderTypeId;
+        data["isUSCitizen"] = this.isUSCitizen;
+        data["citizenship"] = this.citizenship;
+        data["education"] = this.education;
+        data["website"] = this.website;
+        data["personalProfile"] = this.personalProfile;
+        data["leadRequest"] = this.leadRequest ? this.leadRequest.toJSON() : <any>undefined;
+        data["genderType"] = this.genderType ? this.genderType.toJSON() : <any>undefined;
+        data["citizenshipCountry"] = this.citizenshipCountry ? this.citizenshipCountry.toJSON() : <any>undefined;
+        data["countryId"] = this.countryId;
+        data["stateId"] = this.stateId;
+        data["city"] = this.city;
+        data["streetAddress"] = this.streetAddress;
+        data["zip"] = this.zip;
+        data["country"] = this.country ? this.country.toJSON() : <any>undefined;
+        data["state"] = this.state ? this.state.toJSON() : <any>undefined;
+        data["isDeleted"] = this.isDeleted;
+        data["deleterUserId"] = this.deleterUserId;
+        data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
+        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
+        data["lastModifierUserId"] = this.lastModifierUserId;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        data["creatorUserId"] = this.creatorUserId;
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface ILeadPersonalInfo {
+    tenantId: number | undefined;
+    namePrefix: string | undefined;
+    firstName: string | undefined;
+    middleName: string | undefined;
+    lastName: string | undefined;
+    nameSuffix: string | undefined;
+    nickName: string | undefined;
+    title: string | undefined;
+    emailAddress: string | undefined;
+    phoneNumber: string | undefined;
+    phoneExtension: string | undefined;
+    ssn: string | undefined;
+    dob: moment.Moment | undefined;
+    genderTypeId: string | undefined;
+    isUSCitizen: boolean | undefined;
+    citizenship: string | undefined;
+    education: string | undefined;
+    website: string | undefined;
+    personalProfile: string | undefined;
+    leadRequest: LeadRequest | undefined;
+    genderType: GenderType | undefined;
+    citizenshipCountry: Country | undefined;
+    countryId: string | undefined;
+    stateId: string | undefined;
+    city: string | undefined;
+    streetAddress: string | undefined;
+    zip: string | undefined;
+    country: Country | undefined;
+    state: CountryState | undefined;
+    isDeleted: boolean | undefined;
+    deleterUserId: number | undefined;
+    deletionTime: moment.Moment | undefined;
+    lastModificationTime: moment.Moment | undefined;
+    lastModifierUserId: number | undefined;
+    creationTime: moment.Moment | undefined;
+    creatorUserId: number | undefined;
+    id: number | undefined;
+}
+
+export class LeadBusinessInfo implements ILeadBusinessInfo {
+    tenantId!: number | undefined;
+    shortname!: string | undefined;
+    companyName!: string | undefined;
+    emailAddress1!: string | undefined;
+    emailAddress2!: string | undefined;
+    address!: string | undefined;
+    city!: string | undefined;
+    state!: string | undefined;
+    zip!: string | undefined;
+    industry!: string | undefined;
+    relationship!: string | undefined;
+    categories!: string | undefined;
+    primaryFundingType!: string | undefined;
+    referralType!: string | undefined;
+    founded!: moment.Moment | undefined;
+    companySizeFrom!: number | undefined;
+    companySizeTo!: number | undefined;
+    type!: string | undefined;
+    ticker!: string | undefined;
+    refID!: string | undefined;
+    logoUrl!: string | undefined;
+    rating!: number | undefined;
+    ucc!: number | undefined;
+    network!: string | undefined;
+    offerID!: string | undefined;
+    threeMonthEPC!: string | undefined;
+    sevenDayEPC!: string | undefined;
+    payout!: string | undefined;
+    fundingAmountLow!: number | undefined;
+    fundingAmountHigh!: number | undefined;
+    creditScoreMin!: number | undefined;
+    creditScoreDesired!: number | undefined;
+    apr!: number | undefined;
+    featuresAndBenefits!: string | undefined;
+    countriesServed!: string | undefined;
+    description!: string | undefined;
+    keywordTags!: string | undefined;
+    leadRequest!: LeadRequest | undefined;
+    leadBusinessPhones!: LeadBusinessPhone[] | undefined;
+    leadBusinessLinks!: LeadBusinessLink[] | undefined;
+    leadBusinessAliases!: LeadBusinessAlias[] | undefined;
+    leadBusinessTeamContacts!: LeadBusinessTeamContact[] | undefined;
+    isDeleted!: boolean | undefined;
+    deleterUserId!: number | undefined;
+    deletionTime!: moment.Moment | undefined;
+    lastModificationTime!: moment.Moment | undefined;
+    lastModifierUserId!: number | undefined;
+    creationTime!: moment.Moment | undefined;
+    creatorUserId!: number | undefined;
+    id!: number | undefined;
+
+    constructor(data?: ILeadBusinessInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.tenantId = data["tenantId"];
+            this.shortname = data["shortname"];
+            this.companyName = data["companyName"];
+            this.emailAddress1 = data["emailAddress1"];
+            this.emailAddress2 = data["emailAddress2"];
+            this.address = data["address"];
+            this.city = data["city"];
+            this.state = data["state"];
+            this.zip = data["zip"];
+            this.industry = data["industry"];
+            this.relationship = data["relationship"];
+            this.categories = data["categories"];
+            this.primaryFundingType = data["primaryFundingType"];
+            this.referralType = data["referralType"];
+            this.founded = data["founded"] ? moment(data["founded"].toString()) : <any>undefined;
+            this.companySizeFrom = data["companySizeFrom"];
+            this.companySizeTo = data["companySizeTo"];
+            this.type = data["type"];
+            this.ticker = data["ticker"];
+            this.refID = data["refID"];
+            this.logoUrl = data["logoUrl"];
+            this.rating = data["rating"];
+            this.ucc = data["ucc"];
+            this.network = data["network"];
+            this.offerID = data["offerID"];
+            this.threeMonthEPC = data["threeMonthEPC"];
+            this.sevenDayEPC = data["sevenDayEPC"];
+            this.payout = data["payout"];
+            this.fundingAmountLow = data["fundingAmountLow"];
+            this.fundingAmountHigh = data["fundingAmountHigh"];
+            this.creditScoreMin = data["creditScoreMin"];
+            this.creditScoreDesired = data["creditScoreDesired"];
+            this.apr = data["apr"];
+            this.featuresAndBenefits = data["featuresAndBenefits"];
+            this.countriesServed = data["countriesServed"];
+            this.description = data["description"];
+            this.keywordTags = data["keywordTags"];
+            this.leadRequest = data["leadRequest"] ? LeadRequest.fromJS(data["leadRequest"]) : <any>undefined;
+            if (data["leadBusinessPhones"] && data["leadBusinessPhones"].constructor === Array) {
+                this.leadBusinessPhones = [];
+                for (let item of data["leadBusinessPhones"])
+                    this.leadBusinessPhones.push(LeadBusinessPhone.fromJS(item));
+            }
+            if (data["leadBusinessLinks"] && data["leadBusinessLinks"].constructor === Array) {
+                this.leadBusinessLinks = [];
+                for (let item of data["leadBusinessLinks"])
+                    this.leadBusinessLinks.push(LeadBusinessLink.fromJS(item));
+            }
+            if (data["leadBusinessAliases"] && data["leadBusinessAliases"].constructor === Array) {
+                this.leadBusinessAliases = [];
+                for (let item of data["leadBusinessAliases"])
+                    this.leadBusinessAliases.push(LeadBusinessAlias.fromJS(item));
+            }
+            if (data["leadBusinessTeamContacts"] && data["leadBusinessTeamContacts"].constructor === Array) {
+                this.leadBusinessTeamContacts = [];
+                for (let item of data["leadBusinessTeamContacts"])
+                    this.leadBusinessTeamContacts.push(LeadBusinessTeamContact.fromJS(item));
+            }
+            this.isDeleted = data["isDeleted"];
+            this.deleterUserId = data["deleterUserId"];
+            this.deletionTime = data["deletionTime"] ? moment(data["deletionTime"].toString()) : <any>undefined;
+            this.lastModificationTime = data["lastModificationTime"] ? moment(data["lastModificationTime"].toString()) : <any>undefined;
+            this.lastModifierUserId = data["lastModifierUserId"];
+            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
+            this.creatorUserId = data["creatorUserId"];
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): LeadBusinessInfo {
+        data = typeof data === 'object' ? data : {};
+        let result = new LeadBusinessInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["tenantId"] = this.tenantId;
+        data["shortname"] = this.shortname;
+        data["companyName"] = this.companyName;
+        data["emailAddress1"] = this.emailAddress1;
+        data["emailAddress2"] = this.emailAddress2;
+        data["address"] = this.address;
+        data["city"] = this.city;
+        data["state"] = this.state;
+        data["zip"] = this.zip;
+        data["industry"] = this.industry;
+        data["relationship"] = this.relationship;
+        data["categories"] = this.categories;
+        data["primaryFundingType"] = this.primaryFundingType;
+        data["referralType"] = this.referralType;
+        data["founded"] = this.founded ? this.founded.toISOString() : <any>undefined;
+        data["companySizeFrom"] = this.companySizeFrom;
+        data["companySizeTo"] = this.companySizeTo;
+        data["type"] = this.type;
+        data["ticker"] = this.ticker;
+        data["refID"] = this.refID;
+        data["logoUrl"] = this.logoUrl;
+        data["rating"] = this.rating;
+        data["ucc"] = this.ucc;
+        data["network"] = this.network;
+        data["offerID"] = this.offerID;
+        data["threeMonthEPC"] = this.threeMonthEPC;
+        data["sevenDayEPC"] = this.sevenDayEPC;
+        data["payout"] = this.payout;
+        data["fundingAmountLow"] = this.fundingAmountLow;
+        data["fundingAmountHigh"] = this.fundingAmountHigh;
+        data["creditScoreMin"] = this.creditScoreMin;
+        data["creditScoreDesired"] = this.creditScoreDesired;
+        data["apr"] = this.apr;
+        data["featuresAndBenefits"] = this.featuresAndBenefits;
+        data["countriesServed"] = this.countriesServed;
+        data["description"] = this.description;
+        data["keywordTags"] = this.keywordTags;
+        data["leadRequest"] = this.leadRequest ? this.leadRequest.toJSON() : <any>undefined;
+        if (this.leadBusinessPhones && this.leadBusinessPhones.constructor === Array) {
+            data["leadBusinessPhones"] = [];
+            for (let item of this.leadBusinessPhones)
+                data["leadBusinessPhones"].push(item.toJSON());
+        }
+        if (this.leadBusinessLinks && this.leadBusinessLinks.constructor === Array) {
+            data["leadBusinessLinks"] = [];
+            for (let item of this.leadBusinessLinks)
+                data["leadBusinessLinks"].push(item.toJSON());
+        }
+        if (this.leadBusinessAliases && this.leadBusinessAliases.constructor === Array) {
+            data["leadBusinessAliases"] = [];
+            for (let item of this.leadBusinessAliases)
+                data["leadBusinessAliases"].push(item.toJSON());
+        }
+        if (this.leadBusinessTeamContacts && this.leadBusinessTeamContacts.constructor === Array) {
+            data["leadBusinessTeamContacts"] = [];
+            for (let item of this.leadBusinessTeamContacts)
+                data["leadBusinessTeamContacts"].push(item.toJSON());
+        }
+        data["isDeleted"] = this.isDeleted;
+        data["deleterUserId"] = this.deleterUserId;
+        data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
+        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
+        data["lastModifierUserId"] = this.lastModifierUserId;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        data["creatorUserId"] = this.creatorUserId;
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface ILeadBusinessInfo {
+    tenantId: number | undefined;
+    shortname: string | undefined;
+    companyName: string | undefined;
+    emailAddress1: string | undefined;
+    emailAddress2: string | undefined;
+    address: string | undefined;
+    city: string | undefined;
+    state: string | undefined;
+    zip: string | undefined;
+    industry: string | undefined;
+    relationship: string | undefined;
+    categories: string | undefined;
+    primaryFundingType: string | undefined;
+    referralType: string | undefined;
+    founded: moment.Moment | undefined;
+    companySizeFrom: number | undefined;
+    companySizeTo: number | undefined;
+    type: string | undefined;
+    ticker: string | undefined;
+    refID: string | undefined;
+    logoUrl: string | undefined;
+    rating: number | undefined;
+    ucc: number | undefined;
+    network: string | undefined;
+    offerID: string | undefined;
+    threeMonthEPC: string | undefined;
+    sevenDayEPC: string | undefined;
+    payout: string | undefined;
+    fundingAmountLow: number | undefined;
+    fundingAmountHigh: number | undefined;
+    creditScoreMin: number | undefined;
+    creditScoreDesired: number | undefined;
+    apr: number | undefined;
+    featuresAndBenefits: string | undefined;
+    countriesServed: string | undefined;
+    description: string | undefined;
+    keywordTags: string | undefined;
+    leadRequest: LeadRequest | undefined;
+    leadBusinessPhones: LeadBusinessPhone[] | undefined;
+    leadBusinessLinks: LeadBusinessLink[] | undefined;
+    leadBusinessAliases: LeadBusinessAlias[] | undefined;
+    leadBusinessTeamContacts: LeadBusinessTeamContact[] | undefined;
+    isDeleted: boolean | undefined;
+    deleterUserId: number | undefined;
+    deletionTime: moment.Moment | undefined;
+    lastModificationTime: moment.Moment | undefined;
+    lastModifierUserId: number | undefined;
+    creationTime: moment.Moment | undefined;
+    creatorUserId: number | undefined;
+    id: number | undefined;
+}
+
+export class UTMParameter implements IUTMParameter {
+    tenantId!: number | undefined;
+    source!: string | undefined;
+    medium!: string | undefined;
+    campaign!: string | undefined;
+    term!: string | undefined;
+    content!: string | undefined;
+    keyword!: string | undefined;
+    adGroup!: string | undefined;
+    name!: string | undefined;
+    isDeleted!: boolean | undefined;
+    deleterUserId!: number | undefined;
+    deletionTime!: moment.Moment | undefined;
+    lastModificationTime!: moment.Moment | undefined;
+    lastModifierUserId!: number | undefined;
+    creationTime!: moment.Moment | undefined;
+    creatorUserId!: number | undefined;
+    id!: number | undefined;
+
+    constructor(data?: IUTMParameter) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.tenantId = data["tenantId"];
+            this.source = data["source"];
+            this.medium = data["medium"];
+            this.campaign = data["campaign"];
+            this.term = data["term"];
+            this.content = data["content"];
+            this.keyword = data["keyword"];
+            this.adGroup = data["adGroup"];
+            this.name = data["name"];
+            this.isDeleted = data["isDeleted"];
+            this.deleterUserId = data["deleterUserId"];
+            this.deletionTime = data["deletionTime"] ? moment(data["deletionTime"].toString()) : <any>undefined;
+            this.lastModificationTime = data["lastModificationTime"] ? moment(data["lastModificationTime"].toString()) : <any>undefined;
+            this.lastModifierUserId = data["lastModifierUserId"];
+            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
+            this.creatorUserId = data["creatorUserId"];
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): UTMParameter {
+        data = typeof data === 'object' ? data : {};
+        let result = new UTMParameter();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["tenantId"] = this.tenantId;
+        data["source"] = this.source;
+        data["medium"] = this.medium;
+        data["campaign"] = this.campaign;
+        data["term"] = this.term;
+        data["content"] = this.content;
+        data["keyword"] = this.keyword;
+        data["adGroup"] = this.adGroup;
+        data["name"] = this.name;
+        data["isDeleted"] = this.isDeleted;
+        data["deleterUserId"] = this.deleterUserId;
+        data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
+        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
+        data["lastModifierUserId"] = this.lastModifierUserId;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        data["creatorUserId"] = this.creatorUserId;
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface IUTMParameter {
+    tenantId: number | undefined;
+    source: string | undefined;
+    medium: string | undefined;
+    campaign: string | undefined;
+    term: string | undefined;
+    content: string | undefined;
+    keyword: string | undefined;
+    adGroup: string | undefined;
+    name: string | undefined;
+    isDeleted: boolean | undefined;
+    deleterUserId: number | undefined;
+    deletionTime: moment.Moment | undefined;
+    lastModificationTime: moment.Moment | undefined;
+    lastModifierUserId: number | undefined;
+    creationTime: moment.Moment | undefined;
+    creatorUserId: number | undefined;
+    id: number | undefined;
+}
+
+export class Transaction implements ITransaction {
+    tenantId!: number | undefined;
+    userId!: number | undefined;
+    paymentInfoId!: number | undefined;
+    paymentInfo!: PaymentInfo | undefined;
+    ipAddress!: string | undefined;
+    originTransactionId!: number | undefined;
+    originTransaction!: Transaction | undefined;
+    amount!: number | undefined;
+    typeString!: string | undefined;
+    type!: TransactionType | undefined;
+    success!: boolean | undefined;
+    errors!: string | undefined;
+    gatewayName!: string | undefined;
+    gatewayTransactionId!: string | undefined;
+    gatewayOriginTransactionId!: string | undefined;
+    statusString!: string | undefined;
+    status!: TransactionStatus | undefined;
+    authorizationCode!: string | undefined;
+    responseCode!: string | undefined;
+    responseMessage!: string | undefined;
+    messages!: string | undefined;
+    avsResponseCode!: string | undefined;
+    cvvResponseCode!: string | undefined;
+    gatewayCreationDate!: moment.Moment | undefined;
+    originator!: string | undefined;
+    description!: string | undefined;
+    billingSubscriptionId!: number | undefined;
+    billingSubscription!: BillingSubscription | undefined;
+    childTransactions!: Transaction[] | undefined;
+    transactionLinks!: TransactionLink[] | undefined;
+    transactionActions!: TransactionAction[] | undefined;
+    orderSubscriptionPayments!: OrderSubscriptionPayment[] | undefined;
+    lastModificationTime!: moment.Moment | undefined;
+    lastModifierUserId!: number | undefined;
+    creationTime!: moment.Moment | undefined;
+    creatorUserId!: number | undefined;
+    id!: number | undefined;
+
+    constructor(data?: ITransaction) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.tenantId = data["tenantId"];
+            this.userId = data["userId"];
+            this.paymentInfoId = data["paymentInfoId"];
+            this.paymentInfo = data["paymentInfo"] ? PaymentInfo.fromJS(data["paymentInfo"]) : <any>undefined;
+            this.ipAddress = data["ipAddress"];
+            this.originTransactionId = data["originTransactionId"];
+            this.originTransaction = data["originTransaction"] ? Transaction.fromJS(data["originTransaction"]) : <any>undefined;
+            this.amount = data["amount"];
+            this.typeString = data["typeString"];
+            this.type = data["type"];
+            this.success = data["success"];
+            this.errors = data["errors"];
+            this.gatewayName = data["gatewayName"];
+            this.gatewayTransactionId = data["gatewayTransactionId"];
+            this.gatewayOriginTransactionId = data["gatewayOriginTransactionId"];
+            this.statusString = data["statusString"];
+            this.status = data["status"];
+            this.authorizationCode = data["authorizationCode"];
+            this.responseCode = data["responseCode"];
+            this.responseMessage = data["responseMessage"];
+            this.messages = data["messages"];
+            this.avsResponseCode = data["avsResponseCode"];
+            this.cvvResponseCode = data["cvvResponseCode"];
+            this.gatewayCreationDate = data["gatewayCreationDate"] ? moment(data["gatewayCreationDate"].toString()) : <any>undefined;
+            this.originator = data["originator"];
+            this.description = data["description"];
+            this.billingSubscriptionId = data["billingSubscriptionId"];
+            this.billingSubscription = data["billingSubscription"] ? BillingSubscription.fromJS(data["billingSubscription"]) : <any>undefined;
+            if (data["childTransactions"] && data["childTransactions"].constructor === Array) {
+                this.childTransactions = [];
+                for (let item of data["childTransactions"])
+                    this.childTransactions.push(Transaction.fromJS(item));
+            }
+            if (data["transactionLinks"] && data["transactionLinks"].constructor === Array) {
+                this.transactionLinks = [];
+                for (let item of data["transactionLinks"])
+                    this.transactionLinks.push(TransactionLink.fromJS(item));
+            }
+            if (data["transactionActions"] && data["transactionActions"].constructor === Array) {
+                this.transactionActions = [];
+                for (let item of data["transactionActions"])
+                    this.transactionActions.push(TransactionAction.fromJS(item));
+            }
+            if (data["orderSubscriptionPayments"] && data["orderSubscriptionPayments"].constructor === Array) {
+                this.orderSubscriptionPayments = [];
+                for (let item of data["orderSubscriptionPayments"])
+                    this.orderSubscriptionPayments.push(OrderSubscriptionPayment.fromJS(item));
+            }
+            this.lastModificationTime = data["lastModificationTime"] ? moment(data["lastModificationTime"].toString()) : <any>undefined;
+            this.lastModifierUserId = data["lastModifierUserId"];
+            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
+            this.creatorUserId = data["creatorUserId"];
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): Transaction {
+        data = typeof data === 'object' ? data : {};
+        let result = new Transaction();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["tenantId"] = this.tenantId;
+        data["userId"] = this.userId;
+        data["paymentInfoId"] = this.paymentInfoId;
+        data["paymentInfo"] = this.paymentInfo ? this.paymentInfo.toJSON() : <any>undefined;
+        data["ipAddress"] = this.ipAddress;
+        data["originTransactionId"] = this.originTransactionId;
+        data["originTransaction"] = this.originTransaction ? this.originTransaction.toJSON() : <any>undefined;
+        data["amount"] = this.amount;
+        data["typeString"] = this.typeString;
+        data["type"] = this.type;
+        data["success"] = this.success;
+        data["errors"] = this.errors;
+        data["gatewayName"] = this.gatewayName;
+        data["gatewayTransactionId"] = this.gatewayTransactionId;
+        data["gatewayOriginTransactionId"] = this.gatewayOriginTransactionId;
+        data["statusString"] = this.statusString;
+        data["status"] = this.status;
+        data["authorizationCode"] = this.authorizationCode;
+        data["responseCode"] = this.responseCode;
+        data["responseMessage"] = this.responseMessage;
+        data["messages"] = this.messages;
+        data["avsResponseCode"] = this.avsResponseCode;
+        data["cvvResponseCode"] = this.cvvResponseCode;
+        data["gatewayCreationDate"] = this.gatewayCreationDate ? this.gatewayCreationDate.toISOString() : <any>undefined;
+        data["originator"] = this.originator;
+        data["description"] = this.description;
+        data["billingSubscriptionId"] = this.billingSubscriptionId;
+        data["billingSubscription"] = this.billingSubscription ? this.billingSubscription.toJSON() : <any>undefined;
+        if (this.childTransactions && this.childTransactions.constructor === Array) {
+            data["childTransactions"] = [];
+            for (let item of this.childTransactions)
+                data["childTransactions"].push(item.toJSON());
+        }
+        if (this.transactionLinks && this.transactionLinks.constructor === Array) {
+            data["transactionLinks"] = [];
+            for (let item of this.transactionLinks)
+                data["transactionLinks"].push(item.toJSON());
+        }
+        if (this.transactionActions && this.transactionActions.constructor === Array) {
+            data["transactionActions"] = [];
+            for (let item of this.transactionActions)
+                data["transactionActions"].push(item.toJSON());
+        }
+        if (this.orderSubscriptionPayments && this.orderSubscriptionPayments.constructor === Array) {
+            data["orderSubscriptionPayments"] = [];
+            for (let item of this.orderSubscriptionPayments)
+                data["orderSubscriptionPayments"].push(item.toJSON());
+        }
+        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
+        data["lastModifierUserId"] = this.lastModifierUserId;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        data["creatorUserId"] = this.creatorUserId;
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface ITransaction {
+    tenantId: number | undefined;
+    userId: number | undefined;
+    paymentInfoId: number | undefined;
+    paymentInfo: PaymentInfo | undefined;
+    ipAddress: string | undefined;
+    originTransactionId: number | undefined;
+    originTransaction: Transaction | undefined;
+    amount: number | undefined;
+    typeString: string | undefined;
+    type: TransactionType | undefined;
+    success: boolean | undefined;
+    errors: string | undefined;
+    gatewayName: string | undefined;
+    gatewayTransactionId: string | undefined;
+    gatewayOriginTransactionId: string | undefined;
+    statusString: string | undefined;
+    status: TransactionStatus | undefined;
+    authorizationCode: string | undefined;
+    responseCode: string | undefined;
+    responseMessage: string | undefined;
+    messages: string | undefined;
+    avsResponseCode: string | undefined;
+    cvvResponseCode: string | undefined;
+    gatewayCreationDate: moment.Moment | undefined;
+    originator: string | undefined;
+    description: string | undefined;
+    billingSubscriptionId: number | undefined;
+    billingSubscription: BillingSubscription | undefined;
+    childTransactions: Transaction[] | undefined;
+    transactionLinks: TransactionLink[] | undefined;
+    transactionActions: TransactionAction[] | undefined;
+    orderSubscriptionPayments: OrderSubscriptionPayment[] | undefined;
+    lastModificationTime: moment.Moment | undefined;
+    lastModifierUserId: number | undefined;
+    creationTime: moment.Moment | undefined;
+    creatorUserId: number | undefined;
+    id: number | undefined;
+}
+
+export class WorkflowAction implements IWorkflowAction {
+    tenantId!: number | undefined;
+    name!: string;
+    sysId!: string | undefined;
+    actionTransitionMappings!: ActionTransitionMapping[] | undefined;
+    actionAccessibilityMappings!: ActionAccessibilityMapping[] | undefined;
+    actionLogs!: ActionLog[] | undefined;
+    isDeleted!: boolean | undefined;
+    deleterUserId!: number | undefined;
+    deletionTime!: moment.Moment | undefined;
+    lastModificationTime!: moment.Moment | undefined;
+    lastModifierUserId!: number | undefined;
+    creationTime!: moment.Moment | undefined;
+    creatorUserId!: number | undefined;
+    id!: number | undefined;
+
+    constructor(data?: IWorkflowAction) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.tenantId = data["tenantId"];
+            this.name = data["name"];
+            this.sysId = data["sysId"];
+            if (data["actionTransitionMappings"] && data["actionTransitionMappings"].constructor === Array) {
+                this.actionTransitionMappings = [];
+                for (let item of data["actionTransitionMappings"])
+                    this.actionTransitionMappings.push(ActionTransitionMapping.fromJS(item));
+            }
+            if (data["actionAccessibilityMappings"] && data["actionAccessibilityMappings"].constructor === Array) {
+                this.actionAccessibilityMappings = [];
+                for (let item of data["actionAccessibilityMappings"])
+                    this.actionAccessibilityMappings.push(ActionAccessibilityMapping.fromJS(item));
+            }
+            if (data["actionLogs"] && data["actionLogs"].constructor === Array) {
+                this.actionLogs = [];
+                for (let item of data["actionLogs"])
+                    this.actionLogs.push(ActionLog.fromJS(item));
+            }
+            this.isDeleted = data["isDeleted"];
+            this.deleterUserId = data["deleterUserId"];
+            this.deletionTime = data["deletionTime"] ? moment(data["deletionTime"].toString()) : <any>undefined;
+            this.lastModificationTime = data["lastModificationTime"] ? moment(data["lastModificationTime"].toString()) : <any>undefined;
+            this.lastModifierUserId = data["lastModifierUserId"];
+            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
+            this.creatorUserId = data["creatorUserId"];
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): WorkflowAction {
+        data = typeof data === 'object' ? data : {};
+        let result = new WorkflowAction();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["tenantId"] = this.tenantId;
+        data["name"] = this.name;
+        data["sysId"] = this.sysId;
+        if (this.actionTransitionMappings && this.actionTransitionMappings.constructor === Array) {
+            data["actionTransitionMappings"] = [];
+            for (let item of this.actionTransitionMappings)
+                data["actionTransitionMappings"].push(item.toJSON());
+        }
+        if (this.actionAccessibilityMappings && this.actionAccessibilityMappings.constructor === Array) {
+            data["actionAccessibilityMappings"] = [];
+            for (let item of this.actionAccessibilityMappings)
+                data["actionAccessibilityMappings"].push(item.toJSON());
+        }
+        if (this.actionLogs && this.actionLogs.constructor === Array) {
+            data["actionLogs"] = [];
+            for (let item of this.actionLogs)
+                data["actionLogs"].push(item.toJSON());
+        }
+        data["isDeleted"] = this.isDeleted;
+        data["deleterUserId"] = this.deleterUserId;
+        data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
+        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
+        data["lastModifierUserId"] = this.lastModifierUserId;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        data["creatorUserId"] = this.creatorUserId;
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface IWorkflowAction {
+    tenantId: number | undefined;
+    name: string;
+    sysId: string | undefined;
+    actionTransitionMappings: ActionTransitionMapping[] | undefined;
+    actionAccessibilityMappings: ActionAccessibilityMapping[] | undefined;
+    actionLogs: ActionLog[] | undefined;
+    isDeleted: boolean | undefined;
+    deleterUserId: number | undefined;
+    deletionTime: moment.Moment | undefined;
+    lastModificationTime: moment.Moment | undefined;
+    lastModifierUserId: number | undefined;
+    creationTime: moment.Moment | undefined;
+    creatorUserId: number | undefined;
+    id: number | undefined;
+}
+
+export class BillingSubscription implements IBillingSubscription {
+    tenantId!: number | undefined;
+    userId!: number | undefined;
+    startDate!: moment.Moment;
+    endDate!: moment.Moment | undefined;
+    fee!: number;
+    frequencyString!: string;
+    frequency!: BillingSubscriptionFrequency | undefined;
+    gatewayName!: string;
+    paymentInfoId!: number | undefined;
+    paymentInfo!: PaymentInfo | undefined;
+    gatewaySubscriptionId!: string | undefined;
+    originator!: string | undefined;
+    description!: string | undefined;
+    messages!: string | undefined;
+    errors!: string | undefined;
+    statusId!: string;
+    status!: SubscriptionStatus | undefined;
+    transactions!: Transaction[] | undefined;
+    isDeleted!: boolean | undefined;
+    deleterUserId!: number | undefined;
+    deletionTime!: moment.Moment | undefined;
+    lastModificationTime!: moment.Moment | undefined;
+    lastModifierUserId!: number | undefined;
+    creationTime!: moment.Moment | undefined;
+    creatorUserId!: number | undefined;
+    id!: number | undefined;
+
+    constructor(data?: IBillingSubscription) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.tenantId = data["tenantId"];
+            this.userId = data["userId"];
+            this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
+            this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
+            this.fee = data["fee"];
+            this.frequencyString = data["frequencyString"];
+            this.frequency = data["frequency"];
+            this.gatewayName = data["gatewayName"];
+            this.paymentInfoId = data["paymentInfoId"];
+            this.paymentInfo = data["paymentInfo"] ? PaymentInfo.fromJS(data["paymentInfo"]) : <any>undefined;
+            this.gatewaySubscriptionId = data["gatewaySubscriptionId"];
+            this.originator = data["originator"];
+            this.description = data["description"];
+            this.messages = data["messages"];
+            this.errors = data["errors"];
+            this.statusId = data["statusId"];
+            this.status = data["status"] ? SubscriptionStatus.fromJS(data["status"]) : <any>undefined;
+            if (data["transactions"] && data["transactions"].constructor === Array) {
+                this.transactions = [];
+                for (let item of data["transactions"])
+                    this.transactions.push(Transaction.fromJS(item));
+            }
+            this.isDeleted = data["isDeleted"];
+            this.deleterUserId = data["deleterUserId"];
+            this.deletionTime = data["deletionTime"] ? moment(data["deletionTime"].toString()) : <any>undefined;
+            this.lastModificationTime = data["lastModificationTime"] ? moment(data["lastModificationTime"].toString()) : <any>undefined;
+            this.lastModifierUserId = data["lastModifierUserId"];
+            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
+            this.creatorUserId = data["creatorUserId"];
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): BillingSubscription {
+        data = typeof data === 'object' ? data : {};
+        let result = new BillingSubscription();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["tenantId"] = this.tenantId;
+        data["userId"] = this.userId;
+        data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
+        data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
+        data["fee"] = this.fee;
+        data["frequencyString"] = this.frequencyString;
+        data["frequency"] = this.frequency;
+        data["gatewayName"] = this.gatewayName;
+        data["paymentInfoId"] = this.paymentInfoId;
+        data["paymentInfo"] = this.paymentInfo ? this.paymentInfo.toJSON() : <any>undefined;
+        data["gatewaySubscriptionId"] = this.gatewaySubscriptionId;
+        data["originator"] = this.originator;
+        data["description"] = this.description;
+        data["messages"] = this.messages;
+        data["errors"] = this.errors;
+        data["statusId"] = this.statusId;
+        data["status"] = this.status ? this.status.toJSON() : <any>undefined;
+        if (this.transactions && this.transactions.constructor === Array) {
+            data["transactions"] = [];
+            for (let item of this.transactions)
+                data["transactions"].push(item.toJSON());
+        }
+        data["isDeleted"] = this.isDeleted;
+        data["deleterUserId"] = this.deleterUserId;
+        data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
+        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
+        data["lastModifierUserId"] = this.lastModifierUserId;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        data["creatorUserId"] = this.creatorUserId;
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface IBillingSubscription {
+    tenantId: number | undefined;
+    userId: number | undefined;
+    startDate: moment.Moment;
+    endDate: moment.Moment | undefined;
+    fee: number;
+    frequencyString: string;
+    frequency: BillingSubscriptionFrequency | undefined;
+    gatewayName: string;
+    paymentInfoId: number | undefined;
+    paymentInfo: PaymentInfo | undefined;
+    gatewaySubscriptionId: string | undefined;
+    originator: string | undefined;
+    description: string | undefined;
+    messages: string | undefined;
+    errors: string | undefined;
+    statusId: string;
+    status: SubscriptionStatus | undefined;
+    transactions: Transaction[] | undefined;
+    isDeleted: boolean | undefined;
+    deleterUserId: number | undefined;
+    deletionTime: moment.Moment | undefined;
+    lastModificationTime: moment.Moment | undefined;
+    lastModifierUserId: number | undefined;
+    creationTime: moment.Moment | undefined;
+    creatorUserId: number | undefined;
+    id: number | undefined;
+}
+
+export class InvoiceLineUnit implements IInvoiceLineUnit {
+    name!: string;
+    lines!: InvoiceLine[] | undefined;
+    isDeleted!: boolean | undefined;
+    deleterUserId!: number | undefined;
+    deletionTime!: moment.Moment | undefined;
+    lastModificationTime!: moment.Moment | undefined;
+    lastModifierUserId!: number | undefined;
+    creationTime!: moment.Moment | undefined;
+    creatorUserId!: number | undefined;
+    id!: string | undefined;
+
+    constructor(data?: IInvoiceLineUnit) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.name = data["name"];
+            if (data["lines"] && data["lines"].constructor === Array) {
+                this.lines = [];
+                for (let item of data["lines"])
+                    this.lines.push(InvoiceLine.fromJS(item));
+            }
+            this.isDeleted = data["isDeleted"];
+            this.deleterUserId = data["deleterUserId"];
+            this.deletionTime = data["deletionTime"] ? moment(data["deletionTime"].toString()) : <any>undefined;
+            this.lastModificationTime = data["lastModificationTime"] ? moment(data["lastModificationTime"].toString()) : <any>undefined;
+            this.lastModifierUserId = data["lastModifierUserId"];
+            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
+            this.creatorUserId = data["creatorUserId"];
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): InvoiceLineUnit {
+        data = typeof data === 'object' ? data : {};
+        let result = new InvoiceLineUnit();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        if (this.lines && this.lines.constructor === Array) {
+            data["lines"] = [];
+            for (let item of this.lines)
+                data["lines"].push(item.toJSON());
+        }
+        data["isDeleted"] = this.isDeleted;
+        data["deleterUserId"] = this.deleterUserId;
+        data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
+        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
+        data["lastModifierUserId"] = this.lastModifierUserId;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        data["creatorUserId"] = this.creatorUserId;
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface IInvoiceLineUnit {
+    name: string;
+    lines: InvoiceLine[] | undefined;
+    isDeleted: boolean | undefined;
+    deleterUserId: number | undefined;
+    deletionTime: moment.Moment | undefined;
+    lastModificationTime: moment.Moment | undefined;
+    lastModifierUserId: number | undefined;
+    creationTime: moment.Moment | undefined;
+    creatorUserId: number | undefined;
+    id: string | undefined;
+}
+
+export class LeadBusinessPhone implements ILeadBusinessPhone {
+    tenantId!: number | undefined;
+    phoneNumber!: string;
+    leadBusinessInfoId!: number;
+    leadBusinessInfo!: LeadBusinessInfo | undefined;
+    isDeleted!: boolean | undefined;
+    deleterUserId!: number | undefined;
+    deletionTime!: moment.Moment | undefined;
+    lastModificationTime!: moment.Moment | undefined;
+    lastModifierUserId!: number | undefined;
+    creationTime!: moment.Moment | undefined;
+    creatorUserId!: number | undefined;
+    id!: number | undefined;
+
+    constructor(data?: ILeadBusinessPhone) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.tenantId = data["tenantId"];
+            this.phoneNumber = data["phoneNumber"];
+            this.leadBusinessInfoId = data["leadBusinessInfoId"];
+            this.leadBusinessInfo = data["leadBusinessInfo"] ? LeadBusinessInfo.fromJS(data["leadBusinessInfo"]) : <any>undefined;
+            this.isDeleted = data["isDeleted"];
+            this.deleterUserId = data["deleterUserId"];
+            this.deletionTime = data["deletionTime"] ? moment(data["deletionTime"].toString()) : <any>undefined;
+            this.lastModificationTime = data["lastModificationTime"] ? moment(data["lastModificationTime"].toString()) : <any>undefined;
+            this.lastModifierUserId = data["lastModifierUserId"];
+            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
+            this.creatorUserId = data["creatorUserId"];
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): LeadBusinessPhone {
+        data = typeof data === 'object' ? data : {};
+        let result = new LeadBusinessPhone();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["tenantId"] = this.tenantId;
+        data["phoneNumber"] = this.phoneNumber;
+        data["leadBusinessInfoId"] = this.leadBusinessInfoId;
+        data["leadBusinessInfo"] = this.leadBusinessInfo ? this.leadBusinessInfo.toJSON() : <any>undefined;
+        data["isDeleted"] = this.isDeleted;
+        data["deleterUserId"] = this.deleterUserId;
+        data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
+        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
+        data["lastModifierUserId"] = this.lastModifierUserId;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        data["creatorUserId"] = this.creatorUserId;
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface ILeadBusinessPhone {
+    tenantId: number | undefined;
+    phoneNumber: string;
+    leadBusinessInfoId: number;
+    leadBusinessInfo: LeadBusinessInfo | undefined;
+    isDeleted: boolean | undefined;
+    deleterUserId: number | undefined;
+    deletionTime: moment.Moment | undefined;
+    lastModificationTime: moment.Moment | undefined;
+    lastModifierUserId: number | undefined;
+    creationTime: moment.Moment | undefined;
+    creatorUserId: number | undefined;
+    id: number | undefined;
+}
+
+export class LeadBusinessLink implements ILeadBusinessLink {
+    tenantId!: number | undefined;
+    linkType!: string;
+    link!: string;
+    leadBusinessInfoId!: number;
+    leadBusinessInfo!: LeadBusinessInfo | undefined;
+    isDeleted!: boolean | undefined;
+    deleterUserId!: number | undefined;
+    deletionTime!: moment.Moment | undefined;
+    lastModificationTime!: moment.Moment | undefined;
+    lastModifierUserId!: number | undefined;
+    creationTime!: moment.Moment | undefined;
+    creatorUserId!: number | undefined;
+    id!: number | undefined;
+
+    constructor(data?: ILeadBusinessLink) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.tenantId = data["tenantId"];
+            this.linkType = data["linkType"];
+            this.link = data["link"];
+            this.leadBusinessInfoId = data["leadBusinessInfoId"];
+            this.leadBusinessInfo = data["leadBusinessInfo"] ? LeadBusinessInfo.fromJS(data["leadBusinessInfo"]) : <any>undefined;
+            this.isDeleted = data["isDeleted"];
+            this.deleterUserId = data["deleterUserId"];
+            this.deletionTime = data["deletionTime"] ? moment(data["deletionTime"].toString()) : <any>undefined;
+            this.lastModificationTime = data["lastModificationTime"] ? moment(data["lastModificationTime"].toString()) : <any>undefined;
+            this.lastModifierUserId = data["lastModifierUserId"];
+            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
+            this.creatorUserId = data["creatorUserId"];
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): LeadBusinessLink {
+        data = typeof data === 'object' ? data : {};
+        let result = new LeadBusinessLink();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["tenantId"] = this.tenantId;
+        data["linkType"] = this.linkType;
+        data["link"] = this.link;
+        data["leadBusinessInfoId"] = this.leadBusinessInfoId;
+        data["leadBusinessInfo"] = this.leadBusinessInfo ? this.leadBusinessInfo.toJSON() : <any>undefined;
+        data["isDeleted"] = this.isDeleted;
+        data["deleterUserId"] = this.deleterUserId;
+        data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
+        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
+        data["lastModifierUserId"] = this.lastModifierUserId;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        data["creatorUserId"] = this.creatorUserId;
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface ILeadBusinessLink {
+    tenantId: number | undefined;
+    linkType: string;
+    link: string;
+    leadBusinessInfoId: number;
+    leadBusinessInfo: LeadBusinessInfo | undefined;
+    isDeleted: boolean | undefined;
+    deleterUserId: number | undefined;
+    deletionTime: moment.Moment | undefined;
+    lastModificationTime: moment.Moment | undefined;
+    lastModifierUserId: number | undefined;
+    creationTime: moment.Moment | undefined;
+    creatorUserId: number | undefined;
+    id: number | undefined;
+}
+
+export class LeadBusinessAlias implements ILeadBusinessAlias {
+    tenantId!: number | undefined;
+    alias!: string;
+    leadBusinessInfoId!: number;
+    leadBusinessInfo!: LeadBusinessInfo | undefined;
+    isDeleted!: boolean | undefined;
+    deleterUserId!: number | undefined;
+    deletionTime!: moment.Moment | undefined;
+    lastModificationTime!: moment.Moment | undefined;
+    lastModifierUserId!: number | undefined;
+    creationTime!: moment.Moment | undefined;
+    creatorUserId!: number | undefined;
+    id!: number | undefined;
+
+    constructor(data?: ILeadBusinessAlias) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.tenantId = data["tenantId"];
+            this.alias = data["alias"];
+            this.leadBusinessInfoId = data["leadBusinessInfoId"];
+            this.leadBusinessInfo = data["leadBusinessInfo"] ? LeadBusinessInfo.fromJS(data["leadBusinessInfo"]) : <any>undefined;
+            this.isDeleted = data["isDeleted"];
+            this.deleterUserId = data["deleterUserId"];
+            this.deletionTime = data["deletionTime"] ? moment(data["deletionTime"].toString()) : <any>undefined;
+            this.lastModificationTime = data["lastModificationTime"] ? moment(data["lastModificationTime"].toString()) : <any>undefined;
+            this.lastModifierUserId = data["lastModifierUserId"];
+            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
+            this.creatorUserId = data["creatorUserId"];
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): LeadBusinessAlias {
+        data = typeof data === 'object' ? data : {};
+        let result = new LeadBusinessAlias();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["tenantId"] = this.tenantId;
+        data["alias"] = this.alias;
+        data["leadBusinessInfoId"] = this.leadBusinessInfoId;
+        data["leadBusinessInfo"] = this.leadBusinessInfo ? this.leadBusinessInfo.toJSON() : <any>undefined;
+        data["isDeleted"] = this.isDeleted;
+        data["deleterUserId"] = this.deleterUserId;
+        data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
+        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
+        data["lastModifierUserId"] = this.lastModifierUserId;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        data["creatorUserId"] = this.creatorUserId;
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface ILeadBusinessAlias {
+    tenantId: number | undefined;
+    alias: string;
+    leadBusinessInfoId: number;
+    leadBusinessInfo: LeadBusinessInfo | undefined;
+    isDeleted: boolean | undefined;
+    deleterUserId: number | undefined;
+    deletionTime: moment.Moment | undefined;
+    lastModificationTime: moment.Moment | undefined;
+    lastModifierUserId: number | undefined;
+    creationTime: moment.Moment | undefined;
+    creatorUserId: number | undefined;
+    id: number | undefined;
+}
+
+export class LeadBusinessTeamContact implements ILeadBusinessTeamContact {
+    tenantId!: number | undefined;
+    prefix!: string | undefined;
+    firstName!: string | undefined;
+    middleName!: string | undefined;
+    lastName!: string | undefined;
+    title!: string | undefined;
+    emailAddress!: string | undefined;
+    phoneNumber!: string | undefined;
+    leadBusinessInfoId!: number;
+    leadBusinessInfo!: LeadBusinessInfo | undefined;
+    isDeleted!: boolean | undefined;
+    deleterUserId!: number | undefined;
+    deletionTime!: moment.Moment | undefined;
+    lastModificationTime!: moment.Moment | undefined;
+    lastModifierUserId!: number | undefined;
+    creationTime!: moment.Moment | undefined;
+    creatorUserId!: number | undefined;
+    id!: number | undefined;
+
+    constructor(data?: ILeadBusinessTeamContact) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.tenantId = data["tenantId"];
+            this.prefix = data["prefix"];
+            this.firstName = data["firstName"];
+            this.middleName = data["middleName"];
+            this.lastName = data["lastName"];
+            this.title = data["title"];
+            this.emailAddress = data["emailAddress"];
+            this.phoneNumber = data["phoneNumber"];
+            this.leadBusinessInfoId = data["leadBusinessInfoId"];
+            this.leadBusinessInfo = data["leadBusinessInfo"] ? LeadBusinessInfo.fromJS(data["leadBusinessInfo"]) : <any>undefined;
+            this.isDeleted = data["isDeleted"];
+            this.deleterUserId = data["deleterUserId"];
+            this.deletionTime = data["deletionTime"] ? moment(data["deletionTime"].toString()) : <any>undefined;
+            this.lastModificationTime = data["lastModificationTime"] ? moment(data["lastModificationTime"].toString()) : <any>undefined;
+            this.lastModifierUserId = data["lastModifierUserId"];
+            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
+            this.creatorUserId = data["creatorUserId"];
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): LeadBusinessTeamContact {
+        data = typeof data === 'object' ? data : {};
+        let result = new LeadBusinessTeamContact();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["tenantId"] = this.tenantId;
+        data["prefix"] = this.prefix;
+        data["firstName"] = this.firstName;
+        data["middleName"] = this.middleName;
+        data["lastName"] = this.lastName;
+        data["title"] = this.title;
+        data["emailAddress"] = this.emailAddress;
+        data["phoneNumber"] = this.phoneNumber;
+        data["leadBusinessInfoId"] = this.leadBusinessInfoId;
+        data["leadBusinessInfo"] = this.leadBusinessInfo ? this.leadBusinessInfo.toJSON() : <any>undefined;
+        data["isDeleted"] = this.isDeleted;
+        data["deleterUserId"] = this.deleterUserId;
+        data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
+        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
+        data["lastModifierUserId"] = this.lastModifierUserId;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        data["creatorUserId"] = this.creatorUserId;
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface ILeadBusinessTeamContact {
+    tenantId: number | undefined;
+    prefix: string | undefined;
+    firstName: string | undefined;
+    middleName: string | undefined;
+    lastName: string | undefined;
+    title: string | undefined;
+    emailAddress: string | undefined;
+    phoneNumber: string | undefined;
+    leadBusinessInfoId: number;
+    leadBusinessInfo: LeadBusinessInfo | undefined;
+    isDeleted: boolean | undefined;
+    deleterUserId: number | undefined;
+    deletionTime: moment.Moment | undefined;
+    lastModificationTime: moment.Moment | undefined;
+    lastModifierUserId: number | undefined;
+    creationTime: moment.Moment | undefined;
+    creatorUserId: number | undefined;
+    id: number | undefined;
+}
+
+export class PaymentInfo implements IPaymentInfo {
+    tenantId!: number | undefined;
+    userId!: number | undefined;
+    gatewayName!: string;
+    gatewayToken!: string;
+    type!: PaymentInfoType | undefined;
+    contactId!: number | undefined;
+    firstName!: string | undefined;
+    lastName!: string | undefined;
+    email!: string | undefined;
+    phone!: string | undefined;
+    dateOfBirth!: moment.Moment | undefined;
+    streetAddress!: string | undefined;
+    city!: string | undefined;
+    stateCode!: string | undefined;
+    state!: string | undefined;
+    country!: string | undefined;
+    zipCode!: string | undefined;
+    bankCard!: PaymentInfoBankCard | undefined;
+    achCustomer!: PaymentInfoACHCustomer | undefined;
+    contact!: Contact | undefined;
+    isDeleted!: boolean | undefined;
+    deleterUserId!: number | undefined;
+    deletionTime!: moment.Moment | undefined;
+    lastModificationTime!: moment.Moment | undefined;
+    lastModifierUserId!: number | undefined;
+    creationTime!: moment.Moment | undefined;
+    creatorUserId!: number | undefined;
+    id!: number | undefined;
+
+    constructor(data?: IPaymentInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.tenantId = data["tenantId"];
+            this.userId = data["userId"];
+            this.gatewayName = data["gatewayName"];
+            this.gatewayToken = data["gatewayToken"];
+            this.type = data["type"];
+            this.contactId = data["contactId"];
+            this.firstName = data["firstName"];
+            this.lastName = data["lastName"];
+            this.email = data["email"];
+            this.phone = data["phone"];
+            this.dateOfBirth = data["dateOfBirth"] ? moment(data["dateOfBirth"].toString()) : <any>undefined;
+            this.streetAddress = data["streetAddress"];
+            this.city = data["city"];
+            this.stateCode = data["stateCode"];
+            this.state = data["state"];
+            this.country = data["country"];
+            this.zipCode = data["zipCode"];
+            this.bankCard = data["bankCard"] ? PaymentInfoBankCard.fromJS(data["bankCard"]) : <any>undefined;
+            this.achCustomer = data["achCustomer"] ? PaymentInfoACHCustomer.fromJS(data["achCustomer"]) : <any>undefined;
+            this.contact = data["contact"] ? Contact.fromJS(data["contact"]) : <any>undefined;
+            this.isDeleted = data["isDeleted"];
+            this.deleterUserId = data["deleterUserId"];
+            this.deletionTime = data["deletionTime"] ? moment(data["deletionTime"].toString()) : <any>undefined;
+            this.lastModificationTime = data["lastModificationTime"] ? moment(data["lastModificationTime"].toString()) : <any>undefined;
+            this.lastModifierUserId = data["lastModifierUserId"];
+            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
+            this.creatorUserId = data["creatorUserId"];
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): PaymentInfo {
+        data = typeof data === 'object' ? data : {};
+        let result = new PaymentInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["tenantId"] = this.tenantId;
+        data["userId"] = this.userId;
+        data["gatewayName"] = this.gatewayName;
+        data["gatewayToken"] = this.gatewayToken;
+        data["type"] = this.type;
+        data["contactId"] = this.contactId;
+        data["firstName"] = this.firstName;
+        data["lastName"] = this.lastName;
+        data["email"] = this.email;
+        data["phone"] = this.phone;
+        data["dateOfBirth"] = this.dateOfBirth ? this.dateOfBirth.toISOString() : <any>undefined;
+        data["streetAddress"] = this.streetAddress;
+        data["city"] = this.city;
+        data["stateCode"] = this.stateCode;
+        data["state"] = this.state;
+        data["country"] = this.country;
+        data["zipCode"] = this.zipCode;
+        data["bankCard"] = this.bankCard ? this.bankCard.toJSON() : <any>undefined;
+        data["achCustomer"] = this.achCustomer ? this.achCustomer.toJSON() : <any>undefined;
+        data["contact"] = this.contact ? this.contact.toJSON() : <any>undefined;
+        data["isDeleted"] = this.isDeleted;
+        data["deleterUserId"] = this.deleterUserId;
+        data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
+        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
+        data["lastModifierUserId"] = this.lastModifierUserId;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        data["creatorUserId"] = this.creatorUserId;
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface IPaymentInfo {
+    tenantId: number | undefined;
+    userId: number | undefined;
+    gatewayName: string;
+    gatewayToken: string;
+    type: PaymentInfoType | undefined;
+    contactId: number | undefined;
+    firstName: string | undefined;
+    lastName: string | undefined;
+    email: string | undefined;
+    phone: string | undefined;
+    dateOfBirth: moment.Moment | undefined;
+    streetAddress: string | undefined;
+    city: string | undefined;
+    stateCode: string | undefined;
+    state: string | undefined;
+    country: string | undefined;
+    zipCode: string | undefined;
+    bankCard: PaymentInfoBankCard | undefined;
+    achCustomer: PaymentInfoACHCustomer | undefined;
+    contact: Contact | undefined;
+    isDeleted: boolean | undefined;
+    deleterUserId: number | undefined;
+    deletionTime: moment.Moment | undefined;
+    lastModificationTime: moment.Moment | undefined;
+    lastModifierUserId: number | undefined;
+    creationTime: moment.Moment | undefined;
+    creatorUserId: number | undefined;
+    id: number | undefined;
+}
+
+export class TransactionLink implements ITransactionLink {
+    tenantId!: number | undefined;
+    linkType!: string;
+    linkRef!: string;
+    transactionId!: number | undefined;
+    transaction!: Transaction | undefined;
+    creationTime!: moment.Moment | undefined;
+    creatorUserId!: number | undefined;
+    id!: number | undefined;
+
+    constructor(data?: ITransactionLink) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.tenantId = data["tenantId"];
+            this.linkType = data["linkType"];
+            this.linkRef = data["linkRef"];
+            this.transactionId = data["transactionId"];
+            this.transaction = data["transaction"] ? Transaction.fromJS(data["transaction"]) : <any>undefined;
+            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
+            this.creatorUserId = data["creatorUserId"];
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): TransactionLink {
+        data = typeof data === 'object' ? data : {};
+        let result = new TransactionLink();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["tenantId"] = this.tenantId;
+        data["linkType"] = this.linkType;
+        data["linkRef"] = this.linkRef;
+        data["transactionId"] = this.transactionId;
+        data["transaction"] = this.transaction ? this.transaction.toJSON() : <any>undefined;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        data["creatorUserId"] = this.creatorUserId;
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface ITransactionLink {
+    tenantId: number | undefined;
+    linkType: string;
+    linkRef: string;
+    transactionId: number | undefined;
+    transaction: Transaction | undefined;
+    creationTime: moment.Moment | undefined;
+    creatorUserId: number | undefined;
+    id: number | undefined;
+}
+
+export class TransactionAction implements ITransactionAction {
+    tenantId!: number | undefined;
+    transactionId!: number | undefined;
+    transaction!: Transaction | undefined;
+    typeString!: string | undefined;
+    type!: TransactionActionType | undefined;
+    success!: boolean | undefined;
+    errors!: string | undefined;
+    gatewayTransactionId!: string | undefined;
+    statusString!: string | undefined;
+    status!: TransactionActionStatus | undefined;
+    authorizationCode!: string | undefined;
+    responseCode!: string | undefined;
+    responseMessage!: string | undefined;
+    messages!: string | undefined;
+    avsResponseCode!: string | undefined;
+    cvvResponseCode!: string | undefined;
+    gatewayCreationDate!: moment.Moment | undefined;
+    creationTime!: moment.Moment | undefined;
+    creatorUserId!: number | undefined;
+    id!: number | undefined;
+
+    constructor(data?: ITransactionAction) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.tenantId = data["tenantId"];
+            this.transactionId = data["transactionId"];
+            this.transaction = data["transaction"] ? Transaction.fromJS(data["transaction"]) : <any>undefined;
+            this.typeString = data["typeString"];
+            this.type = data["type"];
+            this.success = data["success"];
+            this.errors = data["errors"];
+            this.gatewayTransactionId = data["gatewayTransactionId"];
+            this.statusString = data["statusString"];
+            this.status = data["status"];
+            this.authorizationCode = data["authorizationCode"];
+            this.responseCode = data["responseCode"];
+            this.responseMessage = data["responseMessage"];
+            this.messages = data["messages"];
+            this.avsResponseCode = data["avsResponseCode"];
+            this.cvvResponseCode = data["cvvResponseCode"];
+            this.gatewayCreationDate = data["gatewayCreationDate"] ? moment(data["gatewayCreationDate"].toString()) : <any>undefined;
+            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
+            this.creatorUserId = data["creatorUserId"];
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): TransactionAction {
+        data = typeof data === 'object' ? data : {};
+        let result = new TransactionAction();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["tenantId"] = this.tenantId;
+        data["transactionId"] = this.transactionId;
+        data["transaction"] = this.transaction ? this.transaction.toJSON() : <any>undefined;
+        data["typeString"] = this.typeString;
+        data["type"] = this.type;
+        data["success"] = this.success;
+        data["errors"] = this.errors;
+        data["gatewayTransactionId"] = this.gatewayTransactionId;
+        data["statusString"] = this.statusString;
+        data["status"] = this.status;
+        data["authorizationCode"] = this.authorizationCode;
+        data["responseCode"] = this.responseCode;
+        data["responseMessage"] = this.responseMessage;
+        data["messages"] = this.messages;
+        data["avsResponseCode"] = this.avsResponseCode;
+        data["cvvResponseCode"] = this.cvvResponseCode;
+        data["gatewayCreationDate"] = this.gatewayCreationDate ? this.gatewayCreationDate.toISOString() : <any>undefined;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        data["creatorUserId"] = this.creatorUserId;
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface ITransactionAction {
+    tenantId: number | undefined;
+    transactionId: number | undefined;
+    transaction: Transaction | undefined;
+    typeString: string | undefined;
+    type: TransactionActionType | undefined;
+    success: boolean | undefined;
+    errors: string | undefined;
+    gatewayTransactionId: string | undefined;
+    statusString: string | undefined;
+    status: TransactionActionStatus | undefined;
+    authorizationCode: string | undefined;
+    responseCode: string | undefined;
+    responseMessage: string | undefined;
+    messages: string | undefined;
+    avsResponseCode: string | undefined;
+    cvvResponseCode: string | undefined;
+    gatewayCreationDate: moment.Moment | undefined;
+    creationTime: moment.Moment | undefined;
+    creatorUserId: number | undefined;
+    id: number | undefined;
+}
+
+export class ActionLog implements IActionLog {
+    tenantId!: number | undefined;
+    entityType!: string;
+    entityId!: number | undefined;
+    actionId!: number | undefined;
+    prevStageId!: number | undefined;
+    nextStageId!: number | undefined;
+    action!: WorkflowAction | undefined;
+    prevStage!: Stage | undefined;
+    nextStage!: Stage | undefined;
+    isDeleted!: boolean | undefined;
+    deleterUserId!: number | undefined;
+    deletionTime!: moment.Moment | undefined;
+    lastModificationTime!: moment.Moment | undefined;
+    lastModifierUserId!: number | undefined;
+    creationTime!: moment.Moment | undefined;
+    creatorUserId!: number | undefined;
+    id!: number | undefined;
+
+    constructor(data?: IActionLog) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.tenantId = data["tenantId"];
+            this.entityType = data["entityType"];
+            this.entityId = data["entityId"];
+            this.actionId = data["actionId"];
+            this.prevStageId = data["prevStageId"];
+            this.nextStageId = data["nextStageId"];
+            this.action = data["action"] ? WorkflowAction.fromJS(data["action"]) : <any>undefined;
+            this.prevStage = data["prevStage"] ? Stage.fromJS(data["prevStage"]) : <any>undefined;
+            this.nextStage = data["nextStage"] ? Stage.fromJS(data["nextStage"]) : <any>undefined;
+            this.isDeleted = data["isDeleted"];
+            this.deleterUserId = data["deleterUserId"];
+            this.deletionTime = data["deletionTime"] ? moment(data["deletionTime"].toString()) : <any>undefined;
+            this.lastModificationTime = data["lastModificationTime"] ? moment(data["lastModificationTime"].toString()) : <any>undefined;
+            this.lastModifierUserId = data["lastModifierUserId"];
+            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
+            this.creatorUserId = data["creatorUserId"];
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): ActionLog {
+        data = typeof data === 'object' ? data : {};
+        let result = new ActionLog();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["tenantId"] = this.tenantId;
+        data["entityType"] = this.entityType;
+        data["entityId"] = this.entityId;
+        data["actionId"] = this.actionId;
+        data["prevStageId"] = this.prevStageId;
+        data["nextStageId"] = this.nextStageId;
+        data["action"] = this.action ? this.action.toJSON() : <any>undefined;
+        data["prevStage"] = this.prevStage ? this.prevStage.toJSON() : <any>undefined;
+        data["nextStage"] = this.nextStage ? this.nextStage.toJSON() : <any>undefined;
+        data["isDeleted"] = this.isDeleted;
+        data["deleterUserId"] = this.deleterUserId;
+        data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
+        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
+        data["lastModifierUserId"] = this.lastModifierUserId;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        data["creatorUserId"] = this.creatorUserId;
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface IActionLog {
+    tenantId: number | undefined;
+    entityType: string;
+    entityId: number | undefined;
+    actionId: number | undefined;
+    prevStageId: number | undefined;
+    nextStageId: number | undefined;
+    action: WorkflowAction | undefined;
+    prevStage: Stage | undefined;
+    nextStage: Stage | undefined;
+    isDeleted: boolean | undefined;
+    deleterUserId: number | undefined;
+    deletionTime: moment.Moment | undefined;
+    lastModificationTime: moment.Moment | undefined;
+    lastModifierUserId: number | undefined;
+    creationTime: moment.Moment | undefined;
+    creatorUserId: number | undefined;
+    id: number | undefined;
+}
+
+export class PaymentInfoBankCard implements IPaymentInfoBankCard {
+    tenantId!: number | undefined;
+    holderName!: string;
+    cardNumber!: string;
+    expirationMonth!: string;
+    expirationYear!: string;
+    billingAddress!: string | undefined;
+    billingZip!: string | undefined;
+    billingCity!: string | undefined;
+    billingStateCode!: string | undefined;
+    billingCountryCode!: string | undefined;
+    paymentInfo!: PaymentInfo | undefined;
+    creationTime!: moment.Moment | undefined;
+    creatorUserId!: number | undefined;
+    id!: number | undefined;
+
+    constructor(data?: IPaymentInfoBankCard) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.tenantId = data["tenantId"];
+            this.holderName = data["holderName"];
+            this.cardNumber = data["cardNumber"];
+            this.expirationMonth = data["expirationMonth"];
+            this.expirationYear = data["expirationYear"];
+            this.billingAddress = data["billingAddress"];
+            this.billingZip = data["billingZip"];
+            this.billingCity = data["billingCity"];
+            this.billingStateCode = data["billingStateCode"];
+            this.billingCountryCode = data["billingCountryCode"];
+            this.paymentInfo = data["paymentInfo"] ? PaymentInfo.fromJS(data["paymentInfo"]) : <any>undefined;
+            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
+            this.creatorUserId = data["creatorUserId"];
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): PaymentInfoBankCard {
+        data = typeof data === 'object' ? data : {};
+        let result = new PaymentInfoBankCard();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["tenantId"] = this.tenantId;
+        data["holderName"] = this.holderName;
+        data["cardNumber"] = this.cardNumber;
+        data["expirationMonth"] = this.expirationMonth;
+        data["expirationYear"] = this.expirationYear;
+        data["billingAddress"] = this.billingAddress;
+        data["billingZip"] = this.billingZip;
+        data["billingCity"] = this.billingCity;
+        data["billingStateCode"] = this.billingStateCode;
+        data["billingCountryCode"] = this.billingCountryCode;
+        data["paymentInfo"] = this.paymentInfo ? this.paymentInfo.toJSON() : <any>undefined;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        data["creatorUserId"] = this.creatorUserId;
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface IPaymentInfoBankCard {
+    tenantId: number | undefined;
+    holderName: string;
+    cardNumber: string;
+    expirationMonth: string;
+    expirationYear: string;
+    billingAddress: string | undefined;
+    billingZip: string | undefined;
+    billingCity: string | undefined;
+    billingStateCode: string | undefined;
+    billingCountryCode: string | undefined;
+    paymentInfo: PaymentInfo | undefined;
+    creationTime: moment.Moment | undefined;
+    creatorUserId: number | undefined;
+    id: number | undefined;
+}
+
+export class PaymentInfoACHCustomer implements IPaymentInfoACHCustomer {
+    tenantId!: number | undefined;
+    customerAcctType!: PaymentInfoACHCustomerCustomerAcctType | undefined;
+    dln!: string | undefined;
+    dlnState!: string | undefined;
+    ssn!: string | undefined;
+    paymentInfo!: PaymentInfo | undefined;
+    creationTime!: moment.Moment | undefined;
+    creatorUserId!: number | undefined;
+    id!: number | undefined;
+
+    constructor(data?: IPaymentInfoACHCustomer) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.tenantId = data["tenantId"];
+            this.customerAcctType = data["customerAcctType"];
+            this.dln = data["dln"];
+            this.dlnState = data["dlnState"];
+            this.ssn = data["ssn"];
+            this.paymentInfo = data["paymentInfo"] ? PaymentInfo.fromJS(data["paymentInfo"]) : <any>undefined;
+            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
+            this.creatorUserId = data["creatorUserId"];
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): PaymentInfoACHCustomer {
+        data = typeof data === 'object' ? data : {};
+        let result = new PaymentInfoACHCustomer();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["tenantId"] = this.tenantId;
+        data["customerAcctType"] = this.customerAcctType;
+        data["dln"] = this.dln;
+        data["dlnState"] = this.dlnState;
+        data["ssn"] = this.ssn;
+        data["paymentInfo"] = this.paymentInfo ? this.paymentInfo.toJSON() : <any>undefined;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        data["creatorUserId"] = this.creatorUserId;
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface IPaymentInfoACHCustomer {
+    tenantId: number | undefined;
+    customerAcctType: PaymentInfoACHCustomerCustomerAcctType | undefined;
+    dln: string | undefined;
+    dlnState: string | undefined;
+    ssn: string | undefined;
+    paymentInfo: PaymentInfo | undefined;
+    creationTime: moment.Moment | undefined;
+    creatorUserId: number | undefined;
+    id: number | undefined;
 }
 
 export class CreateContactBusinessInput implements ICreateContactBusinessInput {
@@ -46789,6 +55293,46 @@ export interface IRegisterMemberInput {
     accountingTreeType: RegisterMemberInputAccountingTreeType | undefined;
 }
 
+export class RegisterMemberOutput implements IRegisterMemberOutput {
+    userId!: number | undefined;
+    alreadyInitialized!: boolean | undefined;
+
+    constructor(data?: IRegisterMemberOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.userId = data["userId"];
+            this.alreadyInitialized = data["alreadyInitialized"];
+        }
+    }
+
+    static fromJS(data: any): RegisterMemberOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new RegisterMemberOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["userId"] = this.userId;
+        data["alreadyInitialized"] = this.alreadyInitialized;
+        return data; 
+    }
+}
+
+export interface IRegisterMemberOutput {
+    userId: number | undefined;
+    alreadyInitialized: boolean | undefined;
+}
+
 export class GetUserInstanceInfoOutput implements IGetUserInstanceInfoOutput {
     id!: number | undefined;
     status!: GetUserInstanceInfoOutputStatus | undefined;
@@ -47947,6 +56491,7 @@ export class CreateLeadInput implements ICreateLeadInput {
     links!: CreateContactLinkInput[] | undefined;
     note!: string | undefined;
     companyName!: string | undefined;
+    industry!: string | undefined;
     photo!: ContactPhotoInput | undefined;
     organizationUnitId!: number | undefined;
     title!: string | undefined;
@@ -47955,6 +56500,7 @@ export class CreateLeadInput implements ICreateLeadInput {
     assignedUserId!: number | undefined;
     ratingId!: number | undefined;
     contactGroupId!: string;
+    interests!: ContactInterestInput[] | undefined;
     partnerTypeName!: string | undefined;
 
     constructor(data?: ICreateLeadInput) {
@@ -47998,6 +56544,7 @@ export class CreateLeadInput implements ICreateLeadInput {
             }
             this.note = data["note"];
             this.companyName = data["companyName"];
+            this.industry = data["industry"];
             this.photo = data["photo"] ? ContactPhotoInput.fromJS(data["photo"]) : <any>undefined;
             this.organizationUnitId = data["organizationUnitId"];
             this.title = data["title"];
@@ -48014,6 +56561,11 @@ export class CreateLeadInput implements ICreateLeadInput {
             this.assignedUserId = data["assignedUserId"];
             this.ratingId = data["ratingId"];
             this.contactGroupId = data["contactGroupId"];
+            if (data["interests"] && data["interests"].constructor === Array) {
+                this.interests = [];
+                for (let item of data["interests"])
+                    this.interests.push(ContactInterestInput.fromJS(item));
+            }
             this.partnerTypeName = data["partnerTypeName"];
         }
     }
@@ -48057,6 +56609,7 @@ export class CreateLeadInput implements ICreateLeadInput {
         }
         data["note"] = this.note;
         data["companyName"] = this.companyName;
+        data["industry"] = this.industry;
         data["photo"] = this.photo ? this.photo.toJSON() : <any>undefined;
         data["organizationUnitId"] = this.organizationUnitId;
         data["title"] = this.title;
@@ -48073,6 +56626,11 @@ export class CreateLeadInput implements ICreateLeadInput {
         data["assignedUserId"] = this.assignedUserId;
         data["ratingId"] = this.ratingId;
         data["contactGroupId"] = this.contactGroupId;
+        if (this.interests && this.interests.constructor === Array) {
+            data["interests"] = [];
+            for (let item of this.interests)
+                data["interests"].push(item.toJSON());
+        }
         data["partnerTypeName"] = this.partnerTypeName;
         return data; 
     }
@@ -48093,6 +56651,7 @@ export interface ICreateLeadInput {
     links: CreateContactLinkInput[] | undefined;
     note: string | undefined;
     companyName: string | undefined;
+    industry: string | undefined;
     photo: ContactPhotoInput | undefined;
     organizationUnitId: number | undefined;
     title: string | undefined;
@@ -48101,6 +56660,7 @@ export interface ICreateLeadInput {
     assignedUserId: number | undefined;
     ratingId: number | undefined;
     contactGroupId: string;
+    interests: ContactInterestInput[] | undefined;
     partnerTypeName: string | undefined;
 }
 
@@ -62952,6 +71512,113 @@ export enum MoveRuleDtoApplyOption {
 export enum TransactionCommonDetailsDtoAmountFormat {
     Debits = "Debits", 
     Credits = "Credits", 
+}
+
+export enum PersonInfoDtoPreferredToD {
+    Morning = "Morning", 
+    Afternoon = "Afternoon", 
+    Evening = "Evening", 
+    Anytime = "Anytime", 
+}
+
+export enum PersonPreferredToD {
+    Morning = "Morning", 
+    Afternoon = "Afternoon", 
+    Evening = "Evening", 
+    Anytime = "Anytime", 
+}
+
+export enum NoteType {
+    Note = "Note", 
+    IncomingCall = "IncomingCall", 
+    OutcomingCall = "OutcomingCall", 
+}
+
+export enum ContactStarColorType {
+    Green = "Green", 
+    Blue = "Blue", 
+    Yellow = "Yellow", 
+    Red = "Red", 
+    Purple = "Purple", 
+    Gradient1 = "Gradient1", 
+    Gradient2 = "Gradient2", 
+    Gradient3 = "Gradient3", 
+    Gradient4 = "Gradient4", 
+    Gradient5 = "Gradient5", 
+}
+
+export enum OrderSubscriptionFrequency {
+    _0 = 0, 
+    _1 = 1, 
+}
+
+export enum InvoiceStatus {
+    Draft = "Draft", 
+    Final = "Final", 
+    Sent = "Sent", 
+    Paid = "Paid", 
+    Canceled = "Canceled", 
+}
+
+export enum LeadRequestPaymentPeriodType {
+    _30 = 30, 
+    _365 = 365, 
+}
+
+export enum TransactionType {
+    _0 = 0, 
+    _1 = 1, 
+    _2 = 2, 
+    _3 = 3, 
+    _4 = 4, 
+    _5 = 5, 
+    _6 = 6, 
+}
+
+export enum TransactionStatus {
+    _0 = 0, 
+    _1 = 1, 
+    _2 = 2, 
+    _3 = 3, 
+    _4 = 4, 
+    _5 = 5, 
+    _6 = 6, 
+}
+
+export enum BillingSubscriptionFrequency {
+    _0 = 0, 
+    _1 = 1, 
+}
+
+export enum PaymentInfoType {
+    BankCard = "BankCard", 
+    ACH = "ACH", 
+    PayPal = "PayPal", 
+}
+
+export enum TransactionActionType {
+    _0 = 0, 
+    _1 = 1, 
+    _2 = 2, 
+    _3 = 3, 
+    _4 = 4, 
+    _5 = 5, 
+    _6 = 6, 
+}
+
+export enum TransactionActionStatus {
+    _0 = 0, 
+    _1 = 1, 
+    _2 = 2, 
+    _3 = 3, 
+    _4 = 4, 
+    _5 = 5, 
+    _6 = 6, 
+}
+
+export enum PaymentInfoACHCustomerCustomerAcctType {
+    _0 = 0, 
+    _1 = 1, 
 }
 
 export enum AccountDtoState {

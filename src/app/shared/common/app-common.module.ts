@@ -89,6 +89,7 @@ import { ECheckComponent } from './payment-wizard/payment-options/e-check/e-chec
 import { UserAssignmentComponent } from '@app/crm/shared/user-assignment-list/user-assignment-list.component';
 import { TagsListComponent } from '@app/crm/shared/tags-list/tags-list.component';
 import { ListsListComponent } from '@app/crm/shared/lists-list/lists-list.component';
+import { AppRatingComponent } from './rating/rating.component';
 import { RatingComponent } from '@app/crm/shared/rating/rating.component';
 import { StarsListComponent } from '@app/crm/shared/stars-list/stars-list.component';
 import { TypesListComponent } from '@app/crm/shared/types-list/types-list.component';
@@ -193,6 +194,7 @@ import { LoadingSpinnerModule } from '@app/shared/common/loading-spinner/loading
         UserAssignmentComponent,
         TagsListComponent,
         ListsListComponent,
+        AppRatingComponent,
         RatingComponent,
         StarsListComponent,
         TypesListComponent
@@ -220,6 +222,7 @@ import { LoadingSpinnerModule } from '@app/shared/common/loading-spinner/loading
         UserAssignmentComponent,
         TagsListComponent,
         ListsListComponent,
+        AppRatingComponent,
         RatingComponent,
         StarsListComponent,
         TypesListComponent

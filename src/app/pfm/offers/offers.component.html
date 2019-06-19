@@ -51,6 +51,14 @@
         [targetSelector]="'[aria-label=Status]'"
         [list]="statuses">
     </app-static-list>
+    <app-rating 
+        [title]="l('Rank')" 
+        [allowManage]="true"
+        [targetSelector]="'[aria-label=Rank]'"
+        [selectedKeys]="selectedOfferKeys" 
+        [bulkUpdateMode]="true"
+        (onProcess)="onRankChanged($event)">
+    </app-rating>
 
     <div class="portlet light no-padding margin-bottom-0">
         <div class="main-wrapper">

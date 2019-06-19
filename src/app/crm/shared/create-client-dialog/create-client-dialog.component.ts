@@ -793,7 +793,7 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
             this.partnerTypesComponent.reset();
             this.userAssignmentComponent.selectedItemKey = this.currentUserId;
             this.stageId = this.stages.length ? this.stages.find(v => v.index === this.defaultStageSortOrder).id : undefined;
-            this.ratingComponent.selectedItemKey = this.ratingComponent.ratingMin;
+            this.ratingComponent.reset();
             this._changeDetectorRef.detectChanges();
         };
 

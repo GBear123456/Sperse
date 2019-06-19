@@ -1,15 +1,14 @@
 /** Application imports */
-import { Component, Injector, OnInit, Input, EventEmitter, Output, AfterViewInit } from '@angular/core';
+import { Component, Input, EventEmitter, Output, ViewChild } from '@angular/core';
 
 /** Third party imports */
-import { Store, select } from '@ngrx/store';
 import { finalize } from 'rxjs/operators';
 
 /** Application imports */
-import { AppStore, RatingsStoreSelectors } from '@app/store';
-import { AppComponentBase } from '@shared/common/app-component-base';
-import { AppConsts } from '@shared/AppConsts';
-import { FiltersService } from '@shared/filters/filters.service';
+import { NotifyService } from '@abp/notify/notify.service';
+import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { AppRatingComponent } from '@app/shared/common/rating/rating.component';
 import { ContactRatingsServiceProxy, ContactRatingInfoDto, RateContactInput, RateContactsInput } from '@shared/service-proxies/service-proxies';
 
 @Component({
@@ -18,141 +17,56 @@ import { ContactRatingsServiceProxy, ContactRatingInfoDto, RateContactInput, Rat
   styleUrls: ['./rating.component.less'],
   providers: [ContactRatingsServiceProxy]
 })
-export class RatingComponent extends AppComponentBase implements OnInit, AfterViewInit {
+export class RatingComponent {
+    @ViewChild(AppRatingComponent) ratingComponent: AppRatingComponent;
     @Input() filterModel: any;
     @Input() selectedKeys: any;
     @Input() ratingValue: number;
     @Input() targetSelector = '[aria-label="Rating"]';
     @Input() bulkUpdateMode = false;
     @Input() hideButtons = false;
-    @Input() set selectedItemKey(value) {
-        this.ratingValue = value;
-    }
-    get selectedItemKey() {
-        return this.ratingValue;
-    }
+
     @Output() onValueChanged: EventEmitter<any> = new EventEmitter();
     @Output() onRatingUpdated: EventEmitter<any> = new EventEmitter();
 
-    ratingMin: number;
-    ratingMax: number;
-    ratingStep = 1;
-
-    sliderComponent: any;
-    tooltipVisible = false;
-    filtered = false;
-
     constructor(
-        injector: Injector,
-        private _filtersService: FiltersService,
-        private _ratingService: ContactRatingsServiceProxy,
-        private store$: Store<AppStore.State>
+        public notify: NotifyService,
+        public ls: AppLocalizationService,
+        public permission: PermissionCheckerService,
+        private _ratingService: ContactRatingsServiceProxy
     ) {
-        super(injector);
     }
 
     toggle() {
-        if (this.tooltipVisible = !this.tooltipVisible)
-            this.highlightSelectedFilters();
+        this.ratingComponent.toggle();
     }
 
-    apply(selectedKeys = undefined) {
-        this.selectedKeys = selectedKeys || this.selectedKeys;
-        if (this.sliderComponent && this.selectedKeys && this.selectedKeys.length) {
-            if (this.bulkUpdateMode) {
-                this.message.confirm(
-                    this.l('BulkUpdateConfirmation', this.selectedKeys.length),
-                    isConfirmed => {
-                        if (isConfirmed)
-                            this.process();
-                        else
-                            this.ratingValue = this.ratingMin;
-                    }
-                );
-            } else
-                this.process();
-        }
-        this.tooltipVisible = false;
+    reset() {
+        this.ratingComponent.reset();
     }
 
-    process() {
+    onProcess(ratingValue) {
         if (this.bulkUpdateMode)
             this._ratingService.rateContacts(RateContactsInput.fromJS({
                 contactIds: this.selectedKeys,
-                ratingId: this.ratingValue
+                ratingId: ratingValue
             })).pipe(finalize(() => {
-                this.ratingValue = this.ratingMin;
+                this.ratingComponent.reset();
             })).subscribe((result) => {
-                this.onRatingUpdated.emit(this.ratingValue);
-                this.notify.success(this.l('CustomersRated'));
+                this.onRatingUpdated.emit(ratingValue);
+                this.notify.success(this.ls.l('CustomersRated'));
             });
         else
             this._ratingService.rateContact(RateContactInput.fromJS({
                 contactId: this.selectedKeys[0],
-                ratingId: this.ratingValue
+                ratingId: ratingValue
             })).pipe(finalize(() => {
-                if (!this.ratingValue)
-                    this.ratingValue = this.ratingMin;
+                if (!ratingValue)
+                    this.ratingComponent.reset();
             })).subscribe((result) => {
-                this.onRatingUpdated.emit(this.ratingValue);
-                this.notify.success(this.l('CustomersRated'));
-            });
-    }
-
-    clear() {
-        this.ratingValue = undefined;
-        this.apply();
-    }
-
-    clearFilterHighlight() {
-        this.filtered = false;
-    }
-
-    highlightSelectedFilters() {
-        let filterModelItems = this.filterModel && this.filterModel.items;
-        let filterId = filterModelItems && (filterModelItems.to.value || filterModelItems.from.value);
-        this.clearFilterHighlight();
-        if (this.sliderComponent && filterId) {
-            this.ratingValue = filterId;
-            this.filtered = true;
-        }
-    }
-
-    applyFilter($event) {
-        this.clearFilterHighlight();
-
-        let filterValue = this.ratingValue;
-        let modelItems = this.filterModel.items;
-        if (modelItems.from.value == filterValue && modelItems.to.value == filterValue) {
-            modelItems.from.value = modelItems.to.value = null;
-        } else {
-            modelItems.from.value = modelItems.to.value = filterValue;
-            this.filtered = true;
-        }
-        this._filtersService.change(this.filterModel);
-    }
-
-    onInitialized($event) {
-        this.sliderComponent = $event.component;
-    }
-
-    ngAfterViewInit(): void {
-        this.highlightSelectedFilters();
-    }
-
-    ngOnInit() {
-        this.store$.pipe(select(RatingsStoreSelectors.getRatings)).subscribe((result: ContactRatingInfoDto[]) => {
-            if (result.length) {
-                this.ratingMin = result[0].id;
-                this.ratingMax = result[result.length - 1].id;
-                if (!this.ratingValue)
-                    this.ratingValue = this.ratingMin;
-            }
-        });
-    }
-
-    onValueChange(event) {
-        this.onValueChanged.emit(event);
+                this.onRatingUpdated.emit(ratingValue);
+                this.notify.success(this.ls.l('CustomersRated'));
+            });    
     }
 
     checkPermissions() {
