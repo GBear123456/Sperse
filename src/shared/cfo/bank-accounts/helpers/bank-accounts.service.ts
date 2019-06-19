@@ -131,13 +131,17 @@ export class BankAccountsService {
                 distinctUntilChanged(this.arrayDistinct)
             );
         this.bankAccountsIds$.pipe(
-            pairwise()
-        ).subscribe(([prevBankAccountsIds, nextBankAccountsIds]) => {
-            /** Select newly added bank accounts */
-            this.changeSelectedBankAccountsIds([
-                ...this.state.selectedBankAccountIds,
-                ...difference(nextBankAccountsIds, prevBankAccountsIds)
-            ]);
+            pairwise(),
+            map(([prevBankAccountsIds, nextBankAccountsIds]) => {
+                /** Select newly added bank accounts */
+                return this.changeSelectedBankAccountsIds([
+                    ...this.state.selectedBankAccountIds,
+                    ...difference(nextBankAccountsIds, prevBankAccountsIds)
+                ]);
+            }),
+            switchMap(() => this.filteredSyncAccounts$),
+        ).subscribe(() => {
+            this.applyFilter();
         });
         this.businessEntitiesAmount$ = this.businessEntities$.pipe(
             map(businessEntities => businessEntities.length),
