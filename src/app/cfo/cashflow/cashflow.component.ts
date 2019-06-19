@@ -26,6 +26,7 @@ import {
     filter,
     pluck,
     mergeMap,
+    mergeAll,
     map,
     publishReplay,
     refCount,
@@ -119,24 +120,25 @@ import {
 } from '@app/cfo/store';
 import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
 import { BankAccountStatus } from '@shared/cfo/bank-accounts/helpers/bank-accounts.status.enum';
+import { CashflowTypes } from '@app/cfo/cashflow/enums/cashflow-types.enum';
 
 /** Constants */
-const StartedBalance    = 'B',
-      Income            = 'I',
-      Expense           = 'E',
-      CashflowTypeTotal = 'CTT',
-      Reconciliation    = 'D',
-      NetChange         = 'NC',
-      Total             = 'T',
-      GrandTotal        = 'GT';
+const StartedBalance    = CashflowTypes.StartedBalance,
+      Income            = CashflowTypes.Income,
+      Expense           = CashflowTypes.Expense,
+      CashflowTypeTotal = CashflowTypes.CashflowTypeTotal,
+      Reconciliation    = CashflowTypes.Reconciliation,
+      NetChange         = CashflowTypes.NetChange,
+      Total             = CashflowTypes.Total,
+      GrandTotal        = CashflowTypes.GrandTotal;
 
-const PSB   = CategorizationPrefixes.CashflowType + StartedBalance,
-      PI    = CategorizationPrefixes.CashflowType + Income,
-      PE    = CategorizationPrefixes.CashflowType + Expense,
-      PCTT  = CategorizationPrefixes.CashflowType + CashflowTypeTotal,
-      PR    = CategorizationPrefixes.CashflowType + Reconciliation,
-      PNC   = CategorizationPrefixes.CashflowType + NetChange,
-      PT    = CategorizationPrefixes.CashflowType + Total;
+const PSB   = CategorizationPrefixes.CashflowType + CashflowTypes.StartedBalance,
+      PI    = CategorizationPrefixes.CashflowType + CashflowTypes.Income,
+      PE    = CategorizationPrefixes.CashflowType + CashflowTypes.Expense,
+      PCTT  = CategorizationPrefixes.CashflowType + CashflowTypes.CashflowTypeTotal,
+      PR    = CategorizationPrefixes.CashflowType + CashflowTypes.Reconciliation,
+      PNC   = CategorizationPrefixes.CashflowType + CashflowTypes.NetChange,
+      PT    = CategorizationPrefixes.CashflowType + CashflowTypes.Total;
 
 /** @todo check error cell_options_1.CellOptions is not a constructor when import from separate file */
 export class CellOptions {
@@ -1450,7 +1452,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
         /** for all accounts that are absent add stub empty transactions to show
          *  the empty accounts anyway */
-        allAccountsIds.filter(accountId => accountId).forEach(accountId => {
+        allAccountsIds.filter(Boolean).forEach(accountId => {
             for (let cashflowType in currentAccountsIds) {
                 if (currentAccountsIds[cashflowType].indexOf(accountId) === -1) {
                     stubCashflowDataForAccounts.push(
@@ -3355,18 +3357,20 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         let targetCell = this.getCellElementFromTarget(e.target);
         if (targetCell && this.cashflowService.elementIsDataCell(targetCell)) {
             let cellObj = this.getCellObjectFromCellElement(targetCell);
-            let targetCellData = this.getCellInfo(cellObj);
             const movedCell = JSON.parse(e.dataTransfer.getData('movedCell'));
+            let targetCellData = this.getCellInfo(cellObj, {
+                cashflowTypeId: this.cashflowService.getCategoryValueByValue(movedCell.cell.value)
+            });
             /** Get the transactions of moved cell if so */
             let sourceCellInfo = this.getCellInfo(movedCell);
             this.statsDetailFilter = this.getDetailFilterFromCell(movedCell);
-            let statsDetails$ = this._cashflowServiceProxy.getStatsDetails(InstanceType[this.instanceType], this.instanceId, this.statsDetailFilter).pipe(publishReplay(), refCount(), mergeMap(x => x));
+            let statsDetails$ = this._cashflowServiceProxy.getStatsDetails(InstanceType[this.instanceType], this.instanceId, this.statsDetailFilter).pipe(publishReplay(), refCount(), mergeAll());
             const forecasts$ = statsDetails$.pipe(
                 filter((transaction: any) => <any>!!transaction.forecastId),
                 toArray()
             );
             const historicals$ = statsDetails$.pipe(
-                filter(transaction => <any>!!!transaction.forecastId),
+                filter(transaction => <any>!transaction.forecastId),
                 toArray()
             );
             forkJoin(
@@ -3652,13 +3656,17 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         return date;
     }
 
-    getCellInfo(cellObj): CellInfo {
+    getCellInfo(cellObj, defaultValues: any = {}): CellInfo {
+        const categoryId = this.cashflowService.getCategoryValueByPrefix(cellObj.cell.rowPath, CategorizationPrefixes.Category);
+        const subCategoryId = this.cashflowService.getCategoryValueByPrefix(cellObj.cell.rowPath, CategorizationPrefixes.SubCategory);
         return {
             date: this.formattingDate(cellObj.cell.columnPath),
             fieldCaption: this.getLowestFieldCaptionFromPath(cellObj.cell.columnPath, this.getColumnFields()),
-            cashflowTypeId: this.cashflowService.getCategoryValueByPrefix(cellObj.cell.rowPath, CategorizationPrefixes.CashflowType),
-            categoryId: this.cashflowService.getCategoryValueByPrefix(cellObj.cell.rowPath, CategorizationPrefixes.Category),
-            subCategoryId: this.cashflowService.getCategoryValueByPrefix(cellObj.cell.rowPath, CategorizationPrefixes.SubCategory),
+            cashflowTypeId: this.cashflowService.getCategoryValueByPrefix(cellObj.cell.rowPath, CategorizationPrefixes.CashflowType)
+                            || this.cashflowService.getCashFlowTypeByCategory(subCategoryId || categoryId, this.categoryTree)
+                            || defaultValues.cashflowTypeId,
+            categoryId: categoryId,
+            subCategoryId: subCategoryId,
             transactionDescriptor: this.cashflowService.getCategoryValueByPrefix(cellObj.cell.rowPath, CategorizationPrefixes.TransactionDescriptor),
             accountingTypeId: this.cashflowService.getCategoryValueByPrefix(cellObj.cell.rowPath, CategorizationPrefixes.AccountingType)
         };
@@ -4187,8 +4195,10 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
             let copyItemsModels;
             if (targetCellsObj.length) {
-                let targetsData = targetCellsObj.map(cell => this.getCellInfo(cell));
                 let sourceCellInfo = this.getCellInfo(sourceCellObject);
+                let targetsData = targetCellsObj.map(cell => this.getCellInfo(cell, {
+                    cashflowTypeId: this.cashflowService.getCategoryValueByValue(sourceCellObject.cell.value)
+                }));
                 const isHorizontalCopying = this.cashflowService.isHorizontalCopying(sourceCellObject, targetCellsObj);
                 this.statsDetailFilter = this.getDetailFilterFromCell(sourceCellObject);
                 this._cashflowServiceProxy
@@ -4449,8 +4459,10 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         cellObj.cell.rowPath.forEach(item => {
             if (item) {
                 let [ key, prefix ] = [ item.slice(2), item.slice(0, 2) ];
-                let property = this.getCategoryParams(prefix)['statsKeyName'];
-                filterParams[property] = key;
+                if (key !== CashflowTypeTotal) {
+                    const property = this.getCategoryParams(prefix)['statsKeyName'];
+                    filterParams[property] = key;
+                }
             } else {
                 filterParams['categoryId'] = -1;
             }
@@ -4577,9 +4589,11 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         if (+newValue !== 0) {
             this.startLoading();
             let forecastModel;
-            let cashflowTypeId = this.cashflowService.getCategoryValueByPrefix(savedCellObj.cell.rowPath, CategorizationPrefixes.CashflowType);
             let categoryId = this.cashflowService.getCategoryValueByPrefix(savedCellObj.cell.rowPath, CategorizationPrefixes.Category);
             let subCategoryId = this.cashflowService.getCategoryValueByPrefix(savedCellObj.cell.rowPath, CategorizationPrefixes.SubCategory);
+            let cashflowTypeId = this.cashflowService.getCategoryValueByPrefix(savedCellObj.cell.rowPath, CategorizationPrefixes.CashflowType)
+                || this.cashflowService.getCashFlowTypeByCategory(subCategoryId || categoryId, this.categoryTree)
+                || this.cashflowService.getCategoryValueByValue(+newValue);
             let transactionDescriptor = this.cashflowService.getCategoryValueByPrefix(savedCellObj.cell.rowPath, CategorizationPrefixes.TransactionDescriptor);
             let currentDate = this.cashflowService.getUtcCurrentDate();
             let targetDate = this.modifyingNumberBoxStatsDetailFilter.startDate.isSameOrAfter(currentDate) ? moment(this.modifyingNumberBoxStatsDetailFilter.startDate).utc() : currentDate;
@@ -4613,6 +4627,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                         count: 1,
                         amount: newValue,
                         date: dateWithOffset,
+                        cashflowTypeId: cashflowTypeId,
                         initialDate: targetDate,
                         forecastId: res
                     }, savedCellObj.cell.rowPath));
@@ -5750,7 +5765,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                         amount: 0,
                         cashflowTypeId: item.cashflowTypeId,
                         accountId: item.accountId
-                    }));
+                    })
+                );
                 sameDateTransactionExist = true;
             }
 
@@ -6248,6 +6264,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     }
                 ]
             }
-        ]
+        ];
     }
 }
