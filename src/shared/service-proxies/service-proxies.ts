@@ -38071,7 +38071,6 @@ export class ContactPhotoInfo implements IContactPhotoInfo {
     original!: string | undefined;
     thumbnail!: string | undefined;
     source!: string | undefined;
-    photoSourceId!: string | undefined;
 
     constructor(data?: IContactPhotoInfo) {
         if (data) {
@@ -38087,7 +38086,6 @@ export class ContactPhotoInfo implements IContactPhotoInfo {
             this.original = data["original"];
             this.thumbnail = data["thumbnail"];
             this.source = data["source"];
-            this.photoSourceId = data["photoSourceId"];
         }
     }
 
@@ -38103,7 +38101,6 @@ export class ContactPhotoInfo implements IContactPhotoInfo {
         data["original"] = this.original;
         data["thumbnail"] = this.thumbnail;
         data["source"] = this.source;
-        data["photoSourceId"] = this.photoSourceId;
         return data; 
     }
 }
@@ -38112,7 +38109,6 @@ export interface IContactPhotoInfo {
     original: string | undefined;
     thumbnail: string | undefined;
     source: string | undefined;
-    photoSourceId: string | undefined;
 }
 
 export class CreateContactInput implements ICreateContactInput {
@@ -38126,6 +38122,8 @@ export class CreateContactInput implements ICreateContactInput {
     phoneNumbers!: CreateContactPhoneInput[] | undefined;
     addresses!: CreateContactAddressInput[] | undefined;
     links!: CreateContactLinkInput[] | undefined;
+    dob!: moment.Moment | undefined;
+    genderTypeId!: string | undefined;
     note!: string | undefined;
     companyName!: string | undefined;
     industry!: string | undefined;
@@ -38177,6 +38175,8 @@ export class CreateContactInput implements ICreateContactInput {
                 for (let item of data["links"])
                     this.links.push(CreateContactLinkInput.fromJS(item));
             }
+            this.dob = data["dob"] ? moment(data["dob"].toString()) : <any>undefined;
+            this.genderTypeId = data["genderTypeId"];
             this.note = data["note"];
             this.companyName = data["companyName"];
             this.industry = data["industry"];
@@ -38240,6 +38240,8 @@ export class CreateContactInput implements ICreateContactInput {
             for (let item of this.links)
                 data["links"].push(item.toJSON());
         }
+        data["dob"] = this.dob ? this.dob.toISOString() : <any>undefined;
+        data["genderTypeId"] = this.genderTypeId;
         data["note"] = this.note;
         data["companyName"] = this.companyName;
         data["industry"] = this.industry;
@@ -38280,6 +38282,8 @@ export interface ICreateContactInput {
     phoneNumbers: CreateContactPhoneInput[] | undefined;
     addresses: CreateContactAddressInput[] | undefined;
     links: CreateContactLinkInput[] | undefined;
+    dob: moment.Moment | undefined;
+    genderTypeId: string | undefined;
     note: string | undefined;
     companyName: string | undefined;
     industry: string | undefined;
@@ -38557,8 +38561,7 @@ export interface ICreateContactLinkInput {
 
 export class ContactPhotoInput implements IContactPhotoInput {
     original!: string;
-    thumbnail!: string;
-    photoSourceId!: string | undefined;
+    thumbnail!: string | undefined;
     source!: string | undefined;
     comment!: string | undefined;
 
@@ -38575,7 +38578,6 @@ export class ContactPhotoInput implements IContactPhotoInput {
         if (data) {
             this.original = data["original"];
             this.thumbnail = data["thumbnail"];
-            this.photoSourceId = data["photoSourceId"];
             this.source = data["source"];
             this.comment = data["comment"];
         }
@@ -38592,7 +38594,6 @@ export class ContactPhotoInput implements IContactPhotoInput {
         data = typeof data === 'object' ? data : {};
         data["original"] = this.original;
         data["thumbnail"] = this.thumbnail;
-        data["photoSourceId"] = this.photoSourceId;
         data["source"] = this.source;
         data["comment"] = this.comment;
         return data; 
@@ -38601,8 +38602,7 @@ export class ContactPhotoInput implements IContactPhotoInput {
 
 export interface IContactPhotoInput {
     original: string;
-    thumbnail: string;
-    photoSourceId: string | undefined;
+    thumbnail: string | undefined;
     source: string | undefined;
     comment: string | undefined;
 }
@@ -41334,13 +41334,11 @@ export class ContactPhoto implements IContactPhoto {
     contactId!: number | undefined;
     publicId!: string | undefined;
     source!: string | undefined;
-    photoSourceId!: string | undefined;
     original!: string | undefined;
     thumbnail!: string | undefined;
     comment!: string | undefined;
     contact!: Contact | undefined;
     contactPrimary!: Contact | undefined;
-    photoSource!: PhotoSource | undefined;
     isDeleted!: boolean | undefined;
     deleterUserId!: number | undefined;
     deletionTime!: moment.Moment | undefined;
@@ -41365,13 +41363,11 @@ export class ContactPhoto implements IContactPhoto {
             this.contactId = data["contactId"];
             this.publicId = data["publicId"];
             this.source = data["source"];
-            this.photoSourceId = data["photoSourceId"];
             this.original = data["original"];
             this.thumbnail = data["thumbnail"];
             this.comment = data["comment"];
             this.contact = data["contact"] ? Contact.fromJS(data["contact"]) : <any>undefined;
             this.contactPrimary = data["contactPrimary"] ? Contact.fromJS(data["contactPrimary"]) : <any>undefined;
-            this.photoSource = data["photoSource"] ? PhotoSource.fromJS(data["photoSource"]) : <any>undefined;
             this.isDeleted = data["isDeleted"];
             this.deleterUserId = data["deleterUserId"];
             this.deletionTime = data["deletionTime"] ? moment(data["deletionTime"].toString()) : <any>undefined;
@@ -41396,13 +41392,11 @@ export class ContactPhoto implements IContactPhoto {
         data["contactId"] = this.contactId;
         data["publicId"] = this.publicId;
         data["source"] = this.source;
-        data["photoSourceId"] = this.photoSourceId;
         data["original"] = this.original;
         data["thumbnail"] = this.thumbnail;
         data["comment"] = this.comment;
         data["contact"] = this.contact ? this.contact.toJSON() : <any>undefined;
         data["contactPrimary"] = this.contactPrimary ? this.contactPrimary.toJSON() : <any>undefined;
-        data["photoSource"] = this.photoSource ? this.photoSource.toJSON() : <any>undefined;
         data["isDeleted"] = this.isDeleted;
         data["deleterUserId"] = this.deleterUserId;
         data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
@@ -41420,13 +41414,11 @@ export interface IContactPhoto {
     contactId: number | undefined;
     publicId: string | undefined;
     source: string | undefined;
-    photoSourceId: string | undefined;
     original: string | undefined;
     thumbnail: string | undefined;
     comment: string | undefined;
     contact: Contact | undefined;
     contactPrimary: Contact | undefined;
-    photoSource: PhotoSource | undefined;
     isDeleted: boolean | undefined;
     deleterUserId: number | undefined;
     deletionTime: moment.Moment | undefined;
@@ -43559,86 +43551,6 @@ export interface IPhoneUsageType {
     isCompany: boolean | undefined;
     sortOrder: number | undefined;
     phones: ContactPhone[] | undefined;
-    isDeleted: boolean | undefined;
-    deleterUserId: number | undefined;
-    deletionTime: moment.Moment | undefined;
-    lastModificationTime: moment.Moment | undefined;
-    lastModifierUserId: number | undefined;
-    creationTime: moment.Moment | undefined;
-    creatorUserId: number | undefined;
-    id: string | undefined;
-}
-
-export class PhotoSource implements IPhotoSource {
-    name!: string | undefined;
-    contactPhotos!: ContactPhoto[] | undefined;
-    isDeleted!: boolean | undefined;
-    deleterUserId!: number | undefined;
-    deletionTime!: moment.Moment | undefined;
-    lastModificationTime!: moment.Moment | undefined;
-    lastModifierUserId!: number | undefined;
-    creationTime!: moment.Moment | undefined;
-    creatorUserId!: number | undefined;
-    id!: string | undefined;
-
-    constructor(data?: IPhotoSource) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.name = data["name"];
-            if (data["contactPhotos"] && data["contactPhotos"].constructor === Array) {
-                this.contactPhotos = [];
-                for (let item of data["contactPhotos"])
-                    this.contactPhotos.push(ContactPhoto.fromJS(item));
-            }
-            this.isDeleted = data["isDeleted"];
-            this.deleterUserId = data["deleterUserId"];
-            this.deletionTime = data["deletionTime"] ? moment(data["deletionTime"].toString()) : <any>undefined;
-            this.lastModificationTime = data["lastModificationTime"] ? moment(data["lastModificationTime"].toString()) : <any>undefined;
-            this.lastModifierUserId = data["lastModifierUserId"];
-            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
-            this.creatorUserId = data["creatorUserId"];
-            this.id = data["id"];
-        }
-    }
-
-    static fromJS(data: any): PhotoSource {
-        data = typeof data === 'object' ? data : {};
-        let result = new PhotoSource();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["name"] = this.name;
-        if (this.contactPhotos && this.contactPhotos.constructor === Array) {
-            data["contactPhotos"] = [];
-            for (let item of this.contactPhotos)
-                data["contactPhotos"].push(item.toJSON());
-        }
-        data["isDeleted"] = this.isDeleted;
-        data["deleterUserId"] = this.deleterUserId;
-        data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
-        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
-        data["lastModifierUserId"] = this.lastModifierUserId;
-        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
-        data["creatorUserId"] = this.creatorUserId;
-        data["id"] = this.id;
-        return data; 
-    }
-}
-
-export interface IPhotoSource {
-    name: string | undefined;
-    contactPhotos: ContactPhoto[] | undefined;
     isDeleted: boolean | undefined;
     deleterUserId: number | undefined;
     deletionTime: moment.Moment | undefined;
@@ -49398,8 +49310,7 @@ export interface IPhoneUsageTypeDto {
 export class CreateContactPhotoInput implements ICreateContactPhotoInput {
     contactId!: number;
     original!: string;
-    thumbnail!: string;
-    photoSourceId!: string | undefined;
+    thumbnail!: string | undefined;
     source!: string | undefined;
     comment!: string | undefined;
 
@@ -49417,7 +49328,6 @@ export class CreateContactPhotoInput implements ICreateContactPhotoInput {
             this.contactId = data["contactId"];
             this.original = data["original"];
             this.thumbnail = data["thumbnail"];
-            this.photoSourceId = data["photoSourceId"];
             this.source = data["source"];
             this.comment = data["comment"];
         }
@@ -49435,7 +49345,6 @@ export class CreateContactPhotoInput implements ICreateContactPhotoInput {
         data["contactId"] = this.contactId;
         data["original"] = this.original;
         data["thumbnail"] = this.thumbnail;
-        data["photoSourceId"] = this.photoSourceId;
         data["source"] = this.source;
         data["comment"] = this.comment;
         return data; 
@@ -49445,8 +49354,7 @@ export class CreateContactPhotoInput implements ICreateContactPhotoInput {
 export interface ICreateContactPhotoInput {
     contactId: number;
     original: string;
-    thumbnail: string;
-    photoSourceId: string | undefined;
+    thumbnail: string | undefined;
     source: string | undefined;
     comment: string | undefined;
 }
@@ -56490,6 +56398,8 @@ export class CreateLeadInput implements ICreateLeadInput {
     phoneNumbers!: CreateContactPhoneInput[] | undefined;
     addresses!: CreateContactAddressInput[] | undefined;
     links!: CreateContactLinkInput[] | undefined;
+    dob!: moment.Moment | undefined;
+    genderTypeId!: string | undefined;
     note!: string | undefined;
     companyName!: string | undefined;
     industry!: string | undefined;
@@ -56544,6 +56454,8 @@ export class CreateLeadInput implements ICreateLeadInput {
                 for (let item of data["links"])
                     this.links.push(CreateContactLinkInput.fromJS(item));
             }
+            this.dob = data["dob"] ? moment(data["dob"].toString()) : <any>undefined;
+            this.genderTypeId = data["genderTypeId"];
             this.note = data["note"];
             this.companyName = data["companyName"];
             this.industry = data["industry"];
@@ -56610,6 +56522,8 @@ export class CreateLeadInput implements ICreateLeadInput {
             for (let item of this.links)
                 data["links"].push(item.toJSON());
         }
+        data["dob"] = this.dob ? this.dob.toISOString() : <any>undefined;
+        data["genderTypeId"] = this.genderTypeId;
         data["note"] = this.note;
         data["companyName"] = this.companyName;
         data["industry"] = this.industry;
@@ -56653,6 +56567,8 @@ export interface ICreateLeadInput {
     phoneNumbers: CreateContactPhoneInput[] | undefined;
     addresses: CreateContactAddressInput[] | undefined;
     links: CreateContactLinkInput[] | undefined;
+    dob: moment.Moment | undefined;
+    genderTypeId: string | undefined;
     note: string | undefined;
     companyName: string | undefined;
     industry: string | undefined;
