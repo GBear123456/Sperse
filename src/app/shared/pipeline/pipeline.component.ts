@@ -35,6 +35,7 @@ import { PipelineService } from './pipeline.service';
 import { AddRenameMergeDialogComponent } from './add-rename-merge-dialog/add-rename-merge-dialog.component';
 import { ContactGroup } from '@shared/AppEnums';
 import { DataLayoutType } from '@app/shared/layout/data-layout-type';
+import { FiltersService } from '@shared/filters/filters.service';
 
 @Component({
     selector: 'app-pipeline',
@@ -117,10 +118,18 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         private _pipelineService: PipelineService,
         private _stageServiceProxy: StageServiceProxy,
         private _changeDetector: ChangeDetectorRef,
+        private _filtersService: FiltersService,
         private store$: Store<CrmStore.State>,
         public dialog: MatDialog
     ) {
         super(injector);
+
+        this._filtersService.filterFixed$.pipe(
+            switchMap(() => this._pipelineService.dataLayoutType$),
+            filter((dlt: DataLayoutType) => dlt === DataLayoutType.Pipeline)
+        ).subscribe(() => {
+            setTimeout(() => this.detectChanges(), 1000);
+        });
     }
 
     detectChanges() {

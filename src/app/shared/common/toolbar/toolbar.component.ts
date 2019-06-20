@@ -37,8 +37,8 @@ export class ToolBarComponent implements OnDestroy {
         filtersService: FiltersService,
         private ls: AppLocalizationService
     ) {
-        this.subscription = filtersService.subjectFilterDisable.asObservable().subscribe(() => {
-            this.updateToolbarItemAttribute('filters', 'filter-selected', filtersService.hasFilterSelected);
+        this.subscription = filtersService.filterToggle$.subscribe((enabled) => {
+            enabled || this.updateToolbarItemAttribute('filters', 'filter-selected', filtersService.hasFilterSelected);
         });
     }
 

@@ -50,8 +50,8 @@ export class SideBarComponent {
                 this.filters = [];
         });
 
-        this._filtersService.subjectFilterDisable.subscribe(e => {
-            this._appService.toolbarRefresh();
+        this._filtersService.filterToggle$.subscribe(enabled => {
+            enabled || this._appService.toolbarRefresh();
         });
     }
 
