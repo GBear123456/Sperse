@@ -59,6 +59,19 @@
                     }
                 }
             }
+
+            @media (min-width: 1700px) {
+                .left-header {
+                    .entities {
+                        flex: 0 0 50%;
+                        max-width: 50%;
+                    }
+                    .is-active-filter {
+                        flex: 0 0 25%;
+                        max-width: 25%;
+                    }
+                }
+            }
         }
     }
 
@@ -75,6 +88,8 @@
         font-weight: 500;
         letter-spacing: 0.3px;
         color: #677380;
+        display: flex;
+        align-items: center;
 
         & > span {
             margin-right: 13px;
@@ -359,7 +374,7 @@
         cursor: pointer;
         color: #afb4bb;
         position: relative;
-        top: 2px;
+        top: 1px;
         &:hover {
             text-decoration: underline;
         }
