@@ -395,8 +395,8 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                 finalize(() => {
                     if (this.isAllStagesLoaded())
                         setTimeout(() => {
-                            this.detectChanges();
                             this.finishLoading();
+                            this.detectChanges();
                         });
                     if (!skipTotalRequest && oneStageOnly && stage['full'])
                         this.processTotalsRequest(this.queryWithSearch);
@@ -759,7 +759,9 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
             id: stage.id,
             sortOrder: sortOrder
         })).pipe(
-            finalize(() => this.finishLoading(true))
+            finalize(() => {
+                setTimeout(() => this.finishLoading(true), 500);
+            })
         ).subscribe(() => {
             this.store$.dispatch(new PipelinesStoreActions.LoadRequestAction(true));
             this.notify.info(this.l('SavedSuccessfully'));
