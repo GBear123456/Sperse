@@ -1,13 +1,11 @@
 import { FilterModel } from '@shared/filters/models/filter.model';
 import { FilterItemModel, DisplayElement } from '@shared/filters/models/filter-item.model';
-import { FilterDropDownComponent } from './filter-dropdown.component'
 
 export class FilterDropDownModel extends FilterItemModel {
-    displayName: string = "test";
     displayElementExp: any;
+    valueElementExp: string;
     elements: any;
     filterField: any;
-
     onElementSelect: (event, element) => void;
     clearSelectedElement: (filter) => void;
 
@@ -25,7 +23,12 @@ export class FilterDropDownModel extends FilterItemModel {
     }
 
     getDisplayElements(): DisplayElement[] {
-        let value = this.value && (this.value[this.displayElementExp] || this.displayElementExp(this.value));
+        let value = this.value
+            && (
+                typeof this.value === 'object'
+                ? this.value[this.displayElementExp] || this.displayElementExp(this.value)
+                : this.valueElementExp ? this.elements.find(element => element[this.valueElementExp] === this.value)[this.displayElementExp] : this.value
+            );
         return [<DisplayElement>{ item: this, displayValue: value }];
     }
 

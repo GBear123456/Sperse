@@ -1,4 +1,4 @@
-<app-modal-dialog #modal>
+<modal-dialog [buttons]="buttons" [title]="title">
     <dx-scroll-view showScrollbar="onHover">
         <form #editForm="ngForm" novalidate (ngSubmit)="save()">
             <div class="modal-body" *ngIf="selectBoxData">
@@ -8,8 +8,8 @@
                         displayExpr="displayText"
                         valueExpr="value"
                         [(value)]="language.name"
-                        [searchEnabled]="true"
-                    ></dx-select-box>
+                        [searchEnabled]="true">
+                    </dx-select-box>
                 </div>
                 <div class="form-group">
                     <dx-select-box
@@ -17,15 +17,15 @@
                         displayExpr="displayText"
                         valueExpr="displayText"
                         [searchEnabled]="true"
-                        [value]="language.name ? language.name : flags[0].displayText"
+                        [value]="language.name ? language.name : flags[0]?.displayText"
                         fieldTemplate="field">
                         <div *dxTemplate="let field of 'field'">
                             <div class="custom-field">
                                 <i [className]="field.value"></i>
                                 <dx-text-box class="langulage-code"
                                              [(value)]="field.displayText"
-                                             [readOnly]="true"
-                                ></dx-text-box>
+                                             [readOnly]="true">
+                                </dx-text-box>
                             </div>
                         </div>
                         <div *dxTemplate="let item of 'item'">
@@ -38,15 +38,8 @@
                         </div>
                     </dx-select-box>
                 </div>
-                <div class="m-checkbox-list">
-                    <label for="EditLanguage_IsEnabled" class="m-checkbox">
-                        <input id="EditLanguage_IsEnabled" type="checkbox" name="languageIsEnabled"
-                               [(ngModel)]="language.isEnabled">
-                        {{l("IsEnabled")}}
-                        <span></span>
-                    </label>
-                </div>
+                <dx-check-box [text]="ls.l('IsEnabled')" [(value)]="language.isEnabled"></dx-check-box>
             </div>
         </form>
     </dx-scroll-view>
-</app-modal-dialog>
+</modal-dialog>

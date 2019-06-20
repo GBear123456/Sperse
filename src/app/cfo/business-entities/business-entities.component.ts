@@ -11,21 +11,20 @@ import * as _ from 'underscore';
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
-import { BankAccountsSelectComponent } from 'app/cfo/shared/bank-accounts-select/bank-accounts-select.component';
 import { BankAccountsService } from '@shared/cfo/bank-accounts/helpers/bank-accounts.service';
 import { BusinessEntityServiceProxy, BusinessEntityUpdateBankAccountsInput, InstanceType } from 'shared/service-proxies/service-proxies';
 import { BusinessEntityEditDialogComponent } from './business-entity-edit-dialog/business-entity-edit-dialog.component';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
+import { BankAccountsSelectDialogComponent } from '@app/cfo/shared/bank-accounts-select-dialog/bank-accounts-select-dialog.component';
 
 @Component({
     selector: 'business-entities',
     templateUrl: './business-entities.component.html',
     animations: [appModuleAnimation()],
     styleUrls: ['./business-entities.component.less'],
-    providers: [BusinessEntityServiceProxy]
+    providers: [ BusinessEntityServiceProxy ]
 })
 export class BusinessEntitiesComponent extends CFOComponentBase implements OnInit, OnDestroy {
-    @ViewChild(BankAccountsSelectComponent) bankAccountSelector: BankAccountsSelectComponent;
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
     headlineConfig: any;
     private rootComponent: any;
@@ -44,7 +43,6 @@ export class BusinessEntitiesComponent extends CFOComponentBase implements OnIni
     }
 
     ngOnInit() {
-        super.ngOnInit();
         this.rootComponent.overflowHidden(true);
 
         this.headlineConfig = {
@@ -77,7 +75,7 @@ export class BusinessEntitiesComponent extends CFOComponentBase implements OnIni
     }
 
     onNextClick() {
-        this._router.navigate(['app/cfo/' + this.instanceType.toLowerCase() + '/start']);
+        this._router.navigate([this.instanceUri + '/start']);
     }
 
     onToolbarPreparing(e) {
@@ -130,9 +128,6 @@ export class BusinessEntitiesComponent extends CFOComponentBase implements OnIni
             disableClose: true,
             closeOnNavigation: false,
             data: {
-                instanceId: this.instanceId,
-                instanceType: this.instanceType,
-                localization: this.localizationSourceName,
                 id: id
             }
         }).afterClosed().subscribe(options => {
@@ -156,11 +151,20 @@ export class BusinessEntitiesComponent extends CFOComponentBase implements OnIni
 
     openBankAccountSelectComponent(businessEntity) {
         this.lastSelectedBusinessEntity = businessEntity;
-        this.bankAccountSelector.targetBankAccountsTooltip = '#business-entity-arrow-' + businessEntity.Id;
         this.bankAccountsService.changeSelectedBusinessEntities([], false);
         this.bankAccountsService.changeSelectedBankAccountsIds(businessEntity.BankAccountIds, false);
         this.bankAccountsService.applyFilter();
-        this.bankAccountSelector.toggleBankAccountTooltip();
+        this.dialog.open(BankAccountsSelectDialogComponent, {
+            panelClass: 'slider',
+            data: {
+                applyDisabled: !this.isInstanceAdmin &&
+                    !this.isMemberAccessManage,
+                highlightUsedRows: true,
+                showBusinessEntitiesFilter: false
+            }
+        }).componentInstance.onApply.subscribe(() => {
+            this.applyBankAccountIds();
+        });
     }
 
     applyBankAccountIds() {
@@ -204,7 +208,7 @@ export class BusinessEntitiesComponent extends CFOComponentBase implements OnIni
             forkJoin(
                 updateBankAccountsObservable
             )
-                .subscribe((result) => {
+                .subscribe(() => {
                     this.dataGrid.instance.refresh();
                     this.lastSelectedBusinessEntity = null;
                 });

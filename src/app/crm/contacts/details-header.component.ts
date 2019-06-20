@@ -1,14 +1,5 @@
 /** Core imports */
-import {
-    Component,
-    OnInit,
-    Injector,
-    Input,
-    Output,
-    ViewChild,
-    EventEmitter,
-    OnDestroy
-} from '@angular/core';
+import { Component, OnInit, Injector, Input, Output, ViewChild, EventEmitter, OnDestroy } from '@angular/core';
 
 /** Third party import */
 import { MatDialog } from '@angular/material/dialog';
@@ -16,7 +7,7 @@ import { CacheService } from 'ng2-cache-service';
 import { DxContextMenuComponent } from 'devextreme-angular/ui/context-menu';
 import * as _ from 'underscore';
 import { BehaviorSubject } from 'rxjs';
-import { filter, finalize, takeUntil } from 'rxjs/operators';
+import { filter, finalize, takeUntil, map } from 'rxjs/operators';
 import startCase from 'lodash/startCase';
 
 /** Application imports */
@@ -29,7 +20,6 @@ import { CreateClientDialogComponent } from '../shared/create-client-dialog/crea
 import { UploadDocumentsDialogComponent } from './documents/upload-documents-dialog/upload-documents-dialog.component';
 import { RelationCompaniesDialogComponent } from './relation-companies-dialog/relation-companies-dialog.component';
 import { CreateInvoiceDialogComponent } from '@app/crm/shared/create-invoice-dialog/create-invoice-dialog.component';
-import { ConfirmDialogComponent } from '@app/shared/common/dialogs/confirm/confirm-dialog.component';
 import {
     ContactInfoDto,
     PersonContactInfoDto,
@@ -57,14 +47,14 @@ import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/life
     selector: 'details-header',
     templateUrl: './details-header.component.html',
     styleUrls: ['./details-header.component.less'],
-    providers: [ AppService, ContactPhotoServiceProxy, LifecycleSubjectsService ]
+    providers: [ ContactPhotoServiceProxy, LifecycleSubjectsService ]
 })
 export class DetailsHeaderComponent extends AppComponentBase implements OnInit, OnDestroy {
     @ViewChild(DxContextMenuComponent) addContextComponent: DxContextMenuComponent;
 
     @Input()
     public set data(data: ContactInfoDto) {
-        this._contactInfoBehaviorSubject.next(data);
+        data && this._contactInfoBehaviorSubject.next(data);
     }
     public get data(): ContactInfoDto {
         return this._contactInfoBehaviorSubject.getValue();
@@ -91,13 +81,11 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
     private readonly ADD_INVOICE_OPTION = 3;
     private readonly ADD_OPTION_DEFAULT = this.ADD_FILES_OPTION;
     private readonly ADD_OPTION_CACHE_KEY = 'add_option_active_index';
-
+    private contactGroup: ContactGroup;
     private showRemovingOrgRelationProgress = false;
 
-    groupNames = _.mapObject(_.invert(ContactGroup), (val) => startCase(val));
-    statusNames = _.invert(ContactStatus);
-
     isAdminModule;
+    manageAllowed;
     defaultContextMenuItems = [
         {
             text: this.l('AddFiles'),
@@ -141,7 +129,7 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
         private _cacheService: CacheService,
         private lifeCycleService: LifecycleSubjectsService
     ) {
-        super(injector, AppConsts.localization.CRMLocalizationSourceName);
+        super(injector);
 
         this.isAdminModule = (appService.getModule() == appService.getDefaultModule());
     }
@@ -153,7 +141,9 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
         this._contactInfoBehaviorSubject
             .pipe(filter(Boolean), takeUntil(this.lifeCycleService.destroy$))
             .subscribe(
-                contactInfo => {
+                (contactInfo: ContactInfoDto) => {
+                    this.contactGroup = contactInfo.groupId;
+                    this.manageAllowed = this._contactsService.checkCGPermission(contactInfo.groupId);
                     this.addContextMenuItems = this.defaultContextMenuItems.filter(menuItem => menuItem.contactGroups.indexOf(contactInfo.groupId) >= 0);
                     this.addOptionsInit();
                 }
@@ -180,16 +170,10 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
 
     removePersonOrgRelation(event) {
         let companyName = this.data['organizationContactInfo'].fullName;
-        this.dialog.open(ConfirmDialogComponent, {
-            data: {
-                title: this.l('ContactRelationRemovalConfirmationTitle'),
-                message: this.l('ContactRelationRemovalConfirmationMessage', companyName)
-            }
-        }).afterClosed().subscribe(result => {
+        this.message.confirm(this.l('ContactRelationRemovalConfirmationMessage', companyName), (result) => {
             if (result) {
-                this.showRemovingOrgRelationProgress = true;
-                this.dialog.closeAll();
                 let orgRelationId = this.personContactInfo['personOrgRelationInfo'].id;
+                this.showRemovingOrgRelationProgress = true;
                 this._personOrgRelationService.delete(orgRelationId)
                 .pipe(finalize(() => this.showRemovingOrgRelationProgress = false))
                 .subscribe(() => {
@@ -200,7 +184,7 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
                 });
             }
         });
-        event.stopPropagation();
+        event && event.stopPropagation();
     }
 
     showCompanyDialog(e) {
@@ -212,7 +196,8 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
         this.dialog.open(CompanyDialogComponent, {
             data: {
                 company: companyInfo,
-                contactInfo: this.data
+                contactInfo: this.data,
+                invalidate: this.onInvalidate
             },
             panelClass: 'slider',
             maxWidth: '830px'
@@ -307,37 +292,42 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
     }
 
     getNameInplaceEditData(field = 'personContactInfo') {
-        let contactInfo = this.data && this.data[field];
-        if (contactInfo)
-            return {
-                id: contactInfo.id,
-                value: (contactInfo.fullName || '').trim(),
-                validationRules: [
-                    {type: 'required', message: this.l('FullNameIsRequired')},
-                    {type: 'pattern', pattern: AppConsts.regexPatterns.fullName, message: this.l('FullNameIsNotValid')}
-                ],
-                isEditDialogEnabled: true,
-                lEntityName: 'Name',
-                lEditPlaceholder: this.l('ClientNamePlaceholder')
-            };
+        return this._contactInfoBehaviorSubject.asObservable().pipe(map((data) => {
+            let contactInfo = this.data && this.data[field];
+            if (contactInfo)
+                return {
+                    id: contactInfo.id,
+                    isReadOnlyField: !this.manageAllowed,
+                    value: (contactInfo.fullName || '').trim(),
+                    validationRules: [
+                        {type: 'required', message: this.l('FullNameIsRequired')},
+                        {type: 'pattern', pattern: AppConsts.regexPatterns.fullName, message: this.l('FullNameIsNotValid')}
+                    ],
+                    isEditDialogEnabled: true,
+                    lEntityName: 'Name',
+                    lEditPlaceholder: this.l('ClientNamePlaceholder')
+                };
+        }));
     }
 
     getJobTitleInplaceEditData() {
-        let orgRelationInfo = this.personContactInfo
-            && this.personContactInfo['personOrgRelationInfo'];
-        if (orgRelationInfo)
-            return {
-                id: orgRelationInfo.id,
-                value: (orgRelationInfo.jobTitle || '').trim(),
-                lEntityName: 'JobTitle',
-                lEditPlaceholder: this.l('JobTitle')
-            };
+        return this._personContactInfoBehaviorSubject.asObservable().pipe(map((data) => {
+            let orgRelationInfo = data && data['personOrgRelationInfo'];
+            if (orgRelationInfo)
+                return {
+                    id: orgRelationInfo.id,
+                    isReadOnlyField: !this.manageAllowed,
+                    value: (orgRelationInfo.jobTitle || '').trim(),
+                    lEntityName: 'JobTitle',
+                    lEditPlaceholder: this.l('JobTitle')
+                };
+        }));
     }
 
     showEditPersonDialog(event) {
         this.dialog.closeAll();
         this.dialog.open(PersonDialogComponent, {
-            data: this.data.personContactInfo,
+            data: this.data,
             hasBackdrop: false,
             position: this.dialogService.calculateDialogPosition(
                 event, event.target.closest('div'), 200, -12)
@@ -372,18 +362,24 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
         ).subscribe(() => {});
     }
 
+    get addOptionCacheKey() {
+        return this.ADD_OPTION_CACHE_KEY + '_' + this.contactGroup;
+    }
+
     addOptionsInit() {
-        let cacheKey = this.getCacheKey(this.ADD_OPTION_CACHE_KEY),
+        let cacheKey = this.getCacheKey(this.addOptionCacheKey),
             selectedIndex = this.ADD_OPTION_DEFAULT;
         if (this._cacheService.exists(cacheKey))
             selectedIndex = this._cacheService.get(cacheKey);
-        this.addContextMenuItems[selectedIndex].selected = true;
-        this.addButtonTitle = this.addContextMenuItems[selectedIndex].text;
+        if (this.addContextMenuItems.length) {
+            this.addContextMenuItems[selectedIndex].selected = true;
+            this.addButtonTitle = this.addContextMenuItems[selectedIndex].text;
+        }
     }
 
     updateSaveOption(option) {
         this.addButtonTitle = option.text;
-        this._cacheService.set(this.getCacheKey(this.ADD_OPTION_CACHE_KEY),
+        this._cacheService.set(this.getCacheKey(this.addOptionCacheKey),
             this.addContextMenuItems.findIndex((elm) => elm.text == option.text).toString());
     }
 
@@ -418,7 +414,7 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
         else if (this.addContextMenuItems[this.ADD_FILES_OPTION] && this.addContextMenuItems[this.ADD_FILES_OPTION].selected)
             setTimeout(() => {
                 this.dialog.open(UploadDocumentsDialogComponent, {
-                    panelClass: 'slider',
+                    panelClass: ['slider'],
                     disableClose: false,
                     hasBackdrop: false,
                     closeOnNavigation: true,
@@ -430,7 +426,7 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
         else if (this.addContextMenuItems[this.ADD_NOTES_OPTION] && this.addContextMenuItems[this.ADD_NOTES_OPTION].selected)
             setTimeout(() => {
                 this.dialog.open(NoteAddDialogComponent, {
-                    panelClass: 'slider',
+                    panelClass: ['slider'],
                     disableClose: false,
                     hasBackdrop: false,
                     closeOnNavigation: true,
@@ -451,7 +447,8 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
     }
 
     addCompanyDialog(event) {
-        this._contactsService.addCompanyDialog(event, this.data).subscribe(result => {});
+        if (this.manageAllowed)
+            this._contactsService.addCompanyDialog(event, this.data).subscribe(result => {});
     }
 
     showCompanyList(event) {
@@ -485,7 +482,7 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
         this.lifeCycleService.destroy.next();
     }
 
-    refresh(event) {
-        this.onInvalidate.emit(event);
+    refresh() {
+        this.onInvalidate.emit();
     }
 }

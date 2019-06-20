@@ -5,7 +5,7 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 @Injectable()
 export class AppAuthService implements OnDestroy {
     private tokenCheckTimeout: any;
-    private tokenCheckBusy: boolean = false;
+    private tokenCheckBusy = false;
 
     constructor(
         private _appLocalizationService: AppLocalizationService,
@@ -44,7 +44,7 @@ export class AppAuthService implements OnDestroy {
                     authData.twoFactorRememberClientToken,
                     authData.returnUrl
                 );
-                document.cookie = authDataKey + '=; domain=' + 
+                document.cookie = authDataKey + '=; domain=' +
                     location.origin.split('.').slice(-2).join('.');
 
                 return true;
@@ -105,9 +105,8 @@ export class AppAuthService implements OnDestroy {
             if (this._appLocalizationService)
                 warningMessage = this._appLocalizationService.ls(AppConsts.localization.defaultLocalizationSourceName, 'UserHasChangedWarning');
             abp.message.warn(warningMessage).done(() => location.reload());
-        } else {
-            this.tokenCheckTimeout = setTimeout(() => this.checkAuthToken(initialToken), 3000);
-        }
+        } else
+            this.startTokenCheck();
         this.tokenCheckBusy = false;
     }
 }

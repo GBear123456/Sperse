@@ -1,13 +1,12 @@
 /** Core imports */
-import { AfterViewInit, Component, ElementRef, Injector, OnInit, OnDestroy, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, Injector, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { Params } from '@angular/router';
 
 /** Third party imports */
-import map from 'lodash/map';
-import filter from 'lodash/filter';
 import DataSource from 'devextreme/data/data_source';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { MatDialog } from '@angular/material/dialog';
+import { takeUntil } from 'rxjs/operators';
 
 /** Application imports */
 import { AppService } from '@app/app.service';
@@ -16,6 +15,9 @@ import { LanguageServiceProxy } from '@shared/service-proxies/service-proxies';
 import { FiltersService } from '@shared/filters/filters.service';
 import { EditTextModalComponent } from './edit-text-modal.component';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
+import { FilterModel } from '@shared/filters/models/filter.model';
+import { FilterDropDownComponent } from '@shared/filters/dropdown/filter-dropdown.component';
+import { FilterDropDownModel } from '@shared/filters/dropdown/filter-dropdown.model';
 
 @Component({
     templateUrl: './language-texts.component.html',
@@ -30,19 +32,25 @@ export class LanguageTextsComponent extends AppComponentBase implements AfterVie
     public actionMenuItems: any;
     public actionRecord: any;
     public headlineConfig = {
-        names: [this.l('LanguageTexts')],
+        names: [ this.l('LanguageTexts') ],
         icon: 'flag',
         onRefresh: this.refreshDataGrid.bind(this),
         buttons: []
     };
-
-    sourceNames: string[] = [];
-    languages: abp.localization.ILanguageInfo[] = [];
-    targetLanguageName: string;
-    sourceName: string;
-    baseLanguageName: string;
-    targetValueFilter: string;
-    filterText: string;
+    sourceNames = abp.localization.sources.filter(source => source.type === 'MultiTenantLocalizationSource').map(value => value.name);
+    languages: abp.localization.ILanguageInfo[] = abp.localization.languages;
+    defaultBaseLanguageName: string;
+    defaultTargetLanguageName: string;
+    defaultSourceName: string;
+    defaultTargetValueFilter: string;
+    searchText: string;
+    private filtersValues = {
+        sourceName: undefined,
+        baseLanguageName: undefined,
+        targetLanguageName: undefined,
+        targetValueFilter: undefined
+    };
+    private filtersModels: FilterModel[];
 
     constructor(
         injector: Injector,
@@ -54,42 +62,119 @@ export class LanguageTextsComponent extends AppComponentBase implements AfterVie
         super(injector);
         this.rootComponent = this.getRootComponent();
         this.rootComponent.overflowHidden(true);
-        this.initToolbarConfig();
-        this._activatedRoute.params.subscribe((params: Params) => {
-            this.baseLanguageName = params['baseLanguageName'] || abp.localization.currentLanguage.name;
-            this.targetLanguageName = params['name'];
-            this.sourceName = params['sourceName'] || 'Platform';
-            this.targetValueFilter = params['targetValueFilter'] || 'ALL';
-            this.filterText = params['filterText'] || '';
-        });
     }
 
     ngOnInit(): void {
-        this.sourceNames = map(filter(abp.localization.sources, source => source.type === 'MultiTenantLocalizationSource'), value => value.name);
-        this.languages = abp.localization.languages;
+        this._activatedRoute.params.pipe(takeUntil(this.destroy$)).subscribe((params: Params) => {
+            this.filtersValues.baseLanguageName = this.defaultBaseLanguageName = params['baseLanguageName'] || abp.localization.currentLanguage.name;
+            this.filtersValues.targetLanguageName = this.defaultTargetLanguageName = params['name'];
+            this.filtersValues.sourceName = this.defaultSourceName = params['sourceName'] || 'Platform';
+            this.filtersValues.targetValueFilter = this.defaultTargetValueFilter = params['targetValueFilter'] || 'ALL';
+            this.searchText = params['filterText'] || '';
+            this.setupFilters();
+            this.initFilterConfig();
+            this.filtersModels.forEach((filter: FilterModel) => filter.updateCaptions());
+            this.initToolbarConfig();
+        });
+        this._filtersService.filtersValues$
+            .pipe(takeUntil(this.destroy$))
+            .subscribe(filtersValues => {
+                this.filtersValues = { ...this.filtersValues, ...filtersValues };
+                this.refreshDataGrid();
+            });
     }
 
     ngAfterViewInit(): void {
         this.dataSource = new DataSource({
             key: 'id',
-            load: () => {
+            load: (loadOptions) => {
                 return this._languageService.getLanguageTexts(
-                    1000,
-                    undefined,
-                    undefined,
-                    this.sourceName,
-                    this.baseLanguageName,
-                    this.targetLanguageName,
-                    this.targetValueFilter,
-                    this.filterText
+                    loadOptions.take,
+                    loadOptions.skip,
+                    (loadOptions.sort || []).map((item) => {
+                        return item.selector + ' ' + (item.desc ? 'DESC' : 'ASC');
+                    }).join(','),
+                    this.filtersValues.sourceName || this.defaultSourceName,
+                    this.filtersValues.baseLanguageName || this.defaultBaseLanguageName,
+                    this.filtersValues.targetLanguageName || this.defaultTargetLanguageName,
+                    this.filtersValues.targetValueFilter || this.defaultTargetValueFilter,
+                    this.searchText
                 ).toPromise().then(response => {
                     return {
                         data: response.items,
-                        totalCount: response.items.length
+                        totalCount: response.totalCount
                     };
                 });
             }
         });
+    }
+
+    setupFilters() {
+        this.filtersModels = [
+            new FilterModel({
+                component: FilterDropDownComponent,
+                caption: 'baseLanguageName',
+                items: {
+                    baseLanguageName: new FilterDropDownModel({
+                        displayElementExp: 'displayName',
+                        valueElementExp: 'name',
+                        elements: this.languages,
+                        value: this.filtersValues.baseLanguageName,
+                        filterField: 'baseLanguageName'
+                    })
+                }
+            }),
+            new FilterModel({
+                component: FilterDropDownComponent,
+                caption: 'targetLanguageName',
+                items: {
+                    targetLanguageName: new FilterDropDownModel({
+                        displayElementExp: 'displayName',
+                        valueElementExp: 'name',
+                        elements: this.languages,
+                        value: this.filtersValues.targetLanguageName,
+                        filterField: 'targetLanguageName'
+                    })
+                }
+            }),
+            new FilterModel({
+                component: FilterDropDownComponent,
+                caption: 'sourceName',
+                items: {
+                    sourceName: new FilterDropDownModel({
+                        elements: this.sourceNames,
+                        filterField: 'sourceName',
+                        value: this.filtersValues.sourceName
+                    })
+                }
+            }),
+            new FilterModel({
+                component: FilterDropDownComponent,
+                caption: 'targetValueFilter',
+                items: {
+                    targetValueFilter: new FilterDropDownModel({
+                        elements: [
+                            {
+                                name: this.l('All'),
+                                value: 'ALL'
+                            },
+                            {
+                                name: this.l('EmptyOnes'),
+                                value: 'Empty'
+                            }
+                        ],
+                        displayElementExp: 'name',
+                        valueElementExp: 'value',
+                        value: this.filtersValues.targetValueFilter,
+                        filterField: 'targetValueFilter'
+                    })
+                }
+            })
+        ];
+    }
+
+    initFilterConfig() {
+        this._filtersService.setup(this.filtersModels);
     }
 
     initToolbarConfig() {
@@ -98,8 +183,7 @@ export class LanguageTextsComponent extends AppComponentBase implements AfterVie
                 location: 'before', items: [
                     {
                         name: 'filters',
-                        disabled: true,
-                        action: event => {
+                        action: () => {
                             setTimeout(() => {
                                 this.dataGrid.instance.repaint();
                             }, 1000);
@@ -109,10 +193,10 @@ export class LanguageTextsComponent extends AppComponentBase implements AfterVie
                             checkPressed: () => {
                                 return this._filtersService.fixed;
                             },
-                            mouseover: event => {
+                            mouseover: () => {
                                 this._filtersService.enable();
                             },
-                            mouseout: event => {
+                            mouseout: () => {
                                 if (!this._filtersService.fixed)
                                     this._filtersService.disable();
                             }
@@ -130,7 +214,7 @@ export class LanguageTextsComponent extends AppComponentBase implements AfterVie
                         name: 'search',
                         widget: 'dxTextBox',
                         options: {
-                            value: this.searchValue,
+                            value: this.searchText,
                             width: '279',
                             mode: 'search',
                             placeholder: this.l('Search') + ' ' + this.l('Languages').toLowerCase(),
@@ -197,16 +281,12 @@ export class LanguageTextsComponent extends AppComponentBase implements AfterVie
     }
 
     applyFilters(): void {
-        this._router.navigate(['app/admin/languages', this.targetLanguageName, 'texts', {
-            sourceName: this.sourceName,
-            baseLanguageName: this.baseLanguageName,
-            targetValueFilter: this.targetValueFilter,
-            filterText: this.filterText
+        this._router.navigate(['app/admin/languages', this.filtersValues.targetLanguageName, 'texts', {
+            sourceName: this.filtersValues.sourceName,
+            baseLanguageName: this.filtersValues.baseLanguageName,
+            targetValueFilter: this.filtersValues.targetValueFilter,
+            filterText: this.searchText
         }]);
-    }
-
-    truncateString(text): string {
-        return abp.utils.truncateStringWithPostfix(text, 32, '...');
     }
 
     showCompactRowsHeight() {
@@ -218,11 +298,8 @@ export class LanguageTextsComponent extends AppComponentBase implements AfterVie
     }
 
     searchValueChange(e: object) {
-        this.searchValue = e['value'];
-        if (this.searchValue)
-            this.dataGrid.instance.filter(['displayName', 'contains', this.searchValue]);
-        else
-            this.dataGrid.instance.clearFilter();
+        this.searchText = e['value'];
+        this.refreshDataGrid();
     }
 
     refreshDataGrid() {
@@ -249,6 +326,7 @@ export class LanguageTextsComponent extends AppComponentBase implements AfterVie
 
     ngOnDestroy() {
         this.rootComponent.overflowHidden();
+        this._filtersService.unsubscribe();
         this._appService.updateToolbar(null);
     }
 }

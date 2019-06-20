@@ -233,8 +233,10 @@ button {
         cursor: pointer;
     }
     &[disabled] {
-        cursor: default;
-        background-color: #b1b0b3;
+        cursor: default !important;
+        background-color: #b1b0b3 !important;
+        border-color: #b1b0b3;
+        color: #ddd;
     }
     &.menu {
         padding: 0px 45px 0px 30px;
@@ -353,8 +355,8 @@ button {
 }
 
 /* devExpress common styles */
-
-#gridContainer, dx-data-grid {
+//VP should be adjusted to use class instead of Id
+#gridContainer, #operationsLogsGrid, #changeLogsGrid {
     width: 100%;
     max-width: 100vw;
     height: calc(~'100vh - 212px');
@@ -652,6 +654,14 @@ button {
             letter-spacing: 0.5px;
         }
     }
+
+    .dx-scrollable-scroll {
+        width: 12px;
+    }
+}
+
+dx-data-grid[accessKey="detailGrid"] {
+    height: auto;
 }
 
 .modal {
@@ -860,6 +870,7 @@ button {
 
 // checkboxes styles
 .dx-checkbox {
+    display: block;
     .dx-checkbox-icon {
         width: 20px;
         height: 20px;
@@ -1026,5 +1037,21 @@ body > .blockUI.blockOverlay{
 
     &.star-gradient5 {
         background-color: #959595;
+    }
+}
+
+.cdk-overlay-container {
+    .cdk-overlay-pane.slider {
+        transition: margin 1s!important;
+        min-width: 40vw;
+        max-width: 100vw !important;
+        &.min-width-0 {
+            min-width: 0;
+        }
+        .mat-dialog-container {
+            overflow: visible;
+            padding: 0;
+            margin: 0;
+        }
     }
 }

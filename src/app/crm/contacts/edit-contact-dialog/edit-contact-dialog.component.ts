@@ -24,6 +24,7 @@ import {
     ContactPhoneServiceProxy,
     ContactLinkServiceProxy
 } from '@shared/service-proxies/service-proxies';
+import { ContactsService } from '../contacts.service';
 
 @Component({
     templateUrl: 'edit-contact-dialog.html',
@@ -54,10 +55,12 @@ export class EditContactDialog extends AppComponentBase {
                 private _contactEmailService: ContactEmailServiceProxy,
                 private _contactPhoneService: ContactPhoneServiceProxy,
                 private _contactLinkService: ContactLinkServiceProxy,
-                private store$: Store<AppStore.State>) {
-        super(injector, AppConsts.localization.CRMLocalizationSourceName);
+                private _contactsService: ContactsService,
+                private store$: Store<AppStore.State>
+    ) {
+        super(injector);
 
-        this.isEditAllowed = this.isGranted('Pages.CRM.Customers.Manage');
+        this.isEditAllowed = _contactsService.checkCGPermission(this.data.groupId);
 
         this[data.field + 'TypesLoad']();
         this.action = data.value ? 'Edit' : 'Create';
@@ -131,7 +134,7 @@ export class EditContactDialog extends AppComponentBase {
     }
 
     mouseDown(event) {
-        if (!this.dialogRef['_containerInstance']['_config'].hasBackdrop) 
+        if (!this.dialogRef['_containerInstance']['_config'].hasBackdrop)
             this.movePos = {
                 x: event.clientX,
                 y: event.clientY

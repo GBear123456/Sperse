@@ -44,7 +44,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, OnDestr
         private orderServiceProxy: OrderServiceProxy,
         private currencyPipe: CurrencyPipe
     ) {
-        super(injector, AppConsts.localization.CRMLocalizationSourceName);
+        super(injector);
         this.dataSource = this.getDataSource(+this._contactService['data'].contactInfo.id);
         this._clientService.invalidateSubscribe((area) => {
             if (area == 'orders') {
@@ -57,16 +57,16 @@ export class OrdersComponent extends AppComponentBase implements OnInit, OnDestr
         });
     }
 
+    ngOnInit(): void {
+        this.processFilterInternal();
+    }
+
     onContentReady(event) {
         this.setGridDataLoaded();
         event.component.columnOption('command:edit', {
             visibleIndex: -1,
             width: 40
         });
-    }
-
-    ngOnInit(): void {
-        this.processFilterInternal();
     }
 
     private getDataSource(contactId) {
@@ -125,7 +125,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, OnDestr
     showHistory(data) {
         setTimeout(() =>
             this.dialog.open(HistoryListDialogComponent, {
-                panelClass: 'slider',
+                panelClass: ['slider'],
                 disableClose: false,
                 hasBackdrop: false,
                 closeOnNavigation: true,

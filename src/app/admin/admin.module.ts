@@ -11,8 +11,8 @@ import { MatInputModule } from '@angular/material/input';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatSidenavModule } from '@angular/material/sidenav';
-
 import { DxChartModule } from 'devextreme-angular/ui/chart';
+import { DxCheckBoxModule } from 'devextreme-angular/ui/check-box';
 import { DxPieChartModule } from 'devextreme-angular/ui/pie-chart';
 import { DxFileUploaderModule } from 'devextreme-angular/ui/file-uploader';
 import { DxDataGridModule } from 'devextreme-angular/ui/data-grid';
@@ -41,7 +41,6 @@ import { AddMemberModalComponent } from 'app/admin/organization-units/add-member
 import { AdminRoutingModule } from './admin-routing.module';
 import { AuditLogDetailModalComponent } from './audit-logs/audit-log-detail-modal.component';
 import { AuditLogsComponent } from './audit-logs/audit-logs.component';
-import { EntityChangeDetailModalComponent } from './audit-logs/entity-change-detail-modal.component';
 import { HostDashboardComponent } from './dashboard/host-dashboard.component';
 import { CreateOrEditEditionModalComponent } from './editions/create-or-edit-edition-modal.component';
 import { EditionsComponent } from './editions/editions.component';
@@ -69,8 +68,6 @@ import { EditTenantModalComponent } from './tenants/edit-tenant-modal.component'
 import { TenantFeaturesModalComponent } from './tenants/tenant-features-modal.component';
 import { TenantsComponent } from './tenants/tenants.component';
 import { UiCustomizationComponent } from './ui-customization/ui-customization.component';
-import { CreateOrEditUserModalComponent } from './users/create-or-edit-user-modal.component';
-import { EditUserPermissionsModalComponent } from './users/edit-user-permissions-modal.component';
 import { ImpersonationService } from './users/impersonation.service';
 import { UsersComponent } from './users/users.component';
 import { JobsComponent } from './jobs/jobs.component';
@@ -82,6 +79,7 @@ import { PaymentInfoModule } from '@shared/common/widgets/payment-info/payment-i
 import { ContactsModule } from '../crm/contacts/contacts.module';
 import { ModulesEditionsSelectComponent } from '@admin/tenants/modules-edtions-select.component.ts/modules-editions-select.component';
 import { ItemDetailsLayoutModule } from '@shared/common/item-details-layout/item-details-layout.module';
+import { LoadingSpinnerModule } from '@app/shared/common/loading-spinner/loading-spinner.module';
 
 @NgModule({
     imports: [
@@ -103,6 +101,7 @@ import { ItemDetailsLayoutModule } from '@shared/common/item-details-layout/item
         DxValidationSummaryModule,
         DxFileUploaderModule,
         DxDataGridModule,
+        DxCheckBoxModule,
         DxValidatorModule,
         DxSelectBoxModule,
         DxTextBoxModule,
@@ -131,21 +130,19 @@ import { ItemDetailsLayoutModule } from '@shared/common/item-details-layout/item
         EditorModule,
         InputMaskModule,
         PaymentInfoModule,
-        ItemDetailsLayoutModule
+        ItemDetailsLayoutModule,
+        LoadingSpinnerModule
     ],
     declarations: [
         UsersComponent,
         PermissionComboComponent,
         RoleComboComponent,
-        CreateOrEditUserModalComponent,
-        EditUserPermissionsModalComponent,
         PermissionTreeComponent,
         OrganizationUnitsTreeComponent,
         RolesComponent,
         CreateOrEditRoleModalComponent,
         AuditLogsComponent,
         AuditLogDetailModalComponent,
-        EntityChangeDetailModalComponent,
         HostSettingsComponent,
         MaintenanceComponent,
         JobsComponent,

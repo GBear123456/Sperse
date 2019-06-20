@@ -13,6 +13,8 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppConsts } from '@shared/AppConsts';
 import { FiltersService } from '@shared/filters/filters.service';
 import { AssignUserInput, AssignUserForEachInput } from '@shared/service-proxies/service-proxies';
+import { AppStoreService } from '@app/store/app-store.service';
+import { ContactGroup } from '@shared/AppEnums';
 
 @Component({
     selector: 'crm-user-assignment-list',
@@ -26,7 +28,7 @@ export class UserAssignmentComponent extends AppComponentBase implements OnInit 
     @Input() targetSelector = '[aria-label="Assign"]';
     @Input() bulkUpdateMode = false;
     @Input() hideButtons = false;
-    @Input() permissionKey: string = '';
+    @Input() permissionKey = '';
     @Input() get selectedItemKey() {
         return this.multiSelection ? this.selectedItemKeys :
             (this.selectedItemKeys && this.selectedItemKeys.length ? this.selectedItemKeys[0] : undefined);
@@ -48,10 +50,13 @@ export class UserAssignmentComponent extends AppComponentBase implements OnInit 
 
     constructor(
         injector: Injector,
+	private _appStoreService: AppStoreService,
         private _filtersService: FiltersService,
         private store$: Store<AppStore.State>,
     ) {
-        super(injector, AppConsts.localization.CRMLocalizationSourceName);
+        super(injector);
+
+        _appStoreService.dispatchUserAssignmentsActions(Object.keys(ContactGroup));
     }
 
     private moveSelectedItemsToTop() {
@@ -148,7 +153,7 @@ export class UserAssignmentComponent extends AppComponentBase implements OnInit 
                     this.proxyService.getRelatedAssignableUsers(this.selectedKeys[0], true).subscribe((res) => {
                         if (res && res.length) {
                             res.forEach((user) => {
-                                this.isRelatedUser = this.isRelatedUser || 
+                                this.isRelatedUser = this.isRelatedUser ||
                                     (user.id == abp.session.userId);
                                 if (!_.findWhere(this.list, { id: user.id }))
                                     this.list.unshift(user);
@@ -163,7 +168,7 @@ export class UserAssignmentComponent extends AppComponentBase implements OnInit 
     }
 
     reset() {
-        this.selectedItemKey = this.multiSelection ? []: null;
+        this.selectedItemKey = this.multiSelection ? [] : null;
     }
 
     highlightSelectedFilters() {

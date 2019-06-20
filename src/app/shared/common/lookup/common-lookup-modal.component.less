@@ -1,21 +1,24 @@
 :host {
     display: block;
     height: 100%;
+    max-width: 80vw;
+    @media (min-width: 1200px) {
+        max-width: 50vw;
+    }
     form {
         padding: 20px 20px 0;
         display: flex;
         flex-direction: column;
         height: 100%;
 
-        .primeng-datatable-container {
+        .datatable-container {
             flex-grow: 1;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
+            dx-data-grid {
+                height: calc(100vh - 170px)!important;
+            }
         }
     }
-}
-
-/deep/ .cdk-overlay-pane.common-lookup {
-    max-width: 40vw !important;
 }

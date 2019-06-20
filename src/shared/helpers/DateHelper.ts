@@ -8,7 +8,7 @@ export class DateHelper {
         return date;
     }
 
-    static removeTimezoneOffset(date: Date, removeUserOffset = false, setTime?: 'to' | 'from'): Date {
+    static removeTimezoneOffset(date: Date, removeUserOffset = false, setTime?: string | 'to' | 'from'): Date {
         setTime && Date.prototype.setHours.apply(date,
             setTime == 'to' ? [23, 59, 59, 999] : [0, 0, 0, 0]);
 
@@ -19,6 +19,14 @@ export class DateHelper {
 
     static getUserOffset(date: Date): number {
         return moment(date).tz(abp.timing.timeZoneInfo.iana.timeZoneId).utcOffset();
+    }
+
+    /**
+     * Returns moment with user date in utc timezone without hours, minutes and seconds
+     * @return {moment.Moment}
+     */
+    static getCurrentUtcDate(): moment.Moment {
+        return moment.tz(moment().format('DD-MM-YYYY'), 'DD-MM-YYYY', 'utc');
     }
 
 }

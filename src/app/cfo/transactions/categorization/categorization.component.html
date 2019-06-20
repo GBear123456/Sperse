@@ -7,8 +7,8 @@
         </h3>
         <app-toolbar [config]="toolbarConfig" [compact]="true"></app-toolbar>
     </div>
-    <dx-tree-list width="{{width}}"
-                  height="{{height}}"
+    <dx-tree-list [width]="width"
+                  [height]="height"
                   keyExpr="key"
                   parentIdExpr="parent"
                   [noDataText]="noDataText"
@@ -48,7 +48,6 @@
                     [sortIndex]="1"
                     [sortOrder]="'asc'"
                     dataField="coAID"
-                    dataType="number"
                     [caption]="'ID'"
                     [calculateSortValue]="calculateSortValue"
                     [visible]="settings.showCID">
@@ -67,7 +66,7 @@
                 <div class="category-hover"></div>
                 <span> {{ cell.text }} </span>
                 <div class="category-drop-area">
-                    <div *ngIf="isInstanceAdmin" class="category-drop-add-rule">Add Rule</div>
+                    <div *ngIf="isInstanceAdmin || _cfoService.classifyTransactionsAllowed" class="category-drop-add-rule">{{l('AddRule')}}</div>
                 </div>
             </ng-container>
         </div>

@@ -21,7 +21,7 @@ import {
 import { LoginService } from '../login/login.service';
 import { ResetPasswordModel } from './reset-password.model';
 import { LendSpaceResetPasswordComponent } from './layouts/lend-space/lend-space-reset-password.component';
-import { CFOMemberResetPasswordComponent } from './layouts/cfo-member/cfo-member-reset-password.component';
+import { AdvicePeriodResetPasswordComponent } from './layouts/advice-period/advice-period-reset-password.component';
 import { HostResetPasswordComponent } from './layouts/host/host-reset-password.component';
 
 @Directive({
@@ -33,7 +33,10 @@ export class AdResetPasswordHostDirective {
 
 @Component({
     templateUrl: './reset-password.component.html',
-    animations: [accountModuleAnimation()]
+    animations: [accountModuleAnimation()],
+    styleUrls: [
+        './reset-password.component.less'
+    ],
 })
 export class ResetPasswordComponent extends AppComponentBase implements OnInit {
     @ViewChild(AdResetPasswordHostDirective) adResetPasswordHost: AdResetPasswordHostDirective;
@@ -60,11 +63,11 @@ export class ResetPasswordComponent extends AppComponentBase implements OnInit {
 
     private getLayoutComponent(tenant) {
         switch (tenant && tenant.customLayoutType) {
-            case TenantLoginInfoDtoCustomLayoutType.LendSpace: 
+            case TenantLoginInfoDtoCustomLayoutType.LendSpace:
                 return LendSpaceResetPasswordComponent;
-            case TenantLoginInfoDtoCustomLayoutType.CFOMembers: 
-                return CFOMemberResetPasswordComponent;
-            default: 
+            case TenantLoginInfoDtoCustomLayoutType.AdvicePeriod:
+                return AdvicePeriodResetPasswordComponent;
+            default:
                 return HostResetPasswordComponent;
         }
     }

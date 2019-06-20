@@ -16,7 +16,7 @@ export class SimilarCustomersDialogComponent extends AppComponentBase {
         @Inject(MAT_DIALOG_DATA) public data: any,
         public dialogRef: MatDialogRef<SimilarCustomersDialogComponent>
     ) {
-        super(injector, AppConsts.localization.CRMLocalizationSourceName);
+        super(injector);
     }
 
     selectSimilarCustomer(similarCustomer: SimilarContactOutput): void {

@@ -12,12 +12,15 @@ import { DxTooltipModule } from 'devextreme-angular/ui/tooltip';
 import { DxSelectBoxModule } from 'devextreme-angular/ui/select-box';
 import { DxContextMenuModule } from 'devextreme-angular/ui/context-menu';
 import { DxCheckBoxModule } from 'devextreme-angular/ui/check-box';
+import { DxButtonModule } from '@root/node_modules/devextreme-angular';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
 /** Application imports */
+import { ContactsModule } from '../crm/contacts/contacts.module';
 import { AppCommonModule } from '../shared/common/app-common.module';
 import { CommonModule } from '@shared/common/common.module';
 import { OffersComponent } from '@app/pfm/offers/offers.component';
@@ -35,7 +38,9 @@ import { RatingFieldComponent } from './offer-edit/rating-field/rating-field.com
 import { FromToFieldComponent } from './offer-edit/from-to-field/from-to-field.component';
 import { GroupFieldComponent } from './offer-edit/group-field/group-field.component';
 import { DataSourceService } from '@app/shared/common/data-source/data-source.service';
-import { DxButtonModule } from '@root/node_modules/devextreme-angular';
+import { ClickStatsComponent } from './shared/click-stats/click-stats.component';
+import { VisitorsComponent } from './offer-edit/visitors/visitors.component';
+import { OfferNotifyDialogComponent } from '@app/pfm/offer-edit/offer-notify-dialog/offer-notify-dialog.component';
 
 @NgModule({
     imports: [
@@ -43,6 +48,7 @@ import { DxButtonModule } from '@root/node_modules/devextreme-angular';
         ngCommon.CommonModule,
         CommonModule,
         AppCommonModule,
+        ContactsModule,
         DxButtonModule,
         DxDataGridModule,
         DxTooltipModule,
@@ -57,12 +63,14 @@ import { DxButtonModule } from '@root/node_modules/devextreme-angular';
         MatCheckboxModule,
         MatInputModule,
         MatSelectModule,
+        MatSlideToggleModule,
         ItemDetailsLayoutModule,
         StarsRatingModule
     ],
     declarations: [
         OffersComponent,
         OfferEditComponent,
+        OfferNotifyDialogComponent,
         TextFieldComponent,
         DropdownFieldComponent,
         NumberFieldComponent,
@@ -71,9 +79,13 @@ import { DxButtonModule } from '@root/node_modules/devextreme-angular';
         TextMultipleFieldComponent,
         RatingFieldComponent,
         FromToFieldComponent,
-        GroupFieldComponent
+        GroupFieldComponent,
+        ClickStatsComponent,
+        VisitorsComponent
     ],
-    entryComponents: [],
+    entryComponents: [
+        OfferNotifyDialogComponent
+    ],
     providers: [
         DataSourceService
     ]

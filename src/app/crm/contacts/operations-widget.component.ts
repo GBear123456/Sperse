@@ -1,5 +1,10 @@
+/** Core imports */
 import { Component, Injector, Input, Output, ViewChild, EventEmitter } from '@angular/core';
 
+/** Third party imports */
+import { takeUntil } from 'rxjs/operators';
+
+/** Application imports */
 import { DataLayoutType } from '@app/shared/layout/data-layout-type';
 import { TagsListComponent } from '../shared/tags-list/tags-list.component';
 import { ListsListComponent } from '../shared/lists-list/lists-list.component';
@@ -15,9 +20,6 @@ import { ContactGroup, ContactStatus } from '@shared/AppEnums';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { ToolBarComponent } from '@app/shared/common/toolbar/toolbar.component';
 import { AppService } from '@app/app.service';
-import { AppConsts } from '@shared/AppConsts';
-import { takeUntil } from 'rxjs/operators';
-import { FeatureCheckerService } from '@abp/features/feature-checker.service';
 
 @Component({
     selector: 'operations-widget',
@@ -100,15 +102,14 @@ export class OperationsWidgetComponent extends AppComponentBase {
     };
     constructor(
         injector: Injector,
-        private _clientService: ContactsService,
         private _appService: AppService,
         private _userService: UserServiceProxy,
-        private _featureService: FeatureCheckerService,
+        private _contactService: ContactsService,
         public localizationService: AppLocalizationService,
     ) {
-        super(injector, AppConsts.localization.CRMLocalizationSourceName);
+        super(injector);
 
-        _clientService.toolbarSubscribe((config) => {
+        _contactService.toolbarSubscribe((config) => {
             this.initToolbarConfig(config);
         });
     }
@@ -122,39 +123,47 @@ export class OperationsWidgetComponent extends AppComponentBase {
             let items = [
                 {
                     name: 'assign',
-                    action: this.toggleUserAssignment.bind(this)
+                    action: this.toggleUserAssignment.bind(this),
+                    disabled: !this._contactService.checkCGPermission(this.customerType, 'ManageAssignments')
                 },
                 this.leadId ? {
                     name: 'stage',
-                    action: this.toggleStages.bind(this)
+                    action: this.toggleStages.bind(this),
+                    disabled: !this._contactService.checkCGPermission(this.customerType)
                 } :
                 {
                     name: 'status',
-                    action: this.toggleStatus.bind(this)
+                    action: this.toggleStatus.bind(this),
+                    disabled: !this._contactService.checkCGPermission(this.customerType)
                 }
             ];
             if (this.customerType == ContactGroup.Partner) {
                 items.push({
                     name: 'partnerType',
-                    action: this.togglePartnerTypes.bind(this)
+                    action: this.togglePartnerTypes.bind(this),
+                    disabled: !this._contactService.checkCGPermission(this.customerType)
                 });
             }
             items = items.concat([
                 {
                     name: 'lists',
-                    action: this.toggleLists.bind(this)
+                    action: this.toggleLists.bind(this),
+                    disabled: !this._contactService.checkCGPermission(this.customerType, 'ManageListsAndTags')
                 },
                 {
                     name: 'tags',
-                    action: this.toggleTags.bind(this)
+                    action: this.toggleTags.bind(this),
+                    disabled: !this._contactService.checkCGPermission(this.customerType, 'ManageListsAndTags')
                 },
                 {
                     name: 'rating',
                     action: this.toggleRating.bind(this),
+                    disabled: !this._contactService.checkCGPermission(this.customerType, 'ManageRatingAndStars')
                 },
                 {
                     name: 'star',
                     action: this.toggleStars.bind(this),
+                    disabled: !this._contactService.checkCGPermission(this.customerType, 'ManageRatingAndStars')
                 }
             ]);
             this.toolbarConfig = this._enabled ? [
@@ -181,34 +190,36 @@ export class OperationsWidgetComponent extends AppComponentBase {
                 this.getNavigationConfig(this.isPrevDisabled, this.isNextDisabled)
             ];
 
-            this.toolbarConfig.push(
-                {
-                    location: 'before',
-                    locateInMenu: 'auto',
-                    items: [
-                        {
-                            visible: this.contactInfo 
-                                     && this.contactInfo.groupId == ContactGroup.Client
-                                     && !this._featureService.isEnabled('PFM')
-                                     && (
-                                        this.isClientCFOAvailable() || !this.isClientProspective()
-                                        && !(this._userService['data'] && this._userService['data'].userId) &&
-                                        this._appService.canSendVerificationRequest()
-                                     ),
-                            action: () => {
-                                if (this.isClientCFOAvailable())
-                                    this.redirectToCFO();
-                                else
-                                    this.requestVerification();
-                            },
-                            options: {
-                                text: this.l(this.isClientCFOAvailable() ? 'CFO' : 'ClientDetails_RequestVerification'),
-                                icon: this.isClientCFOAvailable() ? 'cfo-icon' : this.toolbarComponent.getImgURI('verify-icon')
+            const isCfoLinkOrVerifyEnabled = this.contactInfo
+                && this.contactInfo.personContactInfo
+                && this.contactInfo.groupId == ContactGroup.Client
+                && this._appService.isCfoLinkOrVerifyEnabled
+                && (
+                    this.isClientCFOAvailable() && this._appService.checkCFOClientAccessPermission
+                    || (!this.isClientCFOAvailable() && this._appService.canSendVerificationRequest() && this.contactInfo.statusId === ContactStatus.Active)
+                );
+            if (isCfoLinkOrVerifyEnabled) {
+                this.toolbarConfig.push(
+                    {
+                        location: 'before',
+                        locateInMenu: 'auto',
+                        items: [
+                            {
+                                action: () => {
+                                    if (this.isClientCFOAvailable())
+                                        this.redirectToCFO();
+                                    else
+                                        this.requestVerification();
+                                },
+                                options: {
+                                    text: this.l(this.isClientCFOAvailable() ? 'CFO' : 'ClientDetails_RequestVerification'),
+                                    icon: this.isClientCFOAvailable() ? 'cfo-icon' : this.toolbarComponent.getImgURI('verify-icon')
+                                }
                             }
-                        }
-                    ]
-                }
-            );
+                        ]
+                    }
+                );
+            }
         }, ms);
     }
 
@@ -311,9 +322,7 @@ export class OperationsWidgetComponent extends AppComponentBase {
 
     requestVerification() {
         this._appService.requestVerification(this.contactInfo.personContactInfo.id)
-            .pipe(
-                takeUntil(this.deactivate$)
-            )
+            .pipe(takeUntil(this.deactivate$))
             .subscribe(result => {
                 if (this.contactInfo && this.contactInfo.personContactInfo)
                     this.contactInfo.personContactInfo.userId = result;

@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, Injector, OnInit, OnDestroy, ViewChild } from '@angular/core';
+import { Component, Injector, OnDestroy, ViewChild } from '@angular/core';
 import { ActivationEnd, Params } from '@angular/router';
 
 /** Third party imports */
@@ -123,7 +123,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
                 private _customerService: CustomerServiceProxy,
                 private _itemDetailsService: ItemDetailsService
     ) {
-        super(injector, AppConsts.localization.CRMLocalizationSourceName);
+        super(injector);
         this._appStoreService.loadUserDictionaries();
         _contactService['data'] = {
             contactInfo: null,
@@ -166,7 +166,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
     initNavButtons() {
         this.rootComponent.overflowHidden(true);
         this.rootComponent.pageHeaderFixed();
-        let key = this.getCacheKey(abp.session.userId);
+        let key = this.getCacheKey(abp.session.userId.toString());
         if (this._cacheService.exists(key))
             this.rightPanelSetting = this._cacheService.get(key);
         switch (this.getSection()) {
@@ -299,7 +299,8 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
             });
         }
 
-        this.operationsEnabled = (result.groupId != ContactGroup.UserProfile);
+        this.operationsEnabled = !(result.groupId == ContactGroup.UserProfile &&
+            result.personContactInfo.userId && result.statusId != ContactStatus.Prospective);
         this.ratingId = result.ratingId;
         this.primaryContact = result.personContactInfo;
         this.contactInfo = result;
@@ -410,31 +411,26 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
                 publishReplay(),
                 refCount()
             );
-            contactInfo$.pipe(finalize(() => {
-                this.finishLoading(true);
-                if (!this.contactInfo)
+            contactInfo$.pipe(
+                finalize(() => {
+                    this.finishLoading(true);
+                }),
+                switchMap(result => {
+                    this.loadLeadData(result['personContactInfo']);
+                    this.fillContactDetails(result);
+                    if (leadId)
+                        this.loadLeadsStages();
+                    if (this.contactGroup == ContactGroup.Partner)
+                        return this._partnerService.get(contactId);
+                    return of(null);
+                })
+            ).subscribe(result => {
+                if (result) {
+                    this.fillPartnerDetails(result);
+                    this.loadPartnerTypes();
+                } else if (!this.contactInfo)
                     this.close(true);
-            })).subscribe(result => {
-                this.loadLeadData(result['personContactInfo']);
-                this.fillContactDetails(result);
-                if (this.contactGroup == ContactGroup.Partner) {
-                    setTimeout(() => {
-                        this.startLoading(true);
-                    }, 300);
-                    this._partnerService.get(contactId)
-                    .pipe(finalize(() => {
-                        this.finishLoading(true);
-                        if (!this.partnerInfo)
-                            this.close(true);
-                    })).subscribe(result => {
-                        this.fillPartnerDetails(result);
-                        this.loadPartnerTypes();
-                    });
-                }
             });
-        }
-        if (leadId) {
-            this.loadLeadsStages();
         }
         return contactInfo$;
     }
@@ -462,7 +458,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
         if (this.leadStages && this.leadStages.length)
             callback && callback();
         else
-            this._pipelineService.getPipelineDefinitionObservable(AppConsts.PipelinePurposeIds.lead)
+            this._pipelineService.getPipelineDefinitionObservable(AppConsts.PipelinePurposeIds.lead, this.contactGroup)
                 .subscribe(result => {
                     this.leadStages = result.stages.map((stage) => {
                         return {
@@ -501,6 +497,10 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
                     this.updateStatusInternal(status.id)
                         .subscribe(() => {
                             this.contactInfo.statusId = status.id;
+                            let userData = this._userService['data'];
+                            if (userData && userData.user) {
+                                userData.user.isActive = status.id == ContactStatus.Active;
+                            }
                             this.toolbarComponent.statusComponent.listComponent.option('selectedItemKeys', [status.id]);
                             this.notify.success(this.l('StatusSuccessfullyUpdated'));
                         });
@@ -668,14 +668,14 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
         const pipelineId = AppConsts.PipelinePurposeIds.lead;
         let sourceStage = this._pipelineService.getStageByName(pipelineId, this.leadInfo.stage);
         let targetStage = this._pipelineService.getStageByName(pipelineId, $event.itemData.name);
-                                  
+
         if (this._pipelineService.updateEntityStage(pipelineId, this.leadInfo, sourceStage, targetStage, () => {
-            this.toolbarComponent.stagesComponent.listComponent.option('selectedItemKeys', [this.clientStageId = targetStage.id]);            
+            this.toolbarComponent.stagesComponent.listComponent.option('selectedItemKeys', [this.clientStageId = targetStage.id]);
         })) {
-            this.leadInfo.stage = targetStage;
+            this.leadInfo.stage = targetStage.name;
             this.notify.success(this.l('StageSuccessfullyUpdated'));
         } else
-            this.message.warn(this.l('CannotChangeLeadStage', sourceStage, targetStage));
+            this.message.warn(this.l('CannotChangeLeadStage', sourceStage.name, targetStage.name));
 
         this.toolbarComponent.refresh();
         $event.event.stopPropagation();
@@ -715,8 +715,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
         event.stopPropagation();
 
         this.rightPanelSetting[section] = event.target.checked;
-        this._cacheService.set(this.getCacheKey(
-            abp.session.userId), this.rightPanelSetting);
+        this._cacheService.set(this.getCacheKey(abp.session.userId.toString()), this.rightPanelSetting);
     }
 
     onContactSelected(contact) {
@@ -730,23 +729,11 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
     }
 
     getAssignmentsPermissinKey = () => {
-        if (this.contactGroup == ContactGroup.Partner)
-            return 'Pages.CRM.Partners.ManageAssignments';
-
-        return 'Pages.CRM.Customers.ManageAssignments';
+        return this._contactsService.getCGPermissionKey(this.contactGroup, 'ManageAssignments');
     }
 
     getProxyService = () => {
-        if (this.contactGroup == ContactGroup.Partner)
-            return this._partnerService;
-
-        if (this.contactGroup == ContactGroup.Client)
-            return this._customerService;
-
-        if (this.leadId || this.leadInfo)
-            return this._leadService;
-
-        return this._customerService;
+        return this._contactService;
     }
 
     addNewContact(event) {

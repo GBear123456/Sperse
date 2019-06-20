@@ -29,7 +29,7 @@ export class LoginAttempsComponent extends AppComponentBase implements OnInit, O
     }
 
     loadData(userId) {
-        this._userLoginService.getRecentLoginAttemptsForOtherUser(userId).subscribe(result => {            
+        this._userLoginService.getRecentLoginAttemptsForOtherUser(userId).subscribe(result => {
             this.userLoginAttempts = result.items;
         });
     }

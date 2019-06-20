@@ -34,14 +34,15 @@ import {
     EPCVIPMailerSettingsEditDtoServer,
 
     OngageSettingsEditDto,
-    IAgeSettingsEditDto
+    IAgeSettingsEditDto,
+    
 } from '@shared/service-proxies/service-proxies';
 import { FaviconService } from '@shared/common/favicon-service/favicon.service';
 
 @Component({
     templateUrl: './tenant-settings.component.html',
     animations: [appModuleAnimation()],
-    styleUrls: ['./tenant-settings.component.less'],
+    styleUrls: ['../../shared/common/styles/checkbox-radio.less', './tenant-settings.component.less'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     providers: [
         TenantSettingsCreditReportServiceProxy,
@@ -92,7 +93,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
         icon: '',
         buttons: [
             {
-                enabled: this.isGranted('Pages.Administration.Languages.Create'),
+                enabled: true,//this.isGranted('Pages.Administration.Languages.Create'),
                 action: this.saveAll.bind(this),
                 icon: 'la la la-floppy-o',
                 lable: this.l('SaveAll')
@@ -142,8 +143,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
                 this.isPFMApplicationsFeatureEnabled ? this._tenantSettingsService.getOngageSettings() : of<OngageSettingsEditDto>(<any>null),
                 this.isPFMApplicationsFeatureEnabled ? this._tenantSettingsService.getIAgeSettings() : of<IAgeSettingsEditDto>(<any>null)
             ];
-        if (this.isPFMApplicationsFeatureEnabled)
-        {
+        if (this.isPFMApplicationsFeatureEnabled) {
             this.epcvipEmailServers = Object.keys(EPCVIPMailerSettingsEditDtoServer);
         }
 
@@ -234,6 +234,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
             } else {
                 this.message.error(ajaxResponse.error.message);
             }
+            this._changeDetection.detectChanges();
         };
 
         const uploaderOptions: FileUploaderOptions = {};
@@ -268,6 +269,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
             this._appSessionService.tenant.logoFileType = null;
             this._appSessionService.tenant.logoId = null;
             this.notify.info(this.l('ClearedSuccessfully'));
+            this._changeDetection.detectChanges();
         });
     }
 
@@ -275,6 +277,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
         this._tenantCustomizationService.clearFavicons().subscribe(() => {
             this._faviconsService.resetFavicons();
             this.notify.info(this.l('ClearedSuccessfully'));
+            this._changeDetection.detectChanges();
         });
     }
 
@@ -283,6 +286,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
             this.appSession.tenant.customCssId = null;
             $('#TenantCustomCss').remove();
             this.notify.info(this.l('ClearedSuccessfully'));
+            this._changeDetection.detectChanges();
         });
     }
 
@@ -290,6 +294,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
         this._tenantCustomizationService.clearCustomPrivacyPolicyDocument().subscribe(() => {
             this.appSession.tenant.customPrivacyPolicyDocumentId = null;
             this.notify.info(this.l('ClearedSuccessfully'));
+            this._changeDetection.detectChanges();
         });
     }
 
@@ -297,6 +302,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
         this._tenantCustomizationService.clearCustomToSDocument().subscribe(() => {
             this.appSession.tenant.customToSDocumentId = null;
             this.notify.info(this.l('ClearedSuccessfully'));
+            this._changeDetection.detectChanges();
         });
     }
 

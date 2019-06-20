@@ -6,7 +6,7 @@ import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
   templateUrl: './report-period.component.html',
   styleUrls: ['./report-period.component.less']
 })
-export class ReportPeriodComponent extends CFOComponentBase implements OnInit {
+export class ReportPeriodComponent extends CFOComponentBase {
     @Input() sliderReportPeriod: any;
     @Output() onPeriodSelected: EventEmitter<any> = new EventEmitter();
 
@@ -34,9 +34,6 @@ export class ReportPeriodComponent extends CFOComponentBase implements OnInit {
     clear() {
         this.onPeriodSelected.emit({});
         this.reportPeriodTooltipVisible = false;
-    }
-
-    ngOnInit() {
     }
 
 }

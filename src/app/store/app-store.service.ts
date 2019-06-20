@@ -12,27 +12,33 @@ import {
 } from '@app/store/index';
 import { Store, select } from '@ngrx/store';
 import { AppStore } from './index';
-import { ContactGroup } from '@shared/AppEnums';
-import { timeout, filter } from 'rxjs/operators';
+import { ContactGroup, ContactGroupPermission } from '@shared/AppEnums';
+import { filter } from 'rxjs/operators';
+import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
 
 @Injectable()
 export class AppStoreService {
 
-    constructor(private store$: Store<AppStore.State>) {}
+    constructor(
+        private store$: Store<AppStore.State>,
+        private _permission: PermissionCheckerService
+    ) {}
 
-    private dispatchContactGroupActions(keyList) {
+    dispatchUserAssignmentsActions(keyList) {
         if (keyList.length) {
-            let key = ContactGroup[keyList.pop()];
-            this.store$.dispatch(new ContactAssignedUsersStoreActions.LoadRequestAction(key));
-            this.store$.pipe(select(ContactAssignedUsersStoreSelectors.getContactGroupAssignedUsers, { contactGroup: key }))
-                .pipe(filter((res) => Boolean(res))).subscribe(() => setTimeout(() => this.dispatchContactGroupActions(keyList), 100));
+            let contactGroup = keyList.pop(),
+                groupId = ContactGroup[contactGroup];
+            if (this._permission.isGranted(ContactGroupPermission[contactGroup] + '.ManageAssignments')) {
+                this.store$.dispatch(new ContactAssignedUsersStoreActions.LoadRequestAction(groupId));
+                this.store$.pipe(select(ContactAssignedUsersStoreSelectors.getContactGroupAssignedUsers, { contactGroup: groupId }))
+                    .pipe(filter((res) => Boolean(res))).subscribe(() => setTimeout(() => this.dispatchUserAssignmentsActions(keyList), 100));
+            } else
+                this.dispatchUserAssignmentsActions(keyList);
         }
     }
 
     loadUserDictionaries() {
         /** @todo check permissions */
-        this.dispatchContactGroupActions(Object.keys(ContactGroup));
-
         this.store$.dispatch(new PartnerTypesStoreActions.LoadRequestAction(false));
         this.store$.dispatch(new StarsStoreActions.LoadRequestAction(false));
         this.store$.dispatch(new StatusesStoreActions.LoadRequestAction(false));

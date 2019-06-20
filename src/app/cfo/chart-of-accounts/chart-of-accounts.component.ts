@@ -17,7 +17,7 @@ class UploadCategoryModel {
     'Parent Category': string;
     'Parent Category Id': number;
     'Transaction Count': number;
-    'COAID': number;
+    'COAID': string;
 }
 
 @Component({
@@ -31,8 +31,7 @@ export class ChartOfAccountsComponent extends CFOComponentBase implements OnInit
     @ViewChild(CategorizationComponent) categorizationComponent: CategorizationComponent;
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
     headlineConfig: any;
-
-    override: boolean = false;
+    override = false;
 
     constructor(injector: Injector,
         private _categoryTreeServiceProxy: CategoryTreeServiceProxy
@@ -41,8 +40,6 @@ export class ChartOfAccountsComponent extends CFOComponentBase implements OnInit
     }
 
     ngOnInit() {
-        super.ngOnInit();
-
         this.getRootComponent().overflowHidden(true);
         this.headlineConfig = {
             names: [this.l('Setup_Title'), this.l('SetupStep_Chart')],
@@ -85,7 +82,7 @@ export class ChartOfAccountsComponent extends CFOComponentBase implements OnInit
             /* grab first sheet */
             const wsname: string = wb.SheetNames[0];
             const ws: XLSX.WorkSheet = wb.Sheets[wsname];
-            ws['!ref'] = "A1:H1000";
+            ws['!ref'] = 'A1:H1000';
 
             /* save data */
             let data = XLSX.utils.sheet_to_json<UploadCategoryModel>(ws);
@@ -98,7 +95,9 @@ export class ChartOfAccountsComponent extends CFOComponentBase implements OnInit
                     category: val['Category'],
                     parentCategory: val['Parent Category'],
                     coAID: val['COAID'],
-                    sortId: null
+                    sortId: null,
+                    reportingCategoryCode: null,
+                    reportingCategoryName: null
                 }));
             });
             this._categoryTreeServiceProxy.import(
@@ -108,7 +107,7 @@ export class ChartOfAccountsComponent extends CFOComponentBase implements OnInit
                 this.override
             )
                 .pipe(finalize(() => { abp.ui.clearBusy(); }))
-                .subscribe((result) => {
+                .subscribe(() => {
                     this.refreshCategories();
                 });
         };

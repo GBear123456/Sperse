@@ -1,9 +1,5 @@
 .synch-progress-wrapper {
     background: transparent;
-    position: absolute;
-    top: 0;
-    left: 50%;
-    transform: translateX(-50%);
     height: 100%;
 }
 
@@ -49,7 +45,6 @@
 }
 
 :host {
-
     .loadindicator {
         height: 16px;
         width: 16px;
@@ -68,6 +63,11 @@
             border-top-color: orange;
             border-right-color: orange;
         }
+        
+        &.in-progress {
+            border-top-color: #35c8a8;
+            border-right-color: #35c8a8;
+        }
     }
 
     /deep/ .dx-progressbar {
@@ -77,6 +77,10 @@
 
         &.error .dx-progressbar-range {
             background-color: orange !important;
+        }
+        
+        &.in-progress .dx-progressbar-range {
+            background-color: #35c8a8 !important;
         }
     }
 
@@ -357,5 +361,25 @@
     }
     to {
         transform: rotate(359deg);
+    }
+}
+
+.sync-account-button {
+    border-radius: 16px;
+    border: 1px solid #e5e9ec;
+    background-color: #e9eff4;
+    padding: 4px 20px;
+    outline: none;
+    transition: .3s;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    
+    img {
+        margin-right: 8px;
+    }
+    
+    &:hover {
+        background: darken(#e9eff4, 5%);
     }
 }

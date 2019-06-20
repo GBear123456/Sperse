@@ -1,29 +1,46 @@
-import { Component, Injector, OnInit, AfterViewInit, ElementRef } from '@angular/core';
-import { AppComponentBase } from 'shared/common/app-component-base';
+import {
+    Component,
+    Inject,
+    OnInit,
+    AfterViewInit,
+    ElementRef,
+    Input,
+    Output,
+    EventEmitter
+} from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
+import { IDialogOption } from '@shared/common/dialogs/modal/dialog-option.interface';
+import { LoadingService } from '@shared/common/loading-service/loading.service';
 
 @Component({
     selector: 'modal-dialog',
     templateUrl: 'modal-dialog.component.html',
-    styleUrls: ['modal-dialog.component.less']
+    styleUrls: ['modal-dialog.component.less'],
+    host: {
+        '(window:keydown)': 'onKeydown($event)'
+    }
 })
-export class ModalDialogComponent extends AppComponentBase implements OnInit, AfterViewInit {
-    private elementRef: ElementRef;
-    private slider: any;
-    public data: any;
-    public dialogRef: MatDialogRef<ModalDialogComponent, any>;
+export class ModalDialogComponent implements OnInit, AfterViewInit {
+    @Input() title: string;
+    @Input() editTitle = false;
+    @Input() titleClearButton = false;
+    @Input() placeholder = null;
+    @Input() isTitleValid: boolean;
+    @Input() buttons: IDialogButton[];
+    @Input() options: IDialogOption[];
+    @Output() onTitleKeyUp: EventEmitter<any> = new EventEmitter<any>();
+    @Output() titleChange: EventEmitter<string> = new EventEmitter<string>();
+    public slider: any;
 
     constructor(
-        injector: Injector
-    ) {
-        super(injector);
-
-        this.data = injector.get(MAT_DIALOG_DATA);
-        this.elementRef = injector.get(ElementRef);
-        this.dialogRef = <any>injector.get(MatDialogRef);
-
-        this.localizationSourceName = this.data.localization;
-    }
+        @Inject(MAT_DIALOG_DATA) public data: any,
+        public dialogRef: MatDialogRef<ModalDialogComponent>,
+        public ls: AppLocalizationService,
+        private elementRef: ElementRef,
+        private loadingService: LoadingService
+    ) {}
 
     private fork(callback, timeout = 0) {
         setTimeout(callback.bind(this), timeout);
@@ -33,7 +50,7 @@ export class ModalDialogComponent extends AppComponentBase implements OnInit, Af
         this.dialogRef.disableClose = true;
         this.slider = this.elementRef.nativeElement.closest('.slider');
         if (this.slider) {
-            this.slider.classList.add('hide');
+            this.addClass('hide');
             this.dialogRef.updateSize(this.data && this.data.width, '0px');
             this.dialogRef.updatePosition({
                 right: '-100vw'
@@ -54,6 +71,28 @@ export class ModalDialogComponent extends AppComponentBase implements OnInit, Af
             });
     }
 
+    titleChanged(event) {
+        let title = event.element.getElementsByTagName('input')[0].value;
+        this.isTitleValid = Boolean(title);
+        this.titleChange.emit(title);
+    }
+
+    titleKeyUp(event) {
+        this.onTitleKeyUp.emit(event.element.getElementsByTagName('input')[0].value);
+    }
+
+    startLoading() {
+        this.loadingService.startLoading(this.elementRef.nativeElement);
+    }
+
+    addClass(className: string) {
+        if (this.slider) this.slider.classList.add(className);
+    }
+
+    finishLoading() {
+        this.loadingService.finishLoading(this.elementRef.nativeElement);
+    }
+
     close(slide: boolean = false, closeData = null) {
         if (slide) {
             this.dialogRef.updatePosition({
@@ -64,5 +103,10 @@ export class ModalDialogComponent extends AppComponentBase implements OnInit, Af
             }, 300);
         } else
             this.dialogRef.close(closeData);
+    }
+
+    onKeydown(event) {
+        if (event.key == 'Escape')
+            this.close(true);
     }
 }

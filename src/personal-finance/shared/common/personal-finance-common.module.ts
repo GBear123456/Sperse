@@ -4,10 +4,8 @@ import { NgModule, ModuleWithProviders } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { AbpModule } from '@abp/abp.module';
 import { CommonModule } from '@shared/common/common.module';
-
 import { AppAuthService } from '@shared/common/auth/app-auth.service';
 import { CreditReportsRouteGuard } from './auth/auth-route-guard';
-import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { PackagesComponent } from './packages/packages.component';
 import { CampaignOffersComponent } from './campaign-offers/campaign-offers.component';
 import { OffersService } from '../offers/offers.service';
@@ -30,8 +28,7 @@ import { OfferServiceProxy } from '@shared/service-proxies/service-proxies';
     ],
     providers: [
         CurrencyPipe,
-        OffersService,
-        AppLocalizationService
+        OffersService
     ]
 })
 export class PersonalFinanceCommonModule {
@@ -44,8 +41,5 @@ export class PersonalFinanceCommonModule {
                 CreditReportsRouteGuard
             ]
         };
-    }
-    constructor(private appLocalizationService: AppLocalizationService) {
-        this.appLocalizationService.localizationSourceName = 'PFM';
     }
 }

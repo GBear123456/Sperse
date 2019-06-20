@@ -14,10 +14,9 @@ import { AppConsts } from '@shared/AppConsts';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import {
     InstanceServiceProxy,
-    UserServiceProxy,
+    PersonContactServiceProxy,
     ActivateUserForContactInput,
     SetupInput,
-    TenantHostType,
     GetUserInstanceInfoOutputStatus,
     TenantSubscriptionServiceProxy,
     ModuleSubscriptionInfoDtoModule,
@@ -33,7 +32,7 @@ declare let require: any;
 export class AppService extends AppServiceBase {
     public topMenu: PanelMenu;
     public toolbarConfig: any = null;
-    public toolbarIsHidden  = false;
+    public toolbarIsHidden = false;
     public narrowingPageContentWhenFixedFilter = true;
     public hideSubscriptionCallback: Function;
     public showContactInfoPanel = false;
@@ -47,7 +46,7 @@ export class AppService extends AppServiceBase {
     private permission: PermissionCheckerService;
     private feature: FeatureCheckerService;
     private instanceServiceProxy: InstanceServiceProxy;
-    private userServiceProxy: UserServiceProxy;
+    private personContactServiceProxy: PersonContactServiceProxy;
     private notify: NotifyService;
     private appLocalizationService: AppLocalizationService;
     private _setToolbarTimeout: number;
@@ -62,47 +61,87 @@ export class AppService extends AppServiceBase {
             [
                 {
                     name: 'Admin',
-                    showDescription: true
-                },
-                {
-                    name: 'API',
-                    showDescription: true
+                    showDescription: true,
+                    showInDropdown: true,
+                    footerItem: true,
+                    isComingSoon: false
                 },
                 {
                     name: 'CFO',
-                    showDescription: true
+                    showDescription: true,
+                    showInDropdown: true,
+                    focusItem: true,
+                    uri: 'main',
+                    isComingSoon: false
+                },
+                {
+                    name: 'CFO',
+                    showDescription: true,
+                    showInDropdown: true,
+                    footerItem: true,
+                    uri: 'user',
+                    isComingSoon: false,
+                    isMemberPortal: true
                 },
                 {
                     name: 'CRM',
-                    showDescription: true
+                    showDescription: true,
+                    showInDropdown: true,
+                    focusItem: true,
+                    isComingSoon: false
                 },
                 {
                     name: 'PFM',
-                    showDescription: true
+                    showDescription: true,
+                    showInDropdown: true,
+                    isComingSoon: false
+                },
+                {
+                    name: 'API',
+                    showDescription: true,
+                    showInDropdown: true,
+                    isComingSoon: false
+                },
+                {
+                    name: 'PFM',
+                    showDescription: true,
+                    showInDropdown: true,
+                    footerItem: true,
+                    isComingSoon: false,
+                    isMemberPortal: true
                 },
                 {
                     name: 'Cloud',
-                    showDescription: true
+                    showDescription: true,
+                    isComingSoon: true
                 },
                 {
                     name: 'Forms',
-                    showDescription: false
+                    showDescription: false,
+                    isComingSoon: true
                 },
                 {
                     name: 'HR',
-                    showDescription: false
+                    showDescription: false,
+                    isComingSoon: true
                 },
                 {
                     name: 'HUB',
-                    showDescription: false
+                    showDescription: false,
+                    showInDropdown: true,
+                    isComingSoon: true
                 },
                 {
                     name: 'Slice',
-                    showDescription: false
+                    showDescription: false,
+                    showInDropdown: true,
+                    focusItem: true,
+                    isComingSoon: true
                 },
                 {
                     name: 'Store',
-                    showDescription: false
+                    showDescription: false,
+                    isComingSoon: true
                 }
             ],
             {
@@ -110,6 +149,7 @@ export class AppService extends AppServiceBase {
                 api: require('./api/module.config.json'),
                 crm: require('./crm/module.config.json'),
                 cfo: require('./cfo/module.config.json'),
+                cfoPortal: require('./cfo-portal/module.config.json'),
                 pfm: require('./pfm/module.config.json')
             },
         );
@@ -117,13 +157,13 @@ export class AppService extends AppServiceBase {
         this.permission = injector.get(PermissionCheckerService);
         this.feature = injector.get(FeatureCheckerService);
         this.instanceServiceProxy = injector.get(InstanceServiceProxy);
-        this.userServiceProxy = injector.get(UserServiceProxy);
+        this.personContactServiceProxy = injector.get(PersonContactServiceProxy);
         this.notify = injector.get(NotifyService);
         this.appLocalizationService = injector.get(AppLocalizationService);
         this._tenantSubscriptionProxy = injector.get(TenantSubscriptionServiceProxy);
 
         this.toolbarSubject = new Subject<undefined>();
-        if (this.isNotHostTenant()) {
+        if (!this.isHostTenant) {
             this.expiredModule = new Subject<string>();
             this.loadModeuleSubscriptions();
         }
@@ -188,7 +228,7 @@ export class AppService extends AppServiceBase {
         if (this.hasRecurringBilling(sub))
             return false;
 
-        if (this.isNotHostTenant() && sub && sub.endDate) {
+        if (!this.isHostTenant && sub && sub.endDate) {
             let diff = sub.endDate.diff(moment().utc(), 'days', true);
             return (diff > 0) && (diff <= AppConsts.subscriptionExpireNootifyDayCount);
         }
@@ -205,7 +245,7 @@ export class AppService extends AppServiceBase {
         if (this.hasRecurringBilling(sub))
             return false;
 
-        if (this.isNotHostTenant() && sub && sub.endDate) {
+        if (!this.isHostTenant && sub && sub.endDate) {
             let diff = moment().utc().diff(sub.endDate, 'days', true);
             return (diff > 0) && (diff <= AppConsts.subscriptionGracePeriod);
         }
@@ -224,14 +264,10 @@ export class AppService extends AppServiceBase {
             .add(AppConsts.subscriptionGracePeriod, 'days').diff(moment().utc(), 'days', true));
     }
 
-    isNotHostTenant() {
-        return abp.session.multiTenancySide == abp.multiTenancy.sides.TENANT;
-    }
-
     hasModuleSubscription(name?: string) {
         name = (name || this.getModule()).toUpperCase();
         let module = this.getModuleSubscription(name);
-        return !this.isNotHostTenant() || !module || !module.endDate ||
+        return this.isHostTenant || !module || !module.endDate ||
             this.hasRecurringBilling(module) || (module.endDate > moment().utc());
     }
 
@@ -275,8 +311,7 @@ export class AppService extends AppServiceBase {
     }
 
     canSendVerificationRequest() {
-        return this.feature.isEnabled('CFO.Partner') &&
-            this.permission.isGranted('Pages.CRM.ActivateUserForContact') &&
+        return this.permission.isGranted('Pages.CRM.ActivateUserForContact') &&
             this.permission.isGranted('Pages.CFO.ClientActivation');
     }
 
@@ -288,7 +323,7 @@ export class AppService extends AppServiceBase {
                     if (isConfirmed) {
                         let request = new ActivateUserForContactInput();
                         request.contactId = contactId;
-                        this.userServiceProxy.activateUserForContact(request).subscribe(result => {
+                        this.personContactServiceProxy.activateUserForContact(request).subscribe(result => {
                             let setupInput = new SetupInput();
                             setupInput.userId = result.userId;
                             this.instanceServiceProxy.setupAndGrantPermissionsForUser(setupInput).subscribe(() => {
@@ -314,11 +349,20 @@ export class AppService extends AppServiceBase {
         });
     }
 
-    isCFOAvailable(userId) {
-        return ((userId != null) && this.checkCFOClientAccessPermission());
+    get isCfoLinkOrVerifyEnabled() {
+        return this.feature.isEnabled('CFO.Partner')
+               && !this.feature.isEnabled('PFM')
+               && (
+                   this.permission.isGranted('Pages.CFO.ClientInstanceAdmin')
+                   || this.canSendVerificationRequest
+               );
     }
 
-    private checkCFOClientAccessPermission() {
+    isCFOAvailable(userId) {
+        return userId != null;
+    }
+
+    checkCFOClientAccessPermission() {
         return this.permission.isGranted('Pages.CFO.ClientInstanceAdmin');
     }
 
@@ -328,5 +372,9 @@ export class AppService extends AppServiceBase {
 
     toolbarRefresh() {
         this.toolbarSubject.next();
+    }
+
+    isFeatureEnable(featureName: string): boolean {
+        return this.isHostTenant || !featureName || this.feature.isEnabled(featureName);
     }
 }

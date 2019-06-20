@@ -10,22 +10,22 @@ import { VerificationChecklistItem, VerificationChecklistItemStatus } from './ve
 })
 export class VerificationChecklistComponent extends AppComponentBase implements OnInit {
     @Input() data: VerificationChecklistItem[];
-    collapsed: boolean = false;
+    collapsed = false;
 
     constructor(injector: Injector) {
-        super(injector, AppConsts.localization.CRMLocalizationSourceName);
+        super(injector);
     }
 
     ngOnInit() {
     }
 
-    getItemName(item: VerificationChecklistItem):string {
+    getItemName(item: VerificationChecklistItem): string {
         return this.l(`Verification_Checklist_${this.capitalize(item.type)}`);
     }
 
     getItemCounts(item: VerificationChecklistItem): string {
-        return (item.confirmedCount != null 
-            ? `(${item.confirmedCount}/${item.totalCount})` 
+        return (item.confirmedCount != null
+            ? `(${item.confirmedCount}/${item.totalCount})`
             : (item.totalCount == null ? '' : `(${item.totalCount })`)
         );
     }

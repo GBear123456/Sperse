@@ -3,14 +3,15 @@ import { Injectable } from '@angular/core';
 
 /** Third party imports */
 import { Observable, Subject } from 'rxjs';
-import { finalize, map, distinctUntilChanged } from 'rxjs/operators';
+import { filter, finalize, map, distinctUntilChanged, skip } from 'rxjs/operators';
 
 /** Application imports */
 import {
     InstanceType,
     SyncProgressDtoSyncStatus,
     SyncProgressOutput,
-    SyncServiceProxy
+    SyncServiceProxy,
+    MyFinancesServiceProxy
 } from '@shared/service-proxies/service-proxies';
 import { CFOService } from '@shared/cfo/cfo.service';
 import { BehaviorSubject, Subscription } from 'rxjs';
@@ -28,6 +29,11 @@ export class SynchProgressService {
 
     private syncCompleted: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
     syncCompleted$ = this.syncCompleted.asObservable();
+    syncCompletedDistinct$ = this.syncCompleted$.pipe(
+        skip(1),
+        distinctUntilChanged(),
+        filter(Boolean)
+    );
 
     private needRefreshSync = new Subject<string>();
     needRefreshSync$ = this.needRefreshSync.asObservable();
@@ -50,6 +56,7 @@ export class SynchProgressService {
         private cfoService: CFOService,
         private http: HttpClient,
         private syncServiceProxy: SyncServiceProxy,
+        private myFinanceService: MyFinancesServiceProxy,
         private appHttpConfiguration: AppHttpConfiguration
     ) {
         this.subscribeToProgress();
@@ -59,9 +66,9 @@ export class SynchProgressService {
         this.needRefreshSync.next();
     }
 
-    public startSynchronization(forcedSync: boolean = false, newOnly: boolean = false, syncType = 'Q') {
+    public startSynchronization(forcedSync: boolean = false, newOnly: boolean = false, syncType = 'Q', syncAccountIds = []) {
         this.appHttpConfiguration.avoidErrorHandling = true;
-        this.runSyncAll(forcedSync, newOnly, syncType)
+        this.runSync(forcedSync, newOnly, syncType, syncAccountIds)
             .subscribe(() => {
                 this.tryCount = 0;
                 this.hasFailedAccounts = false;
@@ -79,14 +86,26 @@ export class SynchProgressService {
         this.cancelRequests();
     }
 
-    private runSyncAll(forcedSync: boolean = false, newOnly: boolean = false, syncType = 'Q') {
-        return this.syncServiceProxy.syncAllAccounts(
-            InstanceType[this.cfoService.instanceType],
-            this.cfoService.instanceId,
-            forcedSync,
-            newOnly,
-            syncType === 'all' ? undefined : syncType
-        ).pipe(finalize(() => {
+    private runSync(forcedSync: boolean = false, newOnly: boolean = false, syncType = 'Q', syncAccountIds = []) {
+        const method = this.cfoService.isForUser && syncType == 'Q'
+            ? this.myFinanceService.syncAllQuovoAccounts(forcedSync, newOnly)
+            : (
+                syncAccountIds && syncAccountIds.length
+                ? this.syncServiceProxy.requestSyncForAccounts(
+                    InstanceType[this.cfoService.instanceType],
+                    this.cfoService.instanceId,
+                    syncAccountIds
+                )
+                : this.syncServiceProxy.syncAllAccounts(
+                    InstanceType[this.cfoService.instanceType],
+                    this.cfoService.instanceId,
+                    forcedSync,
+                    newOnly,
+                    syncType === 'all' ? undefined : syncType
+                )
+            );
+
+        return method.pipe(finalize(() => {
             this.appHttpConfiguration.avoidErrorHandling = false;
             this.runGetStatus();
         }));
@@ -99,6 +118,9 @@ export class SynchProgressService {
     }
 
     private runSynchProgress() {
+        if (this.cfoService.isForUser)
+            return;
+
         this.appHttpConfiguration.avoidErrorHandling = true;
         this.getSyncProgressSubscription = this.syncServiceProxy.getSyncProgress(
             InstanceType[this.cfoService.instanceType],
@@ -106,8 +128,8 @@ export class SynchProgressService {
         ).pipe(finalize(() => {
             this.appHttpConfiguration.avoidErrorHandling = false;
             this.runGetStatus();
-        }))
-         .subscribe(syncData => this.syncData$.next(syncData));
+        })
+        ).subscribe(syncData => this.syncData$.next(syncData));
     }
 
     private subscribeToProgress() {
@@ -141,7 +163,7 @@ export class SynchProgressService {
                             /** Run sync All after 10 sec and then syncProgress 3 times*/
                             this.timeoutsIds.push(setTimeout(
                                 () => {
-                                    this.runSyncAll(true).subscribe(
+                                    this.runSync(true).subscribe(
                                         () => this.runSynchProgress(),
                                         this.syncAllFailed.bind(this)
                                     );

@@ -61,6 +61,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         this.selectedOrderKeys = orders.map((item) => item.Id);
     }
 
+    manageDisabled = true;
     filterModelStages: FilterModel;
 
     private rootComponent: any;
@@ -90,8 +91,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         private _pipelineService: PipelineService,
         private store$: Store<CrmStore.State>
     ) {
-        super(injector, AppConsts.localization.CRMLocalizationSourceName);
-        this._filtersService.localizationSourceName = AppConsts.localization.CRMLocalizationSourceName;
+        super(injector);
 
         this.dataSource = {
             uri: this.dataSourceURI,
@@ -204,11 +204,10 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                     caption: 'paymentType',
                     items: {
                         paymentType: new FilterDropDownModel({
-                            displayName: 'Payment Type',
                             elements: null,
                             filterField: 'paymentTypeId',
                             onElementSelect: (event, filter: FilterModelBase<FilterDropDownModel>) => {
-                                filter.items['paymentType'].value = event.value;
+                                filter.items['paymentType'].value = event && event.value;
                             }
                         })
                     }
@@ -315,139 +314,151 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     }
 
     initToolbarConfig() {
-        this._appService.updateToolbar([
-            {
-                location: 'before', items: [
-                    {
-                        name: 'filters',
-                        action: (event) => {
-                            setTimeout(() => {
-                                this.dataGrid.instance.repaint();
-                            }, 1000);
-                            this._filtersService.fixed = !this._filtersService.fixed;
-                        },
-                        options: {
-                            checkPressed: () => {
-                                return this._filtersService.fixed;
+        if (this.componentIsActivated) {
+            this.manageDisabled = !this.isGranted('Pages.CRM.Orders.Manage');
+            this._appService.updateToolbar([
+                {
+                    location: 'before', items: [
+                        {
+                            name: 'filters',
+                            action: (event) => {
+                                setTimeout(() => {
+                                    this.dataGrid.instance.repaint();
+                                }, 1000);
+                                this._filtersService.fixed = !this._filtersService.fixed;
                             },
-                            mouseover: (event) => {
-                                this._filtersService.enable();
+                            options: {
+                                checkPressed: () => {
+                                    return this._filtersService.fixed;
+                                },
+                                mouseover: (event) => {
+                                    this._filtersService.enable();
+                                },
+                                mouseout: (event) => {
+                                    if (!this._filtersService.fixed)
+                                        this._filtersService.disable();
+                                }
                             },
-                            mouseout: (event) => {
-                                if (!this._filtersService.fixed)
-                                    this._filtersService.disable();
-                            }
-                        },
-                        attr: {
-                            'filter-selected': this._filtersService.hasFilterSelected
-                        }
-                    }
-                ]
-            },
-            {
-                location: 'before',
-                items: [
-                    {
-                        name: 'search',
-                        widget: 'dxTextBox',
-                        options: {
-                            width: '279',
-                            mode: 'search',
-                            value: this.searchValue,
-                            placeholder: this.l('Search') + ' ' + this.l('Orders').toLowerCase(),
-                            onValueChanged: (e) => {
-                                this.searchValueChange(e);
+                            attr: {
+                                'filter-selected': this._filtersService.hasFilterSelected
                             }
                         }
-                    }
-                ]
-            },
-            {
-                location: 'before',
-                locateInMenu: 'auto',
-                items: [
-                    { name: 'assign', disabled: true }, {
-                        name: 'stage',
-                        action: this.toggleStages.bind(this),
-                        attr: {
-                            'filter-selected': this.filterModelStages && this.filterModelStages.isSelected
+                    ]
+                },
+                {
+                    location: 'before',
+                    items: [
+                        {
+                            name: 'search',
+                            widget: 'dxTextBox',
+                            options: {
+                                width: '279',
+                                mode: 'search',
+                                value: this.searchValue,
+                                placeholder: this.l('Search') + ' ' + this.l('Orders').toLowerCase(),
+                                onValueChanged: (e) => {
+                                    this.searchValueChange(e);
+                                }
+                            }
                         }
-                    }, { name: 'delete', disabled: true }
-                ]
-            },
-            {
-                location: 'after',
-                locateInMenu: 'auto',
-                items: [
-                    {
-                        name: 'download',
-                        widget: 'dxDropDownMenu',
-                        options: {
-                            hint: this.l('Download'),
-                            items: [{
-                                action: Function(),
-                                text: this.l('Save as PDF'),
-                                icon: 'pdf',
-                            }, {
-                                action: this.exportToXLS.bind(this),
-                                text: this.l('Export to Excel'),
-                                icon: 'xls',
-                            }, {
-                                action: this.exportToCSV.bind(this),
-                                text: this.l('Export to CSV'),
-                                icon: 'sheet'
-                            }, {
-                                action: this.exportToGoogleSheet.bind(this),
-                                text: this.l('Export to Google Sheets'),
-                                icon: 'sheet'
-                            }, { type: 'downloadOptions' }]
+                    ]
+                },
+                {
+                    location: 'before',
+                    locateInMenu: 'auto',
+                    items: [
+                        {
+                            name: 'assign',
+                            disabled: this.manageDisabled
+                        },
+                        {
+                            name: 'stage',
+                            action: this.toggleStages.bind(this),
+                            disabled: this.manageDisabled,
+                            attr: {
+                                'filter-selected': this.filterModelStages && this.filterModelStages.isSelected
+                            }
+                        },
+                        {
+                            name: 'delete',
+                            disabled: this.manageDisabled
                         }
-                    },
-                    { name: 'columnChooser', action: this.showColumnChooser.bind(this) }
-                ]
-            },
-            {
-                location: 'after',
-                locateInMenu: 'auto',
-                items: [
-                    { name: 'showCompactRowsHeight', action: () => this.toggleContactView() }
-                ]
-            },
-            {
-                location: 'after',
-                locateInMenu: 'auto',
-                areItemsDependent: true,
-                items: [
-                    // {
-                    //     name: 'box',
-                    //     action: this.toggleDataLayout.bind(this, DataLayoutType.Box),
-                    //     options: {
-                    //         checkPressed: () => {
-                    //             return (this.dataLayoutType == DataLayoutType.Box);
-                    //         },
-                    //     }
-                    // },
-                     {
-                         name: 'pipeline',
-                         action: this.toggleDataLayout.bind(this, DataLayoutType.Pipeline),
-                         options: {
-                             checkPressed: () => {
-                                 return (this.dataLayoutType == DataLayoutType.Pipeline);
-                             },
-                         }
-                     },
-                     {
-                         name: 'grid',
-                         action: this.toggleDataLayout.bind(this, DataLayoutType.Grid),
-                         options: {
-                             checkPressed: () => {
-                                 return (this.dataLayoutType == DataLayoutType.Grid);
-                             },
-                         }
-                     }
-                ]
-            }
-        ]);
+                    ]
+                },
+                {
+                    location: 'after',
+                    locateInMenu: 'auto',
+                    items: [
+                        {
+                            name: 'download',
+                            widget: 'dxDropDownMenu',
+                            options: {
+                                hint: this.l('Download'),
+                                items: [{
+                                    action: Function(),
+                                    text: this.l('Save as PDF'),
+                                    icon: 'pdf',
+                                }, {
+                                    action: this.exportToXLS.bind(this),
+                                    text: this.l('Export to Excel'),
+                                    icon: 'xls',
+                                }, {
+                                    action: this.exportToCSV.bind(this),
+                                    text: this.l('Export to CSV'),
+                                    icon: 'sheet'
+                                }, {
+                                    action: this.exportToGoogleSheet.bind(this),
+                                    text: this.l('Export to Google Sheets'),
+                                    icon: 'sheet'
+                                }, { type: 'downloadOptions' }]
+                            }
+                        },
+                        { name: 'columnChooser', action: this.showColumnChooser.bind(this) }
+                    ]
+                },
+                {
+                    location: 'after',
+                    locateInMenu: 'auto',
+                    items: [
+                        { name: 'showCompactRowsHeight', action: () => this.toggleContactView() }
+                    ]
+                },
+                {
+                    location: 'after',
+                    locateInMenu: 'auto',
+                    areItemsDependent: true,
+                    items: [
+                        // {
+                        //     name: 'box',
+                        //     action: this.toggleDataLayout.bind(this, DataLayoutType.Box),
+                        //     options: {
+                        //         checkPressed: () => {
+                        //             return (this.dataLayoutType == DataLayoutType.Box);
+                        //         },
+                        //     }
+                        // },
+                        {
+                            name: 'pipeline',
+                            action: this.toggleDataLayout.bind(this, DataLayoutType.Pipeline),
+                            options: {
+                                checkPressed: () => {
+                                    return (this.dataLayoutType == DataLayoutType.Pipeline);
+                                },
+                            }
+                        },
+                        {
+                            name: 'grid',
+                            action: this.toggleDataLayout.bind(this, DataLayoutType.Grid),
+                            options: {
+                                checkPressed: () => {
+                                    return (this.dataLayoutType == DataLayoutType.Grid);
+                                },
+                            }
+                        }
+                    ]
+                }
+            ]);
+        }
     }
 
     toggleStages() {
@@ -507,7 +518,6 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                 name: stage.name,
             };
         });
-
         this.initToolbarConfig();
     }
 
@@ -525,7 +535,8 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     }
 
     onCardClick(order) {
-        if (order && order.ContactId)
+        if (order && order.ContactId) {
+            this.searchClear = false;
             this._router.navigate(
                 ['app/crm/contact', order.ContactId, 'orders'], {
                     queryParams: {
@@ -534,11 +545,12 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                     }
                 }
             );
+        }
     }
 
     createInvoice() {
         this.dialog.open(CreateInvoiceDialogComponent, {
-            panelClass: 'slider',
+            panelClass: ['slider'],
             disableClose: true,
             closeOnNavigation: false,
             data: {
@@ -549,8 +561,6 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
 
     activate() {
         super.activate();
-        this.localizationService.localizationSourceName = this.localizationSourceName;
-        this._filtersService.localizationSourceName = this.localizationSourceName;
 
         this.initFilterConfig();
         this.initToolbarConfig();
@@ -608,10 +618,6 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
 
     deactivate() {
         super.deactivate();
-        this.localizationService.localizationSourceName = undefined;
-        this._filtersService.localizationSourceName =
-            AppConsts.localization.defaultLocalizationSourceName;
-
         this._appService.updateToolbar(null);
         this._filtersService.unsubscribe();
         this.rootComponent.overflowHidden();

@@ -1,4 +1,6 @@
 :host {
+    max-width: 100%;
+    
     .inplace-edit-view-mode {
         cursor: pointer;
         display: inline-flex;
@@ -40,7 +42,15 @@
 
         .link {
             overflow: hidden;
-            text-overflow: ellipsis;
+            
+            a {
+                overflow: hidden;
+                text-overflow: ellipsis;
+                display: block;
+                white-space: nowrap;
+                max-width: 100%;
+                padding-right: 5px;
+            }
         }
 
         span {
@@ -59,11 +69,14 @@
         height: 35px;
         display: inline-flex;
         align-items: center;
+        width: 100%;
 
         /deep/ dx-text-box {
             display: inline-block;
+            width: 100%;
+            
             input {
-                margin: 0px;
+                margin: 0;
                 padding: 0 0 0 5px;
                 font-size: 15px;
                 font-weight: 300;

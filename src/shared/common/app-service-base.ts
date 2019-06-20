@@ -1,13 +1,25 @@
+/** Core imports */
 import { Injector } from '@angular/core';
-import { Subscription, Subject } from 'rxjs';
 import { DefaultUrlSerializer, UrlTree } from '@angular/router';
+
+/** Third party imports */
+import { Subscription, Subject } from 'rxjs';
+import camelCase from 'lodash/camelCase';
 import * as _ from 'underscore';
+
+/** Application imports */
 import { FeatureCheckerService } from '@abp/features/feature-checker.service';
 import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
 
 class Module {
     name: string;
     showDescription: boolean;
+    showInDropdown?: boolean;
+    focusItem?: boolean;
+    footerItem?: boolean;
+    uri?: string;
+    isComingSoon?: boolean;
+    isMemberPortal?: boolean;
 }
 
 export abstract class AppServiceBase {
@@ -41,8 +53,9 @@ export abstract class AppServiceBase {
     }
 
     getModule() {
-        let module = (/\/app\/(\w+)[\/$]?/.exec(location.pathname + location.hash)
-            || [this.MODULE_DEFAULT]).pop().toLowerCase();
+        let module = camelCase(
+            (/\/app\/([\w,-]+)[\/$]?/.exec(location.pathname + location.hash) || [this.MODULE_DEFAULT]).pop()
+        );
         return this.isModuleActive(module) ? module : this.getDefaultModule();
     }
 
@@ -53,20 +66,20 @@ export abstract class AppServiceBase {
     }
 
     getDefaultModule() {
-        return this.MODULE_DEFAULT.toLowerCase();
+        return camelCase(this.MODULE_DEFAULT);
     }
 
     getModuleConfig(name: string) {
-        return this._configs[name.toLowerCase()];
+        return this._configs[camelCase(name)];
     }
 
     isModuleActive(name: string) {
-        let config = this._configs[name.toLowerCase()];
+        let config = this._configs[camelCase(name)];
         return (config && typeof (config.navigation) == 'object'
-            && (!abp.session.tenantId || !config.requiredFeature || this._featureChecker.isEnabled(config.requiredFeature))
+            && (this.isHostTenant || !config.requiredFeature || this._featureChecker.isEnabled(config.requiredFeature))
             && (!config.requiredPermission || this._permissionChecker.isGranted(config.requiredPermission))
-            && (abp.session.tenantId || !config.hostDisabled)
-            );
+            && (!this.isHostTenant || !config.hostDisabled)
+        );
     }
 
     initModule() {
@@ -74,7 +87,7 @@ export abstract class AppServiceBase {
     }
 
     switchModule(name: string, params: {}) {
-        let config = _.clone(this._configs[name.toLowerCase()]);
+        let config = _.clone(this._configs[camelCase(name)]);
         config.navigation = config.navigation.map((record) => {
             let clone = record.slice(0);
             clone[3] = this.replaceParams(record[3], params);
@@ -121,5 +134,9 @@ export abstract class AppServiceBase {
                 }).join('/');
         }
         return url;
+    }
+
+    get isHostTenant() {
+        return !abp.session.tenantId;
     }
 }

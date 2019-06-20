@@ -57,60 +57,79 @@ export class RouteGuard implements CanActivate, CanActivateChild {
     }
 
     selectBestRoute(): string {
+        let route;
         if (abp.session.multiTenancySide == abp.multiTenancy.sides.TENANT) {
-            if (this._sessionService.userId !== null) {
-                const lastModuleName = this._cacheService.get('lastVisitedModule_' + this._sessionService.tenantId + '_' + this._sessionService.userId);
-                if (lastModuleName) {
-                    return 'app/' + lastModuleName;
-                }
-            }
-
-            if (this._feature.isEnabled('CRM') && this._permissionChecker.isGranted('Pages.CRM')) {
-                return 'app/crm';
-            }
-
-            if (this._feature.isEnabled('CFO')) {
-                if (this._permissionChecker.isGranted('Pages.CFO')) {
-
-                    if (this._permissionChecker.isGranted('Pages.CFO.MainInstanceAccess'))
-                        return '/app/cfo/main/';
-
-                    if (this._feature.isEnabled('CFO.Partner'))
-                        return '/app/cfo/user/';
-                }
-            }
-
-            if (this._feature.isEnabled('PFM') && this._permissionChecker.isGranted('Pages.PFM.Applications.ManageOffers'))
-                return '/app/pfm/offers';
+            let module = abp.setting.get('App.UserManagement.DefaultModuleType');
+            route = this.getBestRouteForTenant(module);
+            if (!route && module)
+                route = this.getBestRouteForTenant();
+        }
+        else {
+            route = this.getBestRouteForHost();
         }
 
-        if (abp.session.multiTenancySide == abp.multiTenancy.sides.HOST || this._feature.isEnabled('Admin')) {
-            if (this._permissionChecker.isGranted('Pages.Tenants')) {
+        return route || '/app/access-denied';
+    }
+
+    getBestRouteForTenant(preferedModule = null): string {
+        if (this._sessionService.userId !== null) {
+            const lastModuleName = this._cacheService.get('lastVisitedModule_' + this._sessionService.tenantId + '_' + this._sessionService.userId);
+            if (lastModuleName)
+                return 'app/' + lastModuleName;
+        }
+
+        if ((!preferedModule || preferedModule == 'CRM') && this._feature.isEnabled('CRM') && this._permissionChecker.isGranted('Pages.CRM'))
+            return 'app/crm';
+
+        if ((!preferedModule || preferedModule == 'CFO') && this._feature.isEnabled('CFO') && this._permissionChecker.isGranted('Pages.CFO')) {
+            if (this._permissionChecker.isGranted('Pages.CFO.MainInstanceAccess'))
+                return '/app/cfo/main/';
+
+            if (this._feature.isEnabled('CFO.Partner') && this._permissionChecker.isGranted('Pages.CFO.MemberAccess'))
+                return '/app/cfo-portal/';
+        }
+
+        if ((!preferedModule || preferedModule == 'PFM') && this._feature.isEnabled('PFM') && this._permissionChecker.isGranted('Pages.PFM.Applications.ManageOffers'))
+            return '/app/pfm/offers';
+
+        if (!preferedModule && this._feature.isEnabled('Admin'))
+        {
+            if (this._permissionChecker.isGranted('Pages.Tenants'))
                 return '/app/admin/tenants';
-            }
 
-            if (this._permissionChecker.isGranted('Pages.Administration.Host.Dashboard')) {
+            if (this._permissionChecker.isGranted('Pages.Administration.Host.Dashboard'))
                 return '/app/admin/hostDashboard';
-            }
+
+            if (this._permissionChecker.isGranted('Pages.Administration.Users'))
+                return '/app/admin/users';
         }
 
-        if ((abp.session.multiTenancySide == abp.multiTenancy.sides.HOST || this._feature.isEnabled('CRM'))
-            && this._permissionChecker.isGranted('Pages.CRM')) {
-            return '/app/crm/dashboard';
-        }
-
-        if ((abp.session.multiTenancySide == abp.multiTenancy.sides.HOST ||  this._feature.isEnabled('Admin'))
-            && this._permissionChecker.isGranted('Pages.Administration.Users')) {
-            return '/app/admin/users';
-        }
-
-        if (this._feature.isEnabled('PFM.Applications'))
+        if (!preferedModule)
+        {
+            if (this._feature.isEnabled('PFM.Applications'))
             return '/personal-finance';
 
-        if (this._feature.isEnabled('PFM.CreditReport')) {
-            return '/personal-finance/credit-report';
+            if (this._feature.isEnabled('PFM.CreditReport')) {
+                return '/personal-finance/credit-report';
+            }
         }
 
-        return '/app/access-denied';
+        return null;
+    }
+
+    getBestRouteForHost(): string {
+        if (this._permissionChecker.isGranted('Pages.Tenants'))
+            return '/app/admin/tenants';
+
+        if (this._permissionChecker.isGranted('Pages.Administration.Host.Dashboard'))
+            return '/app/admin/hostDashboard';
+
+        if (this._permissionChecker.isGranted('Pages.CRM'))
+            return '/app/crm/dashboard';
+
+        if (this._permissionChecker.isGranted('Pages.Administration.Users'))
+            return '/app/admin/users';
+
+        return null;
     }
 }

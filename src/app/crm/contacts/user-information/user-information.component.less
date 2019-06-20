@@ -20,14 +20,14 @@
 
         dx-text-box, dx-button, country-phone-number {
             display: inline-block;
-        }        
+        }
         dx-text-box, country-phone-number {
             min-width: 170px;
         }
         /deep/ country-phone-number > .wrapper {
             width: 100%;
         }
-        
+
         /deep/ dx-button {
             &.update i {
                 color: #00aeef;
@@ -39,7 +39,7 @@
             border: none;
             position: relative;
         }
-        
+
         dx-validation-group {
             /deep/ dx-button {
               top: -14px;
@@ -81,7 +81,12 @@
             display: flex;
             justify-content: space-between;
             flex-wrap: wrap;
-            padding-top: 30px;
+            padding-top: 20px;
+
+            li {
+                margin-top: 12px;
+            }
+
             /deep/ dx-check-box {
                 width: 150px;
             }
@@ -90,7 +95,7 @@
 
     .user-info {
         margin: 0;
-      
+
         & > div {
             min-width: 300px;
             &.onecolum {
@@ -133,8 +138,9 @@
     }
 
     .item-edit-label {
-        display: inline-block;
-        min-width: 130px;
+        display: block;
+        //min-width: 130px;
+        width: 130px;
         font-size: 13px;
         font-weight: normal;
         line-height: 35px;
@@ -148,11 +154,20 @@
     }
 
     .section-item {
-        display: flex;
         line-height: 35px;
+        
+        div,
+        inplace-edit {
+            display: block;
+            float: left;
+        }
+        
+        inplace-edit {
+            width: calc(~"100% - 130px");
+        }
 
         ul {
-            margin-bottom: 0px;
+            margin-bottom: 0;
             li {
                 white-space: nowrap;
                 .edit-phone {
@@ -167,7 +182,7 @@
                     .edit-phone {
                         display: inline-block;
                     }
-                }      
+                }
             }
         }
     }

@@ -11,7 +11,6 @@ import { PanelMenuItem } from './panel-menu-item';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { AppService } from '@app/app.service';
-import { CFOService } from '@shared/cfo/cfo.service.ts';
 
 @Component({
     templateUrl: './top-bar.component.html',
@@ -37,7 +36,6 @@ export class TopBarComponent extends AppComponentBase {
         injector: Injector,
         private _appSessionService: AppSessionService,
         private _appService: AppService,
-        private _cfoService: CFOService,
         public router: Router
     ) {
         super(injector);
@@ -125,14 +123,14 @@ export class TopBarComponent extends AppComponentBase {
     private checkMenuItemPermission(item): boolean {
         //!!VP Should be considered on module configuration level
         if (this.config['name'] == 'CRM') {
-            if (this._appService.isNotHostTenant()) {
+            if (!this._appService.isHostTenant) {
                 if (['Editions'].indexOf(item.text) >= 0)
                     return false;
             } else if (['Products'].indexOf(item.text) >= 0)
                 return false;
         }
 
-        return this.isFeatureEnable(item.featureName) && ((item.permissionName && this.isGranted(item.permissionName)) ||
+        return this._appService.isFeatureEnable(item.featureName) && ((item.permissionName && this.isGranted(item.permissionName)) ||
             (item.items && item.items.length && this.checkChildMenuItemPermission(item) || !item.permissionName));
     }
 

@@ -22,7 +22,6 @@ export class ChooseXeroAccountComponent extends CFOComponentBase implements OnIn
     }
 
     ngOnInit(): void {
-        super.ngOnInit();
         this.createAccountAvailable = this.data.createAccountAvailable;
         this.accounts = this.data.accounts;
         this.selectedAccountId = this.accounts[0].id;

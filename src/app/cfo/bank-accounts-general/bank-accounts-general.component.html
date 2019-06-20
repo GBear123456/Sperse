@@ -1,6 +1,7 @@
 <div>
     <app-headline [config]="headlineConfig">
-        <synch-progress class="synch-progress"></synch-progress>
+        <synch-progress [isSyncAccountButtonShown]="true" class="synch-progress" (onComplete)="refresh()"></synch-progress>
+        <currencies-dropdown></currencies-dropdown>
     </app-headline>
     <div class="content-wrap">
         <setup-steps SelectedStepIndex="0"></setup-steps>

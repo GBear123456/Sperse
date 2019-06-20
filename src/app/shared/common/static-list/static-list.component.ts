@@ -1,9 +1,6 @@
 import { Component, Injector, Input, EventEmitter, Output, HostBinding } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { FiltersService } from '@shared/filters/filters.service';
-
-import { AppConsts } from '@shared/AppConsts';
-
 import * as _ from 'underscore';
 import startCase from 'lodash/startCase';
 
@@ -34,7 +31,7 @@ export class StaticListComponent extends AppComponentBase {
     @Input() pageLoadMode = 'nextButton';
     @Input() searchExprType = 'name';
     @Input() bulkUpdatePermissionKey = '';
-    @Input('list') 
+    @Input('list')
     set list(value: any[]) {
         this._list = value.map((item) => {
             return _.extend(item, {
@@ -63,7 +60,7 @@ export class StaticListComponent extends AppComponentBase {
         injector: Injector,
         private _filtersService: FiltersService
     ) {
-        super(injector, AppConsts.localization.CRMLocalizationSourceName);
+        super(injector);
     }
 
     toggle() {

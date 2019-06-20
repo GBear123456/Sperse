@@ -1,13 +1,12 @@
 <div class="wrapper">
     <ng-template ngFor let-item [ngForOf]="getItems()" let-i="index">
-        <p>
-            {{ items[item].displayName }}
-        </p>
-            <dx-select-box [dataSource]="items[item].elements"                           
-                           [displayExpr]="items[item].displayElementExp"
-                           [(value)]="items[item].value"
-                           (onValueChanged)="items[item].onElementSelect($event.value, this)"
-                           [searchEnabled]="true">
-            </dx-select-box>       
+        <p>{{ items[item].displayName }}</p>
+        <dx-select-box [dataSource]="items[item].elements"
+                       [displayExpr]="items[item].displayElementExp"
+                       [valueExpr]="items[item].valueElementExp"
+                       [(value)]="items[item].value"
+                       (onValueChanged)="items[item].onElementSelect && items[item].onElementSelect($event.value, this)"
+                       [searchEnabled]="true">
+        </dx-select-box>
     </ng-template>
 </div>

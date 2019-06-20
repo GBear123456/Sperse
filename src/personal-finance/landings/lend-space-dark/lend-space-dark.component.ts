@@ -77,7 +77,7 @@ export class LendSpaceDarkComponent extends AppComponentBase implements AfterVie
         private renderer: Renderer2,
         private dialog: MatDialog
     ) {
-        super(injector, AppConsts.localization.PFMLocalizationSourceName);
+        super(injector);
     }
 
     ngOnInit() {

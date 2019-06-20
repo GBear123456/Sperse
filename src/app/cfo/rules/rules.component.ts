@@ -1,27 +1,25 @@
+/** Core imports */
 import { Component, OnInit, AfterViewInit, OnDestroy, Injector, ViewChild } from '@angular/core';
-import { AppConsts } from '@shared/AppConsts';
+
+/** Third party imports */
+import { MatDialog } from '@angular/material/dialog';
+import { DxTreeListComponent } from 'devextreme-angular/ui/tree-list';
+import 'devextreme/data/odata/store';
+import DataSource from 'devextreme/data/data_source';
+import * as _ from 'underscore';
+
+/** Application imports */
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { AppService } from '@app/app.service';
-
-import { ClassificationServiceProxy, ApplyOption, InstanceType } from '@shared/service-proxies/service-proxies';
-
-import { MatDialog } from '@angular/material/dialog';
 import { RuleDialogComponent } from './rule-edit-dialog/rule-edit-dialog.component';
 import { RuleDeleteDialogComponent } from './rule-delete-dialog/rule-delete-dialog.component';
-
 import { FiltersService } from '@shared/filters/filters.service';
 import { FilterModel } from '@shared/filters/models/filter.model';
 import { FilterItemModel } from '@shared/filters/models/filter-item.model';
 import { FilterInputsComponent } from '@shared/filters/inputs/filter-inputs.component';
 import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calendar.component';
-
-import DataSource from 'devextreme/data/data_source';
-
+import { ClassificationServiceProxy, ApplyOption, InstanceType } from '@shared/service-proxies/service-proxies';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
-import { DxTreeListComponent } from 'devextreme-angular/ui/tree-list';
-import 'devextreme/data/odata/store';
-
-import * as _ from 'underscore';
 
 @Component({
     templateUrl: './rules.component.html',
@@ -51,7 +49,71 @@ export class RulesComponent extends CFOComponentBase implements OnInit, AfterVie
         super(injector);
 
         this.initToolbarConfig();
-        this.filtersService.localizationSourceName = this.localizationSourceName;
+    }
+
+    ngOnInit(): void {
+        this.refreshList();
+        this.filtersService.setup(
+            this.filters = [
+                new FilterModel({
+                    component: FilterInputsComponent,
+                    operator: 'contains',
+                    caption: 'Name',
+                    field: 'name',
+                    items: { name: new FilterItemModel() }
+                }),
+                new FilterModel({
+                    component: FilterCalendarComponent,
+                    operator: { from: '>=', to: '<=' },
+                    caption: 'CreationDate',
+                    field: 'creationTime',
+                    items: { from: new FilterItemModel(), to: new FilterItemModel() },
+                    options: { method: 'getFilterByDate', params: { useUserTimezone: true } }
+                })
+            ]
+        );
+
+        this.filtersService.apply(() => {
+            this.initToolbarConfig();
+
+            let dataSourceFilters = [];
+            for (let filter of this.filters) {
+                let filterMethod = this['filterBy' + this.capitalize(filter.caption)];
+                if (filterMethod) {
+                    let customFilters: any[] = filterMethod(filter);
+                    if (customFilters && customFilters.length)
+                        customFilters.forEach((v) => dataSourceFilters.push(v));
+                } else {
+                    _.pairs(filter.items).forEach((pair) => {
+                        let val = pair.pop().value, key = pair.pop(), operator = {};
+                        if (val)
+                            dataSourceFilters.push([key, filter.operator, val]);
+                    });
+                }
+            }
+
+            dataSourceFilters = dataSourceFilters.length ? dataSourceFilters : null;
+            this.ruleTreeListDataSource.filter(dataSourceFilters);
+            this.ruleTreeListDataSource.load();
+        });
+    }
+
+    ngAfterViewInit(): void {
+        if (this._cfoService.classifyTransactionsAllowed) {
+            this.treeList.editing.allowAdding = true;
+            this.treeList.editing.allowDeleting = true;
+            this.treeList.editing.allowUpdating = true;
+            this.treeList.instance.refresh();
+
+            this.headlineConfig.buttons.push({
+                enabled: true,
+                action: this.showEditDialog.bind(this),
+                lable: this.l('+ Add New')
+            });
+        }
+
+        this.rootComponent = this.getRootComponent();
+        this.rootComponent.overflowHidden(true);
     }
 
     initToolbarConfig() {
@@ -120,6 +182,7 @@ export class RulesComponent extends CFOComponentBase implements OnInit, AfterVie
 
     onEditingStart(e) {
         this.showEditDialog(e.data);
+        e.cancel = true;
     }
 
     onShowingPopup(e) {
@@ -152,86 +215,16 @@ export class RulesComponent extends CFOComponentBase implements OnInit, AfterVie
 
     showEditDialog(data = {}) {
         this.dialog.open(RuleDialogComponent, {
-            panelClass: 'slider', data: _.extend(data, {
-                instanceId: this.instanceId,
-                instanceType: this.instanceType,
+            panelClass: 'slider',
+            data: _.extend(data, {
                 refershParent: this.refreshList.bind(this)
             })
-        }).afterClosed().subscribe(result => { });
-    }
-
-    ngOnInit(): void {
-        super.ngOnInit();
-
-        this.refreshList();
-        this.filtersService.setup(
-            this.filters = [
-                new FilterModel({
-                    component: FilterInputsComponent,
-                    operator: 'contains',
-                    caption: 'Name',
-                    field: 'name',
-                    items: { name: new FilterItemModel() }
-                }),
-                new FilterModel({
-                    component: FilterCalendarComponent,
-                    operator: { from: '>=', to: '<=' },
-                    caption: 'CreationDate',
-                    field: 'creationTime',
-                    items: { from: new FilterItemModel(), to: new FilterItemModel() },
-                    options: { method: 'getFilterByDate', params: { useUserTimezone: true } }
-                })
-            ]
-        );
-
-        this.filtersService.apply(() => {
-            this.initToolbarConfig();
-
-            let dataSourceFilters = [];
-            for (let filter of this.filters) {
-                let filterMethod = this['filterBy' + this.capitalize(filter.caption)];
-                if (filterMethod) {
-                    let customFilters: any[] = filterMethod(filter);
-                    if (customFilters && customFilters.length)
-                        customFilters.forEach((v) => dataSourceFilters.push(v));
-                } else {
-                    _.pairs(filter.items).forEach((pair) => {
-                        let val = pair.pop().value, key = pair.pop(), operator = {};
-                        if (val)
-                            dataSourceFilters.push([key, filter.operator, val]);
-                    });
-                }
-            }
-
-            dataSourceFilters = dataSourceFilters.length ? dataSourceFilters : null;
-            this.ruleTreeListDataSource.filter(dataSourceFilters);
-            this.ruleTreeListDataSource.load();
-        });
-    }
-
-    ngAfterViewInit(): void {
-        if (this.isInstanceAdmin) {
-            this.treeList.editing.allowAdding = true;
-            this.treeList.editing.allowDeleting = true;
-            this.treeList.editing.allowUpdating = true;
-            this.treeList.instance.refresh();
-
-            this.headlineConfig.buttons.push({
-                enabled: true,
-                action: this.showEditDialog.bind(this),
-                lable: this.l('+ Add New')
-            });
-        }
-
-        this.rootComponent = this.getRootComponent();
-        this.rootComponent.overflowHidden(true);
+        }).afterClosed().subscribe(() => {});
     }
 
     ngOnDestroy() {
         this._appService.updateToolbar(null);
         this.rootComponent.overflowHidden();
-        this.filtersService.localizationSourceName
-            = AppConsts.localization.defaultLocalizationSourceName;
         this.filtersService.unsubscribe();
         super.ngOnDestroy();
     }

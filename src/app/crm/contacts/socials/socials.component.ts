@@ -33,10 +33,19 @@ import * as _ from 'underscore';
 })
 export class SocialsComponent extends AppComponentBase {
     @Input() isCompany;
-    @Input() contactInfo: ContactInfoDto;
+    @Input() 
+    set contactInfo(val: ContactInfoDto) {
+        if (this._contactInfo = val)
+            this.isEditAllowed = this._contactsService.checkCGPermission(this.contactInfo.groupId);
+    }
+    get contactInfo(): ContactInfoDto {
+        return this._contactInfo;
+    }
+
     @Input() contactInfoData: ContactInfoDetailsDto;
 
     isEditAllowed = false;
+    private _contactInfo: ContactInfoDto;
 
     LINK_TYPES = {};
 
@@ -48,9 +57,8 @@ export class SocialsComponent extends AppComponentBase {
                 private _organizationContactService: OrganizationContactServiceProxy,
                 private dialogService: DialogService
     ) {
-        super(injector, AppConsts.localization.CRMLocalizationSourceName);
+        super(injector);
 
-        this.isEditAllowed = this.isGranted('Pages.CRM.Customers.Manage');
         this.linkTypesLoad();
     }
 
@@ -102,6 +110,7 @@ export class SocialsComponent extends AppComponentBase {
             id: data && data.id,
             value: data && data.url,
             name: this.l('Link'),
+            groupId: this.contactInfo.groupId,
             contactId: data && data.contactId
             || this.contactInfoData && this.contactInfoData.contactId,
             url: data && data.url,

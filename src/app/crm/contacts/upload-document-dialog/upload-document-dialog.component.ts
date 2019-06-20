@@ -25,7 +25,7 @@ export class UploadDocumentDialogComponent extends AppComponentBase implements O
         public dialogRef: MatDialogRef<UploadDocumentDialogComponent>,
         private documentTypeService: DocumentTypeServiceProxy
     ) {
-        super(injector, AppConsts.localization.CRMLocalizationSourceName);
+        super(injector);
     }
 
     fileChangeListener($event) {

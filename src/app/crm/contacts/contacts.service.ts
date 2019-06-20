@@ -7,6 +7,9 @@ import { Observable, ReplaySubject, Subject } from 'rxjs';
 import { DialogService } from '@app/shared/common/dialogs/dialog.service';
 import { AddCompanyDialogComponent } from './add-company-dialog/add-company-dialog.component';
 import { ContactInfoDto, OrganizationContactInfoDto } from '@shared/service-proxies/service-proxies';
+import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
+import { ContactGroup, ContactGroupPermission } from '@shared/AppEnums';
+import invert from 'lodash/invert';
 
 @Injectable()
 export class ContactsService {
@@ -24,7 +27,10 @@ export class ContactsService {
         common: []
     };
 
+    readonly CONTACT_GROUP_KEYS = invert(ContactGroup);
+
     constructor(injector: Injector,
+        private _permission: PermissionCheckerService,
         private _dialogService: DialogService,
         private _router: Router,
         private _location: Location,
@@ -44,6 +50,18 @@ export class ContactsService {
             this.subscribers[ident] = [];
         this.subscribers[ident].push(sub);
         return sub;
+    }
+
+    getCGPermissionKey(contactGroup, permission = '') {
+        return ContactGroupPermission[
+            this.CONTACT_GROUP_KEYS[contactGroup]
+        ] + (permission ? '.' : '') + permission;
+    }
+
+    checkCGPermission(contactGroup, permission = 'Manage') {
+        return this._permission.isGranted(
+            this.getCGPermissionKey(contactGroup, permission)
+        );
     }
 
     verificationSubscribe(callback, ident?: string) {

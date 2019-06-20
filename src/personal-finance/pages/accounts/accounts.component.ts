@@ -17,7 +17,8 @@ import {
     SyncServiceProxy,
     InstanceServiceProxy,
     GetProviderUITokenOutput,
-    TenantLoginInfoDtoCustomLayoutType
+    TenantLoginInfoDtoCustomLayoutType,
+    MyFinancesServiceProxy
 } from '@shared/service-proxies/service-proxies';
 import { AccountConnectors } from '@shared/AppEnums';
 import { FeatureCheckerService } from '@abp/features/feature-checker.service';
@@ -63,11 +64,12 @@ export class AccountsComponent extends AppComponentBase implements OnInit, OnDes
         private _cfoService: CFOService,
         private _quovoService: QuovoService,
         private _syncService: SyncServiceProxy,
+        private _myFinanceService: MyFinancesServiceProxy,
         private _instanceServiceProxy: InstanceServiceProxy,
         private dialog: MatDialog,
         public featureCheckerService: FeatureCheckerService
     ) {
-        super(injector, AppConsts.localization.PFMLocalizationSourceName);
+        super(injector);
     }
 
     ngOnInit() {
@@ -93,7 +95,7 @@ export class AccountsComponent extends AppComponentBase implements OnInit, OnDes
         if (this._cfoService.initialized) {
             const element = this.getElementRef().nativeElement.querySelector('.p-content');
             abp.ui.setBusy(element);
-            this.tokenLoading$ = this._syncService.createProviderUIToken(InstanceType[this._cfoService.instanceType], this._cfoService.instanceId, 'Q');
+            this.tokenLoading$ = this._myFinanceService.createUserInstanceProviderUIToken('Q');
             /** Load quovo script (jquery getScript to observable) */
             const quovoLoading$ = new Observable(observer => {
                 jQuery.getScript('https://app.quovo.com/ui.js').done(() => {
@@ -108,13 +110,7 @@ export class AccountsComponent extends AppComponentBase implements OnInit, OnDes
             ).pipe(
                 finalize(() => abp.ui.clearBusy(element)),
                 tap(() => {
-                    this._syncService.syncAllAccounts(
-                        InstanceType[this._cfoService.instanceType],
-                        this._cfoService.instanceId,
-                        false,
-                        false,
-                        'Q'
-                    ).subscribe();
+                    this._myFinanceService.syncAllQuovoAccounts(false, false).subscribe();
                 })
             ).subscribe(
                 ([token, sectionName]) => {
@@ -179,28 +175,26 @@ export class AccountsComponent extends AppComponentBase implements OnInit, OnDes
             this.addAccount();
         else {
             abp.ui.setBusy(this.contentElement);
-            this._instanceServiceProxy.setup(InstanceType[this._cfoService.instanceType], undefined)
-                .subscribe(
-                    () => {
-                        this.checkInstanceChangeProcess();
+            this._myFinanceService.setupUserInstance(undefined)
+                .subscribe(() => {
+                    this._cfoService.instanceChangeProcess(() => {
+                        abp.ui.clearBusy(this.contentElement);
+                        this.isInstanceInfoLoaded = true;
                         this.addAccount();
-                    },
-                    () => this.isStartDisabled = false
-                );
+                    });
+                }, () => this.isStartDisabled = false);
         }
     }
 
     private addAccount() {
-        const dialogConfig = {
+        this.dialog.open(AccountConnectorDialogComponent, {
             ...AccountConnectorDialogComponent.defaultConfig,
             ...{
                 data: {
                     connector: AccountConnectors.Quovo
                 }
             }
-        };
-        const dialogRef = this.dialog.open(AccountConnectorDialogComponent, dialogConfig);
-        dialogRef.afterClosed().subscribe(e => {
+        }).afterClosed().subscribe(e => {
             this.onQuovoClose(e);
         });
     }

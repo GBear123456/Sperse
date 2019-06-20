@@ -246,7 +246,7 @@ export class ChatBarComponent extends AppComponentBase implements OnInit, AfterV
 
     openSearchModal(userName: string, tenantId?: number): void {
         const dialogRef = this._dialog.open(CommonLookupModalComponent, {
-            panelClass: [ 'slider', 'common-lookup' ],
+            panelClass: [ 'slider' ],
             data: {
                 filterText: userName,
                 tenantId: tenantId

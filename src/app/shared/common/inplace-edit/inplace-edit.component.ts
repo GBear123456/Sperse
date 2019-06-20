@@ -5,9 +5,9 @@ import {
     ElementRef,
     Output,
     ViewChild,
-    AfterViewInit,
     EventEmitter,
-    ChangeDetectorRef
+    ChangeDetectorRef,
+    ChangeDetectionStrategy
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { AppComponentBase } from '@shared/common/app-component-base';
@@ -18,19 +18,28 @@ import { DxTextBoxComponent } from 'devextreme-angular/ui/text-box';
 @Component({
     selector: 'inplace-edit',
     templateUrl: './inplace-edit.component.html',
-    styleUrls: ['./inplace-edit.component.less']
+    styleUrls: ['./inplace-edit.component.less'],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class InplaceEditComponent extends AppComponentBase implements AfterViewInit {
+export class InplaceEditComponent extends AppComponentBase {
     @ViewChild(DxTextBoxComponent) textBox: DxTextBoxComponent;
     @ViewChild('editText') editTextRef: ElementRef;
 
     @Input()
-    data: InplaceEditModel;
+    set data(model: InplaceEditModel) {
+        if (model && (!this._data || this._data.value != model.value)) {
+            this._data = model;
+            this.valueOriginal = model.value;
+            this.changeDetector.detectChanges();
+        }
+    }
+    get data(): InplaceEditModel {
+        return this._data;
+    }
     @Input()
     mask: string;
     @Input()
     maskInvalidMessage: string;
-    width = 'auto';
 
     @Output()
     valueChanged: EventEmitter<any> = new EventEmitter();
@@ -42,6 +51,7 @@ export class InplaceEditComponent extends AppComponentBase implements AfterViewI
     isEditModeEnabled = false;
     valueOriginal = '';
 
+    private _data: InplaceEditModel;
     private _clickTimeout;
     private _clickCounter = 0;
 
@@ -53,42 +63,37 @@ export class InplaceEditComponent extends AppComponentBase implements AfterViewI
         super(injector);
     }
 
-    ngAfterViewInit() {
-        this.valueOriginal = this.data && this.data.value;
-        this.updateWidth();
-    }
-
-    updateWidth() {
-        this.width = this.editTextRef.nativeElement.offsetWidth + 20;
-    }
-
     deleteItem(event) {
-        this.dialog.open(ConfirmDialogComponent, {
-            data: {
-              title: this.l(this.data.lDeleteConfirmTitle, this.l(this.data.lEntityName)),
-              message: this.l(this.data.lDeleteConfirmMessage, this.l(this.data.lEntityName).toLowerCase())
-            }
-        }).afterClosed().subscribe(result => {
-            if (result) {
-                this.dialog.closeAll();
-                if (this.itemDeleted)
-                    this.itemDeleted.emit(this.data.id);
-            }
-        });
+        if (!this._data.isReadOnlyField)
+            this.dialog.open(ConfirmDialogComponent, {
+                data: {
+                  title: this.l(this._data.lDeleteConfirmTitle, this.l(this._data.lEntityName)),
+                  message: this.l(this._data.lDeleteConfirmMessage, this.l(this._data.lEntityName).toLowerCase())
+                }
+            }).afterClosed().subscribe(result => {
+                if (result) {
+                    this.dialog.closeAll();
+                    if (this.itemDeleted)
+                        this.itemDeleted.emit(this._data.id);
+                }
+            });
         event.stopPropagation();
     }
 
     updateItem(event) {
         if (!event.validationGroup || event.validationGroup.validate().isValid) {
-            if (this.data.value != this.valueOriginal && this.valueChanged)
+            if (this._data.value != this.valueOriginal && this.valueChanged)
                 this.valueChanged.emit(this.valueOriginal);
             this.isEditModeEnabled = false;
-            setTimeout(() => this.updateWidth());
+            this.changeDetector.detectChanges();
         }
     }
 
     setEditModeEnabled(isEnabled: boolean, event?: MouseEvent) {
-        if (this.data.value) {
+        if (this._data.isReadOnlyField)
+            return ;
+
+        if (this._data.value) {
             this._clickCounter++;
             clearTimeout(this._clickTimeout);
             this._clickTimeout = setTimeout(() => {
@@ -99,20 +104,19 @@ export class InplaceEditComponent extends AppComponentBase implements AfterViewI
                         this.showDialog(event);
                 } else {
                     this.isEditModeEnabled = isEnabled;
-                    this.data.value = this.valueOriginal;
+                    this._data.value = this.valueOriginal;
                 }
                 this._clickCounter = 0;
                 this.changeDetector.detectChanges();
             }, 250);
-        } else 
+        } else
             this.showInput(isEnabled);
     }
 
     showInput(enabled) {
-        enabled && this.updateWidth();
         this.isEditModeEnabled = enabled;
-        this.valueOriginal = this.data.value;
-        enabled && setTimeout(() => 
+        this.valueOriginal = this._data.value;
+        enabled && setTimeout(() =>
             this.textBox.instance.focus());
     }
 

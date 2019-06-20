@@ -7,16 +7,17 @@ import { DxToolbarComponent } from 'devextreme-angular/ui/toolbar';
 import * as _ from 'underscore';
 
 /** Application imports */
-import { AppComponentBase } from '@shared/common/app-component-base';
 import { ToolbarGroupModel, ToolbarGroupModelItem } from './toolbar.model';
 import { FiltersService } from '@shared/filters/filters.service';
+import { ToolbarService } from '@app/shared/common/toolbar/toolbar.service';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 
 @Component({
     selector: 'app-toolbar',
     templateUrl: './toolbar.component.html',
     styleUrls: ['./toolbar.component.less']
 })
-export class ToolBarComponent extends AppComponentBase implements OnDestroy {
+export class ToolBarComponent implements OnDestroy {
     @ViewChild(DxToolbarComponent) toolbarComponent: DxToolbarComponent;
     @Input() width = '100%';
     @Input() compact = false;
@@ -31,10 +32,11 @@ export class ToolBarComponent extends AppComponentBase implements OnDestroy {
     public options = {};
     private subscription: any;
 
-    constructor(injector: Injector,
-                filtersService: FiltersService
+    constructor(
+        injector: Injector,
+        filtersService: FiltersService,
+        private ls: AppLocalizationService
     ) {
-        super(injector);
         this.subscription = filtersService.subjectFilterDisable.asObservable().subscribe(() => {
             this.updateToolbarItemAttribute('filters', 'filter-selected', filtersService.hasFilterSelected);
         });
@@ -46,199 +48,199 @@ export class ToolBarComponent extends AppComponentBase implements OnDestroy {
                 accessKey: 'search'
             },
             filters: {
-                hint: this.l('Filters'),
+                hint: this.ls.l('Filters'),
                 accessKey: 'filters'
             },
             expandTree: {
-                text: this.l('Expand'),
+                text: this.ls.l('Expand'),
                 icon: this.getImgURI('expand-tree-icon')
             },
             find: {
-                hint: this.l('Find'),
-                text: this.l('Find'),
+                hint: this.ls.l('Find'),
+                text: this.ls.l('Find'),
                 icon: this.getImgURI('find-icon')
             },
             sort: {
-                hint: this.l('Sort'),
-                text: this.l('Sort'),
+                hint: this.ls.l('Sort'),
+                text: this.ls.l('Sort'),
                 icon: this.getImgURI('sort-icon-down')
             },
             follow: {
                 icon: this.getImgURI('follow-icon')
             },
             back: {
-                hint: this.l('Back'),
+                hint: this.ls.l('Back'),
                 icon: this.getImgURI('back-arrow')
             },
             assign: {
-                text: this.l('Assign'),
+                text: this.ls.l('Assign'),
                 icon: this.getImgURI('assign-icon')
             },
             status: {
-                text: this.l('Status'),
+                text: this.ls.l('Status'),
                 icon: this.getImgURI('status-icon')
             },
             stage: {
-                text: this.l('Stage'),
+                text: this.ls.l('Stage'),
                 icon: this.getImgURI('status-icon')
             },
             partnerType: {
                 accessKey: 'PartnerType',
-                text: this.l('Type'),
+                text: this.ls.l('Type'),
                 icon: this.getImgURI('status-icon')
             },
             delete: {
-                text: this.l('Delete'),
+                text: this.ls.l('Delete'),
                 icon: this.getImgURI('delete-icon')
             },
             discard: {
-                text: this.l('Discard'),
+                text: this.ls.l('Discard'),
                 icon: this.getImgURI('delete-icon')
             },
             cancel: {
-                text: this.l('Cancel'),
+                text: this.ls.l('Cancel'),
                 icon: this.getImgURI('close')
             },
             folder: {
-                hint: this.l('Folder'),
+                hint: this.ls.l('Folder'),
                 icon: this.getImgURI('folder')
             },
             pen: {
-                hint: this.l('Pen'),
+                hint: this.ls.l('Pen'),
                 icon: this.getImgURI('pen')
             },
             more: {
-                text: this.l('More')
+                text: this.ls.l('More')
             },
             box: {
                 accessKey: 'box',
-                hint: this.l('Box'),
+                hint: this.ls.l('Box'),
                 icon: this.getImgURI('box-icon')
             },
             pipeline: {
                 accessKey: 'pipeline',
-                hint: this.l('Pipeline'),
+                hint: this.ls.l('Pipeline'),
                 icon: this.getImgURI('funnel-icon')
             },
             grid: {
                 accessKey: 'grid',
-                hint: this.l('Grid'),
+                hint: this.ls.l('Grid'),
                 icon: this.getImgURI('table-icon')
             },
             prev: {
-                hint: this.l('Previous'),
+                hint: this.ls.l('Previous'),
                 icon: 'chevronprev'
             },
             next: {
-                hint: this.l('Next'),
+                hint: this.ls.l('Next'),
                 icon: 'chevronnext'
             },
             columnChooser: {
-                hint: this.l('ColumnChooser'),
+                hint: this.ls.l('ColumnChooser'),
                 icon: 'column-chooser'
             },
             download: {
-                hint: this.l('Download'),
+                hint: this.ls.l('Download'),
                 icon: this.getImgURI('download-icon')
             },
             refresh: {
-                hint: this.l('Refresh'),
+                hint: this.ls.l('Refresh'),
                 icon: 'icon icon-refresh'
             },
             edit: {
-                text: this.l('Edit'),
+                text: this.ls.l('Edit'),
                 icon: this.getImgURI('edit-pencil-icon')
             },
             rules: {
-                text: this.l('CashflowToolbar_User_Preferences'),
+                text: this.ls.l('CashflowToolbar_User_Preferences'),
                 icon: this.getImgURI('preferences-icon')
             },
             expand: {
-                text: this.l('Expand'),
+                text: this.ls.l('Expand'),
                 icon: this.getImgURI('expand-all-icon')
             },
             expandRows: {
-                text: this.l('Expand rows'),
+                text: this.ls.l('Expand rows'),
                 icon: this.getImgURI('expand-rows-icon')
             },
             expandCols: {
-                text: this.l('Expand cols'),
+                text: this.ls.l('Expand cols'),
                 icon: this.getImgURI('expand-cols-icon')
             },
             flag: {
-                hint: this.l('Flags'),
+                hint: this.ls.l('Flags'),
                 icon: this.getImgURI('flag-icon')
             },
             print: {
-                hint: this.l('Print'),
+                hint: this.ls.l('Print'),
                 icon: this.getImgURI('print-icon')
             },
             comments: {
-                hint: this.l('Show/Hide Comments'),
+                hint: this.ls.l('Show/Hide Comments'),
                 icon: this.getImgURI('comments-icon')
             },
             fullscreen: {
-                hint: this.l('Fullpage'),
+                hint: this.ls.l('Fullpage'),
                 icon: this.getImgURI('expand-fullscreen-icon')
             },
             slider: {
-                hint: this.l('Slider')
+                hint: this.ls.l('Slider')
             },
             forecastModelAdd: {
-                hint: this.l('CreateForecastModel'),
+                hint: this.ls.l('CreateForecastModel'),
                 icon: this.getImgURI('add-button')
             },
             showCompactRowsHeight: {
-                hint: this.l('CompactView'),
+                hint: this.ls.l('CompactView'),
                 icon: this.getImgURI('ic_format_line_spacing')
             },
             reportPeriod: {
                 icon: this.getImgURI('report-period'),
-                text: this.l('CashflowToolbar_Report_Period')
+                text: this.ls.l('CashflowToolbar_Report_Period')
             },
             addEntity: {
-                hint: this.l('AddAccountingType'),
+                hint: this.ls.l('AddAccountingType'),
                 icon: this.getImgURI('add-button')
             },
             tags: {
-                text: this.l('Tags'),
+                text: this.ls.l('Tags'),
                 icon: this.getImgURI('pen')
             },
             tagsSmall: {
-                hint: this.l('Tags'),
+                hint: this.ls.l('Tags'),
                 icon: this.getImgURI('pen')
             },
             lists: {
-                text: this.l('Lists'),
+                text: this.ls.l('Lists'),
                 icon: this.getImgURI('folder')
             },
             listsSmall: {
-                hint: this.l('Lists'),
+                hint: this.ls.l('Lists'),
                 icon: this.getImgURI('folder')
             },
             rating: {
-                text: this.l('Rating'),
+                text: this.ls.l('Rating'),
                 icon: this.getImgURI('flag-icon')
             },
             star: {
-                hint: this.l('Star'),
+                hint: this.ls.l('Star'),
                 icon: this.getImgURI('star-icon')
             },
             close: {
-                hint: this.l('Close'),
+                hint: this.ls.l('Close'),
                 icon: this.getImgURI('close')
             },
             rotateRight: {
-                hint: this.l('Rotate right'),
+                hint: this.ls.l('Rotate right'),
                 icon: this.getImgURI('rotate-right-icon')
             },
             rotateLeft: {
-                hint: this.l('Rotate left'),
+                hint: this.ls.l('Rotate left'),
                 icon: this.getImgURI('rotate-left-icon')
             },
             category: {
-                hint: this.l('Category'),
-                text: this.l('Category'),
+                hint: this.ls.l('Category'),
+                text: this.ls.l('Category'),
                 icon: this.getImgURI('folder')
             }
         };
@@ -267,8 +269,8 @@ export class ToolBarComponent extends AppComponentBase implements OnDestroy {
                 (link.icon ? '<img style="margin-right: 15px; position: relative; top: -2px;" src="' + this.getImgURI(link.icon) + '">' : '') + link.text + '</div>',
             option: '<div><input type="checkbox" id="' + link.name + '" class="dropdown-option-checkbox"' + (link.checked || link.checked == undefined ? ' checked' : '') + '><label for="' + link.name + '">' + link.text + '</label></div>',
             downloadOptions: '<div class="toolbar-download-options" onclick="event.stopPropagation()">' +
-                '<div><input type="radio" name="export" value="all" checked><label>' + this.l('Export all data') + '</label></div>' +
-                '<div><input type="radio" name="export" value="selected"><label>' + this.l('Export selected') + '</label></div>' +
+                '<div><input type="radio" name="export" value="all" checked><label>' + this.ls.l('Export all data') + '</label></div>' +
+                '<div><input type="radio" name="export" value="selected"><label>' + this.ls.l('Export selected') + '</label></div>' +
                 '</div>',
             header: '<span class="dropdown-header">' + link.text + '</span>',
             delimiter: '<hr>'
@@ -288,7 +290,7 @@ export class ToolBarComponent extends AppComponentBase implements OnDestroy {
                 : item.options['items'][0];
             return {
                 'select-caption': item.text ? item.text + ':' : '',
-                'select-value': items && items.length ? selectedItem.text : ''
+                'select-value': items && items.length && selectedItem ? selectedItem.text : ''
             };
         }
         return item.attr || {};
@@ -312,9 +314,10 @@ export class ToolBarComponent extends AppComponentBase implements OnDestroy {
                 link.disabled = link.hasOwnProperty('disabled') ? link.disabled : (link.type == 'delimiter');
                 link.html = this.getDropDownItemTemplate(link, item.options['width']);
                 link.onClick = (event) => {
-                    if (item.name == 'select-box')
+                    if (item.name == 'select-box') {
                         $('.dx-dropdownmenu-button[title' + (item.options.hint ? '="' + item.options.hint + '"' : '') + ']')
                             .attr('select-value', event.itemData.text);
+                    }
                     /** if each item has its own click handler - call it */
                     (link.action && link.action.call(this, this.getOptions() || event)) ||
                     /** if all items use general select handler - call general */
@@ -332,7 +335,6 @@ export class ToolBarComponent extends AppComponentBase implements OnDestroy {
                 let count = group.items.length;
                 group.items.forEach((item, index) => {
                     this.initDropDownMenu(item);
-                    let isLast = count == index + 1;
                     let internalConfig = supportedButtons[item.name];
                     let mergedConfig = _.extend(internalConfig || {}, item.options);
 
@@ -351,9 +353,9 @@ export class ToolBarComponent extends AppComponentBase implements OnDestroy {
                             elementAttr: _.extend({
                                 'button-pressed': Boolean(mergedConfig &&
                                     mergedConfig['checkPressed'] && mergedConfig['checkPressed'].call(this)),
-                                'group-item-position': index ? (isLast ? 'last' : 'inside') : (isLast ? 'single' : 'first'),
+                                'group-item-position': ToolbarService.getGroupItemPosition(index, count),
                                 'group-item-count': count,
-                                'group-item-index': count - index
+                                'group-item-index': ToolbarService.getGroupItemIndex(index, count)
                             }, this.getElementAttr(item))
                         }, mergedConfig)
                     });

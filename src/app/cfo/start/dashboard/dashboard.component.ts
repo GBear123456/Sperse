@@ -3,13 +3,11 @@ import { Component, OnInit, OnDestroy, Injector, ViewChild } from '@angular/core
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
-import { select, Store } from '@ngrx/store';
-import { filter, skip, withLatestFrom } from 'rxjs/operators';
 
 /** Application imports */
 import { SynchProgressComponent } from '@shared/cfo/bank-accounts/synch-progress/synch-progress.component';
 import { BankAccountsService } from '@shared/cfo/bank-accounts/helpers/bank-accounts.service';
-import { BankAccountsSelectComponent } from 'app/cfo/shared/bank-accounts-select/bank-accounts-select.component';
+import { BankAccountsSelectDialogComponent } from 'app/cfo/shared/bank-accounts-select-dialog/bank-accounts-select-dialog.component';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { appModuleAnimation } from 'shared/animations/routerTransition';
 import { AccountsComponent } from '@shared/cfo/dashboard-widgets/accounts/accounts.component';
@@ -17,7 +15,6 @@ import { CategorizationStatusComponent } from '@shared/cfo/dashboard-widgets/cat
 import { TotalsByPeriodComponent } from '@shared/cfo/dashboard-widgets/totals-by-period/totals-by-period.component';
 import { TrendByPeriodComponent } from '@shared/cfo/dashboard-widgets/trend-by-period/trend-by-period.component';
 import { DashboardService } from '@shared/cfo/dashboard-widgets/dashboard.service';
-import { CfoStore, CurrenciesStoreActions, CurrenciesStoreSelectors } from '@app/cfo/store';
 import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
 
 @Component({
@@ -27,7 +24,6 @@ import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
     animations: [appModuleAnimation()]
 })
 export class DashboardComponent extends CFOComponentBase implements OnInit, OnDestroy {
-    @ViewChild(BankAccountsSelectComponent) bankAccountSelector: BankAccountsSelectComponent;
     @ViewChild(AccountsComponent) accountsComponent: AccountsComponent;
     @ViewChild(CategorizationStatusComponent) categorizationStatusComponent: CategorizationStatusComponent;
     @ViewChild(TotalsByPeriodComponent) totalsByPeriodComponent: TotalsByPeriodComponent;
@@ -37,20 +33,17 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, OnDe
     private rootComponent: any;
 
     headlineConfig;
-    updateAfterActivation: boolean;
     linksTo = [
         {name: 'View_Cash_Flow_Report', route: '../cashflow'},
         {name: 'View_Transaction_Details', route: '../transactions'},
         {name: 'View_Financial_Statistics', route: '../stats'},
     ];
-    toolbarConfig;
 
     constructor(
         injector: Injector,
         private _dashboardService: DashboardService,
         private bankAccountsService: BankAccountsService,
         public dialog: MatDialog,
-        private store$: Store<CfoStore.State>,
         public cfoPreferencesService: CfoPreferencesService
     ) {
         super(injector);
@@ -58,142 +51,53 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, OnDe
     }
 
     ngOnInit(): void {
-        super.ngOnInit();
         this.rootComponent.overflowHidden(true);
         this.headlineConfig = {
             names: [this.l('Dashboard_Title')],
             iconSrc: './assets/common/icons/pie-chart.svg',
-            onRefresh: this.refreshWidgets.bind(this),
+            onRefresh: () => {
+                this._dashboardService.refresh();
+                this.refreshWidgets();
+            },
             buttons: []
         };
         /** Load sync accounts */
         this.bankAccountsService.load();
-
-        const selectedCurrencyId$ = this.store$.pipe(
-            select(CurrenciesStoreSelectors.getSelectedCurrencyId)
-        );
-
-        this.initToolbarConfig();
-
-        /** If component is activated and currency has changed - update grid  */
-        selectedCurrencyId$.pipe(
-            /** To avoid initial double widgets loading */
-            skip(1),
-            filter(() => this.componentIsActivated)
-        ).subscribe(() => {
-            this.refreshWidgets();
-        });
-
-        /** If component is not activated - wait until it will activate and then reload */
-        selectedCurrencyId$.pipe(
-            filter(() => !this.componentIsActivated)
-        ).subscribe(() => {
-            this.updateAfterActivation = true;
-        });
-
-        /** After selected accounts change */
-        this.bankAccountsService.selectedBankAccountsIds$.subscribe(() => {
-            /** filter all widgets by new data if change is on this component */
-            if (this.componentIsActivated) {
-                this.filterByBankAccounts(this.bankAccountsService.state);
-            /** if change is on another component - mark this for future update */
-            } else {
-                this.updateAfterActivation = true;
-            }
-        });
-
         this.rootComponent.overflowHidden(true);
         this.rootComponent.addScriptLink('https://fast.wistia.com/embed/medias/kqjpmot28u.jsonp');
         this.rootComponent.addScriptLink('https://fast.wistia.com/assets/external/E-v1.js');
     }
 
     ngOnDestroy(): void {
-        this._dashboardService.unsubscribe();
         this.rootComponent.removeScriptLink('https://fast.wistia.com/embed/medias/kqjpmot28u.jsonp');
         this.rootComponent.removeScriptLink('https://fast.wistia.com/assets/external/E-v1.js');
         this.rootComponent.overflowHidden();
     }
 
-    filterByBankAccounts(data) {
-        this.accountsComponent.filterByBankAccounts(data);
-        this.categorizationStatusComponent.filterByBankAccounts(data);
-        this.totalsByPeriodComponent.filterByBankAccounts(data.selectedBankAccountIds);
-        this.trendByPeriodComponent.filterByBankAccounts(data.selectedBankAccountIds);
-    }
-
     refreshWidgets() {
-        this.loadAllWidgetsData();
         /** @todo check requests */
-        this.bankAccountsService.load().subscribe();
+        this.bankAccountsService.load(true, false).subscribe();
     }
 
-    loadAllWidgetsData() {
-        this.accountsComponent.getAccountTotals();
-        this.accountsComponent.getDailyStats();
-        this.totalsByPeriodComponent.loadStatsData();
-        this.trendByPeriodComponent.loadStatsData();
-        this.categorizationStatusComponent.getCategorizationStatus();
-    }
-
-    periodChanged($event) {
-        this._dashboardService.periodChanged($event);
-    }
-
-    private initToolbarConfig() {
-        this.cfoPreferencesService.getCurrenciesAndSelectedIndex()
-            .subscribe(([currencies, selectedCurrencyIndex]) => {
-                this.toolbarConfig = [
-                    {
-                        location: 'before',
-                        locateInMenu: 'auto',
-                        items: [
-                            {
-                                name: 'select-box',
-                                text: '',
-                                widget: 'dxDropDownMenu',
-                                accessKey: 'currencySwitcher',
-                                options: {
-                                    hint: this.l('Currency'),
-                                    accessKey: 'currencySwitcher',
-                                    items: currencies,
-                                    selectedIndex: selectedCurrencyIndex,
-                                    height: 39,
-                                    width: 230,
-                                    onSelectionChanged: (e) => {
-                                        if (e) {
-                                            this.store$.dispatch(new CurrenciesStoreActions.ChangeCurrencyAction(e.itemData.id));
-                                        }
-                                    }
-                                }
-                            }
-                        ]
-                    }
-                ];
-            });
+    periodChanged(period: string) {
+        this._dashboardService.periodChanged(period);
     }
 
     activate() {
         /** Load sync accounts (if something change - subscription in ngOnInit fires) */
         this.bankAccountsService.load();
-
-        this.initToolbarConfig();
-        /** If selected accounts changed in another component - update widgets */
-        if (this.updateAfterActivation) {
-            this.filterByBankAccounts(this.bankAccountsService.state);
-            this.updateAfterActivation = false;
-        }
-
+        this.totalsByPeriodComponent.activate();
+        this.trendByPeriodComponent.activate();
+        this.categorizationStatusComponent.activate();
         this.synchProgressComponent.activate();
+        this.accountsComponent.activate();
         this.rootComponent.overflowHidden(true);
-
-        this.renderWidgets();
     }
 
-    renderWidgets() {
-        setTimeout(() => {
-            this.totalsByPeriodComponent.render();
-            this.trendByPeriodComponent.render();
-        }, 300);
+    openBankAccountsSelectDialog() {
+        this.dialog.open(BankAccountsSelectDialogComponent, {
+            panelClass: 'slider',
+        });
     }
 
     deactivate() {

@@ -1,29 +1,27 @@
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { OnInit, OnDestroy, Injector } from '@angular/core';
-
+import { OnDestroy, Injector } from '@angular/core';
 import { takeUntil } from 'rxjs/operators';
-
-import { InstanceType } from '@shared/service-proxies/service-proxies';
 import { CFOService } from './cfo.service';
-import { AppConsts } from '@shared/AppConsts';
 
-export abstract class CFOComponentBase extends AppComponentBase implements OnInit, OnDestroy {
+export abstract class CFOComponentBase extends AppComponentBase implements OnDestroy {
     instanceId: number;
     instanceType: string;
     get isInstanceAdmin() {
-        return (this.instanceType == InstanceType.User) || !isNaN(parseInt(this.instanceType)) ||
-            (this.instanceType == InstanceType.Main && this.permission.isGranted('Pages.CFO.MainInstanceAdmin'));
+        return this._cfoService.isInstanceAdmin;
+    }
+    get isMemberAccessManage() {
+        return this._cfoService.isMemberAccessManage;
     }
     _cfoService: CFOService;
+    instanceUri: string;
 
     constructor(injector: Injector) {
         super(injector);
-
-        this.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;
-
         this._cfoService = injector.get(CFOService);
 
-        if (this.constructor == this._activatedRoute.component)
+        if (!this._cfoService.hasStaticInstance &&
+            this.constructor == this._activatedRoute.component
+        ) {
             this._activatedRoute.params.pipe(
                 takeUntil(this.destroy$)
             ).subscribe(params => {
@@ -39,22 +37,22 @@ export abstract class CFOComponentBase extends AppComponentBase implements OnIni
                     this._cfoService.instanceType = this.instanceType;
                     this._cfoService.instanceId = this.instanceId;
                     this._cfoService.instanceChangeProcess();
+                    this.updateInstanceUri();
                 }
             });
-        else {
+        } else {
             this.instanceType = this._cfoService.instanceType;
             this.instanceId = this._cfoService.instanceId;
+            this.updateInstanceUri();
         }
     }
 
-    ngOnInit(): void {
+    updateInstanceUri() {
+        this.instanceUri = (/\/app\/([\w,-]+)[\/$]?/.exec(location.pathname) || location.pathname.split('/').filter(Boolean)).shift() +
+            (this._cfoService.hasStaticInstance ? '' : (this.instanceType || '').toLowerCase());
     }
 
-    ngOnDestroy() {
-        super.ngOnDestroy();
-    }
-
-    getODataUrl(uri: String, filter?: Object) {
+    getODataUrl(uri: string, filter?: Object) {
         return super.getODataUrl(uri, filter, {
             instanceType: this.instanceType,
             instanceId: this.instanceId
@@ -66,5 +64,9 @@ export abstract class CFOComponentBase extends AppComponentBase implements OnIni
             instanceType: this.instanceType,
             instanceId: this.instanceId
         });
+    }
+
+    ngOnDestroy() {
+        super.ngOnDestroy();
     }
 }

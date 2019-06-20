@@ -1,14 +1,14 @@
-<app-modal-dialog #modal>
+<modal-dialog [title]="ls.l('AuditLogDetail')">
     <dx-scroll-view showScrollbar="onHover">
         <form #roleForm="ngForm" novalidate>
             <div class="modal-body">
-                <h3 class="form-section">{{l("UserInformations")}}</h3>
+                <h3 class="form-section">{{ls.l("UserInformations")}}</h3>
                 <div class="row">
                     <div class="col-md-12">
 
                         <div class="form-group m-form__group row">
                             <label class="col-lg-3 col-form-label">
-                                {{l("UserName")}}:
+                                {{ls.l("UserName")}}:
                             </label>
                             <div class="col-lg-9">
                                 <span>{{auditLog.userName}}</span>
@@ -17,7 +17,7 @@
 
                         <div class="form-group m-form__group row">
                             <label class="col-lg-3 col-form-label">
-                                {{l("IpAddress")}}:
+                                {{ls.l("IpAddress")}}:
                             </label>
                             <div class="col-lg-9">
                                 <span>{{auditLog.clientIpAddress}}</span>
@@ -26,7 +26,7 @@
 
                         <div class="form-group m-form__group row">
                             <label class="col-lg-3 col-form-label">
-                                {{l("Client")}}:
+                                {{ls.l("Client")}}:
                             </label>
                             <div class="col-lg-9">
                                 <span>{{auditLog.clientName}}</span>
@@ -35,7 +35,7 @@
 
                         <div class="form-group m-form__group row">
                             <label class="col-lg-3 col-form-label">
-                                {{l("Browser")}}:
+                                {{ls.l("Browser")}}:
                             </label>
                             <div class="col-lg-9">
                                 <span>{{auditLog.browserInfo}}</span>
@@ -52,12 +52,12 @@
                     </div>
                 </div>
 
-                <h3 class="form-section">{{l("ActionInformations")}}</h3>
+                <h3 class="form-section">{{ls.l("ActionInformations")}}</h3>
                 <div class="row">
                     <div class="col-md-12">
                         <div class="form-group m-form__group row">
                             <label class="col-lg-3 col-form-label">
-                                {{l("Service")}}:
+                                {{ls.l("Service")}}:
                             </label>
                             <div class="col-lg-9">
                                 <span>{{auditLog.serviceName}}</span>
@@ -67,7 +67,7 @@
                     <div class="col-md-12">
                         <div class="form-group m-form__group row">
                             <label class="col-lg-3 col-form-label">
-                                {{l("Action")}}:
+                                {{ls.l("Action")}}:
                             </label>
                             <div class="col-lg-9">
                                 <span>{{auditLog.methodName}}</span>
@@ -77,7 +77,7 @@
                     <div class="col-md-12">
                         <div class="form-group m-form__group row">
                             <label class="col-lg-3 col-form-label">
-                                {{l("Time")}}:
+                                {{ls.l("Time")}}:
                             </label>
                             <div class="col-lg-9">
                                 <span>{{getExecutionTime()}}</span>
@@ -87,7 +87,7 @@
                     <div class="col-md-12">
                         <div class="form-group m-form__group row">
                             <label class="col-lg-3 col-form-label">
-                                {{l("Duration")}}:
+                                {{ls.l("Duration")}}:
                             </label>
                             <div class="col-lg-9">
                                 <span>{{getDurationAsMs()}}</span>
@@ -95,7 +95,7 @@
                         </div>
                         <div class="form-group m-form__group row">
                             <label class="col-lg-3 col-form-label">
-                                {{l("Parameters")}}:
+                                {{ls.l("Parameters")}}:
                             </label>
                             <div class="col-lg-9 alert m-alert m-alert--default">
                                 <pre lang="js">{{getFormattedParameters()}}</pre>
@@ -104,12 +104,12 @@
                     </div>
                 </div>
 
-                <h3 class="form-section">{{l("CustomData")}}</h3>
+                <h3 class="form-section">{{ls.l("CustomData")}}</h3>
                 <div class="row">
                     <div class="col-md-12">
                         <div class="form-group m-form__group row">
                             <label class="col-lg-3 col-form-label">
-                                {{l("None")}}:
+                                {{ls.l("None")}}:
                             </label>
                             <div *ngIf="auditLog.customData" class="col-lg-9 alert m-alert m-alert--default">
                                 <pre>{{auditLog.customData}}</pre>
@@ -118,12 +118,12 @@
                     </div>
                 </div>
 
-                <h3 class="form-section">{{l("ErrorState")}}</h3>
+                <h3 class="form-section">{{ls.l("ErrorState")}}</h3>
                 <div class="row">
                     <div class="col-md-12">
                         <div class="form-group m-form__group row">
                             <label *ngIf="!auditLog.exception" class="col-lg-12 col-form-label">
-                                <i class="fa fa-check-circle m--font-success"></i> {{l("Success")}}
+                                <i class="fa fa-check-circle m--font-success"></i> {{ls.l("Success")}}
                             </label>
                             <div *ngIf="auditLog.exception" class="col-lg-12 alert m-alert m-alert--default">
                                 <pre>{{auditLog.exception}}</pre>
@@ -134,4 +134,4 @@
             </div>
         </form>
     </dx-scroll-view>
-</app-modal-dialog>
+</modal-dialog>

@@ -1,59 +1,57 @@
-<app-modal-dialog #modal>
+<modal-dialog [title]="title" [buttons]="buttons">
     <dx-scroll-view showScrollbar="onHover">
         <form #roleForm="ngForm" novalidate (ngSubmit)="save()" *ngIf="active">
             <div class="modal-body">
                 <tabset class="tab-container tabbable-line">
-                    <tab heading="{{l('EditionProperties')}}" customClass="m-tabs__item">
+                    <tab heading="{{ls.l('EditionProperties')}}" customClass="m-tabs__item">
                         <div class="form-group">
-                            <label for="EditionDisplayName">{{l("EditionName")}} *</label>
+                            <label for="EditionDisplayName">{{ls.l("EditionName")}} *</label>
                             <input id="EditionDisplayName" #editionNameInput="ngModel" class="form-control" type="text" name="EditionDisplayName" [ngClass]="{'edited':edition.displayName}" [(ngModel)]="edition.displayName" required maxlength="64">
                             <validation-messages [formCtrl]="editionNameInput"></validation-messages>
                         </div>
 
-                        <label>{{l("SubscriptionPrice")}}</label>
+                        <label>{{ls.l("SubscriptionPrice")}}</label>
                         <div class="m-radio-inline">
                             <label for="EditEdition_IsFree" class="m-radio">
                                 <input id="EditEdition_IsFree" name="SubscriptionPrice" [(ngModel)]="isFree" (ngModelChange)="resetPrices()" [value]="true" type="radio">
-                                {{l("Free")}}
                                 <span></span>
+                                {{ls.l("Free")}}
                             </label>
                             <label for="EditEdition_IsPaid" class="m-radio">
                                 <input id="EditEdition_IsPaid" name="SubscriptionPrice" [(ngModel)]="isFree" [value]="false" type="radio">
-                                {{l("Paid")}}
                                 <span></span>
+                                {{ls.l("Paid")}}
                             </label>
                         </div>
                         <div class="row" *ngIf="!isFree">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="MonthlyPrice">{{l("MonthlyPrice")}}</label>
-                                    <input #monthlyPriceInput="ngModel"
-                                           type="text"
-                                           name="MonthlyPrice"
-                                           id="MonthlyPrice"
-                                           currencyInput
-                                           class="form-control"
-                                           autocomplete="off"
-                                           [ngClass]="{'edited':edition.monthlyPrice}"
-                                           [required]="!isFree"
-                                           [(ngModel)]="edition.monthlyPrice" />
-                                    <validation-messages [formCtrl]="monthlyPriceInput"></validation-messages>
+                                    <label for="MonthlyPrice">{{ls.l("MonthlyPrice")}}</label>
+                                    <dx-number-box #monthlyPriceInput
+                                        name="MonthlyPrice"
+                                        placeholder=""
+                                        format="$ #,##0.##"
+                                        [showClearButton]="true"
+                                        [(value)]="edition.monthlyPrice">
+                                        <dx-validator>
+                                            <dxi-validation-rule type="required"></dxi-validation-rule>
+                                        </dx-validator>
+                                    </dx-number-box>                                    
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="AnnualPrice">{{l("AnnualPrice")}}</label>
-                                    <input #annualPriceInput="ngModel"
-                                           type="text"
-                                           name="AnnualPrice"
-                                           id="AnnualPrice"
-                                           currencyInput
-                                           class="form-control"
-                                           autocomplete="off"
-                                           [ngClass]="{'edited':edition.annualPrice}"
-                                           [required]="!isFree"
-                                           [(ngModel)]="edition.annualPrice" />
-                                    <validation-messages [formCtrl]="annualPriceInput"></validation-messages>
+                                    <label for="AnnualPrice">{{ls.l("AnnualPrice")}}</label>
+                                    <dx-number-box #annualPriceInput
+                                        name="AnnualPrice"
+                                        placeholder=""
+                                        format="$ #,##0.##"
+                                        [showClearButton]="true"
+                                        [(value)]="edition.annualPrice">
+                                        <dx-validator>
+                                            <dxi-validation-rule type="required"></dxi-validation-rule>
+                                        </dx-validator>
+                                    </dx-number-box>
                                 </div>
                             </div>
                         </div>
@@ -61,12 +59,12 @@
                             <div class="m-checkbox-list">
                                 <label for="EditEdition_IsTrialActive" class="m-checkbox">
                                     <input id="EditEdition_IsTrialActive" type="checkbox" name="isTrialActive" [(ngModel)]="isTrialActive" />
-                                    {{l("IsTrialActive")}}
+                                    {{ls.l("IsTrialActive")}}
                                     <span></span>
                                 </label>
                             </div>
                             <div class="form-group trial-day-count" *ngIf="isTrialActive">
-                                <label for="TrialDayCount">{{l("TrialDayCount")}}</label>
+                                <label for="TrialDayCount">{{ls.l("TrialDayCount")}}</label>
                                 <input #trialDayCountInput="ngModel"
                                        class="form-control"
                                        type="number"
@@ -80,12 +78,12 @@
                             <div class="m-checkbox-list">
                                 <label for="EditEdition_IsWaitingDayActive" class="m-checkbox">
                                     <input id="EditEdition_IsWaitingDayActive" class="md-check" type="checkbox" name="IsWaitingDayActive" [(ngModel)]="isWaitingDayActive" />
-                                    {{l("WaitAfterSubscriptionExpireDate")}}
+                                    {{ls.l("WaitAfterSubscriptionExpireDate")}}
                                     <span></span>
                                 </label>
                             </div>
                             <div class="form-group waiting-day-after-expire" *ngIf="isWaitingDayActive">
-                                <label for="WaitingDayAfterExpire">{{l("WaitingDayAfterExpire")}}</label>
+                                <label for="WaitingDayAfterExpire">{{ls.l("WaitingDayAfterExpire")}}</label>
                                 <input #waitingDayAfterExpireInput="ngModel"
                                        class="form-control"
                                        type="number"
@@ -96,16 +94,16 @@
                                        [ngClass]="{'edited':edition.waitingDayAfterExpire}">
                                 <validation-messages [formCtrl]="waitingDayAfterExpireInput"></validation-messages>
                             </div>
-                            <label>{{l("WhatWillDoneAfterSubscriptionExpiry")}}</label>
+                            <label>{{ls.l("WhatWillDoneAfterSubscriptionExpiry")}}</label>
                             <div class="m-radio-inline">
                                 <label for="EditEdition_ExpireAction_DeactiveUser" class="m-radio">
                                     <input id="EditEdition_ExpireAction_DeactiveUser" name="ExpireAction" [(ngModel)]="expireAction" [value]="expireActionEnum.DeactiveTenant" (ngModelChange)="removeExpiringEdition()" type="radio">
-                                    {{l("DeactiveTenant")}}
+                                    {{ls.l("DeactiveTenant")}}
                                     <span></span>
                                 </label>
                                 <label for="EditEdition_ExpireAction_AssignEdition" class="m-radio">
                                     <input id="EditEdition_ExpireAction_AssignEdition" name="ExpireAction" [(ngModel)]="expireAction" [value]="expireActionEnum.AssignToAnotherEdition" type="radio">
-                                    {{l("AssignToAnotherEdition")}}
+                                    {{ls.l("AssignToAnotherEdition")}}
                                     <span></span>
                                 </label>
                             </div>
@@ -116,11 +114,11 @@
                             </div>
                         </div>
                     </tab>
-                    <tab heading="{{l('Features')}}" customClass="m-tabs__item">
-                        <feature-tree [editData]="editData" #featureTree></feature-tree>
+                    <tab heading="{{ls.l('Features')}}" customClass="m-tabs__item">
+                        <feature-tree [editData]="editData"></feature-tree>
                     </tab>
                 </tabset>
             </div>
         </form>
     </dx-scroll-view>
-</app-modal-dialog>
+</modal-dialog>

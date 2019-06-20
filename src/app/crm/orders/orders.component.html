@@ -81,22 +81,21 @@
 
     <div [hidden]="!showPipeline" class="portlet light no-padding margin-bottom-0">
         <div class="portlet-body">
-            <div>
-                <div class="funnel-wrapper">
-                    <app-pipeline
-                        [totalsURI]="'OrderCount'"
-                        [dragulaName]="'orderStages'"
-                        [dataSource]="pipelineDataSource"
-                        [selectFields]="['Id', 'ContactId', 'Name', 'CompanyName', 'CreationTime', 'StageId', 'Stage', 'PhotoPublicId']"
-                        [pipelinePurposeId]="pipelinePurposeId"
-                        [filterModelStages]="filterModelStages"
-                        [(selectedEntities)]="selectedOrders"
-                        (onEntityStageChanged)="onOrderStageChanged($event)"
-                        (onStagesLoaded)="onStagesLoaded($event)"
-                        (onCardClick)="onCardClick($event.entity)">
-                        Loading...
-                    </app-pipeline>
-                </div>
+            <div class="funnel-wrapper">
+                <app-pipeline
+                    [totalsURI]="'OrderCount'"
+                    [dragulaName]="'orderStages'"
+                    [dataSource]="pipelineDataSource"
+                    [selectFields]="['Id', 'ContactId', 'Name', 'CompanyName', 'CreationTime', 'StageId', 'Stage', 'PhotoPublicId']"
+                    [pipelinePurposeId]="pipelinePurposeId"
+                    [filterModelStages]="filterModelStages"
+                    [moveDisabled]="manageDisabled"
+                    [(selectedEntities)]="selectedOrders"
+                    (onEntityStageChanged)="onOrderStageChanged($event)"
+                    (onStagesLoaded)="onStagesLoaded($event)"
+                    (onCardClick)="onCardClick($event.entity)">
+                    Loading...
+                </app-pipeline>
             </div>
         </div>
     </div>

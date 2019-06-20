@@ -1,17 +1,17 @@
 <div class="sidebar-filter-links" *ngIf="filters.length">
     <dx-scroll-view [showScrollbar]="onHover">
         <div class="filter-title">
-            <h3>{{ls('Platform', 'Filters')}}</h3>
+            <h3>{{ls.ls('Platform', 'Filters')}}</h3>
             <span class="close" (click)="closeFilters($event)"></span>
             <button class="clear-all" (click)="clearAllFilters()">
-                {{ls('Platform', 'ClearAll')}}
+                {{ls.ls('Platform', 'ClearAll')}}
             </button>
         </div>
         <ul class="filter-links">
             <ng-template ngFor let-filter [ngForOf]="filters" let-i="index">
                 <li class="filter-link" [hidden]="filter.hidden" [ngClass]="{'active-filter':filter.displayElements && filter.displayElements.length}">
                     <a class="filter-link-header" (click)="showFilterDialog($event, filter)">
-                        {{l('FilterBy' + capitalize(filter.caption) + 'Header')}}
+                        {{ls.l('FilterBy' + capitalize(filter.caption) + 'Header')}}
                         <i class="fa fa-angle-right pull-right" aria-hidden="true"></i>
                     </a>
                     <ul class="sub-filter-list">
@@ -40,14 +40,13 @@
 <div class="sidebar-filters" *ngIf="activeFilter">
     <div class="close-details"></div>
     <div class="sidebar-filter-head">
-        {{ls('Platform', 'SideBarFilterHeader')}} {{l('FilterBy' + capitalize(activeFilter.caption) + 'Header')}}
+        {{ls.ls('Platform', 'SideBarFilterHeader')}} {{ls.l('FilterBy' + capitalize(activeFilter.caption) + 'Header')}}
         <button class="button-layout button-primary" (click)="filterApply($event)">
             <i class="fa fa-check" aria-hidden="true"></i>
-            {{ls('Platform', 'Apply')}}
+            {{ls.ls('Platform', 'Apply')}}
         </button>
     </div>
-
-    <dx-scroll-view showScrollbar="onHover">
+    <dx-scroll-view [showScrollbar]="disableFilterScroll ? 'never' : 'onHover'" [disabled]="disableFilterScroll">
         <filter [config]="activeFilter" (onApply)="filterApply($event)"></filter>
     </dx-scroll-view>
 </div>

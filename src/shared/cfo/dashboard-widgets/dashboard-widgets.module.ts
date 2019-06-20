@@ -20,6 +20,7 @@ import { TotalsByPeriodComponent } from './totals-by-period/totals-by-period.com
 import { TrendByPeriodComponent } from './trend-by-period/trend-by-period.component';
 import { DashboardService } from './dashboard.service';
 import { ChooseResetRulesComponent } from './categorization-status/choose-reset-rules/choose-reset-rules.component';
+import { PeriodService } from '@app/shared/common/period/period.service';
 
 @NgModule({
     imports: [
@@ -52,7 +53,11 @@ import { ChooseResetRulesComponent } from './categorization-status/choose-reset-
         TrendByPeriodComponent,
         ChooseResetRulesComponent
     ],
-    providers: [ DashboardService ]
+    providers: [
+        { provide: 'considerSettingsTimezone', useValue: false },
+        PeriodService,
+        DashboardService
+    ]
 })
 export class DashboardWidgetsModule {
 }

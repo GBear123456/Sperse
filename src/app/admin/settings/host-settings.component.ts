@@ -18,7 +18,7 @@ import {
 @Component({
     templateUrl: './host-settings.component.html',
     animations: [appModuleAnimation()],
-    styleUrls: ['./host-settings.component.less'],
+    styleUrls: ['../../shared/common/styles/checkbox-radio.less', './host-settings.component.less'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     providers: [TenantPaymentSettingsServiceProxy]
 })

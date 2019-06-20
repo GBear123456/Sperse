@@ -4,21 +4,20 @@ import {
     ChangeDetectorRef,
     Component,
     OnInit,
-    Injector,
+    Inject,
     ViewChild,
     ViewChildren,
     QueryList
 } from '@angular/core';
-import { AppModalDialogComponent } from '@app/shared/common/dialogs/modal/app-modal-dialog.component';
 
 /** Third party imports */
-import { MatDialog } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
 import { Store, select } from '@ngrx/store';
 import { MaskPipe } from 'ngx-mask';
 import { DxSelectBoxComponent, DxDateBoxComponent, DxValidatorComponent } from '@root/node_modules/devextreme-angular';
 import * as moment from 'moment';
 import { Observable } from 'rxjs';
-import { filter } from 'rxjs/operators';
+import { filter, finalize } from 'rxjs/operators';
 import * as _ from 'underscore';
 
 /** Application imports */
@@ -30,16 +29,20 @@ import { CountryDto, CountryStateDto, OrganizationContactInfoDto, OrganizationCo
 import { UploadPhotoDialogComponent } from '@app/shared/common/upload-photo-dialog/upload-photo-dialog.component';
 import { StringHelper } from '@shared/helpers/StringHelper';
 import { ContactsService } from '@app/crm/contacts/contacts.service';
-import { ConfirmDialogComponent } from '@app/shared/common/dialogs/confirm/confirm-dialog.component';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { NotifyService } from '@abp/notify/notify.service';
+import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
+import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
 
 @Component({
     selector: 'company-dialog',
     templateUrl: './company-dialog.component.html',
-    styleUrls: [ '../../../shared/form.less', './company-dialog.component.less' ],
+    styleUrls: [ '../../../shared/common/styles/form.less', './company-dialog.component.less' ],
     changeDetection: ChangeDetectionStrategy.OnPush,
     providers: [ContactPhotoServiceProxy, MaskPipe]
 })
-export class CompanyDialogComponent extends AppModalDialogComponent implements OnInit {
+export class CompanyDialogComponent implements OnInit {
+    @ViewChild(ModalDialogComponent) modalDialog: ModalDialogComponent;
     @ViewChild(DxDateBoxComponent) calendarComponent: DxDateBoxComponent;
     @ViewChild(DxSelectBoxComponent) companyTypesSelect: DxSelectBoxComponent;
     @ViewChildren(DxValidatorComponent) validators: QueryList<DxValidatorComponent>;
@@ -82,9 +85,23 @@ export class CompanyDialogComponent extends AppModalDialogComponent implements O
     dunsRegex = AppConsts.regexPatterns.duns;
     einRegex = AppConsts.regexPatterns.ein;
     currentDate = new Date();
+    title: string;
+    buttons: IDialogButton[] = [
+        {
+            id: 'saveCompany',
+            title: this.ls.l('Save'),
+            class: 'primary saveButton',
+            action: this.save.bind(this)
+        },
+        {
+            id: 'deleteCompany',
+            title: this.ls.l('Delete'),
+            class: 'button-layout button-default delete-button',
+            action: () => this.delete()
+        }
+    ];
 
     constructor(
-        injector: Injector,
         public dialog: MatDialog,
         private _organizationContactServiceProxy: OrganizationContactServiceProxy,
         private _notesService: NotesServiceProxy,
@@ -92,15 +109,17 @@ export class CompanyDialogComponent extends AppModalDialogComponent implements O
         private store$: Store<RootStore.State>,
         private changeDetectorRef: ChangeDetectorRef,
         private maskPipe: MaskPipe,
-        private clientService: ContactsService
-    ) {
-        super(injector);
-        this.localizationSourceName = AppConsts.localization.CRMLocalizationSourceName;
-    }
+        private contactService: ContactsService,
+        private notifyService: NotifyService,
+        public ls: AppLocalizationService,
+        @Inject(MAT_DIALOG_DATA) private data: any
+    ) {}
 
     ngOnInit() {
+        this.modalDialog.buttons = this.buttons;
+
         const company: OrganizationContactInfoDto = this.data.company;
-        this.data.title = this.company.fullName = company.fullName;
+        this.title = this.company.fullName = company.fullName;
         this.company = { ...this.company, ...company.organization };
         this.company.id = company.id;
         if (this.company.sizeId === null) {
@@ -108,20 +127,7 @@ export class CompanyDialogComponent extends AppModalDialogComponent implements O
             this.company.sizeId = size ? size.id : null;
         }
         this.company.primaryPhoto = company.primaryPhoto;
-        this.data.editTitle = true;
-        this.data.titleClearButton = true;
-        this.data.placeholder = this.l('Customer.CompanyName');
-        this.data.buttons = [{
-            id: 'saveCompany',
-            title: this.l('Save'),
-            class: 'primary saveButton',
-            action: this.save.bind(this)
-        }, {
-            id: 'deleteCompany',
-            title: this.l('Delete'),
-            class: 'button-layout button-default delete-button',
-            action: () => this.delete()
-        }];
+        this.data.placeholder = this.ls.l('Customer.CompanyName');
         this.loadOrganizationTypes();
         this.loadCountries();
         this.loadStates();
@@ -134,7 +140,8 @@ export class CompanyDialogComponent extends AppModalDialogComponent implements O
             return false;
         }
 
-        this.company.companyName = this.company.fullName = this.data.title;
+        this.modalDialog.startLoading();
+        this.company.companyName = this.company.fullName = this.title;
         let input = new UpdateOrganizationInfoInput(this.company);
         input.formedDate = this.company.formedDate ? this.getMomentFromDateWithoutTime(this.company.formedDate) : null;
         let size = _.find(this.companySizes, item => item.id === this.company.sizeId);
@@ -142,37 +149,49 @@ export class CompanyDialogComponent extends AppModalDialogComponent implements O
             input.sizeFrom = size.from;
             input.sizeTo = size.to;
         }
-        this._organizationContactServiceProxy.updateOrganizationInfo(input).subscribe(() => {
-            this.notify.success(this.l('SavedSuccessfully'));
-            this.close(true, {
-                company: this.company
+        this._organizationContactServiceProxy.updateOrganizationInfo(input)
+            .pipe(finalize(() => this.modalDialog.finishLoading()))
+            .subscribe(() => {
+                this.notifyService.success(this.ls.l('SavedSuccessfully'));
+                this.modalDialog.close(true, {
+                    company: this.company
+                });
             });
-        });
         if (this.company.notes) {
+            this.modalDialog.startLoading();
             this._notesService.createNote(CreateNoteInput.fromJS({
                 contactId: this.company.id,
                 text: this.company.notes,
                 noteType: CreateNoteInputNoteType.Note,
-            })).subscribe(
-                () => this.clientService.invalidate('notes')
+            }))
+            .pipe(finalize(() => this.modalDialog.finishLoading()))
+            .subscribe(
+                () => this.contactService.invalidate('notes')
             );
         }
     }
 
     delete() {
-        this.dialog.open(ConfirmDialogComponent, {
-            data: {
-                title: this.l('CompanyRemovalConfirmationTitle'),
-                message: this.l('CompanyRemovalConfirmationMessage', this.company.fullName),
+        abp.message.confirm(this.ls.l('CompanyRemovalConfirmationMessage', 
+            AppConsts.localization.CRMLocalizationSourceName, this.company.fullName), (result) => {
+                if (result) {
+                    let personOrgRelationId = this.data.contactInfo.personContactInfo.orgRelationId;
+                    this._organizationContactServiceProxy.delete(this.company.id, personOrgRelationId).subscribe(() => {
+                        this.dialog.closeAll();
+                        this.notifyService.success(this.ls.l('SuccessfullyRemoved'));
+                        let contactInfo = this.data.contactInfo;
+                        this.contactService.updateLocation(contactInfo.Id, contactInfo['leadId'], 
+                            undefined, contactInfo.personContactInfo.userId);
+                        this.data.invalidate.emit({
+                            contactId: contactInfo.id,
+                            leadId: contactInfo['leadId'],
+                            companyId: undefined,
+                            userId: contactInfo.personContactInfo.userId
+                        });
+                    });
+                }
             }
-        }).afterClosed().subscribe(result => {
-            if (result) {
-                this._organizationContactServiceProxy.delete(this.company.id).subscribe(() => {
-                    this.notify.success(this.l('SuccessfullyRemoved'));
-                    this.close(true);
-                });
-            }
-        });
+        );
     }
 
     private getMomentFromDateWithoutTime(date: any): moment.Moment {

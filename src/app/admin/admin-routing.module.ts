@@ -14,7 +14,6 @@ import { TenantsComponent } from './tenants/tenants.component';
 import { UiCustomizationComponent } from './ui-customization/ui-customization.component';
 import { UsersComponent } from './users/users.component';
 import { JobsComponent } from './jobs/jobs.component';
-import { SystemSettingsComponent } from './settings/system-settings.component';
 
 @NgModule({
     imports: [
@@ -33,7 +32,6 @@ import { SystemSettingsComponent } from './settings/system-settings.component';
                     { path: 'languages/:name/texts', component: LanguageTextsComponent, data: { permission: 'Pages.Administration.Languages.ChangeTexts' } },
                     { path: 'organization-units', component: OrganizationUnitsComponent, data: { permission: 'Pages.Administration.OrganizationUnits' } },
                     { path: 'tenantSettings', component: TenantSettingsComponent, data: { permission: 'Pages.Administration.Tenant.Settings' } },
-                    { path: 'systemSettings', component: SystemSettingsComponent, data: { permission: 'Pages.Administration.Tenant.Settings' } },
                     { path: 'hostDashboard', component: HostDashboardComponent, data: { permission: 'Pages.Administration.Host.Dashboard' } },
                     { path: 'ui-customization', component: UiCustomizationComponent },
                     { path: 'products', component: EditionsComponent, data: { permission: 'Pages.Editions' } },

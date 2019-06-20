@@ -43,7 +43,7 @@ import { FilterRangeComponent } from '@shared/filters/range/filter-range.compone
 import { FilterStatesComponent } from '@shared/filters/states/filter-states.component';
 import { FilterStatesModel } from '@shared/filters/states/filter-states.model';
 import { DataLayoutType } from '@app/shared/layout/data-layout-type';
-import { LeadServiceProxy } from '@shared/service-proxies/service-proxies';
+import { LeadServiceProxy, ContactServiceProxy } from '@shared/service-proxies/service-proxies';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { CreateClientDialogComponent } from '../shared/create-client-dialog/create-client-dialog.component';
 import { PipelineComponent } from '@app/shared/pipeline/pipeline.component';
@@ -58,11 +58,12 @@ import { CustomReuseStrategy } from '@root/root-routing.module';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 import { ItemTypeEnum } from '@shared/common/item-details-layout/item-type.enum';
 import { ItemDetailsService } from '@shared/common/item-details-layout/item-details.service';
+import { ContactsService } from '@app/crm/contacts/contacts.service';
 
 @Component({
     templateUrl: './leads.component.html',
     styleUrls: ['./leads.component.less'],
-    providers: [ LeadServiceProxy, LifecycleSubjectsService, PipelineService ],
+    providers: [ LeadServiceProxy, ContactServiceProxy, LifecycleSubjectsService, PipelineService ],
     animations: [appModuleAnimation()]
 })
 export class LeadsComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy {
@@ -94,7 +95,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         return {
             text: this.l('ContactGroup_' + group),
             value: group,
-            disabled: !this.isGranted(ContactGroupPermission[group])
+            disabled: !this._contactService.checkCGPermission(ContactGroup[group], '')
         };
     });
     selectedContactGroup = Object.keys(ContactGroup).shift();
@@ -131,7 +132,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         },
         buttons: [
             {
-                enabled: true,
+                enabled: this._contactService.checkCGPermission(ContactGroup.Client),
                 action: this.createLead.bind(this),
                 lable: this.l('CreateNewLead')
             }
@@ -142,7 +143,9 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
 
     constructor(injector: Injector,
         public dialog: MatDialog,
-        public leadService: LeadServiceProxy,
+        public contactProxy: ContactServiceProxy,
+        private _contactService: ContactsService,
+        private _leadService: LeadServiceProxy,
         private _pipelineService: PipelineService,
         private _filtersService: FiltersService,
         private _appService: AppService,
@@ -152,7 +155,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         private itemDetailsService: ItemDetailsService,
         private _cacheService: CacheService
     ) {
-        super(injector, AppConsts.localization.CRMLocalizationSourceName);
+        super(injector);
 
         this.contactGroupOptionInit();
         this.dataSource = {
@@ -411,8 +414,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     initToolbarConfig() {
-        this.manageDisabled = !this.isGranted(
-            ContactGroupPermission[this.selectedContactGroup] + '.Manage');
+        this.manageDisabled = !this._contactService.checkCGPermission(this.contactGroupId);
         this.isActivated() && this._appService.updateToolbar([
             {
                 location: 'before', items: [
@@ -467,7 +469,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     {
                         name: 'assign',
                         action: this.toggleUserAssignment.bind(this),
-                        disabled: !this.isGranted(ContactGroupPermission[this.selectedContactGroup] + '.ManageAssignments'),
+                        disabled: !this._contactService.checkCGPermission(this.contactGroupId, 'ManageAssignments'),
                         attr: {
                             'filter-selected': this.filterModelAssignment && this.filterModelAssignment.isSelected
                         }
@@ -482,7 +484,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     },
                     {
                         name: 'lists',
-                        disabled: !this.isGranted(ContactGroupPermission[this.selectedContactGroup] + '.ManageListsAndTags'),
+                        disabled: !this._contactService.checkCGPermission(this.contactGroupId, 'ManageListsAndTags'),
                         action: this.toggleLists.bind(this),
                         attr: {
                             'filter-selected': this.filterModelLists && this.filterModelLists.isSelected
@@ -490,7 +492,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     },
                     {
                         name: 'tags',
-                        disabled: !this.isGranted(ContactGroupPermission[this.selectedContactGroup] + '.ManageListsAndTags'),
+                        disabled: !this._contactService.checkCGPermission(this.contactGroupId, 'ManageListsAndTags'),
                         action: this.toggleTags.bind(this),
                         attr: {
                             'filter-selected': this.filterModelTags && this.filterModelTags.isSelected
@@ -498,7 +500,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     },
                     {
                         name: 'rating',
-                        disabled: !this.isGranted(ContactGroupPermission[this.selectedContactGroup] + '.ManageRatingAndStars'),
+                        disabled: !this._contactService.checkCGPermission(this.contactGroupId, 'ManageRatingAndStars'),
                         action: this.toggleRating.bind(this),
                         attr: {
                             'filter-selected': this.filterModelRating && this.filterModelRating.isSelected
@@ -506,7 +508,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     },
                     {
                         name: 'star',
-                        disabled: !this.isGranted(ContactGroupPermission[this.selectedContactGroup] + '.ManageRatingAndStars'),
+                        disabled: !this._contactService.checkCGPermission(this.contactGroupId, 'ManageRatingAndStars'),
                         action: this.toggleStars.bind(this),
                         attr: {
                             'filter-selected': this.filterModelStar && this.filterModelStar.isSelected
@@ -770,7 +772,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     updateLeadsStage($event) {
-        if (this.permission.isGranted('Pages.CRM.BulkUpdates')) {
+        if (this.isGranted('Pages.CRM.BulkUpdates')) {
             this.stagesComponent.tooltipVisible = false;
             this._pipelineService.updateEntitiesStage(
                 this.pipelinePurposeId,
@@ -848,7 +850,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     private deleteLeadsInternal(selectedIds: number[]) {
-        this.leadService.deleteLeads(selectedIds).subscribe(() => {
+        this._leadService.deleteLeads(selectedIds).subscribe(() => {
             this.refresh();
             this.dataGrid.instance.deselectAll();
             this.notify.success(this.l('SuccessfullyDeleted'));
@@ -870,10 +872,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
 
     activate() {
         super.activate();
-        this.localizationService.localizationSourceName = this.localizationSourceName;
         this.lifeCycleSubjectsService.activate.next();
-        this._filtersService.localizationSourceName =
-            this.localizationSourceName;
 
         this.paramsSubscribe();
         this.initFilterConfig();
@@ -881,15 +880,12 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         this.initToolbarConfig();
         this.rootComponent = this.getRootComponent();
         this.rootComponent.overflowHidden(true);
-
-        this.showHostElement();
+        this.showHostElement(() => 
+            this.pipelineComponent.detectChanges());
     }
 
     deactivate() {
         super.deactivate();
-        this.localizationService.localizationSourceName = undefined;
-        this._filtersService.localizationSourceName =
-            AppConsts.localization.defaultLocalizationSourceName;
 
         this._appService.updateToolbar(null);
         this._filtersService.unsubscribe();

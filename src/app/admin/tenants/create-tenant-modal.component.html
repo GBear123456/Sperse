@@ -1,40 +1,32 @@
-<app-modal-dialog>
+<modal-dialog [title]="title" [buttons]="buttons">
     <dx-scroll-view showScrollbar="onHover">
         <form #tenantCreateForm="ngForm" role="form" novalidate class="form-validation" (submit)="save()">
         <div class="modal-body">
             <tabset class="tab-container tabbable-line">
-                <tab heading="{{l('TenantProperties')}}">
+                <tab heading="{{ls.l('TenantProperties')}}">
                     <div class="form-group">
-                        <label for="TenancyName">{{l("TenancyName")}} *</label>
+                        <label for="TenancyName">{{ls.l("TenancyName")}} *</label>
                         <input id="TenancyName" #tenancyNameInput="ngModel" class="form-control" type="text" [ngClass]="{'edited':tenant.tenancyName}" name="tenancyName" [(ngModel)]="tenant.tenancyName" #tenancyName="ngModel" required maxlength="64" pattern="^[a-zA-Z][a-zA-Z0-9_-]{1,}$">
                         <validation-messages [formCtrl]="tenancyNameInput"></validation-messages>
                     </div>
                     <div>
-                        <span class="help-block text-danger" *ngIf="!tenancyName.valid && !tenancyName.pristine">{{l("TenantName_Regex_Description")}}</span>
+                        <span class="help-block text-danger" *ngIf="!tenancyName.valid && !tenancyName.pristine">{{ls.l("TenantName_Regex_Description")}}</span>
                     </div>
 
                     <div class="form-group">
-                        <label for="Name">{{l("Name")}} *</label>
+                        <label for="Name">{{ls.l("Name")}} *</label>
                         <input id="Name" #nameInput="ngModel" type="text" name="Name" class="form-control" [ngClass]="{'edited':tenant.name}" [(ngModel)]="tenant.name" required maxlength="128">
                         <validation-messages [formCtrl]="nameInput"></validation-messages>
                     </div>
 
                     <div class="form-group">
-                        <label for="AdminEmailAddress">{{l("AdminEmailAddress")}} *</label>
+                        <label for="AdminEmailAddress">{{ls.l("AdminEmailAddress")}} *</label>
                                 <input id="AdminEmailAddress" #adminEmailAddressInput="ngModel" type="email" name="AdminEmailAddress" class="form-control" [(ngModel)]="tenant.adminEmailAddress" [ngClass]="{'edited':tenant.adminEmailAddress}" required [pattern]="emailRegEx" maxlength="256">
-                        <validation-messages [formCtrl]="adminEmailAddressInput" [errorDefs]="[{pattern: l('InvalidEmailAddress')}]"></validation-messages>
+                        <validation-messages [formCtrl]="adminEmailAddressInput" [errorDefs]="[{pattern: ls.l('InvalidEmailAddress')}]"></validation-messages>
                     </div>
-
-                    <div class="m-checkbox-list">
-                        <label class="m-checkbox">
-                            <input id="CreateTenant_SetRandomPassword" type="checkbox" name="SetRandomPassword" [(ngModel)]="setRandomPassword">
-                            {{l("SetRandomPassword")}}
-                            <span></span>
-                        </label>
-                    </div>
-
+                    <dx-check-box [text]="ls.l('SetRandomPassword')" [(value)]="setRandomPassword"></dx-check-box>
                     <div class="form-group" *ngIf="!setRandomPassword">
-                        <label for="AdminPassword">{{l("AdminPassword")}}</label>
+                        <label for="AdminPassword">{{ls.l("AdminPassword")}}</label>
                         <input id="AdminPassword" type="password" name="adminPassword" class="form-control" id="adminPassword"
                                [(ngModel)]="tenant.adminPassword" [ngClass]="{'edited':tenant.adminPassword}" [required]="!setRandomPassword"
                                #adminPassword="ngModel" validateEqual="adminPasswordRepeat" reverse="true" maxlength="32" [requireDigit]="passwordComplexitySetting.requireDigit" [requireLowercase]="passwordComplexitySetting.requireLowercase"
@@ -43,16 +35,16 @@
 
                     <div [hidden]="tenantCreateForm.form.valid || tenantCreateForm.form.pristine">
                         <ul class="help-block text-danger" *ngIf="tenantCreateForm.controls['adminPassword'] && tenantCreateForm.controls['adminPassword'].errors">
-                            <li [hidden]="!tenantCreateForm.controls['adminPassword'].errors.requireDigit">{{l("PasswordComplexity_RequireDigit_Hint")}}</li>
-                            <li [hidden]="!tenantCreateForm.controls['adminPassword'].errors.requireLowercase">{{l("PasswordComplexity_RequireLowercase_Hint")}}</li>
-                            <li [hidden]="!tenantCreateForm.controls['adminPassword'].errors.requireUppercase">{{l("PasswordComplexity_RequireUppercase_Hint")}}</li>
-                            <li [hidden]="!tenantCreateForm.controls['adminPassword'].errors.requireNonAlphanumeric">{{l("PasswordComplexity_RequireNonAlphanumeric_Hint")}}</li>
-                            <li [hidden]="!tenantCreateForm.controls['adminPassword'].errors.requiredLength">{{l("PasswordComplexity_RequiredLength_Hint", passwordComplexitySetting.requiredLength)}}</li>
+                            <li [hidden]="!tenantCreateForm.controls['adminPassword'].errors.requireDigit">{{ls.l("PasswordComplexity_RequireDigit_Hint")}}</li>
+                            <li [hidden]="!tenantCreateForm.controls['adminPassword'].errors.requireLowercase">{{ls.l("PasswordComplexity_RequireLowercase_Hint")}}</li>
+                            <li [hidden]="!tenantCreateForm.controls['adminPassword'].errors.requireUppercase">{{ls.l("PasswordComplexity_RequireUppercase_Hint")}}</li>
+                            <li [hidden]="!tenantCreateForm.controls['adminPassword'].errors.requireNonAlphanumeric">{{ls.l("PasswordComplexity_RequireNonAlphanumeric_Hint")}}</li>
+                            <li [hidden]="!tenantCreateForm.controls['adminPassword'].errors.requiredLength">{{ls.l("PasswordComplexity_RequiredLength_Hint", passwordComplexitySetting.requiredLength)}}</li>
                         </ul>
                     </div>
 
                     <div class="form-group" *ngIf="!setRandomPassword">
-                        <label for="AdminPasswordRepeat">{{l("AdminPasswordRepeat")}}</label>
+                        <label for="AdminPasswordRepeat">{{ls.l("AdminPasswordRepeat")}}</label>
                         <input id="AdminPasswordRepeat" type="password" name="adminPasswordRepeat" class="form-control"
                                [(ngModel)]="tenant.adminPasswordRepeat" [ngClass]="{'edited':tenant.adminPasswordRepeat}" [required]="!setRandomPassword"
                                #adminPasswordRepeat="ngModel" [requireDigit]="passwordComplexitySetting.requireDigit" [requireLowercase]="passwordComplexitySetting.requireLowercase"
@@ -63,67 +55,52 @@
 
                     <div [hidden]="tenantCreateForm.form.valid || tenantCreateForm.form.pristine">
                         <ul class="help-block text-danger" *ngIf="tenantCreateForm.controls['adminPasswordRepeat'] && tenantCreateForm.controls['adminPasswordRepeat'].errors">
-                            <li [hidden]="!tenantCreateForm.controls['adminPasswordRepeat'].errors.requireDigit">{{l("PasswordComplexity_RequireDigit_Hint")}}</li>
-                            <li [hidden]="!tenantCreateForm.controls['adminPasswordRepeat'].errors.requireLowercase">{{l("PasswordComplexity_RequireLowercase_Hint")}}</li>
-                            <li [hidden]="!tenantCreateForm.controls['adminPasswordRepeat'].errors.requireUppercase">{{l("PasswordComplexity_RequireUppercase_Hint")}}</li>
-                            <li [hidden]="!tenantCreateForm.controls['adminPasswordRepeat'].errors.requireNonAlphanumeric">{{l("PasswordComplexity_RequireNonAlphanumeric_Hint")}}</li>
-                            <li [hidden]="!tenantCreateForm.controls['adminPasswordRepeat'].errors.requiredLength">{{l("PasswordComplexity_RequiredLength_Hint", passwordComplexitySetting.requiredLength)}}</li>
-                            <li [hidden]="tenantCreateForm.controls['adminPasswordRepeat'].valid">{{l("PasswordsDontMatch")}}</li>
+                            <li [hidden]="!tenantCreateForm.controls['adminPasswordRepeat'].errors.requireDigit">{{ls.l("PasswordComplexity_RequireDigit_Hint")}}</li>
+                            <li [hidden]="!tenantCreateForm.controls['adminPasswordRepeat'].errors.requireLowercase">{{ls.l("PasswordComplexity_RequireLowercase_Hint")}}</li>
+                            <li [hidden]="!tenantCreateForm.controls['adminPasswordRepeat'].errors.requireUppercase">{{ls.l("PasswordComplexity_RequireUppercase_Hint")}}</li>
+                            <li [hidden]="!tenantCreateForm.controls['adminPasswordRepeat'].errors.requireNonAlphanumeric">{{ls.l("PasswordComplexity_RequireNonAlphanumeric_Hint")}}</li>
+                            <li [hidden]="!tenantCreateForm.controls['adminPasswordRepeat'].errors.requiredLength">{{ls.l("PasswordComplexity_RequiredLength_Hint", passwordComplexitySetting.requiredLength)}}</li>
+                            <li [hidden]="tenantCreateForm.controls['adminPasswordRepeat'].valid">{{ls.l("PasswordsDontMatch")}}</li>
                         </ul>
                     </div>
 
                     <modules-editions-select *ngIf="(editionsGroups$ | async) as editionsGroups" [editionsGroups]="editionsGroups" [(editionsModels)]="editionsModels"></modules-editions-select>
-
-                    <div class="m-checkbox-list">
-                        <label for="CreateTenant_ShouldChangePasswordOnNextLogin" class="m-checkbox">
-                            <input id="CreateTenant_ShouldChangePasswordOnNextLogin" type="checkbox" name="ShouldChangePasswordOnNextLogin" [(ngModel)]="tenant.shouldChangePasswordOnNextLogin">
-                            {{l("ShouldChangePasswordOnNextLogin")}}
-                            <span></span>
-                        </label>
-                        <label for="CreateTenant_SendActivationEmail" class="m-checkbox">
-                            <input id="CreateTenant_SendActivationEmail" type="checkbox" name="SendActivationEmail" [(ngModel)]="tenant.sendActivationEmail">
-                            {{l("SendActivationEmail")}}
-                            <span></span>
-                        </label>
-                        <label for="CreateTenant_IsActive" class="m-checkbox">
-                            <input id="CreateTenant_IsActive" type="checkbox" name="IsActive" [(ngModel)]="tenant.isActive">
-                            {{l("Active")}}
-                            <span></span>
-                        </label>
-                    </div>
+                    <dx-check-box [text]="ls.l('ShouldChangePasswordOnNextLogin')" [(value)]="tenant.shouldChangePasswordOnNextLogin"></dx-check-box>
+                    <dx-check-box [text]="ls.l('SendActivationEmail')" [(value)]="tenant.sendActivationEmail"></dx-check-box>
+                    <dx-check-box [text]="ls.l('Active')" [(value)]="tenant.isActive"></dx-check-box>
                 </tab>
-                <tab heading="{{l('TenantDatabases')}}">
+                <tab heading="{{ls.l('TenantDatabases')}}">
                     <div class="form-group form-md-line-input form-md-floating-label no-hint">
-                        <label>{{l("Platform")}}</label>
+                        <label>{{ls.l("Platform")}}</label>
                     </div>
                     <div class="form-group form-md-line-input form-md-floating-label no-hint">
                         <input type="text" name="ConnectionString" class="form-control" [(ngModel)]="tenant.connectionString" [ngClass]="{'edited':tenant.connectionString}" maxlength="1024">
-                        <label>{{l("DatabaseConnectionString")}}</label>
+                        <label>{{ls.l("DatabaseConnectionString")}}</label>
                     </div>
                     <div class="form-group form-md-line-input form-md-floating-label no-hint">
-                        <label>{{ls("CRM", "CRM")}}</label>
+                        <label>{{ls.l("CRM", "CRM")}}</label>
                     </div>
                     <div class="form-group form-md-line-input form-md-floating-label no-hint">
                         <input type="text" name="CRMConnectionString" class="form-control" [(ngModel)]="tenant.crmConnectionString" [ngClass]="{'edited':tenant.crmConnectionString}" maxlength="1024">
-                        <label>{{l("DatabaseConnectionString")}}</label>
+                        <label>{{ls.l("DatabaseConnectionString")}}</label>
                     </div>
                     <div class="form-group form-md-line-input form-md-floating-label no-hint">
-                        <label>{{ls("CFO", "CFO")}}</label>
+                        <label>{{ls.l("CFO", "CFO")}}</label>
                     </div>
                     <div class="form-group form-md-line-input form-md-floating-label no-hint">
                         <input type="text" name="CFODbConnectionString" class="form-control" [(ngModel)]="tenant.cfoConnectionString" [ngClass]="{'edited':tenant.cfoConnectionString}" maxlength="1024">
-                        <label>{{l("DatabaseConnectionString")}}</label>
+                        <label>{{ls.l("DatabaseConnectionString")}}</label>
                     </div>
                     <div class="form-group form-md-line-input form-md-floating-label no-hint">
-                        <label>{{ls("PFM", "PFM")}}</label>
+                        <label>{{ls.l("PFM", "PFM")}}</label>
                     </div>
                     <div class="form-group form-md-line-input form-md-floating-label no-hint">
                         <input type="text" name="MemberDbConnectionString" class="form-control" [(ngModel)]="tenant.memberDbConnectionString" [ngClass]="{'edited':tenant.memberDbConnectionString}" maxlength="1024">
-                        <label>{{l("DatabaseConnectionString")}}</label>
+                        <label>{{ls.l("DatabaseConnectionString")}}</label>
                     </div>
                 </tab>
             </tabset>
         </div>
     </form>
     </dx-scroll-view>
-</app-modal-dialog>
+</modal-dialog>

@@ -3,7 +3,7 @@ import capitalize from 'underscore.string/capitalize';
 
 export class FilterItemModel {
     protected _value: any = '';
-
+    disableOuterScroll: boolean;
     public constructor(value?: any) {
         if (value) this.value = value;
     }
@@ -50,6 +50,5 @@ export class DisplayElement {
     parentCode?: any;
     sortField?: any;
     readonly?: boolean;
-
     args?: any;
 }

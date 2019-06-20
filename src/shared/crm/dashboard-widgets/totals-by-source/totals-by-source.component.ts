@@ -1,22 +1,40 @@
-import { AfterViewInit, Component, Injector, ViewChild } from '@angular/core';
-import { AppComponentBase } from '@shared/common/app-component-base';
+/** Core imports */
+import {
+    ChangeDetectionStrategy,
+    ChangeDetectorRef,
+    Component,
+    ElementRef,
+    OnDestroy,
+    OnInit,
+    ViewChild
+} from '@angular/core';
+
+/** Third party imports */
+import { DxPieChartComponent } from 'devextreme-angular/ui/pie-chart';
+import { Observable, combineLatest } from 'rxjs';
+import { finalize, publishReplay, refCount, switchMap, tap, map, takeUntil } from 'rxjs/operators';
+
+/** Application imports */
 import { DashboardServiceProxy } from 'shared/service-proxies/service-proxies';
 import { DashboardWidgetsService } from '../dashboard-widgets.service';
-import { DxPieChartComponent } from 'devextreme-angular/ui/pie-chart';
-import { AppConsts } from '@shared/AppConsts';
-import { finalize } from 'rxjs/operators';
+import { LoadingService } from '@shared/common/loading-service/loading.service';
+import { PeriodModel } from '@app/shared/common/period/period.model';
+import { GetCustomersByCompanySizeOutput } from '@shared/service-proxies/service-proxies';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 
 @Component({
     selector: 'totals-by-source',
     templateUrl: './totals-by-source.component.html',
     styleUrls: ['./totals-by-source.component.less'],
-    providers: []
+    providers: [ LifecycleSubjectsService ],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class TotalsBySourceComponent extends AppComponentBase implements AfterViewInit {
+export class TotalsBySourceComponent implements OnInit, OnDestroy {
     @ViewChild(DxPieChartComponent) chartComponent: DxPieChartComponent;
-    totalsData: any;
-    totalCount = 0;
-
+    customersByCompanySize$: Observable<GetCustomersByCompanySizeOutput[]>;
+    totalCustomersCount$: Observable<number>;
+    totalCustomersCount: number;
     rangeColors = [
         '#00aeef',
         '#8487e7',
@@ -30,37 +48,51 @@ export class TotalsBySourceComponent extends AppComponentBase implements AfterVi
     rangeName: string;
     rangeColor: string;
     totalNumbersTop: string;
-    renderInterval;
     constructor(
-        injector: Injector,
         private _dashboardWidgetsService: DashboardWidgetsService,
-        private _dashboardServiceProxy: DashboardServiceProxy
-    ) {
-        super(injector, AppConsts.localization.CRMLocalizationSourceName);
+        private _dashboardServiceProxy: DashboardServiceProxy,
+        private _elementRef: ElementRef,
+        private _loadingService: LoadingService,
+        private _lifeCycleService: LifecycleSubjectsService,
+        private _changeDetectorRef: ChangeDetectorRef,
+        public ls: AppLocalizationService
+    ) {}
 
-        _dashboardWidgetsService.subscribePeriodChange((period) => {
-            this.startLoading();
-            _dashboardServiceProxy.getCustomersByCompanySize(
-                period && period.from, period && period.to)
-                    .pipe(finalize(() => { this.finishLoading(); })).subscribe((result) => {
-                        this.totalCount = 0;
-                        this.totalsData = result.sort((a, b) => {
-                            return (parseInt(a.companySizeRange) || Infinity) >
-                                (parseInt(b.companySizeRange) || Infinity) ? 1 : -1;
-                        });
-                        this.totalsData.forEach((item) => {
-                            if (!item.companySizeRange)
-                                item.companySizeRange = 'Unknown';
-                            this.totalCount += item.customerCount;
-                        });
-                        setTimeout(() => { this.render(); }, 300);
-                    }
-            );
+    ngOnInit() {
+        this.customersByCompanySize$ = combineLatest(
+            this._dashboardWidgetsService.period$,
+            this._dashboardWidgetsService.refresh$
+        ).pipe(
+            takeUntil(this._lifeCycleService.destroy$),
+            tap(() => this._loadingService.startLoading(this._elementRef.nativeElement)),
+            switchMap(([period]: [PeriodModel]) => this._dashboardServiceProxy.getCustomersByCompanySize(period && period.from, period && period.to).pipe(finalize(() => this._loadingService.finishLoading(this._elementRef.nativeElement)))),
+            map((customersByCompanySize: GetCustomersByCompanySizeOutput[]) => {
+                return customersByCompanySize
+                    .sort(this.sortCustomers)
+                    .map((customer: GetCustomersByCompanySizeOutput) => {
+                        if (!customer.companySizeRange)
+                            customer.companySizeRange = 'Unknown';
+                        return customer;
+                    });
+            }),
+            publishReplay(),
+            refCount()
+        );
+
+        this.totalCustomersCount$ = this.customersByCompanySize$.pipe(
+            map((customersByCompanySize: GetCustomersByCompanySizeOutput[]) => {
+                return customersByCompanySize
+                    .reduce((total: number, customer: GetCustomersByCompanySizeOutput) => total + customer.customerCount, 0);
+            })
+        );
+        this.totalCustomersCount$.subscribe((totalCustomersCount: number) => {
+            this.totalCustomersCount = totalCustomersCount;
+            this._changeDetectorRef.detectChanges();
         });
     }
 
-    ngAfterViewInit() {
-        this.render();
+    sortCustomers = (a, b) => {
+        return (parseInt(a.companySizeRange) || Infinity) > (parseInt(b.companySizeRange) || Infinity) ? 1 : -1;
     }
 
     customizePoint = (data) => {
@@ -72,18 +104,10 @@ export class TotalsBySourceComponent extends AppComponentBase implements AfterVi
     onPointHoverChanged($event) {
         let isHoverIn = $event.target.fullState, item = $event.target;
         this.percentage = isHoverIn ? (item.percent * 100).toFixed(1) + '%' : '';
-        this.rangeCount = (isHoverIn ? item.initialValue : this.totalCount).toLocaleString('en');
+        this.rangeCount = (isHoverIn ? item.initialValue : this.totalCustomersCount).toLocaleString('en');
         this.rangeColor = isHoverIn ? this.rangeColors[item.index] : undefined;
         this.rangeName = item.argument;
-    }
-
-    render() {
-        this.renderInterval = setInterval(() => {
-            if (this.chartComponent) {
-                this.chartComponent.instance.render();
-                clearInterval(this.renderInterval);
-            }
-        }, 100);
+        this._changeDetectorRef.detectChanges();
     }
 
     onDrawn(e) {
@@ -91,10 +115,15 @@ export class TotalsBySourceComponent extends AppComponentBase implements AfterVi
     }
 
     private updatePieChartTopPositions(e) {
-        const componentTop = this.getElementRef().nativeElement.getBoundingClientRect().top;
+        const componentTop = this._elementRef.nativeElement.getBoundingClientRect().top;
         const circleBoundingRect = e.component.getAllSeries()[0]._group.element.getBoundingClientRect();
         const circleTop = circleBoundingRect.top;
-        const circleCenterY = (circleTop - componentTop) + circleBoundingRect.height / 2;
+        const circleCenterY = circleTop - componentTop + circleBoundingRect.height / 2;
         this.totalNumbersTop = circleCenterY - 55 + 'px';
+        this._changeDetectorRef.detectChanges();
+    }
+
+    ngOnDestroy() {
+        this._lifeCycleService.destroy.next();
     }
 }

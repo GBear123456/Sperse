@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, OnInit, Injector, Input } from '@angular/core';
+import { Component, Injector, Input } from '@angular/core';
 
 /** Third party imports  */
 import { MatDialog } from '@angular/material/dialog';
@@ -25,10 +25,18 @@ import { PersonOrgRelationType } from '@root/shared/AppEnums';
     styleUrls: ['./contacts-area.component.less'],
     providers: [ DialogService ]
 })
-export class ContactsAreaComponent extends AppComponentBase implements OnInit {
+export class ContactsAreaComponent extends AppComponentBase {
     @Input() isCompany = false;
     @Input() showContactType: string;
-    @Input() contactInfo: ContactInfoDto;
+    @Input() 
+    set contactInfo(val: ContactInfoDto) {
+        if (this._contactInfo = val)
+            this.isEditAllowed = this._contactsService.checkCGPermission(this.contactInfo.groupId);
+    }
+    get contactInfo(): ContactInfoDto {
+        return this._contactInfo;    
+    }
+        
     @Input() contactInfoData: ContactInfoDetailsDto;
 
     isEditAllowed = false;
@@ -36,8 +44,9 @@ export class ContactsAreaComponent extends AppComponentBase implements OnInit {
     private _clickTimeout;
     private _clickCounter = 0;
     private _isInPlaceEditAllowed = true;
+    private _contactInfo: ContactInfoDto;
     private _itemInEditMode: any;
-    
+
     emailRegEx = AppConsts.regexPatterns.email;
 
     constructor(injector: Injector,
@@ -49,8 +58,7 @@ export class ContactsAreaComponent extends AppComponentBase implements OnInit {
                 private _organizationContactService: OrganizationContactServiceProxy,
                 private dialogService: DialogService
     ) {
-        super(injector, AppConsts.localization.CRMLocalizationSourceName);
-        this.isEditAllowed = this.isGranted('Pages.CRM.Customers.Manage');
+        super(injector);
     }
 
     getDialogPossition(event) {
@@ -93,6 +101,7 @@ export class ContactsAreaComponent extends AppComponentBase implements OnInit {
             id: data && data.id,
             value: data && data[field],
             name: this.getFieldName(field),
+            groupId: this.contactInfo.groupId,
             contactId: data && data.contactId
                 || this.contactInfoData && this.contactInfoData.contactId,
             emailAddress: data && data.emailAddress,
@@ -276,8 +285,5 @@ export class ContactsAreaComponent extends AppComponentBase implements OnInit {
             }
         });
         event.stopPropagation();
-    }
-
-    ngOnInit() {
     }
 }

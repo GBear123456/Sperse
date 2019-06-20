@@ -1,48 +1,53 @@
 <app-headline [config]="headlineConfig">
     <import-progress-bar></import-progress-bar>
-    <app-period (onChange)="periodChanged($event)" [selectedPeriod]="l('This_Month')"></app-period>
+    <app-period (onChange)="periodChanged($event)"></app-period>
 </app-headline>
 <div [@routerTransition]>
   <left-menu (openIntro)="openDialog()" [class.hidden]="leftMenuHidden" (openPaymentWizard)="openPaymentWizardDialog()"></left-menu>
   <div class="widgets-wrapper">
       <div class="col-lg-6 col-xs-12 col-sm-12 wrapper">
           <!-- BEGIN PORTLET-->
-          <div *ngIf="dataEmpty == true" class="dashboard-stub">
-              <div>
-                  <img class="logo-crm" alt="CRM Logo" src="./assets/common/icons/cfo.png" />
-                  <span class="sperse-crm big-gray-text">{{l('CRM')}}</span>
-              </div>
-              <p class="second-line big-gray-text">{{l('CRM_Long')}}</p>
-              <p class="welcome-crm">{{l('CRMDashboard_WelcomeText')}}</p>
-              <p class="text-crm">{{l('CRMDashboard_StartText')}}</p>
-              <p class="manage-crm">{{l('CRMDashboard_ManageText')}} <a [routerLink]="['/app/crm/leads']">{{l('Leads')}}</a>, <a [routerLink]="['/app/crm/clients']">{{l('Clients')}}</a> and <a [routerLink]="['/app/crm/orders']">{{l('Orders')}}</a></p>
-              <!-- p class="last-line"><a [routerLink]="['/app/crm/clients']">{{l('CRMDashboard_AddContact')}}</a> | {{l('CRMDashboard_ImportContact')}}</p -->
-              <button (click)="addClient()" class="btn btn-layout add-client">{{ l('CRMDashboard_AddClient') }}</button>
-          </div>
-
-          <dx-scroll-view showScrollbar="onHover" [ngStyle]="{display: dataEmpty == false ? 'block': 'none'}">
-              <div class="dashboard-widgets">
-                  <counts-and-totals (onDataLoaded)="checkDataEmpty($event)"></counts-and-totals>
-                  <div class="analytics-wrap row" *ngIf="dataEmpty == false">
-                      <div class="left-side col-xl-4">
-                          <new-items-totals></new-items-totals>
+          <ng-container *ngIf="totalsData$ | async; else loading">
+              <dx-scroll-view *ngIf="dataAvailable$ | async; else start" showScrollbar="onHover">
+                  <div class="dashboard-widgets">
+                      <counts-and-totals></counts-and-totals>
+                      <div class="analytics-wrap row">
+                          <div class="left-side col-xl-4">
+                              <new-items-totals></new-items-totals>
+                          </div>
+                          <div class="right-side col-xl-8">
+                              <totals-by-period></totals-by-period>
+                          </div>
                       </div>
-                      <div class="right-side col-xl-8">
-                          <totals-by-period></totals-by-period>
+                      <div class="analytics-wrap row">
+                          <div class="left-side col-lg-6 col-xl-4">
+                              <totals-by-source></totals-by-source>
+                          </div>
+                          <div class="right-side col-lg-6 col-xl-8">
+                              <recent-clients></recent-clients>
+                          </div>
                       </div>
+                      <clients-by-region></clients-by-region>
                   </div>
-
-                  <div class="analytics-wrap row">
-                      <div class="left-side col-lg-6 col-xl-4" *ngIf="dataEmpty == false">
-                          <totals-by-source></totals-by-source>
+              </dx-scroll-view>
+              <ng-template #start>
+                  <div class="dashboard-stub" >
+                      <div>
+                          <img class="logo-crm" alt="CRM Logo" src="./assets/common/icons/cfo.png" />
+                          <span class="sperse-crm big-gray-text">{{l('CRM')}}</span>
                       </div>
-                      <div class="right-side col-lg-6 col-xl-8">
-                          <recent-clients (onReady)="checkDataEmpty($event)"></recent-clients>
-                      </div>
+                      <p class="second-line big-gray-text">{{l('CRM_Long')}}</p>
+                      <p class="welcome-crm">{{l('CRMDashboard_WelcomeText')}}</p>
+                      <p class="text-crm">{{l('CRMDashboard_StartText')}}</p>
+                      <p class="manage-crm">{{l('CRMDashboard_ManageText')}} <a [routerLink]="['/app/crm/leads']">{{l('Leads')}}</a>, <a [routerLink]="['/app/crm/clients']">{{l('Clients')}}</a> and <a [routerLink]="['/app/crm/orders']">{{l('Orders')}}</a></p>
+                      <!-- p class="last-line"><a [routerLink]="['/app/crm/clients']">{{l('CRMDashboard_AddContact')}}</a> | {{l('CRMDashboard_ImportContact')}}</p -->
+                      <button (click)="addClient()" class="btn btn-layout add-client">{{ l('CRMDashboard_AddClient') }}</button>
                   </div>
-                  <clients-by-region></clients-by-region>
-              </div>
-          </dx-scroll-view>
+              </ng-template>
+          </ng-container>
+          <ng-template #loading>
+              <loading-spinner></loading-spinner>
+          </ng-template>
           <!-- END PORTLET-->
       </div>
   </div>

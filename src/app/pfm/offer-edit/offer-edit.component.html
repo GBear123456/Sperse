@@ -10,6 +10,15 @@
                     </inplace-edit>
                 </ng-container>
             </ng-container>
+            <div class="filters">
+                <dx-select-box
+                    name="years"
+                    width="100"
+                    [dataSource]="years"
+                    [(value)]="selectedYear"
+                    [visible]="checkSection('stats') | async">
+                </dx-select-box>
+            </div>
             <div class="buttons">
                 <button class="button-layout button-primary" *ngIf="sentAnnouncementPermissionGranted" (click)="onNotify()">{{ ls.l('Notify') }}</button>
                 <button class="button-layout button-primary" [disabled]="offerIsUpdating" type="submit" (click)="onSubmit()">{{ ls.l('Save') }}</button>
@@ -24,7 +33,7 @@
         </header>
     </ng-container>
     <ng-container mainContent>
-        <form class="offerEditForm">
+        <form class="offerEditForm" (submit)="$event.preventDefault()">
 
             <ng-container [ngSwitch]="section$ | async" *ngIf="model">
 
@@ -190,11 +199,10 @@
                                        [(value)]="model.extendedInfo.states">
                             </tag-field>
 
-                            <dropdown-field name="creditScores"
-                                            [(value)]="model.creditScores"
-                                            [readOnly]="true"
-                                            [dataSource]="getEnumDataSource(creditScoresEnum)">
-                            </dropdown-field>
+                            <text-field name="creditScores"
+                                        [readOnly]="true"
+                                        [value]="creditScoresString">
+                            </text-field>
 
                             <from-to-field fromName="minAnnualIncome"
                                            toName="maxAnnualIncome"
@@ -302,6 +310,14 @@
                             </checkbox-field>
                         </div>
                     </div>
+                </div>
+
+                <div *ngSwitchCase="'stats'">
+                    <pfm-click-stats [campaignId]="model.campaignId" [year]="selectedYear" [refresh$]="refresh$"></pfm-click-stats>
+                </div>
+
+                <div *ngSwitchCase="'visitors'">
+                    <pfm-offer-visitors [campaignId]="model.campaignId"></pfm-offer-visitors>
                 </div>
 
             </ng-container>

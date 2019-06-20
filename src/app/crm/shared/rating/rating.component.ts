@@ -48,7 +48,7 @@ export class RatingComponent extends AppComponentBase implements OnInit, AfterVi
         private _ratingService: ContactRatingsServiceProxy,
         private store$: Store<AppStore.State>
     ) {
-        super(injector, AppConsts.localization.CRMLocalizationSourceName);
+        super(injector);
     }
 
     toggle() {

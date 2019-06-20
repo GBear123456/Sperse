@@ -1,8 +1,16 @@
 /** Core imports */
-import { Component, OnInit, AfterViewInit, ViewChild, Injector, OnDestroy } from '@angular/core';
+import {
+    Component,
+    ChangeDetectionStrategy,
+    OnInit,
+    ViewChild,
+    Inject,
+    OnDestroy,
+    ChangeDetectorRef
+} from '@angular/core';
 
 /** Third party imports */
-import { MatDialog } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Store, select } from '@ngrx/store';
 import { DxContextMenuComponent } from 'devextreme-angular/ui/context-menu';
 import { CacheService } from 'ng2-cache-service';
@@ -15,6 +23,7 @@ import { NameParserService } from '@app/crm/shared/name-parser/name-parser.servi
 import { CountriesStoreActions, CountriesStoreSelectors } from '@app/store';
 import { RootStore, StatesStoreActions, StatesStoreSelectors } from '@root/store';
 import {
+    ContactAssignedUsersStoreSelectors,
     AddressUsageTypesStoreActions,
     AddressUsageTypesStoreSelectors,
     EmailUsageTypesStoreActions,
@@ -34,7 +43,6 @@ import {
     ContactPhoneServiceProxy, SimilarContactOutput, ContactPhotoInput, OrganizationContactServiceProxy,
     PersonInfoDto, LeadServiceProxy, CreateLeadInput, CreateContactLinkInput
 } from '@shared/service-proxies/service-proxies';
-import { AppModalDialogComponent } from '@app/shared/common/dialogs/modal/app-modal-dialog.component';
 import { UploadPhotoDialogComponent } from '@app/shared/common/upload-photo-dialog/upload-photo-dialog.component';
 import { SimilarCustomersDialogComponent } from '../similar-customers-dialog/similar-customers-dialog.component';
 import { StaticListComponent } from '@app/shared/common/static-list/static-list.component';
@@ -45,14 +53,27 @@ import { TypesListComponent } from '../types-list/types-list.component';
 import { UserAssignmentComponent } from '../user-assignment-list/user-assignment-list.component';
 import { ValidationHelper } from '@shared/helpers/ValidationHelper';
 import { StringHelper } from '@shared/helpers/StringHelper';
-
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { NotifyService } from '@abp/notify/notify.service';
+import { Router } from '@angular/router';
+import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
+import { CacheHelper } from '@shared/common/cache-helper/cache-helper';
+import { MessageService } from '@abp/message/message.service';
+import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
+import { ToolbarService } from '@app/shared/common/toolbar/toolbar.service';
 
 @Component({
     templateUrl: 'create-client-dialog.component.html',
-    styleUrls: [ '../../../shared/form.less', 'create-client-dialog.component.less' ],
-    providers: [ContactServiceProxy, ContactPhotoServiceProxy, DialogService, LeadServiceProxy ]
+    styleUrls: [
+        '../../../shared/common/styles/form.less',
+        '../../../shared/common/toolbar/toolbar.component.less',
+        'create-client-dialog.component.less'
+    ],
+    providers: [ CacheHelper, ContactServiceProxy, ContactPhotoServiceProxy, DialogService, LeadServiceProxy, ToolbarService ],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class CreateClientDialogComponent extends AppModalDialogComponent implements OnInit, OnDestroy, AfterViewInit {
+export class CreateClientDialogComponent implements OnInit, OnDestroy {
+    @ViewChild(ModalDialogComponent) modalDialog: ModalDialogComponent;
     @ViewChild('stagesList') stagesComponent: StaticListComponent;
     @ViewChild(RatingComponent) ratingComponent: RatingComponent;
     @ViewChild(TagsListComponent) tagsComponent: TagsListComponent;
@@ -77,76 +98,72 @@ export class CreateClientDialogComponent extends AppModalDialogComponent impleme
     stageId: number;
     defaultStageSortOrder = 0;
     partnerTypes: any[] = [];
-
     saveButtonId = 'saveClientOptions';
     saveContextMenuItems = [];
-
     masks = AppConsts.masks;
-    phoneRegEx = AppConsts.regexPatterns.phone;
     emailRegEx = AppConsts.regexPatterns.email;
     urlRegEx = AppConsts.regexPatterns.url;
-    fullNameRegEx = AppConsts.regexPatterns.fullName;
-
     companies = [];
     company: string;
-    title: string;
     notes = '';
-
-    addressValidators: any = [];
     emailValidators: any = [];
     phoneValidators: any = [];
     linkValidators: any = [];
-
     emailsTypeDefault = 'P';
     phonesTypeDefault = 'M';
     linksTypeDefault = '-';
     addressesTypeDefault = 'W';
-
     addressTypes: any = [];
     phoneTypes: any = [];
     emailTypes: any = [];
     linkTypes: any = [];
     states: any = [];
     countries: any;
-
     googleAutoComplete: boolean;
     photoOriginalData: string;
     photoThumbnailData: string;
     photoSourceData: string;
-
     addButtonVisible = {
         emails: false,
         phones: false,
         links: false,
         addresses: false
     };
-
     contacts: any = {
         emails: [{type: this.emailsTypeDefault}],
         phones: [{type: this.phonesTypeDefault}],
         links: [{type: this.linksTypeDefault}],
         addresses: [{type: this.addressesTypeDefault}]
     };
-
     similarCustomers: SimilarContactOutput[] = [];
     similarCustomersDialog: any;
     toolbarConfig = [];
+    title = '';
+    jobTitle: string;
+    isTitleValid = true;
+    buttons: IDialogButton[] = [
+        {
+            id: this.saveButtonId,
+            title: this.ls.l('Save'),
+            class: 'primary menu',
+            action: this.save.bind(this)
+        }
+    ];
+    contactGroups = ContactGroup;
 
-    private namePattern = AppConsts.regexPatterns.name;
-    private validationError: string;
-    private isUserSelected = true;
-    private isPartnerTypeSelected = false;
-    private isStageSelected = true;
-    private isStatusSelected = false;
-    private isListsSelected = false;
-    private isTagsSelected = false;
-    private isRatingSelected = true;
+    isUserSelected = true;
+    isPartnerTypeSelected = false;
+    isStageSelected = true;
+    isStatusSelected = false;
+    isListsSelected = false;
+    isTagsSelected = false;
+    isRatingSelected = true;
 
     constructor(
-        injector: Injector,
         public dialog: MatDialog,
+        public contactService: ContactServiceProxy,
         private _cacheService: CacheService,
-        private _contactService: ContactServiceProxy,
+        private _router: Router,
         private _contactPhoneService: ContactPhoneServiceProxy,
         private _contactEmailService: ContactEmailServiceProxy,
         private _contactAddressService: ContactAddressServiceProxy,
@@ -156,19 +173,26 @@ export class CreateClientDialogComponent extends AppModalDialogComponent impleme
         private _dialogService: DialogService,
         private _angularGooglePlaceService: AngularGooglePlaceService,
         private _orgServiceProxy: OrganizationContactServiceProxy,
-        private store$: Store<RootStore.State>
+        private _notifyService: NotifyService,
+        private _messageService: MessageService,
+        private _cacheHelper: CacheHelper,
+        private _dialogRef: MatDialogRef<CreateClientDialogComponent>,
+        private _changeDetectorRef: ChangeDetectorRef,
+        private store$: Store<RootStore.State>,
+        public ls: AppLocalizationService,
+        public toolbarService: ToolbarService,
+        @Inject(MAT_DIALOG_DATA) public data: any
     ) {
-        super(injector);
-
         this.company = this.data.company;
-        this.localizationSourceName = AppConsts.localization.CRMLocalizationSourceName;
         this.googleAutoComplete = Boolean(window['google']);
         this.saveContextMenuItems = [
-            {text: this.l('SaveAndAddNew'), selected: false},
-            {text: this.l('SaveAndExtend'), selected: false},
-            {text: this.l('SaveAndClose'), selected: false}
+            {text: this.ls.l('SaveAndAddNew'), selected: false},
+            {text: this.ls.l('SaveAndExtend'), selected: false},
+            {text: this.ls.l('SaveAndClose'), selected: false}
         ];
+    }
 
+    ngOnInit() {
         this.countriesStateLoad();
         this.addressTypesLoad();
         this.phoneTypesLoad();
@@ -176,139 +200,24 @@ export class CreateClientDialogComponent extends AppModalDialogComponent impleme
         this.linkTypesLoad();
         if (this.data.isInLeadMode)
             this.leadStagesLoad();
-
-        this.initToolbarConfig();
-    }
-
-    initToolbarConfig() {
-        this.toolbarConfig = [
-            {
-                location: 'after',
-                locateInMenu: 'auto',
-                items: [
-                    {
-                        name: 'assign',
-                        action: this.toggleUserAssignment.bind(this),
-                        options: {
-                            accessKey: 'ClientAssign'
-                        },
-                        attr: {
-                            'filter-selected': this.isUserSelected
-                        }
-                    },
-                    this.data.isInLeadMode ? {
-                        name: 'stage',
-                        action: this.toggleStages.bind(this),
-                        options: {
-                            accessKey: 'CreateLeadStage'
-                        },
-                        attr: {
-                            'filter-selected': this.isStageSelected
-                        }
-                    } : this.data.customerType == ContactGroup.Client ? {
-                            name: 'status',
-                            widget: 'dxDropDownMenu',
-                            disabled: true,
-                            options: {
-                                hint: 'Status',
-                                items: [
-                                    {
-                                        action: Function(),
-                                        text: 'Active',
-                                    }, {
-                                        action: Function(),
-                                        text: 'Inactive',
-                                    }
-                                ]
-                            },
-                            attr: {
-                                'filter-selected': this.isStatusSelected
-                            }
-                        } :
-                        {
-                            name: 'partnerType',
-                            action: this.togglePartnerTypes.bind(this),
-                            options: {
-                                accessKey: 'PartnerTypesList'
-                            },
-                            attr: {
-                                'filter-selected': this.isPartnerTypeSelected
-                            }
-                        },
-                    {
-                        name: 'lists',
-                        action: this.toggleLists.bind(this),
-                        options: {
-                            accessKey: 'ClientLists'
-                        },
-                        attr: {
-                            'filter-selected': this.isListsSelected
-                        }
-                    },
-                    {
-                        name: 'tags',
-                        action: this.toggleTags.bind(this),
-                        options: {
-                            accessKey: 'ClientTags'
-                        },
-                        attr: {
-                            'filter-selected': this.isTagsSelected
-                        }
-                    },
-                    {
-                        name: 'rating',
-                        action: this.toggleRating.bind(this),
-                        options: {
-                            accessKey: 'ClientRating'
-                        },
-                        attr: {
-                            'filter-selected': this.isRatingSelected
-                        }
-                    }
-                ]
-            },
-            {
-                location: 'after',
-                locateInMenu: 'auto',
-                areItemsDependent: true,
-                items: [
-                    {
-                        name: 'discard',
-                        action: this.resetFullDialog.bind(this, false)
-                    }
-                ]
-            }
-        ];
+        this.saveOptionsInit();
     }
 
     saveOptionsInit() {
-        let cacheKey = this.getCacheKey(this.SAVE_OPTION_CACHE_KEY),
+        let cacheKey = this._cacheHelper.getCacheKey(this.SAVE_OPTION_CACHE_KEY, this.constructor.name),
             selectedIndex = this.SAVE_OPTION_DEFAULT;
         if (this._cacheService.exists(cacheKey))
             selectedIndex = this._cacheService.get(cacheKey);
         this.saveContextMenuItems[selectedIndex].selected = true;
-        this.data.buttons[0].title = this.saveContextMenuItems[selectedIndex].text;
+        this.buttons[0].title = this.saveContextMenuItems[selectedIndex].text;
+        this._changeDetectorRef.detectChanges();
     }
 
     updateSaveOption(option) {
-        this.data.buttons[0].title = option.text;
-        this._cacheService.set(this.getCacheKey(this.SAVE_OPTION_CACHE_KEY),
+        this.buttons[0].title = option.text;
+        this._cacheService.set(this._cacheHelper.getCacheKey(this.SAVE_OPTION_CACHE_KEY, this.constructor.name),
             this.saveContextMenuItems.findIndex((elm) => elm.text == option.text).toString());
-    }
-
-    ngOnInit() {
-        super.ngOnInit();
-
-        this.data.editTitle = true;
-        this.data.titleClearButton = true;
-        this.data.placeholder = this.l('Contact.FullName');
-        this.data.buttons = [{
-            id: this.saveButtonId,
-            title: this.l('Save'),
-            class: 'primary menu',
-            action: this.save.bind(this)
-        }];
-        this.saveOptionsInit();
+        this._changeDetectorRef.detectChanges();
     }
 
     getCountryCode(name) {
@@ -322,6 +231,7 @@ export class CreateClientDialogComponent extends AppModalDialogComponent impleme
     }
 
     private createEntity(): void {
+        this.modalDialog.startLoading();
         let assignedUserId = this.userAssignmentComponent.selectedItemKey;
         let stageId = this.stageId;
         let lists = this.listsComponent.selectedItems;
@@ -340,7 +250,7 @@ export class CreateClientDialogComponent extends AppModalDialogComponent impleme
             addresses: this.getAddressContactInput(),
             links: this.getLinkContactInput(),
             companyName: this.company,
-            title: this.title,
+            title: this.jobTitle,
             photo: this.photoOriginalData ? ContactPhotoInput.fromJS({
                 original: StringHelper.getBase64(this.photoOriginalData),
                 thumbnail: StringHelper.getBase64(this.photoThumbnailData),
@@ -360,18 +270,18 @@ export class CreateClientDialogComponent extends AppModalDialogComponent impleme
         saveButton.disabled = true;
         if (this.data.isInLeadMode)
             this._leadService.createLead(CreateLeadInput.fromJS(dataObj))
-                .pipe(finalize(() => { saveButton.disabled = false; }))
+                .pipe(finalize(() => { saveButton.disabled = false; this.modalDialog.finishLoading(); }))
                 .subscribe(result => this.afterSave(result.contactId, result.id));
         else
-            this._contactService.createContact(CreateContactInput.fromJS(dataObj))
-                .pipe(finalize(() => { saveButton.disabled = false; }))
+            this.contactService.createContact(CreateContactInput.fromJS(dataObj))
+                .pipe(finalize(() => { saveButton.disabled = false; this.modalDialog.finishLoading(); }))
                 .subscribe(result => this.afterSave(result.id));
     }
 
     private afterSave(contactId: number, leadId?: number): void {
         if (this.saveContextMenuItems[0].selected) {
             this.resetFullDialog();
-            this.notify.info(this.l('SavedSuccessfully'));
+            this._notifyService.info(this.ls.l('SavedSuccessfully'));
             this.data.refreshParent(true, this.stageId);
         } else if (this.saveContextMenuItems[1].selected) {
             this.redirectToClientDetails(contactId, leadId);
@@ -388,13 +298,13 @@ export class CreateClientDialogComponent extends AppModalDialogComponent impleme
                 .instance.option('visible', true);
 
         if (!this.person.firstName && !this.person.lastName && !this.company) {
-            this.data.isTitleValid = false;
-            return this.notify.error(this.l('NameFieldsValidationError'));
+            this.isTitleValid = false;
+            return this._notifyService.error(this.ls.l('NameFieldsValidationError'));
         }
 
-        if (!ValidationHelper.ValidateName(this.data.title)) {
-            this.data.isTitleValid = false;
-            return this.notify.error(this.l('FullNameIsNotValid'));
+        if (!ValidationHelper.ValidateName(this.title)) {
+            this.isTitleValid = false;
+            return this._notifyService.error(this.ls.l('FullNameIsNotValid'));
         }
 
         if (!this.validateMultiple(this.emailValidators) ||
@@ -406,7 +316,7 @@ export class CreateClientDialogComponent extends AppModalDialogComponent impleme
         if (['emails', 'phones', 'links', 'addresses'].some((type) => {
             let result = this.checkDuplicateContact(type);
             if (result)
-                this.notify.error(this.l('DuplicateContactDetected', this.l(type)));
+                this._notifyService.error(this.ls.l('DuplicateContactDetected', this.ls.l(type)));
             return result;
         })) return;
 
@@ -549,7 +459,7 @@ export class CreateClientDialogComponent extends AppModalDialogComponent impleme
 
         clearTimeout(this.similarCustomersTimeout);
         this.similarCustomersTimeout = setTimeout(() => {
-            this._contactService.getSimilarContacts(
+            this.contactService.getSimilarContacts(
                 field ? undefined : person.namePrefix || undefined,
                 field ? undefined : person.firstName || undefined,
                 field ? undefined : person.middleName || undefined,
@@ -563,7 +473,8 @@ export class CreateClientDialogComponent extends AppModalDialogComponent impleme
                 isAddress && this.getStateCode(contact.state, contact.country) || undefined,
                 isAddress && contact.zip || undefined,
                 isAddress && this.getCountryCode(contact.country) || undefined,
-                this.data.customerType).subscribe(response => {
+                this.data.customerType
+            ).subscribe(response => {
                     if (response) {
                         if (field)
                             contact.similarCustomers = response;
@@ -595,12 +506,14 @@ export class CreateClientDialogComponent extends AppModalDialogComponent impleme
         let street = this._angularGooglePlaceService.street(event.address_components);
 
         this.contacts.addresses[i].address = number ? (number + ' ' + street) : street;
+        this._changeDetectorRef.detectChanges();
     }
 
     updateCountryInfo(countryName: string, i) {
         this.contacts.addresses[i]['country'] =
             (countryName == 'United States' ?
                 AppConsts.defaultCountryName : countryName);
+        this._changeDetectorRef.detectChanges();
     }
 
     countriesStateLoad(): void {
@@ -618,6 +531,7 @@ export class CreateClientDialogComponent extends AppModalDialogComponent impleme
             filter(types => !!types)
         ).subscribe(types => {
             this.addressTypes = types;
+            this._changeDetectorRef.detectChanges();
         });
     }
 
@@ -625,7 +539,10 @@ export class CreateClientDialogComponent extends AppModalDialogComponent impleme
         this.store$.dispatch(new StatesStoreActions.LoadRequestAction(country.code));
         this.store$.pipe(select(StatesStoreSelectors.getState, { countryCode: country.code }))
             .subscribe(result => {
-                setTimeout(() => this.states[country.name] = result);
+                setTimeout(() => {
+                    this.states[country.name] = result;
+                    this._changeDetectorRef.detectChanges();
+                });
             });
     }
 
@@ -636,6 +553,7 @@ export class CreateClientDialogComponent extends AppModalDialogComponent impleme
             filter(types => !!types)
         ).subscribe(types => {
             this.phoneTypes = types;
+            this._changeDetectorRef.detectChanges();
         });
     }
 
@@ -646,6 +564,7 @@ export class CreateClientDialogComponent extends AppModalDialogComponent impleme
             filter(types => !!types)
         ).subscribe(types => {
             this.emailTypes = types;
+            this._changeDetectorRef.detectChanges();
         });
     }
 
@@ -659,6 +578,7 @@ export class CreateClientDialogComponent extends AppModalDialogComponent impleme
                 entity['uri'] = entity.name.replace(/ /g, '');
                 return entity;
             });
+            this._changeDetectorRef.detectChanges();
         });
     }
 
@@ -678,6 +598,7 @@ export class CreateClientDialogComponent extends AppModalDialogComponent impleme
             this.addButtonVisible[field] =
                 this.checkEveryContactValid(field) &&
                     !this.checkDuplicateContact(field);
+            this._changeDetectorRef.detectChanges();
         }, 300);
     }
 
@@ -698,6 +619,7 @@ export class CreateClientDialogComponent extends AppModalDialogComponent impleme
                 type: this[field + 'TypeDefault']
             });
             this.addButtonVisible[field] = false;
+            this._changeDetectorRef.detectChanges();
         }
     }
 
@@ -733,6 +655,7 @@ export class CreateClientDialogComponent extends AppModalDialogComponent impleme
             this.contacts[field][index] = {type: this[field + 'TypeDefault']};
             this.addButtonVisible[field] = false;
         }
+        this._changeDetectorRef.detectChanges();
     }
 
     resetComponent(component) {
@@ -764,6 +687,7 @@ export class CreateClientDialogComponent extends AppModalDialogComponent impleme
                 !this.checkDuplicateContact(field);
 
         this.checkSimilarCustomers(field, i);
+        this._changeDetectorRef.detectChanges();
     }
 
     onPhoneChanged(component, i) {
@@ -773,12 +697,15 @@ export class CreateClientDialogComponent extends AppModalDialogComponent impleme
             this.addButtonVisible[field] = !component.isEmpty() &&
                 component.isValid() && !this.checkDuplicateContact(field);
             this.checkSimilarCustomers(field, i);
+            this._changeDetectorRef.detectChanges();
         });
     }
 
     onPhoneKeyUp(event) {
-        if (event.keyCode == 8/*Backspace*/)
+        if (event.keyCode == 8/*Backspace*/) {
             this.addButtonVisible['phones'] = false;
+            this._changeDetectorRef.detectChanges();
+        }
     }
 
     companyLookupItems($event) {
@@ -791,6 +718,7 @@ export class CreateClientDialogComponent extends AppModalDialogComponent impleme
             this._orgServiceProxy.getOrganizations(search, this.data.customerType || ContactGroup.Client, 10).subscribe((res) => {
                 if (search == this.company)
                     this.companies = res;
+                this._changeDetectorRef.detectChanges();
                 setTimeout(() => this.companyOptionChanged($event, true));
             });
         }, 500);
@@ -802,7 +730,10 @@ export class CreateClientDialogComponent extends AppModalDialogComponent impleme
     }
 
     onCustomCompanyCreate(e) {
-        setTimeout(() => this.company = e.text);
+        setTimeout(() => {
+            this.company = e.text;
+            this._changeDetectorRef.detectChanges();
+        });
     }
 
     onCommentKeyUp($event) {
@@ -850,26 +781,26 @@ export class CreateClientDialogComponent extends AppModalDialogComponent impleme
 
             this.person = new PersonInfoDto();
             this.addressTypesLoad();
-            this.data.title = undefined;
-            this.data.isTitleValid = true;
+            this.isTitleValid = true;
             this.company = undefined;
             this.similarCustomers = [];
             this.photoOriginalData = undefined;
             this.photoThumbnailData = undefined;
             this.photoSourceData = undefined;
-            this.title = undefined;
+            this.title = '';
             this.tagsComponent.reset();
             this.listsComponent.reset();
             this.partnerTypesComponent.reset();
             this.userAssignmentComponent.selectedItemKey = this.currentUserId;
-            this.stageId = this.stages.length ? this.stages.find(v => v.sortOrder === this.defaultStageSortOrder).id : undefined;
+            this.stageId = this.stages.length ? this.stages.find(v => v.index === this.defaultStageSortOrder).id : undefined;
             this.ratingComponent.selectedItemKey = this.ratingComponent.ratingMin;
+            this._changeDetectorRef.detectChanges();
         };
 
         if (forced)
             resetInternal();
         else
-            this.message.confirm(this.l('DiscardConfirmation'), '', (confirmed) => {
+            this._messageService.confirm(this.ls.l('DiscardConfirmation'), '', (confirmed) => {
                 if (confirmed)
                     resetInternal();
             });
@@ -878,16 +809,16 @@ export class CreateClientDialogComponent extends AppModalDialogComponent impleme
     onSaveOptionSelectionChanged($event) {
         let option = $event.addedItems.pop() || $event.removedItems.pop() ||
             this.saveContextMenuItems[this.SAVE_OPTION_DEFAULT];
-        option.selected = true;
-        $event.component.option('selectedItem', option);
-
+        this.saveContextMenuItems.forEach((item) => {
+            item.selected = option.text === item.text;
+        });
         this.updateSaveOption(option);
         this.save();
     }
 
-    onFullNameKeyUp(event) {
-        this.data.title = event;
-        this._nameParser.parseIntoPerson(this.data.title, this.person);
+    onFullNameKeyUp(inputValue: string) {
+        this.title = inputValue;
+        this._nameParser.parseIntoPerson(this.title, this.person);
         this.checkSimilarCustomers();
     }
 
@@ -897,31 +828,35 @@ export class CreateClientDialogComponent extends AppModalDialogComponent impleme
     }
 
     leadStagesLoad() {
+        this.modalDialog.startLoading();
         this._pipelineService.getPipelineDefinitionObservable(AppConsts.PipelinePurposeIds.lead, this.data.customerType)
-            .subscribe(result => {
-                this.stages = result.stages.map((stage) => {
-                    if (stage.sortOrder === this.defaultStageSortOrder) {
-                        this.stageId = stage.id;
-                    }
-                    return {
-                        id: stage.id,
-                        name: stage.name,
-                        index: stage.sortOrder
-                    };
-                });
-            });
+            .subscribe(
+                result => {
+                    this.stages = result.stages.map((stage) => {
+                        if (stage.sortOrder === this.defaultStageSortOrder) {
+                            this.stageId = stage.id;
+                        }
+                        return {
+                            id: stage.id,
+                            name: stage.name,
+                            index: stage.sortOrder
+                        };
+                    });
+                    this._changeDetectorRef.detectChanges();
+                    this.modalDialog.finishLoading();
+                },
+                () => this.modalDialog.finishLoading()
+            );
     }
 
     onStagesChanged(event) {
         this.stageId = event.id;
         this.isStageSelected = true;
-        this.initToolbarConfig();
     }
 
     onPartnerTypeChanged(event) {
         this.partnerTypesComponent.apply();
         this.isPartnerTypeSelected = Boolean(event.selectedRowKeys.length);
-        this.initToolbarConfig();
     }
 
     getAssignmentsPermissinKey() {
@@ -933,21 +868,27 @@ export class CreateClientDialogComponent extends AppModalDialogComponent impleme
 
     onUserAssignmentChanged(event) {
         this.isUserSelected = Boolean(event.addedItems.length);
-        this.initToolbarConfig();
     }
 
     onListsSelected(event) {
         this.isListsSelected = Boolean(event.selectedRowKeys.length);
-        this.initToolbarConfig();
     }
 
     onTagsSelected(event) {
         this.isTagsSelected = Boolean(event.selectedRowKeys.length);
-        this.initToolbarConfig();
     }
 
-    onRatingchanged(event) {
+    onRatingChanged(event) {
         this.isRatingSelected = Boolean(event.value);
-        this.initToolbarConfig();
+    }
+
+    close() {
+        this._dialogRef.close();
+    }
+
+    getAssignedUsersSelector() {
+        return select(ContactAssignedUsersStoreSelectors.getContactGroupAssignedUsers, {
+            contactGroup: this.partnerTypesComponent.selectedItems.length ? ContactGroup.Partner : ContactGroup.Client
+        });
     }
 }

@@ -4,12 +4,9 @@
         <div class="photo-area" (click)="showUploadPhotoDialog($event)" [ngStyle]="{'background-image': data?.personContactInfo?.primaryPhoto ? 'url(data:image/png;base64,' + data.personContactInfo.primaryPhoto + ')': ''}"></div>
     </div>
     <div class="personal_info">
-        <div *ngIf="data?.groupId" class="status-group-wrapper">
-            <span>{{statusNames[data?.statusId]}} {{groupNames[data?.groupId]}}</span>
-        </div>
         <div class="full_name">
             <h1 *ngIf="data && data?.personContactInfo">
-                <inplace-edit [data]="getNameInplaceEditData()" (valueChanged)="updatePrimaryContactName($event)" (openDialog)="showEditPersonDialog($event)"></inplace-edit>
+                <inplace-edit [data]="getNameInplaceEditData() | async" (valueChanged)="updatePrimaryContactName($event)" (openDialog)="showEditPersonDialog($event)"></inplace-edit>
             </h1>
         </div>
         <rating-bar rating="{{ ratingId || 0 }}"></rating-bar>
@@ -22,19 +19,19 @@
                 <div *ngIf="showRemovingOrgRelationProgress" class="loadindicator"></div>
             </div>
             <h2 class="shift-top">
-                <inplace-edit #companyName [data]="getNameInplaceEditData('organizationContactInfo')" (valueChanged)="updateCompanyField($event)"></inplace-edit>
+                <inplace-edit #companyName [data]="getNameInplaceEditData('organizationContactInfo') | async" (valueChanged)="updateCompanyField($event)"></inplace-edit>
                 <i class="fa fa-angle-down" *ngIf="!companyName.isEditModeEnabled && (data?.personContactInfo?.orgRelations?.length > 1)" (click)="showCompanyList($event)"></i>
-                <div class="actions" [hidden]="companyName.isEditModeEnabled">
+                <div class="actions" [hidden]="!manageAllowed || companyName.isEditModeEnabled">
                     <i class="edit fa fa-pencil" (click)="showCompanyDialog($event)"></i>
                     <i class="add fa fa-plus" (click)="addCompanyDialog($event)"></i>
                     <i class="delete fa fa-times" (click)="removePersonOrgRelation($event)"></i>
                 </div>
             </h2>
             <h3>
-                <inplace-edit #jobTitle [data]="getJobTitleInplaceEditData()" (valueChanged)="updateJobTitle($event)"></inplace-edit>
+                <inplace-edit #jobTitle [data]="getJobTitleInplaceEditData() | async" (valueChanged)="updateJobTitle($event)"></inplace-edit>
             </h3>
         </div>
-        <div *ngIf="!data?.primaryOrganizationContactId" class="add-new-company">
+        <div *ngIf="manageAllowed && !data?.primaryOrganizationContactId" class="add-new-company">
             <a (click)="addCompanyDialog($event)">+ {{ l('Add Company') }}</a>
         </div>
         <div class="organization_logo">
@@ -53,10 +50,12 @@
         target="#addEntity">
     </dx-context-menu>
 
-    <div class="header_buttons" *ngIf="addContextMenuItems.length">
-        <button id="addEntity" class="button-layout button-primary menu" (click)="addEntity($event)">+ <span>{{addButtonTitle}}</span></button>
+    <div class="header_buttons" *ngIf="manageAllowed && addContextMenuItems.length">
+        <button id="addEntity" class="button-layout button-primary menu" (click)="addEntity($event)">
+            + {{addButtonTitle}}
+        </button>
 
         <div class="vertical-delimiter"></div>
-        <button class="refresh-button" (click)="refresh($event)"></button>
+        <button class="refresh-button" (click)="refresh()"></button>
     </div>
 </header>

@@ -13,45 +13,147 @@
                  [selectedItems]=""
                  [hideButtons]="true"
                  [highlightSelected]="true"
-                 [targetSelector]="'[accessKey=CreateLeadStage]'"
+                 targetSelector="#CreateLeadStage"
                  (onItemSelected)="onStagesChanged($event)"
                  [showTitle]="false"
                  [list]="stages"
                  [funnelStyling]="true"
                  [disableHindmost]="true">
 </app-static-list>
-<crm-rating [targetSelector]="'[accesskey=\'ClientRating\']'" [hideButtons]="true" (onValueChanged)="onRatingchanged($event)"></crm-rating>
-<crm-types-list [targetSelector]="'[accesskey=\'PartnerTypesList\']'" [hideButtons]="true"
-                (onSelectedChanged)="onPartnerTypeChanged($event)"></crm-types-list>
-<crm-tags-list [targetSelector]="'[accesskey=\'ClientTags\']'" [hideButtons]="true" (onSelectedChanged)="onTagsSelected($event)"></crm-tags-list>
-<crm-lists-list [targetSelector]="'[accesskey=\'ClientLists\']'" [hideButtons]="true" (onSelectionChanged)="onListsSelected($event)"></crm-lists-list>
+<crm-rating targetSelector="#ClientRating"
+            [hideButtons]="true"
+            (onValueChanged)="onRatingChanged($event)"></crm-rating>
+<crm-types-list targetSelector="#PartnerTypesList"
+                [hideButtons]="true"
+                (onSelectedChanged)="onPartnerTypeChanged($event)">
+</crm-types-list>
+<crm-tags-list targetSelector="#ClientTags"
+               [hideButtons]="true"
+               (onSelectedChanged)="onTagsSelected($event)">
+</crm-tags-list>
+<crm-lists-list targetSelector="#ClientLists"
+                [hideButtons]="true"
+                (onSelectionChanged)="onListsSelected($event)">
+</crm-lists-list>
 <crm-user-assignment-list
-    [targetSelector]="'[accesskey=\'ClientAssign\']'"
+    targetSelector="#ClientAssign"
     [permissionKey]="getAssignmentsPermissinKey()"
+    [assignedUsersSelector]="getAssignedUsersSelector()"
     [selectedItemKey]="currentUserId"
+    [proxyService]="contactService"
     [hideButtons]="true"
     (onSelectionChanged)="onUserAssignmentChanged($event)">
 </crm-user-assignment-list>
 
-<app-modal-dialog (onTitleKeyUp)="onFullNameKeyUp($event)">
+<modal-dialog [title]="title"
+              [buttons]="buttons"
+              [editTitle]="true"
+              [isTitleValid]="isTitleValid"
+              [titleClearButton]="true"
+              [placeholder]="ls.l('Contact.FullName')"
+              (onTitleKeyUp)="onFullNameKeyUp($event)">
     <div class="photo-area" (click)="showUploadPhoto($event)"
         [ngStyle]="{'background-image': photoOriginalData ? 'url(' + photoOriginalData + ')': ''}"></div>
 
-    <div class="toolbar-wraper">
-        <app-toolbar [config]="toolbarConfig" width="700px"></app-toolbar>
+    <dx-toolbar (onItemRendered)="toolbarService.onItemRendered($event)">
+        <dxi-item location="before" template="clientAssign"></dxi-item>
+        <div *dxTemplate="let data of 'clientAssign'">
+            <dx-button [icon]="'./assets/common/icons/assign-icon.svg'"
+                       [text]="ls.l('Assign')"
+                       id="ClientAssign"
+                       [ngClass]="{ 'filter-selected': isUserSelected }"
+                       (onClick)="toggleUserAssignment()">
+            </dx-button>
+        </div>
+
+        <dxi-item *ngIf="data.isInLeadMode; else notLead" template="stages" location="before"></dxi-item>
+        <div *dxTemplate="let data of 'stages'">
+            <dx-button
+                [icon]="'./assets/common/icons/status-icon.svg'"
+                [text]="ls.l('Stage')"
+                id="CreateLeadStage"
+                [ngClass]="{ 'filter-selected': isStageSelected }"
+                (onClick)="toggleStages()">
+            </dx-button>
+        </div>
+
+        <ng-template #notLead>
+            <dxi-item *ngIf="data.customerType === contactGroups.Client; else partner" location="before" template="status"></dxi-item>
+            <div *dxTemplate="let data of 'status'">
+                <dx-button [icon]="'./assets/common/icons/status-icon.svg'"
+                           [text]="ls.l('Status')"
+                           [disabled]="true"
+                           [ngClass]="{ 'filter-selected': isStatusSelected }">
+                </dx-button>
+            </div>
+
+            <ng-template #partner>
+                <dxi-item location="before" template="type"></dxi-item>
+                <div *dxTemplate="let data of 'type'">
+                    <dx-button [icon]="'./assets/common/icons/status-icon.svg'"
+                               [text]="ls.l('Type')"
+                               id="PartnerTypesList"
+                               [ngClass]="{ 'filter-selected': isPartnerTypeSelected }"
+                               (onClick)="togglePartnerTypes()">
+                    </dx-button>
+                </div>
+            </ng-template>
+        </ng-template>
+
+        <dxi-item location="before" template="lists"></dxi-item>
+        <div *dxTemplate="let data of 'lists'">
+            <dx-button [icon]="'./assets/common/icons/folder.svg'"
+                       [text]="ls.l('Lists')"
+                       id="ClientLists"
+                       [ngClass]="{ 'filter-selected': isListsSelected }"
+                       (onClick)="toggleLists()">
+            </dx-button>
+        </div>
+
+        <dxi-item location="before" template="tags"></dxi-item>
+        <div *dxTemplate="let data of 'tags'">
+            <dx-button [icon]="'./assets/common/icons/pen.svg'"
+                       [text]="ls.l('Tags')"
+                       id="ClientTags"
+                       [ngClass]="{ 'filter-selected': isTagsSelected }"
+                       (onClick)="toggleTags()">
+            </dx-button>
+        </div>
+
+        <dxi-item location="before" template="rating"></dxi-item>
+        <div *dxTemplate="let data of 'rating'">
+            <dx-button [icon]="'./assets/common/icons/flag-icon.svg'"
+                       [text]="ls.l('Rating')"
+                       id="ClientRating"
+                       [ngClass]="{ 'filter-selected': isRatingSelected }"
+                       (onClick)="toggleRating()">
+            </dx-button>
+        </div>
+
+        <dxi-item location="after" template="discardTemplate"></dxi-item>
+        <div *dxTemplate="let data of 'discardTemplate'">
+            <dx-button [icon]="'./assets/common/icons/delete-icon.svg'"
+                       [text]="ls.l('Discard')"
+                       [ngClass]="'discard-button'"
+                       (onClick)="resetFullDialog(false)">
+            </dx-button>
+        </div>
+    </dx-toolbar>
+    <div *ngIf="similarCustomersAvailable()"
+         class="similar-clients-message" (click)="showSimilarCustomers($event)">
+        {{ls.l('SimilarRecordsFound')}}
     </div>
-    <div *ngIf="similarCustomersAvailable()" class="similar-clients-message" (click)="showSimilarCustomers($event)">{{l('SimilarRecordsFound')}}</div>
     <div class="form-content">
         <dx-scroll-view showScrollbar="onHover">
             <div class="field">
-                <label class="company-label">{{l('Company')}}</label>
+                <label class="company-label">{{ls.l('Company')}}</label>
                 <dx-select-box #companyComponent
                     name="company"
                     width="270px"
                     displayExpr="name"
                     valueExpr="name"
                     [acceptCustomValue]="true"
-                    [placeholder]="l('CompanyName')"
+                    [placeholder]="ls.l('CompanyName')"
                     [(value)]="company"
                     [dataSource]="companies"
                     [searchEnabled]="true"
@@ -60,32 +162,35 @@
                     (onOptionChanged)="companyOptionChanged($event)"
                     (onCustomItemCreating)="onCustomCompanyCreate($event)">
                 </dx-select-box>
-                <dx-text-box #titleComponent
-                    name="title"
-                    [placeholder]="l('Job title')"
+                <dx-text-box #jobTitleComponent
+                    name="jobTitle"
+                    [placeholder]="ls.l('Job title')"
                     [valueChangeEvent]="'keyup'"
                     [width]="'270px'"
-                    [(value)]="title">
+                    [(value)]="jobTitle">
                 </dx-text-box>
-                <span [class]="(company || title) && 'clear-contact' || 'hidden'" (click)="company = title = ''"><i class="minus-icon"></i></span>
+                <span [class]="(company || jobTitle) && 'clear-contact' || 'hidden'"
+                      (click)="company = jobTitle = ''">
+                    <i class="minus-icon"></i>
+                </span>
             </div>
             <dx-validation-group (onInitialized)="initValidationGroup($event, 'emailValidators')">
                 <div class="field email">
-                    <label class="email-label">{{l('Email')}}</label>
+                    <label class="email-label">{{ls.l('Email')}}</label>
                     <div>
                         <div *ngFor="let email of contacts.emails; index as i" class="editable-item" [ngClass]="{'first-item': !i}">
                             <div class="drop-down-box-wrapper">
                                 <dx-select-box
                                     width="340px"
                                     name="emailType"
-                                    placeholder="{{l('Type')}}"
+                                    placeholder="{{ls.l('Type')}}"
                                     [dataSource]="emailTypes"
                                     displayExpr="name"
                                     valueExpr="id"
                                     [(value)]="email.type"
                                     [itemTemplate]="'emailTypeItemTemplate'">
                                     <div *dxTemplate="let data of 'emailTypeItemTemplate'">
-                                        <div class="usage-type-item"><span>{{data.name}}</span><span>{{l('ContactInformation_EmailTypeTooltip_' + data.id)}}</span></div>
+                                        <div class="usage-type-item"><span>{{data.name}}</span><span>{{ls.l('ContactInformation_EmailTypeTooltip_' + data.id)}}</span></div>
                                     </div>
                                 </dx-select-box>
                             </div>
@@ -97,32 +202,32 @@
                                          (onValueChanged)="onFieldChanged($event, 'emails', i)"
                                          (onInitialized)="onComponentInitialized($event, 'emails')">
                                 <dx-validator>
-                                    <dxi-validation-rule type="pattern" [pattern]="emailRegEx" message="{{l('EmailIsNotValid')}}."></dxi-validation-rule>
+                                    <dxi-validation-rule type="pattern" [pattern]="emailRegEx" message="{{ls.l('EmailIsNotValid')}}."></dxi-validation-rule>
                                 </dx-validator>
                             </dx-text-box>
                             <span [class]="(i || email.email) && 'clear-contact' || 'hidden'" (click)="emptyOrRemoveInput('emails', i)"><i class="minus-icon"></i></span>
                         </div>
-                        <div class="add-new-button" [ngClass]="{disabled: !addButtonVisible['emails']}"><span (click)="addNewContact('emails')">{{l('+ Add email')}}</span></div>
+                        <div class="add-new-button" [ngClass]="{disabled: !addButtonVisible['emails']}"><span (click)="addNewContact('emails')">{{ls.l('+ Add email')}}</span></div>
                     </div>
                 </div>
             </dx-validation-group>
             <dx-validation-group (onInitialized)="initValidationGroup($event, 'phoneValidators')">
                 <div class="field phone H">
-                    <label class="phone-label">{{l('Phone')}}</label>
+                    <label class="phone-label">{{ls.l('Phone')}}</label>
                     <div>
                         <div *ngFor="let phone of contacts.phones; index as i" class="editable-item" [ngClass]="{'first-item': !i}">
                             <div class="drop-down-box-wrapper">
                                 <dx-select-box
                                     width="370px"
                                     name="phoneType"
-                                    placeholder="{{l('Type')}}"
+                                    placeholder="{{ls.l('Type')}}"
                                     [dataSource]="phoneTypes"
                                     displayExpr="name"
                                     valueExpr="id"
                                     [(value)]="phone.type"
                                     [itemTemplate]="'phoneTypeItemTemplate'">
                                     <div *dxTemplate="let data of 'phoneTypeItemTemplate'">
-                                        <div class="usage-type-item"><span style="width: 100px;">{{data.name}}</span><span>{{l('ContactInformation_PhoneTypeTooltip_' + data.id)}}</span></div>
+                                        <div class="usage-type-item"><span style="width: 100px;">{{data.name}}</span><span>{{ls.l('ContactInformation_PhoneTypeTooltip_' + data.id)}}</span></div>
                                     </div>
                                 </dx-select-box>
                             </div>
@@ -138,28 +243,28 @@
                                 name="phoneExtension"
                                 width="50px"
                                 [inputAttr]="{maxlength: 5}"
-                                [placeholder]="l('Ext')"
+                                [placeholder]="ls.l('Ext')"
                                 [(value)]="phone.ext">
                                 <dx-validator>
-                                    <dxi-validation-rule type="stringLength" [max]="5" message="{{l('PhoneExtensionExceedsMaxSize')}}."></dxi-validation-rule>
+                                    <dxi-validation-rule type="stringLength" [max]="5" message="{{ls.l('PhoneExtensionExceedsMaxSize')}}."></dxi-validation-rule>
                                 </dx-validator>
                             </dx-number-box>
                             <span [class]="(i || phone.number || phone.ext) && 'clear-contact' || 'hidden'" (click)="emptyOrRemoveInput('phones', i)"><i class="minus-icon"></i></span>
                         </div>
-                        <div class="add-new-button" [ngClass]="{disabled: !addButtonVisible['phones']}"><span (click)="addNewContact('phones')">{{l('+ Add phone')}}</span></div>
+                        <div class="add-new-button" [ngClass]="{disabled: !addButtonVisible['phones']}"><span (click)="addNewContact('phones')">{{ls.l('+ Add phone')}}</span></div>
                     </div>
                 </div>
             </dx-validation-group>
             <dx-validation-group (onInitialized)="initValidationGroup($event, 'linkValidators')">
                 <div class="field">
-                    <label class="link-label">{{l('Links')}}</label>
+                    <label class="link-label">{{ls.l('Links')}}</label>
                     <div>
                         <div *ngFor="let link of contacts.links; index as i" class="editable-item" [ngClass]="{'first-item': !i}">
                             <div class="drop-down-box-wrapper">
                                 <dx-drop-down-box
                                     width="330px"
                                     name="linkType"
-                                    placeholder="{{l('Type')}}"
+                                    placeholder="{{ls.l('Type')}}"
                                     displayExpr="name"
                                     valueExpr="id"
                                     accessKey="link-type-dialog"
@@ -169,8 +274,8 @@
                                         <div>
                                             <mat-sidenav mode="side" opened="true" position="start" style="height:50px;width:100%;">
                                                 <mat-tab-group (selectedTabChange)="link.isCompany = !!$event.index">
-                                                    <mat-tab label="{{l('Person')}}"></mat-tab>
-                                                    <mat-tab label="{{l('Company')}}"></mat-tab>
+                                                    <mat-tab label="{{ls.l('Person')}}"></mat-tab>
+                                                    <mat-tab label="{{ls.l('Company')}}"></mat-tab>
                                                 </mat-tab-group>
                                             </mat-sidenav>
                                             <dx-list
@@ -198,18 +303,18 @@
                                          (onValueChanged)="onFieldChanged($event, 'links', i)"
                                          (onInitialized)="onComponentInitialized($event, 'links')">
                                 <dx-validator>
-                                    <dxi-validation-rule type="pattern" [pattern]="urlRegEx" message="{{l('LinkIsNotValid')}}."></dxi-validation-rule>
+                                    <dxi-validation-rule type="pattern" [pattern]="urlRegEx" message="{{ls.l('LinkIsNotValid')}}."></dxi-validation-rule>
                                 </dx-validator>
                             </dx-text-box>
                             <span [class]="(i || link.url) && 'clear-contact' || 'hidden'" (click)="emptyOrRemoveInput('links', i)"><i class="minus-icon"></i></span>
                         </div>
-                        <div class="add-new-button" [ngClass]="{disabled: !addButtonVisible['links']}"><span (click)="addNewContact('links')">{{l('+ Add link')}}</span></div>
+                        <div class="add-new-button" [ngClass]="{disabled: !addButtonVisible['links']}"><span (click)="addNewContact('links')">{{ls.l('+ Add link')}}</span></div>
                     </div>
                 </div>
             </dx-validation-group>
             <dx-validation-group>
                 <div class="field">
-                    <label class="address-label">{{l('Address')}}</label>
+                    <label class="address-label">{{ls.l('Address')}}</label>
                     <div>
                         <div *ngFor="let address of contacts.addresses; index as i" class="editable-item">
                             <div class="field addr {{i ? 'padding-right': ''}}">
@@ -217,25 +322,25 @@
                                     <dx-select-box
                                         width="380px"
                                         name="addressType"
-                                        placeholder="{{l('Type')}}"
+                                        placeholder="{{ls.l('Type')}}"
                                         [dataSource]="addressTypes"
                                         displayExpr="name"
                                         valueExpr="id"
                                         [(value)]="address['type']"
                                         [itemTemplate]="'addressTypeItemTemplate'">
                                         <div *dxTemplate="let data of 'addressTypeItemTemplate'">
-                                            <div class="usage-type-item"><span>{{data.name}}</span><span>{{l('ContactInformation_AddressTypeTooltip_' + data.id)}}</span></div>
+                                            <div class="usage-type-item"><span>{{data.name}}</span><span>{{ls.l('ContactInformation_AddressTypeTooltip_' + data.id)}}</span></div>
                                         </div>
                                     </dx-select-box>
                                 </div>
                                 <input *ngIf="!googleAutoComplete" type="text"
                                        name="Address"
-                                       placeholder="{{l('Street')}}"
+                                       placeholder="{{ls.l('Street')}}"
                                        [(ngModel)]="address['address']"
                                        class="dx-texteditor-input"/>
                                 <input *ngIf="googleAutoComplete" type="text"
                                        name="Address"
-                                       placeholder="{{l('Street')}}"
+                                       placeholder="{{ls.l('Street')}}"
                                        [(ngModel)]="address['address']"
                                        class="dx-texteditor-input"
                                        (country)="updateCountryInfo($event, i)"
@@ -252,7 +357,7 @@
                                 <dx-text-box
                                     name="city"
                                     maxLength="50"
-                                    placeholder="{{l('City')}}"
+                                    placeholder="{{ls.l('City')}}"
                                     [width]="'270px'"
                                     [(value)]="address['city']"
                                     [valueChangeEvent]="'keyup'"
@@ -263,7 +368,7 @@
                                     displayExpr="name"
                                     valueExpr="name"
                                     name="state"
-                                    placeholder="{{l('State')}}"
+                                    placeholder="{{ls.l('State')}}"
                                     [width]="'270px'"
                                     [searchEnabled]="true"
                                     [(value)]="address['state']"
@@ -273,7 +378,7 @@
                             <div class="field addr padding-right" style="padding-bottom: 10px;">
                                 <dx-text-box
                                     maxLength="10"
-                                    placeholder="{{l('Zip')}}"
+                                    placeholder="{{ls.l('Zip')}}"
                                     [width]="'270px'"
                                     [(value)]="address['zip']"
                                     [valueChangeEvent]="'keyup'"
@@ -284,7 +389,7 @@
                                     displayExpr="name"
                                     valueExpr="name"
                                     name="country"
-                                    placeholder="{{l('Country')}}"
+                                    placeholder="{{ls.l('Country')}}"
                                     [width]="'270px'"
                                     [searchEnabled]="true"
                                     [(value)]="address['country']"
@@ -293,14 +398,14 @@
                             </div>
                         </div>
                         <div class="add-new-button" [ngClass]="{disabled: !addButtonVisible['addresses']}">
-                            <span (click)="addNewContact('addresses')">{{l('+ Add address')}}</span>
+                            <span (click)="addNewContact('addresses')">{{ls.l('+ Add address')}}</span>
                         </div>
                     </div>
                 </div>
             </dx-validation-group>
 
             <div class="field notes">
-                <label class="notes-label">{{l('Notes')}}</label>
+                <label class="notes-label">{{ls.l('Notes')}}</label>
                 <dx-text-area
                     name="comment"
                     [width]="'570px'"
@@ -312,4 +417,4 @@
             </div>
         </dx-scroll-view>
     </div>
-</app-modal-dialog>
+</modal-dialog>

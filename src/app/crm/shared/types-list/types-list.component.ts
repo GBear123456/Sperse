@@ -60,11 +60,11 @@ export class TypesListComponent extends AppComponentBase implements OnInit {
         private store$: Store<AppStore.State>,
         private actions$: ActionsSubject
     ) {
-        super(injector, AppConsts.localization.CRMLocalizationSourceName);
+        super(injector);
     }
 
     toggle() {
-        if (this.tooltipVisible = !this.tooltipVisible) { 
+        if (this.tooltipVisible = !this.tooltipVisible) {
             if (this.listComponent)
                 setTimeout(() => this.listComponent.repaint());
             this.highlightSelectedFilters();
@@ -88,7 +88,7 @@ export class TypesListComponent extends AppComponentBase implements OnInit {
                 else
                     this.process(isRemove);
             }
-            this.listComponent.clearFilter(); 
+            this.listComponent.clearFilter();
         }
         this.tooltipVisible = false;
     }
@@ -194,14 +194,13 @@ export class TypesListComponent extends AppComponentBase implements OnInit {
 
         $event.cancel = true;
         let dialogData = {
-                deleteAllReferences: false,
-                items: _.filter(this.list, (obj) => {
-                    return (obj.id != itemId);
-                }),
-                entityPrefix: 'Type',
-                reassignToItemId: undefined,
-                localization: this.localizationSourceName
-            };
+            deleteAllReferences: false,
+            items: _.filter(this.list, (obj) => {
+                return (obj.id != itemId);
+            }),
+            entityPrefix: 'Type',
+            reassignToItemId: undefined
+        };
         this.tooltipVisible = false;
         this.dialog.open(DeleteAndReassignDialogComponent, {
             data: dialogData

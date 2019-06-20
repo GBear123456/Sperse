@@ -107,7 +107,6 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
         private csvParser: Papa
     ) {
         super(injector);
-        this.localizationSourceName = AppConsts.localization.CRMLocalizationSourceName;
         this.actionMenuItems = [
             {
                 text: this.l('Edit'),
@@ -327,7 +326,7 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
 
     openDocumentAddAddDialog() {
         this.dialog.open(UploadDocumentsDialogComponent, {
-            panelClass: 'slider',
+            panelClass: ['slider'],
             disableClose: false,
             hasBackdrop: false,
             closeOnNavigation: true,

@@ -1,14 +1,30 @@
-import { Injectable, Injector } from '@angular/core';
-import { Subscription, Observable, BehaviorSubject } from 'rxjs';
+/** Core imports */
+import { Injectable } from '@angular/core';
+
+/** Third party imports */
+import { BehaviorSubject, Subscription, Observable, ReplaySubject, combineLatest } from 'rxjs';
+import { finalize, switchMap, map, tap } from 'rxjs/operators';
+
+/** Application imports */
 import { DashboardServiceProxy } from 'shared/service-proxies/service-proxies';
+import { PeriodModel } from '@app/shared/common/period/period.model';
+import { GetTotalsOutput } from '@shared/service-proxies/service-proxies';
+import { CacheService } from '@node_modules/ng2-cache-service';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { PeriodService } from '@app/shared/common/period/period.service';
 
 @Injectable()
 export class DashboardWidgetsService  {
-    private _period: BehaviorSubject<Object> = new BehaviorSubject<Object>({});
-    private _totalsData: BehaviorSubject<Object> = new BehaviorSubject<Object>({});
+    private _period: BehaviorSubject<PeriodModel> = new BehaviorSubject<PeriodModel>(this._periodService.selectedPeriod);
+    private _totalsData: ReplaySubject<GetTotalsOutput> = new ReplaySubject<GetTotalsOutput>(1);
+    totalsData$: Observable<GetTotalsOutput> = this._totalsData.asObservable();
+    totalsDataAvailable$: Observable<boolean> = this.totalsData$.pipe(
+        map((totalsData: GetTotalsOutput) => !!(totalsData.totalOrderAmount || totalsData.totalLeadCount || totalsData.totalClientCount))
+    );
+    private totalsDataLoading: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+    totalsDataLoading$: Observable<boolean> = this.totalsDataLoading.asObservable();
     private _subscribers: Array<Subscription> = [];
-    public period$: Observable<Object> = this._period.asObservable();
-
+    public period$: Observable<PeriodModel> = this._period.asObservable();
     totalsDataFields = [
         {
             title: 'Sales',
@@ -29,31 +45,32 @@ export class DashboardWidgetsService  {
            type: 'number',
            percent: '0%'
        }];
+    private _refresh: BehaviorSubject<null> = new BehaviorSubject<null>(null);
+    refresh$: Observable<null> = this._refresh.asObservable();
 
-    constructor(injector: Injector,
-        private _dashboardServiceProxy: DashboardServiceProxy
-    ) { }
-
-    subscribePeriodChange(callback: (period: any) => any) {
-        this._subscribers.push(
-            this.period$.subscribe(callback)
-        );
+    constructor(
+        private _dashboardServiceProxy: DashboardServiceProxy,
+        private _cacheService: CacheService,
+        private _ls: AppLocalizationService,
+        private _periodService: PeriodService
+    ) {
+        combineLatest(
+            this.period$,
+            this.refresh$
+        ).pipe(
+            tap(() => this.totalsDataLoading.next(true)),
+            switchMap(([period]: [PeriodModel]) => this._dashboardServiceProxy.getTotals(period && period.from, period && period.to).pipe(finalize(() => this.totalsDataLoading.next(false)))),
+        ).subscribe((totalData: GetTotalsOutput) => {
+            this._totalsData.next(totalData);
+        });
     }
 
-    periodChanged(period = undefined) {
-        this._period.next(period);
-        this._dashboardServiceProxy.getTotals(
-            period && period.from, period && period.to)
-                .subscribe(result => {
-                    this._totalsData.next(result);
-                }
-       );
+    refresh() {
+        this._refresh.next(null);
     }
 
-    subscribeTotalsData(callback: (period: Object) => any) {
-        this._subscribers.push(
-            this._totalsData.asObservable().subscribe(callback)
-        );
+    periodChanged(period: string) {
+        this._period.next(this._periodService.getDatePeriodFromName(period));
     }
 
     getPercentage(value, total) {

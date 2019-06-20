@@ -10,5 +10,5 @@
 <div mat-dialog-actions>
     <button mat-button class="button-layout button-default" (click)="onCancel()">{{l('Cancel')}}</button>
     <button mat-button class="button-layout button-primary" (click)="onSave()">{{l('Import')}}</button>
-    <button mat-button class="button-layout button-primary" (click)="onConnectNew()" [disabled]="!createAccountAvailable">{{l('Add_xero_account')}}</button>
+    <button mat-button class="button-layout button-primary another-account" (click)="onConnectNew()" [disabled]="!createAccountAvailable">{{l('Add_xero_account')}}</button>
 </div>

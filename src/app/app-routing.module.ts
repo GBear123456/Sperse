@@ -45,9 +45,14 @@ export class CfoActivateService implements CanActivate {
     ) {}
 
     canActivate() {
-        if (this.permissionChecker.isGranted('Pages.CFO.MainInstanceAccess') || this.featureService.isEnabled('CFO.Partner')) {
-            this.router.navigate([this.permissionChecker.isGranted('Pages.CFO.MainInstanceAccess') ? '/app/cfo/main' : '/app/cfo/user' ]);
+        if (this.permissionChecker.isGranted('Pages.CFO.MainInstanceAccess')) {
+            this.router.navigate(['/app/cfo/main']);
+        } else if (this.featureService.isEnabled('CFO.Partner') && this.permissionChecker.isGranted('Pages.CFO.MemberAccess')) {
+            this.router.navigate(['/app/cfo-portal']);
+        } else {
+            this.router.navigate(['/app/access-denied']);
         }
+
         return false;
     }
 }
@@ -96,6 +101,12 @@ export class CfoActivateService implements CanActivate {
                         path: 'cfo/:instance',
                         loadChildren: 'app/cfo/cfo.module#CfoModule', //Lazy load cfo *module
                         data: { feature: 'CFO', localizationSource: 'CFO' },
+                        resolve: { cfo: ModulePathResolverService }
+                    },
+                    {
+                        path: 'cfo-portal',
+                        loadChildren: 'app/cfo-portal/cfo-portal.module#CfoPortalModule', //Lazy load cfo-portal *module
+                        data: { feature: 'CFO.Partner', permission: 'Pages.CFO.MemberAccess', localizationSource: 'CFO' },
                         resolve: { cfo: ModulePathResolverService }
                     }
                 ]

@@ -13,6 +13,7 @@ export class ContactListDialogComponent extends AppComponentBase {
     displayList: any[];
     title = this.l('RelatedContacts');
     addNewTitle = this.l('AddRelatedContact');
+    manageAllowed = false;
     photoType;
 
     @ContentChild(TemplateRef)
@@ -23,7 +24,7 @@ export class ContactListDialogComponent extends AppComponentBase {
         @Inject(MAT_DIALOG_DATA) public data: any,
         public dialogRef: MatDialogRef<ContactListDialogComponent>
     ) {
-        super(injector, AppConsts.localization.CRMLocalizationSourceName);
+        super(injector);
     }
 
     selectContact(contact): void {

@@ -1,7 +1,7 @@
 <header>
     <h5 class="dialog-title">
         {{ title }}
-        <a (click)="addNewContact()" class="float-right add-new-contact">{{ addNewTitle }}</a>
+        <a *ngIf="manageAllowed" (click)="addNewContact()" class="float-right add-new-contact">{{ addNewTitle }}</a>
     </h5>
     <div class="search-wrapper clearfix">
         <input type="text" id="search-contacts" class="search-contacts" placeholder="Search contacts..." (keyup)="filterList($event)">

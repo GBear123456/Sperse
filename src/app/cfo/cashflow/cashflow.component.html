@@ -1,5 +1,6 @@
 <app-headline [config]="headlineConfig" *ngIf="!isFullscreenMode">
     <synch-progress class="synch-progress" (onComplete)="showRefreshButton()"></synch-progress>
+    <currencies-dropdown></currencies-dropdown>
 </app-headline>
 
 <cashflow-operations
@@ -22,7 +23,7 @@
     </div>
 
     <dx-resizable *ngIf="statsDetailResult !== undefined" class="cashflow-wrap"
-                  [maxHeight]="735"
+                  [maxHeight]="788"
                   (onResize)="onTransactionDetailsResize($event)"
                   (onResizeEnd)="onTransactionDetailsResizeEnd($event)"
                   handles="top">
@@ -37,11 +38,11 @@
                      (onSelectionChanged)="changeDetailsTab($event)">
             </dx-tabs>
             <div class="detailsButtons">
-                <dx-button [text]="'+ ' + l('AddForecastTransaction')" (onClick)="addNewForecast()" [disabled]="disableAddForecastButton"></dx-button>
-                <dx-button *ngIf="detailsContainsForecasts" [disabled]="!detailsSomeForecastsItemsSelected" [text]="'x ' + l('DeleteSelectedForecasts')" (onClick)="deleteSelectedForecasts()"></dx-button>
+                <dx-button [text]="'+ ' + l('AddForecastTransaction')" (onClick)="addNewForecast()" [disabled]="!isInstanceAdmin || disableAddForecastButton"></dx-button>
+                <dx-button *ngIf="detailsContainsForecasts" [disabled]="!isInstanceAdmin || !detailsSomeForecastsItemsSelected" [text]="'x ' + l('DeleteSelectedForecasts')" (onClick)="deleteSelectedForecasts()"></dx-button>
                 <dx-button *ngIf="searchValue?.length" class="search-value-btn" [text]="searchValue" [visible]="!showAllVisible" (onClick)="refreshTransactionDetail(false)"></dx-button>
                 <dx-button class="showall-btn" [text]="l('Show all')" [visible]="showAllVisible" (onClick)="refreshTransactionDetail(true)" [disabled]="showAllDisable"></dx-button>
-                <dx-button class="reclassify-btn" [text]="l('Reclassify')" [disabled]="!detailsSomeHistoricalItemsSelected" (onClick)="reclassifyTransactions($event)"></dx-button>
+                <dx-button class="reclassify-btn" [text]="l('Reclassify')" [disabled]="!_cfoService.classifyTransactionsAllowed || !detailsSomeHistoricalItemsSelected" (onClick)="reclassifyTransactions($event)"></dx-button>
             </div>
         </div>
 
@@ -63,7 +64,7 @@
                       (onRowUpdating)="onDetailsRowUpdating($event)"
                       (onSelectionChanged)="onDetailsSelectionChanged($event)">
             <dxo-editing mode="cell"
-                         [allowUpdating]="true"
+                         [allowUpdating]="isInstanceAdmin"
                          texts="{'confirmDeleteMessage': ''}">
             </dxo-editing>
 
@@ -72,6 +73,7 @@
                            [showCheckBoxesMode]="'always'"
                            mode="multiple">
             </dxo-selection>
+            <dxo-state-storing [enabled]="true" type="localStorage" [storageKey]="detailsSettingsIdentifier"></dxo-state-storing>
             <dxi-column dataField="forecastDate"
                         dataType="date"
                         [cssClass]="'forecastDate ' + tabularFontName"
@@ -144,7 +146,7 @@
                         [allowFiltering]="false"
                         [cssClass]="tabularFontName"
                         [allowEditing]="false"
-                        visible="false">
+                        [visible]="false">
             </dxi-column>
             <dxi-column [caption]="l('DetailsHeaders_Type')"
                         dataField="cashflowTypeId"
@@ -243,7 +245,7 @@
 <app-no-data
     *ngIf="startDataLoading && (!cashflowData || !cashflowData.length)"
     text=""
-    linkUrl="/app/cfo/main/start"
+    [linkUrl]="instanceUri + 'start'"
     [showLink]="!filteredLoad"
     [linkText]="l('Go_to_sfo_setup')">
 </app-no-data>

@@ -18,7 +18,7 @@ import { AppService } from '@app/app.service';
 export class SetupComponent extends CFOComponentBase implements AfterViewInit, OnInit, OnDestroy {
     private rootComponent: any;
     public headlineConfig;
-    isDisabled = false;
+    isDisabled = !this.isInstanceAdmin;
     dialogConfig = new MatDialogConfig();
     setupContainerElement: Element;
 
@@ -33,7 +33,6 @@ export class SetupComponent extends CFOComponentBase implements AfterViewInit, O
     }
 
     ngOnInit(): void {
-        super.ngOnInit();
         this.headlineConfig = {
             names: [this.l('Setup_Title')],
             iconSrc: './assets/common/icons/magic-stick-icon.svg',
@@ -42,8 +41,7 @@ export class SetupComponent extends CFOComponentBase implements AfterViewInit, O
         this.rootComponent.overflowHidden(true);
         this.rootComponent.addScriptLink('https://fast.wistia.com/embed/medias/kqjpmot28u.jsonp');
         this.rootComponent.addScriptLink('https://fast.wistia.com/assets/external/E-v1.js');
-
-        if (this._appService.hasModuleSubscription())
+        if (this._appService.hasModuleSubscription() && this.instanceType == InstanceType.Main)
             setTimeout(() => this.openDialog(), 300);
     }
 
@@ -62,7 +60,7 @@ export class SetupComponent extends CFOComponentBase implements AfterViewInit, O
         }};
 
         this.dialog.open(AccountConnectorDialogComponent, dialogConfig).afterClosed().subscribe(() => {
-            this.isDisabled = false;
+            this.isDisabled = !this.isInstanceAdmin;
         });
     }
 
@@ -73,7 +71,7 @@ export class SetupComponent extends CFOComponentBase implements AfterViewInit, O
         if (this._cfoService.instanceId == null)
             this._instanceServiceProxy.setup(InstanceType[this.instanceType], undefined).subscribe(
                 data => { this._cfoService.instanceChangeProcess(); },
-                () => this.isDisabled = false
+                () => this.isDisabled = !this.isInstanceAdmin
             );
     }
 

@@ -7,10 +7,10 @@
   "localizationSource":  "CRM",
   "navigation": [
     [ "Dashboard", "", "icon-home", "/app/crm/dashboard" ],
-    [ "Leads", "Pages.CRM.Customers", "icon-globe", "/app/crm/leads" ],
+    [ "Contacts", "Pages.CRM.Customers", "icon-globe", "/app/crm/leads" ],
     [ "Clients", "Pages.CRM.Customers", "icon-globe", "/app/crm/clients" ],
-    [ "Tasks", "Pages.CRM.Events", "icon-globe", "/app/crm/activity" ],
     [ "Partners", "Pages.CRM.Partners", "icon-globe", "/app/crm/partners" ],
+    [ "Tasks", "Pages.CRM.Events", "icon-globe", "/app/crm/activity" ],
     [ "Orders", "Pages.CRM.Orders", "icon-globe", "/app/crm/orders" ],
     [ "Reports", "", "", "" ],
     [ "Products", "", "", "" ]

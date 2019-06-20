@@ -1,5 +1,15 @@
+/** Core imports */
 import { Component, Injector, ViewChild, OnDestroy } from '@angular/core';
 
+/** Third party imports */
+import { MatDialog } from '@angular/material/dialog';
+import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
+import DataSource from 'devextreme/data/data_source';
+import { forkJoin } from 'rxjs';
+import { filter, takeUntil } from 'rxjs/operators';
+import * as _ from 'underscore';
+
+/** Application imports */
 import {
     UserServiceProxy, UserListDto, EntityDtoOfInt64, RoleServiceProxy,
     PermissionServiceProxy, Group
@@ -12,23 +22,13 @@ import { TokenAuthServiceProxy } from '@shared/service-proxies/service-proxies';
 import { CreateUserDialogComponent } from './create-user-dialog/create-user-dialog.component';
 import { ImpersonationService } from './impersonation.service';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
-
-import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
-import DataSource from 'devextreme/data/data_source';
-
 import { FiltersService } from '@shared/filters/filters.service';
 import { FilterModel } from '@shared/filters/models/filter.model';
 import { FilterRadioGroupComponent } from '@shared/filters/radio-group/filter-radio-group.component';
 import { FilterRadioGroupModel } from '@shared/filters/radio-group/filter-radio-group.model';
 import { FilterTreeListComponent } from '@shared/filters/tree-list/tree-list.component';
 import { FilterTreeListModel } from '@shared/filters/tree-list/tree-list.model';
-
 import { AppService } from '@app/app.service';
-import { forkJoin } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
-import * as _ from 'underscore';
-
-import { MatDialog } from '@angular/material/dialog';
 import { ItemTypeEnum } from '@shared/common/item-details-layout/item-type.enum';
 import { ItemDetailsService } from '@shared/common/item-details-layout/item-details.service';
 
@@ -187,6 +187,22 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
                 ]
             },
             {
+                location: 'before',
+                items: [
+                    {
+                        name: 'searchAll',
+                        action: this.searchAllClick.bind(this),
+                        options: {
+                            text: this.l('Search All')
+                        },
+                        attr: {
+                            'filter-selected': ((this.searchValue && this.searchValue.length > 0) && (this._filtersService.hasFilterSelected || this.group)) ? true : false,
+                            'custaccesskey': 'search-container'
+                        }
+                    }
+                ]
+            },
+            {
                 location: 'after',
                 areItemsDependent: true,
                 items: [
@@ -299,6 +315,12 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
         ]);
     }
 
+    searchAllClick() {
+        this._filtersService.clearAllFilters();
+        this.group = undefined;
+        this.initToolbarConfig();
+    }
+
     openUserDetails(userId) {
         this.searchClear = false;
         this.actionRecord = null;
@@ -321,7 +343,7 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
                         items: {
                             element: new FilterTreeListModel({
                                 value: this.selectedPermissions,
-                                list: res[0].items.map((item, index) => {                                    
+                                list: res[0].items.map((item, index) => {
                                     return {
                                         id: item.name,
                                         parent: item.parentName,
@@ -386,7 +408,7 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
         });
     }
 
-    filterByGroup(group: Group) {        
+    filterByGroup(group: Group) {
         this.group = group;
 
         this.initToolbarConfig();
@@ -437,7 +459,7 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
             disableClose: true,
             closeOnNavigation: false,
             data: { refreshParent: this.invalidate.bind(this) }
-        }).afterClosed().subscribe(() => this.invalidate());
+        }).afterClosed().pipe(filter(Boolean)).subscribe(() => this.invalidate());
     }
 
     deleteUser(user: UserListDto): void {
@@ -492,10 +514,6 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
 
     deactivate() {
         super.deactivate();
-
-        this._filtersService.localizationSourceName =
-            AppConsts.localization.defaultLocalizationSourceName;
-
         this._appService.updateToolbar(null);
         this._filtersService.unsubscribe();
         this.rootComponent.overflowHidden();

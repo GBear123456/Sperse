@@ -49,18 +49,19 @@ import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-
 import { FilterRangeComponent } from '@shared/filters/range/filter-range.component';
 import { FilterHelpers } from '@app/crm/shared/helpers/filter.helper';
 import { DataLayoutType } from '@app/shared/layout/data-layout-type';
-import { ContactStatusDto, BulkUpdatePartnerTypeInput, PartnerTypeServiceProxy, PartnerServiceProxy } from '@shared/service-proxies/service-proxies';
+import { ContactStatusDto, BulkUpdatePartnerTypeInput, PartnerTypeServiceProxy, PartnerServiceProxy, ContactServiceProxy } from '@shared/service-proxies/service-proxies';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { ClientService } from '@app/crm/clients/clients.service';
 import { PipelineService } from '@app/shared/pipeline/pipeline.service';
 import { ItemDetailsService } from '@shared/common/item-details-layout/item-details.service';
 import { ItemTypeEnum } from '@shared/common/item-details-layout/item-type.enum';
+import { ContactsService } from '@app/crm/contacts/contacts.service';
 
 @Component({
     templateUrl: './partners.component.html',
     styleUrls: ['./partners.component.less'],
     animations: [appModuleAnimation()],
-    providers: [ ClientService, PartnerServiceProxy, PartnerTypeServiceProxy ]
+    providers: [ ClientService, PartnerServiceProxy, PartnerTypeServiceProxy, ContactServiceProxy ]
 })
 export class PartnersComponent extends AppComponentBase implements OnInit, OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
@@ -78,7 +79,6 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     private rootComponent: any;
     private formatting = AppConsts.formatting;
     private subRouteParams: any;
-    private canSendVerificationRequest = false;
     private dependencyChanged = false;
 
     statuses: ContactStatusDto[];
@@ -97,7 +97,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         onRefresh: this.invalidate.bind(this),
         buttons: [
             {
-                enabled: true,
+                enabled: this._contactService.checkCGPermission(ContactGroup.Partner),
                 action: this.createPartner.bind(this),
                 lable: this.l('CreateNewPartner')
             }
@@ -108,7 +108,9 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
 
     constructor(injector: Injector,
         public dialog: MatDialog,
-        public partnerService: PartnerServiceProxy,
+        public contactProxy: ContactServiceProxy,
+        private _contactService: ContactsService,
+        private _partnerService: PartnerServiceProxy,
         private _appService: AppService,
         private _pipelineService: PipelineService,
         private _filtersService: FiltersService,
@@ -117,7 +119,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         private store$: Store<AppStore.State>,
         private itemDetailsService: ItemDetailsService
     ) {
-        super(injector, AppConsts.localization.CRMLocalizationSourceName);
+        super(injector);
         this.dataSource = {
             store: {
                 key: 'Id',
@@ -137,8 +139,6 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         this._pipelineService.stageChange.asObservable().subscribe((lead) => {
             this.dependencyChanged = (lead.Stage == _.last(this._pipelineService.getStages(AppConsts.PipelinePurposeIds.lead)).name);
         });
-
-        this.canSendVerificationRequest = this._appService.canSendVerificationRequest();
     }
 
     private paramsSubscribe() {
@@ -192,10 +192,6 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         }).afterClosed().subscribe(() => this.invalidate());
     }
 
-    isPartnerCFOAvailable(userId) {
-        return this._appService.isCFOAvailable(userId);
-    }
-
     showPartnerDetails(event) {
         let partnerId = event.data && event.data.Id;
         if (!partnerId)
@@ -206,10 +202,6 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         let orgId = event.data.OrganizationId;
         this._router.navigate(['app/crm/contact', partnerId].concat(orgId ? ['company', orgId] : []),
             { queryParams: { referrer: 'app/crm/partners'} });
-    }
-
-    redirectToCFO(event, userId) {
-        this._appService.redirectToCFO(userId);
     }
 
     toggleDataLayout(dataLayoutType) {
@@ -425,6 +417,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                     {
                         name: 'assign',
                         action: this.toggleUserAssignment.bind(this),
+                        disabled: !this._contactService.checkCGPermission(ContactGroup.Partner, 'ManageAssignments'),
                         attr: {
                             'filter-selected': this.filterModelAssignment && this.filterModelAssignment.isSelected
                         }
@@ -439,6 +432,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                     {
                         name: 'partnerType',
                         action: this.toggleType.bind(this),
+                        disabled: !this._contactService.checkCGPermission(ContactGroup.Partner),
                         attr: {
                             'filter-selected': this.filterModelTypes && this.filterModelTypes.isSelected
                         }
@@ -446,6 +440,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                     {
                         name: 'lists',
                         action: this.toggleLists.bind(this),
+                        disabled: !this._contactService.checkCGPermission(ContactGroup.Partner, 'ManageListsAndTags'),
                         attr: {
                             'filter-selected': this.filterModelLists && this.filterModelLists.isSelected
                         }
@@ -453,6 +448,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                     {
                         name: 'tags',
                         action: this.toggleTags.bind(this),
+                        disabled: !this._contactService.checkCGPermission(ContactGroup.Partner, 'ManageListsAndTags'),
                         attr: {
                             'filter-selected': this.filterModelTags && this.filterModelTags.isSelected
                         }
@@ -460,6 +456,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                     {
                         name: 'rating',
                         action: this.toggleRating.bind(this),
+                        disabled: !this._contactService.checkCGPermission(ContactGroup.Partner, 'ManageRatingAndStars'),
                         attr: {
                             'filter-selected': this.filterModelRating && this.filterModelRating.isSelected
                         }
@@ -467,6 +464,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                     {
                         name: 'star',
                         action: this.toggleStars.bind(this),
+                        disabled: !this._contactService.checkCGPermission(ContactGroup.Partner, 'ManageRatingAndStars'),
                         attr: {
                             'filter-selected': this.filterModelStar && this.filterModelStar.isSelected
                         }
@@ -623,7 +621,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
 
     updatePartnerTypes($event) {
         let selectedIds: number[] = this.dataGrid.instance.getSelectedRowKeys();
-        this.partnerService.bulkUpdateType(BulkUpdatePartnerTypeInput.fromJS({
+        this._partnerService.bulkUpdateType(BulkUpdatePartnerTypeInput.fromJS({
             partnerIds: selectedIds,
             typeId: $event.id
         })).subscribe(() => {
@@ -661,14 +659,8 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         this.deactivate();
     }
 
-    requestVerification(contactId: number) {
-        this._appService.requestVerification(contactId).subscribe();
-    }
-
     activate() {
         super.activate();
-        this.localizationService.localizationSourceName = this.localizationSourceName;
-        this._filtersService.localizationSourceName = this.localizationSourceName;
 
         this.paramsSubscribe();
         this.initFilterConfig();
@@ -684,9 +676,6 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
 
     deactivate() {
         super.deactivate();
-        this.localizationService.localizationSourceName = undefined;
-        this._filtersService.localizationSourceName = AppConsts.localization.defaultLocalizationSourceName;
-
         this.subRouteParams.unsubscribe();
         this._appService.updateToolbar(null);
         this._filtersService.unsubscribe();

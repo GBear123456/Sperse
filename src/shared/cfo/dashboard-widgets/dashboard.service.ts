@@ -1,30 +1,32 @@
-import { Injectable, Injector } from '@angular/core';
-import { Subscription, Subject } from 'rxjs';
+/** Core imports */
+import { Injectable } from '@angular/core';
+
+/** Third party imports */
+import { BehaviorSubject, Observable } from 'rxjs';
+import { distinctUntilChanged } from 'rxjs/operators';
+
+/** Application imports */
+import { PeriodModel } from '@app/shared/common/period/period.model';
+import { PeriodService } from '@app/shared/common/period/period.service';
 
 @Injectable()
-export class DashboardService  {
-    private _period: Subject<Object>;
-    private _subscribers: Array<Subscription> = [];
+export class DashboardService {
+    private _period: BehaviorSubject<PeriodModel> = new BehaviorSubject(this.periodService.selectedPeriod);
+    period$: Observable<PeriodModel> = this._period.asObservable().pipe(distinctUntilChanged());
 
-    constructor(injector: Injector) {
-        this._period = new Subject<Object>();
+    private _refresh: BehaviorSubject<any> = new BehaviorSubject<null>(null);
+    refresh$: Observable<null> = this._refresh.asObservable();
+
+    constructor(
+        private periodService: PeriodService
+    ) {}
+
+    refresh() {
+        this._refresh.next(null);
     }
 
-    subscribePeriodChange(callback: (period: Object) => any) {
-        this._subscribers.push(
-            this._period.asObservable().subscribe(callback)
-        );
-    }
-
-    periodChanged(period) {
-        this._period.next(period);
-    }
-
-    unsubscribe() {
-        this._subscribers.map((sub) => {
-            return void (sub.unsubscribe());
-        });
-        this._subscribers.length = 0;
+    periodChanged(period: string) {
+        this._period.next(this.periodService.getDatePeriodFromName(period));
     }
 
 }

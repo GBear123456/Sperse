@@ -23,9 +23,11 @@ import { NewItemsTotalsComponent } from './new-items-totals/new-items-totals.com
 import { TotalsByPeriodComponent } from './totals-by-period/totals-by-period.component';
 import { TotalsBySourceComponent } from './totals-by-source/totals-by-source.component';
 import { RecentClientsComponent } from './recent-clients/recent-clients.component';
-import { ClientsByReginComponent } from './clients-by-region/clients-by-region.component';
+import { ClientsByRegionComponent } from './clients-by-region/clients-by-region.component';
 import { DashboardWidgetsService } from './dashboard-widgets.service';
 import { DashboardServiceProxy } from 'shared/service-proxies/service-proxies';
+import { LoadingSpinnerModule } from '@app/shared/common/loading-spinner/loading-spinner.module';
+import { PeriodService } from '@app/shared/common/period/period.service';
 
 @NgModule({
     imports: [
@@ -42,20 +44,20 @@ import { DashboardServiceProxy } from 'shared/service-proxies/service-proxies';
         DxDataGridModule,
         MatDialogModule,
         DxVectorMapModule,
+        LoadingSpinnerModule,
         ngCommon.CommonModule
     ],
     declarations: [
-        ClientsByReginComponent,
+        ClientsByRegionComponent,
         CountsAndTotalsComponent,
         NewItemsTotalsComponent,
         TotalsByPeriodComponent,
         TotalsBySourceComponent,
         RecentClientsComponent
     ],
-    entryComponents: [
-    ],
+    entryComponents: [],
     exports: [
-        ClientsByReginComponent,
+        ClientsByRegionComponent,
         CountsAndTotalsComponent,
         NewItemsTotalsComponent,
         TotalsByPeriodComponent,
@@ -63,6 +65,7 @@ import { DashboardServiceProxy } from 'shared/service-proxies/service-proxies';
         RecentClientsComponent
     ],
     providers: [
+        PeriodService,
         DashboardWidgetsService,
         DashboardServiceProxy
     ]

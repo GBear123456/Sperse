@@ -33,7 +33,7 @@ export class ActivityAssignedUsersStoreEffects {
                 return empty();
             }
 
-            return this._userAssignmentService.getAllowedAssignableUsersForActivity(true, undefined, undefined)
+            return this._userAssignmentService.getAllowedAssignableUsersForActivity(undefined, undefined)
                 .pipe(
                     map((users: UserInfoDto[]) => {
                         return new assignedUsersActions.LoadSuccessAction(users);

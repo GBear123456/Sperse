@@ -58,7 +58,7 @@ import { UtilsModule } from '@shared/utils/utils.module';
 import { CommonModule } from '@shared/common/common.module';
 import { UploadPhotoDialogComponent } from './upload-photo-dialog/upload-photo-dialog.component';
 import { ConfirmDialogComponent } from './dialogs/confirm/confirm-dialog.component';
-import { AppModalDialogComponent } from './dialogs/modal/app-modal-dialog.component';
+import { CalendarDialogComponent } from './dialogs/calendar/calendar-dialog.component';
 import { ImportWizardComponent } from './import-wizard/import-wizard.component';
 import { ConfirmImportDialog } from './import-wizard/confirm-import-dialog/confirm-import-dialog.component';
 import { ImportProgressBarComponent } from './import-wizard/import-progress-bar/import-progress-bar.component';
@@ -93,8 +93,8 @@ import { RatingComponent } from '@app/crm/shared/rating/rating.component';
 import { StarsListComponent } from '@app/crm/shared/stars-list/stars-list.component';
 import { TypesListComponent } from '@app/crm/shared/types-list/types-list.component';
 import { StaticListComponent } from './static-list/static-list.component';
-import { LoadingSpinnerComponent } from './loading-spinner/loading-spinner.component';
 import { TimeAgoPipe } from 'time-ago-pipe';
+import { LoadingSpinnerModule } from '@app/shared/common/loading-spinner/loading-spinner.module';
 
 @NgModule({
     imports: [
@@ -156,7 +156,8 @@ import { TimeAgoPipe } from 'time-ago-pipe';
         DxTreeListModule,
         DxSliderModule,
         CreditCardDirectivesModule,
-        AngularGooglePlaceModule
+        AngularGooglePlaceModule,
+        LoadingSpinnerModule
     ],
     declarations: [
         TimeAgoPipe,
@@ -174,6 +175,7 @@ import { TimeAgoPipe } from 'time-ago-pipe';
         ImportWizardComponent,
         ImportProgressBarComponent,
         ConfirmImportDialog,
+        CalendarDialogComponent,
         UploadPhotoDialogComponent,
         ConfirmDialogComponent,
         RatingBarComponent,
@@ -193,9 +195,7 @@ import { TimeAgoPipe } from 'time-ago-pipe';
         ListsListComponent,
         RatingComponent,
         StarsListComponent,
-        TypesListComponent,
-        AppModalDialogComponent,
-        LoadingSpinnerComponent
+        TypesListComponent
     ],
     exports: [
         TimeAgoPipe,
@@ -222,9 +222,7 @@ import { TimeAgoPipe } from 'time-ago-pipe';
         ListsListComponent,
         RatingComponent,
         StarsListComponent,
-        TypesListComponent,
-        AppModalDialogComponent,
-        LoadingSpinnerComponent
+        TypesListComponent
     ],
     providers: [
         DateTimeService,
@@ -232,10 +230,10 @@ import { TimeAgoPipe } from 'time-ago-pipe';
     ],
     entryComponents: [
         ConfirmImportDialog,
+        CalendarDialogComponent,
         UploadPhotoDialogComponent,
         ConfirmDialogComponent,
         PaymentWizardComponent,
-        AppModalDialogComponent,
         CommonLookupModalComponent
     ]
 })

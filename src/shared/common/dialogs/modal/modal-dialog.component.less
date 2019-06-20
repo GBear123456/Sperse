@@ -1,19 +1,10 @@
-/deep/ .cdk-overlay-container {
-    .cdk-overlay-pane.slider {
-        transition: margin 1s!important;
-
-        .mat-dialog-container {
-            overflow: visible;
-            padding: 0px;
-            margin: 0px;
-        }
-    }
-}
 /deep/ .hide {
     display: none;
 }
 :host {
     position: relative;
+    display: block;
+    height: 100%;
     .close-dialog {
         position: absolute;
         width: 42px;
@@ -21,10 +12,10 @@
         top: 25px;
         left: -42px;
         cursor: pointer;
-        border-radius: 5px 0px 0px 5px;
+        border-radius: 5px 0 0 5px;
         border-right: none;
         background-color: #FFF;
-        box-shadow: -2px 0px 6px 0 rgba(0, 0, 0, 0.1);
+        box-shadow: -2px 0 6px 0 rgba(0, 0, 0, 0.1);
 
         &:before, &:after {
             position: absolute;
@@ -48,8 +39,9 @@
 
     .mat-dialog-header {
         display: flex;
+        align-items: center;
         height: 82px;
-        padding: 0px 10px;
+        padding: 0 10px;
         justify-content: space-between;
         background-color: #F3F7FA;
         border-bottom: 1px solid #dadee1;
@@ -65,44 +57,125 @@
            background: transparent;
         }
 
-        .mat-dialog-actions {
-            margin: 0px;
-            .mat-dialog-buttons {
-                height: 46px;
-                align-self: center;
-                display: flex;
-                button {
-                    cursor: pointer;              
-                    outline: none;
-                    &:disabled {
-                        opacity: 0.5;
-                        cursor: not-allowed;
-                    }
-                    &.button-icon {
-                        position: relative;
-                        border-radius: 18px;
-                        margin: 5px;
-                        padding: 0 15px;
-                        height: 36px;
-                        transition: .2s;
-                        border-radius: initial;
-                        margin: auto;
-                        border: 1px solid #eaeef0;
-                        background: #fff;
-                        &:hover {
-                            background: #fff;
-                        }
-                    }
+        /deep/ dx-text-box[name="title"] {
+            width: 440px;
+            height: 100%;
+            &.dx-state-readonly {
+                .dx-texteditor-container:after {
+                    display: none;
+                }
+            }
+            &.dx-invalid {
+                .dx-texteditor-container:after {
+                    background-color: #d9534f!important;
+                }
+                .dx-placeholder {
+                    color: #d9534f!important;
+                }
+            }
+            .dx-texteditor-container:after {
+                content: '';
+                top: 55px!important;
+                margin-top: 0!important;
+                left: 15px;
+                width: 442px;
+                height: 1px;
+                bottom: 18px;
+                position: absolute;
+                display: inline-block;
+                background-color: #dadee1;
+            }
+            input {
+                &, &:read-only {
+                    font-size: 22px;
+                    font-weight: 500;
+                    line-height: 1.09;
+                    letter-spacing: 0.4px;
+                    color: #202b35;
+                    padding-left: 17px;
+                    background-color: #F3F7FA;
+                    border: none;
                 }
             }
         }
     }
 
-    mat-dialog-content {
+    .title-wrapper {
+        display: flex;
+        align-items: center;
+        height: 100%;
+    }
+
+    /deep/ mat-dialog-content {
         height: 100%;
         overflow: hidden;
         max-height: calc(~"100% - 82px");
-        margin: 0px;
-        padding: 0px;         
+        margin: 0;
+        padding: 0;
+    }
+
+    /deep/ mat-dialog-actions {
+        height: 100%;
+        margin: 0;
+        .mat-dialog-buttons {
+            height: 46px;
+            align-self: center;
+            display: flex;
+            button {
+                cursor: pointer;
+                outline: none;
+                &:disabled {
+                    opacity: 0.5;
+                    cursor: not-allowed;
+                }
+                &.button-icon {
+                    position: relative;
+                    padding: 0 15px;
+                    height: 36px;
+                    transition: .2s;
+                    border-radius: initial;
+                    margin: auto;
+                    border: 1px solid #eaeef0;
+                    background: #fff;
+                    &:hover {
+                        background: #fff;
+                    }
+                }
+            }
+        }
+        .mat-dialog-options {
+            padding: 0 15px 0 30px;
+            align-self: center;
+            .mat-dialog-option {
+                font-size: 13px;
+            }
+        }
+    }
+
+    /deep/.tab-content {
+        padding: 15px;
+    }
+
+    /deep/ .dx-checkbox {
+        margin: 5px 0;
+        .dx-checkbox-icon {
+            background-color: #FFF;
+            border: 1px solid #DADEE1 !important;
+            border-radius: 3px;
+        }
+
+        &.dx-checkbox-checked {
+            .dx-checkbox-icon {
+                color: #FFF;
+                font-size: 8px;
+                font-weight: bold;
+                background-color: #00AEEF;
+                border-color: #00AEEF !important;
+            }
+        }
+
+        .dx-checkbox-text {
+            white-space: nowrap;
+        }
     }
 }

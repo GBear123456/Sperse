@@ -11,7 +11,7 @@
 
          .inplace-edit-edit-mode {
              dx-text-box {
-                 .dx-texteditor-input{
+                 .dx-texteditor-input {
                      background: #f3f7fa;
                      color: #202b35;
                      font-size: 28px !important;
@@ -79,7 +79,6 @@
                     white-space: nowrap;
                     text-overflow: ellipsis;
                     height: 100%;
-                    padding-right: 2px;
                 }
             }
         }
@@ -141,22 +140,21 @@
     }
 
     .personal_info {
-        margin: 10px 100px 0 150px;
-        width: 450px;
+        margin: 10px 0 0 150px;
+        width: 100%;
+        max-width: 550px;
+        
         .status-group-wrapper {
-            padding: 0px 0px;
+            padding: 0;
             text-align: left;
+            
             span {
-                font-weight: 500;
                 font-style: italic;
                 font-size: 12px;
                 font-weight: 200;
             }
         }
-
-        @media (max-width:1550px) {
-            margin-right: 0px;
-        }
+        
         @media (max-width:1380px) {
             width: 350px;
         }

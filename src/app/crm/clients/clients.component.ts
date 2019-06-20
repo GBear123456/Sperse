@@ -7,14 +7,16 @@ import { MatDialog } from '@angular/material/dialog';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import 'devextreme/data/odata/store';
 import { Store, select } from '@ngrx/store';
+import { Observable } from 'rxjs';
 import { first, finalize } from 'rxjs/operators';
 import * as _ from 'underscore';
 
 /** Application imports */
 import { AppService } from '@app/app.service';
 import { FilterHelpers } from '@app/crm/shared/helpers/filter.helper';
-import { ContactAssignedUsersStoreSelectors,
+import {
     AppStore,
+    ContactAssignedUsersStoreSelectors,
     TagsStoreSelectors,
     ListsStoreSelectors,
     StarsStoreSelectors,
@@ -24,7 +26,7 @@ import { ContactAssignedUsersStoreSelectors,
 import { ClientService } from '@app/crm/clients/clients.service';
 import { PipelineService } from '@app/shared/pipeline/pipeline.service';
 import { AppConsts } from '@shared/AppConsts';
-import { ContactGroup } from '@shared/AppEnums';
+import { ContactGroup, ContactStatus } from '@shared/AppEnums';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { StaticListComponent } from '@app/shared/common/static-list/static-list.component';
 import { TagsListComponent } from '../shared/tags-list/tags-list.component';
@@ -43,21 +45,20 @@ import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calenda
 import { FilterCheckBoxesComponent } from '@shared/filters/check-boxes/filter-check-boxes.component';
 import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-boxes.model';
 import { FilterRangeComponent } from '@shared/filters/range/filter-range.component';
-import { CustomerServiceProxy, CreateContactEmailInput, ContactEmailServiceProxy, 
-    ContactStatusDto } from '@shared/service-proxies/service-proxies';
+import { CreateContactEmailInput, ContactServiceProxy, ContactEmailServiceProxy, ContactStatusDto } from '@shared/service-proxies/service-proxies';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { CustomReuseStrategy } from '@root/root-routing.module';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
-import { FeatureCheckerService } from '@abp/features/feature-checker.service';
 import { ItemDetailsService } from '@shared/common/item-details-layout/item-details.service';
 import { EditContactDialog } from '../contacts/edit-contact-dialog/edit-contact-dialog.component';
 import { ItemTypeEnum } from '@shared/common/item-details-layout/item-type.enum';
+import { ContactsService } from '@app/crm/contacts/contacts.service';
 
 @Component({
     templateUrl: './clients.component.html',
     styleUrls: ['./clients.component.less'],
     animations: [appModuleAnimation()],
-    providers: [ ClientService, LifecycleSubjectsService ]
+    providers: [ ClientService, LifecycleSubjectsService, ContactServiceProxy ]
 })
 export class ClientsComponent extends AppComponentBase implements OnInit, OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
@@ -68,15 +69,14 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     @ViewChild(StarsListComponent) starsListComponent: StarsListComponent;
     @ViewChild(StaticListComponent) statusComponent: StaticListComponent;
 
-    private readonly dataSourceURI = 'Customer';
+    private readonly dataSourceURI: string = 'Customer';
     private filters: FilterModel[];
     private rootComponent: any;
     private formatting = AppConsts.formatting;
     private subRouteParams: any;
-    private canSendVerificationRequest = false;
     private dependencyChanged = false;
 
-    statuses: ContactStatusDto[];
+    statuses$: Observable<ContactStatusDto[]> = this.store$.pipe(select(StatusesStoreSelectors.getStatuses));
     filterModelLists: FilterModel;
     filterModelTags: FilterModel;
     filterModelAssignment: FilterModel;
@@ -85,7 +85,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     filterModelStar: FilterModel;
 
     assignedUsersSelector = select(ContactAssignedUsersStoreSelectors.getContactGroupAssignedUsers, { contactGroup: ContactGroup.Client });
-
+    contactStatus = ContactStatus;
     selectedClientKeys: any = [];
     public headlineConfig = {
         names: [this.l('Customers')],
@@ -93,7 +93,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         onRefresh: this.refresh.bind(this),
         buttons: [
             {
-                enabled: true,
+                enabled: this._contactService.checkCGPermission(ContactGroup.Client),
                 action: this.createClient.bind(this),
                 lable: this.l('CreateNewCustomer')
             }
@@ -102,8 +102,9 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
 
     constructor(injector: Injector,
         public dialog: MatDialog,
-        public customerService: CustomerServiceProxy,
-        private _appService: AppService,
+        public appService: AppService,
+        public contactProxy: ContactServiceProxy,
+        private _contactService: ContactsService,
         private _pipelineService: PipelineService,
         private _filtersService: FiltersService,
         private _clientService: ClientService,
@@ -111,15 +112,31 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         private store$: Store<AppStore.State>,
         private _reuseService: RouteReuseStrategy,
         private lifeCycleSubjectsService: LifecycleSubjectsService,
-        public featureService: FeatureCheckerService,
         private itemDetailsService: ItemDetailsService
     ) {
-        super(injector, AppConsts.localization.CRMLocalizationSourceName);
+        super(injector);
+    }
+
+    ngOnInit() {
+        this.filterModelStatus = new FilterModel({
+            component: FilterCheckBoxesComponent,
+            caption: 'status',
+            field: 'StatusId',
+            isSelected: true,
+            items: {
+                element: new FilterCheckBoxesModel({
+                    dataSource$: this.statuses$,
+                    nameField: 'name',
+                    keyExpr: 'id',
+                    value: 'A'
+                })
+            }
+        });
         this.dataSource = {
             store: {
                 key: 'Id',
                 type: 'odata',
-                url: this.getODataUrl(this.dataSourceURI),
+                url: this.getODataUrl(this.dataSourceURI, this.filterByStatus(this.filterModelStatus)),
                 version: AppConsts.ODataVersion,
                 deserializeDates: false,
                 beforeSend: (request) => {
@@ -133,7 +150,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             this.dependencyChanged = (lead.Stage == _.last(this._pipelineService.getStages(AppConsts.PipelinePurposeIds.lead)).name);
         });
 
-        this.canSendVerificationRequest = this._appService.canSendVerificationRequest();
+        this.activate();
     }
 
     private paramsSubscribe() {
@@ -196,10 +213,6 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         }).afterClosed().subscribe(() => this.refresh());
     }
 
-    isClientCFOAvailable(userId) {
-        return this._appService.isCFOAvailable(userId);
-    }
-
     showClientDetails(event) {
         if (!event.data)
             return;
@@ -211,10 +224,6 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         event.component.cancelEditData();
         this._router.navigate(['app/crm/contact', clientId].concat(orgId ? ['company', orgId] : []),
             { queryParams: { referrer: 'app/crm/clients'} });
-    }
-
-    redirectToCFO(event, userId) {
-        this._appService.redirectToCFO(userId);
     }
 
     calculateAddressColumnValue(data) {
@@ -248,19 +257,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                         items: {from: new FilterItemModel(), to: new FilterItemModel()},
                         options: {method: 'getFilterByDate', params: { useUserTimezone: true }}
                     }),
-                    this.filterModelStatus = new FilterModel({
-                        component: FilterCheckBoxesComponent,
-                        caption: 'status',
-                        field: 'StatusId',
-                        items: {
-                            element: new FilterCheckBoxesModel(
-                                {
-                                    dataSource$: this.store$.pipe(select(StatusesStoreSelectors.getStatuses)),
-                                    nameField: 'name',
-                                    keyExpr: 'id'
-                                })
-                        }
-                    }),
+                    this.filterModelStatus,
                     new FilterModel({
                         component: FilterInputsComponent,
                         operator: 'contains',
@@ -323,12 +320,11 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                         caption: 'Tag',
                         field: 'TagId',
                         items: {
-                            element: new FilterCheckBoxesModel(
-                                {
-                                    dataSource$: this.store$.pipe(select(TagsStoreSelectors.getStoredTags)),
-                                    nameField: 'name',
-                                    keyExpr: 'id'
-                                })
+                            element: new FilterCheckBoxesModel({
+                                dataSource$: this.store$.pipe(select(TagsStoreSelectors.getStoredTags)),
+                                nameField: 'name',
+                                keyExpr: 'id'
+                            })
                         }
                     }),
                     this.filterModelRating = new FilterModel({
@@ -369,8 +365,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     }
 
     initToolbarConfig() {
-
-        this._appService.updateToolbar([
+        this.appService.updateToolbar([
             {
                 location: 'before', items: [
                     {
@@ -424,6 +419,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                     {
                         name: 'assign',
                         action: this.toggleUserAssignment.bind(this),
+                        disabled: !this._contactService.checkCGPermission(ContactGroup.Client, 'ManageAssignments'),
                         attr: {
                             'filter-selected': this.filterModelAssignment && this.filterModelAssignment.isSelected
                         }
@@ -438,6 +434,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                     {
                         name: 'lists',
                         action: this.toggleLists.bind(this),
+                        disabled: !this._contactService.checkCGPermission(ContactGroup.Client, 'ManageListsAndTags'),
                         attr: {
                             'filter-selected': this.filterModelLists && this.filterModelLists.isSelected
                         }
@@ -445,6 +442,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                     {
                         name: 'tags',
                         action: this.toggleTags.bind(this),
+                        disabled: !this._contactService.checkCGPermission(ContactGroup.Client, 'ManageListsAndTags'),
                         attr: {
                             'filter-selected': this.filterModelTags && this.filterModelTags.isSelected
                         }
@@ -452,6 +450,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                     {
                         name: 'rating',
                         action: this.toggleRating.bind(this),
+                        disabled: !this._contactService.checkCGPermission(ContactGroup.Client, 'ManageRatingAndStars'),
                         attr: {
                             'filter-selected': this.filterModelRating && this.filterModelRating.isSelected
                         }
@@ -459,6 +458,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                     {
                         name: 'star',
                         action: this.toggleStars.bind(this),
+                        disabled: !this._contactService.checkCGPermission(ContactGroup.Client, 'ManageRatingAndStars'),
                         attr: {
                             'filter-selected': this.filterModelStar && this.filterModelStar.isSelected
                         }
@@ -595,16 +595,18 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     }
 
     updateClientStatuses(status) {
-        let selectedIds: number[] = this.dataGrid.instance.getSelectedRowKeys();
-        this._clientService.updateContactStatuses(
-            selectedIds,
-            ContactGroup.Client,
-            status.id,
-            () => {
-                this.refresh();
-                this.dataGrid.instance.clearSelection();
-            }
-        );
+        if (this._contactService.checkCGPermission(ContactGroup.Client)) {
+            let selectedIds: number[] = this.dataGrid.instance.getSelectedRowKeys();
+            this._clientService.updateContactStatuses(
+                selectedIds,
+                ContactGroup.Client,
+                status.id,
+                () => {
+                    this.refresh();
+                    this.dataGrid.instance.clearSelection();
+                }
+            );
+        }
     }
 
     onCellClick($event) {
@@ -614,19 +616,12 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         this.showClientDetails($event);
     }
 
-    ngOnInit() {
-        this.store$.pipe(select(StatusesStoreSelectors.getStatuses)).subscribe(
-            statuses => this.statuses = statuses
-        );
-        this.activate();
-    }
-
     ngOnDestroy() {
         this.deactivate();
     }
 
     private requestVerificationInternal(contactId: number) {
-        this._appService.requestVerification(contactId).subscribe(
+        this.appService.requestVerification(contactId).subscribe(
             () => this.dataGrid.instance.refresh()
         );
     }
@@ -668,15 +663,12 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                     });
                 }
             });
-        } 
+        }
     }
 
     activate() {
         super.activate();
-        this.localizationService.localizationSourceName = this.localizationSourceName;
         this.lifeCycleSubjectsService.activate.next();
-        this._filtersService.localizationSourceName =
-            this.localizationSourceName;
 
         this.paramsSubscribe();
         this.initFilterConfig();
@@ -693,11 +685,9 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
 
     deactivate() {
         super.deactivate();
-        this.localizationService.localizationSourceName = undefined;
-        this._filtersService.localizationSourceName = AppConsts.localization.defaultLocalizationSourceName;
 
         this.subRouteParams.unsubscribe();
-        this._appService.updateToolbar(null);
+        this.appService.updateToolbar(null);
         this._filtersService.unsubscribe();
         this.rootComponent.overflowHidden();
         this.itemDetailsService.setItemsSource(ItemTypeEnum.Customer, this.dataGrid.instance.getDataSource());

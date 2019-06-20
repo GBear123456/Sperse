@@ -132,14 +132,14 @@ export class UserManagementService {
         return tenant && (tenant.customLayoutType == TenantLoginInfoDtoCustomLayoutType.LendSpace);
     }
 
-    checkCFOMembersLayout() {
+    checkAdvicePeriodLayout() {
         let tenant = this.appSession.tenant;
-        return tenant && (tenant.customLayoutType == TenantLoginInfoDtoCustomLayoutType.CFOMembers);
+        return tenant && (tenant.customLayoutType == TenantLoginInfoDtoCustomLayoutType.AdvicePeriod);
     }
 
     getProfilePictureUrl(id, defaultUrl = AppConsts.imageUrls.profileDefault) {
         return id ? AppConsts.remoteServiceBaseUrl + '/api/Profile/Picture/' + (this.appSession.tenantId || 0) + '/' + id
-            : (this.checkLendSpaceLayout() || this.checkCFOMembersLayout() ? AppConsts.imageUrls.profileLendSpace : defaultUrl);
+            : (this.checkLendSpaceLayout() || this.checkAdvicePeriodLayout() ? AppConsts.imageUrls.profileLendSpace : defaultUrl);
     }
 
     showLoginAttempts(e): void {
@@ -159,7 +159,7 @@ export class UserManagementService {
     }
 
     getLogoutUrl() {
-        let domain = environment.LENDSPACE_DOMAIN;  
+        let domain = environment.LENDSPACE_DOMAIN;
         if (this.checkLendSpaceLayout() && this.checkSecondDomainLevel(domain))
             return domain;
     }

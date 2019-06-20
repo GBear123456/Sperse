@@ -1,4 +1,4 @@
-<div class="label"><span>{{title}}</span></div>
+<div class="label" *ngIf="title"><span>{{title}}</span></div>
 <div class="selectionList">
     <ng-container *ngIf="!selectionList">
         <div class="label-container">
@@ -7,18 +7,29 @@
     </ng-container>
     <ng-container *ngIf="selectionList && selectionList.length">
         <dx-tag-box [dataSource]="selectionList"
-                    displayExpr="name"
-                    valueExpr="id"
+                    [displayExpr]="selectionList && selectionList[0].id !== undefined ? 'name' : null"
+                    [valueExpr]="selectionList && selectionList[0].id !== undefined ? 'id' : null"
                     [placeholder]="allItemsText"
-                    showSelectionControls="true"
+                    [showSelectionControls]="true"
                     tagTemplate="customTagTemplate"
-                    [maxDisplayedTags]="4"
+                    itemTemplate="itemTemplate"
+                    (onOpened)="changePopupWidth($event)"
+                    [maxDisplayedTags]="1"
+                    [(value)]="selectedItems"
                     (onValueChanged)="selectedItemsChange()"
                     (onSelectAllValueChanged)="selectAllValueChanged($event)"
                     (onMultiTagPreparing)="onMultiTagPreparing($event)"
-                    [(value)]="selectedItems">
+                    accessKey="selectionFilter">
             <div *dxTemplate="let tag of 'customTagTemplate'">
-                <span class="tag-value">{{tag.name || tag}}</span>
+                <span class="tag-value" [title]="tag.name || tag">{{tag.name || tag}}</span>
+            </div>
+            <div *dxTemplate="let tag of 'itemTemplate'">
+                <div class="selection-list-item">
+                    <span [title]="tag.name || tag">{{tag.name || tag}}</span>
+                    <span *ngIf="tag.count !== undefined">
+                        ({{tag.count}})
+                    </span>
+                </div>
             </div>
         </dx-tag-box>
     </ng-container>

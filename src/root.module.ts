@@ -1,5 +1,5 @@
 /** Core imports */
-import { APP_INITIALIZER, LOCALE_ID, Injector, NgModule } from '@angular/core';
+import { APP_INITIALIZER, LOCALE_ID, Injector, NgModule, ErrorHandler } from '@angular/core';
 import { HAMMER_GESTURE_CONFIG } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { APP_BASE_HREF, PlatformLocation, registerLocaleData } from '@angular/common';
@@ -13,6 +13,7 @@ import { CacheService } from 'ng2-cache-service';
 import { CacheStorageAbstract } from 'ng2-cache-service/dist/src/services/storage/cache-storage-abstract.service';
 import { CacheLocalStorage } from 'ng2-cache-service/dist/src/services/storage/local-storage/cache-local-storage.service';
 import filter from 'lodash/filter';
+import { BugsnagErrorHandler } from '@bugsnag/plugin-angular';
 
 /** Application imports */
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -31,17 +32,27 @@ import { RootComponent, AppRootComponent } from './root.components';
 import { RootRoutingModule, CustomReuseStrategy, AppPreloadingStrategy } from './root-routing.module';
 import { RootStoreModule } from '@root/store';
 import { FaviconService } from '@shared/common/favicon-service/favicon.service';
+import { ProfileService } from '@shared/common/profile-service/profile.service';
+import { BugsnagService } from '@shared/common/bugsnag/bugsnag.service';
+
+export function errorHandlerFactory(
+    bugsnagService: BugsnagService
+) {
+    return bugsnagService.bugsnagApiKey
+        ? new BugsnagErrorHandler(bugsnagService.bugsnagClient)
+        : new ErrorHandler();
+}
 
 export function appInitializerFactory(
     injector: Injector,
     platformLocation: PlatformLocation,
-    faviconService: FaviconService
+    faviconService: FaviconService,
+    bugsnagService: BugsnagService
 ) {
     return () => {
         let appAuthService = injector.get(AppAuthService);
         appAuthService.setCheckDomainToken();
         handleLogoutRequest(appAuthService);
-
         return new Promise<boolean>((resolve, reject) => {
             AppConsts.appBaseHref = getBaseHref(platformLocation);
             AppPreBootstrap.run(AppConsts.appBaseHref, () => {
@@ -51,7 +62,7 @@ export function appInitializerFactory(
                     (result) => {
                         //set og meta tags
                         updateMetadata(appSessionService.tenant, ui);
-
+                        bugsnagService.updateBugsnagWithUserInfo(appSessionService);
                         let customizations = appSessionService.tenant && appSessionService.tenant.tenantCustomizations;
                         if (customizations && customizations.favicons && customizations.favicons.length)
                             faviconService.updateFavicons(customizations.favicons, customizations.faviconBaseUrl);
@@ -161,10 +172,12 @@ function handleLogoutRequest(authService: AppAuthService) {
     providers: [
         AppPreloadingStrategy,
         AppLocalizationService,
+        BugsnagService,
         AppUiCustomizationService,
         AppAuthService,
         RouteGuard,
         AppSessionService,
+        ProfileService,
         AppHttpConfiguration,
         AppHttpInterceptor,
         {
@@ -179,7 +192,7 @@ function handleLogoutRequest(authService: AppAuthService) {
         {
             provide: APP_INITIALIZER,
             useFactory: appInitializerFactory,
-            deps: [ Injector, PlatformLocation, FaviconService ],
+            deps: [ Injector, PlatformLocation, FaviconService, BugsnagService ],
             multi: true
         },
         {
@@ -193,6 +206,11 @@ function handleLogoutRequest(authService: AppAuthService) {
         {
             provide: HAMMER_GESTURE_CONFIG,
             useClass: GestureConfig
+        },
+        {
+            provide: ErrorHandler,
+            useFactory: errorHandlerFactory,
+            deps: [ BugsnagService ]
         }
     ],
     bootstrap: [ RootComponent ]

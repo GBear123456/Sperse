@@ -91,10 +91,10 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
         private personServiceProxy: PersonContactServiceProxy,
         private orgContactService: OrganizationContactServiceProxy
     ) {
-        super(injector, AppConsts.localization.CRMLocalizationSourceName);
+        super(injector);
 
         this.initTypes();
-        
+
         this._contactInfo = this.data.contactInfo;
         let personContactInfo = this._contactInfo.personContactInfo;
         const relatedOrganizations: any[] = personContactInfo && personContactInfo.orgRelations ?
@@ -123,7 +123,7 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
             });
         });
 
-        this.store$.pipe(select(ContactAssignedUsersStoreSelectors.getContactGroupAssignedUsers, 
+        this.store$.pipe(select(ContactAssignedUsersStoreSelectors.getContactGroupAssignedUsers,
             { contactGroup: this._contactInfo.groupId })).subscribe((result) => {
                 this.users = result;
         });
@@ -150,7 +150,7 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
     ngOnInit() {
         this.dialogRef.disableClose = true;
         this.slider = this.elementRef.nativeElement.closest('.slider');
-        this.slider.classList.add('hide');
+        this.slider.classList.add('hide', 'min-width-0');
         this.dialogRef.updateSize('0px', '0px');
         this.dialogRef.updatePosition({
             top: '75px',
@@ -253,7 +253,7 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
         this.contactId = contact.id;
 
         this.companyContact = contact instanceof OrganizationShortInfo;
-        
+
         this.initTypes(false);
         this.applyOrdersFilter();
     }
@@ -279,6 +279,7 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
         let contact = this.getContactById(this.contactId);
         let dialogData = {
             contactId: this.contactId,
+            groupId: this._contactInfo.groupId,
             field: 'phoneNumber',
             name: 'Phone',
             isConfirmed: false,

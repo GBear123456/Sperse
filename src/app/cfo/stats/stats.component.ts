@@ -3,11 +3,12 @@ import { Component, Injector, OnInit, AfterViewInit, OnDestroy, ViewChild } from
 import { CurrencyPipe } from '@angular/common';
 
 /** Third party imports */
+import { MatDialog } from '@angular/material';
 import { DxChartComponent } from 'devextreme-angular/ui/chart';
 import { getMarkup, exportFromMarkup } from 'devextreme/viz/export';
 import { CacheService } from 'ng2-cache-service';
-import { forkJoin } from 'rxjs';
-import { finalize, first, filter, switchMap } from 'rxjs/operators';
+import { merge, zip } from 'rxjs';
+import { finalize, first, filter, switchMap, takeUntil, skip, withLatestFrom } from 'rxjs/operators';
 import * as moment from 'moment';
 import * as _ from 'underscore';
 import { Store, select } from '@ngrx/store';
@@ -30,12 +31,13 @@ import {
     BankAccountDailyStatDto,
     GroupBy,
     CashFlowForecastServiceProxy,
-    InstanceType
+    InstanceType,
+    ForecastModelDto
 } from '@shared/service-proxies/service-proxies';
-import { BankAccountsSelectComponent } from '@app/cfo/shared/bank-accounts-select/bank-accounts-select.component';
+import { BankAccountsSelectDialogComponent } from '@app/cfo/shared/bank-accounts-select-dialog/bank-accounts-select-dialog.component';
 import { BankAccountFilterComponent } from '@shared/filters/bank-account-filter/bank-account-filter.component';
 import { BankAccountFilterModel } from '@shared/filters/bank-account-filter/bank-account-filter.model';
-import { CfoStore, CurrenciesStoreSelectors, CurrenciesStoreActions } from '@app/cfo/store';
+import { CfoStore, CurrenciesStoreSelectors, ForecastModelsStoreActions, ForecastModelsStoreSelectors } from '@app/cfo/store';
 import { FilterHelpers } from '../shared/helpers/filter.helper';
 import { DateHelper } from '@shared/helpers/DateHelper';
 import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
@@ -47,7 +49,6 @@ import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
     'styleUrls': ['./stats.component.less']
 })
 export class StatsComponent extends CFOComponentBase implements OnInit, AfterViewInit, OnDestroy {
-    @ViewChild(BankAccountsSelectComponent) bankAccountSelector: BankAccountsSelectComponent;
     @ViewChild(ReportPeriodComponent) reportPeriodSelector: ReportPeriodComponent;
     @ViewChild('linearChart') private linearChart: DxChartComponent;
     @ViewChild('barChart') private barChart: DxChartComponent;
@@ -55,7 +56,6 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
     statsData: Array<BankAccountDailyStatDto>;
     historicalSourceData: Array<BankAccountDailyStatDto> = [];
     forecastSourceData: Array<BankAccountDailyStatDto> = [];
-    selectedForecastModel;
     headlineConfig: any;
     axisDateFormat = 'month';
     labelPositiveBackgroundColor = '#626b73';
@@ -151,9 +151,10 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
     private rootComponent: any;
     private filters: FilterModel[] = new Array<FilterModel>();
     private requestFilter: StatsFilter;
-    private forecastModelsObj: { items: Array<any>, selectedItemIndex: number } = { items: [], selectedItemIndex: null };
     private syncAccounts: any;
     private updateAfterActivation: boolean;
+    private forecastModels$ = this.store$.pipe(select(ForecastModelsStoreSelectors.getForecastModels), filter(Boolean));
+    private selectedForecastModelIndex$ = this.store$.pipe(select(ForecastModelsStoreSelectors.getSelectedForecastModelIndex, filter(i => i !== null)));
 
     constructor(
         injector: Injector,
@@ -163,48 +164,54 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
         private _cashFlowForecastServiceProxy: CashFlowForecastServiceProxy,
         private _cacheService: CacheService,
         private _statsService: StatsService,
+        private _dialog: MatDialog,
         private store$: Store<CfoStore.State>,
         public bankAccountsService: BankAccountsService,
         public cfoPreferencesService: CfoPreferencesService
     ) {
         super(injector);
         this._appService.narrowingPageContentWhenFixedFilter = false;
-        this._filtersService.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;
     }
 
     ngOnInit() {
-        super.ngOnInit();
-        this.initLocalization();
         this.requestFilter = new StatsFilter();
         this.requestFilter.currencyId = this.cfoPreferencesService.selectedCurrencyId;
         this.requestFilter.startDate = moment().utc().subtract(2, 'year');
         this.requestFilter.endDate = moment().utc().add(1, 'year');
+        this.store$.dispatch(new ForecastModelsStoreActions.LoadRequestAction());
 
+        const currencyId$ = this.store$.pipe(select(CurrenciesStoreSelectors.getSelectedCurrencyId), filter(Boolean));
         /** If component is not activated and selected currency has changed - wait activation and reload data */
-        this.store$.pipe(
-            select(CurrenciesStoreSelectors.getSelectedCurrencyId),
+        merge(
+            currencyId$,
+            this.store$.pipe(select(ForecastModelsStoreSelectors.getSelectedForecastModelId))
+        ).pipe(
+            takeUntil(this.destroy$),
             filter(() => !this.componentIsActivated)
         ).subscribe(() => {
             this.updateAfterActivation = true;
         });
 
-        const bankAccountAndBusinessEntities$ = this.bankAccountsService.load();
-        this.bankAccountsService.accountsAmount$.subscribe(amount => {
+        currencyId$.pipe(
+            skip(1),
+            filter(() => this.componentIsActivated)
+        ).subscribe(() => {
+            this.loadStatsData();
+        });
+
+        this.bankAccountsService.accountsAmountWithApply$.subscribe(amount => {
             this.bankAccountsCount = amount;
             this.initToolbarConfig();
         });
 
-        /** Create parallel operations */
-        const forecastsModels$ = this._cashFlowForecastServiceProxy.getModels(InstanceType[this.instanceType], this.instanceId);
-        forkJoin(bankAccountAndBusinessEntities$, forecastsModels$)
-            .subscribe(([[syncAccounts, businessEntities], forecastsModels]) => {
+        this.bankAccountsService.load()
+            .subscribe(([syncAccounts, ]) => {
                 this.syncAccounts = syncAccounts;
 
                 /** Initial data handling */
                 this.handleCashFlowInitialResult();
 
-                /** Forecast models handling */
-                this.handleForecastModelResult(forecastsModels);
+                this.initToolbarConfig();
 
                 this.initFiltering();
 
@@ -228,171 +235,152 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
         this.calculateChartsSize();
     }
 
+    ngAfterViewInit(): void {
+        this.rootComponent = this.getRootComponent();
+        this.rootComponent.overflowHidden(true);
+    }
+
     initToolbarConfig() {
         if (this.componentIsActivated) {
-            this.cfoPreferencesService.getCurrenciesAndSelectedIndex()
-                .subscribe(([currencies, selectedCurrencyIndex]) => {
-                    /** Get currencies list and selected currency index */
-                    this._appService.updateToolbar([
-                        {
-                            location: 'before',
-                            items: [
-                                {
-                                    name: 'filters',
-                                    action: (event) => {
-                                        setTimeout(() => {
-                                            this.linearChart.instance.render();
-                                            this.barChart.instance.render();
-                                        }, 1000);
-                                        this._filtersService.fixed = !this._filtersService.fixed;
+            this.selectedForecastModelIndex$.pipe(
+                withLatestFrom(this.forecastModels$),
+                first()
+            ).subscribe(([selectedForecastModelIndex, forecastModels]: [number, ForecastModelDto[]]) => {
+                /** Get currencies list and selected currency index */
+                this._appService.updateToolbar([
+                    {
+                        location: 'before',
+                        items: [
+                            {
+                                name: 'filters',
+                                action: (event) => {
+                                    setTimeout(() => {
+                                        this.linearChart.instance.render();
+                                        this.barChart.instance.render();
+                                    }, 1000);
+                                    this._filtersService.fixed = !this._filtersService.fixed;
+                                },
+                                options: {
+                                    checkPressed: () => {
+                                        return this._filtersService.fixed;
                                     },
-                                    options: {
-                                        checkPressed: () => {
-                                            return this._filtersService.fixed;
-                                        },
-                                        mouseover: (event) => {
-                                            this._filtersService.enable();
-                                        },
-                                        mouseout: (event) => {
-                                            if (!this._filtersService.fixed)
-                                                this._filtersService.disable();
-                                        }
+                                    mouseover: (event) => {
+                                        this._filtersService.enable();
                                     },
-                                    attr: {
-                                        'filter-selected': this._filtersService.hasFilterSelected
+                                    mouseout: (event) => {
+                                        if (!this._filtersService.fixed)
+                                            this._filtersService.disable();
                                     }
+                                },
+                                attr: {
+                                    'filter-selected': this._filtersService.hasFilterSelected
                                 }
-                            ]
-                        },
-                        {
-                            location: 'before',
-                            items: [
-                                {
-                                    name: 'select-box',
-                                    text: '',
-                                    widget: 'dxDropDownMenu',
+                            }
+                        ]
+                    },
+                    {
+                        location: 'before',
+                        items: [
+                            {
+                                name: 'select-box',
+                                text: '',
+                                widget: 'dxDropDownMenu',
+                                accessKey: 'statsForecastSwitcher',
+                                options: {
+                                    hint: this.l('Scenario'),
                                     accessKey: 'statsForecastSwitcher',
-                                    options: {
-                                        hint: this.l('Scenario'),
-                                        accessKey: 'statsForecastSwitcher',
-                                        items: this.forecastModelsObj.items,
-                                        selectedIndex: this.forecastModelsObj.selectedItemIndex,
-                                        height: 39,
-                                        width: 243,
-                                        onSelectionChanged: (e) => {
-                                            if (e) {
-                                                this.changeSelectedForecastModel(e);
-                                                this.loadStatsData();
-                                            }
+                                    items: forecastModels,
+                                    selectedIndex: selectedForecastModelIndex,
+                                    height: 39,
+                                    width: 243,
+                                    onSelectionChanged: (e) => {
+                                        if (e) {
+                                            this.store$.dispatch(new ForecastModelsStoreActions.ChangeForecastModelAction(e.itemData.id));
+                                            this.loadStatsData();
                                         }
                                     }
                                 }
-                            ]
-                        },
-                        {
-                            location: 'before',
-                            locateInMenu: 'auto',
-                            items: [
-                                {
-                                    name: 'reportPeriod',
-                                    action: this.toggleReportPeriodFilter.bind(this),
-                                    options: {
-                                        id: 'reportPeriod',
-                                        icon: './assets/common/icons/report-period.svg'
-                                    }
-                                },
-                                {
-                                    name: 'bankAccountSelect',
-                                    widget: 'dxButton',
-                                    action: this.toggleBankAccountTooltip.bind(this),
-                                    options: {
-                                        id: 'bankAccountSelect',
-                                        text: this.l('Accounts'),
-                                        icon: './assets/common/icons/accounts.svg'
-                                    },
-                                    attr: {
-                                        'custaccesskey': 'bankAccountSelect',
-                                        'accountCount': this.bankAccountsCount
-                                    }
+                            }
+                        ]
+                    },
+                    {
+                        location: 'before',
+                        locateInMenu: 'auto',
+                        items: [
+                            {
+                                name: 'reportPeriod',
+                                action: this.toggleReportPeriodFilter.bind(this),
+                                options: {
+                                    id: 'reportPeriod',
+                                    icon: './assets/common/icons/report-period.svg'
                                 }
-                            ]
-                        },
-                        {
-                            location: 'before',
-                            locateInMenu: 'auto',
-                            items: [
-                                {
-                                    name: 'select-box',
-                                    text: '',
-                                    widget: 'dxDropDownMenu',
-                                    accessKey: 'currencySwitcher',
-                                    options: {
-                                        hint: this.l('Currency'),
-                                        accessKey: 'currencySwitcher',
-                                        items: currencies,
-                                        selectedIndex: selectedCurrencyIndex,
-                                        height: 39,
-                                        width: 220,
-                                        onSelectionChanged: (e) => {
-                                            if (e) {
-                                                this.store$.dispatch(new CurrenciesStoreActions.ChangeCurrencyAction(e.itemData.id));
-                                                this.loadStatsData();
-                                            }
+                            },
+                            {
+                                name: 'bankAccountSelect',
+                                widget: 'dxButton',
+                                action: this.openBankAccountsSelectDialog.bind(this),
+                                options: {
+                                    id: 'bankAccountSelect',
+                                    text: this.l('Accounts'),
+                                    icon: './assets/common/icons/accounts.svg'
+                                },
+                                attr: {
+                                    'custaccesskey': 'bankAccountSelect',
+                                    'accountCount': this.bankAccountsCount
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        location: 'after',
+                        locateInMenu: 'auto',
+                        items: [
+                            {
+                                name: 'download',
+                                widget: 'dxDropDownMenu',
+                                options: {
+                                    hint: this.l('Download'),
+                                    items: [
+                                        {
+                                            action: this.download.bind(this, 'pdf'),
+                                            text: this.ls(AppConsts.localization.defaultLocalizationSourceName, 'SaveAs', 'PDF'),
+                                            icon: 'pdf',
+                                        },
+                                        {
+                                            action: this.download.bind(this, 'png'),
+                                            text: this.ls(AppConsts.localization.defaultLocalizationSourceName, 'SaveAs', 'PNG'),
+                                            icon: 'png',
+                                        },
+                                        {
+                                            action: this.download.bind(this, 'jpeg'),
+                                            text: this.ls(AppConsts.localization.defaultLocalizationSourceName, 'SaveAs', 'JPEG'),
+                                            icon: 'jpeg',
+                                        },
+                                        {
+                                            action: this.download.bind(this, 'svg'),
+                                            text: this.ls(AppConsts.localization.defaultLocalizationSourceName, 'SaveAs', 'SVG'),
+                                            icon: 'svg',
+                                        },
+                                        {
+                                            action: this.download.bind(this, 'gif'),
+                                            text: this.ls(AppConsts.localization.defaultLocalizationSourceName, 'SaveAs', 'GIF'),
+                                            icon: 'gif',
                                         }
-                                    }
+                                    ]
                                 }
-                            ]
-                        },
-                        {
-                            location: 'after',
-                            locateInMenu: 'auto',
-                            items: [
-                                {
-                                    name: 'download',
-                                    widget: 'dxDropDownMenu',
-                                    options: {
-                                        hint: this.l('Download'),
-                                        items: [
-                                            {
-                                                action: this.download.bind(this, 'pdf'),
-                                                text: this.ls(AppConsts.localization.defaultLocalizationSourceName, 'SaveAs', 'PDF'),
-                                                icon: 'pdf',
-                                            },
-                                            {
-                                                action: this.download.bind(this, 'png'),
-                                                text: this.ls(AppConsts.localization.defaultLocalizationSourceName, 'SaveAs', 'PNG'),
-                                                icon: 'png',
-                                            },
-                                            {
-                                                action: this.download.bind(this, 'jpeg'),
-                                                text: this.ls(AppConsts.localization.defaultLocalizationSourceName, 'SaveAs', 'JPEG'),
-                                                icon: 'jpeg',
-                                            },
-                                            {
-                                                action: this.download.bind(this, 'svg'),
-                                                text: this.ls(AppConsts.localization.defaultLocalizationSourceName, 'SaveAs', 'SVG'),
-                                                icon: 'svg',
-                                            },
-                                            {
-                                                action: this.download.bind(this, 'gif'),
-                                                text: this.ls(AppConsts.localization.defaultLocalizationSourceName, 'SaveAs', 'GIF'),
-                                                icon: 'gif',
-                                            }
-                                        ]
-                                    }
-                                },
-                                {name: 'print', action: this.print.bind(this)}
-                            ]
-                        },
-                        {
-                            location: 'after',
-                            locateInMenu: 'auto',
-                            items: [
-                                {name: 'fullscreen', action: this.toggleFullscreen.bind(this, document.documentElement)}
-                            ]
-                        }
-                    ]);
-                });
+                            },
+                            {name: 'print', action: this.print.bind(this)}
+                        ]
+                    },
+                    {
+                        location: 'after',
+                        locateInMenu: 'auto',
+                        items: [
+                            {name: 'fullscreen', action: this.toggleFullscreen.bind(this, document.documentElement)}
+                        ]
+                    }
+                ]);
+            });
         }
     }
 
@@ -493,55 +481,23 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
         }
     }
 
-    handleForecastModelResult(result) {
-        let items = result.map(forecastModelItem => {
-            return {
-                id: forecastModelItem.id,
-                text: forecastModelItem.name
-            };
-        });
-        /** If we have the forecast model in cache - get it there, else - get the first model */
-        let cachedForecastModel = this.getForecastModel();
-        /** If we have cached forecast model and cached forecast exists in items list - then use it **/
-        this.selectedForecastModel = cachedForecastModel && items.findIndex(item => item.id === cachedForecastModel.id) !== -1 ?
-            cachedForecastModel :
-            items[0];
-        let selectedForecastModelIndex = items.findIndex(item => item.id === this.selectedForecastModel.id);
-        this.forecastModelsObj = {
-            items: items,
-            selectedItemIndex: selectedForecastModelIndex
-        };
-        this.initToolbarConfig();
-    }
-
-    /**
-     * Get forecast model from the cache
-     */
-    getForecastModel() {
-        return this._cacheService.exists(`stats_forecastModel_${abp.session.userId}`) ?
-               this._cacheService.get(`stats_forecastModel_${abp.session.userId}`) :
-               null;
-    }
-
-    /**
-     * Change the forecast model to reuse later
-     * @param modelObj - new forecast model
-     */
-    changeSelectedForecastModel(modelObj) {
-        this.selectedForecastModel = modelObj.itemData;
-        this._cacheService.set(`stats_forecastModel_${abp.session.userId}`, this.selectedForecastModel);
-    }
-
     /** load stats data from api */
     loadStatsData() {
         abp.ui.setBusy();
         let { startDate, endDate, accountIds = []} = this.requestFilter;
-        this.cfoPreferencesService.getCurrencyId().pipe(
-            switchMap((currencyId: string) => this._bankAccountService.getStats(
+        zip(
+            this.cfoPreferencesService.getCurrencyId(),
+            this.store$.pipe(
+                select(ForecastModelsStoreSelectors.getSelectedForecastModelId),
+                filter(modelId => !!modelId)
+            )
+        ).pipe(
+            first(),
+            switchMap(([currencyId, forecastModelId]: [string, number]) => this._bankAccountService.getStats(
                 InstanceType[this.instanceType],
                 this.instanceId,
                 currencyId,
-                this.selectedForecastModel.id,
+                forecastModelId,
                 accountIds,
                 startDate,
                 endDate,
@@ -579,26 +535,19 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
             }
 
             this.loadingFinished = true;
-        },
-        error => console.log('Error: ' + error));
+        });
     }
 
     getUpdatedDataSource() {
         this.loadStatsData();
-        this.bankAccountsService.load().pipe(
+        this.bankAccountsService.load(true, false).pipe(
             finalize(() => abp.ui.clearBusy() )
         )
         .subscribe();
     }
 
-    ngAfterViewInit(): void {
-        this.rootComponent = this.getRootComponent();
-        this.rootComponent.overflowHidden(true);
-    }
-
     ngOnDestroy() {
         this._appService.updateToolbar(null);
-        this._filtersService.localizationSourceName = AppConsts.localization.defaultLocalizationSourceName;
         this._filtersService.unsubscribe();
         this.rootComponent.overflowHidden();
 
@@ -667,8 +616,12 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
         this.bankAccountsService.setBankAccountsFilter(this.filters, this.syncAccounts, emitFilterChange);
     }
 
-    toggleBankAccountTooltip() {
-        this.bankAccountSelector.toggleBankAccountTooltip();
+    openBankAccountsSelectDialog() {
+        this._dialog.open(BankAccountsSelectDialogComponent, {
+            panelClass: 'slider',
+        }).componentInstance.onApply.subscribe(() => {
+            this.setBankAccountsFilter(true);
+        });
     }
 
     /** Different styles for labels for positive and negative values */
@@ -805,13 +758,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
         };
     }
 
-    private initLocalization() {
-        this.localizationService.localizationSourceName = this.localizationSourceName;
-        this._filtersService.localizationSourceName = this.localizationSourceName;
-    }
-
     activate() {
-        this.initLocalization();
         this.initToolbarConfig();
         this.setupFilters();
         this.initFiltering();
@@ -830,8 +777,6 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
     }
 
     deactivate() {
-        this.localizationService.localizationSourceName = undefined;
-        this._filtersService.localizationSourceName = AppConsts.localization.defaultLocalizationSourceName;
         this._appService.updateToolbar(null);
         this._filtersService.unsubscribe();
         this.synchProgressComponent.deactivate();

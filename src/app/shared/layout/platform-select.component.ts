@@ -13,7 +13,11 @@ export class PlatformSelectComponent extends AppComponentBase {
     hoverModule = '';
     module = '';
     uri = '';
-    modules = [];
+    modules = {
+        topItems: [],
+        footerItems: [],
+        items: [],
+    };
     activeModuleCount = 0;
 
     private _dropDown: any;
@@ -26,18 +30,44 @@ export class PlatformSelectComponent extends AppComponentBase {
         super(injector);
 
         _appService.getModules().forEach((module) => {
-            if (_appService.isModuleActive(module.name)) this.activeModuleCount++;
+            if (_appService.isModuleActive(module.name) && !module.isMemberPortal) this.activeModuleCount++;
             let config = _appService.getModuleConfig(module.name);
-            let moduleConfig = {
-                code: config ? config.code : module.name,
-                name: module.name,
-                showDescription: module.showDescription
-            };
-            if (module.name === 'CFO') {
-                let cfoPersonalEnable = (!abp.session.tenantId || this.feature.isEnabled('CFO.Partner')) && !this.permission.isGranted('Pages.CFO.MainInstanceAccess');
-                moduleConfig['uri'] = cfoPersonalEnable ? 'user' : 'main';
+            if (module.showInDropdown) {
+                let moduleConfig = {
+                    code: config ? config.code : module.name,
+                    name: module.name,
+                    showDescription: module.showDescription,
+                    showInDropdown: module.showInDropdown,
+                    focusItem: module.focusItem,
+                    footerItem: module.footerItem,
+                    isComingSoon: module.isComingSoon,
+                    uri: module.uri
+                };
+
+                if (module.focusItem) {
+                    this.modules.topItems.push(moduleConfig);
+                } else if (module.footerItem) {
+                    if (module.name !== 'CFO' && module.name !== 'PFM' && !this.isDisabled(module.name)) {
+                        this.modules.footerItems.push(moduleConfig);
+                    } else if (module.name === 'CFO'
+                        && this._appService.isModuleActive(module.name)
+                        && !_appService.isHostTenant
+                        && this.feature.isEnabled('CFO.Partner')
+                        && this.permission.isGranted('Pages.CFO.MemberAccess')
+                    ) {
+                        this.modules.footerItems.push(moduleConfig);
+                    } else if (
+                        module.name === 'PFM'
+                        && this._appService.isModuleActive(module.name)
+                        && this.feature.isEnabled('PFM.Applications')
+                    ) {
+                        this.modules.footerItems = this.modules.footerItems.filter((item) => item.name !== 'CFO');
+                        this.modules.footerItems.push(moduleConfig);
+                    }
+                } else if (module.showInDropdown) {
+                    this.modules.items.push(moduleConfig);
+                }
             }
-            this.modules.push(moduleConfig);
         });
         _appService.subscribeModuleChange((config) => {
             this.module = config['name'];
@@ -48,23 +78,26 @@ export class PlatformSelectComponent extends AppComponentBase {
         });
     }
 
-    changeModule(event) {
-        let switchModule = this.modules[event.itemIndex];
-        if ((this.module !== switchModule.name || this.uri !== switchModule.uri) &&
-            this._appService.isModuleActive(switchModule.name) &&
-            !this.checkModuleCustomHandler(switchModule)
+    onItemClick(module) {
+        if ((this.module !== module.name || this.uri !== module.uri) &&
+            this._appService.isModuleActive(module.name)
         ) {
             let navigate = null;
-            let moduleConfig = this._appService.getModuleConfig(switchModule.name);
-            if (moduleConfig.defaultPath)
+            let moduleConfig = this._appService.getModuleConfig(module.name);
+            if (moduleConfig.defaultPath) {
                 navigate = this._router.navigate([moduleConfig.defaultPath]);
-            else
-                navigate = this._router.navigate(['app/' + switchModule.name.toLowerCase() + (switchModule.uri ? '/' + switchModule.uri.toLowerCase() : '')]);
+            } else if (module.name === 'PFM' && module.footerItem) {
+                return window.open(location.origin + '/personal-finance', '_blank');
+            } else if (module.name === 'CFO' && module.footerItem && this.permission.isGranted('Pages.CFO.MemberAccess')) {
+                return window.open(location.origin + '/app/cfo-portal', '_blank');
+            } else {
+                navigate = this._router.navigate(['app/' + module.name.toLowerCase() + (module.uri ? '/' + module.uri.toLowerCase() : '')]);
+            }
             this._dropDown.option('disabled', true);
-            navigate.then((result) => {
+            navigate && navigate.then((result) => {
                 if (result) {
-                    this.module = switchModule.name;
-                    this.uri = switchModule.uri;
+                    this.module = module.name;
+                    this.uri = module.uri;
                     this._appService.switchModule(this.module, { instance: this.uri });
                 }
                 this._dropDown.option('disabled', false);
@@ -73,19 +106,8 @@ export class PlatformSelectComponent extends AppComponentBase {
         }
     }
 
-    checkModuleCustomHandler(module) {
-        if (module.name == 'PFM') {
-            if (!this.permission.isGranted('Pages.PFM.Applications.ManageOffers'))
-                return window.open(location.origin + '/personal-finance', '_blank');
-        }
-    }
-
     isDisabled(item) {
         return !this._appService.isModuleActive(item);
-    }
-
-    onHover(module) {
-        this.hoverModule = module;
     }
 
     onDropDownInit(event) {

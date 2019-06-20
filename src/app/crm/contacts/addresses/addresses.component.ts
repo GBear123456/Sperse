@@ -32,8 +32,16 @@ import { PersonOrgRelationType } from '@root/shared/AppEnums';
 })
 export class AddressesComponent extends AppComponentBase implements OnInit {
     @Input() isCompany = false;
-    @Input() contactInfo: ContactInfoDto;
+    @Input()
+    set contactInfo(val: ContactInfoDto) {
+        if (this._contactInfo = val)
+            this.isEditAllowed = this._contactsService.checkCGPermission(this.contactInfo.groupId);
+    }
+    get contactInfo(): ContactInfoDto {
+        return this._contactInfo;    
+    }
     @Input() contactInfoData: ContactInfoDetailsDto;
+
 
     types: Object = {};
     country: string;
@@ -48,6 +56,7 @@ export class AddressesComponent extends AppComponentBase implements OnInit {
     private _clickTimeout;
     private _clickCounter = 0;
     private _itemInEditMode: any;
+    private _contactInfo: ContactInfoDto;
     private _latestFormatedAddress: string;
 
     constructor(injector: Injector,
@@ -58,7 +67,7 @@ export class AddressesComponent extends AppComponentBase implements OnInit {
                 private dialogService: DialogService,
                 private store$: Store<RootStore.State>
     ) {
-        super(injector, AppConsts.localization.CRMLocalizationSourceName);
+        super(injector);
     }
 
     ngOnInit() {
@@ -70,8 +79,6 @@ export class AddressesComponent extends AppComponentBase implements OnInit {
                         this.types[type.id] = type.name;
                 });
             });
-
-        this.isEditAllowed = this.isGranted('Pages.CRM.Customers.Manage');
     }
 
     loadAddressTypes() {
@@ -127,6 +134,7 @@ export class AddressesComponent extends AppComponentBase implements OnInit {
         let dialogData = _.pick(address || {isActive: true}, 'id', 'city',
             'comment', 'country', 'isActive', 'isConfirmed',
             'state', 'streetAddress', 'usageTypeId', 'zip');
+        dialogData.groupId = this.contactInfo.groupId;
         dialogData.contactId = this.contactInfoData && this.contactInfoData.contactId;
         dialogData.isCompany = this.isCompany;
         dialogData.deleteItem = (event) => {

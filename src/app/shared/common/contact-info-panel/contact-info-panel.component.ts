@@ -14,7 +14,7 @@ export class ContactInfoPanelComponent extends AppComponentBase {
     @Input() 
     set data(value) {
         this._data = value;
-        if (this.data && this.checkCFOMember())
+        if (this.data && this.checkAdvicePeriodLayout())
             this.setTitle(this.data.fullName);
     }
     get data(): any { 
@@ -28,8 +28,8 @@ export class ContactInfoPanelComponent extends AppComponentBase {
         super(injector);
     }
 
-    checkCFOMember() {
+    checkAdvicePeriodLayout() {
         let tenant = this._appSession.tenant;
-        return tenant && tenant.customLayoutType == TenantLoginInfoDtoCustomLayoutType.CFOMembers;
+        return tenant && tenant.customLayoutType == TenantLoginInfoDtoCustomLayoutType.AdvicePeriod;
     }
 }

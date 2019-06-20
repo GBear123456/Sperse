@@ -6,7 +6,6 @@ import * as moment from 'moment-timezone';
 
 /** Application imports */
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { AppConsts } from '@shared/AppConsts';
 import { BankAccountDailyStatDto } from '@shared/service-proxies/service-proxies';
 import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
 
@@ -25,7 +24,7 @@ export class SourceDataComponent extends AppComponentBase implements OnInit, OnD
         injector: Injector,
         private _cfoPreferencesService: CfoPreferencesService,
     ) {
-        super(injector, AppConsts.localization.CFOLocalizationSourceName);
+        super(injector);
     }
 
     ngOnInit() {

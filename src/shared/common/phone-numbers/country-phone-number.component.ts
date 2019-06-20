@@ -22,7 +22,7 @@ export class CountryPhoneNumberComponent extends AppComponentBase implements OnI
     focused = false;
 
     constructor(injector: Injector) {
-        super(injector, AppConsts.localization.defaultLocalizationSourceName);
+        super(injector);
     }
 
     isValid() {

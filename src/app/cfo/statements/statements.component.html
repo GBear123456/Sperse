@@ -1,6 +1,7 @@
 <div>
     <app-headline [config]="headlineConfig">
         <synch-progress class="synch-progress" (onComplete)="refreshData()"></synch-progress>
+        <currencies-dropdown></currencies-dropdown>
     </app-headline>
     <div class="main-wrapper">
         <dx-data-grid id="gridContainer"
@@ -76,9 +77,5 @@
         <app-report-period [sliderReportPeriod]="sliderReportPeriod"
                            (onPeriodSelected)="setReportPeriodFilter($event)">
         </app-report-period>
-        <bank-accounts-select targetBankAccountsTooltip="[custaccesskey='bankAccountSelect']"
-                              useGlobalCache="true"
-                              (onApplySelected)="setBankAccountsFilter(true)">
-        </bank-accounts-select>
     </div>
 </div>

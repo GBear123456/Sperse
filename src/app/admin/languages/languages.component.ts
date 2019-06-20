@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, ElementRef, Injector, OnDestroy, ViewChild } from '@angular/core';
+import { Component, Injector, OnDestroy, ViewChild } from '@angular/core';
 
 /** Third party imports */
 import DataSource from 'devextreme/data/data_source';
@@ -15,7 +15,6 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { ApplicationLanguageListDto, LanguageServiceProxy, SetDefaultLanguageInput } from '@shared/service-proxies/service-proxies';
 import { CreateOrEditLanguageModalComponent } from './create-or-edit-language-modal.component';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
-
 
 @Component({
     templateUrl: './languages.component.html',
@@ -34,7 +33,7 @@ export class LanguagesComponent extends AppComponentBase implements OnDestroy {
         onRefresh: this.refreshDataGrid.bind(this),
         buttons: [
             {
-                enabled: this.isGranted('Pages.Administration.Languages.Create'),
+                enabled: this.isGranted('Pages.Administration.Languages.Create') && this._appService.isHostTenant,
                 action: this.createNewLanguage.bind(this),
                 lable: this.l('CreateNewLanguage')
             }
@@ -59,8 +58,8 @@ export class LanguagesComponent extends AppComponentBase implements OnDestroy {
         this.dataSource = new DataSource({
             key: 'id',
             load: () => {
-                return this._languageService.getLanguages(
-                ).toPromise().then(response => {
+                return this._languageService.getLanguages().toPromise().then(response => {
+                    this.defaultLanguageName = response.defaultLanguageName;
                     return {
                         data: response.items,
                         totalCount: response.items.length,
@@ -75,7 +74,7 @@ export class LanguagesComponent extends AppComponentBase implements OnDestroy {
         this.actionMenuItems = [
             {
                 text: this.l('Edit'),
-                visible: this.permission.isGranted('Pages.Administration.Languages.Edit'),
+                visible: this.permission.isGranted('Pages.Administration.Languages.Edit')  && this._appService.isHostTenant,
                 action: () => {
                     this.openCreateOrEditLanguageModal(this.actionRecord.id);
                 }
@@ -96,7 +95,7 @@ export class LanguagesComponent extends AppComponentBase implements OnDestroy {
             },
             {
                 text: this.l('Delete'),
-                visible: this.permission.isGranted('Pages.Administration.Languages.Delete'),
+                visible: this.permission.isGranted('Pages.Administration.Languages.Delete')  && this._appService.isHostTenant,
                 action: () => {
                     this.deleteLanguage(this.actionRecord);
                 }
@@ -116,53 +115,6 @@ export class LanguagesComponent extends AppComponentBase implements OnDestroy {
 
     initToolbarConfig() {
         this._appService.updateToolbar([
-            {
-                location: 'before', items: [
-                    {
-                        name: 'filters',
-                        disabled: true,
-                        action: event => {
-                            setTimeout(() => {
-                                this.dataGrid.instance.repaint();
-                            }, 1000);
-                            this._filtersService.fixed = !this._filtersService.fixed;
-                        },
-                        options: {
-                            checkPressed: () => {
-                                return this._filtersService.fixed;
-                            },
-                            mouseover: event => {
-                                this._filtersService.enable();
-                            },
-                            mouseout: event => {
-                                if (!this._filtersService.fixed)
-                                    this._filtersService.disable();
-                            }
-                        },
-                        attr: {
-                            'filter-selected': this._filtersService.hasFilterSelected
-                        }
-                    }
-                ]
-            },
-            {
-                location: 'before',
-                items: [
-                    {
-                        name: 'search',
-                        widget: 'dxTextBox',
-                        options: {
-                            value: this.searchValue,
-                            width: '279',
-                            mode: 'search',
-                            placeholder: this.l('Search') + ' ' + this.l('Languages').toLowerCase(),
-                            onValueChanged: (e) => {
-                                this.searchValueChange(e);
-                            }
-                        }
-                    }
-                ]
-            },
             {
                 location: 'after',
                 locateInMenu: 'auto',
@@ -250,10 +202,6 @@ export class LanguagesComponent extends AppComponentBase implements OnDestroy {
         );
     }
 
-    get multiTenancySideIsHost(): boolean {
-        return !this._sessionService.tenantId;
-    }
-
     showCompactRowsHeight() {
         this.dataGrid.instance.element().classList.toggle('grid-compact-view');
     }
@@ -280,6 +228,10 @@ export class LanguagesComponent extends AppComponentBase implements OnDestroy {
         this._appService.updateToolbar(null);
     }
 
+    sortLanguages = (item1, item2) => {
+        return item1 === this.defaultLanguageName ? -1 : (item2 === this.defaultLanguageName ? 1 : 0);
+    }
+
     openCreateOrEditLanguageModal(languageId?: number) {
         const dialogRef = this._dialog.open(CreateOrEditLanguageModalComponent, {
             panelClass: 'slider',
@@ -290,5 +242,11 @@ export class LanguagesComponent extends AppComponentBase implements OnDestroy {
         dialogRef.componentInstance.modalSave.subscribe(() => {
             this.refreshDataGrid();
         });
+    }
+
+    onRowPrepared(e) {
+        if (e.rowType === 'data' && e.data.name === this.defaultLanguageName) {
+            e.rowElement.classList.add('default');
+        }
     }
 }

@@ -2,17 +2,15 @@
 import { Component, Injector, Input, Output, EventEmitter, OnInit, OnDestroy, ViewChild } from '@angular/core';
 
 /** Third party imports */
-import { Store } from '@ngrx/store';
+import { MatDialog } from '@angular/material';
 
 /** Application imports */
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { FiltersService } from '@shared/filters/filters.service';
 import { AppService } from '@app/app.service';
-import { BankAccountsSelectComponent } from 'app/cfo/shared/bank-accounts-select/bank-accounts-select.component';
+import { BankAccountsSelectDialogComponent } from 'app/cfo/shared/bank-accounts-select-dialog/bank-accounts-select-dialog.component';
 import { ReportPeriodComponent } from '@app/cfo/shared/report-period/report-period.component';
 import { BankAccountsService } from '@shared/cfo/bank-accounts/helpers/bank-accounts.service';
-import { CfoStore, CurrenciesStoreActions } from '@app/cfo/store';
-import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
 
 @Component({
     selector: 'cashflow-operations',
@@ -21,7 +19,6 @@ import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
 })
 
 export class OperationsComponent extends AppComponentBase implements OnInit, OnDestroy {
-    @ViewChild(BankAccountsSelectComponent) bankAccountSelector: BankAccountsSelectComponent;
     @ViewChild(ReportPeriodComponent) reportPeriodSelector: ReportPeriodComponent;
     private initReportPeriodTimeout: any;
     @Input('reportPeriod')
@@ -51,33 +48,31 @@ export class OperationsComponent extends AppComponentBase implements OnInit, OnD
         maxDate: null
     };
     totalCount = 3;
+    selectedGroupByIndex = 0;
 
     constructor(injector: Injector,
         private _filtersService: FiltersService,
         private _appService: AppService,
         private _bankAccountsService: BankAccountsService,
-        private cfoPreferencesService: CfoPreferencesService,
-        private store$: Store<CfoStore.State>
+        private _dialog: MatDialog
     ) {
         super(injector);
     }
 
     ngOnInit() {
-        this._bankAccountsService.accountsAmount$.subscribe( amount => {
+        this._bankAccountsService.accountsAmountWithApply$.subscribe( amount => {
             this.bankAccountCount = amount;
         });
     }
 
     initToolbarConfig() {
-        this.cfoPreferencesService.getCurrenciesAndSelectedIndex()
-            .subscribe(([currencies, selectedCurrencyIndex]) => {
-                this._appService.updateToolbar([
+        this._appService.updateToolbar([
                     {
                         location: 'before',
                         items: [
                             {
                                 name: 'filters',
-                                action: (event) => {
+                                action: () => {
                                     setTimeout(this.repaint.bind(this), 1000);
                                     this._filtersService.fixed = !this._filtersService.fixed;
                                 },
@@ -133,7 +128,9 @@ export class OperationsComponent extends AppComponentBase implements OnInit, OnD
                                 text: this.ls('CFO', 'CashflowToolbar_Group_By'),
                                 widget: 'dxDropDownMenu',
                                 options: {
+                                    hint: this.l('CashflowToolbar_Group_By'),
                                     width: 175,
+                                    selectedIndex: this.selectedGroupByIndex,
                                     items: [
                                         {
                                             action: this.groupBy.bind(this),
@@ -145,7 +142,12 @@ export class OperationsComponent extends AppComponentBase implements OnInit, OnD
                                             action: this.groupBy.bind(this),
                                             text: 'Months'
                                         }
-                                    ]
+                                    ],
+                                    onSelectionChanged: (e) => {
+                                        if (e) {
+                                            this.selectedGroupByIndex = e.itemIndex;
+                                        }
+                                    }
                                 }
                             }
                         ]
@@ -157,7 +159,7 @@ export class OperationsComponent extends AppComponentBase implements OnInit, OnD
                             {
                                 name: 'bankAccountSelect',
                                 widget: 'dxButton',
-                                action: this.toggleBankAccountTooltip.bind(this),
+                                action: this.openBankAccountsSelectDialog.bind(this),
                                 options: {
                                     id: 'bankAccountSelect',
                                     text: this.l('Accounts'),
@@ -168,31 +170,6 @@ export class OperationsComponent extends AppComponentBase implements OnInit, OnD
                                     'accountCount': this.bankAccountCount
                                 }
                             },
-                        ]
-                    },
-                    {
-                        location: 'before',
-                        locateInMenu: 'auto',
-                        items: [
-                            {
-                                name: 'select-box',
-                                text: '',
-                                widget: 'dxDropDownMenu',
-                                accessKey: 'currencySwitcher',
-                                options: {
-                                    hint: this.l('Currency'),
-                                    accessKey: 'currencySwitcher',
-                                    items: currencies,
-                                    selectedIndex: selectedCurrencyIndex,
-                                    height: 39,
-                                    width: 220,
-                                    onSelectionChanged: (e) => {
-                                        if (e) {
-                                            this.store$.dispatch(new CurrenciesStoreActions.ChangeCurrencyAction(e.itemData.id));
-                                        }
-                                    }
-                                }
-                            }
                         ]
                     },
                     {
@@ -254,7 +231,6 @@ export class OperationsComponent extends AppComponentBase implements OnInit, OnD
                         ]
                     },
                 ]);
-            });
     }
 
     exportTo(event) {
@@ -299,12 +275,16 @@ export class OperationsComponent extends AppComponentBase implements OnInit, OnD
         this.onReportPeriodChange.emit(period);
     }
 
-    filterByBankAccounts(data) {
-        this.onSelectedBankAccountsChange.emit(data);
+    filterByBankAccounts() {
+        this.onSelectedBankAccountsChange.emit();
     }
 
-    toggleBankAccountTooltip() {
-        this.bankAccountSelector.toggleBankAccountTooltip();
+    openBankAccountsSelectDialog() {
+        this._dialog.open(BankAccountsSelectDialogComponent, {
+            panelClass: 'slider',
+        }).componentInstance.onApply.subscribe(() => {
+            this.filterByBankAccounts();
+        });
     }
 
     ngOnDestroy() {

@@ -32,7 +32,7 @@ export class StarsListComponent extends AppComponentBase implements OnInit {
     }
     private selectedItemKeys = [];
 
-    @Input() targetSelector = "[aria-label='star-icon']";
+    @Input() targetSelector = '[aria-label=\'star-icon\']';
     @Output() onSelectionChanged: EventEmitter<any> = new EventEmitter();
     list: any;
 
@@ -45,7 +45,7 @@ export class StarsListComponent extends AppComponentBase implements OnInit {
         private _starsService: ContactStarsServiceProxy,
         private store$: Store<AppStore.State>
     ) {
-        super(injector, AppConsts.localization.CRMLocalizationSourceName);
+        super(injector);
     }
 
     toggle() {

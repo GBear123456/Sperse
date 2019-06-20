@@ -1,5 +1,4 @@
 import { Component, OnInit, Injector } from '@angular/core';
-import { AppConsts } from 'shared/AppConsts';
 import { AppComponentBase } from 'shared/common/app-component-base';
 import { KbaInputModel } from './kba.model';
 
@@ -23,7 +22,6 @@ export class KbaResultComponent extends AppComponentBase implements OnInit {
         private _KBAService: KBAServiceProxy
     ) {
         super(injector);
-        this.localizationSourceName = AppConsts.localization.PFMLocalizationSourceName;
         this.parseParams();
         this.showingError = decodeURIComponent(this.params.err).replace(/[+]/g, ' ');
     }

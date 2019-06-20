@@ -5,25 +5,24 @@
         <div class="portlet-body">
             <div>
                 <dx-data-grid id="gridContainer"
-                                [allowColumnReordering]="true"
-                                [columnAutoWidth]="true"
-                                [allowColumnResizing]="true"
-                                [hoverStateEnabled]="true"
-                                [pager]="defaultGridPagerConfig"
-                                [dataSource]="dataSource">
-                    <dxi-column caption="{{l('Key')}}" dataField="key"></dxi-column>
-                    <dxi-column caption="{{l('BaseValue')}}" dataField="baseValue"></dxi-column>
-                    <dxi-column caption="{{l('TargetValue')}}" dataField="targetValue"></dxi-column>
-                    <dxi-column caption="{{l('Edit')}}" cellTemplate="editTemplate"></dxi-column>
+                              [allowColumnReordering]="true"
+                              [columnAutoWidth]="true"
+                              [allowColumnResizing]="true"
+                              [hoverStateEnabled]="true"
+                              [pager]="defaultGridPagerConfig"
+                              [dataSource]="dataSource">
+                    <dxi-column [caption]="l('Key')" width="25%" dataField="key"></dxi-column>
+                    <dxi-column [caption]="l('BaseValue')" width="25%" dataField="baseValue"></dxi-column>
+                    <dxi-column [caption]="l('TargetValue')" width="25%" dataField="targetValue"></dxi-column>
+                    <dxi-column [caption]="l('Edit')" cellTemplate="editTemplate"></dxi-column>
                     <ng-container *dxTemplate="let data of 'editTemplate'">
-                            <button class="btn btn-layout"
-                                    (click)="openEditTextLanguageModal(baseLanguageName, targetLanguageName, sourceName, data.data.key, data.data.baseValue, data.data.targetValue)">
-                                <i class="fa fa-edit"></i> {{l('Edit')}}
-                            </button>
+                        <button class="btn btn-layout"
+                                (click)="openEditTextLanguageModal(baseLanguageName, targetLanguageName, sourceName, data.data.key, data.data.baseValue, data.data.targetValue)">
+                            <i class="fa fa-edit"></i> {{l('Edit')}}
+                        </button>
                     </ng-container>
                 </dx-data-grid>
             </div>
         </div>
-
     </div>
 </div>

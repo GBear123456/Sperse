@@ -8,6 +8,7 @@ import { finalize } from 'rxjs/operators';
 import { BehaviorSubject } from '@node_modules/rxjs';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { AppConsts } from '@shared/AppConsts';
+import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
 
 @Injectable()
 export class CFOService extends CFOServiceBase {
@@ -19,29 +20,65 @@ export class CFOService extends CFOServiceBase {
         private _appLocalizationService: AppLocalizationService,
         private _layoutService: LayoutService,
         private _instanceServiceProxy: InstanceServiceProxy,
-        private _contactService: ContactServiceProxy
+        private _contactService: ContactServiceProxy,
+        private _permission: PermissionCheckerService
     ) {
         super();
         this.statusActive = new BehaviorSubject<boolean>(false);
         _appService.subscribeModuleChange(config => {
-            if (config['name'] == 'CFO') {
-                if (this.initialized === undefined) {
-                    if (this._appService.topMenu) {
-                        this._appService.topMenu.items
-                            .forEach((item, i) => {
-                                if (i != 0) {
-                                    item.disabled = true;
-                                }
-                            });
+            switch (config['code']) {
+                case 'CFO':
+                    if (this.hasStaticInstance) {
+                        this.initialized = false;
+                        this.hasStaticInstance = false;
+                        this.instanceType = undefined;
                     }
-                    if (this.instanceType !== undefined) {
+                    if (this.initialized === undefined) {
+                        if (this._appService.topMenu) {
+                            this._appService.topMenu.items
+                                .forEach((item, i) => {
+                                    if (i != 0) {
+                                        item.disabled = true;
+                                    }
+                                });
+                        }
+                        if (this.instanceType !== undefined) {
+                            this.instanceChangeProcess();
+                        }
+                    } else
+                        this.updateMenuItems();
+                    break;
+                case 'CFOP':
+                    if (this.instanceType != InstanceType.User) {
+                        this.initialized = false;
+                        this.instanceId = undefined;
+                        this.instanceType = InstanceType.User;
+                        this.hasStaticInstance = true;
                         this.instanceChangeProcess();
-                    }
-                } else {
-                    this.updateMenuItems();
-                }
+                    } else
+                        this.updateMenuItems();
             }
         });
+    }
+
+    get isInstanceAdmin() {
+        return this.checkMemberAccessPermission('Manage.Administrate', !isNaN(parseInt(this.instanceType)) ||
+            (this.instanceType == InstanceType.Main && this._permission.isGranted('Pages.CFO.MainInstanceAdmin')));
+    }
+
+    get isMemberAccessManage() {
+        return this.checkMemberAccessPermission('Manage', false);
+    }
+
+    get classifyTransactionsAllowed() {
+        return this.checkMemberAccessPermission('ClassifyTransaction', this.isInstanceAdmin);
+    }
+
+    checkMemberAccessPermission(permission, defaultResult = true) {
+        if (this.instanceType == InstanceType.User && !this.instanceId)
+            return this._permission.isGranted('Pages.CFO.MemberAccess.' + permission);
+
+        return defaultResult;
     }
 
     initContactInfo(userId) {
@@ -72,15 +109,19 @@ export class CFOService extends CFOServiceBase {
     }
 
     private updateMenuItems() {
-        this._appService.topMenu.items
-            .forEach((item, i) => {
-                if (i == 0) {
-                    item.text = this._appLocalizationService.l(this.initialized ? 'Navigation_Dashboard' : 'Navigation_Setup', AppConsts.localization.CFOLocalizationSourceName);
+        setTimeout(() => {
+            let menu = this._appService.topMenu;
+            menu && menu.items.forEach((item, i) => {
+                if (!i) {
+                    if (!this.hasStaticInstance)
+                        item.text = this._appLocalizationService.l(this.initialized ? 'Navigation_Dashboard'
+                            : 'Navigation_Setup', AppConsts.localization.CFOLocalizationSourceName);
                 } else if (i == 1) {
                     item.disabled = !this.initialized;
                 } else {
                     item.disabled = !this.hasTransactions;
                 }
             });
+        });
     }
 }

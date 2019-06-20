@@ -4,8 +4,9 @@ export class InplaceEditModel {
     value: string;
     link: string;
     validationRules: object[];
-    isEditDialogEnabled: boolean = false;
-    isDeleteEnabled: boolean = false;
+    isReadOnlyField = false;
+    isEditDialogEnabled = false;
+    isDeleteEnabled = false;
     lEntityName: string;
     lEditPlaceholder: string;
     lDeleteConfirmTitle: string;

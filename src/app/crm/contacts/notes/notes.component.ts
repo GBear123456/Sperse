@@ -42,7 +42,6 @@ export class NotesComponent extends AppComponentBase implements OnInit {
     ) {
         super(injector);
 
-        this.localizationSourceName = AppConsts.localization.CRMLocalizationSourceName;
         _clientService.invalidateSubscribe((area) => {
             if (area == 'notes') {
                 this.data = this._contactService['data'];
@@ -51,10 +50,6 @@ export class NotesComponent extends AppComponentBase implements OnInit {
                 );
             }
         });
-    }
-
-    refreshDataGrid() {
-        this.dataGrid.instance.refresh();
     }
 
     ngOnInit() {
@@ -66,10 +61,14 @@ export class NotesComponent extends AppComponentBase implements OnInit {
         dataSource$.subscribe((notes: NoteInfoDto[]) => {
             if (this.componentIsActivated) {
                 this.dataSource = notes;
-                if (!notes || !notes.length) 
+                if (!notes || !notes.length)
                     setTimeout(() => this.openNoteAddDialog());
             }
         });
+    }
+
+    refreshDataGrid() {
+        this.dataGrid.instance.refresh();
     }
 
     loadData(): Observable<NoteInfoDto[]> {
@@ -88,7 +87,7 @@ export class NotesComponent extends AppComponentBase implements OnInit {
         if (this.data.contactInfo.personContactInfo)
             this._clientService.organizationContactInfo.pipe(first()).subscribe(() => {
                 this.dialog.open(NoteAddDialogComponent, {
-                    panelClass: 'slider',
+                    panelClass: ['slider'],
                     disableClose: false,
                     hasBackdrop: false,
                     closeOnNavigation: true,

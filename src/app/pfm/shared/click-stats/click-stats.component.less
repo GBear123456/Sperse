@@ -1,0 +1,63 @@
+:host {
+    position: relative;
+    display: block;
+    height: 100%;
+    width: 100%;
+    top: -20px;
+
+    /deep/ dx-data-grid {
+        height: calc(100vh - 180px);
+        .dx-row > td {
+            padding: 0;
+        }
+        .dx-datagrid-headers table {
+            tr.dx-header-row td {
+                padding: 3px 0px;
+                div {
+                    height: auto;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    white-space: pre-wrap!important;
+                    font-weight: bold;
+                    color: #000;
+                }
+            }
+            tr.dx-data-row td {
+                background-color: #f3f3f3;
+                font-weight: bold;
+                color: #000;
+                .dx-template-wrapper div {
+                    text-align: center;
+                    span.cell-value {
+                        text-decoration: underline;
+                        cursor: pointer;
+                    }                    
+                }
+            }
+        }
+        .dx-datagrid-rowsview {
+            .dx-template-wrapper {
+                padding-left: 10px;
+                & > div {
+                    display: flex;
+                    justify-content: flex-end;
+                    align-items: flex-end;
+                    span.cell-value {
+                        min-width: 30%;
+                        text-decoration: underline;
+                        cursor: pointer;
+                    }
+                }
+            }
+        }
+        .dx-data-row td span.percentage {
+            width: 43px;
+            text-align: right;
+            font-size: 10px;
+            font-weight: 400;
+            color: #a0a0a0;
+            padding: 0 5px;
+        }
+    }
+}

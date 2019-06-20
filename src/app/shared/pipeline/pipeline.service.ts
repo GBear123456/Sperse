@@ -12,9 +12,11 @@ import * as _ from 'underscore';
 
 /** Application imports */
 import { CrmStore, PipelinesStoreSelectors } from '@app/crm/store';
-import { LeadServiceProxy, CancelLeadInfo, UpdateLeadStageInfo, ProcessLeadInput,
+import {
+    LeadServiceProxy, CancelLeadInfo, UpdateLeadStageInfo, ProcessLeadInput,
     PipelineServiceProxy, PipelineDto, ActivityServiceProxy, TransitionActivityDto,
-    OrderServiceProxy, UpdateOrderStageInfo, CancelOrderInfo, ProcessOrderInfo } from '@shared/service-proxies/service-proxies';
+    OrderServiceProxy, UpdateOrderStageInfo, CancelOrderInfo, ProcessOrderInfo, StageDto
+} from '@shared/service-proxies/service-proxies';
 import { EntityCancelDialogComponent } from './confirm-cancellation-dialog/confirm-cancellation-dialog.component';
 import { LeadCompleteDialogComponent } from './complete-lead-dialog/complete-lead-dialog.component';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -32,13 +34,15 @@ export class PipelineService {
     public stageChange: Subject<any>;
     private _pipelineDefinitions: any = {};
     private defaultStagesColors: StageColor = {
+        '-4': '#f02929',
         '-3': '#f05b29',
         '-2': '#f4ae55',
         '-1': '#f7d15e',
         '0': '#00aeef',
         '1': '#b6cf5e',
         '2': '#86c45d',
-        '3': '#46aa6e'
+        '3': '#46aa6e',
+        '4': '#0e9360'
     };
     private _dataLayoutType: BehaviorSubject<DataLayoutType> = new BehaviorSubject<DataLayoutType>(DataLayoutType.Pipeline);
     dataLayoutType$: Observable<DataLayoutType> = this._dataLayoutType.asObservable();
@@ -86,7 +90,7 @@ export class PipelineService {
         );
     }
 
-    getStages(pipelinePurposeId: string): any {
+    getStages(pipelinePurposeId: string): StageDto[] {
         return this.getPipeline(pipelinePurposeId).stages;
     }
 
@@ -94,7 +98,7 @@ export class PipelineService {
         return this._pipelineDefinitions[pipelinePurposeId];
     }
 
-    getStageByName(pipelinePurposeId: string, stageName: string) {
+    getStageByName(pipelinePurposeId: string, stageName: string): StageDto {
         return _.findWhere(this.getStages(pipelinePurposeId), {name: stageName});
     }
 
@@ -122,7 +126,6 @@ export class PipelineService {
                     complete && complete();
                 }
             } else {
-                this.moveEntityTo(entity, toStage, fromStage);
                 entity.Name && this._notify.warn(this._ls.l('StageCannotBeUpdated',
                     AppConsts.localization.defaultLocalizationSourceName, entity.Name));
                 complete && setTimeout(() => complete());
@@ -135,8 +138,14 @@ export class PipelineService {
     updateEntitiesStage(pipelineId, entities, targetStage) {
         let subject = new Subject<any>();
 
-        this.updateEntitiesStageInternal(pipelineId, entities.slice(0),
-            targetStage, null, (declinedList) => subject.next(declinedList), []);
+        this.updateEntitiesStageInternal(
+            pipelineId,
+            entities.slice(0),
+            targetStage,
+            null,
+            (declinedList) => subject.next(declinedList),
+            []
+        );
 
         return subject.asObservable();
     }
@@ -146,12 +155,18 @@ export class PipelineService {
         if (entity) {
             if (data)
                 entity.data = data;
-            if (!this.updateEntityStage(pipelineId, entity, 
-                this.getStageByName(pipelineId, entity.Stage || entity.stage), 
-                this.getStageByName(pipelineId, targetStage), (data) => {
-                    this.updateEntitiesStageInternal(pipelineId, entities, targetStage, data || entity.data, complete, declinedList);
-                    delete entity.data;
-            })) declinedList.push(entity);
+            if (
+                !this.updateEntityStage(
+                    pipelineId,
+                    entity,
+                    this.getStageByName(pipelineId, entity.Stage || entity.stage),
+                    this.getStageByName(pipelineId, targetStage),
+                    (data) => {
+                        this.updateEntitiesStageInternal(pipelineId, entities, targetStage, data || entity.data, complete, declinedList);
+                        delete entity.data;
+                    }
+                )
+            ) declinedList.push(entity);
         } else
             complete && complete(declinedList);
     }
@@ -203,7 +218,7 @@ export class PipelineService {
                         if (data)
                             this.processLeadInternal(entity, {...data, fromStage, toStage}, complete);
                         else {
-                            this.moveEntityTo(entity, toStage, fromStage);
+                            this.moveEntityTo(entity, fromStage, toStage);
                             complete && complete();
                         }
                     });
@@ -240,7 +255,7 @@ export class PipelineService {
                 if (data)
                     this.cancelLeadInternal(entity, {...data, fromStage, toStage}, complete);
                 else {
-                    this.moveEntityTo(entity, toStage, fromStage);
+                    this.moveEntityTo(entity, fromStage, toStage);
                     complete && complete();
                 }
             });
@@ -300,7 +315,7 @@ export class PipelineService {
                 if (data)
                     this.cancelOrderInternal(entity, {...data, fromStage, toStage}, complete);
                 else {
-                    this.moveEntityTo(entity, toStage, fromStage);
+                    this.moveEntityTo(entity, fromStage, toStage);
                     complete && complete();
                 }
             });
@@ -323,8 +338,8 @@ export class PipelineService {
     moveEntityTo(entity, sourceStage, targetStage) {
         if (sourceStage.entities && targetStage.entities)
             targetStage.entities.unshift(
-                sourceStage.entities.splice(
-                    sourceStage.entities.indexOf(entity), 1).pop());
+                sourceStage.entities.splice(sourceStage.entities.indexOf(entity), 1).pop()
+            );
         entity.StageId = targetStage.id;
         entity.stage = entity.Stage = targetStage.name;
         entity.locked = false;
@@ -350,8 +365,8 @@ export class PipelineService {
         if (entity) {
             let prevEntity = this.getPrevEntity(entity, entities);
             return entities.length > 1 ? prevEntity && prevEntity.SortOrder
-                || entities[0].SortOrder + 1: 0;
-        } else 
+                || entities[0].SortOrder + 1 : 0;
+        } else
             return entities.length && entities.slice(-1).pop().SortOrder || 0;
     }
 
@@ -363,7 +378,7 @@ export class PipelineService {
             ).pipe(finalize(() => {
                 entity.locked = false;
             })).subscribe(complete, complete);
-        } else 
+        } else
             complete && complete();
     }
 

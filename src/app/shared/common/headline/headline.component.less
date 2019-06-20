@@ -1,7 +1,7 @@
 :host {
     position: absolute;
-    top: 0px;
-    left: 0px;
+    top: 0;
+    left: 0;
     z-index: 1;
 
     &.fullscreen {
@@ -20,6 +20,18 @@
         height: 75px;
         top: 75px;
         left: 0px;
+    }
+
+    /deep/ .headline-content {
+        display: flex;
+        flex: 1;
+        justify-content: flex-end;
+        & > * {
+            margin-left: 10px;
+        }
+        /deep/ synch-progress {
+            margin: auto;
+        }
     }
 
     .headline-title {
@@ -79,7 +91,7 @@
     .headline-buttons {
         display: flex;
         align-items: center;
-        margin-left: auto;
+        margin-left: 5px;
         .vertical-delimiter {
             width: 30px;
             height: 0px;

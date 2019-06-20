@@ -1,0 +1,15 @@
+{
+  "code": "CFOP",
+  "name": "CFO Portal",
+  "requiredFeature": "CFO.Partner",
+  "requiredPermission": "Pages.CFO.MemberAccess",
+  "localizationSource": "CFO",
+  "navigation": [
+    [ "Dashboard", "", "icon-home", "/app/cfo-portal/start" ],
+    [ "Accounts", "", "icon-home", "/app/cfo-portal/linkaccounts" ],
+    [ "Transactions", "", "icon-home", "/app/cfo-portal/transactions" ],
+    [ "Cashflow", "", "icon-home", "/app/cfo-portal/cashflow" ],
+    [ "Stats", "", "icon-home", "/app/cfo-portal/stats" ],
+    [ "Statements", "", "icon-home", "/app/cfo-portal/statements" ]
+  ]
+}

@@ -32,7 +32,7 @@ export class AppPreBootstrap {
 
                 location.href = AppConsts.appBaseUrl + '/account/select-edition';
             } else if (queryStringObj.secureId) {
-                AppPreBootstrap.impersonatedAuthenticate(queryStringObj.secureId, queryStringObj.tenantId, () => { AppPreBootstrap.getUserConfiguration(callback); });
+                AppPreBootstrap.impersonatedAuthenticate(queryStringObj.secureId, queryStringObj.tenantId);
             } else if (queryStringObj.switchAccountToken) {
                 AppPreBootstrap.linkedAccountAuthenticate(queryStringObj.switchAccountToken, queryStringObj.tenantId, () => { AppPreBootstrap.getUserConfiguration(callback); });
             } else {
@@ -86,7 +86,7 @@ export class AppPreBootstrap {
         return abp.timing.localClockProvider;
     }
 
-    private static impersonatedAuthenticate(impersonationToken: string, tenantId: number, callback: () => void): JQueryPromise<any> {
+    private static impersonatedAuthenticate(impersonationToken: string, tenantId: number): JQueryPromise<any> {
         abp.auth.clearToken();
         abp.multiTenancy.setTenantIdCookie(tenantId);
 
@@ -108,8 +108,11 @@ export class AppPreBootstrap {
             abp.auth.setToken(result.accessToken);
             AppPreBootstrap.setEncryptedTokenCookie(result.encryptedAccessToken);
             abp.multiTenancy.setTenantIdCookie();
-            location.search = '';
-            callback();
+            if (result.shouldResetPassword) 
+                location.href = location.origin + '/account/reset-password?resetCode=' +
+                    result.passwordResetCode + (tenantId ? '&tenantId=' + tenantId : '') + '&userId=' + result.userId;
+            else
+                location.search = '';
         }).fail(() => {
             abp.multiTenancy.setTenantIdCookie();
             location.href = AppConsts.appBaseUrl;
@@ -145,8 +148,7 @@ export class AppPreBootstrap {
         let generalInfo = window['generalInfo'];
         if (generalInfo && generalInfo.userConfig) {
             this.handleGetAll(generalInfo.userConfig, callback, loadThemeResources);
-        }
-        else {
+        } else {
             const cookieLangValue = abp.utils.getCookieValue('Abp.Localization.CultureName');
             const token = abp.auth.getToken();
 

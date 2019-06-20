@@ -42,19 +42,17 @@
 
     <div [hidden]="!showPipeline" class="portlet light no-padding margin-bottom-0">
         <div class="portlet-body">
-            <div>
-                <div class="funnel-wrapper">
-                    <app-pipeline
-                        [totalsURI]="'ActivityCount'"
-                        [dataSource]="pipelineDataSource"
-                        [dragulaName]="'activityStages'"
-                        [selectFields]="['Id', 'Title', 'Description', 'StartDate', 'EndDate', 'StageId']"
-                        [pipelinePurposeId]="pipelinePurposeId"
-                        [(selectedEntities)]="selectedEntities"
-                        (onCardClick)="showActivityDialog($event)">
-                        Loading...
-                    </app-pipeline>
-                </div>
+            <div class="funnel-wrapper">
+                <app-pipeline
+                    [totalsURI]="'ActivityCount'"
+                    [dataSource]="pipelineDataSource"
+                    [dragulaName]="'activityStages'"
+                    [selectFields]="['Id', 'Title', 'Description', 'StartDate', 'EndDate', 'StageId']"
+                    [pipelinePurposeId]="pipelinePurposeId"
+                    [(selectedEntities)]="selectedEntities"
+                    (onCardClick)="showActivityDialog($event)">
+                    Loading...
+                </app-pipeline>
             </div>
         </div>
     </div>

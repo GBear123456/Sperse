@@ -50,7 +50,7 @@ export class PaymentInformationComponent extends AppComponentBase implements OnI
         private contactService: ContactServiceProxy,
         private _contactsService: ContactsService
     ) {
-        super(injector, AppConsts.localization.CRMLocalizationSourceName);
+        super(injector);
     }
 
     ngOnInit() {

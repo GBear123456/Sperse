@@ -25,26 +25,26 @@
                 srcset="assets/common/images/xero/sperse-logo@2x.png 2x, assets/common/images/xero/sperse-logo@3x.png 3x"
                 alt="Sperse"
                 class="sperse-logo">
-            <h2 class="sperse-title">{{ l('ConnectYourXeroAccount') }}</h2>
+            <h2 class="sperse-title">{{ ls.l('ConnectYourXeroAccount') }}</h2>
         </header>
         <div class="content">
-            <h4>{{ l('AddConsumerKeyAndSecret')}}</h4>
+            <h4>{{ ls.l('AddConsumerKeyAndSecret')}}</h4>
             <div class="field">
-                <div class="field-label">{{l('ConsumerKey')}}</div>
+                <div class="field-label">{{ls.l('ConsumerKey')}}</div>
                 <div class="field-value">
                     <dx-text-box [(value)]="consumerKey">
                         <dx-validator>
-                            <dxi-validation-rule type="required" message="{{l('ConsumerKey')}} is required"></dxi-validation-rule>
+                            <dxi-validation-rule type="required" message="{{ls.l('ConsumerKey')}} is required"></dxi-validation-rule>
                         </dx-validator>
                     </dx-text-box>
                 </div>
             </div>
             <div class="field">
-                <div class="field-label">{{l('ConsumerSecret')}}</div>
+                <div class="field-label">{{ls.l('ConsumerSecret')}}</div>
                 <div class="field-value">
                     <dx-text-box [(value)]="consumerSecret">
                         <dx-validator>
-                            <dxi-validation-rule type="required" message="{{l('ConsumerSecret')}} is required"></dxi-validation-rule>
+                            <dxi-validation-rule type="required" message="{{ls.l('ConsumerSecret')}} is required"></dxi-validation-rule>
                         </dx-validator>
                     </dx-text-box>
                 </div>
@@ -53,7 +53,7 @@
                 <dx-validation-summary id="summary"></dx-validation-summary>
                 <dx-button
                     type="success"
-                    [text]="operationType === 'update' ? l('Update') : l('Connect') "
+                    [text]="operationType === 'update' ? ls.l('Update') : ls.l('Connect') "
                     (onClick)="onClick($event)"
                     class="btn-blue">
                 </dx-button>
@@ -61,23 +61,27 @@
         </div>
         <footer>
             <div class="footer-links">
+                <ng-container *ngIf="operationType === 'add'">
+                    <dx-check-box [text]="ls.l('ImportNewChartOfAccounts')" [(value)]="importNewCategoryTree" class="import-category-tree-checkbox"> </dx-check-box>
+                    <dx-check-box [ngClass]="{ hidden: !importNewCategoryTree }" [text]="ls.l('OverwriteCurrentChartOfAccounts')" [(value)]="overwriteCurrentCategoryTree" class="import-category-tree-checkbox"> </dx-check-box>
+                </ng-container>
                 <ul>
                     <li>
                         <a [href]="xeroAppsLink" target="_blank" class="link">
                             <img src="assets/common/images/xero/icon-xero.png" alt="Xero apps">
-                            {{l('ClickHereToGoToXeroApps')}}
+                            {{ls.l('ClickHereToGoToXeroApps')}}
                         </a>
                     </li>
                     <li>
                         <a [href]="getXeroCertificateUrl" target="_blank" class="link">
                             <img src="assets/common/images/xero/icon-download.svg" alt="download" >
-                            {{l('DownloadCertificate')}}
-                        </a><span>{{ l('ThenAddItToTheXeroApp') }}</span>
+                            {{ls.l('DownloadCertificate')}}
+                        </a><span>{{ ls.l('ThenAddItToTheXeroApp') }}</span>
                     </li>
                 </ul>
                 <a href="https://support.sperse.com/hc/en-us/articles/360008220714-Sperse-integration-with-Xero" target="_blank" class="link link-info">
                     <img src="assets/common/images/xero/icon-info.svg" alt="info" class="info-icon">
-                    {{l('ClickHereToLearnHowToConnectXero')}}
+                    {{ls.l('ClickHereToLearnHowToConnectXero')}}
                 </a>
             </div>
         </footer>

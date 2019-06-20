@@ -1,3 +1,5 @@
+@border-color: #E5E9EC;
+
 :host {
     text-align: start;
 
@@ -5,62 +7,56 @@
         padding: 0 !important;
     }
 
-    .filter-actions {
-        width: 100%;
-        display: inline-block;
-        height: 30px;
+    .header {
+        border-bottom: 1px solid #e5e9ec;
+        padding: 0 8px;
+        .row {
+            align-items: center;
+            margin-right: -8px;
+            margin-left: -8px;
 
-        .filter-by-types {
-            float: left;
-            height: 30px;
-
-            /deep/ .dx-tabs {
-                border: 0;
-                text-align: left;
-                margin-top: -10px;
-            }
-
-            /deep/ .dx-tabs-wrapper {
-                display: inline-block;
-            }
-
-            /deep/ .dx-tab {
-                font-size: 12px;
-                font-weight: 500;
-                line-height: 1.21;
-                letter-spacing: 0.3px;
-                color: #677380;
-                padding: 9px 10px 3px 0;
-                background-color: transparent;
-
-                .dx-tab-content {
-                    border-bottom: 2px solid transparent;
+            &.first-sub-header {
+                border-bottom: 1px solid #e5e9ec;
+                padding: 10px 0;
+                flex-wrap: nowrap;
+                /deep/ search-input {
+                    margin-right: auto;
+                    margin-left: 10px;
                 }
-
-                .dx-tab-text {
-                    font-size: 14px;
+                /deep/ add-account-button {
+                    margin: 0 30px 0 0;
                 }
             }
-
-            /deep/ .dx-tab.dx-tab-selected {
-                border: 0;
-                font-weight: 600;
-                color: #202b35;
-
-                .dx-tab-content {
-                    border-bottom-color: #00AEEF;
-                }
-
-                &:after {
-                    border: 0;
+            &.second-sub-header {
+                padding: 8px 0;
+            }
+            [class*="col-"] {
+                padding-right: 8px;
+                padding-left: 8px;
+            }
+            .left-header {
+                .entities {
+                    display: flex;
+                    align-items: center;
+                    /deep/ .dx-checkbox {
+                        margin-right: 13px;
+                        margin-left: 8px;
+                    }
                 }
             }
 
-            /deep/ .dx-tab {
-                display: inline-block;
+            @media (min-width: 1500px) {
+                .left-header {
+                    flex: 0 0 50%;
+                    max-width: 50%;
+                }
 
-                .dx-tab-text {
-                    line-height: 17px;
+                .right-header {
+                    flex: 0 0 50%;
+                    max-width: 50%;
+                    .row > div {
+                        border-left: 1px solid @border-color;
+                    }
                 }
             }
         }
@@ -74,12 +70,42 @@
         height: auto;
     }
 
+    .is-active-filter {
+        font-size: 13px;
+        font-weight: 500;
+        letter-spacing: 0.3px;
+        color: #677380;
+
+        & > span {
+            margin-right: 13px;
+        }
+
+        /deep/ .dx-switch-on,
+        /deep/ .dx-switch-off {
+            color: transparent;
+        }
+
+        /deep/ .dx-switch-container {
+            border-color: #e2f5fe;
+            background-color: #e2f5fe;
+            border-radius: 12px;
+            height: 20px;
+        }
+
+        /deep/ .dx-switch-handle {
+            &::before {
+                background-color: #30bff2;
+                border-radius: 14px;
+                height: 14px;
+            }
+        }
+    }
+
     .label-container {
         padding-top: 7px;
     }
 
     /deep/ #gridContainer {
-        height: 100% !important;
         font-size: 12px;
 
         .dx-datagrid-headers .dx-datagrid-content,
@@ -152,7 +178,7 @@
                         box-shadow: none !important;
 
                         td {
-                            padding: 3px 8px !important;
+                            padding: 3px 8px;
                             font-weight: 500;
                             color: #67737f;
                         }
@@ -219,6 +245,17 @@
                         background: #f45a34;
                     }
                 }
+                &.short {
+                    background: transparent;
+                    width: 8px;
+                    height: 8px;
+                    display: block;
+                    padding: 0 !important;
+                    &:before {
+                        position: relative;
+                        left: 0 !important;
+                    }
+                }
             }
 
             .dx-datagrid-rowsview {
@@ -228,7 +265,8 @@
             }
 
             .dx-row.dx-data-row {
-                border: 1px solid #e5e9ec;
+                border-top: 1px solid #e5e9ec;
+                border-bottom: 1px solid #e5e9ec;
                 border-radius: 4px;
 
                 td {
@@ -243,6 +281,12 @@
                     &.dx-editor-cell {
                         text-overflow: clip;
                     }
+                    &.checkbox {
+                        padding-left: 16px !important;
+                    }
+                }
+                &:first-child {
+                    border-top: none;
                 }
             }
 
@@ -309,6 +353,10 @@
 
     /deep/ .bold {
         font-weight: 600 !important;
+    }
+
+    .clear-button {
+        cursor: pointer;
     }
 }
 

@@ -1,6 +1,5 @@
 import { Component, OnInit, Input, Injector } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { AppConsts } from '@shared/AppConsts';
 import { CreditReportServiceProxy, AlertDto } from '@shared/service-proxies/service-proxies';
 
 @Component({
@@ -17,7 +16,6 @@ export class AlertsComponent extends AppComponentBase implements OnInit {
     private _loadAlertsService: CreditReportServiceProxy
   ) {
     super(injector);
-    this.localizationSourceName = AppConsts.localization.PFMLocalizationSourceName;
   }
 
   ngOnInit() {

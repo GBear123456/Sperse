@@ -26,7 +26,7 @@ import { ImportServiceProxy, ImportFieldInfoDto } from '@shared/service-proxies/
     styleUrls: ['import-wizard.component.less'],
     providers: [ PhoneNumberService ]
 })
-export class ImportWizardComponent extends AppComponentBase implements OnInit, AfterViewInit {
+export class ImportWizardComponent extends AppComponentBase implements AfterViewInit {
     @ViewChild(MatHorizontalStepper) stepper: MatHorizontalStepper;
     @ViewChild('mapGrid') mapGrid: DxDataGridComponent;
     @ViewChild('reviewGrid') reviewGrid: DxDataGridComponent;
@@ -36,7 +36,6 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit, A
     @Input() icon: string;
     @Input() checkSimilarFields: Array<any>;
     @Input() columnsConfig: any = {};
-    @Input() localizationSource: string;
     @Input() lookupFields: any;
     @Input() preProcessFieldBeforeReview: Function;
     @Input() validateFieldsMapping: Function;
@@ -123,10 +122,6 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit, A
                 return validationResult && validationResult.isMapped && !validationResult.error ? null : validationResult;
             }]
         });
-    }
-
-    ngOnInit() {
-        this.localizationSourceName = this.localizationSource;
     }
 
     ngAfterViewInit() {

@@ -9,6 +9,45 @@
         }
 
         /deep/ bank-accounts-widget {
+
+            .header .row {
+
+                .left-header,
+                .right-header {
+                    flex-basis: 100% !important;
+                    max-width: 100% !important;
+                }
+
+                .left-header {
+                    order: 1;
+                }
+
+                .connections,
+                .accounts {
+                    flex-basis: 50% !important;
+                    max-width: 50% !important;
+                }
+
+                .entities {
+                    flex-basis: 46% !important;
+                    max-width: 46% !important;
+                }
+
+                .types {
+                    flex-basis: 38% !important;
+                    max-width: 38% !important;
+                }
+                .clear-button-block {
+                    flex-basis: 16% !important;
+                    max-width: 16% !important;
+                }
+
+                .current-balance,
+                .is-active-filter {
+                    display: none;
+                }
+            }
+
             .filter-actions .filter-by-types /deep/ .dx-tab .dx-tab-text {
                 font-size: 13px;
             }

@@ -38,7 +38,7 @@ export class DocumentTypesListComponent extends AppComponentBase implements OnIn
         injector: Injector,
         private _documentTypeService: DocumentTypeServiceProxy
     ) {
-        super(injector, AppConsts.localization.CRMLocalizationSourceName);
+        super(injector);
     }
 
     onDropDownInitialized(event) {

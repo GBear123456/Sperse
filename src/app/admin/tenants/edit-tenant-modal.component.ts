@@ -1,9 +1,18 @@
 /** Core imports */
-import { Component, ElementRef, EventEmitter, Injector, OnInit, Output, ViewChild } from '@angular/core';
+import {
+    ChangeDetectorRef,
+    ChangeDetectionStrategy,
+    Component,
+    ElementRef,
+    EventEmitter,
+    Inject,
+    OnInit,
+    Output,
+    ViewChild
+} from '@angular/core';
 
 /** Third party imports */
 import { forkJoin } from 'rxjs';
-import { finalize } from 'rxjs/operators';
 
 /** Application imports */
 import {
@@ -13,57 +22,71 @@ import {
     TenantServiceProxy
 } from '@shared/service-proxies/service-proxies';
 import { TenantsService } from '@admin/tenants/tenants.service';
-import { AppModalDialogComponent } from '@app/shared/common/dialogs/modal/app-modal-dialog.component';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { NotifyService } from '@abp/notify/notify.service';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
+import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
+import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
+import { finalize } from '@node_modules/rxjs/internal/operators';
 
 @Component({
     selector: 'editTenantModal',
     templateUrl: './edit-tenant-modal.component.html',
-    providers: [ TenantsService ]
+    providers: [ TenantsService ],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class EditTenantModalComponent extends AppModalDialogComponent implements OnInit {
-
+export class EditTenantModalComponent implements OnInit {
+    @ViewChild(ModalDialogComponent) modalDialog: ModalDialogComponent;
     @ViewChild('nameInput') nameInput: ElementRef;
     @ViewChild('SubscriptionEndDateUtc') subscriptionEndDateUtc: ElementRef;
     @Output() modalSave: EventEmitter<any> = new EventEmitter<any>();
 
-    saving = false;
     tenant: TenantEditDto;
     editionsModels: { [value: string]: TenantEditEditionDto } = {};
     editionsGroups: SubscribableEditionComboboxItemDto[][];
+    title = this.ls.l('EditTenant');
+    buttons: IDialogButton[] = [
+        {
+            title: this.ls.l('Save'),
+            class: 'primary',
+            action: this.save.bind(this)
+        }
+    ];
 
     constructor(
-        injector: Injector,
+        @Inject(MAT_DIALOG_DATA) private data: any,
         private _tenantService: TenantServiceProxy,
-        private _tenantsService: TenantsService
-    ) {
-        super(injector);
-    }
+        private _tenantsService: TenantsService,
+        private _notifyService: NotifyService,
+        private _changeDetectorRef: ChangeDetectorRef,
+        private _dialogRef: MatDialogRef<EditTenantModalComponent>,
+        public ls: AppLocalizationService
+    ) {}
 
     ngOnInit() {
-        this.data.title = this.l('EditTenant');
+        this.modalDialog.startLoading();
         forkJoin(
             this._tenantsService.getEditionsGroups(),
             this._tenantService.getTenantForEdit(this.data.tenantId)
-        ).subscribe(([editionsGroups, tenantResult]) => {
+        ).pipe(finalize(() => this.modalDialog.finishLoading()))
+        .subscribe(([editionsGroups, tenantResult]) => {
             this.editionsGroups = editionsGroups;
             this.tenant = tenantResult;
             this.editionsModels = this._tenantsService.getEditionsModels(editionsGroups, tenantResult);
+            this._changeDetectorRef.detectChanges();
         });
     }
 
     save(): void {
-        this.saving = true;
+        this.modalDialog.startLoading();
         this.tenant.editions = this._tenantsService.getTenantEditions();
         this._tenantService.updateTenant(this.tenant)
-            .pipe(finalize(() => this.saving = false))
+            .pipe(finalize(() => this.modalDialog.finishLoading()))
             .subscribe(() => {
-                this.notify.info(this.l('SavedSuccessfully'));
-                this.close();
+                this._notifyService.info(this.ls.l('SavedSuccessfully'));
+                this._dialogRef.close(true);
                 this.modalSave.emit(null);
             });
     }
 
-    close(): void {
-        this.dialogRef.close();
-    }
 }
