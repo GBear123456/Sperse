@@ -10,7 +10,7 @@ import { filter, switchMap } from 'rxjs/operators';
 import { CashFlowGridSettingsDto, CashflowServiceProxy, InstanceType } from '@shared/service-proxies/service-proxies';
 import { CFOService } from '@shared/cfo/cfo.service';
 import { BehaviorSubject } from '@node_modules/rxjs';
-import { LocalPreferenecesModel } from '@app/cfo/cashflow/preferences-dialog/local-prefereneces.model';
+import { LocalPreferencesModel } from '@app/cfo/cashflow/preferences-dialog/local-prefereneces.model';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 
 @Injectable()
@@ -19,10 +19,13 @@ export class UserPreferencesService {
     private _userPreferences: ReplaySubject<CashFlowGridSettingsDto> = new ReplaySubject(1);
     userPreferences$: Observable<CashFlowGridSettingsDto> = this._userPreferences.asObservable();
     localPreferencesCacheKey = `LocalUserPreferences_${this.sessionService.tenantId}_${this.sessionService.userId}`;
-    localPreferences: BehaviorSubject<LocalPreferenecesModel> = new BehaviorSubject<LocalPreferenecesModel>(
-        this.cacheService.get(this.localPreferencesCacheKey) || {}
+    localPreferences: BehaviorSubject<LocalPreferencesModel> = new BehaviorSubject<LocalPreferencesModel>(
+        this.cacheService.get(this.localPreferencesCacheKey) || {
+            showCashflowTypeTotals: true,
+            showCategoryTotals: true
+        }
     );
-    localPreferences$: Observable<LocalPreferenecesModel> = this.localPreferences.asObservable();
+    localPreferences$: Observable<LocalPreferencesModel> = this.localPreferences.asObservable();
     constructor(
         private sessionService: AppSessionService,
         private cacheService: CacheService,
@@ -81,7 +84,7 @@ export class UserPreferencesService {
         return preference['sourceName'] + preference['sourceValue'].replace(/ /g, '');
     }
 
-    updateLocalPreferences(preferences: LocalPreferenecesModel) {
+    updateLocalPreferences(preferences: LocalPreferencesModel) {
         const newPreferences = {
             ...this.localPreferences.value,
             ...preferences

@@ -1526,10 +1526,14 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     updateCategorizationLevels() {
+        this.startLoading();
+        this.treePathes = {};
+        this.getCellOptionsFromCell.cache = {};
         this.cashflowData.forEach(cashflowItem => {
              this.addCategorizationLevels(cashflowItem);
         });
         this.dataSource = this.getApiDataSource();
+        this.finishLoading();
     }
 
     /**
@@ -1610,8 +1614,14 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     }
                 }
 
+                /**
+                 * The first level for income or expense is total if user chooses to hide cashflow type totals
+                 */
                 if (level.prefix === CategorizationPrefixes.CashflowType
-                    && (transactionObj[level.statsKeyName] === Income || transactionObj[level.statsKeyName] === Expense)
+                    && (
+                        transactionObj[level.statsKeyName] === Income
+                        || transactionObj[level.statsKeyName] === Expense
+                    )
                     && this.userPreferencesService.localPreferences.value.hasOwnProperty('showCashflowTypeTotals')
                     && !this.userPreferencesService.localPreferences.value.showCashflowTypeTotals
                 ) {
@@ -1620,7 +1630,20 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     return true;
                 }
 
-                key = transactionObj[level.statsKeyName] ? level.prefix + transactionObj[level.statsKeyName] : transactionObj[level.statsKeyName];
+                const isUnclassified = !transactionObj[level.statsKeyName];
+                /**
+                 * If user wants to hide categories and subcategories - avoid adding level for them
+                 */
+                if (
+                    (level.prefix === CategorizationPrefixes.Category || level.prefix === CategorizationPrefixes.SubCategory || level.prefix === CategorizationPrefixes.TransactionDescriptor)
+                    && this.userPreferencesService.localPreferences.value.hasOwnProperty('showCategoryTotals')
+                    && !this.userPreferencesService.localPreferences.value.showCategoryTotals
+                    && !isUnclassified
+                ) {
+                    return true;
+                }
+
+                key = isUnclassified ? transactionObj[level.statsKeyName] : level.prefix + transactionObj[level.statsKeyName];
                 transactionObj['levels'][`level${levelNumber++}`] = key;
             }
             return true;
@@ -1950,6 +1973,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     }
 
                     if (updateAfterAccountingTypeShowingChange) {
+                        this.treePathes = {};
                         this.cashflowData.forEach(item => {
                             this.addCategorizationLevels(item);
                         });
@@ -6253,6 +6277,20 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                                     action: (event) => {
                                         this.userPreferencesService.updateLocalPreferences({
                                             showCashflowTypeTotals: !this.userPreferencesService.localPreferences.value.showCashflowTypeTotals
+                                        });
+                                        this.initCategoryToolbar();
+                                        event.event.stopPropagation();
+                                        event.event.preventDefault();
+                                    }
+                                },
+                                {
+                                    type: 'option',
+                                    name: 'showCategoryTotals',
+                                    checked: this.userPreferencesService.localPreferences.value.showCategoryTotals,
+                                    text: this.l('CategoryTotals'),
+                                    action: (event) => {
+                                        this.userPreferencesService.updateLocalPreferences({
+                                            showCategoryTotals: !this.userPreferencesService.localPreferences.value.showCategoryTotals
                                         });
                                         this.initCategoryToolbar();
                                         event.event.stopPropagation();

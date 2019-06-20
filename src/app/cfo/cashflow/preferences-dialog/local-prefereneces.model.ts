@@ -1,3 +1,4 @@
-export class LocalPreferenecesModel {
-    showCashflowTypeTotals: boolean;
+export class LocalPreferencesModel {
+    showCashflowTypeTotals?: boolean;
+    showCategoryTotals?: boolean;
 }
