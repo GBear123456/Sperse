@@ -156,7 +156,9 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
         this.subscribeToRefreshParam();
         this._appService.updateToolbar(null);
         this.showHostElement(() => {
-            this.clientsByRegion.mapComponent.instance.render();
+            if (this.clientsByRegion && this.clientsByRegion.mapComponent)
+                this.clientsByRegion.mapComponent.instance.render();
+            if (this.totalsBySource && this.totalsBySource.chartComponent)
             this.totalsBySource.chartComponent.instance.render();
             this._changeDetectorRef.detectChanges();
         });
