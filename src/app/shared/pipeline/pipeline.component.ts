@@ -35,6 +35,7 @@ import { PipelineService } from './pipeline.service';
 import { AddRenameMergeDialogComponent } from './add-rename-merge-dialog/add-rename-merge-dialog.component';
 import { ContactGroup } from '@shared/AppEnums';
 import { DataLayoutType } from '@app/shared/layout/data-layout-type';
+import { FiltersService } from '@shared/filters/filters.service';
 
 @Component({
     selector: 'app-pipeline',
@@ -117,10 +118,18 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         private _pipelineService: PipelineService,
         private _stageServiceProxy: StageServiceProxy,
         private _changeDetector: ChangeDetectorRef,
+        private _filtersService: FiltersService,
         private store$: Store<CrmStore.State>,
         public dialog: MatDialog
     ) {
         super(injector);
+
+        this._filtersService.filterFixed$.pipe(
+            switchMap(() => this._pipelineService.dataLayoutType$),
+            filter((dlt: DataLayoutType) => dlt === DataLayoutType.Pipeline)
+        ).subscribe(() => {
+            setTimeout(() => this.detectChanges(), 1000);
+        });
     }
 
     detectChanges() {
@@ -386,8 +395,8 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                 finalize(() => {
                     if (this.isAllStagesLoaded())
                         setTimeout(() => {
-                            this.detectChanges();
                             this.finishLoading();
+                            this.detectChanges();
                         });
                     if (!skipTotalRequest && oneStageOnly && stage['full'])
                         this.processTotalsRequest(this.queryWithSearch);
@@ -750,7 +759,9 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
             id: stage.id,
             sortOrder: sortOrder
         })).pipe(
-            finalize(() => this.finishLoading(true))
+            finalize(() => {
+                setTimeout(() => this.finishLoading(true), 500);
+            })
         ).subscribe(() => {
             this.store$.dispatch(new PipelinesStoreActions.LoadRequestAction(true));
             this.notify.info(this.l('SavedSuccessfully'));

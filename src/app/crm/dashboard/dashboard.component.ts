@@ -27,6 +27,7 @@ import { DashboardWidgetsService } from '@shared/crm/dashboard-widgets/dashboard
 import { RecentClientsComponent } from '@shared/crm/dashboard-widgets/recent-clients/recent-clients.component';
 import { TotalsByPeriodComponent } from '@shared/crm/dashboard-widgets/totals-by-period/totals-by-period.component';
 import { TotalsBySourceComponent } from '@shared/crm/dashboard-widgets/totals-by-source/totals-by-source.component';
+import { ClientsByRegionComponent } from '@shared/crm/dashboard-widgets/clients-by-region/clients-by-region.component';
 import { CrmIntroComponent } from '../shared/crm-intro/crm-intro.component';
 import { CustomReuseStrategy } from '@root/root-routing.module';
 import { RouteReuseStrategy } from '@angular/router';
@@ -40,6 +41,7 @@ import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/life
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DashboardComponent extends AppComponentBase implements AfterViewInit, OnInit, OnDestroy {
+    @ViewChild(ClientsByRegionComponent) clientsByRegion: ClientsByRegionComponent;
     @ViewChild(RecentClientsComponent) recentClientsComponent: RecentClientsComponent;
     @ViewChild(TotalsByPeriodComponent) totalsByPeriod: TotalsByPeriodComponent;
     @ViewChild(TotalsBySourceComponent) totalsBySource: TotalsBySourceComponent;
@@ -49,7 +51,6 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
         names: [this.l('Dashboard')],
         onRefresh: (refreshLeadsAndClients = true) => {
             this.refresh(refreshLeadsAndClients);
-            this._dashboardWidgetsService.refresh();
         },
         text: this.l('statistics and reports'),
         icon: 'globe',
@@ -101,11 +102,12 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
     }
 
     refresh(refreshLeadsAndClients = true) {
+        this._dashboardWidgetsService.refresh();
         if (refreshLeadsAndClients) {
             /** Invalidate leads and clients */
             (this.reuseService as CustomReuseStrategy).invalidate('leads');
             (this.reuseService as CustomReuseStrategy).invalidate('clients');
-        }
+        }        
     }
 
     addClient() {
@@ -153,8 +155,13 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
         this.rootComponent.overflowHidden(true);
         this.subscribeToRefreshParam();
         this._appService.updateToolbar(null);
-        this.showHostElement();
-        this._changeDetectorRef.detectChanges();
+        this.showHostElement(() => {
+            if (this.clientsByRegion && this.clientsByRegion.mapComponent)
+                this.clientsByRegion.mapComponent.instance.render();
+            if (this.totalsBySource && this.totalsBySource.chartComponent)
+            this.totalsBySource.chartComponent.instance.render();
+            this._changeDetectorRef.detectChanges();
+        });
     }
 
     subscribeToRefreshParam() {
@@ -167,8 +174,7 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
     }
 
     invalidate() {
-        this.lifeCycleSubject.activate$.pipe(first()).subscribe(() => {
-            this._dashboardWidgetsService.refresh();
+        this.lifeCycleSubject.activate$.pipe(first()).subscribe(() => {           
             this.refresh(false);
         });
     }
