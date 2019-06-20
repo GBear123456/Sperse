@@ -32,7 +32,7 @@ import {
     PersonOrgRelationShortInfo,
     UpdatePersonOrgRelationInput,
     UpdateOrganizationInfoInput,
-    UpdatePersonInfoInput
+    UpdatePersonNameInput
 } from '@shared/service-proxies/service-proxies';
 import { NameParserService } from '@app/crm/shared/name-parser/name-parser.service';
 import { NoteAddDialogComponent } from './notes/note-add-dialog/note-add-dialog.component';
@@ -356,8 +356,8 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
         let person = this.data.personContactInfo.person;
         this.nameParserService.parseIntoPerson(value, person);
 
-        this.personContactServiceProxy.updatePersonInfo(
-            UpdatePersonInfoInput.fromJS(
+        this.personContactServiceProxy.updatePersonName(
+            UpdatePersonNameInput.fromJS(
                 _.extend({id:  person.contactId},  person))
         ).subscribe(() => {});
     }

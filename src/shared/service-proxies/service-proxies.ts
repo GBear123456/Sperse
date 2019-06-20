@@ -19539,8 +19539,60 @@ export class PersonContactServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    updatePersonInfo(input: UpdatePersonInfoInput | null | undefined): Observable<UpdatePersonInfoOutput> {
+    updatePersonInfo(input: UpdatePersonInfoInput | null | undefined): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CRM/PersonContact/UpdatePersonInfo";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUpdatePersonInfo(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUpdatePersonInfo(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processUpdatePersonInfo(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @input (optional) 
+     * @return Success
+     */
+    updatePersonName(input: UpdatePersonNameInput | null | undefined): Observable<UpdatePersonNameOutput> {
+        let url_ = this.baseUrl + "/api/services/CRM/PersonContact/UpdatePersonName";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input);
@@ -19556,20 +19608,20 @@ export class PersonContactServiceProxy {
         };
 
         return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processUpdatePersonInfo(response_);
+            return this.processUpdatePersonName(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processUpdatePersonInfo(<any>response_);
+                    return this.processUpdatePersonName(<any>response_);
                 } catch (e) {
-                    return <Observable<UpdatePersonInfoOutput>><any>_observableThrow(e);
+                    return <Observable<UpdatePersonNameOutput>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<UpdatePersonInfoOutput>><any>_observableThrow(response_);
+                return <Observable<UpdatePersonNameOutput>><any>_observableThrow(response_);
         }));
     }
 
-    protected processUpdatePersonInfo(response: HttpResponseBase): Observable<UpdatePersonInfoOutput> {
+    protected processUpdatePersonName(response: HttpResponseBase): Observable<UpdatePersonNameOutput> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -19580,7 +19632,7 @@ export class PersonContactServiceProxy {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? UpdatePersonInfoOutput.fromJS(resultData200) : new UpdatePersonInfoOutput();
+            result200 = resultData200 ? UpdatePersonNameOutput.fromJS(resultData200) : new UpdatePersonNameOutput();
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -19588,7 +19640,7 @@ export class PersonContactServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<UpdatePersonInfoOutput>(<any>null);
+        return _observableOf<UpdatePersonNameOutput>(<any>null);
     }
 
     /**
@@ -62824,6 +62876,102 @@ export interface IFlatPermissionWithLevelDto {
 
 export class UpdatePersonInfoInput implements IUpdatePersonInfoInput {
     id!: number;
+    dob!: moment.Moment | undefined;
+    ssn!: string | undefined;
+    timeZone!: string | undefined;
+    maritalStatusId!: string | undefined;
+    marriageDate!: moment.Moment | undefined;
+    divorceDate!: moment.Moment | undefined;
+    genderTypeId!: string | undefined;
+    isUSCitizen!: boolean | undefined;
+    citizenship!: string | undefined;
+    education!: string | undefined;
+    personalProfile!: string | undefined;
+    preferredToD!: UpdatePersonInfoInputPreferredToD | undefined;
+    drivingLicense!: string | undefined;
+    drivingLicenseState!: string | undefined;
+    isActiveMilitaryDuty!: boolean | undefined;
+
+    constructor(data?: IUpdatePersonInfoInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.dob = data["dob"] ? moment(data["dob"].toString()) : <any>undefined;
+            this.ssn = data["ssn"];
+            this.timeZone = data["timeZone"];
+            this.maritalStatusId = data["maritalStatusId"];
+            this.marriageDate = data["marriageDate"] ? moment(data["marriageDate"].toString()) : <any>undefined;
+            this.divorceDate = data["divorceDate"] ? moment(data["divorceDate"].toString()) : <any>undefined;
+            this.genderTypeId = data["genderTypeId"];
+            this.isUSCitizen = data["isUSCitizen"];
+            this.citizenship = data["citizenship"];
+            this.education = data["education"];
+            this.personalProfile = data["personalProfile"];
+            this.preferredToD = data["preferredToD"];
+            this.drivingLicense = data["drivingLicense"];
+            this.drivingLicenseState = data["drivingLicenseState"];
+            this.isActiveMilitaryDuty = data["isActiveMilitaryDuty"];
+        }
+    }
+
+    static fromJS(data: any): UpdatePersonInfoInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdatePersonInfoInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["dob"] = this.dob ? this.dob.toISOString() : <any>undefined;
+        data["ssn"] = this.ssn;
+        data["timeZone"] = this.timeZone;
+        data["maritalStatusId"] = this.maritalStatusId;
+        data["marriageDate"] = this.marriageDate ? this.marriageDate.toISOString() : <any>undefined;
+        data["divorceDate"] = this.divorceDate ? this.divorceDate.toISOString() : <any>undefined;
+        data["genderTypeId"] = this.genderTypeId;
+        data["isUSCitizen"] = this.isUSCitizen;
+        data["citizenship"] = this.citizenship;
+        data["education"] = this.education;
+        data["personalProfile"] = this.personalProfile;
+        data["preferredToD"] = this.preferredToD;
+        data["drivingLicense"] = this.drivingLicense;
+        data["drivingLicenseState"] = this.drivingLicenseState;
+        data["isActiveMilitaryDuty"] = this.isActiveMilitaryDuty;
+        return data; 
+    }
+}
+
+export interface IUpdatePersonInfoInput {
+    id: number;
+    dob: moment.Moment | undefined;
+    ssn: string | undefined;
+    timeZone: string | undefined;
+    maritalStatusId: string | undefined;
+    marriageDate: moment.Moment | undefined;
+    divorceDate: moment.Moment | undefined;
+    genderTypeId: string | undefined;
+    isUSCitizen: boolean | undefined;
+    citizenship: string | undefined;
+    education: string | undefined;
+    personalProfile: string | undefined;
+    preferredToD: UpdatePersonInfoInputPreferredToD | undefined;
+    drivingLicense: string | undefined;
+    drivingLicenseState: string | undefined;
+    isActiveMilitaryDuty: boolean | undefined;
+}
+
+export class UpdatePersonNameInput implements IUpdatePersonNameInput {
+    id!: number;
     namePrefix!: string | undefined;
     firstName!: string | undefined;
     middleName!: string | undefined;
@@ -62831,7 +62979,7 @@ export class UpdatePersonInfoInput implements IUpdatePersonInfoInput {
     nameSuffix!: string | undefined;
     nickName!: string | undefined;
 
-    constructor(data?: IUpdatePersonInfoInput) {
+    constructor(data?: IUpdatePersonNameInput) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -62852,9 +63000,9 @@ export class UpdatePersonInfoInput implements IUpdatePersonInfoInput {
         }
     }
 
-    static fromJS(data: any): UpdatePersonInfoInput {
+    static fromJS(data: any): UpdatePersonNameInput {
         data = typeof data === 'object' ? data : {};
-        let result = new UpdatePersonInfoInput();
+        let result = new UpdatePersonNameInput();
         result.init(data);
         return result;
     }
@@ -62872,7 +63020,7 @@ export class UpdatePersonInfoInput implements IUpdatePersonInfoInput {
     }
 }
 
-export interface IUpdatePersonInfoInput {
+export interface IUpdatePersonNameInput {
     id: number;
     namePrefix: string | undefined;
     firstName: string | undefined;
@@ -62882,10 +63030,10 @@ export interface IUpdatePersonInfoInput {
     nickName: string | undefined;
 }
 
-export class UpdatePersonInfoOutput implements IUpdatePersonInfoOutput {
+export class UpdatePersonNameOutput implements IUpdatePersonNameOutput {
     fullName!: string | undefined;
 
-    constructor(data?: IUpdatePersonInfoOutput) {
+    constructor(data?: IUpdatePersonNameOutput) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -62900,9 +63048,9 @@ export class UpdatePersonInfoOutput implements IUpdatePersonInfoOutput {
         }
     }
 
-    static fromJS(data: any): UpdatePersonInfoOutput {
+    static fromJS(data: any): UpdatePersonNameOutput {
         data = typeof data === 'object' ? data : {};
-        let result = new UpdatePersonInfoOutput();
+        let result = new UpdatePersonNameOutput();
         result.init(data);
         return result;
     }
@@ -62914,7 +63062,7 @@ export class UpdatePersonInfoOutput implements IUpdatePersonInfoOutput {
     }
 }
 
-export interface IUpdatePersonInfoOutput {
+export interface IUpdatePersonNameOutput {
     fullName: string | undefined;
 }
 
@@ -72277,6 +72425,13 @@ export enum PaymentMethodInfoType {
 export enum ACHCustomerShortInfoCustomerAcctType {
     _0 = 0, 
     _1 = 1, 
+}
+
+export enum UpdatePersonInfoInputPreferredToD {
+    Morning = "Morning", 
+    Afternoon = "Afternoon", 
+    Evening = "Evening", 
+    Anytime = "Anytime", 
 }
 
 export enum QuestionDtoType {
