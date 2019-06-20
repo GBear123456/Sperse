@@ -44,7 +44,7 @@
                     </selection-filter>
                 </div>
                 <div class="col-sm-1 clear-button-block">
-                    <button *ngIf="clearButtonIsVisible$ | async" class="button button-primary clear-button" (click)="clearFilters()">{{ l('Clear') }}</button>
+                    <a *ngIf="clearButtonIsVisible$ | async" class="clear-button" (click)="clearFilters()">{{ l('Clear') }}</a>
                 </div>
             </div>
         </div>
