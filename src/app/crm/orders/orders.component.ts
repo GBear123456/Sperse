@@ -567,7 +567,9 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         this.rootComponent = this.getRootComponent();
         this.rootComponent.overflowHidden(true);
 
-        this.showHostElement();
+        this.showHostElement(() => {
+            this.pipelineComponent.detectChanges();
+        });
     }
 
     onOrderStageChanged(order) {
