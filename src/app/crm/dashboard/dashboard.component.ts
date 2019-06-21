@@ -59,7 +59,7 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
                 enabled: true,
                 action: () => this.leftMenuHidden = !this.leftMenuHidden,
                 lable: '',
-                'class': 'toggle dx-button'
+                class: 'toggle dx-button'
             }
         ]
     };
@@ -107,7 +107,7 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
             /** Invalidate leads and clients */
             (this.reuseService as CustomReuseStrategy).invalidate('leads');
             (this.reuseService as CustomReuseStrategy).invalidate('clients');
-        }        
+        }
     }
 
     addClient() {
@@ -159,7 +159,7 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
             if (this.clientsByRegion && this.clientsByRegion.mapComponent)
                 this.clientsByRegion.mapComponent.instance.render();
             if (this.totalsBySource && this.totalsBySource.chartComponent)
-            this.totalsBySource.chartComponent.instance.render();
+                this.totalsBySource.chartComponent.instance.render();
             this._changeDetectorRef.detectChanges();
         });
     }
@@ -174,7 +174,7 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
     }
 
     invalidate() {
-        this.lifeCycleSubject.activate$.pipe(first()).subscribe(() => {           
+        this.lifeCycleSubject.activate$.pipe(first()).subscribe(() => {
             this.refresh(false);
         });
     }
