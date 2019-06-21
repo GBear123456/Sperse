@@ -117,7 +117,8 @@ export class InplaceEditComponent extends AppComponentBase {
         this.isEditModeEnabled = enabled;
         this.valueOriginal = this._data.value;
         enabled && setTimeout(() =>
-            this.textBox.instance.focus());
+            this.textBox.instance.focus()
+        );
     }
 
     showDialog(event) {
