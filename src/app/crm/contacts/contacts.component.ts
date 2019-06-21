@@ -254,6 +254,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
     private InitNavLinks(contact) {
         this.navLinks = [
             {label: 'Contact Information', route: 'contact-information'},
+            {label: 'Personal Details', route: 'personal-details'},
             {
                 label: contact.userId ? 'User Information' : 'Invite User',
                 hidden: !this.permission.isGranted(contact.userId ?
