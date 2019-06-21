@@ -107,7 +107,7 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
             /** Invalidate leads and clients */
             (this.reuseService as CustomReuseStrategy).invalidate('leads');
             (this.reuseService as CustomReuseStrategy).invalidate('clients');
-        }        
+        }
     }
 
     addClient() {
@@ -142,8 +142,11 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
             panelClass: ['payment-wizard', 'setup'],
             data: {
                 module: this._appService.getModuleSubscription(Module.CRM).module,
-                title: this.ls('Platform', 'UpgradeYourSubscription',
-                    this._appService.getSubscriptionName(Module.CRM))
+                title: this.ls(
+                    'Platform',
+                    'UpgradeYourSubscription',
+                    this._appService.getSubscriptionName(Module.CRM)
+                )
             }
         });
     }
@@ -174,7 +177,7 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
     }
 
     invalidate() {
-        this.lifeCycleSubject.activate$.pipe(first()).subscribe(() => {           
+        this.lifeCycleSubject.activate$.pipe(first()).subscribe(() => {
             this.refresh(false);
         });
     }
