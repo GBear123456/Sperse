@@ -534,6 +534,7 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
         this.rootComponent.overflowHidden(true);
         this.initToolbarConfig();
         this.activityStagesLoad();
+        this.pipelineComponent.detectChanges();
     }
 
     deactivate() {

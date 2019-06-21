@@ -986,8 +986,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             this.initToolbarConfig();
         });
         /** Repaint pivot grid after closing the filter modal */
-        this._filtersService.subjectFilterDisable.subscribe(e => {
-            setTimeout(this.repaintDataGrid.bind(this), 1000);
+        this._filtersService.filterToggle$.subscribe(enabled => {
+            enabled || setTimeout(this.repaintDataGrid.bind(this), 1000);
         });
     }
 

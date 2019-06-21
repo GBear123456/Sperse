@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Subscription, Subject, Observable } from 'rxjs';
+import { Subscription, Subject, BehaviorSubject, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { FilterModel } from './models/filter.model';
 import * as _ from 'underscore';
@@ -7,16 +7,29 @@ import * as _ from 'underscore';
 @Injectable()
 export class FiltersService {
     private filters: FilterModel[];
+    private subjectFilterToggle: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+    private subjectFixedToggle: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
     private subjectFilters: Subject<FilterModel[]> = new Subject<FilterModel[]>();
     private subjectFilter: Subject<FilterModel> = new Subject<FilterModel>();
-    public  subjectFilterDisable: Subject<undefined> = new Subject();
     private subscribers: Array<Subscription> = [];
     private disableTimeout: any;
 
-    public enabled = false;
-    public fixed = false;
     public hasFilterSelected = false;
+    get enabled(): boolean {
+        return this.subjectFilterToggle.getValue();
+    }
+    set enabled(value: boolean) {
+        this.subjectFilterToggle.next(value);
+    }
+    get fixed(): boolean {
+        return this.subjectFixedToggle.getValue();
+    }
+    set fixed(value: boolean) {
+        this.subjectFixedToggle.next(value);
+    }
 
+    filterFixed$ = this.subjectFixedToggle.asObservable();
+    filterToggle$ = this.subjectFilterToggle.asObservable();
     filtersValues$: Observable<any> = this.subjectFilter.pipe(
         map(() => {
             let filtersValues = {};
@@ -96,9 +109,8 @@ export class FiltersService {
         this.preventDisable();
         this.disableTimeout = setTimeout(() => {
             callback && callback();
-            this.enabled = false;
             this.fixed = false;
-            this.subjectFilterDisable.next();
+            this.enabled = false;
         }, 100);
     }
 
