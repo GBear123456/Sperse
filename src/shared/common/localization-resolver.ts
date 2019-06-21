@@ -4,7 +4,7 @@ import { ActivatedRouteSnapshot, RouterStateSnapshot, CanActivateChild } from '@
 
 /** Third party imports */
 import { Observable, of } from 'rxjs';
-import { take, mergeMap } from 'rxjs/operators';
+import { filter, tap, take, mergeMap } from 'rxjs/operators';
 
 /** Application imports */
 import { LocalizationServiceProxy } from '@shared/service-proxies/service-proxies';
@@ -26,10 +26,10 @@ export class LocalizationResolver implements CanActivateChild {
         if (this.session.tenant && this.session.tenant.customLayoutType === TenantLoginInfoDtoCustomLayoutType.LendSpace)
             defaultLocalization = 'PFM';
 
-        if (route.data.localizationSource) {
-            this.ls.localizationSourceName = route.data.localizationSource;
-        }
-        return this.checkLoadLocalization(route.data.localizationSource || defaultLocalization);
+        return this.checkLoadLocalization(route.data.localizationSource || defaultLocalization).pipe(
+            filter(() => route.data.localizationSource),
+            tap(() => this.ls.localizationSourceName = route.data.localizationSource)
+        );
     }
 
     checkLoadLocalization(sourceName) {
