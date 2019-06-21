@@ -142,8 +142,11 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
             panelClass: ['payment-wizard', 'setup'],
             data: {
                 module: this._appService.getModuleSubscription(Module.CRM).module,
-                title: this.ls('Platform', 'UpgradeYourSubscription',
-                    this._appService.getSubscriptionName(Module.CRM))
+                title: this.ls(
+                    'Platform',
+                    'UpgradeYourSubscription',
+                    this._appService.getSubscriptionName(Module.CRM)
+                )
             }
         });
     }
