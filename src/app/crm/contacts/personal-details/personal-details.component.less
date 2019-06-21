@@ -1,0 +1,62 @@
+:host{
+    .container {
+        height: 455px;
+        padding: 30px 15px;
+        column-count: 2;
+        column-gap: 1em;
+
+        .item {
+            display: flex;
+            margin: 0 0 1em;
+            width: 100%;
+
+            .item-value {
+                display: inline-block;
+                height: 35px;
+            }
+
+            .item-edit-label {
+                display: inline-block;
+                min-width: 200px;
+                font-size: 13px;
+                font-weight: normal;
+                line-height: 35px;
+                letter-spacing: 0.7px;
+                color: #677380;        
+            }
+
+            /deep/ .inplace-edit-view-mode {
+                height: 35px;
+            }
+
+            /deep/ .dx-placeholder:before {
+                font-style: italic;
+                font-size: 12px;
+                font-weight: 200;
+                font-family: Montserrat;
+                color: rgba(0, 0, 0, 0.87);
+            }
+
+            /deep/ dx-select-box, /deep/ dx-date-box {
+                input {
+                    font-weight: 400;
+                    color: rgba(0, 0, 0, 0.87);
+                    font-size: 14px;
+                }
+            }
+
+            /deep/ dx-date-box {
+                &.dx-state-focused .dx-placeholder {
+                    top: -25px!important;
+                }
+                input {
+                    padding: 8px;
+                }
+            }
+          
+            /deep/ dx-check-box {
+                padding: 7px 0;
+            }
+        }
+    }
+}

@@ -8,8 +8,8 @@ import { InplaceSelectBoxModel } from './inplace-select-box.model';
     styleUrls: ['./inplace-select-box.component.less']
 })
 export class InplaceSelectBoxComponent extends AppComponentBase {
-    @Input()
-    data: any = {};
+    @Input() data: any = {};
+    @Input() width = 'auto';
 
     @Output()
     valueChanged: EventEmitter<any> = new EventEmitter();

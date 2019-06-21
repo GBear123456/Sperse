@@ -16,6 +16,7 @@ import { ActivityLogsComponent } from './activity-logs/activity-logs.component';
 import { NotesComponent } from './notes/notes.component';
 import { OrdersComponent } from './orders/orders.component';
 import { InvoicesComponent } from './invoices/invoices.component';
+import { PersonalDetailsComponent } from './personal-details/personal-details.component';
 
 import { RP_USER_INFO_ID } from './contacts.const';
 
@@ -32,6 +33,7 @@ import { RP_USER_INFO_ID } from './contacts.const';
                 children: [
                     { path: '', redirectTo: 'contact-information', pathMatch: 'full' },
                     { path: 'contact-information', component: ContactInformationComponent },
+                    { path: 'personal-details', component: PersonalDetailsComponent },
                     { path: 'user-information', component: UserInformationComponent, data: { rightPanelId: RP_USER_INFO_ID } },
                     { path: 'login-attemps', component: LoginAttempsComponent, data: { rightPanelOpened: false } },
                     { path: 'lead-information', component: LeadInformationComponent },
@@ -53,6 +55,7 @@ import { RP_USER_INFO_ID } from './contacts.const';
                 children: [
                     { path: '', redirectTo: 'contact-information', pathMatch: 'full' },
                     { path: 'contact-information', component: ContactInformationComponent },
+                    { path: 'personal-details', component: PersonalDetailsComponent },
                     { path: 'user-information', component: UserInformationComponent, data: { rightPanelId: RP_USER_INFO_ID } },
                     { path: 'login-attemps', component: LoginAttempsComponent, data: { rightPanelOpened: false } },
                     { path: 'lead-information', component: LeadInformationComponent },
@@ -74,6 +77,7 @@ import { RP_USER_INFO_ID } from './contacts.const';
                 children: [
                     { path: '', redirectTo: 'contact-information', pathMatch: 'full' },
                     { path: 'contact-information', component: ContactInformationComponent },
+                    { path: 'personal-details', component: PersonalDetailsComponent },
                     { path: 'user-information', component: UserInformationComponent, data: { rightPanelId: RP_USER_INFO_ID } },
                     { path: 'login-attemps', component: LoginAttempsComponent, data: { rightPanelOpened: false } },
                     { path: 'lead-information', component: LeadInformationComponent },
@@ -94,6 +98,7 @@ import { RP_USER_INFO_ID } from './contacts.const';
                 children: [
                     { path: '', redirectTo: 'contact-information', pathMatch: 'full' },
                     { path: 'contact-information', component: ContactInformationComponent },
+                    { path: 'personal-details', component: PersonalDetailsComponent },
                     { path: 'user-information', component: UserInformationComponent, data: { rightPanelId: RP_USER_INFO_ID } },
                     { path: 'login-attemps', component: LoginAttempsComponent, data: { rightPanelOpened: false } },
                     { path: 'lead-information', component: LeadInformationComponent },
@@ -115,6 +120,7 @@ import { RP_USER_INFO_ID } from './contacts.const';
                 children: [
                     { path: '', redirectTo: 'contact-information', pathMatch: 'full' },
                     { path: 'contact-information', component: ContactInformationComponent },
+                    { path: 'personal-details', component: PersonalDetailsComponent },
                     { path: 'user-information', component: UserInformationComponent, data: { rightPanelId: RP_USER_INFO_ID } },
                     { path: 'login-attemps', component: LoginAttempsComponent, data: { rightPanelOpened: false } },
                     { path: 'lead-information', component: LeadInformationComponent },
