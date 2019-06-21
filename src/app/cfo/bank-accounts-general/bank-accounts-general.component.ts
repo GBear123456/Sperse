@@ -82,10 +82,12 @@ export class BankAccountsGeneralComponent extends CFOComponentBase implements On
 
     activate() {
         this._lifeCycleService.activate.next();
+        this.syncComponent.activate();
         this.rootComponent.overflowHidden(true);
     }
 
     deactivate() {
+        this.syncComponent.deactivate();
         this.rootComponent.overflowHidden();
     }
 }

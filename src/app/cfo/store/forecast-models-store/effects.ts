@@ -64,8 +64,11 @@ export class ForecastModelsStoreEffects {
                 action.payload
             ).pipe(
                 map((forecastModelId: number) => {
-                    action.payload['id'] = forecastModelId;
-                    return new forecastModelsActions.AddForecastModelSuccessAction(action.payload);
+                    const forecastModel = new ForecastModelDto({
+                        id: forecastModelId,
+                        name: action.payload.name
+                    });
+                    return new forecastModelsActions.AddForecastModelSuccessAction(forecastModel);
                 })
             );
         })
