@@ -1599,7 +1599,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             if (transactionObj[level.statsKeyName] || (level.prefix === CategorizationPrefixes.SubCategory && !transactionObj.categoryId)) {
 
                 /** If user doesn't want to show accounting type row - skip it */
-                if (level.prefix === CategorizationPrefixes.AccountingType && !this.cashflowGridSettings.general.showAccountingTypeRow) {
+                if (level.prefix === CategorizationPrefixes.AccountingType && !this.userPreferencesService.localPreferences.value.showAccountingTypeTotals) {
                     return true;
                 }
 
@@ -1622,7 +1622,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                         transactionObj[level.statsKeyName] === Income
                         || transactionObj[level.statsKeyName] === Expense
                     )
-                    && this.userPreferencesService.localPreferences.value.hasOwnProperty('showCashflowTypeTotals')
                     && !this.userPreferencesService.localPreferences.value.showCashflowTypeTotals
                 ) {
                     key = PCTT;
@@ -1636,7 +1635,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                  */
                 if (
                     (level.prefix === CategorizationPrefixes.Category || level.prefix === CategorizationPrefixes.SubCategory || level.prefix === CategorizationPrefixes.TransactionDescriptor)
-                    && this.userPreferencesService.localPreferences.value.hasOwnProperty('showCategoryTotals')
                     && !this.userPreferencesService.localPreferences.value.showCategoryTotals
                     && !isUnclassified
                 ) {
@@ -1907,7 +1905,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     refreshDataGridWithPreferences(options) {
         const preferences = options.model;
         const updateWithNetChange = preferences.general.showNetChangeRow !== this.cashflowGridSettings.general.showNetChangeRow;
-        const updateAfterAccountingTypeShowingChange = preferences.general.showAccountingTypeRow !== this.cashflowGridSettings.general.showAccountingTypeRow;
         const updateWithDiscrepancyChange = preferences.general.showBalanceDiscrepancy !== this.cashflowGridSettings.general.showBalanceDiscrepancy;
         const updateMonthSplitting = preferences.general.splitMonthType !== this.cashflowGridSettings.general.splitMonthType;
         const updateCurrency = preferences.localizationAndCurrency.currency !== this.cashflowGridSettings.localizationAndCurrency.currency;
@@ -1956,10 +1953,10 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             if (updateWithDiscrepancyChange) {
                 dataSource ? dataSource.reload() : this.refreshDataGrid();
             }
-            if (!updateWithNetChange && !updateAfterAccountingTypeShowingChange && !updateWithDiscrepancyChange && !updateMonthSplitting) {
+            if (!updateWithNetChange && !updateWithDiscrepancyChange && !updateMonthSplitting) {
                 this.pivotGrid ? this.pivotGrid.instance.repaint() : this.refreshDataGrid();
             } else {
-                if (!updateWithNetChange && !updateAfterAccountingTypeShowingChange) {
+                if (!updateWithNetChange) {
                     dataSource ? dataSource.reload() : this.refreshDataGrid();
                 } else {
                     if (updateWithNetChange) {
@@ -1970,13 +1967,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                         } else {
                             this.cashflowData = this.cashflowData.filter(item => item.cashflowTypeId !== NetChange);
                         }
-                    }
-
-                    if (updateAfterAccountingTypeShowingChange) {
-                        this.treePathes = {};
-                        this.cashflowData.forEach(item => {
-                            this.addCategorizationLevels(item);
-                        });
                     }
                     this.dataSource = this.getApiDataSource();
                 }
@@ -6273,7 +6263,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                                     type: 'option',
                                     name: 'showCashflowTypeTotals',
                                     checked: this.userPreferencesService.localPreferences.value.showCashflowTypeTotals,
-                                    text: this.l('CashflowTypeTotals'),
+                                    text: this.l('CashFlowGrid_UserPrefs_ShowCashflowTypeTotals'),
                                     action: (event) => {
                                         this.userPreferencesService.updateLocalPreferences({
                                             showCashflowTypeTotals: !this.userPreferencesService.localPreferences.value.showCashflowTypeTotals
@@ -6285,9 +6275,23 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                                 },
                                 {
                                     type: 'option',
+                                    name: 'showAccountingTypeTotals',
+                                    checked: this.userPreferencesService.localPreferences.value.showAccountingTypeTotals,
+                                    text: this.l('CashFlowGrid_UserPrefs_ShowAccountingTypeRow'),
+                                    action: (event) => {
+                                        this.userPreferencesService.updateLocalPreferences({
+                                            showAccountingTypeTotals: !this.userPreferencesService.localPreferences.value.showAccountingTypeTotals
+                                        });
+                                        this.initCategoryToolbar();
+                                        event.event.stopPropagation();
+                                        event.event.preventDefault();
+                                    }
+                                },
+                                {
+                                    type: 'option',
                                     name: 'showCategoryTotals',
                                     checked: this.userPreferencesService.localPreferences.value.showCategoryTotals,
-                                    text: this.l('CategoryTotals'),
+                                    text: this.l('CashFlowGrid_UserPrefs_ShowCategoryTotals'),
                                     action: (event) => {
                                         this.userPreferencesService.updateLocalPreferences({
                                             showCategoryTotals: !this.userPreferencesService.localPreferences.value.showCategoryTotals
