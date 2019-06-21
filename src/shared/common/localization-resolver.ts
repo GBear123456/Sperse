@@ -4,7 +4,7 @@ import { ActivatedRouteSnapshot, RouterStateSnapshot, CanActivateChild } from '@
 
 /** Third party imports */
 import { Observable, of } from 'rxjs';
-import { filter, tap, take, mergeMap } from 'rxjs/operators';
+import { tap, take, mergeMap } from 'rxjs/operators';
 
 /** Application imports */
 import { LocalizationServiceProxy } from '@shared/service-proxies/service-proxies';
@@ -27,8 +27,10 @@ export class LocalizationResolver implements CanActivateChild {
             defaultLocalization = 'PFM';
 
         return this.checkLoadLocalization(route.data.localizationSource || defaultLocalization).pipe(
-            filter(() => route.data.localizationSource),
-            tap(() => this.ls.localizationSourceName = route.data.localizationSource)
+            tap(() => {
+                if (route.data.localizationSource)
+                    this.ls.localizationSourceName = route.data.localizationSource;
+            })
         );
     }
 
