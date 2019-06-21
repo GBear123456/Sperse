@@ -2,7 +2,7 @@
     <span class="link" [ngClass]="{ 'placeholder': !data?.value }" [attr.title]="data?.link" (click)="setEditModeEnabled(true, $event)">
         <a (click)="data?.link && $event.stopPropagation()" [attr.href]="data?.link" [attr.title]="data?.displayValue || data?.value || data?.lEditPlaceholder" target="_blank" #editText>{{data?.displayValue || data?.value || data?.lEditPlaceholder}}</a>
     </span>
-    <div class="actions" [hidden]="data?.isReadOnlyField">
+    <div class="actions" [ngClass]="{ hidden: data?.isReadOnlyField }">
         <i *ngIf="data?.isEditDialogEnabled" class="edit fa fa-pencil" aria-hidden="true" (click)="showDialog($event)"></i>
         <i *ngIf="data?.isDeleteEnabled" class="delete fa fa-times" aria-hidden="true" (click)="deleteItem($event)"></i>
     </div>

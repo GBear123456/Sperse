@@ -1,6 +1,6 @@
 :host {
     max-width: 100%;
-    
+
     .inplace-edit-view-mode {
         cursor: pointer;
         display: inline-flex;
@@ -29,7 +29,7 @@
         }
 
         &:hover {
-            .actions {
+            .actions:not(.hidden) {
                 visibility: visible;
             }
         }
@@ -42,7 +42,7 @@
 
         .link {
             overflow: hidden;
-            
+
             a {
                 overflow: hidden;
                 text-overflow: ellipsis;
@@ -74,7 +74,7 @@
         /deep/ dx-text-box {
             display: inline-block;
             width: 100%;
-            
+
             input {
                 margin: 0;
                 padding: 0 0 0 5px;
