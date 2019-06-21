@@ -63,10 +63,14 @@ export class AppComponent implements OnInit {
                                 panelClass: ['payment-wizard', 'setup'],
                                 data: {
                                     module: sub.module,
-                                    title: ls.l('ModuleExpired', appService.getSubscriptionName(name),
-                                        sub && sub.endDate ? 'subscription' : 'trial')
+                                    title: ls.ls(
+                                        'Platform',
+                                        'ModuleExpired',
+                                        appService.getSubscriptionName(name),
+                                        appService.getSubscriptionStatusBySubscription(sub)
+                                    )
                                 }
-                            }).afterClosed().subscribe(result => {});
+                            });
                         }
                     }, 2000);
                 }

@@ -8,7 +8,7 @@
     <div class="row second-sub-header">
         <div class="left-header col-sm-12">
             <div class="row">
-                <div class="col-sm-6 entities">
+                <div class="col-sm-5 entities">
                     <dx-check-box [value]="bankAccountsService.allSyncAccountAreSelected$ | async"
                                   (onValueChanged)="selectAll($event)">
                     </dx-check-box>
@@ -32,7 +32,7 @@
                         (selectionChanged)="bankAccountTypesChanged($event)">
                     </selection-filter>
                 </div>
-                <div class="col-sm-3 is-active-filter">
+                <div class="col-sm-4 is-active-filter">
                     <selection-filter
                         [allItemsText]="l('All_Statuses')"
                         [title]=""

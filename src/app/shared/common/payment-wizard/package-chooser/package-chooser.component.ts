@@ -39,7 +39,7 @@ import { LocalizationResolver } from '@root/shared/common/localization-resolver'
 @Component({
     selector: 'package-chooser',
     templateUrl: './package-chooser.component.html',
-    styleUrls: [        
+    styleUrls: [
         './package-chooser.component.less'
     ],
     changeDetection: ChangeDetectionStrategy.OnPush

@@ -616,7 +616,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             () => this.applyTotalBankAccountFilter()
         );
         this.categorizationComponent.refreshCategories(false, false);
-        this.invalidate();
+        this.processFilterInternal();
     }
 
     searchValueChange(e: object) {
