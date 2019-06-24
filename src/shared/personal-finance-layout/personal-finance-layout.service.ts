@@ -1,5 +1,5 @@
 /** Core imports */
-import { Injectable, Injector } from '@angular/core';
+import { Injectable } from '@angular/core';
 
 /** Third party imports */
 import { ReplaySubject } from 'rxjs';
@@ -8,8 +8,8 @@ import { ReplaySubject } from 'rxjs';
 export class PersonalFinanceLayoutService {
     private headerSubject: ReplaySubject<Object>;
 
-    constructor(injector: Injector) {
-        this.headerSubject = new ReplaySubject<Object>();
+    constructor() {
+        this.headerSubject = new ReplaySubject<Object>(1);
     }
 
     headerContentSubscribe(callback) {

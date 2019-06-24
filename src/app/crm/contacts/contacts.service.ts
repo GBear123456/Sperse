@@ -22,7 +22,7 @@ export class ContactsService {
     private leadInfoSubject: Subject<any>;
     private contactInfoSubject: ReplaySubject<ContactInfoDto> = new ReplaySubject<ContactInfoDto>(1);
     contactInfo$: Observable<ContactInfoDto> = this.contactInfoSubject.asObservable();
-    organizationContactInfo: ReplaySubject<OrganizationContactInfoDto> = new ReplaySubject<OrganizationContactInfoDto>();
+    organizationContactInfo: ReplaySubject<OrganizationContactInfoDto> = new ReplaySubject<OrganizationContactInfoDto>(1);
     private subscribers: any = {
         common: []
     };

@@ -42,7 +42,7 @@ export class OffersService {
         [OfferFilterCategory.CreditMonitoring]: 'id-theft-protection'
     };
 
-    state$: ReplaySubject<string> = new ReplaySubject<string>();
+    state$: ReplaySubject<string> = new ReplaySubject<string>(1);
     memberInfo$: Observable<GetMemberInfoResponse> = this.offerServiceProxy.getMemberInfo().pipe(publishReplay(), refCount());
     memberInfo: GetMemberInfoResponse;
     memberInfoApplyOfferParams: string;
