@@ -30791,7 +30791,7 @@ export class PersonalInformation implements IPersonalInformation {
     isHomeOwner!: boolean | undefined;
     monthsAtAddress!: number | undefined;
     creditScoreRating!: PersonalInformationCreditScoreRating | undefined;
-    gender!: string | undefined;
+    gender!: PersonalInformationGender | undefined;
 
     constructor(data?: IPersonalInformation) {
         if (data) {
@@ -30889,7 +30889,7 @@ export interface IPersonalInformation {
     isHomeOwner: boolean | undefined;
     monthsAtAddress: number | undefined;
     creditScoreRating: PersonalInformationCreditScoreRating | undefined;
-    gender: string | undefined;
+    gender: PersonalInformationGender | undefined;
 }
 
 export class DebtInformation implements IDebtInformation {
@@ -37440,10 +37440,10 @@ export class PersonInfoDto implements IPersonInfoDto {
     ssn!: string | undefined;
     identityConfirmationDate!: moment.Moment | undefined;
     timeZone!: string | undefined;
-    maritalStatus!: string | undefined;
+    maritalStatus!: PersonInfoDtoMaritalStatus | undefined;
     marriageDate!: moment.Moment | undefined;
     divorceDate!: moment.Moment | undefined;
-    gender!: string | undefined;
+    gender!: PersonInfoDtoGender | undefined;
     isUSCitizen!: boolean | undefined;
     citizenship!: string | undefined;
     education!: string | undefined;
@@ -37538,10 +37538,10 @@ export interface IPersonInfoDto {
     ssn: string | undefined;
     identityConfirmationDate: moment.Moment | undefined;
     timeZone: string | undefined;
-    maritalStatus: string | undefined;
+    maritalStatus: PersonInfoDtoMaritalStatus | undefined;
     marriageDate: moment.Moment | undefined;
     divorceDate: moment.Moment | undefined;
-    gender: string | undefined;
+    gender: PersonInfoDtoGender | undefined;
     isUSCitizen: boolean | undefined;
     citizenship: string | undefined;
     education: string | undefined;
@@ -38175,7 +38175,7 @@ export class CreateContactInput implements ICreateContactInput {
     addresses!: CreateContactAddressInput[] | undefined;
     links!: CreateContactLinkInput[] | undefined;
     dob!: moment.Moment | undefined;
-    genderTypeId!: string | undefined;
+    gender!: CreateContactInputGender | undefined;
     note!: string | undefined;
     companyName!: string | undefined;
     industry!: string | undefined;
@@ -38228,7 +38228,7 @@ export class CreateContactInput implements ICreateContactInput {
                     this.links.push(CreateContactLinkInput.fromJS(item));
             }
             this.dob = data["dob"] ? moment(data["dob"].toString()) : <any>undefined;
-            this.genderTypeId = data["genderTypeId"];
+            this.gender = data["gender"];
             this.note = data["note"];
             this.companyName = data["companyName"];
             this.industry = data["industry"];
@@ -38293,7 +38293,7 @@ export class CreateContactInput implements ICreateContactInput {
                 data["links"].push(item.toJSON());
         }
         data["dob"] = this.dob ? this.dob.toISOString() : <any>undefined;
-        data["genderTypeId"] = this.genderTypeId;
+        data["gender"] = this.gender;
         data["note"] = this.note;
         data["companyName"] = this.companyName;
         data["industry"] = this.industry;
@@ -38335,7 +38335,7 @@ export interface ICreateContactInput {
     addresses: CreateContactAddressInput[] | undefined;
     links: CreateContactLinkInput[] | undefined;
     dob: moment.Moment | undefined;
-    genderTypeId: string | undefined;
+    gender: CreateContactInputGender | undefined;
     note: string | undefined;
     companyName: string | undefined;
     industry: string | undefined;
@@ -41495,10 +41495,10 @@ export class Person implements IPerson {
     identityConfirmationDate!: moment.Moment | undefined;
     identityConfirmedByUserId!: number | undefined;
     timeZone!: string | undefined;
-    maritalStatusId!: string | undefined;
+    maritalStatus!: PersonMaritalStatus | undefined;
     marriageDate!: moment.Moment | undefined;
     divorceDate!: moment.Moment | undefined;
-    genderTypeId!: string | undefined;
+    gender!: PersonGender | undefined;
     isUSCitizen!: boolean | undefined;
     citizenship!: string | undefined;
     education!: string | undefined;
@@ -41510,8 +41510,6 @@ export class Person implements IPerson {
     orgRelations!: PersonOrgRelation[] | undefined;
     personRelations!: PersonRelation[] | undefined;
     reverseRelations!: PersonRelation[] | undefined;
-    genderType!: GenderType | undefined;
-    maritalStatus!: MaritalStatus | undefined;
     contact!: Contact | undefined;
     citizenshipCountry!: Country | undefined;
     primaryOrgRelation!: PersonOrgRelation | undefined;
@@ -41548,10 +41546,10 @@ export class Person implements IPerson {
             this.identityConfirmationDate = data["identityConfirmationDate"] ? moment(data["identityConfirmationDate"].toString()) : <any>undefined;
             this.identityConfirmedByUserId = data["identityConfirmedByUserId"];
             this.timeZone = data["timeZone"];
-            this.maritalStatusId = data["maritalStatusId"];
+            this.maritalStatus = data["maritalStatus"];
             this.marriageDate = data["marriageDate"] ? moment(data["marriageDate"].toString()) : <any>undefined;
             this.divorceDate = data["divorceDate"] ? moment(data["divorceDate"].toString()) : <any>undefined;
-            this.genderTypeId = data["genderTypeId"];
+            this.gender = data["gender"];
             this.isUSCitizen = data["isUSCitizen"];
             this.citizenship = data["citizenship"];
             this.education = data["education"];
@@ -41575,8 +41573,6 @@ export class Person implements IPerson {
                 for (let item of data["reverseRelations"])
                     this.reverseRelations.push(PersonRelation.fromJS(item));
             }
-            this.genderType = data["genderType"] ? GenderType.fromJS(data["genderType"]) : <any>undefined;
-            this.maritalStatus = data["maritalStatus"] ? MaritalStatus.fromJS(data["maritalStatus"]) : <any>undefined;
             this.contact = data["contact"] ? Contact.fromJS(data["contact"]) : <any>undefined;
             this.citizenshipCountry = data["citizenshipCountry"] ? Country.fromJS(data["citizenshipCountry"]) : <any>undefined;
             this.primaryOrgRelation = data["primaryOrgRelation"] ? PersonOrgRelation.fromJS(data["primaryOrgRelation"]) : <any>undefined;
@@ -41613,10 +41609,10 @@ export class Person implements IPerson {
         data["identityConfirmationDate"] = this.identityConfirmationDate ? this.identityConfirmationDate.toISOString() : <any>undefined;
         data["identityConfirmedByUserId"] = this.identityConfirmedByUserId;
         data["timeZone"] = this.timeZone;
-        data["maritalStatusId"] = this.maritalStatusId;
+        data["maritalStatus"] = this.maritalStatus;
         data["marriageDate"] = this.marriageDate ? this.marriageDate.toISOString() : <any>undefined;
         data["divorceDate"] = this.divorceDate ? this.divorceDate.toISOString() : <any>undefined;
-        data["genderTypeId"] = this.genderTypeId;
+        data["gender"] = this.gender;
         data["isUSCitizen"] = this.isUSCitizen;
         data["citizenship"] = this.citizenship;
         data["education"] = this.education;
@@ -41640,8 +41636,6 @@ export class Person implements IPerson {
             for (let item of this.reverseRelations)
                 data["reverseRelations"].push(item.toJSON());
         }
-        data["genderType"] = this.genderType ? this.genderType.toJSON() : <any>undefined;
-        data["maritalStatus"] = this.maritalStatus ? this.maritalStatus.toJSON() : <any>undefined;
         data["contact"] = this.contact ? this.contact.toJSON() : <any>undefined;
         data["citizenshipCountry"] = this.citizenshipCountry ? this.citizenshipCountry.toJSON() : <any>undefined;
         data["primaryOrgRelation"] = this.primaryOrgRelation ? this.primaryOrgRelation.toJSON() : <any>undefined;
@@ -41671,10 +41665,10 @@ export interface IPerson {
     identityConfirmationDate: moment.Moment | undefined;
     identityConfirmedByUserId: number | undefined;
     timeZone: string | undefined;
-    maritalStatusId: string | undefined;
+    maritalStatus: PersonMaritalStatus | undefined;
     marriageDate: moment.Moment | undefined;
     divorceDate: moment.Moment | undefined;
-    genderTypeId: string | undefined;
+    gender: PersonGender | undefined;
     isUSCitizen: boolean | undefined;
     citizenship: string | undefined;
     education: string | undefined;
@@ -41686,8 +41680,6 @@ export interface IPerson {
     orgRelations: PersonOrgRelation[] | undefined;
     personRelations: PersonRelation[] | undefined;
     reverseRelations: PersonRelation[] | undefined;
-    genderType: GenderType | undefined;
-    maritalStatus: MaritalStatus | undefined;
     contact: Contact | undefined;
     citizenshipCountry: Country | undefined;
     primaryOrgRelation: PersonOrgRelation | undefined;
@@ -43847,166 +43839,6 @@ export interface IPersonRelation {
     creationTime: moment.Moment | undefined;
     creatorUserId: number | undefined;
     id: number | undefined;
-}
-
-export class GenderType implements IGenderType {
-    name!: string | undefined;
-    persons!: Person[] | undefined;
-    isDeleted!: boolean | undefined;
-    deleterUserId!: number | undefined;
-    deletionTime!: moment.Moment | undefined;
-    lastModificationTime!: moment.Moment | undefined;
-    lastModifierUserId!: number | undefined;
-    creationTime!: moment.Moment | undefined;
-    creatorUserId!: number | undefined;
-    id!: string | undefined;
-
-    constructor(data?: IGenderType) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.name = data["name"];
-            if (data["persons"] && data["persons"].constructor === Array) {
-                this.persons = [];
-                for (let item of data["persons"])
-                    this.persons.push(Person.fromJS(item));
-            }
-            this.isDeleted = data["isDeleted"];
-            this.deleterUserId = data["deleterUserId"];
-            this.deletionTime = data["deletionTime"] ? moment(data["deletionTime"].toString()) : <any>undefined;
-            this.lastModificationTime = data["lastModificationTime"] ? moment(data["lastModificationTime"].toString()) : <any>undefined;
-            this.lastModifierUserId = data["lastModifierUserId"];
-            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
-            this.creatorUserId = data["creatorUserId"];
-            this.id = data["id"];
-        }
-    }
-
-    static fromJS(data: any): GenderType {
-        data = typeof data === 'object' ? data : {};
-        let result = new GenderType();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["name"] = this.name;
-        if (this.persons && this.persons.constructor === Array) {
-            data["persons"] = [];
-            for (let item of this.persons)
-                data["persons"].push(item.toJSON());
-        }
-        data["isDeleted"] = this.isDeleted;
-        data["deleterUserId"] = this.deleterUserId;
-        data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
-        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
-        data["lastModifierUserId"] = this.lastModifierUserId;
-        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
-        data["creatorUserId"] = this.creatorUserId;
-        data["id"] = this.id;
-        return data; 
-    }
-}
-
-export interface IGenderType {
-    name: string | undefined;
-    persons: Person[] | undefined;
-    isDeleted: boolean | undefined;
-    deleterUserId: number | undefined;
-    deletionTime: moment.Moment | undefined;
-    lastModificationTime: moment.Moment | undefined;
-    lastModifierUserId: number | undefined;
-    creationTime: moment.Moment | undefined;
-    creatorUserId: number | undefined;
-    id: string | undefined;
-}
-
-export class MaritalStatus implements IMaritalStatus {
-    name!: string | undefined;
-    persons!: Person[] | undefined;
-    isDeleted!: boolean | undefined;
-    deleterUserId!: number | undefined;
-    deletionTime!: moment.Moment | undefined;
-    lastModificationTime!: moment.Moment | undefined;
-    lastModifierUserId!: number | undefined;
-    creationTime!: moment.Moment | undefined;
-    creatorUserId!: number | undefined;
-    id!: string | undefined;
-
-    constructor(data?: IMaritalStatus) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.name = data["name"];
-            if (data["persons"] && data["persons"].constructor === Array) {
-                this.persons = [];
-                for (let item of data["persons"])
-                    this.persons.push(Person.fromJS(item));
-            }
-            this.isDeleted = data["isDeleted"];
-            this.deleterUserId = data["deleterUserId"];
-            this.deletionTime = data["deletionTime"] ? moment(data["deletionTime"].toString()) : <any>undefined;
-            this.lastModificationTime = data["lastModificationTime"] ? moment(data["lastModificationTime"].toString()) : <any>undefined;
-            this.lastModifierUserId = data["lastModifierUserId"];
-            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
-            this.creatorUserId = data["creatorUserId"];
-            this.id = data["id"];
-        }
-    }
-
-    static fromJS(data: any): MaritalStatus {
-        data = typeof data === 'object' ? data : {};
-        let result = new MaritalStatus();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["name"] = this.name;
-        if (this.persons && this.persons.constructor === Array) {
-            data["persons"] = [];
-            for (let item of this.persons)
-                data["persons"].push(item.toJSON());
-        }
-        data["isDeleted"] = this.isDeleted;
-        data["deleterUserId"] = this.deleterUserId;
-        data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
-        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
-        data["lastModifierUserId"] = this.lastModifierUserId;
-        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
-        data["creatorUserId"] = this.creatorUserId;
-        data["id"] = this.id;
-        return data; 
-    }
-}
-
-export interface IMaritalStatus {
-    name: string | undefined;
-    persons: Person[] | undefined;
-    isDeleted: boolean | undefined;
-    deleterUserId: number | undefined;
-    deletionTime: moment.Moment | undefined;
-    lastModificationTime: moment.Moment | undefined;
-    lastModifierUserId: number | undefined;
-    creationTime: moment.Moment | undefined;
-    creatorUserId: number | undefined;
-    id: string | undefined;
 }
 
 export class OrganizationType implements IOrganizationType {
@@ -46359,14 +46191,13 @@ export class LeadPersonalInfo implements ILeadPersonalInfo {
     phoneExtension!: string | undefined;
     ssn!: string | undefined;
     dob!: moment.Moment | undefined;
-    genderTypeId!: string | undefined;
+    gender!: LeadPersonalInfoGender | undefined;
     isUSCitizen!: boolean | undefined;
     citizenship!: string | undefined;
     education!: string | undefined;
     website!: string | undefined;
     personalProfile!: string | undefined;
     leadRequest!: LeadRequest | undefined;
-    genderType!: GenderType | undefined;
     citizenshipCountry!: Country | undefined;
     countryId!: string | undefined;
     stateId!: string | undefined;
@@ -46408,14 +46239,13 @@ export class LeadPersonalInfo implements ILeadPersonalInfo {
             this.phoneExtension = data["phoneExtension"];
             this.ssn = data["ssn"];
             this.dob = data["dob"] ? moment(data["dob"].toString()) : <any>undefined;
-            this.genderTypeId = data["genderTypeId"];
+            this.gender = data["gender"];
             this.isUSCitizen = data["isUSCitizen"];
             this.citizenship = data["citizenship"];
             this.education = data["education"];
             this.website = data["website"];
             this.personalProfile = data["personalProfile"];
             this.leadRequest = data["leadRequest"] ? LeadRequest.fromJS(data["leadRequest"]) : <any>undefined;
-            this.genderType = data["genderType"] ? GenderType.fromJS(data["genderType"]) : <any>undefined;
             this.citizenshipCountry = data["citizenshipCountry"] ? Country.fromJS(data["citizenshipCountry"]) : <any>undefined;
             this.countryId = data["countryId"];
             this.stateId = data["stateId"];
@@ -46457,14 +46287,13 @@ export class LeadPersonalInfo implements ILeadPersonalInfo {
         data["phoneExtension"] = this.phoneExtension;
         data["ssn"] = this.ssn;
         data["dob"] = this.dob ? this.dob.toISOString() : <any>undefined;
-        data["genderTypeId"] = this.genderTypeId;
+        data["gender"] = this.gender;
         data["isUSCitizen"] = this.isUSCitizen;
         data["citizenship"] = this.citizenship;
         data["education"] = this.education;
         data["website"] = this.website;
         data["personalProfile"] = this.personalProfile;
         data["leadRequest"] = this.leadRequest ? this.leadRequest.toJSON() : <any>undefined;
-        data["genderType"] = this.genderType ? this.genderType.toJSON() : <any>undefined;
         data["citizenshipCountry"] = this.citizenshipCountry ? this.citizenshipCountry.toJSON() : <any>undefined;
         data["countryId"] = this.countryId;
         data["stateId"] = this.stateId;
@@ -46499,14 +46328,13 @@ export interface ILeadPersonalInfo {
     phoneExtension: string | undefined;
     ssn: string | undefined;
     dob: moment.Moment | undefined;
-    genderTypeId: string | undefined;
+    gender: LeadPersonalInfoGender | undefined;
     isUSCitizen: boolean | undefined;
     citizenship: string | undefined;
     education: string | undefined;
     website: string | undefined;
     personalProfile: string | undefined;
     leadRequest: LeadRequest | undefined;
-    genderType: GenderType | undefined;
     citizenshipCountry: Country | undefined;
     countryId: string | undefined;
     stateId: string | undefined;
@@ -54441,7 +54269,7 @@ export class ImportPersonalInput implements IImportPersonalInput {
     drivingLicense!: string | undefined;
     drivingLicenseState!: string | undefined;
     isActiveMilitaryDuty!: boolean | undefined;
-    gender!: string | undefined;
+    gender!: ImportPersonalInputGender | undefined;
     fullAddress!: ImportAddressInput | undefined;
     isUSCitizen!: boolean | undefined;
     webSiteUrl!: string | undefined;
@@ -54545,7 +54373,7 @@ export interface IImportPersonalInput {
     drivingLicense: string | undefined;
     drivingLicenseState: string | undefined;
     isActiveMilitaryDuty: boolean | undefined;
-    gender: string | undefined;
+    gender: ImportPersonalInputGender | undefined;
     fullAddress: ImportAddressInput | undefined;
     isUSCitizen: boolean | undefined;
     webSiteUrl: string | undefined;
@@ -56451,7 +56279,7 @@ export class CreateLeadInput implements ICreateLeadInput {
     addresses!: CreateContactAddressInput[] | undefined;
     links!: CreateContactLinkInput[] | undefined;
     dob!: moment.Moment | undefined;
-    genderTypeId!: string | undefined;
+    gender!: CreateLeadInputGender | undefined;
     note!: string | undefined;
     companyName!: string | undefined;
     industry!: string | undefined;
@@ -56507,7 +56335,7 @@ export class CreateLeadInput implements ICreateLeadInput {
                     this.links.push(CreateContactLinkInput.fromJS(item));
             }
             this.dob = data["dob"] ? moment(data["dob"].toString()) : <any>undefined;
-            this.genderTypeId = data["genderTypeId"];
+            this.gender = data["gender"];
             this.note = data["note"];
             this.companyName = data["companyName"];
             this.industry = data["industry"];
@@ -56575,7 +56403,7 @@ export class CreateLeadInput implements ICreateLeadInput {
                 data["links"].push(item.toJSON());
         }
         data["dob"] = this.dob ? this.dob.toISOString() : <any>undefined;
-        data["genderTypeId"] = this.genderTypeId;
+        data["gender"] = this.gender;
         data["note"] = this.note;
         data["companyName"] = this.companyName;
         data["industry"] = this.industry;
@@ -56620,7 +56448,7 @@ export interface ICreateLeadInput {
     addresses: CreateContactAddressInput[] | undefined;
     links: CreateContactLinkInput[] | undefined;
     dob: moment.Moment | undefined;
-    genderTypeId: string | undefined;
+    gender: CreateLeadInputGender | undefined;
     note: string | undefined;
     companyName: string | undefined;
     industry: string | undefined;
@@ -62879,10 +62707,10 @@ export class UpdatePersonInfoInput implements IUpdatePersonInfoInput {
     dob!: moment.Moment | undefined;
     ssn!: string | undefined;
     timeZone!: string | undefined;
-    maritalStatusId!: string | undefined;
+    maritalStatus!: UpdatePersonInfoInputMaritalStatus | undefined;
     marriageDate!: moment.Moment | undefined;
     divorceDate!: moment.Moment | undefined;
-    genderTypeId!: string | undefined;
+    gender!: UpdatePersonInfoInputGender | undefined;
     isUSCitizen!: boolean | undefined;
     citizenship!: string | undefined;
     education!: string | undefined;
@@ -62907,10 +62735,10 @@ export class UpdatePersonInfoInput implements IUpdatePersonInfoInput {
             this.dob = data["dob"] ? moment(data["dob"].toString()) : <any>undefined;
             this.ssn = data["ssn"];
             this.timeZone = data["timeZone"];
-            this.maritalStatusId = data["maritalStatusId"];
+            this.maritalStatus = data["maritalStatus"];
             this.marriageDate = data["marriageDate"] ? moment(data["marriageDate"].toString()) : <any>undefined;
             this.divorceDate = data["divorceDate"] ? moment(data["divorceDate"].toString()) : <any>undefined;
-            this.genderTypeId = data["genderTypeId"];
+            this.gender = data["gender"];
             this.isUSCitizen = data["isUSCitizen"];
             this.citizenship = data["citizenship"];
             this.education = data["education"];
@@ -62935,10 +62763,10 @@ export class UpdatePersonInfoInput implements IUpdatePersonInfoInput {
         data["dob"] = this.dob ? this.dob.toISOString() : <any>undefined;
         data["ssn"] = this.ssn;
         data["timeZone"] = this.timeZone;
-        data["maritalStatusId"] = this.maritalStatusId;
+        data["maritalStatus"] = this.maritalStatus;
         data["marriageDate"] = this.marriageDate ? this.marriageDate.toISOString() : <any>undefined;
         data["divorceDate"] = this.divorceDate ? this.divorceDate.toISOString() : <any>undefined;
-        data["genderTypeId"] = this.genderTypeId;
+        data["gender"] = this.gender;
         data["isUSCitizen"] = this.isUSCitizen;
         data["citizenship"] = this.citizenship;
         data["education"] = this.education;
@@ -62956,10 +62784,10 @@ export interface IUpdatePersonInfoInput {
     dob: moment.Moment | undefined;
     ssn: string | undefined;
     timeZone: string | undefined;
-    maritalStatusId: string | undefined;
+    maritalStatus: UpdatePersonInfoInputMaritalStatus | undefined;
     marriageDate: moment.Moment | undefined;
     divorceDate: moment.Moment | undefined;
-    genderTypeId: string | undefined;
+    gender: UpdatePersonInfoInputGender | undefined;
     isUSCitizen: boolean | undefined;
     citizenship: string | undefined;
     education: string | undefined;
@@ -71397,6 +71225,11 @@ export enum PersonalInformationCreditScoreRating {
     Poor = "Poor", 
 }
 
+export enum PersonalInformationGender {
+    Female = "Female", 
+    Male = "Male", 
+}
+
 export enum LoanInformationLoanReason {
     DebtConsolidation = "DebtConsolidation", 
     EmergencySituation = "EmergencySituation", 
@@ -71582,11 +71415,38 @@ export enum TransactionCommonDetailsDtoAmountFormat {
     Credits = "Credits", 
 }
 
+export enum PersonInfoDtoMaritalStatus {
+    Single = "Single", 
+    Married = "Married", 
+    Divorced = "Divorced", 
+}
+
+export enum PersonInfoDtoGender {
+    Female = "Female", 
+    Male = "Male", 
+}
+
 export enum PersonInfoDtoPreferredToD {
     Morning = "Morning", 
     Afternoon = "Afternoon", 
     Evening = "Evening", 
     Anytime = "Anytime", 
+}
+
+export enum CreateContactInputGender {
+    Female = "Female", 
+    Male = "Male", 
+}
+
+export enum PersonMaritalStatus {
+    Single = "Single", 
+    Married = "Married", 
+    Divorced = "Divorced", 
+}
+
+export enum PersonGender {
+    Female = "Female", 
+    Male = "Male", 
 }
 
 export enum PersonPreferredToD {
@@ -71631,6 +71491,11 @@ export enum InvoiceStatus {
 export enum LeadRequestPaymentPeriodType {
     _30 = 30, 
     _365 = 365, 
+}
+
+export enum LeadPersonalInfoGender {
+    Female = "Female", 
+    Male = "Male", 
 }
 
 export enum TransactionType {
@@ -71773,6 +71638,11 @@ export enum ImportPersonalInputPreferredToD {
     Anytime = "Anytime", 
 }
 
+export enum ImportPersonalInputGender {
+    Female = "Female", 
+    Male = "Male", 
+}
+
 export enum ImportContactInputImportType {
     Lead = "Lead", 
     Client = "Client", 
@@ -71832,6 +71702,11 @@ export enum UpdateInvoiceStatusInputStatus {
     Canceled = "Canceled", 
 }
 
+export enum CreateLeadInputGender {
+    Female = "Female", 
+    Male = "Male", 
+}
+
 export enum SubmitTenancyRequestInputPaymentPeriodType {
     _30 = 30, 
     _365 = 365, 
@@ -71845,8 +71720,8 @@ export enum PackageInfoDtoModule {
 }
 
 export enum MemberInfoDtoGender {
-    _0 = 0, 
-    _1 = 1, 
+    Female = "Female", 
+    Male = "Male", 
 }
 
 export enum MemberPaymentAuthorizeRequestDtoPaymentInfoType {
@@ -71856,8 +71731,8 @@ export enum MemberPaymentAuthorizeRequestDtoPaymentInfoType {
 }
 
 export enum RegisterMemberRequestGender {
-    _0 = 0, 
-    _1 = 1, 
+    Female = "Female", 
+    Male = "Male", 
 }
 
 export enum NoteInfoDtoNoteType {
@@ -72425,6 +72300,17 @@ export enum PaymentMethodInfoType {
 export enum ACHCustomerShortInfoCustomerAcctType {
     _0 = 0, 
     _1 = 1, 
+}
+
+export enum UpdatePersonInfoInputMaritalStatus {
+    Single = "Single", 
+    Married = "Married", 
+    Divorced = "Divorced", 
+}
+
+export enum UpdatePersonInfoInputGender {
+    Female = "Female", 
+    Male = "Male", 
 }
 
 export enum UpdatePersonInfoInputPreferredToD {
