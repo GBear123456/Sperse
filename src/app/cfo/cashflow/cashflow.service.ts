@@ -12,7 +12,12 @@ import * as _ from 'underscore';
 import { CellInfo } from './models/cell-info';
 import { CellInterval } from './models/cell-interval';
 import { CategorizationPrefixes } from './enums/categorization-prefixes.enum';
-import { BankAccountDto, CategoryDto, GetCategoryTreeOutput } from '@shared/service-proxies/service-proxies';
+import {
+    BankAccountDto,
+    CategoryDto,
+    GetCategoryTreeOutput,
+    ReportingCategoryDto
+} from '@shared/service-proxies/service-proxies';
 import { IModifyingInputOptions } from '@app/cfo/cashflow/modifying-input-options.interface';
 import { IEventDescription } from '@app/cfo/cashflow/models/event-description';
 import { CashflowTypes } from '@app/cfo/cashflow/enums/cashflow-types.enum';
@@ -337,6 +342,15 @@ export class CashflowService {
      */
     elementIsDataCell(element: HTMLElement): boolean {
         return Boolean(element.closest('.dx-area-data-cell'));
+    }
+
+    getReportingCategoriesIds(reportingCategoryId: number, reportingCategories: { [key: string]: ReportingCategoryDto; }): number[] {
+        let reportingCategoriesIds = [ reportingCategoryId ];
+        while (reportingCategories[reportingCategoryId].parentId) {
+            reportingCategoriesIds.push(reportingCategories[reportingCategoryId].parentId);
+            reportingCategoryId = reportingCategories[reportingCategoryId].parentId;
+        }
+        return reportingCategoriesIds.reverse();
     }
 
 }

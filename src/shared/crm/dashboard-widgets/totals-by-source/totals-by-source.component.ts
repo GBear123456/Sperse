@@ -11,17 +11,31 @@ import {
 
 /** Third party imports */
 import { DxPieChartComponent } from 'devextreme-angular/ui/pie-chart';
-import { Observable, combineLatest } from 'rxjs';
-import { finalize, publishReplay, refCount, switchMap, tap, map, takeUntil } from 'rxjs/operators';
+import { BehaviorSubject, Observable, combineLatest } from 'rxjs';
+import {
+    finalize,
+    publishReplay,
+    refCount,
+    switchMap,
+    tap,
+    takeUntil,
+    map,
+    pluck,
+    withLatestFrom
+} from 'rxjs/operators';
 
 /** Application imports */
-import { DashboardServiceProxy } from 'shared/service-proxies/service-proxies';
+import { DashboardServiceProxy, StageDto } from 'shared/service-proxies/service-proxies';
 import { DashboardWidgetsService } from '../dashboard-widgets.service';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
 import { PeriodModel } from '@app/shared/common/period/period.model';
-import { GetCustomersByCompanySizeOutput } from '@shared/service-proxies/service-proxies';
+import { TenantLoginInfoDtoCustomLayoutType } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
+import { ITotalOption } from '@app/crm/dashboard/total-options.interface';
+import { AppSessionService } from '@shared/common/session/app-session.service';
+import { PipelineService } from '@app/shared/pipeline/pipeline.service';
+import { ContactGroup } from '@shared/AppEnums';
 
 @Component({
     selector: 'totals-by-source',
@@ -32,9 +46,9 @@ import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/life
 })
 export class TotalsBySourceComponent implements OnInit, OnDestroy {
     @ViewChild(DxPieChartComponent) chartComponent: DxPieChartComponent;
-    customersByCompanySize$: Observable<GetCustomersByCompanySizeOutput[]>;
-    totalCustomersCount$: Observable<number>;
-    totalCustomersCount: number;
+    data$: Observable<any[]>;
+    totalCount$: Observable<number>;
+    totalCount: string;
     rangeColors = [
         '#00aeef',
         '#8487e7',
@@ -42,12 +56,66 @@ export class TotalsBySourceComponent implements OnInit, OnDestroy {
         '#f7d15e',
         '#ecf0f3'
     ];
-
     percentage: string;
-    rangeCount: number;
+    rangeCount: string;
     rangeName: string;
     rangeColor: string;
     totalNumbersTop: string;
+    totalsOptions: ITotalOption[] = [
+        {
+            key: 'star',
+            label: this.ls.l('TotalsByStar/CreditRating'),
+            method: this._dashboardServiceProxy.getCustomersByStar,
+            argumentField: 'key',
+            valueField: 'count',
+            argumentIsColor: true
+        },
+        {
+            key: 'stageDistribution',
+            label: this.ls.l('TotalsByStageDistribution'),
+            method: this._dashboardServiceProxy.getLeadsCountByStage,
+            argumentField: 'key',
+            valueField: 'count',
+            getColor: (stageName: string) => {
+                const stage: StageDto = this._pipelineService.getStageByName('Lead', stageName);
+                return this._pipelineService.getStageDefaultColorByStageSortOrder(stage.sortOrder);
+            }
+        },
+        {
+            key: 'ageDistribution',
+            label: this.ls.l('TotalsByLeadAgeDistribution'),
+            method: this._dashboardServiceProxy.getLeadsCountByAge,
+            argumentField: 'key',
+            valueField: 'count'
+        },
+        {
+            key: 'companySize',
+            label: this.ls.l('TotalsByCompanySize'),
+            method: this._dashboardServiceProxy.getCustomersByCompanySize,
+            argumentField: 'companySizeRange',
+            valueField: 'customerCount',
+            sorting: (a, b) => {
+                return (parseInt(a.companySizeRange) || Infinity) > (parseInt(b.companySizeRange) || Infinity) ? 1 : -1;
+            }
+        },
+        {
+            key: 'rating',
+            label: this.ls.l('TotalsByRating'),
+            method: this._dashboardServiceProxy.getCustomersByRating,
+            argumentField: 'key',
+            valueField: 'count'
+        }
+    ];
+    selectedTotal: BehaviorSubject<ITotalOption> = new BehaviorSubject<ITotalOption>(
+        this._appSession.tenant && this._appSession.tenant.customLayoutType === TenantLoginInfoDtoCustomLayoutType.LendSpace
+        ? this.totalsOptions.find(option => option.key === 'star')
+        : this.totalsOptions.find(option => option.key === 'companySize')
+    );
+    selectedTotal$: Observable<ITotalOption> = this.selectedTotal.asObservable();
+    selectedArgumentField$: Observable<string> = this.selectedTotal$.pipe(pluck('argumentField'));
+    selectedValueField$: Observable<string> = this.selectedTotal$.pipe(pluck('valueField'));
+    loading = false;
+
     constructor(
         private _dashboardWidgetsService: DashboardWidgetsService,
         private _dashboardServiceProxy: DashboardServiceProxy,
@@ -55,57 +123,73 @@ export class TotalsBySourceComponent implements OnInit, OnDestroy {
         private _loadingService: LoadingService,
         private _lifeCycleService: LifecycleSubjectsService,
         private _changeDetectorRef: ChangeDetectorRef,
+        private _appSession: AppSessionService,
+        private _pipelineService: PipelineService,
         public ls: AppLocalizationService
     ) {}
 
     ngOnInit() {
-        this.customersByCompanySize$ = combineLatest(
+        /** Get pipeline definitions to get colors for stage distributions */
+        this._pipelineService.getPipelineDefinitionObservable('Lead', ContactGroup.Client).subscribe();
+        this.data$ = combineLatest(
+            this.selectedTotal$,
             this._dashboardWidgetsService.period$,
-            this._dashboardWidgetsService.refresh$
+            this._dashboardWidgetsService.refresh$,
         ).pipe(
             takeUntil(this._lifeCycleService.destroy$),
-            tap(() => this._loadingService.startLoading(this._elementRef.nativeElement)),
-            switchMap(([period]: [PeriodModel]) => this._dashboardServiceProxy.getCustomersByCompanySize(period && period.from, period && period.to).pipe(finalize(() => this._loadingService.finishLoading(this._elementRef.nativeElement)))),
-            map((customersByCompanySize: GetCustomersByCompanySizeOutput[]) => {
-                return customersByCompanySize
-                    .sort(this.sortCustomers)
-                    .map((customer: GetCustomersByCompanySizeOutput) => {
-                        if (!customer.companySizeRange)
-                            customer.companySizeRange = 'Unknown';
+            tap(() => {
+                this.loading = true;
+                this._loadingService.startLoading(this._elementRef.nativeElement);
+            }),
+            switchMap(([selectedTotal, period]: [ITotalOption, PeriodModel]) => selectedTotal.method.call(this._dashboardServiceProxy, period && period.from, period && period.to).pipe(finalize(() => this._loadingService.finishLoading(this._elementRef.nativeElement)))),
+            map((data: any[]) => {
+                if (this.selectedTotal.value.sorting) {
+                    data = data.sort(this.selectedTotal.value.sorting);
+                }
+                return data
+                    .map((customer: any) => {
+                        if (!customer[this.selectedTotal.value.argumentField])
+                            customer[this.selectedTotal.value.argumentField] = 'Unknown';
                         return customer;
                     });
             }),
+            tap(() => this.loading = false),
             publishReplay(),
             refCount()
         );
 
-        this.totalCustomersCount$ = this.customersByCompanySize$.pipe(
-            map((customersByCompanySize: GetCustomersByCompanySizeOutput[]) => {
-                return customersByCompanySize
-                    .reduce((total: number, customer: GetCustomersByCompanySizeOutput) => total + customer.customerCount, 0);
-            })
+        this.totalCount$ = this.data$.pipe(
+            withLatestFrom(this.selectedValueField$),
+            map(([data, valueField]: [any[], string]) => data.reduce((total: number, customer: any) => {
+                return total + customer[valueField];
+            }, 0))
         );
-        this.totalCustomersCount$.subscribe((totalCustomersCount: number) => {
-            this.totalCustomersCount = totalCustomersCount;
-            this._changeDetectorRef.detectChanges();
+        this.totalCount$.subscribe((totalCount: number) => {
+            this.rangeCount = this.totalCount = totalCount.toLocaleString('en');
         });
-    }
-
-    sortCustomers = (a, b) => {
-        return (parseInt(a.companySizeRange) || Infinity) > (parseInt(b.companySizeRange) || Infinity) ? 1 : -1;
     }
 
     customizePoint = (data) => {
         return {
-            color: this.rangeColors[data.index]
+            color: this.getItemColor(data)
         };
+    }
+
+    private getItemColor(item) {
+        return this.selectedTotal.value.argumentIsColor && item.argument && item.argument !== 'Unknown'
+            ? item.argument
+            : (
+                this.selectedTotal.value.getColor
+                ? this.selectedTotal.value.getColor(item.argument)
+                : this.rangeColors[item.index]
+            );
     }
 
     onPointHoverChanged($event) {
         let isHoverIn = $event.target.fullState, item = $event.target;
         this.percentage = isHoverIn ? (item.percent * 100).toFixed(1) + '%' : '';
-        this.rangeCount = (isHoverIn ? item.initialValue : this.totalCustomersCount).toLocaleString('en');
-        this.rangeColor = isHoverIn ? this.rangeColors[item.index] : undefined;
+        this.rangeCount = (isHoverIn ? item.initialValue : this.totalCount).toLocaleString('en');
+        this.rangeColor = isHoverIn ? this.getItemColor(item) : undefined;
         this.rangeName = item.argument;
         this._changeDetectorRef.detectChanges();
     }

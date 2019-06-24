@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, Injector, OnInit, NgZone, ViewEncapsulation, HostBinding, HostListener } from '@angular/core';
+import { Component, OnInit, NgZone, ViewEncapsulation, HostBinding, HostListener } from '@angular/core';
 import { Router } from '@angular/router';
 
 /** Third party imports */
