@@ -270,6 +270,13 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             'namesSource'            : 'bankAccounts'
         },
         {
+            'prefix'                 : CategorizationPrefixes.ReportingCategory,
+            'statsKeyName'           : 'reportingCategoryId',
+            'namesSource'            : 'categoryTree.reportingCategories',
+            'childNamesSource'       : 'categoryTree.categories',
+            'childReferenceProperty' : 'parentId'
+        },
+        {
             'prefix'                 : CategorizationPrefixes.AccountingType,
             'statsKeyName'           : 'accountingTypeId',
             'namesSource'            : 'categoryTree.accountingTypes',
@@ -325,11 +332,37 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             customizeText: this.customizeFieldText.bind(this)
         },
         {
-            caption: 'Account Type',
+            caption: 'Reporting Type',
             width: 120,
             area: 'row',
             dataField: 'levels.level1',
             areaIndex: 1,
+            sortBy: 'displayText',
+            sortOrder: 'asc',
+            expanded: false,
+            showTotals: true,
+            resortable: true,
+            customizeText: cellInfo => this.customizeFieldText.bind(this, cellInfo, this.l('Unclassified'))()
+        },
+        {
+            caption: 'Reporting Type 2',
+            width: 120,
+            area: 'row',
+            dataField: 'levels.level2',
+            areaIndex: 2,
+            sortBy: 'displayText',
+            sortOrder: 'asc',
+            expanded: false,
+            showTotals: true,
+            resortable: true,
+            customizeText: cellInfo => this.customizeFieldText.bind(this, cellInfo, this.l('Unclassified'))()
+        },
+        {
+            caption: 'Account Type',
+            width: 120,
+            area: 'row',
+            dataField: 'levels.level3',
+            areaIndex: 3,
             sortBy: 'displayText',
             sortOrder: 'asc',
             expanded: false,
@@ -345,8 +378,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             sortBy: 'displayText',
             sortOrder: 'asc',
             resortable: true,
-            areaIndex: 2,
-            dataField: 'levels.level2',
+            areaIndex: 4,
+            dataField: 'levels.level4',
             customizeText: this.customizeFieldText.bind(this)
         },
         {
@@ -356,8 +389,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             sortBy: 'displayText',
             sortOrder: 'asc',
             resortable: true,
-            areaIndex: 3,
-            dataField: 'levels.level3',
+            areaIndex: 5,
+            dataField: 'levels.level5',
             customizeText: this.customizeFieldText.bind(this)
         },
         {
@@ -367,8 +400,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             sortBy: 'displayText',
             sortOrder: 'asc',
             resortable: true,
-            areaIndex: 4,
-            dataField: 'levels.level4',
+            areaIndex: 6,
+            dataField: 'levels.level6',
             customizeText: this.customizeFieldText.bind(this)
         },
         {
@@ -1317,33 +1350,32 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 return this._cashflowServiceProxy.getStats(InstanceType[this.instanceType], this.instanceId, this.requestFilter);
             }),
             pluck('transactionStats')
-        )
-            .subscribe(transactions => {
-                this.startDataLoading = true;
-                this.startLoading();
-                this.handleCashflowData(transactions, period);
-                /** override cashflow data push method to add totals and net change automatically after adding of cashflow */
-                this.overrideCashflowDataPushMethod();
-            },
-            e => {},
-            () => {
-                if (!this.gridDataExists && (!this.cashflowData || !this.cashflowData.length)) {
-                    if (this.componentIsActivated)
-                        this.appService.updateToolbar(null);
-                } else {
-                    this.gridDataExists = true;
-                    this.dataSource = this.getApiDataSource();
-                }
+        ).subscribe(transactions => {
+            this.startDataLoading = true;
+            this.startLoading();
+            this.handleCashflowData(transactions, period);
+            /** override cashflow data push method to add totals and net change automatically after adding of cashflow */
+            this.overrideCashflowDataPushMethod();
+        },
+        e => {},
+        () => {
+            if (!this.gridDataExists && (!this.cashflowData || !this.cashflowData.length)) {
+                if (this.componentIsActivated)
+                    this.appService.updateToolbar(null);
+            } else {
+                this.gridDataExists = true;
+                this.dataSource = this.getApiDataSource();
+            }
 
-                this.initToolbarConfig();
-                this.initFooterToolbar();
+            this.initToolbarConfig();
+            this.initFooterToolbar();
 
-                if (completeCallback) {
-                    completeCallback.call(this);
-                }
+            if (completeCallback) {
+                completeCallback.call(this);
+            }
 
-                this.finishLoading();
-            });
+            this.finishLoading();
+        });
     }
 
     handleCashflowData(transactions, period = StatsFilterGroupByPeriod.Monthly) {
@@ -1584,7 +1616,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         return data;
     }
 
-    addCategorizationLevels(transactionObj) {
+    addCategorizationLevels(transactionObj: any) {
         /** Add group and categories numbers to the categorization list and show the names in
          *  customize functions by finding the names with ids
          */
@@ -1596,8 +1628,23 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         let key = null;
         transactionObj['levels'] = {};
         this.categorization.every((level) => {
-            if (transactionObj[level.statsKeyName] || (level.prefix === CategorizationPrefixes.SubCategory && !transactionObj.categoryId)) {
 
+            if (level.prefix === CategorizationPrefixes.ReportingCategory
+                && this.userPreferencesService.localPreferences.value.showReportingCategoryTotals
+                && (transactionObj.subCategoryId || transactionObj.categoryId)
+            ) {
+                const reportingCategoryId = this.categoryTree.categories[transactionObj.subCategoryId || transactionObj.categoryId].reportingCategoryId;
+                const reportingCategoriesIds = this.cashflowService.getReportingCategoriesIds(reportingCategoryId, this.categoryTree.reportingCategories);
+                reportingCategoriesIds.forEach((reportingCategoryId: number, index: number) => {
+                    /** Get only first and last reporting categories for tree */
+                    if (index === 0 || index === reportingCategoriesIds.length - 1) {
+                        transactionObj['levels'][`level${levelNumber++}`] = level.prefix + reportingCategoryId;
+                    }
+                });
+                return true;
+            }
+
+            if (transactionObj[level.statsKeyName] || (level.prefix === CategorizationPrefixes.SubCategory && !transactionObj.categoryId)) {
                 /** If user doesn't want to show accounting type row - skip it */
                 if (level.prefix === CategorizationPrefixes.AccountingType && !this.userPreferencesService.localPreferences.value.showAccountingTypeTotals) {
                     return true;
@@ -4167,7 +4214,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     private reloadCategoryTree() {
-        this._categoryTreeServiceProxy.get(InstanceType[this.instanceType], this.instanceId, false)
+        this._categoryTreeServiceProxy.get(InstanceType[this.instanceType], this.instanceId, true)
             .subscribe((categoryTreeResult: GetCategoryTreeOutput) => {
                 this.handleGetCategoryTreeResult(categoryTreeResult);
             });
@@ -4411,8 +4458,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             .subscribe(result => {
                 /**
                  * If the cell is not historical
-                 * If cell is current - if amount of results is 0 - add, >1 - show details
-                 * If cell is forecast - if amount of results is 0 - add, >1 - show details
+                 * If cell is current - if amount of results is 0 - add, > 1 - show details
+                 * If cell is forecast - if amount of results is 0 - add, > 1 - show details
                  */
                 let clickedCellPrefix = cellObj.cell.rowPath.slice(-1)[0] ? cellObj.cell.rowPath.slice(-1)[0].slice(0, 2) : undefined;
                 const cellIsNotHistorical = this.cellIsNotHistorical(cellObj);
@@ -4423,6 +4470,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     result.length === 0 &&
                     /** disallow adding of these levels */
                     clickedCellPrefix !== CategorizationPrefixes.CashflowType &&
+                    clickedCellPrefix !== CategorizationPrefixes.ReportingCategory &&
                     clickedCellPrefix !== CategorizationPrefixes.AccountingType &&
                     clickedCellPrefix !== CategorizationPrefixes.AccountName &&
                     /** allow adding if checked active accounts */
@@ -6267,6 +6315,20 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                                     action: (event) => {
                                         this.userPreferencesService.updateLocalPreferences({
                                             showCashflowTypeTotals: !this.userPreferencesService.localPreferences.value.showCashflowTypeTotals
+                                        });
+                                        this.initCategoryToolbar();
+                                        event.event.stopPropagation();
+                                        event.event.preventDefault();
+                                    }
+                                },
+                                {
+                                    type: 'option',
+                                    name: 'showReportingCategoryTotals',
+                                    checked: this.userPreferencesService.localPreferences.value.showReportingCategoryTotals,
+                                    text: this.l('CashFlowGrid_UserPrefs_ShowReportingCategoryRow'),
+                                    action: (event) => {
+                                        this.userPreferencesService.updateLocalPreferences({
+                                            showReportingCategoryTotals: !this.userPreferencesService.localPreferences.value.showReportingCategoryTotals
                                         });
                                         this.initCategoryToolbar();
                                         event.event.stopPropagation();

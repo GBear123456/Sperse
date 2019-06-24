@@ -22,6 +22,7 @@ export class UserPreferencesService {
     localPreferences: BehaviorSubject<LocalPreferencesModel> = new BehaviorSubject<LocalPreferencesModel>(
         this.cacheService.get(this.localPreferencesCacheKey) || {
             showCashflowTypeTotals: true,
+            showReportingCategoryTotals: true,
             showAccountingTypeTotals: true,
             showCategoryTotals: true
         }
