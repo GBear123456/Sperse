@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, Injector } from '@angular/core';
+import { Component } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 
 /** Third party imports */
@@ -8,9 +8,10 @@ import * as _ from 'underscore';
 /** Application imports */
 import { PanelMenu } from './panel-menu';
 import { PanelMenuItem } from './panel-menu-item';
-import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { AppService } from '@app/app.service';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
 
 @Component({
     templateUrl: './top-bar.component.html',
@@ -20,7 +21,7 @@ import { AppService } from '@app/app.service';
         '(window:resize)': 'updateNavMenu()'
     }
 })
-export class TopBarComponent extends AppComponentBase {
+export class TopBarComponent {
     config: any = {};
     selectedIndex: number;
     lastInnerWidth: number;
@@ -33,13 +34,12 @@ export class TopBarComponent extends AppComponentBase {
     };
 
     constructor(
-        injector: Injector,
         private _appSessionService: AppSessionService,
         private _appService: AppService,
-        public router: Router
+        private _permissionChecker: PermissionCheckerService,
+        public router: Router,
+        public ls: AppLocalizationService
     ) {
-        super(injector);
-
         this.router.events.subscribe(event => {
             if (event instanceof NavigationEnd) {
                 let currModuleName = (this.config.name || '').toLowerCase();
@@ -56,14 +56,14 @@ export class TopBarComponent extends AppComponentBase {
             }
         });
 
-        _appService.subscribeModuleChange((config) => {
+        this._appService.subscribeModuleChange((config) => {
             this.config = config;
             this.visibleMenuItemsWidth = 0;
             this.menu = new PanelMenu('MainMenu', 'MainMenu',
                 this.initMenu(config['navigation'], config['localizationSource'], 0)
             );
 
-            _appService.topMenu = this.menu;
+            this._appService.topMenu = this.menu;
             this.updateNavMenu(true);
         });
     }
@@ -74,7 +74,7 @@ export class TopBarComponent extends AppComponentBase {
             let value = val.slice(0);
             if (val.length === 7)
                 value.push(this.initMenu(value.pop(), localizationSource, ++level));
-            let item = new PanelMenuItem(value[0] && this.localizationService.l('Navigation_' + value[0], localizationSource),
+            let item = new PanelMenuItem(value[0] && this.ls.l('Navigation_' + value[0], localizationSource),
                 value[1], value[2], value[3], value[4], value[5], value[6]);
             item.visible = this.showMenuItem(item);
             if (!level && item.visible) {
@@ -103,7 +103,7 @@ export class TopBarComponent extends AppComponentBase {
             clearTimeout(this.updateTimeout);
             this.updateTimeout = setTimeout(() => {
                 this.lastInnerWidth = window.innerWidth;
-                let availableWidth = this.lastInnerWidth - 600;
+                let availableWidth = this.lastInnerWidth - 685;
                 if (availableWidth < this.visibleMenuItemsWidth) {
                     let switchItemIndex;
                     this.menu.items.every((item, index) => {
@@ -112,8 +112,8 @@ export class TopBarComponent extends AppComponentBase {
                             availableWidth -= item['length'];
                         return availableWidth >= 0;
                     });
-                    this.navbarItems = switchItemIndex ? this.menu.items.slice(0, --switchItemIndex): [];
-                    this.adaptiveMenuItems = switchItemIndex ? this.menu.items.slice(switchItemIndex): this.menu.items;
+                    this.navbarItems = switchItemIndex ? this.menu.items.slice(0, --switchItemIndex) : [];
+                    this.adaptiveMenuItems = switchItemIndex ? this.menu.items.slice(switchItemIndex) : this.menu.items;
                 } else
                     this.navbarItems = this.menu.items;
             }, 300);
@@ -136,7 +136,7 @@ export class TopBarComponent extends AppComponentBase {
 
     private checkPermission(value) {
         return !value || value.split('|').some((item) => {
-            return item.split('&').every((key) => this.isGranted(key));
+            return item.split('&').every((key) => this._permissionChecker.isGranted(key));
         });
     }
 

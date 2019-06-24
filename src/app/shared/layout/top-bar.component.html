@@ -1,44 +1,44 @@
 ﻿<div class="top-bar-search" *ngIf="config['search']">
-	<i class="icon-magnifier"></i>
-	<input [(ngModel)]="search" name="search" autoFocus class="form-control" placeholder="{{l('SearchAllData')}}" type="text">
+    <i class="icon-magnifier"></i>
+    <input [(ngModel)]="search" name="search" autoFocus class="form-control" placeholder="{{ls.l('SearchAllData')}}" type="text">
 </div>
 
 <platform-select></platform-select>
 
 <div class="top-bar-nav" *ngIf="navbarItems.length">
-  <dx-nav-bar
-    height="74px"
-    [hoverStateEnabled]="true"
-    [selectedIndex]="selectedIndex"
-    selectionMode="single">
-      <dxi-item
-        *ngFor="let link of navbarItems; let i = index;"
-        [visible]="showMenuItem(link)"
-        [disabled]="link.disabled">
-        <dx-menu
-          [dataSource]="[link]"
-          [selectionMode]="none"
-          [hoverStateEnabled]="true"
-          [hideSubmenuOnMouseLeave]="true"
-          [showFirstSubmenuMode]="{name: 'onHover', delay: {hide:0, show: 0}}"
-          [showSubmenuMode]="{name: 'onHover', delay: {hide:0, show: 0}}"
-          (onItemClick)="navigate($event)">
-        </dx-menu>
-      </dxi-item>
-  </dx-nav-bar>
+    <dx-nav-bar
+        height="74px"
+        [hoverStateEnabled]="true"
+        [selectedIndex]="selectedIndex"
+        selectionMode="single">
+        <dxi-item
+            *ngFor="let link of navbarItems; let i = index;"
+            [visible]="showMenuItem(link)"
+            [disabled]="link.disabled">
+            <dx-menu
+                [dataSource]="[link]"
+                [selectionMode]="none"
+                [hoverStateEnabled]="true"
+                [hideSubmenuOnMouseLeave]="true"
+                [showFirstSubmenuMode]="{name: 'onHover', delay: {hide:0, show: 0}}"
+                [showSubmenuMode]="{name: 'onHover', delay: {hide:0, show: 0}}"
+                (onItemClick)="navigate($event)">
+            </dx-menu>
+        </dxi-item>
+    </dx-nav-bar>
 </div>
 
 <div class="adaptive-menu" *ngIf="adaptiveMenuItems.length">
-  <dx-menu
-    accessKey="nav-menu"
-    [dataSource]="adaptiveMenuItems"
-    selectionMode="single"
-    [hoverStateEnabled]="true"
-    submenuDirection="rightOrBottom"
-    [hideSubmenuOnMouseLeave]="true"
-    [adaptivityEnabled]="true"
-    [showFirstSubmenuMode]="{name: 'onHover', delay: {hide:0, show: 0}}"
-    [showSubmenuMode]="{name: 'onHover', delay: {hide:0, show: 0}}"
-    (onItemClick)="navigate($event)">
-  </dx-menu>
+    <dx-menu
+        accessKey="nav-menu"
+        [dataSource]="adaptiveMenuItems"
+        selectionMode="single"
+        [hoverStateEnabled]="true"
+        submenuDirection="rightOrBottom"
+        [hideSubmenuOnMouseLeave]="true"
+        [adaptivityEnabled]="true"
+        [showFirstSubmenuMode]="{name: 'onHover', delay: {hide:0, show: 0}}"
+        [showSubmenuMode]="{name: 'onHover', delay: {hide:0, show: 0}}"
+        (onItemClick)="navigate($event)">
+    </dx-menu>
 </div>
