@@ -53,7 +53,7 @@ export class AppService extends AppServiceBase {
     private _subscriptionBarsClosed = {};
     private _subscriptionBarVisible: Boolean;
 
-    constructor(injector: Injector) {
+    constructor(injector: Injector,) {
         super(
             injector,
             'Admin',
@@ -182,7 +182,7 @@ export class AppService extends AppServiceBase {
         );
     }
 
-    getModuleSubscription(name?: string, moduleSubscriptions = this.moduleSubscriptions) {
+    getModuleSubscription(name?: string, moduleSubscriptions = this.moduleSubscriptions): ModuleSubscriptionInfoDto {
         let module = (name || this.getModule()).toUpperCase();
         if (moduleSubscriptions && ModuleSubscriptionInfoDtoModule[module])
             return _.find(moduleSubscriptions, (subscription) => {
@@ -193,6 +193,16 @@ export class AppService extends AppServiceBase {
     getSubscriptionName(module?: string) {
         let sub = this.getModuleSubscription(module);
         return sub && sub.module.replace('_', ' & ') || '';
+    }
+
+    getSubscriptionStatusByModuleName(moduleName: string) {
+        return this.getSubscriptionStatusBySubscription(this.getModuleSubscription(moduleName));
+    }
+
+    getSubscriptionStatusBySubscription(subscription: ModuleSubscriptionInfoDto) {
+        return subscription.isInTrial
+                ? this.appLocalizationService.l('trial')
+                : this.appLocalizationService.l('subscription');
     }
 
     subscriptionIsLocked(name?: string) {
@@ -246,15 +256,22 @@ export class AppService extends AppServiceBase {
 
         if (!this.isHostTenant && sub && sub.endDate) {
             let diff = moment().utc().diff(sub.endDate, 'days', true);
-            return (diff > 0) && (diff <= AppConsts.subscriptionGracePeriod);
+            return (diff > 0) && (diff <= this.getGracePeriod(sub));
         }
         return false;
     }
 
+    getGracePeriod(subscription: ModuleSubscriptionInfoDto) {
+        return (subscription && subscription.hasRecurringBilling
+                  ? AppConsts.subscriptionRecurringBillingPeriod
+                  : 0
+                ) + AppConsts.subscriptionGracePeriod;
+    }
+
     getSubscriptionExpiringDayCount(name?: string): number {
         let sub = this.getModuleSubscription(name);
-        return sub && sub.endDate && Math.round(moment(
-            sub.endDate).diff(moment().utc(), 'days', true));
+        return sub && sub.endDate && Math.round(moment(sub.endDate)
+            .diff(moment().utc(), 'days', true));
     }
 
     getGracePeriodDayCount(name?: string) {

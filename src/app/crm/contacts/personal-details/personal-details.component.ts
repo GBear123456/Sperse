@@ -12,8 +12,8 @@ import { NotifyService } from '@abp/notify/notify.service';
 import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
 import { RootStore, StatesStoreActions, StatesStoreSelectors } from '@root/store';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
-import { PersonContactServiceProxy, UpdatePersonInfoInput, PersonInfoDto, UpdatePersonInfoInputPreferredToD,
-    NameValueDto, TimingServiceProxy } from 'shared/service-proxies/service-proxies';
+import { PersonContactServiceProxy, UpdatePersonInfoInput, UpdatePersonInfoInputMaritalStatus, UpdatePersonInfoInputGender,
+    PersonInfoDto, UpdatePersonInfoInputPreferredToD, TimingServiceProxy } from 'shared/service-proxies/service-proxies';
 import { ContactsService } from '../contacts.service';
 
 @Component({
@@ -128,10 +128,10 @@ export class PersonalDetailsComponent {
             dob: this.person.dob,
             ssn: this.accessConfidentialData ? this.person.ssn : undefined,
             timeZone: this.person.timeZone,
-            maritalStatusId: this.person.maritalStatus,
+            maritalStatus: UpdatePersonInfoInputMaritalStatus[this.person.maritalStatus],
             marriageDate: this.person.marriageDate,
             divorceDate: this.person.divorceDate,
-            genderTypeId: this.person.gender,
+            gender: UpdatePersonInfoInputGender[this.person.gender],
             isUSCitizen: this.person.isUSCitizen,
             citizenship: this.person.citizenship,
             education: this.person.education,

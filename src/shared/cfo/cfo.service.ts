@@ -2,9 +2,8 @@
 import { Injectable } from '@angular/core';
 
 /** Third party imports */
-import { Subject, Subscription, Observable, of } from 'rxjs';
+import { BehaviorSubject, Subject, Subscription, Observable, of } from 'rxjs';
 import { finalize, filter, first, map, switchMap } from 'rxjs/operators';
-import { BehaviorSubject } from '@node_modules/rxjs';
 import capitalize from 'lodash/capitalize';
 
 /** Application imports */
