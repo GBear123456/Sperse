@@ -1,6 +1,5 @@
 import { Component, Injector, Input, Output, EventEmitter } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { InplaceSelectBoxModel } from './inplace-select-box.model';
 
 @Component({
     selector: 'inplace-select',
@@ -20,9 +19,9 @@ export class InplaceSelectBoxComponent extends AppComponentBase {
 
     updateValue(event) {
         //MB: validation should be added & tested in this approch
-        if(!event.validationGroup || event.validationGroup.validate().isValid) {
+        if (!event.validationGroup || event.validationGroup.validate().isValid) {
             if (this.valueChanged)
                 this.valueChanged.emit(event.value);
-        }      
+        }
     }
 }
