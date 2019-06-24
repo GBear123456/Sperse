@@ -10,12 +10,12 @@
     [ "Tenants", "Pages.Tenants", "icon-globe", "/app/admin/tenants", "Admin.Advanced" ],
     [ "Roles", "Pages.Administration.Roles", "icon-briefcase", "/app/admin/roles", "" ],
     [ "Users", "Pages.Administration.Users", "icon-people", "/app/admin/users", "" ],
-    [ "Languages", "Pages.Administration.Languages", "icon-flag", "/app/admin/languages", "Admin.Advanced" ],
+    [ "Languages", "Pages.Administration.Languages", "icon-flag", "/app/admin/languages", "Admin.Customizations" ],
     [ "AuditLogs", "Pages.Administration.AuditLogs", "icon-lock", "/app/admin/auditLogs", "Admin.Advanced" ],
     [ "Maintenance", "Pages.Administration.Host.Maintenance", "icon-wrench", "/app/admin/maintenance", "Admin.Advanced" ],
     [ "Jobs", "Pages.Administration.HangfireDashboard", "icon-wrench", "/app/admin/jobs", "Admin.Advanced" ],
-    [ "Settings", "Pages.Administration.Host.Settings", "icon-settings", "/app/admin/hostSettings", "Admin.Advanced" ],
-    [ "Settings", "Pages.Administration.Tenant.Settings", "icon-settings", "/app/admin/tenantSettings", "Admin.Advanced" ],
+    [ "Settings", "Pages.Administration.Host.Settings|Pages.Administration.TenantHosts", "icon-settings", "/app/admin/hostSettings", "Admin" ],
+    [ "Settings", "Pages.Administration.Tenant.Settings|Pages.Administration.TenantHosts", "icon-settings", "/app/admin/tenantSettings", "Admin" ],
     [ "Products", "Pages.Editions", "icon-grid", "/app/admin/products" ]
   ]
 }

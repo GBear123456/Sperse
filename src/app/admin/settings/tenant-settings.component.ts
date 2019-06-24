@@ -66,6 +66,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
     payPalPaymentSettings: PayPalSettings = new PayPalSettings();
     achWorksSettings: ACHWorksSettings = new ACHWorksSettings();
     recurlySettings: RecurlyPaymentSettings = new RecurlyPaymentSettings();
+    isAdminCustomizations: boolean = abp.features.isEnabled('Admin.Customizations');
     isCreditReportFeatureEnabled: boolean = abp.features.isEnabled('PFM.CreditReport');
     isPFMApplicationsFeatureEnabled: boolean = abp.features.isEnabled('PFM') && abp.features.isEnabled('PFM.Applications');
     epcvipSettings: EPCVIPOfferProviderSettings = new EPCVIPOfferProviderSettings();

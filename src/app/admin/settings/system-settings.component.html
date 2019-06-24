@@ -1,65 +1,60 @@
-<mat-tab-group>
-    <mat-tab label="{{ls.l('SSLConfiguration')}}">
-        <dx-scroll-view showScrollbar="onHover">
-            <div class="text-right">
-                <button class="btn btn-layout" (click)="showSSLDialog()"><i class="fa fa-plus"></i>{{ls.l("UploadCertificate")}}</button>
+<dx-scroll-view showScrollbar="onHover">
+    <div class="header">
+        <h3>{{ls.l('SSLConfiguration')}}</h3>
+        <button class="btn btn-layout" (click)="showSSLDialog()"><i class="fa fa-plus"></i>{{ls.l("UploadCertificate")}}</button>
+    </div>
+    <div id="SSLTable">
+        <dx-data-grid id="gridContainer"
+                      #sslGrid
+                      [dataSource]="sslGridDataSource"
+                      [allowColumnReordering]="true"
+                      [columnAutoWidth]="true"
+                      [allowColumnResizing]="true"
+                      (onRowRemoving)="deleteCertificate($event)"
+                      (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
+            <dxi-column dataField="id" caption="{{ls.l('Id')}}" [visible]="false"></dxi-column>
+            <dxi-column dataField="hostNames" caption="{{ls.l('HostName')}}"></dxi-column>
+            <dxi-column dataField="expiration" caption="{{ls.l('ExpirationDate')}}" cellTemplate="dateCell"></dxi-column>
+            <dxi-column dataField="thumbprint" caption="{{ls.l('Thumbprint')}}"></dxi-column>
+            <dxi-column [width]="100" [allowFiltering]="false" [allowSorting]="false" [allowReordering]="false" cellTemplate="editDeleteTemplate"></dxi-column>
+            <div *dxTemplate="let data of 'editDeleteTemplate'">
+                <a class="dx-link" (click)="deleteCertificate(data)">{{ls.l('Delete')}}</a>
             </div>
-            <div id="SSLTable">
-                <dx-data-grid id="gridContainer"
-                              #sslGrid
-                              [dataSource]="sslGridDataSource"
-                              [allowColumnReordering]="true"
-                              [columnAutoWidth]="true"
-                              [allowColumnResizing]="true"
-                              (onRowRemoving)="deleteCertificate($event)"
-                              (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
-                    <dxi-column dataField="id" caption="{{ls.l('Id')}}" [visible]="false"></dxi-column>
-                    <dxi-column dataField="hostNames" caption="{{ls.l('HostName')}}"></dxi-column>
-                    <dxi-column dataField="expiration" caption="{{ls.l('ExpirationDate')}}" cellTemplate="dateCell"></dxi-column>
-                    <dxi-column dataField="thumbprint" caption="{{ls.l('Thumbprint')}}"></dxi-column>
-                    <dxi-column [width]="100" [allowFiltering]="false" [allowSorting]="false" [allowReordering]="false" cellTemplate="editDeleteTemplate"></dxi-column>
-                    <div *dxTemplate="let data of 'editDeleteTemplate'">
-                        <a class="dx-link" (click)="deleteCertificate(data)">{{ls.l('Delete')}}</a>
-                    </div>
-                    <div *dxTemplate="let cellData of 'dateCell'">
-                        {{cellData.value | date: 'MM/dd/yyyy, h:mm a'}}
-                    </div>
-                </dx-data-grid>
+            <div *dxTemplate="let cellData of 'dateCell'">
+                {{cellData.value | date: 'MM/dd/yyyy, h:mm a'}}
             </div>
-            <uploadSSLCertificateModal #uploadSSLCertificateModal (modalSave)="refreshSSLGrid()"></uploadSSLCertificateModal>
-        </dx-scroll-view>
-    </mat-tab>
-    <mat-tab label="{{ls.l('CustomDomains')}}">
-        <dx-scroll-view showScrollbar="onHover">
-            <div class="text-right">
-                <button class="btn btn-layout" (click)="showSSLBindingDialog(null)"><i class="fa fa-plus"></i>{{ls.l("AddSSLBinding")}}</button>
+        </dx-data-grid>
+    </div>
+    <uploadSSLCertificateModal #uploadSSLCertificateModal (modalSave)="refreshSSLGrid()"></uploadSSLCertificateModal>
+    <br>
+    <div class="header">
+        <h3>{{ls.l('CustomDomains')}}</h3>
+        <button class="btn btn-layout" (click)="showSSLBindingDialog(null)"><i class="fa fa-plus"></i>{{ls.l("AddSSLBinding")}}</button>
+    </div>
+    <div id="CustomDomainsTable">
+        <dx-data-grid id="gridContainer"
+                      #customDomainsGrid
+                      [dataSource]="sslBindingsDataSource"
+                      [allowColumnReordering]="true"
+                      [allowColumnResizing]="true">
+            <dxi-column dataField="id" caption="{{ls.l('Id')}}" [visible]="false"></dxi-column>
+            <dxi-column dataField="sslCertificateId" caption="{{ls.l('SslCertificateId')}}" [visible]="false"></dxi-column>
+            <dxi-column dataField="hostName" caption="{{ls.l('HostName')}}"></dxi-column>
+            <dxi-column dataField="hostType" caption="{{ls.l('Type')}}">
+                <dxo-lookup [dataSource]="hostTypes" valueExpr="Id" displayExpr="Name"></dxo-lookup>
+            </dxi-column>
+            <dxi-column dataField="isActive" caption="{{ls.l('Active')}}"></dxi-column>
+            <dxi-column dataField="sslCertificateExpiration" caption="{{ls.l('ExpirationDate')}}" cellTemplate="dateCell"></dxi-column>
+            <dxi-column dataField="sslCertificateThumbprint" caption="{{ls.l('Thumbprint')}}"></dxi-column>
+            <dxi-column [width]="100" [allowFiltering]="false" [allowSorting]="false" [allowReordering]="false" cellTemplate="editDeleteTemplate"></dxi-column>
+            <div *dxTemplate="let data of 'editDeleteTemplate'">
+                <a class="dx-link" (click)="showSSLBindingDialog(data)">{{ls.l('Edit')}}</a>
+                <a class="dx-link" (click)="deleteSSLBinding(data)">{{ls.l('Delete')}}</a>
             </div>
-            <div id="CustomDomainsTable">
-                <dx-data-grid id="gridContainer"
-                              #customDomainsGrid
-                              [dataSource]="sslBindingsDataSource"
-                              [allowColumnReordering]="true"
-                              [allowColumnResizing]="true">
-                    <dxi-column dataField="id" caption="{{ls.l('Id')}}" [visible]="false"></dxi-column>
-                    <dxi-column dataField="sslCertificateId" caption="{{ls.l('SslCertificateId')}}" [visible]="false"></dxi-column>
-                    <dxi-column dataField="hostName" caption="{{ls.l('HostName')}}"></dxi-column>
-                    <dxi-column dataField="hostType" caption="{{ls.l('Type')}}">
-                        <dxo-lookup [dataSource]="hostTypes" valueExpr="Id" displayExpr="Name"></dxo-lookup>
-                    </dxi-column>
-                    <dxi-column dataField="isActive" caption="{{ls.l('Active')}}"></dxi-column>
-                    <dxi-column dataField="sslCertificateExpiration" caption="{{ls.l('ExpirationDate')}}" cellTemplate="dateCell"></dxi-column>
-                    <dxi-column dataField="sslCertificateThumbprint" caption="{{ls.l('Thumbprint')}}"></dxi-column>
-                    <dxi-column [width]="100" [allowFiltering]="false" [allowSorting]="false" [allowReordering]="false" cellTemplate="editDeleteTemplate"></dxi-column>
-                    <div *dxTemplate="let data of 'editDeleteTemplate'">
-                        <a class="dx-link" (click)="showSSLBindingDialog(data)">{{ls.l('Edit')}}</a>
-                        <a class="dx-link" (click)="deleteSSLBinding(data)">{{ls.l('Delete')}}</a>
-                    </div>
-                    <div *dxTemplate="let cellData of 'dateCell'">
-                        {{cellData.value | date: 'MM/dd/yyyy, h:mm a'}}
-                    </div>
-                </dx-data-grid>
+            <div *dxTemplate="let cellData of 'dateCell'">
+                {{cellData.value | date: 'MM/dd/yyyy, h:mm a'}}
             </div>
-            <addOrEditSSLBindingModal #addOrEditSSLBindingModal [hostTypes]="hostTypes" (modalSave)="refreshSSLBindingGrid()"></addOrEditSSLBindingModal>
-        </dx-scroll-view>
-    </mat-tab>
-</mat-tab-group>
+        </dx-data-grid>
+    </div>
+    <addOrEditSSLBindingModal #addOrEditSSLBindingModal [hostTypes]="hostTypes" (modalSave)="refreshSSLBindingGrid()"></addOrEditSSLBindingModal>
+</dx-scroll-view>

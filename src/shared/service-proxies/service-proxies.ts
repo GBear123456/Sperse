@@ -21291,69 +21291,7 @@ export class ReportingCategoryServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    get(instanceType: InstanceType77 | null | undefined, instanceId: number | null | undefined): Observable<ReportingCategoryDto[]> {
-        let url_ = this.baseUrl + "/api/services/CFO/ReportingCategory/Get?";
-        if (instanceType !== undefined)
-            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
-        if (instanceId !== undefined)
-            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGet(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processGet(<any>response_);
-                } catch (e) {
-                    return <Observable<ReportingCategoryDto[]>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<ReportingCategoryDto[]>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processGet(response: HttpResponseBase): Observable<ReportingCategoryDto[]> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            if (resultData200 && resultData200.constructor === Array) {
-                result200 = [];
-                for (let item of resultData200)
-                    result200.push(ReportingCategoryDto.fromJS(item));
-            }
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<ReportingCategoryDto[]>(<any>null);
-    }
-
-    /**
-     * @instanceType (optional) 
-     * @instanceId (optional) 
-     * @return Success
-     */
-    getReportingAndCoACategorization(instanceType: InstanceType78 | null | undefined, instanceId: number | null | undefined): Observable<string> {
+    getReportingAndCoACategorization(instanceType: InstanceType77 | null | undefined, instanceId: number | null | undefined): Observable<string> {
         let url_ = this.baseUrl + "/api/services/CFO/ReportingCategory/GetReportingAndCoACategorization?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -21654,7 +21592,7 @@ export class SecurityManagementServiceProxy {
      * @permission (optional) 
      * @return Success
      */
-    grantBankAccountPermissions(instanceType: InstanceType79 | null | undefined, instanceId: number | null | undefined, bankAccountId: number | null | undefined, userId: number | null | undefined, permission: Permission | null | undefined): Observable<void> {
+    grantBankAccountPermissions(instanceType: InstanceType78 | null | undefined, instanceId: number | null | undefined, bankAccountId: number | null | undefined, userId: number | null | undefined, permission: Permission | null | undefined): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/SecurityManagement/GrantBankAccountPermissions?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -21717,7 +21655,7 @@ export class SecurityManagementServiceProxy {
      * @bankAccountIds (optional) 
      * @return Success
      */
-    revokeBankAccountPermissions(instanceType: InstanceType80 | null | undefined, instanceId: number | null | undefined, userId: number | null | undefined, bankAccountIds: number[] | null | undefined): Observable<void> {
+    revokeBankAccountPermissions(instanceType: InstanceType79 | null | undefined, instanceId: number | null | undefined, userId: number | null | undefined, bankAccountIds: number[] | null | undefined): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/SecurityManagement/RevokeBankAccountPermissions?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -21776,7 +21714,7 @@ export class SecurityManagementServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    getBankAccountAssignedUsers(instanceType: InstanceType81 | null | undefined, instanceId: number | null | undefined): Observable<BankAccountUsers[]> {
+    getBankAccountAssignedUsers(instanceType: InstanceType80 | null | undefined, instanceId: number | null | undefined): Observable<BankAccountUsers[]> {
         let url_ = this.baseUrl + "/api/services/CFO/SecurityManagement/GetBankAccountAssignedUsers?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -22187,7 +22125,7 @@ export class SyncServiceProxy {
      * @syncTypeId (optional) 
      * @return Success
      */
-    createProviderUIToken(instanceType: InstanceType82 | null | undefined, instanceId: number | null | undefined, syncTypeId: string | null | undefined): Observable<GetProviderUITokenOutput> {
+    createProviderUIToken(instanceType: InstanceType81 | null | undefined, instanceId: number | null | undefined, syncTypeId: string | null | undefined): Observable<GetProviderUITokenOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/Sync/CreateProviderUIToken?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -22250,7 +22188,7 @@ export class SyncServiceProxy {
      * @errorPage (optional) 
      * @return Success
      */
-    getSetupAccountsLink(instanceType: InstanceType83 | null | undefined, instanceId: number | null | undefined, syncTypeId: string | null | undefined, css: string | null | undefined, errorPage: string | null | undefined): Observable<GetSetupAccountsLinkOutput> {
+    getSetupAccountsLink(instanceType: InstanceType82 | null | undefined, instanceId: number | null | undefined, syncTypeId: string | null | undefined, css: string | null | undefined, errorPage: string | null | undefined): Observable<GetSetupAccountsLinkOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/Sync/GetSetupAccountsLink?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -22317,7 +22255,7 @@ export class SyncServiceProxy {
      * @syncType (optional) 
      * @return Success
      */
-    syncAllAccounts(instanceType: InstanceType84 | null | undefined, instanceId: number | null | undefined, forcedSync: boolean | null | undefined, newOnly: boolean | null | undefined, syncType: string | null | undefined): Observable<SyncAllAccountsOutput> {
+    syncAllAccounts(instanceType: InstanceType83 | null | undefined, instanceId: number | null | undefined, forcedSync: boolean | null | undefined, newOnly: boolean | null | undefined, syncType: string | null | undefined): Observable<SyncAllAccountsOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/Sync/SyncAllAccounts?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -22382,7 +22320,7 @@ export class SyncServiceProxy {
      * @syncAccountId (optional) 
      * @return Success
      */
-    syncAccount(instanceType: InstanceType85 | null | undefined, instanceId: number | null | undefined, syncAccountId: number | null | undefined): Observable<boolean> {
+    syncAccount(instanceType: InstanceType84 | null | undefined, instanceId: number | null | undefined, syncAccountId: number | null | undefined): Observable<boolean> {
         let url_ = this.baseUrl + "/api/services/CFO/Sync/SyncAccount?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -22442,7 +22380,7 @@ export class SyncServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    getSyncProgress(instanceType: InstanceType86 | null | undefined, instanceId: number | null | undefined): Observable<SyncProgressOutput> {
+    getSyncProgress(instanceType: InstanceType85 | null | undefined, instanceId: number | null | undefined): Observable<SyncProgressOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/Sync/GetSyncProgress?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -22501,7 +22439,7 @@ export class SyncServiceProxy {
      * @syncAccountIds (optional) 
      * @return Success
      */
-    requestSyncForAccounts(instanceType: InstanceType87 | null | undefined, instanceId: number | null | undefined, syncAccountIds: number[] | null | undefined): Observable<number> {
+    requestSyncForAccounts(instanceType: InstanceType86 | null | undefined, instanceId: number | null | undefined, syncAccountIds: number[] | null | undefined): Observable<number> {
         let url_ = this.baseUrl + "/api/services/CFO/Sync/RequestSyncForAccounts?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -22575,7 +22513,7 @@ export class SyncAccountServiceProxy {
      * @syncTypeId (optional) 
      * @return Success
      */
-    getActive(instanceType: InstanceType88 | null | undefined, instanceId: number | null | undefined, syncTypeId: string | null | undefined): Observable<SyncAccountDto[]> {
+    getActive(instanceType: InstanceType87 | null | undefined, instanceId: number | null | undefined, syncTypeId: string | null | undefined): Observable<SyncAccountDto[]> {
         let url_ = this.baseUrl + "/api/services/CFO/SyncAccount/GetActive?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -22640,7 +22578,7 @@ export class SyncAccountServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    create(instanceType: InstanceType89 | null | undefined, instanceId: number | null | undefined, input: CreateSyncAccountInput | null | undefined): Observable<number> {
+    create(instanceType: InstanceType88 | null | undefined, instanceId: number | null | undefined, input: CreateSyncAccountInput | null | undefined): Observable<number> {
         let url_ = this.baseUrl + "/api/services/CFO/SyncAccount/Create?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -22702,7 +22640,7 @@ export class SyncAccountServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    update(instanceType: InstanceType90 | null | undefined, instanceId: number | null | undefined, input: UpdateSyncAccountInput | null | undefined): Observable<void> {
+    update(instanceType: InstanceType89 | null | undefined, instanceId: number | null | undefined, input: UpdateSyncAccountInput | null | undefined): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/SyncAccount/Update?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -22760,7 +22698,7 @@ export class SyncAccountServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    rename(instanceType: InstanceType91 | null | undefined, instanceId: number | null | undefined, input: RenameSyncAccountInput | null | undefined): Observable<void> {
+    rename(instanceType: InstanceType90 | null | undefined, instanceId: number | null | undefined, input: RenameSyncAccountInput | null | undefined): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/SyncAccount/Rename?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -22818,7 +22756,7 @@ export class SyncAccountServiceProxy {
      * @syncAccountId (optional) 
      * @return Success
      */
-    delete(instanceType: InstanceType92 | null | undefined, instanceId: number | null | undefined, syncAccountId: number | null | undefined): Observable<void> {
+    delete(instanceType: InstanceType91 | null | undefined, instanceId: number | null | undefined, syncAccountId: number | null | undefined): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/SyncAccount/Delete?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -22874,7 +22812,7 @@ export class SyncAccountServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    createIsAllowed(instanceType: InstanceType93 | null | undefined, instanceId: number | null | undefined): Observable<boolean> {
+    createIsAllowed(instanceType: InstanceType92 | null | undefined, instanceId: number | null | undefined): Observable<boolean> {
         let url_ = this.baseUrl + "/api/services/CFO/SyncAccount/CreateIsAllowed?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -26932,7 +26870,7 @@ export class TransactionsServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    getFiltersInitialData(instanceType: InstanceType94 | null | undefined, instanceId: number | null | undefined): Observable<FiltersInitialData> {
+    getFiltersInitialData(instanceType: InstanceType93 | null | undefined, instanceId: number | null | undefined): Observable<FiltersInitialData> {
         let url_ = this.baseUrl + "/api/services/CFO/Transactions/GetFiltersInitialData?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -26990,7 +26928,7 @@ export class TransactionsServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    getTransactionAttributeTypes(instanceType: InstanceType95 | null | undefined, instanceId: number | null | undefined): Observable<GetTransactionAttributeTypesOutput> {
+    getTransactionAttributeTypes(instanceType: InstanceType94 | null | undefined, instanceId: number | null | undefined): Observable<GetTransactionAttributeTypesOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/Transactions/GetTransactionAttributeTypes?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -27048,7 +26986,7 @@ export class TransactionsServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    getTransactionDetails(instanceType: InstanceType96 | null | undefined, instanceId: number | null | undefined, transactionId: number): Observable<GetTransactionDetailsOutput> {
+    getTransactionDetails(instanceType: InstanceType95 | null | undefined, instanceId: number | null | undefined, transactionId: number): Observable<GetTransactionDetailsOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/Transactions/GetTransactionDetails?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -30791,7 +30729,7 @@ export class PersonalInformation implements IPersonalInformation {
     isHomeOwner!: boolean | undefined;
     monthsAtAddress!: number | undefined;
     creditScoreRating!: PersonalInformationCreditScoreRating | undefined;
-    gender!: string | undefined;
+    gender!: PersonalInformationGender | undefined;
 
     constructor(data?: IPersonalInformation) {
         if (data) {
@@ -30889,7 +30827,7 @@ export interface IPersonalInformation {
     isHomeOwner: boolean | undefined;
     monthsAtAddress: number | undefined;
     creditScoreRating: PersonalInformationCreditScoreRating | undefined;
-    gender: string | undefined;
+    gender: PersonalInformationGender | undefined;
 }
 
 export class DebtInformation implements IDebtInformation {
@@ -34569,6 +34507,7 @@ export class GetCategoryTreeOutput implements IGetCategoryTreeOutput {
     types!: { [key: string] : TypeDto; } | undefined;
     accountingTypes!: { [key: string] : AccountingTypeDto; } | undefined;
     categories!: { [key: string] : CategoryDto; } | undefined;
+    reportingCategories!: { [key: string] : ReportingCategoryDto; } | undefined;
 
     constructor(data?: IGetCategoryTreeOutput) {
         if (data) {
@@ -34600,6 +34539,13 @@ export class GetCategoryTreeOutput implements IGetCategoryTreeOutput {
                 for (let key in data["categories"]) {
                     if (data["categories"].hasOwnProperty(key))
                         this.categories[key] = data["categories"][key] ? CategoryDto.fromJS(data["categories"][key]) : new CategoryDto();
+                }
+            }
+            if (data["reportingCategories"]) {
+                this.reportingCategories = {};
+                for (let key in data["reportingCategories"]) {
+                    if (data["reportingCategories"].hasOwnProperty(key))
+                        this.reportingCategories[key] = data["reportingCategories"][key] ? ReportingCategoryDto.fromJS(data["reportingCategories"][key]) : new ReportingCategoryDto();
                 }
             }
         }
@@ -34635,6 +34581,13 @@ export class GetCategoryTreeOutput implements IGetCategoryTreeOutput {
                     data["categories"][key] = this.categories[key];
             }
         }
+        if (this.reportingCategories) {
+            data["reportingCategories"] = {};
+            for (let key in this.reportingCategories) {
+                if (this.reportingCategories.hasOwnProperty(key))
+                    data["reportingCategories"][key] = this.reportingCategories[key];
+            }
+        }
         return data; 
     }
 }
@@ -34643,6 +34596,7 @@ export interface IGetCategoryTreeOutput {
     types: { [key: string] : TypeDto; } | undefined;
     accountingTypes: { [key: string] : AccountingTypeDto; } | undefined;
     categories: { [key: string] : CategoryDto; } | undefined;
+    reportingCategories: { [key: string] : ReportingCategoryDto; } | undefined;
 }
 
 export class TypeDto implements ITypeDto {
@@ -34779,6 +34733,50 @@ export interface ICategoryDto {
     name: string | undefined;
     isActive: boolean | undefined;
     reportingCategoryId: number | undefined;
+}
+
+export class ReportingCategoryDto implements IReportingCategoryDto {
+    code!: string | undefined;
+    name!: string | undefined;
+    parentId!: number | undefined;
+
+    constructor(data?: IReportingCategoryDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.code = data["code"];
+            this.name = data["name"];
+            this.parentId = data["parentId"];
+        }
+    }
+
+    static fromJS(data: any): ReportingCategoryDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new ReportingCategoryDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["code"] = this.code;
+        data["name"] = this.name;
+        data["parentId"] = this.parentId;
+        return data; 
+    }
+}
+
+export interface IReportingCategoryDto {
+    code: string | undefined;
+    name: string | undefined;
+    parentId: number | undefined;
 }
 
 export class CreateCategoryInput implements ICreateCategoryInput {
@@ -37440,10 +37438,10 @@ export class PersonInfoDto implements IPersonInfoDto {
     ssn!: string | undefined;
     identityConfirmationDate!: moment.Moment | undefined;
     timeZone!: string | undefined;
-    maritalStatus!: string | undefined;
+    maritalStatus!: PersonInfoDtoMaritalStatus | undefined;
     marriageDate!: moment.Moment | undefined;
     divorceDate!: moment.Moment | undefined;
-    gender!: string | undefined;
+    gender!: PersonInfoDtoGender | undefined;
     isUSCitizen!: boolean | undefined;
     citizenship!: string | undefined;
     education!: string | undefined;
@@ -37538,10 +37536,10 @@ export interface IPersonInfoDto {
     ssn: string | undefined;
     identityConfirmationDate: moment.Moment | undefined;
     timeZone: string | undefined;
-    maritalStatus: string | undefined;
+    maritalStatus: PersonInfoDtoMaritalStatus | undefined;
     marriageDate: moment.Moment | undefined;
     divorceDate: moment.Moment | undefined;
-    gender: string | undefined;
+    gender: PersonInfoDtoGender | undefined;
     isUSCitizen: boolean | undefined;
     citizenship: string | undefined;
     education: string | undefined;
@@ -38175,7 +38173,7 @@ export class CreateContactInput implements ICreateContactInput {
     addresses!: CreateContactAddressInput[] | undefined;
     links!: CreateContactLinkInput[] | undefined;
     dob!: moment.Moment | undefined;
-    genderTypeId!: string | undefined;
+    gender!: CreateContactInputGender | undefined;
     note!: string | undefined;
     companyName!: string | undefined;
     industry!: string | undefined;
@@ -38228,7 +38226,7 @@ export class CreateContactInput implements ICreateContactInput {
                     this.links.push(CreateContactLinkInput.fromJS(item));
             }
             this.dob = data["dob"] ? moment(data["dob"].toString()) : <any>undefined;
-            this.genderTypeId = data["genderTypeId"];
+            this.gender = data["gender"];
             this.note = data["note"];
             this.companyName = data["companyName"];
             this.industry = data["industry"];
@@ -38293,7 +38291,7 @@ export class CreateContactInput implements ICreateContactInput {
                 data["links"].push(item.toJSON());
         }
         data["dob"] = this.dob ? this.dob.toISOString() : <any>undefined;
-        data["genderTypeId"] = this.genderTypeId;
+        data["gender"] = this.gender;
         data["note"] = this.note;
         data["companyName"] = this.companyName;
         data["industry"] = this.industry;
@@ -38335,7 +38333,7 @@ export interface ICreateContactInput {
     addresses: CreateContactAddressInput[] | undefined;
     links: CreateContactLinkInput[] | undefined;
     dob: moment.Moment | undefined;
-    genderTypeId: string | undefined;
+    gender: CreateContactInputGender | undefined;
     note: string | undefined;
     companyName: string | undefined;
     industry: string | undefined;
@@ -41495,10 +41493,10 @@ export class Person implements IPerson {
     identityConfirmationDate!: moment.Moment | undefined;
     identityConfirmedByUserId!: number | undefined;
     timeZone!: string | undefined;
-    maritalStatusId!: string | undefined;
+    maritalStatus!: PersonMaritalStatus | undefined;
     marriageDate!: moment.Moment | undefined;
     divorceDate!: moment.Moment | undefined;
-    genderTypeId!: string | undefined;
+    gender!: PersonGender | undefined;
     isUSCitizen!: boolean | undefined;
     citizenship!: string | undefined;
     education!: string | undefined;
@@ -41510,8 +41508,6 @@ export class Person implements IPerson {
     orgRelations!: PersonOrgRelation[] | undefined;
     personRelations!: PersonRelation[] | undefined;
     reverseRelations!: PersonRelation[] | undefined;
-    genderType!: GenderType | undefined;
-    maritalStatus!: MaritalStatus | undefined;
     contact!: Contact | undefined;
     citizenshipCountry!: Country | undefined;
     primaryOrgRelation!: PersonOrgRelation | undefined;
@@ -41548,10 +41544,10 @@ export class Person implements IPerson {
             this.identityConfirmationDate = data["identityConfirmationDate"] ? moment(data["identityConfirmationDate"].toString()) : <any>undefined;
             this.identityConfirmedByUserId = data["identityConfirmedByUserId"];
             this.timeZone = data["timeZone"];
-            this.maritalStatusId = data["maritalStatusId"];
+            this.maritalStatus = data["maritalStatus"];
             this.marriageDate = data["marriageDate"] ? moment(data["marriageDate"].toString()) : <any>undefined;
             this.divorceDate = data["divorceDate"] ? moment(data["divorceDate"].toString()) : <any>undefined;
-            this.genderTypeId = data["genderTypeId"];
+            this.gender = data["gender"];
             this.isUSCitizen = data["isUSCitizen"];
             this.citizenship = data["citizenship"];
             this.education = data["education"];
@@ -41575,8 +41571,6 @@ export class Person implements IPerson {
                 for (let item of data["reverseRelations"])
                     this.reverseRelations.push(PersonRelation.fromJS(item));
             }
-            this.genderType = data["genderType"] ? GenderType.fromJS(data["genderType"]) : <any>undefined;
-            this.maritalStatus = data["maritalStatus"] ? MaritalStatus.fromJS(data["maritalStatus"]) : <any>undefined;
             this.contact = data["contact"] ? Contact.fromJS(data["contact"]) : <any>undefined;
             this.citizenshipCountry = data["citizenshipCountry"] ? Country.fromJS(data["citizenshipCountry"]) : <any>undefined;
             this.primaryOrgRelation = data["primaryOrgRelation"] ? PersonOrgRelation.fromJS(data["primaryOrgRelation"]) : <any>undefined;
@@ -41613,10 +41607,10 @@ export class Person implements IPerson {
         data["identityConfirmationDate"] = this.identityConfirmationDate ? this.identityConfirmationDate.toISOString() : <any>undefined;
         data["identityConfirmedByUserId"] = this.identityConfirmedByUserId;
         data["timeZone"] = this.timeZone;
-        data["maritalStatusId"] = this.maritalStatusId;
+        data["maritalStatus"] = this.maritalStatus;
         data["marriageDate"] = this.marriageDate ? this.marriageDate.toISOString() : <any>undefined;
         data["divorceDate"] = this.divorceDate ? this.divorceDate.toISOString() : <any>undefined;
-        data["genderTypeId"] = this.genderTypeId;
+        data["gender"] = this.gender;
         data["isUSCitizen"] = this.isUSCitizen;
         data["citizenship"] = this.citizenship;
         data["education"] = this.education;
@@ -41640,8 +41634,6 @@ export class Person implements IPerson {
             for (let item of this.reverseRelations)
                 data["reverseRelations"].push(item.toJSON());
         }
-        data["genderType"] = this.genderType ? this.genderType.toJSON() : <any>undefined;
-        data["maritalStatus"] = this.maritalStatus ? this.maritalStatus.toJSON() : <any>undefined;
         data["contact"] = this.contact ? this.contact.toJSON() : <any>undefined;
         data["citizenshipCountry"] = this.citizenshipCountry ? this.citizenshipCountry.toJSON() : <any>undefined;
         data["primaryOrgRelation"] = this.primaryOrgRelation ? this.primaryOrgRelation.toJSON() : <any>undefined;
@@ -41671,10 +41663,10 @@ export interface IPerson {
     identityConfirmationDate: moment.Moment | undefined;
     identityConfirmedByUserId: number | undefined;
     timeZone: string | undefined;
-    maritalStatusId: string | undefined;
+    maritalStatus: PersonMaritalStatus | undefined;
     marriageDate: moment.Moment | undefined;
     divorceDate: moment.Moment | undefined;
-    genderTypeId: string | undefined;
+    gender: PersonGender | undefined;
     isUSCitizen: boolean | undefined;
     citizenship: string | undefined;
     education: string | undefined;
@@ -41686,8 +41678,6 @@ export interface IPerson {
     orgRelations: PersonOrgRelation[] | undefined;
     personRelations: PersonRelation[] | undefined;
     reverseRelations: PersonRelation[] | undefined;
-    genderType: GenderType | undefined;
-    maritalStatus: MaritalStatus | undefined;
     contact: Contact | undefined;
     citizenshipCountry: Country | undefined;
     primaryOrgRelation: PersonOrgRelation | undefined;
@@ -43847,166 +43837,6 @@ export interface IPersonRelation {
     creationTime: moment.Moment | undefined;
     creatorUserId: number | undefined;
     id: number | undefined;
-}
-
-export class GenderType implements IGenderType {
-    name!: string | undefined;
-    persons!: Person[] | undefined;
-    isDeleted!: boolean | undefined;
-    deleterUserId!: number | undefined;
-    deletionTime!: moment.Moment | undefined;
-    lastModificationTime!: moment.Moment | undefined;
-    lastModifierUserId!: number | undefined;
-    creationTime!: moment.Moment | undefined;
-    creatorUserId!: number | undefined;
-    id!: string | undefined;
-
-    constructor(data?: IGenderType) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.name = data["name"];
-            if (data["persons"] && data["persons"].constructor === Array) {
-                this.persons = [];
-                for (let item of data["persons"])
-                    this.persons.push(Person.fromJS(item));
-            }
-            this.isDeleted = data["isDeleted"];
-            this.deleterUserId = data["deleterUserId"];
-            this.deletionTime = data["deletionTime"] ? moment(data["deletionTime"].toString()) : <any>undefined;
-            this.lastModificationTime = data["lastModificationTime"] ? moment(data["lastModificationTime"].toString()) : <any>undefined;
-            this.lastModifierUserId = data["lastModifierUserId"];
-            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
-            this.creatorUserId = data["creatorUserId"];
-            this.id = data["id"];
-        }
-    }
-
-    static fromJS(data: any): GenderType {
-        data = typeof data === 'object' ? data : {};
-        let result = new GenderType();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["name"] = this.name;
-        if (this.persons && this.persons.constructor === Array) {
-            data["persons"] = [];
-            for (let item of this.persons)
-                data["persons"].push(item.toJSON());
-        }
-        data["isDeleted"] = this.isDeleted;
-        data["deleterUserId"] = this.deleterUserId;
-        data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
-        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
-        data["lastModifierUserId"] = this.lastModifierUserId;
-        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
-        data["creatorUserId"] = this.creatorUserId;
-        data["id"] = this.id;
-        return data; 
-    }
-}
-
-export interface IGenderType {
-    name: string | undefined;
-    persons: Person[] | undefined;
-    isDeleted: boolean | undefined;
-    deleterUserId: number | undefined;
-    deletionTime: moment.Moment | undefined;
-    lastModificationTime: moment.Moment | undefined;
-    lastModifierUserId: number | undefined;
-    creationTime: moment.Moment | undefined;
-    creatorUserId: number | undefined;
-    id: string | undefined;
-}
-
-export class MaritalStatus implements IMaritalStatus {
-    name!: string | undefined;
-    persons!: Person[] | undefined;
-    isDeleted!: boolean | undefined;
-    deleterUserId!: number | undefined;
-    deletionTime!: moment.Moment | undefined;
-    lastModificationTime!: moment.Moment | undefined;
-    lastModifierUserId!: number | undefined;
-    creationTime!: moment.Moment | undefined;
-    creatorUserId!: number | undefined;
-    id!: string | undefined;
-
-    constructor(data?: IMaritalStatus) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.name = data["name"];
-            if (data["persons"] && data["persons"].constructor === Array) {
-                this.persons = [];
-                for (let item of data["persons"])
-                    this.persons.push(Person.fromJS(item));
-            }
-            this.isDeleted = data["isDeleted"];
-            this.deleterUserId = data["deleterUserId"];
-            this.deletionTime = data["deletionTime"] ? moment(data["deletionTime"].toString()) : <any>undefined;
-            this.lastModificationTime = data["lastModificationTime"] ? moment(data["lastModificationTime"].toString()) : <any>undefined;
-            this.lastModifierUserId = data["lastModifierUserId"];
-            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
-            this.creatorUserId = data["creatorUserId"];
-            this.id = data["id"];
-        }
-    }
-
-    static fromJS(data: any): MaritalStatus {
-        data = typeof data === 'object' ? data : {};
-        let result = new MaritalStatus();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["name"] = this.name;
-        if (this.persons && this.persons.constructor === Array) {
-            data["persons"] = [];
-            for (let item of this.persons)
-                data["persons"].push(item.toJSON());
-        }
-        data["isDeleted"] = this.isDeleted;
-        data["deleterUserId"] = this.deleterUserId;
-        data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
-        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
-        data["lastModifierUserId"] = this.lastModifierUserId;
-        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
-        data["creatorUserId"] = this.creatorUserId;
-        data["id"] = this.id;
-        return data; 
-    }
-}
-
-export interface IMaritalStatus {
-    name: string | undefined;
-    persons: Person[] | undefined;
-    isDeleted: boolean | undefined;
-    deleterUserId: number | undefined;
-    deletionTime: moment.Moment | undefined;
-    lastModificationTime: moment.Moment | undefined;
-    lastModifierUserId: number | undefined;
-    creationTime: moment.Moment | undefined;
-    creatorUserId: number | undefined;
-    id: string | undefined;
 }
 
 export class OrganizationType implements IOrganizationType {
@@ -46359,14 +46189,13 @@ export class LeadPersonalInfo implements ILeadPersonalInfo {
     phoneExtension!: string | undefined;
     ssn!: string | undefined;
     dob!: moment.Moment | undefined;
-    genderTypeId!: string | undefined;
+    gender!: LeadPersonalInfoGender | undefined;
     isUSCitizen!: boolean | undefined;
     citizenship!: string | undefined;
     education!: string | undefined;
     website!: string | undefined;
     personalProfile!: string | undefined;
     leadRequest!: LeadRequest | undefined;
-    genderType!: GenderType | undefined;
     citizenshipCountry!: Country | undefined;
     countryId!: string | undefined;
     stateId!: string | undefined;
@@ -46408,14 +46237,13 @@ export class LeadPersonalInfo implements ILeadPersonalInfo {
             this.phoneExtension = data["phoneExtension"];
             this.ssn = data["ssn"];
             this.dob = data["dob"] ? moment(data["dob"].toString()) : <any>undefined;
-            this.genderTypeId = data["genderTypeId"];
+            this.gender = data["gender"];
             this.isUSCitizen = data["isUSCitizen"];
             this.citizenship = data["citizenship"];
             this.education = data["education"];
             this.website = data["website"];
             this.personalProfile = data["personalProfile"];
             this.leadRequest = data["leadRequest"] ? LeadRequest.fromJS(data["leadRequest"]) : <any>undefined;
-            this.genderType = data["genderType"] ? GenderType.fromJS(data["genderType"]) : <any>undefined;
             this.citizenshipCountry = data["citizenshipCountry"] ? Country.fromJS(data["citizenshipCountry"]) : <any>undefined;
             this.countryId = data["countryId"];
             this.stateId = data["stateId"];
@@ -46457,14 +46285,13 @@ export class LeadPersonalInfo implements ILeadPersonalInfo {
         data["phoneExtension"] = this.phoneExtension;
         data["ssn"] = this.ssn;
         data["dob"] = this.dob ? this.dob.toISOString() : <any>undefined;
-        data["genderTypeId"] = this.genderTypeId;
+        data["gender"] = this.gender;
         data["isUSCitizen"] = this.isUSCitizen;
         data["citizenship"] = this.citizenship;
         data["education"] = this.education;
         data["website"] = this.website;
         data["personalProfile"] = this.personalProfile;
         data["leadRequest"] = this.leadRequest ? this.leadRequest.toJSON() : <any>undefined;
-        data["genderType"] = this.genderType ? this.genderType.toJSON() : <any>undefined;
         data["citizenshipCountry"] = this.citizenshipCountry ? this.citizenshipCountry.toJSON() : <any>undefined;
         data["countryId"] = this.countryId;
         data["stateId"] = this.stateId;
@@ -46499,14 +46326,13 @@ export interface ILeadPersonalInfo {
     phoneExtension: string | undefined;
     ssn: string | undefined;
     dob: moment.Moment | undefined;
-    genderTypeId: string | undefined;
+    gender: LeadPersonalInfoGender | undefined;
     isUSCitizen: boolean | undefined;
     citizenship: string | undefined;
     education: string | undefined;
     website: string | undefined;
     personalProfile: string | undefined;
     leadRequest: LeadRequest | undefined;
-    genderType: GenderType | undefined;
     citizenshipCountry: Country | undefined;
     countryId: string | undefined;
     stateId: string | undefined;
@@ -54441,7 +54267,7 @@ export class ImportPersonalInput implements IImportPersonalInput {
     drivingLicense!: string | undefined;
     drivingLicenseState!: string | undefined;
     isActiveMilitaryDuty!: boolean | undefined;
-    gender!: string | undefined;
+    gender!: ImportPersonalInputGender | undefined;
     fullAddress!: ImportAddressInput | undefined;
     isUSCitizen!: boolean | undefined;
     webSiteUrl!: string | undefined;
@@ -54545,7 +54371,7 @@ export interface IImportPersonalInput {
     drivingLicense: string | undefined;
     drivingLicenseState: string | undefined;
     isActiveMilitaryDuty: boolean | undefined;
-    gender: string | undefined;
+    gender: ImportPersonalInputGender | undefined;
     fullAddress: ImportAddressInput | undefined;
     isUSCitizen: boolean | undefined;
     webSiteUrl: string | undefined;
@@ -56451,7 +56277,7 @@ export class CreateLeadInput implements ICreateLeadInput {
     addresses!: CreateContactAddressInput[] | undefined;
     links!: CreateContactLinkInput[] | undefined;
     dob!: moment.Moment | undefined;
-    genderTypeId!: string | undefined;
+    gender!: CreateLeadInputGender | undefined;
     note!: string | undefined;
     companyName!: string | undefined;
     industry!: string | undefined;
@@ -56507,7 +56333,7 @@ export class CreateLeadInput implements ICreateLeadInput {
                     this.links.push(CreateContactLinkInput.fromJS(item));
             }
             this.dob = data["dob"] ? moment(data["dob"].toString()) : <any>undefined;
-            this.genderTypeId = data["genderTypeId"];
+            this.gender = data["gender"];
             this.note = data["note"];
             this.companyName = data["companyName"];
             this.industry = data["industry"];
@@ -56575,7 +56401,7 @@ export class CreateLeadInput implements ICreateLeadInput {
                 data["links"].push(item.toJSON());
         }
         data["dob"] = this.dob ? this.dob.toISOString() : <any>undefined;
-        data["genderTypeId"] = this.genderTypeId;
+        data["gender"] = this.gender;
         data["note"] = this.note;
         data["companyName"] = this.companyName;
         data["industry"] = this.industry;
@@ -56620,7 +56446,7 @@ export interface ICreateLeadInput {
     addresses: CreateContactAddressInput[] | undefined;
     links: CreateContactLinkInput[] | undefined;
     dob: moment.Moment | undefined;
-    genderTypeId: string | undefined;
+    gender: CreateLeadInputGender | undefined;
     note: string | undefined;
     companyName: string | undefined;
     industry: string | undefined;
@@ -62879,10 +62705,10 @@ export class UpdatePersonInfoInput implements IUpdatePersonInfoInput {
     dob!: moment.Moment | undefined;
     ssn!: string | undefined;
     timeZone!: string | undefined;
-    maritalStatusId!: string | undefined;
+    maritalStatus!: UpdatePersonInfoInputMaritalStatus | undefined;
     marriageDate!: moment.Moment | undefined;
     divorceDate!: moment.Moment | undefined;
-    genderTypeId!: string | undefined;
+    gender!: UpdatePersonInfoInputGender | undefined;
     isUSCitizen!: boolean | undefined;
     citizenship!: string | undefined;
     education!: string | undefined;
@@ -62907,10 +62733,10 @@ export class UpdatePersonInfoInput implements IUpdatePersonInfoInput {
             this.dob = data["dob"] ? moment(data["dob"].toString()) : <any>undefined;
             this.ssn = data["ssn"];
             this.timeZone = data["timeZone"];
-            this.maritalStatusId = data["maritalStatusId"];
+            this.maritalStatus = data["maritalStatus"];
             this.marriageDate = data["marriageDate"] ? moment(data["marriageDate"].toString()) : <any>undefined;
             this.divorceDate = data["divorceDate"] ? moment(data["divorceDate"].toString()) : <any>undefined;
-            this.genderTypeId = data["genderTypeId"];
+            this.gender = data["gender"];
             this.isUSCitizen = data["isUSCitizen"];
             this.citizenship = data["citizenship"];
             this.education = data["education"];
@@ -62935,10 +62761,10 @@ export class UpdatePersonInfoInput implements IUpdatePersonInfoInput {
         data["dob"] = this.dob ? this.dob.toISOString() : <any>undefined;
         data["ssn"] = this.ssn;
         data["timeZone"] = this.timeZone;
-        data["maritalStatusId"] = this.maritalStatusId;
+        data["maritalStatus"] = this.maritalStatus;
         data["marriageDate"] = this.marriageDate ? this.marriageDate.toISOString() : <any>undefined;
         data["divorceDate"] = this.divorceDate ? this.divorceDate.toISOString() : <any>undefined;
-        data["genderTypeId"] = this.genderTypeId;
+        data["gender"] = this.gender;
         data["isUSCitizen"] = this.isUSCitizen;
         data["citizenship"] = this.citizenship;
         data["education"] = this.education;
@@ -62956,10 +62782,10 @@ export interface IUpdatePersonInfoInput {
     dob: moment.Moment | undefined;
     ssn: string | undefined;
     timeZone: string | undefined;
-    maritalStatusId: string | undefined;
+    maritalStatus: UpdatePersonInfoInputMaritalStatus | undefined;
     marriageDate: moment.Moment | undefined;
     divorceDate: moment.Moment | undefined;
-    genderTypeId: string | undefined;
+    gender: UpdatePersonInfoInputGender | undefined;
     isUSCitizen: boolean | undefined;
     citizenship: string | undefined;
     education: string | undefined;
@@ -64087,50 +63913,6 @@ export class QuickBookConnectionLinkResult implements IQuickBookConnectionLinkRe
 
 export interface IQuickBookConnectionLinkResult {
     connectionLink: string | undefined;
-}
-
-export class ReportingCategoryDto implements IReportingCategoryDto {
-    code!: string | undefined;
-    name!: string | undefined;
-    parentId!: number | undefined;
-
-    constructor(data?: IReportingCategoryDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.code = data["code"];
-            this.name = data["name"];
-            this.parentId = data["parentId"];
-        }
-    }
-
-    static fromJS(data: any): ReportingCategoryDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new ReportingCategoryDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["code"] = this.code;
-        data["name"] = this.name;
-        data["parentId"] = this.parentId;
-        return data; 
-    }
-}
-
-export interface IReportingCategoryDto {
-    code: string | undefined;
-    name: string | undefined;
-    parentId: number | undefined;
 }
 
 export class ListResultDtoOfRoleListDto implements IListResultDtoOfRoleListDto {
@@ -71183,11 +70965,6 @@ export enum InstanceType77 {
     Main = "Main", 
 }
 
-export enum InstanceType78 {
-    User = "User", 
-    Main = "Main", 
-}
-
 export enum ModuleType {
     CFO = "CFO", 
     CRM = "CRM", 
@@ -71195,7 +70972,7 @@ export enum ModuleType {
     PFM = "PFM", 
 }
 
-export enum InstanceType79 {
+export enum InstanceType78 {
     User = "User", 
     Main = "Main", 
 }
@@ -71205,6 +70982,11 @@ export enum Permission {
     Read = "Read", 
     Write = "Write", 
     All = "All", 
+}
+
+export enum InstanceType79 {
+    User = "User", 
+    Main = "Main", 
 }
 
 export enum InstanceType80 {
@@ -71272,11 +71054,6 @@ export enum InstanceType92 {
     Main = "Main", 
 }
 
-export enum InstanceType93 {
-    User = "User", 
-    Main = "Main", 
-}
-
 export enum LayoutType {
     Default = "Default", 
     LendSpace = "LendSpace", 
@@ -71307,17 +71084,17 @@ export enum DefaultTimezoneScope {
     _7 = 7, 
 }
 
+export enum InstanceType93 {
+    User = "User", 
+    Main = "Main", 
+}
+
 export enum InstanceType94 {
     User = "User", 
     Main = "Main", 
 }
 
 export enum InstanceType95 {
-    User = "User", 
-    Main = "Main", 
-}
-
-export enum InstanceType96 {
     User = "User", 
     Main = "Main", 
 }
@@ -71395,6 +71172,11 @@ export enum PersonalInformationCreditScoreRating {
     Good = "Good", 
     Fair = "Fair", 
     Poor = "Poor", 
+}
+
+export enum PersonalInformationGender {
+    Female = "Female", 
+    Male = "Male", 
 }
 
 export enum LoanInformationLoanReason {
@@ -71582,11 +71364,42 @@ export enum TransactionCommonDetailsDtoAmountFormat {
     Credits = "Credits", 
 }
 
+export enum PersonInfoDtoMaritalStatus {
+    Single = "Single", 
+    Married = "Married", 
+    Divorced = "Divorced", 
+    Widowed = "Widowed", 
+    Separated = "Separated", 
+}
+
+export enum PersonInfoDtoGender {
+    Female = "Female", 
+    Male = "Male", 
+}
+
 export enum PersonInfoDtoPreferredToD {
     Morning = "Morning", 
     Afternoon = "Afternoon", 
     Evening = "Evening", 
     Anytime = "Anytime", 
+}
+
+export enum CreateContactInputGender {
+    Female = "Female", 
+    Male = "Male", 
+}
+
+export enum PersonMaritalStatus {
+    Single = "Single", 
+    Married = "Married", 
+    Divorced = "Divorced", 
+    Widowed = "Widowed", 
+    Separated = "Separated", 
+}
+
+export enum PersonGender {
+    Female = "Female", 
+    Male = "Male", 
 }
 
 export enum PersonPreferredToD {
@@ -71631,6 +71444,11 @@ export enum InvoiceStatus {
 export enum LeadRequestPaymentPeriodType {
     _30 = 30, 
     _365 = 365, 
+}
+
+export enum LeadPersonalInfoGender {
+    Female = "Female", 
+    Male = "Male", 
 }
 
 export enum TransactionType {
@@ -71773,6 +71591,11 @@ export enum ImportPersonalInputPreferredToD {
     Anytime = "Anytime", 
 }
 
+export enum ImportPersonalInputGender {
+    Female = "Female", 
+    Male = "Male", 
+}
+
 export enum ImportContactInputImportType {
     Lead = "Lead", 
     Client = "Client", 
@@ -71832,6 +71655,11 @@ export enum UpdateInvoiceStatusInputStatus {
     Canceled = "Canceled", 
 }
 
+export enum CreateLeadInputGender {
+    Female = "Female", 
+    Male = "Male", 
+}
+
 export enum SubmitTenancyRequestInputPaymentPeriodType {
     _30 = 30, 
     _365 = 365, 
@@ -71845,8 +71673,8 @@ export enum PackageInfoDtoModule {
 }
 
 export enum MemberInfoDtoGender {
-    _0 = 0, 
-    _1 = 1, 
+    Female = "Female", 
+    Male = "Male", 
 }
 
 export enum MemberPaymentAuthorizeRequestDtoPaymentInfoType {
@@ -71856,8 +71684,8 @@ export enum MemberPaymentAuthorizeRequestDtoPaymentInfoType {
 }
 
 export enum RegisterMemberRequestGender {
-    _0 = 0, 
-    _1 = 1, 
+    Female = "Female", 
+    Male = "Male", 
 }
 
 export enum NoteInfoDtoNoteType {
@@ -72425,6 +72253,19 @@ export enum PaymentMethodInfoType {
 export enum ACHCustomerShortInfoCustomerAcctType {
     _0 = 0, 
     _1 = 1, 
+}
+
+export enum UpdatePersonInfoInputMaritalStatus {
+    Single = "Single", 
+    Married = "Married", 
+    Divorced = "Divorced", 
+    Widowed = "Widowed", 
+    Separated = "Separated", 
+}
+
+export enum UpdatePersonInfoInputGender {
+    Female = "Female", 
+    Male = "Male", 
 }
 
 export enum UpdatePersonInfoInputPreferredToD {

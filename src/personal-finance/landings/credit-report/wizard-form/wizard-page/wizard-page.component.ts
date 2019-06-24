@@ -63,8 +63,8 @@ export class CreditWizardPageComponent extends AppComponentBase implements OnIni
     states: CountryStateDto[];
     uniqueId: string = UUID();
     gender = [
-        { text: 'Male', value: RegisterMemberRequestGender._1 },
-        { text: 'Female', value: RegisterMemberRequestGender._0 }
+        { text: 'Male', value: RegisterMemberRequestGender.Male },
+        { text: 'Female', value: RegisterMemberRequestGender.Female }
     ];
     radioGroupCitizen = [
         { text: 'Yes', status: true },

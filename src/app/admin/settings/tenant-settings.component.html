@@ -20,7 +20,7 @@
                         <label for="ZendeskAccountUrl">{{l("ZendeskAccountUrl")}}</label>
                         <input id="ZendeskAccountUrl" type="text" name="ZendeskAccountUrl" class="form-control" [(ngModel)]="settings.general.zendeskAccountUrl" maxlength="128">
                     </div>
-                    <div class="row m-form">
+                    <div class="row m-form" *ngIf="isAdminCustomizations">
                         <div class="col-md-6">
                             <h5>{{l("PrivacyPolicy")}}</h5>
                             <p *ngIf="appSession.tenant.customPrivacyPolicyDocumentId"><a [href]="remoteServiceBaseUrl + '/api/TenantCustomization/GetPrivacyPolicyDocument?tenantId=' + appSession.tenant.id" target="_blank">{{l('Download')}}</a></p>
@@ -47,8 +47,8 @@
                         </div>
                     </div>
                 </dx-scroll-view>
-            </mat-tab>
-            <mat-tab label="{{l('Appearance')}}">
+            </mat-tab>           
+            <mat-tab label="{{l('Appearance')}}" *ngIf="isAdminCustomizations">
                 <dx-scroll-view showScrollbar="onHover">
                     <div class="row m-form">
                         <div class="col-md-4">
@@ -255,7 +255,7 @@
                     </div>
                 </dx-scroll-view>
             </mat-tab>
-            <mat-tab label="{{l('System')}}">
+            <mat-tab label="{{l('Domain')}}">
                 <dx-scroll-view showScrollbar="onHover">
                     <system-settings></system-settings>
                 </dx-scroll-view>
