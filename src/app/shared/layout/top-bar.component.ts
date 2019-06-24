@@ -130,8 +130,14 @@ export class TopBarComponent extends AppComponentBase {
                 return false;
         }
 
-        return this._appService.isFeatureEnable(item.featureName) && ((item.permissionName && this.isGranted(item.permissionName)) ||
+        return this._appService.isFeatureEnable(item.featureName) && (this.checkPermission(item.permissionName) ||
             (item.items && item.items.length && this.checkChildMenuItemPermission(item) || !item.permissionName));
+    }
+
+    private checkPermission(value) {
+        return !value || value.split('|').some((item) => {
+            return item.split('&').every((key) => this.isGranted(key));
+        });
     }
 
     private checkChildMenuItemPermission(menu): boolean {
