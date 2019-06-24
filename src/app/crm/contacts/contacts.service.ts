@@ -20,7 +20,7 @@ export class ContactsService {
     private organizationUnitsSave: Subject<any>;
     private invalidateSubject: Subject<any>;
     private leadInfoSubject: Subject<any>;
-    private contactInfoSubject: ReplaySubject<ContactInfoDto> = new ReplaySubject<ContactInfoDto>();
+    private contactInfoSubject: ReplaySubject<ContactInfoDto> = new ReplaySubject<ContactInfoDto>(1);
     contactInfo$: Observable<ContactInfoDto> = this.contactInfoSubject.asObservable();
     organizationContactInfo: ReplaySubject<OrganizationContactInfoDto> = new ReplaySubject<OrganizationContactInfoDto>();
     private subscribers: any = {
@@ -142,7 +142,7 @@ export class ContactsService {
             if (!sub.closed)
                 sub.unsubscribe();
         });
-        list.lendth = 0;
+        list.length = 0;
     }
 
     addCompanyDialog(event, contactInfo, shiftX?, shiftY?) {

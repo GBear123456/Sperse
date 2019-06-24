@@ -5,7 +5,7 @@ export class InplaceSelectBoxModel {
     validationRules: InplaceEditValidationRule[];
 }
 
-export class InplaceSelectBoxOption{
+export class InplaceSelectBoxOption {
     id: any;
     name: string;
 }
