@@ -24,7 +24,7 @@ import { ContactsService } from '../contacts.service';
 export class PersonalDetailsComponent {
     person: PersonInfoDto;
     isEditAllowed = false;
-    startCase = startCase;    
+    startCase = startCase;
 
     accessConfidentialData = this._permission.isGranted('Pages.CRM.AccessConfidentialData');
 
@@ -55,15 +55,15 @@ export class PersonalDetailsComponent {
     };
 
     constructor(
-        public ls: AppLocalizationService,      
+        public ls: AppLocalizationService,
         private notifyService: NotifyService,
-        private _store$: Store<RootStore.State>,        
+        private _store$: Store<RootStore.State>,
         private _timingService: TimingServiceProxy,
         private _contactsService: ContactsService,
         private _changeDetector: ChangeDetectorRef,
         private _permission: PermissionCheckerService,
         private _personContactService: PersonContactServiceProxy
-    ) {        
+    ) {
         this._contactsService.contactInfoSubscribe((contactInfo) => {
             this.person = contactInfo.personContactInfo.person;
             this.isEditAllowed = this._contactsService.checkCGPermission(contactInfo.groupId);
@@ -107,8 +107,8 @@ export class PersonalDetailsComponent {
         return this.getSelectList([
             'Married',
             'Widowed',
-            'Separated', 
-            'Divorced', 
+            'Separated',
+            'Divorced',
             'Single'
         ]);
     }
@@ -140,7 +140,7 @@ export class PersonalDetailsComponent {
             drivingLicense: this.accessConfidentialData ? this.person.drivingLicense : undefined,
             drivingLicenseState: this.person.drivingLicenseState,
             isActiveMilitaryDuty: this.person.isActiveMilitaryDuty,
-        })).subscribe(result => {        
+        })).subscribe(() => {
             this.notifyService.success(this.ls.l('SavedSuccessfully'));
         });
     }

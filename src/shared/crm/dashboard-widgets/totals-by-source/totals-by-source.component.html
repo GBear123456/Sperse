@@ -1,14 +1,21 @@
 <div class="wrapper">
-    <h2 class="title">{{ ls.l('TotalsByCompanySize') }}</h2>
-    <ng-container *ngIf="customersByCompanySize$ | async as customersByCompanySize">
-        <div *ngIf="totalCustomersCount$ | async; else noData">
-            <div class="totalsNumbers" [ngStyle]="{top: totalNumbersTop}">
+    <header>
+        <h2 class="title">{{ ls.l('TotalsBy') }}</h2>
+        <dx-select-box [items]="totalsOptions"
+                       displayExpr="label"
+                       [value]="selectedTotal$ | async"
+                       (onValueChanged)="selectedTotal.next($event.value)">
+        </dx-select-box>
+    </header>
+    <ng-container *ngIf="data$ | async as data">
+        <div *ngIf="totalCount$ | async as totalCount; else noData">
+            <div *ngIf="!loading" class="totalsNumbers" [ngStyle]="{top: totalNumbersTop}">
                 <span class="range-name" [ngStyle]="{color: rangeColor}">{{percentage && rangeName}}</span>
-                <span class="total-count" [ngStyle]="{color: rangeColor}">{{rangeCount || totalCustomersCount}}</span>
+                <span class="total-count" [ngStyle]="{color: rangeColor}">{{rangeCount || totalCount}}</span>
                 <span class="percentage" [ngStyle]="{color: rangeColor}">{{percentage}}</span>
             </div>
-            <div class="round-progress" >
-                <dx-pie-chart [dataSource]="customersByCompanySize"
+            <div class="round-progress">
+                <dx-pie-chart [dataSource]="data"
                               [type]="'doughnut'"
                               [innerRadius]="0.9"
                               [customizePoint]="customizePoint"
@@ -16,8 +23,8 @@
                               (onPointSelectionChanged)="onPointSelectionChanged($event)"
                               [legend]="{verticalAlignment: 'bottom', horizontalAlignment: 'center'}"
                               (onDrawn)="onDrawn($event)">
-                    <dxo-common-series-settings argumentField="companySizeRange"></dxo-common-series-settings>
-                    <dxi-series valueField="customerCount"></dxi-series>
+                    <dxo-common-series-settings [argumentField]="selectedArgumentField$ | async"></dxo-common-series-settings>
+                    <dxi-series [valueField]="selectedValueField$ | async"></dxi-series>
                     <dxo-animation [enabled]="false"></dxo-animation>
                 </dx-pie-chart>
             </div>

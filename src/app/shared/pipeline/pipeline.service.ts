@@ -183,13 +183,12 @@ export class PipelineService {
         })).pipe(finalize(() => {
             entity.locked = false;
             complete && complete();
-        })).subscribe((res) => {
+        })).subscribe(() => {
             this.completeEntityUpdate(entity, fromStage, toStage);
         });
     }
 
     updateLeadStage(fromStage, toStage, entity, complete) {
-        let prevEntity = this.getPrevEntity(entity, toStage);
         this._leadService.updateLeadStage(
             UpdateLeadStageInfo.fromJS({
                 leadId: this.getEntityId(entity),
@@ -199,7 +198,7 @@ export class PipelineService {
         ).pipe(finalize(() => {
             entity.locked = false;
             complete && complete();
-        })).subscribe((res) => {
+        })).subscribe(() => {
             this.completeEntityUpdate(entity, fromStage, toStage);
         });
     }
@@ -238,7 +237,7 @@ export class PipelineService {
             entity.locked = false;
             complete && complete(data);
             (this._reuseService as CustomReuseStrategy).invalidate('orders');
-        })).subscribe((res) => {
+        })).subscribe(() => {
             this.completeEntityUpdate(entity, data.fromStage, data.toStage);
         });
     }
@@ -271,7 +270,7 @@ export class PipelineService {
         ).pipe(finalize(() => {
             entity.locked = false;
             complete && complete(data);
-        })).subscribe((result) => {
+        })).subscribe(() => {
             this.completeEntityUpdate(entity, data.fromStage, data.toStage);
         });
     }
@@ -286,7 +285,7 @@ export class PipelineService {
         ).pipe(finalize(() => {
             entity.locked = false;
             complete && complete();
-        })).subscribe((res) => {
+        })).subscribe(() => {
             this.completeEntityUpdate(entity, fromStage, toStage);
         });
     }
@@ -300,7 +299,7 @@ export class PipelineService {
         ).pipe(finalize(() => {
             entity.locked = false;
             complete && complete();
-        })).subscribe((res) => {
+        })).subscribe(() => {
             this.completeEntityUpdate(entity, fromStage, toStage);
         });
     }
@@ -330,7 +329,7 @@ export class PipelineService {
         ).pipe(finalize(() => {
             entity.locked = false;
             complete && complete(data);
-        })).subscribe((result) => {
+        })).subscribe(() => {
             this.completeEntityUpdate(entity, data.fromStage, data.toStage);
         });
     }
@@ -392,4 +391,5 @@ export class PipelineService {
         }
         return color;
     }
+
 }
