@@ -67,7 +67,7 @@ export class AppComponent implements OnInit {
                                         'Platform',
                                         'ModuleExpired',
                                         appService.getSubscriptionName(name),
-                                        sub && sub.endDate ? 'subscription' : 'trial'
+                                        appService.getSubscriptionStatusBySubscription(sub)
                                     )
                                 }
                             });
