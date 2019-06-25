@@ -907,6 +907,14 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             }
             this.finishLoading();
         });
+
+        this.userPreferencesService.showSparklines$.pipe(
+            takeUntil(this.destroy$),
+            skip(1)
+        ).subscribe(() => {
+            this.getNewTextWidth.cache = {};
+            this.pivotGrid.instance.repaint();
+        });
     }
 
     private showEmptyCategories() {
@@ -2972,7 +2980,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         let options = this.getCellOptionsFromCell(e.cell, e.area, e.rowIndex, e.isWhiteSpace);
 
         /** added charts near row titles */
-        if (e.area === 'row' && !e.cell.isWhiteSpace && e.cell.path) {
+        if (this.userPreferencesService.localPreferences.value.showSparklines && e.area === 'row' && !e.cell.isWhiteSpace && e.cell.path) {
             this.addChartToRow(e);
         }
 
@@ -3298,7 +3306,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         (cellInnerWidth, textWidth, textPaddingLeft, isAccount): number => {
             let newTextWidth;
             /** Get the sum of widths of all cell children except text element width */
-            let anotherChildrenElementsWidth: number = this.sparkLinesWidth + (isAccount ? this.accountNumberWidth : 0);
+            let anotherChildrenElementsWidth: number = (this.userPreferencesService.localPreferences.value.showSparklines ?
+                this.sparkLinesWidth : 0) + (isAccount ? this.accountNumberWidth : 0);
             let cellAvailableWidth: number = cellInnerWidth - this.rowCellRightPadding - textPaddingLeft - anotherChildrenElementsWidth;
 
             /** If text size is too big - truncate it */
@@ -6402,6 +6411,23 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                                     action: (event) => {
                                         this.userPreferencesService.updateLocalPreferences({
                                             showEmptyCategories: !this.userPreferencesService.localPreferences.value.showEmptyCategories
+                                        });
+                                        this.initCategoryToolbar();
+                                        event.event.stopPropagation();
+                                        event.event.preventDefault();
+                                    }
+                                },
+                                {
+                                    type: 'delimiter'
+                                },
+                                {
+                                    type: 'option',
+                                    name: 'showSparklines',
+                                    checked: this.userPreferencesService.localPreferences.value.showSparklines,
+                                    text: this.l('CashFlowGrid_UserPrefs_ShowSparklines'),
+                                    action: (event) => {
+                                        this.userPreferencesService.updateLocalPreferences({
+                                            showSparklines: !this.userPreferencesService.localPreferences.value.showSparklines
                                         });
                                         this.initCategoryToolbar();
                                         event.event.stopPropagation();

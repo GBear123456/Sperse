@@ -4,4 +4,5 @@ export class LocalPreferencesModel {
     showAccountingTypeTotals?: boolean;
     showCategoryTotals?: boolean;
     showEmptyCategories?: boolean;
+    showSparklines?: boolean;
 }

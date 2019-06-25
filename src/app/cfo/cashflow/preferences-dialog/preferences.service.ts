@@ -24,7 +24,8 @@ export class UserPreferencesService {
             showReportingCategoryTotals: true,
             showAccountingTypeTotals: true,
             showCategoryTotals: true,
-            showEmptyCategories: false
+            showEmptyCategories: false,
+            showSparklines: true
         }
     );
     localPreferences$: Observable<LocalPreferencesModel> = this.localPreferences.asObservable();
@@ -48,6 +49,10 @@ export class UserPreferencesService {
     );
     showEmptyCategories$: Observable<boolean> = this.localPreferences$.pipe(
         map((localPreferences: LocalPreferencesModel) => localPreferences.showEmptyCategories),
+        distinctUntilChanged()
+    );
+    showSparklines$: Observable<boolean> = this.localPreferences$.pipe(
+        map((localPreferences: LocalPreferencesModel) => localPreferences.showSparklines),
         distinctUntilChanged()
     );
     constructor(
