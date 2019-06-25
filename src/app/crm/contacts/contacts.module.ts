@@ -31,6 +31,7 @@ import { DxContextMenuModule } from 'devextreme-angular/ui/context-menu';
 import { DxRadioGroupModule } from 'devextreme-angular/ui/radio-group';
 import { DxDropDownBoxModule } from 'devextreme-angular/ui/drop-down-box';
 import { DxTreeViewModule } from 'devextreme-angular/ui/tree-view';
+import { DxTagBoxModule } from 'devextreme-angular/ui/tag-box';
 
 import { FileDropModule } from 'ngx-file-drop';
 import { ImageViewerModule } from 'ng2-image-viewer';
@@ -182,6 +183,7 @@ import { PersonalDetailsComponent } from './personal-details/personal-details.co
         DxListModule,
         DxTreeListModule,
         DxTreeViewModule,
+        DxTagBoxModule,
         RoundProgressModule,
         DxValidationGroupModule,
         PipelineModule,
