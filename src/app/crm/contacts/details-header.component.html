@@ -10,6 +10,7 @@
             </h1>
         </div>
         <rating-bar rating="{{ ratingId || 0 }}"></rating-bar>
+        <div class="bank-code" *ngIf="data?.personContactInfo?.person?.bankCode"><span>{{data?.personContactInfo?.person?.bankCode}}</span></div>
     </div>
     <div *ngIf="data" class="organization_info">
         <div class="delimiter"></div>

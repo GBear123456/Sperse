@@ -39,6 +39,7 @@ export class PersonalDetailsComponent implements OnDestroy {
         { name: 'drivingLicense',           type: 'string',     confidential: true },
         { name: 'drivingLicenseState',      type: 'select'                         },
         { name: 'experience',               type: 'string'                         },
+        { name: 'interests',                type: 'list'                           },
         { name: 'gender',                   type: 'select'                         },
         { name: 'isActiveMilitaryDuty',     type: 'bool'                           },
         { name: 'isUSCitizen',              type: 'bool'                           },

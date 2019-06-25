@@ -20,6 +20,15 @@
                                 [value]="person[field.name]"
                                 (onValueChanged)="updateValue($event.value, field.name)">
                             </dx-check-box>
+                            <dx-tag-box *ngSwitchCase="'list'"
+                                width="260px"
+                                [multiline]="false"
+                                [placeholder]="ls.l('EditValuePlaceholder')"
+                                [items]="person[field.name]"
+                                [acceptCustomValue]="true"
+                                [value]="person[field.name]"
+                                (onValueChanged)="updateValue($event.value, field.name)">
+                            </dx-tag-box>
                         </div>
                     </ng-container>
                 </div>

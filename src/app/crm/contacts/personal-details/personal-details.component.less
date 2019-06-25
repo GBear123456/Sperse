@@ -37,7 +37,7 @@
                 color: rgba(0, 0, 0, 0.87);
             }
 
-            /deep/ dx-select-box, /deep/ dx-date-box {
+            /deep/ .dx-widget {
                 input {
                     font-weight: 400;
                     color: rgba(0, 0, 0, 0.87);
@@ -56,6 +56,30 @@
           
             /deep/ dx-check-box {
                 padding: 7px 0;
+            }
+
+            /deep/ dx-tag-box {
+                input {
+                    margin: 0px;
+                    padding: 0px;
+                    font-size: 15px;
+                    font-weight: 300;
+                    line-height: 1.67;
+                    letter-spacing: 0.3px;
+                    text-align: left;
+                    border-bottom: 0px;
+                    padding-right: 35px;
+                }
+                .dx-placeholder {
+                    &:before {
+                        padding-left: 0px;
+                    }
+                }
+                &.dx-state-focused {
+                    .dx-placeholder {
+                        top: -25px;
+                    }
+                }
             }
         }
     }

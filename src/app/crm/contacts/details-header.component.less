@@ -114,6 +114,52 @@
         }
     }
 
+    .bank-code {
+        top: -13px;
+        right: -2px;
+        width: 115px;
+        z-index: 1;
+        line-height: 10px;
+        letter-spacing: 15px;
+        text-align: center;
+        position: relative;
+        padding-top: 10px;
+        span {
+            color: #FFF;
+            font-size: 17px;
+            position: relative;
+        }
+        &:before, &:after, span:before, span:after {
+            content: "";
+            z-index: -1;
+            width: 20px;
+            height: 20px;
+            display: block;
+            border-radius: 50%;                
+            position: absolute;
+        }
+        &:before {
+            background: linear-gradient(to bottom, #850614, #C93152);
+            left: -2px;
+            bottom: -5px;
+        }
+        &:after {
+            background: linear-gradient(to bottom, #03356D, #74A7CB);
+            right: 13px;
+            top: 5px;
+        } 
+        span:before {
+            background: linear-gradient(to bottom, #E57B05, #F9CC76);
+            left: 24px;
+            bottom: 0px;
+        } 
+        span:after { 
+            background: linear-gradient(to bottom, #033219, #73A994);
+            right: 38px;
+            bottom: 0px;
+        }
+    }
+
     .avatar {
         cursor: pointer;
         position: absolute;
