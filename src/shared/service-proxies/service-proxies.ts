@@ -37330,8 +37330,6 @@ export class PersonContactInfoDto implements IPersonContactInfoDto {
     jobTitle!: string | undefined;
     orgRelationId!: number | undefined;
     orgRelations!: PersonOrgRelationShortInfo[] | undefined;
-    industry!: string | undefined;
-    interests!: number[] | undefined;
     id!: number | undefined;
     fullName!: string | undefined;
     userId!: number | undefined;
@@ -37359,12 +37357,6 @@ export class PersonContactInfoDto implements IPersonContactInfoDto {
                 this.orgRelations = [];
                 for (let item of data["orgRelations"])
                     this.orgRelations.push(PersonOrgRelationShortInfo.fromJS(item));
-            }
-            this.industry = data["industry"];
-            if (data["interests"] && data["interests"].constructor === Array) {
-                this.interests = [];
-                for (let item of data["interests"])
-                    this.interests.push(item);
             }
             this.id = data["id"];
             this.fullName = data["fullName"];
@@ -37394,12 +37386,6 @@ export class PersonContactInfoDto implements IPersonContactInfoDto {
             for (let item of this.orgRelations)
                 data["orgRelations"].push(item.toJSON());
         }
-        data["industry"] = this.industry;
-        if (this.interests && this.interests.constructor === Array) {
-            data["interests"] = [];
-            for (let item of this.interests)
-                data["interests"].push(item);
-        }
         data["id"] = this.id;
         data["fullName"] = this.fullName;
         data["userId"] = this.userId;
@@ -37417,8 +37403,6 @@ export interface IPersonContactInfoDto {
     jobTitle: string | undefined;
     orgRelationId: number | undefined;
     orgRelations: PersonOrgRelationShortInfo[] | undefined;
-    industry: string | undefined;
-    interests: number[] | undefined;
     id: number | undefined;
     fullName: string | undefined;
     userId: number | undefined;
@@ -37436,6 +37420,7 @@ export class PersonInfoDto implements IPersonInfoDto {
     nickName!: string | undefined;
     dob!: moment.Moment | undefined;
     ssn!: string | undefined;
+    bankCode!: string | undefined;
     identityConfirmationDate!: moment.Moment | undefined;
     timeZone!: string | undefined;
     maritalStatus!: PersonInfoDtoMaritalStatus | undefined;
@@ -37444,12 +37429,13 @@ export class PersonInfoDto implements IPersonInfoDto {
     gender!: PersonInfoDtoGender | undefined;
     isUSCitizen!: boolean | undefined;
     citizenship!: string | undefined;
-    education!: string | undefined;
-    personalProfile!: string | undefined;
+    experience!: string | undefined;
+    profileSummary!: string | undefined;
     preferredToD!: PersonInfoDtoPreferredToD | undefined;
     drivingLicense!: string | undefined;
     drivingLicenseState!: string | undefined;
     isActiveMilitaryDuty!: boolean | undefined;
+    interests!: string[] | undefined;
     contactId!: number | undefined;
     firstName!: string | undefined;
     lastName!: string | undefined;
@@ -37471,6 +37457,7 @@ export class PersonInfoDto implements IPersonInfoDto {
             this.nickName = data["nickName"];
             this.dob = data["dob"] ? moment(data["dob"].toString()) : <any>undefined;
             this.ssn = data["ssn"];
+            this.bankCode = data["bankCode"];
             this.identityConfirmationDate = data["identityConfirmationDate"] ? moment(data["identityConfirmationDate"].toString()) : <any>undefined;
             this.timeZone = data["timeZone"];
             this.maritalStatus = data["maritalStatus"];
@@ -37479,12 +37466,17 @@ export class PersonInfoDto implements IPersonInfoDto {
             this.gender = data["gender"];
             this.isUSCitizen = data["isUSCitizen"];
             this.citizenship = data["citizenship"];
-            this.education = data["education"];
-            this.personalProfile = data["personalProfile"];
+            this.experience = data["experience"];
+            this.profileSummary = data["profileSummary"];
             this.preferredToD = data["preferredToD"];
             this.drivingLicense = data["drivingLicense"];
             this.drivingLicenseState = data["drivingLicenseState"];
             this.isActiveMilitaryDuty = data["isActiveMilitaryDuty"];
+            if (data["interests"] && data["interests"].constructor === Array) {
+                this.interests = [];
+                for (let item of data["interests"])
+                    this.interests.push(item);
+            }
             this.contactId = data["contactId"];
             this.firstName = data["firstName"];
             this.lastName = data["lastName"];
@@ -37506,6 +37498,7 @@ export class PersonInfoDto implements IPersonInfoDto {
         data["nickName"] = this.nickName;
         data["dob"] = this.dob ? this.dob.toISOString() : <any>undefined;
         data["ssn"] = this.ssn;
+        data["bankCode"] = this.bankCode;
         data["identityConfirmationDate"] = this.identityConfirmationDate ? this.identityConfirmationDate.toISOString() : <any>undefined;
         data["timeZone"] = this.timeZone;
         data["maritalStatus"] = this.maritalStatus;
@@ -37514,12 +37507,17 @@ export class PersonInfoDto implements IPersonInfoDto {
         data["gender"] = this.gender;
         data["isUSCitizen"] = this.isUSCitizen;
         data["citizenship"] = this.citizenship;
-        data["education"] = this.education;
-        data["personalProfile"] = this.personalProfile;
+        data["experience"] = this.experience;
+        data["profileSummary"] = this.profileSummary;
         data["preferredToD"] = this.preferredToD;
         data["drivingLicense"] = this.drivingLicense;
         data["drivingLicenseState"] = this.drivingLicenseState;
         data["isActiveMilitaryDuty"] = this.isActiveMilitaryDuty;
+        if (this.interests && this.interests.constructor === Array) {
+            data["interests"] = [];
+            for (let item of this.interests)
+                data["interests"].push(item);
+        }
         data["contactId"] = this.contactId;
         data["firstName"] = this.firstName;
         data["lastName"] = this.lastName;
@@ -37534,6 +37532,7 @@ export interface IPersonInfoDto {
     nickName: string | undefined;
     dob: moment.Moment | undefined;
     ssn: string | undefined;
+    bankCode: string | undefined;
     identityConfirmationDate: moment.Moment | undefined;
     timeZone: string | undefined;
     maritalStatus: PersonInfoDtoMaritalStatus | undefined;
@@ -37542,12 +37541,13 @@ export interface IPersonInfoDto {
     gender: PersonInfoDtoGender | undefined;
     isUSCitizen: boolean | undefined;
     citizenship: string | undefined;
-    education: string | undefined;
-    personalProfile: string | undefined;
+    experience: string | undefined;
+    profileSummary: string | undefined;
     preferredToD: PersonInfoDtoPreferredToD | undefined;
     drivingLicense: string | undefined;
     drivingLicenseState: string | undefined;
     isActiveMilitaryDuty: boolean | undefined;
+    interests: string[] | undefined;
     contactId: number | undefined;
     firstName: string | undefined;
     lastName: string | undefined;
@@ -38173,8 +38173,12 @@ export class CreateContactInput implements ICreateContactInput {
     addresses!: CreateContactAddressInput[] | undefined;
     links!: CreateContactLinkInput[] | undefined;
     dob!: moment.Moment | undefined;
+    bankCode!: string | undefined;
     gender!: CreateContactInputGender | undefined;
+    experience!: string | undefined;
+    profileSummary!: string | undefined;
     note!: string | undefined;
+    interests!: string[] | undefined;
     companyName!: string | undefined;
     industry!: string | undefined;
     photo!: ContactPhotoInput | undefined;
@@ -38185,7 +38189,6 @@ export class CreateContactInput implements ICreateContactInput {
     assignedUserId!: number | undefined;
     ratingId!: number | undefined;
     contactGroupId!: string;
-    interests!: ContactInterestInput[] | undefined;
     partnerTypeName!: string | undefined;
 
     constructor(data?: ICreateContactInput) {
@@ -38226,8 +38229,16 @@ export class CreateContactInput implements ICreateContactInput {
                     this.links.push(CreateContactLinkInput.fromJS(item));
             }
             this.dob = data["dob"] ? moment(data["dob"].toString()) : <any>undefined;
+            this.bankCode = data["bankCode"];
             this.gender = data["gender"];
+            this.experience = data["experience"];
+            this.profileSummary = data["profileSummary"];
             this.note = data["note"];
+            if (data["interests"] && data["interests"].constructor === Array) {
+                this.interests = [];
+                for (let item of data["interests"])
+                    this.interests.push(item);
+            }
             this.companyName = data["companyName"];
             this.industry = data["industry"];
             this.photo = data["photo"] ? ContactPhotoInput.fromJS(data["photo"]) : <any>undefined;
@@ -38246,11 +38257,6 @@ export class CreateContactInput implements ICreateContactInput {
             this.assignedUserId = data["assignedUserId"];
             this.ratingId = data["ratingId"];
             this.contactGroupId = data["contactGroupId"];
-            if (data["interests"] && data["interests"].constructor === Array) {
-                this.interests = [];
-                for (let item of data["interests"])
-                    this.interests.push(ContactInterestInput.fromJS(item));
-            }
             this.partnerTypeName = data["partnerTypeName"];
         }
     }
@@ -38291,8 +38297,16 @@ export class CreateContactInput implements ICreateContactInput {
                 data["links"].push(item.toJSON());
         }
         data["dob"] = this.dob ? this.dob.toISOString() : <any>undefined;
+        data["bankCode"] = this.bankCode;
         data["gender"] = this.gender;
+        data["experience"] = this.experience;
+        data["profileSummary"] = this.profileSummary;
         data["note"] = this.note;
+        if (this.interests && this.interests.constructor === Array) {
+            data["interests"] = [];
+            for (let item of this.interests)
+                data["interests"].push(item);
+        }
         data["companyName"] = this.companyName;
         data["industry"] = this.industry;
         data["photo"] = this.photo ? this.photo.toJSON() : <any>undefined;
@@ -38311,11 +38325,6 @@ export class CreateContactInput implements ICreateContactInput {
         data["assignedUserId"] = this.assignedUserId;
         data["ratingId"] = this.ratingId;
         data["contactGroupId"] = this.contactGroupId;
-        if (this.interests && this.interests.constructor === Array) {
-            data["interests"] = [];
-            for (let item of this.interests)
-                data["interests"].push(item.toJSON());
-        }
         data["partnerTypeName"] = this.partnerTypeName;
         return data; 
     }
@@ -38333,8 +38342,12 @@ export interface ICreateContactInput {
     addresses: CreateContactAddressInput[] | undefined;
     links: CreateContactLinkInput[] | undefined;
     dob: moment.Moment | undefined;
+    bankCode: string | undefined;
     gender: CreateContactInputGender | undefined;
+    experience: string | undefined;
+    profileSummary: string | undefined;
     note: string | undefined;
+    interests: string[] | undefined;
     companyName: string | undefined;
     industry: string | undefined;
     photo: ContactPhotoInput | undefined;
@@ -38345,7 +38358,6 @@ export interface ICreateContactInput {
     assignedUserId: number | undefined;
     ratingId: number | undefined;
     contactGroupId: string;
-    interests: ContactInterestInput[] | undefined;
     partnerTypeName: string | undefined;
 }
 
@@ -38726,42 +38738,6 @@ export class ContactListInput implements IContactListInput {
 }
 
 export interface IContactListInput {
-    name: string;
-}
-
-export class ContactInterestInput implements IContactInterestInput {
-    name!: string;
-
-    constructor(data?: IContactInterestInput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.name = data["name"];
-        }
-    }
-
-    static fromJS(data: any): ContactInterestInput {
-        data = typeof data === 'object' ? data : {};
-        let result = new ContactInterestInput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["name"] = this.name;
-        return data; 
-    }
-}
-
-export interface IContactInterestInput {
     name: string;
 }
 
@@ -39574,7 +39550,6 @@ export class OrganizationBusinessInfo implements IOrganizationBusinessInfo {
     assignedUserId!: number | undefined;
     ratingId!: number | undefined;
     userId!: number | undefined;
-    interests!: ContactInterest[] | undefined;
 
     constructor(data?: IOrganizationBusinessInfo) {
         if (data) {
@@ -39665,11 +39640,6 @@ export class OrganizationBusinessInfo implements IOrganizationBusinessInfo {
             this.assignedUserId = data["assignedUserId"];
             this.ratingId = data["ratingId"];
             this.userId = data["userId"];
-            if (data["interests"] && data["interests"].constructor === Array) {
-                this.interests = [];
-                for (let item of data["interests"])
-                    this.interests.push(ContactInterest.fromJS(item));
-            }
         }
     }
 
@@ -39760,11 +39730,6 @@ export class OrganizationBusinessInfo implements IOrganizationBusinessInfo {
         data["assignedUserId"] = this.assignedUserId;
         data["ratingId"] = this.ratingId;
         data["userId"] = this.userId;
-        if (this.interests && this.interests.constructor === Array) {
-            data["interests"] = [];
-            for (let item of this.interests)
-                data["interests"].push(item.toJSON());
-        }
         return data; 
     }
 }
@@ -39816,7 +39781,6 @@ export interface IOrganizationBusinessInfo {
     assignedUserId: number | undefined;
     ratingId: number | undefined;
     userId: number | undefined;
-    interests: ContactInterest[] | undefined;
 }
 
 export class OrganizationAliasInfo implements IOrganizationAliasInfo {
@@ -40279,90 +40243,6 @@ export interface IContactList {
     id: number | undefined;
 }
 
-export class ContactInterest implements IContactInterest {
-    tenantId!: number | undefined;
-    name!: string;
-    contactInterestAssignments!: ContactInterestAssignment[] | undefined;
-    isDeleted!: boolean | undefined;
-    deleterUserId!: number | undefined;
-    deletionTime!: moment.Moment | undefined;
-    lastModificationTime!: moment.Moment | undefined;
-    lastModifierUserId!: number | undefined;
-    creationTime!: moment.Moment | undefined;
-    creatorUserId!: number | undefined;
-    id!: number | undefined;
-
-    constructor(data?: IContactInterest) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.tenantId = data["tenantId"];
-            this.name = data["name"];
-            if (data["contactInterestAssignments"] && data["contactInterestAssignments"].constructor === Array) {
-                this.contactInterestAssignments = [];
-                for (let item of data["contactInterestAssignments"])
-                    this.contactInterestAssignments.push(ContactInterestAssignment.fromJS(item));
-            }
-            this.isDeleted = data["isDeleted"];
-            this.deleterUserId = data["deleterUserId"];
-            this.deletionTime = data["deletionTime"] ? moment(data["deletionTime"].toString()) : <any>undefined;
-            this.lastModificationTime = data["lastModificationTime"] ? moment(data["lastModificationTime"].toString()) : <any>undefined;
-            this.lastModifierUserId = data["lastModifierUserId"];
-            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
-            this.creatorUserId = data["creatorUserId"];
-            this.id = data["id"];
-        }
-    }
-
-    static fromJS(data: any): ContactInterest {
-        data = typeof data === 'object' ? data : {};
-        let result = new ContactInterest();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["tenantId"] = this.tenantId;
-        data["name"] = this.name;
-        if (this.contactInterestAssignments && this.contactInterestAssignments.constructor === Array) {
-            data["contactInterestAssignments"] = [];
-            for (let item of this.contactInterestAssignments)
-                data["contactInterestAssignments"].push(item.toJSON());
-        }
-        data["isDeleted"] = this.isDeleted;
-        data["deleterUserId"] = this.deleterUserId;
-        data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
-        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
-        data["lastModifierUserId"] = this.lastModifierUserId;
-        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
-        data["creatorUserId"] = this.creatorUserId;
-        data["id"] = this.id;
-        return data; 
-    }
-}
-
-export interface IContactInterest {
-    tenantId: number | undefined;
-    name: string;
-    contactInterestAssignments: ContactInterestAssignment[] | undefined;
-    isDeleted: boolean | undefined;
-    deleterUserId: number | undefined;
-    deletionTime: moment.Moment | undefined;
-    lastModificationTime: moment.Moment | undefined;
-    lastModifierUserId: number | undefined;
-    creationTime: moment.Moment | undefined;
-    creatorUserId: number | undefined;
-    id: number | undefined;
-}
-
 export class ContactTagAssignment implements IContactTagAssignment {
     tenantId!: number | undefined;
     contactId!: number | undefined;
@@ -40491,70 +40371,6 @@ export interface IContactListAssignment {
     id: number | undefined;
 }
 
-export class ContactInterestAssignment implements IContactInterestAssignment {
-    tenantId!: number | undefined;
-    contactId!: number | undefined;
-    contactInterestId!: number | undefined;
-    contact!: Contact | undefined;
-    contactInterest!: ContactInterest | undefined;
-    creationTime!: moment.Moment | undefined;
-    creatorUserId!: number | undefined;
-    id!: number | undefined;
-
-    constructor(data?: IContactInterestAssignment) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.tenantId = data["tenantId"];
-            this.contactId = data["contactId"];
-            this.contactInterestId = data["contactInterestId"];
-            this.contact = data["contact"] ? Contact.fromJS(data["contact"]) : <any>undefined;
-            this.contactInterest = data["contactInterest"] ? ContactInterest.fromJS(data["contactInterest"]) : <any>undefined;
-            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
-            this.creatorUserId = data["creatorUserId"];
-            this.id = data["id"];
-        }
-    }
-
-    static fromJS(data: any): ContactInterestAssignment {
-        data = typeof data === 'object' ? data : {};
-        let result = new ContactInterestAssignment();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["tenantId"] = this.tenantId;
-        data["contactId"] = this.contactId;
-        data["contactInterestId"] = this.contactInterestId;
-        data["contact"] = this.contact ? this.contact.toJSON() : <any>undefined;
-        data["contactInterest"] = this.contactInterest ? this.contactInterest.toJSON() : <any>undefined;
-        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
-        data["creatorUserId"] = this.creatorUserId;
-        data["id"] = this.id;
-        return data; 
-    }
-}
-
-export interface IContactInterestAssignment {
-    tenantId: number | undefined;
-    contactId: number | undefined;
-    contactInterestId: number | undefined;
-    contact: Contact | undefined;
-    contactInterest: ContactInterest | undefined;
-    creationTime: moment.Moment | undefined;
-    creatorUserId: number | undefined;
-    id: number | undefined;
-}
-
 export class Contact implements IContact {
     isAssignablePermission!: string | undefined;
     tenantId!: number | undefined;
@@ -40593,7 +40409,6 @@ export class Contact implements IContact {
     notes!: Note[] | undefined;
     contactTagAssignments!: ContactTagAssignment[] | undefined;
     contactListAssignments!: ContactListAssignment[] | undefined;
-    contactInterestAssignments!: ContactInterestAssignment[] | undefined;
     documents!: Document[] | undefined;
     star!: ContactStar | undefined;
     rating!: ContactRating | undefined;
@@ -40695,11 +40510,6 @@ export class Contact implements IContact {
                 this.contactListAssignments = [];
                 for (let item of data["contactListAssignments"])
                     this.contactListAssignments.push(ContactListAssignment.fromJS(item));
-            }
-            if (data["contactInterestAssignments"] && data["contactInterestAssignments"].constructor === Array) {
-                this.contactInterestAssignments = [];
-                for (let item of data["contactInterestAssignments"])
-                    this.contactInterestAssignments.push(ContactInterestAssignment.fromJS(item));
             }
             if (data["documents"] && data["documents"].constructor === Array) {
                 this.documents = [];
@@ -40811,11 +40621,6 @@ export class Contact implements IContact {
             for (let item of this.contactListAssignments)
                 data["contactListAssignments"].push(item.toJSON());
         }
-        if (this.contactInterestAssignments && this.contactInterestAssignments.constructor === Array) {
-            data["contactInterestAssignments"] = [];
-            for (let item of this.contactInterestAssignments)
-                data["contactInterestAssignments"].push(item.toJSON());
-        }
         if (this.documents && this.documents.constructor === Array) {
             data["documents"] = [];
             for (let item of this.documents)
@@ -40879,7 +40684,6 @@ export interface IContact {
     notes: Note[] | undefined;
     contactTagAssignments: ContactTagAssignment[] | undefined;
     contactListAssignments: ContactListAssignment[] | undefined;
-    contactInterestAssignments: ContactInterestAssignment[] | undefined;
     documents: Document[] | undefined;
     star: ContactStar | undefined;
     rating: ContactRating | undefined;
@@ -41490,6 +41294,7 @@ export class Person implements IPerson {
     primaryOrgRelationId!: number | undefined;
     dob!: moment.Moment | undefined;
     ssn!: string | undefined;
+    bankCode!: string | undefined;
     identityConfirmationDate!: moment.Moment | undefined;
     identityConfirmedByUserId!: number | undefined;
     timeZone!: string | undefined;
@@ -41499,8 +41304,8 @@ export class Person implements IPerson {
     gender!: PersonGender | undefined;
     isUSCitizen!: boolean | undefined;
     citizenship!: string | undefined;
-    education!: string | undefined;
-    personalProfile!: string | undefined;
+    experience!: string | undefined;
+    profileSummary!: string | undefined;
     preferredToD!: PersonPreferredToD | undefined;
     drivingLicense!: string | undefined;
     drivingLicenseState!: string | undefined;
@@ -41508,6 +41313,7 @@ export class Person implements IPerson {
     orgRelations!: PersonOrgRelation[] | undefined;
     personRelations!: PersonRelation[] | undefined;
     reverseRelations!: PersonRelation[] | undefined;
+    personInterests!: PersonInterest[] | undefined;
     contact!: Contact | undefined;
     citizenshipCountry!: Country | undefined;
     primaryOrgRelation!: PersonOrgRelation | undefined;
@@ -41541,6 +41347,7 @@ export class Person implements IPerson {
             this.primaryOrgRelationId = data["primaryOrgRelationId"];
             this.dob = data["dob"] ? moment(data["dob"].toString()) : <any>undefined;
             this.ssn = data["ssn"];
+            this.bankCode = data["bankCode"];
             this.identityConfirmationDate = data["identityConfirmationDate"] ? moment(data["identityConfirmationDate"].toString()) : <any>undefined;
             this.identityConfirmedByUserId = data["identityConfirmedByUserId"];
             this.timeZone = data["timeZone"];
@@ -41550,8 +41357,8 @@ export class Person implements IPerson {
             this.gender = data["gender"];
             this.isUSCitizen = data["isUSCitizen"];
             this.citizenship = data["citizenship"];
-            this.education = data["education"];
-            this.personalProfile = data["personalProfile"];
+            this.experience = data["experience"];
+            this.profileSummary = data["profileSummary"];
             this.preferredToD = data["preferredToD"];
             this.drivingLicense = data["drivingLicense"];
             this.drivingLicenseState = data["drivingLicenseState"];
@@ -41570,6 +41377,11 @@ export class Person implements IPerson {
                 this.reverseRelations = [];
                 for (let item of data["reverseRelations"])
                     this.reverseRelations.push(PersonRelation.fromJS(item));
+            }
+            if (data["personInterests"] && data["personInterests"].constructor === Array) {
+                this.personInterests = [];
+                for (let item of data["personInterests"])
+                    this.personInterests.push(PersonInterest.fromJS(item));
             }
             this.contact = data["contact"] ? Contact.fromJS(data["contact"]) : <any>undefined;
             this.citizenshipCountry = data["citizenshipCountry"] ? Country.fromJS(data["citizenshipCountry"]) : <any>undefined;
@@ -41604,6 +41416,7 @@ export class Person implements IPerson {
         data["primaryOrgRelationId"] = this.primaryOrgRelationId;
         data["dob"] = this.dob ? this.dob.toISOString() : <any>undefined;
         data["ssn"] = this.ssn;
+        data["bankCode"] = this.bankCode;
         data["identityConfirmationDate"] = this.identityConfirmationDate ? this.identityConfirmationDate.toISOString() : <any>undefined;
         data["identityConfirmedByUserId"] = this.identityConfirmedByUserId;
         data["timeZone"] = this.timeZone;
@@ -41613,8 +41426,8 @@ export class Person implements IPerson {
         data["gender"] = this.gender;
         data["isUSCitizen"] = this.isUSCitizen;
         data["citizenship"] = this.citizenship;
-        data["education"] = this.education;
-        data["personalProfile"] = this.personalProfile;
+        data["experience"] = this.experience;
+        data["profileSummary"] = this.profileSummary;
         data["preferredToD"] = this.preferredToD;
         data["drivingLicense"] = this.drivingLicense;
         data["drivingLicenseState"] = this.drivingLicenseState;
@@ -41633,6 +41446,11 @@ export class Person implements IPerson {
             data["reverseRelations"] = [];
             for (let item of this.reverseRelations)
                 data["reverseRelations"].push(item.toJSON());
+        }
+        if (this.personInterests && this.personInterests.constructor === Array) {
+            data["personInterests"] = [];
+            for (let item of this.personInterests)
+                data["personInterests"].push(item.toJSON());
         }
         data["contact"] = this.contact ? this.contact.toJSON() : <any>undefined;
         data["citizenshipCountry"] = this.citizenshipCountry ? this.citizenshipCountry.toJSON() : <any>undefined;
@@ -41660,6 +41478,7 @@ export interface IPerson {
     primaryOrgRelationId: number | undefined;
     dob: moment.Moment | undefined;
     ssn: string | undefined;
+    bankCode: string | undefined;
     identityConfirmationDate: moment.Moment | undefined;
     identityConfirmedByUserId: number | undefined;
     timeZone: string | undefined;
@@ -41669,8 +41488,8 @@ export interface IPerson {
     gender: PersonGender | undefined;
     isUSCitizen: boolean | undefined;
     citizenship: string | undefined;
-    education: string | undefined;
-    personalProfile: string | undefined;
+    experience: string | undefined;
+    profileSummary: string | undefined;
     preferredToD: PersonPreferredToD | undefined;
     drivingLicense: string | undefined;
     drivingLicenseState: string | undefined;
@@ -41678,6 +41497,7 @@ export interface IPerson {
     orgRelations: PersonOrgRelation[] | undefined;
     personRelations: PersonRelation[] | undefined;
     reverseRelations: PersonRelation[] | undefined;
+    personInterests: PersonInterest[] | undefined;
     contact: Contact | undefined;
     citizenshipCountry: Country | undefined;
     primaryOrgRelation: PersonOrgRelation | undefined;
@@ -43839,6 +43659,90 @@ export interface IPersonRelation {
     id: number | undefined;
 }
 
+export class PersonInterest implements IPersonInterest {
+    tenantId!: number | undefined;
+    personId!: number | undefined;
+    interestId!: number | undefined;
+    person!: Person | undefined;
+    interest!: Interest | undefined;
+    isDeleted!: boolean | undefined;
+    deleterUserId!: number | undefined;
+    deletionTime!: moment.Moment | undefined;
+    lastModificationTime!: moment.Moment | undefined;
+    lastModifierUserId!: number | undefined;
+    creationTime!: moment.Moment | undefined;
+    creatorUserId!: number | undefined;
+    id!: number | undefined;
+
+    constructor(data?: IPersonInterest) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.tenantId = data["tenantId"];
+            this.personId = data["personId"];
+            this.interestId = data["interestId"];
+            this.person = data["person"] ? Person.fromJS(data["person"]) : <any>undefined;
+            this.interest = data["interest"] ? Interest.fromJS(data["interest"]) : <any>undefined;
+            this.isDeleted = data["isDeleted"];
+            this.deleterUserId = data["deleterUserId"];
+            this.deletionTime = data["deletionTime"] ? moment(data["deletionTime"].toString()) : <any>undefined;
+            this.lastModificationTime = data["lastModificationTime"] ? moment(data["lastModificationTime"].toString()) : <any>undefined;
+            this.lastModifierUserId = data["lastModifierUserId"];
+            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
+            this.creatorUserId = data["creatorUserId"];
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): PersonInterest {
+        data = typeof data === 'object' ? data : {};
+        let result = new PersonInterest();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["tenantId"] = this.tenantId;
+        data["personId"] = this.personId;
+        data["interestId"] = this.interestId;
+        data["person"] = this.person ? this.person.toJSON() : <any>undefined;
+        data["interest"] = this.interest ? this.interest.toJSON() : <any>undefined;
+        data["isDeleted"] = this.isDeleted;
+        data["deleterUserId"] = this.deleterUserId;
+        data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
+        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
+        data["lastModifierUserId"] = this.lastModifierUserId;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        data["creatorUserId"] = this.creatorUserId;
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface IPersonInterest {
+    tenantId: number | undefined;
+    personId: number | undefined;
+    interestId: number | undefined;
+    person: Person | undefined;
+    interest: Interest | undefined;
+    isDeleted: boolean | undefined;
+    deleterUserId: number | undefined;
+    deletionTime: moment.Moment | undefined;
+    lastModificationTime: moment.Moment | undefined;
+    lastModifierUserId: number | undefined;
+    creationTime: moment.Moment | undefined;
+    creatorUserId: number | undefined;
+    id: number | undefined;
+}
+
 export class OrganizationType implements IOrganizationType {
     name!: string | undefined;
     organizations!: Organization[] | undefined;
@@ -45443,6 +45347,90 @@ export interface IPersonRelationType {
     id: string | undefined;
 }
 
+export class Interest implements IInterest {
+    tenantId!: number | undefined;
+    name!: string;
+    personInterests!: PersonInterest[] | undefined;
+    isDeleted!: boolean | undefined;
+    deleterUserId!: number | undefined;
+    deletionTime!: moment.Moment | undefined;
+    lastModificationTime!: moment.Moment | undefined;
+    lastModifierUserId!: number | undefined;
+    creationTime!: moment.Moment | undefined;
+    creatorUserId!: number | undefined;
+    id!: number | undefined;
+
+    constructor(data?: IInterest) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.tenantId = data["tenantId"];
+            this.name = data["name"];
+            if (data["personInterests"] && data["personInterests"].constructor === Array) {
+                this.personInterests = [];
+                for (let item of data["personInterests"])
+                    this.personInterests.push(PersonInterest.fromJS(item));
+            }
+            this.isDeleted = data["isDeleted"];
+            this.deleterUserId = data["deleterUserId"];
+            this.deletionTime = data["deletionTime"] ? moment(data["deletionTime"].toString()) : <any>undefined;
+            this.lastModificationTime = data["lastModificationTime"] ? moment(data["lastModificationTime"].toString()) : <any>undefined;
+            this.lastModifierUserId = data["lastModifierUserId"];
+            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
+            this.creatorUserId = data["creatorUserId"];
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): Interest {
+        data = typeof data === 'object' ? data : {};
+        let result = new Interest();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["tenantId"] = this.tenantId;
+        data["name"] = this.name;
+        if (this.personInterests && this.personInterests.constructor === Array) {
+            data["personInterests"] = [];
+            for (let item of this.personInterests)
+                data["personInterests"].push(item.toJSON());
+        }
+        data["isDeleted"] = this.isDeleted;
+        data["deleterUserId"] = this.deleterUserId;
+        data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
+        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
+        data["lastModifierUserId"] = this.lastModifierUserId;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        data["creatorUserId"] = this.creatorUserId;
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface IInterest {
+    tenantId: number | undefined;
+    name: string;
+    personInterests: PersonInterest[] | undefined;
+    isDeleted: boolean | undefined;
+    deleterUserId: number | undefined;
+    deletionTime: moment.Moment | undefined;
+    lastModificationTime: moment.Moment | undefined;
+    lastModifierUserId: number | undefined;
+    creationTime: moment.Moment | undefined;
+    creatorUserId: number | undefined;
+    id: number | undefined;
+}
+
 export class BusinessCategory implements IBusinessCategory {
     tenantId!: number | undefined;
     name!: string;
@@ -46192,9 +46180,9 @@ export class LeadPersonalInfo implements ILeadPersonalInfo {
     gender!: LeadPersonalInfoGender | undefined;
     isUSCitizen!: boolean | undefined;
     citizenship!: string | undefined;
-    education!: string | undefined;
+    experience!: string | undefined;
     website!: string | undefined;
-    personalProfile!: string | undefined;
+    profileSummary!: string | undefined;
     leadRequest!: LeadRequest | undefined;
     citizenshipCountry!: Country | undefined;
     countryId!: string | undefined;
@@ -46240,9 +46228,9 @@ export class LeadPersonalInfo implements ILeadPersonalInfo {
             this.gender = data["gender"];
             this.isUSCitizen = data["isUSCitizen"];
             this.citizenship = data["citizenship"];
-            this.education = data["education"];
+            this.experience = data["experience"];
             this.website = data["website"];
-            this.personalProfile = data["personalProfile"];
+            this.profileSummary = data["profileSummary"];
             this.leadRequest = data["leadRequest"] ? LeadRequest.fromJS(data["leadRequest"]) : <any>undefined;
             this.citizenshipCountry = data["citizenshipCountry"] ? Country.fromJS(data["citizenshipCountry"]) : <any>undefined;
             this.countryId = data["countryId"];
@@ -46288,9 +46276,9 @@ export class LeadPersonalInfo implements ILeadPersonalInfo {
         data["gender"] = this.gender;
         data["isUSCitizen"] = this.isUSCitizen;
         data["citizenship"] = this.citizenship;
-        data["education"] = this.education;
+        data["experience"] = this.experience;
         data["website"] = this.website;
-        data["personalProfile"] = this.personalProfile;
+        data["profileSummary"] = this.profileSummary;
         data["leadRequest"] = this.leadRequest ? this.leadRequest.toJSON() : <any>undefined;
         data["citizenshipCountry"] = this.citizenshipCountry ? this.citizenshipCountry.toJSON() : <any>undefined;
         data["countryId"] = this.countryId;
@@ -46329,9 +46317,9 @@ export interface ILeadPersonalInfo {
     gender: LeadPersonalInfoGender | undefined;
     isUSCitizen: boolean | undefined;
     citizenship: string | undefined;
-    education: string | undefined;
+    experience: string | undefined;
     website: string | undefined;
-    personalProfile: string | undefined;
+    profileSummary: string | undefined;
     leadRequest: LeadRequest | undefined;
     citizenshipCountry: Country | undefined;
     countryId: string | undefined;
@@ -56277,8 +56265,12 @@ export class CreateLeadInput implements ICreateLeadInput {
     addresses!: CreateContactAddressInput[] | undefined;
     links!: CreateContactLinkInput[] | undefined;
     dob!: moment.Moment | undefined;
+    bankCode!: string | undefined;
     gender!: CreateLeadInputGender | undefined;
+    experience!: string | undefined;
+    profileSummary!: string | undefined;
     note!: string | undefined;
+    interests!: string[] | undefined;
     companyName!: string | undefined;
     industry!: string | undefined;
     photo!: ContactPhotoInput | undefined;
@@ -56289,7 +56281,6 @@ export class CreateLeadInput implements ICreateLeadInput {
     assignedUserId!: number | undefined;
     ratingId!: number | undefined;
     contactGroupId!: string;
-    interests!: ContactInterestInput[] | undefined;
     partnerTypeName!: string | undefined;
 
     constructor(data?: ICreateLeadInput) {
@@ -56333,8 +56324,16 @@ export class CreateLeadInput implements ICreateLeadInput {
                     this.links.push(CreateContactLinkInput.fromJS(item));
             }
             this.dob = data["dob"] ? moment(data["dob"].toString()) : <any>undefined;
+            this.bankCode = data["bankCode"];
             this.gender = data["gender"];
+            this.experience = data["experience"];
+            this.profileSummary = data["profileSummary"];
             this.note = data["note"];
+            if (data["interests"] && data["interests"].constructor === Array) {
+                this.interests = [];
+                for (let item of data["interests"])
+                    this.interests.push(item);
+            }
             this.companyName = data["companyName"];
             this.industry = data["industry"];
             this.photo = data["photo"] ? ContactPhotoInput.fromJS(data["photo"]) : <any>undefined;
@@ -56353,11 +56352,6 @@ export class CreateLeadInput implements ICreateLeadInput {
             this.assignedUserId = data["assignedUserId"];
             this.ratingId = data["ratingId"];
             this.contactGroupId = data["contactGroupId"];
-            if (data["interests"] && data["interests"].constructor === Array) {
-                this.interests = [];
-                for (let item of data["interests"])
-                    this.interests.push(ContactInterestInput.fromJS(item));
-            }
             this.partnerTypeName = data["partnerTypeName"];
         }
     }
@@ -56401,8 +56395,16 @@ export class CreateLeadInput implements ICreateLeadInput {
                 data["links"].push(item.toJSON());
         }
         data["dob"] = this.dob ? this.dob.toISOString() : <any>undefined;
+        data["bankCode"] = this.bankCode;
         data["gender"] = this.gender;
+        data["experience"] = this.experience;
+        data["profileSummary"] = this.profileSummary;
         data["note"] = this.note;
+        if (this.interests && this.interests.constructor === Array) {
+            data["interests"] = [];
+            for (let item of this.interests)
+                data["interests"].push(item);
+        }
         data["companyName"] = this.companyName;
         data["industry"] = this.industry;
         data["photo"] = this.photo ? this.photo.toJSON() : <any>undefined;
@@ -56421,11 +56423,6 @@ export class CreateLeadInput implements ICreateLeadInput {
         data["assignedUserId"] = this.assignedUserId;
         data["ratingId"] = this.ratingId;
         data["contactGroupId"] = this.contactGroupId;
-        if (this.interests && this.interests.constructor === Array) {
-            data["interests"] = [];
-            for (let item of this.interests)
-                data["interests"].push(item.toJSON());
-        }
         data["partnerTypeName"] = this.partnerTypeName;
         return data; 
     }
@@ -56446,8 +56443,12 @@ export interface ICreateLeadInput {
     addresses: CreateContactAddressInput[] | undefined;
     links: CreateContactLinkInput[] | undefined;
     dob: moment.Moment | undefined;
+    bankCode: string | undefined;
     gender: CreateLeadInputGender | undefined;
+    experience: string | undefined;
+    profileSummary: string | undefined;
     note: string | undefined;
+    interests: string[] | undefined;
     companyName: string | undefined;
     industry: string | undefined;
     photo: ContactPhotoInput | undefined;
@@ -56458,7 +56459,6 @@ export interface ICreateLeadInput {
     assignedUserId: number | undefined;
     ratingId: number | undefined;
     contactGroupId: string;
-    interests: ContactInterestInput[] | undefined;
     partnerTypeName: string | undefined;
 }
 
@@ -62704,6 +62704,7 @@ export class UpdatePersonInfoInput implements IUpdatePersonInfoInput {
     id!: number;
     dob!: moment.Moment | undefined;
     ssn!: string | undefined;
+    bankCode!: string | undefined;
     timeZone!: string | undefined;
     maritalStatus!: UpdatePersonInfoInputMaritalStatus | undefined;
     marriageDate!: moment.Moment | undefined;
@@ -62711,12 +62712,13 @@ export class UpdatePersonInfoInput implements IUpdatePersonInfoInput {
     gender!: UpdatePersonInfoInputGender | undefined;
     isUSCitizen!: boolean | undefined;
     citizenship!: string | undefined;
-    education!: string | undefined;
-    personalProfile!: string | undefined;
+    experience!: string | undefined;
+    profileSummary!: string | undefined;
     preferredToD!: UpdatePersonInfoInputPreferredToD | undefined;
     drivingLicense!: string | undefined;
     drivingLicenseState!: string | undefined;
     isActiveMilitaryDuty!: boolean | undefined;
+    interests!: string[] | undefined;
 
     constructor(data?: IUpdatePersonInfoInput) {
         if (data) {
@@ -62732,6 +62734,7 @@ export class UpdatePersonInfoInput implements IUpdatePersonInfoInput {
             this.id = data["id"];
             this.dob = data["dob"] ? moment(data["dob"].toString()) : <any>undefined;
             this.ssn = data["ssn"];
+            this.bankCode = data["bankCode"];
             this.timeZone = data["timeZone"];
             this.maritalStatus = data["maritalStatus"];
             this.marriageDate = data["marriageDate"] ? moment(data["marriageDate"].toString()) : <any>undefined;
@@ -62739,12 +62742,17 @@ export class UpdatePersonInfoInput implements IUpdatePersonInfoInput {
             this.gender = data["gender"];
             this.isUSCitizen = data["isUSCitizen"];
             this.citizenship = data["citizenship"];
-            this.education = data["education"];
-            this.personalProfile = data["personalProfile"];
+            this.experience = data["experience"];
+            this.profileSummary = data["profileSummary"];
             this.preferredToD = data["preferredToD"];
             this.drivingLicense = data["drivingLicense"];
             this.drivingLicenseState = data["drivingLicenseState"];
             this.isActiveMilitaryDuty = data["isActiveMilitaryDuty"];
+            if (data["interests"] && data["interests"].constructor === Array) {
+                this.interests = [];
+                for (let item of data["interests"])
+                    this.interests.push(item);
+            }
         }
     }
 
@@ -62760,6 +62768,7 @@ export class UpdatePersonInfoInput implements IUpdatePersonInfoInput {
         data["id"] = this.id;
         data["dob"] = this.dob ? this.dob.toISOString() : <any>undefined;
         data["ssn"] = this.ssn;
+        data["bankCode"] = this.bankCode;
         data["timeZone"] = this.timeZone;
         data["maritalStatus"] = this.maritalStatus;
         data["marriageDate"] = this.marriageDate ? this.marriageDate.toISOString() : <any>undefined;
@@ -62767,12 +62776,17 @@ export class UpdatePersonInfoInput implements IUpdatePersonInfoInput {
         data["gender"] = this.gender;
         data["isUSCitizen"] = this.isUSCitizen;
         data["citizenship"] = this.citizenship;
-        data["education"] = this.education;
-        data["personalProfile"] = this.personalProfile;
+        data["experience"] = this.experience;
+        data["profileSummary"] = this.profileSummary;
         data["preferredToD"] = this.preferredToD;
         data["drivingLicense"] = this.drivingLicense;
         data["drivingLicenseState"] = this.drivingLicenseState;
         data["isActiveMilitaryDuty"] = this.isActiveMilitaryDuty;
+        if (this.interests && this.interests.constructor === Array) {
+            data["interests"] = [];
+            for (let item of this.interests)
+                data["interests"].push(item);
+        }
         return data; 
     }
 }
@@ -62781,6 +62795,7 @@ export interface IUpdatePersonInfoInput {
     id: number;
     dob: moment.Moment | undefined;
     ssn: string | undefined;
+    bankCode: string | undefined;
     timeZone: string | undefined;
     maritalStatus: UpdatePersonInfoInputMaritalStatus | undefined;
     marriageDate: moment.Moment | undefined;
@@ -62788,12 +62803,13 @@ export interface IUpdatePersonInfoInput {
     gender: UpdatePersonInfoInputGender | undefined;
     isUSCitizen: boolean | undefined;
     citizenship: string | undefined;
-    education: string | undefined;
-    personalProfile: string | undefined;
+    experience: string | undefined;
+    profileSummary: string | undefined;
     preferredToD: UpdatePersonInfoInputPreferredToD | undefined;
     drivingLicense: string | undefined;
     drivingLicenseState: string | undefined;
     isActiveMilitaryDuty: boolean | undefined;
+    interests: string[] | undefined;
 }
 
 export class UpdatePersonNameInput implements IUpdatePersonNameInput {
