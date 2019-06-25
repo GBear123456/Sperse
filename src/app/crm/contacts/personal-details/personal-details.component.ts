@@ -54,11 +54,11 @@ export class PersonalDetailsComponent implements OnDestroy {
         timeZone: [],
         citizenship: this._asyncPipe.transform(this._store$.pipe(
             select(CountriesStoreSelectors.getCountries),
-            map(countries => countries.map(item => ({id: item.code, name: item.name})))
+            map(countries => this.getSelectListFromObject(countries))
         )),
         drivingLicenseState: this._asyncPipe.transform(this._store$.pipe(
             select(StatesStoreSelectors.getState, {countryCode: AppConsts.defaultCountry}),
-            map(states => states.map(item => ({id: item.code, name: item.name})))
+            map(states => this.getSelectListFromObject(states))
         )),
         gender: this.getGenderList(),
         maritalStatus: this.getMaritalStatusList(),
@@ -123,6 +123,10 @@ export class PersonalDetailsComponent implements OnDestroy {
 
     getSelectList(items) {
         return items.map(item => ({id: item, name: this.ls.l(item)}));
+    }
+
+    getSelectListFromObject(collection) {
+        return (collection || []).map(item => ({id: item.code, name: item.name}));
     }
 
     updateValue(value, field) {
