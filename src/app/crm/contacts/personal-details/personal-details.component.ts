@@ -38,14 +38,14 @@ export class PersonalDetailsComponent implements OnDestroy {
         { name: 'dob',                      type: 'date'                           },
         { name: 'drivingLicense',           type: 'string',     confidential: true },
         { name: 'drivingLicenseState',      type: 'select'                         },
-        { name: 'education',                type: 'string'                         },
+        { name: 'experience',               type: 'string'                         },
         { name: 'gender',                   type: 'select'                         },
         { name: 'isActiveMilitaryDuty',     type: 'bool'                           },
         { name: 'isUSCitizen',              type: 'bool'                           },
         { name: 'maritalStatus',            type: 'select'                         },
         { name: 'marriageDate',             type: 'date'                           },
         { name: 'divorceDate',              type: 'date'                           },
-        { name: 'personalProfile',          type: 'string'                         },
+        { name: 'profileSummary',           type: 'string'                         },
         { name: 'preferredToD',             type: 'select'                         },
         { name: 'ssn',                      type: 'string',     confidential: true }
     ];
@@ -137,6 +137,7 @@ export class PersonalDetailsComponent implements OnDestroy {
                 id: this.person.contactId,
                 dob: this.person.dob,
                 ssn: this.accessConfidentialData ? this.person.ssn : undefined,
+                bankCode: this.person.bankCode,
                 timeZone: this.person.timeZone,
                 maritalStatus: UpdatePersonInfoInputMaritalStatus[this.person.maritalStatus],
                 marriageDate: this.person.marriageDate,
@@ -144,12 +145,13 @@ export class PersonalDetailsComponent implements OnDestroy {
                 gender: UpdatePersonInfoInputGender[this.person.gender],
                 isUSCitizen: this.person.isUSCitizen,
                 citizenship: this.person.citizenship,
-                education: this.person.education,
-                personalProfile: this.person.personalProfile,
+                experience: this.person.experience,
+                profileSummary: this.person.profileSummary,
                 preferredToD: UpdatePersonInfoInputPreferredToD[this.person.preferredToD],
                 drivingLicense: this.accessConfidentialData ? this.person.drivingLicense : undefined,
                 drivingLicenseState: this.person.drivingLicenseState,
                 isActiveMilitaryDuty: this.person.isActiveMilitaryDuty,
+                interests: this.person.interests
             })).subscribe(() => {
                 this.notifyService.success(this.ls.l('SavedSuccessfully'));
             }, () => {
