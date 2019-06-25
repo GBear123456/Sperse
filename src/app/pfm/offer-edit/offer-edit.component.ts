@@ -31,6 +31,7 @@ import {
 } from 'rxjs/operators';
 import { Store, select } from '@ngrx/store';
 import cloneDeep from 'lodash/cloneDeep';
+import range from 'lodash/range';
 import * as moment from 'moment-timezone';
 
 /** Application imports */
@@ -102,9 +103,9 @@ export class OfferEditComponent implements OnInit, OnDestroy, ICloseComponent {
             route: '../visitors'
         }
     ];
-    selectedYear = moment().year();
-    years = new Array(10).fill(0).map(
-        (item, index) => this.selectedYear - index);
+    startedYear = 2018;
+    selectedYear: number = moment().year();
+    years: number[] = range(this.startedYear, this.selectedYear + 1);
     offerId$: Observable<number>;
     private _refresh: Subject<null> = new Subject<null>();
     refresh$: Observable<null> = this._refresh.asObservable();
