@@ -24,6 +24,7 @@ import { CFOService } from '@shared/cfo/cfo.service';
 import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
 import { ISortItem } from '@app/shared/common/sort-button/sort-item.interface';
 import { IExpandItem } from '@app/shared/common/expand-button/expand-item.interface';
+import { SyncTypeIds } from '@shared/AppEnums';
 
 @Component({
     selector: 'bank-accounts-widget',
@@ -344,7 +345,7 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
     editingStart(e) {
         this.editingStarted = true;
         const syncAccount: SyncAccountBankDto = this.dataSource.find(syncAccount => syncAccount.syncAccountId === e.data.syncAccountId);
-        if (syncAccount.syncTypeId === 'X') {
+        if (syncAccount.syncTypeId === SyncTypeIds.Xero) {
             e.component.columnOption(
                 'accountName',
                 'editorOptions',

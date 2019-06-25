@@ -20,7 +20,7 @@ import {
     TenantLoginInfoDtoCustomLayoutType,
     MyFinancesServiceProxy
 } from '@shared/service-proxies/service-proxies';
-import { AccountConnectors } from '@shared/AppEnums';
+import { AccountConnectors, SyncTypeIds } from '@shared/AppEnums';
 import { FeatureCheckerService } from '@abp/features/feature-checker.service';
 import { PfmIntroComponent } from '@root/personal-finance/shared/pfm-intro/pfm-intro.component';
 import { IdleCountdownDialog } from './idle-countdown-dialog/idle-countdown-dialog.component';
@@ -95,7 +95,7 @@ export class AccountsComponent extends AppComponentBase implements OnInit, OnDes
         if (this._cfoService.initialized) {
             const element = this.getElementRef().nativeElement.querySelector('.p-content');
             abp.ui.setBusy(element);
-            this.tokenLoading$ = this._myFinanceService.createUserInstanceProviderUIToken('Q');
+            this.tokenLoading$ = this._myFinanceService.createUserInstanceProviderUIToken(SyncTypeIds.Quovo);
             /** Load quovo script (jquery getScript to observable) */
             const quovoLoading$ = new Observable(observer => {
                 jQuery.getScript('https://app.quovo.com/ui.js').done(() => {

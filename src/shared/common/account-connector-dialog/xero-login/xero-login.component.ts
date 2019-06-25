@@ -22,7 +22,8 @@ import {
     InstanceType89,
     UpdateSyncAccountInput
 } from 'shared/service-proxies/service-proxies';
-import { AppConsts } from 'shared/AppConsts';
+import { AppConsts } from '@shared/AppConsts';
+import { SyncTypeIds } from '@shared/AppEnums';
 import { SynchProgressService } from '@shared/cfo/bank-accounts/helpers/synch-progress.service';
 import { SyncDto } from '@shared/service-proxies/service-proxies';
 import { CFOService } from '@shared/cfo/cfo.service';
@@ -78,7 +79,7 @@ export class XeroLoginComponent {
             this._cfoService.instanceType as InstanceType88,
             this._cfoService.instanceId,
             new CreateSyncAccountInput({
-                typeId: 'X',
+                typeId: SyncTypeIds.Xero,
                 consumerKey: this.consumerKey,
                 consumerSecret: this.consumerSecret,
                 isSyncBankAccountsEnabled: this.isSyncBankAccountsEnabled
@@ -106,7 +107,7 @@ export class XeroLoginComponent {
                 this._notifyService.info(this.ls.l('SavedSuccessfully'));
                 this.onComplete.emit(syncAccountId);
                 this.onClose.emit();
-                this._syncProgressService.startSynchronization(true, false, 'X', [ syncAccountId ]);
+                this._syncProgressService.startSynchronization(true, false, SyncTypeIds.Xero, [ syncAccountId ]);
             });
     }
 
@@ -123,7 +124,7 @@ export class XeroLoginComponent {
             .subscribe(() => {
                 this.onComplete.emit();
                 this.onClose.emit();
-                this._syncProgressService.startSynchronization(true, false, 'X', [ accountId ]);
+                this._syncProgressService.startSynchronization(true, false, SyncTypeIds.Xero, [ accountId ]);
             });
     }
 

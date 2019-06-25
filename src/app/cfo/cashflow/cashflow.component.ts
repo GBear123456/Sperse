@@ -907,6 +907,14 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             }
             this.finishLoading();
         });
+
+        this.userPreferencesService.showSparklines$.pipe(
+            takeUntil(this.destroy$),
+            skip(1)
+        ).subscribe(() => {
+            this.getNewTextWidth.cache = {};
+            this.pivotGrid.instance.repaint();
+        });
     }
 
     private showEmptyCategories() {
@@ -973,7 +981,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 if (key === Income || key === Expense) {
                     text  = `${this.l('Total')} ${text}`;
                 } else if (key === CashflowTypeTotal) {
-                    text = this.l('CashflowTypeTotals');
+                    text = this.l('CashFlowGrid_UserPrefs_ShowCashflowTypeTotals');
                 }
                 text = text.toUpperCase();
             }
@@ -1722,6 +1730,12 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             }
             return true;
         });
+
+        /** Don't show items only with one level in the second level */
+        if (Object.keys(transactionObj.levels).length === 1) {
+            transactionObj.levels.level1 = 'hidden';
+        }
+
         this.updateTreePathes(transactionObj);
         return transactionObj;
     }
@@ -2966,7 +2980,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         let options = this.getCellOptionsFromCell(e.cell, e.area, e.rowIndex, e.isWhiteSpace);
 
         /** added charts near row titles */
-        if (e.area === 'row' && !e.cell.isWhiteSpace && e.cell.path) {
+        if (this.userPreferencesService.localPreferences.value.showSparklines && e.area === 'row' && !e.cell.isWhiteSpace && e.cell.path) {
             this.addChartToRow(e);
         }
 
@@ -3292,7 +3306,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         (cellInnerWidth, textWidth, textPaddingLeft, isAccount): number => {
             let newTextWidth;
             /** Get the sum of widths of all cell children except text element width */
-            let anotherChildrenElementsWidth: number = this.sparkLinesWidth + (isAccount ? this.accountNumberWidth : 0);
+            let anotherChildrenElementsWidth: number = (this.userPreferencesService.localPreferences.value.showSparklines ?
+                this.sparkLinesWidth : 0) + (isAccount ? this.accountNumberWidth : 0);
             let cellAvailableWidth: number = cellInnerWidth - this.rowCellRightPadding - textPaddingLeft - anotherChildrenElementsWidth;
 
             /** If text size is too big - truncate it */
@@ -4909,14 +4924,18 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
      */
     calculateSummaryValue() {
         return (summaryCell: DevExpress.ui.dxPivotGridSummaryCell) => {
-
-            if (!this.cashflowGridSettings.general.showBalanceDiscrepancy && this.isCellDiscrapencyCell(summaryCell)) {
+            const cellRow: any = summaryCell.field('row');
+            const cellValue = cellRow && summaryCell.value(cellRow.dataField);
+            /** Hide fields */
+            if ((!this.cashflowGridSettings.general.showBalanceDiscrepancy && this.isCellDiscrapencyCell(summaryCell, cellRow, cellValue))
+                || cellValue === 'hidden'
+            ) {
                 return null;
             }
 
             /** To hide rows that not correspond to the search */
-            if (this.filterBy && summaryCell.field('row')) {
-                if (!this.rowFitsToFilter(summaryCell, this.filterBy)) {
+            if (this.filterBy && cellRow) {
+                if (!this.rowFitsToFilter(summaryCell, cellValue, this.filterBy)) {
                     return null;
                 }
             }
@@ -4924,17 +4943,17 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             let prevWithParent = this.getPrevWithParent(summaryCell);
 
             /** calculation for ending cash position value */
-            if (prevWithParent !== null && this.isColumnGrandTotal(summaryCell)) {
+            if (prevWithParent !== null && this.isColumnGrandTotal(summaryCell, cellRow)) {
                 return this.modifyGrandTotalSummary(summaryCell);
             }
 
             /** if cell is starting balance account cell - then add account sum from previous period */
-            if (prevWithParent !== null && (this.isStartingBalanceAccountCell(summaryCell))) {
+            if (prevWithParent !== null && (this.isStartingBalanceAccountCell(summaryCell, cellRow))) {
                 return this.modifyStartingBalanceAccountCell(summaryCell, prevWithParent);
             }
 
             /** If the column is starting balance column but without prev - calculate */
-            if (this.isStartingBalanceAccountCell(summaryCell)) {
+            if (this.isStartingBalanceAccountCell(summaryCell, cellRow)) {
                 return this.getCurrentValueForStartingBalanceCell(summaryCell);
             }
 
@@ -4942,32 +4961,27 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
              *  If the grand total is balance or ending cash position cell -
              *  get the previous value - not the total of every cell
              */
-            if (this.isRowGrandTotal(summaryCell) && (this.isStartingBalanceAccountCell(summaryCell) || this.isEndingBalanceAccountCell(summaryCell))) {
-                let cellAccount = this.initialData.bankAccountBalances.find(bankAccount => bankAccount.bankAccountId === summaryCell.value(summaryCell.field('row')));
+            if (this.isRowGrandTotal(summaryCell) && (this.isStartingBalanceAccountCell(summaryCell, cellRow) || this.isEndingBalanceAccountCell(summaryCell, cellRow))) {
+                let cellAccount = this.initialData.bankAccountBalances.find(bankAccount => bankAccount.bankAccountId === cellValue);
                 return cellAccount ? cellAccount.balance : 0;
             }
 
             /** if cell is ending cash position account summary cell */
-            if (prevWithParent !== null && this.isEndingBalanceAccountCell(summaryCell)) {
+            if (prevWithParent !== null && this.isEndingBalanceAccountCell(summaryCell, cellRow)) {
                 return this.modifyEndingBalanceAccountCell(summaryCell, prevWithParent);
             }
 
             /** if the value is a balance value -
              *  then get the prev columns grand total for the column and add */
-            if (prevWithParent !== null && this.isCellIsStartingBalanceSummary(summaryCell)) {
+            if (prevWithParent !== null && this.isCellIsStartingBalanceSummary(summaryCell, cellRow, cellValue)) {
                 return this.modifyStartingBalanceSummaryCell(summaryCell, prevWithParent);
             }
 
-            if (this.isCellIsStartingBalanceSummary(summaryCell)) {
+            if (this.isCellIsStartingBalanceSummary(summaryCell, cellRow, cellValue)) {
                 return this.getCurrentValueForStartingBalanceCell(summaryCell, false);
             }
 
-            /** To hide rows that has empty header (except level1) */
-            let value = this.cellRowIsNotEmpty(summaryCell) ?
-                        summaryCell.value() || 0 :
-                        null;
-
-            return value;
+            return this.cellRowIsNotEmpty(cellRow, cellValue) ? summaryCell.value() || 0 : null;
         };
     }
 
@@ -4979,9 +4993,9 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
      * @param filter - string for which to filter
      * @return {boolean}
      */
-    rowFitsToFilter(summaryCell, filter: string) {
+    rowFitsToFilter(summaryCell, cellValue, filter: string) {
         let cellsToCheck = [];
-        let rowInfo = summaryCell.value(summaryCell.field('row').dataField) || '';
+        let rowInfo = cellValue || '';
         let result = false;
         /** add the rowInfo to cash to avoid checking for every cell */
         if (!this.cachedRowsFitsToFilter.has(rowInfo) || !rowInfo) {
@@ -5275,8 +5289,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         this.anotherPeriodAccountsValues.set(key, value);
     }
 
-    isColumnGrandTotal(summaryCell) {
-        return summaryCell.field('row') !== null &&
+    isColumnGrandTotal(summaryCell, cellRow) {
+        return cellRow !== null &&
                summaryCell.value(summaryCell.field('row')) === PT;
     }
 
@@ -5284,33 +5298,29 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         return summaryCell.field('column') === null;
     }
 
-    isStartingBalanceAccountCell(summaryCell) {
-        return summaryCell.field('row') !== null &&
-            summaryCell.field('row').dataField === 'levels.level1' &&
-            summaryCell.parent('row') && summaryCell.parent('row').value(summaryCell.parent('row').field('row')) === PSB;
+    isStartingBalanceAccountCell(summaryCell, cellRow) {
+        return cellRow !== null &&
+               cellRow.dataField === 'levels.level1' &&
+               summaryCell.parent('row') && summaryCell.parent('row').value(summaryCell.parent('row').field('row')) === PSB;
     }
 
-    isCellIsStartingBalanceSummary(summaryCell): boolean {
-        return summaryCell.field('row') !== null && summaryCell.value(summaryCell.field('row')) === (CategorizationPrefixes.CashflowType + StartedBalance);
+    isCellIsStartingBalanceSummary(summaryCell, cellRow, cellValue): boolean {
+        return cellRow !== null && cellValue === (CategorizationPrefixes.CashflowType + StartedBalance);
     }
 
-    isCellDiscrapencyCell(summaryCell): boolean {
+    isCellDiscrapencyCell(summaryCell, row, value): boolean {
         let parentCell = summaryCell.parent('row');
-        return (summaryCell.field('row') !== null && summaryCell.value(summaryCell.field('row')) === (CategorizationPrefixes.CashflowType + Reconciliation)) ||
+        return (row !== null && value === (CategorizationPrefixes.CashflowType + Reconciliation)) ||
             (parentCell !== null && parentCell.value(parentCell.field('row')) === (CategorizationPrefixes.CashflowType + Reconciliation));
     }
 
-    cellRowIsNotEmpty(summaryCell) {
-        return summaryCell.field('row') &&
-                (
-                    summaryCell.value(summaryCell.field('row').dataField) !== undefined ||
-                    summaryCell.field('row').dataField === 'levels.level1'
-                );
+    cellRowIsNotEmpty(cellRow, cellValue) {
+        return cellRow && (cellValue !== undefined || cellRow.dataField === 'levels.level1');
     }
 
-    isEndingBalanceAccountCell(summaryCell) {
-        return summaryCell.field('row') !== null &&
-               summaryCell.field('row').dataField === 'levels.level1' &&
+    isEndingBalanceAccountCell(summaryCell, cellRow) {
+        return cellRow !== null &&
+               cellRow.dataField === 'levels.level1' &&
                summaryCell.parent('row') && summaryCell.parent('row').value(summaryCell.parent('row').field('row')) === PT;
     }
 
@@ -6401,6 +6411,23 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                                     action: (event) => {
                                         this.userPreferencesService.updateLocalPreferences({
                                             showEmptyCategories: !this.userPreferencesService.localPreferences.value.showEmptyCategories
+                                        });
+                                        this.initCategoryToolbar();
+                                        event.event.stopPropagation();
+                                        event.event.preventDefault();
+                                    }
+                                },
+                                {
+                                    type: 'delimiter'
+                                },
+                                {
+                                    type: 'option',
+                                    name: 'showSparklines',
+                                    checked: this.userPreferencesService.localPreferences.value.showSparklines,
+                                    text: this.l('CashFlowGrid_UserPrefs_ShowSparklines'),
+                                    action: (event) => {
+                                        this.userPreferencesService.updateLocalPreferences({
+                                            showSparklines: !this.userPreferencesService.localPreferences.value.showSparklines
                                         });
                                         this.initCategoryToolbar();
                                         event.event.stopPropagation();

@@ -3,6 +3,7 @@ import { SyncServiceProxy, InstanceType } from '@shared/service-proxies/service-
 import { DomSanitizer } from '@angular/platform-browser';
 import { CFOComponentBase } from '../shared/common/cfo-component-base';
 import { AppConsts } from '@shared/AppConsts';
+import { SyncTypeIds } from '@shared/AppEnums';
 
 @Component({
     selector: 'accounts',
@@ -29,7 +30,7 @@ export class AccountsComponent extends CFOComponentBase implements OnInit  {
         this._syncServiceProxy.getSetupAccountsLink(
             InstanceType[this.instanceType],
             this.instanceId,
-            'Q',
+            SyncTypeIds.Quovo,
             AppConsts.appBaseHref + 'assets/cfo-css/quovocustom.css',
             ''
         ).subscribe((data) => {

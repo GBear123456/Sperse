@@ -13,6 +13,7 @@ import { CFOService } from '@shared/cfo/cfo.service';
 import { SynchProgressService } from '@shared/cfo/bank-accounts/helpers/synch-progress.service';
 import { NotifyService } from '@abp/notify/notify.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { SyncTypeIds } from '@shared/AppEnums';
 
 declare const Quovo: any;
 
@@ -45,8 +46,8 @@ export class QuovoService {
     ) {
         this.cfoService = injector.get(CFOService);
         this.tokenLoading$ = this.cfoService.isForUser
-            ? this.myFinanceService.createUserInstanceProviderUIToken('Q')
-            : this.syncService.createProviderUIToken(InstanceType[this.cfoService.instanceType], this.cfoService.instanceId, 'Q');
+            ? this.myFinanceService.createUserInstanceProviderUIToken(SyncTypeIds.Quovo)
+            : this.syncService.createProviderUIToken(InstanceType[this.cfoService.instanceType], this.cfoService.instanceId, SyncTypeIds.Quovo);
         this.permissionChecker = injector.get(PermissionCheckerService);
     }
 

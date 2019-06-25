@@ -206,7 +206,7 @@ export class VisitorsComponent extends AppComponentBase implements AfterViewInit
     showCalendarDialog() {
         this._dialog.closeAll();
         this._dialog.open(CalendarDialogComponent, {
-            panelClass: 'slider',
+            panelClass: [ 'slider', 'min-width-0' ],
             disableClose: false,
             hasBackdrop: false,
             closeOnNavigation: true,
@@ -239,5 +239,6 @@ export class VisitorsComponent extends AppComponentBase implements AfterViewInit
 
     ngOnDestroy() {
         this.queryParamsSubscription.unsubscribe();
+        this._dialog.closeAll();
     }
 }

@@ -142,14 +142,19 @@ export enum AccountConnectors {
     Xero = 'Xero'
 }
 
+export enum SyncTypeIds {
+    Quovo = 'Q',
+    Xero = 'X'
+}
+
 export enum ConditionsType {
     Terms = 'Terms',
     Policies = 'Policies'
 }
 
 export enum ModuleType {
-    CFO = 1, 
-    CRM = 2, 
-    CFO_CRM = CFO | CRM, 
-    PFM = 4, 
+    CFO = 1,
+    CRM = 2,
+    CFO_CRM = CFO | CRM,
+    PFM = 4,
 }

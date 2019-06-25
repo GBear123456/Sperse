@@ -1,7 +1,6 @@
-import { ChangeDetectionStrategy, Component, Inject, Injector, TemplateRef, ContentChild, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Inject, TemplateRef, ContentChild, Input } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { AppComponentBase } from '@shared/common/app-component-base';
-import { AppConsts } from '@shared/AppConsts';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 
 @Component({
     selector: 'contact-list-dialog',
@@ -9,10 +8,10 @@ import { AppConsts } from '@shared/AppConsts';
     styleUrls: ['./contact-list-dialog.component.less'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ContactListDialogComponent extends AppComponentBase {
+export class ContactListDialogComponent {
     displayList: any[];
-    title = this.l('RelatedContacts');
-    addNewTitle = this.l('AddRelatedContact');
+    title = this.ls.l('RelatedContacts');
+    addNewTitle = this.ls.l('AddRelatedContact');
     manageAllowed = false;
     photoType;
 
@@ -20,12 +19,10 @@ export class ContactListDialogComponent extends AppComponentBase {
     @Input() contactLayoutTemplate: TemplateRef<any>;
 
     constructor(
-        injector: Injector,
         @Inject(MAT_DIALOG_DATA) public data: any,
-        public dialogRef: MatDialogRef<ContactListDialogComponent>
-    ) {
-        super(injector);
-    }
+        public dialogRef: MatDialogRef<ContactListDialogComponent>,
+        public ls: AppLocalizationService
+    ) {}
 
     selectContact(contact): void {
         this.dialogRef.close(contact);
