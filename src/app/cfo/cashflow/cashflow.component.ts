@@ -1594,13 +1594,15 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
     updateCategorizationLevels() {
         this.startLoading();
-        this.treePathes = {};
-        this.getCellOptionsFromCell.cache = {};
-        this.cashflowData.forEach(cashflowItem => {
-             this.addCategorizationLevels(cashflowItem);
+        setTimeout(() => {
+            this.treePathes = {};
+            this.getCellOptionsFromCell.cache = {};
+            this.cashflowData.forEach(cashflowItem => {
+                this.addCategorizationLevels(cashflowItem);
+            });
+            this.dataSource = this.getApiDataSource();
+            this.finishLoading();
         });
-        this.dataSource = this.getApiDataSource();
-        this.finishLoading();
     }
 
     /**
