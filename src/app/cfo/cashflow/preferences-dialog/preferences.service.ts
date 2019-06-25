@@ -3,13 +3,12 @@ import { Injectable } from '@angular/core';
 
 /** Third party imports */
 import { CacheService } from 'ng2-cache-service';
-import { Observable, ReplaySubject } from 'rxjs';
-import { filter, switchMap } from 'rxjs/operators';
+import { BehaviorSubject, Observable, ReplaySubject, combineLatest } from 'rxjs';
+import { distinctUntilChanged, filter, map, switchMap } from 'rxjs/operators';
 
 /** Application imports */
 import { CashFlowGridSettingsDto, CashflowServiceProxy, InstanceType } from '@shared/service-proxies/service-proxies';
 import { CFOService } from '@shared/cfo/cfo.service';
-import { BehaviorSubject } from '@node_modules/rxjs';
 import { LocalPreferencesModel } from '@app/cfo/cashflow/preferences-dialog/local-prefereneces.model';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 
@@ -24,10 +23,33 @@ export class UserPreferencesService {
             showCashflowTypeTotals: true,
             showReportingCategoryTotals: true,
             showAccountingTypeTotals: true,
-            showCategoryTotals: true
+            showCategoryTotals: true,
+            showEmptyCategories: false
         }
     );
     localPreferences$: Observable<LocalPreferencesModel> = this.localPreferences.asObservable();
+    categorizationPreferences$: Observable<any> = combineLatest(
+        this.localPreferences$.pipe(
+            map((localPreferences: LocalPreferencesModel) => localPreferences.showCashflowTypeTotals),
+            distinctUntilChanged()
+        ),
+        this.localPreferences$.pipe(
+            map((localPreferences: LocalPreferencesModel) => localPreferences.showReportingCategoryTotals),
+            distinctUntilChanged()
+        ),
+        this.localPreferences$.pipe(
+            map((localPreferences: LocalPreferencesModel) => localPreferences.showAccountingTypeTotals),
+            distinctUntilChanged()
+        ),
+        this.localPreferences$.pipe(
+            map((localPreferences: LocalPreferencesModel) => localPreferences.showCategoryTotals),
+            distinctUntilChanged()
+        )
+    );
+    showEmptyCategories$: Observable<boolean> = this.localPreferences$.pipe(
+        map((localPreferences: LocalPreferencesModel) => localPreferences.showEmptyCategories),
+        distinctUntilChanged()
+    );
     constructor(
         private sessionService: AppSessionService,
         private cacheService: CacheService,

@@ -186,6 +186,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     private categoryTree: GetCategoryTreeOutput;
 
     /** The main data for cashflow table */
+    stubsCashflowDataForEmptyCategories: TransactionStatsDto[];
     cashflowData = [];
 
     /** Years in cashflow */
@@ -887,12 +888,41 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             document.addEventListener('keydown', this.keyDownEventHandler, true);
         }
 
-        this.userPreferencesService.localPreferences$.pipe(
+        this.userPreferencesService.categorizationPreferences$.pipe(
             takeUntil(this.destroy$),
             skip(1)
         ).subscribe(() => {
             this.updateCategorizationLevels();
         });
+
+        this.userPreferencesService.showEmptyCategories$.pipe(
+            takeUntil(this.destroy$),
+            skip(1),
+            tap(() => this.startLoading())
+        ).subscribe((showEmptyCategories: boolean) => {
+            if (showEmptyCategories) {
+                this.showEmptyCategories();
+            } else {
+                this.hideEmptyCategories();
+            }
+            this.finishLoading();
+        });
+    }
+
+    private showEmptyCategories() {
+        if (!this.stubsCashflowDataForEmptyCategories.length) {
+            this.stubsCashflowDataForEmptyCategories = this.getStubsCashflowDataForEmptyCategories(this.cashflowData[0].date, this.cashflowData[0].initialDate);
+            this.cashflowData = this.cashflowData.concat(this.stubsCashflowDataForEmptyCategories);
+            this.dataSource = this.getApiDataSource();
+        }
+    }
+
+    private hideEmptyCategories() {
+        if (this.stubsCashflowDataForEmptyCategories && this.stubsCashflowDataForEmptyCategories.length) {
+            this.cashflowData = difference(this.cashflowData, this.stubsCashflowDataForEmptyCategories);
+            this.stubsCashflowDataForEmptyCategories = [];
+            this.dataSource = this.getApiDataSource();
+        }
     }
 
     createDragImage() {
@@ -1347,7 +1377,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 return this._cashflowServiceProxy.getStats(InstanceType[this.instanceType], this.instanceId, this.requestFilter);
             }),
             pluck('transactionStats')
-        ).subscribe(transactions => {
+        ).subscribe((transactions: TransactionStatsDto[]) => {
             this.handleCashflowData(transactions, period);
             /** override cashflow data push method to add totals and net change automatically after adding of cashflow */
             this.overrideCashflowDataPushMethod();
@@ -1380,13 +1410,15 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             /** Make a copy of cashflow data to display it in custom total group on the top level */
             const stubsCashflowDataForEndingCashPosition = this.getStubsCashflowDataForEndingCashPosition(this.cashflowData);
             const stubsCashflowDataForAllDays = this.getStubsCashflowDataForAllPeriods(this.cashflowData, period);
-            const stubsCashflowDataForEmptyCategories = this.getStubsCashflowDataForEmptyCategories(this.cashflowData[0].date, this.cashflowData[0].initialDate);
+            this.stubsCashflowDataForEmptyCategories = this.userPreferencesService.localPreferences.value.showEmptyCategories
+                ? this.getStubsCashflowDataForEmptyCategories(this.cashflowData[0].date, this.cashflowData[0].initialDate)
+                : [];
             const cashflowWithStubsForEndingPosition = this.cashflowData.concat(stubsCashflowDataForEndingCashPosition);
             const stubsCashflowDataForAccounts = this.getStubsCashflowDataForAccounts(cashflowWithStubsForEndingPosition);
 
             /** concat initial data and stubs from the different hacks */
             this.cashflowData = cashflowWithStubsForEndingPosition.concat(
-                stubsCashflowDataForEmptyCategories,
+                this.stubsCashflowDataForEmptyCategories,
                 stubsCashflowDataForAccounts,
                 stubsCashflowDataForAllDays
             );
@@ -1629,13 +1661,15 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 && (transactionObj.subCategoryId || transactionObj.categoryId)
             ) {
                 const reportingCategoryId = this.categoryTree.categories[transactionObj.subCategoryId || transactionObj.categoryId].reportingCategoryId;
-                const reportingCategoriesIds = this.cashflowService.getReportingCategoriesIds(reportingCategoryId, this.categoryTree.reportingCategories);
-                reportingCategoriesIds.forEach((reportingCategoryId: number, index: number) => {
-                    /** Get only first and last reporting categories for tree */
-                    if (index === 0 || index === reportingCategoriesIds.length - 1) {
-                        transactionObj['levels'][`level${levelNumber++}`] = level.prefix + reportingCategoryId;
-                    }
-                });
+                if (reportingCategoryId) {
+                    const reportingCategoriesIds = this.cashflowService.getReportingCategoriesIds(reportingCategoryId, this.categoryTree.reportingCategories);
+                    reportingCategoriesIds.forEach((reportingCategoryId: number, index: number) => {
+                        /** Get only first and last reporting categories for tree */
+                        if (index === 0 || index === reportingCategoriesIds.length - 1) {
+                            transactionObj['levels'][`level${levelNumber++}`] = level.prefix + reportingCategoryId;
+                        }
+                    });
+                }
                 return true;
             }
 
@@ -6352,6 +6386,21 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                                     action: (event) => {
                                         this.userPreferencesService.updateLocalPreferences({
                                             showCategoryTotals: !this.userPreferencesService.localPreferences.value.showCategoryTotals
+                                        });
+                                        this.initCategoryToolbar();
+                                        event.event.stopPropagation();
+                                        event.event.preventDefault();
+                                    }
+                                },
+                                {
+                                    type: 'option',
+                                    name: 'showEmptyCategories',
+                                    visible: this.userPreferencesService.localPreferences.value.showCategoryTotals,
+                                    checked: this.userPreferencesService.localPreferences.value.showEmptyCategories,
+                                    text: this.l('CashFlowGrid_UserPrefs_ShowEmptyCategories'),
+                                    action: (event) => {
+                                        this.userPreferencesService.updateLocalPreferences({
+                                            showEmptyCategories: !this.userPreferencesService.localPreferences.value.showEmptyCategories
                                         });
                                         this.initCategoryToolbar();
                                         event.event.stopPropagation();

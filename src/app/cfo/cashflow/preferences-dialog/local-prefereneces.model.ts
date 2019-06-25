@@ -3,4 +3,5 @@ export class LocalPreferencesModel {
     showReportingCategoryTotals?: boolean;
     showAccountingTypeTotals?: boolean;
     showCategoryTotals?: boolean;
+    showEmptyCategories?: boolean;
 }
