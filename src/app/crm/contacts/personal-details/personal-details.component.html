@@ -14,12 +14,12 @@
                                 [placeholder]="ls.l('Date')"
                                 [value]="person[field.name]"
                                 (onKeyDown)="allowDigitsOnly($event, ['/'])"
-                                (onValueChanged)="updateValue($event.value, field.name)"
-                            ></dx-date-box>
+                                (onValueChanged)="updateValue($event.value, field.name)">
+                            </dx-date-box>
                             <dx-check-box *ngSwitchCase="'bool'"
                                 [value]="person[field.name]"
-                                (onValueChanged)="updateValue($event.value, field.name)"
-                            ></dx-check-box>
+                                (onValueChanged)="updateValue($event.value, field.name)">
+                            </dx-check-box>
                         </div>
                     </ng-container>
                 </div>
