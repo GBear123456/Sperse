@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, Input, Output, EventEmitter, Injector, OnInit, AfterViewInit, ViewChild } from '@angular/core';
+import { Component, Input, Output, EventEmitter, Injector, OnInit, AfterViewInit, ViewChild, ChangeDetectorRef } from '@angular/core';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
@@ -106,7 +106,8 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
         public dialog: MatDialog,
         private _filtersService: FiltersService,
         private _cacheService: CacheService,
-        private _categoryTreeServiceProxy: CategoryTreeServiceProxy
+        private _categoryTreeServiceProxy: CategoryTreeServiceProxy,
+        private _changeDetectionRef: ChangeDetectorRef
     ) {
         super(injector);
     }
@@ -162,8 +163,8 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
                         action: (event) => {
                             event.event.stopPropagation();
                             event.event.preventDefault();
-
                             this.showSearch = !this.showSearch;
+                            this._changeDetectionRef.detectChanges();
                         }
                     },
                     {
