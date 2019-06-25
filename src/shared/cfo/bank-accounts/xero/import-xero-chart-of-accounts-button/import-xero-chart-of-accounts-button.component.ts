@@ -9,7 +9,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { AccountConnectorDialogComponent } from '@shared/common/account-connector-dialog/account-connector-dialog';
 import { SyncAccountServiceProxy, CategoryTreeServiceProxy, InstanceType, SyncDto } from 'shared/service-proxies/service-proxies';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
-import { AccountConnectors } from '@shared/AppEnums';
+import { AccountConnectors, SyncTypeIds } from '@shared/AppEnums';
 import { ChooseXeroAccountComponent } from '@shared/cfo/bank-accounts/xero/import-xero-chart-of-accounts-button/choose-xero-account/choose-xero-account.component';
 
 @Component({
@@ -40,7 +40,7 @@ export class ImportXeroChartOfAccountsButtonComponent extends CFOComponentBase {
     importChartOfAccount(): void {
         abp.ui.setBusy();
 
-        this._syncAccountServiceProxy.getActive(InstanceType[this.instanceType], this.instanceId, 'X')
+        this._syncAccountServiceProxy.getActive(InstanceType[this.instanceType], this.instanceId, SyncTypeIds.Xero)
             .subscribe(result => {
                 if (result.length == 0) {
                     this.newConnect();

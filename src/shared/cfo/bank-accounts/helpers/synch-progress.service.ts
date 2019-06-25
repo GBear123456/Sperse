@@ -17,6 +17,7 @@ import { CFOService } from '@shared/cfo/cfo.service';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { AppHttpConfiguration } from '@shared/http/appHttpConfiguration';
+import { SyncTypeIds } from '@shared/AppEnums';
 
 @Injectable()
 export class SynchProgressService {
@@ -66,7 +67,7 @@ export class SynchProgressService {
         this.needRefreshSync.next();
     }
 
-    public startSynchronization(forcedSync: boolean = false, newOnly: boolean = false, syncType = 'Q', syncAccountIds = []) {
+    public startSynchronization(forcedSync: boolean = false, newOnly: boolean = false, syncType: any = SyncTypeIds.Quovo, syncAccountIds = []) {
         this.appHttpConfiguration.avoidErrorHandling = true;
         this.runSync(forcedSync, newOnly, syncType, syncAccountIds)
             .subscribe(() => {
@@ -86,8 +87,8 @@ export class SynchProgressService {
         this.cancelRequests();
     }
 
-    private runSync(forcedSync: boolean = false, newOnly: boolean = false, syncType = 'Q', syncAccountIds = []) {
-        const method = this.cfoService.isForUser && syncType == 'Q'
+    private runSync(forcedSync: boolean = false, newOnly: boolean = false, syncType: any = SyncTypeIds.Quovo, syncAccountIds = []) {
+        const method = this.cfoService.isForUser && syncType == SyncTypeIds.Quovo
             ? this.myFinanceService.syncAllQuovoAccounts(forcedSync, newOnly)
             : (
                 syncAccountIds && syncAccountIds.length

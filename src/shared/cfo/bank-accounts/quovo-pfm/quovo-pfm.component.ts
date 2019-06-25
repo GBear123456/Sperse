@@ -1,10 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { SyncServiceProxy, InstanceType, GetProviderUITokenOutput } from '@shared/service-proxies/service-proxies';
-import { AppConsts } from '@shared/AppConsts';
 import { DomSanitizer } from '@angular/platform-browser';
 import { CFOService } from '@shared/cfo/cfo.service.ts';
-import { Observable, BehaviorSubject, forkJoin } from '../../../../../node_modules/rxjs';
-
+import { Observable, forkJoin } from 'rxjs';
+import { SyncTypeIds } from '@shared/AppEnums';
 
 declare const Quovo: any;
 
@@ -14,7 +13,6 @@ declare const Quovo: any;
     styleUrls: ['./quovo-pfm.component.less']
 })
 export class QuovoPfmComponent implements OnInit {
-    private quovoLoaded$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
     private tokenLoading$: Observable<GetProviderUITokenOutput>;
 
     constructor(
@@ -22,7 +20,7 @@ export class QuovoPfmComponent implements OnInit {
         private sanitizer: DomSanitizer,
         private _cfoService: CFOService
     ) {
-        this.tokenLoading$ = this._syncServiceProxy.createProviderUIToken(InstanceType[this._cfoService.instanceType], this._cfoService.instanceId, 'Q');
+        this.tokenLoading$ = this._syncServiceProxy.createProviderUIToken(InstanceType[this._cfoService.instanceType], this._cfoService.instanceId, SyncTypeIds.Quovo);
     }
 
     ngOnInit() {
