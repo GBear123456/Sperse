@@ -102,7 +102,7 @@ export class CashflowService {
      */
     getCategoryValueByPrefix(path: any[], prefix: CategorizationPrefixes): any {
         let value;
-        path.some((pathItem, index) => {
+        path.some(pathItem => {
             if (pathItem && pathItem.slice(0, 2) === prefix) {
                 value = pathItem !== CategorizationPrefixes.CashflowType + CashflowTypes.CashflowTypeTotal ? pathItem.slice(2) : undefined;
                 return true;

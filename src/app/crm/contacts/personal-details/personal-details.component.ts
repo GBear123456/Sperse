@@ -146,7 +146,7 @@ export class PersonalDetailsComponent implements OnDestroy {
                 drivingLicense: this.accessConfidentialData ? this.person.drivingLicense : undefined,
                 drivingLicenseState: this.person.drivingLicenseState,
                 isActiveMilitaryDuty: this.person.isActiveMilitaryDuty,
-            })).subscribe(result => {
+            })).subscribe(() => {
                 this.notifyService.success(this.ls.l('SavedSuccessfully'));
             }, () => {
                 this.person[field] = initialValue;
