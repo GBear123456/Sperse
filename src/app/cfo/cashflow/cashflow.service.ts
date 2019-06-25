@@ -336,7 +336,7 @@ export class CashflowService {
     }
 
     /**
-     * Return whehter element is cell of cashflow table
+     * Return whether element is cell of cashflow table
      * @param {HTMLElement} element
      * @return {boolean}
      */
@@ -347,10 +347,10 @@ export class CashflowService {
     getReportingCategoriesIds(reportingCategoryId: number, reportingCategories: { [key: string]: ReportingCategoryDto; }): number[] {
         let reportingCategoriesIds = [ reportingCategoryId ];
         while (reportingCategories[reportingCategoryId].parentId) {
-            reportingCategoriesIds.push(reportingCategories[reportingCategoryId].parentId);
+            reportingCategoriesIds.unshift(reportingCategories[reportingCategoryId].parentId);
             reportingCategoryId = reportingCategories[reportingCategoryId].parentId;
         }
-        return reportingCategoriesIds.reverse();
+        return reportingCategoriesIds;
     }
 
 }

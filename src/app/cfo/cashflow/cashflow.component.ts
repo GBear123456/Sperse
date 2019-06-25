@@ -258,46 +258,46 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
      */
     private categorization: CategorizationModel[] = [
         {
-            'prefix'                 : CategorizationPrefixes.CashflowType,
-            'statsKeyName'           : 'cashflowTypeId',
-            'namesSource'            : 'categoryTree.types',
-            'childNamesSource'       : 'categoryTree.accountingTypes',
-            'childReferenceProperty' : 'typeId'
+            prefix                 : CategorizationPrefixes.CashflowType,
+            statsKeyName           : 'cashflowTypeId',
+            namesSource            : 'categoryTree.types',
+            childNamesSource       : 'categoryTree.accountingTypes',
+            childReferenceProperty : 'typeId'
         },
         {
-            'prefix'                 : CategorizationPrefixes.AccountName,
-            'statsKeyName'           : 'accountId',
-            'namesSource'            : 'bankAccounts'
+            prefix                 : CategorizationPrefixes.AccountName,
+            statsKeyName           : 'accountId',
+            namesSource            : 'bankAccounts'
         },
         {
-            'prefix'                 : CategorizationPrefixes.ReportingCategory,
-            'statsKeyName'           : 'reportingCategoryId',
-            'namesSource'            : 'categoryTree.reportingCategories',
-            'childNamesSource'       : 'categoryTree.categories',
-            'childReferenceProperty' : 'parentId'
+            prefix                 : CategorizationPrefixes.ReportingCategory,
+            statsKeyName           : 'reportingCategoryId',
+            namesSource            : 'categoryTree.reportingCategories',
+            childNamesSource       : 'categoryTree.categories',
+            childReferenceProperty : 'parentId'
         },
         {
-            'prefix'                 : CategorizationPrefixes.AccountingType,
-            'statsKeyName'           : 'accountingTypeId',
-            'namesSource'            : 'categoryTree.accountingTypes',
-            'childNamesSource'       : 'categoryTree.categories',
-            'childReferenceProperty' : 'accountingTypeId'
+            prefix                 : CategorizationPrefixes.AccountingType,
+            statsKeyName           : 'accountingTypeId',
+            namesSource            : 'categoryTree.accountingTypes',
+            childNamesSource       : 'categoryTree.categories',
+            childReferenceProperty : 'accountingTypeId'
         },
         {
-            'prefix'                 : CategorizationPrefixes.Category,
-            'statsKeyName'           : 'categoryId',
-            'namesSource'            : 'categoryTree.categories',
-            'childNamesSource'       : 'categoryTree.categories',
-            'childReferenceProperty' : 'parentId'
+            prefix                 : CategorizationPrefixes.Category,
+            statsKeyName           : 'categoryId',
+            namesSource            : 'categoryTree.categories',
+            childNamesSource       : 'categoryTree.categories',
+            childReferenceProperty : 'parentId'
         },
         {
-            'prefix'                 : CategorizationPrefixes.SubCategory,
-            'statsKeyName'           : 'subCategoryId',
-            'namesSource'            : 'categoryTree.categories'
+            prefix                 : CategorizationPrefixes.SubCategory,
+            statsKeyName           : 'subCategoryId',
+            namesSource            : 'categoryTree.categories'
         },
         {
-            'prefix'                 : CategorizationPrefixes.TransactionDescriptor,
-            'statsKeyName'           : 'transactionDescriptor'
+            prefix                 : CategorizationPrefixes.TransactionDescriptor,
+            statsKeyName           : 'transactionDescriptor'
         }
     ];
 
@@ -734,9 +734,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
     /** Interval between state saving (ms) */
     public stateSavingTimeout = 1000;
-
-    /** Whether the data started loading */
-    public startDataLoading = false;
 
     /** Whether the loading of data was performed with filter */
     public filteredLoad = false;
@@ -1351,8 +1348,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             }),
             pluck('transactionStats')
         ).subscribe(transactions => {
-            this.startDataLoading = true;
-            this.startLoading();
             this.handleCashflowData(transactions, period);
             /** override cashflow data push method to add totals and net change automatically after adding of cashflow */
             this.overrideCashflowDataPushMethod();
@@ -5338,7 +5333,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
     /** Begin loading animation */
     startLoading() {
-        abp.ui.setBusy();
+        super.startLoading();
         let pivotGridElement = document.querySelector('.pivot-grid');
         if (pivotGridElement) pivotGridElement.classList.add('invisible');
         pivotGridElement = null;
@@ -5347,7 +5342,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     /** Finish loading animation */
     finishLoading() {
         setTimeout(() => {
-            abp.ui.clearBusy();
+            super.finishLoading();
             let pivotGridElement = document.querySelector('.pivot-grid');
             if (pivotGridElement) pivotGridElement.classList.remove('invisible');
         }, 1000);
