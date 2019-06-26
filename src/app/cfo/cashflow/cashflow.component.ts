@@ -38,6 +38,7 @@ import {
 } from 'rxjs/operators';
 import cloneDeep from 'lodash/cloneDeep';
 import difference from 'lodash/difference';
+import uniq from 'lodash/uniq';
 import * as $ from 'jquery';
 import * as underscore from 'underscore';
 import capitalize from 'underscore.string/capitalize';
@@ -1673,11 +1674,9 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 const reportingCategoryId = this.categoryTree.categories[transactionObj.subCategoryId || transactionObj.categoryId].reportingCategoryId;
                 if (reportingCategoryId) {
                     const reportingCategoriesIds = this.cashflowService.getReportingCategoriesIds(reportingCategoryId, this.categoryTree.reportingCategories);
-                    reportingCategoriesIds.forEach((reportingCategoryId: number, index: number) => {
-                        /** Get only first and last reporting categories for tree */
-                        if (index === 0 || index === reportingCategoriesIds.length - 1) {
-                            transactionObj['levels'][`level${levelNumber++}`] = level.prefix + reportingCategoryId;
-                        }
+                    /** Get only first and last reporting categories for tree */
+                    uniq([ reportingCategoriesIds[0], reportingCategoriesIds[reportingCategoriesIds.length - 1]]).forEach((reportingCategoryId: number) => {
+                        transactionObj['levels'][`level${levelNumber++}`] = level.prefix + reportingCategoryId;
                     });
                 }
                 return true;
