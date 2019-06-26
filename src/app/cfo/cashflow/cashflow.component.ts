@@ -4936,10 +4936,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             }
 
             /** To hide rows that not correspond to the search */
-            if (this.filterBy && cellRow) {
-                if (!this.rowFitsToFilter(summaryCell, cellValue, this.filterBy)) {
-                    return null;
-                }
+            if (this.filterBy && cellRow && !this.rowFitsToFilter(summaryCell, cellValue, this.filterBy)) {
+                return null;
             }
 
             let prevWithParent = this.getPrevWithParent(summaryCell);
@@ -4996,49 +4994,21 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
      * @return {boolean}
      */
     rowFitsToFilter(summaryCell, cellValue, filter: string) {
-        let cellsToCheck = [];
-        let rowInfo = cellValue || '';
+        const rowInfo = cellValue || '';
         let result = false;
         /** add the rowInfo to cash to avoid checking for every cell */
         if (!this.cachedRowsFitsToFilter.has(rowInfo) || !rowInfo) {
-            Object.keys(this.treePathes).forEach(strPath => {
+            result = Object.keys(this.treePathes).some(strPath => {
                 let arrPath = strPath.split(',');
                 if (arrPath.indexOf(rowInfo) !== -1) {
                     /** Handle for uncategorized */
                     if (!rowInfo) {
                         let parent = summaryCell.parent('row');
                         let parentInfo = parent.value(parent.field('row').dataField);
-                        if (arrPath.indexOf(parentInfo) !== -1) {
-                            cellsToCheck = underscore.union(cellsToCheck, arrPath);
-                        }
-                    } else {
-                        cellsToCheck = underscore.union(cellsToCheck, arrPath);
-                    }
-                }
-            });
-            result = cellsToCheck.some(value => {
-                if (value) {
-                    let [prefix, key] = [value.slice(0, 2), value.slice(2)];
-                    let dataSource = this.getNamesSourceLink(prefix);
-                    if (dataSource) {
-                        let possibleIds = [];
-                        for (let id of Object.keys(dataSource)) {
-                            let cellInfo = {value: value};
-                            let customizedFieldText = this.customizeFieldText(cellInfo);
-                            if (customizedFieldText && customizedFieldText.toLowerCase().indexOf(filter.toLowerCase()) !== -1) {
-                                possibleIds.push(id);
-                            }
-                        }
-                        if (possibleIds.indexOf(key) !== -1) {
+                        if (arrPath.indexOf(parentInfo) !== -1 && this.pathContainsFilter(arrPath, filter)) {
                             return true;
                         }
-                    } else {
-                        if (key.toLowerCase().indexOf(filter.toLowerCase()) !== -1) {
-                            return true;
-                        }
-                    }
-                } else {
-                    if (this.l('Unclassified').toLowerCase().indexOf(filter.toLowerCase()) !== -1) {
+                    } else if (this.pathContainsFilter(arrPath, filter)) {
                         return true;
                     }
                 }
@@ -5049,6 +5019,37 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             result = this.cachedRowsFitsToFilter.get(rowInfo);
         }
         return result;
+    }
+
+    private pathContainsFilter(path: string[], filter: string) {
+        return path.some((value: string) => {
+            if (value) {
+                const prefix: any = value.slice(0, 2);
+                const key = value.slice(2);
+                const dataSource = this.getNamesSourceLink(prefix);
+                if (dataSource) {
+                    let possibleIds = [];
+                    for (let id of Object.keys(dataSource)) {
+                        let cellInfo = {value: value};
+                        let customizedFieldText = this.customizeFieldText(cellInfo);
+                        if (customizedFieldText && customizedFieldText.toLowerCase().indexOf(filter.toLowerCase()) !== -1) {
+                            possibleIds.push(id);
+                        }
+                    }
+                    if (possibleIds.indexOf(key) !== -1) {
+                        return true;
+                    }
+                } else {
+                    if (key.toLowerCase().indexOf(filter.toLowerCase()) !== -1) {
+                        return true;
+                    }
+                }
+            } else {
+                if (this.l('Unclassified').toLowerCase().indexOf(filter.toLowerCase()) !== -1) {
+                    return true;
+                }
+            }
+        });
     }
 
     /**
