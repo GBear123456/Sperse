@@ -17,7 +17,7 @@ import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interf
 @Component({
     selector: 'tenantFeaturesModal',
     templateUrl: './tenant-features-modal.component.html',
-    styleUrls: [ './tenant-features-modal.component.less'],
+    styleUrls: [ './modal.less' ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TenantFeaturesModalComponent implements OnInit {

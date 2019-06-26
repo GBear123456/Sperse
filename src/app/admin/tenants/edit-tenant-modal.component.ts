@@ -32,7 +32,7 @@ import { finalize } from '@node_modules/rxjs/internal/operators';
 @Component({
     selector: 'editTenantModal',
     templateUrl: './edit-tenant-modal.component.html',
-    styleUrls: [ './edit-tenant-modal.component.less' ],
+    styleUrls: [ './modal.less' ],
     providers: [ TenantsService ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })

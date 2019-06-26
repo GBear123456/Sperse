@@ -36,7 +36,10 @@ import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.
 @Component({
     selector: 'createTenantModal',
     templateUrl: './create-tenant-modal.component.html',
-    styleUrls: ['./create-tenant-modal.component.less'],
+    styleUrls: [
+        './modal.less',
+        './create-tenant-modal.component.less'
+    ],
     providers: [ TenantsService ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })

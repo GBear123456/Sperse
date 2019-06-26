@@ -369,7 +369,7 @@ export class TenantsComponent extends AppComponentBase implements OnDestroy {
 
     private openEditDialog(tenantId: number) {
         this.dialog.open(EditTenantModalComponent, {
-            panelClass: ['slider', 'tenant-modal'],
+            panelClass: ['slider'],
             data: { tenantId: tenantId }
         }).afterClosed().pipe(filter(Boolean)).subscribe(
             () => this.refreshDataGrid()
