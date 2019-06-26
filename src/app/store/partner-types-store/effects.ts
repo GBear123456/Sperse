@@ -28,7 +28,7 @@ import {
 } from 'shared/service-proxies/service-proxies';
 import { State } from './state';
 import { getLoadedTime } from './selectors';
-import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
+import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { StoreHelper } from '@root/store/store.helper';
 import { AppConsts } from '@shared/AppConsts';
 
@@ -38,7 +38,7 @@ export class PartnerTypesStoreEffects {
                 private actions$: Actions,
                 private store$: Store<State>,
                 private notifyService: NotifyService,
-                private permissionCheckerService: PermissionCheckerService) {}
+                private permissionCheckerService: AppPermissionService) {}
 
     @Effect()
     loadRequestEffect$: Observable<Action> = this.actions$.pipe(

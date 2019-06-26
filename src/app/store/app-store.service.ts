@@ -14,14 +14,14 @@ import { Store, select } from '@ngrx/store';
 import { AppStore } from './index';
 import { ContactGroup, ContactGroupPermission } from '@shared/AppEnums';
 import { filter } from 'rxjs/operators';
-import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
+import { AppPermissionService } from '@shared/common/auth/permission.service';
 
 @Injectable()
 export class AppStoreService {
 
     constructor(
         private store$: Store<AppStore.State>,
-        private _permission: PermissionCheckerService
+        private _permission: AppPermissionService
     ) {}
 
     dispatchUserAssignmentsActions(keyList) {

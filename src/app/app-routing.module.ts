@@ -17,7 +17,7 @@ import { CacheService } from 'ng2-cache-service';
 /** Application imports */
 import { AppComponent } from './app.component';
 import { AccessDeniedComponent } from '@app/main/access-denied/access-denied.component';
-import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
+import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { FeatureCheckerService } from '@abp/features/feature-checker.service';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 
@@ -40,7 +40,7 @@ export class ModulePathResolverService implements Resolve<any> {
 export class CfoActivateService implements CanActivate {
     constructor(
         private router: Router,
-        private permissionChecker: PermissionCheckerService,
+        private permissionChecker: AppPermissionService,
         private featureService: FeatureCheckerService
     ) {}
 

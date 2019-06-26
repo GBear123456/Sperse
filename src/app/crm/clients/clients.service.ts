@@ -1,5 +1,5 @@
 import { Injectable, Injector  } from '@angular/core';
-import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
+import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { NotifyService } from '@abp/notify/notify.service';
 import { MessageService } from '@abp/message/message.service';
 import { ContactGroup } from '@shared/AppEnums';
@@ -9,7 +9,7 @@ import { ContactServiceProxy, UpdateContactStatusesInput } from '@shared/service
 
 @Injectable()
 export class ClientService {
-    private permission: PermissionCheckerService;
+    private permission: AppPermissionService;
     private notify: NotifyService;
     private appLocalizationService: AppLocalizationService;
     private message: MessageService;
@@ -18,7 +18,7 @@ export class ClientService {
     private crmLocalizationSourceName = AppConsts.localization.CRMLocalizationSourceName;
 
     constructor(injector: Injector) {
-        this.permission = injector.get(PermissionCheckerService);
+        this.permission = injector.get(AppPermissionService);
         this.notify = injector.get(NotifyService);
         this.appLocalizationService = injector.get(AppLocalizationService);
         this.message = injector.get(MessageService);

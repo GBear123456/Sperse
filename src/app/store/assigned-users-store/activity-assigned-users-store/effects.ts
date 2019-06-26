@@ -12,14 +12,14 @@ import * as assignedUsersActions from './actions';
 import { UserAssignmentServiceProxy, UserInfoDto } from 'shared/service-proxies/service-proxies';
 import { State } from './state';
 import { getLoaded } from './selectors';
-import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
+import { AppPermissionService } from '@shared/common/auth/permission.service';
 
 @Injectable()
 export class ActivityAssignedUsersStoreEffects {
     constructor(private _userAssignmentService: UserAssignmentServiceProxy,
                 private actions$: Actions,
                 private store$: Store<State>,
-                private permissionCheckerService: PermissionCheckerService) {}
+                private permissionCheckerService: AppPermissionService) {}
 
     @Effect()
     loadRequestEffect$: Observable<Action> = this.actions$.pipe(

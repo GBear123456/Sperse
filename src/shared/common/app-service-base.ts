@@ -9,7 +9,7 @@ import * as _ from 'underscore';
 
 /** Application imports */
 import { FeatureCheckerService } from '@abp/features/feature-checker.service';
-import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
+import { AppPermissionService } from '@shared/common/auth/permission.service';
 
 class Module {
     name: string;
@@ -30,7 +30,7 @@ export abstract class AppServiceBase {
     private _modules: Array<Module>;
     private _configs: { [id: string]: any; };
     _featureChecker: FeatureCheckerService;
-    _permissionChecker: PermissionCheckerService;
+    _permissionChecker: AppPermissionService;
 
     public params: any;
 
@@ -41,7 +41,7 @@ export abstract class AppServiceBase {
         configs: { [id: string]: any; }
     ) {
         this._featureChecker = _injector.get(FeatureCheckerService);
-        this._permissionChecker = _injector.get(PermissionCheckerService);
+        this._permissionChecker = _injector.get(AppPermissionService);
         this._config = new Subject<Object>();
         this.MODULE_DEFAULT = defaultModuleName;
         this._modules = modules;

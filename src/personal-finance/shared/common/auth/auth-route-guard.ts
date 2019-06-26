@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
+import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { FeatureCheckerService } from '@abp/features/feature-checker.service';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { UrlHelper } from '@shared/helpers/UrlHelper';
@@ -16,7 +16,7 @@ export class CreditReportsRouteGuard implements CanActivate, CanActivateChild {
 
     constructor(
         private _featureChecker: FeatureCheckerService,
-        private _permissionChecker: PermissionCheckerService,
+        private _permissionChecker: AppPermissionService,
         private _router: Router,
         private _sessionService: AppSessionService,
     ) { }

@@ -14,8 +14,8 @@
     [ "AuditLogs", "Pages.Administration.AuditLogs", "icon-lock", "/app/admin/auditLogs", "Admin.Advanced" ],
     [ "Maintenance", "Pages.Administration.Host.Maintenance", "icon-wrench", "/app/admin/maintenance", "Admin.Advanced" ],
     [ "Jobs", "Pages.Administration.HangfireDashboard", "icon-wrench", "/app/admin/jobs", "Admin.Advanced" ],
-    [ "Settings", "Pages.Administration.Host.Settings|Pages.Administration.TenantHosts", "icon-settings", "/app/admin/hostSettings", "Admin" ],
-    [ "Settings", "Pages.Administration.Tenant.Settings|Pages.Administration.TenantHosts", "icon-settings", "/app/admin/tenantSettings", "Admin" ],
+    [ "Settings", "Pages.Administration.Host.Settings|Pages.Administration.TenantHosts", "icon-settings", "/app/admin/hostSettings", "Admin", "", "", "host" ],
+    [ "Settings", "Pages.Administration.Tenant.Settings|Pages.Administration.TenantHosts", "icon-settings", "/app/admin/tenantSettings", "Admin", "", "", "tenant" ],
     [ "Products", "Pages.Editions", "icon-grid", "/app/admin/products" ]
   ]
 }

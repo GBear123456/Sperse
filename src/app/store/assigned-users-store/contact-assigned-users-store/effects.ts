@@ -13,7 +13,7 @@ import * as assignedUsersActions from './actions';
 import { ContactServiceProxy, UserInfoDto } from 'shared/service-proxies/service-proxies';
 import { State } from './state';
 import { getContactGroupAssignedUsers } from './selectors';
-import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
+import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { ContactGroupPermission } from '@shared/AppEnums';
 
 @Injectable()
@@ -21,7 +21,7 @@ export class ContactAssignedUsersStoreEffects {
     constructor(private _contactService: ContactServiceProxy,
                 private actions$: Actions,
                 private store$: Store<State>,
-                private permissionCheckerService: PermissionCheckerService) {}
+                private permissionCheckerService: AppPermissionService) {}
 
     @Effect()
     loadRequestEffect$: Observable<Action> = this.actions$.pipe(

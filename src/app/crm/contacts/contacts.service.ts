@@ -7,7 +7,7 @@ import { Observable, ReplaySubject, Subject } from 'rxjs';
 import { DialogService } from '@app/shared/common/dialogs/dialog.service';
 import { AddCompanyDialogComponent } from './add-company-dialog/add-company-dialog.component';
 import { ContactInfoDto, OrganizationContactInfoDto } from '@shared/service-proxies/service-proxies';
-import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
+import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { ContactGroup, ContactGroupPermission } from '@shared/AppEnums';
 import invert from 'lodash/invert';
 
@@ -30,7 +30,7 @@ export class ContactsService {
     readonly CONTACT_GROUP_KEYS = invert(ContactGroup);
 
     constructor(injector: Injector,
-        private _permission: PermissionCheckerService,
+        private _permission: AppPermissionService,
         private _dialogService: DialogService,
         private _router: Router,
         private _location: Location,

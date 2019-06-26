@@ -16,6 +16,7 @@ import filter from 'lodash/filter';
 import { BugsnagErrorHandler } from '@bugsnag/plugin-angular';
 
 /** Application imports */
+import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { AppConsts } from '@shared/AppConsts';
 import { AppSessionService } from '@shared/common/session/app-session.service';
@@ -211,7 +212,8 @@ function handleLogoutRequest(authService: AppAuthService) {
             provide: ErrorHandler,
             useFactory: errorHandlerFactory,
             deps: [ BugsnagService ]
-        }
+        },
+        AppPermissionService
     ],
     bootstrap: [ RootComponent ]
 })

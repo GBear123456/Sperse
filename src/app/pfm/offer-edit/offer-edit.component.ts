@@ -63,7 +63,7 @@ import { TargetDirectionEnum } from '@app/crm/contacts/target-direction.enum';
 import { ItemFullInfo } from '@shared/common/item-details-layout/item-full-info';
 import { CloseComponentAction } from '@app/shared/common/close-component.service/close-component-action.enum';
 import { ICloseComponent } from '@app/shared/common/close-component.service/close-component.interface';
-import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
+import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { AppConsts } from '@shared/AppConsts';
 import { OffersService } from '@root/personal-finance/shared/offers/offers.service';
 import { OfferNotifyDialogComponent } from '@app/pfm/offer-edit/offer-notify-dialog/offer-notify-dialog.component';
@@ -143,7 +143,7 @@ export class OfferEditComponent implements OnInit, OnDestroy, ICloseComponent {
         private notifyService: NotifyService,
         private changeDetector: ChangeDetectorRef,
         private itemDetailsService: ItemDetailsService,
-        private permissionChecker: PermissionCheckerService,
+        private permissionChecker: AppPermissionService,
         private dialog: MatDialog,
         public ls: AppLocalizationService
     ) {
