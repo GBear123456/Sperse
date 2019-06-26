@@ -301,9 +301,23 @@ export class BankAccountsService {
 
         this.allSyncAccountAreSelected$ = this.filteredSyncAccounts$.pipe(
             map((syncAccounts: SyncAccountBankDto[]) => {
-                const selectedSyncAccounts = syncAccounts.filter(syncAccount => !syncAccount.bankAccounts.length || syncAccount['selected'] !== false);
-                return selectedSyncAccounts.length ? (selectedSyncAccounts.length === syncAccounts.length ? true : undefined) : false;
-            })
+                let selectedSyncAccounts: SyncAccountBankDto[] = [];
+                let syncAccountWithoutBankAccounts: SyncAccountBankDto[] = [];
+                syncAccounts.forEach((syncAccount: SyncAccountBankDto) => {
+                    if (!syncAccount.bankAccounts.length) {
+                        syncAccountWithoutBankAccounts.push(syncAccount);
+                    } else if (syncAccount['selected'] !== false) {
+                        selectedSyncAccounts.push(syncAccount);
+                    }
+                });
+                /** If there are no selected accounts - return false, else - check the sum of selected and empty accounts and if
+                 *  it's the same as total - return true
+                 */
+                return selectedSyncAccounts.length
+                       ? (selectedSyncAccounts.length + syncAccountWithoutBankAccounts.length === syncAccounts.length ? true : undefined)
+                       : false;
+            }),
+            distinctUntilChanged()
         );
 
         this.syncAccountsAmount$ = this.filteredSyncAccounts$.pipe(
