@@ -7,20 +7,20 @@
     cursor: pointer;
     font-size: 14px;
     transition: .2s;
-    
+
     &.m-radio--disabled,
     &.m-checkbox--disabled {
         opacity: .8;
         cursor: not-allowed;
     }
-    
+
     // Hide default browser input
     > input {
         position: absolute;
         z-index: -1;
         opacity: 0;
     }
-    
+
     > span {
         border-radius: 3px;
         background: none;
@@ -30,19 +30,19 @@
         height: 20px;
         width: 20px;
         border: 1px solid #DADEE1;
-        
+
         &:after {
             content:'';
             position: absolute;
             display: none; // Hide check
         }
     }
-    
+
     &:hover > input:not([disabled]) ~ span,
     > input:focus ~ span {
         border-color: #00AEEF;
     }
-    
+
     > input:checked ~ span {
         transition: .2s;
         background: #00AEEF;
@@ -51,36 +51,36 @@
             display: block;
         }
     }
-    
+
     &:hover > input:not([disabled]):checked ~ span,
     > input:checked ~ span {
         transition: .2s;
     }
-    
+
     > input:disabled ~ span {
         opacity: .6;
         pointer-events: none;
     }
-    
+
     &.m-radio--solid,
     &.m-checkbox--solid {
         > span {
             border: 1px solid transparent;
         }
-        
+
         &:hover > input:not([disabled]) ~ span,
         > input:focus ~ span {
             transition: .2s;
         }
     }
-    
+
     &.m-radio--square,
     &.m-checkbox--square {
         > span {
             border-radius: 0;
         }
     }
-    
+
     //> input:focus ~ span,
     &.m-checkbox--bold > span,
     &.m-radio--bold > span {
@@ -92,36 +92,37 @@
 .m-radio {
     > span {
         border-radius: 50% !important; // Makes radio buttons circlular
-        
+
         &:after {
-            top: 50%;
-            left: 50%;
-            margin-left: -4px;
-            margin-top: -4px;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            margin: auto;
             height: 8px;
             width: 8px;
             border-radius: 100% !important;
             background: #fff;
         }
     }
-    
+
     > input:checked ~ span {
         border-color: #00AEEF;
         background-color: #fff;
-        
+
         &::after {
             background: #00AEEF;
         }
     }
-    
+
     &.m-radio--single {
         width: 10px;
         height: 10px;
-        
+
         > span {
             top: 0;
         }
-        
+
         th > &,
         td > & {
             right: -5px;
@@ -144,20 +145,20 @@
             transform: rotate(45deg);
         }
     }
-    
+
     .form-inline & {
         margin-left: 15px;
         margin-right: 15px;
     }
-    
+
     &.m-checkbox--single {
         width: 4px;
         height: 4px;
-        
+
         > span {
             top: 0;
         }
-        
+
         th > &,
         td > & {
             right: -5px;
@@ -168,15 +169,15 @@
 .m-checkbox-list,
 .m-radio-list {
     padding: 0 0;
-    
+
     .form-horizontal .form-group & {
         padding-top: 0;
     }
-    
+
     .m-checkbox,
     .m-radio {
         display: block;
-        
+
         &:last-child {
             margin-bottom: 5px;
         }
@@ -186,13 +187,13 @@
 .m-checkbox-inline,
 .m-radio-inline {
     padding: 0 0;
-    
+
     .m-checkbox,
     .m-radio {
         display: inline-block;
         margin-right: 15px;
         margin-bottom: 5px;
-        
+
         &:last-child {
             margin-right: 0;
         }
@@ -204,7 +205,7 @@
     .m-radio-inline {
         margin-top: 5px;
     }
-    
+
     .m-checkbox-list,
     .m-radio-list {
         margin-top: 2px;
