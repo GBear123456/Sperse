@@ -33633,7 +33633,6 @@ export class CashflowGridGeneralSettingsDto implements ICashflowGridGeneralSetti
     showNegativeValuesInRed!: number;
     showColumnsWithZeroActivity!: CashflowGridGeneralSettingsDtoShowColumnsWithZeroActivity;
     showNetChangeRow!: boolean;
-    showAccountingTypeRow!: boolean;
     showBalanceDiscrepancy!: boolean;
     splitMonthType!: CashflowGridGeneralSettingsDtoSplitMonthType;
 
@@ -33653,7 +33652,6 @@ export class CashflowGridGeneralSettingsDto implements ICashflowGridGeneralSetti
             this.showNegativeValuesInRed = data["showNegativeValuesInRed"];
             this.showColumnsWithZeroActivity = data["showColumnsWithZeroActivity"];
             this.showNetChangeRow = data["showNetChangeRow"];
-            this.showAccountingTypeRow = data["showAccountingTypeRow"];
             this.showBalanceDiscrepancy = data["showBalanceDiscrepancy"];
             this.splitMonthType = data["splitMonthType"];
         }
@@ -33673,7 +33671,6 @@ export class CashflowGridGeneralSettingsDto implements ICashflowGridGeneralSetti
         data["showNegativeValuesInRed"] = this.showNegativeValuesInRed;
         data["showColumnsWithZeroActivity"] = this.showColumnsWithZeroActivity;
         data["showNetChangeRow"] = this.showNetChangeRow;
-        data["showAccountingTypeRow"] = this.showAccountingTypeRow;
         data["showBalanceDiscrepancy"] = this.showBalanceDiscrepancy;
         data["splitMonthType"] = this.splitMonthType;
         return data; 
@@ -33686,7 +33683,6 @@ export interface ICashflowGridGeneralSettingsDto {
     showNegativeValuesInRed: number;
     showColumnsWithZeroActivity: CashflowGridGeneralSettingsDtoShowColumnsWithZeroActivity;
     showNetChangeRow: boolean;
-    showAccountingTypeRow: boolean;
     showBalanceDiscrepancy: boolean;
     splitMonthType: CashflowGridGeneralSettingsDtoSplitMonthType;
 }

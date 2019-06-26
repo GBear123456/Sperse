@@ -22,6 +22,7 @@ import { FilterInputsComponent } from '@shared/filters/inputs/filter-inputs.comp
 import { FilterModel } from '@shared/filters/models/filter.model';
 import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calendar.component';
 import { FiltersService } from '@shared/filters/filters.service';
+import { DateHelper } from '@shared/helpers/DateHelper';
 
 @Component({
     templateUrl: './audit-logs.component.html',
@@ -31,12 +32,6 @@ import { FiltersService } from '@shared/filters/filters.service';
 })
 export class AuditLogsComponent extends AppComponentBase implements OnInit, OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
-
-    //Filters
-    public startDate: moment.Moment = moment().startOf('day');
-    public endDate: moment.Moment = moment().endOf('day');
-    public usernameEntityChange: string;
-    public entityTypeFullName: string;
     private rootComponent: any;
     public headlineConfig = {
         names: [this.l('AuditLogs')],
@@ -44,13 +39,33 @@ export class AuditLogsComponent extends AppComponentBase implements OnInit, OnDe
         onRefresh: this.refreshData.bind(this),
         buttons: []
     };
+    private filtersValues = {
+        date: {
+            startDate: moment().startOf('day'),
+            endDate: moment().endOf('day')
+        },
+        userId: undefined,
+        userName: undefined,
+        usernameEntityChange: undefined,
+        serviceName: undefined,
+        methodName: undefined,
+        browserInfo: undefined,
+        hasException: [],
+        minExecutionDuration: undefined,
+        maxExecutionDuration: undefined,
+        entityTypeFullName: undefined
+    };
+    private dateFilterModel: FilterModel;
     private filtersModels: FilterModel[] = [
-        new FilterModel({
+        this.dateFilterModel = new FilterModel({
             component: FilterCalendarComponent,
             caption: 'date',
             operator: { from: 'startDate', to: 'endDate' },
             field: 'date',
-            items: {from: new FilterItemModel(), to: new FilterItemModel()},
+            items: {
+                from: new FilterItemModel(DateHelper.addTimezoneOffset(this.filtersValues.date.startDate.toDate(), true)),
+                to: new FilterItemModel(DateHelper.addTimezoneOffset(this.filtersValues.date.endDate.toDate(), true))
+            },
             options: {method: 'getFilterByDate', params: { useUserTimezone: true }}
         }),
         new FilterModel({
@@ -109,22 +124,6 @@ export class AuditLogsComponent extends AppComponentBase implements OnInit, OnDe
         })
     ];
     operationLogsDataSource: DataSource;
-    private filtersValues = {
-        date: {
-            startDate: moment().startOf('day'),
-            endDate: moment().endOf('day')
-        },
-        userId: undefined,
-        userName: undefined,
-        usernameEntityChange: undefined,
-        serviceName: undefined,
-        methodName: undefined,
-        browserInfo: undefined,
-        hasException: [],
-        minExecutionDuration: undefined,
-        maxExecutionDuration: undefined,
-        entityTypeFullName: undefined
-    };
 
     constructor(
         injector: Injector,
@@ -146,6 +145,7 @@ export class AuditLogsComponent extends AppComponentBase implements OnInit, OnDe
                 this.filtersValues = filtersValues;
                 this.refreshData();
             });
+        this.dateFilterModel.updateCaptions();
         this.operationLogsDataSource = new DataSource({
             key: 'id',
             load: (loadOptions) => {
@@ -331,8 +331,8 @@ export class AuditLogsComponent extends AppComponentBase implements OnInit, OnDe
         this._auditLogService.getEntityChangesToExcel(
             this.filtersValues.date.startDate,
             this.filtersValues.date.endDate,
-            this.usernameEntityChange,
-            this.entityTypeFullName,
+            this.filtersValues.usernameEntityChange,
+            this.filtersValues.entityTypeFullName,
             undefined,
             1,
             0)
