@@ -301,20 +301,20 @@ export class BankAccountsService {
 
         this.allSyncAccountAreSelected$ = this.filteredSyncAccounts$.pipe(
             map((syncAccounts: SyncAccountBankDto[]) => {
-                let selectedSyncAccounts: SyncAccountBankDto[] = [];
-                let syncAccountWithoutBankAccounts: SyncAccountBankDto[] = [];
+                let selectedSyncAccountsNumber = 0;
+                let syncAccountWithoutBankAccountsNumber = 0;
                 syncAccounts.forEach((syncAccount: SyncAccountBankDto) => {
                     if (!syncAccount.bankAccounts.length) {
-                        syncAccountWithoutBankAccounts.push(syncAccount);
+                        syncAccountWithoutBankAccountsNumber++;
                     } else if (syncAccount['selected'] !== false) {
-                        selectedSyncAccounts.push(syncAccount);
+                        selectedSyncAccountsNumber++;
                     }
                 });
                 /** If there are no selected accounts - return false, else - check the sum of selected and empty accounts and if
                  *  it's the same as total - return true
                  */
-                return selectedSyncAccounts.length
-                       ? (selectedSyncAccounts.length + syncAccountWithoutBankAccounts.length === syncAccounts.length ? true : undefined)
+                return selectedSyncAccountsNumber
+                       ? (selectedSyncAccountsNumber + syncAccountWithoutBankAccountsNumber === syncAccounts.length ? true : undefined)
                        : false;
             }),
             distinctUntilChanged()
