@@ -2732,11 +2732,20 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         return result;
     }
 
+    isReportingCategoryRowTotal(cell, area): boolean {
+        let result = false;
+        if (area === 'row' || area === 'data') {
+            let path = cell.path || cell.rowPath;
+            result = path && !cell.isWhiteSpace && path[path.length - 1] ? path[path.length - 1].slice(0, 2) === CategorizationPrefixes.ReportingCategory : false;
+        }
+        return result;
+    }
+
     isAccountingRowTotal(cell, area): boolean {
         let result = false;
         if (area === 'row' || area === 'data') {
             let path = cell.path || cell.rowPath;
-            result = path && !cell.isWhiteSpace && path.length === 2 && path[1] ? path[1].slice(0, 2) === CategorizationPrefixes.AccountingType : false;
+            result = path && !cell.isWhiteSpace && path[path.length - 1] ? path[path.length - 1].slice(0, 2) === CategorizationPrefixes.AccountingType : false;
         }
         return result;
     }
@@ -3141,6 +3150,14 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
             if (this.isUnclassified(cell, area)) {
                 options.parentClasses.push('unclassifiedRow');
+            }
+
+            if (this.isAccountingRowTotal(cell, area)) {
+                options.parentClasses.push('totalRow', 'accountingTotal');
+            }
+
+            if (this.isReportingCategoryRowTotal(cell, area)) {
+                options.parentClasses.push('totalRow', 'reportingCategoryTotal');
             }
 
             if (this.isAccountingRowTotal(cell, area)) {
