@@ -7,7 +7,7 @@ import { switchMap, delay, first, filter, map, retryWhen, concatMap } from 'rxjs
 
 /** Application imports */
 import { GetProviderUITokenOutput, InstanceType, SyncServiceProxy, MyFinancesServiceProxy } from '@shared/service-proxies/service-proxies';
-import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
+import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { AppConsts } from '@shared/AppConsts';
 import { CFOService } from '@shared/cfo/cfo.service';
 import { SynchProgressService } from '@shared/cfo/bank-accounts/helpers/synch-progress.service';
@@ -25,7 +25,7 @@ enum QuovoOperation {
 @Injectable()
 export class QuovoService {
     private cfoService: CFOService;
-    private permissionChecker: PermissionCheckerService;
+    private permissionChecker: AppPermissionService;
     private quovo: any;
     private token: string;
     private iframe: HTMLIFrameElement;
@@ -48,7 +48,7 @@ export class QuovoService {
         this.tokenLoading$ = this.cfoService.isForUser
             ? this.myFinanceService.createUserInstanceProviderUIToken(SyncTypeIds.Quovo)
             : this.syncService.createProviderUIToken(InstanceType[this.cfoService.instanceType], this.cfoService.instanceId, SyncTypeIds.Quovo);
-        this.permissionChecker = injector.get(PermissionCheckerService);
+        this.permissionChecker = injector.get(AppPermissionService);
     }
 
     connect() {

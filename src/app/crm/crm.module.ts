@@ -44,7 +44,7 @@ import { FileUploadModule } from 'ng2-file-upload';
 
 /** Application imports */
 import { AppService } from '@app/app.service';
-import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
+import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { PipelineModule } from '@app/shared/pipeline/pipeline.module';
 import { DeleteAndReassignDialogComponent } from '@app/crm/shared/delete-and-reassign-dialog/delete-and-reassign-dialog.component';
 import { CrmStoreModule } from '@app/crm/store/crm-store.module';
@@ -164,7 +164,7 @@ export class CrmModule {
         private _appService: AppService,
         private _appStoreService: AppStoreService,
         private _importLeadsService: ImportLeadsService,
-        private _permissionService: PermissionCheckerService,
+        private _permissionService: AppPermissionService,
         private store$: Store<AppStore.State>
     ) {
         if (abp.session.userId) {

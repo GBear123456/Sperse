@@ -21,7 +21,7 @@ import {
     ModuleSubscriptionInfoDtoModule,
     ModuleSubscriptionInfoDto
 } from '@shared/service-proxies/service-proxies';
-import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
+import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { FeatureCheckerService } from '@abp/features/feature-checker.service';
 import { NotifyService } from '@abp/notify/notify.service';
 
@@ -42,7 +42,7 @@ export class AppService extends AppServiceBase {
     public moduleSubscriptions$: Observable<ModuleSubscriptionInfoDto[]>;
     private moduleSubscriptions: ModuleSubscriptionInfoDto[];
     public subscriptionIsFree$: Observable<boolean>;
-    private permission: PermissionCheckerService;
+    private permission: AppPermissionService;
     private feature: FeatureCheckerService;
     private instanceServiceProxy: InstanceServiceProxy;
     private personContactServiceProxy: PersonContactServiceProxy;
@@ -153,7 +153,7 @@ export class AppService extends AppServiceBase {
             },
         );
 
-        this.permission = injector.get(PermissionCheckerService);
+        this.permission = injector.get(AppPermissionService);
         this.feature = injector.get(FeatureCheckerService);
         this.instanceServiceProxy = injector.get(InstanceServiceProxy);
         this.personContactServiceProxy = injector.get(PersonContactServiceProxy);

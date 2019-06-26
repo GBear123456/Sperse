@@ -1,4 +1,4 @@
-import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
+import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { Injectable } from '@angular/core';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { UrlHelper } from '@shared/helpers/UrlHelper';
@@ -16,7 +16,7 @@ export class RouteGuard implements CanActivate, CanActivateChild {
 
     constructor(
         private _feature: FeatureCheckerService,
-        private _permissionChecker: PermissionCheckerService,
+        private _permissionChecker: AppPermissionService,
         private _router: Router,
         private _sessionService: AppSessionService,
         private _cacheService: CacheService

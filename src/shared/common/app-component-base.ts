@@ -8,7 +8,7 @@ import { Subject, Observable } from 'rxjs';
 import capitalize from 'underscore.string/capitalize';
 
 /** Application imports */
-import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
+import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { LocalizationService } from '@abp/localization/localization.service';
 import { FeatureCheckerService } from '@abp/features/feature-checker.service';
 import { NotifyService } from '@abp/notify/notify.service';
@@ -41,7 +41,7 @@ export abstract class AppComponentBase implements OnDestroy {
     totalRowCount: number;
     totalDataSource: any;
     localization: LocalizationService;
-    permission: PermissionCheckerService;
+    permission: AppPermissionService;
     protected feature: FeatureCheckerService;
     notify: NotifyService;
     setting: SettingService;
@@ -91,7 +91,7 @@ export abstract class AppComponentBase implements OnDestroy {
         private _injector: Injector
     ) {
         this.localization = _injector.get(LocalizationService);
-        this.permission = _injector.get(PermissionCheckerService);
+        this.permission = _injector.get(AppPermissionService);
         this.feature = _injector.get(FeatureCheckerService);
         this.notify = _injector.get(NotifyService);
         this.setting = _injector.get(SettingService);

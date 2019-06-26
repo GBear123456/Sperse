@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Output, Input } from '@angular/core';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
-import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
+import { AppPermissionService } from '@shared/common/auth/permission.service';
 
 @Component({
     selector: 'api-welcome',
@@ -13,7 +13,7 @@ export class ApiWelcomeComponent {
     canManageApiKeys = this.permission.isGranted('Pages.API.ManageKeys');
     constructor(
         public ls: AppLocalizationService,
-        private permission: PermissionCheckerService
+        private permission: AppPermissionService
     ) {}
 
     addApiKey() {

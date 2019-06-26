@@ -3,7 +3,7 @@ import { Subscription, Subject } from 'rxjs';
 import { RouteReuseStrategy } from '@angular/router';
 import { ImportStatus } from '@shared/AppEnums';
 import { ImportServiceProxy } from '@shared/service-proxies/service-proxies';
-import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
+import { AppPermissionService } from '@shared/common/auth/permission.service';
 
 @Injectable()
 export class ImportWizardService {
@@ -17,7 +17,7 @@ export class ImportWizardService {
     constructor(injector: Injector,
         private _reuseService: RouteReuseStrategy,
         private _importProxy: ImportServiceProxy,
-        private _permissionService: PermissionCheckerService
+        private _permissionService: AppPermissionService
     ) {
         this.subjectProgress = new Subject<any>();
         this.subjectCancel = new Subject<any>();

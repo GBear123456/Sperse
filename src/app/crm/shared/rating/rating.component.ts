@@ -6,7 +6,7 @@ import { finalize } from 'rxjs/operators';
 
 /** Application imports */
 import { NotifyService } from '@abp/notify/notify.service';
-import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
+import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { AppRatingComponent } from '@app/shared/common/rating/rating.component';
 import { ContactRatingsServiceProxy, ContactRatingInfoDto, RateContactInput, RateContactsInput } from '@shared/service-proxies/service-proxies';
@@ -32,7 +32,7 @@ export class RatingComponent {
     constructor(
         public notify: NotifyService,
         public ls: AppLocalizationService,
-        public permission: PermissionCheckerService,
+        public permission: AppPermissionService,
         private _ratingService: ContactRatingsServiceProxy
     ) {
     }

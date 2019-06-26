@@ -8,8 +8,17 @@ export class PanelMenuItem {
     visible: boolean = true;
     disabled: boolean = false;
     items: PanelMenuItem[];
+    host: string;
 
-    constructor(text: string, permissionName: string, icon: string, route: string, featureName: string, alterRoutes?: string[], items?: PanelMenuItem[]) {
+    constructor(text: string, 
+        permissionName: string, 
+        icon: string, 
+        route: string, 
+        featureName: string, 
+        alterRoutes?: string[], 
+        items?: PanelMenuItem[], 
+        host?: string
+    ) {
         this.text = text;
         this.permissionName = permissionName;
         this.featureName = featureName;
@@ -17,6 +26,7 @@ export class PanelMenuItem {
         this.route = route;
         this.disabled = !route;
         this.visible = Boolean(text);
+        this.host = host;
         
         if (items === undefined) {
             this.items = [];

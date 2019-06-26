@@ -11,7 +11,7 @@ import { PanelMenuItem } from './panel-menu-item';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { AppService } from '@app/app.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
-import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
+import { AppPermissionService } from '@shared/common/auth/permission.service';
 
 @Component({
     templateUrl: './top-bar.component.html',
@@ -36,7 +36,7 @@ export class TopBarComponent {
     constructor(
         private _appSessionService: AppSessionService,
         private _appService: AppService,
-        private _permissionChecker: PermissionCheckerService,
+        private _permissionChecker: AppPermissionService,
         public router: Router,
         public ls: AppLocalizationService
     ) {
@@ -75,7 +75,7 @@ export class TopBarComponent {
             if (val.length === 7)
                 value.push(this.initMenu(value.pop(), localizationSource, ++level));
             let item = new PanelMenuItem(value[0] && this.ls.l('Navigation_' + value[0], localizationSource),
-                value[1], value[2], value[3], value[4], value[5], value[6]);
+                value[1], value[2], value[3], value[4], value[5], value[6], value[7]);
             item.visible = this.showMenuItem(item);
             if (!level && item.visible) {
                 item['length'] = (item.text.length * 10 + 32);
@@ -130,14 +130,8 @@ export class TopBarComponent {
                 return false;
         }
 
-        return this._appService.isFeatureEnable(item.featureName) && (this.checkPermission(item.permissionName) ||
+        return this._appService.isFeatureEnable(item.featureName) && (this._permissionChecker.isGranted(item.permissionName) ||
             (item.items && item.items.length && this.checkChildMenuItemPermission(item) || !item.permissionName));
-    }
-
-    private checkPermission(value) {
-        return !value || value.split('|').some((item) => {
-            return item.split('&').every((key) => this._permissionChecker.isGranted(key));
-        });
     }
 
     private checkChildMenuItemPermission(menu): boolean {
@@ -147,6 +141,6 @@ export class TopBarComponent {
     }
 
     showMenuItem(item): boolean {
-        return this.checkMenuItemPermission(item);
+        return (!item.host || (abp.session.multiTenancySide == <any>abp.multiTenancy.sides[item.host.toUpperCase()])) && this.checkMenuItemPermission(item);
     }
 }

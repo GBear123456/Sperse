@@ -13,7 +13,7 @@ import { CFOServiceBase } from 'shared/cfo/cfo-service-base';
 import { InstanceServiceProxy, InstanceType, GetStatusOutputStatus, ContactServiceProxy, GetStatusOutput } from 'shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { AppConsts } from '@shared/AppConsts';
-import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
+import { AppPermissionService } from '@shared/common/auth/permission.service';
 
 @Injectable()
 export class CFOService extends CFOServiceBase {
@@ -26,7 +26,7 @@ export class CFOService extends CFOServiceBase {
         private _layoutService: LayoutService,
         private _instanceServiceProxy: InstanceServiceProxy,
         private _contactService: ContactServiceProxy,
-        private _permission: PermissionCheckerService
+        private _permission: AppPermissionService
     ) {
         super();
         this.statusActive = new BehaviorSubject<boolean>(false);

@@ -11,7 +11,7 @@ import { map } from 'rxjs/operators';
 import { AppConsts } from '@shared/AppConsts';
 import { AppTimezoneScope } from '@shared/AppEnums';
 import { NotifyService } from '@abp/notify/notify.service';
-import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
+import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { CountriesStoreActions, CountriesStoreSelectors } from '@app/store';
 import { RootStore, StatesStoreActions, StatesStoreSelectors } from '@root/store';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -73,7 +73,7 @@ export class PersonalDetailsComponent implements OnDestroy {
         private _timingService: TimingServiceProxy,
         private _contactsService: ContactsService,
         private _changeDetector: ChangeDetectorRef,
-        private _permission: PermissionCheckerService,
+        private _permission: AppPermissionService,
         private _personContactService: PersonContactServiceProxy,
         private _asyncPipe: AsyncPipe
     ) {
