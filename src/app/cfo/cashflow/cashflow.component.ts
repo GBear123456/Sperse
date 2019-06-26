@@ -2183,7 +2183,12 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     direction = 'down';
                     break;
                 case 67: // ctrl + c
-                    if (this.selectedCell && this.isCopyable(this.selectedCell) && (e.ctrlKey || e.metaKey)) {
+                    if (
+                        this.userPreferencesService.localPreferences.value.showCategoryTotals
+                        && this.selectedCell
+                        && this.isCopyable(this.selectedCell)
+                        && (e.ctrlKey || e.metaKey)
+                    ) {
                         this.onCopy(e);
                     }
                     break;
@@ -3210,7 +3215,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             }
 
             /** add draggable and droppable attribute to the cells that can be dragged */
-            if (this.cellCanBeDragged(cell, area)) {
+            if (this.userPreferencesService.localPreferences.value.showCategoryTotals && this.cellCanBeDragged(cell, area)) {
                 options.attributes['draggable'] = 'true';
                 options.attributes['droppable'] = 'false';
                 if (!this.cellIsHistorical(cell)) {
@@ -4216,7 +4221,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 cellObj.cellElement.classList.add('selectedCell');
             }
 
-            if (this.isCopyable(cellObj)) {
+            if (this.userPreferencesService.localPreferences.value.showCategoryTotals && this.isCopyable(cellObj)) {
                 let crossMovingTriangle = this._cellsCopyingService.getCrossMovingTriangle();
                 cellObj.cellElement.appendChild(crossMovingTriangle);
             } else if (this._cellsCopyingService.elem) {
@@ -4509,6 +4514,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 let clickedCellPrefix = cellObj.cell.rowPath.slice(-1)[0] ? cellObj.cell.rowPath.slice(-1)[0].slice(0, 2) : undefined;
                 const cellIsNotHistorical = this.cellIsNotHistorical(cellObj);
                 if (this.isInstanceAdmin &&
+                    /** disallow adding if category totals is deactivated */
+                    this.userPreferencesService.localPreferences.value.showCategoryTotals &&
                     /** disallow adding historical periods */
                     cellIsNotHistorical &&
                     /** allow adding only for empty cells */
