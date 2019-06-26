@@ -61,6 +61,7 @@ export class TransactionDetailInfoComponent implements OnInit {
     accountingTypes: any = [];
     filteredCategory: any = [];
     filteredSubCategory: any = [];
+    dropDownWidth = '200';
     constructor(
         private _cfoService: CFOService,
         private _transactionsService: TransactionsServiceProxy,
@@ -84,6 +85,10 @@ export class TransactionDetailInfoComponent implements OnInit {
             this.transactionId = id;
             this.getTransactionDetails();
         });
+    }
+
+    changeOptionsPopupWidth(e) {
+        e.component._popup.option('width', this.dropDownWidth);
     }
 
     getTransactionDetails() {
@@ -139,6 +144,7 @@ export class TransactionDetailInfoComponent implements OnInit {
 
     getFilteredSubCategoriesData(transactionInfo: TransactionDetailsDto, selectedCategoryKey: number) {
         this.filteredSubCategory = [];
+        this.selectedSubCategoryKey = null;
         this.categories.filter(category => {
             if (category['parent'] == selectedCategoryKey) {
                 this.filteredSubCategory.push(category);
@@ -168,7 +174,7 @@ export class TransactionDetailInfoComponent implements OnInit {
     }
 
     confirmUpdateTransactionCategory($event) {
-        if ($event.itemData.parent !== this.TRANSACTION_ACCOUNTING_TYPE_KEY) {
+        if ($event.itemData.typeId !== this.selectedCashflowTypeId) {
             abp.message.confirm(this.ls.l('RuleDialog_ChangeCashTypeMessage'), this.ls.l('RuleDialog_ChangeCashTypeTitle'),
                 (result) => {
                     if (result) {
@@ -184,6 +190,8 @@ export class TransactionDetailInfoComponent implements OnInit {
                         }
                     }
             });
+        } else {
+            this.updateTransactionCategory($event);
         }
     }
 
