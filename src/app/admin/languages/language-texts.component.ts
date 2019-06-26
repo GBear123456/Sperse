@@ -217,7 +217,7 @@ export class LanguageTextsComponent extends AppComponentBase implements AfterVie
                             value: this.searchText,
                             width: '279',
                             mode: 'search',
-                            placeholder: this.l('Search') + ' ' + this.l('Languages').toLowerCase(),
+                            placeholder: this.l('Search') + ' ' + this.l('Texts').toLowerCase(),
                             onValueChanged: (e) => {
                                 this.searchValueChange(e);
                             }
@@ -307,13 +307,13 @@ export class LanguageTextsComponent extends AppComponentBase implements AfterVie
             this.dataGrid.instance.refresh();
     }
 
-    openEditTextLanguageModal(baseLanguageName?, targetLanguageName?, sourceName?, key?, baseValue?, targetValue?) {
+    openEditTextLanguageModal(key?, baseValue?, targetValue?) {
         const dialogRef = this._dialog.open(EditTextModalComponent, {
             panelClass: 'slider',
             data: {
-                baseLanguageName: baseLanguageName,
-                targetLanguageName: targetLanguageName,
-                sourceName: sourceName,
+                baseLanguageName: this.filtersValues.baseLanguageName,
+                targetLanguageName: this.filtersValues.targetLanguageName,
+                sourceName: this.filtersValues.sourceName,
                 key: key,
                 baseValue: baseValue,
                 targetValue: targetValue,
