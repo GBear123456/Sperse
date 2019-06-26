@@ -1,9 +1,15 @@
+/** Core imports */
 import { Component, OnInit, Injector, EventEmitter, Input, Output, OnDestroy, ViewChild } from '@angular/core';
+
+/** Third party imports */
+import { DxTooltipComponent } from 'devextreme-angular/ui/tooltip';
+import { merge } from 'rxjs';
+import { filter, first, takeUntil } from 'rxjs/operators';
+
+/** Application imports */
 import { SyncProgressOutput, SyncProgressDtoSyncStatus } from 'shared/service-proxies/service-proxies';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
-import { DxTooltipComponent } from 'devextreme-angular/ui/tooltip';
 import { SynchProgressService } from '@shared/cfo/bank-accounts/helpers/synch-progress.service';
-import { takeUntil, filter, first } from 'rxjs/operators';
 
 @Component({
     templateUrl: './synch-progress.component.html',
@@ -11,9 +17,10 @@ import { takeUntil, filter, first } from 'rxjs/operators';
     selector: 'synch-progress'
 })
 export class SynchProgressComponent extends CFOComponentBase implements OnInit, OnDestroy {
-    @Input() isSyncAccountButtonShown = false;
+    @Input() showSyncAccountButton = false;
     @ViewChild('accountProgressTooltip') accountProgressTooltip: DxTooltipComponent;
     @Output() onComplete = new EventEmitter();
+    @Output() onSyncStarted = new EventEmitter();
     completed = true;
     showProgress = true;
     syncData: SyncProgressOutput;
@@ -68,8 +75,15 @@ export class SynchProgressComponent extends CFOComponentBase implements OnInit, 
         this.showLoader = true;
         if (toggleComponent) this.toggleComponent();
         this.syncProgressService.startSynchronization(true, false, 'all');
-        this.syncProgressService.syncCompleted$.pipe(filter(completed => !completed), first()).subscribe(
-            () => this.showLoader = false
+        merge(
+            this.syncProgressService.lastProgressFinished$,
+            this.syncProgressService.syncCompleted$.pipe(filter(completed => !completed))
+        ).pipe(takeUntil(this.deactivate$), first())
+        .subscribe(
+            () => {
+                this.showLoader = false;
+                this.onSyncStarted.emit();
+            }
         );
     }
 

@@ -1,6 +1,6 @@
 <div>
     <app-headline [config]="headlineConfig">
-        <synch-progress [isSyncAccountButtonShown]="true" class="synch-progress" (onComplete)="refresh()"></synch-progress>
+        <synch-progress [showSyncAccountButton]="true" class="synch-progress" (onSyncStarted)="refresh()" (onComplete)="refresh()"></synch-progress>
         <currencies-dropdown></currencies-dropdown>
     </app-headline>
     <div class="content-wrap">

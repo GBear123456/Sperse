@@ -2,8 +2,8 @@
 import { Injectable } from '@angular/core';
 
 /** Third party imports */
-import { Observable, Subject } from 'rxjs';
-import { filter, finalize, map, distinctUntilChanged, skip } from 'rxjs/operators';
+import { Observable, Subject, of } from 'rxjs';
+import { distinctUntilChanged, filter, finalize, tap, map, skip, publishReplay, refCount } from 'rxjs/operators';
 
 /** Application imports */
 import {
@@ -47,10 +47,17 @@ export class SynchProgressService {
     private synchProgressDelay = this.initialSynchProgressDelay;
     private synchProgressDelayMultiplier = 1.1;
     private maxSynchProgressDelay = 10 * 60 * 1000;
-
-    public currentProgress$: Observable<number>;
     public syncData$: Subject<SyncProgressOutput> = new Subject();
-    public hasFailedAccounts$: Observable<boolean>;
+    private lastProgressFinished: Subject<null> = new Subject<null>();
+    lastProgressFinished$: Observable<null> = this.lastProgressFinished.asObservable();
+    public currentProgress$: Observable<number> = this.syncData$.pipe(
+        map((res: SyncProgressOutput) => res.totalProgress.progressPercent),
+        distinctUntilChanged()
+    );
+    public hasFailedAccounts$: Observable<boolean> = this.syncData$.pipe(
+        map(syncData => this.syncHasFailedAccounts(syncData)),
+        distinctUntilChanged()
+    );
     private statusCheckCompleted: boolean;
 
     constructor(
@@ -118,30 +125,28 @@ export class SynchProgressService {
         }
     }
 
-    private runSynchProgress() {
+    private runSynchProgress(): Observable<SyncProgressOutput | boolean> {
         if (this.cfoService.isForUser)
-            return;
+            return of(false);
 
         this.appHttpConfiguration.avoidErrorHandling = true;
-        this.getSyncProgressSubscription = this.syncServiceProxy.getSyncProgress(
+        const syncProgress = this.syncServiceProxy.getSyncProgress(
             InstanceType[this.cfoService.instanceType],
             this.cfoService.instanceId
-        ).pipe(finalize(() => {
-            this.appHttpConfiguration.avoidErrorHandling = false;
-            this.runGetStatus();
-        })
-        ).subscribe(syncData => this.syncData$.next(syncData));
+        ).pipe(
+            finalize(() => {
+                this.appHttpConfiguration.avoidErrorHandling = false;
+                this.runGetStatus();
+            }),
+            tap(syncData => this.syncData$.next(syncData)),
+            publishReplay(),
+            refCount()
+        );
+        this.getSyncProgressSubscription = syncProgress.subscribe();
+        return syncProgress;
     }
 
     private subscribeToProgress() {
-        this.currentProgress$ = this.syncData$.pipe(
-            map((res: SyncProgressOutput) => res.totalProgress.progressPercent),
-            distinctUntilChanged()
-        );
-        this.hasFailedAccounts$ = this.syncData$.pipe(
-            map(syncData => this.syncHasFailedAccounts(syncData)),
-            distinctUntilChanged()
-        );
         this.syncData$
             .subscribe(
                 (result: SyncProgressOutput) => {
@@ -165,8 +170,14 @@ export class SynchProgressService {
                             this.timeoutsIds.push(setTimeout(
                                 () => {
                                     this.runSync(true).subscribe(
-                                        () => this.runSynchProgress(),
-                                        this.syncAllFailed.bind(this)
+                                        () => {
+                                            this.runSynchProgress().pipe(
+                                                filter(() => this.tryCount === this.maxTryCount - 1)
+                                            ).subscribe(() => {
+                                                 this.lastProgressFinished.next();
+                                            });
+                                        },
+                                         this.syncAllFailed.bind(this)
                                     );
                                 }, 10 * 1000
                             ));
