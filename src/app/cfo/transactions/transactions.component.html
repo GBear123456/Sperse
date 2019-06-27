@@ -25,7 +25,7 @@
                 </div>
                 <div class="transactions">
                     <dx-data-grid id="gridContainer"
-                                  [noDataText]="dataSource?.isLoading() ? '' : l('NoData')"
+                                  [noDataText]="!dataGrid?.dataSource || dataSource?.isLoading() ? '' : l('NoData')"
                                   [allowColumnReordering]="true"
                                   [columnAutoWidth]="true"
                                   [allowColumnResizing]="true"
