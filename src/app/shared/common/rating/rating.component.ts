@@ -3,7 +3,7 @@ import { Component, OnInit, Input, EventEmitter, Output, AfterViewInit } from '@
 
 /** Third party imports */
 import { Store, select } from '@ngrx/store';
-import { finalize } from 'rxjs/operators';
+import { first } from 'rxjs/operators';
 
 /** Application imports */
 import { MessageService } from '@abp/message/message.service';
@@ -28,7 +28,7 @@ export class AppRatingComponent implements OnInit, AfterViewInit {
     @Input() allowManage = false;
 
     @Output() onValueChanged: EventEmitter<any> = new EventEmitter();
-    @Output() onProcess: EventEmitter<any> = new EventEmitter();
+    @Output() onProcess: EventEmitter<number> = new EventEmitter();
 
     ratingMin: number;
     ratingMax: number;
@@ -39,15 +39,29 @@ export class AppRatingComponent implements OnInit, AfterViewInit {
     filtered = false;
 
     constructor(
-        public message: MessageService,
         public ls: AppLocalizationService,
+        private _message: MessageService,
         private _filtersService: FiltersService,
         private store$: Store<AppStore.State>
-    ) {
+    ) { }
+
+    ngAfterViewInit(): void {
+        this.highlightSelectedFilters();
+    }
+
+    ngOnInit() {
+        this.store$.pipe(select(RatingsStoreSelectors.getRatings)).pipe(first()).subscribe((result: any[]) => {
+            if (result.length) {
+                this.ratingMin = result[0].id;
+                this.ratingMax = result[result.length - 1].id;
+                if (!this.ratingValue)
+                    this.ratingValue = this.ratingMin;
+            }
+        });
     }
 
     reset() {
-        this.ratingValue = this.ratingMin;    
+        this.ratingValue = this.ratingMin;
     }
 
     toggle() {
@@ -55,12 +69,12 @@ export class AppRatingComponent implements OnInit, AfterViewInit {
             this.highlightSelectedFilters();
     }
 
-    apply(selectedKeys = undefined) {
+    apply(selectedKeys?) {
         this.selectedKeys = selectedKeys || this.selectedKeys;
         if (this.sliderComponent && this.selectedKeys && this.selectedKeys.length) {
             if (this.bulkUpdateMode) {
-                this.message.confirm(
-                    this.ls.ls(AppConsts.localization.defaultLocalizationSourceName, 
+                this._message.confirm(
+                    this.ls.ls(AppConsts.localization.defaultLocalizationSourceName,
                         'BulkUpdateConfirmation', this.selectedKeys.length),
                     isConfirmed => {
                         if (isConfirmed)
@@ -114,21 +128,6 @@ export class AppRatingComponent implements OnInit, AfterViewInit {
 
     onInitialized($event) {
         this.sliderComponent = $event.component;
-    }
-
-    ngAfterViewInit(): void {
-        this.highlightSelectedFilters();
-    }
-
-    ngOnInit() {
-        this.store$.pipe(select(RatingsStoreSelectors.getRatings)).subscribe((result: any[]) => {
-            if (result.length) {
-                this.ratingMin = result[0].id;
-                this.ratingMax = result[result.length - 1].id;
-                if (!this.ratingValue)
-                    this.ratingValue = this.ratingMin;
-            }
-        });
     }
 
     onValueChange(event) {

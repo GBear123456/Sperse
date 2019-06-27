@@ -2,11 +2,10 @@
     [allowManage]="checkPermissions()"
     [filterModel]="filterModel"
     [selectedKeys]="selectedKeys"
-    [ratingValue]="ratingValue"
     [targetSelector]="targetSelector"
     [bulkUpdateMode]="bulkUpdateMode"
     [hideButtons]="hideButtons"
     [ratingValue]="ratingValue"
     (onValueChanged)="onValueChanged.emit($event)"
-    (onProcess)="onProcess($event)"
-></app-rating>
+    (onProcess)="onProcess($event)">
+</app-rating>

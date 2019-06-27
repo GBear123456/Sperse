@@ -9,7 +9,7 @@ import { NotifyService } from '@abp/notify/notify.service';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { AppRatingComponent } from '@app/shared/common/rating/rating.component';
-import { ContactRatingsServiceProxy, ContactRatingInfoDto, RateContactInput, RateContactsInput } from '@shared/service-proxies/service-proxies';
+import { ContactRatingsServiceProxy, RateContactInput, RateContactsInput } from '@shared/service-proxies/service-proxies';
 
 @Component({
   selector: 'crm-rating',
@@ -30,9 +30,9 @@ export class RatingComponent {
     @Output() onRatingUpdated: EventEmitter<any> = new EventEmitter();
 
     constructor(
-        public notify: NotifyService,
-        public ls: AppLocalizationService,
-        public permission: AppPermissionService,
+        private _notify: NotifyService,
+        private _ls: AppLocalizationService,
+        private _permission: AppPermissionService,
         private _ratingService: ContactRatingsServiceProxy
     ) {
     }
@@ -54,7 +54,7 @@ export class RatingComponent {
                 this.ratingComponent.reset();
             })).subscribe((result) => {
                 this.onRatingUpdated.emit(ratingValue);
-                this.notify.success(this.ls.l('CustomersRated'));
+                this._notify.success(this._ls.l('CustomersRated'));
             });
         else
             this._ratingService.rateContact(RateContactInput.fromJS({
@@ -65,12 +65,12 @@ export class RatingComponent {
                     this.ratingComponent.reset();
             })).subscribe((result) => {
                 this.onRatingUpdated.emit(ratingValue);
-                this.notify.success(this.ls.l('CustomersRated'));
-            });    
+                this._notify.success(this._ls.l('CustomersRated'));
+            });
     }
 
     checkPermissions() {
-        return this.permission.isGranted('Pages.CRM.Customers.ManageRatingAndStars') &&
-            (!this.bulkUpdateMode || this.permission.isGranted('Pages.CRM.BulkUpdates'));
+        return this._permission.isGranted('Pages.CRM.Customers.ManageRatingAndStars') &&
+            (!this.bulkUpdateMode || this._permission.isGranted('Pages.CRM.BulkUpdates'));
     }
 }
