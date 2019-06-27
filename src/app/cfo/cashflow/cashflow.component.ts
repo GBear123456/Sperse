@@ -4718,7 +4718,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         let newValue = event ? event.component.option('value') : this.modifyingCellNumberBox.option('value');
 
         if (+newValue !== 0) {
-            this.startLoading();
             let forecastModel;
             let categoryId = this.cashflowService.getCategoryValueByPrefix(savedCellObj.cell.rowPath, CategorizationPrefixes.Category);
             let subCategoryId = this.cashflowService.getCategoryValueByPrefix(savedCellObj.cell.rowPath, CategorizationPrefixes.SubCategory);
@@ -4748,8 +4747,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 InstanceType10[this.instanceType],
                 this.instanceId,
                 forecastModel
-            ).pipe(finalize(() => this.finishLoading()))
-                .subscribe(
+            ).subscribe(
                 res => {
                     let dateWithOffset = moment(targetDate).add(new Date(<any>targetDate).getTimezoneOffset(), 'minutes');
                     /** Update data locally */
