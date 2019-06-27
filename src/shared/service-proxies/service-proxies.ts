@@ -8787,6 +8787,65 @@ export class ContactPhoneServiceProxy {
     }
 
     /**
+     * @contactId (optional) 
+     * @return Success
+     */
+    getContactPhones(contactId: number | null | undefined): Observable<ContactPhoneInfo[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/ContactPhone/GetContactPhones?";
+        if (contactId !== undefined)
+            url_ += "contactId=" + encodeURIComponent("" + contactId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetContactPhones(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetContactPhones(<any>response_);
+                } catch (e) {
+                    return <Observable<ContactPhoneInfo[]>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<ContactPhoneInfo[]>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetContactPhones(response: HttpResponseBase): Observable<ContactPhoneInfo[]> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(ContactPhoneInfo.fromJS(item));
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<ContactPhoneInfo[]>(<any>null);
+    }
+
+    /**
      * @input (optional) 
      * @return Success
      */
@@ -19478,61 +19537,6 @@ export class PersonContactServiceProxy {
     constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
         this.http = http;
         this.baseUrl = baseUrl ? baseUrl : "";
-    }
-
-    /**
-     * @contactId (optional) 
-     * @return Success
-     */
-    getPersonContactInfo(contactId: number | null | undefined): Observable<PersonContactInfoDto> {
-        let url_ = this.baseUrl + "/api/services/CRM/PersonContact/GetPersonContactInfo?";
-        if (contactId !== undefined)
-            url_ += "contactId=" + encodeURIComponent("" + contactId) + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetPersonContactInfo(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processGetPersonContactInfo(<any>response_);
-                } catch (e) {
-                    return <Observable<PersonContactInfoDto>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<PersonContactInfoDto>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processGetPersonContactInfo(response: HttpResponseBase): Observable<PersonContactInfoDto> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? PersonContactInfoDto.fromJS(resultData200) : new PersonContactInfoDto();
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<PersonContactInfoDto>(<any>null);
     }
 
     /**
@@ -39988,6 +39992,7 @@ export interface IContactEmailInfo {
 }
 
 export class ContactPhoneInfo implements IContactPhoneInfo {
+    id!: number | undefined;
     phoneNumber!: string | undefined;
     phoneExtension!: string | undefined;
     usageTypeId!: string | undefined;
@@ -40003,6 +40008,7 @@ export class ContactPhoneInfo implements IContactPhoneInfo {
 
     init(data?: any) {
         if (data) {
+            this.id = data["id"];
             this.phoneNumber = data["phoneNumber"];
             this.phoneExtension = data["phoneExtension"];
             this.usageTypeId = data["usageTypeId"];
@@ -40018,6 +40024,7 @@ export class ContactPhoneInfo implements IContactPhoneInfo {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
         data["phoneNumber"] = this.phoneNumber;
         data["phoneExtension"] = this.phoneExtension;
         data["usageTypeId"] = this.usageTypeId;
@@ -40026,6 +40033,7 @@ export class ContactPhoneInfo implements IContactPhoneInfo {
 }
 
 export interface IContactPhoneInfo {
+    id: number | undefined;
     phoneNumber: string | undefined;
     phoneExtension: string | undefined;
     usageTypeId: string | undefined;

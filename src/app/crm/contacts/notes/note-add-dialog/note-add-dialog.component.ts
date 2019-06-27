@@ -24,15 +24,11 @@ import {
     PersonOrgRelationShortInfo,
     PersonShortInfoDto,
     OrganizationShortInfo,
-    OrganizationContactServiceProxy,
-    PersonContactServiceProxy,
-    NoteInfoDtoNoteType,
     CreateNoteInputNoteType
 } from '@shared/service-proxies/service-proxies';
 import { PhoneFormatPipe } from '@shared/common/pipes/phone-format/phone-format.pipe';
 import { EditContactDialog } from '../../edit-contact-dialog/edit-contact-dialog.component';
 import { AppStore, ContactAssignedUsersStoreSelectors } from '@app/store';
-import { ContactGroup } from '@shared/AppEnums';
 import { ContactsService } from '@app/crm/contacts/contacts.service';
 
 class PhoneNumber {
@@ -87,9 +83,7 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
         private _userService: UserServiceProxy,
         private _contactPhoneService: ContactPhoneServiceProxy,
         private store$: Store<AppStore.State>,
-        private clientService: ContactsService,
-        private personServiceProxy: PersonContactServiceProxy,
-        private orgContactService: OrganizationContactServiceProxy
+        private clientService: ContactsService
     ) {
         super(injector);
 
@@ -234,10 +228,8 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
     onContactChanged($event) {
         let contact = this.getContactById($event.value);
         const contactPhones$ = contact.phones ? of(contact.phones) :
-            (contact instanceof OrganizationShortInfo
-                ? this.orgContactService.getOrganizationContactInfo(contact.id)
-                : this.personServiceProxy.getPersonContactInfo(contact.id)
-            ).pipe(map(res => res.details && res.details.phones || []));
+            this._contactPhoneService.getContactPhones(contact.id)
+                .pipe(map(phones => phones || []));
 
         contactPhones$.pipe(
             mergeAll(),
