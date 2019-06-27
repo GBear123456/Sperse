@@ -166,7 +166,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             this.filtersService.change(this.setCurrenciesFilter(selectedCurrencyId));
         });
 
-        this.dataSource = {
+        this.dataSource = new DataSource({
             store: {
                 type: 'odata',
                 url: this.getODataUrl(this.dataSourceURI),
@@ -175,7 +175,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                 }
             }
-        };
+        });
 
         this.totalDataSource = new DataSource({
             store: {
