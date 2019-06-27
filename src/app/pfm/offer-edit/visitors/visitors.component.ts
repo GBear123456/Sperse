@@ -206,7 +206,7 @@ export class VisitorsComponent extends AppComponentBase implements AfterViewInit
     showCalendarDialog() {
         this._dialog.closeAll();
         this._dialog.open(CalendarDialogComponent, {
-            panelClass: [ 'slider', 'min-width-0' ],
+            panelClass: [ 'slider' ],
             disableClose: false,
             hasBackdrop: false,
             closeOnNavigation: true,
