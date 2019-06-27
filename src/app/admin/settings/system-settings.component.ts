@@ -11,6 +11,7 @@ import { UploadSSLCertificateModalComponent } from './modals/upload-ssl-cert-mod
 import { AddOrEditSSLBindingModal } from './modals/add-or-edit-ssl-binding-modal.component';
 import { NotifyService } from '@abp/notify/notify.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { AppHttpInterceptor } from '@shared/http/appHttpInterceptor';
 
 @Component({
@@ -32,18 +33,24 @@ export class SystemSettingsComponent implements OnInit {
         { 'Id': 1, 'Name': 'Platform App' }
     ];
 
+    tenantHostsEnabled = abp.features.isEnabled('Admin.Customizations') 
+        && this._permission.isGranted('Pages.Administration.TenantHosts');
+
     constructor(
         private _tenantSslCertificateService: TenantSslCertificateServiceProxy,
         private _tenantHostService: TenantHostServiceProxy,
         private _changeDetection: ChangeDetectorRef,
         private _notifyService: NotifyService,
+        private _permission: AppPermissionService,
         public httpInterceptor: AppHttpInterceptor,
         public ls: AppLocalizationService
     ) {}
 
     ngOnInit(): void {
-        this.refreshSSLGrid();
-        this.refreshSSLBindingGrid();
+        if (this.tenantHostsEnabled) {
+            this.refreshSSLGrid();
+            this.refreshSSLBindingGrid();
+        }
     }
 
     showSSLDialog() {

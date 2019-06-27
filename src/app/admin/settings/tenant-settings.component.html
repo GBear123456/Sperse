@@ -255,7 +255,7 @@
                     </div>
                 </dx-scroll-view>
             </mat-tab>
-            <mat-tab label="{{l('Domain')}}">
+            <mat-tab label="{{l('Domain')}}" *ngIf="isAdminCustomizations && isTenantHosts">
                 <dx-scroll-view showScrollbar="onHover">
                     <system-settings></system-settings>
                 </dx-scroll-view>
