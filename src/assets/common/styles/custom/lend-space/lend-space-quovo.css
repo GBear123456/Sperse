@@ -1,4 +1,3 @@
-@import '../../../../fonts/fonts-poppins.css';
 .Dashboard__main,
 .solo,
 .GoalsModal__overlay {
@@ -6,7 +5,7 @@
 }
 *,
 body {
-  font-family: Poppins !important;
+  font-family: Poppins, Lato, Helvetica, sans-serif !important;
 }
 .solo {
   border-top: 20px solid #ffcc00;
@@ -45,7 +44,7 @@ html {
 .override__button {
   border-radius: 2px;
   background-color: #ffcc00;
-  font-family: 'Poppins', sans-serif;
+  font-family: Poppins, Lato, Helvetica, sans-serif;
   font-size: 18px;
   color: #000000;
   transition: 0.2s;
