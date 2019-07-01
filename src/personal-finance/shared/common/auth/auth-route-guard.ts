@@ -34,6 +34,12 @@ export class CreditReportsRouteGuard implements CanActivate, CanActivateChild {
         return route.data && route.data.isPublic;
     }
 
+    checkLoansSection(url) {
+        return ['personal', 'auto', 'business', 'installment', 'payday'].every(
+            item => url.indexOf('/personal-finance/offers/' + item + '-loans') < 0
+        );
+    }
+
     canActivateChild(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
         if (UrlHelper.isPfmAppUrl(state.url)) {
             if (this._featureChecker.isEnabled('PFM.Applications'))                
@@ -45,7 +51,7 @@ export class CreditReportsRouteGuard implements CanActivate, CanActivateChild {
             if (!route.data || !route.data['permission']
                 || this._permissionChecker.isGranted(route.data['permission'])
             ) {
-                if (this._sessionService.isLendspaceDemoUser && state.url.indexOf('offers/personal-loans') < 0) {
+                if (this._sessionService.isLendspaceDemoUser && this.checkLoansSection(state.url)) {
                     this._router.navigate(['/personal-finance/offers/personal-loans']);
                     return false;
                 }                
