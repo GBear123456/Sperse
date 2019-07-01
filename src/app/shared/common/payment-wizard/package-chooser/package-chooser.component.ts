@@ -139,7 +139,7 @@ export class PackageChooserComponent implements OnInit {
 
     private getCurrentSubscriptionInfo(currentSubscriptionInfo: ModuleSubscriptionInfoExtended): void {
         if (currentSubscriptionInfo) {
-            this.tenantSubscriptionIsTrial = currentSubscriptionInfo.isInTrial;
+            this.tenantSubscriptionIsTrial = currentSubscriptionInfo.isTrial;
             this.tenantSubscriptionIsFree = this.freePackages && this.freePackages.length ? currentSubscriptionInfo.editionId === this.freePackages[0].editions[0].id : false;
         }
     }
