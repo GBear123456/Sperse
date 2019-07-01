@@ -68339,6 +68339,7 @@ export class TransactionDetailsDto implements ITransactionDetailsDto {
     accountingTypeId!: number | undefined;
     accountingType!: string | undefined;
     transactionDescriptor!: string | undefined;
+    isDescriptorCalculated!: boolean | undefined;
     comments!: TransactionCommentDto[] | undefined;
     attributes!: TransactionAttributeDto[] | undefined;
 
@@ -68370,6 +68371,7 @@ export class TransactionDetailsDto implements ITransactionDetailsDto {
             this.accountingTypeId = data["accountingTypeId"];
             this.accountingType = data["accountingType"];
             this.transactionDescriptor = data["transactionDescriptor"];
+            this.isDescriptorCalculated = data["isDescriptorCalculated"];
             if (data["comments"] && data["comments"].constructor === Array) {
                 this.comments = [];
                 for (let item of data["comments"])
@@ -68409,6 +68411,7 @@ export class TransactionDetailsDto implements ITransactionDetailsDto {
         data["accountingTypeId"] = this.accountingTypeId;
         data["accountingType"] = this.accountingType;
         data["transactionDescriptor"] = this.transactionDescriptor;
+        data["isDescriptorCalculated"] = this.isDescriptorCalculated;
         if (this.comments && this.comments.constructor === Array) {
             data["comments"] = [];
             for (let item of this.comments)
@@ -68441,6 +68444,7 @@ export interface ITransactionDetailsDto {
     accountingTypeId: number | undefined;
     accountingType: string | undefined;
     transactionDescriptor: string | undefined;
+    isDescriptorCalculated: boolean | undefined;
     comments: TransactionCommentDto[] | undefined;
     attributes: TransactionAttributeDto[] | undefined;
 }
