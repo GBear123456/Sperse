@@ -183,7 +183,13 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         if (this._cacheService.exists(cacheKey)) {
             this.selectedContactGroup = this._cacheService.get(cacheKey);
             this.contactGroupId = ContactGroup[this.selectedContactGroup];
+            this.createButtonEnabledSet();
         }
+    }
+
+    private createButtonEnabledSet() {
+        this.headlineConfig.buttons[0].enabled =
+            this._contactService.checkCGPermission(this.contactGroupId); 
     }
 
     private isActivated() {
@@ -926,6 +932,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         if (event.previousValue != event.value) {
             this.contactGroupId = ContactGroup[event.value];
             this._cacheService.set(this.getCacheKey(this.CONTACT_GROUP_CACHE_KEY), event.value);
+            this.createButtonEnabledSet();
             this.filterChanged = true;
             this.initToolbarConfig();
             if (!this.showPipeline)

@@ -61,6 +61,7 @@ import { CacheHelper } from '@shared/common/cache-helper/cache-helper';
 import { MessageService } from '@abp/message/message.service';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
 import { ToolbarService } from '@app/shared/common/toolbar/toolbar.service';
+import { ContactsService } from '@app/crm/contacts/contacts.service';
 
 @Component({
     templateUrl: 'create-client-dialog.component.html',
@@ -159,9 +160,14 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
     isTagsSelected = false;
     isRatingSelected = true;
 
+    isAssignDisabled = true;
+    isListAndTagsDisabled = true;
+    isRatingAndStarsDisabled = true;
+
     constructor(
         public dialog: MatDialog,
-        public contactService: ContactServiceProxy,
+        public contactProxy: ContactServiceProxy,
+        private _contactService: ContactsService,
         private _cacheService: CacheService,
         private _router: Router,
         private _contactPhoneService: ContactPhoneServiceProxy,
@@ -190,6 +196,10 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
             {text: this.ls.l('SaveAndExtend'), selected: false},
             {text: this.ls.l('SaveAndClose'), selected: false}
         ];
+
+        this.isAssignDisabled = !_contactService.checkCGPermission(data.customerType, 'ManageAssignments');
+        this.isListAndTagsDisabled = !_contactService.checkCGPermission(data.customerType, 'ManageListsAndTags');
+        this.isRatingAndStarsDisabled = !_contactService.checkCGPermission(data.customerType, 'ManageRatingAndStars');
     }
 
     ngOnInit() {
@@ -257,11 +267,11 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
                 source: this.photoSourceData
             }) : null,
             note: this.notes,
-            assignedUserId: assignedUserId || this.currentUserId,
+            assignedUserId: this.isAssignDisabled ? undefined : assignedUserId || this.currentUserId,
             stageId: stageId,
-            lists: lists,
-            tags: tags,
-            ratingId: ratingId,
+            lists: this.isListAndTagsDisabled ? undefined : lists,
+            tags: this.isListAndTagsDisabled ? undefined : tags,
+            ratingId: this.isRatingAndStarsDisabled ? undefined: ratingId,
             contactGroupId: this.data.customerType,
             partnerTypeName: partnerTypeName
         };
@@ -273,7 +283,7 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
                 .pipe(finalize(() => { saveButton.disabled = false; this.modalDialog.finishLoading(); }))
                 .subscribe(result => this.afterSave(result.contactId, result.id));
         else
-            this.contactService.createContact(CreateContactInput.fromJS(dataObj))
+            this.contactProxy.createContact(CreateContactInput.fromJS(dataObj))
                 .pipe(finalize(() => { saveButton.disabled = false; this.modalDialog.finishLoading(); }))
                 .subscribe(result => this.afterSave(result.id));
     }
@@ -459,7 +469,7 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
 
         clearTimeout(this.similarCustomersTimeout);
         this.similarCustomersTimeout = setTimeout(() => {
-            this.contactService.getSimilarContacts(
+            this.contactProxy.getSimilarContacts(
                 field ? undefined : person.namePrefix || undefined,
                 field ? undefined : person.firstName || undefined,
                 field ? undefined : person.middleName || undefined,

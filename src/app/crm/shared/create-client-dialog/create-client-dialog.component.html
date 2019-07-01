@@ -40,7 +40,7 @@
     [permissionKey]="getAssignmentsPermissinKey()"
     [assignedUsersSelector]="getAssignedUsersSelector()"
     [selectedItemKey]="currentUserId"
-    [proxyService]="contactService"
+    [proxyService]="contactProxy"
     [hideButtons]="true"
     (onSelectionChanged)="onUserAssignmentChanged($event)">
 </crm-user-assignment-list>
@@ -56,7 +56,7 @@
         [ngStyle]="{'background-image': photoOriginalData ? 'url(' + photoOriginalData + ')': ''}"></div>
 
     <dx-toolbar (onItemRendered)="toolbarService.onItemRendered($event)">
-        <dxi-item location="before" template="clientAssign"></dxi-item>
+        <dxi-item location="before" template="clientAssign" [disabled]="isAssignDisabled"></dxi-item>
         <div *dxTemplate="let data of 'clientAssign'">
             <dx-button [icon]="'./assets/common/icons/assign-icon.svg'"
                        [text]="ls.l('Assign')"
@@ -100,7 +100,7 @@
             </ng-template>
         </ng-template>
 
-        <dxi-item location="before" template="lists"></dxi-item>
+        <dxi-item location="before" template="lists" [disabled]="isListAndTagsDisabled"></dxi-item>
         <div *dxTemplate="let data of 'lists'">
             <dx-button [icon]="'./assets/common/icons/folder.svg'"
                        [text]="ls.l('Lists')"
@@ -110,7 +110,7 @@
             </dx-button>
         </div>
 
-        <dxi-item location="before" template="tags"></dxi-item>
+        <dxi-item location="before" template="tags" [disabled]="isListAndTagsDisabled"></dxi-item>
         <div *dxTemplate="let data of 'tags'">
             <dx-button [icon]="'./assets/common/icons/pen.svg'"
                        [text]="ls.l('Tags')"
@@ -120,7 +120,7 @@
             </dx-button>
         </div>
 
-        <dxi-item location="before" template="rating"></dxi-item>
+        <dxi-item location="before" template="rating" [disabled]="isRatingAndStarsDisabled"></dxi-item>
         <div *dxTemplate="let data of 'rating'">
             <dx-button [icon]="'./assets/common/icons/flag-icon.svg'"
                        [text]="ls.l('Rating')"
