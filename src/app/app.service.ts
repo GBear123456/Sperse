@@ -200,7 +200,7 @@ export class AppService extends AppServiceBase {
     }
 
     getSubscriptionStatusBySubscription(subscription: ModuleSubscriptionInfoDto) {
-        return subscription.isInTrial
+        return subscription.isTrial
                 ? this.appLocalizationService.l('trial')
                 : this.appLocalizationService.l('subscription');
     }

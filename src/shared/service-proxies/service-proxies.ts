@@ -44378,7 +44378,7 @@ export class OrderSubscription implements IOrderSubscription {
     frequency!: OrderSubscriptionFrequency | undefined;
     trialDayCount!: number | undefined;
     statusId!: string;
-    isInTrial!: boolean | undefined;
+    isTrial!: boolean | undefined;
     isLocked!: boolean;
     hasRecurringBilling!: boolean | undefined;
     previousOrderSubscriptionId!: number | undefined;
@@ -44421,7 +44421,7 @@ export class OrderSubscription implements IOrderSubscription {
             this.frequency = data["frequency"];
             this.trialDayCount = data["trialDayCount"];
             this.statusId = data["statusId"];
-            this.isInTrial = data["isInTrial"];
+            this.isTrial = data["isTrial"];
             this.isLocked = data["isLocked"];
             this.hasRecurringBilling = data["hasRecurringBilling"];
             this.previousOrderSubscriptionId = data["previousOrderSubscriptionId"];
@@ -44468,7 +44468,7 @@ export class OrderSubscription implements IOrderSubscription {
         data["frequency"] = this.frequency;
         data["trialDayCount"] = this.trialDayCount;
         data["statusId"] = this.statusId;
-        data["isInTrial"] = this.isInTrial;
+        data["isTrial"] = this.isTrial;
         data["isLocked"] = this.isLocked;
         data["hasRecurringBilling"] = this.hasRecurringBilling;
         data["previousOrderSubscriptionId"] = this.previousOrderSubscriptionId;
@@ -44508,7 +44508,7 @@ export interface IOrderSubscription {
     frequency: OrderSubscriptionFrequency | undefined;
     trialDayCount: number | undefined;
     statusId: string;
-    isInTrial: boolean | undefined;
+    isTrial: boolean | undefined;
     isLocked: boolean;
     hasRecurringBilling: boolean | undefined;
     previousOrderSubscriptionId: number | undefined;
@@ -61958,7 +61958,7 @@ export interface IGetPackagesConfigOutput {
 }
 
 export class ModuleSubscriptionInfoExtended implements IModuleSubscriptionInfoExtended {
-    isInTrial!: boolean | undefined;
+    isTrial!: boolean | undefined;
     editionId!: number;
     maxUserCount!: number | undefined;
     frequency!: ModuleSubscriptionInfoExtendedFrequency;
@@ -61974,7 +61974,7 @@ export class ModuleSubscriptionInfoExtended implements IModuleSubscriptionInfoEx
 
     init(data?: any) {
         if (data) {
-            this.isInTrial = data["isInTrial"];
+            this.isTrial = data["isTrial"];
             this.editionId = data["editionId"];
             this.maxUserCount = data["maxUserCount"];
             this.frequency = data["frequency"];
@@ -61990,7 +61990,7 @@ export class ModuleSubscriptionInfoExtended implements IModuleSubscriptionInfoEx
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["isInTrial"] = this.isInTrial;
+        data["isTrial"] = this.isTrial;
         data["editionId"] = this.editionId;
         data["maxUserCount"] = this.maxUserCount;
         data["frequency"] = this.frequency;
@@ -61999,7 +61999,7 @@ export class ModuleSubscriptionInfoExtended implements IModuleSubscriptionInfoEx
 }
 
 export interface IModuleSubscriptionInfoExtended {
-    isInTrial: boolean | undefined;
+    isTrial: boolean | undefined;
     editionId: number;
     maxUserCount: number | undefined;
     frequency: ModuleSubscriptionInfoExtendedFrequency;
@@ -67194,7 +67194,7 @@ export class ModuleSubscriptionInfoDto implements IModuleSubscriptionInfoDto {
     module!: ModuleSubscriptionInfoDtoModule | undefined;
     endDate!: moment.Moment | undefined;
     editionName!: string | undefined;
-    isInTrial!: boolean | undefined;
+    isTrial!: boolean | undefined;
     isLocked!: boolean | undefined;
     trackingCode!: string | undefined;
     hasRecurringBilling!: boolean | undefined;
@@ -67214,7 +67214,7 @@ export class ModuleSubscriptionInfoDto implements IModuleSubscriptionInfoDto {
             this.module = data["module"];
             this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
             this.editionName = data["editionName"];
-            this.isInTrial = data["isInTrial"];
+            this.isTrial = data["isTrial"];
             this.isLocked = data["isLocked"];
             this.trackingCode = data["trackingCode"];
             this.hasRecurringBilling = data["hasRecurringBilling"];
@@ -67234,7 +67234,7 @@ export class ModuleSubscriptionInfoDto implements IModuleSubscriptionInfoDto {
         data["module"] = this.module;
         data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
         data["editionName"] = this.editionName;
-        data["isInTrial"] = this.isInTrial;
+        data["isTrial"] = this.isTrial;
         data["isLocked"] = this.isLocked;
         data["trackingCode"] = this.trackingCode;
         data["hasRecurringBilling"] = this.hasRecurringBilling;
@@ -67247,7 +67247,7 @@ export interface IModuleSubscriptionInfoDto {
     module: ModuleSubscriptionInfoDtoModule | undefined;
     endDate: moment.Moment | undefined;
     editionName: string | undefined;
-    isInTrial: boolean | undefined;
+    isTrial: boolean | undefined;
     isLocked: boolean | undefined;
     trackingCode: string | undefined;
     hasRecurringBilling: boolean | undefined;
