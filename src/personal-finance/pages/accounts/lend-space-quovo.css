@@ -1,9 +1,8 @@
-.Dashboard__main,
-.solo,
-.GoalsModal__overlay {
+@import '../../../assets/fonts/fonts-poppins.css';
+.Dashboard__main {
   background: #ffffff;
 }
 *,
 body {
-  font-family: Poppins, Lato, Helvetica, sans-serif;
+  font-family: Poppins;
 }
