@@ -4,6 +4,7 @@ import {
     ChangeDetectionStrategy,
     Component,
     OnInit,
+    AfterViewInit,
     Inject,
     Injector,
     OnDestroy,
@@ -36,6 +37,7 @@ import {
 import kebabCase from 'lodash/kebabCase';
 import { MatSelect, MatSelectChange } from '@angular/material/select';
 import { MatSliderChange } from '@angular/material/slider';
+import { DxScrollViewComponent } from 'devextreme-angular/ui/scroll-view';
 
 /** App part imports */
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -97,10 +99,11 @@ enum CreditCardCategory {
     changeDetection: ChangeDetectionStrategy.OnPush,
     providers: [ CurrencyPipe, NumberAbbrPipe ]
 })
-export class OffersLayoutComponent implements OnInit, OnDestroy {
+export class OffersLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild('offersList') offersListRef: ElementRef;
     @ViewChild('filtersSideBar') filtersSideBar: ElementRef;
     @ViewChild('sortingSelect') sortingSelect: MatSelect;
+    @ViewChild('filterScroll') filterScroll: DxScrollViewComponent;
     offers$: Observable<any>;
     displayedOffers$: Observable<any>;
 
@@ -525,6 +528,10 @@ export class OffersLayoutComponent implements OnInit, OnDestroy {
             );
 
         this.activate();
+    }
+
+    ngAfterViewInit() {
+        setTimeout(() => this.filterScroll.instance.update());
     }
 
     activate() {

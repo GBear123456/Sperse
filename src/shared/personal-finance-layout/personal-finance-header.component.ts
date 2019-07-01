@@ -7,6 +7,7 @@ import { AppConsts } from 'shared/AppConsts';
 import { AppComponentBase } from 'shared/common/app-component-base';
 import { PersonalFinanceLayoutService } from './personal-finance-layout.service';
 import { AbpSessionService } from '@abp/session/abp-session.service';
+import { AppSessionService } from '@shared/common/session/app-session.service';
 import { environment } from 'environments/environment';
 
 @Directive({
@@ -62,7 +63,8 @@ export class PersonalFinanceHeaderComponent extends AppComponentBase {
     constructor(
         injector: Injector,
         private _pfmLayoutService: PersonalFinanceLayoutService,
-        private abpSessionService: AbpSessionService
+        private _abpSessionService: AbpSessionService,
+        public sessionService: AppSessionService
     ) {
         super(injector);
         _pfmLayoutService.headerContentSubscribe((component) => {
@@ -86,7 +88,7 @@ export class PersonalFinanceHeaderComponent extends AppComponentBase {
     }
 
     get notificationEnabled(): boolean {
-        return (!this.abpSessionService.tenantId || this.feature.isEnabled('Notification'));
+        return (!this._abpSessionService.tenantId || this.feature.isEnabled('Notification'));
     }
 
     private getAppAreaLinks() {

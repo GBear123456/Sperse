@@ -34,9 +34,15 @@ export class CreditReportsRouteGuard implements CanActivate, CanActivateChild {
         return route.data && route.data.isPublic;
     }
 
+    checkLoansSection(url) {
+        return ['personal', 'auto', 'business', 'installment', 'payday'].every(
+            item => url.indexOf('/personal-finance/offers/' + item + '-loans') < 0
+        );
+    }
+
     canActivateChild(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
         if (UrlHelper.isPfmAppUrl(state.url)) {
-            if (this._featureChecker.isEnabled('PFM.Applications'))
+            if (this._featureChecker.isEnabled('PFM.Applications'))                
                 this._router.navigate([this._sessionService.user ? '/personal-finance/home' : '/account/login']);
             else
                 this._router.navigate([this.selectBestRoute()]);
@@ -44,9 +50,14 @@ export class CreditReportsRouteGuard implements CanActivate, CanActivateChild {
         } else if (this._sessionService.user) {
             if (!route.data || !route.data['permission']
                 || this._permissionChecker.isGranted(route.data['permission'])
-            )
+            ) {
+                if (this._sessionService.isLendspaceDemoUser && this.checkLoansSection(state.url)) {
+                    this._router.navigate(['/personal-finance/offers/personal-loans']);
+                    return false;
+                }                
+        
                 return true;
-            else {
+            } else {
                 this._router.navigate(['/app/access-denied']);
                 return false;
             }

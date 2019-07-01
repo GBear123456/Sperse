@@ -18,7 +18,7 @@
                 <h2 class="text-left filters-toogle" (click)="hideFilters = !hideFilters && isMobile">
                     {{ ls.l('Refine_Your_Search') }}<i class="mat-select-arrow" [ngClass]="{collapsed: hideFilters}"></i>
                 </h2>
-                <dx-scroll-view showScrollbar="onHover" [height]="getFilterScrollHeight()">
+                <dx-scroll-view #filterScroll showScrollbar="onHover" [height]="getFilterScrollHeight()">
                     <ul class="filters" [ngClass]="{collapsed: hideFilters}">
                         <ng-container *ngFor="let filter of filters$ | async">
                             <li [ngClass]="{'slider-filter': filter.type === 2}">
