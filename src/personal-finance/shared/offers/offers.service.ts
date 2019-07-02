@@ -88,11 +88,11 @@ export class OffersService {
     demoUserOffers = [
         OfferDto.fromJS({
             campaignId: 1,
-            details: ["APR: 5.73%-16.79%", "Loan Term: 24-84 months", "Credit Score: Good/Excellent"],
+            details: ["APR: 5.73%-16.59%", "Loan Term: 24-84 months", "Credit Score: Good/Excellent"],
             logoUrl: "./assets/images/credit-report/offers/demo/sofi.svg",
             maxLoanAmount: 100000,
             name: "SoFi",
-            regularAPR: "5.73%-16.79%",
+            regularAPR: "5.73%-16.59%",
             systemType: "EPCVIP"
         }),
         OfferDto.fromJS({
