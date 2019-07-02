@@ -583,7 +583,10 @@ export class OffersLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
                     if (categoryGroup === CategoryGroupEnum.Loans || categoryGroup === CategoryGroupEnum.CreditCards)
                         input.creditScore = GetAllInputCreditScore[this.offersService.getCreditScore(filter.category, filter.creditScore)];
 
-                    return this.offerServiceProxy.getAll(input).pipe(
+                    return (
+                        this._sessionService.isLendspaceDemoUser && input.creditScore == GetAllInputCreditScore.Excellent 
+                            ? of(this.offersService.demoUserOffers) : this.offerServiceProxy.getAll(input)
+                    ).pipe(
                         finalize(() => {
                             this.offersAreLoading = false;
                             abp.ui.clearBusy(this.offersListRef.nativeElement);
@@ -653,8 +656,13 @@ export class OffersLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
         return filters;
     }
 
+    checkDemoUserActionAllowed() {
+        return !this._sessionService.isLendspaceDemoUser || this.filtersValues.creditScore < 720;
+    }
+
     viewCardDetails(card: OfferDto) {
-        this.router.navigate(['./', card.campaignId], { relativeTo: this.route });
+        if (this.checkDemoUserActionAllowed())
+            this.router.navigate(['./', card.campaignId], { relativeTo: this.route });
     }
 
     toggleFiltering(e) {
@@ -668,9 +676,10 @@ export class OffersLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     applyOffer(offer: OfferDto) {
-        this.category$.pipe(first()).subscribe(
-            category => this.offersService.applyOffer(offer, category === OfferFilterCategory.CreditCards)
-        );
+        if (this.checkDemoUserActionAllowed())
+            this.category$.pipe(first()).subscribe(
+                category => this.offersService.applyOffer(offer, category === OfferFilterCategory.CreditCards)
+            );
     }
 
     changeStep(sliderChange: MatSliderChange, stepsConditions: StepConditionInterface[]) {
