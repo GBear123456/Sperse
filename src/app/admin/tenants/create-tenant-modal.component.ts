@@ -31,6 +31,7 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 import { NotifyService } from '@abp/notify/notify.service';
 import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
+import { ModulesEditionsSelectComponent } from './modules-edtions-select.component.ts/modules-editions-select.component';
 
 //!!VP should be reimplemnted to use Dx text box instead of inputs
 @Component({
@@ -46,6 +47,7 @@ import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.
 export class CreateTenantModalComponent implements OnInit {
     @ViewChild('tenancyNameInput') tenancyNameInput: ElementRef;
     @ViewChild(ModalDialogComponent) modalDialog: ModalDialogComponent;
+    @ViewChild(ModulesEditionsSelectComponent) editionsSelect: ModulesEditionsSelectComponent;
     @Output() modalSave: EventEmitter<any> = new EventEmitter<any>();
 
     setRandomPassword = true;
@@ -97,6 +99,9 @@ export class CreateTenantModalComponent implements OnInit {
     }
 
     save(): void {
+        if (!this.editionsSelect.validateModel())
+            return;
+
         this.modalDialog.startLoading();
         if (this.setRandomPassword) {
             this.tenant.adminPassword = null;

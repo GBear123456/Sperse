@@ -28,6 +28,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
 import { finalize } from '@node_modules/rxjs/internal/operators';
+import { ModulesEditionsSelectComponent } from './modules-edtions-select.component.ts/modules-editions-select.component';
 
 @Component({
     selector: 'editTenantModal',
@@ -40,6 +41,7 @@ export class EditTenantModalComponent implements OnInit {
     @ViewChild(ModalDialogComponent) modalDialog: ModalDialogComponent;
     @ViewChild('nameInput') nameInput: ElementRef;
     @ViewChild('SubscriptionEndDateUtc') subscriptionEndDateUtc: ElementRef;
+    @ViewChild(ModulesEditionsSelectComponent) editionsSelect: ModulesEditionsSelectComponent;
     @Output() modalSave: EventEmitter<any> = new EventEmitter<any>();
 
     tenant: TenantEditDto;
@@ -79,6 +81,9 @@ export class EditTenantModalComponent implements OnInit {
     }
 
     save(): void {
+        if (!this.editionsSelect.validateModel())
+            return;
+        
         this.modalDialog.startLoading();
         this.tenant.editions = this._tenantsService.getTenantEditions();
         this._tenantService.updateTenant(this.tenant)
