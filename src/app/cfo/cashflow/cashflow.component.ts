@@ -4957,7 +4957,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             }
 
             /** To hide rows that not correspond to the search */
-            if (this.filterBy && cellRow && !this.rowFitsToFilter(summaryCell, cellValue, this.filterBy)) {
+            if (this.filterBy && cellRow && !this.rowFitsToFilter(summaryCell, cellValue)) {
                 return null;
             }
 
@@ -5014,62 +5014,51 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
      * @param filter - string for which to filter
      * @return {boolean}
      */
-    rowFitsToFilter(summaryCell, cellValue, filter: string) {
-        const rowInfo = cellValue || '';
+    rowFitsToFilter(summaryCell, cellValue) {
         let result = false;
+        const rowInfo = cellValue || '';
         /** add the rowInfo to cash to avoid checking for every cell */
-        if (!this.cachedRowsFitsToFilter.has(rowInfo) || !rowInfo) {
+        if (this.cachedRowsFitsToFilter.has(rowInfo)) 
+            result = this.cachedRowsFitsToFilter.get(rowInfo);
+        else {
             result = Object.keys(this.treePathes).some(strPath => {
                 let arrPath = strPath.split(',');
-                if (arrPath.indexOf(rowInfo) !== -1) {
+                if (arrPath.indexOf(rowInfo) >= 0) {
                     /** Handle for uncategorized */
                     if (!rowInfo) {
                         let parent = summaryCell.parent('row');
                         let parentInfo = parent.value(parent.field('row').dataField);
-                        if (arrPath.indexOf(parentInfo) !== -1 && this.pathContainsFilter(arrPath, filter)) {
+                        if (arrPath.indexOf(parentInfo) >= 0 && this.pathContainsFilter(arrPath, this.filterBy)) {
                             return true;
                         }
-                    } else if (this.pathContainsFilter(arrPath, filter)) {
+                    } else if (this.pathContainsFilter(arrPath, this.filterBy)) {
                         return true;
                     }
                 }
                 return false;
             });
             this.cachedRowsFitsToFilter.set(rowInfo, result);
-        } else {
-            result = this.cachedRowsFitsToFilter.get(rowInfo);
         }
         return result;
     }
 
     private pathContainsFilter(path: string[], filter: string) {
+        filter = filter.toLowerCase();
         return path.some((value: string) => {
             if (value) {
-                const prefix: any = value.slice(0, 2);
                 const key = value.slice(2);
+                const prefix: any = value.slice(0, 2);
                 const dataSource = this.getNamesSourceLink(prefix);
                 if (dataSource) {
-                    let possibleIds = [];
-                    for (let id of Object.keys(dataSource)) {
-                        let cellInfo = {value: value};
-                        let customizedFieldText = this.customizeFieldText(cellInfo);
-                        if (customizedFieldText && customizedFieldText.toLowerCase().indexOf(filter.toLowerCase()) !== -1) {
-                            possibleIds.push(id);
-                        }
+                    for (let i = 0; i < dataSource.length; i++) {
+                        let customizedFieldText = this.customizeFieldText({value: value}).toLowerCase();
+                        if (customizedFieldText && customizedFieldText.indexOf(filter) >= 0 && key == dataSource[i].id)
+                            return true;
                     }
-                    if (possibleIds.indexOf(key) !== -1) {
-                        return true;
-                    }
-                } else {
-                    if (key.toLowerCase().indexOf(filter.toLowerCase()) !== -1) {
-                        return true;
-                    }
-                }
-            } else {
-                if (this.l('Unclassified').toLowerCase().indexOf(filter.toLowerCase()) !== -1) {
-                    return true;
-                }
-            }
+                } else
+                    return key.toLowerCase().indexOf(filter) >= 0;
+            } else
+                return this.l('Unclassified').toLowerCase().indexOf(filter) >= 0;
         });
     }
 
