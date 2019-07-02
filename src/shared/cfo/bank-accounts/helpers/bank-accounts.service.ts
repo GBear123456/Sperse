@@ -706,8 +706,7 @@ export class BankAccountsService {
     changeStatusesFilter(value: BankAccountStatus[], saveInCache = false) {
         if (this.selectedStatuses.value !== value) {
             this.changeState({
-                statuses: value,
-                selectedBankAccountIds: null
+                statuses: value
             }, saveInCache);
             this.selectedStatuses.next(value);
         }
