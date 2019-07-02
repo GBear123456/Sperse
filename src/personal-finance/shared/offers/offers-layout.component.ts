@@ -69,6 +69,7 @@ import { ChooserFilterSetting, ChooserDesign, ChooserType } from '@root/personal
 import { ChooserOption } from '@root/personal-finance/shared/offers/filters/chooser-filter/chooser-filter.component';
 import { ScoreFilterSetting } from '@root/personal-finance/shared/offers/filters/filters-settings/score-filter-setting';
 import { CreditScoreItem } from '@root/personal-finance/shared/offers/filters/interfaces/score-filter.interface';
+import { AppSessionService } from '@shared/common/session/app-session.service';
 import { AppConsts } from '@shared/AppConsts';
 
 export class FilterValues {
@@ -143,15 +144,15 @@ export class OffersLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
                     {
                         name: this.ls.l('Offers_PersonalLoans'),
                         value: OfferFilterCategory.PersonalLoans
-                    },
-                    {
+                    }].concat(this._sessionService.isLendspaceDemoUser ? [] : 
+                    [{
                         name: this.ls.l('Offers_PaydayLoans'),
                         value: OfferFilterCategory.PaydayLoans
                     },
                     {
                         name: this.ls.l('Offers_InstallmentLoans'),
                         value: OfferFilterCategory.InstallmentLoans
-                    },
+                    }], [
                     {
                         name: this.ls.l('Offers_BusinessLoans'),
                         value: OfferFilterCategory.BusinessLoans
@@ -159,8 +160,8 @@ export class OffersLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
                     {
                         name: this.ls.l('Offers_AutoLoans'),
                         value: OfferFilterCategory.AutoLoans
-                    }
-                ]),
+                    }]
+                )),
                 selected$: this.category$,
                 onChange: (e: MatSelectChange) => {
                     this.router.navigate(['../' + kebabCase(e.value)], { relativeTo: this.route });
@@ -488,6 +489,7 @@ export class OffersLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
         private store$: Store<RootStore.State>,
         private currencyPipe: CurrencyPipe,
         private numberAbbrPipe: NumberAbbrPipe,
+        private _sessionService: AppSessionService,
         @Inject(DOCUMENT) private document
     ) {}
 

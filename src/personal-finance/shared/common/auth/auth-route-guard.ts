@@ -34,8 +34,8 @@ export class CreditReportsRouteGuard implements CanActivate, CanActivateChild {
         return route.data && route.data.isPublic;
     }
 
-    checkLoansSection(url) {
-        return ['personal', 'auto', 'business', 'installment', 'payday'].every(
+    checkLoansSectionForDemoUser(url) {
+        return this._sessionService.isLendspaceDemoUser && ['personal', 'auto', 'business'].every(
             item => url.indexOf('/personal-finance/offers/' + item + '-loans') < 0
         );
     }
@@ -51,7 +51,7 @@ export class CreditReportsRouteGuard implements CanActivate, CanActivateChild {
             if (!route.data || !route.data['permission']
                 || this._permissionChecker.isGranted(route.data['permission'])
             ) {
-                if (this._sessionService.isLendspaceDemoUser && this.checkLoansSection(state.url)) {
+                if (this.checkLoansSectionForDemoUser(state.url)) {
                     this._router.navigate(['/personal-finance/offers/personal-loans']);
                     return false;
                 }                
