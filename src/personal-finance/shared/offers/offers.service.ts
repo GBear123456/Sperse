@@ -89,7 +89,7 @@ export class OffersService {
         OfferDto.fromJS({
             campaignId: 1,
             details: ["APR: 5.73%-16.79%", "Loan Term: 24-84 months", "Credit Score: Good/Excellent"],
-            logoUrl: "/assets/images/credit-report/offers/demo/sofi.svg",
+            logoUrl: "./assets/images/credit-report/offers/demo/sofi.svg",
             maxLoanAmount: 100000,
             name: "SoFi",
             regularAPR: "5.73%-16.79%",
@@ -98,7 +98,7 @@ export class OffersService {
         OfferDto.fromJS({
             campaignId: 2,
             details: ["Debt Consolidation Loans Made Easy", "Loans from $1,000-$35,000", "Rates starting at 4.99%", "All Credit Types Considered"],
-            logoUrl: "/assets/images/credit-report/offers/demo/marcus.png",
+            logoUrl: "./assets/images/credit-report/offers/demo/marcus.png",
             maxLoanAmount: 35000,
             minLoanAmount: 1000,
             name: "Marcus by Goldman Sachs",
@@ -107,7 +107,7 @@ export class OffersService {
         OfferDto.fromJS({
             campaignId: 3,
             details: ["APR: 3.99%-35.99%", "Loan Term: 3-180 months", "Credit Score: Poor/Fair/Good/Excellent"],
-            logoUrl: "/assets/images/credit-report/offers/demo/lending.png",
+            logoUrl: "./assets/images/credit-report/offers/demo/lending.png",
             name: "Lending Tree",
             regularAPR: "3.99%-35.99%",
             systemType: "EPCVIP"
@@ -115,7 +115,7 @@ export class OffersService {
         OfferDto.fromJS({
             campaignId: 4,
             details: ["APR: 4.99%-35.99%", "Loan Term: 24-84 months", "Credit Score: Fair/Good/Excellent"],
-            logoUrl: "/assets/images/credit-report/offers/demo/credible.svg",
+            logoUrl: "./assets/images/credit-report/offers/demo/credible.svg",
             name: "Credible",
             regularAPR: "4.99%-35.99%",
             systemType: "EPCVIP"
