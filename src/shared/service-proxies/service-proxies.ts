@@ -10775,15 +10775,15 @@ export class DashboardServiceProxy {
 
     /**
      * @topCount (optional) 
-     * @showProspective (optional) 
+     * @isProspective (optional) 
      * @return Success
      */
-    getRecentlyCreatedCustomers(topCount: number | null | undefined, showProspective: boolean | null | undefined): Observable<GetRecentlyCreatedCustomersOutput[]> {
+    getRecentlyCreatedCustomers(topCount: number | null | undefined, isProspective: boolean | null | undefined): Observable<GetRecentlyCreatedCustomersOutput[]> {
         let url_ = this.baseUrl + "/api/services/CRM/Dashboard/GetRecentlyCreatedCustomers?";
         if (topCount !== undefined)
             url_ += "topCount=" + encodeURIComponent("" + topCount) + "&"; 
-        if (showProspective !== undefined)
-            url_ += "showProspective=" + encodeURIComponent("" + showProspective) + "&"; 
+        if (isProspective !== undefined)
+            url_ += "isProspective=" + encodeURIComponent("" + isProspective) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -10964,8 +10964,8 @@ export class DashboardServiceProxy {
      * @endDate (optional) 
      * @return Success
      */
-    getLeadsCountByAge(startDate: moment.Moment | null | undefined, endDate: moment.Moment | null | undefined): Observable<GetCountOutput[]> {
-        let url_ = this.baseUrl + "/api/services/CRM/Dashboard/GetLeadsCountByAge?";
+    getContactsCountByAge(startDate: moment.Moment | null | undefined, endDate: moment.Moment | null | undefined): Observable<GetCountOutputOfContactsCountAgeRange[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/Dashboard/GetContactsCountByAge?";
         if (startDate !== undefined)
             url_ += "StartDate=" + encodeURIComponent(startDate ? "" + startDate.toJSON() : "") + "&"; 
         if (endDate !== undefined)
@@ -10982,20 +10982,20 @@ export class DashboardServiceProxy {
         };
 
         return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetLeadsCountByAge(response_);
+            return this.processGetContactsCountByAge(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processGetLeadsCountByAge(<any>response_);
+                    return this.processGetContactsCountByAge(<any>response_);
                 } catch (e) {
-                    return <Observable<GetCountOutput[]>><any>_observableThrow(e);
+                    return <Observable<GetCountOutputOfContactsCountAgeRange[]>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<GetCountOutput[]>><any>_observableThrow(response_);
+                return <Observable<GetCountOutputOfContactsCountAgeRange[]>><any>_observableThrow(response_);
         }));
     }
 
-    protected processGetLeadsCountByAge(response: HttpResponseBase): Observable<GetCountOutput[]> {
+    protected processGetContactsCountByAge(response: HttpResponseBase): Observable<GetCountOutputOfContactsCountAgeRange[]> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -11009,7 +11009,7 @@ export class DashboardServiceProxy {
             if (resultData200 && resultData200.constructor === Array) {
                 result200 = [];
                 for (let item of resultData200)
-                    result200.push(GetCountOutput.fromJS(item));
+                    result200.push(GetCountOutputOfContactsCountAgeRange.fromJS(item));
             }
             return _observableOf(result200);
             }));
@@ -11018,7 +11018,7 @@ export class DashboardServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<GetCountOutput[]>(<any>null);
+        return _observableOf<GetCountOutputOfContactsCountAgeRange[]>(<any>null);
     }
 
     /**
@@ -51653,6 +51653,46 @@ export interface IGetContactsByRegionOutput {
     count: number | undefined;
 }
 
+export class GetCountOutputOfContactsCountAgeRange implements IGetCountOutputOfContactsCountAgeRange {
+    key!: GetCountOutputOfContactsCountAgeRangeKey | undefined;
+    count!: number | undefined;
+
+    constructor(data?: IGetCountOutputOfContactsCountAgeRange) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.key = data["key"];
+            this.count = data["count"];
+        }
+    }
+
+    static fromJS(data: any): GetCountOutputOfContactsCountAgeRange {
+        data = typeof data === 'object' ? data : {};
+        let result = new GetCountOutputOfContactsCountAgeRange();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["key"] = this.key;
+        data["count"] = this.count;
+        return data; 
+    }
+}
+
+export interface IGetCountOutputOfContactsCountAgeRange {
+    key: GetCountOutputOfContactsCountAgeRangeKey | undefined;
+    count: number | undefined;
+}
+
 export class GetCountOutput implements IGetCountOutput {
     key!: string | undefined;
     count!: number | undefined;
@@ -68299,6 +68339,7 @@ export class TransactionDetailsDto implements ITransactionDetailsDto {
     accountingTypeId!: number | undefined;
     accountingType!: string | undefined;
     transactionDescriptor!: string | undefined;
+    isDescriptorCalculated!: boolean | undefined;
     comments!: TransactionCommentDto[] | undefined;
     attributes!: TransactionAttributeDto[] | undefined;
 
@@ -68330,6 +68371,7 @@ export class TransactionDetailsDto implements ITransactionDetailsDto {
             this.accountingTypeId = data["accountingTypeId"];
             this.accountingType = data["accountingType"];
             this.transactionDescriptor = data["transactionDescriptor"];
+            this.isDescriptorCalculated = data["isDescriptorCalculated"];
             if (data["comments"] && data["comments"].constructor === Array) {
                 this.comments = [];
                 for (let item of data["comments"])
@@ -68369,6 +68411,7 @@ export class TransactionDetailsDto implements ITransactionDetailsDto {
         data["accountingTypeId"] = this.accountingTypeId;
         data["accountingType"] = this.accountingType;
         data["transactionDescriptor"] = this.transactionDescriptor;
+        data["isDescriptorCalculated"] = this.isDescriptorCalculated;
         if (this.comments && this.comments.constructor === Array) {
             data["comments"] = [];
             for (let item of this.comments)
@@ -68401,6 +68444,7 @@ export interface ITransactionDetailsDto {
     accountingTypeId: number | undefined;
     accountingType: string | undefined;
     transactionDescriptor: string | undefined;
+    isDescriptorCalculated: boolean | undefined;
     comments: TransactionCommentDto[] | undefined;
     attributes: TransactionAttributeDto[] | undefined;
 }
@@ -71572,6 +71616,15 @@ export enum ScoreSimulatorInfoDtoAccessStatus {
     KbaIsNotPassed = "KbaIsNotPassed", 
     UnsupportedPackage = "UnsupportedPackage", 
     NoPayment = "NoPayment", 
+}
+
+export enum GetCountOutputOfContactsCountAgeRangeKey {
+    UpTo30Days = "UpTo30Days", 
+    UpTo60Days = "UpTo60Days", 
+    UpTo90Days = "UpTo90Days", 
+    UpTo6Months = "UpTo6Months", 
+    UpTo12Months = "UpTo12Months", 
+    MoreThanYear = "MoreThanYear", 
 }
 
 export enum ContactStarInfoDtoColorType {

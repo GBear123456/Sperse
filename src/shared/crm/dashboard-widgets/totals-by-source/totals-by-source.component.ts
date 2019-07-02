@@ -84,7 +84,7 @@ export class TotalsBySourceComponent implements OnInit, OnDestroy {
         {
             key: 'ageDistribution',
             label: this.ls.l('TotalsByLeadAgeDistribution'),
-            method: this._dashboardServiceProxy.getLeadsCountByAge,
+            method: this._dashboardServiceProxy.getContactsCountByAge,
             argumentField: 'key',
             valueField: 'count'
         },
