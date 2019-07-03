@@ -10,6 +10,7 @@ export class SelectionFilterComponent {
     @Input() title;
     @Input() allItemsText;
     @Input() selectionList = [];
+    @Input() allSelectedTitle = false;
     @Input() selectedItems: any[] = [];
     @Input() itemsText = this.localization.l('entities');
     @Input() popupWidth: string;
@@ -24,8 +25,10 @@ export class SelectionFilterComponent {
     }
 
     getSelectedTitle() {
-        let selectedCount = this.selectedItems.length;
-        return selectedCount ? selectedCount + ' ' + this.itemsText : this.allItemsText;
+        let selectedCount = this.selectedItems.length,
+            totalCount = this.selectionList.length;
+        return selectedCount ? (this.allSelectedTitle && selectedCount == totalCount 
+            ? this.allItemsText : selectedCount + ' ' + this.itemsText) : this.allItemsText;
     }
 
     onMultiTagPreparing(e) {

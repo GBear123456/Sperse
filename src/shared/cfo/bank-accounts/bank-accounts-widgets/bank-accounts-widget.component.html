@@ -26,7 +26,8 @@
                         [allItemsText]="l('All_Types')"
                         [title]=""
                         popupWidth="250px"
-                        [itemsText]="l('Types')"
+                        [allSelectedTitle]="true"
+                        [itemsText]="l('Types')"                    
                         [selectionList]="bankAccountsService.existingBankAccountsTypesWithFilteredCounts$ | async"
                         [selectedItems]="bankAccountsService.selectedBankAccountTypes$ | async"
                         (selectionChanged)="bankAccountTypesChanged($event)">
@@ -38,6 +39,7 @@
                         [title]=""
                         popupWidth="150px"
                         [itemsText]="l('Statuses')"
+                        [allSelectedTitle]="true"
                         [selectionList]="bankAccountsService.allStatuses"
                         [selectedItems]="bankAccountsService.selectedStatuses$ | async"
                         (selectionChanged)="statusesChanged($event)">

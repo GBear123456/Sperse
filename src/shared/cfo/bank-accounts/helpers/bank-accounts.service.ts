@@ -13,7 +13,8 @@ import {
     pairwise,
     publishReplay,
     withLatestFrom,
-    switchMap
+    switchMap,
+    tap
 } from 'rxjs/operators';
 import { CacheService } from 'ng2-cache-service';
 import * as _ from 'underscore';
@@ -460,7 +461,10 @@ export class BankAccountsService {
             }),
             /** Sort types */
             map((types: BankAccountType[]) => types.sort(this.sortBankAccountsTypes)),
-            distinctUntilChanged(this.arrayDistinct)
+            distinctUntilChanged(this.arrayDistinct),
+            tap(list => this._selectedBankAccountTypes.next(
+                list.filter(item => item.name != 'Bill.com').map(item => item.id)
+            ))
         );
     }
 
