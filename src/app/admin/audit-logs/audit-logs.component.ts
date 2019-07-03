@@ -157,7 +157,7 @@ export class AuditLogsComponent extends AppComponentBase implements OnInit, OnDe
                     this.filtersValues.serviceName,
                     this.filtersValues.methodName,
                     this.filtersValues.browserInfo,
-                    !!this.filtersValues.hasException[0],
+                    !!this.filtersValues.hasException[0] || undefined,
                     this.filtersValues.minExecutionDuration,
                     this.filtersValues.maxExecutionDuration,
                     (loadOptions.sort || []).map((item) => {
@@ -316,7 +316,7 @@ export class AuditLogsComponent extends AppComponentBase implements OnInit, OnDe
             this.filtersValues.serviceName,
             this.filtersValues.methodName,
             this.filtersValues.browserInfo,
-            !!this.filtersValues.hasException[0],
+            !!this.filtersValues.hasException[0] || undefined,
             this.filtersValues.minExecutionDuration,
             this.filtersValues.maxExecutionDuration,
             undefined,
