@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, Injector, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component, Injector, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef, ElementRef, ViewChild } from '@angular/core';
 
 /** Third party imports */
 import { IAjaxResponse } from '@abp/abpHttpInterceptor';
@@ -35,7 +35,6 @@ import {
 
     OngageSettingsEditDto,
     IAgeSettingsEditDto,
-    
 } from '@shared/service-proxies/service-proxies';
 import { FaviconService } from '@shared/common/favicon-service/favicon.service';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
@@ -52,7 +51,11 @@ import { AppPermissionService } from '@shared/common/auth/permission.service';
     ]
 })
 export class TenantSettingsComponent extends AppComponentBase implements OnInit, OnDestroy {
-
+    @ViewChild('privacyInput') privacyInput: ElementRef;
+    @ViewChild('tosInput') tosInput: ElementRef;
+    @ViewChild('logoInput') logoInput: ElementRef;
+    @ViewChild('cssInput') cssInput: ElementRef;
+    @ViewChild('faviconInput') faviconInput: ElementRef;
     usingDefaultTimeZone = false;
     initialTimeZone: string = null;
     testEmailAddress: string = undefined;
@@ -96,7 +99,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
         icon: '',
         buttons: [
             {
-                enabled: true,//this.isGranted('Pages.Administration.Languages.Create'),
+                enabled: true, // this.isGranted('Pages.Administration.Languages.Create'),
                 action: this.saveAll.bind(this),
                 icon: 'la la la-floppy-o',
                 lable: this.l('SaveAll')
@@ -192,7 +195,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
             result => {
                 this.appSession.tenant.customCssId = result.id;
                 $('#TenantCustomCss').remove();
-                $('head').append('<link id="TenantCustomCss" href="' + AppConsts.remoteServiceBaseUrl + '/api/TenantCustomization/GetCustomCss?id=' + this.appSession.tenant.customCssId + '" rel="stylesheet"/>');
+                $('head').append('<link id="TenantCustomCss" href="' + AppConsts.remoteServiceBaseUrl + '/api/TenantCustomization/GetCustomCss/' + this.appSession.tenant.customCssId + '/' + this.appSession.tenant.id + '" rel="stylesheet"/>');
             }
         );
 
@@ -221,6 +224,10 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
         );
     }
 
+    resetInput(input: ElementRef) {
+        input.nativeElement.value = null;
+    }
+
     createUploader(url: string, success?: (result: any) => void): FileUploader {
         const uploader = new FileUploader({ url: AppConsts.remoteServiceBaseUrl + url });
 
@@ -240,7 +247,6 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
             }
             this._changeDetection.detectChanges();
         };
-
         const uploaderOptions: FileUploaderOptions = {};
         uploaderOptions.authToken = 'Bearer ' + this._tokenService.getToken();
         uploaderOptions.removeAfterUpload = true;
@@ -250,22 +256,27 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
 
     uploadLogo(): void {
         this.logoUploader.uploadAll();
+        this.resetInput(this.logoInput);
     }
 
     uploadFavicons(): void {
         this.faviconsUploader.uploadAll();
+        this.resetInput(this.faviconInput);
     }
 
     uploadCustomCss(): void {
         this.customCssUploader.uploadAll();
+        this.resetInput(this.cssInput);
     }
 
     uploadCustomPrivacyPolicy(): void {
         this.customPrivacyPolicyUploader.uploadAll();
+        this.resetInput(this.privacyInput);
     }
 
     uploadCustomToS(): void {
         this.customToSUploader.uploadAll();
+        this.resetInput(this.tosInput);
     }
 
     clearLogo(): void {

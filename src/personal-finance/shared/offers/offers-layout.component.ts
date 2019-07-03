@@ -69,6 +69,7 @@ import { ChooserFilterSetting, ChooserDesign, ChooserType } from '@root/personal
 import { ChooserOption } from '@root/personal-finance/shared/offers/filters/chooser-filter/chooser-filter.component';
 import { ScoreFilterSetting } from '@root/personal-finance/shared/offers/filters/filters-settings/score-filter-setting';
 import { CreditScoreItem } from '@root/personal-finance/shared/offers/filters/interfaces/score-filter.interface';
+import { AppSessionService } from '@shared/common/session/app-session.service';
 import { AppConsts } from '@shared/AppConsts';
 
 export class FilterValues {
@@ -143,15 +144,15 @@ export class OffersLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
                     {
                         name: this.ls.l('Offers_PersonalLoans'),
                         value: OfferFilterCategory.PersonalLoans
-                    },
-                    {
+                    }].concat(this._sessionService.isLendspaceDemoUser ? [] : 
+                    [{
                         name: this.ls.l('Offers_PaydayLoans'),
                         value: OfferFilterCategory.PaydayLoans
                     },
                     {
                         name: this.ls.l('Offers_InstallmentLoans'),
                         value: OfferFilterCategory.InstallmentLoans
-                    },
+                    }], [
                     {
                         name: this.ls.l('Offers_BusinessLoans'),
                         value: OfferFilterCategory.BusinessLoans
@@ -159,8 +160,8 @@ export class OffersLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
                     {
                         name: this.ls.l('Offers_AutoLoans'),
                         value: OfferFilterCategory.AutoLoans
-                    }
-                ]),
+                    }]
+                )),
                 selected$: this.category$,
                 onChange: (e: MatSelectChange) => {
                     this.router.navigate(['../' + kebabCase(e.value)], { relativeTo: this.route });
@@ -488,6 +489,7 @@ export class OffersLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
         private store$: Store<RootStore.State>,
         private currencyPipe: CurrencyPipe,
         private numberAbbrPipe: NumberAbbrPipe,
+        private _sessionService: AppSessionService,
         @Inject(DOCUMENT) private document
     ) {}
 
@@ -581,7 +583,10 @@ export class OffersLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
                     if (categoryGroup === CategoryGroupEnum.Loans || categoryGroup === CategoryGroupEnum.CreditCards)
                         input.creditScore = GetAllInputCreditScore[this.offersService.getCreditScore(filter.category, filter.creditScore)];
 
-                    return this.offerServiceProxy.getAll(input).pipe(
+                    return (
+                        this._sessionService.isLendspaceDemoUser && input.creditScore == GetAllInputCreditScore.Excellent 
+                            ? of(this.offersService.demoUserOffers) : this.offerServiceProxy.getAll(input)
+                    ).pipe(
                         finalize(() => {
                             this.offersAreLoading = false;
                             abp.ui.clearBusy(this.offersListRef.nativeElement);
@@ -651,8 +656,13 @@ export class OffersLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
         return filters;
     }
 
+    checkDemoUserActionAllowed() {
+        return !this._sessionService.isLendspaceDemoUser || this.filtersValues.creditScore < 720;
+    }
+
     viewCardDetails(card: OfferDto) {
-        this.router.navigate(['./', card.campaignId], { relativeTo: this.route });
+        if (this.checkDemoUserActionAllowed())
+            this.router.navigate(['./', card.campaignId], { relativeTo: this.route });
     }
 
     toggleFiltering(e) {
@@ -666,9 +676,10 @@ export class OffersLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     applyOffer(offer: OfferDto) {
-        this.category$.pipe(first()).subscribe(
-            category => this.offersService.applyOffer(offer, category === OfferFilterCategory.CreditCards)
-        );
+        if (this.checkDemoUserActionAllowed())
+            this.category$.pipe(first()).subscribe(
+                category => this.offersService.applyOffer(offer, category === OfferFilterCategory.CreditCards)
+            );
     }
 
     changeStep(sliderChange: MatSliderChange, stepsConditions: StepConditionInterface[]) {
