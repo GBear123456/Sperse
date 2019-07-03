@@ -25,8 +25,8 @@
                             <h5>{{l("PrivacyPolicy")}}</h5>
                             <p *ngIf="appSession.tenant.customPrivacyPolicyDocumentId"><a [href]="remoteServiceBaseUrl + '/api/TenantCustomization/GetPrivacyPolicyDocument?tenantId=' + appSession.tenant.id" target="_blank">{{l('Download')}}</a></p>
                             <form #privacyPolicyUploadForm>
-                                <div class="form-group">
-                                    <input type="file" ng2FileSelect [uploader]="customPrivacyPolicyUploader" class="col-lg-12" required accept=".html" />
+                                <div class="form-group row">
+                                    <input type="file" ng2FileSelect [uploader]="customPrivacyPolicyUploader" class="col-lg-12" required accept=".html" #privacyInput/>
                                     <span class="m-form__help col-lg-12">{{l("UploadPrivacyPolicy_Info")}}</span>
                                 </div>
                                 <button class="btn btn-primary" type="button" (click)="uploadCustomPrivacyPolicy()">{{l("Upload")}}</button>
@@ -37,8 +37,8 @@
                             <h5>{{l("TermsOfService")}}</h5>
                             <p *ngIf="appSession.tenant.customToSDocumentId"><a [href]="remoteServiceBaseUrl + '/api/TenantCustomization/GetTermsOfServiceDocument?tenantId=' + appSession.tenant.id" target="_blank">{{l('Download')}}</a></p>
                             <form #toSUploadForm>
-                                <div class="form-group">
-                                    <input type="file" ng2FileSelect [uploader]="customToSUploader" class="col-lg-12" required accept=".html" />
+                                <div class="form-group row">
+                                    <input type="file" ng2FileSelect [uploader]="customToSUploader" class="col-lg-12" required accept=".html" #tosInput/>
                                     <span class="m-form__help col-lg-12">{{l("UploadToS_Info")}}</span>
                                 </div>
                                 <button class="btn btn-primary" type="button" (click)="uploadCustomToS()">{{l("Upload")}}</button>
@@ -53,9 +53,13 @@
                     <div class="row m-form">
                         <div class="col-md-4">
                             <h5>{{l("ApplicationLogo")}}</h5>
+                            <p *ngIf="appSession.tenant.logoId">
+                                <a [href]="remoteServiceBaseUrl + '/api/TenantCustomization/GetLogo?logoId=' + appSession.tenant.logoId"
+                                   target="_blank">{{l('Download')}}</a>
+                            </p>
                             <form #logoUploadForm>
-                                <div class="form-group">
-                                    <input type="file" ng2FileSelect [uploader]="logoUploader" class="col-lg-12" required />
+                                <div class="form-group row">
+                                    <input type="file" ng2FileSelect [uploader]="logoUploader" class="col-lg-12" required #logoInput/>
                                     <span class="m-form__help col-lg-12">{{l("UploadLogo_Info")}}</span>
                                 </div>
                                 <button class="btn btn-primary" type="button" (click)="uploadLogo()">{{l("Upload")}}</button>
@@ -64,10 +68,12 @@
                         </div>
                         <div class="col-md-4">
                             <h5>{{l("CustomCSS")}}</h5>
-                            <p *ngIf="appSession.tenant.customCssId"><a [href]="remoteServiceBaseUrl + '/api/TenantCustomization/GetCustomCss/' + appSession.tenant.customCssId + '/' + appSession.tenant.id" target="_blank">{{l('Download')}}</a></p>
+                            <p *ngIf="appSession.tenant.customCssId">
+                                <a [href]="remoteServiceBaseUrl + '/api/TenantCustomization/GetCustomCss/' + appSession.tenant.customCssId + '/' + appSession.tenant.id" target="_blank">{{l('Download')}}</a>
+                            </p>
                             <form #cssUploadForm>
-                                <div class="form-group">
-                                    <input type="file" ng2FileSelect [uploader]="customCssUploader" class="col-lg-12" required />
+                                <div class="form-group row">
+                                    <input type="file" ng2FileSelect [uploader]="customCssUploader" class="col-lg-12" required #cssInput/>
                                     <span class="m-form__help col-lg-12">{{l("UploadCSS_Info")}}</span>
                                 </div>
                                 <button class="btn btn-primary" type="button" (click)="uploadCustomCss()">{{l("Upload")}}</button>
@@ -77,8 +83,8 @@
                         <div class="col-md-4">
                             <h5>{{l('CustomFavicons')}}</h5>
                             <form #faviconsUploadForm>
-                                <div class="form-group">
-                                    <input type="file" ng2FileSelect [uploader]="faviconsUploader" class="col-lg-12" required />
+                                <div class="form-group row">
+                                    <input type="file" ng2FileSelect [uploader]="faviconsUploader" class="col-lg-12" required #faviconInput/>
                                     <span class="m-form__help col-lg-12">{{l("UploadFavicons_Info")}}</span>
                                 </div>
                                 <button class="btn btn-primary" type="button" (click)="uploadFavicons()">{{l("Upload")}}</button>
