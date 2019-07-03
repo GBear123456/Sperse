@@ -17016,6 +17016,68 @@ export class OfferServiceProxy {
     }
 
     /**
+     * @input (optional) 
+     * @return Success
+     */
+    submitApplication(input: SubmitApplicationInput | null | undefined): Observable<any> {
+        let url_ = this.baseUrl + "/api/services/PFM/Offer/SubmitApplication";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processSubmitApplication(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processSubmitApplication(<any>response_);
+                } catch (e) {
+                    return <Observable<any>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<any>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processSubmitApplication(response: HttpResponseBase): Observable<any> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200) {
+                result200 = {};
+                for (let key in resultData200) {
+                    if (resultData200.hasOwnProperty(key))
+                        result200[key] = resultData200[key];
+                }
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<any>(<any>null);
+    }
+
+    /**
      * @return Success
      */
     getMemberInfo(): Observable<GetMemberInfoResponse> {
@@ -54293,6 +54355,7 @@ export class ImportPersonalInput implements IImportPersonalInput {
     homePhoneExt!: string | undefined;
     preferredToD!: ImportPersonalInputPreferredToD | undefined;
     ssn!: string | undefined;
+    bankCode!: string | undefined;
     email1!: string | undefined;
     email2!: string | undefined;
     email3!: string | undefined;
@@ -54310,6 +54373,9 @@ export class ImportPersonalInput implements IImportPersonalInput {
     googlePlusUrl!: string | undefined;
     angelListUrl!: string | undefined;
     photoUrl!: string | undefined;
+    experience!: string | undefined;
+    profileSummary!: string | undefined;
+    interests!: string[] | undefined;
 
     constructor(data?: IImportPersonalInput) {
         if (data) {
@@ -54330,6 +54396,7 @@ export class ImportPersonalInput implements IImportPersonalInput {
             this.homePhoneExt = data["homePhoneExt"];
             this.preferredToD = data["preferredToD"];
             this.ssn = data["ssn"];
+            this.bankCode = data["bankCode"];
             this.email1 = data["email1"];
             this.email2 = data["email2"];
             this.email3 = data["email3"];
@@ -54347,6 +54414,13 @@ export class ImportPersonalInput implements IImportPersonalInput {
             this.googlePlusUrl = data["googlePlusUrl"];
             this.angelListUrl = data["angelListUrl"];
             this.photoUrl = data["photoUrl"];
+            this.experience = data["experience"];
+            this.profileSummary = data["profileSummary"];
+            if (data["interests"] && data["interests"].constructor === Array) {
+                this.interests = [];
+                for (let item of data["interests"])
+                    this.interests.push(item);
+            }
         }
     }
 
@@ -54367,6 +54441,7 @@ export class ImportPersonalInput implements IImportPersonalInput {
         data["homePhoneExt"] = this.homePhoneExt;
         data["preferredToD"] = this.preferredToD;
         data["ssn"] = this.ssn;
+        data["bankCode"] = this.bankCode;
         data["email1"] = this.email1;
         data["email2"] = this.email2;
         data["email3"] = this.email3;
@@ -54384,6 +54459,13 @@ export class ImportPersonalInput implements IImportPersonalInput {
         data["googlePlusUrl"] = this.googlePlusUrl;
         data["angelListUrl"] = this.angelListUrl;
         data["photoUrl"] = this.photoUrl;
+        data["experience"] = this.experience;
+        data["profileSummary"] = this.profileSummary;
+        if (this.interests && this.interests.constructor === Array) {
+            data["interests"] = [];
+            for (let item of this.interests)
+                data["interests"].push(item);
+        }
         return data; 
     }
 }
@@ -54397,6 +54479,7 @@ export interface IImportPersonalInput {
     homePhoneExt: string | undefined;
     preferredToD: ImportPersonalInputPreferredToD | undefined;
     ssn: string | undefined;
+    bankCode: string | undefined;
     email1: string | undefined;
     email2: string | undefined;
     email3: string | undefined;
@@ -54414,6 +54497,9 @@ export interface IImportPersonalInput {
     googlePlusUrl: string | undefined;
     angelListUrl: string | undefined;
     photoUrl: string | undefined;
+    experience: string | undefined;
+    profileSummary: string | undefined;
+    interests: string[] | undefined;
 }
 
 export class ImportBusinessInput implements IImportBusinessInput {
@@ -59752,6 +59838,66 @@ export interface ISubmitRequestOutput {
     status: string | undefined;
     redirectUrl: string | undefined;
     applicationId: string | undefined;
+}
+
+export class SubmitApplicationInput implements ISubmitApplicationInput {
+    personalInformation!: PersonalInformation | undefined;
+    debtInformation!: DebtInformation | undefined;
+    loanInformation!: LoanInformation | undefined;
+    employmentInformation!: EmploymentInformation | undefined;
+    bankInformation!: BankInformation | undefined;
+    legalInformation!: LegalInformation | undefined;
+    trackingInformation!: TrackingInformation | undefined;
+
+    constructor(data?: ISubmitApplicationInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.personalInformation = data["personalInformation"] ? PersonalInformation.fromJS(data["personalInformation"]) : <any>undefined;
+            this.debtInformation = data["debtInformation"] ? DebtInformation.fromJS(data["debtInformation"]) : <any>undefined;
+            this.loanInformation = data["loanInformation"] ? LoanInformation.fromJS(data["loanInformation"]) : <any>undefined;
+            this.employmentInformation = data["employmentInformation"] ? EmploymentInformation.fromJS(data["employmentInformation"]) : <any>undefined;
+            this.bankInformation = data["bankInformation"] ? BankInformation.fromJS(data["bankInformation"]) : <any>undefined;
+            this.legalInformation = data["legalInformation"] ? LegalInformation.fromJS(data["legalInformation"]) : <any>undefined;
+            this.trackingInformation = data["trackingInformation"] ? TrackingInformation.fromJS(data["trackingInformation"]) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): SubmitApplicationInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new SubmitApplicationInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["personalInformation"] = this.personalInformation ? this.personalInformation.toJSON() : <any>undefined;
+        data["debtInformation"] = this.debtInformation ? this.debtInformation.toJSON() : <any>undefined;
+        data["loanInformation"] = this.loanInformation ? this.loanInformation.toJSON() : <any>undefined;
+        data["employmentInformation"] = this.employmentInformation ? this.employmentInformation.toJSON() : <any>undefined;
+        data["bankInformation"] = this.bankInformation ? this.bankInformation.toJSON() : <any>undefined;
+        data["legalInformation"] = this.legalInformation ? this.legalInformation.toJSON() : <any>undefined;
+        data["trackingInformation"] = this.trackingInformation ? this.trackingInformation.toJSON() : <any>undefined;
+        return data; 
+    }
+}
+
+export interface ISubmitApplicationInput {
+    personalInformation: PersonalInformation | undefined;
+    debtInformation: DebtInformation | undefined;
+    loanInformation: LoanInformation | undefined;
+    employmentInformation: EmploymentInformation | undefined;
+    bankInformation: BankInformation | undefined;
+    legalInformation: LegalInformation | undefined;
+    trackingInformation: TrackingInformation | undefined;
 }
 
 export class GetMemberInfoResponse implements IGetMemberInfoResponse {
