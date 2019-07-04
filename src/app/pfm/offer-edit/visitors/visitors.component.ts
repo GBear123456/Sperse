@@ -233,7 +233,7 @@ export class VisitorsComponent extends AppComponentBase implements AfterViewInit
     }
 
     onCellClick(event) {
-        this._router.navigate(['app/pfm/contact', event.data.ContactId],
+        this._router.navigate(['app/pfm/user', event.data.ApplicantUserId],
             { queryParams: { referrer: location.pathname } });
     }
 
