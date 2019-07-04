@@ -50,27 +50,21 @@
             "scripts": [
               "node_modules/jquery/dist/jquery.js",
               "node_modules/jquery-validation/dist/jquery.validate.js",
-
               "node_modules/js-cookie/src/js.cookie.js",
               "node_modules/@aspnet/signalr/dist/browser/signalr.min.js",
               "node_modules/moment/min/moment.min.js",
-
               "node_modules/popper.js/dist/umd/popper.js",
               "node_modules/bootstrap/dist/js/bootstrap.js",
               "node_modules/bootstrap-select/dist/js/bootstrap-select.js",
-
               "node_modules/jquery-slimscroll/jquery.slimscroll.js",
               "node_modules/timeago/jquery.timeago.js",
-
               "node_modules/jstree/dist/jstree.min.js",
               "node_modules/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.js",
-
               "node_modules/spin.js/spin.js",
               "node_modules/spin.js/jquery.spin.js",
               "node_modules/block-ui/jquery.blockUI.js",
               "node_modules/sweetalert/dist/sweetalert.min.js",
               "node_modules/toastr/toastr.js",
-
               "node_modules/abp-web-resources/Abp/Framework/scripts/abp.js",
               "node_modules/abp-web-resources/Abp/Framework/scripts/libs/abp.jquery.js",
               "node_modules/abp-web-resources/Abp/Framework/scripts/libs/abp.toastr.js",
@@ -237,27 +231,21 @@
             "scripts": [
               "node_modules/jquery/dist/jquery.js",
               "node_modules/jquery-validation/dist/jquery.validate.js",
-
               "node_modules/js-cookie/src/js.cookie.js",
               "node_modules/@aspnet/signalr/dist/browser/signalr.min.js",
-
               "node_modules/popper.js/dist/umd/popper.js",
               "node_modules/bootstrap/dist/js/bootstrap.js",
               "node_modules/bootstrap-daterangepicker/daterangepicker.js",
               "node_modules/bootstrap-select/dist/js/bootstrap-select.js",
-
               "node_modules/jquery-slimscroll/jquery.slimscroll.js",
               "node_modules/timeago/jquery.timeago.js",
-
               "node_modules/jstree/dist/jstree.min.js",
               "node_modules/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.js",
-
               "node_modules/spin.js/spin.js",
               "node_modules/spin.js/jquery.spin.js",
               "node_modules/block-ui/jquery.blockUI.js",
               "node_modules/sweetalert/dist/sweetalert.min.js",
               "node_modules/toastr/toastr.js",
-
               "node_modules/abp-web-resources/Abp/Framework/scripts/abp.js",
               "node_modules/abp-web-resources/Abp/Framework/scripts/libs/abp.jquery.js",
               "node_modules/abp-web-resources/Abp/Framework/scripts/libs/abp.toastr.js",
@@ -265,7 +253,6 @@
               "node_modules/abp-web-resources/Abp/Framework/scripts/libs/abp.spin.js",
               "node_modules/abp-web-resources/Abp/Framework/scripts/libs/abp.sweet-alert.js",
               "node_modules/abp-web-resources/Abp/Framework/scripts/libs/abp.moment.js",
-
               "src/assets/metronic/src/js/framework/base/app.js",
               "src/assets/metronic/src/js/framework/base/util.js",
               "src/assets/metronic/src/js/framework/components/general/dropdown.js",
@@ -515,6 +502,120 @@
               "projects/package-chooser-widget/tsconfig.app.json",
               "projects/package-chooser-widget/tsconfig.spec.json"
             ],
+            "exclude": [
+              "**/node_modules/**"
+            ]
+          }
+        }
+      }
+    },
+    "bank-code": {
+      "root": "projects/bank-code/",
+      "sourceRoot": "projects/bank-code/src",
+      "projectType": "application",
+      "prefix": "app",
+      "schematics": {},
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:browser",
+          "options": {
+            "outputPath": "dist/bank-code",
+            "index": "projects/bank-code/src/index.html",
+            "main": "projects/bank-code/src/main.ts",
+            "polyfills": "projects/bank-code/src/polyfills.ts",
+            "tsConfig": "projects/bank-code/tsconfig.app.json",
+            "assets": [
+              "projects/bank-code/src/favicon.ico",
+              "projects/bank-code/src/assets"
+            ],
+            "styles": [
+              "projects/bank-code/src/styles.css"
+            ],
+            "scripts": []
+          },
+          "configurations": {
+            "prod": {
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "extractCss": true,
+              "namedChunks": false,
+              "aot": true,
+              "showCircularDependencies": true,
+              "extractLicenses": true,
+              "vendorChunk": true,
+              "buildOptimizer": true
+            }
+          }
+        },
+        "serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "browserTarget": "bank-code:build"
+          },
+          "configurations": {
+            "production": {
+              "browserTarget": "bank-code:build:production"
+            }
+          }
+        },
+        "extract-i18n": {
+          "builder": "@angular-devkit/build-angular:extract-i18n",
+          "options": {
+            "browserTarget": "bank-code:build"
+          }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "projects/bank-code/src/test.ts",
+            "polyfills": "projects/bank-code/src/polyfills.ts",
+            "tsConfig": "projects/bank-code/tsconfig.spec.json",
+            "karmaConfig": "projects/bank-code/karma.conf.js",
+            "styles": [
+              "projects/bank-code/src/styles.css"
+            ],
+            "scripts": [],
+            "assets": [
+              "projects/bank-code/src/favicon.ico",
+              "projects/bank-code/src/assets"
+            ]
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "projects/bank-code/tsconfig.app.json",
+              "projects/bank-code/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**"
+            ]
+          }
+        }
+      }
+    },
+    "bank-code-e2e": {
+      "root": "projects/bank-code-e2e/",
+      "projectType": "application",
+      "architect": {
+        "e2e": {
+          "builder": "@angular-devkit/build-angular:protractor",
+          "options": {
+            "protractorConfig": "projects/bank-code-e2e/protractor.conf.js",
+            "devServerTarget": "bank-code:serve"
+          },
+          "configurations": {
+            "production": {
+              "devServerTarget": "bank-code:serve:production"
+            }
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": "projects/bank-code-e2e/tsconfig.e2e.json",
             "exclude": [
               "**/node_modules/**"
             ]

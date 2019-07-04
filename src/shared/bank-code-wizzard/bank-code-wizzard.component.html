@@ -1,0 +1,69 @@
+<div class="top-colored-border">
+    <div class="section section__blue"></div>
+    <div class="section section__red"></div>
+    <div class="section section__orange"></div>
+    <div class="section section__green"></div>
+</div>
+<section class="step step__one">
+    <h2>step 1: text analysis</h2>
+    <form>
+        <label for="text-for-analise">ENTER THE TEXT YOU WANT TO ANALYZE</label>
+        <textarea name="textForAnalise" id="text-for-analise"></textarea>
+
+        <div class="action-buttons">
+            <button type="submit" class="button button__primary">Analyze</button>
+            <button type="reset" class="button button__default">Reset</button>
+        </div>
+    </form>
+    <h3>REVIEW OUR INSIGHTS ABOUT THIS B.A.N.K. CODE</h3>
+    <div class="bank-code-result">
+        <p class="text">this b.a.n.k. code is</p>
+        <div class="code">
+            <ul>
+                <li *ngFor="let item of codeResult">{{item}}</li>
+            </ul>
+        </div>
+        <div class="primary-code">
+            Action
+        </div>
+    </div>
+    <app-bank-code-wizzard-tabs></app-bank-code-wizzard-tabs>
+</section>
+
+<div class="top-colored-border">
+    <div class="section section__blue"></div>
+    <div class="section section__red"></div>
+    <div class="section section__orange"></div>
+    <div class="section section__green"></div>
+</div>
+<section class="step step__two">
+    <h2>step 2: response Analysis</h2>
+    <div class="response-analize">
+
+        <div class="right">
+
+        </div>
+        <form>
+            <label for="analised">ENTER THE TEXT YOU WANT TO ANALYZE</label>
+            <div class="left">
+                <textarea name="textForAnalise" id="analised"></textarea>
+
+                <div class="action-buttons align-left">
+                    <button type="submit" class="button button__primary">Analyze</button>
+                    <button type="reset" class="button button__default">Reset</button>
+                </div>
+            </div>
+            <div class="right">
+                <input type="radio" id="primary-code" name="code" value="primary">
+                <label class="radio-label" for="primary-code">primary code</label>
+                <input type="radio" id="full-code" name="code" value="full">
+                <label class="radio-label" for="full-code">full b.a.n.k. code</label>
+            </div>
+        </form>
+    </div>
+    <app-bank-code-wizzard-tabs></app-bank-code-wizzard-tabs>
+</section>
+
+<footer>
+    <p class="copyright">© 2019 Codebreaker Technologies, Inc. All Rights Reserved.</p>
+</footer>

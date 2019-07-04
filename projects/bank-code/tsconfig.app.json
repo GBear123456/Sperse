@@ -1,0 +1,10 @@
+{
+  "target": "es2015",
+  "extends": "../../src/tsconfig.json",
+  "compilerOptions": {
+    "outDir": "../../out-tsc/app"
+  },
+  "include": [
+    "./**/*"
+  ]
+}

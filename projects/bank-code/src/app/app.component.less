@@ -1,0 +1,77 @@
+@blue-color: #1a4b7d;
+@red-color: #a8312d;
+@orange-color: #f3a33c;
+@green-color: #32673a;
+@gray-text-light: #a7a6a6;
+@main-text: #2a2a2a;
+@gray-bg: #ced0d1;
+
+:host {
+    display: flex;
+    min-height: 100vh;
+    
+    * {
+        box-sizing: border-box;
+    }
+    
+    .wrapper {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        background: url("../assets/images/bg.jpg") no-repeat;
+        background-size: 100% auto;
+    }
+    
+    .header-container,
+    .wizzard-container,
+    .footer-container {
+        max-width: 85%;
+        width: 100%;
+        margin: 30px auto;
+    }
+    
+    .header-container {}
+    
+    .title,
+    .sub-title {
+        text-align: center;
+        color: #fff;
+        text-transform: uppercase;
+    }
+    
+    .title {
+        color: #d7d7d7;
+        font-family: "Aviano Sans Black", sans-serif;
+        font-size: 3em;
+        line-height: 0.7;
+        font-weight: 400;
+        text-transform: uppercase;
+    }
+    
+    .sub-title {
+        font-size: 1.5em;
+        line-height: 1.5;
+        font-weight: 400;
+        font-family: sans-serif;
+        max-width: 65%;
+        margin: 0 auto;
+    }
+    
+    .wizzard-container {
+        min-height: 400px;
+        flex: 1;
+        border-radius: 0 0 10px 10px;
+        background: #ffffff;
+    }
+    
+    .footer-container {}
+    
+    figure {
+        max-width: 200px;
+        margin: 0 auto;
+        
+        img {
+            max-width: 100%;
+        }
+    }
+}
