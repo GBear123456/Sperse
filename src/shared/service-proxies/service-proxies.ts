@@ -12585,6 +12585,73 @@ export class EmailingServiceProxy {
 }
 
 @Injectable()
+export class ExternalServiceProxy {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @content (optional) 
+     * @return Success
+     */
+    getBankCode(content: string | null | undefined): Observable<GetBankCodeResponse> {
+        let url_ = this.baseUrl + "/api/services/CRM/External/GetBankCode?";
+        if (content !== undefined)
+            url_ += "content=" + encodeURIComponent("" + content) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetBankCode(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetBankCode(<any>response_);
+                } catch (e) {
+                    return <Observable<GetBankCodeResponse>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<GetBankCodeResponse>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetBankCode(response: HttpResponseBase): Observable<GetBankCodeResponse> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? GetBankCodeResponse.fromJS(resultData200) : new GetBankCodeResponse();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<GetBankCodeResponse>(<any>null);
+    }
+}
+
+@Injectable()
 export class FriendshipServiceProxy {
     private http: HttpClient;
     private baseUrl: string;
@@ -16898,7 +16965,7 @@ export class OfferServiceProxy {
      * @to (optional) 
      * @return Success
      */
-    getOffersStats(groupByPeriod: GroupByPeriod | null | undefined, campaignId: number | null | undefined, from: moment.Moment | null | undefined, to: moment.Moment | null | undefined): Observable<GetStatsResponse[]> {
+    getOffersStats(groupByPeriod: GroupByPeriod | null | undefined, campaignId: number | null | undefined, from: moment.Moment | null | undefined, to: moment.Moment | null | undefined): Observable<OfferApplicationGroup[]> {
         let url_ = this.baseUrl + "/api/services/PFM/Offer/GetOffersStats?";
         if (groupByPeriod !== undefined)
             url_ += "GroupByPeriod=" + encodeURIComponent("" + groupByPeriod) + "&"; 
@@ -16926,14 +16993,14 @@ export class OfferServiceProxy {
                 try {
                     return this.processGetOffersStats(<any>response_);
                 } catch (e) {
-                    return <Observable<GetStatsResponse[]>><any>_observableThrow(e);
+                    return <Observable<OfferApplicationGroup[]>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<GetStatsResponse[]>><any>_observableThrow(response_);
+                return <Observable<OfferApplicationGroup[]>><any>_observableThrow(response_);
         }));
     }
 
-    protected processGetOffersStats(response: HttpResponseBase): Observable<GetStatsResponse[]> {
+    protected processGetOffersStats(response: HttpResponseBase): Observable<OfferApplicationGroup[]> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -16947,7 +17014,7 @@ export class OfferServiceProxy {
             if (resultData200 && resultData200.constructor === Array) {
                 result200 = [];
                 for (let item of resultData200)
-                    result200.push(GetStatsResponse.fromJS(item));
+                    result200.push(OfferApplicationGroup.fromJS(item));
             }
             return _observableOf(result200);
             }));
@@ -16956,7 +17023,7 @@ export class OfferServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<GetStatsResponse[]>(<any>null);
+        return _observableOf<OfferApplicationGroup[]>(<any>null);
     }
 
     /**
@@ -22503,14 +22570,17 @@ export class SyncServiceProxy {
      * @instanceType (optional) 
      * @instanceId (optional) 
      * @syncAccountIds (optional) 
+     * @fullResync (optional) 
      * @return Success
      */
-    requestSyncForAccounts(instanceType: InstanceType86 | null | undefined, instanceId: number | null | undefined, syncAccountIds: number[] | null | undefined): Observable<number> {
+    requestSyncForAccounts(instanceType: InstanceType86 | null | undefined, instanceId: number | null | undefined, syncAccountIds: number[] | null | undefined, fullResync: boolean | null | undefined): Observable<number> {
         let url_ = this.baseUrl + "/api/services/CFO/Sync/RequestSyncForAccounts?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
         if (instanceId !== undefined)
             url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
+        if (fullResync !== undefined)
+            url_ += "fullResync=" + encodeURIComponent("" + fullResync) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(syncAccountIds);
@@ -52887,6 +52957,90 @@ export interface ICreateOrUpdateEditionDto {
     featureValues: NameValueDto[];
 }
 
+export class GetBankCodeResponse implements IGetBankCodeResponse {
+    dimmensions!: Dimmension[] | undefined;
+
+    constructor(data?: IGetBankCodeResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            if (data["dimmensions"] && data["dimmensions"].constructor === Array) {
+                this.dimmensions = [];
+                for (let item of data["dimmensions"])
+                    this.dimmensions.push(Dimmension.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): GetBankCodeResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new GetBankCodeResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (this.dimmensions && this.dimmensions.constructor === Array) {
+            data["dimmensions"] = [];
+            for (let item of this.dimmensions)
+                data["dimmensions"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface IGetBankCodeResponse {
+    dimmensions: Dimmension[] | undefined;
+}
+
+export class Dimmension implements IDimmension {
+    name!: DimmensionName | undefined;
+    value!: number | undefined;
+
+    constructor(data?: IDimmension) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.name = data["name"];
+            this.value = data["value"];
+        }
+    }
+
+    static fromJS(data: any): Dimmension {
+        data = typeof data === 'object' ? data : {};
+        let result = new Dimmension();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        data["value"] = this.value;
+        return data; 
+    }
+}
+
+export interface IDimmension {
+    name: DimmensionName | undefined;
+    value: number | undefined;
+}
+
 export class CreateFriendshipRequestInput implements ICreateFriendshipRequestInput {
     userId!: number | undefined;
     tenantId!: number | undefined;
@@ -59660,11 +59814,11 @@ export interface IOfferDetailsDto {
     details: string[] | undefined;
 }
 
-export class GetStatsResponse implements IGetStatsResponse {
+export class OfferApplicationGroup implements IOfferApplicationGroup {
     date!: moment.Moment | undefined;
     count!: number | undefined;
 
-    constructor(data?: IGetStatsResponse) {
+    constructor(data?: IOfferApplicationGroup) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -59680,9 +59834,9 @@ export class GetStatsResponse implements IGetStatsResponse {
         }
     }
 
-    static fromJS(data: any): GetStatsResponse {
+    static fromJS(data: any): OfferApplicationGroup {
         data = typeof data === 'object' ? data : {};
-        let result = new GetStatsResponse();
+        let result = new OfferApplicationGroup();
         result.init(data);
         return result;
     }
@@ -59695,7 +59849,7 @@ export class GetStatsResponse implements IGetStatsResponse {
     }
 }
 
-export interface IGetStatsResponse {
+export interface IOfferApplicationGroup {
     date: moment.Moment | undefined;
     count: number | undefined;
 }
@@ -59841,13 +59995,15 @@ export interface ISubmitRequestOutput {
 }
 
 export class SubmitApplicationInput implements ISubmitApplicationInput {
-    personalInformation!: PersonalInformation | undefined;
-    debtInformation!: DebtInformation | undefined;
-    loanInformation!: LoanInformation | undefined;
-    employmentInformation!: EmploymentInformation | undefined;
-    bankInformation!: BankInformation | undefined;
-    legalInformation!: LegalInformation | undefined;
-    trackingInformation!: TrackingInformation | undefined;
+    systemType!: SubmitApplicationInputSystemType;
+    personalInformation!: PersonalInformation;
+    debtInformation!: DebtInformation;
+    loanInformation!: LoanInformation;
+    employmentInformation!: EmploymentInformation;
+    bankInformation!: BankInformation;
+    legalInformation!: LegalInformation;
+    campaignId!: number;
+    clickId!: string | undefined;
 
     constructor(data?: ISubmitApplicationInput) {
         if (data) {
@@ -59856,17 +60012,27 @@ export class SubmitApplicationInput implements ISubmitApplicationInput {
                     (<any>this)[property] = (<any>data)[property];
             }
         }
+        if (!data) {
+            this.personalInformation = new PersonalInformation();
+            this.debtInformation = new DebtInformation();
+            this.loanInformation = new LoanInformation();
+            this.employmentInformation = new EmploymentInformation();
+            this.bankInformation = new BankInformation();
+            this.legalInformation = new LegalInformation();
+        }
     }
 
     init(data?: any) {
         if (data) {
-            this.personalInformation = data["personalInformation"] ? PersonalInformation.fromJS(data["personalInformation"]) : <any>undefined;
-            this.debtInformation = data["debtInformation"] ? DebtInformation.fromJS(data["debtInformation"]) : <any>undefined;
-            this.loanInformation = data["loanInformation"] ? LoanInformation.fromJS(data["loanInformation"]) : <any>undefined;
-            this.employmentInformation = data["employmentInformation"] ? EmploymentInformation.fromJS(data["employmentInformation"]) : <any>undefined;
-            this.bankInformation = data["bankInformation"] ? BankInformation.fromJS(data["bankInformation"]) : <any>undefined;
-            this.legalInformation = data["legalInformation"] ? LegalInformation.fromJS(data["legalInformation"]) : <any>undefined;
-            this.trackingInformation = data["trackingInformation"] ? TrackingInformation.fromJS(data["trackingInformation"]) : <any>undefined;
+            this.systemType = data["systemType"];
+            this.personalInformation = data["personalInformation"] ? PersonalInformation.fromJS(data["personalInformation"]) : new PersonalInformation();
+            this.debtInformation = data["debtInformation"] ? DebtInformation.fromJS(data["debtInformation"]) : new DebtInformation();
+            this.loanInformation = data["loanInformation"] ? LoanInformation.fromJS(data["loanInformation"]) : new LoanInformation();
+            this.employmentInformation = data["employmentInformation"] ? EmploymentInformation.fromJS(data["employmentInformation"]) : new EmploymentInformation();
+            this.bankInformation = data["bankInformation"] ? BankInformation.fromJS(data["bankInformation"]) : new BankInformation();
+            this.legalInformation = data["legalInformation"] ? LegalInformation.fromJS(data["legalInformation"]) : new LegalInformation();
+            this.campaignId = data["campaignId"];
+            this.clickId = data["clickId"];
         }
     }
 
@@ -59879,25 +60045,29 @@ export class SubmitApplicationInput implements ISubmitApplicationInput {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["systemType"] = this.systemType;
         data["personalInformation"] = this.personalInformation ? this.personalInformation.toJSON() : <any>undefined;
         data["debtInformation"] = this.debtInformation ? this.debtInformation.toJSON() : <any>undefined;
         data["loanInformation"] = this.loanInformation ? this.loanInformation.toJSON() : <any>undefined;
         data["employmentInformation"] = this.employmentInformation ? this.employmentInformation.toJSON() : <any>undefined;
         data["bankInformation"] = this.bankInformation ? this.bankInformation.toJSON() : <any>undefined;
         data["legalInformation"] = this.legalInformation ? this.legalInformation.toJSON() : <any>undefined;
-        data["trackingInformation"] = this.trackingInformation ? this.trackingInformation.toJSON() : <any>undefined;
+        data["campaignId"] = this.campaignId;
+        data["clickId"] = this.clickId;
         return data; 
     }
 }
 
 export interface ISubmitApplicationInput {
-    personalInformation: PersonalInformation | undefined;
-    debtInformation: DebtInformation | undefined;
-    loanInformation: LoanInformation | undefined;
-    employmentInformation: EmploymentInformation | undefined;
-    bankInformation: BankInformation | undefined;
-    legalInformation: LegalInformation | undefined;
-    trackingInformation: TrackingInformation | undefined;
+    systemType: SubmitApplicationInputSystemType;
+    personalInformation: PersonalInformation;
+    debtInformation: DebtInformation;
+    loanInformation: LoanInformation;
+    employmentInformation: EmploymentInformation;
+    bankInformation: BankInformation;
+    legalInformation: LegalInformation;
+    campaignId: number;
+    clickId: string | undefined;
 }
 
 export class GetMemberInfoResponse implements IGetMemberInfoResponse {
@@ -71793,6 +71963,13 @@ export enum EditionListDtoModule {
     PFM = "PFM", 
 }
 
+export enum DimmensionName {
+    Action = "Action", 
+    Blueprint = "Blueprint", 
+    Nurturing = "Nurturing", 
+    Knowledge = "Knowledge", 
+}
+
 export enum ImportInputImportType {
     Lead = "Lead", 
     Client = "Client", 
@@ -72095,6 +72272,10 @@ export enum SubmitRequestInputCreditScore {
     Good = "Good", 
     Fair = "Fair", 
     Poor = "Poor", 
+}
+
+export enum SubmitApplicationInputSystemType {
+    EPCVIP = "EPCVIP", 
 }
 
 export enum GetMemberInfoResponseCreditScore {

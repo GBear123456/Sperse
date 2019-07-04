@@ -102,7 +102,8 @@ export class SynchProgressService {
                 ? this.syncServiceProxy.requestSyncForAccounts(
                     InstanceType[this.cfoService.instanceType],
                     this.cfoService.instanceId,
-                    syncAccountIds
+                    syncAccountIds,
+                    false
                 )
                 : this.syncServiceProxy.syncAllAccounts(
                     InstanceType[this.cfoService.instanceType],
