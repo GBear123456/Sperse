@@ -446,6 +446,7 @@ export class OffersComponent extends AppComponentBase implements OnInit, OnDestr
     }
 
     invalidate() {
+        this.selectedOfferKeys = [];
         this.processFilterInternal();
     }
 
