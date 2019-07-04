@@ -85,6 +85,7 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
     contextMenuItems = [
         { text: this.l('Edit_Name') },
         { text: this.l('Sync_Now') },
+        { text: this.l('Resync_All') },
         { text: this.l('Update_Info') },
         { text: this.l('Delete') }
     ];
@@ -223,14 +224,10 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
 
     setHighlighted() {
         this.dataSource && this.dataSource.forEach(syncAccount => {
-            let highlightedBankAccountExist = false;
             syncAccount.bankAccounts.forEach(bankAccount => {
-                let isBankAccountHighlighted = _.contains(this.bankAccountIdsForHighlight, bankAccount.id);
-                bankAccount['highlighted'] = isBankAccountHighlighted;
-                if (isBankAccountHighlighted)
-                    highlightedBankAccountExist = true;
+                if (bankAccount['highlighted'] = _.contains(this.bankAccountIdsForHighlight, bankAccount.id))
+                    syncAccount['highlighted'] = true;
             });
-            syncAccount['highlighted'] = highlightedBankAccountExist;
         });
     }
 
@@ -460,9 +457,9 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
             });
     }
 
-    requestSyncForAccounts() {
+    requestSyncForAccounts(fullResync = false) {
         this._syncServiceProxy
-            .requestSyncForAccounts(this.instanceType, this.instanceId, this.syncAccountIds, false)
+            .requestSyncForAccounts(this.instanceType, this.instanceId, this.syncAccountIds, fullResync)
             .subscribe(res => {
                 if (res) {
                     this.reloadDataSource.emit();
@@ -512,6 +509,9 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
                 break;
             case this.l('Sync_Now'):
                 this.requestSyncForAccounts();
+                break;
+            case this.l('Resync_All'):
+                this.requestSyncForAccounts(true);
                 break;
             case this.l('Update_Info'):
                 this.updateAccountInfo(this.syncAccount);
