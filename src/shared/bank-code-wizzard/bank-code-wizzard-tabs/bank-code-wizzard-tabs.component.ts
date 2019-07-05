@@ -1,7 +1,9 @@
+/** Core imports */
 import { Component, OnInit, Input } from '@angular/core';
 
 /** Third party imports */
-import { Chart } from 'chart.js';
+
+/** Application imports */
 
 @Component({
     selector: 'app-bank-code-wizzard-tabs',

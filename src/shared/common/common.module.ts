@@ -30,6 +30,7 @@ import { NoDataModule } from '@shared/common/widgets/no-data/no-data.module';
 import { CacheHelper } from '@shared/common/cache-helper/cache-helper';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
 import { PrimengTableHelper } from '@shared/helpers/PrimengTableHelper';
+import { ReversArrayPipe } from './pipes/revers-array.pipe';
 
 @NgModule({
     declarations: [
@@ -45,7 +46,8 @@ import { PrimengTableHelper } from '@shared/helpers/PrimengTableHelper';
         TitleCasePipe,
         ModalDialogComponent,
         RegisterConfirmComponent,
-        ConditionsModalComponent
+        ConditionsModalComponent,
+        ReversArrayPipe
     ],
     exports: [
         CalendarComponent,

@@ -5,6 +5,7 @@ import { BankCodeWizzardComponent } from './bank-code-wizzard.component';
 import { MatTabsModule } from '@angular/material/tabs';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { BankCodeWizzardTabsComponent } from './bank-code-wizzard-tabs/bank-code-wizzard-tabs.component';
+import { ReversArrayPipe } from '@shared/common/pipes/revers-array.pipe';
 
 @NgModule({
     imports: [
@@ -15,7 +16,8 @@ import { BankCodeWizzardTabsComponent } from './bank-code-wizzard-tabs/bank-code
     ],
     declarations: [
         BankCodeWizzardComponent,
-        BankCodeWizzardTabsComponent
+        BankCodeWizzardTabsComponent,
+        ReversArrayPipe
     ],
     exports: [
         BankCodeWizzardComponent

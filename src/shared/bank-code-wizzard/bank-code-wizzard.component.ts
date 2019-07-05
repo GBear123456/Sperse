@@ -20,6 +20,8 @@ export class BankCodeWizzardComponent implements OnInit {
     chart: any;
     scores;
     sortedResult = [];
+    biggestValue = { name: 'Action', value: 1 };
+
     analyseResult = [
         { name: 'Blueprint', value: 0 },
         { name: 'Action', value: 1 },
@@ -41,9 +43,9 @@ export class BankCodeWizzardComponent implements OnInit {
         const settings = {
             'async': true,
             'crossDomain': true,
-            // 'url': 'https://api.cyrano.ai/bankcode',
-            'url': requestUrl,
-            'method': 'GET',
+            'url': 'https://api.cyrano.ai/bankcode',
+            // 'url': requestUrl,
+            'method': 'POST',
             'headers': {
                 'x-api-key': 'Hug3PclOlz2XEFZHmWTb2a88A5hnFiGb32sR64ud',
                 'Content-Type': 'application/json'
@@ -54,7 +56,7 @@ export class BankCodeWizzardComponent implements OnInit {
             .done(function (response) {
                 console.log(response);
                 let dimentions = response.result.dimmensions;
-                this.anylizeResult = dimentions;
+                this.analyseResult = dimentions;
                 let scores = [0, 0, 0, 0];
                 for (let i = 0; i < dimentions.length; i++) {
                     switch (dimentions[i].name) {
@@ -76,14 +78,14 @@ export class BankCodeWizzardComponent implements OnInit {
                 }
                 this.scores = scores;
                 drawChart(scores);
-                }
-            )
+            })
             .fail(function (response) {
                 console.log(response);
-                $('#bankCodeAnalyzer').prop('readonly', false);
-                $('#loader').prop('hidden', true);
-            }
-            );
+            });
+
+        setTimeout(() => {
+            if (this.analyseResult) this.biggestValue = this.analyseResult[this.analyseResult.length - 1];
+        }, 200);
     }
 
     onSubmit(event, formData) {
