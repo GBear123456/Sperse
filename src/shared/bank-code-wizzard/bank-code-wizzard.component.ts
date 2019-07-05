@@ -43,9 +43,9 @@ export class BankCodeWizzardComponent implements OnInit {
         const settings = {
             'async': true,
             'crossDomain': true,
-            'url': 'https://api.cyrano.ai/bankcode',
-            // 'url': requestUrl,
-            'method': 'POST',
+            // 'url': 'https://api.cyrano.ai/bankcode',
+            'url': requestUrl,
+            'method': 'GET',
             'headers': {
                 'x-api-key': 'Hug3PclOlz2XEFZHmWTb2a88A5hnFiGb32sR64ud',
                 'Content-Type': 'application/json'
