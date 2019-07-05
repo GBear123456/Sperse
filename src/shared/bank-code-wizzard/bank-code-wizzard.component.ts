@@ -52,21 +52,23 @@ export class BankCodeWizzardComponent implements OnInit {
         };
         $.ajax(settings)
             .done(function (response) {
-                this.anylizeResult = response.dimmensions;
+                console.log(response);
+                let dimentions = response.result.dimmensions;
+                this.anylizeResult = dimentions;
                 let scores = [0, 0, 0, 0];
-                for (let i = 0; i < response.dimmensions.length; i++) {
-                    switch (response.dimmensions[i].name) {
+                for (let i = 0; i < dimentions.length; i++) {
+                    switch (dimentions[i].name) {
                         case 'Blueprint':
-                            scores[0] = response.dimmensions[i].value;
+                            scores[0] = dimentions[i].value;
                             break;
                         case 'Action':
-                            scores[1] = response.dimmensions[i].value;
+                            scores[1] = dimentions[i].value;
                             break;
                         case 'Nurturing':
-                            scores[2] = response.dimmensions[i].value;
+                            scores[2] = dimentions[i].value;
                             break;
                         case 'Knowledge':
-                            scores[3] = response.dimmensions[i].value;
+                            scores[3] = dimentions[i].value;
                             break;
                         default:
                             break;
