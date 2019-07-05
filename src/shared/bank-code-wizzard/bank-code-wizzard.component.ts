@@ -48,8 +48,7 @@ export class BankCodeWizzardComponent implements OnInit {
                 'x-api-key': 'Hug3PclOlz2XEFZHmWTb2a88A5hnFiGb32sR64ud',
                 'Content-Type': 'application/json'
             },
-            'processData': false,
-            'data': JSON.stringify({ content: text.replace(/(\r\n|\n|\r)/gm, '') })
+            'processData': false
         };
         $.ajax(settings)
             .done(function (response) {
