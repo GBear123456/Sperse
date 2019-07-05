@@ -1,0 +1,34 @@
+:host {
+    /deep/ .content-tabs {
+
+        .mat-tab-header {
+            border: 0;
+
+            .mat-tab-labels {
+                .mat-tab-label {
+                    border: 1px solid #e7e7e8;
+                    background: linear-gradient(#fff, #e3ebf0);
+                    flex: 1;
+                    font-weight: bold;
+                    text-transform: uppercase;
+                    font-size: 15px;
+                    color: #000;
+                    border-radius: 5px;
+
+                    &.mat-tab-label-active {
+                        box-shadow: inset 0 0 100px 0 rgba(#000, .3);
+                    }
+                }
+            }
+
+            .mat-ink-bar {
+                display: none;
+            }
+        }
+
+        mat-tab-body {
+            min-height: 250px;
+        }
+    }
+}
+
