@@ -1,6 +1,12 @@
+/** Core imports */
 import { Component, OnInit } from '@angular/core';
+
+/** Third party imports */
 import { Chart } from 'chart.js';
 import * as $ from 'jquery';
+
+/** Application imports */
+import { AppConsts } from '@shared/AppConsts';
 
 @Component({
     selector: 'app-bank-code-wizzard',
@@ -8,11 +14,15 @@ import * as $ from 'jquery';
     styleUrls: ['./bank-code-wizzard.component.less']
 })
 export class BankCodeWizzardComponent implements OnInit {
-    textForAnylize = '';
+    requestUrl = AppConsts.remoteServiceBaseUrl + '/api/services/CRM/External/GetBankCode?content=';
+    textForAnalyse = '';
     chart: any;
-    anylizeResult: any;
-    codeResult = [
-        'A', 'N', 'B', 'K'
+    sortedResult = [];
+    analyseResult = [
+        { name: 'Blueprint', value: 0 },
+        { name: 'Action', value: 1 },
+        { name: 'Nurturing', value: 2 },
+        { name: 'Knowledge', value: 3 }
     ];
 
     constructor(
@@ -21,14 +31,17 @@ export class BankCodeWizzardComponent implements OnInit {
 
     ngOnInit() {
         drawChart();
+        console.log(AppConsts.remoteServiceBaseUrl);
     }
 
     categorizeText(text: string) {
         event.preventDefault();
+        const requestUrl = this.requestUrl + text;
         const settings = {
             'async': true,
             'crossDomain': true,
-            'url': 'https://api.cyrano.ai/bankcode',
+            'url': requestUrl,
+            // 'url': 'https://api.cyrano.ai/bankcode',
             'method': 'POST',
             'headers': {
                 'x-api-key': 'Hug3PclOlz2XEFZHmWTb2a88A5hnFiGb32sR64ud',
@@ -39,27 +52,30 @@ export class BankCodeWizzardComponent implements OnInit {
         };
         $.ajax(settings)
             .done(function (response) {
-                this.anylizeResult = response;
+                this.anylizeResult = response.dimmensions;
+                console.log(this.anylizeResult);
+                this.sortedResult = sortingResult(this.anylizeResult, 'value');
+                console.log(this.anylizeResult);
                 let scores = [0, 0, 0, 0];
-                    for (let i = 0; i < response.dimmensions.length; i++) {
-                        switch (response.dimmensions[i].name) {
-                            case 'Blueprint':
-                                scores[0] = response.dimmensions[i].value;
-                                break;
-                            case 'Action':
-                                scores[1] = response.dimmensions[i].value;
-                                break;
-                            case 'Nurturing':
-                                scores[2] = response.dimmensions[i].value;
-                                break;
-                            case 'Knowledge':
-                                scores[3] = response.dimmensions[i].value;
-                                break;
-                            default:
-                                break;
-                        }
+                for (let i = 0; i < response.dimmensions.length; i++) {
+                    switch (response.dimmensions[i].name) {
+                        case 'Blueprint':
+                            scores[0] = response.dimmensions[i].value;
+                            break;
+                        case 'Action':
+                            scores[1] = response.dimmensions[i].value;
+                            break;
+                        case 'Nurturing':
+                            scores[2] = response.dimmensions[i].value;
+                            break;
+                        case 'Knowledge':
+                            scores[3] = response.dimmensions[i].value;
+                            break;
+                        default:
+                            break;
                     }
-                    drawChart(scores);
+                }
+                drawChart(scores);
                 }
             )
             .fail(function (response) {
@@ -72,9 +88,10 @@ export class BankCodeWizzardComponent implements OnInit {
 
     onSubmit(event, formData) {
         event.preventDefault();
-        const textForAnylize = formData.value.textForAnalise;
-        this.categorizeText(textForAnylize);
+        const textForAnalyse = formData.value.textForAnalyse;
+        this.categorizeText(textForAnalyse);
     }
+
 }
 
 function drawChart(scores = [0, 0, 0, 0]) {
@@ -90,5 +107,14 @@ function drawChart(scores = [0, 0, 0, 0]) {
             }]
         },
         'options': { 'scales': { 'yAxes': [{ 'ticks': { 'beginAtZero': true } }] } }
+    });
+}
+
+function sortingResult(array, key) {
+    return array.sort((a, b) => {
+        console.log(a, b);
+        console.log(a[key], b[key]);
+        console.log(a[key] > b[key]);
+        return a[key] - b[key];
     });
 }
