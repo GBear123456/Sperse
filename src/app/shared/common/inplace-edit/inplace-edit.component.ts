@@ -117,12 +117,12 @@ export class InplaceEditComponent extends AppComponentBase {
     showInput(enabled) {
         this.isEditModeEnabled = enabled;
         this.valueOriginal = this._data.value;
-        enabled && setTimeout(() =>
+        enabled && setTimeout(() => {
             if (this.multiline)
                 this.textArea.instance.focus();
             else
                 this.textBox.instance.focus();
-        );
+        });
     }
 
     showDialog(event) {
