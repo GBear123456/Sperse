@@ -54,18 +54,20 @@
                         </dxo-selection>
                         <dxo-group-panel [visible]="true"></dxo-group-panel>
                         <dxo-sorting mode="multiple"></dxo-sorting>
+                        <dxo-header-filter [visible]="true" [allowSearch]="true"></dxo-header-filter>
 
                         <dxi-column dataField="Date" cssClass="tabular" caption="{{l('Transactions_Date')}}" cellTemplate="dateCell"></dxi-column>
                         <dxi-column dataField="Description" cellTemplate="descriptionTemplate" caption="{{l('Transactions_Description')}}" [width]="450"></dxi-column>
                         <dxi-column caption="{{l('Transactions_CashflowCategoryName')}}"
                                     dataField="CashflowCategoryName"
                                     cellTemplate="CashflowCategoryNameTemplate"
-                                    cssClass="category"></dxi-column>
+                                    cssClass="category"
+                                    [allowFiltering]="false"></dxi-column>
                         <dxi-column dataField="CashflowSubCategoryName"
                                     caption="{{l('Transactions_CashflowSubCategoryName')}}"
                                     [visible]="false"></dxi-column>
-                        <dxi-column dataField="Amount" cssClass="tabular" name="Amount" caption="{{l('Transactions_Amount')}}" cellTemplate="amountTemplate"></dxi-column>
-                        <dxi-column dataField="EndingBalance" cssClass="tabular" caption="{{l('Transactions_EndingBalance')}}" cellTemplate="endBalanceTemplate" [visible]="false"></dxi-column>
+                        <dxi-column dataField="Amount" cssClass="tabular" name="Amount" caption="{{l('Transactions_Amount')}}" cellTemplate="amountTemplate" [allowFiltering]="false"></dxi-column>
+                        <dxi-column dataField="EndingBalance" cssClass="tabular" caption="{{l('Transactions_EndingBalance')}}" cellTemplate="endBalanceTemplate" [visible]="false" [allowFiltering]="false"></dxi-column>
                         <dxi-column dataField="CashFlowTypeName"
                                     cellTemplate="CashFlowTypeNameTemplate"
                                     cssClass="cashflow-type"

@@ -90,7 +90,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
         showCID: true, /* Category ID */
         showTC: false, /* Transaction Count */
         showAT: true, /* Accounting types */
-        showEmpty: false, /* hide empty categories */
+        showEmpty: true, /* hide empty categories */
         padding: this.MIN_PADDING,
         sorting: {
             field: 0,
