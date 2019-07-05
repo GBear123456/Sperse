@@ -27,7 +27,7 @@
             Action
         </div>
     </div>
-    <app-bank-code-wizzard-tabs></app-bank-code-wizzard-tabs>
+    <app-bank-code-wizzard-tabs [analyseResult]="analyseResult" [scores]="scores"></app-bank-code-wizzard-tabs>
 </section>
 
 <div class="top-colored-border">
@@ -54,12 +54,12 @@
                     <label class="radio-label" for="primary-code">primary code</label>
                     <input type="radio" id="full-code" name="code" value="full">
                     <label class="radio-label" for="full-code">full b.a.n.k. code</label> -->
-                    <canvas id="bankCodeChart"></canvas>
+                    <canvas id="bankCodeChart" class="chart-canvas"></canvas>
                 </div>
             </div>
         </form>
     </div>
-    <app-bank-code-wizzard-tabs></app-bank-code-wizzard-tabs>
+    <app-bank-code-wizzard-tabs [analyseResult]="analyseResult" [scores]="scores"></app-bank-code-wizzard-tabs>
 </section>
 
 <footer>

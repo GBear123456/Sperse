@@ -14,9 +14,11 @@ import { AppConsts } from '@shared/AppConsts';
     styleUrls: ['./bank-code-wizzard.component.less']
 })
 export class BankCodeWizzardComponent implements OnInit {
-    requestUrl = AppConsts.remoteServiceBaseUrl + '/api/services/CRM/External/GetBankCode?content=';
+    requestUrl = 'https://testadmin.sperse.com/api/services/CRM/External/GetBankCode?content=';
     textForAnalyse = '';
+    requestResponse: any;
     chart: any;
+    scores;
     sortedResult = [];
     analyseResult = [
         { name: 'Blueprint', value: 0 },
@@ -31,7 +33,6 @@ export class BankCodeWizzardComponent implements OnInit {
 
     ngOnInit() {
         drawChart();
-        console.log(AppConsts.remoteServiceBaseUrl);
     }
 
     categorizeText(text: string) {
@@ -40,8 +41,8 @@ export class BankCodeWizzardComponent implements OnInit {
         const settings = {
             'async': true,
             'crossDomain': true,
-            'url': requestUrl,
             // 'url': 'https://api.cyrano.ai/bankcode',
+            'url': requestUrl,
             'method': 'POST',
             'headers': {
                 'x-api-key': 'Hug3PclOlz2XEFZHmWTb2a88A5hnFiGb32sR64ud',
@@ -53,9 +54,6 @@ export class BankCodeWizzardComponent implements OnInit {
         $.ajax(settings)
             .done(function (response) {
                 this.anylizeResult = response.dimmensions;
-                console.log(this.anylizeResult);
-                this.sortedResult = sortingResult(this.anylizeResult, 'value');
-                console.log(this.anylizeResult);
                 let scores = [0, 0, 0, 0];
                 for (let i = 0; i < response.dimmensions.length; i++) {
                     switch (response.dimmensions[i].name) {
@@ -75,6 +73,7 @@ export class BankCodeWizzardComponent implements OnInit {
                             break;
                     }
                 }
+                this.scores = scores;
                 drawChart(scores);
                 }
             )
@@ -95,26 +94,25 @@ export class BankCodeWizzardComponent implements OnInit {
 }
 
 function drawChart(scores = [0, 0, 0, 0]) {
-    new Chart(document.getElementById('bankCodeChart'), {
-        'type': 'bar',
-        'data': {
-            'labels': ['Blueprint', 'Action', 'Nurturing', 'Knowledge'],
-            'datasets': [{
-                'data': scores,
-                'label': 'BANK Score',
-                'fill': true,
-                'backgroundColor': ['#004a81', '#b70000', '#faa000', '#176826']
-            }]
-        },
-        'options': { 'scales': { 'yAxes': [{ 'ticks': { 'beginAtZero': true } }] } }
+    Array.from(document.getElementsByClassName('chart-canvas')).forEach((element) => {
+        new Chart(element, {
+            'type': 'bar',
+            'data': {
+                'labels': ['Blueprint', 'Action', 'Nurturing', 'Knowledge'],
+                'datasets': [{
+                    'data': scores,
+                    'label': 'BANK Score',
+                    'fill': true,
+                    'backgroundColor': ['#004a81', '#b70000', '#faa000', '#176826']
+                }]
+            },
+            'options': { 'scales': { 'yAxes': [{ 'ticks': { 'beginAtZero': true } }] } }
+        });
     });
 }
 
 function sortingResult(array, key) {
     return array.sort((a, b) => {
-        console.log(a, b);
-        console.log(a[key], b[key]);
-        console.log(a[key] > b[key]);
         return a[key] - b[key];
     });
 }
