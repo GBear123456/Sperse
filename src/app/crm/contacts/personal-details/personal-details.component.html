@@ -1,14 +1,25 @@
 <mat-tab-group>
     <mat-tab label="General">
-        <dx-scroll-view showScrollbar="onHover">
-            <div class="container" *ngIf="person">
-                <div *ngFor="let field of fields" class="item">
+        <dx-scroll-view showScrollbar="onHover" *ngIf="person">
+            <div class="container" *ngFor="let column of columns">
+                <div *ngFor="let field of column" class="item">
                     <div class="item-edit-label">{{startCase(field.name)}}:</div>
                     <div *ngIf="!isEditAllowed || (field.confidential && !accessConfidentialData)" class="item-value">{{person[field.name]}}</div>
                     <ng-container *ngIf="isEditAllowed && (!field.confidential || accessConfidentialData)">
-                        <div [ngSwitch]="field.type" class="item-value">
-                            <inplace-edit *ngSwitchCase="'string'" [data]="getInputData(field.name)" (valueChanged)="updateValue($event, field.name)"></inplace-edit>
-                            <inplace-select *ngSwitchCase="'select'" [data]="getSelectData(field.name)" (valueChanged)="updateValue($event, field.name)" width="260px"></inplace-select>
+                        <div [ngSwitch]="field.type" class="item-value {{field.multiline ? 'multiline' : ''}}">
+                            <inplace-edit *ngSwitchCase="'string'" 
+                                [isOptional]="true"
+                                [mask]="field.name == 'ssn' ? '000-00-0000': ''"
+                                [maxLength]="20"
+                                [data]="getInputData(field.name)" 
+                                [multiline]="field.multiline" 
+                                (valueChanged)="updateValue($event, field.name)">
+                            </inplace-edit>
+                            <inplace-select *ngSwitchCase="'select'"
+                                width="260px"
+                                [data]="getSelectData(field.name)" 
+                                (valueChanged)="updateValue($event, field.name)">
+                            </inplace-select>
                             <dx-date-box *ngSwitchCase="'date'"
                                 width="260px"
                                 [placeholder]="ls.l('Date')"
@@ -22,7 +33,7 @@
                             </dx-check-box>
                             <dx-tag-box *ngSwitchCase="'list'"
                                 width="260px"
-                                [multiline]="false"
+                                [multiline]="field.multiline"
                                 [placeholder]="ls.l('EditValuePlaceholder')"
                                 [items]="person[field.name]"
                                 [acceptCustomValue]="true"

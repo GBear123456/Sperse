@@ -1,9 +1,15 @@
 :host{
+    /deep/ .dx-scrollview-content {
+        display: flex;
+        justify-content: center;
+    }
+
     .container {
-        height: 455px;
+        width: 520px;
+        height: 100%;
+        display: inline-block;
         padding: 30px 15px;
-        column-count: 2;
-        column-gap: 1em;
+        margin: 0 20px;
 
         .item {
             display: flex;
@@ -11,8 +17,12 @@
             width: 100%;
 
             .item-value {
-                display: inline-block;
+                width: 260px;
                 height: 35px;
+                display: inline-block;
+                &.multiline {
+                    height: auto!important;
+                }
             }
 
             .item-edit-label {
@@ -23,10 +33,6 @@
                 line-height: 35px;
                 letter-spacing: 0.7px;
                 color: #677380;        
-            }
-
-            /deep/ .inplace-edit-view-mode {
-                height: 35px;
             }
 
             /deep/ .dx-placeholder:before {

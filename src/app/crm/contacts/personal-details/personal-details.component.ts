@@ -32,23 +32,26 @@ export class PersonalDetailsComponent implements OnDestroy {
 
     accessConfidentialData = this._permission.isGranted('Pages.CRM.AccessConfidentialData');
 
-    fields = [
-        { name: 'citizenship',              type: 'select'                         },
-        { name: 'timeZone',                 type: 'select'                         },
-        { name: 'dob',                      type: 'date'                           },
-        { name: 'drivingLicense',           type: 'string',     confidential: true },
-        { name: 'drivingLicenseState',      type: 'select'                         },
-        { name: 'experience',               type: 'string'                         },
-        { name: 'interests',                type: 'list'                           },
-        { name: 'gender',                   type: 'select'                         },
-        { name: 'isActiveMilitaryDuty',     type: 'bool'                           },
-        { name: 'isUSCitizen',              type: 'bool'                           },
-        { name: 'maritalStatus',            type: 'select'                         },
-        { name: 'marriageDate',             type: 'date'                           },
-        { name: 'divorceDate',              type: 'date'                           },
-        { name: 'profileSummary',           type: 'string'                         },
-        { name: 'preferredToD',             type: 'select'                         },
-        { name: 'ssn',                      type: 'string',     confidential: true }
+    columns = [
+        [
+            { name: 'citizenship',              type: 'select'                         },
+            { name: 'timeZone',                 type: 'select'                         },
+            { name: 'dob',                      type: 'date'                           },
+            { name: 'drivingLicense',           type: 'string',     confidential: true },
+            { name: 'drivingLicenseState',      type: 'select'                         },
+            { name: 'experience',               type: 'string',     multiline:    true },
+            { name: 'gender',                   type: 'select'                         },
+            { name: 'interests',                type: 'list',       multiline:    true },
+        ], [
+            { name: 'isActiveMilitaryDuty',     type: 'bool'                           },
+            { name: 'isUSCitizen',              type: 'bool'                           },
+            { name: 'maritalStatus',            type: 'select'                         },
+            { name: 'marriageDate',             type: 'date'                           },
+            { name: 'divorceDate',              type: 'date'                           },
+            { name: 'profileSummary',           type: 'string',     multiline:    true },
+            { name: 'preferredToD',             type: 'select'                         },
+            { name: 'ssn',                      type: 'string',     confidential: true }
+        ]
     ];
 
     selectList = {
@@ -93,9 +96,12 @@ export class PersonalDetailsComponent implements OnDestroy {
     }
 
     getInputData(field) {
+        let value = (this.person[field] || '').trim();
         return {
             id: field,
-            value: this.person[field],
+            value: value,
+            displayValue: field == 'ssn' ? 
+                this.getSsnMasked(value): '',
             isEditDialogEnabled: false,
             lEntityName: field,
             lEditPlaceholder: this.ls.l('EditValuePlaceholder')
@@ -108,6 +114,12 @@ export class PersonalDetailsComponent implements OnDestroy {
             options: this.selectList[field],
             value: this.person[field]
         };
+    }
+
+    getSsnMasked(value) {
+        return this.accessConfidentialData && value ? 
+            [value.slice(0, 3), value.slice(3, 5), value.slice(-4)].join('-')
+            : value;
     }
 
     getGenderList() {

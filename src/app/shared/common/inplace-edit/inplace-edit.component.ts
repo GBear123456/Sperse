@@ -14,6 +14,7 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { ConfirmDialogComponent } from '@app/shared/common/dialogs/confirm/confirm-dialog.component';
 import { InplaceEditModel } from './inplace-edit.model';
 import { DxTextBoxComponent } from 'devextreme-angular/ui/text-box';
+import { DxTextAreaComponent } from 'devextreme-angular/ui/text-area';
 
 @Component({
     selector: 'inplace-edit',
@@ -23,10 +24,10 @@ import { DxTextBoxComponent } from 'devextreme-angular/ui/text-box';
 })
 export class InplaceEditComponent extends AppComponentBase {
     @ViewChild(DxTextBoxComponent) textBox: DxTextBoxComponent;
+    @ViewChild(DxTextAreaComponent) textArea: DxTextAreaComponent;
     @ViewChild('editText') editTextRef: ElementRef;
 
-    @Input()
-    set data(model: InplaceEditModel) {
+    @Input() set data(model: InplaceEditModel) {
         if (model && (!this._data || this._data.value != model.value)) {
             this._data = model;
             this.valueOriginal = model.value;
@@ -36,10 +37,12 @@ export class InplaceEditComponent extends AppComponentBase {
     get data(): InplaceEditModel {
         return this._data;
     }
-    @Input()
-    mask: string;
-    @Input()
-    maskInvalidMessage: string;
+
+    @Input() mask: string;
+    @Input() multiline = false;
+    @Input() maskInvalidMessage: string;
+    @Input() maxLength;
+    @Input() isOptional;
 
     @Output()
     valueChanged: EventEmitter<any> = new EventEmitter();
@@ -81,7 +84,7 @@ export class InplaceEditComponent extends AppComponentBase {
     }
 
     updateItem(event) {
-        if (!event.validationGroup || event.validationGroup.validate().isValid) {
+        if (this.multiline || this.textBox.instance.option('isValid')) {
             if (this._data.value != this.valueOriginal && this.valueChanged)
                 this.valueChanged.emit(this.valueOriginal);
             this.isEditModeEnabled = false;
@@ -102,10 +105,8 @@ export class InplaceEditComponent extends AppComponentBase {
                         this.showInput(isEnabled);
                     else
                         this.showDialog(event);
-                } else {
-                    this.isEditModeEnabled = isEnabled;
-                    this._data.value = this.valueOriginal;
-                }
+                } else 
+                    this.showInput(isEnabled);
                 this._clickCounter = 0;
                 this.changeDetector.detectChanges();
             }, 250);
@@ -117,12 +118,29 @@ export class InplaceEditComponent extends AppComponentBase {
         this.isEditModeEnabled = enabled;
         this.valueOriginal = this._data.value;
         enabled && setTimeout(() =>
-            this.textBox.instance.focus()
+            if (this.multiline)
+                this.textArea.instance.focus();
+            else
+                this.textBox.instance.focus();
         );
     }
 
     showDialog(event) {
         if (this.openDialog)
             this.openDialog.emit(event);
+    }
+
+    onFocusOut(event) {
+        if (this.mask && this.isOptional && !event.component.option("value")) {
+            event.component.option("mask", '');
+            event.component.option("isValid", true);
+        }
+    }
+
+    onFocusIn(event) {
+        if (this.mask) {
+            event.component.option("mask", this.mask);
+            event.component.option("isValid", true);
+        }
     }
 }
