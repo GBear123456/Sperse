@@ -1,4 +1,5 @@
 import { NgModule } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { BankCodeWizzardComponent } from './bank-code-wizzard.component';
 import { MatTabsModule } from '@angular/material/tabs';
@@ -9,6 +10,7 @@ import { BankCodeWizzardTabsComponent } from './bank-code-wizzard-tabs/bank-code
     imports: [
         CommonModule,
         BrowserAnimationsModule,
+        FormsModule,
         MatTabsModule
     ],
     declarations: [
