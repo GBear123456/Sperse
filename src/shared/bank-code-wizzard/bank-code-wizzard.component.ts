@@ -37,7 +37,7 @@ export class BankCodeWizzardComponent implements OnInit {
 
     categorizeText(text: string) {
         event.preventDefault();
-        const requestUrl = this.requestUrl + text;
+        const requestUrl = this.requestUrl + text.replace(/(\r\n|\n|\r)/gm, '');
         const settings = {
             'async': true,
             'crossDomain': true,
