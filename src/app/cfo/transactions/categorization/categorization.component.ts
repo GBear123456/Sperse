@@ -90,6 +90,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
         showCID: true, /* Category ID */
         showTC: false, /* Transaction Count */
         showAT: true, /* Accounting types */
+        showEmpty: false, /* hide empty categories */
         padding: this.MIN_PADDING,
         sorting: {
             field: 0,
@@ -250,6 +251,22 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
                                     }
                                 },
                                 {
+                                    type: 'option',
+                                    name: 'showEmpty',
+                                    checked: this.settings.showEmpty,
+                                    text: this.l('Empty categories'),
+                                    action: (event) => {
+                                        if (event.event.target.tagName == 'INPUT') {
+                                            this.settings.showEmpty = !this.settings.showEmpty;
+                                            if (this.showAddEntity) {
+                                                this.initToolbarConfig();
+                                            }
+                                            this.refreshCategories();
+                                            this.storeSettings();
+                                        }
+                                    }
+                                },
+                                {
                                     type: 'delimiter'
                                 },
                                 {
@@ -277,6 +294,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
                                             this.settings.showCID = false;
                                             event.itemElement.previousElementSibling.querySelector('input').checked = false;
                                             this.settings.showTC = !this.settings.showTC;
+                                            this._changeDetectionRef.detectChanges();
                                             this.storeSettings();
                                         }
                                     }
@@ -352,6 +370,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
 
     applyPadding() {
         this.columnClassName = 'column-padding-' + this.settings.padding;
+        this._changeDetectionRef.detectChanges();
     }
 
     initSettings() {
@@ -660,25 +679,28 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
                 }
                 setTimeout(() => this.finishLoading());
                 if (!this.categories.length) this.noDataText = this.ls('Platform', 'NoData');
+
+                this.setTransactionsCount();
+                this._changeDetectionRef.detectChanges();
             }
         );
     }
 
     setTransactionsCount() {
         let items = this.transactionsCountDataSource.items();
-
-        this.categories.forEach(x => {
-            x.transactionsCount = items[0][x.key];
-        });
+        if (!items.length)
+            return ;
 
         let accountingTypes: any[] = [];
         let parentCategories: any[] = [];
+                                                 
+        this.categories.forEach(item => {
+            item.transactionsCount = items[0][item.key];
 
-        this.categories.forEach(x => {
-            if (isNaN(x.key))
-                accountingTypes[x.key] = x;
-            else if (parseInt(x.parent) != x.parent)
-                parentCategories[x.key] = x;
+            if (isNaN(item.key))
+                accountingTypes[item.key] = item;
+            else if (parseInt(item.parent) != item.parent)
+                parentCategories[item.key] = item;
         });
 
         this.categories.forEach(x => {
@@ -686,7 +708,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
                 let parentCategory = parentCategories[x.parent];
                 if (parentCategory && x.transactionsCount)
                     parentCategory.transactionsCount = parentCategory.transactionsCount ? parentCategory.transactionsCount + x.transactionsCount : x.transactionsCount;
-            }
+            }            
         });
 
         if (this.settings.showAT)
@@ -695,6 +717,10 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
                 if (x.transactionsCount)
                     accountingType.transactionsCount = accountingType.transactionsCount ? accountingType.transactionsCount + x.transactionsCount : x.transactionsCount;
             });
+
+        if (!this.settings.showEmpty)
+            this.categories = this.categories.filter(item => Boolean(item.transactionsCount));
+
         this.setExcelData(items[0]);
     }
 
