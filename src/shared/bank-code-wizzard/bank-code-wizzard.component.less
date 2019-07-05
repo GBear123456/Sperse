@@ -36,7 +36,7 @@
     }
 
     .step {
-        padding: 60px 150px;
+        padding: 60px 190px;
 
         &__one{
             background: url("../../../projects/bank-code/src/assets/images/code-breaker-logo.png") top 20px right 20px no-repeat;
@@ -44,24 +44,32 @@
 
         &__two {
             background-color: #f2f2f2;
+    
+            .action-buttons {
+                text-align: left;
+            }
         }
     }
 
     h2 {
         color: #959494;
         font-family: "Bebas Neue Regular", sans-serif;
-        font-size: 51px;
+        font-size: 2.2em;
         font-weight: 400;
-        line-height: 45.83px;
+        margin-bottom: 10px;
         text-transform: uppercase;
+    }
+
+    h3 {
+        font-size: 1.6em;
+        letter-spacing: .2px;
     }
 
     label {
         color: #000000;
         font-family: "Aviano Sans Black", sans-serif;
-        font-size: 42px;
+        font-size: 1.6em;
         font-weight: 400;
-        line-height: 45.83px;
         text-transform: uppercase;
     }
 
@@ -107,6 +115,7 @@
             box-shadow: -6px -1px 29px 1px rgba(0, 0, 0, 0.25);
             background-color: #b6b3b2;
             transition: .3s;
+            cursor: pointer;
 
             &__default {
                 background-color: #b6b3b2;
@@ -126,6 +135,87 @@
             + .button {
                 margin-left: 20px;
             }
+            
+            &[disabled] {
+                opacity: .5;
+                cursor: not-allowed;
+                pointer-events: none;
+            }
+        }
+    }
+
+    .bank-code-result {
+        box-shadow: inset 0 0 57px rgba(0, 0, 0, 0.23);
+        background-color: #ffffff;
+        border-radius: 10px;
+        padding: 10px 20px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        .text {
+            font-size: 34px;
+            text-transform: uppercase;
+            color: #959393;
+            font-weight: bold;
+            margin: 0;
+            letter-spacing: .4px;
+        }
+
+        .sorted-code {
+            list-style: none;
+            display: flex;
+
+            &__item {
+                display: flex;
+                width: 25px;
+                height: 25px;
+                background: #ccc;
+                margin: 0 4px;
+                align-items: center;
+                justify-content: center;
+                line-height: 25px;
+
+                &::before {
+                    content: '';
+                    color: #fff;
+                }
+
+                &.blueprint {
+                    background-color: @blue-color;
+                    &::before {
+                        content: 'B'
+                    }
+                }
+
+                &.action {
+                    background-color: @red-color;
+                    &::before {
+                        content: 'A'
+                    }
+                }
+
+                &.nurturing {
+                    background-color: @orange-color;
+                    &::before {
+                        content: 'N'
+                    }
+                }
+
+                &.knowledge {
+                    background-color: @green-color;
+                    &::before {
+                        content: 'K'
+                    }
+                }
+            }
+        }
+
+        .primary-code {
+            //margin-left: auto;
+            text-transform: uppercase;
+            font-size: 42px;
+            color: @red-color;
         }
     }
 

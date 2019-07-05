@@ -6,12 +6,12 @@
 </div>
 <section class="step step__one">
     <h2>step 1: text analysis</h2>
-    <form>
-        <label for="text-for-analise">ENTER THE TEXT YOU WANT TO ANALYZE</label>
-        <textarea name="textForAnalise" id="text-for-analise"></textarea>
+    <form #analyseText1="ngForm" (ngSubmit)="onSubmit($event, analyseText1)" novalidate>
+        <label for="text-for-analyse">ENTER THE TEXT YOU WANT TO ANALYZE</label>
+        <textarea name="textForAnalyse" id="text-for-analyse" ngModel required></textarea>
 
         <div class="action-buttons">
-            <button type="submit" class="button button__primary">Analyze</button>
+            <button type="submit" class="button button__primary" [disabled]="!analyseText1.valid">Analyze</button>
             <button type="reset" class="button button__default">Reset</button>
         </div>
     </form>
@@ -19,15 +19,15 @@
     <div class="bank-code-result">
         <p class="text">this b.a.n.k. code is</p>
         <div class="code">
-            <ul>
-                <li *ngFor="let item of codeResult">{{item}}</li>
+            <ul class="sorted-code">
+                <li *ngFor="let item of analyseResult" class="sorted-code__item" [ngClass]="item.name | lowercase"></li>
             </ul>
         </div>
         <div class="primary-code">
             Action
         </div>
     </div>
-    <app-bank-code-wizzard-tabs></app-bank-code-wizzard-tabs>
+    <app-bank-code-wizzard-tabs [analyseResult]="analyseResult" [scores]="scores"></app-bank-code-wizzard-tabs>
 </section>
 
 <div class="top-colored-border">
@@ -39,13 +39,13 @@
 <section class="step step__two">
     <h2>step 2: response Analysis</h2>
     <div class="response-analize">
-        <form #analyzeText2="ngForm" (ngSubmit)="onSubmit($event, analyzeText2)" novalidate>
-            <label for="analised">ENTER THE TEXT YOU WANT TO ANALYZE</label>
+        <form #analyseText2="ngForm" (ngSubmit)="onSubmit($event, analyseText2)" novalidate>
+            <label for="analysed">ENTER THE TEXT YOU WANT TO ANALYZE</label>
             <div class="row">
                 <div class="col">
-                    <textarea name="textForAnalise" id="analised" ngModel></textarea>
+                    <textarea name="textForAnalyse" id="analysed" ngModel required></textarea>
                     <div class="action-buttons align-left">
-                        <button type="submit" class="button button__primary">Analyze</button>
+                        <button type="submit" class="button button__primary" [disabled]="!analyseText2.valid">Analyze</button>
                         <button type="reset" class="button button__default">Reset</button>
                     </div>
                 </div>
@@ -54,12 +54,12 @@
                     <label class="radio-label" for="primary-code">primary code</label>
                     <input type="radio" id="full-code" name="code" value="full">
                     <label class="radio-label" for="full-code">full b.a.n.k. code</label> -->
-                    <canvas id="bankCodeChart"></canvas>
+                    <canvas id="bankCodeChart" class="chart-canvas"></canvas>
                 </div>
             </div>
         </form>
     </div>
-    <app-bank-code-wizzard-tabs></app-bank-code-wizzard-tabs>
+    <app-bank-code-wizzard-tabs [analyseResult]="analyseResult" [scores]="scores"></app-bank-code-wizzard-tabs>
 </section>
 
 <footer>
