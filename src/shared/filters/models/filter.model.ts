@@ -113,7 +113,7 @@ export class FilterModel extends FilterModelBase<FilterItemModel> {
         _.each(this.items, (item: FilterItemModel, key) => {
             if (item && item.value) {
                 let clone = new Date(item.value.getTime());
-                DateHelper.removeTimezoneOffset(clone, true, key);
+                DateHelper.removeTimezoneOffset(clone, params && params.useUserTimezone, key);
                 data[this.field][this.operator[key]] = clone;
             }
         });
