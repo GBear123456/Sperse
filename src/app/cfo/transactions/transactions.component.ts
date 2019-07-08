@@ -232,7 +232,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                                 onRemoved: (ids) => this._bankAccountsService.changeSelectedBankAccountsIds(ids)
                             })
                     }
-                }),
+                })].concat(this._cfoService.hasStaticInstance ? [] : [
                 new FilterModel({
                     component: FilterInputsComponent,
                     operator: 'contains',
@@ -314,7 +314,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                     caption: 'Reference',
                     //items: { BusinessEntity: '' }
                 })
-            ];
+            ]);
             this.filtersService.setup(this.filters, this._activatedRoute.snapshot.queryParams, false);
             this.initFiltering();
             this._bankAccountsService.syncAccounts$.subscribe((syncAccounts) => {
