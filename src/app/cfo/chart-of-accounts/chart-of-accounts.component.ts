@@ -97,7 +97,8 @@ export class ChartOfAccountsComponent extends CFOComponentBase implements OnInit
                     coAID: val['COAID'],
                     sortId: null,
                     reportingCategoryCode: null,
-                    reportingCategoryName: null
+                    reportingCategoryName: null,
+                    isActive: val['isActive']
                 }));
             });
             this._categoryTreeServiceProxy.import(
