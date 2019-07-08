@@ -62,6 +62,7 @@ export class TransactionDetailInfoComponent implements OnInit {
     filteredCategory: any = [];
     filteredSubCategory: any = [];
     dropDownWidth = '200';
+    isDescriptorUpdated = false;
     constructor(
         private _cfoService: CFOService,
         private _transactionsService: TransactionsServiceProxy,
@@ -202,7 +203,7 @@ export class TransactionDetailInfoComponent implements OnInit {
             new UpdateTransactionsCategoryInput({
                 transactionIds: [this.transactionId],
                 categoryId: $event.itemData.key,
-                standardDescriptor: this.transactionInfo.transactionDescriptor,
+                standardDescriptor: this.transactionInfo.isDescriptorCalculated || !this.isDescriptorUpdated ? '' : this.transactionInfo.transactionDescriptor,
                 descriptorAttributeTypeId: undefined,
                 suppressCashflowMismatch: true
             })
@@ -283,7 +284,9 @@ export class TransactionDetailInfoComponent implements OnInit {
             })
         ).pipe(finalize(() => this.modalDialog.finishLoading()))
             .subscribe(() => {
+                this.isDescriptorUpdated = true;
                 this.refreshParent();
+                this.getTransactionDetails();
                 this.transactionInfo['inplaceEdit'] = false;
                 this._notifyService.info(this.ls.l('SavedSuccessfully'));
                 if (!this._changeDetectorRef['destroyed']) {
