@@ -346,7 +346,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     initHeadlineConfig() {
         this.headlineConfig = {
             names: [this.l('Transactions')],
-            onRefresh: this.refreshDataGrid.bind(this),
+            onRefresh: this._cfoService.hasStaticInstance ? undefined: this.refreshDataGrid.bind(this),
             iconSrc: './assets/common/icons/credit-card-icon.svg',
             class: this.noRefreshedAfterSync ? 'need-refresh' : 'no-need-refresh'
         };
@@ -449,6 +449,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                     items: [
                         {
                             name: 'showCompactRowsHeight',
+                            visible: !this._cfoService.hasStaticInstance,
                             action: this.showCompactRowsHeight.bind(this)
                         },
                         {
@@ -477,6 +478,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                         },
                         {
                             name: 'columnChooser',
+                            visible: !this._cfoService.hasStaticInstance,
                             action: this.showColumnChooser.bind(this)
                         }
                     ]
@@ -487,6 +489,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                     items: [
                         {
                             name: 'fullscreen',
+                            visible: !this._cfoService.hasStaticInstance,
                             action: () => {
                                 this.toggleFullscreen(document.documentElement);
                                 setTimeout(() => this.dataGrid.instance.repaint(), 100);

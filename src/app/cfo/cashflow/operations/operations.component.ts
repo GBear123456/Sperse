@@ -11,6 +11,7 @@ import { AppService } from '@app/app.service';
 import { BankAccountsSelectDialogComponent } from 'app/cfo/shared/bank-accounts-select-dialog/bank-accounts-select-dialog.component';
 import { ReportPeriodComponent } from '@app/cfo/shared/report-period/report-period.component';
 import { BankAccountsService } from '@shared/cfo/bank-accounts/helpers/bank-accounts.service';
+import { CFOService } from '@shared/cfo/cfo.service';
 
 @Component({
     selector: 'cashflow-operations',
@@ -53,6 +54,7 @@ export class OperationsComponent extends AppComponentBase implements OnInit, OnD
     constructor(injector: Injector,
         private _filtersService: FiltersService,
         private _appService: AppService,
+        private _cfoService: CFOService,
         private _bankAccountsService: BankAccountsService,
         private _dialog: MatDialog
     ) {
@@ -226,8 +228,15 @@ export class OperationsComponent extends AppComponentBase implements OnInit, OnD
                         location: 'after',
                         locateInMenu: 'auto',
                         items: [
-                            { name: 'comments' },
-                            { name: 'fullscreen', action: this.fullscreen.bind(this) }
+                            { 
+                                name: 'comments', 
+                                visible: !this._cfoService.hasStaticInstance,
+                            },
+                            { 
+                                name: 'fullscreen',
+                                visible: !this._cfoService.hasStaticInstance,
+                                action: this.fullscreen.bind(this) 
+                            }
                         ]
                     },
                 ]);

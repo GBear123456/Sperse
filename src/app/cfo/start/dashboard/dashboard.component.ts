@@ -55,7 +55,7 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, OnDe
         this.headlineConfig = {
             names: [this.l('Dashboard_Title')],
             iconSrc: './assets/common/icons/pie-chart.svg',
-            onRefresh: () => {
+            onRefresh: this._cfoService.hasStaticInstance ? undefined : () => {
                 this._dashboardService.refresh();
                 this.refreshWidgets();
             },

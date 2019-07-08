@@ -327,23 +327,27 @@ export class ToolBarComponent implements OnDestroy {
         }
     }
 
+    checkItemVisible(item) {
+        return !item.hasOwnProperty('visible') || item.visible;
+    }
+
     initToolbarItems() {
         let supportedButtons = this.getSupportedButtons();
         let items = [];
         if (this._config)
             this._config.forEach((group) => {
-                let count = group.items.length;
-                group.items.forEach((item, index) => {
+                let groupItems = group.items.filter((item => this.checkItemVisible(item))),
+                    count = groupItems.length;
+                groupItems.forEach((item, index) => {
                     this.initDropDownMenu(item);
                     let internalConfig = supportedButtons[item.name];
                     let mergedConfig = _.extend(internalConfig || {}, item.options);
 
-                    items.push({
+                    this.checkItemVisible(item) && items.push({
                         name: item.name,
                         location: group.location,
                         locateInMenu: group.locateInMenu,
                         disabled: item.disabled,
-                        visible: item.visible,
                         widget: (item.text !== undefined || item.html !== undefined) && !item.widget ? null : item.widget || 'dxButton',
                         text: !item.widget && item.text,
                         html: !item.widget && item.html,

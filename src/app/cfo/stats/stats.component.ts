@@ -415,7 +415,11 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
                         location: 'after',
                         locateInMenu: 'auto',
                         items: [
-                            {name: 'fullscreen', action: this.toggleFullscreen.bind(this, document.documentElement)}
+                            {
+                                name: 'fullscreen',
+                                visible: !this._cfoService.hasStaticInstance,
+                                action: this.toggleFullscreen.bind(this, document.documentElement)
+                            }
                         ]
                     }
                 ]);
@@ -427,7 +431,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
         this.headlineConfig = {
             names: [this.l('Daily Cash Balances')],
             iconSrc: './assets/common/icons/pulse-icon.svg',
-            onRefresh: this.getUpdatedDataSource.bind(this),
+            onRefresh: this._cfoService.hasStaticInstance ? undefined : this.getUpdatedDataSource.bind(this),
             buttons: [
                 {
                     enabled: this.statsData && this.statsData.length ? true : false,

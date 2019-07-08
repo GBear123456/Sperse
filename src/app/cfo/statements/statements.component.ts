@@ -304,7 +304,11 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
                     location: 'after',
                     locateInMenu: 'auto',
                     items: [
-                        {name: 'showCompactRowsHeight', action: this.showCompactRowsHeight.bind(this)},
+                        {
+                            name: 'showCompactRowsHeight', 
+                            visible: !this._cfoService.hasStaticInstance,
+                            action: this.showCompactRowsHeight.bind(this)
+                        },
                         {
                             name: 'download',
                             widget: 'dxDropDownMenu',
@@ -328,7 +332,11 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
                                 ]
                             }
                         },
-                        {name: 'columnChooser', action: this.showColumnChooser.bind(this)}
+                        {
+                            name: 'columnChooser', 
+                            visible: !this._cfoService.hasStaticInstance,
+                            action: this.showColumnChooser.bind(this)
+                        }
                     ]
                 }
             ]);
@@ -376,7 +384,7 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
     initHeadlineConfig() {
         this.headlineConfig = {
             names: [this.l('Statements')],
-            onRefresh: () => {
+            onRefresh: this._cfoService.hasStaticInstance ? undefined : () => {
                 this.refresh.next();
                 this.bankAccountsService.load(true, false).pipe(
                     finalize(() => abp.ui.clearBusy())
