@@ -20,7 +20,7 @@
         <p class="text">this b.a.n.k. code is</p>
         <div class="code">
             <ul class="sorted-code">
-                <li *ngFor="let item of analyseResult | reverse" class="sorted-code__item" [ngClass]="item.name | lowercase"></li>
+                <li *ngFor="let item of analyseResult" class="sorted-code__item" [ngClass]="item.name | lowercase"></li>
             </ul>
         </div>
         <div class="primary-code" [ngClass]="biggestValue.name | lowercase">
