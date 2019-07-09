@@ -143,4 +143,8 @@ export class InplaceEditComponent extends AppComponentBase {
             event.component.option("isValid", true);
         }
     }
+
+    onTextAreaInitialized(event) {
+        setTimeout(() => event.component.repaint());
+    }
 }

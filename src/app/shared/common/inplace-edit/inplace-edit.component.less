@@ -74,6 +74,7 @@
 
     .inplace-edit-edit-mode {
         height: 35px;
+        position: relative;
         display: inline-flex;
         align-items: center;
         width: 100%;
@@ -110,13 +111,20 @@
         }
         /deep/ dx-button {
             border: none;
-            position: relative;
-
-            &.button-update i {
-                color: #00aeef;
+            position: absolute;
+            top: 0px;
+           
+            &.button-update {
+                right: -30px;
+                i {
+                    color: #00aeef;
+                }
             }
-            &.button-exit i {
-                color: #f44336;
+            &.button-exit {
+                right: -65px;
+                i {
+                    color: #f44336;
+                }
             }
         }
     }

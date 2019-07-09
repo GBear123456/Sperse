@@ -8,7 +8,11 @@
     </div>
 </div>
 <div *ngIf="!data?.isReadOnlyField && isEditModeEnabled" class="inplace-edit-edit-mode {{multiline ? 'multiline': ''}}">
-    <dx-text-area [placeholder]="data?.lEditPlaceholder" [(value)]="valueOriginal" [autoResizeEnabled]="true" *ngIf="multiline">
+    <dx-text-area *ngIf="multiline"
+        [placeholder]="data?.lEditPlaceholder" 
+        [(value)]="valueOriginal" 
+        [autoResizeEnabled]="true"
+        (onInitialized)="onTextAreaInitialized($event)">
         <dx-validator [validationRules]="data?.validationRules || []"></dx-validator>
     </dx-text-area>
     <dx-text-box *ngIf="!multiline"
