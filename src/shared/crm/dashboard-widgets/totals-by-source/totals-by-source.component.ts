@@ -149,16 +149,17 @@ export class TotalsBySourceComponent implements OnInit, OnDestroy {
                 this.loading = true;
                 this._loadingService.startLoading(this._elementRef.nativeElement);
             }),
-            switchMap(([selectedTotal, period]: [ITotalOption, PeriodModel]) => selectedTotal.method.call(this._dashboardServiceProxy, period && period.from, period && period.to).pipe(finalize(() => this._loadingService.finishLoading(this._elementRef.nativeElement)))),
+            switchMap(([selectedTotal, period]: [ITotalOption, PeriodModel]) => selectedTotal.method.call(
+                this._dashboardServiceProxy, period && period.from || new Date('2000-01-01'), period && period.to || new Date()).pipe(
+                    finalize(() => this._loadingService.finishLoading(this._elementRef.nativeElement))
+                )
+            ),
             map((data: any[]) => {
-                if (this.selectedTotal.value.sorting) {
-                    data = data.sort(this.selectedTotal.value.sorting);
-                }
-                return data
-                    .map((customer: any) => {
-                        if (!customer[this.selectedTotal.value.argumentField])
-                            customer[this.selectedTotal.value.argumentField] = 'Unknown';
-                        return customer;
+                return (this.selectedTotal.value.sorting ? data.sort(this.selectedTotal.value.sorting) : data)
+                    .map((item: any) => {
+                        item[this.selectedTotal.value.argumentField] = this.ls.l(
+                            item[this.selectedTotal.value.argumentField] || 'Unknown');
+                        return item;
                     });
             }),
             tap(() => this.loading = false),
