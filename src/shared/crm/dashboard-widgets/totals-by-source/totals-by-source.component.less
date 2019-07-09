@@ -1,5 +1,6 @@
 :host {
     display: block;
+
     .wrapper {
         width: 100%;
         text-align: center;
@@ -14,6 +15,13 @@
             justify-content: space-between;
             margin-bottom: 10px;
             align-items: center;
+
+            @media (max-width: 1600px) {
+                .title, /deep/ dx-select-box input {
+                    font-size: 16px;
+                }                
+            }
+
             .title {
                 font-size: 18px;
                 font-family: Montserrat;
@@ -21,6 +29,7 @@
                 fill: #212c36;
                 cursor: default;
                 margin-bottom: 0;
+                white-space: nowrap;
             }
         }
         .totalsNumbers {
