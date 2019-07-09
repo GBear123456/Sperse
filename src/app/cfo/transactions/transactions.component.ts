@@ -233,12 +233,14 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                             })
                     }
                 })].concat(this._cfoService.hasStaticInstance ? [] : [
+/*
                 new FilterModel({
                     component: FilterInputsComponent,
                     operator: 'contains',
                     caption: 'Description',
                     items: { Description: new FilterItemModel() }
                 }),
+*/
                 new FilterModel({
                     component: FilterInputsComponent,
                     operator: { from: 'ge', to: 'le' },
@@ -258,6 +260,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                         })
                     }
                 }),
+/*
                 new FilterModel({
                     component: FilterCheckBoxesComponent,
                     field: 'TypeId',
@@ -270,6 +273,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                         })
                     }
                 }),
+*/
                 new FilterModel({
                     component: FilterCBoxesComponent,
                     caption: 'classified',
@@ -301,7 +305,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                             keyExpr: 'id'
                         })
                     }
-                }),
+                }) /*,
                 new FilterModel({
                     component: FilterInputsComponent,
                     //operator: 'contains',
@@ -313,7 +317,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                     //operator: 'contains',
                     caption: 'Reference',
                     //items: { BusinessEntity: '' }
-                })
+                }) */
             ]);
             this.filtersService.setup(this.filters, this._activatedRoute.snapshot.queryParams, false);
             this.initFiltering();

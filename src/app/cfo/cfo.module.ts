@@ -89,6 +89,7 @@ import { SearchInputModule } from '@app/shared/common/search-input/search-input.
 import { ExpandButtonModule } from '@app/shared/common/expand-button/expand-button.module';
 import { SortButtonModule } from '@app/shared/common/sort-button/sort-button.module';
 import { CFOService } from '@shared/cfo/cfo.service';
+import { ReportsComponent } from './reports/reports.component';
 
 let COMPONENTS = [
     StartComponent,
@@ -121,7 +122,8 @@ let COMPONENTS = [
     ReportPeriodComponent,
     ImportFromQuickBooksButtonComponent,
     UsersDialogComponent,
-    KeyPhrasesComponent
+    KeyPhrasesComponent,
+    ReportsComponent
 ];
 
 @NgModule({

@@ -18,6 +18,7 @@
     [ "Transactions", "", "icon-home", "/app/cfo/:instance/transactions" ],
     [ "Cashflow", "", "icon-home", "/app/cfo/:instance/cashflow" ],
     [ "Stats", "", "icon-home", "/app/cfo/:instance/stats" ],
-    [ "Statements", "", "icon-home", "/app/cfo/:instance/statements" ]
+    [ "Statements", "", "icon-home", "/app/cfo/:instance/statements" ],
+    [ "Reports", "", "icon-home", "/app/cfo/:instance/statements" ]
   ]
 }

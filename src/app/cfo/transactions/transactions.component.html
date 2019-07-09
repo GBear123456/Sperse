@@ -29,6 +29,7 @@
                                   [columnAutoWidth]="true"
                                   [allowColumnResizing]="true"
                                   [hoverStateEnabled]="true"
+                                  [headerFilter]="{allowSearch: false, visible: true}"
                                   [pager]="defaultGridPagerConfig"
                                   [loadPanel]="{
                                     enabled: true,
@@ -54,9 +55,8 @@
                         </dxo-selection>
                         <dxo-group-panel [visible]="true"></dxo-group-panel>
                         <dxo-sorting mode="multiple"></dxo-sorting>
-                        <dxo-header-filter [visible]="true" [allowSearch]="true"></dxo-header-filter>
 
-                        <dxi-column dataField="Date" cssClass="tabular" caption="{{l('Transactions_Date')}}" cellTemplate="dateCell"></dxi-column>
+                        <dxi-column dataField="Date" cssClass="tabular" caption="{{l('Transactions_Date')}}" cellTemplate="dateCell" [allowFiltering]="false"></dxi-column>
                         <dxi-column dataField="Description" cellTemplate="descriptionTemplate" caption="{{l('Transactions_Description')}}" [width]="450"></dxi-column>
                         <dxi-column caption="{{l('Transactions_CashflowCategoryName')}}"
                                     dataField="CashflowCategoryName"
@@ -74,12 +74,12 @@
                                     alignment="center"
                                     caption="{{l('Transactions_CashFlowType')}}"></dxi-column>
                         <dxi-column dataField="AccountingTypeName" caption="{{l('Transactions_AccountingTypeName')}}" [visible]="false"></dxi-column>
-                        <dxi-column dataField="BankAccountNumber" cssClass="tabular" caption="{{l('Transactions_BankAccountNumber')}}"></dxi-column>
+                        <dxi-column dataField="BankAccountNumber" cssClass="tabular" caption="{{l('Transactions_BankAccountNumber')}}" [filterOperations]="'='"></dxi-column>
                         <dxi-column dataField="Descriptor" caption="{{l('Transactions_Descriptor')}}"></dxi-column>
                         <dxi-column dataField="Comments" caption="{{l('Transactions_Comments')}}"></dxi-column>
 
-                        <dxi-column dataField="Id" cssClass="tabular id-column" caption="{{l('Transactions_Id')}}" sortOrder="desc" sortIndex="0" [visible]="false"></dxi-column>
-                        <dxi-column dataField="BankCode" caption="{{l('Transactions_BankCode')}}" [visible]="false"></dxi-column>
+                        <dxi-column dataField="Id" cssClass="tabular id-column" caption="{{l('Transactions_Id')}}" sortOrder="desc" sortIndex="0" [visible]="false" [allowFiltering]="false"></dxi-column>
+                        <dxi-column dataField="BankCode" caption="{{l('Transactions_BankCode')}}" [visible]="false" [filterOperations]="'='"></dxi-column>
                         <dxi-column dataField="IsPending" caption="{{l('Transactions_IsPending')}}" [visible]="false" cellTemplate="isPendingTemplate"></dxi-column>
                         <dxi-column dataField="MonthYear" caption="{{l('Transactions_MonthYear')}}" cellTemplate="dateMonthYear" groupCellTemplate="dateMonthYear" calculateSortValue="Date" [visible]="false"></dxi-column>
                         <dxi-column dataField="Debit" cssClass="tabular" name="Debit" caption="{{l('Transactions_Debit')}}" cellTemplate="amountTemplate" [visible]="false"></dxi-column>
