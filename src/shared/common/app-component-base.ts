@@ -314,6 +314,7 @@ export abstract class AppComponentBase implements OnDestroy {
             let scroll = this.dataGrid.instance.getScrollable();
             if (scroll)
                 this._prevScrollPos = scroll.scrollOffset();
+            this.dataGrid.instance.hideColumnChooser();
         }
     }
 

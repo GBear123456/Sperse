@@ -11,6 +11,7 @@ import {
 } from '@angular/core';
 
 /** Third party imports */
+import { CacheService } from 'ng2-cache-service';
 import { SynchProgressComponent } from '@shared/cfo/bank-accounts/synch-progress/synch-progress.component';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Store, select } from '@ngrx/store';
@@ -71,6 +72,8 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
 
     private transId$: Subject<number> = new Subject<number>();
 
+    dataGridStateTimeout: any;
+    filtersInitialData: any;
     noRefreshedAfterSync: boolean;
     items: any;
     transactionId: any;
@@ -133,6 +136,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         private _classificationServiceProxy: ClassificationServiceProxy,
         private _bankAccountsService: BankAccountsService,
         private _changeDetectionRef: ChangeDetectorRef,
+        private _cacheService: CacheService,
         private store$: Store<CfoStore.State>,
         public cfoPreferencesService: CfoPreferencesService,
         public filtersService: FiltersService,
@@ -211,6 +215,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             this._bankAccountsService.syncAccounts$.pipe(first())
         ).subscribe(([typeAndCategories, filtersInitialData, syncAccounts]) => {
             this.syncAccounts = syncAccounts;
+            this.filtersInitialData = filtersInitialData;
             this.filters = [
                 new FilterModel({
                     component: FilterCalendarComponent,
@@ -984,8 +989,36 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         }
     }
 
-    onContentReady($event) {
-        this.onSelectionChanged($event, true);
+    storeGridState(instance) {
+        clearTimeout(this.dataGridStateTimeout);
+        this.dataGridStateTimeout = setTimeout(() => {
+            instance = instance || this.dataGrid && this.dataGrid.instance;
+            if (instance)
+                this._cacheService.set(this.getCacheKey('dataGridState'), instance.state());
+        }, 500);
+    }
+
+    applyGridState(instance) {
+        instance = instance || this.dataGrid && this.dataGrid.instance;
+        if (instance) {
+            let state = this._cacheService.get(
+                this.getCacheKey('dataGridState'));
+            if (state) {
+                instance.state(state);
+                state.columns.forEach((column) => 
+                    instance.columnOption(column.dataField, 'visible', column.visible)
+                );
+            };
+        }
+    }
+
+    onInitialized(event) {
+        this.applyGridState(event.component);
+    }
+
+    onContentReady(event) {
+        this.storeGridState(event.component);
+        this.onSelectionChanged(event, true);
     }
 
     categorizeTransactions($event) {
@@ -1190,6 +1223,8 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     }
 
     activate() {
+        super.activate();
+
         this.initFiltering();
         this.filtersService.setup(this.filters, this._activatedRoute.snapshot.queryParams, true);
         this.initToolbarConfig();
@@ -1210,10 +1245,12 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     }
 
     deactivate() {
+        super.deactivate();
+
         this.dialog.closeAll();
         this._appService.updateToolbar(null);
         this.filtersService.unsubscribe();
         this.synchProgressComponent.deactivate();
-        this.rootComponent.overflowHidden(false);
+        this.rootComponent.overflowHidden(false);        
     }
 }
