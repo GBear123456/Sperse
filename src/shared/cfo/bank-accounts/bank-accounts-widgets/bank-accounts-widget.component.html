@@ -27,7 +27,7 @@
                         [title]=""
                         popupWidth="250px"
                         [allSelectedTitle]="true"
-                        [itemsText]="l('Types')"                    
+                        [itemsText]="l('Type')"
                         [selectionList]="bankAccountsService.existingBankAccountsTypesWithFilteredCounts$ | async"
                         [selectedItems]="bankAccountsService.selectedBankAccountTypes$ | async"
                         (selectionChanged)="bankAccountTypesChanged($event)">
