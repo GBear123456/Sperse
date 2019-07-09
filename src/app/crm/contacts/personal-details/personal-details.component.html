@@ -35,7 +35,7 @@
                                 width="260px"
                                 [multiline]="field.multiline"
                                 [placeholder]="ls.l('EditValuePlaceholder')"
-                                [items]="person[field.name]"
+                                [items]="field.source | async"
                                 [acceptCustomValue]="true"
                                 [value]="person[field.name]"
                                 (onValueChanged)="updateValue($event.value, field.name)">
