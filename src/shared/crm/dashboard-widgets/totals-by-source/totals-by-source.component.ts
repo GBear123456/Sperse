@@ -68,7 +68,15 @@ export class TotalsBySourceComponent implements OnInit, OnDestroy {
             method: this._dashboardServiceProxy.getCustomersByStar,
             argumentField: 'key',
             valueField: 'count',
-            argumentIsColor: true
+            getColor: (value: string) => {
+                return {
+                    Excellent: '#24c26c',
+                    Good: '#82cc57',
+                    Fair: '#f0eb56',
+                    Poor: '#f3852a',
+                    NotSure: '#959595'
+                }[value] || '#ecf0f3';
+            }
         },
         {
             key: 'stageDistribution',
@@ -176,13 +184,9 @@ export class TotalsBySourceComponent implements OnInit, OnDestroy {
     }
 
     private getItemColor(item) {
-        return this.selectedTotal.value.argumentIsColor && item.argument && item.argument !== 'Unknown'
-            ? item.argument
-            : (
-                this.selectedTotal.value.getColor
-                ? this.selectedTotal.value.getColor(item.argument)
-                : this.rangeColors[item.index]
-            );
+        return this.selectedTotal.value.getColor
+            ? this.selectedTotal.value.getColor(item.argument)
+            : this.rangeColors[item.index];
     }
 
     onPointHoverChanged($event) {
