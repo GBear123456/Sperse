@@ -426,8 +426,8 @@ export class OffersComponent extends AppComponentBase implements OnInit, OnDestr
         return filterParams;
     }
 
-    onSelectionChanged($event) {
-        this.selectedOfferKeys = $event.component.getSelectedRowKeys().map(item => item.CampaignId);
+    onSelectionChanged(event) {
+        this.selectedOfferKeys = event.component.getSelectedRowKeys().map(item => item.CampaignId);
     }
 
     showCompactRowsHeight() {
@@ -446,7 +446,7 @@ export class OffersComponent extends AppComponentBase implements OnInit, OnDestr
     }
 
     invalidate() {
-        this.selectedOfferKeys = [];
+        this.dataGrid.instance.deselectAll();
         this.processFilterInternal();
     }
 
