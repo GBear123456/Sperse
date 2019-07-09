@@ -232,6 +232,18 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                                 onRemoved: (ids) => this._bankAccountsService.changeSelectedBankAccountsIds(ids)
                             })
                     }
+                }),
+                new FilterModel({
+                    component: FilterCheckBoxesComponent,
+                    field: 'BusinessEntityId',
+                    caption: 'BusinessEntity',
+                    items: {
+                        element: new FilterCheckBoxesModel({
+                            dataSource: filtersInitialData.businessEntities,
+                            nameField: 'name',
+                            keyExpr: 'id'
+                        })
+                    }
                 })].concat(this._cfoService.hasStaticInstance ? [] : [
                 new FilterModel({
                     component: FilterInputsComponent,
@@ -287,18 +299,6 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                             nameField: 'name',
                             keyExpr: 'id',
                             value: [ this.cfoPreferencesService.selectedCurrencyId ]
-                        })
-                    }
-                }),
-                new FilterModel({
-                    component: FilterCheckBoxesComponent,
-                    field: 'BusinessEntityId',
-                    caption: 'BusinessEntity',
-                    items: {
-                        element: new FilterCheckBoxesModel({
-                            dataSource: filtersInitialData.businessEntities,
-                            nameField: 'name',
-                            keyExpr: 'id'
                         })
                     }
                 }),
