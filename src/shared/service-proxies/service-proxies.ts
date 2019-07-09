@@ -11498,6 +11498,62 @@ export class DictionaryServiceProxy {
         }
         return _observableOf<OrganizationTypeDto[]>(<any>null);
     }
+
+    /**
+     * @return Success
+     */
+    getInterests(): Observable<string[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/Dictionary/GetInterests";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetInterests(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetInterests(<any>response_);
+                } catch (e) {
+                    return <Observable<string[]>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<string[]>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetInterests(response: HttpResponseBase): Observable<string[]> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(item);
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<string[]>(<any>null);
+    }
 }
 
 @Injectable()
@@ -60190,6 +60246,7 @@ export class SubmitRequestInput implements ISubmitRequestInput {
     stateCode!: string | undefined;
     countryCode!: string | undefined;
     zipCode!: string | undefined;
+    monthsAtAddress!: number | undefined;
     doB!: moment.Moment | undefined;
     creditScore!: SubmitRequestInputCreditScore | undefined;
 
@@ -60218,6 +60275,7 @@ export class SubmitRequestInput implements ISubmitRequestInput {
             this.stateCode = data["stateCode"];
             this.countryCode = data["countryCode"];
             this.zipCode = data["zipCode"];
+            this.monthsAtAddress = data["monthsAtAddress"];
             this.doB = data["doB"] ? moment(data["doB"].toString()) : <any>undefined;
             this.creditScore = data["creditScore"];
         }
@@ -60246,6 +60304,7 @@ export class SubmitRequestInput implements ISubmitRequestInput {
         data["stateCode"] = this.stateCode;
         data["countryCode"] = this.countryCode;
         data["zipCode"] = this.zipCode;
+        data["monthsAtAddress"] = this.monthsAtAddress;
         data["doB"] = this.doB ? this.doB.toISOString() : <any>undefined;
         data["creditScore"] = this.creditScore;
         return data; 
@@ -60267,6 +60326,7 @@ export interface ISubmitRequestInput {
     stateCode: string | undefined;
     countryCode: string | undefined;
     zipCode: string | undefined;
+    monthsAtAddress: number | undefined;
     doB: moment.Moment | undefined;
     creditScore: SubmitRequestInputCreditScore | undefined;
 }
