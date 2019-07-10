@@ -242,7 +242,7 @@
 </div>
 
 <app-no-data
-    *ngIf="loading && (!cashflowData || !cashflowData.length)"
+    *ngIf="!loading && !(cashflowData && cashflowData.length)"
     text=""
     [linkUrl]="instanceUri + 'start'"
     [showLink]="!filteredLoad"
