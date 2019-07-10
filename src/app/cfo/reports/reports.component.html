@@ -1,0 +1,23 @@
+<div>
+    <app-headline [config]="headlineConfig"></app-headline>
+    <div class="main-wrapper">
+        <div class="left-menu">
+            <ul class="menu-wrapper">
+                <ng-template ngFor let-item [ngForOf]="menuItems" let-i="index">
+                    <li class="item">
+                        <span class="link" (click)="onMenuClick(item)">{{l(item.caption)}}</span>
+                    </li>
+                </ng-template>
+            </ul>
+        </div>
+
+        <div class="reports" *ngIf="(reportsProxy.getAll(instanceType, instanceId) | async) as reports; else nodata">
+            
+        </div>
+
+        <ng-template #nodata>
+            <app-no-data [showLink]="false"></app-no-data>
+        </ng-template>
+
+    </div>
+</div>

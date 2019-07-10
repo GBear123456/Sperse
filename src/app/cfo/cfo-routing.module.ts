@@ -14,6 +14,7 @@ import { BusinessEntitiesComponent } from './business-entities/business-entities
 import { ChartOfAccountsComponent } from 'app/cfo/chart-of-accounts/chart-of-accounts.component';
 import { StatementsComponent } from './statements/statements.component';
 import { CfoInstanceStatusGuard } from '@app/cfo/cfo-instance-status-guard';
+import { ReportsComponent } from './reports/reports.component';
 
 @NgModule({
     imports: [
@@ -60,7 +61,8 @@ import { CfoInstanceStatusGuard } from '@app/cfo/cfo-instance-status-guard';
                     { path: 'transactions', component: TransactionsComponent, data: { permission: '', reuse: true } },
                     { path: 'rules', component: RulesComponent, data: { permission: '' } },
                     { path: 'permissions', component: PermissionsComponent, data: { permission: '' } },
-                    { path: 'statements', component: StatementsComponent, data: { permission: '', reuse: true } }
+                    { path: 'statements', component: StatementsComponent, data: { permission: '', reuse: true } },
+                    { path: 'reports', component: ReportsComponent, data: { permission: '', reuse: true } }
                 ]
             }
         ])
