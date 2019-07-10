@@ -4,9 +4,10 @@ import { ActivatedRoute, Router, UrlSegment } from '@angular/router';
 import { HttpParams } from '@angular/common/http';
 
 /** Third party imports */
-import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
+import { MatDialog } from '@angular/material/dialog';
 import camelCase from 'lodash/camelCase';
 import kebabCase from 'lodash/kebabCase';
+import cloneDeep from 'lodash/cloneDeep';
 import capitalize from 'lodash/capitalize';
 import lowerCase from 'lodash/lowerCase';
 import upperFirst from 'lodash/upperFirst';
