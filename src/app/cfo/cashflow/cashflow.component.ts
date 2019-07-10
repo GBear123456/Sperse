@@ -883,7 +883,9 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         this.initHeadlineConfig();
 
         /** Add event listeners for cashflow component (delegation for cashflow cells mostly) */
-        if (this.isInstanceAdmin || this._cfoService.classifyTransactionsAllowed) {
+        if (this.userPreferencesService.localPreferences.value.showCategoryTotals
+            && (this.isInstanceAdmin || this._cfoService.classifyTransactionsAllowed)
+        ) {
             this.cashflowService.addEvents(this.getElementRef().nativeElement, this.cashflowEvents);
             this.createDragImage();
             document.addEventListener('keydown', this.keyDownEventHandler, true);
@@ -2193,15 +2195,20 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     }
                     break;
                 case 86: // ctrl + v
-                    if (this.copiedCell && this.isCopyable(this.copiedCell) && (e.ctrlKey || e.metaKey)) {
-                        this.onPaste();
-                    }
+                    if (this.userPreferencesService.localPreferences.value.showCategoryTotals) {
+                        if (this.copiedCell && this.isCopyable(this.copiedCell) && (e.ctrlKey || e.metaKey))
+                            this.onPaste();
+                    } else 
+                        this.notify.error(this.l('EnableCategoryTotals'));
                     break;
                 case 46: // delete
-                    if (this.statsDetailResult && e.target.closest('#cashflowGridContainer'))
-                        this.onDetailsRowDelete(e);
-                    else
-                        this.onDelete(e);
+                    if (this.userPreferencesService.localPreferences.value.showCategoryTotals) {
+                        if (this.statsDetailResult && e.target.closest('#cashflowGridContainer'))
+                            this.onDetailsRowDelete(e);
+                        else
+                            this.onDelete(e);
+                    } else 
+                        this.notify.error(this.l('EnableCategoryTotals'));
                     break;
                 default:
                     return;
@@ -3418,8 +3425,11 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     onDragEnd(e) {
         e.preventDefault();
         e.stopPropagation();
+
         const targetCell = this.getCellElementFromTarget(e.target);
-        if (targetCell && this.cashflowService.elementIsDataCell(targetCell)) {
+        if (this.userPreferencesService.localPreferences.value.showCategoryTotals &&
+            targetCell && this.cashflowService.elementIsDataCell(targetCell)
+        ) {
             const hoveredElements = document.querySelectorAll(':hover');
             const lastHoveredElement = hoveredElements[hoveredElements.length - 1];
             const hoveredCell = this.getCellElementFromTarget(lastHoveredElement);
@@ -4680,6 +4690,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         }));
         /** If period is historical*/
         this.disableAddForecastButton = this.detailsPeriodIsHistorical
+            || !this.userPreferencesService.localPreferences.value.showCategoryTotals
             /** Or not category, subcategory or descriptor */
             || (
                 !this.statsDetailFilter.categoryId
@@ -5730,12 +5741,19 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 }
 
                 if (data.amount === 0) {
-                    apiMethod = this._cashFlowForecastServiceProxy
-                        .deleteForecast(
-                            InstanceType10[this.instanceType],
-                            this.instanceId,
-                            data.id
-                        );
+                    if (this.userPreferencesService.localPreferences.value.showCategoryTotals) 
+                        apiMethod = this._cashFlowForecastServiceProxy
+                            .deleteForecast(
+                                InstanceType10[this.instanceType],
+                                this.instanceId,
+                                data.id
+                            );
+                    else {
+                        this.detailsFinishLoading();
+                        this.notify.error(this.l('EnableCategoryTotals'));
+                        e.component.cancelEditData();
+                        return e.cancel = true;
+                    }
 
                 } else {
                     /* Set forecast category */
