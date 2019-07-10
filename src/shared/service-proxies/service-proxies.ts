@@ -33253,6 +33253,7 @@ export class StatsFilter implements IStatsFilter {
     currencyId!: string | undefined;
     accountIds!: number[] | undefined;
     businessEntityIds!: number[] | undefined;
+    transferTransactionFilter!: StatsFilterTransferTransactionFilter | undefined;
 
     constructor(data?: IStatsFilter) {
         if (data) {
@@ -33292,6 +33293,7 @@ export class StatsFilter implements IStatsFilter {
                 for (let item of data["businessEntityIds"])
                     this.businessEntityIds.push(item);
             }
+            this.transferTransactionFilter = data["transferTransactionFilter"];
         }
     }
 
@@ -33326,6 +33328,7 @@ export class StatsFilter implements IStatsFilter {
             for (let item of this.businessEntityIds)
                 data["businessEntityIds"].push(item);
         }
+        data["transferTransactionFilter"] = this.transferTransactionFilter;
         return data; 
     }
 }
@@ -33341,6 +33344,7 @@ export interface IStatsFilter {
     currencyId: string | undefined;
     accountIds: number[] | undefined;
     businessEntityIds: number[] | undefined;
+    transferTransactionFilter: StatsFilterTransferTransactionFilter | undefined;
 }
 
 export class Period implements IPeriod {
@@ -33817,6 +33821,7 @@ export class StatsDetailFilter implements IStatsDetailFilter {
     currencyId!: string | undefined;
     accountIds!: number[] | undefined;
     businessEntityIds!: number[] | undefined;
+    transferTransactionFilter!: StatsDetailFilterTransferTransactionFilter | undefined;
 
     constructor(data?: IStatsDetailFilter) {
         if (data) {
@@ -33850,6 +33855,7 @@ export class StatsDetailFilter implements IStatsDetailFilter {
                 for (let item of data["businessEntityIds"])
                     this.businessEntityIds.push(item);
             }
+            this.transferTransactionFilter = data["transferTransactionFilter"];
         }
     }
 
@@ -33883,6 +33889,7 @@ export class StatsDetailFilter implements IStatsDetailFilter {
             for (let item of this.businessEntityIds)
                 data["businessEntityIds"].push(item);
         }
+        data["transferTransactionFilter"] = this.transferTransactionFilter;
         return data; 
     }
 }
@@ -33901,6 +33908,7 @@ export interface IStatsDetailFilter {
     currencyId: string | undefined;
     accountIds: number[] | undefined;
     businessEntityIds: number[] | undefined;
+    transferTransactionFilter: StatsDetailFilterTransferTransactionFilter | undefined;
 }
 
 export class CashFlowStatsDetailDto implements ICashFlowStatsDetailDto {
@@ -36511,6 +36519,7 @@ export class StatsDetailFilterBase implements IStatsDetailFilterBase {
     currencyId!: string | undefined;
     accountIds!: number[] | undefined;
     businessEntityIds!: number[] | undefined;
+    transferTransactionFilter!: StatsDetailFilterBaseTransferTransactionFilter | undefined;
 
     constructor(data?: IStatsDetailFilterBase) {
         if (data) {
@@ -36542,6 +36551,7 @@ export class StatsDetailFilterBase implements IStatsDetailFilterBase {
                 for (let item of data["businessEntityIds"])
                     this.businessEntityIds.push(item);
             }
+            this.transferTransactionFilter = data["transferTransactionFilter"];
         }
     }
 
@@ -36573,6 +36583,7 @@ export class StatsDetailFilterBase implements IStatsDetailFilterBase {
             for (let item of this.businessEntityIds)
                 data["businessEntityIds"].push(item);
         }
+        data["transferTransactionFilter"] = this.transferTransactionFilter;
         return data; 
     }
 }
@@ -36589,6 +36600,7 @@ export interface IStatsDetailFilterBase {
     currencyId: string | undefined;
     accountIds: number[] | undefined;
     businessEntityIds: number[] | undefined;
+    transferTransactionFilter: StatsDetailFilterBaseTransferTransactionFilter | undefined;
 }
 
 export class GetTransactionCommonDetailsInput implements IGetTransactionCommonDetailsInput {
@@ -37268,6 +37280,7 @@ export class CreateCashFlowCommentThreadInput implements ICreateCashFlowCommentT
     currencyId!: string | undefined;
     accountIds!: number[] | undefined;
     businessEntityIds!: number[] | undefined;
+    transferTransactionFilter!: CreateCashFlowCommentThreadInputTransferTransactionFilter | undefined;
 
     constructor(data?: ICreateCashFlowCommentThreadInput) {
         if (data) {
@@ -37301,6 +37314,7 @@ export class CreateCashFlowCommentThreadInput implements ICreateCashFlowCommentT
                 for (let item of data["businessEntityIds"])
                     this.businessEntityIds.push(item);
             }
+            this.transferTransactionFilter = data["transferTransactionFilter"];
         }
     }
 
@@ -37334,6 +37348,7 @@ export class CreateCashFlowCommentThreadInput implements ICreateCashFlowCommentT
             for (let item of this.businessEntityIds)
                 data["businessEntityIds"].push(item);
         }
+        data["transferTransactionFilter"] = this.transferTransactionFilter;
         return data; 
     }
 }
@@ -37352,6 +37367,7 @@ export interface ICreateCashFlowCommentThreadInput {
     currencyId: string | undefined;
     accountIds: number[] | undefined;
     businessEntityIds: number[] | undefined;
+    transferTransactionFilter: CreateCashFlowCommentThreadInputTransferTransactionFilter | undefined;
 }
 
 export class CreateCashFlowCommentThreadOutput implements ICreateCashFlowCommentThreadOutput {
@@ -72109,7 +72125,19 @@ export enum StatsFilterGroupByPeriod {
     Yearly = "Yearly", 
 }
 
+export enum StatsFilterTransferTransactionFilter {
+    _0 = 0, 
+    _1 = 1, 
+    _2 = 2, 
+}
+
 export enum TransactionStatsDtoAdjustmentType {
+    _0 = 0, 
+    _1 = 1, 
+    _2 = 2, 
+}
+
+export enum StatsDetailFilterTransferTransactionFilter {
     _0 = 0, 
     _1 = 1, 
     _2 = 2, 
@@ -72223,9 +72251,21 @@ export enum MoveRuleDtoApplyOption {
     AllExisting = "AllExisting", 
 }
 
+export enum StatsDetailFilterBaseTransferTransactionFilter {
+    _0 = 0, 
+    _1 = 1, 
+    _2 = 2, 
+}
+
 export enum TransactionCommonDetailsDtoAmountFormat {
     Debits = "Debits", 
     Credits = "Credits", 
+}
+
+export enum CreateCashFlowCommentThreadInputTransferTransactionFilter {
+    _0 = 0, 
+    _1 = 1, 
+    _2 = 2, 
 }
 
 export enum PersonInfoDtoMaritalStatus {
