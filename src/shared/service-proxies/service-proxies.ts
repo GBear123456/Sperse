@@ -33934,6 +33934,7 @@ export class CashFlowStatsDetailDto implements ICashFlowStatsDetailDto {
     forecastId!: number | undefined;
     forecastDate!: moment.Moment | undefined;
     status!: CashFlowStatsDetailDtoStatus | undefined;
+    counterpartyName!: string | undefined;
 
     constructor(data?: ICashFlowStatsDetailDto) {
         if (data) {
@@ -33965,6 +33966,7 @@ export class CashFlowStatsDetailDto implements ICashFlowStatsDetailDto {
             this.forecastId = data["forecastId"];
             this.forecastDate = data["forecastDate"] ? moment(data["forecastDate"].toString()) : <any>undefined;
             this.status = data["status"];
+            this.counterpartyName = data["counterpartyName"];
         }
     }
 
@@ -33996,6 +33998,7 @@ export class CashFlowStatsDetailDto implements ICashFlowStatsDetailDto {
         data["forecastId"] = this.forecastId;
         data["forecastDate"] = this.forecastDate ? this.forecastDate.toISOString() : <any>undefined;
         data["status"] = this.status;
+        data["counterpartyName"] = this.counterpartyName;
         return data; 
     }
 }
@@ -34020,6 +34023,7 @@ export interface ICashFlowStatsDetailDto {
     forecastId: number | undefined;
     forecastDate: moment.Moment | undefined;
     status: CashFlowStatsDetailDtoStatus | undefined;
+    counterpartyName: string | undefined;
 }
 
 export class CashFlowGridSettingsDto implements ICashFlowGridSettingsDto {
