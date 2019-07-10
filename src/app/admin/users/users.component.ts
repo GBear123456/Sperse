@@ -27,6 +27,7 @@ import { FilterModel } from '@shared/filters/models/filter.model';
 import { FilterRadioGroupComponent } from '@shared/filters/radio-group/filter-radio-group.component';
 import { FilterRadioGroupModel } from '@shared/filters/radio-group/filter-radio-group.model';
 import { FilterTreeListComponent } from '@shared/filters/tree-list/tree-list.component';
+import { FilterNullableRadioGroupModel } from '@shared/filters/radio-group/filter-nullable-radio-group.model';
 import { FilterTreeListModel } from '@shared/filters/tree-list/tree-list.model';
 import { AppService } from '@app/app.service';
 import { ItemTypeEnum } from '@shared/common/item-details-layout/item-type.enum';
@@ -45,6 +46,7 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
     selectedPermissions: string[] = [];
     role: number;
     group = Group.Employee;
+    isActive = true;
 
     public actionMenuItems: any;
     public actionRecord: any;
@@ -123,6 +125,7 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
                     this.role || undefined,
                     false,
                     this.group,
+                    this.isActive,
                     (loadOptions.sort || []).map((item) => {
                         return item.selector + ' ' + (item.desc ? 'DESC' : 'ASC');
                     }).join(','), loadOptions.take || -1, loadOptions.skip
@@ -196,7 +199,7 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
                             text: this.l('Search All')
                         },
                         attr: {
-                            'filter-selected': ((this.searchValue && this.searchValue.length > 0) && (this._filtersService.hasFilterSelected || this.group)) ? true : false,
+                            'filter-selected': ((this.searchValue && this.searchValue.length > 0) && (this._filtersService.hasFilterSelected || this.group || this.isActive != undefined)) ? true : false,
                             'custaccesskey': 'search-container'
                         }
                     }
@@ -262,6 +265,51 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
             },
             {
                 location: 'after',
+                areItemsDependent: true,
+                items: [
+                    {
+                        name: 'All',
+                        widget: 'dxButton',
+                        options: {
+                            text: this.l('All'),
+                            checkPressed: () => {
+                                return this.isActive == undefined;
+                            }
+                        },
+                        action: () => {
+                            this.filterByIsActive(undefined);
+                        }
+                    },
+                    {
+                        name: 'Active',
+                        widget: 'dxButton',
+                        options: {
+                            text: this.l('Active'),
+                            checkPressed: () => {
+                                return this.isActive;
+                            }
+                        },
+                        action: () => {
+                            this.filterByIsActive(true);
+                        }
+                    },
+                    {
+                        name: 'Inactive',
+                        widget: 'dxButton',
+                        options: {
+                            text: this.l('Inactive'),
+                            checkPressed: () => {
+                                return this.isActive == false;
+                            }
+                        },
+                        action: () => {
+                            this.filterByIsActive(false);
+                        }
+                    }
+                ]
+            },
+            {
+                location: 'after',
                 locateInMenu: 'auto',
                 items: [
                     {
@@ -318,6 +366,7 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
     searchAllClick() {
         this._filtersService.clearAllFilters();
         this.group = undefined;
+        this.isActive = undefined;
         this.initToolbarConfig();
     }
 
@@ -383,11 +432,25 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
                                 })
                             })
                         }
+                    }),
+                    new FilterModel({
+                        component: FilterRadioGroupComponent,
+                        caption: 'isActive',
+                        items: {
+                            element: new FilterNullableRadioGroupModel({
+                                value: this.isActive,
+                                list: [
+                                    { id: true, name: this.l('Active')},
+                                    { id: false, name: this.l('Inactive')}
+                                ]
+                            })
+                        }
                     })
                 ]
             );
 
             this.updateGroupFilter(this.group);
+            this.updateIsActiveFilter(this.isActive);
         });
 
         this._filtersService.apply((filter) => {
@@ -401,6 +464,8 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
                     this.selectedPermissions = filterValue;
                 else if (filter.caption == 'group')
                     this.group = filterValue;
+                else if (filter.caption == 'isActive')
+                    this.isActive = filterValue;
             }
 
             this.initToolbarConfig();
@@ -417,12 +482,28 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
     }
 
     updateGroupFilter(group: Group) {
-        this.dataGrid.export.fileName = group;
-        let groupFilterModel = _.findWhere(this.filters, { caption: 'group' });
-        if (groupFilterModel) {
-            groupFilterModel.isSelected = true;
-            groupFilterModel.items.element.value = group;
-            this._filtersService.change(groupFilterModel);
+        this.updateFilter('group', group);
+    }
+
+    filterByIsActive(isActive: boolean) {
+        this.isActive = isActive;
+
+        this.initToolbarConfig();
+        this.invalidate();
+        this.updateIsActiveFilter(isActive);
+    }
+
+    updateIsActiveFilter(isActive: boolean) {
+        this.updateFilter('isActive', isActive);
+    }
+
+    updateFilter(caption: string, value: any) {
+        this.dataGrid.export.fileName = value;
+        let filterModel = _.findWhere(this.filters, { caption: caption });
+        if (filterModel) {
+            filterModel.isSelected = true;
+            filterModel.items.element.value = value;
+            this._filtersService.change(filterModel);
         }
     }
 
