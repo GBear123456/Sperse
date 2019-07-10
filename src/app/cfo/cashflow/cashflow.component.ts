@@ -1666,18 +1666,18 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         let key = null;
         transactionObj['levels'] = {};
         this.categorization.every((level) => {
-
-            if (level.prefix === CategorizationPrefixes.ReportingCategory
-                && this.userPreferencesService.localPreferences.value.showReportingCategoryTotals
-                && (transactionObj.subCategoryId || transactionObj.categoryId)
-            ) {
-                const reportingCategoryId = this.categoryTree.categories[transactionObj.subCategoryId || transactionObj.categoryId].reportingCategoryId;
-                if (reportingCategoryId) {
-                    const reportingCategoriesIds = this.cashflowService.getReportingCategoriesIds(reportingCategoryId, this.categoryTree.reportingCategories);
-                    /** Get only first and last reporting categories for tree */
-                    uniq([ reportingCategoriesIds[0], reportingCategoriesIds[reportingCategoriesIds.length - 1]]).forEach((reportingCategoryId: number) => {
-                        transactionObj['levels'][`level${levelNumber++}`] = level.prefix + reportingCategoryId;
-                    });
+            if (level.prefix === CategorizationPrefixes.ReportingCategory) {
+                if (this.userPreferencesService.localPreferences.value.showReportingCategoryTotals
+                    && (transactionObj.subCategoryId || transactionObj.categoryId)
+                ) {
+                    const reportingCategoryId = this.categoryTree.categories[transactionObj.subCategoryId || transactionObj.categoryId].reportingCategoryId;
+                    if (reportingCategoryId) {
+                        const reportingCategoriesIds = this.cashflowService.getReportingCategoriesIds(reportingCategoryId, this.categoryTree.reportingCategories);
+                        /** Get only first and last reporting categories for tree */
+                        uniq([reportingCategoriesIds[0], reportingCategoriesIds[reportingCategoriesIds.length - 1]]).forEach((reportingCategoryId: number) => {
+                            transactionObj['levels'][`level${levelNumber++}`] = level.prefix + reportingCategoryId;
+                        });
+                    }
                 }
                 return true;
             }
