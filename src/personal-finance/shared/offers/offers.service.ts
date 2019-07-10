@@ -4,11 +4,10 @@ import { ActivatedRoute, Router, UrlSegment } from '@angular/router';
 import { HttpParams } from '@angular/common/http';
 
 /** Third party imports */
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import camelCase from 'lodash/camelCase';
 import kebabCase from 'lodash/kebabCase';
 import capitalize from 'lodash/capitalize';
-import cloneDeep from 'lodash/cloneDeep';
 import lowerCase from 'lodash/lowerCase';
 import upperFirst from 'lodash/upperFirst';
 import { ReplaySubject, Observable } from 'rxjs';
@@ -30,6 +29,7 @@ import { CreditScoreInterface } from '@root/personal-finance/shared/offers/inter
 import { ApplyOfferDialogComponent } from '@root/personal-finance/shared/offers/apply-offer-modal/apply-offer-dialog.component';
 import { CategoryGroupEnum } from '@root/personal-finance/shared/offers/category-group.enum';
 import { CurrencyPipe } from '@angular/common';
+import { OffersWizardComponent } from '@shared/offers-wizard/offers-wizard.component';
 
 @Injectable()
 export class OffersService {
@@ -187,6 +187,15 @@ export class OffersService {
     }
 
     applyOffer(offer: OfferDto, isCreditCard = false) {
+        // console.log(offer);
+        // console.log(isCreditCard);
+        // this.dialog.open(OffersWizardComponent, {
+        //     width: '1200px',
+        //     height: '800px',
+        //     id: 'payment-wizard',
+        //     panelClass: ['payment-wizard', 'setup']
+        // });
+
         const linkIsDirect = !!offer.redirectUrl;
         let submitRequestInput = SubmitRequestInput.fromJS({
             campaignId: offer.campaignId,
