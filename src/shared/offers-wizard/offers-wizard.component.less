@@ -1,0 +1,87 @@
+@mainFont: inherit;
+
+:host {
+    /deep/ .step-item {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        position: relative;
+
+        .step-bg {
+            display: block;
+            position: absolute;
+            width: 101%;
+            height: 100%;
+            background-image: linear-gradient(244deg, #c86dd7, #3023ae);
+            clip-path: polygon(0 0, 100% 0, 100% 44%, 0 65%);
+            z-index: 0;
+        }
+
+        .brain-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 1;
+        }
+
+        .header {
+            height: 12%;
+            padding: 11px 52px 11px 24px;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            font-size: 21px;
+            font-weight: 500;
+            color: #fff;
+            position: relative;
+            z-index: 5;
+
+            .crm-intro-logo {
+                margin-right: auto !important;
+            }
+        }
+
+        .main {
+            height: 73%;
+            //text-align: center;
+            flex-grow: 2;
+            position: relative;
+            z-index: 6;
+
+            h2 {
+                font-family: @mainFont;
+                font-size: 32px;
+                font-weight: bold;
+                color: #ffffff;
+            }
+
+            p {
+                font-family: @mainFont;
+                font-size: 24px;
+                font-weight: 500;
+                letter-spacing: 0.7px;
+                color: #ffffff;
+                margin-top: -12px;
+            }
+        }
+
+        .footer {
+            height: 15%;
+            align-items: center;
+            position: relative;
+            z-index: 7;
+            display: flex;
+
+            .btn {
+                padding-left: 20px;
+                padding-right: 20px;
+
+                + .btn {
+                    margin-left: auto;
+                }
+            }
+        }
+
+    }
+}
