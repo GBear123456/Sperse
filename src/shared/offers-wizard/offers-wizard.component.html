@@ -7,118 +7,180 @@
                     Personal Info
                 </div>
                 <div class="main">
-                    <div class="dx-fieldset">
-                        <div class="dx-field">
+                    <div class="dx-field">
                             <div class="dx-field-label">First Name</div>
                             <div class="dx-field-value">
-                                <dx-text-box placeholder="Enter first name"></dx-text-box>
+                                <dx-text-box placeholder="Enter first name"
+                                             [(value)]="submitApplicationInput.personalInformation.firstName"
+                                             (keydown)="validateName($event)">
+                                    <dx-validator>
+                                        <dxi-validation-rule type="required"
+                                                             [message]="ls.l('FieldIsRequired')"></dxi-validation-rule>
+                                    </dx-validator>
+                                </dx-text-box>
                             </div>
+            </div>
+                    <div class="dx-field">
+                        <div class="dx-field-label">Last Name</div>
+                        <div class="dx-field-value">
+                            <dx-text-box placeholder="Enter last name"
+                                         [(value)]="submitApplicationInput.personalInformation.lastName"
+                                         (keydown)="validateName($event)">
+                                <dx-validator>
+                                    <dxi-validation-rule type="required"
+                                                         [message]="ls.l('FieldIsRequired')"></dxi-validation-rule>
+                                </dx-validator>
+                            </dx-text-box>
                         </div>
-                        <div class="dx-field">
-                            <div class="dx-field-label">Last Name</div>
-                            <div class="dx-field-value">
-                                <dx-text-box placeholder="Enter last name"></dx-text-box>
-                            </div>
+                    </div>
+                    <div class="dx-field">
+                        <div class="dx-field-label">Middle Name</div>
+                        <div class="dx-field-value">
+                            <dx-text-box placeholder="Enter middle name"
+                                         [(value)]="submitApplicationInput.personalInformation.middleName"
+                                         (keydown)="validateName($event)">
+                                <dx-validator>
+                                    <dxi-validation-rule type="required"
+                                                         [message]="ls.l('FieldIsRequired')"></dxi-validation-rule>
+                                </dx-validator>
+                            </dx-text-box>
                         </div>
-                        <div class="dx-field">
-                            <div class="dx-field-label">Middle Name</div>
-                            <div class="dx-field-value">
-                                <dx-text-box placeholder="Enter middle name"></dx-text-box>
-                            </div>
-                        </div>
-                        <div class="dx-field">
-                            <div class="dx-field-label">Email</div>
-                            <div class="dx-field-value">
-                                <dx-text-box placeholder="Enter email"></dx-text-box>
-                            </div>
-                        </div>
-                        <div class="dx-field">
-                            <div class="dx-field-label">Alternative Email</div>
-                            <div class="dx-field-value">
-                                <dx-text-box placeholder="Enter alternative email"></dx-text-box>
-                            </div>
-                        </div>
-                        <div class="dx-field">
+                    </div>
+                    <div class="dx-field">
                         <div class="dx-field-label">Date of Birth</div>
-                            <div class="dx-field-value">
-                                <dx-date-box
-                                    [value]="today"
-                                    type="date">
-                                </dx-date-box>
-                            </div>
+                        <div class="dx-field-value">
+                            <dx-date-box
+                                [(value)]="submitApplicationInput.personalInformation.doB"
+                                type="date">
+                            </dx-date-box>
+                        </div>
+                    </div>
+                    <div class="dx-field">
+                        <div class="dx-field-label">SSN</div>
+                        <div class="dx-field-value">
+                            <dx-text-box placeholder="Enter ssn"
+                                         mask="000-00-0000"
+                                         [(value)]="submitApplicationInput.personalInformation.ssn"></dx-text-box>
+                        </div>
+                    </div>
+                    <div class="dx-field">
+                        <div class="dx-field-label">Gender</div>
+                        <div class="dx-field-value">
+                            <dx-select-box
+                                [items]="gender"
+                                [(value)]="submitApplicationInput.personalInformation.gender"
+                                placeholder="Choose Product"
+                            ></dx-select-box>
+                        </div>
+                    </div>
+                    <div class="dx-field">
+                        <div class="dx-field-label">Is Active Military</div>
+                        <div class="dx-field-value">
+                            <dx-radio-group
+                                [items]="radioGroup"
+                                [(value)]="submitApplicationInput.personalInformation.isActiveMilitary"
+                                displayExpr="text"
+                                valueExpr="value"
+                                layout="horizontal">
+                            </dx-radio-group>
                         </div>
                     </div>
                 </div>
                 <div class="footer">
-                    <button matStepperNext class="btn btn-layout">Next</button>
+                    <button class="btn btn-layout btn-next" (click)="goToNextStep($event)">Next</button>
                 </div>
             </div>
         </mat-step>
         <mat-step>
             <div class="step-item">
                 <div class="header">
-                    ... Info
+                    Contact Information
                 </div>
                 <div class="main">
-                    <div class="dx-fieldset">
-                        <div class="dx-field">
-                            <div class="dx-field-label">SSN</div>
-                            <div class="dx-field-value">
-                                <dx-text-box placeholder="Enter ssn"></dx-text-box>
-                            </div>
+                    <div class="dx-field">
+                        <div class="dx-field-label">Email</div>
+                        <div class="dx-field-value">
+                            <dx-text-box placeholder="Enter email"
+                                         [(value)]="submitApplicationInput.personalInformation.email">
+                                <dx-validator>
+                                    <dxi-validation-rule type="required"
+                                                         [message]="ls.l('EmailIsRequired')"></dxi-validation-rule>
+                                    <dxi-validation-rule type="pattern"
+                                                         [pattern]="emailRegEx"
+                                                         [message]="ls.l('InvalidEmailAddress')"></dxi-validation-rule>
+                                </dx-validator>
+                            </dx-text-box>
                         </div>
-                        <div class="dx-field">
-                            <div class="dx-field-label">License State</div>
-                            <div class="dx-field-value">
-                                <dx-text-box placeholder="Enter license state"></dx-text-box>
-                            </div>
+                    </div>
+                    <div class="dx-field">
+                        <div class="dx-field-label">Alternative Email</div>
+                        <div class="dx-field-value">
+                            <dx-text-box placeholder="Enter alternative email"
+                                         [(value)]="submitApplicationInput.personalInformation.alternateEmail">
+                                <dx-validator>
+                                    <dxi-validation-rule type="required"
+                                                         [message]="ls.l('EmailIsRequired')"></dxi-validation-rule>
+                                    <dxi-validation-rule type="pattern"
+                                                         [pattern]="emailRegEx"
+                                                         [message]="ls.l('InvalidEmailAddress')"></dxi-validation-rule>
+                                </dx-validator>
+                            </dx-text-box>
                         </div>
-                        <div class="dx-field">
-                            <div class="dx-field-label">License Number</div>
-                            <div class="dx-field-value">
-                                <dx-text-box placeholder="Enter license number"></dx-text-box>
-                            </div>
+                    </div>
+                    <div class="dx-field">
+                        <div class="dx-field-label">License State</div>
+                        <div class="dx-field-value">
+                            <dx-text-box placeholder="Enter license state"
+                                         [(value)]="submitApplicationInput.personalInformation.licenseState"></dx-text-box>
                         </div>
-                        <div class="dx-field">
-                            <div class="dx-field-label">Is Active Military</div>
-                            <div class="dx-field-value">
-                                <dx-radio-group
-                                    [items]="radioGroup"
-                                    [value]="radioGroup[0]"
-                                    displayExpr="text"
-                                    valueExpr="value"
-                                    layout="horizontal">
-                                </dx-radio-group>
-                            </div>
+                    </div>
+                    <div class="dx-field">
+                        <div class="dx-field-label">License Number</div>
+                        <div class="dx-field-value">
+                            <dx-text-box placeholder="Enter license number"
+                                         [(value)]="submitApplicationInput.personalInformation.licenseNumber"></dx-text-box>
                         </div>
-                        <div class="dx-field">
-                            <div class="dx-field-label">Phone</div>
-                            <div class="dx-field-value">
-                                <dx-text-box mask="+1 (X00) 000-0000" [maskRules]="rules">
-                                </dx-text-box>
-                            </div>
+                    </div>
+                    <div class="dx-field">
+                        <div class="dx-field-label">Phone</div>
+                        <div class="dx-field-value">
+                            <dx-text-box mask="+1 (X00) 000-0000"
+                                         [(value)]="submitApplicationInput.personalInformation.phone"
+                                         [maskRules]="rules">
+                            </dx-text-box>
                         </div>
-                        <div class="dx-field">
-                            <div class="dx-field-label">Mobile Phone</div>
-                            <div class="dx-field-value">
-                                <dx-text-box mask="+1 (X00) 000-0000" [maskRules]="rules">
-                                </dx-text-box>
-                            </div>
+                    </div>
+                    <div class="dx-field">
+                        <div class="dx-field-label">Mobile Phone</div>
+                        <div class="dx-field-value">
+                            <dx-text-box mask="+1 (X00) 000-0000"
+                                         [(value)]="submitApplicationInput.personalInformation.phoneMobile"
+                                         [maskRules]="rules">
+                            </dx-text-box>
                         </div>
-                        <div class="dx-field">
-                            <div class="dx-field-label">Preferred Contact Time</div>
-                            <div class="dx-field-value">
-                                <dx-select-box
-                                    [items]="contactTime"
-                                    placeholder="Choose Product"
-                                ></dx-select-box>
-                            </div>
+                    </div>
+                    <div class="dx-field">
+                        <div class="dx-field-label">Preferred Contact Time</div>
+                        <div class="dx-field-value">
+                            <dx-select-box
+                                [items]="contactTime"
+                                [(value)]="submitApplicationInput.personalInformation.preferredContactTOD"
+                                placeholder="Select Time"
+                            ></dx-select-box>
+                        </div>
+                    </div>
+                    <div class="dx-field">
+                        <div class="right-info">
+                            <small>By clicking "Next", you agree to our <a href="">Terms &amp; Conditions</a> and <a href="">Privacy Policy</a> and to receive important notices and other communications electronically.</small>
+                        </div>
+                        <div class="right-info">
+                            <small>By providing your number and clicking “Next”, you consent to receive calls, texts and pre-recorded messages from Lendspace, its Lending Partners and/or Network Partners.**</small>
                         </div>
                     </div>
                 </div>
                 <div class="footer">
                     <button matStepperPrevious class="btn btn-default">Back</button>
-                    <button matStepperNext class="btn btn-layout">Next</button>
+                    <button matStepperNext class="btn btn-layout btn-next">Next</button>
                 </div>
             </div>
         </mat-step>
@@ -131,95 +193,71 @@
                     <div class="dx-field">
                         <div class="dx-field-label">Address 1</div>
                         <div class="dx-field-value">
-                            <dx-text-box placeholder="Enter address"></dx-text-box>
+                            <dx-text-box placeholder="Enter address"
+                                         [(value)]="submitApplicationInput.personalInformation.address1"></dx-text-box>
                         </div>
                     </div>
                     <div class="dx-field">
                         <div class="dx-field-label">Address 2</div>
                         <div class="dx-field-value">
-                            <dx-text-box placeholder="Enter address"></dx-text-box>
+                            <dx-text-box placeholder="Enter address"
+                                         [(value)]="submitApplicationInput.personalInformation.address2"></dx-text-box>
                         </div>
                     </div>
                     <div class="dx-field">
                         <div class="dx-field-label">City</div>
                         <div class="dx-field-value">
-                            <dx-text-box placeholder="Enter city"></dx-text-box>
+                            <dx-text-box placeholder="Enter city"
+                                         [(value)]="submitApplicationInput.personalInformation.city"></dx-text-box>
                         </div>
                     </div>
                     <div class="dx-field">
                         <div class="dx-field-label">State Code</div>
                         <div class="dx-field-value">
-                            <dx-text-box placeholder="Enter state code"></dx-text-box>
+                            <dx-text-box placeholder="Enter state code"
+                                         [(value)]="submitApplicationInput.personalInformation.stateCode"></dx-text-box>
                         </div>
                     </div>
                     <div class="dx-field">
                         <div class="dx-field-label">Postal Code</div>
                         <div class="dx-field-value">
-                            <dx-text-box placeholder="Enter postal code"></dx-text-box>
+                            <dx-text-box placeholder="Enter postal code"
+                                         [(value)]="submitApplicationInput.personalInformation.postalCode"></dx-text-box>
                         </div>
                     </div>
                     <div class="dx-field">
                         <div class="dx-field-label">Country Code</div>
                         <div class="dx-field-value">
-                            <dx-text-box placeholder="Enter country code"></dx-text-box>
+                            <dx-text-box placeholder="Enter country code"
+                                         [(value)]="submitApplicationInput.personalInformation.countryCode"></dx-text-box>
                         </div>
                     </div>
-                </div>
-                <div class="footer">
-                    <button matStepperPrevious class="btn btn-default">Back</button>
-                    <button matStepperNext class="btn btn-layout">Next</button>
-                </div>
-            </div>
-
-        </mat-step>
-        <mat-step>
-            <div class="step-item">
-                <div class="header">
-                    ... Info
-                </div>
-                <div class="main">
                     <div class="dx-field">
-                        <div class="dx-field-label">Is Active Military</div>
+                        <div class="dx-field-label">How long have you lived here?</div>
+                        <div class="dx-field-value">
+                            <dx-text-box placeholder="Enter number of years"
+                                         [(value)]="submitApplicationInput.personalInformation.monthsAtAddress"></dx-text-box>
+                        </div>
+                    </div>
+                    <div class="dx-field">
+                        <div class="dx-field-label">Is Direct Deposit</div>
                         <div class="dx-field-value">
                             <dx-radio-group
                                 [items]="radioGroup"
-                                [value]="radioGroup[0]"
+                                [(value)]="submitApplicationInput.personalInformation.isHomeOwner"
                                 displayExpr="text"
                                 valueExpr="value"
                                 layout="horizontal">
                             </dx-radio-group>
                         </div>
                     </div>
-                    <div class="dx-field">
-                        <div class="dx-field-label">How long have you lived here?</div>
-                        <div class="dx-field-value">
-                            <dx-text-box placeholder="Enter number of years"></dx-text-box>
-                        </div>
-                    </div>
-                    <div class="dx-field">
-                        <div class="dx-field-label">Credit score rating</div>
-                        <div class="dx-field-value">
-                            <dx-select-box
-                                [items]="creditScore"
-                                placeholder="Choose Product"
-                            ></dx-select-box>
-                        </div>
-                    </div>
-                    <div class="dx-field">
-                        <div class="dx-field-label">Gender</div>
-                        <div class="dx-field-value">
-                            <dx-select-box
-                                [items]="gender"
-                                placeholder="Choose Product"
-                            ></dx-select-box>
-                        </div>
-                    </div>
                 </div>
                 <div class="footer">
                     <button matStepperPrevious class="btn btn-default">Back</button>
-                    <button matStepperNext class="btn btn-layout">Next</button>
+                    <button matStepperNext class="btn btn-layout btn-next">Next</button>
                 </div>
             </div>
+
         </mat-step>
         <mat-step>
             <div class="step-item">
@@ -230,25 +268,34 @@
                     <div class="dx-field">
                         <div class="dx-field-label">Debt Amount</div>
                         <div class="dx-field-value">
-                            <dx-text-box placeholder="Enter amount"></dx-text-box>
+                            <dx-number-box
+                                format="$ #,##0.##"
+                                [(value)]="submitApplicationInput.debtInformation.debtAmount"
+                            ></dx-number-box>
                         </div>
                     </div>
                     <div class="dx-field">
                         <div class="dx-field-label">Credit Card Debt Amount</div>
                         <div class="dx-field-value">
-                            <dx-text-box placeholder="Enter amount"></dx-text-box>
+                            <dx-number-box
+                                format="$ #,##0.##"
+                                [(value)]="submitApplicationInput.debtInformation.creditCardDebtAmount"
+                            ></dx-number-box>
                         </div>
                     </div>
                     <div class="dx-field">
                         <div class="dx-field-label">Student Debt Amount</div>
                         <div class="dx-field-value">
-                            <dx-text-box placeholder="Enter amount"></dx-text-box>
+                            <dx-number-box
+                                format="$ #,##0.##"
+                                [(value)]="submitApplicationInput.debtInformation.studentDebtAmount"
+                            ></dx-number-box>
                         </div>
                     </div>
                 </div>
                 <div class="footer">
                     <button matStepperPrevious class="btn btn-default">Back</button>
-                    <button matStepperNext class="btn btn-layout">Next</button>
+                    <button matStepperNext class="btn btn-layout btn-next">Next</button>
                 </div>
             </div>
         </mat-step>
@@ -259,15 +306,31 @@
                 </div>
                 <div class="main">
                     <div class="dx-field">
+                        <div class="dx-field-label">Credit score rating</div>
+                        <div class="dx-field-value">
+                            <dx-select-box
+                                [items]="creditScore"
+                                [(value)]="submitApplicationInput.personalInformation.creditScoreRating"
+                                placeholder="Choose Product"
+                            ></dx-select-box>
+                        </div>
+                    </div>
+                    <div class="dx-field">
                         <div class="dx-field-label">Requested Loan Amount</div>
                         <div class="dx-field-value">
-                            <dx-text-box placeholder="Enter amount"></dx-text-box>
+                            <dx-number-box
+                                format="$ #,##0.##"
+                                [(value)]="submitApplicationInput.loanInformation.requestedLoanAmount"
+                            ></dx-number-box>
                         </div>
                     </div>
                     <div class="dx-field">
                         <div class="dx-field-label">Approved Loan Amount</div>
                         <div class="dx-field-value">
-                            <dx-text-box placeholder="Enter amount"></dx-text-box>
+                            <dx-number-box
+                                format="$ #,##0.##"
+                                [(value)]="submitApplicationInput.loanInformation.approvedLoanAmount"
+                            ></dx-number-box>
                         </div>
                     </div>
                     <div class="dx-field">
@@ -275,14 +338,15 @@
                         <div class="dx-field-value">
                             <dx-select-box
                                 [items]="loanReason"
-                                placeholder="Choose Product"
+                                [(value)]="submitApplicationInput.loanInformation.loanReason"
+                                placeholder="Choose Loan Reason"
                             ></dx-select-box>
                         </div>
                     </div>
                 </div>
                 <div class="footer">
                     <button matStepperPrevious class="btn btn-default">Back</button>
-                    <button matStepperNext class="btn btn-layout">Next</button>
+                    <button matStepperNext class="btn btn-layout btn-next">Next</button>
                 </div>
             </div>
         </mat-step>
@@ -336,6 +400,19 @@
                             </dx-text-box>
                         </div>
                     </div>
+                </div>
+                <div class="footer">
+                    <button matStepperPrevious class="btn btn-default">Back</button>
+                    <button matStepperNext class="btn btn-layout btn-next">Next</button>
+                </div>
+            </div>
+        </mat-step>
+        <mat-step>
+            <div class="step-item">
+                <div class="header">
+                    Employment Address
+                </div>
+                <div class="main">
                     <div class="dx-field">
                         <div class="dx-field-label">Employer Address1</div>
                         <div class="dx-field-value">
@@ -366,10 +443,25 @@
                             <dx-text-box placeholder="Enter postal code"></dx-text-box>
                         </div>
                     </div>
+                </div>
+                <div class="footer">
+                    <button matStepperPrevious class="btn btn-default">Back</button>
+                    <button matStepperNext class="btn btn-layout btn-next">Next</button>
+                </div>
+            </div>
+        </mat-step>
+        <mat-step>
+            <div class="step-item">
+                <div class="header">
+                    Employment Payment
+                </div>
+                <div class="main">
                     <div class="dx-field">
                         <div class="dx-field-label">Net Monthly Income</div>
                         <div class="dx-field-value">
-                            <dx-text-box placeholder="Enter amount"></dx-text-box>
+                            <dx-number-box
+                                format="$ #,##0.##"
+                            ></dx-number-box>
                         </div>
                     </div>
                     <div class="dx-field">
@@ -411,7 +503,7 @@
                 </div>
                 <div class="footer">
                     <button matStepperPrevious class="btn btn-default">Back</button>
-                    <button matStepperNext class="btn btn-layout">Next</button>
+                    <button matStepperNext class="btn btn-layout btn-next">Next</button>
                 </div>
             </div>
         </mat-step>
@@ -477,32 +569,7 @@
                 </div>
                 <div class="footer">
                     <button matStepperPrevious class="btn btn-default">Back</button>
-                    <button matStepperNext class="btn btn-layout">Next</button>
-                </div>
-            </div>
-        </mat-step>
-        <mat-step>
-            <div class="step-item">
-                <div class="header">
-                    Legal Information
-                </div>
-                <div class="main">
-                    <div class="dx-field">
-                        <div class="dx-field-label">Is TCPA Checked</div>
-                        <div class="dx-field-value">
-                            <dx-radio-group
-                            [items]="radioGroup"
-                            [value]="radioGroup[0]"
-                            displayExpr="text"
-                            valueExpr="value"
-                            layout="horizontal">
-                            </dx-radio-group>
-                        </div>
-                    </div>
-                </div>
-                <div class="footer">
-                    <button matStepperPrevious class="btn btn-default">Back</button>
-                    <button matStepperNext class="btn btn-layout">Submit</button>
+                    <button class="btn btn-layout btn-next" (click)="submitApplication()">Submit</button>
                 </div>
             </div>
         </mat-step>

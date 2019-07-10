@@ -10,10 +10,14 @@ import {
 } from '@angular/core';
 
 /** Third party imports */
-import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
-import {MatHorizontalStepper} from '@angular/material';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MatHorizontalStepper } from '@angular/material';
+import * as moment from 'moment';
 
 /** Application imports */
+import { AppConsts } from '@shared/AppConsts';
+import { OfferServiceProxy, SubmitApplicationInput, SubmitApplicationInputSystemType } from '@shared/service-proxies/service-proxies';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 
 @Component({
     selector: 'app-offers-wizard',
@@ -23,8 +27,10 @@ import {MatHorizontalStepper} from '@angular/material';
 })
 export class OffersWizardComponent implements OnInit {
     @ViewChild('stepper') stepper: MatHorizontalStepper;
+    submitApplicationInput = new SubmitApplicationInput();
     dialogRef: MatDialogRef<OffersWizardComponent, any>;
     today: Date = new Date();
+    emailRegEx = AppConsts.regexPatterns.email;
     rules: any;
     radioGroup = [
         {value: true, text: 'Yes'},
@@ -65,10 +71,15 @@ export class OffersWizardComponent implements OnInit {
     constructor(
         injector: Injector,
         private _changeDetectionRef: ChangeDetectorRef,
+        public ls: AppLocalizationService,
+        private offersServiceProxy: OfferServiceProxy,
         @Inject(MAT_DIALOG_DATA) public data: any
     ) {
         this.dialogRef = <any>injector.get(MatDialogRef);
         this.rules = {'X': /[02-9]/};
+        this.submitApplicationInput.systemType = SubmitApplicationInputSystemType.EPCVIP;
+        this.submitApplicationInput.personalInformation.doB = moment();
+        this.submitApplicationInput.personalInformation.isActiveMilitary = false;
         console.log(this.dialogRef);
     }
 
@@ -76,8 +87,24 @@ export class OffersWizardComponent implements OnInit {
         this._changeDetectionRef.detectChanges();
     }
 
-    goToStep(index) {
-        this.stepper.selectedIndex = index;
+    validateName(event) {
+        if (!event.key.match(/^[a-zA-Z]+$/))
+            event.preventDefault();
+    }
+
+    goToNextStep(event) {
+        console.log(event);
+        // this.stepper.selectedIndex = index;
+        // event.preventDefault();
+        console.log(this.submitApplicationInput);
+        // validate before next
+        this.stepper.next();
+    }
+
+    submitApplication() {
+        console.log(this.submitApplicationInput);
+        
+        this.offersServiceProxy.submitApplication(this.submitApplicationInput);
     }
 
 }

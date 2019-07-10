@@ -9,6 +9,9 @@ import { DxTextBoxModule } from 'devextreme-angular/ui/text-box';
 import { DxDateBoxModule } from 'devextreme-angular/ui/date-box';
 import { DxRadioGroupModule } from 'devextreme-angular/ui/radio-group';
 import { DxSelectBoxModule } from 'devextreme-angular/ui/select-box';
+import { DxValidatorModule } from 'devextreme-angular/ui/validator';
+import { DxValidationGroupModule } from 'devextreme-angular/ui/validation-group';
+import { DxNumberBoxModule } from 'devextreme-angular/ui/number-box';
 
 /** Application imports */
 import { OffersWizardComponent } from './offers-wizard.component';
@@ -23,7 +26,10 @@ import { OffersWizardComponent } from './offers-wizard.component';
         DxTextBoxModule,
         DxDateBoxModule,
         DxRadioGroupModule,
-        DxSelectBoxModule
+        DxSelectBoxModule,
+        DxValidatorModule,
+        DxValidationGroupModule,
+        DxNumberBoxModule
     ],
     declarations: [
         OffersWizardComponent
@@ -32,7 +38,7 @@ import { OffersWizardComponent } from './offers-wizard.component';
         OffersWizardComponent
     ],
     entryComponents: [
-        OffersWizardComponent // ??
+        OffersWizardComponent
     ]
 })
 export class OffersWizardModule {
