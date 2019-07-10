@@ -5622,7 +5622,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             startDate = moment(momentDate).toDate();
             endDate = moment(momentDate).add(1, 'days').subtract(1, 'seconds').toDate();
         }
-
+        let category: CategoryDto = this.categoryTree.categories[data.categoryId];
         let forecastModel = new AddForecastInput({
             forecastModelId: this.selectedForecastModelId,
             bankAccountId: data.accountId,
@@ -5630,7 +5630,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             startDate: startDate,
             endDate: endDate,
             cashFlowTypeId: data.cashflowTypeId,
-            categoryId: data.categoryId,
+            categoryId: category && data.categoryId,
             transactionDescriptor: data.descriptor,
             currencyId: this._cfoPreferencesService.selectedCurrencyId,
             amount: data.debit ? -data.debit : data.credit,
@@ -5648,8 +5648,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             res => {
                 e.data.id = res;
                 e.data.forecastId = res;
-
-                let category: CategoryDto = this.categoryTree.categories[data.categoryId];
+                
                 let localForecastData = {
                     forecastId: res,
                     accountId: forecastModel.bankAccountId,
@@ -5658,9 +5657,9 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     date: moment(forecastModel.date).utc(),
                     initialDate: moment(forecastModel.date).utc().subtract((<Date>forecastModel.date).getTimezoneOffset(), 'minutes'),
                     cashflowTypeId: forecastModel.cashFlowTypeId,
-                    categoryId: this.statsDetailFilter.categoryId,
+                    categoryId: category && data.categoryId,
                     subCategoryId: this.statsDetailFilter.subCategoryId,
-                    accountingTypeId: category.accountingTypeId,
+                    accountingTypeId: category && category.accountingTypeId,
                     transactionDescriptor: forecastModel.transactionDescriptor,
                     isStub: true
                 };
