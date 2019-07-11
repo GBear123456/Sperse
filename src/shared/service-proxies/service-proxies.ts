@@ -72068,9 +72068,9 @@ export enum StatsFilterGroupByPeriod {
 }
 
 export enum StatsFilterTransferTransactionFilter {
-    _0 = 0, 
-    _1 = 1, 
-    _2 = 2, 
+    Include = "Include", 
+    Exclude = "Exclude", 
+    OnlyTransfers = "OnlyTransfers", 
 }
 
 export enum TransactionStatsDtoAdjustmentType {
@@ -72080,9 +72080,9 @@ export enum TransactionStatsDtoAdjustmentType {
 }
 
 export enum StatsDetailFilterTransferTransactionFilter {
-    _0 = 0, 
-    _1 = 1, 
-    _2 = 2, 
+    Include = "Include", 
+    Exclude = "Exclude", 
+    OnlyTransfers = "OnlyTransfers", 
 }
 
 export enum CashFlowStatsDetailDtoStatus {
@@ -72194,9 +72194,9 @@ export enum MoveRuleDtoApplyOption {
 }
 
 export enum StatsDetailFilterBaseTransferTransactionFilter {
-    _0 = 0, 
-    _1 = 1, 
-    _2 = 2, 
+    Include = "Include", 
+    Exclude = "Exclude", 
+    OnlyTransfers = "OnlyTransfers", 
 }
 
 export enum TransactionCommonDetailsDtoAmountFormat {
@@ -72205,9 +72205,9 @@ export enum TransactionCommonDetailsDtoAmountFormat {
 }
 
 export enum CreateCashFlowCommentThreadInputTransferTransactionFilter {
-    _0 = 0, 
-    _1 = 1, 
-    _2 = 2, 
+    Include = "Include", 
+    Exclude = "Exclude", 
+    OnlyTransfers = "OnlyTransfers", 
 }
 
 export enum PersonInfoDtoMaritalStatus {
