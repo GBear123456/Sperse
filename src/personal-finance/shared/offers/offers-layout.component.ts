@@ -681,6 +681,13 @@ export class OffersLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
                 category => this.offersService.applyOffer(offer, category === OfferFilterCategory.CreditCards)
             );
     }
+    
+    openOfferWizard(offer: OfferDto) {
+        if (this.checkDemoUserActionAllowed())
+            this.category$.pipe(first()).subscribe(
+                category => this.offersService.openOfferWizard(offer, category === OfferFilterCategory.CreditCards)
+            );
+    }
 
     changeStep(sliderChange: MatSliderChange, stepsConditions: StepConditionInterface[]) {
         if (stepsConditions && stepsConditions.length) {

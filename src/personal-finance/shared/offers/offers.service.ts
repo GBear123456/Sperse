@@ -21,9 +21,11 @@ import {
     GetMemberInfoResponseCreditScore,
     SubmitRequestInput,
     SubmitRequestOutput,
+    SubmitApplicationInput,
     OfferServiceProxy,
     GetMemberInfoResponse,
-    OfferDtoCampaignProviderType
+    OfferDtoCampaignProviderType,
+    SubmitApplicationInputSystemType
 } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { CreditScoreInterface } from '@root/personal-finance/shared/offers/interfaces/credit-score.interface';
@@ -187,16 +189,18 @@ export class OffersService {
         }
     }
 
-    applyOffer(offer: OfferDto, isCreditCard = false) {
-        // console.log(offer);
-        // console.log(isCreditCard);
-        // this.dialog.open(OffersWizardComponent, {
-        //     width: '1200px',
-        //     height: '800px',
-        //     id: 'payment-wizard',
-        //     panelClass: ['payment-wizard', 'setup']
-        // });
+    openOfferWizard(offer: OfferDto, isCreditCard = false) {
+        console.log(offer);
+        console.log(isCreditCard);
+        this.dialog.open(OffersWizardComponent, {
+            width: '1200px',
+            height: '800px',
+            id: 'offers-wizard',
+            panelClass: ['offers-wizard', 'setup']
+        });
+    }
 
+    applyOffer(offer: OfferDto, isCreditCard = false) {
         const linkIsDirect = !!offer.redirectUrl;
         let submitRequestInput = SubmitRequestInput.fromJS({
             campaignId: offer.campaignId,
