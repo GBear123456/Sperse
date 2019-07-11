@@ -127,9 +127,23 @@ export class ClickStatsComponent extends AppComponentBase implements OnInit {
         this.freezeFirstRow(event.element);
     }
 
+    getQueryStringDate(day, month) {
+        return day + month + this._year;
+    }
+
+    getMonthLastDay(monthIndex) {
+        return new Date(this._year, monthIndex, 0).getDate();
+    }
+
     showVisitors(record) {
-        let date = record.data.day + record.column.dataField + this._year;
+        let day = record.data.day, 
+            month = record.column.dataField,
+            isOneDay = Boolean(record.rowIndex),
+            dateFrom = this.getQueryStringDate(isOneDay ? day : 1, month),
+            dateTo = this.getQueryStringDate(isOneDay ? day : 
+                this.getMonthLastDay(record.column.index), month);
+        
         this._router.navigate(['../visitors'],
-            { relativeTo: this._activatedRoute, queryParams: { from: date, to: date} });
+            { relativeTo: this._activatedRoute, queryParams: { from: dateFrom, to: dateTo } });
     }
 }
