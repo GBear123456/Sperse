@@ -190,13 +190,15 @@ export class OffersService {
     }
 
     openOfferWizard(offer: OfferDto, isCreditCard = false) {
-        console.log(offer);
-        console.log(isCreditCard);
         this.dialog.open(OffersWizardComponent, {
             width: '1200px',
             height: '800px',
             id: 'offers-wizard',
-            panelClass: ['offers-wizard', 'setup']
+            panelClass: ['offers-wizard', 'setup'],
+            data: {
+                offer: offer,
+                isCreditCard: isCreditCard
+            }
         });
     }
 

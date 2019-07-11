@@ -69,7 +69,7 @@
                             <dx-select-box
                                 [items]="gender"
                                 [(value)]="submitApplicationInput.personalInformation.gender"
-                                placeholder="Choose Product"
+                                placeholder="Choose gender"
                             ></dx-select-box>
                         </div>
                     </div>
@@ -97,50 +97,64 @@
                     Contact Information
                 </div>
                 <div class="main">
-                    <div class="dx-field">
-                        <div class="dx-field-label">Email</div>
-                        <div class="dx-field-value">
-                            <dx-text-box placeholder="Enter email"
-                                         [(value)]="submitApplicationInput.personalInformation.email">
-                                <dx-validator>
-                                    <dxi-validation-rule type="required"
-                                                         [message]="ls.l('EmailIsRequired')"></dxi-validation-rule>
-                                    <dxi-validation-rule type="pattern"
-                                                         [pattern]="emailRegEx"
-                                                         [message]="ls.l('InvalidEmailAddress')"></dxi-validation-rule>
-                                </dx-validator>
-                            </dx-text-box>
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="dx-field">
+                                <div class="dx-field-label">Email</div>
+                                <div class="dx-field-value">
+                                    <dx-text-box placeholder="Enter email"
+                                                 [(value)]="submitApplicationInput.personalInformation.email">
+                                        <dx-validator>
+                                            <dxi-validation-rule type="required"
+                                                                 [message]="ls.l('EmailIsRequired')"></dxi-validation-rule>
+                                            <dxi-validation-rule type="pattern"
+                                                                 [pattern]="emailRegEx"
+                                                                 [message]="ls.l('InvalidEmailAddress')"></dxi-validation-rule>
+                                        </dx-validator>
+                                    </dx-text-box>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="dx-field">
+                                <div class="dx-field-label">Alternative Email</div>
+                                <div class="dx-field-value">
+                                    <dx-text-box placeholder="Enter alternative email"
+                                                 [(value)]="submitApplicationInput.personalInformation.alternateEmail">
+                                        <dx-validator>
+                                            <dxi-validation-rule type="required"
+                                                                 [message]="ls.l('EmailIsRequired')"></dxi-validation-rule>
+                                            <dxi-validation-rule type="pattern"
+                                                                 [pattern]="emailRegEx"
+                                                                 [message]="ls.l('InvalidEmailAddress')"></dxi-validation-rule>
+                                        </dx-validator>
+                                    </dx-text-box>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <div class="dx-field">
-                        <div class="dx-field-label">Alternative Email</div>
-                        <div class="dx-field-value">
-                            <dx-text-box placeholder="Enter alternative email"
-                                         [(value)]="submitApplicationInput.personalInformation.alternateEmail">
-                                <dx-validator>
-                                    <dxi-validation-rule type="required"
-                                                         [message]="ls.l('EmailIsRequired')"></dxi-validation-rule>
-                                    <dxi-validation-rule type="pattern"
-                                                         [pattern]="emailRegEx"
-                                                         [message]="ls.l('InvalidEmailAddress')"></dxi-validation-rule>
-                                </dx-validator>
-                            </dx-text-box>
+
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="dx-field">
+                                <div class="dx-field-label">License State</div>
+                                <div class="dx-field-value">
+                                    <dx-text-box placeholder="Enter license state"
+                                                 [(value)]="submitApplicationInput.personalInformation.licenseState"></dx-text-box>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="dx-field">
+                                <div class="dx-field-label">License Number</div>
+                                <div class="dx-field-value">
+                                    <dx-text-box placeholder="Enter license number"
+                                                 [(value)]="submitApplicationInput.personalInformation.licenseNumber"></dx-text-box>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <div class="dx-field">
-                        <div class="dx-field-label">License State</div>
-                        <div class="dx-field-value">
-                            <dx-text-box placeholder="Enter license state"
-                                         [(value)]="submitApplicationInput.personalInformation.licenseState"></dx-text-box>
-                        </div>
-                    </div>
-                    <div class="dx-field">
-                        <div class="dx-field-label">License Number</div>
-                        <div class="dx-field-value">
-                            <dx-text-box placeholder="Enter license number"
-                                         [(value)]="submitApplicationInput.personalInformation.licenseNumber"></dx-text-box>
-                        </div>
-                    </div>
+
                     <div class="dx-field">
                         <div class="dx-field-label">Phone</div>
                         <div class="dx-field-value">
@@ -165,16 +179,16 @@
                             <dx-select-box
                                 [items]="contactTime"
                                 [(value)]="submitApplicationInput.personalInformation.preferredContactTOD"
-                                placeholder="Select Time"
+                                placeholder="Select contact time"
                             ></dx-select-box>
                         </div>
                     </div>
                     <div class="dx-field">
                         <div class="right-info">
-                            <small>By clicking "Next", you agree to our <a href="">Terms &amp; Conditions</a> and <a href="">Privacy Policy</a> and to receive important notices and other communications electronically.</small>
+                            <small>* By clicking "Next", you agree to our <a href="">Terms &amp; Conditions</a> and <a href="">Privacy Policy</a> and to receive important notices and other communications electronically.</small>
                         </div>
                         <div class="right-info">
-                            <small>By providing your number and clicking “Next”, you consent to receive calls, texts and pre-recorded messages from Lendspace, its Lending Partners and/or Network Partners.**</small>
+                            <small>** By providing your number and clicking “Next”, you consent to receive calls, texts and pre-recorded messages from Lendspace, its Lending Partners and/or Network Partners.</small>
                         </div>
                     </div>
                 </div>
@@ -204,32 +218,44 @@
                                          [(value)]="submitApplicationInput.personalInformation.address2"></dx-text-box>
                         </div>
                     </div>
-                    <div class="dx-field">
-                        <div class="dx-field-label">City</div>
-                        <div class="dx-field-value">
-                            <dx-text-box placeholder="Enter city"
-                                         [(value)]="submitApplicationInput.personalInformation.city"></dx-text-box>
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="dx-field">
+                                <div class="dx-field-label">Country Code</div>
+                                <div class="dx-field-value">
+                                    <dx-text-box placeholder="Enter country code"
+                                                 [(value)]="submitApplicationInput.personalInformation.countryCode"></dx-text-box>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="dx-field">
+                                <div class="dx-field-label">State Code</div>
+                                <div class="dx-field-value">
+                                    <dx-text-box placeholder="Enter state code"
+                                                 [(value)]="submitApplicationInput.personalInformation.stateCode"></dx-text-box>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <div class="dx-field">
-                        <div class="dx-field-label">State Code</div>
-                        <div class="dx-field-value">
-                            <dx-text-box placeholder="Enter state code"
-                                         [(value)]="submitApplicationInput.personalInformation.stateCode"></dx-text-box>
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="dx-field">
+                                <div class="dx-field-label">City</div>
+                                <div class="dx-field-value">
+                                    <dx-text-box placeholder="Enter city"
+                                                 [(value)]="submitApplicationInput.personalInformation.city"></dx-text-box>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                    <div class="dx-field">
-                        <div class="dx-field-label">Postal Code</div>
-                        <div class="dx-field-value">
-                            <dx-text-box placeholder="Enter postal code"
-                                         [(value)]="submitApplicationInput.personalInformation.postalCode"></dx-text-box>
-                        </div>
-                    </div>
-                    <div class="dx-field">
-                        <div class="dx-field-label">Country Code</div>
-                        <div class="dx-field-value">
-                            <dx-text-box placeholder="Enter country code"
-                                         [(value)]="submitApplicationInput.personalInformation.countryCode"></dx-text-box>
+                        <div class="col-6">
+                            <div class="dx-field">
+                                <div class="dx-field-label">Postal Code</div>
+                                <div class="dx-field-value">
+                                    <dx-text-box placeholder="Enter postal code"
+                                                 [(value)]="submitApplicationInput.personalInformation.postalCode"></dx-text-box>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="dx-field">
@@ -240,7 +266,7 @@
                         </div>
                     </div>
                     <div class="dx-field">
-                        <div class="dx-field-label">Is Direct Deposit</div>
+                        <div class="dx-field-label">Do you own your home?</div>
                         <div class="dx-field-value">
                             <dx-radio-group
                                 [items]="radioGroup"
@@ -311,7 +337,7 @@
                             <dx-select-box
                                 [items]="creditScore"
                                 [(value)]="submitApplicationInput.personalInformation.creditScoreRating"
-                                placeholder="Choose Product"
+                                placeholder="Choose credit score"
                             ></dx-select-box>
                         </div>
                     </div>
@@ -339,7 +365,7 @@
                             <dx-select-box
                                 [items]="loanReason"
                                 [(value)]="submitApplicationInput.loanInformation.loanReason"
-                                placeholder="Choose Loan Reason"
+                                placeholder="Choose loan reason"
                             ></dx-select-box>
                         </div>
                     </div>
@@ -469,7 +495,7 @@
                         <div class="dx-field-value">
                             <dx-select-box
                                 [items]="payFrequency"
-                                placeholder="Choose Period"
+                                placeholder="Choose pay frequency"
                             ></dx-select-box>
                         </div>
                     </div>
@@ -496,7 +522,7 @@
                         <div class="dx-field-value">
                             <dx-select-box
                                 [items]="incomeType"
-                                placeholder="Choose Income Type"
+                                placeholder="Choose income type"
                             ></dx-select-box>
                         </div>
                     </div>
@@ -514,7 +540,7 @@
                 </div>
                 <div class="main">
                     <div class="dx-field">
-                        <div class="dx-field-label">Income Type</div>
+                        <div class="dx-field-label">Bank Account Type</div>
                         <div class="dx-field-value">
                             <dx-select-box
                                 [items]="bankAccountType"

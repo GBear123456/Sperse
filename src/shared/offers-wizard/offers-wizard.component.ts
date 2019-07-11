@@ -46,21 +46,21 @@ export class OffersWizardComponent implements OnInit {
         'NotSure', 'Excellent', 'Good', 'Fair', 'Poor'
     ];
     loanReason = [
-        'DebtConsolidation',
-        'EmergencySituation',
-        'AutoRepairs',
-        'AutoPurchase',
+        'Debt Consolidation',
+        'Emergency Situation',
+        'Auto Repairs',
+        'Auto Purchase',
         'Moving',
-        'HomeImprovement',
+        'Home Improvement',
         'Medical',
         'Business',
         'Vacation',
-        'RentOrMortgage',
+        'Rent Or Mortgage',
         'Wedding',
-        'MajorPurchases',
+        'Major Purchases',
         'Other',
-        'CreditCardDebtRelief',
-        'StudentLoanDebtRelief'
+        'Credit Card Debt Relief',
+        'Student Loan Debt Relief'
     ];
     payFrequency = [
         'Weekly', 'BiWeekly', 'Monthly', 'SemiMonthly'
@@ -77,13 +77,13 @@ export class OffersWizardComponent implements OnInit {
     ) {
         this.dialogRef = <any>injector.get(MatDialogRef);
         this.rules = {'X': /[02-9]/};
-        this.submitApplicationInput.systemType = SubmitApplicationInputSystemType.EPCVIP;
-        this.submitApplicationInput.personalInformation.doB = moment();
-        this.submitApplicationInput.personalInformation.isActiveMilitary = false;
-        console.log(this.dialogRef);
     }
 
     ngOnInit() {
+        this.submitApplicationInput.systemType = this.data.offer.systemType;
+        this.submitApplicationInput.personalInformation.doB = moment();
+        this.submitApplicationInput.personalInformation.isActiveMilitary = false;
+        this.submitApplicationInput.campaignId = this.data.offer.campaignId;
         this._changeDetectionRef.detectChanges();
     }
 
@@ -93,18 +93,14 @@ export class OffersWizardComponent implements OnInit {
     }
 
     goToNextStep(event) {
-        console.log(event);
-        // this.stepper.selectedIndex = index;
-        // event.preventDefault();
-        console.log(this.submitApplicationInput);
-        // validate before next
         this.stepper.next();
     }
 
     submitApplication() {
         console.log(this.submitApplicationInput);
-        
-        this.offersServiceProxy.submitApplication(this.submitApplicationInput);
+        this.offersServiceProxy.submitApplication(this.submitApplicationInput).subscribe(result => {
+            console.log(result);
+        });
     }
 
 }

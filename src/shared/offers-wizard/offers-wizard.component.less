@@ -28,6 +28,11 @@
             position: relative;
             z-index: 5;
             color: #2C2C2C;
+
+            @media all and (min-width: 992px) {
+                padding-left: calc(~"35% + 30px");
+                justify-content: unset;
+            }
         }
 
         .main {
@@ -36,6 +41,12 @@
             position: relative;
             z-index: 6;
             overflow: auto;
+
+            @media all and (min-width: 992px) {
+                width: 65%;
+                align-self: flex-end;
+                padding: 0 30px;
+            }
 
             h2 {
                 font-family: @mainFont;
@@ -54,9 +65,11 @@
             }
             
             .right-info {
-                width: 60%;
-                float: right;
                 margin-bottom: 12px;
+            }
+
+            .row {
+                margin-bottom: 10px;
             }
         }
 
@@ -68,8 +81,8 @@
             display: flex;
 
             .btn {
-                padding-left: 20px;
-                padding-right: 20px;
+                padding-left: 30px;
+                padding-right: 30px;
 
                 &-next {
                     margin-left: auto;
@@ -86,14 +99,29 @@
     
     /deep/ .dx-field {
         align-items: center;
+        width: 100%;
         
         .dx-field-label {
-            width: 60%;
+            width: 100%;
             float: right;
             text-transform: uppercase;
             font-size: 12px;
             font-weight: 700;
             padding-bottom: 4px;
+        }
+        .dx-field-value {
+            width: 100% !important;
+        }
+
+        .dx-texteditor-input {
+            background-color: #dfdfdf;
+            border-radius: 4px;
+        }
+
+        .dx-placeholder {
+            font-weight: 400;
+            color: #aaa;
+            transition: 0.2s;
         }
     }
     
@@ -125,6 +153,10 @@
             border-bottom: 0;
             padding: 0;
             z-index: 9999;
+
+            @media all and (max-width: 768px) {
+                display: none;
+            }
             
             .mat-step-label-active {
                 .mat-step-text-label {
