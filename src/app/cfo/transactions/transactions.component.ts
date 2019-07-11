@@ -45,6 +45,8 @@ import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calenda
 import { FilterCBoxesComponent } from '@shared/filters/cboxes/filter-cboxes.component';
 import { FilterCheckBoxesComponent } from '@shared/filters/check-boxes/filter-check-boxes.component';
 import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-boxes.model';
+import { FilterDropDownModel } from '@shared/filters/dropdown/filter-dropdown.model';
+import { FilterDropDownComponent } from '@shared/filters/dropdown/filter-dropdown.component';
 import { RuleDialogComponent } from '../rules/rule-edit-dialog/rule-edit-dialog.component';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { CategorizationComponent } from 'app/cfo/transactions/categorization/categorization.component';
@@ -308,6 +310,21 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                             nameField: 'name',
                             keyExpr: 'id',
                             value: [ this.cfoPreferencesService.selectedCurrencyId ]
+                        })
+                    }
+                }),
+                new FilterModel({
+                    component: FilterDropDownComponent,
+                    caption: 'IsTransfer',
+                    items: {
+                        isTransfer: new FilterDropDownModel({
+                            elements: [
+                                {name: this.l('AllTransactions'), value: ''},
+                                {name: this.l('ExcludeTransfers'), value: 'exclude'},
+                                {name: this.l('OnlyTransfers'), value: 'transfers'}
+                            ],
+                            displayElementExp: 'name',
+                            valueElementExp: 'value'
                         })
                     }
                 }) /*,
@@ -791,6 +808,11 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         let url = super.getODataUrl(uri, filter);
         url += (url.indexOf('?') == -1 ? '?' : '&') + 'currencyId=' + this.cfoPreferencesService.selectedCurrencyId;
         return url;
+    }
+
+    filterByIsTransfer(filter: FilterModel) {
+        let val = filter.items.isTransfer.value;
+        return val ? {IsTransfer: val == 'transfers'} : {};
     }
 
     filterByClassified(filter: FilterModel) {

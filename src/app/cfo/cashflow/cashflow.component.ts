@@ -58,6 +58,8 @@ import { FilterItemModel } from '@shared/filters/models/filter-item.model';
 import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calendar.component';
 import { FilterCheckBoxesComponent } from '@shared/filters/check-boxes/filter-check-boxes.component';
 import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-boxes.model';
+import { FilterDropDownModel } from '@shared/filters/dropdown/filter-dropdown.model';
+import { FilterDropDownComponent } from '@shared/filters/dropdown/filter-dropdown.component';
 import {
     CashflowServiceProxy,
     StatsFilter,
@@ -89,7 +91,8 @@ import {
     UpdateTransactionsCategoryInput,
     UpdateCategoryInput,
     RenameForecastModelInput,
-    CreateForecastModelInput, SyncAccountBankDto
+    CreateForecastModelInput, SyncAccountBankDto,
+    StatsFilterTransferTransactionFilter
 } from '@shared/service-proxies/service-proxies';
 import { BankAccountFilterComponent } from 'shared/filters/bank-account-filter/bank-account-filter.component';
 import { BankAccountFilterModel } from 'shared/filters/bank-account-filter/bank-account-filter.model';
@@ -1150,6 +1153,22 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                         dataSource: initialData.businessEntities,
                         nameField: 'name',
                         keyExpr: 'id'
+                    })
+                }
+            }),
+            new FilterModel({
+                component: FilterDropDownComponent,
+                caption: 'IsTransfer',
+                items: {
+                    isTransfer: new FilterDropDownModel({
+                        elements: [
+                            {name: this.l('AllTransactions'), value: ''},
+                            {name: this.l('ExcludeTransfers'), value: StatsFilterTransferTransactionFilter.Exclude},
+                            {name: this.l('OnlyTransfers'), value: StatsFilterTransferTransactionFilter.OnlyTransfers}
+                        ],
+                        displayElementExp: 'name',
+                        valueElementExp: 'value',
+                        value: ''
                     })
                 }
             })

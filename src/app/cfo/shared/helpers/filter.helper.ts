@@ -61,4 +61,8 @@ export class FilterHelpers {
         }
     }
 
+    static filterByIsTransfer(filter: FilterModel, requestFilter: StatsFilter) {
+        if (filter.items.isTransfer.value)
+            requestFilter.transferTransactionFilter = filter.items.isTransfer.value;
+    }
 }
