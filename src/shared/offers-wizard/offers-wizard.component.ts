@@ -77,13 +77,20 @@ export class OffersWizardComponent implements OnInit {
     ) {
         this.dialogRef = <any>injector.get(MatDialogRef);
         this.rules = {'X': /[02-9]/};
-        this.submitApplicationInput.systemType = SubmitApplicationInputSystemType.EPCVIP;
-        this.submitApplicationInput.personalInformation.doB = moment();
-        this.submitApplicationInput.personalInformation.isActiveMilitary = false;
         console.log(this.dialogRef);
+        console.log(this.data);
     }
 
     ngOnInit() {
+        console.log(this.data.offer.systemType);
+        console.log(this.data.offer.campaignId);
+        this.submitApplicationInput.systemType = this.data.offer.systemType;
+        this.submitApplicationInput.personalInformation.doB = moment();
+        this.submitApplicationInput.personalInformation.isActiveMilitary = false;
+        this.submitApplicationInput.campaignId = this.data.offer.campaignId;
+        /*this.offersServiceProxy.getApplicationDetails().subscribe(response => {
+            console.log(response);
+        });*/
         this._changeDetectionRef.detectChanges();
     }
 
@@ -103,8 +110,9 @@ export class OffersWizardComponent implements OnInit {
 
     submitApplication() {
         console.log(this.submitApplicationInput);
-        
-        this.offersServiceProxy.submitApplication(this.submitApplicationInput);
+        this.offersServiceProxy.submitApplication(this.submitApplicationInput).subscribe(result => {
+            console.log(result);
+        });
     }
 
 }
