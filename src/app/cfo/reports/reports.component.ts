@@ -11,7 +11,7 @@ import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { AppService } from '@app/app.service';
 import { AppConsts } from '@shared/AppConsts';
 import { FileSizePipe } from '@shared/common/pipes/file-size.pipe';
-import { ReportsServiceProxy, InstanceType78 } from '@shared/service-proxies/service-proxies';
+import { ReportsServiceProxy } from '@shared/service-proxies/service-proxies';
 
 @Component({
     templateUrl: './reports.component.html',
@@ -36,7 +36,7 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
      ];
 
     formatting = AppConsts.formatting;
-    reports$ = this.reportsProxy.getAll(InstanceType78[this.instanceType], this.instanceId);
+    reports$ = of([]);
 
     constructor(
         private injector: Injector,
