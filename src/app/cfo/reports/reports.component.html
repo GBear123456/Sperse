@@ -11,8 +11,52 @@
             </ul>
         </div>
 
-        <div class="reports" *ngIf="(reportsProxy.getAll(instanceType, instanceId) | async) as reports; else nodata">
-            
+        <div class="reports" *ngIf="(reports$ | async) as reports; else nodata">
+            <dx-data-grid id="gridContainer"
+                        height="100%"
+                        [dataSource]="reports"
+                        [allowColumnReordering]="true"
+                        [columnAutoWidth]="true"
+                        [allowColumnResizing]="true"
+                        [hoverStateEnabled]="true"
+                        [pager]="defaultGridPagerConfig"
+                        (onCellClick)="onCellClick($event)"
+                        (onInitialized)="onDataGridInit($event)"
+                        (onContentReady)="onContentReady()"
+                        (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
+                <dxo-search-panel [visible]="true" [width]="300"></dxo-search-panel>
+                <dxo-header-filter [visible]="true" [allowSearch]="true"></dxo-header-filter>
+
+                <dxi-column [width]="'40px'" [fixed]="true" [fixedPosition]="'left'" [showInColumnChooser]="false" [allowExporting]="false"></dxi-column>
+                <dxi-column
+                    alignment="center"
+                    width="90px"
+                    [fixed]="true" 
+                    [showInColumnChooser]="false" 
+                    [allowExporting]="false"
+                    cellTemplate="actionsCellTemplate"
+                    headerCellTemplate="actionsCellTemplate">
+                </dxi-column>
+                <dxi-column dataField="fileName" caption="{{l('FileName')}}"></dxi-column>
+                <dxi-column dataField="size" [calculateSortValue]="numerizeFileSizeSortValue" caption="{{l('Size')}}" [calculateCellValue]="calculateFileSizeValue"></dxi-column>
+                <dxi-column dataField="creationTime" caption="{{l('Date')}}" cssClass="tabular" cellTemplate="dateCell" sortOrder="desc"></dxi-column>
+                <dxi-column [width]="'40px'" [fixed]="true" [fixedPosition]="'right'" [showInColumnChooser]="false" [allowExporting]="false"></dxi-column>
+
+                <a class="dx-link dx-link-edit" *dxTemplate="let cellData of 'actionsCellTemplate'">Edit</a>
+
+                <div *dxTemplate="let cellData of 'dateCell'">
+                    {{ cellData.value | date: formatting.dateTime : userTimezone }}
+                </div>
+                <div *dxTemplate="let data of 'title'">
+                    <h2 class="title">{{l('Documents')}}</h2>
+                </div>
+
+                <dxo-load-panel [enabled]="false"></dxo-load-panel>
+                <dxo-scrolling mode="virtual"></dxo-scrolling>
+
+                <dxo-sorting mode="multiple"></dxo-sorting>
+                <dxo-group-panel [visible]="false"></dxo-group-panel>
+            </dx-data-grid>            
         </div>
 
         <ng-template #nodata>
