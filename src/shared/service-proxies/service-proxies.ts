@@ -71878,12 +71878,14 @@ export enum LayoutType {
     Default = "Default", 
     LendSpace = "LendSpace", 
     AdvicePeriod = "AdvicePeriod", 
+    BankCode = "BankCode", 
 }
 
 export enum LayoutType2 {
     Default = "Default", 
     LendSpace = "LendSpace", 
     AdvicePeriod = "AdvicePeriod", 
+    BankCode = "BankCode", 
 }
 
 export enum TenantHostType {
@@ -73164,6 +73166,7 @@ export enum TenantLoginInfoDtoCustomLayoutType {
     Default = "Default", 
     LendSpace = "LendSpace", 
     AdvicePeriod = "AdvicePeriod", 
+    BankCode = "BankCode", 
 }
 
 export enum TenantLoginInfoDtoPaymentPeriodType {
