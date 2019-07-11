@@ -61,8 +61,8 @@ export class ClickStatsComponent extends AppComponentBase implements OnInit {
                 return this._offerService.getOffersStats(
                     GroupByPeriod.Daily,
                     this.campaignId,
-                    moment().year(this._year).startOf('year'),
-                    moment().year(this._year).endOf('year')
+                    moment.utc().year(this._year).startOf('year'),
+                    moment.utc().year(this._year).endOf('year')
                 ).toPromise().then(response => {
                     return {
                         data: this.getDataByDay(response),
@@ -96,8 +96,8 @@ export class ClickStatsComponent extends AppComponentBase implements OnInit {
         });
 
         res.forEach((item) => {
-            let month = item.date.format('MMM');
-            data[item.date.date()][month] = item.count;
+            let month = item.date.utc().format('MMM');
+            data[item.date.utc().date()][month] = item.count;
             data[this.TOTAL_COL_INDEX][month] += item.count;
             data[this.TOTAL_COL_INDEX][this.TOTAL_DATA_FIELD] += item.count;
         });
