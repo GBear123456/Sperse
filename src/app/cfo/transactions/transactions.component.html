@@ -29,7 +29,7 @@
                                   [columnAutoWidth]="true"
                                   [allowColumnResizing]="true"
                                   [hoverStateEnabled]="true"
-                                  [headerFilter]="{allowSearch: false, visible: true}"
+                                  [headerFilter]="{allowSearch: true, visible: false}"
                                   [pager]="defaultGridPagerConfig"
                                   [loadPanel]="{
                                     enabled: true,
@@ -57,7 +57,9 @@
                         <dxo-group-panel [visible]="true"></dxo-group-panel>
                         <dxo-sorting mode="multiple"></dxo-sorting>
 
-                        <dxi-column dataField="Date" cssClass="tabular" caption="{{l('Transactions_Date')}}" cellTemplate="dateCell" [allowFiltering]="false"></dxi-column>
+                         <dxo-filter-row [visible]="true" [showOperationChooser]="false"></dxo-filter-row>
+
+                        <dxi-column dataField="Date" cssClass="tabular" caption="{{l('Transactions_Date')}}" cellTemplate="dateCell" [allowFiltering]="true"></dxi-column>
                         <dxi-column dataField="Description" cellTemplate="descriptionTemplate" caption="{{l('Transactions_Description')}}" [width]="450"></dxi-column>
                         <dxi-column dataField="Amount" cssClass="tabular" name="Amount" caption="{{l('Transactions_Amount')}}" cellTemplate="amountTemplate" [allowFiltering]="false"></dxi-column>
                         <dxi-column dataField="BankAccountBankName" caption="{{l('Transactions_BankName')}}"></dxi-column>
