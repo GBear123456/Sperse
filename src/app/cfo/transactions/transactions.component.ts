@@ -100,6 +100,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     public bankAccountCount;
     visibleAccountCount = 0;
     public bankAccounts: number[];
+    public bankAccountsLookup = [];
     public creditTransactionCount = 0;
     public creditTransactionTotal = 0;
     public creditClassifiedTransactionCount = 0;
@@ -217,6 +218,11 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             this._bankAccountsService.syncAccounts$.pipe(first())
         ).subscribe(([typeAndCategories, filtersInitialData, syncAccounts]) => {
             this.syncAccounts = syncAccounts;
+
+            this.bankAccountsLookup = syncAccounts.reduce((acc, item) => {
+                return acc.concat(item.bankAccounts);
+            }, []);
+
             this.filtersInitialData = filtersInitialData;
             this.filters = [
                 new FilterModel({
