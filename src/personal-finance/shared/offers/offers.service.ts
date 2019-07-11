@@ -189,7 +189,16 @@ export class OffersService {
         }
     }
 
-    openOfferWizard(offer: OfferDto, isCreditCard = false) {
+    applyOffer(offer: OfferDto, isCreditCard = false) {
+        const linkIsDirect = !!offer.redirectUrl;
+        let submitRequestInput = SubmitRequestInput.fromJS({
+            campaignId: offer.campaignId,
+            systemType: offer.systemType,
+            ...this.memberInfo
+        });
+        let redirectUrl = !linkIsDirect ? offer.redirectUrl : offer.redirectUrl + '&' + this.memberInfoApplyOfferParams;
+        if (linkIsDirect) submitRequestInput.redirectUrl = redirectUrl;
+
         this.dialog.open(OffersWizardComponent, {
             width: '1200px',
             height: '800px',
@@ -199,55 +208,11 @@ export class OffersService {
                 offer: offer,
                 isCreditCard: isCreditCard
             }
+        }).afterClosed().subscribe(result => {
+            if (result) {
+                window.open(redirectUrl, '_blank');
+            }
         });
-    }
-
-    applyOffer(offer: OfferDto, isCreditCard = false) {
-        const linkIsDirect = !!offer.redirectUrl;
-        let submitRequestInput = SubmitRequestInput.fromJS({
-            campaignId: offer.campaignId,
-            systemType: offer.systemType,
-            ...this.memberInfo
-        });
-        let redirectUrl = !linkIsDirect ? offer.redirectUrl : offer.redirectUrl + '&' + this.memberInfoApplyOfferParams;
-        const modalData = {
-            processingSteps: [null, null, null, null],
-            completeDelays: [ 250, 250, 250, 250 ],
-            delayMessages: null,
-            title: 'Offers_ConnectingToPartners',
-            subtitle: 'Offers_NewWindowWillBeOpen',
-            redirectUrl: redirectUrl,
-            logoUrl: offer.campaignProviderType === OfferDtoCampaignProviderType.CreditLand
-                     ? this.creditLandLogoUrl
-                     : (isCreditCard ? null : offer.logoUrl)
-        };
-        if (!linkIsDirect) {
-            modalData.processingSteps = cloneDeep(this.processingSteps);
-            modalData.title = 'Offers_ProcessingLoanRequest';
-            modalData.subtitle = 'Offers_WaitLoanRequestProcessing';
-            modalData.completeDelays = [ 1000, 1000, 1000, null ];
-            modalData.delayMessages = <any>[ null, null, null, this.ls.l('Offers_TheNextStepWillTake') ];
-        } else {
-            submitRequestInput.redirectUrl = redirectUrl;
-        }
-
-        const applyOfferDialog = this.dialog.open(ApplyOfferDialogComponent, {
-            width: '530px',
-            panelClass: 'apply-offer-dialog',
-            data: modalData
-        });
-        this.offerServiceProxy.submitRequest(submitRequestInput)
-            .subscribe(
-                (output: SubmitRequestOutput) => {
-                    if (!linkIsDirect) {
-                        /** If window opening is blocked - show message for allowing popups opening, else - close popup and redirect to the link (code for redirect in the popup component) */
-                        !window.open(output.redirectUrl, '_blank')
-                            ? applyOfferDialog.componentInstance.showBlockedMessage = true
-                            : applyOfferDialog.close();
-                    }
-                },
-                () => applyOfferDialog.close()
-            );
     }
 
     getCreditScore(category: OfferFilterCategory, creditScoreNumber: number): GetMemberInfoResponseCreditScore {

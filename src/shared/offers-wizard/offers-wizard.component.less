@@ -114,7 +114,7 @@
         }
 
         .dx-texteditor-input {
-            background-color: #dfdfdf;
+            background-color: #fff;
             border-radius: 4px;
         }
 
@@ -224,5 +224,13 @@
         .mat-horizontal-stepper-content[aria-expanded="true"] {
             height: 100%;
         }
+    }
+
+    /deep/ dx-validation-group {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        position: relative;
     }
 }
