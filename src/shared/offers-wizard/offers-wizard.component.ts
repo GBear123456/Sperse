@@ -16,7 +16,11 @@ import * as moment from 'moment';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
-import { OfferServiceProxy, SubmitApplicationInput, SubmitApplicationInputSystemType } from '@shared/service-proxies/service-proxies';
+import {
+    GetApplicationDetailsOutput,
+    OfferServiceProxy,
+    SubmitApplicationInput
+} from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 
 @Component({
@@ -84,6 +88,12 @@ export class OffersWizardComponent implements OnInit {
         this.submitApplicationInput.personalInformation.doB = moment();
         this.submitApplicationInput.personalInformation.isActiveMilitary = false;
         this.submitApplicationInput.campaignId = this.data.offer.campaignId;
+        this.offersServiceProxy.getApplicationDetails().subscribe(
+            (output: GetApplicationDetailsOutput) => {
+                console.log(output);
+            },
+            (error) => console.log(error)
+        );
         this._changeDetectionRef.detectChanges();
     }
 
@@ -93,13 +103,13 @@ export class OffersWizardComponent implements OnInit {
     }
 
     goToNextStep(event) {
-        this.stepper.next();
+        let result = event.validationGroup.validate();
+        if (result.isValid) this.stepper.next();
     }
 
     submitApplication() {
-        console.log(this.submitApplicationInput);
-        this.offersServiceProxy.submitApplication(this.submitApplicationInput).subscribe(result => {
-            console.log(result);
+        this.offersServiceProxy.submitApplication(this.submitApplicationInput).subscribe(() => {
+            this.dialogRef.close(true);
         });
     }
 

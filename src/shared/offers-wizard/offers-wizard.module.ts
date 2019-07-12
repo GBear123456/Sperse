@@ -12,6 +12,7 @@ import { DxSelectBoxModule } from 'devextreme-angular/ui/select-box';
 import { DxValidatorModule } from 'devextreme-angular/ui/validator';
 import { DxValidationGroupModule } from 'devextreme-angular/ui/validation-group';
 import { DxNumberBoxModule } from 'devextreme-angular/ui/number-box';
+import { DxButtonModule } from 'devextreme-angular/ui/button';
 
 /** Application imports */
 import { OffersWizardComponent } from './offers-wizard.component';
@@ -29,7 +30,8 @@ import { OffersWizardComponent } from './offers-wizard.component';
         DxSelectBoxModule,
         DxValidatorModule,
         DxValidationGroupModule,
-        DxNumberBoxModule
+        DxNumberBoxModule,
+        DxButtonModule
     ],
     declarations: [
         OffersWizardComponent
