@@ -13,6 +13,7 @@ import { PackageIdService } from './shared/common/packages/package-id.service';
 import { PersonalFinanceLayoutModule } from '@shared/personal-finance-layout/personal-finance-layout.module';
 import { InstanceServiceProxy } from '@shared/service-proxies/service-proxies';
 import { ApplyOfferDialogComponent } from '@root/personal-finance/shared/offers/apply-offer-modal/apply-offer-dialog.component';
+import { OffersWizardModule } from '@shared/offers-wizard/offers-wizard.module';
 
 @NgModule({
     declarations: [
@@ -24,6 +25,7 @@ import { ApplyOfferDialogComponent } from '@root/personal-finance/shared/offers/
         CommonModule,
         MatDialogModule,
         PersonalFinanceRoutingModule,
+        OffersWizardModule,
         PersonalFinanceCommonModule.forRoot()
     ],
     providers: [
