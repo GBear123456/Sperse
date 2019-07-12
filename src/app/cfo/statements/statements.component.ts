@@ -130,7 +130,7 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
         private _cfoPreferences: CfoPreferencesService,
         private _dialog: MatDialog,
         private _lifecycleService: LifecycleSubjectsService,
-        private bankAccountsService: BankAccountsService,
+        public bankAccountsService: BankAccountsService,
         private store$: Store<CfoStore.State>
     ) {
         super(injector);
