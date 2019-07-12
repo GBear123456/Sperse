@@ -19,6 +19,12 @@
                               (onValueChanged)="isActiveChanged($event.value)">
                 </dx-check-box>
             </div>
+            <div class="field checkbox">
+                <label>{{ls.l('BusinessEntity_Default')}}</label>
+                <dx-check-box name="isDefault"
+                            [(value)]="businessEntity.isDefault">
+                </dx-check-box>
+            </div>            
             <div class="field">
                 <label>{{ls.l('BusinessEntity_Industry')}}</label>
                 <dx-text-box name="Industry"

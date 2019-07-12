@@ -77,7 +77,9 @@ export class BusinessEntityEditDialogComponent implements OnInit {
     ngOnInit() {
         this.countriesStateLoad();
         this.loadTypes();
-        if (!this.isNew) {
+        if (this.isNew) {
+            this.businessEntity.isDefault = false;
+        } else {
             this.modalDialog.startLoading();
             this._businessEntityService.get(this._cfoService.instanceType as any, this._cfoService.instanceId, this.data.id)
                 .pipe(finalize(() => this.modalDialog.finishLoading()))
