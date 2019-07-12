@@ -91,6 +91,7 @@ export class OffersWizardComponent implements OnInit {
                     this.submitApplicationProfileInput = SubmitApplicationProfileInput.fromJS({
                         ...output
                     });
+                    this._changeDetectionRef.detectChanges();
                 }
             },
             (error) => console.log(error)
