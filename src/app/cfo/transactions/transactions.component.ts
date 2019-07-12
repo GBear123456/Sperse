@@ -139,7 +139,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         private _appService: AppService,
         private _TransactionsServiceProxy: TransactionsServiceProxy,
         private _classificationServiceProxy: ClassificationServiceProxy,
-        private _bankAccountsService: BankAccountsService,
+        public bankAccountsService: BankAccountsService,
         private _changeDetectionRef: ChangeDetectorRef,
         private _cacheService: CacheService,
         private store$: Store<CfoStore.State>,
@@ -213,11 +213,11 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             }
         });
 
-        this._bankAccountsService.load();
+        this.bankAccountsService.load();
         forkJoin(
             this._TransactionsServiceProxy.getTransactionTypesAndCategories(),
             this._TransactionsServiceProxy.getFiltersInitialData(InstanceType[this.instanceType], this.instanceId),
-            this._bankAccountsService.syncAccounts$.pipe(first())
+            this.bankAccountsService.syncAccounts$.pipe(first())
         ).subscribe(([typeAndCategories, filtersInitialData, syncAccounts]) => {
             this.syncAccounts = syncAccounts;
             this.types = typeAndCategories.types.map((item) => item.name);
@@ -245,7 +245,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                                 dataSource: syncAccounts,
                                 nameField: 'name',
                                 keyExpr: 'id',
-                                onRemoved: (ids) => this._bankAccountsService.changeSelectedBankAccountsIds(ids)
+                                onRemoved: (ids) => this.bankAccountsService.changeSelectedBankAccountsIds(ids)
                             })
                     }
                 }),
@@ -351,14 +351,14 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             ]);
             this.filtersService.setup(this.filters, this._activatedRoute.snapshot.queryParams, false);
             this.initFiltering();
-            this._bankAccountsService.syncAccounts$.subscribe((syncAccounts) => {
+            this.bankAccountsService.syncAccounts$.subscribe((syncAccounts) => {
                 this.syncAccounts = syncAccounts;
             });
             /** After selected accounts change */
-            this._bankAccountsService.selectedBankAccountsIds$.pipe(first()).subscribe(() => {
+            this.bankAccountsService.selectedBankAccountsIds$.pipe(first()).subscribe(() => {
                 this.applyTotalBankAccountFilter(true);
             });
-            this._bankAccountsService.selectedBankAccountsIds$.subscribe(() => {
+            this.bankAccountsService.selectedBankAccountsIds$.subscribe(() => {
                 /** filter all widgets by new data if change is on this component */
                 if (this.componentIsActivated) {
                     this.applyTotalBankAccountFilter();
@@ -370,7 +370,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             });
         });
 
-        this._bankAccountsService.accountsAmountWithApply$.subscribe(amount => {
+        this.bankAccountsService.accountsAmountWithApply$.subscribe(amount => {
             this.bankAccountCount = amount;
             this.initToolbarConfig();
             this._changeDetectionRef.detectChanges();
@@ -660,7 +660,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     refreshDataGrid() {
         this.noRefreshedAfterSync = false;
         this.initHeadlineConfig();
-        this._bankAccountsService.load(true, false).subscribe(
+        this.bankAccountsService.load(true, false).subscribe(
             () => this.applyTotalBankAccountFilter()
         );
         this.categorizationComponent.refreshCategories(false, false);
@@ -736,9 +736,9 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             for (let filter of this.filters) {
                 if (filter.caption.toLowerCase() === 'account') {
                     /** apply filter on top */
-                    this._bankAccountsService.applyFilter();
+                    this.bankAccountsService.applyFilter();
                     /** apply filter in sidebar */
-                    filter.items.element.setValue(this._bankAccountsService.state.selectedBankAccountIds, filter);
+                    filter.items.element.setValue(this.bankAccountsService.state.selectedBankAccountIds, filter);
                 }
 
                 if (filter.caption.toLowerCase() === 'classified') {
@@ -766,12 +766,12 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     }
 
     // setBankAccountCount(bankAccountIds, visibleAccountCount) {
-    //     this.bankAccountCount = this._bankAccountsService.getBankAccountCount(bankAccountIds, visibleAccountCount);
+    //     this.bankAccountCount = this.bankAccountsService.getBankAccountCount(bankAccountIds, visibleAccountCount);
     // }
 
     applyTotalBankAccountFilter(emitFilterChange = false) {
         emitFilterChange && this.setDataSource();
-        this._bankAccountsService.setBankAccountsFilter(this.filters, this.syncAccounts, emitFilterChange);
+        this.bankAccountsService.setBankAccountsFilter(this.filters, this.syncAccounts, emitFilterChange);
     }
 
     setCurrenciesFilter(currencyId: string) {
@@ -793,9 +793,9 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             (filter) => {
                 if (filter.caption && filter.caption.toLowerCase() === 'account') {
                     /** apply filter on top */
-                    this._bankAccountsService.applyFilter();
+                    this.bankAccountsService.applyFilter();
                     /** apply filter in sidebar */
-                    filter.items.element.setValue(this._bankAccountsService.state.selectedBankAccountIds, filter);
+                    filter.items.element.setValue(this.bankAccountsService.state.selectedBankAccountIds, filter);
                 }
                 let filterMethod = this['filterBy' + this.capitalize(filter.caption)];
                 if (filterMethod)
@@ -1264,7 +1264,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         this.initToolbarConfig();
 
         /** Load sync accounts (if something change - subscription in ngOnInit fires) */
-        this._bankAccountsService.load();
+        this.bankAccountsService.load();
 
         /** If selected accounts changed in another component - update widgets */
         if (this.updateAfterActivation) {

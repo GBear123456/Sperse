@@ -775,7 +775,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         private _calculatorService: CalculatorService,
         private _cellsCopyingService: CellsCopyingService,
         private cashflowService: CashflowService,
-        private _bankAccountsService: BankAccountsService,
+        public bankAccountsService: BankAccountsService,
         private store$: Store<CfoStore.State>,
         private actions$: ActionsSubject,
         private _cfoPreferencesService: CfoPreferencesService,
@@ -828,8 +828,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
         this.userPreferencesService.removeLocalModel();
         let cashflowGridSettings$ = this.userPreferencesService.userPreferences$.pipe(first());
-        this._bankAccountsService.load();
-        const syncAccounts$ = this._bankAccountsService.syncAccounts$.pipe(first());
+        this.bankAccountsService.load();
+        const syncAccounts$ = this.bankAccountsService.syncAccounts$.pipe(first());
 
         const selectedCurrencyId$ = this.store$.pipe(
             select(CurrenciesStoreSelectors.getSelectedCurrencyId),
@@ -869,10 +869,10 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 this.initFiltering();
 
                 /** After selected accounts change */
-                this._bankAccountsService.selectedBankAccountsIds$.pipe(first()).subscribe(() => {
+                this.bankAccountsService.selectedBankAccountsIds$.pipe(first()).subscribe(() => {
                     this.setBankAccountsFilter(true);
                 });
-                this._bankAccountsService.selectedBankAccountsIds$.subscribe(() => {
+                this.bankAccountsService.selectedBankAccountsIds$.subscribe(() => {
                     /** filter all widgets by new data if change is on this component */
                     if (this.componentIsActivated) {
                         this.setBankAccountsFilter();
@@ -1043,9 +1043,9 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 }
                 if (filter.caption.toLowerCase() === 'account') {
                     /** apply filter on top */
-                    this._bankAccountsService.applyFilter();
+                    this.bankAccountsService.applyFilter();
                     /** apply filter in sidebar */
-                    filter.items.element.setValue(this._bankAccountsService.state.selectedBankAccountIds, filter);
+                    filter.items.element.setValue(this.bankAccountsService.state.selectedBankAccountIds, filter);
                 }
 
                 let filterMethod = FilterHelpers['filterBy' + this.capitalize(filter.caption)];
@@ -1130,7 +1130,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                             dataSource: syncAccounts,
                             nameField: 'name',
                             keyExpr: 'id',
-                            onRemoved: (ids) => this._bankAccountsService.changeSelectedBankAccountsIds(ids)
+                            onRemoved: (ids) => this.bankAccountsService.changeSelectedBankAccountsIds(ids)
                         }
                     )
                 }
@@ -1388,7 +1388,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         if (period === StatsFilterGroupByPeriod.Monthly) {
             this.requestFilter.dailyPeriods = this.getDailyPeriods();
         }
-        this.requestFilter.accountIds = this._bankAccountsService.state.selectedBankAccountIds;
+        this.requestFilter.accountIds = this.bankAccountsService.state.selectedBankAccountIds;
 
         /** Clear cache of tree paths */
         this.treePathes = {};
@@ -1998,7 +1998,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         this.monthsDaysLoadedPathes = [];
         this.anotherPeriodAccountsValues.clear();
         this.reloadCategoryTree();
-        this._bankAccountsService.load(true, false).subscribe(() => {
+        this.bankAccountsService.load(true, false).subscribe(() => {
             this.setBankAccountsFilter(true);
             this.finishLoading();
         });
@@ -5993,8 +5993,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     setBankAccountsFilter(emitFilterChange = false) {
-        this._bankAccountsService.setBankAccountsFilter(this.filters, this.syncAccounts, emitFilterChange);
-        this.allowChangingForecast = this._bankAccountsService.state.statuses.indexOf(BankAccountStatus.Active) >= 0;
+        this.bankAccountsService.setBankAccountsFilter(this.filters, this.syncAccounts, emitFilterChange);
+        this.allowChangingForecast = this.bankAccountsService.state.statuses.indexOf(BankAccountStatus.Active) >= 0;
     }
 
     discardDiscrepancy(cellObj) {
@@ -6257,7 +6257,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         }
 
         /** Load sync accounts (if something change - subscription in ngOnInit fires) */
-        this._bankAccountsService.load();
+        this.bankAccountsService.load();
 
         /** If selected accounts changed in another component - update widgets */
         if (this.updateAfterActivation) {

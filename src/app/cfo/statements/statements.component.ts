@@ -384,14 +384,16 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
     initHeadlineConfig() {
         this.headlineConfig = {
             names: [this.l('Statements')],
-            onRefresh: this._cfoService.hasStaticInstance ? undefined : () => {
-                this.refresh.next();
-                this.bankAccountsService.load(true, false).pipe(
-                    finalize(() => abp.ui.clearBusy())
-                ).subscribe();
-            },
+            onRefresh: this._cfoService.hasStaticInstance ? undefined : this.invalidate.bind(true),
             iconSrc: './assets/common/icons/credit-card-icon.svg'
         };
+    }
+
+    invalidate() {
+        this.refresh.next();
+        this.bankAccountsService.load(true, false).pipe(
+            finalize(() => abp.ui.clearBusy())
+        ).subscribe();
     }
 
     updateCurrencySymbol = (data) => {

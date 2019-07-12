@@ -12,6 +12,7 @@ import { AppService } from '@app/app.service';
 import { AppConsts } from '@shared/AppConsts';
 import { FileSizePipe } from '@shared/common/pipes/file-size.pipe';
 import { ReportsServiceProxy } from '@shared/service-proxies/service-proxies';
+import { BankAccountsService } from '@shared/cfo/bank-accounts/helpers/bank-accounts.service';
 
 @Component({
     templateUrl: './reports.component.html',
@@ -43,7 +44,8 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
         private _appService: AppService,
         private _fileSizePipe: FileSizePipe,
         private _changeDetector: ChangeDetectorRef,
-        public reportsProxy: ReportsServiceProxy
+        public reportsProxy: ReportsServiceProxy,
+        public bankAccountsService: BankAccountsService
     ) {
         super(injector);        
     }

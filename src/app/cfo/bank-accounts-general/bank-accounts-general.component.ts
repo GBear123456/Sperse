@@ -12,6 +12,7 @@ import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { SynchProgressComponent } from '@shared/cfo/bank-accounts/synch-progress/synch-progress.component';
 import { SynchProgressService } from '@shared/cfo/bank-accounts/helpers/synch-progress.service';
 import { BankAccountsGeneralService } from '@shared/cfo/bank-accounts/helpers/bank-accounts-general.service';
+import { BankAccountsService } from '@shared/cfo/bank-accounts/helpers/bank-accounts.service';
 import { SyncAccountServiceProxy, InstanceType94 } from '@shared/service-proxies/service-proxies';
 import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
 import { CfoStore, CurrenciesStoreSelectors } from '@app/cfo/store';
@@ -36,6 +37,7 @@ export class BankAccountsGeneralComponent extends CFOComponentBase implements On
         private _syncAccountServiceProxy: SyncAccountServiceProxy,
         private _bankAccountsGeneralService: BankAccountsGeneralService,
         private _dialog: MatDialog,
+        public bankAccountsService: BankAccountsService,
         public cfoPreferencesService: CfoPreferencesService,
         private store$: Store<CfoStore.State>,
         private _lifeCycleService: LifecycleSubjectsService

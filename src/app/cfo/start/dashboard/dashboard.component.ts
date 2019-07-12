@@ -42,7 +42,7 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, OnDe
     constructor(
         injector: Injector,
         private _dashboardService: DashboardService,
-        private bankAccountsService: BankAccountsService,
+        public bankAccountsService: BankAccountsService,
         public dialog: MatDialog,
         public cfoPreferencesService: CfoPreferencesService
     ) {
@@ -55,10 +55,7 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, OnDe
         this.headlineConfig = {
             names: [this.l('Dashboard_Title')],
             iconSrc: './assets/common/icons/pie-chart.svg',
-            onRefresh: this._cfoService.hasStaticInstance ? undefined : () => {
-                this._dashboardService.refresh();
-                this.refreshWidgets();
-            },
+            onRefresh: this._cfoService.hasStaticInstance ? undefined : this.invalidate.bind(this),
             buttons: []
         };
         /** Load sync accounts */
@@ -66,6 +63,11 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, OnDe
         this.rootComponent.overflowHidden(true);
         this.rootComponent.addScriptLink('https://fast.wistia.com/embed/medias/kqjpmot28u.jsonp');
         this.rootComponent.addScriptLink('https://fast.wistia.com/assets/external/E-v1.js');
+    }
+
+    invalidate() {
+        this._dashboardService.refresh();
+        this.refreshWidgets();
     }
 
     ngOnDestroy(): void {

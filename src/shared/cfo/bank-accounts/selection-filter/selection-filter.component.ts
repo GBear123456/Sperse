@@ -15,6 +15,7 @@ export class SelectionFilterComponent {
     @Input() itemsText = this.localization.l('entity');
     @Input() popupWidth: string;
     @Output() selectionChanged: EventEmitter<any> = new EventEmitter();
+    @Output() onClosed: EventEmitter<any> = new EventEmitter();
 
     constructor(
         private localization: AppLocalizationService

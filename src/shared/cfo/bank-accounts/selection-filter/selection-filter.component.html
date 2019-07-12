@@ -19,6 +19,7 @@
                     (onValueChanged)="selectedItemsChange()"
                     (onSelectAllValueChanged)="selectAllValueChanged($event)"
                     (onMultiTagPreparing)="onMultiTagPreparing($event)"
+                    (onClosed)="onClosed.emit($event)"
                     accessKey="selectionFilter">
             <div *dxTemplate="let tag of 'customTagTemplate'">
                 <span class="tag-value" [title]="tag.name || tag">{{tag.name || tag}}</span>

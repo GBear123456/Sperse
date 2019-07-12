@@ -1,5 +1,16 @@
 <div>
-    <app-headline [config]="headlineConfig"></app-headline>
+    <app-headline [config]="headlineConfig">
+        <selection-filter class="headline"
+            [allItemsText]="l('All_Entities')"
+            [title]=""
+            popupWidth="280px"
+            [selectionList]="bankAccountsService.businessEntities$ | async"
+            [selectedItems]="bankAccountsService.selectedBusinessEntitiesIds$ | async"
+            (selectionChanged)="bankAccountsService.changeState({selectedBusinessEntitiesIds: $event}, true)"
+            (onClosed)="invalidate()">
+        </selection-filter>
+        <synch-progress class="synch-progress"></synch-progress>
+    </app-headline>
     <div class="main-wrapper">
         <div class="left-menu">
             <ul class="menu-wrapper">
