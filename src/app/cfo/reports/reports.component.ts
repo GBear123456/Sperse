@@ -4,7 +4,6 @@ import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material';
-import { Observable, Subject, of } from 'rxjs';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import moment from 'moment-timezone';
 
@@ -12,7 +11,7 @@ import moment from 'moment-timezone';
 import { AppService } from '@app/app.service';
 import { AppConsts } from '@shared/AppConsts';
 import { FileSizePipe } from '@shared/common/pipes/file-size.pipe';
-import { ReportsServiceProxy, GenerateInput, GenerateInputPeriod, InstanceType79, InstanceType78 } from '@shared/service-proxies/service-proxies';
+import { ReportsServiceProxy, GenerateInput, GenerateInputPeriod } from '@shared/service-proxies/service-proxies';
 import { BankAccountsService } from '@shared/cfo/bank-accounts/helpers/bank-accounts.service';
 import { CalendarDialogComponent } from '@app/shared/common/dialogs/calendar/calendar-dialog.component';
 import { DateHelper } from '@shared/helpers/DateHelper';
@@ -100,7 +99,7 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
                 text: this.l('Generate'),
                 onClick: () => {
                     this.notify.info(this.l('GeneratingStarted'));
-                    this.reportsProxy.generate(this.instanceType as InstanceType79, this.instanceId, new GenerateInput({
+                    this.reportsProxy.generate(<any>this.instanceType, this.instanceId, new GenerateInput({
                         from: this.dateFrom,
                         to: this.dateTo,
                         period: this.selectedPeriod
@@ -172,7 +171,7 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
 
     onCellClick(event) {
         if (event.data && event.data.Id)
-            this.reportsProxy.getUrl(this.instanceType as InstanceType78, this.instanceId, event.data.Id)
+            this.reportsProxy.getUrl(<any>this.instanceType, this.instanceId, event.data.Id)
                 .subscribe(res => window.open(res.url));
     }
 
