@@ -18,7 +18,7 @@ import * as moment from 'moment';
 import { AppConsts } from '@shared/AppConsts';
 import {
     GetApplicationDetailsOutput,
-    OfferServiceProxy,
+    OfferServiceProxy, PersonalInformation,
     SubmitApplicationInput
 } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -85,12 +85,24 @@ export class OffersWizardComponent implements OnInit {
 
     ngOnInit() {
         this.submitApplicationInput.systemType = this.data.offer.systemType;
-        this.submitApplicationInput.personalInformation.doB = moment();
         this.submitApplicationInput.personalInformation.isActiveMilitary = false;
         this.submitApplicationInput.campaignId = this.data.offer.campaignId;
+        this.submitApplicationInput.personalInformation = PersonalInformation.fromJS({
+            email: this.data.submitRequestInput.emailAddress,
+            postalCode: this.data.submitRequestInput.zipCode,
+            address1: this.data.submitRequestInput.streetAddress,
+            creditScoreRating: this.data.submitRequestInput.creditScore,
+            phone: this.data.submitRequestInput.phoneNumber,
+            ...this.data.submitRequestInput
+        });
+        console.log(this.submitApplicationInput);
         this.offersServiceProxy.getApplicationDetails().subscribe(
             (output: GetApplicationDetailsOutput) => {
-                console.log(output);
+                if (output) {
+                    this.submitApplicationInput = SubmitApplicationInput.fromJS({
+                        ...output
+                    });
+                }
             },
             (error) => console.log(error)
         );

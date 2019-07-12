@@ -3,6 +3,10 @@
 /deep/ #offers-wizard {
     background: #E7E7E7 url(../../assets/images/hero.jpg) bottom 0 left 0 no-repeat;
     padding-bottom: 0;
+    
+    @media all and (max-width: 768px) {
+        background-image: none;
+    }
 }
 
 :host {
@@ -32,6 +36,10 @@
             @media all and (min-width: 992px) {
                 padding-left: calc(~"35% + 30px");
                 justify-content: unset;
+            }
+    
+            @media all and (max-width: 768px) {
+                font-size: 20px;
             }
         }
 

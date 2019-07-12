@@ -206,6 +206,7 @@ export class OffersService {
             panelClass: ['offers-wizard', 'setup'],
             data: {
                 offer: offer,
+                submitRequestInput: submitRequestInput,
                 isCreditCard: isCreditCard
             }
         }).afterClosed().subscribe(result => {
