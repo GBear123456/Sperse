@@ -6,13 +6,16 @@ import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { MatDialog } from '@angular/material';
 import { Observable, Subject, of } from 'rxjs';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
+import moment from 'moment-timezone';
 
 /** Application imports */
 import { AppService } from '@app/app.service';
 import { AppConsts } from '@shared/AppConsts';
 import { FileSizePipe } from '@shared/common/pipes/file-size.pipe';
-import { ReportsServiceProxy } from '@shared/service-proxies/service-proxies';
+import { ReportsServiceProxy, GenerateInput, GenerateInputPeriod, InstanceType79, InstanceType78 } from '@shared/service-proxies/service-proxies';
 import { BankAccountsService } from '@shared/cfo/bank-accounts/helpers/bank-accounts.service';
+import { CalendarDialogComponent } from '@app/shared/common/dialogs/calendar/calendar-dialog.component';
+import { DateHelper } from '@shared/helpers/DateHelper';
 
 @Component({
     templateUrl: './reports.component.html',
@@ -23,31 +26,62 @@ import { BankAccountsService } from '@shared/cfo/bank-accounts/helpers/bank-acco
 export class ReportsComponent extends CFOComponentBase implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
 
+    dateFrom = moment().subtract(1, 'month').startOf('month');
+    dateTo = moment().subtract(1, 'month').endOf('month');
+
     headlineConfig;
     menuItems = [
-         {
-             caption: 'MonthlyReports'
-         },
-         {
-             caption: 'QuarterlyReports'
-         },
-         {
-             caption: 'AnnualReports'             
-         }
-     ];
+        {
+            caption: 'MonthlyReports',
+            period: GenerateInputPeriod.Monthly
+        },
+        {
+            caption: 'QuarterlyReports',
+            period: GenerateInputPeriod.Quarterly
+        },
+        {
+            caption: 'AnnualReports',
+            period: GenerateInputPeriod.Annual
+        }
+    ];
 
+    selectedPeriod = GenerateInputPeriod.Monthly;
     formatting = AppConsts.formatting;
-    reports$ = of([]);
+    dataSourceURI = 'Reporting';
 
     constructor(
         private injector: Injector,
+        private _dialog: MatDialog,
         private _appService: AppService,
         private _fileSizePipe: FileSizePipe,
         private _changeDetector: ChangeDetectorRef,
         public reportsProxy: ReportsServiceProxy,
         public bankAccountsService: BankAccountsService
     ) {
-        super(injector);        
+        super(injector);
+        this.dataSource = {
+              store: {
+                key: 'Id',
+                type: 'odata',
+                url: this.getODataUrl(this.dataSourceURI, this.getFilters()),
+                version: AppConsts.ODataVersion,
+                beforeSend: (request) => {
+                    request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
+                    request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
+                    if (request.params.$filter && request.url.indexOf('$filter')) {
+                        let parts = request.url.split('?');
+                        request.url = parts.shift() + '?' + parts.pop().split('&').reduce((acc, item) => {
+                            let arrgs = item.split('=');
+                            if (arrgs[0] == '$filter') {
+                                request.params.$filter = '(' + request.params.$filter + ') and (' + arrgs[1] + ')';
+                                return acc;
+                            } else
+                                return acc + (acc ? '&' : '') + arrgs.join('=');
+                        }, '');
+                    }
+                }
+            }
+        };
     }
 
     ngOnInit(): void {
@@ -56,6 +90,67 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
 
     ngAfterViewInit(): void {
         this.activate();
+    }
+
+    onToolbarPreparing($event) {
+        $event.toolbarOptions.items.push({
+            location: 'before',
+            widget: 'dxButton',
+            options: {
+                text: this.l('Generate'),
+                onClick: () => {
+                    this.notify.info(this.l('GeneratingStarted'));
+                    this.reportsProxy.generate(this.instanceType as InstanceType79, this.instanceId, new GenerateInput({
+                        from: this.dateFrom,
+                        to: this.dateTo,
+                        period: this.selectedPeriod
+                    })).subscribe(() => {
+                        this.notify.info(this.l('SuccesfullyGenerated'));
+                        this.invalidate();
+                    });
+                }
+            }
+        }, {
+            location: 'center',
+            widget: 'dxButton',
+            options: {
+                text: this.getDateButtonText(),
+                onClick: (event) => {
+                    this.showCalendarDialog(() => {
+                        event.component.option('text', this.getDateButtonText());
+                    });
+                }
+            }
+        });
+    }
+
+    getDateButtonText() {
+        return (this.dateFrom ? this.dateFrom.format('DD/MM/YYYY') : this.l('Start Date')) +
+            ' - ' + (this.dateTo ? this.dateTo.format('DD/MM/YYYY') : this.l('End Date'));
+    }
+
+    showCalendarDialog(callback) {
+        this._dialog.closeAll();
+        this._dialog.open(CalendarDialogComponent, {
+            panelClass: [ 'slider' ],
+            disableClose: false,
+            hasBackdrop: false,
+            closeOnNavigation: true,
+            data: {
+                to: { value: this.dateTo && DateHelper.addTimezoneOffset(this.dateTo.toDate(), true) },
+                from: { value: this.dateFrom && DateHelper.addTimezoneOffset(this.dateFrom.toDate(), true) },
+                options: { }
+            }
+        }).afterClosed().subscribe((data) => {
+            if ((this.dateTo ? this.dateTo.diff(data.dateTo, 'days') : data.dateTo) ||
+                (this.dateFrom ? this.dateFrom.diff(data.dateFrom, 'days') : data.dateFrom)
+            ) {
+                this.dateFrom = data.dateFrom && moment(data.dateFrom);
+                this.dateTo = data.dateTo && moment(data.dateTo);
+                this.processFilterInternal();
+                callback();
+            }
+        });
     }
 
     initHeadlineConfig() {
@@ -68,21 +163,53 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
         };
     }
 
-    calculateFileSizeValue = (data) => this._fileSizePipe.transform(data.size);
-    numerizeFileSizeSortValue = (data) => +data.size;
+    calculateFileSizeValue = (data) => this._fileSizePipe.transform(data.Size);
+    numerizeFileSizeSortValue = (data) => +data.Size;
 
     onDataGridInit(event) {
-        
+        this._changeDetector.markForCheck();
     }
 
     onCellClick(event) {
+        if (event.data && event.data.Id)
+            this.reportsProxy.getUrl(this.instanceType as InstanceType78, this.instanceId, event.data.Id)
+                .subscribe(res => window.open(res.url));
     }
 
     onContentReady() {
         this.setGridDataLoaded();
     }
 
+    getFilters() {
+        return [
+            {Period: this.selectedPeriod},
+            {From: {ge: this.dateFrom.toDate()}},
+            {To: {le: this.dateTo.toDate()}}
+        ];
+    }
+
+    processFilterInternal() {
+        this.processODataFilter(
+            this.dataGrid.instance,
+            this.dataSourceURI,
+            this.getFilters(),
+            (filter) => filter
+        );
+    }
+
     onMenuClick(item) {
+        let period = {
+            Monthly: 'month',
+            Quarterly: 'quarter',
+            Annual: 'year'
+        }[item.period];
+
+        this.selectedPeriod = item.period;
+        this.dateFrom = moment().subtract(1, period).startOf(period);
+        this.dateTo = moment().subtract(1, period).endOf(period);
+
+        this.processFilterInternal();
+        this.dataGrid.instance.repaint();
     }
 
     ngOnDestroy() {

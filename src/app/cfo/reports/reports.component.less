@@ -44,6 +44,9 @@
                         display: inline-block;
                         font-size: 20px;
                         padding: 10px;
+                        &.selected {
+                            text-decoration: underline;
+                        }
                     }
                 }  
             }
@@ -51,6 +54,17 @@
 
         .reports {
             height: calc(100vh - 160px);
+            /deep/ dx-data-grid#gridContainer {
+                .dx-toolbar-before {
+                    width: 100px !important;
+                    padding: 15px !important;
+                }  
+                .dx-toolbar-center {
+                    margin: auto !important;
+                    padding: 15px !important;
+                    float: none !important;
+                }  
+            }
         }
     }
 }
