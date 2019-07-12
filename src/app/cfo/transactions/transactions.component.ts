@@ -115,6 +115,8 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     public adjustmentTotal = 0;
     public adjustmentStartingBalanceTotal = 0;
     headlineConfig: any;
+    categories: any;
+    types: any;
 
     private _categoriesShowedBefore = true;
     private _categoriesShowed = true;
@@ -218,7 +220,8 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             this._bankAccountsService.syncAccounts$.pipe(first())
         ).subscribe(([typeAndCategories, filtersInitialData, syncAccounts]) => {
             this.syncAccounts = syncAccounts;
-
+            this.types = typeAndCategories.types.map((item) => item.name);
+            this.categories = typeAndCategories.categories.map((item) => item.name);
             this.bankAccountsLookup = syncAccounts.reduce((acc, item) => {
                 return acc.concat(item.bankAccounts);
             }, []);
@@ -265,7 +268,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                     caption: 'Description',
                     items: { Description: new FilterItemModel() }
                 }),
-*/
+
                 new FilterModel({
                     component: FilterInputsComponent,
                     operator: { from: 'ge', to: 'le' },
@@ -285,7 +288,6 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                         })
                     }
                 }),
-/*
                 new FilterModel({
                     component: FilterCheckBoxesComponent,
                     field: 'TypeId',

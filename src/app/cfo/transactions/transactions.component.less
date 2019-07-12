@@ -120,7 +120,17 @@
                     cursor: grab;
                 }
 
+                .dx-datagrid-filter-row {
+                    td {
+                        padding: 0px;
+                    }
+                }
+
                 .dx-header-row {
+                    td {
+                        padding: 0px 5px!important;
+                        vertical-align: bottom!important;
+                    }
                     .dx-visibility-hidden {
                         display: none;
                     }
@@ -353,11 +363,9 @@
             }
         }
 
-        /*.dx-pointer-events-target {
-            * {
-                background-color: transparent;
-            }
-        }*/
+        .dx-pointer-events-target {
+            opacity: 0;
+        }
     }
 }
 
