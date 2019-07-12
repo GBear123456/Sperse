@@ -102,7 +102,8 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
                     this.reportsProxy.generate(<any>this.instanceType, this.instanceId, new GenerateInput({
                         from: this.dateFrom,
                         to: this.dateTo,
-                        period: this.selectedPeriod
+                        period: this.selectedPeriod,
+                        bankAccountIds: []
                     })).subscribe(() => {
                         this.notify.info(this.l('SuccesfullyGenerated'));
                         this.invalidate();
