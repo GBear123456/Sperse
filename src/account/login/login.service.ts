@@ -18,7 +18,6 @@ import {
     AccountServiceProxy,
     SendPasswordResetCodeOutput,
     SignUpMemberResponse,
-    ApplicationServiceProxy,
     SignUpMemberRequest
 } from '@shared/service-proxies/service-proxies';
 import map from 'lodash/map';
@@ -82,7 +81,6 @@ export class LoginService {
         private _logService: LogService,
         private _accountService: AccountServiceProxy,
         private _authService: AppAuthService,
-        private _applicationServiceProxy: ApplicationServiceProxy,
         public dialog: MatDialog
     ) {
         this.clear();
@@ -251,7 +249,7 @@ export class LoginService {
 
     signUpMember(data: SignUpMemberRequest) {
         abp.ui.setBusy();
-        this._applicationServiceProxy.signUpMember(data)
+        this._accountService.signUpMember(data)
             .pipe(finalize(() => {
                 abp.ui.clearBusy();
             }))

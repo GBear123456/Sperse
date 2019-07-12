@@ -27,6 +27,114 @@ export class AccountServiceProxy {
     }
 
     /**
+     * @request (optional) 
+     * @return Success
+     */
+    validateMemberSignUp(request: SignUpMemberRequest | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/Platform/Account/ValidateMemberSignUp";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(request);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processValidateMemberSignUp(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processValidateMemberSignUp(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processValidateMemberSignUp(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @request (optional) 
+     * @return Success
+     */
+    signUpMember(request: SignUpMemberRequest | null | undefined): Observable<SignUpMemberResponse> {
+        let url_ = this.baseUrl + "/api/services/Platform/Account/SignUpMember";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(request);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processSignUpMember(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processSignUpMember(<any>response_);
+                } catch (e) {
+                    return <Observable<SignUpMemberResponse>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<SignUpMemberResponse>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processSignUpMember(response: HttpResponseBase): Observable<SignUpMemberResponse> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? SignUpMemberResponse.fromJS(resultData200) : new SignUpMemberResponse();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<SignUpMemberResponse>(<any>null);
+    }
+
+    /**
      * @input (optional) 
      * @return Success
      */
@@ -1314,114 +1422,6 @@ export class ApplicationServiceProxy {
             }));
         }
         return _observableOf<RegisterApplicantResponse>(<any>null);
-    }
-
-    /**
-     * @request (optional) 
-     * @return Success
-     */
-    validateMemberSignUp(request: SignUpMemberRequest | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/PFM/Application/ValidateMemberSignUp";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(request);
-
-        let options_ : any = {
-            body: content_,
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-            })
-        };
-
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processValidateMemberSignUp(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processValidateMemberSignUp(<any>response_);
-                } catch (e) {
-                    return <Observable<void>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<void>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processValidateMemberSignUp(response: HttpResponseBase): Observable<void> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(<any>null);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<void>(<any>null);
-    }
-
-    /**
-     * @request (optional) 
-     * @return Success
-     */
-    signUpMember(request: SignUpMemberRequest | null | undefined): Observable<SignUpMemberResponse> {
-        let url_ = this.baseUrl + "/api/services/PFM/Application/SignUpMember";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(request);
-
-        let options_ : any = {
-            body: content_,
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processSignUpMember(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processSignUpMember(<any>response_);
-                } catch (e) {
-                    return <Observable<SignUpMemberResponse>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<SignUpMemberResponse>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processSignUpMember(response: HttpResponseBase): Observable<SignUpMemberResponse> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? SignUpMemberResponse.fromJS(resultData200) : new SignUpMemberResponse();
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<SignUpMemberResponse>(<any>null);
     }
 
     /**
@@ -29761,6 +29761,238 @@ export class XeroServiceProxy {
     }
 }
 
+export class SignUpMemberRequest implements ISignUpMemberRequest {
+    firstName!: string;
+    lastName!: string;
+    email!: string;
+    postalCode!: string | undefined;
+    phoneNumber!: string | undefined;
+    isUSCitizen!: boolean;
+    pendingPasswordReset!: boolean | undefined;
+
+    constructor(data?: ISignUpMemberRequest) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.firstName = data["firstName"];
+            this.lastName = data["lastName"];
+            this.email = data["email"];
+            this.postalCode = data["postalCode"];
+            this.phoneNumber = data["phoneNumber"];
+            this.isUSCitizen = data["isUSCitizen"];
+            this.pendingPasswordReset = data["pendingPasswordReset"];
+        }
+    }
+
+    static fromJS(data: any): SignUpMemberRequest {
+        data = typeof data === 'object' ? data : {};
+        let result = new SignUpMemberRequest();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["firstName"] = this.firstName;
+        data["lastName"] = this.lastName;
+        data["email"] = this.email;
+        data["postalCode"] = this.postalCode;
+        data["phoneNumber"] = this.phoneNumber;
+        data["isUSCitizen"] = this.isUSCitizen;
+        data["pendingPasswordReset"] = this.pendingPasswordReset;
+        return data; 
+    }
+}
+
+export interface ISignUpMemberRequest {
+    firstName: string;
+    lastName: string;
+    email: string;
+    postalCode: string | undefined;
+    phoneNumber: string | undefined;
+    isUSCitizen: boolean;
+    pendingPasswordReset: boolean | undefined;
+}
+
+export class SignUpMemberResponse implements ISignUpMemberResponse {
+    authenticateResult!: AuthenticateResultModel | undefined;
+
+    constructor(data?: ISignUpMemberResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.authenticateResult = data["authenticateResult"] ? AuthenticateResultModel.fromJS(data["authenticateResult"]) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): SignUpMemberResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new SignUpMemberResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["authenticateResult"] = this.authenticateResult ? this.authenticateResult.toJSON() : <any>undefined;
+        return data; 
+    }
+}
+
+export interface ISignUpMemberResponse {
+    authenticateResult: AuthenticateResultModel | undefined;
+}
+
+export class AuthenticateResultModel implements IAuthenticateResultModel {
+    accessToken!: string | undefined;
+    encryptedAccessToken!: string | undefined;
+    expireInSeconds!: number | undefined;
+    shouldResetPassword!: boolean | undefined;
+    passwordResetCode!: string | undefined;
+    userId!: number | undefined;
+    requiresTwoFactorVerification!: boolean | undefined;
+    twoFactorAuthProviders!: string[] | undefined;
+    twoFactorRememberClientToken!: string | undefined;
+    returnUrl!: string | undefined;
+    detectedTenancies!: TenantModel[] | undefined;
+
+    constructor(data?: IAuthenticateResultModel) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.accessToken = data["accessToken"];
+            this.encryptedAccessToken = data["encryptedAccessToken"];
+            this.expireInSeconds = data["expireInSeconds"];
+            this.shouldResetPassword = data["shouldResetPassword"];
+            this.passwordResetCode = data["passwordResetCode"];
+            this.userId = data["userId"];
+            this.requiresTwoFactorVerification = data["requiresTwoFactorVerification"];
+            if (data["twoFactorAuthProviders"] && data["twoFactorAuthProviders"].constructor === Array) {
+                this.twoFactorAuthProviders = [];
+                for (let item of data["twoFactorAuthProviders"])
+                    this.twoFactorAuthProviders.push(item);
+            }
+            this.twoFactorRememberClientToken = data["twoFactorRememberClientToken"];
+            this.returnUrl = data["returnUrl"];
+            if (data["detectedTenancies"] && data["detectedTenancies"].constructor === Array) {
+                this.detectedTenancies = [];
+                for (let item of data["detectedTenancies"])
+                    this.detectedTenancies.push(TenantModel.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): AuthenticateResultModel {
+        data = typeof data === 'object' ? data : {};
+        let result = new AuthenticateResultModel();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["accessToken"] = this.accessToken;
+        data["encryptedAccessToken"] = this.encryptedAccessToken;
+        data["expireInSeconds"] = this.expireInSeconds;
+        data["shouldResetPassword"] = this.shouldResetPassword;
+        data["passwordResetCode"] = this.passwordResetCode;
+        data["userId"] = this.userId;
+        data["requiresTwoFactorVerification"] = this.requiresTwoFactorVerification;
+        if (this.twoFactorAuthProviders && this.twoFactorAuthProviders.constructor === Array) {
+            data["twoFactorAuthProviders"] = [];
+            for (let item of this.twoFactorAuthProviders)
+                data["twoFactorAuthProviders"].push(item);
+        }
+        data["twoFactorRememberClientToken"] = this.twoFactorRememberClientToken;
+        data["returnUrl"] = this.returnUrl;
+        if (this.detectedTenancies && this.detectedTenancies.constructor === Array) {
+            data["detectedTenancies"] = [];
+            for (let item of this.detectedTenancies)
+                data["detectedTenancies"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface IAuthenticateResultModel {
+    accessToken: string | undefined;
+    encryptedAccessToken: string | undefined;
+    expireInSeconds: number | undefined;
+    shouldResetPassword: boolean | undefined;
+    passwordResetCode: string | undefined;
+    userId: number | undefined;
+    requiresTwoFactorVerification: boolean | undefined;
+    twoFactorAuthProviders: string[] | undefined;
+    twoFactorRememberClientToken: string | undefined;
+    returnUrl: string | undefined;
+    detectedTenancies: TenantModel[] | undefined;
+}
+
+export class TenantModel implements ITenantModel {
+    id!: number | undefined;
+    tenancyName!: string | undefined;
+    name!: string | undefined;
+
+    constructor(data?: ITenantModel) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.tenancyName = data["tenancyName"];
+            this.name = data["name"];
+        }
+    }
+
+    static fromJS(data: any): TenantModel {
+        data = typeof data === 'object' ? data : {};
+        let result = new TenantModel();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["tenancyName"] = this.tenancyName;
+        data["name"] = this.name;
+        return data; 
+    }
+}
+
+export interface ITenantModel {
+    id: number | undefined;
+    tenancyName: string | undefined;
+    name: string | undefined;
+}
+
 export class IsTenantAvailableInput implements IIsTenantAvailableInput {
     tenancyName!: string;
 
@@ -29974,50 +30206,6 @@ export class SendPasswordResetCodeOutput implements ISendPasswordResetCodeOutput
 
 export interface ISendPasswordResetCodeOutput {
     detectedTenancies: TenantModel[] | undefined;
-}
-
-export class TenantModel implements ITenantModel {
-    id!: number | undefined;
-    tenancyName!: string | undefined;
-    name!: string | undefined;
-
-    constructor(data?: ITenantModel) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.id = data["id"];
-            this.tenancyName = data["tenancyName"];
-            this.name = data["name"];
-        }
-    }
-
-    static fromJS(data: any): TenantModel {
-        data = typeof data === 'object' ? data : {};
-        let result = new TenantModel();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["tenancyName"] = this.tenancyName;
-        data["name"] = this.name;
-        return data; 
-    }
-}
-
-export interface ITenantModel {
-    id: number | undefined;
-    tenancyName: string | undefined;
-    name: string | undefined;
 }
 
 export class ResetPasswordInput implements IResetPasswordInput {
@@ -31570,194 +31758,6 @@ export interface IUserInfo {
     userName: string | undefined;
     password: string | undefined;
     loginUrl: string | undefined;
-}
-
-export class SignUpMemberRequest implements ISignUpMemberRequest {
-    firstName!: string;
-    lastName!: string;
-    email!: string;
-    postalCode!: string | undefined;
-    phoneNumber!: string | undefined;
-    isUSCitizen!: boolean;
-    pendingPasswordReset!: boolean | undefined;
-
-    constructor(data?: ISignUpMemberRequest) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.firstName = data["firstName"];
-            this.lastName = data["lastName"];
-            this.email = data["email"];
-            this.postalCode = data["postalCode"];
-            this.phoneNumber = data["phoneNumber"];
-            this.isUSCitizen = data["isUSCitizen"];
-            this.pendingPasswordReset = data["pendingPasswordReset"];
-        }
-    }
-
-    static fromJS(data: any): SignUpMemberRequest {
-        data = typeof data === 'object' ? data : {};
-        let result = new SignUpMemberRequest();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["firstName"] = this.firstName;
-        data["lastName"] = this.lastName;
-        data["email"] = this.email;
-        data["postalCode"] = this.postalCode;
-        data["phoneNumber"] = this.phoneNumber;
-        data["isUSCitizen"] = this.isUSCitizen;
-        data["pendingPasswordReset"] = this.pendingPasswordReset;
-        return data; 
-    }
-}
-
-export interface ISignUpMemberRequest {
-    firstName: string;
-    lastName: string;
-    email: string;
-    postalCode: string | undefined;
-    phoneNumber: string | undefined;
-    isUSCitizen: boolean;
-    pendingPasswordReset: boolean | undefined;
-}
-
-export class SignUpMemberResponse implements ISignUpMemberResponse {
-    authenticateResult!: AuthenticateResultModel | undefined;
-
-    constructor(data?: ISignUpMemberResponse) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.authenticateResult = data["authenticateResult"] ? AuthenticateResultModel.fromJS(data["authenticateResult"]) : <any>undefined;
-        }
-    }
-
-    static fromJS(data: any): SignUpMemberResponse {
-        data = typeof data === 'object' ? data : {};
-        let result = new SignUpMemberResponse();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["authenticateResult"] = this.authenticateResult ? this.authenticateResult.toJSON() : <any>undefined;
-        return data; 
-    }
-}
-
-export interface ISignUpMemberResponse {
-    authenticateResult: AuthenticateResultModel | undefined;
-}
-
-export class AuthenticateResultModel implements IAuthenticateResultModel {
-    accessToken!: string | undefined;
-    encryptedAccessToken!: string | undefined;
-    expireInSeconds!: number | undefined;
-    shouldResetPassword!: boolean | undefined;
-    passwordResetCode!: string | undefined;
-    userId!: number | undefined;
-    requiresTwoFactorVerification!: boolean | undefined;
-    twoFactorAuthProviders!: string[] | undefined;
-    twoFactorRememberClientToken!: string | undefined;
-    returnUrl!: string | undefined;
-    detectedTenancies!: TenantModel[] | undefined;
-
-    constructor(data?: IAuthenticateResultModel) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.accessToken = data["accessToken"];
-            this.encryptedAccessToken = data["encryptedAccessToken"];
-            this.expireInSeconds = data["expireInSeconds"];
-            this.shouldResetPassword = data["shouldResetPassword"];
-            this.passwordResetCode = data["passwordResetCode"];
-            this.userId = data["userId"];
-            this.requiresTwoFactorVerification = data["requiresTwoFactorVerification"];
-            if (data["twoFactorAuthProviders"] && data["twoFactorAuthProviders"].constructor === Array) {
-                this.twoFactorAuthProviders = [];
-                for (let item of data["twoFactorAuthProviders"])
-                    this.twoFactorAuthProviders.push(item);
-            }
-            this.twoFactorRememberClientToken = data["twoFactorRememberClientToken"];
-            this.returnUrl = data["returnUrl"];
-            if (data["detectedTenancies"] && data["detectedTenancies"].constructor === Array) {
-                this.detectedTenancies = [];
-                for (let item of data["detectedTenancies"])
-                    this.detectedTenancies.push(TenantModel.fromJS(item));
-            }
-        }
-    }
-
-    static fromJS(data: any): AuthenticateResultModel {
-        data = typeof data === 'object' ? data : {};
-        let result = new AuthenticateResultModel();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["accessToken"] = this.accessToken;
-        data["encryptedAccessToken"] = this.encryptedAccessToken;
-        data["expireInSeconds"] = this.expireInSeconds;
-        data["shouldResetPassword"] = this.shouldResetPassword;
-        data["passwordResetCode"] = this.passwordResetCode;
-        data["userId"] = this.userId;
-        data["requiresTwoFactorVerification"] = this.requiresTwoFactorVerification;
-        if (this.twoFactorAuthProviders && this.twoFactorAuthProviders.constructor === Array) {
-            data["twoFactorAuthProviders"] = [];
-            for (let item of this.twoFactorAuthProviders)
-                data["twoFactorAuthProviders"].push(item);
-        }
-        data["twoFactorRememberClientToken"] = this.twoFactorRememberClientToken;
-        data["returnUrl"] = this.returnUrl;
-        if (this.detectedTenancies && this.detectedTenancies.constructor === Array) {
-            data["detectedTenancies"] = [];
-            for (let item of this.detectedTenancies)
-                data["detectedTenancies"].push(item.toJSON());
-        }
-        return data; 
-    }
-}
-
-export interface IAuthenticateResultModel {
-    accessToken: string | undefined;
-    encryptedAccessToken: string | undefined;
-    expireInSeconds: number | undefined;
-    shouldResetPassword: boolean | undefined;
-    passwordResetCode: string | undefined;
-    userId: number | undefined;
-    requiresTwoFactorVerification: boolean | undefined;
-    twoFactorAuthProviders: string[] | undefined;
-    twoFactorRememberClientToken: string | undefined;
-    returnUrl: string | undefined;
-    detectedTenancies: TenantModel[] | undefined;
 }
 
 export class OfferApplicationDto implements IOfferApplicationDto {
