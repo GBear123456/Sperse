@@ -32862,6 +32862,7 @@ export class BusinessEntityInfoDto implements IBusinessEntityInfoDto {
     city!: string | undefined;
     address!: string | undefined;
     statusId!: string | undefined;
+    isDefault!: boolean | undefined;
     id!: number | undefined;
 
     constructor(data?: IBusinessEntityInfoDto) {
@@ -32891,6 +32892,7 @@ export class BusinessEntityInfoDto implements IBusinessEntityInfoDto {
             this.city = data["city"];
             this.address = data["address"];
             this.statusId = data["statusId"];
+            this.isDefault = data["isDefault"];
             this.id = data["id"];
         }
     }
@@ -32920,6 +32922,7 @@ export class BusinessEntityInfoDto implements IBusinessEntityInfoDto {
         data["city"] = this.city;
         data["address"] = this.address;
         data["statusId"] = this.statusId;
+        data["isDefault"] = this.isDefault;
         data["id"] = this.id;
         return data; 
     }
@@ -32942,6 +32945,7 @@ export interface IBusinessEntityInfoDto {
     city: string | undefined;
     address: string | undefined;
     statusId: string | undefined;
+    isDefault: boolean | undefined;
     id: number | undefined;
 }
 
@@ -32961,6 +32965,7 @@ export class CreateBusinessEntityDto implements ICreateBusinessEntityDto {
     zip!: string | undefined;
     city!: string | undefined;
     address!: string | undefined;
+    isDefault!: boolean | undefined;
 
     constructor(data?: ICreateBusinessEntityDto) {
         if (data) {
@@ -32988,6 +32993,7 @@ export class CreateBusinessEntityDto implements ICreateBusinessEntityDto {
             this.zip = data["zip"];
             this.city = data["city"];
             this.address = data["address"];
+            this.isDefault = data["isDefault"];
         }
     }
 
@@ -33015,6 +33021,7 @@ export class CreateBusinessEntityDto implements ICreateBusinessEntityDto {
         data["zip"] = this.zip;
         data["city"] = this.city;
         data["address"] = this.address;
+        data["isDefault"] = this.isDefault;
         return data; 
     }
 }
@@ -33035,6 +33042,7 @@ export interface ICreateBusinessEntityDto {
     zip: string | undefined;
     city: string | undefined;
     address: string | undefined;
+    isDefault: boolean | undefined;
 }
 
 export class UpdateBusinessEntityDto implements IUpdateBusinessEntityDto {
@@ -33055,6 +33063,7 @@ export class UpdateBusinessEntityDto implements IUpdateBusinessEntityDto {
     zip!: string | undefined;
     city!: string | undefined;
     address!: string | undefined;
+    isDefault!: boolean | undefined;
 
     constructor(data?: IUpdateBusinessEntityDto) {
         if (data) {
@@ -33084,6 +33093,7 @@ export class UpdateBusinessEntityDto implements IUpdateBusinessEntityDto {
             this.zip = data["zip"];
             this.city = data["city"];
             this.address = data["address"];
+            this.isDefault = data["isDefault"];
         }
     }
 
@@ -33113,6 +33123,7 @@ export class UpdateBusinessEntityDto implements IUpdateBusinessEntityDto {
         data["zip"] = this.zip;
         data["city"] = this.city;
         data["address"] = this.address;
+        data["isDefault"] = this.isDefault;
         return data; 
     }
 }
@@ -33135,6 +33146,7 @@ export interface IUpdateBusinessEntityDto {
     zip: string | undefined;
     city: string | undefined;
     address: string | undefined;
+    isDefault: boolean | undefined;
 }
 
 export class BusinessEntityBankAccountDto implements IBusinessEntityBankAccountDto {
@@ -64886,6 +64898,7 @@ export class GenerateInput implements IGenerateInput {
     from!: moment.Moment;
     to!: moment.Moment;
     period!: GenerateInputPeriod;
+    bankAccountIds!: number[] | undefined;
 
     constructor(data?: IGenerateInput) {
         if (data) {
@@ -64901,6 +64914,11 @@ export class GenerateInput implements IGenerateInput {
             this.from = data["from"] ? moment(data["from"].toString()) : <any>undefined;
             this.to = data["to"] ? moment(data["to"].toString()) : <any>undefined;
             this.period = data["period"];
+            if (data["bankAccountIds"] && data["bankAccountIds"].constructor === Array) {
+                this.bankAccountIds = [];
+                for (let item of data["bankAccountIds"])
+                    this.bankAccountIds.push(item);
+            }
         }
     }
 
@@ -64916,6 +64934,11 @@ export class GenerateInput implements IGenerateInput {
         data["from"] = this.from ? this.from.toISOString() : <any>undefined;
         data["to"] = this.to ? this.to.toISOString() : <any>undefined;
         data["period"] = this.period;
+        if (this.bankAccountIds && this.bankAccountIds.constructor === Array) {
+            data["bankAccountIds"] = [];
+            for (let item of this.bankAccountIds)
+                data["bankAccountIds"].push(item);
+        }
         return data; 
     }
 }
@@ -64924,6 +64947,7 @@ export interface IGenerateInput {
     from: moment.Moment;
     to: moment.Moment;
     period: GenerateInputPeriod;
+    bankAccountIds: number[] | undefined;
 }
 
 export class ListResultDtoOfRoleListDto implements IListResultDtoOfRoleListDto {
