@@ -13,6 +13,8 @@ import { UserDropdownMenuItemType } from 'shared/common/layout/user-management-l
 /** @todo Used for chart bar and dropdown. Reimplement in future */
 import 'assets/metronic/src/js/framework/base/util.js';
 import 'assets/metronic/src/js/framework/components/general/dropdown.js';
+import { OffersWizardComponent } from '@shared/offers-wizard/offers-wizard.component';
+import { MatDialog } from '@angular/material';
 
 @Component({
     selector: 'user-dropdown-menu',
@@ -56,6 +58,12 @@ export class UserDropdownMenuComponent extends AppComponentBase implements OnIni
         {
             type: UserDropdownMenuItemType.Separator,
             visible: this.isImpersonatedLogin
+        },
+        {
+            name: this.l('My Profile'),
+            id: 'UpdateMyProfile',
+            iconClass: 'profile-picture',
+            onClick: (e) => this.updateProfileInformation()
         },
         {
             name: this.l('ChangePassword'),
@@ -110,6 +118,7 @@ export class UserDropdownMenuComponent extends AppComponentBase implements OnIni
     constructor(
         injector: Injector,
         public userManagementService: UserManagementService,
+        private dialog: MatDialog,
         private abpSessionService: AbpSessionService
     ) {
         super(injector);
@@ -127,5 +136,15 @@ export class UserDropdownMenuComponent extends AppComponentBase implements OnIni
         this.userManagementService.getRecentlyLinkedUsers().subscribe(
             recentlyLinkedUsers => this.recentlyLinkedUsers = recentlyLinkedUsers
         );
+    }
+
+    updateProfileInformation() {
+        this.dialog.open(OffersWizardComponent, {
+            width: '1200px',
+            height: '800px',
+            id: 'offers-wizard',
+            panelClass: ['offers-wizard', 'setup'],
+            data: {}
+        });
     }
 }

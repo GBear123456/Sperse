@@ -19,20 +19,17 @@ import {
     OfferDto,
     OfferFilterCategory,
     GetMemberInfoResponseCreditScore,
-    SubmitRequestInput,
     SubmitRequestOutput,
-    SubmitApplicationInput,
     OfferServiceProxy,
     GetMemberInfoResponse,
     OfferDtoCampaignProviderType,
-    SubmitApplicationInputSystemType
+    SubmitApplicationInput
 } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { CreditScoreInterface } from '@root/personal-finance/shared/offers/interfaces/credit-score.interface';
 import { ApplyOfferDialogComponent } from '@root/personal-finance/shared/offers/apply-offer-modal/apply-offer-dialog.component';
 import { CategoryGroupEnum } from '@root/personal-finance/shared/offers/category-group.enum';
 import { CurrencyPipe } from '@angular/common';
-import { OffersWizardComponent } from '@shared/offers-wizard/offers-wizard.component';
 
 @Injectable()
 export class OffersService {
@@ -91,37 +88,37 @@ export class OffersService {
     demoUserOffers = [
         OfferDto.fromJS({
             campaignId: 1,
-            details: ["APR: 5.73%-16.59%", "Loan Term: 24-84 months", "Credit Score: Good/Excellent"],
-            logoUrl: "./assets/images/credit-report/offers/demo/sofi.svg",
+            details: ['APR: 5.73%-16.59%', 'Loan Term: 24-84 months', 'Credit Score: Good/Excellent'],
+            logoUrl: './assets/images/credit-report/offers/demo/sofi.svg',
             maxLoanAmount: 100000,
-            name: "SoFi",
-            regularAPR: "5.73%-16.59%",
-            systemType: "EPCVIP"
+            name: 'SoFi',
+            regularAPR: '5.73%-16.59%',
+            systemType: 'EPCVIP'
         }),
         OfferDto.fromJS({
             campaignId: 2,
-            details: ["Debt Consolidation Loans Made Easy", "Loans from $1,000-$35,000", "Rates starting at 4.99%", "All Credit Types Considered"],
-            logoUrl: "./assets/images/credit-report/offers/demo/marcus.png",
+            details: ['Debt Consolidation Loans Made Easy', 'Loans from $1,000-$35,000', 'Rates starting at 4.99%', 'All Credit Types Considered'],
+            logoUrl: './assets/images/credit-report/offers/demo/marcus.png',
             maxLoanAmount: 35000,
             minLoanAmount: 1000,
-            name: "Marcus by Goldman Sachs",
-            systemType: "EPCVIP"
+            name: 'Marcus by Goldman Sachs',
+            systemType: 'EPCVIP'
         }),
         OfferDto.fromJS({
             campaignId: 3,
-            details: ["APR: 3.99%-35.99%", "Loan Term: 3-180 months", "Credit Score: Poor/Fair/Good/Excellent"],
-            logoUrl: "./assets/images/credit-report/offers/demo/lending.png",
-            name: "Lending Tree",
-            regularAPR: "3.99%-35.99%",
-            systemType: "EPCVIP"
+            details: ['APR: 3.99%-35.99%', 'Loan Term: 3-180 months', 'Credit Score: Poor/Fair/Good/Excellent'],
+            logoUrl: './assets/images/credit-report/offers/demo/lending.png',
+            name: 'Lending Tree',
+            regularAPR: '3.99%-35.99%',
+            systemType: 'EPCVIP'
         }),
         OfferDto.fromJS({
             campaignId: 4,
-            details: ["APR: 4.99%-35.99%", "Loan Term: 24-84 months", "Credit Score: Fair/Good/Excellent"],
-            logoUrl: "./assets/images/credit-report/offers/demo/credible.svg",
-            name: "Credible",
-            regularAPR: "4.99%-35.99%",
-            systemType: "EPCVIP"
+            details: ['APR: 4.99%-35.99%', 'Loan Term: 24-84 months', 'Credit Score: Fair/Good/Excellent'],
+            logoUrl: './assets/images/credit-report/offers/demo/credible.svg',
+            name: 'Credible',
+            regularAPR: '4.99%-35.99%',
+            systemType: 'EPCVIP'
         })
     ];
     readonly creditLandLogoUrl = './assets/common/images/offers/credit-land.png';
@@ -191,29 +188,48 @@ export class OffersService {
 
     applyOffer(offer: OfferDto, isCreditCard = false) {
         const linkIsDirect = !!offer.redirectUrl;
-        let submitRequestInput = SubmitRequestInput.fromJS({
-            campaignId: offer.campaignId,
-            systemType: offer.systemType,
-            ...this.memberInfo
+        let submitApplicationInput = SubmitApplicationInput.fromJS({
+            campaignId: offer.campaignId
         });
         let redirectUrl = !linkIsDirect ? offer.redirectUrl : offer.redirectUrl + '&' + this.memberInfoApplyOfferParams;
-        if (linkIsDirect) submitRequestInput.redirectUrl = redirectUrl;
+        const modalData = {
+            processingSteps: [null, null, null, null],
+            completeDelays: [ 250, 250, 250, 250 ],
+            delayMessages: null,
+            title: 'Offers_ConnectingToPartners',
+            subtitle: 'Offers_NewWindowWillBeOpen',
+            redirectUrl: redirectUrl,
+            logoUrl: offer.campaignProviderType === OfferDtoCampaignProviderType.CreditLand
+                ? this.creditLandLogoUrl
+                : (isCreditCard ? null : offer.logoUrl)
+        };
+        if (!linkIsDirect) {
+            modalData.processingSteps = cloneDeep(this.processingSteps);
+            modalData.title = 'Offers_ProcessingLoanRequest';
+            modalData.subtitle = 'Offers_WaitLoanRequestProcessing';
+            modalData.completeDelays = [ 1000, 1000, 1000, null ];
+            modalData.delayMessages = <any>[ null, null, null, this.ls.l('Offers_TheNextStepWillTake') ];
+        } else {
+            submitApplicationInput['redirectUrl'] = redirectUrl;
+        }
 
-        this.dialog.open(OffersWizardComponent, {
-            width: '1200px',
-            height: '800px',
-            id: 'offers-wizard',
-            panelClass: ['offers-wizard', 'setup'],
-            data: {
-                offer: offer,
-                submitRequestInput: submitRequestInput,
-                isCreditCard: isCreditCard
-            }
-        }).afterClosed().subscribe(result => {
-            if (result) {
-                window.open(redirectUrl, '_blank');
-            }
+        const applyOfferDialog = this.dialog.open(ApplyOfferDialogComponent, {
+            width: '530px',
+            panelClass: 'apply-offer-dialog',
+            data: modalData
         });
+        this.offerServiceProxy.submitApplication(submitApplicationInput)
+            .subscribe(
+                (output: SubmitRequestOutput) => {
+                    if (!linkIsDirect) {
+                        /** If window opening is blocked - show message for allowing popups opening, else - close popup and redirect to the link (code for redirect in the popup component) */
+                        !window.open(output.redirectUrl, '_blank')
+                            ? applyOfferDialog.componentInstance.showBlockedMessage = true
+                            : applyOfferDialog.close();
+                    }
+                },
+                () => applyOfferDialog.close()
+            );
     }
 
     getCreditScore(category: OfferFilterCategory, creditScoreNumber: number): GetMemberInfoResponseCreditScore {

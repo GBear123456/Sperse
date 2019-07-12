@@ -12,14 +12,14 @@ import {
 /** Third party imports */
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatHorizontalStepper } from '@angular/material';
-import * as moment from 'moment';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
 import {
     GetApplicationDetailsOutput,
-    OfferServiceProxy, PersonalInformation,
-    SubmitApplicationInput
+    OfferServiceProxy,
+    PersonalInformation,
+    SubmitApplicationProfileInput, SubmitApplicationProfileInputSystemType
 } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 
@@ -31,7 +31,7 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 })
 export class OffersWizardComponent implements OnInit {
     @ViewChild('stepper') stepper: MatHorizontalStepper;
-    submitApplicationInput = new SubmitApplicationInput();
+    submitApplicationProfileInput = new SubmitApplicationProfileInput();
     dialogRef: MatDialogRef<OffersWizardComponent, any>;
     today: Date = new Date();
     emailRegEx = AppConsts.regexPatterns.email;
@@ -84,22 +84,11 @@ export class OffersWizardComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.submitApplicationInput.systemType = this.data.offer.systemType;
-        this.submitApplicationInput.personalInformation.isActiveMilitary = false;
-        this.submitApplicationInput.campaignId = this.data.offer.campaignId;
-        this.submitApplicationInput.personalInformation = PersonalInformation.fromJS({
-            email: this.data.submitRequestInput.emailAddress,
-            postalCode: this.data.submitRequestInput.zipCode,
-            address1: this.data.submitRequestInput.streetAddress,
-            creditScoreRating: this.data.submitRequestInput.creditScore,
-            phone: this.data.submitRequestInput.phoneNumber,
-            ...this.data.submitRequestInput
-        });
-        console.log(this.submitApplicationInput);
+        this.submitApplicationProfileInput.systemType = SubmitApplicationProfileInputSystemType.EPCVIP;
         this.offersServiceProxy.getApplicationDetails().subscribe(
             (output: GetApplicationDetailsOutput) => {
                 if (output) {
-                    this.submitApplicationInput = SubmitApplicationInput.fromJS({
+                    this.submitApplicationProfileInput = SubmitApplicationProfileInput.fromJS({
                         ...output
                     });
                 }
@@ -119,8 +108,8 @@ export class OffersWizardComponent implements OnInit {
         if (result.isValid) this.stepper.next();
     }
 
-    submitApplication() {
-        this.offersServiceProxy.submitApplication(this.submitApplicationInput).subscribe(() => {
+    submitApplicationProfile() {
+        this.offersServiceProxy.submitApplicationProfile(this.submitApplicationProfileInput).subscribe(() => {
             this.dialogRef.close(true);
         });
     }
