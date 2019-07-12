@@ -70,21 +70,19 @@
 
                         <dxi-column dataField="Date" dataType="date" cssClass="tabular" caption="{{l('Transactions_Date')}}" cellTemplate="dateCell"></dxi-column>
                         <dxi-column dataField="BusinessEntityId" caption="{{l('BusinessEntities')}}" [lookup]="{allowClearing: false, dataSource: filtersInitialData?.businessEntities, displayExpr: 'name', valueExpr: 'id'}"></dxi-column>
-                        <dxi-column dataField="CategoryName" dataType="string" caption="{{l('Transactions_CategoryName')}}" [lookup]="{dataSource: categories}"></dxi-column>
+                        <dxi-column caption="{{l('Transactions_CashflowCategoryName')}}"
+                                    dataField="CashflowCategoryName"
+                                    dataType="string" 
+                                    cellTemplate="CashflowCategoryNameTemplate"
+                                    cssClass="category">
+                        </dxi-column>
                         <dxi-column dataField="CounterpartyName" dataType="string" caption="{{l('Transactions_Vendor')}}"></dxi-column>
                         <dxi-column dataField="Description" dataType="string" cellTemplate="descriptionTemplate" caption="{{l('Transactions_Description')}}"></dxi-column>
                         <dxi-column dataField="Amount" dataType="number" cssClass="tabular" name="Amount" caption="{{l('Transactions_Amount')}}" cellTemplate="amountTemplate"></dxi-column>
                         <dxi-column dataField="BankAccountNumber" cssClass="tabular" caption="{{l('Transactions_BankAccountNumber')}}" [lookup]="{allowClearing: false, dataSource: bankAccountsLookup, displayExpr: 'accountName', valueExpr: 'accountNumber'}"></dxi-column>
                         <dxi-column dataField="Comments" dataType="string" caption="{{l('Transactions_Comments')}}"></dxi-column>
 
-                        <dxi-column caption="{{l('Transactions_CashflowCategoryName')}}"
-                                    dataField="CashflowCategoryName"
-                                    dataType="string" 
-                                    cellTemplate="CashflowCategoryNameTemplate"
-                                    cssClass="category"
-                                    [visible]="false">
-                        </dxi-column>
-
+                        <dxi-column dataField="CategoryName" dataType="string" caption="{{l('Transactions_CategoryName')}}" [lookup]="{dataSource: categories}" [visible]="false"></dxi-column>
                         <dxi-column dataField="CashflowSubCategoryName" dataType="string" caption="{{l('Transactions_CashflowSubCategoryName')}}" [visible]="false"></dxi-column>
                         <dxi-column dataField="EndingBalance" dataType="number" cssClass="tabular" caption="{{l('Transactions_EndingBalance')}}" cellTemplate="endBalanceTemplate" [visible]="false"></dxi-column>
                         <dxi-column dataField="CashFlowTypeName" dataType="string" cellTemplate="CashFlowTypeNameTemplate" cssClass="cashflow-type" alignment="center" 
