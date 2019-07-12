@@ -93,11 +93,11 @@
             <div class="step-item">
                 <dx-validation-group>
                     <div class="header">
-                        Contact Information
+                        Personal Information
                     </div>
                     <div class="main">
                         <div class="row">
-                            <div class="col-6">
+                            <div class="col-md-6 col-sm-12">
                                 <div class="dx-field">
                                     <div class="dx-field-label">Email</div>
                                     <div class="dx-field-value">
@@ -114,19 +114,19 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-6">
+                            <div class="col-md-6 col-sm-12">
                                 <div class="dx-field">
                                     <div class="dx-field-label">Alternative Email</div>
                                     <div class="dx-field-value">
                                         <dx-text-box placeholder="Enter alternative email"
                                                      [(value)]="submitApplicationInput.personalInformation.alternateEmail">
-                                            <dx-validator>
+                                            <!--<dx-validator>
                                                 <dxi-validation-rule type="required"
                                                                      [message]="ls.l('EmailIsRequired')"></dxi-validation-rule>
                                                 <dxi-validation-rule type="pattern"
                                                                      [pattern]="emailRegEx"
                                                                      [message]="ls.l('InvalidEmailAddress')"></dxi-validation-rule>
-                                            </dx-validator>
+                                            </dx-validator>-->
                                         </dx-text-box>
                                     </div>
                                 </div>
@@ -134,7 +134,7 @@
                         </div>
 
                         <div class="row">
-                            <div class="col-6">
+                            <div class="col-md-6 col-sm-12">
                                 <div class="dx-field">
                                     <div class="dx-field-label">License State</div>
                                     <div class="dx-field-value">
@@ -143,7 +143,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-6">
+                            <div class="col-md-6 col-sm-12">
                                 <div class="dx-field">
                                     <div class="dx-field-label">License Number</div>
                                     <div class="dx-field-value">
@@ -219,7 +219,7 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-6">
+                        <div class="col-md-6 col-sm-12">
                             <div class="dx-field">
                                 <div class="dx-field-label">Country Code</div>
                                 <div class="dx-field-value">
@@ -228,7 +228,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-6">
+                        <div class="col-md-6 col-sm-12">
                             <div class="dx-field">
                                 <div class="dx-field-label">State Code</div>
                                 <div class="dx-field-value">
@@ -239,7 +239,7 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-6">
+                        <div class="col-md-6 col-sm-12">
                             <div class="dx-field">
                                 <div class="dx-field-label">City</div>
                                 <div class="dx-field-value">
@@ -248,7 +248,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-6">
+                        <div class="col-md-6 col-sm-12">
                             <div class="dx-field">
                                 <div class="dx-field-label">Postal Code</div>
                                 <div class="dx-field-value">
@@ -387,7 +387,7 @@
                         <div class="dx-field-value">
                             <dx-radio-group
                                 [items]="radioGroup"
-                                [value]="radioGroup[0]"
+                                [(value)]="submitApplicationInput.employmentInformation.isEmployed"
                                 displayExpr="text"
                                 valueExpr="value"
                                 layout="horizontal">
@@ -397,32 +397,37 @@
                     <div class="dx-field">
                         <div class="dx-field-label">Employer Name</div>
                         <div class="dx-field-value">
-                            <dx-text-box placeholder="Enter employer name"></dx-text-box>
+                            <dx-text-box placeholder="Enter employer name"
+                                         [(value)]="submitApplicationInput.employmentInformation.employerName"></dx-text-box>
                         </div>
                     </div>
                     <div class="dx-field">
                         <div class="dx-field-label">Job Title</div>
                         <div class="dx-field-value">
-                            <dx-text-box placeholder="Enter job title"></dx-text-box>
+                            <dx-text-box placeholder="Enter job title"
+                                         [(value)]="submitApplicationInput.employmentInformation.jobTitle"></dx-text-box>
                         </div>
                     </div>
                     <div class="dx-field">
                         <div class="dx-field-label">Months At Employer</div>
                         <div class="dx-field-value">
-                            <dx-text-box placeholder="Enter period"></dx-text-box>
+                            <dx-text-box placeholder="Enter period"
+                                         [(value)]="submitApplicationInput.employmentInformation.monthsAtEmployer"></dx-text-box>
                         </div>
                     </div>
                     <div class="dx-field">
                         <div class="dx-field-label">Work Phone</div>
                         <div class="dx-field-value">
-                            <dx-text-box mask="+1 (X00) 000-0000" [maskRules]="rules">
+                            <dx-text-box mask="+1 (X00) 000-0000" [maskRules]="rules"
+                                         [(value)]="submitApplicationInput.employmentInformation.phoneWork">
                             </dx-text-box>
                         </div>
                     </div>
                     <div class="dx-field">
                         <div class="dx-field-label">Work Phone Extension</div>
                         <div class="dx-field-value">
-                            <dx-text-box mask="00000" [maskRules]="rules">
+                            <dx-text-box mask="00000" [maskRules]="rules"
+                                         [(value)]="submitApplicationInput.employmentInformation.phoneWorkExtension">
                             </dx-text-box>
                         </div>
                     </div>
@@ -442,31 +447,36 @@
                     <div class="dx-field">
                         <div class="dx-field-label">Employer Address1</div>
                         <div class="dx-field-value">
-                            <dx-text-box placeholder="Enter address"></dx-text-box>
+                            <dx-text-box placeholder="Enter address"
+                                         [value]="submitApplicationInput.employmentInformation.employerAddress1"></dx-text-box>
                         </div>
                     </div>
                     <div class="dx-field">
                         <div class="dx-field-label">Employer Address2</div>
                         <div class="dx-field-value">
-                            <dx-text-box placeholder="Enter address"></dx-text-box>
+                            <dx-text-box placeholder="Enter address"
+                                         [(value)]="submitApplicationInput.employmentInformation.employerAddress2"></dx-text-box>
                         </div>
                     </div>
                     <div class="dx-field">
                         <div class="dx-field-label">Employer City</div>
                         <div class="dx-field-value">
-                            <dx-text-box placeholder="Enter city"></dx-text-box>
+                            <dx-text-box placeholder="Enter city"
+                                         [(value)]="submitApplicationInput.employmentInformation.employerCity"></dx-text-box>
                         </div>
                     </div>
                     <div class="dx-field">
                         <div class="dx-field-label">Employer State Code</div>
                         <div class="dx-field-value">
-                            <dx-text-box placeholder="Enter state code"></dx-text-box>
+                            <dx-text-box placeholder="Enter state code"
+                                         [(value)]="submitApplicationInput.employmentInformation.employerStateCode"></dx-text-box>
                         </div>
                     </div>
                     <div class="dx-field">
                         <div class="dx-field-label">Employer Postal Code</div>
                         <div class="dx-field-value">
-                            <dx-text-box placeholder="Enter postal code"></dx-text-box>
+                            <dx-text-box placeholder="Enter postal code"
+                                         [(value)]="submitApplicationInput.employmentInformation.employerPostalCode"></dx-text-box>
                         </div>
                     </div>
                 </div>
@@ -487,6 +497,7 @@
                         <div class="dx-field-value">
                             <dx-number-box
                                 format="$ #,##0.##"
+                                [(value)]="submitApplicationInput.employmentInformation.netMonthlyIncome"
                             ></dx-number-box>
                         </div>
                     </div>
@@ -495,6 +506,7 @@
                         <div class="dx-field-value">
                             <dx-select-box
                                 [items]="payFrequency"
+                                [(value)]="submitApplicationInput.employmentInformation.payFrequency"
                                 placeholder="Choose pay frequency"
                             ></dx-select-box>
                         </div>
@@ -503,7 +515,7 @@
                         <div class="dx-field-label">Pay Next Date</div>
                         <div class="dx-field-value">
                             <dx-date-box
-                                [value]="today"
+                                [(value)]="submitApplicationInput.employmentInformation.payNextDate"
                                 type="date">
                             </dx-date-box>
                         </div>
@@ -512,7 +524,7 @@
                         <div class="dx-field-label">Pay After Next Date</div>
                         <div class="dx-field-value">
                             <dx-date-box
-                                [value]="today"
+                                [(value)]="submitApplicationInput.employmentInformation.payAfterNextDate"
                                 type="date">
                             </dx-date-box>
                         </div>
@@ -523,6 +535,7 @@
                             <dx-select-box
                                 [items]="incomeType"
                                 placeholder="Choose income type"
+                                [(value)]="submitApplicationInput.employmentInformation.incomeType"
                             ></dx-select-box>
                         </div>
                     </div>
@@ -544,6 +557,7 @@
                         <div class="dx-field-value">
                             <dx-select-box
                                 [items]="bankAccountType"
+                                [(value)]="submitApplicationInput.bankInformation.bankAccountType"
                                 placeholder="Choose Bank Account Type"
                             ></dx-select-box>
                         </div>
@@ -551,25 +565,29 @@
                     <div class="dx-field">
                         <div class="dx-field-label">Bank Name</div>
                         <div class="dx-field-value">
-                            <dx-text-box placeholder="Enter bank name"></dx-text-box>
+                            <dx-text-box placeholder="Enter bank name"
+                                         [(value)]="submitApplicationInput.bankInformation.bankName"></dx-text-box>
                         </div>
                     </div>
                     <div class="dx-field">
                         <div class="dx-field-label">Bank Account Number</div>
                         <div class="dx-field-value">
-                            <dx-text-box placeholder="Enter bank account number"></dx-text-box>
+                            <dx-text-box placeholder="Enter bank account number"
+                                         [(value)]="submitApplicationInput.bankInformation.bankAccountNumber"></dx-text-box>
                         </div>
                     </div>
                     <div class="dx-field">
                         <div class="dx-field-label">Bank ABA</div>
                         <div class="dx-field-value">
-                            <dx-text-box placeholder="Enter bank ABA"></dx-text-box>
+                            <dx-text-box placeholder="Enter bank ABA"
+                                         [(value)]="submitApplicationInput.bankInformation.bankABA"></dx-text-box>
                         </div>
                     </div>
                     <div class="dx-field">
                         <div class="dx-field-label">Bank Phone</div>
                         <div class="dx-field-value">
-                            <dx-text-box mask="+1 (X00) 000-0000" [maskRules]="rules">
+                            <dx-text-box mask="+1 (X00) 000-0000" [maskRules]="rules"
+                                         [(value)]="submitApplicationInput.bankInformation.bankPhone">
                             </dx-text-box>
                         </div>
                     </div>
@@ -578,7 +596,7 @@
                         <div class="dx-field-value">
                             <dx-radio-group
                                 [items]="radioGroup"
-                                [value]="radioGroup[0]"
+                                [(value)]="submitApplicationInput.bankInformation.isDirectDeposit"
                                 displayExpr="text"
                                 valueExpr="value"
                                 layout="horizontal">
@@ -588,7 +606,8 @@
                     <div class="dx-field">
                         <div class="dx-field-label">Months At Bank</div>
                         <div class="dx-field-value">
-                            <dx-text-box placeholder="Enter month in bank">
+                            <dx-text-box placeholder="Enter month in bank"
+                                         [(value)]="submitApplicationInput.bankInformation.monthsAtBank">
                             </dx-text-box>
                         </div>
                     </div>
