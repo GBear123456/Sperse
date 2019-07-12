@@ -759,6 +759,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
 
     setDataSource() {
         this.dataGrid.dataSource = this.dataSource;
+        this._changeDetectionRef.markForCheck();
     }
 
     showCompactRowsHeight() {
