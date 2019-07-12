@@ -191,7 +191,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
     /** The main data for cashflow table */
     stubsCashflowDataForEmptyCategories: TransactionStatsDto[];
-    cashflowData = [];
+    cashflowData;
 
     /** Years in cashflow */
     private allYears: number[] = [];

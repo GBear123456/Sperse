@@ -205,7 +205,7 @@
             'withCashflowFooterToolbar' : cashflowGridSettings?.visualPreferences?.showFooterBar
         }">
         <div class="pivot-grid-wrapper">
-            <dx-pivot-grid *ngIf="cashflowData && cashflowData.length" id="operations"
+            <dx-pivot-grid id="operations"
                            class="pivot-grid invisible"
                            [allowSortingBySummary]="false"
                            [allowSorting]="false"
@@ -251,7 +251,7 @@
 </div>
 
 <app-no-data
-    *ngIf="!loading && !(cashflowData && cashflowData.length)"
+    *ngIf="!loading && cashflowData && !cashflowData.length"
     text=""
     [linkUrl]="instanceUri + 'start'"
     [showLink]="!filteredLoad"
