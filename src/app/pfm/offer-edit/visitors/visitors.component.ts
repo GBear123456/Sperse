@@ -216,6 +216,8 @@ export class VisitorsComponent extends AppComponentBase implements AfterViewInit
                 options: { }
             }
         }).afterClosed().subscribe((data) => {
+            if (!data) return;
+
             if ((this.dateTo ? this.dateTo.diff(data.dateTo, 'days') : data.dateTo) ||
                 (this.dateFrom ? this.dateFrom.diff(data.dateFrom, 'days') : data.dateFrom)
             ) {
