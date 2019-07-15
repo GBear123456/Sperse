@@ -31296,10 +31296,10 @@ export class RegisterApplicantRequest implements IRegisterApplicantRequest {
     sendWelcomeEmail!: boolean | undefined;
     returnNewUserInfo!: boolean | undefined;
     trackingInformation!: TrackingInformation | undefined;
-    personalInformation!: PersonalInformation | undefined;
+    personalInformation!: PersonalInformationExtended | undefined;
     debtInformation!: DebtInformation | undefined;
     loanInformation!: LoanInformation | undefined;
-    employmentInformation!: EmploymentInformation | undefined;
+    employmentInformation!: EmploymentInformationExtended | undefined;
     bankInformation!: BankInformation | undefined;
     legalInformation!: LegalInformation | undefined;
 
@@ -31320,10 +31320,10 @@ export class RegisterApplicantRequest implements IRegisterApplicantRequest {
             this.sendWelcomeEmail = data["sendWelcomeEmail"];
             this.returnNewUserInfo = data["returnNewUserInfo"];
             this.trackingInformation = data["trackingInformation"] ? TrackingInformation.fromJS(data["trackingInformation"]) : <any>undefined;
-            this.personalInformation = data["personalInformation"] ? PersonalInformation.fromJS(data["personalInformation"]) : <any>undefined;
+            this.personalInformation = data["personalInformation"] ? PersonalInformationExtended.fromJS(data["personalInformation"]) : <any>undefined;
             this.debtInformation = data["debtInformation"] ? DebtInformation.fromJS(data["debtInformation"]) : <any>undefined;
             this.loanInformation = data["loanInformation"] ? LoanInformation.fromJS(data["loanInformation"]) : <any>undefined;
-            this.employmentInformation = data["employmentInformation"] ? EmploymentInformation.fromJS(data["employmentInformation"]) : <any>undefined;
+            this.employmentInformation = data["employmentInformation"] ? EmploymentInformationExtended.fromJS(data["employmentInformation"]) : <any>undefined;
             this.bankInformation = data["bankInformation"] ? BankInformation.fromJS(data["bankInformation"]) : <any>undefined;
             this.legalInformation = data["legalInformation"] ? LegalInformation.fromJS(data["legalInformation"]) : <any>undefined;
         }
@@ -31361,10 +31361,10 @@ export interface IRegisterApplicantRequest {
     sendWelcomeEmail: boolean | undefined;
     returnNewUserInfo: boolean | undefined;
     trackingInformation: TrackingInformation | undefined;
-    personalInformation: PersonalInformation | undefined;
+    personalInformation: PersonalInformationExtended | undefined;
     debtInformation: DebtInformation | undefined;
     loanInformation: LoanInformation | undefined;
-    employmentInformation: EmploymentInformation | undefined;
+    employmentInformation: EmploymentInformationExtended | undefined;
     bankInformation: BankInformation | undefined;
     legalInformation: LegalInformation | undefined;
 }
@@ -31449,7 +31449,8 @@ export interface ITrackingInformation {
     clickId: string | undefined;
 }
 
-export class PersonalInformation implements IPersonalInformation {
+export class PersonalInformationExtended implements IPersonalInformationExtended {
+    address2!: string | undefined;
     firstName!: string;
     lastName!: string;
     middleName!: string | undefined;
@@ -31462,19 +31463,18 @@ export class PersonalInformation implements IPersonalInformation {
     isActiveMilitary!: boolean | undefined;
     phone!: string | undefined;
     phoneMobile!: string | undefined;
-    preferredContactTOD!: PersonalInformationPreferredContactTOD | undefined;
+    preferredContactTOD!: PersonalInformationExtendedPreferredContactTOD | undefined;
     address1!: string | undefined;
-    address2!: string | undefined;
     city!: string | undefined;
     stateCode!: string | undefined;
     postalCode!: string | undefined;
     countryCode!: string | undefined;
     isHomeOwner!: boolean | undefined;
     monthsAtAddress!: number | undefined;
-    creditScoreRating!: PersonalInformationCreditScoreRating | undefined;
-    gender!: PersonalInformationGender | undefined;
+    creditScoreRating!: PersonalInformationExtendedCreditScoreRating | undefined;
+    gender!: PersonalInformationExtendedGender | undefined;
 
-    constructor(data?: IPersonalInformation) {
+    constructor(data?: IPersonalInformationExtended) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -31485,6 +31485,7 @@ export class PersonalInformation implements IPersonalInformation {
 
     init(data?: any) {
         if (data) {
+            this.address2 = data["address2"];
             this.firstName = data["firstName"];
             this.lastName = data["lastName"];
             this.middleName = data["middleName"];
@@ -31499,7 +31500,6 @@ export class PersonalInformation implements IPersonalInformation {
             this.phoneMobile = data["phoneMobile"];
             this.preferredContactTOD = data["preferredContactTOD"];
             this.address1 = data["address1"];
-            this.address2 = data["address2"];
             this.city = data["city"];
             this.stateCode = data["stateCode"];
             this.postalCode = data["postalCode"];
@@ -31511,15 +31511,16 @@ export class PersonalInformation implements IPersonalInformation {
         }
     }
 
-    static fromJS(data: any): PersonalInformation {
+    static fromJS(data: any): PersonalInformationExtended {
         data = typeof data === 'object' ? data : {};
-        let result = new PersonalInformation();
+        let result = new PersonalInformationExtended();
         result.init(data);
         return result;
     }
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["address2"] = this.address2;
         data["firstName"] = this.firstName;
         data["lastName"] = this.lastName;
         data["middleName"] = this.middleName;
@@ -31534,7 +31535,6 @@ export class PersonalInformation implements IPersonalInformation {
         data["phoneMobile"] = this.phoneMobile;
         data["preferredContactTOD"] = this.preferredContactTOD;
         data["address1"] = this.address1;
-        data["address2"] = this.address2;
         data["city"] = this.city;
         data["stateCode"] = this.stateCode;
         data["postalCode"] = this.postalCode;
@@ -31547,7 +31547,8 @@ export class PersonalInformation implements IPersonalInformation {
     }
 }
 
-export interface IPersonalInformation {
+export interface IPersonalInformationExtended {
+    address2: string | undefined;
     firstName: string;
     lastName: string;
     middleName: string | undefined;
@@ -31560,17 +31561,16 @@ export interface IPersonalInformation {
     isActiveMilitary: boolean | undefined;
     phone: string | undefined;
     phoneMobile: string | undefined;
-    preferredContactTOD: PersonalInformationPreferredContactTOD | undefined;
+    preferredContactTOD: PersonalInformationExtendedPreferredContactTOD | undefined;
     address1: string | undefined;
-    address2: string | undefined;
     city: string | undefined;
     stateCode: string | undefined;
     postalCode: string | undefined;
     countryCode: string | undefined;
     isHomeOwner: boolean | undefined;
     monthsAtAddress: number | undefined;
-    creditScoreRating: PersonalInformationCreditScoreRating | undefined;
-    gender: PersonalInformationGender | undefined;
+    creditScoreRating: PersonalInformationExtendedCreditScoreRating | undefined;
+    gender: PersonalInformationExtendedGender | undefined;
 }
 
 export class DebtInformation implements IDebtInformation {
@@ -31661,7 +31661,8 @@ export interface ILoanInformation {
     loanReason: LoanInformationLoanReason | undefined;
 }
 
-export class EmploymentInformation implements IEmploymentInformation {
+export class EmploymentInformationExtended implements IEmploymentInformationExtended {
+    employerAddress2!: string | undefined;
     isEmployed!: boolean | undefined;
     employerName!: string | undefined;
     jobTitle!: string | undefined;
@@ -31669,17 +31670,16 @@ export class EmploymentInformation implements IEmploymentInformation {
     phoneWork!: string | undefined;
     phoneWorkExtension!: string | undefined;
     employerAddress1!: string | undefined;
-    employerAddress2!: string | undefined;
     employerCity!: string | undefined;
     employerStateCode!: string | undefined;
     employerPostalCode!: string | undefined;
     netMonthlyIncome!: number | undefined;
-    payFrequency!: EmploymentInformationPayFrequency | undefined;
+    payFrequency!: EmploymentInformationExtendedPayFrequency | undefined;
     payNextDate!: moment.Moment | undefined;
     payAfterNextDate!: moment.Moment | undefined;
-    incomeType!: EmploymentInformationIncomeType | undefined;
+    incomeType!: EmploymentInformationExtendedIncomeType | undefined;
 
-    constructor(data?: IEmploymentInformation) {
+    constructor(data?: IEmploymentInformationExtended) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -31690,6 +31690,7 @@ export class EmploymentInformation implements IEmploymentInformation {
 
     init(data?: any) {
         if (data) {
+            this.employerAddress2 = data["employerAddress2"];
             this.isEmployed = data["isEmployed"];
             this.employerName = data["employerName"];
             this.jobTitle = data["jobTitle"];
@@ -31697,7 +31698,6 @@ export class EmploymentInformation implements IEmploymentInformation {
             this.phoneWork = data["phoneWork"];
             this.phoneWorkExtension = data["phoneWorkExtension"];
             this.employerAddress1 = data["employerAddress1"];
-            this.employerAddress2 = data["employerAddress2"];
             this.employerCity = data["employerCity"];
             this.employerStateCode = data["employerStateCode"];
             this.employerPostalCode = data["employerPostalCode"];
@@ -31709,15 +31709,16 @@ export class EmploymentInformation implements IEmploymentInformation {
         }
     }
 
-    static fromJS(data: any): EmploymentInformation {
+    static fromJS(data: any): EmploymentInformationExtended {
         data = typeof data === 'object' ? data : {};
-        let result = new EmploymentInformation();
+        let result = new EmploymentInformationExtended();
         result.init(data);
         return result;
     }
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["employerAddress2"] = this.employerAddress2;
         data["isEmployed"] = this.isEmployed;
         data["employerName"] = this.employerName;
         data["jobTitle"] = this.jobTitle;
@@ -31725,7 +31726,6 @@ export class EmploymentInformation implements IEmploymentInformation {
         data["phoneWork"] = this.phoneWork;
         data["phoneWorkExtension"] = this.phoneWorkExtension;
         data["employerAddress1"] = this.employerAddress1;
-        data["employerAddress2"] = this.employerAddress2;
         data["employerCity"] = this.employerCity;
         data["employerStateCode"] = this.employerStateCode;
         data["employerPostalCode"] = this.employerPostalCode;
@@ -31738,7 +31738,8 @@ export class EmploymentInformation implements IEmploymentInformation {
     }
 }
 
-export interface IEmploymentInformation {
+export interface IEmploymentInformationExtended {
+    employerAddress2: string | undefined;
     isEmployed: boolean | undefined;
     employerName: string | undefined;
     jobTitle: string | undefined;
@@ -31746,15 +31747,14 @@ export interface IEmploymentInformation {
     phoneWork: string | undefined;
     phoneWorkExtension: string | undefined;
     employerAddress1: string | undefined;
-    employerAddress2: string | undefined;
     employerCity: string | undefined;
     employerStateCode: string | undefined;
     employerPostalCode: string | undefined;
     netMonthlyIncome: number | undefined;
-    payFrequency: EmploymentInformationPayFrequency | undefined;
+    payFrequency: EmploymentInformationExtendedPayFrequency | undefined;
     payNextDate: moment.Moment | undefined;
     payAfterNextDate: moment.Moment | undefined;
-    incomeType: EmploymentInformationIncomeType | undefined;
+    incomeType: EmploymentInformationExtendedIncomeType | undefined;
 }
 
 export class BankInformation implements IBankInformation {
@@ -31995,6 +31995,218 @@ export interface IOfferApplicationDto {
     employmentInformation: EmploymentInformation | undefined;
     bankInformation: BankInformation | undefined;
     legalInformation: LegalInformation | undefined;
+}
+
+export class PersonalInformation implements IPersonalInformation {
+    firstName!: string;
+    lastName!: string;
+    middleName!: string | undefined;
+    email!: string;
+    alternateEmail!: string | undefined;
+    doB!: moment.Moment | undefined;
+    ssn!: string | undefined;
+    licenseNumber!: string | undefined;
+    licenseState!: string | undefined;
+    isActiveMilitary!: boolean | undefined;
+    phone!: string | undefined;
+    phoneMobile!: string | undefined;
+    preferredContactTOD!: PersonalInformationPreferredContactTOD | undefined;
+    address1!: string | undefined;
+    city!: string | undefined;
+    stateCode!: string | undefined;
+    postalCode!: string | undefined;
+    countryCode!: string | undefined;
+    isHomeOwner!: boolean | undefined;
+    monthsAtAddress!: number | undefined;
+    creditScoreRating!: PersonalInformationCreditScoreRating | undefined;
+    gender!: PersonalInformationGender | undefined;
+
+    constructor(data?: IPersonalInformation) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.firstName = data["firstName"];
+            this.lastName = data["lastName"];
+            this.middleName = data["middleName"];
+            this.email = data["email"];
+            this.alternateEmail = data["alternateEmail"];
+            this.doB = data["doB"] ? moment(data["doB"].toString()) : <any>undefined;
+            this.ssn = data["ssn"];
+            this.licenseNumber = data["licenseNumber"];
+            this.licenseState = data["licenseState"];
+            this.isActiveMilitary = data["isActiveMilitary"];
+            this.phone = data["phone"];
+            this.phoneMobile = data["phoneMobile"];
+            this.preferredContactTOD = data["preferredContactTOD"];
+            this.address1 = data["address1"];
+            this.city = data["city"];
+            this.stateCode = data["stateCode"];
+            this.postalCode = data["postalCode"];
+            this.countryCode = data["countryCode"];
+            this.isHomeOwner = data["isHomeOwner"];
+            this.monthsAtAddress = data["monthsAtAddress"];
+            this.creditScoreRating = data["creditScoreRating"];
+            this.gender = data["gender"];
+        }
+    }
+
+    static fromJS(data: any): PersonalInformation {
+        data = typeof data === 'object' ? data : {};
+        let result = new PersonalInformation();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["firstName"] = this.firstName;
+        data["lastName"] = this.lastName;
+        data["middleName"] = this.middleName;
+        data["email"] = this.email;
+        data["alternateEmail"] = this.alternateEmail;
+        data["doB"] = this.doB ? this.doB.toISOString() : <any>undefined;
+        data["ssn"] = this.ssn;
+        data["licenseNumber"] = this.licenseNumber;
+        data["licenseState"] = this.licenseState;
+        data["isActiveMilitary"] = this.isActiveMilitary;
+        data["phone"] = this.phone;
+        data["phoneMobile"] = this.phoneMobile;
+        data["preferredContactTOD"] = this.preferredContactTOD;
+        data["address1"] = this.address1;
+        data["city"] = this.city;
+        data["stateCode"] = this.stateCode;
+        data["postalCode"] = this.postalCode;
+        data["countryCode"] = this.countryCode;
+        data["isHomeOwner"] = this.isHomeOwner;
+        data["monthsAtAddress"] = this.monthsAtAddress;
+        data["creditScoreRating"] = this.creditScoreRating;
+        data["gender"] = this.gender;
+        return data; 
+    }
+}
+
+export interface IPersonalInformation {
+    firstName: string;
+    lastName: string;
+    middleName: string | undefined;
+    email: string;
+    alternateEmail: string | undefined;
+    doB: moment.Moment | undefined;
+    ssn: string | undefined;
+    licenseNumber: string | undefined;
+    licenseState: string | undefined;
+    isActiveMilitary: boolean | undefined;
+    phone: string | undefined;
+    phoneMobile: string | undefined;
+    preferredContactTOD: PersonalInformationPreferredContactTOD | undefined;
+    address1: string | undefined;
+    city: string | undefined;
+    stateCode: string | undefined;
+    postalCode: string | undefined;
+    countryCode: string | undefined;
+    isHomeOwner: boolean | undefined;
+    monthsAtAddress: number | undefined;
+    creditScoreRating: PersonalInformationCreditScoreRating | undefined;
+    gender: PersonalInformationGender | undefined;
+}
+
+export class EmploymentInformation implements IEmploymentInformation {
+    isEmployed!: boolean | undefined;
+    employerName!: string | undefined;
+    jobTitle!: string | undefined;
+    monthsAtEmployer!: number | undefined;
+    phoneWork!: string | undefined;
+    phoneWorkExtension!: string | undefined;
+    employerAddress1!: string | undefined;
+    employerCity!: string | undefined;
+    employerStateCode!: string | undefined;
+    employerPostalCode!: string | undefined;
+    netMonthlyIncome!: number | undefined;
+    payFrequency!: EmploymentInformationPayFrequency | undefined;
+    payNextDate!: moment.Moment | undefined;
+    payAfterNextDate!: moment.Moment | undefined;
+    incomeType!: EmploymentInformationIncomeType | undefined;
+
+    constructor(data?: IEmploymentInformation) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.isEmployed = data["isEmployed"];
+            this.employerName = data["employerName"];
+            this.jobTitle = data["jobTitle"];
+            this.monthsAtEmployer = data["monthsAtEmployer"];
+            this.phoneWork = data["phoneWork"];
+            this.phoneWorkExtension = data["phoneWorkExtension"];
+            this.employerAddress1 = data["employerAddress1"];
+            this.employerCity = data["employerCity"];
+            this.employerStateCode = data["employerStateCode"];
+            this.employerPostalCode = data["employerPostalCode"];
+            this.netMonthlyIncome = data["netMonthlyIncome"];
+            this.payFrequency = data["payFrequency"];
+            this.payNextDate = data["payNextDate"] ? moment(data["payNextDate"].toString()) : <any>undefined;
+            this.payAfterNextDate = data["payAfterNextDate"] ? moment(data["payAfterNextDate"].toString()) : <any>undefined;
+            this.incomeType = data["incomeType"];
+        }
+    }
+
+    static fromJS(data: any): EmploymentInformation {
+        data = typeof data === 'object' ? data : {};
+        let result = new EmploymentInformation();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["isEmployed"] = this.isEmployed;
+        data["employerName"] = this.employerName;
+        data["jobTitle"] = this.jobTitle;
+        data["monthsAtEmployer"] = this.monthsAtEmployer;
+        data["phoneWork"] = this.phoneWork;
+        data["phoneWorkExtension"] = this.phoneWorkExtension;
+        data["employerAddress1"] = this.employerAddress1;
+        data["employerCity"] = this.employerCity;
+        data["employerStateCode"] = this.employerStateCode;
+        data["employerPostalCode"] = this.employerPostalCode;
+        data["netMonthlyIncome"] = this.netMonthlyIncome;
+        data["payFrequency"] = this.payFrequency;
+        data["payNextDate"] = this.payNextDate ? this.payNextDate.toISOString() : <any>undefined;
+        data["payAfterNextDate"] = this.payAfterNextDate ? this.payAfterNextDate.toISOString() : <any>undefined;
+        data["incomeType"] = this.incomeType;
+        return data; 
+    }
+}
+
+export interface IEmploymentInformation {
+    isEmployed: boolean | undefined;
+    employerName: string | undefined;
+    jobTitle: string | undefined;
+    monthsAtEmployer: number | undefined;
+    phoneWork: string | undefined;
+    phoneWorkExtension: string | undefined;
+    employerAddress1: string | undefined;
+    employerCity: string | undefined;
+    employerStateCode: string | undefined;
+    employerPostalCode: string | undefined;
+    netMonthlyIncome: number | undefined;
+    payFrequency: EmploymentInformationPayFrequency | undefined;
+    payNextDate: moment.Moment | undefined;
+    payAfterNextDate: moment.Moment | undefined;
+    incomeType: EmploymentInformationIncomeType | undefined;
 }
 
 export class PagedResultDtoOfAuditLogListDto implements IPagedResultDtoOfAuditLogListDto {
@@ -72224,14 +72436,14 @@ export enum TrackingInformationVertical {
     HybridLoans = "HybridLoans", 
 }
 
-export enum PersonalInformationPreferredContactTOD {
+export enum PersonalInformationExtendedPreferredContactTOD {
     Morning = "Morning", 
     Afternoon = "Afternoon", 
     Evening = "Evening", 
     Anytime = "Anytime", 
 }
 
-export enum PersonalInformationCreditScoreRating {
+export enum PersonalInformationExtendedCreditScoreRating {
     NotSure = "NotSure", 
     Excellent = "Excellent", 
     Good = "Good", 
@@ -72239,7 +72451,7 @@ export enum PersonalInformationCreditScoreRating {
     Poor = "Poor", 
 }
 
-export enum PersonalInformationGender {
+export enum PersonalInformationExtendedGender {
     Female = "Female", 
     Male = "Male", 
 }
@@ -72262,6 +72474,44 @@ export enum LoanInformationLoanReason {
     StudentLoanDebtRelief = "StudentLoanDebtRelief", 
 }
 
+export enum EmploymentInformationExtendedPayFrequency {
+    Weekly = "Weekly", 
+    BiWeekly = "BiWeekly", 
+    Monthly = "Monthly", 
+    SemiMonthly = "SemiMonthly", 
+}
+
+export enum EmploymentInformationExtendedIncomeType {
+    Employed = "Employed", 
+    Benefits = "Benefits", 
+    SelfEmployed = "SelfEmployed", 
+}
+
+export enum BankInformationBankAccountType {
+    Checking = "Checking", 
+    Savings = "Savings", 
+}
+
+export enum PersonalInformationPreferredContactTOD {
+    Morning = "Morning", 
+    Afternoon = "Afternoon", 
+    Evening = "Evening", 
+    Anytime = "Anytime", 
+}
+
+export enum PersonalInformationCreditScoreRating {
+    NotSure = "NotSure", 
+    Excellent = "Excellent", 
+    Good = "Good", 
+    Fair = "Fair", 
+    Poor = "Poor", 
+}
+
+export enum PersonalInformationGender {
+    Female = "Female", 
+    Male = "Male", 
+}
+
 export enum EmploymentInformationPayFrequency {
     Weekly = "Weekly", 
     BiWeekly = "BiWeekly", 
@@ -72273,11 +72523,6 @@ export enum EmploymentInformationIncomeType {
     Employed = "Employed", 
     Benefits = "Benefits", 
     SelfEmployed = "SelfEmployed", 
-}
-
-export enum BankInformationBankAccountType {
-    Checking = "Checking", 
-    Savings = "Savings", 
 }
 
 export enum EntityChangeListDtoChangeType {
