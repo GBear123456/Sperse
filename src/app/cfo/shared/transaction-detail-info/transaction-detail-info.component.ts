@@ -277,7 +277,7 @@ export class TransactionDetailInfoComponent implements OnInit {
             this._cfoService.instanceId,
             new UpdateTransactionsCategoryInput({
                 transactionIds: [this.transactionId],
-                categoryId: this.transactionInfo.cashflowCategoryId,
+                categoryId: this.transactionInfo.cashflowSubCategoryId ? this.transactionInfo.cashflowSubCategoryId : this.transactionInfo.cashflowCategoryId,
                 standardDescriptor: this.transactionInfo.transactionDescriptor,
                 descriptorAttributeTypeId: null,
                 suppressCashflowMismatch: true
