@@ -22,16 +22,20 @@ import { PaymentInfoModule } from '@shared/common/widgets/payment-info/payment-i
 import { HostLoginComponent } from './login/layouts/host/host-login.component';
 import { LendSpaceLoginComponent } from './login/layouts/lend-space/lend-space-login.component';
 import { AdvicePeriodLoginComponent } from './login/layouts/advice-period/advice-period-login.component';
+import { BankCodeLoginComponent } from './login/layouts/bank-code/bank-code-login.component';
 import { HostLayoutComponent } from './layouts/host/host-layout.component';
 import { LendSpaceLayoutComponent } from './layouts/lend-space/lend-space-layout.component';
 import { AdvicePeriodLayoutComponent } from './layouts/advice-period/advice-period-layout.component';
+import { BankCodeLayoutComponent } from './layouts/bank-code/bank-code-layout.component';
 import { PersonalFinanceLayoutModule } from '@shared/personal-finance-layout/personal-finance-layout.module';
 import { HostForgotPasswordComponent } from './password/layouts/host/host-forgot-password.component';
 import { LendSpaceForgotPasswordComponent } from './password/layouts/lend-space/lend-space-forgot-password.component';
 import { AdvicePeriodForgotPasswordComponent } from './password/layouts/advice-period/advice-period-forgot-password.component';
+import { BankCodeForgotPasswordComponent } from './password/layouts/bank-code/bank-code-forgot-password.component';
 import { HostResetPasswordComponent } from './password/layouts/host/host-reset-password.component';
 import { LendSpaceResetPasswordComponent } from './password/layouts/lend-space/lend-space-reset-password.component';
 import { AdvicePeriodResetPasswordComponent } from './password/layouts/advice-period/advice-period-reset-password.component';
+import { BankCodeResetPasswordComponent } from './password/layouts/bank-code/bank-code-reset-password.component';
 import { ApplicationServiceProxy } from '@shared/service-proxies/service-proxies';
 
 @NgModule({
@@ -52,10 +56,12 @@ import { ApplicationServiceProxy } from '@shared/service-proxies/service-proxies
         HostLayoutComponent,
         LendSpaceLayoutComponent,
         AdvicePeriodLayoutComponent,
+        BankCodeLayoutComponent,
         TenantChangeComponent,
         TenantChangeModalComponent,
         LoginComponent,
         AdvicePeriodLoginComponent,
+        BankCodeLoginComponent,
         HostLoginComponent,
         LendSpaceLoginComponent,
         AdLoginHostDirective,
@@ -75,7 +81,9 @@ import { ApplicationServiceProxy } from '@shared/service-proxies/service-proxies
         HostResetPasswordComponent,
         LendSpaceResetPasswordComponent,
         AdvicePeriodResetPasswordComponent,
-        AdvicePeriodForgotPasswordComponent 
+        AdvicePeriodForgotPasswordComponent,
+        BankCodeResetPasswordComponent, 
+        BankCodeForgotPasswordComponent
     ],
     entryComponents: [
         HostLayoutComponent,
@@ -84,12 +92,16 @@ import { ApplicationServiceProxy } from '@shared/service-proxies/service-proxies
         LendSpaceLayoutComponent,
         AdvicePeriodLoginComponent,
         AdvicePeriodLayoutComponent,
+        BankCodeLayoutComponent,
+        BankCodeLoginComponent,
         HostForgotPasswordComponent,
         LendSpaceForgotPasswordComponent,
         HostResetPasswordComponent,
         LendSpaceResetPasswordComponent,
         AdvicePeriodResetPasswordComponent,
-        AdvicePeriodForgotPasswordComponent 
+        AdvicePeriodForgotPasswordComponent,
+        BankCodeResetPasswordComponent, 
+        BankCodeForgotPasswordComponent
     ],
     providers: [
         LoginService,

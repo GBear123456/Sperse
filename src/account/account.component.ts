@@ -6,6 +6,7 @@ import { AppSessionService } from '@shared/common/session/app-session.service';
 import { HostLayoutComponent } from './layouts/host/host-layout.component';
 import { LendSpaceLayoutComponent } from './layouts/lend-space/lend-space-layout.component';
 import { AdvicePeriodLayoutComponent } from './layouts/advice-period/advice-period-layout.component';
+import { BankCodeLayoutComponent } from './layouts/bank-code/bank-code-layout.component';
 import { TenantLoginInfoDtoCustomLayoutType } from '@shared/service-proxies/service-proxies';
 
 @Directive({
@@ -49,6 +50,8 @@ export class AccountComponent extends AppComponentBase implements OnInit {
                 return LendSpaceLayoutComponent;
             case TenantLoginInfoDtoCustomLayoutType.AdvicePeriod:
                 return AdvicePeriodLayoutComponent;
+            case TenantLoginInfoDtoCustomLayoutType.BankCode:
+                return BankCodeLayoutComponent;
             default:
                 return HostLayoutComponent;
         }
