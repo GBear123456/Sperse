@@ -16,7 +16,7 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import {
     ChangeUserLanguageDto, LinkedUserDto, ProfileServiceProxy, TenantLoginInfoDtoCustomLayoutType, CommonUserInfoServiceProxy
 } from '@shared/service-proxies/service-proxies';
-import { UserManagementService } from '@root/shared/common/layout/user-management-list/user-management.service';
+import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
 import { UserDropdownMenuItemType } from '@root/shared/common/layout/user-management-list/user-dropdown-menu/user-dropdown-menu-item-type';
 import { UserDropdownMenuItemModel } from '@root/shared/common/layout/user-management-list/user-dropdown-menu/user-dropdown-menu-item.model';
 import { LayoutService } from '@app/shared/layout/layout.service';

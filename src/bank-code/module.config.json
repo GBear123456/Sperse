@@ -1,0 +1,10 @@
+{
+  "code": "BC",
+  "name": "BankCode",
+  "search": false,
+  "requiredFeature": "",
+  "defaultPath": "/code-breaker",
+  "hostDisabled": true,
+  "localizationSource": "Platform",
+  "navigation": [  ]
+}

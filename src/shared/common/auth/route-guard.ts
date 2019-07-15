@@ -8,6 +8,7 @@ import {
     RouterStateSnapshot,
     CanActivateChild
 } from '@angular/router';
+import { TenantLoginInfoDtoCustomLayoutType } from '@shared/service-proxies/service-proxies';
 import { FeatureCheckerService } from '@abp/features/feature-checker.service';
 import { CacheService } from 'ng2-cache-service';
 
@@ -113,6 +114,10 @@ export class RouteGuard implements CanActivate, CanActivateChild {
                 return '/personal-finance/credit-report';
             }
         }
+
+        let tenant = this._sessionService.tenant;
+        if (tenant && tenant.customLayoutType == TenantLoginInfoDtoCustomLayoutType.BankCode)
+            return '/code-breaker';
 
         return null;
     }

@@ -94,6 +94,11 @@ const routes: Routes = [
                 data: { feature: 'PFM', localizationSource: 'PFM' }
             },
             {
+                path: 'code-breaker',
+                loadChildren: 'bank-code/bank-code.module#BankCodeModule', //Lazy load bank code module
+                data: { localizationSource: 'Platform' }
+            },
+            {
                 path: 'app',
                 loadChildren: 'app/app.module#AppModule', //Lazy load desktop module
                 data: { feature: 'Admin', localizationSource: 'Platform' }

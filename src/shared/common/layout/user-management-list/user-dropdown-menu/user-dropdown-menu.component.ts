@@ -63,6 +63,7 @@ export class UserDropdownMenuComponent extends AppComponentBase implements OnIni
             name: this.l('My Profile'),
             id: 'UpdateMyProfile',
             iconClass: 'profile-picture',
+            visible: this.feature.isEnabled('PFM'),
             onClick: (e) => this.updateProfileInformation()
         },
         {
