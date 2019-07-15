@@ -97,6 +97,7 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
             widget: 'dxButton',
             options: {
                 text: this.l('Generate'),
+                visible: this.isInstanceAdmin || this.isMemberAccessManage,
                 onClick: () => {
                     this.notify.info(this.l('GeneratingStarted'));
                     this.reportsProxy.generate(<any>this.instanceType, this.instanceId, new GenerateInput({
