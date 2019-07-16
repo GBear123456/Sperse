@@ -1,0 +1,24 @@
+:host {
+    margin: 10px 0;
+    /deep/ dx-date-box {        
+        overflow: hidden;
+        &, input {
+            border-radius: 25px;
+        }
+        input {
+            border: 1px solid #e5e9ec !important;
+            padding-left: 10px !important;
+            padding-right: 35px !important;
+            text-align: center;
+            cursor: pointer;
+        }
+        .dx-texteditor-buttons-container {
+            right: 5px !important;
+        }
+        &.dx-state-hover, &.dx-state-active, &.dx-dropdowneditor-active {
+            .dx-dropdowneditor-icon {
+                background-color: #fff !important;
+            }
+        }
+    }
+}

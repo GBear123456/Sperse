@@ -1,0 +1,10 @@
+<dx-date-box
+    [max]="maxDate"
+    height="39px"
+    applyValueMode="useButtons"
+    [applyButtonText]="ls.l('Apply')"
+    [adaptivityEnabled]="true"
+    [acceptCustomValue]="false"
+    [value]="syncService.maxSyncDate$ | async"
+    (onValueChanged)="apply($event)">
+</dx-date-box>

@@ -53,7 +53,7 @@ export class AppService extends AppServiceBase {
     private _subscriptionBarsClosed = {};
     private _subscriptionBarVisible: Boolean;
 
-    constructor(injector: Injector,) {
+    constructor(injector: Injector) {
         super(
             injector,
             'Admin',
