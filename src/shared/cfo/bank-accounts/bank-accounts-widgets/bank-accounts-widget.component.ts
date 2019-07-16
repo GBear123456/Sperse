@@ -51,16 +51,6 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
     @Input() showAddAccountButton = true;
     @Input() searchInputWidth = 279;
     dataSource: any;
-    @Input('highlightedBankAccountIds')
-    set highlightedBankAccountIds(highlightedBankAccountIds) {
-        clearTimeout(this.initBankAccountHighlightedTimeout);
-        this.initBankAccountHighlightedTimeout = setTimeout(() => {
-            this.bankAccountIdsForHighlight = highlightedBankAccountIds;
-            this.setHighlighted();
-            if (this.mainDataGrid)
-                this.mainDataGrid.instance.refresh();
-        }, 300);
-    }
     @Input() allowBankAccountsEditing = false;
     @Output() selectionChanged: EventEmitter<any> = new EventEmitter();
     @Output() accountsEntitiesBindingChanged: EventEmitter<any> = new EventEmitter();
@@ -212,23 +202,14 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
 
     rowPrepared(e) {
         if (e.rowType === 'data') {
-            if (e.data['highlighted']) {
+            if (this.highlightUsedRows && e.data.bankAccounts 
+                && e.data.bankAccounts.some(item => item.isUsed)
+            ) {
                 e.rowElement.classList.add('highlighted-row');
-            }
-
-            if (e.data['isUsed']) {
+            } else if (e.data['isUsed']) {
                 e.rowElement.classList.add('used-row');
             }
         }
-    }
-
-    setHighlighted() {
-        this.dataSource && this.dataSource.forEach(syncAccount => {
-            syncAccount.bankAccounts.forEach(bankAccount => {
-                if (bankAccount['highlighted'] = _.contains(this.bankAccountIdsForHighlight, bankAccount.id))
-                    syncAccount['highlighted'] = true;
-            });
-        });
     }
 
     masterRowExpandChange(e) {

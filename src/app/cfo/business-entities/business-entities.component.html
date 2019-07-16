@@ -66,11 +66,14 @@
                     <div *dxTemplate="let data of 'accountsTemplate'">
                         <div (click)="openBankAccountSelectComponent(data.data)">
                             <i id="business-entity-arrow-{{data.data.Id}}" class="arrow"></i>
-                            <ng-container *ngIf="data.value && data.value.length">
+                            <ng-container *ngIf="data.value && data.value.length; else noaccounts">
                                 <span class="count">
                                     {{data.value.length | number}} {{data.value.length ===1 ? l('Account'): l('Accounts')}}
                                 </span>
                             </ng-container>
+                            <ng-template #noaccounts>
+                                {{l('Assign')}} {{l('Accounts')}}
+                            </ng-template>
                         </div>
                     </div>
                 </dx-data-grid>

@@ -1207,9 +1207,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     openBankAccountsSelectDialog() {
         this.dialog.open(BankAccountsSelectDialogComponent, {
             panelClass: 'slider',
-            data: {
-                highlightedBankAccountIds: this.bankAccounts
-            }
+            data: { }
         }).componentInstance.onApply.subscribe(() => {
             this.applyTotalBankAccountFilter(true);
         });
