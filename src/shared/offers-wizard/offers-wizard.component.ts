@@ -12,14 +12,16 @@ import {
 /** Third party imports */
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatHorizontalStepper } from '@angular/material';
+import { Observable } from 'rxjs';
+import { first, publishReplay, refCount } from 'rxjs/operators';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
 import {
-    GetApplicationDetailsOutput,
+    GetApplicationDetailsOutput, GetMemberInfoResponse,
     OfferServiceProxy,
-    PersonalInformation,
-    SubmitApplicationProfileInput, SubmitApplicationProfileInputSystemType
+    SubmitApplicationProfileInput,
+    SubmitApplicationProfileInputSystemType
 } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 
@@ -32,6 +34,8 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 export class OffersWizardComponent implements OnInit {
     @ViewChild('stepper') stepper: MatHorizontalStepper;
     submitApplicationProfileInput = new SubmitApplicationProfileInput();
+    memberInfo$: Observable<GetMemberInfoResponse> = this.offersServiceProxy.getMemberInfo().pipe(publishReplay(), refCount());
+    memberInfo: GetMemberInfoResponse;
     dialogRef: MatDialogRef<OffersWizardComponent, any>;
     today: Date = new Date();
     emailRegEx = AppConsts.regexPatterns.email;
@@ -81,6 +85,21 @@ export class OffersWizardComponent implements OnInit {
     ) {
         this.dialogRef = <any>injector.get(MatDialogRef);
         this.rules = {'X': /[02-9]/};
+        this.memberInfo$.pipe(first()).subscribe(
+            (memberInfo: GetMemberInfoResponse) => {
+                this.submitApplicationProfileInput.personalInformation.firstName = memberInfo.firstName;
+                this.submitApplicationProfileInput.personalInformation.lastName = memberInfo.lastName;
+                this.submitApplicationProfileInput.personalInformation.email = memberInfo.emailAddress;
+                this.submitApplicationProfileInput.personalInformation.phone = memberInfo.phoneNumber;
+                this.submitApplicationProfileInput.personalInformation.postalCode = memberInfo.zipCode;
+                this.submitApplicationProfileInput.personalInformation.address1 = memberInfo.streetAddress;
+                this.submitApplicationProfileInput.personalInformation.city = memberInfo.city;
+                this.submitApplicationProfileInput.personalInformation.stateCode = memberInfo.stateCode;
+                this.submitApplicationProfileInput.personalInformation.countryCode = memberInfo.countryCode;
+                this.submitApplicationProfileInput.personalInformation.doB = memberInfo.doB;
+                this._changeDetectionRef.detectChanges();
+            }
+        );
     }
 
     ngOnInit() {

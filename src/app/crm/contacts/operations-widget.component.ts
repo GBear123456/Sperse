@@ -195,7 +195,7 @@ export class OperationsWidgetComponent extends AppComponentBase {
                 && this.contactInfo.groupId == ContactGroup.Client
                 && this._appService.isCfoLinkOrVerifyEnabled
                 && (
-                    this.isClientCFOAvailable() && this._appService.checkCFOClientAccessPermission
+                    this.isClientCFOAvailable() && this._appService.checkCFOClientAccessPermission()
                     || (!this.isClientCFOAvailable() && this._appService.canSendVerificationRequest() && this.contactInfo.statusId === ContactStatus.Active)
                 );
             if (isCfoLinkOrVerifyEnabled) {
