@@ -24,6 +24,7 @@ import {
     SubmitApplicationProfileInputSystemType
 } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { DateHelper } from '@shared/helpers/DateHelper';
 
 @Component({
     selector: 'app-offers-wizard',
@@ -37,6 +38,12 @@ export class OffersWizardComponent implements OnInit {
     memberInfo$: Observable<GetMemberInfoResponse> = this.offersServiceProxy.getMemberInfo().pipe(publishReplay(), refCount());
     memberInfo: GetMemberInfoResponse;
     dialogRef: MatDialogRef<OffersWizardComponent, any>;
+    private readonly INPUT_MASK = {
+        ssn: '000-00-0000',
+        phone: '+1 (X00) 000-0000',
+        zipCode: '00000',
+        phoneExt: '99999'
+    };
     today: Date = new Date();
     emailRegEx = AppConsts.regexPatterns.email;
     rules: any;
@@ -118,9 +125,39 @@ export class OffersWizardComponent implements OnInit {
         this._changeDetectionRef.detectChanges();
     }
 
+    focusInput(event) {
+        if (!(event.component._value && event.component._value.trim())) {
+            let input = event.event.target;
+            event.component.option({
+                mask: this.INPUT_MASK[input.name],
+                maskRules: { 'D': /\d?/ },
+                isValid: true
+            });
+            setTimeout(function () {
+                if (input.createTextRange) {
+                    let part = input.createTextRange();
+                    part.move('character', 0);
+                    part.select();
+                } else if (input.setSelectionRange)
+                    input.setSelectionRange(0, 0);
+
+                input.focus();
+            }, 100);
+        }
+    }
+
+    blurInput(event) {
+        if (!(event.component._value && event.component._value.trim()))
+            event.component.option({ mask: '', value: '' });
+    }
+
     validateName(event) {
         if (!event.key.match(/^[a-zA-Z]+$/))
             event.preventDefault();
+    }
+
+    removeTimeZone(date) {
+        return DateHelper.removeTimezoneOffset(date);
     }
 
     goToNextStep(event) {
