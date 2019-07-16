@@ -48,6 +48,7 @@
                             <div class="dx-field-value">
                                 <dx-date-box
                                     [(value)]="submitApplicationProfileInput.personalInformation.doB"
+                                    (onBlur)="removeTimeZone(submitApplicationProfileInput.personalInformation.doB)"
                                     type="date">
                                 </dx-date-box>
                             </div>
@@ -56,7 +57,9 @@
                             <div class="dx-field-label">SSN</div>
                             <div class="dx-field-value">
                                 <dx-text-box placeholder="Enter ssn"
-                                             mask="000-00-0000"
+                                             name="ssn"
+                                             (onFocusOut)="blurInput($event)"
+                                             (onFocusIn)="focusInput($event)"
                                              [(value)]="submitApplicationProfileInput.personalInformation.ssn"></dx-text-box>
                             </div>
                         </div>
@@ -157,7 +160,9 @@
                         <div class="dx-field">
                             <div class="dx-field-label">Phone</div>
                             <div class="dx-field-value">
-                                <dx-text-box mask="+1 (X00) 000-0000"
+                                <dx-text-box name="phone"
+                                             (onFocusOut)="blurInput($event)"
+                                             (onFocusIn)="focusInput($event)"
                                              [(value)]="submitApplicationProfileInput.personalInformation.phone"
                                              [maskRules]="rules">
                                 </dx-text-box>
@@ -166,7 +171,9 @@
                         <div class="dx-field">
                             <div class="dx-field-label">Mobile Phone</div>
                             <div class="dx-field-value">
-                                <dx-text-box mask="+1 (X00) 000-0000"
+                                <dx-text-box name="phone"
+                                             (onFocusOut)="blurInput($event)"
+                                             (onFocusIn)="focusInput($event)"
                                              [(value)]="submitApplicationProfileInput.personalInformation.phoneMobile"
                                              [maskRules]="rules">
                                 </dx-text-box>
@@ -411,7 +418,10 @@
                     <div class="dx-field">
                         <div class="dx-field-label">Work Phone</div>
                         <div class="dx-field-value">
-                            <dx-text-box mask="+1 (X00) 000-0000" [maskRules]="rules"
+                            <dx-text-box name="phone"
+                                         (onFocusOut)="blurInput($event)"
+                                         (onFocusIn)="focusInput($event)"
+                                         [maskRules]="rules"
                                          [(value)]="submitApplicationProfileInput.employmentInformation.phoneWork">
                             </dx-text-box>
                         </div>
@@ -419,7 +429,10 @@
                     <div class="dx-field">
                         <div class="dx-field-label">Work Phone Extension</div>
                         <div class="dx-field-value">
-                            <dx-text-box mask="00000" [maskRules]="rules"
+                            <dx-text-box [maxLength]="5"
+                                         name="phoneExt"
+                                         (onFocusOut)="blurInput($event)"
+                                         (onFocusIn)="focusInput($event)"
                                          [(value)]="submitApplicationProfileInput.employmentInformation.phoneWorkExtension">
                             </dx-text-box>
                         </div>
@@ -502,6 +515,7 @@
                         <div class="dx-field-value">
                             <dx-date-box
                                 [(value)]="submitApplicationProfileInput.employmentInformation.payNextDate"
+                                (onBlur)="removeTimeZone(submitApplicationProfileInput.employmentInformation.payNextDate)"
                                 type="date">
                             </dx-date-box>
                         </div>
@@ -511,6 +525,7 @@
                         <div class="dx-field-value">
                             <dx-date-box
                                 [(value)]="submitApplicationProfileInput.employmentInformation.payAfterNextDate"
+                                (onBlur)="removeTimeZone(submitApplicationProfileInput.employmentInformation.payAfterNextDate)"
                                 type="date">
                             </dx-date-box>
                         </div>
@@ -572,7 +587,10 @@
                     <div class="dx-field">
                         <div class="dx-field-label">Bank Phone</div>
                         <div class="dx-field-value">
-                            <dx-text-box mask="+1 (X00) 000-0000" [maskRules]="rules"
+                            <dx-text-box name="phone"
+                                         (onFocusOut)="blurInput($event)"
+                                         (onFocusIn)="focusInput($event)"
+                                         [maskRules]="rules"
                                          [(value)]="submitApplicationProfileInput.bankInformation.bankPhone">
                             </dx-text-box>
                         </div>
