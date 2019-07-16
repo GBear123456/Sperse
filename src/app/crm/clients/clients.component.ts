@@ -631,6 +631,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             this.requestVerificationInternal(data.Id);
         else {
             let dialogData = {
+                groupId: ContactGroup.Client,
                 field: 'emailAddress',
                 emailAddress: '',
                 name: 'Email',
