@@ -22,12 +22,16 @@ export class SyncDatePickerService {
     }
 
     setMaxVisibleDate(date: moment) { 
-        this._instanceService.setMaxVisibleDate(this._cfoService.instanceType as InstanceType75, 
-            this._cfoService.instanceId, date).subscribe(() => this._maxSyncDate.next(date));
+        if (this._cfoService.initialized)
+            this._instanceService.setMaxVisibleDate(this._cfoService.instanceType as InstanceType75, 
+                this._cfoService.instanceId, date).subscribe(() => this._maxSyncDate.next(date));
     }
 
     invalidate() {  
-        this._instanceService.getMaxVisibleDate(this._cfoService.instanceType as InstanceType74, this._cfoService.instanceId)
-            .subscribe(date => this._maxSyncDate.next(date.isValid() ? date : moment()));
+        if (this._cfoService.initialized)
+            this._instanceService.getMaxVisibleDate(this._cfoService.instanceType as InstanceType74, this._cfoService.instanceId)
+                .subscribe(date => this._maxSyncDate.next(date.isValid() ? date : moment()));
+        else 
+            this._maxSyncDate.next(moment());
     }
 }
