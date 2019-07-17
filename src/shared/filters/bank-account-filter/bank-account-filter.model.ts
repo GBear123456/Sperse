@@ -27,25 +27,17 @@ export class BankAccountFilterModel extends FilterItemModel {
         return result;
     }
     set value(value: any) {
-        this._value = value;
-        value = (value && value.length) ? value : [];
-        this.dataSource.forEach((syncAccount, i) => {
+        this._value = value = value || [];
+        this.dataSource.forEach((syncAccount) => {
             let selectedBankAccountCount = 0;
-            syncAccount.bankAccounts.forEach((bankAccount, i) => {
-                let isSelected = _.contains(value, bankAccount.id);
-                bankAccount['selected'] = isSelected;
-                if (isSelected)
+            syncAccount.bankAccounts.forEach((bankAccount) => {
+                if (bankAccount['selected'] = _.contains(value, bankAccount.id))
                     selectedBankAccountCount++;
             });
-            if (selectedBankAccountCount === 0) {
-                syncAccount['selected'] = false;
-            } else {
-                if (selectedBankAccountCount === syncAccount.bankAccounts.length) {
-                    syncAccount['selected'] = true;
-                } else {
-                    syncAccount['selected'] = undefined;
-                }
-            }
+
+            syncAccount['selected'] = selectedBankAccountCount ? 
+                selectedBankAccountCount === syncAccount.bankAccounts.length || undefined : 
+                false;
         });
     }
 

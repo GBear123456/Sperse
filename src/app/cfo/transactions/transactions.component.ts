@@ -20,6 +20,7 @@ import DataSource from 'devextreme/data/data_source';
 import 'devextreme/data/odata/store';
 import { Subject, forkJoin } from 'rxjs';
 import { first, filter, skip } from 'rxjs/operators';
+import difference from 'lodash/difference';
 import * as _ from 'underscore';
 
 /** Application imports */
@@ -90,6 +91,8 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     private filters: FilterModel[];
     private rootComponent: any;
     private cashFlowCategoryFilter = [];
+    private bankAccountFilter: FilterModel;
+    private businessEntityFilter: FilterModel;
     public transactionsFilterQuery: any[];
 
     public manageAllowed = false;
@@ -217,15 +220,15 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         forkJoin(
             this._TransactionsServiceProxy.getTransactionTypesAndCategories(),
             this._TransactionsServiceProxy.getFiltersInitialData(InstanceType[this.instanceType], this.instanceId),
-            this.bankAccountsService.syncAccounts$.pipe(first())
-        ).subscribe(([typeAndCategories, filtersInitialData, syncAccounts]) => {
+            this.bankAccountsService.syncAccounts$.pipe(first()),
+            this.bankAccountsService.selectedBusinessEntitiesIds$.pipe(first())
+        ).subscribe(([typeAndCategories, filtersInitialData, syncAccounts, selectedBusinessEntitiesIds]) => {
             this.syncAccounts = syncAccounts;
             this.types = typeAndCategories.types.map((item) => item.name);
             this.categories = typeAndCategories.categories.map((item) => item.name);
             this.bankAccountsLookup = syncAccounts.reduce((acc, item) => {
                 return acc.concat(item.bankAccounts);
             }, []);
-
             this.filtersInitialData = filtersInitialData;
             this.filters = [
                 new FilterModel({
@@ -236,7 +239,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                     items: { from: new FilterItemModel(), to: new FilterItemModel() },
                     options: { method: 'getFilterByDate' }
                 }),
-                new FilterModel({
+                this.bankAccountFilter = new FilterModel({
                     component: BankAccountFilterComponent,
                     caption: 'Account',
                     items: {
@@ -249,7 +252,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                             })
                     }
                 }),
-                new FilterModel({
+                this.businessEntityFilter = new FilterModel({
                     component: FilterCheckBoxesComponent,
                     field: 'BusinessEntityId',
                     caption: 'BusinessEntity',
@@ -257,7 +260,8 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                         element: new FilterCheckBoxesModel({
                             dataSource: filtersInitialData.businessEntities,
                             nameField: 'name',
-                            keyExpr: 'id'
+                            keyExpr: 'id',
+                            value: selectedBusinessEntitiesIds
                         })
                     }
                 })].concat(this._cfoService.hasStaticInstance ? [] : [
@@ -732,28 +736,28 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     }
 
     initFiltering() {
-        this.filtersService.apply(() => {
-            for (let filter of this.filters) {
-                if (filter.caption.toLowerCase() === 'account') {
-                    /** apply filter on top */
-                    this.bankAccountsService.applyFilter();
-                    /** apply filter in sidebar */
-                    filter.items.element.setValue(this.bankAccountsService.state.selectedBankAccountIds, filter);
-                }
+        this.filtersService.apply(filter => {
+            let filterName = filter.caption.toLowerCase();
+            if (filterName == 'account') {
+                /** apply filter on top */
+                this.bankAccountsService.applyFilter();
+                /** apply filter in sidebar */
+                filter.items.element.value = this.bankAccountsService.state.selectedBankAccountIds;
+            }
 
-                if (filter.caption.toLowerCase() === 'classified') {
-                    if (this.selectedCashflowCategoryKey && filter.items['no'].value === true && filter.items['yes'].value !== true) {
-                        this.cashFlowCategoryFilter = [];
-                        this.categorizationComponent.clearSelection(false);
-                        this.processFilterInternal();
-                        this.selectedCashflowCategoryKey = null;
-                    } else {
-                        this.processFilterInternal();
-                    }
+            if (filterName == 'classified') {
+                if (this.selectedCashflowCategoryKey && filter.items['no'].value === true && filter.items['yes'].value !== true) {
+                    this.cashFlowCategoryFilter = [];
+                    this.categorizationComponent.clearSelection(false);
+                    this.selectedCashflowCategoryKey = null;
                 }
             }
 
+            if (filterName == 'businessentity')
+                this.onBusinessEntitiesChange(filter.items.element.value);
+
             this.initToolbarConfig();
+            this.processFilterInternal();
         });
     }
 
@@ -1245,6 +1249,31 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         } else {
             this.transId$.next(this.transactionId);
         }
+    }
+
+    onBusinessEntitiesChange(businessEntitiesIds) {
+        let selectedBankAccountIds = [];
+        let newBusinessEntitiesIds = difference(businessEntitiesIds, 
+            this.bankAccountsService.state.selectedBusinessEntitiesIds);
+
+        this.syncAccounts.forEach(syncAccount => {
+            syncAccount.bankAccounts.forEach(bankAccount => {
+                if (newBusinessEntitiesIds.indexOf(bankAccount.businessEntityId) >= 0
+                    || this.bankAccountsService.state.selectedBusinessEntitiesIds.indexOf(bankAccount.businessEntityId) >= 0
+                    && this.bankAccountsService.state.selectedBankAccountIds.indexOf(bankAccount.id) >= 0
+                )
+                    selectedBankAccountIds.push(bankAccount.id);                
+            })            
+        });
+
+        this.bankAccountsService.changeState({
+            selectedBusinessEntitiesIds: businessEntitiesIds,
+            selectedBankAccountIds: selectedBankAccountIds
+        });
+
+        this.businessEntityFilter.items.element.value = businessEntitiesIds;
+
+        this.applyTotalBankAccountFilter(true);
     }
 
     ngOnDestroy() {
