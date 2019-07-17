@@ -73,11 +73,11 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
     cfoService: CFOService;
     isContextMenuVisible = false;
     contextMenuItems = [
-        { text: this.l('Edit_Name') },
-        { text: this.l('Sync_Now') },
-        { text: this.l('Resync_All') },
-        { text: this.l('Update_Info') },
-        { text: this.l('Delete') }
+        { text: this.l('Edit_Name'), name: 'edit', display: true },
+        { text: this.l('Sync_Now'), name: 'sync', display: true },
+        { text: this.l('Resync_All'), name: 'resync', display: true },
+        { text: this.l('Update_Info'), name: 'update', display: true },
+        { text: this.l('Delete'), name: 'delete', display: true }
     ];
     syncAccountId: number;
     syncAccountIds = [];
@@ -154,7 +154,7 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
 
         if (!this.isInstanceAdmin && !this.isMemberAccessManage) {
             this.contextMenuItems = [
-                { text: this.l('Sync_Now') }
+                { text: this.l('Sync_Now'), name: 'sync', display: true }
             ];
         }
     }
@@ -471,6 +471,9 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
     }
 
     openActionsMenu(cellObj) {
+        this.contextMenuItems.forEach(e => {
+            e.display = !(cellObj.data.syncTypeId === 'Q' && e.name === 'resync');
+        });
         this.syncAccount = cellObj.data;
         this.syncRef = cellObj.text;
         this.syncAccountId = cellObj.data.syncAccountId;
