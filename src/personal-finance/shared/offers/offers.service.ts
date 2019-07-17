@@ -23,7 +23,8 @@ import {
     OfferServiceProxy,
     GetMemberInfoResponse,
     OfferDtoCampaignProviderType,
-    SubmitApplicationInput
+    SubmitRequestInput,
+    SubmitRequestInputSystemType
 } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { CreditScoreInterface } from '@root/personal-finance/shared/offers/interfaces/credit-score.interface';
@@ -188,10 +189,13 @@ export class OffersService {
 
     applyOffer(offer: OfferDto, isCreditCard = false) {
         const linkIsDirect = !!offer.redirectUrl;
-        let submitApplicationInput = SubmitApplicationInput.fromJS({
-            campaignId: offer.campaignId
-        });
         let redirectUrl = !linkIsDirect ? offer.redirectUrl : offer.redirectUrl + '&' + this.memberInfoApplyOfferParams;
+        let submitRequestInput = SubmitRequestInput.fromJS({
+            campaignId: offer.campaignId,
+            systemType: SubmitRequestInputSystemType.EPCVIP,
+            ...this.memberInfo
+        });
+        if (linkIsDirect) submitRequestInput.redirectUrl = redirectUrl;
         const modalData = {
             processingSteps: [null, null, null, null],
             completeDelays: [ 250, 250, 250, 250 ],
@@ -210,7 +214,7 @@ export class OffersService {
             modalData.completeDelays = [ 1000, 1000, 1000, null ];
             modalData.delayMessages = <any>[ null, null, null, this.ls.l('Offers_TheNextStepWillTake') ];
         } else {
-            submitApplicationInput['redirectUrl'] = redirectUrl;
+            submitRequestInput['redirectUrl'] = redirectUrl;
         }
 
         const applyOfferDialog = this.dialog.open(ApplyOfferDialogComponent, {
@@ -218,7 +222,7 @@ export class OffersService {
             panelClass: 'apply-offer-dialog',
             data: modalData
         });
-        this.offerServiceProxy.submitApplication(submitApplicationInput)
+        this.offerServiceProxy.submitRequest(submitRequestInput)
             .subscribe(
                 (output: SubmitRequestOutput) => {
                     if (!linkIsDirect) {
