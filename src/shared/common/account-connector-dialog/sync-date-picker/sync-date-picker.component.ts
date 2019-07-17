@@ -31,6 +31,6 @@ export class SyncDatePickerComponent {
 
     apply(event) {
         if (event.previousValue && event.value)
-            this.syncService.setMaxAllowedSyncDate(event.value);
+            this.syncService.setMaxVisibleDate(event.value);
     }
 }

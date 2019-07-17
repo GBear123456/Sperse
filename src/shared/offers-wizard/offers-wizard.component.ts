@@ -20,8 +20,8 @@ import { AppConsts } from '@shared/AppConsts';
 import {
     GetApplicationDetailsOutput, GetMemberInfoResponse,
     OfferServiceProxy,
-    SubmitApplicationProfileInput,
-    SubmitApplicationProfileInputSystemType
+    SubmitApplicationInput,
+    SubmitApplicationInputSystemType
 } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { DateHelper } from '@shared/helpers/DateHelper';
@@ -34,7 +34,7 @@ import { DateHelper } from '@shared/helpers/DateHelper';
 })
 export class OffersWizardComponent implements OnInit {
     @ViewChild('stepper') stepper: MatHorizontalStepper;
-    submitApplicationProfileInput = new SubmitApplicationProfileInput();
+    submitApplicationProfileInput = new SubmitApplicationInput();
     memberInfo$: Observable<GetMemberInfoResponse> = this.offersServiceProxy.getMemberInfo().pipe(publishReplay(), refCount());
     memberInfo: GetMemberInfoResponse;
     dialogRef: MatDialogRef<OffersWizardComponent, any>;
@@ -110,11 +110,11 @@ export class OffersWizardComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.submitApplicationProfileInput.systemType = SubmitApplicationProfileInputSystemType.EPCVIP;
+        this.submitApplicationProfileInput.systemType = SubmitApplicationInputSystemType.EPCVIP;
         this.offersServiceProxy.getApplicationDetails().subscribe(
             (output: GetApplicationDetailsOutput) => {
                 if (output) {
-                    this.submitApplicationProfileInput = SubmitApplicationProfileInput.fromJS({
+                    this.submitApplicationProfileInput = SubmitApplicationInput.fromJS({
                         ...output
                     });
                     this._changeDetectionRef.detectChanges();
@@ -166,7 +166,7 @@ export class OffersWizardComponent implements OnInit {
     }
 
     submitApplicationProfile() {
-        this.offersServiceProxy.submitApplicationProfile(this.submitApplicationProfileInput).subscribe(() => {
+        this.offersServiceProxy.submitApplication(this.submitApplicationProfileInput).subscribe(() => {
             this.dialogRef.close(true);
         });
     }
