@@ -32969,6 +32969,7 @@ export interface IUpdateBankAccountDto {
 export class BusinessEntityDto implements IBusinessEntityDto {
     id!: number | undefined;
     name!: string | undefined;
+    isDefault!: boolean | undefined;
 
     constructor(data?: IBusinessEntityDto) {
         if (data) {
@@ -32983,6 +32984,7 @@ export class BusinessEntityDto implements IBusinessEntityDto {
         if (data) {
             this.id = data["id"];
             this.name = data["name"];
+            this.isDefault = data["isDefault"];
         }
     }
 
@@ -32997,6 +32999,7 @@ export class BusinessEntityDto implements IBusinessEntityDto {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
         data["name"] = this.name;
+        data["isDefault"] = this.isDefault;
         return data; 
     }
 }
@@ -33004,6 +33007,7 @@ export class BusinessEntityDto implements IBusinessEntityDto {
 export interface IBusinessEntityDto {
     id: number | undefined;
     name: string | undefined;
+    isDefault: boolean | undefined;
 }
 
 export class BusinessEntityTypeDto implements IBusinessEntityTypeDto {
