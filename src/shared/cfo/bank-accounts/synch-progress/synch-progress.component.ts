@@ -7,20 +7,27 @@ import { merge } from 'rxjs';
 import { filter, first, takeUntil } from 'rxjs/operators';
 
 /** Application imports */
-import { SyncProgressOutput, SyncProgressDtoSyncStatus } from 'shared/service-proxies/service-proxies';
+import {
+    SyncProgressOutput,
+    SyncProgressDtoSyncStatus,
+    InstanceType,
+    SyncAccountServiceProxy
+} from 'shared/service-proxies/service-proxies';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { SynchProgressService } from '@shared/cfo/bank-accounts/helpers/synch-progress.service';
 
 @Component({
     templateUrl: './synch-progress.component.html',
     styleUrls: ['./synch-progress.component.less'],
-    selector: 'synch-progress'
+    selector: 'synch-progress',
+    providers: [ SyncAccountServiceProxy ]
 })
 export class SynchProgressComponent extends CFOComponentBase implements OnInit, OnDestroy {
     @Input() showSyncAccountButton = false;
     @ViewChild('accountProgressTooltip') accountProgressTooltip: DxTooltipComponent;
     @Output() onComplete = new EventEmitter();
     @Output() onSyncStarted = new EventEmitter();
+    createAccountAvailable: boolean;
     completed = true;
     showProgress = true;
     syncData: SyncProgressOutput;
@@ -35,9 +42,14 @@ export class SynchProgressComponent extends CFOComponentBase implements OnInit, 
 
     constructor(
         injector: Injector,
-        private syncProgressService: SynchProgressService
+        private syncProgressService: SynchProgressService,
+        private _syncAccountServiceProxy: SyncAccountServiceProxy,
     ) {
         super(injector);
+        this._syncAccountServiceProxy.createIsAllowed(InstanceType[this.instanceType], this.instanceId)
+            .subscribe((result) => {
+                this.createAccountAvailable = result;
+            });
     }
 
     ngOnInit(): void {
