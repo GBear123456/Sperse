@@ -10,7 +10,7 @@ import {
 } from '@angular/core';
 
 /** Third party imports */
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatHorizontalStepper } from '@angular/material';
 import { Observable } from 'rxjs';
 import { first, publishReplay, refCount } from 'rxjs/operators';
@@ -18,13 +18,14 @@ import { first, publishReplay, refCount } from 'rxjs/operators';
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
 import {
-    GetApplicationDetailsOutput, GetMemberInfoResponse,
+    GetApplicationDetailsOutput, GetMemberInfoResponse, OfferDtoCampaignProviderType,
     OfferServiceProxy,
     SubmitApplicationInput,
-    SubmitApplicationInputSystemType
+    SubmitApplicationInputSystemType, SubmitApplicationOutput
 } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { DateHelper } from '@shared/helpers/DateHelper';
+import { ApplyOfferDialogComponent } from '@root/personal-finance/shared/offers/apply-offer-modal/apply-offer-dialog.component';
 
 @Component({
     selector: 'app-offers-wizard',
@@ -88,6 +89,7 @@ export class OffersWizardComponent implements OnInit {
         private _changeDetectionRef: ChangeDetectorRef,
         public ls: AppLocalizationService,
         private offersServiceProxy: OfferServiceProxy,
+        private dialog: MatDialog,
         @Inject(MAT_DIALOG_DATA) public data: any
     ) {
         this.dialogRef = <any>injector.get(MatDialogRef);
@@ -166,9 +168,27 @@ export class OffersWizardComponent implements OnInit {
     }
 
     submitApplicationProfile() {
-        this.offersServiceProxy.submitApplication(this.submitApplicationProfileInput).subscribe(() => {
-            this.dialogRef.close(true);
+        const modalData = {
+            processingSteps: [null, null, null, null],
+            completeDelays: [ 1000, 1000, 1000, null ],
+            delayMessages: <any>[ null, null, null, this.ls.l('Offers_TheNextStepWillTake') ],
+            title: 'Offers_ProcessingLoanRequest',
+            subtitle: 'Offers_WaitLoanRequestProcessing',
+            redirectUrl: this.data.offer.redirectUrl,
+            logoUrl: this.data.offer.campaignProviderType === OfferDtoCampaignProviderType.CreditLand
+                ? this.data.offercreditLandLogoUrl
+                : (this.data.isCreditCard ? null : this.data.offer.logoUrl)
+        };
+
+        const applyOfferDialog = this.dialog.open(ApplyOfferDialogComponent, {
+            width: '530px',
+            panelClass: 'apply-offer-dialog',
+            data: modalData
+        });
+
+        this.offersServiceProxy.submitApplication(this.submitApplicationProfileInput).subscribe((result: SubmitApplicationOutput) => {
+            applyOfferDialog.close();
+            this.dialogRef.close(result);
         });
     }
-
 }

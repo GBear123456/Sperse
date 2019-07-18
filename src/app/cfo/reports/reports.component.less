@@ -67,4 +67,65 @@
             }
         }
     }
+    
+    &.fullscreen .reportView {
+        width: 100%;
+        border: solid 1px green;
+        /deep/ app-image-viewer {
+            #imageViewer {
+                height: 100%;
+                border: solid 1px red;
+            }
+        }
+    }
+
+    .reportView {
+        height: 100%;
+        width: 100%;
+        overflow: hidden;
+        .xmlContainer {
+            padding-bottom: 10px;
+        }
+    }
+
+    .report-viewer-wrapper {
+        height: 100%;
+        width: 100%;
+    }
+
+    /deep/ app-image-viewer {
+        #imageViewer {
+            height: calc(~"100vh - 220px");
+            margin-top: 0px;
+            .image-container {
+                bottom: 0px;
+            }
+            .inline-icon, i.material-icons, .footer-info {
+                display: none;
+            }
+        }
+    }
+}
+
+/deep/ dx-list[accesskey="actionsMenu"] {
+    .dx-state-invisible + .dx-list-item {
+        border-top: none;
+    }
+}
+
+/deep/ .file-name {
+    width: 90%;
+    padding-left: 15px;
+    font-weight: 500;
+    overflow: visible !important;
+    display: flex;
+    align-items: center;
+    &:before {
+        margin-right: 17px;
+        max-height: 32px;
+        width: 24px;
+    }
+    &.pdf:before {
+        content: url('../../../assets/common/icons/documents/pdf.svg');
+    }
 }

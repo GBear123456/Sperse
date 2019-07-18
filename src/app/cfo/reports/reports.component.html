@@ -21,8 +21,16 @@
                 </ng-template>
             </ul>
         </div>
-
-        <div class="reports">
+        <dx-tooltip width="130px">
+            <div *dxTemplate="let data of 'content'">
+                <div class="lists-tooltip-container">
+                    <dx-list accessKey="actionsMenu" [dataSource]="actionMenuItems"
+                        (onItemClick)="onMenuItemClick($event)">
+                    </dx-list>
+                </div>
+            </div>
+        </dx-tooltip>
+        <div [hidden]="openReportMode" class="reports">
             <dx-data-grid id="gridContainer"
                         height="100%"
                         [dataSource]="dataSource"
@@ -72,6 +80,17 @@
                 <dxo-sorting mode="multiple"></dxo-sorting>
                 <dxo-group-panel [visible]="false"></dxo-group-panel>
             </dx-data-grid>            
+        </div>
+
+        <div [hidden]="!openReportMode" class="report-viewer-wrapper">
+            <app-toolbar [config]="viewerToolbarConfig"></app-toolbar>
+            <div class="reportView">
+                <app-image-viewer
+                    [images]="[previewContent]"
+                    [idContainer]="'imageViewer'"
+                    [loadOnInit]="true">
+                </app-image-viewer>
+            </div>
         </div>
 
         <ng-template #nodata>

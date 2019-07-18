@@ -45,6 +45,7 @@ import { UploadDocumentsDialogComponent } from '@app/crm/contacts/documents/uplo
 import { NotSupportedTypeDialogComponent } from '@app/crm/contacts/documents/not-supported-type-dialog/not-supported-type-dialog.component';
 import { DocumentsService } from '@app/crm/contacts/documents/documents.service';
 import { DocumentViewerType } from '@app/crm/contacts/documents/document-viewer-type.enum';
+import { RequestHelper } from '@root/shared/helpers/RequestHelper';
 
 @Component({
     templateUrl: './documents.component.html',
@@ -443,7 +444,7 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
                     break;
                 default:
                     this.documentsService.getDocumentUrlInfoObservable(this.currentDocumentInfo.id).subscribe((urlInfo) => {
-                        this.downloadFileBlob(urlInfo.url, (blob) => {
+                        RequestHelper.downloadFileBlob(urlInfo.url, (blob) => {
                             if (viewerType === DocumentViewerType.ARCHIVE) {
                                 this.archiveFiles$ = (ext === 'rar' ? this.getFilesInfoFromRarBlob(blob) : this.getFilesInfoFromZipBlob(blob)).pipe(tap(() => this.openDocumentMode = true));
                             } else {
@@ -556,22 +557,6 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
 
     sanitizeContent(content: string): string {
         return content.replace(/&/g, '&amp;');
-    }
-
-    downloadFileBlob(url, callback) {
-        let xhr = new XMLHttpRequest();
-        xhr.onreadystatechange = function() {
-            if (this.readyState == 4 && this.status == 200)
-                callback(this.response);
-        };
-
-        xhr.open('GET', url);
-        xhr.responseType = 'blob';
-
-        xhr.setRequestHeader('Access-Control-Allow-Headers', '*');
-        xhr.setRequestHeader('Access-Control-Allow-Origin', '*');
-
-        xhr.send();
     }
 
     editDocument() {

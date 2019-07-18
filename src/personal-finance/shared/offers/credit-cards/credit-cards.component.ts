@@ -127,7 +127,6 @@ export class CreditCardsComponent implements OnInit, OnDestroy {
         return this.offersService.memberInfo$.pipe(
             switchMap((memberInfo: GetMemberInfoResponse) => this.offerServiceProxy.getAll(GetAllInput.fromJS({
                 testMode: memberInfo.testMode,
-                isDirectPostSupported: memberInfo.isDirectPostSupported,
                 category: OfferFilterCategory.CreditCards,
                 country: 'US',
                 isOfferCollection: isOfferCollection,

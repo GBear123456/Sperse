@@ -7,7 +7,6 @@ import { HttpParams } from '@angular/common/http';
 import { MatDialog } from '@angular/material/dialog';
 import camelCase from 'lodash/camelCase';
 import kebabCase from 'lodash/kebabCase';
-import cloneDeep from 'lodash/cloneDeep';
 import capitalize from 'lodash/capitalize';
 import lowerCase from 'lodash/lowerCase';
 import upperFirst from 'lodash/upperFirst';
@@ -24,13 +23,14 @@ import {
     GetMemberInfoResponse,
     OfferDtoCampaignProviderType,
     SubmitRequestInput,
-    SubmitRequestInputSystemType
+    SubmitRequestInputSystemType, SubmitApplicationOutput
 } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { CreditScoreInterface } from '@root/personal-finance/shared/offers/interfaces/credit-score.interface';
 import { ApplyOfferDialogComponent } from '@root/personal-finance/shared/offers/apply-offer-modal/apply-offer-dialog.component';
 import { CategoryGroupEnum } from '@root/personal-finance/shared/offers/category-group.enum';
 import { CurrencyPipe } from '@angular/common';
+import { OffersWizardComponent } from '@shared/offers-wizard/offers-wizard.component';
 
 @Injectable()
 export class OffersService {
@@ -195,7 +195,6 @@ export class OffersService {
             systemType: SubmitRequestInputSystemType.EPCVIP,
             ...this.memberInfo
         });
-        if (linkIsDirect) submitRequestInput.redirectUrl = redirectUrl;
         const modalData = {
             processingSteps: [null, null, null, null],
             completeDelays: [ 250, 250, 250, 250 ],
@@ -208,32 +207,42 @@ export class OffersService {
                 : (isCreditCard ? null : offer.logoUrl)
         };
         if (!linkIsDirect) {
-            modalData.processingSteps = cloneDeep(this.processingSteps);
-            modalData.title = 'Offers_ProcessingLoanRequest';
-            modalData.subtitle = 'Offers_WaitLoanRequestProcessing';
-            modalData.completeDelays = [ 1000, 1000, 1000, null ];
-            modalData.delayMessages = <any>[ null, null, null, this.ls.l('Offers_TheNextStepWillTake') ];
+            this.dialog.open(OffersWizardComponent, {
+                width: '1200px',
+                height: '800px',
+                id: 'offers-wizard',
+                panelClass: ['offers-wizard', 'setup'],
+                data: {
+                    offer: offer,
+                    creditLandLogoUrl: this.creditLandLogoUrl,
+                    isCreditCard: isCreditCard
+                }
+            }).afterClosed().subscribe((result: SubmitApplicationOutput)  => {
+                redirectUrl = result.redirectUrl;
+                if (result.redirectUrl) window.open(result.redirectUrl, '_blank');
+            });
         } else {
-            submitRequestInput['redirectUrl'] = redirectUrl;
+            submitRequestInput.redirectUrl = redirectUrl;
         }
-
-        const applyOfferDialog = this.dialog.open(ApplyOfferDialogComponent, {
-            width: '530px',
-            panelClass: 'apply-offer-dialog',
-            data: modalData
-        });
-        this.offerServiceProxy.submitRequest(submitRequestInput)
-            .subscribe(
-                (output: SubmitRequestOutput) => {
-                    if (!linkIsDirect) {
-                        /** If window opening is blocked - show message for allowing popups opening, else - close popup and redirect to the link (code for redirect in the popup component) */
-                        !window.open(output.redirectUrl, '_blank')
-                            ? applyOfferDialog.componentInstance.showBlockedMessage = true
-                            : applyOfferDialog.close();
-                    }
-                },
-                () => applyOfferDialog.close()
-            );
+        if (linkIsDirect) {
+            submitRequestInput.redirectUrl = redirectUrl;
+            const applyOfferDialog = this.dialog.open(ApplyOfferDialogComponent, {
+                width: '530px',
+                panelClass: 'apply-offer-dialog',
+                data: modalData
+            });
+            this.offerServiceProxy.submitRequest(submitRequestInput)
+                .subscribe(
+                    (output: SubmitRequestOutput) => {
+                        if (!linkIsDirect) {
+                            !window.open(output.redirectUrl, '_blank')
+                                ? applyOfferDialog.componentInstance.showBlockedMessage = true
+                                : applyOfferDialog.close();
+                        }
+                    },
+                    () => applyOfferDialog.close()
+                );
+        }
     }
 
     getCreditScore(category: OfferFilterCategory, creditScoreNumber: number): GetMemberInfoResponseCreditScore {
