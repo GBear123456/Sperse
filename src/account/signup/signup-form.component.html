@@ -1,0 +1,168 @@
+<section class="get-free">
+    <div class="container h-100">
+        <div class="row h-100 girl-bg">
+            <div class="col-lg-6 offset-lg-6 col-md-12 align-self-center">
+                <h2>Monitor, Gain Insight & Make Better Decisions</h2>
+                <h4>sign up and get your credit score today</h4>
+
+                <form class="sign-up-lend-space" (ngSubmit)="signUpMember()">
+                    <div class="dx-field form-row align-items-center">
+                        <div class="form-group form-group--name col">
+                            <dx-text-box placeholder="First Name"
+                                         (keydown)="validateName($event)"
+                                         [(value)]="registerData.firstName">
+                                <dx-validator>
+                                    <dxi-validation-rule type="required" message="Name is required"></dxi-validation-rule>
+                                    <dxi-validation-rule type="stringLength" [min]="2" message="Name must have at least 2 symbols"></dxi-validation-rule>
+                                </dx-validator>
+                            </dx-text-box>
+                        </div>
+                        <div class="form-group form-group--surname col">
+                            <dx-text-box placeholder="Last Name"
+                                         (keydown)="validateName($event)"
+                                         [(value)]="registerData.lastName">
+                                <dx-validator>
+                                    <dxi-validation-rule type="required" message="Name is required"></dxi-validation-rule>
+                                    <dxi-validation-rule type="stringLength" [min]="2" message="Name must have at least 2 symbols"></dxi-validation-rule>
+                                </dx-validator>
+                            </dx-text-box>
+                        </div>
+                    </div>
+                    <div class="dx-field form-row">
+                        <div class="form-group col">
+                            <dx-text-box placeholder="Your email address" [(value)]="registerData.email">
+                                <dx-validator>
+                                    <dxi-validation-rule type="required" message="Email is required"></dxi-validation-rule>
+                                    <dxi-validation-rule type="pattern" [pattern]="patterns.emailPattern" message="Email is invalid"></dxi-validation-rule>
+                                </dx-validator>
+                            </dx-text-box>
+                        </div>
+                    </div>
+                    <div class="dx-field form-row zip-citizen-row align-items-center">
+                        <div class="form-group col">
+                            <dx-text-box placeholder="Phone Number"
+                                         mask="+1 (999) 999-9999"
+                                         showMaskMode="onFocus"
+                                         [(value)]="registerData.phoneNumber">
+                                <dx-validator>
+                                    <dxi-validation-rule type="pattern" [pattern]="patterns.phonePattern" message="Phone is incorrect"></dxi-validation-rule>
+                                    <dxi-validation-rule type="stringLength" [max]="15" message="Phone length is invalid"></dxi-validation-rule>
+                                </dx-validator>
+                            </dx-text-box>
+                        </div>
+                        <div class="form-group zip-field col">
+                            <dx-text-box placeholder="Zip"
+                                         [(value)]="registerData.postalCode"
+                                         minLength="5"
+                                         maxLength="10">
+                                <dx-validator>
+                                    <dxi-validation-rule type="pattern"
+                                                         [pattern]="patterns.zipPattern"
+                                                         message="Zip Code is invalid">
+                                    </dxi-validation-rule>
+                                </dx-validator>
+                            </dx-text-box>
+                        </div>
+                    </div>
+                    <div class="form-group d-flex">
+                        <div>
+                            <dx-check-box #agreeToRecieveCallsCheckBox
+                                          class="privacy-term"
+                                          validationMessageMode="always"
+                                          [(value)]="isAgreedToRecieveCalls">
+                                <dx-validator>
+                                    <dxi-validation-rule type="required" message="Check this box to confirm your consent."></dxi-validation-rule>
+                                </dx-validator>
+                            </dx-check-box>
+                        </div>
+                        <p class="agreement">
+                            I consent to receive calls, texts, emails, and pre-recorded messages from LendSpace, its subsidiaries, agents, and/or partners, dialed manually or by autodialer.
+                        </p>
+                    </div>
+                    <div class="form-group d-flex">
+                        <div>
+                            <dx-check-box #agreeWithTermsCheckBox
+                                          class="privacy-term"
+                                          validationMessageMode="always"
+                                          [(value)]="isAgreeWithTerms">
+                                <dx-validator>
+                                    <dxi-validation-rule type="required" message="You must agree to the Terms and Conditions"></dxi-validation-rule>
+                                </dx-validator>
+                            </dx-check-box>
+                        </div>
+                        <p class="agreement">
+                            By continuing, I certify I'm a US resident and older than 18 years of age.
+                            I understand and agree to the LendSpace <a (click)="openConditionsDialog(conditions.Terms)">Terms of Use</a>,
+                            <a (click)="openConditionsDialog(conditions.Policies)">Privacy Policy</a>.
+                        </p>
+                    </div>
+                    <div class="dx-field actions-field d-flex align-items-center">
+                        <dx-button text="Activate my free account"
+                                   type="success"
+                                   class="btn btn-outline-dark activate-button"
+                                   [useSubmitBehavior]="true">
+                        </dx-button>
+                        <div class="login-options d-flex align-items-center"
+                             *ngIf="(loginService.externalLoginProviders$ | async) as externalLoginProviders">
+                            <span class="login-with-or">{{l("or")}}</span>
+                            <ul class="social-icons">
+                                <li *ngFor="let provider of externalLoginProviders">
+                                    <a class="social-login-icon social-icon-color {{provider.icon}}"
+                                       (click)="externalLogin(provider)"
+                                       title="{{provider.name}}">
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="form-group already-registered">
+                        <h3>Already have a LendSpace account?</h3>
+                        <p class="links">
+                            <a routerLink="/account/login">Click here to login</a> | <a routerLink="/account/forgot-password">Reset your password</a>
+                        </p>
+                    </div>
+                    <div class="form-group">
+                        <p class="ssl-secure text-center">
+                            <i class="fa fa-lock"></i>
+                            we use 256 ssl technology to encrypt your data
+                        </p>
+                    </div>
+                    <!--<div class="form-group">-->
+                    <!--<dx-validation-summary id="summary"></dx-validation-summary>-->
+                    <!--</div>-->
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="lend-space-footer text-center">
+    <div class="container">
+        <h4>Disclosure</h4>
+        <p>
+            LendSpace is not a lender. The LendSpace website does not offer or provide loans, but rather, it offers a service to match users
+            to suitable financial services.
+            It should not be construed as a lending agent or broker. The site does not endorse any lenders and does not charge visitors any
+            fees.
+            The website owners do not evaluate potential lenders’ applications, nor do they approve or deny credit.
+            The LendSpace website gathers applicants’ personal information and transmits it to lenders that are part of the site’s lending
+            network.
+            No one is required to make use of this website, nor are they under any obligation to begin contact with site operators or to
+            attempt to secure a loan with any of the site’s lending partners.
+            Some, but not all, lenders may offer loans of up to $35,000, and loans tend to range between $500 and $35,000.
+            Transmission of your financial and personal information on the website in no way obligates lenders to offer you a loan or any
+            other kind of credit product.
+            Be aware that cash transfer times can vary, depending on the lender and the bank you use. It may be necessary to fax information
+            under certain circumstances.
+            All questions about loans, and any concerns you may have should be directed to your lender. These loans are intended as
+            short-term financial solution to satisfy borrowers’ needs for immediate monetary relief.
+            This is not intended to be part of a long-term financial plan for individuals. These services are not offered in all states.
+            Potential borrows may undergo credit check if lenders choose to use any of the major credit reporting bureaus, including
+            Equifax, Trans Union and Experian.
+            They may also use other alternative sources to check credit ratings. Your request for a loan constitutes your agreement and
+            acknowledgement that (A) your personal data may be shared with lenders and perhaps other third-party partners,
+            and (B) lenders can acquire credit bureau reports that detail your credit history. Reports from major credit bureaus, such as
+            Equifax, Experian and TransUnion may be obtained and used to evaluate your reliability as a borrower.
+        </p>
+    </div>
+</section>
