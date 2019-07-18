@@ -26,6 +26,8 @@ import {
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { DateHelper } from '@shared/helpers/DateHelper';
 import { ApplyOfferDialogComponent } from '@root/personal-finance/shared/offers/apply-offer-modal/apply-offer-dialog.component';
+import { ConditionsModalComponent } from '@shared/common/conditions-modal/conditions-modal.component';
+import { environment } from '@root/environments/environment';
 
 @Component({
     selector: 'app-offers-wizard',
@@ -39,6 +41,17 @@ export class OffersWizardComponent implements OnInit {
     memberInfo$: Observable<GetMemberInfoResponse> = this.offersServiceProxy.getMemberInfo().pipe(publishReplay(), refCount());
     memberInfo: GetMemberInfoResponse;
     dialogRef: MatDialogRef<OffersWizardComponent, any>;
+    domain = environment.LENDSPACE_DOMAIN;
+    termsData = {
+        title: 'Terms of Use',
+        bodyUrl: this.domain + '/documents/terms.html',
+        downloadDisabled: true
+    }
+    privacyData = {
+        title: 'Privacy Policy',
+        bodyUrl: this.domain + '/documents/policy.html',
+        downloadDisabled: true
+    }
     private readonly INPUT_MASK = {
         ssn: '000-00-0000',
         phone: '+1 (X00) 000-0000',
@@ -198,5 +211,9 @@ export class OffersWizardComponent implements OnInit {
             (error) => {
                 if (this.data.campaignId) applyOfferDialog.close();
             });
+    }
+    
+    openConditionsDialog(data: any) {
+        this.dialog.open(ConditionsModalComponent, {panelClass: ['slider', 'footer-slider'], data: data});
     }
 }
