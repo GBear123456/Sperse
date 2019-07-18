@@ -89,8 +89,8 @@
                         headerCellTemplate="twoRowsHeaderCellTemplate"
                         alignment="left"
                         [allowEditing]="false"
-                        [caption]="l('DetailsHeaders_ForecastDate')"
-                        [minWidth]="140">
+                        [minWidth]="30"
+                        [caption]="l('DetailsHeaders_ForecastDate')">
                 <dxi-validation-rule type="custom" [message]="l('ForecastDateUpdating_validation_message')" [validationCallback]="validateForecastDate"></dxi-validation-rule>
             </dxi-column>
             <dxi-column dataField="date"
@@ -100,21 +100,21 @@
                         headerCellTemplate="twoRowsHeaderCellTemplate"
                         alignment="left"
                         [caption]="l('DetailsHeaders_ActualDate')"
-                        [allowEditing]="false"
-                        [minWidth]="120">
+                        [minWidth]="30"
+                        [allowEditing]="false">
             </dxi-column>
             <dxi-column dataField="status"
                         headerCellTemplate="twoRowsHeaderCellTemplate"
                         alignment="left"
                         [caption]="l('DetailsHeaders_CurrentStatus')"
-                        [allowEditing]="false"
-                        [minWidth]="130">
+                        [minWidth]="30"
+                        [allowEditing]="false">
             </dxi-column>
             <dxi-column dataField="descriptor"
-                        [minWidth]="130"
                         cellTemplate="descriptorCell"
                         [width]="detailsDescriptorColumnWidth()"
                         [allowEditing]="false"
+                        [minWidth]="30"
                         [caption]="l('DetailsHeaders_Descriptor')">
                 <dxo-header-filter [visible]="true"></dxo-header-filter>
             </dxi-column>
@@ -126,7 +126,7 @@
                         [cssClass]="tabularFontName"
                         [allowEditing]="false"
                         alignment="right"
-                        [minWidth]="150">
+                        [minWidth]="30">
                 <dxi-validation-rule type="numeric"></dxi-validation-rule>
             </dxi-column>
             <dxi-column dataField="credit"
@@ -136,8 +136,8 @@
                         [allowFiltering]="false"
                         [cssClass]="tabularFontName"
                         [allowEditing]="false"
-                        alignment="right"
-                        [minWidth]="150">
+                        [minWidth]="30"
+                        alignment="right">
                 <dxi-validation-rule type="numeric"></dxi-validation-rule>
             </dxi-column>
             <dxi-column [caption]="l('DetailsHeaders_Account')"
@@ -146,7 +146,7 @@
                         [allowFiltering]="false"
                         [cssClass]="tabularFontName"
                         [allowEditing]="false"
-                        [minWidth]="150"
+                        [minWidth]="30"
                         editCellTemplate="accountsEditSelect">
             </dxi-column>
             <dxi-column dataField="accountId"
@@ -154,6 +154,7 @@
                         [allowFiltering]="false"
                         [cssClass]="tabularFontName"
                         [allowEditing]="false"
+                        [minWidth]="30"
                         [visible]="false">
             </dxi-column>
             <dxi-column [caption]="l('DetailsHeaders_Type')"
@@ -161,16 +162,16 @@
                         [allowSorting]="false"
                         [allowFiltering]="false"
                         [allowEditing]="false"
-                        cellTemplate="typeCell"
-                        [minWidth]="130">
+                        [minWidth]="30"
+                        cellTemplate="typeCell">
             </dxi-column>
             <dxi-column [caption]="l('DetailsHeaders_Description')"
                         dataField="description"
                         cellTemplate="descriptionTemplate"
                         [width]="detailsDescriptionColumnWidth()"
-                        [minWidth]="200"
                         [allowSorting]="false"
                         [allowFiltering]="false"
+                        [minWidth]="30"
                         [allowEditing]="false">
                 <dxo-header-filter [visible]="true"></dxo-header-filter>
             </dxi-column>
