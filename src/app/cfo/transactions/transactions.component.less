@@ -1,3 +1,21 @@
+/deep/ .dx-editor-container {
+    &.dx-datagrid-filter-range-start, 
+    &.dx-datagrid-filter-range-end {
+        input {
+            padding: 0px 10px!important;
+            margin: -5px;
+            line-height: 0px;
+            font-size: 14px;
+        }
+        .dx-placeholder {
+            font-size: 14px;
+            &:before {
+                padding-top: 3px;
+            }
+        }
+    }
+}
+
 :host {
     display: block;
     position: relative;
@@ -117,6 +135,12 @@
             /deep/ dx-data-grid {
                 tr.dx-selection {
                     cursor: grab;
+                }
+
+                .dx-datagrid-headers {
+                    & > div {
+                        min-height: 65px;
+                    }
                 }
 
                 .dx-datagrid-filter-row {

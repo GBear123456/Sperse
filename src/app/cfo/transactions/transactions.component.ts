@@ -486,6 +486,16 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                     locateInMenu: 'auto',
                     items: [
                         {
+                            name: 'rowFilter',
+                            action: this.enableFilteringRow.bind(this),
+                            options: {
+                                checkPressed: () => {
+                                    return this.dataGrid && this.dataGrid.instance &&
+                                        this.dataGrid.instance.option('filterRow.visible');
+                                }
+                            }
+                        },
+                        {
                             name: 'showCompactRowsHeight',
                             visible: !this._cfoService.hasStaticInstance,
                             action: this.showCompactRowsHeight.bind(this)
@@ -537,6 +547,12 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                 }
             ]);
         }
+    }
+
+    enableFilteringRow(event) {
+        let visible = !this.dataGrid.instance.option('filterRow.visible');
+        this.dataGrid.instance.option('filterRow.visible', visible);
+        event.element.setAttribute('button-pressed', visible);
     }
 
     onToolbarPreparing(e) {

@@ -515,6 +515,22 @@
             }
         }
 
+        [accesskey="row-filter"] {
+            img {
+                display: none
+            }
+
+            .dx-button-content {
+                background: url('../../../../assets/common/icons/find-icon.svg') no-repeat center;
+            }
+
+            &[button-pressed="true"] {
+                .dx-button-content {
+                    background: url('../../../../assets/common/icons/find-blue-icon.svg') no-repeat center;
+                }
+            }
+        }
+
         [filter-selected="true"],
         .filter-selected {
             &::after {

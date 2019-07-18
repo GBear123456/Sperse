@@ -60,6 +60,10 @@ export class ToolBarComponent implements OnDestroy {
                 text: this.ls.l('Find'),
                 icon: this.getImgURI('find-icon')
             },
+            rowFilter: {
+                hint: this.ls.l('Find'),
+                accessKey: 'row-filter'
+            },
             sort: {
                 hint: this.ls.l('Sort'),
                 text: this.ls.l('Sort'),
