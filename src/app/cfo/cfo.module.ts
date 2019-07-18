@@ -42,6 +42,7 @@ import { DxSelectBoxModule } from 'devextreme-angular/ui/select-box';
 import { ModalModule } from 'ngx-bootstrap';
 import { Observable, of } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
+import { ImageViewerModule } from 'ng2-image-viewer';
 
 /** Application imports */
 import { ReportPeriodComponent } from '@app/cfo/shared/report-period/report-period.component';
@@ -169,6 +170,7 @@ let COMPONENTS = [
         DxSwitchModule,
         AngularGooglePlaceModule,
         DxPopupModule,
+        ImageViewerModule,
         BankAccountsCommonModule,
         SharedIntroStepsModule,
         AccountConnectorDialogModule,
