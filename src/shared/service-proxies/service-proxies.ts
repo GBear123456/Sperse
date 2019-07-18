@@ -34096,7 +34096,6 @@ export class BankAccountBalanceDto implements IBankAccountBalanceDto {
     balance!: number | undefined;
     balanceDate!: moment.Moment | undefined;
     isActive!: boolean | undefined;
-    reconciledBalance!: number | undefined;
 
     constructor(data?: IBankAccountBalanceDto) {
         if (data) {
@@ -34114,7 +34113,6 @@ export class BankAccountBalanceDto implements IBankAccountBalanceDto {
             this.balance = data["balance"];
             this.balanceDate = data["balanceDate"] ? moment(data["balanceDate"].toString()) : <any>undefined;
             this.isActive = data["isActive"];
-            this.reconciledBalance = data["reconciledBalance"];
         }
     }
 
@@ -34132,7 +34130,6 @@ export class BankAccountBalanceDto implements IBankAccountBalanceDto {
         data["balance"] = this.balance;
         data["balanceDate"] = this.balanceDate ? this.balanceDate.toISOString() : <any>undefined;
         data["isActive"] = this.isActive;
-        data["reconciledBalance"] = this.reconciledBalance;
         return data; 
     }
 }
@@ -34143,7 +34140,6 @@ export interface IBankAccountBalanceDto {
     balance: number | undefined;
     balanceDate: moment.Moment | undefined;
     isActive: boolean | undefined;
-    reconciledBalance: number | undefined;
 }
 
 export class StatsDetailFilter implements IStatsDetailFilter {
@@ -60100,7 +60096,6 @@ export interface INotificationSubscriptionDto {
 
 export class GetAllInput implements IGetAllInput {
     testMode!: boolean;
-    isDirectPostSupported!: boolean;
     category!: GetAllInputCategory | undefined;
     type!: GetAllInputType | undefined;
     country!: string | undefined;
@@ -60133,7 +60128,6 @@ export class GetAllInput implements IGetAllInput {
     init(data?: any) {
         if (data) {
             this.testMode = data["testMode"];
-            this.isDirectPostSupported = data["isDirectPostSupported"];
             this.category = data["category"];
             this.type = data["type"];
             this.country = data["country"];
@@ -60174,7 +60168,6 @@ export class GetAllInput implements IGetAllInput {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["testMode"] = this.testMode;
-        data["isDirectPostSupported"] = this.isDirectPostSupported;
         data["category"] = this.category;
         data["type"] = this.type;
         data["country"] = this.country;
@@ -60208,7 +60201,6 @@ export class GetAllInput implements IGetAllInput {
 
 export interface IGetAllInput {
     testMode: boolean;
-    isDirectPostSupported: boolean;
     category: GetAllInputCategory | undefined;
     type: GetAllInputType | undefined;
     country: string | undefined;
@@ -61448,7 +61440,6 @@ export class OfferFilter implements IOfferFilter {
     country!: string | undefined;
     state!: string | undefined;
     creditScore!: OfferFilterCreditScore | undefined;
-    excludeType!: OfferFilterExcludeType | undefined;
     isOfferCollection!: boolean | undefined;
     itemOfOfferCollection!: OfferFilterItemOfOfferCollection | undefined;
     loanAmount!: number | undefined;
@@ -61480,7 +61471,6 @@ export class OfferFilter implements IOfferFilter {
             this.country = data["country"];
             this.state = data["state"];
             this.creditScore = data["creditScore"];
-            this.excludeType = data["excludeType"];
             this.isOfferCollection = data["isOfferCollection"];
             this.itemOfOfferCollection = data["itemOfOfferCollection"];
             this.loanAmount = data["loanAmount"];
@@ -61524,7 +61514,6 @@ export class OfferFilter implements IOfferFilter {
         data["country"] = this.country;
         data["state"] = this.state;
         data["creditScore"] = this.creditScore;
-        data["excludeType"] = this.excludeType;
         data["isOfferCollection"] = this.isOfferCollection;
         data["itemOfOfferCollection"] = this.itemOfOfferCollection;
         data["loanAmount"] = this.loanAmount;
@@ -61561,7 +61550,6 @@ export interface IOfferFilter {
     country: string | undefined;
     state: string | undefined;
     creditScore: OfferFilterCreditScore | undefined;
-    excludeType: OfferFilterExcludeType | undefined;
     isOfferCollection: boolean | undefined;
     itemOfOfferCollection: OfferFilterItemOfOfferCollection | undefined;
     loanAmount: number | undefined;
@@ -65111,6 +65099,7 @@ export class GenerateInput implements IGenerateInput {
     from!: moment.Moment;
     to!: moment.Moment;
     period!: GenerateInputPeriod;
+    businessEntityIds!: number[] | undefined;
     bankAccountIds!: number[] | undefined;
 
     constructor(data?: IGenerateInput) {
@@ -65127,6 +65116,11 @@ export class GenerateInput implements IGenerateInput {
             this.from = data["from"] ? moment(data["from"].toString()) : <any>undefined;
             this.to = data["to"] ? moment(data["to"].toString()) : <any>undefined;
             this.period = data["period"];
+            if (data["businessEntityIds"] && data["businessEntityIds"].constructor === Array) {
+                this.businessEntityIds = [];
+                for (let item of data["businessEntityIds"])
+                    this.businessEntityIds.push(item);
+            }
             if (data["bankAccountIds"] && data["bankAccountIds"].constructor === Array) {
                 this.bankAccountIds = [];
                 for (let item of data["bankAccountIds"])
@@ -65147,6 +65141,11 @@ export class GenerateInput implements IGenerateInput {
         data["from"] = this.from ? this.from.toISOString() : <any>undefined;
         data["to"] = this.to ? this.to.toISOString() : <any>undefined;
         data["period"] = this.period;
+        if (this.businessEntityIds && this.businessEntityIds.constructor === Array) {
+            data["businessEntityIds"] = [];
+            for (let item of this.businessEntityIds)
+                data["businessEntityIds"].push(item);
+        }
         if (this.bankAccountIds && this.bankAccountIds.constructor === Array) {
             data["bankAccountIds"] = [];
             for (let item of this.bankAccountIds)
@@ -65160,6 +65159,7 @@ export interface IGenerateInput {
     from: moment.Moment;
     to: moment.Moment;
     period: GenerateInputPeriod;
+    businessEntityIds: number[] | undefined;
     bankAccountIds: number[] | undefined;
 }
 
@@ -73539,13 +73539,6 @@ export enum OfferFilterCreditScore {
     Good = "Good", 
     Fair = "Fair", 
     Poor = "Poor", 
-}
-
-export enum OfferFilterExcludeType {
-    MultiOfferSinglePage = "MultiOfferSinglePage", 
-    TrafficDistribution = "TrafficDistribution", 
-    DirectPost = "DirectPost", 
-    Carrier = "Carrier", 
 }
 
 export enum OfferFilterItemOfOfferCollection {
