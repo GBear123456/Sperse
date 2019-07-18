@@ -1,4 +1,4 @@
-<div class="synch-progress-wrapper">
+<div class="synch-progress-wrapper" *ngIf="(isInstanceAdmin || isMemberAccessManage) && createAccountAvailable">
     <button *ngIf="showSyncAccountButton && !showProgress"
             class="sync-account-button"
             (click)="syncAll(true)">
