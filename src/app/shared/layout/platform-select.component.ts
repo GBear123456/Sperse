@@ -79,7 +79,7 @@ export class PlatformSelectComponent extends AppComponentBase {
     }
 
     onItemClick(module) {
-        if ((this.module !== module.name || this.uri !== module.uri) &&
+        if ((this.module !== module.name || this.uri !== module.uri || module.footerItem) &&
             this._appService.isModuleActive(module.name)
         ) {
             let navigate = null;
