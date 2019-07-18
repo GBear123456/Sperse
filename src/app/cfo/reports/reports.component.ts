@@ -217,6 +217,7 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
                         from: this.dateFrom,
                         to: this.dateTo,
                         period: this.selectedPeriod,
+                        businessEntityIds: [],
                         bankAccountIds: []
                     })).subscribe(() => {
                         this.notify.info(this.l('SuccesfullyGenerated'));
