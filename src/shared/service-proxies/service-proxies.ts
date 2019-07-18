@@ -60865,7 +60865,6 @@ export class GetMemberInfoResponse implements IGetMemberInfoResponse {
     countryCode!: string | undefined;
     doB!: moment.Moment | undefined;
     creditScore!: GetMemberInfoResponseCreditScore | undefined;
-    isDirectPostSupported!: boolean | undefined;
     testMode!: boolean | undefined;
 
     constructor(data?: IGetMemberInfoResponse) {
@@ -60893,7 +60892,6 @@ export class GetMemberInfoResponse implements IGetMemberInfoResponse {
             this.countryCode = data["countryCode"];
             this.doB = data["doB"] ? moment(data["doB"].toString()) : <any>undefined;
             this.creditScore = data["creditScore"];
-            this.isDirectPostSupported = data["isDirectPostSupported"];
             this.testMode = data["testMode"];
         }
     }
@@ -60921,7 +60919,6 @@ export class GetMemberInfoResponse implements IGetMemberInfoResponse {
         data["countryCode"] = this.countryCode;
         data["doB"] = this.doB ? this.doB.toISOString() : <any>undefined;
         data["creditScore"] = this.creditScore;
-        data["isDirectPostSupported"] = this.isDirectPostSupported;
         data["testMode"] = this.testMode;
         return data; 
     }
@@ -60942,7 +60939,6 @@ export interface IGetMemberInfoResponse {
     countryCode: string | undefined;
     doB: moment.Moment | undefined;
     creditScore: GetMemberInfoResponseCreditScore | undefined;
-    isDirectPostSupported: boolean | undefined;
     testMode: boolean | undefined;
 }
 
