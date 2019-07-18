@@ -1,13 +1,10 @@
 @mainFont: 'Poppins', sans-serif;
-@yellowColor: #f0d500;
-@darkGrayColor: #262626;
 
 :host {
-    margin-top: 50px;
     min-width: 1200px;
     height: 100%;
     display: block;
-    background: @darkGrayColor;    
+    background: transparent;    
 
     *:not(.fa) {
         font-family: @mainFont;
@@ -19,12 +16,6 @@
         -moz-user-select: none;
         -ms-user-select: none;
         user-select: none;
-    }
-
-    .yellow-title {
-        font-size: 50px;
-        font-weight: 500;
-        color: @yellowColor !important;
     }
 
     .custom-checkbox {
@@ -39,7 +30,7 @@
 
     .get-free {
         min-height: 441px;
-        background-color: #fec80d;
+        background-color: transaparent;
         font-family: @mainFont;
 
         dx-text-box {
@@ -53,7 +44,7 @@
         }
 
         .girl-bg {
-            background: #fec80d url(../../assets/common/images/lend-space-dark/girl-2.png) 4px bottom no-repeat;
+            background: transparent;
             background-size: 52%;
 
             @media all and (max-width: 1199px) {
@@ -66,8 +57,8 @@
         }
 
         h2 {
-            text-align: left;
-            color: #000;
+            text-align: center;
+            color: #FFF;
             font-size: 42px;
             font-weight: 700;
             line-height: 45px;
@@ -76,11 +67,12 @@
         }
 
         h4 {
+            color: #FFF;
             text-transform: uppercase;
         }
 
         p {
-            color: #333;
+            color: #FFF;
             font-size: 14px;
             line-height: 20px;
             font-weight: 500;
@@ -170,7 +162,7 @@
                 span {
                     border: 1px solid #000;
                     background: #fff;
-                    color: lighten(#000, 50%);
+                    color: lighten(#FFF, 50%);
                     display: inline-block;
                     width: 40px;
                     line-height: 28px;
@@ -193,7 +185,7 @@
                 input:checked ~ .yes,
                 input:not(:checked) ~ .no {
                     background: #ffce00;
-                    color: #000;
+                    color: #FFF;
                     font-weight: bold;
                 }
             }
@@ -208,6 +200,7 @@
             text-align: center;
             
             h3 {
+                color: #FFF;
                 font-weight: 600;
                 font-size: 16px;
             }
@@ -219,12 +212,12 @@
                     padding: 0 10px;
                     text-decoration: underline;
                     letter-spacing: 1px;
-                    color: @darkGrayColor;
+                    color: #FFF;
                     font-weight: normal;
                     transition: .3s;
                     
                     &:hover {
-                        color: lighten(@darkGrayColor, 10%);
+                        color: lighten(#262626, 10%);
                     }
                 }
             }
@@ -240,7 +233,7 @@
 
             a {
                 font-weight: 700;
-                color: #000;
+                color: #FFF;
                 text-decoration: none;
                 transition: .2s;
 
@@ -281,62 +274,6 @@
         }
     }
 
-    .lend-space-footer {
-        background: #262626;
-        padding: 38px 0 38px;
-
-        * {
-            color: #ccc;
-            font-size: 12px;
-            font-weight: 400;
-            line-height: 18px;
-        }
-
-        h4 {
-            font-size: 16px;
-            font-weight: 700;
-
-            + p {
-                text-align: justify;
-            }
-        }
-
-        .logos-wrap {
-            display: none !important;
-            padding: 25px 0;
-
-            ul {
-                margin: 0 auto;
-
-                li {
-                    display: inline-block;
-                    padding: 10px 20px;
-                    transition: .2s;
-
-                    .logo-small {
-                        width: 110px;
-                    }
-
-                    &:hover {
-                        opacity: .8;
-                    }
-                }
-            }
-        }
-
-        .terms {
-            display: none;
-            color: #f0d500;
-            font-weight: 400;
-            text-transform: uppercase;
-        }
-
-        .copy {
-            display: none;
-            margin-bottom: 0;
-        }
-    }
-
     .actions-field {
         margin-top: 20px;
         margin-bottom: 30px;
@@ -361,7 +298,7 @@
         font-size: 12px;
 
         a {
-            color: #000;
+            color: #FFF;
             font-weight: bold;
 
             &:hover {
@@ -371,11 +308,7 @@
     }
 }
 
-/deep/ .pfm-app .wrapper {
-    padding: 0 !important;
-}
-
-/deep/ .sign-up-lend-space {
+/deep/ .sign-up {
 
     .dx-texteditor {
         background-color: transparent;
@@ -383,16 +316,17 @@
     }
 
     input[type="text"].dx-texteditor-input {
+        color: #FFF;
         background-color: transparent;
         border: 0;
         border-radius: 0;
-        border-bottom: 2px solid #000;
+        border-bottom: 2px solid #FFF;
     }
 
     .dx-placeholder {
         font-size: 15px;
         font-weight: 600;
-        color: #000 !important;
+        color: #FFF !important;
         transition: .2s;
     }
     //.custom-radio-2-btn {
@@ -420,7 +354,7 @@
     dx-button {
         border: 2px solid #333;
         border-radius: 0;
-        color: #333;
+        color: #FFF;
         padding: 5px 10px;
 
 
@@ -451,7 +385,7 @@
     .privacy-term {
         .dx-checkbox-icon {
             vertical-align: top;
-            background-color: #e8daa8 !important;
+            background-color: #FFF !important;
         }
 
         &.dx-checkbox-checked {

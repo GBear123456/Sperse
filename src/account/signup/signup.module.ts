@@ -1,4 +1,5 @@
 import { NgModule } from '@angular/core';
+import { RouterModule } from '@angular/router';
 import { SignupComponent } from './signup.component';
 import { SignupFormComponent } from './signup-form.component';
 import { DxButtonModule } from 'devextreme-angular/ui/button';
@@ -11,6 +12,7 @@ import { FormsModule } from '@angular/forms';
 @NgModule({
     imports: [
         CommonModule,
+        RouterModule,
         FormsModule,
         DxTextBoxModule,
         DxValidatorModule,
