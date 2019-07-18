@@ -214,17 +214,14 @@ export class OffersService {
                 panelClass: ['offers-wizard', 'setup'],
                 data: {
                     offer: offer,
+                    campaignId: offer.campaignId,
                     creditLandLogoUrl: this.creditLandLogoUrl,
                     isCreditCard: isCreditCard
                 }
             }).afterClosed().subscribe((result: SubmitApplicationOutput)  => {
-                redirectUrl = result.redirectUrl;
-                if (result.redirectUrl) window.open(result.redirectUrl, '_blank');
+                if (result && result.redirectUrl) window.open(result.redirectUrl, '_blank');
             });
         } else {
-            submitRequestInput.redirectUrl = redirectUrl;
-        }
-        if (linkIsDirect) {
             submitRequestInput.redirectUrl = redirectUrl;
             const applyOfferDialog = this.dialog.open(ApplyOfferDialogComponent, {
                 width: '530px',

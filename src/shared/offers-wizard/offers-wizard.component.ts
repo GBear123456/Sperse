@@ -168,27 +168,35 @@ export class OffersWizardComponent implements OnInit {
     }
 
     submitApplicationProfile() {
-        const modalData = {
-            processingSteps: [null, null, null, null],
-            completeDelays: [ 1000, 1000, 1000, null ],
-            delayMessages: <any>[ null, null, null, this.ls.l('Offers_TheNextStepWillTake') ],
-            title: 'Offers_ProcessingLoanRequest',
-            subtitle: 'Offers_WaitLoanRequestProcessing',
-            redirectUrl: this.data.offer.redirectUrl,
-            logoUrl: this.data.offer.campaignProviderType === OfferDtoCampaignProviderType.CreditLand
-                ? this.data.offercreditLandLogoUrl
-                : (this.data.isCreditCard ? null : this.data.offer.logoUrl)
-        };
-
-        const applyOfferDialog = this.dialog.open(ApplyOfferDialogComponent, {
-            width: '530px',
-            panelClass: 'apply-offer-dialog',
-            data: modalData
-        });
-
-        this.offersServiceProxy.submitApplication(this.submitApplicationProfileInput).subscribe((result: SubmitApplicationOutput) => {
-            applyOfferDialog.close();
-            this.dialogRef.close(result);
-        });
+        let applyOfferDialog;
+        if (this.data.campaignId && this.data.offer) {
+            const modalData = {
+                processingSteps: [null, null, null, null],
+                completeDelays: [ 1000, 1000, 1000, null ],
+                delayMessages: <any>[ null, null, null, this.ls.l('Offers_TheNextStepWillTake') ],
+                title: 'Offers_ProcessingLoanRequest',
+                subtitle: 'Offers_WaitLoanRequestProcessing',
+                redirectUrl: this.data.offer.redirectUrl,
+                logoUrl: this.data.offer.campaignProviderType === OfferDtoCampaignProviderType.CreditLand
+                    ? this.data.offercreditLandLogoUrl
+                    : (this.data.isCreditCard ? null : this.data.offer.logoUrl)
+            };
+            applyOfferDialog = this.dialog.open(ApplyOfferDialogComponent, {
+                width: '530px',
+                panelClass: 'apply-offer-dialog',
+                data: modalData
+            });
+        }
+        this.submitApplicationProfileInput.campaignId = this.data.campaignId;
+        this.offersServiceProxy.submitApplication(this.submitApplicationProfileInput).subscribe(
+            (result: SubmitApplicationOutput) => {
+                if (result) {
+                    if (this.data.campaignId) applyOfferDialog.close();
+                    this.dialogRef.close(result);
+                }
+            },
+            (error) => {
+                if (this.data.campaignId) applyOfferDialog.close();
+            });
     }
 }
