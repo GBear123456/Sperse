@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 
 /** Third party imports */
 import { Observable, ReplaySubject } from 'rxjs';
+import { first, switchMap } from 'rxjs/operators';
 import * as moment from 'moment-timezone';
 
 /** Application imports */
@@ -27,11 +28,17 @@ export class SyncDatePickerService {
                 this._cfoService.instanceId, date).subscribe(() => this._maxSyncDate.next(date));
     }
 
+    getMaxVisibleDate() {
+        return this._instanceService.getMaxVisibleDate(
+            this._cfoService.instanceType as InstanceType74, this._cfoService.instanceId);
+    }
+
     invalidate() {  
+        let sub;
         if (this._cfoService.initialized)
-            this._instanceService.getMaxVisibleDate(this._cfoService.instanceType as InstanceType74, this._cfoService.instanceId)
-                .subscribe(date => this._maxSyncDate.next(date.isValid() ? date : moment()));
-        else 
-            this._maxSyncDate.next(moment());
+            sub = this.getMaxVisibleDate();
+        else
+            sub = this._cfoService.instanceChangeProcess().pipe(switchMap(() => this.getMaxVisibleDate()));
+        sub.subscribe(date => this._maxSyncDate.next(date.isValid() ? date : moment.utc().set({hour:0,minute:0,second:0,millisecond:0})));
     }
 }
