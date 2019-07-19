@@ -1,6 +1,6 @@
 import { Component, OnInit, Injector } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { PackageServiceProxy, ListResultDtoOfPackageDto } from '@shared/service-proxies/service-proxies';
+import { PackageServiceProxy, PackageDtoListResultDto } from '@shared/service-proxies/service-proxies';
 import { PackageIdService } from './package-id.service';
 
 @Component({
@@ -10,7 +10,7 @@ import { PackageIdService } from './package-id.service';
     providers: [PackageServiceProxy]
 })
 export class PackagesComponent extends AppComponentBase implements OnInit {
-    packageList: ListResultDtoOfPackageDto;
+    packageList: PackageDtoListResultDto;
     constructor(
         injector: Injector,
         private data: PackageIdService,

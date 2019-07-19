@@ -3,7 +3,7 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 import { Observable } from '@node_modules/rxjs';
 import { finalize, switchMap } from '@node_modules/rxjs/internal/operators';
 import {
-    OfferFilterCategory,
+    CampaignCategory,
     GetMemberInfoResponse,
     OfferDto,
     OfferServiceProxy,
@@ -51,7 +51,7 @@ export class CreditMonitoringComponent implements OnInit {
                 this.offersServiceProxy.getAll(GetAllInput.fromJS({
                     testMode: memberInfo.testMode,
                     isDirectPostSupported: memberInfo.isDirectPostSupported,
-                    category: OfferFilterCategory.CreditMonitoring,
+                    category: CampaignCategory.CreditMonitoring,
                     country: 'US',
                     isOfferCollection: false
                 })).pipe(

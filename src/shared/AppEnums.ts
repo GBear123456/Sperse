@@ -1,35 +1,35 @@
 import {
-    ChatMessageDtoReadState,
-    ChatMessageDtoSide,
-    FriendDtoState,
-    DefaultTimezoneScope,
+    ChatMessageReadState,
+    ChatSide,
+    FriendshipState,
+    SettingScopes,
     UserNotificationState,
-    IsTenantAvailableOutputState,
-    IncomeStatisticsDateInterval
+    TenantAvailabilityState,
+    ChartDateInterval
 //    RegisterTenantInputSubscriptionStartType,
 
 } from '@shared/service-proxies/service-proxies';
 
 export class AppChatMessageReadState {
-    static Unread: number = ChatMessageDtoReadState._1;
-    static Read: number = ChatMessageDtoReadState._2;
+    static Unread: number = ChatMessageReadState._1;
+    static Read: number = ChatMessageReadState._2;
 }
 
 export class AppChatSide {
-    static Sender: number = ChatMessageDtoSide._1;
-    static Receiver: number = ChatMessageDtoSide._2;
+    static Sender: number = ChatSide._1;
+    static Receiver: number = ChatSide._2;
 }
 
 export class AppFriendshipState {
-    static Accepted: number = FriendDtoState._1;
-    static Blocked: number = FriendDtoState._2;
+    static Accepted: number = FriendshipState._1;
+    static Blocked: number = FriendshipState._2;
 }
 
 
 export class AppTimezoneScope {
-    static Application: number = DefaultTimezoneScope._1;
-    static Tenant: number = DefaultTimezoneScope._2;
-    static User: number = DefaultTimezoneScope._4;
+    static Application: number = SettingScopes._1;
+    static Tenant: number = SettingScopes._2;
+    static User: number = SettingScopes._4;
 }
 
 export class AppUserNotificationState {
@@ -38,15 +38,15 @@ export class AppUserNotificationState {
 }
 
 export class AppTenantAvailabilityState {
-    static Available: number = IsTenantAvailableOutputState._1;
-    static InActive: number = IsTenantAvailableOutputState._2;
-    static NotFound: number = IsTenantAvailableOutputState._3;
+    static Available: number = TenantAvailabilityState._1;
+    static InActive: number = TenantAvailabilityState._2;
+    static NotFound: number = TenantAvailabilityState._3;
 }
 
 export class AppIncomeStatisticsDateInterval {
-    static Daily: number = IncomeStatisticsDateInterval._1;
-    static Weekly: number = IncomeStatisticsDateInterval._2;
-    static Monthly: number = IncomeStatisticsDateInterval._3;
+    static Daily: number = ChartDateInterval._1;
+    static Weekly: number = ChartDateInterval._2;
+    static Monthly: number = ChartDateInterval._3;
 }
 /*
 export class SubscriptionStartType {

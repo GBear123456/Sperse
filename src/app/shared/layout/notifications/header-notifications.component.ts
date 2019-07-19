@@ -1,6 +1,6 @@
 import { Component, Injector, OnInit, ViewEncapsulation } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { InstanceServiceProxy, NotificationServiceProxy, TenantSubscriptionServiceProxy, UserNotification } from '@shared/service-proxies/service-proxies';
+import { InstanceServiceProxy, NotificationServiceProxy, TenantSubscriptionServiceProxy, UserNotificationDto } from '@shared/service-proxies/service-proxies';
 import { IFormattedUserNotification, UserNotificationHelper } from './UserNotificationHelper';
 import { PaymentWizardComponent } from '../../common/payment-wizard/payment-wizard.component';
 import { AppService } from '@app/app.service';
@@ -103,7 +103,7 @@ export class HeaderNotificationsComponent extends AppComponentBase implements On
         this._notificationService.getUserNotifications(undefined, 3, 0).subscribe(result => {
             this.unreadNotificationCount = result.unreadCount;
             this.notifications = [];
-            $.each(result.items, (index, item: UserNotification) => {
+            $.each(result.items, (index, item: UserNotificationDto) => {
                 this.notifications.push(this._userNotificationHelper.format(<any>item));
             });
         });

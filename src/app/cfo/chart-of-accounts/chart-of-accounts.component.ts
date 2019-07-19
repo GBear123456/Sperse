@@ -104,8 +104,8 @@ export class ChartOfAccountsComponent extends CFOComponentBase implements OnInit
             this._categoryTreeServiceProxy.import(
                 InstanceType[this.instanceType],
                 this.instanceId,
-                accTypes,
-                this.override
+                this.override,
+                accTypes
             )
                 .pipe(finalize(() => { abp.ui.clearBusy(); }))
                 .subscribe(() => {

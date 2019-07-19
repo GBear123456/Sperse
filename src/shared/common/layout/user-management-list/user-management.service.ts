@@ -11,7 +11,7 @@ import { MySettingsModalComponent } from 'app/shared/layout/profile/my-settings-
 import { UploadPhotoDialogComponent } from 'app/shared/common/upload-photo-dialog/upload-photo-dialog.component';
 import {
     LinkedUserDto, ProfileServiceProxy,
-    TenantLoginInfoDtoCustomLayoutType,
+    LayoutType,
     UpdateProfilePictureInput, UserLinkServiceProxy
 } from 'shared/service-proxies/service-proxies';
 import { LinkedAccountsModalComponent } from 'app/shared/layout/linked-accounts-modal.component';
@@ -129,12 +129,12 @@ export class UserManagementService {
 
     checkLendSpaceLayout() {
         let tenant = this.appSession.tenant;
-        return tenant && (tenant.customLayoutType == TenantLoginInfoDtoCustomLayoutType.LendSpace);
+        return tenant && (tenant.customLayoutType == LayoutType.LendSpace);
     }
 
     checkAdvicePeriodLayout() {
         let tenant = this.appSession.tenant;
-        return tenant && (tenant.customLayoutType == TenantLoginInfoDtoCustomLayoutType.AdvicePeriod);
+        return tenant && (tenant.customLayoutType == LayoutType.AdvicePeriod);
     }
 
     getProfilePictureUrl(id, defaultUrl = AppConsts.imageUrls.profileDefault) {

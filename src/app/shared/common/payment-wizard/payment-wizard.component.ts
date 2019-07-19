@@ -22,7 +22,7 @@ import { AppService } from '@app/app.service';
 import { PackageOptions } from '@app/shared/common/payment-wizard/models/package-options.model';
 import { PaymentService } from '@app/shared/common/payment-wizard/payment.service';
 import { PaymentStatusEnum } from '@app/shared/common/payment-wizard/models/payment-status.enum';
-import { Module, PackageServiceProxy, TenantSubscriptionServiceProxy } from '@shared/service-proxies/service-proxies';
+import { ModuleType, PackageServiceProxy, TenantSubscriptionServiceProxy } from '@shared/service-proxies/service-proxies';
 import { AppComponentBase } from 'shared/common/app-component-base';
 import { StatusInfo } from './models/status-info';
 
@@ -41,7 +41,7 @@ export class PaymentWizardComponent extends AppComponentBase implements OnInit {
     paymentStatus: PaymentStatusEnum;
     paymentStatusData: StatusInfo;
     refreshAfterClose = false;
-    module: Module;
+    module: ModuleType;
     subscriptionIsLocked: boolean;
     subscriptionIsFree: boolean;
     trackingCode: string;

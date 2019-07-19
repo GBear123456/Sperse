@@ -12,7 +12,7 @@ import * as emailUsageTypesActions from '@app/store/email-usage-types-store/acti
 import { ContactEmailServiceProxy } from 'shared/service-proxies/service-proxies';
 import { State } from './state';
 import { getLoadedTime } from './selectors';
-import { ListResultDtoOfEmailUsageTypeDto } from '@shared/service-proxies/service-proxies';
+import { EmailUsageTypeDtoListResultDto } from '@shared/service-proxies/service-proxies';
 import { AppConsts } from '@shared/AppConsts';
 import { StoreHelper } from '@root/store/store.helper';
 
@@ -34,7 +34,7 @@ export class EmailUsageTypesStoreEffects {
 
             return this.injector.get(ContactEmailServiceProxy).getEmailUsageTypes()
                 .pipe(
-                    map((emailUsageTypes: ListResultDtoOfEmailUsageTypeDto) => {
+                    map((emailUsageTypes: EmailUsageTypeDtoListResultDto) => {
                         return new emailUsageTypesActions.LoadSuccessAction(emailUsageTypes.items);
                     }),
                     catchError(err => {

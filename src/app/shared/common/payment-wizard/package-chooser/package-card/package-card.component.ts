@@ -10,7 +10,7 @@ import { DecimalPipe } from '@angular/common';
 import { BillingPeriod } from '@app/shared/common/payment-wizard/models/billing-period.enum';
 import { PackageEditionConfigDto, PackageEditionConfigFeatureDto } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
-import { Module } from '@shared/service-proxies/service-proxies';
+import { ModuleType } from '@shared/service-proxies/service-proxies';
 import { AppConsts } from '@shared/AppConsts';
 
 @Component({
@@ -27,7 +27,7 @@ export class PackageCardComponent implements OnChanges {
     @Input() currencySymbol = '$';
     @Input() usersAmount: number;
     @Input() editions: PackageEditionConfigDto[];
-    @Input() module: Module;
+    @Input() module: ModuleType;
     @HostBinding('class.isActive') public isActive: boolean;
     @HostBinding('class.bestValue') @Input() bestValue = false;
     baseUrl = AppConsts.appBaseHref;

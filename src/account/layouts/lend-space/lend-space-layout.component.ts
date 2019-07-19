@@ -5,7 +5,7 @@ import { Router, NavigationStart } from '@angular/router';
 /** Application imports */
 import { AppComponentBase } from '@shared/common/app-component-base';
 import * as moment from 'moment';
-import {TenantLoginInfoDtoCustomLayoutType} from '@shared/service-proxies/service-proxies';
+import {LayoutType} from '@shared/service-proxies/service-proxies';
 import {AppSessionService} from '@shared/common/session/app-session.service';
 
 @Component({

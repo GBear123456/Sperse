@@ -16,10 +16,9 @@ import {
     ApplicationServiceProxy,
     CountryStateDto,
     MemberServiceProxy,
-    RegisterMemberRequestGender,
+    Gender,
     MemberPaymentAuthorizeRequestDto,
     MemberInfoDto,
-    MemberInfoDtoGender,
     MemberAddressDto,
     PasswordComplexitySetting,
 } from '@shared/service-proxies/service-proxies';
@@ -63,8 +62,8 @@ export class CreditWizardPageComponent extends AppComponentBase implements OnIni
     states: CountryStateDto[];
     uniqueId: string = UUID();
     gender = [
-        { text: 'Male', value: RegisterMemberRequestGender.Male },
-        { text: 'Female', value: RegisterMemberRequestGender.Female }
+        { text: 'Male', value: Gender.Male },
+        { text: 'Female', value: Gender.Female }
     ];
     radioGroupCitizen = [
         { text: 'Yes', status: true },
@@ -129,7 +128,7 @@ export class CreditWizardPageComponent extends AppComponentBase implements OnIni
                             this.model.ssn = result.memberInfo.ssn;
                             this.model.phone = result.memberInfo.phone;
                             this.model.isUSCitizen = result.memberInfo.isUSCitizen;
-                            this.model.gender = <RegisterMemberRequestGender><any>result.memberInfo.gender;
+                            this.model.gender = <Gender><any>result.memberInfo.gender;
 
                             if (result.memberInfo.address) {
                                 this.model.address = result.memberInfo.address;
@@ -338,7 +337,7 @@ export class CreditWizardPageComponent extends AppComponentBase implements OnIni
         memberInfo.ssn = model.ssn;
         memberInfo.isUSCitizen = model.isUSCitizen;
 
-        memberInfo.gender = <MemberInfoDtoGender><any>model.gender;
+        memberInfo.gender = <Gender><any>model.gender;
         memberInfo.address = model.address;
 
         return memberInfo;

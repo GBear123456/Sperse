@@ -12,7 +12,7 @@ import * as phoneUsageTypesActions from '@app/store/phone-usage-types-store/acti
 import { ContactPhoneServiceProxy } from 'shared/service-proxies/service-proxies';
 import { State } from './state';
 import { getLoadedTime } from './selectors';
-import { ListResultDtoOfPhoneUsageTypeDto } from '@shared/service-proxies/service-proxies';
+import { PhoneUsageTypeDtoListResultDto } from '@shared/service-proxies/service-proxies';
 import { AppConsts } from '@shared/AppConsts';
 import { StoreHelper } from '@root/store/store.helper';
 
@@ -34,7 +34,7 @@ export class PhoneUsageTypesStoreEffects {
 
             return this.injector.get(ContactPhoneServiceProxy).getPhoneUsageTypes()
                 .pipe(
-                    map((phoneUsageTypes: ListResultDtoOfPhoneUsageTypeDto) => {
+                    map((phoneUsageTypes: PhoneUsageTypeDtoListResultDto) => {
                         return new phoneUsageTypesActions.LoadSuccessAction(phoneUsageTypes.items);
                     }),
                     catchError(err => {

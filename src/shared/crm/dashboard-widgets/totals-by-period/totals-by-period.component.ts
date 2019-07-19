@@ -44,7 +44,7 @@ import startCase from 'lodash/startCase';
 import { CrmStore, PipelinesStoreSelectors } from '@app/crm/store';
 import { TotalsByPeriodModel } from './totals-by-period.model';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { DashboardServiceProxy, GroupBy, GroupBy2 } from '@shared/service-proxies/service-proxies';
+import { DashboardServiceProxy, GroupByPeriod } from '@shared/service-proxies/service-proxies';
 import { DashboardWidgetsService } from '../dashboard-widgets.service';
 import { AppConsts } from '@shared/AppConsts';
 import { GetCustomerAndLeadStatsOutput } from '@shared/service-proxies/service-proxies';
@@ -70,19 +70,19 @@ export class TotalsByPeriodComponent extends AppComponentBase implements OnInit,
     nativeElement: any;
     periods: TotalsByPeriodModel[] = [
          {
-             key: GroupBy.Daily,
+             key: GroupByPeriod.Daily,
              name: 'Daily',
              text: `30 ${this.ls('Platform', 'Periods_Day_plural')}`,
              amount: 30
          },
          {
-             key: GroupBy.Weekly,
+             key: GroupByPeriod.Weekly,
              name: 'Weekly',
              text: `15 ${this.ls('Platform', 'Periods_Week_plural')}`,
              amount: 15
         },
         {
-            key: GroupBy.Monthly,
+            key: GroupByPeriod.Monthly,
             name: 'Monthly',
             text: `12 ${this.l('Periods_Month_plural')}`,
             amount: 12
@@ -215,7 +215,7 @@ export class TotalsByPeriodComponent extends AppComponentBase implements OnInit,
 
     private loadCustomersAndLeadsStats(period: any, isCumulative: boolean): Observable<GetCustomerAndLeadStatsOutput[]> {
         return this._dashboardServiceProxy.getCustomerAndLeadStats(
-            GroupBy2[(period.name as GroupBy2)],
+            GroupByPeriod[(period.name as GroupByPeriod)],
             period.amount,
             isCumulative
         );
@@ -299,7 +299,7 @@ export class TotalsByPeriodComponent extends AppComponentBase implements OnInit,
 
     private getHeaderFormattedDate(date: moment.Moment): string {
         let formattedDate;
-        if (this.selectedPeriod.key !== GroupBy.Monthly) {
+        if (this.selectedPeriod.key !== GroupByPeriod.Monthly) {
             const dateEnding = date.format('Do').slice(-2);
             formattedDate = `${date.format('MMM D')}<sup>${dateEnding}</sup> ${date.format('YYYY')}`;
         } else {

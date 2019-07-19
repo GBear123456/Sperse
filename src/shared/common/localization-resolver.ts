@@ -9,7 +9,7 @@ import { tap, take, mergeMap } from 'rxjs/operators';
 /** Application imports */
 import { LocalizationServiceProxy } from '@shared/service-proxies/service-proxies';
 import { AppSessionService } from '@shared/common/session/app-session.service';
-import { TenantLoginInfoDtoCustomLayoutType } from '@shared/service-proxies/service-proxies';
+import { LayoutType } from '@shared/service-proxies/service-proxies';
 import { AppConsts } from '@shared/AppConsts';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 
@@ -23,7 +23,7 @@ export class LocalizationResolver implements CanActivateChild {
 
     canActivateChild(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
         let defaultLocalization = AppConsts.localization.defaultLocalizationSourceName;
-        if (this.session.tenant && this.session.tenant.customLayoutType === TenantLoginInfoDtoCustomLayoutType.LendSpace)
+        if (this.session.tenant && this.session.tenant.customLayoutType === LayoutType.LendSpace)
             defaultLocalization = 'PFM';
 
         return this.checkLoadLocalization(route.data.localizationSource || defaultLocalization).pipe(

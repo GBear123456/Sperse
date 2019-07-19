@@ -23,7 +23,7 @@ import {
     HostDashboardData,
     HostDashboardServiceProxy,
     IncomeStastistic,
-    IncomeStatisticsDateInterval,
+    ChartDateInterval,
     RecentTenant, TenantEdition
 } from '@shared/service-proxies/service-proxies';
 import { MomentFormatPipe } from '@shared/utils/moment-format.pipe';
@@ -98,7 +98,7 @@ export class HostDashboardComponent implements OnInit {
             }),
             switchMap(([, interval, dateRange]: [null, AppIncomeStatisticsDateInterval, CalendarValuesModel]) => {
                 return this._hostDashboardService.getDashboardStatisticsData(
-                    interval as IncomeStatisticsDateInterval,
+                    interval as ChartDateInterval,
                     DateHelper.removeTimezoneOffset(dateRange.from.value, true, 'from'),
                     DateHelper.removeTimezoneOffset(dateRange.to.value, true, 'to')
                 ).pipe(

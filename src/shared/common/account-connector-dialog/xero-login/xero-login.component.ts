@@ -92,8 +92,8 @@ export class XeroLoginComponent {
                         request$ = this._categoryTreeServiceProxy.sync(
                             <any>this._cfoService.instanceType,
                             this._cfoService.instanceId,
-                            syncInput,
-                            this.overwriteCurrentCategoryTree
+                            this.overwriteCurrentCategoryTree,
+                            syncInput
                         ).pipe(mapTo(syncAccountId));
                     }
                     return request$;

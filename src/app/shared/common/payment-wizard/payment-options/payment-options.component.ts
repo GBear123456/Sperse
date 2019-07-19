@@ -14,15 +14,15 @@ import { StatusInfo } from '@app/shared/common/payment-wizard/models/status-info
 import { PaymentMethods } from '@app/shared/common/payment-wizard/models/payment-methods.enum';
 import {
     ACHCustomerInfoDto,
-    PaymentRequestInfoDtoPaymentMethod,
+    PaymentMethod,
     BankCardInfoDto,
     PaymentRequestInfoDto,
     TenantSubscriptionServiceProxy,
     PayPalInfoDto,
-    PaymentRequestInfoDtoPaymentInfoType,
-    ModuleSubscriptionInfoFrequency,
+    PaymentInfoType,
+    PaymentPeriodType,
     RequestPaymentDto,
-    RequestPaymentDtoRequestType,
+    RequestPaymentType,
     ModuleSubscriptionInfo,
     BankTransferSettingsDto,
     RequestPaymentResult
@@ -126,16 +126,16 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
                 editionId: this.plan.selectedEditionId,
                 maxUserCount: this.plan.usersAmount,
                 frequency: this.plan.billingPeriod == BillingPeriod.Monthly
-                    ? ModuleSubscriptionInfoFrequency._30
-                    : ModuleSubscriptionInfoFrequency._365
+                    ? PaymentPeriodType._30
+                    : PaymentPeriodType._365
             }
         };
         switch (paymentMethod) {
             case PaymentMethods.eCheck:
                 const eCheckData = data as ECheckDataModel;
                 paymentInfo.billingInfo = PaymentRequestInfoDto.fromJS({
-                    paymentMethod: PaymentRequestInfoDtoPaymentMethod.Charge,
-                    paymentInfoType: PaymentRequestInfoDtoPaymentInfoType.ACH,
+                    paymentMethod: PaymentMethod.Charge,
+                    paymentInfoType: PaymentInfoType.ACH,
                     achCustomer: ACHCustomerInfoDto.fromJS({
                         customerRoutingNo: eCheckData.routingNumber,
                         customerAcctNo: eCheckData.bankAccountNumber,
@@ -146,8 +146,8 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
             case PaymentMethods.CreditCard:
                 const creditCardData = data as BankCardDataModel;
                 paymentInfo.billingInfo = PaymentRequestInfoDto.fromJS({
-                    paymentMethod: PaymentRequestInfoDtoPaymentMethod.Recurring,
-                    paymentInfoType: PaymentRequestInfoDtoPaymentInfoType.BankCard,
+                    paymentMethod: PaymentMethod.Recurring,
+                    paymentInfoType: PaymentInfoType.BankCard,
                     bankCard: BankCardInfoDto.fromJS({
                         holderName: creditCardData.holderName,
                         cardNumber: creditCardData.cardNumber.replace(/-|\s/g, ''),
@@ -167,8 +167,8 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
             case PaymentMethods.PayPal:
                 const payPalData = data as PayPalDataModel;
                 paymentInfo.billingInfo = PaymentRequestInfoDto.fromJS({
-                    paymentMethod: PaymentRequestInfoDtoPaymentMethod.Capture,
-                    paymentInfoType: PaymentRequestInfoDtoPaymentInfoType.PayPal,
+                    paymentMethod: PaymentMethod.Capture,
+                    paymentInfoType: PaymentInfoType.PayPal,
                     payPal: PayPalInfoDto.fromJS({
                         paymentId: payPalData.paymentId,
                         payerId: payPalData.payerId
@@ -191,7 +191,7 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
                               maxUserCount: paymentInfo.subscriptionInfo.maxUserCount,
                               frequency: paymentInfo.subscriptionInfo.frequency
                           }),
-                          requestType: RequestPaymentDtoRequestType.ManualBankTransfer
+                          requestType: RequestPaymentType.ManualBankTransfer
                       })
                   )
                 : this.tenantSubscriptionServiceProxy.setupSubscription(paymentInfo);

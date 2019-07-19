@@ -15,7 +15,7 @@ import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import {
-    DefaultTimezoneScope,
+    SettingScopes,
     SendTestEmailInput,
     TenantSettingsEditDto,
     TenantSettingsServiceProxy,
@@ -31,7 +31,7 @@ import {
     TenantOfferProviderSettingsServiceProxy,
     TenantCustomizationInfoDto,
     EPCVIPMailerSettingsEditDto,
-    EPCVIPMailerSettingsEditDtoServer,
+    EPCVIPServer,
 
     OngageSettingsEditDto,
     IAgeSettingsEditDto,
@@ -91,7 +91,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
     remoteServiceBaseUrl = AppConsts.remoteServiceBaseUrl;
     siteUrlRegexPattern = AppConsts.regexPatterns.siteUrl;
 
-    defaultTimezoneScope: DefaultTimezoneScope = AppTimezoneScope.Tenant;
+    defaultTimezoneScope: SettingScopes = AppTimezoneScope.Tenant;
 
     private rootComponent;
     public headlineConfig = {
@@ -151,7 +151,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
                 this.isPFMApplicationsFeatureEnabled ? this._tenantSettingsService.getIAgeSettings() : of<IAgeSettingsEditDto>(<any>null)
             ];
         if (this.isPFMApplicationsFeatureEnabled) {
-            this.epcvipEmailServers = Object.keys(EPCVIPMailerSettingsEditDtoServer);
+            this.epcvipEmailServers = Object.keys(EPCVIPServer);
         }
 
         forkJoin(requests)

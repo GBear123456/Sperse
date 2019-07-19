@@ -18,10 +18,11 @@ import { first, publishReplay, refCount } from 'rxjs/operators';
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
 import {
-    GetApplicationDetailsOutput, GetMemberInfoResponse,
+    GetApplicationDetailsOutput,
+    GetMemberInfoResponse,
     OfferServiceProxy,
     SubmitApplicationInput,
-    SubmitApplicationInputSystemType
+    OfferProviderType
 } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { DateHelper } from '@shared/helpers/DateHelper';
@@ -110,7 +111,7 @@ export class OffersWizardComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.submitApplicationProfileInput.systemType = SubmitApplicationInputSystemType.EPCVIP;
+        this.submitApplicationProfileInput.systemType = OfferProviderType.EPCVIP;
         this.offersServiceProxy.getApplicationDetails().subscribe(
             (output: GetApplicationDetailsOutput) => {
                 if (output) {

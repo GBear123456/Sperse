@@ -1,7 +1,7 @@
-import { GroupBy } from '@shared/service-proxies/service-proxies';
+import { GroupByPeriod } from '@shared/service-proxies/service-proxies';
 
 export class TotalsByPeriodModel {
-    key: GroupBy;
+    key: GroupByPeriod;
     name: string;
     text: string;
     amount: number;

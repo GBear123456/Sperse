@@ -11,7 +11,7 @@ import moment from 'moment-timezone';
 import { AppService } from '@app/app.service';
 import { AppConsts } from '@shared/AppConsts';
 import { FileSizePipe } from '@shared/common/pipes/file-size.pipe';
-import { ReportsServiceProxy, GenerateInput, GenerateInputPeriod } from '@shared/service-proxies/service-proxies';
+import { ReportsServiceProxy, GenerateInput, ReportPeriod } from '@shared/service-proxies/service-proxies';
 import { BankAccountsService } from '@shared/cfo/bank-accounts/helpers/bank-accounts.service';
 import { CalendarDialogComponent } from '@app/shared/common/dialogs/calendar/calendar-dialog.component';
 import { DateHelper } from '@shared/helpers/DateHelper';
@@ -32,19 +32,19 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
     menuItems = [
         {
             caption: 'MonthlyReports',
-            period: GenerateInputPeriod.Monthly
+            period: ReportPeriod.Monthly
         },
         {
             caption: 'QuarterlyReports',
-            period: GenerateInputPeriod.Quarterly
+            period: ReportPeriod.Quarterly
         },
         {
             caption: 'AnnualReports',
-            period: GenerateInputPeriod.Annual
+            period: ReportPeriod.Annual
         }
     ];
 
-    selectedPeriod = GenerateInputPeriod.Monthly;
+    selectedPeriod = ReportPeriod.Monthly;
     formatting = AppConsts.formatting;
     dataSourceURI = 'Reporting';
 

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { CFOServiceBase } from './cfo-service-base';
-import { InstanceType, GetStatusOutputStatus, MyFinancesServiceProxy } from 'shared/service-proxies/service-proxies';
+import { InstanceType, InstanceStatus, MyFinancesServiceProxy } from 'shared/service-proxies/service-proxies';
 import { BehaviorSubject } from 'rxjs';
 import { map } from 'rxjs/operators';
 
@@ -25,7 +25,7 @@ export class UserOnlyCFOService extends CFOServiceBase {
 
     instanceChangeProcess(invalidateServerCache: boolean = false) {
         return this._myFinancesService.getUserInstanceStatus().pipe(map(data => {
-            const statusActive = data.status == GetStatusOutputStatus.Active;
+            const statusActive = data.status == InstanceStatus.Active;
             this.statusActive.next(statusActive);
             this.initialized = statusActive;
             this.hasTransactions = this.initialized && data.hasTransactions;

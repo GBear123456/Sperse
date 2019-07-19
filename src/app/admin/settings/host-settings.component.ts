@@ -11,7 +11,7 @@ import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import {
-    ComboboxItemDto, CommonLookupServiceProxy, DefaultTimezoneScope, HostSettingsEditDto, HostSettingsServiceProxy, SendTestEmailInput, PayPalSettings,
+    ComboboxItemDto, CommonLookupServiceProxy, SettingScopes, HostSettingsEditDto, HostSettingsServiceProxy, SendTestEmailInput, PayPalSettings,
     BaseCommercePaymentSettings, TenantPaymentSettingsServiceProxy, ACHWorksSettings, RecurlyPaymentSettings
 } from '@shared/service-proxies/service-proxies';
 
@@ -29,7 +29,7 @@ export class HostSettingsComponent extends AppComponentBase implements OnInit, O
     editions: ComboboxItemDto[] = undefined;
     testEmailAddress: string = undefined;
     showTimezoneSelection = abp.clock.provider.supportsMultipleTimezone;
-    defaultTimezoneScope: DefaultTimezoneScope = AppTimezoneScope.Application;
+    defaultTimezoneScope: SettingScopes = AppTimezoneScope.Application;
     baseCommercePaymentSettings: BaseCommercePaymentSettings = new BaseCommercePaymentSettings();
     payPalPaymentSettings: PayPalSettings = new PayPalSettings();
     achWorksSettings: ACHWorksSettings = new ACHWorksSettings();
