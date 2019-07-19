@@ -46,8 +46,6 @@ import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calenda
 import { FilterCBoxesComponent } from '@shared/filters/cboxes/filter-cboxes.component';
 import { FilterCheckBoxesComponent } from '@shared/filters/check-boxes/filter-check-boxes.component';
 import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-boxes.model';
-import { FilterDropDownModel } from '@shared/filters/dropdown/filter-dropdown.model';
-import { FilterDropDownComponent } from '@shared/filters/dropdown/filter-dropdown.component';
 import { RuleDialogComponent } from '../rules/rule-edit-dialog/rule-edit-dialog.component';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { CategorizationComponent } from 'app/cfo/transactions/categorization/categorization.component';
@@ -324,22 +322,8 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                             value: [ this.cfoPreferencesService.selectedCurrencyId ]
                         })
                     }
-                }),
-                new FilterModel({
-                    component: FilterDropDownComponent,
-                    caption: 'IsTransfer',
-                    items: {
-                        isTransfer: new FilterDropDownModel({
-                            elements: [
-                                {name: this.l('AllTransactions'), value: ''},
-                                {name: this.l('ExcludeTransfers'), value: 'exclude'},
-                                {name: this.l('OnlyTransfers'), value: 'transfers'}
-                            ],
-                            displayElementExp: 'name',
-                            valueElementExp: 'value'
-                        })
-                    }
-                }) /*,
+                })
+                /*,
                 new FilterModel({
                     component: FilterInputsComponent,
                     //operator: 'contains',
@@ -486,6 +470,16 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                     locateInMenu: 'auto',
                     items: [
                         {
+                            name: 'rowFilter',
+                            action: this.enableFilteringRow.bind(this),
+                            options: {
+                                checkPressed: () => {
+                                    return this.dataGrid && this.dataGrid.instance &&
+                                        this.dataGrid.instance.option('filterRow.visible');
+                                }
+                            }
+                        },
+                        {
                             name: 'showCompactRowsHeight',
                             visible: !this._cfoService.hasStaticInstance,
                             action: this.showCompactRowsHeight.bind(this)
@@ -537,6 +531,12 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                 }
             ]);
         }
+    }
+
+    enableFilteringRow(event) {
+        let visible = !this.dataGrid.instance.option('filterRow.visible');
+        this.dataGrid.instance.option('filterRow.visible', visible);
+        event.element.setAttribute('button-pressed', visible);
     }
 
     onToolbarPreparing(e) {
@@ -822,12 +822,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         url += (url.indexOf('?') == -1 ? '?' : '&') + 'currencyId=' + this.cfoPreferencesService.selectedCurrencyId;
         return url;
     }
-
-    filterByIsTransfer(filter: FilterModel) {
-        let val = filter.items.isTransfer.value;
-        return val ? {IsTransfer: val == 'transfers'} : {};
-    }
-
+    
     filterByClassified(filter: FilterModel) {
         let isYes = filter.items.yes.value;
         let isNo = filter.items.no.value;

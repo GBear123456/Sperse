@@ -50,7 +50,6 @@ export class CreditMonitoringComponent implements OnInit {
             switchMap((memberInfo: GetMemberInfoResponse) =>
                 this.offersServiceProxy.getAll(GetAllInput.fromJS({
                     testMode: memberInfo.testMode,
-                    isDirectPostSupported: memberInfo.isDirectPostSupported,
                     category: CampaignCategory.CreditMonitoring,
                     country: 'US',
                     isOfferCollection: false

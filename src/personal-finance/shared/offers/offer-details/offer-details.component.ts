@@ -155,7 +155,6 @@ export class OfferDetailsComponent implements OnInit, OnDestroy {
                         combineLatest(this.category$, this.offersService.memberInfo$).pipe(
                         switchMap(([category, memberInfo]) => this.offerServiceProxy.getAll(GetAllInput.fromJS({
                             testMode: memberInfo.testMode,
-                            isDirectPostSupported: memberInfo.isDirectPostSupported,
                             category: category,
                             country: 'US'
                         }))),

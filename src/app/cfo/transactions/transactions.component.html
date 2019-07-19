@@ -64,8 +64,8 @@
                         </dxo-selection>
                         <dxo-group-panel [visible]="true"></dxo-group-panel>
                         <dxo-sorting mode="multiple"></dxo-sorting>
-
-                         <dxo-filter-row [visible]="true" [showOperationChooser]="true"></dxo-filter-row>
+                        <dxo-paging [pageSize]="20"></dxo-paging>
+                        <dxo-filter-row [visible]="false" [showOperationChooser]="true"></dxo-filter-row>
 
                         <dxi-column dataField="Date" dataType="date" cssClass="tabular" caption="{{l('Transactions_Date')}}" cellTemplate="dateCell"></dxi-column>
                         <dxi-column dataField="BusinessEntityId" caption="{{l('BusinessEntities')}}" [lookup]="{allowClearing: false, dataSource: filtersInitialData?.businessEntities, displayExpr: 'name', valueExpr: 'id'}"></dxi-column>
@@ -89,7 +89,7 @@
                         <dxi-column dataField="AccountingTypeName" dataType="string" caption="{{l('Transactions_AccountingTypeName')}}" [visible]="false"></dxi-column>
                         <dxi-column dataField="Descriptor" dataType="string" caption="{{l('Transactions_Descriptor')}}" [visible]="false"></dxi-column>
                         <dxi-column dataField="BankAccountBankName" dataType="string" caption="{{l('Transactions_BankName')}}" [visible]="false"></dxi-column>
-                        <dxi-column dataField="Id" cssClass="tabular id-column" caption="{{l('Transactions_Id')}}" sortOrder="desc" sortIndex="0" [visible]="false" [allowFiltering]="false"></dxi-column>
+                        <dxi-column dataField="Id" cssClass="tabular id-column" caption="{{l('Transactions_Id')}}" sortOrder="desc" sortIndex="0" [visible]="false"></dxi-column>
                         <dxi-column dataField="BankCode" caption="{{l('Transactions_BankCode')}}" [visible]="false" [filterOperations]="'='"></dxi-column>
 
                         <dxi-column dataField="IsPending" caption="{{l('Transactions_IsPending')}}" [visible]="false" cellTemplate="isPendingTemplate"></dxi-column>
@@ -148,8 +148,6 @@
                         <div *dxTemplate="let cellData of 'dateMonthYear'">
                             {{cellData.value | date: 'MMM yyyy'}}
                         </div>
-
-                        <dxo-paging [pageSize]="20"></dxo-paging>
 
                         <div *dxTemplate="let data of 'startBalanceTotal'">
                             <div class="informer starting-balance">

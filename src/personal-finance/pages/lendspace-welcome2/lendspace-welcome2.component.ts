@@ -1,7 +1,6 @@
 import { Component, Inject, Injector, OnInit } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { AppConsts } from '@shared/AppConsts';
 import kebabCase from 'lodash/kebabCase';
 
 @Component({

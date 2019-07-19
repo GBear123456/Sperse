@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { UtilsModule } from '@shared/utils/utils.module';
 import { ModalModule } from 'ngx-bootstrap/modal';
+import { SignupModule } from './signup/signup.module';
 import { AccountRoutingModule } from './account-routing.module';
 import { AccountComponent, AdLayoutHostDirective } from './account.component';
 import { ConfirmEmailComponent } from './email-activation/confirm-email.component';
@@ -46,6 +47,7 @@ import { ApplicationServiceProxy } from '@shared/service-proxies/service-proxies
         ModalModule.forRoot(),
 
         UtilsModule,
+        SignupModule,
         PaymentInfoModule,
         AccountRoutingModule,
         PersonalFinanceLayoutModule,

@@ -33733,12 +33733,6 @@ export interface IPeriod {
     end: moment.Moment | undefined;
 }
 
-export enum TransferTransactionFilter {
-    Include = "Include", 
-    Exclude = "Exclude", 
-    OnlyTransfers = "OnlyTransfers", 
-}
-
 export class StatsFilter implements IStatsFilter {
     forecastModelId!: number | undefined;
     showResolvedComments!: boolean | undefined;
@@ -33750,7 +33744,6 @@ export class StatsFilter implements IStatsFilter {
     currencyId!: string | undefined;
     accountIds!: number[] | undefined;
     businessEntityIds!: number[] | undefined;
-    transferTransactionFilter!: TransferTransactionFilter | undefined;
 
     constructor(data?: IStatsFilter) {
         if (data) {
@@ -33789,7 +33782,6 @@ export class StatsFilter implements IStatsFilter {
                 for (let item of data["businessEntityIds"])
                     this.businessEntityIds.push(item);
             }
-            this.transferTransactionFilter = data["transferTransactionFilter"];
         }
     }
 
@@ -33824,7 +33816,6 @@ export class StatsFilter implements IStatsFilter {
             for (let item of this.businessEntityIds)
                 data["businessEntityIds"].push(item);
         }
-        data["transferTransactionFilter"] = this.transferTransactionFilter;
         return data; 
     }
 }
@@ -33840,7 +33831,6 @@ export interface IStatsFilter {
     currencyId: string | undefined;
     accountIds: number[] | undefined;
     businessEntityIds: number[] | undefined;
-    transferTransactionFilter: TransferTransactionFilter | undefined;
 }
 
 export enum AdjustmentType {
@@ -34135,7 +34125,6 @@ export class BankAccountBalanceDto implements IBankAccountBalanceDto {
     balance!: number | undefined;
     balanceDate!: moment.Moment | undefined;
     isActive!: boolean | undefined;
-    reconciledBalance!: number | undefined;
 
     constructor(data?: IBankAccountBalanceDto) {
         if (data) {
@@ -34153,7 +34142,6 @@ export class BankAccountBalanceDto implements IBankAccountBalanceDto {
             this.balance = data["balance"];
             this.balanceDate = data["balanceDate"] ? moment(data["balanceDate"].toString()) : <any>undefined;
             this.isActive = data["isActive"];
-            this.reconciledBalance = data["reconciledBalance"];
         }
     }
 
@@ -34171,7 +34159,6 @@ export class BankAccountBalanceDto implements IBankAccountBalanceDto {
         data["balance"] = this.balance;
         data["balanceDate"] = this.balanceDate ? this.balanceDate.toISOString() : <any>undefined;
         data["isActive"] = this.isActive;
-        data["reconciledBalance"] = this.reconciledBalance;
         return data; 
     }
 }
@@ -34182,7 +34169,6 @@ export interface IBankAccountBalanceDto {
     balance: number | undefined;
     balanceDate: moment.Moment | undefined;
     isActive: boolean | undefined;
-    reconciledBalance: number | undefined;
 }
 
 export class CashFlowInitialData implements ICashFlowInitialData {
@@ -34283,7 +34269,6 @@ export class StatsDetailFilter implements IStatsDetailFilter {
     currencyId!: string | undefined;
     accountIds!: number[] | undefined;
     businessEntityIds!: number[] | undefined;
-    transferTransactionFilter!: TransferTransactionFilter | undefined;
 
     constructor(data?: IStatsDetailFilter) {
         if (data) {
@@ -34317,7 +34302,6 @@ export class StatsDetailFilter implements IStatsDetailFilter {
                 for (let item of data["businessEntityIds"])
                     this.businessEntityIds.push(item);
             }
-            this.transferTransactionFilter = data["transferTransactionFilter"];
         }
     }
 
@@ -34351,7 +34335,6 @@ export class StatsDetailFilter implements IStatsDetailFilter {
             for (let item of this.businessEntityIds)
                 data["businessEntityIds"].push(item);
         }
-        data["transferTransactionFilter"] = this.transferTransactionFilter;
         return data; 
     }
 }
@@ -34370,7 +34353,6 @@ export interface IStatsDetailFilter {
     currencyId: string | undefined;
     accountIds: number[] | undefined;
     businessEntityIds: number[] | undefined;
-    transferTransactionFilter: TransferTransactionFilter | undefined;
 }
 
 export enum Status {
@@ -35983,6 +35965,7 @@ export interface ISyncDto {
 }
 
 export class AccountingCategoryDto implements IAccountingCategoryDto {
+    providerId!: string | undefined;
     coAID!: string | undefined;
     isActive!: boolean | undefined;
     cashType!: string | undefined;
@@ -36004,6 +35987,7 @@ export class AccountingCategoryDto implements IAccountingCategoryDto {
 
     init(data?: any) {
         if (data) {
+            this.providerId = data["providerId"];
             this.coAID = data["coAID"];
             this.isActive = data["isActive"];
             this.cashType = data["cashType"];
@@ -36025,6 +36009,7 @@ export class AccountingCategoryDto implements IAccountingCategoryDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["providerId"] = this.providerId;
         data["coAID"] = this.coAID;
         data["isActive"] = this.isActive;
         data["cashType"] = this.cashType;
@@ -36039,6 +36024,7 @@ export class AccountingCategoryDto implements IAccountingCategoryDto {
 }
 
 export interface IAccountingCategoryDto {
+    providerId: string | undefined;
     coAID: string | undefined;
     isActive: boolean | undefined;
     cashType: string | undefined;
@@ -37031,7 +37017,6 @@ export class StatsDetailFilterBase implements IStatsDetailFilterBase {
     currencyId!: string | undefined;
     accountIds!: number[] | undefined;
     businessEntityIds!: number[] | undefined;
-    transferTransactionFilter!: TransferTransactionFilter | undefined;
 
     constructor(data?: IStatsDetailFilterBase) {
         if (data) {
@@ -37063,7 +37048,6 @@ export class StatsDetailFilterBase implements IStatsDetailFilterBase {
                 for (let item of data["businessEntityIds"])
                     this.businessEntityIds.push(item);
             }
-            this.transferTransactionFilter = data["transferTransactionFilter"];
         }
     }
 
@@ -37095,7 +37079,6 @@ export class StatsDetailFilterBase implements IStatsDetailFilterBase {
             for (let item of this.businessEntityIds)
                 data["businessEntityIds"].push(item);
         }
-        data["transferTransactionFilter"] = this.transferTransactionFilter;
         return data; 
     }
 }
@@ -37112,7 +37095,6 @@ export interface IStatsDetailFilterBase {
     currencyId: string | undefined;
     accountIds: number[] | undefined;
     businessEntityIds: number[] | undefined;
-    transferTransactionFilter: TransferTransactionFilter | undefined;
 }
 
 export class UpdateTransactionsCategoryWithFilterInput implements IUpdateTransactionsCategoryWithFilterInput {
@@ -37852,7 +37834,6 @@ export class CreateCashFlowCommentThreadInput implements ICreateCashFlowCommentT
     currencyId!: string | undefined;
     accountIds!: number[] | undefined;
     businessEntityIds!: number[] | undefined;
-    transferTransactionFilter!: TransferTransactionFilter | undefined;
 
     constructor(data?: ICreateCashFlowCommentThreadInput) {
         if (data) {
@@ -37886,7 +37867,6 @@ export class CreateCashFlowCommentThreadInput implements ICreateCashFlowCommentT
                 for (let item of data["businessEntityIds"])
                     this.businessEntityIds.push(item);
             }
-            this.transferTransactionFilter = data["transferTransactionFilter"];
         }
     }
 
@@ -37920,7 +37900,6 @@ export class CreateCashFlowCommentThreadInput implements ICreateCashFlowCommentT
             for (let item of this.businessEntityIds)
                 data["businessEntityIds"].push(item);
         }
-        data["transferTransactionFilter"] = this.transferTransactionFilter;
         return data; 
     }
 }
@@ -37939,7 +37918,6 @@ export interface ICreateCashFlowCommentThreadInput {
     currencyId: string | undefined;
     accountIds: number[] | undefined;
     businessEntityIds: number[] | undefined;
-    transferTransactionFilter: TransferTransactionFilter | undefined;
 }
 
 export class CreateCashFlowCommentThreadOutput implements ICreateCashFlowCommentThreadOutput {
@@ -60588,7 +60566,6 @@ export enum SortOrderType {
 
 export class GetAllInput implements IGetAllInput {
     testMode!: boolean;
-    isDirectPostSupported!: boolean;
     category!: CampaignCategory | undefined;
     type!: CampaignType | undefined;
     country!: string | undefined;
@@ -60621,7 +60598,6 @@ export class GetAllInput implements IGetAllInput {
     init(data?: any) {
         if (data) {
             this.testMode = data["testMode"];
-            this.isDirectPostSupported = data["isDirectPostSupported"];
             this.category = data["category"];
             this.type = data["type"];
             this.country = data["country"];
@@ -60662,7 +60638,6 @@ export class GetAllInput implements IGetAllInput {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["testMode"] = this.testMode;
-        data["isDirectPostSupported"] = this.isDirectPostSupported;
         data["category"] = this.category;
         data["type"] = this.type;
         data["country"] = this.country;
@@ -60696,7 +60671,6 @@ export class GetAllInput implements IGetAllInput {
 
 export interface IGetAllInput {
     testMode: boolean;
-    isDirectPostSupported: boolean;
     category: CampaignCategory | undefined;
     type: CampaignType | undefined;
     country: string | undefined;
@@ -61357,7 +61331,6 @@ export class GetMemberInfoResponse implements IGetMemberInfoResponse {
     countryCode!: string | undefined;
     doB!: moment.Moment | undefined;
     creditScore!: CreditScoreRating | undefined;
-    isDirectPostSupported!: boolean | undefined;
     testMode!: boolean | undefined;
 
     constructor(data?: IGetMemberInfoResponse) {
@@ -61385,7 +61358,6 @@ export class GetMemberInfoResponse implements IGetMemberInfoResponse {
             this.countryCode = data["countryCode"];
             this.doB = data["doB"] ? moment(data["doB"].toString()) : <any>undefined;
             this.creditScore = data["creditScore"];
-            this.isDirectPostSupported = data["isDirectPostSupported"];
             this.testMode = data["testMode"];
         }
     }
@@ -61413,7 +61385,6 @@ export class GetMemberInfoResponse implements IGetMemberInfoResponse {
         data["countryCode"] = this.countryCode;
         data["doB"] = this.doB ? this.doB.toISOString() : <any>undefined;
         data["creditScore"] = this.creditScore;
-        data["isDirectPostSupported"] = this.isDirectPostSupported;
         data["testMode"] = this.testMode;
         return data; 
     }
@@ -61434,7 +61405,6 @@ export interface IGetMemberInfoResponse {
     countryCode: string | undefined;
     doB: moment.Moment | undefined;
     creditScore: CreditScoreRating | undefined;
-    isDirectPostSupported: boolean | undefined;
     testMode: boolean | undefined;
 }
 
@@ -62005,7 +61975,6 @@ export class OfferFilter implements IOfferFilter {
     country!: string | undefined;
     state!: string | undefined;
     creditScore!: CreditScoreRating | undefined;
-    excludeType!: CampaignType | undefined;
     isOfferCollection!: boolean | undefined;
     itemOfOfferCollection!: OfferCollection | undefined;
     loanAmount!: number | undefined;
@@ -62037,7 +62006,6 @@ export class OfferFilter implements IOfferFilter {
             this.country = data["country"];
             this.state = data["state"];
             this.creditScore = data["creditScore"];
-            this.excludeType = data["excludeType"];
             this.isOfferCollection = data["isOfferCollection"];
             this.itemOfOfferCollection = data["itemOfOfferCollection"];
             this.loanAmount = data["loanAmount"];
@@ -62081,7 +62049,6 @@ export class OfferFilter implements IOfferFilter {
         data["country"] = this.country;
         data["state"] = this.state;
         data["creditScore"] = this.creditScore;
-        data["excludeType"] = this.excludeType;
         data["isOfferCollection"] = this.isOfferCollection;
         data["itemOfOfferCollection"] = this.itemOfOfferCollection;
         data["loanAmount"] = this.loanAmount;
@@ -62118,7 +62085,6 @@ export interface IOfferFilter {
     country: string | undefined;
     state: string | undefined;
     creditScore: CreditScoreRating | undefined;
-    excludeType: CampaignType | undefined;
     isOfferCollection: boolean | undefined;
     itemOfOfferCollection: OfferCollection | undefined;
     loanAmount: number | undefined;
@@ -65726,6 +65692,7 @@ export class GenerateInput implements IGenerateInput {
     from!: moment.Moment;
     to!: moment.Moment;
     period!: ReportPeriod;
+    businessEntityIds!: number[] | undefined;
     bankAccountIds!: number[] | undefined;
 
     constructor(data?: IGenerateInput) {
@@ -65742,6 +65709,11 @@ export class GenerateInput implements IGenerateInput {
             this.from = data["from"] ? moment(data["from"].toString()) : <any>undefined;
             this.to = data["to"] ? moment(data["to"].toString()) : <any>undefined;
             this.period = data["period"];
+            if (data["businessEntityIds"] && data["businessEntityIds"].constructor === Array) {
+                this.businessEntityIds = [];
+                for (let item of data["businessEntityIds"])
+                    this.businessEntityIds.push(item);
+            }
             if (data["bankAccountIds"] && data["bankAccountIds"].constructor === Array) {
                 this.bankAccountIds = [];
                 for (let item of data["bankAccountIds"])
@@ -65762,6 +65734,11 @@ export class GenerateInput implements IGenerateInput {
         data["from"] = this.from ? this.from.toISOString() : <any>undefined;
         data["to"] = this.to ? this.to.toISOString() : <any>undefined;
         data["period"] = this.period;
+        if (this.businessEntityIds && this.businessEntityIds.constructor === Array) {
+            data["businessEntityIds"] = [];
+            for (let item of this.businessEntityIds)
+                data["businessEntityIds"].push(item);
+        }
         if (this.bankAccountIds && this.bankAccountIds.constructor === Array) {
             data["bankAccountIds"] = [];
             for (let item of this.bankAccountIds)
@@ -65775,6 +65752,7 @@ export interface IGenerateInput {
     from: moment.Moment;
     to: moment.Moment;
     period: ReportPeriod;
+    businessEntityIds: number[] | undefined;
     bankAccountIds: number[] | undefined;
 }
 

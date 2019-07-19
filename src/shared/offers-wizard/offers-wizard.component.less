@@ -13,6 +13,16 @@
     display: block;
     height: 100%;
     
+    .link {
+        color: #58a3dc;
+        transition: .3s;
+        
+        &:hover {
+            text-decoration: underline;
+            color: darken(#58a3dc, 10%);
+        }
+    }
+    
     /deep/ .step-item {
         height: 100%;
         display: flex;

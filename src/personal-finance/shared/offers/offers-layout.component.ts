@@ -557,7 +557,6 @@ export class OffersLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
                     const categoryGroup = this.offersService.getCategoryGroup(filter.category);
                     let input = GetAllInput.fromJS({
                         testMode: memberInfo.testMode,
-                        isDirectPostSupported: memberInfo.isDirectPostSupported,
                         category: filter.category,
                         country: filter.country
                     });
