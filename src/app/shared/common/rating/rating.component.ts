@@ -26,6 +26,7 @@ export class AppRatingComponent implements OnInit, AfterViewInit {
     @Input() bulkUpdateMode = false;
     @Input() hideButtons = false;
     @Input() allowManage = false;
+    @Input() emptyRatingValue = undefined;
 
     @Output() onValueChanged: EventEmitter<any> = new EventEmitter();
     @Output() onProcess: EventEmitter<number> = new EventEmitter();
@@ -43,7 +44,7 @@ export class AppRatingComponent implements OnInit, AfterViewInit {
         private _message: MessageService,
         private _filtersService: FiltersService,
         private store$: Store<AppStore.State>
-    ) { }
+    ) {}
 
     ngAfterViewInit(): void {
         this.highlightSelectedFilters();
@@ -69,7 +70,7 @@ export class AppRatingComponent implements OnInit, AfterViewInit {
             this.highlightSelectedFilters();
     }
 
-    apply(selectedKeys?) {
+    apply(selectedKeys?, processValue?: number) {
         this.selectedKeys = selectedKeys || this.selectedKeys;
         if (this.sliderComponent && this.selectedKeys && this.selectedKeys.length) {
             if (this.bulkUpdateMode) {
@@ -78,24 +79,23 @@ export class AppRatingComponent implements OnInit, AfterViewInit {
                         'BulkUpdateConfirmation', this.selectedKeys.length),
                     isConfirmed => {
                         if (isConfirmed)
-                            this.process();
+                            this.process(processValue);
                         else
                             this.ratingValue = this.ratingMin;
                     }
                 );
             } else
-                this.process();
+                this.process(processValue);
         }
         this.tooltipVisible = false;
     }
 
-    process() {
-        this.onProcess.emit(this.ratingValue);
+    process(value: number = this.ratingValue) {
+        this.onProcess.emit(value);
     }
 
     clear() {
-        this.ratingValue = undefined;
-        this.apply();
+        this.apply(undefined, this.emptyRatingValue);
     }
 
     clearFilterHighlight() {

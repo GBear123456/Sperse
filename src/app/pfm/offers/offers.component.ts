@@ -39,7 +39,7 @@ import { AppStore, RatingsStoreSelectors } from '@app/store';
 @Component({
     templateUrl: './offers.component.html',
     styleUrls: ['./offers.component.less'],
-    providers: [OfferServiceProxy, OfferManagementServiceProxy]
+    providers: [ OfferServiceProxy, OfferManagementServiceProxy ]
 })
 export class OffersComponent extends AppComponentBase implements OnInit, OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
@@ -66,6 +66,7 @@ export class OffersComponent extends AppComponentBase implements OnInit, OnDestr
     flags = [];
     attributes = [];
     statuses = [];
+    displayedRatingValue: number;
 
     constructor(
         private injector: Injector,
@@ -427,7 +428,19 @@ export class OffersComponent extends AppComponentBase implements OnInit, OnDestr
     }
 
     onSelectionChanged(event) {
-        this.selectedOfferKeys = event.component.getSelectedRowKeys().map(item => item.CampaignId);
+        const selectedOffers = event.component.getSelectedRowKeys();
+        this.selectedOfferKeys = selectedOffers.map(item => item.CampaignId);
+        this.displayedRatingValue = this.getSelectedOffersValue(selectedOffers);
+    }
+
+    /**
+     * If only one offer is selected - get its rating value, else - get the minimal rating
+     * @return {undefined}
+     */
+    getSelectedOffersValue(selectedOffers): number {
+        return selectedOffers.length === 1
+            ? selectedOffers[0].Rank
+            : this.ratingComponent.ratingMin;
     }
 
     showCompactRowsHeight() {
@@ -477,11 +490,10 @@ export class OffersComponent extends AppComponentBase implements OnInit, OnDestr
            return this.pullContextComponent.instance.option('visible', true);
 
         this.notify.info(this.l('Offers_PullStarted'));
-        this._offersProxy.pull(fetchAll).subscribe(() => {
-            this.notify.info(this.l('Offers_PullFinished'));
-        }, (e) => {
-            this.message.error(e.message);
-        });
+        this._offersProxy.pull(fetchAll).subscribe(
+            () => this.notify.info(this.l('Offers_PullFinished')),
+            e => this.message.error(e.message)
+        );
     }
 
     getCategoryValue(data) {
