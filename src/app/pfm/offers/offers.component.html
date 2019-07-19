@@ -57,7 +57,9 @@
         [targetSelector]="'[aria-label=Rank]'"
         [selectedKeys]="selectedOfferKeys"
         [filterModel]="filterModelRank"
+        [ratingValue]="displayedRatingValue"
         [bulkUpdateMode]="true"
+        [emptyRatingValue]="0"
         (onProcess)="onRankChanged($event)">
     </app-rating>
 
