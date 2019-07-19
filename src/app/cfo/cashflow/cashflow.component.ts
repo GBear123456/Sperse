@@ -2198,7 +2198,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     if (this.userPreferencesService.localPreferences.value.showCategoryTotals) {
                         if (this.copiedCell && this.isCopyable(this.copiedCell) && (e.ctrlKey || e.metaKey))
                             this.onPaste();
-                    } else 
+                    } else
                         this.notify.error(this.l('EnableCategoryTotals'));
                     break;
                 case 46: // delete
@@ -2207,7 +2207,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                             this.onDetailsRowDelete(e);
                         else
                             this.onDelete(e);
-                    } else 
+                    } else
                         this.notify.error(this.l('EnableCategoryTotals'));
                     break;
                 default:
@@ -4963,19 +4963,16 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             /** Hide fields */
             if ((!this.cashflowGridSettings.general.showBalanceDiscrepancy && this.isCellDiscrapencyCell(summaryCell, cellRow, cellValue))
                 || cellValue === 'hidden'
+                /** To hide rows that not correspond to the search */
+                || (this.filterBy && cellRow && !this.rowFitsToFilter(summaryCell, cellValue))
             ) {
-                return null;
-            }
-
-            /** To hide rows that not correspond to the search */
-            if (this.filterBy && cellRow && !this.rowFitsToFilter(summaryCell, cellValue)) {
                 return null;
             }
 
             let prevWithParent = this.getPrevWithParent(summaryCell);
 
             /** calculation for ending cash position value */
-            if (prevWithParent !== null && this.isColumnGrandTotal(summaryCell, cellRow)) {
+            if (this.isColumnGrandTotal(summaryCell, cellRow)) {
                 return this.modifyGrandTotalSummary(summaryCell);
             }
 
@@ -5029,7 +5026,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         let result = false;
         const rowInfo = cellValue || '';
         /** add the rowInfo to cash to avoid checking for every cell */
-        if (this.cachedRowsFitsToFilter.has(rowInfo)) 
+        if (this.cachedRowsFitsToFilter.has(rowInfo))
             result = this.cachedRowsFitsToFilter.get(rowInfo);
         else {
             result = Object.keys(this.treePathes).some(strPath => {
@@ -5648,7 +5645,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             res => {
                 e.data.id = res;
                 e.data.forecastId = res;
-                
                 let localForecastData = {
                     forecastId: res,
                     accountId: forecastModel.bankAccountId,
@@ -5740,7 +5736,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 }
 
                 if (data.amount === 0) {
-                    if (this.userPreferencesService.localPreferences.value.showCategoryTotals) 
+                    if (this.userPreferencesService.localPreferences.value.showCategoryTotals)
                         apiMethod = this._cashFlowForecastServiceProxy
                             .deleteForecast(
                                 InstanceType[this.instanceType],
