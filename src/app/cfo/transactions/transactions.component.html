@@ -76,7 +76,7 @@
                                     cssClass="category">
                         </dxi-column>
                         <dxi-column dataField="CounterpartyName" dataType="string" caption="{{l('Transactions_Vendor')}}"></dxi-column>
-                        <dxi-column dataField="Description" dataType="string" cellTemplate="descriptionTemplate" caption="{{l('Transactions_Description')}}"></dxi-column>
+                        <dxi-column dataField="Description" cssClass="description-column" dataType="string" cellTemplate="descriptionTemplate" caption="{{l('Transactions_Description')}}"></dxi-column>
                         <dxi-column dataField="Amount" dataType="number" cssClass="tabular" name="Amount" caption="{{l('Transactions_Amount')}}" cellTemplate="amountTemplate"></dxi-column>
                         <dxi-column dataField="BankAccountNumber" cssClass="tabular" caption="{{l('Transactions_BankAccountNumber')}}" [lookup]="{allowClearing: false, dataSource: bankAccountsLookup, displayExpr: 'accountName', valueExpr: 'accountNumber'}"></dxi-column>
                         <dxi-column dataField="Comments" dataType="string" caption="{{l('Transactions_Comments')}}"></dxi-column>
