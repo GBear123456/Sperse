@@ -16,9 +16,8 @@ import * as forecastModelsActions from './actions';
 import {
     CashFlowForecastServiceProxy,
     ForecastModelDto,
-    InstanceType33,
-    InstanceType32,
-    InstanceType19, CreateForecastModelInput
+    InstanceType,
+    CreateForecastModelInput
 } from '@shared/service-proxies/service-proxies';
 import { CFOService } from '@shared/cfo/cfo.service';
 
@@ -42,7 +41,7 @@ export class ForecastModelsStoreEffects {
                 return empty();
             }
 
-            return this.cashFlowForecastServiceProxy.getModels(this.cfoService.instanceType as InstanceType19, this.cfoService.instanceId)
+            return this.cashFlowForecastServiceProxy.getModels(this.cfoService.instanceType as InstanceType, this.cfoService.instanceId)
                 .pipe(
                     map((forecastModels: ForecastModelDto[]) => {
                         return new forecastModelsActions.LoadSuccessAction(forecastModels);
@@ -59,7 +58,7 @@ export class ForecastModelsStoreEffects {
         ofType<forecastModelsActions.AddForecastModelAction>(forecastModelsActions.ActionTypes.ADD_FORECAST_MODEL),
         exhaustMap((action) => {
             return this.cashFlowForecastServiceProxy.createForecastModel(
-                this.cfoService.instanceType as InstanceType32,
+                this.cfoService.instanceType as InstanceType,
                 this.cfoService.instanceId,
                 action.payload
             ).pipe(
@@ -79,7 +78,7 @@ export class ForecastModelsStoreEffects {
         ofType<forecastModelsActions.RenameForecastModelAction>(forecastModelsActions.ActionTypes.RENAME_FORECAST_MODEL),
         exhaustMap((action) => {
             return this.cashFlowForecastServiceProxy.renameForecastModel(
-                this.cfoService.instanceType as InstanceType33,
+                this.cfoService.instanceType as InstanceType,
                 this.cfoService.instanceId,
                 action.payload
             ).pipe(

@@ -9,7 +9,7 @@ import { filter, first, takeUntil } from 'rxjs/operators';
 /** Application imports */
 import {
     SyncProgressOutput,
-    SyncProgressDtoSyncStatus,
+    SyncProgressStatus,
     InstanceType,
     SyncAccountServiceProxy
 } from 'shared/service-proxies/service-proxies';
@@ -70,9 +70,9 @@ export class SynchProgressComponent extends CFOComponentBase implements OnInit, 
     }
 
     isFailedAccount(accountStatus: string): boolean {
-        return accountStatus == SyncProgressDtoSyncStatus.ActionRequired.toString() ||
-            accountStatus == SyncProgressDtoSyncStatus.SyncPending.toString() ||
-            accountStatus == SyncProgressDtoSyncStatus.Unavailable.toString();
+        return accountStatus == SyncProgressStatus.ActionRequired.toString() ||
+            accountStatus == SyncProgressStatus.SyncPending.toString() ||
+            accountStatus == SyncProgressStatus.Unavailable.toString();
     }
 
     accountProgressMouseEnter(elementId: string, message: string) {

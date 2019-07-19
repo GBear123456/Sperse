@@ -29,7 +29,7 @@ import { DashboardServiceProxy, StageDto } from 'shared/service-proxies/service-
 import { DashboardWidgetsService } from '../dashboard-widgets.service';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
 import { PeriodModel } from '@app/shared/common/period/period.model';
-import { TenantLoginInfoDtoCustomLayoutType } from '@shared/service-proxies/service-proxies';
+import { LayoutType } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 import { ITotalOption } from '@app/crm/dashboard/total-options.interface';
@@ -115,7 +115,7 @@ export class TotalsBySourceComponent implements OnInit, OnDestroy {
         }
     ];
     selectedTotal: BehaviorSubject<ITotalOption> = new BehaviorSubject<ITotalOption>(
-        this._appSession.tenant && this._appSession.tenant.customLayoutType === TenantLoginInfoDtoCustomLayoutType.LendSpace
+        this._appSession.tenant && this._appSession.tenant.customLayoutType === LayoutType.LendSpace
         ? this.totalsOptions.find(option => option.key === 'star')
         : this.totalsOptions.find(option => option.key === 'companySize')
     );

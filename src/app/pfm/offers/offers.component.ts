@@ -18,12 +18,12 @@ import { FilterModel } from '@shared/filters/models/filter.model';
 import {
     RankRequest,
     OfferServiceProxy,
-    OfferFilterCategory,
+    CampaignCategory,
     OfferManagementServiceProxy,
-    OfferFlag,
+    OfferFlagType,
     OfferFilter,
-    OfferAttribute,
-    OfferFilterStatus
+    OfferAttributeType,
+    CampaignStatus
 } from '@shared/service-proxies/service-proxies';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { FilterCheckBoxesComponent } from '@shared/filters/check-boxes/filter-check-boxes.component';
@@ -85,17 +85,17 @@ export class OffersComponent extends AppComponentBase implements OnInit, OnDestr
 
     ngOnInit(): void {
         this.rootComponent = this.getRootComponent();
-        this.categories = Object.keys(OfferFilterCategory)
-            .map(key => ({ id: OfferFilterCategory[key], name: this.l(key) }));
+        this.categories = Object.keys(CampaignCategory)
+            .map(key => ({ id: CampaignCategory[key], name: this.l(key) }));
 
-        this.flags = Object.keys(OfferFlag)
-            .map(key => ({ id: OfferFlag[key], name: startCase(key) }));
+        this.flags = Object.keys(OfferFlagType)
+            .map(key => ({ id: OfferFlagType[key], name: startCase(key) }));
 
-        this.attributes = Object.keys(OfferAttribute)
-            .map(key => ({ id: OfferAttribute[key], name: startCase(key) }));
+        this.attributes = Object.keys(OfferAttributeType)
+            .map(key => ({ id: OfferAttributeType[key], name: startCase(key) }));
 
-        this.statuses = Object.keys(OfferFilterStatus)
-            .map(key => ({ id: OfferFilterStatus[key], name: startCase(key) }));
+        this.statuses = Object.keys(CampaignStatus)
+            .map(key => ({ id: CampaignStatus[key], name: startCase(key) }));
 
         this.filters = [
             this.filterModelCategories = new FilterModel({
@@ -143,7 +143,7 @@ export class OffersComponent extends AppComponentBase implements OnInit, OnDestr
                         dataSource: this.statuses,
                         nameField: 'name',
                         keyExpr: 'id',
-                        value: [OfferFilterStatus.Active]
+                        value: [CampaignStatus.Active]
                     })
                 }
             }),
@@ -507,8 +507,8 @@ export class OffersComponent extends AppComponentBase implements OnInit, OnDestr
             let exclude = data.previousValue.length > data.value.length,
                 selected = difference(exclude ? data.previousValue : data.value, exclude ? data.value : data.previousValue);
             if (selected.length)
-                this._offersProxy.setFlag(OfferFilter.fromJS({campaignIds: this.selectedOfferKeys}),
-                    selected[0]['id'], !exclude).subscribe(() => {
+                this._offersProxy.setFlag(selected[0]['id'], !exclude,
+                    OfferFilter.fromJS({ campaignIds: this.selectedOfferKeys })).subscribe(() => {
                         this.notify.info(this.l('AppliedSuccessfully'));
                     }
                 );
@@ -517,9 +517,9 @@ export class OffersComponent extends AppComponentBase implements OnInit, OnDestr
 
     onAttributeValueApply(data) {
         this._offersProxy.setAttribute(
-            OfferFilter.fromJS({campaignIds: this.selectedOfferKeys}),
             data.id,
-            data.bottomInputValue
+            data.bottomInputValue,
+            OfferFilter.fromJS({campaignIds: this.selectedOfferKeys}),
         ).subscribe(() => {
             this.notify.info(this.l('AppliedSuccessfully'));
         });

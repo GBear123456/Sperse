@@ -1,6 +1,6 @@
 import { Component, Injector, Input } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { TenantLoginInfoDtoCustomLayoutType } from '@shared/service-proxies/service-proxies';
+import { LayoutType } from '@shared/service-proxies/service-proxies';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 
 @Component({
@@ -30,6 +30,6 @@ export class ContactInfoPanelComponent extends AppComponentBase {
 
     checkAdvicePeriodLayout() {
         let tenant = this._appSession.tenant;
-        return tenant && tenant.customLayoutType == TenantLoginInfoDtoCustomLayoutType.AdvicePeriod;
+        return tenant && tenant.customLayoutType == LayoutType.AdvicePeriod;
     }
 }

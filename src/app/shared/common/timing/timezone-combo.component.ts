@@ -11,8 +11,8 @@ import {
 import { Observable } from 'rxjs';
 import { pluck } from 'rxjs/operators';
 import {
-    DefaultTimezoneScope,
-    ListResultDtoOfNameValueDto,
+    SettingScopes,
+    NameValueDtoListResultDto,
     TimingServiceProxy
 } from '@shared/service-proxies/service-proxies';
 
@@ -29,9 +29,9 @@ import {
 export class TimeZoneComboComponent implements OnInit {
     @ViewChild('TimeZoneCombobox') timeZoneComboboxElement: ElementRef;
     @Input() selectedTimeZone: string = undefined;
-    @Input() defaultTimezoneScope: DefaultTimezoneScope;
+    @Input() defaultTimezoneScope: SettingScopes;
     @Output() selectedTimeZoneChange: EventEmitter<string> = new EventEmitter<string>();
-    timeZones$: Observable<ListResultDtoOfNameValueDto[]>;
+    timeZones$: Observable<NameValueDtoListResultDto[]>;
 
     constructor(private _timingService: TimingServiceProxy) {}
 

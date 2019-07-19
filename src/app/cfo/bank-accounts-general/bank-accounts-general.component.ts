@@ -13,7 +13,7 @@ import { SynchProgressComponent } from '@shared/cfo/bank-accounts/synch-progress
 import { SynchProgressService } from '@shared/cfo/bank-accounts/helpers/synch-progress.service';
 import { BankAccountsGeneralService } from '@shared/cfo/bank-accounts/helpers/bank-accounts-general.service';
 import { BankAccountsService } from '@shared/cfo/bank-accounts/helpers/bank-accounts.service';
-import { SyncAccountServiceProxy, InstanceType97 } from '@shared/service-proxies/service-proxies';
+import { SyncAccountServiceProxy, InstanceType } from '@shared/service-proxies/service-proxies';
 import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
 import { CfoStore, CurrenciesStoreSelectors } from '@app/cfo/store';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
@@ -46,7 +46,7 @@ export class BankAccountsGeneralComponent extends CFOComponentBase implements On
         this._synchProgress.needRefreshSync$.subscribe(() => {
             this._synchProgress.startSynchronization();
         });
-        this._syncAccountServiceProxy.createIsAllowed(this._cfoService.instanceType as InstanceType97, this.instanceId)
+        this._syncAccountServiceProxy.createIsAllowed(this._cfoService.instanceType as InstanceType, this.instanceId)
             .subscribe((result) => {
                 this.createAccountAvailable = result;
                 this.initHeadlineConfig();

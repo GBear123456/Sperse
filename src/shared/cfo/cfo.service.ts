@@ -10,7 +10,7 @@ import capitalize from 'lodash/capitalize';
 import { AppService } from '@app/app.service';
 import { LayoutService } from '@app/shared/layout/layout.service';
 import { CFOServiceBase } from 'shared/cfo/cfo-service-base';
-import { InstanceServiceProxy, InstanceType, GetStatusOutputStatus, ContactServiceProxy, GetStatusOutput } from 'shared/service-proxies/service-proxies';
+import { InstanceServiceProxy, InstanceType, InstanceStatus, ContactServiceProxy, GetStatusOutput } from 'shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { AppConsts } from '@shared/AppConsts';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
@@ -113,7 +113,7 @@ export class CFOService extends CFOServiceBase {
             .pipe(finalize(() => this.instanceStatus$ = undefined), map((data: GetStatusOutput) => {
                 if (this.instanceId && data.userId)
                     this.initContactInfo(data.userId);
-                const status = data.status == GetStatusOutputStatus.Active;
+                const status = data.status == InstanceStatus.Active;
                 this.statusActive.next(status);
                 this.initialized = status && data.hasSyncAccounts;
                 this.hasTransactions = this.initialized && data.hasTransactions;

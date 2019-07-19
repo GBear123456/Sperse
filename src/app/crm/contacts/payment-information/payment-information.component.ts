@@ -20,7 +20,7 @@ import * as _ from 'underscore';
 import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { ContactsService } from '../contacts.service';
-import { ContactServiceProxy, MonthlyPaymentInfo, PaymentMethodInfo, PaymentMethodInfoType, PaymentServiceProxy } from '@shared/service-proxies/service-proxies';
+import { ContactServiceProxy, MonthlyPaymentInfo, PaymentMethodInfo, PaymentInfoType, PaymentServiceProxy } from '@shared/service-proxies/service-proxies';
 
 @Component({
     selector: 'payment-information',
@@ -39,7 +39,7 @@ export class PaymentInformationComponent extends AppComponentBase implements OnI
     payments$: Observable<MonthlyPaymentInfo[]>;
     dispayedPayments$: Observable<MonthlyPaymentInfo[]>;
     paymentMethods$: Observable<PaymentMethodInfo[]>;
-    paymentMethodsTypes = PaymentMethodInfoType;
+    paymentMethodsTypes = PaymentInfoType;
     paymentsDisplayLimit$: BehaviorSubject<number | null> = new BehaviorSubject<number>(9);
     private _refresh: BehaviorSubject<boolean> = new BehaviorSubject(false);
     refresh: Observable<boolean> = this._refresh.asObservable();

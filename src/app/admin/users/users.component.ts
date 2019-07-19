@@ -11,8 +11,8 @@ import * as _ from 'underscore';
 
 /** Application imports */
 import {
-    UserServiceProxy, UserListDto, EntityDtoOfInt64, RoleServiceProxy,
-    PermissionServiceProxy, Group
+    UserServiceProxy, UserListDto, Int64EntityDto, RoleServiceProxy,
+    PermissionServiceProxy, UserGroup
 } from '@shared/service-proxies/service-proxies';
 import { NotifyService } from '@abp/notify/notify.service';
 import { AppConsts } from '@shared/AppConsts';
@@ -45,7 +45,7 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
     private filters: FilterModel[];
     selectedPermissions: string[] = [];
     role: number;
-    group = Group.Employee;
+    group = UserGroup.Employee;
     isActive = true;
 
     public actionMenuItems: any;
@@ -228,11 +228,11 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
                         options: {
                             text: this.l('Employees'),
                             checkPressed: () => {
-                                return this.group == Group.Employee;
+                                return this.group == UserGroup.Employee;
                             }
                         },
                         action: () => {
-                            this.filterByGroup(Group.Employee);
+                            this.filterByGroup(UserGroup.Employee);
                         }
                     },
                     {
@@ -241,11 +241,11 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
                         options: {
                             text: this.l('Members'),
                             checkPressed: () => {
-                                return this.group == Group.Member;
+                                return this.group == UserGroup.Member;
                             }
                         },
                         action: () => {
-                            this.filterByGroup(Group.Member);
+                            this.filterByGroup(UserGroup.Member);
                         }
                     },
                     {
@@ -254,11 +254,11 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
                         options: {
                             text: this.l('Partners'),
                             checkPressed: () => {
-                                return this.group == Group.Partner;
+                                return this.group == UserGroup.Partner;
                             }
                         },
                         action: () => {
-                            this.filterByGroup(Group.Partner);
+                            this.filterByGroup(UserGroup.Partner);
                         }
                     }
                 ]
@@ -424,7 +424,7 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
                         items: {
                             element: new FilterRadioGroupModel({
                                 value: this.group,
-                                list: [Group.Employee, Group.Member, Group.Partner].map((item) => {
+                                list: [UserGroup.Employee, UserGroup.Member, UserGroup.Partner].map((item) => {
                                     return {
                                         id: item,
                                         name: this.l(item)
@@ -473,7 +473,7 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
         });
     }
 
-    filterByGroup(group: Group) {
+    filterByGroup(group: UserGroup) {
         this.group = group;
 
         this.initToolbarConfig();
@@ -481,7 +481,7 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
         this.updateGroupFilter(group);
     }
 
-    updateGroupFilter(group: Group) {
+    updateGroupFilter(group: UserGroup) {
         this.updateFilter('group', group);
     }
 
@@ -522,7 +522,7 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
     }
 
     unlockUser(record): void {
-        this._userServiceProxy.unlockUser(new EntityDtoOfInt64({ id: record.id })).subscribe(() => {
+        this._userServiceProxy.unlockUser(new Int64EntityDto({ id: record.id })).subscribe(() => {
             this.notify.success(this.l('UnlockedTheUser', record.userName));
         });
     }

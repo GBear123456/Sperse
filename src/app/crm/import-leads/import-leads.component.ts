@@ -27,7 +27,7 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { ZipCodeFormatterPipe } from '@shared/common/pipes/zip-code-formatter/zip-code-formatter.pipe';
 import {
     ImportItemInput, ImportInput, ImportPersonalInput, ImportBusinessInput, ImportFullName, ImportAddressInput,
-    ImportServiceProxy, ImportInputImportType, PartnerServiceProxy
+    ImportServiceProxy, ImportTypeInput, PartnerServiceProxy
 } from '@shared/service-proxies/service-proxies';
 import { ImportLeadsService } from './import-leads.service';
 import { ImportStatus, ContactGroup } from '@shared/AppEnums';
@@ -167,7 +167,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     failedCount = 0;
     mappingFields: any[] = [];
     importTypeIndex = 0;
-    importType = ImportInputImportType.Lead;
+    importType = ImportTypeInput.Lead;
     contactGroupId = ContactGroup.Client;
 
     fullName: ImportFullName;
@@ -232,17 +232,17 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         this.importTypeIndex = event.itemIndex;
         this.importType = event.itemData.value;
 
-        if (this.importType != ImportInputImportType.Lead)
+        if (this.importType != ImportTypeInput.Lead)
             this.selectedStageId = null;
 
-        if (this.importType != ImportInputImportType.Partner)
+        if (this.importType != ImportTypeInput.Partner)
             this.selectedPartnerTypeName = null;
 
         this.userAssignmentComponent.assignedUsersSelector = this.getAssignedUsersSelector();
         this.userAssignmentComponent.refreshList();
 
-        let contactGroupId = this.importType == ImportInputImportType.Client ? undefined :
-            (ContactGroup[this.importType == ImportInputImportType.Lead ? 'Client' : this.importType]);
+        let contactGroupId = this.importType == ImportTypeInput.Client ? undefined :
+            (ContactGroup[this.importType == ImportTypeInput.Lead ? 'Client' : this.importType]);
         if (contactGroupId != this.contactGroupId) {
             if (this.contactGroupId = contactGroupId)
                 this.getStages();
@@ -610,17 +610,17 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
                             width: 130,
                             selectedIndex: this.importTypeIndex,
                             hint: this.l('Import Type'),
-                            items: Object.keys(ImportInputImportType).map((type) => {
-                                if (type == ImportInputImportType.Lead)
+                            items: Object.keys(ImportTypeInput).map((type) => {
+                                if (type == ImportTypeInput.Lead)
                                     type = 'Client';
-                                if (type == ImportInputImportType.Employee)
+                                if (type == ImportTypeInput.Employee)
                                     type = 'UserProfile';
                                 return {
-                                    disabled: type == ImportInputImportType.Order
+                                    disabled: type == ImportTypeInput.Order
                                         || !this._contactService.checkCGPermission(ContactGroup[type]),
                                     action: this.importTypeChanged.bind(this),
                                     text: this.l(type + 's'),
-                                    value: ImportInputImportType[type]
+                                    value: ImportTypeInput[type]
                                 };
                             })
                         }
@@ -653,7 +653,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
                         attr: {
                             'filter-selected': !!this.selectedPartnerTypeName
                         },
-                        disabled: this.importType != ImportInputImportType.Partner || disabledManage
+                        disabled: this.importType != ImportTypeInput.Partner || disabledManage
                     },
                     {
                         name: 'lists',

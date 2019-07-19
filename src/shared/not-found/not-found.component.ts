@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { Location } from '@angular/common';
 import { AppSessionService } from '@shared/common/session/app-session.service';
-import { TenantLoginInfoDtoCustomLayoutType } from '@shared/service-proxies/service-proxies';
+import { LayoutType } from '@shared/service-proxies/service-proxies';
 
 @Component({
   selector: 'not-found',
@@ -9,7 +9,7 @@ import { TenantLoginInfoDtoCustomLayoutType } from '@shared/service-proxies/serv
   styleUrls: ['./not-found.component.less'],
 })
 export class NotFoundComponent {
-    lendSpaceLayout = this._appSession.tenant && this._appSession.tenant.customLayoutType === TenantLoginInfoDtoCustomLayoutType.LendSpace;
+    lendSpaceLayout = this._appSession.tenant && this._appSession.tenant.customLayoutType === LayoutType.LendSpace;
     constructor(
         private _location: Location,
         private _appSession: AppSessionService

@@ -41,7 +41,7 @@ import {
     StatsFilter,
     BankAccountsServiceProxy,
     BankAccountDailyStatDto,
-    GroupBy,
+    GroupByPeriod,
     CashFlowForecastServiceProxy,
     InstanceType,
     ForecastModelDto
@@ -159,7 +159,7 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
                     requestFilter.accountIds,
                     requestFilter.startDate,
                     requestFilter.endDate,
-                    GroupBy.Monthly
+                    GroupByPeriod.Monthly
                 ).pipe(finalize(() => abp.ui.clearBusy()));
             })
         ).subscribe((result: BankAccountDailyStatDto[]) => {

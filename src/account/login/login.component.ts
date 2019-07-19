@@ -9,7 +9,7 @@ import { HostLoginComponent } from './layouts/host/host-login.component';
 import { LendSpaceLoginComponent } from './layouts/lend-space/lend-space-login.component';
 import { AdvicePeriodLoginComponent } from './layouts/advice-period/advice-period-login.component';
 import { BankCodeLoginComponent } from './layouts/bank-code/bank-code-login.component';
-import { TenantLoginInfoDtoCustomLayoutType } from '@shared/service-proxies/service-proxies';
+import { LayoutType } from '@shared/service-proxies/service-proxies';
 
 @Directive({
     selector: '[ad-login-host]'
@@ -43,11 +43,11 @@ export class LoginComponent extends AppComponentBase implements OnInit {
 
     private getLayoutComponent(tenant) {
         switch (tenant && tenant.customLayoutType) {
-            case TenantLoginInfoDtoCustomLayoutType.LendSpace:
+            case LayoutType.LendSpace:
                 return LendSpaceLoginComponent;
-            case TenantLoginInfoDtoCustomLayoutType.AdvicePeriod:
+            case LayoutType.AdvicePeriod:
                 return AdvicePeriodLoginComponent;
-            case TenantLoginInfoDtoCustomLayoutType.BankCode:
+            case LayoutType.BankCode:
                 return BankCodeLoginComponent;
             default:
                 return HostLoginComponent;

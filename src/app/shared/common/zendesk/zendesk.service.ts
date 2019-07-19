@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { environment } from 'environments/environment';
 import { ngxZendeskWebwidgetService } from 'ngx-zendesk-webwidget';
 import { AppSessionService } from '@shared/common/session/app-session.service';
-import { TenantLoginInfoDtoCustomLayoutType } from '@shared/service-proxies/service-proxies';
+import { LayoutType } from '@shared/service-proxies/service-proxies';
 import { AppConsts } from '@shared/AppConsts';
 import { extend } from 'underscore';
 
@@ -27,7 +27,7 @@ export class ZendeskService {
 
         try {
             let tenant = this._appSession.tenant;
-            if (tenant && (tenant.customLayoutType == TenantLoginInfoDtoCustomLayoutType.LendSpace))
+            if (tenant && (tenant.customLayoutType == LayoutType.LendSpace))
                 settings = { position: { horizontal: 'left', vertical: 'bottom' } };
             this.zendeskWidgetService.setSettings(
                 {

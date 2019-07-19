@@ -13,8 +13,8 @@ import * as _ from 'underscore';
 /** Application imports */
 import {
     CashflowServiceProxy, ClassificationServiceProxy, EditRuleDto, GetTransactionCommonDetailsInput,
-    CreateRuleDtoApplyOption, EditRuleDtoApplyOption, UpdateTransactionsCategoryInput,
-    TransactionsServiceProxy, ConditionDtoCashFlowAmountFormat, ConditionAttributeDtoConditionTypeId,
+    ApplyToTransactionsOption, UpdateTransactionsCategoryInput,
+    TransactionsServiceProxy, CashFlowAmountFormat, CategorizationRuleConditionType,
     CreateRuleDto, ConditionAttributeDto, ConditionDto, TransactionTypesAndCategoriesDto, TransactionAttributeDto, GetKeyAttributeValuesInput } from '@shared/service-proxies/service-proxies';
 import { CFOService } from '@shared/cfo/cfo.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -36,7 +36,7 @@ export class RuleDialogComponent implements OnInit, AfterViewInit {
     maxAmount: number;
     bankId: number;
     accountId: number;
-    amountFormat: ConditionDtoCashFlowAmountFormat = ConditionDtoCashFlowAmountFormat.Unspecified;
+    amountFormat: CashFlowAmountFormat = CashFlowAmountFormat.Unspecified;
     banks: any;
     accounts: any;
     categories: any = [];
@@ -105,12 +105,12 @@ export class RuleDialogComponent implements OnInit, AfterViewInit {
     ) {}
 
     ngOnInit() {
-        this.formats = _.values(ConditionDtoCashFlowAmountFormat).map((value) => {
+        this.formats = _.values(CashFlowAmountFormat).map((value) => {
             return {
                 format: value
             };
         });
-        this.conditionTypes = _.values(ConditionAttributeDtoConditionTypeId).map((value) => {
+        this.conditionTypes = _.values(CategorizationRuleConditionType).map((value) => {
             return {
                 condition: value
             };
@@ -168,7 +168,7 @@ export class RuleDialogComponent implements OnInit, AfterViewInit {
                 if (this.descriptor = rule.transactionDescriptorAttributeTypeId && this.transactionAttributeTypes[rule.transactionDescriptorAttributeTypeId]
                     || rule.transactionDescriptor)
                     this.onDescriptorChanged({ value: this.descriptor });
-                this.options[0].value = (rule.applyOption == EditRuleDtoApplyOption['MatchedAndUnclassified']);
+                this.options[0].value = (rule.applyOption == ApplyToTransactionsOption['MatchedAndUnclassified']);
                 this.title = rule.name;
                 if (rule.condition) {
                     this.bankId = rule.condition.bankId;
@@ -275,7 +275,7 @@ export class RuleDialogComponent implements OnInit, AfterViewInit {
         return attributes.map((v) => {
             return {
                 attributeTypeId: v.typeId,
-                conditionTypeId: v.value ? ConditionAttributeDtoConditionTypeId.Equal : ConditionAttributeDtoConditionTypeId.Exist,
+                conditionTypeId: v.value ? CategorizationRuleConditionType.Equal : CategorizationRuleConditionType.Exist,
                 conditionValue: v.value
             };
         }).filter((attr) => attr.attributeTypeId == 'DS' || attr.attributeTypeId == 'PR');
@@ -290,9 +290,7 @@ export class RuleDialogComponent implements OnInit, AfterViewInit {
             sourceTransactionList: this.data.transactionIds,
             transactionDescriptor: this.transactionAttributeTypes[this.descriptor] ? undefined : this.descriptor,
             transactionDescriptorAttributeTypeId: this.transactionAttributeTypes[this.descriptor] ? this.descriptor : undefined,
-            applyOption: (this.data.id ? EditRuleDtoApplyOption : CreateRuleDtoApplyOption)[
-                this.options[0].value ? 'MatchedAndUnclassified' : 'SelectedOnly'
-            ],
+            applyOption: ApplyToTransactionsOption[this.options[0].value ? 'MatchedAndUnclassified' : 'SelectedOnly'],
             condition: ConditionDto.fromJS({
                 minAmount: this.minAmount,
                 maxAmount: this.maxAmount,
@@ -329,7 +327,7 @@ export class RuleDialogComponent implements OnInit, AfterViewInit {
             list = list.concat(this.keywords.map((item) => {
                 return {
                     attributeTypeId: 'keyword',
-                    conditionTypeId: ConditionAttributeDtoConditionTypeId.Equal,
+                    conditionTypeId: CategorizationRuleConditionType.Equal,
                     conditionValue: item.keyword
                 };
             }));

@@ -8,7 +8,7 @@ import * as moment from 'moment-timezone';
 
 /** Application imports */
 import { CFOService } from '@shared/cfo/cfo.service';
-import { InstanceServiceProxy, InstanceType74, InstanceType75 } from '@shared/service-proxies/service-proxies';
+import { InstanceServiceProxy, InstanceType } from '@shared/service-proxies/service-proxies';
 
 @Injectable()
 export class SyncDatePickerService {
@@ -24,13 +24,13 @@ export class SyncDatePickerService {
 
     setMaxVisibleDate(date: moment) { 
         if (this._cfoService.initialized)
-            this._instanceService.setMaxVisibleDate(this._cfoService.instanceType as InstanceType75, 
-                this._cfoService.instanceId, date).subscribe(() => this._maxSyncDate.next(date));
+            this._instanceService.setMaxVisibleDate(this._cfoService.instanceType as InstanceType, 
+            this._cfoService.instanceId, date).subscribe(() => this._maxSyncDate.next(date));
     }
 
     getMaxVisibleDate() {
         return this._instanceService.getMaxVisibleDate(
-            this._cfoService.instanceType as InstanceType74, this._cfoService.instanceId);
+            this._cfoService.instanceType as InstanceType, this._cfoService.instanceId);
     }
 
     invalidate() {  

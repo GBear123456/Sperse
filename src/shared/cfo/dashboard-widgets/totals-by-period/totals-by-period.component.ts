@@ -25,7 +25,7 @@ import { DashboardService } from '../dashboard.service';
 import { DxChartComponent } from 'devextreme-angular/ui/chart';
 import {
     BankAccountsServiceProxy,
-    GroupBy,
+    GroupByPeriod,
     InstanceType
 } from '@shared/service-proxies/service-proxies';
 import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
@@ -94,7 +94,7 @@ export class TotalsByPeriodComponent extends CFOComponentBase implements OnInit 
             return {
                 startDate: period.from ? period.from.startOf('day') : null,
                 endDate: period.to ? period.to.startOf('day') : null,
-                selectedPeriod: String(GroupBy[groupBy]).toLowerCase(),
+                selectedPeriod: String(GroupByPeriod[groupBy]).toLowerCase(),
             };
         })
     );

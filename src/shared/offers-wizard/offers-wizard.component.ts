@@ -18,10 +18,13 @@ import { first, publishReplay, refCount } from 'rxjs/operators';
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
 import {
-    GetApplicationDetailsOutput, GetMemberInfoResponse, OfferDtoCampaignProviderType,
+    GetApplicationDetailsOutput,
+	GetMemberInfoResponse,
+    CampaignProviderType,
     OfferServiceProxy,
     SubmitApplicationInput,
-    SubmitApplicationInputSystemType, SubmitApplicationOutput
+    OfferProviderType,
+    SubmitApplicationOutput
 } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { DateHelper } from '@shared/helpers/DateHelper';
@@ -125,7 +128,7 @@ export class OffersWizardComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.submitApplicationProfileInput.systemType = SubmitApplicationInputSystemType.EPCVIP;
+        this.submitApplicationProfileInput.systemType = OfferProviderType.EPCVIP;
         this.offersServiceProxy.getApplicationDetails().subscribe(
             (output: GetApplicationDetailsOutput) => {
                 if (output) {
@@ -190,7 +193,7 @@ export class OffersWizardComponent implements OnInit {
                 title: 'Offers_ProcessingLoanRequest',
                 subtitle: 'Offers_WaitLoanRequestProcessing',
                 redirectUrl: this.data.offer.redirectUrl,
-                logoUrl: this.data.offer.campaignProviderType === OfferDtoCampaignProviderType.CreditLand
+                logoUrl: this.data.offer.campaignProviderType === CampaignProviderType.CreditLand
                     ? this.data.offercreditLandLogoUrl
                     : (this.data.isCreditCard ? null : this.data.offer.logoUrl)
             };
@@ -198,8 +201,8 @@ export class OffersWizardComponent implements OnInit {
                 width: '530px',
                 panelClass: 'apply-offer-dialog',
                 data: modalData
-            });
-        }
+        });
+    }
         this.submitApplicationProfileInput.campaignId = this.data.campaignId;
         this.offersServiceProxy.submitApplication(this.submitApplicationProfileInput).subscribe(
             (result: SubmitApplicationOutput) => {
@@ -212,8 +215,8 @@ export class OffersWizardComponent implements OnInit {
                 if (this.data.campaignId) applyOfferDialog.close();
             });
     }
-    
+
     openConditionsDialog(data: any) {
         this.dialog.open(ConditionsModalComponent, {panelClass: ['slider', 'footer-slider'], data: data});
-    }
+}
 }

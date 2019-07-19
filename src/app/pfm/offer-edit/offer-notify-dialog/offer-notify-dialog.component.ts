@@ -13,7 +13,7 @@ import {
     ContactListInfoDto,
     OfferAnnouncementServiceProxy,
     SendAnnouncementRequest,
-    SendAnnouncementRequestServiceName
+    MailSenderType
 } from '@shared/service-proxies/service-proxies';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
 import { AppStore, ListsStoreSelectors, ListsStoreActions } from '@app/store';
@@ -31,8 +31,8 @@ import { NotifyService } from '@abp/notify/notify.service';
 export class OfferNotifyDialogComponent implements OnInit {
     offerPublicLink: string = this.data.offerPublicLink;
     offerId: number = this.data.offerId;
-    services = SendAnnouncementRequestServiceName;
-    selectedService: SendAnnouncementRequestServiceName = SendAnnouncementRequestServiceName.IAge;
+    services = MailSenderType;
+    selectedService: MailSenderType = MailSenderType.IAge;
     currentStage = 0;
     lists$: Observable<ContactListInfoDto[]> = this.store$.pipe(select(ListsStoreSelectors.getLists));
     selectedListId: BehaviorSubject<number> = new BehaviorSubject<number>(null);
@@ -65,9 +65,9 @@ export class OfferNotifyDialogComponent implements OnInit {
     }
 
     changeService() {
-        this.selectedService = this.selectedService === SendAnnouncementRequestServiceName.IAge
-                ? SendAnnouncementRequestServiceName.Ongage
-                : SendAnnouncementRequestServiceName.IAge;
+        this.selectedService = this.selectedService === MailSenderType.IAge
+            ? MailSenderType.Ongage
+            : MailSenderType.IAge;
     }
 
     sendAnnouncement() {

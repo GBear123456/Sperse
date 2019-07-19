@@ -16,9 +16,9 @@ import {
     InstanceServiceProxy,
     PersonContactServiceProxy,
     RegisterMemberInput,
-    GetUserInstanceInfoOutputStatus,
+    InstanceStatus,
     TenantSubscriptionServiceProxy,
-    ModuleSubscriptionInfoDtoModule,
+    ModuleType,
     ModuleSubscriptionInfoDto
 } from '@shared/service-proxies/service-proxies';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
@@ -184,7 +184,7 @@ export class AppService extends AppServiceBase {
 
     getModuleSubscription(name?: string, moduleSubscriptions = this.moduleSubscriptions): ModuleSubscriptionInfoDto {
         let module = (name || this.getModule()).toUpperCase();
-        if (moduleSubscriptions && ModuleSubscriptionInfoDtoModule[module])
+        if (moduleSubscriptions && ModuleType[module])
             return _.find(moduleSubscriptions, (subscription) => {
                 return subscription.module.includes(module);
             }) || { module: module, endDate: moment(new Date(0)) };
@@ -217,12 +217,12 @@ export class AppService extends AppServiceBase {
 
     checkModuleSubscriptionEnabled() {
         let module = this.getModule();
-        return Boolean(ModuleSubscriptionInfoDtoModule[module.toUpperCase()]);
+        return Boolean(ModuleType[module.toUpperCase()]);
     }
 
     subscriptionStatusBarIsHidden(): boolean {
         let module = this.getModule();
-        if (!ModuleSubscriptionInfoDtoModule[module.toUpperCase()])
+        if (!ModuleType[module.toUpperCase()])
             return true;
 
         if (!this._subscriptionBarVisible)
@@ -354,7 +354,7 @@ export class AppService extends AppServiceBase {
 
     redirectToCFO(userId) {
         this.instanceServiceProxy.getUserInstanceInfo(userId).subscribe(result => {
-            if (result && result.id && (result.status === GetUserInstanceInfoOutputStatus.Active))
+            if (result && result.id && (result.status === InstanceStatus.Active))
                 window.open(AppConsts.appBaseUrl + '/app/cfo/' + result.id + '/start');
             else
                 this.notify.error(this.appLocalizationService.ls(AppConsts.localization.CRMLocalizationSourceName, 'CFOInstanceInactive'));

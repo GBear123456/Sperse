@@ -25,13 +25,12 @@ import { PackageOptions } from '@app/shared/common/payment-wizard/models/package
 import { AppConsts } from '@shared/AppConsts.ts';
 import {
     GetPackagesConfigOutput,
-    ModuleSubscriptionInfoFrequency,
-    Module,
+    PaymentPeriodType,
+    ModuleType,
     PackageConfigDto,
     PackageEditionConfigDto,
     PackageServiceProxy,
-    ModuleSubscriptionInfoExtended,
-    ModuleSubscriptionInfoExtendedFrequency
+    ModuleSubscriptionInfoExtended
 } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { LocalizationResolver } from '@root/shared/common/localization-resolver';
@@ -47,7 +46,7 @@ import { LocalizationResolver } from '@root/shared/common/localization-resolver'
 export class PackageChooserComponent implements OnInit {
     @ViewChildren(PackageCardComponent) packageCardComponents: QueryList<PackageCardComponent>;
     @ViewChildren(MatSlider) slider: MatSlider;
-    @Input() module: Module;
+    @Input() module: ModuleType;
     @Input() widgettitle: string;
     @Input() subtitle = this.l('ChoosePlan');
     @Input() yearDiscount = 20;
@@ -67,7 +66,7 @@ export class PackageChooserComponent implements OnInit {
     @Output() onPlanChosen: EventEmitter<PackageOptions> = new EventEmitter();
     @Output() moveToNextStep: EventEmitter<null> = new EventEmitter();
     @HostBinding('class.withBackground') @Input() showBackground;
-    modules = Module;
+    modules = ModuleType;
     packages: PackageConfigDto[];
     usersAmount = null;
     sliderInitialMinValue = 5;
@@ -158,7 +157,7 @@ export class PackageChooserComponent implements OnInit {
         this.freePackages = freePackages;
         /** @todo remove */
         /** Replace packages editions with stub data */
-        if (this.module === Module.CFO) {
+        if (this.module === ModuleType.CFO) {
             notFreePackages[0]['editions'][0]['features'] = [
                 {
                     'definition': {
@@ -539,7 +538,7 @@ export class PackageChooserComponent implements OnInit {
                     ];
             }
         }
-        if (this.module === Module.CRM) {
+        if (this.module === ModuleType.CRM) {
             notFreePackages[0]['editions'][0]['features'] = [
                 {
                     'definition': {
@@ -2280,7 +2279,7 @@ export class PackageChooserComponent implements OnInit {
     }
 
     private getDefaultBillingPeriod(currentSubscriptionInfo: ModuleSubscriptionInfoExtended) {
-        return currentSubscriptionInfo && currentSubscriptionInfo.frequency === ModuleSubscriptionInfoExtendedFrequency._30
+        return currentSubscriptionInfo && currentSubscriptionInfo.frequency === PaymentPeriodType._30
             && !this.tenantSubscriptionIsFree && !this.tenantSubscriptionIsTrial
             ? BillingPeriod.Monthly
             : BillingPeriod.Yearly;
@@ -2360,10 +2359,10 @@ export class PackageChooserComponent implements OnInit {
         }
     }
 
-    private getSubscriptionFrequency(): ModuleSubscriptionInfoFrequency {
+    private getSubscriptionFrequency(): PaymentPeriodType {
         return this.selectedPackageCardComponent.billingPeriod === BillingPeriod.Monthly
-            ? ModuleSubscriptionInfoFrequency._30
-            : ModuleSubscriptionInfoFrequency._365;
+            ? PaymentPeriodType._30
+            : PaymentPeriodType._365;
     }
 
     goToNextStep() {

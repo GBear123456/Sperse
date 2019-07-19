@@ -16,7 +16,7 @@ import { flatMap } from 'rxjs/operators';
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
 import { FileSizePipe } from '@shared/common/pipes/file-size.pipe';
-import { ReportsServiceProxy, GenerateInput, GenerateInputPeriod, GetReportUrlOutput } from '@shared/service-proxies/service-proxies';
+import { ReportsServiceProxy, GenerateInput, ReportPeriod, GetReportUrlOutput } from '@shared/service-proxies/service-proxies';
 import { BankAccountsService } from '@shared/cfo/bank-accounts/helpers/bank-accounts.service';
 import { CalendarDialogComponent } from '@app/shared/common/dialogs/calendar/calendar-dialog.component';
 import { DateHelper } from '@shared/helpers/DateHelper';
@@ -42,15 +42,15 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
     menuItems = [
         {
             caption: 'MonthlyReports',
-            period: GenerateInputPeriod.Monthly
+            period: ReportPeriod.Monthly
         },
         {
             caption: 'QuarterlyReports',
-            period: GenerateInputPeriod.Quarterly
+            period: ReportPeriod.Quarterly
         },
         {
             caption: 'AnnualReports',
-            period: GenerateInputPeriod.Annual
+            period: ReportPeriod.Annual
         }
     ];
 
@@ -63,7 +63,7 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
     previewContent: string;
     reportUrls = {};
 
-    selectedPeriod = GenerateInputPeriod.Monthly;
+    selectedPeriod = ReportPeriod.Monthly;
     formatting = AppConsts.formatting;
     dataSourceURI = 'Reporting';
 
@@ -110,7 +110,7 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
             {
                 text: this.l('Delete'),
                 action: this.deleteReport.bind(this)
-            }
+    }
         ];
     }
 
@@ -297,7 +297,7 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
                 this.visibleReports = $event.component.getVisibleRows().map(row => row.data);
                 /** If user click the whole row */
                 this.viewReport(ReportViewType.Current, $event);
-            }
+    }
         }
     }
 
@@ -446,7 +446,7 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
         if (this.openReportMode) {
             this.openReportMode = false;
             this._changeDetector.markForCheck();
-        }
+    }
     }
 
     @HostListener('document:keydown', ['$event'])
@@ -468,7 +468,7 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
         this.viewerToolbarConfig = [];
         if (this.openReportMode) {
             this.closeReport();
-        }
+    }
     }
 
     activate() {

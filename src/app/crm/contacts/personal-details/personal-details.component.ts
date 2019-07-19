@@ -15,8 +15,8 @@ import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { CountriesStoreActions, CountriesStoreSelectors } from '@app/store';
 import { RootStore, StatesStoreActions, StatesStoreSelectors } from '@root/store';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
-import { PersonContactServiceProxy, UpdatePersonInfoInput, UpdatePersonInfoInputMaritalStatus, UpdatePersonInfoInputGender, PersonInfoDtoMaritalStatus,
-    DictionaryServiceProxy, PersonInfoDtoGender, PersonInfoDto, UpdatePersonInfoInputPreferredToD, TimingServiceProxy } from 'shared/service-proxies/service-proxies';
+import { PersonContactServiceProxy, UpdatePersonInfoInput, MaritalStatus, Gender,
+    DictionaryServiceProxy, PersonInfoDto, TimeOfDay, TimingServiceProxy } from 'shared/service-proxies/service-proxies';
 import { ContactsService } from '../contacts.service';
 
 @Component({
@@ -124,15 +124,15 @@ export class PersonalDetailsComponent implements OnDestroy {
     }
 
     getGenderList() {
-        return this.getSelectList(Object.keys(PersonInfoDtoGender));
+        return this.getSelectList(Object.keys(Gender));
     }
 
     getMaritalStatusList() {
-        return this.getSelectList(Object.keys(PersonInfoDtoMaritalStatus));
+        return this.getSelectList(Object.keys(MaritalStatus));
     }
 
     getPreferredToD() {
-        return this.getSelectList(Object.keys(UpdatePersonInfoInputPreferredToD));
+        return this.getSelectList(Object.keys(TimeOfDay));
     }
 
     getSelectList(items) {
@@ -153,15 +153,15 @@ export class PersonalDetailsComponent implements OnDestroy {
                 ssn: this.accessConfidentialData ? this.person.ssn : undefined,
                 bankCode: this.person.bankCode,
                 timeZone: this.person.timeZone,
-                maritalStatus: UpdatePersonInfoInputMaritalStatus[this.person.maritalStatus],
+                maritalStatus: MaritalStatus[this.person.maritalStatus],
                 marriageDate: this.person.marriageDate,
                 divorceDate: this.person.divorceDate,
-                gender: UpdatePersonInfoInputGender[this.person.gender],
+                gender: Gender[this.person.gender],
                 isUSCitizen: this.person.isUSCitizen,
                 citizenship: this.person.citizenship,
                 experience: this.person.experience,
                 profileSummary: this.person.profileSummary,
-                preferredToD: UpdatePersonInfoInputPreferredToD[this.person.preferredToD],
+                preferredToD: TimeOfDay[this.person.preferredToD],
                 drivingLicense: this.accessConfidentialData ? this.person.drivingLicense : undefined,
                 drivingLicenseState: this.person.drivingLicenseState,
                 isActiveMilitaryDuty: this.person.isActiveMilitaryDuty,
