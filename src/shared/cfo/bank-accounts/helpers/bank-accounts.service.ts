@@ -102,6 +102,7 @@ export class BankAccountsService {
     ];
     selectedStatuses: BehaviorSubject<BankAccountStatus[]> = new BehaviorSubject(this.state.statuses);
     selectedStatuses$ = this.selectedStatuses.asObservable();
+    selectDefaultBusinessEntity = false;
 
     constructor(
         private cfoService: CFOService,
@@ -117,7 +118,22 @@ export class BankAccountsService {
             this.bankAccountsCacheKey = `Dashboard_BankAccounts_${abp.session.tenantId}_${abp.session.userId}_${instanceType}`;
         });
         this.syncAccounts$ = this._syncAccounts.asObservable().pipe(distinctUntilChanged(this.arrayDistinct));
-        this.businessEntities$ = this._businessEntities.asObservable().pipe(distinctUntilChanged(this.arrayDistinct));
+        this.businessEntities$ = this._businessEntities.asObservable().pipe(
+            map((businessEntities: BusinessEntityDto[]) => {
+                if (this.selectDefaultBusinessEntity) {
+                    /** Get default business entity and select it */
+                    const defaultBusinessEntity = businessEntities.find((businessEntity: BusinessEntityDto) => {
+                        return businessEntity.isDefault;
+                    });
+                    if (defaultBusinessEntity) {
+                        this.changeSelectedBusinessEntities([defaultBusinessEntity.id]);
+                    }
+                    this.selectDefaultBusinessEntity = false;
+                }
+                return businessEntities;
+            }),
+            distinctUntilChanged(this.arrayDistinct)
+        );
         this.bankAccountsIds$ = this.syncAccounts$
             .pipe(
                 map(syncAccounts => {
@@ -346,8 +362,14 @@ export class BankAccountsService {
 
     loadState(applyFilter = true) {
 
+        const cachedState = this.cacheService.get(this.bankAccountsCacheKey);
+        /** If there are no cache (user is logging the first time) and it is cfo portal */
+        if (!cachedState && this.cfoService.hasStaticInstance) {
+            this.selectDefaultBusinessEntity = true;
+        }
+
         /** Get filter data from cache and apply it to update all accounts */
-        this.state = {...this.state, ...this.cacheService.get(this.bankAccountsCacheKey)};
+        this.state = {...this.state, ...cachedState};
         this._selectedBankAccountTypes.next(this.state.selectedBankAccountTypes);
         this.selectedStatuses.next(this.state.statuses);
         this._syncAccountsState.next(this.state);

@@ -6,7 +6,6 @@ import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import Form from 'devextreme/ui/form';
 import { BehaviorSubject, Observable, combineLatest, forkJoin } from 'rxjs';
 import { finalize, map } from 'rxjs/operators';
-import * as _ from 'underscore';
 
 /** Application imports */
 import { BankAccountsService } from '@shared/cfo/bank-accounts/helpers/bank-accounts.service';
@@ -33,7 +32,6 @@ import { SyncTypeIds } from '@shared/AppEnums';
     providers: [ BankAccountsServiceProxy, BusinessEntityServiceProxy, SyncAccountServiceProxy, SyncServiceProxy ]
 })
 export class BankAccountsWidgetComponent extends CFOComponentBase implements OnInit {
-    private initBankAccountHighlightedTimeout: any;
     @ViewChild(DxDataGridComponent) mainDataGrid: DxDataGridComponent;
     @ViewChild('header', { read: ElementRef }) header: ElementRef;
     @Input() showSyncDate = false;
@@ -202,7 +200,7 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
 
     rowPrepared(e) {
         if (e.rowType === 'data') {
-            if (this.highlightUsedRows && e.data.bankAccounts 
+            if (this.highlightUsedRows && e.data.bankAccounts
                 && e.data.bankAccounts.some(item => item.isUsed)
             ) {
                 e.rowElement.classList.add('highlighted-row');
