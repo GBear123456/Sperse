@@ -27,6 +27,9 @@
                                 dataField="BankAccountIds"
                                 [width]="200"
                                 cellTemplate="accountsTemplate"></dxi-column>
+                    <dxi-column caption="{{l('BusinessEntities_ParentName')}}"
+                                dataField="ParentName"
+                                [width]="250"></dxi-column>
                     <dxi-column caption="{{l('BusinessEntities_Location')}}"
                                 [calculateCellValue]="locationColumn_calculateCellValue"></dxi-column>
                     <dxi-column caption="{{l('BusinessEntities_DateOpened')}}"

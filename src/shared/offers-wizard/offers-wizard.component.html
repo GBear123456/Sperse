@@ -1,88 +1,97 @@
-<!--<button mat-dialog-close class="close-dialog"><i class="la la-times"></i></button>-->
 <mat-dialog-content>
     <mat-horizontal-stepper [linear]="false" #stepper [@.disabled]="true">
         <mat-step>
             <div class="step-item">
                 <dx-validation-group>
                     <div class="header">
-                        Personal Info
+                        Personal Information
                     </div>
                     <div class="main">
-                        <div class="dx-field">
-                                <div class="dx-field-label">First Name</div>
-                                <div class="dx-field-value">
-                                    <dx-text-box placeholder="Enter first name"
-                                                 [(value)]="submitApplicationProfileInput.personalInformation.firstName"
-                                                 (keydown)="validateName($event)">
-                                        <dx-validator>
-                                            <dxi-validation-rule type="required"
-                                                                 [message]="ls.l('FieldIsRequired')"></dxi-validation-rule>
-                                        </dx-validator>
-                                    </dx-text-box>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="dx-field">
+                                    <div class="dx-field-label">First Name</div>
+                                    <div class="dx-field-value">
+                                        <dx-text-box placeholder="Enter first name"
+                                                     [(value)]="submitApplicationProfileInput.personalInformation.firstName"
+                                                     (keydown)="validateName($event)">
+                                            <dx-validator>
+                                                <dxi-validation-rule type="required"
+                                                                     [message]="ls.l('FieldIsRequired')"></dxi-validation-rule>
+                                            </dx-validator>
+                                        </dx-text-box>
+                                    </div>
                                 </div>
-                </div>
-                        <div class="dx-field">
-                            <div class="dx-field-label">Last Name</div>
-                            <div class="dx-field-value">
-                                <dx-text-box placeholder="Enter last name"
-                                             [(value)]="submitApplicationProfileInput.personalInformation.lastName"
-                                             (keydown)="validateName($event)">
-                                    <dx-validator>
-                                        <dxi-validation-rule type="required"
-                                                             [message]="ls.l('FieldIsRequired')"></dxi-validation-rule>
-                                    </dx-validator>
-                                </dx-text-box>
                             </div>
                         </div>
-                        <div class="dx-field">
-                            <div class="dx-field-label">Middle Name</div>
-                            <div class="dx-field-value">
-                                <dx-text-box placeholder="Enter middle name"
-                                             [(value)]="submitApplicationProfileInput.personalInformation.middleName"
-                                             (keydown)="validateName($event)">
-                                </dx-text-box>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="dx-field">
+                                    <div class="dx-field-label">Last Name</div>
+                                    <div class="dx-field-value">
+                                        <dx-text-box placeholder="Enter last name"
+                                                     [(value)]="submitApplicationProfileInput.personalInformation.lastName"
+                                                     (keydown)="validateName($event)">
+                                            <dx-validator>
+                                                <dxi-validation-rule type="required"
+                                                                     [message]="ls.l('FieldIsRequired')"></dxi-validation-rule>
+                                            </dx-validator>
+                                        </dx-text-box>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                        <div class="dx-field">
-                            <div class="dx-field-label">Date of Birth</div>
-                            <div class="dx-field-value">
-                                <dx-date-box
-                                    [(value)]="submitApplicationProfileInput.personalInformation.doB"
-                                    (onBlur)="removeTimeZone(submitApplicationProfileInput.personalInformation.doB)"
-                                    type="date">
-                                </dx-date-box>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="dx-field">
+                                    <div class="dx-field-label">Middle Name</div>
+                                    <div class="dx-field-value">
+                                        <dx-text-box placeholder="Enter middle name"
+                                                     [(value)]="submitApplicationProfileInput.personalInformation.middleName"
+                                                     (keydown)="validateName($event)">
+                                        </dx-text-box>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                        <div class="dx-field">
-                            <div class="dx-field-label">SSN</div>
-                            <div class="dx-field-value">
-                                <dx-text-box placeholder="Enter ssn"
-                                             name="ssn"
-                                             (onFocusOut)="blurInput($event)"
-                                             (onFocusIn)="focusInput($event)"
-                                             [(value)]="submitApplicationProfileInput.personalInformation.ssn"></dx-text-box>
+                        <div class="row">
+                            <div class="col-md-6 col-sm-12">
+                                <div class="dx-field">
+                                    <div class="dx-field-label">Date of Birth</div>
+                                    <div class="dx-field-value">
+                                        <dx-date-box
+                                            [(value)]="submitApplicationProfileInput.personalInformation.doB"
+                                            (onBlur)="removeTimeZone(submitApplicationProfileInput.personalInformation.doB)"
+                                            type="date">
+                                        </dx-date-box>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-sm-12">
+                                <div class="dx-field">
+                                    <div class="dx-field-label">SSN</div>
+                                    <div class="dx-field-value">
+                                        <dx-text-box placeholder="Enter ssn"
+                                                     name="ssn"
+                                                     (onFocusOut)="blurInput($event)"
+                                                     (onFocusIn)="focusInput($event)"
+                                                     [(value)]="submitApplicationProfileInput.personalInformation.ssn"></dx-text-box>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                        <div class="dx-field">
-                            <div class="dx-field-label">Gender</div>
-                            <div class="dx-field-value">
-                                <dx-select-box
-                                    [items]="gender"
-                                    [(value)]="submitApplicationProfileInput.personalInformation.gender"
-                                    placeholder="Choose gender"
-                                ></dx-select-box>
-                            </div>
-                        </div>
-                        <div class="dx-field">
-                            <div class="dx-field-label">Is Active Military</div>
-                            <div class="dx-field-value">
-                                <dx-radio-group
-                                    [items]="radioGroup"
-                                    [(value)]="submitApplicationProfileInput.personalInformation.isActiveMilitary"
-                                    displayExpr="text"
-                                    valueExpr="value"
-                                    layout="horizontal">
-                                </dx-radio-group>
+                        <div class="row">
+                            <div class="col-md-6 col-sm-12">
+                                <div class="dx-field">
+                                    <div class="dx-field-label">Gender</div>
+                                    <div class="dx-field-value">
+                                        <dx-select-box
+                                            [items]="gender"
+                                            [(value)]="submitApplicationProfileInput.personalInformation.gender"
+                                            placeholder="Choose gender"
+                                        ></dx-select-box>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -96,11 +105,11 @@
             <div class="step-item">
                 <dx-validation-group>
                     <div class="header">
-                        Personal Information
+                        Contact Information
                     </div>
                     <div class="main">
                         <div class="row">
-                            <div class="col-md-6 col-sm-12">
+                            <div class="col-md-12">
                                 <div class="dx-field">
                                     <div class="dx-field-label">Email</div>
                                     <div class="dx-field-value">
@@ -117,7 +126,9 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-6 col-sm-12">
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
                                 <div class="dx-field">
                                     <div class="dx-field-label">Alternative Email</div>
                                     <div class="dx-field-value">
@@ -135,28 +146,6 @@
                                 </div>
                             </div>
                         </div>
-
-                        <div class="row">
-                            <div class="col-md-6 col-sm-12">
-                                <div class="dx-field">
-                                    <div class="dx-field-label">License State</div>
-                                    <div class="dx-field-value">
-                                        <dx-text-box placeholder="Enter license state"
-                                                     [(value)]="submitApplicationProfileInput.personalInformation.licenseState"></dx-text-box>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-6 col-sm-12">
-                                <div class="dx-field">
-                                    <div class="dx-field-label">License Number</div>
-                                    <div class="dx-field-value">
-                                        <dx-text-box placeholder="Enter license number"
-                                                     [(value)]="submitApplicationProfileInput.personalInformation.licenseNumber"></dx-text-box>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
                         <div class="dx-field">
                             <div class="dx-field-label">Phone</div>
                             <div class="dx-field-value">
@@ -258,29 +247,55 @@
                             </div>
                         </div>
                     </div>
-                    <div class="dx-field">
-                        <div class="dx-field-label">How long have you lived here?</div>
-                        <div class="dx-field-value">
-                            <dx-text-box placeholder="Enter number of years"
-                                         [(value)]="submitApplicationProfileInput.personalInformation.monthsAtAddress"></dx-text-box>
+                    <div class="row">
+                        <div class="col-md-6 col-sm-12">
+                            <div class="dx-field">
+                                <div class="dx-field-label">How long have you lived here?</div>
+                                <div class="dx-field-value">
+                                    <dx-text-box placeholder="Enter number of years"
+                                                 [(value)]="submitApplicationProfileInput.personalInformation.monthsAtAddress"></dx-text-box>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-sm-12">
+                            <div class="dx-field">
+                                <div class="dx-field-label">Do you own your home?</div>
+                                <div class="dx-field-value">
+                                    <dx-radio-group
+                                        [items]="radioGroup"
+                                        [(value)]="submitApplicationProfileInput.personalInformation.isHomeOwner"
+                                        displayExpr="text"
+                                        valueExpr="value"
+                                        layout="horizontal">
+                                    </dx-radio-group>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <div class="dx-field">
-                        <div class="dx-field-label">Do you own your home?</div>
-                        <div class="dx-field-value">
-                            <dx-radio-group
-                                [items]="radioGroup"
-                                [(value)]="submitApplicationProfileInput.personalInformation.isHomeOwner"
-                                displayExpr="text"
-                                valueExpr="value"
-                                layout="horizontal">
-                            </dx-radio-group>
+                    <div class="row">
+                        <div class="col-md-6 col-sm-12">
+                            <div class="dx-field">
+                                <div class="dx-field-label">License State</div>
+                                <div class="dx-field-value">
+                                    <dx-text-box placeholder="Enter license state"
+                                                 [(value)]="submitApplicationProfileInput.personalInformation.licenseState"></dx-text-box>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-sm-12">
+                            <div class="dx-field">
+                                <div class="dx-field-label">License Number</div>
+                                <div class="dx-field-value">
+                                    <dx-text-box placeholder="Enter license number"
+                                                 [(value)]="submitApplicationProfileInput.personalInformation.licenseNumber"></dx-text-box>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
                 <div class="footer">
                     <button matStepperPrevious class="btn btn-default">Back</button>
-                    <button matStepperNext class="btn btn-layout btn-next">Next</button>
+                    <dx-button class="btn btn-layout btn-next" text="Next" (onClick)="goToNextStep($event)"></dx-button>
                 </div>
             </div>
 
@@ -288,91 +303,82 @@
         <mat-step>
             <div class="step-item">
                 <div class="header">
-                    Debt Information
+                    Bank Information
                 </div>
                 <div class="main">
                     <div class="dx-field">
-                        <div class="dx-field-label">Debt Amount</div>
+                        <div class="dx-field-label">Bank Account Type</div>
                         <div class="dx-field-value">
-                            <dx-number-box
-                                format="$ #,##0.##"
-                                [(value)]="submitApplicationProfileInput.debtInformation.debtAmount"
-                            ></dx-number-box>
+                            <dx-select-box
+                                [items]="bankAccountType"
+                                [(value)]="submitApplicationProfileInput.bankInformation.bankAccountType"
+                                placeholder="Choose Bank Account Type"
+                            ></dx-select-box>
                         </div>
                     </div>
                     <div class="dx-field">
-                        <div class="dx-field-label">Credit Card Debt Amount</div>
+                        <div class="dx-field-label">Bank Name</div>
                         <div class="dx-field-value">
-                            <dx-number-box
-                                format="$ #,##0.##"
-                                [(value)]="submitApplicationProfileInput.debtInformation.creditCardDebtAmount"
-                            ></dx-number-box>
+                            <dx-text-box placeholder="Enter bank name"
+                                         [(value)]="submitApplicationProfileInput.bankInformation.bankName"></dx-text-box>
                         </div>
                     </div>
                     <div class="dx-field">
-                        <div class="dx-field-label">Student Debt Amount</div>
+                        <div class="dx-field-label">Bank Account Number</div>
                         <div class="dx-field-value">
-                            <dx-number-box
-                                format="$ #,##0.##"
-                                [(value)]="submitApplicationProfileInput.debtInformation.studentDebtAmount"
-                            ></dx-number-box>
+                            <dx-text-box placeholder="Enter bank account number"
+                                         [(value)]="submitApplicationProfileInput.bankInformation.bankAccountNumber"></dx-text-box>
+                        </div>
+                    </div>
+
+                    <div class="dx-field">
+                        <div class="dx-field-label">Bank ABA</div>
+                        <div class="dx-field-value">
+                            <dx-text-box placeholder="Enter bank ABA"
+                                         [(value)]="submitApplicationProfileInput.bankInformation.bankABA"></dx-text-box>
+                        </div>
+                    </div>
+                    <div class="dx-field">
+                        <div class="dx-field-label">Bank Phone</div>
+                        <div class="dx-field-value">
+                            <dx-text-box name="phone"
+                                         (onFocusOut)="blurInput($event)"
+                                         (onFocusIn)="focusInput($event)"
+                                         [maskRules]="rules"
+                                         [(value)]="submitApplicationProfileInput.bankInformation.bankPhone">
+                            </dx-text-box>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 col-sm-12">
+                            <div class="dx-field">
+                                <div class="dx-field-label">Months At Bank</div>
+                                <div class="dx-field-value">
+                                    <dx-text-box placeholder="Enter month in bank"
+                                                 [(value)]="submitApplicationProfileInput.bankInformation.monthsAtBank">
+                                    </dx-text-box>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-sm-12">
+                            <div class="dx-field">
+                                <div class="dx-field-label">Is Direct Deposit</div>
+                                <div class="dx-field-value">
+                                    <dx-radio-group
+                                        [items]="radioGroup"
+                                        [(value)]="submitApplicationProfileInput.bankInformation.isDirectDeposit"
+                                        displayExpr="text"
+                                        valueExpr="value"
+                                        layout="horizontal">
+                                    </dx-radio-group>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
                 <div class="footer">
                     <button matStepperPrevious class="btn btn-default">Back</button>
-                    <button matStepperNext class="btn btn-layout btn-next">Next</button>
-                </div>
-            </div>
-        </mat-step>
-        <mat-step>
-            <div class="step-item">
-                <div class="header">
-                    Loan Information
-                </div>
-                <div class="main">
-                    <div class="dx-field">
-                        <div class="dx-field-label">Credit score rating</div>
-                        <div class="dx-field-value">
-                            <dx-select-box
-                                [items]="creditScore"
-                                [(value)]="submitApplicationProfileInput.personalInformation.creditScoreRating"
-                                placeholder="Choose credit score"
-                            ></dx-select-box>
-                        </div>
-                    </div>
-                    <div class="dx-field">
-                        <div class="dx-field-label">Requested Loan Amount</div>
-                        <div class="dx-field-value">
-                            <dx-number-box
-                                format="$ #,##0.##"
-                                [(value)]="submitApplicationProfileInput.loanInformation.requestedLoanAmount"
-                            ></dx-number-box>
-                        </div>
-                    </div>
-                    <div class="dx-field">
-                        <div class="dx-field-label">Approved Loan Amount</div>
-                        <div class="dx-field-value">
-                            <dx-number-box
-                                format="$ #,##0.##"
-                                [(value)]="submitApplicationProfileInput.loanInformation.approvedLoanAmount"
-                            ></dx-number-box>
-                        </div>
-                    </div>
-                    <div class="dx-field">
-                        <div class="dx-field-label">Loan Reason</div>
-                        <div class="dx-field-value">
-                            <dx-select-box
-                                [items]="loanReason"
-                                [(value)]="submitApplicationProfileInput.loanInformation.loanReason"
-                                placeholder="Choose loan reason"
-                            ></dx-select-box>
-                        </div>
-                    </div>
-                </div>
-                <div class="footer">
-                    <button matStepperPrevious class="btn btn-default">Back</button>
-                    <button matStepperNext class="btn btn-layout btn-next">Next</button>
+                    <dx-button class="btn btn-layout btn-next" text="Next" (onClick)="goToNextStep($event)"></dx-button>
                 </div>
             </div>
         </mat-step>
@@ -382,106 +388,139 @@
                     Employment Information
                 </div>
                 <div class="main">
-                    <div class="dx-field">
-                        <div class="dx-field-label">Is Employed</div>
-                        <div class="dx-field-value">
-                            <dx-radio-group
-                                [items]="radioGroup"
-                                [(value)]="submitApplicationProfileInput.employmentInformation.isEmployed"
-                                displayExpr="text"
-                                valueExpr="value"
-                                layout="horizontal">
-                            </dx-radio-group>
+                    <div class="row">
+                        <div class="col-md-6 col-sm-12">
+                            <div class="dx-field">
+                                <div class="dx-field-label">Is Employed?</div>
+                                <div class="dx-field-value">
+                                    <dx-radio-group
+                                        [items]="radioGroup"
+                                        [(value)]="submitApplicationProfileInput.employmentInformation.isEmployed"
+                                        displayExpr="text"
+                                        valueExpr="value"
+                                        layout="horizontal">
+                                    </dx-radio-group>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-sm-12">
+                            <div class="dx-field">
+                                <div class="dx-field-label">Is Active Military?</div>
+                                <div class="dx-field-value">
+                                    <dx-radio-group
+                                        [items]="radioGroup"
+                                        [(value)]="submitApplicationProfileInput.personalInformation.isActiveMilitary"
+                                        displayExpr="text"
+                                        valueExpr="value"
+                                        layout="horizontal">
+                                    </dx-radio-group>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <div class="dx-field">
-                        <div class="dx-field-label">Employer Name</div>
-                        <div class="dx-field-value">
-                            <dx-text-box placeholder="Enter employer name"
-                                         [(value)]="submitApplicationProfileInput.employmentInformation.employerName"></dx-text-box>
+                    <div class="row">
+                        <div class="col-md-6 col-sm-12">
+                            <div class="dx-field">
+                                <div class="dx-field-label">Employer Name</div>
+                                <div class="dx-field-value">
+                                    <dx-text-box placeholder="Enter employer name"
+                                                 [(value)]="submitApplicationProfileInput.employmentInformation.employerName"></dx-text-box>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-sm-12">
+                            <div class="dx-field">
+                                <div class="dx-field-label">Job Title</div>
+                                <div class="dx-field-value">
+                                    <dx-text-box placeholder="Enter job title"
+                                                 [(value)]="submitApplicationProfileInput.employmentInformation.jobTitle"></dx-text-box>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <div class="dx-field">
-                        <div class="dx-field-label">Job Title</div>
-                        <div class="dx-field-value">
-                            <dx-text-box placeholder="Enter job title"
-                                         [(value)]="submitApplicationProfileInput.employmentInformation.jobTitle"></dx-text-box>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="dx-field">
+                                <div class="dx-field-label">Months At Employer</div>
+                                <div class="dx-field-value">
+                                    <dx-text-box placeholder="Enter period"
+                                                 [(value)]="submitApplicationProfileInput.employmentInformation.monthsAtEmployer"></dx-text-box>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <div class="dx-field">
-                        <div class="dx-field-label">Months At Employer</div>
-                        <div class="dx-field-value">
-                            <dx-text-box placeholder="Enter period"
-                                         [(value)]="submitApplicationProfileInput.employmentInformation.monthsAtEmployer"></dx-text-box>
+                    <div class="row">
+                        <div class="col-md-6 col-sm-12">
+                            <div class="dx-field">
+                                <div class="dx-field-label">Work Phone</div>
+                                <div class="dx-field-value">
+                                    <dx-text-box name="phone"
+                                                 (onFocusOut)="blurInput($event)"
+                                                 (onFocusIn)="focusInput($event)"
+                                                 [maskRules]="rules"
+                                                 [(value)]="submitApplicationProfileInput.employmentInformation.phoneWork">
+                                    </dx-text-box>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-sm-12">
+                            <div class="dx-field">
+                                <div class="dx-field-label">Work Phone Extension</div>
+                                <div class="dx-field-value">
+                                    <dx-text-box [maxLength]="5"
+                                                 name="phoneExt"
+                                                 (onFocusOut)="blurInput($event)"
+                                                 (onFocusIn)="focusInput($event)"
+                                                 [(value)]="submitApplicationProfileInput.employmentInformation.phoneWorkExtension">
+                                    </dx-text-box>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <div class="dx-field">
-                        <div class="dx-field-label">Work Phone</div>
-                        <div class="dx-field-value">
-                            <dx-text-box name="phone"
-                                         (onFocusOut)="blurInput($event)"
-                                         (onFocusIn)="focusInput($event)"
-                                         [maskRules]="rules"
-                                         [(value)]="submitApplicationProfileInput.employmentInformation.phoneWork">
-                            </dx-text-box>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="dx-field">
+                                <div class="dx-field-label">Employer Address1</div>
+                                <div class="dx-field-value">
+                                    <dx-text-box placeholder="Enter address"
+                                                 [(value)]="submitApplicationProfileInput.employmentInformation.employerAddress1"></dx-text-box>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <div class="dx-field">
-                        <div class="dx-field-label">Work Phone Extension</div>
-                        <div class="dx-field-value">
-                            <dx-text-box [maxLength]="5"
-                                         name="phoneExt"
-                                         (onFocusOut)="blurInput($event)"
-                                         (onFocusIn)="focusInput($event)"
-                                         [(value)]="submitApplicationProfileInput.employmentInformation.phoneWorkExtension">
-                            </dx-text-box>
+                    <div class="row">
+                        <div class="col-md-4 col-sm-12">
+                            <div class="dx-field">
+                                <div class="dx-field-label">Employer City</div>
+                                <div class="dx-field-value">
+                                    <dx-text-box placeholder="Enter city"
+                                                 [(value)]="submitApplicationProfileInput.employmentInformation.employerCity"></dx-text-box>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 col-sm-12">
+                            <div class="dx-field">
+                                <div class="dx-field-label">Employer State Code</div>
+                                <div class="dx-field-value">
+                                    <dx-text-box placeholder="Enter state code"
+                                                 [(value)]="submitApplicationProfileInput.employmentInformation.employerStateCode"></dx-text-box>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 col-sm-12">
+                            <div class="dx-field">
+                                <div class="dx-field-label">Employer Postal Code</div>
+                                <div class="dx-field-value">
+                                    <dx-text-box placeholder="Enter postal code"
+                                                 [(value)]="submitApplicationProfileInput.employmentInformation.employerPostalCode"></dx-text-box>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
                 <div class="footer">
                     <button matStepperPrevious class="btn btn-default">Back</button>
-                    <button matStepperNext class="btn btn-layout btn-next">Next</button>
-                </div>
-            </div>
-        </mat-step>
-        <mat-step>
-            <div class="step-item">
-                <div class="header">
-                    Employment Address
-                </div>
-                <div class="main">
-                    <div class="dx-field">
-                        <div class="dx-field-label">Employer Address1</div>
-                        <div class="dx-field-value">
-                            <dx-text-box placeholder="Enter address"
-                                         [(value)]="submitApplicationProfileInput.employmentInformation.employerAddress1"></dx-text-box>
-                        </div>
-                    </div>
-                    <div class="dx-field">
-                        <div class="dx-field-label">Employer City</div>
-                        <div class="dx-field-value">
-                            <dx-text-box placeholder="Enter city"
-                                         [(value)]="submitApplicationProfileInput.employmentInformation.employerCity"></dx-text-box>
-                        </div>
-                    </div>
-                    <div class="dx-field">
-                        <div class="dx-field-label">Employer State Code</div>
-                        <div class="dx-field-value">
-                            <dx-text-box placeholder="Enter state code"
-                                         [(value)]="submitApplicationProfileInput.employmentInformation.employerStateCode"></dx-text-box>
-                        </div>
-                    </div>
-                    <div class="dx-field">
-                        <div class="dx-field-label">Employer Postal Code</div>
-                        <div class="dx-field-value">
-                            <dx-text-box placeholder="Enter postal code"
-                                         [(value)]="submitApplicationProfileInput.employmentInformation.employerPostalCode"></dx-text-box>
-                        </div>
-                    </div>
-                </div>
-                <div class="footer">
-                    <button matStepperPrevious class="btn btn-default">Back</button>
-                    <button matStepperNext class="btn btn-layout btn-next">Next</button>
+                    <dx-button class="btn btn-layout btn-next" text="Next" (onClick)="goToNextStep($event)"></dx-button>
                 </div>
             </div>
         </mat-step>
@@ -550,69 +589,94 @@
         <mat-step>
             <div class="step-item">
                 <div class="header">
-                    Bank Information
+                    Loan Information
                 </div>
                 <div class="main">
-                    <div class="dx-field">
-                        <div class="dx-field-label">Bank Account Type</div>
-                        <div class="dx-field-value">
-                            <dx-select-box
-                                [items]="bankAccountType"
-                                [(value)]="submitApplicationProfileInput.bankInformation.bankAccountType"
-                                placeholder="Choose Bank Account Type"
-                            ></dx-select-box>
+                    <div class="row">
+                        <div class="col-md-6 col-sm-12">
+                            <div class="dx-field">
+                                <div class="dx-field-label">Credit score rating</div>
+                                <div class="dx-field-value">
+                                    <dx-select-box
+                                        [items]="creditScore"
+                                        [(value)]="submitApplicationProfileInput.personalInformation.creditScoreRating"
+                                        placeholder="Choose credit score"
+                                    ></dx-select-box>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-sm-12">
+                            <div class="dx-field">
+                                <div class="dx-field-label">Loan Reason</div>
+                                <div class="dx-field-value">
+                                    <dx-select-box
+                                        [items]="loanReason"
+                                        [(value)]="submitApplicationProfileInput.loanInformation.loanReason"
+                                        placeholder="Choose loan reason"
+                                    ></dx-select-box>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <div class="dx-field">
-                        <div class="dx-field-label">Bank Name</div>
-                        <div class="dx-field-value">
-                            <dx-text-box placeholder="Enter bank name"
-                                         [(value)]="submitApplicationProfileInput.bankInformation.bankName"></dx-text-box>
+                    <div class="row">
+                        <div class="col-md-6 col-sm-12">
+                            <div class="dx-field">
+                                <div class="dx-field-label">Requested Loan Amount</div>
+                                <div class="dx-field-value">
+                                    <dx-number-box
+                                        format="$ #,##0.##"
+                                        [(value)]="submitApplicationProfileInput.loanInformation.requestedLoanAmount"
+                                    ></dx-number-box>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-sm-12">
+                            <div class="dx-field">
+                                <div class="dx-field-label">Approved Loan Amount</div>
+                                <div class="dx-field-value">
+                                    <dx-number-box
+                                        format="$ #,##0.##"
+                                        [(value)]="submitApplicationProfileInput.loanInformation.approvedLoanAmount"
+                                    ></dx-number-box>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <div class="dx-field">
-                        <div class="dx-field-label">Bank Account Number</div>
-                        <div class="dx-field-value">
-                            <dx-text-box placeholder="Enter bank account number"
-                                         [(value)]="submitApplicationProfileInput.bankInformation.bankAccountNumber"></dx-text-box>
-                        </div>
+
+                    <div class="header">
+                        Debt Information
                     </div>
                     <div class="dx-field">
-                        <div class="dx-field-label">Bank ABA</div>
+                        <div class="dx-field-label">Debt Amount</div>
                         <div class="dx-field-value">
-                            <dx-text-box placeholder="Enter bank ABA"
-                                         [(value)]="submitApplicationProfileInput.bankInformation.bankABA"></dx-text-box>
+                            <dx-number-box
+                                format="$ #,##0.##"
+                                [(value)]="submitApplicationProfileInput.debtInformation.debtAmount"
+                            ></dx-number-box>
                         </div>
                     </div>
-                    <div class="dx-field">
-                        <div class="dx-field-label">Bank Phone</div>
-                        <div class="dx-field-value">
-                            <dx-text-box name="phone"
-                                         (onFocusOut)="blurInput($event)"
-                                         (onFocusIn)="focusInput($event)"
-                                         [maskRules]="rules"
-                                         [(value)]="submitApplicationProfileInput.bankInformation.bankPhone">
-                            </dx-text-box>
+                    <div class="row">
+                        <div class="col-md-6 col-sm-12">
+                            <div class="dx-field">
+                                <div class="dx-field-label">Credit Card Debt Amount</div>
+                                <div class="dx-field-value">
+                                    <dx-number-box
+                                        format="$ #,##0.##"
+                                        [(value)]="submitApplicationProfileInput.debtInformation.creditCardDebtAmount"
+                                    ></dx-number-box>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                    <div class="dx-field">
-                        <div class="dx-field-label">Is Direct Deposit</div>
-                        <div class="dx-field-value">
-                            <dx-radio-group
-                                [items]="radioGroup"
-                                [(value)]="submitApplicationProfileInput.bankInformation.isDirectDeposit"
-                                displayExpr="text"
-                                valueExpr="value"
-                                layout="horizontal">
-                            </dx-radio-group>
-                        </div>
-                    </div>
-                    <div class="dx-field">
-                        <div class="dx-field-label">Months At Bank</div>
-                        <div class="dx-field-value">
-                            <dx-text-box placeholder="Enter month in bank"
-                                         [(value)]="submitApplicationProfileInput.bankInformation.monthsAtBank">
-                            </dx-text-box>
+                        <div class="col-md-6 col-sm-12">
+                            <div class="dx-field">
+                                <div class="dx-field-label">Student Debt Amount</div>
+                                <div class="dx-field-value">
+                                    <dx-number-box
+                                        format="$ #,##0.##"
+                                        [(value)]="submitApplicationProfileInput.debtInformation.studentDebtAmount"
+                                    ></dx-number-box>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

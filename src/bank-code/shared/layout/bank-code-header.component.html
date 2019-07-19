@@ -5,5 +5,25 @@
         </a>
     </div>
 
+    <div *ngIf="!loggedUserId" class="navigation">
+        <ul class="app-area-navigation">
+            <li class="app-list-item">
+                <a href="https://www.bankcode.pro/" target="_blank">
+                    Try it Free
+                </a>
+            </li>
+            <li class="app-list-item">
+                <a routerLink="signup">
+                    Subscribe
+                </a>
+            </li>
+            <li class="app-list-item">
+                <a routerLink="login">
+                    Sign In
+                </a>
+            </li>
+        </ul>
+    </div>
+
     <ng-template ad-header-host></ng-template>
 </div>

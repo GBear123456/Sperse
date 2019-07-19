@@ -33164,6 +33164,7 @@ export interface IBusinessEntityTypeDto {
 
 export class BusinessEntityInfoDto implements IBusinessEntityInfoDto {
     name!: string | undefined;
+    parentId!: number | undefined;
     industry!: string | undefined;
     typeId!: string | undefined;
     taxNumber!: string | undefined;
@@ -33194,6 +33195,7 @@ export class BusinessEntityInfoDto implements IBusinessEntityInfoDto {
     init(data?: any) {
         if (data) {
             this.name = data["name"];
+            this.parentId = data["parentId"];
             this.industry = data["industry"];
             this.typeId = data["typeId"];
             this.taxNumber = data["taxNumber"];
@@ -33224,6 +33226,7 @@ export class BusinessEntityInfoDto implements IBusinessEntityInfoDto {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["name"] = this.name;
+        data["parentId"] = this.parentId;
         data["industry"] = this.industry;
         data["typeId"] = this.typeId;
         data["taxNumber"] = this.taxNumber;
@@ -33247,6 +33250,7 @@ export class BusinessEntityInfoDto implements IBusinessEntityInfoDto {
 
 export interface IBusinessEntityInfoDto {
     name: string | undefined;
+    parentId: number | undefined;
     industry: string | undefined;
     typeId: string | undefined;
     taxNumber: string | undefined;
@@ -33268,6 +33272,7 @@ export interface IBusinessEntityInfoDto {
 
 export class CreateBusinessEntityDto implements ICreateBusinessEntityDto {
     name!: string;
+    parentId!: number | undefined;
     industry!: string | undefined;
     typeId!: string | undefined;
     taxNumber!: string | undefined;
@@ -33296,6 +33301,7 @@ export class CreateBusinessEntityDto implements ICreateBusinessEntityDto {
     init(data?: any) {
         if (data) {
             this.name = data["name"];
+            this.parentId = data["parentId"];
             this.industry = data["industry"];
             this.typeId = data["typeId"];
             this.taxNumber = data["taxNumber"];
@@ -33324,6 +33330,7 @@ export class CreateBusinessEntityDto implements ICreateBusinessEntityDto {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["name"] = this.name;
+        data["parentId"] = this.parentId;
         data["industry"] = this.industry;
         data["typeId"] = this.typeId;
         data["taxNumber"] = this.taxNumber;
@@ -33345,6 +33352,7 @@ export class CreateBusinessEntityDto implements ICreateBusinessEntityDto {
 
 export interface ICreateBusinessEntityDto {
     name: string;
+    parentId: number | undefined;
     industry: string | undefined;
     typeId: string | undefined;
     taxNumber: string | undefined;
@@ -33366,6 +33374,7 @@ export class UpdateBusinessEntityDto implements IUpdateBusinessEntityDto {
     id!: number;
     statusId!: string | undefined;
     name!: string;
+    parentId!: number | undefined;
     industry!: string | undefined;
     typeId!: string | undefined;
     taxNumber!: string | undefined;
@@ -33396,6 +33405,7 @@ export class UpdateBusinessEntityDto implements IUpdateBusinessEntityDto {
             this.id = data["id"];
             this.statusId = data["statusId"];
             this.name = data["name"];
+            this.parentId = data["parentId"];
             this.industry = data["industry"];
             this.typeId = data["typeId"];
             this.taxNumber = data["taxNumber"];
@@ -33426,6 +33436,7 @@ export class UpdateBusinessEntityDto implements IUpdateBusinessEntityDto {
         data["id"] = this.id;
         data["statusId"] = this.statusId;
         data["name"] = this.name;
+        data["parentId"] = this.parentId;
         data["industry"] = this.industry;
         data["typeId"] = this.typeId;
         data["taxNumber"] = this.taxNumber;
@@ -33449,6 +33460,7 @@ export interface IUpdateBusinessEntityDto {
     id: number;
     statusId: string | undefined;
     name: string;
+    parentId: number | undefined;
     industry: string | undefined;
     typeId: string | undefined;
     taxNumber: string | undefined;
@@ -65692,6 +65704,7 @@ export class GenerateInput implements IGenerateInput {
     from!: moment.Moment;
     to!: moment.Moment;
     period!: ReportPeriod;
+    currencyId!: string;
     businessEntityIds!: number[] | undefined;
     bankAccountIds!: number[] | undefined;
 
@@ -65709,6 +65722,7 @@ export class GenerateInput implements IGenerateInput {
             this.from = data["from"] ? moment(data["from"].toString()) : <any>undefined;
             this.to = data["to"] ? moment(data["to"].toString()) : <any>undefined;
             this.period = data["period"];
+            this.currencyId = data["currencyId"];
             if (data["businessEntityIds"] && data["businessEntityIds"].constructor === Array) {
                 this.businessEntityIds = [];
                 for (let item of data["businessEntityIds"])
@@ -65734,6 +65748,7 @@ export class GenerateInput implements IGenerateInput {
         data["from"] = this.from ? this.from.toISOString() : <any>undefined;
         data["to"] = this.to ? this.to.toISOString() : <any>undefined;
         data["period"] = this.period;
+        data["currencyId"] = this.currencyId;
         if (this.businessEntityIds && this.businessEntityIds.constructor === Array) {
             data["businessEntityIds"] = [];
             for (let item of this.businessEntityIds)
@@ -65752,6 +65767,7 @@ export interface IGenerateInput {
     from: moment.Moment;
     to: moment.Moment;
     period: ReportPeriod;
+    currencyId: string;
     businessEntityIds: number[] | undefined;
     bankAccountIds: number[] | undefined;
 }

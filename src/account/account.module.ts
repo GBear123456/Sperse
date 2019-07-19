@@ -38,6 +38,7 @@ import { LendSpaceResetPasswordComponent } from './password/layouts/lend-space/l
 import { AdvicePeriodResetPasswordComponent } from './password/layouts/advice-period/advice-period-reset-password.component';
 import { BankCodeResetPasswordComponent } from './password/layouts/bank-code/bank-code-reset-password.component';
 import { ApplicationServiceProxy } from '@shared/service-proxies/service-proxies';
+import { BankCodeLayoutModule } from '@root/bank-code/shared/layout/bank-code-layout.module';
 
 @NgModule({
     imports: [
@@ -51,6 +52,7 @@ import { ApplicationServiceProxy } from '@shared/service-proxies/service-proxies
         PaymentInfoModule,
         AccountRoutingModule,
         PersonalFinanceLayoutModule,
+        BankCodeLayoutModule,
     ],
     declarations: [
         AccountComponent,

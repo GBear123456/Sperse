@@ -72,6 +72,10 @@
                 font-weight: bold;
                 color: #ffffff;
             }
+            
+            .header {
+                padding-left: 0;
+            }
 
             p {
                 font-family: @mainFont;
@@ -209,6 +213,7 @@
             mat-step-header.mat-horizontal-stepper-header {
                 padding: 10px;
                 height: 100%;
+                pointer-events: none !important;
                 
                 &:hover {
                     background: transparent !important;
