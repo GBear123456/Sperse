@@ -19,7 +19,7 @@ import { first, publishReplay, refCount } from 'rxjs/operators';
 import { AppConsts } from '@shared/AppConsts';
 import {
     GetApplicationDetailsOutput,
-	GetMemberInfoResponse,
+    GetMemberInfoResponse,
     CampaignProviderType,
     OfferServiceProxy,
     SubmitApplicationInput,
@@ -201,8 +201,9 @@ export class OffersWizardComponent implements OnInit {
                 width: '530px',
                 panelClass: 'apply-offer-dialog',
                 data: modalData
-        });
-    }
+            });
+        }
+        this.submitApplicationProfileInput.legalInformation.isTCPAChecked = true;
         this.submitApplicationProfileInput.campaignId = this.data.campaignId;
         this.offersServiceProxy.submitApplication(this.submitApplicationProfileInput).subscribe(
             (result: SubmitApplicationOutput) => {
