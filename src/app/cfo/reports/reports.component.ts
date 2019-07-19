@@ -11,7 +11,8 @@ import { CacheService } from 'ng2-cache-service';
 import moment from 'moment-timezone';
 import { ImageViewerComponent } from 'ng2-image-viewer';
 import '@node_modules/ng2-image-viewer/imageviewer.js';
-import { flatMap } from 'rxjs/operators';
+import { flatMap, first, switchMap, tap } from 'rxjs/operators';
+import { select, Store } from '@ngrx/store';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
@@ -23,6 +24,7 @@ import { DateHelper } from '@shared/helpers/DateHelper';
 import { StringHelper } from '@root/shared/helpers/StringHelper';
 import { RequestHelper } from '@root/shared/helpers/RequestHelper';
 import { ReportViewType } from './report-view-type.enum';
+import { CfoStore, CurrenciesStoreSelectors } from '@app/cfo/store';
 
 @Component({
     templateUrl: './reports.component.html',
@@ -76,7 +78,8 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
         private _changeDetector: ChangeDetectorRef,
         private cacheService: CacheService,
         public reportsProxy: ReportsServiceProxy,
-        public bankAccountsService: BankAccountsService
+        public bankAccountsService: BankAccountsService,
+        private store$: Store<CfoStore.State>
     ) {
         super(injector);
         this.dataSource = {
@@ -110,7 +113,7 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
             {
                 text: this.l('Delete'),
                 action: this.deleteReport.bind(this)
-    }
+            }
         ];
     }
 
@@ -212,14 +215,21 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
                 text: this.l('Generate'),
                 visible: this.isInstanceAdmin || this.isMemberAccessManage,
                 onClick: () => {
-                    this.notify.info(this.l('GeneratingStarted'));
-                    this.reportsProxy.generate(<any>this.instanceType, this.instanceId, new GenerateInput({
-                        from: this.dateFrom,
-                        to: this.dateTo,
-                        period: this.selectedPeriod,
-                        businessEntityIds: [],
-                        bankAccountIds: []
-                    })).subscribe(() => {
+                    this.store$.pipe(
+                        select(CurrenciesStoreSelectors.getSelectedCurrencyId), 
+                        first(),
+                        tap(() => this.notify.info(this.l('GeneratingStarted'))),
+                        switchMap(currencyId => 
+                            this.reportsProxy.generate(<any>this.instanceType, this.instanceId, new GenerateInput({
+                                from: this.dateFrom,
+                                to: this.dateTo,
+                                period: this.selectedPeriod,
+                                currencyId,
+                                businessEntityIds: [],
+                                bankAccountIds: []
+                            }))
+                        )
+                    ).subscribe(() => {
                         this.notify.info(this.l('SuccesfullyGenerated'));
                         this.invalidate();
                     });

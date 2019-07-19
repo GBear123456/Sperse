@@ -65704,6 +65704,7 @@ export class GenerateInput implements IGenerateInput {
     from!: moment.Moment;
     to!: moment.Moment;
     period!: ReportPeriod;
+    currencyId!: string;
     businessEntityIds!: number[] | undefined;
     bankAccountIds!: number[] | undefined;
 
@@ -65721,6 +65722,7 @@ export class GenerateInput implements IGenerateInput {
             this.from = data["from"] ? moment(data["from"].toString()) : <any>undefined;
             this.to = data["to"] ? moment(data["to"].toString()) : <any>undefined;
             this.period = data["period"];
+            this.currencyId = data["currencyId"];
             if (data["businessEntityIds"] && data["businessEntityIds"].constructor === Array) {
                 this.businessEntityIds = [];
                 for (let item of data["businessEntityIds"])
@@ -65746,6 +65748,7 @@ export class GenerateInput implements IGenerateInput {
         data["from"] = this.from ? this.from.toISOString() : <any>undefined;
         data["to"] = this.to ? this.to.toISOString() : <any>undefined;
         data["period"] = this.period;
+        data["currencyId"] = this.currencyId;
         if (this.businessEntityIds && this.businessEntityIds.constructor === Array) {
             data["businessEntityIds"] = [];
             for (let item of this.businessEntityIds)
@@ -65764,6 +65767,7 @@ export interface IGenerateInput {
     from: moment.Moment;
     to: moment.Moment;
     period: ReportPeriod;
+    currencyId: string;
     businessEntityIds: number[] | undefined;
     bankAccountIds: number[] | undefined;
 }
