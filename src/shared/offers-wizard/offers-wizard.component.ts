@@ -24,7 +24,8 @@ import {
     OfferServiceProxy,
     SubmitApplicationInput,
     OfferProviderType,
-    SubmitApplicationOutput
+    LoanReason,
+    SubmitApplicationOutput, PayFrequency, CreditScoreRating, IncomeType, Gender, TimeOfDay, BankAccountType
 } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { DateHelper } from '@shared/helpers/DateHelper';
@@ -46,15 +47,15 @@ export class OffersWizardComponent implements OnInit {
     dialogRef: MatDialogRef<OffersWizardComponent, any>;
     domain = environment.LENDSPACE_DOMAIN;
     termsData = {
-        title: 'Terms of Use',
+        title: this.ls.l('TermsOfUse'),
         bodyUrl: this.domain + '/documents/terms.html',
         downloadDisabled: true
-    }
+    };
     privacyData = {
-        title: 'Privacy Policy',
+        title: this.ls.l('PrivacyPolicy'),
         bodyUrl: this.domain + '/documents/policy.html',
         downloadDisabled: true
-    }
+    };
     private readonly INPUT_MASK = {
         ssn: '000-00-0000',
         phone: '+1 (X00) 000-0000',
@@ -65,40 +66,16 @@ export class OffersWizardComponent implements OnInit {
     emailRegEx = AppConsts.regexPatterns.email;
     rules: any;
     radioGroup = [
-        {value: true, text: 'Yes'},
-        {value: false, text: 'No'}
+        { value: true, text: 'Yes' },
+        { value: false, text: 'No' }
     ];
-    contactTime = [
-        'Morning', 'Afternoon', 'Evening', 'Anytime'
-    ];
-    gender = [
-        'Female', 'Male'
-    ];
-    creditScore = [
-        'NotSure', 'Excellent', 'Good', 'Fair', 'Poor'
-    ];
-    loanReason = [
-        'Debt Consolidation',
-        'Emergency Situation',
-        'Auto Repairs',
-        'Auto Purchase',
-        'Moving',
-        'Home Improvement',
-        'Medical',
-        'Business',
-        'Vacation',
-        'Rent Or Mortgage',
-        'Wedding',
-        'Major Purchases',
-        'Other',
-        'Credit Card Debt Relief',
-        'Student Loan Debt Relief'
-    ];
-    payFrequency = [
-        'Weekly', 'BiWeekly', 'Monthly', 'SemiMonthly'
-    ];
-    incomeType = [ 'Employed', 'Benefits', 'SelfEmployed' ];
-    bankAccountType = [ 'Checking', 'Savings' ];
+    contactTime = Object.keys(TimeOfDay);
+    gender = Object.keys(Gender);
+    creditScore = Object.keys(CreditScoreRating);
+    loanReason = Object.keys(LoanReason);
+    payFrequency = Object.keys(PayFrequency);
+    incomeType = Object.keys(IncomeType);
+    bankAccountType = Object.keys(BankAccountType);
 
     constructor(
         injector: Injector,
