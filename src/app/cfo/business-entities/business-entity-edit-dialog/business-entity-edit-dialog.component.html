@@ -13,6 +13,18 @@
                 </dx-text-box>
                 <span [class]="businessEntity.name && 'clear-contact' || 'hidden'" (click)="emptyValue('name')"><i class="minus-icon"></i></span>
             </div>
+            <div class="field">
+                <label>{{ls.l('BusinessEntity_ParentName')}}</label>
+                <dx-select-box [dataSource]="businessEntities"
+                               displayExpr="name"
+                               valueExpr="id"
+                               name="parent"
+                               [width]="'360px'"
+                               [searchEnabled]="true"
+                               [(value)]="businessEntity.parentId">
+                </dx-select-box>
+                <span [class]="businessEntity.parentId && 'clear-contact' || 'hidden'" (click)="emptyValue('parentId')"><i class="minus-icon"></i></span>
+            </div>
             <div class="field checkbox" *ngIf="!isNew">
                 <label>{{ls.l('BusinessEntity_Active')}}</label>
                 <dx-check-box [value]="isActive()"
@@ -22,9 +34,9 @@
             <div class="field checkbox">
                 <label>{{ls.l('BusinessEntity_Default')}}</label>
                 <dx-check-box name="isDefault"
-                            [(value)]="businessEntity.isDefault">
+                              [(value)]="businessEntity.isDefault">
                 </dx-check-box>
-            </div>            
+            </div>
             <div class="field">
                 <label>{{ls.l('BusinessEntity_Industry')}}</label>
                 <dx-text-box name="Industry"

@@ -33164,6 +33164,7 @@ export interface IBusinessEntityTypeDto {
 
 export class BusinessEntityInfoDto implements IBusinessEntityInfoDto {
     name!: string | undefined;
+    parentId!: number | undefined;
     industry!: string | undefined;
     typeId!: string | undefined;
     taxNumber!: string | undefined;
@@ -33194,6 +33195,7 @@ export class BusinessEntityInfoDto implements IBusinessEntityInfoDto {
     init(data?: any) {
         if (data) {
             this.name = data["name"];
+            this.parentId = data["parentId"];
             this.industry = data["industry"];
             this.typeId = data["typeId"];
             this.taxNumber = data["taxNumber"];
@@ -33224,6 +33226,7 @@ export class BusinessEntityInfoDto implements IBusinessEntityInfoDto {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["name"] = this.name;
+        data["parentId"] = this.parentId;
         data["industry"] = this.industry;
         data["typeId"] = this.typeId;
         data["taxNumber"] = this.taxNumber;
@@ -33247,6 +33250,7 @@ export class BusinessEntityInfoDto implements IBusinessEntityInfoDto {
 
 export interface IBusinessEntityInfoDto {
     name: string | undefined;
+    parentId: number | undefined;
     industry: string | undefined;
     typeId: string | undefined;
     taxNumber: string | undefined;
@@ -33268,6 +33272,7 @@ export interface IBusinessEntityInfoDto {
 
 export class CreateBusinessEntityDto implements ICreateBusinessEntityDto {
     name!: string;
+    parentId!: number | undefined;
     industry!: string | undefined;
     typeId!: string | undefined;
     taxNumber!: string | undefined;
@@ -33296,6 +33301,7 @@ export class CreateBusinessEntityDto implements ICreateBusinessEntityDto {
     init(data?: any) {
         if (data) {
             this.name = data["name"];
+            this.parentId = data["parentId"];
             this.industry = data["industry"];
             this.typeId = data["typeId"];
             this.taxNumber = data["taxNumber"];
@@ -33324,6 +33330,7 @@ export class CreateBusinessEntityDto implements ICreateBusinessEntityDto {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["name"] = this.name;
+        data["parentId"] = this.parentId;
         data["industry"] = this.industry;
         data["typeId"] = this.typeId;
         data["taxNumber"] = this.taxNumber;
@@ -33345,6 +33352,7 @@ export class CreateBusinessEntityDto implements ICreateBusinessEntityDto {
 
 export interface ICreateBusinessEntityDto {
     name: string;
+    parentId: number | undefined;
     industry: string | undefined;
     typeId: string | undefined;
     taxNumber: string | undefined;
@@ -33366,6 +33374,7 @@ export class UpdateBusinessEntityDto implements IUpdateBusinessEntityDto {
     id!: number;
     statusId!: string | undefined;
     name!: string;
+    parentId!: number | undefined;
     industry!: string | undefined;
     typeId!: string | undefined;
     taxNumber!: string | undefined;
@@ -33396,6 +33405,7 @@ export class UpdateBusinessEntityDto implements IUpdateBusinessEntityDto {
             this.id = data["id"];
             this.statusId = data["statusId"];
             this.name = data["name"];
+            this.parentId = data["parentId"];
             this.industry = data["industry"];
             this.typeId = data["typeId"];
             this.taxNumber = data["taxNumber"];
@@ -33426,6 +33436,7 @@ export class UpdateBusinessEntityDto implements IUpdateBusinessEntityDto {
         data["id"] = this.id;
         data["statusId"] = this.statusId;
         data["name"] = this.name;
+        data["parentId"] = this.parentId;
         data["industry"] = this.industry;
         data["typeId"] = this.typeId;
         data["taxNumber"] = this.taxNumber;
@@ -33449,6 +33460,7 @@ export interface IUpdateBusinessEntityDto {
     id: number;
     statusId: string | undefined;
     name: string;
+    parentId: number | undefined;
     industry: string | undefined;
     typeId: string | undefined;
     taxNumber: string | undefined;
