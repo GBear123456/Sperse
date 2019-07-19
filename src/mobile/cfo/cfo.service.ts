@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { CFOServiceBase } from '@shared/cfo/cfo-service-base';
-import { InstanceServiceProxy, InstanceType, GetStatusOutputStatus } from '@shared/service-proxies/service-proxies';
+import { InstanceServiceProxy, InstanceType, InstanceStatus } from '@shared/service-proxies/service-proxies';
 
 @Injectable()
 export class CFOService extends CFOServiceBase {
@@ -11,7 +11,7 @@ export class CFOService extends CFOServiceBase {
 
     instanceChangeProcess() {
         this._instanceServiceProxy.getStatus(InstanceType[this.instanceType], this.instanceId, false).subscribe((data) => {
-            this.initialized = (data.status == GetStatusOutputStatus.Active) && data.hasSyncAccounts;
+            this.initialized = (data.status == InstanceStatus.Active) && data.hasSyncAccounts;
         });
     }
 }

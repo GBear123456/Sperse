@@ -20,7 +20,7 @@ import {
     CommonLookupServiceProxy,
     FindUsersInput,
     NameValueDto,
-    PagedResultDtoOfNameValueDto
+    NameValueDtoPagedResultDto
 } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';

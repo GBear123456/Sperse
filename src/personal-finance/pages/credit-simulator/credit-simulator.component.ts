@@ -3,7 +3,7 @@ import {appModuleAnimation} from '@shared/animations/routerTransition';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { finalize } from 'rxjs/operators';
 
-import { CreditSimulatorServiceProxy, ScoreSimulatorDto, ScoreSimulatorInfoDto, ScoreSimulatorInfoDtoAccessStatus } from '@shared/service-proxies/service-proxies';
+import { CreditSimulatorServiceProxy, ScoreSimulatorDto, ScoreSimulatorInfoDto, MemberSimulatorAccessStatus } from '@shared/service-proxies/service-proxies';
 
 @Component({
     selector: 'app-credit-calculator',
@@ -18,7 +18,7 @@ export class CreditSimulatorComponent extends AppComponentBase implements OnInit
     score: ScoreSimulatorDto = new ScoreSimulatorDto();
     calculatedCreditScore: number;
     historyItems = [];
-    scoreSimulatorInfoDtoAccessStatus = ScoreSimulatorInfoDtoAccessStatus;
+    scoreSimulatorInfoDtoAccessStatus = MemberSimulatorAccessStatus;
 
     constructor(
         injector: Injector,
@@ -34,7 +34,7 @@ export class CreditSimulatorComponent extends AppComponentBase implements OnInit
             .subscribe(result => {
                 this.simulatorInfo = result;
 
-                if (result.accessStatus == ScoreSimulatorInfoDtoAccessStatus.Ok) {
+                if (result.accessStatus == MemberSimulatorAccessStatus.Ok) {
                     this.actualCreditScore = result;
                 }
             });

@@ -36,11 +36,11 @@ import {
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { OffersService } from '@root/personal-finance/shared/offers/offers.service';
 import {
-    OfferFilterCategory,
+    CampaignCategory,
     OfferServiceProxy,
     OfferDto,
     OfferDetailsDto,
-    CreditScores,
+    CreditScoreRating,
     GetAllInput
 } from '@shared/service-proxies/service-proxies';
 import { CreditScoreInterface } from '@root/personal-finance/shared/offers/interfaces/credit-score.interface';
@@ -61,7 +61,7 @@ export class OfferDetailsComponent implements OnInit, OnDestroy {
     selectedCardId: ReplaySubject<number> = new ReplaySubject<number>(1);
     selectedCardId$: Observable<number> = this.selectedCardId.asObservable();
     selectedCardDetails$: Observable<OfferDetailsDto>;
-    category$: Observable<OfferFilterCategory>;
+    category$: Observable<CampaignCategory>;
     selectedCategory: string;
     categoryDisplayName$: Observable<string>;
     private deactivateSubject: Subject<null> = new Subject<null>();
@@ -104,13 +104,13 @@ export class OfferDetailsComponent implements OnInit, OnDestroy {
         this.category$ = OffersService.getCategoryFromRoute(this.route).pipe(first());
         this.category$.subscribe(res => {
             switch (this.selectedCategory = res) {
-                case OfferFilterCategory.PersonalLoans:
+                case CampaignCategory.PersonalLoans:
                     this.buttonCaption = 'ApplyNow';
                     break;
-                case OfferFilterCategory.CreditCards:
+                case CampaignCategory.CreditCards:
                     this.buttonCaption = 'ViewOffers';
                     break;
-                case OfferFilterCategory.CreditScore:
+                case CampaignCategory.CreditScore:
                     this.buttonCaption = 'GetOffer';
                     break;
             }
@@ -181,12 +181,12 @@ export class OfferDetailsComponent implements OnInit, OnDestroy {
 
     applyOffer(offer: OfferDto) {
         this.category$.subscribe(
-            category => this.offersService.applyOffer(offer, category === OfferFilterCategory.CreditCards)
+            category => this.offersService.applyOffer(offer, category === CampaignCategory.CreditCards)
         );
     }
 
-    getCreditScore(creditScores: CreditScores[]): CreditScoreInterface {
-        return creditScores && (creditScores.length > 1 || (creditScores.length === 1 && creditScores[0] !== CreditScores.NotSure))
+    getCreditScore(creditScores: CreditScoreRating[]): CreditScoreInterface {
+        return creditScores && (creditScores.length > 1 || (creditScores.length === 1 && creditScores[0] !== CreditScoreRating.NotSure))
                   ? this.offersService.getCreditScoreObject(creditScores[0] as any)
                   : null;
     }

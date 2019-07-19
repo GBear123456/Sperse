@@ -20,7 +20,7 @@ import { AppService } from '@app/app.service';
 import { PaymentWizardComponent } from '@app/shared/common/payment-wizard/payment-wizard.component';
 import { PeriodComponent } from '@app/shared/common/period/period.component';
 import { RootStore, StatesStoreActions } from '@root/store';
-import { Module } from '@shared/service-proxies/service-proxies';
+import { ModuleType } from '@shared/service-proxies/service-proxies';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { DashboardWidgetsService } from '@shared/crm/dashboard-widgets/dashboard-widgets.service';
@@ -141,11 +141,11 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
             id: 'payment-wizard',
             panelClass: ['payment-wizard', 'setup'],
             data: {
-                module: this._appService.getModuleSubscription(Module.CRM).module,
+                module: this._appService.getModuleSubscription(ModuleType.CRM).module,
                 title: this.ls(
                     'Platform',
                     'UpgradeYourSubscription',
-                    this._appService.getSubscriptionName(Module.CRM)
+                    this._appService.getSubscriptionName(ModuleType.CRM)
                 )
             }
         });

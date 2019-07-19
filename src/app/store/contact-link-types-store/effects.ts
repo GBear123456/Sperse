@@ -12,7 +12,7 @@ import * as contactLinkTypesActions from '@app/store/contact-link-types-store/ac
 import { ContactLinkServiceProxy } from 'shared/service-proxies/service-proxies';
 import { State } from './state';
 import { getLoadedTime } from './selectors';
-import { ListResultDtoOfContactLinkTypeDto } from '@shared/service-proxies/service-proxies';
+import { ContactLinkTypeDtoListResultDto } from '@shared/service-proxies/service-proxies';
 import { StoreHelper } from '@root/store/store.helper';
 import { AppConsts } from '@shared/AppConsts';
 
@@ -34,7 +34,7 @@ export class ContactLinkTypesStoreEffects {
 
             return this.injector.get(ContactLinkServiceProxy).getContactLinkTypes()
                 .pipe(
-                    map((contactLinkTypes: ListResultDtoOfContactLinkTypeDto) => {
+                    map((contactLinkTypes: ContactLinkTypeDtoListResultDto) => {
                         return new contactLinkTypesActions.LoadSuccessAction(contactLinkTypes.items);
                     }),
                     catchError(err => {

@@ -39,21 +39,21 @@ import { NotifyService } from '@abp/notify/notify.service';
 import { RootComponent } from 'root.components';
 import {
     CountryStateDto,
-    ExtendOfferDtoCampaignProviderType,
-    ExtendOfferDtoCardNetwork,
-    ExtendOfferDtoCardType,
-    ExtendOfferDtoOfferCollection,
-    ExtendOfferDtoParameterHandlerType,
-    ExtendOfferDtoSecuringType,
-    OfferDetailsForEditDtoStatus,
-    ExtendOfferDtoTargetAudience,
-    OfferDetailsForEditDtoType,
+    CampaignProviderType,
+    CardNetwork,
+    CardType,
+    OfferCollection,
+    ParameterHandlerType,
+    SecuringType,
+    CampaignStatus,
+    TargetAudience,
+    CampaignType,
     OfferServiceProxy,
     OfferCategoryDto,
     OfferDetailsForEditDto,
     OfferManagementServiceProxy,
     OfferAnnouncementServiceProxy,
-    CreditScores
+    CreditScoreRating
 } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { RootStore, StatesStoreActions, StatesStoreSelectors } from '@root/store';
@@ -113,15 +113,15 @@ export class OfferEditComponent implements OnInit, OnDestroy, ICloseComponent {
     states$: Observable<CountryStateDto[]>;
     categoriesNames$: Observable<string[]>;
     offerNotInCardCategory$: Observable<boolean>;
-    statusEnum = OfferDetailsForEditDtoStatus;
-    typeEnum = OfferDetailsForEditDtoType;
-    campaignProviderTypeEnum = ExtendOfferDtoCampaignProviderType;
-    parameterHandlerTypeEnum = ExtendOfferDtoParameterHandlerType;
-    cardTypeEnum = ExtendOfferDtoCardType;
-    cardNetworkEnum = ExtendOfferDtoCardNetwork;
-    targetAudienceEnum = ExtendOfferDtoTargetAudience;
-    securingTypeEnum = ExtendOfferDtoSecuringType;
-    offerCollectionEnum = ExtendOfferDtoOfferCollection;
+    statusEnum = CampaignStatus;
+    typeEnum = CampaignType;
+    campaignProviderTypeEnum = CampaignProviderType;
+    parameterHandlerTypeEnum = ParameterHandlerType;
+    cardTypeEnum = CardType;
+    cardNetworkEnum = CardNetwork;
+    targetAudienceEnum = TargetAudience;
+    securingTypeEnum = SecuringType;
+    offerCollectionEnum = OfferCollection;
     model: OfferDetailsForEditDto;
     initialModel: OfferDetailsForEditDto;
     creditScores: string[];
@@ -149,7 +149,7 @@ export class OfferEditComponent implements OnInit, OnDestroy, ICloseComponent {
     ) {
         this.rootComponent = injector.get(this.applicationRef.componentTypes[0]);
         this.sentAnnouncementPermissionGranted = this.permissionChecker.isGranted('Pages.PFM.Applications.SendOfferAnnouncements');
-        this.creditScores = Object.keys(CreditScores);
+        this.creditScores = Object.keys(CreditScoreRating);
     }
 
     ngOnInit() {

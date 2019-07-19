@@ -7,7 +7,6 @@ import * as nameParser from 'parse-full-name';
 /** Application imports */
 import {
     InviteUserInput,
-    InviteUserInputModuleType,
     ModuleType,
     RoleListDto,
     RoleServiceProxy,
@@ -67,7 +66,7 @@ export class ImportUsersStepComponent extends AppComponentBase implements OnInit
                     surname: parsedName.last,
                     assignedRoleNames: v.roleNames,
                     tenantHostType: TenantHostType.PlatformApp,
-                    moduleType: InviteUserInputModuleType[this.moduleType]
+                    moduleType: ModuleType[this.moduleType]
                 }));
             }
         });

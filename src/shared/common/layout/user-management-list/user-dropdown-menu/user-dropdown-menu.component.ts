@@ -145,7 +145,9 @@ export class UserDropdownMenuComponent extends AppComponentBase implements OnIni
             height: '800px',
             id: 'offers-wizard',
             panelClass: ['offers-wizard', 'setup'],
-            data: {}
+            data: {
+                campaignId: null
+            }
         });
     }
 }

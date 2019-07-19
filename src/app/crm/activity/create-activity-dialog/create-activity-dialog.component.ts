@@ -17,7 +17,7 @@ import {
     CustomerServiceProxy,
     LeadServiceProxy,
     OrderServiceProxy,
-    CreateActivityDtoType,
+    ActivityType,
     CreateActivityDto,
     UpdateActivityDto
 } from '@shared/service-proxies/service-proxies';
@@ -171,7 +171,7 @@ export class CreateActivityDialogComponent implements OnInit {
                 this.data.stages[Math.floor(this.data.stages.length / 2)].id;
 
         if (!this.data.appointment.Type)
-            this.data.appointment.Type = CreateActivityDtoType.Task;
+            this.data.appointment.Type = ActivityType.Task;
 
         this.data.appointment.Type == 'Event' ? this.activityTypeIndex = 1 : this.activityTypeIndex = 0;
         this.title = this.data.appointment.Title ? this.data.appointment.Title : '';
@@ -218,11 +218,11 @@ export class CreateActivityDialogComponent implements OnInit {
                                 {
                                     action: this.activityTypeChanged.bind(this),
                                     text: this.ls.l('Task'),
-                                    value: CreateActivityDtoType.Task
+                                    value: ActivityType.Task
                                 }, {
                                     action: this.activityTypeChanged.bind(this),
                                     text: this.ls.l('Event'),
-                                    value: CreateActivityDtoType.Event
+                                    value: ActivityType.Event
                                 }
                             ]
                         }
@@ -505,7 +505,7 @@ export class CreateActivityDialogComponent implements OnInit {
             this.title = '';
             this.isTitleValid = true;
             this.data.appointment = {
-                Type: CreateActivityDtoType.Task,
+                Type: ActivityType.Task,
                 StageId: this.initialStageId
             };
 

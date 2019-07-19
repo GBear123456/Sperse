@@ -8,7 +8,7 @@ import { finalize } from 'rxjs/operators';
 /** Application imports */
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { CachingServiceProxy, EntityDtoOfString, WebLogServiceProxy } from '@shared/service-proxies/service-proxies';
+import { CachingServiceProxy, StringEntityDto, WebLogServiceProxy } from '@shared/service-proxies/service-proxies';
 import { FileDownloadService } from '@shared/utils/file-download.service';
 
 @Component({
@@ -47,7 +47,7 @@ export class MaintenanceComponent extends AppComponentBase implements OnInit, Af
 
     clearCache(cacheName): void {
         const self = this;
-        const input = new EntityDtoOfString();
+        const input = new StringEntityDto();
         input.id = cacheName;
 
         self._cacheService.clearCache(input).subscribe(() => {

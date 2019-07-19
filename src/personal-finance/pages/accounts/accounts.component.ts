@@ -17,7 +17,7 @@ import {
     SyncServiceProxy,
     InstanceServiceProxy,
     GetProviderUITokenOutput,
-    TenantLoginInfoDtoCustomLayoutType,
+    LayoutType,
     MyFinancesServiceProxy
 } from '@shared/service-proxies/service-proxies';
 import { AccountConnectors, SyncTypeIds } from '@shared/AppEnums';
@@ -134,7 +134,7 @@ export class AccountsComponent extends AppComponentBase implements OnInit, OnDes
                 this.lastQuouvoActivity = new Date();
             }
         };
-        if (this.appSession.tenant.customLayoutType === TenantLoginInfoDtoCustomLayoutType.LendSpace) {
+        if (this.appSession.tenant.customLayoutType === LayoutType.LendSpace) {
             settings['userCss'] = AppConsts.appBaseHref + 'assets/common/styles/custom/lend-space/lend-space-quovo.css';
         }
         Quovo.embed(settings);

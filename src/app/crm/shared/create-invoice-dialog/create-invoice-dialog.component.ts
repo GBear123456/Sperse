@@ -13,8 +13,10 @@ import { finalize } from 'rxjs/operators';
 /** Application imports */
 import { DialogService } from '@app/shared/common/dialogs/dialog.service';
 import { ContactGroup } from '@shared/AppEnums';
-import { InvoiceServiceProxy, CreateInvoiceInput, UpdateInvoiceLineInput, UpdateInvoiceStatusInput, UpdateInvoiceInput, CustomerServiceProxy, CreateInvoiceInputStatus, UpdateInvoiceInputStatus,
-    UpdateInvoiceStatusInputStatus, CreateInvoiceLineInput, InvoiceSettingsInfoDto } from '@shared/service-proxies/service-proxies';
+import {
+    InvoiceServiceProxy, CreateInvoiceInput, UpdateInvoiceLineInput, UpdateInvoiceStatusInput, UpdateInvoiceInput, CustomerServiceProxy, InvoiceStatus,
+    CreateInvoiceLineInput, InvoiceSettingsInfoDto
+} from '@shared/service-proxies/service-proxies';
 import { NotifyService } from '@abp/notify/notify.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { CacheHelper } from '@shared/common/cache-helper/cache-helper';
@@ -47,7 +49,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
     orderId: number;
     invoiceId: number;
     statuses: any[] = [];
-    status = CreateInvoiceInputStatus.Draft;
+    status = InvoiceStatus.Draft;
 
     saveButtonId = 'saveInvoiceOptions';
     saveContextMenuItems = [];
@@ -105,7 +107,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
         this.saveContextMenuItems = [
             {text: this.ls.l('Save'), selected: false},
             {text: this.ls.l('Invoice_SaveAsDraft'), selected: false, disabled: this.data.invoice
-                && this.data.invoice.Status != CreateInvoiceInputStatus.Draft},
+                && this.data.invoice.Status != InvoiceStatus.Draft},
             {text: this.ls.l('Invoice_SaveAndSend'), selected: false, disabled: true},
             {text: this.ls.l('Invoice_SaveAndMarkSent'), selected: false, disabled: true}
         ];
@@ -139,8 +141,8 @@ export class CreateInvoiceDialogComponent implements OnInit {
             this.date = invoice.Date;
             this.dueDate = invoice.DueDate;
             this.contactId = invoice.ContactId;
-            this.disabledForUpdate = this.status != CreateInvoiceInputStatus.Draft
-                && this.status != CreateInvoiceInputStatus.Final;
+            this.disabledForUpdate = this.status != InvoiceStatus.Draft
+                && this.status != InvoiceStatus.Final;
             this._changeDetectorRef.detectChanges();
             this._invoiceProxy.getInvoiceInfo(invoice.Id)
                 .pipe(finalize(() => this.modalDialog.finishLoading()))
@@ -203,7 +205,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
             let data = new UpdateInvoiceInput();
             this.setRequestCommonFields(data);
             data.id = this.invoiceId;
-            data.status = UpdateInvoiceInputStatus[this.status];
+            data.status = InvoiceStatus[this.status];
             data.lines = this.lines.map((row, index) => {
                 return new UpdateInvoiceLineInput({
                     id: row['id'],
@@ -220,7 +222,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
             this.setRequestCommonFields(data);
             data.contactId = this.contactId;
             data.orderId = this.orderId;
-            data.status = CreateInvoiceInputStatus[this.status];
+            data.status = InvoiceStatus[this.status];
             data.lines = this.lines.map((row, index) => {
                 return new CreateInvoiceLineInput({
                     quantity: row['Quantity'],
@@ -247,7 +249,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
             this.modalDialog.startLoading();
             this._invoiceProxy.updateStatus(new UpdateInvoiceStatusInput({
                 id: this.invoiceId,
-                status: UpdateInvoiceStatusInputStatus[this.status]
+                status: InvoiceStatus[this.status]
             })).pipe(finalize(() => this.modalDialog.finishLoading()))
                 .subscribe(() => {
                     this.afterSave();
@@ -276,7 +278,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
 
         this.saveContextMenuItems.some((item, index) => {
             if (item.selected) {
-                this.status = CreateInvoiceInputStatus[index == 1 ? 'Draft' : 'Final'];
+                this.status = InvoiceStatus[index == 1 ? 'Draft' : 'Final'];
                 this._changeDetectorRef.detectChanges();
             }
             return item.selected;
@@ -319,7 +321,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
     resetFullDialog(forced = true) {
         let resetInternal = () => {
             this.invoiceNo = this.billingSettings.nextInvoiceNumber;
-            this.status = CreateInvoiceInputStatus.Draft;
+            this.status = InvoiceStatus.Draft;
             this.customer = undefined;
             this.date = undefined;
             this.dueDate = this.date;

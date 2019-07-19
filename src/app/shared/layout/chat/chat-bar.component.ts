@@ -16,7 +16,7 @@ import { AppChatMessageReadState, AppChatSide, AppFriendshipState } from '@share
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { DomHelper } from '@shared/helpers/DomHelper';
-import { BlockUserInput, ChatMessageDtoSide, ChatServiceProxy, CommonLookupServiceProxy, CreateFriendshipRequestByUserNameInput, CreateFriendshipRequestInput, FriendDto, FriendDtoState, FriendshipServiceProxy, MarkAllUnreadMessagesOfUserAsReadInput, NameValueDto, ProfileServiceProxy, UnblockUserInput, UserLoginInfoDto } from '@shared/service-proxies/service-proxies';
+import { BlockUserInput, ChatSide, ChatServiceProxy, CommonLookupServiceProxy, CreateFriendshipRequestByUserNameInput, CreateFriendshipRequestInput, FriendDto, FriendshipState, FriendshipServiceProxy, MarkAllUnreadMessagesOfUserAsReadInput, NameValueDto, ProfileServiceProxy, UnblockUserInput, UserLoginInfoDto } from '@shared/service-proxies/service-proxies';
 import { LocalStorageService } from '@shared/utils/local-storage.service';
 import { QuickSideBarChat } from 'app/shared/layout/chat/QuickSideBarChat';
 import { ChatFriendDto } from './ChatFriendDto';
@@ -298,7 +298,7 @@ export class ChatBarComponent extends AppComponentBase implements OnInit, AfterV
         return null;
     }
 
-    getFilteredFriends(state: FriendDtoState, userNameFilter: string): FriendDto[] {
+    getFilteredFriends(state: FriendshipState, userNameFilter: string): FriendDto[] {
         const foundFriends = filter(this.friends, friend => friend.state === state &&
             this.getShownUserName(friend)
                 .toLocaleLowerCase()
@@ -307,11 +307,11 @@ export class ChatBarComponent extends AppComponentBase implements OnInit, AfterV
         return foundFriends;
     }
 
-    getFilteredFriendsCount(state: FriendDtoState): number {
+    getFilteredFriendsCount(state: FriendshipState): number {
         return filter(this.friends, friend => friend.state === state).length;
     }
 
-    getUserNameByChatSide(chatSide: ChatMessageDtoSide): string {
+    getUserNameByChatSide(chatSide: ChatSide): string {
         return chatSide === AppChatSide.Sender ?
             this.currentUser.userName :
             this.selectedUser.friendUserName;

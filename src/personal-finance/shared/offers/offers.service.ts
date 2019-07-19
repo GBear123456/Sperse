@@ -16,14 +16,15 @@ import { map, first, publishReplay, refCount } from 'rxjs/operators';
 /** Application imports */
 import {
     OfferDto,
-    OfferFilterCategory,
-    GetMemberInfoResponseCreditScore,
+    CampaignCategory,
+    CreditScoreRating,
     SubmitRequestOutput,
     OfferServiceProxy,
     GetMemberInfoResponse,
-    OfferDtoCampaignProviderType,
+    CampaignProviderType,
     SubmitRequestInput,
-    SubmitRequestInputSystemType, SubmitApplicationOutput
+    OfferProviderType,
+    SubmitApplicationOutput
 } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { CreditScoreInterface } from '@root/personal-finance/shared/offers/interfaces/credit-score.interface';
@@ -34,13 +35,13 @@ import { OffersWizardComponent } from '@shared/offers-wizard/offers-wizard.compo
 
 @Injectable()
 export class OffersService {
-    static readonly routeToCategoryMapping: { [key: string]: OfferFilterCategory } = {
-        'credit-scores': OfferFilterCategory.CreditScore,
-        'id-theft-protection': OfferFilterCategory.CreditMonitoring
+    static readonly routeToCategoryMapping: { [key: string]: CampaignCategory } = {
+        'credit-scores': CampaignCategory.CreditScore,
+        'id-theft-protection': CampaignCategory.CreditMonitoring
     };
     static readonly categoryToRouteMapping = {
-        [OfferFilterCategory.CreditScore]: 'credit-scores',
-        [OfferFilterCategory.CreditMonitoring]: 'id-theft-protection'
+        [CampaignCategory.CreditScore]: 'credit-scores',
+        [CampaignCategory.CreditMonitoring]: 'id-theft-protection'
     };
 
     state$: ReplaySubject<string> = new ReplaySubject<string>(1);
@@ -62,7 +63,7 @@ export class OffersService {
         }
     ];
     readonly categoriesDisplayNames = {
-        [OfferFilterCategory.CreditScore]: this.ls.l('CreditScore_CreditScores')
+        [CampaignCategory.CreditScore]: this.ls.l('CreditScore_CreditScores')
     };
     readonly creditScores = {
         'notsure': {
@@ -142,17 +143,17 @@ export class OffersService {
         );
     }
 
-    static getCategoryFromRoute(route: ActivatedRoute): Observable<OfferFilterCategory> {
+    static getCategoryFromRoute(route: ActivatedRoute): Observable<CampaignCategory> {
         return route.url.pipe(
-            map((urlSegment: UrlSegment) => OffersService.routeToCategoryMapping[urlSegment[0].path] || OfferFilterCategory[upperFirst(camelCase(urlSegment[0].path))])
+            map((urlSegment: UrlSegment) => OffersService.routeToCategoryMapping[urlSegment[0].path] || CampaignCategory[upperFirst(camelCase(urlSegment[0].path))])
         );
     }
 
-    static getCategoryRouteNameByCategoryEnum(category: OfferFilterCategory): string {
+    static getCategoryRouteNameByCategoryEnum(category: CampaignCategory): string {
         return OffersService.categoryToRouteMapping[category] || kebabCase(category);
     }
 
-    getCategoryDisplayName(category: OfferFilterCategory): string {
+    getCategoryDisplayName(category: CampaignCategory): string {
         return category ? this.categoriesDisplayNames[category] || lowerCase(category) : this.defaultCategoryDisplayName;
     }
 
@@ -164,17 +165,17 @@ export class OffersService {
         }
     }
 
-    convertCreditScoreToNumber(score: GetMemberInfoResponseCreditScore): number {
+    convertCreditScoreToNumber(score: CreditScoreRating): number {
         const creditScoreObj: CreditScoreInterface = this.getCreditScoreObject(score);
         return creditScoreObj ? creditScoreObj.max : 700;
     }
 
-    convertNumberToCreditScore(scoreNumber: number): GetMemberInfoResponseCreditScore {
+    convertNumberToCreditScore(scoreNumber: number): CreditScoreRating {
         let scoreName = capitalize(this.getCreditScoreName(scoreNumber));
-        return GetMemberInfoResponseCreditScore[scoreName] ? GetMemberInfoResponseCreditScore[scoreName] : GetMemberInfoResponseCreditScore.NotSure;
+        return CreditScoreRating[scoreName] ? CreditScoreRating[scoreName] : CreditScoreRating.NotSure;
     }
 
-    getCreditScoreObject(creditScore: GetMemberInfoResponseCreditScore): CreditScoreInterface {
+    getCreditScoreObject(creditScore: CreditScoreRating): CreditScoreInterface {
         if (creditScore) {
             const scoreName = (creditScore as string).toLowerCase();
             if (this.creditScores[scoreName]) {
@@ -192,7 +193,7 @@ export class OffersService {
         let redirectUrl = !linkIsDirect ? offer.redirectUrl : offer.redirectUrl + '&' + this.memberInfoApplyOfferParams;
         let submitRequestInput = SubmitRequestInput.fromJS({
             campaignId: offer.campaignId,
-            systemType: SubmitRequestInputSystemType.EPCVIP,
+            systemType: OfferProviderType.EPCVIP,
             ...this.memberInfo
         });
         const modalData = {
@@ -202,7 +203,7 @@ export class OffersService {
             title: 'Offers_ConnectingToPartners',
             subtitle: 'Offers_NewWindowWillBeOpen',
             redirectUrl: redirectUrl,
-            logoUrl: offer.campaignProviderType === OfferDtoCampaignProviderType.CreditLand
+            logoUrl: offer.campaignProviderType === CampaignProviderType.CreditLand
                 ? this.creditLandLogoUrl
                 : (isCreditCard ? null : offer.logoUrl)
         };
@@ -214,38 +215,35 @@ export class OffersService {
                 panelClass: ['offers-wizard', 'setup'],
                 data: {
                     offer: offer,
+                    campaignId: offer.campaignId,
                     creditLandLogoUrl: this.creditLandLogoUrl,
                     isCreditCard: isCreditCard
                 }
             }).afterClosed().subscribe((result: SubmitApplicationOutput)  => {
-                redirectUrl = result.redirectUrl;
-                if (result.redirectUrl) window.open(result.redirectUrl, '_blank');
+                if (result && result.redirectUrl) window.open(result.redirectUrl, '_blank');
             });
         } else {
             submitRequestInput.redirectUrl = redirectUrl;
-        }
-        if (linkIsDirect) {
-            submitRequestInput.redirectUrl = redirectUrl;
-            const applyOfferDialog = this.dialog.open(ApplyOfferDialogComponent, {
-                width: '530px',
-                panelClass: 'apply-offer-dialog',
-                data: modalData
-            });
-            this.offerServiceProxy.submitRequest(submitRequestInput)
-                .subscribe(
-                    (output: SubmitRequestOutput) => {
-                        if (!linkIsDirect) {
-                            !window.open(output.redirectUrl, '_blank')
-                                ? applyOfferDialog.componentInstance.showBlockedMessage = true
-                                : applyOfferDialog.close();
-                        }
-                    },
-                    () => applyOfferDialog.close()
-                );
-        }
+        const applyOfferDialog = this.dialog.open(ApplyOfferDialogComponent, {
+            width: '530px',
+            panelClass: 'apply-offer-dialog',
+            data: modalData
+        });
+        this.offerServiceProxy.submitRequest(submitRequestInput)
+            .subscribe(
+                (output: SubmitRequestOutput) => {
+                    if (!linkIsDirect) {
+                        !window.open(output.redirectUrl, '_blank')
+                            ? applyOfferDialog.componentInstance.showBlockedMessage = true
+                            : applyOfferDialog.close();
+                    }
+                },
+                () => applyOfferDialog.close()
+            );
+    }
     }
 
-    getCreditScore(category: OfferFilterCategory, creditScoreNumber: number): GetMemberInfoResponseCreditScore {
+    getCreditScore(category: CampaignCategory, creditScoreNumber: number): CreditScoreRating {
         const categoryGroup = this.getCategoryGroup(category);
         let creditScore = categoryGroup === CategoryGroupEnum.Loans
             || categoryGroup === CategoryGroupEnum.CreditCards
@@ -254,18 +252,18 @@ export class OffersService {
         return creditScore;
     }
 
-    getCategoryGroup(category: OfferFilterCategory): CategoryGroupEnum {
+    getCategoryGroup(category: CampaignCategory): CategoryGroupEnum {
         let categoryGroup: CategoryGroupEnum;
         switch (category) {
-            case OfferFilterCategory.PersonalLoans:
-            case OfferFilterCategory.PaydayLoans:
-            case OfferFilterCategory.InstallmentLoans:
-            case OfferFilterCategory.BusinessLoans:
-            case OfferFilterCategory.AutoLoans: {
+            case CampaignCategory.PersonalLoans:
+            case CampaignCategory.PaydayLoans:
+            case CampaignCategory.InstallmentLoans:
+            case CampaignCategory.BusinessLoans:
+            case CampaignCategory.AutoLoans: {
                 categoryGroup = CategoryGroupEnum.Loans;
                 break;
             }
-            case OfferFilterCategory.CreditCards: {
+            case CampaignCategory.CreditCards: {
                 categoryGroup = CategoryGroupEnum.CreditCards;
                 break;
             }

@@ -93,7 +93,7 @@ export class ImportXeroChartOfAccountsButtonComponent extends CFOComponentBase {
         let syncInput = SyncDto.fromJS({
             syncAccountId: syncAccountId
         });
-        this._categoryTreeServiceProxy.sync(InstanceType[this.instanceType], this.instanceId, syncInput, this.override)
+        this._categoryTreeServiceProxy.sync(InstanceType[this.instanceType], this.instanceId, this.override, syncInput)
             .pipe(finalize(() => { abp.ui.clearBusy(); }))
             .subscribe(() => {
                 this.notify.info(this.l('SavedSuccessfully'));

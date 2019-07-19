@@ -45,14 +45,13 @@ import { RootStore, StatesStoreActions, StatesStoreSelectors } from '@root/store
 import { OffersService } from '@root/personal-finance/shared/offers/offers.service';
 import {
     OfferDto,
-    OfferFilterCategory,
+    CampaignCategory,
     OfferServiceProxy,
-    CardNetworks,
-    GetAllInputCardType,
-    GetAllInputSecuringType,
-    GetAllInputTargetAudience,
-    GetAllInputCreditScore,
-    GetMemberInfoResponseCreditScore,
+    CardNetwork,
+    CardType,
+    SecuringType,
+    TargetAudience,
+    CreditScoreRating,
     GetAllInput,
     GetMemberInfoResponse
 } from '@shared/service-proxies/service-proxies';
@@ -73,14 +72,14 @@ import { AppSessionService } from '@shared/common/session/app-session.service';
 import { AppConsts } from '@shared/AppConsts';
 
 export class FilterValues {
-    category: OfferFilterCategory;
+    category: CampaignCategory;
     country: string;
     creditScore: number;
     issuingBank: string;
-    cardNetworks: CardNetworks[];
-    cardType: GetAllInputCardType;
-    securingType: GetAllInputSecuringType;
-    targetAudience: GetAllInputTargetAudience;
+    cardNetworks: CardNetwork[];
+    cardType: CardType;
+    securingType: SecuringType;
+    targetAudience: TargetAudience;
     loanAmount: number;
     state: string;
     annualIncome: number;
@@ -129,11 +128,11 @@ export class OffersLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
     readonly defaultVisibleOffersCount = 6;
     visibleOffersCount = this.defaultVisibleOffersCount;
     brands$: BehaviorSubject<SelectFilterModel[]> = new BehaviorSubject<SelectFilterModel[]>([]);
-    category$: Observable<OfferFilterCategory> = OffersService.getCategoryFromRoute(this.route);
-    categoryGroup$: Observable<CategoryGroupEnum> = this.category$.pipe(map((category: OfferFilterCategory) => this.offersService.getCategoryGroup(category)));
+    category$: Observable<CampaignCategory> = OffersService.getCategoryFromRoute(this.route);
+    categoryGroup$: Observable<CategoryGroupEnum> = this.category$.pipe(map((category: CampaignCategory) => this.offersService.getCategoryGroup(category)));
     categoryDisplayName$: Observable<string> = this.category$.pipe(map(category => this.offersService.getCategoryDisplayName(category)));
 
-    creditScore$: Observable<number> = this.offersService.memberInfo$.pipe(pluck('creditScore'), map((score: GetMemberInfoResponseCreditScore) => this.offersService.convertCreditScoreToNumber(score)));
+    creditScore$: Observable<number> = this.offersService.memberInfo$.pipe(pluck('creditScore'), map((score: CreditScoreRating) => this.offersService.convertCreditScoreToNumber(score)));
 
     filtersValues: FilterValues = this.getDefaultFilters();
     filtersSettings: { [filterGroup: string]: FilterSettingInterface[] } = {
@@ -143,23 +142,23 @@ export class OffersLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
                 values$: of([
                     {
                         name: this.ls.l('Offers_PersonalLoans'),
-                        value: OfferFilterCategory.PersonalLoans
+                        value: CampaignCategory.PersonalLoans
                     }].concat(this._sessionService.isLendspaceDemoUser ? [] : 
                     [{
                         name: this.ls.l('Offers_PaydayLoans'),
-                        value: OfferFilterCategory.PaydayLoans
+                        value: CampaignCategory.PaydayLoans
                     },
                     {
                         name: this.ls.l('Offers_InstallmentLoans'),
-                        value: OfferFilterCategory.InstallmentLoans
+                        value: CampaignCategory.InstallmentLoans
                     }], [
                     {
                         name: this.ls.l('Offers_BusinessLoans'),
-                        value: OfferFilterCategory.BusinessLoans
+                                value: CampaignCategory.BusinessLoans
                     },
                     {
                         name: this.ls.l('Offers_AutoLoans'),
-                        value: OfferFilterCategory.AutoLoans
+                        value: CampaignCategory.AutoLoans
                     }]
                 )),
                 selected$: this.category$,
@@ -172,26 +171,26 @@ export class OffersLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
                 values$: of([
                     {
                         name: this.ls.l('Score_Excellent'),
-                        value: GetMemberInfoResponseCreditScore.Excellent
+                        value: CreditScoreRating.Excellent
                     },
                     {
                         name: this.ls.l('Score_Good'),
-                        value: GetMemberInfoResponseCreditScore.Good
+                        value: CreditScoreRating.Good
                     },
                     {
                         name: this.ls.l('Score_Fair'),
-                        value: GetMemberInfoResponseCreditScore.Fair
+                        value: CreditScoreRating.Fair
                     },
                     {
                         name: this.ls.l('Score_Bad'),
-                        value: GetMemberInfoResponseCreditScore.Poor
+                        value: CreditScoreRating.Poor
                     },
                     {
                         name: this.ls.l('Score_NoScore'),
-                        value: GetMemberInfoResponseCreditScore.NotSure
+                        value: CreditScoreRating.NotSure
                     }
                 ]),
-                selected$: this.creditScore$.pipe(map((creditScore: GetMemberInfoResponseCreditScore) => {
+                selected$: this.creditScore$.pipe(map((creditScore: CreditScoreRating) => {
                     return this.filtersValues.creditScore && this.offersService.convertNumberToCreditScore(this.filtersValues.creditScore) || creditScore;
                 })),
                 onChange: (e: MatSelectChange) => {
@@ -281,34 +280,34 @@ export class OffersLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
                 values$: of([
                     {
                         name: 'Excellent',
-                        value: GetMemberInfoResponseCreditScore.Excellent,
+                        value: CreditScoreRating.Excellent,
                         min: 720,
                         max: 850
                     },
                     {
                         name: 'Good',
-                        value: GetMemberInfoResponseCreditScore.Good,
+                        value: CreditScoreRating.Good,
                         min: 690,
                         max: 719
                     },
                     {
                         name: 'Fair',
-                        value: GetMemberInfoResponseCreditScore.Fair,
+                        value: CreditScoreRating.Fair,
                         min: 630,
                         max: 689
                     },
                     {
                         name: 'Bad',
-                        value: GetMemberInfoResponseCreditScore.Poor,
+                        value: CreditScoreRating.Poor,
                         min: 300,
                         max: 629
                     },
                     {
                         name: 'Limited or No Score',
-                        value: GetMemberInfoResponseCreditScore.NotSure
+                        value: CreditScoreRating.NotSure
                     }
                 ]),
-                selected$: this.creditScore$.pipe(map((creditScore: GetMemberInfoResponseCreditScore) => {
+                selected$: this.creditScore$.pipe(map((creditScore: CreditScoreRating) => {
                     return this.filtersValues.creditScore && this.offersService.convertNumberToCreditScore(this.filtersValues.creditScore) || creditScore;
                 })),
                 onChange: (creditScore: CreditScoreItem) => {
@@ -342,13 +341,13 @@ export class OffersLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
                     if (selectedValues[0]) {
                         switch (selectedValues[0].value) {
                             case CreditCardCategory.Credit:
-                                cardType = GetAllInputCardType.Credit;
+                                cardType = CardType.Credit;
                                 break;
                             case CreditCardCategory.Debit:
-                                cardType = GetAllInputCardType.Debit;
+                                cardType = CardType.Debit;
                                 break;
                             case CreditCardCategory.Prepaid:
-                                securingType = GetAllInputSecuringType.Prepaid;
+                                securingType = SecuringType.Prepaid;
                                 break;
                         }
                     }
@@ -366,15 +365,15 @@ export class OffersLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
                 values$: of([
                     {
                         name: this.ls.l('Offers_Personal'),
-                        value: GetAllInputTargetAudience.Consumer
+                        value: TargetAudience.Consumer
                     },
                     {
                         name: this.ls.l('Offers_Student'),
-                        value: GetAllInputTargetAudience.Students,
+                        value: TargetAudience.Students,
                     },
                     {
                         name: this.ls.l('Offers_Business'),
-                        value: GetAllInputTargetAudience.Business
+                        value: TargetAudience.Business
                     }
                 ]),
                 onChange: (selectedValues: ChooserOption[]) => {
@@ -415,19 +414,19 @@ export class OffersLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
                 values$: of([
                     {
                         iconSrc: './assets/common/icons/offers/visa.svg',
-                        value: CardNetworks.Visa,
+                        value: CardNetwork.Visa,
                     },
                     {
                         iconSrc: './assets/common/icons/offers/mastercard.svg',
-                        value: CardNetworks.Mastercard
+                        value: CardNetwork.Mastercard
                     },
                     {
                         iconSrc: './assets/common/icons/offers/discover.svg',
-                        value: CardNetworks.Discover
+                        value: CardNetwork.Discover
                     },
                     {
                         iconSrc: './assets/common/icons/offers/american-express.svg',
-                        value: CardNetworks.AmEx
+                        value: CardNetwork.AmEx
                     }
                 ]),
                 onChange: (selectedValues: ChooserOption[]) => {
@@ -506,13 +505,13 @@ export class OffersLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
             this.pagePrefix = category;
 
             switch (category) {
-                case OfferFilterCategory.PersonalLoans:
+                case CampaignCategory.PersonalLoans:
                     this.buttonCaption = 'GetMyRate';
                     break;
-                case OfferFilterCategory.CreditCards:
+                case CampaignCategory.CreditCards:
                     this.buttonCaption = 'ViewOffers';
                     break;
-                case OfferFilterCategory.CreditScore:
+                case CampaignCategory.CreditScore:
                     this.buttonCaption = 'GetOffer';
                     break;
             }
@@ -580,10 +579,10 @@ export class OffersLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
                     }
 
                     if (categoryGroup === CategoryGroupEnum.Loans || categoryGroup === CategoryGroupEnum.CreditCards)
-                        input.creditScore = GetAllInputCreditScore[this.offersService.getCreditScore(filter.category, filter.creditScore)];
+                        input.creditScore = CreditScoreRating[this.offersService.getCreditScore(filter.category, filter.creditScore)];
 
                     return (
-                        this._sessionService.isLendspaceDemoUser && input.creditScore == GetAllInputCreditScore.Excellent 
+                        this._sessionService.isLendspaceDemoUser && input.creditScore == CreditScoreRating.Excellent 
                             ? of(this.offersService.demoUserOffers) : this.offerServiceProxy.getAll(input)
                     ).pipe(
                         finalize(() => {
@@ -677,7 +676,7 @@ export class OffersLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
     applyOffer(offer: OfferDto) {
         if (this.checkDemoUserActionAllowed())
             this.category$.pipe(first()).subscribe(
-                category => this.offersService.applyOffer(offer, category === OfferFilterCategory.CreditCards)
+                category => this.offersService.applyOffer(offer, category === CampaignCategory.CreditCards)
             );
     }
 

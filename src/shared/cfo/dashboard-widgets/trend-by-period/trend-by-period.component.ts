@@ -36,7 +36,7 @@ import {
     BankAccountDailyStatDto,
     InstanceType,
     CashFlowForecastServiceProxy,
-    GroupBy
+    GroupByPeriod
 } from '@shared/service-proxies/service-proxies';
 import { TrendByPeriodModel } from './trend-by-period.model';
 import { StatsService } from '@app/cfo/shared/helpers/stats.service';
@@ -124,19 +124,19 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit {
     ];
     periods: TrendByPeriodModel[] = [
          {
-             key: GroupBy.Daily,
+            key: GroupByPeriod.Daily,
              name: 'day',
              text: `30 ${this.ls('Platform', 'Periods_Day_plural')}`,
              amount: 30
          },
          {
-             key: GroupBy.Weekly,
+             key: GroupByPeriod.Weekly,
              name: 'week',
              text: `15 ${this.ls('Platform', 'Periods_Week_plural')}`,
              amount: 15
         },
         {
-            key: GroupBy.Monthly,
+            key: GroupByPeriod.Monthly,
             name: 'month',
             text: `12 ${this.l('Periods_Month_plural')}`,
             amount: 12

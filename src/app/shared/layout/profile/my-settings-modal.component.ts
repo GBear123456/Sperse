@@ -18,7 +18,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { AppConsts } from '@shared/AppConsts';
 import { AppTimezoneScope } from '@shared/AppEnums';
 import { AppSessionService } from '@shared/common/session/app-session.service';
-import { CurrentUserProfileEditDto, DefaultTimezoneScope, ProfileServiceProxy, UpdateGoogleAuthenticatorKeyOutput } from '@shared/service-proxies/service-proxies';
+import { CurrentUserProfileEditDto, SettingScopes, ProfileServiceProxy, UpdateGoogleAuthenticatorKeyOutput } from '@shared/service-proxies/service-proxies';
 import { SmsVerificationModalComponent } from './sms-verification-modal.component';
 import { DialogService } from '@app/shared/common/dialogs/dialog.service';
 import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
@@ -52,7 +52,7 @@ export class MySettingsModalComponent implements AfterViewChecked, OnInit {
     public user: CurrentUserProfileEditDto;
     public showTimezoneSelection: boolean = abp.clock.provider.supportsMultipleTimezone;
     public canChangeUserName: boolean;
-    public defaultTimezoneScope: DefaultTimezoneScope = AppTimezoneScope.User;
+    public defaultTimezoneScope: SettingScopes = AppTimezoneScope.User;
     private _initialTimezone: string = undefined;
     buttons: IDialogButton[] = [
         {

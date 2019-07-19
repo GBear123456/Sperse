@@ -71,25 +71,25 @@ import {
     GetCategoryTreeOutput,
     CashFlowGridSettingsDto,
     InstanceType,
-    InstanceType10,
     UpdateForecastInput,
-    CashFlowStatsDetailDtoStatus,
+    Status,
     AddForecastInput,
     BankAccountDto,
-    StatsFilterGroupByPeriod,
-    TransactionStatsDtoAdjustmentType,
+    GroupByPeriod,
+    AdjustmentType,
     DiscardDiscrepanciesInput,
     CashFlowStatsDetailDto,
     Period,
     UpdateTransactionsCategoryWithFilterInput,
     UpdateForecastsInput,
     CreateForecastsInput,
-    CashflowGridGeneralSettingsDtoSplitMonthType,
+    MonthPeriodScope,
     CategoryDto,
     UpdateTransactionsCategoryInput,
     UpdateCategoryInput,
     RenameForecastModelInput,
-    CreateForecastModelInput, SyncAccountBankDto
+    CreateForecastModelInput,
+    SyncAccountBankDto
 } from '@shared/service-proxies/service-proxies';
 import { BankAccountFilterComponent } from 'shared/filters/bank-account-filter/bank-account-filter.component';
 import { BankAccountFilterModel } from 'shared/filters/bank-account-filter/bank-account-filter.model';
@@ -818,7 +818,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         });
 
         this.requestFilter = new StatsFilter();
-        this.requestFilter.groupByPeriod = StatsFilterGroupByPeriod.Monthly;
+        this.requestFilter.groupByPeriod = GroupByPeriod.Monthly;
         /** Create parallel operations */
         let getCashFlowInitialData$ = this._cashflowServiceProxy.getCashFlowInitialData(InstanceType[this.instanceType], this.instanceId);
         let getCategoryTree$ = this._categoryTreeServiceProxy.get(InstanceType[this.instanceType], this.instanceId, true);
@@ -1152,7 +1152,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                         keyExpr: 'id'
                     })
                 }
-            })
+                    })
         ];
     }
 
@@ -1324,8 +1324,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         });
     }
 
-    applySplitMonthIntoSetting(splitMonthType: CashflowGridGeneralSettingsDtoSplitMonthType) {
-        let showWeeks = splitMonthType === CashflowGridGeneralSettingsDtoSplitMonthType.Weeks;
+    applySplitMonthIntoSetting(splitMonthType: MonthPeriodScope) {
+        let showWeeks = splitMonthType === MonthPeriodScope.Weeks;
         let weekField = this.apiTableFields.find(field => field.caption === 'Week');
         let projectedField = this.apiTableFields.find(field => field.caption === 'Projected');
         weekField.visible = showWeeks;
@@ -1363,10 +1363,10 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         super.ngOnDestroy();
     }
 
-    loadGridDataSource(period: StatsFilterGroupByPeriod = StatsFilterGroupByPeriod.Monthly, completeCallback = null) {
+    loadGridDataSource(period: GroupByPeriod = GroupByPeriod.Monthly, completeCallback = null) {
         this.startLoading();
         this.requestFilter.groupByPeriod = period;
-        if (period === StatsFilterGroupByPeriod.Monthly) {
+        if (period === GroupByPeriod.Monthly) {
             this.requestFilter.dailyPeriods = this.getDailyPeriods();
         }
         this.requestFilter.accountIds = this.bankAccountsService.state.selectedBankAccountIds;
@@ -1414,7 +1414,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         });
     }
 
-    handleCashflowData(transactions, period = StatsFilterGroupByPeriod.Monthly) {
+    handleCashflowData(transactions, period = GroupByPeriod.Monthly) {
         if (transactions && transactions.length) {
             /** categories - object with categories */
             this.cashflowData = this.getCashflowDataFromTransactions(transactions);
@@ -1447,7 +1447,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         if (this.cashflowData && this.cashflowData.length) {
             this.cashflowData.slice().forEach(item => {
                 if (item.initialDate.format('MM.YYYY') === startDate.format('MM.YYYY') &&
-                    item.adjustmentStartingBalanceTotal !== TransactionStatsDtoAdjustmentType._2) {
+                    item.adjustmentStartingBalanceTotal !== AdjustmentType._2) {
                     this.cashflowData.splice(this.cashflowData.indexOf(item), 1);
                 }
             });
@@ -1456,7 +1456,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         if (this.adjustmentsList && this.adjustmentsList.length) {
             this.adjustmentsList.slice().forEach(item => {
                 if (item.initialDate.format('MM.YYYY') === startDate.format('MM.YYYY') &&
-                    item.adjustmentStartingBalanceTotal !== TransactionStatsDtoAdjustmentType._2) {
+                    item.adjustmentStartingBalanceTotal !== AdjustmentType._2) {
                     this.adjustmentsList.splice(this.cashflowData.indexOf(item), 1);
                 }
             });
@@ -1470,7 +1470,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             if (existingPeriods.indexOf(formattedDate) === -1) existingPeriods.push(formattedDate);
         });
         let accountId: number = transactions[0] ? +transactions[0].accountId : this.bankAccounts[0].id;
-        let stubCashflowDataForAllDays = this.createStubsForPeriod(startDate, endDate, StatsFilterGroupByPeriod.Daily, accountId, existingPeriods);
+        let stubCashflowDataForAllDays = this.createStubsForPeriod(startDate, endDate, GroupByPeriod.Daily, accountId, existingPeriods);
         let stubCashflowDataForAccounts = this.getStubsCashflowDataForAccounts(transactions);
 
         /** concat initial data and stubs from the different hacks */
@@ -1854,13 +1854,13 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
      * @param {TransactionStatsDtoExtended[]} cashflowData
      * @return {TransactionStatsDtoExtended[]}
      */
-    getStubsCashflowDataForAllPeriods(cashflowData: TransactionStatsDtoExtended[], period = StatsFilterGroupByPeriod.Monthly) {
+    getStubsCashflowDataForAllPeriods(cashflowData: TransactionStatsDtoExtended[], period = GroupByPeriod.Monthly) {
         this.allYears = [];
         this.yearsAmount = 0;
         let existingPeriods: string[] = [],
             minDate: moment.Moment,
             maxDate: moment.Moment,
-            periodFormat = period === StatsFilterGroupByPeriod.Monthly ? 'YYYY-MM' : 'YYYY-MM-DD';
+            periodFormat = period === GroupByPeriod.Monthly ? 'YYYY-MM' : 'YYYY-MM-DD';
 
         cashflowData.forEach(cashflowItem => {
             /** Move the year to the years array if it is unique */
@@ -1888,7 +1888,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 let filterEnd = this.requestFilter.endDate ? moment(this.requestFilter.endDate) : null;
                 let start = filterStart && dailyPeriod.start.isBefore(filterStart) ? filterStart : dailyPeriod.start.utc();
                 let end = filterEnd && dailyPeriod.end.isAfter(filterEnd) ? filterEnd : dailyPeriod.end.utc();
-                let dailyStubs = this.createStubsForPeriod(start, end, StatsFilterGroupByPeriod.Daily, accountId, []);
+                let dailyStubs = this.createStubsForPeriod(start, end, GroupByPeriod.Daily, accountId, []);
                 stubCashflowData = stubCashflowData.concat(dailyStubs);
             });
         }
@@ -1937,11 +1937,11 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         return { startDate: moment.utc(minDate), endDate: moment.utc(maxDate) };
     }
 
-    createStubsForPeriod(startDate, endDate, groupingPeriod: StatsFilterGroupByPeriod, bankAccountId, existingPeriods = []): TransactionStatsDtoExtended[] {
+    createStubsForPeriod(startDate, endDate, groupingPeriod: GroupByPeriod, bankAccountId, existingPeriods = []): TransactionStatsDtoExtended[] {
         let stubs = [];
         let startDateCopy = moment(startDate),
             endDateCopy = moment(endDate),
-            period: any = groupingPeriod === StatsFilterGroupByPeriod.Monthly ? 'month' : 'day',
+            period: any = groupingPeriod === GroupByPeriod.Monthly ? 'month' : 'day',
             format = period === 'month' ? 'YYYY-MM' : 'YYYY-MM-DD';
         while (startDateCopy.isSameOrBefore(endDateCopy)) {
             let date = moment.tz(startDateCopy.format(format), format, 'utc');
@@ -2014,7 +2014,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         this.getUserPreferencesForCell.cache = {};
         if (updateMonthSplitting) {
             /** Changed showing of week and projected fields */
-            let showWeeks = preferences.general.splitMonthType === CashflowGridGeneralSettingsDtoSplitMonthType.Weeks;
+            let showWeeks = preferences.general.splitMonthType === MonthPeriodScope.Weeks;
             const projectedUpdatedProps = { visible: !showWeeks, expanded: !showWeeks };
             const weekUpdatedProps = { visible: showWeeks };
             if (dataSource) {
@@ -3641,7 +3641,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
     moveForecasts(forecastsModels: UpdateForecastsInput): Observable<void> {
         return this._cashFlowForecastServiceProxy.updateForecasts(
-            InstanceType10[this.instanceType],
+            InstanceType[this.instanceType],
             this.instanceId,
             UpdateForecastsInput.fromJS(forecastsModels)
         );
@@ -3649,7 +3649,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
     copyForecasts(forecastsModels: CreateForecastsInput) {
         return this._cashFlowForecastServiceProxy.createForecasts(
-            InstanceType10[this.instanceType],
+            InstanceType[this.instanceType],
             this.instanceId,
             CreateForecastsInput.fromJS(forecastsModels)
         );
@@ -4109,7 +4109,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             this.requestFilter.endDate && datePeriod.startDate > this.requestFilter.endDate) {
             return;
         }
-        requestFilter.groupByPeriod = StatsFilterGroupByPeriod.Daily;
+        requestFilter.groupByPeriod = GroupByPeriod.Daily;
         requestFilter.startDate = this.requestFilter.startDate && moment(this.requestFilter.startDate).utc().isAfter(datePeriod.startDate) ? moment(this.requestFilter.startDate).utc() : datePeriod.startDate;
         requestFilter.endDate = this.requestFilter.endDate && moment(this.requestFilter.endDate).utc().isBefore(datePeriod.endDate ) ? moment(this.requestFilter.endDate).utc() : datePeriod.endDate;
         requestFilter.calculateStartingBalance = false;
@@ -4755,7 +4755,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             });
 
             this._cashFlowForecastServiceProxy.addForecast(
-                InstanceType10[this.instanceType],
+                InstanceType[this.instanceType],
                 this.instanceId,
                 forecastModel
             ).subscribe(
@@ -5559,7 +5559,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             e.rowElement.classList.add('forecastRow');
         }
 
-        if (e.rowType === 'data' && e.data.status === CashFlowStatsDetailDtoStatus.Projected) {
+        if (e.rowType === 'data' && e.data.status === Status.Projected) {
             e.rowElement.classList.add('projected');
         }
 
@@ -5587,7 +5587,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
         data.id = -1;
         data.forecastId = -1;
-        data.status = CashFlowStatsDetailDtoStatus.Projected;
+        data.status = Status.Projected;
         data.cashflowTypeId = this.statsDetailFilter.cashflowTypeId;
         data.categoryId = this.statsDetailFilter.subCategoryId || this.statsDetailFilter.categoryId;
         data.descriptor = this.statsDetailFilter.transactionDescriptor;
@@ -5641,7 +5641,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         e.cancel = deferred.promise();
 
         this._cashFlowForecastServiceProxy.addForecast(
-            InstanceType10[this.instanceType],
+            InstanceType[this.instanceType],
             this.instanceId,
             forecastModel
         ).subscribe(
@@ -5743,7 +5743,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     if (this.userPreferencesService.localPreferences.value.showCategoryTotals) 
                         apiMethod = this._cashFlowForecastServiceProxy
                             .deleteForecast(
-                                InstanceType10[this.instanceType],
+                                InstanceType[this.instanceType],
                                 this.instanceId,
                                 data.id
                             );
@@ -5762,7 +5762,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     data.categoryId = forecastData.subCategoryId || forecastData.categoryId;
                     apiMethod = this._cashFlowForecastServiceProxy
                         .updateForecast(
-                            InstanceType10[this.instanceType],
+                            InstanceType[this.instanceType],
                             this.instanceId,
                             data
                         );
@@ -6197,7 +6197,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
                     this._cashFlowForecastServiceProxy
                         .deleteForecast(
-                        InstanceType10[this.instanceType],
+                        InstanceType[this.instanceType],
                         this.instanceId,
                         record.forecastId
                     ).subscribe(res => {

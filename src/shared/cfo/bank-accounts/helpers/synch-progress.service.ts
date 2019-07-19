@@ -8,7 +8,7 @@ import { distinctUntilChanged, filter, finalize, tap, map, skip, publishReplay, 
 /** Application imports */
 import {
     InstanceType,
-    SyncProgressDtoSyncStatus,
+    SyncProgressStatus,
     SyncProgressOutput,
     SyncServiceProxy,
     MyFinancesServiceProxy
@@ -102,8 +102,8 @@ export class SynchProgressService {
                 ? this.syncServiceProxy.requestSyncForAccounts(
                     InstanceType[this.cfoService.instanceType],
                     this.cfoService.instanceId,
-                    syncAccountIds,
-                    false
+                    false,
+                    syncAccountIds
                 )
                 : this.syncServiceProxy.syncAllAccounts(
                     InstanceType[this.cfoService.instanceType],
@@ -207,8 +207,8 @@ export class SynchProgressService {
     private syncHasFailedAccounts(syncData: SyncProgressOutput): boolean {
         let hasFailed = false;
         syncData.accountProgresses.forEach(value => {
-            if (value.syncStatus == SyncProgressDtoSyncStatus.ActionRequired
-                || value.syncStatus == SyncProgressDtoSyncStatus.SyncPending) {
+            if (value.syncStatus == SyncProgressStatus.ActionRequired
+                || value.syncStatus == SyncProgressStatus.SyncPending) {
                 hasFailed = true;
             }
         });

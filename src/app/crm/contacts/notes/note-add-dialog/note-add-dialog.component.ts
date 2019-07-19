@@ -24,7 +24,7 @@ import {
     PersonOrgRelationShortInfo,
     PersonShortInfoDto,
     OrganizationShortInfo,
-    CreateNoteInputNoteType
+    NoteType
 } from '@shared/service-proxies/service-proxies';
 import { PhoneFormatPipe } from '@shared/common/pipes/phone-format/phone-format.pipe';
 import { EditContactDialog } from '../../edit-contact-dialog/edit-contact-dialog.component';
@@ -167,11 +167,11 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
 
     initTypes(switchToDefault = true) {
         if (switchToDefault) {
-            this.defaultType = CreateNoteInputNoteType.Note;
+            this.defaultType = NoteType.Note;
             this.type = this.defaultType;
         }
 
-        this.types = _.map(Object.keys(CreateNoteInputNoteType), x => {
+        this.types = _.map(Object.keys(NoteType), x => {
             let el = {};
             el['id'] = x;
             el['name'] = this.l(this.companyContact ? 'Company' : 'Client') + ' ' + this.l(x);

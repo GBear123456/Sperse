@@ -18,7 +18,7 @@ import { FilterModel } from '@shared/filters/models/filter.model';
 import { FilterItemModel } from '@shared/filters/models/filter-item.model';
 import { FilterInputsComponent } from '@shared/filters/inputs/filter-inputs.component';
 import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calendar.component';
-import { ClassificationServiceProxy, ApplyOption, InstanceType } from '@shared/service-proxies/service-proxies';
+import { ClassificationServiceProxy, ApplyToTransactionsOption, InstanceType } from '@shared/service-proxies/service-proxies';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 
 @Component({
@@ -203,7 +203,7 @@ export class RulesComponent extends CFOComponentBase implements OnInit, AfterVie
                 if (result) {
                     this.startLoading(true);
                     this._ClassificationService.deleteRule(InstanceType[this.instanceType], this.instanceId,
-                        [], ApplyOption[dialogData.reclassify ? 'MatchedAndUnclassified' : 'None'], itemId)
+                        [], ApplyToTransactionsOption[dialogData.reclassify ? 'MatchedAndUnclassified' : 'None'], itemId)
                         .subscribe((id) => {
                             this.lastRemovedItemID = itemId;
                             $event.component.deleteRow($event.component.getRowIndexByKey(itemId));

@@ -15,7 +15,7 @@ import { PipelineService } from '@app/shared/pipeline/pipeline.service';
 import { DataLayoutType } from '@app/shared/layout/data-layout-type';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { ActivityServiceProxy, CreateActivityDtoType } from '@shared/service-proxies/service-proxies';
+import { ActivityServiceProxy, ActivityType } from '@shared/service-proxies/service-proxies';
 import { CreateActivityDialogComponent } from './create-activity-dialog/create-activity-dialog.component';
 import { FiltersService } from '@shared/filters/filters.service';
 
@@ -39,7 +39,7 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
     public pipelineDataSource: any;
     public pipelinePurposeId = AppConsts.PipelinePurposeIds.activity;
 
-    public activityTypes = CreateActivityDtoType;
+    public activityTypes = ActivityType;
     public selectedEntities: any = [];
 
     public currentDate = new Date();
@@ -60,11 +60,11 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
             allowMultiple: false,
             dataSource: [{
                   text: this.l('Event'),
-                  id: CreateActivityDtoType.Event,
+                id: ActivityType.Event,
                   color: '#727bd2'
               }, {
                   text: this.l('Task'),
-                  id: CreateActivityDtoType.Task,
+                    id: ActivityType.Task,
                   color: '#32c9ed'
             }],
             label: this.l('Type')

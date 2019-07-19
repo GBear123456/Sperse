@@ -1,7 +1,7 @@
 import { AfterViewInit, Component, ElementRef, EventEmitter, Injector, Output, ViewChild } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { HtmlHelper } from '@shared/helpers/HtmlHelper';
-import { ListResultDtoOfOrganizationUnitDto, MoveOrganizationUnitInput, OrganizationUnitDto, OrganizationUnitServiceProxy } from '@shared/service-proxies/service-proxies';
+import { OrganizationUnitDtoListResultDto, MoveOrganizationUnitInput, OrganizationUnitDto, OrganizationUnitServiceProxy } from '@shared/service-proxies/service-proxies';
 import map from 'lodash/map';
 import { Observable } from 'rxjs';
 import { catchError } from 'rxjs/operators';
@@ -156,7 +156,7 @@ export class OrganizationTreeComponent extends AppComponentBase implements After
     }
 
     private getTreeDataFromServer(callback: (ous: IOrganizationUnitOnTree[]) => void): void {
-        this._organizationUnitService.getOrganizationUnits().subscribe((result: ListResultDtoOfOrganizationUnitDto) => {
+        this._organizationUnitService.getOrganizationUnits().subscribe((result: OrganizationUnitDtoListResultDto) => {
             const treeData = map(result.items, item => (<IOrganizationUnitOnTree>{
                 id: item.id,
                 parent: item.parentId ? item.parentId : '#',

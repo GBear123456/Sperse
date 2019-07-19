@@ -16,7 +16,7 @@ import {
     SyncAccountBankDto,
     BankAccountUsers,
     SecurityManagementServiceProxy,
-    Permission,
+    Permissions,
     UserServiceProxy,
     UserListDto
 } from 'shared/service-proxies/service-proxies';
@@ -285,7 +285,7 @@ export class PermissionsComponent extends CFOComponentBase implements OnInit, Af
         const permission = e.newData[userId];
         const instanceType = <any>this.instanceType;
         let methodObservable = permission ?
-                               this.securityManagmentServiceProxy.grantBankAccountPermissions(instanceType, this.instanceId, e.oldData.accountId, userId, Permission.All) :
+                               this.securityManagmentServiceProxy.grantBankAccountPermissions(instanceType, this.instanceId, e.oldData.accountId, userId, Permissions.All) :
                                this.securityManagmentServiceProxy.revokeBankAccountPermissions(instanceType, this.instanceId, userId, [e.oldData.accountId]);
         methodObservable.subscribe(res => {
             this.notify.success(this.ls('Platform', 'AppliedSuccessfully'));

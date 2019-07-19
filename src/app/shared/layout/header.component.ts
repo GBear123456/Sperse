@@ -14,7 +14,7 @@ import { AbpSessionService } from '@abp/session/abp-session.service';
 import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import {
-    ChangeUserLanguageDto, LinkedUserDto, ProfileServiceProxy, TenantLoginInfoDtoCustomLayoutType, CommonUserInfoServiceProxy
+    ChangeUserLanguageDto, LinkedUserDto, ProfileServiceProxy, LayoutType, CommonUserInfoServiceProxy
 } from '@shared/service-proxies/service-proxies';
 import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
 import { UserDropdownMenuItemType } from '@root/shared/common/layout/user-management-list/user-dropdown-menu/user-dropdown-menu-item-type';
@@ -121,7 +121,7 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
             map(x => isEqual(x, {}) ? null : x)
         );
         let tenant = this.appSession.tenant;
-        if (tenant && tenant.customLayoutType && tenant.customLayoutType != TenantLoginInfoDtoCustomLayoutType.Default)
+        if (tenant && tenant.customLayoutType && tenant.customLayoutType != LayoutType.Default)
             this.customLayoutType = kebabCase(tenant.customLayoutType);
         this.userManagementService.getRecentlyLinkedUsers().subscribe(
             recentlyLinkedUsers => this.recentlyLinkedUsers = recentlyLinkedUsers

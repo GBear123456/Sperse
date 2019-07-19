@@ -25,7 +25,7 @@ import { AppConsts } from '@shared/AppConsts';
 import { RootStore } from '@root/store';
 import { CountriesStoreActions, CountriesStoreSelectors, OrganizationTypeStoreActions, OrganizationTypeSelectors } from '@app/store';
 import { StatesStoreActions, StatesStoreSelectors } from '@root/store';
-import { CountryDto, CountryStateDto, OrganizationContactInfoDto, OrganizationContactServiceProxy, UpdateOrganizationInfoInput, NotesServiceProxy, CreateNoteInput, ContactPhotoServiceProxy, CreateContactPhotoInput, CreateNoteInputNoteType } from '@shared/service-proxies/service-proxies';
+import { CountryDto, CountryStateDto, OrganizationContactInfoDto, OrganizationContactServiceProxy, UpdateOrganizationInfoInput, NotesServiceProxy, CreateNoteInput, ContactPhotoServiceProxy, CreateContactPhotoInput, NoteType } from '@shared/service-proxies/service-proxies';
 import { UploadPhotoDialogComponent } from '@app/shared/common/upload-photo-dialog/upload-photo-dialog.component';
 import { StringHelper } from '@shared/helpers/StringHelper';
 import { ContactsService } from '@app/crm/contacts/contacts.service';
@@ -162,7 +162,7 @@ export class CompanyDialogComponent implements OnInit {
             this._notesService.createNote(CreateNoteInput.fromJS({
                 contactId: this.company.id,
                 text: this.company.notes,
-                noteType: CreateNoteInputNoteType.Note,
+                noteType: NoteType.Note,
             }))
             .pipe(finalize(() => this.modalDialog.finishLoading()))
             .subscribe(

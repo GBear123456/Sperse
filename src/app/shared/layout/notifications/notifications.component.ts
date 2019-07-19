@@ -9,7 +9,7 @@ import { finalize } from 'rxjs/operators';
 
 /** Application imports */
 import { appModuleAnimation } from '@shared/animations/routerTransition';
-import { NotificationServiceProxy, UserNotification } from '@shared/service-proxies/service-proxies';
+import { NotificationServiceProxy, UserNotificationDto } from '@shared/service-proxies/service-proxies';
 import { IFormattedUserNotification, UserNotificationHelper } from './UserNotificationHelper';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
@@ -54,7 +54,7 @@ export class NotificationsComponent implements OnInit {
             .subscribe(result => {
                 this.unreadNotificationCount = result.unreadCount;
                 this.notifications = [];
-                $.each(result.items, (index, item: UserNotification) => {
+                $.each(result.items, (index, item: UserNotificationDto) => {
                     this.notifications.push(this._userNotificationHelper.format(<any>item, false));
                 });
                 this._changeDetectorRef.detectChanges();

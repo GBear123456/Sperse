@@ -10,7 +10,7 @@ import { first, map, takeUntil, switchMap, finalize } from 'rxjs/operators';
 /** Core imports */
 import { environment } from 'environments/environment';
 import { OffersService } from '@root/personal-finance/shared/offers/offers.service';
-import { OfferDtoSystemType, OfferServiceProxy, GetMemberInfoResponse } from '@shared/service-proxies/service-proxies';
+import { OfferProviderType, OfferServiceProxy, GetMemberInfoResponse } from '@shared/service-proxies/service-proxies';
 
 @Component({
     selector: 'articles',
@@ -33,7 +33,7 @@ export class ArticlesComponent extends AppComponentBase implements OnInit, OnDes
             const offerInfo: any = {
                 campaignId: campaignId,
                 redirectUrl: redirectUrl,
-                systemType: OfferDtoSystemType.EPCVIP
+                systemType: OfferProviderType.EPCVIP
             };
             this.offersService.applyOffer(offerInfo);
         };

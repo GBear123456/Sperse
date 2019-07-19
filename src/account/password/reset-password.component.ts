@@ -16,7 +16,7 @@ import {
     AccountServiceProxy,
     PasswordComplexitySetting,
     ProfileServiceProxy,
-    TenantLoginInfoDtoCustomLayoutType
+    LayoutType
 } from '@shared/service-proxies/service-proxies';
 import { LoginService } from '../login/login.service';
 import { ResetPasswordModel } from './reset-password.model';
@@ -42,7 +42,7 @@ export class AdResetPasswordHostDirective {
 export class ResetPasswordComponent extends AppComponentBase implements OnInit {
     @ViewChild(AdResetPasswordHostDirective) adResetPasswordHost: AdResetPasswordHostDirective;
 
-    @HostBinding('class.lend-space') lendSpaceWrapper = this._appSessionService.tenant && this._appSessionService.tenant.customLayoutType === TenantLoginInfoDtoCustomLayoutType.LendSpace;
+    @HostBinding('class.lend-space') lendSpaceWrapper = this._appSessionService.tenant && this._appSessionService.tenant.customLayoutType === LayoutType.LendSpace;
     model: ResetPasswordModel = new ResetPasswordModel();
     passwordComplexitySetting: PasswordComplexitySetting = new PasswordComplexitySetting();
     saving = false;
@@ -64,11 +64,11 @@ export class ResetPasswordComponent extends AppComponentBase implements OnInit {
 
     private getLayoutComponent(tenant) {
         switch (tenant && tenant.customLayoutType) {
-            case TenantLoginInfoDtoCustomLayoutType.LendSpace:
+            case LayoutType.LendSpace:
                 return LendSpaceResetPasswordComponent;
-            case TenantLoginInfoDtoCustomLayoutType.AdvicePeriod:
+            case LayoutType.AdvicePeriod:
                 return AdvicePeriodResetPasswordComponent;
-            case TenantLoginInfoDtoCustomLayoutType.BankCode:
+            case LayoutType.BankCode:
                 return BankCodeResetPasswordComponent;
             default:
                 return HostResetPasswordComponent;

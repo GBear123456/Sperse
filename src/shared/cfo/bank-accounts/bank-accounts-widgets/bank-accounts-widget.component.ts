@@ -440,7 +440,7 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
 
     requestSyncForAccounts(fullResync = false) {
         this._syncServiceProxy
-            .requestSyncForAccounts(this.instanceType, this.instanceId, this.syncAccountIds, fullResync)
+            .requestSyncForAccounts(this.instanceType, this.instanceId, fullResync, this.syncAccountIds)
             .subscribe(res => {
                 if (res) {
                     this.reloadDataSource.emit();
