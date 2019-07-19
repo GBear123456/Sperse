@@ -28,7 +28,7 @@ export class SelectionFilterComponent {
     getSelectedTitle() {
         let selectedCount = this.selectedItems.length,
             totalCount = this.selectionList.length;
-        return selectedCount ? (this.allSelectedTitle && selectedCount == totalCount 
+        return selectedCount ? (this.allSelectedTitle && selectedCount == totalCount
             ? this.allItemsText : this.localization.l('Any') + ' ' + this.itemsText) : this.allItemsText;
     }
 

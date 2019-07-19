@@ -519,7 +519,7 @@ export class OffersComponent extends AppComponentBase implements OnInit, OnDestr
         this._offersProxy.setAttribute(
             data.id,
             data.bottomInputValue,
-            OfferFilter.fromJS({campaignIds: this.selectedOfferKeys}),
+            OfferFilter.fromJS({campaignIds: this.selectedOfferKeys})
         ).subscribe(() => {
             this.notify.info(this.l('AppliedSuccessfully'));
         });
