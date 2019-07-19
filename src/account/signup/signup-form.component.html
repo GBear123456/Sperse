@@ -2,8 +2,8 @@
     <div class="container h-100">
         <div class="row h-100 girl-bg">
             <div class="col-lg-6 offset-lg-6 col-md-12 align-self-center" style="margin:auto">
-                <h2>Monitor, Gain Insight & Make Better Decisions</h2>
-                <h4>sign up and get your credit score today</h4>
+                <h2>Gain Insights to Increase Your Sales Prospects</h2>
+                <h4>SIGN UP AND GET ACCESS TO CODEBREAKER AI</h4>
 
                 <form class="sign-up" (ngSubmit)="signUpMember()">
                     <div class="dx-field form-row align-items-center">
@@ -76,7 +76,7 @@
                             </dx-check-box>
                         </div>
                         <p class="agreement">
-                            I consent to receive calls, texts, emails, and pre-recorded messages from LendSpace, its subsidiaries, agents, and/or partners, dialed manually or by autodialer.
+                            Yes, send me updates and special offers.
                         </p>
                     </div>
                     <div class="form-group d-flex">
@@ -91,9 +91,7 @@
                             </dx-check-box>
                         </div>
                         <p class="agreement">
-                            By continuing, I certify I'm a US resident and older than 18 years of age.
-                            I understand and agree to the LendSpace <a (click)="openConditionsDialog(conditions.Terms)">Terms of Use</a>,
-                            <a (click)="openConditionsDialog(conditions.Policies)">Privacy Policy</a>.
+                            Yes, I agree to the <a (click)="openConditionsDialog(conditions.Terms)">terms</a> and <a (click)="openConditionsDialog(conditions.Policies)">policy</a>.                                                        
                         </p>
                     </div>
                     <div class="dx-field actions-field align-items-center">
@@ -104,7 +102,7 @@
                         </dx-button>
                     </div>
                     <div class="form-group already-registered">
-                        <h3>Already have a LendSpace account?</h3>
+                        <h3>Do you already have a BANKCODE account?</h3>
                         <p class="links">
                             <a [routerLink]="'/account/login'">Click here to login</a> | <a [routerLink]="'/account/forgot-password'">Reset your password</a>
                         </p>
