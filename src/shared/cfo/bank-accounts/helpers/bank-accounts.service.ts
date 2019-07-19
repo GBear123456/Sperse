@@ -74,7 +74,7 @@ export class BankAccountsService {
     private _selectedBankAccountTypes: BehaviorSubject<string[]> = new BehaviorSubject([]);
     selectedBankAccountTypes$: Observable<string[]> = this._selectedBankAccountTypes.asObservable();
 
-    private _applyFilter = new BehaviorSubject(null);
+    private _applyFilter = new BehaviorSubject<Boolean>(false);
     applyFilter$ = this._applyFilter.asObservable();
     _syncAccounts: ReplaySubject<SyncAccountBankDto[]> = new ReplaySubject(1);
     _businessEntities: ReplaySubject<BusinessEntityDto[]> = new ReplaySubject(1);
@@ -190,7 +190,22 @@ export class BankAccountsService {
             this.filteredSyncAccounts$.pipe(
                 first(),
                 switchMap(() => this.applyFilter$),
-                withLatestFrom(this.filteredSyncAccounts$, (apply, filteredAccounts) => {
+                withLatestFrom(this.filteredSyncAccounts$, (applyForLink, filteredAccounts) => {
+                    if (!applyForLink && this.acceptFilterOnlyOnApply &&
+                        !filteredAccounts.some(item => item['selected'])
+                    ) {
+                        let filteredAccountsIds = [];
+                        filteredAccounts.forEach(account => {
+                            if (account.bankAccounts.length) {
+                                account['selected'] = true;
+                                account.bankAccounts.forEach(bank => {
+                                    bank['selected'] = true;
+                                    filteredAccountsIds.push(bank.id);
+                                });
+                            }
+                        });
+                        this.changeSelectedBankAccountsIds(filteredAccountsIds);
+                    }
                     return filteredAccounts;
                 }),
                 distinctUntilChanged(this.arrayDistinct)
@@ -277,26 +292,6 @@ export class BankAccountsService {
             distinctUntilChanged(this.arrayDistinct)
         );
 
-        this.selectedBankAccountsIds$.pipe(
-            withLatestFrom(this.filteredBankAccountsIds$)
-        ).subscribe(
-            ([selectedAccountsIds, filteredAccountsIds]) => {
-                /** If selected bank accounts sets to none - select all filtered */
-                if (!selectedAccountsIds || !selectedAccountsIds.length) {
-                    if (this.acceptFilterOnlyOnApply) {
-                        this.changeSelectedBankAccountsIds(filteredAccountsIds);
-                        this.applyFilter();
-                    }
-                } else {
-                    /** If selected are differ from saved in store - update store */
-                    // if (ArrayHelper.dataChanged(selectedAccountsIds, this.state.selectedBankAccountIds)) {
-                    //     this.state.selectedBankAccountIds = selectedAccountsIds;
-                    //     this.cacheService.set(this.bankAccountsCacheKey, this.state);
-                    // }
-                }
-            }
-        );
-
         this.accountsDataTotalNetWorth$ = this.getAccountsTotalNetWorth(this.filteredSyncAccounts$);
         this.accountsDataTotalNetWorthWithApply$ = this.getAccountsTotalNetWorth(this.filteredSyncAccountsWithApply$);
 
@@ -345,7 +340,6 @@ export class BankAccountsService {
     }
 
     loadState(applyFilter = true) {
-
         /** Get filter data from cache and apply it to update all accounts */
         this.state = {...this.state, ...this.cacheService.get(this.bankAccountsCacheKey)};
         this._selectedBankAccountTypes.next(this.state.selectedBankAccountTypes);
@@ -596,12 +590,12 @@ export class BankAccountsService {
         this.tempState = null;
     }
 
-    applyFilter() {
+    applyFilter(applyForLink = false) {
         if (this.tempState) {
             this.saveStateInCache(this.tempState);
             this.clearTempState();
         }
-        this._applyFilter.next(null);
+        this._applyFilter.next(applyForLink);
     }
 
     private saveStateInCache(state: BankAccountsState) {

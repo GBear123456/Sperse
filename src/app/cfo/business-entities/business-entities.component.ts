@@ -158,6 +158,7 @@ export class BusinessEntitiesComponent extends CFOComponentBase implements OnIni
         this.dialog.open(BankAccountsSelectDialogComponent, {
             panelClass: 'slider',
             data: {
+                applyForLink: true,
                 applyDisabled: !this.isInstanceAdmin &&
                     !this.isMemberAccessManage,
                 highlightUsedRows: true,
@@ -208,11 +209,11 @@ export class BusinessEntitiesComponent extends CFOComponentBase implements OnIni
         if (updateBankAccountsObservable.length) {
             forkJoin(
                 updateBankAccountsObservable
-            )
-                .subscribe(() => {
-                    this.dataGrid.instance.refresh();
-                    this.lastSelectedBusinessEntity = null;
-                });
+            ).subscribe(() => {
+                this.dataGrid.instance.refresh();
+                this.bankAccountsService.load(false).subscribe();
+                this.lastSelectedBusinessEntity = null;
+            });
         }
     }
 
