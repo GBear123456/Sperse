@@ -5,7 +5,11 @@
     position: fixed;
     width: 100%;
     z-index: 2;
-    background: #32333B;
+    background: #000;
+    
+    .page-header {
+        padding: 0 60px;
+    }
 
     .navigation {
         width: auto;
@@ -13,7 +17,6 @@
         align-items: center;
         justify-content: space-between;
         margin-left: auto;
-        margin-right: auto;
 
         .app-area-navigation {
             width: 100%;
@@ -32,12 +35,13 @@
                 a {
                     display: block;
                     text-decoration: none;
-                    font-family: Poppins;
-                    font-size: 14px;
-                    font-weight: 600;
+                    font-family: Poppins, sans-serif;
+                    font-size: 18px;
+                    font-weight: 500;
                     white-space: nowrap;
-                    padding: 12px 25px;
+                    padding: 12px 10px;
                     color: #FFF;
+                    transition: .2s;
 
                     &.disabled {
                         color: #535354 !important;
@@ -50,6 +54,25 @@
 
                         &:hover {
                             background-color: lighten(#ff9933, 6%);
+                        }
+                    }
+                    
+                    &.try-free {
+                        color: lighten(#2c6935, 10%);
+                        &:hover {
+                            color: lighten(#2c6935, 18%);
+                        }
+                    }
+                    &.sign-up {
+                        color: #b62024;
+                        &:hover {
+                            color: lighten(#b62024, 10%);
+                        }
+                    }
+                    &.login {
+                        color: #f7a11c;
+                        &:hover {
+                            color: lighten(#f7a11c, 10%);
                         }
                     }
                 }
