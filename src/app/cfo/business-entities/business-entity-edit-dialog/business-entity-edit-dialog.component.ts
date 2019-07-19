@@ -31,6 +31,7 @@ import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interf
 })
 export class BusinessEntityEditDialogComponent implements OnInit {
     @ViewChild(ModalDialogComponent) modalDialog: ModalDialogComponent;
+    businessEntities: any;
     types: any;
     states: any;
     countries: any;
@@ -75,6 +76,7 @@ export class BusinessEntityEditDialogComponent implements OnInit {
     }
 
     ngOnInit() {
+        this.businessEntitiesLoad();
         this.countriesStateLoad();
         this.loadTypes();
         if (this.isNew) {
@@ -110,6 +112,19 @@ export class BusinessEntityEditDialogComponent implements OnInit {
                     this._changeDetectorRef.detectChanges();
                 });
         }
+    }
+
+    businessEntitiesLoad() {
+        this._businessEntityService.getBusinessEntities(this._cfoService.instanceType as any, this._cfoService.instanceId)
+            .subscribe(result => {
+                if (!this.isNew) {
+                    let index = result.findIndex(x => x.id === this.data.id);
+                    result.splice(index, 1);
+                }
+                
+                this.businessEntities = result;
+                this._changeDetectorRef.detectChanges();
+            });
     }
 
     loadTypes() {
