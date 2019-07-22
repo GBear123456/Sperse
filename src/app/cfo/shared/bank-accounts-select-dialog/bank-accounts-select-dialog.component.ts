@@ -63,9 +63,7 @@ export class BankAccountsSelectDialogComponent implements OnInit {
     }
 
     apply() {
-        this.bankAccountsService.applyFilter(
-            this.data.applyForLink);
-
+        this.bankAccountsService.applyFilter(this.data && this.data.applyForLink);
         this.onApply.emit();
         this.modalDialog.close(true);
     }
