@@ -19,7 +19,7 @@
         <td *ngFor="let item of creditReport?.bureauReports">{{item.personalInfo.name}}</td>
       </tr>
       <tr>
-        <td class="row-title">{{l("dob")}}</td>
+        <td class="row-title">{{l("dob")}}:</td>
         <td *ngFor="let item of creditReport?.bureauReports">{{item.personalInfo.doB?.utc().format('MMM DD, YYYY')}}</td>
       </tr>
       <tr>
