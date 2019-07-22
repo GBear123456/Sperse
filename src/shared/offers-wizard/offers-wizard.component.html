@@ -90,6 +90,8 @@
                                     <div class="dx-field-value">
                                         <dx-select-box
                                             [items]="gender"
+                                            valueExpr="key"
+                                            displayExpr="text"
                                             [(value)]="submitApplicationProfileInput.personalInformation.gender"
                                             placeholder="Choose gender">
                                         </dx-select-box>
@@ -174,6 +176,8 @@
                             <div class="dx-field-value">
                                 <dx-select-box
                                     [items]="contactTime"
+                                    valueExpr="key"
+                                    displayExpr="text"
                                     [(value)]="submitApplicationProfileInput.personalInformation.preferredContactTOD"
                                     placeholder="Select contact time">
                                 </dx-select-box>
@@ -331,6 +335,8 @@
                         <div class="dx-field-value">
                             <dx-select-box
                                 [items]="bankAccountType"
+                                valueExpr="key"
+                                displayExpr="text"
                                 [(value)]="submitApplicationProfileInput.bankInformation.bankAccountType"
                                 placeholder="Choose Bank Account Type">
                             </dx-select-box>
@@ -580,6 +586,8 @@
                         <div class="dx-field-value">
                             <dx-select-box
                                 [items]="payFrequency"
+                                valueExpr="key"
+                                displayExpr="text"
                                 [(value)]="submitApplicationProfileInput.employmentInformation.payFrequency"
                                 placeholder="Choose pay frequency">
                             </dx-select-box>
@@ -610,6 +618,8 @@
                         <div class="dx-field-value">
                             <dx-select-box
                                 [items]="incomeType"
+                                valueExpr="key"
+                                displayExpr="text"
                                 placeholder="Choose income type"
                                 [(value)]="submitApplicationProfileInput.employmentInformation.incomeType">
                             </dx-select-box>
@@ -638,6 +648,8 @@
                                 <div class="dx-field-value">
                                     <dx-select-box
                                         [items]="creditScore"
+                                        valueExpr="key"
+                                        displayExpr="text"
                                         [(value)]="submitApplicationProfileInput.personalInformation.creditScoreRating"
                                         placeholder="Choose credit score">
                                     </dx-select-box>
@@ -650,6 +662,8 @@
                                 <div class="dx-field-value">
                                     <dx-select-box
                                         [items]="loanReason"
+                                        valueExpr="key"
+                                        displayExpr="text"
                                         [(value)]="submitApplicationProfileInput.loanInformation.loanReason"
                                         placeholder="Choose loan reason">
                                     </dx-select-box>
