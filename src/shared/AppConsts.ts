@@ -109,7 +109,7 @@ export class AppConsts {
     static readonly defaultCountryCode = '+1';
 
     static readonly ODataVersion = 4;
-    static readonly ODataRequestTimeoutMilliseconds = 2 * 60 * 1000;
+    static readonly ODataRequestTimeoutMilliseconds = 3 * 60 * 1000;
 
     static readonly maxRatingValue = 10;
 

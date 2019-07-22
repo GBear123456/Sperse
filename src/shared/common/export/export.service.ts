@@ -13,7 +13,7 @@ import * as moment from 'moment';
 export class ExportService {
 
     private _exportGoogleSheetService: ExportGoogleSheetService;
-    private readonly EXPORT_REQUEST_TIMEOUT = 600000;
+    private readonly EXPORT_REQUEST_TIMEOUT = 3 * 60 * 1000;
 
     constructor(private _injector: Injector) {
         this._exportGoogleSheetService = _injector.get(ExportGoogleSheetService);
