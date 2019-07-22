@@ -95,7 +95,6 @@ export class GenerateReportDialogComponent implements OnInit {
 
     generateReport() {
         this.applyDateRange();
-        this.notify.info(this.ls.l('GeneratingStarted'));
         this.store$.pipe(
             select(CurrenciesStoreSelectors.getSelectedCurrencyId),
             first(),

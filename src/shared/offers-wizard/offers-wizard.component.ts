@@ -12,20 +12,23 @@ import {
 /** Third party imports */
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatHorizontalStepper } from '@angular/material';
-import { Observable } from 'rxjs';
-import { first, publishReplay, refCount } from 'rxjs/operators';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
 import {
     GetApplicationDetailsOutput,
-    GetMemberInfoResponse,
     CampaignProviderType,
     OfferServiceProxy,
     SubmitApplicationInput,
     OfferProviderType,
     LoanReason,
-    SubmitApplicationOutput, PayFrequency, CreditScoreRating, IncomeType, Gender, TimeOfDay, BankAccountType
+    SubmitApplicationOutput,
+    PayFrequency,
+    CreditScoreRating,
+    IncomeType,
+    Gender,
+    TimeOfDay,
+    BankAccountType
 } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { DateHelper } from '@shared/helpers/DateHelper';
@@ -42,10 +45,9 @@ import { environment } from '@root/environments/environment';
 export class OffersWizardComponent implements OnInit {
     @ViewChild('stepper') stepper: MatHorizontalStepper;
     submitApplicationProfileInput = new SubmitApplicationInput();
-    memberInfo$: Observable<GetMemberInfoResponse> = this.offersServiceProxy.getMemberInfo().pipe(publishReplay(), refCount());
-    memberInfo: GetMemberInfoResponse;
     dialogRef: MatDialogRef<OffersWizardComponent, any>;
     domain = environment.LENDSPACE_DOMAIN;
+    rules = {'X': /[02-9]/};
     termsData = {
         title: this.ls.l('TermsOfUse'),
         bodyUrl: this.domain + '/documents/terms.html',
@@ -64,7 +66,6 @@ export class OffersWizardComponent implements OnInit {
     };
     today: Date = new Date();
     emailRegEx = AppConsts.regexPatterns.email;
-    rules: any;
     radioGroup = [
         { value: true, text: 'Yes' },
         { value: false, text: 'No' }
@@ -86,22 +87,6 @@ export class OffersWizardComponent implements OnInit {
         @Inject(MAT_DIALOG_DATA) public data: any
     ) {
         this.dialogRef = <any>injector.get(MatDialogRef);
-        this.rules = {'X': /[02-9]/};
-        this.memberInfo$.pipe(first()).subscribe(
-            (memberInfo: GetMemberInfoResponse) => {
-                this.submitApplicationProfileInput.personalInformation.firstName = memberInfo.firstName;
-                this.submitApplicationProfileInput.personalInformation.lastName = memberInfo.lastName;
-                this.submitApplicationProfileInput.personalInformation.email = memberInfo.emailAddress;
-                this.submitApplicationProfileInput.personalInformation.phone = memberInfo.phoneNumber;
-                this.submitApplicationProfileInput.personalInformation.postalCode = memberInfo.zipCode;
-                this.submitApplicationProfileInput.personalInformation.address1 = memberInfo.streetAddress;
-                this.submitApplicationProfileInput.personalInformation.city = memberInfo.city;
-                this.submitApplicationProfileInput.personalInformation.stateCode = memberInfo.stateCode;
-                this.submitApplicationProfileInput.personalInformation.countryCode = memberInfo.countryCode;
-                this.submitApplicationProfileInput.personalInformation.doB = memberInfo.doB;
-                this._changeDetectionRef.detectChanges();
-            }
-        );
     }
 
     ngOnInit() {
