@@ -1,0 +1,22 @@
+<modal-dialog [title]="title"
+              [buttons]="buttons">
+    <div *ngIf="currentStep == generateReportSteps.Step1" class="step1-container">
+        <dx-data-grid id="gridContainer"
+                    height="100%"
+                    [dataSource]="bankAccountsService.businessEntities$ | async"
+                    [pager]="defaultGridPagerConfig">
+            <dxo-header-filter [visible]="true" [allowSearch]="true"></dxo-header-filter>
+            <dxo-selection
+                selectAllMode="page"
+                showCheckBoxesMode="always"
+                mode="multiple">
+            </dxo-selection>
+            <dxi-column dataField="name" caption="{{ ls.l('BusinessEntityName') | uppercase }}"></dxi-column>
+            <dxo-scrolling mode="virtual"></dxo-scrolling>
+            <dxo-group-panel [visible]="false"></dxo-group-panel>
+        </dx-data-grid>
+    </div>
+    <div *ngIf="currentStep == generateReportSteps.Step2" class="step2-container">
+        <calendar [values]="calendarData" [options]="calendarData.options"></calendar>
+    </div>
+</modal-dialog>

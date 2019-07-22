@@ -59,6 +59,7 @@ import { CommonModule } from '@shared/common/common.module';
 import { UploadPhotoDialogComponent } from './upload-photo-dialog/upload-photo-dialog.component';
 import { ConfirmDialogComponent } from './dialogs/confirm/confirm-dialog.component';
 import { CalendarDialogComponent } from './dialogs/calendar/calendar-dialog.component';
+import { GenerateReportDialogComponent } from '@app/cfo/reports/generate-report-dialog/generate-report-dialog.component'
 import { ImportWizardComponent } from './import-wizard/import-wizard.component';
 import { ConfirmImportDialog } from './import-wizard/confirm-import-dialog/confirm-import-dialog.component';
 import { ImportProgressBarComponent } from './import-wizard/import-progress-bar/import-progress-bar.component';
@@ -177,6 +178,7 @@ import { LoadingSpinnerModule } from '@app/shared/common/loading-spinner/loading
         ImportProgressBarComponent,
         ConfirmImportDialog,
         CalendarDialogComponent,
+        GenerateReportDialogComponent,
         UploadPhotoDialogComponent,
         ConfirmDialogComponent,
         RatingBarComponent,
@@ -234,6 +236,7 @@ import { LoadingSpinnerModule } from '@app/shared/common/loading-spinner/loading
     entryComponents: [
         ConfirmImportDialog,
         CalendarDialogComponent,
+        GenerateReportDialogComponent,
         UploadPhotoDialogComponent,
         ConfirmDialogComponent,
         PaymentWizardComponent,

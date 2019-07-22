@@ -1,4 +1,4 @@
-<div class="page-header navbar navbar-fixed-top navbar-light container">
+<div class="page-header navbar navbar-fixed-top navbar-light">
     <div class="page-logo">
         <a href="javascript:void(0);" (click)="logoClick($event)">
             <img src="./assets/common/images/bank-code/header-logo.png" alt="logo" class="logo-default" width="200px" height="auto"/>
@@ -8,17 +8,17 @@
     <div *ngIf="!loggedUserId" class="navigation">
         <ul class="app-area-navigation">
             <li class="app-list-item">
-                <a href="https://www.bankcode.pro/" target="_blank">
+                <a href="https://www.bankcode.pro/" class="try-free">
                     Try it Free
                 </a>
             </li>
             <li class="app-list-item">
-                <a routerLink="signup">
+                <a routerLink="signup" class="sign-up">
                     Subscribe
                 </a>
             </li>
             <li class="app-list-item">
-                <a routerLink="login">
+                <a routerLink="login" class="login">
                     Sign In
                 </a>
             </li>

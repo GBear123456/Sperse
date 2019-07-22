@@ -19,12 +19,11 @@ import { AppConsts } from '@shared/AppConsts';
 import { FileSizePipe } from '@shared/common/pipes/file-size.pipe';
 import { ReportsServiceProxy, GenerateInput, ReportPeriod, GetReportUrlOutput } from '@shared/service-proxies/service-proxies';
 import { BankAccountsService } from '@shared/cfo/bank-accounts/helpers/bank-accounts.service';
-import { CalendarDialogComponent } from '@app/shared/common/dialogs/calendar/calendar-dialog.component';
-import { DateHelper } from '@shared/helpers/DateHelper';
 import { StringHelper } from '@root/shared/helpers/StringHelper';
 import { RequestHelper } from '@root/shared/helpers/RequestHelper';
 import { ReportViewType } from './report-view-type.enum';
 import { CfoStore, CurrenciesStoreSelectors } from '@app/cfo/store';
+import { GenerateReportDialogComponent } from './generate-report-dialog/generate-report-dialog.component';
 
 @Component({
     templateUrl: './reports.component.html',
@@ -36,9 +35,6 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
     @ViewChild(DxTooltipComponent) actionsTooltip: DxTooltipComponent;
     @ViewChild(ImageViewerComponent) imageViewer: ImageViewerComponent;
-
-    dateFrom = moment().subtract(1, 'month').startOf('month');
-    dateTo = moment().subtract(1, 'month').endOf('month');
 
     headlineConfig;
     menuItems = [
@@ -213,85 +209,37 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
         this.activate();
     }
 
-    onToolbarPreparing($event) {
-        $event.toolbarOptions.items.push({
-            location: 'before',
-            widget: 'dxButton',
-            options: {
-                text: this.l('Generate'),
-                visible: this.isInstanceAdmin || this.isMemberAccessManage,
-                onClick: () => {
-                    this.store$.pipe(
-                        select(CurrenciesStoreSelectors.getSelectedCurrencyId),
-                        first(),
-                        tap(() => this.notify.info(this.l('GeneratingStarted'))),
-                        switchMap(currencyId =>
-                            this.reportsProxy.generate(<any>this.instanceType, this.instanceId, new GenerateInput({
-                                from: this.dateFrom,
-                                to: this.dateTo,
-                                period: this.selectedPeriod,
-                                currencyId,
-                                businessEntityIds: [],
-                                bankAccountIds: []
-                            }))
-                        )
-                    ).subscribe(() => {
-                        this.notify.info(this.l('SuccesfullyGenerated'));
-                        this.invalidate();
-                    });
-                }
-            }
-        }, {
-            location: 'center',
-            widget: 'dxButton',
-            options: {
-                text: this.getDateButtonText(),
-                onClick: (event) => {
-                    this.showCalendarDialog(() => {
-                        event.component.option('text', this.getDateButtonText());
-                    });
-                }
-            }
-        });
-    }
-
-    getDateButtonText() {
-        return (this.dateFrom ? this.dateFrom.format('DD/MM/YYYY') : this.l('Start Date')) +
-            ' - ' + (this.dateTo ? this.dateTo.format('DD/MM/YYYY') : this.l('End Date'));
-    }
-
-    showCalendarDialog(callback) {
-        this._dialog.closeAll();
-        this._dialog.open(CalendarDialogComponent, {
-            panelClass: [ 'slider' ],
-            disableClose: false,
-            hasBackdrop: false,
-            closeOnNavigation: true,
-            data: {
-                to: { value: this.dateTo && DateHelper.addTimezoneOffset(this.dateTo.toDate(), true) },
-                from: { value: this.dateFrom && DateHelper.addTimezoneOffset(this.dateFrom.toDate(), true) },
-                options: { }
-            }
-        }).afterClosed().subscribe((data) => {
-            if ((this.dateTo ? this.dateTo.diff(data.dateTo, 'days') : data.dateTo) ||
-                (this.dateFrom ? this.dateFrom.diff(data.dateFrom, 'days') : data.dateFrom)
-            ) {
-                this.dateFrom = data.dateFrom && moment(data.dateFrom);
-                this.dateTo = data.dateTo && moment(data.dateTo);
-                this.processFilterInternal();
-                callback();
-            }
-        });
-    }
-
     initHeadlineConfig() {
         this.headlineConfig = {
             names: [this.l('REPORTS')],
             onRefresh: () => {
                 this.dataGrid.instance.refresh();
             },
-            iconSrc: './assets/common/icons/credit-card-icon.svg'
+            iconSrc: './assets/common/icons/credit-card-icon.svg',
+            buttons: [
+                {
+                    action: this.showGenerateReportDialog.bind(this),
+                    lable: this.l('Generate'),
+                    enabled: this.isInstanceAdmin || this.isMemberAccessManage
+                }
+            ]
         };
+    }
+
+    showGenerateReportDialog() {
+        this._dialog.closeAll();
+        this._dialog.open(GenerateReportDialogComponent, {
+            panelClass: [ 'slider' ],
+            disableClose: true,
+            hasBackdrop: true,
+            closeOnNavigation: true,
+            data: {
+                instanceType: this.instanceType,
+                instanceId: this.instanceId,
+                period: this.selectedPeriod,
+                reportGenerated: () => this.dataGrid.instance.refresh()
+            }
+        });
     }
 
     calculateFileSizeValue = (data) => this._fileSizePipe.transform(data.Size);
@@ -430,9 +378,7 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
 
     getFilters() {
         return [
-            {Period: this.selectedPeriod},
-            {From: {ge: this.dateFrom.toDate()}},
-            {To: {le: this.dateTo.toDate()}}
+            {Period: this.selectedPeriod}
         ];
     }
 
@@ -453,8 +399,6 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
         }[item.period];
 
         this.selectedPeriod = item.period;
-        this.dateFrom = moment().subtract(1, period).startOf(period);
-        this.dateTo = moment().subtract(1, period).endOf(period);
 
         this.processFilterInternal();
         this.dataGrid.instance.repaint();
@@ -462,7 +406,10 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
         if (this.openReportMode) {
             this.openReportMode = false;
             this._changeDetector.markForCheck();
+        if (this._dialog) {
+            this._dialog.closeAll();
         }
+    }
     }
 
     @HostListener('document:keydown', ['$event'])
