@@ -8,66 +8,22 @@
         display: flex;
         align-items: center;
 
-        .left-menu {
-            width: 321px;
-            height: calc(~"100vh - 150px");
-            background-color: #fff;
-            padding: 35px 25px 25px 25px;
-            border-right: 1px solid #dfdfdf;
-            float: left;
-
-            .menu-wrapper {
-                position: relative;
-                padding-left: 45px;
-                list-style: none;
-                line-height: 1;
-                color: #677380;
-                letter-spacing: 0.3px;
-
-                &::before {
-                    display: inline-block;
-                    content: '';
-                    position: absolute;
-                    top: 0;
-                    left: 15px;
-                    width: 10px;
-                    height: 100%;
-                    border-left: 3px solid #F7F8F9;
-                }
-                .item {
-                    position: relative;
-                    font-weight: 500;
-                    span {
-                        width: 215px;
-                        position: relative;
-                        cursor: pointer;
-                        display: inline-block;
-                        font-size: 20px;
-                        padding: 10px;
-                        &.selected {
-                            text-decoration: underline;
-                        }
-                    }
-                }  
-            }
-        }
-
         .reports {
             height: calc(100vh - 160px);
             /deep/ dx-data-grid#gridContainer {
                 .dx-toolbar-before {
                     width: 100px !important;
                     padding: 15px !important;
-                }  
+                }
                 .dx-toolbar-center {
                     margin: auto !important;
                     padding: 15px !important;
                     float: none !important;
-                }  
+                }
             }
         }
     }
-    
+
     &.fullscreen .reportView {
         width: 100%;
         border: solid 1px green;
@@ -103,6 +59,15 @@
             .inline-icon, i.material-icons, .footer-info {
                 display: none;
             }
+        }
+    }
+
+    /deep/ .dx-datagrid {
+        .dx-header-filter {
+            display: none!important;
+        }
+        td:hover .dx-header-filter {
+            display: inline-block!important;
         }
     }
 }

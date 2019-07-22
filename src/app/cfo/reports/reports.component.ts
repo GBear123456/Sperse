@@ -44,15 +44,21 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
     menuItems = [
         {
             caption: 'MonthlyReports',
-            period: ReportPeriod.Monthly
+            period: ReportPeriod.Monthly,
+            isAlwaysActive: true,
+            onClick: this.onMenuClick.bind(this)
         },
         {
             caption: 'QuarterlyReports',
-            period: ReportPeriod.Quarterly
+            period: ReportPeriod.Quarterly,
+            isAlwaysActive: true,
+            onClick: this.onMenuClick.bind(this)
         },
         {
             caption: 'AnnualReports',
-            period: ReportPeriod.Annual
+            period: ReportPeriod.Annual,
+            isAlwaysActive: true,
+            onClick: this.onMenuClick.bind(this)
         }
     ];
 
@@ -216,10 +222,10 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
                 visible: this.isInstanceAdmin || this.isMemberAccessManage,
                 onClick: () => {
                     this.store$.pipe(
-                        select(CurrenciesStoreSelectors.getSelectedCurrencyId), 
+                        select(CurrenciesStoreSelectors.getSelectedCurrencyId),
                         first(),
                         tap(() => this.notify.info(this.l('GeneratingStarted'))),
-                        switchMap(currencyId => 
+                        switchMap(currencyId =>
                             this.reportsProxy.generate(<any>this.instanceType, this.instanceId, new GenerateInput({
                                 from: this.dateFrom,
                                 to: this.dateTo,
@@ -456,7 +462,7 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
         if (this.openReportMode) {
             this.openReportMode = false;
             this._changeDetector.markForCheck();
-    }
+        }
     }
 
     @HostListener('document:keydown', ['$event'])
@@ -478,7 +484,7 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
         this.viewerToolbarConfig = [];
         if (this.openReportMode) {
             this.closeReport();
-    }
+        }
     }
 
     activate() {

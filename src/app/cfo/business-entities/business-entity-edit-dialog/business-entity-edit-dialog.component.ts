@@ -121,7 +121,7 @@ export class BusinessEntityEditDialogComponent implements OnInit {
                     let index = result.findIndex(x => x.id === this.data.id);
                     result.splice(index, 1);
                 }
-                
+
                 this.businessEntities = result;
                 this._changeDetectorRef.detectChanges();
             });

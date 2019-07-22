@@ -12,15 +12,7 @@
         <synch-progress class="synch-progress"></synch-progress>
     </app-headline>
     <div class="main-wrapper">
-        <div class="left-menu">
-            <ul class="menu-wrapper">
-                <ng-template ngFor let-item [ngForOf]="menuItems" let-i="index">
-                    <li class="item">
-                        <span class="link {{selectedPeriod == item.period ? 'selected' : ''}}" (click)="onMenuClick(item)">{{l(item.caption)}}</span>
-                    </li>
-                </ng-template>
-            </ul>
-        </div>
+        <setup-steps [SetupSteps]="menuItems" [SelectedStepIndex]="0" [HeaderTitle]="''"></setup-steps>
         <dx-tooltip width="130px">
             <div *dxTemplate="let data of 'content'">
                 <div class="lists-tooltip-container">
@@ -51,18 +43,17 @@
                 <dxi-column
                     alignment="center"
                     width="90px"
-                    [fixed]="true" 
-                    [showInColumnChooser]="false" 
+                    [fixed]="true"
+                    [showInColumnChooser]="false"
                     [allowExporting]="false"
                     cellTemplate="actionsCellTemplate"
                     headerCellTemplate="actionsCellTemplate">
                 </dxi-column>
                 <dxi-column dataField="FileName" caption="{{l('FileName')}}"></dxi-column>
                 <dxi-column dataField="Size" [calculateSortValue]="numerizeFileSizeSortValue" caption="{{l('Size')}}" [calculateCellValue]="calculateFileSizeValue" [allowSearch]="false"></dxi-column>
-                <dxi-column dataField="Period" caption="{{l('Period')}}" cssClass="tabular" sortOrder="desc" [allowSearch]="false"></dxi-column>
-                <dxi-column dataField="CreationTime" caption="{{l('Date')}}" cssClass="tabular" cellTemplate="dateCell" sortOrder="desc" [allowSearch]="false"></dxi-column>
-                <dxi-column dataField="From" caption="{{l('From')}}" cssClass="tabular" cellTemplate="dateCell" sortOrder="desc" [allowSearch]="false"></dxi-column>
-                <dxi-column dataField="To" caption="{{l('To')}}" cssClass="tabular" cellTemplate="dateCell" sortOrder="desc" [allowSearch]="false"></dxi-column>
+                <dxi-column dataField="CreationTime" caption="{{l('Reports_Created')}}" cssClass="tabular" cellTemplate="dateCell" [allowSearch]="false" sortOrder="desc"></dxi-column>
+                <dxi-column dataField="From" caption="{{l('Reports_PeriodFrom')}}" cssClass="tabular" cellTemplate="dateCell" [allowSearch]="false"></dxi-column>
+                <dxi-column dataField="To" caption="{{l('Reports_PeriodTo')}}" cssClass="tabular" cellTemplate="dateCell" [allowSearch]="false"></dxi-column>
                 <dxi-column [width]="'40px'" [fixed]="true" [fixedPosition]="'right'" [showInColumnChooser]="false" [allowExporting]="false"></dxi-column>
 
                 <a class="dx-link dx-link-edit" *dxTemplate="let cellData of 'actionsCellTemplate'">Edit</a>
@@ -77,9 +68,9 @@
                 <dxo-load-panel [enabled]="true"></dxo-load-panel>
                 <dxo-scrolling mode="virtual"></dxo-scrolling>
 
-                <dxo-sorting mode="multiple"></dxo-sorting>
+                <dxo-sorting mode="single"></dxo-sorting>
                 <dxo-group-panel [visible]="false"></dxo-group-panel>
-            </dx-data-grid>            
+            </dx-data-grid>
         </div>
 
         <div [hidden]="!openReportMode" class="report-viewer-wrapper">

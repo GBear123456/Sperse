@@ -26,6 +26,7 @@ export class SetupStepComponent extends CFOComponentBase {
     ];
     @Input() HeaderTitle: string = this.l(this._cfoService.initialized ? 'SetupStep_MainHeader' : 'SetupStep_InitialHeader');
     @Input() headerLink: string = this.instanceUri + '/start';
+    @Input() showIntroductionTourLink = false;
 
     private dialogConfig = new MatDialogConfig();
 
@@ -37,8 +38,14 @@ export class SetupStepComponent extends CFOComponentBase {
     }
 
     onClick(elem) {
-        if (this.stepLinkIsEnabled(elem))
-            this._router.navigate([this.instanceUri + elem.component]);
+        if (this.stepLinkIsEnabled(elem)) {
+            if (elem.component) {
+                this._router.navigate([this.instanceUri + elem.component]);
+            } else if (elem.onClick) {
+                this.SelectedStepIndex = this.SetupSteps.findIndex(step => step === elem);
+                elem.onClick(elem);
+            }
+        }
     }
 
     stepLinkIsEnabled(elem) {
