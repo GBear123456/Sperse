@@ -212,9 +212,6 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
     initHeadlineConfig() {
         this.headlineConfig = {
             names: [this.l('REPORTS')],
-            onRefresh: () => {
-                this.dataGrid.instance.refresh();
-            },
             iconSrc: './assets/common/icons/credit-card-icon.svg',
             buttons: [
                 {
