@@ -121,12 +121,12 @@ export class BankAccountsService {
         this.businessEntities$ = this._businessEntities.asObservable().pipe(
             map((businessEntities: BusinessEntityDto[]) => {
                 if (this.selectDefaultBusinessEntity) {
-                    /** Get default business entity and select it */
-                    const defaultBusinessEntity = businessEntities.find((businessEntity: BusinessEntityDto) => {
-                        return businessEntity.isDefault;
-                    });
-                    if (defaultBusinessEntity) {
-                        this.changeSelectedBusinessEntities([defaultBusinessEntity.id]);
+                    /** Get default business entities ids and select it */
+                    const defaultBusinessEntitiesIds = businessEntities
+                        .filter((businessEntity: BusinessEntityDto) => businessEntity.isDefault)
+                        .map((businessEntity: BusinessEntityDto) => businessEntity.id);
+                    if (defaultBusinessEntitiesIds && defaultBusinessEntitiesIds.length) {
+                        this.changeSelectedBusinessEntities(defaultBusinessEntitiesIds);
                     }
                     this.selectDefaultBusinessEntity = false;
                 }
