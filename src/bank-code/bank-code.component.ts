@@ -1,8 +1,5 @@
 /** Core imports */
-import { Component, HostBinding, ViewContainerRef, OnInit, OnDestroy, Injector } from '@angular/core';
-
-/** Third party imports */
-import { AbpSessionService } from '@abp/session/abp-session.service';
+import { Component, ViewContainerRef, OnInit, OnDestroy, Injector } from '@angular/core';
 
 /** Application imports */
 import { AppComponentBase } from '@shared/common/app-component-base';

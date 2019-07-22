@@ -2,19 +2,12 @@
 import { Injectable } from '@angular/core';
 
 /** Third party imports */
-import { ReplaySubject } from 'rxjs';
+import { Observable, ReplaySubject } from 'rxjs';
 
 @Injectable()
 export class BankCodeLayoutService {
-    private headerSubject: ReplaySubject<Object>;
-
-    constructor() {
-        this.headerSubject = new ReplaySubject<Object>(1);
-    }
-
-    headerContentSubscribe(callback) {
-        this.headerSubject.asObservable().subscribe(callback);
-    }
+    private headerSubject: ReplaySubject<any>= new ReplaySubject<Object>(1);
+    headerSubject$: Observable<any>= this.headerSubject.asObservable();
 
     headerContentUpdate(component) {
         this.headerSubject.next(component);

@@ -1,14 +1,15 @@
 /** Core imports */
-import { Component, Injector, HostBinding, ViewChild, ViewContainerRef,
-    Type, Directive, ComponentFactoryResolver } from '@angular/core';
+import { Component, ViewChild, ViewContainerRef, Directive, OnInit, OnDestroy } from '@angular/core';
+import { Router } from '@angular/router';
+
+/** Third party imports */
+import { takeUntil } from 'rxjs/operators';
 
 /** Application imports */
 import { AppConsts } from 'shared/AppConsts';
-import { AppComponentBase } from 'shared/common/app-component-base';
 import { BankCodeLayoutService } from './bank-code-layout.service';
-import { AbpSessionService } from '@abp/session/abp-session.service';
 import { AppSessionService } from '@shared/common/session/app-session.service';
-import { environment } from 'environments/environment';
+import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 
 @Directive({
     selector: '[ad-header-host]'
@@ -22,34 +23,36 @@ export class AdHeaderHostDirective {
     styleUrls: ['bank-code-header.component.less'],
     selector: 'bank-code-header'
 })
-export class BankCodeHeaderComponent extends AppComponentBase {
+export class BankCodeHeaderComponent implements OnInit, OnDestroy {
     @ViewChild(AdHeaderHostDirective) adHeaderHost: AdHeaderHostDirective;
 
     loggedUserId = abp.session.userId;
     remoteServiceBaseUrl: string = AppConsts.remoteServiceBaseUrl;
-
     currentDate = new Date();
 
     constructor(
-        injector: Injector,
-        private _LayoutService: BankCodeLayoutService,
-        private _abpSessionService: AbpSessionService,
+        private layoutService: BankCodeLayoutService,
+        private router: Router,
+        private lifecycleService: LifecycleSubjectsService,
         public sessionService: AppSessionService
-    ) {
-        super(injector);
-        _LayoutService.headerContentSubscribe((component) => {
-            setTimeout(() => {
-                this.adHeaderHost.viewContainerRef.clear();
-                this.adHeaderHost.viewContainerRef.createComponent(component);
+    ) {}
+
+    ngOnInit() {
+        this.layoutService.headerSubject$
+            .pipe(takeUntil(this.lifecycleService.destroy$))
+            .subscribe((component) => {
+                setTimeout(() => {
+                    this.adHeaderHost.viewContainerRef.clear();
+                    this.adHeaderHost.viewContainerRef.createComponent(component);
+                });
             });
-        });
     }
 
-    isMemberArea() {
-        return Boolean(this.loggedUserId);
+    logoClick() {
+        this.router.navigate(['/code-breaker']);
     }
 
-    logoClick(event) {
-        this._router.navigate(['/code-breaker']);
+    ngOnDestroy() {
+        this.lifecycleService.destroy.next();
     }
 }
