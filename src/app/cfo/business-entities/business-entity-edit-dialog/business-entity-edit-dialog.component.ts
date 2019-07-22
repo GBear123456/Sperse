@@ -4,7 +4,8 @@ import { Component, ChangeDetectionStrategy, ChangeDetectorRef, OnInit, Inject, 
 /** Third party imports */
 import { MAT_DIALOG_DATA } from '@angular/material';
 import { Store, select } from '@ngrx/store';
-import { finalize } from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import { finalize, map } from 'rxjs/operators';
 import * as _ from 'underscore';
 
 /** Application imports */
@@ -15,7 +16,8 @@ import {
     BusinessEntityServiceProxy,
     CreateBusinessEntityDto,
     UpdateBusinessEntityDto,
-    BusinessEntityInfoDto
+    BusinessEntityInfoDto,
+    BusinessEntityDto
 } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { NotifyService } from '@abp/notify/notify.service';
@@ -31,7 +33,7 @@ import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interf
 })
 export class BusinessEntityEditDialogComponent implements OnInit {
     @ViewChild(ModalDialogComponent) modalDialog: ModalDialogComponent;
-    businessEntities: any;
+    businessEntities$: Observable<BusinessEntityDto[]>;
     types: any;
     states: any;
     countries: any;
@@ -115,16 +117,15 @@ export class BusinessEntityEditDialogComponent implements OnInit {
     }
 
     businessEntitiesLoad() {
-        this._businessEntityService.getBusinessEntities(this._cfoService.instanceType as any, this._cfoService.instanceId)
-            .subscribe(result => {
+        this.businessEntities$ = this._businessEntityService.getBusinessEntities(this._cfoService.instanceType as any, this._cfoService.instanceId).pipe(
+            map((businessEntities: BusinessEntityDto[]) => {
                 if (!this.isNew) {
-                    let index = result.findIndex(x => x.id === this.data.id);
-                    result.splice(index, 1);
+                    const index = businessEntities.findIndex(x => x.id === this.data.id);
+                    businessEntities.splice(index, 1);
                 }
-
-                this.businessEntities = result;
-                this._changeDetectorRef.detectChanges();
-            });
+                return businessEntities;
+            })
+        );
     }
 
     loadTypes() {

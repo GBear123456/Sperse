@@ -15,7 +15,7 @@
             </div>
             <div class="field">
                 <label>{{ls.l('BusinessEntity_ParentName')}}</label>
-                <dx-select-box [dataSource]="businessEntities"
+                <dx-select-box [dataSource]="businessEntities$ | async"
                                displayExpr="name"
                                valueExpr="id"
                                name="parent"
