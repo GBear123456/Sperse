@@ -18,6 +18,6 @@
         </ng-template>
         <div *ngIf="data.onRefresh || data.toggleToolbar" class="vertical-delimiter"></div>
         <button *ngIf="data.onRefresh" class="refresh-button" (click)="data.onRefresh($event)"></button>
-        <button *ngIf="data.toggleToolbar" class="toggle-button" title="Toggle toolbar  " (click)="data.toggleToolbar($event)"></button>
+        <button *ngIf="data.toggleToolbar" class="toggle-button" title="Toggle toolbar" (click)="data.toggleToolbar($event)"></button>
     </div>
 </div>
