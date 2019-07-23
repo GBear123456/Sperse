@@ -21,7 +21,8 @@ export class AdHeaderHostDirective {
 @Component({
     templateUrl: 'bank-code-header.component.html',
     styleUrls: ['bank-code-header.component.less'],
-    selector: 'bank-code-header'
+    selector: 'bank-code-header',
+    providers: [ LifecycleSubjectsService ]
 })
 export class BankCodeHeaderComponent implements OnInit, OnDestroy {
     @ViewChild(AdHeaderHostDirective) adHeaderHost: AdHeaderHostDirective;

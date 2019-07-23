@@ -22,7 +22,7 @@ import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/life
     styleUrls: [
         './signup-form.component.less'
     ],
-    providers: [ ApplicationServiceProxy, LoginService ],
+    providers: [ ApplicationServiceProxy, LoginService, LifecycleSubjectsService ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SignupFormComponent implements OnInit, OnDestroy {
