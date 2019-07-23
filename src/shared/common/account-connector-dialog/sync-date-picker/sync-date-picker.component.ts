@@ -7,9 +7,7 @@ import * as moment from 'moment-timezone';
 
 /** Application imports */
 import { SyncDatePickerService } from './sync-date-picker.service';
-import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
-import { CFOService } from '@shared/cfo/cfo.service';
 
 @Component({
   selector: 'sync-date-picker',
