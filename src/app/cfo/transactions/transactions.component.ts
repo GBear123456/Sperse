@@ -18,8 +18,8 @@ import { Store, select } from '@ngrx/store';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import DataSource from 'devextreme/data/data_source';
 import 'devextreme/data/odata/store';
-import { Subject, forkJoin } from 'rxjs';
-import { first, filter, skip } from 'rxjs/operators';
+import { Subject, forkJoin, of } from 'rxjs';
+import { first, skip, switchMap, mapTo } from 'rxjs/operators';
 import difference from 'lodash/difference';
 import * as _ from 'underscore';
 
@@ -41,7 +41,6 @@ import {
 import { FiltersService } from '@shared/filters/filters.service';
 import { FilterModel } from '@shared/filters/models/filter.model';
 import { FilterItemModel } from '@shared/filters/models/filter-item.model';
-import { FilterInputsComponent } from '@shared/filters/inputs/filter-inputs.component';
 import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calendar.component';
 import { FilterCBoxesComponent } from '@shared/filters/cboxes/filter-cboxes.component';
 import { FilterCheckBoxesComponent } from '@shared/filters/check-boxes/filter-check-boxes.component';
@@ -55,13 +54,16 @@ import { BankAccountFilterModel } from 'shared/filters/bank-account-filter/bank-
 import { BankAccountsSelectDialogComponent } from 'app/cfo/shared/bank-accounts-select-dialog/bank-accounts-select-dialog.component';
 import { CurrenciesStoreSelectors, CfoStore } from '@app/cfo/store';
 import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
+import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
+import { CalendarValuesModel } from '@shared/common/widgets/calendar/calendar-values.model';
+import { takeUntil } from '@node_modules/rxjs/operators';
 
 @Component({
     templateUrl: './transactions.component.html',
     styleUrls: ['./transactions.component.less'],
     animations: [appModuleAnimation()],
     changeDetection: ChangeDetectionStrategy.OnPush,
-    providers: [ TransactionsServiceProxy, ClassificationServiceProxy, BankAccountsServiceProxy ]
+    providers: [ TransactionsServiceProxy, ClassificationServiceProxy, BankAccountsServiceProxy, LifecycleSubjectsService ]
 })
 export class TransactionsComponent extends CFOComponentBase implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
@@ -81,7 +83,6 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     defaultCreditTooltipVisible = false;
     defaultDebitTooltipVisible = false;
     defaultTotalTooltipVisible = false;
-    defaultSubaccountTooltipVisible = false;
     toggleTabContent = true;
 
     private readonly dataSourceURI = 'Transaction';
@@ -89,6 +90,15 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     private filters: FilterModel[];
     private rootComponent: any;
     private cashFlowCategoryFilter = [];
+    private dateFilter: FilterModel = new FilterModel({
+        component: FilterCalendarComponent,
+        operator: { from: 'ge', to: 'le' },
+        caption: 'Date',
+        field: 'Date',
+        items: { from: new FilterItemModel(), to: new FilterItemModel() },
+        options: { method: 'getFilterByDate' },
+        hidden: true
+    });
     private bankAccountFilter: FilterModel;
     private businessEntityFilter: FilterModel;
     public transactionsFilterQuery: any[];
@@ -143,6 +153,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         public bankAccountsService: BankAccountsService,
         private _changeDetectionRef: ChangeDetectorRef,
         private _cacheService: CacheService,
+        private _lifecycleService: LifecycleSubjectsService,
         private store$: Store<CfoStore.State>,
         public cfoPreferencesService: CfoPreferencesService,
         public filtersService: FiltersService,
@@ -164,16 +175,17 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         const selectedCurrencyId$ = this.store$.pipe(select(CurrenciesStoreSelectors.getSelectedCurrencyId));
         /** If component is not activated - wait until it will activate and then reload */
         selectedCurrencyId$.pipe(
-            filter(() => !this.componentIsActivated)
-        ).subscribe(() => {
-            this.updateAfterActivation = true;
+            skip(1),
+            switchMap((selectedCurrencyId) => this.componentIsActivated ? of(selectedCurrencyId) : this._lifecycleService.activate$.pipe(first(), mapTo(selectedCurrencyId)))
+        ).subscribe((selectedCurrencyId) => {
+            this.filtersService.change(this.setCurrenciesFilter(selectedCurrencyId));
         });
 
-        selectedCurrencyId$.pipe(
-            filter(() => this.componentIsActivated),
-            skip(1)
-        ).subscribe((selectedCurrencyId: string) => {
-            this.filtersService.change(this.setCurrenciesFilter(selectedCurrencyId));
+        this.cfoPreferencesService.dateRange$.pipe(
+            takeUntil(this.destroy$),
+            switchMap((dateRange) => this.componentIsActivated ? of(dateRange) : this._lifecycleService.activate$.pipe(first(), mapTo(dateRange)))
+        ).subscribe((dateRange: CalendarValuesModel) => {
+            this.filtersService.change(this.updateDateFilter(dateRange));
         });
 
         this.dataSource = new DataSource({
@@ -190,9 +202,9 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                             if (arrgs[0] == '$filter') {
                                 request.params.$filter = '(' + request.params.$filter + ') and (' + arrgs[1] + ')';
                                 return acc;
-                            } else 
+                            } else
                                 return acc + (acc ? '&' : '') + arrgs.join('=');
-                        }, '');                        
+                        }, '');
                     }
                 }
             }
@@ -229,14 +241,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             }, []);
             this.filtersInitialData = filtersInitialData;
             this.filters = [
-                new FilterModel({
-                    component: FilterCalendarComponent,
-                    operator: { from: 'ge', to: 'le' },
-                    caption: 'Date',
-                    field: 'Date',
-                    items: { from: new FilterItemModel(), to: new FilterItemModel() },
-                    options: { method: 'getFilterByDate' }
-                }),
+                this.dateFilter,
                 this.bankAccountFilter = new FilterModel({
                     component: BankAccountFilterComponent,
                     caption: 'Account',
@@ -368,7 +373,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     initHeadlineConfig() {
         this.headlineConfig = {
             names: [this.l('Transactions')],
-            onRefresh: this._cfoService.hasStaticInstance ? undefined: this.refreshDataGrid.bind(this),
+            onRefresh: this._cfoService.hasStaticInstance ? undefined : this.refreshDataGrid.bind(this),
             iconSrc: './assets/common/icons/credit-card-icon.svg',
             class: this.noRefreshedAfterSync ? 'need-refresh' : 'no-need-refresh'
         };
@@ -439,7 +444,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                                 text: this.l('Search All')
                             },
                             attr: {
-                                'filter-selected': ((this.searchValue && this.searchValue.length > 0) && (this.filtersService.hasFilterSelected || this.selectedCashflowCategoryKey)) ? true : false,
+                                'filter-selected': (this.searchValue && this.searchValue.length > 0) && (this.filtersService.hasFilterSelected || this.selectedCashflowCategoryKey),
                                 'custaccesskey': 'search-container'
                             }
                         }
@@ -690,10 +695,12 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         this.defaultCreditTooltipVisible = !this.defaultCreditTooltipVisible;
         this._changeDetectionRef.detectChanges();
     }
+
     toggleDebitDefault() {
         this.defaultDebitTooltipVisible = !this.defaultDebitTooltipVisible;
         this._changeDetectionRef.detectChanges();
     }
+
     toggleTotalDefault() {
         this.defaultTotalTooltipVisible = !this.defaultTotalTooltipVisible;
         this._changeDetectionRef.detectChanges();
@@ -784,7 +791,15 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         return this.changeAndGetCurrenciesFilter(currenciesFilter, currencyId);
     }
 
-    changeAndGetCurrenciesFilter(currenciesFilter: FilterModel, countryId: string) {
+    updateDateFilter(dateRange: CalendarValuesModel) {
+        this.dateFilter.items = {
+            from: new FilterItemModel(dateRange.from.value),
+            to: new FilterItemModel(dateRange.to.value)
+        };
+        return this.dateFilter;
+    }
+
+    changeAndGetCurrenciesFilter(currenciesFilter: FilterModel, countryId: string): FilterModel {
         currenciesFilter.items['element'].setValue([countryId], currenciesFilter);
         currenciesFilter.updateCaptions();
         return currenciesFilter;
@@ -822,7 +837,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         url += (url.indexOf('?') == -1 ? '?' : '&') + 'currencyId=' + this.cfoPreferencesService.selectedCurrencyId;
         return url;
     }
-    
+
     filterByClassified(filter: FilterModel) {
         let isYes = filter.items.yes.value;
         let isNo = filter.items.no.value;
@@ -1039,10 +1054,10 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                 this.getCacheKey('dataGridState'));
             if (state) {
                 instance.state(state);
-                state.columns.forEach((column) => 
+                state.columns.forEach((column) =>
                     instance.columnOption(column.dataField, 'visible', column.visible)
                 );
-            };
+            }
         }
     }
 
@@ -1132,7 +1147,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                                 transactionIds: transactionIds,
                                 refershParent: this.refreshDataGrid.bind(this)
                             }
-                        }).afterClosed().subscribe(result => { });
+                        }).afterClosed().subscribe(() => {});
                     }
                 });
             };
@@ -1248,7 +1263,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
 
     onBusinessEntitiesChange(businessEntitiesIds) {
         let selectedBankAccountIds = [];
-        let newBusinessEntitiesIds = difference(businessEntitiesIds, 
+        let newBusinessEntitiesIds = difference(businessEntitiesIds,
             this.bankAccountsService.state.selectedBusinessEntitiesIds);
 
         this.syncAccounts.forEach(syncAccount => {
@@ -1257,8 +1272,8 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                     || this.bankAccountsService.state.selectedBusinessEntitiesIds.indexOf(bankAccount.businessEntityId) >= 0
                     && this.bankAccountsService.state.selectedBankAccountIds.indexOf(bankAccount.id) >= 0
                 )
-                    selectedBankAccountIds.push(bankAccount.id);                
-            })            
+                    selectedBankAccountIds.push(bankAccount.id);
+            });
         });
 
         this.bankAccountsService.changeState({
@@ -1285,6 +1300,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         this.initFiltering();
         this.filtersService.setup(this.filters, this._activatedRoute.snapshot.queryParams, true);
         this.initToolbarConfig();
+        this._lifecycleService.activate.next();
 
         /** Load sync accounts (if something change - subscription in ngOnInit fires) */
         this.bankAccountsService.load();
@@ -1308,6 +1324,6 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         this._appService.updateToolbar(null);
         this.filtersService.unsubscribe();
         this.synchProgressComponent.deactivate();
-        this.rootComponent.overflowHidden(false);        
+        this.rootComponent.overflowHidden(false);
     }
 }

@@ -63,6 +63,7 @@ export class CalendarComponent extends AppComponentBase implements AfterViewInit
             (event, obj) => {
                 this._values.from.value = new Date(obj.date1.getTime());
                 this._values.to.value = new Date(obj.date2.getTime());
+                this._values.period = this.calendar.data('dateRangePicker').getRangeSelectedPeriod();
                 this.onChange.emit(this._values);
             }
         );

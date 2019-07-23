@@ -13,7 +13,7 @@
                     [pager]="defaultGridPagerConfig"
                     (onCellClick)="onCellClick($event)"
                     (onInitialized)="onDataGridInit($event)"
-                    (onContentReady)="onContentReady($event)"
+                    (onContentReady)="onContentReady()"
                     (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
             <dxo-selection selectAllMode="page"
                            showCheckBoxesMode="always"
@@ -23,7 +23,7 @@
             <dxi-column caption="{{l('Name')}}" cellTemplate="nameCell"></dxi-column>
             <dxi-column dataField="StateCode" caption="{{l('State')}}"></dxi-column>
             <dxi-column dataField="Email" caption="{{l('Email')}}"></dxi-column>
-            <dxi-column dataField="PhoneNumber" caption="{{l('PhoneNumber')}}"></dxi-column>          
+            <dxi-column dataField="PhoneNumber" caption="{{l('PhoneNumber')}}"></dxi-column>
             <dxi-column dataField="Date" caption="{{l('Created')}}" cellTemplate="dateCell"></dxi-column>
             <dxi-column dataField="DoB" caption="{{l('Birthday')}}" dataType="date" format="dd/MM/yyyy"></dxi-column>
 

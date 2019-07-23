@@ -1,5 +1,5 @@
 /** Core imports */
-import {Component, Injector, ViewChild, OnInit, EventEmitter, Output, HostListener} from '@angular/core';
+import {Component, ViewChild, HostListener} from '@angular/core';
 
 /** Third party imports */
 import { DxDateBoxComponent } from 'devextreme-angular/ui/date-box';
@@ -16,18 +16,15 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 })
 export class SyncDatePickerComponent {
     @ViewChild(DxDateBoxComponent) dateBox: DxDateBoxComponent;
-
+    maxDate = moment();
     @HostListener('click') onClick() {
         this.dateBox.instance.open();
     }
 
-    maxDate = moment();
-
     constructor(
         public syncService: SyncDatePickerService,
         public ls: AppLocalizationService
-    ) {
-    }
+    ) {}
 
     apply(event) {
         if (event.previousValue && event.value)

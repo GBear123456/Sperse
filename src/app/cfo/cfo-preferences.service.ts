@@ -3,13 +3,17 @@ import { Injectable } from '@angular/core';
 
 /** Third party imports */
 import { Store, select } from '@ngrx/store';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { first, filter, map } from 'rxjs/operators';
+import * as moment from 'moment';
 
 /** Application imports */
 import { CfoStore, CurrenciesStoreActions, CurrenciesStoreSelectors } from '@app/cfo/store';
 import { UserPreferencesService } from '@app/cfo/cashflow/preferences-dialog/preferences.service';
 import { CashFlowGridSettingsDto, CurrencyInfo } from '@shared/service-proxies/service-proxies';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { CalendarValuesModel } from '@shared/common/widgets/calendar/calendar-values.model';
+import { DateHelper } from '@shared/helpers/DateHelper';
 
 @Injectable()
 export class CfoPreferencesService {
@@ -17,9 +21,32 @@ export class CfoPreferencesService {
     selectedCurrencyId: string;
     selectedCurrencySymbol: string;
     selectedCurrencyIndex$: Observable<number>;
+    dateRange: BehaviorSubject<CalendarValuesModel> = new BehaviorSubject<CalendarValuesModel>({
+        from: { value: moment().subtract(1, 'month').toDate() },
+        to: { value: moment().toDate() },
+        period: 'LastMonth'
+    });
+    dateRange$: Observable<CalendarValuesModel> = this.dateRange.asObservable();
+    dateRangeForFilter$: Observable<any> = this.dateRange$.pipe(
+        map((dateRange: CalendarValuesModel) => {
+            return dateRange && {
+                from: { value: this.getShiftedDate(dateRange.from.value) },
+                to: { value: this.getShiftedDate(dateRange.to.value) }
+            };
+        })
+    );
+    periodLabel$: Observable<string> = this.dateRange$.pipe(
+        map((dateRange: CalendarValuesModel) => {
+            return dateRange && dateRange.period ? this.ls.l('Periods_' + dateRange.period) : (
+                dateRange && dateRange.from && dateRange.to ? this.formatDate(dateRange.from.value) + ' - ' + this.formatDate(dateRange.to.value) : this.ls.l('LastMonth')
+            );
+        })
+    );
+
     constructor(
         private store$: Store<CfoStore.State>,
-        private cashflowPreferencesService: UserPreferencesService
+        private cashflowPreferencesService: UserPreferencesService,
+        private ls: AppLocalizationService
     ) {
         this.store$.dispatch(new CurrenciesStoreActions.LoadRequestAction());
         this.store$.pipe(
@@ -63,6 +90,18 @@ export class CfoPreferencesService {
             select(CurrenciesStoreSelectors.getCurrencies),
             filter(Boolean)
         );
+    }
+
+    private getShiftedDate(date): Date {
+        return DateHelper.removeTimezoneOffset(new Date(date.getTime()));
+    }
+
+    private formatDate(date: Date): string {
+        return date.toLocaleDateString('en-US', {
+            month: '2-digit',
+            day: '2-digit',
+            year: 'numeric'
+        });
     }
 
     /**

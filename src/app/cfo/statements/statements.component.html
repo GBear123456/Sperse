@@ -10,6 +10,7 @@
             (onClosed)="invalidate()">
         </selection-filter>
         <synch-progress class="synch-progress" (onComplete)="refresh.next()"></synch-progress>
+        <calendar-button></calendar-button>
     </app-headline>
     <div class="main-wrapper">
         <dx-data-grid id="gridContainer"
@@ -81,9 +82,5 @@
                 <span [ngClass]="cell.value < 0 ? 'negative' : 'positive'"> {{ cell.text }} </span>
             </ng-container>
         </dx-data-grid>
-
-        <app-report-period [sliderReportPeriod]="sliderReportPeriod"
-                           (onPeriodSelected)="setReportPeriodFilter($event)">
-        </app-report-period>
     </div>
 </div>

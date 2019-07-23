@@ -91,6 +91,7 @@ import { ExpandButtonModule } from '@app/shared/common/expand-button/expand-butt
 import { SortButtonModule } from '@app/shared/common/sort-button/sort-button.module';
 import { CFOService } from '@shared/cfo/cfo.service';
 import { ReportsComponent } from './reports/reports.component';
+import { CalendarButtonComponent } from '@app/cfo/shared/common/calendar-button/calendar-button.component';
 
 let COMPONENTS = [
     StartComponent,
@@ -124,7 +125,8 @@ let COMPONENTS = [
     ImportFromQuickBooksButtonComponent,
     UsersDialogComponent,
     KeyPhrasesComponent,
-    ReportsComponent
+    ReportsComponent,
+    CalendarButtonComponent
 ];
 
 @NgModule({
@@ -215,7 +217,7 @@ export class CfoModule {
                     route = route.firstChild;
                 return route;
             }),
-            filter(route => route.outlet === 'primary' && 
+            filter(route => route.outlet === 'primary' &&
                 this.cfoService.checkInstanceChanged(route.params))
         ).subscribe();
     }

@@ -23,20 +23,16 @@ import {
     publishReplay,
     refCount
 } from 'rxjs/operators';
-import * as _ from 'underscore';
 import cloneDeep from 'lodash/cloneDeep';
 
 /** Application imports */
 import { AppService } from '@app/app.service';
 import { SynchProgressComponent } from '@shared/cfo/bank-accounts/synch-progress/synch-progress.component';
 import { BankAccountsService } from '@shared/cfo/bank-accounts/helpers/bank-accounts.service';
-import { ReportPeriodComponent } from '@app/cfo/shared/report-period/report-period.component';
 import { BankAccountFilterComponent } from '@shared/filters/bank-account-filter/bank-account-filter.component';
 import { BankAccountFilterModel } from '@shared/filters/bank-account-filter/bank-account-filter.model';
 import { FiltersService } from '@shared/filters/filters.service';
 import { FilterModel } from '@shared/filters/models/filter.model';
-import { FilterItemModel } from '@shared/filters/models/filter-item.model';
-import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calendar.component';
 import {
     StatsFilter,
     BankAccountsServiceProxy,
@@ -47,7 +43,6 @@ import {
     ForecastModelDto
 } from '@shared/service-proxies/service-proxies';
 import { FilterHelpers } from '../shared/helpers/filter.helper';
-import { DateHelper } from '@shared/helpers/DateHelper';
 import {
     CurrenciesStoreSelectors,
     CfoStore,
@@ -57,6 +52,7 @@ import {
 import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
 import { BankAccountsSelectDialogComponent } from '@app/cfo/shared/bank-accounts-select-dialog/bank-accounts-select-dialog.component';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
+import { CalendarValuesModel } from '@shared/common/widgets/calendar/calendar-values.model';
 
 @Component({
     templateUrl: './statements.component.html',
@@ -65,18 +61,11 @@ import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/life
 })
 export class StatementsComponent extends CFOComponentBase implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
-    @ViewChild(ReportPeriodComponent) reportPeriodSelector: ReportPeriodComponent;
     @ViewChild(SynchProgressComponent) synchProgressComponent: SynchProgressComponent;
 
     public headlineConfig;
     private bankAccountCount = '';
     private filters: FilterModel[] = new Array<FilterModel>();
-    public sliderReportPeriod = {
-        start: null,
-        end: null,
-        minDate: moment().utc().subtract(10, 'year').year(),
-        maxDate: moment().utc().add(10, 'year').year()
-    };
     private syncAccounts: any;
     private defaultRequestFilter: StatsFilter =  new StatsFilter({
         currencyId: 'USD',
@@ -144,21 +133,22 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
             this.selectedForecastModelId$,
             this.selectedCurrencyId$,
             this.requestFilter$,
+            this._cfoPreferences.dateRangeForFilter$,
             this.refresh$
         ).pipe(
             takeUntil(this.destroy$),
             switchMap(data => this.componentIsActivated ? of(data) : this._lifecycleService.activate$.pipe(first(), mapTo(data))),
             tap(() => abp.ui.setBusy()),
-            switchMap(([forecastModelId, currencyId, requestFilter]:
-                              [number, string, StatsFilter]) => {
+            switchMap(([forecastModelId, currencyId, requestFilter, dateRange]:
+                              [number, string, StatsFilter, CalendarValuesModel]) => {
                 return this._bankAccountService.getStats(
                     InstanceType[this.instanceType],
                     this.instanceId,
                     currencyId,
                     forecastModelId,
                     requestFilter.accountIds,
-                    requestFilter.startDate,
-                    requestFilter.endDate,
+                    dateRange.from.value,
+                    dateRange.to.value,
                     GroupByPeriod.Monthly
                 ).pipe(finalize(() => abp.ui.clearBusy()));
             })
@@ -200,8 +190,6 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
 
                 /** reinit */
                 this.initHeadlineConfig();
-
-                this.setSliderReportPeriodFilterData(this.statementsData[0].date.year(), this.statementsData[this.statementsData.length - 1].date.year());
             } else {
                 this.statementsData = null;
             }
@@ -277,14 +265,6 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
                     locateInMenu: 'auto',
                     items: [
                         {
-                            name: 'reportPeriod',
-                            action: this.toggleReportPeriodFilter.bind(this),
-                            options: {
-                                id: 'reportPeriod',
-                                icon: './assets/common/icons/report-period.svg'
-                            }
-                        },
-                        {
                             name: 'bankAccountSelect',
                             widget: 'dxButton',
                             action: this.openBankAccountsSelectDialog.bind(this),
@@ -305,7 +285,7 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
                     locateInMenu: 'auto',
                     items: [
                         {
-                            name: 'showCompactRowsHeight', 
+                            name: 'showCompactRowsHeight',
                             visible: !this._cfoService.hasStaticInstance,
                             action: this.showCompactRowsHeight.bind(this)
                         },
@@ -333,7 +313,7 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
                             }
                         },
                         {
-                            name: 'columnChooser', 
+                            name: 'columnChooser',
                             visible: !this._cfoService.hasStaticInstance,
                             action: this.showColumnChooser.bind(this)
                         }
@@ -403,15 +383,6 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
     createFilters(syncAccounts) {
         this.filters = [
             new FilterModel({
-                component: FilterCalendarComponent,
-                caption: 'Date',
-                items: { from: new FilterItemModel(), to: new FilterItemModel() },
-                options: {
-                    allowFutureDates: true,
-                    endDate: moment(new Date()).add(10, 'years').toDate()
-                }
-            }),
-            new FilterModel({
                 field: 'accountIds',
                 component: BankAccountFilterComponent,
                 caption: 'Account',
@@ -432,17 +403,6 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
         this._filtersService.apply(() => {
             let requestFilter = this.defaultRequestFilter;
             for (let filter of this.filters) {
-                if (filter.caption.toLowerCase() === 'date') {
-                    if (filter.items.from.value)
-                        this.sliderReportPeriod.start = filter.items.from.value.getFullYear();
-                    else
-                        this.sliderReportPeriod.start = this.sliderReportPeriod.minDate;
-
-                    if (filter.items.to.value)
-                        this.sliderReportPeriod.end = filter.items.to.value.getFullYear();
-                    else
-                        this.sliderReportPeriod.end = this.sliderReportPeriod.maxDate;
-                }
                 if (filter.caption.toLowerCase() === 'account') {
                     /** apply filter on top */
                     this.bankAccountsService.applyFilter();
@@ -470,10 +430,6 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
         });
     }
 
-    toggleReportPeriodFilter() {
-        this.reportPeriodSelector.toggleReportPeriodFilter();
-    }
-
     onRowPrepared(e) {
         if (e.rowType == 'data') {
             if (e.data.date.isSame(moment(), 'month'))
@@ -493,37 +449,6 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
         } else {
             e.component.expandRow(e.key);
         }
-    }
-
-    setSliderReportPeriodFilterData(start, end) {
-        let dateFilter: FilterModel = _.find(this.filters, function (f: FilterModel) { return f.caption.toLowerCase() === 'date'; });
-        if (dateFilter) {
-            if (!dateFilter.items['from'].value)
-                this.sliderReportPeriod.start = start;
-            if (!dateFilter.items['to'].value)
-                this.sliderReportPeriod.end = end;
-        }
-    }
-
-    setReportPeriodFilter(period) {
-        let dateFilter: FilterModel = _.find(this.filters, function (f: FilterModel) { return f.caption.toLowerCase() === 'date'; });
-
-        if (period.start) {
-            let from = new Date(period.start + '-01-01');
-            DateHelper.addTimezoneOffset(from);
-            dateFilter.items['from'].setValue(from, dateFilter);
-        } else {
-            dateFilter.items['from'].setValue('', dateFilter);
-        }
-
-        if (period.end) {
-            let end = new Date(period.end + '-12-31');
-            DateHelper.addTimezoneOffset(end);
-            dateFilter.items['to'].setValue(end, dateFilter);
-        } else {
-            dateFilter.items['to'].setValue('', dateFilter);
-        }
-        this._filtersService.change(dateFilter);
     }
 
     setBankAccountsFilter(emitFilterChange = false) {
@@ -561,6 +486,7 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
     }
 
     deactivate() {
+        this._dialog.closeAll();
         this._appService.updateToolbar(null);
         this._filtersService.unsubscribe();
         this.synchProgressComponent.deactivate();
