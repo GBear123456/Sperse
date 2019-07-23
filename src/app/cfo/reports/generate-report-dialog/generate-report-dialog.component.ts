@@ -77,7 +77,7 @@ export class GenerateReportDialogComponent implements OnInit {
     }
 
     next() {
-        this.applyBusinesEntity();
+        this.applyBusinessEntity();
 
         this.currentStep++;
 
@@ -87,9 +87,10 @@ export class GenerateReportDialogComponent implements OnInit {
         button.action = this.generateReport.bind(this);
     }
 
-    applyBusinesEntity() {
+    applyBusinessEntity() {
         this.bankAccountsService.changeSelectedBusinessEntities(
-            this.selectedBusinessEntityIds = this.dataGrid.instance.getSelectedRowKeys());
+            this.selectedBusinessEntityIds = this.dataGrid.instance.getSelectedRowKeys()
+        );
     }
 
     generateReport() {
