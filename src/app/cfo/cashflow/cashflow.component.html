@@ -71,132 +71,97 @@
                       (onRowInserting)="onRowInserting($event)"
                       (onRowUpdating)="onDetailsRowUpdating($event)"
                       (onSelectionChanged)="onDetailsSelectionChanged($event)">
-            <dxo-editing mode="cell"
-                         [allowUpdating]="isInstanceAdmin"
-                         texts="{'confirmDeleteMessage': ''}">
-            </dxo-editing>
-
             <dxo-header-filter [visible]="true"></dxo-header-filter>
             <dxo-selection selectAllMode="page"
                            [showCheckBoxesMode]="'always'"
                            mode="multiple">
             </dxo-selection>
             <dxo-state-storing [enabled]="true" type="localStorage" [storageKey]="detailsSettingsIdentifier"></dxo-state-storing>
-            <dxi-column dataField="forecastDate"
-                        dataType="date"
-                        [cssClass]="'forecastDate ' + tabularFontName"
-                        cellTemplate="dateCell"
-                        headerCellTemplate="twoRowsHeaderCellTemplate"
-                        alignment="left"
-                        [allowEditing]="false"
-                        [minWidth]="30"
-                        [caption]="l('DetailsHeaders_ForecastDate')">
-                <dxi-validation-rule type="custom" [message]="l('ForecastDateUpdating_validation_message')" [validationCallback]="validateForecastDate"></dxi-validation-rule>
-            </dxi-column>
             <dxi-column dataField="date"
                         dataType="date"
-                        [cssClass]="tabularFontName"
+                        alignment="left"
+                        [minWidth]="30"
                         cellTemplate="dateCell"
-                        headerCellTemplate="twoRowsHeaderCellTemplate"
+                        caption="{{l('Transactions_Date')}}"
+                        cssClass="tabularFontName">
+            </dxi-column>
+            <dxi-column dataField="businessEntityName"
+                        dataType="string"
                         alignment="left"
-                        [caption]="l('DetailsHeaders_ActualDate')"
                         [minWidth]="30"
-                        [allowEditing]="false">
+                        [allowFiltering]="false"
+                        caption="{{l('BusinessEntities')}}"
+                        cssClass="tabularFontName">
             </dxi-column>
-            <dxi-column dataField="status"
-                        headerCellTemplate="twoRowsHeaderCellTemplate"
+            <dxi-column dataField="categoryName"
+                        dataType="string" 
                         alignment="left"
-                        [caption]="l('DetailsHeaders_CurrentStatus')"
                         [minWidth]="30"
-                        [allowEditing]="false">
-            </dxi-column>
-            <dxi-column dataField="descriptor"
-                        cellTemplate="descriptorCell"
-                        [width]="detailsDescriptorColumnWidth()"
-                        [allowEditing]="false"
-                        [minWidth]="30"
-                        [caption]="l('DetailsHeaders_Descriptor')">
-                <dxo-header-filter [visible]="true"></dxo-header-filter>
-            </dxi-column>
-            <dxi-column dataField="debit"
-                        [caption]="l('DetailsHeaders_Debit')"
-                        [format]="customCurrency"
-                        [allowSorting]="false"
                         [allowFiltering]="false"
-                        [cssClass]="tabularFontName"
-                        [allowEditing]="false"
-                        alignment="right"
-                        [minWidth]="30">
-                <dxi-validation-rule type="numeric"></dxi-validation-rule>
+                        cellTemplate="CategoryNameTemplate"
+                        caption="{{l('Transactions_CashflowCategoryName')}}"
+                        cssClass="category">
             </dxi-column>
-            <dxi-column dataField="credit"
-                        [caption]="l('DetailsHeaders_Credit')"
-                        [format]="customCurrency"
-                        [allowSorting]="false"
-                        [allowFiltering]="false"
-                        [cssClass]="tabularFontName"
-                        [allowEditing]="false"
+            <dxi-column dataField="counterpartyName"
+                        dataType="string"
+                        alignment="left"
                         [minWidth]="30"
-                        alignment="right">
-                <dxi-validation-rule type="numeric"></dxi-validation-rule>
-            </dxi-column>
-            <dxi-column [caption]="l('DetailsHeaders_Account')"
-                        dataField="accountNumber"
-                        [allowSorting]="false"
                         [allowFiltering]="false"
-                        [cssClass]="tabularFontName"
-                        [allowEditing]="false"
-                        [minWidth]="30"
-                        editCellTemplate="accountsEditSelect">
+                        caption="{{l('Transactions_Vendor')}}">
             </dxi-column>
-            <dxi-column dataField="accountId"
-                        [allowSorting]="false"
+            <dxi-column dataField="description" 
+                        dataType="string"
+                        alignment="left"
                         [allowFiltering]="false"
-                        [cssClass]="tabularFontName"
-                        [allowEditing]="false"
-                        [minWidth]="30"
-                        [visible]="false">
-            </dxi-column>
-            <dxi-column [caption]="l('DetailsHeaders_Type')"
-                        dataField="cashflowTypeId"
-                        [allowSorting]="false"
-                        [allowFiltering]="false"
-                        [allowEditing]="false"
-                        [minWidth]="30"
-                        cellTemplate="typeCell">
-            </dxi-column>
-            <dxi-column [caption]="l('DetailsHeaders_Description')"
-                        dataField="description"
                         cellTemplate="descriptionTemplate"
-                        [width]="detailsDescriptionColumnWidth()"
-                        [allowSorting]="false"
-                        [allowFiltering]="false"
+                        caption="{{l('Transactions_Description')}}"
+                        cssClass="description-column">
+            </dxi-column>
+            <dxi-column dataField="amount"
+                        alignment="left"
                         [minWidth]="30"
-                        [allowEditing]="false">
-                <dxo-header-filter [visible]="true"></dxo-header-filter>
+                        [allowFiltering]="false"
+                        cellTemplate="amountTemplate"
+                        caption="{{l('Transactions_Amount')}}"
+                        cssClass="tabular">
+            </dxi-column>            
+            <dxi-column dataField="accountName"
+                        alignment="left"
+                        [minWidth]="30"
+                        [allowFiltering]="false"
+                        caption="{{l('Transactions_BankAccountNumber')}}"
+                        cssClass="tabular">
+            </dxi-column>
+            <dxi-column dataField="Comment"
+                        dataType="string"
+                        alignment="left"
+                        [minWidth]="30"
+                        [allowFiltering]="false"
+                        caption="{{l('Transactions_Comments')}}">
             </dxi-column>
 
             <dxo-load-panel [enabled]="false"></dxo-load-panel>
             <dxo-scrolling mode="virtual"></dxo-scrolling>
 
             <div *dxTemplate="let cellData of 'dateCell'">{{cellData.value | date: 'MM/dd/yyyy'}}</div>
-            <div *dxTemplate="let cellData of 'typeCell'">{{cashflowTypes[cellData.value]}}</div>
             <div *dxTemplate="let cellData of 'descriptionTemplate'">
-                <span id="transactionDetailTarget-{{cellData.data.id}}">{{cellData.text}}</span>
+                <span class="transaction-target" id="transactionDetailTarget-{{cellData.data.id}}">{{cellData.text}}</span>
             </div>
-            <div *dxTemplate="let cellData of 'descriptorCell'" [class.calculated]="cellData.data.date && cellData.data.isDescriptorCalculated">{{cellData.value}}</div>
-            <div *dxTemplate="let cell of 'accountsEditSelect'">
-                <dx-select-box [items]="activeBankAccounts"
-                               [displayExpr]="getBankAccountName"
-                               valueExpr="id"
-                               [value]="getBankAccountId(cell)"
-                               (onValueChanged)="accountChanged($event, cell)">
-                </dx-select-box>
+            <div *dxTemplate="let cell of 'amountTemplate'">
+                <ng-container>
+                    <span [ngClass]="cell.value < 0 ? 'negative-values' : 'positive-values'"> {{ cell.text | currency:_cfoPreferencesService.selectedCurrencyId:_cfoPreferencesService.selectedCurrencySymbol:'1.2-2' }} </span>
+                </ng-container>
             </div>
-            <div *dxTemplate="let headerCellData of 'twoRowsHeaderCellTemplate'">
-                <div class="firstLine">{{headerCellData.column.caption.slice(0, headerCellData.column.caption.indexOf(' '))}}</div>
-                <div>{{headerCellData.column.caption.slice(headerCellData.column.caption.indexOf(' ') + 1)}}</div>
-            </div>
+            <div *dxTemplate="let data of 'CategoryNameTemplate'">
+                <span [ngClass]="{'uncategorized': !data.value}">
+                    <ng-container *ngIf="data.value">
+                        <span class="clickable-item"> {{data.value}} </span>
+                    </ng-container>
+                    <ng-container *ngIf="!data.value">
+                        <span> {{l('Unclassified')}} </span>
+                    </ng-container>
+                </span>
+            </div>          
         </dx-data-grid>
     </dx-resizable>
     <dx-scroll-view

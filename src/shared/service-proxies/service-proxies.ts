@@ -34458,8 +34458,10 @@ export enum Status {
 export class CashFlowStatsDetailDto implements ICashFlowStatsDetailDto {
     id!: number | undefined;
     date!: moment.Moment | undefined;
+    businessEntityName!: string | undefined;
     cashflowTypeId!: string | undefined;
     categoryId!: number | undefined;
+    categoryName!: string | undefined;
     descriptor!: string | undefined;
     isDescriptorCalculated!: boolean | undefined;
     bankName!: string | undefined;
@@ -34469,6 +34471,7 @@ export class CashFlowStatsDetailDto implements ICashFlowStatsDetailDto {
     currencyId!: string | undefined;
     credit!: number | undefined;
     debit!: number | undefined;
+    amount!: number | undefined;
     description!: string | undefined;
     comment!: string | undefined;
     commentThreadId!: number | undefined;
@@ -34490,8 +34493,10 @@ export class CashFlowStatsDetailDto implements ICashFlowStatsDetailDto {
         if (data) {
             this.id = data["id"];
             this.date = data["date"] ? moment(data["date"].toString()) : <any>undefined;
+            this.businessEntityName = data["businessEntityName"];
             this.cashflowTypeId = data["cashflowTypeId"];
             this.categoryId = data["categoryId"];
+            this.categoryName = data["categoryName"];
             this.descriptor = data["descriptor"];
             this.isDescriptorCalculated = data["isDescriptorCalculated"];
             this.bankName = data["bankName"];
@@ -34501,6 +34506,7 @@ export class CashFlowStatsDetailDto implements ICashFlowStatsDetailDto {
             this.currencyId = data["currencyId"];
             this.credit = data["credit"];
             this.debit = data["debit"];
+            this.amount = data["amount"];
             this.description = data["description"];
             this.comment = data["comment"];
             this.commentThreadId = data["commentThreadId"];
@@ -34522,8 +34528,10 @@ export class CashFlowStatsDetailDto implements ICashFlowStatsDetailDto {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
         data["date"] = this.date ? this.date.toISOString() : <any>undefined;
+        data["businessEntityName"] = this.businessEntityName;
         data["cashflowTypeId"] = this.cashflowTypeId;
         data["categoryId"] = this.categoryId;
+        data["categoryName"] = this.categoryName;
         data["descriptor"] = this.descriptor;
         data["isDescriptorCalculated"] = this.isDescriptorCalculated;
         data["bankName"] = this.bankName;
@@ -34533,6 +34541,7 @@ export class CashFlowStatsDetailDto implements ICashFlowStatsDetailDto {
         data["currencyId"] = this.currencyId;
         data["credit"] = this.credit;
         data["debit"] = this.debit;
+        data["amount"] = this.amount;
         data["description"] = this.description;
         data["comment"] = this.comment;
         data["commentThreadId"] = this.commentThreadId;
@@ -34547,8 +34556,10 @@ export class CashFlowStatsDetailDto implements ICashFlowStatsDetailDto {
 export interface ICashFlowStatsDetailDto {
     id: number | undefined;
     date: moment.Moment | undefined;
+    businessEntityName: string | undefined;
     cashflowTypeId: string | undefined;
     categoryId: number | undefined;
+    categoryName: string | undefined;
     descriptor: string | undefined;
     isDescriptorCalculated: boolean | undefined;
     bankName: string | undefined;
@@ -34558,6 +34569,7 @@ export interface ICashFlowStatsDetailDto {
     currencyId: string | undefined;
     credit: number | undefined;
     debit: number | undefined;
+    amount: number | undefined;
     description: string | undefined;
     comment: string | undefined;
     commentThreadId: number | undefined;
