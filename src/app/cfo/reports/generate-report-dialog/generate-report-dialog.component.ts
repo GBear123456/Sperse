@@ -100,8 +100,8 @@ export class GenerateReportDialogComponent implements OnInit {
             tap(() => this.notify.info(this.ls.l('GeneratingStarted'))),
             switchMap(currencyId =>
                 this.reportsProxy.generate(<any>this.data.instanceType, this.data.instanceId, new GenerateInput({
-                    from: this.dateFrom,
-                    to: this.dateTo,
+                    from: DateHelper.getDateWithoutTime(this.dateFrom),
+                    to: DateHelper.getDateWithoutTime(this.dateTo).subtract(1, 'second'),
                     period: this.data.period,
                     currencyId,
                     businessEntityIds: this.selectedBusinessEntityIds,
@@ -121,8 +121,8 @@ export class GenerateReportDialogComponent implements OnInit {
         if ((this.dateTo ? this.dateTo.diff(dateTo, 'days') : dateTo) ||
             (this.dateFrom ? this.dateFrom.diff(dateFrom, 'days') : dateFrom)
         ) {
-            this.dateFrom = dateFrom && DateHelper.getDateWithoutTime(dateFrom);
-            this.dateTo = dateTo && DateHelper.getDateWithoutTime(dateTo);
+            this.dateFrom = dateFrom && moment(dateFrom);
+            this.dateTo = dateTo && moment(dateTo);
         }
     }
 }
