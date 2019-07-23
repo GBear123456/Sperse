@@ -27469,6 +27469,79 @@ export class TransactionsServiceProxy {
     /**
      * @instanceType (optional) 
      * @instanceId (optional) 
+     * @startDate (optional) 
+     * @endDate (optional) 
+     * @currencyId (optional) 
+     * @accountIds (optional) 
+     * @businessEntityIds (optional) 
+     * @return Success
+     */
+    getStartingBalance(instanceType: InstanceType | null | undefined, instanceId: number | null | undefined, startDate: moment.Moment | null | undefined, endDate: moment.Moment | null | undefined, currencyId: string | null | undefined, accountIds: number[] | null | undefined, businessEntityIds: number[] | null | undefined): Observable<number> {
+        let url_ = this.baseUrl + "/api/services/CFO/Transactions/GetStartingBalance?";
+        if (instanceType !== undefined)
+            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
+        if (instanceId !== undefined)
+            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
+        if (startDate !== undefined)
+            url_ += "StartDate=" + encodeURIComponent(startDate ? "" + startDate.toJSON() : "") + "&"; 
+        if (endDate !== undefined)
+            url_ += "EndDate=" + encodeURIComponent(endDate ? "" + endDate.toJSON() : "") + "&"; 
+        if (currencyId !== undefined)
+            url_ += "CurrencyId=" + encodeURIComponent("" + currencyId) + "&"; 
+        if (accountIds !== undefined)
+            accountIds && accountIds.forEach(item => { url_ += "AccountIds=" + encodeURIComponent("" + item) + "&"; });
+        if (businessEntityIds !== undefined)
+            businessEntityIds && businessEntityIds.forEach(item => { url_ += "BusinessEntityIds=" + encodeURIComponent("" + item) + "&"; });
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetStartingBalance(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetStartingBalance(<any>response_);
+                } catch (e) {
+                    return <Observable<number>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<number>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetStartingBalance(response: HttpResponseBase): Observable<number> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 !== undefined ? resultData200 : <any>null;
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<number>(<any>null);
+    }
+
+    /**
+     * @instanceType (optional) 
+     * @instanceId (optional) 
      * @return Success
      */
     getTransactionAttributeTypes(instanceType: InstanceType | null | undefined, instanceId: number | null | undefined): Observable<GetTransactionAttributeTypesOutput> {
@@ -33082,6 +33155,8 @@ export class BusinessEntityDto implements IBusinessEntityDto {
     id!: number | undefined;
     name!: string | undefined;
     isDefault!: boolean | undefined;
+    parentId!: number | undefined;
+    hasChildren!: boolean | undefined;
 
     constructor(data?: IBusinessEntityDto) {
         if (data) {
@@ -33097,6 +33172,8 @@ export class BusinessEntityDto implements IBusinessEntityDto {
             this.id = data["id"];
             this.name = data["name"];
             this.isDefault = data["isDefault"];
+            this.parentId = data["parentId"];
+            this.hasChildren = data["hasChildren"];
         }
     }
 
@@ -33112,6 +33189,8 @@ export class BusinessEntityDto implements IBusinessEntityDto {
         data["id"] = this.id;
         data["name"] = this.name;
         data["isDefault"] = this.isDefault;
+        data["parentId"] = this.parentId;
+        data["hasChildren"] = this.hasChildren;
         return data; 
     }
 }
@@ -33120,6 +33199,8 @@ export interface IBusinessEntityDto {
     id: number | undefined;
     name: string | undefined;
     isDefault: boolean | undefined;
+    parentId: number | undefined;
+    hasChildren: boolean | undefined;
 }
 
 export class BusinessEntityTypeDto implements IBusinessEntityTypeDto {
@@ -34377,8 +34458,10 @@ export enum Status {
 export class CashFlowStatsDetailDto implements ICashFlowStatsDetailDto {
     id!: number | undefined;
     date!: moment.Moment | undefined;
+    businessEntityName!: string | undefined;
     cashflowTypeId!: string | undefined;
     categoryId!: number | undefined;
+    categoryName!: string | undefined;
     descriptor!: string | undefined;
     isDescriptorCalculated!: boolean | undefined;
     bankName!: string | undefined;
@@ -34388,6 +34471,7 @@ export class CashFlowStatsDetailDto implements ICashFlowStatsDetailDto {
     currencyId!: string | undefined;
     credit!: number | undefined;
     debit!: number | undefined;
+    amount!: number | undefined;
     description!: string | undefined;
     comment!: string | undefined;
     commentThreadId!: number | undefined;
@@ -34409,8 +34493,10 @@ export class CashFlowStatsDetailDto implements ICashFlowStatsDetailDto {
         if (data) {
             this.id = data["id"];
             this.date = data["date"] ? moment(data["date"].toString()) : <any>undefined;
+            this.businessEntityName = data["businessEntityName"];
             this.cashflowTypeId = data["cashflowTypeId"];
             this.categoryId = data["categoryId"];
+            this.categoryName = data["categoryName"];
             this.descriptor = data["descriptor"];
             this.isDescriptorCalculated = data["isDescriptorCalculated"];
             this.bankName = data["bankName"];
@@ -34420,6 +34506,7 @@ export class CashFlowStatsDetailDto implements ICashFlowStatsDetailDto {
             this.currencyId = data["currencyId"];
             this.credit = data["credit"];
             this.debit = data["debit"];
+            this.amount = data["amount"];
             this.description = data["description"];
             this.comment = data["comment"];
             this.commentThreadId = data["commentThreadId"];
@@ -34441,8 +34528,10 @@ export class CashFlowStatsDetailDto implements ICashFlowStatsDetailDto {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
         data["date"] = this.date ? this.date.toISOString() : <any>undefined;
+        data["businessEntityName"] = this.businessEntityName;
         data["cashflowTypeId"] = this.cashflowTypeId;
         data["categoryId"] = this.categoryId;
+        data["categoryName"] = this.categoryName;
         data["descriptor"] = this.descriptor;
         data["isDescriptorCalculated"] = this.isDescriptorCalculated;
         data["bankName"] = this.bankName;
@@ -34452,6 +34541,7 @@ export class CashFlowStatsDetailDto implements ICashFlowStatsDetailDto {
         data["currencyId"] = this.currencyId;
         data["credit"] = this.credit;
         data["debit"] = this.debit;
+        data["amount"] = this.amount;
         data["description"] = this.description;
         data["comment"] = this.comment;
         data["commentThreadId"] = this.commentThreadId;
@@ -34466,8 +34556,10 @@ export class CashFlowStatsDetailDto implements ICashFlowStatsDetailDto {
 export interface ICashFlowStatsDetailDto {
     id: number | undefined;
     date: moment.Moment | undefined;
+    businessEntityName: string | undefined;
     cashflowTypeId: string | undefined;
     categoryId: number | undefined;
+    categoryName: string | undefined;
     descriptor: string | undefined;
     isDescriptorCalculated: boolean | undefined;
     bankName: string | undefined;
@@ -34477,6 +34569,7 @@ export interface ICashFlowStatsDetailDto {
     currencyId: string | undefined;
     credit: number | undefined;
     debit: number | undefined;
+    amount: number | undefined;
     description: string | undefined;
     comment: string | undefined;
     commentThreadId: number | undefined;
@@ -35977,7 +36070,7 @@ export interface ISyncDto {
 }
 
 export class AccountingCategoryDto implements IAccountingCategoryDto {
-    providerId!: string | undefined;
+    id!: string | undefined;
     coAID!: string | undefined;
     isActive!: boolean | undefined;
     cashType!: string | undefined;
@@ -35999,7 +36092,7 @@ export class AccountingCategoryDto implements IAccountingCategoryDto {
 
     init(data?: any) {
         if (data) {
-            this.providerId = data["providerId"];
+            this.id = data["id"];
             this.coAID = data["coAID"];
             this.isActive = data["isActive"];
             this.cashType = data["cashType"];
@@ -36021,7 +36114,7 @@ export class AccountingCategoryDto implements IAccountingCategoryDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["providerId"] = this.providerId;
+        data["id"] = this.id;
         data["coAID"] = this.coAID;
         data["isActive"] = this.isActive;
         data["cashType"] = this.cashType;
@@ -36036,7 +36129,7 @@ export class AccountingCategoryDto implements IAccountingCategoryDto {
 }
 
 export interface IAccountingCategoryDto {
-    providerId: string | undefined;
+    id: string | undefined;
     coAID: string | undefined;
     isActive: boolean | undefined;
     cashType: string | undefined;
