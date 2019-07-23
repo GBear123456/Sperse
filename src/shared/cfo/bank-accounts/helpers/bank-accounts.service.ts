@@ -77,7 +77,7 @@ export class BankAccountsService {
     private _applyFilter = new BehaviorSubject<Boolean>(false);
     applyFilter$ = this._applyFilter.asObservable();
     _syncAccounts: ReplaySubject<SyncAccountBankDto[]> = new ReplaySubject(1);
-    _businessEntities: ReplaySubject<BusinessEntityDto[]> = new ReplaySubject(1);
+    _businessEntities: BehaviorSubject<BusinessEntityDto[]> = new BehaviorSubject([]);
     syncAccounts$: Observable<SyncAccountBankDto[]>;
     bankAccountsIds$: Observable<number[]>;
     businessEntities$: Observable<BusinessEntityDto[]>;
@@ -130,7 +130,7 @@ export class BankAccountsService {
                     }
                     this.selectDefaultBusinessEntity = false;
                 }
-                return businessEntities;
+                return this.sortBusinessEntities(businessEntities);
             }),
             distinctUntilChanged(this.arrayDistinct)
         );
@@ -356,7 +356,6 @@ export class BankAccountsService {
     }
 
     loadState(applyFilter = true) {
-
         const cachedState = this.cacheService.get(this.bankAccountsCacheKey);
         /** If there are no cache (user is logging the first time) and it is cfo portal */
         if (!cachedState && this.cfoService.hasStaticInstance) {
@@ -375,6 +374,19 @@ export class BankAccountsService {
                 this.applyFilter();
             }
         }
+    }
+
+    sortBusinessEntities(list) {
+        return list.sort((prev, next) => {
+            let isPrevSelected = this.state.selectedBusinessEntitiesIds.indexOf(prev.id) >= 0,
+                isNextSelected = this.state.selectedBusinessEntitiesIds.indexOf(next.id) >= 0;
+            if (isPrevSelected && isNextSelected || !isPrevSelected && !isNextSelected)
+                return prev.name.localeCompare(next.name);
+            else if (isPrevSelected)
+                return -1;
+            else if (isNextSelected)
+                return 1;
+        });
     }
 
     load(acceptFilterOnlyOnApply = true, applyFilter = true) {
@@ -601,6 +613,9 @@ export class BankAccountsService {
         }
         if (state.hasOwnProperty('statuses')) {
             this.selectedStatuses.next(tempFilter.statuses);
+        }
+        if (state.hasOwnProperty('selectedBusinessEntitiesIds')) {
+            this._businessEntities.next(this._businessEntities.getValue());
         }
         this._syncAccountsState.next(tempFilter);
     }

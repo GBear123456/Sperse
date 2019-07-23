@@ -121,8 +121,8 @@ export class GenerateReportDialogComponent implements OnInit {
         if ((this.dateTo ? this.dateTo.diff(dateTo, 'days') : dateTo) ||
             (this.dateFrom ? this.dateFrom.diff(dateFrom, 'days') : dateFrom)
         ) {
-            this.dateFrom = dateFrom && moment(dateFrom);
-            this.dateTo = dateTo && moment(dateTo);
+            this.dateFrom = dateFrom && DateHelper.getDateWithoutTime(dateFrom);
+            this.dateTo = dateTo && DateHelper.getDateWithoutTime(dateTo);
         }
     }
 }

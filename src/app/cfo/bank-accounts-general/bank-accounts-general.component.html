@@ -6,7 +6,7 @@
             popupWidth="280px"
             [selectionList]="bankAccountsService.businessEntities$ | async"
             [selectedItems]="bankAccountsService.selectedBusinessEntitiesIds$ | async"
-            (selectionChanged)="bankAccountsService.changeState({selectedBusinessEntitiesIds: $event}, true)">
+            (onClosed)="bankAccountsService.changeState({selectedBusinessEntitiesIds: $event}, true)">
         </selection-filter>
         <synch-progress [showSyncAccountButton]="true" class="synch-progress" (onSyncStarted)="refresh()" (onComplete)="refresh()"></synch-progress>
         <sync-date-picker></sync-date-picker>

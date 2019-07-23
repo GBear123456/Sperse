@@ -1256,7 +1256,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         clearTimeout(this._changeTimeout);
         this._changeTimeout = setTimeout(() => {
             this.applyTotalBankAccountFilter(true);
-        }, 1000);
+        }, 100);
     }
 
     checkUpdateAccountsState(businessEntitiesIds) {
