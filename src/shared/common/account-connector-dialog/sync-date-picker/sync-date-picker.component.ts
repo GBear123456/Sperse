@@ -30,7 +30,7 @@ export class SyncDatePickerComponent {
     }
 
     apply(event) {
-        if (event.previousValue && event.value)
+        if (event.previousValue && moment(event.value).diff(event.previousValue, 'days'))
             this.syncService.setMaxVisibleDate(event.value);
     }
 }

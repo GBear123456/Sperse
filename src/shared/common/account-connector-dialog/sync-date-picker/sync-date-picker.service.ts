@@ -9,6 +9,7 @@ import * as moment from 'moment-timezone';
 /** Application imports */
 import { CFOService } from '@shared/cfo/cfo.service';
 import { InstanceServiceProxy, InstanceType } from '@shared/service-proxies/service-proxies';
+import { DateHelper } from '@shared/helpers/DateHelper';
 
 @Injectable()
 export class SyncDatePickerService {
@@ -23,9 +24,11 @@ export class SyncDatePickerService {
     }
 
     setMaxVisibleDate(date: moment) { 
-        if (this._cfoService.initialized)
+        if (this._cfoService.initialized) {
+            date = DateHelper.getDateWithoutTime(date);
             this._instanceService.setMaxVisibleDate(this._cfoService.instanceType as InstanceType, 
-            this._cfoService.instanceId, date).subscribe(() => this._maxSyncDate.next(date));
+                this._cfoService.instanceId, date).subscribe(() => this._maxSyncDate.next(date));
+        }
     }
 
     getMaxVisibleDate() {
@@ -39,6 +42,6 @@ export class SyncDatePickerService {
             sub = this.getMaxVisibleDate();
         else
             sub = this._cfoService.instanceChangeProcess().pipe(switchMap(() => this.getMaxVisibleDate()));
-        sub.subscribe(date => this._maxSyncDate.next(date.isValid() ? date : moment.utc().set({hour:0,minute:0,second:0,millisecond:0})));
+        sub.subscribe(date => this._maxSyncDate.next(date.isValid() ? date : DateHelper.getDateWithoutTime(moment())));
     }
 }
