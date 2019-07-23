@@ -90,7 +90,7 @@ export class ChartOfAccountsComponent extends CFOComponentBase implements OnInit
             let accTypes: AccountingCategoryDto[] = [];
             data.forEach((val, i) => {
                 accTypes.push(new AccountingCategoryDto({
-                    providerId: null,
+                    id: null,
                     accountingType: val['Accounting Type'],
                     cashType: val['Cashflow Type'],
                     category: val['Category'],

@@ -28,7 +28,8 @@ export class EditionsComponent extends AppComponentBase implements OnDestroy {
     public headlineConfig = {
         names: [this.l('Products')],
         icon: '',
-        onRefresh: this.refreshDataGrid.bind(this),
+        // onRefresh: this.refreshDataGrid.bind(this),
+        toggleToolbar: this.toggleToolbar.bind(this),
         buttons: [
             {
                 enabled: this.isGranted('Pages.Editions.Create'),
@@ -78,6 +79,11 @@ export class EditionsComponent extends AppComponentBase implements OnDestroy {
                 }
             }
         ].filter(Boolean);
+    }
+
+    toggleToolbar() {
+        this._appService.toolbarToggle();
+        setTimeout(() => this.dataGrid.instance.repaint(), 0);
     }
 
     initToolbarConfig() {

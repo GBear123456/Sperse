@@ -36,7 +36,8 @@ export class AuditLogsComponent extends AppComponentBase implements OnInit, OnDe
     public headlineConfig = {
         names: [this.l('AuditLogs')],
         icon: '',
-        onRefresh: this.refreshData.bind(this),
+        // onRefresh: this.refreshData.bind(this),
+        toggleToolbar: this.toggleToolbar.bind(this),
         buttons: []
     };
     private filtersValues = {
@@ -278,6 +279,11 @@ export class AuditLogsComponent extends AppComponentBase implements OnInit, OnDe
                 ]
             }
         ]);
+    }
+
+    toggleToolbar() {
+        this._appService.toolbarToggle();
+        setTimeout(() => this.dataGrid.instance.repaint(), 0);
     }
 
     showCompactRowsHeight() {

@@ -411,7 +411,8 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
         this.headlineConfig = {
             names: [this.l('Daily Cash Balances')],
             iconSrc: './assets/common/icons/pulse-icon.svg',
-            onRefresh: this._cfoService.hasStaticInstance ? undefined : this.getUpdatedDataSource.bind(this),
+            // onRefresh: this._cfoService.hasStaticInstance ? undefined : this.getUpdatedDataSource.bind(this),
+            toggleToolbar: this.toggleToolbar.bind(this),
             buttons: [
                 {
                     enabled: !!(this.statsData && this.statsData.length),
@@ -420,6 +421,11 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
                 }
             ]
         };
+    }
+
+    toggleToolbar() {
+        this._appService.toolbarToggle();
+        setTimeout(() => this.dataGrid.instance.repaint(), 0);
     }
 
     initFiltering() {

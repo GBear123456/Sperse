@@ -3,8 +3,11 @@
     <div *ngIf="currentStep == generateReportSteps.Step1" class="step1-container">
         <dx-data-grid id="gridContainer"
                     height="100%"
+                    keyExpr="id"
+                    [selectedRowKeys]="bankAccountsService.selectedBusinessEntitiesIds$ | async"
                     [dataSource]="bankAccountsService.businessEntities$ | async"
-                    [pager]="defaultGridPagerConfig">
+                    [pager]="defaultGridPagerConfig"
+                    (onInitialized)="$event.component.repaint()">
             <dxo-header-filter [visible]="true" [allowSearch]="true"></dxo-header-filter>
             <dxo-selection
                 selectAllMode="page"

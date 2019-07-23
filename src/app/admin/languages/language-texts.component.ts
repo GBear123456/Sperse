@@ -34,7 +34,8 @@ export class LanguageTextsComponent extends AppComponentBase implements AfterVie
     public headlineConfig = {
         names: [ this.l('LanguageTexts') ],
         icon: 'flag',
-        onRefresh: this.refreshDataGrid.bind(this),
+        // onRefresh: this.refreshDataGrid.bind(this),
+        toggleToolbar: this.toggleToolbar.bind(this),
         buttons: []
     };
     sourceNames = abp.localization.sources.filter(source => source.type === 'MultiTenantLocalizationSource').map(value => value.name);
@@ -82,6 +83,11 @@ export class LanguageTextsComponent extends AppComponentBase implements AfterVie
                 this.filtersValues = { ...this.filtersValues, ...filtersValues };
                 this.refreshDataGrid();
             });
+    }
+
+    toggleToolbar() {
+        this._appService.toolbarToggle();
+        setTimeout(() => this.dataGrid.instance.repaint(), 0);
     }
 
     ngAfterViewInit(): void {

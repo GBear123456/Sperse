@@ -90,7 +90,8 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     public headlineConfig = {
         names: [this.l('Customers')],
         icon: 'people',
-        onRefresh: this.refresh.bind(this),
+        // onRefresh: this.refresh.bind(this),
+        toggleToolbar: this.toggleToolbar.bind(this),
         buttons: [
             {
                 enabled: this._contactService.checkCGPermission(ContactGroup.Client),
@@ -151,6 +152,11 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         });
 
         this.activate();
+    }
+
+    toggleToolbar() {
+        this.appService.toolbarToggle();
+        setTimeout(() => this.dataGrid.instance.repaint(), 0);
     }
 
     private paramsSubscribe() {

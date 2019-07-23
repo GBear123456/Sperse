@@ -68,7 +68,7 @@
                         <dxo-paging [pageSize]="20"></dxo-paging>
                         <dxo-filter-row [visible]="false" [showOperationChooser]="true"></dxo-filter-row>
 
-                        <dxi-column dataField="Date" dataType="date" cssClass="tabular" caption="{{l('Transactions_Date')}}" cellTemplate="dateCell"></dxi-column>
+                        <dxi-column dataField="Date" dataType="date" cssClass="tabular" caption="{{l('Transactions_Date')}}" cellTemplate="dateCell" width="100px"></dxi-column>
                         <dxi-column dataField="BusinessEntityId" caption="{{l('BusinessEntities')}}" [lookup]="{allowClearing: false, dataSource: filtersInitialData?.businessEntities, displayExpr: 'name', valueExpr: 'id'}"></dxi-column>
                         <dxi-column caption="{{l('Transactions_CashflowCategoryName')}}"
                                     dataField="CashflowCategoryName"

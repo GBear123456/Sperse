@@ -72,7 +72,8 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
     ];
     public headlineConfig = {
         names: [this.l('Tasks')],
-        onRefresh: this.refresh.bind(this),
+        // onRefresh: this.refresh.bind(this),
+        toggleToolbar: this.toggleToolbar.bind(this),
         icon: 'docs',
         buttons: [
             {
@@ -105,7 +106,12 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
         this.updateCalendarCaption();
         this.initDataSource();
     }
-
+    
+    toggleToolbar() {
+        this._appService.toolbarToggle();
+        setTimeout(() => this.dataGrid.instance.repaint(), 0);
+    }
+    
     initDataSource() {
         this.dataSource = {
             requireTotalCount: false,

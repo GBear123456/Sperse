@@ -1178,7 +1178,7 @@
                 position: absolute;
                 right: 0;
                 z-index: 1;
-                top: 70px;
+                top: 60px;
                 &:hover {
                     background: transparent !important;
                 }
@@ -1473,6 +1473,27 @@
                         }
                     }
                 }
+
+                .dx-data-row td {
+                    &.category {
+                        padding-left: 27px;
+                        position: relative;
+                    }
+                    .uncategorized {
+                        &:before {
+                            content: "";
+                            background: #f8a126;
+                            width: 8px;
+                            height: 8px;
+                            border-radius: 50%;
+                            display: block;
+                            position: absolute;
+                            left: 10px;
+                            top: 50%;
+                            transform: translateY(-50%);
+                        }
+                    }
+                }
             }
 
             .dx-datagrid {
@@ -1487,6 +1508,13 @@
 
                 .dx-datagrid-focus-overlay {
                     border: none;
+                }
+            }
+
+            .uncategorized {
+                td {
+                    background-color: #FFFBF5;
+                    color: #757B7F;
                 }
             }
         }
@@ -1658,6 +1686,23 @@
             padding: 0;
             margin-top: 2px;
         }
+    }
+
+    .positive-values,
+    .positive-values * {
+        color: #61c670 !important;
+    }
+    .negative-values,
+    .negative-values * {
+        color: #e7326a !important;
+    }
+
+    .transaction-target {
+        max-width: 100%;
+        width: 330px;
+        display: block;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 }
 

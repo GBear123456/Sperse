@@ -16,7 +16,8 @@
         <ng-template ngFor let-item [ngForOf]="data.buttons">
             <button *ngIf="item.enabled" id="{{item?.id}}" class="btn {{item?.class || 'btn-layout'}}" (click)="item.action($event)"><i class="icon-{{item.icon}}"></i> {{item.lable}}</button>
         </ng-template>
-        <div *ngIf="data.onRefresh" class="vertical-delimiter"></div>
+        <div *ngIf="data.onRefresh || data.toggleToolbar" class="vertical-delimiter"></div>
         <button *ngIf="data.onRefresh" class="refresh-button" (click)="data.onRefresh($event)"></button>
+        <button *ngIf="data.toggleToolbar" class="toggle-button" title="Toggle toolbar" (click)="data.toggleToolbar($event)"></button>
     </div>
 </div>

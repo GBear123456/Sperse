@@ -70,13 +70,13 @@ export class OffersWizardComponent implements OnInit {
         { value: true, text: 'Yes' },
         { value: false, text: 'No' }
     ];
-    contactTime = Object.keys(TimeOfDay);
-    gender = Object.keys(Gender);
-    creditScore = Object.keys(CreditScoreRating);
-    loanReason = Object.keys(LoanReason);
-    payFrequency = Object.keys(PayFrequency);
-    incomeType = Object.keys(IncomeType);
-    bankAccountType = Object.keys(BankAccountType);
+    contactTime = Object.keys(TimeOfDay).map(e => ({key: e, text: this.ls.l(e)}));
+    gender = Object.keys(Gender).map(e => ({key: e, text: this.ls.l(e)}));
+    creditScore = Object.keys(CreditScoreRating).map(e => ({key: e, text: this.ls.l(e)}));
+    loanReason = Object.keys(LoanReason).map(e => ({key: e, text: this.ls.l(e)}));
+    payFrequency = Object.keys(PayFrequency).map(e => ({key: e, text: this.ls.l(e)}));
+    incomeType = Object.keys(IncomeType).map(e => ({key: e, text: this.ls.l(e)}));
+    bankAccountType = Object.keys(BankAccountType).map(e => ({key: e, text: this.ls.l(e)}));
 
     constructor(
         injector: Injector,

@@ -19,7 +19,7 @@ import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import DataSource from 'devextreme/data/data_source';
 import 'devextreme/data/odata/store';
 import { Subject, forkJoin, of } from 'rxjs';
-import { first, skip, switchMap, mapTo } from 'rxjs/operators';
+import { first, skip, switchMap, mapTo, takeUntil } from 'rxjs/operators';
 import difference from 'lodash/difference';
 import * as _ from 'underscore';
 
@@ -56,7 +56,6 @@ import { CurrenciesStoreSelectors, CfoStore } from '@app/cfo/store';
 import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 import { CalendarValuesModel } from '@shared/common/widgets/calendar/calendar-values.model';
-import { takeUntil } from '@node_modules/rxjs/operators';
 
 @Component({
     templateUrl: './transactions.component.html',
@@ -129,6 +128,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     categories: any;
     types: any;
 
+    private _changeTimeout;
     private _categoriesShowedBefore = true;
     private _categoriesShowed = true;
     public set categoriesShowed(value: boolean) {
@@ -160,7 +160,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         public dialog: MatDialog
     ) {
         super(injector);
-
+        _appService.toolbarIsHidden = true;
         if (filtersService.fixed)
             this._categoriesShowed = false;
 
@@ -373,11 +373,17 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     initHeadlineConfig() {
         this.headlineConfig = {
             names: [this.l('Transactions')],
-            onRefresh: this._cfoService.hasStaticInstance ? undefined : this.refreshDataGrid.bind(this),
+            // onRefresh: this._cfoService.hasStaticInstance ? undefined : this.refreshDataGrid.bind(this),
+            toggleToolbar: this.toggleToolbar.bind(this),
             iconSrc: './assets/common/icons/credit-card-icon.svg',
             class: this.noRefreshedAfterSync ? 'need-refresh' : 'no-need-refresh'
         };
         this._changeDetectionRef.detectChanges();
+    }
+
+    toggleToolbar() {
+        this._appService.toolbarToggle();
+        setTimeout(() => this.dataGrid.instance.repaint(), 0);
     }
 
     initToolbarConfig() {
@@ -761,7 +767,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             }
 
             if (filterName == 'businessentity')
-                this.onBusinessEntitiesChange(filter.items.element.value);
+                this.checkUpdateAccountsState(filter.items.element.value);
 
             this.initToolbarConfig();
             this.processFilterInternal();
@@ -769,8 +775,10 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     }
 
     setDataSource() {
-        this.dataGrid.dataSource = this.dataSource;
-        this._changeDetectionRef.markForCheck();
+        if (this.dataGrid && !this.dataGrid.dataSource) {
+            this.dataGrid.dataSource = this.dataSource;
+            this._changeDetectionRef.markForCheck();
+        }
     }
 
     showCompactRowsHeight() {
@@ -782,8 +790,9 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     // }
 
     applyTotalBankAccountFilter(emitFilterChange = false) {
-        emitFilterChange && this.setDataSource();
-        this.bankAccountsService.setBankAccountsFilter(this.filters, this.syncAccounts, emitFilterChange);
+        this.setDataSource();
+        this.bankAccountsService.setBankAccountsFilter(
+            this.filters, this.syncAccounts, emitFilterChange);
     }
 
     setCurrenciesFilter(currencyId: string) {
@@ -1262,10 +1271,20 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     }
 
     onBusinessEntitiesChange(businessEntitiesIds) {
+        this.checkUpdateAccountsState(businessEntitiesIds);
+
+        clearTimeout(this._changeTimeout);
+        this._changeTimeout = setTimeout(() => {
+            this.applyTotalBankAccountFilter(true);
+        }, 1000);
+    }
+
+    checkUpdateAccountsState(businessEntitiesIds) {
         let selectedBankAccountIds = [];
         let newBusinessEntitiesIds = difference(businessEntitiesIds,
             this.bankAccountsService.state.selectedBusinessEntitiesIds);
 
+        this.businessEntityFilter.items.element.value = businessEntitiesIds;
         this.syncAccounts.forEach(syncAccount => {
             syncAccount.bankAccounts.forEach(bankAccount => {
                 if (newBusinessEntitiesIds.indexOf(bankAccount.businessEntityId) >= 0
@@ -1280,10 +1299,6 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             selectedBusinessEntitiesIds: businessEntitiesIds,
             selectedBankAccountIds: selectedBankAccountIds
         });
-
-        this.businessEntityFilter.items.element.value = businessEntitiesIds;
-
-        this.applyTotalBankAccountFilter(true);
     }
 
     ngOnDestroy() {
