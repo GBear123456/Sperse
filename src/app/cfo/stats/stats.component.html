@@ -210,10 +210,6 @@
     </svg>
 </div>
 
-<app-report-period [sliderReportPeriod]="sliderReportPeriod"
-                   (onPeriodSelected)="setReportPeriodFilter($event)">
-</app-report-period>
-
 <app-no-data
     *ngIf="loadingFinished && (!statsData || !statsData.length)"
     [showLink]="false">
