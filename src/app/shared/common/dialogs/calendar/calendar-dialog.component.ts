@@ -1,10 +1,9 @@
 /** Core imports */
-import { Component, Inject, Injector, OnInit, AfterViewInit, ElementRef } from '@angular/core';
+import { Component, Inject, OnInit, AfterViewInit, ElementRef } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 /** Application imports */
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
-import { DateHelper } from '@shared/helpers/DateHelper';
 
 @Component({
   templateUrl: 'calendar-dialog.component.html',
@@ -14,7 +13,6 @@ export class CalendarDialogComponent implements OnInit, AfterViewInit {
     private slider: any;
 
     constructor(
-        injector: Injector,
         @Inject(MAT_DIALOG_DATA) public data: any,
         public ls: AppLocalizationService,
         public dialogRef: MatDialogRef<CalendarDialogComponent, any>,
@@ -53,10 +51,9 @@ export class CalendarDialogComponent implements OnInit, AfterViewInit {
 
     filterApply(event) {
         this.dialogRef.close({
-            dateFrom: this.data.from.value &&
-                DateHelper.removeTimezoneOffset(this.data.from.value, true, 'from'),
-            dateTo: this.data.to.value &&
-                DateHelper.removeTimezoneOffset(this.data.to.value, true, 'to')
+            dateFrom: this.data.from.value,
+            dateTo: this.data.to.value,
+            period: this.data.period
         });
     }
 }

@@ -122,6 +122,9 @@ import {
 import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
 import { BankAccountStatus } from '@shared/cfo/bank-accounts/helpers/bank-accounts.status.enum';
 import { CashflowTypes } from '@app/cfo/cashflow/enums/cashflow-types.enum';
+import { mapTo } from '@node_modules/rxjs/operators';
+import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
+import { CalendarValuesModel } from '@shared/common/widgets/calendar/calendar-values.model';
 
 /** Constants */
 const StartedBalance    = CashflowTypes.StartedBalance,
@@ -158,7 +161,7 @@ export class CellOptions {
     selector: 'app-cashflow',
     templateUrl: './cashflow.component.html',
     styleUrls: ['./cashflow.component.less'],
-    providers: [ CashFlowForecastServiceProxy, CategoryTreeServiceProxy, ClassificationServiceProxy, UserPreferencesService, BankAccountsServiceProxy, CellsCopyingService, CashflowService, CurrencyPipe ]
+    providers: [ CashFlowForecastServiceProxy, CategoryTreeServiceProxy, ClassificationServiceProxy, UserPreferencesService, BankAccountsServiceProxy, CellsCopyingService, CashflowService, CurrencyPipe, LifecycleSubjectsService ]
 })
 export class CashflowComponent extends CFOComponentBase implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(DxPivotGridComponent) pivotGrid: DxPivotGridComponent;
@@ -167,12 +170,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     @ViewChild(SynchProgressComponent) synchProgressComponent: SynchProgressComponent;
     transactionId: any;
     selectedBankAccountsIds;
-    sliderReportPeriod = {
-        start: null,
-        end: null,
-        minDate: moment().utc().subtract(10, 'year').year(),
-        maxDate: moment().utc().add(10, 'year').year()
-    };
 
     allowChangingForecast: boolean;
     showAllVisible = false;
@@ -655,6 +652,17 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     /** Cell to be copied (dxPivotGridPivotGridCell) interface */
     private copiedCell;
 
+    private dateFilter: FilterModel = new FilterModel({
+        component: FilterCalendarComponent,
+        caption: 'Date',
+        items: {from: new FilterItemModel(), to: new FilterItemModel()},
+        options: {
+            allowFutureDates: true,
+            endDate: moment(new Date()).add(10, 'years').toDate()
+        },
+        hidden: true
+    });
+
     /** Row pathes of the months that had been already expanded and we don't need to load the days again */
     private monthsDaysLoadedPathes = [];
 
@@ -776,7 +784,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         private store$: Store<CfoStore.State>,
         private actions$: ActionsSubject,
         private _cfoPreferencesService: CfoPreferencesService,
-        private _currencyPipe: CurrencyPipe
+        private _currencyPipe: CurrencyPipe,
+        private _lifecycleService: LifecycleSubjectsService
     ) {
         super(injector);
 
@@ -826,10 +835,10 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         this.userPreferencesService.removeLocalModel();
         let cashflowGridSettings$ = this.userPreferencesService.userPreferences$.pipe(first());
         this.bankAccountsService.load();
-        const syncAccounts$ = this.bankAccountsService.syncAccounts$.pipe(first());
 
         const selectedCurrencyId$ = this.store$.pipe(
             select(CurrenciesStoreSelectors.getSelectedCurrencyId),
+            takeUntil(this.destroy$),
             tap((selectedCurrencyId: string) => this.requestFilter.currencyId = selectedCurrencyId)
         );
 
@@ -852,6 +861,18 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             this.updateAfterActivation = true;
         });
 
+        this._cfoPreferencesService.dateRange$.pipe(
+            takeUntil(this.destroy$),
+            switchMap((dateRange) => this.componentIsActivated ? of(dateRange) : this._lifecycleService.activate$.pipe(first(), mapTo(dateRange)))
+        ).subscribe((dateRange: CalendarValuesModel) => {
+            this.dateFilter.items = {
+                from: new FilterItemModel(dateRange.from.value),
+                to: new FilterItemModel(dateRange.to.value)
+            };
+            this._filtersService.change(this.dateFilter);
+        });
+
+        const syncAccounts$ = this.bankAccountsService.syncAccounts$.pipe(first());
         forkJoin(getCashFlowInitialData$, getCategoryTree$, cashflowGridSettings$, syncAccounts$)
             .subscribe(([initialData, categoryTree, cashflowSettings, syncAccounts]) => {
                 /** Initial data handling */
@@ -1018,26 +1039,20 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     initHeadlineConfig() {
         this.headlineConfig = {
             names: [this.l('Cashflow_mainTitle')],
-            onRefresh:  this._cfoService.hasStaticInstance ? undefined : this.refreshDataGrid.bind(this),
+            // onRefresh:  this._cfoService.hasStaticInstance ? undefined : this.refreshDataGrid.bind(this),
+            toggleToolbar: this.toggleToolbar.bind(this),
             iconSrc: './assets/common/icons/chart-icon.svg'
         };
+    }
+
+    toggleToolbar() {
+        this.appService.toolbarToggle();
+        setTimeout(() => this.pivotGrid.instance.repaint(), 0);
     }
 
     initFiltering() {
         this._filtersService.apply(() => {
             for (let filter of this.filters) {
-                if (filter.caption.toLowerCase() === 'date') {
-                    this.monthsDaysLoadedPathes = [];
-                    if (filter.items.from.value)
-                        this.sliderReportPeriod.start = filter.items.from.value.getFullYear();
-                    else
-                        this.sliderReportPeriod.start = this.sliderReportPeriod.minDate;
-
-                    if (filter.items.to.value)
-                        this.sliderReportPeriod.end = filter.items.to.value.getFullYear();
-                    else
-                        this.sliderReportPeriod.end = this.sliderReportPeriod.maxDate;
-                }
                 if (filter.caption.toLowerCase() === 'account') {
                     /** apply filter on top */
                     this.bankAccountsService.applyFilter();
@@ -1132,15 +1147,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     )
                 }
             }),
-            new FilterModel({
-                component: FilterCalendarComponent,
-                caption: 'Date',
-                items: {from: new FilterItemModel(), to: new FilterItemModel()},
-                options: {
-                    allowFutureDates: true,
-                    endDate: moment(new Date()).add(10, 'years').toDate()
-                }
-            }),
+            this.dateFilter,
             new FilterModel({
                 component: FilterCheckBoxesComponent,
                 field: 'businessEntityIds',
@@ -1152,7 +1159,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                         keyExpr: 'id'
                     })
                 }
-                    })
+            })
         ];
     }
 
@@ -1433,9 +1440,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 stubsCashflowDataForAccounts,
                 stubsCashflowDataForAllDays
             );
-            let start = underscore.min(this.cashflowData, function (val) { return val.date; }).date.year();
-            let end = underscore.max(this.cashflowData, function (val) { return val.date; }).date.year();
-            this.setSliderReportPeriodFilterData(start, end);
         } else {
             this.cashflowData = this.getCashflowDataFromTransactions(transactions);
         }
@@ -4523,9 +4527,9 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         let path = cellObj.cell.path || cellObj.cell.columnPath;
         let cellDateInterval = this.formattingDate(path);
         let currentDate = DateHelper.getCurrentUtcDate();
-        return  cellDateInterval.endDate.isAfter(currentDate, 'day') ||
-                currentDate.isBetween(cellDateInterval.startDate, cellDateInterval.endDate, 'day') ||
-                (currentDate.isSame(cellDateInterval.startDate, 'day') && currentDate.isSame(cellDateInterval.endDate, 'day'));
+        return cellDateInterval.endDate.isAfter(currentDate, 'day') ||
+               currentDate.isBetween(cellDateInterval.startDate, cellDateInterval.endDate, 'day') ||
+               (currentDate.isSame(cellDateInterval.startDate, 'day') && currentDate.isSame(cellDateInterval.endDate, 'day'));
     }
 
     handleDataCellDoubleClick(cellObj) {
@@ -5937,38 +5941,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         return commentsWidth > buttonsWidthWithCommentsTitle ? window.innerWidth > 1600 ? '33%' : '23%' : buttonsWidthWithCommentsTitle;
     }
 
-    setReportPeriodFilter(period) {
-        let dateFilter: FilterModel = underscore.find(this.filters, function (f: FilterModel) { return f.caption.toLowerCase() === 'date'; });
-
-        if (period.start) {
-            let from = new Date(period.start + '-01-01');
-            DateHelper.addTimezoneOffset(from);
-            dateFilter.items['from'].setValue(from, dateFilter);
-        } else {
-            dateFilter.items['from'].setValue('', dateFilter);
-        }
-
-        if (period.end) {
-            let end = new Date(period.end + '-12-31');
-            DateHelper.addTimezoneOffset(end);
-            dateFilter.items['to'].setValue(end, dateFilter);
-        } else {
-            dateFilter.items['to'].setValue('', dateFilter);
-        }
-
-        this._filtersService.change(dateFilter);
-    }
-
-    setSliderReportPeriodFilterData(start, end) {
-        let dateFilter: FilterModel = underscore.find(this.filters, function (f: FilterModel) { return f.caption.toLowerCase() === 'date'; });
-        if (dateFilter) {
-            if (!dateFilter.items['from'].value)
-                this.sliderReportPeriod.start = start;
-            if (!dateFilter.items['to'].value)
-                this.sliderReportPeriod.end = end;
-        }
-    }
-
     setBankAccountsFilter(emitFilterChange = false) {
         this.bankAccountsService.setBankAccountsFilter(this.filters, this.syncAccounts, emitFilterChange);
         this.allowChangingForecast = this.bankAccountsService.state.statuses.indexOf(BankAccountStatus.Active) >= 0;
@@ -6232,6 +6204,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             this.pivotGrid.instance.repaint();
             setTimeout(() => this.toggleGridOpacity());
         }
+        this._lifecycleService.activate.next();
 
         /** Load sync accounts (if something change - subscription in ngOnInit fires) */
         this.bankAccountsService.load();
@@ -6249,6 +6222,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
     deactivate() {
         this.toggleGridOpacity();
+        this.dialog.closeAll();
         this.appService.updateToolbar(null);
         this._filtersService.unsubscribe();
         this.synchProgressComponent.deactivate();

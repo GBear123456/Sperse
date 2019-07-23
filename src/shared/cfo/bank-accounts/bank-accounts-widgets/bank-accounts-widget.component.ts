@@ -151,9 +151,7 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
         });
 
         if (!this.isInstanceAdmin && !this.isMemberAccessManage) {
-            this.contextMenuItems = [
-                { text: this.l('Sync_Now'), name: 'sync' }
-            ];
+            this.contextMenuItems = [];
         }
     }
 

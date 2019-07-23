@@ -179,7 +179,8 @@ export class OffersComponent extends AppComponentBase implements OnInit, OnDestr
     initHeadlineConfig() {
         this.headlineConfig = {
             names: [this.l('Offers')],
-            onRefresh: this.refreshDataGrid.bind(this),
+            // onRefresh: this.refreshDataGrid.bind(this),
+            toggleToolbar: this.toggleToolbar.bind(this),
             icon: 'people',
             buttons: [
                 {
@@ -196,6 +197,11 @@ export class OffersComponent extends AppComponentBase implements OnInit, OnDestr
         this.pullContextMenuItems = [
             { text: this.l('Offers_PullAll'), icon: 'arrowdown', selected: false }
         ];
+    }
+
+    toggleToolbar() {
+        this._appService.toolbarToggle();
+        setTimeout(() => this.dataGrid.instance.repaint(), 0);
     }
 
     initToolbarConfig() {

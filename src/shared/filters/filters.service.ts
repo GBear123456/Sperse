@@ -1,8 +1,13 @@
+/** Core imports */
 import { Injectable } from '@angular/core';
+
+/** Third party imports */
 import { Subscription, Subject, BehaviorSubject, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { FilterModel } from './models/filter.model';
 import * as _ from 'underscore';
+
+/** Application imports */
+import { FilterModel } from './models/filter.model';
 
 @Injectable()
 export class FiltersService {

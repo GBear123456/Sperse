@@ -8,6 +8,7 @@
         (onClosed)="bankAccountsService.changeState({selectedBusinessEntitiesIds: $event}, true); getUpdatedDataSource()">
     </selection-filter>
     <synch-progress class="synch-progress" (onComplete)="getUpdatedDataSource()"></synch-progress>
+    <calendar-button></calendar-button>
 </app-headline>
 
 <div [hidden]="!statsData || !statsData.length">

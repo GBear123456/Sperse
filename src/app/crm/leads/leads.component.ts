@@ -127,9 +127,10 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
 
     public headlineConfig = {
         names: [],
-        onRefresh: () => {
-            this.refresh();
-        },
+        // onRefresh: () => {
+        //     this.refresh();
+        // },
+        toggleToolbar: this.toggleToolbar.bind(this),
         buttons: [
             {
                 enabled: this._contactService.checkCGPermission(ContactGroup.Client),
@@ -176,6 +177,11 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             }
         };
         this.searchValue = '';
+    }
+
+    toggleToolbar() {
+        this._appService.toolbarToggle();
+        setTimeout(() => this.dataGrid.instance.repaint(), 0);
     }
 
     contactGroupOptionInit() {

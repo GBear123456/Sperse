@@ -9,6 +9,7 @@
             (onClosed)="onBusinessEntitiesChange($event)">
         </selection-filter>
         <synch-progress class="synch-progress" (onComplete)="showRefreshButton()"></synch-progress>
+        <calendar-button></calendar-button>
     </app-headline>
     <div class="portlet light no-padding margin-bottom-0">
         <div class="portlet-body">
@@ -71,7 +72,7 @@
                         <dxi-column dataField="BusinessEntityId" caption="{{l('BusinessEntities')}}" [lookup]="{allowClearing: false, dataSource: filtersInitialData?.businessEntities, displayExpr: 'name', valueExpr: 'id'}"></dxi-column>
                         <dxi-column caption="{{l('Transactions_CashflowCategoryName')}}"
                                     dataField="CashflowCategoryName"
-                                    dataType="string" 
+                                    dataType="string"
                                     cellTemplate="CashflowCategoryNameTemplate"
                                     cssClass="category">
                         </dxi-column>
@@ -84,7 +85,7 @@
                         <dxi-column dataField="CategoryName" dataType="string" caption="{{l('Transactions_CategoryName')}}" [lookup]="{dataSource: categories}" [visible]="false"></dxi-column>
                         <dxi-column dataField="CashflowSubCategoryName" dataType="string" caption="{{l('Transactions_CashflowSubCategoryName')}}" [visible]="false"></dxi-column>
                         <dxi-column dataField="EndingBalance" dataType="number" cssClass="tabular" caption="{{l('Transactions_EndingBalance')}}" cellTemplate="endBalanceTemplate" [visible]="false"></dxi-column>
-                        <dxi-column dataField="CashFlowTypeName" dataType="string" cellTemplate="CashFlowTypeNameTemplate" cssClass="cashflow-type" alignment="center" 
+                        <dxi-column dataField="CashFlowTypeName" dataType="string" cellTemplate="CashFlowTypeNameTemplate" cssClass="cashflow-type" alignment="center"
                             [lookup]="{dataSource: ['Inflows', 'Outflows']}" [visible]="false" caption="{{l('Transactions_CashFlowType')}}"></dxi-column>
                         <dxi-column dataField="AccountingTypeName" dataType="string" caption="{{l('Transactions_AccountingTypeName')}}" [visible]="false"></dxi-column>
                         <dxi-column dataField="Descriptor" dataType="string" caption="{{l('Transactions_Descriptor')}}" [visible]="false"></dxi-column>

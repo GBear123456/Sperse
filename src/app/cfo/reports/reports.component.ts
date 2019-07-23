@@ -1,6 +1,5 @@
 /** Core imports */
 import { Component, Injector, OnInit, AfterViewInit, OnDestroy, ViewChild, ChangeDetectionStrategy, ChangeDetectorRef, HostListener } from '@angular/core';
-import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material';
@@ -8,22 +7,21 @@ import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { DxTooltipComponent } from 'devextreme-angular/ui/tooltip';
 import { Observable, of } from 'rxjs';
 import { CacheService } from 'ng2-cache-service';
-import moment from 'moment-timezone';
 import { ImageViewerComponent } from 'ng2-image-viewer';
 import '@node_modules/ng2-image-viewer/imageviewer.js';
-import { flatMap, first, switchMap, tap } from 'rxjs/operators';
-import { select, Store } from '@ngrx/store';
+import { flatMap } from 'rxjs/operators';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
 import { FileSizePipe } from '@shared/common/pipes/file-size.pipe';
-import { ReportsServiceProxy, GenerateInput, ReportPeriod, GetReportUrlOutput } from '@shared/service-proxies/service-proxies';
+import { ReportsServiceProxy, ReportPeriod, GetReportUrlOutput } from '@shared/service-proxies/service-proxies';
 import { BankAccountsService } from '@shared/cfo/bank-accounts/helpers/bank-accounts.service';
 import { StringHelper } from '@root/shared/helpers/StringHelper';
 import { RequestHelper } from '@root/shared/helpers/RequestHelper';
 import { ReportViewType } from './report-view-type.enum';
-import { CfoStore, CurrenciesStoreSelectors } from '@app/cfo/store';
 import { GenerateReportDialogComponent } from './generate-report-dialog/generate-report-dialog.component';
+import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
+import { AppService } from '@app/app.service';
 
 @Component({
     templateUrl: './reports.component.html',
@@ -75,13 +73,13 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
 
     constructor(
         private injector: Injector,
+        private _appService: AppService,
         private _dialog: MatDialog,
         private _fileSizePipe: FileSizePipe,
         private _changeDetector: ChangeDetectorRef,
         private cacheService: CacheService,
         public reportsProxy: ReportsServiceProxy,
-        public bankAccountsService: BankAccountsService,
-        private store$: Store<CfoStore.State>
+        public bankAccountsService: BankAccountsService
     ) {
         super(injector);
         this.dataSource = {
@@ -240,6 +238,7 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
     }
 
     calculateFileSizeValue = (data) => this._fileSizePipe.transform(data.Size);
+
     numerizeFileSizeSortValue = (data) => +data.Size;
 
     onDataGridInit(event) {
@@ -389,24 +388,18 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
     }
 
     onMenuClick(item) {
-        let period = {
-            Monthly: 'month',
-            Quarterly: 'quarter',
-            Annual: 'year'
-        }[item.period];
-
         this.selectedPeriod = item.period;
-
+        this.dataGrid.instance.clearFilter();
         this.processFilterInternal();
         this.dataGrid.instance.repaint();
 
         if (this.openReportMode) {
             this.openReportMode = false;
             this._changeDetector.markForCheck();
-        if (this._dialog) {
-            this._dialog.closeAll();
+            if (this._dialog) {
+                this._dialog.closeAll();
+            }
         }
-    }
     }
 
     @HostListener('document:keydown', ['$event'])

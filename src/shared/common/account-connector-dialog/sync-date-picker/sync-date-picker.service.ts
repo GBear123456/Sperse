@@ -13,7 +13,7 @@ import { DateHelper } from '@shared/helpers/DateHelper';
 
 @Injectable()
 export class SyncDatePickerService {
-    private _maxSyncDate = new ReplaySubject<moment.Moment>(1);    
+    private _maxSyncDate = new ReplaySubject<moment.Moment>(1);
     maxSyncDate$: Observable<moment.Moment> = this._maxSyncDate.asObservable();
 
     constructor(
@@ -23,10 +23,10 @@ export class SyncDatePickerService {
         this.invalidate();
     }
 
-    setMaxVisibleDate(date: moment) { 
+    setMaxVisibleDate(date: moment) {
         if (this._cfoService.initialized) {
             date = DateHelper.getDateWithoutTime(date);
-            this._instanceService.setMaxVisibleDate(this._cfoService.instanceType as InstanceType, 
+            this._instanceService.setMaxVisibleDate(this._cfoService.instanceType as InstanceType,
                 this._cfoService.instanceId, date).subscribe(() => this._maxSyncDate.next(date));
         }
     }
@@ -36,7 +36,7 @@ export class SyncDatePickerService {
             this._cfoService.instanceType as InstanceType, this._cfoService.instanceId);
     }
 
-    invalidate() {  
+    invalidate() {
         let sub;
         if (this._cfoService.initialized)
             sub = this.getMaxVisibleDate();

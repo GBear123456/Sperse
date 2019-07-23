@@ -73,7 +73,8 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     private formatting = AppConsts.formatting;
     public headlineConfig = {
         names: [this.l('Orders')],
-        onRefresh: this.processFilterInternal.bind(this),
+        // onRefresh: this.processFilterInternal.bind(this),
+        toggleToolbar: this.toggleToolbar.bind(this),
         icon: 'briefcase',
         buttons: [
             {
@@ -114,6 +115,11 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
 
     ngOnInit() {
         this.activate();
+    }
+
+    toggleToolbar() {
+        this._appService.toolbarToggle();
+        setTimeout(() => this.dataGrid.instance.repaint(), 0);
     }
 
     ngAfterViewInit(): void {

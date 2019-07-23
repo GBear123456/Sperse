@@ -94,7 +94,8 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     public headlineConfig = {
         names: [this.l('Partners')],
         icon: 'people',
-        onRefresh: this.invalidate.bind(this),
+        // onRefresh: this.invalidate.bind(this),
+        toggleToolbar: this.toggleToolbar.bind(this),
         buttons: [
             {
                 enabled: this._contactService.checkCGPermission(ContactGroup.Partner),
@@ -139,6 +140,11 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         this._pipelineService.stageChange.asObservable().subscribe((lead) => {
             this.dependencyChanged = (lead.Stage == _.last(this._pipelineService.getStages(AppConsts.PipelinePurposeIds.lead)).name);
         });
+    }
+
+    toggleToolbar() {
+        this._appService.toolbarToggle();
+        setTimeout(() => this.dataGrid.instance.repaint(), 0);
     }
 
     private paramsSubscribe() {
