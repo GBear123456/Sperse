@@ -40,7 +40,7 @@
                     headerCellTemplate="actionsCellTemplate">
                 </dxi-column>
                 <dxi-column dataField="FileName" caption="{{l('Reports_FileName')}}"></dxi-column>
-                <dxi-column dataField="Size" [calculateSortValue]="numerizeFileSizeSortValue" caption="{{l('Reports_Size')}}" [calculateCellValue]="calculateFileSizeValue" [allowSearch]="false"></dxi-column>
+                <dxi-column dataField="Size" [calculateSortValue]="numerizeFileSizeSortValue" caption="{{l('Reports_Size')}}" [calculateCellValue]="calculateFileSizeValue" [allowSearch]="false" [allowFiltering]="false"></dxi-column>
                 <dxi-column dataField="CreationTime" caption="{{l('Reports_Created')}}" cssClass="tabular" cellTemplate="dateTimeCell" [allowSearch]="false" sortOrder="desc"></dxi-column>
                 <dxi-column dataField="From" caption="{{l('Reports_PeriodFrom')}}" cssClass="tabular" cellTemplate="dateCell" [allowSearch]="false"></dxi-column>
                 <dxi-column dataField="To" caption="{{l('Reports_PeriodTo')}}" cssClass="tabular" cellTemplate="dateCell" [allowSearch]="false"></dxi-column>
