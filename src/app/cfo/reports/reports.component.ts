@@ -388,24 +388,18 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
     }
 
     onMenuClick(item) {
-        let period = {
-            Monthly: 'month',
-            Quarterly: 'quarter',
-            Annual: 'year'
-        }[item.period];
-
         this.selectedPeriod = item.period;
-
+        this.dataGrid.instance.clearFilter();
         this.processFilterInternal();
         this.dataGrid.instance.repaint();
 
         if (this.openReportMode) {
             this.openReportMode = false;
             this._changeDetector.markForCheck();
-        if (this._dialog) {
-            this._dialog.closeAll();
+            if (this._dialog) {
+                this._dialog.closeAll();
+            }
         }
-    }
     }
 
     @HostListener('document:keydown', ['$event'])
