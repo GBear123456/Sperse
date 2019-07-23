@@ -53,7 +53,8 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
     public headlineConfig = {
         names: [this.l('Users')],
         icon: 'people',
-        onRefresh: () => this.invalidate(),
+        // onRefresh: () => this.invalidate(),
+        toggleToolbar: this.toggleToolbar.bind(this),
         buttons: [
             {
                 enabled: this.isGranted('Pages.Administration.Users.Create'),
@@ -139,6 +140,11 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
         });
 
         this.activate();
+    }
+
+    toggleToolbar() {
+        this._appService.toolbarToggle();
+        setTimeout(() => this.dataGrid.instance.repaint(), 0);
     }
 
     initToolbarConfig() {

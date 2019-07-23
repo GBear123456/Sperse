@@ -42,7 +42,8 @@ export class RolesComponent extends AppComponentBase implements OnDestroy {
     public headlineConfig = {
         names: [this.l('Roles')],
         icon: 'people',
-        onRefresh: this.refreshDataGrid.bind(this),
+        // onRefresh: this.refreshDataGrid.bind(this),
+        toggleToolbar: this.toggleToolbar.bind(this),
         buttons: [
             {
                 enabled: this.isGranted('Pages.Administration.Roles.Create'),
@@ -100,6 +101,11 @@ export class RolesComponent extends AppComponentBase implements OnDestroy {
                 });
             }
         });
+    }
+    
+    toggleToolbar() {
+        this._appService.toolbarToggle();
+        setTimeout(() => this.dataGrid.instance.repaint(), 0);
     }
 
     initToolbarConfig() {

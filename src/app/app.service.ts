@@ -1,5 +1,6 @@
 /** Core imports */
-import { Injectable, Injector } from '@angular/core';
+import { Inject, Injectable, Injector } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
 
 /** Third party imports */
 import { Subject, Observable } from 'rxjs';
@@ -53,7 +54,10 @@ export class AppService extends AppServiceBase {
     private _subscriptionBarsClosed = {};
     private _subscriptionBarVisible: Boolean;
 
-    constructor(injector: Injector) {
+    constructor(
+        injector: Injector,
+        @Inject(DOCUMENT) private document: Document,
+    ) {
         super(
             injector,
             'Admin',
@@ -376,6 +380,11 @@ export class AppService extends AppServiceBase {
 
     checkCFOClientAccessPermission() {
         return this.permission.isGranted('Pages.CFO.MembersAdministration.AllMemberInstancesAdmin');
+    }
+
+    toolbarToggle(toolbarIsHidden = false) {
+        toolbarIsHidden ?  this.toolbarIsHidden = toolbarIsHidden : this.toolbarIsHidden = !this.toolbarIsHidden;
+        this.toolbarIsHidden ? this.document.body.classList.add('toolbar-hidden') : this.document.body.classList.remove('toolbar-hidden');
     }
 
     toolbarSubscribe(callback) {

@@ -150,7 +150,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         public dialog: MatDialog
     ) {
         super(injector);
-
+        _appService.toolbarIsHidden = true;
         if (filtersService.fixed)
             this._categoriesShowed = false;
 
@@ -369,11 +369,17 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     initHeadlineConfig() {
         this.headlineConfig = {
             names: [this.l('Transactions')],
-            onRefresh: this._cfoService.hasStaticInstance ? undefined: this.refreshDataGrid.bind(this),
+            // onRefresh: this._cfoService.hasStaticInstance ? undefined : this.refreshDataGrid.bind(this),
+            toggleToolbar: this.toggleToolbar.bind(this),
             iconSrc: './assets/common/icons/credit-card-icon.svg',
             class: this.noRefreshedAfterSync ? 'need-refresh' : 'no-need-refresh'
         };
         this._changeDetectionRef.detectChanges();
+    }
+
+    toggleToolbar() {
+        this._appService.toolbarToggle();
+        setTimeout(() => this.dataGrid.instance.repaint(), 0);
     }
 
     initToolbarConfig() {

@@ -24,6 +24,7 @@ import { RequestHelper } from '@root/shared/helpers/RequestHelper';
 import { ReportViewType } from './report-view-type.enum';
 import { CfoStore, CurrenciesStoreSelectors } from '@app/cfo/store';
 import { GenerateReportDialogComponent } from './generate-report-dialog/generate-report-dialog.component';
+import { AppService } from '@app/app.service';
 
 @Component({
     templateUrl: './reports.component.html',
@@ -75,6 +76,7 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
 
     constructor(
         private injector: Injector,
+        private _appService: AppService,
         private _dialog: MatDialog,
         private _fileSizePipe: FileSizePipe,
         private _changeDetector: ChangeDetectorRef,

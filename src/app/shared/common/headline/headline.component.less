@@ -94,7 +94,7 @@
         margin-left: 5px;
         .vertical-delimiter {
             width: 30px;
-            height: 0px;
+            height: 0;
             position: relative;
             display: inline-block;
             vertical-align: top;
@@ -109,7 +109,8 @@
                 top: -10px;
             }
         }
-        .refresh-button {
+        .refresh-button,
+        .toggle-button {
             width: 44px;
             height: 44px;
             margin: 5px;
@@ -118,6 +119,14 @@
             cursor: pointer;
             vertical-align: bottom;
             background: url("../../../../assets/common/icons/refresh-btn.svg") no-repeat center;
+        }
+        
+        .toggle-button {
+            width: 42px;
+            height: 42px;
+            border: 1px solid #e6eaed;
+            border-radius: 50%;
+            background: #fff url('../../../../assets/common/icons/follow-icon.svg') no-repeat center;
         }
 
         &.need-refresh {

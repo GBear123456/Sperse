@@ -30,7 +30,8 @@ export class LanguagesComponent extends AppComponentBase implements OnDestroy {
     public headlineConfig = {
         names: [this.l('Languages')],
         icon: 'flag',
-        onRefresh: this.refreshDataGrid.bind(this),
+        // onRefresh: this.refreshDataGrid.bind(this),
+        toggleToolbar: this.toggleToolbar.bind(this),
         buttons: [
             {
                 enabled: this.isGranted('Pages.Administration.Languages.Create') && this._appService.isHostTenant,
@@ -101,6 +102,11 @@ export class LanguagesComponent extends AppComponentBase implements OnDestroy {
                 }
             }
         ].filter(Boolean);
+    }
+    
+    toggleToolbar() {
+        this._appService.toolbarToggle();
+        setTimeout(() => this.dataGrid.instance.repaint(), 0);
     }
 
     showActionsMenu(event) {
