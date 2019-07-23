@@ -88,9 +88,8 @@ export class GenerateReportDialogComponent implements OnInit {
     }
 
     applyBusinesEntity() {
-        this.dataGrid.instance.getSelectedRowKeys().forEach((item) => {
-            this.selectedBusinessEntityIds.push(item.id);
-        });
+        this.bankAccountsService.changeSelectedBusinessEntities(
+            this.selectedBusinessEntityIds = this.dataGrid.instance.getSelectedRowKeys());
     }
 
     generateReport() {
