@@ -9,7 +9,7 @@
             (onClosed)="bankAccountsService.changeState({selectedBusinessEntitiesIds: $event}, true)">
         </selection-filter>
         <synch-progress [showSyncAccountButton]="true" class="synch-progress" (onSyncStarted)="refresh()" (onComplete)="refresh()"></synch-progress>
-        <sync-date-picker></sync-date-picker>
+<!--        <sync-date-picker></sync-date-picker>-->
     </app-headline>
     <div class="content-wrap">
         <setup-steps SelectedStepIndex="0"></setup-steps>

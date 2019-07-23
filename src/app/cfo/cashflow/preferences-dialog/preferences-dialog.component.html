@@ -5,11 +5,11 @@
               *ngIf="active">
     <dx-scroll-view showScrollbar="onHover">
         <div class="modal-body" *ngIf="active">
-            <div class="section">
+            <div class="section clearfix">
                 <div class="header header-general">
                     {{ls.l("CashFlowGrid_UserPrefs_General")}}
                 </div>
-                <div class="section-body container-fluid">
+                <div class="section-body container-fluid clearfix">
                     <div class="row row-header">
                         <div class="col-xs-4"></div>
                         <div *ngFor="let colHeader of getEnumKeys(GeneralScope)" class="col-xs-1">{{ls.l('CashFlowGrid_UserPrefs_General_' + colHeader)}}</div>
@@ -80,7 +80,7 @@
                     </div>
                 </div>
             </div>
-            <div class="section">
+            <div class="section clearfix">
                 <div class="header header-visuals">
                     {{ls.l("CashFlowGrid_UserPrefs_Visuals")}}
                 </div>
@@ -113,7 +113,7 @@
                     </div>
                 </div>
             </div>
-            <div class="section">
+            <div class="section clearfix">
                 <div class="header header-currency">
                     {{ls.l("CashFlowGrid_UserPrefs_L11nAndCurrency")}}
                 </div>
@@ -136,6 +136,16 @@
                                            [(value)]="model.localizationAndCurrency.currency">
                             </dx-select-box>
                         </div>
+                    </div>
+                </div>
+            </div>
+            <div class="section clearfix">
+                <div class="header header-date">
+                    {{ls.l("Cut-off date")}}
+                </div>
+                <div class="section-body">
+                    <div class="dx-field left-field sync-date-picker">
+                        <sync-date-picker></sync-date-picker>
                     </div>
                 </div>
             </div>
