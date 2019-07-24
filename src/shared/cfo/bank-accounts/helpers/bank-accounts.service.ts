@@ -208,7 +208,7 @@ export class BankAccountsService {
                 switchMap(() => this.applyFilter$),
                 withLatestFrom(this.filteredSyncAccounts$, (applyForLink, filteredAccounts) => {
                     if (!applyForLink && this.acceptFilterOnlyOnApply &&
-                        !filteredAccounts.some(item => item['selected'])
+                        !this.state.selectedBankAccountIds.length
                     ) {
                         let filteredAccountsIds = [];
                         filteredAccounts.forEach(account => {
