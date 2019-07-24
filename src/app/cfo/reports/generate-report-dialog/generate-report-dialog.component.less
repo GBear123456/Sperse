@@ -1,4 +1,7 @@
 :host {   
+    modal-dialog {
+        width: 600px;
+    }
     .step1-container {
         height: 100%;
         padding: 20px 30px 30px 30px;
@@ -12,18 +15,14 @@
     }
 }
 
-/deep/ .title-wrapper {
-    width: 380px;
-}
-
 /deep/ .generate-report {
+    .cdk-overlay-pane.slider {
+            min-width: 600px;
+    }
     mat-dialog-container {
         width: 600px;
     }
-}
-
-/deep/ .cdk-overlay-container {
-    .cdk-overlay-pane.slider {
-            min-width: 600px;
+    .title-wrapper {
+        width: 380px;
     }
 }
