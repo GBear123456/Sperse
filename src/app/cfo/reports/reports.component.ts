@@ -170,10 +170,7 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
                 location: 'after', items: [
                     {
                         name: 'fullscreen',
-                        action: () => {
-                            const fullScreenTarget = this.getViewedReportElement();
-                            this.toggleFullscreen(fullScreenTarget);
-                        }
+                        action: this.showReportFullscreen.bind(this)
                     }
                 ]
             },
@@ -186,6 +183,10 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
                 ]
             }
         ];
+    }
+
+    showReportFullscreen() {
+        this.toggleFullscreen(this.getViewedReportElement());
     }
 
     getViewedReportElement() {
@@ -301,9 +302,9 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
                     let reader = new FileReader();
                     reader.addEventListener('loadend', () => {
                         this.openReportMode = true;
+                        this.previewContent = StringHelper.getBase64(reader.result);
+                        setTimeout(() => this.showReportFullscreen(), 300);
                         this._changeDetector.markForCheck();
-                        let content = StringHelper.getBase64(reader.result);
-                        this.previewContent = content;
                     });
                     reader.readAsDataURL(blob);
                 super.finishLoading(true);
@@ -364,8 +365,10 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
 
     closeReport() {
         this.openReportMode = false;
-        this._changeDetector.markForCheck();
+        this.previewContent = undefined;
         this.viewerToolbarConfig = [];
+        this._changeDetector.markForCheck();
+        setTimeout(() => this.dataGrid.instance.repaint());
     }
 
     onContentReady() {

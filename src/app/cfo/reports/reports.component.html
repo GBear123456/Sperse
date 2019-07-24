@@ -63,7 +63,7 @@
             </dx-data-grid>
         </div>
 
-        <div [hidden]="!openReportMode" class="report-viewer-wrapper">
+        <div *ngIf="openReportMode" class="report-viewer-wrapper">
             <app-toolbar [config]="viewerToolbarConfig"></app-toolbar>
             <div class="reportView">
                 <app-image-viewer
@@ -77,6 +77,5 @@
         <ng-template #nodata>
             <app-no-data [showLink]="false"></app-no-data>
         </ng-template>
-
     </div>
 </div>
