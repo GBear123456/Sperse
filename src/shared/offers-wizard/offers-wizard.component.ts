@@ -36,6 +36,7 @@ import { ApplyOfferDialogComponent } from '@root/personal-finance/shared/offers/
 import { ConditionsModalComponent } from '@shared/common/conditions-modal/conditions-modal.component';
 import { environment } from '@root/environments/environment';
 import { InputStatusesService } from '@shared/utils/input-statuses.service';
+import { AppHttpConfiguration } from '@shared/http/appHttpConfiguration';
 
 @Component({
     selector: 'app-offers-wizard',
@@ -80,6 +81,7 @@ export class OffersWizardComponent implements OnInit {
         private offersServiceProxy: OfferServiceProxy,
         private dialog: MatDialog,
         public inputStatusesService: InputStatusesService,
+        private appHttpConfiguration: AppHttpConfiguration,
         @Inject(MAT_DIALOG_DATA) public data: any
     ) {
         this.dialogRef = <any>injector.get(MatDialogRef);
@@ -137,6 +139,7 @@ export class OffersWizardComponent implements OnInit {
         }
         this.submitApplicationProfileInput.legalInformation.isTCPAChecked = true;
         this.submitApplicationProfileInput.campaignId = this.data.campaignId;
+        this.appHttpConfiguration.avoidErrorHandling = true;
         this.offersServiceProxy.submitApplication(this.submitApplicationProfileInput).subscribe(
             (result: SubmitApplicationOutput) => {
                 if (result) {
@@ -146,10 +149,22 @@ export class OffersWizardComponent implements OnInit {
             },
             (error) => {
                 if (this.data.campaignId) applyOfferDialog.close();
-            });
+                if (error && error.validationErrors) {
+                    let data = '<div class="scroll-zone">';
+                    error.validationErrors.forEach(item => {
+                        data += `<p><b>${item.members[0]}</b> - ${item.message}</p>`;
+                    });
+                    data += '</div>';
+                    abp.message.error(data, 'Your request is not valid!\nThe following errors were detected during validation.', true);
+                } else {
+                    abp.message.error(null, error.message);
+                }
+            },
+            () => this.appHttpConfiguration.avoidErrorHandling = false
+        );
     }
 
     openConditionsDialog(data: any) {
         this.dialog.open(ConditionsModalComponent, {panelClass: ['slider', 'footer-slider'], data: data});
-}
+    }
 }
