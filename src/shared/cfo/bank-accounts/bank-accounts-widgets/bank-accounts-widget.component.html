@@ -14,8 +14,10 @@
                     </dx-check-box>
                     <selection-filter
                         [allItemsText]="l('All_Entities')"
-                        [title]=""
+                        title=""
                         popupWidth="280px"
+                        [maxDisplayedItems]="0"
+                        [showSelectedCount]="false"
                         [selectionList]="bankAccountsService.businessEntities$ | async"
                         [selectedItems]="bankAccountsService.selectedBusinessEntitiesIds$ | async"
                         (selectionChanged)="entitiesItemsChanged($event)">
@@ -24,10 +26,11 @@
                 <div class="col-sm-3 types">
                     <selection-filter
                         [allItemsText]="l('All_Types')"
-                        [title]=""
+                        title=""
                         popupWidth="250px"
+                        [showSelectedCount]="false"
                         [allSelectedTitle]="true"
-                        [itemsText]="l('Type')"
+                        [itemsText]="l('Type')"                        
                         [selectionList]="bankAccountsService.existingBankAccountsTypesWithFilteredCounts$ | async"
                         [selectedItems]="bankAccountsService.selectedBankAccountTypes$ | async"
                         (selectionChanged)="bankAccountTypesChanged($event)">
@@ -36,8 +39,9 @@
                 <div class="col-sm-4 is-active-filter">
                     <selection-filter
                         [allItemsText]="l('All_Statuses')"
-                        [title]=""
+                        title=""
                         popupWidth="150px"
+                        [showSelectedCount]="false"
                         [itemsText]="l('Statuses')"
                         [allSelectedTitle]="true"
                         [selectionList]="bankAccountsService.allStatuses"

@@ -10,6 +10,8 @@ export class SelectionFilterComponent {
     @Input() title;
     @Input() allItemsText;
     @Input() selectionList = [];
+    @Input() maxDisplayedItems = 1;
+    @Input() showSelectedCount = true;
     @Input() allSelectedTitle = false;
     @Input() selectedItems: any[] = [];
     @Input() highlightParentField = 'hasChildren';
@@ -30,8 +32,16 @@ export class SelectionFilterComponent {
         let selectedCount = this.selectedItems.length,
             totalCount = this.selectionList.length;
         return selectedCount ? (this.allSelectedTitle && selectedCount == totalCount
-            ? this.allItemsText : this.selectionList[0].name + ' +' + (selectedCount - 1)) : this.allItemsText;
+            ? this.allItemsText : this.getItemsTitle()) : this.allItemsText;
     }
+
+    getItemsTitle() {
+        let firstSelected = this.selectionList.find(
+            item => item.id == this.selectedItems[0]);
+        return this.showSelectedCount ? 
+            firstSelected.name + ' +' + (this.selectedItems.length - 1)
+            : this.localization.l('Any') + ' ' + this.itemsText;
+    }    
 
     onMultiTagPreparing(e) {
         e.text = this.getSelectedTitle();
