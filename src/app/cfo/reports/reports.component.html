@@ -52,7 +52,7 @@
                     {{ cellData.value | date: formatting.dateTime : userTimezone }}
                 </div>
                 <div *dxTemplate="let cellData of 'dateCell'">
-                    {{ cellData.value | date: formatting.date: userTimezone }}
+                    {{ cellData.value | date: formatting.date }}
                 </div>
                 <div *dxTemplate="let data of 'title'">
                     <h2 class="title">{{l('Documents')}}</h2>

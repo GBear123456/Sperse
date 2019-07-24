@@ -36,11 +36,11 @@ export class GenerateReportDialogComponent implements OnInit {
 
     selectedBusinessEntityIds: any = [];
 
-    dateFrom = moment().subtract(1, 'month').startOf('month');
-    dateTo = moment().subtract(1, 'month').endOf('month');
+    dateFrom = moment.utc().subtract(1, 'month').startOf('month');
+    dateTo = moment.utc().subtract(1, 'month').endOf('month');
     calendarData = {
-        from: { value: DateHelper.addTimezoneOffset(this.dateFrom.toDate(), true) },
-        to: { value: DateHelper.addTimezoneOffset(this.dateTo.toDate(), true) },
+        from: { value: DateHelper.addTimezoneOffset(this.dateFrom.toDate()) },
+        to: { value: DateHelper.addTimezoneOffset(this.dateTo.toDate()) },
         options: { }
     };
 
@@ -109,7 +109,7 @@ export class GenerateReportDialogComponent implements OnInit {
             switchMap(currencyId =>
                 this.reportsProxy.generate(<any>this.data.instanceType, this.data.instanceId, new GenerateInput({
                     from: DateHelper.getDateWithoutTime(this.dateFrom),
-                    to: DateHelper.getDateWithoutTime(this.dateTo).subtract(1, 'second'),
+                    to: DateHelper.getDateWithoutTime(this.dateTo),
                     period: this.data.period,
                     currencyId,
                     businessEntityIds: this.selectedBusinessEntityIds,
@@ -124,8 +124,8 @@ export class GenerateReportDialogComponent implements OnInit {
     }
 
     applyDateRange() {
-        let dateFrom = this.calendarData.from.value && DateHelper.removeTimezoneOffset(this.calendarData.from.value, true, 'from');
-        let dateTo = this.calendarData.to.value && DateHelper.removeTimezoneOffset(this.calendarData.to.value, true, 'to');
+        let dateFrom = this.calendarData.from.value && DateHelper.removeTimezoneOffset(this.calendarData.from.value);
+        let dateTo = this.calendarData.to.value && DateHelper.removeTimezoneOffset(this.calendarData.to.value);
         if ((this.dateTo ? this.dateTo.diff(dateTo, 'days') : dateTo) ||
             (this.dateFrom ? this.dateFrom.diff(dateFrom, 'days') : dateFrom)
         ) {
