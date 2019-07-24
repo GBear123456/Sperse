@@ -18,6 +18,7 @@
                         popupWidth="280px"
                         [maxDisplayedItems]="0"
                         [showSelectedCount]="false"
+                        [staticItemsText]="l('Entities')"
                         [selectionList]="bankAccountsService.businessEntities$ | async"
                         [selectedItems]="bankAccountsService.selectedBusinessEntitiesIds$ | async"
                         (selectionChanged)="entitiesItemsChanged($event)">

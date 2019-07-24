@@ -9,6 +9,7 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 export class SelectionFilterComponent {
     @Input() title;
     @Input() allItemsText;
+    @Input() staticItemsText;
     @Input() selectionList = [];
     @Input() maxDisplayedItems = 1;
     @Input() showSelectedCount = true;
@@ -29,6 +30,9 @@ export class SelectionFilterComponent {
     }
 
     getSelectedTitle() {
+        if (this.staticItemsText)
+            return this.staticItemsText;
+  
         let selectedCount = this.selectedItems.length,
             totalCount = this.selectionList.length;
         return selectedCount ? (this.allSelectedTitle && selectedCount == totalCount
