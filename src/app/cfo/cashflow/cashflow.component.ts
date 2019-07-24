@@ -1451,7 +1451,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         if (this.cashflowData && this.cashflowData.length) {
             this.cashflowData.slice().forEach(item => {
                 if (item.initialDate.format('MM.YYYY') === startDate.format('MM.YYYY') &&
-                    item.adjustmentStartingBalanceTotal !== AdjustmentType._2) {
+                    item.adjustmentStartingBalanceTotal != AdjustmentType._2) {
                     this.cashflowData.splice(this.cashflowData.indexOf(item), 1);
                 }
             });
@@ -1460,7 +1460,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         if (this.adjustmentsList && this.adjustmentsList.length) {
             this.adjustmentsList.slice().forEach(item => {
                 if (item.initialDate.format('MM.YYYY') === startDate.format('MM.YYYY') &&
-                    item.adjustmentStartingBalanceTotal !== AdjustmentType._2) {
+                    item.adjustmentStartingBalanceTotal != AdjustmentType._2) {
                     this.adjustmentsList.splice(this.cashflowData.indexOf(item), 1);
                 }
             });
@@ -1640,7 +1640,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 /** @todo Remove adjustment list for the months and create another for days */
                 if (transactionObj.cashflowTypeId === StartedBalance) {
                     this.adjustmentsList.push({...transactionObj});
-                    transactionObj.cashflowTypeId = Total;
                 }
             } else {
                 /** @todo change reset for some normal prop */
@@ -3262,12 +3261,15 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
             if (this.isStartingBalanceDataColumn(cell, area)) {
                 let elements = this.adjustmentsList.filter(cashflowItem => {
-                    return (cell.rowPath[1] === CategorizationPrefixes.AccountName + cashflowItem.accountId || (cell.rowPath.length === 1 && cell.rowPath[0] === CategorizationPrefixes.CashflowType + StartedBalance)) &&
-                        cell.columnPath.every((fieldValue, index) => {
-                        let field = this.pivotGrid.instance.getDataSource().getAreaFields('column', true)[index];
-                        let dateMethod = field.groupInterval === 'day' ? 'date' : field.groupInterval;
-                            return field.dataType !== 'date' || (field.groupInterval === 'month' ? cashflowItem.initialDate[dateMethod]() + 1 : cashflowItem.initialDate[dateMethod]()) === cell.columnPath[index];
-                    });
+                    return cashflowItem.adjustmentType == AdjustmentType._0
+                           && (
+                               cell.rowPath[1] === CategorizationPrefixes.AccountName + cashflowItem.accountId
+                               || (
+                                   cell.rowPath.length === 1
+                                   && cell.rowPath[0] === CategorizationPrefixes.CashflowType + StartedBalance
+                               )
+                            ) &&
+                           this.cellIsInPeriod(cashflowItem.initialDate, cell.columnPath);
                 });
                 if (elements.length) {
                     let sum = elements.reduce((x, y) => x + y.amount, 0);
@@ -3324,6 +3326,11 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         },
         function() { return JSON.stringify(arguments); }
     );
+
+    private cellIsInPeriod(cellDate: moment.Moment, columnPath: string[]): boolean {
+        const period = this.formattingDate(columnPath);
+        return cellDate.isBetween(period.startDate, period.endDate, 'days', '[]');
+    }
 
     cellIsHistorical(cell) {
         let path = cell.path || cell.columnPath;
@@ -4192,27 +4199,31 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             if (!cellObj.cell.expanded) {
                 let pathForMonth = isMonthHeaderCell ? cellObj.cell.path : cellObj.cell.path.slice(0, -1);
                 if (!this.monthsDaysLoadedPathes.some(arr => arr.toString() === pathForMonth.toString())) {
-                    abp.ui.setBusy();
+                    this.startLoading();
                     /** Prevent default expanding */
                     this._cashflowServiceProxy
                         .getStats(InstanceType[this.instanceType], this.instanceId, requestFilter)
                         .pipe(pluck('transactionStats'))
-                        .subscribe((transactions: any) => {
+                        .subscribe(
+                            (transactions: any) => {
 
-                            /** Update cashflow data with the daily transactions */
-                            this.handleDailyCashflowData(transactions, requestFilter.startDate, requestFilter.endDate);
+                                /** Update cashflow data with the daily transactions */
+                                this.handleDailyCashflowData(transactions, requestFilter.startDate, requestFilter.endDate);
 
-                            /** Reload the cashflow */
-                            this.pivotGrid.instance.getDataSource().reload();
+                                /** Reload the cashflow */
+                                this.pivotGrid.instance.getDataSource().reload();
 
-                            /** Mark the month as already expanded to avoid double data loading */
-                            this.monthsDaysLoadedPathes.push(pathForMonth);
+                                /** Mark the month as already expanded to avoid double data loading */
+                                this.monthsDaysLoadedPathes.push(pathForMonth);
 
-                            /** If month is not current month - expand it into days instead of total */
-                            if (!monthIsCurrent && this.projectedFieldIsVisible()) {
-                                this.expandMonthProjectedChilds(cellObj);
-                            }
-                        });
+                                /** If month is not current month - expand it into days instead of total */
+                                if (!monthIsCurrent && this.projectedFieldIsVisible()) {
+                                    this.expandMonthProjectedChilds(cellObj);
+                                }
+                            },
+                            () => {},
+                            () => this.finishLoading()
+                        );
                 } else {
                     /** If month is not current month - expand it into days instead of total */
                     if (!monthIsCurrent && this.projectedFieldIsVisible()) {
@@ -4987,7 +4998,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
             /** If the column is starting balance column but without prev - calculate */
             if (this.isStartingBalanceAccountCell(summaryCell, cellRow)) {
-                return this.getCurrentValueForStartingBalanceCell(summaryCell);
+                return this.getCurrentValueForStartingBalanceCell(summaryCell, true);
             }
 
             /** For proper grand total calculation and proper sorting
@@ -5011,7 +5022,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             }
 
             if (this.isCellIsStartingBalanceSummary(summaryCell, cellRow, cellValue)) {
-                return this.getCurrentValueForStartingBalanceCell(summaryCell, false);
+                return this.getCurrentValueForStartingBalanceCell(summaryCell, true);
             }
 
             return this.cellRowIsNotEmpty(cellRow, cellValue) ? summaryCell.value() || 0 : null;
@@ -5131,8 +5142,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         let cellData = <any>this.getCellData(summaryCell, summaryCell.value(summaryCell.field('row')).slice(2), StartedBalance);
         if (!getWholePeriod) {
             cellData.quarter = cellData.quarter || 1,
-                cellData.month = cellData.month || 1,
-                cellData.day = cellData.day || 1;
+            cellData.month = cellData.month || 1,
+            cellData.day = cellData.day || 1;
         }
         return this.calculateCellValue(cellData, this.adjustmentsList);
     }
@@ -5315,8 +5326,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     isColumnGrandTotal(summaryCell, cellRow) {
-        return cellRow !== null &&
-               summaryCell.value(summaryCell.field('row')) === PT;
+        return cellRow !== null && summaryCell.value(summaryCell.field('row')) === PT;
     }
 
     isRowGrandTotal(summaryCell) {
