@@ -63,7 +63,9 @@ export class AppConsts {
     static readonly masks = {
         phone: '+1 (000)-000-0000',
         ssn: '000-00-0000',
-        taxNumber: '00-0000000'
+        taxNumber: '00-0000000',
+        zipCode: '00000',
+        phoneExt: '99999'
     };
 
     static readonly formatting = {

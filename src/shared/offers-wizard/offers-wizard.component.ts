@@ -35,6 +35,7 @@ import { DateHelper } from '@shared/helpers/DateHelper';
 import { ApplyOfferDialogComponent } from '@root/personal-finance/shared/offers/apply-offer-modal/apply-offer-dialog.component';
 import { ConditionsModalComponent } from '@shared/common/conditions-modal/conditions-modal.component';
 import { environment } from '@root/environments/environment';
+import { InputStatusesService } from '@shared/utils/input-statuses.service';
 
 @Component({
     selector: 'app-offers-wizard',
@@ -58,12 +59,6 @@ export class OffersWizardComponent implements OnInit {
         bodyUrl: this.domain + '/documents/policy.html',
         downloadDisabled: true
     };
-    private readonly INPUT_MASK = {
-        ssn: '000-00-0000',
-        phone: '+1 (X00) 000-0000',
-        zipCode: '00000',
-        phoneExt: '99999'
-    };
     today: Date = new Date();
     emailRegEx = AppConsts.regexPatterns.email;
     radioGroup = [
@@ -84,6 +79,7 @@ export class OffersWizardComponent implements OnInit {
         public ls: AppLocalizationService,
         private offersServiceProxy: OfferServiceProxy,
         private dialog: MatDialog,
+        public inputStatusesService: InputStatusesService,
         @Inject(MAT_DIALOG_DATA) public data: any
     ) {
         this.dialogRef = <any>injector.get(MatDialogRef);
@@ -103,32 +99,6 @@ export class OffersWizardComponent implements OnInit {
             (error) => console.log(error)
         );
         this._changeDetectionRef.detectChanges();
-    }
-
-    focusInput(event) {
-        if (!(event.component._value && event.component._value.trim())) {
-            let input = event.event.target;
-            event.component.option({
-                mask: this.INPUT_MASK[input.name],
-                maskRules: { 'D': /\d?/ },
-                isValid: true
-            });
-            setTimeout(function () {
-                if (input.createTextRange) {
-                    let part = input.createTextRange();
-                    part.move('character', 0);
-                    part.select();
-                } else if (input.setSelectionRange)
-                    input.setSelectionRange(0, 0);
-
-                input.focus();
-            }, 100);
-        }
-    }
-
-    blurInput(event) {
-        if (!(event.component._value && event.component._value.trim()))
-            event.component.option({ mask: '', value: '' });
     }
 
     validateName(event) {
