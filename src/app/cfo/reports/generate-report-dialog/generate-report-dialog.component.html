@@ -4,11 +4,14 @@
         <dx-data-grid id="gridContainer"
                     height="100%"
                     keyExpr="id"
+                    [scrolling]="{showScrollbar: 'never'}"
                     [selectedRowKeys]="bankAccountsService.selectedBusinessEntitiesIds$ | async"
                     [dataSource]="bankAccountsService.businessEntities$ | async"
                     [pager]="defaultGridPagerConfig"
-                    (onInitialized)="$event.component.repaint()">
-            <dxo-header-filter [visible]="true" [allowSearch]="true"></dxo-header-filter>
+                    (onContentReady)="onContentReady($event)"
+                    (onSelectionChanged)="onSelectionChanged($event)"
+                    (onInitialized)="onInitialized($event)">
+            <dxo-header-filter [visible]="false" [allowSearch]="true"></dxo-header-filter>
             <dxo-selection
                 selectAllMode="page"
                 showCheckBoxesMode="always"

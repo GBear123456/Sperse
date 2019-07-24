@@ -382,8 +382,8 @@ export class AppService extends AppServiceBase {
         return this.permission.isGranted('Pages.CFO.MembersAdministration.AllMemberInstancesAdmin');
     }
 
-    toolbarToggle(toolbarIsHidden = false) {
-        toolbarIsHidden ?  this.toolbarIsHidden = toolbarIsHidden : this.toolbarIsHidden = !this.toolbarIsHidden;
+    toolbarToggle() {
+        this.toolbarIsHidden = !this.toolbarIsHidden;
         this.toolbarIsHidden ? this.document.body.classList.add('toolbar-hidden') : this.document.body.classList.remove('toolbar-hidden');
     }
 

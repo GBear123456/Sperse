@@ -47,8 +47,8 @@
                                          placeholder="{{l('CreditCardNumber')}}"
                                          maskInvalidMessage="{{l('CreditCardFormatError')}}"
                                          [(value)]="bankCard.cardNumber"
-                                         (onFocusIn)="focusInput($event)"
-                                         (onFocusOut)="blurInput($event)">
+                                         (onFocusIn)="inputStatusesService.focusInput($event)"
+                                         (onFocusOut)="inputStatusesService.blurInput($event)">
                                 <dx-validator>
                                     <dxi-validation-rule type="required"
                                                          message="{{l('CreditCardRequired')}}"></dxi-validation-rule>
@@ -64,8 +64,8 @@
                                          placeholder="{{l('ExpirationDate')}}"
                                          maskInvalidMessage="{{l('ExpirationDateFormatError')}}"
                                          [(value)]="expirationDate"
-                                         (onFocusIn)="focusInput($event)"
-                                         (onFocusOut)="blurInput($event)">
+                                         (onFocusIn)="inputStatusesService.focusInput($event)"
+                                         (onFocusOut)="inputStatusesService.blurInput($event)">
                                 <dx-validator>
                                     <dxi-validation-rule type="required"
                                                          message="{{l('ExpirationDateRequired')}}"></dxi-validation-rule>
@@ -84,8 +84,8 @@
                                          name="cvvCode"
                                          [disabled]="!paymentAuthorizationRequired"
                                          [(value)]="bankCard.cvv"
-                                         (onFocusIn)="focusInput($event)"
-                                         (onFocusOut)="blurInput($event)">
+                                         (onFocusIn)="inputStatusesService.focusInput($event)"
+                                         (onFocusOut)="inputStatusesService.blurInput($event)">
                                 <dx-validator>
                                     <dxi-validation-rule type="required"
                                                          message="{{l('CVVRequired')}}"></dxi-validation-rule>
@@ -166,8 +166,8 @@
                                          placeholder="{{l('Zipcode')}}"
                                          maskInvalidMessage="{{l('ZipcodeFormatError')}}"
                                          [(value)]="bankCard.billingZip"
-                                         (onFocusIn)="focusInput($event)"
-                                         (onFocusOut)="blurInput($event)">
+                                         (onFocusIn)="inputStatusesService.focusInput($event)"
+                                         (onFocusOut)="inputStatusesService.blurInput($event)">
                                 <dx-validator>
                                     <dxi-validation-rule type="required"
                                                          message="{{l('ZipIsRequired')}}"></dxi-validation-rule>

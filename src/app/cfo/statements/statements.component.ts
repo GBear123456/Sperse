@@ -209,6 +209,7 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
                     items: [
                         {
                             name: 'filters',
+                            visible: false,
                             action: (event) => {
                                 setTimeout(() => {
                                     this.dataGrid.instance.repaint();

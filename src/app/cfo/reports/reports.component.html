@@ -2,6 +2,7 @@
     <app-headline [config]="headlineConfig">
         <synch-progress class="synch-progress"></synch-progress>
     </app-headline>
+    <app-toolbar [config]="toolbarConfig"></app-toolbar>
     <div class="main-wrapper">
         <setup-steps [SetupSteps]="menuItems" [SelectedStepIndex]="0" [HeaderTitle]="''"></setup-steps>
         <dx-tooltip width="130px">
@@ -26,7 +27,6 @@
                         (onInitialized)="onDataGridInit($event)"
                         (onContentReady)="onContentReady()"
                         (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
-                <dxo-search-panel [visible]="true" [width]="300"></dxo-search-panel>
                 <dxo-header-filter [visible]="true" [allowSearch]="true"></dxo-header-filter>
 
                 <dxi-column [width]="'40px'" [fixed]="true" [fixedPosition]="'left'" [showInColumnChooser]="false" [allowExporting]="false"></dxi-column>
@@ -52,7 +52,7 @@
                     {{ cellData.value | date: formatting.dateTime : userTimezone }}
                 </div>
                 <div *dxTemplate="let cellData of 'dateCell'">
-                    {{ cellData.value | date: formatting.date: userTimezone }}
+                    {{ cellData.value | date: formatting.date }}
                 </div>
                 <div *dxTemplate="let data of 'title'">
                     <h2 class="title">{{l('Documents')}}</h2>
@@ -66,7 +66,7 @@
             </dx-data-grid>
         </div>
 
-        <div [hidden]="!openReportMode" class="report-viewer-wrapper">
+        <div *ngIf="openReportMode" class="report-viewer-wrapper">
             <app-toolbar [config]="viewerToolbarConfig"></app-toolbar>
             <div class="reportView">
                 <app-image-viewer
@@ -80,6 +80,5 @@
         <ng-template #nodata>
             <app-no-data [showLink]="false"></app-no-data>
         </ng-template>
-
     </div>
 </div>

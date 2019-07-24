@@ -56,6 +56,7 @@ export class OperationsComponent extends AppComponentBase implements OnInit, OnD
                 items: [
                     {
                         name: 'filters',
+                        visible: false,
                         action: () => {
                             setTimeout(this.repaint.bind(this), 1000);
                             this._filtersService.fixed = !this._filtersService.fixed;
