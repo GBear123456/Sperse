@@ -22,8 +22,8 @@ export class CfoPreferencesService {
     selectedCurrencySymbol: string;
     selectedCurrencyIndex$: Observable<number>;
     dateRange: BehaviorSubject<CalendarValuesModel> = new BehaviorSubject<CalendarValuesModel>({
-        from: { value: moment().subtract(1, 'month').toDate() },
-        to: { value: moment().toDate() },
+        from: { value: DateHelper.addTimezoneOffset(moment().subtract(1, 'month').startOf('month').toDate(), true) },
+        to: { value: DateHelper.addTimezoneOffset(moment().subtract(1, 'month').endOf('month').toDate(), true) },
         period: 'LastMonth'
     });
     dateRange$: Observable<CalendarValuesModel> = this.dateRange.asObservable();

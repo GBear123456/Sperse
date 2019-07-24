@@ -40,16 +40,19 @@
                     headerCellTemplate="actionsCellTemplate">
                 </dxi-column>
                 <dxi-column dataField="FileName" caption="{{l('Reports_FileName')}}"></dxi-column>
-                <dxi-column dataField="Size" [calculateSortValue]="numerizeFileSizeSortValue" caption="{{l('Reports_Size')}}" [calculateCellValue]="calculateFileSizeValue" [allowSearch]="false"></dxi-column>
-                <dxi-column dataField="CreationTime" caption="{{l('Reports_Created')}}" cssClass="tabular" cellTemplate="dateCell" [allowSearch]="false" sortOrder="desc"></dxi-column>
+                <dxi-column dataField="Size" [calculateSortValue]="numerizeFileSizeSortValue" caption="{{l('Reports_Size')}}" [calculateCellValue]="calculateFileSizeValue" [allowSearch]="false" [allowFiltering]="false"></dxi-column>
+                <dxi-column dataField="CreationTime" caption="{{l('Reports_Created')}}" cssClass="tabular" cellTemplate="dateTimeCell" [allowSearch]="false" sortOrder="desc"></dxi-column>
                 <dxi-column dataField="From" caption="{{l('Reports_PeriodFrom')}}" cssClass="tabular" cellTemplate="dateCell" [allowSearch]="false"></dxi-column>
                 <dxi-column dataField="To" caption="{{l('Reports_PeriodTo')}}" cssClass="tabular" cellTemplate="dateCell" [allowSearch]="false"></dxi-column>
                 <dxi-column [width]="'40px'" [fixed]="true" [fixedPosition]="'right'" [showInColumnChooser]="false" [allowExporting]="false"></dxi-column>
 
                 <a class="dx-link dx-link-edit" *dxTemplate="let cellData of 'actionsCellTemplate'">Edit</a>
 
-                <div *dxTemplate="let cellData of 'dateCell'">
+                <div *dxTemplate="let cellData of 'dateTimeCell'">
                     {{ cellData.value | date: formatting.dateTime : userTimezone }}
+                </div>
+                <div *dxTemplate="let cellData of 'dateCell'">
+                    {{ cellData.value | date: formatting.date: userTimezone }}
                 </div>
                 <div *dxTemplate="let data of 'title'">
                     <h2 class="title">{{l('Documents')}}</h2>

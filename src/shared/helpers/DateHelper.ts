@@ -3,7 +3,7 @@ import * as moment from 'moment';
 export class DateHelper {
 
     static getDateWithoutTime(date: moment) {
-        return moment(date).utc().set({hour:0,minute:0,second:0,millisecond:0});
+        return moment(date).utc().set({ hour: 0 , minute: 0, second: 0, millisecond: 0 });
     }
 
     static addTimezoneOffset(date: Date, addUserOffset = false): Date {
