@@ -4,6 +4,7 @@
         <dx-data-grid id="gridContainer"
                     height="100%"
                     keyExpr="id"
+                    [scrolling]="{showScrollbar: 'never'}"
                     [selectedRowKeys]="bankAccountsService.selectedBusinessEntitiesIds$ | async"
                     [dataSource]="bankAccountsService.businessEntities$ | async"
                     [pager]="defaultGridPagerConfig"
