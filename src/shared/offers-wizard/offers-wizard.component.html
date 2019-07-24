@@ -75,8 +75,8 @@
                                     <div class="dx-field-value">
                                         <dx-text-box placeholder="Enter ssn"
                                                      name="ssn"
-                                                     (onFocusOut)="blurInput($event)"
-                                                     (onFocusIn)="focusInput($event)"
+                                                     (onFocusOut)="inputStatusesService.blurInput($event)"
+                                                     (onFocusIn)="inputStatusesService.focusInput($event)"
                                                      [(value)]="submitApplicationProfileInput.personalInformation.ssn">
                                         </dx-text-box>
                                     </div>
@@ -153,8 +153,8 @@
                             <div class="dx-field-label">{{ls.l('Phone')}}</div>
                             <div class="dx-field-value">
                                 <dx-text-box name="phone"
-                                             (onFocusOut)="blurInput($event)"
-                                             (onFocusIn)="focusInput($event)"
+                                             (onFocusOut)="inputStatusesService.blurInput($event)"
+                                             (onFocusIn)="inputStatusesService.focusInput($event)"
                                              [(value)]="submitApplicationProfileInput.personalInformation.phone"
                                              [maskRules]="rules">
                                 </dx-text-box>
@@ -164,8 +164,8 @@
                             <div class="dx-field-label">{{ls.l('MobPhone')}}</div>
                             <div class="dx-field-value">
                                 <dx-text-box name="phone"
-                                             (onFocusOut)="blurInput($event)"
-                                             (onFocusIn)="focusInput($event)"
+                                             (onFocusOut)="inputStatusesService.blurInput($event)"
+                                             (onFocusIn)="inputStatusesService.focusInput($event)"
                                              [(value)]="submitApplicationProfileInput.personalInformation.phoneMobile"
                                              [maskRules]="rules">
                                 </dx-text-box>
@@ -259,6 +259,9 @@
                                 <div class="dx-field-label">{{ls.l('PostalCode')}}</div>
                                 <div class="dx-field-value">
                                     <dx-text-box placeholder="Enter postal code"
+                                                 name="zipCode"
+                                                 (onFocusOut)="inputStatusesService.blurInput($event)"
+                                                 (onFocusIn)="inputStatusesService.focusInput($event)"
                                                  [(value)]="submitApplicationProfileInput.personalInformation.postalCode">
                                     </dx-text-box>
                                 </div>
@@ -371,8 +374,8 @@
                         <div class="dx-field-label">{{ls.l('BankPhone')}}</div>
                         <div class="dx-field-value">
                             <dx-text-box name="phone"
-                                         (onFocusOut)="blurInput($event)"
-                                         (onFocusIn)="focusInput($event)"
+                                         (onFocusOut)="inputStatusesService.blurInput($event)"
+                                         (onFocusIn)="inputStatusesService.focusInput($event)"
                                          [maskRules]="rules"
                                          [(value)]="submitApplicationProfileInput.bankInformation.bankPhone">
                             </dx-text-box>
@@ -490,8 +493,8 @@
                                 <div class="dx-field-label">{{ls.l('WorkPhone')}}</div>
                                 <div class="dx-field-value">
                                     <dx-text-box name="phone"
-                                                 (onFocusOut)="blurInput($event)"
-                                                 (onFocusIn)="focusInput($event)"
+                                                 (onFocusOut)="inputStatusesService.blurInput($event)"
+                                                 (onFocusIn)="inputStatusesService.focusInput($event)"
                                                  [maskRules]="rules"
                                                  [(value)]="submitApplicationProfileInput.employmentInformation.phoneWork">
                                     </dx-text-box>
@@ -504,8 +507,8 @@
                                 <div class="dx-field-value">
                                     <dx-text-box [maxLength]="5"
                                                  name="phoneExt"
-                                                 (onFocusOut)="blurInput($event)"
-                                                 (onFocusIn)="focusInput($event)"
+                                                 (onFocusOut)="inputStatusesService.blurInput($event)"
+                                                 (onFocusIn)="inputStatusesService.focusInput($event)"
                                                  [(value)]="submitApplicationProfileInput.employmentInformation.phoneWorkExtension">
                                     </dx-text-box>
                                 </div>
@@ -550,6 +553,9 @@
                                 <div class="dx-field-label">{{ls.l('EmployerPostalCode')}}</div>
                                 <div class="dx-field-value">
                                     <dx-text-box placeholder="Enter postal code"
+                                                 name="zipCode"
+                                                 (onFocusOut)="inputStatusesService.blurInput($event)"
+                                                 (onFocusIn)="inputStatusesService.focusInput($event)"
                                                  [(value)]="submitApplicationProfileInput.employmentInformation.employerPostalCode">
                                     </dx-text-box>
                                 </div>

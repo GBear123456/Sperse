@@ -393,6 +393,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                     location: 'before', items: [
                         {
                             name: 'filters',
+                            visible: false,
                             action: () => {
                                 this.filtersService.fixed =
                                     !this.filtersService.fixed;

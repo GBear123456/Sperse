@@ -68,8 +68,8 @@
                                                      placeholder="{{l('Phone')}}"
                                                      maskInvalidMessage="{{l('PhoneValidationError')}}."
                                                      [(value)]="model.phone"
-                                                     (onFocusOut)="blurInput($event)"
-                                                     (onFocusIn)="focusInput($event)">
+                                                     (onFocusOut)="inputStatusesService.blurInput($event)"
+                                                     (onFocusIn)="inputStatusesService.focusInput($event)">
                                             <dx-validator>
                                                 <dxi-validation-rule type="required" message="{{l('PhoneIsRequired')}}."></dxi-validation-rule>
                                             </dx-validator>
@@ -123,8 +123,8 @@
                                                      placeholder="{{l('SSN')}}"
                                                      maskInvalidMessage="{{l('SSNFormatError')}}"
                                                      [(value)]="model.ssn"
-                                                     (onFocusIn)="focusInput($event)"
-                                                     (onFocusOut)="blurInput($event)">
+                                                     (onFocusIn)="inputStatusesService.focusInput($event)"
+                                                     (onFocusOut)="inputStatusesService.blurInput($event)">
                                             <dx-validator>
                                                 <dxi-validation-rule type="required" message="{{l('SSNIsRequired')}}."></dxi-validation-rule>
                                             </dx-validator>
@@ -253,8 +253,8 @@
                                                  maxLength="5"
                                                  placeholder="{{l('Zipcode')}}"
                                                  [(value)]="model.address.zip"
-                                                 (onFocusIn)="focusInput($event)"
-                                                 (onFocusOut)="blurInput($event)">
+                                                 (onFocusIn)="inputStatusesService.focusInput($event)"
+                                                 (onFocusOut)="inputStatusesService.blurInput($event)">
                                         <dx-validator>
                                             <dxi-validation-rule type="required"
                                                                  message="{{l('ZipIsRequired')}}"></dxi-validation-rule>

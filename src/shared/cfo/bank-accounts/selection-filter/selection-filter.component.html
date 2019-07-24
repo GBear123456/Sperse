@@ -14,7 +14,7 @@
                     tagTemplate="customTagTemplate"
                     itemTemplate="itemTemplate"
                     (onOpened)="changePopupWidth($event)"
-                    [maxDisplayedTags]="1"
+                    [maxDisplayedTags]="maxDisplayedItems"
                     [(value)]="selectedItems"
                     (onValueChanged)="selectedItemsChange()"
                     (onSelectAllValueChanged)="selectAllValueChanged($event)"

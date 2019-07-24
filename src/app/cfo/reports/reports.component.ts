@@ -35,6 +35,7 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
     @ViewChild(ImageViewerComponent) imageViewer: ImageViewerComponent;
 
     headlineConfig;
+    toolbarConfig: any = [];
     menuItems = [
         {
             caption: 'MonthlyReports',
@@ -117,6 +118,33 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
         ];
     }
 
+    initToolbarConfig() {
+        this.toolbarConfig = [
+            {
+                location: 'before',
+                items: [
+                    {
+                        name: 'search',
+                        widget: 'dxTextBox',
+                        options: {
+                            value: this.searchValue,
+                            width: '279',
+                            mode: 'search',
+                            placeholder: this.l('Search'),
+                            onValueChanged: (e) => {
+                                this.searchValueChange(e);
+                            }
+                        }
+                    }
+                ]
+            }];
+    }
+
+    searchValueChange(e: object) {
+        this.searchValue = e['value'];
+        this.processFilterInternal();
+    }
+
     initViewerToolbar(conf: any = {}) {
         this.viewerToolbarConfig = [
             {
@@ -170,10 +198,7 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
                 location: 'after', items: [
                     {
                         name: 'fullscreen',
-                        action: () => {
-                            const fullScreenTarget = this.getViewedReportElement();
-                            this.toggleFullscreen(fullScreenTarget);
-                        }
+                        action: this.showReportFullscreen.bind(this)
                     }
                 ]
             },
@@ -186,6 +211,10 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
                 ]
             }
         ];
+    }
+
+    showReportFullscreen() {
+        this.toggleFullscreen(this.getViewedReportElement());
     }
 
     getViewedReportElement() {
@@ -201,6 +230,7 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
 
     ngOnInit(): void {
         this.initHeadlineConfig();
+        this.initToolbarConfig();
     }
 
     ngAfterViewInit(): void {
@@ -214,7 +244,7 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
             buttons: [
                 {
                     action: this.showGenerateReportDialog.bind(this),
-                    lable: this.l('Generate'),
+                    lable: this.l('GenerateNewReport'),
                     enabled: this.isInstanceAdmin || this.isMemberAccessManage
                 }
             ]
@@ -301,9 +331,9 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
                     let reader = new FileReader();
                     reader.addEventListener('loadend', () => {
                         this.openReportMode = true;
+                        this.previewContent = StringHelper.getBase64(reader.result);
+                        setTimeout(() => this.showReportFullscreen(), 300);
                         this._changeDetector.markForCheck();
-                        let content = StringHelper.getBase64(reader.result);
-                        this.previewContent = content;
                     });
                     reader.readAsDataURL(blob);
                 super.finishLoading(true);
@@ -364,8 +394,10 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
 
     closeReport() {
         this.openReportMode = false;
-        this._changeDetector.markForCheck();
+        this.previewContent = undefined;
         this.viewerToolbarConfig = [];
+        this._changeDetector.markForCheck();
+        setTimeout(() => this.dataGrid.instance.repaint());
     }
 
     onContentReady() {
@@ -418,6 +450,7 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
 
     ngOnDestroy() {
         this.deactivate();
+        this.toolbarConfig = [];
         this.viewerToolbarConfig = [];
         if (this.openReportMode) {
             this.closeReport();

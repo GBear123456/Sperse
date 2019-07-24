@@ -14,7 +14,7 @@
                 <span [class]="businessEntity.name && 'clear-contact' || 'hidden'" (click)="emptyValue('name')"><i class="minus-icon"></i></span>
             </div>
             <div class="field">
-                <label>{{ls.l('BusinessEntity_ParentName')}}</label>
+                <label>{{ls.l('BusinessEntity_Parent')}}</label>
                 <dx-select-box [dataSource]="businessEntities$ | async"
                                displayExpr="name"
                                valueExpr="id"
