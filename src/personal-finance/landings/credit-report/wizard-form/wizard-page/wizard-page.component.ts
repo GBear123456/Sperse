@@ -28,6 +28,7 @@ import { LoginService } from '@root/account/login/login.service';
 import { RegisterModel } from './register.model';
 import { v4 as UUID } from 'uuid';
 import { PackageIdService } from '../../../../shared/common/packages/package-id.service';
+import { InputStatusesService } from '@shared/utils/input-statuses.service';
 
 @Component({
     selector: 'app-wizard-page',
@@ -94,6 +95,7 @@ export class CreditWizardPageComponent extends AppComponentBase implements OnIni
         private data: PackageIdService,
         private _memberService: MemberServiceProxy,
         private _angularGooglePlaceService: AngularGooglePlaceService,
+        public inputStatusesService: InputStatusesService,
         private store$: Store<RootStore.State>
     ) {
         super(injector);
@@ -369,32 +371,6 @@ export class CreditWizardPageComponent extends AppComponentBase implements OnIni
         }, 0);
 
         event.component.open();
-    }
-
-    focusInput(event) {
-        if (!(event.component._value && event.component._value.trim())) {
-            let input = event.event.target;
-            event.component.option({
-                mask: this.INPUT_MASK[input.name],
-                maskRules: { 'D': /\d?/ },
-                isValid: true
-            });
-            setTimeout(function () {
-                if (input.createTextRange) {
-                    let part = input.createTextRange();
-                    part.move('character', 0);
-                    part.select();
-                } else if (input.setSelectionRange)
-                    input.setSelectionRange(0, 0);
-
-                input.focus();
-            }, 100);
-        }
-    }
-
-    blurInput(event) {
-        if (!(event.component._value && event.component._value.trim()))
-            event.component.option({ mask: '', value: '' });
     }
 
     toggleShowPassword(event) {

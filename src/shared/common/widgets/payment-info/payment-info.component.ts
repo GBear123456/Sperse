@@ -17,6 +17,7 @@ import { until } from '@node_modules/@types/selenium-webdriver';
 import Condition = until.Condition;
 import { ConditionsType } from '@shared/AppEnums';
 import { ConditionsModalComponent } from '@shared/common/conditions-modal/conditions-modal.component';
+import { InputStatusesService } from '@shared/utils/input-statuses.service';
 
 @Component({
     selector: 'payment-info',
@@ -48,9 +49,11 @@ export class PaymentInfoComponent extends AppComponentBase implements OnInit {
         }
     };
 
-    constructor(injector: Injector,
+    constructor(
+        injector: Injector,
         private store$: Store<RootStore.State>,
-        private dialog: MatDialog
+        private dialog: MatDialog,
+        public inputStatusesService: InputStatusesService
     ) {
         super(injector);
 
@@ -101,32 +104,6 @@ export class PaymentInfoComponent extends AppComponentBase implements OnInit {
         }
 
         return isValid;
-    }
-
-    focusInput(event) {
-        if (!(event.component._value && event.component._value.trim())) {
-            let input = event.event.target;
-            event.component.option({
-                mask: this.INPUT_MASK[input.name],
-                maskRules: { 'D': /\d?/ },
-                isValid: true
-            });
-            setTimeout(function () {
-                if (input.createTextRange) {
-                    let part = input.createTextRange();
-                    part.move('character', 0);
-                    part.select();
-                } else if (input.setSelectionRange)
-                    input.setSelectionRange(0, 0);
-
-                input.focus();
-            }, 100);
-        }
-    }
-
-    blurInput(event) {
-        if (!(event.component._value && event.component._value.trim()))
-            event.component.option({ mask: '', value: '' });
     }
 
     openConditionsDialog(type: ConditionsType) {
