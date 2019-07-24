@@ -2,6 +2,7 @@
     <app-headline [config]="headlineConfig">
         <synch-progress class="synch-progress"></synch-progress>
     </app-headline>
+    <app-toolbar [config]="toolbarConfig"></app-toolbar>
     <div class="main-wrapper">
         <setup-steps [SetupSteps]="menuItems" [SelectedStepIndex]="0" [HeaderTitle]="''"></setup-steps>
         <dx-tooltip width="130px">
@@ -26,7 +27,6 @@
                         (onInitialized)="onDataGridInit($event)"
                         (onContentReady)="onContentReady()"
                         (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
-                <dxo-search-panel [visible]="true" [width]="300"></dxo-search-panel>
                 <dxo-header-filter [visible]="true" [allowSearch]="true"></dxo-header-filter>
 
                 <dxi-column [width]="'40px'" [fixed]="true" [fixedPosition]="'left'" [showInColumnChooser]="false" [allowExporting]="false"></dxi-column>

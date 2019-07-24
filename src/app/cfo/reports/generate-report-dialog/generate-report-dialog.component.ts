@@ -44,6 +44,9 @@ export class GenerateReportDialogComponent implements OnInit {
         options: { }
     };
 
+    private readonly BACK_BTN_INDEX = 0;
+    private readonly NEXT_BTN_INDEX = 1;
+
     constructor(
         @Inject(MAT_DIALOG_DATA) public data: any,
         public reportsProxy: ReportsServiceProxy,
@@ -59,10 +62,15 @@ export class GenerateReportDialogComponent implements OnInit {
     ngOnInit() {
         this.buttons = [
             {
-                title: this.ls.l('Cancel'),
+                title: this.ls.l('Back'),
                 class: 'default',
+                disabled: true,
                 action: () => {
-                    this.modalDialog.close(true);
+                    this.currentStep--;
+                    this.title = this.ls.l('SelectBusinessEntity');
+                    this.buttons[this.NEXT_BTN_INDEX].title = this.ls.l('Next');
+                    this.buttons[this.NEXT_BTN_INDEX].action = this.next.bind(this);
+                    this.buttons[this.BACK_BTN_INDEX].disabled = true;
                 }
             },
             {
@@ -72,7 +80,6 @@ export class GenerateReportDialogComponent implements OnInit {
                 action: this.next.bind(this)
             }
         ];
-
         this.bankAccountsService.load();
     }
 
@@ -80,11 +87,10 @@ export class GenerateReportDialogComponent implements OnInit {
         this.applyBusinessEntity();
 
         this.currentStep++;
-
         this.title = this.ls.l('SelectDateRange');
-        let button = _.findWhere(this.buttons, { id: 'next' });
-        button.title = this.ls.l('Generate');
-        button.action = this.generateReport.bind(this);
+        this.buttons[this.NEXT_BTN_INDEX].title = this.ls.l('Generate');
+        this.buttons[this.NEXT_BTN_INDEX].action = this.generateReport.bind(this);
+        this.buttons[this.BACK_BTN_INDEX].disabled = false;
     }
 
     applyBusinessEntity() {
@@ -125,5 +131,11 @@ export class GenerateReportDialogComponent implements OnInit {
             this.dateFrom = dateFrom && moment(dateFrom);
             this.dateTo = dateTo && moment(dateTo);
         }
+    }
+
+    onInitialized(event) {
+        setTimeout(() => {
+            event.component.repaint();
+        }, 300);
     }
 }
