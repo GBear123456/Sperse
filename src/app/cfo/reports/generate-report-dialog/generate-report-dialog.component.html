@@ -7,6 +7,8 @@
                     [selectedRowKeys]="bankAccountsService.selectedBusinessEntitiesIds$ | async"
                     [dataSource]="bankAccountsService.businessEntities$ | async"
                     [pager]="defaultGridPagerConfig"
+                    (onContentReady)="onContentReady($event)"
+                    (onSelectionChanged)="onSelectionChanged($event)"
                     (onInitialized)="onInitialized($event)">
             <dxo-header-filter [visible]="false" [allowSearch]="true"></dxo-header-filter>
             <dxo-selection

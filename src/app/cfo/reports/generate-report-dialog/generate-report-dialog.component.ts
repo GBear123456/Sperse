@@ -77,7 +77,8 @@ export class GenerateReportDialogComponent implements OnInit {
                 id: 'next',
                 title: this.ls.l('Next'),
                 class: 'primary saveButton',
-                action: this.next.bind(this)
+                action: this.next.bind(this),
+                disabled: true
             }
         ];
         this.bankAccountsService.load();
@@ -131,6 +132,14 @@ export class GenerateReportDialogComponent implements OnInit {
             this.dateFrom = dateFrom && moment(dateFrom);
             this.dateTo = dateTo && moment(dateTo);
         }
+    }
+
+    onContentReady(event) {
+        this.onSelectionChanged({selectedRowKeys: event.component.getSelectedRowKeys()});
+    }
+
+    onSelectionChanged(event) {
+        this.buttons[this.NEXT_BTN_INDEX].disabled = !event.selectedRowKeys.length;
     }
 
     onInitialized(event) {
