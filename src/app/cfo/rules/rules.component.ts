@@ -123,6 +123,7 @@ export class RulesComponent extends CFOComponentBase implements OnInit, AfterVie
                 items: [
                     {
                         name: 'filters',
+                        visible: false,
                         action: () => {
                             setTimeout(() => {
                                 this.treeList.instance.repaint();

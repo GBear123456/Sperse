@@ -281,6 +281,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
                         items: [
                             {
                                 name: 'filters',
+                                visible: false,
                                 action: () => {
                                     setTimeout(() => {
                                         this.linearChart.instance.render();
