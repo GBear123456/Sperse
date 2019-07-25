@@ -182,6 +182,9 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     toggleToolbar() {
         this._appService.toolbarToggle();
         setTimeout(() => this.dataGrid.instance.repaint(), 0);
+        this._filtersService.fixed = false;
+        this._filtersService.disable();
+        this.initToolbarConfig();
     }
 
     contactGroupOptionInit() {

@@ -209,7 +209,7 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
                     items: [
                         {
                             name: 'filters',
-                            visible: false,
+                            visible: !this._cfoService.hasStaticInstance,
                             action: (event) => {
                                 setTimeout(() => {
                                     this.dataGrid.instance.repaint();
@@ -373,7 +373,9 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
 
     toggleToolbar() {
         this._appService.toolbarToggle();
-        setTimeout(() => this.dataGrid.instance.repaint(), 0);
+        setTimeout(() => this.dataGrid.instance.repaint());
+        this._filtersService.fixed = false;
+        this._filtersService.disable();
     }
 
     invalidate() {
