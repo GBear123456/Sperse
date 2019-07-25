@@ -3,6 +3,7 @@
 /deep/ #offers-wizard {
     background: #E7E7E7 url(../../assets/images/hero.jpg) bottom 0 left 0 no-repeat;
     padding-bottom: 0;
+    position: relative;
     
     @media all and (max-width: 768px) {
         background-image: none;
@@ -23,6 +24,43 @@
 :host {
     display: block;
     height: 100%;
+    
+    .close {
+        position: absolute;
+        width: 20px;
+        height: 20px;
+        top: 10px;
+        right: 12px;
+        display: block;
+        background-color: transparent;
+        transition: .3s;
+        cursor: pointer;
+        outline: none;
+        opacity: .5;
+        
+        &:after, &:before {
+            position: absolute;
+            top: 0;
+            left: 9px;
+            content: ' ';
+            height: 20px;
+            width: 2px;
+            background-color: #202b35;
+            cursor: pointer;
+        }
+        
+        &:before {
+            transform: rotate(45deg);
+        }
+        
+        &:after {
+            transform: rotate(-45deg);
+        }
+        
+        &:hover {
+            opacity: 1;
+        }
+    }
     
     .link {
         color: #58a3dc;
