@@ -145,6 +145,9 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     toggleToolbar() {
         this._appService.toolbarToggle();
         setTimeout(() => this.dataGrid.instance.repaint(), 0);
+        this._filtersService.fixed = false;
+        this._filtersService.disable();
+        this.initToolbarConfig();
     }
 
     private paramsSubscribe() {

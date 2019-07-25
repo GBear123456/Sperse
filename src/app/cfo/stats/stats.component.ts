@@ -281,7 +281,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
                         items: [
                             {
                                 name: 'filters',
-                                visible: false,
+                                visible: !this._cfoService.hasStaticInstance,
                                 action: () => {
                                     setTimeout(() => {
                                         this.linearChart.instance.render();
@@ -426,7 +426,10 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
 
     toggleToolbar() {
         this._appService.toolbarToggle();
-        setTimeout(() => this.dataGrid.instance.repaint(), 0);
+        setTimeout(() => this.dataGrid.instance.repaint());
+        this._filtersService.fixed = false;
+        this._filtersService.disable();
+        this.initToolbarConfig();
     }
 
     initFiltering() {
