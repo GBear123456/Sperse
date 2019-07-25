@@ -66,7 +66,7 @@ export class PreferencesDialogComponent implements OnInit {
             action: () => {
                 if (this.rememberLastSettings) {
                     this.modalDialog.startLoading();
-                    this._cashflowService.saveCashFlowGridSettings(this._cfoService.instanceType as any, this._cfoService.instanceId, this.model)
+                    this._cashflowService.saveCashFlowGridSettings(this.cfoService.instanceType as any, this.cfoService.instanceId, this.model)
                         .pipe(finalize(() => this.modalDialog.finishLoading()))
                         .subscribe(() => {
                             this.closeSuccessful();
@@ -90,7 +90,7 @@ export class PreferencesDialogComponent implements OnInit {
     ];
     constructor(
         private _cashflowService: CashflowServiceProxy,
-        private _cfoService: CFOService,
+        public cfoService: CFOService,
         private _dialogRef: MatDialogRef<PreferencesDialogComponent>,
         private _changeDetectorRef: ChangeDetectorRef,
         public userPreferencesService: UserPreferencesService,

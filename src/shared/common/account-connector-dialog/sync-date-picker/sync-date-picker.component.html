@@ -1,10 +1,9 @@
 <dx-date-box
     type="date"
     height="39px"
-    *ngIf="isInstanceAdmin || isMemberAccessManage"
     [max]="maxDate"
     applyValueMode="useButtons"
-    [applyButtonText]="l('Apply')"
+    [applyButtonText]="ls.l('Apply')"
     [adaptivityEnabled]="true"
     [acceptCustomValue]="false"
     [value]="syncService.maxSyncDate$ | async"

@@ -139,7 +139,7 @@
                     </div>
                 </div>
             </div>
-            <div class="section clearfix">
+            <div class="section clearfix" *ngIf="cfoService.isInstanceAdmin || cfoService.isMemberAccessManage">
                 <div class="header header-date">
                     {{ls.l("Cut-off date")}}
                 </div>
