@@ -152,7 +152,7 @@ export class OffersWizardComponent implements OnInit {
                 if (error && error.validationErrors) {
                     let data = '<div class="scroll-zone">';
                     error.validationErrors.forEach(item => {
-                        data += `<p><b>${item.members[0]}</b> - ${item.message}</p>`;
+                        data += `<p><b>${this.ls.l(item.members[0])}</b> - ${item.message}</p>`;
                     });
                     data += '</div>';
                     abp.message.error(data, 'Your request is not valid!\nThe following errors were detected during validation.', true);
