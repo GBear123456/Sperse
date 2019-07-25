@@ -353,4 +353,15 @@ export class CashflowService {
         return reportingCategoriesIds;
     }
 
+    itemIsInWeekInterval(cellData, date): boolean {
+        const weekInterval = JSON.parse(cellData.projected);
+        return weekInterval
+            && date.isSameOrAfter(moment.utc(weekInterval.startDate))
+            && date.isSameOrBefore(moment.utc(weekInterval.endDate));
+    }
+
+    itemIsWeekBeginning(cellData, date): boolean {
+        const weekInterval = JSON.parse(cellData.projected);
+        return weekInterval && date.isSame(moment.utc(weekInterval.startDate));
+    }
 }
