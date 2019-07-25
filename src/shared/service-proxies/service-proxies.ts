@@ -11150,7 +11150,7 @@ export class DashboardServiceProxy {
      * @endDate (optional) 
      * @return Success
      */
-    getCustomersByStar(startDate: moment.Moment | null | undefined, endDate: moment.Moment | null | undefined): Observable<GetCountOutput[]> {
+    getCustomersByStar(startDate: moment.Moment | null | undefined, endDate: moment.Moment | null | undefined): Observable<GetCountByStarOutput[]> {
         let url_ = this.baseUrl + "/api/services/CRM/Dashboard/GetCustomersByStar?";
         if (startDate !== undefined)
             url_ += "StartDate=" + encodeURIComponent(startDate ? "" + startDate.toJSON() : "") + "&"; 
@@ -11174,14 +11174,14 @@ export class DashboardServiceProxy {
                 try {
                     return this.processGetCustomersByStar(<any>response_);
                 } catch (e) {
-                    return <Observable<GetCountOutput[]>><any>_observableThrow(e);
+                    return <Observable<GetCountByStarOutput[]>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<GetCountOutput[]>><any>_observableThrow(response_);
+                return <Observable<GetCountByStarOutput[]>><any>_observableThrow(response_);
         }));
     }
 
-    protected processGetCustomersByStar(response: HttpResponseBase): Observable<GetCountOutput[]> {
+    protected processGetCustomersByStar(response: HttpResponseBase): Observable<GetCountByStarOutput[]> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -11195,7 +11195,7 @@ export class DashboardServiceProxy {
             if (resultData200 && resultData200.constructor === Array) {
                 result200 = [];
                 for (let item of resultData200)
-                    result200.push(GetCountOutput.fromJS(item));
+                    result200.push(GetCountByStarOutput.fromJS(item));
             }
             return _observableOf(result200);
             }));
@@ -11204,7 +11204,7 @@ export class DashboardServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<GetCountOutput[]>(<any>null);
+        return _observableOf<GetCountByStarOutput[]>(<any>null);
     }
 }
 
@@ -35709,11 +35709,63 @@ export interface IReportingCategoryDto {
     parentId: number | undefined;
 }
 
+export enum SectionGroup {
+    _0 = 0, 
+    _1 = 1, 
+    _2 = 2, 
+    _3 = 3, 
+}
+
+export class ReportSectionDto implements IReportSectionDto {
+    id!: number | undefined;
+    group!: SectionGroup | undefined;
+    name!: string | undefined;
+
+    constructor(data?: IReportSectionDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.group = data["group"];
+            this.name = data["name"];
+        }
+    }
+
+    static fromJS(data: any): ReportSectionDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new ReportSectionDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["group"] = this.group;
+        data["name"] = this.name;
+        return data; 
+    }
+}
+
+export interface IReportSectionDto {
+    id: number | undefined;
+    group: SectionGroup | undefined;
+    name: string | undefined;
+}
+
 export class GetCategoryTreeOutput implements IGetCategoryTreeOutput {
     types!: { [key: string] : TypeDto; } | undefined;
     accountingTypes!: { [key: string] : AccountingTypeDto; } | undefined;
     categories!: { [key: string] : CategoryDto; } | undefined;
     reportingCategories!: { [key: string] : ReportingCategoryDto; } | undefined;
+    reportSections!: { [key: string] : ReportSectionDto; } | undefined;
 
     constructor(data?: IGetCategoryTreeOutput) {
         if (data) {
@@ -35752,6 +35804,13 @@ export class GetCategoryTreeOutput implements IGetCategoryTreeOutput {
                 for (let key in data["reportingCategories"]) {
                     if (data["reportingCategories"].hasOwnProperty(key))
                         this.reportingCategories[key] = data["reportingCategories"][key] ? ReportingCategoryDto.fromJS(data["reportingCategories"][key]) : new ReportingCategoryDto();
+                }
+            }
+            if (data["reportSections"]) {
+                this.reportSections = {};
+                for (let key in data["reportSections"]) {
+                    if (data["reportSections"].hasOwnProperty(key))
+                        this.reportSections[key] = data["reportSections"][key] ? ReportSectionDto.fromJS(data["reportSections"][key]) : new ReportSectionDto();
                 }
             }
         }
@@ -35794,6 +35853,13 @@ export class GetCategoryTreeOutput implements IGetCategoryTreeOutput {
                     data["reportingCategories"][key] = this.reportingCategories[key];
             }
         }
+        if (this.reportSections) {
+            data["reportSections"] = {};
+            for (let key in this.reportSections) {
+                if (this.reportSections.hasOwnProperty(key))
+                    data["reportSections"][key] = this.reportSections[key];
+            }
+        }
         return data; 
     }
 }
@@ -35803,6 +35869,7 @@ export interface IGetCategoryTreeOutput {
     accountingTypes: { [key: string] : AccountingTypeDto; } | undefined;
     categories: { [key: string] : CategoryDto; } | undefined;
     reportingCategories: { [key: string] : ReportingCategoryDto; } | undefined;
+    reportSections: { [key: string] : ReportSectionDto; } | undefined;
 }
 
 export class CreateCategoryInput implements ICreateCategoryInput {
@@ -52973,6 +53040,50 @@ export class GetCountOutput implements IGetCountOutput {
 }
 
 export interface IGetCountOutput {
+    key: string | undefined;
+    count: number | undefined;
+}
+
+export class GetCountByStarOutput implements IGetCountByStarOutput {
+    colorType!: ContactStarColorType | undefined;
+    key!: string | undefined;
+    count!: number | undefined;
+
+    constructor(data?: IGetCountByStarOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.colorType = data["colorType"];
+            this.key = data["key"];
+            this.count = data["count"];
+        }
+    }
+
+    static fromJS(data: any): GetCountByStarOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new GetCountByStarOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["colorType"] = this.colorType;
+        data["key"] = this.key;
+        data["count"] = this.count;
+        return data; 
+    }
+}
+
+export interface IGetCountByStarOutput {
+    colorType: ContactStarColorType | undefined;
     key: string | undefined;
     count: number | undefined;
 }
