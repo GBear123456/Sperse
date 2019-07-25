@@ -5027,7 +5027,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
             if (this.isEndingBalanceAccountCell(summaryCell, cellRow)) {
                 let startedBalanceCell = summaryCell.slice(<any>0, PSB),
-                    startedBalanceCellValue = startedBalanceCell ? (startedBalanceCell.value(true) || 0) : 0,
+                    startedBalanceCellValue = startedBalanceCell ? (startedBalanceCell.value() || 0) : 0,
                     currentCellValue = summaryCell.value() || 0,
                     reconciliationTotal = this.getCellValue(summaryCell, Reconciliation);
                 return startedBalanceCellValue + reconciliationTotal + currentCellValue;
