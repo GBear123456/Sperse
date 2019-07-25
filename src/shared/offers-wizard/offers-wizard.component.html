@@ -150,7 +150,7 @@
                             </div>
                         </div>
                         <div class="dx-field">
-                            <div class="dx-field-label">{{ls.l('Phone')}}</div>
+                            <div class="dx-field-label">{{ls.l('phone')}}</div>
                             <div class="dx-field-value">
                                 <dx-text-box name="phone"
                                              (onFocusOut)="inputStatusesService.blurInput($event)"
@@ -214,7 +214,7 @@
                 </div>
                 <div class="main">
                     <div class="dx-field">
-                        <div class="dx-field-label">{{ls.l('Address1')}}</div>
+                        <div class="dx-field-label">{{ls.l('address1')}}</div>
                         <div class="dx-field-value">
                             <dx-text-box placeholder="Enter address"
                                          [(value)]="submitApplicationProfileInput.personalInformation.address1">
@@ -224,7 +224,7 @@
                     <div class="row">
                         <div class="col-md-6 col-sm-12">
                             <div class="dx-field">
-                                <div class="dx-field-label">{{ls.l('CountryCode')}}</div>
+                                <div class="dx-field-label">{{ls.l('country_code')}}</div>
                                 <div class="dx-field-value">
                                     <dx-text-box placeholder="Enter country code"
                                                  [(value)]="submitApplicationProfileInput.personalInformation.countryCode">
@@ -234,7 +234,7 @@
                         </div>
                         <div class="col-md-6 col-sm-12">
                             <div class="dx-field">
-                                <div class="dx-field-label">{{ls.l('StateCode')}}</div>
+                                <div class="dx-field-label">{{ls.l('state')}}</div>
                                 <div class="dx-field-value">
                                     <dx-text-box placeholder="Enter state code"
                                                  [(value)]="submitApplicationProfileInput.personalInformation.stateCode">
@@ -246,7 +246,7 @@
                     <div class="row">
                         <div class="col-md-6 col-sm-12">
                             <div class="dx-field">
-                                <div class="dx-field-label">{{ls.l('City')}}</div>
+                                <div class="dx-field-label">{{ls.l('city')}}</div>
                                 <div class="dx-field-value">
                                     <dx-text-box placeholder="Enter city"
                                                  [(value)]="submitApplicationProfileInput.personalInformation.city">
@@ -256,7 +256,7 @@
                         </div>
                         <div class="col-md-6 col-sm-12">
                             <div class="dx-field">
-                                <div class="dx-field-label">{{ls.l('PostalCode')}}</div>
+                                <div class="dx-field-label">{{ls.l('postal_code')}}</div>
                                 <div class="dx-field-value">
                                     <dx-text-box placeholder="Enter postal code"
                                                  name="zipCode"
@@ -271,7 +271,7 @@
                     <div class="row">
                         <div class="col-md-6 col-sm-12">
                             <div class="dx-field">
-                                <div class="dx-field-label">{{ls.l('HowLongHere')}}</div>
+                                <div class="dx-field-label">{{ls.l('months_at_address')}}</div>
                                 <div class="dx-field-value">
                                     <dx-text-box placeholder="Enter number of years"
                                                  [(value)]="submitApplicationProfileInput.personalInformation.monthsAtAddress">
@@ -297,7 +297,7 @@
                     <div class="row">
                         <div class="col-md-6 col-sm-12">
                             <div class="dx-field">
-                                <div class="dx-field-label">{{ls.l('LicenseState')}}</div>
+                                <div class="dx-field-label">{{ls.l('license_state')}}</div>
                                 <div class="dx-field-value">
                                     <dx-text-box placeholder="Enter license state"
                                                  [(value)]="submitApplicationProfileInput.personalInformation.licenseState">
@@ -307,7 +307,7 @@
                         </div>
                         <div class="col-md-6 col-sm-12">
                             <div class="dx-field">
-                                <div class="dx-field-label">{{ls.l('LicenseNumber')}}</div>
+                                <div class="dx-field-label">{{ls.l('license_state')}}</div>
                                 <div class="dx-field-value">
                                     <dx-text-box placeholder="Enter license number"
                                                  [(value)]="submitApplicationProfileInput.personalInformation.licenseNumber">
@@ -334,7 +334,7 @@
                 </div>
                 <div class="main">
                     <div class="dx-field">
-                        <div class="dx-field-label">{{ls.l('BankAccType')}}</div>
+                        <div class="dx-field-label">{{ls.l('bank_account_type')}}</div>
                         <div class="dx-field-value">
                             <dx-select-box
                                 [items]="bankAccountType"
@@ -346,7 +346,7 @@
                         </div>
                     </div>
                     <div class="dx-field">
-                        <div class="dx-field-label">{{ls.l('BankName')}}</div>
+                        <div class="dx-field-label">{{ls.l('bank_name')}}</div>
                         <div class="dx-field-value">
                             <dx-text-box placeholder="Enter bank name"
                                          [(value)]="submitApplicationProfileInput.bankInformation.bankName">
@@ -354,7 +354,7 @@
                         </div>
                     </div>
                     <div class="dx-field">
-                        <div class="dx-field-label">{{ls.l('BankAccNumber')}}</div>
+                        <div class="dx-field-label">{{ls.l('bank_account_number')}}</div>
                         <div class="dx-field-value">
                             <dx-text-box placeholder="Enter bank account number"
                                          [(value)]="submitApplicationProfileInput.bankInformation.bankAccountNumber">
@@ -363,7 +363,7 @@
                     </div>
 
                     <div class="dx-field">
-                        <div class="dx-field-label">{{ls.l('BankABA')}}</div>
+                        <div class="dx-field-label">{{ls.l('bank_aba')}}</div>
                         <div class="dx-field-value">
                             <dx-text-box placeholder="Enter bank ABA"
                                          [(value)]="submitApplicationProfileInput.bankInformation.bankABA">
@@ -394,7 +394,7 @@
                         </div>
                         <div class="col-md-6 col-sm-12">
                             <div class="dx-field">
-                                <div class="dx-field-label">{{ls.l('IsDirectDeposit')}}</div>
+                                <div class="dx-field-label">{{ls.l('direct_deposit')}}</div>
                                 <div class="dx-field-value">
                                     <dx-radio-group
                                         [items]="radioGroup"
@@ -440,7 +440,7 @@
                         </div>
                         <div class="col-md-6 col-sm-12">
                             <div class="dx-field">
-                                <div class="dx-field-label">{{ls.l('IsActiveMilitary')}}</div>
+                                <div class="dx-field-label">{{ls.l('active_military')}}</div>
                                 <div class="dx-field-value">
                                     <dx-radio-group
                                         [items]="radioGroup"
@@ -456,7 +456,7 @@
                     <div class="row">
                         <div class="col-md-6 col-sm-12">
                             <div class="dx-field">
-                                <div class="dx-field-label">{{ls.l('EmployerName')}}</div>
+                                <div class="dx-field-label">{{ls.l('employer_name')}}</div>
                                 <div class="dx-field-value">
                                     <dx-text-box placeholder="Enter employer name"
                                                  [(value)]="submitApplicationProfileInput.employmentInformation.employerName">
@@ -478,7 +478,7 @@
                     <div class="row">
                         <div class="col-md-12">
                             <div class="dx-field">
-                                <div class="dx-field-label">{{ls.l('MonthsAtEmployer')}}</div>
+                                <div class="dx-field-label">{{ls.l('months_at_employer')}}</div>
                                 <div class="dx-field-value">
                                     <dx-text-box placeholder="Enter period"
                                                  [(value)]="submitApplicationProfileInput.employmentInformation.monthsAtEmployer">
@@ -490,7 +490,7 @@
                     <div class="row">
                         <div class="col-md-6 col-sm-12">
                             <div class="dx-field">
-                                <div class="dx-field-label">{{ls.l('WorkPhone')}}</div>
+                                <div class="dx-field-label">{{ls.l('phone_work')}}</div>
                                 <div class="dx-field-value">
                                     <dx-text-box name="phone"
                                                  (onFocusOut)="inputStatusesService.blurInput($event)"
@@ -579,7 +579,7 @@
                 </div>
                 <div class="main">
                     <div class="dx-field">
-                        <div class="dx-field-label">{{ls.l('NetMonthlyIncome')}}</div>
+                        <div class="dx-field-label">{{ls.l('net_monthly_income')}}</div>
                         <div class="dx-field-value">
                             <dx-number-box
                                 format="$ #,##0.##"
@@ -588,7 +588,7 @@
                         </div>
                     </div>
                     <div class="dx-field">
-                        <div class="dx-field-label">{{ls.l('PayFrequency')}}</div>
+                        <div class="dx-field-label">{{ls.l('pay_frequency')}}</div>
                         <div class="dx-field-value">
                             <dx-select-box
                                 [items]="payFrequency"
@@ -600,7 +600,7 @@
                         </div>
                     </div>
                     <div class="dx-field">
-                        <div class="dx-field-label">{{ls.l('PayNextDate')}}</div>
+                        <div class="dx-field-label">{{ls.l('pay_next_date')}}</div>
                         <div class="dx-field-value">
                             <dx-date-box
                                 [(value)]="submitApplicationProfileInput.employmentInformation.payNextDate"
@@ -610,7 +610,7 @@
                         </div>
                     </div>
                     <div class="dx-field">
-                        <div class="dx-field-label">{{ls.l('PayAfterNextDate')}}</div>
+                        <div class="dx-field-label">{{ls.l('pay_after_next_date')}}</div>
                         <div class="dx-field-value">
                             <dx-date-box
                                 [(value)]="submitApplicationProfileInput.employmentInformation.payAfterNextDate"
@@ -620,7 +620,7 @@
                         </div>
                     </div>
                     <div class="dx-field">
-                        <div class="dx-field-label">{{ls.l('IncomeType')}}</div>
+                        <div class="dx-field-label">{{ls.l('income_type')}}</div>
                         <div class="dx-field-value">
                             <dx-select-box
                                 [items]="incomeType"
