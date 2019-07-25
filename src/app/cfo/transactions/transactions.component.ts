@@ -221,7 +221,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             },
             onChanged: () => {
                 this.dataGrid.instance.clearSelection();
-                this.getTotalValues();
+                this.processTotalValues();
                 this._changeDetectionRef.detectChanges();
             }
         });
@@ -447,6 +447,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                         {
                             name: 'searchAll',
                             action: this.searchAllClick.bind(this),
+                            visible: (this.searchValue && this.searchValue.length > 0) && (this.filtersService.hasFilterSelected || this.selectedCashflowCategoryKey),
                             options: {
                                 text: this.l('Search All')
                             },
@@ -568,10 +569,8 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             });
     }
 
-    getTotalValues() {
-        let totals = this.totalDataSource && this.totalDataSource.items();
+    processTotalValuesInternal(totals, startingBalanceTotal = 0) {
         let selectedRows = this.dataGrid.instance ? this.dataGrid.instance.getSelectedRowsData() : [];
-
         if (selectedRows.length) {
             let creditTotal = this.creditTransactionTotal = 0;
             let creditCount = this.creditTransactionCount = 0;
@@ -581,7 +580,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             let debitCount = this.debitTransactionCount = 0;
             let debitClassifiedCount = this.debitClassifiedTransactionCount = 0;
 
-            this.adjustmentStartingBalanceTotal = 0;
+            this.adjustmentStartingBalanceTotal = startingBalanceTotal;
             this.adjustmentTotal = 0;
 
             let bankAccounts = [];
@@ -617,44 +616,59 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             this.transactionTotal = this.creditTransactionTotal + this.debitTransactionTotal;
             this.transactionCount = this.creditTransactionCount + this.debitTransactionCount;
         } else if (totals && totals.length) {
-                this.creditTransactionTotal = totals[0].creditTotal;
-                this.creditTransactionCount = totals[0].creditCount;
-                this.creditClassifiedTransactionCount = totals[0].classifiedCreditTransactionCount;
+            this.creditTransactionTotal = totals[0].creditTotal;
+            this.creditTransactionCount = totals[0].creditCount;
+            this.creditClassifiedTransactionCount = totals[0].classifiedCreditTransactionCount;
 
-                this.debitTransactionTotal = totals[0].debitTotal;
-                this.debitTransactionCount = totals[0].debitCount;
-                this.debitClassifiedTransactionCount = totals[0].classifiedDebitTransactionCount;
-                setTimeout(() => {
-                    if (totals[0].bankAccounts) {
-                        this.bankAccounts = totals[0].bankAccounts;
-                    } else {
-                        this.bankAccounts = [];
-                    }
-                    this._changeDetectionRef.detectChanges();
-                });
+            this.debitTransactionTotal = totals[0].debitTotal;
+            this.debitTransactionCount = totals[0].debitCount;
+            this.debitClassifiedTransactionCount = totals[0].classifiedDebitTransactionCount;
+            setTimeout(() => {
+                if (totals[0].bankAccounts) {
+                    this.bankAccounts = totals[0].bankAccounts;
+                } else {
+                    this.bankAccounts = [];
+                }
+                this._changeDetectionRef.detectChanges();
+            });
 
-                this.adjustmentStartingBalanceTotal = totals[0].adjustmentStartingBalanceTotal;
-                this.adjustmentTotal = totals[0].adjustmentTotal;
+            this.adjustmentStartingBalanceTotal = totals[0].adjustmentStartingBalanceTotal + startingBalanceTotal;
+            this.adjustmentTotal = totals[0].adjustmentTotal;
 
-                this.transactionTotal = this.creditTransactionTotal + this.debitTransactionTotal + this.adjustmentTotal + this.adjustmentStartingBalanceTotal;
-                this.transactionCount = this.creditTransactionCount + this.debitTransactionCount;
-            } else {
-                this.creditTransactionTotal = 0;
-                this.creditTransactionCount = 0;
+            this.transactionTotal = this.creditTransactionTotal + this.debitTransactionTotal + this.adjustmentTotal + this.adjustmentStartingBalanceTotal;
+            this.transactionCount = this.creditTransactionCount + this.debitTransactionCount;
+        } else {
+            this.creditTransactionTotal = 0;
+            this.creditTransactionCount = 0;
 
-                this.debitTransactionTotal = 0;
-                this.debitTransactionCount = 0;
+            this.debitTransactionTotal = 0;
+            this.debitTransactionCount = 0;
 
-                setTimeout(() => { this.bankAccounts = []; });
+            setTimeout(() => { this.bankAccounts = []; });
 
-                this.transactionTotal = 0;
-                this.transactionCount = 0;
+            this.transactionTotal = 0;
+            this.transactionCount = 0;
+            
+            this.adjustmentStartingBalanceTotal = startingBalanceTotal;
+            this.adjustmentTotal = 0;
+        }
 
-                this.adjustmentStartingBalanceTotal = 0;
-                this.adjustmentTotal = 0;
-            }
+        this._changeDetectionRef.markForCheck();
+    }
 
-        this._changeDetectionRef.detectChanges();
+    processTotalValues() {
+        let totals = this.totalDataSource && this.totalDataSource.items();        
+        if (this.dateFilter.items.from.value)
+            this._TransactionsServiceProxy.getStartingBalance(
+                this.instanceType as InstanceType, this.instanceId, 
+                this.dateFilter.items.from.value, 
+                this.dateFilter.items.to.value, 
+                this.cfoPreferencesService.selectedCurrencyId, 
+                this.bankAccountFilter.items.element.value, 
+                this.businessEntityFilter.items.element.value
+            ).subscribe(res => this.processTotalValuesInternal(totals, res));
+        else 
+            this.processTotalValuesInternal(totals);
     }
 
     getFloatPart(value) {
@@ -967,7 +981,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     }
 
     onSelectionChanged($event, initial = false) {
-        this.getTotalValues();
+        this.processTotalValues();
 
         if (!this.manageAllowed)
             return ;
@@ -1148,7 +1162,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                             this.dataGrid.instance.selectRows(gridItems, false);
                         this.dataGrid.instance.repaintRows(selectedRowIndexes);
 
-                        this.getTotalValues();
+                        this.processTotalValues();
                         this.categorizationComponent.setTransactionsCount();
                     }
 
