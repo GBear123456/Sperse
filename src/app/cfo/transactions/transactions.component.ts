@@ -751,24 +751,29 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
 
     initFiltering() {
         this.filtersService.apply(filter => {
-            let filterName = filter.caption.toLowerCase();
-            if (filterName == 'account') {
-                /** apply filter on top */
-                this.bankAccountsService.applyFilter();
-                /** apply filter in sidebar */
-                filter.items.element.value = this.bankAccountsService.state.selectedBankAccountIds;
-            }
-
-            if (filterName == 'classified') {
-                if (this.selectedCashflowCategoryKey && filter.items['no'].value === true && filter.items['yes'].value !== true) {
-                    this.cashFlowCategoryFilter = [];
-                    this.categorizationComponent.clearSelection(false);
-                    this.selectedCashflowCategoryKey = null;
+            if (filter) {
+                let filterName = filter.caption.toLowerCase();
+                if (filterName == 'account') {
+                    /** apply filter on top */
+                    this.bankAccountsService.applyFilter();
+                    /** apply filter in sidebar */
+                    filter.items.element.value = this.bankAccountsService.state.selectedBankAccountIds;
                 }
-            }
 
-            if (filterName == 'businessentity')
-                this.checkUpdateAccountsState(filter.items.element.value);
+                if (filterName == 'classified') {
+                    if (this.selectedCashflowCategoryKey && filter.items['no'].value === true && filter.items['yes'].value !== true) {
+                        this.cashFlowCategoryFilter = [];
+                        this.categorizationComponent.clearSelection(false);
+                        this.selectedCashflowCategoryKey = null;
+                    }
+                }
+
+                if (filterName == 'businessentity')
+                    this.checkUpdateAccountsState(filter.items.element.value);
+            } else {
+                this.selectAllAccounts();
+                this.dataGrid.instance.clearFilter();
+            }  
 
             this.initToolbarConfig();
             this.processFilterInternal();
@@ -1278,6 +1283,24 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         this._changeTimeout = setTimeout(() => {
             this.applyTotalBankAccountFilter(true);
         }, 100);
+    }
+
+    selectAllAccounts() {
+        let selectedBankAccountIds = [];
+        this.syncAccounts.forEach(syncAccount => {
+            if (syncAccount.bankAccounts)
+                syncAccount.bankAccounts.forEach(bankAccount => {
+                    selectedBankAccountIds.push(bankAccount.id);
+                });
+        });        
+        this.businessEntityFilter.items.element.value = 
+            this.filtersInitialData.businessEntities.map(item => item.id);
+        this.bankAccountFilter.items.element.value = selectedBankAccountIds;
+        this.bankAccountsService.changeState({
+            selectedBusinessEntitiesIds: this.businessEntityFilter.items.element.value,
+            selectedBankAccountIds: selectedBankAccountIds
+        });
+        this.bankAccountsService.applyFilter();
     }
 
     checkUpdateAccountsState(businessEntitiesIds) {
