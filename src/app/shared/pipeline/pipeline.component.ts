@@ -516,6 +516,16 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         return this.queryWithSearch;
     }
 
+    startLoading(global?) {
+        super.startLoading(global);
+        this.disabled = true;
+    }
+
+    finishLoading(global?) {
+        super.finishLoading(global);
+        this.disabled = false;
+    }
+
     loadMore(stageIndex): Observable<any> {
         this.startLoading();
         return this.loadData(
