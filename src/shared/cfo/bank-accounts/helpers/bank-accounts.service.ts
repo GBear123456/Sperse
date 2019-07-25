@@ -20,6 +20,7 @@ import { CacheService } from 'ng2-cache-service';
 import * as _ from 'underscore';
 import values from 'lodash/values';
 import difference from 'lodash/difference';
+import orderBy from 'lodash/orderBy';
 
 /** Application imports */
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -377,16 +378,10 @@ export class BankAccountsService {
     }
 
     sortBusinessEntities(list) {
-        return list.sort((prev, next) => {
-            let isPrevSelected = this.state.selectedBusinessEntitiesIds.indexOf(prev.id) >= 0,
-                isNextSelected = this.state.selectedBusinessEntitiesIds.indexOf(next.id) >= 0;
-            if (isPrevSelected && isNextSelected || !isPrevSelected && !isNextSelected)
-                return prev.name.localeCompare(next.name);
-            else if (isPrevSelected)
-                return -1;
-            else if (isNextSelected)
-                return 1;
+        list.forEach(item => {
+            item['isSelected'] = this.state.selectedBusinessEntitiesIds.indexOf(item.id) >= 0;
         });
+        return list = orderBy(list, ['isSelected', 'hasChildren', 'name'], ['desc', 'desc', 'asc']);
     }
 
     load(acceptFilterOnlyOnApply = true, applyFilter = true) {
