@@ -4,6 +4,7 @@ import { Component } from '@angular/core';
 /** Third party imports */
 import { MatDialog } from '@angular/material';
 import { filter } from 'rxjs/operators';
+import * as moment from 'moment';
 
 /** Application imports */
 import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
@@ -30,7 +31,10 @@ export class CalendarButtonComponent {
             data: {
                 to: { value: this.cfoPreferencesService.dateRange.value && this.cfoPreferencesService.dateRange.value.to.value },
                 from: { value: this.cfoPreferencesService.dateRange.value && this.cfoPreferencesService.dateRange.value.from.value },
-                options: {}
+                options: {
+                    allowFutureDates: true,
+                    endDate: moment(new Date()).add(10, 'years').toDate()
+                }
             }
         }).afterClosed().pipe(
             filter(Boolean)

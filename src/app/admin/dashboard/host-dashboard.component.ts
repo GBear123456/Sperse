@@ -99,8 +99,8 @@ export class HostDashboardComponent implements OnInit {
             switchMap(([, interval, dateRange]: [null, AppIncomeStatisticsDateInterval, CalendarValuesModel]) => {
                 return this._hostDashboardService.getDashboardStatisticsData(
                     interval as ChartDateInterval,
-                    DateHelper.removeTimezoneOffset(dateRange.from.value, true, 'from'),
-                    DateHelper.removeTimezoneOffset(dateRange.to.value, true, 'to')
+                    dateRange.from.value && DateHelper.removeTimezoneOffset(dateRange.from.value, true, 'from'),
+                    dateRange.to.value && DateHelper.removeTimezoneOffset(dateRange.to.value, true, 'to')
                 ).pipe(
                     finalize(() => this.refreshing = false),
                     catchError(() => of(new HostDashboardData()))
@@ -123,6 +123,12 @@ export class HostDashboardComponent implements OnInit {
         this.recentTenantsData$ = this.hostDashboardData$.pipe(
             map((data: HostDashboardData) => data.recentTenants || [])
         );
+    }
+
+    getSelectedDateRangeLabel(format: string) {
+        return this.selectedDateRange.value.from.value && this.selectedDateRange.value.to.value
+            ? this._datePipe.transform(this.selectedDateRange.value.from.value, format) + ' - ' + this._datePipe.transform(this.selectedDateRange.value.to.value, format)
+            : this.ls.l('Periods_AllTime');
     }
 
     incomeStatisticsDateIntervalChange(interval: number) {

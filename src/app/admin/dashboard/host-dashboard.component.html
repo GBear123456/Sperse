@@ -16,7 +16,7 @@
                         <span class="m-subheader__daterange-label">
                             <span class="m-subheader__daterange-title"></span>
                             <span class="m-subheader__daterange-date m--font-brand">
-                                {{selectedDateRange.value.from.value | date: 'MMMM d, yyyy' }} - {{selectedDateRange.value.to.value | date: 'MMMM d, yyyy'}}
+                                {{ getSelectedDateRangeLabel('MMMM d, yyyy') }}
                             </span>
                         </span>
                         <a class="btn btn-sm btn-primary m-btn m-btn--icon m-btn--icon-only m-btn--custom m-btn--pill">
@@ -59,7 +59,7 @@
                                     </div>
                                     <span class="m-widget24__change">
                                         <div class="status-title">
-                                            {{selectedDateRange.value.from.value | date: 'MM/dd/yyyy'}} - {{selectedDateRange.value.to.value | date: 'MM/dd/yyyy'}}
+                                            {{ getSelectedDateRangeLabel('MM/dd/yyyy') }}
                                         </div>
                                     </span>
                                     <span class="m-widget24__number">
@@ -86,7 +86,7 @@
                                     </div>
                                     <span class="m-widget24__change">
                                         <div class="status-title">
-                                            {{selectedDateRange.value.from.value | date: 'MM/dd/yyyy'}} - {{selectedDateRange.value.to.value | date: 'MM/dd/yyyy'}}
+                                            {{ getSelectedDateRangeLabel('MM/dd/yyyy') }}
                                         </div>
                                     </span>
                                 </div>
@@ -162,7 +162,7 @@
                                         <span class="caption-subject font-blue bold uppercase">{{ls.l("IncomeStatistics")}}</span>
                                         <small>
                                             <span class="caption-helper">
-                                                {{selectedDateRange.value.from.value | date: 'MM/dd/yyyy'}} - {{selectedDateRange.value.to.value | date: 'MM/dd/yyyy'}}
+                                                {{ getSelectedDateRangeLabel('MM/dd/yyyy') }}
                                             </span>
                                         </small>
                                     </h3>
@@ -259,7 +259,7 @@
                                         <span class="caption-subject font-green-seagreen">{{ls.l("EditionStatistics")}}</span>
                                         <small>
                                             <span class="caption-helper">
-                                                {{selectedDateRange.value.from.value | date: 'MM/dd/yyyy'}} - {{selectedDateRange.value.to.value | date: 'MM/dd/yyyy'}}
+                                                {{ getSelectedDateRangeLabel('MM/dd/yyyy') }}
                                             </span>
                                         </small>
                                     </h3>

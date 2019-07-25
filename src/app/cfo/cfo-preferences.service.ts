@@ -30,8 +30,8 @@ export class CfoPreferencesService {
     dateRangeForFilter$: Observable<any> = this.dateRange$.pipe(
         map((dateRange: CalendarValuesModel) => {
             return dateRange && {
-                from: { value: this.getShiftedDate(dateRange.from.value) },
-                to: { value: this.getShiftedDate(dateRange.to.value) }
+                from: { value: dateRange.from.value && this.getShiftedDate(dateRange.from.value) },
+                to: { value: dateRange.from.value && this.getShiftedDate(dateRange.to.value) }
             };
         })
     );

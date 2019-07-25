@@ -41,7 +41,9 @@ export class GenerateReportDialogComponent implements OnInit {
     calendarData = {
         from: { value: DateHelper.addTimezoneOffset(this.dateFrom.toDate()) },
         to: { value: DateHelper.addTimezoneOffset(this.dateTo.toDate()) },
-        options: { }
+        options: {
+            showAllAvailableDatesButton: false
+        }
     };
 
     private readonly BACK_BTN_INDEX = 0;
@@ -108,8 +110,8 @@ export class GenerateReportDialogComponent implements OnInit {
             tap(() => this.notify.info(this.ls.l('GeneratingStarted'))),
             switchMap(currencyId =>
                 this.reportsProxy.generate(<any>this.data.instanceType, this.data.instanceId, new GenerateInput({
-                    from: DateHelper.getDateWithoutTime(this.dateFrom),
-                    to: DateHelper.getDateWithoutTime(this.dateTo),
+                    from: this.dateFrom && DateHelper.getDateWithoutTime(this.dateFrom),
+                    to: this.dateTo && DateHelper.getDateWithoutTime(this.dateTo),
                     period: this.data.period,
                     currencyId,
                     businessEntityIds: this.selectedBusinessEntityIds,
