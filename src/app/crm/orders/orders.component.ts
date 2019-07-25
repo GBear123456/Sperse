@@ -120,6 +120,9 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     toggleToolbar() {
         this._appService.toolbarToggle();
         setTimeout(() => this.dataGrid.instance.repaint(), 0);
+        this._filtersService.fixed = false;
+        this._filtersService.disable();
+        this.initToolbarConfig();
     }
 
     ngAfterViewInit(): void {

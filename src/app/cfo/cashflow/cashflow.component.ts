@@ -659,8 +659,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         options: {
             allowFutureDates: true,
             endDate: moment(new Date()).add(10, 'years').toDate()
-        },
-        hidden: true
+        }
     });
 
     /** Row pathes of the months that had been already expanded and we don't need to load the days again */
@@ -1048,6 +1047,9 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     toggleToolbar() {
         this.appService.toolbarToggle();
         setTimeout(() => this.pivotGrid.instance.repaint(), 0);
+        this._filtersService.fixed = false;
+        this._filtersService.disable();
+        this.initToolbarConfig();
     }
 
     initFiltering() {

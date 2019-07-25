@@ -95,8 +95,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         caption: 'Date',
         field: 'Date',
         items: { from: new FilterItemModel(), to: new FilterItemModel() },
-        options: { method: 'getFilterByDate' },
-        hidden: true
+        options: { method: 'getFilterByDate' }
     });
     private bankAccountFilter: FilterModel;
     private businessEntityFilter: FilterModel;
@@ -382,8 +381,11 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     }
 
     toggleToolbar() {
+        setTimeout(() => this.dataGrid.instance.repaint());
         this._appService.toolbarToggle();
-        setTimeout(() => this.dataGrid.instance.repaint(), 0);
+        this.filtersService.fixed = false;
+        this.filtersService.disable();
+        this.initToolbarConfig();
     }
 
     initToolbarConfig() {
@@ -393,7 +395,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                     location: 'before', items: [
                         {
                             name: 'filters',
-                            visible: false,
+                            visible: !this._cfoService.hasStaticInstance,
                             action: () => {
                                 this.filtersService.fixed =
                                     !this.filtersService.fixed;
