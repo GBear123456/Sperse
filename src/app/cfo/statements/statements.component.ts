@@ -11,6 +11,7 @@ import { CacheService } from 'ng2-cache-service';
 import * as moment from 'moment';
 import { Observable, Subject, combineLatest, of } from 'rxjs';
 import {
+    catchError,
     finalize,
     filter,
     first,
@@ -150,7 +151,10 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
                     dateRange.from.value,
                     dateRange.to.value || dateRange.from.value,
                     GroupByPeriod.Monthly
-                ).pipe(finalize(() => abp.ui.clearBusy()));
+                ).pipe(
+                    catchError((error) => of(error)),
+                    finalize(() => abp.ui.clearBusy())
+                );
             })
         ).subscribe((result: BankAccountDailyStatDto[]) => {
             if (result && result.length) {

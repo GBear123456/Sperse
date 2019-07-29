@@ -8,7 +8,7 @@ import { DxChartComponent } from 'devextreme-angular/ui/chart';
 import { getMarkup, exportFromMarkup } from 'devextreme/viz/export';
 import { CacheService } from 'ng2-cache-service';
 import { BehaviorSubject, Observable, Subject, combineLatest, of } from 'rxjs';
-import { finalize, first, filter, switchMap, tap, takeUntil, mapTo, withLatestFrom } from 'rxjs/operators';
+import { catchError, finalize, first, filter, switchMap, tap, takeUntil, mapTo, withLatestFrom } from 'rxjs/operators';
 import * as moment from 'moment';
 import { Store, select } from '@ngrx/store';
 
@@ -205,7 +205,10 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
                     dateRange.from.value,
                     dateRange.to.value || dateRange.from.value,
                     GroupByPeriod.Monthly
-                ).pipe(finalize(() => abp.ui.clearBusy()));
+                ).pipe(
+                    catchError((error) => of(error)),
+                    finalize(() => abp.ui.clearBusy())
+                );
             })
         ).subscribe((result: BankAccountDailyStatDto[]) => {
             if (result && result.length) {

@@ -3,8 +3,6 @@ import * as moment from 'moment-timezone';
 import { CashflowService } from './cashflow.service';
 import { BrowserDynamicTestingModule, platformBrowserDynamicTesting } from '@angular/platform-browser-dynamic/testing';
 
-//var moment = require('moment');
-
 describe('CashflowService', () => {
     beforeEach(() => {
         TestBed.resetTestEnvironment();
@@ -18,7 +16,7 @@ describe('CashflowService', () => {
         expect(service).toBeTruthy();
     }));
 
-    it('calculateCellValue shoud work', inject([CashflowService], (service: CashflowService) => {
+    it('calculateCellValue should work', inject([CashflowService], (service: CashflowService) => {
         //console.log(moment);
         const dataArray = [
             {
