@@ -213,6 +213,7 @@ export class OffersService {
                 height: '800px',
                 id: 'offers-wizard',
                 panelClass: ['offers-wizard', 'setup'],
+                disableClose: true,
                 data: {
                     offer: offer,
                     campaignId: offer.campaignId,

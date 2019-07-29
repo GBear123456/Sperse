@@ -1,3 +1,4 @@
+<button mat-button mat-dialog-close class="close"></button>
 <mat-dialog-content>
     <mat-horizontal-stepper [linear]="false" #stepper [@.disabled]="true">
         <mat-step>
@@ -8,7 +9,7 @@
                     </div>
                     <div class="main">
                         <div class="row">
-                            <div class="col-md-12">
+                            <div class="col-md-6 col-sm-12">
                                 <div class="dx-field">
                                     <div class="dx-field-label">{{ls.l('FirstName')}}</div>
                                     <div class="dx-field-value">
@@ -24,9 +25,20 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="col-md-6 col-sm-12">
+                                <div class="dx-field">
+                                    <div class="dx-field-label">{{ls.l('MiddleName')}}</div>
+                                    <div class="dx-field-value">
+                                        <dx-text-box placeholder="Enter middle name"
+                                                     [(value)]="submitApplicationProfileInput.personalInformation.middleName"
+                                                     (keydown)="validateName($event)">
+                                        </dx-text-box>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-12">
+                            <div class="col-md-6 col-sm-12">
                                 <div class="dx-field">
                                     <div class="dx-field-label">{{ls.l('LastName')}}</div>
                                     <div class="dx-field-value">
@@ -42,16 +54,17 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-12">
+                            <div class="col-md-6 col-sm-12">
                                 <div class="dx-field">
-                                    <div class="dx-field-label">{{ls.l('MiddleName')}}</div>
+                                    <div class="dx-field-label">{{ls.l('Gender')}}</div>
                                     <div class="dx-field-value">
-                                        <dx-text-box placeholder="Enter middle name"
-                                                     [(value)]="submitApplicationProfileInput.personalInformation.middleName"
-                                                     (keydown)="validateName($event)">
-                                        </dx-text-box>
+                                        <dx-select-box
+                                            [items]="gender"
+                                            valueExpr="key"
+                                            displayExpr="text"
+                                            [(value)]="submitApplicationProfileInput.personalInformation.gender"
+                                            placeholder="Choose gender">
+                                        </dx-select-box>
                                     </div>
                                 </div>
                             </div>
@@ -79,22 +92,6 @@
                                                      (onFocusIn)="inputStatusesService.focusInput($event)"
                                                      [(value)]="submitApplicationProfileInput.personalInformation.ssn">
                                         </dx-text-box>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6 col-sm-12">
-                                <div class="dx-field">
-                                    <div class="dx-field-label">{{ls.l('Gender')}}</div>
-                                    <div class="dx-field-value">
-                                        <dx-select-box
-                                            [items]="gender"
-                                            valueExpr="key"
-                                            displayExpr="text"
-                                            [(value)]="submitApplicationProfileInput.personalInformation.gender"
-                                            placeholder="Choose gender">
-                                        </dx-select-box>
                                     </div>
                                 </div>
                             </div>
@@ -149,40 +146,59 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="dx-field">
-                            <div class="dx-field-label">{{ls.l('phone')}}</div>
-                            <div class="dx-field-value">
-                                <dx-text-box name="phone"
-                                             (onFocusOut)="inputStatusesService.blurInput($event)"
-                                             (onFocusIn)="inputStatusesService.focusInput($event)"
-                                             [(value)]="submitApplicationProfileInput.personalInformation.phone"
-                                             [maskRules]="rules">
-                                </dx-text-box>
+                        <div class="row">
+                            <div class="col-md-6 col-sm-12">
+                                <div class="dx-field">
+                                    <div class="dx-field-label">{{ls.l('MobPhone')}}</div>
+                                    <div class="dx-field-value">
+                                        <dx-text-box name="phone"
+                                                     (onFocusOut)="inputStatusesService.blurInput($event)"
+                                                     (onFocusIn)="inputStatusesService.focusInput($event)"
+                                                     [(value)]="submitApplicationProfileInput.personalInformation.phoneMobile"
+                                                     [maskRules]="rules">
+                                        </dx-text-box>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-sm-12">
+                                <div class="dx-field">
+                                    <div class="dx-field-label">{{ls.l('phone')}}</div>
+                                    <div class="dx-field-value">
+                                        <dx-text-box name="phone"
+                                                     (onFocusOut)="inputStatusesService.blurInput($event)"
+                                                     (onFocusIn)="inputStatusesService.focusInput($event)"
+                                                     [(value)]="submitApplicationProfileInput.personalInformation.phone"
+                                                     [maskRules]="rules">
+                                        </dx-text-box>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                        <div class="dx-field">
-                            <div class="dx-field-label">{{ls.l('MobPhone')}}</div>
-                            <div class="dx-field-value">
-                                <dx-text-box name="phone"
-                                             (onFocusOut)="inputStatusesService.blurInput($event)"
-                                             (onFocusIn)="inputStatusesService.focusInput($event)"
-                                             [(value)]="submitApplicationProfileInput.personalInformation.phoneMobile"
-                                             [maskRules]="rules">
-                                </dx-text-box>
+                        <div class="row">
+                            <div class="col-md-6 col-sm-12">
+                                <div class="dx-field">
+                                    <div class="dx-field-label">{{ls.l('PreferredContactTime')}}</div>
+                                    <div class="dx-field-value">
+                                        <dx-select-box
+                                            [items]="contactTime"
+                                            valueExpr="key"
+                                            displayExpr="text"
+                                            [(value)]="submitApplicationProfileInput.personalInformation.preferredContactTOD"
+                                            placeholder="Select contact time">
+                                        </dx-select-box>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-sm-12">
+                                <div class="dx-field">
+                                    <div class="dx-field-label">{{ls.l('Timezone')}}</div>
+                                    <div class="dx-field-value">
+                                        <dx-text-box name="timezone"></dx-text-box>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                        <div class="dx-field">
-                            <div class="dx-field-label">{{ls.l('PreferredContactTime')}}</div>
-                            <div class="dx-field-value">
-                                <dx-select-box
-                                    [items]="contactTime"
-                                    valueExpr="key"
-                                    displayExpr="text"
-                                    [(value)]="submitApplicationProfileInput.personalInformation.preferredContactTOD"
-                                    placeholder="Select contact time">
-                                </dx-select-box>
-                            </div>
-                        </div>
+
                         <div class="dx-field">
                             <div class="right-info">
                                 <small>* By clicking "Next", you agree to our <a class="link" (click)="openConditionsDialog(termsData)">Terms
@@ -678,7 +694,7 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-md-6 col-sm-12">
+                        <div class="col-md-12">
                             <div class="dx-field">
                                 <div class="dx-field-label">{{ls.l('RequestedLoanAmount')}}</div>
                                 <div class="dx-field-value">
@@ -689,19 +705,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-6 col-sm-12">
-                            <div class="dx-field">
-                                <div class="dx-field-label">{{ls.l('ApprovedLoanAmount')}}</div>
-                                <div class="dx-field-value">
-                                    <dx-number-box
-                                        format="$ #,##0.##"
-                                        [(value)]="submitApplicationProfileInput.loanInformation.approvedLoanAmount">
-                                    </dx-number-box>
-                                </div>
-                            </div>
-                        </div>
                     </div>
-
                     <div class="header">
                         {{ls.l('DebtInfo')}}
                     </div>
