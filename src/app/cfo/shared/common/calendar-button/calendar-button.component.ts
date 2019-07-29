@@ -1,14 +1,16 @@
 /** Core imports */
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material';
-import { filter } from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import { filter, map, withLatestFrom } from 'rxjs/operators';
 import * as moment from 'moment';
 
 /** Application imports */
 import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
 import { CalendarDialogComponent } from '@app/shared/common/dialogs/calendar/calendar-dialog.component';
+import { CalendarValuesModel } from '@shared/common/widgets/calendar/calendar-values.model';
 
 @Component({
     selector: 'calendar-button',
@@ -16,10 +18,16 @@ import { CalendarDialogComponent } from '@app/shared/common/dialogs/calendar/cal
     styleUrls: ['./calendar-button.component.less']
 })
 export class CalendarButtonComponent {
-
+    @Input() emptyEndDateIsAvailable = false;
+    periodLabel$: Observable<string> = this.cfoPreferencesService.periodLabel$.pipe(
+        withLatestFrom(this.cfoPreferencesService.dateRange$),
+        map(([label, dateRange]: [string, CalendarValuesModel]) => {
+            return this.emptyEndDateIsAvailable && !dateRange.to.value ? label + ' -' : label;
+        })
+    );
     constructor(
         private dialog: MatDialog,
-        public cfoPreferencesService: CfoPreferencesService
+        private cfoPreferencesService: CfoPreferencesService
     ) {}
 
     openCalendarDialog() {

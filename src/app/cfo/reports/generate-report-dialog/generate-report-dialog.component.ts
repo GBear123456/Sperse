@@ -127,7 +127,7 @@ export class GenerateReportDialogComponent implements OnInit {
 
     applyDateRange() {
         let dateFrom = this.calendarData.from.value && DateHelper.removeTimezoneOffset(this.calendarData.from.value);
-        let dateTo = this.calendarData.to.value && DateHelper.removeTimezoneOffset(this.calendarData.to.value);
+        let dateTo = this.calendarData.to.value ? DateHelper.removeTimezoneOffset(this.calendarData.to.value) : dateFrom;
         if ((this.dateTo ? this.dateTo.diff(dateTo, 'days') : dateTo) ||
             (this.dateFrom ? this.dateFrom.diff(dateFrom, 'days') : dateFrom)
         ) {

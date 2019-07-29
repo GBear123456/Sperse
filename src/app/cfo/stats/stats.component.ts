@@ -203,7 +203,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
                     forecastModelId,
                     requestFilter.accountIds,
                     dateRange.from.value,
-                    dateRange.to.value,
+                    dateRange.to.value || dateRange.from.value,
                     GroupByPeriod.Monthly
                 ).pipe(finalize(() => abp.ui.clearBusy()));
             })
