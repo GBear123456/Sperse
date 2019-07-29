@@ -22,7 +22,7 @@ export class CalendarButtonComponent {
     periodLabel$: Observable<string> = this.cfoPreferencesService.periodLabel$.pipe(
         withLatestFrom(this.cfoPreferencesService.dateRange$),
         map(([label, dateRange]: [string, CalendarValuesModel]) => {
-            return this.emptyEndDateIsAvailable && !dateRange.to.value ? label + ' -' : label;
+            return this.emptyEndDateIsAvailable && dateRange.from.value && !dateRange.to.value ? label + ' -' : label;
         })
     );
     constructor(

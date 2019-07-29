@@ -1453,16 +1453,17 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         if (this.cashflowData && this.cashflowData.length) {
             this.cashflowData.slice().forEach(item => {
                 if (item.initialDate.format('MM.YYYY') === startDate.format('MM.YYYY') &&
-                    item.adjustmentStartingBalanceTotal != AdjustmentType._2) {
+                    item.adjustmentType != AdjustmentType._2 && !item.isStub
+                ) {
                     this.cashflowData.splice(this.cashflowData.indexOf(item), 1);
                 }
             });
         }
 
         if (this.adjustmentsList && this.adjustmentsList.length) {
-            this.adjustmentsList.slice().forEach((item, index) => {
+            this.adjustmentsList.slice().forEach(item => {
                 if (item.initialDate.format('MM.YYYY') === startDate.format('MM.YYYY') &&
-                    item.adjustmentStartingBalanceTotal != AdjustmentType._2) {
+                    item.adjustmentType != AdjustmentType._2) {
                     this.adjustmentsList.splice(this.adjustmentsList.indexOf(item), 1);
                 }
             });
@@ -5008,7 +5009,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
             /** If the column is starting balance column but without prev - calculate */
             if (this.isStartingBalanceAccountCell(summaryCell, cellRow)) {
-                return this.getCurrentValueForStartingBalanceCell(summaryCell);
+                return this.getCurrentValueForStartingBalanceCell(summaryCell) + (summaryCell.value() || 0);
             }
 
             /** For proper grand total calculation and proper sorting
@@ -5027,7 +5028,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
             if (this.isEndingBalanceAccountCell(summaryCell, cellRow)) {
                 let startedBalanceCell = summaryCell.slice(<any>0, PSB),
-                    startedBalanceCellValue = startedBalanceCell ? (startedBalanceCell.value(true) || 0) : 0,
+                    startedBalanceCellValue = startedBalanceCell ? (startedBalanceCell.value() || 0) : 0,
                     currentCellValue = summaryCell.value() || 0,
                     reconciliationTotal = this.getCellValue(summaryCell, Reconciliation);
                 return startedBalanceCellValue + reconciliationTotal + currentCellValue;
@@ -5159,7 +5160,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
     getCurrentValueForStartingBalanceCell(summaryCell) {
         const cellData = <any>this.getCellData(summaryCell, summaryCell.value(summaryCell.field('row')).slice(2), StartedBalance);
-        return this.calculateCellValue(cellData, this.adjustmentsList, true);
+        return this.cashflowService.calculateCellValue(cellData, this.adjustmentsList.filter(item => item.adjustmentType === AdjustmentType._0), true);
     }
 
     /**
@@ -5240,7 +5241,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             /** if we haven't found the value in cash - then we should calculate the value in the cashflow data by ourselves */
             if (!this.anotherPeriodAccountsValues.has(key)) {
                 /** calculate the cell value using the cell data and cashflowData */
-                targetPeriodAccountCachedValue = this.calculateCellValue(cellData, this.cashflowData);
+                targetPeriodAccountCachedValue = this.cashflowService.calculateCellValue(cellData, this.cashflowData);
                 this.setAnotherPeriodAccountCachedValue(key, targetPeriodAccountCachedValue);
             } else {
                 targetPeriodAccountCachedValue = this.anotherPeriodAccountsValues.get(key);
@@ -5288,55 +5289,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             }
         }
         return cellData;
-    }
-
-    /**
-     * Calculates the value of the cell using the cell data and cashflowData array
-     * @param cellData
-     */
-    calculateCellValue(cellData, dataArray, onlyStartOfPeriod = false) {
-        let currentDateDate = DateHelper.getCurrentUtcDate().date();
-        // const cellMoment = moment().set({
-        //     year: cellData.year,
-        //     quarter: cellData.quarter,
-        //     month: cellData.month - 1,
-        //     date: cellData.day
-        // });
-        /** {cashflowTypeId: 'T', accountId: 10, quarter: 3, year: 2015, month: 5} */
-        let value = dataArray.reduce((sum, cashflowData) => {
-            let date = cashflowData.initialDate || cashflowData.date;
-            if (
-                cashflowData.cashflowTypeId === cellData.cashflowTypeId &&
-                /** if account id is B - then we should get all accounts */
-                (cellData.accountId === StartedBalance || cellData.accountId === Total || cashflowData.accountId == cellData.accountId) &&
-                (
-                    (!cellData.year || (cellData.year === date.year())) &&
-                    (!cellData.quarter || (cellData.quarter === date.quarter())) &&
-                    (!cellData.month || (cellData.month - 1 === date.month())) &&
-                    ((cellData.day && cellData.day === date.date()) ||
-                        (!cellData.day && !cellData.projected) ||
-                        (
-                            cellData.projected &&
-                            (
-                                (cellData.projected === Projected.Mtd && date.date() < currentDateDate) ||
-                                (cellData.projected === Projected.Today && date.date() === currentDateDate) ||
-                                (cellData.projected === Projected.Forecast && date.date() > currentDateDate) ||
-                                (
-                                    onlyStartOfPeriod
-                                        ? this.cashflowService.itemIsWeekBeginning(cellData, date)
-                                        : this.cashflowService.itemIsInWeekInterval(cellData, date)
-                                )
-                            )
-                        )
-                    )
-                )
-            ) {
-                sum += cashflowData.amount;
-            }
-            return sum;
-        }, 0);
-
-        return value;
     }
 
     /** set the prev ending account value to the cash */

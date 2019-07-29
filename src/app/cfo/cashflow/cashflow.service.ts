@@ -2,7 +2,7 @@
 import { Injectable } from '@angular/core';
 
 /** Third party imports */
-import * as moment from 'moment-timezone';
+import * as moment from 'moment';
 import TextBox from 'devextreme/ui/text_box';
 import NumberBox from 'devextreme/ui/number_box';
 import * as $ from 'jquery';
@@ -21,6 +21,18 @@ import {
 import { IModifyingInputOptions } from '@app/cfo/cashflow/modifying-input-options.interface';
 import { IEventDescription } from '@app/cfo/cashflow/models/event-description';
 import { CashflowTypes } from '@app/cfo/cashflow/enums/cashflow-types.enum';
+import { DateHelper } from '@shared/helpers/DateHelper';
+import { Projected } from '@app/cfo/cashflow/enums/projected.enum';
+
+/** Constants */
+const StartedBalance    = CashflowTypes.StartedBalance,
+    Income            = CashflowTypes.Income,
+    Expense           = CashflowTypes.Expense,
+    CashflowTypeTotal = CashflowTypes.CashflowTypeTotal,
+    Reconciliation    = CashflowTypes.Reconciliation,
+    NetChange         = CashflowTypes.NetChange,
+    Total             = CashflowTypes.Total,
+    GrandTotal        = CashflowTypes.GrandTotal;
 
 @Injectable()
 export class CashflowService {
@@ -360,8 +372,60 @@ export class CashflowService {
             && date.isSameOrBefore(moment.utc(weekInterval.endDate));
     }
 
-    itemIsWeekBeginning(cellData, date): boolean {
-        const weekInterval = JSON.parse(cellData.projected);
-        return weekInterval && date.isSame(moment.utc(weekInterval.startDate));
+    /**
+     * Calculates the value of the cell using the cell data and cashflowData array
+     * Please run test after changing or refactoring to avoid regression
+     * @param cellData
+     */
+    calculateCellValue(cellData, dataArray, onlyStartOfPeriod = false) {
+        let currentDateDate = DateHelper.getCurrentUtcDate().date(), cellMoment;
+        if (onlyStartOfPeriod) {
+            if (cellData.projected) {
+                const weekInterval = JSON.parse(cellData.projected);
+                cellMoment = moment.utc(weekInterval.startDate);
+            } else {
+                cellMoment = moment()
+                    .set({ year: cellData.year })
+                    .startOf('year')
+                    .set({
+                        quarter: cellData.quarter,
+                        month: cellData.month ? cellData.month - 1 : cellData.month,
+                        date: cellData.day
+                    });
+            }
+        }
+        /** {cashflowTypeId: 'T', accountId: 10, quarter: 3, year: 2015, month: 5} */
+        let value = dataArray.reduce((sum, cashflowData) => {
+            let date = cashflowData.initialDate || cashflowData.date;
+            if (
+                cashflowData.cashflowTypeId === cellData.cashflowTypeId &&
+                /** if account id is B - then we should get all accounts */
+                (cellData.accountId === StartedBalance || cellData.accountId === Total || cashflowData.accountId == cellData.accountId) &&
+                (
+                    onlyStartOfPeriod
+                        ? cellMoment.format('DD.MM.YYYY') === date.format('DD.MM.YYYY')
+                        : ((!cellData.year || (cellData.year === date.year())) &&
+                            (!cellData.quarter || (cellData.quarter === date.quarter())) &&
+                            (!cellData.month || (cellData.month - 1 === date.month())) &&
+                            ((cellData.day && cellData.day === date.date()) ||
+                                (!cellData.day && !cellData.projected) ||
+                                (
+                                    cellData.projected &&
+                                    (
+                                        (cellData.projected === Projected.Mtd && date.date() < currentDateDate) ||
+                                        (cellData.projected === Projected.Today && date.date() === currentDateDate) ||
+                                        (cellData.projected === Projected.Forecast && date.date() > currentDateDate) ||
+                                        this.itemIsInWeekInterval(cellData, date)
+                                    )
+                                ))
+                        )
+                )
+            ) {
+                sum += cashflowData.amount;
+            }
+            return sum;
+        }, 0);
+
+        return value;
     }
 }
