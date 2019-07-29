@@ -107,7 +107,8 @@
         <dxi-column dataField="bankAccounts.length" [visible]="showAdvancedColumns" [width]="10" [sortIndex]="1" sortOrder="asc" [calculateSortValue]="calculateSyncAccountSortValue" alignment="right" [calculateDisplayValue]="calculateSyncAccountDisplayValue" [allowEditing]="false"></dxi-column>
         <dxi-column [width]="30" alignment="right" [allowEditing]="false" [visible]="showAdvancedColumns" cellTemplate="expandTemplate"></dxi-column>
         <dxi-column dataField="balance" [caption]="l('BankAccountsWidget_Value')" cellTemplate="amountTemplate" alignment="right" [allowEditing]="false"></dxi-column>
-        <dxi-column [width]="40" alignment="right" dataField="syncRef" [allowEditing]="false" [(visible)]="allowUpdateAccount" cellTemplate="actionsTemplate"></dxi-column>
+        <dxi-column [width]="40" alignment="right" dataField="syncRef" [allowEditing]="false"
+                    [visible]="allowUpdateAccount && (contextMenuItems && contextMenuItems.length)" cellTemplate="actionsTemplate"></dxi-column>
         <div *dxTemplate="let syncAccount of 'detail'">
             <div class="bank-accounts-grid-container">
                 <dx-data-grid accessKey="detailGrid"
