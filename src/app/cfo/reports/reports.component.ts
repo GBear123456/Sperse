@@ -9,7 +9,7 @@ import { Observable, of } from 'rxjs';
 import { CacheService } from 'ng2-cache-service';
 import { ImageViewerComponent } from 'ng2-image-viewer';
 import '@node_modules/ng2-image-viewer/imageviewer.js';
-import { flatMap } from 'rxjs/operators';
+import { flatMap, finalize } from 'rxjs/operators';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
@@ -379,14 +379,15 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
             isConfirmed => {
                 if (isConfirmed) {
                     super.startLoading(true);
-                    this.reportsProxy.delete(<any>this.instanceType, this.instanceId, this.currentReportInfo.Id).subscribe((response) => {
-                        this.dataGrid.instance.refresh();
-                        if (this.actionsTooltip && this.actionsTooltip.visible) {
-                            this.hideActionsMenu();
-                        }
-                        this.closeReport();
-                        super.finishLoading(true);
-                    });
+                    this.reportsProxy.delete(<any>this.instanceType, this.instanceId, this.currentReportInfo.Id)
+                        .pipe(finalize(() => super.finishLoading(true)))
+                        .subscribe((response) => {
+                            this.dataGrid.instance.refresh();
+                            if (this.actionsTooltip && this.actionsTooltip.visible) {
+                                this.hideActionsMenu();
+                            }
+                            this.closeReport();
+                        });
                 }
             }
         );

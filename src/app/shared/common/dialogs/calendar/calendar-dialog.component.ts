@@ -51,8 +51,8 @@ export class CalendarDialogComponent implements OnInit, AfterViewInit {
 
     filterApply(event) {
         this.dialogRef.close({
-            dateFrom: this.data.from.value,
-            dateTo: this.data.to.value,
+            dateFrom: this.data.from.value || undefined,
+            dateTo: this.data.to.value || undefined,
             period: this.data.period
         });
     }

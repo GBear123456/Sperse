@@ -31,14 +31,14 @@ export class CfoPreferencesService {
         map((dateRange: CalendarValuesModel) => {
             return dateRange && {
                 from: { value: dateRange.from.value && this.getShiftedDate(dateRange.from.value) },
-                to: { value: dateRange.from.value && this.getShiftedDate(dateRange.to.value) }
+                to: { value: dateRange.to.value && this.getShiftedDate(dateRange.to.value) }
             };
         })
     );
     periodLabel$: Observable<string> = this.dateRange$.pipe(
         map((dateRange: CalendarValuesModel) => {
             return dateRange && dateRange.period ? this.ls.l('Periods_' + dateRange.period) : (
-                dateRange && dateRange.from && dateRange.to ? this.formatDate(dateRange.from.value) + ' - ' + this.formatDate(dateRange.to.value) : this.ls.l('LastMonth')
+                dateRange && dateRange.from.value && dateRange.to.value ? this.formatDate(dateRange.from.value) + ' - ' + this.formatDate(dateRange.to.value) : this.ls.l('LastMonth')
             );
         })
     );

@@ -609,15 +609,16 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
                     super.startLoading(true);
                     this.showViewerType = undefined;
                     this.openDocumentMode = false;
-                    this._documentService.delete(this.currentDocumentInfo.id).subscribe((response) => {
-                        this.loadDocuments(() => {
-                            if (this.actionsTooltip && this.actionsTooltip.visible) {
-                                this.hideActionsMenu();
-                            }
-                            this.closeDocument();
-                            super.finishLoading(true);
+                    this._documentService.delete(this.currentDocumentInfo.id)
+                        .pipe(finalize(() => super.finishLoading(true)))
+                        .subscribe((response) => {
+                            this.loadDocuments(() => {
+                                if (this.actionsTooltip && this.actionsTooltip.visible) {
+                                    this.hideActionsMenu();
+                                }
+                                this.closeDocument();
+                            });
                         });
-                    });
                 }
             }
         );
