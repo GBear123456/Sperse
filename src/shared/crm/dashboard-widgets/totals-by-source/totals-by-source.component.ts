@@ -56,6 +56,7 @@ export class TotalsBySourceComponent implements OnInit, OnDestroy {
         '#f7d15e',
         '#ecf0f3'
     ];
+    rawData: any[];
     percentage: string;
     rangeCount: string;
     rangeName: string;
@@ -67,16 +68,7 @@ export class TotalsBySourceComponent implements OnInit, OnDestroy {
             label: this.ls.l('TotalsByStar/CreditRating'),
             method: this._dashboardServiceProxy.getCustomersByStar,
             argumentField: 'key',
-            valueField: 'count',
-            getColor: (value: string) => {
-                return {
-                    Excellent: '#24c26c',
-                    Good: '#82cc57',
-                    Fair: '#f0eb56',
-                    Poor: '#f3852a',
-                    NotSure: '#959595'
-                }[value] || '#ecf0f3';
-            }
+            valueField: 'count'
         },
         {
             key: 'stageDistribution',
@@ -155,6 +147,7 @@ export class TotalsBySourceComponent implements OnInit, OnDestroy {
                 )
             ),
             map((data: any[]) => {
+                this.rawData = data;
                 return (this.selectedTotal.value.sorting ? data.sort(this.selectedTotal.value.sorting) : data)
                     .map((item: any) => {
                         item[this.selectedTotal.value.argumentField] = this.ls.l(
@@ -185,9 +178,11 @@ export class TotalsBySourceComponent implements OnInit, OnDestroy {
     }
 
     private getItemColor(item) {
-        return this.selectedTotal.value.getColor
-            ? this.selectedTotal.value.getColor(item.argument)
-            : this.rangeColors[item.index];
+        return this.rawData[item.index].colorType || (
+            this.selectedTotal.value.getColor ?
+            this.selectedTotal.value.getColor(item.argument) :
+            this.rangeColors[item.index]
+        );
     }
 
     onPointHoverChanged($event) {
