@@ -244,6 +244,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
     private expandBeforeIndex: number = null;
 
+    private hasStaticInstance;
+
     public set calculatorShowed(value: boolean) {
         this._calculatorShowed = value;
     }
@@ -798,6 +800,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         this._cellsCopyingService.selectedCellsToCopyFinished$.subscribe(targetCells => {
             this.handleCellsCopying(this._cellsCopyingService.copiedCell, targetCells);
         });
+
+        this.hasStaticInstance = this._cfoService.hasStaticInstance;
     }
 
     ngOnInit() {
