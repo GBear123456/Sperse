@@ -137,6 +137,8 @@ export class AuditLogsComponent extends AppComponentBase implements OnInit, OnDe
         super(injector);
         this.rootComponent = this.getRootComponent();
         this.rootComponent.overflowHidden(true);
+        this.initFilterConfig();
+        this.initToolbarConfig();
     }
 
     ngOnInit() {
@@ -174,8 +176,6 @@ export class AuditLogsComponent extends AppComponentBase implements OnInit, OnDe
                 });
             }
         });
-        this.initToolbarConfig();
-        this.initFilterConfig();
     }
 
     initToolbarConfig() {
@@ -353,6 +353,10 @@ export class AuditLogsComponent extends AppComponentBase implements OnInit, OnDe
 
     initFilterConfig() {
         this._filtersService.setup(this.filtersModels);
+        this._filtersService.checkIfAnySelected();
+        this._filtersService.apply(() => {
+            this.initToolbarConfig();
+        });
     }
 
     refreshData(): void {
