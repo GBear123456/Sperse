@@ -8,7 +8,7 @@
         (onClosed)="bankAccountsService.changeState({selectedBusinessEntitiesIds: $event}, true); refreshDataGrid()">
     </selection-filter>
     <synch-progress class="synch-progress" (onComplete)="showRefreshButton()"></synch-progress>
-    <calendar-button></calendar-button>
+    <calendar-button [emptyEndDateIsAvailable]="true"></calendar-button>
 </app-headline>
 
 <cashflow-operations
@@ -92,7 +92,7 @@
                         cssClass="tabularFontName">
             </dxi-column>
             <dxi-column dataField="categoryName"
-                        dataType="string" 
+                        dataType="string"
                         alignment="left"
                         [minWidth]="30"
                         [allowFiltering]="false"
@@ -107,7 +107,7 @@
                         [allowFiltering]="false"
                         caption="{{l('Transactions_Vendor')}}">
             </dxi-column>
-            <dxi-column dataField="description" 
+            <dxi-column dataField="description"
                         dataType="string"
                         alignment="left"
                         [allowFiltering]="false"
@@ -122,7 +122,7 @@
                         cellTemplate="amountTemplate"
                         caption="{{l('Transactions_Amount')}}"
                         cssClass="tabular">
-            </dxi-column>            
+            </dxi-column>
             <dxi-column dataField="accountName"
                         alignment="left"
                         [minWidth]="30"
@@ -159,7 +159,7 @@
                         <span> {{l('Unclassified')}} </span>
                     </ng-container>
                 </span>
-            </div>          
+            </div>
         </dx-data-grid>
     </dx-resizable>
     <dx-scroll-view

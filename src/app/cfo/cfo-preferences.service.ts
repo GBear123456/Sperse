@@ -38,7 +38,12 @@ export class CfoPreferencesService {
     periodLabel$: Observable<string> = this.dateRange$.pipe(
         map((dateRange: CalendarValuesModel) => {
             return dateRange && dateRange.period ? this.ls.l('Periods_' + dateRange.period) : (
-                dateRange && dateRange.from.value && dateRange.to.value ? this.formatDate(dateRange.from.value) + ' - ' + this.formatDate(dateRange.to.value) : this.ls.l('LastMonth')
+                dateRange && dateRange.from.value
+                    ? (dateRange.to.value
+                        ? this.formatDate(dateRange.from.value) + ' - ' + this.formatDate(dateRange.to.value)
+                        : this.formatDate(dateRange.from.value)
+                    )
+                    : this.ls.l('LastMonth')
             );
         })
     );
