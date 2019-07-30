@@ -487,7 +487,7 @@ export class BankAccountsService {
             map((types: BankAccountType[]) => types.sort(this.sortBankAccountsTypes)),
             distinctUntilChanged(this.arrayDistinct),
             tap(list => this._selectedBankAccountTypes.next(
-                list.filter(item => item.name != 'Bill.com').map(item => item.id)
+                list.filter(item => item.name != 'Bill.com' && item.name != 'Accounting').map(item => item.id)
             ))
         );
     }
