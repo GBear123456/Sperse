@@ -154,19 +154,11 @@ export class AccountsComponent extends CFOComponentBase implements OnInit {
     }
 
     getDailyStatsAmount(dailyStatsData: GetDailyBalanceStatsOutput, dailyStatsSliderSelected: number): number {
-        let amount;
-        switch (dailyStatsSliderSelected) {
-            case 0:
-                amount = dailyStatsData.maxBalance;
-                break;
-            case 1:
-                amount = dailyStatsData.avarageBalance;
-                break;
-            case 2:
-                amount = dailyStatsData.minBalance;
-                break;
-        }
-        return amount;
+        return [
+            dailyStatsData.maxBalance,
+            dailyStatsData.avarageBalance,
+            dailyStatsData.minBalance
+        ][dailyStatsSliderSelected];
     }
 
     activate() {
