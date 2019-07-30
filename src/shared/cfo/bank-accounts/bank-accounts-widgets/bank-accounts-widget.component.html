@@ -69,7 +69,7 @@
 <div class="grid-container {{highlightUsedRows ? 'highlight-used-rows' : '' }}">
     <dx-data-grid id="gridContainer"
                   [width]="'100%'"
-                  [height]="scrollHeight"
+                  [height]="calculateHeight()"
                   [dataSource]="dataSource"
                   [masterDetail]="{ enabled: false, template: 'detail' }"
                   keyExpr="syncAccountId"
