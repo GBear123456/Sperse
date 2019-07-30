@@ -40,6 +40,7 @@ import { MatSliderChange } from '@angular/material/slider';
 import { DxScrollViewComponent } from 'devextreme-angular/ui/scroll-view';
 
 /** App part imports */
+import { MatDialog } from '@angular/material/dialog';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { RootStore, StatesStoreActions, StatesStoreSelectors } from '@root/store';
 import { OffersService } from '@root/personal-finance/shared/offers/offers.service';
@@ -69,6 +70,7 @@ import { ChooserFilterSetting, ChooserDesign, ChooserType } from '@root/personal
 import { ChooserOption } from '@root/personal-finance/shared/offers/filters/chooser-filter/chooser-filter.component';
 import { ScoreFilterSetting } from '@root/personal-finance/shared/offers/filters/filters-settings/score-filter-setting';
 import { CreditScoreItem } from '@root/personal-finance/shared/offers/filters/interfaces/score-filter.interface';
+import { MarcusDetailsComponent } from '@root/personal-finance/shared/offers/marcus-details/marcus-details.component';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { AppConsts } from '@shared/AppConsts';
 
@@ -480,6 +482,7 @@ export class OffersLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
         injector: Injector,
         applicationRef: ApplicationRef,
         public ls: AppLocalizationService,
+        private dialog: MatDialog,
         private router: Router,
         private offersService: OffersService,
         private renderer: Renderer2,
@@ -656,12 +659,27 @@ export class OffersLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
         return filters;
     }
 
-    checkDemoUserActionAllowed() {
-        return !this._sessionService.isLendspaceDemoUser || this.filtersValues.creditScore < 720;
+    checkDemoUserActionAllowed(card?: OfferDto) {
+        if (this._sessionService.isLendspaceDemoUser) {
+            let result = this.filtersValues.creditScore < 720;
+            if (!result && card && card.redirectUrl)
+                this.dialog.open(MarcusDetailsComponent, {
+                    width: '900px',
+                    height: '800px',
+                    id: card.redirectUrl,
+                    disableClose: false,
+                    data: {}
+                }).afterClosed().subscribe((res)  => {
+
+                });
+
+            return result;
+        } else
+            return true;
     }
 
     viewCardDetails(card: OfferDto) {
-        if (this.checkDemoUserActionAllowed())
+        if (this.checkDemoUserActionAllowed(card))
             this.router.navigate(['./', card.campaignId], { relativeTo: this.route });
     }
 
