@@ -99,10 +99,16 @@ export class OffersService {
         }),
         OfferDto.fromJS({
             campaignId: 2,
-            details: ['Debt Consolidation Loans Made Easy', 'Loans from $1,000-$35,000', 'Rates starting at 4.99%', 'All Credit Types Considered'],
+            details: [
+                'Fixed rates from 5.99% to 28.99% APR. For NY residents, rates range from 5.99% to 24.99% APR.',
+                'Only the most creditworthy applicants qualify for the lowest rates and largest loans amounts. Rates will generally be higher for longer-term loans.',
+                'Marcus is backed by Goldman Sachs\' 150 years of financial expertise.',
+                'No origination fee, prepayment fee, or late fee - You only pay interest for the additional days.'
+            ],
             logoUrl: './assets/images/credit-report/offers/demo/marcus.png',
-            maxLoanAmount: 35000,
-            minLoanAmount: 1000,
+            maxLoanAmount: 40000,
+            minLoanAmount: 3500,
+            redirectUrl: 'marcus-details',
             name: 'Marcus by Goldman Sachs',
             systemType: 'EPCVIP'
         }),

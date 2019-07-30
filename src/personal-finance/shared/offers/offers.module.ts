@@ -16,6 +16,7 @@ import { OffersLayoutComponent } from '@root/personal-finance/shared/offers/offe
 import { LayoutModule } from '../layout/layout.module';
 import { DxScrollViewModule } from '@root/node_modules/devextreme-angular';
 import { OfferDetailsComponent } from '@root/personal-finance/shared/offers/offer-details/offer-details.component';
+import { MarcusDetailsComponent } from '@root/personal-finance/shared/offers/marcus-details/marcus-details.component';
 import { NoDataModule } from '@shared/common/widgets/no-data/no-data.module';
 import { OffersRoutingModule } from '@root/personal-finance/shared/offers/offers-routing.module';
 import { NumberAbbrPipe } from '@shared/common/pipes/number-abbr/number-abbr.pipe';
@@ -50,6 +51,7 @@ import { StarsRatingModule } from '@shared/common/stars-rating/stars-rating.modu
         PersonalFinanceCommonModule
     ],
     declarations: [
+        MarcusDetailsComponent,
         OffersLayoutComponent,
         OfferDetailsComponent,
         NumberAbbrPipe,
@@ -62,6 +64,9 @@ import { StarsRatingModule } from '@shared/common/stars-rating/stars-rating.modu
         BusinessLoansComponent,
         OffersCategoryDetailsComponent,
         DebtConsolidationComponent
+    ],
+    entryComponents: [
+        MarcusDetailsComponent
     ]
 })
 export class OffersModule {}
