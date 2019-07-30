@@ -35809,6 +35809,7 @@ export class GetCategoryTreeOutput implements IGetCategoryTreeOutput {
     accountingTypes!: { [key: string] : AccountingTypeDto; } | undefined;
     categories!: { [key: string] : CategoryDto; } | undefined;
     reportingCategories!: { [key: string] : ReportingCategoryDto; } | undefined;
+    reportSectionGroups!: { [key: string] : string; } | undefined;
     reportSections!: { [key: string] : ReportSectionDto; } | undefined;
 
     constructor(data?: IGetCategoryTreeOutput) {
@@ -35848,6 +35849,13 @@ export class GetCategoryTreeOutput implements IGetCategoryTreeOutput {
                 for (let key in data["reportingCategories"]) {
                     if (data["reportingCategories"].hasOwnProperty(key))
                         this.reportingCategories[key] = data["reportingCategories"][key] ? ReportingCategoryDto.fromJS(data["reportingCategories"][key]) : new ReportingCategoryDto();
+                }
+            }
+            if (data["reportSectionGroups"]) {
+                this.reportSectionGroups = {};
+                for (let key in data["reportSectionGroups"]) {
+                    if (data["reportSectionGroups"].hasOwnProperty(key))
+                        this.reportSectionGroups[key] = data["reportSectionGroups"][key];
                 }
             }
             if (data["reportSections"]) {
@@ -35897,6 +35905,13 @@ export class GetCategoryTreeOutput implements IGetCategoryTreeOutput {
                     data["reportingCategories"][key] = this.reportingCategories[key];
             }
         }
+        if (this.reportSectionGroups) {
+            data["reportSectionGroups"] = {};
+            for (let key in this.reportSectionGroups) {
+                if (this.reportSectionGroups.hasOwnProperty(key))
+                    data["reportSectionGroups"][key] = this.reportSectionGroups[key];
+            }
+        }
         if (this.reportSections) {
             data["reportSections"] = {};
             for (let key in this.reportSections) {
@@ -35913,6 +35928,7 @@ export interface IGetCategoryTreeOutput {
     accountingTypes: { [key: string] : AccountingTypeDto; } | undefined;
     categories: { [key: string] : CategoryDto; } | undefined;
     reportingCategories: { [key: string] : ReportingCategoryDto; } | undefined;
+    reportSectionGroups: { [key: string] : string; } | undefined;
     reportSections: { [key: string] : ReportSectionDto; } | undefined;
 }
 
