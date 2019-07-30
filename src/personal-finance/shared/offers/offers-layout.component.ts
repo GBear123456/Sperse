@@ -663,7 +663,7 @@ export class OffersLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
             if (!result && card && card.redirectUrl)
                 this.dialog.open(MarcusDetailsComponent, {
                     width: '900px',
-                    height: '680px',
+                    height: '710px',
                     id: card.redirectUrl,
                     disableClose: false,
                     data: {}
