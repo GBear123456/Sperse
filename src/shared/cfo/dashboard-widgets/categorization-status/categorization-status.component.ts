@@ -25,6 +25,7 @@ import { CategorizationStatus } from '@shared/service-proxies/service-proxies';
 })
 export class CategorizationStatusComponent extends CFOComponentBase implements OnInit {
     categorySynchData: CategorizationStatus;
+    totalCount: number;
     private autoClassifyData = new AutoClassifyDto();
     resetRules = new ResetClassificationDto();
     currencyId$ = this.store$.pipe(
@@ -70,7 +71,7 @@ export class CategorizationStatusComponent extends CFOComponentBase implements O
             takeUntil(this.destroy$)
         ).subscribe((result: CategorizationStatus) => {
             this.categorySynchData = result;
-            this.categorySynchData['totalCount'] = result.classifiedTransactionCount + result.unclassifiedTransactionCount;
+            this.totalCount = result.classifiedTransactionCount + result.unclassifiedTransactionCount;
         });
     }
 
