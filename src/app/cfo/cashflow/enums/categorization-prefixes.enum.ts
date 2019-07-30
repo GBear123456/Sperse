@@ -1,7 +1,8 @@
 export enum CategorizationPrefixes  {
     CashflowType            = 'CT',
     AccountName             = 'AN',
-    ReportingCategory       = 'RC',
+    ReportingGroup          = 'RG',
+    ReportingSection        = 'RS',
     AccountingType          = 'AT',
     Category                = 'CA',
     SubCategory             = 'SC',

@@ -23,6 +23,9 @@ import { IEventDescription } from '@app/cfo/cashflow/models/event-description';
 import { CashflowTypes } from '@app/cfo/cashflow/enums/cashflow-types.enum';
 import { DateHelper } from '@shared/helpers/DateHelper';
 import { Projected } from '@app/cfo/cashflow/enums/projected.enum';
+import { CategorizationModel } from '@app/cfo/cashflow/models/categorization-model';
+import { UserPreferencesService } from '@app/cfo/cashflow/preferences-dialog/preferences.service';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 
 /** Constants */
 const StartedBalance    = CashflowTypes.StartedBalance,
@@ -33,6 +36,14 @@ const StartedBalance    = CashflowTypes.StartedBalance,
     NetChange         = CashflowTypes.NetChange,
     Total             = CashflowTypes.Total,
     GrandTotal        = CashflowTypes.GrandTotal;
+
+const PSB   = CategorizationPrefixes.CashflowType + CashflowTypes.StartedBalance,
+      PI    = CategorizationPrefixes.CashflowType + CashflowTypes.Income,
+      PE    = CategorizationPrefixes.CashflowType + CashflowTypes.Expense,
+      PCTT  = CategorizationPrefixes.CashflowType + CashflowTypes.CashflowTypeTotal,
+      PR    = CategorizationPrefixes.CashflowType + CashflowTypes.Reconciliation,
+      PNC   = CategorizationPrefixes.CashflowType + CashflowTypes.NetChange,
+      PT    = CategorizationPrefixes.CashflowType + CashflowTypes.Total;
 
 @Injectable()
 export class CashflowService {
@@ -46,7 +57,65 @@ export class CashflowService {
     modifyingCellOldHtml: string;
     valueIsChanging = false;
 
-    constructor() { }
+    /**
+     *  Categorization settings for creating categorization tree on cashflow
+     */
+    categorization: CategorizationModel[] = [
+        {
+            prefix                 : CategorizationPrefixes.CashflowType,
+            statsKeyName           : 'cashflowTypeId',
+            namesSource            : 'categoryTree.types'
+        },
+        {
+            prefix                 : CategorizationPrefixes.AccountName,
+            statsKeyName           : 'accountId',
+            namesSource            : 'bankAccounts'
+        },
+        {
+            prefix                 : CategorizationPrefixes.ReportingGroup,
+            namesSource            : 'reportingGroups'
+        },
+        {
+            prefix                 : CategorizationPrefixes.ReportingSection,
+            statsKeyName           : 'reportSectionId',
+            namesSource            : 'categoryTree.reportingSections'
+        },
+        {
+            prefix                 : CategorizationPrefixes.AccountingType,
+            statsKeyName           : 'accountingTypeId',
+            namesSource            : 'categoryTree.accountingTypes'
+        },
+        {
+            prefix                 : CategorizationPrefixes.Category,
+            statsKeyName           : 'categoryId',
+            namesSource            : 'categoryTree.categories'
+        },
+        {
+            prefix                 : CategorizationPrefixes.SubCategory,
+            statsKeyName           : 'subCategoryId',
+            namesSource            : 'categoryTree.categories'
+        },
+        {
+            prefix                 : CategorizationPrefixes.TransactionDescriptor,
+            statsKeyName           : 'transactionDescriptor'
+        }
+    ];
+
+    /** The string paths of cashflow data */
+    treePathes = {};
+
+    /** The tree of categories after first data loading */
+    categoryTree: GetCategoryTreeOutput;
+
+    cashflowTypes: any;
+
+    /** Bank accounts of user with extracted bank accounts */
+    bankAccounts: BankAccountDto[];
+
+    constructor(
+        private userPreferencesService: UserPreferencesService,
+        private ls: AppLocalizationService
+    ) { }
 
     addEvents(element: HTMLElement, events: IEventDescription[]) {
         for (let event of events) {
@@ -427,5 +496,175 @@ export class CashflowService {
         }, 0);
 
         return value;
+    }
+
+    addCategorizationLevels(transactionObj: any) {
+        /** Add group and categories numbers to the categorization list and show the names in
+         *  customize functions by finding the names with ids
+         */
+        let levelNumber = 0;
+        let isAccountTransaction = transactionObj.cashflowTypeId === StartedBalance ||
+            transactionObj.cashflowTypeId === Total ||
+            transactionObj.cashflowTypeId === Reconciliation ||
+            transactionObj.cashflowTypeId === NetChange;
+        let key = null;
+        transactionObj['levels'] = {};
+        this.categorization.every((level) => {
+
+            if (
+                transactionObj[level.statsKeyName]
+                || (level.prefix === CategorizationPrefixes.SubCategory && !transactionObj.categoryId)
+                || level.prefix === CategorizationPrefixes.ReportingGroup
+            ) {
+                /** If user doesn't want to show accounting type row - skip it */
+                if (
+                    level.prefix === CategorizationPrefixes.AccountingType && !this.userPreferencesService.localPreferences.value.showAccountingTypeTotals
+                    || ((level.prefix === CategorizationPrefixes.ReportingGroup || level.prefix === CategorizationPrefixes.ReportingSection) && !this.userPreferencesService.localPreferences.value.showReportingCategoryTotals)
+                ) {
+                    return true;
+                }
+
+                if (level.prefix === CategorizationPrefixes.ReportingGroup) {
+                    if (transactionObj.reportSectionId) {
+                        const reportSection = this.categoryTree.reportSections[transactionObj.reportSectionId];
+                        if (reportSection) {
+                            transactionObj['levels'][`level${levelNumber++}`] = level.prefix + reportSection.group;
+                        }
+                    }
+                    return true;
+                }
+
+                /** Create categories levels properties */
+                if (level.prefix === CategorizationPrefixes.AccountName) {
+                    if (isAccountTransaction) {
+                        key = level.prefix + transactionObj[level.statsKeyName];
+                        transactionObj['levels'][`level${levelNumber++}`] = key;
+                        return false;
+                    } else {
+                        return true;
+                    }
+                }
+
+                /**
+                 * The first level for income or expense is total if user chooses to hide cashflow type totals
+                 */
+                if (level.prefix === CategorizationPrefixes.CashflowType
+                    && (
+                        transactionObj[level.statsKeyName] === Income
+                        || transactionObj[level.statsKeyName] === Expense
+                    )
+                    && !this.userPreferencesService.localPreferences.value.showCashflowTypeTotals
+                ) {
+                    key = PCTT;
+                    transactionObj['levels'][`level${levelNumber++}`] = key;
+                    return true;
+                }
+
+                const isUnclassified = !transactionObj[level.statsKeyName];
+                /**
+                 * If user wants to hide categories and subcategories - avoid adding level for them
+                 */
+                if (
+                    (level.prefix === CategorizationPrefixes.Category || level.prefix === CategorizationPrefixes.SubCategory || level.prefix === CategorizationPrefixes.TransactionDescriptor)
+                    && !this.userPreferencesService.localPreferences.value.showCategoryTotals
+                    && !isUnclassified
+                ) {
+                    return true;
+                }
+
+                key = isUnclassified ? transactionObj[level.statsKeyName] : level.prefix + transactionObj[level.statsKeyName];
+                transactionObj['levels'][`level${levelNumber++}`] = key;
+            }
+            return true;
+        });
+
+        /** Don't show items only with one level in the second level */
+        if (Object.keys(transactionObj.levels).length === 1) {
+            transactionObj.levels.level1 = 'hidden';
+        }
+
+        this.updateTreePathes(transactionObj);
+        return transactionObj;
+    }
+
+    /**
+     * Update pathes for the filtering
+     * @param transactionObj
+     */
+    updateTreePathes(transactionObj, removePath = false) {
+        let fullPath = [];
+        for (let level in transactionObj['levels']) {
+            fullPath.push(transactionObj['levels'][level]);
+        }
+        let stringPath = fullPath.join(',');
+        if (!this.treePathes.hasOwnProperty(stringPath)) {
+            this.treePathes[stringPath] = 1;
+        } else {
+            if (removePath) {
+                this.treePathes[stringPath]--;
+                if (!this.treePathes[stringPath])
+                    delete this.treePathes[stringPath];
+            } else {
+                this.treePathes[stringPath]++;
+            }
+        }
+    }
+
+    customizeFieldText(cellInfo, emptyText = null): string | null {
+        let text;
+        if (cellInfo.value) {
+            let [ key, prefix ] = [ cellInfo.value.slice(2), cellInfo.value.slice(0, 2) ];
+
+            /** General text customizing handling */
+            let namesSource = this.getNamesSourceLink(prefix);
+            text = namesSource && namesSource[key] && namesSource[key]['name'] ?
+                namesSource[key]['name'] :
+                cellInfo.value;
+
+            /** Text customizing for cashflow types */
+            if (prefix === CategorizationPrefixes.CashflowType) {
+                text = this.cashflowTypes[key];
+                if (key === Income || key === Expense) {
+                    text  = `${this.ls.l('Total')} ${text}`;
+                } else if (key === CashflowTypeTotal) {
+                    text = this.ls.l('CashFlowGrid_UserPrefs_ShowCashflowTypeTotals');
+                }
+                text = text.toUpperCase();
+            }
+
+            /** Text customizing for reporting groups */
+            if (prefix === CategorizationPrefixes.ReportingGroup) {
+                let group = this.categoryTree.reportSectionGroups[key];
+                text = group ? this.ls.l('SectionGroup_' + group) : '';
+            }
+
+            /** Text customizing for accounts names */
+            if (prefix === CategorizationPrefixes.AccountName) {
+                let account = this.bankAccounts.find(account => account.id == key );
+                text = account && account.accountName ? account.accountName : '';
+            }
+
+            /** Text customizing for transactions descriptor */
+            if (prefix === CategorizationPrefixes.TransactionDescriptor) {
+                text = key;
+            }
+
+        } else {
+            return emptyText;
+        }
+        return text;
+    }
+
+    getNamesSourceLink(prefix: CategorizationPrefixes) {
+        let category = this.getCategoryParams(prefix);
+        return category && category['namesSource'] ? this.getDescendantPropValue(this, category.namesSource) : undefined;
+    }
+
+    getCategoryParams(prefix: CategorizationPrefixes): CategorizationModel {
+        return this.categorization.find(item => item.prefix === prefix);
+    }
+
+    getDescendantPropValue(obj, path) {
+        return path.split('.').reduce((acc, part) => acc && acc[part], obj);
     }
 }
