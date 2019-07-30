@@ -53,12 +53,13 @@ import { ItemDetailsService } from '@shared/common/item-details-layout/item-deta
 import { EditContactDialog } from '../contacts/edit-contact-dialog/edit-contact-dialog.component';
 import { ItemTypeEnum } from '@shared/common/item-details-layout/item-type.enum';
 import { ContactsService } from '@app/crm/contacts/contacts.service';
+import { ImpersonationService } from '@app/admin/users/impersonation.service';
 
 @Component({
     templateUrl: './clients.component.html',
     styleUrls: ['./clients.component.less'],
     animations: [appModuleAnimation()],
-    providers: [ ClientService, LifecycleSubjectsService, ContactServiceProxy ]
+    providers: [ ClientService, LifecycleSubjectsService, ContactServiceProxy, ImpersonationService ]
 })
 export class ClientsComponent extends AppComponentBase implements OnInit, OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
@@ -69,6 +70,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     @ViewChild(StarsListComponent) starsListComponent: StarsListComponent;
     @ViewChild(StaticListComponent) statusComponent: StaticListComponent;
 
+    private readonly MENU_LOGIN_INDEX = 1;
     private readonly dataSourceURI: string = 'Customer';
     private filters: FilterModel[];
     private rootComponent: any;
@@ -101,6 +103,24 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         ]
     };
 
+    actionEvent: any;
+    actionMenuItems = [
+        {
+            text: this.l('Edit'),
+            visible: true,
+            action: () => {
+                this.showClientDetails(this.actionEvent);
+            }
+        },
+        {
+            text: this.l('LoginAsThisUser'),
+            visible: this.permission.isGranted('Pages.Administration.Users.Impersonation'),
+            action: () => {
+                this._impersonationService.impersonate(this.actionEvent.data.UserId, this.appSession.tenantId);
+            }
+        }
+    ];
+
     constructor(injector: Injector,
         public dialog: MatDialog,
         public appService: AppService,
@@ -113,7 +133,8 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         private store$: Store<AppStore.State>,
         private _reuseService: RouteReuseStrategy,
         private lifeCycleSubjectsService: LifecycleSubjectsService,
-        private itemDetailsService: ItemDetailsService
+        private itemDetailsService: ItemDetailsService,
+        private _impersonationService: ImpersonationService
     ) {
         super(injector);
     }
@@ -228,8 +249,10 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
 
         this.searchClear = false;
         event.component.cancelEditData();
-        this._router.navigate(['app/crm/contact', clientId].concat(orgId ? ['company', orgId] : []),
-            { queryParams: { referrer: 'app/crm/clients'} });
+        setTimeout(() => {
+            this._router.navigate(['app/crm/contact', clientId].concat(orgId ? ['company', orgId] : []),
+                { queryParams: { referrer: 'app/crm/clients'} });
+        });
     }
 
     calculateAddressColumnValue(data) {
@@ -699,6 +722,20 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         this.rootComponent.overflowHidden();
         this.itemDetailsService.setItemsSource(ItemTypeEnum.Customer, this.dataGrid.instance.getDataSource());
         this.hideHostElement();
+    }
+
+    showActionsMenu(event) {
+        event.cancel = true;
+
+        this.actionEvent = null;
+        this.actionMenuItems[this.MENU_LOGIN_INDEX].visible = Boolean(event.data.UserId)
+            && this.permission.isGranted('Pages.Administration.Users.Impersonation');
+        setTimeout(() => this.actionEvent = event);
+    }
+
+    onMenuItemClick(event) {
+        event.itemData.action.call(this);
+        this.actionEvent = null;
     }
 
     onShowingPopup(e) {

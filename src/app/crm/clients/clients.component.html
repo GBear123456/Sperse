@@ -2,6 +2,17 @@
     <app-headline [config]="headlineConfig">
         <import-progress-bar></import-progress-bar>
     </app-headline>
+    <dx-tooltip width="200px"
+                [target]="'.dx-state-hover .dx-link.dx-link-edit'"
+                [visible]="actionEvent">
+        <div *dxTemplate="let data of 'content'">
+            <div class="lists-tooltip-container">
+                <dx-list [dataSource]="actionMenuItems"
+                    (onItemClick)="onMenuItemClick($event)">
+                </dx-list>
+            </div>
+        </div>
+    </dx-tooltip>
     <app-static-list
         [width]="'180px'"
         [title]="l('Status')"
@@ -38,7 +49,7 @@
                                   [pager]="defaultGridPagerConfig"
                                   (onContentReady)="onContentReady($event)"
                                   (onCellClick)="onCellClick($event)"
-                                  (onEditingStart)="showClientDetails($event)"
+                                  (onEditingStart)="showActionsMenu($event)"
                                   (onSelectionChanged)="onSelectionChanged($event)"
                                   (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
                         <dxo-selection selectAllMode="page"
