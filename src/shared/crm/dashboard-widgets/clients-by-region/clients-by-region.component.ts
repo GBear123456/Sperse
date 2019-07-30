@@ -10,8 +10,8 @@ import {
 import { DecimalPipe } from '@angular/common';
 
 /** Third party imports */
-import { combineLatest } from 'rxjs';
-import { finalize, switchMap, takeUntil, tap } from 'rxjs/operators';
+import { combineLatest, of } from 'rxjs';
+import { catchError, finalize, switchMap, takeUntil, tap } from 'rxjs/operators';
 import * as mapsData from 'devextreme/dist/js/vectormap-data/usa.js';
 import { DxVectorMapComponent } from 'devextreme-angular/ui/vector-map';
 
@@ -55,8 +55,10 @@ export class ClientsByRegionComponent implements OnInit, OnDestroy {
             takeUntil(this._lifeCycleService.destroy$),
             tap(() => this._loadingService.startLoading(this._elementRef.nativeElement)),
             switchMap(([period]: [PeriodModel]) => {
-                return this._dashboardServiceProxy.getContactsByRegion(period && period.from, period && period.to)
-                    .pipe(finalize(() => this._loadingService.finishLoading(this._elementRef.nativeElement)));
+                return this._dashboardServiceProxy.getContactsByRegion(period && period.from, period && period.to).pipe(
+                    catchError(() => of([])),
+                    finalize(() => this._loadingService.finishLoading(this._elementRef.nativeElement))
+                );
             })
         ).subscribe((contactsByRegion: GetContactsByRegionOutput[]) => {
             this.gdpData = {};

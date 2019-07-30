@@ -17,6 +17,7 @@ import { AbpSessionService } from '@abp/session/abp-session.service';
 import { DxChartComponent } from 'devextreme-angular/ui/chart';
 import { BehaviorSubject, Observable, combineLatest, fromEvent, of } from 'rxjs';
 import {
+    catchError,
     distinct,
     distinctUntilChanged,
     finalize,
@@ -147,6 +148,7 @@ export class TotalsByPeriodComponent extends AppComponentBase implements OnInit,
             takeUntil(this.destroy$),
             tap(() => this.startLoading()),
             switchMap(([period, isCumulative]) => this.loadCustomersAndLeadsStats(period, isCumulative).pipe(
+                catchError(() => of([])),
                 finalize(() => { this.finishLoading(); })
             )),
             publishReplay(),

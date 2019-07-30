@@ -20,6 +20,7 @@ import { DOCUMENT } from '@angular/common';
 import { MatRadioChange } from '@angular/material/radio';
 import { Observable, Subject, ReplaySubject, of, combineLatest, fromEvent, merge } from 'rxjs';
 import {
+    catchError,
     finalize,
     first,
     debounceTime,
@@ -27,7 +28,6 @@ import {
     switchMap,
     takeUntil,
     pluck,
-    tap,
     publishReplay,
     refCount
 } from 'rxjs/operators';
@@ -132,8 +132,12 @@ export class OfferDetailsComponent implements OnInit, OnDestroy {
         abp.ui.setBusy(this.detailsContainerRef.nativeElement);
         return combineLatest(this.category$, this.offersService.memberInfo$)
             .pipe(
-                switchMap(([category, memberInfo]) => this.offerServiceProxy.getDetails(memberInfo.testMode, cardId)),
-                tap(() => abp.ui.clearBusy(this.detailsContainerRef.nativeElement))
+                switchMap(([category, memberInfo]) => {
+                    return this.offerServiceProxy.getDetails(memberInfo.testMode, cardId).pipe(
+                        catchError(() => of(new OfferDetailsDto())),
+                        finalize(() => abp.ui.clearBusy(this.detailsContainerRef.nativeElement))
+                    );
+                })
             );
     }
 
@@ -150,18 +154,19 @@ export class OfferDetailsComponent implements OnInit, OnDestroy {
 
     private getCreditCards() {
         abp.ui.setBusy(this.creditCardsListRef.nativeElement);
-        return (this.offersService.displayedCards && this.offersService.displayedCards.length ?
-                    of(this.offersService.displayedCards) :
-                        combineLatest(this.category$, this.offersService.memberInfo$).pipe(
-                        switchMap(([category, memberInfo]) => this.offerServiceProxy.getAll(GetAllInput.fromJS({
-                            testMode: memberInfo.testMode,
-                            category: category,
-                            country: 'US'
-                        }))),
-                        publishReplay(),
-                        refCount()
-                    )
-                ).pipe(
+        return (this.offersService.displayedCards && this.offersService.displayedCards.length
+                ? of(this.offersService.displayedCards)
+                : combineLatest(this.category$, this.offersService.memberInfo$).pipe(
+                    switchMap(([category, memberInfo]) => this.offerServiceProxy.getAll(GetAllInput.fromJS({
+                        testMode: memberInfo.testMode,
+                        category: category,
+                        country: 'US'
+                    })).pipe(
+                        catchError(() => of([]))
+                    )),
+                    publishReplay(),
+                    refCount()
+                )).pipe(
                     finalize(() => abp.ui.clearBusy(this.creditCardsListRef.nativeElement))
                 );
     }

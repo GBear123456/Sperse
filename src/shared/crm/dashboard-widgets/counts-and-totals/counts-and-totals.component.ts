@@ -2,7 +2,7 @@
 import { ChangeDetectionStrategy, Component, OnInit, OnDestroy, ElementRef, ChangeDetectorRef } from '@angular/core';
 
 /** Third party imports */
-import { filter, takeUntil } from 'rxjs/operators';
+import { takeUntil } from 'rxjs/operators';
 
 /** Application imports */
 import { DashboardServiceProxy } from 'shared/service-proxies/service-proxies';

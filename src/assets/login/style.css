@@ -352,6 +352,7 @@ input.form-control {
     box-shadow: none;
     line-height: 54px;
     position: relative;
+    outline: none;
 }
 
 @media all and (max-width: 450px) {

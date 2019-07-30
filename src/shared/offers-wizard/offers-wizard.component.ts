@@ -12,6 +12,8 @@ import {
 /** Third party imports */
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatHorizontalStepper } from '@angular/material';
+import { pluck } from 'rxjs/operators';
+import { Observable } from 'rxjs';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
@@ -28,7 +30,10 @@ import {
     IncomeType,
     Gender,
     TimeOfDay,
-    BankAccountType
+    BankAccountType,
+    NameValueDtoListResultDto,
+    TimingServiceProxy,
+    SettingScopes
 } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { DateHelper } from '@shared/helpers/DateHelper';
@@ -37,6 +42,7 @@ import { ConditionsModalComponent } from '@shared/common/conditions-modal/condit
 import { environment } from '@root/environments/environment';
 import { InputStatusesService } from '@shared/utils/input-statuses.service';
 import { AppHttpConfiguration } from '@shared/http/appHttpConfiguration';
+import { AppTimezoneScope } from '@shared/AppEnums';
 
 @Component({
     selector: 'app-offers-wizard',
@@ -73,6 +79,8 @@ export class OffersWizardComponent implements OnInit {
     payFrequency = Object.keys(PayFrequency).map(e => ({key: e, text: this.ls.l(e)}));
     incomeType = Object.keys(IncomeType).map(e => ({key: e, text: this.ls.l(e)}));
     bankAccountType = Object.keys(BankAccountType).map(e => ({key: e, text: this.ls.l(e)}));
+    timeZones$: Observable<NameValueDtoListResultDto[]>;
+    public defaultTimezoneScope: SettingScopes = AppTimezoneScope.User;
 
     constructor(
         injector: Injector,
@@ -82,6 +90,7 @@ export class OffersWizardComponent implements OnInit {
         private dialog: MatDialog,
         public inputStatusesService: InputStatusesService,
         private appHttpConfiguration: AppHttpConfiguration,
+        private _timingService: TimingServiceProxy,
         @Inject(MAT_DIALOG_DATA) public data: any
     ) {
         this.dialogRef = <any>injector.get(MatDialogRef);
@@ -100,6 +109,7 @@ export class OffersWizardComponent implements OnInit {
             },
             (error) => console.log(error)
         );
+        this.getTimezoneList();
         this._changeDetectionRef.detectChanges();
     }
 
@@ -110,6 +120,12 @@ export class OffersWizardComponent implements OnInit {
 
     removeTimeZone(date) {
         return DateHelper.removeTimezoneOffset(date);
+    }
+
+    getTimezoneList() {
+        this.timeZones$ = this._timingService.getTimezones(this.defaultTimezoneScope).pipe(
+            pluck('items')
+        );
     }
 
     goToNextStep(event) {

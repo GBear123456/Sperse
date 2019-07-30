@@ -38,6 +38,8 @@ import { FilterHelpers } from '../shared/helpers/filter.helper';
 import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 import { CalendarValuesModel } from '@shared/common/widgets/calendar/calendar-values.model';
+import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calendar.component';
+import { FilterItemModel } from '@shared/filters/models/filter-item.model';
 
 @Component({
     'selector': 'app-stats',
@@ -159,6 +161,15 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
     private selectedBankAccountIds$ = this.bankAccountsService.selectedBankAccountsIds$;
     private refresh: BehaviorSubject<null> = new BehaviorSubject<null>(null);
     refresh$: Observable<null> = this.refresh.asObservable();
+    private dateFilter = new FilterModel({
+        component: FilterCalendarComponent,
+        caption: 'Date',
+        items: {from: new FilterItemModel(), to: new FilterItemModel()},
+        options: {
+            allowFutureDates: true,
+            endDate: moment(new Date()).add(10, 'years').toDate()
+        }
+    });
 
     constructor(
         injector: Injector,
@@ -185,28 +196,38 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
             this.initToolbarConfig();
         });
 
+        this.cfoPreferencesService.dateRange$.pipe(
+            takeUntil(this.destroy$),
+            switchMap((dateRange) => this.componentIsActivated ? of(dateRange) : this._lifecycleService.activate$.pipe(first(), mapTo(dateRange)))
+        ).subscribe((dateRange: CalendarValuesModel) => {
+            this.dateFilter.items = {
+                from: new FilterItemModel(dateRange.from.value),
+                to: new FilterItemModel(dateRange.to.value)
+            };
+            this._filtersService.change(this.dateFilter);
+        });
+
         combineLatest(
             this.currencyId$,
             this.selectedForecastModelId$,
             this.requestFilter$,
-            this.cfoPreferencesService.dateRangeForFilter$,
             this.refresh$
         ).pipe(
             takeUntil(this.destroy$),
             switchMap((data) => this.componentIsActivated ? of(data) : this._lifecycleService.activate$.pipe(first(), mapTo(data))),
             tap(() => abp.ui.setBusy()),
-            switchMap(([currencyId, forecastModelId, requestFilter, dateRange]: [string, number, StatsFilter, CalendarValuesModel]) => {
+            switchMap(([currencyId, forecastModelId, requestFilter]: [string, number, StatsFilter]) => {
                 return this._bankAccountService.getStats(
                     InstanceType[this.instanceType],
                     this.instanceId,
                     currencyId,
                     forecastModelId,
                     requestFilter.accountIds,
-                    dateRange.from.value,
-                    dateRange.to.value || dateRange.from.value,
+                    requestFilter.startDate,
+                    requestFilter.endDate || requestFilter.startDate,
                     GroupByPeriod.Monthly
                 ).pipe(
-                    catchError((error) => of(error)),
+                    catchError(() => of([])),
                     finalize(() => abp.ui.clearBusy())
                 );
             })
@@ -479,6 +500,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
         } else {
             this._filtersService.setup(
                 this.filters = [
+                    this.dateFilter,
                     new FilterModel({
                         field: 'accountIds',
                         component: BankAccountFilterComponent,

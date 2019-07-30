@@ -2,8 +2,8 @@
 import { Injectable } from '@angular/core';
 
 /** Third party imports */
-import { BehaviorSubject, Subscription, Observable, ReplaySubject, combineLatest } from 'rxjs';
-import { finalize, switchMap, map, tap } from 'rxjs/operators';
+import { BehaviorSubject, Observable, ReplaySubject, combineLatest, of } from 'rxjs';
+import { catchError, finalize, switchMap, map, tap } from 'rxjs/operators';
 
 /** Application imports */
 import { DashboardServiceProxy } from 'shared/service-proxies/service-proxies';
@@ -23,7 +23,6 @@ export class DashboardWidgetsService  {
     );
     private totalsDataLoading: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
     totalsDataLoading$: Observable<boolean> = this.totalsDataLoading.asObservable();
-    private _subscribers: Array<Subscription> = [];
     public period$: Observable<PeriodModel> = this._period.asObservable();
     totalsDataFields = [
         {
@@ -59,7 +58,10 @@ export class DashboardWidgetsService  {
             this.refresh$
         ).pipe(
             tap(() => this.totalsDataLoading.next(true)),
-            switchMap(([period]: [PeriodModel]) => this._dashboardServiceProxy.getTotals(period && period.from, period && period.to).pipe(finalize(() => this.totalsDataLoading.next(false)))),
+            switchMap(([period]: [PeriodModel]) => this._dashboardServiceProxy.getTotals(period && period.from, period && period.to).pipe(
+                catchError(() => of(new GetTotalsOutput())),
+                finalize(() => this.totalsDataLoading.next(false))
+            )),
         ).subscribe((totalData: GetTotalsOutput) => {
             this._totalsData.next(totalData);
         });
@@ -77,10 +79,4 @@ export class DashboardWidgetsService  {
         return (total ? Math.round(value / total * 100) : 0)  + '%';
     }
 
-    unsubscribe() {
-        this._subscribers.map((sub) => {
-            return void (sub.unsubscribe());
-        });
-        this._subscribers.length = 0;
-    }
 }

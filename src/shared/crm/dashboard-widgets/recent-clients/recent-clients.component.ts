@@ -3,8 +3,8 @@ import { ChangeDetectionStrategy, Component, ElementRef, OnInit, ViewChild } fro
 import { Router } from '@angular/router';
 
 /** Third party imports */
-import { Observable, BehaviorSubject, combineLatest } from 'rxjs';
-import { finalize, switchMap, tap, distinctUntilChanged } from 'rxjs/operators';
+import { Observable, BehaviorSubject, combineLatest, of } from 'rxjs';
+import { catchError, finalize, switchMap, tap, distinctUntilChanged } from 'rxjs/operators';
 
 /** Application imports */
 import { DashboardServiceProxy, GetRecentlyCreatedCustomersOutput } from '@shared/service-proxies/service-proxies';
@@ -65,6 +65,7 @@ export class RecentClientsComponent implements OnInit {
         ).pipe(
             tap(() => this._loadingService.startLoading(this._elementRef.nativeElement)),
             switchMap(([selectedItem]) => selectedItem.dataSource.pipe(
+                catchError(() => of([])),
                 finalize(() => this._loadingService.finishLoading(this._elementRef.nativeElement))
             ))
         );

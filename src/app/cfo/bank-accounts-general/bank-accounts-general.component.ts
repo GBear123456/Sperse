@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, OnInit, Injector, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, OnInit, Injector, ViewChild } from '@angular/core';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material';
@@ -24,7 +24,7 @@ import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/life
     styleUrls: ['./bank-accounts-general.component.less'],
     providers: [ BankAccountsGeneralService, SyncAccountServiceProxy, LifecycleSubjectsService ]
 })
-export class BankAccountsGeneralComponent extends CFOComponentBase implements OnInit, AfterViewInit  {
+export class BankAccountsGeneralComponent extends CFOComponentBase implements OnInit {
     @ViewChild(SynchProgressComponent) syncComponent: SynchProgressComponent;
 
     headlineConfig: any;
@@ -63,6 +63,8 @@ export class BankAccountsGeneralComponent extends CFOComponentBase implements On
         ).subscribe(() => {
             this.refresh();
         });
+        this.rootComponent = this.getRootComponent();
+        this.rootComponent.overflowHidden(true);
     }
 
     private initHeadlineConfig() {
@@ -78,14 +80,9 @@ export class BankAccountsGeneralComponent extends CFOComponentBase implements On
         this._bankAccountsGeneralService.refreshBankAccounts();
     }
 
-    ngAfterViewInit(): void {
-        this.rootComponent = this.getRootComponent();
-    }
-
     activate() {
         this._lifeCycleService.activate.next();
         this.syncComponent.activate();
-        this.rootComponent.overflowHidden(true);
     }
 
     deactivate() {

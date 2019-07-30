@@ -83,7 +83,6 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
     syncAccount: SyncAccountBankDto;
     popupVisible = false;
     bankAccountInfo: RenameSyncAccountInput = new RenameSyncAccountInput();
-    scrollHeight: number;
     sortItems: ISortItem[] = [
         {
             text: this.l('Sort by connection'),
@@ -422,7 +421,7 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
     calculateHeight() {
         /** Get bottom position of previous element */
         let filtersBottomPosition = this.header.nativeElement.getBoundingClientRect().bottom;
-        this.scrollHeight = window.innerHeight - filtersBottomPosition;
+        return window.innerHeight - filtersBottomPosition;
     }
 
     removeAccount(syncAccountId) {

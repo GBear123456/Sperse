@@ -5,6 +5,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Injector, OnInit
 import { select, Store } from '@ngrx/store';
 import { Observable, combineLatest, of } from 'rxjs';
 import {
+    catchError,
     filter,
     first,
     finalize,
@@ -140,6 +141,7 @@ export class TotalsByPeriodComponent extends CFOComponentBase implements OnInit 
                 period.endDate,
                 period.selectedPeriod
             ).pipe(
+                catchError(() => of([])),
                 finalize(() => {
                     this.finishLoading();
                     this._changeDetectorRef.detectChanges();

@@ -13,8 +13,9 @@ import { CurrencyPipe } from '@angular/common';
 /** Third party imports */
 import { select, Store } from '@ngrx/store';
 import { DxChartComponent } from 'devextreme-angular/ui/chart';
-import { BehaviorSubject, Observable, asapScheduler, combineLatest, merge, from, of } from 'rxjs';
+import { Observable, asapScheduler, combineLatest, merge, from, of } from 'rxjs';
 import {
+    catchError,
     filter,
     first,
     finalize,
@@ -247,7 +248,10 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit {
                     period.startDate,
                     period.endDate,
                     period.key
-                ).pipe(finalize(() => this.finishLoading()))
+                ).pipe(
+                    catchError(() => of([])),
+                    finalize(() => this.finishLoading())
+                )
             ),
             filter(Boolean),
             map((stats: BankAccountDailyStatDto[]) => {

@@ -1,15 +1,21 @@
+/** Core imports */
 import { Component, Injector, OnInit } from '@angular/core';
+
+/** Third party imports */
+import { MatDialog } from '@angular/material/dialog';
+import { Store, select } from '@ngrx/store';
+import { combineLatest, of } from 'rxjs';
+import { catchError, filter, first, tap, switchMap, finalize, takeUntil, mapTo } from 'rxjs/operators';
+
+/** Application imports */
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { DashboardServiceProxy, ClassificationServiceProxy, InstanceType, AutoClassifyDto, ResetClassificationDto } from 'shared/service-proxies/service-proxies';
-import { MatDialog } from '@angular/material/dialog';
-import {ChooseResetRulesComponent} from './choose-reset-rules/choose-reset-rules.component';
+import { ChooseResetRulesComponent } from './choose-reset-rules/choose-reset-rules.component';
 import { CfoStore, CurrenciesStoreSelectors } from '@app/cfo/store';
-import { Store, select } from '@ngrx/store';
-import { filter, tap, switchMap, finalize, takeUntil, first, mapTo } from 'rxjs/operators';
 import { BankAccountsService } from '../../bank-accounts/helpers/bank-accounts.service';
 import { DashboardService } from '../dashboard.service';
-import { combineLatest, of } from 'rxjs';
 import { LifecycleSubjectsService } from '@root/shared/common/lifecycle-subjects/lifecycle-subjects.service';
+import { CategorizationStatus } from '@shared/service-proxies/service-proxies';
 
 @Component({
     selector: 'app-categorization-status',
@@ -18,7 +24,8 @@ import { LifecycleSubjectsService } from '@root/shared/common/lifecycle-subjects
     providers: [DashboardServiceProxy, ClassificationServiceProxy, LifecycleSubjectsService]
 })
 export class CategorizationStatusComponent extends CFOComponentBase implements OnInit {
-    categorySynchData: any;
+    categorySynchData: CategorizationStatus;
+    totalCount: number;
     private autoClassifyData = new AutoClassifyDto();
     resetRules = new ResetClassificationDto();
     currencyId$ = this.store$.pipe(
@@ -57,11 +64,14 @@ export class CategorizationStatusComponent extends CFOComponentBase implements O
             tap(() => this.startLoading()),
             switchMap(([, currencyId, bankAccountIds]: [null,  string, number[]]) => this._dashboardServiceProxy.getCategorizationStatus(
                 InstanceType[this.instanceType], this.instanceId, currencyId, bankAccountIds
-            ).pipe(finalize(() => this.finishLoading()))),
+            ).pipe(
+                catchError(() => of(new CategorizationStatus())),
+                finalize(() => this.finishLoading())
+            )),
             takeUntil(this.destroy$)
-        ).subscribe((result) => {
+        ).subscribe((result: CategorizationStatus) => {
             this.categorySynchData = result;
-            this.categorySynchData.totalCount = this.categorySynchData.classifiedTransactionCount + this.categorySynchData.unclassifiedTransactionCount;
+            this.totalCount = result.classifiedTransactionCount + result.unclassifiedTransactionCount;
         });
     }
 

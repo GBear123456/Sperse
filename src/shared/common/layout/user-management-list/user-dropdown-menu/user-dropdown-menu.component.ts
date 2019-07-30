@@ -115,6 +115,7 @@ export class UserDropdownMenuComponent extends AppComponentBase implements OnIni
             }
         }
     ];
+    private rootComponent: any;
 
     constructor(
         injector: Injector,
@@ -140,6 +141,8 @@ export class UserDropdownMenuComponent extends AppComponentBase implements OnIni
     }
 
     updateProfileInformation() {
+        this.rootComponent = this.getRootComponent();
+        this.rootComponent.overflowHidden(true);
         this.dialog.open(OffersWizardComponent, {
             width: '1200px',
             height: '800px',
@@ -149,6 +152,8 @@ export class UserDropdownMenuComponent extends AppComponentBase implements OnIni
             data: {
                 campaignId: null
             }
+        }).afterClosed().subscribe(() => {
+            this.rootComponent.overflowHidden(false);
         });
     }
 }
