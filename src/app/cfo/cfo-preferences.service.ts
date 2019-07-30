@@ -14,6 +14,7 @@ import { CashFlowGridSettingsDto, CurrencyInfo } from '@shared/service-proxies/s
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { CalendarValuesModel } from '@shared/common/widgets/calendar/calendar-values.model';
 import { DateHelper } from '@shared/helpers/DateHelper';
+import { CFOService } from '@shared/cfo/cfo.service';
 
 @Injectable()
 export class CfoPreferencesService {
@@ -21,11 +22,19 @@ export class CfoPreferencesService {
     selectedCurrencyId: string;
     selectedCurrencySymbol: string;
     selectedCurrencyIndex$: Observable<number>;
-    dateRange: BehaviorSubject<CalendarValuesModel> = new BehaviorSubject<CalendarValuesModel>({
-        from: { value: DateHelper.addTimezoneOffset(moment().subtract(1, 'month').startOf('month').toDate(), true) },
-        to: { value: DateHelper.addTimezoneOffset(moment().subtract(1, 'month').endOf('month').toDate(), true) },
-        period: 'LastMonth'
-    });
+    dateRange: BehaviorSubject<CalendarValuesModel> = new BehaviorSubject<CalendarValuesModel>(
+        this.cfoService.hasStaticInstance
+        ? {
+            from: { value: DateHelper.addTimezoneOffset(moment().subtract(1, 'month').startOf('month').toDate(), true) },
+            to: { value: DateHelper.addTimezoneOffset(moment().subtract(1, 'month').endOf('month').toDate(), true) },
+            period: 'LastMonth'
+        }
+        : {
+            from: { value: DateHelper.addTimezoneOffset(moment().startOf('year').toDate(), true) },
+            to: { value: DateHelper.addTimezoneOffset(moment().endOf('year').toDate(), true) },
+            period: 'ThisYear'
+        }
+    );
     dateRange$: Observable<CalendarValuesModel> = this.dateRange.asObservable();
     dateRangeForFilter$: Observable<any> = this.dateRange$.pipe(
         map((dateRange: CalendarValuesModel) => {
@@ -43,7 +52,7 @@ export class CfoPreferencesService {
                         ? this.formatDate(dateRange.from.value) + ' - ' + this.formatDate(dateRange.to.value)
                         : this.formatDate(dateRange.from.value)
                     )
-                    : this.ls.l('LastMonth')
+                    : (this.cfoService.hasStaticInstance ? this.ls.l('Periods_LastMonth') : this.ls.l('Periods_ThisYear'))
             );
         })
     );
@@ -51,7 +60,8 @@ export class CfoPreferencesService {
     constructor(
         private store$: Store<CfoStore.State>,
         private cashflowPreferencesService: UserPreferencesService,
-        private ls: AppLocalizationService
+        private ls: AppLocalizationService,
+        private cfoService: CFOService
     ) {
         this.store$.dispatch(new CurrenciesStoreActions.LoadRequestAction());
         this.store$.pipe(
