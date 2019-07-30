@@ -14,7 +14,7 @@
             </div>
         </dx-tooltip>
         <div class="value" id="valueTotal" *ngIf="bankAccountsService.accountsDataTotalNetWorthWithApply$ | async as accountsTotalNetWorth">
-            {{ accountsTotalNetWorth | currency:cfoPreferencesService.selectedCurrencyId:cfoPreferencesService.selectedCurrencySymbol:'1.0-0'}}
+            {{ accountsTotalNetWorth | customNumber : '1.0-0' | currency:cfoPreferencesService.selectedCurrencyId:cfoPreferencesService.selectedCurrencySymbol:'1.0-0'}}
             <span>.{{ accountsTotalNetWorth | customNumber:'0.2-2'}}</span>
         </div>
         <div class="name">{{l('Current_Balance')}}</div>
