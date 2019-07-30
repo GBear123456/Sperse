@@ -2,17 +2,17 @@
     display: none;
 }
 :host {
-    height: 100%;
+    height: calc(100% - 85px);
     display: block;
     position: relative;
-    
+
     mat-dialog-content {
         max-height: 100%;
         text-align: right;
-    
+
         margin: 20px 0 0;
         padding: 0;
-        
+
         /deep/ calendar {
             position: relative;
             .date-range-length-tip {
@@ -20,7 +20,7 @@
             }
         }
     }
-    
+
     .close-details {
         position: absolute;
         width: 42px;
@@ -34,7 +34,7 @@
         box-shadow: -2px 0 6px 0 rgba(0, 0, 0, 0.1);
         min-width: 0;
         outline: none;
-        
+
         &:before, &:after {
             position: absolute;
             top: 10px;
@@ -44,15 +44,15 @@
             width: 2px;
             background-color: #1b1b1b;
         }
-        
+
         &:before {
             transform: rotate(45deg);
         }
-        
+
         &:after {
             transform: rotate(-45deg);
         }
-        
+
         /deep/ .mat-button-focus-overlay {
             opacity: 0;
         }
