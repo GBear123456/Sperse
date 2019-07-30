@@ -193,7 +193,12 @@
                                 <div class="dx-field">
                                     <div class="dx-field-label">{{ls.l('Timezone')}}</div>
                                     <div class="dx-field-value">
-                                        <dx-text-box name="timezone"></dx-text-box>
+                                        <dx-select-box
+                                            [items]="timeZones$ | async"
+                                            valueExpr="value"
+                                            displayExpr="name"
+                                            [(value)]="submitApplicationProfileInput.timezone">
+                                        </dx-select-box>
                                     </div>
                                 </div>
                             </div>
