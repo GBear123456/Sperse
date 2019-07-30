@@ -8,6 +8,7 @@ import { InstanceType } from 'shared/service-proxies/service-proxies';
 import { CfoModule } from '@app/cfo/cfo.module';
 import { LayoutService } from '@app/shared/layout/layout.service';
 import { CFOService } from '@shared/cfo/cfo.service';
+import { AppService } from '@app/app.service';
 
 @NgModule({
     imports: [
@@ -18,11 +19,13 @@ import { CFOService } from '@shared/cfo/cfo.service';
 export class CfoPortalModule {
     constructor(
         private _layoutService: LayoutService,
-        private _cfoService: CFOService
+        private _cfoService: CFOService,
+        private _appService: AppService
     ) {
         _layoutService.showPlatformSelectMenu = false;
 
         _cfoService.hasStaticInstance = true;
         _cfoService.instanceType = InstanceType.User;
+        _appService.toolbarToggle();
     }
 }

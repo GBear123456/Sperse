@@ -57,7 +57,6 @@ export class CFOService extends CFOServiceBase {
                         this.updateMenuItems();
             }
         });
-        if (this.hasStaticInstance) _appService.toolbarToggle();
     }
 
     checkInstanceChanged(params) {
