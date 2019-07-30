@@ -206,7 +206,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
                     dateRange.to.value || dateRange.from.value,
                     GroupByPeriod.Monthly
                 ).pipe(
-                    catchError((error) => of(error)),
+                    catchError(() => of([])),
                     finalize(() => abp.ui.clearBusy())
                 );
             })

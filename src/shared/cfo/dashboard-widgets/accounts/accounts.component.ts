@@ -4,8 +4,8 @@ import { Component, Injector, OnInit, Output, EventEmitter, ViewChild, ElementRe
 /** Third party libraries */
 import { Store, select } from '@ngrx/store';
 import * as moment from 'moment';
-import { combineLatest } from 'rxjs';
-import { first, filter, finalize, switchMap, takeUntil, map, mapTo, tap } from 'rxjs/operators';
+import { BehaviorSubject, Observable, combineLatest, of } from 'rxjs';
+import { first, filter, finalize, switchMap, takeUntil, map, mapTo, tap, catchError } from 'rxjs/operators';
 
 /** Application imports */
 import { BankAccountsService } from '@shared/cfo/bank-accounts/helpers/bank-accounts.service';
@@ -19,7 +19,6 @@ import { DashboardService } from '../dashboard.service';
 import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
 import { CurrenciesStoreSelectors } from '@app/cfo/store';
 import { CfoStore } from '@app/cfo/store';
-import { BehaviorSubject, Observable, of } from '@node_modules/rxjs';
 import { AccountTotals } from '@shared/service-proxies/service-proxies';
 import { PeriodModel } from '@app/shared/common/period/period.model';
 import { DailyStatsPeriodModel } from '@shared/cfo/dashboard-widgets/accounts/daily-stats-period.model';
@@ -69,7 +68,7 @@ export class AccountsComponent extends CFOComponentBase implements OnInit {
     }
 
     ngOnInit() {
-        this.accountsData$ =  combineLatest(
+        this.accountsData$ = combineLatest(
             this.currencyId$,
             this.bankAccountIds$,
             this._dashboardService.refresh$
@@ -84,6 +83,7 @@ export class AccountsComponent extends CFOComponentBase implements OnInit {
                     bankAccountIds,
                     currencyId
                 ).pipe(
+                    catchError(() => of(new AccountTotals())),
                     finalize(() => this._loadingService.finishLoading(this.networth.nativeElement))
                 );
             })
@@ -107,6 +107,7 @@ export class AccountsComponent extends CFOComponentBase implements OnInit {
                     period.endDate,
                     currencyId
                 ).pipe(
+                    catchError(() => of(new GetDailyBalanceStatsOutput())),
                     finalize(() => this._loadingService.finishLoading(this.dailyStats.nativeElement))
                 );
             })

@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, Input, Injector, ViewChild } from '@angular/core';
+import { Component, AfterViewInit, Input, Injector, ViewChild } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { CreditReportServiceProxy, AccountInfoDto, CreditReportDto } from '@shared/service-proxies/service-proxies';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
@@ -9,14 +9,12 @@ import * as moment from 'moment';
     templateUrl: './accounts.component.html',
     styleUrls: ['./accounts.component.less']
 })
-export class AccountsComponent extends AppComponentBase implements OnInit, AfterViewInit {
+export class AccountsComponent extends AppComponentBase implements AfterViewInit {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
     @Input() creditReport: CreditReportDto;
     selectionChangedRaised: boolean;
     creditReportId: any;
-    accountsIds: any;
     selectedRow: any;
-    loadingVisible = false;
     creditHistory: Object = {};
     creditHistoryStartDate: any;
     creditHistoryMonths: Array<Number> = Array(24).fill(0);
@@ -26,6 +24,7 @@ export class AccountsComponent extends AppComponentBase implements OnInit, After
     accountStatuses = [
         'Other', 'NotOpened', 'Unknown', 'Ok', 'L30', 'L60', 'L90', 'L120', 'L150', 'PP', 'RF', 'CC'
     ];
+
     constructor(
         injector: Injector,
         private _accountInfoService: CreditReportServiceProxy
@@ -33,10 +32,8 @@ export class AccountsComponent extends AppComponentBase implements OnInit, After
         super(injector);
     }
 
-    ngOnInit() {}
-
     ngAfterViewInit() {
-      this.dataGrid.instance.filter(['state', '=', 0]);
+        this.dataGrid.instance.filter(['state', '=', 0]);
     }
 
     getRatioColor(ratio: number) {
@@ -67,7 +64,7 @@ export class AccountsComponent extends AppComponentBase implements OnInit, After
     statusButtonUpdate(event, status) {
         this.dataGrid.instance.filter(['state', '=', status]);
         event.target.parentElement[(status ? 'previous' : 'next') + 'Sibling']
-          .children[0].classList.remove('active');
+            .children[0].classList.remove('active');
         event.target.classList.add('active');
     }
 
@@ -88,7 +85,7 @@ export class AccountsComponent extends AppComponentBase implements OnInit, After
         }
     }
 
-    toggleMasterRow (e) {
+    toggleMasterRow(e) {
         if (!this.selectionChangedRaised) {
             e.component.deselectAll();
             e.component.collapseAll(-1);
@@ -97,41 +94,41 @@ export class AccountsComponent extends AppComponentBase implements OnInit, After
     }
 
     prepareCreditHistory() {
-      var maxHistoryDate = moment(new Date(0));
-      this.accountInfo.forEach(account => {
-        var history = this.creditHistory[account.bureau] = {};
-        maxHistoryDate = moment.max(maxHistoryDate, account.maxAccountHistoryDate);
-        account.twoYearHistory.forEach(data => {
-          let historyIndex = String(data.year) + (data.month - 1);
-          history[historyIndex] = {};
-          history[historyIndex].status = this.accountStatuses[data.statusType];
-          history[historyIndex].isPositive = data.isPositiveStatus;
-          history[historyIndex].title = this.l(this.accountStatuses[data.statusType]);
+        let maxHistoryDate = moment(new Date(0));
+        this.accountInfo.forEach(account => {
+            let history = this.creditHistory[account.bureau] = {};
+            maxHistoryDate = moment.max(maxHistoryDate, account.maxAccountHistoryDate);
+            account.twoYearHistory.forEach(data => {
+                let historyIndex = String(data.year) + (data.month - 1);
+                history[historyIndex] = {};
+                history[historyIndex].status = this.accountStatuses[data.statusType];
+                history[historyIndex].isPositive = data.isPositiveStatus;
+                history[historyIndex].title = this.l(this.accountStatuses[data.statusType]);
+            });
         });
-      });
 
-      var startDate = this.creditHistoryStartDate = moment(maxHistoryDate)
-        .subtract(this.creditHistoryMonths.length - 1, 'months'), yearIterator;
+        let startDate = this.creditHistoryStartDate = moment(maxHistoryDate)
+            .subtract(this.creditHistoryMonths.length - 1, 'months'), yearIterator;
 
-      this.creditHistoryYears = [];
-      this.creditHistoryMonths.map((value, index) => {
-        var iterator = startDate.clone().add(index, 'months');
-        if (iterator.year() != yearIterator)
-          this.creditHistoryYears.push(yearIterator = iterator.year());
-        this.creditHistoryMonths[index] = iterator.month();
-      });
+        this.creditHistoryYears = [];
+        this.creditHistoryMonths.map((value, index) => {
+            let iterator = startDate.clone().add(index, 'months');
+            if (iterator.year() != yearIterator)
+                this.creditHistoryYears.push(yearIterator = iterator.year());
+            this.creditHistoryMonths[index] = iterator.month();
+        });
     }
 
     getCreditHistoryYearSpan(year) {
-      return moment([year, 11, 29]).diff(moment.max(moment([year, 0, 1]),
-        this.creditHistoryStartDate), 'months') + 1;
+        return moment([year, 11, 29]).diff(moment.max(moment([year, 0, 1]),
+            this.creditHistoryStartDate), 'months') + 1;
     }
 
     getAccountInfoUI(bureau: string, monthIndex: number, month: number) {
         if (!this.creditHistoryStartDate) return {};
         let historyIndex = String(this.creditHistoryStartDate.clone().add(monthIndex, 'months').year()) + month;
         let accInfo = this.creditHistory[bureau][historyIndex];
-        return accInfo ? accInfo : { status: 'undefined' };
+        return accInfo ? accInfo : {status: 'undefined'};
     }
 
     getAccountInfo(creditReportId, accountsIds): void {

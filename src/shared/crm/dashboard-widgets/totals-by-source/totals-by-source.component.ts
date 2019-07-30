@@ -11,8 +11,9 @@ import {
 
 /** Third party imports */
 import { DxPieChartComponent } from 'devextreme-angular/ui/pie-chart';
-import { BehaviorSubject, Observable, combineLatest } from 'rxjs';
+import { BehaviorSubject, Observable, combineLatest, of } from 'rxjs';
 import {
+    catchError,
     finalize,
     publishReplay,
     refCount,
@@ -143,6 +144,7 @@ export class TotalsBySourceComponent implements OnInit, OnDestroy {
             }),
             switchMap(([selectedTotal, period]: [ITotalOption, PeriodModel]) => selectedTotal.method.call(
                 this._dashboardServiceProxy, period && period.from || new Date('2000-01-01'), period && period.to || new Date()).pipe(
+                    catchError(() => of([])),
                     finalize(() => this._loadingService.finishLoading(this._elementRef.nativeElement))
                 )
             ),

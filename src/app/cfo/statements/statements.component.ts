@@ -152,7 +152,7 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
                     dateRange.to.value || dateRange.from.value,
                     GroupByPeriod.Monthly
                 ).pipe(
-                    catchError((error) => of(error)),
+                    catchError(() => of([])),
                     finalize(() => abp.ui.clearBusy())
                 );
             })
