@@ -159,7 +159,6 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         public dialog: MatDialog
     ) {
         super(injector);
-        _appService.toolbarIsHidden = true;
         if (filtersService.fixed)
             this._categoriesShowed = false;
 
@@ -381,10 +380,10 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     }
 
     toggleToolbar() {
-        setTimeout(() => this.dataGrid.instance.repaint());
         this._appService.toolbarToggle();
         this.filtersService.fixed = false;
         this.filtersService.disable();
+        setTimeout(() => this.dataGrid.instance.repaint());
         this.initToolbarConfig();
     }
 

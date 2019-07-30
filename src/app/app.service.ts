@@ -384,7 +384,8 @@ export class AppService extends AppServiceBase {
 
     toolbarToggle() {
         this.toolbarIsHidden = !this.toolbarIsHidden;
-        this.toolbarIsHidden ? this.document.body.classList.add('toolbar-hidden') : this.document.body.classList.remove('toolbar-hidden');
+        this.toolbarIsHidden ?
+            this.document.body.classList.add('toolbar-hidden') : this.document.body.classList.remove('toolbar-hidden');
     }
 
     toolbarSubscribe(callback) {
