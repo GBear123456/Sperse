@@ -175,10 +175,7 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
 
         if (this.inviteData.phoneNumber && !this.phoneNumberComponent.instance.option('isValid'))
             return this.message.warn(this.l('PhoneValidationError'));
-
-        if (!this.inviteData.assignedRoleNames.length)
-            return this.message.warn(this.l('RoleIsRequired'));
-
+        
         this.message.confirm(
             this.l('CreateNewUser'),
             this.l('AreYouSure'),
