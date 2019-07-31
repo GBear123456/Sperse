@@ -98,12 +98,12 @@ export class OffersService {
         OfferDto.fromJS({
             campaignId: 2,
             details: [
-                'Loans from $3,500 to $40,000 and fixed rates from 5.99% to 28.99% APR. For NY residents, rates range from 5.99% to 24.99% APR. Only the most creditworthy applicants qualify for the lowest rates and largest loans amounts. Rates will generally be higher for longer-term loans.',
                 'Marcus is backed by Goldman Sachs\' 150 years of financial expertise.',
-                'No origination fee, prepayment fee, or late fee - You only pay interest for the additional days.'
+                'No origination fee, prepayment fee, or late fee - You only pay interest for the additional days.',
+                'Loans from $3,500 to $40,000 and fixed rates from 5.99% to 28.99% APR. For NY residents, rates range from 5.99% to 24.99% APR. Only the most creditworthy applicants qualify for the lowest rates and largest loans amounts. Rates will generally be higher for longer-term loans.'
             ],
             logoUrl: './assets/images/credit-report/offers/demo/marcus.png',
-            redirectUrl: 'marcus-details',
+            redirectUrl: 'https://www.marcus.com/us/en',
             name: 'Marcus by Goldman Sachs',
             systemType: 'EPCVIP'
         }),
