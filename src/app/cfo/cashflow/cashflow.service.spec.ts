@@ -161,5 +161,6 @@ describe('CashflowService', () => {
         expect(service.customizeFieldText({ value: 'CTI' })).toBe('TOTAL INFLOWS');
         expect(service.customizeFieldText({ value: 'AT2' })).toBe('Expense');
         expect(service.customizeFieldText({ value: 'RG1' })).toBe('SectionGroup_CostOfSales');
+        expect(service.customizeFieldText({ value: 'RS11' })).toBe('Business Expenses');
     }));
 });

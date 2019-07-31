@@ -78,7 +78,7 @@ export class CashflowService {
         {
             prefix                 : CategorizationPrefixes.ReportingSection,
             statsKeyName           : 'reportSectionId',
-            namesSource            : 'categoryTree.reportingSections'
+            namesSource            : 'categoryTree.reportSections'
         },
         {
             prefix                 : CategorizationPrefixes.AccountingType,
@@ -656,7 +656,7 @@ export class CashflowService {
     }
 
     getNamesSourceLink(prefix: CategorizationPrefixes) {
-        let category = this.getCategoryParams(prefix);
+        const category = this.getCategoryParams(prefix);
         return category && category['namesSource'] ? this.getDescendantPropValue(this, category.namesSource) : undefined;
     }
 
