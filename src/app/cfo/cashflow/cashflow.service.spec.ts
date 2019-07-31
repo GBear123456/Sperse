@@ -5,7 +5,7 @@ import { BrowserDynamicTestingModule, platformBrowserDynamicTesting } from '@ang
 import {
     AccountingTypeDto, CashflowServiceProxy, ContactServiceProxy,
     GetCategoryTreeOutput, InstanceServiceProxy, PermissionServiceProxy, PersonContactServiceProxy,
-    ReportSectionDto, SessionServiceProxy, TenantSubscriptionServiceProxy,
+    ReportSectionDto, SectionGroup, SessionServiceProxy, TenantSubscriptionServiceProxy,
     TransactionStatsDto, TypeDto
 } from '@shared/service-proxies/service-proxies';
 import { UserPreferencesService } from '@app/cfo/cashflow/preferences-dialog/preferences.service';
@@ -122,15 +122,15 @@ describe('CashflowService', () => {
                 '2': new AccountingTypeDto({typeId: 'E', name: 'Expense', isSystem: true})
             },
             categories: {},
-            reportingCategories: {},
             reportSections: {
-                '11': new ReportSectionDto({ id: 11, group: 2, name: 'Business Expenses' })
-            },
-            reportSectionGroups: {}
+                '11': new ReportSectionDto({ id: 11, group: SectionGroup.Expense, name: 'Business Expenses' })
+            }
         });
-        expect(service.addCategorizationLevels(transaction).levels).toEqual({
+        const levels = service.addCategorizationLevels(transaction).levels;
+        console.log(levels);
+        expect(levels).toEqual({
             level0: 'CTI',
-            level1: 'RG2',
+            level1: 'RGExpense',
             level2: 'RS11',
             level3: 'AT2',
             level4: 'CA5566',
@@ -146,21 +146,14 @@ describe('CashflowService', () => {
                 '2': new AccountingTypeDto({typeId: 'E', name: 'Expense', isSystem: true})
             },
             categories: {},
-            reportingCategories: {},
             reportSections: {
-                '11': new ReportSectionDto({ id: 11, group: 2, name: 'Business Expenses' })
-            },
-            reportSectionGroups: {
-                0: 'Income',
-                1: 'CostOfSales',
-                2: 'Expense',
-                3: 'OtherIncomeExpense',
+                '11': new ReportSectionDto({ id: 11, group: SectionGroup.Expense, name: 'Business Expenses' })
             }
         });
         service.cashflowTypes = {B: 'Starting Balance', D: 'Unreconciled Balance', E: 'Outflows', I: 'Inflows'};
         expect(service.customizeFieldText({ value: 'CTI' })).toBe('TOTAL INFLOWS');
         expect(service.customizeFieldText({ value: 'AT2' })).toBe('Expense');
-        expect(service.customizeFieldText({ value: 'RG1' })).toBe('SectionGroup_CostOfSales');
+        expect(service.customizeFieldText({ value: 'RGCostOfSales' })).toBe('SectionGroup_CostOfSales');
         expect(service.customizeFieldText({ value: 'RS11' })).toBe('Business Expenses');
     }));
 });
