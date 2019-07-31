@@ -20,6 +20,7 @@ import { ContactGroup, ContactStatus } from '@shared/AppEnums';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { ToolBarComponent } from '@app/shared/common/toolbar/toolbar.component';
 import { AppService } from '@app/app.service';
+import { AppPermissions } from '@shared/AppPermissions';
 
 @Component({
     selector: 'operations-widget',
@@ -100,6 +101,7 @@ export class OperationsWidgetComponent extends AppComponentBase {
             }
         ]
     };
+    permissions = AppPermissions;
     constructor(
         injector: Injector,
         private _appService: AppService,

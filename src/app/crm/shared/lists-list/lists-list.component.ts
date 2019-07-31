@@ -14,6 +14,7 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { FiltersService } from '@shared/filters/filters.service';
 import { ContactListsServiceProxy, ContactListInput } from '@shared/service-proxies/service-proxies';
 import { DeleteAndReassignDialogComponent } from '../delete-and-reassign-dialog/delete-and-reassign-dialog.component';
+import { AppPermissions } from '@shared/AppPermissions';
 
 @Component({
   selector: 'crm-lists-list',
@@ -366,7 +367,7 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
     }
 
     checkPermissions() {
-        return this.permission.isGranted('Pages.CRM.Customers.ManageListsAndTags') &&
-            (!this.bulkUpdateMode || this.permission.isGranted('Pages.CRM.BulkUpdates'));
+        return this.permission.isGranted(AppPermissions.PagesCRMCustomersManageListsAndTags) &&
+            (!this.bulkUpdateMode || this.permission.isGranted(AppPermissions.PagesCRMBulkUpdates));
     }
 }

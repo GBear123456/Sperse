@@ -8,7 +8,7 @@ import { Store } from '@ngrx/store';
 
 /** Application imports */
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { AppConsts } from '@shared/AppConsts';
+import { AppPermissions } from '@shared/AppPermissions';
 import { FiltersService } from '@shared/filters/filters.service';
 import { ContactStarsServiceProxy, MarkContactInput, MarkContactsInput } from '@shared/service-proxies/service-proxies';
 import { AppStore, StarsStoreSelectors } from '@app/store';
@@ -157,7 +157,7 @@ export class StarsListComponent extends AppComponentBase implements OnInit {
     }
 
     checkPermissions() {
-        return this.permission.isGranted('Pages.CRM.Customers.ManageRatingAndStars') &&
-            (!this.bulkUpdateMode || this.permission.isGranted('Pages.CRM.BulkUpdates'));
+        return this.permission.isGranted(AppPermissions.PagesCRMCustomersManageRatingAndStars) &&
+            (!this.bulkUpdateMode || this.permission.isGranted(AppPermissions.PagesCRMBulkUpdates));
     }
 }

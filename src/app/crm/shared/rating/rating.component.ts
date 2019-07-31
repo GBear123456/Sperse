@@ -10,6 +10,7 @@ import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { AppRatingComponent } from '@app/shared/common/rating/rating.component';
 import { ContactRatingsServiceProxy, RateContactInput, RateContactsInput } from '@shared/service-proxies/service-proxies';
+import { AppPermissions } from '@shared/AppPermissions';
 
 @Component({
   selector: 'crm-rating',
@@ -70,7 +71,7 @@ export class RatingComponent {
     }
 
     checkPermissions() {
-        return this._permission.isGranted('Pages.CRM.Customers.ManageRatingAndStars') &&
-            (!this.bulkUpdateMode || this._permission.isGranted('Pages.CRM.BulkUpdates'));
+        return this._permission.isGranted(AppPermissions.PagesCRMCustomersManageRatingAndStars) &&
+            (!this.bulkUpdateMode || this._permission.isGranted(AppPermissions.PagesCRMBulkUpdates));
     }
 }

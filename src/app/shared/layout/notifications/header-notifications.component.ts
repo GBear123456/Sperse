@@ -6,6 +6,7 @@ import { PaymentWizardComponent } from '../../common/payment-wizard/payment-wiza
 import { AppService } from '@app/app.service';
 import { MatDialog } from '@angular/material/dialog';
 import { NotificationsComponent } from '@app/shared/layout/notifications/notifications.component';
+import { AppPermissions } from '@shared/AppPermissions';
 
 @Component({
     templateUrl: './header-notifications.component.html',
@@ -150,7 +151,7 @@ export class HeaderNotificationsComponent extends AppComponentBase implements On
 
     subscriptionStatusBarVisible(): boolean {
         const moduleSubscription = this._appService.getModuleSubscription();
-        return this._appService.checkModuleSubscriptionEnabled() && this.subscriptionExpiringDayCount && this.permission.isGranted('Pages.Administration.Tenant.SubscriptionManagement') && moduleSubscription && moduleSubscription.isUpgradable;
+        return this._appService.checkModuleSubscriptionEnabled() && this.subscriptionExpiringDayCount && this.permission.isGranted(AppPermissions. PagesAdministrationTenantSubscriptionManagement) && moduleSubscription && moduleSubscription.isUpgradable;
     }
 
     hideDropDown() {

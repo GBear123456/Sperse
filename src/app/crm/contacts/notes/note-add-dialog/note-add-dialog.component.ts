@@ -30,6 +30,7 @@ import { PhoneFormatPipe } from '@shared/common/pipes/phone-format/phone-format.
 import { EditContactDialog } from '../../edit-contact-dialog/edit-contact-dialog.component';
 import { AppStore, ContactAssignedUsersStoreSelectors } from '@app/store';
 import { ContactsService } from '@app/crm/contacts/contacts.service';
+import { AppPermissions } from '@shared/AppPermissions';
 
 class PhoneNumber {
     id: any;
@@ -210,7 +211,7 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
         clearTimeout(this.searchTimeout);
         this.searchTimeout = setTimeout(() => {
             if ($event.text)
-                this._userService.getUsers($event.text, ['Pages.CRM'], undefined, false, undefined, undefined, undefined, 10, 0).subscribe((result) => {
+                this._userService.getUsers($event.text, [ AppPermissions.PagesCRM ], undefined, false, undefined, undefined, undefined, 10, 0).subscribe((result) => {
                     this.users = result.items.map((user) => {
                         return {
                             id: user.id,

@@ -25,6 +25,7 @@ import { PaymentStatusEnum } from '@app/shared/common/payment-wizard/models/paym
 import { ModuleType, PackageServiceProxy, TenantSubscriptionServiceProxy } from '@shared/service-proxies/service-proxies';
 import { AppComponentBase } from 'shared/common/app-component-base';
 import { StatusInfo } from './models/status-info';
+import { AppPermissions } from '@shared/AppPermissions';
 
 @Component({
     selector: 'payment-wizard',
@@ -68,7 +69,7 @@ export class PaymentWizardComponent extends AppComponentBase implements OnInit {
     }
 
     moveToPaymentOptionsStep() {
-        if (this.permission.isGranted('Pages.Administration.Tenant.SubscriptionManagement'))
+        if (this.permission.isGranted(AppPermissions.PagesAdministrationTenantSubscriptionManagement))
             this.stepper.next();
         else
             this.message.info(this.l('SubscriptionManagmentPermissionRequired'));

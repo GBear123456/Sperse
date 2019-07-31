@@ -1,4 +1,10 @@
+/** Core imports */
 import { Component, OnInit, Input, Injector } from '@angular/core';
+
+/** Third party imports */
+import { MatDialog } from '@angular/material';
+
+/** Application imports */
 import { AppComponentBase } from 'shared/common/app-component-base';
 import { AbpSessionService } from '@abp/session/abp-session.service';
 import { ImpersonationService } from 'app/admin/users/impersonation.service';
@@ -9,12 +15,11 @@ import {
 import { UserManagementService } from 'shared/common/layout/user-management-list/user-management.service';
 import { UserDropdownMenuItemModel } from 'shared/common/layout/user-management-list/user-dropdown-menu/user-dropdown-menu-item.model';
 import { UserDropdownMenuItemType } from 'shared/common/layout/user-management-list/user-dropdown-menu/user-dropdown-menu-item-type';
-
 /** @todo Used for chart bar and dropdown. Reimplement in future */
 import 'assets/metronic/src/js/framework/base/util.js';
 import 'assets/metronic/src/js/framework/components/general/dropdown.js';
 import { OffersWizardComponent } from '@shared/offers-wizard/offers-wizard.component';
-import { MatDialog } from '@angular/material';
+import { AppPermissions } from '@shared/AppPermissions';
 
 @Component({
     selector: 'user-dropdown-menu',
@@ -29,9 +34,9 @@ export class UserDropdownMenuComponent extends AppComponentBase implements OnIni
     isImpersonatedLogin = this.abpSessionService.impersonatorUserId > 0;
     shownLoginInfo: { fullName, email, tenantName?};
     recentlyLinkedUsers: LinkedUserDto[];
-    hasPlatformPermissions = (this.feature.isEnabled('CFO') && this.permission.isGranted('Pages.CFO')) ||
-                             (this.feature.isEnabled('CRM') && this.permission.isGranted('Pages.CRM')) ||
-                             (this.feature.isEnabled('Admin') && this.permission.isGranted('Pages.Administration.Users'));
+    hasPlatformPermissions = (this.feature.isEnabled('CFO') && this.permission.isGranted(AppPermissions.PagesCFO)) ||
+                             (this.feature.isEnabled('CRM') && this.permission.isGranted(AppPermissions.PagesCRM)) ||
+                             (this.feature.isEnabled('Admin') && this.permission.isGranted(AppPermissions.PagesAdministrationUsers));
     menuItemTypes = UserDropdownMenuItemType;
     @Input() subtitle: string;
     @Input() dropdownMenuItems: UserDropdownMenuItemModel[] = [
@@ -64,7 +69,7 @@ export class UserDropdownMenuComponent extends AppComponentBase implements OnIni
             id: 'UpdateMyProfile',
             iconClass: 'profile-picture',
             visible: this.feature.isEnabled('PFM'),
-            onClick: (e) => this.updateProfileInformation()
+            onClick: () => this.updateProfileInformation()
         },
         {
             name: this.l('ChangePassword'),
@@ -102,7 +107,7 @@ export class UserDropdownMenuComponent extends AppComponentBase implements OnIni
         },
         {
             name: this.l('Logout'),
-            onClick: (e) => this.userManagementService.logout(),
+            onClick: () => this.userManagementService.logout(),
             cssClass: 'bottom-logout',
             iconClass: 'logout'
         },

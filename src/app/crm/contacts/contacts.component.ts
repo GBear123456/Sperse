@@ -52,6 +52,7 @@ import { ItemTypeEnum } from '@shared/common/item-details-layout/item-type.enum'
 import { ItemFullInfo } from '@shared/common/item-details-layout/item-full-info';
 import { BehaviorSubject, Observable } from '@node_modules/rxjs';
 import { TargetDirectionEnum } from '@app/crm/contacts/target-direction.enum';
+import { AppPermissions } from '@shared/AppPermissions';
 
 @Component({
     templateUrl: './contacts.component.html',
@@ -258,7 +259,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
             {
                 label: contact.userId ? 'User Information' : 'Invite User',
                 hidden: !this.permission.isGranted(contact.userId ?
-                    'Pages.Administration.Users' : 'Pages.Administration.Users.Create'),
+                    AppPermissions.PagesAdministrationUsers : AppPermissions.PagesAdministrationUsersCreate),
                 route: 'user-information'
             },
             {label: 'Documents', route: 'documents'},
@@ -271,7 +272,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
             {
                 label: 'Activity Logs',
                 route: 'activity-logs',
-                disabled: !this.permission.isGranted('Pages.PFM.Applications')
+                disabled: !this.permission.isGranted(AppPermissions.PagesPFMApplications)
             },
             {label: 'Referral History', route: 'referral-history', disabled: true},
             {label: 'Application Status', route: 'application-status', hidden: !!this.leadId, disabled: true},

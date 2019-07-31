@@ -4,6 +4,7 @@ import { RouteReuseStrategy } from '@angular/router';
 import { ImportStatus } from '@shared/AppEnums';
 import { ImportServiceProxy } from '@shared/service-proxies/service-proxies';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
+import { AppPermissions } from '@shared/AppPermissions';
 
 @Injectable()
 export class ImportWizardService {
@@ -43,7 +44,7 @@ export class ImportWizardService {
     }
 
     startStatusCheck(importId = undefined, method = undefined, invalUri = undefined) {
-        if (this._permissionService.isGranted('Pages.CRM.BulkImport'))
+        if (this._permissionService.isGranted(AppPermissions.PagesCRMBulkImport))
             this.setupCheckTimeout((callback) => {
                 this._importProxy.getStatuses(importId).subscribe((res) => {
                     if (res && res.length) {

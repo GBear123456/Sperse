@@ -20,6 +20,7 @@ import { AccessDeniedComponent } from '@app/main/access-denied/access-denied.com
 import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { FeatureCheckerService } from '@abp/features/feature-checker.service';
 import { AppSessionService } from '@shared/common/session/app-session.service';
+import { AppPermissions } from '@shared/AppPermissions';
 
 @Injectable()
 export class ModulePathResolverService implements Resolve<any> {
@@ -45,9 +46,9 @@ export class CfoActivateService implements CanActivate {
     ) {}
 
     canActivate() {
-        if (this.permissionChecker.isGranted('Pages.CFO.MainInstanceAccess')) {
+        if (this.permissionChecker.isGranted(AppPermissions.PagesCFOMainInstanceAccess)) {
             this.router.navigate(['/app/cfo/main']);
-        } else if (this.featureService.isEnabled('CFO.Partner') && this.permissionChecker.isGranted('Pages.CFO.MemberAccess')) {
+        } else if (this.featureService.isEnabled('CFO.Partner') && this.permissionChecker.isGranted(AppPermissions.PagesCFOMemberAccess)) {
             this.router.navigate(['/app/cfo-portal']);
         } else {
             this.router.navigate(['/app/access-denied']);
@@ -106,7 +107,7 @@ export class CfoActivateService implements CanActivate {
                     {
                         path: 'cfo-portal',
                         loadChildren: 'app/cfo-portal/cfo-portal.module#CfoPortalModule', //Lazy load cfo-portal *module
-                        data: { feature: 'CFO.Partner', permission: 'Pages.CFO.MemberAccess', localizationSource: 'CFO' },
+                        data: { feature: 'CFO.Partner', permission: AppPermissions.PagesCFOMemberAccess, localizationSource: 'CFO' },
                         resolve: { cfo: ModulePathResolverService }
                     }
                 ]

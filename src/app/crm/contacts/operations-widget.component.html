@@ -9,7 +9,7 @@
             [selectedItems]=""
             [hideButtons]="true"
             [highlightSelected]="true"
-            [bulkUpdatePermissionKey]="'Pages.CRM.BulkUpdates'"
+            [bulkUpdatePermissionKey]="permissions.PagesCRMBulkUpdates"
             (onSelectionChanged)="updateStage($event)"
             [targetSelector]="'[aria-label=Stage]'"
             [funnelStyling]="true"
@@ -36,7 +36,7 @@
             <!--[selectedItems]=""-->
             <!--[hideButtons]="true"-->
             <!--[highlightSelected]="true"-->
-            <!-- [bulkUpdatePermissionKey]="'Pages.CRM.BulkUpdates'" -->
+            <!-- [bulkUpdatePermissionKey]="permissions.PagesCRMBulkUpdates" -->
             <!--(onSelectionChanged)="updatePartnerType($event)"-->
             <!--[targetSelector]="'[accessKey=PartnerType]'"-->
             <!--[showTitle]="false"-->
@@ -45,10 +45,10 @@
         <crm-types-list [selectedKeys]="[contactInfo.id]" [selectedItems]="[selectedPartnerTypeId]"></crm-types-list>
         <crm-tags-list [selectedKeys]="[contactInfo.id]" [selectedItems]="contactInfo?.tags"></crm-tags-list>
         <crm-lists-list [selectedKeys]="[contactInfo.id]" [selectedItems]="contactInfo?.lists"></crm-lists-list>
-        <crm-user-assignment-list 
-            [selectedKeys]="[contactInfo.id]" 
-            [selectedItemKey]="contactInfo?.assignedUserId" 
-            [assignedUsersSelector]="getAssignedUsersSelector()" 
+        <crm-user-assignment-list
+            [selectedKeys]="[contactInfo.id]"
+            [selectedItemKey]="contactInfo?.assignedUserId"
+            [assignedUsersSelector]="getAssignedUsersSelector()"
             [permissionKey]="getAssignmentsPermissionKey()"
             [proxyService]="getProxyService()">
         </crm-user-assignment-list>

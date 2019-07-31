@@ -18,6 +18,7 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 import { PersonContactServiceProxy, UpdatePersonInfoInput, MaritalStatus, Gender,
     DictionaryServiceProxy, PersonInfoDto, TimeOfDay, TimingServiceProxy } from 'shared/service-proxies/service-proxies';
 import { ContactsService } from '../contacts.service';
+import { AppPermissions } from '@shared/AppPermissions';
 
 @Component({
     templateUrl: './personal-details.component.html',
@@ -30,7 +31,7 @@ export class PersonalDetailsComponent implements OnDestroy {
     isEditAllowed = false;
     startCase = startCase;
     interests$ = this._dictionaryProxy.getInterests();
-    accessConfidentialData = this._permission.isGranted('Pages.CRM.AccessConfidentialData');
+    accessConfidentialData = this._permission.isGranted(AppPermissions.PagesCRMAccessConfidentialData);
 
     columns = [
         [
@@ -80,7 +81,7 @@ export class PersonalDetailsComponent implements OnDestroy {
         private _personContactService: PersonContactServiceProxy,
         private _dictionaryProxy: DictionaryServiceProxy,
         private _asyncPipe: AsyncPipe
-    ) {        
+    ) {
         this._contactsService.contactInfoSubscribe((contactInfo) => {
             this.person = contactInfo.personContactInfo.person;
             this.isEditAllowed = this._contactsService.checkCGPermission(contactInfo.groupId);
@@ -101,7 +102,7 @@ export class PersonalDetailsComponent implements OnDestroy {
         return {
             id: field,
             value: value,
-            displayValue: field == 'ssn' ? 
+            displayValue: field == 'ssn' ?
                 this.getSsnMasked(value): '',
             isEditDialogEnabled: false,
             lEntityName: field,
@@ -118,7 +119,7 @@ export class PersonalDetailsComponent implements OnDestroy {
     }
 
     getSsnMasked(value) {
-        return this.accessConfidentialData && value ? 
+        return this.accessConfidentialData && value ?
             [value.slice(0, 3), value.slice(3, 5), value.slice(-4)].join('-')
             : value;
     }

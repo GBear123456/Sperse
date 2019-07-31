@@ -14,6 +14,7 @@ import { InstanceServiceProxy, InstanceType, InstanceStatus, ContactServiceProxy
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { AppConsts } from '@shared/AppConsts';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
+import { AppPermissions } from '@shared/AppPermissions';
 
 @Injectable()
 export class CFOService extends CFOServiceBase {
@@ -79,7 +80,7 @@ export class CFOService extends CFOServiceBase {
 
     get isInstanceAdmin() {
         return this.checkMemberAccessPermission('Manage.Administrate', !isNaN(parseInt(this.instanceType)) ||
-            (this.instanceType == InstanceType.Main && this._permission.isGranted('Pages.CFO.MainInstanceAdmin')));
+            (this.instanceType == InstanceType.Main && this._permission.isGranted(AppPermissions.PagesCFOMainInstanceAdmin)));
     }
 
     get isMemberAccessManage() {
@@ -92,7 +93,7 @@ export class CFOService extends CFOServiceBase {
 
     checkMemberAccessPermission(permission, defaultResult = true) {
         if (this.instanceType == InstanceType.User && !this.instanceId)
-            return this._permission.isGranted('Pages.CFO.MemberAccess.' + permission);
+            return this._permission.isGranted(AppPermissions.PagesCFOMemberAccess + '.' + permission);
 
         return defaultResult;
     }

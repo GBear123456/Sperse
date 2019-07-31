@@ -23,6 +23,7 @@ import { FilterRadioGroupComponent } from '@shared/filters/radio-group/filter-ra
 import { FilterRadioGroupModel } from '@shared/filters/radio-group/filter-radio-group.model';
 import { AppService } from '@app/app.service';
 import { AppConsts } from '@shared/AppConsts';
+import { AppPermissions } from '@shared/AppPermissions';
 
 @Component({
     templateUrl: './roles.component.html',
@@ -46,7 +47,7 @@ export class RolesComponent extends AppComponentBase implements OnDestroy {
         toggleToolbar: this.toggleToolbar.bind(this),
         buttons: [
             {
-                enabled: this.isGranted('Pages.Administration.Roles.Create'),
+                enabled: this.isGranted(AppPermissions.PagesAdministrationRolesCreate),
                 action: this.createRole.bind(this),
                 lable: this.l('CreateNewRole')
             }
@@ -70,14 +71,14 @@ export class RolesComponent extends AppComponentBase implements OnDestroy {
         this.actionMenuItems = [
             {
                 text: this.l('Edit'),
-                visible: this.permission.isGranted('Pages.Administration.Roles.Edit'),
+                visible: this.permission.isGranted(AppPermissions.PagesAdministrationRolesEdit),
                 action: () => {
                     this.openCreateOrEditRoleModal(this.actionRecord.id);
                 }
             },
             {
                 text: this.l('Delete'),
-                visible: this.permission.isGranted('Pages.Administration.Roles.Delete'),
+                visible: this.permission.isGranted(AppPermissions.PagesAdministrationRolesDelete),
                 action: () => {
                     this.deleteRole(this.actionRecord);
                 }
@@ -102,7 +103,7 @@ export class RolesComponent extends AppComponentBase implements OnDestroy {
             }
         });
     }
-    
+
     toggleToolbar() {
         this._appService.toolbarToggle();
         setTimeout(() => this.dataGrid.instance.repaint(), 0);
@@ -310,7 +311,7 @@ export class RolesComponent extends AppComponentBase implements OnDestroy {
     }
 
     editRole(event) {
-        if (this.permission.isGranted('Pages.Administration.Roles.Edit')) {
+        if (this.permission.isGranted(AppPermissions.PagesAdministrationRolesEdit)) {
             let roleId = event.data && event.data.id;
             if (roleId) {
                 event.component.cancelEditData();

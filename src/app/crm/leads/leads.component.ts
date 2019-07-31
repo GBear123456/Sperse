@@ -59,6 +59,7 @@ import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/life
 import { ItemTypeEnum } from '@shared/common/item-details-layout/item-type.enum';
 import { ItemDetailsService } from '@shared/common/item-details-layout/item-details.service';
 import { ContactsService } from '@app/crm/contacts/contacts.service';
+import { AppPermissions } from '@shared/AppPermissions';
 
 @Component({
     templateUrl: './leads.component.html',
@@ -139,6 +140,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             }
         ]
     };
+    permissions = AppPermissions;
 
     private readonly CONTACT_GROUP_CACHE_KEY = 'CONTACT_GROUP';
 
@@ -198,7 +200,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
 
     private createButtonEnabledSet() {
         this.headlineConfig.buttons[0].enabled =
-            this._contactService.checkCGPermission(this.contactGroupId); 
+            this._contactService.checkCGPermission(this.contactGroupId);
     }
 
     private isActivated() {
@@ -787,7 +789,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     updateLeadsStage($event) {
-        if (this.isGranted('Pages.CRM.BulkUpdates')) {
+        if (this.isGranted(AppPermissions.PagesCRMBulkUpdates)) {
             this.stagesComponent.tooltipVisible = false;
             this._pipelineService.updateEntitiesStage(
                 this.pipelinePurposeId,
@@ -895,7 +897,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         this.initToolbarConfig();
         this.rootComponent = this.getRootComponent();
         this.rootComponent.overflowHidden(true);
-        this.showHostElement(() => 
+        this.showHostElement(() =>
             this.pipelineComponent.detectChanges());
     }
 

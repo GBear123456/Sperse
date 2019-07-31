@@ -32,6 +32,7 @@ import { FilterTreeListModel } from '@shared/filters/tree-list/tree-list.model';
 import { AppService } from '@app/app.service';
 import { ItemTypeEnum } from '@shared/common/item-details-layout/item-type.enum';
 import { ItemDetailsService } from '@shared/common/item-details-layout/item-details.service';
+import { AppPermissions } from '@shared/AppPermissions';
 
 @Component({
     templateUrl: './users.component.html',
@@ -57,7 +58,7 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
         toggleToolbar: this.toggleToolbar.bind(this),
         buttons: [
             {
-                enabled: this.isGranted('Pages.Administration.Users.Create'),
+                enabled: this.isGranted(AppPermissions.PagesAdministrationUsersCreate),
                 action: this.createUser.bind(this),
                 lable: this.l('CreateNewUser')
             }
@@ -89,28 +90,28 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
         this.actionMenuItems = [
             {
                 text: this.l('LoginAsThisUser'),
-                visible: this.permission.isGranted('Pages.Administration.Users.Impersonation'),
+                visible: this.permission.isGranted(AppPermissions.PagesAdministrationUsersImpersonation),
                 action: () => {
                     this._impersonationService.impersonate(this.actionRecord.id, this.appSession.tenantId);
                 }
             },
             {
                 text: this.l('Edit'),
-                visible: this.permission.isGranted('Pages.Administration.Users.Edit'),
+                visible: this.permission.isGranted(AppPermissions.PagesAdministrationUsersEdit),
                 action: () => {
                     this.openUserDetails(this.actionRecord.id);
                 }
             },
             {
                 text: this.l('Unlock'),
-                visible: this.permission.isGranted('Pages.Administration.Users.ChangePermissions'),
+                visible: this.permission.isGranted(AppPermissions.PagesAdministrationUsersChangePermissionsAndRoles),
                 action: () => {
                     this.unlockUser(this.actionRecord);
                 }
             },
             {
                 text: this.l('Delete'),
-                visible: this.permission.isGranted('Pages.Administration.Users.Delete'),
+                visible: this.permission.isGranted(AppPermissions.PagesAdministrationUsersDelete),
                 action: () => {
                     this.deleteUser(this.actionRecord);
                 }
@@ -571,7 +572,7 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
     }
 
     editUser(event) {
-        if (this.permission.isGranted('Pages.Administration.Users.Edit')) {
+        if (this.permission.isGranted(AppPermissions.PagesAdministrationUsersEdit)) {
             let userId = event.data && event.data.id;
             if (userId) {
                 event.component.cancelEditData();

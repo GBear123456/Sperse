@@ -75,6 +75,7 @@ import { PipelinesStoreActions } from '@app/crm/store';
 import { Store } from '@node_modules/@ngrx/store';
 import { AppStore } from '@app/store';
 import { LoadingSpinnerModule } from '@app/shared/common/loading-spinner/loading-spinner.module';
+import { AppPermissions } from '@shared/AppPermissions';
 
 @NgModule({
     imports: [
@@ -169,7 +170,7 @@ export class CrmModule {
     ) {
         if (abp.session.userId) {
             setTimeout(() => this._appStoreService.loadUserDictionaries(), 2000);
-            if (_permissionService.isGranted('Pages.CRM.BulkImport'))
+            if (_permissionService.isGranted(AppPermissions.PagesCRMBulkImport))
                 _appService.subscribeModuleChange((config) => {
                     if (config['name'] == this.name)
                         _importLeadsService.setupImportCheck();

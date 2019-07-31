@@ -9,6 +9,7 @@ import {
 //    RegisterTenantInputSubscriptionStartType,
 
 } from '@shared/service-proxies/service-proxies';
+import { AppPermissions } from '@shared/AppPermissions';
 
 export class AppChatMessageReadState {
     static Unread: number = ChatMessageReadState._1;
@@ -110,11 +111,11 @@ export class ContactGroup {
 }
 
 export class ContactGroupPermission {
-    static Client = 'Pages.CRM.Customers';
-    static Partner = 'Pages.CRM.Partners';
-    static UserProfile = 'Pages.CRM.Employees';
-    static Investor = 'Pages.CRM.Investors';
-    static Vendor = 'Pages.CRM.Vendors';
+    static Client = AppPermissions.PagesCRMCustomers;
+    static Partner = AppPermissions.PagesCRMPartners;
+    static UserProfile = AppPermissions.PagesCRMEmployees;
+    static Investor = AppPermissions.PagesCRMInvestors;
+    static Vendor = AppPermissions.PagesCRMVendors;
 }
 
 export class PersonOrgRelationType {

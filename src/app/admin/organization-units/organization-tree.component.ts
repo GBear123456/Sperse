@@ -1,14 +1,20 @@
+/** Core imports */
 import { AfterViewInit, Component, ElementRef, EventEmitter, Injector, Output, ViewChild } from '@angular/core';
-import { AppComponentBase } from '@shared/common/app-component-base';
-import { HtmlHelper } from '@shared/helpers/HtmlHelper';
-import { OrganizationUnitDtoListResultDto, MoveOrganizationUnitInput, OrganizationUnitDto, OrganizationUnitServiceProxy } from '@shared/service-proxies/service-proxies';
+
+/** Third party imports */
 import map from 'lodash/map';
 import { Observable } from 'rxjs';
 import { catchError } from 'rxjs/operators';
+
+/** Application imports */
+import { AppComponentBase } from '@shared/common/app-component-base';
+import { HtmlHelper } from '@shared/helpers/HtmlHelper';
+import { OrganizationUnitDtoListResultDto, MoveOrganizationUnitInput, OrganizationUnitDto, OrganizationUnitServiceProxy } from '@shared/service-proxies/service-proxies';
 import { IBasicOrganizationUnitInfo } from './basic-organization-unit-info';
 import { CreateOrEditUnitModalComponent } from './create-or-edit-unit-modal.component';
 import { IUserWithOrganizationUnit } from './user-with-organization-unit';
 import { IUsersWithOrganizationUnit } from './users-with-organization-unit';
+import { AppPermissions } from '@shared/AppPermissions';
 
 export interface IOrganizationUnitOnTree extends IBasicOrganizationUnitInfo {
     id: number;
@@ -34,6 +40,7 @@ export class OrganizationTreeComponent extends AppComponentBase implements After
 
     private _$tree: JQuery;
     private _updatingNode: any;
+    permissions = AppPermissions;
 
     constructor(
         injector: Injector,
@@ -64,7 +71,7 @@ export class OrganizationTreeComponent extends AppComponentBase implements After
                 'sort'
             ];
 
-            if (this.isGranted('Pages.Administration.OrganizationUnits.ManageOrganizationTree')) {
+            if (this.isGranted(AppPermissions.PagesAdministrationOrganizationUnitsManageOrganizationTree)) {
                 jsTreePlugins.push('dnd');
             }
 
@@ -77,7 +84,7 @@ export class OrganizationTreeComponent extends AppComponentBase implements After
                     }
                 })
                 .on('move_node.jstree', (e, data) => {
-                    if (!this.isGranted('Pages.Administration.OrganizationUnits.ManageOrganizationTree')) {
+                    if (!this.isGranted(AppPermissions.PagesAdministrationOrganizationUnitsManageOrganizationTree)) {
                         this._$tree.jstree('refresh'); //rollback
                         return;
                     }
@@ -180,9 +187,8 @@ export class OrganizationTreeComponent extends AppComponentBase implements After
     }
 
     private contextMenu(node: any, self: OrganizationTreeComponent) {
-        const canManageOrganizationTree = self.isGranted('Pages.Administration.OrganizationUnits.ManageOrganizationTree');
-
-        const items = {
+        const canManageOrganizationTree = self.isGranted(AppPermissions.PagesAdministrationOrganizationUnitsManageOrganizationTree);
+        return {
             editUnit: {
                 label: self.l('Edit'),
                 _disabled: !canManageOrganizationTree,
@@ -194,7 +200,6 @@ export class OrganizationTreeComponent extends AppComponentBase implements After
                     });
                 }
             },
-
             addSubUnit: {
                 label: self.l('AddSubUnit'),
                 _disabled: !canManageOrganizationTree,
@@ -202,7 +207,6 @@ export class OrganizationTreeComponent extends AppComponentBase implements After
                     self.addUnit(node.id);
                 }
             },
-
             'delete': {
                 label: self.l('Delete'),
                 _disabled: !canManageOrganizationTree || node.original.code == '00001',
@@ -225,8 +229,6 @@ export class OrganizationTreeComponent extends AppComponentBase implements After
                 }
             }
         };
-
-        return items;
     }
 
     addUnit(parentId?: number): void {

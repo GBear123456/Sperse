@@ -54,6 +54,7 @@ import { EditContactDialog } from '../contacts/edit-contact-dialog/edit-contact-
 import { ItemTypeEnum } from '@shared/common/item-details-layout/item-type.enum';
 import { ContactsService } from '@app/crm/contacts/contacts.service';
 import { ImpersonationService } from '@app/admin/users/impersonation.service';
+import { AppPermissions } from '@shared/AppPermissions';
 
 @Component({
     templateUrl: './clients.component.html',
@@ -114,7 +115,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         },
         {
             text: this.l('LoginAsThisUser'),
-            visible: this.permission.isGranted('Pages.Administration.Users.Impersonation'),
+            visible: this.permission.isGranted(AppPermissions.PagesAdministrationUsersImpersonation),
             action: () => {
                 this._impersonationService.impersonate(this.actionEvent.data.UserId, this.appSession.tenantId);
             }
@@ -729,7 +730,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
 
         this.actionEvent = null;
         this.actionMenuItems[this.MENU_LOGIN_INDEX].visible = Boolean(event.data.UserId)
-            && this.permission.isGranted('Pages.Administration.Users.Impersonation');
+            && this.permission.isGranted(AppPermissions.PagesAdministrationUsersImpersonation);
         setTimeout(() => this.actionEvent = event);
     }
 

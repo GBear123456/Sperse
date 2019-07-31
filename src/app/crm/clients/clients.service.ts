@@ -6,6 +6,7 @@ import { ContactGroup } from '@shared/AppEnums';
 import { AppConsts } from '@shared/AppConsts';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { ContactServiceProxy, UpdateContactStatusesInput } from '@shared/service-proxies/service-proxies';
+import { AppPermissions} from '@shared/AppPermissions';
 
 @Injectable()
 export class ClientService {
@@ -26,7 +27,7 @@ export class ClientService {
     }
 
     updateContactStatuses(contactIds: number[], groupId: string, statusId: string, callback: (() => void)) {
-        if (this.permission.isGranted('Pages.CRM.BulkUpdates')) {
+        if (this.permission.isGranted(AppPermissions.PagesCRMBulkUpdates)) {
             if (contactIds && contactIds.length) {
                 this.showUpdateContactStatusConfirmationDialog(contactIds, groupId, statusId, callback);
             } else {

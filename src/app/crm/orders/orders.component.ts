@@ -34,6 +34,7 @@ import { FilterHelpers } from '../shared/helpers/filter.helper';
 import { PipelineService } from '@app/shared/pipeline/pipeline.service';
 import { PipelineComponent } from '@app/shared/pipeline/pipeline.component';
 import { CreateInvoiceDialogComponent } from '../shared/create-invoice-dialog/create-invoice-dialog.component';
+import { AppPermissions } from '@shared/AppPermissions';
 
 @Component({
     templateUrl: './orders.component.html',
@@ -84,6 +85,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             }
         ]
     };
+    permissions = AppPermissions;
 
     constructor(injector: Injector,
         public dialog: MatDialog,
@@ -324,7 +326,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
 
     initToolbarConfig() {
         if (this.componentIsActivated) {
-            this.manageDisabled = !this.isGranted('Pages.CRM.Orders.Manage');
+            this.manageDisabled = !this.isGranted(AppPermissions.PagesCRMOrdersManage);
             this._appService.updateToolbar([
                 {
                     location: 'before', items: [
@@ -340,10 +342,10 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                                 checkPressed: () => {
                                     return this._filtersService.fixed;
                                 },
-                                mouseover: (event) => {
+                                mouseover: () => {
                                     this._filtersService.enable();
                                 },
-                                mouseout: (event) => {
+                                mouseout: () => {
                                     if (!this._filtersService.fixed)
                                         this._filtersService.disable();
                                 }
@@ -602,7 +604,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     }
 
     updateOrdersStage($event) {
-        if (this.permission.isGranted('Pages.CRM.BulkUpdates')) {
+        if (this.permission.isGranted(AppPermissions.PagesCRMBulkUpdates)) {
             this.stagesComponent.tooltipVisible = false;
             this._pipelineService.updateEntitiesStage(
                 this.pipelinePurposeId,

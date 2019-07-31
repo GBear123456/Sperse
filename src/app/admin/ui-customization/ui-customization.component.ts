@@ -2,6 +2,7 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { AfterViewChecked, Component, Injector, OnInit, OnDestroy } from '@angular/core';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { UiCustomizationSettingsEditDto, UiCustomizationSettingsServiceProxy } from '@shared/service-proxies/service-proxies';
+import { AppPermissions } from '@shared/AppPermissions';
 
 @Component({
     templateUrl: './ui-customization.component.html',
@@ -9,8 +10,9 @@ import { UiCustomizationSettingsEditDto, UiCustomizationSettingsServiceProxy } f
 })
 export class UiCustomizationComponent extends AppComponentBase implements AfterViewChecked, OnInit, OnDestroy {
 
-    settings: UiCustomizationSettingsEditDto;
     private rootComponent: any;
+    settings: UiCustomizationSettingsEditDto;
+    permissions = AppPermissions;
 
     constructor(
         injector: Injector,
