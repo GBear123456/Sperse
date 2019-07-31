@@ -1,11 +1,12 @@
 <modal-dialog [title]="ls.l('SelectedAccounts')"
               [buttons]="buttons">
     <div class="bank-accounts-tooltip-container">
-        <bank-accounts-widget [saveChangesInCache]="false"
-                              [showAdvancedColumns]="true"
-                              [showAddAccountButton]="false"
-                              [showBusinessEntitiesFilter]="data?.showBusinessEntitiesFilter"
-                              [highlightUsedRows]="data?.highlightUsedRows">
+        <bank-accounts-widget 
+            [saveChangesInCache]="false"
+            [showAdvancedColumns]="true"
+            [showAddAccountButton]="false"
+            [showBusinessEntitiesFilter]="data?.showBusinessEntitiesFilter"
+            [highlightUsedRows]="data?.highlightUsedRows">
         </bank-accounts-widget>
     </div>
 </modal-dialog>

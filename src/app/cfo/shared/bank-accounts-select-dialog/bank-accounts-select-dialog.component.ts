@@ -53,9 +53,9 @@ export class BankAccountsSelectDialogComponent implements OnInit {
         this.dialogRef.afterOpen().subscribe(() => {
             this.bankAccountsService.clearTempState();
         });
-        this.dialogRef.afterClosed().subscribe((resetState: boolean) => {
+        this.dialogRef.afterClosed().subscribe((isApply: boolean) => {
             this.bankAccountsService.clearTempState();
-            if (resetState) {
+            if (!isApply) {
                 /** Reset state */
                 this.bankAccountsService.resetState();
             }
