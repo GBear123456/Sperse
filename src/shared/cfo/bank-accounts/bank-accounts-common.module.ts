@@ -22,6 +22,7 @@ import { DxValidationSummaryModule } from 'devextreme-angular/ui/validation-summ
 import { DxRadioGroupModule } from 'devextreme-angular/ui/radio-group';
 import { DxDropDownBoxModule } from 'devextreme-angular/ui/drop-down-box';
 import { DxListModule } from 'devextreme-angular/ui/list';
+import { DxTreeViewModule } from 'devextreme-angular/ui/tree-view';
 
 /** Application imports */
 import { CommonModule } from '@shared/common/common.module';
@@ -49,6 +50,7 @@ import { AccountConnectorDialogModule } from '@shared/common/account-connector-d
 import { SearchInputModule } from '@app/shared/common/search-input/search-input.module';
 import { SortButtonModule } from '@app/shared/common/sort-button/sort-button.module';
 import { ExpandButtonModule } from '@app/shared/common/expand-button/expand-button.module';
+import { BusinessEntitiesChooserComponent } from './business-entities-chooser/business-entities-chooser.component';
 
 @NgModule({
     imports: [
@@ -74,12 +76,14 @@ import { ExpandButtonModule } from '@app/shared/common/expand-button/expand-butt
         AccountConnectorDialogModule,
         DxValidationSummaryModule,
         DxRadioGroupModule,
+        DxTreeViewModule,
         SearchInputModule,
         SortButtonModule,
         ExpandButtonModule
     ],
     declarations: [
         BankAccountsComponent,
+        BusinessEntitiesChooserComponent,
         BankAccountsWidgetComponent,
         BankAccountsQuovoComponent,
         QuovoPfmComponent,
@@ -93,6 +97,7 @@ import { ExpandButtonModule } from '@app/shared/common/expand-button/expand-butt
     ],
     exports: [
         BankAccountsComponent,
+        BusinessEntitiesChooserComponent,
         BankAccountsWidgetComponent,
         BankAccountsQuovoComponent,
         QuovoPfmComponent,

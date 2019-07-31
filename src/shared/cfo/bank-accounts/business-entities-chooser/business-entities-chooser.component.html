@@ -1,0 +1,38 @@
+<div class="selectionList">
+    <ng-container *ngIf="bankAccountsService.businessEntities$ | async as dataSource">
+        <dx-drop-down-box *ngIf="dataSource.length"
+            width="280px"
+            [value]="getSelectedTitle(dataSource)"
+            [placeholder]="ls.l('All_Entities') + ' \u25BE'"
+            (onOpened)="changePopupWidth($event)"
+            (onClosed)="onPopupClosed($event)">
+            <div *dxTemplate="let contentData of 'content'" class="bussiness-entities-chooser">
+                <div class="select-all">
+                    <dx-check-box 
+                        [text]="ls.l('Select All')"
+                        [(value)]="selectedAll"
+                        (onValueChanged)="onSelectAll($event, dataSource)"
+                    ></dx-check-box>
+                </div>
+                <dx-tree-view 
+                    [expandAllEnabled]="true"
+                    [parentIdExpr]="'parentId'"
+                    [dataStructure]="'plain'"
+                    [dataSource]="dataSource"
+                    [selectedExpr]="'isSelected'"
+                    [hasItemsExpr]="'hasChildren'"
+                    [showCheckBoxesMode]="'normal'"
+                    [displayExpr]="'name'"
+                    itemTemplate="itemTemplate"
+                    (onContentReady)="updateSelectedList(dataSource)"
+                    (onSelectionChanged)="selectedItemsChange(dataSource)">
+                    <div *dxTemplate="let item of 'itemTemplate'">
+                        <div class="selection-list-item {{item.hasChildren ? 'highlighted' : ''}}">
+                            <span [title]="item.name">{{item.name}}</span>
+                        </div>
+                    </div>
+                </dx-tree-view>
+            </div>
+        </dx-drop-down-box>
+    </ng-container>
+</div>

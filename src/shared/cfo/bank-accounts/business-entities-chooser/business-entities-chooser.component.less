@@ -1,0 +1,74 @@
+:host {
+    width: 280px;
+    display: flex;
+    dx-drop-down-box {
+        background: transparent;
+    }
+
+    /deep/ .selectionList {
+        align-self: center;
+        .dx-texteditor-input,
+        .dx-placeholder {
+            font-size: 17px;
+            letter-spacing: 0.3px;
+            padding: 0 5px;
+            height: auto !important;
+            font-weight: 500;
+            top: 0;
+            bottom: 0;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+        }
+
+        .dx-texteditor-buttons-container {
+            display: none;
+        }
+
+        .dx-texteditor-container {
+            padding-top: 0;
+            padding-right: 0;
+            display: flex;
+            align-items: center;
+            input {
+                overflow: visible;
+                display: block;
+                white-space: nowrap;
+                padding: 0;
+            }
+        }
+    }
+}
+
+/deep/ .dx-popup-content {
+    .bussiness-entities-chooser {
+        margin: 5px;
+        .select-all {
+            padding: 10px 25px;
+            border-bottom: 1px solid #dfdfdf;
+            margin-left: -7px;
+            position: absolute;
+            top: 0px;
+            width: 100%;
+            .dx-checkbox-text {
+                margin-left: -15px;
+            }
+        }
+        dx-tree-view {
+            padding-top: 45px;
+        }
+    }
+}
+
+/deep/ .dx-item-content {
+    .selection-list-item {
+        display: flex;
+        justify-content: space-between;
+        &.highlighted span {
+            font-weight: bold;
+        }
+        &:before {
+            display: none;
+        }
+    }
+}
