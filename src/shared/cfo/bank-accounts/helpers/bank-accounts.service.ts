@@ -381,7 +381,7 @@ export class BankAccountsService {
         list.forEach(item => {
             item['isSelected'] = this.state.selectedBusinessEntitiesIds.indexOf(item.id) >= 0;
         });
-        return list = orderBy(list, ['isSelected', 'hasChildren', 'name'], ['desc', 'desc', 'asc']);
+        return orderBy(list, ['isSelected', 'hasChildren', 'name'], ['desc', 'desc', 'asc']);
     }
 
     load(acceptFilterOnlyOnApply = true, applyFilter = true) {
@@ -609,7 +609,7 @@ export class BankAccountsService {
         if (state.hasOwnProperty('statuses')) {
             this.selectedStatuses.next(tempFilter.statuses);
         }
-        if (state.hasOwnProperty('selectedBusinessEntitiesIds')) {
+        if (saveInCache && state.hasOwnProperty('selectedBusinessEntitiesIds')) {
             this._businessEntities.next(this._businessEntities.getValue());
         }
         this._syncAccountsState.next(tempFilter);
