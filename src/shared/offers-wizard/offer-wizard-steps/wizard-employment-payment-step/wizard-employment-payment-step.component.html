@@ -1,0 +1,53 @@
+<div class="dx-field">
+    <div class="dx-field-label">{{ls.l('net_monthly_income')}}</div>
+    <div class="dx-field-value">
+        <dx-number-box
+            format="$ #,##0.##"
+            [(value)]="offersWizardService.submitApplicationProfileInput.employmentInformation.netMonthlyIncome">
+        </dx-number-box>
+    </div>
+</div>
+<div class="dx-field">
+    <div class="dx-field-label">{{ls.l('pay_frequency')}}</div>
+    <div class="dx-field-value">
+        <dx-select-box
+            [items]="offersWizardService.payFrequency"
+            valueExpr="key"
+            displayExpr="text"
+            [(value)]="offersWizardService.submitApplicationProfileInput.employmentInformation.payFrequency"
+            placeholder="Choose pay frequency">
+        </dx-select-box>
+    </div>
+</div>
+<div class="dx-field">
+    <div class="dx-field-label">{{ls.l('pay_next_date')}}</div>
+    <div class="dx-field-value">
+        <dx-date-box
+            [(value)]="offersWizardService.submitApplicationProfileInput.employmentInformation.payNextDate"
+            (onBlur)="offersWizardService.removeTimeZone(offersWizardService.submitApplicationProfileInput.employmentInformation.payNextDate)"
+            type="date">
+        </dx-date-box>
+    </div>
+</div>
+<div class="dx-field">
+    <div class="dx-field-label">{{ls.l('pay_after_next_date')}}</div>
+    <div class="dx-field-value">
+        <dx-date-box
+            [(value)]="offersWizardService.submitApplicationProfileInput.employmentInformation.payAfterNextDate"
+            (onBlur)="offersWizardService.removeTimeZone(offersWizardService.submitApplicationProfileInput.employmentInformation.payAfterNextDate)"
+            type="date">
+        </dx-date-box>
+    </div>
+</div>
+<div class="dx-field">
+    <div class="dx-field-label">{{ls.l('income_type')}}</div>
+    <div class="dx-field-value">
+        <dx-select-box
+            [items]="offersWizardService.incomeType"
+            valueExpr="key"
+            displayExpr="text"
+            placeholder="Choose income type"
+            [(value)]="offersWizardService.submitApplicationProfileInput.employmentInformation.incomeType">
+        </dx-select-box>
+    </div>
+</div>

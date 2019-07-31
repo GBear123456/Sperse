@@ -1,0 +1,139 @@
+<div class="row">
+    <div class="col-md-6 col-sm-12">
+        <div class="dx-field">
+            <div class="dx-field-label">{{ls.l('IsEmployed')}}</div>
+            <div class="dx-field-value">
+                <dx-radio-group
+                    [items]="offersWizardService.radioGroup"
+                    [(value)]="offersWizardService.submitApplicationProfileInput.employmentInformation.isEmployed"
+                    displayExpr="text"
+                    valueExpr="value"
+                    layout="horizontal">
+                </dx-radio-group>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 col-sm-12">
+        <div class="dx-field">
+            <div class="dx-field-label">{{ls.l('active_military')}}</div>
+            <div class="dx-field-value">
+                <dx-radio-group
+                    [items]="offersWizardService.radioGroup"
+                    [(value)]="offersWizardService.submitApplicationProfileInput.personalInformation.isActiveMilitary"
+                    displayExpr="text"
+                    valueExpr="value"
+                    layout="horizontal">
+                </dx-radio-group>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-6 col-sm-12">
+        <div class="dx-field">
+            <div class="dx-field-label">{{ls.l('employer_name')}}</div>
+            <div class="dx-field-value">
+                <dx-text-box placeholder="Enter employer name"
+                             [(value)]="offersWizardService.submitApplicationProfileInput.employmentInformation.employerName">
+                </dx-text-box>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 col-sm-12">
+        <div class="dx-field">
+            <div class="dx-field-label">{{ls.l('JobTitle')}}</div>
+            <div class="dx-field-value">
+                <dx-text-box placeholder="Enter job title"
+                             [(value)]="offersWizardService.submitApplicationProfileInput.employmentInformation.jobTitle">
+                </dx-text-box>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="dx-field">
+            <div class="dx-field-label">{{ls.l('months_at_employer')}}</div>
+            <div class="dx-field-value">
+                <dx-text-box placeholder="Enter period"
+                             [(value)]="offersWizardService.submitApplicationProfileInput.employmentInformation.monthsAtEmployer">
+                </dx-text-box>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-6 col-sm-12">
+        <div class="dx-field">
+            <div class="dx-field-label">{{ls.l('phone_work')}}</div>
+            <div class="dx-field-value">
+                <dx-text-box name="phone"
+                             (onFocusOut)="inputStatusesService.blurInput($event)"
+                             (onFocusIn)="inputStatusesService.focusInput($event)"
+                             [maskRules]="offersWizardService.rules"
+                             [(value)]="offersWizardService.submitApplicationProfileInput.employmentInformation.phoneWork">
+                </dx-text-box>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 col-sm-12">
+        <div class="dx-field">
+            <div class="dx-field-label">{{ls.l('WorkPhoneExt')}}</div>
+            <div class="dx-field-value">
+                <dx-text-box [maxLength]="5"
+                             name="phoneExt"
+                             (onFocusOut)="inputStatusesService.blurInput($event)"
+                             (onFocusIn)="inputStatusesService.focusInput($event)"
+                             [(value)]="offersWizardService.submitApplicationProfileInput.employmentInformation.phoneWorkExtension">
+                </dx-text-box>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="dx-field">
+            <div class="dx-field-label">{{ls.l('EmployerAddress1')}}</div>
+            <div class="dx-field-value">
+                <dx-text-box placeholder="Enter address"
+                             [(value)]="offersWizardService.submitApplicationProfileInput.employmentInformation.employerAddress1">
+                </dx-text-box>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-4 col-sm-12">
+        <div class="dx-field">
+            <div class="dx-field-label">{{ls.l('EmployerCity')}}</div>
+            <div class="dx-field-value">
+                <dx-text-box placeholder="Enter city"
+                             [(value)]="offersWizardService.submitApplicationProfileInput.employmentInformation.employerCity">
+                </dx-text-box>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 col-sm-12">
+        <div class="dx-field">
+            <div class="dx-field-label">{{ls.l('EmployerStateCode')}}</div>
+            <div class="dx-field-value">
+                <dx-text-box placeholder="Enter state code"
+                             [(value)]="offersWizardService.submitApplicationProfileInput.employmentInformation.employerStateCode">
+                </dx-text-box>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 col-sm-12">
+        <div class="dx-field">
+            <div class="dx-field-label">{{ls.l('EmployerPostalCode')}}</div>
+            <div class="dx-field-value">
+                <dx-text-box placeholder="Enter postal code"
+                             name="zipCode"
+                             (onFocusOut)="inputStatusesService.blurInput($event)"
+                             (onFocusIn)="inputStatusesService.focusInput($event)"
+                             [(value)]="offersWizardService.submitApplicationProfileInput.employmentInformation.employerPostalCode">
+                </dx-text-box>
+            </div>
+        </div>
+    </div>
+</div>

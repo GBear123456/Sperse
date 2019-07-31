@@ -1,0 +1,103 @@
+<div class="dx-field">
+    <div class="dx-field-label">{{ls.l('address1')}}</div>
+    <div class="dx-field-value">
+        <dx-text-box placeholder="Enter address"
+                     [(value)]="offersWizardService.submitApplicationProfileInput.personalInformation.address1">
+        </dx-text-box>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-6 col-sm-12">
+        <div class="dx-field">
+            <div class="dx-field-label">{{ls.l('country_code')}}</div>
+            <div class="dx-field-value">
+                <dx-text-box placeholder="Enter country code"
+                             [(value)]="offersWizardService.submitApplicationProfileInput.personalInformation.countryCode">
+                </dx-text-box>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 col-sm-12">
+        <div class="dx-field">
+            <div class="dx-field-label">{{ls.l('state')}}</div>
+            <div class="dx-field-value">
+                <dx-text-box placeholder="Enter state code"
+                             [(value)]="offersWizardService.submitApplicationProfileInput.personalInformation.stateCode">
+                </dx-text-box>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-6 col-sm-12">
+        <div class="dx-field">
+            <div class="dx-field-label">{{ls.l('city')}}</div>
+            <div class="dx-field-value">
+                <dx-text-box placeholder="Enter city"
+                             [(value)]="offersWizardService.submitApplicationProfileInput.personalInformation.city">
+                </dx-text-box>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 col-sm-12">
+        <div class="dx-field">
+            <div class="dx-field-label">{{ls.l('postal_code')}}</div>
+            <div class="dx-field-value">
+                <dx-text-box placeholder="Enter postal code"
+                             name="zipCode"
+                             (onFocusOut)="inputStatusesService.blurInput($event)"
+                             (onFocusIn)="inputStatusesService.focusInput($event)"
+                             [(value)]="offersWizardService.submitApplicationProfileInput.personalInformation.postalCode">
+                </dx-text-box>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-6 col-sm-12">
+        <div class="dx-field">
+            <div class="dx-field-label">{{ls.l('months_at_address')}}</div>
+            <div class="dx-field-value">
+                <dx-text-box placeholder="Enter number of years"
+                             [(value)]="offersWizardService.submitApplicationProfileInput.personalInformation.monthsAtAddress">
+                </dx-text-box>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 col-sm-12">
+        <div class="dx-field">
+            <div class="dx-field-label">{{ls.l('DoYouOwnYourHome')}}</div>
+            <div class="dx-field-value">
+                <dx-radio-group
+                    [items]="offersWizardService.radioGroup"
+                    [(value)]="offersWizardService.submitApplicationProfileInput.personalInformation.isHomeOwner"
+                    displayExpr="text"
+                    valueExpr="value"
+                    layout="horizontal">
+                </dx-radio-group>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-6 col-sm-12">
+        <div class="dx-field">
+            <div class="dx-field-label">{{ls.l('license_state')}}</div>
+            <div class="dx-field-value">
+                <dx-text-box placeholder="Enter license state"
+                             [(value)]="offersWizardService.submitApplicationProfileInput.personalInformation.licenseState">
+                </dx-text-box>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 col-sm-12">
+        <div class="dx-field">
+            <div class="dx-field-label">{{ls.l('license_state')}}</div>
+            <div class="dx-field-value">
+                <dx-text-box placeholder="Enter license number"
+                             [(value)]="offersWizardService.submitApplicationProfileInput.personalInformation.licenseNumber">
+                </dx-text-box>
+            </div>
+        </div>
+    </div>
+</div>

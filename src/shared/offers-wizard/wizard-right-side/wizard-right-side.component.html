@@ -1,0 +1,38 @@
+<modal-dialog [title]="ls.l('My Profile')"
+              [buttons]="buttons"
+              [editTitle]="false"
+              [titleClearButton]="false">
+    <dx-scroll-view showScrollbar="onHover">
+        <div class="container">
+            <mat-tab-group [selectedIndex]="0">
+                <mat-tab label="{{ls.l('PersonalInformation')}}">
+                    <dx-scroll-view showScrollbar="onHover">
+                        <app-wizard-personal-info-step></app-wizard-personal-info-step>
+                    </dx-scroll-view>
+                </mat-tab>
+                <mat-tab label="{{ls.l('ContactInfo')}}">
+                    <dx-scroll-view showScrollbar="onHover">
+                        <app-wizard-contact-info-step></app-wizard-contact-info-step>
+                        <app-wizard-home-info-step></app-wizard-home-info-step>
+                    </dx-scroll-view>
+                </mat-tab>
+                <mat-tab label="{{ls.l('BankInfo')}}">
+                    <dx-scroll-view showScrollbar="onHover">
+                        <app-wizard-bank-info-step></app-wizard-bank-info-step>
+                    </dx-scroll-view>
+                </mat-tab>
+                <mat-tab label="{{ls.l('EmploymentInfo')}}">
+                    <dx-scroll-view showScrollbar="onHover">
+                        <app-wizard-employment-info-step></app-wizard-employment-info-step>
+                        <app-wizard-employment-payment-step></app-wizard-employment-payment-step>
+                    </dx-scroll-view>
+                </mat-tab>
+                <mat-tab label="{{ls.l('LoanInfo')}}">
+                    <dx-scroll-view showScrollbar="onHover">
+                        <app-wizard-loan-info-step></app-wizard-loan-info-step>
+                    </dx-scroll-view>
+                </mat-tab>
+            </mat-tab-group>
+        </div>
+    </dx-scroll-view>
+</modal-dialog>
