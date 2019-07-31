@@ -657,19 +657,15 @@ export class OffersLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
         return filters;
     }
 
-    checkDemoUserActionAllowed(card?: OfferDto) {
+    checkDemoUserActionAllowed(card: OfferDto, redirect = false) {
         if (this._sessionService.isLendspaceDemoUser) {
             let result = this.filtersValues.creditScore < 720;
             if (!result && card && card.redirectUrl)
-                this.dialog.open(MarcusDetailsComponent, {
-                    width: '900px',
-                    height: '800px',
-                    id: card.redirectUrl,
-                    disableClose: false,
-                    data: {}
-                }).afterClosed().subscribe((res)  => {
-
-                });
+                redirect ? window.open(card.redirectUrl) :
+                    this.dialog.open(MarcusDetailsComponent, {
+                        width: '900px',
+                        height: '710px'
+                    });
 
             return result;
         } else
@@ -692,7 +688,7 @@ export class OffersLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     applyOffer(offer: OfferDto) {
-        if (this.checkDemoUserActionAllowed())
+        if (this.checkDemoUserActionAllowed(offer, true))
             this.category$.pipe(first()).subscribe(
                 category => this.offersService.applyOffer(offer, category === CampaignCategory.CreditCards)
             );
