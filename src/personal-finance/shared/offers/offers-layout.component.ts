@@ -666,7 +666,7 @@ export class OffersLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
                 redirect ? window.open(card.redirectUrl) :
                     this.dialog.open(MarcusDetailsComponent, {
                         width: '900px',
-                        height: '800px'
+                        height: '710px'
                     });
 
             return result;
