@@ -14,6 +14,7 @@ import {
     ComboboxItemDto, CommonLookupServiceProxy, SettingScopes, HostSettingsEditDto, HostSettingsServiceProxy, SendTestEmailInput, PayPalSettings,
     BaseCommercePaymentSettings, TenantPaymentSettingsServiceProxy, ACHWorksSettings, RecurlyPaymentSettings
 } from '@shared/service-proxies/service-proxies';
+import { AppPermissions } from '@shared/AppPermissions';
 
 @Component({
     templateUrl: './host-settings.component.html',
@@ -43,7 +44,7 @@ export class HostSettingsComponent extends AppComponentBase implements OnInit, O
         icon: '',
         buttons: [
             {
-                enabled: this.isGranted('Pages.Administration.Languages.Create'),
+                enabled: this.isGranted(AppPermissions.PagesAdministrationLanguagesCreate),
                 action: this.saveAll.bind(this),
                 icon: 'la la la-floppy-o',
                 lable: this.l('SaveAll')

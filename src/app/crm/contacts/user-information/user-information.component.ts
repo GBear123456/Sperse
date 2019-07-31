@@ -22,6 +22,7 @@ import { InplaceEditModel } from '@app/shared/common/inplace-edit/inplace-edit.m
 import { ContactsService } from '../contacts.service';
 import { ResetPasswordDialog } from './reset-password-dialog/reset-password-dialog.component';
 import { ContactStatus } from '@root/shared/AppEnums';
+import { AppPermissions } from '@shared/AppPermissions';
 
 @Component({
     selector: 'user-information',
@@ -117,8 +118,8 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
                 _roleServiceProxy['data'] = this.roles = res.items;
             });
 
-        this.isEditAllowed = this.isGranted('Pages.Administration.Users.Edit');
-        this.changeRolesAllowed = this.isGranted('Pages.Administration.Users.ChangePermissionsAndRoles');
+        this.isEditAllowed = this.isGranted(AppPermissions.PagesAdministrationUsersEdit);
+        this.changeRolesAllowed = this.isGranted(AppPermissions.PagesAdministrationUsersChangePermissionsAndRoles);
     }
 
     ngOnInit() {
@@ -132,7 +133,7 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
 
     checkShowInviteForm() {
         this.showInviteUserForm = this.data && !this.data.userId &&
-            this.permission.isGranted('Pages.Administration.Users.Create');
+            this.permission.isGranted(AppPermissions.PagesAdministrationUsersCreate);
 
         let contactInfo = this.contactInfoData.contactInfo.personContactInfo;
         if (contactInfo) {
@@ -175,7 +176,7 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
 
         if (this.inviteData.phoneNumber && !this.phoneNumberComponent.instance.option('isValid'))
             return this.message.warn(this.l('PhoneValidationError'));
-        
+
         this.message.confirm(
             this.l('CreateNewUser'),
             this.l('AreYouSure'),

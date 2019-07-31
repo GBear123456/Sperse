@@ -10,9 +10,9 @@
                 </span>
             </div>
             <div class="col-sm-12 col-md-6 text-right">
-                <button *ngIf="isGranted('Pages.Administration.UiCustomization')" (click)="updateDefaultUiManagementSettings()" class="btn btn-primary"><i class="fa fa-floppy-o"></i> {{l("SaveAsSystemDefault")}}</button>
-                <button *ngIf="!isGranted('Pages.Administration.UiCustomization')" (click)="updateUiManagementSettings()" class="btn btn-primary"><i class="fa fa-floppy-o"></i> {{l("Save")}}</button>
-                <button *ngIf="!isGranted('Pages.Administration.UiCustomization')" (click)="useSystemDefaultSettings()" class="btn btn-metal"> {{l("UseSystemDefaults")}}</button>
+                <button (click)="updateDefaultUiManagementSettings()" class="btn btn-primary"><i class="fa fa-floppy-o"></i> {{l("SaveAsSystemDefault")}}</button>
+                <button (click)="updateUiManagementSettings()" class="btn btn-primary"><i class="fa fa-floppy-o"></i> {{l("Save")}}</button>
+                <button (click)="useSystemDefaultSettings()" class="btn btn-metal"> {{l("UseSystemDefaults")}}</button>
             </div>
         </div>
     </div>

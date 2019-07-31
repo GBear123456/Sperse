@@ -67,6 +67,7 @@ import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { AppConsts } from '@shared/AppConsts';
 import { OffersService } from '@root/personal-finance/shared/offers/offers.service';
 import { OfferNotifyDialogComponent } from '@app/pfm/offer-edit/offer-notify-dialog/offer-notify-dialog.component';
+import { AppPermissions } from '@shared/AppPermissions';
 
 @Component({
     selector: 'offer-edit',
@@ -148,7 +149,7 @@ export class OfferEditComponent implements OnInit, OnDestroy, ICloseComponent {
         public ls: AppLocalizationService
     ) {
         this.rootComponent = injector.get(this.applicationRef.componentTypes[0]);
-        this.sentAnnouncementPermissionGranted = this.permissionChecker.isGranted('Pages.PFM.Applications.SendOfferAnnouncements');
+        this.sentAnnouncementPermissionGranted = this.permissionChecker.isGranted(AppPermissions.PagesPFMApplicationsSendOfferAnnouncements);
         this.creditScores = Object.keys(CreditScoreRating);
     }
 

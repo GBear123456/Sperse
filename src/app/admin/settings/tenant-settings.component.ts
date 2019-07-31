@@ -32,12 +32,12 @@ import {
     TenantCustomizationInfoDto,
     EPCVIPMailerSettingsEditDto,
     EPCVIPServer,
-
     OngageSettingsEditDto,
     IAgeSettingsEditDto,
 } from '@shared/service-proxies/service-proxies';
 import { FaviconService } from '@shared/common/favicon-service/favicon.service';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
+import { AppPermissions } from '@shared/AppPermissions';
 
 @Component({
     templateUrl: './tenant-settings.component.html',
@@ -70,7 +70,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
     payPalPaymentSettings: PayPalSettings = new PayPalSettings();
     achWorksSettings: ACHWorksSettings = new ACHWorksSettings();
     recurlySettings: RecurlyPaymentSettings = new RecurlyPaymentSettings();
-    isTenantHosts: boolean = this._permission.isGranted('Pages.Administration.TenantHosts');
+    isTenantHosts: boolean = this._permission.isGranted(AppPermissions.PagesAdministrationTenantHosts);
     isAdminCustomizations: boolean = abp.features.isEnabled('Admin.Customizations');
     isCreditReportFeatureEnabled: boolean = abp.features.isEnabled('PFM.CreditReport');
     isPFMApplicationsFeatureEnabled: boolean = abp.features.isEnabled('PFM') && abp.features.isEnabled('PFM.Applications');
@@ -99,7 +99,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
         icon: '',
         buttons: [
             {
-                enabled: true, // this.isGranted('Pages.Administration.Languages.Create'),
+                enabled: true, // this.isGranted(AppPermissions.PagesAdministrationLanguagesCreate),
                 action: this.saveAll.bind(this),
                 icon: 'la la la-floppy-o',
                 lable: this.l('SaveAll')

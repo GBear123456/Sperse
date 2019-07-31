@@ -15,6 +15,7 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { ApplicationLanguageListDto, LanguageServiceProxy, SetDefaultLanguageInput } from '@shared/service-proxies/service-proxies';
 import { CreateOrEditLanguageModalComponent } from './create-or-edit-language-modal.component';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
+import { AppPermissions } from '@shared/AppPermissions';
 
 @Component({
     templateUrl: './languages.component.html',
@@ -34,7 +35,7 @@ export class LanguagesComponent extends AppComponentBase implements OnDestroy {
         toggleToolbar: this.toggleToolbar.bind(this),
         buttons: [
             {
-                enabled: this.isGranted('Pages.Administration.Languages.Create') && this._appService.isHostTenant,
+                enabled: this.isGranted(AppPermissions.PagesAdministrationLanguagesCreate) && this._appService.isHostTenant,
                 action: this.createNewLanguage.bind(this),
                 lable: this.l('CreateNewLanguage')
             }
@@ -75,35 +76,35 @@ export class LanguagesComponent extends AppComponentBase implements OnDestroy {
         this.actionMenuItems = [
             {
                 text: this.l('Edit'),
-                visible: this.permission.isGranted('Pages.Administration.Languages.Edit')  && this._appService.isHostTenant,
+                visible: this.permission.isGranted(AppPermissions.PagesAdministrationLanguagesEdit)  && this._appService.isHostTenant,
                 action: () => {
                     this.openCreateOrEditLanguageModal(this.actionRecord.id);
                 }
             },
             {
                 text: this.l('ChangeTexts'),
-                visible: this.permission.isGranted('Pages.Administration.Languages.ChangeTexts'),
+                visible: this.permission.isGranted(AppPermissions.PagesAdministrationLanguagesChangeTexts),
                 action: () => {
                     this.changeTexts(this.actionRecord);
                 }
             },
             {
                 text: this.l('SetAsDefaultLanguage'),
-                visible: this.permission.isGranted('Pages.Administration.Languages.ChangeTexts'),
+                visible: this.permission.isGranted(AppPermissions.PagesAdministrationLanguagesChangeTexts),
                 action: () => {
                     this.setAsDefaultLanguage(this.actionRecord);
                 }
             },
             {
                 text: this.l('Delete'),
-                visible: this.permission.isGranted('Pages.Administration.Languages.Delete')  && this._appService.isHostTenant,
+                visible: this.permission.isGranted(AppPermissions.PagesAdministrationLanguagesDelete)  && this._appService.isHostTenant,
                 action: () => {
                     this.deleteLanguage(this.actionRecord);
                 }
             }
         ].filter(Boolean);
     }
-    
+
     toggleToolbar() {
         this._appService.toolbarToggle();
         setTimeout(() => this.dataGrid.instance.repaint(), 0);

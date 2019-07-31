@@ -14,6 +14,7 @@ import { TenantsComponent } from './tenants/tenants.component';
 import { UiCustomizationComponent } from './ui-customization/ui-customization.component';
 import { UsersComponent } from './users/users.component';
 import { JobsComponent } from './jobs/jobs.component';
+import { AppPermissions } from '@shared/AppPermissions';
 
 @NgModule({
     imports: [
@@ -22,20 +23,20 @@ import { JobsComponent } from './jobs/jobs.component';
             {
                 path: '',
                 children: [
-                    { path: 'users', component: UsersComponent, data: { permission: 'Pages.Administration.Users', reuse: true } },
-                    { path: 'roles', component: RolesComponent, data: { permission: 'Pages.Administration.Roles' } },
+                    { path: 'users', component: UsersComponent, data: { permission: AppPermissions.PagesAdministrationUsers, reuse: true } },
+                    { path: 'roles', component: RolesComponent, data: { permission: AppPermissions.PagesAdministrationRoles } },
                     { path: 'auditLogs', component: AuditLogsComponent, data: { permission: 'Pages.Administration.AuditLogs' } },
                     { path: 'maintenance', component: MaintenanceComponent, data: { permission: 'Pages.Administration.Host.Maintenance' } },
                     { path: 'jobs', component: JobsComponent, data: { permission: 'Pages.Administration.HangfireDashboard' } },
                     { path: 'hostSettings', component: HostSettingsComponent, data: { permission: 'Pages.Administration.Host.Settings|Pages.Administration.TenantHosts' } },
                     { path: 'languages', component: LanguagesComponent, data: { permission: 'Pages.Administration.Languages' } },
-                    { path: 'languages/:name/texts', component: LanguageTextsComponent, data: { permission: 'Pages.Administration.Languages.ChangeTexts' } },
+                    { path: 'languages/:name/texts', component: LanguageTextsComponent, data: { permission: AppPermissions.PagesAdministrationLanguagesChangeTexts } },
                     { path: 'organization-units', component: OrganizationUnitsComponent, data: { permission: 'Pages.Administration.OrganizationUnits' } },
                     { path: 'tenantSettings', component: TenantSettingsComponent, data: { permission: 'Pages.Administration.Tenant.Settings|Pages.Administration.TenantHosts' } },
-                    { path: 'hostDashboard', component: HostDashboardComponent, data: { permission: 'Pages.Administration.Host.Dashboard' } },
+                    { path: 'hostDashboard', component: HostDashboardComponent, data: { permission: AppPermissions.PagesAdministrationHostDashboard } },
                     { path: 'ui-customization', component: UiCustomizationComponent },
                     { path: 'products', component: EditionsComponent, data: { permission: 'Pages.Editions' } },
-                    { path: 'tenants', component: TenantsComponent, data: { permission: 'Pages.Tenants' } }
+                    { path: 'tenants', component: TenantsComponent, data: { permission: AppPermissions.PagesTenants } }
                 ]
             }
         ])

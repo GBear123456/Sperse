@@ -13,6 +13,7 @@ import { AppService } from '@app/app.service';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { EditionListDto, EditionServiceProxy } from '@shared/service-proxies/service-proxies';
 import { CreateOrEditEditionModalComponent } from './create-or-edit-edition-modal.component';
+import { AppPermissions } from '@shared/AppPermissions';
 
 @Component({
     templateUrl: './editions.component.html',
@@ -32,7 +33,7 @@ export class EditionsComponent extends AppComponentBase implements OnDestroy {
         toggleToolbar: this.toggleToolbar.bind(this),
         buttons: [
             {
-                enabled: this.isGranted('Pages.Editions.Create'),
+                enabled: this.isGranted(AppPermissions.PagesEditionsCreate),
                 action: this.createEdition.bind(this),
                 lable: this.l('CreateNewEdition')
             }
@@ -66,14 +67,14 @@ export class EditionsComponent extends AppComponentBase implements OnDestroy {
         this.actionMenuItems = [
             {
                 text: this.l('Edit'),
-                visible: this.permission.isGranted('Pages.Editions.Edit'),
+                visible: this.permission.isGranted(AppPermissions.PagesEditionsEdit),
                 action: () => {
                     this.openCreateOrEditDialog(this.actionRecord.id);
                 }
             },
             {
                 text: this.l('Delete'),
-                visible: this.permission.isGranted('Pages.Editions.Delete'),
+                visible: this.permission.isGranted(AppPermissions.PagesEditionsDelete),
                 action: () => {
                     this.deleteEdition(this.actionRecord);
                 }

@@ -31,6 +31,7 @@ import { getLoadedTime } from './selectors';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { StoreHelper } from '@root/store/store.helper';
 import { AppConsts } from '@shared/AppConsts';
+import { AppPermissions } from '@shared/AppPermissions';
 
 @Injectable()
 export class PartnerTypesStoreEffects {
@@ -43,8 +44,8 @@ export class PartnerTypesStoreEffects {
     @Effect()
     loadRequestEffect$: Observable<Action> = this.actions$.pipe(
         ofType<partnerTypesActions.LoadRequestAction>(partnerTypesActions.ActionTypes.LOAD_REQUEST),
-        filter(() => this.permissionCheckerService.isGranted('Pages.CRM.Partners') ||
-                             this.permissionCheckerService.isGranted('Pages.Administration.Users')),
+        filter(() => this.permissionCheckerService.isGranted(AppPermissions.PagesCRMPartners) ||
+                              this.permissionCheckerService.isGranted(AppPermissions.PagesAdministrationUsers)),
         withLatestFrom(this.store$.pipe(select(getLoadedTime))),
         exhaustMap(([action, loadedTime]) => {
 

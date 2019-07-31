@@ -1,15 +1,20 @@
+/** Core imports */
 import { Injectable, Injector } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { Location } from '@angular/common';
-import { Observable, ReplaySubject, Subject } from 'rxjs';
 
+/** Third party imports */
+import { MatDialog } from '@angular/material/dialog';
+import { Observable, ReplaySubject, Subject } from 'rxjs';
+import invert from 'lodash/invert';
+
+/** Application imports */
 import { DialogService } from '@app/shared/common/dialogs/dialog.service';
 import { AddCompanyDialogComponent } from './add-company-dialog/add-company-dialog.component';
 import { ContactInfoDto, OrganizationContactInfoDto } from '@shared/service-proxies/service-proxies';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { ContactGroup, ContactGroupPermission } from '@shared/AppEnums';
-import invert from 'lodash/invert';
+import { AppPermissions } from '@shared/AppPermissions';
 
 @Injectable()
 export class ContactsService {
@@ -59,8 +64,8 @@ export class ContactsService {
     }
 
     checkCGPermission(contactGroup, permission = 'Manage') {
-        return contactGroup == ContactGroup.UserProfile && 
-            this._permission.isGranted('Pages.Administration.Users.Edit') ||
+        return contactGroup == ContactGroup.UserProfile &&
+            this._permission.isGranted(AppPermissions.PagesAdministrationUsersEdit) ||
             this._permission.isGranted(this.getCGPermissionKey(contactGroup, permission));
     }
 

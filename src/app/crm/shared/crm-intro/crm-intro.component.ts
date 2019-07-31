@@ -13,7 +13,7 @@ import { ModuleType, RoleServiceProxy, UserServiceProxy } from 'shared/service-p
 import { QuestionnaireComponent } from '@shared/shared-intro-steps/questionnaire/questionnaire.component';
 import { ImportUsersStepComponent } from '@shared/shared-intro-steps/import-users-step/import-users-step.component';
 import { AppService } from '@app/app.service';
-
+import { AppPermissions } from '@shared/AppPermissions';
 
 @Component({
     selector: 'app-crm-intro',
@@ -44,9 +44,9 @@ export class CrmIntroComponent extends AppComponentBase implements OnInit {
         this.dialogRef = <any>injector.get(MatDialogRef);
 
         this.showImportUsersStep = (appService.isHostTenant || this.feature.isEnabled('Admin'))
-            && this.permission.isGranted('Pages.Administration.Users')
-            && this.permission.isGranted('Pages.Administration.Users.Create')
-            && this.permission.isGranted('Pages.Administration.Roles');
+            && this.permission.isGranted(AppPermissions.PagesAdministrationUsers)
+            && this.permission.isGranted(AppPermissions.PagesAdministrationUsersCreate)
+            && this.permission.isGranted(AppPermissions.PagesAdministrationRoles);
     }
 
     ngOnInit() {

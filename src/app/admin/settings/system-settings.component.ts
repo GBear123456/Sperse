@@ -13,6 +13,7 @@ import { NotifyService } from '@abp/notify/notify.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { AppHttpInterceptor } from '@shared/http/appHttpInterceptor';
+import { AppPermissions } from '@shared/AppPermissions';
 
 @Component({
     selector: 'system-settings',
@@ -33,8 +34,8 @@ export class SystemSettingsComponent implements OnInit {
         { 'Id': 1, 'Name': 'Platform App' }
     ];
 
-    tenantHostsEnabled = abp.features.isEnabled('Admin.Customizations') 
-        && this._permission.isGranted('Pages.Administration.TenantHosts');
+    tenantHostsEnabled = abp.features.isEnabled('Admin.Customizations')
+        && this._permission.isGranted(AppPermissions.PagesAdministrationTenantHosts);
 
     constructor(
         private _tenantSslCertificateService: TenantSslCertificateServiceProxy,

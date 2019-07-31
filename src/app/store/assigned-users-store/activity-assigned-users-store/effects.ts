@@ -13,6 +13,7 @@ import { UserAssignmentServiceProxy, UserInfoDto } from 'shared/service-proxies/
 import { State } from './state';
 import { getLoaded } from './selectors';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
+import { AppPermissions } from '@shared/AppPermissions';
 
 @Injectable()
 export class ActivityAssignedUsersStoreEffects {
@@ -24,8 +25,8 @@ export class ActivityAssignedUsersStoreEffects {
     @Effect()
     loadRequestEffect$: Observable<Action> = this.actions$.pipe(
         ofType<assignedUsersActions.LoadRequestAction>(assignedUsersActions.ActionTypes.LOAD_REQUEST),
-        filter(() => this.permissionCheckerService.isGranted('Pages.CRM.Events.ManageAssignments') ||
-                             this.permissionCheckerService.isGranted('Pages.Administration.Users')),
+        filter(() => this.permissionCheckerService.isGranted(AppPermissions.PagesCRMEventsManageAssignments) ||
+                             this.permissionCheckerService.isGranted(AppPermissions.PagesAdministrationUsers)),
         withLatestFrom(this.store$.pipe(select(getLoaded))),
         exhaustMap(([action, loaded]) => {
 

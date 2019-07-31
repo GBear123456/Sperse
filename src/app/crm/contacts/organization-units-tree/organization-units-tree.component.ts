@@ -1,13 +1,18 @@
+/** Core imports */
 import { Component, Injector, ViewChild, OnDestroy } from '@angular/core';
+
+/** Third party imports */
+import DataSource from 'devextreme/data/data_source';
+import { DxTreeViewComponent } from 'devextreme-angular/ui/tree-view';
+import includes from 'lodash/includes';
+import { finalize } from 'rxjs/operators';
+
+/** Application imports */
 import { OrganizationUnitDto, OrganizationUnitServiceProxy,
     UsersToOrganizationUnitInput } from '@shared/service-proxies/service-proxies';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { ContactsService } from '../contacts.service';
-import { finalize } from 'rxjs/operators';
-
-import DataSource from 'devextreme/data/data_source';
-import { DxTreeViewComponent } from 'devextreme-angular/ui/tree-view';
-import includes from 'lodash/includes';
+import { AppPermissions } from '@shared/AppPermissions';
 
 @Component({
     selector: 'oranization-units-tree',
@@ -86,7 +91,7 @@ export class OrganizationUnitsTreeComponent extends AppComponentBase implements 
             this.setOrganizationUnitsData(userData.allOrganizationUnits, userData.memberedOrganizationUnits);
         }, this.constructor.name);
 
-        this.isEditAllowed = this.isGranted('Pages.Administration.OrganizationUnits.ManageMembers');
+        this.isEditAllowed = this.isGranted(AppPermissions.PagesAdministrationOrganizationUnitsManageMembers);
     }
 
     setOrganizationUnitsData(orgUnits: OrganizationUnitDto[], memberedOrganizationUnits: string[]) {

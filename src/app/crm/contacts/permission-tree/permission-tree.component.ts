@@ -13,6 +13,7 @@ import { PermissionTreeEditModel } from '@app/admin/shared/permission-tree-edit.
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { UserServiceProxy, GrantPermissionInput, ProhibitPermissionInput } from '@shared/service-proxies/service-proxies';
 import { ContactsService } from '../contacts.service';
+import { AppPermissions } from '@shared/AppPermissions';
 
 @Component({
     selector: 'permission-tree',
@@ -88,7 +89,7 @@ export class PermissionTreeComponent extends AppComponentBase implements OnInit,
                 this.loadData();
         }, this.constructor.name);
 
-        this.isEditAllowed = this.isGranted('Pages.Administration.Users.ChangePermissionsAndRoles');
+        this.isEditAllowed = this.isGranted(AppPermissions.PagesAdministrationUsersChangePermissionsAndRoles);
     }
 
     ngOnInit() {

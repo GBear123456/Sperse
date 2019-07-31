@@ -2,9 +2,8 @@
 import { Component, Injector, OnInit, Input, EventEmitter, Output } from '@angular/core';
 
 /** Third party imports */
-import { Store, select } from '@ngrx/store';
+import { Store } from '@ngrx/store';
 import { finalize } from 'rxjs/operators';
-import { Observable } from 'rxjs';
 import * as _ from 'underscore';
 
 /** Application imports */
@@ -15,6 +14,7 @@ import { FiltersService } from '@shared/filters/filters.service';
 import { AssignUserInput, AssignUserForEachInput } from '@shared/service-proxies/service-proxies';
 import { AppStoreService } from '@app/store/app-store.service';
 import { ContactGroup } from '@shared/AppEnums';
+import { AppPermissions } from '@shared/AppPermissions';
 
 @Component({
     selector: 'crm-user-assignment-list',
@@ -50,7 +50,7 @@ export class UserAssignmentComponent extends AppComponentBase implements OnInit 
 
     constructor(
         injector: Injector,
-	private _appStoreService: AppStoreService,
+	    private _appStoreService: AppStoreService,
         private _filtersService: FiltersService,
         private store$: Store<AppStore.State>,
     ) {
@@ -119,14 +119,14 @@ export class UserAssignmentComponent extends AppComponentBase implements OnInit 
                     userId: this.selectedItemKey
                 })).pipe(finalize(() => {
                     this.listComponent.unselectAll();
-                })).subscribe((result) => {
+                })).subscribe(() => {
                     this.notify.success(this.l('UserAssigned'));
                 });
             else
                 this.proxyService.assignUser(AssignUserInput.fromJS({
                     id: this.selectedKeys[0],
                     userId: this.selectedItemKey
-                })).subscribe((result) => {
+                })).subscribe(() => {
                     this.moveSelectedItemsToTop();
                     this.notify.success(this.l('UserAssigned'));
                 });
@@ -223,6 +223,6 @@ export class UserAssignmentComponent extends AppComponentBase implements OnInit 
 
     checkPermissions() {
         return this.permission.isGranted(this.permissionKey) &&
-            (!this.bulkUpdateMode || this.permission.isGranted('Pages.CRM.BulkUpdates'));
+            (!this.bulkUpdateMode || this.permission.isGranted(AppPermissions.PagesCRMBulkUpdates));
     }
 }

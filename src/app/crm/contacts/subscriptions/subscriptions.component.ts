@@ -8,18 +8,17 @@ import { map } from 'rxjs/operators';
 import * as _ from 'underscore';
 
 /** Application imports */
-import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import {
     ContactServiceProxy, OrderSubscriptionServiceProxy, OrderSubscriptionDto, ContactInfoDto,
     NameValueDto,
-    FindUsersInput,
     CommonLookupServiceProxy
 } from 'shared/service-proxies/service-proxies';
 import { CommonLookupModalComponent } from '@app/shared/common/lookup/common-lookup-modal.component';
 import { ImpersonationService } from '@app/admin/users/impersonation.service';
 import { ContactsService } from '../contacts.service';
 import { DxDataGridComponent } from 'devextreme-angular';
+import { AppPermissions } from '@shared/AppPermissions';
 
 @Component({
     selector: 'subscriptions',
@@ -35,7 +34,7 @@ export class SubscriptionsComponent extends AppComponentBase implements OnInit {
     public dataSource: DataSource;
     showAll = false;
     impersonateTenantId: number;
-
+    permissions = AppPermissions;
     constructor(
         injector: Injector,
         private _contactService: ContactServiceProxy,

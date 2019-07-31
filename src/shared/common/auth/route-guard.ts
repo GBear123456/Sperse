@@ -1,16 +1,20 @@
-import { AppPermissionService } from '@shared/common/auth/permission.service';
+/** Core imports */
 import { Injectable } from '@angular/core';
-import { AppSessionService } from '@shared/common/session/app-session.service';
-import { UrlHelper } from '@shared/helpers/UrlHelper';
 import {
     CanActivate, Router,
     ActivatedRouteSnapshot,
     RouterStateSnapshot,
     CanActivateChild
 } from '@angular/router';
+
+/** Application imports */
+import { AppPermissionService } from '@shared/common/auth/permission.service';
+import { AppSessionService } from '@shared/common/session/app-session.service';
+import { UrlHelper } from '@shared/helpers/UrlHelper';
 import { LayoutType } from '@shared/service-proxies/service-proxies';
 import { FeatureCheckerService } from '@abp/features/feature-checker.service';
 import { CacheService } from 'ng2-cache-service';
+import { AppPermissions } from '@shared/AppPermissions';
 
 @Injectable()
 export class RouteGuard implements CanActivate, CanActivateChild {
@@ -65,8 +69,7 @@ export class RouteGuard implements CanActivate, CanActivateChild {
             route = this.getBestRouteForTenant(module);
             if (!route && module)
                 route = this.getBestRouteForTenant();
-        }
-        else {
+        } else {
             route = this.getBestRouteForHost();
         }
 
@@ -80,34 +83,32 @@ export class RouteGuard implements CanActivate, CanActivateChild {
                 return 'app/' + lastModuleName;
         }
 
-        if ((!preferedModule || preferedModule == 'CRM') && this._feature.isEnabled('CRM') && this._permissionChecker.isGranted('Pages.CRM'))
+        if ((!preferedModule || preferedModule == 'CRM') && this._feature.isEnabled('CRM') && this._permissionChecker.isGranted(AppPermissions.PagesCRM))
             return 'app/crm';
 
-        if ((!preferedModule || preferedModule == 'CFO') && this._feature.isEnabled('CFO') && this._permissionChecker.isGranted('Pages.CFO')) {
-            if (this._permissionChecker.isGranted('Pages.CFO.MainInstanceAccess'))
+        if ((!preferedModule || preferedModule == 'CFO') && this._feature.isEnabled('CFO') && this._permissionChecker.isGranted(AppPermissions.PagesCFO)) {
+            if (this._permissionChecker.isGranted(AppPermissions.PagesCFOMainInstanceAccess))
                 return '/app/cfo/main/';
 
-            if (this._feature.isEnabled('CFO.Partner') && this._permissionChecker.isGranted('Pages.CFO.MemberAccess'))
+            if (this._feature.isEnabled('CFO.Partner') && this._permissionChecker.isGranted(AppPermissions.PagesCFOMemberAccess))
                 return '/app/cfo-portal/';
         }
 
-        if ((!preferedModule || preferedModule == 'PFM') && this._feature.isEnabled('PFM') && this._permissionChecker.isGranted('Pages.PFM.Applications.ManageOffers'))
+        if ((!preferedModule || preferedModule == 'PFM') && this._feature.isEnabled('PFM') && this._permissionChecker.isGranted(AppPermissions.PagesPFMApplicationsManageOffers))
             return '/app/pfm/offers';
 
-        if (!preferedModule && this._feature.isEnabled('Admin'))
-        {
-            if (this._permissionChecker.isGranted('Pages.Tenants'))
+        if (!preferedModule && this._feature.isEnabled('Admin')) {
+            if (this._permissionChecker.isGranted(AppPermissions.PagesTenants))
                 return '/app/admin/tenants';
 
-            if (this._permissionChecker.isGranted('Pages.Administration.Host.Dashboard'))
+            if (this._permissionChecker.isGranted(AppPermissions.PagesAdministrationHostDashboard))
                 return '/app/admin/hostDashboard';
 
-            if (this._permissionChecker.isGranted('Pages.Administration.Users'))
+            if (this._permissionChecker.isGranted(AppPermissions.PagesAdministrationUsers))
                 return '/app/admin/users';
         }
 
-        if (!preferedModule)
-        {
+        if (!preferedModule) {
             if (this._feature.isEnabled('PFM.Applications'))
             return '/personal-finance';
 
@@ -124,16 +125,16 @@ export class RouteGuard implements CanActivate, CanActivateChild {
     }
 
     getBestRouteForHost(): string {
-        if (this._permissionChecker.isGranted('Pages.Tenants'))
+        if (this._permissionChecker.isGranted(AppPermissions.PagesTenants))
             return '/app/admin/tenants';
 
-        if (this._permissionChecker.isGranted('Pages.Administration.Host.Dashboard'))
+        if (this._permissionChecker.isGranted(AppPermissions.PagesAdministrationHostDashboard))
             return '/app/admin/hostDashboard';
 
-        if (this._permissionChecker.isGranted('Pages.CRM'))
+        if (this._permissionChecker.isGranted(AppPermissions.PagesCRM))
             return '/app/crm/dashboard';
 
-        if (this._permissionChecker.isGranted('Pages.Administration.Users'))
+        if (this._permissionChecker.isGranted(AppPermissions.PagesAdministrationUsers))
             return '/app/admin/users';
 
         return null;

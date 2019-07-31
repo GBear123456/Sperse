@@ -8,7 +8,7 @@
             <ul class="top__items">
                 <li class="top__item {{item.code | lowercase }}" *ngFor="let item of modules.topItems">
                     <a (click)="onItemClick(item)"
-                       [class]="isDisabled(item.name) || item.isComingSoon || (item.name == 'CFO' && !permission.isGranted('Pages.CFO.MainInstanceAccess')) ? 'top__link disabled' : 'top__link'">
+                       [class]="isDisabled(item.name) || item.isComingSoon || (item.name == 'CFO' && !permission.isGranted(permissions.PagesCFOMainInstanceAccess)) ? 'top__link disabled' : 'top__link'">
                         <h2 class="top__item_title">
                             <img src="./assets/common/images/platform-select/{{ item.name | lowercase }}.svg"
                                  class="top__item_title-image"

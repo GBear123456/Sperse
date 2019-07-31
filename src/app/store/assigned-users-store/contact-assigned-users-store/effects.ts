@@ -5,8 +5,7 @@ import { Injectable } from '@angular/core';
 import { Actions, Effect, ofType } from '@ngrx/effects';
 import { Store, Action, select } from '@ngrx/store';
 import { Observable, of, empty, zip } from 'rxjs';
-import { filter, catchError, exhaustMap, 
-    map, mergeMap, withLatestFrom } from 'rxjs/operators';
+import { filter, catchError, exhaustMap, map, mergeMap } from 'rxjs/operators';
 
 /** Application imports */
 import * as assignedUsersActions from './actions';
@@ -15,6 +14,7 @@ import { State } from './state';
 import { getContactGroupAssignedUsers } from './selectors';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { ContactGroupPermission } from '@shared/AppEnums';
+import { AppPermissions } from '@shared/AppPermissions';
 
 @Injectable()
 export class ContactAssignedUsersStoreEffects {
@@ -26,7 +26,7 @@ export class ContactAssignedUsersStoreEffects {
     @Effect()
     loadRequestEffect$: Observable<Action> = this.actions$.pipe(
         ofType<assignedUsersActions.LoadRequestAction>(assignedUsersActions.ActionTypes.LOAD_REQUEST),
-        filter((action) => this.permissionCheckerService.isGranted('Pages.Administration.Users') ||
+        filter((action) => this.permissionCheckerService.isGranted(AppPermissions.PagesAdministrationUsers) ||
             this.permissionCheckerService.isGranted(ContactGroupPermission[action.payload] + '.ManageAssignments')),
         mergeMap(action => zip(of(action.payload), this.store$.pipe(select(getContactGroupAssignedUsers, { contactGroup: action.payload })))),
         exhaustMap(([payload, assignedUsers]) => {

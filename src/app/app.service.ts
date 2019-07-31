@@ -25,6 +25,7 @@ import {
 import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { FeatureCheckerService } from '@abp/features/feature-checker.service';
 import { NotifyService } from '@abp/notify/notify.service';
+import { AppPermissions } from '@shared/AppPermissions';
 
 declare let require: any;
 
@@ -331,7 +332,7 @@ export class AppService extends AppServiceBase {
     }
 
     canSendVerificationRequest() {
-        return this.permission.isGranted('Pages.CFO.MembersAdministration.NewMemberRegistration');
+        return this.permission.isGranted(AppPermissions.PagesCFOMembersAdministrationNewMemberRegistration);
     }
 
     requestVerification(contactId: number): Observable<number> {
@@ -369,7 +370,7 @@ export class AppService extends AppServiceBase {
         return this.feature.isEnabled('CFO.Partner')
                && !this.feature.isEnabled('PFM')
                && (
-                   this.permission.isGranted('Pages.CFO.MembersAdministration.AllMemberInstancesAdmin')
+                   this.permission.isGranted(AppPermissions.PagesCFOMembersAdministrationAllMemberInstancesAdmin)
                    || this.canSendVerificationRequest
                );
     }
@@ -379,7 +380,7 @@ export class AppService extends AppServiceBase {
     }
 
     checkCFOClientAccessPermission() {
-        return this.permission.isGranted('Pages.CFO.MembersAdministration.AllMemberInstancesAdmin');
+        return this.permission.isGranted(AppPermissions.PagesCFOMembersAdministrationAllMemberInstancesAdmin);
     }
 
     toolbarToggle() {

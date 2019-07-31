@@ -2,6 +2,7 @@ import { Component, Injector, HostBinding } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppService } from '@app/app.service';
 import { LayoutService } from '@app/shared/layout/layout.service';
+import { AppPermissions } from '@shared/AppPermissions';
 
 @Component({
     templateUrl: './platform-select.component.html',
@@ -19,7 +20,7 @@ export class PlatformSelectComponent extends AppComponentBase {
         items: [],
     };
     activeModuleCount = 0;
-
+    permissions = AppPermissions;
     private _dropDown: any;
 
     constructor(
@@ -53,7 +54,7 @@ export class PlatformSelectComponent extends AppComponentBase {
                         && this._appService.isModuleActive(module.name)
                         && !_appService.isHostTenant
                         && this.feature.isEnabled('CFO.Partner')
-                        && this.permission.isGranted('Pages.CFO.MemberAccess')
+                        && this.permission.isGranted(AppPermissions.PagesCFOMemberAccess)
                     ) {
                         this.modules.footerItems.push(moduleConfig);
                     } else if (
@@ -88,7 +89,7 @@ export class PlatformSelectComponent extends AppComponentBase {
                 navigate = this._router.navigate([moduleConfig.defaultPath]);
             } else if (module.name === 'PFM' && module.footerItem) {
                 return window.open(location.origin + '/personal-finance', '_blank');
-            } else if (module.name === 'CFO' && module.footerItem && this.permission.isGranted('Pages.CFO.MemberAccess')) {
+            } else if (module.name === 'CFO' && module.footerItem && this.permission.isGranted(AppPermissions.PagesCFOMemberAccess)) {
                 return window.open(location.origin + '/app/cfo-portal', '_blank');
             } else {
                 navigate = this._router.navigate(['app/' + module.name.toLowerCase() + (module.uri ? '/' + module.uri.toLowerCase() : '')]);

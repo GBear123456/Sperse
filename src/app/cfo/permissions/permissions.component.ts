@@ -22,6 +22,7 @@ import {
 } from 'shared/service-proxies/service-proxies';
 import { AccountPermission } from './account-permission.model';
 import { UsersDialogComponent } from './users-dialog/users-dialog.component';
+import { AppPermissions } from '@shared/AppPermissions';
 
 @Component({
     selector: 'app-permissions',
@@ -105,7 +106,7 @@ export class PermissionsComponent extends CFOComponentBase implements OnInit, Af
         const instanceType = <any>this.instanceType;
         const usersObservable = this.userServiceProxy.getUsers(
             undefined,
-            ['Pages.CFO.MainInstanceAccess'],
+            [ AppPermissions.PagesCFOMainInstanceAccess ],
             undefined,
             false,
             undefined,

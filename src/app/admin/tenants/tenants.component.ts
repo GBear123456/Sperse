@@ -33,6 +33,7 @@ import { FilterItemModel } from '@shared/filters/models/filter-item.model';
 import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calendar.component';
 import { MatDialog } from '@angular/material';
 import { CommonLookupModalComponent } from '@app/shared/common/lookup/common-lookup-modal.component';
+import { AppPermissions } from '@shared/AppPermissions';
 
 @Component({
     templateUrl: './tenants.component.html',
@@ -58,7 +59,7 @@ export class TenantsComponent extends AppComponentBase implements OnDestroy {
         toggleToolbar: this.toggleToolbar.bind(this),
         buttons: [
             {
-                enabled: this.isGranted('Pages.Administration'),
+                enabled: this.isGranted(AppPermissions.PagesAdministration),
                 action: this.createTenant.bind(this),
                 lable: this.l('CreateNewTenant')
             }
@@ -115,21 +116,21 @@ export class TenantsComponent extends AppComponentBase implements OnDestroy {
         this.actionMenuItems = [
             {
                 text: this.l('LoginAsThisTenant'),
-                visible: this.permission.isGranted('Pages.Tenants.Impersonation'),
+                visible: this.permission.isGranted(AppPermissions.PagesTenantsImpersonation),
                 action: () => {
                     this.showUserImpersonateLookUpModal(this.actionRecord);
                 }
             },
             {
                 text: this.l('Edit'),
-                visible: this.permission.isGranted('Pages.Tenants.Edit'),
+                visible: this.permission.isGranted(AppPermissions.PagesTenantsEdit),
                 action: () => {
                     this.openEditDialog(this.actionRecord.id);
                 }
             },
             {
                 text: this.l('Features'),
-                visible: this.permission.isGranted('Pages.Tenants.ChangeFeatures'),
+                visible: this.permission.isGranted(AppPermissions.PagesTenantsChangeFeatures),
                 action: () => {
                     this.dialog.open(TenantFeaturesModalComponent, {
                         panelClass: ['slider'],
@@ -141,7 +142,7 @@ export class TenantsComponent extends AppComponentBase implements OnDestroy {
             },
             {
                 text: this.l('Delete'),
-                visible: this.permission.isGranted('Pages.Tenants.Delete'),
+                visible: this.permission.isGranted(AppPermissions.PagesTenantsDelete),
                 action: () => {
                     this.deleteTenant(this.actionRecord);
                 }
@@ -364,7 +365,7 @@ export class TenantsComponent extends AppComponentBase implements OnDestroy {
     }
 
     editTenant(event) {
-        if (this.permission.isGranted('Pages.Administration.Roles.Edit')) {
+        if (this.permission.isGranted(AppPermissions.PagesAdministrationRolesEdit)) {
             let roleId = event.data && event.data.id;
             if (roleId) {
                 event.component.cancelEditData();

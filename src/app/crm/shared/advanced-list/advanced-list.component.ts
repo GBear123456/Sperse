@@ -1,24 +1,28 @@
-import {Component, Injector, OnInit, Input, Output, EventEmitter } from '@angular/core';
+/** Core imports */
+import { Component, Injector, OnInit, Input, Output, EventEmitter } from '@angular/core';
+
+/** Third party imports */
+import { MatDialog } from '@angular/material/dialog';
+import * as _ from 'underscore';
+
+/** Application imports */
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { FiltersService } from '@shared/filters/filters.service';
 import { AppConsts } from '@shared/AppConsts';
-
 import { ContactListsServiceProxy, AddContactsToListsInput, ContactListInput,
     UpdateContactListInput, UpdateContactListsInput} from '@shared/service-proxies/service-proxies';
-
-import * as _ from 'underscore';
 import { DeleteAndReassignDialogComponent } from '../delete-and-reassign-dialog/delete-and-reassign-dialog.component';
-import { MatDialog } from '@angular/material/dialog';
+import { AppPermissions } from '../../../../shared/AppPermissions';
 
 @Component({
     selector: 'app-advanced-list',
     templateUrl: './advanced-list.component.html',
     styleUrls: ['./advanced-list.component.less'],
-    providers: [ContactListsServiceProxy]
+    providers: [ ContactListsServiceProxy ]
 })
 export class AdvancedListComponent extends AppComponentBase implements OnInit {
     @Input() name: string;
-    @Input() permissionName = 'Pages.CRM.Customers.ManageListsAndTags';
+    @Input() permissionName = AppPermissions.PagesCRMCustomersManageListsAndTags;
     @Input() bulkUpdateConfirmationKey: string;
     @Input() bulkRemoveConfirmationKey: string;
     @Input() dataSource: any;
@@ -324,6 +328,6 @@ export class AdvancedListComponent extends AppComponentBase implements OnInit {
 
     checkPermissions() {
         return this.permission.isGranted(this.permissionName) &&
-            (!this.bulkUpdateMode || this.permission.isGranted('Pages.CRM.BulkUpdates'));
+            (!this.bulkUpdateMode || this.permission.isGranted(AppPermissions.PagesCRMBulkUpdates));
     }
 }

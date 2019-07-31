@@ -6,6 +6,7 @@ import { ChangeDetectionStrategy, Component, Injector, Output, EventEmitter } fr
 /** Application imports */
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppService } from '@app/app.service';
+import { AppPermissions } from '@shared/AppPermissions';
 
 @Component({
     templateUrl: './left-menu.component.html',
@@ -28,18 +29,18 @@ export class DashboardMenuComponent extends AppComponentBase {
                 caption: 'ManageClients',
                 component: '/clients',
                 showPlus: true,
-                hidden: !this.permission.isGranted('Pages.CRM.Customers')
+                hidden: !this.permission.isGranted(AppPermissions.PagesCRMCustomers)
             },
             {
                 caption: 'ManageLeads',
                 component: '/leads',
                 showPlus: true,
-                hidden: !this.permission.isGranted('Pages.CRM.Customers')
+                hidden: !this.permission.isGranted(AppPermissions.PagesCRMCustomers)
             },
             {
                 caption: 'ImportYourList',
                 component: '/import-list',
-                hidden: !this.permission.isGranted('Pages.CRM.BulkImport')
+                hidden: !this.permission.isGranted(AppPermissions.PagesCRMBulkImport)
             },
             {
                 caption: 'CustomizeSettings',

@@ -13,7 +13,7 @@ import { DeleteAndReassignDialogComponent } from '@app/crm/shared/delete-and-rea
 import { AppStore, PartnerTypesStoreActions, PartnerTypesStoreSelectors } from '@app/store';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { FiltersService } from '@shared/filters/filters.service';
-import { AppConsts } from '@shared/AppConsts';
+import { AppPermissions } from '@shared/AppPermissions';
 import {
     PartnerTypeServiceProxy,
     PartnerServiceProxy
@@ -343,8 +343,8 @@ export class TypesListComponent extends AppComponentBase implements OnInit {
     }
 
     checkPermissions() {
-        return this.permission.isGranted('Pages.CRM.Customers.ManageListsAndTags') &&
-            (!this.bulkUpdateMode || this.permission.isGranted('Pages.CRM.BulkUpdates'));
+        return this.permission.isGranted(AppPermissions.PagesCRMCustomersManageListsAndTags) &&
+            (!this.bulkUpdateMode || this.permission.isGranted(AppPermissions.PagesCRMBulkUpdates));
     }
 
     radioClick(event, cell) {
