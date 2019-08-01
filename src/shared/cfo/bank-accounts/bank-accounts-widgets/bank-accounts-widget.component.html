@@ -3,7 +3,7 @@
         <search-input [width]="searchInputWidth" (onInput)="searchChanged($event)" [value]="bankAccountsService.searchValue.value"></search-input>
         <sort-button [items]="sortItems" (onChange)="changeSorting($event)"></sort-button>
         <expand-button [items]="expandItems" (onExpand)="expand($event)"></expand-button>
-        <add-account-button *ngIf="showAddAccountButton" (onComplete)="bankAccountsService.next(null)"></add-account-button>
+        <add-account-button *ngIf="showAddAccountButton" (onComplete)="refresh()"></add-account-button>
     </div>
     <div class="row second-sub-header">
         <div class="left-header col-sm-12">
@@ -31,7 +31,7 @@
                         popupWidth="250px"
                         [showSelectedCount]="false"
                         [allSelectedTitle]="true"
-                        [itemsText]="l('Type')"                        
+                        [itemsText]="l('Type')"
                         [selectionList]="bankAccountsService.existingBankAccountsTypesWithFilteredCounts$ | async"
                         [selectedItems]="bankAccountsService.selectedBankAccountTypes$ | async"
                         (selectionChanged)="bankAccountTypesChanged($event)">
