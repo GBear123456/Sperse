@@ -24,7 +24,6 @@ import { OffersWizardService } from '@shared/offers-wizard/offers-wizard.service
   styleUrls: ['./wizard-center-modal.component.less']
 })
 export class WizardCenterModalComponent implements OnInit {
-
     @ViewChild('stepper') stepper: MatHorizontalStepper;
     dialogRef: MatDialogRef<WizardCenterModalComponent, any>;
 

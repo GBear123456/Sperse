@@ -94,10 +94,6 @@ export class OffersWizardService {
             event.preventDefault();
     }
 
-    removeTimeZone(date) {
-        return DateHelper.removeTimezoneOffset(date);
-    }
-
     openConditionsDialog(data: any) {
         this.dialog.open(ConditionsModalComponent, {panelClass: ['slider', 'footer-slider'], data: data});
     }
@@ -110,6 +106,7 @@ export class OffersWizardService {
 
     submitApplicationProfile() {
         let applyOfferDialog;
+        this.submitApplicationProfileInput.personalInformation.doB = DateHelper.getDateWithoutTime(this.submitApplicationProfileInput.personalInformation.doB);
         if (this.data.campaignId && this.data.offer) {
             const modalData = {
                 processingSteps: [null, null, null, null],
