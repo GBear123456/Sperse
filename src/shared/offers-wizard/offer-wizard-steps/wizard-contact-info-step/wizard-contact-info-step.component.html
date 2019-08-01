@@ -1,27 +1,6 @@
 <div class="row">
     <div class="col-md-12">
         <div class="dx-field">
-            <div class="dx-field-label">{{ls.l('Email')}}*</div>
-            <div class="dx-field-value">
-                <dx-text-box placeholder="Enter email"
-                             [(value)]="offersWizardService.submitApplicationProfileInput.personalInformation.email">
-                    <dx-validator>
-                        <dxi-validation-rule type="required"
-                                             [message]="ls.l('EmailIsRequired')">
-                        </dxi-validation-rule>
-                        <dxi-validation-rule type="pattern"
-                                             [pattern]="offersWizardService.emailRegEx"
-                                             [message]="ls.l('InvalidEmailAddress')">
-                        </dxi-validation-rule>
-                    </dx-validator>
-                </dx-text-box>
-            </div>
-        </div>
-    </div>
-</div>
-<div class="row">
-    <div class="col-md-12">
-        <div class="dx-field">
             <div class="dx-field-label">{{ls.l('AltEmail')}}</div>
             <div class="dx-field-value">
                 <dx-text-box placeholder="Enter alternative email"
@@ -88,7 +67,7 @@
         </div>
     </div>
 </div>
-<div class="dx-field">
+<div class="dx-field hide-on-right-wizard">
     <div class="right-info">
         <small>* By clicking "Next", you agree to our <a class="link" (click)="offersWizardService.openConditionsDialog(offersWizardService.termsData)">Terms
             &amp; Conditions</a> and <a class="link" (click)="offersWizardService.openConditionsDialog(offersWizardService.privacyData)">Privacy Policy</a>

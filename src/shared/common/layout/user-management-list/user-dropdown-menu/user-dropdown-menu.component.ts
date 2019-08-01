@@ -145,12 +145,9 @@ export class UserDropdownMenuComponent extends AppComponentBase implements OnIni
         this.rootComponent = this.getRootComponent();
         this.rootComponent.overflowHidden(true);
         this.dialog.open(WizardRightSideComponent, {
-            id: 'offers-wizard',
-            // panelClass: ['offers-wizard', 'setup'],
-            // disableClose: true,
+            id: 'offers-wizard-right',
             panelClass: ['slider', 'user-info'],
             disableClose: true,
-            // closeOnNavigation: false,
             data: {
                 campaignId: null
             }
