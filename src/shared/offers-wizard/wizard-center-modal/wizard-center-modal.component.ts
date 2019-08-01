@@ -1,6 +1,5 @@
 /** Core imports */
 import {
-    ChangeDetectionStrategy,
     Component,
     Inject,
     OnInit,
@@ -18,15 +17,16 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 import { InputStatusesService } from '@shared/utils/input-statuses.service';
 import { OffersWizardService } from '@shared/offers-wizard/offers-wizard.service';
 
+
 @Component({
-    selector: 'app-offers-wizard',
-    templateUrl: './offers-wizard.component.html',
-    styleUrls: ['./offers-wizard.component.less'],
-    changeDetection: ChangeDetectionStrategy.OnPush
+  selector: 'app-wizard-centr-modal',
+  templateUrl: './wizard-center-modal.component.html',
+  styleUrls: ['./wizard-center-modal.component.less']
 })
-export class OffersWizardComponent implements OnInit {
+export class WizardCenterModalComponent implements OnInit {
+
     @ViewChild('stepper') stepper: MatHorizontalStepper;
-    dialogRef: MatDialogRef<OffersWizardComponent, any>;
+    dialogRef: MatDialogRef<WizardCenterModalComponent, any>;
 
     constructor(
         injector: Injector,
@@ -45,4 +45,5 @@ export class OffersWizardComponent implements OnInit {
         let result = event.validationGroup.validate();
         if (result.isValid) this.stepper.next();
     }
+
 }

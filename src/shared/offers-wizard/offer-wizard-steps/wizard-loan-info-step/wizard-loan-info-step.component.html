@@ -1,0 +1,79 @@
+<div class="row">
+    <div class="col-md-6 col-sm-12">
+        <div class="dx-field">
+            <div class="dx-field-label">{{ls.l('CreditScoreRating')}}</div>
+            <div class="dx-field-value">
+                <dx-select-box
+                    [items]="offersWizardService.creditScore"
+                    valueExpr="key"
+                    displayExpr="text"
+                    [(value)]="offersWizardService.submitApplicationProfileInput.personalInformation.creditScoreRating"
+                    placeholder="Choose credit score">
+                </dx-select-box>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 col-sm-12">
+        <div class="dx-field">
+            <div class="dx-field-label">{{ls.l('LoanReason')}}</div>
+            <div class="dx-field-value">
+                <dx-select-box
+                    [items]="offersWizardService.loanReason"
+                    valueExpr="key"
+                    displayExpr="text"
+                    [(value)]="offersWizardService.submitApplicationProfileInput.loanInformation.loanReason"
+                    placeholder="Choose loan reason">
+                </dx-select-box>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="dx-field">
+            <div class="dx-field-label">{{ls.l('RequestedLoanAmount')}}</div>
+            <div class="dx-field-value">
+                <dx-number-box
+                    format="$ #,##0.##"
+                    [(value)]="offersWizardService.submitApplicationProfileInput.loanInformation.requestedLoanAmount">
+                </dx-number-box>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="header">
+    {{ls.l('DebtInfo')}}
+</div>
+<div class="dx-field">
+    <div class="dx-field-label">{{ls.l('DebtAmount')}}</div>
+    <div class="dx-field-value">
+        <dx-number-box
+            format="$ #,##0.##"
+            [(value)]="offersWizardService.submitApplicationProfileInput.debtInformation.debtAmount">
+        </dx-number-box>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-6 col-sm-12">
+        <div class="dx-field">
+            <div class="dx-field-label">{{ls.l('CCDebtAmount')}}</div>
+            <div class="dx-field-value">
+                <dx-number-box
+                    format="$ #,##0.##"
+                    [(value)]="offersWizardService.submitApplicationProfileInput.debtInformation.creditCardDebtAmount">
+                </dx-number-box>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 col-sm-12">
+        <div class="dx-field">
+            <div class="dx-field-label">{{ls.l('StudentDebtAmount')}}</div>
+            <div class="dx-field-value">
+                <dx-number-box
+                    format="$ #,##0.##"
+                    [(value)]="offersWizardService.submitApplicationProfileInput.debtInformation.studentDebtAmount">
+                </dx-number-box>
+            </div>
+        </div>
+    </div>
+</div>
