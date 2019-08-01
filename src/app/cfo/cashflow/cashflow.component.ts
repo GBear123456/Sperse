@@ -950,7 +950,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         public appService: AppService,
         private _calculatorService: CalculatorService,
         private _cellsCopyingService: CellsCopyingService,
-        private cashflowService: CashflowService,
+        public cashflowService: CashflowService,
         public bankAccountsService: BankAccountsService,
         private store$: Store<CfoStore.State>,
         private actions$: ActionsSubject,
