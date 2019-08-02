@@ -1,61 +1,56 @@
 /** Core imports */
-import {
-    ChangeDetectionStrategy,
-    ChangeDetectorRef,
-    Component,
-    Inject,
-    Injector,
-    OnInit,
-    ViewChild
-} from '@angular/core';
+import { Injectable } from '@angular/core';
 
 /** Third party imports */
-import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { MatHorizontalStepper } from '@angular/material';
-import { pluck } from 'rxjs/operators';
+import { pluck, publishReplay, refCount } from 'rxjs/operators';
 import { Observable } from 'rxjs';
+import { MatDialog } from '@angular/material/dialog';
 
 /** Application imports */
-import { AppConsts } from '@shared/AppConsts';
 import {
-    GetApplicationDetailsOutput,
-    CampaignProviderType,
-    OfferServiceProxy,
-    SubmitApplicationInput,
-    OfferProviderType,
-    LoanReason,
-    SubmitApplicationOutput,
-    PayFrequency,
+    BankAccountType, CampaignProviderType,
     CreditScoreRating,
-    IncomeType,
     Gender,
-    TimeOfDay,
-    BankAccountType,
+    GetApplicationDetailsOutput,
+    IncomeType,
+    LoanReason,
     NameValueDtoListResultDto,
-    TimingServiceProxy,
-    SettingScopes
+    OfferProviderType,
+    OfferServiceProxy,
+    PayFrequency,
+    SettingScopes,
+    SubmitApplicationInput, SubmitApplicationOutput,
+    TimeOfDay,
+    TimingServiceProxy
 } from '@shared/service-proxies/service-proxies';
+import { ConditionsModalComponent } from '@shared/common/conditions-modal/conditions-modal.component';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { DateHelper } from '@shared/helpers/DateHelper';
-import { ApplyOfferDialogComponent } from '@root/personal-finance/shared/offers/apply-offer-modal/apply-offer-dialog.component';
-import { ConditionsModalComponent } from '@shared/common/conditions-modal/conditions-modal.component';
-import { environment } from '@root/environments/environment';
-import { InputStatusesService } from '@shared/utils/input-statuses.service';
-import { AppHttpConfiguration } from '@shared/http/appHttpConfiguration';
+import { AppConsts } from '@shared/AppConsts';
 import { AppTimezoneScope } from '@shared/AppEnums';
+import { environment } from '@root/environments/environment';
+import { ApplyOfferDialogComponent } from '@root/personal-finance/shared/offers/apply-offer-modal/apply-offer-dialog.component';
+import { AppHttpConfiguration } from '@shared/http/appHttpConfiguration';
 
-@Component({
-    selector: 'app-offers-wizard',
-    templateUrl: './offers-wizard.component.html',
-    styleUrls: ['./offers-wizard.component.less'],
-    changeDetection: ChangeDetectionStrategy.OnPush
-})
-export class OffersWizardComponent implements OnInit {
-    @ViewChild('stepper') stepper: MatHorizontalStepper;
-    submitApplicationProfileInput = new SubmitApplicationInput();
-    dialogRef: MatDialogRef<OffersWizardComponent, any>;
+@Injectable()
+export class OffersWizardService {
+    emailRegEx = AppConsts.regexPatterns.email;
     domain = environment.LENDSPACE_DOMAIN;
+    dialogRef: any;
     rules = {'X': /[02-9]/};
+    data: any;
+    radioGroup = [
+        { value: true, text: 'Yes' },
+        { value: false, text: 'No' }
+    ];
+    submitApplicationProfileInput = new SubmitApplicationInput();
+    contactTime = Object.keys(TimeOfDay).map(e => ({key: e, text: this.ls.l(e)}));
+    gender = Object.keys(Gender).map(e => ({key: e, text: this.ls.l(e)}));
+    creditScore = Object.keys(CreditScoreRating).map(e => ({key: e, text: this.ls.l(e)}));
+    loanReason = Object.keys(LoanReason).map(e => ({key: e, text: this.ls.l(e)}));
+    payFrequency = Object.keys(PayFrequency).map(e => ({key: e, text: this.ls.l(e)}));
+    incomeType = Object.keys(IncomeType).map(e => ({key: e, text: this.ls.l(e)}));
+    bankAccountType = Object.keys(BankAccountType).map(e => ({key: e, text: this.ls.l(e)}));
     termsData = {
         title: this.ls.l('TermsOfUse'),
         bodyUrl: this.domain + '/documents/terms.html',
@@ -66,51 +61,32 @@ export class OffersWizardComponent implements OnInit {
         bodyUrl: this.domain + '/documents/policy.html',
         downloadDisabled: true
     };
-    today: Date = new Date();
-    emailRegEx = AppConsts.regexPatterns.email;
-    radioGroup = [
-        { value: true, text: 'Yes' },
-        { value: false, text: 'No' }
-    ];
-    contactTime = Object.keys(TimeOfDay).map(e => ({key: e, text: this.ls.l(e)}));
-    gender = Object.keys(Gender).map(e => ({key: e, text: this.ls.l(e)}));
-    creditScore = Object.keys(CreditScoreRating).map(e => ({key: e, text: this.ls.l(e)}));
-    loanReason = Object.keys(LoanReason).map(e => ({key: e, text: this.ls.l(e)}));
-    payFrequency = Object.keys(PayFrequency).map(e => ({key: e, text: this.ls.l(e)}));
-    incomeType = Object.keys(IncomeType).map(e => ({key: e, text: this.ls.l(e)}));
-    bankAccountType = Object.keys(BankAccountType).map(e => ({key: e, text: this.ls.l(e)}));
     timeZones$: Observable<NameValueDtoListResultDto[]>;
     public defaultTimezoneScope: SettingScopes = AppTimezoneScope.User;
 
     constructor(
-        injector: Injector,
-        private _changeDetectionRef: ChangeDetectorRef,
         public ls: AppLocalizationService,
         private offersServiceProxy: OfferServiceProxy,
-        private dialog: MatDialog,
-        public inputStatusesService: InputStatusesService,
-        private appHttpConfiguration: AppHttpConfiguration,
         private _timingService: TimingServiceProxy,
-        @Inject(MAT_DIALOG_DATA) public data: any
+        private appHttpConfiguration: AppHttpConfiguration,
+        private dialog: MatDialog
     ) {
-        this.dialogRef = <any>injector.get(MatDialogRef);
+        this.submitApplicationProfileInput.systemType = OfferProviderType.EPCVIP;
+        this.getApplicationDetails();
+        this.getTimezoneList();
     }
 
-    ngOnInit() {
-        this.submitApplicationProfileInput.systemType = OfferProviderType.EPCVIP;
+    getApplicationDetails() {
         this.offersServiceProxy.getApplicationDetails().subscribe(
             (output: GetApplicationDetailsOutput) => {
                 if (output) {
                     this.submitApplicationProfileInput = SubmitApplicationInput.fromJS({
                         ...output
                     });
-                    this._changeDetectionRef.detectChanges();
                 }
             },
             (error) => console.log(error)
         );
-        this.getTimezoneList();
-        this._changeDetectionRef.detectChanges();
     }
 
     validateName(event) {
@@ -118,8 +94,8 @@ export class OffersWizardComponent implements OnInit {
             event.preventDefault();
     }
 
-    removeTimeZone(date) {
-        return DateHelper.removeTimezoneOffset(date);
+    openConditionsDialog(data: any) {
+        this.dialog.open(ConditionsModalComponent, {panelClass: ['slider', 'footer-slider'], data: data});
     }
 
     getTimezoneList() {
@@ -128,13 +104,11 @@ export class OffersWizardComponent implements OnInit {
         );
     }
 
-    goToNextStep(event) {
-        let result = event.validationGroup.validate();
-        if (result.isValid) this.stepper.next();
-    }
-
     submitApplicationProfile() {
         let applyOfferDialog;
+        this.submitApplicationProfileInput.personalInformation.doB = DateHelper.getDateWithoutTime(this.submitApplicationProfileInput.personalInformation.doB);
+        this.submitApplicationProfileInput.employmentInformation.payNextDate = DateHelper.getDateWithoutTime(this.submitApplicationProfileInput.employmentInformation.payNextDate);
+        this.submitApplicationProfileInput.employmentInformation.payAfterNextDate = DateHelper.getDateWithoutTime(this.submitApplicationProfileInput.employmentInformation.payAfterNextDate);
         if (this.data.campaignId && this.data.offer) {
             const modalData = {
                 processingSteps: [null, null, null, null],
@@ -156,7 +130,8 @@ export class OffersWizardComponent implements OnInit {
         this.submitApplicationProfileInput.legalInformation.isTCPAChecked = true;
         this.submitApplicationProfileInput.campaignId = this.data.campaignId;
         this.appHttpConfiguration.avoidErrorHandling = true;
-        this.offersServiceProxy.submitApplication(this.submitApplicationProfileInput).subscribe(
+        const submitApplication = this.offersServiceProxy.submitApplication(this.submitApplicationProfileInput).pipe(publishReplay(), refCount());
+        submitApplication.subscribe(
             (result: SubmitApplicationOutput) => {
                 if (result) {
                     if (this.data.campaignId) applyOfferDialog.close();
@@ -176,11 +151,10 @@ export class OffersWizardComponent implements OnInit {
                     abp.message.error(null, error.message);
                 }
             },
-            () => this.appHttpConfiguration.avoidErrorHandling = false
+            () => {
+                this.appHttpConfiguration.avoidErrorHandling = false;
+            }
         );
-    }
-
-    openConditionsDialog(data: any) {
-        this.dialog.open(ConditionsModalComponent, {panelClass: ['slider', 'footer-slider'], data: data});
+        return submitApplication;
     }
 }

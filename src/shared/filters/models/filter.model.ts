@@ -43,7 +43,10 @@ export class FilterModelBase<T extends FilterItemModel> {
     }
 
     clearFilterItems() {
-        _.each(this.items, i => i.removeFilterItem(this));
+        _.each(this.items, item => {
+            if (item.removeFilterItem)
+                item.removeFilterItem(this);        
+        });
     }
 
     getValues() {

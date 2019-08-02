@@ -1,6 +1,6 @@
 export class LocalPreferencesModel {
     showCashflowTypeTotals?: boolean;
-    showReportingCategoryTotals?: boolean;
+    showReportingSectionTotals?: boolean;
     showAccountingTypeTotals?: boolean;
     showCategoryTotals?: boolean;
     showEmptyCategories?: boolean;

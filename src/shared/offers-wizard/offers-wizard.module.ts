@@ -1,6 +1,6 @@
 /** Core imports */
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import * as ngCommon from '@angular/common';
 
 /** Third party imports */
 import { MatStepperModule } from '@angular/material/stepper';
@@ -15,11 +15,23 @@ import { DxNumberBoxModule } from 'devextreme-angular/ui/number-box';
 import { DxButtonModule } from 'devextreme-angular/ui/button';
 
 /** Application imports */
-import { OffersWizardComponent } from './offers-wizard.component';
+import { WizardPersonalInfoStepComponent } from './offer-wizard-steps/wizard-personal-info-step/wizard-personal-info-step.component';
+import { OffersWizardService } from '@shared/offers-wizard/offers-wizard.service';
+import { WizardContactInfoStepComponent } from './offer-wizard-steps/wizard-contact-info-step/wizard-contact-info-step.component';
+import { WizardHomeInfoStepComponent } from './offer-wizard-steps/wizard-home-info-step/wizard-home-info-step.component';
+import { WizardBankInfoStepComponent } from './offer-wizard-steps/wizard-bank-info-step/wizard-bank-info-step.component';
+import { WizardEmploymentInfoStepComponent } from './offer-wizard-steps/wizard-employment-info-step/wizard-employment-info-step.component';
+import { WizardEmploymentPaymentStepComponent } from './offer-wizard-steps/wizard-employment-payment-step/wizard-employment-payment-step.component';
+import { WizardLoanInfoStepComponent } from './offer-wizard-steps/wizard-loan-info-step/wizard-loan-info-step.component';
+import { WizardRightSideComponent } from './wizard-right-side/wizard-right-side.component';
+import { WizardCenterModalComponent } from './wizard-center-modal/wizard-center-modal.component';
+import { CommonModule } from '@shared/common/common.module';
+import { DxScrollViewModule } from '@root/node_modules/devextreme-angular';
+import { MatTabsModule } from '@angular/material';
 
 @NgModule({
     imports: [
-        CommonModule,
+        ngCommon.CommonModule,
 
         MatStepperModule,
         MatDialogModule,
@@ -31,16 +43,32 @@ import { OffersWizardComponent } from './offers-wizard.component';
         DxValidatorModule,
         DxValidationGroupModule,
         DxNumberBoxModule,
-        DxButtonModule
+        DxButtonModule,
+        CommonModule,
+        DxScrollViewModule,
+        MatTabsModule
     ],
     declarations: [
-        OffersWizardComponent
+        WizardPersonalInfoStepComponent,
+        WizardContactInfoStepComponent,
+        WizardHomeInfoStepComponent,
+        WizardBankInfoStepComponent,
+        WizardEmploymentInfoStepComponent,
+        WizardEmploymentPaymentStepComponent,
+        WizardLoanInfoStepComponent,
+        WizardRightSideComponent,
+        WizardCenterModalComponent
     ],
     exports: [
-        OffersWizardComponent
+        WizardCenterModalComponent,
+        WizardRightSideComponent
     ],
     entryComponents: [
-        OffersWizardComponent
+        WizardCenterModalComponent,
+        WizardRightSideComponent
+    ],
+    providers: [
+        OffersWizardService
     ]
 })
 export class OffersWizardModule {

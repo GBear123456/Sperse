@@ -950,7 +950,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         public appService: AppService,
         private _calculatorService: CalculatorService,
         private _cellsCopyingService: CellsCopyingService,
-        private cashflowService: CashflowService,
+        public cashflowService: CashflowService,
         public bankAccountsService: BankAccountsService,
         private store$: Store<CfoStore.State>,
         private actions$: ActionsSubject,
@@ -6130,12 +6130,12 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                                 },
                                 {
                                     type: 'option',
-                                    name: 'showReportingCategoryTotals',
-                                    checked: this.userPreferencesService.localPreferences.value.showReportingCategoryTotals,
-                                    text: this.l('CashFlowGrid_UserPrefs_ShowReportingCategoryRow'),
+                                    name: 'showReportingSectionTotals',
+                                    checked: this.userPreferencesService.localPreferences.value.showReportingSectionTotals,
+                                    text: this.l('CashFlowGrid_UserPrefs_ShowReportingSectionRow'),
                                     action: (event) => {
                                         this.userPreferencesService.updateLocalPreferences({
-                                            showReportingCategoryTotals: !this.userPreferencesService.localPreferences.value.showReportingCategoryTotals
+                                            showReportingSectionTotals: !this.userPreferencesService.localPreferences.value.showReportingSectionTotals
                                         });
                                         this.initCategoryToolbar();
                                         event.event.stopPropagation();

@@ -31,7 +31,7 @@ import { CreditScoreInterface } from '@root/personal-finance/shared/offers/inter
 import { ApplyOfferDialogComponent } from '@root/personal-finance/shared/offers/apply-offer-modal/apply-offer-dialog.component';
 import { CategoryGroupEnum } from '@root/personal-finance/shared/offers/category-group.enum';
 import { CurrencyPipe } from '@angular/common';
-import { OffersWizardComponent } from '@shared/offers-wizard/offers-wizard.component';
+import { WizardCenterModalComponent } from '@shared/offers-wizard/wizard-center-modal/wizard-center-modal.component';
 
 @Injectable()
 export class OffersService {
@@ -45,7 +45,8 @@ export class OffersService {
     };
 
     state$: ReplaySubject<string> = new ReplaySubject<string>(1);
-    memberInfo$: Observable<GetMemberInfoResponse> = this.offerServiceProxy.getMemberInfo().pipe(publishReplay(), refCount());
+    private _memberInfo: ReplaySubject<GetMemberInfoResponse> = new ReplaySubject(1);
+    memberInfo$: Observable<GetMemberInfoResponse> = this._memberInfo.asObservable();
     memberInfo: GetMemberInfoResponse;
     memberInfoApplyOfferParams: string;
     processingSteps = [
@@ -62,6 +63,7 @@ export class OffersService {
             name: 'Retrieving Response'
         }
     ];
+
     readonly categoriesDisplayNames = {
         [CampaignCategory.CreditScore]: this.ls.l('CreditScore_CreditScores')
     };
@@ -137,13 +139,14 @@ export class OffersService {
         private currencyPipe: CurrencyPipe,
         private dialog: MatDialog
     ) {
-        this.memberInfo$.pipe(first()).subscribe(
+        this.memberInfo$.subscribe(
             (memberInfo: GetMemberInfoResponse) => {
                 this.memberInfo = memberInfo;
                 this.state$.next(memberInfo.stateCode || 'all');
                 this.memberInfoApplyOfferParams = this.getApplyOffersParams(memberInfo);
             }
         );
+        this.loadMemberInfo();
     }
 
     static getCategoryFromRoute(route: ActivatedRoute): Observable<CampaignCategory> {
@@ -211,7 +214,7 @@ export class OffersService {
                 : (isCreditCard ? null : offer.logoUrl)
         };
         if (!linkIsDirect) {
-            this.dialog.open(OffersWizardComponent, {
+            this.dialog.open(WizardCenterModalComponent, {
                 width: '1200px',
                 height: '800px',
                 id: 'offers-wizard',
@@ -224,7 +227,10 @@ export class OffersService {
                     isCreditCard: isCreditCard
                 }
             }).afterClosed().subscribe((result: SubmitApplicationOutput)  => {
-                if (result && result.redirectUrl) window.open(result.redirectUrl, '_blank');
+                if (result) {
+                    this.loadMemberInfo();
+                    if (result.redirectUrl) window.open(result.redirectUrl, '_blank');
+                }
             });
         } else {
             submitRequestInput.redirectUrl = redirectUrl;
@@ -244,7 +250,13 @@ export class OffersService {
                 },
                 () => applyOfferDialog.close()
             );
+        }
     }
+
+    loadMemberInfo(): void {
+        this.offerServiceProxy.getMemberInfo().subscribe((memberInfo: GetMemberInfoResponse) => {
+            this._memberInfo.next(memberInfo);
+        });
     }
 
     getCreditScore(category: CampaignCategory, creditScoreNumber: number): CreditScoreRating {

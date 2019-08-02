@@ -21,7 +21,7 @@ export class UserPreferencesService {
     localPreferences: BehaviorSubject<LocalPreferencesModel> = new BehaviorSubject<LocalPreferencesModel>(
         this.cacheService.get(this.localPreferencesCacheKey) || {
             showCashflowTypeTotals: true,
-            showReportingCategoryTotals: true,
+            showReportingSectionTotals: true,
             showAccountingTypeTotals: true,
             showCategoryTotals: true,
             showEmptyCategories: false,
@@ -35,7 +35,7 @@ export class UserPreferencesService {
             distinctUntilChanged()
         ),
         this.localPreferences$.pipe(
-            map((localPreferences: LocalPreferencesModel) => localPreferences.showReportingCategoryTotals),
+            map((localPreferences: LocalPreferencesModel) => localPreferences.showReportingSectionTotals),
             distinctUntilChanged()
         ),
         this.localPreferences$.pipe(

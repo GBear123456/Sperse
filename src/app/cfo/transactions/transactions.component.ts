@@ -56,6 +56,7 @@ import { CurrenciesStoreSelectors, CfoStore } from '@app/cfo/store';
 import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 import { CalendarValuesModel } from '@shared/common/widgets/calendar/calendar-values.model';
+import { DateHelper } from '@shared/helpers/DateHelper';
 
 @Component({
     templateUrl: './transactions.component.html',
@@ -581,7 +582,6 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             let debitCount = this.debitTransactionCount = 0;
             let debitClassifiedCount = this.debitClassifiedTransactionCount = 0;
 
-            this.adjustmentStartingBalanceTotal = startingBalanceTotal;
             this.adjustmentTotal = 0;
 
             let bankAccounts = [];
@@ -657,13 +657,13 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         this._changeDetectionRef.markForCheck();
     }
 
-    processTotalValues() {
+    processTotalValues(rowSelection = false) {
         let totals = this.totalDataSource && this.totalDataSource.items();        
-        if (this.dateFilter.items.from.value)
+        if (!rowSelection && this.dateFilter.items.from.value)
             this._TransactionsServiceProxy.getStartingBalance(
                 this.instanceType as InstanceType, this.instanceId, 
-                this.dateFilter.items.from.value, 
-                this.dateFilter.items.to.value, 
+                DateHelper.removeTimezoneOffset(this.dateFilter.items.from.value, false, 'from'),
+                DateHelper.removeTimezoneOffset(this.dateFilter.items.to.value, false, 'to'),
                 this.cfoPreferencesService.selectedCurrencyId, 
                 this.bankAccountFilter.items.element.value, 
                 this.businessEntityFilter.items.element.value
@@ -974,8 +974,9 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         this.initToolbarConfig();
     }
 
-    onSelectionChanged($event, initial = false) {
-        this.processTotalValues();
+    onSelectionChanged($event, initial = false) {       
+        if ($event.selectedRowKeys)
+            this.processTotalValues($event.selectedRowKeys.length);
 
         if (!this.manageAllowed)
             return ;

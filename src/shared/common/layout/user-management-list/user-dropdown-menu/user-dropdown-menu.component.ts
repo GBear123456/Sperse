@@ -18,8 +18,8 @@ import { UserDropdownMenuItemType } from 'shared/common/layout/user-management-l
 /** @todo Used for chart bar and dropdown. Reimplement in future */
 import 'assets/metronic/src/js/framework/base/util.js';
 import 'assets/metronic/src/js/framework/components/general/dropdown.js';
-import { OffersWizardComponent } from '@shared/offers-wizard/offers-wizard.component';
 import { AppPermissions } from '@shared/AppPermissions';
+import { WizardRightSideComponent } from '@shared/offers-wizard/wizard-right-side/wizard-right-side.component';
 
 @Component({
     selector: 'user-dropdown-menu',
@@ -91,6 +91,7 @@ export class UserDropdownMenuComponent extends AppComponentBase implements OnIni
         },
         {
             name: this.l('MySettings'),
+            visible: !this.feature.isEnabled('PFM'),
             id: 'UserProfileMySettingsLink',
             iconClass: 'settings',
             onClick: (e) => this.userManagementService.changeMySettings(e)
@@ -148,11 +149,9 @@ export class UserDropdownMenuComponent extends AppComponentBase implements OnIni
     updateProfileInformation() {
         this.rootComponent = this.getRootComponent();
         this.rootComponent.overflowHidden(true);
-        this.dialog.open(OffersWizardComponent, {
-            width: '1200px',
-            height: '800px',
-            id: 'offers-wizard',
-            panelClass: ['offers-wizard', 'setup'],
+        this.dialog.open(WizardRightSideComponent, {
+            id: 'offers-wizard-right',
+            panelClass: ['slider', 'user-info'],
             disableClose: true,
             data: {
                 campaignId: null

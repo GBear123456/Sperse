@@ -35709,55 +35709,11 @@ export interface ICategoryDto {
     reportingCategoryId: number | undefined;
 }
 
-export class ReportingCategoryDto implements IReportingCategoryDto {
-    code!: string | undefined;
-    name!: string | undefined;
-    parentId!: number | undefined;
-
-    constructor(data?: IReportingCategoryDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.code = data["code"];
-            this.name = data["name"];
-            this.parentId = data["parentId"];
-        }
-    }
-
-    static fromJS(data: any): ReportingCategoryDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new ReportingCategoryDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["code"] = this.code;
-        data["name"] = this.name;
-        data["parentId"] = this.parentId;
-        return data; 
-    }
-}
-
-export interface IReportingCategoryDto {
-    code: string | undefined;
-    name: string | undefined;
-    parentId: number | undefined;
-}
-
 export enum SectionGroup {
-    _0 = 0, 
-    _1 = 1, 
-    _2 = 2, 
-    _3 = 3, 
+    Income = "Income", 
+    CostOfSales = "CostOfSales", 
+    Expense = "Expense", 
+    OtherIncomeExpense = "OtherIncomeExpense", 
 }
 
 export class ReportSectionDto implements IReportSectionDto {
@@ -35808,8 +35764,6 @@ export class GetCategoryTreeOutput implements IGetCategoryTreeOutput {
     types!: { [key: string] : TypeDto; } | undefined;
     accountingTypes!: { [key: string] : AccountingTypeDto; } | undefined;
     categories!: { [key: string] : CategoryDto; } | undefined;
-    reportingCategories!: { [key: string] : ReportingCategoryDto; } | undefined;
-    reportSectionGroups!: { [key: string] : string; } | undefined;
     reportSections!: { [key: string] : ReportSectionDto; } | undefined;
 
     constructor(data?: IGetCategoryTreeOutput) {
@@ -35842,20 +35796,6 @@ export class GetCategoryTreeOutput implements IGetCategoryTreeOutput {
                 for (let key in data["categories"]) {
                     if (data["categories"].hasOwnProperty(key))
                         this.categories[key] = data["categories"][key] ? CategoryDto.fromJS(data["categories"][key]) : new CategoryDto();
-                }
-            }
-            if (data["reportingCategories"]) {
-                this.reportingCategories = {};
-                for (let key in data["reportingCategories"]) {
-                    if (data["reportingCategories"].hasOwnProperty(key))
-                        this.reportingCategories[key] = data["reportingCategories"][key] ? ReportingCategoryDto.fromJS(data["reportingCategories"][key]) : new ReportingCategoryDto();
-                }
-            }
-            if (data["reportSectionGroups"]) {
-                this.reportSectionGroups = {};
-                for (let key in data["reportSectionGroups"]) {
-                    if (data["reportSectionGroups"].hasOwnProperty(key))
-                        this.reportSectionGroups[key] = data["reportSectionGroups"][key];
                 }
             }
             if (data["reportSections"]) {
@@ -35898,20 +35838,6 @@ export class GetCategoryTreeOutput implements IGetCategoryTreeOutput {
                     data["categories"][key] = this.categories[key];
             }
         }
-        if (this.reportingCategories) {
-            data["reportingCategories"] = {};
-            for (let key in this.reportingCategories) {
-                if (this.reportingCategories.hasOwnProperty(key))
-                    data["reportingCategories"][key] = this.reportingCategories[key];
-            }
-        }
-        if (this.reportSectionGroups) {
-            data["reportSectionGroups"] = {};
-            for (let key in this.reportSectionGroups) {
-                if (this.reportSectionGroups.hasOwnProperty(key))
-                    data["reportSectionGroups"][key] = this.reportSectionGroups[key];
-            }
-        }
         if (this.reportSections) {
             data["reportSections"] = {};
             for (let key in this.reportSections) {
@@ -35927,8 +35853,6 @@ export interface IGetCategoryTreeOutput {
     types: { [key: string] : TypeDto; } | undefined;
     accountingTypes: { [key: string] : AccountingTypeDto; } | undefined;
     categories: { [key: string] : CategoryDto; } | undefined;
-    reportingCategories: { [key: string] : ReportingCategoryDto; } | undefined;
-    reportSectionGroups: { [key: string] : string; } | undefined;
     reportSections: { [key: string] : ReportSectionDto; } | undefined;
 }
 
@@ -61616,6 +61540,7 @@ export class GetMemberInfoResponse implements IGetMemberInfoResponse {
     doB!: moment.Moment | undefined;
     creditScore!: CreditScoreRating | undefined;
     testMode!: boolean | undefined;
+    profileSubmissionDate!: moment.Moment | undefined;
 
     constructor(data?: IGetMemberInfoResponse) {
         if (data) {
@@ -61643,6 +61568,7 @@ export class GetMemberInfoResponse implements IGetMemberInfoResponse {
             this.doB = data["doB"] ? moment(data["doB"].toString()) : <any>undefined;
             this.creditScore = data["creditScore"];
             this.testMode = data["testMode"];
+            this.profileSubmissionDate = data["profileSubmissionDate"] ? moment(data["profileSubmissionDate"].toString()) : <any>undefined;
         }
     }
 
@@ -61670,6 +61596,7 @@ export class GetMemberInfoResponse implements IGetMemberInfoResponse {
         data["doB"] = this.doB ? this.doB.toISOString() : <any>undefined;
         data["creditScore"] = this.creditScore;
         data["testMode"] = this.testMode;
+        data["profileSubmissionDate"] = this.profileSubmissionDate ? this.profileSubmissionDate.toISOString() : <any>undefined;
         return data; 
     }
 }
@@ -61690,6 +61617,7 @@ export interface IGetMemberInfoResponse {
     doB: moment.Moment | undefined;
     creditScore: CreditScoreRating | undefined;
     testMode: boolean | undefined;
+    profileSubmissionDate: moment.Moment | undefined;
 }
 
 export class RankRequest implements IRankRequest {
@@ -64903,7 +64831,7 @@ export class CreateUserForContactInput implements ICreateUserForContactInput {
     contactId!: number;
     emailAddress!: string | undefined;
     phoneNumber!: string | undefined;
-    assignedRoleNames!: string[];
+    assignedRoleNames!: string[] | undefined;
 
     constructor(data?: ICreateUserForContactInput) {
         if (data) {
@@ -64911,9 +64839,6 @@ export class CreateUserForContactInput implements ICreateUserForContactInput {
                 if (data.hasOwnProperty(property))
                     (<any>this)[property] = (<any>data)[property];
             }
-        }
-        if (!data) {
-            this.assignedRoleNames = [];
         }
     }
 
@@ -64955,7 +64880,7 @@ export interface ICreateUserForContactInput {
     contactId: number;
     emailAddress: string | undefined;
     phoneNumber: string | undefined;
-    assignedRoleNames: string[];
+    assignedRoleNames: string[] | undefined;
 }
 
 export class CreatePersonOrgRelationInput implements ICreatePersonOrgRelationInput {

@@ -1,0 +1,73 @@
+<div class="dx-field">
+    <div class="dx-field-label">{{ls.l('bank_account_type')}}</div>
+    <div class="dx-field-value">
+        <dx-select-box
+            [items]="offersWizardService.bankAccountType"
+            valueExpr="key"
+            displayExpr="text"
+            [(value)]="offersWizardService.submitApplicationProfileInput.bankInformation.bankAccountType"
+            placeholder="Choose Bank Account Type">
+        </dx-select-box>
+    </div>
+</div>
+<div class="dx-field">
+    <div class="dx-field-label">{{ls.l('bank_name')}}</div>
+    <div class="dx-field-value">
+        <dx-text-box placeholder="Enter bank name"
+                     [(value)]="offersWizardService.submitApplicationProfileInput.bankInformation.bankName">
+        </dx-text-box>
+    </div>
+</div>
+<div class="dx-field">
+    <div class="dx-field-label">{{ls.l('bank_account_number')}}</div>
+    <div class="dx-field-value">
+        <dx-text-box placeholder="Enter bank account number"
+                     [(value)]="offersWizardService.submitApplicationProfileInput.bankInformation.bankAccountNumber">
+        </dx-text-box>
+    </div>
+</div>
+<div class="dx-field">
+    <div class="dx-field-label">{{ls.l('bank_aba')}}</div>
+    <div class="dx-field-value">
+        <dx-text-box placeholder="Enter bank ABA"
+                     [(value)]="offersWizardService.submitApplicationProfileInput.bankInformation.bankABA">
+        </dx-text-box>
+    </div>
+</div>
+<div class="dx-field">
+    <div class="dx-field-label">{{ls.l('BankPhone')}}</div>
+    <div class="dx-field-value">
+        <dx-text-box name="phone"
+                     (onFocusOut)="inputStatusesService.blurInput($event)"
+                     (onFocusIn)="inputStatusesService.focusInput($event)"
+                     [maskRules]="offersWizardService.rules"
+                     [(value)]="offersWizardService.submitApplicationProfileInput.bankInformation.bankPhone">
+        </dx-text-box>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-6 col-sm-12">
+        <div class="dx-field">
+            <div class="dx-field-label">{{ls.l('MonthsAtBank')}}</div>
+            <div class="dx-field-value">
+                <dx-text-box placeholder="Enter month in bank"
+                             [(value)]="offersWizardService.submitApplicationProfileInput.bankInformation.monthsAtBank">
+                </dx-text-box>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 col-sm-12">
+        <div class="dx-field">
+            <div class="dx-field-label">{{ls.l('direct_deposit')}}</div>
+            <div class="dx-field-value">
+                <dx-radio-group
+                    [items]="offersWizardService.radioGroup"
+                    [(value)]="offersWizardService.submitApplicationProfileInput.bankInformation.isDirectDeposit"
+                    displayExpr="text"
+                    valueExpr="value"
+                    layout="horizontal">
+                </dx-radio-group>
+            </div>
+        </div>
+    </div>
+</div>

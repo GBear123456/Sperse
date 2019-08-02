@@ -1,0 +1,125 @@
+<button mat-button mat-dialog-close class="close"></button>
+<mat-dialog-content>
+    <mat-horizontal-stepper [linear]="false" #stepper [@.disabled]="true">
+        <mat-step>
+            <div class="step-item">
+                <dx-validation-group>
+                    <div class="header">
+                        {{ls.l('PersonalInformation')}}
+                    </div>
+                    <div class="main">
+                        <app-wizard-personal-info-step></app-wizard-personal-info-step>
+                    </div>
+                    <div class="footer">
+                        <dx-button class="btn btn-layout btn-next"
+                                   text="Next"
+                                   (onClick)="goToNextStep($event)">
+                        </dx-button>
+                    </div>
+                </dx-validation-group>
+            </div>
+        </mat-step>
+        <mat-step>
+            <div class="step-item">
+                <div class="header">
+                    {{ls.l('ContactInfo')}}
+                </div>
+                <div class="main">
+                    <app-wizard-contact-info-step></app-wizard-contact-info-step>
+                </div>
+                <div class="footer">
+                    <button matStepperPrevious class="btn btn-default">{{ls.l('Back')}}</button>
+                    <dx-button class="btn btn-layout btn-next"
+                               text="Next"
+                               (onClick)="goToNextStep($event)">
+                    </dx-button>
+                </div>
+            </div>
+        </mat-step>
+        <mat-step>
+            <div class="step-item">
+                <div class="header">
+                    {{ls.l('HomeAddress')}}
+                </div>
+                <div class="main">
+                    <app-wizard-home-info-step></app-wizard-home-info-step>
+                </div>
+                <div class="footer">
+                    <button matStepperPrevious class="btn btn-default">{{ls.l('Back')}}</button>
+                    <dx-button class="btn btn-layout btn-next"
+                               text="Next"
+                               (onClick)="goToNextStep($event)">
+                    </dx-button>
+                </div>
+            </div>
+        </mat-step>
+        <mat-step>
+            <div class="step-item">
+                <div class="header">
+                    {{ls.l('BankInfo')}}
+                </div>
+                <div class="main">
+                    <app-wizard-bank-info-step></app-wizard-bank-info-step>
+                </div>
+                <div class="footer">
+                    <button matStepperPrevious class="btn btn-default">{{ls.l('Back')}}</button>
+                    <dx-button class="btn btn-layout btn-next"
+                               text="Next"
+                               (onClick)="goToNextStep($event)">
+                    </dx-button>
+                </div>
+            </div>
+        </mat-step>
+        <mat-step>
+            <div class="step-item">
+                <div class="header">
+                    {{ls.l('EmploymentInfo')}}
+                </div>
+                <div class="main">
+                    <app-wizard-employment-info-step></app-wizard-employment-info-step>
+                </div>
+                <div class="footer">
+                    <button matStepperPrevious class="btn btn-default">{{ls.l('Back')}}</button>
+                    <dx-button class="btn btn-layout btn-next"
+                               text="Next"
+                               (onClick)="goToNextStep($event)">
+                    </dx-button>
+                </div>
+            </div>
+        </mat-step>
+        <mat-step>
+            <div class="step-item">
+                <div class="header">
+                    {{ls.l('EmploymentPayment')}}
+                </div>
+                <div class="main">
+                    <app-wizard-employment-payment-step></app-wizard-employment-payment-step>
+                </div>
+                <div class="footer">
+                    <button matStepperPrevious class="btn btn-default">{{ls.l('Back')}}</button>
+                    <dx-button class="btn btn-layout btn-next"
+                               text="Next"
+                               (onClick)="goToNextStep($event)">
+                    </dx-button>
+                </div>
+            </div>
+        </mat-step>
+        <mat-step>
+            <div class="step-item">
+                <div class="header">
+                    {{ls.l('LoanInfo')}}
+                </div>
+                <div class="main">
+                    <app-wizard-loan-info-step></app-wizard-loan-info-step>
+                </div>
+                <div class="footer">
+                    <button matStepperPrevious class="btn btn-default">{{ls.l('Back')}}</button>
+                    <button class="btn btn-layout btn-next"
+                            (click)="offersWizardService.submitApplicationProfile()">
+                        {{ls.l('Submit')}}
+                    </button>
+                </div>
+            </div>
+        </mat-step>
+    </mat-horizontal-stepper>
+</mat-dialog-content>
