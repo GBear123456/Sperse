@@ -2,7 +2,7 @@
 import { Injectable } from '@angular/core';
 
 /** Third party imports */
-import { pluck } from 'rxjs/operators';
+import { pluck, publishReplay, refCount } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 
@@ -130,7 +130,8 @@ export class OffersWizardService {
         this.submitApplicationProfileInput.legalInformation.isTCPAChecked = true;
         this.submitApplicationProfileInput.campaignId = this.data.campaignId;
         this.appHttpConfiguration.avoidErrorHandling = true;
-        this.offersServiceProxy.submitApplication(this.submitApplicationProfileInput).subscribe(
+        const submitApplication = this.offersServiceProxy.submitApplication(this.submitApplicationProfileInput).pipe(publishReplay(), refCount());
+        submitApplication.subscribe(
             (result: SubmitApplicationOutput) => {
                 if (result) {
                     if (this.data.campaignId) applyOfferDialog.close();
@@ -150,7 +151,10 @@ export class OffersWizardService {
                     abp.message.error(null, error.message);
                 }
             },
-            () => this.appHttpConfiguration.avoidErrorHandling = false
+            () => {
+                this.appHttpConfiguration.avoidErrorHandling = false;
+            }
         );
+        return submitApplication;
     }
 }
