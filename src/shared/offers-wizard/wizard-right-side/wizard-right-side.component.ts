@@ -10,6 +10,7 @@ import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interf
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
 import { DialogService } from '@app/shared/common/dialogs/dialog.service';
 import { OffersWizardService } from '@shared/offers-wizard/offers-wizard.service';
+import { OffersService } from '@root/personal-finance/shared/offers/offers.service';
 
 @Component({
     selector: 'app-wizard-right-side',
@@ -32,6 +33,7 @@ export class WizardRightSideComponent implements OnInit {
         injector: Injector,
         public ls: AppLocalizationService,
         public offersWizardService: OffersWizardService,
+        private _offersService: OffersService,
         @Inject(MAT_DIALOG_DATA) public data: any
     ) {
         this.offersWizardService.data = data;
@@ -44,6 +46,8 @@ export class WizardRightSideComponent implements OnInit {
     }
 
     save(): void {
-        this.offersWizardService.submitApplicationProfile();
+        this.offersWizardService.submitApplicationProfile().subscribe((res) => {
+            res && this._offersService.loadMemberInfo();
+        });
     }
 }
