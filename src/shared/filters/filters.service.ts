@@ -57,11 +57,10 @@ export class FiltersService {
                 if (initFilters[filter.caption]) {
                     let props = Object.keys(initFilters[filter.caption]);
                     props.forEach(val => {
-                        if (filter.items[val].setValue) {
-                            filter.items[val].setValue(initFilters[filter.caption][val], filter);
-                        } else {
+                        if (filter.items[val].dispatchValue)
+                            filter.items[val].dispatchValue(initFilters[filter.caption][val], filter);
+                        else
                             filter.items[val] = initFilters[filter.caption][val];
-                        }
                     });
                 }
             });

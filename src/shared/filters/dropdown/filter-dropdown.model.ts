@@ -10,16 +10,15 @@ export class FilterDropDownModel extends FilterItemModel {
     clearSelectedElement: (filter) => void;
 
     public constructor(init?: Partial<FilterDropDownModel>) {
-        super();
-        Object.assign(this, init);
+        super(init, true);
     }
 
-    setValue(value: any, filter: FilterModel) {
+    dispatchValue(value: any, filter: FilterModel) {
         let element = this.elements.find(x => x.id == value);
         if (element && this.onElementSelect)
             this.onElementSelect(element, filter);
         else
-            super.setValue(value, filter);
+            this.value = value;
     }
 
     getDisplayElements(): DisplayElement[] {

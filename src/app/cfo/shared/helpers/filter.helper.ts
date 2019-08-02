@@ -3,7 +3,6 @@ import { FilterModel } from '@shared/filters/models/filter.model';
 import { DateHelper } from '@shared/helpers/DateHelper';
 
 export class FilterHelpers {
-
     static ConvertBanksToTreeSource(data: BankDto[]): any[] {
         let result = [];
         data.forEach((bank, i) => {
@@ -26,24 +25,17 @@ export class FilterHelpers {
         return result;
     }
 
+    static filterByField(filter: FilterModel, requestFilter: StatsFilter) {
+        if (filter.items.element && filter.items.element.value)
+            requestFilter[filter.field] = filter.items.element.value;
+    }
+
     static filterByBusinessEntity(filter: FilterModel, requestFilter: StatsFilter) {
-        let data = {};
-        if (filter.items.element && filter.items.element.value) {
-            requestFilter[filter.field] = filter.items.element.value.map(x => x);
-        }
+        FilterHelpers.filterByField(filter, requestFilter);
     }
 
     static filterByAccount(filter: FilterModel, requestFilter: StatsFilter) {
-        if (filter.items && filter.items.element) {
-            requestFilter.accountIds = [];
-            filter.items.element['dataSource'].forEach((syncAccount, i) => {
-                syncAccount.bankAccounts.forEach((bankAccount, i) => {
-                    if (bankAccount['selected']) {
-                        requestFilter.accountIds.push(+bankAccount.id);
-                    }
-                });
-            });
-        }
+        FilterHelpers.filterByField(filter, requestFilter);
     }
 
     static filterByDate(filter: FilterModel, requestFilter: StatsFilter) {

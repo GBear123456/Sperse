@@ -1179,21 +1179,19 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     initFiltering() {
-        this._filtersService.apply(() => {
-            for (let filter of this.filters) {
-                if (filter.caption.toLowerCase() === 'account') {
-                    /** apply filter on top */
-                    this.bankAccountsService.applyFilter();
-                    /** apply filter in sidebar */
-                    filter.items.element.setValue(this.bankAccountsService.state.selectedBankAccountIds, filter);
-                }
-
-                let filterMethod = FilterHelpers['filterBy' + this.capitalize(filter.caption)];
-                if (filterMethod)
-                    filterMethod(filter, this.requestFilter);
-                else
-                    this.requestFilter[filter.field] = undefined;
+        this._filtersService.apply((filter) => {
+            if (filter && filter.items.element) {
+                if (filter.caption == 'BusinessEntity')
+                    this.bankAccountsService.changeSelectedBusinessEntities(filter.items.element.value);
+                this.bankAccountsService.applyFilter();
             }
+
+            let filterMethod = FilterHelpers['filterBy' + this.capitalize(filter.caption)];
+            if (filterMethod)
+                filterMethod(filter, this.requestFilter);
+            else
+                this.requestFilter[filter.field] = undefined;
+
             this.closeTransactionsDetail();
             this.filteredLoad = true;
             this.loadGridDataSource();
@@ -1267,10 +1265,10 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 items: {
                     element: new BankAccountFilterModel(
                         {
-                            dataSource: syncAccounts,
+                            dataSource$: this.bankAccountsService.syncAccounts$.pipe(takeUntil(this.destroy$)),
+                            selectedKeys$: this.bankAccountsService.selectedBankAccountsIds$.pipe(takeUntil(this.destroy$)),
                             nameField: 'name',
-                            keyExpr: 'id',
-                            onRemoved: (ids) => this.bankAccountsService.changeSelectedBankAccountsIds(ids)
+                            keyExpr: 'id'
                         }
                     )
                 }
@@ -1282,7 +1280,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 caption: 'BusinessEntity',
                 items: {
                     element: new FilterCheckBoxesModel({
-                        dataSource: initialData.businessEntities,
+                        dataSource$: this.bankAccountsService.businessEntities$.pipe(takeUntil(this.destroy$)),
+                        selectedKeys$: this.bankAccountsService.selectedBusinessEntitiesIds$.pipe(takeUntil(this.destroy$)),
                         nameField: 'name',
                         keyExpr: 'id'
                     })

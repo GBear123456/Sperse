@@ -40,7 +40,7 @@ export class SelectionFilterComponent {
     }
 
     getItemsTitle() {
-        let firstSelected = this.selectionList.find(item => item.isSelected);
+        let firstSelected = this.selectionList.find(item => item.selected);
         return this.showSelectedCount ? 
             firstSelected.name + ' +' + (this.selectedItems.length - 1)
             : this.localization.l('Any') + ' ' + this.itemsText;

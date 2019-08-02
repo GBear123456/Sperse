@@ -6,8 +6,7 @@ export class FilterTreeListModel extends FilterItemModel {
     list: any[];
 
     public constructor(init?: Partial<FilterTreeListModel>) {
-        super();
-        Object.assign(this, init);
+        super(init, true);
     }
 
     getDisplayElements(): DisplayElement[] {

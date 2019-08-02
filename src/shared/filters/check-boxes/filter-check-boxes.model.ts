@@ -3,24 +3,15 @@ import { FilterItemModel, DisplayElement } from '@shared/filters/models/filter-i
 import find from 'lodash/find';
 import each from 'lodash/each';
 import remove from 'lodash/remove';
-import { Observable } from 'rxjs';
 
 export class FilterCheckBoxesModel extends FilterItemModel {
-    dataSource: any;
-    dataSource$: Observable<any>;
     keyExpr: any;
     parentExpr?: any = 'parentId';
     nameField: string;
     templateFunc?: (itemData) => string;
 
     public constructor(init?: Partial<FilterCheckBoxesModel>) {
-        super();
-        Object.assign(this, init);
-        if (this.dataSource$ && this.dataSource$ instanceof Observable) {
-            this.dataSource$.subscribe(source => {
-                this.dataSource = source;
-            });
-        }
+        super(init, true);
     }
 
     getDisplayElements(): DisplayElement[] {

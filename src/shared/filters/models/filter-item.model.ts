@@ -1,11 +1,29 @@
 import { FilterModel } from './filter.model';
 import capitalize from 'underscore.string/capitalize';
+import { Observable } from 'rxjs';
 
 export class FilterItemModel {
-    protected _value: any = '';
+    dataSource: any;
+    dataSource$: Observable<any>;
+    selectedKeys$: Observable<any>;
     disableOuterScroll: boolean;
-    public constructor(value?: any) {
-        if (value) this.value = value;
+    protected _value: any = '';
+
+    public constructor(value?: any, isPartial = false) {
+        if (isPartial) 
+            Object.assign(this, value);
+        else if (value)
+            this.value = value;
+
+        if (this.dataSource$)
+            this.dataSource$.subscribe(source => {
+                this.dataSource = source;
+            });
+
+        if (this.selectedKeys$)
+            this.selectedKeys$.subscribe(keys => {
+                this.value = keys;
+            });
     }
 
     get value(): any {
@@ -15,7 +33,7 @@ export class FilterItemModel {
         this._value = value;
     }
 
-    setValue(value: any, filter: FilterModel) {
+    dispatchValue(value: any, filter: FilterModel) {
         this.value = value;
     }
 

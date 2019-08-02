@@ -5,8 +5,7 @@ export class FilterRadioGroupModel extends FilterItemModel {
     list: any[];
 
     public constructor(init?: Partial<FilterRadioGroupModel>) {
-        super();
-        Object.assign(this, init);
+        super(init, true);
     }
 
     getDisplayElements(): DisplayElement[] {

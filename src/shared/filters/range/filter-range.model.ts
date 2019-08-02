@@ -6,7 +6,6 @@ export class FilterRangeModel extends FilterItemModel {
     step: number;
 
     public constructor(init?: Partial<FilterRangeModel>) {
-        super();
-        Object.assign(this, init);
+        super(init, true);
     }
 }

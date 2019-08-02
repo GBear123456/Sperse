@@ -379,9 +379,9 @@ export class BankAccountsService {
 
     sortBusinessEntities(list) {
         list.forEach(item => {
-            item['isSelected'] = this.state.selectedBusinessEntitiesIds.indexOf(item.id) >= 0;
+            item['selected'] = this.state.selectedBusinessEntitiesIds.indexOf(item.id) >= 0;
         });
-        return orderBy(list, ['isSelected', 'hasChildren', 'name'], ['desc', 'desc', 'asc']);
+        return orderBy(list, ['selected', 'hasChildren', 'name'], ['desc', 'desc', 'asc']);
     }
 
     load(acceptFilterOnlyOnApply = true, applyFilter = true) {
@@ -752,14 +752,9 @@ export class BankAccountsService {
 
     changeAndGetBankAccountFilter(accountFilter: FilterModel, data: BankAccountsState, initialDataSource: SyncAccountBankDto[]) {
         let accountFilterModel = <any>accountFilter.items.element;
-        if (ArrayHelper.dataChanged(initialDataSource, accountFilterModel.dataSource)) {
+        if (ArrayHelper.dataChanged(initialDataSource, accountFilterModel.dataSource))
             accountFilterModel.dataSource = initialDataSource;
-        }
-        if (data.selectedBankAccountIds) {
-            accountFilter.items['element'].setValue(data.selectedBankAccountIds, accountFilter);
-        } else {
-            accountFilter.items['element'].setValue([], accountFilter);
-        }
+        accountFilter.items['element'].value = data.selectedBankAccountIds || [];
         accountFilter.updateCaptions();
         return accountFilter;
     }

@@ -12,17 +12,11 @@
                     <dx-check-box [value]="bankAccountsService.allSyncAccountAreSelected$ | async"
                                   (onValueChanged)="selectAll($event)">
                     </dx-check-box>
-                    <selection-filter
-                        [allItemsText]="l('All_Entities')"
-                        title=""
-                        popupWidth="280px"
-                        [maxDisplayedItems]="0"
-                        [showSelectedCount]="false"
+                    <business-entities-chooser 
+                        [applyFilter]="false" 
                         [staticItemsText]="l('Entities')"
-                        [selectionList]="bankAccountsService.businessEntities$ | async"
-                        [selectedItems]="bankAccountsService.selectedBusinessEntitiesIds$ | async"
                         (selectionChanged)="entitiesItemsChanged($event)">
-                    </selection-filter>
+                    </business-entities-chooser>
                 </div>
                 <div class="col-sm-3 types">
                     <selection-filter

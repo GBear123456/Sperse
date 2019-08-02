@@ -246,10 +246,10 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                     items: {
                         element: new BankAccountFilterModel(
                             {
-                                dataSource: syncAccounts,
+                                dataSource$: this.bankAccountsService.syncAccounts$.pipe(takeUntil(this.destroy$)),
+                                selectedKeys$: this.bankAccountsService.selectedBankAccountsIds$.pipe(takeUntil(this.destroy$)),
                                 nameField: 'name',
-                                keyExpr: 'id',
-                                onRemoved: (ids) => this.bankAccountsService.changeSelectedBankAccountsIds(ids)
+                                keyExpr: 'id'
                             })
                     }
                 }),
@@ -259,10 +259,10 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                     caption: 'BusinessEntity',
                     items: {
                         element: new FilterCheckBoxesModel({
-                            dataSource: filtersInitialData.businessEntities,
+                            dataSource$: this.bankAccountsService.businessEntities$.pipe(takeUntil(this.destroy$)),
+                            selectedKeys$: this.bankAccountsService.selectedBusinessEntitiesIds$.pipe(takeUntil(this.destroy$)),
                             nameField: 'name',
                             keyExpr: 'id',
-                            value: selectedBusinessEntitiesIds
                         })
                     }
                 })].concat(this._cfoService.hasStaticInstance ? [] : [
@@ -733,24 +733,24 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         let amountFilter: FilterModel = _.find(this.filters, function (f: FilterModel) { return f.caption === 'Amount'; });
 
         if (classified) {
-            classifiedFilter.items['yes'].setValue(true, classifiedFilter);
-            classifiedFilter.items['no'].setValue(false, classifiedFilter);
+            classifiedFilter.items['yes'].value = true;
+            classifiedFilter.items['no'].value = false;
         } else {
-            classifiedFilter.items['yes'].setValue(false, classifiedFilter);
-            classifiedFilter.items['no'].setValue(true, classifiedFilter);
+            classifiedFilter.items['yes'].value = false;
+            classifiedFilter.items['no'].value = true;
         }
 
         if (credit) {
-            amountFilter.items['from'].setValue('0', amountFilter);
-            amountFilter.items['to'].setValue('', amountFilter);
+            amountFilter.items['from'].value = '0';
+            amountFilter.items['to'].value = '';
             this.defaultCreditTooltipVisible = false;
         } else if (debit) {
-            amountFilter.items['to'].setValue('0', amountFilter);
-            amountFilter.items['from'].setValue('', amountFilter);
+            amountFilter.items['to'].value = '0';
+            amountFilter.items['from'].value = '';
             this.defaultDebitTooltipVisible = false;
         } else {
-            amountFilter.items['to'].setValue('', amountFilter);
-            amountFilter.items['from'].setValue('', amountFilter);
+            amountFilter.items['to'].value = '';
+            amountFilter.items['from'].value = '';
             this.defaultTotalTooltipVisible = false;
         }
 
@@ -759,8 +759,8 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
 
     clearClassifiedFilter() {
         let classifiedFilter: FilterModel = _.find(this.filters, function (f: FilterModel) { return f.caption === 'classified'; });
-        classifiedFilter.items['yes'].setValue(false, classifiedFilter);
-        classifiedFilter.items['no'].setValue(false, classifiedFilter);
+        classifiedFilter.items['yes'].value = false;
+        classifiedFilter.items['no'].value = false;
         this.filtersService.change(classifiedFilter);
     }
 
@@ -768,11 +768,10 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         this.filtersService.apply(filter => {
             if (filter) {
                 let filterName = filter.caption.toLowerCase();
-                if (filterName == 'account') {
-                    /** apply filter on top */
+                if (filterName == 'businessentity' || filterName == 'account') {
+                    this.bankAccountsService.changeSelectedBusinessEntities(
+                        this.businessEntityFilter.items.element.value);
                     this.bankAccountsService.applyFilter();
-                    /** apply filter in sidebar */
-                    filter.items.element.value = this.bankAccountsService.state.selectedBankAccountIds;
                 }
 
                 if (filterName == 'classified') {
@@ -782,9 +781,6 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                         this.selectedCashflowCategoryKey = null;
                     }
                 }
-
-                if (filterName == 'businessentity')
-                    this.checkUpdateAccountsState(filter.items.element.value);
             } else {
                 this.selectAllAccounts();
                 this.dataGrid.instance.clearFilter();
@@ -830,7 +826,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     }
 
     changeAndGetCurrenciesFilter(currenciesFilter: FilterModel, countryId: string): FilterModel {
-        currenciesFilter.items['element'].setValue([countryId], currenciesFilter);
+        currenciesFilter.items['element'].value = [countryId];
         currenciesFilter.updateCaptions();
         return currenciesFilter;
     }
@@ -841,12 +837,9 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             this.dataSourceURI,
             this.cashFlowCategoryFilter.concat(this.filters),
             (filter) => {
-                if (filter.caption && filter.caption.toLowerCase() === 'account') {
-                    /** apply filter on top */
+                if (filter.caption && filter.caption.toLowerCase() === 'account')
                     this.bankAccountsService.applyFilter();
-                    /** apply filter in sidebar */
-                    filter.items.element.setValue(this.bankAccountsService.state.selectedBankAccountIds, filter);
-                }
+
                 let filterMethod = this['filterBy' + this.capitalize(filter.caption)];
                 if (filterMethod)
                     return filterMethod.call(this, filter);
@@ -1291,15 +1284,6 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         }
     }
 
-    onBusinessEntitiesChange(businessEntitiesIds) {
-        this.checkUpdateAccountsState(businessEntitiesIds);
-
-        clearTimeout(this._changeTimeout);
-        this._changeTimeout = setTimeout(() => {
-            this.applyTotalBankAccountFilter(true);
-        }, 100);
-    }
-
     selectAllAccounts() {
         let selectedBankAccountIds = [];
         this.syncAccounts.forEach(syncAccount => {
@@ -1316,28 +1300,6 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             selectedBankAccountIds: selectedBankAccountIds
         });
         this.bankAccountsService.applyFilter();
-    }
-
-    checkUpdateAccountsState(businessEntitiesIds) {
-        let selectedBankAccountIds = [];
-        let newBusinessEntitiesIds = difference(businessEntitiesIds,
-            this.bankAccountsService.state.selectedBusinessEntitiesIds);
-
-        this.businessEntityFilter.items.element.value = businessEntitiesIds;
-        this.syncAccounts.forEach(syncAccount => {
-            syncAccount.bankAccounts.forEach(bankAccount => {
-                if (newBusinessEntitiesIds.indexOf(bankAccount.businessEntityId) >= 0
-                    || this.bankAccountsService.state.selectedBusinessEntitiesIds.indexOf(bankAccount.businessEntityId) >= 0
-                    && this.bankAccountsService.state.selectedBankAccountIds.indexOf(bankAccount.id) >= 0
-                )
-                    selectedBankAccountIds.push(bankAccount.id);
-            });
-        });
-
-        this.bankAccountsService.changeState({
-            selectedBusinessEntitiesIds: businessEntitiesIds,
-            selectedBankAccountIds: selectedBankAccountIds
-        });
     }
 
     ngOnDestroy() {

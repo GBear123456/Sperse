@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, Input, Output, EventEmitter, ViewChild } from '@angular/core';
+import { Component, Input, Output, EventEmitter, ViewChild, OnDestroy } from '@angular/core';
 
 /** Third party imports */
 import { DxTreeViewComponent } from 'devextreme-angular/ui/tree-view';
@@ -15,12 +15,15 @@ import { BankAccountsService } from '@shared/cfo/bank-accounts/helpers/bank-acco
     templateUrl: './business-entities-chooser.component.html',
     styleUrls: ['./business-entities-chooser.component.less']
 })
-export class BusinessEntitiesChooserComponent {
+export class BusinessEntitiesChooserComponent implements OnDestroy {
     @ViewChild(DxTreeViewComponent) treeList: DxTreeViewComponent;
 
+    private _syncAccSub;
+
     @Input() staticItemsText;
-    @Input() allSelectedTitle = false;
+    @Input() applyFilter = true;
     @Input() popupWidth: string;
+    @Input() allSelectedTitle = false;
 
     @Output() selectionChanged: EventEmitter<any> = new EventEmitter();
     @Output() onClosed: EventEmitter<any> = new EventEmitter();
@@ -33,14 +36,12 @@ export class BusinessEntitiesChooserComponent {
         public bankAccountsService: BankAccountsService,
         private ls: AppLocalizationService
     ) {
-        bankAccountsService.syncAccounts$.pipe(first()).subscribe((res) => {
-            this.syncAccounts = res;
-        });
+        this._syncAccSub = bankAccountsService.syncAccounts$.subscribe(
+            syncAccounts => this.syncAccounts = syncAccounts);
     }
 
     public selectedItemsChange(data) {
-            this.updateSelectedList(data);
-            this.selectionChanged.emit(this.getSelectedIds());
+        this.selectionChanged.emit(this.getSelectedIds());
     }
 
     getSelectedIds() {
@@ -48,6 +49,7 @@ export class BusinessEntitiesChooserComponent {
     }
 
     getSelectedTitle(data) {
+        this.updateSelectedItems(data);
         if (this.staticItemsText)
             return this.staticItemsText;
 
@@ -58,15 +60,15 @@ export class BusinessEntitiesChooserComponent {
     }
 
     getItemsTitle(data) {
-        let firstSelected = data.find(item => item.isSelected),
+        let firstSelected = data.find(item => item.selected),
             moreCount = this.selectedItems.length - 1;
         return firstSelected ? firstSelected.name + (moreCount ? ' +' + moreCount : '') + ' \u25BE' : '';
     }
 
-    updateSelectedList(data) {
-        this.selectedItems = data.filter(item => item.isSelected);
+    updateSelectedItems(data) {
+        this.selectedItems = data.filter(item => item.selected);
         let selectedCount = this.selectedItems.length;
-        this.selectedAll = selectedCount ? (selectedCount == data.length ? true : undefined) : false;
+        this.selectedAll = selectedCount ? (selectedCount == data.length || undefined) : false;
     }
 
     changePopupWidth(e) {
@@ -80,31 +82,37 @@ export class BusinessEntitiesChooserComponent {
                 : this.treeList.instance.unselectAll();
             event.component.option('text', (event.value ? this.ls.l('Clear')
                 : this.ls.l('Select')) + ' ' + this.ls.l('All'));
-            this.updateSelectedList(data);
         }
     }
 
     onPopupClosed(event) {
-        let selectedBankAccountIds = [];
         let businessEntitiesIds = this.getSelectedIds();
-        let newBusinessEntitiesIds = difference(businessEntitiesIds,
-            this.bankAccountsService.state.selectedBusinessEntitiesIds);
+        if (this.applyFilter) {
+            let selectedBankAccountIds = [];
+            let newBusinessEntitiesIds = difference(businessEntitiesIds,
+                this.bankAccountsService.state.selectedBusinessEntitiesIds);
 
-        this.syncAccounts.forEach(syncAccount => {
-            syncAccount.bankAccounts.forEach(bankAccount => {
-                if (newBusinessEntitiesIds.indexOf(bankAccount.businessEntityId) >= 0
-                    || this.bankAccountsService.state.selectedBusinessEntitiesIds.indexOf(bankAccount.businessEntityId) >= 0
-                    && this.bankAccountsService.state.selectedBankAccountIds.indexOf(bankAccount.id) >= 0
-                )
-                    selectedBankAccountIds.push(bankAccount.id);
+            this.syncAccounts.forEach(syncAccount => {
+                syncAccount.bankAccounts.forEach(bankAccount => {
+                    if (newBusinessEntitiesIds.indexOf(bankAccount.businessEntityId) >= 0
+                        || businessEntitiesIds.indexOf(bankAccount.businessEntityId) >= 0
+                        && this.bankAccountsService.state.selectedBankAccountIds.indexOf(bankAccount.id) >= 0
+                    )
+                        selectedBankAccountIds.push(bankAccount.id);
+                });
             });
-        });
 
-        this.bankAccountsService.changeState({
-            selectedBusinessEntitiesIds: businessEntitiesIds,
-            selectedBankAccountIds: selectedBankAccountIds
-        });
-
+            this.bankAccountsService.changeState({
+                selectedBusinessEntitiesIds: businessEntitiesIds,
+                selectedBankAccountIds: selectedBankAccountIds
+            });
+      
+            this.bankAccountsService.applyFilter();
+        }
         this.onClosed.emit(businessEntitiesIds);
+    }
+
+    ngOnDestroy() {
+        this._syncAccSub.unsubscribe();
     }
 }

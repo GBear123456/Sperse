@@ -8,9 +8,9 @@
             (onClosed)="onPopupClosed($event)">
             <div *dxTemplate="let contentData of 'content'" class="bussiness-entities-chooser">
                 <div class="select-all">
-                    <dx-check-box 
+                    <dx-check-box #selectAll
                         [text]="ls.l('Select All')"
-                        [(value)]="selectedAll"
+                        [value]="selectedAll"
                         (onValueChanged)="onSelectAll($event, dataSource)"
                     ></dx-check-box>
                 </div>
@@ -19,12 +19,11 @@
                     [parentIdExpr]="'parentId'"
                     [dataStructure]="'plain'"
                     [dataSource]="dataSource"
-                    [selectedExpr]="'isSelected'"
+                    [selectedExpr]="'selected'"
                     [hasItemsExpr]="'hasChildren'"
                     [showCheckBoxesMode]="'normal'"
                     [displayExpr]="'name'"
-                    itemTemplate="itemTemplate"
-                    (onContentReady)="updateSelectedList(dataSource)"
+                    itemTemplate="itemTemplate"                    
                     (onSelectionChanged)="selectedItemsChange(dataSource)">
                     <div *dxTemplate="let item of 'itemTemplate'">
                         <div class="selection-list-item {{item.hasChildren ? 'highlighted' : ''}}">

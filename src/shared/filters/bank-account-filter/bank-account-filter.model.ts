@@ -3,15 +3,12 @@ import { FilterItemModel, DisplayElement } from '@shared/filters/models/filter-i
 import * as _ from 'underscore';
 
 export class BankAccountFilterModel extends FilterItemModel {
-    dataSource: any;
     keyExpr: any;
     nameField: string;
-    onRemoved: (ids: number[]) => void;
     disableOuterScroll = true;
 
     public constructor(init?: Partial<BankAccountFilterModel>) {
-        super();
-        Object.assign(this, init);
+        super(init, true);
     }
 
     get value(): any {
@@ -39,10 +36,6 @@ export class BankAccountFilterModel extends FilterItemModel {
                 selectedBankAccountCount === syncAccount.bankAccounts.length || undefined : 
                 false;
         });
-    }
-
-    setValue(value: any, filter: FilterModel) {
-        this.value = value;
     }
 
     getDisplayElements(): DisplayElement[] {
@@ -84,8 +77,7 @@ export class BankAccountFilterModel extends FilterItemModel {
                 }
             });
         } else {
-            this.setValue([], filter);
+            this.value = [];
         }
-        this.onRemoved && this.onRemoved(this.value);
     }
 }

@@ -6,13 +6,11 @@ import remove from 'lodash/remove';
 export class FilterMultiselectDropDownModel extends FilterItemModel {
     displayName?: string;
     displayElementExp: any;
-    dataSource: any;
     columns: any[];
     filterField: any;
 
     public constructor(init?: Partial<FilterMultiselectDropDownModel>) {
-        super();
-        Object.assign(this, init);
+        super(init, true);
     }
 
     getDisplayElements(key: string): DisplayElement[] {

@@ -150,7 +150,6 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
     private requestFilter: Subject<StatsFilter> = new Subject<StatsFilter>();
     requestFilter$: Observable<StatsFilter> = this.requestFilter.asObservable();
     private syncAccounts: any;
-    private updateAfterActivation: boolean;
     private forecastModels$ = this.store$.pipe(select(ForecastModelsStoreSelectors.getForecastModels), filter(Boolean));
     private selectedForecastModelIndex$ = this.store$.pipe(select(ForecastModelsStoreSelectors.getSelectedForecastModelIndex, filter(i => i !== null)));
     private selectedForecastModelId$ = this.store$.pipe(
@@ -460,12 +459,8 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
         this._filtersService.apply(() => {
             let requestFilter = this.defaultRequestFilter;
             for (let filter of this.filters) {
-                if (filter.caption.toLowerCase() === 'account') {
-                    /** apply filter on top */
+                if (filter.caption.toLowerCase() === 'account')
                     this.bankAccountsService.applyFilter();
-                    /** apply filter in sidebar */
-                    filter.items.element.setValue(this.bankAccountsService.state.selectedBankAccountIds, filter);
-                }
 
                 let filterMethod = FilterHelpers['filterBy' + this.capitalize(filter.caption)];
                 if (filterMethod)
@@ -508,10 +503,10 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
                         items: {
                             element: new BankAccountFilterModel(
                                 {
-                                    dataSource: this.syncAccounts,
+                                    dataSource$: this.bankAccountsService.syncAccounts$.pipe(takeUntil(this.destroy$)),
+                                    selectedKeys$: this.bankAccountsService.selectedBankAccountsIds$.pipe(takeUntil(this.destroy$)),
                                     nameField: 'name',
-                                    keyExpr: 'syncId',
-                                    onRemoved: (ids) => this.bankAccountsService.changeSelectedBankAccountsIds(ids)
+                                    keyExpr: 'syncId'
                                 })
                         }
                     })
@@ -710,12 +705,6 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
         /** Load sync accounts (if something change - subscription in ngOnInit fires) */
         this.bankAccountsService.load();
         this._lifecycleService.activate.next();
-
-        /** If selected accounts changed in another component - update widgets */
-        if (this.updateAfterActivation) {
-            this.setBankAccountsFilter(true);
-            this.updateAfterActivation = false;
-        }
 
         this.synchProgressComponent.activate();
         this.rootComponent.overflowHidden(true);

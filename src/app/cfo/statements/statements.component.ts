@@ -424,10 +424,10 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
                 items: {
                     element: new BankAccountFilterModel(
                         {
-                            dataSource: syncAccounts,
+                            dataSource$: this.bankAccountsService.syncAccounts$.pipe(takeUntil(this.destroy$)),
+                            selectedKeys$: this.bankAccountsService.selectedBankAccountsIds$.pipe(takeUntil(this.destroy$)),
                             nameField: 'name',
-                            keyExpr: 'id',
-                            onRemoved: (ids) => this.bankAccountsService.changeSelectedBankAccountsIds(ids)
+                            keyExpr: 'id'
                         })
                 }
             })
@@ -438,12 +438,8 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
         this._filtersService.apply(() => {
             let requestFilter = this.defaultRequestFilter;
             for (let filter of this.filters) {
-                if (filter.caption.toLowerCase() === 'account') {
-                    /** apply filter on top */
+                if (filter.caption.toLowerCase() === 'account')
                     this.bankAccountsService.applyFilter();
-                    /** apply filter in sidebar */
-                    filter.items.element.setValue(this.bankAccountsService.state.selectedBankAccountIds, filter);
-                }
 
                 let filterMethod = FilterHelpers['filterBy' + this.capitalize(filter.caption)];
                 if (filterMethod)
