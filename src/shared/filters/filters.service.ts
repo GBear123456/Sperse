@@ -67,6 +67,7 @@ export class FiltersService {
             if (applyFilterImmediately)
                 this.change(<FilterModel>{});
         }
+        this.checkIfAnySelected();
     }
 
     update(callback: (filters: FilterModel[]) => any) {

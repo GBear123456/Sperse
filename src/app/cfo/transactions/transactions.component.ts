@@ -341,7 +341,6 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                     //items: { BusinessEntity: '' }
                 }) */
             ]);
-            this.filtersService.setup(this.filters, this._activatedRoute.snapshot.queryParams, false);
             this.initFiltering();
             this.bankAccountsService.syncAccounts$.subscribe((syncAccounts) => {
                 this.syncAccounts = syncAccounts;
@@ -789,6 +788,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             this.initToolbarConfig();
             this.processFilterInternal();
         });
+        this.filtersService.setup(this.filters, this._activatedRoute.snapshot.queryParams);
     }
 
     setDataSource() {
@@ -1315,10 +1315,8 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         super.activate();
 
         this.initFiltering();
-        this.filtersService.setup(this.filters, this._activatedRoute.snapshot.queryParams, true);
         this.initToolbarConfig();
         this._lifecycleService.activate.next();
-
         /** Load sync accounts (if something change - subscription in ngOnInit fires) */
         this.bankAccountsService.load();
 
