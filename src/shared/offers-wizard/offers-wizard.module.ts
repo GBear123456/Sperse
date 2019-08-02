@@ -15,7 +15,6 @@ import { DxNumberBoxModule } from 'devextreme-angular/ui/number-box';
 import { DxButtonModule } from 'devextreme-angular/ui/button';
 
 /** Application imports */
-import { OffersWizardComponent } from './offers-wizard.component';
 import { WizardPersonalInfoStepComponent } from './offer-wizard-steps/wizard-personal-info-step/wizard-personal-info-step.component';
 import { OffersWizardService } from '@shared/offers-wizard/offers-wizard.service';
 import { WizardContactInfoStepComponent } from './offer-wizard-steps/wizard-contact-info-step/wizard-contact-info-step.component';
@@ -50,7 +49,6 @@ import { MatTabsModule } from '@angular/material';
         MatTabsModule
     ],
     declarations: [
-        OffersWizardComponent,
         WizardPersonalInfoStepComponent,
         WizardContactInfoStepComponent,
         WizardHomeInfoStepComponent,
@@ -62,12 +60,10 @@ import { MatTabsModule } from '@angular/material';
         WizardCenterModalComponent
     ],
     exports: [
-        OffersWizardComponent,
         WizardCenterModalComponent,
         WizardRightSideComponent
     ],
     entryComponents: [
-        OffersWizardComponent,
         WizardCenterModalComponent,
         WizardRightSideComponent
     ],
