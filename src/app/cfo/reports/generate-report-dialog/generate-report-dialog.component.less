@@ -1,8 +1,9 @@
-:host {   
+:host {
     modal-dialog {
         width: 600px;
     }
-    .step1-container {
+
+    .step1-container, .step3-container {
         height: 100%;
         padding: 20px 30px 30px 30px;
     }
@@ -13,6 +14,54 @@
         margin-right: auto;
         width: 380px;
     }
+
+    .blue-edit-pencil {
+        display: inline-block;
+        width: 15px;
+        height: 15px;
+        background: url(../../../../assets/common/icons/blue-edit-pencil.svg) 50% 50% no-repeat;
+        position: relative;
+        top: 2px;
+        margin-left: 4px;
+    }
+}
+
+/deep/ .custom-radio-2-btn {
+    align-content: flex-end;
+    .dx-radiobutton {
+        overflow: hidden;
+
+        .dx-radio-value-container {
+            display: none;
+        }
+
+        .dx-item-content {
+            overflow: hidden;
+            border: 1px solid #000;
+            background: #fff;
+            color: lighten(#000, 70%);
+            padding: 3px;
+        }
+
+        &.dx-radiobutton-checked {
+            .dx-item-content {
+                background: #01aeef;
+                color: #000;
+                border-color: #000;
+            }
+        }
+    }
+
+    .dx-radiogroup-horizontal .dx-radiobutton {
+        margin-right: 0;
+    }
+}
+
+.generateReport-btn {
+    height: 41px;
+    border-radius: 20.5px;
+    background-color: #01aeef;
+    margin: 0;
 }
 
 /deep/ .generate-report {

@@ -2,20 +2,19 @@
               [buttons]="buttons">
     <div *ngIf="currentStep == generateReportSteps.Step1" class="step1-container">
         <dx-data-grid id="gridContainer"
-                    height="100%"
-                    keyExpr="id"
-                    [scrolling]="{showScrollbar: 'never'}"
-                    [selectedRowKeys]="bankAccountsService.selectedBusinessEntitiesIds$ | async"
-                    [dataSource]="bankAccountsService.businessEntities$ | async"
-                    [pager]="defaultGridPagerConfig"
-                    (onContentReady)="onContentReady($event)"
-                    (onSelectionChanged)="onSelectionChanged($event)"
-                    (onInitialized)="onInitialized($event)">
+                      height="100%"
+                      keyExpr="id"
+                      [scrolling]="{showScrollbar: 'never'}"
+                      [selectedRowKeys]="bankAccountsService.selectedBusinessEntitiesIds$ | async"
+                      [dataSource]="bankAccountsService.businessEntities$ | async"
+                      [pager]="defaultGridPagerConfig"
+                      (onContentReady)="onContentReady($event)"
+                      (onSelectionChanged)="onSelectionChanged($event)"
+                      (onInitialized)="onInitialized($event)">
             <dxo-header-filter [visible]="false" [allowSearch]="true"></dxo-header-filter>
-            <dxo-selection
-                selectAllMode="page"
-                showCheckBoxesMode="always"
-                mode="multiple">
+            <dxo-selection selectAllMode="page"
+                           showCheckBoxesMode="always"
+                           mode="multiple">
             </dxo-selection>
             <dxi-column dataField="name" caption="{{ ls.l('BusinessEntityName') | uppercase }}"></dxi-column>
             <dxo-scrolling mode="virtual"></dxo-scrolling>
@@ -24,5 +23,57 @@
     </div>
     <div *ngIf="currentStep == generateReportSteps.Step2" class="step2-container">
         <calendar [values]="calendarData" [options]="calendarData.options"></calendar>
+    </div>
+    <div *ngIf="currentStep == generateReportSteps.Step3" class="step3-container">
+        <div class="text-left container">
+            <div class="row">
+                <div class="col-4 text-left">{{ ls.l('Reports_ReportsGrouping') }}</div>
+                <div class="col-7 custom-radio-2-btn">
+                    <dx-radio-group [dataSource]="radioGroupGrouping"
+                                    displayExpr="text"
+                                    valueExpr="value"
+                                    layout="horizontal"
+                                    name="isSeparateGrouping"
+                                    [(value)]="isSeparateGrouping">
+                    </dx-radio-group>
+                </div>
+                <div class="col-1">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-4 text-left">{{ ls.l('Reports_DateRange') }}</div>
+                <div class="col-7 text-right">
+                    <span>{{dateFrom | date : 'MMM d, y'}} - {{dateTo | date : 'MMM d, y'}}</span>
+                </div>
+                <div class="col-1">
+                    <i class="icon blue-edit-pencil" (click)="editDate()">&nbsp;</i>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-4 text-left">{{ ls.l('BusinessEntities') }}</div>
+                <div class="col-7 text-right">
+                    <div *ngIf="(bankAccountsService.businessEntitiesAmount$ | async) != (bankAccountsService.selectedBusinessEntities$ | async).length">
+                        <div *ngFor="let bEntity of bankAccountsService.selectedBusinessEntities$ | async">
+                            <div>
+                                {{bEntity.name}}
+                            </div>
+                        </div>
+                    </div>
+                    <div *ngIf="(bankAccountsService.businessEntitiesAmount$ | async) == (bankAccountsService.selectedBusinessEntities$ | async).length">
+                        {{ ls.l('All') }}
+                    </div>
+                </div>
+                <div class="col-1">
+                    <i class="icon blue-edit-pencil" (click)="editBusinessEntities()">&nbsp;</i>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12 text-center">
+                    <button mat-button (click)="generateReport()" class="btn generateReport-btn">
+                        <span>{{ls.l('Reports_RunReportGenerator')}}</span>
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
 </modal-dialog>
