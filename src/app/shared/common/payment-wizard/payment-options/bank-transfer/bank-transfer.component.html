@@ -1,11 +1,12 @@
 <div #bankTransferSettingsContainer class="bankTransferSettingsContainer">
     <div class="sections">
         <div class="request-step">
-            <dx-check-box 
+            <dx-check-box
+                *ngIf="false"
                 width="430px"
-                [(value)]="requireInstructionEnabled" 
+                [(value)]="requireInstructionEnabled"
                 [text]="l('SendPaymentByWireTransfer')">
-            </dx-check-box>        
+            </dx-check-box>
             <p>{{l('PleaseSendWireInstructions')}}</p>
         </div>
     </div>

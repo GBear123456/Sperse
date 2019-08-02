@@ -31,7 +31,7 @@ import { CreditScoreInterface } from '@root/personal-finance/shared/offers/inter
 import { ApplyOfferDialogComponent } from '@root/personal-finance/shared/offers/apply-offer-modal/apply-offer-dialog.component';
 import { CategoryGroupEnum } from '@root/personal-finance/shared/offers/category-group.enum';
 import { CurrencyPipe } from '@angular/common';
-import { OffersWizardComponent } from '@shared/offers-wizard/offers-wizard.component';
+import { WizardCenterModalComponent } from '@shared/offers-wizard/wizard-center-modal/wizard-center-modal.component';
 
 @Injectable()
 export class OffersService {
@@ -211,7 +211,7 @@ export class OffersService {
                 : (isCreditCard ? null : offer.logoUrl)
         };
         if (!linkIsDirect) {
-            this.dialog.open(OffersWizardComponent, {
+            this.dialog.open(WizardCenterModalComponent, {
                 width: '1200px',
                 height: '800px',
                 id: 'offers-wizard',

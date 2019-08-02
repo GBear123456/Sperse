@@ -1,0 +1,229 @@
+@mainFont: inherit;
+
+/deep/ #offers-wizard-right {
+    background: #E7E7E7 url(../../../assets/images/hero.jpg) bottom 0 left 0 no-repeat;
+    padding-bottom: 0;
+    position: relative;
+    
+    @media all and (max-width: 768px) {
+        background-image: none;
+    }
+    
+    .hide-on-right-wizard {
+        display: none !important;
+    }
+}
+
+/deep/ .scroll-zone {
+    height: 400px;
+    overflow: auto;
+    
+    p {
+        font-size: 14px;
+        margin-bottom: 4px;
+        text-align: left;
+    }
+}
+
+:host {
+    display: block;
+    height: 100%;
+    
+    .container {
+        margin: 30px 0;
+        padding: 0 40px;
+    }
+    
+    .close {
+        position: absolute;
+        width: 20px;
+        height: 20px;
+        top: 10px;
+        right: 12px;
+        display: block;
+        background-color: transparent;
+        transition: .3s;
+        cursor: pointer;
+        outline: none;
+        opacity: .5;
+        
+        &:after, &:before {
+            position: absolute;
+            top: 0;
+            left: 9px;
+            content: ' ';
+            height: 20px;
+            width: 2px;
+            background-color: #202b35;
+            cursor: pointer;
+        }
+        
+        &:before {
+            transform: rotate(45deg);
+        }
+        
+        &:after {
+            transform: rotate(-45deg);
+        }
+        
+        &:hover {
+            opacity: 1;
+        }
+    }
+    
+    .link {
+        color: #58a3dc;
+        transition: .3s;
+        
+        &:hover {
+            text-decoration: underline;
+            color: darken(#58a3dc, 10%);
+        }
+    }
+    
+    .right-info {
+        display: block;
+        margin: 15px 0;
+    }
+    
+    /deep/ .step-item {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        position: relative;
+        
+        
+        .header {
+            height: 9%;
+            padding: 11px 52px 11px 24px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            font-weight: 700;
+            position: relative;
+            z-index: 5;
+            color: #2C2C2C;
+            
+            @media all and (min-width: 992px) {
+                padding-left: calc(~"35% + 30px");
+                justify-content: unset;
+            }
+            
+            @media all and (max-width: 768px) {
+                font-size: 20px;
+            }
+        }
+        
+        h2 {
+            font-family: @mainFont;
+            font-size: 32px;
+            font-weight: bold;
+            color: #ffffff;
+        }
+        
+        .header {
+            padding-left: 0;
+        }
+        
+        p {
+            font-family: @mainFont;
+            font-size: 24px;
+            font-weight: 500;
+            letter-spacing: 0.7px;
+            color: #ffffff;
+            margin-top: -12px;
+        }
+        
+        .row {
+            margin-bottom: 10px;
+        }
+    }
+    
+    /deep/ .mat-dialog-content {
+        height: 100%;
+        min-height: 100%;
+        position: relative;
+    }
+    
+    /deep/ .dx-field {
+        align-items: center;
+        width: 100%;
+        
+        .dx-field-label {
+            width: 100%;
+            float: right;
+            text-transform: uppercase;
+            font-size: 12px;
+            font-weight: 700;
+            padding-bottom: 4px;
+            color: #fff;
+        }
+        .dx-field-value {
+            width: 100% !important;
+        }
+        
+        .dx-texteditor-input {
+            background-color: #fff;
+            border-radius: 4px;
+        }
+        
+        .dx-placeholder {
+            font-weight: 400;
+            color: #aaa;
+            transition: 0.2s;
+        }
+    
+        .right-info {
+            margin-top: 15px;
+        }
+    }
+    
+    /deep/ .dx-radiobutton-checked {
+        .dx-radiobutton-icon {
+            &::before {
+                background-color: transparent;
+            }
+            
+            .dx-radiobutton-icon-dot {
+                background: #f0d500;
+            }
+        }
+    }
+    
+    /deep/ .dx-state-focused {
+        border-color: #f0d500;
+    }
+    
+    /deep/ .mat-tab-group {
+        .mat-tab-header {
+            border-bottom-color: rgba(255, 255, 255, .8);
+            
+            .mat-tab-header-pagination {
+                background: rgba(255, 255, 255, .8);
+            }
+    
+            .mat-tab-label {
+                color: rgba(255, 255, 255, .8);
+                background-color: transparent !important;
+            }
+            
+            .mat-tab-label-active {
+                opacity: 1;
+            }
+            
+            .mat-ink-bar {
+                background-color: rgba(255, 255, 255, .8);
+            }
+        }
+    }
+    
+    /deep/ dx-validation-group {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        position: relative;
+    }
+}

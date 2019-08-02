@@ -28,6 +28,7 @@ import { FiltersService } from '@shared/filters/filters.service';
 export class ActivityComponent extends AppComponentBase implements AfterViewInit, OnDestroy {
     @ViewChild(DxSchedulerComponent) schedulerComponent: DxSchedulerComponent;
     @ViewChild(PipelineComponent) pipelineComponent: PipelineComponent;
+    schedulerHeight = window.innerHeight - 210;
 
     private rootComponent: any;
     private dataLayoutType: DataLayoutType = DataLayoutType.Grid;
@@ -106,15 +107,16 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
         this.updateCalendarCaption();
         this.initDataSource();
     }
-    
+
     toggleToolbar() {
         this._appService.toolbarToggle();
-        setTimeout(() => this.dataGrid.instance.repaint(), 0);
+        this._appService.toolbarIsHidden ? this.schedulerHeight = window.innerHeight - 150 : this.schedulerHeight = window.innerHeight - 210;
+        setTimeout(() => this.repaint(), 0);
         this._filtersService.fixed = false;
         this._filtersService.disable();
         this.initToolbarConfig();
     }
-    
+
     initDataSource() {
         this.dataSource = {
             requireTotalCount: false,

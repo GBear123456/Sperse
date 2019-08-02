@@ -15,8 +15,7 @@ import { CategorizationPrefixes } from './enums/categorization-prefixes.enum';
 import {
     BankAccountDto,
     CategoryDto,
-    GetCategoryTreeOutput,
-    ReportingCategoryDto
+    GetCategoryTreeOutput
 } from '@shared/service-proxies/service-proxies';
 import { IModifyingInputOptions } from '@app/cfo/cashflow/modifying-input-options.interface';
 import { IEventDescription } from '@app/cfo/cashflow/models/event-description';
@@ -73,7 +72,7 @@ export class CashflowService {
         },
         {
             prefix                 : CategorizationPrefixes.ReportingGroup,
-            namesSource            : 'reportingGroups'
+            namesSource            : 'categoryTree.reportSections'
         },
         {
             prefix                 : CategorizationPrefixes.ReportingSection,
@@ -425,15 +424,6 @@ export class CashflowService {
         return Boolean(element.closest('.dx-area-data-cell'));
     }
 
-    getReportingCategoriesIds(reportingCategoryId: number, reportingCategories: { [key: string]: ReportingCategoryDto; }): number[] {
-        let reportingCategoriesIds = [ reportingCategoryId ];
-        while (reportingCategories[reportingCategoryId].parentId) {
-            reportingCategoriesIds.unshift(reportingCategories[reportingCategoryId].parentId);
-            reportingCategoryId = reportingCategories[reportingCategoryId].parentId;
-        }
-        return reportingCategoriesIds;
-    }
-
     itemIsInWeekInterval(cellData, date): boolean {
         const weekInterval = JSON.parse(cellData.projected);
         return weekInterval
@@ -519,7 +509,7 @@ export class CashflowService {
                 /** If user doesn't want to show accounting type row - skip it */
                 if (
                     level.prefix === CategorizationPrefixes.AccountingType && !this.userPreferencesService.localPreferences.value.showAccountingTypeTotals
-                    || ((level.prefix === CategorizationPrefixes.ReportingGroup || level.prefix === CategorizationPrefixes.ReportingSection) && !this.userPreferencesService.localPreferences.value.showReportingCategoryTotals)
+                    || ((level.prefix === CategorizationPrefixes.ReportingGroup || level.prefix === CategorizationPrefixes.ReportingSection) && !this.userPreferencesService.localPreferences.value.showReportingSectionTotals)
                 ) {
                     return true;
                 }
@@ -634,8 +624,7 @@ export class CashflowService {
 
             /** Text customizing for reporting groups */
             if (prefix === CategorizationPrefixes.ReportingGroup) {
-                let group = this.categoryTree.reportSectionGroups[key];
-                text = group ? this.ls.l('SectionGroup_' + group) : '';
+                text = this.ls.l('SectionGroup_' + key);
             }
 
             /** Text customizing for accounts names */
