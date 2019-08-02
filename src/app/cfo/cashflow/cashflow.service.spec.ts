@@ -4,8 +4,8 @@ import { CashflowService } from './cashflow.service';
 import { BrowserDynamicTestingModule, platformBrowserDynamicTesting } from '@angular/platform-browser-dynamic/testing';
 import {
     AccountingTypeDto, CashflowServiceProxy, ContactServiceProxy,
-    GetCategoryTreeOutput, InstanceServiceProxy, PermissionServiceProxy, PersonContactServiceProxy,
-    ReportSectionDto, SectionGroup, SessionServiceProxy, TenantSubscriptionServiceProxy,
+    GetCategoryTreeOutput, GroupByPeriod, InstanceServiceProxy, PermissionServiceProxy, PersonContactServiceProxy,
+    ReportSectionDto, SectionGroup, SessionServiceProxy, StatsDetailFilter, StatsFilter, TenantSubscriptionServiceProxy,
     TransactionStatsDto, TypeDto
 } from '@shared/service-proxies/service-proxies';
 import { UserPreferencesService } from '@app/cfo/cashflow/preferences-dialog/preferences.service';
@@ -21,12 +21,18 @@ import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
 import { NotifyService } from '@abp/notify/notify.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { LayoutService } from '@app/shared/layout/layout.service';
+import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
+import { RootStoreModule } from '@root/store/root-store.module';
+import { CurrencyPipe } from '@angular/common';
 
 describe('CashflowService', () => {
     beforeEach(() => {
         TestBed.resetTestEnvironment();
         TestBed.initTestEnvironment(BrowserDynamicTestingModule, platformBrowserDynamicTesting());
         TestBed.configureTestingModule({
+            imports: [
+                RootStoreModule
+            ],
             providers: [
                 CashflowService,
                 UserPreferencesService,
@@ -49,9 +55,20 @@ describe('CashflowService', () => {
                 TenantSubscriptionServiceProxy,
                 LayoutService,
                 ContactServiceProxy,
-                CashflowServiceProxy
+                CashflowServiceProxy,
+                CfoPreferencesService,
+                CurrencyPipe
             ]
         });
+        abp.timing['timeZoneInfo'] = {
+            iana: { timeZoneId: 'UTC' },
+            windows: {
+                timeZoneId: 'UTC',
+                baseUtcOffsetInMilliseconds: 0,
+                currentUtcOffsetInMilliseconds: 0,
+                isDaylightSavingTimeNow: false,
+            }
+        };
     });
 
     it('should be created', inject([ CashflowService, UserPreferencesService ], (service: CashflowService) => {
@@ -127,7 +144,6 @@ describe('CashflowService', () => {
             }
         });
         const levels = service.addCategorizationLevels(transaction).levels;
-        console.log(levels);
         expect(levels).toEqual({
             level0: 'CTI',
             level1: 'RGExpense',
@@ -155,5 +171,31 @@ describe('CashflowService', () => {
         expect(service.customizeFieldText({ value: 'AT2' })).toBe('Expense');
         expect(service.customizeFieldText({ value: 'RGCostOfSales' })).toBe('SectionGroup_CostOfSales');
         expect(service.customizeFieldText({ value: 'RS11' })).toBe('Business Expenses');
+    }));
+
+    it('getDetailFilterFromCell should return filter from cell', inject([ CashflowService ], (service: CashflowService) => {
+        const cellObj = {
+            cell: {
+                columnPath: [ '0', '2018', '3', '10' ],
+                rowPath: [ 'CTI', 'RGExpense', 'RS3' ]
+            }
+        };
+        service.requestFilter = new StatsFilter({
+            startDate: moment().subtract(1, 'year').startOf('year'),
+            endDate: moment().add(1, 'year').endOf('year'),
+            forecastModelId: 1,
+            showResolvedComments: true,
+            groupByPeriod: GroupByPeriod.Monthly,
+            dailyPeriods: [],
+            calculateStartingBalance: true,
+            currencyId: 'USD',
+            accountIds: [],
+            businessEntityIds: [],
+        });
+        const result = service.getDetailFilterFromCell(cellObj);
+        console.log(result);
+        expect(result.cashflowTypeId).toEqual('I');
+        expect(result.reportSectionGroup).toEqual('Expense');
+        expect(result.reportSectionId).toEqual('3');
     }));
 });

@@ -229,6 +229,8 @@
             "polyfills": "src/polyfills.ts",
             "tsConfig": "src/tsconfig.json",
             "scripts": [
+              "node_modules/moment/moment.js",
+              "node_modules/moment-timezone/moment-timezone.js",
               "node_modules/jquery/dist/jquery.js",
               "node_modules/jquery-validation/dist/jquery.validate.js",
               "node_modules/js-cookie/src/js.cookie.js",

@@ -7,7 +7,7 @@ export const getCurrenciesState = createFeatureSelector<State>('currencies');
 export const getCurrencies = createSelector(
     getCurrenciesState,
     (state: State) => {
-        return state.entities && state.entities.length
+        return state && state.entities && state.entities.length
                 ? state.entities.map((currency: CurrencyInfo) => {
                     return {
                         ...currency,
@@ -20,7 +20,7 @@ export const getCurrencies = createSelector(
 
 export const getSelectedCurrencyId = createSelector(
     getCurrenciesState,
-    (state: State) => state.selectedCurrencyId
+    (state: State) => state && state.selectedCurrencyId
 );
 
 export const getSelectedCurrencySymbol = createSelector(

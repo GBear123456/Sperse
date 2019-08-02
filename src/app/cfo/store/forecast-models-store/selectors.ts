@@ -7,7 +7,7 @@ export const getForecastModelsState = createFeatureSelector<State>('forecastMode
 export const getForecastModels = createSelector(
     getForecastModelsState,
     (state: State) => {
-        return state.entities && state.entities.length
+        return state && state.entities && state.entities.length
                 ? state.entities.map((forecastModel: ForecastModelDto) => {
                     return {
                         ...forecastModel,
