@@ -217,16 +217,14 @@ export class VisitorsComponent extends AppComponentBase implements AfterViewInit
             }
         }).afterClosed().subscribe((data) => {
             if (!data) return;
+            const dateFrom = data.dateFrom && DateHelper.removeTimezoneOffset(data.dateFrom, true, 'from');
             const dateTo = data.dateTo && DateHelper.removeTimezoneOffset(data.dateTo, true, 'to');
-            const dateFrom = data.dateTo && DateHelper.removeTimezoneOffset(data.dateFrom, true, 'from');
-            if ((this.dateTo ? this.dateTo.diff(dateTo, 'days') : dateTo) ||
-                (this.dateFrom ? this.dateFrom.diff(dateFrom, 'days') : dateFrom)
-            ) {
-                this.dateFrom = dateFrom && moment(dateFrom);
-                this.dateTo = dateTo && moment(dateTo);
-                this.processDataInternal();
-                this.initToolbarConfig();
-            }
+
+            this.dateFrom = dateFrom && moment(dateFrom);
+            this.dateTo = dateTo && moment(dateTo);
+            this.processDataInternal();
+            this.initToolbarConfig();
+
         });
     }
 
