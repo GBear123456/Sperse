@@ -107,6 +107,8 @@ export class OffersWizardService {
     submitApplicationProfile() {
         let applyOfferDialog;
         this.submitApplicationProfileInput.personalInformation.doB = DateHelper.getDateWithoutTime(this.submitApplicationProfileInput.personalInformation.doB);
+        this.submitApplicationProfileInput.employmentInformation.payNextDate = DateHelper.getDateWithoutTime(this.submitApplicationProfileInput.employmentInformation.payNextDate);
+        this.submitApplicationProfileInput.employmentInformation.payAfterNextDate = DateHelper.getDateWithoutTime(this.submitApplicationProfileInput.employmentInformation.payAfterNextDate);
         if (this.data.campaignId && this.data.offer) {
             const modalData = {
                 processingSteps: [null, null, null, null],
