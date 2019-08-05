@@ -34392,13 +34392,21 @@ export interface ICashFlowInitialData {
     bankAccountBalances: BankAccountBalanceDto[] | undefined;
 }
 
+export enum SectionGroup {
+    Income = "Income", 
+    CostOfSales = "CostOfSales", 
+    Expense = "Expense", 
+    OtherIncomeExpense = "OtherIncomeExpense", 
+}
+
 export class StatsDetailFilter implements IStatsDetailFilter {
     searchTerm!: string | undefined;
     forecastModelId!: number | undefined;
     cashflowTypeId!: string | undefined;
     accountingTypeId!: number | undefined;
     categoryId!: number | undefined;
-    reportingCategoryId!: number | undefined;
+    reportSectionGroup!: SectionGroup | undefined;
+    reportSectionId!: number | undefined;
     subCategoryId!: number | undefined;
     transactionDescriptor!: string | undefined;
     startDate!: moment.Moment | undefined;
@@ -34423,7 +34431,8 @@ export class StatsDetailFilter implements IStatsDetailFilter {
             this.cashflowTypeId = data["cashflowTypeId"];
             this.accountingTypeId = data["accountingTypeId"];
             this.categoryId = data["categoryId"];
-            this.reportingCategoryId = data["reportingCategoryId"];
+            this.reportSectionGroup = data["reportSectionGroup"];
+            this.reportSectionId = data["reportSectionId"];
             this.subCategoryId = data["subCategoryId"];
             this.transactionDescriptor = data["transactionDescriptor"];
             this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
@@ -34456,7 +34465,8 @@ export class StatsDetailFilter implements IStatsDetailFilter {
         data["cashflowTypeId"] = this.cashflowTypeId;
         data["accountingTypeId"] = this.accountingTypeId;
         data["categoryId"] = this.categoryId;
-        data["reportingCategoryId"] = this.reportingCategoryId;
+        data["reportSectionGroup"] = this.reportSectionGroup;
+        data["reportSectionId"] = this.reportSectionId;
         data["subCategoryId"] = this.subCategoryId;
         data["transactionDescriptor"] = this.transactionDescriptor;
         data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
@@ -34482,7 +34492,8 @@ export interface IStatsDetailFilter {
     cashflowTypeId: string | undefined;
     accountingTypeId: number | undefined;
     categoryId: number | undefined;
-    reportingCategoryId: number | undefined;
+    reportSectionGroup: SectionGroup | undefined;
+    reportSectionId: number | undefined;
     subCategoryId: number | undefined;
     transactionDescriptor: string | undefined;
     startDate: moment.Moment | undefined;
@@ -34497,6 +34508,12 @@ export enum Status {
     Partial = "Partial", 
     Projected = "Projected", 
     Completed = "Completed", 
+}
+
+export enum StatsType {
+    Transaction = "Transaction", 
+    Adjustment = "Adjustment", 
+    Forecast = "Forecast", 
 }
 
 export class CashFlowStatsDetailDto implements ICashFlowStatsDetailDto {
@@ -34523,6 +34540,7 @@ export class CashFlowStatsDetailDto implements ICashFlowStatsDetailDto {
     forecastDate!: moment.Moment | undefined;
     status!: Status | undefined;
     counterpartyName!: string | undefined;
+    type!: StatsType | undefined;
 
     constructor(data?: ICashFlowStatsDetailDto) {
         if (data) {
@@ -34558,6 +34576,7 @@ export class CashFlowStatsDetailDto implements ICashFlowStatsDetailDto {
             this.forecastDate = data["forecastDate"] ? moment(data["forecastDate"].toString()) : <any>undefined;
             this.status = data["status"];
             this.counterpartyName = data["counterpartyName"];
+            this.type = data["type"];
         }
     }
 
@@ -34593,6 +34612,7 @@ export class CashFlowStatsDetailDto implements ICashFlowStatsDetailDto {
         data["forecastDate"] = this.forecastDate ? this.forecastDate.toISOString() : <any>undefined;
         data["status"] = this.status;
         data["counterpartyName"] = this.counterpartyName;
+        data["type"] = this.type;
         return data; 
     }
 }
@@ -34621,6 +34641,7 @@ export interface ICashFlowStatsDetailDto {
     forecastDate: moment.Moment | undefined;
     status: Status | undefined;
     counterpartyName: string | undefined;
+    type: StatsType | undefined;
 }
 
 export enum PeriodScope {
@@ -35707,13 +35728,6 @@ export interface ICategoryDto {
     name: string | undefined;
     isActive: boolean | undefined;
     reportingCategoryId: number | undefined;
-}
-
-export enum SectionGroup {
-    Income = "Income", 
-    CostOfSales = "CostOfSales", 
-    Expense = "Expense", 
-    OtherIncomeExpense = "OtherIncomeExpense", 
 }
 
 export class ReportSectionDto implements IReportSectionDto {
@@ -37165,7 +37179,8 @@ export class StatsDetailFilterBase implements IStatsDetailFilterBase {
     cashflowTypeId!: string | undefined;
     accountingTypeId!: number | undefined;
     categoryId!: number | undefined;
-    reportingCategoryId!: number | undefined;
+    reportSectionGroup!: SectionGroup | undefined;
+    reportSectionId!: number | undefined;
     subCategoryId!: number | undefined;
     transactionDescriptor!: string | undefined;
     startDate!: moment.Moment | undefined;
@@ -37188,7 +37203,8 @@ export class StatsDetailFilterBase implements IStatsDetailFilterBase {
             this.cashflowTypeId = data["cashflowTypeId"];
             this.accountingTypeId = data["accountingTypeId"];
             this.categoryId = data["categoryId"];
-            this.reportingCategoryId = data["reportingCategoryId"];
+            this.reportSectionGroup = data["reportSectionGroup"];
+            this.reportSectionId = data["reportSectionId"];
             this.subCategoryId = data["subCategoryId"];
             this.transactionDescriptor = data["transactionDescriptor"];
             this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
@@ -37219,7 +37235,8 @@ export class StatsDetailFilterBase implements IStatsDetailFilterBase {
         data["cashflowTypeId"] = this.cashflowTypeId;
         data["accountingTypeId"] = this.accountingTypeId;
         data["categoryId"] = this.categoryId;
-        data["reportingCategoryId"] = this.reportingCategoryId;
+        data["reportSectionGroup"] = this.reportSectionGroup;
+        data["reportSectionId"] = this.reportSectionId;
         data["subCategoryId"] = this.subCategoryId;
         data["transactionDescriptor"] = this.transactionDescriptor;
         data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
@@ -37243,7 +37260,8 @@ export interface IStatsDetailFilterBase {
     cashflowTypeId: string | undefined;
     accountingTypeId: number | undefined;
     categoryId: number | undefined;
-    reportingCategoryId: number | undefined;
+    reportSectionGroup: SectionGroup | undefined;
+    reportSectionId: number | undefined;
     subCategoryId: number | undefined;
     transactionDescriptor: string | undefined;
     startDate: moment.Moment | undefined;
@@ -37982,7 +38000,8 @@ export class CreateCashFlowCommentThreadInput implements ICreateCashFlowCommentT
     cashflowTypeId!: string | undefined;
     accountingTypeId!: number | undefined;
     categoryId!: number | undefined;
-    reportingCategoryId!: number | undefined;
+    reportSectionGroup!: SectionGroup | undefined;
+    reportSectionId!: number | undefined;
     subCategoryId!: number | undefined;
     transactionDescriptor!: string | undefined;
     startDate!: moment.Moment | undefined;
@@ -38007,7 +38026,8 @@ export class CreateCashFlowCommentThreadInput implements ICreateCashFlowCommentT
             this.cashflowTypeId = data["cashflowTypeId"];
             this.accountingTypeId = data["accountingTypeId"];
             this.categoryId = data["categoryId"];
-            this.reportingCategoryId = data["reportingCategoryId"];
+            this.reportSectionGroup = data["reportSectionGroup"];
+            this.reportSectionId = data["reportSectionId"];
             this.subCategoryId = data["subCategoryId"];
             this.transactionDescriptor = data["transactionDescriptor"];
             this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
@@ -38040,7 +38060,8 @@ export class CreateCashFlowCommentThreadInput implements ICreateCashFlowCommentT
         data["cashflowTypeId"] = this.cashflowTypeId;
         data["accountingTypeId"] = this.accountingTypeId;
         data["categoryId"] = this.categoryId;
-        data["reportingCategoryId"] = this.reportingCategoryId;
+        data["reportSectionGroup"] = this.reportSectionGroup;
+        data["reportSectionId"] = this.reportSectionId;
         data["subCategoryId"] = this.subCategoryId;
         data["transactionDescriptor"] = this.transactionDescriptor;
         data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
@@ -38066,7 +38087,8 @@ export interface ICreateCashFlowCommentThreadInput {
     cashflowTypeId: string | undefined;
     accountingTypeId: number | undefined;
     categoryId: number | undefined;
-    reportingCategoryId: number | undefined;
+    reportSectionGroup: SectionGroup | undefined;
+    reportSectionId: number | undefined;
     subCategoryId: number | undefined;
     transactionDescriptor: string | undefined;
     startDate: moment.Moment | undefined;
@@ -40802,6 +40824,7 @@ export class ContactEmailInfo implements IContactEmailInfo {
     id!: number | undefined;
     emailAddress!: string | undefined;
     usageTypeId!: string | undefined;
+    isPrimary!: boolean | undefined;
 
     constructor(data?: IContactEmailInfo) {
         if (data) {
@@ -40817,6 +40840,7 @@ export class ContactEmailInfo implements IContactEmailInfo {
             this.id = data["id"];
             this.emailAddress = data["emailAddress"];
             this.usageTypeId = data["usageTypeId"];
+            this.isPrimary = data["isPrimary"];
         }
     }
 
@@ -40832,6 +40856,7 @@ export class ContactEmailInfo implements IContactEmailInfo {
         data["id"] = this.id;
         data["emailAddress"] = this.emailAddress;
         data["usageTypeId"] = this.usageTypeId;
+        data["isPrimary"] = this.isPrimary;
         return data; 
     }
 }
@@ -40840,6 +40865,7 @@ export interface IContactEmailInfo {
     id: number | undefined;
     emailAddress: string | undefined;
     usageTypeId: string | undefined;
+    isPrimary: boolean | undefined;
 }
 
 export class ContactPhoneInfo implements IContactPhoneInfo {

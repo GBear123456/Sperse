@@ -240,11 +240,14 @@
                 </ng-container>
             </div>
             <div *dxTemplate="let data of 'CategoryNameTemplate'">
-                <span [ngClass]="{'uncategorized': !data.value}">
+                <span [ngClass]="{'uncategorized': !data.value && data.data.type != 'Adjustment'}">
                     <ng-container *ngIf="data.value">
                         <span class="clickable-item"> {{data.value}} </span>
                     </ng-container>
-                    <ng-container *ngIf="!data.value">
+                    <ng-container *ngIf="data.data.type == 'Adjustment'">
+                        <span> {{data.data.description}} </span>
+                    </ng-container>
+                    <ng-container *ngIf="!data.value && data.data.type != 'Adjustment'">
                         <span> {{l('Unclassified')}} </span>
                     </ng-container>
                 </span>
