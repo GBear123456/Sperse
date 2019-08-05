@@ -237,11 +237,20 @@ export class OffersService {
                         creditLandLogoUrl: this.creditLandLogoUrl,
                         isCreditCard: isCreditCard
                     }
-                }).afterClosed().subscribe((result: SubmitApplicationOutput)  => {
-                    if (result) {
+                }).afterClosed().subscribe((output: SubmitApplicationOutput)  => {
+                    const applyOfferDialog = this.dialog.open(ApplyOfferDialogComponent, {
+                        width: '530px',
+                        panelClass: 'apply-offer-dialog',
+                        data: modalData
+                    });
+                    if (output) {
                         this.loadMemberInfo();
                         submitRequestInput.redirectUrl = redirectUrl;
-                        this.offerServiceProxy.submitRequest(submitRequestInput);
+                        this.offerServiceProxy.submitRequest(submitRequestInput).subscribe(() => {
+                            applyOfferDialog.close();
+                        });
+                    } else {
+                        applyOfferDialog.close();
                     }
                 });
             } else {
@@ -253,13 +262,6 @@ export class OffersService {
                 });
                 this.offerServiceProxy.submitRequest(submitRequestInput)
                     .subscribe(
-                        (output: SubmitRequestOutput) => {
-                            if (!linkIsDirect) {
-                                !window.open(output.redirectUrl, '_blank')
-                                    ? applyOfferDialog.componentInstance.showBlockedMessage = true
-                                    : applyOfferDialog.close();
-                            }
-                        },
                         () => applyOfferDialog.close()
                     );
             }
