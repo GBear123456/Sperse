@@ -104,7 +104,7 @@ export class OffersWizardService {
         this.dialog.open(ConditionsModalComponent, {panelClass: ['slider', 'footer-slider'], data: data});
     }
 
-    submitApplicationProfile() {
+    submitApplicationProfile(): Observable<SubmitApplicationOutput> {
         let applyOfferDialog;
         this.submitApplicationProfileInput.personalInformation.doB = DateHelper.getDateWithoutTime(this.submitApplicationProfileInput.personalInformation.doB);
         this.submitApplicationProfileInput.employmentInformation.payNextDate = DateHelper.getDateWithoutTime(this.submitApplicationProfileInput.employmentInformation.payNextDate);
@@ -130,8 +130,8 @@ export class OffersWizardService {
         this.submitApplicationProfileInput.legalInformation.isTCPAChecked = true;
         this.submitApplicationProfileInput.campaignId = this.data.campaignId;
         this.appHttpConfiguration.avoidErrorHandling = true;
-        const submitApplication = this.offersServiceProxy.submitApplication(this.submitApplicationProfileInput).pipe(publishReplay(), refCount());
-        submitApplication.subscribe(
+        const submitApplication$ = this.offersServiceProxy.submitApplication(this.submitApplicationProfileInput).pipe(publishReplay(), refCount());
+        submitApplication$.subscribe(
             (result: SubmitApplicationOutput) => {
                 if (result) {
                     if (this.data.campaignId) applyOfferDialog.close();
@@ -155,6 +155,6 @@ export class OffersWizardService {
                 this.appHttpConfiguration.avoidErrorHandling = false;
             }
         );
-        return submitApplication;
+        return submitApplication$;
     }
 }
