@@ -27,8 +27,8 @@
     <div *ngIf="currentStep == generateReportSteps.Step3" class="step3-container">
         <div class="text-left container">
             <div class="row">
-                <div class="col-4 text-left">{{ ls.l('Reports_ReportsGrouping') }}</div>
-                <div class="col-7 custom-radio-2-btn">
+                <div class="text-left">{{ ls.l('Reports_ReportsGrouping') }}</div>
+                <div class="custom-radio-2-btn">
                     <dx-radio-group [dataSource]="radioGroupGrouping"
                                     displayExpr="text"
                                     valueExpr="value"
@@ -37,41 +37,29 @@
                                     [(value)]="isSeparateGrouping">
                     </dx-radio-group>
                 </div>
-                <div class="col-1">
+            </div>
+            <div class="row date-range">
+                <div class="text-left">{{ ls.l('Reports_DateRange') }}</div>
+                <div class="text-right">
+                    <span class="date">{{dateFrom | date : 'MM/dd/yyyy'}}</span>
+                    <img class="arrow" src="./assets/common/icons/date-arrow-right.svg">
+                    <span class="date">{{dateTo | date : 'MM/dd/yyyy'}}</span>
+                    <i class="icon blue-edit-pencil" (click)="editDate()"></i>
                 </div>
             </div>
-            <div class="row">
-                <div class="col-4 text-left">{{ ls.l('Reports_DateRange') }}</div>
-                <div class="col-7 text-right">
-                    <span>{{dateFrom | date : 'MMM d, y'}} - {{dateTo | date : 'MMM d, y'}}</span>
-                </div>
-                <div class="col-1">
-                    <i class="icon blue-edit-pencil" (click)="editDate()">&nbsp;</i>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-4 text-left">{{ ls.l('BusinessEntities') }}</div>
-                <div class="col-7 text-right">
-                    <div *ngIf="(bankAccountsService.businessEntitiesAmount$ | async) != (bankAccountsService.selectedBusinessEntities$ | async).length">
-                        <div *ngFor="let bEntity of bankAccountsService.selectedBusinessEntities$ | async">
-                            <div>
-                                {{bEntity.name}}
-                            </div>
-                        </div>
-                    </div>
-                    <div *ngIf="(bankAccountsService.businessEntitiesAmount$ | async) == (bankAccountsService.selectedBusinessEntities$ | async).length">
-                        {{ ls.l('All') }}
-                    </div>
-                </div>
-                <div class="col-1">
+            <div class="row business-entities">
+                <div class="text-left">{{ ls.l('BusinessEntities') }}</div>
+                <div class="text-right">
+                    <ul *ngIf="(bankAccountsService.businessEntitiesAmount$ | async) !== (bankAccountsService.selectedBusinessEntities$ | async).length; else all">
+                        <li *ngFor="let entity of bankAccountsService.selectedBusinessEntities$ | async">{{ entity.name }}</li>
+                    </ul>
+                    <ng-template #all>{{ ls.l('All') }}</ng-template>
                     <i class="icon blue-edit-pencil" (click)="editBusinessEntities()">&nbsp;</i>
                 </div>
             </div>
             <div class="row">
                 <div class="col-12 text-center">
-                    <button mat-button (click)="generateReport()" class="btn generateReport-btn">
-                        <span>{{ls.l('Reports_RunReportGenerator')}}</span>
-                    </button>
+                    <button (click)="generateReport()" class="btn generateReport-btn">{{ls.l('Reports_RunReportGenerator')}}</button>
                 </div>
             </div>
         </div>
