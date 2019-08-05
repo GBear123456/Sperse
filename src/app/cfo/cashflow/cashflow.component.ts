@@ -4051,8 +4051,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             this.onAmountCellEditStart(e);
 
         if (e.rowType === 'data') {
-            if (this.manageAllowed &&
-                ((e.column.dataField == 'categoryName' && e.data.categoryId)) {
+            if (this.manageAllowed && e.column.dataField == 'categoryName' && e.data.categoryId) {
                 this.dialog.open(RuleDialogComponent, {
                     panelClass: 'slider',
                     data: {
