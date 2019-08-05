@@ -758,10 +758,12 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     }
 
     clearClassifiedFilter() {
-        let classifiedFilter: FilterModel = _.find(this.filters, function (f: FilterModel) { return f.caption === 'classified'; });
-        classifiedFilter.items['yes'].setValue(false, classifiedFilter);
-        classifiedFilter.items['no'].setValue(false, classifiedFilter);
-        this.filtersService.change(classifiedFilter);
+        let classifiedFilter: FilterModel = _.find(this.filters, (f: FilterModel) => f.caption === 'classified' );
+        if (classifiedFilter) {
+            classifiedFilter.items['yes'].setValue(false, classifiedFilter);
+            classifiedFilter.items['no'].setValue(false, classifiedFilter);
+            this.filtersService.change(classifiedFilter);
+        }
     }
 
     initFiltering() {
