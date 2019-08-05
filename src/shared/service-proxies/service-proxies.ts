@@ -34510,6 +34510,12 @@ export enum Status {
     Completed = "Completed", 
 }
 
+export enum StatsType {
+    Transaction = "Transaction", 
+    Adjustment = "Adjustment", 
+    Forecast = "Forecast", 
+}
+
 export class CashFlowStatsDetailDto implements ICashFlowStatsDetailDto {
     id!: number | undefined;
     date!: moment.Moment | undefined;
@@ -34534,6 +34540,7 @@ export class CashFlowStatsDetailDto implements ICashFlowStatsDetailDto {
     forecastDate!: moment.Moment | undefined;
     status!: Status | undefined;
     counterpartyName!: string | undefined;
+    type!: StatsType | undefined;
 
     constructor(data?: ICashFlowStatsDetailDto) {
         if (data) {
@@ -34569,6 +34576,7 @@ export class CashFlowStatsDetailDto implements ICashFlowStatsDetailDto {
             this.forecastDate = data["forecastDate"] ? moment(data["forecastDate"].toString()) : <any>undefined;
             this.status = data["status"];
             this.counterpartyName = data["counterpartyName"];
+            this.type = data["type"];
         }
     }
 
@@ -34604,6 +34612,7 @@ export class CashFlowStatsDetailDto implements ICashFlowStatsDetailDto {
         data["forecastDate"] = this.forecastDate ? this.forecastDate.toISOString() : <any>undefined;
         data["status"] = this.status;
         data["counterpartyName"] = this.counterpartyName;
+        data["type"] = this.type;
         return data; 
     }
 }
@@ -34632,6 +34641,7 @@ export interface ICashFlowStatsDetailDto {
     forecastDate: moment.Moment | undefined;
     status: Status | undefined;
     counterpartyName: string | undefined;
+    type: StatsType | undefined;
 }
 
 export enum PeriodScope {
@@ -40814,6 +40824,7 @@ export class ContactEmailInfo implements IContactEmailInfo {
     id!: number | undefined;
     emailAddress!: string | undefined;
     usageTypeId!: string | undefined;
+    isPrimary!: boolean | undefined;
 
     constructor(data?: IContactEmailInfo) {
         if (data) {
@@ -40829,6 +40840,7 @@ export class ContactEmailInfo implements IContactEmailInfo {
             this.id = data["id"];
             this.emailAddress = data["emailAddress"];
             this.usageTypeId = data["usageTypeId"];
+            this.isPrimary = data["isPrimary"];
         }
     }
 
@@ -40844,6 +40856,7 @@ export class ContactEmailInfo implements IContactEmailInfo {
         data["id"] = this.id;
         data["emailAddress"] = this.emailAddress;
         data["usageTypeId"] = this.usageTypeId;
+        data["isPrimary"] = this.isPrimary;
         return data; 
     }
 }
@@ -40852,6 +40865,7 @@ export interface IContactEmailInfo {
     id: number | undefined;
     emailAddress: string | undefined;
     usageTypeId: string | undefined;
+    isPrimary: boolean | undefined;
 }
 
 export class ContactPhoneInfo implements IContactPhoneInfo {
