@@ -262,7 +262,7 @@
         class="cashflow-scroll"
         (onScroll)="onScroll($event)"
         [ngClass]="{
-            'withCashflowFooterToolbar' : cashflowService.filterBy?.visualPreferences?.showFooterBar
+            'withCashflowFooterToolbar' : cashflowService.cashflowGridSettings?.visualPreferences?.showFooterBar
         }">
         <div class="pivot-grid-wrapper">
             <dx-pivot-grid id="operations"
@@ -304,7 +304,7 @@
         <calculator-widget></calculator-widget>
     </div>
 
-    <div class="cashflowFooterToolbar" *ngIf="cashflowService.filterBy?.visualPreferences?.showFooterBar">
+    <div class="cashflowFooterToolbar" *ngIf="cashflowService.cashflowGridSettings?.visualPreferences?.showFooterBar">
         <app-toolbar [config]="footerToolbarConfig"></app-toolbar>
     </div>
 
@@ -318,6 +318,6 @@
     [linkText]="l('Go_to_sfo_setup')">
 </app-no-data>
 <div class="cashflowFooterToolbar"
-     *ngIf="loading && (!cashflowService.cashflowData || !cashflowService.cashflowData.length) && cashflowService.filterBy?.visualPreferences?.showFooterBar">
+     *ngIf="loading && (!cashflowService.cashflowData || !cashflowService.cashflowData.length) && cashflowService.cashflowGridSettings?.visualPreferences?.showFooterBar">
     <app-toolbar [config]="footerToolbarConfig"></app-toolbar>
 </div>
