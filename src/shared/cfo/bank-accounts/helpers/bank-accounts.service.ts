@@ -487,10 +487,12 @@ export class BankAccountsService {
             map((types: BankAccountType[]) => types.sort(this.sortBankAccountsTypes)),
             distinctUntilChanged(this.arrayDistinct),
             tap(list => {
-                if (!this.cacheService.get(this.bankAccountsCacheKey))
+                if (!this.cacheService.get(this.bankAccountsCacheKey)) {
                     this._selectedBankAccountTypes.next(
                         list.filter(item => item.name != 'Bill.com' && item.name != 'Accounting').map(item => item.id)
-            }))
+                    );
+                }
+            })
         );
     }
 
