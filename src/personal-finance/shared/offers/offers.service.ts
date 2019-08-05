@@ -19,13 +19,13 @@ import {
     OfferDto,
     CampaignCategory,
     CreditScoreRating,
-    SubmitRequestOutput,
     OfferServiceProxy,
     GetMemberInfoResponse,
     CampaignProviderType,
     SubmitRequestInput,
     OfferProviderType,
-    SubmitApplicationOutput, GetApplicationDetailsOutput, SubmitApplicationInput
+    SubmitApplicationOutput,
+    SubmitApplicationInput
 } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { CreditScoreInterface } from '@root/personal-finance/shared/offers/interfaces/credit-score.interface';
