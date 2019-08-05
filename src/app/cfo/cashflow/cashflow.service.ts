@@ -5,17 +5,21 @@ import { Injectable } from '@angular/core';
 import * as moment from 'moment';
 import TextBox from 'devextreme/ui/text_box';
 import NumberBox from 'devextreme/ui/number_box';
+import DevExpress from 'devextreme/bundles/dx.all';
 import * as $ from 'jquery';
+import capitalize from 'underscore.string/capitalize';
 import * as _ from 'underscore';
+import * as underscore from 'underscore';
 
 /** Application imports */
 import { CellInfo } from './models/cell-info';
 import { CellInterval } from './models/cell-interval';
 import { CategorizationPrefixes } from './enums/categorization-prefixes.enum';
 import {
-    BankAccountDto,
+    AdjustmentType,
+    BankAccountDto, CashFlowGridSettingsDto, CashFlowInitialData,
     CategoryDto,
-    GetCategoryTreeOutput
+    GetCategoryTreeOutput, StatsDetailFilter, StatsFilter
 } from '@shared/service-proxies/service-proxies';
 import { IModifyingInputOptions } from '@app/cfo/cashflow/modifying-input-options.interface';
 import { IEventDescription } from '@app/cfo/cashflow/models/event-description';
@@ -25,6 +29,10 @@ import { Projected } from '@app/cfo/cashflow/enums/projected.enum';
 import { CategorizationModel } from '@app/cfo/cashflow/models/categorization-model';
 import { UserPreferencesService } from '@app/cfo/cashflow/preferences-dialog/preferences.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
+import { CurrencyPipe } from '@angular/common';
+import { Periods } from '@app/cfo/cashflow/enums/periods.enum';
+import { WeekInfo } from '@app/cfo/cashflow/models/week-info';
 
 /** Constants */
 const StartedBalance    = CashflowTypes.StartedBalance,
@@ -72,6 +80,7 @@ export class CashflowService {
         },
         {
             prefix                 : CategorizationPrefixes.ReportingGroup,
+            statsKeyName           : 'reportSectionGroup',
             namesSource            : 'categoryTree.reportSections'
         },
         {
@@ -107,13 +116,243 @@ export class CashflowService {
     categoryTree: GetCategoryTreeOutput;
 
     cashflowTypes: any;
-
+    requestFilter: StatsFilter;
     /** Bank accounts of user with extracted bank accounts */
     bankAccounts: BankAccountDto[];
+    anotherPeriodAccountsValues: Map<string, number> = new Map();
+    cachedRowsFitsToFilter: Map<string, boolean> = new Map();
+    /** First categorization level items order */
+    private leftMenuOrder = [
+        StartedBalance,
+        Income,
+        Expense,
+        CashflowTypeTotal,
+        NetChange,
+        Reconciliation,
+        Total
+    ];
+    cashflowData;
+    cashflowGridSettings: CashFlowGridSettingsDto;
+
+    selectedForecastModelId;
+
+    /** List of adjustments on cashflow */
+    adjustmentsList = [];
+    showAllVisible = false;
+    showAllDisable = false;
+    initialData: CashFlowInitialData;
+    /** Pivot grid fields settings */
+    apiTableFields: any = [
+        {
+            caption: 'Type',
+            width: 120,
+            area: 'row',
+            expanded: false,
+            allowExpandAll: false,
+            allowExpand: false,
+            sortOrder: 'asc',
+            areaIndex: 0,
+            dataField: 'levels.level0',
+            rowHeaderLayout: 'tree',
+            showTotals: true,
+            sortingMethod: (firstItem, secondItem) => {
+                return this.leftMenuOrder.indexOf(firstItem.value.slice(2)) > this.leftMenuOrder.indexOf(secondItem.value.slice(2)) ? 1 : -1;
+            },
+            customizeText: this.customizeFieldText.bind(this)
+        },
+        {
+            caption: 'Reporting Group',
+            width: 120,
+            area: 'row',
+            dataField: 'levels.level1',
+            areaIndex: 1,
+            sortBy: 'displayText',
+            sortOrder: 'asc',
+            expanded: false,
+            showTotals: true,
+            resortable: true,
+            customizeText: cellInfo => this.customizeFieldText.bind(this, cellInfo, this.ls.l('Unclassified'))()
+        },
+        {
+            caption: 'Reporting Section',
+            width: 120,
+            area: 'row',
+            dataField: 'levels.level2',
+            areaIndex: 2,
+            sortBy: 'displayText',
+            sortOrder: 'asc',
+            expanded: false,
+            showTotals: true,
+            resortable: true,
+            customizeText: cellInfo => this.customizeFieldText.bind(this, cellInfo, this.ls.l('Unclassified'))()
+        },
+        {
+            caption: 'Account Type',
+            width: 120,
+            area: 'row',
+            dataField: 'levels.level3',
+            areaIndex: 3,
+            sortBy: 'displayText',
+            sortOrder: 'asc',
+            expanded: false,
+            showTotals: true,
+            resortable: true,
+            customizeText: cellInfo => this.customizeFieldText.bind(this, cellInfo, this.ls.l('Unclassified'))(),
+            rowHeaderLayout: 'tree'
+        },
+        {
+            caption: 'Category',
+            showTotals: false,
+            area: 'row',
+            sortBy: 'displayText',
+            sortOrder: 'asc',
+            resortable: true,
+            areaIndex: 4,
+            dataField: 'levels.level4',
+            customizeText: this.customizeFieldText.bind(this)
+        },
+        {
+            caption: 'Sub Category',
+            showTotals: false,
+            area: 'row',
+            sortBy: 'displayText',
+            sortOrder: 'asc',
+            resortable: true,
+            areaIndex: 5,
+            dataField: 'levels.level5',
+            customizeText: this.customizeFieldText.bind(this)
+        },
+        {
+            caption: 'Descriptor',
+            showTotals: false,
+            area: 'row',
+            sortBy: 'displayText',
+            sortOrder: 'asc',
+            resortable: true,
+            areaIndex: 6,
+            dataField: 'levels.level6',
+            customizeText: this.customizeFieldText.bind(this)
+        },
+        {
+            caption: 'Amount',
+            dataField: 'amount',
+            dataType: 'number',
+            summaryType: 'sum',
+            format: value => {
+                return this.formatAsCurrencyWithLocale(value);
+            },
+            area: 'data',
+            showColumnTotals: true,
+            calculateSummaryValue: this.calculateSummaryValue(),
+            summaryDisplayMode: 'percentOfColumnTotal'
+        },
+        {
+            caption: 'Historical',
+            area: 'column',
+            areaIndex: 0,
+            showTotals: false,
+            selector: this.getYearHistoricalSelectorWithCurrent(),
+            customizeText: this.getHistoricalCustomizer.bind(this)(),
+            expanded: true,
+            allowExpand: false,
+            wordWrapEnabled: true,
+            visible: true
+        },
+        {
+            caption: 'Year',
+            dataField: 'date',
+            dataType: 'date',
+            area: 'column',
+            areaIndex: 1,
+            groupInterval: 'year',
+            showTotals: true,
+            visible: true,
+            summaryDisplayMode: 'percentVariation'
+        },
+        {
+            caption: 'Quarter',
+            dataField: 'date',
+            dataType: 'date',
+            width: 0.01,
+            area: 'column',
+            areaIndex: 2,
+            groupInterval: 'quarter',
+            showTotals: false,
+            customizeText: this.getQuarterHeaderCustomizer(),
+            visible: true
+        },
+        {
+            caption: 'Month',
+            dataField: 'date',
+            dataType: 'date',
+            area: 'column',
+            width: 0.01,
+            areaIndex: 3,
+            showTotals: false,
+            groupInterval: 'month',
+            customizeText: this.getMonthHeaderCustomizer(),
+            visible: true
+        },
+        {
+            caption: 'Projected',
+            area: 'column',
+            showTotals: false,
+            areaIndex: 4,
+            selector: this.projectedSelector,
+            customizeText: cellInfo => {
+                let projectedKey;
+                switch (cellInfo.value) {
+                    case Projected.PastTotal:
+                    case Projected.FutureTotal:    projectedKey = 'CashflowFields_Total'; break;
+                    case Projected.Forecast:       projectedKey = 'CashflowFields_Projected'; break;
+                    case Projected.Mtd:            projectedKey = 'CashflowFields_Mtd'; break;
+                    case Projected.Today:          projectedKey = 'CashflowFields_Today'; break;
+                }
+                return this.ls.l(projectedKey).toUpperCase();
+            },
+            expanded: false,
+            allowExpand: false,
+            visible: true
+        },
+        {
+            caption: 'Week',
+            area: 'column',
+            width: 0.01,
+            areaIndex: 5,
+            showTotals: false,
+            sortBy: 'displayText',
+            selector: this.weekHeaderSelector,
+            sortingMethod: this.weekSorting,
+            customizeText: this.getWeekHeaderCustomizer(),
+            visible: true
+        },
+        {
+            caption: 'Day',
+            dataField: 'date',
+            dataType: 'date',
+            areaIndex: 6,
+            area: 'column',
+            showTotals: false,
+            groupInterval: 'day',
+            visible: true
+        }
+    ];
+
+    /** Filter by string */
+    filterBy: string;
+
+    /** Language keys for historical field texts*/
+    private historicalTextsKeys = [
+        'Periods_Historical',
+        'Periods_Current',
+        'Periods_Forecast'
+    ];
 
     constructor(
         private userPreferencesService: UserPreferencesService,
-        private ls: AppLocalizationService
+        private cfoPreferencesService: CfoPreferencesService,
+        private ls: AppLocalizationService,
+        private currencyPipe: CurrencyPipe
     ) { }
 
     addEvents(element: HTMLElement, events: IEventDescription[]) {
@@ -655,5 +894,1026 @@ export class CashflowService {
 
     getDescendantPropValue(obj, path) {
         return path.split('.').reduce((acc, part) => acc && acc[part], obj);
+    }
+
+    getDetailFilterFromCell(cellObj): StatsDetailFilter {
+        const datePeriod = this.formattingDate(cellObj.cell.columnPath);
+
+        //console.log(StatsDetailFilter.fromJS(filterParams));
+
+        /** if somehow user click on the cell that is not in the filter date range - return null */
+        if (this.requestFilter.startDate && datePeriod.endDate < this.requestFilter.startDate ||
+            this.requestFilter.endDate && datePeriod.startDate > this.requestFilter.endDate) {
+            return;
+        }
+
+        const isAccountCell = [PSB, PR, PT].indexOf(cellObj.cell.rowPath[0]) !== -1;
+        let accountsIds = isAccountCell && cellObj.cell.rowPath[1] ?
+            [cellObj.cell.rowPath[1].slice(2)] :
+            this.requestFilter.accountIds || [];
+
+        let startDate = this.requestFilter.startDate && this.requestFilter.startDate > datePeriod.startDate ? this.requestFilter.startDate : datePeriod.startDate;
+        let endDate = this.requestFilter.endDate && this.requestFilter.endDate < datePeriod.endDate ? this.requestFilter.endDate : datePeriod.endDate;
+        let filterParams = {
+            startDate: startDate,
+            endDate: endDate,
+            currencyId: this.cfoPreferencesService.selectedCurrencyId,
+            accountIds: accountsIds,
+            businessEntityIds: this.requestFilter.businessEntityIds || [],
+            searchTerm: '',
+            forecastModelId: this.selectedForecastModelId
+        };
+
+        this.showAllVisible = false;
+        this.showAllDisable = false;
+
+        cellObj.cell.rowPath.forEach(item => {
+            if (item) {
+                let [ key, prefix ] = [ item.slice(2), item.slice(0, 2) ];
+
+                //console.log(key, prefix);
+                if (key !== CashflowTypeTotal) {
+                    const property = this.getCategoryParams(prefix)['statsKeyName'];
+                    //console.log(property);
+                    filterParams[property] = key;
+                }
+            } else {
+                filterParams['categoryId'] = -1;
+            }
+        });
+        return StatsDetailFilter.fromJS(filterParams);
+    }
+
+    formattingDate(path): CellInterval {
+        let columnFields = {};
+        this.getColumnFields().forEach(item => {
+            columnFields[item.caption.toLowerCase()] = item.areaIndex;
+        });
+
+        let startDate: moment.Moment = moment.utc('1970-01-01');
+        let endDate: moment.Moment = moment.utc('1970-01-01');
+        let year = path[columnFields['year']];
+        let quarter = path[columnFields['quarter']];
+        let month = path[columnFields['month']];
+        let week = path[columnFields['week']];
+        let day = path[columnFields['day']];
+        let projected = path[columnFields['projected']];
+
+        startDate.year(year);
+        endDate.year(year).endOf('year');
+        if (quarter) {
+            startDate.quarter(quarter);
+            endDate.quarter(quarter).endOf('quarter');
+        }
+        if (month) {
+            startDate.month(month - 1);
+            endDate.month(month - 1).endOf('month');
+        }
+        if (day) {
+            startDate.date(day);
+            endDate.date(day).endOf('day');
+        } else {
+            if (week) {
+                let weekInfo = JSON.parse(week);
+                startDate = moment(weekInfo.startDate).utc();
+                endDate = moment(weekInfo.endDate).utc();
+            } else if (projected) {
+                let currentDate = moment().date();
+                /** Exclude projected */
+                if (projected === Projected.Forecast) {
+                    startDate.date(currentDate + 1);
+                    /** or mtd dates */
+                } else if (projected === Projected.Mtd) {
+                    endDate.date(currentDate - 1);
+                } else if (projected === Projected.Today) {
+                    startDate.date(currentDate);
+                    endDate.date(currentDate);
+                }
+            }
+        }
+
+        return { startDate: startDate, endDate: endDate };
+    }
+
+    /** Get all column fields */
+    getColumnFields() {
+        return this.apiTableFields.filter(field => field.area === 'column' && field.visible);
+    }
+
+    projectedSelector(dataItem) {
+        let result: Projected;
+        let itemMonthFormatted = dataItem.initialDate.format('YYYY.MM');
+        let currentMonthFormatted = moment().format('YYYY.MM');
+        if (itemMonthFormatted !== currentMonthFormatted) {
+            result = currentMonthFormatted > itemMonthFormatted ? Projected.PastTotal : Projected.FutureTotal;
+        } else {
+            let itemDate = dataItem.initialDate.format('YYYY.MM.DD');
+            let currentDate = moment().format('YYYY.MM.DD');
+            if (itemDate === currentDate) {
+                result = Projected.Today;
+            } else if (itemDate > currentDate) {
+                result = Projected.Forecast;
+            } else if (itemDate < currentDate) {
+                result = Projected.Mtd;
+            }
+        }
+        return  result;
+    }
+
+    formatAsCurrencyWithLocale(value: number, fractionDigits = 2, locale: string = null) {
+        if (!locale)
+            locale = this.cashflowGridSettings.localizationAndCurrency.numberFormatting.indexOf('.') == 1 ? 'tr' : 'en-EN';
+        value = value > -0.01 && value < 0.01 ? 0 : value;
+        return this.currencyPipe.transform(
+            value,
+            this.cfoPreferencesService.selectedCurrencyId,
+            this.cfoPreferencesService.selectedCurrencySymbol,
+            `0.${fractionDigits}-${fractionDigits}`
+        );
+    }
+
+
+    /**
+     * Method that check if the cell of format CTI (Category Type Income) is fit to the filter
+     * It looks all pathes where the cell value is presented and if any of the elements of these pathes
+     * contains filter string - return true
+     * @param rowInfo - info of format (CategoryPrefixes + Key)
+     * @param filter - string for which to filter
+     * @return {boolean}
+     */
+    rowFitsToFilter(summaryCell, cellValue) {
+        let result = false;
+        const rowInfo = cellValue || '';
+        /** add the rowInfo to cash to avoid checking for every cell */
+        if (this.cachedRowsFitsToFilter.has(rowInfo))
+            result = this.cachedRowsFitsToFilter.get(rowInfo);
+        else {
+            result = Object.keys(this.treePathes).some(strPath => {
+                let arrPath = strPath.split(',');
+                if (arrPath.indexOf(rowInfo) >= 0) {
+                    /** Handle for uncategorized */
+                    if (!rowInfo) {
+                        let parent = summaryCell.parent('row');
+                        let parentInfo = parent.value(parent.field('row').dataField);
+                        if (arrPath.indexOf(parentInfo) >= 0 && this.pathContainsFilter(arrPath, this.filterBy)) {
+                            return true;
+                        }
+                    } else if (this.pathContainsFilter(arrPath, this.filterBy)) {
+                        return true;
+                    }
+                }
+                return false;
+            });
+            this.cachedRowsFitsToFilter.set(rowInfo, result);
+        }
+        return result;
+    }
+
+    private pathContainsFilter(path: string[], filter: string) {
+        filter = filter.toLowerCase();
+        return path.some((value: string) => {
+            if (value) {
+                const key = value.slice(2);
+                const prefix: any = value.slice(0, 2);
+                const dataSource = this.getNamesSourceLink(prefix);
+                if (dataSource) {
+                    for (let i = 0; i < dataSource.length; i++) {
+                        let customizedFieldText = this.customizeFieldText({value: value}).toLowerCase();
+                        if (customizedFieldText && customizedFieldText.indexOf(filter) >= 0 && key == dataSource[i].id)
+                            return true;
+                    }
+                } else
+                    return key.toLowerCase().indexOf(filter) >= 0;
+            } else
+                return this.ls.l('Unclassified').toLowerCase().indexOf(filter) >= 0;
+        });
+    }
+
+    /**
+     *  recalculates sum of the starting balance (including previous totals)
+     *  and recalculates ending cash positions values (including previous totals)
+     *  @param summaryCell
+     *  @return {number}
+     */
+    calculateSummaryValue() {
+        return (summaryCell: DevExpress.ui.dxPivotGridSummaryCell) => {
+            const cellRow: any = summaryCell.field('row');
+            const cellValue = cellRow && summaryCell.value(cellRow.dataField);
+            /** Hide fields */
+            if ((!this.cashflowGridSettings.general.showBalanceDiscrepancy && this.isCellDiscrapencyCell(summaryCell, cellRow, cellValue))
+                || cellValue === 'hidden'
+                /** To hide rows that not correspond to the search */
+                || (this.filterBy && cellRow && !this.rowFitsToFilter(summaryCell, cellValue))
+            ) {
+                return null;
+            }
+
+            let prevWithParent = this.getPrevWithParent(summaryCell);
+
+            /** calculation for ending cash position value */
+            if (prevWithParent !== null && this.isColumnGrandTotal(summaryCell, cellRow)) {
+                return this.modifyGrandTotalSummary(summaryCell);
+            }
+
+            if (this.isColumnGrandTotal(summaryCell, cellRow)) {
+                return this.modifyGrandTotalSummary(summaryCell, false);
+            }
+
+            /** if cell is starting balance account cell - then add account sum from previous period */
+            if (prevWithParent !== null && this.isStartingBalanceAccountCell(summaryCell, cellRow)) {
+                return this.modifyStartingBalanceAccountCell(summaryCell, prevWithParent)
+                    + this.getCurrentValueForStartingBalanceCell(summaryCell);
+            }
+
+            /** If the column is starting balance column but without prev - calculate */
+            if (this.isStartingBalanceAccountCell(summaryCell, cellRow)) {
+                return this.getCurrentValueForStartingBalanceCell(summaryCell) + (summaryCell.value() || 0);
+            }
+
+            /** For proper grand total calculation and proper sorting
+             *  If the grand total is balance or ending cash position cell -
+             *  get the previous value - not the total of every cell
+             */
+            if (this.isRowGrandTotal(summaryCell) && (this.isStartingBalanceAccountCell(summaryCell, cellRow) || this.isEndingBalanceAccountCell(summaryCell, cellRow))) {
+                let cellAccount = this.initialData.bankAccountBalances.find(bankAccount => bankAccount.bankAccountId === cellValue);
+                return cellAccount ? cellAccount.balance : 0;
+            }
+
+            /** if cell is ending cash position account summary cell */
+            if (prevWithParent !== null && this.isEndingBalanceAccountCell(summaryCell, cellRow)) {
+                return this.modifyEndingBalanceAccountCell(summaryCell, prevWithParent);
+            }
+
+            if (this.isEndingBalanceAccountCell(summaryCell, cellRow)) {
+                let startedBalanceCell = summaryCell.slice(<any>0, PSB),
+                    startedBalanceCellValue = startedBalanceCell ? (startedBalanceCell.value() || 0) : 0,
+                    currentCellValue = summaryCell.value() || 0,
+                    reconciliationTotal = this.getCellValue(summaryCell, Reconciliation);
+                return startedBalanceCellValue + reconciliationTotal + currentCellValue;
+            }
+
+            /** if the value is a balance value -
+             *  then get the prev columns grand total for the column and add */
+            if (prevWithParent !== null && this.isCellIsStartingBalanceSummary(summaryCell, cellRow, cellValue)) {
+                return this.modifyStartingBalanceSummaryCell(summaryCell, prevWithParent)
+                    + this.getCurrentValueForStartingBalanceCell(summaryCell);
+            }
+
+            if (this.isCellIsStartingBalanceSummary(summaryCell, cellRow, cellValue)) {
+                return this.getCurrentValueForStartingBalanceCell(summaryCell);
+            }
+
+            return this.cellRowIsNotEmpty(cellRow, cellValue) ? summaryCell.value() || 0 : null;
+        };
+    }
+
+    getYearHistoricalSelectorWithCurrent(): any {
+        return data => {
+            let currentYear = moment().year();
+            let itemYear = data.initialDate ? data.initialDate.year() : data.date.year();
+            let result = Periods.Historical;
+            if (currentYear < itemYear) {
+                result = Periods.Forecast;
+            } else if (currentYear === itemYear) {
+                result = Periods.Current;
+            }
+            return result;
+        };
+    }
+
+    /**
+     * Gets the text for months header
+     * @returns {string}
+     */
+    getMonthHeaderCustomizer(): any {
+        return cellInfo => cellInfo.valueText.slice(0, 3).toUpperCase();
+    }
+
+    /**
+     * Gets the text for quarters header
+     * @returns {string}
+     */
+    getQuarterHeaderCustomizer(): any {
+        return cellInfo => cellInfo.valueText.slice(0, 3).toUpperCase();
+    }
+
+    isColumnGrandTotal(summaryCell, cellRow) {
+        return cellRow !== null && summaryCell.value(summaryCell.field('row')) === PT;
+    }
+
+    isRowGrandTotal(summaryCell) {
+        return summaryCell.field('column') === null;
+    }
+
+    isStartingBalanceAccountCell(summaryCell, cellRow) {
+        return cellRow !== null &&
+            cellRow.dataField === 'levels.level1' &&
+            summaryCell.parent('row') && summaryCell.parent('row').value(summaryCell.parent('row').field('row')) === PSB;
+    }
+
+    isCellIsStartingBalanceSummary(summaryCell, cellRow, cellValue): boolean {
+        return cellRow !== null && cellValue === (CategorizationPrefixes.CashflowType + StartedBalance);
+    }
+
+    isCellDiscrapencyCell(summaryCell, row, value): boolean {
+        let parentCell = summaryCell.parent('row');
+        return (row !== null && value === (CategorizationPrefixes.CashflowType + Reconciliation)) ||
+            (parentCell !== null && parentCell.value(parentCell.field('row')) === (CategorizationPrefixes.CashflowType + Reconciliation));
+    }
+
+    cellRowIsNotEmpty(cellRow, cellValue) {
+        return cellRow && (cellValue !== undefined || cellRow.dataField === 'levels.level1');
+    }
+
+    isEndingBalanceAccountCell(summaryCell, cellRow) {
+        return cellRow !== null &&
+            cellRow.dataField === 'levels.level1' &&
+            summaryCell.parent('row') && summaryCell.parent('row').value(summaryCell.parent('row').field('row')) === PT;
+    }
+
+    getHistoricalCustomizer() {
+        return cellInfo => this.ls.l(this.historicalTextsKeys[cellInfo.value]).toUpperCase();
+    }
+
+    /**
+     * Gets quarter from the year
+     * @param date
+     * @returns {number}
+     */
+    getQuarter(date: Date = new Date()) {
+        return Math.floor(date.getMonth() / 3) + 1;
+    }
+
+    weekHeaderSelector(dataItem): string {
+        let weekInfo = new WeekInfo(dataItem.initialDate);
+        return JSON.stringify(weekInfo);
+    }
+
+    weekSorting(firstItem, secondItem) {
+        return JSON.parse(firstItem.value).weekNumber > JSON.parse(secondItem.value).weekNumber ? 1 : -1;
+    }
+
+    getWeekHeaderCustomizer(): any {
+        return (weekInfo: {value: string, valueText: string}) => {
+            let weekInfoObj: WeekInfo = JSON.parse(weekInfo.value);
+            let startDate = moment(weekInfoObj.startDate).utc().format('MM.DD');
+            let endDate = moment(weekInfoObj.endDate).utc().format('MM.DD');
+            let text = startDate === endDate ? startDate : `${startDate} - ${endDate}`;
+            return text;
+        };
+    }
+
+    /**
+     * Gets the historical field object in tableFields
+     * @returns {Object}
+     */
+    getHistoricField(): any {
+        return this.apiTableFields.find(
+            field => field['caption'] === 'Historical'
+        );
+    }
+
+    getCurrentValueForStartingBalanceCell(summaryCell) {
+        const cellData = <any>this.getCellData(summaryCell, summaryCell.value(summaryCell.field('row')).slice(2), StartedBalance);
+        return this.calculateCellValue(cellData, this.adjustmentsList.filter(item => item.adjustmentType === AdjustmentType._0), true);
+    }
+
+    /**
+     * Modify the value of the starting balance account cell to have a proper calculation
+     * @param summaryCell
+     * @param prevWithParent
+     * @return {number}
+     */
+    modifyStartingBalanceAccountCell(summaryCell, prevWithParent) {
+        const prevEndingAccountValue = this.getCellValue(prevWithParent, Total);
+        const prevIsFirstColumn = this.getPrevWithParent(prevWithParent) ? true : false;
+        const prevCellValue = prevWithParent ? prevWithParent.value(prevIsFirstColumn) || 0 : 0;
+        const prevReconciliation = this.getCellValue(prevWithParent, Reconciliation);
+        return prevEndingAccountValue + prevCellValue + prevReconciliation;
+    }
+
+    /**
+     * Modify the value of the starting balance summary cell to have a proper calculation
+     * @param summaryCell
+     * @param prevWithParent
+     * @return {number}
+     */
+    modifyStartingBalanceSummaryCell(summaryCell, prevWithParent) {
+        let prevTotal = prevWithParent.slice(0, PT),
+            currentCellValue = summaryCell.value() || 0,
+            prevTotalValue = prevTotal ? prevTotal.value() || 0 : 0,
+            prevIsFirstColumn = this.getPrevWithParent(prevWithParent) ? true : false,
+            prevCellValue = prevWithParent ? prevWithParent.value(prevIsFirstColumn) || 0 : 0,
+            prevReconciliation = prevWithParent.slice(0, PR),
+            prevReconciliationValue = prevReconciliation ? prevReconciliation.value() || 0 : 0;
+        return currentCellValue + prevTotalValue + prevCellValue + prevReconciliationValue;
+    }
+
+    /**
+     * Modify the ending balance account cell to have a proper calculation
+     * @param summaryCell
+     * @param prevWithParent
+     * @return {number}
+     */
+    modifyEndingBalanceAccountCell(summaryCell, prevWithParent) {
+        let prevEndingAccountValue = this.getCellValue(prevWithParent, Total, true),
+            currentCellValue = summaryCell.value() || 0,
+            reconciliationTotal = this.getCellValue(summaryCell, Reconciliation);
+        return currentCellValue + prevEndingAccountValue + reconciliationTotal;
+    }
+
+    /**
+     * Modify the total balance summary cell to have a proper calculation
+     * @param summaryCell
+     * @return {number}
+     */
+    modifyGrandTotalSummary(summaryCell, calculatedStartedBalance = true) {
+        let startedBalanceCell = summaryCell.slice(0, PSB),
+            startedBalanceCellValue = startedBalanceCell ? (startedBalanceCell.value(calculatedStartedBalance) || 0) : 0,
+            currentCellValue = summaryCell.value() || 0,
+            reconciliationTotal = summaryCell.slice(0, PR),
+            reconciliationTotalValue = reconciliationTotal && reconciliationTotal.value() || 0;
+        return currentCellValue + startedBalanceCellValue + reconciliationTotalValue;
+    }
+
+    /**
+     * Get real previous cell for the summaryCell (alternative for summaryCell.prev('column', true) and
+     *  summaryCell.prev('column', false) )
+     * @param summaryCell
+     * @return {any}
+     */
+    getPrevWithParent(summaryCell) {
+        let counter = this.getColumnFields().length - 1;
+        let prev = summaryCell.prev('column', true);
+        while (counter > 0) {
+            if (prev === null || !this.cellsAreSequence(summaryCell, prev)) {
+                let parent = summaryCell.parent('column');
+                if (parent) {
+                    prev = parent.prev('column', true);
+                    summaryCell = parent;
+                }
+                counter--;
+            } else {
+                break;
+            }
+        }
+        return prev;
+    }
+
+    /**
+     * Gets the cell value from the specific cell
+     * cellData - summaryCell object of devextreme
+     * target - StartedBalance | Total | Reconciliation
+     */
+    getCellValue(summaryCell, target, isCalculatedValue = underscore.contains([StartedBalance, Reconciliation], target)) {
+
+        let targetPeriodAccountCachedValue;
+        const accountId = summaryCell.value(summaryCell.field('row'), true).slice(2);
+        const targetPeriodCell = summaryCell.parent('row') ? summaryCell.parent('row').slice(0, CategorizationPrefixes.CashflowType + target) : null;
+        const targetPeriodAccountCell = targetPeriodCell ? targetPeriodCell.child('row', CategorizationPrefixes.AccountName + accountId) : null;
+
+        /** if we haven't found the value from the another period -
+         *  then it hasn't been expanded and we should find out whether the value is in cash */
+        if (targetPeriodAccountCell === null) {
+            const cellData = this.getCellData(summaryCell, accountId, target);
+            let key = cellData.toString();
+            /** if we haven't found the value in cash - then we should calculate the value in the cashflow data by ourselves */
+            if (!this.anotherPeriodAccountsValues.has(key)) {
+                /** calculate the cell value using the cell data and cashflowData */
+                targetPeriodAccountCachedValue = this.calculateCellValue(cellData, this.cashflowData);
+                this.setAnotherPeriodAccountCachedValue(key, targetPeriodAccountCachedValue);
+            } else {
+                targetPeriodAccountCachedValue = this.anotherPeriodAccountsValues.get(key);
+            }
+        }
+        //else {
+        //    /** add the prevEndingAccount value to the cash */
+        //    this.setAnotherPeriodAccountCachedValue(cellData.toString(), targetPeriodAccountCell.value(isCalculatedValue));
+        //}
+
+        return targetPeriodAccountCachedValue ?
+            targetPeriodAccountCachedValue :
+            (targetPeriodAccountCell ? targetPeriodAccountCell.value(isCalculatedValue) || 0 : 0);
+    }
+
+
+    /**
+     * Return whether cells are sequence in pivot grid
+     * @param current - current cell
+     * @param prev - prev cell (use summaryCell.prev('column', true))
+     * @return {boolean}
+     */
+    cellsAreSequence(current, prev) {
+        if (current.field('column') && current.field('column')['groupInterval'] === 'year') {
+            return true;
+        }
+        let currentCellParent = current.parent('column');
+        let prevCellParent = prev.parent('column');
+        while (true) {
+            if (
+                underscore.isEqual(currentCellParent, prevCellParent) ||
+                currentCellParent.prev() === prevCellParent ||
+                (
+                    currentCellParent.field('column') &&
+                    currentCellParent.field('column')['groupInterval'] !== 'year' &&
+                    currentCellParent.prev('column', true) === prevCellParent
+                )
+            ) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+    }
+
+    getCellData(summaryCell, accountId, cashflowTypeId) {
+        const groupInterval = summaryCell.field('column') ? summaryCell.field('column').groupInterval || 'projected' : 'historical',
+            columnValue = summaryCell.value(summaryCell.field('column')),
+            /** object with cell data as the key for Map object cash */
+            cellData = {
+                'cashflowTypeId': cashflowTypeId,
+                'accountId': accountId,
+                [groupInterval]: columnValue,
+                /** method for creating the key for cash from the object props and values */
+                toString() {
+                    let str = '';
+                    for (let prop in this) {
+                        if (typeof this[prop] !== 'function') {
+                            str += prop.charAt(0) + this[prop];
+                        }
+                    }
+                    return str;
+                }
+            };
+        let parent = summaryCell ? summaryCell.parent() : null;
+        /** add to the cell data other date intervals */
+        if (parent) {
+            while (parent.field('column')) {
+                if (parent.field('column').dataType === 'date') {
+                    let parentGroupInterval = parent.field('column').groupInterval,
+                        parentColumnValue = parent.value(parent.field('column'));
+                    cellData[parentGroupInterval] = parentColumnValue;
+                }
+                parent = parent.parent();
+            }
+        }
+        return cellData;
+    }
+
+    /** set the prev ending account value to the cash */
+    setAnotherPeriodAccountCachedValue(key, value) {
+        this.anotherPeriodAccountsValues.set(key, value);
+    }
+
+    /**
+     * Update the fields array with the date fields with different date intervals like year, quarter and month
+     * @param startedGroupInterval - the groupInterval from which we should start show headers
+     */
+    updateDateFields(startedGroupInterval) {
+        let allColumnsFields = this.getColumnFields();
+        for (let field of allColumnsFields) {
+            field.expanded = false;
+        }
+        allColumnsFields.every(field => {
+            if (field.groupInterval === startedGroupInterval) {
+                return false;
+            } else {
+                field.expanded = true;
+                return true;
+            }
+        });
+    }
+
+
+    /** check the date - if it is mtd date - disallow editing, if today or projected - welcome on board */
+    cellIsNotHistorical(cellObj): boolean {
+        let path = cellObj.cell.path || cellObj.cell.columnPath;
+        let cellDateInterval = this.formattingDate(path);
+        let currentDate = DateHelper.getCurrentUtcDate();
+        return cellDateInterval.endDate.isAfter(currentDate, 'day') ||
+            currentDate.isBetween(cellDateInterval.startDate, cellDateInterval.endDate, 'day') ||
+            (currentDate.isSame(cellDateInterval.startDate, 'day') && currentDate.isSame(cellDateInterval.endDate, 'day'));
+    }
+
+
+    getDataSourceItemByPath(dataSourceItems: any[], path: any[]) {
+        let pathValue = path.shift();
+        for (let i = 0; i < dataSourceItems.length; i++) {
+            let item = dataSourceItems[i];
+            if (item.value == pathValue) {
+                if (path.length == 0)
+                    return item;
+
+                if (!item.children)
+                    return null;
+
+                return this.getDataSourceItemByPath(item.children, path);
+            }
+        }
+    }
+
+    /**
+     * whether or not the cell is balance sheet header
+     * @param cellObj - the object that pivot grid passes to the onCellPrepared event
+     * return bool
+     */
+    isStartingBalanceHeaderColumn(cellObj) {
+        return cellObj.area === 'row' &&
+            cellObj.cell.path !== undefined &&
+            cellObj.cell.path.length === 1 &&
+            cellObj.cell.rowspan === undefined &&
+            cellObj.cell.path[0] === PSB &&
+            !cellObj.cell.isWhiteSpace;
+    }
+
+    /**
+     * whether or not the cell is balance sheet data cell
+     * @param cell - info about cell
+     * @param area - area of the cell ('data', 'row', 'column')
+     * return {boolean}
+     */
+    isStartingBalanceDataColumn(cell, area): boolean {
+        return area === 'data' && cell.rowPath !== undefined && cell.rowPath[0] === PSB;
+    }
+
+    /**
+     * whether or not the cell is balance sheet total data cell
+     * @param cell - info about cell
+     * @param area - area of the cell ('data', 'row', 'column')
+     * return {boolean}
+     */
+    isStartingBalanceTotalDataColumn(cellObj): boolean {
+        return cellObj.area === 'data' && cellObj.cell.rowPath !== undefined &&
+            cellObj.cell.rowPath[0] === PSB &&
+            (cellObj.cell.rowType === PT || cellObj.cell.rowPath.length === 1);
+    }
+
+    /**
+     * whether cell is cashflow type header cell
+     * @param cell - info about cell
+     * @param area - area of the cell ('data', 'row', 'column')
+     * return {boolean}
+     */
+    isCashflowTypeRowTotal(cell, area): boolean {
+        let result = false;
+        if (area === 'row' || area === 'data') {
+            let path = cell.path || cell.rowPath;
+            result = path && !cell.isWhiteSpace ? path.length === 1 : false;
+        }
+        return result;
+    }
+
+    isReportingSectionRowTotal(cell, area): boolean {
+        let result = false;
+        if (area === 'row' || area === 'data') {
+            let path = cell.path || cell.rowPath;
+            if (path && !cell.isWhiteSpace && path[path.length - 1]) {
+                const prefix = path[path.length - 1].slice(0, 2);
+                result = prefix === CategorizationPrefixes.ReportingSection || prefix === CategorizationPrefixes.ReportingGroup;
+            } else {
+                result = false;
+            }
+        }
+        return result;
+    }
+
+    isAccountingRowTotal(cell, area): boolean {
+        let result = false;
+        if (area === 'row' || area === 'data') {
+            let path = cell.path || cell.rowPath;
+            result = path && !cell.isWhiteSpace && path[path.length - 1] ? path[path.length - 1].slice(0, 2) === CategorizationPrefixes.AccountingType : false;
+        }
+        return result;
+    }
+
+    cellIsUnclassified(cell, area) {
+        let result = false;
+        if (area === 'row' || area === 'data') {
+            let path = cell.path || cell.rowPath;
+            result = path && !cell.isWhiteSpace && path.length === 2 && path[2] === undefined;
+        }
+        return result;
+    }
+
+    /**
+     * whether or not the cell is income or expenses header cell
+     * @param cell - info about cell
+     * @param area - area of the cell ('data', 'row', 'column')
+     * return {boolean}
+     */
+    isIncomeOrExpensesChildCell(cell, area) {
+        return area === 'row' && cell.path && cell.path.length > 1 && (cell.path[0] === PI || cell.path[0] === PE);
+    }
+
+    /**
+     * whether the cell is income or expenses header cell
+     * @param cell - info about cell
+     * @param area - area of the cell ('data', 'row', 'column')
+     * return {boolean}
+     */
+    isIncomeOrExpensesChildHeaderCell(cellObj): boolean {
+        return cellObj.area === 'row' && cellObj.cell.path && cellObj.cell.path.length > 1 &&
+            (cellObj.cell.path[0] === PI || cellObj.cell.path[0] === PE);
+    }
+
+    /**
+     * whether the cell is net change header cell
+     * @param cell - info about cell
+     * @param area - area of the cell ('data', 'row', 'column')
+     * return {boolean}
+     */
+    isNetChangeTotalCell(cellObj) {
+        let pathProperty = cellObj.area === 'row' ? 'path' : 'rowPath';
+        return cellObj.cell[pathProperty] && !cellObj.cell.isWhiteSpace && cellObj.cell[pathProperty].length === 1 && cellObj.cell[pathProperty][0] === PNC;
+    }
+
+    isAccountHeaderCell(cell, area): boolean {
+        return area === 'row' && cell.path && cell.path[1] && cell.path[1].slice(0, 2) === CategorizationPrefixes.AccountName;
+    }
+
+    /**
+     * whether or not the cell is income or expenses data cell
+     * @param cellObj - the object that pivot grid passes to the onCellPrepared event
+     * return {boolean}
+     */
+    isIncomeOrExpensesDataCell(cell, area) {
+        return area === 'data' && cell.rowPath !== undefined && cell.rowPath.length === 1 &&
+            (cell.rowPath[0] === PI || cell.rowPath[0] === PE);
+    }
+
+    /** Whether the cell is the ending cash position header cell */
+    isTotalEndingHeaderCell(cellObj) {
+        return cellObj.cell.path !== undefined &&
+            cellObj.cell.path.length === 1 &&
+            cellObj.cell.path[0] === PT &&
+            !cellObj.cell.isWhiteSpace;
+    }
+
+    isStartingBalanceWhiteSpace(cell) {
+        return cell.isWhiteSpace &&
+            cell.path.length === 1 &&
+            cell.path[0] === PSB;
+    }
+
+    /** Whether the cell is the ending cash position data cell */
+    isTotalEndingDataCell(cellObj) {
+        return cellObj.cell.rowPath !== undefined &&
+            cellObj.cell.rowPath.length === 1 &&
+            (cellObj.cell.rowPath[0] === PT);
+    }
+
+    isAllTotalBalanceCell(cell) {
+        return cell.rowPath !== undefined && (cell.rowPath[0] === PT || cell.rowPath[0] === PNC);
+    }
+
+    isTransactionRows(cell) {
+        return cell.rowPath !== undefined &&
+            cell.rowPath.length !== 1 &&
+            (cell.rowPath[0] === PI || cell.rowPath[0] === PE || cell.rowPath[0] === PCTT);
+    }
+
+    isReconciliationRows(cell) {
+        return cell.rowPath !== undefined && cell.rowPath[0] === PR;
+    }
+
+    /**
+     * whether the cell is the historical cell
+     * @param cellObj
+     * @returns {boolean}
+     */
+    isHistoricalCell(cellObj) {
+        return cellObj.area === 'column' && cellObj.rowIndex === 0;
+    }
+
+    createActionButton(name, attributes: object = {}) {
+        let a = document.createElement('a');
+        a.className = 'dx-link dx-link-' + name;
+        a.innerText = this.ls.l(capitalize(name));
+        if (attributes) {
+            for (let key in attributes) {
+                a.setAttribute(key, attributes[key]);
+            }
+        }
+        return a;
+    }
+
+    applyOptionsToElement(element, ...optionsList) {
+        for (let options of optionsList) {
+            options.classes.length && element.classList.add(...options.classes);
+            options.parentClasses.length && element.parentElement.classList.add(...options.parentClasses);
+            if (Object.keys(options.attributes).length) {
+                for (let attribute in options.attributes) {
+                    element.setAttribute(attribute, options.attributes[attribute]);
+                }
+            }
+            options.elementsToAppend.length && options.elementsToAppend.forEach(appendElement => element.appendChild(appendElement));
+            options.childrenSelectorsToRemove.length && options.childrenSelectorsToRemove.forEach(selectorToRemove => element.querySelector(selectorToRemove).remove());
+            if (Object.keys(options.eventListeners).length) {
+                for (let listener in options.eventListeners) {
+                    element[listener] = options.eventListeners[listener];
+                }
+            }
+            options.eventsToTrigger.length && options.eventsToTrigger.forEach(eventName => element[eventName]());
+            if (options.value !== null) {
+                /** @todo add class to the span with actual value and get it */
+                element.firstElementChild.innerHTML = options.value;
+            }
+        }
+    }
+
+
+    getCellInfo(cellObj, defaultValues: any = {}): CellInfo {
+        const categoryId = this.getCategoryValueByPrefix(cellObj.cell.rowPath, CategorizationPrefixes.Category);
+        const subCategoryId = this.getCategoryValueByPrefix(cellObj.cell.rowPath, CategorizationPrefixes.SubCategory);
+        return {
+            date: this.formattingDate(cellObj.cell.columnPath),
+            fieldCaption: this.getLowestFieldCaptionFromPath(cellObj.cell.columnPath, this.getColumnFields()),
+            cashflowTypeId: this.getCategoryValueByPrefix(cellObj.cell.rowPath, CategorizationPrefixes.CashflowType)
+            || this.getCashFlowTypeByCategory(subCategoryId || categoryId, this.categoryTree)
+            || defaultValues.cashflowTypeId,
+            categoryId: categoryId,
+            subCategoryId: subCategoryId,
+            transactionDescriptor: this.getCategoryValueByPrefix(cellObj.cell.rowPath, CategorizationPrefixes.TransactionDescriptor),
+            accountingTypeId: this.getCategoryValueByPrefix(cellObj.cell.rowPath, CategorizationPrefixes.AccountingType)
+        };
+    }
+
+
+    getLowestFieldCaptionFromPath(path, columnFields) {
+        let lastOpenedColumnIndex = path.length - 1;
+        let lastOpenedField = columnFields[lastOpenedColumnIndex];
+        return lastOpenedField ? lastOpenedField.caption.toLowerCase() : null;
+    }
+
+    /**
+     * Get the classes for the current cells such as currentYear, currentQuarter and currentMonth
+     @todo refactor
+     */
+    getCurrentPeriodsClass(cell, area) {
+        let className;
+        const path = cell.path || cell.columnPath;
+        if (area !== 'row' && path && path.length) {
+            let fieldIndex = path.length - 1;
+            let cellField = this.getColumnFields()[fieldIndex];
+            let fieldCaption = cellField.caption.toLowerCase();
+            let cellValue = path[fieldIndex];
+            let currentDate = moment();
+            if (cellField.dataType === 'date' || fieldCaption === 'week') {
+                let periodFormat;
+                switch (fieldCaption) {
+                    case 'year'    : periodFormat = 'YYYY'; break;
+                    case 'quarter' : periodFormat = 'YYYY.QQ'; break;
+                    case 'month'   : periodFormat = 'YYYY.MM'; break;
+                    case 'week'    : periodFormat = 'YYYY.MM.WW'; break;
+                    case 'day'     : periodFormat = 'YYYY.MM.DD'; break;
+                }
+                let cellDate = this.getDateByPath(path, this.getColumnFields(), fieldCaption);
+                let cellDateFormated = cellDate.format(periodFormat);
+                let currentDateFormatted = currentDate.format(periodFormat);
+                if (cellDateFormated === currentDateFormatted) {
+                    className = `current${capitalize(fieldCaption)}`;
+                } else if (cellDateFormated < currentDateFormatted) {
+                    className = `prev${capitalize(fieldCaption)}`;
+                } else if (cellDateFormated > currentDateFormatted) {
+                    className = `next${capitalize(fieldCaption)}`;
+                }
+            } else if (fieldCaption === 'projected') {
+                if (cellValue === Projected.Today) {
+                    className = `current${capitalize(fieldCaption)}`;
+                } else if (cellValue === Projected.Mtd || cellValue === Projected.PastTotal) {
+                    className = `prev${capitalize(fieldCaption)}`;
+                } else if (cellValue === Projected.Forecast || cellValue === Projected.FutureTotal) {
+                    className = `next${capitalize(fieldCaption)}`;
+                }
+            } else if (fieldCaption === 'historical') {
+                if (cellValue === Periods.Current) {
+                    className = `current${capitalize(fieldCaption)}`;
+                } else if (cellValue === Periods.Historical) {
+                    className = `prev${capitalize(fieldCaption)}`;
+                } else if (cellValue === Periods.Forecast) {
+                    className = `next${capitalize(fieldCaption)}`;
+                }
+            }
+        }
+        return className;
+    }
+
+    /**
+     * Return the date object from the cell
+     * @param path
+     * @param columnFields
+     * @return {any}
+     */
+    getDateByPath(columnPath, columnFields, lowestCaption ?: string) {
+        lowestCaption = lowestCaption || this.getLowestFieldCaptionFromPath(columnPath, columnFields);
+        let date = moment.unix(0).tz('UTC');
+        columnFields.every(dateField => {
+            let areaIndex = this.getAreaIndexByCaption(dateField.caption, 'column');
+            let fieldValue = columnPath[areaIndex];
+            if (dateField.dataType === 'date') {
+                let method = dateField.groupInterval === 'day' ? 'date' : dateField.groupInterval;
+                if (fieldValue) {
+                    fieldValue = dateField.groupInterval === 'month' ? fieldValue - 1 : fieldValue;
+                    /** set the new interval to the moment */
+                    date[method](fieldValue);
+                }
+            } else if (dateField.caption === 'Week') {
+                let weekNumber = JSON.parse(fieldValue).weekNumber;
+                date.isoWeek(weekNumber);
+            } else if (dateField.caption === 'Projected') {
+                let currentDate = moment().date();
+                if (fieldValue) {
+                    if (fieldValue === Projected.Today) {
+                        date.date(currentDate);
+                    } else if (fieldValue === Projected.Mtd || fieldValue === Projected.PastTotal) {
+                        date.date(1);
+                    } else if (fieldValue === Projected.Forecast || fieldValue === Projected.FutureTotal) {
+                        date.date(currentDate + 1);
+                    }
+                }
+            }
+            return dateField.caption.toLowerCase() !== lowestCaption;
+        });
+        return date;
+    }
+
+    getDateFields(columnFields, lowestInterval) {
+        let result = [];
+        columnFields.every(field => {
+            if (field.dataType === 'date') {
+                result.push(field);
+            }
+            if (field.groupInterval === lowestInterval) {
+                return false;
+            }
+            return true;
+        });
+        return result;
+    }
+
+    /**
+     * Creates historical cell in historical row
+     * @param period
+     */
+    createHistoricalCell(period) {
+        let positionMethod = period === 'next' ? 'after' : 'before',
+            textKey = period === 'next' ? this.historicalTextsKeys[2] : this.historicalTextsKeys[0],
+            text = this.ls.l(textKey);
+        $('.historicalRow .currentHistorical')
+            [positionMethod](function () {
+            return `<td class="dx-pivotgrid-expanded historicalField ${period}Historical">${text.toUpperCase()}</td>`;
+        });
+    }
+
+
+    /**
+     * Return index in path for field for a row or column areas
+     * @param {string} caption
+     * @param {"row" | "column"} area
+     * @return {any}
+     */
+    getAreaIndexByCaption(caption: string, area: 'row' | 'column') {
+        let areaIndex = null;
+        caption = caption.toLowerCase();
+        this.apiTableFields.some(field => {
+            if (field.area === area) {
+                if (field.caption.toLowerCase() === caption) {
+                    areaIndex = field.areaIndex;
+                    return true;
+                }
+            }
+        });
+        return areaIndex;
+    }
+
+
+    /**
+     * Gets the mtd or projected 0 or 1 from the path
+     * @param projected
+     */
+    getProjectedValueByPath(path) {
+        let projectedFieldIndex = this.getAreaIndexByCaption('projected', 'column');
+        return projectedFieldIndex ? path[projectedFieldIndex] : undefined;
+    }
+
+
+    /**
+     * Check if date is weekend date
+     * @param date
+     */
+    isWeekend(date) {
+        /** if day number is 0 (sunday) or 6 (saturday) */
+        return date.day() === 0 || date.day() === 6;
+    }
+
+    /**
+     * Build the nested object from array as the properties
+     * @param base - the object to create
+     * @param names - the array with nested keys
+     */
+    updateNestedObject(base, names) {
+        for (let i = 0; i < names.length; i++ ) {
+            base = base[ names[i] ] = base[ names[i] ] || {};
+        }
     }
 }

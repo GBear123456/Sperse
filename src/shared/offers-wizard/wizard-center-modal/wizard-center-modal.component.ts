@@ -11,12 +11,10 @@ import {
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatHorizontalStepper } from '@angular/material';
 
-
 /** Application imports */
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { InputStatusesService } from '@shared/utils/input-statuses.service';
 import { OffersWizardService } from '@shared/offers-wizard/offers-wizard.service';
-
 
 @Component({
   selector: 'app-wizard-centr-modal',

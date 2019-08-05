@@ -16,7 +16,7 @@
     (onSelectedBankAccountsChange)="setBankAccountsFilter(true)">
 </cashflow-operations>
 
-<div class="cashflow" *ngIf="cashflowData && cashflowData.length">
+<div class="cashflow" *ngIf="cashflowService.cashflowData && cashflowService.cashflowData.length">
     <div class="sort-options" [hidden]="!contentReady">
         <app-toolbar [config]="categoryToolbarConfig" [compact]="true"></app-toolbar>
     </div>
@@ -39,8 +39,8 @@
             <div class="detailsButtons">
                 <dx-button *ngIf="!hasStaticInstance" [text]="'+ ' + l('AddForecastTransaction')" (onClick)="addNewForecast()" [disabled]="!isInstanceAdmin || disableAddForecastButton"></dx-button>
                 <dx-button *ngIf="detailsContainsForecasts" [disabled]="!isInstanceAdmin || !detailsSomeForecastsItemsSelected" [text]="'x ' + l('DeleteSelectedForecasts')" (onClick)="deleteSelectedForecasts()"></dx-button>
-                <dx-button *ngIf="searchValue?.length" class="search-value-btn" [text]="searchValue" [visible]="!showAllVisible" (onClick)="refreshTransactionDetail(false)"></dx-button>
-                <dx-button class="showall-btn" [text]="l('Show all')" [visible]="showAllVisible" (onClick)="refreshTransactionDetail(true)" [disabled]="showAllDisable"></dx-button>
+                <dx-button *ngIf="searchValue?.length" class="search-value-btn" [text]="searchValue" [visible]="!cashflowService.showAllVisible" (onClick)="refreshTransactionDetail(false)"></dx-button>
+                <dx-button class="showall-btn" [text]="l('Show all')" [visible]="cashflowService.showAllVisible" (onClick)="refreshTransactionDetail(true)" [disabled]="cashflowService.showAllDisable"></dx-button>
                 <dx-button *ngIf="!hasStaticInstance" class="reclassify-btn" [text]="l('Reclassify')" [disabled]="!_cfoService.classifyTransactionsAllowed || !detailsSomeHistoricalItemsSelected" (onClick)="reclassifyTransactions($event)"></dx-button>
             </div>
         </div>
@@ -103,7 +103,7 @@
                         cssClass="tabularFontName">
             </dxi-column>
             <dxi-column *ngIf="hasStaticInstance" dataField="categoryName"
-                        dataType="string" 
+                        dataType="string"
                         alignment="left"
                         [minWidth]="30"
                         [allowFiltering]="false"
@@ -117,7 +117,7 @@
                         [minWidth]="30"
                         [allowFiltering]="false"
                         caption="{{l('Transactions_Vendor')}}">
-            </dxi-column>            
+            </dxi-column>
             <dxi-column *ngIf="!hasStaticInstance" dataField="status"
                         headerCellTemplate="twoRowsHeaderCellTemplate"
                         alignment="left"
@@ -163,7 +163,7 @@
                         [allowEditing]="false"
                         [minWidth]="30"
                         editCellTemplate="accountsEditSelect">
-            </dxi-column>         
+            </dxi-column>
             <dxi-column *ngIf="!hasStaticInstance" dataField="accountId"
                         [allowSorting]="false"
                         [allowFiltering]="false"
@@ -255,7 +255,7 @@
         class="cashflow-scroll"
         (onScroll)="onScroll($event)"
         [ngClass]="{
-            'withCashflowFooterToolbar' : cashflowGridSettings?.visualPreferences?.showFooterBar
+            'withCashflowFooterToolbar' : cashflowService.cashflowGridSettings?.visualPreferences?.showFooterBar
         }">
         <div class="pivot-grid-wrapper">
             <dx-pivot-grid id="operations"
@@ -297,20 +297,20 @@
         <calculator-widget></calculator-widget>
     </div>
 
-    <div class="cashflowFooterToolbar" *ngIf="cashflowGridSettings?.visualPreferences?.showFooterBar">
+    <div class="cashflowFooterToolbar" *ngIf="cashflowService.cashflowGridSettings?.visualPreferences?.showFooterBar">
         <app-toolbar [config]="footerToolbarConfig"></app-toolbar>
     </div>
 
 </div>
 
 <app-no-data
-    *ngIf="!loading && cashflowData && !cashflowData.length"
+    *ngIf="!loading && cashflowService.cashflowData && !cashflowService.cashflowData.length"
     text=""
     [linkUrl]="instanceUri + 'start'"
     [showLink]="!filteredLoad"
     [linkText]="l('Go_to_sfo_setup')">
 </app-no-data>
 <div class="cashflowFooterToolbar"
-     *ngIf="loading && (!cashflowData || !cashflowData.length) && cashflowGridSettings?.visualPreferences?.showFooterBar">
+     *ngIf="loading && (!cashflowService.cashflowData || !cashflowService.cashflowData.length) && cashflowService.cashflowGridSettings?.visualPreferences?.showFooterBar">
     <app-toolbar [config]="footerToolbarConfig"></app-toolbar>
 </div>
