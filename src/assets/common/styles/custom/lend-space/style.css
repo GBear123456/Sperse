@@ -325,6 +325,7 @@ body.lend-space .cdk-overlay-pane.user-info app-modal-dialog mat-dialog-content 
     right: 0 !important;
     top: 21px !important;
     background-color: transparent !important;
+    z-index: 1;
   }
   body.lend-space .cdk-overlay-pane.footer-slider .close-dialog:before,
   body.lend-space .cdk-overlay-pane.user-info .close-dialog:before,
@@ -489,3 +490,4 @@ personal-finance-header.pfm-app.yellow {
   background-color: #000!important;
   color: #FFF!important;
 }
+/*# sourceMappingURL=style.css.map */
