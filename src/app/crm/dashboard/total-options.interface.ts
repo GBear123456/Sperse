@@ -5,5 +5,5 @@ export interface ITotalOption {
     argumentField: string;
     valueField: string;
     sorting?: (a: any, b: any) => -1 | 0 | 1;
-    getColor?: (argument: string) => string;
+    getColor?: (item: any) => string;
 }

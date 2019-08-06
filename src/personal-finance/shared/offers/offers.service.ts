@@ -11,20 +11,21 @@ import capitalize from 'lodash/capitalize';
 import lowerCase from 'lodash/lowerCase';
 import upperFirst from 'lodash/upperFirst';
 import { ReplaySubject, Observable } from 'rxjs';
-import { map, first, publishReplay, refCount } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
+import * as moment from 'moment';
 
 /** Application imports */
 import {
     OfferDto,
     CampaignCategory,
     CreditScoreRating,
-    SubmitRequestOutput,
     OfferServiceProxy,
     GetMemberInfoResponse,
     CampaignProviderType,
     SubmitRequestInput,
     OfferProviderType,
-    SubmitApplicationOutput
+    SubmitApplicationOutput,
+    SubmitApplicationInput
 } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { CreditScoreInterface } from '@root/personal-finance/shared/offers/interfaces/credit-score.interface';
@@ -131,6 +132,7 @@ export class OffersService {
     readonly creditLandLogoUrl = './assets/common/images/offers/credit-land.png';
     displayedCards: OfferDto[];
     defaultCategoryDisplayName: string = this.ls.l('Offers_Offers');
+    submitApplicationProfileInput = new SubmitApplicationInput();
     constructor(
         private route: ActivatedRoute,
         private router: Router,
@@ -147,6 +149,7 @@ export class OffersService {
             }
         );
         this.loadMemberInfo();
+        this.submitApplicationProfileInput.systemType = OfferProviderType.EPCVIP;
     }
 
     static getCategoryFromRoute(route: ActivatedRoute): Observable<CampaignCategory> {
@@ -181,19 +184,6 @@ export class OffersService {
         return CreditScoreRating[scoreName] ? CreditScoreRating[scoreName] : CreditScoreRating.NotSure;
     }
 
-    getCreditScoreObject(creditScore: CreditScoreRating): CreditScoreInterface {
-        if (creditScore) {
-            const scoreName = (creditScore as string).toLowerCase();
-            if (this.creditScores[scoreName]) {
-                return {
-                    name: scoreName,
-                    min: this.creditScores[scoreName].min,
-                    max: this.creditScores[scoreName].max
-                };
-            }
-        }
-    }
-
     applyOffer(offer: OfferDto, isCreditCard = false) {
         const linkIsDirect = !!offer.redirectUrl;
         let redirectUrl = !linkIsDirect ? offer.redirectUrl : offer.redirectUrl + '&' + this.memberInfoApplyOfferParams;
@@ -204,15 +194,16 @@ export class OffersService {
         });
         const modalData = {
             processingSteps: [null, null, null, null],
-            completeDelays: [ 250, 250, 250, 250 ],
-            delayMessages: null,
-            title: 'Offers_ConnectingToPartners',
-            subtitle: 'Offers_NewWindowWillBeOpen',
-            redirectUrl: redirectUrl,
+            completeDelays: linkIsDirect ? [ 250, 250, 250, 250 ] : [ 1000, 1000, 1000, null ],
+            delayMessages: linkIsDirect ? null : <any>[ null, null, null, this.ls.l('Offers_TheNextStepWillTake') ],
+            title: linkIsDirect ? 'Offers_ConnectingToPartners' : 'Offers_ProcessingLoanRequest',
+            subtitle: linkIsDirect ? 'Offers_NewWindowWillBeOpen' : 'Offers_WaitLoanRequestProcessing',
+            redirectUrl: linkIsDirect ? redirectUrl : offer.redirectUrl,
             logoUrl: offer.campaignProviderType === CampaignProviderType.CreditLand
                 ? this.creditLandLogoUrl
                 : (isCreditCard ? null : offer.logoUrl)
         };
+
         if (!linkIsDirect) {
             this.dialog.open(WizardCenterModalComponent, {
                 width: '1200px',
@@ -226,31 +217,71 @@ export class OffersService {
                     creditLandLogoUrl: this.creditLandLogoUrl,
                     isCreditCard: isCreditCard
                 }
-            }).afterClosed().subscribe((result: SubmitApplicationOutput)  => {
-                if (result) {
+            }).afterClosed().subscribe((output: SubmitApplicationOutput)  => {
+                if (output) {
                     this.loadMemberInfo();
-                    if (result.redirectUrl) window.open(result.redirectUrl, '_blank');
+                    if (output.redirectUrl) window.open(output.redirectUrl, '_blank');
                 }
             });
         } else {
-            submitRequestInput.redirectUrl = redirectUrl;
-        const applyOfferDialog = this.dialog.open(ApplyOfferDialogComponent, {
-            width: '530px',
-            panelClass: 'apply-offer-dialog',
-            data: modalData
-        });
-        this.offerServiceProxy.submitRequest(submitRequestInput)
-            .subscribe(
-                (output: SubmitRequestOutput) => {
-                    if (!linkIsDirect) {
-                        !window.open(output.redirectUrl, '_blank')
-                            ? applyOfferDialog.componentInstance.showBlockedMessage = true
-                            : applyOfferDialog.close();
+            if (this.isOldLastSubmitDate()) {
+                this.dialog.open(WizardCenterModalComponent, {
+                    width: '1200px',
+                    height: '800px',
+                    id: 'offers-wizard',
+                    panelClass: ['offers-wizard', 'setup'],
+                    disableClose: true,
+                    data: {
+                        offer: offer,
+                        campaignId: null,
+                        creditLandLogoUrl: this.creditLandLogoUrl,
+                        isCreditCard: isCreditCard
                     }
-                },
-                () => applyOfferDialog.close()
-            );
+                }).afterClosed().subscribe((output: SubmitApplicationOutput)  => {
+                    if (output) {
+                         const applyOfferDialog = this.dialog.open(ApplyOfferDialogComponent, {
+                            width: '530px',
+                            panelClass: 'apply-offer-dialog',
+                            data: modalData
+                        });
+                        this.loadMemberInfo();
+                        submitRequestInput.redirectUrl = redirectUrl;
+                        this.offerServiceProxy.submitRequest(submitRequestInput).subscribe(() => {
+                            applyOfferDialog.close();
+                        });
+                    }
+                });
+            } else {
+                submitRequestInput.redirectUrl = redirectUrl;
+                const applyOfferDialog = this.dialog.open(ApplyOfferDialogComponent, {
+                    width: '530px',
+                    panelClass: 'apply-offer-dialog',
+                    data: modalData
+                });
+                this.offerServiceProxy.submitRequest(submitRequestInput)
+                    .subscribe(
+                        () => applyOfferDialog.close()
+                    );
+            }
         }
+    }
+
+    getCreditScoreObject(creditScore: CreditScoreRating): CreditScoreInterface {
+        if (creditScore) {
+            const scoreName = (creditScore as string).toLowerCase();
+            if (this.creditScores[scoreName]) {
+                return {
+                    name: scoreName,
+                    min: this.creditScores[scoreName].min,
+                    max: this.creditScores[scoreName].max
+                };
+            }
+        }
+    }
+    
+    isOldLastSubmitDate() {
+        const compareToDate = moment().subtract(1, 'month');
+        return this.memberInfo.profileSubmissionDate ? moment(compareToDate).isAfter(this.memberInfo.profileSubmissionDate) : true;
     }
 
     loadMemberInfo(): void {

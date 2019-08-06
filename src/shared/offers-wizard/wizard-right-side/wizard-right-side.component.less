@@ -31,45 +31,7 @@
     height: 100%;
     
     .container {
-        margin: 30px 0;
-        padding: 0 40px;
-    }
-    
-    .close {
-        position: absolute;
-        width: 20px;
-        height: 20px;
-        top: 10px;
-        right: 12px;
-        display: block;
-        background-color: transparent;
-        transition: .3s;
-        cursor: pointer;
-        outline: none;
-        opacity: .5;
-        
-        &:after, &:before {
-            position: absolute;
-            top: 0;
-            left: 9px;
-            content: ' ';
-            height: 20px;
-            width: 2px;
-            background-color: #202b35;
-            cursor: pointer;
-        }
-        
-        &:before {
-            transform: rotate(45deg);
-        }
-        
-        &:after {
-            transform: rotate(-45deg);
-        }
-        
-        &:hover {
-            opacity: 1;
-        }
+        padding: 20px 15px;
     }
     
     .link {
@@ -152,7 +114,7 @@
         align-items: center;
         width: 100%;
         
-        .dx-field-label {
+        .dx-field-label         {
             width: 100%;
             float: right;
             text-transform: uppercase;
@@ -160,7 +122,13 @@
             font-weight: 700;
             padding-bottom: 4px;
             color: #fff;
+    
+            @media all and (max-width: 768px) {
+                font-size: 11px;
+                font-weight: 400;
+            }
         }
+        
         .dx-field-value {
             width: 100% !important;
         }
@@ -168,6 +136,12 @@
         .dx-texteditor-input {
             background-color: #fff;
             border-radius: 4px;
+            
+            @media all and (max-width: 768px) {
+                padding: 5px 8px;
+                font-size: 14px;
+                font-weight: 500;
+            }
         }
         
         .dx-placeholder {

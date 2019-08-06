@@ -96,7 +96,6 @@
                         <dxi-column dataField="TypeName" caption="{{l('Transactions_Type')}}" [visible]="false" [lookup]="{dataSource: types}"></dxi-column>
                         <dxi-column dataField="ProviderCashFlowCategoryName" caption="{{l('Transactions_ProviderCashFlowCategory')}}" [visible]="false"></dxi-column>
                         <dxi-column dataField="ProviderCashFlowSubCategoryName" caption="{{l('Transactions_ProviderCashFlowSubCategory')}}" [visible]="false"></dxi-column>
-                        <dxi-column [fixed]="true" [fixedPosition]="'right'" [showInColumnChooser]="false"></dxi-column>
 
                         <div *dxTemplate="let cell of 'amountTemplate'">
                             <ng-container *ngIf="(cell.text) && ((cell.column.name == 'Amount') || (cell.value < 0 && cell.column.name == 'Debit') || (cell.value >= 0 && cell.column.name == 'Credit'))">

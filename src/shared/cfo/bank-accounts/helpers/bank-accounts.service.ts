@@ -208,21 +208,24 @@ export class BankAccountsService {
                 first(),
                 switchMap(() => this.applyFilter$),
                 withLatestFrom(this.filteredSyncAccounts$, (applyForLink, filteredAccounts) => {
-                    if (!applyForLink && this.acceptFilterOnlyOnApply &&
-                        !this.state.selectedBankAccountIds.length
-                    ) {
-                        let filteredAccountsIds = [];
-                        filteredAccounts.forEach(account => {
+                    this.changeSelectedBankAccountsIds(
+                        filteredAccounts.reduce((result, account) => {
                             if (account.bankAccounts.length) {
-                                account['selected'] = true;
-                                account.bankAccounts.forEach(bank => {
-                                    bank['selected'] = true;
-                                    filteredAccountsIds.push(bank.id);
-                                });
+                                if (!applyForLink && this.acceptFilterOnlyOnApply &&
+                                    !this.state.selectedBankAccountIds.length
+                                ) {
+                                    account['selected'] = true;
+                                    account.bankAccounts.forEach(bank => {
+                                        bank['selected'] = true;
+                                        result.push(bank.id);
+                                    });
+                                } else 
+                                    result = result.concat(account.bankAccounts.filter(
+                                        item => item['selected']).map(item => item.id));                              
                             }
-                        });
-                        this.changeSelectedBankAccountsIds(filteredAccountsIds);
-                    }
+                            return result;
+                        }, [])
+                    );
                     return filteredAccounts;
                 }),
                 distinctUntilChanged(this.arrayDistinct)

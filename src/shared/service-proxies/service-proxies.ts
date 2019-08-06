@@ -31512,6 +31512,7 @@ export class PersonalInformationExtended implements IPersonalInformationExtended
     monthsAtAddress!: number | undefined;
     creditScoreRating!: CreditScoreRating | undefined;
     gender!: Gender | undefined;
+    timezone!: string | undefined;
 
     constructor(data?: IPersonalInformationExtended) {
         if (data) {
@@ -31547,6 +31548,7 @@ export class PersonalInformationExtended implements IPersonalInformationExtended
             this.monthsAtAddress = data["monthsAtAddress"];
             this.creditScoreRating = data["creditScoreRating"];
             this.gender = data["gender"];
+            this.timezone = data["timezone"];
         }
     }
 
@@ -31582,6 +31584,7 @@ export class PersonalInformationExtended implements IPersonalInformationExtended
         data["monthsAtAddress"] = this.monthsAtAddress;
         data["creditScoreRating"] = this.creditScoreRating;
         data["gender"] = this.gender;
+        data["timezone"] = this.timezone;
         return data; 
     }
 }
@@ -31610,6 +31613,7 @@ export interface IPersonalInformationExtended {
     monthsAtAddress: number | undefined;
     creditScoreRating: CreditScoreRating | undefined;
     gender: Gender | undefined;
+    timezone: string | undefined;
 }
 
 export class DebtInformation implements IDebtInformation {
@@ -32115,6 +32119,7 @@ export class PersonalInformation implements IPersonalInformation {
     monthsAtAddress!: number | undefined;
     creditScoreRating!: CreditScoreRating | undefined;
     gender!: Gender | undefined;
+    timezone!: string | undefined;
 
     constructor(data?: IPersonalInformation) {
         if (data) {
@@ -32149,6 +32154,7 @@ export class PersonalInformation implements IPersonalInformation {
             this.monthsAtAddress = data["monthsAtAddress"];
             this.creditScoreRating = data["creditScoreRating"];
             this.gender = data["gender"];
+            this.timezone = data["timezone"];
         }
     }
 
@@ -32183,6 +32189,7 @@ export class PersonalInformation implements IPersonalInformation {
         data["monthsAtAddress"] = this.monthsAtAddress;
         data["creditScoreRating"] = this.creditScoreRating;
         data["gender"] = this.gender;
+        data["timezone"] = this.timezone;
         return data; 
     }
 }
@@ -32210,6 +32217,7 @@ export interface IPersonalInformation {
     monthsAtAddress: number | undefined;
     creditScoreRating: CreditScoreRating | undefined;
     gender: Gender | undefined;
+    timezone: string | undefined;
 }
 
 export class LoanInformation implements ILoanInformation {
@@ -61178,7 +61186,6 @@ export class GetApplicationDetailsOutput implements IGetApplicationDetailsOutput
     systemType!: OfferProviderType | undefined;
     campaignId!: number | undefined;
     clickId!: string | undefined;
-    timezone!: string | undefined;
     personalInformation!: PersonalInformation | undefined;
     debtInformation!: DebtInformation | undefined;
     loanInformation!: LoanInformation | undefined;
@@ -61200,7 +61207,6 @@ export class GetApplicationDetailsOutput implements IGetApplicationDetailsOutput
             this.systemType = data["systemType"];
             this.campaignId = data["campaignId"];
             this.clickId = data["clickId"];
-            this.timezone = data["timezone"];
             this.personalInformation = data["personalInformation"] ? PersonalInformation.fromJS(data["personalInformation"]) : <any>undefined;
             this.debtInformation = data["debtInformation"] ? DebtInformation.fromJS(data["debtInformation"]) : <any>undefined;
             this.loanInformation = data["loanInformation"] ? LoanInformation.fromJS(data["loanInformation"]) : <any>undefined;
@@ -61222,7 +61228,6 @@ export class GetApplicationDetailsOutput implements IGetApplicationDetailsOutput
         data["systemType"] = this.systemType;
         data["campaignId"] = this.campaignId;
         data["clickId"] = this.clickId;
-        data["timezone"] = this.timezone;
         data["personalInformation"] = this.personalInformation ? this.personalInformation.toJSON() : <any>undefined;
         data["debtInformation"] = this.debtInformation ? this.debtInformation.toJSON() : <any>undefined;
         data["loanInformation"] = this.loanInformation ? this.loanInformation.toJSON() : <any>undefined;
@@ -61237,7 +61242,6 @@ export interface IGetApplicationDetailsOutput {
     systemType: OfferProviderType | undefined;
     campaignId: number | undefined;
     clickId: string | undefined;
-    timezone: string | undefined;
     personalInformation: PersonalInformation | undefined;
     debtInformation: DebtInformation | undefined;
     loanInformation: LoanInformation | undefined;
@@ -61439,7 +61443,6 @@ export class SubmitApplicationInput implements ISubmitApplicationInput {
     employmentInformation!: EmploymentInformation;
     bankInformation!: BankInformation;
     legalInformation!: LegalInformation;
-    timezone!: string | undefined;
 
     constructor(data?: ISubmitApplicationInput) {
         if (data) {
@@ -61468,7 +61471,6 @@ export class SubmitApplicationInput implements ISubmitApplicationInput {
             this.employmentInformation = data["employmentInformation"] ? EmploymentInformation.fromJS(data["employmentInformation"]) : new EmploymentInformation();
             this.bankInformation = data["bankInformation"] ? BankInformation.fromJS(data["bankInformation"]) : new BankInformation();
             this.legalInformation = data["legalInformation"] ? LegalInformation.fromJS(data["legalInformation"]) : new LegalInformation();
-            this.timezone = data["timezone"];
         }
     }
 
@@ -61489,7 +61491,6 @@ export class SubmitApplicationInput implements ISubmitApplicationInput {
         data["employmentInformation"] = this.employmentInformation ? this.employmentInformation.toJSON() : <any>undefined;
         data["bankInformation"] = this.bankInformation ? this.bankInformation.toJSON() : <any>undefined;
         data["legalInformation"] = this.legalInformation ? this.legalInformation.toJSON() : <any>undefined;
-        data["timezone"] = this.timezone;
         return data; 
     }
 }
@@ -61503,7 +61504,6 @@ export interface ISubmitApplicationInput {
     employmentInformation: EmploymentInformation;
     bankInformation: BankInformation;
     legalInformation: LegalInformation;
-    timezone: string | undefined;
 }
 
 export class SubmitApplicationOutput implements ISubmitApplicationOutput {

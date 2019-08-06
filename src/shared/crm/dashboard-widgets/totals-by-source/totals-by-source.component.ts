@@ -69,7 +69,10 @@ export class TotalsBySourceComponent implements OnInit, OnDestroy {
             label: this.ls.l('TotalsByStar/CreditRating'),
             method: this._dashboardServiceProxy.getCustomersByStar,
             argumentField: 'key',
-            valueField: 'count'
+            valueField: 'count',
+            getColor: (item) => {
+                return this._dashboardWidgetsService.getStarColorByType(this.rawData[item.index].colorType);
+            }
         },
         {
             key: 'stageDistribution',
@@ -77,8 +80,8 @@ export class TotalsBySourceComponent implements OnInit, OnDestroy {
             method: this._dashboardServiceProxy.getLeadsCountByStage,
             argumentField: 'key',
             valueField: 'count',
-            getColor: (stageName: string) => {
-                const stage: StageDto = this._pipelineService.getStageByName('Lead', stageName);
+            getColor: (item) => {
+                const stage: StageDto = this._pipelineService.getStageByName('Lead', item.argument);
                 return this._pipelineService.getStageDefaultColorByStageSortOrder(stage.sortOrder);
             }
         },
@@ -180,11 +183,9 @@ export class TotalsBySourceComponent implements OnInit, OnDestroy {
     }
 
     private getItemColor(item) {
-        return this.rawData[item.index].colorType || (
-            this.selectedTotal.value.getColor ?
-            this.selectedTotal.value.getColor(item.argument) :
-            this.rangeColors[item.index]
-        );
+        return this.selectedTotal.value.getColor ?
+            this.selectedTotal.value.getColor(item) :
+            this.rangeColors[item.index];
     }
 
     onPointHoverChanged($event) {

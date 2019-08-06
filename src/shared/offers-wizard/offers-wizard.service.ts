@@ -44,13 +44,13 @@ export class OffersWizardService {
         { value: false, text: 'No' }
     ];
     submitApplicationProfileInput = new SubmitApplicationInput();
-    contactTime = Object.keys(TimeOfDay).map(e => ({key: e, text: this.ls.l(e)}));
-    gender = Object.keys(Gender).map(e => ({key: e, text: this.ls.l(e)}));
-    creditScore = Object.keys(CreditScoreRating).map(e => ({key: e, text: this.ls.l(e)}));
-    loanReason = Object.keys(LoanReason).map(e => ({key: e, text: this.ls.l(e)}));
-    payFrequency = Object.keys(PayFrequency).map(e => ({key: e, text: this.ls.l(e)}));
-    incomeType = Object.keys(IncomeType).map(e => ({key: e, text: this.ls.l(e)}));
-    bankAccountType = Object.keys(BankAccountType).map(e => ({key: e, text: this.ls.l(e)}));
+    contactTime = this.arrayFromEnum(TimeOfDay);
+    gender = this.arrayFromEnum(Gender);
+    creditScore = this.arrayFromEnum(CreditScoreRating);
+    loanReason = this.arrayFromEnum(LoanReason);
+    payFrequency = this.arrayFromEnum(PayFrequency);
+    incomeType = this.arrayFromEnum(IncomeType);
+    bankAccountType = this.arrayFromEnum(BankAccountType);
     termsData = {
         title: this.ls.l('TermsOfUse'),
         bodyUrl: this.domain + '/documents/terms.html',
@@ -72,8 +72,10 @@ export class OffersWizardService {
         private dialog: MatDialog
     ) {
         this.submitApplicationProfileInput.systemType = OfferProviderType.EPCVIP;
+        this.timeZones$ = this._timingService.getTimezones(this.defaultTimezoneScope).pipe(
+            pluck('items')
+        );
         this.getApplicationDetails();
-        this.getTimezoneList();
     }
 
     getApplicationDetails() {
@@ -89,6 +91,10 @@ export class OffersWizardService {
         );
     }
 
+    arrayFromEnum(enumData) {
+        return Object.keys(enumData).map(e => ({key: e, text: this.ls.l(e)}));
+    }
+
     validateName(event) {
         if (!event.key.match(/^[a-zA-Z]+$/))
             event.preventDefault();
@@ -98,13 +104,7 @@ export class OffersWizardService {
         this.dialog.open(ConditionsModalComponent, {panelClass: ['slider', 'footer-slider'], data: data});
     }
 
-    getTimezoneList() {
-        this.timeZones$ = this._timingService.getTimezones(this.defaultTimezoneScope).pipe(
-            pluck('items')
-        );
-    }
-
-    submitApplicationProfile() {
+    submitApplicationProfile(): Observable<SubmitApplicationOutput> {
         let applyOfferDialog;
         this.submitApplicationProfileInput.personalInformation.doB = DateHelper.getDateWithoutTime(this.submitApplicationProfileInput.personalInformation.doB);
         this.submitApplicationProfileInput.employmentInformation.payNextDate = DateHelper.getDateWithoutTime(this.submitApplicationProfileInput.employmentInformation.payNextDate);
@@ -130,8 +130,8 @@ export class OffersWizardService {
         this.submitApplicationProfileInput.legalInformation.isTCPAChecked = true;
         this.submitApplicationProfileInput.campaignId = this.data.campaignId;
         this.appHttpConfiguration.avoidErrorHandling = true;
-        const submitApplication = this.offersServiceProxy.submitApplication(this.submitApplicationProfileInput).pipe(publishReplay(), refCount());
-        submitApplication.subscribe(
+        const submitApplication$ = this.offersServiceProxy.submitApplication(this.submitApplicationProfileInput).pipe(publishReplay(), refCount());
+        submitApplication$.subscribe(
             (result: SubmitApplicationOutput) => {
                 if (result) {
                     if (this.data.campaignId) applyOfferDialog.close();
@@ -155,6 +155,6 @@ export class OffersWizardService {
                 this.appHttpConfiguration.avoidErrorHandling = false;
             }
         );
-        return submitApplication;
+        return submitApplication$;
     }
 }

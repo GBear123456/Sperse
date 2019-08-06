@@ -50,4 +50,8 @@ export class WizardRightSideComponent implements OnInit {
             res && this._offersService.loadMemberInfo();
         });
     }
+
+    calculateScrolableHeight() {
+        return window.innerHeight - 172;
+    }
 }
