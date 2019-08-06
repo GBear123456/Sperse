@@ -2,6 +2,7 @@
 import * as ngCommon from '@angular/common';
 import { NgModule, ModuleWithProviders } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 
 /** Third party imports */
 import { MatProgressBarModule } from '@angular/material/progress-bar';
@@ -97,6 +98,7 @@ import { TypesListComponent } from '@app/crm/shared/types-list/types-list.compon
 import { StaticListComponent } from './static-list/static-list.component';
 import { TimeAgoPipe } from 'time-ago-pipe';
 import { LoadingSpinnerModule } from '@app/shared/common/loading-spinner/loading-spinner.module';
+import { SetupStepsComponent } from './setup-steps/setup-steps.component';
 
 @NgModule({
     imports: [
@@ -108,6 +110,7 @@ import { LoadingSpinnerModule } from '@app/shared/common/loading-spinner/loading
         CommonModule,
         TableModule,
         PaginatorModule,
+        RouterModule,
 
         MatTabsModule,
         MatInputModule,
@@ -199,7 +202,8 @@ import { LoadingSpinnerModule } from '@app/shared/common/loading-spinner/loading
         AppRatingComponent,
         RatingComponent,
         StarsListComponent,
-        TypesListComponent
+        TypesListComponent,
+        SetupStepsComponent
     ],
     exports: [
         TimeAgoPipe,
@@ -227,7 +231,8 @@ import { LoadingSpinnerModule } from '@app/shared/common/loading-spinner/loading
         AppRatingComponent,
         RatingComponent,
         StarsListComponent,
-        TypesListComponent
+        TypesListComponent,
+        SetupStepsComponent
     ],
     providers: [
         DateTimeService,

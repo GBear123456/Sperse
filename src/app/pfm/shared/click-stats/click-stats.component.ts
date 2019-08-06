@@ -1,6 +1,6 @@
 /** Core imports */
 import { ChangeDetectionStrategy, OnInit,
-    Component, Input, Injector, ViewChild } from '@angular/core';
+    Component, Input, Injector, ViewChild, Output, EventEmitter } from '@angular/core';
 
 /** Third party imports */
 import DataSource from 'devextreme/data/data_source';
@@ -26,6 +26,7 @@ import { OfferServiceProxy, GroupByPeriod } from 'shared/service-proxies/service
 export class ClickStatsComponent extends AppComponentBase implements OnInit {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
 
+    @Output() onStatsClick: EventEmitter<any> = new EventEmitter<any>();
     @Input() refresh$: Observable<null>;
     @Input() campaignId;
     @Input()
@@ -143,7 +144,6 @@ export class ClickStatsComponent extends AppComponentBase implements OnInit {
             dateTo = this.getQueryStringDate(isOneDay ? day : 
                 this.getMonthLastDay(record.column.index), month);
         
-        this._router.navigate(['../visitors'],
-            { relativeTo: this._activatedRoute, queryParams: { from: dateFrom, to: dateTo } });
+        this.onStatsClick.emit({ from: dateFrom, to: dateTo });
     }
 }

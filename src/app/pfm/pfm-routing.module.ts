@@ -4,6 +4,7 @@ import { OffersComponent } from '@app/pfm/offers/offers.component';
 import { OfferEditComponent } from '@app/pfm/offer-edit/offer-edit.component';
 import { CloseComponentGuard } from '@app/shared/common/close-component.service/close-component-guard';
 import { CloseComponentService } from '@app/shared/common/close-component.service/close-component.service';
+import { ReportsComponent } from '@app/pfm/reports/reports.component';
 
 @NgModule({
     imports: [
@@ -14,7 +15,8 @@ import { CloseComponentService } from '@app/shared/common/close-component.servic
                 children: [
                     { path: 'offers', component: OffersComponent, data: { permission: '', reuse: true } },
                     { path: 'offers/:id', redirectTo: 'offers/:id/general' },
-                    { path: 'offers/:id/:section', component: OfferEditComponent, canDeactivate: [ CloseComponentGuard ] }
+                    { path: 'offers/:id/:section', component: OfferEditComponent, canDeactivate: [ CloseComponentGuard ] },
+                    { path: 'reports', component: ReportsComponent, data: { permission: '', reuse: true }  }
                 ]
             }
         ])

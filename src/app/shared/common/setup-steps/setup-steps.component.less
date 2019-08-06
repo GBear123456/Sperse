@@ -1,0 +1,96 @@
+:host {
+    border-right: 1.4px solid #dfdfdf;
+    @media (max-width: 768px) {
+        display: none;
+    }
+
+    .setup-steps {
+        width: 321px;
+        height: calc(~"100vh - 215px");
+        background-color: #fff;
+        padding: 35px 25px 25px 25px;
+        float: left;
+    }
+
+    .title {
+        font-size: 17px;
+        padding-left: 14px;
+        padding-bottom: 33px;
+        font-weight: 400;
+        letter-spacing: 1px;
+
+        a {
+            text-decoration: none;
+            color: rgb(103, 115, 128);
+        }
+    }
+
+    .steps-progress {
+        position: relative;
+        padding-left: 45px;
+        list-style: none;
+        line-height: 1;
+        color: #677380;
+        letter-spacing: 0.3px;
+
+        &::before {
+            display: inline-block;
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 15px;
+            width: 10px;
+            height: 100%;
+            border-left: 3px solid #F7F8F9;
+        }
+
+        &-item {
+            position: relative;
+            font-weight: 500;
+
+            &:not(.disabled) .link {
+                &:hover {
+                    cursor: pointer;
+                    color: rgba(0, 0, 0, 0.65);
+                    font-weight: 600;
+                }
+            }
+
+            &:not(:last-child) {
+                padding-bottom: 63px;
+            }
+
+            &.current {
+                color: #000;
+                font-weight: 600;
+            }
+
+            &.disabled {
+                opacity: .3;
+            }
+
+            .img {
+                width: 45px;
+                height: 45px;
+                margin: 0;
+                padding: 0;
+                position: absolute;
+                left: -52px;
+                top: -17px;
+                background: white no-repeat center;
+            }
+            
+            .img-statistics {
+                background-image: url("../../../../assets/common/icons/statistics.svg");
+            }
+
+            .img-document {
+                background-image: url("../../../../assets/common/icons/document.svg");
+            }
+
+            .img-person {
+                background-image: url("../../../../assets/common/icons/person.svg");
+            }
+        }
+    }
+}

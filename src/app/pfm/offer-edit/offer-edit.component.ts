@@ -344,4 +344,9 @@ export class OfferEditComponent implements OnInit, OnDestroy, ICloseComponent {
     checkSection(uri) {
         return this.section$.pipe(filter(section => section == uri));
     }
+
+    onStatsClick(event) {
+        this.router.navigate(['../visitors'],
+            { relativeTo: this.route, queryParams: event });
+    }
 }

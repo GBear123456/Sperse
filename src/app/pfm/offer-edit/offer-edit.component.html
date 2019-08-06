@@ -313,7 +313,7 @@
                 </div>
 
                 <div *ngSwitchCase="'stats'">
-                    <pfm-click-stats [campaignId]="model.campaignId" [year]="selectedYear" [refresh$]="refresh$"></pfm-click-stats>
+                    <pfm-click-stats [campaignId]="model.campaignId" [year]="selectedYear" [refresh$]="refresh$" (onStatsClick)="onStatsClick($event)"></pfm-click-stats>
                 </div>
 
                 <div *ngSwitchCase="'visitors'">
