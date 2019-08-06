@@ -238,19 +238,17 @@ export class OffersService {
                         isCreditCard: isCreditCard
                     }
                 }).afterClosed().subscribe((output: SubmitApplicationOutput)  => {
-                    const applyOfferDialog = this.dialog.open(ApplyOfferDialogComponent, {
-                        width: '530px',
-                        panelClass: 'apply-offer-dialog',
-                        data: modalData
-                    });
                     if (output) {
+                         const applyOfferDialog = this.dialog.open(ApplyOfferDialogComponent, {
+                            width: '530px',
+                            panelClass: 'apply-offer-dialog',
+                            data: modalData
+                        });
                         this.loadMemberInfo();
                         submitRequestInput.redirectUrl = redirectUrl;
                         this.offerServiceProxy.submitRequest(submitRequestInput).subscribe(() => {
                             applyOfferDialog.close();
                         });
-                    } else {
-                        applyOfferDialog.close();
                     }
                 });
             } else {
@@ -280,10 +278,10 @@ export class OffersService {
             }
         }
     }
-
+    
     isOldLastSubmitDate() {
         const compareToDate = moment().subtract(1, 'month');
-        return moment(compareToDate).isAfter(this.memberInfo.profileSubmissionDate);
+        return this.memberInfo.profileSubmissionDate ? moment(compareToDate).isAfter(this.memberInfo.profileSubmissionDate) : true;
     }
 
     loadMemberInfo(): void {
