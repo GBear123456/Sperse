@@ -87,7 +87,7 @@ body.lend-space .accountsContainer {
 }
 body.lend-space .accountsContainer .row {
   width: auto !important;
-  height: calc(100vh - 146px);
+  height: calc(-46vh);
 }
 body.lend-space .accountsContainer .sidebar {
   padding-left: 0;
@@ -283,7 +283,7 @@ body.lend-space .cdk-overlay-pane.footer-slider app-modal-dialog mat-dialog-cont
 body.lend-space .cdk-overlay-pane.user-info app-modal-dialog mat-dialog-content #content * .doc-title {
   text-align: center;
 }
-@media all and (max-width: 600px) {
+@media all and (max-width: 768px) {
   body.lend-space .cdk-overlay-pane.footer-slider,
   body.lend-space .cdk-overlay-pane.user-info {
     max-width: 85vw !important;
@@ -298,33 +298,40 @@ body.lend-space .cdk-overlay-pane.user-info app-modal-dialog mat-dialog-content 
   }
   body.lend-space .cdk-overlay-pane.footer-slider .mat-dialog-header,
   body.lend-space .cdk-overlay-pane.user-info .mat-dialog-header {
-    flex-direction: column;
-    height: 110px;
+    padding: 0 15px;
+  }
+  body.lend-space .cdk-overlay-pane.footer-slider .mat-dialog-header .title-wrapper,
+  body.lend-space .cdk-overlay-pane.user-info .mat-dialog-header .title-wrapper {
+    width: 50%;
   }
   body.lend-space .cdk-overlay-pane.footer-slider .mat-dialog-header dx-text-box,
   body.lend-space .cdk-overlay-pane.user-info .mat-dialog-header dx-text-box {
-    max-width: 100%;
+    width: auto !important;
     order: 2;
   }
   body.lend-space .cdk-overlay-pane.footer-slider .mat-dialog-header input,
   body.lend-space .cdk-overlay-pane.user-info .mat-dialog-header input {
     text-align: center;
+    font-size: 18px;
+  }
+  body.lend-space .cdk-overlay-pane.footer-slider .mat-dialog-header .dx-texteditor-input,
+  body.lend-space .cdk-overlay-pane.user-info .mat-dialog-header .dx-texteditor-input {
+    font-size: 14px !important;
+    padding: 0 !important;
   }
   body.lend-space .cdk-overlay-pane.footer-slider .mat-dialog-header .mat-dialog-actions,
   body.lend-space .cdk-overlay-pane.user-info .mat-dialog-header .mat-dialog-actions {
     justify-content: flex-end;
     padding: 0;
   }
-  body.lend-space .cdk-overlay-pane.footer-slider .mat-dialog-header .mat-dialog-actions .mat-dialog-buttons,
-  body.lend-space .cdk-overlay-pane.user-info .mat-dialog-header .mat-dialog-actions .mat-dialog-buttons {
-    margin-right: 28px;
+  body.lend-space .cdk-overlay-pane.footer-slider .mat-dialog-header .mat-dialog-actions .mat-dialog-buttons .button-layout,
+  body.lend-space .cdk-overlay-pane.user-info .mat-dialog-header .mat-dialog-actions .mat-dialog-buttons .button-layout {
+    font-size: 12px;
+    padding: 0 8px !important;
   }
   body.lend-space .cdk-overlay-pane.footer-slider .close-dialog,
   body.lend-space .cdk-overlay-pane.user-info .close-dialog {
-    left: auto !important;
-    right: 0 !important;
     top: 21px !important;
-    background-color: transparent !important;
     z-index: 1;
   }
   body.lend-space .cdk-overlay-pane.footer-slider .close-dialog:before,
@@ -490,4 +497,3 @@ personal-finance-header.pfm-app.yellow {
   background-color: #000!important;
   color: #FFF!important;
 }
-/*# sourceMappingURL=style.css.map */

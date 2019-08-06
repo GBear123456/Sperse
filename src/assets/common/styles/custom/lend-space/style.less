@@ -218,7 +218,7 @@ body.lend-space {
                 }
             }
 
-            @media all and (max-width: 600px) {
+            @media all and (max-width: 768px) {
                 max-width: 85vw !important;
 
                 mat-dialog-container {
@@ -230,33 +230,50 @@ body.lend-space {
                 }
 
                 .mat-dialog-header {
-                    flex-direction: column;
-                    height: 110px;
+                    //flex-direction: column;
+                    //height: 110px;
+                    padding: 0 15px;
+                    
+                    .title-wrapper {
+                        width: 50%;
+                    }
 
                     dx-text-box {
-                        max-width: 100%;
+                        //max-width: 100%;
+                        width: auto !important;
                         order: 2;
                     }
 
                     input {
                         text-align: center;
+                        font-size: 18px;
+                    }
+                    
+                    .dx-texteditor-input {
+                        font-size: 14px !important;
+                        padding: 0 !important;
                     }
 
                     .mat-dialog-actions {
                         justify-content: flex-end;
                         padding: 0;
-
+                        
                         .mat-dialog-buttons {
-                            margin-right: 28px;
+                            //margin-right: 28px;
+                            
+                            .button-layout {
+                                font-size: 12px;
+                                padding: 0 8px !important;
+                            }
                         }
                     }
                 }
 
                 .close-dialog {
-                    left: auto !important;
-                    right: 0 !important;
+                    //left: auto !important;
+                    //right: 0 !important;
                     top: 21px !important;
-                    background-color: transparent !important;
+                    //background-color: transparent !important;
                     z-index: 1;
                     &:before, &:after {
                         background: #FFF!important;
