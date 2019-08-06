@@ -38574,6 +38574,7 @@ export class OrganizationShortInfo implements IOrganizationShortInfo {
     id!: number | undefined;
     name!: string | undefined;
     thumbnail!: string | undefined;
+    organizationUnitId!: number | undefined;
 
     constructor(data?: IOrganizationShortInfo) {
         if (data) {
@@ -38589,6 +38590,7 @@ export class OrganizationShortInfo implements IOrganizationShortInfo {
             this.id = data["id"];
             this.name = data["name"];
             this.thumbnail = data["thumbnail"];
+            this.organizationUnitId = data["organizationUnitId"];
         }
     }
 
@@ -38604,6 +38606,7 @@ export class OrganizationShortInfo implements IOrganizationShortInfo {
         data["id"] = this.id;
         data["name"] = this.name;
         data["thumbnail"] = this.thumbnail;
+        data["organizationUnitId"] = this.organizationUnitId;
         return data; 
     }
 }
@@ -38612,6 +38615,7 @@ export interface IOrganizationShortInfo {
     id: number | undefined;
     name: string | undefined;
     thumbnail: string | undefined;
+    organizationUnitId: number | undefined;
 }
 
 export class PersonOrgRelationTypeInfo implements IPersonOrgRelationTypeInfo {
@@ -46815,6 +46819,7 @@ export class Organization implements IOrganization {
     countriesServed!: string | undefined;
     description!: string | undefined;
     keywordTags!: string | undefined;
+    organizationUnitId!: number | undefined;
     orgType!: OrganizationType | undefined;
     contact!: Contact | undefined;
     formedCountry!: Country | undefined;
@@ -46870,6 +46875,7 @@ export class Organization implements IOrganization {
             this.countriesServed = data["countriesServed"];
             this.description = data["description"];
             this.keywordTags = data["keywordTags"];
+            this.organizationUnitId = data["organizationUnitId"];
             this.orgType = data["orgType"] ? OrganizationType.fromJS(data["orgType"]) : <any>undefined;
             this.contact = data["contact"] ? Contact.fromJS(data["contact"]) : <any>undefined;
             this.formedCountry = data["formedCountry"] ? Country.fromJS(data["formedCountry"]) : <any>undefined;
@@ -46941,6 +46947,7 @@ export class Organization implements IOrganization {
         data["countriesServed"] = this.countriesServed;
         data["description"] = this.description;
         data["keywordTags"] = this.keywordTags;
+        data["organizationUnitId"] = this.organizationUnitId;
         data["orgType"] = this.orgType ? this.orgType.toJSON() : <any>undefined;
         data["contact"] = this.contact ? this.contact.toJSON() : <any>undefined;
         data["formedCountry"] = this.formedCountry ? this.formedCountry.toJSON() : <any>undefined;
@@ -47005,6 +47012,7 @@ export interface IOrganization {
     countriesServed: string | undefined;
     description: string | undefined;
     keywordTags: string | undefined;
+    organizationUnitId: number | undefined;
     orgType: OrganizationType | undefined;
     contact: Contact | undefined;
     formedCountry: Country | undefined;
@@ -49137,6 +49145,7 @@ export class OrganizationBusinessInfo implements IOrganizationBusinessInfo {
     typeName!: string | undefined;
     shortname!: string | undefined;
     companyName!: string | undefined;
+    typeId!: string | undefined;
     industry!: string | undefined;
     relationship!: string | undefined;
     primaryFundingType!: string | undefined;
@@ -49195,6 +49204,7 @@ export class OrganizationBusinessInfo implements IOrganizationBusinessInfo {
             this.typeName = data["typeName"];
             this.shortname = data["shortname"];
             this.companyName = data["companyName"];
+            this.typeId = data["typeId"];
             this.industry = data["industry"];
             this.relationship = data["relationship"];
             this.primaryFundingType = data["primaryFundingType"];
@@ -49285,6 +49295,7 @@ export class OrganizationBusinessInfo implements IOrganizationBusinessInfo {
         data["typeName"] = this.typeName;
         data["shortname"] = this.shortname;
         data["companyName"] = this.companyName;
+        data["typeId"] = this.typeId;
         data["industry"] = this.industry;
         data["relationship"] = this.relationship;
         data["primaryFundingType"] = this.primaryFundingType;
@@ -49368,6 +49379,7 @@ export interface IOrganizationBusinessInfo {
     typeName: string | undefined;
     shortname: string | undefined;
     companyName: string | undefined;
+    typeId: string | undefined;
     industry: string | undefined;
     relationship: string | undefined;
     primaryFundingType: string | undefined;
@@ -62802,6 +62814,7 @@ export class OrganizationInfoDto implements IOrganizationInfoDto {
     duns!: string | undefined;
     ticker!: string | undefined;
     typeId!: string | undefined;
+    organizationUnitId!: number | undefined;
 
     constructor(data?: IOrganizationInfoDto) {
         if (data) {
@@ -62829,6 +62842,7 @@ export class OrganizationInfoDto implements IOrganizationInfoDto {
             this.duns = data["duns"];
             this.ticker = data["ticker"];
             this.typeId = data["typeId"];
+            this.organizationUnitId = data["organizationUnitId"];
         }
     }
 
@@ -62856,6 +62870,7 @@ export class OrganizationInfoDto implements IOrganizationInfoDto {
         data["duns"] = this.duns;
         data["ticker"] = this.ticker;
         data["typeId"] = this.typeId;
+        data["organizationUnitId"] = this.organizationUnitId;
         return data; 
     }
 }
@@ -62876,6 +62891,7 @@ export interface IOrganizationInfoDto {
     duns: string | undefined;
     ticker: string | undefined;
     typeId: string | undefined;
+    organizationUnitId: number | undefined;
 }
 
 export class PersonShortInfoDto implements IPersonShortInfoDto {
@@ -63032,6 +63048,7 @@ export class CreateOrganizationInput implements ICreateOrganizationInput {
     duns!: string | undefined;
     ticker!: string | undefined;
     typeId!: string | undefined;
+    organizationUnitId!: number | undefined;
 
     constructor(data?: ICreateOrganizationInput) {
         if (data) {
@@ -63061,6 +63078,7 @@ export class CreateOrganizationInput implements ICreateOrganizationInput {
             this.duns = data["duns"];
             this.ticker = data["ticker"];
             this.typeId = data["typeId"];
+            this.organizationUnitId = data["organizationUnitId"];
         }
     }
 
@@ -63090,6 +63108,7 @@ export class CreateOrganizationInput implements ICreateOrganizationInput {
         data["duns"] = this.duns;
         data["ticker"] = this.ticker;
         data["typeId"] = this.typeId;
+        data["organizationUnitId"] = this.organizationUnitId;
         return data; 
     }
 }
@@ -63112,6 +63131,7 @@ export interface ICreateOrganizationInput {
     duns: string | undefined;
     ticker: string | undefined;
     typeId: string | undefined;
+    organizationUnitId: number | undefined;
 }
 
 export class CreateOrganizationOutput implements ICreateOrganizationOutput {
@@ -63167,6 +63187,7 @@ export class UpdateOrganizationInfoInput implements IUpdateOrganizationInfoInput
     duns!: string | undefined;
     ticker!: string | undefined;
     typeId!: string | undefined;
+    organizationUnitId!: number | undefined;
 
     constructor(data?: IUpdateOrganizationInfoInput) {
         if (data) {
@@ -63195,6 +63216,7 @@ export class UpdateOrganizationInfoInput implements IUpdateOrganizationInfoInput
             this.duns = data["duns"];
             this.ticker = data["ticker"];
             this.typeId = data["typeId"];
+            this.organizationUnitId = data["organizationUnitId"];
         }
     }
 
@@ -63223,6 +63245,7 @@ export class UpdateOrganizationInfoInput implements IUpdateOrganizationInfoInput
         data["duns"] = this.duns;
         data["ticker"] = this.ticker;
         data["typeId"] = this.typeId;
+        data["organizationUnitId"] = this.organizationUnitId;
         return data; 
     }
 }
@@ -63244,6 +63267,7 @@ export interface IUpdateOrganizationInfoInput {
     duns: string | undefined;
     ticker: string | undefined;
     typeId: string | undefined;
+    organizationUnitId: number | undefined;
 }
 
 export class OrganizationUnitDto implements IOrganizationUnitDto {
