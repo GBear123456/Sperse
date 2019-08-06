@@ -32,6 +32,7 @@ import { NotifyService } from '@abp/notify/notify.service';
 import { MessageService } from '@abp/message/message.service';
 import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
+import { AppPermissions } from '@shared/AppPermissions';
 
 @Component({
     templateUrl: 'create-activity-dialog.component.html',
@@ -99,6 +100,7 @@ export class CreateActivityDialogComponent implements OnInit {
             action: this.save.bind(this)
         }
     ];
+    permissions = AppPermissions;
 
     constructor(
         private _cacheService: CacheService,
