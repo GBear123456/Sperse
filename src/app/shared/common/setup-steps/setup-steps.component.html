@@ -1,0 +1,19 @@
+<div class="setup-steps">
+    <p *ngIf="HeaderTitle" class="title"><a [routerLink]="headerLink">{{HeaderTitle}}</a></p>
+    <ul class="steps-progress">
+        <ng-template ngFor let-step [ngForOf]="SetupSteps" let-i="index">
+            <li [ngClass]="{
+                'steps-progress-item': true,
+                'passed': i < SelectedStepIndex,
+                'current': i == SelectedStepIndex,
+                'disabled': step.isDisabled
+            }"
+                *ngIf="step.visible || !step.hasOwnProperty('visible')">
+                <div class="img {{'img-' + step.img}}"></div>
+                <span class="link" (click)="onClick(step)">
+                    {{step.caption}}
+                </span>
+            </li>
+        </ng-template>
+    </ul>
+</div>

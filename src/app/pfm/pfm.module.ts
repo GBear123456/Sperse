@@ -24,6 +24,7 @@ import { ContactsModule } from '../crm/contacts/contacts.module';
 import { AppCommonModule } from '../shared/common/app-common.module';
 import { CommonModule } from '@shared/common/common.module';
 import { OffersComponent } from '@app/pfm/offers/offers.component';
+import { ReportsComponent } from '@app/pfm/reports/reports.component';
 import { PfmRoutingModule } from '@app/pfm/pfm-routing.module';
 import { OfferEditComponent } from '@app/pfm/offer-edit/offer-edit.component';
 import { ItemDetailsLayoutModule } from '@shared/common/item-details-layout/item-details-layout.module';
@@ -71,6 +72,7 @@ import { OfferNotifyDialogComponent } from '@app/pfm/offer-edit/offer-notify-dia
         OffersComponent,
         OfferEditComponent,
         OfferNotifyDialogComponent,
+        ReportsComponent,
         TextFieldComponent,
         DropdownFieldComponent,
         NumberFieldComponent,
