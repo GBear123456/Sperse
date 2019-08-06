@@ -7,6 +7,7 @@ import * as _ from 'underscore';
 import { Store } from '@ngrx/store';
 
 /** Application imports */
+import { DashboardWidgetsService } from '@shared/crm/dashboard-widgets/dashboard-widgets.service';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppConsts } from '@shared/AppConsts';
 import { FiltersService } from '@shared/filters/filters.service';
@@ -41,6 +42,7 @@ export class StarsListComponent extends AppComponentBase implements OnInit {
 
     constructor(
         injector: Injector,
+        public dashboardWidgetsService: DashboardWidgetsService,
         private _filtersService: FiltersService,
         private _starsService: ContactStarsServiceProxy,
         private store$: Store<AppStore.State>

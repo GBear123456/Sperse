@@ -6,7 +6,7 @@ import { BehaviorSubject, Observable, ReplaySubject, combineLatest, of } from 'r
 import { catchError, finalize, switchMap, map, tap } from 'rxjs/operators';
 
 /** Application imports */
-import { DashboardServiceProxy } from 'shared/service-proxies/service-proxies';
+import { DashboardServiceProxy, ContactStarColorType } from 'shared/service-proxies/service-proxies';
 import { PeriodModel } from '@app/shared/common/period/period.model';
 import { GetTotalsOutput } from '@shared/service-proxies/service-proxies';
 import { CacheService } from '@node_modules/ng2-cache-service';
@@ -47,6 +47,19 @@ export class DashboardWidgetsService  {
     private _refresh: BehaviorSubject<null> = new BehaviorSubject<null>(null);
     refresh$: Observable<null> = this._refresh.asObservable();
 
+    private _starColorTypes = {
+        Yellow: 'rgb(230, 230, 0)',
+        Blue: 'blue',
+        Green: 'green',
+        Purple: 'purple',
+        Red: 'red',
+        Gradient1: ['#24c26c', '#5ac860'],
+        Gradient2: ['#82cc57', '#b1d049'],
+        Gradient3: ['#f0eb56', '#ffc800'],
+        Gradient4: ['#f3852a', '#e14617'],
+        Gradient5: '#959595'
+    };
+
     constructor(
         private _dashboardServiceProxy: DashboardServiceProxy,
         private _cacheService: CacheService,
@@ -65,6 +78,14 @@ export class DashboardWidgetsService  {
         ).subscribe((totalData: GetTotalsOutput) => {
             this._totalsData.next(totalData);
         });
+    }
+
+    getStarColorByType(type: ContactStarColorType, gradient = false) {
+        let colors: any = this._starColorTypes[type];
+        if (colors && colors.join)
+            return gradient ? 'linear-gradient(' + colors.join(',') + ')' : colors.shift();
+        else
+            return colors;
     }
 
     refresh() {
