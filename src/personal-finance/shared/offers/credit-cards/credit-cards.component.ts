@@ -132,8 +132,7 @@ export class CreditCardsComponent implements OnInit, OnDestroy {
                 itemOfOfferCollection: CustomItemOfOfferCollection[collection] || OfferCollection[collection],
                 sortOrderType: collection === CustomItemOfOfferCollection.Newest ? SortOrderType.Newest : SortOrderType.Best,
                 topCount: collection === CustomItemOfOfferCollection.Newest ? 30 : undefined
-            }))),
-            finalize(() => abp.ui.clearBusy())
+            })).pipe(finalize(() => abp.ui.clearBusy())))
         );
     }
 
