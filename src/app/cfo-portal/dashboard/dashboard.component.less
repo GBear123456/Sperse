@@ -1,0 +1,220 @@
+:host {
+    position: relative;
+    top: 75px;
+
+    &.wide {
+        .dashboard-wrapper {
+            width: 100vw;
+        }
+    }
+
+    /deep/ app-accounts {
+        .accounts-list {
+            & > div {
+                max-width: 32.5%!important;
+                &:first-child {
+                    max-width: 33%!important;
+                }
+            }
+        }
+    }
+
+    .content {
+        display: flex;
+        height: calc(~"100vh - 150px");
+    }
+
+    .btn-layout {
+        padding: 18px 68px 21px 66px !important;
+        height: 52px;
+        text-transform: none !important;
+        line-height: 0 !important;
+        border-radius: 26px !important;
+        font-size: 16px !important;
+        font-weight: 500 !important;
+
+        &:after {
+            content: none;
+        }
+    }
+
+    app-totals-by-period {
+        height: 100%;
+    }
+
+    .dashboard-wrapper {
+        background-color: #fff;
+        width: calc(~"100vw - 322px");
+        @media (max-width: 768px) {
+            width: 100%;
+        }
+
+        padding: 0 48px;
+
+        section {
+            + section {
+                margin-top: 15px;
+            }
+            header {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding: 10px 0px 5px 0px;
+            }
+        }
+
+        .synch-status {
+            margin-bottom: 0;
+        }
+
+        .dashboard-title {
+            color: #424C56;
+            font-size: 16px;
+            letter-spacing: 0.2px;
+            line-height: 24px;
+            margin-bottom: 0;
+            text-transform: uppercase;
+            font-weight: 500;
+            opacity: .5;
+            padding-right: 30px;
+        }
+
+        /deep/ dx-select-box {
+            float: right;
+            border-radius: 0;
+            background-color: transparent;
+
+            .dx-texteditor-input, input.form-control {
+                color: #677380;
+                font-size: 14px;
+                font-weight: 300;
+                letter-spacing: 0.2px;
+                line-height: 24px;
+                padding: 0 16px 0 0 ;
+                background-color: transparent;
+                min-height: 24px;
+                text-align: right;
+                border: 0;
+            }
+
+            .dx-dropdowneditor-button {
+                width: 10px;
+                padding: 0;
+                border-radius: 0;
+
+                .dx-dropdowneditor-icon {
+                    background-color: transparent !important;
+
+                    &::before {
+                        content: '\f107';
+                        font-family: FontAwesome !important;
+                    }
+                }
+            }
+        }
+
+        .synch-status .synch-section-wrap,
+        .analytics .analytics-wrap {
+            display: flex;
+            flex-flow: row wrap;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+        .synch-status .synch-section-wrap {
+            align-items: center;
+        }
+        .synch-status .synch-section-wrap .links {
+            width: 50%;
+            height: 100%;
+            padding-left: 30px;
+        }
+        .synch-status .synch-section-wrap .list-of-links {
+            list-style-type: none;
+            padding-left: 0;
+            margin-bottom: 0;
+        }
+        .synch-status .synch-section-wrap .link-item {
+            padding: 5px 5px;
+            border-bottom: 1px solid  #E5E9EC;
+        }
+
+        .synch-status .synch-section-wrap .link {
+            color: #00AEEF;
+            font-size: 16px;
+            letter-spacing: 0.2px;
+            line-height: 24px;
+            font-weight: 500;
+            text-decoration: none;
+            transition: .2s;
+
+            &:hover {
+                color: lighten(#00AEEF, 20%);
+            }
+        }
+
+        .synch-status .synch-section-wrap .spendingCategories {
+            width: 33%;
+            min-height: 269px;
+            border: 1px solid #E5E9EC;
+            background-color: #FFFFFF;
+            border-radius: 4px;
+            position: relative;
+            padding: 10px 30px;
+        }
+
+        .synch-status .synch-section-wrap .synch-item {
+            display: flex;
+            justify-content: space-between;
+            max-width: 66%;
+            width: 100%;
+            background-color: #FFFFFF;
+            border-radius: 4px;
+            position: relative;
+            padding: 0px 30px 0px 0;
+            .totalByPeriod {
+                width: 50%;
+                border: 1px solid #E5E9EC;
+                background-color: #FFFFFF;
+                border-radius: 4px;
+                position: relative;
+                padding: 10px 30px;
+            }
+        }
+
+        .analytics .analytics-wrap {
+            align-items: stretch;
+
+            .trendByPeriod {
+                width: 66%;
+            }
+
+            .bankBalances {
+                width: 33%;
+                border: 1px solid #E5E9EC;
+                background-color: #FFFFFF;
+                border-radius: 4px;
+                position: relative;
+                padding: 10px 30px;
+            }
+        }
+    }
+    /deep/ .dx-scrollable-content {
+        background: #FFF;
+    }
+
+    /deep/ app-toolbar {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        margin: auto;
+        display: flex;
+        align-items: center;
+        right: 220px;
+        dx-toolbar {
+            background: transparent;
+        }
+        @media (min-width: 992px) {
+            right: 160px;
+        }
+    }
+}

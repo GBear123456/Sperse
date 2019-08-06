@@ -14,6 +14,7 @@ import { BusinessEntitiesComponent } from './business-entities/business-entities
 import { ChartOfAccountsComponent } from 'app/cfo/chart-of-accounts/chart-of-accounts.component';
 import { StatementsComponent } from './statements/statements.component';
 import { CfoInstanceStatusGuard } from '@app/cfo/cfo-instance-status-guard';
+import { DashboardComponent } from './start/dashboard/dashboard.component';
 import { ReportsComponent } from './reports/reports.component';
 
 @NgModule({
@@ -23,7 +24,7 @@ import { ReportsComponent } from './reports/reports.component';
             {
                 path: '',
                 children: [
-                    { path: 'start', component: StartComponent, data: { permission: '', reuse: true } },
+                    { path: 'start', component: StartComponent, data: { permission: '', reuse: true, host: DashboardComponent } },
                     {
                         path: 'linkaccounts',
                         data: { permission: '', reuse: true },

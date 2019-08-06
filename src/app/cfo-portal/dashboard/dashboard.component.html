@@ -1,0 +1,56 @@
+<div [@routerTransition]>
+    <app-headline [config]="headlineConfig">
+        <business-entities-chooser (onClosed)="invalidate()"></business-entities-chooser>
+        <synch-progress class="synch-progress" (onComplete)="refreshWidgets()"></synch-progress>
+        <app-period (onChange)="periodChanged($event)"></app-period>
+    </app-headline>
+
+    <div class="content">
+        <setup-steps [showIntroductionTourLink]="true" [hidden]="isWideMode"></setup-steps>
+        <div class="right">
+            <dx-scroll-view showScrollbar="onHover">
+                <div class="dashboard-wrapper">
+                    <section class="accounts-info">
+                        <header>
+                            <h2 class="dashboard-title">
+                                {{l('Accounts_Summary')}}
+                            </h2>
+                            <add-account-button></add-account-button>
+                        </header>
+                        <app-accounts *ngIf="isInstanceAdmin" (onTotalAccountsMouseEnter)="openBankAccountsSelectDialog()"></app-accounts>
+                    </section>
+                    <section class="analytics">
+                        <div class="analytics-wrap">
+                            <div class="bankBalances">
+                                <app-no-data [showLink]="false"></app-no-data>
+                            </div>
+                            <div class="trendByPeriod">
+                                <app-trend-by-period></app-trend-by-period>
+                            </div>
+                        </div>
+                    </section>
+                    <section class="synch-status">
+                        <div class="synch-section-wrap">
+                            <div class="spendingCategories">
+                                <app-no-data [showLink]="false"></app-no-data>
+                            </div>
+                            <div class="synch-item">
+                                <div class="totalByPeriod">
+                                    <app-totals-by-period></app-totals-by-period>
+                                </div>
+                                <div class="links">
+                                    <ul class="list-of-links">
+                                        <li *ngFor="let link of linksTo" class="link-item">
+                                            <a class="link" *ngIf="link.route" [routerLink]="link.route">{{l(link.name)}}</a>
+                                            <a class="link" *ngIf="link.action" (click)="link.action()">{{l(link.name)}}</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </dx-scroll-view>
+        </div>
+    </div>
+</div>

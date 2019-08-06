@@ -5,7 +5,7 @@
   "requiredPermission": "Pages.CFO.MemberAccess",
   "localizationSource": "CFO",
   "navigation": [
-    [ "Dashboard", "", "icon-home", "/app/cfo-portal/start" ],
+    [ "Dashboard", "", "icon-home", "/app/cfo-portal/overview" ],
     [ "Accounts", "", "icon-home", "/app/cfo-portal/linkaccounts" ],
     [ "Transactions", "", "icon-home", "/app/cfo-portal/transactions" ],
     [ "Cashflow", "", "icon-home", "/app/cfo-portal/cashflow" ],

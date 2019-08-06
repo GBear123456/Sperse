@@ -1,7 +1,14 @@
+import { Directive, ComponentFactoryResolver, Injector, AfterViewInit,
+    Component, OnDestroy, ViewChild, ViewContainerRef } from '@angular/core';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
-import { Injector, Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
-import { DashboardComponent } from './dashboard/dashboard.component';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
+
+@Directive({
+    selector: '[ad-dashboard-host]'
+})
+export class AdDashboardHostDirective {
+    constructor(public viewContainerRef: ViewContainerRef) { }
+}
 
 @Component({
     selector: 'start',
@@ -9,27 +16,42 @@ import { appModuleAnimation } from '@shared/animations/routerTransition';
     styleUrls: ['./start.component.less'],
     animations: [appModuleAnimation()]
 })
-export class StartComponent extends CFOComponentBase implements OnInit, OnDestroy {
-    @ViewChild(DashboardComponent) dashboardComponent: DashboardComponent;
-    constructor(injector: Injector
+export class StartComponent extends CFOComponentBase implements AfterViewInit, OnDestroy {
+    @ViewChild(AdDashboardHostDirective) adHostDirective: AdDashboardHostDirective;
+    private _hostComponent: any;
+    private _hostClass: any;
+
+    constructor(injector: Injector,
+        private _componentFactoryResolver: ComponentFactoryResolver
     ) {
         super(injector);
+        this._activatedRoute.data.subscribe((data) => {
+            if (data.host)
+                this._hostClass = data.host;
+        });
     }
 
-    ngOnInit(): void {
-        this._cfoService.instanceChangeProcess().subscribe();
+    instanceChangeProcess() {
+        this._cfoService.instanceChangeProcess().subscribe(() => {
+            if (this._cfoService.initialized && this._hostClass)
+                this._hostComponent = this.adHostDirective.viewContainerRef.createComponent(
+                    this._componentFactoryResolver.resolveComponentFactory(this._hostClass)
+                );
+        });
+    } 
+
+    ngAfterViewInit(): void {
+        this.instanceChangeProcess();
     }
 
     activate() {
-        this._cfoService.instanceChangeProcess().subscribe();
-        if (this.dashboardComponent) {
-            this.dashboardComponent.activate();
-        }
+        this.instanceChangeProcess();
+        if (this._hostComponent)
+            this._hostComponent.instance.activate();
     }
 
     deactivate() {
-        if (this.dashboardComponent) {
-            this.dashboardComponent.deactivate();
-        }
+        if (this._hostComponent)
+            this._hostComponent.instance.deactivate();
     }
 }

@@ -49,7 +49,7 @@ import { ReportPeriodComponent } from '@app/cfo/shared/report-period/report-peri
 import { AppCommonModule } from '../shared/common/app-common.module';
 import { CommonModule } from '@shared/common/common.module';
 import { CfoRoutingModule } from './cfo-routing.module';
-import { StartComponent } from './start/start.component';
+import { StartComponent, AdDashboardHostDirective } from './start/start.component';
 import { SetupComponent } from './start/setup/setup.component';
 import { CfoIntroComponent } from './shared/cfo-intro/cfo-intro.component';
 import { DashboardComponent } from './start/dashboard/dashboard.component';
@@ -95,6 +95,7 @@ import { CalendarButtonComponent } from '@app/cfo/shared/common/calendar-button/
 
 let COMPONENTS = [
     StartComponent,
+    AdDashboardHostDirective,
     SetupComponent,
     CfoIntroComponent,
     DashboardComponent,
