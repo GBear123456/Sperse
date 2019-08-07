@@ -63898,9 +63898,11 @@ export interface IModuleSubscriptionInfoExtended {
     frequency: PaymentPeriodType;
 }
 
-export class ILocalizableString implements IILocalizableString {
+export class LocalizableString implements ILocalizableString {
+    sourceName!: string | undefined;
+    name!: string | undefined;
 
-    constructor(data?: IILocalizableString) {
+    constructor(data?: ILocalizableString) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -63911,23 +63913,29 @@ export class ILocalizableString implements IILocalizableString {
 
     init(data?: any) {
         if (data) {
+            this.sourceName = data["sourceName"];
+            this.name = data["name"];
         }
     }
 
-    static fromJS(data: any): ILocalizableString {
+    static fromJS(data: any): LocalizableString {
         data = typeof data === 'object' ? data : {};
-        let result = new ILocalizableString();
+        let result = new LocalizableString();
         result.init(data);
         return result;
     }
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["sourceName"] = this.sourceName;
+        data["name"] = this.name;
         return data; 
     }
 }
 
-export interface IILocalizableString {
+export interface ILocalizableString {
+    sourceName: string | undefined;
+    name: string | undefined;
 }
 
 export enum MeasurementUnit {
@@ -63936,7 +63944,7 @@ export enum MeasurementUnit {
 
 export class PricingTableFeatureDefinition implements IPricingTableFeatureDefinition {
     name!: string | undefined;
-    displayName!: ILocalizableString | undefined;
+    displayName!: LocalizableString | undefined;
     isVariable!: boolean | undefined;
     sortOrder!: number | undefined;
     isStatic!: boolean | undefined;
@@ -63955,7 +63963,7 @@ export class PricingTableFeatureDefinition implements IPricingTableFeatureDefini
     init(data?: any) {
         if (data) {
             this.name = data["name"];
-            this.displayName = data["displayName"] ? ILocalizableString.fromJS(data["displayName"]) : <any>undefined;
+            this.displayName = data["displayName"] ? LocalizableString.fromJS(data["displayName"]) : <any>undefined;
             this.isVariable = data["isVariable"];
             this.sortOrder = data["sortOrder"];
             this.isStatic = data["isStatic"];
@@ -63986,7 +63994,7 @@ export class PricingTableFeatureDefinition implements IPricingTableFeatureDefini
 
 export interface IPricingTableFeatureDefinition {
     name: string | undefined;
-    displayName: ILocalizableString | undefined;
+    displayName: LocalizableString | undefined;
     isVariable: boolean | undefined;
     sortOrder: number | undefined;
     isStatic: boolean | undefined;
