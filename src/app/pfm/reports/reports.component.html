@@ -17,14 +17,14 @@
                     [allowGrouping]="false" [allowSorting]="false"></dxi-column>
                 <dxi-column dataField="Name" caption="{{l('Offer_Name')}}"></dxi-column>
                 <dxi-column dataField="Categories" caption="{{l('Offer_Category')}}" [width]="300" [calculateSortValue]="getCategoryValue" [calculateGroupValue]="getCategoryValue" [calculateCellValue]="getCategoryValue"></dxi-column>
-                <dxi-column dataField="ClicksCount" caption="{{l('Offer_ClickCount')}}" cellTemplate="clicksTemplate" [width]="150"></dxi-column>
+                <dxi-column dataField="RequestCount" caption="{{l('Offer_ClickCount')}}" cellTemplate="clicksTemplate" [width]="150"></dxi-column>
 
                 <div *dxTemplate="let field of 'photoTemplate'">
                     <div [ngStyle]="{'background-image': 'url(' + field.data.LogoUrl + ')'}" class="logo-url"></div>
                 </div>
                 
                 <div *dxTemplate="let field of 'clicksTemplate'">
-                    <div class="clicksCount" (click)="onOfferClicksClick(field)">{{field.data.ClicksCount}}</div>
+                    <div class="clicksCount" (click)="onOfferClicksClick(field)">{{field.data.RequestCount}}</div>
                 </div>
             </dx-data-grid>
         </div>
