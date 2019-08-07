@@ -162,6 +162,7 @@ export class OffersComponent extends AppComponentBase implements OnInit, OnDestr
                 url: this.getODataUrl(this.dataSourceURI,
                     this.filterByStatus(this.filterModelStatuses)),
                 deserializeDates: false,
+                select: ['Id', 'CampaignId', 'LogoUrl', 'Name', 'CardNetwork', 'Categories', 'Status', 'Rank', 'OverallRating', 'IsPublished', 'Created'],
                 version: AppConsts.ODataVersion,
                 beforeSend: function (request) {
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();

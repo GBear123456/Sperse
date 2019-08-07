@@ -103,6 +103,7 @@ import { DocumentsService } from '@app/crm/contacts/documents/documents.service'
 import { OrdersComponent } from '@app/crm/contacts/orders/orders.component';
 import { InvoicesComponent } from '@app/crm/contacts/invoices/invoices.component';
 import { PersonalDetailsComponent } from './personal-details/personal-details.component';
+import { CRMDashboardWidgetsModule } from '@shared/crm/dashboard-widgets/dashboard-widgets.module';
 
 @NgModule({
     declarations: [
@@ -196,7 +197,8 @@ import { PersonalDetailsComponent } from './personal-details/personal-details.co
         VgOverlayPlayModule,
         VgBufferingModule,
         NgxMaskModule.forRoot(),
-        ItemDetailsLayoutModule
+        ItemDetailsLayoutModule,
+        CRMDashboardWidgetsModule
     ],
     entryComponents: [
         EditContactDialog,

@@ -34,6 +34,7 @@ export class ReportsComponent extends AppComponentBase implements OnInit, OnDest
     dateTo: moment;
     formatting = AppConsts.formatting;
     offerStatsDataSource: DataSource;
+    offersStaticFilter = {'RequestCount': { gt: 0 }};
     visitorsDataSource: DataSource;
     visitorsCampaignId: number;
 
@@ -81,7 +82,7 @@ export class ReportsComponent extends AppComponentBase implements OnInit, OnDest
         this.offerStatsDataSource = new DataSource({
             store: {
                 type: 'odata',
-                url: this.getODataUrl('Offer'),
+                url: this.getODataUrl('Offer', this.offersStaticFilter),
                 deserializeDates: false,
                 version: AppConsts.ODataVersion,
                 beforeSend: function (request) {
@@ -93,7 +94,7 @@ export class ReportsComponent extends AppComponentBase implements OnInit, OnDest
                 'LogoUrl',
                 'Name',
                 'Categories',
-                'ClicksCount'
+                'RequestCount'
             ],
             sort: [
                 { selector: 'Created', desc: true }
@@ -220,10 +221,10 @@ export class ReportsComponent extends AppComponentBase implements OnInit, OnDest
     refreshOfferStats(){
         var customFilter = [];
         if (this.dateFrom)
-            customFilter.push({name: 'DateFrom', value: this.dateFrom.toDate().toJSON()});
+            customFilter.push({name: 'CountDateFrom', value: this.dateFrom.toDate().toJSON()});
         if (this.dateTo)
-            customFilter.push({name: 'DateTo', value: this.dateTo.toDate().toJSON()});
-        this.processODataFilter(this.offerStatsGrid.instance, 'Offer', null, null, null, customFilter);
+            customFilter.push({name: 'CountDateTo', value: this.dateTo.toDate().toJSON()});
+        this.processODataFilter(this.offerStatsGrid.instance, 'Offer', [this.offersStaticFilter], (filter) => filter, null, customFilter);
     }
 
     onPeriodChanged(from: Date, to: Date): boolean {

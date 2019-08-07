@@ -68,6 +68,7 @@
             <div class="dx-field-label">{{ls.l('phone_work')}}</div>
             <div class="dx-field-value">
                 <dx-text-box name="phone"
+                             [placeholder]="ls.l('Enter') + ' ' + ls.l('phone_work')"
                              (onFocusOut)="inputStatusesService.blurInput($event)"
                              (onFocusIn)="inputStatusesService.focusInput($event)"
                              [maskRules]="offersWizardService.rules"
@@ -80,8 +81,8 @@
         <div class="dx-field">
             <div class="dx-field-label">{{ls.l('WorkPhoneExt')}}</div>
             <div class="dx-field-value">
-                <dx-text-box [maxLength]="5"
-                             name="phoneExt"
+                <dx-text-box name="phoneExt"
+                             [placeholder]="ls.l('Enter') + ' ' + ls.l('WorkPhoneExt')"
                              (onFocusOut)="inputStatusesService.blurInput($event)"
                              (onFocusIn)="inputStatusesService.focusInput($event)"
                              [(value)]="offersWizardService.submitApplicationProfileInput.employmentInformation.phoneWorkExtension">
