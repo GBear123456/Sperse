@@ -106,12 +106,15 @@ export class OffersWizardService {
 
     submitApplicationProfile(): Observable<SubmitApplicationOutput> {
         let applyOfferDialog;
-        if (this.submitApplicationProfileInput.personalInformation.doB)
-            this.submitApplicationProfileInput.personalInformation.doB = DateHelper.getDateWithoutTime(this.submitApplicationProfileInput.personalInformation.doB);
-        if (this.submitApplicationProfileInput.employmentInformation.payNextDate)
-            this.submitApplicationProfileInput.employmentInformation.payNextDate = DateHelper.getDateWithoutTime(this.submitApplicationProfileInput.employmentInformation.payNextDate);
-        if (this.submitApplicationProfileInput.employmentInformation.payAfterNextDate)
-            this.submitApplicationProfileInput.employmentInformation.payAfterNextDate = DateHelper.getDateWithoutTime(this.submitApplicationProfileInput.employmentInformation.payAfterNextDate);
+        this.submitApplicationProfileInput.personalInformation.doB ?
+            this.submitApplicationProfileInput.personalInformation.doB = DateHelper.removeTimezoneOffset(this.submitApplicationProfileInput.personalInformation.doB.toDate(), false, 'from') :
+            this.submitApplicationProfileInput.personalInformation.doB = null;
+        this.submitApplicationProfileInput.employmentInformation.payNextDate ?
+            this.submitApplicationProfileInput.employmentInformation.payNextDate = DateHelper.removeTimezoneOffset(this.submitApplicationProfileInput.employmentInformation.payNextDate.toDate(), false, 'from') :
+            this.submitApplicationProfileInput.employmentInformation.payNextDate = null;
+        this.submitApplicationProfileInput.employmentInformation.payAfterNextDate ?
+            this.submitApplicationProfileInput.employmentInformation.payAfterNextDate = DateHelper.removeTimezoneOffset(this.submitApplicationProfileInput.employmentInformation.payAfterNextDate.toDate(), false, 'from') :
+            this.submitApplicationProfileInput.employmentInformation.payAfterNextDate = null;
         if (this.data.campaignId && this.data.offer) {
             const modalData = {
                 processingSteps: [null, null, null, null],
