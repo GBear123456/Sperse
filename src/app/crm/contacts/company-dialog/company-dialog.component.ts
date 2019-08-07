@@ -64,22 +64,22 @@ export class CompanyDialogComponent implements OnInit {
     ];
     company: any = {
         id: null,
-        fullName: '',
-        shortName: '',
+        fullName: null,
+        shortName: null,
         typeId: null,
         sizeId: null,
-        annualRevenue: '',
+        annualRevenue: null,
         formedStateId: null,
         formedCountryId: 'US',
-        industry: '',
-        businessSicCode: '',
-        description: '',
-        logo: '',
+        industry: null,
+        businessSicCode: null,
+        description: null,
+        logo: null,
         formedDate: null,
-        ein: '',
-        duns: '',
-        ticker: '',
-        notes: '',
+        ein: null,
+        duns: null,
+        ticker: null,
+        notes: null,
         primaryPhoto: null
     };
     dunsRegex = AppConsts.regexPatterns.duns;
@@ -142,7 +142,9 @@ export class CompanyDialogComponent implements OnInit {
 
         this.modalDialog.startLoading();
         this.company.companyName = this.company.fullName = this.title;
-        let input = new UpdateOrganizationInfoInput(this.company);
+        let input = new UpdateOrganizationInfoInput(_.mapObject(this.company, (val, key) => {
+            return val || null;
+        }));
         input.formedDate = this.company.formedDate ? this.getMomentFromDateWithoutTime(this.company.formedDate) : null;
         let size = _.find(this.companySizes, item => item.id === this.company.sizeId);
         if (size) {
