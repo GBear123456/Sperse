@@ -517,7 +517,7 @@ export class BankAccountsService {
     }
 
     private getAccountsTotalBalance = bankAccounts => bankAccounts.reduce((sum, bankAccount) => {
-        return sum + bankAccount.balance;
+        return parseFloat((sum + bankAccount.balance).toFixed(2)); //!!VP to avoid JS float precision issue
     }, 0)
 
     private getSelectedBankAccounts = (bankAccounts: any) => {
