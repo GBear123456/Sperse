@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, Inject, OnInit, ViewChild, Injector } from '@angular/core';
+import { Component, Inject, ViewChild, Injector } from '@angular/core';
 
 /** Third party imports */
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
@@ -12,13 +12,14 @@ import { DialogService } from '@app/shared/common/dialogs/dialog.service';
 import { OffersWizardService } from '@shared/offers-wizard/offers-wizard.service';
 import { OffersService } from '@root/personal-finance/shared/offers/offers.service';
 
+
 @Component({
     selector: 'app-wizard-right-side',
     templateUrl: './wizard-right-side.component.html',
     styleUrls: ['./wizard-right-side.component.less'],
     providers: [DialogService]
 })
-export class WizardRightSideComponent implements OnInit {
+export class WizardRightSideComponent {
     @ViewChild(ModalDialogComponent) modalDialog: ModalDialogComponent;
     dialogRef: MatDialogRef<WizardRightSideComponent, any>;
     buttons: IDialogButton[] = [
@@ -38,11 +39,6 @@ export class WizardRightSideComponent implements OnInit {
     ) {
         this.offersWizardService.data = data;
         this.offersWizardService.dialogRef = this.dialogRef = <any>injector.get(MatDialogRef);
-    }
-
-    ngOnInit() {
-        this.modalDialog.startLoading();
-        this.modalDialog.finishLoading();
     }
 
     save(): void {

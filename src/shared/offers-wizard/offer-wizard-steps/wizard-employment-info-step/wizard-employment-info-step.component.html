@@ -69,8 +69,9 @@
             <div class="dx-field-value">
                 <dx-text-box name="phone"
                              [placeholder]="ls.l('Enter') + ' ' + ls.l('phone_work')"
-                             (onFocusOut)="inputStatusesService.blurInput($event)"
+                             (onContentReady)="inputStatusesService.setMask($event)"
                              (onFocusIn)="inputStatusesService.focusInput($event)"
+                             (onFocusOut)="inputStatusesService.blurInput($event)"
                              [maskRules]="offersWizardService.rules"
                              [(value)]="offersWizardService.submitApplicationProfileInput.employmentInformation.phoneWork">
                 </dx-text-box>
@@ -83,8 +84,9 @@
             <div class="dx-field-value">
                 <dx-text-box name="phoneExt"
                              [placeholder]="ls.l('Enter') + ' ' + ls.l('WorkPhoneExt')"
-                             (onFocusOut)="inputStatusesService.blurInput($event)"
+                             (onContentReady)="inputStatusesService.setMask($event)"
                              (onFocusIn)="inputStatusesService.focusInput($event)"
+                             (onFocusOut)="inputStatusesService.blurInput($event)"
                              [(value)]="offersWizardService.submitApplicationProfileInput.employmentInformation.phoneWorkExtension">
                 </dx-text-box>
             </div>
@@ -130,8 +132,9 @@
             <div class="dx-field-value">
                 <dx-text-box placeholder="Enter postal code"
                              name="zipCode"
-                             (onFocusOut)="inputStatusesService.blurInput($event)"
+                             (onContentReady)="inputStatusesService.setMask($event)"
                              (onFocusIn)="inputStatusesService.focusInput($event)"
+                             (onFocusOut)="inputStatusesService.blurInput($event)"
                              [(value)]="offersWizardService.submitApplicationProfileInput.employmentInformation.employerPostalCode">
                 </dx-text-box>
             </div>

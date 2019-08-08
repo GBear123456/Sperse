@@ -16,8 +16,9 @@
             <div class="dx-field-label">{{ls.l('MobPhone')}}</div>
             <div class="dx-field-value">
                 <dx-text-box name="phone"
-                             (onFocusOut)="inputStatusesService.blurInput($event)"
+                             (onContentReady)="inputStatusesService.setMask($event)"
                              (onFocusIn)="inputStatusesService.focusInput($event)"
+                             (onFocusOut)="inputStatusesService.blurInput($event)"
                              [(value)]="offersWizardService.submitApplicationProfileInput.personalInformation.phoneMobile"
                              [maskRules]="offersWizardService.rules">
                 </dx-text-box>
@@ -29,8 +30,9 @@
             <div class="dx-field-label">{{ls.l('phone')}}</div>
             <div class="dx-field-value">
                 <dx-text-box name="phone"
-                             (onFocusOut)="inputStatusesService.blurInput($event)"
+                             (onContentReady)="inputStatusesService.setMask($event)"
                              (onFocusIn)="inputStatusesService.focusInput($event)"
+                             (onFocusOut)="inputStatusesService.blurInput($event)"
                              [(value)]="offersWizardService.submitApplicationProfileInput.personalInformation.phone"
                              [maskRules]="offersWizardService.rules">
                 </dx-text-box>

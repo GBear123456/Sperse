@@ -45,8 +45,9 @@
             <div class="dx-field-value">
                 <dx-text-box placeholder="Enter postal code"
                              name="zipCode"
-                             (onFocusOut)="inputStatusesService.blurInput($event)"
+                             (onContentReady)="inputStatusesService.setMask($event)"
                              (onFocusIn)="inputStatusesService.focusInput($event)"
+                             (onFocusOut)="inputStatusesService.blurInput($event)"
                              [(value)]="offersWizardService.submitApplicationProfileInput.personalInformation.postalCode">
                 </dx-text-box>
             </div>

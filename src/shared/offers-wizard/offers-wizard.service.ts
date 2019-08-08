@@ -63,6 +63,7 @@ export class OffersWizardService {
         downloadDisabled: true
     };
     timeZones$: Observable<NameValueDtoListResultDto[]>;
+    applicationDetails$: Observable<GetApplicationDetailsOutput> = this.offersServiceProxy.getApplicationDetails().pipe(publishReplay(), refCount());
     public defaultTimezoneScope: SettingScopes = AppTimezoneScope.User;
 
     constructor(
@@ -76,11 +77,7 @@ export class OffersWizardService {
         this.timeZones$ = this._timingService.getTimezones(this.defaultTimezoneScope).pipe(
             pluck('items')
         );
-        this.getApplicationDetails();
-    }
-
-    getApplicationDetails() {
-        this.offersServiceProxy.getApplicationDetails().subscribe(
+        this.applicationDetails$.subscribe(
             (output: GetApplicationDetailsOutput) => {
                 if (output) {
                     this.submitApplicationProfileInput = SubmitApplicationInput.fromJS({
