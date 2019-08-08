@@ -3,6 +3,28 @@
     position: relative;
     display: block;
 
+    /deep/ app-headline {
+        dx-select-box {
+            width: 90px;
+            border-radius: 20px;
+            box-shadow: 0 0 1px 1px #EFEFEF;
+            overflow: hidden;
+
+            .dx-dropdowneditor-icon {
+                background-color: transparent !important;
+                width: 22px;
+            }
+
+            input {
+                font-size: 15px;
+                font-weight: normal;
+                
+                padding: 0 8px 0 20px;
+                border-bottom: 0;
+            }
+        }
+    }
+
     .wrapper {    
         display: flex;    
         border-bottom: 0;

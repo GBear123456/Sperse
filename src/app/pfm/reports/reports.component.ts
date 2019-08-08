@@ -27,6 +27,7 @@ export class ReportsComponent extends AppComponentBase implements OnInit, OnDest
     @ViewChild('visitorsGrid') visitorsGrid: DxDataGridComponent;
     @ViewChild(SetupStepsComponent) setupStepsComponent: SetupStepsComponent;
 
+    headlineConfig;
     private _refresh: Subject<null> = new Subject<null>();
     refresh$: Observable<null> = this._refresh.asObservable();
     section: 'clicks' | 'offers' | 'visitors' = 'clicks';
@@ -35,17 +36,13 @@ export class ReportsComponent extends AppComponentBase implements OnInit, OnDest
     formatting = AppConsts.formatting;
     offerStatsDataSource: DataSource;
     offersStaticFilter = {'RequestCount': { gt: 0 }};
+    offersQuickSearch: string;
     visitorsDataSource: DataSource;
     visitorsCampaignId: number;
+    visitorsQuickSearch: string;
 
-    clickStatsYearIndex: number = 1;
     clickStatsYear: number = moment().year();
     years: number[] = range(2018, this.clickStatsYear + 1);
-
-    headlineConfig = {
-        names: [this.l('Reports')],
-        buttons: []
-    };
 
     menuItems = [
         {
@@ -77,7 +74,7 @@ export class ReportsComponent extends AppComponentBase implements OnInit, OnDest
     }
 
     ngOnInit(): void {
-        this.initToolbarConfig();
+        this.initConfigs();
 
         this.offerStatsDataSource = new DataSource({
             store: {
@@ -116,50 +113,59 @@ export class ReportsComponent extends AppComponentBase implements OnInit, OnDest
         });
     }
 
+    initConfigs() {
+        this.initHeadlineConfig();
+        this.initToolbarConfig();
+    }
+
+    initHeadlineConfig() {
+        this.headlineConfig = {
+            names: [this.l('Reports')],
+            buttons: [
+                {
+                    enabled: this.section != 'clicks',
+                    class: 'button-layout button-default',
+                    action: (event) => {
+                        this.showCalendarDialog();
+                    },
+                    lable: (this.dateFrom ? this.dateFrom.format('DD/MM/YYYY') : this.l('Start Date')) +
+                        ' - ' + (this.dateTo ? this.dateTo.format('DD/MM/YYYY') : this.l('End Date'))
+                }
+            ]
+        };
+    }
+
     initToolbarConfig() {
         if (this.componentIsActivated) {
             this._appService.updateToolbar([
                 {
-                    location: 'center',
-                    items: [{
-                        widget: 'dxButton',
-                        options: {
-                            text: (this.dateFrom ? this.dateFrom.format('DD/MM/YYYY') : this.l('Start Date')) +
-                                ' - ' + (this.dateTo ? this.dateTo.format('DD/MM/YYYY') : this.l('End Date')),
-                            onClick: (event) => {
-                                this.showCalendarDialog();
-                            }
-                        },
-                        visible: this.section != 'clicks'
-                    },{
-                        text: '',
-                        name: 'select-box',
-                        widget: 'dxDropDownMenu',
-                        options: {
-                            width: 80,
-                            selectedIndex: this.clickStatsYearIndex,
-                            items: [
-                                {
-                                    text: '2018',
-                                    value: 2018
-                                }, {
-                                    text: '2019',
-                                    value: 2019
-                                }, {
-                                    text: '2020',
-                                    value: 2020
+                    location: 'before',
+                    items: [
+                        {
+                            name: 'search',
+                            widget: 'dxTextBox',
+                            options: {
+                                value: this.section == 'offers' ? this.offersQuickSearch : this.visitorsQuickSearch,
+                                width: '279',
+                                mode: 'search',
+                                placeholder: this.l('Search') + ' '
+                                    + this.l(this.section == 'offers' ? 'Offers' : 'Customers').toLowerCase(),
+                                onValueChanged: (e) => {
+                                    if (this.section == 'offers')
+                                    {
+                                        this.offersQuickSearch = e.value;
+                                        this.refreshOfferStats();
+                                    }
+                                    else
+                                    {
+                                        this.visitorsQuickSearch = e.value;
+                                        this.refreshVisitors();
+                                    }
                                 }
-                            ],
-                            onSelectionChanged: (e) => {
-                                if (e) {
-                                    this.clickStatsYearIndex = e.itemIndex;
-                                    this.clickStatsYear = e.itemData.value;
-                                    this.initToolbarConfig();
-                                }
-                            }
-                        },
-                        visible: this.section == 'clicks'
-                    }]
+                            },
+                            visible: this.section != 'clicks'
+                        }
+                    ]
                 },
                 {
                     location: 'after',
@@ -175,7 +181,16 @@ export class ReportsComponent extends AppComponentBase implements OnInit, OnDest
                                 }
                             },
                             visible: this.section == 'visitors' && this.visitorsCampaignId
-                        }
+                        },
+                        {
+                            name: 'download',
+                            widget: 'dxDropDownMenu',
+                            options: {
+                                hint: this.l('Download'),
+                                items: [
+                                ]
+                            }
+                        },
                     ]
                 },
             ]);
@@ -184,6 +199,7 @@ export class ReportsComponent extends AppComponentBase implements OnInit, OnDest
 
     onStatsClick(event) {
         this.onPeriodChanged(new Date(event.from), new Date(event.to));
+        this.offersQuickSearch = null;
         this.setSection('offers', false);
         this.setupStepsComponent.setSelectedIndex(1);
         this.refreshOfferStats();
@@ -198,7 +214,7 @@ export class ReportsComponent extends AppComponentBase implements OnInit, OnDest
             return;
 
         this.section = section;
-        this.initToolbarConfig()
+        this.initConfigs();
         if (repaint)
         {
             setTimeout(() => {
@@ -212,10 +228,10 @@ export class ReportsComponent extends AppComponentBase implements OnInit, OnDest
 
     onOfferClicksClick(field) {
         this.visitorsCampaignId = field.data.CampaignId;
+        this.visitorsQuickSearch = null;
         this.setSection('visitors', false);
         this.setupStepsComponent.setSelectedIndex(2);
         this.refreshVisitors();
-        this.initToolbarConfig();
     }
 
     refreshOfferStats(){
@@ -224,7 +240,10 @@ export class ReportsComponent extends AppComponentBase implements OnInit, OnDest
             customFilter.push({name: 'CountDateFrom', value: this.dateFrom.toDate().toJSON()});
         if (this.dateTo)
             customFilter.push({name: 'CountDateTo', value: this.dateTo.toDate().toJSON()});
-        this.processODataFilter(this.offerStatsGrid.instance, 'Offer', [this.offersStaticFilter], (filter) => filter, null, customFilter);
+        var filters: any[] = [this.offersStaticFilter];
+        if (this.offersQuickSearch)
+            filters.push({'Name': { contains: this.offersQuickSearch}});
+        this.processODataFilter(this.offerStatsGrid.instance, 'Offer', filters, (filter) => filter, null, customFilter);
     }
 
     onPeriodChanged(from: Date, to: Date): boolean {
@@ -238,7 +257,7 @@ export class ReportsComponent extends AppComponentBase implements OnInit, OnDest
             if (dateTo != this.dateTo || dateFrom != this.dateFrom) {
                 this.dateTo = dateTo && moment(dateTo);
                 this.dateFrom = dateFrom && moment(dateFrom);
-                this.initToolbarConfig();
+                this.initHeadlineConfig();
                 return true;
             }
         }
@@ -257,17 +276,20 @@ export class ReportsComponent extends AppComponentBase implements OnInit, OnDest
             visitorsFilter.push({Date: {gt: this.dateFrom.toDate()}});
         if (this.dateTo)
             visitorsFilter.push({Date: {lt: this.dateTo.toDate()}});
-
         if (this.visitorsCampaignId)
-        {
             visitorsFilter.push({CampaignId: this.visitorsCampaignId});
-        }
+        if (this.visitorsQuickSearch)
+            visitorsFilter.push(this.getSearchFilter(['FirstName', 'LastName', 'Email', 'PhoneNumber'], this.visitorsQuickSearch));
 
         this.processODataFilter(this.visitorsGrid.instance, 'PfmOfferRequest', visitorsFilter, (filter) => filter);
     }
 
     getCategoryValue(data) {
         return data.Categories.map(item => item.Name).join(', ');
+    }
+
+    yearSelectionChanged() {
+        this.initHeadlineConfig();
     }
 
     showCalendarDialog() {
@@ -299,7 +321,7 @@ export class ReportsComponent extends AppComponentBase implements OnInit, OnDest
 
     activate() {
         super.activate();
-        this.initToolbarConfig();
+        this.initConfigs();
     }
 
     deactivate() {

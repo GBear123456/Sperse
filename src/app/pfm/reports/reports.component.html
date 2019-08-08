@@ -1,5 +1,11 @@
 <div>
-    <app-headline [config]="headlineConfig"></app-headline>
+    <app-headline [config]="headlineConfig">
+        <dx-select-box *ngIf="section == 'clicks'" 
+            [items]="years"
+            [(value)]="clickStatsYear"
+            (selectionChanged)="yearSelectionChanged($event)">
+        </dx-select-box>
+    </app-headline>
     <div class="wrapper portlet light">
         <setup-steps-common [SetupSteps]="menuItems" [SelectedStepIndex]="0" [HeaderTitle]="''"></setup-steps-common>
 
