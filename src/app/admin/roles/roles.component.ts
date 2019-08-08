@@ -213,7 +213,7 @@ export class RolesComponent extends AppComponentBase implements OnDestroy {
     }
 
     initFilterConfig() {
-        this._permissionService.getAllPermissions().subscribe((res) => {
+        this._permissionService.getAllPermissions(false).subscribe((res) => {
             this._filtersService.setup(
                 this.filters = [
                     this.permissionFilterModel = new FilterModel({

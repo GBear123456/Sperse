@@ -31,7 +31,7 @@ export class PermissionComboComponent extends AppComponentBase implements OnInit
 
     ngOnInit(): void {
         let self = this;
-        this._permissionService.getAllPermissions().subscribe(result => {
+        this._permissionService.getAllPermissions(false).subscribe(result => {
             $.each(result.items, (index, item) => {
                 item.displayName = Array(item.level + 1).join('---') + ' ' + item.displayName;
             });

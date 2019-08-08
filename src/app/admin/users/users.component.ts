@@ -388,7 +388,7 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
 
     initFilterConfig() {
         forkJoin(
-            this._permissionService.getAllPermissions(),
+            this._permissionService.getAllPermissions(false),
             this._roleService.getRoles(undefined, undefined)
         ).subscribe((res) => {
             this._filtersService.setup(

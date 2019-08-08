@@ -12760,6 +12760,74 @@ export class ExternalServiceProxy {
 }
 
 @Injectable()
+export class FeatureServiceProxy {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @return Success
+     */
+    getAllFeatures(): Observable<FlatFeatureDto[]> {
+        let url_ = this.baseUrl + "/api/services/Platform/Feature/GetAllFeatures";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetAllFeatures(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetAllFeatures(<any>response_);
+                } catch (e) {
+                    return <Observable<FlatFeatureDto[]>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<FlatFeatureDto[]>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetAllFeatures(response: HttpResponseBase): Observable<FlatFeatureDto[]> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(FlatFeatureDto.fromJS(item));
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<FlatFeatureDto[]>(<any>null);
+    }
+}
+
+@Injectable()
 export class FriendshipServiceProxy {
     private http: HttpClient;
     private baseUrl: string;
@@ -15338,66 +15406,6 @@ export class LeadServiceProxy {
             }));
         }
         return _observableOf<string>(<any>null);
-    }
-
-    /**
-     * @body (optional) 
-     * @return Success
-     */
-    submitLeadBusinessRequests(body: LeadBusinessInfoInput[] | null | undefined): Observable<ImportOutput[]> {
-        let url_ = this.baseUrl + "/api/services/CRM/Lead/SubmitLeadBusinessRequests";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(body);
-
-        let options_ : any = {
-            body: content_,
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processSubmitLeadBusinessRequests(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processSubmitLeadBusinessRequests(<any>response_);
-                } catch (e) {
-                    return <Observable<ImportOutput[]>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<ImportOutput[]>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processSubmitLeadBusinessRequests(response: HttpResponseBase): Observable<ImportOutput[]> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            if (resultData200 && resultData200.constructor === Array) {
-                result200 = [];
-                for (let item of resultData200)
-                    result200.push(ImportOutput.fromJS(item));
-            }
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<ImportOutput[]>(<any>null);
     }
 
     /**
@@ -19876,10 +19884,13 @@ export class PermissionServiceProxy {
     }
 
     /**
+     * @disableTenancyFilter (optional) 
      * @return Success
      */
-    getAllPermissions(): Observable<FlatPermissionWithLevelDtoListResultDto> {
-        let url_ = this.baseUrl + "/api/services/Platform/Permission/GetAllPermissions";
+    getAllPermissions(disableTenancyFilter: boolean | null | undefined): Observable<FlatPermissionWithLevelDtoListResultDto> {
+        let url_ = this.baseUrl + "/api/services/Platform/Permission/GetAllPermissions?";
+        if (disableTenancyFilter !== undefined)
+            url_ += "disableTenancyFilter=" + encodeURIComponent("" + disableTenancyFilter) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -58621,498 +58632,6 @@ export interface ISubmitFreeTrialRequestInput {
     contactGroupId: string | undefined;
     email: string;
     tag: string | undefined;
-}
-
-export class LeadBusinessPhoneInput implements ILeadBusinessPhoneInput {
-    phoneNumber!: string | undefined;
-
-    constructor(data?: ILeadBusinessPhoneInput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.phoneNumber = data["phoneNumber"];
-        }
-    }
-
-    static fromJS(data: any): LeadBusinessPhoneInput {
-        data = typeof data === 'object' ? data : {};
-        let result = new LeadBusinessPhoneInput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["phoneNumber"] = this.phoneNumber;
-        return data; 
-    }
-}
-
-export interface ILeadBusinessPhoneInput {
-    phoneNumber: string | undefined;
-}
-
-export class LeadBusinessLinkInput implements ILeadBusinessLinkInput {
-    linkType!: string | undefined;
-    link!: string | undefined;
-
-    constructor(data?: ILeadBusinessLinkInput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.linkType = data["linkType"];
-            this.link = data["link"];
-        }
-    }
-
-    static fromJS(data: any): LeadBusinessLinkInput {
-        data = typeof data === 'object' ? data : {};
-        let result = new LeadBusinessLinkInput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["linkType"] = this.linkType;
-        data["link"] = this.link;
-        return data; 
-    }
-}
-
-export interface ILeadBusinessLinkInput {
-    linkType: string | undefined;
-    link: string | undefined;
-}
-
-export class LeadBusinessAliasInput implements ILeadBusinessAliasInput {
-    alias!: string | undefined;
-
-    constructor(data?: ILeadBusinessAliasInput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.alias = data["alias"];
-        }
-    }
-
-    static fromJS(data: any): LeadBusinessAliasInput {
-        data = typeof data === 'object' ? data : {};
-        let result = new LeadBusinessAliasInput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["alias"] = this.alias;
-        return data; 
-    }
-}
-
-export interface ILeadBusinessAliasInput {
-    alias: string | undefined;
-}
-
-export class LeadBusinessTeamContactInput implements ILeadBusinessTeamContactInput {
-    prefix!: string | undefined;
-    firstName!: string | undefined;
-    middleName!: string | undefined;
-    lastName!: string | undefined;
-    title!: string | undefined;
-    emailAddress!: string | undefined;
-    phoneNumber!: string | undefined;
-
-    constructor(data?: ILeadBusinessTeamContactInput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.prefix = data["prefix"];
-            this.firstName = data["firstName"];
-            this.middleName = data["middleName"];
-            this.lastName = data["lastName"];
-            this.title = data["title"];
-            this.emailAddress = data["emailAddress"];
-            this.phoneNumber = data["phoneNumber"];
-        }
-    }
-
-    static fromJS(data: any): LeadBusinessTeamContactInput {
-        data = typeof data === 'object' ? data : {};
-        let result = new LeadBusinessTeamContactInput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["prefix"] = this.prefix;
-        data["firstName"] = this.firstName;
-        data["middleName"] = this.middleName;
-        data["lastName"] = this.lastName;
-        data["title"] = this.title;
-        data["emailAddress"] = this.emailAddress;
-        data["phoneNumber"] = this.phoneNumber;
-        return data; 
-    }
-}
-
-export interface ILeadBusinessTeamContactInput {
-    prefix: string | undefined;
-    firstName: string | undefined;
-    middleName: string | undefined;
-    lastName: string | undefined;
-    title: string | undefined;
-    emailAddress: string | undefined;
-    phoneNumber: string | undefined;
-}
-
-export class LeadBusinessInfoInput implements ILeadBusinessInfoInput {
-    shortname!: string;
-    companyName!: string;
-    emailAddress1!: string | undefined;
-    emailAddress2!: string | undefined;
-    address!: string | undefined;
-    city!: string | undefined;
-    state!: string | undefined;
-    zip!: string | undefined;
-    website!: string | undefined;
-    industry!: string | undefined;
-    relationship!: string | undefined;
-    primaryFundingType!: string | undefined;
-    referralType!: string | undefined;
-    founded!: moment.Moment | undefined;
-    companySizeFrom!: number | undefined;
-    companySizeTo!: number | undefined;
-    type!: string | undefined;
-    ticker!: string | undefined;
-    refID!: string | undefined;
-    logoUrl!: string | undefined;
-    rating!: number | undefined;
-    ucc!: number | undefined;
-    network!: string | undefined;
-    offerID!: string | undefined;
-    threeMonthEPC!: string | undefined;
-    sevenDayEPC!: string | undefined;
-    payout!: string | undefined;
-    fundingAmountLow!: number | undefined;
-    fundingAmountHigh!: number | undefined;
-    creditScoreMin!: number | undefined;
-    creditScoreDesired!: number | undefined;
-    apr!: number | undefined;
-    featuresAndBenefits!: string | undefined;
-    countriesServed!: string | undefined;
-    description!: string | undefined;
-    keywordTags!: string | undefined;
-    primaryContactNamePrefix!: string | undefined;
-    primaryContactFirstName!: string | undefined;
-    primaryContactMiddleName!: string | undefined;
-    primaryContactLastName!: string | undefined;
-    primaryContactTitle!: string | undefined;
-    primaryContactEmail!: string | undefined;
-    primaryContactPhone1!: string | undefined;
-    primaryContactPhone1Ext!: string | undefined;
-    primaryContactPhone2!: string | undefined;
-    primaryContactDOB!: moment.Moment | undefined;
-    primaryContactEducation!: string | undefined;
-    primaryContactCityState!: string | undefined;
-    primaryContactPersonalProfile!: string | undefined;
-    primaryContactPersonalLinkedIn!: string | undefined;
-    businessPhones!: LeadBusinessPhoneInput[] | undefined;
-    businessLinks!: LeadBusinessLinkInput[] | undefined;
-    businessAliases!: LeadBusinessAliasInput[] | undefined;
-    businessTeamContacts!: LeadBusinessTeamContactInput[] | undefined;
-
-    constructor(data?: ILeadBusinessInfoInput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.shortname = data["shortname"];
-            this.companyName = data["companyName"];
-            this.emailAddress1 = data["emailAddress1"];
-            this.emailAddress2 = data["emailAddress2"];
-            this.address = data["address"];
-            this.city = data["city"];
-            this.state = data["state"];
-            this.zip = data["zip"];
-            this.website = data["website"];
-            this.industry = data["industry"];
-            this.relationship = data["relationship"];
-            this.primaryFundingType = data["primaryFundingType"];
-            this.referralType = data["referralType"];
-            this.founded = data["founded"] ? moment(data["founded"].toString()) : <any>undefined;
-            this.companySizeFrom = data["companySizeFrom"];
-            this.companySizeTo = data["companySizeTo"];
-            this.type = data["type"];
-            this.ticker = data["ticker"];
-            this.refID = data["refID"];
-            this.logoUrl = data["logoUrl"];
-            this.rating = data["rating"];
-            this.ucc = data["ucc"];
-            this.network = data["network"];
-            this.offerID = data["offerID"];
-            this.threeMonthEPC = data["threeMonthEPC"];
-            this.sevenDayEPC = data["sevenDayEPC"];
-            this.payout = data["payout"];
-            this.fundingAmountLow = data["fundingAmountLow"];
-            this.fundingAmountHigh = data["fundingAmountHigh"];
-            this.creditScoreMin = data["creditScoreMin"];
-            this.creditScoreDesired = data["creditScoreDesired"];
-            this.apr = data["apr"];
-            this.featuresAndBenefits = data["featuresAndBenefits"];
-            this.countriesServed = data["countriesServed"];
-            this.description = data["description"];
-            this.keywordTags = data["keywordTags"];
-            this.primaryContactNamePrefix = data["primaryContactNamePrefix"];
-            this.primaryContactFirstName = data["primaryContactFirstName"];
-            this.primaryContactMiddleName = data["primaryContactMiddleName"];
-            this.primaryContactLastName = data["primaryContactLastName"];
-            this.primaryContactTitle = data["primaryContactTitle"];
-            this.primaryContactEmail = data["primaryContactEmail"];
-            this.primaryContactPhone1 = data["primaryContactPhone1"];
-            this.primaryContactPhone1Ext = data["primaryContactPhone1Ext"];
-            this.primaryContactPhone2 = data["primaryContactPhone2"];
-            this.primaryContactDOB = data["primaryContactDOB"] ? moment(data["primaryContactDOB"].toString()) : <any>undefined;
-            this.primaryContactEducation = data["primaryContactEducation"];
-            this.primaryContactCityState = data["primaryContactCityState"];
-            this.primaryContactPersonalProfile = data["primaryContactPersonalProfile"];
-            this.primaryContactPersonalLinkedIn = data["primaryContactPersonalLinkedIn"];
-            if (data["businessPhones"] && data["businessPhones"].constructor === Array) {
-                this.businessPhones = [];
-                for (let item of data["businessPhones"])
-                    this.businessPhones.push(LeadBusinessPhoneInput.fromJS(item));
-            }
-            if (data["businessLinks"] && data["businessLinks"].constructor === Array) {
-                this.businessLinks = [];
-                for (let item of data["businessLinks"])
-                    this.businessLinks.push(LeadBusinessLinkInput.fromJS(item));
-            }
-            if (data["businessAliases"] && data["businessAliases"].constructor === Array) {
-                this.businessAliases = [];
-                for (let item of data["businessAliases"])
-                    this.businessAliases.push(LeadBusinessAliasInput.fromJS(item));
-            }
-            if (data["businessTeamContacts"] && data["businessTeamContacts"].constructor === Array) {
-                this.businessTeamContacts = [];
-                for (let item of data["businessTeamContacts"])
-                    this.businessTeamContacts.push(LeadBusinessTeamContactInput.fromJS(item));
-            }
-        }
-    }
-
-    static fromJS(data: any): LeadBusinessInfoInput {
-        data = typeof data === 'object' ? data : {};
-        let result = new LeadBusinessInfoInput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["shortname"] = this.shortname;
-        data["companyName"] = this.companyName;
-        data["emailAddress1"] = this.emailAddress1;
-        data["emailAddress2"] = this.emailAddress2;
-        data["address"] = this.address;
-        data["city"] = this.city;
-        data["state"] = this.state;
-        data["zip"] = this.zip;
-        data["website"] = this.website;
-        data["industry"] = this.industry;
-        data["relationship"] = this.relationship;
-        data["primaryFundingType"] = this.primaryFundingType;
-        data["referralType"] = this.referralType;
-        data["founded"] = this.founded ? this.founded.toISOString() : <any>undefined;
-        data["companySizeFrom"] = this.companySizeFrom;
-        data["companySizeTo"] = this.companySizeTo;
-        data["type"] = this.type;
-        data["ticker"] = this.ticker;
-        data["refID"] = this.refID;
-        data["logoUrl"] = this.logoUrl;
-        data["rating"] = this.rating;
-        data["ucc"] = this.ucc;
-        data["network"] = this.network;
-        data["offerID"] = this.offerID;
-        data["threeMonthEPC"] = this.threeMonthEPC;
-        data["sevenDayEPC"] = this.sevenDayEPC;
-        data["payout"] = this.payout;
-        data["fundingAmountLow"] = this.fundingAmountLow;
-        data["fundingAmountHigh"] = this.fundingAmountHigh;
-        data["creditScoreMin"] = this.creditScoreMin;
-        data["creditScoreDesired"] = this.creditScoreDesired;
-        data["apr"] = this.apr;
-        data["featuresAndBenefits"] = this.featuresAndBenefits;
-        data["countriesServed"] = this.countriesServed;
-        data["description"] = this.description;
-        data["keywordTags"] = this.keywordTags;
-        data["primaryContactNamePrefix"] = this.primaryContactNamePrefix;
-        data["primaryContactFirstName"] = this.primaryContactFirstName;
-        data["primaryContactMiddleName"] = this.primaryContactMiddleName;
-        data["primaryContactLastName"] = this.primaryContactLastName;
-        data["primaryContactTitle"] = this.primaryContactTitle;
-        data["primaryContactEmail"] = this.primaryContactEmail;
-        data["primaryContactPhone1"] = this.primaryContactPhone1;
-        data["primaryContactPhone1Ext"] = this.primaryContactPhone1Ext;
-        data["primaryContactPhone2"] = this.primaryContactPhone2;
-        data["primaryContactDOB"] = this.primaryContactDOB ? this.primaryContactDOB.toISOString() : <any>undefined;
-        data["primaryContactEducation"] = this.primaryContactEducation;
-        data["primaryContactCityState"] = this.primaryContactCityState;
-        data["primaryContactPersonalProfile"] = this.primaryContactPersonalProfile;
-        data["primaryContactPersonalLinkedIn"] = this.primaryContactPersonalLinkedIn;
-        if (this.businessPhones && this.businessPhones.constructor === Array) {
-            data["businessPhones"] = [];
-            for (let item of this.businessPhones)
-                data["businessPhones"].push(item.toJSON());
-        }
-        if (this.businessLinks && this.businessLinks.constructor === Array) {
-            data["businessLinks"] = [];
-            for (let item of this.businessLinks)
-                data["businessLinks"].push(item.toJSON());
-        }
-        if (this.businessAliases && this.businessAliases.constructor === Array) {
-            data["businessAliases"] = [];
-            for (let item of this.businessAliases)
-                data["businessAliases"].push(item.toJSON());
-        }
-        if (this.businessTeamContacts && this.businessTeamContacts.constructor === Array) {
-            data["businessTeamContacts"] = [];
-            for (let item of this.businessTeamContacts)
-                data["businessTeamContacts"].push(item.toJSON());
-        }
-        return data; 
-    }
-}
-
-export interface ILeadBusinessInfoInput {
-    shortname: string;
-    companyName: string;
-    emailAddress1: string | undefined;
-    emailAddress2: string | undefined;
-    address: string | undefined;
-    city: string | undefined;
-    state: string | undefined;
-    zip: string | undefined;
-    website: string | undefined;
-    industry: string | undefined;
-    relationship: string | undefined;
-    primaryFundingType: string | undefined;
-    referralType: string | undefined;
-    founded: moment.Moment | undefined;
-    companySizeFrom: number | undefined;
-    companySizeTo: number | undefined;
-    type: string | undefined;
-    ticker: string | undefined;
-    refID: string | undefined;
-    logoUrl: string | undefined;
-    rating: number | undefined;
-    ucc: number | undefined;
-    network: string | undefined;
-    offerID: string | undefined;
-    threeMonthEPC: string | undefined;
-    sevenDayEPC: string | undefined;
-    payout: string | undefined;
-    fundingAmountLow: number | undefined;
-    fundingAmountHigh: number | undefined;
-    creditScoreMin: number | undefined;
-    creditScoreDesired: number | undefined;
-    apr: number | undefined;
-    featuresAndBenefits: string | undefined;
-    countriesServed: string | undefined;
-    description: string | undefined;
-    keywordTags: string | undefined;
-    primaryContactNamePrefix: string | undefined;
-    primaryContactFirstName: string | undefined;
-    primaryContactMiddleName: string | undefined;
-    primaryContactLastName: string | undefined;
-    primaryContactTitle: string | undefined;
-    primaryContactEmail: string | undefined;
-    primaryContactPhone1: string | undefined;
-    primaryContactPhone1Ext: string | undefined;
-    primaryContactPhone2: string | undefined;
-    primaryContactDOB: moment.Moment | undefined;
-    primaryContactEducation: string | undefined;
-    primaryContactCityState: string | undefined;
-    primaryContactPersonalProfile: string | undefined;
-    primaryContactPersonalLinkedIn: string | undefined;
-    businessPhones: LeadBusinessPhoneInput[] | undefined;
-    businessLinks: LeadBusinessLinkInput[] | undefined;
-    businessAliases: LeadBusinessAliasInput[] | undefined;
-    businessTeamContacts: LeadBusinessTeamContactInput[] | undefined;
-}
-
-export class ImportOutput implements IImportOutput {
-    leadName!: string | undefined;
-    errorMessage!: string | undefined;
-
-    constructor(data?: IImportOutput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.leadName = data["leadName"];
-            this.errorMessage = data["errorMessage"];
-        }
-    }
-
-    static fromJS(data: any): ImportOutput {
-        data = typeof data === 'object' ? data : {};
-        let result = new ImportOutput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["leadName"] = this.leadName;
-        data["errorMessage"] = this.errorMessage;
-        return data; 
-    }
-}
-
-export interface IImportOutput {
-    leadName: string | undefined;
-    errorMessage: string | undefined;
 }
 
 export class UpdateLeadStageInfo implements IUpdateLeadStageInfo {
