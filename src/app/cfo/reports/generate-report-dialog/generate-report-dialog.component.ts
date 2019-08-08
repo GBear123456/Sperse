@@ -154,7 +154,7 @@ export class GenerateReportDialogComponent implements OnInit {
                         currencyId,
                         businessEntityIds: [Number(param)],
                         bankAccountIds: [],
-                        notificationData: undefined
+                        notificationData: null
                     }))) :
                     this.reportsProxy.generate(<any>this.data.instanceType, this.data.instanceId, new GenerateInput({
                         from: this.dateFrom && DateHelper.getDateWithoutTime(this.dateFrom),
@@ -163,7 +163,7 @@ export class GenerateReportDialogComponent implements OnInit {
                         currencyId,
                         businessEntityIds: this.selectedBusinessEntityIds,
                         bankAccountIds: [],
-                        notificationData: undefined
+                        notificationData: null
                     }));
                 return forkJoin(genOb);
             })
@@ -172,6 +172,10 @@ export class GenerateReportDialogComponent implements OnInit {
             this.data.reportGenerated();
             this.modalDialog.close(true);
             this.notify.info(this.ls.l('SuccessfullyGenerated'));
+        }, () => {
+                this.modalDialog.finishLoading();
+                this.modalDialog.close(true);
+                this.notify.error(this.ls.l('GenerationFailed'));
         });
     }
 
