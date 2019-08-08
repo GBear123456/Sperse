@@ -464,7 +464,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
             this._odataService.loadDataSource(
                 this._totalDataSource,
                 this.totalsURI
-            ).done((res) => {
+            ).then((res) => {
                 let stages = res.pop();
                 this.allStagesEntitiesTotal = 0;
                 stages && this.stages.forEach((stage) => {
@@ -474,6 +474,8 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                     this.allStagesEntitiesTotal += stage['total'];
                 });
                 this.detectChanges();
+            }, (e) => {
+                this.notify.error(this.l('AnErrorOccurred'));
             });
         }
     }
