@@ -21935,6 +21935,64 @@ export class ReportsServiceProxy {
         }
         return _observableOf<void>(<any>null);
     }
+
+    /**
+     * @instanceType (optional) 
+     * @instanceId (optional) 
+     * @body (optional) 
+     * @return Success
+     */
+    sendReportNotification(instanceType: InstanceType | null | undefined, instanceId: number | null | undefined, body: SendReportNotificationInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CFO/Reports/SendReportNotification?";
+        if (instanceType !== undefined)
+            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
+        if (instanceId !== undefined)
+            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processSendReportNotification(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processSendReportNotification(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processSendReportNotification(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
 }
 
 @Injectable()
@@ -66063,6 +66121,50 @@ export enum ReportPeriod {
     Annual = "Annual", 
 }
 
+export class SendReportNotificationInput implements ISendReportNotificationInput {
+    reportId!: string | undefined;
+    recipientUserEmailAddress!: string | undefined;
+    sendReportInAttachments!: boolean | undefined;
+
+    constructor(data?: ISendReportNotificationInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.reportId = data["reportId"];
+            this.recipientUserEmailAddress = data["recipientUserEmailAddress"];
+            this.sendReportInAttachments = data["sendReportInAttachments"];
+        }
+    }
+
+    static fromJS(data: any): SendReportNotificationInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new SendReportNotificationInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["reportId"] = this.reportId;
+        data["recipientUserEmailAddress"] = this.recipientUserEmailAddress;
+        data["sendReportInAttachments"] = this.sendReportInAttachments;
+        return data; 
+    }
+}
+
+export interface ISendReportNotificationInput {
+    reportId: string | undefined;
+    recipientUserEmailAddress: string | undefined;
+    sendReportInAttachments: boolean | undefined;
+}
+
 export class GenerateInput implements IGenerateInput {
     from!: moment.Moment;
     to!: moment.Moment;
@@ -66070,6 +66172,7 @@ export class GenerateInput implements IGenerateInput {
     currencyId!: string;
     businessEntityIds!: number[] | undefined;
     bankAccountIds!: number[] | undefined;
+    notificationData!: SendReportNotificationInput | undefined;
 
     constructor(data?: IGenerateInput) {
         if (data) {
@@ -66096,6 +66199,7 @@ export class GenerateInput implements IGenerateInput {
                 for (let item of data["bankAccountIds"])
                     this.bankAccountIds.push(item);
             }
+            this.notificationData = data["notificationData"] ? SendReportNotificationInput.fromJS(data["notificationData"]) : <any>undefined;
         }
     }
 
@@ -66122,6 +66226,7 @@ export class GenerateInput implements IGenerateInput {
             for (let item of this.bankAccountIds)
                 data["bankAccountIds"].push(item);
         }
+        data["notificationData"] = this.notificationData ? this.notificationData.toJSON() : <any>undefined;
         return data; 
     }
 }
@@ -66133,6 +66238,7 @@ export interface IGenerateInput {
     currencyId: string;
     businessEntityIds: number[] | undefined;
     bankAccountIds: number[] | undefined;
+    notificationData: SendReportNotificationInput | undefined;
 }
 
 export class RoleListDto implements IRoleListDto {
