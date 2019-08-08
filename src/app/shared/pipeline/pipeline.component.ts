@@ -36,6 +36,7 @@ import { AddRenameMergeDialogComponent } from './add-rename-merge-dialog/add-ren
 import { ContactGroup } from '@shared/AppEnums';
 import { DataLayoutType } from '@app/shared/layout/data-layout-type';
 import { FiltersService } from '@shared/filters/filters.service';
+import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
 
 @Component({
     selector: 'app-pipeline',
@@ -120,6 +121,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         private _changeDetector: ChangeDetectorRef,
         private _filtersService: FiltersService,
         private store$: Store<CrmStore.State>,
+        public userManagementService: UserManagementService,
         public dialog: MatDialog
     ) {
         super(injector);

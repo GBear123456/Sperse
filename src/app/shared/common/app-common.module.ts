@@ -52,6 +52,7 @@ import { PapaParseModule } from 'ngx-papaparse';
 import { ImageCropperModule } from 'ng2-img-cropper';
 import { CreditCardDirectivesModule } from 'angular-cc-library';
 import { AngularGooglePlaceModule } from 'angular-google-place';
+import { TimeAgoPipe } from 'time-ago-pipe';
 
 /** Application imports */
 import { AbpModule } from '@abp/abp.module';
@@ -60,7 +61,7 @@ import { CommonModule } from '@shared/common/common.module';
 import { UploadPhotoDialogComponent } from './upload-photo-dialog/upload-photo-dialog.component';
 import { ConfirmDialogComponent } from './dialogs/confirm/confirm-dialog.component';
 import { CalendarDialogComponent } from './dialogs/calendar/calendar-dialog.component';
-import { GenerateReportDialogComponent } from '@app/cfo/reports/generate-report-dialog/generate-report-dialog.component'
+import { GenerateReportDialogComponent } from '@app/cfo/reports/generate-report-dialog/generate-report-dialog.component';
 import { ImportWizardComponent } from './import-wizard/import-wizard.component';
 import { ConfirmImportDialog } from './import-wizard/confirm-import-dialog/confirm-import-dialog.component';
 import { ImportProgressBarComponent } from './import-wizard/import-progress-bar/import-progress-bar.component';
@@ -96,7 +97,6 @@ import { RatingComponent } from '@app/crm/shared/rating/rating.component';
 import { StarsListComponent } from '@app/crm/shared/stars-list/stars-list.component';
 import { TypesListComponent } from '@app/crm/shared/types-list/types-list.component';
 import { StaticListComponent } from './static-list/static-list.component';
-import { TimeAgoPipe } from 'time-ago-pipe';
 import { LoadingSpinnerModule } from '@app/shared/common/loading-spinner/loading-spinner.module';
 import { SetupStepsComponent } from './setup-steps/setup-steps.component';
 

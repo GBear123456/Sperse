@@ -86,7 +86,7 @@ import { BankCodeLayoutModule } from '@root/bank-code/shared/layout/bank-code-la
         LendSpaceResetPasswordComponent,
         AdvicePeriodResetPasswordComponent,
         AdvicePeriodForgotPasswordComponent,
-        BankCodeResetPasswordComponent, 
+        BankCodeResetPasswordComponent,
         BankCodeForgotPasswordComponent
     ],
     entryComponents: [
@@ -104,7 +104,7 @@ import { BankCodeLayoutModule } from '@root/bank-code/shared/layout/bank-code-la
         LendSpaceResetPasswordComponent,
         AdvicePeriodResetPasswordComponent,
         AdvicePeriodForgotPasswordComponent,
-        BankCodeResetPasswordComponent, 
+        BankCodeResetPasswordComponent,
         BankCodeForgotPasswordComponent
     ],
     providers: [

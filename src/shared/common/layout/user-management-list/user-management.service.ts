@@ -137,6 +137,11 @@ export class UserManagementService {
         return tenant && (tenant.customLayoutType == LayoutType.AdvicePeriod);
     }
 
+    checkBankCodeLayout() {
+        const tenant = this.appSession.tenant;
+        return tenant && (tenant.customLayoutType == LayoutType.BankCode);
+    }
+
     getProfilePictureUrl(id, defaultUrl = AppConsts.imageUrls.profileDefault) {
         return id ? AppConsts.remoteServiceBaseUrl + '/api/Profile/Picture/' + (this.appSession.tenantId || 0) + '/' + id
             : (this.checkLendSpaceLayout() || this.checkAdvicePeriodLayout() ? AppConsts.imageUrls.profileLendSpace : defaultUrl);

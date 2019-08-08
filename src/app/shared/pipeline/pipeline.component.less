@@ -1,7 +1,7 @@
 @import "~dragula/dist/dragula.css";
 
 :host {
-    margin: 0px 0px;
+    margin: 0 0;
     display: flex;
     flex-flow: wrap;
     justify-content: flex-end;
@@ -48,14 +48,14 @@
 
             .column-title {
                 position: absolute!important;
-                top: 0px;
+                top: 0;
                 z-index: 1;
                 height: 63px;
                 min-height: 40px;
-                border-radius: 0px;
+                border-radius: 0;
                 border: none;
                 padding: 5px;
-                border-right: 0;               
+                border-right: 0;
                 font-size: 13px;
                 font-weight: 600; // 500
                 letter-spacing: 0.5px;
@@ -129,7 +129,7 @@
                     opacity: 0;
                     transition: .3s;
                     position: absolute;
-                    right: 0px;
+                    right: 0;
                 }
                 &:hover {
                     .edit-button {
@@ -173,7 +173,7 @@
                 .card {
                     cursor: not-allowed;
                     min-height: 95px;
-                    padding: 10px 0px 0px 0px;
+                    padding: 10px 0 0 0;
                     margin-bottom: 11px;
                     font-size: 15px;
                     line-height: 1.4;
@@ -200,11 +200,14 @@
                     }
                     .row {
                         margin-right: -15px;
+                        padding: 0 10px;
+                        flex-wrap: nowrap;
+                        justify-content: space-between;
                         &.item-data {
                             display: none;
                             position: relative;
                             bottom: -11px;
-                            padding: 10px 0px 3px;
+                            padding: 10px 0 3px;
                             img {
                                 vertical-align: baseline;
                                 &.email {
@@ -216,7 +219,7 @@
                                 width: 1px;
                                 height: 21px;
                                 background-color: #dfdfdf;
-                                margin: 0px 10px;
+                                margin: 0 10px;
                             }
                             .text-right {
                                 width: 100%;
@@ -238,7 +241,6 @@
                         .full-name {
                             display: inline-block;
                             max-height: 42px;
-                            padding: 0px 10px;
                             text-overflow: ellipsis;
                             overflow: hidden;
                             span {
@@ -249,19 +251,19 @@
                                     font-size: 12px;
                                 }
                             }
-                            .company-name {
-                                overflow: hidden;
-                                text-overflow: ellipsis;
-                                span {
-                                    font-size: 12px;
-                                    font-weight: 500;
-                                    font-style: normal;
-                                    font-stretch: normal;
-                                    line-height: 0.71;
-                                    letter-spacing: 0.3px;
-                                    text-align: left;
-                                    color: #677380;
-                                }
+                        }
+                        .company-name {
+                            overflow: hidden;
+                            text-overflow: ellipsis;
+                            span {
+                                font-size: 12px;
+                                font-weight: 500;
+                                font-style: normal;
+                                font-stretch: normal;
+                                letter-spacing: 0.3px;
+                                text-align: left;
+                                color: #677380;
+                                white-space: nowrap;
                             }
                         }
                         .days-ago {
@@ -287,7 +289,6 @@
                         .check-box {
                             position: absolute;
                             bottom: 11px;
-                            left: 10px;
                             height: 18px;
                             line-height: 0;
 
@@ -334,8 +335,8 @@
                         border-top: 31px solid transparent;
                         border-bottom: 31px solid transparent;
                         border-left: 31px solid #FFF;
-                        left: 0px;
-                        top: 0px;
+                        left: 0;
+                        top: 0;
                     }
                     &:after {
                         content: '';
@@ -345,7 +346,7 @@
                         border-bottom: 31px solid transparent;
                         border-left: 31px solid #076943;
                         right: -31px;
-                        top: 0px;
+                        top: 0;
                     }
                     & > span, div {
                         padding-left: 30px;
@@ -458,7 +459,7 @@
                         border-bottom: 31px solid transparent;
                         border-right: 31px solid #b52626;
                         left: -31px;
-                        top: 0px;
+                        top: 0;
                     }
                     &:after {
                         content: '';
@@ -467,14 +468,14 @@
                         border-top: 31px solid transparent;
                         border-bottom: 31px solid transparent;
                         border-right: 31px solid #FFF;
-                        right: 0px;
-                        top: 0px;
+                        right: 0;
+                        top: 0;
                     }
                     & > span, div {
                         padding-right: 30px;
                     }
                     .edit-button {
-                        left: 0px!important;
+                        left: 0!important;
                     }
                 }
                 &.column1 {
@@ -543,7 +544,7 @@
             z-index: 17;
             width: auto;
             min-width: 14vw;
-            margin: 0px 11px!important;
+            margin: 0 11px!important;
             .column-title {
                 background-color: #00aeef!important;
                 &:before {
@@ -554,7 +555,7 @@
                     border-bottom: 31px solid transparent;
                     border-right: 31px solid #00aeef;
                     left: -31px;
-                    top: 0px;
+                    top: 0;
                 }
                 &:after {
                     content: '';
@@ -564,7 +565,7 @@
                     border-bottom: 31px solid transparent;
                     border-left: 31px solid #00aeef;
                     right: -31px;
-                    top: 0px;
+                    top: 0;
                 }
             }
             .column-items {
@@ -619,7 +620,7 @@
             color: #FFF;
             font-weight: 400;
             font-size: 12px;
-            padding: 4px 0px;
+            padding: 4px 0;
             border: 1px solid #ca0808;
         }
     }
@@ -627,19 +628,20 @@
     .pipeline-photo-wrap {
         min-width: 40px;
         position: absolute;
-        right: 5px;
         bottom: 5px;
+        right: 5px;
     }
     .related-contact {
         display: none;
     }
     .row {
         margin-right: -15px;
+        padding: 0 10px;
         &.item-data {
             display: none;
             position: relative;
             bottom: -15px;
-            padding: 10px 0px;
+            padding: 10px 0;
             img {
                 vertical-align: baseline;
                 &.email {
@@ -651,7 +653,7 @@
                 width: 1px;
                 height: 21px;
                 background-color: #dfdfdf;
-                margin: 0px 10px;
+                margin: 0 10px;
             }
             .text-right {
                 width: 100%;
@@ -662,25 +664,25 @@
         .full-name {
             max-height: 42px;
             width: 100%;
-            padding: 0px 10px;
             text-overflow: ellipsis;
             overflow: hidden;
             span {
                 white-space: nowrap;
             }
-            .company-name {
-                overflow: hidden;
-                text-overflow: ellipsis;
-                span {
-                    font-size: 12px;
-                    font-weight: 500;
-                    font-style: normal;
-                    font-stretch: normal;
-                    line-height: 0.71;
-                    letter-spacing: 0.3px;
-                    text-align: left;
-                    color: #677380;
-                }
+        }
+        .company-name {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            span {
+                font-size: 12px;
+                font-weight: 500;
+                font-style: normal;
+                font-stretch: normal;
+                line-height: 0.71;
+                letter-spacing: 0.3px;
+                text-align: left;
+                color: #677380;
+                white-space: nowrap;
             }
         }
         .days-ago {
@@ -724,11 +726,11 @@
 }
 
 /deep/ .pipeline-actions {
-    padding: 0px!important;
+    padding: 0!important;
 
     .stage-actions {
-        margin: 0px;
-        padding: 0px;
+        margin: 0;
+        padding: 0;
         list-style-type: none;
         text-align: left;
 
@@ -769,7 +771,7 @@
             }
             a {
                 display: inline-block;
-                padding: 12px 22px 0px 22px;
+                padding: 12px 22px 0 22px;
 
                 & > i {
                     width: 21px;
@@ -818,8 +820,17 @@
 }
 
 /deep/ .funnel-wrapper {
-    padding: 0px;
+    padding: 0;
     height: calc(~'100vh - 210px');
     overflow-x: hidden;
     overflow-y: auto;
+}
+
+/deep/ .bank-code-tooltip {
+    bank-code-letter {
+        display: inline-block;
+        &:not(:last-child) {
+            margin-right: 5px;
+        }
+    }
 }

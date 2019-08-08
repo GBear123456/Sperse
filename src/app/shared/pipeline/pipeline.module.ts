@@ -11,7 +11,7 @@ import { DxNumberBoxModule } from 'devextreme-angular/ui/number-box';
 import { DxTextAreaModule } from 'devextreme-angular/ui/text-area';
 import { DxCheckBoxModule } from 'devextreme-angular/ui/check-box';
 import { DxTooltipModule } from 'devextreme-angular/ui/tooltip';
-import { OrderServiceProxy, LeadServiceProxy, PipelineServiceProxy, 
+import { OrderServiceProxy, LeadServiceProxy, PipelineServiceProxy,
     ActivityServiceProxy } from '@shared/service-proxies/service-proxies';
 import { EntityCancelDialogComponent } from './confirm-cancellation-dialog/confirm-cancellation-dialog.component';
 import { LeadCompleteDialogComponent } from './complete-lead-dialog/complete-lead-dialog.component';
@@ -25,6 +25,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { PipelineService } from './pipeline.service';
 import { ReplacePipe } from '@shared/common/pipes/replace.pipe';
 import { AddRenameMergeDialogComponent } from './add-rename-merge-dialog/add-rename-merge-dialog.component';
+import { BankCodeLetterModule } from '@app/shared/common/bank-code-letter/bank-code-letter.module';
 
 @NgModule({
     imports: [
@@ -44,6 +45,7 @@ import { AddRenameMergeDialogComponent } from './add-rename-merge-dialog/add-ren
         MatInputModule,
         MatButtonModule,
         MatSelectModule,
+        BankCodeLetterModule,
         FormsModule
     ],
     declarations: [

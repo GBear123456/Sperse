@@ -153,7 +153,8 @@ export class GenerateReportDialogComponent implements OnInit {
                         period: this.data.period,
                         currencyId,
                         businessEntityIds: [Number(param)],
-                        bankAccountIds: []
+                        bankAccountIds: [],
+                        notificationData: undefined
                     }))) :
                     this.reportsProxy.generate(<any>this.data.instanceType, this.data.instanceId, new GenerateInput({
                         from: this.dateFrom && DateHelper.getDateWithoutTime(this.dateFrom),
@@ -161,7 +162,8 @@ export class GenerateReportDialogComponent implements OnInit {
                         period: this.data.period,
                         currencyId,
                         businessEntityIds: this.selectedBusinessEntityIds,
-                        bankAccountIds: []
+                        bankAccountIds: [],
+                        notificationData: undefined
                     }));
                 return forkJoin(genOb);
             })

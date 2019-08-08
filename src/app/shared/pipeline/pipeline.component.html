@@ -54,15 +54,31 @@
                     <div class="container-fluid">
                         <div class="row">
                             <div class="full-name">
-                                <ng-container *ngIf="(entity?.Name || entity?.Title || entity?.Email) as name">
+                                <ng-container *ngIf="(entity?.Name || entity?.Title || entity?.Email) as name; else noName">
                                     <span [title]="name">{{ name }}</span>
                                 </ng-container>
-                                <span *ngIf="!entity?.Name && !entity?.Title && !entity?.Email" class="no-name">
-                                    {{ l('ClientNoName') }}
-                                </span>
-                                <div class="company-name" *ngIf="(entity?.CompanyName || entity?.Description) as companyName">
-                                    <span [title]="companyName">{{ companyName }}</span>
-                                </div>
+                                <ng-template #noName>
+                                    <span class="no-name">{{ l('ClientNoName') }}</span>
+                                </ng-template>
+                            </div>
+                            <div class="bank-code" *ngIf="entity?.bankCode && userManagementService.checkBankCodeLayout()">
+                                <bank-code-letter [id]="'bankCode' + entity.Id" [letter]="entity.bankCode[0]"></bank-code-letter>
+                                <dx-tooltip [target]="'#bankCode' + entity.Id"
+                                            showEvent="dxhoverstart"
+                                            hideEvent="dxhoverend">
+                                    <div *dxTemplate="let data of 'content'">
+                                        <div class="bank-code-tooltip">
+                                            <ng-container *ngFor="let letter of entity.bankCode.split('')">
+                                                <bank-code-letter [letter]="letter"></bank-code-letter>
+                                            </ng-container>
+                                        </div>
+                                    </div>
+                                </dx-tooltip>
+                            </div>
+                        </div>
+                        <div class="row" *ngIf="(entity?.CompanyName || entity?.Description) as companyName">
+                            <div class="company-name">
+                                <span [title]="companyName">{{ companyName }}</span>
                             </div>
                         </div>
                         <div class="row">

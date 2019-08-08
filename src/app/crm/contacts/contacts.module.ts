@@ -104,6 +104,7 @@ import { OrdersComponent } from '@app/crm/contacts/orders/orders.component';
 import { InvoicesComponent } from '@app/crm/contacts/invoices/invoices.component';
 import { PersonalDetailsComponent } from './personal-details/personal-details.component';
 import { CRMDashboardWidgetsModule } from '@shared/crm/dashboard-widgets/dashboard-widgets.module';
+import { BankCodeLetterModule } from '@app/shared/common/bank-code-letter/bank-code-letter.module';
 
 @NgModule({
     declarations: [
@@ -198,7 +199,8 @@ import { CRMDashboardWidgetsModule } from '@shared/crm/dashboard-widgets/dashboa
         VgBufferingModule,
         NgxMaskModule.forRoot(),
         ItemDetailsLayoutModule,
-        CRMDashboardWidgetsModule
+        CRMDashboardWidgetsModule,
+        BankCodeLetterModule
     ],
     entryComponents: [
         EditContactDialog,

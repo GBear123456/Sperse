@@ -12,7 +12,7 @@
         <rating-bar rating="{{ ratingId || 0 }}"></rating-bar>
         <div class="bank-code" *ngIf="data?.personContactInfo?.person?.bankCode as bankCodeLetters">
             <ng-container *ngFor="let letter of bankCodeLetters.split('')">
-                <span [ngClass]="letter">{{letter}}</span>
+                <bank-code-letter [letter]="letter"></bank-code-letter>
             </ng-container>
         </div>
     </div>
