@@ -170,6 +170,10 @@ export class GenerateReportDialogComponent implements OnInit {
             this.data.reportGenerated();
             this.modalDialog.close(true);
             this.notify.info(this.ls.l('SuccessfullyGenerated'));
+        }, () => {
+                this.modalDialog.finishLoading();
+                this.modalDialog.close(true);
+                this.notify.error(this.ls.l('GenerationFailed'));
         });
     }
 
