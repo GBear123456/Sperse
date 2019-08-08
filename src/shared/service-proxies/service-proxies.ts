@@ -7479,6 +7479,58 @@ export class ContactServiceProxy {
         }
         return _observableOf<void>(<any>null);
     }
+
+    /**
+     * @body (optional) 
+     * @return Success
+     */
+    updateOrganizationUnit(body: UpdateContactOrganizationUnitInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Contact/UpdateOrganizationUnit";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUpdateOrganizationUnit(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUpdateOrganizationUnit(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processUpdateOrganizationUnit(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
 }
 
 @Injectable()
@@ -40296,6 +40348,46 @@ export interface IAssignUserForEachInput {
     userId: number | undefined;
 }
 
+export class UpdateContactOrganizationUnitInput implements IUpdateContactOrganizationUnitInput {
+    contactId!: number;
+    organizationUnitId!: number;
+
+    constructor(data?: IUpdateContactOrganizationUnitInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.contactId = data["contactId"];
+            this.organizationUnitId = data["organizationUnitId"];
+        }
+    }
+
+    static fromJS(data: any): UpdateContactOrganizationUnitInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateContactOrganizationUnitInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["contactId"] = this.contactId;
+        data["organizationUnitId"] = this.organizationUnitId;
+        return data; 
+    }
+}
+
+export interface IUpdateContactOrganizationUnitInput {
+    contactId: number;
+    organizationUnitId: number;
+}
+
 export class CreateContactAddressOutput implements ICreateContactAddressOutput {
     id!: number | undefined;
 
@@ -59083,6 +59175,7 @@ export class LeadInfoDto implements ILeadInfoDto {
     refererUrl!: string | undefined;
     entryUrl!: string | undefined;
     primaryLeadRequestId!: number | undefined;
+    organizationUnitId!: number | undefined;
 
     constructor(data?: ILeadInfoDto) {
         if (data) {
@@ -59116,6 +59209,7 @@ export class LeadInfoDto implements ILeadInfoDto {
             this.refererUrl = data["refererUrl"];
             this.entryUrl = data["entryUrl"];
             this.primaryLeadRequestId = data["primaryLeadRequestId"];
+            this.organizationUnitId = data["organizationUnitId"];
         }
     }
 
@@ -59149,6 +59243,7 @@ export class LeadInfoDto implements ILeadInfoDto {
         data["refererUrl"] = this.refererUrl;
         data["entryUrl"] = this.entryUrl;
         data["primaryLeadRequestId"] = this.primaryLeadRequestId;
+        data["organizationUnitId"] = this.organizationUnitId;
         return data; 
     }
 }
@@ -59175,6 +59270,7 @@ export interface ILeadInfoDto {
     refererUrl: string | undefined;
     entryUrl: string | undefined;
     primaryLeadRequestId: number | undefined;
+    organizationUnitId: number | undefined;
 }
 
 export class UpdateLeadInfoInput implements IUpdateLeadInfoInput {
@@ -64890,6 +64986,7 @@ export class CreateUserForContactInput implements ICreateUserForContactInput {
     emailAddress!: string | undefined;
     phoneNumber!: string | undefined;
     assignedRoleNames!: string[] | undefined;
+    organizationUnitIds!: number[] | undefined;
 
     constructor(data?: ICreateUserForContactInput) {
         if (data) {
@@ -64909,6 +65006,11 @@ export class CreateUserForContactInput implements ICreateUserForContactInput {
                 this.assignedRoleNames = [];
                 for (let item of data["assignedRoleNames"])
                     this.assignedRoleNames.push(item);
+            }
+            if (data["organizationUnitIds"] && data["organizationUnitIds"].constructor === Array) {
+                this.organizationUnitIds = [];
+                for (let item of data["organizationUnitIds"])
+                    this.organizationUnitIds.push(item);
             }
         }
     }
@@ -64930,6 +65032,11 @@ export class CreateUserForContactInput implements ICreateUserForContactInput {
             for (let item of this.assignedRoleNames)
                 data["assignedRoleNames"].push(item);
         }
+        if (this.organizationUnitIds && this.organizationUnitIds.constructor === Array) {
+            data["organizationUnitIds"] = [];
+            for (let item of this.organizationUnitIds)
+                data["organizationUnitIds"].push(item);
+        }
         return data; 
     }
 }
@@ -64939,6 +65046,7 @@ export interface ICreateUserForContactInput {
     emailAddress: string | undefined;
     phoneNumber: string | undefined;
     assignedRoleNames: string[] | undefined;
+    organizationUnitIds: number[] | undefined;
 }
 
 export class CreatePersonOrgRelationInput implements ICreatePersonOrgRelationInput {

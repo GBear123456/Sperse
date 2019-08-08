@@ -62,7 +62,8 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
         contactId: undefined,
         emailAddress: '',
         phoneNumber: undefined,
-        assignedRoleNames: []
+        assignedRoleNames: [],
+        organizationUnitIds: []
     });
 
     showInviteUserForm = false;
