@@ -7,7 +7,7 @@ import moment from 'moment-timezone';
 import { NotifyService } from 'abp-ng2-module/dist/src/notify/notify.service';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { forkJoin } from 'rxjs';
-import { first, switchMap, tap } from 'rxjs/operators';
+import { first, switchMap, tap, finalize } from 'rxjs/operators';
 import { select, Store } from '@ngrx/store';
 
 /** Application imports */
@@ -208,31 +208,30 @@ export class GenerateReportDialogComponent implements OnInit {
             first(),
             tap(() => this.notify.info(this.ls.l('GeneratingStarted'))),
             switchMap((currencyId: string) => {
-                let genOb = this.isSeparateGrouping
-                    ? this.selectedBusinessEntityIds.map(param => {
+                return this.isSeparateGrouping
+                    ? forkJoin(this.selectedBusinessEntityIds.map(param => {
                         return this.reportsProxy.generate(
                             <any>this.data.instanceType,
                             this.data.instanceId,
                             this.getGenerateInput(currencyId, [+param])
                         );
-                    })
+                    }))
                     : this.reportsProxy.generate(
                         <any>this.data.instanceType,
                         this.data.instanceId,
                         this.getGenerateInput(currencyId, this.selectedBusinessEntityIds)
                     );
-                return forkJoin(genOb);
+            }),
+            finalize(() => {
+                this.modalDialog.finishLoading();
+                this.modalDialog.close(true);
             })
         ).subscribe(
             () => {
-                this.modalDialog.finishLoading();
                 this.data.reportGenerated();
-                this.modalDialog.close(true);
                 this.notify.info(this.ls.l('SuccessfullyGenerated'));
             },
             () => {
-                this.modalDialog.finishLoading();
-                this.modalDialog.close(true);
                 this.notify.error(this.ls.l('GenerationFailed'));
             }
         );

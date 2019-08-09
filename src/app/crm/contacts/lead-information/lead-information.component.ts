@@ -114,7 +114,8 @@ export class LeadInformationComponent extends AppComponentBase implements OnInit
         this.data = this._contactProxy['data'];
         this._contactsService.contactInfoSubscribe((contactInfo) => {
             this.data.contactInfo = contactInfo;
-            this.isEditAllowed = this._contactsService.checkCGPermission(contactInfo.groupId);
+            this.isEditAllowed = this.data.leadInfo && this.data.leadInfo.id &&
+                this._contactsService.checkCGPermission(contactInfo.groupId);
             this.showApplicationAllowed = this.isGranted(AppPermissions.PagesPFMApplicationsViewApplications) &&
                 contactInfo.personContactInfo.userId && contactInfo.groupId == ContactGroup.Client;
         });

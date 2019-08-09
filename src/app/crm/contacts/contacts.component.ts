@@ -268,7 +268,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
             {label: 'Invoices', route: 'invoices', hidden: this.contactGroup !== ContactGroup.Client || this.contactInfo.statusId === ContactStatus.Prospective},
             {label: 'Subscriptions', route: 'subscriptions', hidden: !this.isClientDetailPage()},
             {label: 'Payment Information', route: 'payment-information', hidden: !this.isClientDetailPage()},
-            {label: 'Lead Information', route: 'lead-information', hidden: this.contactGroup == ContactGroup.Partner || (this.leadInfo && !this.leadInfo.id)},
+            {label: 'Lead Information', route: 'lead-information'},
             {
                 label: 'Activity Logs',
                 route: 'activity-logs',
