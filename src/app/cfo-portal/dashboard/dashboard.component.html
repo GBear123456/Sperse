@@ -22,7 +22,18 @@
                     <section class="analytics">
                         <div class="analytics-wrap">
                             <div class="bankBalances">
-                                <app-no-data [showLink]="false"></app-no-data>
+                                <bank-accounts-widget
+                                    [height]="308"
+                                    [saveChangesInCache]="false"
+                                    [nameColumnWidth]="120"
+                                    [showBusinessEntitiesFilter]="false"
+                                    [changeOnlyAfterApply]="true"
+                                    [showAddAccountButton]="false"
+                                    [showHeader]="false"
+                                    [showCheckboxes]="false"
+                                    [showOnlySelected]="true"
+                                    [showAccountsNumber]="false">
+                                </bank-accounts-widget>
                             </div>
                             <div class="trendByPeriod">
                                 <app-trend-by-period></app-trend-by-period>

@@ -219,9 +219,9 @@ export class BankAccountsService {
                                         bank['selected'] = true;
                                         result.push(bank.id);
                                     });
-                                } else 
+                                } else
                                     result = result.concat(account.bankAccounts.filter(
-                                        item => item['selected']).map(item => item.id));                              
+                                        item => item['selected']).map(item => item.id));
                             }
                             return result;
                         }, [])

@@ -35,7 +35,7 @@ export class PortalDashboardComponent extends CFOComponentBase implements OnInit
     linksTo: any = [
         {name: 'View_Cash_Flow_Report', route: '../cashflow'},
         {name: 'View_Transaction_Details', route: '../transactions'},
-        {name: 'View_Financial_Statistics', route: '../stats'}        
+        {name: 'View_Financial_Statistics', route: '../stats'}
     ];
 
     constructor(
@@ -69,7 +69,7 @@ export class PortalDashboardComponent extends CFOComponentBase implements OnInit
     toggleLeftMenu() {
         this.isWideMode = !this.isWideMode;
         setTimeout(() => this.trendByPeriodComponent
-            .chartComponent.instance.render(), 300);        
+            .chartComponent.instance.render(), 300);
     }
 
     invalidate() {
