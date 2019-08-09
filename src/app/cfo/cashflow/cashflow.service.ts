@@ -1258,8 +1258,7 @@ export class CashflowService {
             let weekInfoObj: WeekInfo = JSON.parse(weekInfo.value);
             let startDate = moment(weekInfoObj.startDate).utc().format('MM.DD');
             let endDate = moment(weekInfoObj.endDate).utc().format('MM.DD');
-            let text = startDate === endDate ? startDate : `${startDate} - ${endDate}`;
-            return text;
+            return startDate === endDate ? startDate : `${startDate} - ${endDate}`;
         };
     }
 

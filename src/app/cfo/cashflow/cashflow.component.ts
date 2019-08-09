@@ -1350,7 +1350,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         if (this.cashflowService.cashflowData && this.cashflowService.cashflowData.length) {
             this.cashflowService.cashflowData.slice().forEach(item => {
                 if (item.initialDate.format('MM.YYYY') === startDate.format('MM.YYYY') &&
-                    item.adjustmentType != AdjustmentType._2 && !item.isStub
+                    item.adjustmentType != AdjustmentType._2 && item.amount
                 ) {
                     this.cashflowService.cashflowData.splice(this.cashflowService.cashflowData.indexOf(item), 1);
                 }
@@ -4641,8 +4641,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     getBankAccountId(cell) {
-        let id = this.cashflowService.bankAccounts.find(account => account.accountNumber === cell.data.accountNumber)['id'];
-        return id;
+        return this.cashflowService.bankAccounts.find(account => account.accountNumber === cell.data.accountNumber)['id'];
     }
 
     accountChanged(e, cell) {
