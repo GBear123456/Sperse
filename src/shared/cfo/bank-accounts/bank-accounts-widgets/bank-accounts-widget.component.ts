@@ -50,6 +50,11 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
     @Input() searchInputWidth = 279;
     dataSource: any;
     @Input() allowBankAccountsEditing = false;
+    @Input() showHeader = true;
+    @Input() showCheckboxes = true;
+    @Input() changeOnlyAfterApply = false;
+    @Input() showOnlySelected = false;
+    @Input() showAccountsNumber = true;
     @Output() selectionChanged: EventEmitter<any> = new EventEmitter();
     @Output() accountsEntitiesBindingChanged: EventEmitter<any> = new EventEmitter();
     @Output() onUpdateAccount: EventEmitter<any> = new EventEmitter();
@@ -114,10 +119,24 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
         }
     ];
     refresh$: BehaviorSubject<null> = new BehaviorSubject<null>(null);
-    syncAccounts$: Observable<SyncAccountBankDto[]> = this.bankAccountsService.distinctUntilChangedFilteredSyncAccounts$.pipe(
-        map((syncAccounts) => {
+    syncAccounts$: Observable<SyncAccountBankDto[]> = (this.changeOnlyAfterApply
+        ? this.bankAccountsService.distinctUntilChangedFilteredSyncAccounts$
+        : this.bankAccountsService.filteredSyncAccountsWithApply$
+    ).pipe(
+        map((syncAccounts: SyncAccountBankDto[]) => {
             if (!this.showSyncAccountWithoutBankAccounts) {
-                syncAccounts.filter(syncAccount => !syncAccount.bankAccounts.length);
+                syncAccounts = syncAccounts.filter(syncAccount => !syncAccount.bankAccounts.length);
+            }
+            if (this.showOnlySelected) {
+                syncAccounts = syncAccounts.filter((syncAccount: SyncAccountBankDto) => {
+                    const selectedBankAccounts = syncAccount.bankAccounts.filter(bankAccount => {
+                        return bankAccount['selected'];
+                    });
+                    if (selectedBankAccounts) {
+                        syncAccount.bankAccounts = selectedBankAccounts;
+                    }
+                    return selectedBankAccounts.length;
+                });
             }
             return syncAccounts;
         })
@@ -419,8 +438,9 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
 
     calculateHeight() {
         /** Get bottom position of previous element */
-        let filtersBottomPosition = this.header.nativeElement.getBoundingClientRect().bottom;
-        return window.innerHeight - filtersBottomPosition;
+        return this.height
+               ? this.height
+               : window.innerHeight - this.header.nativeElement.getBoundingClientRect().bottom;
     }
 
     removeAccount(syncAccountId) {
