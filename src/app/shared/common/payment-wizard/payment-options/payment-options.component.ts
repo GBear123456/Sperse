@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, ChangeDetectionStrategy, EventEmitter, OnInit, Output, Injector, Input, ChangeDetectorRef } from '@angular/core';
+import { Component, ChangeDetectionStrategy, EventEmitter, Output, Injector, Input, ChangeDetectorRef } from '@angular/core';
 
 /** Third party imports */
 import { Observable } from 'rxjs';
@@ -41,7 +41,7 @@ import { AppService } from '@app/app.service';
     changeDetection: ChangeDetectionStrategy.OnPush,
     providers: [ TenantSubscriptionServiceProxy ]
 })
-export class PaymentOptionsComponent extends AppComponentBase implements OnInit {
+export class PaymentOptionsComponent extends AppComponentBase {
     @Input() plan: PackageOptions;
     @Input() steps: Step[] = [
         {
@@ -98,8 +98,6 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
             changeDetector.detectChanges();
         });
     }
-
-    ngOnInit() {}
 
     goToStep(i) {
         this.onChangeStep.emit(i);
@@ -207,7 +205,7 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
                     this.onStatusChange.emit({
                         status: this.getPaymentStatus(paymentMethod, res),
                         statusText: this.getPaymentStatusText(paymentMethod, res),
-                        icon: PaymentStatusEnum.Confirmed,                        
+                        icon: PaymentStatusEnum.Confirmed,
                         downloadPdf: this.paymentMethodsConfig[paymentMethod] && this.paymentMethodsConfig[paymentMethod].downloadPdf,
                         showBack: this.paymentMethodsConfig[paymentMethod] && this.paymentMethodsConfig[paymentMethod].showBack
                     });

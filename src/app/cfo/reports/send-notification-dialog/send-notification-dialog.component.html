@@ -1,0 +1,31 @@
+<modal-dialog [title]="title">
+    <div class="container">
+        <div class="row">
+            <div class="text-left col-md-5">{{ ls.l('Reports_SendEmailNotificationTo') }}</div>
+            <div class="text-right col-md-7">
+                <dx-text-box [(value)]="notificationToEmail" name="email" #notificationToEmailTextBox>
+                    <dx-validator>
+                        <dxi-validation-rule type="pattern"
+                                             [pattern]="emailRegEx"
+                                             [message]="ls.l('Reports_EmailIsNotValid')">
+                        </dxi-validation-rule>
+                    </dx-validator>
+                </dx-text-box>
+            </div>
+        </div>
+        <div class="row send-as-attachment">
+            <dx-check-box [(value)]="sendReportInAttachments"
+                          [disabled]="!emailIsValidAndNotEmpty"
+                          [text]="ls.l('Reports_SendAsAttachment')">
+            </dx-check-box>
+        </div>
+        <div class="row">
+            <div class="col-12 text-center">
+                <button [disabled]="cfoService.isMainInstanceType || !emailIsValidAndNotEmpty"
+                        [ngClass]="{ disabled: cfoService.isMainInstanceType || !emailIsValidAndNotEmpty }"
+                        (click)="sendNotification()" class="btn send-btn">{{ls.l('Send')}}
+                </button>
+            </div>
+        </div>
+    </div>
+</modal-dialog>

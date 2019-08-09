@@ -2,7 +2,7 @@
 import { ChangeDetectionStrategy, Component, ElementRef, Inject, OnInit } from '@angular/core';
 
 /** Third party imports */
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Store, select } from '@ngrx/store';
 import { BehaviorSubject, Observable, combineLatest } from 'rxjs';
 import { distinctUntilChanged, finalize, map } from 'rxjs/operators';

@@ -22,6 +22,7 @@ import { ReportViewType } from './report-view-type.enum';
 import { GenerateReportDialogComponent } from './generate-report-dialog/generate-report-dialog.component';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { AppService } from '@app/app.service';
+import { SendNotificationDialogComponent } from '@app/cfo/reports/send-notification-dialog/send-notification-dialog.component';
 
 @Component({
     templateUrl: './reports.component.html',
@@ -59,7 +60,21 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
 
     visibleReports: any[];
     viewerToolbarConfig: any = [];
-    actionMenuItems: any;
+    actionMenuItems: any = [
+        {
+            text: this.l('Download'),
+            action: this.downloadReport.bind(this)
+        },
+        {
+            text: this.l('Reports_SendNotification'),
+            action: this.openSendNotificationDialog.bind(this),
+            visible: !this._cfoService.isMainInstanceType
+        },
+        {
+            text: this.l('Delete'),
+            action: this.deleteReport.bind(this)
+        }
+    ];
     actionRecordData: any;
     currentReportInfo: any;
     openReportMode = false;
@@ -106,16 +121,18 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
                 }
             }
         };
-        this.actionMenuItems = [
-            {
-                text: this.l('Download'),
-                action: this.downloadReport.bind(this)
-            },
-            {
-                text: this.l('Delete'),
-                action: this.deleteReport.bind(this)
-            }
-        ];
+    }
+
+    ngOnInit(): void {
+        this.initHeadlineConfig();
+        this.initToolbarConfig();
+    }
+
+    private openSendNotificationDialog() {
+        this._dialog.open(SendNotificationDialogComponent, {
+            panelClass: 'slider',
+            data: { reportId: this.currentReportInfo.Id }
+        });
     }
 
     initToolbarConfig() {
@@ -226,11 +243,6 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
             viewedReportElement = iframe;
         }
         return viewedReportElement;
-    }
-
-    ngOnInit(): void {
-        this.initHeadlineConfig();
-        this.initToolbarConfig();
     }
 
     ngAfterViewInit(): void {
@@ -381,7 +393,7 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
                     super.startLoading(true);
                     this.reportsProxy.delete(<any>this.instanceType, this.instanceId, this.currentReportInfo.Id)
                         .pipe(finalize(() => super.finishLoading(true)))
-                        .subscribe((response) => {
+                        .subscribe(() => {
                             this.dataGrid.instance.refresh();
                             if (this.actionsTooltip && this.actionsTooltip.visible) {
                                 this.hideActionsMenu();

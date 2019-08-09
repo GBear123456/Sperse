@@ -1,0 +1,65 @@
+:host {
+
+    modal-dialog {
+        width: 600px;
+    }
+
+    .container .row {
+        justify-content: space-between;
+        flex-wrap: nowrap;
+        min-height: 52px;
+        padding: 0 20px;
+        align-items: center;
+        position: relative;
+        &:nth-child(2n + 2):not(:last-child) {
+            background-color: #f3f7fa;
+        }
+
+        &.send-as-attachment {
+            background-color: initial !important;
+            justify-content: center;
+        }
+    }
+    .text-left {
+        font-size: 15px;
+        letter-spacing: 0.3px;
+        color: #424c56;
+        padding: 0;
+    }
+    .text-right {
+        /deep/ dx-text-box {
+            height: 35px;
+        }
+    }
+    .send-btn {
+        height: 50px;
+        border-radius: 20.5px;
+        background-color: #00aeef;
+        margin: 0;
+        font-size: 17px;
+        font-weight: 600;
+        letter-spacing: 0.34px;
+        color: #ffffff;
+        padding: 0 50px;
+        width: 332px;
+        position: relative;
+        &:after {
+            content: url(../../../assets/common/icons/generate-right-arrow.svg);
+            position: absolute;
+            right: 19px;
+        }
+    }
+}
+
+
+/deep/ .generate-report {
+    .cdk-overlay-pane.slider {
+        min-width: 600px;
+    }
+    mat-dialog-container {
+        width: 600px;
+    }
+    .title-wrapper {
+        width: 380px;
+    }
+}

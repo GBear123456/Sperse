@@ -1,6 +1,6 @@
 <div>
     <app-headline [config]="headlineConfig">
-        <dx-select-box *ngIf="section == 'clicks'" 
+        <dx-select-box *ngIf="section == 'clicks'"
             [items]="years"
             [(value)]="clickStatsYear"
             (selectionChanged)="yearSelectionChanged($event)">
@@ -8,7 +8,6 @@
     </app-headline>
     <div class="wrapper portlet light">
         <setup-steps-common [SetupSteps]="menuItems" [SelectedStepIndex]="0" [HeaderTitle]="''"></setup-steps-common>
-
         <div [hidden]="section != 'clicks'">
             <pfm-click-stats [campaignId]="undefined" [year]="clickStatsYear" [refresh$]="refresh$" (onStatsClick)="onStatsClick($event)"></pfm-click-stats>
         </div>
@@ -17,7 +16,7 @@
                 [visible]="section == 'offers'"
                 [dataSource]="offerStatsDataSource"
                 [pager]="defaultGridPagerConfig"
-                (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">                
+                (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
                 <dxi-column dataField="LogoUrl" caption="Logo" cellTemplate="photoTemplate"
                     [width]="140" [showInColumnChooser]="false" [allowExporting]="false"
                     [allowGrouping]="false" [allowSorting]="false"></dxi-column>
@@ -28,7 +27,7 @@
                 <div *dxTemplate="let field of 'photoTemplate'">
                     <div [ngStyle]="{'background-image': 'url(' + field.data.LogoUrl + ')'}" class="logo-url"></div>
                 </div>
-                
+
                 <div *dxTemplate="let field of 'clicksTemplate'">
                     <div class="clicksCount" (click)="onOfferClicksClick(field)">{{field.data.RequestCount}}</div>
                 </div>

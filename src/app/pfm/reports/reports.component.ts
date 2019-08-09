@@ -125,7 +125,7 @@ export class ReportsComponent extends AppComponentBase implements OnInit, OnDest
                 {
                     enabled: this.section != 'clicks',
                     class: 'button-layout button-default',
-                    action: (event) => {
+                    action: () => {
                         this.showCalendarDialog();
                     },
                     lable: (this.dateFrom ? this.dateFrom.format('DD/MM/YYYY') : this.l('Start Date')) +
@@ -151,13 +151,10 @@ export class ReportsComponent extends AppComponentBase implements OnInit, OnDest
                                 placeholder: this.l('Search') + ' '
                                     + this.l(this.section == 'offers' ? 'Offers' : 'Customers').toLowerCase(),
                                 onValueChanged: (e) => {
-                                    if (this.section == 'offers')
-                                    {
+                                    if (this.section == 'offers') {
                                         this.offersQuickSearch = e.value;
                                         this.refreshOfferStats();
-                                    }
-                                    else
-                                    {
+                                    } else {
                                         this.visitorsQuickSearch = e.value;
                                         this.refreshVisitors();
                                     }
@@ -174,7 +171,7 @@ export class ReportsComponent extends AppComponentBase implements OnInit, OnDest
                             widget: 'dxButton',
                             options: {
                                 text: 'Show all',
-                                onClick: (event) => {
+                                onClick: () => {
                                     this.visitorsCampaignId = null;
                                     this.refreshVisitors();
                                     this.initToolbarConfig();
@@ -215,8 +212,7 @@ export class ReportsComponent extends AppComponentBase implements OnInit, OnDest
 
         this.section = section;
         this.initConfigs();
-        if (repaint)
-        {
+        if (repaint) {
             setTimeout(() => {
                 if (section == 'offers')
                     this.offerStatsGrid.instance.repaint();
@@ -234,13 +230,13 @@ export class ReportsComponent extends AppComponentBase implements OnInit, OnDest
         this.refreshVisitors();
     }
 
-    refreshOfferStats(){
-        var customFilter = [];
+    refreshOfferStats() {
+        let customFilter = [];
         if (this.dateFrom)
             customFilter.push({name: 'CountDateFrom', value: this.dateFrom.toDate().toJSON()});
         if (this.dateTo)
             customFilter.push({name: 'CountDateTo', value: this.dateTo.toDate().toJSON()});
-        var filters: any[] = [this.offersStaticFilter];
+        let filters: any[] = [this.offersStaticFilter];
         if (this.offersQuickSearch)
             filters.push({'Name': { contains: this.offersQuickSearch}});
         this.processODataFilter(this.offerStatsGrid.instance, 'Offer', filters, (filter) => filter, null, customFilter);
@@ -306,8 +302,7 @@ export class ReportsComponent extends AppComponentBase implements OnInit, OnDest
             }
         }).afterClosed().subscribe((data) => {
             if (!data) return;
-            if (this.onPeriodChanged(data.dateFrom, data.dateTo))
-            {
+            if (this.onPeriodChanged(data.dateFrom, data.dateTo)) {
                 this.refreshOfferStats();
                 this.refreshVisitors();
             }

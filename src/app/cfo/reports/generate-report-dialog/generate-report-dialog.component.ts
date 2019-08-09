@@ -4,11 +4,10 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 /** Third party imports */
 import moment from 'moment-timezone';
-import * as _ from 'underscore';
 import { NotifyService } from 'abp-ng2-module/dist/src/notify/notify.service';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
-import { first, switchMap, tap, map } from 'rxjs/operators';
-import { from, forkJoin } from 'rxjs';
+import { forkJoin } from 'rxjs';
+import { first, switchMap, tap } from 'rxjs/operators';
 import { select, Store } from '@ngrx/store';
 
 /** Application imports */
@@ -16,28 +15,53 @@ import { DateHelper } from '@shared/helpers/DateHelper';
 import { IDialogButton } from '@root/shared/common/dialogs/modal/dialog-button.interface';
 import { ModalDialogComponent } from '@root/shared/common/dialogs/modal/modal-dialog.component';
 import { BankAccountsService } from '@root/shared/cfo/bank-accounts/helpers/bank-accounts.service';
-import { ReportsServiceProxy, GenerateInput } from '@root/shared/service-proxies/service-proxies';
+import {
+    ReportsServiceProxy,
+    GenerateInput,
+    InstanceServiceProxy,
+    InstanceType
+} from '@root/shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { GenerateReportStep } from './generate-report-step.enum';
 import { CfoStore, CurrenciesStoreSelectors } from '@app/cfo/store';
+import { CFOService } from '@shared/cfo/cfo.service';
+import { AppConsts } from '@shared/AppConsts';
+import { SendReportNotificationInput } from '@shared/service-proxies/service-proxies';
+import { DxTextBoxComponent } from '@root/node_modules/devextreme-angular';
 
 @Component({
     templateUrl: 'generate-report-dialog.component.html',
-    styleUrls: ['generate-report-dialog.component.less'],
-    providers: [ReportsServiceProxy]
+    styleUrls: [
+        '../report-dialog.less',
+        'generate-report-dialog.component.less'
+    ],
+    providers: [ ReportsServiceProxy ]
 })
 export class GenerateReportDialogComponent implements OnInit {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
     @ViewChild(ModalDialogComponent) modalDialog: ModalDialogComponent;
+    @ViewChild('notificationToEmailTextBox') notificationToEmailTextBox: DxTextBoxComponent;
 
     title = this.ls.l('SelectBusinessEntity');
-    initButtons: IDialogButton[];
-    buttons: IDialogButton[];
+    initButtons: IDialogButton[] = [
+        {
+            title: this.ls.l('Back'),
+            class: 'default',
+            disabled: true,
+            action: this.prev.bind(this)
+        },
+        {
+            id: 'next',
+            title: this.ls.l('Next'),
+            class: 'primary saveButton',
+            action: this.next.bind(this),
+            disabled: true
+        }
+    ];
+    buttons: IDialogButton[] = this.initButtons;
     currentStep = GenerateReportStep.Step1;
     generateReportSteps = GenerateReportStep;
-
     selectedBusinessEntityIds: any = [];
-
     dateFrom = moment.utc().subtract(1, 'month').startOf('month');
     dateTo = moment.utc().subtract(1, 'month').endOf('month');
     calendarData = {
@@ -52,48 +76,78 @@ export class GenerateReportDialogComponent implements OnInit {
         { text: 'Combined', value: false }
     ];
     isSeparateGrouping = true;
+    notificationToEmail: string;
+    sendReportInAttachments = false;
+    emailRegEx = AppConsts.regexPatterns.email;
 
     private readonly BACK_BTN_INDEX = 0;
     private readonly NEXT_BTN_INDEX = 1;
 
     constructor(
         @Inject(MAT_DIALOG_DATA) public data: any,
-        public reportsProxy: ReportsServiceProxy,
+        private reportsProxy: ReportsServiceProxy,
+        private notify: NotifyService,
+        private store$: Store<CfoStore.State>,
+        private dialogRef: MatDialogRef<GenerateReportDialogComponent>,
+        private instanceAppService: InstanceServiceProxy,
+        public cfoService: CFOService,
         public bankAccountsService: BankAccountsService,
-        public dialogRef: MatDialogRef<GenerateReportDialogComponent, any>,
-        public ls: AppLocalizationService,
-        public notify: NotifyService,
-        private store$: Store<CfoStore.State>
+        public ls: AppLocalizationService
     ) {
         this.dialogRef['_overlayRef'].hostElement.classList.add('generate-report');
     }
 
     ngOnInit() {
-        this.initButtons = [
-            {
-                title: this.ls.l('Back'),
-                class: 'default',
-                disabled: true,
-                action: this.prev.bind(this)
-            },
-            {
-                id: 'next',
-                title: this.ls.l('Next'),
-                class: 'primary saveButton',
-                action: this.next.bind(this),
-                disabled: true
-            }
-        ];
-        this.buttons = this.initButtons;
+        this.instanceAppService.getInstanceOwnerEmailAddress(
+            this.cfoService.instanceType as InstanceType,
+            this.cfoService.instanceId
+        ).subscribe((ownerEmail: string) => {
+            this.notificationToEmail = ownerEmail;
+        });
         this.bankAccountsService.load();
     }
 
-    prev() {
+    /**
+     * Return GenerateInput
+     * @param {string} currencyId
+     * @param {number[]} businessEntityIds
+     * @return {GenerateInput}
+     */
+    private getGenerateInput(currencyId: string, businessEntityIds: number[]): GenerateInput {
+        return new GenerateInput({
+            from: this.dateFrom && DateHelper.getDateWithoutTime(this.dateFrom),
+            to: this.dateTo && DateHelper.getDateWithoutTime(this.dateTo),
+            period: this.data.period,
+            currencyId,
+            businessEntityIds: businessEntityIds,
+            bankAccountIds: [],
+            notificationData: !this.cfoService.isMainInstanceType && this.emailIsValidAndNotEmpty
+                ? new SendReportNotificationInput({
+                    reportId: null,
+                    recipientUserEmailAddress: this.notificationToEmail,
+                    sendReportInAttachments: this.sendReportInAttachments
+                })
+                : null
+        });
+    }
+
+    private applyDateRange() {
+        let dateFrom = this.calendarData.from.value && DateHelper.removeTimezoneOffset(this.calendarData.from.value);
+        let dateTo = this.calendarData.to.value ? DateHelper.removeTimezoneOffset(this.calendarData.to.value) : dateFrom;
+        if ((this.dateTo ? this.dateTo.diff(dateTo, 'days') : dateTo) ||
+            (this.dateFrom ? this.dateFrom.diff(dateFrom, 'days') : dateFrom)
+        ) {
+            this.dateFrom = dateFrom && moment(dateFrom);
+            this.dateTo = dateTo && moment(dateTo);
+        }
+    }
+
+    private prev() {
         this.currentStep--;
         this.processStep();
     }
 
-    next() {
+    private next() {
         this.currentStep++;
         if (this.currentStep == GenerateReportStep.Step2) {
             this.applyBusinessEntity();
@@ -104,7 +158,7 @@ export class GenerateReportDialogComponent implements OnInit {
         this.processStep();
     }
 
-    processStep() {
+    private processStep() {
         this.buttons = this.initButtons;
         if (this.currentStep == GenerateReportStep.Step1) {
             this.title = this.ls.l('SelectBusinessEntity');
@@ -123,6 +177,20 @@ export class GenerateReportDialogComponent implements OnInit {
         }
     }
 
+    private applyBusinessEntity() {
+        this.bankAccountsService.changeSelectedBusinessEntities(
+            this.selectedBusinessEntityIds = this.dataGrid.instance.getSelectedRowKeys()
+        );
+    }
+
+    get emailIsValidAndNotEmpty(): boolean {
+        return this.notificationToEmail && this.notificationToEmailTextBox && this.notificationToEmailTextBox.instance.option('isValid');
+    }
+
+    get emailIsValid(): boolean {
+        return this.notificationToEmailTextBox && this.notificationToEmailTextBox.instance && this.notificationToEmailTextBox.instance.option('isValid');
+    }
+
     editDate() {
         this.currentStep = GenerateReportStep.Step2;
         this.processStep();
@@ -133,61 +201,41 @@ export class GenerateReportDialogComponent implements OnInit {
         this.processStep();
     }
 
-    applyBusinessEntity() {
-        this.bankAccountsService.changeSelectedBusinessEntities(
-            this.selectedBusinessEntityIds = this.dataGrid.instance.getSelectedRowKeys()
-        );
-    }
-
     generateReport() {
         this.modalDialog.startLoading();
         this.store$.pipe(
             select(CurrenciesStoreSelectors.getSelectedCurrencyId),
             first(),
             tap(() => this.notify.info(this.ls.l('GeneratingStarted'))),
-            switchMap(currencyId => {
-                let genOb = this.isSeparateGrouping ? this.selectedBusinessEntityIds.map(param =>
-                    this.reportsProxy.generate(<any>this.data.instanceType, this.data.instanceId, new GenerateInput({
-                        from: this.dateFrom && DateHelper.getDateWithoutTime(this.dateFrom),
-                        to: this.dateTo && DateHelper.getDateWithoutTime(this.dateTo),
-                        period: this.data.period,
-                        currencyId,
-                        businessEntityIds: [Number(param)],
-                        bankAccountIds: [],
-                        notificationData: null
-                    }))) :
-                    this.reportsProxy.generate(<any>this.data.instanceType, this.data.instanceId, new GenerateInput({
-                        from: this.dateFrom && DateHelper.getDateWithoutTime(this.dateFrom),
-                        to: this.dateTo && DateHelper.getDateWithoutTime(this.dateTo),
-                        period: this.data.period,
-                        currencyId,
-                        businessEntityIds: this.selectedBusinessEntityIds,
-                        bankAccountIds: [],
-                        notificationData: null
-                    }));
+            switchMap((currencyId: string) => {
+                let genOb = this.isSeparateGrouping
+                    ? this.selectedBusinessEntityIds.map(param => {
+                        return this.reportsProxy.generate(
+                            <any>this.data.instanceType,
+                            this.data.instanceId,
+                            this.getGenerateInput(currencyId, [+param])
+                        );
+                    })
+                    : this.reportsProxy.generate(
+                        <any>this.data.instanceType,
+                        this.data.instanceId,
+                        this.getGenerateInput(currencyId, this.selectedBusinessEntityIds)
+                    );
                 return forkJoin(genOb);
             })
-        ).subscribe(() => {
-            this.modalDialog.finishLoading();
-            this.data.reportGenerated();
-            this.modalDialog.close(true);
-            this.notify.info(this.ls.l('SuccessfullyGenerated'));
-        }, () => {
+        ).subscribe(
+            () => {
+                this.modalDialog.finishLoading();
+                this.data.reportGenerated();
+                this.modalDialog.close(true);
+                this.notify.info(this.ls.l('SuccessfullyGenerated'));
+            },
+            () => {
                 this.modalDialog.finishLoading();
                 this.modalDialog.close(true);
                 this.notify.error(this.ls.l('GenerationFailed'));
-        });
-    }
-
-    applyDateRange() {
-        let dateFrom = this.calendarData.from.value && DateHelper.removeTimezoneOffset(this.calendarData.from.value);
-        let dateTo = this.calendarData.to.value ? DateHelper.removeTimezoneOffset(this.calendarData.to.value) : dateFrom;
-        if ((this.dateTo ? this.dateTo.diff(dateTo, 'days') : dateTo) ||
-            (this.dateFrom ? this.dateFrom.diff(dateFrom, 'days') : dateFrom)
-        ) {
-            this.dateFrom = dateFrom && moment(dateFrom);
-            this.dateTo = dateTo && moment(dateTo);
-        }
+            }
+        );
     }
 
     onContentReady(event) {
