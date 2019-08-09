@@ -36,7 +36,7 @@ export class SendNotificationDialogComponent implements OnInit {
     sendReportInAttachments = false;
     emailRegEx = AppConsts.regexPatterns.email;
     constructor(
-        private ls: AppLocalizationService,
+        public ls: AppLocalizationService,
         private instanceAppService: InstanceServiceProxy,
         private dialogRef: MatDialogRef<SendNotificationDialogComponent>,
         private reportsProxy: ReportsServiceProxy,
