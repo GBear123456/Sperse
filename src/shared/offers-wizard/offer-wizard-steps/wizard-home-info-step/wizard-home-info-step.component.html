@@ -21,9 +21,13 @@
         <div class="dx-field">
             <div class="dx-field-label">{{ls.l('state')}}</div>
             <div class="dx-field-value">
-                <dx-text-box placeholder="Enter state code"
-                             [(value)]="offersWizardService.submitApplicationProfileInput.personalInformation.stateCode">
-                </dx-text-box>
+                <dx-select-box
+                    [items]="states"
+                    valueExpr="code"
+                    displayExpr="name"
+                    [(value)]="offersWizardService.submitApplicationProfileInput.personalInformation.stateCode"
+                    placeholder="Select state">
+                </dx-select-box>
             </div>
         </div>
     </div>
