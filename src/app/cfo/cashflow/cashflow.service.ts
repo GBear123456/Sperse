@@ -138,6 +138,7 @@ export class CashflowService {
 
     /** List of adjustments on cashflow */
     adjustmentsList = [];
+    zeroAdjustmentsList = [];
     showAllVisible = false;
     showAllDisable = false;
     initialData: CashFlowInitialData;
@@ -1258,8 +1259,7 @@ export class CashflowService {
             let weekInfoObj: WeekInfo = JSON.parse(weekInfo.value);
             let startDate = moment(weekInfoObj.startDate).utc().format('MM.DD');
             let endDate = moment(weekInfoObj.endDate).utc().format('MM.DD');
-            let text = startDate === endDate ? startDate : `${startDate} - ${endDate}`;
-            return text;
+            return startDate === endDate ? startDate : `${startDate} - ${endDate}`;
         };
     }
 
@@ -1275,7 +1275,7 @@ export class CashflowService {
 
     getCurrentValueForStartingBalanceCell(summaryCell) {
         const cellData = <any>this.getCellData(summaryCell, summaryCell.value(summaryCell.field('row')).slice(2), StartedBalance);
-        return this.calculateCellValue(cellData, this.adjustmentsList.filter(item => item.adjustmentType === AdjustmentType._0), true);
+        return this.calculateCellValue(cellData, this.zeroAdjustmentsList, true);
     }
 
     /**
@@ -1289,7 +1289,8 @@ export class CashflowService {
         const prevIsFirstColumn = this.getPrevWithParent(prevWithParent) ? true : false;
         const prevCellValue = prevWithParent ? prevWithParent.value(prevIsFirstColumn) || 0 : 0;
         const prevReconciliation = this.getCellValue(prevWithParent, Reconciliation);
-        return prevEndingAccountValue + prevCellValue + prevReconciliation;
+        const adjustmentsAlreadyIncludedInStartedBalances = this.getCurrentValueForStartingBalanceCell(prevWithParent);
+        return prevEndingAccountValue - adjustmentsAlreadyIncludedInStartedBalances + prevCellValue + prevReconciliation;
     }
 
     /**
@@ -1305,8 +1306,9 @@ export class CashflowService {
             prevIsFirstColumn = this.getPrevWithParent(prevWithParent) ? true : false,
             prevCellValue = prevWithParent ? prevWithParent.value(prevIsFirstColumn) || 0 : 0,
             prevReconciliation = prevWithParent.slice(0, PR),
-            prevReconciliationValue = prevReconciliation ? prevReconciliation.value() || 0 : 0;
-        return currentCellValue + prevTotalValue + prevCellValue + prevReconciliationValue;
+            prevReconciliationValue = prevReconciliation ? prevReconciliation.value() || 0 : 0,
+            adjustmentsAlreadyIncludedInStartedBalances = this.getCurrentValueForStartingBalanceCell(prevWithParent);
+        return currentCellValue + prevTotalValue + prevCellValue + prevReconciliationValue - adjustmentsAlreadyIncludedInStartedBalances;
     }
 
     /**
@@ -1332,8 +1334,9 @@ export class CashflowService {
             startedBalanceCellValue = startedBalanceCell ? (startedBalanceCell.value(calculatedStartedBalance) || 0) : 0,
             currentCellValue = summaryCell.value() || 0,
             reconciliationTotal = summaryCell.slice(0, PR),
-            reconciliationTotalValue = reconciliationTotal && reconciliationTotal.value() || 0;
-        return currentCellValue + startedBalanceCellValue + reconciliationTotalValue;
+            reconciliationTotalValue = reconciliationTotal && reconciliationTotal.value() || 0,
+            adjustmentsAlreadyIncludedInStartedBalances = this.getCurrentValueForStartingBalanceCell(summaryCell);
+        return currentCellValue + startedBalanceCellValue + reconciliationTotalValue - adjustmentsAlreadyIncludedInStartedBalances;
     }
 
     /**
@@ -1896,6 +1899,11 @@ export class CashflowService {
         return projectedFieldIndex ? path[projectedFieldIndex] : undefined;
     }
 
+    updateZeroAdjustmentsList() {
+        this.zeroAdjustmentsList = this.adjustmentsList.filter(item => {
+            return item.adjustmentType === AdjustmentType._0;
+        });
+    }
 
     /**
      * Check if date is weekend date

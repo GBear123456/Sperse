@@ -5,7 +5,7 @@ import { BrowserDynamicTestingModule, platformBrowserDynamicTesting } from '@ang
 import {
     AccountingTypeDto, CashflowServiceProxy, ContactServiceProxy,
     GetCategoryTreeOutput, GroupByPeriod, InstanceServiceProxy, PermissionServiceProxy, PersonContactServiceProxy,
-    ReportSectionDto, SectionGroup, SessionServiceProxy, StatsDetailFilter, StatsFilter, TenantSubscriptionServiceProxy,
+    ReportSectionDto, SectionGroup, SessionServiceProxy, StatsFilter, TenantSubscriptionServiceProxy,
     TransactionStatsDto, TypeDto
 } from '@shared/service-proxies/service-proxies';
 import { UserPreferencesService } from '@app/cfo/cashflow/preferences-dialog/preferences.service';
@@ -24,6 +24,7 @@ import { LayoutService } from '@app/shared/layout/layout.service';
 import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
 import { RootStoreModule } from '@root/store/root-store.module';
 import { CurrencyPipe } from '@angular/common';
+import { SummaryCell } from 'devextreme/ui/pivot_grid/ui.pivot_grid.summary_display_modes.js';
 
 describe('CashflowService', () => {
     beforeEach(() => {
@@ -197,5 +198,363 @@ describe('CashflowService', () => {
         expect(result.cashflowTypeId).toEqual('I');
         expect(result.reportSectionGroup).toEqual('Expense');
         expect(result.reportSectionId).toEqual('3');
+    }));
+
+    it('calculateSummary value should return correct value from cell', inject([ CashflowService ], (service: CashflowService) => {
+        const descriptions = {
+            columns: [
+                {
+                    'caption': 'Historical',
+                    'area': 'column',
+                    'showTotals': false,
+                    'expanded': true,
+                    'allowExpand': false,
+                    'wordWrapEnabled': true,
+                    'visible': true,
+                    '_initProperties': {'area': 'column', 'areaIndex': 0, 'expanded': true},
+                    'index': 0,
+                    'allowSorting': false,
+                    'allowSortingBySummary': false,
+                    'allowFiltering': false,
+                    'allowExpandAll': false,
+                    'areaIndex': 0
+                },
+                {
+                    'caption': 'Year',
+                    'dataField': 'date',
+                    'dataType': 'date',
+                    'area': 'column',
+                    'groupInterval': 'year',
+                    'showTotals': true,
+                    'visible': true,
+                    'summaryDisplayMode': 'percentVariation',
+                    '_initProperties': {'area': 'column', 'areaIndex': 1, 'summaryDisplayMode': 'percentVariation'},
+                    'index': 1,
+                    'allowSorting': false,
+                    'allowSortingBySummary': false,
+                    'allowFiltering': false,
+                    'allowExpandAll': false,
+                    'areaIndex': 1
+                },
+                {
+                    'caption': 'Quarter',
+                    'dataField': 'date',
+                    'dataType': 'date',
+                    'width': 0.01,
+                    'area': 'column',
+                    'groupInterval': 'quarter',
+                    'showTotals': false,
+                    'visible': true,
+                    '_initProperties': {'area': 'column', 'areaIndex': 2},
+                    'expanded': false,
+                    'index': 2,
+                    'allowSorting': false,
+                    'allowSortingBySummary': false,
+                    'allowFiltering': false,
+                    'allowExpandAll': false,
+                    'areaIndex': 2
+                },
+                {
+                    'caption': 'Month',
+                    'dataField': 'date',
+                    'dataType': 'date',
+                    'area': 'column',
+                    'width': 0.01,
+                    'showTotals': false,
+                    'groupInterval': 'month',
+                    'visible': true,
+                    '_initProperties': {'area': 'column', 'areaIndex': 3},
+                    'expanded': false,
+                    'index': 3,
+                    'allowSorting': false,
+                    'allowSortingBySummary': false,
+                    'allowFiltering': false,
+                    'allowExpandAll': false,
+                    'areaIndex': 3
+                },
+                {
+                    'caption': 'Week',
+                    'area': 'column',
+                    'width': 0.01,
+                    'showTotals': false,
+                    'sortBy': 'displayText',
+                    'visible': true,
+                    '_initProperties': {'area': 'column', 'areaIndex': 5, 'sortBy': 'displayText'},
+                    'index': 4,
+                    'allowSorting': false,
+                    'allowSortingBySummary': false,
+                    'allowFiltering': false,
+                    'allowExpandAll': false,
+                    'areaIndex': 4
+                },
+                {
+                    'caption': 'Day',
+                    'dataField': 'date',
+                    'dataType': 'date',
+                    'area': 'column',
+                    'showTotals': false,
+                    'groupInterval': 'day',
+                    'visible': true,
+                    '_initProperties': {'area': 'column', 'areaIndex': 6},
+                    'index': 5,
+                    'allowSorting': false,
+                    'allowSortingBySummary': false,
+                    'allowFiltering': false,
+                    'allowExpandAll': false,
+                    'areaIndex': 5
+                }
+            ],
+            rows: [
+                {
+                    'dataField': 'levels.level0',
+                    'dataType': 'string',
+                    'displayFolder': 'levels',
+                    'caption': 'Type',
+                    'width': 120,
+                    'area': 'row',
+                    'expanded': false,
+                    'allowExpandAll': false,
+                    'allowExpand': false,
+                    'sortOrder': 'asc',
+                    'rowHeaderLayout': 'tree',
+                    'showTotals': true,
+                    '_initProperties': {'area': 'row', 'areaIndex': 0, 'sortOrder': 'asc', 'expanded': false},
+                    'index': 0,
+                    'allowSorting': false,
+                    'allowSortingBySummary': false,
+                    'allowFiltering': false,
+                    'areaIndex': 0
+                },
+                {
+                    'dataField': 'levels.level1',
+                    'dataType': 'string',
+                    'displayFolder': 'levels',
+                    'caption': 'Reporting Group',
+                    'width': 120,
+                    'area': 'row',
+                    'sortBy': 'displayText',
+                    'sortOrder': 'asc',
+                    'expanded': false,
+                    'showTotals': true,
+                    'resortable': true,
+                    '_initProperties': {
+                        'area': 'row',
+                        'areaIndex': 1,
+                        'sortOrder': 'asc',
+                        'sortBy': 'displayText',
+                        'expanded': false
+                    },
+                    'index': 1,
+                    'allowSorting': false,
+                    'allowSortingBySummary': false,
+                    'allowFiltering': false,
+                    'allowExpandAll': false,
+                    'areaIndex': 1
+                },
+                {
+                    'caption': 'Reporting Section',
+                    'width': 120,
+                    'area': 'row',
+                    'dataField': 'levels.level2',
+                    'sortBy': 'displayText',
+                    'sortOrder': 'asc',
+                    'expanded': false,
+                    'showTotals': true,
+                    'resortable': true,
+                    '_initProperties': {
+                        'area': 'row',
+                        'areaIndex': 2,
+                        'sortOrder': 'asc',
+                        'sortBy': 'displayText',
+                        'expanded': false
+                    },
+                    'index': 2,
+                    'allowSorting': false,
+                    'allowSortingBySummary': false,
+                    'allowFiltering': false,
+                    'allowExpandAll': false,
+                    'areaIndex': 2
+                },
+                {
+                    'caption': 'Account Type',
+                    'width': 120,
+                    'area': 'row',
+                    'dataField': 'levels.level3',
+                    'sortBy': 'displayText',
+                    'sortOrder': 'asc',
+                    'expanded': false,
+                    'showTotals': true,
+                    'resortable': true,
+                    'rowHeaderLayout': 'tree',
+                    '_initProperties': {
+                        'area': 'row',
+                        'areaIndex': 3,
+                        'sortOrder': 'asc',
+                        'sortBy': 'displayText',
+                        'expanded': false
+                    },
+                    'index': 3,
+                    'allowSorting': false,
+                    'allowSortingBySummary': false,
+                    'allowFiltering': false,
+                    'allowExpandAll': false,
+                    'areaIndex': 3
+                },
+                {
+                    'caption': 'Category',
+                    'showTotals': false,
+                    'area': 'row',
+                    'sortBy': 'displayText',
+                    'sortOrder': 'asc',
+                    'resortable': true,
+                    'dataField': 'levels.level4',
+                    '_initProperties': {'area': 'row', 'areaIndex': 4, 'sortOrder': 'asc', 'sortBy': 'displayText'},
+                    'index': 4,
+                    'allowSorting': false,
+                    'allowSortingBySummary': false,
+                    'allowFiltering': false,
+                    'allowExpandAll': false,
+                    'areaIndex': 4
+                },
+                {
+                    'caption': 'Sub Category',
+                    'showTotals': false,
+                    'area': 'row',
+                    'sortBy': 'displayText',
+                    'sortOrder': 'asc',
+                    'resortable': true,
+                    'dataField': 'levels.level5',
+                    '_initProperties': {'area': 'row', 'areaIndex': 5, 'sortOrder': 'asc', 'sortBy': 'displayText'},
+                    'index': 5,
+                    'allowSorting': false,
+                    'allowSortingBySummary': false,
+                    'allowFiltering': false,
+                    'allowExpandAll': false,
+                    'areaIndex': 5
+                },
+                {
+                    'caption': 'Descriptor',
+                    'showTotals': false,
+                    'area': 'row',
+                    'sortBy': 'displayText',
+                    'sortOrder': 'asc',
+                    'resortable': true,
+                    'dataField': 'levels.level6',
+                    '_initProperties': {'area': 'row', 'areaIndex': 6, 'sortOrder': 'asc', 'sortBy': 'displayText'},
+                    'index': 6,
+                    'allowSorting': false,
+                    'allowSortingBySummary': false,
+                    'allowFiltering': false,
+                    'allowExpandAll': false,
+                    'areaIndex': 6
+                }
+            ],
+            values: [
+                {
+                    'dataField': 'amount',
+                    'dataType': 'number',
+                    'displayFolder': '',
+                    'caption': 'Amount',
+                    'summaryType': 'sum',
+                    'area': 'data',
+                    'showColumnTotals': true,
+                    'summaryDisplayMode': 'percentOfColumnTotal',
+                    '_initProperties': {
+                        'area': 'data',
+                        'summaryType': 'sum',
+                        'summaryDisplayMode': 'percentOfColumnTotal'
+                    },
+                    'index': 7,
+                    'allowSorting': false,
+                    'allowSortingBySummary': false,
+                    'allowFiltering': false,
+                    'allowExpandAll': false,
+                    'areaIndex': 0
+                }
+            ]
+        };
+        const fields = {
+            'fields': {},
+            'positions': {'1': {'area': 'row', 'index': 1}, '13': {'area': 'column', 'index': 4}},
+            'levels.level1': {
+                'dataField': 'levels.level1',
+                'dataType': 'string',
+                'displayFolder': 'levels',
+                'caption': 'Reporting Group',
+                'width': 120,
+                'area': 'row',
+                'sortBy': 'displayText',
+                'sortOrder': 'asc',
+                'expanded': false,
+                'showTotals': true,
+                'resortable': true,
+                '_initProperties': {
+                    'area': 'row',
+                    'areaIndex': 1,
+                    'sortOrder': 'asc',
+                    'sortBy': 'displayText',
+                    'expanded': false
+                },
+                'index': 1,
+                'allowSorting': false,
+                'allowSortingBySummary': false,
+                'allowFiltering': false,
+                'allowExpandAll': false,
+                'areaIndex': 1
+            }
+        };
+        const summaryCell = new SummaryCell(
+            [
+                {
+                    'value': '{"startDate":"2019-03-01T00:00:00.000Z","endDate":"2019-03-03T23:59:59.999Z","weekNumber":9}',
+                    'text': '03.01 - 03.03',
+                    index: 4
+                },
+                {
+                    'value': 3,
+                    'text': 'MAR',
+                    index: 3
+                },
+                {
+                    'value': 1,
+                    'text': 'Q1',
+                    index: 2
+                },
+                {
+                    'value': 2019,
+                    'text': '2019',
+                    index: 1
+                },
+                {
+                    'value': 1,
+                    index: 0,
+                    'text': 'CURRENT'
+                }
+            ],
+            [
+                {
+                    'value': 'AN85972',
+                    index: 0,
+                    'text': 'HTML'
+                },
+                {
+                    'value': 'CTB',
+                    index: 1,
+                    'text': 'STARTING BALANCE'
+                }
+            ],
+            {
+                values: [
+                    [ 400, 1000 ],
+                    [ 400, 1000 ],
+                    [ 100, 400 ],
+                    [ 25, 200 ],
+                    [ 10, 100 ]
+                ]
+            },
+            descriptions,
+            0,
+            fields
+        );
     }));
 });
