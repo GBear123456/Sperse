@@ -449,7 +449,6 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
 
     toggleToolbar() {
         this._appService.toolbarToggle();
-        setTimeout(() => this.dataGrid.instance.repaint());
         this._filtersService.fixed = false;
         this._filtersService.disable();
         this.initToolbarConfig();

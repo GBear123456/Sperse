@@ -3,6 +3,7 @@ import { Component, Input, Output, EventEmitter, ViewChild, OnDestroy } from '@a
 
 /** Third party imports */
 import { DxTreeViewComponent } from 'devextreme-angular/ui/tree-view';
+import { DxDropDownBoxComponent } from 'devextreme-angular/ui/drop-down-box';
 import difference from 'lodash/difference';
 import { first } from 'rxjs/operators';
 
@@ -17,8 +18,10 @@ import { BankAccountsService } from '@shared/cfo/bank-accounts/helpers/bank-acco
 })
 export class BusinessEntitiesChooserComponent implements OnDestroy {
     @ViewChild(DxTreeViewComponent) treeList: DxTreeViewComponent;
+    @ViewChild(DxDropDownBoxComponent) dropDown: DxDropDownBoxComponent;
 
     private _syncAccSub;
+    private _isFilterClick;
 
     @Input() staticItemsText;
     @Input() applyFilter = true;
@@ -27,7 +30,8 @@ export class BusinessEntitiesChooserComponent implements OnDestroy {
 
     @Output() selectionChanged: EventEmitter<any> = new EventEmitter();
     @Output() onClosed: EventEmitter<any> = new EventEmitter();
-
+    @Output() onFilterButtonClick: EventEmitter<any> = new EventEmitter();
+   
     syncAccounts  = [];
     selectedItems = [];
     selectedAll;
@@ -71,9 +75,11 @@ export class BusinessEntitiesChooserComponent implements OnDestroy {
         this.selectedAll = selectedCount ? (selectedCount == data.length || undefined) : false;
     }
 
-    changePopupWidth(e) {
+    onPopupOpened(event, data) {
         if (this.popupWidth)
-            e.component._popup.option('width', this.popupWidth);
+            event.component._popup.option('width', this.popupWidth);
+        if (this.treeList)
+            this.treeList.instance.option('dataSource', data);
     }
 
     onSelectAll(event, data) {
@@ -110,6 +116,16 @@ export class BusinessEntitiesChooserComponent implements OnDestroy {
             this.bankAccountsService.applyFilter();
         }
         this.onClosed.emit(businessEntitiesIds);
+
+        if (this._isFilterClick)
+            this.onFilterButtonClick.emit(businessEntitiesIds);            
+        this._isFilterClick = false;
+    }
+
+    filterButtonClick(event) {
+        this._isFilterClick = true;
+        if (this.dropDown && this.dropDown.instance)
+            this.dropDown.instance.close();
     }
 
     ngOnDestroy() {
