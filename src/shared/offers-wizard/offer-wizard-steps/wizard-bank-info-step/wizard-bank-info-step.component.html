@@ -38,8 +38,9 @@
     <div class="dx-field-label">{{ls.l('BankPhone')}}</div>
     <div class="dx-field-value">
         <dx-text-box name="phone"
-                     (onFocusOut)="inputStatusesService.blurInput($event)"
+                     (onContentReady)="inputStatusesService.setMask($event)"
                      (onFocusIn)="inputStatusesService.focusInput($event)"
+                     (onFocusOut)="inputStatusesService.blurInput($event)"
                      [maskRules]="offersWizardService.rules"
                      [(value)]="offersWizardService.submitApplicationProfileInput.bankInformation.bankPhone">
         </dx-text-box>

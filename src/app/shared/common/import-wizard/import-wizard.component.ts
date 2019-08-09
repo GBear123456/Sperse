@@ -401,7 +401,7 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
     }
 
     parse(content) {
-        this.fileContent = content.trim();
+        this.fileContent = content;
         this._parser.parse(this.fileContent, {
             complete: (results) => {
                 this.fileData = results;

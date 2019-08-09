@@ -648,7 +648,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
 
             this.transactionTotal = 0;
             this.transactionCount = 0;
-            
+
             this.adjustmentStartingBalanceTotal = startingBalanceTotal;
             this.adjustmentTotal = 0;
         }
@@ -657,17 +657,18 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     }
 
     processTotalValues(rowSelection = false) {
-        let totals = this.totalDataSource && this.totalDataSource.items();        
-        if (!rowSelection && this.dateFilter.items.from.value)
+        let totals = this.totalDataSource && this.totalDataSource.items();
+        if (!rowSelection && this.dateFilter.items.from.value) {
+            let dateTo = this.dateFilter.items.to.value;
             this._TransactionsServiceProxy.getStartingBalance(
-                this.instanceType as InstanceType, this.instanceId, 
+                this.instanceType as InstanceType, this.instanceId,
                 DateHelper.removeTimezoneOffset(this.dateFilter.items.from.value, false, 'from'),
-                DateHelper.removeTimezoneOffset(this.dateFilter.items.to.value, false, 'to'),
-                this.cfoPreferencesService.selectedCurrencyId, 
-                this.bankAccountFilter.items.element.value, 
+                dateTo ? DateHelper.removeTimezoneOffset(dateTo, false, 'to') : null,
+                this.cfoPreferencesService.selectedCurrencyId,
+                this.bankAccountFilter.items.element.value,
                 this.businessEntityFilter.items.element.value
             ).subscribe(res => this.processTotalValuesInternal(totals, res));
-        else 
+        } else
             this.processTotalValuesInternal(totals);
     }
 
@@ -785,7 +786,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             } else {
                 this.selectAllAccounts();
                 this.dataGrid.instance.clearFilter();
-            }  
+            }
 
             this.initToolbarConfig();
             this.processFilterInternal();
@@ -976,7 +977,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         this.initToolbarConfig();
     }
 
-    onSelectionChanged($event, initial = false) {       
+    onSelectionChanged($event, initial = false) {
         if ($event.selectedRowKeys)
             this.processTotalValues($event.selectedRowKeys.length);
 
@@ -1294,8 +1295,8 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                 syncAccount.bankAccounts.forEach(bankAccount => {
                     selectedBankAccountIds.push(bankAccount.id);
                 });
-        });        
-        this.businessEntityFilter.items.element.value = 
+        });
+        this.businessEntityFilter.items.element.value =
             this.filtersInitialData.businessEntities.map(item => item.id);
         this.bankAccountFilter.items.element.value = selectedBankAccountIds;
         this.bankAccountsService.changeState({

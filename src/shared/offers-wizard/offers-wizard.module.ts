@@ -28,6 +28,7 @@ import { WizardCenterModalComponent } from './wizard-center-modal/wizard-center-
 import { CommonModule } from '@shared/common/common.module';
 import { DxScrollViewModule } from '@root/node_modules/devextreme-angular';
 import { MatTabsModule } from '@angular/material';
+import { LoadingSpinnerModule } from '@app/shared/common/loading-spinner/loading-spinner.module';
 
 @NgModule({
     imports: [
@@ -46,7 +47,8 @@ import { MatTabsModule } from '@angular/material';
         DxButtonModule,
         CommonModule,
         DxScrollViewModule,
-        MatTabsModule
+        MatTabsModule,
+        LoadingSpinnerModule
     ],
     declarations: [
         WizardPersonalInfoStepComponent,

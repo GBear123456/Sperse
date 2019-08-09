@@ -77,8 +77,9 @@
             <div class="dx-field-value">
                 <dx-text-box placeholder="Enter ssn"
                              name="ssn"
-                             (onFocusOut)="inputStatusesService.blurInput($event)"
+                             (onContentReady)="inputStatusesService.setMask($event)"
                              (onFocusIn)="inputStatusesService.focusInput($event)"
+                             (onFocusOut)="inputStatusesService.blurInput($event)"
                              [(value)]="offersWizardService.submitApplicationProfileInput.personalInformation.ssn">
                 </dx-text-box>
             </div>

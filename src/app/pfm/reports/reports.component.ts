@@ -35,7 +35,7 @@ export class ReportsComponent extends AppComponentBase implements OnInit, OnDest
     dateTo: moment;
     formatting = AppConsts.formatting;
     offerStatsDataSource: DataSource;
-    offersStaticFilter = {'RequestCount': { gt: 0 }};
+    offersStaticFilter = { 'RequestCount': { gt: 0 } };
     offersQuickSearch: string;
     visitorsDataSource: DataSource;
     visitorsCampaignId: number;
@@ -233,12 +233,12 @@ export class ReportsComponent extends AppComponentBase implements OnInit, OnDest
     refreshOfferStats() {
         let customFilter = [];
         if (this.dateFrom)
-            customFilter.push({name: 'CountDateFrom', value: this.dateFrom.toDate().toJSON()});
+            customFilter.push({ name: 'CountDateFrom', value: this.dateFrom.toDate().toJSON() });
         if (this.dateTo)
-            customFilter.push({name: 'CountDateTo', value: this.dateTo.toDate().toJSON()});
+            customFilter.push({ name: 'CountDateTo', value: this.dateTo.toDate().toJSON() });
         let filters: any[] = [this.offersStaticFilter];
         if (this.offersQuickSearch)
-            filters.push({'Name': { contains: this.offersQuickSearch}});
+            filters.push({ 'Name': { contains: this.offersQuickSearch } });
         this.processODataFilter(this.offerStatsGrid.instance, 'Offer', filters, (filter) => filter, null, customFilter);
     }
 
@@ -269,11 +269,11 @@ export class ReportsComponent extends AppComponentBase implements OnInit, OnDest
     refreshVisitors() {
         let visitorsFilter = [];
         if (this.dateFrom)
-            visitorsFilter.push({Date: {gt: this.dateFrom.toDate()}});
+            visitorsFilter.push({ Date: { gt: this.dateFrom.toDate() } });
         if (this.dateTo)
-            visitorsFilter.push({Date: {lt: this.dateTo.toDate()}});
+            visitorsFilter.push({ Date: { lt: this.dateTo.toDate() } });
         if (this.visitorsCampaignId)
-            visitorsFilter.push({CampaignId: this.visitorsCampaignId});
+            visitorsFilter.push({ CampaignId: this.visitorsCampaignId });
         if (this.visitorsQuickSearch)
             visitorsFilter.push(this.getSearchFilter(['FirstName', 'LastName', 'Email', 'PhoneNumber'], this.visitorsQuickSearch));
 

@@ -114,7 +114,7 @@
         align-items: center;
         width: 100%;
         
-        .dx-field-label         {
+        .dx-field-label {
             width: 100%;
             float: right;
             text-transform: uppercase;
@@ -148,10 +148,22 @@
             font-weight: 400;
             color: #aaa;
             transition: 0.2s;
+    
+            @media all and (max-width: 768px) {
+                font-size: 14px;
+            }
         }
     
         .right-info {
             margin-top: 15px;
+        }
+        
+        @media all and (max-width: 768px) {
+            .dx-texteditor-empty.dx-state-focused {
+                .dx-placeholder {
+                    top: -30px;
+                }
+            }
         }
     }
     

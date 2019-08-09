@@ -31,6 +31,7 @@ import { AppTimezoneScope } from '@shared/AppEnums';
 import { environment } from '@root/environments/environment';
 import { ApplyOfferDialogComponent } from '@root/personal-finance/shared/offers/apply-offer-modal/apply-offer-dialog.component';
 import { AppHttpConfiguration } from '@shared/http/appHttpConfiguration';
+import * as moment from 'moment';
 
 @Injectable()
 export class OffersWizardService {
@@ -62,6 +63,7 @@ export class OffersWizardService {
         downloadDisabled: true
     };
     timeZones$: Observable<NameValueDtoListResultDto[]>;
+    applicationDetails$: Observable<GetApplicationDetailsOutput> = this.offersServiceProxy.getApplicationDetails().pipe(publishReplay(), refCount());
     public defaultTimezoneScope: SettingScopes = AppTimezoneScope.User;
 
     constructor(
@@ -75,11 +77,7 @@ export class OffersWizardService {
         this.timeZones$ = this._timingService.getTimezones(this.defaultTimezoneScope).pipe(
             pluck('items')
         );
-        this.getApplicationDetails();
-    }
-
-    getApplicationDetails() {
-        this.offersServiceProxy.getApplicationDetails().subscribe(
+        this.applicationDetails$.subscribe(
             (output: GetApplicationDetailsOutput) => {
                 if (output) {
                     this.submitApplicationProfileInput = SubmitApplicationInput.fromJS({
@@ -107,13 +105,13 @@ export class OffersWizardService {
     submitApplicationProfile(): Observable<SubmitApplicationOutput> {
         let applyOfferDialog;
         this.submitApplicationProfileInput.personalInformation.doB ?
-            this.submitApplicationProfileInput.personalInformation.doB = DateHelper.removeTimezoneOffset(this.submitApplicationProfileInput.personalInformation.doB.toDate(), false, 'from') :
+            this.submitApplicationProfileInput.personalInformation.doB = DateHelper.removeTimezoneOffset(moment(this.submitApplicationProfileInput.personalInformation.doB).toDate(), false, 'from') :
             this.submitApplicationProfileInput.personalInformation.doB = null;
         this.submitApplicationProfileInput.employmentInformation.payNextDate ?
-            this.submitApplicationProfileInput.employmentInformation.payNextDate = DateHelper.removeTimezoneOffset(this.submitApplicationProfileInput.employmentInformation.payNextDate.toDate(), false, 'from') :
+            this.submitApplicationProfileInput.employmentInformation.payNextDate = DateHelper.removeTimezoneOffset(moment(this.submitApplicationProfileInput.employmentInformation.payNextDate).toDate(), false, 'from') :
             this.submitApplicationProfileInput.employmentInformation.payNextDate = null;
         this.submitApplicationProfileInput.employmentInformation.payAfterNextDate ?
-            this.submitApplicationProfileInput.employmentInformation.payAfterNextDate = DateHelper.removeTimezoneOffset(this.submitApplicationProfileInput.employmentInformation.payAfterNextDate.toDate(), false, 'from') :
+            this.submitApplicationProfileInput.employmentInformation.payAfterNextDate = DateHelper.removeTimezoneOffset(moment(this.submitApplicationProfileInput.employmentInformation.payAfterNextDate).toDate(), false, 'from') :
             this.submitApplicationProfileInput.employmentInformation.payAfterNextDate = null;
         if (this.data.campaignId && this.data.offer) {
             const modalData = {

@@ -10,6 +10,17 @@ export class InputStatusesService {
     constructor() {
     }
 
+    setMask(event) {
+        const inputName = event.element.attributes.name.value;
+        if (event.component.option('value')) {
+            event.component.option({
+                mask: this.masks[inputName],
+                maskRules: {'D': /\d?/},
+                isValid: true
+            });
+        }
+    }
+
     focusInput(event) {
         if (!(event.component._value && event.component._value.trim())) {
             let input = event.event.target;
