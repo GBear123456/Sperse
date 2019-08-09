@@ -12773,8 +12773,8 @@ export class FeatureServiceProxy {
     /**
      * @return Success
      */
-    getAllFeatures(): Observable<FlatFeatureDto[]> {
-        let url_ = this.baseUrl + "/api/services/Platform/Feature/GetAllFeatures";
+    getAll(): Observable<FlatFeatureDto[]> {
+        let url_ = this.baseUrl + "/api/services/Platform/Feature/GetAll";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -12787,11 +12787,11 @@ export class FeatureServiceProxy {
         };
 
         return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetAllFeatures(response_);
+            return this.processGetAll(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processGetAllFeatures(<any>response_);
+                    return this.processGetAll(<any>response_);
                 } catch (e) {
                     return <Observable<FlatFeatureDto[]>><any>_observableThrow(e);
                 }
@@ -12800,7 +12800,7 @@ export class FeatureServiceProxy {
         }));
     }
 
-    protected processGetAllFeatures(response: HttpResponseBase): Observable<FlatFeatureDto[]> {
+    protected processGetAll(response: HttpResponseBase): Observable<FlatFeatureDto[]> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
