@@ -19942,13 +19942,13 @@ export class PermissionServiceProxy {
     }
 
     /**
-     * @disableTenancyFilter (optional) 
+     * @includeIrrelevant (optional) 
      * @return Success
      */
-    getAllPermissions(disableTenancyFilter: boolean | null | undefined): Observable<FlatPermissionWithLevelDtoListResultDto> {
+    getAllPermissions(includeIrrelevant: boolean | null | undefined): Observable<FlatPermissionWithLevelDtoListResultDto> {
         let url_ = this.baseUrl + "/api/services/Platform/Permission/GetAllPermissions?";
-        if (disableTenancyFilter !== undefined)
-            url_ += "disableTenancyFilter=" + encodeURIComponent("" + disableTenancyFilter) + "&"; 
+        if (includeIrrelevant !== undefined)
+            url_ += "includeIrrelevant=" + encodeURIComponent("" + includeIrrelevant) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {

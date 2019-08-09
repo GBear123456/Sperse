@@ -4,15 +4,17 @@
             width="280px"
             [value]="getSelectedTitle(dataSource)"
             [placeholder]="ls.l('All_Entities') + ' \u25BE'"
-            (onOpened)="changePopupWidth($event)"
+            (onOpened)="onPopupOpened($event, dataSource)"
             (onClosed)="onPopupClosed($event)">
             <div *dxTemplate="let contentData of 'content'" class="bussiness-entities-chooser">
                 <div class="select-all">
                     <dx-check-box #selectAll
+                        width="200px"
                         [text]="ls.l('Select All')"
                         [value]="selectedAll"
-                        (onValueChanged)="onSelectAll($event, dataSource)"
-                    ></dx-check-box>
+                        (onValueChanged)="onSelectAll($event, dataSource)">
+                    </dx-check-box>
+                    <span *ngIf="bankAccountsService.cfoService.hasStaticInstance && onFilterButtonClick.observers.length" class="accounts-filter" (click)="filterButtonClick($event)"></span>
                 </div>
                 <dx-tree-view 
                     [expandAllEnabled]="true"

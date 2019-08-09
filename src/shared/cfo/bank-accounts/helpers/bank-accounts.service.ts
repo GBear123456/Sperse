@@ -106,7 +106,7 @@ export class BankAccountsService {
     selectDefaultBusinessEntity = false;
 
     constructor(
-        private cfoService: CFOService,
+        public cfoService: CFOService,
         private bankAccountsServiceProxy: BankAccountsServiceProxy,
         private businessEntityService: BusinessEntityServiceProxy,
         private cacheService: CacheService,
