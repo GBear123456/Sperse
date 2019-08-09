@@ -24,7 +24,7 @@ import {
 import { TenantsService } from '@admin/tenants/tenants.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { NotifyService } from '@abp/notify/notify.service';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
 import { finalize } from '@node_modules/rxjs/internal/operators';
@@ -83,7 +83,7 @@ export class EditTenantModalComponent implements OnInit {
     save(): void {
         if (!this.editionsSelect.validateModel())
             return;
-        
+
         this.modalDialog.startLoading();
         this.tenant.editions = this._tenantsService.getTenantEditions();
         this._tenantService.updateTenant(this.tenant)

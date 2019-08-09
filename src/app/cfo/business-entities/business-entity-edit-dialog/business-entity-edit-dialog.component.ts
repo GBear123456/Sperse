@@ -2,7 +2,7 @@
 import { Component, ChangeDetectionStrategy, ChangeDetectorRef, OnInit, Inject, ViewChild } from '@angular/core';
 
 /** Third party imports */
-import { MAT_DIALOG_DATA } from '@angular/material';
+import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Store, select } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { finalize, map } from 'rxjs/operators';

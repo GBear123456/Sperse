@@ -40,7 +40,6 @@ import { DxSwitchModule } from 'devextreme-angular/ui/switch';
 import { DxPopupModule } from 'devextreme-angular/ui/popup';
 import { DxSelectBoxModule } from 'devextreme-angular/ui/select-box';
 import { ModalModule } from 'ngx-bootstrap';
-import { Observable, of } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 import { ImageViewerModule } from 'ng2-image-viewer';
 
@@ -92,6 +91,8 @@ import { SortButtonModule } from '@app/shared/common/sort-button/sort-button.mod
 import { CFOService } from '@shared/cfo/cfo.service';
 import { ReportsComponent } from './reports/reports.component';
 import { CalendarButtonComponent } from '@app/cfo/shared/common/calendar-button/calendar-button.component';
+import { SendNotificationDialogComponent } from '@app/cfo/reports/send-notification-dialog/send-notification-dialog.component';
+import { GenerateReportDialogComponent } from '@app/cfo/reports/generate-report-dialog/generate-report-dialog.component';
 
 let COMPONENTS = [
     StartComponent,
@@ -127,6 +128,8 @@ let COMPONENTS = [
     UsersDialogComponent,
     KeyPhrasesComponent,
     ReportsComponent,
+    GenerateReportDialogComponent,
+    SendNotificationDialogComponent,
     CalendarButtonComponent
 ];
 
@@ -194,7 +197,9 @@ let COMPONENTS = [
         TransactionDetailInfoComponent,
         CfoIntroComponent,
         UsersDialogComponent,
-        BankAccountsSelectDialogComponent
+        BankAccountsSelectDialogComponent,
+        GenerateReportDialogComponent,
+        SendNotificationDialogComponent
     ],
     providers: [
         CashflowServiceProxy,

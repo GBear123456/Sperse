@@ -2,7 +2,7 @@
 import { Component, Inject, ElementRef, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 
 /** Third party imports */
-import { MAT_DIALOG_DATA } from '@angular/material';
+import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import capitalize from 'underscore.string/capitalize';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { DxTreeViewComponent } from 'devextreme-angular/ui/tree-view';

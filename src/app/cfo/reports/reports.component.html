@@ -5,7 +5,7 @@
     <app-toolbar [config]="toolbarConfig"></app-toolbar>
     <div class="main-wrapper">
         <setup-steps [SetupSteps]="menuItems" [SelectedStepIndex]="0" [HeaderTitle]="''"></setup-steps>
-        <dx-tooltip width="130px">
+        <dx-tooltip width="180px">
             <div *dxTemplate="let data of 'content'">
                 <div class="lists-tooltip-container">
                     <dx-list accessKey="actionsMenu" [dataSource]="actionMenuItems"

@@ -10,7 +10,7 @@ import {
 } from '@angular/core';
 
 /** Third party imports */
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import find from 'lodash/find';
 
 /** Application imports */
