@@ -22,7 +22,7 @@
             <div class="dx-field-label">{{ls.l('state')}}</div>
             <div class="dx-field-value">
                 <dx-select-box
-                    [items]="states"
+                    [items]="states$ | async"
                     valueExpr="code"
                     displayExpr="name"
                     [(value)]="offersWizardService.submitApplicationProfileInput.personalInformation.stateCode"
