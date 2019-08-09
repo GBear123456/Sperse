@@ -135,7 +135,7 @@ export class UserDropdownMenuComponent extends AppComponentBase implements OnIni
     }
 
     getScrollHeight() {
-        let height = innerHeight - 190;
+        let height = innerHeight - 170;
         return height > 490 ? '100%' : height;
     }
 
