@@ -179,12 +179,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     /** The main data for cashflow table */
     stubsCashflowDataForEmptyCategories: TransactionStatsDto[];
 
-    /** Years in cashflow */
-    private allYears: number[] = [];
-
-    /** Amount of years with stubs */
-    private yearsAmount = 0;
-
     private activeBankAccounts: BankAccountDto[];
 
     private syncAccounts: SyncAccountBankDto[];
@@ -1325,7 +1319,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             this.cashflowService.cashflowData = this.getCashflowDataFromTransactions(transactions);
             /** Make a copy of cashflow data to display it in custom total group on the top level */
             const stubsCashflowDataForEndingCashPosition = this.getStubsCashflowDataForEndingCashPosition(this.cashflowService.cashflowData);
-            const stubsCashflowDataForAllDays = this.getStubsCashflowDataForAllPeriods(this.cashflowService.cashflowData, period);
+            const stubsCashflowDataForAllDays = this.cashflowService.getStubsCashflowDataForAllPeriods(this.cashflowService.cashflowData, period);
             this.stubsCashflowDataForEmptyCategories = this.userPreferencesService.localPreferences.value.showEmptyCategories
                 ? this.getStubsCashflowDataForEmptyCategories(this.cashflowService.cashflowData[0].date, this.cashflowService.cashflowData[0].initialDate)
                 : [];
@@ -1349,7 +1343,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         if (this.cashflowService.cashflowData && this.cashflowService.cashflowData.length) {
             this.cashflowService.cashflowData.slice().forEach(item => {
                 if (item.initialDate.format('MM.YYYY') === startDate.format('MM.YYYY') &&
-                    item.adjustmentType != AdjustmentType._2 && item.amount
+                    item.adjustmentType != AdjustmentType._2
                 ) {
                     this.cashflowService.cashflowData.splice(this.cashflowService.cashflowData.indexOf(item), 1);
                 }
@@ -1374,7 +1368,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             if (existingPeriods.indexOf(formattedDate) === -1) existingPeriods.push(formattedDate);
         });
         let accountId: number = transactions[0] ? +transactions[0].accountId : this.cashflowService.bankAccounts[0].id;
-        let stubCashflowDataForAllDays = this.createStubsForPeriod(startDate, endDate, GroupByPeriod.Daily, accountId, existingPeriods);
+        let stubCashflowDataForAllDays = this.cashflowService.createStubsForPeriod(startDate, endDate, GroupByPeriod.Daily, accountId, existingPeriods);
         let stubCashflowDataForAccounts = this.getStubsCashflowDataForAccounts(transactions);
 
         /** concat initial data and stubs from the different hacks */
@@ -1430,7 +1424,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             for (let cashflowType in currentAccountsIds) {
                 if (currentAccountsIds[cashflowType].indexOf(accountId) === -1) {
                     stubCashflowDataForAccounts.push(
-                        this.createStubTransaction({
+                        this.cashflowService.createStubTransaction({
                             'cashflowTypeId': cashflowType,
                             'date': firstDate,
                             'initialDate': firstInitialDate,
@@ -1454,7 +1448,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 const cashflowTypeId = this.cashflowService.categoryTree.accountingTypes[category.accountingTypeId].typeId;
                 if (cashflowTypeId) {
                     /** Create stub for category */
-                    const stubTransaction = this.createStubTransaction({
+                    const stubTransaction = this.cashflowService.createStubTransaction({
                         'cashflowTypeId': cashflowTypeId,
                         'accountingTypeId': category.accountingTypeId,
                         'categoryId': category.parentId && parentExists ? category.parentId : categoryId,
@@ -1468,36 +1462,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             }
         }
         return stubs;
-    }
-
-    /**
-     * Return the stub transaction
-     * @param stubObj - the object with own custom data for stub transaction
-     * @param path
-     * @return {TransactionStatsDto & any}
-     */
-    createStubTransaction(stubObj, path: string[] = []) {
-        let stubTransaction = {
-            'adjustmentType': null,
-            'accountId': null,
-            'currencyId': this._cfoPreferencesService.selectedCurrencyId,
-            'amount': 0,
-            'comment': null,
-            'date': null,
-            'initialDate': null,
-            'forecastId': null,
-            'isStub': true
-        };
-        if (path && path.length) {
-            path.forEach(pathItem => {
-                if (pathItem) {
-                    let [ key, prefix ] = [ pathItem.slice(2), pathItem.slice(0, 2) ];
-                    let categoryParams = this.cashflowService.getCategoryParams(prefix as CategorizationPrefixes);
-                    stubTransaction[categoryParams['statsKeyName']] = key;
-                }
-            });
-        }
-        return this.cashflowService.addCategorizationLevels({ ...stubTransaction, ...stubObj });
     }
 
     updateCategorizationLevels() {
@@ -1584,7 +1548,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         cashflowData.forEach(cashflowDataItem => {
             /** clone transaction to another array */
             if (cashflowDataItem.cashflowTypeId === Income || cashflowDataItem.cashflowTypeId === Expense) {
-                let clonedTransaction = this.createStubTransaction({
+                let clonedTransaction = this.cashflowService.createStubTransaction({
                     'cashflowTypeId': Total,
                     'amount': cashflowDataItem.amount,
                     'forecastId': cashflowDataItem.forecastId,
@@ -1597,7 +1561,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 /** add net change row if user choose preference */
                 if (this.cashflowService.cashflowGridSettings.general.showNetChangeRow) {
                     stubCashflowDataForEndingCashPosition.push(
-                        this.createStubTransaction({
+                        this.cashflowService.createStubTransaction({
                             'cashflowTypeId': NetChange,
                             'amount': cashflowDataItem.amount,
                             'accountId': cashflowDataItem.accountId,
@@ -1620,7 +1584,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     /** add net change row if user choose preference */
                     if (this.cashflowService.cashflowGridSettings.general.showNetChangeRow) {
                         stubCashflowDataForEndingCashPosition.push(
-                            this.createStubTransaction({
+                            this.cashflowService.createStubTransaction({
                                 'cashflowTypeId': NetChange,
                                 'expenseCategoryId': null,
                                 'amount': cashflowDataItem.amount,
@@ -1633,118 +1597,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             });
         }
         return stubCashflowDataForEndingCashPosition;
-    }
-
-    /**
-     * for every day that is absent in cashflow data add stub object
-     * (hack to show all days, months and quarters for all years in cashflow data page)
-     * @param {TransactionStatsDtoExtended[]} cashflowData
-     * @return {TransactionStatsDtoExtended[]}
-     */
-    getStubsCashflowDataForAllPeriods(cashflowData: TransactionStatsDtoExtended[], period = GroupByPeriod.Monthly) {
-        this.allYears = [];
-        this.yearsAmount = 0;
-        let existingPeriods: string[] = [],
-            minDate: moment.Moment,
-            maxDate: moment.Moment,
-            periodFormat = period === GroupByPeriod.Monthly ? 'YYYY-MM' : 'YYYY-MM-DD';
-
-        cashflowData.forEach(cashflowItem => {
-            /** Move the year to the years array if it is unique */
-            let date = cashflowItem.initialDate;
-            let transactionYear = date.year();
-            let formattedDate = date.utc().format(periodFormat);
-            if (this.allYears.indexOf(transactionYear) === -1) this.allYears.push(transactionYear);
-            if (existingPeriods.indexOf(formattedDate) === -1) existingPeriods.push(formattedDate);
-            if (!minDate || cashflowItem.date < minDate)
-                minDate = moment(date);
-            if (!maxDate || cashflowItem.date > maxDate)
-                maxDate = moment(date);
-        });
-        this.allYears = this.allYears.sort();
-        let stubsInterval = this.getStubsInterval(minDate, maxDate, existingPeriods, periodFormat);
-        this.yearsAmount = stubsInterval.endDate.diff(stubsInterval.startDate, 'years') + 1;
-
-        /** cycle from started date to ended date */
-        /** added fake data for each date that is not already exists in cashflow data */
-        let accountId = cashflowData[0] ? cashflowData[0].accountId : this.cashflowService.bankAccounts[0].id;
-        let stubCashflowData = this.createStubsForPeriod(stubsInterval.startDate, stubsInterval.endDate, period, accountId, existingPeriods);
-        if (this.cashflowService.requestFilter.dailyPeriods.length) {
-            this.cashflowService.requestFilter.dailyPeriods.forEach(dailyPeriod => {
-                let filterStart = this.cashflowService.requestFilter.startDate ? moment(this.cashflowService.requestFilter.startDate) : null;
-                let filterEnd = this.cashflowService.requestFilter.endDate ? moment(this.cashflowService.requestFilter.endDate) : null;
-                let start = filterStart && dailyPeriod.start.isBefore(filterStart) ? filterStart : dailyPeriod.start.utc();
-                let end = filterEnd && dailyPeriod.end.isAfter(filterEnd) ? filterEnd : dailyPeriod.end.utc();
-                let dailyStubs = this.createStubsForPeriod(start, end, GroupByPeriod.Daily, accountId, []);
-                stubCashflowData = stubCashflowData.concat(dailyStubs);
-            });
-        }
-
-        return stubCashflowData;
-    }
-
-    /**
-     * Return stubs intervals
-     * @param {moment.Moment} minDate
-     * @param {moment.Moment} maxDate
-     * @param {string[]} existingPeriods
-     * @param {string} periodFormat
-     * @return {{startDate: Moment.moment; endDate: Moment.moment}}
-     */
-    getStubsInterval(minDate: moment.Moment, maxDate: moment.Moment, existingPeriods: string[], periodFormat: string): { startDate: moment.Moment, endDate: moment.Moment } {
-
-        let currentDate = this.cashflowService.getUtcCurrentDate();
-        let filterStart = this.cashflowService.requestFilter.startDate;
-        let filterEnd = this.cashflowService.requestFilter.endDate;
-
-        /** If current date is not in existing - set min or max date as current */
-        if (existingPeriods.indexOf(currentDate.format(periodFormat)) === -1) {
-            if (currentDate.format(periodFormat) < minDate.format(periodFormat)) {
-                minDate = currentDate;
-                /** if endDate from filter */
-            } else if (currentDate.format(periodFormat) > maxDate.format(periodFormat) &&
-                (!filterEnd || (filterEnd && currentDate.isBefore(moment(filterEnd).utc())))
-            ) {
-                maxDate = currentDate;
-            }
-        }
-
-        /** set max date to the end of year if current maxDate year is current year */
-        if (maxDate.year() === currentDate.year()) {
-            let endOfYear = maxDate.clone().endOf('year');
-            if (!filterEnd || (filterEnd && endOfYear.isBefore(moment(filterEnd).utc()))) {
-                maxDate = endOfYear;
-            }
-        }
-
-        /** consider the filter */
-        if (filterStart && (!minDate || moment(filterStart).utc().isAfter(minDate))) minDate = filterStart;
-        if (filterEnd && (!maxDate || moment(filterEnd).utc().isAfter(maxDate))) maxDate = filterEnd;
-
-        return { startDate: moment.utc(minDate), endDate: moment.utc(maxDate) };
-    }
-
-    createStubsForPeriod(startDate, endDate, groupingPeriod: GroupByPeriod, bankAccountId, existingPeriods = []): TransactionStatsDtoExtended[] {
-        let stubs = [];
-        let startDateCopy = moment(startDate),
-            endDateCopy = moment(endDate),
-            period: any = groupingPeriod === GroupByPeriod.Monthly ? 'month' : 'day',
-            format = period === 'month' ? 'YYYY-MM' : 'YYYY-MM-DD';
-        while (startDateCopy.isSameOrBefore(endDateCopy)) {
-            let date = moment.tz(startDateCopy.format(format), format, 'utc');
-            if (existingPeriods.indexOf(date.format(format)) === -1) {
-                stubs.push(
-                    this.createStubTransaction({
-                        'cashflowTypeId': StartedBalance,
-                        'accountId': bankAccountId,
-                        'date': moment(date).add(date.toDate().getTimezoneOffset(), 'minutes'),
-                        'initialDate': date
-                    })
-                );
-            }
-            startDateCopy.add(1, period);
-        }
-        return stubs;
     }
 
     showRefreshButton() {
@@ -1874,14 +1726,14 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         }
 
         /** If amount of years is 1 and it is collapsed - expand it to the month */
-        if (this.allYears && this.allYears.length && this.allYears.length === 1 && this.yearsAmount === 1) {
+        if (this.cashflowService.allYears && this.cashflowService.allYears.length && this.cashflowService.allYears.length === 1 && this.cashflowService.yearsAmount === 1) {
             /** Check if the year was expanded, if no - expand to months for better user experience */
             let yearWasExpanded = this.pivotGrid.instance.getDataSource().state().columnExpandedPaths.some(path => {
-                return path.indexOf(this.allYears[0]) !== -1;
+                return path.indexOf(this.cashflowService.allYears[0]) !== -1;
             });
             if (!yearWasExpanded) {
-                this.expandYear(this.allYears[0]);
-                this.allYears = undefined;
+                this.expandYear(this.cashflowService.allYears[0]);
+                this.cashflowService.allYears = undefined;
             }
         }
 
@@ -2911,7 +2763,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             stubCopy.amount = 0;
             stubCopy.forecastId = null;
             stubCopy.transactionDescriptor = null;
-            this.cashflowService.cashflowData.push(this.createStubTransaction(stubCopy));
+            this.cashflowService.cashflowData.push(this.cashflowService.createStubTransaction(stubCopy));
 
             let date = moment(targetData.date.startDate).utc();
             let timezoneOffset = date.toDate().getTimezoneOffset();
@@ -2956,7 +2808,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 forecastId: copiedForecastsIds[index]
             };
             let categorizationData = this.cashflowService.getCategorizationFromForecastAndTarget(sourceData, forecast['target'], false);
-            this.cashflowService.cashflowData.push(this.createStubTransaction({...data, ...categorizationData}));
+            this.cashflowService.cashflowData.push(this.cashflowService.createStubTransaction({...data, ...categorizationData}));
         });
     }
 
@@ -3577,7 +3429,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     forecastIds.forEach(id => {
                         temp[id]['affectedTransactions'].forEach(item => {
                             this.cashflowService.cashflowData.push(
-                                this.createStubTransaction({
+                                this.cashflowService.createStubTransaction({
                                     date: item.date,
                                     initialDate: (<any>item).initialDate,
                                     amount: 0,
@@ -3805,7 +3657,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 res => {
                     let dateWithOffset = moment(targetDate).add(new Date(<any>targetDate).getTimezoneOffset(), 'minutes');
                     /** Update data locally */
-                    this.cashflowService.cashflowData.push(this.createStubTransaction({
+                    this.cashflowService.cashflowData.push(this.cashflowService.createStubTransaction({
                         accountId: accountId,
                         count: 1,
                         amount: newValue,
@@ -4412,7 +4264,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 newStat.amount = amount;
                 newStat.transactionDescriptor = descriptor;
 
-                this.cashflowService.cashflowData.push(this.createStubTransaction(newStat));
+                this.cashflowService.cashflowData.push(this.cashflowService.createStubTransaction(newStat));
             }
         }
     }
@@ -4438,7 +4290,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         affectedTransactions.forEach(item => {
             if (!sameDateTransactionExist && (paramNameForUpdateInput == 'date' || hideFromCashflow)) {
                 this.cashflowService.cashflowData.push(
-                    this.createStubTransaction({
+                    this.cashflowService.createStubTransaction({
                         date: item.date,
                         initialDate: (<any>item).initialDate,
                         amount: 0,

@@ -1,12 +1,23 @@
-import { TestBed, inject } from '@angular/core/testing';
+import { inject, TestBed } from '@angular/core/testing';
 import * as moment from 'moment-timezone';
 import { CashflowService } from './cashflow.service';
 import { BrowserDynamicTestingModule, platformBrowserDynamicTesting } from '@angular/platform-browser-dynamic/testing';
 import {
-    AccountingTypeDto, CashflowServiceProxy, ContactServiceProxy,
-    GetCategoryTreeOutput, GroupByPeriod, InstanceServiceProxy, PermissionServiceProxy, PersonContactServiceProxy,
-    ReportSectionDto, SectionGroup, SessionServiceProxy, StatsFilter, TenantSubscriptionServiceProxy,
-    TransactionStatsDto, TypeDto
+    AccountingTypeDto,
+    CashflowServiceProxy,
+    ContactServiceProxy,
+    GetCategoryTreeOutput,
+    GroupByPeriod,
+    InstanceServiceProxy, Period,
+    PermissionServiceProxy,
+    PersonContactServiceProxy,
+    ReportSectionDto,
+    SectionGroup,
+    SessionServiceProxy,
+    StatsFilter,
+    TenantSubscriptionServiceProxy,
+    TransactionStatsDto,
+    TypeDto
 } from '@shared/service-proxies/service-proxies';
 import { UserPreferencesService } from '@app/cfo/cashflow/preferences-dialog/preferences.service';
 import { AppSessionService } from '@shared/common/session/app-session.service';
@@ -25,6 +36,7 @@ import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
 import { RootStoreModule } from '@root/store/root-store.module';
 import { CurrencyPipe } from '@angular/common';
 import { SummaryCell } from 'devextreme/ui/pivot_grid/ui.pivot_grid.summary_display_modes.js';
+import { TransactionStatsDtoExtended } from '@app/cfo/cashflow/models/transaction-stats-dto-extended';
 
 describe('CashflowService', () => {
     beforeEach(() => {
@@ -194,10 +206,50 @@ describe('CashflowService', () => {
             businessEntityIds: [],
         });
         const result = service.getDetailFilterFromCell(cellObj);
-        console.log(result);
         expect(result.cashflowTypeId).toEqual('I');
         expect(result.reportSectionGroup).toEqual('Expense');
         expect(result.reportSectionId).toEqual('3');
+    }));
+
+    it('getStubsCashflowDataForAllPeriods should work properly', inject([CashflowService], (service: CashflowService) => {
+        const cashflowData = [
+            new TransactionStatsDtoExtended({
+                adjustmentType: 2,
+                cashflowTypeId: 'B',
+                accountId: 142,
+                currencyId: 'USD',
+                date: moment('2019-01-15T22:00:00.000Z'),
+                initialDate: moment('2019-01-15T22:00:00.000Z'),
+                amount: 13247.42,
+                count: 2,
+                comment: '',
+                accountingTypeId: 1,
+                categoryId: 1,
+                subCategoryId: 2,
+                reportSectionId: 1,
+                transactionDescriptor: '',
+                forecastId: null
+            })
+        ];
+        service.allYears = [ 2019 ];
+        service.requestFilter = new StatsFilter({
+            accountIds: [63, 64, 142, 143],
+            calculateStartingBalance: true,
+            currencyId: 'USD',
+            dailyPeriods: [new Period({
+                start: moment('Tue Jan 01 2019 00:00:00 GMT+0000'),
+                end: moment('Thu Jan 31 2019 23:59:59 GMT+0000')
+            })],
+            endDate: moment('Sat Jan 26 2019 02:00:00 GMT+0200'),
+            forecastModelId: 1,
+            groupByPeriod: GroupByPeriod.Monthly,
+            showResolvedComments: false,
+            startDate: moment('Wed Jan 16 2019 02:00:00 GMT+0200'),
+            businessEntityIds: []
+        });
+        const allPeriods = service.getStubsCashflowDataForAllPeriods(cashflowData, GroupByPeriod.Monthly);
+        /** One stub transaction stat for every day */
+        expect(allPeriods.length).toBe(11);
     }));
 
     it('calculateSummary value should return correct value from cell', inject([ CashflowService ], (service: CashflowService) => {
