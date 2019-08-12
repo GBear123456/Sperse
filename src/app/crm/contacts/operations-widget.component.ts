@@ -15,9 +15,9 @@ import { StarsListComponent } from '../shared/stars-list/stars-list.component';
 import { StaticListComponent } from '@app/shared/common/static-list/static-list.component';
 import { ContactInfoDto, UserServiceProxy } from '@shared/service-proxies/service-proxies';
 import { ContactsService } from './contacts.service';
-import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { ContactGroup, ContactStatus } from '@shared/AppEnums';
 import { AppComponentBase } from '@shared/common/app-component-base';
+import { ImpersonationService } from '@app/admin/users/impersonation.service';
 import { ToolBarComponent } from '@app/shared/common/toolbar/toolbar.component';
 import { AppService } from '@app/app.service';
 import { AppPermissions } from '@shared/AppPermissions';
@@ -107,7 +107,7 @@ export class OperationsWidgetComponent extends AppComponentBase {
         private _appService: AppService,
         private _userService: UserServiceProxy,
         private _contactService: ContactsService,
-        public localizationService: AppLocalizationService,
+        private _impersonationService: ImpersonationService
     ) {
         super(injector);
 
@@ -168,6 +168,24 @@ export class OperationsWidgetComponent extends AppComponentBase {
                     disabled: !this._contactService.checkCGPermission(this.customerType, 'ManageRatingAndStars')
                 }
             ]);
+            let impersonationItem = {
+                location: 'before',
+                locateInMenu: 'auto',
+                items: [
+                    {
+                        widget: 'dxButton',
+                        options: {
+                            text: this.l('LoginAsThisUser')
+                        },
+                        visible: this.contactInfo && this.contactInfo.personContactInfo.userId &&
+                            this.permission.isGranted(AppPermissions.PagesAdministrationUsersImpersonation),
+                        action: () => {
+                            this._impersonationService.impersonate(this.contactInfo.personContactInfo.userId, this.appSession.tenantId);
+                        }
+                    }
+                ]
+            };
+
             this.toolbarConfig = this._enabled ? [
                 {
                     location: 'before',
@@ -185,12 +203,14 @@ export class OperationsWidgetComponent extends AppComponentBase {
                         }
                     ]
                 },
+                impersonationItem,
                 this.printButtonConfig,
                 this.getNavigationConfig(this.isPrevDisabled, this.isNextDisabled)
             ] : [
-                this.printButtonConfig,
-                this.getNavigationConfig(this.isPrevDisabled, this.isNextDisabled)
-            ];
+                    impersonationItem,
+                    this.printButtonConfig,
+                    this.getNavigationConfig(this.isPrevDisabled, this.isNextDisabled)
+                ];
 
             const isCfoLinkOrVerifyEnabled = this.contactInfo
                 && this.contactInfo.personContactInfo

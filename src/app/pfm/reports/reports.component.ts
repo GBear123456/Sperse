@@ -233,9 +233,9 @@ export class ReportsComponent extends AppComponentBase implements OnInit, OnDest
     refreshOfferStats() {
         let customFilter = [];
         if (this.dateFrom)
-            customFilter.push({ name: 'CountDateFrom', value: this.dateFrom.toDate().toJSON() });
+            customFilter.push({ name: 'RequestDateFrom', value: this.dateFrom.toDate().toJSON() });
         if (this.dateTo)
-            customFilter.push({ name: 'CountDateTo', value: this.dateTo.toDate().toJSON() });
+            customFilter.push({ name: 'RequestDateTo', value: this.dateTo.toDate().toJSON() });
         let filters: any[] = [this.offersStaticFilter];
         if (this.offersQuickSearch)
             filters.push({ 'Name': { contains: this.offersQuickSearch } });
