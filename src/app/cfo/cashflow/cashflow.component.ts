@@ -8,7 +8,6 @@ import { ActionsSubject, select, Store } from '@ngrx/store';
 import { ofType } from '@ngrx/effects';
 import { DxPivotGridComponent } from 'devextreme-angular/ui/pivot-grid';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
-import DevExpress from 'devextreme/bundles/dx.all';
 import config from 'devextreme/core/config';
 import TextBox from 'devextreme/ui/text_box';
 import NumberBox from 'devextreme/ui/number_box';
@@ -18,7 +17,7 @@ import SparkLine from 'devextreme/viz/sparkline';
 import ScrollView from 'devextreme/ui/scroll_view';
 import * as moment from 'moment-timezone';
 import { CacheService } from 'ng2-cache-service';
-import { Observable, BehaviorSubject, Subject, forkJoin, of, merge, zip } from 'rxjs';
+import { Observable, BehaviorSubject, Subject, forkJoin, combineLatest, of, merge } from 'rxjs';
 import {
     tap,
     finalize,
@@ -28,6 +27,7 @@ import {
     mergeMap,
     mergeAll,
     map,
+    mapTo,
     publishReplay,
     refCount,
     skip,
@@ -68,7 +68,6 @@ import {
     ClassificationServiceProxy,
     BankAccountsServiceProxy,
     GetCategoryTreeOutput,
-    CashFlowGridSettingsDto,
     InstanceType,
     UpdateForecastInput,
     Status,
@@ -99,7 +98,6 @@ import { Periods } from './enums/periods.enum';
 import { Projected } from './enums/projected.enum';
 import { CashflowService } from './cashflow.service';
 import { CellInfo } from './models/cell-info';
-import { CellInterval } from './models/cell-interval';
 import { IExpandLevel } from './models/expand-level';
 import { IEventDescription } from './models/event-description';
 import { TransactionStatsDtoExtended } from './models/transaction-stats-dto-extended';
@@ -109,7 +107,6 @@ import { UserPreferencesService } from './preferences-dialog/preferences.service
 import { PreferencesDialogComponent } from './preferences-dialog/preferences-dialog.component';
 import { RuleDialogComponent } from '../rules/rule-edit-dialog/rule-edit-dialog.component';
 import { FilterHelpers } from '../shared/helpers/filter.helper';
-import { DateHelper } from '@shared/helpers/DateHelper';
 import {
     CfoStore,
     CurrenciesStoreActions,
@@ -120,7 +117,6 @@ import {
 import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
 import { BankAccountStatus } from '@shared/cfo/bank-accounts/helpers/bank-accounts.status.enum';
 import { CashflowTypes } from '@app/cfo/cashflow/enums/cashflow-types.enum';
-import { mapTo } from '@node_modules/rxjs/operators';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 import { CalendarValuesModel } from '@shared/common/widgets/calendar/calendar-values.model';
 
@@ -1060,12 +1056,12 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     initFooterToolbar() {
-        zip(
+        combineLatest(
             this.store$.pipe(select(ForecastModelsStoreSelectors.getForecastModels), filter(Boolean)),
-            this.store$.pipe(select(ForecastModelsStoreSelectors.getSelectedForecastModelId, filter(Boolean)))
+            this.store$.pipe(select(ForecastModelsStoreSelectors.getSelectedForecastModelIndex, filter(Boolean)))
         ).pipe(
             first()
-        ).subscribe(([forecastModels, selectedForecastModelIdodelIndex]) => {
+        ).subscribe(([forecastModels, selectedForecastModelIndex]) => {
             this.footerToolbarConfig = [
                 {
                     location: 'before',
@@ -1079,10 +1075,10 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                             widget: 'dxTabs',
                             options: {
                                 items: forecastModels,
-                                selectedIndex: selectedForecastModelIdodelIndex,
+                                selectedIndex: selectedForecastModelIndex,
                                 accessKey: 'cashflowForecastSwitcher',
                                 onItemClick: (e) => {
-                                    this.cashflowService.handleDoubleSingleClick(e, this.changeselectedForecastModelIdodel.bind(this), this.handleForecastModelDoubleClick.bind(this));
+                                    this.cashflowService.handleDoubleSingleClick(e, this.changeSelectedForecastModelId.bind(this), this.handleForecastModelDoubleClick.bind(this));
                                 }
                             }
                         },
@@ -1235,7 +1231,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
      * Change the forecast model to reuse later
      * @param modelObj - new forecast model
      */
-    changeselectedForecastModelIdodel(modelObj) {
+    changeSelectedForecastModelId(modelObj) {
         if (!$(modelObj.element).find('.editModel').length) {
             this.store$.dispatch(new ForecastModelsStoreActions.ChangeForecastModelAction(modelObj.itemData.id));
         }
