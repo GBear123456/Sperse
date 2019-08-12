@@ -40879,102 +40879,6 @@ export interface IContactBusinessInfo {
     comment: string | undefined;
 }
 
-export class OrganizationAliasInfo implements IOrganizationAliasInfo {
-    alias!: string | undefined;
-
-    constructor(data?: IOrganizationAliasInfo) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.alias = data["alias"];
-        }
-    }
-
-    static fromJS(data: any): OrganizationAliasInfo {
-        data = typeof data === 'object' ? data : {};
-        let result = new OrganizationAliasInfo();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["alias"] = this.alias;
-        return data; 
-    }
-}
-
-export interface IOrganizationAliasInfo {
-    alias: string | undefined;
-}
-
-export class OrganizationTeamContactInfo implements IOrganizationTeamContactInfo {
-    prefix!: string | undefined;
-    firstName!: string | undefined;
-    middleName!: string | undefined;
-    lastName!: string | undefined;
-    title!: string | undefined;
-    emailAddress!: string | undefined;
-    phoneNumber!: string | undefined;
-
-    constructor(data?: IOrganizationTeamContactInfo) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.prefix = data["prefix"];
-            this.firstName = data["firstName"];
-            this.middleName = data["middleName"];
-            this.lastName = data["lastName"];
-            this.title = data["title"];
-            this.emailAddress = data["emailAddress"];
-            this.phoneNumber = data["phoneNumber"];
-        }
-    }
-
-    static fromJS(data: any): OrganizationTeamContactInfo {
-        data = typeof data === 'object' ? data : {};
-        let result = new OrganizationTeamContactInfo();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["prefix"] = this.prefix;
-        data["firstName"] = this.firstName;
-        data["middleName"] = this.middleName;
-        data["lastName"] = this.lastName;
-        data["title"] = this.title;
-        data["emailAddress"] = this.emailAddress;
-        data["phoneNumber"] = this.phoneNumber;
-        return data; 
-    }
-}
-
-export interface IOrganizationTeamContactInfo {
-    prefix: string | undefined;
-    firstName: string | undefined;
-    middleName: string | undefined;
-    lastName: string | undefined;
-    title: string | undefined;
-    emailAddress: string | undefined;
-    phoneNumber: string | undefined;
-}
-
 export class AddressInfo implements IAddressInfo {
     id!: number | undefined;
     streetAddress!: string | undefined;
@@ -42773,6 +42677,7 @@ export class LeadPersonalInfo implements ILeadPersonalInfo {
     nameSuffix!: string | undefined;
     nickName!: string | undefined;
     title!: string | undefined;
+    companyName!: string | undefined;
     emailAddress!: string | undefined;
     phoneNumber!: string | undefined;
     phoneExtension!: string | undefined;
@@ -42821,6 +42726,7 @@ export class LeadPersonalInfo implements ILeadPersonalInfo {
             this.nameSuffix = data["nameSuffix"];
             this.nickName = data["nickName"];
             this.title = data["title"];
+            this.companyName = data["companyName"];
             this.emailAddress = data["emailAddress"];
             this.phoneNumber = data["phoneNumber"];
             this.phoneExtension = data["phoneExtension"];
@@ -42869,6 +42775,7 @@ export class LeadPersonalInfo implements ILeadPersonalInfo {
         data["nameSuffix"] = this.nameSuffix;
         data["nickName"] = this.nickName;
         data["title"] = this.title;
+        data["companyName"] = this.companyName;
         data["emailAddress"] = this.emailAddress;
         data["phoneNumber"] = this.phoneNumber;
         data["phoneExtension"] = this.phoneExtension;
@@ -42910,6 +42817,7 @@ export interface ILeadPersonalInfo {
     nameSuffix: string | undefined;
     nickName: string | undefined;
     title: string | undefined;
+    companyName: string | undefined;
     emailAddress: string | undefined;
     phoneNumber: string | undefined;
     phoneExtension: string | undefined;
@@ -42930,618 +42838,6 @@ export interface ILeadPersonalInfo {
     zip: string | undefined;
     country: Country | undefined;
     state: CountryState | undefined;
-    isDeleted: boolean | undefined;
-    deleterUserId: number | undefined;
-    deletionTime: moment.Moment | undefined;
-    lastModificationTime: moment.Moment | undefined;
-    lastModifierUserId: number | undefined;
-    creationTime: moment.Moment | undefined;
-    creatorUserId: number | undefined;
-    id: number | undefined;
-}
-
-export class LeadBusinessPhone implements ILeadBusinessPhone {
-    tenantId!: number | undefined;
-    phoneNumber!: string;
-    leadBusinessInfoId!: number;
-    leadBusinessInfo!: LeadBusinessInfo | undefined;
-    isDeleted!: boolean | undefined;
-    deleterUserId!: number | undefined;
-    deletionTime!: moment.Moment | undefined;
-    lastModificationTime!: moment.Moment | undefined;
-    lastModifierUserId!: number | undefined;
-    creationTime!: moment.Moment | undefined;
-    creatorUserId!: number | undefined;
-    id!: number | undefined;
-
-    constructor(data?: ILeadBusinessPhone) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.tenantId = data["tenantId"];
-            this.phoneNumber = data["phoneNumber"];
-            this.leadBusinessInfoId = data["leadBusinessInfoId"];
-            this.leadBusinessInfo = data["leadBusinessInfo"] ? LeadBusinessInfo.fromJS(data["leadBusinessInfo"]) : <any>undefined;
-            this.isDeleted = data["isDeleted"];
-            this.deleterUserId = data["deleterUserId"];
-            this.deletionTime = data["deletionTime"] ? moment(data["deletionTime"].toString()) : <any>undefined;
-            this.lastModificationTime = data["lastModificationTime"] ? moment(data["lastModificationTime"].toString()) : <any>undefined;
-            this.lastModifierUserId = data["lastModifierUserId"];
-            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
-            this.creatorUserId = data["creatorUserId"];
-            this.id = data["id"];
-        }
-    }
-
-    static fromJS(data: any): LeadBusinessPhone {
-        data = typeof data === 'object' ? data : {};
-        let result = new LeadBusinessPhone();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["tenantId"] = this.tenantId;
-        data["phoneNumber"] = this.phoneNumber;
-        data["leadBusinessInfoId"] = this.leadBusinessInfoId;
-        data["leadBusinessInfo"] = this.leadBusinessInfo ? this.leadBusinessInfo.toJSON() : <any>undefined;
-        data["isDeleted"] = this.isDeleted;
-        data["deleterUserId"] = this.deleterUserId;
-        data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
-        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
-        data["lastModifierUserId"] = this.lastModifierUserId;
-        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
-        data["creatorUserId"] = this.creatorUserId;
-        data["id"] = this.id;
-        return data; 
-    }
-}
-
-export interface ILeadBusinessPhone {
-    tenantId: number | undefined;
-    phoneNumber: string;
-    leadBusinessInfoId: number;
-    leadBusinessInfo: LeadBusinessInfo | undefined;
-    isDeleted: boolean | undefined;
-    deleterUserId: number | undefined;
-    deletionTime: moment.Moment | undefined;
-    lastModificationTime: moment.Moment | undefined;
-    lastModifierUserId: number | undefined;
-    creationTime: moment.Moment | undefined;
-    creatorUserId: number | undefined;
-    id: number | undefined;
-}
-
-export class LeadBusinessLink implements ILeadBusinessLink {
-    tenantId!: number | undefined;
-    linkType!: string;
-    link!: string;
-    leadBusinessInfoId!: number;
-    leadBusinessInfo!: LeadBusinessInfo | undefined;
-    isDeleted!: boolean | undefined;
-    deleterUserId!: number | undefined;
-    deletionTime!: moment.Moment | undefined;
-    lastModificationTime!: moment.Moment | undefined;
-    lastModifierUserId!: number | undefined;
-    creationTime!: moment.Moment | undefined;
-    creatorUserId!: number | undefined;
-    id!: number | undefined;
-
-    constructor(data?: ILeadBusinessLink) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.tenantId = data["tenantId"];
-            this.linkType = data["linkType"];
-            this.link = data["link"];
-            this.leadBusinessInfoId = data["leadBusinessInfoId"];
-            this.leadBusinessInfo = data["leadBusinessInfo"] ? LeadBusinessInfo.fromJS(data["leadBusinessInfo"]) : <any>undefined;
-            this.isDeleted = data["isDeleted"];
-            this.deleterUserId = data["deleterUserId"];
-            this.deletionTime = data["deletionTime"] ? moment(data["deletionTime"].toString()) : <any>undefined;
-            this.lastModificationTime = data["lastModificationTime"] ? moment(data["lastModificationTime"].toString()) : <any>undefined;
-            this.lastModifierUserId = data["lastModifierUserId"];
-            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
-            this.creatorUserId = data["creatorUserId"];
-            this.id = data["id"];
-        }
-    }
-
-    static fromJS(data: any): LeadBusinessLink {
-        data = typeof data === 'object' ? data : {};
-        let result = new LeadBusinessLink();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["tenantId"] = this.tenantId;
-        data["linkType"] = this.linkType;
-        data["link"] = this.link;
-        data["leadBusinessInfoId"] = this.leadBusinessInfoId;
-        data["leadBusinessInfo"] = this.leadBusinessInfo ? this.leadBusinessInfo.toJSON() : <any>undefined;
-        data["isDeleted"] = this.isDeleted;
-        data["deleterUserId"] = this.deleterUserId;
-        data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
-        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
-        data["lastModifierUserId"] = this.lastModifierUserId;
-        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
-        data["creatorUserId"] = this.creatorUserId;
-        data["id"] = this.id;
-        return data; 
-    }
-}
-
-export interface ILeadBusinessLink {
-    tenantId: number | undefined;
-    linkType: string;
-    link: string;
-    leadBusinessInfoId: number;
-    leadBusinessInfo: LeadBusinessInfo | undefined;
-    isDeleted: boolean | undefined;
-    deleterUserId: number | undefined;
-    deletionTime: moment.Moment | undefined;
-    lastModificationTime: moment.Moment | undefined;
-    lastModifierUserId: number | undefined;
-    creationTime: moment.Moment | undefined;
-    creatorUserId: number | undefined;
-    id: number | undefined;
-}
-
-export class LeadBusinessAlias implements ILeadBusinessAlias {
-    tenantId!: number | undefined;
-    alias!: string;
-    leadBusinessInfoId!: number;
-    leadBusinessInfo!: LeadBusinessInfo | undefined;
-    isDeleted!: boolean | undefined;
-    deleterUserId!: number | undefined;
-    deletionTime!: moment.Moment | undefined;
-    lastModificationTime!: moment.Moment | undefined;
-    lastModifierUserId!: number | undefined;
-    creationTime!: moment.Moment | undefined;
-    creatorUserId!: number | undefined;
-    id!: number | undefined;
-
-    constructor(data?: ILeadBusinessAlias) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.tenantId = data["tenantId"];
-            this.alias = data["alias"];
-            this.leadBusinessInfoId = data["leadBusinessInfoId"];
-            this.leadBusinessInfo = data["leadBusinessInfo"] ? LeadBusinessInfo.fromJS(data["leadBusinessInfo"]) : <any>undefined;
-            this.isDeleted = data["isDeleted"];
-            this.deleterUserId = data["deleterUserId"];
-            this.deletionTime = data["deletionTime"] ? moment(data["deletionTime"].toString()) : <any>undefined;
-            this.lastModificationTime = data["lastModificationTime"] ? moment(data["lastModificationTime"].toString()) : <any>undefined;
-            this.lastModifierUserId = data["lastModifierUserId"];
-            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
-            this.creatorUserId = data["creatorUserId"];
-            this.id = data["id"];
-        }
-    }
-
-    static fromJS(data: any): LeadBusinessAlias {
-        data = typeof data === 'object' ? data : {};
-        let result = new LeadBusinessAlias();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["tenantId"] = this.tenantId;
-        data["alias"] = this.alias;
-        data["leadBusinessInfoId"] = this.leadBusinessInfoId;
-        data["leadBusinessInfo"] = this.leadBusinessInfo ? this.leadBusinessInfo.toJSON() : <any>undefined;
-        data["isDeleted"] = this.isDeleted;
-        data["deleterUserId"] = this.deleterUserId;
-        data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
-        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
-        data["lastModifierUserId"] = this.lastModifierUserId;
-        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
-        data["creatorUserId"] = this.creatorUserId;
-        data["id"] = this.id;
-        return data; 
-    }
-}
-
-export interface ILeadBusinessAlias {
-    tenantId: number | undefined;
-    alias: string;
-    leadBusinessInfoId: number;
-    leadBusinessInfo: LeadBusinessInfo | undefined;
-    isDeleted: boolean | undefined;
-    deleterUserId: number | undefined;
-    deletionTime: moment.Moment | undefined;
-    lastModificationTime: moment.Moment | undefined;
-    lastModifierUserId: number | undefined;
-    creationTime: moment.Moment | undefined;
-    creatorUserId: number | undefined;
-    id: number | undefined;
-}
-
-export class LeadBusinessTeamContact implements ILeadBusinessTeamContact {
-    tenantId!: number | undefined;
-    prefix!: string | undefined;
-    firstName!: string | undefined;
-    middleName!: string | undefined;
-    lastName!: string | undefined;
-    title!: string | undefined;
-    emailAddress!: string | undefined;
-    phoneNumber!: string | undefined;
-    leadBusinessInfoId!: number;
-    leadBusinessInfo!: LeadBusinessInfo | undefined;
-    isDeleted!: boolean | undefined;
-    deleterUserId!: number | undefined;
-    deletionTime!: moment.Moment | undefined;
-    lastModificationTime!: moment.Moment | undefined;
-    lastModifierUserId!: number | undefined;
-    creationTime!: moment.Moment | undefined;
-    creatorUserId!: number | undefined;
-    id!: number | undefined;
-
-    constructor(data?: ILeadBusinessTeamContact) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.tenantId = data["tenantId"];
-            this.prefix = data["prefix"];
-            this.firstName = data["firstName"];
-            this.middleName = data["middleName"];
-            this.lastName = data["lastName"];
-            this.title = data["title"];
-            this.emailAddress = data["emailAddress"];
-            this.phoneNumber = data["phoneNumber"];
-            this.leadBusinessInfoId = data["leadBusinessInfoId"];
-            this.leadBusinessInfo = data["leadBusinessInfo"] ? LeadBusinessInfo.fromJS(data["leadBusinessInfo"]) : <any>undefined;
-            this.isDeleted = data["isDeleted"];
-            this.deleterUserId = data["deleterUserId"];
-            this.deletionTime = data["deletionTime"] ? moment(data["deletionTime"].toString()) : <any>undefined;
-            this.lastModificationTime = data["lastModificationTime"] ? moment(data["lastModificationTime"].toString()) : <any>undefined;
-            this.lastModifierUserId = data["lastModifierUserId"];
-            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
-            this.creatorUserId = data["creatorUserId"];
-            this.id = data["id"];
-        }
-    }
-
-    static fromJS(data: any): LeadBusinessTeamContact {
-        data = typeof data === 'object' ? data : {};
-        let result = new LeadBusinessTeamContact();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["tenantId"] = this.tenantId;
-        data["prefix"] = this.prefix;
-        data["firstName"] = this.firstName;
-        data["middleName"] = this.middleName;
-        data["lastName"] = this.lastName;
-        data["title"] = this.title;
-        data["emailAddress"] = this.emailAddress;
-        data["phoneNumber"] = this.phoneNumber;
-        data["leadBusinessInfoId"] = this.leadBusinessInfoId;
-        data["leadBusinessInfo"] = this.leadBusinessInfo ? this.leadBusinessInfo.toJSON() : <any>undefined;
-        data["isDeleted"] = this.isDeleted;
-        data["deleterUserId"] = this.deleterUserId;
-        data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
-        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
-        data["lastModifierUserId"] = this.lastModifierUserId;
-        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
-        data["creatorUserId"] = this.creatorUserId;
-        data["id"] = this.id;
-        return data; 
-    }
-}
-
-export interface ILeadBusinessTeamContact {
-    tenantId: number | undefined;
-    prefix: string | undefined;
-    firstName: string | undefined;
-    middleName: string | undefined;
-    lastName: string | undefined;
-    title: string | undefined;
-    emailAddress: string | undefined;
-    phoneNumber: string | undefined;
-    leadBusinessInfoId: number;
-    leadBusinessInfo: LeadBusinessInfo | undefined;
-    isDeleted: boolean | undefined;
-    deleterUserId: number | undefined;
-    deletionTime: moment.Moment | undefined;
-    lastModificationTime: moment.Moment | undefined;
-    lastModifierUserId: number | undefined;
-    creationTime: moment.Moment | undefined;
-    creatorUserId: number | undefined;
-    id: number | undefined;
-}
-
-export class LeadBusinessInfo implements ILeadBusinessInfo {
-    tenantId!: number | undefined;
-    shortname!: string | undefined;
-    companyName!: string | undefined;
-    emailAddress1!: string | undefined;
-    emailAddress2!: string | undefined;
-    address!: string | undefined;
-    city!: string | undefined;
-    state!: string | undefined;
-    zip!: string | undefined;
-    industry!: string | undefined;
-    relationship!: string | undefined;
-    categories!: string | undefined;
-    primaryFundingType!: string | undefined;
-    referralType!: string | undefined;
-    founded!: moment.Moment | undefined;
-    companySizeFrom!: number | undefined;
-    companySizeTo!: number | undefined;
-    type!: string | undefined;
-    ticker!: string | undefined;
-    refID!: string | undefined;
-    logoUrl!: string | undefined;
-    rating!: number | undefined;
-    ucc!: number | undefined;
-    network!: string | undefined;
-    offerID!: string | undefined;
-    threeMonthEPC!: string | undefined;
-    sevenDayEPC!: string | undefined;
-    payout!: string | undefined;
-    fundingAmountLow!: number | undefined;
-    fundingAmountHigh!: number | undefined;
-    creditScoreMin!: number | undefined;
-    creditScoreDesired!: number | undefined;
-    apr!: number | undefined;
-    featuresAndBenefits!: string | undefined;
-    countriesServed!: string | undefined;
-    description!: string | undefined;
-    keywordTags!: string | undefined;
-    leadRequest!: LeadRequest | undefined;
-    leadBusinessPhones!: LeadBusinessPhone[] | undefined;
-    leadBusinessLinks!: LeadBusinessLink[] | undefined;
-    leadBusinessAliases!: LeadBusinessAlias[] | undefined;
-    leadBusinessTeamContacts!: LeadBusinessTeamContact[] | undefined;
-    isDeleted!: boolean | undefined;
-    deleterUserId!: number | undefined;
-    deletionTime!: moment.Moment | undefined;
-    lastModificationTime!: moment.Moment | undefined;
-    lastModifierUserId!: number | undefined;
-    creationTime!: moment.Moment | undefined;
-    creatorUserId!: number | undefined;
-    id!: number | undefined;
-
-    constructor(data?: ILeadBusinessInfo) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.tenantId = data["tenantId"];
-            this.shortname = data["shortname"];
-            this.companyName = data["companyName"];
-            this.emailAddress1 = data["emailAddress1"];
-            this.emailAddress2 = data["emailAddress2"];
-            this.address = data["address"];
-            this.city = data["city"];
-            this.state = data["state"];
-            this.zip = data["zip"];
-            this.industry = data["industry"];
-            this.relationship = data["relationship"];
-            this.categories = data["categories"];
-            this.primaryFundingType = data["primaryFundingType"];
-            this.referralType = data["referralType"];
-            this.founded = data["founded"] ? moment(data["founded"].toString()) : <any>undefined;
-            this.companySizeFrom = data["companySizeFrom"];
-            this.companySizeTo = data["companySizeTo"];
-            this.type = data["type"];
-            this.ticker = data["ticker"];
-            this.refID = data["refID"];
-            this.logoUrl = data["logoUrl"];
-            this.rating = data["rating"];
-            this.ucc = data["ucc"];
-            this.network = data["network"];
-            this.offerID = data["offerID"];
-            this.threeMonthEPC = data["threeMonthEPC"];
-            this.sevenDayEPC = data["sevenDayEPC"];
-            this.payout = data["payout"];
-            this.fundingAmountLow = data["fundingAmountLow"];
-            this.fundingAmountHigh = data["fundingAmountHigh"];
-            this.creditScoreMin = data["creditScoreMin"];
-            this.creditScoreDesired = data["creditScoreDesired"];
-            this.apr = data["apr"];
-            this.featuresAndBenefits = data["featuresAndBenefits"];
-            this.countriesServed = data["countriesServed"];
-            this.description = data["description"];
-            this.keywordTags = data["keywordTags"];
-            this.leadRequest = data["leadRequest"] ? LeadRequest.fromJS(data["leadRequest"]) : <any>undefined;
-            if (data["leadBusinessPhones"] && data["leadBusinessPhones"].constructor === Array) {
-                this.leadBusinessPhones = [];
-                for (let item of data["leadBusinessPhones"])
-                    this.leadBusinessPhones.push(LeadBusinessPhone.fromJS(item));
-            }
-            if (data["leadBusinessLinks"] && data["leadBusinessLinks"].constructor === Array) {
-                this.leadBusinessLinks = [];
-                for (let item of data["leadBusinessLinks"])
-                    this.leadBusinessLinks.push(LeadBusinessLink.fromJS(item));
-            }
-            if (data["leadBusinessAliases"] && data["leadBusinessAliases"].constructor === Array) {
-                this.leadBusinessAliases = [];
-                for (let item of data["leadBusinessAliases"])
-                    this.leadBusinessAliases.push(LeadBusinessAlias.fromJS(item));
-            }
-            if (data["leadBusinessTeamContacts"] && data["leadBusinessTeamContacts"].constructor === Array) {
-                this.leadBusinessTeamContacts = [];
-                for (let item of data["leadBusinessTeamContacts"])
-                    this.leadBusinessTeamContacts.push(LeadBusinessTeamContact.fromJS(item));
-            }
-            this.isDeleted = data["isDeleted"];
-            this.deleterUserId = data["deleterUserId"];
-            this.deletionTime = data["deletionTime"] ? moment(data["deletionTime"].toString()) : <any>undefined;
-            this.lastModificationTime = data["lastModificationTime"] ? moment(data["lastModificationTime"].toString()) : <any>undefined;
-            this.lastModifierUserId = data["lastModifierUserId"];
-            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
-            this.creatorUserId = data["creatorUserId"];
-            this.id = data["id"];
-        }
-    }
-
-    static fromJS(data: any): LeadBusinessInfo {
-        data = typeof data === 'object' ? data : {};
-        let result = new LeadBusinessInfo();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["tenantId"] = this.tenantId;
-        data["shortname"] = this.shortname;
-        data["companyName"] = this.companyName;
-        data["emailAddress1"] = this.emailAddress1;
-        data["emailAddress2"] = this.emailAddress2;
-        data["address"] = this.address;
-        data["city"] = this.city;
-        data["state"] = this.state;
-        data["zip"] = this.zip;
-        data["industry"] = this.industry;
-        data["relationship"] = this.relationship;
-        data["categories"] = this.categories;
-        data["primaryFundingType"] = this.primaryFundingType;
-        data["referralType"] = this.referralType;
-        data["founded"] = this.founded ? this.founded.toISOString() : <any>undefined;
-        data["companySizeFrom"] = this.companySizeFrom;
-        data["companySizeTo"] = this.companySizeTo;
-        data["type"] = this.type;
-        data["ticker"] = this.ticker;
-        data["refID"] = this.refID;
-        data["logoUrl"] = this.logoUrl;
-        data["rating"] = this.rating;
-        data["ucc"] = this.ucc;
-        data["network"] = this.network;
-        data["offerID"] = this.offerID;
-        data["threeMonthEPC"] = this.threeMonthEPC;
-        data["sevenDayEPC"] = this.sevenDayEPC;
-        data["payout"] = this.payout;
-        data["fundingAmountLow"] = this.fundingAmountLow;
-        data["fundingAmountHigh"] = this.fundingAmountHigh;
-        data["creditScoreMin"] = this.creditScoreMin;
-        data["creditScoreDesired"] = this.creditScoreDesired;
-        data["apr"] = this.apr;
-        data["featuresAndBenefits"] = this.featuresAndBenefits;
-        data["countriesServed"] = this.countriesServed;
-        data["description"] = this.description;
-        data["keywordTags"] = this.keywordTags;
-        data["leadRequest"] = this.leadRequest ? this.leadRequest.toJSON() : <any>undefined;
-        if (this.leadBusinessPhones && this.leadBusinessPhones.constructor === Array) {
-            data["leadBusinessPhones"] = [];
-            for (let item of this.leadBusinessPhones)
-                data["leadBusinessPhones"].push(item.toJSON());
-        }
-        if (this.leadBusinessLinks && this.leadBusinessLinks.constructor === Array) {
-            data["leadBusinessLinks"] = [];
-            for (let item of this.leadBusinessLinks)
-                data["leadBusinessLinks"].push(item.toJSON());
-        }
-        if (this.leadBusinessAliases && this.leadBusinessAliases.constructor === Array) {
-            data["leadBusinessAliases"] = [];
-            for (let item of this.leadBusinessAliases)
-                data["leadBusinessAliases"].push(item.toJSON());
-        }
-        if (this.leadBusinessTeamContacts && this.leadBusinessTeamContacts.constructor === Array) {
-            data["leadBusinessTeamContacts"] = [];
-            for (let item of this.leadBusinessTeamContacts)
-                data["leadBusinessTeamContacts"].push(item.toJSON());
-        }
-        data["isDeleted"] = this.isDeleted;
-        data["deleterUserId"] = this.deleterUserId;
-        data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
-        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
-        data["lastModifierUserId"] = this.lastModifierUserId;
-        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
-        data["creatorUserId"] = this.creatorUserId;
-        data["id"] = this.id;
-        return data; 
-    }
-}
-
-export interface ILeadBusinessInfo {
-    tenantId: number | undefined;
-    shortname: string | undefined;
-    companyName: string | undefined;
-    emailAddress1: string | undefined;
-    emailAddress2: string | undefined;
-    address: string | undefined;
-    city: string | undefined;
-    state: string | undefined;
-    zip: string | undefined;
-    industry: string | undefined;
-    relationship: string | undefined;
-    categories: string | undefined;
-    primaryFundingType: string | undefined;
-    referralType: string | undefined;
-    founded: moment.Moment | undefined;
-    companySizeFrom: number | undefined;
-    companySizeTo: number | undefined;
-    type: string | undefined;
-    ticker: string | undefined;
-    refID: string | undefined;
-    logoUrl: string | undefined;
-    rating: number | undefined;
-    ucc: number | undefined;
-    network: string | undefined;
-    offerID: string | undefined;
-    threeMonthEPC: string | undefined;
-    sevenDayEPC: string | undefined;
-    payout: string | undefined;
-    fundingAmountLow: number | undefined;
-    fundingAmountHigh: number | undefined;
-    creditScoreMin: number | undefined;
-    creditScoreDesired: number | undefined;
-    apr: number | undefined;
-    featuresAndBenefits: string | undefined;
-    countriesServed: string | undefined;
-    description: string | undefined;
-    keywordTags: string | undefined;
-    leadRequest: LeadRequest | undefined;
-    leadBusinessPhones: LeadBusinessPhone[] | undefined;
-    leadBusinessLinks: LeadBusinessLink[] | undefined;
-    leadBusinessAliases: LeadBusinessAlias[] | undefined;
-    leadBusinessTeamContacts: LeadBusinessTeamContact[] | undefined;
     isDeleted: boolean | undefined;
     deleterUserId: number | undefined;
     deletionTime: moment.Moment | undefined;
@@ -44897,7 +44193,6 @@ export class LeadRequest implements ILeadRequest {
     lead!: Lead | undefined;
     leadInterests!: LeadInterest[] | undefined;
     leadPersonalInfo!: LeadPersonalInfo | undefined;
-    leadBusinessInfo!: LeadBusinessInfo | undefined;
     utmParameter!: UTMParameter | undefined;
     lastTransaction!: Transaction | undefined;
     isDeleted!: boolean | undefined;
@@ -44952,7 +44247,6 @@ export class LeadRequest implements ILeadRequest {
                     this.leadInterests.push(LeadInterest.fromJS(item));
             }
             this.leadPersonalInfo = data["leadPersonalInfo"] ? LeadPersonalInfo.fromJS(data["leadPersonalInfo"]) : <any>undefined;
-            this.leadBusinessInfo = data["leadBusinessInfo"] ? LeadBusinessInfo.fromJS(data["leadBusinessInfo"]) : <any>undefined;
             this.utmParameter = data["utmParameter"] ? UTMParameter.fromJS(data["utmParameter"]) : <any>undefined;
             this.lastTransaction = data["lastTransaction"] ? Transaction.fromJS(data["lastTransaction"]) : <any>undefined;
             this.isDeleted = data["isDeleted"];
@@ -45007,7 +44301,6 @@ export class LeadRequest implements ILeadRequest {
                 data["leadInterests"].push(item.toJSON());
         }
         data["leadPersonalInfo"] = this.leadPersonalInfo ? this.leadPersonalInfo.toJSON() : <any>undefined;
-        data["leadBusinessInfo"] = this.leadBusinessInfo ? this.leadBusinessInfo.toJSON() : <any>undefined;
         data["utmParameter"] = this.utmParameter ? this.utmParameter.toJSON() : <any>undefined;
         data["lastTransaction"] = this.lastTransaction ? this.lastTransaction.toJSON() : <any>undefined;
         data["isDeleted"] = this.isDeleted;
@@ -45051,7 +44344,6 @@ export interface ILeadRequest {
     lead: Lead | undefined;
     leadInterests: LeadInterest[] | undefined;
     leadPersonalInfo: LeadPersonalInfo | undefined;
-    leadBusinessInfo: LeadBusinessInfo | undefined;
     utmParameter: UTMParameter | undefined;
     lastTransaction: Transaction | undefined;
     isDeleted: boolean | undefined;
@@ -47039,6 +46331,7 @@ export class Organization implements IOrganization {
     description!: string | undefined;
     keywordTags!: string | undefined;
     organizationUnitId!: number | undefined;
+    affiliateCode!: string | undefined;
     orgType!: OrganizationType | undefined;
     contact!: Contact | undefined;
     formedCountry!: Country | undefined;
@@ -47095,6 +46388,7 @@ export class Organization implements IOrganization {
             this.description = data["description"];
             this.keywordTags = data["keywordTags"];
             this.organizationUnitId = data["organizationUnitId"];
+            this.affiliateCode = data["affiliateCode"];
             this.orgType = data["orgType"] ? OrganizationType.fromJS(data["orgType"]) : <any>undefined;
             this.contact = data["contact"] ? Contact.fromJS(data["contact"]) : <any>undefined;
             this.formedCountry = data["formedCountry"] ? Country.fromJS(data["formedCountry"]) : <any>undefined;
@@ -47167,6 +46461,7 @@ export class Organization implements IOrganization {
         data["description"] = this.description;
         data["keywordTags"] = this.keywordTags;
         data["organizationUnitId"] = this.organizationUnitId;
+        data["affiliateCode"] = this.affiliateCode;
         data["orgType"] = this.orgType ? this.orgType.toJSON() : <any>undefined;
         data["contact"] = this.contact ? this.contact.toJSON() : <any>undefined;
         data["formedCountry"] = this.formedCountry ? this.formedCountry.toJSON() : <any>undefined;
@@ -47232,6 +46527,7 @@ export interface IOrganization {
     description: string | undefined;
     keywordTags: string | undefined;
     organizationUnitId: number | undefined;
+    affiliateCode: string | undefined;
     orgType: OrganizationType | undefined;
     contact: Contact | undefined;
     formedCountry: Country | undefined;
@@ -49366,32 +48662,18 @@ export class OrganizationBusinessInfo implements IOrganizationBusinessInfo {
     companyName!: string | undefined;
     typeId!: string | undefined;
     industry!: string | undefined;
-    relationship!: string | undefined;
-    primaryFundingType!: string | undefined;
-    referralType!: string | undefined;
     duns!: string | undefined;
     ticker!: string | undefined;
-    refID!: string | undefined;
-    rating!: number | undefined;
-    ucc!: number | undefined;
     sizeFrom!: number | undefined;
     sizeTo!: number | undefined;
-    countriesServed!: string | undefined;
     description!: string | undefined;
-    keywordTags!: string | undefined;
-    logoUrl!: string | undefined;
     ein!: string | undefined;
     formedCountryId!: string | undefined;
     formedStateId!: string | undefined;
     formedDate!: moment.Moment | undefined;
     annualRevenue!: number | undefined;
-    acceptCc!: boolean | undefined;
-    annualVolumesOnCards!: number | undefined;
-    productServicesSold!: number | undefined;
     businessSicCode!: number | undefined;
     note!: string | undefined;
-    organizationAliases!: OrganizationAliasInfo[] | undefined;
-    organizationTeamContacts!: OrganizationTeamContactInfo[] | undefined;
     contactId!: number | undefined;
     emailAddress!: string | undefined;
     phoneNumber!: string | undefined;
@@ -49425,40 +48707,18 @@ export class OrganizationBusinessInfo implements IOrganizationBusinessInfo {
             this.companyName = data["companyName"];
             this.typeId = data["typeId"];
             this.industry = data["industry"];
-            this.relationship = data["relationship"];
-            this.primaryFundingType = data["primaryFundingType"];
-            this.referralType = data["referralType"];
             this.duns = data["duns"];
             this.ticker = data["ticker"];
-            this.refID = data["refID"];
-            this.rating = data["rating"];
-            this.ucc = data["ucc"];
             this.sizeFrom = data["sizeFrom"];
             this.sizeTo = data["sizeTo"];
-            this.countriesServed = data["countriesServed"];
             this.description = data["description"];
-            this.keywordTags = data["keywordTags"];
-            this.logoUrl = data["logoUrl"];
             this.ein = data["ein"];
             this.formedCountryId = data["formedCountryId"];
             this.formedStateId = data["formedStateId"];
             this.formedDate = data["formedDate"] ? moment(data["formedDate"].toString()) : <any>undefined;
             this.annualRevenue = data["annualRevenue"];
-            this.acceptCc = data["acceptCc"];
-            this.annualVolumesOnCards = data["annualVolumesOnCards"];
-            this.productServicesSold = data["productServicesSold"];
             this.businessSicCode = data["businessSicCode"];
             this.note = data["note"];
-            if (data["organizationAliases"] && data["organizationAliases"].constructor === Array) {
-                this.organizationAliases = [];
-                for (let item of data["organizationAliases"])
-                    this.organizationAliases.push(OrganizationAliasInfo.fromJS(item));
-            }
-            if (data["organizationTeamContacts"] && data["organizationTeamContacts"].constructor === Array) {
-                this.organizationTeamContacts = [];
-                for (let item of data["organizationTeamContacts"])
-                    this.organizationTeamContacts.push(OrganizationTeamContactInfo.fromJS(item));
-            }
             this.contactId = data["contactId"];
             this.emailAddress = data["emailAddress"];
             this.phoneNumber = data["phoneNumber"];
@@ -49516,40 +48776,18 @@ export class OrganizationBusinessInfo implements IOrganizationBusinessInfo {
         data["companyName"] = this.companyName;
         data["typeId"] = this.typeId;
         data["industry"] = this.industry;
-        data["relationship"] = this.relationship;
-        data["primaryFundingType"] = this.primaryFundingType;
-        data["referralType"] = this.referralType;
         data["duns"] = this.duns;
         data["ticker"] = this.ticker;
-        data["refID"] = this.refID;
-        data["rating"] = this.rating;
-        data["ucc"] = this.ucc;
         data["sizeFrom"] = this.sizeFrom;
         data["sizeTo"] = this.sizeTo;
-        data["countriesServed"] = this.countriesServed;
         data["description"] = this.description;
-        data["keywordTags"] = this.keywordTags;
-        data["logoUrl"] = this.logoUrl;
         data["ein"] = this.ein;
         data["formedCountryId"] = this.formedCountryId;
         data["formedStateId"] = this.formedStateId;
         data["formedDate"] = this.formedDate ? this.formedDate.toISOString() : <any>undefined;
         data["annualRevenue"] = this.annualRevenue;
-        data["acceptCc"] = this.acceptCc;
-        data["annualVolumesOnCards"] = this.annualVolumesOnCards;
-        data["productServicesSold"] = this.productServicesSold;
         data["businessSicCode"] = this.businessSicCode;
         data["note"] = this.note;
-        if (this.organizationAliases && this.organizationAliases.constructor === Array) {
-            data["organizationAliases"] = [];
-            for (let item of this.organizationAliases)
-                data["organizationAliases"].push(item.toJSON());
-        }
-        if (this.organizationTeamContacts && this.organizationTeamContacts.constructor === Array) {
-            data["organizationTeamContacts"] = [];
-            for (let item of this.organizationTeamContacts)
-                data["organizationTeamContacts"].push(item.toJSON());
-        }
         data["contactId"] = this.contactId;
         data["emailAddress"] = this.emailAddress;
         data["phoneNumber"] = this.phoneNumber;
@@ -49600,32 +48838,18 @@ export interface IOrganizationBusinessInfo {
     companyName: string | undefined;
     typeId: string | undefined;
     industry: string | undefined;
-    relationship: string | undefined;
-    primaryFundingType: string | undefined;
-    referralType: string | undefined;
     duns: string | undefined;
     ticker: string | undefined;
-    refID: string | undefined;
-    rating: number | undefined;
-    ucc: number | undefined;
     sizeFrom: number | undefined;
     sizeTo: number | undefined;
-    countriesServed: string | undefined;
     description: string | undefined;
-    keywordTags: string | undefined;
-    logoUrl: string | undefined;
     ein: string | undefined;
     formedCountryId: string | undefined;
     formedStateId: string | undefined;
     formedDate: moment.Moment | undefined;
     annualRevenue: number | undefined;
-    acceptCc: boolean | undefined;
-    annualVolumesOnCards: number | undefined;
-    productServicesSold: number | undefined;
     businessSicCode: number | undefined;
     note: string | undefined;
-    organizationAliases: OrganizationAliasInfo[] | undefined;
-    organizationTeamContacts: OrganizationTeamContactInfo[] | undefined;
     contactId: number | undefined;
     emailAddress: string | undefined;
     phoneNumber: string | undefined;
@@ -62546,6 +61770,7 @@ export class OrganizationInfoDto implements IOrganizationInfoDto {
     ticker!: string | undefined;
     typeId!: string | undefined;
     organizationUnitId!: number | undefined;
+    affiliateCode!: string | undefined;
 
     constructor(data?: IOrganizationInfoDto) {
         if (data) {
@@ -62574,6 +61799,7 @@ export class OrganizationInfoDto implements IOrganizationInfoDto {
             this.ticker = data["ticker"];
             this.typeId = data["typeId"];
             this.organizationUnitId = data["organizationUnitId"];
+            this.affiliateCode = data["affiliateCode"];
         }
     }
 
@@ -62602,6 +61828,7 @@ export class OrganizationInfoDto implements IOrganizationInfoDto {
         data["ticker"] = this.ticker;
         data["typeId"] = this.typeId;
         data["organizationUnitId"] = this.organizationUnitId;
+        data["affiliateCode"] = this.affiliateCode;
         return data; 
     }
 }
@@ -62623,6 +61850,7 @@ export interface IOrganizationInfoDto {
     ticker: string | undefined;
     typeId: string | undefined;
     organizationUnitId: number | undefined;
+    affiliateCode: string | undefined;
 }
 
 export class PersonShortInfoDto implements IPersonShortInfoDto {
@@ -62780,6 +62008,7 @@ export class CreateOrganizationInput implements ICreateOrganizationInput {
     ticker!: string | undefined;
     typeId!: string | undefined;
     organizationUnitId!: number | undefined;
+    affiliateCode!: string | undefined;
 
     constructor(data?: ICreateOrganizationInput) {
         if (data) {
@@ -62810,6 +62039,7 @@ export class CreateOrganizationInput implements ICreateOrganizationInput {
             this.ticker = data["ticker"];
             this.typeId = data["typeId"];
             this.organizationUnitId = data["organizationUnitId"];
+            this.affiliateCode = data["affiliateCode"];
         }
     }
 
@@ -62840,6 +62070,7 @@ export class CreateOrganizationInput implements ICreateOrganizationInput {
         data["ticker"] = this.ticker;
         data["typeId"] = this.typeId;
         data["organizationUnitId"] = this.organizationUnitId;
+        data["affiliateCode"] = this.affiliateCode;
         return data; 
     }
 }
@@ -62863,6 +62094,7 @@ export interface ICreateOrganizationInput {
     ticker: string | undefined;
     typeId: string | undefined;
     organizationUnitId: number | undefined;
+    affiliateCode: string | undefined;
 }
 
 export class CreateOrganizationOutput implements ICreateOrganizationOutput {
@@ -62919,6 +62151,7 @@ export class UpdateOrganizationInfoInput implements IUpdateOrganizationInfoInput
     ticker!: string | undefined;
     typeId!: string | undefined;
     organizationUnitId!: number | undefined;
+    affiliateCode!: string | undefined;
 
     constructor(data?: IUpdateOrganizationInfoInput) {
         if (data) {
@@ -62948,6 +62181,7 @@ export class UpdateOrganizationInfoInput implements IUpdateOrganizationInfoInput
             this.ticker = data["ticker"];
             this.typeId = data["typeId"];
             this.organizationUnitId = data["organizationUnitId"];
+            this.affiliateCode = data["affiliateCode"];
         }
     }
 
@@ -62977,6 +62211,7 @@ export class UpdateOrganizationInfoInput implements IUpdateOrganizationInfoInput
         data["ticker"] = this.ticker;
         data["typeId"] = this.typeId;
         data["organizationUnitId"] = this.organizationUnitId;
+        data["affiliateCode"] = this.affiliateCode;
         return data; 
     }
 }
@@ -62999,6 +62234,7 @@ export interface IUpdateOrganizationInfoInput {
     ticker: string | undefined;
     typeId: string | undefined;
     organizationUnitId: number | undefined;
+    affiliateCode: string | undefined;
 }
 
 export class OrganizationUnitDto implements IOrganizationUnitDto {
