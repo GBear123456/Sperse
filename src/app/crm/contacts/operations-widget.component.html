@@ -4,7 +4,7 @@
         <app-static-list
             #stagesList
             [width]="'210px'"
-            [title]="localizationService.l('Stages')"
+            [title]="l('Stages')"
             [selectedKeys]="[selectedStageId]"
             [selectedItems]=""
             [hideButtons]="true"
@@ -19,19 +19,19 @@
         <app-static-list
             #statusesList
             [width]="'180px'"
-            [title]="localizationService.l('Status')"
+            [title]="l('Status')"
             [showConfirmation]="false"
             [hideButtons]="true"
             [highlightSelected]="true"
             [selectedKeys]="[contactInfo?.statusId]"
             [targetSelector]="'[aria-label=Status]'"
-            [list]="[{id: 'A', name: localizationService.l('Active')}, {id: 'I', name: localizationService.l('Inactive')}]"
+            [list]="[{id: 'A', name: l('Active')}, {id: 'I', name: l('Inactive')}]"
             (onItemSelected)="updateStatus($event)">
         </app-static-list>
         <!--<app-static-list-->
             <!--#partnerTypesList-->
             <!--[width]="'210px'"-->
-            <!--[title]="localizationService.l('Type')"-->
+            <!--[title]="l('Type')"-->
             <!--[selectedKeys]="[selectedPartnerTypeId]"-->
             <!--[selectedItems]=""-->
             <!--[hideButtons]="true"-->
