@@ -151,14 +151,9 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
                         rightPanelId = this.getCheckPropertyValue(data, 'rightPanelId', RP_DEFAULT_ID);
                     this.rightPanelSetting.opened = this.getCheckPropertyValue(data, 'rightPanelOpened',
                         rightPanelId == RP_DEFAULT_ID && abp.features.isEnabled('PFM.CreditReport')
-                        || rightPanelId == RP_USER_INFO_ID && this._userService['data'].userId
                     );
                     this.rightPanelSetting.id = rightPanelId;
                 });
-        });
-        _contactsService.userSubscribe((userId) => {
-            if (this.rightPanelSetting.id == RP_USER_INFO_ID)
-                this.rightPanelSetting.opened = Boolean(userId);
         });
         _contactsService.invalidateSubscribe((area) => { this.invalidate(area); });
         _contactsService.loadLeadInfoSubscribe(() => this.loadLeadData());

@@ -143,6 +143,7 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
             this.emails = contactInfo.details.emails
                 .filter(item => item.isActive );
         }
+        this.loadData();
     }
 
     loadData() {
@@ -150,7 +151,7 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
             this.fillUserData(this.data['raw']);
         else if (!this.loading) {
             this.startLoading();
-            this._userService.getUserForEdit(this.data.userId)
+            this._userService.getUserForEdit(this.data.userId || undefined)
                 .pipe(finalize(() => this.finishLoading()))
                 .subscribe((userEditOutput) => {
                     this.fillUserData(this._userService['data'].raw = userEditOutput);
@@ -159,16 +160,29 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
     }
 
     fillUserData(data) {
-        this._userService['data'].user = data.user;
-        data.user['setRandomPassword'] = false;
-        data.user['sendActivationEmail'] = false;
-
-        this._userService['data'].roles = data.roles;
-
         data.memberedOrganizationUnits.forEach((item) => {
             this.selectedOrgUnits.push(find(data.allOrganizationUnits, {code: item})['id']);
         });
-        setTimeout(() => this._contactsService.orgUnitsUpdate(this.userData = data));
+
+        if (data.user) {
+            this._userService['data'].user = data.user;
+            data.user['setRandomPassword'] = false;
+            data.user['sendActivationEmail'] = false;
+
+            this._userService['data'].roles = data.roles;
+            this.userData = data;
+        } else {
+            let orgUnitIds = this.contactInfoData.contactInfo.personContactInfo.orgRelations.map(item => {
+                return item.organization && item.organization.organizationUnitId;
+            }).filter(Boolean);
+            if (orgUnitIds && orgUnitIds.length) {
+                this.selectedOrgUnits = orgUnitIds;
+                data.memberedOrganizationUnits = orgUnitIds.map(id =>
+                    find(data.allOrganizationUnits, {id: id})['code']);
+            }
+        }
+
+        setTimeout(() => this._contactsService.orgUnitsUpdate(data));
     }
 
     inviteUser() {
@@ -186,11 +200,12 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
                     this.startLoading();
                     this.inviteData.contactId = this.contactInfoData.contactInfo.personContactInfo.id;
                     let phoneNumber = this.inviteData.phoneNumber;
-                    this._personContactServiceProxy.createUserForContact(extend(clone(this.inviteData),
-                        { phoneNumber: phoneNumber && phoneNumber.replace(/\D/g, '') }))
-                        .pipe(finalize(() => this.finishLoading())).subscribe(() => {
-                            this._contactsService.invalidate();
-                        });
+                    this._personContactServiceProxy.createUserForContact(extend(clone(this.inviteData), {
+                        phoneNumber: phoneNumber && phoneNumber.replace(/\D/g, ''),
+                        organizationUnitIds: this.selectedOrgUnits
+                    })).pipe(finalize(() => this.finishLoading())).subscribe(() => {
+                        this._contactsService.invalidate();
+                    });
                 }
             }
         );

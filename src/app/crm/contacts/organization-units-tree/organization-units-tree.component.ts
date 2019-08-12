@@ -136,19 +136,18 @@ export class OrganizationUnitsTreeComponent extends AppComponentBase implements 
     }
 
     onChange(event) {
-        let sub;
-        if (event.itemData.selected)
-            sub = this._userOrgUnitsService.addUsersToOrganizationUnit(UsersToOrganizationUnitInput.fromJS({
-                userIds: [this.userId],
-                organizationUnitId: event.itemData.id
-            }));
+        if (this.userId)
+            (event.itemData.selected ?
+                this._userOrgUnitsService.addUsersToOrganizationUnit(UsersToOrganizationUnitInput.fromJS({
+                    userIds: [this.userId],
+                    organizationUnitId: event.itemData.id
+                })) : this._userOrgUnitsService.removeUserFromOrganizationUnit(this.userId, event.itemData.id)
+            ).pipe(finalize(() => this.finishLoading(true))).subscribe(() => {
+                this._contactsService.orgUnitsSave(this.getSelectedOrganizationUnits());
+                this.notify.info(this.l('SavedSuccessfully'));
+            });
         else
-            sub = this._userOrgUnitsService.removeUserFromOrganizationUnit(this.userId, event.itemData.id);
-
-        sub.pipe(finalize(() => this.finishLoading(true))).subscribe(() => {
             this._contactsService.orgUnitsSave(this.getSelectedOrganizationUnits());
-            this.notify.info(this.l('SavedSuccessfully'));
-        });
     }
 
     ngOnDestroy() {
