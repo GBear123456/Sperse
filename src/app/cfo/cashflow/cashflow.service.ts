@@ -19,7 +19,7 @@ import {
     AdjustmentType,
     BankAccountDto, CashFlowGridSettingsDto, CashFlowInitialData,
     CategoryDto,
-    GetCategoryTreeOutput, StatsDetailFilter, StatsFilter
+    GetCategoryTreeOutput, GroupByPeriod, StatsDetailFilter, StatsFilter
 } from '@shared/service-proxies/service-proxies';
 import { IModifyingInputOptions } from '@app/cfo/cashflow/modifying-input-options.interface';
 import { IEventDescription } from '@app/cfo/cashflow/models/event-description';
@@ -33,6 +33,7 @@ import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
 import { CurrencyPipe } from '@angular/common';
 import { Periods } from '@app/cfo/cashflow/enums/periods.enum';
 import { WeekInfo } from '@app/cfo/cashflow/models/week-info';
+import { TransactionStatsDtoExtended } from '@app/cfo/cashflow/models/transaction-stats-dto-extended';
 
 /** Constants */
 const StartedBalance    = CashflowTypes.StartedBalance,
@@ -348,6 +349,12 @@ export class CashflowService {
         'Periods_Current',
         'Periods_Forecast'
     ];
+
+    /** Years in cashflow */
+    allYears: number[] = [];
+
+    /** Amount of years with stubs */
+    yearsAmount = 0;
 
     constructor(
         private userPreferencesService: UserPreferencesService,
@@ -1923,5 +1930,151 @@ export class CashflowService {
         for (let i = 0; i < names.length; i++ ) {
             base = base[ names[i] ] = base[ names[i] ] || {};
         }
+    }
+
+
+    /**
+     * for every day that is absent in cashflow data add stub object
+     * (hack to show all days, months and quarters for all years in cashflow data page)
+     * @param {TransactionStatsDtoExtended[]} cashflowData
+     * @return {TransactionStatsDtoExtended[]}
+     */
+    getStubsCashflowDataForAllPeriods(cashflowData: TransactionStatsDtoExtended[], period = GroupByPeriod.Monthly) {
+        this.allYears = [];
+        this.yearsAmount = 0;
+        let existingPeriods: string[] = [],
+            minDate: moment.Moment,
+            maxDate: moment.Moment,
+            periodFormat = period === GroupByPeriod.Monthly ? 'YYYY-MM' : 'YYYY-MM-DD';
+
+        cashflowData.forEach(cashflowItem => {
+            /** Move the year to the years array if it is unique */
+            let date = cashflowItem.initialDate;
+            let transactionYear = date.year();
+            let formattedDate = date.utc().format(periodFormat);
+            if (this.allYears.indexOf(transactionYear) === -1) this.allYears.push(transactionYear);
+            if (existingPeriods.indexOf(formattedDate) === -1) existingPeriods.push(formattedDate);
+            if (!minDate || cashflowItem.date < minDate)
+                minDate = moment(date);
+            if (!maxDate || cashflowItem.date > maxDate)
+                maxDate = moment(date);
+        });
+        this.allYears = this.allYears.sort();
+        let stubsInterval = this.getStubsInterval(minDate, maxDate, existingPeriods, periodFormat);
+        this.yearsAmount = stubsInterval.endDate.diff(stubsInterval.startDate, 'years') + 1;
+
+        /** cycle from started date to ended date */
+        /** added fake data for each date that is not already exists in cashflow data */
+        let accountId = cashflowData[0] ? cashflowData[0].accountId : this.bankAccounts[0].id;
+        let stubCashflowData = this.createStubsForPeriod(stubsInterval.startDate, stubsInterval.endDate, period, accountId, existingPeriods);
+        if (this.requestFilter.dailyPeriods.length) {
+            this.requestFilter.dailyPeriods.forEach(dailyPeriod => {
+                let filterStart = this.requestFilter.startDate ? moment(this.requestFilter.startDate) : null;
+                let filterEnd = this.requestFilter.endDate ? moment(this.requestFilter.endDate) : null;
+                let start = filterStart && dailyPeriod.start.isBefore(filterStart) ? filterStart.utc() : dailyPeriod.start.utc();
+                let end = filterEnd && dailyPeriod.end.isAfter(filterEnd) ? filterEnd.utc() : dailyPeriod.end.utc();
+                let dailyStubs = this.createStubsForPeriod(start, end, GroupByPeriod.Daily, accountId, []);
+                stubCashflowData = stubCashflowData.concat(dailyStubs);
+            });
+        }
+
+        return stubCashflowData;
+    }
+
+
+    /**
+     * Return stubs intervals
+     * @param {moment.Moment} minDate
+     * @param {moment.Moment} maxDate
+     * @param {string[]} existingPeriods
+     * @param {string} periodFormat
+     * @return {{startDate: Moment.moment; endDate: Moment.moment}}
+     */
+    getStubsInterval(minDate: moment.Moment, maxDate: moment.Moment, existingPeriods: string[], periodFormat: string): { startDate: moment.Moment, endDate: moment.Moment } {
+
+        let currentDate = this.getUtcCurrentDate();
+        let filterStart = this.requestFilter.startDate;
+        let filterEnd = this.requestFilter.endDate;
+
+        /** If current date is not in existing - set min or max date as current */
+        if (existingPeriods.indexOf(currentDate.format(periodFormat)) === -1) {
+            if (currentDate.format(periodFormat) < minDate.format(periodFormat)) {
+                minDate = currentDate;
+                /** if endDate from filter */
+            } else if (currentDate.format(periodFormat) > maxDate.format(periodFormat) &&
+                (!filterEnd || (filterEnd && currentDate.isBefore(moment(filterEnd).utc())))
+            ) {
+                maxDate = currentDate;
+            }
+        }
+
+        /** set max date to the end of year if current maxDate year is current year */
+        if (maxDate.year() === currentDate.year()) {
+            let endOfYear = maxDate.clone().endOf('year');
+            if (!filterEnd || (filterEnd && endOfYear.isBefore(moment(filterEnd).utc()))) {
+                maxDate = endOfYear;
+            }
+        }
+
+        /** consider the filter */
+        if (filterStart && (!minDate || moment(filterStart).utc().isAfter(minDate))) minDate = filterStart;
+        if (filterEnd && (!maxDate || moment(filterEnd).utc().isAfter(maxDate))) maxDate = filterEnd;
+
+        return { startDate: moment.utc(minDate), endDate: moment.utc(maxDate) };
+    }
+
+
+    createStubsForPeriod(startDate, endDate, groupingPeriod: GroupByPeriod, bankAccountId, existingPeriods = []): TransactionStatsDtoExtended[] {
+        let stubs = [];
+        let startDateCopy = moment(startDate),
+            endDateCopy = moment(endDate),
+            period: any = groupingPeriod === GroupByPeriod.Monthly ? 'month' : 'day',
+            format = period === 'month' ? 'YYYY-MM' : 'YYYY-MM-DD';
+        while (startDateCopy.isSameOrBefore(endDateCopy)) {
+            let date = moment.tz(startDateCopy.format(format), format, 'utc');
+            if (existingPeriods.indexOf(date.format(format)) === -1) {
+                stubs.push(
+                    this.createStubTransaction({
+                        'cashflowTypeId': StartedBalance,
+                        'accountId': bankAccountId,
+                        'date': moment(date).add(date.toDate().getTimezoneOffset(), 'minutes'),
+                        'initialDate': date
+                    })
+                );
+            }
+            startDateCopy.add(1, period);
+        }
+        return stubs;
+    }
+
+
+    /**
+     * Return the stub transaction
+     * @param stubObj - the object with own custom data for stub transaction
+     * @param path
+     * @return {TransactionStatsDto & any}
+     */
+    createStubTransaction(stubObj, path: string[] = []) {
+        let stubTransaction = {
+            'adjustmentType': null,
+            'accountId': null,
+            'currencyId': this.cfoPreferencesService.selectedCurrencyId,
+            'amount': 0,
+            'comment': null,
+            'date': null,
+            'initialDate': null,
+            'forecastId': null,
+            'isStub': true
+        };
+        if (path && path.length) {
+            path.forEach(pathItem => {
+                if (pathItem) {
+                    let [ key, prefix ] = [ pathItem.slice(2), pathItem.slice(0, 2) ];
+                    let categoryParams = this.getCategoryParams(prefix as CategorizationPrefixes);
+                    stubTransaction[categoryParams['statsKeyName']] = key;
+                }
+            });
+        }
+        return this.addCategorizationLevels({ ...stubTransaction, ...stubObj });
     }
 }
