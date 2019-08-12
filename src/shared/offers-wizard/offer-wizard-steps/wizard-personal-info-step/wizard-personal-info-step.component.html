@@ -75,8 +75,8 @@
         <div class="dx-field">
             <div class="dx-field-label">SSN</div>
             <div class="dx-field-value">
-                <dx-text-box placeholder="Enter ssn"
-                             name="ssn"
+                <dx-text-box name="ssn"
+                             showMaskMode="onfocus"
                              (onContentReady)="inputStatusesService.setMask($event)"
                              (onFocusIn)="inputStatusesService.focusInput($event)"
                              (onFocusOut)="inputStatusesService.blurInput($event)"
