@@ -72,11 +72,19 @@
                         <dxi-column dataField="Phone" caption="{{l('Contact.Phone')}}" cellTemplate="phoneCell" cssClass="tabular"></dxi-column>
                         <dxi-column dataField="City" caption="{{l('Contact.City')}}"></dxi-column>
                         <dxi-column dataField="StateId" caption="{{l('Contact.State')}}"></dxi-column>
+                        <dxi-column dataField="BankCode" cellTemplate="bankCodeCell" [caption]="l('BankCode')" [visible]="userManagementService.checkBankCodeLayout()"></dxi-column>
                         <dxi-column dataField="Status" caption="{{l('Status')}}" cellTemplate="statusCell"></dxi-column>
                         <div *dxTemplate="let cellData of 'statusCell'">
                             <div [class]="'client-status ' + cellData.value | lowercase">
                                 {{cellData.value}}
                             </div>
+                        </div>
+                        <div *dxTemplate="let cellData of 'bankCodeCell'">
+                            <ng-container *ngIf="cellData.value" >
+                                <ng-container *ngFor="let letter of cellData.value.split('')">
+                                    <bank-code-letter [letter]="letter"></bank-code-letter>
+                                </ng-container>
+                            </ng-container>
                         </div>
                         <dxi-column dataField="CreationTime" dataType="string" caption="{{l('Created')}}" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
                         <dxi-column [visible]="appService.isCfoLinkOrVerifyEnabled" name="LinkToCFO" cellTemplate="linkToCFOTemplate" [width]="80" [fixed]="true" [fixedPosition]="'right'" [showInColumnChooser]="false" [allowExporting]="false"></dxi-column>

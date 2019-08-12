@@ -55,6 +55,7 @@ import { ItemTypeEnum } from '@shared/common/item-details-layout/item-type.enum'
 import { ContactsService } from '@app/crm/contacts/contacts.service';
 import { ImpersonationService } from '@app/admin/users/impersonation.service';
 import { AppPermissions } from '@shared/AppPermissions';
+import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
 
 @Component({
     templateUrl: './clients.component.html',
@@ -122,10 +123,8 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         }
     ];
 
-    constructor(injector: Injector,
-        public dialog: MatDialog,
-        public appService: AppService,
-        public contactProxy: ContactServiceProxy,
+    constructor(
+        injector: Injector,
         private _contactService: ContactsService,
         private _pipelineService: PipelineService,
         private _filtersService: FiltersService,
@@ -135,7 +134,11 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         private _reuseService: RouteReuseStrategy,
         private lifeCycleSubjectsService: LifecycleSubjectsService,
         private itemDetailsService: ItemDetailsService,
-        private _impersonationService: ImpersonationService
+        private _impersonationService: ImpersonationService,
+        public dialog: MatDialog,
+        public appService: AppService,
+        public contactProxy: ContactServiceProxy,
+        public userManagementService: UserManagementService
     ) {
         super(injector);
     }

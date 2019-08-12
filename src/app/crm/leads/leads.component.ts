@@ -60,6 +60,7 @@ import { ItemTypeEnum } from '@shared/common/item-details-layout/item-type.enum'
 import { ItemDetailsService } from '@shared/common/item-details-layout/item-details.service';
 import { ContactsService } from '@app/crm/contacts/contacts.service';
 import { AppPermissions } from '@shared/AppPermissions';
+import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
 
 @Component({
     templateUrl: './leads.component.html',
@@ -156,7 +157,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         private _reuseService: RouteReuseStrategy,
         private lifeCycleSubjectsService: LifecycleSubjectsService,
         private itemDetailsService: ItemDetailsService,
-        private _cacheService: CacheService
+        private _cacheService: CacheService,
+        public userManagementService: UserManagementService
     ) {
         super(injector);
 
