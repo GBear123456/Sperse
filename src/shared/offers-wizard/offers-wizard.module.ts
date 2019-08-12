@@ -13,6 +13,7 @@ import { DxValidatorModule } from 'devextreme-angular/ui/validator';
 import { DxValidationGroupModule } from 'devextreme-angular/ui/validation-group';
 import { DxNumberBoxModule } from 'devextreme-angular/ui/number-box';
 import { DxButtonModule } from 'devextreme-angular/ui/button';
+import { NgxMaskModule } from 'ngx-mask';
 
 /** Application imports */
 import { WizardPersonalInfoStepComponent } from './offer-wizard-steps/wizard-personal-info-step/wizard-personal-info-step.component';
@@ -48,7 +49,8 @@ import { LoadingSpinnerModule } from '@app/shared/common/loading-spinner/loading
         CommonModule,
         DxScrollViewModule,
         MatTabsModule,
-        LoadingSpinnerModule
+        LoadingSpinnerModule,
+        NgxMaskModule.forRoot(),
     ],
     declarations: [
         WizardPersonalInfoStepComponent,

@@ -49,10 +49,17 @@
             <div class="dx-field-value">
                 <dx-text-box placeholder="Enter postal code"
                              name="zipCode"
+                             minLength="5"
                              (onContentReady)="inputStatusesService.setMask($event)"
-                             (onFocusIn)="inputStatusesService.focusInput($event)"
+                             (onInput)="onInput($event, 10, '00000-0000')"
                              (onFocusOut)="inputStatusesService.blurInput($event)"
                              [(value)]="offersWizardService.submitApplicationProfileInput.personalInformation.postalCode">
+                    <dx-validator>
+                        <dxi-validation-rule type="pattern"
+                                             [pattern]="zipRegex"
+                                             message="Zip Code is invalid">
+                        </dxi-validation-rule>
+                    </dx-validator>
                 </dx-text-box>
             </div>
         </div>

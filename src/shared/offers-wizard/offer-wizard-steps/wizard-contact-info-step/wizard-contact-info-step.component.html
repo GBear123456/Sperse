@@ -20,6 +20,7 @@
                              (onFocusIn)="inputStatusesService.focusInput($event)"
                              (onFocusOut)="inputStatusesService.blurInput($event)"
                              [(value)]="offersWizardService.submitApplicationProfileInput.personalInformation.phoneMobile"
+                             useMaskedValue="true"
                              [maskRules]="offersWizardService.rules">
                 </dx-text-box>
             </div>
@@ -34,6 +35,7 @@
                              (onFocusIn)="inputStatusesService.focusInput($event)"
                              (onFocusOut)="inputStatusesService.blurInput($event)"
                              [(value)]="offersWizardService.submitApplicationProfileInput.personalInformation.phone"
+                             useMaskedValue="true"
                              [maskRules]="offersWizardService.rules">
                 </dx-text-box>
             </div>
