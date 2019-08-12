@@ -106,8 +106,7 @@ export class AddCompanyDialogComponent extends AppComponentBase {
             this.data.id = undefined;
             this.finishLoading(true);
         })).subscribe((responce) => {
-            this.finishLoading(true);
-            if (responce.organizationId) {
+            if (responce.organizationId) {                
                 this.data.updateLocation(this.data.contactId, this.data.contactInfo['leadId'], responce.organizationId);
                 this.applyContactInfo(responce);
             }

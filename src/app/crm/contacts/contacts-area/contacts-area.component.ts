@@ -12,7 +12,7 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import {
     ContactInfoDto, ContactEmailServiceProxy, ContactEmailDto, ContactPhoneDto,
     ContactPhoneServiceProxy, CreateContactEmailInput, ContactInfoDetailsDto,
-    UpdateContactEmailInput, CreateContactPhoneInput, UpdateContactPhoneInput, UserServiceProxy,
+    UpdateContactEmailInput, CreateContactPhoneInput, UpdateContactPhoneInput,
     OrganizationContactServiceProxy, CreateOrganizationInput, OrganizationContactInfoDto, OrganizationInfoDto
 } from '@shared/service-proxies/service-proxies';
 import { EditContactDialog } from '../edit-contact-dialog/edit-contact-dialog.component';
@@ -51,7 +51,6 @@ export class ContactsAreaComponent extends AppComponentBase {
 
     constructor(injector: Injector,
                 public dialog: MatDialog,
-                private _userService: UserServiceProxy,
                 private _contactsService: ContactsService,
                 private _contactEmailService: ContactEmailServiceProxy,
                 private _contactPhoneService: ContactPhoneServiceProxy,
@@ -194,7 +193,7 @@ export class ContactsAreaComponent extends AppComponentBase {
                         .push(ContactEmailDto.fromJS(updatedData));
             }
             this._contactsService.verificationUpdate();
-            this._userService['data'].raw = undefined;
+            this._contactsService.invalidateUserData();
         }, error => {
             dataItem[field] = dataItem.original;
         });

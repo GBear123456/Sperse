@@ -6,12 +6,13 @@ import { Location } from '@angular/common';
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
 import { Observable, ReplaySubject, Subject } from 'rxjs';
+import { tap } from 'rxjs/operators';
 import invert from 'lodash/invert';
 
 /** Application imports */
 import { DialogService } from '@app/shared/common/dialogs/dialog.service';
 import { AddCompanyDialogComponent } from './add-company-dialog/add-company-dialog.component';
-import { ContactInfoDto, OrganizationContactInfoDto } from '@shared/service-proxies/service-proxies';
+import { ContactInfoDto, OrganizationContactInfoDto, UserServiceProxy } from '@shared/service-proxies/service-proxies';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { ContactGroup, ContactGroupPermission } from '@shared/AppEnums';
 import { AppPermissions } from '@shared/AppPermissions';
@@ -35,6 +36,7 @@ export class ContactsService {
     readonly CONTACT_GROUP_KEYS = invert(ContactGroup);
 
     constructor(injector: Injector,
+        private _userService: UserServiceProxy,
         private _permission: AppPermissionService,
         private _dialogService: DialogService,
         private _router: Router,
@@ -91,6 +93,14 @@ export class ContactsService {
 
     userUpdate(userId) {
         this.userSubject.next(userId);
+    }
+
+    invalidateUserData() {
+        let userData = this._userService['data'];
+        if (userData) {
+            userData.raw = undefined;
+            this.userUpdate(userData.userId);
+        }
     }
 
     contactInfoSubscribe(callback, ident?: string) {
@@ -163,7 +173,10 @@ export class ContactsService {
             hasBackdrop: false,
             position: this._dialogService.calculateDialogPosition(
                 event, event.target, shiftX, shiftY)
-        }).afterClosed();
+        }).afterClosed().pipe(tap(responce => {
+            if (responce.organizationId)
+                this.invalidateUserData();
+        }));
     }
 
     updateLocation(contactId?, leadId?, companyId?, userId?) {

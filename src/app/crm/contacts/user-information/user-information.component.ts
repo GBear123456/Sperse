@@ -101,8 +101,8 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
         super(injector);
 
         _contactsService.userSubscribe((userId) => {
-            if ((this.data = _userService['data']).userId = userId)
-                this.loadData();
+            this.data = _userService['data'];
+            this.data.userId = userId;
             this.checkShowInviteForm();
         }, this.constructor.name);
 

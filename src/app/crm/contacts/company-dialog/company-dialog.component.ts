@@ -154,6 +154,7 @@ export class CompanyDialogComponent implements OnInit {
         this._organizationContactServiceProxy.updateOrganizationInfo(input)
             .pipe(finalize(() => this.modalDialog.finishLoading()))
             .subscribe(() => {
+                this.contactService.invalidateUserData();
                 this.notifyService.success(this.ls.l('SavedSuccessfully'));
                 this.modalDialog.close(true, {
                     company: this.company
