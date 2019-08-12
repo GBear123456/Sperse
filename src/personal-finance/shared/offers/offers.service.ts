@@ -219,8 +219,18 @@ export class OffersService {
                 }
             }).afterClosed().subscribe((output: SubmitApplicationOutput)  => {
                 if (output) {
+                    const applyOfferDialog = this.dialog.open(ApplyOfferDialogComponent, {
+                        width: '530px',
+                        panelClass: 'apply-offer-dialog',
+                        data: modalData
+                    });
                     this.loadMemberInfo();
-                    if (output.redirectUrl) window.open(output.redirectUrl, '_blank');
+                    if (output.redirectUrl) {
+                        window.open(output.redirectUrl, '_blank');
+                        !window.open(output.redirectUrl, '_blank')
+                            ? applyOfferDialog.componentInstance.showBlockedMessage = true
+                            : applyOfferDialog.close();
+                    }
                 }
             });
         } else {
@@ -278,7 +288,7 @@ export class OffersService {
             }
         }
     }
-    
+
     isOldLastSubmitDate() {
         const compareToDate = moment().subtract(1, 'month');
         return this.memberInfo.profileSubmissionDate ? moment(compareToDate).isAfter(this.memberInfo.profileSubmissionDate) : true;
