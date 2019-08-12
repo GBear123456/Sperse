@@ -164,7 +164,7 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
             this.selectedOrgUnits.push(find(data.allOrganizationUnits, {code: item})['id']);
         });
 
-        if (data.user) {
+        if (data.user.id) {
             this._userService['data'].user = data.user;
             data.user['setRandomPassword'] = false;
             data.user['sendActivationEmail'] = false;
