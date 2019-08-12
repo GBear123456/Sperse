@@ -56,6 +56,7 @@ import { PipelineService } from '@app/shared/pipeline/pipeline.service';
 import { ItemDetailsService } from '@shared/common/item-details-layout/item-details.service';
 import { ItemTypeEnum } from '@shared/common/item-details-layout/item-type.enum';
 import { ContactsService } from '@app/crm/contacts/contacts.service';
+import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
 
 @Component({
     templateUrl: './partners.component.html',
@@ -107,9 +108,8 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
 
     partnerTypes: any/*PartnerTypeDto*/[];
 
-    constructor(injector: Injector,
-        public dialog: MatDialog,
-        public contactProxy: ContactServiceProxy,
+    constructor(
+        injector: Injector,
         private _contactService: ContactsService,
         private _partnerService: PartnerServiceProxy,
         private _appService: AppService,
@@ -118,7 +118,10 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         private _clientService: ClientService,
         private _partnerTypeService: PartnerTypeServiceProxy,
         private store$: Store<AppStore.State>,
-        private itemDetailsService: ItemDetailsService
+        private itemDetailsService: ItemDetailsService,
+        public dialog: MatDialog,
+        public contactProxy: ContactServiceProxy,
+        public userManagementService: UserManagementService
     ) {
         super(injector);
         this.dataSource = {

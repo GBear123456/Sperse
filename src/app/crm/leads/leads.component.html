@@ -82,6 +82,7 @@
                         <dxi-column dataField="City" caption="{{l('Contact.City')}}"></dxi-column>
                         <dxi-column dataField="StateId" caption="{{l('Contact.State')}}"></dxi-column>
                         <dxi-column dataField="Stage" caption="{{l('Stage')}}"></dxi-column>
+                        <dxi-column dataField="BankCode" cellTemplate="bankCodeCell" [caption]="l('BankCode')" [visible]="userManagementService.checkBankCodeLayout()"></dxi-column>
                         <dxi-column dataField="CreationTime" caption="{{l('Created')}}" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
                         <dxi-column dataField="AffiliateCode" caption="{{l('AffiliateCode')}}" [visible]="false"></dxi-column>
                         <dxi-column dataField="CampaignCode" caption="{{l('CampaignCode')}}" [visible]="false"></dxi-column>
@@ -100,6 +101,13 @@
                         </div>
                         <div *dxTemplate="let cellData of 'dateCell'">
                             {{cellData.value | date: formatting.dateTime : userTimezone}}
+                        </div>
+                        <div *dxTemplate="let cellData of 'bankCodeCell'">
+                            <ng-container *ngIf="cellData.value" >
+                                <ng-container *ngFor="let letter of cellData.value.split('')">
+                                    <bank-code-letter [letter]="letter"></bank-code-letter>
+                                </ng-container>
+                            </ng-container>
                         </div>
                         <dxi-column [fixed]="true" [fixedPosition]="'right'" [showInColumnChooser]="false"></dxi-column>
                         <dxo-group-panel [visible]="true"></dxo-group-panel>

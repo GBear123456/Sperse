@@ -76,6 +76,7 @@ import { Store } from '@node_modules/@ngrx/store';
 import { AppStore } from '@app/store';
 import { LoadingSpinnerModule } from '@app/shared/common/loading-spinner/loading-spinner.module';
 import { AppPermissions } from '@shared/AppPermissions';
+import { BankCodeLetterModule } from '@app/shared/common/bank-code-letter/bank-code-letter.module';
 
 @NgModule({
     imports: [
@@ -128,7 +129,8 @@ import { AppPermissions } from '@shared/AppPermissions';
         PipelineModule,
         SharedIntroStepsModule,
         CrmStoreModule,
-        LoadingSpinnerModule
+        LoadingSpinnerModule,
+        BankCodeLetterModule
     ],
     declarations: [
         ClientsComponent,

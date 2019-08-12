@@ -127,19 +127,19 @@ export class UserManagementService {
                : of([]);
     }
 
-    checkLendSpaceLayout() {
+    checkLendSpaceLayout(): boolean {
         let tenant = this.appSession.tenant;
-        return tenant && (tenant.customLayoutType == LayoutType.LendSpace);
+        return !!(tenant && (tenant.customLayoutType == LayoutType.LendSpace));
     }
 
-    checkAdvicePeriodLayout() {
+    checkAdvicePeriodLayout(): boolean {
         let tenant = this.appSession.tenant;
-        return tenant && (tenant.customLayoutType == LayoutType.AdvicePeriod);
+        return !!(tenant && (tenant.customLayoutType == LayoutType.AdvicePeriod));
     }
 
-    checkBankCodeLayout() {
+    checkBankCodeLayout(): boolean {
         const tenant = this.appSession.tenant;
-        return tenant && (tenant.customLayoutType == LayoutType.BankCode);
+        return !!(tenant && (tenant.customLayoutType == LayoutType.BankCode));
     }
 
     getProfilePictureUrl(id, defaultUrl = AppConsts.imageUrls.profileDefault) {
