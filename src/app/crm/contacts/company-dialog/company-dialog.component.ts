@@ -80,10 +80,12 @@ export class CompanyDialogComponent implements OnInit {
         duns: null,
         ticker: null,
         notes: null,
-        primaryPhoto: null
+        primaryPhoto: null,
+        affiliateCode: null
     };
     dunsRegex = AppConsts.regexPatterns.duns;
     einRegex = AppConsts.regexPatterns.ein;
+    affiliateRegex = /^[a-zA-Z0-9_-]*$/;
     currentDate = new Date();
     title: string;
     buttons: IDialogButton[] = [
