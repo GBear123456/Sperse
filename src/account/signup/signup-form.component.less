@@ -403,10 +403,23 @@
             line-height: 18px;
             color: #333;
         }
-
-        .dx-invalid-message .dx-overlay-content {
-            max-width: 200px !important;
-            width: 200px !important;
+        
+        .dx-invalid-message {
+            position: absolute;
+            top: 0;
+            
+            @media all and (min-width: 768px) {
+                .dx-overlay-content {
+                    max-width: 292px !important;
+                    width: 292px !important;
+                    position: absolute !important;
+                    bottom: auto !important;
+                    right: 5px !important;
+                    left: auto !important;
+                    top: -8px !important;
+                    transform: translate(0, 0) !important;
+                }
+            }
         }
     }
 
