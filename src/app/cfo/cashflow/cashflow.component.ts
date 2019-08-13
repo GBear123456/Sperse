@@ -87,7 +87,10 @@ import {
     UpdateCategoryInput,
     RenameForecastModelInput,
     CreateForecastModelInput,
-    SyncAccountBankDto
+    SyncAccountBankDto,
+    ReportTemplate,
+    GetReportTemplateDefinitionOutput,
+    CashFlowGridSettingsDto
 } from '@shared/service-proxies/service-proxies';
 import { BankAccountFilterComponent } from 'shared/filters/bank-account-filter/bank-account-filter.component';
 import { BankAccountFilterModel } from 'shared/filters/bank-account-filter/bank-account-filter.model';
@@ -805,15 +808,20 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         /** Create parallel operations */
         const cashFlowInitialData$: Observable<CashFlowInitialData> = this._cashflowServiceProxy.getCashFlowInitialData(InstanceType[this.instanceType], this.instanceId);
         const categoryTree$: Observable<GetCategoryTreeOutput> = this._categoryTreeServiceProxy.get(InstanceType[this.instanceType], this.instanceId, true);
-        const cashflowGridSettings$ = this.userPreferencesService.userPreferences$.pipe(first());
-        const syncAccounts$ = this.bankAccountsService.syncAccounts$.pipe(first());
-        forkJoin(cashFlowInitialData$ , categoryTree$, cashflowGridSettings$, syncAccounts$)
-            .subscribe(([initialData, categoryTree, cashflowSettings, syncAccounts]) => {
+        const reportSections$ = this._categoryTreeServiceProxy.getReportTemplateDefinition(InstanceType[this.instanceType], this.instanceId, ReportTemplate.Personal);
+        const cashflowGridSettings$: Observable<CashFlowGridSettingsDto> = this.userPreferencesService.userPreferences$.pipe(first());
+        const syncAccounts$: Observable<SyncAccountBankDto[]> = this.bankAccountsService.syncAccounts$.pipe(first());
+        forkJoin(cashFlowInitialData$ , categoryTree$, reportSections$, cashflowGridSettings$, syncAccounts$)
+            .subscribe(([initialData, categoryTree, reportSections, cashflowSettings, syncAccounts]:
+                             [CashFlowInitialData, GetCategoryTreeOutput, GetReportTemplateDefinitionOutput, CashFlowGridSettingsDto, SyncAccountBankDto[]]) => {
                 /** Initial data handling */
                 this.handleCashFlowInitialResult(initialData, syncAccounts);
 
                 /** Handle the get categories response */
-                this.handleGetCategoryTreeResult(categoryTree);
+                this.cashflowService.handleGetCategoryTreeResult(categoryTree);
+
+                /** Handle reports sections response */
+                this.cashflowService.reportSections = reportSections;
 
                 /** Handle the get cashflow grid settings response*/
                 this.handleGetCashflowGridSettingsResult(cashflowSettings);
@@ -1184,20 +1192,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         });
         e.element.appendChild(inputBlockElement);
         inputBlockElement = null;
-    }
-
-    /**
-     * Handle get categories result
-     * @param getCategoriesResult
-     */
-    handleGetCategoryTreeResult(getCategoriesResult: GetCategoryTreeOutput) {
-        this.cashflowService.categoryTree = getCategoriesResult;
-        /** Add starting balance, ending balance, netchange and balance discrepancy */
-        for (let type in this.cashflowService.cashflowTypes) {
-            if (!this.cashflowService.categoryTree.types.hasOwnProperty(type)) {
-                this.cashflowService.categoryTree.types[type] = <any>{ name: this.cashflowService.cashflowTypes[type]};
-            }
-        }
     }
 
     /**
@@ -3236,7 +3230,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     private reloadCategoryTree() {
         this._categoryTreeServiceProxy.get(InstanceType[this.instanceType], this.instanceId, true)
             .subscribe((categoryTreeResult: GetCategoryTreeOutput) => {
-                this.handleGetCategoryTreeResult(categoryTreeResult);
+                this.cashflowService.handleGetCategoryTreeResult(categoryTreeResult);
             });
     }
 

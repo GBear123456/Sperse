@@ -11,13 +11,14 @@ import {
     InstanceServiceProxy, Period,
     PermissionServiceProxy,
     PersonContactServiceProxy,
-    ReportSectionDto,
-    SectionGroup,
+    GetReportTemplateDefinitionOutput,
     SessionServiceProxy,
     StatsFilter,
     TenantSubscriptionServiceProxy,
     TransactionStatsDto,
-    TypeDto
+    TypeDto,
+    ReportSectionDto,
+    SectionGroup
 } from '@shared/service-proxies/service-proxies';
 import { UserPreferencesService } from '@app/cfo/cashflow/preferences-dialog/preferences.service';
 import { AppSessionService } from '@shared/common/session/app-session.service';
@@ -152,6 +153,17 @@ describe('CashflowService', () => {
             },
             categories: {}
         });
+        service.reportSections = new GetReportTemplateDefinitionOutput({
+            sections: {
+                11: new ReportSectionDto({
+                    name: 'Expense',
+                    group: SectionGroup.Expense
+                })
+            },
+            categorySectionMap: {
+                5566: 11
+            }
+        });
         const levels = service.addCategorizationLevels(transaction).levels;
         expect(levels).toEqual({
             level0: 'CTI',
@@ -171,6 +183,17 @@ describe('CashflowService', () => {
                 '2': new AccountingTypeDto({typeId: 'E', name: 'Expense', isSystem: true})
             },
             categories: {}
+        });
+        service.reportSections = new GetReportTemplateDefinitionOutput({
+            sections: {
+                11: new ReportSectionDto({
+                    name: 'Business Expenses',
+                    group: SectionGroup.Expense
+                })
+            },
+            categorySectionMap: {
+                5566: 11
+            }
         });
         service.cashflowTypes = {B: 'Starting Balance', D: 'Unreconciled Balance', E: 'Outflows', I: 'Inflows'};
         expect(service.customizeFieldText({ value: 'CTI' })).toBe('TOTAL INFLOWS');
