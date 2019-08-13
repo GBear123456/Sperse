@@ -181,6 +181,7 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
                     let orgRelationToDelete = _.find(orgRelations, orgRelation => orgRelation.id === orgRelationId);
                     orgRelations.splice(orgRelations.indexOf(orgRelationToDelete), 1);
                     this.displayOrgRelation(orgRelationToDelete.organization.id);
+                    this._contactsService.invalidateUserData();
                 });
             }
         });
@@ -343,6 +344,7 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
                 _.extend({id: data.id}, data.organization))
         ).subscribe(() => {
             data.fullName = value;
+            this._contactsService.invalidateUserData();
         });
     }
 
