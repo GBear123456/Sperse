@@ -132,7 +132,6 @@ describe('CashflowService', () => {
     it('addCategorizationLevels should work', inject([CashflowService], (service: CashflowService) => {
         const transaction: TransactionStatsDto = new TransactionStatsDto({
             cashflowTypeId: 'I',
-            reportSectionId: 11,
             accountingTypeId: 2,
             subCategoryId: 5632,
             adjustmentType: null,
@@ -151,10 +150,7 @@ describe('CashflowService', () => {
             accountingTypes: {
                 '2': new AccountingTypeDto({typeId: 'E', name: 'Expense', isSystem: true})
             },
-            categories: {},
-            reportSections: {
-                '11': new ReportSectionDto({ id: 11, group: SectionGroup.Expense, name: 'Business Expenses' })
-            }
+            categories: {}
         });
         const levels = service.addCategorizationLevels(transaction).levels;
         expect(levels).toEqual({
@@ -174,10 +170,7 @@ describe('CashflowService', () => {
             accountingTypes: {
                 '2': new AccountingTypeDto({typeId: 'E', name: 'Expense', isSystem: true})
             },
-            categories: {},
-            reportSections: {
-                '11': new ReportSectionDto({ id: 11, group: SectionGroup.Expense, name: 'Business Expenses' })
-            }
+            categories: {}
         });
         service.cashflowTypes = {B: 'Starting Balance', D: 'Unreconciled Balance', E: 'Outflows', I: 'Inflows'};
         expect(service.customizeFieldText({ value: 'CTI' })).toBe('TOTAL INFLOWS');
