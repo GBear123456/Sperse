@@ -364,10 +364,10 @@ export class CashflowService {
     reportSections: GetReportTemplateDefinitionOutput;
 
     constructor(
-        private userPreferencesService: UserPreferencesService,
         private cfoPreferencesService: CfoPreferencesService,
         private ls: AppLocalizationService,
-        private currencyPipe: CurrencyPipe
+        private currencyPipe: CurrencyPipe,
+        public userPreferencesService: UserPreferencesService
     ) {}
 
     addEvents(element: HTMLElement, events: IEventDescription[]) {
@@ -784,8 +784,9 @@ export class CashflowService {
                 }
 
                 if (level.prefix === CategorizationPrefixes.ReportingGroup || level.prefix === CategorizationPrefixes.ReportingSection) {
-                    if (transactionObj.categoryId) {
-                        const reportSectionId = this.reportSections.categorySectionMap[transactionObj.categoryId];
+                    const categoryId = transactionObj.subCategoryId || transactionObj.categoryId;
+                    if (categoryId) {
+                        const reportSectionId = this.reportSections.categorySectionMap[categoryId];
                         if (reportSectionId) {
                             const reportSection = this.reportSections.sections[reportSectionId];
                             if (reportSection) {

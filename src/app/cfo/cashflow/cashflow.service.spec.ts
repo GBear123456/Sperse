@@ -134,11 +134,11 @@ describe('CashflowService', () => {
         const transaction: TransactionStatsDto = new TransactionStatsDto({
             cashflowTypeId: 'I',
             accountingTypeId: 2,
-            subCategoryId: 5632,
             adjustmentType: null,
             accountId: 63,
             amount: 40,
             categoryId: 5566,
+            subCategoryId: 5632,
             count: 0,
             forecastId: 10402,
             transactionDescriptor: 'descriptor',
@@ -161,10 +161,19 @@ describe('CashflowService', () => {
                 })
             },
             categorySectionMap: {
-                5566: 11
+                5632: 11
             }
         });
-        const levels = service.addCategorizationLevels(transaction).levels;
+        let levels = service.addCategorizationLevels(transaction).levels;
+        expect(levels).toEqual({
+            level0: 'CTI',
+            level1: 'AT2',
+            level2: 'CA5566',
+            level3: 'SC5632',
+            level4: 'TDdescriptor'
+        });
+        service.userPreferencesService.localPreferences.value.showReportingSectionTotals = true;
+        levels = service.addCategorizationLevels(transaction).levels;
         expect(levels).toEqual({
             level0: 'CTI',
             level1: 'RGExpense',
