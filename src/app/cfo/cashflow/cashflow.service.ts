@@ -761,15 +761,15 @@ export class CashflowService {
                     return true;
                 }
 
-                if (level.prefix === CategorizationPrefixes.ReportingGroup) {
-                    if (transactionObj.reportSectionId) {
-                        const reportSection = this.categoryTree.reportSections[transactionObj.reportSectionId];
-                        if (reportSection) {
-                            transactionObj['levels'][`level${levelNumber++}`] = level.prefix + reportSection.group;
-                        }
-                    }
-                    return true;
-                }
+                // if (level.prefix === CategorizationPrefixes.ReportingGroup) {
+                //     if (transactionObj.reportSectionId) {
+                //         const reportSection = this.categoryTree.reportSections[transactionObj.reportSectionId];
+                //         if (reportSection) {
+                //             transactionObj['levels'][`level${levelNumber++}`] = level.prefix + reportSection.group;
+                //         }
+                //     }
+                //     return true;
+                // }
 
                 /** Create categories levels properties */
                 if (level.prefix === CategorizationPrefixes.AccountName) {

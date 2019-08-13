@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 
 /** Third party imports */
 import { DxScrollViewModule } from 'devextreme-angular/ui/scroll-view';
+import { DxPieChartModule } from 'devextreme-angular/ui/pie-chart';
 
 /** Application imports */
 import { NoDataModule } from '@shared/common/widgets/no-data/no-data.module';
@@ -17,10 +18,12 @@ import { CfoModule } from '@app/cfo/cfo.module';
 import { LayoutService } from '@app/shared/layout/layout.service';
 import { CFOService } from '@shared/cfo/cfo.service';
 import { AppService } from '@app/app.service';
+import { TopSpendingCategoriesComponent } from './top-spending-categories/top-spending-categories.component';
 
 @NgModule({
     declarations: [
-        PortalDashboardComponent
+        PortalDashboardComponent,
+        TopSpendingCategoriesComponent
     ],
     imports: [
         CfoPortalRoutingModule,
@@ -30,7 +33,8 @@ import { AppService } from '@app/app.service';
         AppCommonModule,
         DashboardWidgetsModule,
         BankAccountsCommonModule,
-        DxScrollViewModule
+        DxScrollViewModule,
+        DxPieChartModule
     ]
 })
 

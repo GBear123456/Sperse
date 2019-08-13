@@ -1,0 +1,20 @@
+<h2 class="title">{{ ls.l('TopSpendingCategories') }}</h2>
+<ng-container *ngIf="topSpendingCategories$ | async as topSpendingCategories">
+    <ng-container *ngIf="topSpendingCategories && topSpendingCategories.length; else noData">
+        <dx-pie-chart
+            id="pie"
+            palette="bright"
+            type="donut"
+            innerRadius="0.7"
+            [dataSource]="topSpendingCategories">
+            <dxi-series
+                argumentField="fullName"
+                valueField="amount">
+            </dxi-series>
+            <dxo-size [width]="525" [height]="180"></dxo-size>
+        </dx-pie-chart>
+    </ng-container>
+    <ng-template #noData>
+        <app-no-data></app-no-data>
+    </ng-template>
+</ng-container>
