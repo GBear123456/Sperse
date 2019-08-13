@@ -195,7 +195,7 @@ describe('CashflowService', () => {
                 5566: 11
             }
         });
-        service.cashflowTypes = {B: 'Starting Balance', D: 'Unreconciled Balance', E: 'Outflows', I: 'Inflows'};
+        service.cashflowTypes = { B: 'Starting Balance', D: 'Unreconciled Balance', E: 'Outflows', I: 'Inflows' };
         expect(service.customizeFieldText({ value: 'CTI' })).toBe('TOTAL INFLOWS');
         expect(service.customizeFieldText({ value: 'AT2' })).toBe('Expense');
         expect(service.customizeFieldText({ value: 'RGCostOfSales' })).toBe('SectionGroup_CostOfSales');
