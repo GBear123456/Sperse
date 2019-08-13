@@ -5,7 +5,7 @@
 @text-color: #4a4a4a;
 
 :host {
-    * {
+    *:not(i.fa) {
         font-family: Poppins;
     }
 
@@ -22,6 +22,14 @@
             line-height: 25px;
             text-align: center;
         }
+    }
+
+    a.advertising-disclosure {
+        position: relative;
+        float: right;
+        bottom: 45px;
+        color: #3a7bf5;
+        font-weight: 600;
     }
 
     a.viewDetails {

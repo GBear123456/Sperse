@@ -145,7 +145,7 @@ export class OffersLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
                     {
                         name: this.ls.l('Offers_PersonalLoans'),
                         value: CampaignCategory.PersonalLoans
-                    }].concat(this._sessionService.isLendspaceDemoUser ? [] :
+                    }].concat(this.sessionService.isLendspaceDemoUser ? [] :
                     [{
                         name: this.ls.l('Offers_PaydayLoans'),
                         value: CampaignCategory.PaydayLoans
@@ -491,7 +491,7 @@ export class OffersLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
         private store$: Store<RootStore.State>,
         private currencyPipe: CurrencyPipe,
         private numberAbbrPipe: NumberAbbrPipe,
-        private _sessionService: AppSessionService,
+        public sessionService: AppSessionService,
         @Inject(DOCUMENT) private document
     ) {}
 
@@ -585,7 +585,7 @@ export class OffersLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
                         input.creditScore = CreditScoreRating[this.offersService.getCreditScore(filter.category, filter.creditScore)];
 
                     return (
-                        this._sessionService.isLendspaceDemoUser && input.creditScore == CreditScoreRating.Excellent
+                        this.sessionService.isLendspaceDemoUser && input.creditScore == CreditScoreRating.Excellent
                             ? of(this.offersService.demoUserOffers) : this.offerServiceProxy.getAll(input)
                     ).pipe(
                         finalize(() => {
@@ -658,13 +658,13 @@ export class OffersLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     checkDemoUserActionAllowed(card: OfferDto, redirect = false) {
-        if (this._sessionService.isLendspaceDemoUser) {
+        if (this.sessionService.isLendspaceDemoUser) {
             let result = this.filtersValues.creditScore < 720;
             if (!result && card && card.redirectUrl)
                 redirect ? window.open(card.redirectUrl) :
                     this.dialog.open(MarcusDetailsComponent, {
                         width: '900px',
-                        height: '710px'
+                        height: '350px'
                     });
 
             return result;
