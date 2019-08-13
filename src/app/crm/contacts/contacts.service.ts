@@ -175,7 +175,7 @@ export class ContactsService {
                 event, event.target, shiftX, shiftY)
         }).afterClosed().pipe(tap(responce => {
             if (responce.organizationId)
-                this.invalidateUserData();
+                setTimeout(() => this.invalidateUserData(), 300);
         }));
     }
 

@@ -74,7 +74,8 @@ export class AddCompanyDialogComponent extends AppComponentBase {
         if (responce && contactInfo) {
             let orgId = responce.organizationId;
             this.orgServiceProxy.getOrganizationContactInfo(orgId).subscribe((result) => {
-                contactInfo['organizationContactInfo'] = result;
+                contactInfo.personContactInfo['personOrgRelationInfo'].organization.organizationUnitId = 
+                    (contactInfo['organizationContactInfo'] = result).organization.organizationUnitId;
             });
             contactInfo.personContactInfo.orgRelationId = responce.id;
             contactInfo.primaryOrganizationContactId = orgId;
