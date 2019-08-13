@@ -43,6 +43,7 @@ export class TopSpendingCategoriesComponent {
                 this.cfoService.instanceId,
                 selectedBankAccountsIds,
                 currencyId,
+                5,
                 period.startDate,
                 period.endDate
             ).pipe(

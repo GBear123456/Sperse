@@ -10767,10 +10767,11 @@ export class DashboardServiceProxy {
      * @instanceType (optional) 
      * @instanceId (optional) 
      * @bankAccountIds (optional) 
+     * @maxCount (optional) 
      * @startDate (optional) 
      * @return Success
      */
-    getSpendingCategories(instanceType: InstanceType | null | undefined, instanceId: number | null | undefined, bankAccountIds: number[] | null | undefined, currencyId: string, startDate: moment.Moment | null | undefined, endDate: moment.Moment): Observable<GetSpendingCategoriesOutput[]> {
+    getSpendingCategories(instanceType: InstanceType | null | undefined, instanceId: number | null | undefined, bankAccountIds: number[] | null | undefined, currencyId: string, maxCount: number | null | undefined, startDate: moment.Moment | null | undefined, endDate: moment.Moment): Observable<GetSpendingCategoriesOutput[]> {
         let url_ = this.baseUrl + "/api/services/CFO/Dashboard/GetSpendingCategories?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -10782,6 +10783,8 @@ export class DashboardServiceProxy {
             throw new Error("The parameter 'currencyId' must be defined and cannot be null.");
         else
             url_ += "CurrencyId=" + encodeURIComponent("" + currencyId) + "&"; 
+        if (maxCount !== undefined)
+            url_ += "MaxCount=" + encodeURIComponent("" + maxCount) + "&"; 
         if (startDate !== undefined)
             url_ += "StartDate=" + encodeURIComponent(startDate ? "" + startDate.toJSON() : "") + "&"; 
         if (endDate === undefined || endDate === null)
@@ -48840,7 +48843,6 @@ export class OrganizationBusinessInfo implements IOrganizationBusinessInfo {
     name!: string | undefined;
     typeName!: string | undefined;
     shortname!: string | undefined;
-    companyName!: string | undefined;
     typeId!: string | undefined;
     industry!: string | undefined;
     duns!: string | undefined;
@@ -48885,7 +48887,6 @@ export class OrganizationBusinessInfo implements IOrganizationBusinessInfo {
             this.name = data["name"];
             this.typeName = data["typeName"];
             this.shortname = data["shortname"];
-            this.companyName = data["companyName"];
             this.typeId = data["typeId"];
             this.industry = data["industry"];
             this.duns = data["duns"];
@@ -48954,7 +48955,6 @@ export class OrganizationBusinessInfo implements IOrganizationBusinessInfo {
         data["name"] = this.name;
         data["typeName"] = this.typeName;
         data["shortname"] = this.shortname;
-        data["companyName"] = this.companyName;
         data["typeId"] = this.typeId;
         data["industry"] = this.industry;
         data["duns"] = this.duns;
@@ -49016,7 +49016,6 @@ export interface IOrganizationBusinessInfo {
     name: string | undefined;
     typeName: string | undefined;
     shortname: string | undefined;
-    companyName: string | undefined;
     typeId: string | undefined;
     industry: string | undefined;
     duns: string | undefined;
