@@ -158,7 +158,7 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
                     .pipe(finalize(() => this.finishLoading()))
                     .subscribe(userEditOutput => {
                         this.fillUserData(userEditOutput);
-                    })
+                    }), this.constructor.name
             );
         }
     }
