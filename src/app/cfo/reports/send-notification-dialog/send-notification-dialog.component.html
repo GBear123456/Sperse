@@ -21,8 +21,8 @@
         </div>
         <div class="row">
             <div class="col-12 text-center">
-                <button [disabled]="cfoService.isMainInstanceType || !emailIsValidAndNotEmpty"
-                        [ngClass]="{ disabled: cfoService.isMainInstanceType || !emailIsValidAndNotEmpty }"
+                <button [disabled]="!cfoService.isMainInstanceType && !emailIsValidAndNotEmpty"
+                        [ngClass]="{ disabled: !cfoService.isMainInstanceType && !emailIsValidAndNotEmpty }"
                         (click)="sendNotification()" class="btn send-btn">{{ls.l('Send')}}
                 </button>
             </div>

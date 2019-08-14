@@ -35,6 +35,7 @@ import { ItemDetailsService } from '@shared/common/item-details-layout/item-deta
 import { FilterHelpers } from '@app/crm/shared/helpers/filter.helper';
 import { FilterRangeComponent } from '@shared/filters/range/filter-range.component';
 import { AppStore, RatingsStoreSelectors } from '@app/store';
+import { DataGridService } from '@app/shared/common/data-grid.service.ts/data-grid.service';
 
 @Component({
     templateUrl: './offers.component.html',
@@ -314,7 +315,7 @@ export class OffersComponent extends AppComponentBase implements OnInit, OnDestr
                     location: 'after',
                     locateInMenu: 'auto',
                     items: [
-                        { name: 'showCompactRowsHeight', action: this.showCompactRowsHeight.bind(this) },
+                        { name: 'showCompactRowsHeight', action: DataGridService.showCompactRowsHeight.bind(this, this.dataGrid) },
                         {
                             name: 'download',
                             widget: 'dxDropDownMenu',
@@ -338,7 +339,7 @@ export class OffersComponent extends AppComponentBase implements OnInit, OnDestr
                                 ]
                             }
                         },
-                        { name: 'columnChooser', action: this.showColumnChooser.bind(this) }
+                        { name: 'columnChooser', action: DataGridService.showColumnChooser.bind(this, this.dataGrid) }
                     ]
                 }
             ]);
@@ -448,14 +449,6 @@ export class OffersComponent extends AppComponentBase implements OnInit, OnDestr
         return selectedOffers.length === 1
             ? selectedOffers[0].Rank
             : this.ratingComponent.ratingMin;
-    }
-
-    showCompactRowsHeight() {
-        this.dataGrid.instance.element().classList.toggle('grid-compact-view');
-    }
-
-    showColumnChooser() {
-        this.dataGrid.instance.showColumnChooser();
     }
 
     openOfferEdit(e) {

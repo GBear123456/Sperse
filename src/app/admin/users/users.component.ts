@@ -33,6 +33,7 @@ import { AppService } from '@app/app.service';
 import { ItemTypeEnum } from '@shared/common/item-details-layout/item-type.enum';
 import { ItemDetailsService } from '@shared/common/item-details-layout/item-details.service';
 import { AppPermissions } from '@shared/AppPermissions';
+import { DataGridService } from '@app/shared/common/data-grid.service.ts/data-grid.service';
 
 @Component({
     templateUrl: './users.component.html',
@@ -350,8 +351,8 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
                 location: 'after',
                 locateInMenu: 'auto',
                 items: [
-                    { name: 'showCompactRowsHeight', action: this.showCompactRowsHeight.bind(this) },
-                    { name: 'columnChooser', action: this.showColumnChooser.bind(this) }
+                    { name: 'showCompactRowsHeight', action: DataGridService.showCompactRowsHeight.bind(this, this.dataGrid) },
+                    { name: 'columnChooser', action: DataGridService.showColumnChooser.bind(this, this.dataGrid) }
                 ]
             },
             {
@@ -512,14 +513,6 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
             filterModel.items.element.value = value;
             this._filtersService.change(filterModel);
         }
-    }
-
-    showCompactRowsHeight() {
-        this.dataGrid.instance.element().classList.toggle('grid-compact-view');
-    }
-
-    showColumnChooser() {
-        this.dataGrid.instance.showColumnChooser();
     }
 
     searchValueChange(e: object) {

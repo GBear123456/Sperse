@@ -14,6 +14,7 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { FileSizePipe } from '@shared/common/pipes/file-size.pipe';
 import { ImportServiceProxy } from '@shared/service-proxies/service-proxies';
 import { ImportLeadsService } from './import-leads.service';
+import { DataGridService } from '@app/shared/common/data-grid.service.ts/data-grid.service';
 
 @Component({
     templateUrl: './import-list.component.html',
@@ -126,7 +127,7 @@ export class ImportListComponent extends AppComponentBase implements AfterViewIn
                             }, { type: 'downloadOptions' }]
                         }
                     },
-                    { name: 'columnChooser', action: this.showColumnChooser.bind(this) }
+                    { name: 'columnChooser', action: DataGridService.showColumnChooser.bind(this, this.dataGrid) }
                 ]
             }
         ];
@@ -151,10 +152,6 @@ export class ImportListComponent extends AppComponentBase implements AfterViewIn
             this.dataGrid.instance.refresh();
     }
 
-    showColumnChooser() {
-        this.dataGrid.instance.showColumnChooser();
-    }
-
     navigateToDashboard() {
         this._router.navigate(['app/crm/dashboard']);
     }
@@ -172,7 +169,7 @@ export class ImportListComponent extends AppComponentBase implements AfterViewIn
                         this.selectedRowIds.map((id) => {
                             return this._importProxy.delete(id);
                         })
-                    ).subscribe((res) => {
+                    ).subscribe(() => {
                         this.refreshDataGrid();
                     });
             });

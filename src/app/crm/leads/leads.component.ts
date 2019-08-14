@@ -61,6 +61,7 @@ import { ItemDetailsService } from '@shared/common/item-details-layout/item-deta
 import { ContactsService } from '@app/crm/contacts/contacts.service';
 import { AppPermissions } from '@shared/AppPermissions';
 import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
+import { DataGridService } from '@app/shared/common/data-grid.service.ts/data-grid.service';
 
 @Component({
     templateUrl: './leads.component.html',
@@ -260,10 +261,6 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         });
     }
 
-    showColumnChooser() {
-        this.dataGrid.instance.showColumnChooser();
-    }
-
     toggleDataLayout(dataLayoutType: DataLayoutType) {
         this.selectedClientKeys = [];
         this.showPipeline = dataLayoutType == DataLayoutType.Pipeline;
@@ -452,7 +449,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                             mouseover: (event) => {
                                 this._filtersService.enable();
                             },
-                            mouseout: (event) => {
+                            mouseout: () => {
                                 if (!this._filtersService.fixed)
                                     this._filtersService.disable();
                             }
@@ -588,7 +585,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 locateInMenu: 'auto',
                 items: [
                     { name: 'showCompactRowsHeight', action: this.toggleCompactView.bind(this) },
-                    { name: 'columnChooser', action: this.showColumnChooser.bind(this) }
+                    { name: 'columnChooser', action: DataGridService.showColumnChooser.bind(this, this.dataGrid) }
                 ]
             },
             {

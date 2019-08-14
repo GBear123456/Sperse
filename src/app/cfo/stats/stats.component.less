@@ -179,10 +179,6 @@
                     font-size: 30px
                 }
 
-                &:first-of-type {
-                    margin-bottom: 30px;
-                }
-
                 .yearArgument {
                     font-size: 10px;
                 }
@@ -245,6 +241,17 @@
             &:after {
                 background: none
             }
+        }
+    }
+
+    /deep/ .dx-scrollable-content {
+        height: 100%;
+
+        .dx-scrollview-content {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
         }
     }
 }

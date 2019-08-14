@@ -57,6 +57,7 @@ import { ItemDetailsService } from '@shared/common/item-details-layout/item-deta
 import { ItemTypeEnum } from '@shared/common/item-details-layout/item-type.enum';
 import { ContactsService } from '@app/crm/contacts/contacts.service';
 import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
+import { DataGridService } from '@app/shared/common/data-grid.service.ts/data-grid.service';
 
 @Component({
     templateUrl: './partners.component.html',
@@ -164,10 +165,6 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
             });
     }
 
-    showColumnChooser() {
-        this.dataGrid.instance.showColumnChooser();
-    }
-
     onContentReady(event) {
         this.setGridDataLoaded();
         event.component.columnOption('command:edit', {
@@ -185,11 +182,6 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         if (this.dataGrid && this.dataGrid.instance)
             this.dependencyChanged = false;
         this.processFilterInternal();
-    }
-
-    showCompactRowsHeight() {
-        this.dataGrid.instance.element().classList.toggle('grid-compact-view');
-        this.dataGrid.instance.updateDimensions();
     }
 
     createPartner() {
@@ -380,7 +372,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                 location: 'before', items: [
                     {
                         name: 'filters',
-                        action: event => {
+                        action: () => {
                             setTimeout(() => {
                                 this.dataGrid.instance.repaint();
                             }, 1000);
@@ -518,8 +510,8 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                 location: 'after',
                 locateInMenu: 'auto',
                 items: [
-                    { name: 'showCompactRowsHeight', action: this.showCompactRowsHeight.bind(this) },
-                    { name: 'columnChooser', action: this.showColumnChooser.bind(this) }
+                    { name: 'showCompactRowsHeight', action: DataGridService.showCompactRowsHeight.bind(this, this.dataGrid, true) },
+                    { name: 'columnChooser', action: DataGridService.showColumnChooser.bind(this, this.dataGrid) }
                 ]
             },
             {

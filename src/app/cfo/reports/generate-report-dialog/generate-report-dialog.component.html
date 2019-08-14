@@ -78,8 +78,8 @@
             <div class="row">
                 <div class="col-12 text-center">
                     <button (click)="generateReport()"
-                            [disabled]="cfoService.isMainInstanceType || !emailIsValid"
-                            [ngClass]="{ disabled: cfoService.isMainInstanceType || !emailIsValid }"
+                            [disabled]="!cfoService.isMainInstanceType && !emailIsValid"
+                            [ngClass]="{ disabled: !cfoService.isMainInstanceType && !emailIsValid }"
                             class="btn send-btn">
                         {{ls.l('Reports_RunReportGenerator')}}
                     </button>

@@ -56,6 +56,7 @@ import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/life
 import { CalendarValuesModel } from '@shared/common/widgets/calendar/calendar-values.model';
 import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calendar.component';
 import { FilterItemModel } from '@shared/filters/models/filter-item.model';
+import { DataGridService } from '@app/shared/common/data-grid.service.ts/data-grid.service';
 
 @Component({
     templateUrl: './statements.component.html',
@@ -313,7 +314,7 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
                         {
                             name: 'showCompactRowsHeight',
                             visible: !this._cfoService.hasStaticInstance,
-                            action: this.showCompactRowsHeight.bind(this)
+                            action: DataGridService.showCompactRowsHeight.bind(this, this.dataGrid)
                         },
                         {
                             name: 'download',
@@ -341,7 +342,7 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
                         {
                             name: 'columnChooser',
                             visible: !this._cfoService.hasStaticInstance,
-                            action: this.showColumnChooser.bind(this)
+                            action: DataGridService.showColumnChooser.bind(this, this.dataGrid)
                         }
                     ]
                 }
@@ -382,7 +383,7 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
     }
 
     ngAfterViewInit(): void {
-        this.showCompactRowsHeight();
+        DataGridService.showCompactRowsHeight(this.dataGrid);
         let rootComponent = this.getRootComponent();
         rootComponent.overflowHidden(true);
     }
@@ -484,14 +485,6 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
 
     setBankAccountsFilter(emitFilterChange = false) {
         this.bankAccountsService.setBankAccountsFilter(this.filters, this.syncAccounts, emitFilterChange);
-    }
-
-    showCompactRowsHeight() {
-        this.dataGrid.instance.element().classList.toggle('grid-compact-view');
-    }
-
-    showColumnChooser() {
-        this.dataGrid.instance.showColumnChooser();
     }
 
     ngOnDestroy() {

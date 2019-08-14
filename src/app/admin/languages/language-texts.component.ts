@@ -18,6 +18,7 @@ import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { FilterModel } from '@shared/filters/models/filter.model';
 import { FilterDropDownComponent } from '@shared/filters/dropdown/filter-dropdown.component';
 import { FilterDropDownModel } from '@shared/filters/dropdown/filter-dropdown.model';
+import { DataGridService } from '@app/shared/common/data-grid.service.ts/data-grid.service';
 
 @Component({
     templateUrl: './language-texts.component.html',
@@ -266,8 +267,8 @@ export class LanguageTextsComponent extends AppComponentBase implements AfterVie
                 location: 'after',
                 locateInMenu: 'auto',
                 items: [
-                    { name: 'showCompactRowsHeight', action: this.showCompactRowsHeight.bind(this) },
-                    { name: 'columnChooser', action: this.showColumnChooser.bind(this) }
+                    { name: 'showCompactRowsHeight', action: DataGridService.showCompactRowsHeight.bind(this, this.dataGrid) },
+                    { name: 'columnChooser', action: DataGridService.showColumnChooser.bind(this, this.dataGrid) }
                 ]
             },
             {
@@ -293,14 +294,6 @@ export class LanguageTextsComponent extends AppComponentBase implements AfterVie
             targetValueFilter: this.filtersValues.targetValueFilter,
             filterText: this.searchText
         }]);
-    }
-
-    showCompactRowsHeight() {
-        this.dataGrid.instance.element().classList.toggle('grid-compact-view');
-    }
-
-    showColumnChooser() {
-        this.dataGrid.instance.showColumnChooser();
     }
 
     searchValueChange(e: object) {

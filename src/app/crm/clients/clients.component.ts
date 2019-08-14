@@ -56,6 +56,7 @@ import { ContactsService } from '@app/crm/contacts/contacts.service';
 import { ImpersonationService } from '@app/admin/users/impersonation.service';
 import { AppPermissions } from '@shared/AppPermissions';
 import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
+import { DataGridService } from '@app/shared/common/data-grid.service.ts/data-grid.service';
 
 @Component({
     templateUrl: './clients.component.html',
@@ -195,10 +196,6 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             });
     }
 
-    showColumnChooser() {
-        this.dataGrid.instance.showColumnChooser();
-    }
-
     onContentReady(event) {
         this.setGridDataLoaded();
         event.component.columnOption('command:edit', {
@@ -227,11 +224,6 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         });
     }
 
-    showCompactRowsHeight() {
-        this.dataGrid.instance.element().classList.toggle('grid-compact-view');
-        this.dataGrid.instance.updateDimensions();
-    }
-
     createClient() {
         this.dialog.open(CreateClientDialogComponent, {
             panelClass: 'slider',
@@ -257,10 +249,6 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             this._router.navigate(['app/crm/contact', clientId].concat(orgId ? ['company', orgId] : []),
                 { queryParams: { referrer: 'app/crm/clients'} });
         });
-    }
-
-    calculateAddressColumnValue(data) {
-        return (data.City || data.StateId) ? [data.City, data.StateId].join(', ') : null;
     }
 
     initFilterConfig() {
@@ -403,7 +391,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 location: 'before', items: [
                     {
                         name: 'filters',
-                        action: event => {
+                        action: () => {
                             setTimeout(() => {
                                 this.dataGrid.instance.repaint();
                             }, 1000);
@@ -413,10 +401,10 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                             checkPressed: () => {
                                 return this._filtersService.fixed;
                             },
-                            mouseover: event => {
+                            mouseover: () => {
                                 this._filtersService.enable();
                             },
-                            mouseout: event => {
+                            mouseout: () => {
                                 if (!this._filtersService.fixed)
                                     this._filtersService.disable();
                             }
@@ -533,8 +521,8 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 location: 'after',
                 locateInMenu: 'auto',
                 items: [
-                    { name: 'showCompactRowsHeight', action: this.showCompactRowsHeight.bind(this) },
-                    { name: 'columnChooser', action: this.showColumnChooser.bind(this) }
+                    { name: 'showCompactRowsHeight', action: DataGridService.showCompactRowsHeight.bind(this, this.dataGrid, true) },
+                    { name: 'columnChooser', action: DataGridService.showColumnChooser.bind(this, this.dataGrid) }
                 ]
             },
             {
@@ -674,7 +662,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 isActive: true,
                 isCompany: false,
                 comment: '',
-                deleteItem: (event) => {}
+                deleteItem: () => {}
             };
 
             this.dialog.open(EditContactDialog, {

@@ -16,6 +16,7 @@ import { BusinessEntityServiceProxy, BusinessEntityUpdateBankAccountsInput, Inst
 import { BusinessEntityEditDialogComponent } from './business-entity-edit-dialog/business-entity-edit-dialog.component';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { BankAccountsSelectDialogComponent } from '@app/cfo/shared/bank-accounts-select-dialog/bank-accounts-select-dialog.component';
+import { DataGridService } from '@app/shared/common/data-grid.service.ts/data-grid.service';
 
 @Component({
     selector: 'business-entities',
@@ -86,7 +87,7 @@ export class BusinessEntitiesComponent extends CFOComponentBase implements OnIni
                 options: {
                     hint: this.l('ColumnChooser'),
                     icon: 'column-chooser',
-                    onClick: this.showColumnChooser.bind(this),
+                    onClick: DataGridService.showColumnChooser.bind(this, this.dataGrid),
                 }
             }
         );
@@ -219,10 +220,6 @@ export class BusinessEntitiesComponent extends CFOComponentBase implements OnIni
 
     refreshDataGrid() {
         this.dataGrid.instance.refresh();
-    }
-
-    showColumnChooser() {
-        this.dataGrid.instance.showColumnChooser();
     }
 
     ngOnDestroy(): void {
