@@ -36,14 +36,6 @@ export class CfoPreferencesService {
         }
     );
     dateRange$: Observable<CalendarValuesModel> = this.dateRange.asObservable();
-    dateRangeForFilter$: Observable<any> = this.dateRange$.pipe(
-        map((dateRange: CalendarValuesModel) => {
-            return dateRange && {
-                from: { value: dateRange.from.value && this.getShiftedDate(dateRange.from.value) },
-                to: { value: dateRange.to.value && this.getShiftedDate(dateRange.to.value) }
-            };
-        })
-    );
     periodLabel$: Observable<string> = this.dateRange$.pipe(
         map((dateRange: CalendarValuesModel) => {
             return dateRange && dateRange.period ? this.ls.l('Periods_' + dateRange.period) : (
@@ -105,10 +97,6 @@ export class CfoPreferencesService {
             select(CurrenciesStoreSelectors.getCurrencies),
             filter(Boolean)
         );
-    }
-
-    private getShiftedDate(date): Date {
-        return DateHelper.removeTimezoneOffset(new Date(date.getTime()));
     }
 
     private formatDate(date: Date): string {

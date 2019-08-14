@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, Inject, OnInit, AfterViewInit, ElementRef } from '@angular/core';
+import { Component, Inject, OnInit, AfterViewInit, ElementRef, Output, EventEmitter } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 /** Application imports */
@@ -10,8 +10,8 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
   styleUrls: ['calendar-dialog.component.less']
 })
 export class CalendarDialogComponent implements OnInit, AfterViewInit {
+    @Output() opened: EventEmitter<boolean> = new EventEmitter<boolean>();
     private slider: any;
-
     constructor(
         @Inject(MAT_DIALOG_DATA) public data: any,
         public ls: AppLocalizationService,
@@ -45,6 +45,8 @@ export class CalendarDialogComponent implements OnInit, AfterViewInit {
                     top: '75px',
                     right: '0px'
                 });
+                /** Dialog transition equals 1 sec */
+                setTimeout(() => this.opened.emit(true), 1000);
             }, 100);
         });
     }

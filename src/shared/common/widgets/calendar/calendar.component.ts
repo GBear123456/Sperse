@@ -52,8 +52,7 @@ export class CalendarComponent extends AppComponentBase implements AfterViewInit
     }
 
     ngAfterViewInit() {
-        this.calendar = JQCalendarInit(
-            '.calendar#' + this.UID, true, this._options);
+        this.calendar = JQCalendarInit('.calendar#' + this.UID, true, this._options);
         this.calendar.on('datepicker-first-date-selected',
             (event, obj) => {
                 this._values.from.value = new Date(obj.date1.getTime());

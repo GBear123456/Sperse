@@ -20,7 +20,6 @@ import DataSource from 'devextreme/data/data_source';
 import 'devextreme/data/odata/store';
 import { Subject, forkJoin, of } from 'rxjs';
 import { first, skip, switchMap, mapTo, takeUntil } from 'rxjs/operators';
-import difference from 'lodash/difference';
 import * as _ from 'underscore';
 
 /** Application imports */
@@ -229,9 +228,8 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         forkJoin(
             this._TransactionsServiceProxy.getTransactionTypesAndCategories(),
             this._TransactionsServiceProxy.getFiltersInitialData(InstanceType[this.instanceType], this.instanceId),
-            this.bankAccountsService.syncAccounts$.pipe(first()),
-            this.bankAccountsService.selectedBusinessEntitiesIds$.pipe(first())
-        ).subscribe(([typeAndCategories, filtersInitialData, syncAccounts, selectedBusinessEntitiesIds]) => {
+            this.bankAccountsService.syncAccounts$.pipe(first())
+        ).subscribe(([typeAndCategories, filtersInitialData, syncAccounts]) => {
             this.syncAccounts = syncAccounts;
             this.types = typeAndCategories.types.map((item) => item.name);
             this.categories = typeAndCategories.categories.map((item) => item.name);
@@ -659,11 +657,12 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     processTotalValues(rowSelection = false) {
         let totals = this.totalDataSource && this.totalDataSource.items();
         if (!rowSelection && this.dateFilter.items.from.value) {
-            let dateTo = this.dateFilter.items.to.value;
+            let dateFrom = new Date(this.dateFilter.items.from.value);
+            let dateTo = new Date(this.dateFilter.items.to.value);
             this._TransactionsServiceProxy.getStartingBalance(
                 this.instanceType as InstanceType,
                 this.instanceId,
-                DateHelper.removeTimezoneOffset(this.dateFilter.items.from.value, false, 'from'),
+                DateHelper.removeTimezoneOffset(dateFrom, false, 'from'),
                 dateTo ? DateHelper.removeTimezoneOffset(dateTo, false, 'to') : null,
                 this.cfoPreferencesService.selectedCurrencyId,
                 this.bankAccountFilter.items.element.value,

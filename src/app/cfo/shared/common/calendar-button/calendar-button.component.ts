@@ -25,34 +25,40 @@ export class CalendarButtonComponent {
             return this.emptyEndDateIsAvailable && dateRange.from.value && !dateRange.to.value ? label + ' -' : label;
         })
     );
+    calendarDialogOpening = false;
     constructor(
         private dialog: MatDialog,
         private cfoPreferencesService: CfoPreferencesService
     ) {}
 
     openCalendarDialog() {
-        this.dialog.open(CalendarDialogComponent, {
-            panelClass: 'slider',
-            disableClose: false,
-            hasBackdrop: false,
-            closeOnNavigation: true,
-            data: {
-                to: { value: this.cfoPreferencesService.dateRange.value && this.cfoPreferencesService.dateRange.value.to.value },
-                from: { value: this.cfoPreferencesService.dateRange.value && this.cfoPreferencesService.dateRange.value.from.value },
-                options: {
-                    allowFutureDates: true,
-                    endDate: moment(new Date()).add(10, 'years').toDate()
+        if (!this.calendarDialogOpening) {
+            this.calendarDialogOpening = true;
+            const calendarDialog = this.dialog.open(CalendarDialogComponent, {
+                panelClass: 'slider',
+                disableClose: false,
+                hasBackdrop: false,
+                closeOnNavigation: true,
+                data: {
+                    to: { value: this.cfoPreferencesService.dateRange.value && new Date(this.cfoPreferencesService.dateRange.value.to.value) },
+                    from: { value: this.cfoPreferencesService.dateRange.value && new Date(this.cfoPreferencesService.dateRange.value.from.value) },
+                    options: {
+                        allowFutureDates: true,
+                        endDate: moment(new Date()).add(10, 'years').toDate()
+                    }
                 }
-            }
-        }).afterClosed().pipe(
-            filter(Boolean)
-        ).subscribe((dateRange) => {
-            this.cfoPreferencesService.dateRange.next({
-                from: { value: dateRange.dateFrom },
-                to: { value: dateRange.dateTo },
-                period: dateRange.period
             });
-        });
+            calendarDialog.componentInstance.opened.subscribe(() => this.calendarDialogOpening = false);
+            calendarDialog.afterClosed().pipe(
+                filter(Boolean)
+            ).subscribe((dateRange) => {
+                this.cfoPreferencesService.dateRange.next({
+                    from: { value: dateRange.dateFrom },
+                    to: { value: dateRange.dateTo },
+                    period: dateRange.period
+                });
+            });
+        }
     }
 
 }
