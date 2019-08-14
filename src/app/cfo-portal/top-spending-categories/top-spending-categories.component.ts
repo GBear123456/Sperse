@@ -40,10 +40,10 @@ export class TopSpendingCategoriesComponent {
         switchMap(([selectedBankAccountsIds, currencyId, period]: [ number[], string, DailyStatsPeriodModel]) => {
             return this.dashboardServiceProxy.getSpendingCategories(
                 this.cfoService.instanceType as InstanceType,
-                this.cfoService.instanceId,
+                this.cfoService.instanceId,                
+                5,
                 selectedBankAccountsIds,
                 currencyId,
-                5,
                 period.startDate,
                 period.endDate
             ).pipe(
