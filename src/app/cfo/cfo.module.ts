@@ -224,7 +224,8 @@ export class CfoModule {
                 return route;
             }),
             filter(route => route.outlet === 'primary' &&
-                this.cfoService.checkInstanceChanged(route.params))
+                this.cfoService.checkInstanceChanged(route.params)
+            )
         ).subscribe();
     }
 }

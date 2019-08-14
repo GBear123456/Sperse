@@ -17,9 +17,15 @@ import { CellInterval } from './models/cell-interval';
 import { CategorizationPrefixes } from './enums/categorization-prefixes.enum';
 import {
     AdjustmentType,
-    BankAccountDto, CashFlowGridSettingsDto, CashFlowInitialData,
+    BankAccountDto,
+    CashFlowGridSettingsDto,
+    CashFlowInitialData,
     CategoryDto,
-    GetCategoryTreeOutput, GroupByPeriod, StatsDetailFilter, StatsFilter
+    GetCategoryTreeOutput,
+    GetReportTemplateDefinitionOutput,
+    GroupByPeriod,
+    StatsDetailFilter,
+    StatsFilter
 } from '@shared/service-proxies/service-proxies';
 import { IModifyingInputOptions } from '@app/cfo/cashflow/modifying-input-options.interface';
 import { IEventDescription } from '@app/cfo/cashflow/models/event-description';
@@ -81,13 +87,12 @@ export class CashflowService {
         },
         {
             prefix                 : CategorizationPrefixes.ReportingGroup,
-            statsKeyName           : 'reportSectionGroup',
-            namesSource            : 'categoryTree.reportSections'
+            statsKeyName           : 'reportSectionGroup'
         },
         {
             prefix                 : CategorizationPrefixes.ReportingSection,
             statsKeyName           : 'reportSectionId',
-            namesSource            : 'categoryTree.reportSections'
+            namesSource            : 'reportSections.sections'
         },
         {
             prefix                 : CategorizationPrefixes.AccountingType,
@@ -356,12 +361,14 @@ export class CashflowService {
     /** Amount of years with stubs */
     yearsAmount = 0;
 
+    reportSections: GetReportTemplateDefinitionOutput;
+
     constructor(
-        private userPreferencesService: UserPreferencesService,
         private cfoPreferencesService: CfoPreferencesService,
         private ls: AppLocalizationService,
-        private currencyPipe: CurrencyPipe
-    ) { }
+        private currencyPipe: CurrencyPipe,
+        public userPreferencesService: UserPreferencesService
+    ) {}
 
     addEvents(element: HTMLElement, events: IEventDescription[]) {
         for (let event of events) {
@@ -411,6 +418,20 @@ export class CashflowService {
 
         categorization['cashflowTypeId'] = categorization['cashFlowTypeId'] = cashflowTypeId;
         return categorization;
+    }
+
+    /**
+     * Handle get categories result
+     * @param getCategoriesResult
+     */
+    handleGetCategoryTreeResult(getCategoriesResult: GetCategoryTreeOutput) {
+        this.categoryTree = getCategoriesResult;
+        /** Add starting balance, ending balance, netchange and balance discrepancy */
+        for (let type in this.cashflowTypes) {
+            if (!this.categoryTree.types.hasOwnProperty(type)) {
+                this.categoryTree.types[type] = <any>{ name: this.cashflowTypes[type]};
+            }
+        }
     }
 
     isUnclassified(cell: CellInfo): boolean {
@@ -752,6 +773,7 @@ export class CashflowService {
                 transactionObj[level.statsKeyName]
                 || (level.prefix === CategorizationPrefixes.SubCategory && !transactionObj.categoryId)
                 || level.prefix === CategorizationPrefixes.ReportingGroup
+                || level.prefix === CategorizationPrefixes.ReportingSection
             ) {
                 /** If user doesn't want to show accounting type row - skip it */
                 if (
@@ -761,11 +783,19 @@ export class CashflowService {
                     return true;
                 }
 
-                if (level.prefix === CategorizationPrefixes.ReportingGroup) {
-                    if (transactionObj.reportSectionId) {
-                        const reportSection = this.categoryTree.reportSections[transactionObj.reportSectionId];
-                        if (reportSection) {
-                            transactionObj['levels'][`level${levelNumber++}`] = level.prefix + reportSection.group;
+                if (level.prefix === CategorizationPrefixes.ReportingGroup || level.prefix === CategorizationPrefixes.ReportingSection) {
+                    const categoryId = transactionObj.subCategoryId || transactionObj.categoryId;
+                    if (categoryId) {
+                        const reportSectionId = this.reportSections.categorySectionMap[categoryId];
+                        if (reportSectionId) {
+                            const reportSection = this.reportSections.sections[reportSectionId];
+                            if (reportSection) {
+                                transactionObj['levels'][`level${levelNumber++}`] = level.prefix + (
+                                    level.prefix === CategorizationPrefixes.ReportingGroup
+                                        ? reportSection.group
+                                        : reportSectionId
+                                );
+                            }
                         }
                     }
                     return true;

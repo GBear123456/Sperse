@@ -100,6 +100,19 @@
                         </dx-number-box>
                         <span [class]="company.businessSicCode && 'clear-contact' || 'hidden'" (click)="company.businessSicCode = ''"><i class="minus-icon"></i></span>
                     </div>
+                    <div *ngIf="company.organizationUnitId" class="field affiliateCode">
+                        <label for="affiliateCode">{{ls.l('Company_affiliateCode')}}</label>
+                        <dx-text-box name="affiliateCode"
+                                     (onInput)="onInput($event, 50)"
+                                     [inputAttr]="{ id: 'affiliateCode' }"
+                                     [valueChangeEvent]="'focusout'"
+                                     [(value)]="company.affiliateCode">
+                            <dx-validator>
+                                <dxi-validation-rule type="pattern" [pattern]="affiliateRegex" message="{{ls.l('InvalidAffiliateCode')}}."></dxi-validation-rule>
+                            </dx-validator>
+                        </dx-text-box>
+                        <span [class]="company.affiliateCode && 'clear-contact' || 'hidden'" (click)="company.affiliateCode = ''"><i class="minus-icon"></i></span>
+                    </div>
                     <div class="field productsAndServices">
                         <label for="productsAndServices">{{ls.l('Company_ProductsAndServices')}}</label>
                         <dx-text-area
@@ -161,6 +174,8 @@
                                      (onInput)="onInput($event, 15)">
                         </dx-text-box>
                         <span [class]="company.ticker && 'clear-contact' || 'hidden'" (click)="company.ticker = ''"><i class="minus-icon"></i></span>
+                    </div>
+                    <div *ngIf="company.organizationUnitId" class="field stubField">
                     </div>
                     <div class="field notes">
                         <label for="notes">{{ls.l('Company_Notes')}}</label>

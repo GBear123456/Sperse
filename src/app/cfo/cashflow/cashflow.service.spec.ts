@@ -11,13 +11,14 @@ import {
     InstanceServiceProxy, Period,
     PermissionServiceProxy,
     PersonContactServiceProxy,
-    ReportSectionDto,
-    SectionGroup,
+    GetReportTemplateDefinitionOutput,
     SessionServiceProxy,
     StatsFilter,
     TenantSubscriptionServiceProxy,
     TransactionStatsDto,
-    TypeDto
+    TypeDto,
+    ReportSectionDto,
+    SectionGroup
 } from '@shared/service-proxies/service-proxies';
 import { UserPreferencesService } from '@app/cfo/cashflow/preferences-dialog/preferences.service';
 import { AppSessionService } from '@shared/common/session/app-session.service';
@@ -132,13 +133,12 @@ describe('CashflowService', () => {
     it('addCategorizationLevels should work', inject([CashflowService], (service: CashflowService) => {
         const transaction: TransactionStatsDto = new TransactionStatsDto({
             cashflowTypeId: 'I',
-            reportSectionId: 11,
             accountingTypeId: 2,
-            subCategoryId: 5632,
             adjustmentType: null,
             accountId: 63,
             amount: 40,
             categoryId: 5566,
+            subCategoryId: 5632,
             count: 0,
             forecastId: 10402,
             transactionDescriptor: 'descriptor',
@@ -151,12 +151,29 @@ describe('CashflowService', () => {
             accountingTypes: {
                 '2': new AccountingTypeDto({typeId: 'E', name: 'Expense', isSystem: true})
             },
-            categories: {},
-            reportSections: {
-                '11': new ReportSectionDto({ id: 11, group: SectionGroup.Expense, name: 'Business Expenses' })
+            categories: {}
+        });
+        service.reportSections = new GetReportTemplateDefinitionOutput({
+            sections: {
+                11: new ReportSectionDto({
+                    name: 'Expense',
+                    group: SectionGroup.Expense
+                })
+            },
+            categorySectionMap: {
+                5632: 11
             }
         });
-        const levels = service.addCategorizationLevels(transaction).levels;
+        let levels = service.addCategorizationLevels(transaction).levels;
+        expect(levels).toEqual({
+            level0: 'CTI',
+            level1: 'AT2',
+            level2: 'CA5566',
+            level3: 'SC5632',
+            level4: 'TDdescriptor'
+        });
+        service.userPreferencesService.localPreferences.value.showReportingSectionTotals = true;
+        levels = service.addCategorizationLevels(transaction).levels;
         expect(levels).toEqual({
             level0: 'CTI',
             level1: 'RGExpense',
@@ -174,12 +191,20 @@ describe('CashflowService', () => {
             accountingTypes: {
                 '2': new AccountingTypeDto({typeId: 'E', name: 'Expense', isSystem: true})
             },
-            categories: {},
-            reportSections: {
-                '11': new ReportSectionDto({ id: 11, group: SectionGroup.Expense, name: 'Business Expenses' })
+            categories: {}
+        });
+        service.reportSections = new GetReportTemplateDefinitionOutput({
+            sections: {
+                11: new ReportSectionDto({
+                    name: 'Business Expenses',
+                    group: SectionGroup.Expense
+                })
+            },
+            categorySectionMap: {
+                5566: 11
             }
         });
-        service.cashflowTypes = {B: 'Starting Balance', D: 'Unreconciled Balance', E: 'Outflows', I: 'Inflows'};
+        service.cashflowTypes = { B: 'Starting Balance', D: 'Unreconciled Balance', E: 'Outflows', I: 'Inflows' };
         expect(service.customizeFieldText({ value: 'CTI' })).toBe('TOTAL INFLOWS');
         expect(service.customizeFieldText({ value: 'AT2' })).toBe('Expense');
         expect(service.customizeFieldText({ value: 'RGCostOfSales' })).toBe('SectionGroup_CostOfSales');

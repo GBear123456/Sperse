@@ -4289,6 +4289,67 @@ export class CategoryTreeServiceProxy {
     /**
      * @instanceType (optional) 
      * @instanceId (optional) 
+     * @reportTemplate (optional) 
+     * @return Success
+     */
+    getReportTemplateDefinition(instanceType: InstanceType | null | undefined, instanceId: number | null | undefined, reportTemplate: ReportTemplate | null | undefined): Observable<GetReportTemplateDefinitionOutput> {
+        let url_ = this.baseUrl + "/api/services/CFO/CategoryTree/GetReportTemplateDefinition?";
+        if (instanceType !== undefined)
+            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
+        if (instanceId !== undefined)
+            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
+        if (reportTemplate !== undefined)
+            url_ += "reportTemplate=" + encodeURIComponent("" + reportTemplate) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetReportTemplateDefinition(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetReportTemplateDefinition(<any>response_);
+                } catch (e) {
+                    return <Observable<GetReportTemplateDefinitionOutput>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<GetReportTemplateDefinitionOutput>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetReportTemplateDefinition(response: HttpResponseBase): Observable<GetReportTemplateDefinitionOutput> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? GetReportTemplateDefinitionOutput.fromJS(resultData200) : new GetReportTemplateDefinitionOutput();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<GetReportTemplateDefinitionOutput>(<any>null);
+    }
+
+    /**
+     * @instanceType (optional) 
+     * @instanceId (optional) 
      * @body (optional) 
      * @return Success
      */
@@ -10637,7 +10698,7 @@ export class DashboardServiceProxy {
      * @startDate (optional) 
      * @return Success
      */
-    getDailyBalanceStats(instanceType: InstanceType | null | undefined, instanceId: number | null | undefined, bankAccountIds: number[] | null | undefined, startDate: moment.Moment | null | undefined, endDate: moment.Moment, currencyId: string): Observable<GetDailyBalanceStatsOutput> {
+    getDailyBalanceStats(instanceType: InstanceType | null | undefined, instanceId: number | null | undefined, bankAccountIds: number[] | null | undefined, currencyId: string, startDate: moment.Moment | null | undefined, endDate: moment.Moment): Observable<GetDailyBalanceStatsOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/Dashboard/GetDailyBalanceStats?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -10645,16 +10706,16 @@ export class DashboardServiceProxy {
             url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
         if (bankAccountIds !== undefined)
             bankAccountIds && bankAccountIds.forEach(item => { url_ += "BankAccountIds=" + encodeURIComponent("" + item) + "&"; });
+        if (currencyId === undefined || currencyId === null)
+            throw new Error("The parameter 'currencyId' must be defined and cannot be null.");
+        else
+            url_ += "CurrencyId=" + encodeURIComponent("" + currencyId) + "&"; 
         if (startDate !== undefined)
             url_ += "StartDate=" + encodeURIComponent(startDate ? "" + startDate.toJSON() : "") + "&"; 
         if (endDate === undefined || endDate === null)
             throw new Error("The parameter 'endDate' must be defined and cannot be null.");
         else
             url_ += "EndDate=" + encodeURIComponent(endDate ? "" + endDate.toJSON() : "") + "&"; 
-        if (currencyId === undefined || currencyId === null)
-            throw new Error("The parameter 'currencyId' must be defined and cannot be null.");
-        else
-            url_ += "CurrencyId=" + encodeURIComponent("" + currencyId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -10700,6 +10761,85 @@ export class DashboardServiceProxy {
             }));
         }
         return _observableOf<GetDailyBalanceStatsOutput>(<any>null);
+    }
+
+    /**
+     * @instanceType (optional) 
+     * @instanceId (optional) 
+     * @maxCount (optional) 
+     * @bankAccountIds (optional) 
+     * @startDate (optional) 
+     * @return Success
+     */
+    getSpendingCategories(instanceType: InstanceType | null | undefined, instanceId: number | null | undefined, maxCount: number | null | undefined, bankAccountIds: number[] | null | undefined, currencyId: string, startDate: moment.Moment | null | undefined, endDate: moment.Moment): Observable<GetSpendingCategoriesOutput[]> {
+        let url_ = this.baseUrl + "/api/services/CFO/Dashboard/GetSpendingCategories?";
+        if (instanceType !== undefined)
+            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
+        if (instanceId !== undefined)
+            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
+        if (maxCount !== undefined)
+            url_ += "MaxCount=" + encodeURIComponent("" + maxCount) + "&"; 
+        if (bankAccountIds !== undefined)
+            bankAccountIds && bankAccountIds.forEach(item => { url_ += "BankAccountIds=" + encodeURIComponent("" + item) + "&"; });
+        if (currencyId === undefined || currencyId === null)
+            throw new Error("The parameter 'currencyId' must be defined and cannot be null.");
+        else
+            url_ += "CurrencyId=" + encodeURIComponent("" + currencyId) + "&"; 
+        if (startDate !== undefined)
+            url_ += "StartDate=" + encodeURIComponent(startDate ? "" + startDate.toJSON() : "") + "&"; 
+        if (endDate === undefined || endDate === null)
+            throw new Error("The parameter 'endDate' must be defined and cannot be null.");
+        else
+            url_ += "EndDate=" + encodeURIComponent(endDate ? "" + endDate.toJSON() : "") + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetSpendingCategories(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetSpendingCategories(<any>response_);
+                } catch (e) {
+                    return <Observable<GetSpendingCategoriesOutput[]>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<GetSpendingCategoriesOutput[]>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetSpendingCategories(response: HttpResponseBase): Observable<GetSpendingCategoriesOutput[]> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(GetSpendingCategoriesOutput.fromJS(item));
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<GetSpendingCategoriesOutput[]>(<any>null);
     }
 
     /**
@@ -34165,7 +34305,6 @@ export class TransactionStatsDto implements ITransactionStatsDto {
     accountingTypeId!: number | undefined;
     categoryId!: number | undefined;
     subCategoryId!: number | undefined;
-    reportSectionId!: number | undefined;
     transactionDescriptor!: string | undefined;
     accountId!: number | undefined;
     currencyId!: string | undefined;
@@ -34191,7 +34330,6 @@ export class TransactionStatsDto implements ITransactionStatsDto {
             this.accountingTypeId = data["accountingTypeId"];
             this.categoryId = data["categoryId"];
             this.subCategoryId = data["subCategoryId"];
-            this.reportSectionId = data["reportSectionId"];
             this.transactionDescriptor = data["transactionDescriptor"];
             this.accountId = data["accountId"];
             this.currencyId = data["currencyId"];
@@ -34217,7 +34355,6 @@ export class TransactionStatsDto implements ITransactionStatsDto {
         data["accountingTypeId"] = this.accountingTypeId;
         data["categoryId"] = this.categoryId;
         data["subCategoryId"] = this.subCategoryId;
-        data["reportSectionId"] = this.reportSectionId;
         data["transactionDescriptor"] = this.transactionDescriptor;
         data["accountId"] = this.accountId;
         data["currencyId"] = this.currencyId;
@@ -34236,7 +34373,6 @@ export interface ITransactionStatsDto {
     accountingTypeId: number | undefined;
     categoryId: number | undefined;
     subCategoryId: number | undefined;
-    reportSectionId: number | undefined;
     transactionDescriptor: string | undefined;
     accountId: number | undefined;
     currencyId: string | undefined;
@@ -35917,55 +36053,10 @@ export interface ICategoryDto {
     reportingCategoryId: number | undefined;
 }
 
-export class ReportSectionDto implements IReportSectionDto {
-    id!: number | undefined;
-    group!: SectionGroup | undefined;
-    name!: string | undefined;
-
-    constructor(data?: IReportSectionDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.id = data["id"];
-            this.group = data["group"];
-            this.name = data["name"];
-        }
-    }
-
-    static fromJS(data: any): ReportSectionDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new ReportSectionDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["group"] = this.group;
-        data["name"] = this.name;
-        return data; 
-    }
-}
-
-export interface IReportSectionDto {
-    id: number | undefined;
-    group: SectionGroup | undefined;
-    name: string | undefined;
-}
-
 export class GetCategoryTreeOutput implements IGetCategoryTreeOutput {
     types!: { [key: string] : TypeDto; } | undefined;
     accountingTypes!: { [key: string] : AccountingTypeDto; } | undefined;
     categories!: { [key: string] : CategoryDto; } | undefined;
-    reportSections!: { [key: string] : ReportSectionDto; } | undefined;
 
     constructor(data?: IGetCategoryTreeOutput) {
         if (data) {
@@ -35997,13 +36088,6 @@ export class GetCategoryTreeOutput implements IGetCategoryTreeOutput {
                 for (let key in data["categories"]) {
                     if (data["categories"].hasOwnProperty(key))
                         this.categories[key] = data["categories"][key] ? CategoryDto.fromJS(data["categories"][key]) : new CategoryDto();
-                }
-            }
-            if (data["reportSections"]) {
-                this.reportSections = {};
-                for (let key in data["reportSections"]) {
-                    if (data["reportSections"].hasOwnProperty(key))
-                        this.reportSections[key] = data["reportSections"][key] ? ReportSectionDto.fromJS(data["reportSections"][key]) : new ReportSectionDto();
                 }
             }
         }
@@ -36039,13 +36123,6 @@ export class GetCategoryTreeOutput implements IGetCategoryTreeOutput {
                     data["categories"][key] = this.categories[key];
             }
         }
-        if (this.reportSections) {
-            data["reportSections"] = {};
-            for (let key in this.reportSections) {
-                if (this.reportSections.hasOwnProperty(key))
-                    data["reportSections"][key] = this.reportSections[key];
-            }
-        }
         return data; 
     }
 }
@@ -36054,7 +36131,114 @@ export interface IGetCategoryTreeOutput {
     types: { [key: string] : TypeDto; } | undefined;
     accountingTypes: { [key: string] : AccountingTypeDto; } | undefined;
     categories: { [key: string] : CategoryDto; } | undefined;
-    reportSections: { [key: string] : ReportSectionDto; } | undefined;
+}
+
+export enum ReportTemplate {
+    Personal = "Personal", 
+}
+
+export class ReportSectionDto implements IReportSectionDto {
+    group!: SectionGroup | undefined;
+    name!: string | undefined;
+
+    constructor(data?: IReportSectionDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.group = data["group"];
+            this.name = data["name"];
+        }
+    }
+
+    static fromJS(data: any): ReportSectionDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new ReportSectionDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["group"] = this.group;
+        data["name"] = this.name;
+        return data; 
+    }
+}
+
+export interface IReportSectionDto {
+    group: SectionGroup | undefined;
+    name: string | undefined;
+}
+
+export class GetReportTemplateDefinitionOutput implements IGetReportTemplateDefinitionOutput {
+    sections!: { [key: string] : ReportSectionDto; } | undefined;
+    categorySectionMap!: { [key: string] : number; } | undefined;
+
+    constructor(data?: IGetReportTemplateDefinitionOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            if (data["sections"]) {
+                this.sections = {};
+                for (let key in data["sections"]) {
+                    if (data["sections"].hasOwnProperty(key))
+                        this.sections[key] = data["sections"][key] ? ReportSectionDto.fromJS(data["sections"][key]) : new ReportSectionDto();
+                }
+            }
+            if (data["categorySectionMap"]) {
+                this.categorySectionMap = {};
+                for (let key in data["categorySectionMap"]) {
+                    if (data["categorySectionMap"].hasOwnProperty(key))
+                        this.categorySectionMap[key] = data["categorySectionMap"][key];
+                }
+            }
+        }
+    }
+
+    static fromJS(data: any): GetReportTemplateDefinitionOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new GetReportTemplateDefinitionOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (this.sections) {
+            data["sections"] = {};
+            for (let key in this.sections) {
+                if (this.sections.hasOwnProperty(key))
+                    data["sections"][key] = this.sections[key];
+            }
+        }
+        if (this.categorySectionMap) {
+            data["categorySectionMap"] = {};
+            for (let key in this.categorySectionMap) {
+                if (this.categorySectionMap.hasOwnProperty(key))
+                    data["categorySectionMap"][key] = this.categorySectionMap[key];
+            }
+        }
+        return data; 
+    }
+}
+
+export interface IGetReportTemplateDefinitionOutput {
+    sections: { [key: string] : ReportSectionDto; } | undefined;
+    categorySectionMap: { [key: string] : number; } | undefined;
 }
 
 export class CreateCategoryInput implements ICreateCategoryInput {
@@ -48659,7 +48843,6 @@ export class OrganizationBusinessInfo implements IOrganizationBusinessInfo {
     name!: string | undefined;
     typeName!: string | undefined;
     shortname!: string | undefined;
-    companyName!: string | undefined;
     typeId!: string | undefined;
     industry!: string | undefined;
     duns!: string | undefined;
@@ -48704,7 +48887,6 @@ export class OrganizationBusinessInfo implements IOrganizationBusinessInfo {
             this.name = data["name"];
             this.typeName = data["typeName"];
             this.shortname = data["shortname"];
-            this.companyName = data["companyName"];
             this.typeId = data["typeId"];
             this.industry = data["industry"];
             this.duns = data["duns"];
@@ -48773,7 +48955,6 @@ export class OrganizationBusinessInfo implements IOrganizationBusinessInfo {
         data["name"] = this.name;
         data["typeName"] = this.typeName;
         data["shortname"] = this.shortname;
-        data["companyName"] = this.companyName;
         data["typeId"] = this.typeId;
         data["industry"] = this.industry;
         data["duns"] = this.duns;
@@ -48835,7 +49016,6 @@ export interface IOrganizationBusinessInfo {
     name: string | undefined;
     typeName: string | undefined;
     shortname: string | undefined;
-    companyName: string | undefined;
     typeId: string | undefined;
     industry: string | undefined;
     duns: string | undefined;
@@ -52182,6 +52362,50 @@ export interface IGetDailyBalanceStatsOutput {
     avarageBalance: number | undefined;
     maxBalance: number | undefined;
     count: number | undefined;
+}
+
+export class GetSpendingCategoriesOutput implements IGetSpendingCategoriesOutput {
+    name!: string | undefined;
+    fullName!: string | undefined;
+    amount!: number | undefined;
+
+    constructor(data?: IGetSpendingCategoriesOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.name = data["name"];
+            this.fullName = data["fullName"];
+            this.amount = data["amount"];
+        }
+    }
+
+    static fromJS(data: any): GetSpendingCategoriesOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new GetSpendingCategoriesOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        data["fullName"] = this.fullName;
+        data["amount"] = this.amount;
+        return data; 
+    }
+}
+
+export interface IGetSpendingCategoriesOutput {
+    name: string | undefined;
+    fullName: string | undefined;
+    amount: number | undefined;
 }
 
 export class GetTotalsOutput implements IGetTotalsOutput {

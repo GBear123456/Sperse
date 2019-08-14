@@ -20,7 +20,6 @@ import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
 import { CurrenciesStoreSelectors } from '@app/cfo/store';
 import { CfoStore } from '@app/cfo/store';
 import { AccountTotals } from '@shared/service-proxies/service-proxies';
-import { PeriodModel } from '@app/shared/common/period/period.model';
 import { DailyStatsPeriodModel } from '@shared/cfo/dashboard-widgets/accounts/daily-stats-period.model';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
@@ -50,9 +49,7 @@ export class AccountsComponent extends CFOComponentBase implements OnInit {
     dailyStatsSliderSelected$: Observable<number> = this.dailyStatsSliderSelected.asObservable();
     currencyId$ = this.store$.pipe(select(CurrenciesStoreSelectors.getSelectedCurrencyId), filter(Boolean));
     bankAccountIds$: Observable<number[]> = this.bankAccountsService.selectedBankAccountsIds$;
-    period$ = this._dashboardService.period$.pipe(
-        map((period: PeriodModel) => this.getDailyStatsPeriod(period))
-    );
+    period$ = this._dashboardService.dailyStatsPeriod$;
 
     constructor(
         injector: Injector,
@@ -103,9 +100,9 @@ export class AccountsComponent extends CFOComponentBase implements OnInit {
                     InstanceType[this.instanceType],
                     this.instanceId,
                     bankAccountIds,
+                    currencyId,
                     period.startDate,
-                    period.endDate,
-                    currencyId
+                    period.endDate
                 ).pipe(
                     catchError(() => of(new GetDailyBalanceStatsOutput())),
                     finalize(() => this._loadingService.finishLoading(this.dailyStats.nativeElement))
@@ -135,22 +132,6 @@ export class AccountsComponent extends CFOComponentBase implements OnInit {
 
     changeDailyStatsToggleValue(index) {
         this.dailyStatsSliderSelected.next(index);
-    }
-
-    getDailyStatsPeriod(period: PeriodModel): DailyStatsPeriodModel {
-        let currentDate = moment().utc().startOf('day');
-        let result = {
-            startDate: null,
-            endDate: currentDate
-        };
-        if (period) {
-            result.startDate = period.from ? period.from.startOf('day') : null;
-            result.endDate = period.to ? period.to.startOf('day') : null;
-
-            result.endDate = !result.endDate || currentDate.isBefore(result.endDate) ? currentDate : result.endDate;
-            result.startDate = result.startDate && result.endDate.isBefore(result.startDate) ? result.endDate : result.startDate;
-        }
-        return result;
     }
 
     getDailyStatsAmount(dailyStatsData: GetDailyBalanceStatsOutput, dailyStatsSliderSelected: number): number {

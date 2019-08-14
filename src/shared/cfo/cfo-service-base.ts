@@ -1,4 +1,5 @@
 import { BehaviorSubject, Subject, Observable } from 'rxjs';
+import { InstanceModel } from '@shared/cfo/instance.model';
 
 export abstract class CFOServiceBase {
     instanceId: number;
@@ -7,8 +8,8 @@ export abstract class CFOServiceBase {
     hasTransactions: boolean;
     hasStaticInstance: boolean;
     statusActive: BehaviorSubject<boolean>;
-    instanceTypeChanged: Subject<string> = new Subject();
-    instanceTypeChanged$: Observable<string> = this.instanceTypeChanged.asObservable();
+    instanceChanged: Subject<InstanceModel> = new Subject();
+    instanceChanged$: Observable<InstanceModel> = this.instanceChanged.asObservable();
     isForUser: boolean;
 
     constructor() { }

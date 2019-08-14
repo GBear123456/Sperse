@@ -1,8 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { Route } from '@angular/router';
 import { AccountsComponent } from './accounts/accounts.component';
-import { StartComponent } from './start/start.component'
+import { StartComponent } from './start/start.component';
 
 @NgModule({
     imports: [

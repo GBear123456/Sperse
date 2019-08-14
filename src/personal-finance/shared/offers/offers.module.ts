@@ -10,11 +10,12 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatRadioModule } from '@angular/material/radio';
 import { RoundProgressModule } from 'angular-svg-round-progressbar';
 import { MatSliderModule } from '@angular/material/slider';
+import { DxScrollViewModule } from 'devextreme-angular/ui/scroll-view';
+import { DxTooltipModule } from 'devextreme-angular/ui/tooltip';
 
 /** Application imports */
 import { OffersLayoutComponent } from '@root/personal-finance/shared/offers/offers-layout.component';
 import { LayoutModule } from '../layout/layout.module';
-import { DxScrollViewModule } from '@root/node_modules/devextreme-angular';
 import { OfferDetailsComponent } from '@root/personal-finance/shared/offers/offer-details/offer-details.component';
 import { MarcusDetailsComponent } from '@root/personal-finance/shared/offers/marcus-details/marcus-details.component';
 import { NoDataModule } from '@shared/common/widgets/no-data/no-data.module';
@@ -42,6 +43,7 @@ import { StarsRatingModule } from '@shared/common/stars-rating/stars-rating.modu
         MatCheckboxModule,
         MatSliderModule,
         MatSelectModule,
+        DxTooltipModule,
         DxScrollViewModule,
         RoundProgressModule,
         NoDataModule,

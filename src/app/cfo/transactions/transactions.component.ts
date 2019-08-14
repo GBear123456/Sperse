@@ -661,7 +661,8 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         if (!rowSelection && this.dateFilter.items.from.value) {
             let dateTo = this.dateFilter.items.to.value;
             this._TransactionsServiceProxy.getStartingBalance(
-                this.instanceType as InstanceType, this.instanceId,
+                this.instanceType as InstanceType,
+                this.instanceId,
                 DateHelper.removeTimezoneOffset(this.dateFilter.items.from.value, false, 'from'),
                 dateTo ? DateHelper.removeTimezoneOffset(dateTo, false, 'to') : null,
                 this.cfoPreferencesService.selectedCurrencyId,
