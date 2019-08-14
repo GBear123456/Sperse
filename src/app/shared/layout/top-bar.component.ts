@@ -120,7 +120,7 @@ export class TopBarComponent {
         }
     }
 
-    private checkMenuItemPermission(item): boolean {
+    private checkMenuItemPermission(item: PanelMenuItem): boolean {
         //!!VP Should be considered on module configuration level
         if (this.config['name'] == 'CRM') {
             if (!this._appService.isHostTenant) {
@@ -140,7 +140,7 @@ export class TopBarComponent {
         });
     }
 
-    showMenuItem(item): boolean {
+    showMenuItem(item: PanelMenuItem): boolean {
         return (!item.host || (abp.session.multiTenancySide == <any>abp.multiTenancy.sides[item.host.toUpperCase()])) && this.checkMenuItemPermission(item);
     }
 }

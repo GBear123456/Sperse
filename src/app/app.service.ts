@@ -26,6 +26,7 @@ import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { FeatureCheckerService } from '@abp/features/feature-checker.service';
 import { NotifyService } from '@abp/notify/notify.service';
 import { AppPermissions } from '@shared/AppPermissions';
+import { AppFeatures } from '@shared/AppFeatures';
 
 declare let require: any;
 
@@ -367,8 +368,8 @@ export class AppService extends AppServiceBase {
     }
 
     get isCfoLinkOrVerifyEnabled() {
-        return this.feature.isEnabled('CFO.Partner')
-               && !this.feature.isEnabled('PFM')
+        return this.feature.isEnabled(AppFeatures.CFOPartner)
+               && !this.feature.isEnabled(AppFeatures.PFM)
                && (
                    this.permission.isGranted(AppPermissions.CFOMembersAdministrationAllMemberInstancesAdmin)
                    || this.canSendVerificationRequest
@@ -397,7 +398,7 @@ export class AppService extends AppServiceBase {
         this.toolbarSubject.next();
     }
 
-    isFeatureEnable(featureName: string): boolean {
+    isFeatureEnable(featureName: AppFeatures): boolean {
         return this.isHostTenant || !featureName || this.feature.isEnabled(featureName);
     }
 }

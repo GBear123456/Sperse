@@ -1,5 +1,6 @@
 ﻿import { Injectable } from '@angular/core';
 import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
+import { AppPermissions } from '@shared/AppPermissions';
 
 @Injectable()
 export class AppPermissionService {
@@ -7,7 +8,7 @@ export class AppPermissionService {
         private _permissionChecker: PermissionCheckerService
     ) {}
 
-    isGranted(permission: string): boolean {
+    isGranted(permission: AppPermissions): boolean {
         return !permission || permission.split('|').some((item) => {
             return item.split('&').every((key) => this._permissionChecker.isGranted(key));
         });

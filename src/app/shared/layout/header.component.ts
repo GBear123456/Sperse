@@ -20,6 +20,7 @@ import { UserManagementService } from '@shared/common/layout/user-management-lis
 import { UserDropdownMenuItemType } from '@root/shared/common/layout/user-management-list/user-dropdown-menu/user-dropdown-menu-item-type';
 import { UserDropdownMenuItemModel } from '@root/shared/common/layout/user-management-list/user-dropdown-menu/user-dropdown-menu-item.model';
 import { LayoutService } from '@app/shared/layout/layout.service';
+import { AppFeatures } from '@shared/AppFeatures';
 
 @Component({
     templateUrl: './header.component.html',
@@ -159,7 +160,7 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
 
 
     get chatEnabled(): boolean {
-        return (!this._abpSessionService.tenantId || this.feature.isEnabled('App.ChatFeature'));
+        return (!this._abpSessionService.tenantId || this.feature.isEnabled(AppFeatures.AppChatFeature));
     }
 
 }

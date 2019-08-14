@@ -29,6 +29,7 @@ import { Observable } from '@node_modules/rxjs';
 import { FeatureCheckerService } from '@abp/features/feature-checker.service';
 import { AbpSessionService } from '@abp/session/abp-session.service';
 import { environment } from 'environments/environment';
+import { AppFeatures } from '@shared/AppFeatures';
 
 @Injectable()
 export class UserManagementService {
@@ -182,6 +183,6 @@ export class UserManagementService {
     }
 
     get notificationEnabled(): boolean {
-        return (!this.abpSessionService.tenantId || this.feature.isEnabled('Notification'));
+        return (!this.abpSessionService.tenantId || this.feature.isEnabled(AppFeatures.Notification));
     }
 }

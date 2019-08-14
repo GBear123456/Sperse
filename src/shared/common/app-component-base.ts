@@ -28,6 +28,7 @@ import { AppHttpInterceptor } from '@shared/http/appHttpInterceptor';
 import { CacheHelper } from '@shared/common/cache-helper/cache-helper';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
 import { ProfileService } from '@shared/common/profile-service/profile.service';
+import { AppPermissions } from '@shared/AppPermissions';
 
 export abstract class AppComponentBase implements OnDestroy {
     @HostBinding('class.fullscreen') public isFullscreenMode = false;
@@ -147,22 +148,8 @@ export abstract class AppComponentBase implements OnDestroy {
         return this.localizationService.ls(sourcename, key, ...args);
     }
 
-    isGranted(permissionName: string): boolean {
+    isGranted(permissionName: AppPermissions): boolean {
         return this.permission.isGranted(permissionName);
-    }
-
-    isGrantedAny(...permissions: string[]): boolean {
-        if (!permissions) {
-            return false;
-        }
-
-        for (const permission of permissions) {
-            if (this.isGranted(permission)) {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     s(key: string): string {

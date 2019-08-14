@@ -122,6 +122,7 @@ import { BankAccountStatus } from '@shared/cfo/bank-accounts/helpers/bank-accoun
 import { CashflowTypes } from '@app/cfo/cashflow/enums/cashflow-types.enum';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 import { CalendarValuesModel } from '@shared/common/widgets/calendar/calendar-values.model';
+import { AppFeatures } from '@shared/AppFeatures';
 
 /** Constants */
 const StartedBalance    = CashflowTypes.StartedBalance,
@@ -417,7 +418,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 options.attributes['droppable'] = 'false';
                 if (!this.cellIsHistorical(cell)) {
                     const cellDateInterval = this.cashflowService.formattingDate(cell.columnPath);
-                    const futureForecastsYearsAmount = parseInt(this.feature.getValue('CFO.FutureForecastsYearCount'));
+                    const futureForecastsYearsAmount = parseInt(this.feature.getValue(AppFeatures.CFOFutureForecastsYearCount));
                     if (!this.cashflowService.cellIsAllowedForAddingForecast(cellDateInterval, futureForecastsYearsAmount)) {
                         options.classes.push('outOfAllowedForecastsInterval');
                     }
@@ -2453,7 +2454,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
     highlightForecastsTargetCells($targetCell, $availableRows) {
         /** Exclude cells that are not in allowed forecasts amount interval */
-        const allowedForecastsYearAmount = parseInt(this.feature.getValue('CFO.FutureForecastsYearCount'));
+        const allowedForecastsYearAmount = parseInt(this.feature.getValue(AppFeatures.CFOFutureForecastsYearCount));
 
         /** Exclude next current total row from droppable */
         let closestYearColumnTotalSelector = !$targetCell.hasClass('dx-total')
@@ -2486,7 +2487,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 const targetCellObj = this.getCellObjectFromCellElement(hoveredCell);
                 const targetInterval = this.cashflowService.formattingDate(targetCellObj.cell.columnPath);
                 const currentDate = this.cashflowService.getUtcCurrentDate();
-                const forecastsYearCount = parseInt(this.feature.getValue('CFO.FutureForecastsYearCount'));
+                const forecastsYearCount = parseInt(this.feature.getValue(AppFeatures.CFOFutureForecastsYearCount));
                 if (targetInterval.endDate.isBefore(currentDate)) {
                     this.notify.error(this.l('SelectFutureDate'));
                 } else if (!this.cashflowService.cellIsAllowedForAddingForecast(targetInterval, forecastsYearCount)) {
@@ -2823,7 +2824,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             date = currentDate;
         } else {
             /** If date is after allowed last date for forecasts year feature - get this last date */
-            const forecastsYearCount = parseInt(this.feature.getValue('CFO.FutureForecastsYearCount'));
+            const forecastsYearCount = parseInt(this.feature.getValue(AppFeatures.CFOFutureForecastsYearCount));
             if (forecastsYearCount) {
                 const allowedForecastsInterval = this.cashflowService.getAllowedForecastsInterval(forecastsYearCount);
                 if (date.isAfter(allowedForecastsInterval.endDate)) {
@@ -3446,7 +3447,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
     cellCanBeTargetOfCopy(cellObj): boolean {
         const cellDateInterval = this.cashflowService.formattingDate(cellObj.cell.columnPath);
-        const futureForecastsYearsAmount = parseInt(this.feature.getValue('CFO.FutureForecastsYearCount'));
+        const futureForecastsYearsAmount = parseInt(this.feature.getValue(AppFeatures.CFOFutureForecastsYearCount));
         return (cellObj.cell.rowPath[0] === PI || cellObj.cell.rowPath[0] === PE || cellObj.cell.rowPath[0] === PCTT)
             && !this.cashflowService.isCashflowTypeRowTotal(cellObj.cell, cellObj.area)
             && !this.cashflowService.isAccountingRowTotal(cellObj.cell, cellObj.area)
@@ -3484,7 +3485,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     this.allowChangingForecast
                 ) {
                     const cellDateInterval = this.cashflowService.formattingDate(cellObj.cell.columnPath);
-                    const futureForecastsYearsAmount = parseInt(this.feature.getValue('CFO.FutureForecastsYearCount'));
+                    const futureForecastsYearsAmount = parseInt(this.feature.getValue(AppFeatures.CFOFutureForecastsYearCount));
                     if (futureForecastsYearsAmount && !this.cashflowService.cellIsAllowedForAddingForecast(cellDateInterval, futureForecastsYearsAmount)) {
                         this.notify.error(this.l('ForecastIsProjectedTooFarAhead'));
                     } else {

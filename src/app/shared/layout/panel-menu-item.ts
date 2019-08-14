@@ -1,22 +1,26 @@
+import { AppFeatures } from '@shared/AppFeatures';
+import { AppPermissions } from '@shared/AppPermissions';
+
 export class PanelMenuItem {
-    text: string = '';
-    permissionName: string = '';
-    featureName: string = '';
-    icon: string = '';
-    route: string = '';
+    text = '';
+    permissionName: AppPermissions = null;
+    featureName: AppFeatures = null;
+    icon = '';
+    route = '';
     alterRoutes: string[] = [];
-    visible: boolean = true;
-    disabled: boolean = false;
+    visible = true;
+    disabled = false;
     items: PanelMenuItem[];
     host: string;
 
-    constructor(text: string, 
-        permissionName: string, 
-        icon: string, 
-        route: string, 
-        featureName: string, 
-        alterRoutes?: string[], 
-        items?: PanelMenuItem[], 
+    constructor(
+        text: string,
+        permissionName: AppPermissions,
+        icon: string,
+        route: string,
+        featureName: AppFeatures,
+        alterRoutes?: string[],
+        items?: PanelMenuItem[],
         host?: string
     ) {
         this.text = text;
@@ -27,7 +31,7 @@ export class PanelMenuItem {
         this.disabled = !route;
         this.visible = Boolean(text);
         this.host = host;
-        
+
         if (items === undefined) {
             this.items = [];
         } else {
@@ -38,6 +42,6 @@ export class PanelMenuItem {
             this.alterRoutes = [];
         } else {
             this.alterRoutes = alterRoutes;
-        }        
+        }
     }
 }

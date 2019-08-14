@@ -38,6 +38,7 @@ import {
 import { FaviconService } from '@shared/common/favicon-service/favicon.service';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { AppPermissions } from '@shared/AppPermissions';
+import { AppFeatures } from '@shared/AppFeatures';
 
 @Component({
     templateUrl: './tenant-settings.component.html',
@@ -71,9 +72,9 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
     achWorksSettings: ACHWorksSettings = new ACHWorksSettings();
     recurlySettings: RecurlyPaymentSettings = new RecurlyPaymentSettings();
     isTenantHosts: boolean = this._permission.isGranted(AppPermissions.AdministrationTenantHosts);
-    isAdminCustomizations: boolean = abp.features.isEnabled('Admin.Customizations');
-    isCreditReportFeatureEnabled: boolean = abp.features.isEnabled('PFM.CreditReport');
-    isPFMApplicationsFeatureEnabled: boolean = abp.features.isEnabled('PFM') && abp.features.isEnabled('PFM.Applications');
+    isAdminCustomizations: boolean = abp.features.isEnabled(AppFeatures.AdminCustomizations);
+    isCreditReportFeatureEnabled: boolean = abp.features.isEnabled(AppFeatures.PFMCreditReport);
+    isPFMApplicationsFeatureEnabled: boolean = abp.features.isEnabled(AppFeatures.PFM) && abp.features.isEnabled(AppFeatures.PFMApplications);
     epcvipSettings: EPCVIPOfferProviderSettings = new EPCVIPOfferProviderSettings();
 
     epcvipEmailSettings: EPCVIPMailerSettingsEditDto = new EPCVIPMailerSettingsEditDto();

@@ -3,6 +3,7 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { FiltersService } from '@shared/filters/filters.service';
 import * as _ from 'underscore';
 import startCase from 'lodash/startCase';
+import { AppPermissions } from '@shared/AppPermissions';
 
 @Component({
   selector: 'app-static-list',
@@ -30,7 +31,7 @@ export class StaticListComponent extends AppComponentBase {
     @Input() customSearchEnabled = false;
     @Input() pageLoadMode = 'nextButton';
     @Input() searchExprType = 'name';
-    @Input() bulkUpdatePermissionKey = '';
+    @Input() bulkUpdatePermissionKey: AppPermissions = null;
     @Input('list')
     set list(value: any[]) {
         this._list = value.map((item) => {

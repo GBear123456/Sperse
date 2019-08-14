@@ -25,6 +25,7 @@ import { finalize, map as _map, publishReplay, refCount } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { RegisterConfirmComponent } from '@shared/common/dialogs/register-confirm/register-confirm.component';
+import { AppFeatures } from '@shared/AppFeatures';
 
 declare const FB: any; // Facebook API
 declare const gapi: any; // Facebook API
@@ -214,7 +215,7 @@ export class LoginService {
                 redirectUrl
             );
 
-        } else if (authenticateResult.userNotFound && abp.features.isEnabled('PFM.Applications')) {
+        } else if (authenticateResult.userNotFound && abp.features.isEnabled(AppFeatures.PFMApplications)) {
             // show confirmation msg about creating user
             this.dialog.open(RegisterConfirmComponent, {
                 width: '600px',

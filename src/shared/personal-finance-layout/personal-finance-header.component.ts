@@ -9,6 +9,7 @@ import { PersonalFinanceLayoutService } from './personal-finance-layout.service'
 import { AbpSessionService } from '@abp/session/abp-session.service';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { environment } from 'environments/environment';
+import { AppFeatures } from '@shared/AppFeatures';
 
 @Directive({
     selector: '[ad-header-host]'
@@ -73,7 +74,7 @@ export class PersonalFinanceHeaderComponent extends AppComponentBase {
                 this.adHeaderHost.viewContainerRef.createComponent(component);
             });
         });
-        if (this.feature.isEnabled('CFO.Partner')) {
+        if (this.feature.isEnabled(AppFeatures.CFOPartner)) {
             this.memberAreaLinks.unshift(
                 {
                     name: 'accountsLink',
@@ -83,12 +84,12 @@ export class PersonalFinanceHeaderComponent extends AppComponentBase {
                 });
         }
 
-        this.hasPfmAppFeature = this.feature.isEnabled('PFM.Applications');
+        this.hasPfmAppFeature = this.feature.isEnabled(AppFeatures.PFMApplications);
         this.showDefaultHeader = this.isMemberArea() || this.hasPfmAppFeature;
     }
 
     get notificationEnabled(): boolean {
-        return (!this._abpSessionService.tenantId || this.feature.isEnabled('Notification'));
+        return (!this._abpSessionService.tenantId || this.feature.isEnabled(AppFeatures.Notification));
     }
 
     private getAppAreaLinks() {
@@ -137,7 +138,7 @@ export class PersonalFinanceHeaderComponent extends AppComponentBase {
             },
             {
                 name: 'My Finances',
-                hidden: !this.feature.isEnabled('CFO.Partner'),
+                hidden: !this.feature.isEnabled(AppFeatures.CFOPartner),
                 sublinks: [
                     {
                         name: 'Accounts',

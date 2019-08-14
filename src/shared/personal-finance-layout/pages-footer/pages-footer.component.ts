@@ -7,6 +7,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { ConditionsModalComponent } from '@shared/common/conditions-modal/conditions-modal.component';
 import { environment } from 'environments/environment';
+import { AppFeatures } from '@shared/AppFeatures';
 
 @Component({
     selector: 'app-pages-footer',
@@ -81,7 +82,7 @@ export class PagesFooterComponent extends AppComponentBase {
         super(injector);
 
         this.loggedUserId = this.appSession.userId;
-        this.hasPfmAppFeature = this.feature.isEnabled('PFM.Applications');
+        this.hasPfmAppFeature = this.feature.isEnabled(AppFeatures.PFMApplications);
         this.footerMenuItems = this.hasPfmAppFeature ? this.appMenuItems : this.defaultMenuItems;
     }
 

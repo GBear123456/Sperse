@@ -3,6 +3,7 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { ConditionsType } from '@shared/AppEnums';
 import { MatDialog } from '@angular/material/dialog';
 import { ConditionsModalComponent } from '@shared/common/conditions-modal/conditions-modal.component';
+import { AppFeatures } from '@shared/AppFeatures';
 
 @Component({
     templateUrl: 'personal-finance-footer.component.html',
@@ -21,7 +22,7 @@ export class PersonalFinanceFooterComponent extends AppComponentBase {
     ) {
         super(injector);
 
-        this.hasPfmAppFeature = this.feature.isEnabled('PFM.Applications');
+        this.hasPfmAppFeature = this.feature.isEnabled(AppFeatures.PFMApplications);
         this.showDefaultFooter = this.isMemberArea() && !this.hasPfmAppFeature;
     }
 

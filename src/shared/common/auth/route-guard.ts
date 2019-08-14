@@ -15,6 +15,7 @@ import { LayoutType } from '@shared/service-proxies/service-proxies';
 import { FeatureCheckerService } from '@abp/features/feature-checker.service';
 import { CacheService } from 'ng2-cache-service';
 import { AppPermissions } from '@shared/AppPermissions';
+import { AppFeatures } from '@shared/AppFeatures';
 
 @Injectable()
 export class RouteGuard implements CanActivate, CanActivateChild {
@@ -83,21 +84,21 @@ export class RouteGuard implements CanActivate, CanActivateChild {
                 return 'app/' + lastModuleName;
         }
 
-        if ((!preferedModule || preferedModule == 'CRM') && this._feature.isEnabled('CRM') && this._permissionChecker.isGranted(AppPermissions.CRM))
+        if ((!preferedModule || preferedModule == 'CRM') && this._feature.isEnabled(AppFeatures.CRM) && this._permissionChecker.isGranted(AppPermissions.CRM))
             return 'app/crm';
 
-        if ((!preferedModule || preferedModule == 'CFO') && this._feature.isEnabled('CFO') && this._permissionChecker.isGranted(AppPermissions.CFO)) {
+        if ((!preferedModule || preferedModule == 'CFO') && this._feature.isEnabled(AppFeatures.CFO) && this._permissionChecker.isGranted(AppPermissions.CFO)) {
             if (this._permissionChecker.isGranted(AppPermissions.CFOMainInstanceAccess))
                 return '/app/cfo/main/';
 
-            if (this._feature.isEnabled('CFO.Partner') && this._permissionChecker.isGranted(AppPermissions.CFOMemberAccess))
+            if (this._feature.isEnabled(AppFeatures.CFOPartner) && this._permissionChecker.isGranted(AppPermissions.CFOMemberAccess))
                 return '/app/cfo-portal/';
         }
 
-        if ((!preferedModule || preferedModule == 'PFM') && this._feature.isEnabled('PFM') && this._permissionChecker.isGranted(AppPermissions.PFMApplicationsManageOffers))
+        if ((!preferedModule || preferedModule == 'PFM') && this._feature.isEnabled(AppFeatures.PFM) && this._permissionChecker.isGranted(AppPermissions.PFMApplicationsManageOffers))
             return '/app/pfm/offers';
 
-        if (!preferedModule && this._feature.isEnabled('Admin')) {
+        if (!preferedModule && this._feature.isEnabled(AppFeatures.Admin)) {
             if (this._permissionChecker.isGranted(AppPermissions.Tenants))
                 return '/app/admin/tenants';
 
@@ -109,10 +110,10 @@ export class RouteGuard implements CanActivate, CanActivateChild {
         }
 
         if (!preferedModule) {
-            if (this._feature.isEnabled('PFM.Applications'))
+            if (this._feature.isEnabled(AppFeatures.PFMApplications))
             return '/personal-finance';
 
-            if (this._feature.isEnabled('PFM.CreditReport')) {
+            if (this._feature.isEnabled(AppFeatures.PFMCreditReport)) {
                 return '/personal-finance/credit-report';
             }
         }

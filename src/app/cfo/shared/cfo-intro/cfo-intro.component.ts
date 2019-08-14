@@ -14,6 +14,7 @@ import { QuestionnaireComponent } from '@shared/shared-intro-steps/questionnaire
 import { ImportUsersStepComponent } from '@shared/shared-intro-steps/import-users-step/import-users-step.component';
 import { AppService } from '@app/app.service';
 import { AppPermissions } from '@shared/AppPermissions';
+import { AppFeatures } from '@shared/AppFeatures';
 
 @Component({
     selector: 'app-cfo-intro',
@@ -43,7 +44,7 @@ export class CfoIntroComponent extends CFOComponentBase implements OnInit {
         this.moduleName = AppConsts.modules.CFOModule;
         this.dialogRef = <any>injector.get(MatDialogRef);
         this.showImportUsersStep = this.instanceType == InstanceType.Main &&
-            (appService.isHostTenant || this.feature.isEnabled('Admin'))
+            (appService.isHostTenant || this.feature.isEnabled(AppFeatures.Admin))
             && this.permission.isGranted(AppPermissions.AdministrationUsers)
             && this.permission.isGranted(AppPermissions.AdministrationUsersCreate)
             && this.permission.isGranted(AppPermissions.AdministrationRoles);

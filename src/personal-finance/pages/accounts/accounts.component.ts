@@ -24,6 +24,7 @@ import { AccountConnectors, SyncTypeIds } from '@shared/AppEnums';
 import { FeatureCheckerService } from '@abp/features/feature-checker.service';
 import { PfmIntroComponent } from '@root/personal-finance/shared/pfm-intro/pfm-intro.component';
 import { IdleCountdownDialog } from './idle-countdown-dialog/idle-countdown-dialog.component';
+import { AppFeatures } from '@shared/AppFeatures';
 
 declare const Quovo: any;
 
@@ -58,6 +59,7 @@ export class AccountsComponent extends AppComponentBase implements OnInit, OnDes
     lastQuouvoActivity: Date;
     quovoActivityCheck;
     private readonly MAX_IDLE_TIME_MILISECONDS = 13 * 60 * 1000; // 13 min
+    features = AppFeatures;
 
     constructor(
         injector: Injector,
