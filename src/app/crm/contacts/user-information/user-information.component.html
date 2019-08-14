@@ -4,7 +4,7 @@
             width="300px"
             placeholder="Email Address"
             name="emailAddress"
-            [disabled]="!isEditAllowed"
+            [disabled]="!isInviteAllowed"
             [showClearButton]="true"
             [acceptCustomValue]="true"
             [dataSource]="emails"
@@ -36,7 +36,7 @@
             width="300px"
             placeholder="Phone Number"
             name="phoneNumber"
-            [disabled]="!isEditAllowed"
+            [disabled]="!isInviteAllowed"
             [showClearButton]="true"
             [acceptCustomValue]="true"
             [dataSource]="phones"
@@ -66,7 +66,7 @@
         </dx-select-box>
         <ul class="items-list">
             <li *ngFor="let role of roles">
-                <dx-check-box [disabled]="!isEditAllowed" text="{{role.displayName}}" (onValueChanged)="inviteRoleUpdate($event, role)"></dx-check-box>
+                <dx-check-box [disabled]="!isInviteAllowed" text="{{role.displayName}}" (onValueChanged)="inviteRoleUpdate($event, role)"></dx-check-box>
             </li>
         </ul>
         <button class="button-layout button-primary" (click)="inviteUser($event)">{{l('Invite')}}</button>

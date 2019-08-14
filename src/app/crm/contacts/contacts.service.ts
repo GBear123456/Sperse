@@ -66,9 +66,7 @@ export class ContactsService {
     }
 
     checkCGPermission(contactGroup, permission = 'Manage') {
-        return contactGroup == ContactGroup.UserProfile &&
-            this._permission.isGranted(AppPermissions.PagesAdministrationUsersEdit) ||
-            this._permission.isGranted(this.getCGPermissionKey(contactGroup, permission));
+        return this._permission.isGranted(this.getCGPermissionKey(contactGroup, permission));
     }
 
     verificationSubscribe(callback, ident?: string) {
