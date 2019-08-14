@@ -44,9 +44,9 @@ export class CrmIntroComponent extends AppComponentBase implements OnInit {
         this.dialogRef = <any>injector.get(MatDialogRef);
 
         this.showImportUsersStep = (appService.isHostTenant || this.feature.isEnabled('Admin'))
-            && this.permission.isGranted(AppPermissions.PagesAdministrationUsers)
-            && this.permission.isGranted(AppPermissions.PagesAdministrationUsersCreate)
-            && this.permission.isGranted(AppPermissions.PagesAdministrationRoles);
+            && this.permission.isGranted(AppPermissions.AdministrationUsers)
+            && this.permission.isGranted(AppPermissions.AdministrationUsersCreate)
+            && this.permission.isGranted(AppPermissions.AdministrationRoles);
     }
 
     ngOnInit() {

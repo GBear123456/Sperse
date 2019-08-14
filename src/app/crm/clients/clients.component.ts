@@ -117,12 +117,13 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         },
         {
             text: this.l('LoginAsThisUser'),
-            visible: this.permission.isGranted(AppPermissions.PagesAdministrationUsersImpersonation),
+            visible: this.permission.isGranted(AppPermissions.AdministrationUsersImpersonation),
             action: () => {
                 this._impersonationService.impersonate(this.actionEvent.data.UserId, this.appSession.tenantId);
             }
         }
     ];
+    permissions = AppPermissions;
 
     constructor(
         injector: Injector,
@@ -721,7 +722,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
 
         this.actionEvent = null;
         this.actionMenuItems[this.MENU_LOGIN_INDEX].visible = Boolean(event.data.UserId)
-            && this.permission.isGranted(AppPermissions.PagesAdministrationUsersImpersonation);
+            && this.permission.isGranted(AppPermissions.AdministrationUsersImpersonation);
         setTimeout(() => this.actionEvent = event);
     }
 

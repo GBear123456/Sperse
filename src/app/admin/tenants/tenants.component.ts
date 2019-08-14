@@ -60,7 +60,7 @@ export class TenantsComponent extends AppComponentBase implements OnDestroy {
         toggleToolbar: this.toggleToolbar.bind(this),
         buttons: [
             {
-                enabled: this.isGranted(AppPermissions.PagesAdministration),
+                enabled: this.isGranted(AppPermissions.Administration),
                 action: this.createTenant.bind(this),
                 lable: this.l('CreateNewTenant')
             }
@@ -117,21 +117,21 @@ export class TenantsComponent extends AppComponentBase implements OnDestroy {
         this.actionMenuItems = [
             {
                 text: this.l('LoginAsThisTenant'),
-                visible: this.permission.isGranted(AppPermissions.PagesTenantsImpersonation),
+                visible: this.permission.isGranted(AppPermissions.TenantsImpersonation),
                 action: () => {
                     this.showUserImpersonateLookUpModal(this.actionRecord);
                 }
             },
             {
                 text: this.l('Edit'),
-                visible: this.permission.isGranted(AppPermissions.PagesTenantsEdit),
+                visible: this.permission.isGranted(AppPermissions.TenantsEdit),
                 action: () => {
                     this.openEditDialog(this.actionRecord.id);
                 }
             },
             {
                 text: this.l('Features'),
-                visible: this.permission.isGranted(AppPermissions.PagesTenantsChangeFeatures),
+                visible: this.permission.isGranted(AppPermissions.TenantsChangeFeatures),
                 action: () => {
                     this.dialog.open(TenantFeaturesModalComponent, {
                         panelClass: ['slider'],
@@ -143,7 +143,7 @@ export class TenantsComponent extends AppComponentBase implements OnDestroy {
             },
             {
                 text: this.l('Delete'),
-                visible: this.permission.isGranted(AppPermissions.PagesTenantsDelete),
+                visible: this.permission.isGranted(AppPermissions.TenantsDelete),
                 action: () => {
                     this.deleteTenant(this.actionRecord);
                 }
@@ -366,7 +366,7 @@ export class TenantsComponent extends AppComponentBase implements OnDestroy {
     }
 
     editTenant(event) {
-        if (this.permission.isGranted(AppPermissions.PagesAdministrationRolesEdit)) {
+        if (this.permission.isGranted(AppPermissions.AdministrationRolesEdit)) {
             let roleId = event.data && event.data.id;
             if (roleId) {
                 event.component.cancelEditData();

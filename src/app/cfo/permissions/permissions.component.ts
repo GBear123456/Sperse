@@ -106,7 +106,7 @@ export class PermissionsComponent extends CFOComponentBase implements OnInit, Af
         const instanceType = <any>this.instanceType;
         const usersObservable = this.userServiceProxy.getUsers(
             undefined,
-            [ AppPermissions.PagesCFOMainInstanceAccess ],
+            [ AppPermissions.CFOMainInstanceAccess ],
             undefined,
             false,
             undefined,

@@ -22,7 +22,7 @@ import { AppPermissions } from '../../../../shared/AppPermissions';
 })
 export class AdvancedListComponent extends AppComponentBase implements OnInit {
     @Input() name: string;
-    @Input() permissionName = AppPermissions.PagesCRMCustomersManageListsAndTags;
+    @Input() permissionName = AppPermissions.CRMCustomersManageListsAndTags;
     @Input() bulkUpdateConfirmationKey: string;
     @Input() bulkRemoveConfirmationKey: string;
     @Input() dataSource: any;
@@ -328,6 +328,6 @@ export class AdvancedListComponent extends AppComponentBase implements OnInit {
 
     checkPermissions() {
         return this.permission.isGranted(this.permissionName) &&
-            (!this.bulkUpdateMode || this.permission.isGranted(AppPermissions.PagesCRMBulkUpdates));
+            (!this.bulkUpdateMode || this.permission.isGranted(AppPermissions.CRMBulkUpdates));
     }
 }

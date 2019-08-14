@@ -96,7 +96,7 @@ export class OrganizationUnitsTreeComponent extends AppComponentBase implements 
             this.setOrganizationUnitsData(userData.allOrganizationUnits, userData.memberedOrganizationUnits);
         }, this.ident);
 
-        this.isEditAllowed = this.isGranted(AppPermissions.PagesAdministrationOrganizationUnitsManageMembers);
+        this.isEditAllowed = this.isGranted(AppPermissions.AdministrationOrganizationUnitsManageMembers);
     }
 
     setOrganizationUnitsData(orgUnits: OrganizationUnitDto[], memberedOrganizationUnits: string[]) {

@@ -5,18 +5,17 @@ var XMLHttpRequest = require('xmlhttprequest').XMLHttpRequest;
 var environment = require('../src/assets/appconfig' + (environmentName ? '.' + environmentName : '') + '.json');
 var xhr = new XMLHttpRequest();
 /** Load permissions list */
-xhr.open('GET', environment.remoteServiceBaseUrl + apiRelativeLink, false);
+xhr.open('GET', environment.remoteServiceBaseUrl + apiRelativeLink + '?includeIrrelevant=true', false);
 xhr.send();
 if (xhr.status !== 200) {
     console.log('error', xhr.status + xhr.statusText);
 } else {
     var data = JSON.parse(xhr.responseText);
-    var tenantSpecificPermissions = [
-        { name: 'Pages.Administration.Tenant.Settings' },
-        { name: 'Pages.Administration.Tenant.SubscriptionManagement' }
-    ];
     var hostPermissions = data.result.items;
-    var allPermissions = tenantSpecificPermissions.concat(hostPermissions).map(item => '    ' + item.name.split('.').join('') + ' = ' + '\'' + item.name + '\'').join(',\n');
+    var allPermissions = hostPermissions
+        .filter(item => item.name !== 'Pages')
+        .map(item => '    ' + item.name.split('.').splice(1).join('') + ' = ' + '\'' + item.name + '\'')
+        .join(',\n');
     var permissionsFileName = 'src/shared/AppPermissions.ts';
     /** Create permissions enum and fill it with permissions from response */
     fs.writeFile(permissionsFileName, 'export enum AppPermissions {\n', function() {

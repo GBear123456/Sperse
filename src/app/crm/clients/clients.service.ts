@@ -27,7 +27,7 @@ export class ClientService {
     }
 
     updateContactStatuses(contactIds: number[], groupId: string, statusId: string, callback: (() => void)) {
-        if (this.permission.isGranted(AppPermissions.PagesCRMBulkUpdates)) {
+        if (this.permission.isGranted(AppPermissions.CRMBulkUpdates)) {
             if (contactIds && contactIds.length) {
                 this.showUpdateContactStatusConfirmationDialog(contactIds, groupId, statusId, callback);
             } else {

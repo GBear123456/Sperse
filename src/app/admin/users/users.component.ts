@@ -59,7 +59,7 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
         toggleToolbar: this.toggleToolbar.bind(this),
         buttons: [
             {
-                enabled: this.isGranted(AppPermissions.PagesAdministrationUsersCreate),
+                enabled: this.isGranted(AppPermissions.AdministrationUsersCreate),
                 action: this.createUser.bind(this),
                 lable: this.l('CreateNewUser')
             }
@@ -91,28 +91,28 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
         this.actionMenuItems = [
             {
                 text: this.l('LoginAsThisUser'),
-                visible: this.permission.isGranted(AppPermissions.PagesAdministrationUsersImpersonation),
+                visible: this.permission.isGranted(AppPermissions.AdministrationUsersImpersonation),
                 action: () => {
                     this._impersonationService.impersonate(this.actionRecord.id, this.appSession.tenantId);
                 }
             },
             {
                 text: this.l('Edit'),
-                visible: this.permission.isGranted(AppPermissions.PagesAdministrationUsersEdit),
+                visible: this.permission.isGranted(AppPermissions.AdministrationUsersEdit),
                 action: () => {
                     this.openUserDetails(this.actionRecord.id);
                 }
             },
             {
                 text: this.l('Unlock'),
-                visible: this.permission.isGranted(AppPermissions.PagesAdministrationUsersChangePermissionsAndRoles),
+                visible: this.permission.isGranted(AppPermissions.AdministrationUsersChangePermissionsAndRoles),
                 action: () => {
                     this.unlockUser(this.actionRecord);
                 }
             },
             {
                 text: this.l('Delete'),
-                visible: this.permission.isGranted(AppPermissions.PagesAdministrationUsersDelete),
+                visible: this.permission.isGranted(AppPermissions.AdministrationUsersDelete),
                 action: () => {
                     this.deleteUser(this.actionRecord);
                 }
@@ -565,7 +565,7 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
     }
 
     editUser(event) {
-        if (this.permission.isGranted(AppPermissions.PagesAdministrationUsersEdit)) {
+        if (this.permission.isGranted(AppPermissions.AdministrationUsersEdit)) {
             let userId = event.data && event.data.id;
             if (userId) {
                 event.component.cancelEditData();

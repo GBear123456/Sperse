@@ -26,7 +26,7 @@ export class ContactAssignedUsersStoreEffects {
     @Effect()
     loadRequestEffect$: Observable<Action> = this.actions$.pipe(
         ofType<assignedUsersActions.LoadRequestAction>(assignedUsersActions.ActionTypes.LOAD_REQUEST),
-        filter((action) => this.permissionCheckerService.isGranted(AppPermissions.PagesAdministrationUsers) ||
+        filter((action) => this.permissionCheckerService.isGranted(AppPermissions.AdministrationUsers) ||
             this.permissionCheckerService.isGranted(ContactGroupPermission[action.payload] + '.ManageAssignments')),
         mergeMap(action => zip(of(action.payload), this.store$.pipe(select(getContactGroupAssignedUsers, { contactGroup: action.payload })))),
         exhaustMap(([payload, assignedUsers]) => {

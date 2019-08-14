@@ -34,7 +34,7 @@ export class EditionsComponent extends AppComponentBase implements OnDestroy {
         toggleToolbar: this.toggleToolbar.bind(this),
         buttons: [
             {
-                enabled: this.isGranted(AppPermissions.PagesEditionsCreate),
+                enabled: this.isGranted(AppPermissions.EditionsCreate),
                 action: this.createEdition.bind(this),
                 lable: this.l('CreateNewEdition')
             }
@@ -68,14 +68,14 @@ export class EditionsComponent extends AppComponentBase implements OnDestroy {
         this.actionMenuItems = [
             {
                 text: this.l('Edit'),
-                visible: this.permission.isGranted(AppPermissions.PagesEditionsEdit),
+                visible: this.permission.isGranted(AppPermissions.EditionsEdit),
                 action: () => {
                     this.openCreateOrEditDialog(this.actionRecord.id);
                 }
             },
             {
                 text: this.l('Delete'),
-                visible: this.permission.isGranted(AppPermissions.PagesEditionsDelete),
+                visible: this.permission.isGranted(AppPermissions.EditionsDelete),
                 action: () => {
                     this.deleteEdition(this.actionRecord);
                 }

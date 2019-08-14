@@ -255,7 +255,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
             {
                 label: contact.userId ? 'User Information' : 'Invite User',
                 hidden: !this.permission.isGranted(contact.userId ?
-                    AppPermissions.PagesAdministrationUsers : AppPermissions.PagesAdministrationUsersCreate),
+                    AppPermissions.AdministrationUsers : AppPermissions.AdministrationUsersCreate),
                 route: 'user-information'
             },
             {label: 'Documents', route: 'documents'},
@@ -268,7 +268,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
             {
                 label: 'Activity Logs',
                 route: 'activity-logs',
-                disabled: !this.permission.isGranted(AppPermissions.PagesPFMApplications)
+                disabled: !this.permission.isGranted(AppPermissions.PFMApplications)
             },
             {label: 'Referral History', route: 'referral-history', disabled: true},
             {label: 'Application Status', route: 'application-status', hidden: !!this.leadId, disabled: true},

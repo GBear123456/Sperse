@@ -19,7 +19,7 @@
         <!--[title]="l('Type')"-->
         <!--[selectedKeys]="selectedPartnerKeys"-->
         <!--[showConfirmation]="true"-->
-        <!-- [bulkUpdatePermissionKey]="AppPermissions.PagesCRMBulkUpdates" -->
+        <!-- [bulkUpdatePermissionKey]="AppPermissions.CRMBulkUpdates" -->
         <!--[updateConfirmationTitle]="l('PartnerTypeUpdateConfirmationTitle')"-->
         <!--[updateConfirmationMessage]="l('PartnersUpdateTypeWarningMessage')"-->
         <!--[hideButtons]="true"-->
@@ -35,19 +35,19 @@
 
     <!--<app-advanced-list-->
         <!--[data]="partnerTypes"-->
-        <!--[permissionName]="AppPermissions.PagesCRMCustomersManageListsAndTags"-->
+        <!--[permissionName]="AppPermissions.CRMCustomersManageListsAndTags"-->
         <!--[bulkRemoveConfirmationKey]="'RemoveFromTypeBulkUpdateConfirmation'"-->
         <!--[bulkUpdateConfirmationKey]="'AddToTypeUpdateConfirmation'"-->
     <!--&gt;</app-advanced-list>-->
     <!--<app-advanced-list-->
         <!--[data]="tags"-->
-        <!--[permissionName]="AppPermissions.PagesCRMCustomersManageListsAndTags"-->
+        <!--[permissionName]="AppPermissions.CRMCustomersManageListsAndTags"-->
         <!--[bulkRemoveConfirmationKey]="'UntagBulkUpdateConfirmation'"-->
         <!--[bulkUpdateConfirmationKey]="'TagBulkUpdateConfirmation'"-->
     <!--&gt;</app-advanced-list>-->
     <!--<app-advanced-list-->
         <!--[data]="lists"-->
-        <!--[permissionName]="AppPermissions.PagesCRMCustomersManageListsAndTags"-->
+        <!--[permissionName]="AppPermissions.CRMCustomersManageListsAndTags"-->
         <!--[bulkRemoveConfirmationKey]="'AddToListsBulkUpdateConfirmation'"-->
         <!--[bulkUpdateConfirmationKey]="'RemoveFromBulkUpdateConfirmation'"-->
     <!--&gt;</app-advanced-list>-->
@@ -56,7 +56,7 @@
                               [bulkUpdateMode]="true"
                               [filterModel]="filterModelAssignment"
                               [proxyService]="contactProxy"
-                              [permissionKey]="'Pages.CRM.Partners.ManageAssignments'"
+                              [permissionKey]="permissions.CRMPartnersManageAssignments"
                               [assignedUsersSelector]="getAssignedUsersSelector()">
     </crm-user-assignment-list>
     <crm-rating [selectedKeys]="selectedPartnerKeys" [bulkUpdateMode]="true" [filterModel]="filterModelRating"></crm-rating>

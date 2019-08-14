@@ -71,7 +71,7 @@ export class OrganizationTreeComponent extends AppComponentBase implements After
                 'sort'
             ];
 
-            if (this.isGranted(AppPermissions.PagesAdministrationOrganizationUnitsManageOrganizationTree)) {
+            if (this.isGranted(AppPermissions.AdministrationOrganizationUnitsManageOrganizationTree)) {
                 jsTreePlugins.push('dnd');
             }
 
@@ -84,7 +84,7 @@ export class OrganizationTreeComponent extends AppComponentBase implements After
                     }
                 })
                 .on('move_node.jstree', (e, data) => {
-                    if (!this.isGranted(AppPermissions.PagesAdministrationOrganizationUnitsManageOrganizationTree)) {
+                    if (!this.isGranted(AppPermissions.AdministrationOrganizationUnitsManageOrganizationTree)) {
                         this._$tree.jstree('refresh'); //rollback
                         return;
                     }
@@ -187,7 +187,7 @@ export class OrganizationTreeComponent extends AppComponentBase implements After
     }
 
     private contextMenu(node: any, self: OrganizationTreeComponent) {
-        const canManageOrganizationTree = self.isGranted(AppPermissions.PagesAdministrationOrganizationUnitsManageOrganizationTree);
+        const canManageOrganizationTree = self.isGranted(AppPermissions.AdministrationOrganizationUnitsManageOrganizationTree);
         return {
             editUnit: {
                 label: self.l('Edit'),

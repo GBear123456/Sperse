@@ -17,14 +17,14 @@ import { AppPermissions } from '@shared/AppPermissions';
             {
                 path: '',
                 children: [
-                    { path: 'dashboard', component: DashboardComponent, data: { permission: AppPermissions.PagesCRM, reuse: true } },
-                    { path: 'clients', component: ClientsComponent, data: { permission: 'Pages.CRM.Customers', reuse: true } },
-                    { path: 'partners', component: PartnersComponent, data: { permission: AppPermissions.PagesCRMPartners, reuse: true } },
-                    { path: 'leads', component: LeadsComponent, data: { permission: 'Pages.CRM.Customers', reuse: true } },
-                    { path: 'orders', component: OrdersComponent, data: { permission: 'Pages.CRM.Orders', reuse: true } },
-                    { path: 'import-leads', component: ImportLeadsComponent, data: { permission: AppPermissions.PagesCRMBulkImport, reuse: true } },
-                    { path: 'import-list', component: ImportListComponent, data: { permission: AppPermissions.PagesCRMBulkImport, reuse: true } },
-                    { path: 'activity', component: ActivityComponent, data: { permission: 'Pages.CRM.Events', reuse: true } }
+                    { path: 'dashboard', component: DashboardComponent, data: { permission: AppPermissions.CRM, reuse: true } },
+                    { path: 'clients', component: ClientsComponent, data: { permission: AppPermissions.CRMCustomers, reuse: true } },
+                    { path: 'partners', component: PartnersComponent, data: { permission: AppPermissions.CRMPartners, reuse: true } },
+                    { path: 'leads', component: LeadsComponent, data: { permission: AppPermissions.CRMCustomers, reuse: true } },
+                    { path: 'orders', component: OrdersComponent, data: { permission: AppPermissions.CRMOrders, reuse: true } },
+                    { path: 'import-leads', component: ImportLeadsComponent, data: { permission: AppPermissions.CRMBulkImport, reuse: true } },
+                    { path: 'import-list', component: ImportListComponent, data: { permission: AppPermissions.CRMBulkImport, reuse: true } },
+                    { path: 'activity', component: ActivityComponent, data: { permission: AppPermissions.CRMEvents, reuse: true } }
                 ]
             }
         ])

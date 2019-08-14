@@ -223,6 +223,6 @@ export class UserAssignmentComponent extends AppComponentBase implements OnInit 
 
     checkPermissions() {
         return this.permission.isGranted(this.permissionKey) &&
-            (!this.bulkUpdateMode || this.permission.isGranted(AppPermissions.PagesCRMBulkUpdates));
+            (!this.bulkUpdateMode || this.permission.isGranted(AppPermissions.CRMBulkUpdates));
     }
 }

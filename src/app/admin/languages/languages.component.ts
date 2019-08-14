@@ -36,7 +36,7 @@ export class LanguagesComponent extends AppComponentBase implements OnDestroy {
         toggleToolbar: this.toggleToolbar.bind(this),
         buttons: [
             {
-                enabled: this.isGranted(AppPermissions.PagesAdministrationLanguagesCreate) && this._appService.isHostTenant,
+                enabled: this.isGranted(AppPermissions.AdministrationLanguagesCreate) && this._appService.isHostTenant,
                 action: this.createNewLanguage.bind(this),
                 lable: this.l('CreateNewLanguage')
             }
@@ -77,28 +77,28 @@ export class LanguagesComponent extends AppComponentBase implements OnDestroy {
         this.actionMenuItems = [
             {
                 text: this.l('Edit'),
-                visible: this.permission.isGranted(AppPermissions.PagesAdministrationLanguagesEdit)  && this._appService.isHostTenant,
+                visible: this.permission.isGranted(AppPermissions.AdministrationLanguagesEdit)  && this._appService.isHostTenant,
                 action: () => {
                     this.openCreateOrEditLanguageModal(this.actionRecord.id);
                 }
             },
             {
                 text: this.l('ChangeTexts'),
-                visible: this.permission.isGranted(AppPermissions.PagesAdministrationLanguagesChangeTexts),
+                visible: this.permission.isGranted(AppPermissions.AdministrationLanguagesChangeTexts),
                 action: () => {
                     this.changeTexts(this.actionRecord);
                 }
             },
             {
                 text: this.l('SetAsDefaultLanguage'),
-                visible: this.permission.isGranted(AppPermissions.PagesAdministrationLanguagesChangeTexts),
+                visible: this.permission.isGranted(AppPermissions.AdministrationLanguagesChangeTexts),
                 action: () => {
                     this.setAsDefaultLanguage(this.actionRecord);
                 }
             },
             {
                 text: this.l('Delete'),
-                visible: this.permission.isGranted(AppPermissions.PagesAdministrationLanguagesDelete)  && this._appService.isHostTenant,
+                visible: this.permission.isGranted(AppPermissions.AdministrationLanguagesDelete)  && this._appService.isHostTenant,
                 action: () => {
                     this.deleteLanguage(this.actionRecord);
                 }

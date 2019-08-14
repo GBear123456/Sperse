@@ -44,8 +44,8 @@ export class PartnerTypesStoreEffects {
     @Effect()
     loadRequestEffect$: Observable<Action> = this.actions$.pipe(
         ofType<partnerTypesActions.LoadRequestAction>(partnerTypesActions.ActionTypes.LOAD_REQUEST),
-        filter(() => this.permissionCheckerService.isGranted(AppPermissions.PagesCRMPartners) ||
-                              this.permissionCheckerService.isGranted(AppPermissions.PagesAdministrationUsers)),
+        filter(() => this.permissionCheckerService.isGranted(AppPermissions.CRMPartners) ||
+                              this.permissionCheckerService.isGranted(AppPermissions.AdministrationUsers)),
         withLatestFrom(this.store$.pipe(select(getLoadedTime))),
         exhaustMap(([action, loadedTime]) => {
 

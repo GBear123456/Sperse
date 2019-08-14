@@ -35,7 +35,7 @@ export class SystemSettingsComponent implements OnInit {
     ];
 
     tenantHostsEnabled = abp.features.isEnabled('Admin.Customizations')
-        && this._permission.isGranted(AppPermissions.PagesAdministrationTenantHosts);
+        && this._permission.isGranted(AppPermissions.AdministrationTenantHosts);
 
     constructor(
         private _tenantSslCertificateService: TenantSslCertificateServiceProxy,

@@ -159,7 +159,7 @@ export class StarsListComponent extends AppComponentBase implements OnInit {
     }
 
     checkPermissions() {
-        return this.permission.isGranted(AppPermissions.PagesCRMCustomersManageRatingAndStars) &&
-            (!this.bulkUpdateMode || this.permission.isGranted(AppPermissions.PagesCRMBulkUpdates));
+        return this.permission.isGranted(AppPermissions.CRMCustomersManageRatingAndStars) &&
+            (!this.bulkUpdateMode || this.permission.isGranted(AppPermissions.CRMBulkUpdates));
     }
 }

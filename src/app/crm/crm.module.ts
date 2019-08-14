@@ -172,7 +172,7 @@ export class CrmModule {
     ) {
         if (abp.session.userId) {
             setTimeout(() => this._appStoreService.loadUserDictionaries(), 2000);
-            if (_permissionService.isGranted(AppPermissions.PagesCRMBulkImport))
+            if (_permissionService.isGranted(AppPermissions.CRMBulkImport))
                 _appService.subscribeModuleChange((config) => {
                     if (config['name'] == this.name)
                         _importLeadsService.setupImportCheck();

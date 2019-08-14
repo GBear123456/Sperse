@@ -11,7 +11,7 @@ import { AppPermissions } from '@shared/AppPermissions';
 export class ApiWelcomeComponent {
     @Input() small: false;
     @Output() onAddApiKey: EventEmitter<null> = new EventEmitter<null>();
-    canManageApiKeys = this.permission.isGranted(AppPermissions.PagesAPIManageKeys);
+    canManageApiKeys = this.permission.isGranted(AppPermissions.APIManageKeys);
     constructor(
         public ls: AppLocalizationService,
         private permission: AppPermissionService

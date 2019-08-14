@@ -151,7 +151,7 @@ export class HeaderNotificationsComponent extends AppComponentBase implements On
 
     subscriptionStatusBarVisible(): boolean {
         const moduleSubscription = this._appService.getModuleSubscription();
-        return this._appService.checkModuleSubscriptionEnabled() && this.subscriptionExpiringDayCount && this.permission.isGranted(AppPermissions. PagesAdministrationTenantSubscriptionManagement) && moduleSubscription && moduleSubscription.isUpgradable;
+        return this._appService.checkModuleSubscriptionEnabled() && this.subscriptionExpiringDayCount && this.permission.isGranted(AppPermissions.AdministrationTenantSubscriptionManagement) && moduleSubscription && moduleSubscription.isUpgradable;
     }
 
     hideDropDown() {

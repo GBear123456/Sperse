@@ -788,7 +788,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     updateLeadsStage($event) {
-        if (this.isGranted(AppPermissions.PagesCRMBulkUpdates)) {
+        if (this.isGranted(AppPermissions.CRMBulkUpdates)) {
             this.stagesComponent.tooltipVisible = false;
             this._pipelineService.updateEntitiesStage(
                 this.pipelinePurposeId,

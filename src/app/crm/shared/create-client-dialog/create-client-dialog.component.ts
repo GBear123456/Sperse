@@ -62,6 +62,7 @@ import { MessageService } from '@abp/message/message.service';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
 import { ToolbarService } from '@app/shared/common/toolbar/toolbar.service';
 import { ContactsService } from '@app/crm/contacts/contacts.service';
+import { AppPermissions } from '@shared/AppPermissions';
 
 @Component({
     templateUrl: 'create-client-dialog.component.html',
@@ -871,9 +872,9 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
 
     getAssignmentsPermissinKey() {
         if (this.partnerTypesComponent.selectedItems.length)
-            return 'Pages.CRM.Partners.ManageAssignments';
+            return AppPermissions.CRMPartnersManageAssignments;
 
-        return 'Pages.CRM.Customers.ManageAssignments';
+        return AppPermissions.CRMCustomersManageAssignments;
     }
 
     onUserAssignmentChanged(event) {

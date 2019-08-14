@@ -178,7 +178,7 @@ export class OperationsWidgetComponent extends AppComponentBase {
                             text: this.l('LoginAsThisUser')
                         },
                         visible: this.contactInfo && this.contactInfo.personContactInfo.userId &&
-                            this.permission.isGranted(AppPermissions.PagesAdministrationUsersImpersonation),
+                            this.permission.isGranted(AppPermissions.AdministrationUsersImpersonation),
                         action: () => {
                             this._impersonationService.impersonate(this.contactInfo.personContactInfo.userId, this.appSession.tenantId);
                         }
