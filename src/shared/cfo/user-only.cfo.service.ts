@@ -19,7 +19,10 @@ export class UserOnlyCFOService extends CFOServiceBase {
         this.hasStaticInstance = true;
         this.isForUser = true;
 
-        this.instanceTypeChanged.next(this.instanceType);
+        this.instanceChanged.next({
+            instanceType: this.instanceType,
+            instanceId: this.instanceId
+        });
         this.statusActive = new BehaviorSubject(false);
     }
 
