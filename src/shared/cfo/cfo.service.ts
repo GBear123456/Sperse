@@ -15,11 +15,12 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 import { AppConsts } from '@shared/AppConsts';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { AppPermissions } from '@shared/AppPermissions';
+import { InstanceModel } from '@shared/cfo/instance.model';
 
 @Injectable()
 export class CFOService extends CFOServiceBase {
-    instanceTypeChanged: Subject<string> = new Subject<null>();
-    instanceTypeChanged$: Observable<string> = this.instanceTypeChanged.asObservable();
+    instanceChanged: Subject<InstanceModel> = new Subject<InstanceModel>();
+    instanceChanged$: Observable<InstanceModel> = this.instanceChanged.asObservable();
     instanceStatus$: Observable<boolean>;
     constructor(
         private _appService: AppService,
@@ -66,13 +67,16 @@ export class CFOService extends CFOServiceBase {
             return false;
 
         let instanceId = parseInt(instance) || undefined,
-            instanceType = instance && capitalize(instance) || undefined,
+            instanceType = instanceId ? undefined : (instance && capitalize(instance) || undefined),
             changed = instanceType !== this.instanceType || instanceId !== this.instanceId;
 
         if (changed) {
             this.instanceId = instanceId;
-            this.instanceTypeChanged.next(
-                this.instanceType = instanceType);
+            this.instanceType = instanceType;
+            this.instanceChanged.next({
+                instanceType: this.instanceType,
+                instanceId: this.instanceId
+            });
         }
 
         return changed;

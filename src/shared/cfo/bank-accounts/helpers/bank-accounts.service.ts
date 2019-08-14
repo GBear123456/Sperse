@@ -33,6 +33,7 @@ import { CFOService } from '@shared/cfo/cfo.service';
 import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
 import { BankAccountStatus } from '@shared/cfo/bank-accounts/helpers/bank-accounts.status.enum';
 import { BankAccountType } from '@shared/cfo/bank-accounts/helpers/bank-account-type.model';
+import { InstanceModel } from '@shared/cfo/instance.model';
 
 @Injectable()
 export class BankAccountsService {
@@ -115,8 +116,9 @@ export class BankAccountsService {
         private cfoPreferencesService: CfoPreferencesService,
         private ls: AppLocalizationService
     ) {
-        this.cfoService.instanceTypeChanged$.subscribe(instanceType => {
-            this.bankAccountsCacheKey = `Dashboard_BankAccounts_${abp.session.tenantId}_${abp.session.userId}_${instanceType}`;
+        this.cfoService.instanceChanged$.subscribe((instance: InstanceModel) => {
+            const instanceText = instance.instanceType || instance.instanceId;
+            this.bankAccountsCacheKey = `Dashboard_BankAccounts_${abp.session.tenantId}_${abp.session.userId}_${instanceText}`;
         });
         this.syncAccounts$ = this._syncAccounts.asObservable().pipe(distinctUntilChanged(this.arrayDistinct));
         this.businessEntities$ = this._businessEntities.asObservable().pipe(
