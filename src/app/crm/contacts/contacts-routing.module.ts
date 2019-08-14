@@ -18,7 +18,7 @@ import { OrdersComponent } from './orders/orders.component';
 import { InvoicesComponent } from './invoices/invoices.component';
 import { PersonalDetailsComponent } from './personal-details/personal-details.component';
 
-import { RP_USER_INFO_ID } from './contacts.const';
+import { RP_USER_INFO_ID, RP_LEAD_INFO_ID } from './contacts.const';
 
 
 @NgModule({
@@ -36,7 +36,7 @@ import { RP_USER_INFO_ID } from './contacts.const';
                     { path: 'personal-details', component: PersonalDetailsComponent },
                     { path: 'user-information', component: UserInformationComponent, data: { rightPanelId: RP_USER_INFO_ID, rightPanelOpened: true } },
                     { path: 'login-attemps', component: LoginAttempsComponent, data: { rightPanelOpened: false } },
-                    { path: 'lead-information', component: LeadInformationComponent },
+                    { path: 'lead-information', component: LeadInformationComponent, data: { rightPanelId: RP_LEAD_INFO_ID, rightPanelOpened: true } },
                     { path: 'questionnaire', component: QuestionnaireComponent },
                     { path: 'documents', component: DocumentsComponent, data: { rightPanelOpened: false } },
                     { path: 'application-status', component: ApplicationStatusComponent },
@@ -58,7 +58,7 @@ import { RP_USER_INFO_ID } from './contacts.const';
                     { path: 'personal-details', component: PersonalDetailsComponent },
                     { path: 'user-information', component: UserInformationComponent, data: { rightPanelId: RP_USER_INFO_ID, rightPanelOpened: true } },
                     { path: 'login-attemps', component: LoginAttempsComponent, data: { rightPanelOpened: false } },
-                    { path: 'lead-information', component: LeadInformationComponent },
+                    { path: 'lead-information', component: LeadInformationComponent, data: { rightPanelId: RP_LEAD_INFO_ID, rightPanelOpened: true } },
                     { path: 'questionnaire', component: QuestionnaireComponent },
                     { path: 'documents', component: DocumentsComponent, data: { rightPanelOpened: false } },
                     { path: 'application-status', component: ApplicationStatusComponent },
@@ -80,7 +80,7 @@ import { RP_USER_INFO_ID } from './contacts.const';
                     { path: 'personal-details', component: PersonalDetailsComponent },
                     { path: 'user-information', component: UserInformationComponent, data: { rightPanelId: RP_USER_INFO_ID, rightPanelOpened: true } },
                     { path: 'login-attemps', component: LoginAttempsComponent, data: { rightPanelOpened: false } },
-                    { path: 'lead-information', component: LeadInformationComponent },
+                    { path: 'lead-information', component: LeadInformationComponent, data: { rightPanelId: RP_LEAD_INFO_ID, rightPanelOpened: true } },
                     { path: 'questionnaire', component: QuestionnaireComponent },
                     { path: 'documents', component: DocumentsComponent, data: { rightPanelOpened: false } },
                     { path: 'referral-history', component: ReferralHistoryComponent },
@@ -101,7 +101,7 @@ import { RP_USER_INFO_ID } from './contacts.const';
                     { path: 'personal-details', component: PersonalDetailsComponent },
                     { path: 'user-information', component: UserInformationComponent, data: { rightPanelId: RP_USER_INFO_ID, rightPanelOpened: true } },
                     { path: 'login-attemps', component: LoginAttempsComponent, data: { rightPanelOpened: false } },
-                    { path: 'lead-information', component: LeadInformationComponent },
+                    { path: 'lead-information', component: LeadInformationComponent, data: { rightPanelId: RP_LEAD_INFO_ID, rightPanelOpened: true } },
                     { path: 'questionnaire', component: QuestionnaireComponent },
                     { path: 'documents', component: DocumentsComponent, data: { rightPanelOpened: false } },
                     { path: 'application-status', component: ApplicationStatusComponent },
@@ -123,7 +123,7 @@ import { RP_USER_INFO_ID } from './contacts.const';
                     { path: 'personal-details', component: PersonalDetailsComponent },
                     { path: 'user-information', component: UserInformationComponent, data: { rightPanelId: RP_USER_INFO_ID, rightPanelOpened: true } },
                     { path: 'login-attemps', component: LoginAttempsComponent, data: { rightPanelOpened: false } },
-                    { path: 'lead-information', component: LeadInformationComponent },
+                    { path: 'lead-information', component: LeadInformationComponent, data: { rightPanelId: RP_LEAD_INFO_ID, rightPanelOpened: true } },
                     { path: 'questionnaire', component: QuestionnaireComponent },
                     { path: 'documents', component: DocumentsComponent, data: { rightPanelOpened: false } },
                     { path: 'referral-history', component: ReferralHistoryComponent },
