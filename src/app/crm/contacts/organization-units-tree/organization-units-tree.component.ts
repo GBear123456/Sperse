@@ -152,7 +152,7 @@ export class OrganizationUnitsTreeComponent extends AppComponentBase implements 
                 this._contactsService.orgUnitsSave(this.getSelectedOrganizationUnits());
                 this.notify.info(this.l('SavedSuccessfully'));
             });
-        else {
+        else if (event.event) {
             if (this.lastSeletedItemId == event.itemData.id) {
                 if (!event.itemData.selected)
                     event.component.selectItem(event.node.key);
