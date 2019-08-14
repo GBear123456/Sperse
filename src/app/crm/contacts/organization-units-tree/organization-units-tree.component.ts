@@ -1,11 +1,12 @@
 /** Core imports */
-import { Component, Injector, ViewChild, OnDestroy } from '@angular/core';
+import { Component, Input, Injector, ViewChild, OnDestroy } from '@angular/core';
 
 /** Third party imports */
 import DataSource from 'devextreme/data/data_source';
 import { DxTreeViewComponent } from 'devextreme-angular/ui/tree-view';
 import includes from 'lodash/includes';
 import { finalize } from 'rxjs/operators';
+import * as _ from 'underscore';
 
 /** Application imports */
 import { OrganizationUnitDto, OrganizationUnitServiceProxy,
@@ -22,6 +23,8 @@ import { AppPermissions } from '@shared/AppPermissions';
 export class OrganizationUnitsTreeComponent extends AppComponentBase implements OnDestroy {
     @ViewChild(DxTreeViewComponent) organizationUnitsTree: DxTreeViewComponent;
 
+    @Input() selectionMode = 'multiple';
+
     public oranizationUnitsDataSource: DataSource;
     public searchEnabled = false;
     public sortTreeDesc = false;
@@ -30,6 +33,8 @@ export class OrganizationUnitsTreeComponent extends AppComponentBase implements 
 
     private userId: number;
     private organizationUnitsData: OrganizationUnitDto[];
+    private lastSeletedItemId: number;
+    private ident = _.uniqueId(this.constructor.name);
 
     toolbarConfig = [
         {
@@ -89,7 +94,7 @@ export class OrganizationUnitsTreeComponent extends AppComponentBase implements 
         _contactsService.orgUnitsSubscribe((userData) => {
             this.userId = userData.user.id;
             this.setOrganizationUnitsData(userData.allOrganizationUnits, userData.memberedOrganizationUnits);
-        }, this.constructor.name);
+        }, this.ident);
 
         this.isEditAllowed = this.isGranted(AppPermissions.PagesAdministrationOrganizationUnitsManageMembers);
     }
@@ -98,7 +103,8 @@ export class OrganizationUnitsTreeComponent extends AppComponentBase implements 
         this.organizationUnitsData = orgUnits;
 
         this.organizationUnitsData.forEach((item) => {
-            item['selected'] = includes(memberedOrganizationUnits, item.code);
+            if (item['selected'] = includes(memberedOrganizationUnits, item.code))
+                this.lastSeletedItemId = item.id;
             item['expanded'] = true;
         });
 
@@ -136,7 +142,7 @@ export class OrganizationUnitsTreeComponent extends AppComponentBase implements 
     }
 
     onChange(event) {
-        if (this.userId)
+        if (this.userId && this.selectionMode == 'multiple')
             (event.itemData.selected ?
                 this._userOrgUnitsService.addUsersToOrganizationUnit(UsersToOrganizationUnitInput.fromJS({
                     userIds: [this.userId],
@@ -146,11 +152,18 @@ export class OrganizationUnitsTreeComponent extends AppComponentBase implements 
                 this._contactsService.orgUnitsSave(this.getSelectedOrganizationUnits());
                 this.notify.info(this.l('SavedSuccessfully'));
             });
-        else
-            this._contactsService.orgUnitsSave(this.getSelectedOrganizationUnits());
+        else {
+            if (this.lastSeletedItemId == event.itemData.id) {
+                if (!event.itemData.selected)
+                    event.component.selectItem(event.node.key);
+            } else {
+                this.lastSeletedItemId = event.itemData.id;
+                this._contactsService.orgUnitsSave(this.getSelectedOrganizationUnits());
+            }
+        }
     }
 
     ngOnDestroy() {
-        this._contactsService.unsubscribe(this.constructor.name);
+        this._contactsService.unsubscribe(this.ident);
     }
 }

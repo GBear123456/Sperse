@@ -43,8 +43,8 @@ import {
 import { VerificationChecklistItemType, VerificationChecklistItem, VerificationChecklistItemStatus } from './verification-checklist/verification-checklist.model';
 import { OperationsWidgetComponent } from './operations-widget.component';
 import { ContactsService } from './contacts.service';
-import { RP_DEFAULT_ID, RP_USER_INFO_ID } from './contacts.const';
 import { AppStoreService } from '@app/store/app-store.service';
+import { RP_DEFAULT_ID, RP_USER_INFO_ID, RP_LEAD_INFO_ID } from './contacts.const';
 import { ContactPersonsDialogComponent } from './contact-persons-dialog/contact-persons-dialog.component';
 import { CreateClientDialogComponent } from '../shared/create-client-dialog/create-client-dialog.component';
 import { ItemDetailsService } from '@shared/common/item-details-layout/item-details.service';
@@ -65,8 +65,9 @@ import { AppPermissions } from '@shared/AppPermissions';
 export class ContactsComponent extends AppComponentBase implements OnDestroy {
     @ViewChild(OperationsWidgetComponent) toolbarComponent: OperationsWidgetComponent;
 
-    readonly RP_DEFAULT_ID = RP_DEFAULT_ID;
+    readonly RP_DEFAULT_ID   = RP_DEFAULT_ID;
     readonly RP_USER_INFO_ID = RP_USER_INFO_ID;
+    readonly RP_LEAD_INFO_ID = RP_LEAD_INFO_ID;
 
     customerId: number;
     contactGroup: string;

@@ -151,11 +151,13 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
             this.fillUserData(this.data['raw']);
         else if (!this.loading) {
             this.startLoading();
-            this._userService.getUserForEdit(this.data.userId || undefined)
-                .pipe(finalize(() => this.finishLoading()))
-                .subscribe((userEditOutput) => {
-                    this.fillUserData(this._userService['data'].raw = userEditOutput);
-                });
+            this._contactsService.contactInfoSubscribe((contactInfo) =>
+                this._userService.getUserForEdit(contactInfo.personContactInfo.userId || undefined)
+                    .pipe(finalize(() => this.finishLoading()))
+                    .subscribe(userEditOutput => {
+                        this.fillUserData(userEditOutput);
+                    })
+            );
         }
     }
 
@@ -182,6 +184,7 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
             }
         }
 
+        this._userService['data'].raw = data;
         setTimeout(() => this._contactsService.orgUnitsUpdate(data));
     }
 

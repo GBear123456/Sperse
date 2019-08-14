@@ -1,9 +1,11 @@
 <app-toolbar [config]="toolbarConfig" [compact]="true"></app-toolbar>
 <dx-tree-view dataStructure="plain"
               [disabled]="!isEditAllowed"
+              [selectionMode]="selectionMode"
               [dataSource]="oranizationUnitsDataSource"
               parentIdExpr="parentId"
               keyExpr="id"
+              selectByClick="true"
               displayExpr="displayName"
               showCheckBoxesMode="normal"
               [selectNodesRecursive]="false"
