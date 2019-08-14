@@ -49,6 +49,7 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
     selectedTabIndex = this.GENERAL_TAB_INDEX;
 
     isEditAllowed = false;
+    isInviteAllowed = false;
     changeRolesAllowed = false;
 
     phoneInplaceEdit = false;
@@ -120,6 +121,7 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
             });
 
         this.isEditAllowed = this.isGranted(AppPermissions.AdministrationUsersEdit);
+        this.isInviteAllowed = this.isGranted(AppPermissions.AdministrationUsersCreate);
         this.changeRolesAllowed = this.isGranted(AppPermissions.AdministrationUsersChangePermissionsAndRoles);
     }
 

@@ -84,7 +84,6 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
     partnerInfo: PartnerInfoDto;
     partnerTypeId: string;
     partnerTypes: any[] = [];
-    operationsEnabled = false;
 
     private initialData: string;
 
@@ -297,8 +296,6 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
             });
         }
 
-        this.operationsEnabled = !(result.groupId == ContactGroup.UserProfile &&
-            result.personContactInfo.userId && result.statusId != ContactStatus.Prospective);
         this.ratingId = result.ratingId;
         this.primaryContact = result.personContactInfo;
         this.contactInfo = result;
