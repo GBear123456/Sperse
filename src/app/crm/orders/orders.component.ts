@@ -35,6 +35,7 @@ import { PipelineService } from '@app/shared/pipeline/pipeline.service';
 import { PipelineComponent } from '@app/shared/pipeline/pipeline.component';
 import { CreateInvoiceDialogComponent } from '../shared/create-invoice-dialog/create-invoice-dialog.component';
 import { AppPermissions } from '@shared/AppPermissions';
+import { DataGridService } from '@app/shared/common/data-grid.service.ts/data-grid.service';
 
 @Component({
     templateUrl: './orders.component.html',
@@ -160,10 +161,6 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     invalidate() {
         this.processFilterInternal();
         this.filterChanged = true;
-    }
-
-    showColumnChooser() {
-        this.dataGrid.instance.showColumnChooser();
     }
 
     toggleDataLayout(dataLayoutType: DataLayoutType) {
@@ -424,7 +421,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                                 }, { type: 'downloadOptions' }]
                             }
                         },
-                        { name: 'columnChooser', action: this.showColumnChooser.bind(this) }
+                        { name: 'columnChooser', action: DataGridService.showColumnChooser.bind(this, this.dataGrid) }
                     ]
                 },
                 {

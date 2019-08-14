@@ -14,6 +14,7 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { EditionListDto, EditionServiceProxy } from '@shared/service-proxies/service-proxies';
 import { CreateOrEditEditionModalComponent } from './create-or-edit-edition-modal.component';
 import { AppPermissions } from '@shared/AppPermissions';
+import { DataGridService } from '@app/shared/common/data-grid.service.ts/data-grid.service';
 
 @Component({
     templateUrl: './editions.component.html',
@@ -142,8 +143,8 @@ export class EditionsComponent extends AppComponentBase implements OnDestroy {
                 location: 'after',
                 locateInMenu: 'auto',
                 items: [
-                    { name: 'showCompactRowsHeight', action: this.showCompactRowsHeight.bind(this) },
-                    { name: 'columnChooser', action: this.showColumnChooser.bind(this) }
+                    { name: 'showCompactRowsHeight', action: DataGridService.showCompactRowsHeight.bind(this, this.dataGrid) },
+                    { name: 'columnChooser', action: DataGridService.showColumnChooser.bind(this, this.dataGrid) }
                 ]
             },
             {
@@ -208,14 +209,6 @@ export class EditionsComponent extends AppComponentBase implements OnDestroy {
 
     onContentReady() {
         this.setGridDataLoaded();
-    }
-
-    showCompactRowsHeight() {
-        this.dataGrid.instance.element().classList.toggle('grid-compact-view');
-    }
-
-    showColumnChooser() {
-        this.dataGrid.instance.showColumnChooser();
     }
 
     searchValueChange(e: object) {

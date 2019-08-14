@@ -23,6 +23,7 @@ import { GenerateReportDialogComponent } from './generate-report-dialog/generate
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { AppService } from '@app/app.service';
 import { SendNotificationDialogComponent } from '@app/cfo/reports/send-notification-dialog/send-notification-dialog.component';
+import { DataGridService } from '@app/shared/common/data-grid.service.ts/data-grid.service';
 
 @Component({
     templateUrl: './reports.component.html',
@@ -154,7 +155,53 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
                         }
                     }
                 ]
-            }];
+            },
+            {
+                location: 'after',
+                locateInMenu: 'auto',
+                items: [
+                    {
+                        name: 'showCompactRowsHeight',
+                        visible: !this._cfoService.hasStaticInstance,
+                        action: DataGridService.showCompactRowsHeight.bind(this, this.dataGrid)
+                    },
+                    {
+                        name: 'download',
+                        widget: 'dxDropDownMenu',
+                        options: {
+                            hint: this.l('Download'),
+                            items: [
+                                {
+                                    action: Function(),
+                                    text: this.l('Save as PDF'),
+                                    icon: 'pdf',
+                                },
+                                {
+                                    action: this.exportToXLS.bind(this),
+                                    text: this.l('Export to Excel'),
+                                    icon: 'xls',
+                                },
+                                {
+                                    action: this.exportToCSV.bind(this),
+                                    text: this.l('Export to CSV'),
+                                    icon: 'sheet'
+                                },
+                                {
+                                    action: this.exportToGoogleSheet.bind(this),
+                                    text: this.l('Export to Google Sheets'),
+                                    icon: 'sheet'
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        name: 'columnChooser',
+                        visible: !this._cfoService.hasStaticInstance,
+                        action: DataGridService.showColumnChooser.bind(this, this.dataGrid)
+                    }
+                ]
+            }
+        ];
     }
 
     searchValueChange(e: object) {

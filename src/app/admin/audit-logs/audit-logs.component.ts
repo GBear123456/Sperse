@@ -23,6 +23,7 @@ import { FilterModel } from '@shared/filters/models/filter.model';
 import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calendar.component';
 import { FiltersService } from '@shared/filters/filters.service';
 import { DateHelper } from '@shared/helpers/DateHelper';
+import { DataGridService } from '@app/shared/common/data-grid.service.ts/data-grid.service';
 
 @Component({
     templateUrl: './audit-logs.component.html',
@@ -261,8 +262,8 @@ export class AuditLogsComponent extends AppComponentBase implements OnInit, OnDe
                 location: 'after',
                 locateInMenu: 'auto',
                 items: [
-                    { name: 'showCompactRowsHeight', action: this.showCompactRowsHeight.bind(this) },
-                    { name: 'columnChooser', action: this.showColumnChooser.bind(this) }
+                    { name: 'showCompactRowsHeight', action: DataGridService.showCompactRowsHeight.bind(this, this.dataGrid) },
+                    { name: 'columnChooser', action: DataGridService.showColumnChooser.bind(this, this.dataGrid) }
                 ]
             },
             {
@@ -284,14 +285,6 @@ export class AuditLogsComponent extends AppComponentBase implements OnInit, OnDe
     toggleToolbar() {
         this._appService.toolbarToggle();
         setTimeout(() => this.dataGrid.instance.repaint(), 0);
-    }
-
-    showCompactRowsHeight() {
-        this.dataGrid.instance.element().classList.toggle('grid-compact-view');
-    }
-
-    showColumnChooser() {
-        this.dataGrid.instance.showColumnChooser();
     }
 
     searchValueChange(e: object) {

@@ -20,6 +20,7 @@ import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { CalendarDialogComponent } from '@app/shared/common/dialogs/calendar/calendar-dialog.component';
 import { DateHelper } from '@shared/helpers/DateHelper';
+import { DataGridService } from '@app/shared/common/data-grid.service.ts/data-grid.service';
 
 @Component({
     selector: 'pfm-offer-visitors',
@@ -161,8 +162,8 @@ export class VisitorsComponent extends AppComponentBase implements AfterViewInit
                 location: 'after',
                 locateInMenu: 'auto',
                 items: [
-                    { name: 'showCompactRowsHeight', action: this.showCompactRowsHeight.bind(this) },
-                    { name: 'columnChooser', action: this.showColumnChooser.bind(this) }
+                    { name: 'showCompactRowsHeight', action: DataGridService.showCompactRowsHeight.bind(this, this.dataGrid, true) },
+                    { name: 'columnChooser', action: DataGridService.showColumnChooser.bind(this, this.dataGrid) }
                 ]
             },
             {
@@ -192,15 +193,6 @@ export class VisitorsComponent extends AppComponentBase implements AfterViewInit
         this.startLoading();
         this.processODataFilter(this.dataGrid.instance,
             this.dataSourceURI, this.getInputFilter(), filter => filter);
-    }
-
-    showColumnChooser() {
-        this.dataGrid.instance.showColumnChooser();
-    }
-
-    showCompactRowsHeight() {
-        this.dataGrid.instance.element().classList.toggle('grid-compact-view');
-        this.dataGrid.instance.updateDimensions();
     }
 
     showCalendarDialog() {

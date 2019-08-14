@@ -54,9 +54,6 @@
                 <div *dxTemplate="let cellData of 'dateCell'">
                     {{ cellData.value | date: formatting.date }}
                 </div>
-                <div *dxTemplate="let data of 'title'">
-                    <h2 class="title">{{l('Documents')}}</h2>
-                </div>
 
                 <dxo-load-panel [enabled]="true"></dxo-load-panel>
                 <dxo-scrolling mode="virtual"></dxo-scrolling>

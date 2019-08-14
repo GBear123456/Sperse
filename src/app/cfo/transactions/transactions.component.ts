@@ -56,6 +56,7 @@ import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 import { CalendarValuesModel } from '@shared/common/widgets/calendar/calendar-values.model';
 import { DateHelper } from '@shared/helpers/DateHelper';
+import { DataGridService } from '@app/shared/common/data-grid.service.ts/data-grid.service';
 
 @Component({
     templateUrl: './transactions.component.html',
@@ -483,47 +484,52 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                     items: [
                         {
                             name: 'rowFilter',
-                            action: this.enableFilteringRow.bind(this),
+                            action: DataGridService.enableFilteringRow.bind(this, this.dataGrid),
                             options: {
-                                checkPressed: () => {
-                                    return this.dataGrid && this.dataGrid.instance &&
-                                        this.dataGrid.instance.option('filterRow.visible');
-                                }
+                                checkPressed: DataGridService.getGridOption(this.dataGrid, 'filterRow.visible')
                             }
                         },
                         {
                             name: 'showCompactRowsHeight',
                             visible: !this._cfoService.hasStaticInstance,
-                            action: this.showCompactRowsHeight.bind(this)
+                            action: DataGridService.showCompactRowsHeight.bind(this, this.dataGrid)
                         },
                         {
                             name: 'download',
                             widget: 'dxDropDownMenu',
                             options: {
                                 hint: this.l('Download'),
-                                items: [{
-                                    action: Function(),
-                                    text: this.l('Save as PDF'),
-                                    icon: 'pdf',
-                                }, {
-                                    action: this.exportToXLS.bind(this),
-                                    text: this.l('Export to Excel'),
-                                    icon: 'xls',
-                                }, {
-                                    action: this.exportToCSV.bind(this),
-                                    text: this.l('Export to CSV'),
-                                    icon: 'sheet'
-                                }, {
-                                    action: this.exportToGoogleSheet.bind(this),
-                                    text: this.l('Export to Google Sheets'),
-                                    icon: 'sheet'
-                                }, {type: 'downloadOptions'}]
+                                items: [
+                                    {
+                                        action: Function(),
+                                        text: this.l('Save as PDF'),
+                                        icon: 'pdf',
+                                    },
+                                    {
+                                        action: this.exportToXLS.bind(this),
+                                        text: this.l('Export to Excel'),
+                                        icon: 'xls',
+                                    },
+                                    {
+                                        action: this.exportToCSV.bind(this),
+                                        text: this.l('Export to CSV'),
+                                        icon: 'sheet'
+                                    },
+                                    {
+                                        action: this.exportToGoogleSheet.bind(this),
+                                        text: this.l('Export to Google Sheets'),
+                                        icon: 'sheet'
+                                    },
+                                    {
+                                        type: 'downloadOptions'
+                                    }
+                                ]
                             }
                         },
                         {
                             name: 'columnChooser',
                             visible: !this._cfoService.hasStaticInstance,
-                            action: this.showColumnChooser.bind(this)
+                            action: DataGridService.showColumnChooser.bind(this, this.dataGrid)
                         }
                     ]
                 },
@@ -543,12 +549,6 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                 }
             ]);
         }
-    }
-
-    enableFilteringRow(event) {
-        let visible = !this.dataGrid.instance.option('filterRow.visible');
-        this.dataGrid.instance.option('filterRow.visible', visible);
-        event.element.setAttribute('button-pressed', visible);
     }
 
     onToolbarPreparing(e) {
@@ -679,10 +679,6 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         return float_part;
     }
 
-    showColumnChooser() {
-        this.dataGrid.instance.showColumnChooser();
-    }
-
     showRefreshButton() {
         this.noRefreshedAfterSync = true;
         this.initHeadlineConfig();
@@ -799,10 +795,6 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             this.dataGrid.dataSource = this.dataSource;
             this._changeDetectionRef.markForCheck();
         }
-    }
-
-    showCompactRowsHeight() {
-        this.dataGrid.instance.element().classList.toggle('grid-compact-view');
     }
 
     // setBankAccountCount(bankAccountIds, visibleAccountCount) {
@@ -1255,7 +1247,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     }
 
     ngAfterViewInit(): void {
-        this.showCompactRowsHeight();
+        DataGridService.showCompactRowsHeight(this.dataGrid);
 
         this.rootComponent = this.getRootComponent();
         this.rootComponent.overflowHidden(true);
