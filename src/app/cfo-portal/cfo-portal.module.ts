@@ -35,6 +35,9 @@ import { TopSpendingCategoriesComponent } from './top-spending-categories/top-sp
         BankAccountsCommonModule,
         DxScrollViewModule,
         DxPieChartModule
+    ],
+    entryComponents: [
+        PortalDashboardComponent
     ]
 })
 

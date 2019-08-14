@@ -199,7 +199,8 @@ let COMPONENTS = [
         UsersDialogComponent,
         BankAccountsSelectDialogComponent,
         GenerateReportDialogComponent,
-        SendNotificationDialogComponent
+        SendNotificationDialogComponent,
+        DashboardComponent
     ],
     providers: [
         CashflowServiceProxy,
