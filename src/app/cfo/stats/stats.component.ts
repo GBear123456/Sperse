@@ -451,6 +451,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
         this._appService.toolbarToggle();
         this._filtersService.fixed = false;
         this._filtersService.disable();
+        this.calculateChartsScrolableHeight();
         this.initToolbarConfig();
     }
 
@@ -481,7 +482,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
 
     /** Calculates the height of the charts scrollable height after resizing */
     calculateChartsScrolableHeight() {
-        return window.innerHeight - 260;
+        return this._appService.toolbarIsHidden ? window.innerHeight - 199 : window.innerHeight - 260;
     }
 
     handleCashFlowInitialResult() {
