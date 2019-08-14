@@ -367,7 +367,7 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
     }
 
     checkPermissions() {
-        return this.permission.isGranted(AppPermissions.PagesCRMCustomersManageListsAndTags) &&
-            (!this.bulkUpdateMode || this.permission.isGranted(AppPermissions.PagesCRMBulkUpdates));
+        return this.permission.isGranted(AppPermissions.CRMCustomersManageListsAndTags) &&
+            (!this.bulkUpdateMode || this.permission.isGranted(AppPermissions.CRMBulkUpdates));
     }
 }

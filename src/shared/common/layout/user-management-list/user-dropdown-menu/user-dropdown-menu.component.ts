@@ -34,9 +34,9 @@ export class UserDropdownMenuComponent extends AppComponentBase implements OnIni
     isImpersonatedLogin = this.abpSessionService.impersonatorUserId > 0;
     shownLoginInfo: { fullName, email, tenantName?};
     recentlyLinkedUsers: LinkedUserDto[];
-    hasPlatformPermissions = (this.feature.isEnabled('CFO') && this.permission.isGranted(AppPermissions.PagesCFO)) ||
-                             (this.feature.isEnabled('CRM') && this.permission.isGranted(AppPermissions.PagesCRM)) ||
-                             (this.feature.isEnabled('Admin') && this.permission.isGranted(AppPermissions.PagesAdministrationUsers));
+    hasPlatformPermissions = (this.feature.isEnabled('CFO') && this.permission.isGranted(AppPermissions.CFO)) ||
+                             (this.feature.isEnabled('CRM') && this.permission.isGranted(AppPermissions.CRM)) ||
+                             (this.feature.isEnabled('Admin') && this.permission.isGranted(AppPermissions.AdministrationUsers));
     menuItemTypes = UserDropdownMenuItemType;
     @Input() subtitle: string;
     @Input() dropdownMenuItems: UserDropdownMenuItemModel[] = [

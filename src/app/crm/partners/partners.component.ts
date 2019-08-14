@@ -58,6 +58,7 @@ import { ItemTypeEnum } from '@shared/common/item-details-layout/item-type.enum'
 import { ContactsService } from '@app/crm/contacts/contacts.service';
 import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
 import { DataGridService } from '@app/shared/common/data-grid.service.ts/data-grid.service';
+import { AppPermissions } from '@shared/AppPermissions';
 
 @Component({
     templateUrl: './partners.component.html',
@@ -108,6 +109,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     };
 
     partnerTypes: any/*PartnerTypeDto*/[];
+    permissions = AppPermissions;
 
     constructor(
         injector: Injector,

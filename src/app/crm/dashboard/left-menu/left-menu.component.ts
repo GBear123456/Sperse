@@ -29,18 +29,18 @@ export class DashboardMenuComponent extends AppComponentBase {
                 caption: 'ManageClients',
                 component: '/clients',
                 showPlus: true,
-                hidden: !this.permission.isGranted(AppPermissions.PagesCRMCustomers)
+                hidden: !this.permission.isGranted(AppPermissions.CRMCustomers)
             },
             {
                 caption: 'ManageLeads',
                 component: '/leads',
                 showPlus: true,
-                hidden: !this.permission.isGranted(AppPermissions.PagesCRMCustomers)
+                hidden: !this.permission.isGranted(AppPermissions.CRMCustomers)
             },
             {
                 caption: 'ImportYourList',
                 component: '/import-list',
-                hidden: !this.permission.isGranted(AppPermissions.PagesCRMBulkImport)
+                hidden: !this.permission.isGranted(AppPermissions.CRMBulkImport)
             },
             {
                 caption: 'CustomizeSettings',

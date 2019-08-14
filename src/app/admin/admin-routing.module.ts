@@ -23,20 +23,20 @@ import { AppPermissions } from '@shared/AppPermissions';
             {
                 path: '',
                 children: [
-                    { path: 'users', component: UsersComponent, data: { permission: AppPermissions.PagesAdministrationUsers, reuse: true } },
-                    { path: 'roles', component: RolesComponent, data: { permission: AppPermissions.PagesAdministrationRoles } },
-                    { path: 'auditLogs', component: AuditLogsComponent, data: { permission: 'Pages.Administration.AuditLogs' } },
-                    { path: 'maintenance', component: MaintenanceComponent, data: { permission: 'Pages.Administration.Host.Maintenance' } },
-                    { path: 'jobs', component: JobsComponent, data: { permission: 'Pages.Administration.HangfireDashboard' } },
-                    { path: 'hostSettings', component: HostSettingsComponent, data: { permission: 'Pages.Administration.Host.Settings|Pages.Administration.TenantHosts' } },
-                    { path: 'languages', component: LanguagesComponent, data: { permission: 'Pages.Administration.Languages' } },
-                    { path: 'languages/:name/texts', component: LanguageTextsComponent, data: { permission: AppPermissions.PagesAdministrationLanguagesChangeTexts } },
-                    { path: 'organization-units', component: OrganizationUnitsComponent, data: { permission: 'Pages.Administration.OrganizationUnits' } },
-                    { path: 'tenantSettings', component: TenantSettingsComponent, data: { permission: 'Pages.Administration.Tenant.Settings|Pages.Administration.TenantHosts' } },
-                    { path: 'hostDashboard', component: HostDashboardComponent, data: { permission: AppPermissions.PagesAdministrationHostDashboard } },
+                    { path: 'users', component: UsersComponent, data: { permission: AppPermissions.AdministrationUsers, reuse: true } },
+                    { path: 'roles', component: RolesComponent, data: { permission: AppPermissions.AdministrationRoles } },
+                    { path: 'auditLogs', component: AuditLogsComponent, data: { permission: AppPermissions.AdministrationAuditLogs } },
+                    { path: 'maintenance', component: MaintenanceComponent, data: { permission: AppPermissions.AdministrationHostMaintenance } },
+                    { path: 'jobs', component: JobsComponent, data: { permission: AppPermissions.AdministrationHangfireDashboard } },
+                    { path: 'hostSettings', component: HostSettingsComponent, data: { permission: AppPermissions.AdministrationHostSettings + '|' + AppPermissions.AdministrationTenantHosts } },
+                    { path: 'languages', component: LanguagesComponent, data: { permission: AppPermissions.AdministrationLanguages } },
+                    { path: 'languages/:name/texts', component: LanguageTextsComponent, data: { permission: AppPermissions.AdministrationLanguagesChangeTexts } },
+                    { path: 'organization-units', component: OrganizationUnitsComponent, data: { permission: AppPermissions.AdministrationOrganizationUnits } },
+                    { path: 'tenantSettings', component: TenantSettingsComponent, data: { permission: AppPermissions.AdministrationTenantSettings + '|' + AppPermissions.AdministrationTenantHosts } },
+                    { path: 'hostDashboard', component: HostDashboardComponent, data: { permission: AppPermissions.AdministrationHostDashboard } },
                     { path: 'ui-customization', component: UiCustomizationComponent },
-                    { path: 'products', component: EditionsComponent, data: { permission: 'Pages.Editions' } },
-                    { path: 'tenants', component: TenantsComponent, data: { permission: AppPermissions.PagesTenants } }
+                    { path: 'products', component: EditionsComponent, data: { permission: AppPermissions.Editions } },
+                    { path: 'tenants', component: TenantsComponent, data: { permission: AppPermissions.Tenants } }
                 ]
             }
         ])

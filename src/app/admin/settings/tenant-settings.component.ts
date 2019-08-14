@@ -70,7 +70,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
     payPalPaymentSettings: PayPalSettings = new PayPalSettings();
     achWorksSettings: ACHWorksSettings = new ACHWorksSettings();
     recurlySettings: RecurlyPaymentSettings = new RecurlyPaymentSettings();
-    isTenantHosts: boolean = this._permission.isGranted(AppPermissions.PagesAdministrationTenantHosts);
+    isTenantHosts: boolean = this._permission.isGranted(AppPermissions.AdministrationTenantHosts);
     isAdminCustomizations: boolean = abp.features.isEnabled('Admin.Customizations');
     isCreditReportFeatureEnabled: boolean = abp.features.isEnabled('PFM.CreditReport');
     isPFMApplicationsFeatureEnabled: boolean = abp.features.isEnabled('PFM') && abp.features.isEnabled('PFM.Applications');
@@ -99,7 +99,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
         icon: '',
         buttons: [
             {
-                enabled: true, // this.isGranted(AppPermissions.PagesAdministrationLanguagesCreate),
+                enabled: true, // this.isGranted(AppPermissions.AdministrationLanguagesCreate),
                 action: this.saveAll.bind(this),
                 icon: 'la la la-floppy-o',
                 lable: this.l('SaveAll')

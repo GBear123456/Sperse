@@ -31,7 +31,7 @@ export class PersonalDetailsComponent implements OnDestroy {
     isEditAllowed = false;
     startCase = startCase;
     interests$ = this._dictionaryProxy.getInterests();
-    accessConfidentialData = this._permission.isGranted(AppPermissions.PagesCRMAccessConfidentialData);
+    accessConfidentialData = this._permission.isGranted(AppPermissions.CRMAccessConfidentialData);
 
     columns = [
         [

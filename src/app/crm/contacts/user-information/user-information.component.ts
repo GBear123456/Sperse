@@ -120,9 +120,9 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
                 _roleServiceProxy['data'] = this.roles = res.items;
             });
 
-        this.isEditAllowed = this.isGranted(AppPermissions.PagesAdministrationUsersEdit);
-        this.isInviteAllowed = this.isGranted(AppPermissions.PagesAdministrationUsersCreate);
-        this.changeRolesAllowed = this.isGranted(AppPermissions.PagesAdministrationUsersChangePermissionsAndRoles);
+        this.isEditAllowed = this.isGranted(AppPermissions.AdministrationUsersEdit);
+        this.isInviteAllowed = this.isGranted(AppPermissions.AdministrationUsersCreate);
+        this.changeRolesAllowed = this.isGranted(AppPermissions.AdministrationUsersChangePermissionsAndRoles);
     }
 
     ngOnInit() {
@@ -136,7 +136,7 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
 
     checkShowInviteForm() {
         this.showInviteUserForm = this.data && !this.data.userId &&
-            this.permission.isGranted(AppPermissions.PagesAdministrationUsersCreate);
+            this.permission.isGranted(AppPermissions.AdministrationUsersCreate);
 
         let contactInfo = this.contactInfoData.contactInfo.personContactInfo;
         if (contactInfo) {

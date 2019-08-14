@@ -149,7 +149,7 @@ export class OfferEditComponent implements OnInit, OnDestroy, ICloseComponent {
         public ls: AppLocalizationService
     ) {
         this.rootComponent = injector.get(this.applicationRef.componentTypes[0]);
-        this.sentAnnouncementPermissionGranted = this.permissionChecker.isGranted(AppPermissions.PagesPFMApplicationsSendOfferAnnouncements);
+        this.sentAnnouncementPermissionGranted = this.permissionChecker.isGranted(AppPermissions.PFMApplicationsSendOfferAnnouncements);
         this.creditScores = Object.keys(CreditScoreRating);
     }
 

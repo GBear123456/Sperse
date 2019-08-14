@@ -111,11 +111,11 @@ export class ContactGroup {
 }
 
 export class ContactGroupPermission {
-    static Client = AppPermissions.PagesCRMCustomers;
-    static Partner = AppPermissions.PagesCRMPartners;
-    static UserProfile = AppPermissions.PagesCRMEmployees;
-    static Investor = AppPermissions.PagesCRMInvestors;
-    static Vendor = AppPermissions.PagesCRMVendors;
+    static Client = AppPermissions.CRMCustomers;
+    static Partner = AppPermissions.CRMPartners;
+    static UserProfile = AppPermissions.CRMEmployees;
+    static Investor = AppPermissions.CRMInvestors;
+    static Vendor = AppPermissions.CRMVendors;
 }
 
 export class PersonOrgRelationType {

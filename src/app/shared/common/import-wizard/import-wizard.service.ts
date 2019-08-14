@@ -44,7 +44,7 @@ export class ImportWizardService {
     }
 
     startStatusCheck(importId = undefined, method = undefined, invalUri = undefined) {
-        if (this._permissionService.isGranted(AppPermissions.PagesCRMBulkImport))
+        if (this._permissionService.isGranted(AppPermissions.CRMBulkImport))
             this.setupCheckTimeout((callback) => {
                 this._importProxy.getStatuses(importId).subscribe((res) => {
                     if (res && res.length) {

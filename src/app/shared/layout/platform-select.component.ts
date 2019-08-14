@@ -54,7 +54,7 @@ export class PlatformSelectComponent extends AppComponentBase {
                         && this._appService.isModuleActive(module.name)
                         && !_appService.isHostTenant
                         && this.feature.isEnabled('CFO.Partner')
-                        && this.permission.isGranted(AppPermissions.PagesCFOMemberAccess)
+                        && this.permission.isGranted(AppPermissions.CFOMemberAccess)
                     ) {
                         this.modules.footerItems.push(moduleConfig);
                     } else if (
@@ -89,7 +89,7 @@ export class PlatformSelectComponent extends AppComponentBase {
                 navigate = this._router.navigate([moduleConfig.defaultPath]);
             } else if (module.name === 'PFM' && module.footerItem) {
                 return window.open(location.origin + '/personal-finance', '_blank');
-            } else if (module.name === 'CFO' && module.footerItem && this.permission.isGranted(AppPermissions.PagesCFOMemberAccess)) {
+            } else if (module.name === 'CFO' && module.footerItem && this.permission.isGranted(AppPermissions.CFOMemberAccess)) {
                 return window.open(location.origin + '/app/cfo-portal', '_blank');
             } else {
                 navigate = this._router.navigate(['app/' + module.name.toLowerCase() + (module.uri ? '/' + module.uri.toLowerCase() : '')]);

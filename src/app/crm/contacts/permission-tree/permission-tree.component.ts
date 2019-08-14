@@ -89,7 +89,7 @@ export class PermissionTreeComponent extends AppComponentBase implements OnInit,
                 this.loadData();
         }, this.constructor.name);
 
-        this.isEditAllowed = this.isGranted(AppPermissions.PagesAdministrationUsersChangePermissionsAndRoles);
+        this.isEditAllowed = this.isGranted(AppPermissions.AdministrationUsersChangePermissionsAndRoles);
     }
 
     ngOnInit() {

@@ -83,28 +83,28 @@ export class RouteGuard implements CanActivate, CanActivateChild {
                 return 'app/' + lastModuleName;
         }
 
-        if ((!preferedModule || preferedModule == 'CRM') && this._feature.isEnabled('CRM') && this._permissionChecker.isGranted(AppPermissions.PagesCRM))
+        if ((!preferedModule || preferedModule == 'CRM') && this._feature.isEnabled('CRM') && this._permissionChecker.isGranted(AppPermissions.CRM))
             return 'app/crm';
 
-        if ((!preferedModule || preferedModule == 'CFO') && this._feature.isEnabled('CFO') && this._permissionChecker.isGranted(AppPermissions.PagesCFO)) {
-            if (this._permissionChecker.isGranted(AppPermissions.PagesCFOMainInstanceAccess))
+        if ((!preferedModule || preferedModule == 'CFO') && this._feature.isEnabled('CFO') && this._permissionChecker.isGranted(AppPermissions.CFO)) {
+            if (this._permissionChecker.isGranted(AppPermissions.CFOMainInstanceAccess))
                 return '/app/cfo/main/';
 
-            if (this._feature.isEnabled('CFO.Partner') && this._permissionChecker.isGranted(AppPermissions.PagesCFOMemberAccess))
+            if (this._feature.isEnabled('CFO.Partner') && this._permissionChecker.isGranted(AppPermissions.CFOMemberAccess))
                 return '/app/cfo-portal/';
         }
 
-        if ((!preferedModule || preferedModule == 'PFM') && this._feature.isEnabled('PFM') && this._permissionChecker.isGranted(AppPermissions.PagesPFMApplicationsManageOffers))
+        if ((!preferedModule || preferedModule == 'PFM') && this._feature.isEnabled('PFM') && this._permissionChecker.isGranted(AppPermissions.PFMApplicationsManageOffers))
             return '/app/pfm/offers';
 
         if (!preferedModule && this._feature.isEnabled('Admin')) {
-            if (this._permissionChecker.isGranted(AppPermissions.PagesTenants))
+            if (this._permissionChecker.isGranted(AppPermissions.Tenants))
                 return '/app/admin/tenants';
 
-            if (this._permissionChecker.isGranted(AppPermissions.PagesAdministrationHostDashboard))
+            if (this._permissionChecker.isGranted(AppPermissions.AdministrationHostDashboard))
                 return '/app/admin/hostDashboard';
 
-            if (this._permissionChecker.isGranted(AppPermissions.PagesAdministrationUsers))
+            if (this._permissionChecker.isGranted(AppPermissions.AdministrationUsers))
                 return '/app/admin/users';
         }
 
@@ -125,16 +125,16 @@ export class RouteGuard implements CanActivate, CanActivateChild {
     }
 
     getBestRouteForHost(): string {
-        if (this._permissionChecker.isGranted(AppPermissions.PagesTenants))
+        if (this._permissionChecker.isGranted(AppPermissions.Tenants))
             return '/app/admin/tenants';
 
-        if (this._permissionChecker.isGranted(AppPermissions.PagesAdministrationHostDashboard))
+        if (this._permissionChecker.isGranted(AppPermissions.AdministrationHostDashboard))
             return '/app/admin/hostDashboard';
 
-        if (this._permissionChecker.isGranted(AppPermissions.PagesCRM))
+        if (this._permissionChecker.isGranted(AppPermissions.CRM))
             return '/app/crm/dashboard';
 
-        if (this._permissionChecker.isGranted(AppPermissions.PagesAdministrationUsers))
+        if (this._permissionChecker.isGranted(AppPermissions.AdministrationUsers))
             return '/app/admin/users';
 
         return null;

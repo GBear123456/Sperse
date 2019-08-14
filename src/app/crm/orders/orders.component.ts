@@ -323,7 +323,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
 
     initToolbarConfig() {
         if (this.componentIsActivated) {
-            this.manageDisabled = !this.isGranted(AppPermissions.PagesCRMOrdersManage);
+            this.manageDisabled = !this.isGranted(AppPermissions.CRMOrdersManage);
             this._appService.updateToolbar([
                 {
                     location: 'before', items: [
@@ -601,7 +601,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     }
 
     updateOrdersStage($event) {
-        if (this.permission.isGranted(AppPermissions.PagesCRMBulkUpdates)) {
+        if (this.permission.isGranted(AppPermissions.CRMBulkUpdates)) {
             this.stagesComponent.tooltipVisible = false;
             this._pipelineService.updateEntitiesStage(
                 this.pipelinePurposeId,
