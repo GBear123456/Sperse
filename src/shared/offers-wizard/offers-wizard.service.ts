@@ -35,6 +35,7 @@ import * as moment from 'moment';
 
 @Injectable()
 export class OffersWizardService {
+    USER_EMAIL: string;
     emailRegEx = AppConsts.regexPatterns.email;
     domain = environment.LENDSPACE_DOMAIN;
     dialogRef: any;
@@ -83,6 +84,7 @@ export class OffersWizardService {
                     this.submitApplicationProfileInput = SubmitApplicationInput.fromJS({
                         ...output
                     });
+                    this.USER_EMAIL = output.personalInformation.email;
                 }
             },
             (error) => console.log(error)
@@ -100,6 +102,22 @@ export class OffersWizardService {
 
     openConditionsDialog(data: any) {
         this.dialog.open(ConditionsModalComponent, {panelClass: ['slider', 'footer-slider'], data: data});
+    }
+
+    isEmailChanged() {
+        return this.submitApplicationProfileInput.personalInformation.email !== this.USER_EMAIL;
+    }
+
+    checkIfEmailChanged() {
+        if (!this.data.campaignId && this.isEmailChanged()) {
+            abp.message.confirm(this.ls.l('EmailChangeText', this.submitApplicationProfileInput.personalInformation.email), this.ls.l('EmailChangeTitle'), result => {
+                if (result) {
+                    this.submitApplicationProfile();
+                }
+            });
+        } else {
+            this.submitApplicationProfile();
+        }
     }
 
     submitApplicationProfile(): Observable<SubmitApplicationOutput> {
