@@ -22,7 +22,7 @@ export class BugsnagService {
 
     constructor() {
         const generalInfo = window['generalInfo'];
-        this.bugsnagApiKey = generalInfo && generalInfo.userConfig && generalInfo.userConfig.settings && generalInfo.userConfig.settings.values && generalInfo.userConfig.settings.values['Integrations.Bugsnag.UIApiKey'];
+        this.bugsnagApiKey = generalInfo && generalInfo.userConfig && generalInfo.userConfig.setting && generalInfo.userConfig.setting.values && generalInfo.userConfig.setting.values['Integrations.Bugsnag.UIApiKey'];
         if (this.bugsnagApiKey) {
             this.bugsnagClient = bugsnag({
                 ...this.bugsnagConfig,
