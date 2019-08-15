@@ -29,7 +29,7 @@
                         <h3 class="lab">{{upperCase(group)}}</h3>
                         <div *ngFor="let field of getObjectKeys(application[group])" class="section-item">
                             <div class="item-edit-label">{{startCase(field)}}:</div>
-                            <div>{{application[group][field]}}</div>
+                            <div>{{formatFieldValue(application[group][field])}}</div>
                         </div>
                     </div>
                 </div>
