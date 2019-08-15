@@ -80,7 +80,7 @@
         <!--</app-static-list>-->
 
         <app-static-list [selectedKeys]="[data.appointment.SelectedStar]" [hideButtons]="true"
-                        (onSelectionChanged)="onStarsChanged($event)" [bulkUpdatePermissionKey]="permissions.PagesCRMBulkUpdates"></app-static-list>
+                        (onSelectionChanged)="onStarsChanged($event)" [bulkUpdatePermissionKey]="permissions.CRMBulkUpdates"></app-static-list>
 
         <div class="tab-content">
             <dx-validation-group (onInitialized)="initDateValidationGroup($event)">
