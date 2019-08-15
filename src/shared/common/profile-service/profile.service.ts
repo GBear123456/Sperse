@@ -7,6 +7,15 @@ import { AppSessionService } from '@shared/common/session/app-session.service';
 export class ProfileService {
     constructor(private appSession: AppSessionService) {}
 
+    getPhoto(photo, gender = null): string {
+        if (photo)
+            return 'data:image/jpeg;base64,' + photo;
+        if (gender)
+            return 'assets/common/images/no-photo-' + gender + '.png';
+
+        return AppConsts.imageUrls.noPhoto;
+    }
+
     getProfilePictureUrl(id, defaultUrl = AppConsts.imageUrls.profileDefault) {
         let tenant = this.appSession.tenant;
         if (!id)
@@ -16,5 +25,15 @@ export class ProfileService {
 
         let tenantId = this.appSession.tenantId;
         return AppConsts.remoteServiceBaseUrl + '/api/Profile/Picture/' + (tenantId || 0) + '/' + id;
+    }
+
+    getContactPhotoUrl(publicId, isThumbnail = true): string {
+        if (publicId) {
+            let actionName = isThumbnail ? 'thumbnail' : 'photo';
+            let tenantId = this.appSession.tenantId || 0;
+            return AppConsts.remoteServiceBaseUrl + '/api/contact/' + actionName + '/' + tenantId + '/' + publicId;
+        }
+
+        return AppConsts.imageUrls.noPhoto;
     }
 }

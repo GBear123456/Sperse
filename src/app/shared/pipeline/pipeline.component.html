@@ -90,7 +90,7 @@
                                 <span *ngIf="entity?.StartDate">{{ getDateWithTimezone(entity?.StartDate) | date : 'M/d, H:mm' }} - {{ getDateWithTimezone(entity?.EndDate) | date : 'M/d, H:mm' }}</span>
                             </div>
                             <div class="text-right pipeline-photo-wrap">
-                                <div [ngStyle]="{'background-image': entity?.PhotoPublicId ? 'url(' + getContactPhotoUrl(entity?.PhotoPublicId) + ')': 'none'}" class="img-responsive img-circle"></div>
+                                <div [ngStyle]="{'background-image': entity?.PhotoPublicId ? 'url(' + profileService.getContactPhotoUrl(entity?.PhotoPublicId) + ')': 'none'}" class="img-responsive img-circle"></div>
                             </div>
                         </div>
                     </div>
