@@ -14,6 +14,7 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { AppHttpInterceptor } from '@shared/http/appHttpInterceptor';
 import { AppPermissions } from '@shared/AppPermissions';
+import { AppFeatures } from '@shared/AppFeatures';
 
 @Component({
     selector: 'system-settings',
@@ -34,7 +35,7 @@ export class SystemSettingsComponent implements OnInit {
         { 'Id': 1, 'Name': 'Platform App' }
     ];
 
-    tenantHostsEnabled = abp.features.isEnabled('Admin.Customizations')
+    tenantHostsEnabled = abp.features.isEnabled(AppFeatures.AdminCustomizations)
         && this._permission.isGranted(AppPermissions.AdministrationTenantHosts);
 
     constructor(

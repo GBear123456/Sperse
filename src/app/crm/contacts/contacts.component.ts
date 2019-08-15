@@ -53,6 +53,7 @@ import { ItemFullInfo } from '@shared/common/item-details-layout/item-full-info'
 import { BehaviorSubject, Observable } from '@node_modules/rxjs';
 import { TargetDirectionEnum } from '@app/crm/contacts/target-direction.enum';
 import { AppPermissions } from '@shared/AppPermissions';
+import { AppFeatures } from '@shared/AppFeatures';
 
 @Component({
     templateUrl: './contacts.component.html',
@@ -150,7 +151,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
                     let data = event.snapshot.data,
                         rightPanelId = this.getCheckPropertyValue(data, 'rightPanelId', RP_DEFAULT_ID);
                     this.rightPanelSetting.opened = this.getCheckPropertyValue(data, 'rightPanelOpened',
-                        rightPanelId == RP_DEFAULT_ID && abp.features.isEnabled('PFM.CreditReport')
+                        rightPanelId == RP_DEFAULT_ID && abp.features.isEnabled(AppFeatures.PFMCreditReport)
                     );
                     this.rightPanelSetting.id = rightPanelId;
                 });

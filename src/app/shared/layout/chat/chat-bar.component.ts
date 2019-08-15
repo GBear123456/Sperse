@@ -23,6 +23,7 @@ import { ChatFriendDto } from './ChatFriendDto';
 import { ChatSignalrService } from './chat-signalr.service';
 import { UserHelper } from '../../helpers/UserHelper';
 import { CommonLookupModalComponent } from '@app/shared/common/lookup/common-lookup-modal.component';
+import { AppFeatures } from '@shared/AppFeatures';
 
 @Component({
     templateUrl: './chat-bar.component.html',
@@ -615,8 +616,8 @@ export class ChatBarComponent extends AppComponentBase implements OnInit, AfterV
 
     init(): void {
         this.registerEvents();
-        this.tenantToTenantChatAllowed = this.feature.isEnabled('App.ChatFeature.TenantToTenant');
-        this.tenantToHostChatAllowed = this.feature.isEnabled('App.ChatFeature.TenantToHost');
-        this.interTenantChatAllowed = this.feature.isEnabled('App.ChatFeature.TenantToTenant') || this.feature.isEnabled('App.ChatFeature.TenantToHost') || !this._appSessionService.tenant;
+        this.tenantToTenantChatAllowed = this.feature.isEnabled(AppFeatures.AppChatFeatureTenantToTenant);
+        this.tenantToHostChatAllowed = this.feature.isEnabled(AppFeatures.AppChatFeatureTenantToHost);
+        this.interTenantChatAllowed = this.feature.isEnabled(AppFeatures.AppChatFeatureTenantToTenant) || this.feature.isEnabled(AppFeatures.AppChatFeatureTenantToHost) || !this._appSessionService.tenant;
     }
 }

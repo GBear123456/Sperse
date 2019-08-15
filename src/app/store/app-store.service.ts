@@ -15,6 +15,7 @@ import { AppStore } from './index';
 import { ContactGroup, ContactGroupPermission } from '@shared/AppEnums';
 import { filter } from 'rxjs/operators';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
+import { AppPermissions } from '@shared/AppPermissions';
 
 @Injectable()
 export class AppStoreService {
@@ -28,7 +29,7 @@ export class AppStoreService {
         if (keyList.length) {
             let contactGroup = keyList.pop(),
                 groupId = ContactGroup[contactGroup];
-            if (this._permission.isGranted(ContactGroupPermission[contactGroup] + '.ManageAssignments')) {
+            if (this._permission.isGranted(ContactGroupPermission[contactGroup] + '.ManageAssignments' as AppPermissions)) {
                 this.store$.dispatch(new ContactAssignedUsersStoreActions.LoadRequestAction(groupId));
                 this.store$.pipe(select(ContactAssignedUsersStoreSelectors.getContactGroupAssignedUsers, { contactGroup: groupId }))
                     .pipe(filter((res) => Boolean(res))).subscribe(() => setTimeout(() => this.dispatchUserAssignmentsActions(keyList), 100));

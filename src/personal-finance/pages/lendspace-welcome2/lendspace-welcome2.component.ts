@@ -2,6 +2,7 @@ import { Component, Inject, Injector, OnInit } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import kebabCase from 'lodash/kebabCase';
+import { AppFeatures } from '@shared/AppFeatures';
 
 @Component({
   selector: 'app-lendspace-welcome2',
@@ -35,7 +36,7 @@ export class LendspaceWelcome2Component extends AppComponentBase implements OnIn
             name: 'PersonalFinance',
             button: 'AddAccounts',
             router: 'personal-finance/my-finances',
-            hidden: !this.feature.isEnabled('CFO.Partner'),
+            hidden: !this.feature.isEnabled(AppFeatures.CFOPartner),
         }
     ];
 

@@ -1,5 +1,6 @@
 import { Component, Injector, OnInit } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
+import { AppFeatures } from '@shared/AppFeatures';
 
 @Component({
   selector: 'app-lendspace-welcome',
@@ -38,7 +39,7 @@ export class LendspaceWelcomeComponent extends AppComponentBase implements OnIni
             title: 'Personal Finances',
             text: 'Track your combined',
             router: '/personal-finance/my-finances',
-            hidden: !this.feature.isEnabled('CFO.Partner'),
+            hidden: !this.feature.isEnabled(AppFeatures.CFOPartner),
         }
     ];
 

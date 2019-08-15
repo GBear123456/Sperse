@@ -1,66 +1,81 @@
-import { Component, Injector, Output, Input, EventEmitter } from '@angular/core';
-import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
+/** Core imports */
+import { Component, Output, Input, EventEmitter } from '@angular/core';
+
+/** Third party imports */
+import { Observable, of } from 'rxjs';
+import { finalize, switchMap, tap } from 'rxjs/operators';
+
+/** Application imports */
 import { QuickBookServiceProxy, InstanceType } from 'shared/service-proxies/service-proxies';
+import { LoadingService } from '@shared/common/loading-service/loading.service';
+import { QuickBookConnectionLinkResult } from '@shared/service-proxies/service-proxies';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { CFOService } from '@shared/cfo/cfo.service';
+import { MessageService } from '@abp/message/message.service';
 
 @Component({
     selector: 'import-quick-book-button',
     templateUrl: './import-quick-book-button.component.html',
     styleUrls: ['./import-quick-book-button.component.less'],
-    providers: [QuickBookServiceProxy]
+    providers: [ QuickBookServiceProxy ]
 })
-export class ImportFromQuickBooksButtonComponent extends CFOComponentBase {
+export class ImportFromQuickBooksButtonComponent {
     @Output() onClose: EventEmitter<any> = new EventEmitter();
     @Input() override: boolean;
 
     constructor(
-        injector: Injector,
-        private _quickBookService: QuickBookServiceProxy
-    ) {
-        super(injector);
+        private quickBookService: QuickBookServiceProxy,
+        private loadingService: LoadingService,
+        private ls: AppLocalizationService,
+        private cfoService: CFOService,
+        private messageService: MessageService
+    ) {}
+
+    private checkConnection(tryNewConnect: boolean) {
+        this.loadingService.startLoading();
+        this.quickBookService.checkToken(InstanceType[this.cfoService.instanceType], this.cfoService.instanceId)
+            .pipe(
+                switchMap(result => {
+                    if (result) {
+                        return this.syncCoA();
+                    } else {
+                        if (tryNewConnect) {
+                            return this.newConnect();
+                        } else {
+                            this.onDialogClose(null);
+                            return of(result);
+                        }
+                    }
+                }),
+                finalize(() => this.loadingService.finishLoading())
+            ).subscribe();
     }
 
-    buttonClick(): void {
-        abp.message.confirm(this.l('ImportQbCoAConfirmation'), this.l('ImportQbCoAConfirmationTitle'), (result) => {
-            if (result) {
-                abp.ui.setBusy();
-                this.checkConnection(true);
-            }
-        });
-    }
-
-    checkConnection(tryNewConnect: boolean) {
-        this._quickBookService.checkToken(InstanceType[this.instanceType], this.instanceId)
-            .subscribe((result) => {
-                if (result) {
-                    this.syncCoA();
-                }
-                else {
-                    if (tryNewConnect)
-                        this.newConnect();
-                    else
-                        this.onDialogClose(null);
-                }
-            });
-    }
-
-    newConnect() {
-        this._quickBookService.getQuickBookConnectionLink(InstanceType[this.instanceType], this.instanceId)
-            .subscribe((result) => {
+    private newConnect(): Observable<QuickBookConnectionLinkResult> {
+        return this.quickBookService.getQuickBookConnectionLink(
+            InstanceType[this.cfoService.instanceType],
+            this.cfoService.instanceId
+        ).pipe(
+            tap((result: QuickBookConnectionLinkResult) => {
                 if (result.connectionLink) {
                     let qbWindow = window.open(result.connectionLink, 'Quick Book Connection', 'menubar=0,scrollbars=1,width=780,height=900,top=10');
                     this.checkWindowClose(qbWindow);
                 }
-            });
+            })
+        );
     }
 
-    syncCoA() {
-        this._quickBookService.syncChartOfAccounts(InstanceType[this.instanceType], this.instanceId, this.override)
-            .subscribe((result) => {
-                this.onDialogClose(null);
-            });
+    private syncCoA(): Observable<void> {
+        return this.quickBookService.syncChartOfAccounts(
+            InstanceType[this.cfoService.instanceType],
+            this.cfoService.instanceId,
+            this.override
+        ).pipe(
+            tap(() => this.onDialogClose(null))
+        );
     }
 
-    checkWindowClose(qbWindow: Window) {
+    private checkWindowClose(qbWindow: Window) {
         if (qbWindow.closed)
             this.checkConnection(false);
         else {
@@ -69,7 +84,14 @@ export class ImportFromQuickBooksButtonComponent extends CFOComponentBase {
     }
 
     private onDialogClose(e) {
-        abp.ui.clearBusy();
         this.onClose.emit(e);
+    }
+
+    buttonClick(): void {
+        this.messageService.confirm(this.ls.l('ImportQbCoAConfirmation'), this.ls.l('ImportQbCoAConfirmationTitle'), (result) => {
+            if (result) {
+                this.checkConnection(true);
+            }
+        });
     }
 }

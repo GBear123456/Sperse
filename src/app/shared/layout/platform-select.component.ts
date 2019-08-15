@@ -3,6 +3,7 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppService } from '@app/app.service';
 import { LayoutService } from '@app/shared/layout/layout.service';
 import { AppPermissions } from '@shared/AppPermissions';
+import { AppFeatures } from '@shared/AppFeatures';
 
 @Component({
     templateUrl: './platform-select.component.html',
@@ -53,14 +54,14 @@ export class PlatformSelectComponent extends AppComponentBase {
                     } else if (module.name === 'CFO'
                         && this._appService.isModuleActive(module.name)
                         && !_appService.isHostTenant
-                        && this.feature.isEnabled('CFO.Partner')
+                        && this.feature.isEnabled(AppFeatures.CFOPartner)
                         && this.permission.isGranted(AppPermissions.CFOMemberAccess)
                     ) {
                         this.modules.footerItems.push(moduleConfig);
                     } else if (
                         module.name === 'PFM'
                         && this._appService.isModuleActive(module.name)
-                        && this.feature.isEnabled('PFM.Applications')
+                        && this.feature.isEnabled(AppFeatures.PFMApplications)
                     ) {
                         this.modules.footerItems = this.modules.footerItems.filter((item) => item.name !== 'CFO');
                         this.modules.footerItems.push(moduleConfig);

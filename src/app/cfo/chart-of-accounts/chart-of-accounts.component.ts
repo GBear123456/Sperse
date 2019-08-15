@@ -1,13 +1,17 @@
+/** Core imports */
 import { Component, OnInit, OnDestroy, Injector, ViewChild } from '@angular/core';
-import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 
-import { ClassificationServiceProxy, AccountingCategoryDto, InstanceType, CategoryTreeServiceProxy } from '@shared/service-proxies/service-proxies';
-import { appModuleAnimation } from '@shared/animations/routerTransition';
+/** Third party imports */
+import * as XLSX from 'xlsx';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import 'devextreme/data/odata/store';
-import { CategorizationComponent } from '@app/cfo/transactions/categorization/categorization.component';
-import * as XLSX from 'xlsx';
 import { finalize } from 'rxjs/operators';
+
+/** Application imports */
+import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
+import { ClassificationServiceProxy, AccountingCategoryDto, InstanceType, CategoryTreeServiceProxy } from '@shared/service-proxies/service-proxies';
+import { appModuleAnimation } from '@shared/animations/routerTransition';
+import { CategorizationComponent } from '@app/cfo/transactions/categorization/categorization.component';
 
 class UploadCategoryModel {
     'Cashflow Type': string;
@@ -33,8 +37,9 @@ export class ChartOfAccountsComponent extends CFOComponentBase implements OnInit
     headlineConfig: any;
     override = false;
 
-    constructor(injector: Injector,
-        private _categoryTreeServiceProxy: CategoryTreeServiceProxy
+    constructor(
+        injector: Injector,
+        private categoryTreeServiceProxy: CategoryTreeServiceProxy
     ) {
         super(injector);
     }
@@ -102,7 +107,7 @@ export class ChartOfAccountsComponent extends CFOComponentBase implements OnInit
                     isActive: val['isActive']
                 }));
             });
-            this._categoryTreeServiceProxy.import(
+            this.categoryTreeServiceProxy.import(
                 InstanceType[this.instanceType],
                 this.instanceId,
                 this.override,
@@ -114,6 +119,7 @@ export class ChartOfAccountsComponent extends CFOComponentBase implements OnInit
                 });
         };
 
+        reader.onerror = () => { abp.ui.clearBusy(); };
         reader.readAsBinaryString(target.files[0]);
     }
 

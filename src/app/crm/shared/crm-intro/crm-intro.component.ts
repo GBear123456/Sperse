@@ -14,6 +14,7 @@ import { QuestionnaireComponent } from '@shared/shared-intro-steps/questionnaire
 import { ImportUsersStepComponent } from '@shared/shared-intro-steps/import-users-step/import-users-step.component';
 import { AppService } from '@app/app.service';
 import { AppPermissions } from '@shared/AppPermissions';
+import { AppFeatures } from '@shared/AppFeatures';
 
 @Component({
     selector: 'app-crm-intro',
@@ -43,7 +44,7 @@ export class CrmIntroComponent extends AppComponentBase implements OnInit {
         this.moduleName = AppConsts.modules.CRMModule;
         this.dialogRef = <any>injector.get(MatDialogRef);
 
-        this.showImportUsersStep = (appService.isHostTenant || this.feature.isEnabled('Admin'))
+        this.showImportUsersStep = (appService.isHostTenant || this.feature.isEnabled(AppFeatures.Admin))
             && this.permission.isGranted(AppPermissions.AdministrationUsers)
             && this.permission.isGranted(AppPermissions.AdministrationUsersCreate)
             && this.permission.isGranted(AppPermissions.AdministrationRoles);

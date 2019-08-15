@@ -10,6 +10,7 @@ import {
     RouterStateSnapshot,
     CanActivateChild
 } from '@angular/router';
+import { AppFeatures } from '@shared/AppFeatures';
 
 @Injectable()
 export class CreditReportsRouteGuard implements CanActivate, CanActivateChild {
@@ -22,7 +23,7 @@ export class CreditReportsRouteGuard implements CanActivate, CanActivateChild {
     ) { }
 
     canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
-        if (!this._featureChecker.isEnabled('PFM')) {
+        if (!this._featureChecker.isEnabled(AppFeatures.PFM)) {
             this._router.navigate(['/']);
             return false;
         }
@@ -42,7 +43,7 @@ export class CreditReportsRouteGuard implements CanActivate, CanActivateChild {
 
     canActivateChild(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
         if (UrlHelper.isPfmAppUrl(state.url)) {
-            if (this._featureChecker.isEnabled('PFM.Applications'))                
+            if (this._featureChecker.isEnabled(AppFeatures.PFMApplications))
                 this._router.navigate([this._sessionService.user ? '/personal-finance/home' : '/account/login']);
             else
                 this._router.navigate([this.selectBestRoute()]);
@@ -54,8 +55,8 @@ export class CreditReportsRouteGuard implements CanActivate, CanActivateChild {
                 if (this.checkLoansSectionForDemoUser(state.url)) {
                     this._router.navigate(['/personal-finance/offers/personal-loans']);
                     return false;
-                }                
-        
+                }
+
                 return true;
             } else {
                 this._router.navigate(['/app/access-denied']);
@@ -71,10 +72,10 @@ export class CreditReportsRouteGuard implements CanActivate, CanActivateChild {
     }
 
     selectBestRoute(): string {
-        if (this._featureChecker.isEnabled('PFM.Applications'))
+        if (this._featureChecker.isEnabled(AppFeatures.PFMApplications))
             return '/personal-finance/home';
 
-        if (this._featureChecker.isEnabled('PFM.CreditReport'))
+        if (this._featureChecker.isEnabled(AppFeatures.PFMCreditReport))
             return '/personal-finance/credit-report';
 
         return '/';

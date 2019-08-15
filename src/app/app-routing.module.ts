@@ -21,6 +21,7 @@ import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { FeatureCheckerService } from '@abp/features/feature-checker.service';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { AppPermissions } from '@shared/AppPermissions';
+import { AppFeatures } from '@shared/AppFeatures';
 
 @Injectable()
 export class ModulePathResolverService implements Resolve<any> {
@@ -48,7 +49,7 @@ export class CfoActivateService implements CanActivate {
     canActivate() {
         if (this.permissionChecker.isGranted(AppPermissions.CFOMainInstanceAccess)) {
             this.router.navigate(['/app/cfo/main']);
-        } else if (this.featureService.isEnabled('CFO.Partner') && this.permissionChecker.isGranted(AppPermissions.CFOMemberAccess)) {
+        } else if (this.featureService.isEnabled(AppFeatures.CFOPartner) && this.permissionChecker.isGranted(AppPermissions.CFOMemberAccess)) {
             this.router.navigate(['/app/cfo-portal']);
         } else {
             this.router.navigate(['/app/access-denied']);

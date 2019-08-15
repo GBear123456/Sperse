@@ -20,6 +20,7 @@ import 'assets/metronic/src/js/framework/base/util.js';
 import 'assets/metronic/src/js/framework/components/general/dropdown.js';
 import { AppPermissions } from '@shared/AppPermissions';
 import { WizardRightSideComponent } from '@shared/offers-wizard/wizard-right-side/wizard-right-side.component';
+import { AppFeatures } from '@shared/AppFeatures';
 
 @Component({
     selector: 'user-dropdown-menu',
@@ -34,9 +35,9 @@ export class UserDropdownMenuComponent extends AppComponentBase implements OnIni
     isImpersonatedLogin = this.abpSessionService.impersonatorUserId > 0;
     shownLoginInfo: { fullName, email, tenantName?};
     recentlyLinkedUsers: LinkedUserDto[];
-    hasPlatformPermissions = (this.feature.isEnabled('CFO') && this.permission.isGranted(AppPermissions.CFO)) ||
-                             (this.feature.isEnabled('CRM') && this.permission.isGranted(AppPermissions.CRM)) ||
-                             (this.feature.isEnabled('Admin') && this.permission.isGranted(AppPermissions.AdministrationUsers));
+    hasPlatformPermissions = (this.feature.isEnabled(AppFeatures.CFO) && this.permission.isGranted(AppPermissions.CFO)) ||
+                             (this.feature.isEnabled(AppFeatures.CRM) && this.permission.isGranted(AppPermissions.CRM)) ||
+                             (this.feature.isEnabled(AppFeatures.Admin) && this.permission.isGranted(AppPermissions.AdministrationUsers));
     menuItemTypes = UserDropdownMenuItemType;
     @Input() subtitle: string;
     @Input() dropdownMenuItems: UserDropdownMenuItemModel[] = [
@@ -68,7 +69,7 @@ export class UserDropdownMenuComponent extends AppComponentBase implements OnIni
             name: this.l('My Profile'),
             id: 'UpdateMyProfile',
             iconClass: 'profile-picture',
-            visible: this.feature.isEnabled('PFM'),
+            visible: this.feature.isEnabled(AppFeatures.PFM),
             onClick: () => this.updateProfileInformation()
         },
         {
@@ -91,7 +92,7 @@ export class UserDropdownMenuComponent extends AppComponentBase implements OnIni
         },
         {
             name: this.l('MySettings'),
-            visible: !this.feature.isEnabled('PFM'),
+            visible: !this.feature.isEnabled(AppFeatures.PFM),
             id: 'UserProfileMySettingsLink',
             iconClass: 'settings',
             onClick: (e) => this.userManagementService.changeMySettings(e)
