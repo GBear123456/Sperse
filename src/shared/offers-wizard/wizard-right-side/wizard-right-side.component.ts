@@ -42,6 +42,18 @@ export class WizardRightSideComponent {
     }
 
     save(): void {
+        if (this.offersWizardService.isEmailChanged()) {
+            abp.message.confirm(this.ls.l('EmailChangeText', this.offersWizardService.submitApplicationProfileInput.personalInformation.email), this.ls.l('EmailChangeTitle'), result => {
+                if (result) {
+                    this.submitApplicationProfile();
+                }
+            });
+        } else {
+            this.submitApplicationProfile();
+        }
+    }
+
+    submitApplicationProfile() {
         this.offersWizardService.submitApplicationProfile().subscribe((res) => {
             res && this._offersService.loadMemberInfo();
         });

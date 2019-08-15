@@ -152,10 +152,10 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
         if (this.data && this.data.raw && this.data.raw.user.id == this.data.userId)
             this.fillUserData(this.data['raw']);
         else if (!this.loading) {
-            this.startLoading();
+            this.startLoading(true);
             this._contactsService.contactInfoSubscribe((contactInfo) =>
                 this._userService.getUserForEdit(contactInfo.personContactInfo.userId || undefined)
-                    .pipe(finalize(() => this.finishLoading()))
+                    .pipe(finalize(() => this.finishLoading(true)))
                     .subscribe(userEditOutput => {
                         this.fillUserData(userEditOutput);
                     }), this.constructor.name
@@ -202,13 +202,13 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
             this.l('AreYouSure'),
             isConfirmed => {
                 if (isConfirmed) {
-                    this.startLoading();
+                    this.startLoading(true);
                     this.inviteData.contactId = this.contactInfoData.contactInfo.personContactInfo.id;
                     let phoneNumber = this.inviteData.phoneNumber;
                     this._personContactServiceProxy.createUserForContact(extend(clone(this.inviteData), {
                         phoneNumber: phoneNumber && phoneNumber.replace(/\D/g, ''),
                         organizationUnitIds: this.selectedOrgUnits
-                    })).pipe(finalize(() => this.finishLoading())).subscribe(() => {
+                    })).pipe(finalize(() => this.finishLoading(true))).subscribe(() => {
                         this._contactsService.invalidate();
                     });
                 }
