@@ -3,7 +3,7 @@ import { Component, OnInit, Injector, ViewChild, ElementRef, OnDestroy } from '@
 
 /** Third party imports */
 import { finalize } from 'rxjs/operators';
-import * as moment from 'moment';
+import * as moment from 'moment-timezone';
 import startCase from 'lodash/startCase';
 import upperCase from 'lodash/upperCase';
 import find from 'lodash/find';
@@ -174,7 +174,7 @@ export class LeadInformationComponent extends AppComponentBase implements OnInit
         if (!value)
             return null;
 
-        return value instanceof moment ? value.format(this.formatting.dateMoment) : value;
+        return this.formatFieldValue(value);
     }
 
     updateValue(value, item) {
@@ -187,6 +187,10 @@ export class LeadInformationComponent extends AppComponentBase implements OnInit
 
     getObjectKeys(obj) {
         return obj && Object.keys(obj);
+    }
+
+    formatFieldValue(value) {
+        return value instanceof moment ? value.format(this.formatting.dateMoment) : value;
     }
 
     ngOnDestroy() {
