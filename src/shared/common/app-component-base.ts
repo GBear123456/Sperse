@@ -182,33 +182,6 @@ export abstract class AppComponentBase implements OnDestroy {
             ScreenHelper.openFullscreen(element);
     }
 
-    getPhoto(photo, gender = null): string {
-        if (photo)
-            return this.getImageBase64Src(photo);
-        if (gender)
-            return 'assets/common/images/no-photo-' + gender + '.png';
-
-        return AppConsts.imageUrls.noPhoto;
-    }
-
-    getContactPhotoUrl(publicId, isThumbnail = true): string {
-        if (publicId) {
-            let actionName = isThumbnail ? 'thumbnail' : 'photo';
-            let tenantId = this.appSession.tenantId || 0;
-            return AppConsts.remoteServiceBaseUrl + '/api/contact/' + actionName + '/' + tenantId + '/' + publicId;
-        }
-
-        return AppConsts.imageUrls.noPhoto;
-    }
-
-    getImageBase64Src(imageBase64: string): string {
-        return 'data:image/jpeg;base64,' + imageBase64;
-    }
-
-    getProfilePictureUrl(id, defaultUrl = AppConsts.imageUrls.profileDefault) {
-        return this.profileService.getProfilePictureUrl(id, defaultUrl);
-    }
-
     startLoading(globally = false, element: any = null) {
         this.loading = true;
         this.loadingService.startLoading(globally ? null : element || this.getElementRef().nativeElement);
