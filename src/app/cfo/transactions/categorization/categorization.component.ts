@@ -624,66 +624,68 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
     refreshCategories(expandInitial: boolean = false, refreshTransactionsCount = true) {
         this.startLoading();
         this._categoryTreeServiceProxy.get(
-            InstanceType[this._cfoService.instanceType], this._cfoService.instanceId, this.includeNonCashflowNodes).subscribe((data) => {
-                let categories = [];
-                this.categorization = data;
-                if (this.settings.showAT && data.accountingTypes) {
-                    _.mapObject(data.accountingTypes, (item, key) => {
-                        categories.push({
-                            key: key + item.typeId,
-                            parent: 'root',
-                            coAID: null,
-                            name: item.name,
-                            typeId: item.typeId
-                        });
+            InstanceType[this._cfoService.instanceType],
+            this._cfoService.instanceId,
+            this.includeNonCashflowNodes
+        ).subscribe((data) => {
+            let categories = [];
+            this.categorization = data;
+            if (this.settings.showAT && data.accountingTypes) {
+                _.mapObject(data.accountingTypes, (item, key) => {
+                    categories.push({
+                        key: key + item.typeId,
+                        parent: 'root',
+                        coAID: null,
+                        name: item.name,
+                        typeId: item.typeId
                     });
-                }
-                if (data.categories)
-                    _.mapObject(data.categories, (item, key) => {
-                        let accounting = data.accountingTypes[item.accountingTypeId];
-                        if (accounting && (!item.parentId || data.categories[item.parentId])) {
-                            categories.push({
-                                key: parseInt(key),
-                                parent: item.parentId || (this.settings.showAT ?
-                                    item.accountingTypeId.toString() + accounting.typeId : 'root'),
-                                coAID: item.coAID,
-                                name: item.name,
-                                typeId: accounting.typeId
-                            });
-                        }
-                    });
-
-                this.categories = categories;
-
-                if (expandInitial) {
-                    let expanded = this._cacheService.get(this._expandedCacheKey);
-                    if (expanded)
-                        this.categoryList.expandedRowKeys = expanded;
-                    else
-                        this.processExpandTree(true, false);
-                }
-
-                if (this.categoryId) {
-                    this.categoryList.instance.focus();
-                    let category = data.categories[this.categoryId];
-                    this.categoryList.instance.expandRow(category.accountingTypeId + data.accountingTypes[category.accountingTypeId].typeId);
-                    if (category.parentId)
-                        this.categoryList.instance.expandRow(category.parentId);
-                    setTimeout(() => {
-                        this.categoryList.instance.selectRows([this.categoryId], true);
-                    }, 0);
-                }
-
-                if (refreshTransactionsCount) {
-                    this.refreshTransactionsCountDataSource();
-                }
-                setTimeout(() => this.finishLoading());
-                if (!this.categories.length) this.noDataText = this.ls('Platform', 'NoData');
-
-                this.setTransactionsCount();
-                this._changeDetectionRef.detectChanges();
+                });
             }
-        );
+            if (data.categories)
+                _.mapObject(data.categories, (item, key) => {
+                    let accounting = data.accountingTypes[item.accountingTypeId];
+                    if (accounting && (!item.parentId || data.categories[item.parentId])) {
+                        categories.push({
+                            key: parseInt(key),
+                            parent: item.parentId || (this.settings.showAT ?
+                                item.accountingTypeId.toString() + accounting.typeId : 'root'),
+                            coAID: item.coAID,
+                            name: item.name,
+                            typeId: accounting.typeId
+                        });
+                    }
+                });
+
+            this.categories = categories;
+
+            if (expandInitial) {
+                let expanded = this._cacheService.get(this._expandedCacheKey);
+                if (expanded)
+                    this.categoryList.expandedRowKeys = expanded;
+                else
+                    this.processExpandTree(true, false);
+            }
+
+            if (this.categoryId) {
+                this.categoryList.instance.focus();
+                let category = data.categories[this.categoryId];
+                this.categoryList.instance.expandRow(category.accountingTypeId + data.accountingTypes[category.accountingTypeId].typeId);
+                if (category.parentId)
+                    this.categoryList.instance.expandRow(category.parentId);
+                setTimeout(() => {
+                    this.categoryList.instance.selectRows([this.categoryId], true);
+                }, 0);
+            }
+
+            if (refreshTransactionsCount) {
+                this.refreshTransactionsCountDataSource();
+            }
+            setTimeout(() => this.finishLoading());
+            if (!this.categories.length) this.noDataText = this.ls('Platform', 'NoData');
+
+            this.setTransactionsCount();
+            this._changeDetectionRef.detectChanges();
+        });
     }
 
     setTransactionsCount() {
@@ -693,7 +695,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
 
         let accountingTypes: any[] = [];
         let parentCategories: any[] = [];
-                                                 
+
         this.categories.forEach(item => {
             item.transactionsCount = items[0][item.key];
 
@@ -708,7 +710,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
                 let parentCategory = parentCategories[x.parent];
                 if (parentCategory && x.transactionsCount)
                     parentCategory.transactionsCount = parentCategory.transactionsCount ? parentCategory.transactionsCount + x.transactionsCount : x.transactionsCount;
-            }            
+            }
         });
 
         if (this.settings.showAT)
