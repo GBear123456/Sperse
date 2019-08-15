@@ -43,7 +43,7 @@
             <dxo-common-series-settings
                 argumentField="date"
                 type="stackedBar"
-                ignoreEmptyPoints="true">
+                [ignoreEmptyPoints]="true">
             </dxo-common-series-settings>
             <dxo-tooltip
                 enabled="true"
@@ -51,15 +51,15 @@
                 [customizeTooltip]="customizeBarTooltip">
             </dxo-tooltip>
 
-            <dxi-series [color]="historicalCreditColor" valueField="credit" name="{{l('Stats_Inflows')}}"></dxi-series>
-            <dxi-series [color]="historicalDebitColor" valueField="debit" name="{{l('Stats_Outflows')}}"></dxi-series>
+            <dxi-series [color]="historicalCreditColor" valueField="credit" [name]="l('Stats_Inflows')"></dxi-series>
+            <dxi-series [color]="historicalDebitColor" valueField="debit" [name]="l('Stats_Outflows')"></dxi-series>
             <dxi-series [color]="forecastCreditColor" valueField="forecastCredit" [showInLegend]="false" name="forecast"></dxi-series>
             <dxi-series [color]="forecastDebitColor" valueField="forecastDebit" [showInLegend]="false" name="forecastDebit"></dxi-series>
             <dxi-series
                 type="line"
                 [color]="historicalNetChangeColor"
                 valueField="netChange"
-                name="{{l('Net_Change')}}"
+                [name]="l('Net_Change')"
                 [showInLegend]="false">
             </dxi-series>
             <dxi-series
@@ -70,10 +70,28 @@
                 [showInLegend]="false">
             </dxi-series>
 
+            <dxi-series name="startedBalanceGradient"
+                        pane="topPane"
+                        color="url(#started-balance-gradient)"
+                        type="rangeArea"
+                        hoverMode="none"
+                        rangeValue1Field="minRange"
+                        rangeValue2Field="startingBalance">
+                <dxo-label [visible]="false"></dxo-label>
+            </dxi-series>
+            <dxi-series name="startingBalance"
+                        [color]="startingBalanceColor"
+                        type="line"
+                        valueField="startingBalance"
+                        pane="topPane">
+                <dxo-point size="8"></dxo-point>
+            </dxi-series>
+            <dxi-pane name="topPane"></dxi-pane>
+
             <!-- Bottom axis -->
             <dxo-argument-axis
                 argumentType="datetime"
-                visible="true"
+                [visible]="true"
                 type="discrete">
                 <dxo-label [customizeText]="customizeBottomAxis"></dxo-label>
                 <!--<dxo-tick-interval months="1"></dxo-tick-interval>-->
@@ -107,6 +125,14 @@
                 </dxo-strip-style>
             </dxo-common-axis-settings>
         </dx-chart>
+
+        <svg>
+            <linearGradient id="started-balance-gradient" x1="0" x2="0" y1="0" y2="1">
+                <stop offset="0%" stop-color="rgba(0, 174, 239, .1)"/>
+                <stop offset="100%" stop-color="#fff"/>
+            </linearGradient>
+        </svg>
+
     </div>
     <app-no-data [hidden]="trendData && trendData.length"></app-no-data>
 </ng-container>
