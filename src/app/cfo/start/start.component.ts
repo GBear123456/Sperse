@@ -2,6 +2,8 @@ import { Directive, ComponentFactoryResolver, Injector, AfterViewInit,
     Component, OnDestroy, ViewChild, ViewContainerRef } from '@angular/core';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
+import { PortalDashboardComponent } from './dashboard/portal-dashboard.component';
+import { DashboardComponent } from './dashboard/dashboard.component';
 
 @Directive({
     selector: '[ad-dashboard-host]'
@@ -25,10 +27,9 @@ export class StartComponent extends CFOComponentBase implements AfterViewInit, O
         private _componentFactoryResolver: ComponentFactoryResolver
     ) {
         super(injector);
-        this._activatedRoute.data.subscribe((data) => {
-            if (data.host)
-                this._hostClass = data.host;
-        });
+
+        this._hostClass = this._cfoService.hasStaticInstance || this.instanceId ?
+            PortalDashboardComponent : DashboardComponent;
     }
 
     instanceChangeProcess() {

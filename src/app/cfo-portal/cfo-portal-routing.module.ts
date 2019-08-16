@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { StartComponent } from '@app/cfo/start/start.component';
-import { PortalDashboardComponent } from './dashboard/dashboard.component';
+import { PortalDashboardComponent } from '@app/cfo/start/dashboard/portal-dashboard.component';
 
 @NgModule({
     imports: [
@@ -10,7 +10,7 @@ import { PortalDashboardComponent } from './dashboard/dashboard.component';
             {
                 path: '',
                 children: [
-                    { path: 'overview', component: StartComponent, data: { permission: '', reuse: true, host: PortalDashboardComponent } },
+                    { path: 'overview', component: StartComponent, data: { permission: '', reuse: true } },
                 ]
             }
         ])
