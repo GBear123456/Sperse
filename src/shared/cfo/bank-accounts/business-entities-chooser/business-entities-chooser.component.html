@@ -14,7 +14,7 @@
                         [value]="selectedAll"
                         (onValueChanged)="onSelectAll($event, dataSource)">
                     </dx-check-box>
-                    <span *ngIf="bankAccountsService.cfoService.hasStaticInstance && onFilterButtonClick.observers.length" class="accounts-filter" (click)="filterButtonClick($event)"></span>
+                    <span *ngIf="onFilterButtonClick.observers.length" class="accounts-filter" (click)="filterButtonClick($event)"></span>
                 </div>
                 <dx-tree-view 
                     [expandAllEnabled]="true"
