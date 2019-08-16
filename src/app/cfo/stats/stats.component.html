@@ -29,8 +29,12 @@
                         [customizePoint]="customizePoint" (onDone)="onDone($event)" resolveLabelOverlapping="stack" #linearChart>
                         <dxo-size [width]="chartsWidth" [height]="chartsHeight / 2"></dxo-size>
                         <!-- common settings for charts -->
-                        <dxo-common-series-settings argumentField="date" [showInLegend]="false" [maxLabelCount]="maxLabelCount"
-                            ignoreEmptyPoints="true" hoverMode="none">
+                        <dxo-common-series-settings
+                            argumentField="date"
+                            [showInLegend]="false"
+                            [maxLabelCount]="maxLabelCount"
+                            ignoreEmptyPoints="true"
+                            hoverMode="none">
                             <dxo-label [visible]="false" [backgroundColor]="labelPositiveBackgroundColor">
                                 <dxo-format type="currency largeNumber" [currency]="cfoPreferencesService.selectedCurrencyId">
                                 </dxo-format>
@@ -46,11 +50,17 @@
                         </dxi-series>
                         <dxi-series name="forecast" pane="topPane" [color]="forecastEndingBalanceColor" valueField="forecastEndingBalance">
                         </dxi-series>
-                        <dxi-series name="historicalGradient" pane="topPane" color="url(#historical-linear-gradient)" type="rangeArea"
-                            rangeValue1Field="minRange" rangeValue2Field="endingBalance">
+                        <dxi-series name="historicalGradient"
+                                    pane="topPane"
+                                    color="url(#historical-linear-gradient)"
+                                    type="rangeArea"
+                                    rangeValue1Field="minRange" rangeValue2Field="endingBalance">
                             <dxo-label [visible]="false"></dxo-label>
                         </dxi-series>
-                        <dxi-series name="historical" [color]="historicalEndingBalanceColor" valueField="endingBalance" pane="topPane">
+                        <dxi-series name="historical"
+                                    [color]="historicalEndingBalanceColor"
+                                    valueField="endingBalance"
+                                    pane="topPane">
                         </dxi-series>
                         <dxi-pane name="topPane"></dxi-pane>
                         <!-- Left axis -->
@@ -79,7 +89,7 @@
                         </dxo-common-axis-settings>
                     </dx-chart>
                 </div>
-                
+
                 <div class="chart">
                     <div class="header">
                         <h2>{{l('Stats_Header_Inflows_Outflows')}}</h2>
@@ -114,8 +124,8 @@
                                                     ignoreEmptyPoints="true">
                         </dxo-common-series-settings>
                         <dxo-tooltip enabled="true"
-                                    zIndex="1"
-                                    [customizeTooltip]="customizeBarTooltip">
+                                     zIndex="1"
+                                     [customizeTooltip]="customizeBarTooltip">
                         </dxo-tooltip>
                         <dxi-series [color]="historicalCreditColor" valueField="credit" name="historical"></dxi-series>
                         <dxi-series [color]="historicalDebitColor" valueField="debit" name="historicalDebit"></dxi-series>
