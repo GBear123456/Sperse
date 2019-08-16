@@ -10,6 +10,7 @@ import { DxCheckBoxModule } from 'devextreme-angular/ui/check-box';
 import { DxTooltipModule } from 'devextreme-angular/ui/tooltip';
 import { DxChartModule } from 'devextreme-angular/ui/chart';
 import { DxSliderModule } from 'devextreme-angular/ui/slider';
+import { DxPieChartModule } from 'devextreme-angular/ui/pie-chart';
 
 /** Application imports */
 import { CommonModule } from '@shared/common/common.module';
@@ -20,6 +21,7 @@ import { TotalsByPeriodComponent } from './totals-by-period/totals-by-period.com
 import { TrendByPeriodComponent } from './trend-by-period/trend-by-period.component';
 import { DashboardService } from './dashboard.service';
 import { ChooseResetRulesComponent } from './categorization-status/choose-reset-rules/choose-reset-rules.component';
+import { TopSpendingCategoriesComponent } from './top-spending-categories/top-spending-categories.component';
 import { PeriodService } from '@app/shared/common/period/period.service';
 
 @NgModule({
@@ -32,6 +34,7 @@ import { PeriodService } from '@app/shared/common/period/period.service';
         DxChartModule,
         DxSliderModule,
         MatDialogModule,
+        DxPieChartModule,
         ngCommon.CommonModule
     ],
     declarations: [
@@ -40,7 +43,8 @@ import { PeriodService } from '@app/shared/common/period/period.service';
         AccountsSynchStatusComponent,
         TotalsByPeriodComponent,
         TrendByPeriodComponent,
-        ChooseResetRulesComponent
+        ChooseResetRulesComponent,
+        TopSpendingCategoriesComponent
     ],
     entryComponents: [
         ChooseResetRulesComponent
@@ -51,7 +55,8 @@ import { PeriodService } from '@app/shared/common/period/period.service';
         AccountsSynchStatusComponent,
         TotalsByPeriodComponent,
         TrendByPeriodComponent,
-        ChooseResetRulesComponent
+        ChooseResetRulesComponent,
+        TopSpendingCategoriesComponent
     ],
     providers: [
         { provide: 'considerSettingsTimezone', useValue: false },

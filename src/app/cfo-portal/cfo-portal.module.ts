@@ -12,19 +12,13 @@ import { AppCommonModule } from '@app/shared/common/app-common.module';
 import { BankAccountsCommonModule } from '@shared/cfo/bank-accounts/bank-accounts-common.module';
 import { DashboardWidgetsModule } from '@shared/cfo/dashboard-widgets/dashboard-widgets.module';
 import { CfoPortalRoutingModule } from './cfo-portal-routing.module';
-import { PortalDashboardComponent } from './dashboard/dashboard.component';
 import { InstanceType } from 'shared/service-proxies/service-proxies';
 import { CfoModule } from '@app/cfo/cfo.module';
 import { LayoutService } from '@app/shared/layout/layout.service';
 import { CFOService } from '@shared/cfo/cfo.service';
 import { AppService } from '@app/app.service';
-import { TopSpendingCategoriesComponent } from './top-spending-categories/top-spending-categories.component';
 
 @NgModule({
-    declarations: [
-        PortalDashboardComponent,
-        TopSpendingCategoriesComponent
-    ],
     imports: [
         CfoPortalRoutingModule,
         CfoModule,
@@ -35,9 +29,6 @@ import { TopSpendingCategoriesComponent } from './top-spending-categories/top-sp
         BankAccountsCommonModule,
         DxScrollViewModule,
         DxPieChartModule
-    ],
-    entryComponents: [
-        PortalDashboardComponent
     ]
 })
 

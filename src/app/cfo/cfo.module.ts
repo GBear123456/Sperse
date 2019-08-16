@@ -52,6 +52,7 @@ import { StartComponent, AdDashboardHostDirective } from './start/start.componen
 import { SetupComponent } from './start/setup/setup.component';
 import { CfoIntroComponent } from './shared/cfo-intro/cfo-intro.component';
 import { DashboardComponent } from './start/dashboard/dashboard.component';
+import { PortalDashboardComponent } from './start/dashboard/portal-dashboard.component';
 import { BankAccountsGeneralComponent } from './bank-accounts-general/bank-accounts-general.component';
 import { BankAccountsCommonModule } from '@shared/cfo/bank-accounts/bank-accounts-common.module';
 import { TransactionsComponent } from './transactions/transactions.component';
@@ -100,6 +101,7 @@ let COMPONENTS = [
     SetupComponent,
     CfoIntroComponent,
     DashboardComponent,
+    PortalDashboardComponent,
     BankAccountsGeneralComponent,
     TransactionsComponent,
     CategorizationComponent,
@@ -200,6 +202,7 @@ let COMPONENTS = [
         BankAccountsSelectDialogComponent,
         GenerateReportDialogComponent,
         SendNotificationDialogComponent,
+        PortalDashboardComponent,
         DashboardComponent
     ],
     providers: [

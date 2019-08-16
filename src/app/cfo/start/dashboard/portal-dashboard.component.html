@@ -10,14 +10,14 @@
         <div class="right">
             <dx-scroll-view showScrollbar="onHover">
                 <div class="dashboard-wrapper">
-                    <section class="accounts-info">
+                    <section class="accounts-info" *ngIf="isInstanceAdmin">
                         <header>
                             <h2 class="dashboard-title">
                                 {{l('Accounts_Summary')}}
                             </h2>
                             <add-account-button></add-account-button>
                         </header>
-                        <app-accounts *ngIf="isInstanceAdmin" (onTotalAccountsMouseEnter)="openBankAccountsSelectDialog()"></app-accounts>
+                        <app-accounts (onTotalAccountsMouseEnter)="openBankAccountsSelectDialog()"></app-accounts>
                     </section>
                     <section class="analytics">
                         <div class="analytics-wrap">

@@ -17,9 +17,9 @@ import { DashboardService } from '@shared/cfo/dashboard-widgets/dashboard.servic
 import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
 
 @Component({
-    selector: 'dashboard',
-    templateUrl: './dashboard.component.html',
-    styleUrls: ['./dashboard.component.less'],
+    selector: 'portal-dashboard',
+    templateUrl: './portal-dashboard.component.html',
+    styleUrls: ['./portal-dashboard.component.less'],
     animations: [appModuleAnimation()]
 })
 export class PortalDashboardComponent extends CFOComponentBase implements OnInit, OnDestroy {
@@ -35,7 +35,7 @@ export class PortalDashboardComponent extends CFOComponentBase implements OnInit
     linksTo: any = [
         {name: 'View_Cash_Flow_Report', route: '../cashflow'},
         {name: 'View_Transaction_Details', route: '../transactions'},
-        {name: 'View_Financial_Statistics', route: '../stats'}
+        {name: 'Last Quarter and Month Report', route: '../reports'}
     ];
 
     constructor(
