@@ -61,3 +61,30 @@
   display: block;
   color: #000;
 }
+.mat-dialog-container {
+  background: #32333B;
+  color: #bebebe;
+}
+.mat-dialog-container a {
+  color: #ee8615;
+  transition: 0.2s;
+  padding: 0 2px;
+  font-weight: bold;
+  text-decoration: underline;
+}
+.mat-dialog-container a:hover {
+  color: #f19f45;
+}
+.mat-dialog-container ol > li::before {
+  color: #fff;
+}
+.mat-dialog-container .close-dialog,
+.mat-dialog-container .mat-dialog-header,
+.mat-dialog-container .dx-texteditor-input {
+  background-color: #32333b !important;
+  color: #fff !important;
+}
+.mat-dialog-container .close-dialog::before,
+.mat-dialog-container .close-dialog::after {
+  background-color: #fff !important;
+}
