@@ -3,6 +3,26 @@
     .step1-container, .step3-container {
         height: 100%;
         padding: 20px 30px 30px 30px;
+        
+        /deep/ dx-tree-list {
+            .dx-treelist-headers {
+                td {
+                    padding: 0!important;
+                }
+                .dx-treelist-select-all .dx-checkbox {
+                    padding-left: 17px!important;
+                }
+                .dx-treelist-text-content {
+                    line-height: 20px;
+                    padding-left: 20px;
+                }
+            }
+            .dx-select-checkbox {
+                position: static;
+                display: inline-block;
+                margin-top: 0px!important;
+            }
+        }
     }
 
     .step2-container {
