@@ -122,9 +122,14 @@ export class LeadInformationComponent extends AppComponentBase implements OnInit
         }, this.constructor.name);
 
         this._userService.getUserForEdit(undefined).subscribe(data => {
-            data.memberedOrganizationUnits = [find(data.allOrganizationUnits,
-                {id: this.data.leadInfo.organizationUnitId})['code']];
-            setTimeout(() => this._contactsService.orgUnitsUpdate(data));
+            let orgUnit = find(data.allOrganizationUnits, {
+                id: this.data.leadInfo.organizationUnitId || 
+                    this.data.contactInfo.organizationUnitId
+            });
+            if (orgUnit) {
+                data.memberedOrganizationUnits = [orgUnit['code']];
+                setTimeout(() => this._contactsService.orgUnitsUpdate(data));
+            }
         });
     }
 
