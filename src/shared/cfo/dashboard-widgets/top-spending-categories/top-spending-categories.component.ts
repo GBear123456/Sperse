@@ -1,10 +1,11 @@
 /** Core import */
-import { Component, ElementRef } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 
 /** Third party import */
 import { select, Store } from '@ngrx/store';
 import { Observable, combineLatest } from 'rxjs';
-import { filter, finalize, switchMap, tap } from 'rxjs/operators';
+import { filter, finalize, switchMap, takeUntil, tap } from 'rxjs/operators';
+import { DxPieChartComponent } from 'devextreme-angular/ui/pie-chart';
 
 /** Application imports */
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -21,15 +22,20 @@ import { CfoStore } from '@app/cfo/store';
 import { DashboardService } from '@shared/cfo/dashboard-widgets/dashboard.service';
 import { DailyStatsPeriodModel } from '@shared/cfo/dashboard-widgets/accounts/daily-stats-period.model';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
+import { CurrencyPipe } from '@angular/common';
+import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 
 @Component({
     selector: 'top-spending-categories',
     templateUrl: './top-spending-categories.component.html',
     styleUrls: ['./top-spending-categories.component.less'],
-    providers: [ DashboardServiceProxy ]
+    providers: [ CurrencyPipe, DashboardServiceProxy, LifecycleSubjectsService ]
 })
-export class TopSpendingCategoriesComponent {
+export class TopSpendingCategoriesComponent implements OnInit, OnDestroy {
+    @ViewChild(DxPieChartComponent) pieChart: DxPieChartComponent;
     period$: Observable<DailyStatsPeriodModel> = this.dashboardService.dailyStatsPeriod$;
+    currencyId: string;
+    topSpendingCategories: GetSpendingCategoriesOutput[];
     topSpendingCategories$: Observable<GetSpendingCategoriesOutput[]> = combineLatest(
         this.bankAccountsService.selectedBankAccountsIds$,
         this.store$.pipe(select(CurrenciesStoreSelectors.getSelectedCurrencyId), filter(Boolean)),
@@ -38,9 +44,10 @@ export class TopSpendingCategoriesComponent {
     ).pipe(
         tap(() => this.loadingService.startLoading(this.elementRef.nativeElement)),
         switchMap(([selectedBankAccountsIds, currencyId, period]: [ number[], string, DailyStatsPeriodModel]) => {
+            this.currencyId = currencyId;
             return this.dashboardServiceProxy.getSpendingCategories(
                 this.cfoService.instanceType as InstanceType,
-                this.cfoService.instanceId,                
+                this.cfoService.instanceId,
                 5,
                 selectedBankAccountsIds,
                 currencyId,
@@ -60,7 +67,25 @@ export class TopSpendingCategoriesComponent {
         private store$: Store<CfoStore.State>,
         private loadingService: LoadingService,
         private elementRef: ElementRef,
+        private currencyPipe: CurrencyPipe,
+        private lifeCycleService: LifecycleSubjectsService,
         public ls: AppLocalizationService
     ) {}
 
+    ngOnInit() {
+        this.topSpendingCategories$
+            .pipe(takeUntil(this.lifeCycleService.destroy$))
+            .subscribe((totalSpendingCategories: GetSpendingCategoriesOutput[]) => {
+                this.topSpendingCategories = totalSpendingCategories;
+            });
+    }
+
+    customizeLegendText = (pointInfo) => {
+        const amount = this.topSpendingCategories[pointInfo.pointIndex].amount;
+        return this.currencyPipe.transform(amount, this.currencyId, 'symbol-narrow', '1.2-2') + ' ' + pointInfo.pointName;
+    }
+
+    ngOnDestroy() {
+        this.lifeCycleService.destroy.next();
+    }
 }
