@@ -236,11 +236,6 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
         return country && country['code'];
     }
 
-    getStateCode(name: string, countryName: string) {
-        let state = _.findWhere(this.states[countryName], {name: name});
-        return state && state['code'];
-    }
-
     private createEntity(): void {
         this.modalDialog.startLoading();
         let assignedUserId = this.userAssignmentComponent.selectedItemKey;
@@ -272,7 +267,7 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
             stageId: stageId,
             lists: this.isListAndTagsDisabled ? undefined : lists,
             tags: this.isListAndTagsDisabled ? undefined : tags,
-            ratingId: this.isRatingAndStarsDisabled ? undefined: ratingId,
+            ratingId: this.isRatingAndStarsDisabled ? undefined : ratingId,
             contactGroupId: this.data.customerType,
             partnerTypeName: partnerTypeName
         };
@@ -388,7 +383,7 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
                 return {
                     streetAddress: streetAddress,
                     city: address.city,
-                    stateId: this.getStateCode(address.state, address.country),
+                    stateId: address.stateCode,
                     zip: address.zip,
                     countryId: this.getCountryCode(address.country),
                     isActive: true,
@@ -481,7 +476,7 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
                 isPhone && contact.number && [contact.number] || undefined,
                 isAddress && contact.address || undefined,
                 isAddress && contact.city || undefined,
-                isAddress && this.getStateCode(contact.state, contact.country) || undefined,
+                isAddress && contact.stateCode || undefined,
                 isAddress && contact.zip || undefined,
                 isAddress && this.getCountryCode(contact.country) || undefined,
                 this.data.customerType
@@ -510,12 +505,20 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
         return event.element.getElementsByTagName('input')[0].value;
     }
 
+    getStateCodeFromComponents(components) {
+        for (const attr of components)
+            for (const type of attr.types)
+                if (type === 'administrative_area_level_1')
+                    return (<any>attr)['short_name'];
+    }
+
     onAddressChanged(event, i) {
         this.checkAddressControls(i);
 
         let number = this._angularGooglePlaceService.street_number(event.address_components);
         let street = this._angularGooglePlaceService.street(event.address_components);
 
+        this.contacts.addresses[i].stateCode = this.getStateCodeFromComponents(event.address_components);
         this.contacts.addresses[i].address = number ? (number + ' ' + street) : street;
         this._changeDetectorRef.detectChanges();
     }

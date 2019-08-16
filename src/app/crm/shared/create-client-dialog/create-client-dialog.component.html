@@ -366,12 +366,12 @@
                                 <dx-select-box
                                     [dataSource]="states[address.country]"
                                     displayExpr="name"
-                                    valueExpr="name"
+                                    valueExpr="code"
                                     name="state"
                                     placeholder="{{ls.l('State')}}"
                                     [width]="'270px'"
                                     [searchEnabled]="true"
-                                    [(value)]="address['state']"
+                                    [(value)]="address['stateCode']"
                                     (onValueChanged)="checkAddressControls(i)">
                                 </dx-select-box>
                             </div>
