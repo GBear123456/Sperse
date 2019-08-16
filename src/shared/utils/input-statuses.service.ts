@@ -12,11 +12,13 @@ export class InputStatusesService {
 
     setMask(event) {
         const inputName = event.element.attributes.name.value;
-        event.component.option({
-            mask: this.masks[inputName],
-            maskRules: {'D': /\d?/},
-            isValid: true
-        });
+        if (event.component.option('value')) {
+            event.component.option({
+                mask: this.masks[inputName],
+                maskRules: {'D': /\d?/},
+                isValid: true
+            });
+        }
     }
 
     focusInput(event) {
