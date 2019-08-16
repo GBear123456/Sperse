@@ -1,25 +1,21 @@
 <modal-dialog [title]="title"
               [buttons]="buttons">
     <div *ngIf="currentStep == generateReportSteps.Step1" class="step1-container">
-        <dx-data-grid id="gridContainer"
+        <dx-tree-list id="gridContainer"
                       height="100%"
                       keyExpr="id"
+                      parentIdExpr="parentId"
+                      [autoExpandAll]="true"
                       [scrolling]="{showScrollbar: 'never'}"
                       [selectedRowKeys]="bankAccountsService.selectedBusinessEntitiesIds$ | async"
                       [dataSource]="bankAccountsService.businessEntities$ | async"
-                      [pager]="defaultGridPagerConfig"
                       (onContentReady)="onContentReady($event)"
                       (onSelectionChanged)="onSelectionChanged($event)"
                       (onInitialized)="onInitialized($event)">
-            <dxo-header-filter [visible]="false" [allowSearch]="true"></dxo-header-filter>
-            <dxo-selection selectAllMode="page"
-                           showCheckBoxesMode="always"
-                           mode="multiple">
-            </dxo-selection>
+            <dxo-selection [allowSelectAll]="true" mode="multiple" [recursive]="true"></dxo-selection>
             <dxi-column dataField="name" [caption]="ls.l('BusinessEntityName') | uppercase"></dxi-column>
             <dxo-scrolling mode="virtual"></dxo-scrolling>
-            <dxo-group-panel [visible]="false"></dxo-group-panel>
-        </dx-data-grid>
+        </dx-tree-list>
     </div>
     <div *ngIf="currentStep == generateReportSteps.Step2" class="step2-container">
         <calendar [values]="calendarData" [options]="calendarData.options"></calendar>

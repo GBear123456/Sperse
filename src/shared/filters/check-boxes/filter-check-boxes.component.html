@@ -1,19 +1,14 @@
 <div class="wrapper">
-    <dx-tree-list [dataSource]="items.element.dataSource"
-                  dataStructure="tree"
+    <dx-tree-list [selection]="{allowSelectAll: true, mode: 'multiple', recursive: true}"
+                  [dataSource]="items.element.dataSource"
                   [keyExpr]="items.element.keyExpr"
                   [parentIdExpr]="items.element.parentExpr"
-                  [selection]="{allowSelectAll: false, mode: 'multiple'}"
                   [showColumnHeaders]="false"
                   [autoExpandAll]="true"
-                  [(selectedRowKeys)]="items.element.value"
-                  scrolling="{mode: 'virtual', showScrollbar: 'always'}">
-        <dxi-column [dataField]="items.element.nameField" cellTemplate="checkBoxTemplate"></dxi-column>
+                  [(selectedRowKeys)]="items.element.value">
+        <dxi-column [dataField]="items.element.nameField" [cellTemplate]="items.element.templateFunc ? 'checkBoxTemplate' : null"></dxi-column>
         <div *dxTemplate="let cell of 'checkBoxTemplate'">
-            <ng-container *ngIf="items.element.templateFunc; else simple">
-                <div [innerHTML]="items.element.templateFunc(cell.data)"></div>
-            </ng-container>
-            <ng-template #simple>{{ cell.data.name }}</ng-template>
+            <div [innerHTML]="items.element.templateFunc(cell.data)"></div>
         </div>
     </dx-tree-list>
 </div>

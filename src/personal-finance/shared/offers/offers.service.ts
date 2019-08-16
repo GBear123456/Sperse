@@ -226,7 +226,6 @@ export class OffersService {
                     });
                     this.loadMemberInfo();
                     if (output.redirectUrl) {
-                        window.open(output.redirectUrl, '_blank');
                         !window.open(output.redirectUrl, '_blank')
                             ? applyOfferDialog.componentInstance.showBlockedMessage = true
                             : applyOfferDialog.close();

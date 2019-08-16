@@ -1053,6 +1053,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                         dataSource$: this.bankAccountsService.businessEntities$.pipe(takeUntil(this.destroy$)),
                         selectedKeys$: this.bankAccountsService.selectedBusinessEntitiesIds$.pipe(takeUntil(this.destroy$)),
                         nameField: 'name',
+                        parentExpr: 'parent',
                         keyExpr: 'id'
                     })
                 }

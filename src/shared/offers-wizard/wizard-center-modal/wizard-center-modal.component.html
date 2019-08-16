@@ -1,5 +1,5 @@
 <button mat-button mat-dialog-close class="close"></button>
-<mat-dialog-content>
+<mat-dialog-content *ngIf="offersWizardService.applicationDetails$ | async; else loading">
     <mat-horizontal-stepper [linear]="false" #stepper [@.disabled]="true">
         <mat-step>
             <div class="step-item">
@@ -122,4 +122,7 @@
             </div>
         </mat-step>
     </mat-horizontal-stepper>
+    <ng-template #loading>
+        <loading-spinner></loading-spinner>
+    </ng-template>
 </mat-dialog-content>

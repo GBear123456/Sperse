@@ -5,7 +5,8 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 /** Third party imports */
 import moment from 'moment-timezone';
 import { NotifyService } from 'abp-ng2-module/dist/src/notify/notify.service';
-import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
+import { DxTreeListComponent } from 'devextreme-angular/ui/tree-list';
+import { DxTextBoxComponent } from '@root/node_modules/devextreme-angular';
 import { forkJoin } from 'rxjs';
 import { first, switchMap, tap, finalize } from 'rxjs/operators';
 import { select, Store } from '@ngrx/store';
@@ -27,7 +28,6 @@ import { CfoStore, CurrenciesStoreSelectors } from '@app/cfo/store';
 import { CFOService } from '@shared/cfo/cfo.service';
 import { AppConsts } from '@shared/AppConsts';
 import { SendReportNotificationInput } from '@shared/service-proxies/service-proxies';
-import { DxTextBoxComponent } from '@root/node_modules/devextreme-angular';
 
 @Component({
     templateUrl: 'generate-report-dialog.component.html',
@@ -38,7 +38,7 @@ import { DxTextBoxComponent } from '@root/node_modules/devextreme-angular';
     providers: [ ReportsServiceProxy ]
 })
 export class GenerateReportDialogComponent implements OnInit {
-    @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
+    @ViewChild(DxTreeListComponent) dataGrid: DxTreeListComponent;
     @ViewChild(ModalDialogComponent) modalDialog: ModalDialogComponent;
     @ViewChild('notificationToEmailTextBox') notificationToEmailTextBox: DxTextBoxComponent;
 

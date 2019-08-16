@@ -44,8 +44,11 @@
     }
 
     .login-form {
-        min-width: 428px;
         margin: 0 auto;
+
+        @media all and (min-width:450px) {
+            min-width: 428px;
+        }
 
         input,
         button {
@@ -215,7 +218,7 @@
                 }
             }
             
-            @media all and (max-width:380px) {                                
+            @media all and (max-width:380px) {
                 .col {
                     width: auto;
                     flex-basis: auto;
