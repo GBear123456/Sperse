@@ -1,75 +1,76 @@
-.setup-steps {
-    position: absolute;
-    width: 321px;
-    height: calc(~"100vh - 150px");
-    background-color: #fff;
-    padding: 45px 25px 25px 25px;
-    float: left;
+:host {
+    .setup-steps {
+        width: 321px;
+        height: calc(~"100vh - 150px");
+        background-color: #fff;
+        padding: 45px 25px 25px 25px;
+        float: left;
 
-    .steps-progress {
-        position: relative;
-        padding-left: 45px;
-        list-style: none;
-        line-height: 1;
-        color: #000;
-        font-weight: 500;
-        letter-spacing: 0.7px;
-
-        &::before {
-            display: inline-block;
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 15px;
-            width: 10px;
-            height: 100%;
-            border-left: 3px solid #00aeef;
-        }
-
-        &-item {
+        .steps-progress {
             position: relative;
+            padding-left: 45px;
+            list-style: none;
+            line-height: 1;
+            color: #000;
+            font-weight: 500;
+            letter-spacing: 0.7px;
 
-            &:not(:last-child) {
-                padding-bottom: 56px;
-            }
-
-            &.current {
-                color: #000;
-                font-weight: 600;
-            }
-
-            .img {
-                background-repeat: no-repeat;
-                width: 45px;
-                height: 45px;
-                margin: 0;
-                padding: 0;
-                background-position: center;
+            &::before {
+                display: inline-block;
+                content: '';
                 position: absolute;
-                left: -52px;
-                top: -17px;
-                background-color: white;
-                background-position: center;
+                top: 0;
+                left: 15px;
+                width: 10px;
+                height: 100%;
+                border-left: 3px solid #00aeef;
             }
 
-            .img-API_Platform {
-                background-image: url("../../../../assets/common/icons/arrow-two-side.svg");
-            }
+            &-item {
+                position: relative;
 
-            .img-API_CRM {
-                background-image: url("../../../../assets/common/icons/people.svg");
-            }
+                &:not(:last-child) {
+                    padding-bottom: 56px;
+                }
 
-            .img-API_CFO {
-                background-image: url("../../../../assets/common/icons/statistics.svg");
-            }
+                &.current {
+                    color: #000;
+                    font-weight: 600;
+                }
 
-            .img-API_CreditReports {
-                background-image: url("../../../../assets/common/icons/document.svg");
-            }
+                .img {
+                    background-repeat: no-repeat;
+                    width: 45px;
+                    height: 45px;
+                    margin: 0;
+                    padding: 0;
+                    background-position: center;
+                    position: absolute;
+                    left: -52px;
+                    top: -17px;
+                    background-color: white;
+                    background-position: center;
+                }
 
-            .img-API_Tenant {
-                background-image: url("../../../../assets/common/icons/person.svg");
+                .img-API_Platform {
+                    background-image: url("../../../../assets/common/icons/arrow-two-side.svg");
+                }
+
+                .img-API_CRM {
+                    background-image: url("../../../../assets/common/icons/people.svg");
+                }
+
+                .img-API_CFO {
+                    background-image: url("../../../../assets/common/icons/statistics.svg");
+                }
+
+                .img-API_CreditReports {
+                    background-image: url("../../../../assets/common/icons/document.svg");
+                }
+
+                .img-API_Tenant {
+                    background-image: url("../../../../assets/common/icons/person.svg");
+                }
             }
         }
     }

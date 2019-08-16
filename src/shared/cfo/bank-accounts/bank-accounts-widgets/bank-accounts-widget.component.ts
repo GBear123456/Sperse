@@ -24,6 +24,7 @@ import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
 import { ISortItem } from '@app/shared/common/sort-button/sort-item.interface';
 import { IExpandItem } from '@app/shared/common/expand-button/expand-item.interface';
 import { SyncTypeIds } from '@shared/AppEnums';
+import { AppConsts } from '@shared/AppConsts';
 
 @Component({
     selector: 'bank-accounts-widget',
@@ -45,7 +46,7 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
     @Input() showSyncAccountWithoutBankAccounts = true;
     @Input() showCreditInfo = false;
     @Input() showBusinessEntitiesFilter = true;
-    @Input() showStatusText = true;
+    @Input() showStatusText = AppConsts.isMobile ? false : true;
     @Input() showAddAccountButton = true;
     @Input() searchInputWidth = 279;
     dataSource: any;

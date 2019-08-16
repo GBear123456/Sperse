@@ -1,7 +1,12 @@
 :host {
     border-right: 1.4px solid #dfdfdf;
-    @media (max-width: 768px) {
-        display: none;
+    transform: translate(0);
+    transition: transform 0.5s;
+    z-index: 2;
+    @media (max-width: 991px) {
+        &.hidden {
+            transform: translate(-100%);
+        }
     }
 
     .setup-steps {

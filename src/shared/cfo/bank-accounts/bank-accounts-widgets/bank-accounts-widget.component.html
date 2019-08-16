@@ -8,7 +8,7 @@
     <div class="row second-sub-header">
         <div class="left-header col-sm-12">
             <div class="row">
-                <div class="col-sm-5 entities">
+                <div class="col-4 col-sm-5 entities">
                     <dx-check-box [value]="bankAccountsService.allSyncAccountAreSelected$ | async"
                                   (onValueChanged)="selectAll($event)">
                     </dx-check-box>
@@ -18,7 +18,7 @@
                         (selectionChanged)="entitiesItemsChanged($event)">
                     </business-entities-chooser>
                 </div>
-                <div class="col-sm-3 types">
+                <div class="col-3 types">
                     <selection-filter
                         [allItemsText]="l('All_Types')"
                         title=""
@@ -31,7 +31,7 @@
                         (selectionChanged)="bankAccountTypesChanged($event)">
                     </selection-filter>
                 </div>
-                <div class="col-sm-4 is-active-filter">
+                <div class="col-5 col-sm-4 is-active-filter">
                     <selection-filter
                         [allItemsText]="l('All_Statuses')"
                         title=""
@@ -49,9 +49,9 @@
         </div>
         <div class="right-header col-sm-12">
             <div class="row">
-                <div class="col-sm-3 connections"><info-component imgSrc="assets/common/icons/total-icon.svg" [value]="bankAccountsService.syncAccountsAmount$ | async" [description]="l('Connections')"></info-component></div>
-                <div class="col-sm-3 accounts"><info-component imgSrc="assets/common/icons/total-icon.svg" [value]="bankAccountsService.accountsAmount$ | async" [description]="l('Accounts')"></info-component></div>
-                <div class="col-sm-6 current-balance">
+                <div class="col-4 col-sm-3 connections"><info-component imgSrc="assets/common/icons/total-icon.svg" [value]="bankAccountsService.syncAccountsAmount$ | async" [description]="l('Connections')"></info-component></div>
+                <div class="col-4 col-sm-3 accounts"><info-component imgSrc="assets/common/icons/total-icon.svg" [value]="bankAccountsService.accountsAmount$ | async" [description]="l('Accounts')"></info-component></div>
+                <div class="col-4 col-sm-6 current-balance">
                     <info-component imgSrc="assets/common/icons/coins-icon.svg"
                                     [value]="bankAccountsService.accountsDataTotalNetWorth$ | async | currency:cfoPreferencesService.selectedCurrencyId:cfoPreferencesService.selectedCurrencySymbol:'1.2-2'"
                                     [description]="l('Current_Balance')">

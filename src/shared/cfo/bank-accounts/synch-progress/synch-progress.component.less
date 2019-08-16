@@ -33,6 +33,15 @@
         margin-right: 14px;
         margin-bottom: 0;
     }
+
+    @media (max-width: 768px) {
+        h3 {
+            display: none;
+        }
+        .dx-progressbar {
+            width: 100px !important;
+        }
+    }
 }
 
 .synch-progress,
@@ -63,7 +72,7 @@
             border-top-color: orange;
             border-right-color: orange;
         }
-        
+
         &.in-progress {
             border-top-color: #35c8a8;
             border-right-color: #35c8a8;
@@ -78,7 +87,7 @@
         &.error .dx-progressbar-range {
             background-color: orange !important;
         }
-        
+
         &.in-progress .dx-progressbar-range {
             background-color: #35c8a8 !important;
         }
@@ -374,11 +383,11 @@
     cursor: pointer;
     display: flex;
     align-items: center;
-    
+
     img {
         margin-right: 8px;
     }
-    
+
     &:hover {
         background: darken(#e9eff4, 5%);
     }

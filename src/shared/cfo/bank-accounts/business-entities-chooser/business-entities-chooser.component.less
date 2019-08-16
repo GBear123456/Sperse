@@ -1,6 +1,7 @@
 :host {
     width: 280px;
     display: flex;
+    justify-content: center;
     dx-drop-down-box {
         background: transparent;
     }
@@ -19,6 +20,9 @@
             background: transparent;
             border: none;
             cursor: pointer;
+            @media (max-width: 768px) {
+                font-size: 13px;
+            }
         }
 
         .dx-texteditor-buttons-container {

@@ -5,7 +5,6 @@ import { Component, Input, Output, EventEmitter, ViewChild, OnDestroy } from '@a
 import { DxTreeViewComponent } from 'devextreme-angular/ui/tree-view';
 import { DxDropDownBoxComponent } from 'devextreme-angular/ui/drop-down-box';
 import difference from 'lodash/difference';
-import { first } from 'rxjs/operators';
 
 /** Application imports */
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -31,7 +30,7 @@ export class BusinessEntitiesChooserComponent implements OnDestroy {
     @Output() selectionChanged: EventEmitter<any> = new EventEmitter();
     @Output() onClosed: EventEmitter<any> = new EventEmitter();
     @Output() onFilterButtonClick: EventEmitter<any> = new EventEmitter();
-   
+
     syncAccounts  = [];
     selectedItems = [];
     selectedAll;
@@ -45,7 +44,7 @@ export class BusinessEntitiesChooserComponent implements OnDestroy {
     }
 
     public selectedItemsChange(data) {
-        setTimeout(() => 
+        setTimeout(() =>
             this.selectionChanged.emit(this.getSelectedIds()));
     }
 
@@ -113,13 +112,13 @@ export class BusinessEntitiesChooserComponent implements OnDestroy {
                 selectedBusinessEntitiesIds: businessEntitiesIds,
                 selectedBankAccountIds: selectedBankAccountIds
             });
-      
+
             this.bankAccountsService.applyFilter();
         }
         this.onClosed.emit(businessEntitiesIds);
 
         if (this._isFilterClick)
-            this.onFilterButtonClick.emit(businessEntitiesIds);            
+            this.onFilterButtonClick.emit(businessEntitiesIds);
         this._isFilterClick = false;
     }
 

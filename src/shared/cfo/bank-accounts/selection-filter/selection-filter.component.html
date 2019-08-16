@@ -6,21 +6,21 @@
         </div>
     </ng-container>
     <ng-container *ngIf="selectionList && selectionList.length">
-        <dx-tag-box [dataSource]="selectionList"
+        <dx-tag-box accessKey="selectionFilter"
+                    [dataSource]="selectionList"
                     [displayExpr]="selectionList && selectionList[0].id !== undefined ? 'name' : null"
                     [valueExpr]="selectionList && selectionList[0].id !== undefined ? 'id' : null"
                     [placeholder]="allItemsText"
                     [showSelectionControls]="true"
                     tagTemplate="customTagTemplate"
                     itemTemplate="itemTemplate"
-                    (onOpened)="changePopupWidth($event)"
                     [maxDisplayedTags]="maxDisplayedItems"
                     [(value)]="selectedItems"
+                    (onOpened)="changePopupWidth($event)"
                     (onValueChanged)="selectedItemsChange()"
                     (onSelectAllValueChanged)="selectAllValueChanged($event)"
                     (onMultiTagPreparing)="onMultiTagPreparing($event)"
-                    (onClosed)="onClosed.emit(selectedItems)"
-                    accessKey="selectionFilter">
+                    (onClosed)="onClosed.emit(selectedItems)">
             <div *dxTemplate="let tag of 'customTagTemplate'">
                 <span class="tag-value" [title]="tag.name || tag">{{tag.name || tag}}</span>
             </div>
