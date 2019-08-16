@@ -1,5 +1,6 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { AppConsts } from '@shared/AppConsts';
 
 @Component({
     selector: 'selection-filter',
@@ -32,7 +33,7 @@ export class SelectionFilterComponent {
     getSelectedTitle() {
         if (this.staticItemsText)
             return this.staticItemsText;
-  
+
         let selectedCount = this.selectedItems.length,
             totalCount = this.selectionList.length;
         return selectedCount ? (this.allSelectedTitle && selectedCount == totalCount
@@ -41,10 +42,10 @@ export class SelectionFilterComponent {
 
     getItemsTitle() {
         let firstSelected = this.selectionList.find(item => item.selected);
-        return this.showSelectedCount ? 
-            firstSelected.name + ' +' + (this.selectedItems.length - 1)
+        return this.showSelectedCount
+            ? firstSelected.name + ' +' + (this.selectedItems.length - 1)
             : this.localization.l('Any') + ' ' + this.itemsText;
-    }    
+    }
 
     onMultiTagPreparing(e) {
         e.text = this.getSelectedTitle();
@@ -52,7 +53,7 @@ export class SelectionFilterComponent {
 
     changePopupWidth(e) {
         if (this.popupWidth) {
-            e.component._popup.option('width', this.popupWidth);
+            e.component._popup.option('width', AppConsts.isMobile ? '150px' : this.popupWidth);
         }
     }
 

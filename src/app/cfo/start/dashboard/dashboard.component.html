@@ -8,7 +8,7 @@
     </app-headline>
 
     <div class="content">
-        <setup-steps [showIntroductionTourLink]="true"></setup-steps>
+        <setup-steps [showIntroductionTourLink]="true" [class.hidden]="leftMenuHidden"></setup-steps>
         <div class="right">
             <dx-scroll-view showScrollbar="onHover">
                 <div class="dashboard-wrapper">

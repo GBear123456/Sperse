@@ -1,0 +1,99 @@
+.swal-modal {
+    background: #525961;
+}
+.swal-modal .swal-icon.swal-icon--error,
+.swal-modal .swal-icon.swal-icon--warning,
+.swal-modal .swal-icon.swal-icon--info {
+    background: #FFF;
+    border: 10px solid #ee8615!important;
+    box-shadow: 0 0 20px 20px #ee8615!important;
+}
+.swal-modal .swal-icon.swal-icon--success {
+    background: #FFF;
+    border: 10px solid #FFD564;
+}
+.swal-modal .swal-icon.swal-icon--success .swal-icon--success__hide-corners {
+    height: 50px!important;
+}
+.swal-modal .swal-icon.swal-icon--success:before,
+.swal-modal .swal-icon.swal-icon--success:after {
+    width: 0!important;
+}
+.swal-modal .swal-icon.swal-icon--warning:before {
+    content: "\2713";
+}
+.swal-modal .swal-icon > div:first-child:before {
+    color: #000!important;
+}
+.swal-modal .swal-title {
+    color: #ee8615!important;
+    font-size: 26px;
+    font-weight: bold;
+    white-space: pre-line;
+}
+.swal-modal .swal-text {
+    color: #fff;
+}
+.swal-modal .swal-button {
+    background-color: #ee8615!important;
+    font-size: 18px;
+    font-weight: 600;
+    color: #000!important;
+    cursor: pointer;
+}
+.swal-modal .swal-button:hover {
+    color: #FFF;
+    background-color: #000;
+}
+.alert.m-alert--outline.alert-success {
+    border-color: #ffcc00;
+    color: #000;
+}
+.alert.m-alert--outline.alert-success.alert-success.m-alert--icon-solid .m-alert__icon {
+    background: #ffcc00;
+}
+.alert.m-alert--outline.alert-success.alert-success.m-alert--icon-solid .m-alert__icon span {
+    border-left-color: #ffcc00;
+}
+.alert.m-alert--outline .m-alert__icon small.label {
+    font-weight: 600;
+    margin-top: 10px;
+    display: block;
+    color: #000;
+}
+
+.mat-dialog-container {
+    background: #32333B;
+    color: #bebebe;
+    
+    a {
+        color: #ee8615;
+        transition: 0.2s;
+        padding: 0 2px;
+        font-weight: bold;
+        text-decoration: underline;
+        
+        &:hover {
+            color: lighten(#ee8615, 10%);
+        }
+    }
+    
+    ol > li::before {
+        color: #fff;
+    }
+    
+    .close-dialog,
+    .mat-dialog-header,
+    .dx-texteditor-input {
+        background-color: #32333b !important;
+        color: #fff !important;
+    }
+    
+    .close-dialog {
+        
+        &::before,
+        &::after {
+            background-color: #fff !important;
+        }
+    }
+}

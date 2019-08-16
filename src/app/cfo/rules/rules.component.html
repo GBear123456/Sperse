@@ -5,9 +5,9 @@
     <div class="portlet light no-padding margin-bottom-0">
         <setup-steps [hidden]="filtersService.fixed" SelectedStepIndex="3"></setup-steps>
         <div class="portlet-body">
-            <dx-tree-list height="100%" 
+            <dx-tree-list height="100%"
                           [noDataText]="''"
-                          [hoverStateEnabled]="true"                          
+                          [hoverStateEnabled]="true"
                           [dataSource]="ruleTreeListDataSource"
                           [sorting]="{mode: 'none'}"
                           [selection]="{allowSelectAll: false, mode: 'none'}"

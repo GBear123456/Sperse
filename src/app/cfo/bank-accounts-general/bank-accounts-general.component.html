@@ -1,11 +1,11 @@
 <div>
     <app-headline [config]="headlineConfig">
-        <business-entities-chooser></business-entities-chooser>
+        <business-entities-chooser popupWidth="210px"></business-entities-chooser>
         <synch-progress [showSyncAccountButton]="true" class="synch-progress" (onSyncStarted)="refresh()" (onComplete)="refresh()"></synch-progress>
 <!--        <sync-date-picker></sync-date-picker>-->
     </app-headline>
     <div class="content-wrap">
-        <setup-steps SelectedStepIndex="0"></setup-steps>
+        <setup-steps SelectedStepIndex="0" [class.hidden]="leftMenuHidden"></setup-steps>
         <div class="frame-wrap">
             <router-outlet></router-outlet>
         </div>

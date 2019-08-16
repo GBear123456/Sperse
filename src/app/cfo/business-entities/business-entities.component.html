@@ -54,7 +54,7 @@
                                 alignment="center"
                                 cellTemplate="statusTemplate"></dxi-column>
                     <dxi-column caption="{{l('BusinessEntities_Default')}}"
-                                dataField="IsDefault"></dxi-column>                                
+                                dataField="IsDefault"></dxi-column>
 
                     <div *dxTemplate="let data of 'dateOpenedTemplate'">{{data.value | date: 'EEE dd, yyyy' : userTimezone }}</div>
                     <div *dxTemplate="let data of 'phoneCell'">{{data.value | phone}}</div>

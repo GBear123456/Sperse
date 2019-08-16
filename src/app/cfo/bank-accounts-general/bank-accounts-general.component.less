@@ -6,6 +6,9 @@
 
         .frame-wrap {
             flex: 1;
+            @media (min-width: 991px) {
+                margin-left: 322px;
+            }
             iframe {
                 height: 100% !important;
             }
@@ -13,6 +16,10 @@
     }
     .synch-progress {
         padding: 8px 14px 7px 14px !important;
+        @media (max-width: 768px) {
+            padding-right: 0 !important;
+            padding-left: 8px !important;
+        }
     }
     /deep/ .back-button,
     /deep/ .next-button {
@@ -36,5 +43,8 @@
         dx-toolbar {
             background: transparent;
         }
+    }
+    setup-steps {
+        position: absolute;
     }
 }
