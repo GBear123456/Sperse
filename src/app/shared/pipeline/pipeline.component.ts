@@ -467,15 +467,17 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                 this._totalDataSource,
                 this.totalsURI
             ).then((res) => {
-                let stages = res.pop();
-                this.allStagesEntitiesTotal = 0;
-                stages && this.stages.forEach((stage) => {
-                    stage['total'] = stages[stage.id] || 0;
-                    stage['full'] = stage['total']
-                        <= stage['entities'].length;
-                    this.allStagesEntitiesTotal += stage['total'];
-                });
-                this.detectChanges();
+                if (res && res.length) {
+                    let stages = res.pop();
+                    this.allStagesEntitiesTotal = 0;
+                    stages && this.stages.forEach((stage) => {
+                        stage['total'] = stages[stage.id] || 0;
+                        stage['full'] = stage['total']
+                            <= stage['entities'].length;
+                        this.allStagesEntitiesTotal += stage['total'];
+                    });
+                    this.detectChanges();
+                }
             }, (e) => {
                 this.notify.error(this.l('AnErrorOccurred'));
             });

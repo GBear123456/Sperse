@@ -23,7 +23,7 @@ export class ODataService {
     }
 
     loadDataSource(dataSource, uri, url?) {
-        let promise = Promise.resolve();
+        let promise = Promise.resolve([]);
         if (dataSource) {
             if (dataSource.isLoading() && dataSource['operationId'])
                 dataSource.cancel(dataSource['operationId']);
