@@ -23,15 +23,18 @@ export class ODataService {
     }
 
     loadDataSource(dataSource, uri, url?) {
-        if (dataSource.isLoading() && dataSource['operationId'])
-            dataSource.cancel(dataSource['operationId']);
-        if (this._dxRequestPool[uri])
-            this._dxRequestPool[uri].abort();
+        let promise = Promise.resolve();
+        if (dataSource) {
+            if (dataSource.isLoading() && dataSource['operationId'])
+                dataSource.cancel(dataSource['operationId']);
+            if (this._dxRequestPool[uri])
+                this._dxRequestPool[uri].abort();
 
-        if (url)
-            dataSource['_store']['_url'] = url;
-        let promise = dataSource.load();
-        dataSource['operationId'] = promise.operationId;
+            if (url)
+                dataSource['_store']['_url'] = url;
+            promise = dataSource.load();
+            dataSource['operationId'] = promise['operationId'];
+        }
         return promise;
     }
 

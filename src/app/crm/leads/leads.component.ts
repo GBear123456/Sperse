@@ -19,7 +19,7 @@ import { CacheService } from 'ng2-cache-service';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
-import { ContactGroup, ContactGroupPermission } from '@shared/AppEnums';
+import { ContactGroup } from '@shared/AppEnums';
 import { AppService } from '@app/app.service';
 import {
     ContactAssignedUsersStoreSelectors,
@@ -246,9 +246,9 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         }
     }
 
-    refresh(invalidateDashboard = true) {
+    refresh(invalidateDashboard = true, allViews = false) {
         setTimeout(() => {
-            this.processFilterInternal();
+            this.processFilterInternal(allViews ? [ this.pipelineComponent, this ] : undefined);
         });
         if (invalidateDashboard) {
             (this._reuseService as CustomReuseStrategy).invalidate('dashboard');
@@ -257,7 +257,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
 
     invalidate(quiet = false, stageId?: number) {
         this.lifeCycleSubjectsService.activate$.pipe(first()).subscribe(() => {
-            this.refresh(false);
+            this.refresh(false, true);
         });
     }
 
@@ -646,7 +646,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 dataSource = instance.option('dataSource'),
                 checkExportOption = (dataSource, ignoreFilter = false) => {
                     if (options == importOption)
-                        ignoreFilter || this.processFilterInternal(this);
+                        ignoreFilter || this.processFilterInternal([this]);
                     else if (!this.exportPipelineSelectedItemsFilter(dataSource))
                         importOption = options;
                 };
@@ -719,22 +719,29 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         }
     }
 
-    processFilterInternal(cxt?: any) {
+    processFilterInternal(cxts?: any[]) {
         if (this.showPipeline) {
             this.pipelineComponent.searchColumns = this.searchColumns;
             this.pipelineComponent.searchValue = this.searchValue;
         }
 
-        let context = cxt || (this.showPipeline ? this.pipelineComponent : this);
-        context.processODataFilter.call(context,
-            this.dataGrid.instance, this.dataSourceURI,
-                this.filters, (filter) => {
-                let filterMethod = this['filterBy' +
-                    this.capitalize(filter.caption)];
-                if (filterMethod)
-                    return filterMethod.call(this, filter);
-                }
-        );
+        let contexts = cxts && cxts.length ? cxts : [ this.showPipeline ? this.pipelineComponent : this ];
+        contexts.forEach(context => {
+            if (context && context.processODataFilter) {
+                context.processODataFilter.call(
+                    context,
+                    this.dataGrid.instance,
+                    this.dataSourceURI,
+                    this.filters,
+                    (filter) => {
+                        let filterMethod = this['filterBy' +
+                        this.capitalize(filter.caption)];
+                        if (filterMethod)
+                            return filterMethod.call(this, filter);
+                    }
+                );
+            }
+        });
     }
 
     initDataSource() {
