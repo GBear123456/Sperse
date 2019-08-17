@@ -25,17 +25,16 @@ export class CalendarButtonComponent {
             return this.emptyEndDateIsAvailable && dateRange.from.value && !dateRange.to.value ? label + ' -' : label;
         })
     );
-    calendarDialogOpening = false;
     constructor(
         private dialog: MatDialog,
         private cfoPreferencesService: CfoPreferencesService
     ) {}
 
     openCalendarDialog() {
-        if (!this.calendarDialogOpening) {
-            this.calendarDialogOpening = true;
-            const calendarDialog = this.dialog.open(CalendarDialogComponent, {
+        if (!this.dialog.getDialogById('calendarDialog')) {
+            this.dialog.open(CalendarDialogComponent, {
                 panelClass: 'slider',
+                id: 'calendarDialog',
                 disableClose: false,
                 hasBackdrop: false,
                 closeOnNavigation: true,
@@ -47,9 +46,7 @@ export class CalendarButtonComponent {
                         endDate: moment(new Date()).add(10, 'years').toDate()
                     }
                 }
-            });
-            calendarDialog.componentInstance.opened.subscribe(() => this.calendarDialogOpening = false);
-            calendarDialog.afterClosed().pipe(
+            }).afterClosed().pipe(
                 filter(Boolean)
             ).subscribe((dateRange) => {
                 this.cfoPreferencesService.dateRange.next({
