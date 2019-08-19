@@ -46,6 +46,7 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
     @Input() showSyncAccountWithoutBankAccounts = true;
     @Input() showCreditInfo = false;
     @Input() showBusinessEntitiesFilter = true;
+    @Input() showStatus = true;
     @Input() showStatusText = AppConsts.isMobile ? false : true;
     @Input() showAddAccountButton = true;
     @Input() searchInputWidth = 279;
