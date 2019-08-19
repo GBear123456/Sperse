@@ -67,7 +67,7 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit {
     trendData: Array<BankAccountDailyStatDto>;
     chartWidth = 650;
     isForecast = false;
-    startingBalanceColor = '#ace2f9';
+    endingBalanceColor = '#ace2f9';
     historicalCreditColor = '#00aeef';
     historicalDebitColor = '#f05b2a';
     forecastCreditColor = '#a9e3f9';
@@ -257,7 +257,6 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit {
             filter(Boolean),
             map((stats: BankAccountDailyStatDto[]) => {
                 let historical = [], forecast = [];
-                let allValues = [];
                 stats.forEach((statsItem: BankAccountDailyStatDto) => {
                     if (statsItem.isForecast) {
                         this.isForecast = true;
@@ -268,32 +267,6 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit {
                             }
                         }
                     }
-                    /** Get all using in chart values to show gradient well*/
-                    allValues = [
-                        ...allValues,
-                        statsItem.startingBalance,
-                        statsItem.debit,
-                        statsItem.credit
-                    ].concat(
-                        statsItem.isForecast
-                        ? [
-                            statsItem['forecastDebit'] || 0,
-                            statsItem['forecastCredit'] || 0
-                        ]
-                        : []
-                    );
-                });
-                const minValue = Math.min.apply(Math, allValues);
-                const maxValue = Math.max.apply(Math, allValues);
-                const minRange = minValue - (0.2 * Math.abs(maxValue - minValue));
-                stats.forEach((statsItem: BankAccountDailyStatDto) => {
-                    Object.defineProperties(
-                        statsItem,
-                        {
-                            'netChange': {value: statsItem.credit + statsItem.debit, enumerable: true},
-                            'minRange': { value: minRange, enumerable: true }
-                        }
-                    );
                     if (statsItem.isForecast) {
                         forecast.push(statsItem);
                     } else {
@@ -306,8 +279,37 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit {
                 };
             }),
             switchMap(data => this.mergeHistoricalAndForecast(data.historical, data.forecast)),
-            map(data => {
-                return <any>data.map((obj) => {
+            map((stats: BankAccountDailyStatDto[]) => {
+                let allValues = [];
+                stats.forEach((statsItem: BankAccountDailyStatDto) => {
+                    /** Get all using in chart values to show gradient well*/
+                    allValues = [
+                        ...allValues,
+                        statsItem.startingBalance,
+                        statsItem.debit,
+                        statsItem.credit
+                    ].concat(
+                        statsItem.isForecast
+                            ? [
+                                statsItem['forecastDebit'] || 0,
+                                statsItem['forecastCredit'] || 0
+                            ]
+                            : []
+                    );
+                });
+                const minValue = Math.min.apply(Math, allValues);
+                const maxValue = Math.max.apply(Math, allValues);
+                const minRange = minValue - (0.2 * Math.abs(maxValue - minValue));
+                stats.forEach((statsItem: BankAccountDailyStatDto) => {
+                    Object.defineProperties(
+                        statsItem,
+                        {
+                            'netChange': { value: statsItem.credit + statsItem.debit, enumerable: true },
+                            'minRange': { value: minRange, enumerable: true }
+                        }
+                    );
+                });
+                return <any>stats.map((obj) => {
                     obj['date'].add(obj['date'].toDate().getTimezoneOffset(), 'minutes');
                     return obj;
                 });
