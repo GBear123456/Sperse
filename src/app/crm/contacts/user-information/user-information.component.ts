@@ -23,6 +23,7 @@ import { ContactsService } from '../contacts.service';
 import { ResetPasswordDialog } from './reset-password-dialog/reset-password-dialog.component';
 import { ContactGroup, ContactStatus } from '@root/shared/AppEnums';
 import { AppPermissions } from '@shared/AppPermissions';
+import { AppRoles } from '@shared/AppRoles';
 
 @Component({
     selector: 'user-information',
@@ -56,7 +57,7 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
     initialPhoneNumber: any;
 
     roles: any = [];
-    checkedByDefaultRoles: string[] = [ 'CRM Partner User' ];
+    checkedByDefaultRoles: AppRoles[] = [ AppRoles.CRMPartnerUser ];
     emails: any = [];
     phones: any = [];
     contactInfoData: any;
@@ -135,7 +136,7 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
             setTimeout(() => this.checkShowInviteForm(), 500);
     }
 
-    roleIsCheckedByDefault(roleName: string) {
+    roleIsCheckedByDefault(roleName: AppRoles) {
         return this.checkedByDefaultRoles.indexOf(roleName) >= 0;
     }
 
