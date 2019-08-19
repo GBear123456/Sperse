@@ -79,6 +79,7 @@ export class GenerateReportDialogComponent implements OnInit {
     notificationToEmail: string;
     sendReportInAttachments = false;
     emailRegEx = AppConsts.regexPatterns.email;
+    dontSendEmailNotification = false;
 
     private readonly BACK_BTN_INDEX = 0;
     private readonly NEXT_BTN_INDEX = 1;
@@ -121,7 +122,7 @@ export class GenerateReportDialogComponent implements OnInit {
             currencyId,
             businessEntityIds: businessEntityIds,
             bankAccountIds: [],
-            notificationData: !this.cfoService.isMainInstanceType && this.emailIsValidAndNotEmpty
+            notificationData: !this.dontSendEmailNotification && !this.cfoService.isMainInstanceType && this.emailIsValidAndNotEmpty
                 ? new SendReportNotificationInput({
                     reportId: null,
                     recipientUserEmailAddress: this.notificationToEmail,
@@ -245,6 +246,10 @@ export class GenerateReportDialogComponent implements OnInit {
 
     onSelectionChanged(event) {
         this.buttons[this.NEXT_BTN_INDEX].disabled = !event.selectedRowKeys.length;
+    }
+
+    get submitButtonDisabled() {
+        return !this.dontSendEmailNotification && !this.cfoService.isMainInstanceType && !this.emailIsValid;
     }
 
     onInitialized(event) {

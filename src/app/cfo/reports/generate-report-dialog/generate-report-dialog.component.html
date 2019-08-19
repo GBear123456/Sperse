@@ -54,10 +54,13 @@
                 </div>
             </div>
             <ng-container *ngIf="!cfoService.isMainInstanceType">
-                <div class="row">
+                <div class="row notificationEmail">
                     <div class="text-left">{{ ls.l('Reports_SendEmailNotificationTo') }}</div>
                     <div class="text-right">
-                        <dx-text-box [(value)]="notificationToEmail" name="email" #notificationToEmailTextBox>
+                        <dx-text-box name="email"
+                                     [(value)]="notificationToEmail"
+                                     [disabled]="dontSendEmailNotification"
+                                     #notificationToEmailTextBox>
                             <dx-validator>
                                 <dxi-validation-rule type="pattern"
                                                      [pattern]="emailRegEx"
@@ -67,15 +70,23 @@
                         </dx-text-box>
                     </div>
                 </div>
-                <div class="row send-as-attachment">
-                    <dx-check-box [(value)]="sendReportInAttachments" [disabled]="!emailIsValidAndNotEmpty" [text]="ls.l('Reports_SendAsAttachment')"></dx-check-box>
+                <div class="row checkbox">
+                    <dx-check-box [(value)]="dontSendEmailNotification"
+                                  [text]="ls.l('Reports_IDontWantToSendEmailNotification')">
+                    </dx-check-box>
+                </div>
+                <div class="row checkbox">
+                    <dx-check-box [(value)]="sendReportInAttachments"
+                                  [disabled]="dontSendEmailNotification || !emailIsValidAndNotEmpty"
+                                  [text]="ls.l('Reports_SendAsAttachment')">
+                    </dx-check-box>
                 </div>
             </ng-container>
             <div class="row">
                 <div class="col-12 text-center">
                     <button (click)="generateReport()"
-                            [disabled]="!cfoService.isMainInstanceType && !emailIsValid"
-                            [ngClass]="{ disabled: !cfoService.isMainInstanceType && !emailIsValid }"
+                            [disabled]="submitButtonDisabled"
+                            [ngClass]="{ disabled: submitButtonDisabled }"
                             class="btn send-btn">
                         {{ls.l('Reports_RunReportGenerator')}}
                     </button>
