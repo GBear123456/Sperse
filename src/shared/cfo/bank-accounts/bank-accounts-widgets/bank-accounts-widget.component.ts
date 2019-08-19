@@ -127,7 +127,7 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
     ).pipe(
         map((syncAccounts: SyncAccountBankDto[]) => {
             if (!this.showSyncAccountWithoutBankAccounts) {
-                syncAccounts = syncAccounts.filter(syncAccount => !syncAccount.bankAccounts.length);
+                syncAccounts = syncAccounts.filter(syncAccount => syncAccount.bankAccounts && syncAccount.bankAccounts.length);
             }
             if (this.showOnlySelected) {
                 syncAccounts = syncAccounts.filter((syncAccount: SyncAccountBankDto) => {

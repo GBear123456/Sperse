@@ -1,19 +1,11 @@
-import { Component, Injector, OnInit } from '@angular/core';
-import { AppComponentBase } from '@shared/common/app-component-base';
+import { Component } from '@angular/core';
 import { FilterComponent } from '../models/filter-component';
 
 @Component({
     templateUrl: './bank-account-filter.component.html',
     styleUrls: ['./bank-account-filter.component.less']
 })
-export class BankAccountFilterComponent extends AppComponentBase implements OnInit, FilterComponent {
+export class BankAccountFilterComponent implements FilterComponent {
     items: any;
     apply: (event) => void;
-
-    constructor(injector: Injector) {
-        super(injector);
-    }
-
-    ngOnInit(): void {
-    }
 }
