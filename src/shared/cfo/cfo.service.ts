@@ -100,7 +100,7 @@ export class CFOService extends CFOServiceBase {
     }
 
     checkMemberAccessPermission(permission, defaultResult = true) {
-        if (this.instanceType == InstanceType.User && !this.instanceId)
+        if (this.instanceType == InstanceType.User || this.instanceId)
             return this._permission.isGranted(AppPermissions.CFOMemberAccess + '.' + permission as AppPermissions);
 
         return defaultResult;
