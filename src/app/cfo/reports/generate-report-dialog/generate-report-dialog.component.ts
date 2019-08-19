@@ -38,7 +38,7 @@ import { SendReportNotificationInput } from '@shared/service-proxies/service-pro
     providers: [ ReportsServiceProxy ]
 })
 export class GenerateReportDialogComponent implements OnInit {
-    @ViewChild(DxTreeListComponent) dataGrid: DxTreeListComponent;
+    @ViewChild(DxTreeListComponent) treeList: DxTreeListComponent;
     @ViewChild(ModalDialogComponent) modalDialog: ModalDialogComponent;
     @ViewChild('notificationToEmailTextBox') notificationToEmailTextBox: DxTextBoxComponent;
 
@@ -179,7 +179,9 @@ export class GenerateReportDialogComponent implements OnInit {
 
     private applyBusinessEntity() {
         this.bankAccountsService.changeSelectedBusinessEntities(
-            this.selectedBusinessEntityIds = this.dataGrid.instance.getSelectedRowKeys()
+            this.selectedBusinessEntityIds = this.treeList.instance.getVisibleRows()
+                .filter((item) => item.isSelected)
+                .map(item => item.key)
         );
     }
 
