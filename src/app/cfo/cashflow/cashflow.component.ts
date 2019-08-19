@@ -667,8 +667,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
     private changeTransactionGridEditMode: boolean;
 
-    public manageAllowed = false;
-
     tabularFontName;
     updateAfterActivation: boolean;
     detailsTabs = [
@@ -736,7 +734,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         });
 
         this.hasStaticInstance = this._cfoService.hasStaticInstance;
-        this.manageAllowed = this._cfoService.classifyTransactionsAllowed;
     }
 
     ngOnInit() {
@@ -3895,19 +3892,17 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         if (this.isInstanceAdmin && e.column && e.component.option('editing.mode') != 'row' && (e.column.dataField == 'debit' || e.column.dataField == 'credit'))
             this.onAmountCellEditStart(e);
 
-        if (e.rowType === 'data') {
-            if (this.manageAllowed && e.column.dataField == 'categoryName' && e.data.categoryId) {
-                this.dialog.open(RuleDialogComponent, {
-                    panelClass: 'slider',
-                    data: {
-                        categoryId: e.data.categoryId,
-                        categoryCashflowTypeId: e.cashflowTypeId,
-                        transactions: [e.data],
-                        transactionIds: [e.data.id],
-                        refershParent: this.refreshTransactionDetail.bind(this)
-                    }
-                }).afterClosed().subscribe();
-            }
+        if (e.rowType === 'data' && this._cfoService.classifyTransactionsAllowed && e.column.dataField == 'categoryName' && e.data.categoryId) {
+            this.dialog.open(RuleDialogComponent, {
+                panelClass: 'slider',
+                data: {
+                    categoryId: e.data.categoryId,
+                    categoryCashflowTypeId: e.cashflowTypeId,
+                    transactions: [e.data],
+                    transactionIds: [e.data.id],
+                    refershParent: this.refreshTransactionDetail.bind(this)
+                }
+            }).afterClosed().subscribe();
         }
     }
 
