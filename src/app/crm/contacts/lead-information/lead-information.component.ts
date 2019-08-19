@@ -123,7 +123,7 @@ export class LeadInformationComponent extends AppComponentBase implements OnInit
 
         this._userService.getUserForEdit(undefined).subscribe(data => {
             let orgUnit = find(data.allOrganizationUnits, {
-                id: this.data.leadInfo.organizationUnitId || 
+                id: this.data.leadInfo.organizationUnitId ||
                     this.data.contactInfo.organizationUnitId
             });
             if (orgUnit) {

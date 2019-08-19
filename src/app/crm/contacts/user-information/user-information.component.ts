@@ -21,7 +21,7 @@ import { PhoneFormatPipe } from '@shared/common/pipes/phone-format/phone-format.
 import { InplaceEditModel } from '@app/shared/common/inplace-edit/inplace-edit.model';
 import { ContactsService } from '../contacts.service';
 import { ResetPasswordDialog } from './reset-password-dialog/reset-password-dialog.component';
-import { ContactStatus } from '@root/shared/AppEnums';
+import { ContactGroup, ContactStatus } from '@root/shared/AppEnums';
 import { AppPermissions } from '@shared/AppPermissions';
 
 @Component({
@@ -56,6 +56,7 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
     initialPhoneNumber: any;
 
     roles: any = [];
+    checkedByDefaultRoles: string[] = [ 'CRM Partner User' ];
     emails: any = [];
     phones: any = [];
     contactInfoData: any;
@@ -134,6 +135,10 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
             setTimeout(() => this.checkShowInviteForm(), 500);
     }
 
+    roleIsCheckedByDefault(roleName: string) {
+        return this.checkedByDefaultRoles.indexOf(roleName) >= 0;
+    }
+
     checkShowInviteForm() {
         this.showInviteUserForm = this.data && !this.data.userId &&
             this.permission.isGranted(AppPermissions.AdministrationUsersCreate);
@@ -161,6 +166,11 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
                     }), this.constructor.name
             );
         }
+    }
+
+    isPartner() {
+        return this.contactInfoData && this.contactInfoData.contactInfo &&
+               this.contactInfoData.contactInfo.groupId === ContactGroup.Partner;
     }
 
     fillUserData(data) {

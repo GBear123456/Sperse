@@ -100,7 +100,7 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
     ) {
         super(injector);
         this.dataSource = {
-              store: {
+            store: {
                 key: 'Id',
                 type: 'odata',
                 url: this.getODataUrl(this.dataSourceURI, this.getFilters()),
