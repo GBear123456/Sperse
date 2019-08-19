@@ -7,14 +7,16 @@
         justify-content: space-between;
 
         .account-item {
-            max-width: 32%;
             width: 100%;
             padding: 5px 20px 5px 110px;
             border: 1px solid #E5E9EC;
             background: #FFFFFF url('../../../../assets/common/icons/total-icon.svg') 45px 50% no-repeat;
             border-radius: 4px;
             position: relative;
-            
+
+            &:not(:last-child) {
+                margin-bottom: 10px;
+            }
             .col-8,
             .col-4 {
                 padding-right: 0;
@@ -24,7 +26,7 @@
                 padding-left: 60px !important;
                 background-position: 15px 50% !important;
             }
-    
+
             @media (max-width: 1370px) {
                 padding-left: 46px !important;
                 background-position: 11px 50% !important;
@@ -115,11 +117,11 @@
 
             &.networth {
                 background-image: url('../../../../assets/common/icons/coins-icon.svg');
-    
+
                 .value {
                     font-weight: 400;
                     color: #677380;
-        
+
                     span {
                         font-size: 14px;
                         line-height: 2.4;
@@ -142,11 +144,11 @@
                 overflow: hidden;
                 white-space: nowrap;
                 text-overflow: ellipsis;
-    
+
                 @media (max-width: 1370px) {
                     font-size: 20px;
                 }
-                
+
                 span {
                     @media (max-width: 1370px) {
                         margin-top: -3px !important;
@@ -183,6 +185,11 @@
                 &:hover {
                     color: lighten(#00AEEF, 20%);
                 }
+            }
+
+            @media (min-width: 768px) {
+                max-width: 32%;
+                margin-bottom: 0;
             }
         }
     }
