@@ -1,30 +1,30 @@
 :host {
-     /deep/ inplace-edit {
-         .inplace-edit-view-mode {
-             height: 30px;
+    /deep/ inplace-edit {
+        .inplace-edit-view-mode {
+            height: 30px;
 
-             .actions i {
-                 padding: 0 0 2px 7px;
-                 vertical-align: middle;
-             }
-         }
+            .actions i {
+                padding: 0 0 2px 7px;
+                vertical-align: middle;
+            }
+        }
 
-         .inplace-edit-edit-mode {
-             dx-text-box {
-                 .dx-texteditor-input {
-                     background: #f3f7fa;
-                     color: #202b35;
-                     font-size: 28px !important;
-                     font-weight: 400;
-                 }
-             }
-             dx-button {
-                 background: inherit;
-             }
-         }
-     }
+        .inplace-edit-edit-mode {
+            dx-text-box {
+                .dx-texteditor-input {
+                    background: #f3f7fa;
+                    color: #202b35;
+                    font-size: 28px !important;
+                    font-weight: 400;
+                }
+            }
+            dx-button {
+                background: inherit;
+            }
+        }
+    }
 
-     .vertical-delimiter {
+    .vertical-delimiter {
         width: 30px;
         height: 0px;
         position: relative;
@@ -42,7 +42,7 @@
         }
     }
 
-     .refresh-button {
+    .refresh-button {
         width: 44px;
         height: 44px;
         margin: 5px;
@@ -104,13 +104,13 @@
             position: relative;
         }
         &:after {
-           display: block;
-           width: 40px;
-           background-color: #DBDCDD;
-           height: 10px;
-           top: 10px;
-           left: 35px;
-           position: relative;
+            display: block;
+            width: 40px;
+            background-color: #DBDCDD;
+            height: 10px;
+            top: 10px;
+            left: 35px;
+            position: relative;
         }
     }
 
@@ -157,8 +157,6 @@
 
     .personal_info {
         margin: 10px 0 0 150px;
-        width: 100%;
-        max-width: 525px;
 
         .status-group-wrapper {
             padding: 0;
@@ -171,18 +169,27 @@
             }
         }
 
-        @media (max-width:1380px) {
+        @media (max-width: 1380px) {
             width: 350px;
         }
-        @media (max-width:1280px) {
+        @media (max-width: 1280px) {
             width: 280px;
         }
     }
 
     .organization_info {
         white-space: nowrap;
-
-        @media (max-width:980px) {
+        display: flex;
+        align-items: center;
+        position: relative;
+        width: 500px;
+        @media (max-width: 1500px) {
+            width: 400px;
+        }
+        @media (max-width: 1200px) {
+            width: 300px;
+        }
+        @media (max-width: 980px) {
             display: none;
         }
 
@@ -197,9 +204,11 @@
         }
 
         .company-details {
-            display: inline;
+            align-items: center;
+            width: calc(100% - 115px);
+            padding-right: 75px;
+            display: flex;
         }
-
         .delimiter {
             display: inline-block;
             width: 1px;
@@ -209,8 +218,6 @@
         }
 
         .organization_logo {
-            display: inline-block;
-            margin: 20px 0px;
             cursor: pointer;
             img {
                 max-width: 100%;
@@ -223,28 +230,22 @@
             /deep/ inplace-edit {
                 vertical-align: middle;
             }
-            top: 45px;
-            margin-bottom: 0px;
-            position: absolute;
-            padding-left: 45px;
+            margin-bottom: 0;
             font-size: 12px;
             font-weight: 400;
             color: #677380;
             height: 35px;
+            padding-right: 0 !important;
         }
 
         h2 {
             &.shift-top {
                 position: relative;
-                bottom: 10px;
-
                 .fa-angle-down {
                     margin-left: 10px;
                     cursor: pointer;
                 }
             }
-            padding-left: 15px;
-            display: inline-block;
             color: #202b35;
             font-size: 19px;
             font-weight: 500;
@@ -254,27 +255,15 @@
         }
 
         h2, h3 {
-            padding-right: 90px;
-            @media (max-width: 1366px) {
-                width: 320px;
-                padding-right: 0;
-            }
-            @media (max-width:1150px) {
-                width: 220px;
-            }
-            @media (max-width:1050px) {
-                width: 150px;
-            }
-
             /deep/ inplace-edit {
                 .inplace-edit-view-mode {
                     height: auto;
                 }
                 i.dx-icon {
-                    font-size: 14px!important;
+                    font-size: 14px !important;
                 }
                 i.edit {
-                    display: none!important;
+                    display: none !important;
                 }
                 span {
                     display: inline-block;
@@ -284,17 +273,17 @@
                     }
                 }
                 input {
-                    font-size: 16px!important;
+                    font-size: 16px !important;
                 }
             }
 
             .actions {
-                margin-left: 10px;
-                display: none;
-                position: absolute;
                 top: 0;
                 bottom: 0;
                 align-items: center;
+                visibility: hidden;
+                display: inline-flex;
+                margin-left: 0;
                 i {
                     color: #00aeef;
                     padding: 0px 5px;
@@ -306,7 +295,7 @@
                 }
             }
             &:hover .actions {
-                display: inline-flex;
+                visibility: visible;
             }
         }
 
@@ -318,6 +307,10 @@
             img {
                 padding-bottom: 2px;
             }
+        }
+        .titles {
+            width: calc(100% - 30px);
+            padding-left: 15px;
         }
     }
 
@@ -360,16 +353,15 @@
     }
 
     .header_buttons {
-        margin-left: auto;
         margin-right: 75px;
 
         #addEntity {
             min-width: 187px;
         }
 
-        @media (max-width:1280px) {
+        @media (max-width: 1280px) {
             .menu {
-                min-width: 50px!important;
+                min-width: 50px !important;
                 span {
                     display: none;
                 }
@@ -389,17 +381,18 @@
     }
 
     .loadindicator {
-        height: 16px;
-        width: 16px;
-        left: -9px;
-        border: 2px solid #00aeef;
-        border-left-color: rgba(255,255,255,.2);
-        border-bottom-color: rgba(255,255,255,.2);
-        border-radius: 50%;
-        position: relative;
-        -webkit-animation: rotation .6s infinite linear;
-        -moz-animation: rotation .6s infinite linear;
-        -o-animation: rotation .6s infinite linear;
-        animation: rotation .6s infinite linear;
-    }
+            height: 16px;
+            width: 16px;
+            left: -9px;
+            border: 2px solid #00aeef;
+            border-left-color: rgba(255, 255, 255, .2);
+            border-bottom-color: rgba(255, 255, 255, .2);
+            border-radius: 50%;
+            position: relative;
+            -webkit-animation: rotation .6s infinite linear;
+            -moz-animation: rotation .6s infinite linear;
+            -o-animation: rotation .6s infinite linear;
+            animation: rotation .6s infinite linear;
+        }
 }
+

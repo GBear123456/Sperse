@@ -23,37 +23,28 @@
                 <img *ngIf="!showRemovingOrgRelationProgress" src="./assets/common/icons/info-icon-blue.svg" alt="Organization Details">
                 <div *ngIf="showRemovingOrgRelationProgress" class="loadindicator"></div>
             </div>
-            <h2 class="shift-top">
-                <inplace-edit #companyName [data]="getNameInplaceEditData('organizationContactInfo') | async" (valueChanged)="updateCompanyField($event)"></inplace-edit>
-                <i class="fa fa-angle-down" *ngIf="!companyName.isEditModeEnabled && (data?.personContactInfo?.orgRelations?.length > 1)" (click)="showCompanyList($event)"></i>
-                <div class="actions" [hidden]="!manageAllowed || companyName.isEditModeEnabled">
-                    <i class="edit fa fa-pencil" (click)="showCompanyDialog($event)"></i>
-                    <i class="add fa fa-plus" (click)="addCompanyDialog($event)"></i>
-                    <i class="delete fa fa-times" (click)="removePersonOrgRelation($event)"></i>
-                </div>
-            </h2>
-            <h3>
-                <inplace-edit #jobTitle [data]="getJobTitleInplaceEditData() | async" (valueChanged)="updateJobTitle($event)"></inplace-edit>
-            </h3>
+            <div class="titles">
+                <h2 class="shift-top">
+                    <inplace-edit #companyName [data]="getNameInplaceEditData('organizationContactInfo') | async" (valueChanged)="updateCompanyField($event)"></inplace-edit>
+                    <i class="fa fa-angle-down" *ngIf="!companyName.isEditModeEnabled && (data?.personContactInfo?.orgRelations?.length > 1)" (click)="showCompanyList($event)"></i>
+                    <div class="actions" [hidden]="!manageAllowed || companyName.isEditModeEnabled">
+                        <i class="edit fa fa-pencil" (click)="showCompanyDialog($event)"></i>
+                        <i class="add fa fa-plus" (click)="addCompanyDialog($event)"></i>
+                        <i class="delete fa fa-times" (click)="removePersonOrgRelation($event)"></i>
+                    </div>
+                </h2>
+                <h3>
+                    <inplace-edit #jobTitle [data]="getJobTitleInplaceEditData() | async" (valueChanged)="updateJobTitle($event)"></inplace-edit>
+                </h3>
+            </div>
         </div>
         <div *ngIf="manageAllowed && !data?.primaryOrganizationContactId" class="add-new-company">
             <a (click)="addCompanyDialog($event)">+ {{ l('Add Company') }}</a>
         </div>
         <div class="organization_logo">
-            <img (click)="showCompanyDialog($event)" src="{{ data?.organizationContactInfo?.primaryPhoto ? 'data:image/png;base64,' + data.organizationContactInfo.primaryPhoto : './assets/common/images/no-photo-Organization.png' }}" alt="Organization Logo">
+            <img (click)="showCompanyDialog($event)" [src]="data?.organizationContactInfo?.primaryPhoto ? 'data:image/png;base64,' + data.organizationContactInfo.primaryPhoto : './assets/common/images/no-photo-Organization.png'" alt="Organization Logo">
         </div>
     </div>
-    <div class="header_financial_info">
-    </div>
-
-    <dx-context-menu
-        [selectByClick]="true"
-        [selectionMode]="'single'"
-        [dataSource]="addContextMenuItems"
-        [position]="{ my: 'top right', at: 'bottom right' }"
-        (onSelectionChanged)="addOptionSelectionChanged($event)"
-        target="#addEntity">
-    </dx-context-menu>
 
     <div class="header_buttons" *ngIf="manageAllowed && addContextMenuItems.length">
         <button id="addEntity" class="button-layout button-primary menu" (click)="addEntity($event)">
@@ -64,3 +55,12 @@
         <button class="refresh-button" (click)="refresh()"></button>
     </div>
 </header>
+<dx-context-menu
+    *ngIf="addContextMenuItems && addContextMenuItems.length"
+    [selectByClick]="true"
+    [selectionMode]="'single'"
+    [dataSource]="addContextMenuItems"
+    [position]="{ my: 'top right', at: 'bottom right' }"
+    (onSelectionChanged)="addOptionSelectionChanged($event)"
+    target="#addEntity">
+</dx-context-menu>
