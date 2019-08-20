@@ -1,5 +1,6 @@
 :host {
-
+    height: calc(100% - 85px);
+    display: block;
     .step1-container, .step3-container {
         height: 100%;
         padding: 20px 30px 30px 30px;
@@ -139,5 +140,9 @@
                 margin-bottom: 55px;
             }
         }
+    }
+
+    /deep/ .mat-dialog-content {
+        max-height: 100%;
     }
 }

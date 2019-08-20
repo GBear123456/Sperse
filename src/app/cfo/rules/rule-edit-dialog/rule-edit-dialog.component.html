@@ -4,7 +4,7 @@
               [editTitle]="true"
               [placeholder]="ls.l('Enter the rule name')"
               [isTitleValid]="isTitleValid">
-    <dx-scroll-view showScrollbar="onHover">
+    <dx-scroll-view showScrollbar="onHover" height="calc(100% - 82px)">
         <div class="transactions-container" *ngIf="showSelectedTransactions">
             <div class="close-transactions" (click)="showSelectedTransactions=false"></div>
             <dx-data-grid class="grid-layout"
