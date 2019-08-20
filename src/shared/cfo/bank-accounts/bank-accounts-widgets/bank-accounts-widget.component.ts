@@ -122,8 +122,8 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
     ];
     refresh$: BehaviorSubject<null> = new BehaviorSubject<null>(null);
     syncAccounts$: Observable<SyncAccountBankDto[]> = (this.changeOnlyAfterApply
-        ? this.bankAccountsService.distinctUntilChangedFilteredSyncAccounts$
-        : this.bankAccountsService.filteredSyncAccountsWithApply$
+        ? this.bankAccountsService.filteredSyncAccountsWithApply$
+        : this.bankAccountsService.distinctUntilChangedFilteredSyncAccounts$
     ).pipe(
         map((syncAccounts: SyncAccountBankDto[]) => {
             if (!this.showSyncAccountWithoutBankAccounts) {
