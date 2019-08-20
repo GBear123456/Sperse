@@ -9,6 +9,7 @@ import difference from 'lodash/difference';
 /** Application imports */
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { BankAccountsService } from '@shared/cfo/bank-accounts/helpers/bank-accounts.service';
+import { AppConsts } from '@shared/AppConsts';
 
 @Component({
     selector: 'business-entities-chooser',
@@ -76,8 +77,8 @@ export class BusinessEntitiesChooserComponent implements OnDestroy {
     }
 
     onPopupOpened(event, data) {
-        if (this.popupWidth)
-            event.component._popup.option('width', this.popupWidth);
+        if (this.popupWidth || AppConsts.isMobile)
+            event.component._popup.option('width', this.popupWidth ? this.popupWidth : '180px');
         if (this.treeList)
             this.treeList.instance.option('dataSource', data);
     }

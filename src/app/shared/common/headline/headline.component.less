@@ -21,7 +21,7 @@
         top: 75px;
         left: 0;
         @media (max-width: 768px) {
-            padding-right: 0;
+            padding-right: 5px;
             padding-left: 5px;
         }
     }
@@ -38,14 +38,23 @@
         }
         @media (max-width: 992px) {
             flex-wrap: wrap;
+            justify-content: center;
         }
         @media (max-width: 768px) {
+            flex-direction: column;
+            align-items: center;
             business-entities-chooser {
                 &, .dx-dropdownbox {
                     margin-left: 0;
-                    margin-right: auto;
-                    width: 130px !important;
+                    margin-right: 0;
+                    width: 100px !important;
                 }
+            }
+            & > * {
+                margin-left: 0px;
+            }
+            /deep/ synch-progress {
+                margin: 0;
             }
         }
     }
@@ -62,7 +71,7 @@
         }
 
         @media (max-width: 768px) {
-            margin-left: 3px;
+            margin-left: 0px;
             img {
                 display: none;
             }
@@ -121,6 +130,12 @@
                 }
                 .right-arrow {
                     display: none;
+                }
+            }
+
+            @media (max-width: 768px) {
+                .header-names {
+                    margin-left: 0;
                 }
             }
         }
