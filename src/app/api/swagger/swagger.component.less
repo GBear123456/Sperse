@@ -1,12 +1,15 @@
 :host {
-  position: relative;
-  top: 75px;
-
-  iframe {
-    width: calc(~"100% - 320px");
-    height: calc(~"100vh - 25px");
     position: relative;
     top: 75px;
-    float: right;
-  }
+    display: flex;
+    
+    /deep/.setup-steps {
+        border-right: 1px solid #dfdfdf;
+    }
+    
+    iframe {
+        width: calc(~"100% - 320px");
+        height: calc(~"100vh - 150px");
+        position: relative;
+    }
 }
