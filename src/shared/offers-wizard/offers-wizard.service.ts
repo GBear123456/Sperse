@@ -5,6 +5,7 @@ import { Injectable } from '@angular/core';
 import { pluck, publishReplay, refCount } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
+import * as moment from 'moment';
 
 /** Application imports */
 import {
@@ -31,7 +32,6 @@ import { AppTimezoneScope } from '@shared/AppEnums';
 import { environment } from '@root/environments/environment';
 import { ApplyOfferDialogComponent } from '@root/personal-finance/shared/offers/apply-offer-modal/apply-offer-dialog.component';
 import { AppHttpConfiguration } from '@shared/http/appHttpConfiguration';
-import * as moment from 'moment';
 
 @Injectable()
 export class OffersWizardService {
@@ -120,6 +120,16 @@ export class OffersWizardService {
         }
     }
 
+    removeEmptyData(obj) {
+        Object.keys(obj).forEach((prop) => {
+            if (obj[prop] && typeof obj[prop] === 'object') {
+                this.removeEmptyData(obj[prop]);
+            } else {
+                obj[prop] = obj[prop] === '' ? null : obj[prop];
+            }
+        });
+    }
+
     submitApplicationProfile(): Observable<SubmitApplicationOutput> {
         let applyOfferDialog;
         this.submitApplicationProfileInput.personalInformation.doB ?
@@ -131,6 +141,8 @@ export class OffersWizardService {
         this.submitApplicationProfileInput.employmentInformation.payAfterNextDate ?
             this.submitApplicationProfileInput.employmentInformation.payAfterNextDate = DateHelper.removeTimezoneOffset(moment(this.submitApplicationProfileInput.employmentInformation.payAfterNextDate).toDate(), false, 'from') :
             this.submitApplicationProfileInput.employmentInformation.payAfterNextDate = null;
+        this.removeEmptyData(this.submitApplicationProfileInput);
+
         if (this.data.campaignId && this.data.offer) {
             const modalData = {
                 processingSteps: [null, null, null, null],
