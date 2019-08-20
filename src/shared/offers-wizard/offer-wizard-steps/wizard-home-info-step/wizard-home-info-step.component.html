@@ -52,7 +52,6 @@
                              minLength="5"
                              (onContentReady)="inputStatusesService.setMask($event)"
                              (onInput)="onInput($event, 10, '00000-0000')"
-                             (onFocusOut)="inputStatusesService.blurInput($event)"
                              [(value)]="offersWizardService.submitApplicationProfileInput.personalInformation.postalCode">
                     <dx-validator>
                         <dxi-validation-rule type="pattern"
