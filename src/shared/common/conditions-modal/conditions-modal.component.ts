@@ -116,10 +116,16 @@ export class ConditionsModalComponent implements OnInit {
             style: '.visible-on-print { visibility: visible; text-align: center; }',
             onLoadingStart: () => {
                 /** Height property works incorrectly with the following p if set in styles */
-                document.querySelector('.visible-on-print')['style'].height = 'auto';
+                const visibleOnPrint = document.querySelector('.visible-on-print');
+                if (visibleOnPrint) {
+                    visibleOnPrint['style'].height = 'auto';
+                }
             },
             onLoadingEnd: () => {
-                document.querySelector('.visible-on-print')['style'].height = '0';
+                const visibleOnPrint = document.querySelector('.visible-on-print');
+                if (visibleOnPrint) {
+                    visibleOnPrint['style'].height = '0';
+                }
             }
         });
     }
