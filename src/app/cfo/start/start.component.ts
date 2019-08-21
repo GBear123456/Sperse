@@ -39,6 +39,7 @@ export class StartComponent extends CFOComponentBase implements AfterViewInit, O
     }
 
     instanceChangeProcess() {
+        this._cfoService.instanceChangeProcess().subscribe();
         this._cfoService.initialized$
             .pipe(
                 takeUntil(this.deactivate$),
