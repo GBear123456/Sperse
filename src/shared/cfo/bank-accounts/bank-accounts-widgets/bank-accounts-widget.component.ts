@@ -56,7 +56,9 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
     @Input() showCheckboxes = true;
     @Input() changeOnlyAfterApply = false;
     @Input() showOnlySelected = false;
-    @Input() showAccountsNumber = true;
+    @Input() showAccountNumber = true;
+    @Input() showAccountType = true;
+    @Input() showAccountsCount = true;
     @Output() selectionChanged: EventEmitter<any> = new EventEmitter();
     @Output() accountsEntitiesBindingChanged: EventEmitter<any> = new EventEmitter();
     @Output() onUpdateAccount: EventEmitter<any> = new EventEmitter();

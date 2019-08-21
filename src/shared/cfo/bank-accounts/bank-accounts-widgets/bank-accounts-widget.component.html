@@ -98,8 +98,8 @@
         <dxi-column dataField="name" [caption]="l('Account')" [sortIndex]="0" sortOrder="asc" [width]="nameColumnWidth" alignment="left" [allowEditing]="false" cssClass="bold"></dxi-column>
         <dxi-column dataField="syncAccountStatus" [visible]="showStatus" [caption]="l('BankAccountsWidget_Sync_status')" [width]="200" alignment="center" sortOrder="asc" [sortIndex]="2" cellTemplate="statusTemplate" [allowEditing]="false"></dxi-column>
         <dxi-column dataField="lastSyncDate" alignment="left" [caption]="l('BankAccountsWidget_Last_sync')" [width]="510" [allowEditing]="false" cellTemplate="syncDateTemplate" [visible]="showSyncDate"></dxi-column>
-        <dxi-column dataField="bankAccounts.length" [visible]="showAdvancedColumns && showAccountsNumber" [width]="10" [sortIndex]="1" sortOrder="asc" [calculateSortValue]="calculateSyncAccountSortValue" alignment="right" [calculateDisplayValue]="calculateSyncAccountDisplayValue" [allowEditing]="false"></dxi-column>
-        <dxi-column [width]="30" alignment="right" [allowEditing]="false" [visible]="showAdvancedColumns && showAccountsNumber" cellTemplate="expandTemplate"></dxi-column>
+        <dxi-column dataField="bankAccounts.length" [visible]="showAdvancedColumns && showAccountsCount" [width]="10" [sortIndex]="1" sortOrder="asc" [calculateSortValue]="calculateSyncAccountSortValue" alignment="right" [calculateDisplayValue]="calculateSyncAccountDisplayValue" [allowEditing]="false"></dxi-column>
+        <dxi-column [width]="30" alignment="right" [allowEditing]="false" [visible]="showAdvancedColumns && showAccountsCount" cellTemplate="expandTemplate"></dxi-column>
         <dxi-column dataField="balance" [caption]="l('BankAccountsWidget_Value')" cellTemplate="amountTemplate" alignment="right" [allowEditing]="false"></dxi-column>
         <dxi-column [width]="40" alignment="right" dataField="syncRef" [allowEditing]="false"
                     [visible]="allowUpdateAccount && (contextMenuItems && contextMenuItems.length)" cellTemplate="actionsTemplate"></dxi-column>
@@ -133,10 +133,10 @@
                     <dxo-filter-row [visible]="false"></dxo-filter-row>
                     <dxi-column dataField="id" [allowEditing]="false" [visible]="false" sortOrder="desc" [sortIndex]="0"></dxi-column>
                     <dxi-column dataField="selected" [visible]="showCheckboxes" cssClass="checkbox" [visibleIndex]="0" [allowEditing]="false" [width]="30" alignment="center" dataType="boolean" caption=""></dxi-column>
-                    <dxi-column dataField="accountNumber" [visibleIndex]="2" cssClass="accountNumber" cssClass="tabular" [width]="166" alignment="left" [allowEditing]="allowEditing" [editorOptions]="{ disabled: true }"></dxi-column>
+                    <dxi-column dataField="accountNumber" [visible]="showAccountNumber" [visibleIndex]="2" cssClass="accountNumber" cssClass="tabular" [width]="166" alignment="left" [allowEditing]="allowEditing" [editorOptions]="{ disabled: true }"></dxi-column>
                     <dxi-column dataField="accountName" [visibleIndex]="1" [width]="nameColumnWidth" alignment="left" [allowEditing]="allowEditing"></dxi-column>
                     <dxi-column dataField="typeName" cssClass="type-container" [width]="160" alignment="left" [allowEditing]="false"
-                                cellTemplate="typeTemplate" [(visible)]="showAdvancedColumns"></dxi-column>
+                                cellTemplate="typeTemplate" [(visible)]="showAdvancedColumns && showAccountType"></dxi-column>
                     <dxi-column dataField="businessEntityId" [allowEditing]="allowEditing" [visible]="false" editCellTemplate="businessEntityEditSelect"></dxi-column>
                     <dxi-column dataField="isActive" [allowEditing]="allowEditing" [visible]="false"></dxi-column>
                     <dxi-column dataField="balance" cssClass="tabular" alignment="right" cellTemplate="amountTemplate" [(visible)]="showAdvancedColumns" [allowEditing]="false"></dxi-column>
