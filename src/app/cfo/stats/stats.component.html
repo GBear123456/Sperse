@@ -25,15 +25,21 @@
                             </button>
                         </div>
                     </div>
-                    <dx-chart id="chart" [dataSource]="statsData" animation="{easing: 'easeOutCubic',duration: 2000}"
-                        [customizePoint]="customizePoint" (onDone)="onDone($event)" resolveLabelOverlapping="stack" #linearChart>
+                    <dx-chart id="chart"
+                              [dataSource]="statsData"
+                              animation="{easing: 'easeOutCubic',duration: 2000}"
+                              [customizePoint]="customizePoint"
+                              resolveLabelOverlapping="stack"
+                              (onDone)="onDone($event)"
+                              #linearChart>
+                        <dxo-adaptive-layout width="500px"></dxo-adaptive-layout>
                         <dxo-size [width]="chartsWidth" [height]="chartsHeight / 2"></dxo-size>
                         <!-- common settings for charts -->
                         <dxo-common-series-settings
                             argumentField="date"
                             [showInLegend]="false"
                             [maxLabelCount]="maxLabelCount"
-                            ignoreEmptyPoints="true"
+                            [ignoreEmptyPoints]="true"
                             hoverMode="none">
                             <dxo-label [visible]="false" [backgroundColor]="labelPositiveBackgroundColor">
                                 <dxo-format type="currency largeNumber" [currency]="cfoPreferencesService.selectedCurrencyId">
@@ -144,7 +150,7 @@
 
                         <!-- Bottom axis -->
                         <dxo-argument-axis argumentType="datetime"
-                                        visible="true"
+                                        [visible]="true"
                                         type="discrete">
                             <dxo-label [customizeText]="customizeBottomAxis">
                                 <dxo-format [type]="axisDateFormat">
@@ -162,7 +168,7 @@
                             <dxo-grid color="#e5e9ec" [visible]="true"></dxo-grid>
                         </dxi-value-axis>
                         <!-- Common settings for axis -->
-                        <dxo-common-axis-settings allowDecimals="false">
+                        <dxo-common-axis-settings [allowDecimals]="false">
                             <dxo-label alignment="center">
                                 <dxo-font weight="300" color="#677380" size="12px"></dxo-font>
                             </dxo-label>

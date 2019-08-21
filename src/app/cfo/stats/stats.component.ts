@@ -439,7 +439,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
             toggleToolbar: this.toggleToolbar.bind(this),
             buttons: [
                 {
-                    enabled: !!(this.statsData && this.statsData.length),
+                    enabled: !AppConsts.isMobile && !!(this.statsData && this.statsData.length),
                     action: this.showSourceDataWidget.bind(this),
                     lable: this.l('Show source data')
                 }
@@ -476,8 +476,8 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
     /** Recalculates the height of the charts to squeeze them both into the window to avoid scrolling */
     calculateChartsSize() {
         let chartsHeight = window.innerHeight - 390;
-        this.chartsHeight =  chartsHeight > this.chartsHeight ? chartsHeight : this.chartsHeight;
-        this.chartsWidth = window.innerWidth - 371;
+        this.chartsHeight = chartsHeight > this.chartsHeight ? chartsHeight : this.chartsHeight;
+        this.chartsWidth = window.innerWidth < 768 ? window.innerWidth - 20 : window.innerWidth - 371;
     }
 
     /** Calculates the height of the charts scrollable height after resizing */

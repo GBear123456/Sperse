@@ -5,7 +5,7 @@
     top: 75px;
 
     &.fullscreen {
-        top: 0px !important;
+        top: 0 !important;
 
         dx-scroll-view {
             background: #fff
@@ -46,7 +46,7 @@
         }
 
         .charts {
-            padding: 25px 25px 0;
+            padding: 10px 10px 0;
 
             .header {
 
@@ -183,6 +183,10 @@
                     font-size: 10px;
                 }
             }
+
+            @media (min-width: 768px) {
+                padding: 25px 25px 0;
+            }
         }
 
         source-data {
@@ -251,6 +255,12 @@
             display: flex;
             flex-direction: column;
             justify-content: space-between;
+        }
+    }
+
+    setup-steps {
+        @media (max-width: 767px) {
+            display: none;
         }
     }
 }
