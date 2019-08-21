@@ -21,13 +21,13 @@ export class SetupStepsComponent extends AppComponentBase {
     @Input() headerLink;
 
     constructor(
-        injector: Injector,        
+        injector: Injector,
         private _changeDetectorRef: ChangeDetectorRef
     ) {
         super(injector);
     }
 
-    setSelectedIndex(index: number){
+    setSelectedIndex(index: number) {
         this.SelectedStepIndex = index;
         this._changeDetectorRef.detectChanges();
     }

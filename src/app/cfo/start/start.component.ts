@@ -1,5 +1,11 @@
+/** Core imports */
 import { Directive, ComponentFactoryResolver, Injector, AfterViewInit,
     Component, OnDestroy, ViewChild, ViewContainerRef } from '@angular/core';
+
+/** Third party imports */
+import { filter, first, takeUntil } from 'rxjs/operators';
+
+/** Application imports */
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { PortalDashboardComponent } from './dashboard/portal-dashboard.component';
@@ -21,25 +27,30 @@ export class AdDashboardHostDirective {
 export class StartComponent extends CFOComponentBase implements AfterViewInit, OnDestroy {
     @ViewChild(AdDashboardHostDirective) adHostDirective: AdDashboardHostDirective;
     private _hostComponent: any;
-    private _hostClass: any;
+    private _hostClass: any = this._cfoService.hasStaticInstance || this.instanceId
+        ? PortalDashboardComponent
+        : DashboardComponent;
 
-    constructor(injector: Injector,
+    constructor(
+        injector: Injector,
         private _componentFactoryResolver: ComponentFactoryResolver
     ) {
         super(injector);
-
-        this._hostClass = this._cfoService.hasStaticInstance || this.instanceId ?
-            PortalDashboardComponent : DashboardComponent;
     }
 
     instanceChangeProcess() {
-        this._cfoService.instanceChangeProcess().subscribe(() => {
-            if (this._cfoService.initialized && this._hostClass)
+        this._cfoService.initialized$
+            .pipe(
+                takeUntil(this.deactivate$),
+                filter(Boolean),
+                first()
+            )
+            .subscribe(() => {
                 this._hostComponent = this.adHostDirective.viewContainerRef.createComponent(
                     this._componentFactoryResolver.resolveComponentFactory(this._hostClass)
                 );
-        });
-    } 
+            });
+    }
 
     ngAfterViewInit(): void {
         this.instanceChangeProcess();

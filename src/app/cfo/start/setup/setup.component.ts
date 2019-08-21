@@ -1,10 +1,12 @@
+/** Core imports */
 import { AfterViewInit, Component, OnInit, Injector, OnDestroy } from '@angular/core';
 
+/** Third party imports */
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
-
 import { of } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
 
+/** Application imports */
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { InstanceServiceProxy, InstanceType, SyncServiceProxy } from 'shared/service-proxies/service-proxies';
@@ -25,7 +27,8 @@ export class SetupComponent extends CFOComponentBase implements AfterViewInit, O
     dialogConfig = new MatDialogConfig();
     setupContainerElement: Element;
 
-    constructor(injector: Injector,
+    constructor(
+        injector: Injector,
         private _instanceServiceProxy: InstanceServiceProxy,
         private _syncService: SyncServiceProxy,
         private _appService: AppService,
