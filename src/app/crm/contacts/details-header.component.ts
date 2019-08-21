@@ -38,10 +38,11 @@ import { NameParserService } from '@app/crm/shared/name-parser/name-parser.servi
 import { NoteAddDialogComponent } from './notes/note-add-dialog/note-add-dialog.component';
 import { AppService } from '@app/app.service';
 import { StringHelper } from '@shared/helpers/StringHelper';
-import { ContactGroup, ContactStatus } from '@shared/AppEnums';
+import { ContactGroup } from '@shared/AppEnums';
 import { CompanyDialogComponent } from '@app/crm/contacts/company-dialog/company-dialog.component';
 import { ContactsService } from './contacts.service';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
+import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
 
 @Component({
     selector: 'details-header',
@@ -114,6 +115,7 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
     ];
     addContextMenuItems = [];
     addButtonTitle = '';
+    isBankCodeLayout = this.userManagementService.checkBankCodeLayout();
 
     constructor(
         injector: Injector,
@@ -121,6 +123,7 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
         private _contactsService: ContactsService,
         private _personOrgRelationService: PersonOrgRelationServiceProxy,
         private _orgContactService: OrganizationContactServiceProxy,
+        private userManagementService: UserManagementService,
         private personContactServiceProxy: PersonContactServiceProxy,
         private contactPhotoServiceProxy: ContactPhotoServiceProxy,
         private nameParserService: NameParserService,
@@ -478,7 +481,6 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
                 this._contactsService.updateLocation(this.data.id, this.data['leadId'], result && result.id);
             });
     }
-
 
     ngOnDestroy() {
         this.lifeCycleService.destroy.next();

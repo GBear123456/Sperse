@@ -104,7 +104,7 @@ import { OrdersComponent } from '@app/crm/contacts/orders/orders.component';
 import { InvoicesComponent } from '@app/crm/contacts/invoices/invoices.component';
 import { PersonalDetailsComponent } from './personal-details/personal-details.component';
 import { CRMDashboardWidgetsModule } from '@shared/crm/dashboard-widgets/dashboard-widgets.module';
-import { BankCodeLetterModule } from '@app/shared/common/bank-code-letter/bank-code-letter.module';
+import { BankCodeLettersModule } from '@app/shared/common/bank-code-letters/bank-code-letters.module';
 
 @NgModule({
     declarations: [
@@ -200,7 +200,7 @@ import { BankCodeLetterModule } from '@app/shared/common/bank-code-letter/bank-c
         NgxMaskModule.forRoot(),
         ItemDetailsLayoutModule,
         CRMDashboardWidgetsModule,
-        BankCodeLetterModule
+        BankCodeLettersModule
     ],
     entryComponents: [
         EditContactDialog,

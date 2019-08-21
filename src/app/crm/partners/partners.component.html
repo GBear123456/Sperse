@@ -115,11 +115,7 @@
                             {{cellData.value | phone}}
                         </div>
                         <div *dxTemplate="let cellData of 'bankCodeCell'">
-                            <ng-container *ngIf="cellData.value" >
-                                <ng-container *ngFor="let letter of cellData.value.split('')">
-                                    <bank-code-letter [letter]="letter"></bank-code-letter>
-                                </ng-container>
-                            </ng-container>
+                            <bank-code-letters [bankCode]="cellData.value"></bank-code-letters>
                         </div>
 
                         <dxi-column [fixed]="true" [fixedPosition]="'right'" [showInColumnChooser]="false"></dxi-column>

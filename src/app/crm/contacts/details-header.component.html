@@ -9,12 +9,12 @@
                 <inplace-edit [data]="getNameInplaceEditData() | async" (valueChanged)="updatePrimaryContactName($event)" (openDialog)="showEditPersonDialog($event)"></inplace-edit>
             </h1>
         </div>
-        <rating-bar rating="{{ ratingId || 0 }}"></rating-bar>
-        <div class="bank-code" *ngIf="data?.personContactInfo?.person?.bankCode as bankCodeLetters">
-            <ng-container *ngFor="let letter of bankCodeLetters.split('')">
-                <bank-code-letter [letter]="letter"></bank-code-letter>
-            </ng-container>
-        </div>
+        <rating-bar *ngIf="!isBankCodeLayout; else bankCode" [rating]="ratingId || 0"></rating-bar>
+        <ng-template #bankCode>
+            <div class="bank-code" *ngIf="data?.personContactInfo?.person?.bankCode as bankCodeLetters">
+                <bank-code-letters [bankCode]="bankCodeLetters"></bank-code-letters>
+            </div>
+        </ng-template>
     </div>
     <div *ngIf="data" class="organization_info">
         <div class="delimiter"></div>

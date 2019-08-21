@@ -81,11 +81,7 @@
                             </div>
                         </div>
                         <div *dxTemplate="let cellData of 'bankCodeCell'">
-                            <ng-container *ngIf="cellData.value" >
-                                <ng-container *ngFor="let letter of cellData.value.split('')">
-                                    <bank-code-letter [letter]="letter"></bank-code-letter>
-                                </ng-container>
-                            </ng-container>
+                            <bank-code-letters [bankCode]="cellData.value"></bank-code-letters>
                         </div>
                         <dxi-column dataField="CreationTime" dataType="string" caption="{{l('Created')}}" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
                         <dxi-column [visible]="appService.isCfoLinkOrVerifyEnabled" name="LinkToCFO" cellTemplate="linkToCFOTemplate" [width]="80" [fixed]="true" [fixedPosition]="'right'" [showInColumnChooser]="false" [allowExporting]="false"></dxi-column>

@@ -76,7 +76,7 @@ import { Store } from '@node_modules/@ngrx/store';
 import { AppStore } from '@app/store';
 import { LoadingSpinnerModule } from '@app/shared/common/loading-spinner/loading-spinner.module';
 import { AppPermissions } from '@shared/AppPermissions';
-import { BankCodeLetterModule } from '@app/shared/common/bank-code-letter/bank-code-letter.module';
+import { BankCodeLettersModule } from '@app/shared/common/bank-code-letters/bank-code-letters.module';
 
 @NgModule({
     imports: [
@@ -130,7 +130,7 @@ import { BankCodeLetterModule } from '@app/shared/common/bank-code-letter/bank-c
         SharedIntroStepsModule,
         CrmStoreModule,
         LoadingSpinnerModule,
-        BankCodeLetterModule
+        BankCodeLettersModule
     ],
     declarations: [
         ClientsComponent,

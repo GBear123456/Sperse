@@ -68,9 +68,7 @@
                                             hideEvent="dxhoverend">
                                     <div *dxTemplate="let data of 'content'">
                                         <div class="bank-code-tooltip">
-                                            <ng-container *ngFor="let letter of entity.bankCode.split('')">
-                                                <bank-code-letter [letter]="letter"></bank-code-letter>
-                                            </ng-container>
+                                            <bank-code-letters [bankCode]="entity.bankCode"></bank-code-letters>
                                         </div>
                                     </div>
                                 </dx-tooltip>
