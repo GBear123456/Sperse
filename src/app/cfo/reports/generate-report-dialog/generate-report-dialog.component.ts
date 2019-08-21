@@ -174,6 +174,7 @@ export class GenerateReportDialogComponent implements OnInit {
             this.buttons[this.BACK_BTN_INDEX].disabled = false;
         }
         if (this.currentStep == GenerateReportStep.Step3) {
+            this.title = this.ls.l('ReportGenerationOptions');
             this.buttons = null;
         }
     }
