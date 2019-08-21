@@ -36,9 +36,9 @@
                 <div class="row date-range">
                     <div class="text-left">{{ ls.l('Reports_DateRange') }}</div>
                     <div class="text-right">
-                        <span class="date">{{dateFrom | date : 'MM/dd/yyyy'}}</span>
+                        <span class="date">{{dateFrom | date : 'MM/dd/yyyy' : 'UTC' }}</span>
                         <img class="arrow" src="./assets/common/icons/date-arrow-right.svg">
-                        <span class="date">{{dateTo | date : 'MM/dd/yyyy'}}</span>
+                        <span class="date">{{dateTo | date : 'MM/dd/yyyy' : 'UTC' }}</span>
                         <i class="icon blue-edit-pencil" (click)="editDate()"></i>
                     </div>
                 </div>
