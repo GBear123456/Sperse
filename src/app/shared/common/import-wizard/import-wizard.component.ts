@@ -431,7 +431,7 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
         this.fileName = file.name;
         let reader = new FileReader();
         reader.onload = (event) => {
-            let bytes = StringHelper.convertToBytes(reader.result);
+            let bytes = StringHelper.convertToBytes(reader.result.toString());
             this.fileOrigSize = bytes.length;
             this.fileSize = this.getFileSize(bytes.length);
             this.dropZoneProgress = 101;

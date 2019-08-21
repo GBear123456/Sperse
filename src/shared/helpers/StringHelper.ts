@@ -10,7 +10,7 @@ export class StringHelper {
         return data.indexOf(StringHelper.prefixes[0]) >= 0 ? originalSize - 3 : originalSize;
     }
 
-    static convertToBytes(str) {
+    static convertToBytes(str: string): any[] {
         let bytes = [];
         for (let i = 0; i < str.length; i++) {
             let charcode = str.charCodeAt(i);
