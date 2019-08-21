@@ -13,7 +13,7 @@
                 </dx-text-box>
             </div>
         </div>
-        <div class="row send-as-attachment">
+        <div class="row send-as-attachment checkbox">
             <dx-check-box [(value)]="sendReportInAttachments"
                           [disabled]="!emailIsValidAndNotEmpty"
                           [text]="ls.l('Reports_SendAsAttachment')">
@@ -21,9 +21,10 @@
         </div>
         <div class="row">
             <div class="col-12 text-center">
-                <button [disabled]="!cfoService.isMainInstanceType && !emailIsValidAndNotEmpty"
-                        [ngClass]="{ disabled: !cfoService.isMainInstanceType && !emailIsValidAndNotEmpty }"
-                        (click)="sendNotification()" class="btn send-btn">{{ls.l('Send')}}
+                <button [disabled]="submitButtonDisabled"
+                        [ngClass]="{ disabled: submitButtonDisabled }"
+                        (click)="sendNotification()" class="btn send-btn">
+                    {{ls.l('Send')}}
                 </button>
             </div>
         </div>

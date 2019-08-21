@@ -86,4 +86,8 @@ export class SendNotificationDialogComponent implements OnInit {
         }
     }
 
+    get submitButtonDisabled() {
+        return !this.cfoService.isMainInstanceType && !this.emailIsValidAndNotEmpty;
+    }
+
 }
