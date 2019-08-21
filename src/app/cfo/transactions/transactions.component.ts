@@ -128,9 +128,8 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     categories: any;
     types: any;
 
-    private _changeTimeout;
-    private _categoriesShowedBefore = true;
-    private _categoriesShowed = true;
+    private _categoriesShowedBefore = !AppConsts.isMobile;
+    private _categoriesShowed = this._categoriesShowedBefore;
     public set categoriesShowed(value: boolean) {
         this._categoriesShowedBefore = this._categoriesShowed;
         if (this._categoriesShowed = value) {
@@ -374,7 +373,15 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             // onRefresh: this._cfoService.hasStaticInstance ? undefined : this.refreshDataGrid.bind(this),
             toggleToolbar: this.toggleToolbar.bind(this),
             iconSrc: './assets/common/icons/credit-card-icon.svg',
-            class: this.noRefreshedAfterSync ? 'need-refresh' : 'no-need-refresh'
+            class: this.noRefreshedAfterSync ? 'need-refresh' : 'no-need-refresh',
+            buttons: [
+                {
+                    enabled: true,
+                    action: () => this.categoriesShowed = !this.categoriesShowed,
+                    lable: '',
+                    class: 'toggle dx-button'
+                }
+            ]
         };
         this._changeDetectionRef.detectChanges();
     }

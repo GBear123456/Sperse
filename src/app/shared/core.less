@@ -162,7 +162,7 @@ body.page-md {
         padding: 0;
     }
     .portlet-body {
-        padding: 0px !important;
+        padding: 0 !important;
         .form {
             display: none;
         }
@@ -232,7 +232,7 @@ button {
     letter-spacing: 0.3px;
     font-weight: 400;
     margin: 5px;
-    padding: 0 15px 0 15px;
+    padding: 0 5px;
     height: 36px;
     outline: none !important;
     transition: .2s;
@@ -247,7 +247,7 @@ button {
         color: #ddd;
     }
     &.menu {
-        padding: 0px 45px 0px 30px;
+        padding: 0 45px 0 30px;
         &:before {
             content: '';
             border-left: 4px solid transparent;
@@ -271,6 +271,9 @@ button {
             position: absolute;
             top: 0;
         }
+    }
+    @media (min-width: 768px) {
+        padding: 0 15px;
     }
 }
 
@@ -376,9 +379,6 @@ button {
         padding-left: 10px;
         .dx-pages,
         .dx-page-sizes {
-            margin-top: 4px;
-
-            .dx-selection,
             .dx-selection {
                 width: auto;
                 border-radius: 3px;
@@ -389,6 +389,21 @@ button {
                 color: #212c36 !important;
                 font-weight: 600 !important;
                 padding: 4px 10px 5px;
+            }
+            @media (min-width: 768px) {
+                margin-right: 4px;
+            }
+        }
+
+        .dx-pages {
+            display: flex;
+            align-items: center;
+            .dx-pages-count {
+                font-size: 18px;
+                padding-right: 6px;
+            }
+            .dx-info-text {
+                padding-left: 0;
             }
         }
 
@@ -419,7 +434,7 @@ button {
 
             td {
                 height: 45px;
-                border: 0px;
+                border: 0;
                 vertical-align: middle;
                 text-align: left;
                 line-height: 1.85;
@@ -471,8 +486,8 @@ button {
         .dx-column-lines {
             td {
                 height: 45px;
-                border-left: 0px;
-                border-right: 0px;
+                border-left: 0;
+                border-right: 0;
                 vertical-align: middle;
                 border-bottom: 1px solid #ddd;
                 font-size: 15px;
@@ -482,7 +497,7 @@ button {
             }
 
             &.dx-freespace-row td {
-                border-bottom: 0px;
+                border-bottom: 0;
             }
         }
     }
@@ -492,7 +507,7 @@ button {
             height: 62px;
 
             .dx-toolbar-before {
-                top: 0px !important;
+                top: 0 !important;
             }
 
             .dx-toolbar-center {
@@ -505,7 +520,7 @@ button {
             }
 
             .dx-datagrid-group-panel {
-                margin: 5px 0px 0px 10px;
+                margin: 5px 0 0 10px;
                 width: auto !important;
             }
 
@@ -653,7 +668,7 @@ button {
         }
 
         .dx-datagrid-group-panel .dx-group-panel-message {
-            padding-top: 0px;
+            padding-top: 0;
             padding-bottom: 0;
         }
 
@@ -667,6 +682,14 @@ button {
     .dx-scrollable-scroll {
         width: 12px;
     }
+
+    .dx-pager .dx-pages {
+        .dx-prev-button:before,
+        .dx-next-button:before {
+            font-family: DXIcons !important;
+        }
+    }
+
 }
 
 .toolbar-hidden {
@@ -1020,7 +1043,6 @@ body > .blockUI.blockOverlay{
     .cdk-overlay-pane.slider {
         transition: margin 1s!important;
         min-width: 40vw;
-        max-width: 100vw !important;
         &.min-width-0 {
             min-width: 0;
         }
@@ -1028,6 +1050,9 @@ body > .blockUI.blockOverlay{
             overflow: visible;
             padding: 0;
             margin: 0;
+        }
+        @media (min-width: 768px) {
+            max-width: 100vw !important;
         }
     }
 }

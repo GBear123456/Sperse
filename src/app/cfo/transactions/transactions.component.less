@@ -1,5 +1,5 @@
 /deep/ .dx-editor-container {
-    &.dx-datagrid-filter-range-start, 
+    &.dx-datagrid-filter-range-start,
     &.dx-datagrid-filter-range-end {
         input {
             padding: 0px 10px!important;
@@ -126,12 +126,11 @@
             width: 0;
             transition: 1s;
             overflow: hidden;
-            border-right: 0px;
+            border-right: 0;
         }
 
         .transactions {
             transition: 1s;
-            width: calc(~"100% - 10px");
             /deep/ dx-data-grid {
                 tr.dx-selection {
                     cursor: grab;
@@ -158,7 +157,7 @@
                         display: none;
                     }
                     .dx-header-filter-indicator {
-                        width: calc(100% - 20px);                        
+                        width: calc(100% - 20px);
                     }
                     td[role="columnheader"] {
                         text-align: left !important;
@@ -234,6 +233,9 @@
                     }
                 }
             }
+            @media (min-width: 768px) {
+                width: calc(~"100% - 10px");
+            }
         }
 
         /deep/ #gridContainer .dx-datagrid-rowsview {
@@ -241,7 +243,7 @@
             .dx-datagrid-content tr td.tabular * {
                 font-family: 'Lato' !important;
             }
-            
+
             .description-column {
                 width: 330px !important;
             }
@@ -271,15 +273,25 @@
             .dx-toolbar-items-container {
                 .dx-toolbar-before{
                     width: auto !important;
+                    @media (max-width: 767px) {
+                        display: none;
+                    }
                 }
             }
 
-            .dx-toolbar .dx-toolbar-center {
-                margin: 0 !important;
+            .dx-toolbar {
+                .dx-toolbar-center {
+                    margin: 0 !important;
+                }
+                @media (max-width: 767px) {
+                    height: initial;
+                    margin-bottom: 0;
+                }
+
             }
 
             .dx-toolbar-items-container {
-                height: 72px;
+                height: 107px;
                 margin-bottom: 0;
 
                 // styles for summary values
@@ -288,6 +300,7 @@
                     height: 100%;
                     justify-content: flex-end;
                     align-items: stretch;
+                    padding-left: 0;
                     margin: 0 !important;
 
                     .dx-item-content {
@@ -295,21 +308,23 @@
                     }
 
                     .dx-toolbar-item {
-                        width: 25%;
+                        width: 50%;
+                        padding: 0;
                         text-align: center;
                         display: flex;
                         align-items: center;
 
                         .informer {
-                            min-width: 180px;
                             width: 100%;
-                            padding: 0 12px;
-                            border-left: 1px solid #ddd;
-
                             &.starting-balance {
                                 > .count {
                                     font-weight: 400;
                                 }
+                            }
+                            @media (min-width: 768px) {
+                                min-width: 180px;
+                                padding: 0 12px;
+                                border-left: 1px solid #ddd;
                             }
                         }
 
@@ -370,7 +385,20 @@
                             text-overflow: ellipsis;
                             white-space: nowrap;
                         }
+
+                        @media (min-width: 768px) {
+                            width: 25%;
+                            padding: 0 0 0 5px;
+                        }
                     }
+                    @media (max-width: 768px) {
+                        padding: 10px 0;
+
+                        flex-wrap: wrap;
+                    }
+                }
+                @media (min-width: 768px) {
+                    height: 72px;
                 }
             }
         }
@@ -431,7 +459,7 @@
         font-family: 'Lato', sans-serif !important;
         display: flex;
         align-items: center;
-    
+
         .click-to-filter {
             font-size: 13px;
             color: #ccc;
