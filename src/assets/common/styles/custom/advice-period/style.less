@@ -2,14 +2,13 @@ body.advice-period {
     app-header {
         background: #423332;
 
-        .dx-menu-adaptive-mode, 
         dx-drop-down-box, #m_header_topbar,
         dx-nav-bar .dx-item.dx-tab,
         dx-nav-bar .dx-state-hover {
             background: transparent!important;
         }
         dx-drop-down-box input {
-            border: 0px!important;
+            border: 0!important;
         }
         dx-nav-bar {
             .dx-item.dx-tab.dx-state-hover .dx-menu-item-text,
@@ -59,7 +58,7 @@ body.advice-period {
     }
     .swal-modal {
         background: #fee192;
-        
+
         .swal-icon.swal-icon--error,
         .swal-icon.swal-icon--warning,
         .swal-icon.swal-icon--info {
@@ -193,6 +192,15 @@ body.advice-period {
                         background: #FFF!important;
                     }
                 }
+            }
+        }
+    }
+    /deep/ top-bar {
+        width: 100%;
+        .adaptive-menu {
+            z-index: 1;
+            @media (max-width: 360px) {
+                display: block !important;
             }
         }
     }

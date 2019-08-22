@@ -9,7 +9,7 @@ body.advice-period app-header dx-nav-bar .dx-state-hover {
   background: transparent!important;
 }
 body.advice-period app-header dx-drop-down-box input {
-  border: 0px!important;
+  border: 0!important;
 }
 body.advice-period app-header dx-nav-bar .dx-item.dx-tab.dx-state-hover .dx-menu-item-text,
 body.advice-period app-header dx-nav-bar .dx-item.dx-tab.dx-tab-selected .dx-menu-item-text {
@@ -215,5 +215,16 @@ body.advice-period .cdk-overlay-pane.user-info app-modal-dialog .mat-dialog-head
   body.advice-period .cdk-overlay-pane.footer-slider .close-dialog:after,
   body.advice-period .cdk-overlay-pane.user-info .close-dialog:after {
     background: #FFF!important;
+  }
+}
+body.advice-period /deep/ top-bar {
+  width: 100%;
+}
+body.advice-period /deep/ top-bar .adaptive-menu {
+  z-index: 1;
+}
+@media (max-width: 360px) {
+  body.advice-period /deep/ top-bar .adaptive-menu {
+    display: block !important;
   }
 }

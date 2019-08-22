@@ -52,6 +52,7 @@ import {
 } from '@app/cfo/store';
 import { BankAccountsService } from '@shared/cfo/bank-accounts/helpers/bank-accounts.service';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
+import { AppConsts } from '@shared/AppConsts';
 
 @Component({
     selector: 'app-trend-by-period',
@@ -195,7 +196,7 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit {
     }
 
     getChartWidth() {
-        return this.getElementRef().nativeElement.clientWidth - 60;
+        return this.getElementRef().nativeElement.clientWidth - ( AppConsts.isMobile ? 30 : 60 );
     }
 
     /** Replace minus for the brackets */

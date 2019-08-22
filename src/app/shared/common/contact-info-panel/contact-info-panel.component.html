@@ -1,11 +1,11 @@
 <header>
-        <div class="avatar">
-            <div class="active"></div>
-            <img src="{{ profileService.getPhoto(data?.photo?.thumbnail) }}" alt="Person Photo">
+    <div class="avatar">
+        <div class="active"></div>
+        <img src="{{ profileService.getPhoto(data?.photo?.thumbnail) }}" alt="Person Photo">
+    </div>
+    <div class="personal_info">
+        <div class="full_name">
+            <h1 *ngIf="data && data?.fullName">{{ data?.fullName }}</h1>
         </div>
-        <div class="personal_info">
-            <div class="full_name">
-                <h1 *ngIf="data && data?.fullName">{{ data?.fullName }}</h1>
-            </div>
-        </div>
+    </div>
 </header>
