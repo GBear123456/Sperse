@@ -50,7 +50,6 @@
                 (street_number)='data.streetNumber=$event'
                 (street)='data.streetAddress=$event'
                 (city)='data.city=$event'
-                (state)='data.state=$event'
                 (postal_code)='data.zip=$event'
                 (setAddress)="onAddressChanged($event)"
                 angularGooglePlace/>
@@ -88,7 +87,7 @@
                   name="state"
                   [disabled]="!isEditAllowed"
                   [searchEnabled]="true"
-                  [(value)]="data.state"
+                  [(value)]="state"
                   fieldTemplate="field">
                   <div *dxTemplate="let data of 'field'">
                       <div class="custom-item">
