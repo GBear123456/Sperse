@@ -11,13 +11,13 @@ import { AppSessionService } from '@shared/common/session/app-session.service';
 export class ContactInfoPanelComponent extends AppComponentBase {
     private _data: any;
 
-    @Input() 
+    @Input()
     set data(value) {
         this._data = value;
         if (this.data && this.checkAdvicePeriodLayout())
             this.setTitle(this.data.fullName);
     }
-    get data(): any { 
+    get data(): any {
         return this._data;
     }
 

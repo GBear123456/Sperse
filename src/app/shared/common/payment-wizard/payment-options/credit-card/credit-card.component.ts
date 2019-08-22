@@ -129,7 +129,7 @@ export class CreditCardComponent extends AppComponentBase implements OnInit {
             countryName = AppConsts.defaultCountryName;
 
         this.updateCountryInfo(countryName);
-        let state = this._angularGooglePlaceService.state(event.address_components);
+        let state = this._angularGooglePlaceService.state(event.address_components).normalize('NFD').replace(/[\u0300-\u036f]/g, '');
         this.getStates(() => this.updateStatesInfo(state));
     }
 

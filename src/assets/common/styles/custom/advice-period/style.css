@@ -1,7 +1,6 @@
 body.advice-period app-header {
   background: #423332;
 }
-body.advice-period app-header .dx-menu-adaptive-mode,
 body.advice-period app-header dx-drop-down-box,
 body.advice-period app-header #m_header_topbar,
 body.advice-period app-header dx-nav-bar .dx-item.dx-tab,
@@ -9,7 +8,7 @@ body.advice-period app-header dx-nav-bar .dx-state-hover {
   background: transparent!important;
 }
 body.advice-period app-header dx-drop-down-box input {
-  border: 0px!important;
+  border: 0!important;
 }
 body.advice-period app-header dx-nav-bar .dx-item.dx-tab.dx-state-hover .dx-menu-item-text,
 body.advice-period app-header dx-nav-bar .dx-item.dx-tab.dx-tab-selected .dx-menu-item-text {
@@ -118,6 +117,12 @@ body.advice-period .cdk-overlay-pane.footer-slider,
 body.advice-period .cdk-overlay-pane.user-info {
   max-width: 50vw !important;
 }
+@media all and (max-width: 990px) {
+  body.advice-period .cdk-overlay-pane.footer-slider,
+  body.advice-period .cdk-overlay-pane.user-info {
+    max-width: 75vw !important;
+  }
+}
 body.advice-period .cdk-overlay-pane.footer-slider modal-dialog .close-dialog,
 body.advice-period .cdk-overlay-pane.user-info modal-dialog .close-dialog,
 body.advice-period .cdk-overlay-pane.footer-slider app-modal-dialog .close-dialog,
@@ -163,7 +168,7 @@ body.advice-period .cdk-overlay-pane.user-info app-modal-dialog .mat-dialog-head
 @media all and (max-width: 600px) {
   body.advice-period .cdk-overlay-pane.footer-slider,
   body.advice-period .cdk-overlay-pane.user-info {
-    max-width: 85vw !important;
+    max-width: 100vw !important;
   }
   body.advice-period .cdk-overlay-pane.footer-slider mat-dialog-container,
   body.advice-period .cdk-overlay-pane.user-info mat-dialog-container {
@@ -202,11 +207,25 @@ body.advice-period .cdk-overlay-pane.user-info app-modal-dialog .mat-dialog-head
     right: 0 !important;
     top: 21px !important;
     background-color: transparent !important;
+    box-shadow: none;
   }
   body.advice-period .cdk-overlay-pane.footer-slider .close-dialog:before,
   body.advice-period .cdk-overlay-pane.user-info .close-dialog:before,
   body.advice-period .cdk-overlay-pane.footer-slider .close-dialog:after,
   body.advice-period .cdk-overlay-pane.user-info .close-dialog:after {
     background: #FFF!important;
+  }
+}
+@media (max-width: 767px) {
+  body.advice-period /deep/ top-bar {
+    width: 100%;
+  }
+}
+body.advice-period /deep/ top-bar .adaptive-menu {
+  z-index: 1;
+}
+@media (max-width: 360px) {
+  body.advice-period /deep/ top-bar .adaptive-menu {
+    display: block !important;
   }
 }

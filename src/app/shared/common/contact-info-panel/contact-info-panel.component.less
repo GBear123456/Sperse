@@ -7,29 +7,31 @@
         top: 0px;
         left: 0px;
     }
-  
+
     .full_name h1 {
-        margin-top: -2px;
         font-weight: 400;
         font-family: Montserrat;
         font-size: 28px!important;
         line-height: 1;
         color: #202b35;
+        @media (min-width: 768px) {
+            margin-top: -2px;
+        }
     }
-  
+
     .avatar {
         position: absolute;
         margin: 12px 16px;
         z-index: 1;
     }
-  
+
     .avatar img {
         border-radius: 50%;
         height: 54px;
         width: 54px;
         background-color: #fff;
     }
-  
+
     .avatar .active {
         background: #37d749;
         border-radius: 50%;
@@ -40,8 +42,13 @@
         top: 2px;
         right: 2px;
     }
-  
+
     .personal_info {
-      margin: 24px 90px;
+        margin: 10px 79px;
+        @media (min-width: 768px) {
+            margin: 24px 90px;
+            display: flex;
+            align-items: center;
+        }
     }
-}  
+}

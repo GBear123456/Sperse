@@ -4,7 +4,7 @@
     background-color: #FFFFFF;
     border-radius: 4px;
     position: relative;
-    padding: 8px 30px;
+    padding: 8px 15px;
     display: block;
 
     header {
@@ -39,8 +39,8 @@
                     .legend-item {
                         display: inline-block;
                         font-weight: 400;
-                        font-size: 12px;
-                        margin-right: 15px;
+                        font-size: 10px;
+                        margin-right: 8px;
                         &:last-child {
                             margin-right: 0px;
                         }
@@ -51,9 +51,13 @@
                             height: 8px;
                             background: #00aeef;
                             display: inline-block;
-                            margin-right: 5px;
+                            margin-right: 3px;
                             position: relative;
-                            top: -1px;
+
+                            @media (min-width: 768px) {
+                                margin-right: 5px;
+                                top: -1px;
+                            }
                         }
 
                         &.endingBalance::before {
@@ -85,13 +89,27 @@
                         }
 
                         &.label {
-                            width: 60px;
                             &::before{
                                 content: none;
                             }
+                            @media (min-width: 768px) {
+                                width: 60px;
+                            }
+                        }
+
+                        @media (min-width: 768px) {
+                            margin-right: 15px;
+                            font-size: 12px;
                         }
                     }
                 }
+                @media (max-width: 767px) {
+                    margin: 0 auto;
+                }
+            }
+
+            @media (max-width: 767px) {
+                flex-wrap: wrap;
             }
         }
 
@@ -168,5 +186,9 @@
     svg {
         position: absolute;
         z-index: -1;
+    }
+
+    @media (min-width: 768px) {
+        padding: 8px 30px;;
     }
 }

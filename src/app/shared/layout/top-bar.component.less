@@ -1,17 +1,16 @@
 :host {
-    top: 0px;
+    top: 0;
     position: absolute;
     display: flex;
-    padding-left: 20px;
     justify-content: flex-start;
     width: calc(~"100% - 430px");
-    margin-left: 220px;
+    padding-left: 240px;
     white-space: nowrap;
     height: 75px;
 
     @media (max-width: 580px) {
         width: calc(~"100% - 320px");
-        margin-left: 120px;
+        padding-left: 120px;
     }
 
     @media (max-width: 480px) {
@@ -122,11 +121,11 @@
 
     .adaptive-menu {
         float: left;
-        width: 50px;
         padding-top: 20px;
-        margin-right: 10px;
         overflow: hidden;
-
+        margin-left: 0;
+        margin-right: 0;
+        width: 36px;
         @media (max-width: 360px) {
             display: none;
         }

@@ -19,6 +19,7 @@ import { ConfirmImportDialog } from './confirm-import-dialog/confirm-import-dial
 import { AppConsts } from '@shared/AppConsts';
 import { PhoneNumberService } from '@shared/common/phone-numbers/phone-number.service';
 import { ImportServiceProxy, ImportFieldInfoDto } from '@shared/service-proxies/service-proxies';
+import { StringHelper } from '@root/shared/helpers/StringHelper';
 
 @Component({
     selector: 'import-wizard',
@@ -428,10 +429,11 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
 
         this.loadProgress = 0;
         this.fileName = file.name;
-        this.fileOrigSize = file.size;
-        this.fileSize = this.getFileSize(file.size);
         let reader = new FileReader();
         reader.onload = (event) => {
+            let bytes = StringHelper.convertToBytes(reader.result.toString());
+            this.fileOrigSize = bytes.length;
+            this.fileSize = this.getFileSize(bytes.length);
             this.dropZoneProgress = 101;
             this.parse(reader.result);
         };

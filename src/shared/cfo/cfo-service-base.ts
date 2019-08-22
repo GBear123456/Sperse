@@ -1,16 +1,16 @@
-import { BehaviorSubject, Subject, Observable } from 'rxjs';
+import { BehaviorSubject, ReplaySubject, Subject, Observable } from 'rxjs';
 import { InstanceModel } from '@shared/cfo/instance.model';
 
 export abstract class CFOServiceBase {
     instanceId: number;
     instanceType: string;
     initialized: boolean;
+    protected _initialized: ReplaySubject<boolean> = new ReplaySubject<boolean>(1);
+    initialized$: Observable<boolean> = this._initialized.asObservable();
     hasTransactions: boolean;
     hasStaticInstance: boolean;
     statusActive: BehaviorSubject<boolean>;
     instanceChanged: Subject<InstanceModel> = new Subject();
     instanceChanged$: Observable<InstanceModel> = this.instanceChanged.asObservable();
     isForUser: boolean;
-
-    constructor() { }
 }

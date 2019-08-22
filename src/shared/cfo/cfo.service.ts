@@ -121,17 +121,22 @@ export class CFOService extends CFOServiceBase {
             this._layoutService.hideDefaultPageHeader();
         }
         if (!this.instanceStatus$)
-            this.instanceStatus$ = this._instanceServiceProxy.getStatus(InstanceType[this.instanceType], this.instanceId, invalidateServerCache)
-            .pipe(finalize(() => this.instanceStatus$ = undefined), map((data: GetStatusOutput) => {
-                if (this.instanceId && data.userId)
-                    this.initContactInfo(data.userId);
-                const status = data.status == InstanceStatus.Active;
-                this.statusActive.next(status);
-                this.initialized = status && data.hasSyncAccounts;
-                this.hasTransactions = this.initialized && data.hasTransactions;
-                this.updateMenuItems();
-                return this.hasTransactions;
-            }));
+            this.instanceStatus$ = this._instanceServiceProxy
+                .getStatus(InstanceType[this.instanceType], this.instanceId, invalidateServerCache)
+                .pipe(
+                    finalize(() => this.instanceStatus$ = undefined),
+                    map((data: GetStatusOutput) => {
+                        if (this.instanceId && data.userId)
+                            this.initContactInfo(data.userId);
+                        const status = data.status == InstanceStatus.Active;
+                        this.statusActive.next(status);
+                        this.initialized = status && data.hasSyncAccounts;
+                        this._initialized.next(this.initialized);
+                        this.hasTransactions = this.initialized && data.hasTransactions;
+                        this.updateMenuItems();
+                        return this.hasTransactions;
+                    })
+                );
         return this.instanceStatus$;
     }
 

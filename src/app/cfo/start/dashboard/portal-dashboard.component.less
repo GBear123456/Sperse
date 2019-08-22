@@ -246,6 +246,16 @@
         background: #FFF;
     }
 
+    /deep/ .bankBalances {
+        .dx-scrollable-wrapper {
+            padding-right: 6px;
+        }
+        .dx-scrollbar-vertical.dx-scrollbar-hoverable,
+        .dx-scrollable-scroll {
+            width: 10px !important;
+        }
+    }
+
     /deep/ app-toolbar {
         position: absolute;
         top: 0;
@@ -259,6 +269,12 @@
         }
         @media (min-width: 992px) {
             right: 160px;
+        }
+    }
+
+    @media (max-width: 767px) {
+        synch-progress {
+            display: none;
         }
     }
 }

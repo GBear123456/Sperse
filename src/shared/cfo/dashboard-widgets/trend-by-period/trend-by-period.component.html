@@ -4,13 +4,15 @@
         <ng-container *ngIf="trendData$ | async as trendData">
             <div class="legend" [hidden]="!trendData || !trendData.length">
                 <ul class="legend-list">
-                    <li class="legend-item endingBalance">{{l('Stats_Ending_Balance')}}</li>
                     <li class="label legend-item">{{l('Historical')}}:</li>
                     <li class="legend-item inflow">{{l('Stats_Inflows')}}</li>
                     <li class="legend-item outflows">{{l('Stats_Outflows')}}</li>
                     <li class="legend-item net-change">{{l('Net_Change')}}</li>
                 </ul>
-                <ng-container>
+                <ul class="legend-list">
+                    <li class="legend-item endingBalance">{{l('Stats_Ending_Balance')}}</li>
+                </ul>
+                <ng-container *ngIf="isForecast">
                     <ul class="legend-list">
                         <li class="label legend-item">{{l('Forecast')}}:</li>
                         <li class="legend-item forecast inflow">{{l('Stats_Inflows')}}</li>
@@ -47,7 +49,7 @@
                 [ignoreEmptyPoints]="true">
             </dxo-common-series-settings>
             <dxo-tooltip
-                enabled="true"
+                [enabled]="true"
                 zIndex="1"
                 [customizeTooltip]="customizeBarTooltip">
             </dxo-tooltip>
@@ -117,7 +119,7 @@
             </dxi-value-axis>
 
             <!-- Common settings for axis -->
-            <dxo-common-axis-settings allowDecimals="false">
+            <dxo-common-axis-settings [allowDecimals]="false">
                 <dxo-label alignment="center">
                     <dxo-font weight="300" color="#677380" size="12px"></dxo-font>
                 </dxo-label>
