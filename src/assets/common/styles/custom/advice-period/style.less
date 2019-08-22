@@ -2,6 +2,7 @@ body.advice-period {
     app-header {
         background: #423332;
 
+        //.dx-menu-adaptive-mode,
         dx-drop-down-box, #m_header_topbar,
         dx-nav-bar .dx-item.dx-tab,
         dx-nav-bar .dx-state-hover {
@@ -196,7 +197,9 @@ body.advice-period {
         }
     }
     /deep/ top-bar {
-        width: 100%;
+        @media (max-width: 767px) {
+            width: 100%;
+        }
         .adaptive-menu {
             z-index: 1;
             @media (max-width: 360px) {

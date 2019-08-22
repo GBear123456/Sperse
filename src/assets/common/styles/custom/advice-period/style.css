@@ -1,7 +1,6 @@
 body.advice-period app-header {
   background: #423332;
 }
-body.advice-period app-header .dx-menu-adaptive-mode,
 body.advice-period app-header dx-drop-down-box,
 body.advice-period app-header #m_header_topbar,
 body.advice-period app-header dx-nav-bar .dx-item.dx-tab,
@@ -217,8 +216,10 @@ body.advice-period .cdk-overlay-pane.user-info app-modal-dialog .mat-dialog-head
     background: #FFF!important;
   }
 }
-body.advice-period /deep/ top-bar {
-  width: 100%;
+@media (max-width: 767px) {
+  body.advice-period /deep/ top-bar {
+    width: 100%;
+  }
 }
 body.advice-period /deep/ top-bar .adaptive-menu {
   z-index: 1;
