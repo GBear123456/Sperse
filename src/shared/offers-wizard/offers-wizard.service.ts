@@ -2,14 +2,18 @@
 import { Injectable } from '@angular/core';
 
 /** Third party imports */
-import { pluck, publishReplay, refCount } from 'rxjs/operators';
+import { filter, pluck, publishReplay, refCount } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import * as moment from 'moment';
+import { Store, select } from '@ngrx/store';
+import { RootStore, StatesStoreActions, StatesStoreSelectors } from '@root/store';
 
 /** Application imports */
 import {
-    BankAccountType, CampaignProviderType,
+    BankAccountType,
+    CampaignProviderType,
+    CountryStateDto,
     CreditScoreRating,
     Gender,
     GetApplicationDetailsOutput,
@@ -66,12 +70,18 @@ export class OffersWizardService {
     timeZones$: Observable<NameValueDtoListResultDto[]>;
     applicationDetails$: Observable<GetApplicationDetailsOutput> = this.offersServiceProxy.getApplicationDetails().pipe(publishReplay(), refCount());
     public defaultTimezoneScope: SettingScopes = AppTimezoneScope.User;
+    countryCode = 'US';
+    states$: Observable<CountryStateDto[]> = this.store$.pipe(
+        select(StatesStoreSelectors.getState, { countryCode: this.countryCode }),
+        filter(Boolean)
+    );
 
     constructor(
         public ls: AppLocalizationService,
         private offersServiceProxy: OfferServiceProxy,
         private _timingService: TimingServiceProxy,
         private appHttpConfiguration: AppHttpConfiguration,
+        private store$: Store<RootStore.State>,
         private dialog: MatDialog
     ) {
         this.submitApplicationProfileInput.systemType = OfferProviderType.EPCVIP;
@@ -89,10 +99,15 @@ export class OffersWizardService {
             },
             (error) => console.log(error)
         );
+        this.getStates();
     }
 
     arrayFromEnum(enumData) {
         return Object.keys(enumData).map(e => ({key: e, text: this.ls.l(e)}));
+    }
+
+    getStates(): void {
+        this.store$.dispatch(new StatesStoreActions.LoadRequestAction(this.countryCode));
     }
 
     validateName(event) {
