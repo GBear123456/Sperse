@@ -344,7 +344,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
                                     items: forecastModels,
                                     selectedIndex: selectedForecastModelIndex,
                                     height: 39,
-                                    width: 243,
+                                    width: AppConsts.isMobile ? 150 : 243,
                                     onSelectionChanged: (e) => {
                                         if (e) {
                                             this.store$.dispatch(new ForecastModelsStoreActions.ChangeForecastModelAction(e.itemData.id));

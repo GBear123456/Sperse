@@ -315,7 +315,7 @@ export class ToolBarComponent implements OnDestroy {
             /** To avoid modifying of incoming data */
             item.options['items'] = cloneDeep(item.options['items']);
             item.options['items'].forEach(link => {
-                link.disabled = link.hasOwnProperty('disabled') ? link.disabled : (link.type == 'delimiter');
+                link.disabled = link.hasOwnProperty('disabled') ? link.disabled : link.type == 'delimiter';
                 link.html = this.getDropDownItemTemplate(link, item.options['width']);
                 link.onClick = (event) => {
                     if (item.name == 'select-box') {
@@ -357,6 +357,7 @@ export class ToolBarComponent implements OnDestroy {
                         html: !item.widget && item.html,
                         itemTemplate: item.itemTemplate || group.itemTemplate,
                         options: _.extend({
+                            focusStateEnabled: true,
                             onClick: (e) => this.toolbarItemAction(item, group, e),
                             elementAttr: _.extend({
                                 'button-pressed': Boolean(mergedConfig &&

@@ -273,7 +273,7 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
                                 items: forecastModels,
                                 selectedIndex: forecastModels.findIndex(model => model.id === selectedForecastModelId),
                                 height: 39,
-                                width: 243,
+                                width: AppConsts.isMobile ? 150 : 243,
                                 onSelectionChanged: (e) => {
                                     if (e) {
                                         if (e.itemData.id !== undefined) {
