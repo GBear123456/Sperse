@@ -34,6 +34,7 @@ export class EditAddressDialog extends AppComponentBase {
     isEditAllowed = false;
     states: CountryStateDto[];
     countries: CountryDto[];
+    state: string;
 
     googleAutoComplete: Boolean;
 
@@ -88,6 +89,7 @@ export class EditAddressDialog extends AppComponentBase {
     onAddressChanged(event) {
         let number = this._angularGooglePlaceService.street_number(event.address_components);
         let street = this._angularGooglePlaceService.street(event.address_components);
+        this.state = this._angularGooglePlaceService.state(event.address_components).normalize('NFD').replace(/[\u0300-\u036f]/g, '');
         this.address = number ? (number + ' ' + street) : street;
     }
 
