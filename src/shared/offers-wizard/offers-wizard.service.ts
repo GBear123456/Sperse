@@ -110,11 +110,18 @@ export class OffersWizardService {
 
     checkIfEmailChanged() {
         if (!this.data.campaignId && this.isEmailChanged()) {
-            abp.message.confirm(this.ls.l('EmailChangeText', this.submitApplicationProfileInput.personalInformation.email), this.ls.l('EmailChangeTitle'), result => {
-                if (result) {
-                    this.submitApplicationProfile();
-                }
-            });
+            abp.message.confirm(
+                this.ls.l(
+                    'EmailChangeText',
+                    AppConsts.localization.PFMLocalizationSourceName,
+                    '<b>' + this.submitApplicationProfileInput.personalInformation.email + '</b>'
+                ),
+                this.ls.l('EmailChangeTitle'), result => {
+                    if (result) {
+                        this.submitApplicationProfile();
+                    }
+                },
+                true);
         } else {
             this.submitApplicationProfile();
         }
