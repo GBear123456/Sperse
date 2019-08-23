@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, Injector, Input, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Injector, Input, EventEmitter, Output } from '@angular/core';
 
 /** Third party imports */
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
@@ -27,6 +27,8 @@ export class SetupStepComponent extends CFOComponentBase {
     @Input() HeaderTitle: string = this.l(this._cfoService.initialized ? 'SetupStep_MainHeader' : 'SetupStep_InitialHeader');
     @Input() headerLink: string = this.instanceUri + '/start';
     @Input() showIntroductionTourLink = false;
+    @Input() showToggleButton = false;
+    @Output() onToggle: EventEmitter<null> = new EventEmitter<null>();
 
     private dialogConfig = new MatDialogConfig();
 

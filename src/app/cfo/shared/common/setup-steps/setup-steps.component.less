@@ -2,6 +2,7 @@
     border-right: 1.4px solid #dfdfdf;
     transform: translate(0);
     transition: transform 0.5s;
+    position: relative;
     z-index: 2;
     @media (max-width: 991px) {
         &.hidden {
@@ -197,6 +198,37 @@
             cursor: pointer;
             color: rgba(0, 0, 0, 0.65);
             font-weight: 600;
+        }
+    }
+
+    .toggle-button {
+        position: absolute;
+        top: 40px;
+        right: -20px;
+        width: 20px;
+        height: 40px;
+        background-color: #fff;
+        border-top-right-radius: 20px;
+        border-bottom-right-radius: 20px;
+        border: 1px solid #dfdfdf;
+        border-left: 0;
+        box-sizing: border-box;
+        display: flex;
+        justify-content: center;
+        cursor: pointer;
+        img {
+            position: relative;
+            left: -3px;
+        }
+        &:focus {
+            outline: none;
+        }
+    }
+
+    &.hidden {
+        .toggle-button img {
+            transform: rotate(180deg);
+            left: 0;
         }
     }
 }

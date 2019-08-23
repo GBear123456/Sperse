@@ -2,9 +2,15 @@
     position: relative;
     top: 75px;
 
+    .right {
+        @media (min-width: 1200px) {
+            margin-left: 322px;
+        }
+    }
+
     &.wide {
-        .dashboard-wrapper {
-            width: 100vw;
+        .right {
+            margin-left: 0;
         }
     }
 
@@ -46,7 +52,7 @@
 
     .dashboard-wrapper {
         background-color: #fff;
-        width: calc(~"100vw - 322px");
+        width: 100vw;
         padding: 0 48px;
 
         /deep/ bank-accounts-widget {
@@ -178,6 +184,7 @@
             position: relative;
             padding: 10px;
             margin-bottom: 10px;
+            align-self: stretch;
             @media (min-width: 768px) {
                 width: 33%;
                 margin-bottom: 0;
@@ -232,14 +239,6 @@
                 padding: 10px;
                 height: 320px;
                 margin-bottom: 10px;
-                h2 {
-                    font-size: 18px;
-                    font-weight: 700;
-                    color: #212c36;
-                    margin: 0;
-                    line-height: 1;
-                    padding: 12px 0;
-                }
             }
 
             @media (min-width: 768px) {
@@ -288,4 +287,26 @@
             display: none;
         }
     }
+
+    h2.title {
+        font-size: 16px !important;
+        font-weight: 700;
+        color: #212c36;
+        margin: 0;
+        line-height: 1;
+        padding: 12px 0;
+        @media (max-width: 992px) {
+            h2.title {
+                font-size: 18px !important;
+            }
+        }
+    }
+
+    setup-steps {
+        position: absolute;
+        &.hidden {
+            transform: translate(-100%);
+        }
+    }
+
 }

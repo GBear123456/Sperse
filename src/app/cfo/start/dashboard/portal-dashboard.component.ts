@@ -49,8 +49,6 @@ export class PortalDashboardComponent extends CFOComponentBase implements OnInit
     ) {
         super(injector);
         this.rootComponent = this.getRootComponent();
-        if (this.isInstanceAdmin)
-            this.linksTo.push({name: 'Toggle More Options', action: this.toggleLeftMenu.bind(this)});
     }
 
     ngOnInit(): void {
