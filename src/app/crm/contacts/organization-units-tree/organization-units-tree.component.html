@@ -1,14 +1,16 @@
 <app-toolbar [config]="toolbarConfig" [compact]="true"></app-toolbar>
-<dx-tree-view dataStructure="plain"
-              [disabled]="!isEditAllowed"
-              [selectionMode]="selectionMode"
-              [dataSource]="oranizationUnitsDataSource"
-              parentIdExpr="parentId"
-              keyExpr="id"
-              selectByClick="true"
-              displayExpr="displayName"
-              showCheckBoxesMode="normal"
-              [selectNodesRecursive]="false"
-              [searchEnabled]="searchEnabled"
-              (onItemSelectionChanged)="onChange($event)">
-</dx-tree-view>
+<dx-scroll-view showScrollbar="onHover" [height]="'calc(100vh - 330px)'">
+    <dx-tree-view dataStructure="plain"
+                [disabled]="!isEditAllowed"
+                [selectionMode]="selectionMode"
+                [dataSource]="oranizationUnitsDataSource"
+                parentIdExpr="parentId"
+                keyExpr="id"
+                selectByClick="true"
+                displayExpr="displayName"
+                showCheckBoxesMode="normal"
+                [selectNodesRecursive]="false"
+                [searchEnabled]="searchEnabled"
+                (onItemSelectionChanged)="onChange($event)">
+    </dx-tree-view>
+</dx-scroll-view>
