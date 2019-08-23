@@ -9,3 +9,67 @@
         }
     }
 }
+
+/deep/ .mat-dialog-container {
+    background: #32333B;
+    color: #bebebe;
+    
+    a {
+        color: #ee8615;
+        transition: 0.2s;
+        padding: 0 2px;
+        font-weight: bold;
+        text-decoration: underline;
+        
+        &:hover {
+            color: lighten(#ee8615, 10%);
+        }
+    }
+    
+    ol > li::before {
+        color: #fff;
+    }
+    
+    .close-dialog,
+    .mat-dialog-header,
+    .dx-texteditor-input {
+        background-color: #32333b !important;
+        color: #fff !important;
+    }
+    
+    .close-dialog {
+        
+        &::before,
+        &::after {
+            background-color: #fff !important;
+        }
+    }
+    
+    
+    .dropdown .dropbtn {
+        height: 46px;
+        border-radius: 0;
+    }
+    
+    .nav-item.m-tabs__item .nav-link.m-tabs__link {
+        padding: 6px 10px;
+    }
+    
+    .mat-dialog-title,
+    .mat-tab-label,
+    .mat-tab-link {
+        color: #fff !important;
+    }
+    
+    .cdk-mouse-focused {
+        color: #32333B !important;
+    }
+    
+    .button-primary {
+        background-color: #f6a948 !important;
+        
+        &.menu:after {
+            background-color: #f6a948 !important;
+        }
+    }
+}

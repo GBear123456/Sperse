@@ -73,7 +73,7 @@
                         <dxi-column dataField="Phone" caption="{{l('Contact.Phone')}}" cellTemplate="phoneCell" cssClass="tabular"></dxi-column>
                         <dxi-column dataField="City" caption="{{l('Contact.City')}}"></dxi-column>
                         <dxi-column dataField="StateId" caption="{{l('Contact.State')}}"></dxi-column>
-                        <dxi-column dataField="BankCode" cellTemplate="bankCodeCell" [caption]="l('BankCode')" [visible]="userManagementService.checkBankCodeLayout()"></dxi-column>
+                        <dxi-column dataField="BankCode" cellTemplate="bankCodeCell" [caption]="l('BankCode')" [visible]="userManagementService.checkBankCodeFeature()"></dxi-column>
                         <dxi-column dataField="Status" caption="{{l('Status')}}" cellTemplate="statusCell"></dxi-column>
                         <div *dxTemplate="let cellData of 'statusCell'">
                             <div [class]="'client-status ' + cellData.value | lowercase">
