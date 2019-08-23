@@ -34,7 +34,7 @@
             dx-data-grid {
                 height: calc(100vh - 250px);
             }
-        }
+        }   
 
         .offers-section{
             /deep/ #gridContainer {
@@ -54,6 +54,7 @@
                 .clicksCount {
                     padding-right: 43px;
                     cursor: pointer;
+                    text-decoration: underline;
                 }
 
                 .dx-datagrid-rowsview {
@@ -65,5 +66,11 @@
                 }
             }
         }
+    }
+}
+
+/deep/ dx-toolbar .dx-toolbar-after {
+    .dx-toolbar-item:last-child {
+        padding-left: 0 !important;
     }
 }

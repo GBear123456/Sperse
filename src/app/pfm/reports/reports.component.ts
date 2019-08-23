@@ -30,6 +30,7 @@ export class ReportsComponent extends AppComponentBase implements OnInit, OnDest
     @ViewChild(SetupStepsComponent) setupStepsComponent: SetupStepsComponent;
 
     headlineConfig;
+    private rootComponent: any;
     private _refresh: Subject<null> = new Subject<null>();
     refresh$: Observable<null> = this._refresh.asObservable();
     section: 'clicks' | 'offers' | 'visitors' = 'clicks';
@@ -78,6 +79,8 @@ export class ReportsComponent extends AppComponentBase implements OnInit, OnDest
 
     ngOnInit(): void {
         this.initConfigs();
+        this.rootComponent = this.getRootComponent();
+        this.rootComponent.overflowHidden(true);
 
         this.offerStatsDataSource = new DataSource({
             store: {
@@ -361,11 +364,13 @@ export class ReportsComponent extends AppComponentBase implements OnInit, OnDest
 
     activate() {
         super.activate();
+        this.rootComponent.overflowHidden(true);
         this.initConfigs();
     }
 
     deactivate() {
         super.deactivate();
+        this.rootComponent.overflowHidden();
         this.appService.updateToolbar(null);
     }
 }
