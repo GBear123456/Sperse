@@ -48,6 +48,17 @@
         background-color: #fff;
         width: calc(~"100vw - 322px");
         padding: 0 48px;
+
+        /deep/ bank-accounts-widget {
+            table.dx-datagrid-table {
+                table-layout: fixed !important;
+            }
+        }
+
+        @media (max-width: 1500px) {
+            padding: 0 10px;
+        }
+
         @media (max-width: 768px) {
             width: 100%;
             padding: 0 10px;

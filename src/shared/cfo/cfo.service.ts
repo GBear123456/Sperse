@@ -83,8 +83,10 @@ export class CFOService extends CFOServiceBase {
     }
 
     get isInstanceAdmin() {
-        return this.checkMemberAccessPermission('Manage.Administrate', !isNaN(parseInt(this.instanceType)) ||
-            (this.instanceType == InstanceType.Main && this._permission.isGranted(AppPermissions.CFOMainInstanceAdmin)));
+        return this.checkMemberAccessPermission(
+            'Manage.Administrate',
+            !isNaN(parseInt(this.instanceType)) || (this.instanceType == InstanceType.Main && this._permission.isGranted(AppPermissions.CFOMainInstanceAdmin))
+        );
     }
 
     get isMainInstanceType() {
