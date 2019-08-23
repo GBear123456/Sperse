@@ -1,10 +1,11 @@
+/** Core imports */
 import { Injectable, Injector } from '@angular/core';
 
+/** Third party imports */
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { ExportGoogleSheetService } from './export-google-sheets/export-google-sheets';
 import { Angular5Csv } from './export-csv/export-csv';
 import DataSource from 'devextreme/data/data_source';
-
 import capitalize from 'underscore.string/capitalize';
 import * as _ from 'underscore';
 import * as moment from 'moment';
@@ -22,7 +23,7 @@ export class ExportService {
     getFileName(dataGrid?) {
         let name = dataGrid && dataGrid.export.fileName || '';
         return capitalize(location.href.split('/').pop()) + '_' +
-            (!name || name == 'DataGrid' ? '': name + '_') + moment().local().format('YYYY-MM-DD_hhmmss_a');
+            (!name || name == 'DataGrid' ? '' : name + '_') + moment().local().format('YYYY-MM-DD_hhmmss_a');
     }
 
     private checkJustifyData(data) {

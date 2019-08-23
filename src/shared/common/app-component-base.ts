@@ -29,6 +29,7 @@ import { CacheHelper } from '@shared/common/cache-helper/cache-helper';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
 import { ProfileService } from '@shared/common/profile-service/profile.service';
 import { AppPermissions } from '@shared/AppPermissions';
+import { DxDataGridComponent } from '@root/node_modules/devextreme-angular/ui/data-grid';
 
 export abstract class AppComponentBase implements OnDestroy {
     @HostBinding('class.fullscreen') public isFullscreenMode = false;
@@ -156,23 +157,23 @@ export abstract class AppComponentBase implements OnDestroy {
         return abp.setting.get(key);
     }
 
-    exportTo(option, type) {
+    exportTo(option, type, dataGrid: DxDataGridComponent = null) {
         this.startLoading();
         return this.exportService['exportTo' + type](
-            this.dataGrid, option == 'all'
+            dataGrid || this.dataGrid, option == 'all'
         ).then(() => this.finishLoading());
     }
 
-    exportToXLS(option) {
-        return this.exportTo(option, 'Excel');
+    exportToXLS(option, dataGrid: DxDataGridComponent = null) {
+        return this.exportTo(option, 'Excel', dataGrid);
     }
 
-    exportToCSV(option) {
-        return this.exportTo(option, 'CSV');
+    exportToCSV(option, dataGrid: DxDataGridComponent = null) {
+        return this.exportTo(option, 'CSV', dataGrid);
     }
 
-    exportToGoogleSheet(option) {
-        return this.exportTo(option, 'GoogleSheets');
+    exportToGoogleSheet(option, dataGrid: DxDataGridComponent = null) {
+        return this.exportTo(option, 'GoogleSheets', dataGrid);
     }
 
     toggleFullscreen(element: any) {
