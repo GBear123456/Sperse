@@ -121,9 +121,13 @@
         <div class="dx-field">
             <div class="dx-field-label">{{ls.l('EmployerStateCode')}}</div>
             <div class="dx-field-value">
-                <dx-text-box placeholder="Enter state code"
-                             [(value)]="offersWizardService.submitApplicationProfileInput.employmentInformation.employerStateCode">
-                </dx-text-box>
+                <dx-select-box
+                    [items]="offersWizardService.states$ | async"
+                    valueExpr="code"
+                    displayExpr="name"
+                    [(value)]="offersWizardService.submitApplicationProfileInput.employmentInformation.employerStateCode"
+                    placeholder="Select state code">
+                </dx-select-box>
             </div>
         </div>
     </div>
