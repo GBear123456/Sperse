@@ -1,24 +1,41 @@
 <header>
     <div class="left-section">
-        <h2 class="title">{{l('TrendByPeriod_Title')}}</h2>
+        <dx-select-box [dataSource]="chartTypes"
+                       valueExpr="value"
+                       displayExpr="displayName"
+                       [(value)]="selectedChartType"
+                       (onSelectionChanged)="saveSelectedChartInCache($event)">
+        </dx-select-box>
+
         <ng-container *ngIf="trendData$ | async as trendData">
             <div class="legend" [hidden]="!trendData || !trendData.length">
-                <ul class="legend-list">
-                    <li class="label legend-item">{{l('Historical')}}:</li>
-                    <li class="legend-item inflow">{{l('Stats_Inflows')}}</li>
-                    <li class="legend-item outflows">{{l('Stats_Outflows')}}</li>
-                    <li class="legend-item net-change">{{l('Net_Change')}}</li>
-                </ul>
-                <ul class="legend-list">
-                    <li class="legend-item endingBalance">{{l('Stats_Ending_Balance')}}</li>
-                </ul>
-                <ng-container *ngIf="isForecast">
-                    <ul class="legend-list">
-                        <li class="label legend-item">{{l('Forecast')}}:</li>
-                        <li class="legend-item forecast inflow">{{l('Stats_Inflows')}}</li>
-                        <li class="legend-item forecast outflows">{{l('Stats_Outflows')}}</li>
-                        <li class="legend-item forecast net-change">{{l('Net_Change')}}</li>
-                    </ul>
+                <ng-container [ngSwitch]="selectedChartType">
+                    <ng-container *ngSwitchCase="chartType.CashBalancesTrends">
+                        <ul class="legend-list">
+                            <li class="legend-item endingBalance">{{l('Stats_Historical_Ending_Balance')}}</li>
+                        </ul>
+                        <ng-container *ngIf="isForecast">
+                            <ul class="legend-list">
+                                <li class="legend-item forecast endingBalance">{{l('Stats_Forecast_Ending_Balance')}}</li>
+                            </ul>
+                        </ng-container>
+                    </ng-container>
+                    <ng-container *ngSwitchCase="chartType.CashInflowsAndOutflows">
+                        <ul class="legend-list">
+                            <li class="label legend-item">{{l('Historical')}}:</li>
+                            <li class="legend-item inflow">{{l('Stats_Inflows')}}</li>
+                            <li class="legend-item outflows">{{l('Stats_Outflows')}}</li>
+                            <li class="legend-item net-change">{{l('Net_Change')}}</li>
+                        </ul>
+                        <ng-container *ngIf="isForecast">
+                            <ul class="legend-list">
+                                <li class="label legend-item">{{l('Forecast')}}:</li>
+                                <li class="legend-item forecast inflow">{{l('Stats_Inflows')}}</li>
+                                <li class="legend-item forecast outflows">{{l('Stats_Outflows')}}</li>
+                                <li class="legend-item forecast net-change">{{l('Net_Change')}}</li>
+                            </ul>
+                        </ng-container>
+                    </ng-container>
                 </ng-container>
             </div>
         </ng-container>
@@ -33,7 +50,7 @@
         </dx-select-box -->
     </div>
 </header>
-<ng-container *ngIf="(trendData$ | async) as trendData">
+<ng-container *ngIf="trendData$ | async as trendData">
     <div *ngIf="trendData && trendData.length">
         <dx-chart
             id="bar"
@@ -54,42 +71,46 @@
                 [customizeTooltip]="customizeBarTooltip">
             </dxo-tooltip>
 
-            <dxi-series [color]="historicalCreditColor" valueField="credit" [name]="l('Stats_Inflows')"></dxi-series>
-            <dxi-series [color]="historicalDebitColor" valueField="debit" [name]="l('Stats_Outflows')"></dxi-series>
-            <dxi-series [color]="forecastCreditColor" valueField="forecastCredit" [showInLegend]="false" name="forecast"></dxi-series>
-            <dxi-series [color]="forecastDebitColor" valueField="forecastDebit" [showInLegend]="false" name="forecastDebit"></dxi-series>
-            <dxi-series
-                type="line"
-                [color]="historicalNetChangeColor"
-                valueField="netChange"
-                [name]="l('Net_Change')"
-                [showInLegend]="false">
-            </dxi-series>
-            <dxi-series
-                type="line"
-                [color]="forecastNetChangeColor"
-                valueField="forecastNetChange"
-                name="forecastNetChange"
-                [showInLegend]="false">
-            </dxi-series>
+            <ng-container *ngIf="selectedChartType === chartType.CashInflowsAndOutflows">
+                <dxi-series [color]="historicalCreditColor" valueField="credit" [name]="l('Stats_Inflows')"></dxi-series>
+                <dxi-series [color]="historicalDebitColor" valueField="debit" [name]="l('Stats_Outflows')"></dxi-series>
+                <dxi-series [color]="forecastCreditColor" valueField="forecastCredit" [showInLegend]="false" name="forecast"></dxi-series>
+                <dxi-series [color]="forecastDebitColor" valueField="forecastDebit" [showInLegend]="false" name="forecastDebit"></dxi-series>
+                <dxi-series
+                    type="line"
+                    [color]="historicalNetChangeColor"
+                    valueField="netChange"
+                    [name]="l('Net_Change')"
+                    [showInLegend]="false">
+                </dxi-series>
+                <dxi-series
+                    type="line"
+                    [color]="forecastNetChangeColor"
+                    valueField="forecastNetChange"
+                    name="forecastNetChange"
+                    [showInLegend]="false">
+                </dxi-series>
+            </ng-container>
 
-            <dxi-series name="endingBalanceGradient"
-                        pane="topPane"
-                        color="url(#ending-balance-gradient)"
-                        type="rangeArea"
-                        hoverMode="none"
-                        rangeValue1Field="minRange"
-                        rangeValue2Field="endingBalance">
-                <dxo-label [visible]="false"></dxo-label>
-            </dxi-series>
-            <dxi-series name="endingBalance"
-                        [color]="endingBalanceColor"
-                        type="line"
-                        valueField="endingBalance"
-                        pane="topPane">
-                <dxo-point size="8"></dxo-point>
-            </dxi-series>
-            <dxi-pane name="topPane"></dxi-pane>
+            <ng-container *ngIf="selectedChartType === chartType.CashBalancesTrends">
+                <dxi-series name="endingBalanceGradient"
+                            pane="topPane"
+                            color="url(#ending-balance-gradient)"
+                            type="rangeArea"
+                            hoverMode="none"
+                            rangeValue1Field="minRange"
+                            rangeValue2Field="endingBalance">
+                    <dxo-label [visible]="false"></dxo-label>
+                </dxi-series>
+                <dxi-series name="endingBalance"
+                            [color]="endingBalanceColor"
+                            type="line"
+                            valueField="endingBalance"
+                            pane="topPane">
+                    <dxo-point size="8"></dxo-point>
+                </dxi-series>
+                <dxi-pane name="topPane"></dxi-pane>
+            </ng-container>
 
             <!-- Bottom axis -->
             <dxo-argument-axis

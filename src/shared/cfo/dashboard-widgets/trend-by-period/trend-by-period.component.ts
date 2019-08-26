@@ -53,6 +53,10 @@ import {
 import { BankAccountsService } from '@shared/cfo/bank-accounts/helpers/bank-accounts.service';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 import { AppConsts } from '@shared/AppConsts';
+import { ChartTypeModel } from '@shared/cfo/dashboard-widgets/trend-by-period/chart-type.model';
+import { ChartType } from '@shared/cfo/dashboard-widgets/trend-by-period/chart-type.enum';
+import { AbpSessionService } from '@abp/session/abp-session.service';
+import { CacheService } from '@node_modules/ng2-cache-service';
 
 @Component({
     selector: 'app-trend-by-period',
@@ -170,6 +174,21 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit {
     );
     forecastModelId$ = this.store$.pipe(select(ForecastModelsStoreSelectors.getSelectedForecastModelId));
     loading = true;
+    chartTypes: ChartTypeModel[] = [
+        {
+            displayName: this.l('Cash Balances Trends'),
+            value: ChartType.CashBalancesTrends
+        },
+        {
+            displayName: this.l('Cash Inflows And Outflows'),
+            value: ChartType.CashInflowsAndOutflows
+        }
+    ];
+    chartType = ChartType;
+    private selectedChartCacheKey = 'CFO_Dashboard_TrendByPeriod_SelectedChart_' + this.sessionService.tenantId + '_' + this.sessionService.userId;
+    selectedChartType: ChartType = this.cacheService.exists(this.selectedChartCacheKey)
+        ? this.cacheService.get(this.selectedChartCacheKey)
+        : ChartType.CashBalancesTrends;
 
     constructor(
         injector: Injector,
@@ -181,7 +200,9 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit {
         private _changeDetectorRef: ChangeDetectorRef,
         private _lifeCycleService: LifecycleSubjectsService,
         private store$: Store<CfoStore.State>,
-        public cfoPreferencesService: CfoPreferencesService,
+        private sessionService: AbpSessionService,
+        private cacheService: CacheService,
+        public cfoPreferencesService: CfoPreferencesService
     ) {
         super(injector);
     }
@@ -347,6 +368,10 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit {
                     take(this.selectedPeriod.amount),
                     toArray()
                 );
+    }
+
+    saveSelectedChartInCache(e) {
+        this.cacheService.set(this.selectedChartCacheKey, e.selectedItem.value);
     }
 
 }

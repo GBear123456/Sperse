@@ -86,6 +86,10 @@
                                     background: #a82aba;
                                 }
                             }
+
+                            &.endingBalance::before {
+                                background: #f9ba4e;
+                            }
                         }
 
                         &.label {
@@ -110,6 +114,21 @@
 
             @media (max-width: 767px) {
                 flex-wrap: wrap;
+            }
+
+            /deep/ .dx-selectbox {
+                .dx-texteditor-input {
+                    font-size: 18px;
+                    font-weight: 700;
+                    color: #212c36;
+                    margin: 0;
+                    line-height: 1;
+                    padding: 12px 0;
+                    text-align: left;
+                }
+                @media (min-width: 768px) {
+                    width: 300px;
+                }
             }
         }
 
