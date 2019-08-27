@@ -20,9 +20,9 @@
                 <dxi-column dataField="LogoUrl" caption="Logo" cellTemplate="photoTemplate"
                     [width]="140" [showInColumnChooser]="false" [allowExporting]="false"
                     [allowGrouping]="false" [allowSorting]="false"></dxi-column>
-                <dxi-column dataField="Name" caption="{{l('Offer_Name')}}"></dxi-column>
-                <dxi-column dataField="Categories" caption="{{l('Offer_Category')}}" [width]="300" [calculateSortValue]="getCategoryValue" [calculateGroupValue]="getCategoryValue" [calculateCellValue]="getCategoryValue"></dxi-column>
-                <dxi-column dataField="RequestCount" caption="{{l('Offer_ClickCount')}}" cellTemplate="clicksTemplate" [width]="150"></dxi-column>
+                <dxi-column dataField="Name" [caption]="l('Offer_Name')"></dxi-column>
+                <dxi-column dataField="Categories" [caption]="l('Offer_Category')" [width]="300" [calculateSortValue]="getCategoryValue" [calculateGroupValue]="getCategoryValue" [calculateCellValue]="getCategoryValue"></dxi-column>
+                <dxi-column dataField="RequestCount" [caption]="l('Offer_ClickCount')" cellTemplate="clicksTemplate" [width]="150"></dxi-column>
 
                 <div *dxTemplate="let field of 'photoTemplate'">
                     <div [ngStyle]="{'background-image': 'url(' + field.data.LogoUrl + ')'}" class="logo-url"></div>
@@ -43,21 +43,13 @@
                     [visible]="section == 'visitors'"
                     (onCellClick)="onVisitorCellClick($event)"
                     (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
-                <dxi-column caption="{{l('Offer_Name')}}" cellTemplate="nameCell"></dxi-column>
-                <dxi-column dataField="StateCode" caption="{{l('State')}}" [width]="60"></dxi-column>
-                <dxi-column dataField="Email" caption="{{l('Email')}}"></dxi-column>
-                <dxi-column dataField="PhoneNumber" caption="{{l('PhoneNumber')}}"></dxi-column>
-                <dxi-column dataField="Date" caption="{{l('Created')}}" cellTemplate="dateCell"></dxi-column>
-                <dxi-column dataField="DoB" caption="{{l('Birthday')}}" dataType="date" format="dd/MM/yyyy"></dxi-column>
-                <dxi-column dataField="CampaignName" caption="{{l('CampaignName')}}"></dxi-column>
-
-                <div *dxTemplate="let cellData of 'nameCell'">
-                    {{ cellData.data.FirstName }} {{ cellData.data.LastName }}
-                </div>
-
-                <div *dxTemplate="let cellData of 'dateCell'">
-                    {{ cellData.value | date: formatting.dateTime : userTimezone }}
-                </div>
+                <dxi-column [caption]="l('Name')" [calculateDisplayValue]="getVisitorFullName"></dxi-column>
+                <dxi-column dataField="StateCode" [caption]="l('State')" [width]="60"></dxi-column>
+                <dxi-column dataField="Email" [caption]="l('Email')"></dxi-column>
+                <dxi-column dataField="PhoneNumber" [caption]="l('PhoneNumber')"></dxi-column>
+                <dxi-column dataField="Date" [caption]="l('Created')" [calculateDisplayValue]="getCreatedDate"></dxi-column>
+                <dxi-column dataField="DoB" [caption]="l('Birthday')" dataType="date" format="dd/MM/yyyy"></dxi-column>
+                <dxi-column dataField="CampaignName" [caption]="l('CampaignName')"></dxi-column>
 
                 <dxo-group-panel [visible]="false"></dxo-group-panel>
                 <dxo-sorting mode="multiple"></dxo-sorting>

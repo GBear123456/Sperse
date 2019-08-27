@@ -1,5 +1,6 @@
 /** Core imports */
 import { Component, Injector, OnInit, OnDestroy, ViewChild } from '@angular/core';
+import { DatePipe } from '@angular/common';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
@@ -22,7 +23,7 @@ import { CFOService } from '@shared/cfo/cfo.service';
 @Component({
     templateUrl: './reports.component.html',
     styleUrls: ['./reports.component.less'],
-    providers: []
+    providers: [ DatePipe ]
 })
 export class ReportsComponent extends AppComponentBase implements OnInit, OnDestroy {
     @ViewChild('offerStatsGrid') offerStatsGrid: DxDataGridComponent;
@@ -36,7 +37,6 @@ export class ReportsComponent extends AppComponentBase implements OnInit, OnDest
     section: 'clicks' | 'offers' | 'visitors' = 'clicks';
     dateFrom: moment;
     dateTo: moment;
-    formatting = AppConsts.formatting;
     offerStatsDataSource: DataSource;
     offersStaticFilter = { 'RequestCount': { gt: 0 } };
     offersQuickSearch: string;
@@ -72,7 +72,8 @@ export class ReportsComponent extends AppComponentBase implements OnInit, OnDest
         injector: Injector,
         private appService: AppService,
         private dialog: MatDialog,
-        private cfoService: CFOService
+        private cfoService: CFOService,
+        private datePipe: DatePipe
     ) {
         super(injector);
     }
@@ -372,5 +373,13 @@ export class ReportsComponent extends AppComponentBase implements OnInit, OnDest
         super.deactivate();
         this.rootComponent.overflowHidden();
         this.appService.updateToolbar(null);
+    }
+
+    getVisitorFullName = (e) => {
+        return e.FirstName + ' ' + e.LastName;
+    }
+
+    getCreatedDate = (e) => {
+        return this.datePipe.transform(e.Date, AppConsts.formatting.dateTime, this.userTimezone);
     }
 }
