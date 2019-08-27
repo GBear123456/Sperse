@@ -1,15 +1,15 @@
 /** Core imports */
 import { Component, Inject, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
 import { DOCUMENT } from '@angular/common';
+import { Router } from '@angular/router';
 
 /** Third party imports */
 import kebabCase from 'lodash/kebabCase';
 
 /** Application imports */
 import { AppFeatures } from '@shared/AppFeatures';
-import { FeatureCheckerService } from '@abp/features/feature-checker.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { FeatureCheckerService } from '@abp/features/feature-checker.service';
 
 @Component({
     selector: 'app-lendspace-welcome2',
@@ -47,11 +47,12 @@ export class LendspaceWelcome2Component implements OnInit {
     ];
 
     constructor(
+        private ls: AppLocalizationService,
         private featureService: FeatureCheckerService,
         private router: Router,
-        public ls: AppLocalizationService,
         @Inject(DOCUMENT) private document: any
-    ) {}
+    ) {
+    }
 
     ngOnInit() {
         this.document.body.scrollTo(0, 0);
