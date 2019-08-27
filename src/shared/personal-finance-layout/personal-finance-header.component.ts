@@ -1,6 +1,5 @@
 /** Core imports */
-import { Component, Injector, HostBinding, ViewChild, ViewContainerRef,
-    Type, Directive, ComponentFactoryResolver } from '@angular/core';
+import { Component, Injector, HostBinding, ViewChild, ViewContainerRef, Directive } from '@angular/core';
 
 /** Application imports */
 import { AppConsts } from 'shared/AppConsts';
@@ -10,6 +9,7 @@ import { AbpSessionService } from '@abp/session/abp-session.service';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { environment } from 'environments/environment';
 import { AppFeatures } from '@shared/AppFeatures';
+import { RegisterComponent } from '@root/shared/personal-finance-layout/register/register.component';
 
 @Directive({
     selector: '[ad-header-host]'
@@ -25,6 +25,7 @@ export class AdHeaderHostDirective {
 })
 export class PersonalFinanceHeaderComponent extends AppComponentBase {
     @ViewChild(AdHeaderHostDirective) adHeaderHost: AdHeaderHostDirective;
+    @ViewChild(RegisterComponent) registerComponent: RegisterComponent;
     @HostBinding('class.pfm-app') hasPfmAppFeature = false;
     @HostBinding('class.yellow') yellowTheme =
         environment.LENDSPACE_HEADER_THEME == 'yellow';
@@ -32,10 +33,8 @@ export class PersonalFinanceHeaderComponent extends AppComponentBase {
     loggedUserId = abp.session.userId;
     remoteServiceBaseUrl: string = AppConsts.remoteServiceBaseUrl;
     showDefaultHeader = true;
-
     currentDate = new Date();
     appAreaLinks = this.getAppAreaLinks();
-
     memberAreaLinks = [
         {
             name: 'creditReportLink',
@@ -60,6 +59,7 @@ export class PersonalFinanceHeaderComponent extends AppComponentBase {
         {name: 'SIGN UP', class: 'member-signup', url: environment.LENDSPACE_DOMAIN + '/sign-up', disabled: false},
         {name: 'Member Login', class: 'member-login', url: environment.LENDSPACE_DOMAIN + '/login.html', disabled: false}
     ];
+    registerIsNecessary = true;
 
     constructor(
         injector: Injector,

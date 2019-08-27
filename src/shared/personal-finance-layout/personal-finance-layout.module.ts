@@ -11,6 +11,7 @@ import { PersonalFinanceFooterComponent } from './personal-finance-footer.compon
 import { PagesHeaderComponent } from './pages-header/pages-header.component';
 import { PagesFooterComponent } from './pages-footer/pages-footer.component';
 import { PersonalFinanceLayoutService } from './personal-finance-layout.service';
+import { RegisterComponent } from '@root/shared/personal-finance-layout/register/register.component';
 
 let COMPONENTS = [
     PagesFooterComponent,
@@ -19,7 +20,8 @@ let COMPONENTS = [
     PersonalFinanceFooterComponent,
     PersonalFinanceHeaderComponent,
     AppAreaNavigationComponent,
-    MemberAreaNavigationComponent
+    MemberAreaNavigationComponent,
+    RegisterComponent
 ];
 
 @NgModule({

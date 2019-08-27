@@ -1,0 +1,184 @@
+:host {
+
+}
+
+/deep/ .swal-modal {
+    h1 {
+        font-weight: 700;
+    }
+
+    h2 {
+        font-size: 16px;
+        font-weight: 400;
+    }
+
+    button.apply {
+        border-radius: 30px;
+        border: 2px solid #000;
+        background: #f0d500;
+        font-weight: 700;
+        font-size: 33px;
+        width: 150px;
+        cursor: pointer;
+    }
+
+    button:hover {
+        background: #F0BF1E;
+    }
+
+    .swal-icon {
+        position: absolute;
+        left: 5%;
+        top: 25px;
+        border: 6px solid rgba(165, 220, 134, 0.1) !important;
+        @media (min-width: 768px) {
+            left: 100px;
+            top: 70px;
+        }
+    }
+
+    &.finalize,
+    &.success,
+    &.failure {
+        box-shadow: 4px 9px 7px -2px rgba(0,0,0,0.74);
+        background: #fff !important;
+        @media (min-width: 768px) {
+            width: 550px;
+            height: 330px;
+        }
+    }
+
+    &.finalize {
+
+        .swal-title {
+            font-weight: 700;
+            margin-bottom: 0;
+            padding-bottom: 0;
+            margin-top: 55px;
+            font-size: 28px !important;
+            @media (min-width: 768px) {
+                margin-top: 80px;
+            }
+        }
+
+        .swal-content {
+            margin-top: 0;
+            h2 {
+                font-weight: 700;
+                font-size: 28px;
+                color: #019c4f;
+            }
+        }
+        .swal-button {
+            border-radius: 0;
+            text-transform: uppercase;
+            &:after {
+                display: none;
+            }
+        }
+    }
+
+    &.success {
+
+        .swal-title {
+            color: #004999 !important;
+            text-transform: uppercase;
+            font-weight: 700 !important;
+            letter-spacing: -.03em;
+            margin-bottom: 0;
+            padding-bottom: 0;
+            font-size: 25px !important;
+            @media (min-width: 768px) {
+                font-size: 40px !important;
+                margin-top: 20px;
+            }
+        }
+
+        .swal-content {
+            padding: 0;
+            margin-bottom: 0;
+            @media (min-width: 768px) {
+                margin-top: 35px;
+            }
+        }
+
+        .approved {
+            color: #9fc358;
+            text-transform: uppercase;
+            font-weight: 500;
+            margin-left: 100px;
+            margin-bottom: 20px;
+
+            div {
+                font-size: 30px;
+            }
+        }
+
+        a.continue {
+            color: #9fc358;
+            font-size: 20px;
+        }
+
+
+        .info {
+            background: #dce8c1;
+            padding: 10px;
+            margin-top: 25px;
+            border-bottom-left-radius: 5px;
+            border-bottom-right-radius: 5px;
+
+            @media (min-width: 768px) {
+                position: absolute;
+                bottom: 0;
+            }
+
+            p {
+                margin-bottom: 0;
+            }
+        }
+
+    }
+
+    &.failure {
+        background: #fdcd01;
+        text-align: left;
+        .swal-title {
+            font-weight: 700;
+            color: #000;
+            line-height: 28px;
+            padding-bottom: 27px;
+            &:after {
+                content: '';
+                border-bottom: 2px solid #000;
+                width: 200px;
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                margin: auto;
+            }
+        }
+
+        .swal-footer {
+            .swal-button-container {
+                position: absolute;
+                bottom: -20px;
+                width: 300px;
+                left: 0;
+                right: 0;
+                margin: auto;
+            }
+
+            .swal-button {
+                background: #38cbca;
+                width: 100%;
+                text-transform: uppercase;
+                border-radius: 0;
+                &:hover {
+                    background: #3cb3b2;
+                }
+            }
+        }
+    }
+
+}

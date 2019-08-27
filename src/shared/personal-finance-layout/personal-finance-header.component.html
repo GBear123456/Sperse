@@ -1,9 +1,10 @@
 <app-pages-header *ngIf="!showDefaultHeader"></app-pages-header>
 <div class="top-headline">
-    <div class="container d-flex justify-content-between align-items-center">
+    <div class="container d-flex justify-content-between align-items-center" *ngIf="registerIsNecessary">
         <a href="//lendspace.com" class="url">www.lendspace.com</a>
-        <p class="get-free-score">Get Your Free Credit Score with LendSpace</p>
+        <a class="get-free-score" (click)="registerComponent.showRegisterPopup()">Your application is incomplete. Click here to continue...</a>
         <p class="date">{{currentDate | date:'longDate' : userTimezone}}</p>
+        <register></register>
     </div>
 </div>
 <div class="page-header navbar navbar-fixed-top navbar-light container" [ngClass]="{'pfm-app': hasPfmAppFeature}" *ngIf="showDefaultHeader">

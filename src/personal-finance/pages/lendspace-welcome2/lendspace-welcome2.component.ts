@@ -1,18 +1,24 @@
-import { Component, Inject, Injector, OnInit } from '@angular/core';
+/** Core imports */
+import { Component, Inject, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { DOCUMENT } from '@angular/common';
-import { AppComponentBase } from '@shared/common/app-component-base';
+
+/** Third party imports */
 import kebabCase from 'lodash/kebabCase';
+
+/** Application imports */
 import { AppFeatures } from '@shared/AppFeatures';
+import { FeatureCheckerService } from '@abp/features/feature-checker.service';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 
 @Component({
-  selector: 'app-lendspace-welcome2',
-  templateUrl: './lendspace-welcome2.component.html',
-  styleUrls: ['./lendspace-welcome2.component.less']
+    selector: 'app-lendspace-welcome2',
+    templateUrl: './lendspace-welcome2.component.html',
+    styleUrls: ['./lendspace-welcome2.component.less']
 })
 
-export class LendspaceWelcome2Component extends AppComponentBase implements OnInit {
+export class LendspaceWelcome2Component implements OnInit {
     kebabCase = kebabCase;
-
     categoryItems = [
         {
             name: 'CreditScores',
@@ -36,19 +42,22 @@ export class LendspaceWelcome2Component extends AppComponentBase implements OnIn
             name: 'PersonalFinance',
             button: 'AddAccounts',
             router: 'personal-finance/my-finances',
-            hidden: !this.feature.isEnabled(AppFeatures.CFOPartner),
+            hidden: !this.featureService.isEnabled(AppFeatures.CFOPartner),
         }
     ];
 
-    constructor(injector: Injector, @Inject(DOCUMENT) private document: any) {
-        super(injector);
-    }
+    constructor(
+        private featureService: FeatureCheckerService,
+        private router: Router,
+        public ls: AppLocalizationService,
+        @Inject(DOCUMENT) private document: any
+    ) {}
 
     ngOnInit() {
         this.document.body.scrollTo(0, 0);
     }
 
     navigate(route) {
-        this._router.navigate(route);
+        this.router.navigate(route);
     }
 }

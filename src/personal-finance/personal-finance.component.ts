@@ -9,7 +9,10 @@ declare const Typekit: any;
 
 @Component({
     templateUrl: './personal-finance.component.html',
-    styleUrls: ['./personal-finance.component.less']
+    styleUrls: [
+        './shared/common/styles/apply-button.less',
+        './personal-finance.component.less'
+    ]
 })
 export class PersonalFinanceComponent extends AppComponentBase implements OnInit, OnDestroy {
     @HostBinding('class.pfm-app') hasPfmAppFeature = false;

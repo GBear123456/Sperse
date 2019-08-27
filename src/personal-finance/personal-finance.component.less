@@ -26,7 +26,7 @@
             height: 100%;
         }
     }
-    
+
     /deep/ body.finance-page {
         .page-content {
             height: 0;
@@ -525,64 +525,5 @@
         box-sizing: border-box;
         padding: 32px 48px 48px;
         margin-bottom: 78px!important;
-    }
-
-    /deep/ button.applyButton,
-    /deep/ a.applyButton {
-
-        text-align: center;
-        padding: 7px;
-        border: 1px solid #b1770b;
-        border-radius: 3px;
-        background-image: linear-gradient(0deg, #fdb337, #f3ea80);
-        font-size: 18px;
-        font-weight: 500;
-        color: #333;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin: 0 auto 7px;
-        cursor: pointer;
-
-        &:hover {
-            background-image: linear-gradient(0deg, #f3ea80, #fdb337);
-        }
-
-        span {
-            display: block;
-            color: #1f1700;
-            font-size: 16px;
-            font-weight: 700;
-            letter-spacing: 0.1px;
-            text-align: center;
-            text-transform: uppercase;
-            font-family: Poppins;
-        }
-        &.withArrow {
-            padding: 7px 50px 7px 25px;
-            position: relative;
-            &:after {
-                content: url('../assets/common/icons/right-arrow-black.svg');
-                display: block;
-                height: 18px;
-                width: 17px;
-                right: 26px;
-                position: absolute;
-            }
-        }
-        &::after {
-            content: url(../assets/common/icons/lock.png);
-            margin-left: 10px;
-            height: 24px;
-        }
-    }
-
-    /deep/ a.applyButton {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        &:hover {
-            text-decoration: none;
-        }
     }
 }
