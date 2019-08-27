@@ -1,8 +1,15 @@
-import { Component, Inject, Injector, OnInit } from '@angular/core';
+/** Core imports */
+import { Component, Inject, OnInit } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
-import { AppComponentBase } from '@shared/common/app-component-base';
+import { Router } from '@angular/router';
+
+/** Third party imports */
 import kebabCase from 'lodash/kebabCase';
+
+/** Application imports */
 import { AppFeatures } from '@shared/AppFeatures';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { FeatureCheckerService } from '@abp/features/feature-checker.service';
 
 @Component({
   selector: 'app-lendspace-welcome2',
@@ -10,9 +17,8 @@ import { AppFeatures } from '@shared/AppFeatures';
   styleUrls: ['./lendspace-welcome2.component.less']
 })
 
-export class LendspaceWelcome2Component extends AppComponentBase implements OnInit {
+export class LendspaceWelcome2Component implements OnInit {
     kebabCase = kebabCase;
-
     categoryItems = [
         {
             name: 'CreditScores',
@@ -36,12 +42,16 @@ export class LendspaceWelcome2Component extends AppComponentBase implements OnIn
             name: 'PersonalFinance',
             button: 'AddAccounts',
             router: 'personal-finance/my-finances',
-            hidden: !this.feature.isEnabled(AppFeatures.CFOPartner),
+            hidden: !this.featureService.isEnabled(AppFeatures.CFOPartner),
         }
     ];
 
-    constructor(injector: Injector, @Inject(DOCUMENT) private document: any) {
-        super(injector);
+    constructor(
+        private ls: AppLocalizationService,
+        private featureService: FeatureCheckerService,
+        private router: Router,
+        @Inject(DOCUMENT) private document: any
+    ) {
     }
 
     ngOnInit() {
@@ -49,6 +59,6 @@ export class LendspaceWelcome2Component extends AppComponentBase implements OnIn
     }
 
     navigate(route) {
-        this._router.navigate(route);
+        this.router.navigate(route);
     }
 }
