@@ -47,9 +47,9 @@ export class LendspaceWelcome2Component implements OnInit {
     ];
 
     constructor(
-        private ls: AppLocalizationService,
         private featureService: FeatureCheckerService,
         private router: Router,
+        public ls: AppLocalizationService,
         @Inject(DOCUMENT) private document: any
     ) {
     }
