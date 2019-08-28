@@ -1,5 +1,6 @@
 /** Core imports */
 import { Component, Injector, OnInit, OnDestroy, ViewChild } from '@angular/core';
+import { DatePipe } from '@angular/common';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
@@ -7,6 +8,7 @@ import { Subject, Observable } from 'rxjs';
 import * as moment from 'moment-timezone';
 import DataSource from 'devextreme/data/data_source';
 import { DxDataGridComponent } from 'devextreme-angular';
+import range from 'lodash/range';
 
 /** Application imports */
 import { AppComponentBase } from '@root/shared/common/app-component-base';
@@ -15,12 +17,13 @@ import { CalendarDialogComponent } from '@app/shared/common/dialogs/calendar/cal
 import { DateHelper } from '@root/shared/helpers/DateHelper';
 import { AppConsts } from '@root/shared/AppConsts';
 import { SetupStepsComponent } from '@app/shared/common/setup-steps/setup-steps.component';
-import range from 'lodash/range';
+import { DataGridService } from '@app/shared/common/data-grid.service.ts/data-grid.service';
+import { CFOService } from '@shared/cfo/cfo.service';
 
 @Component({
     templateUrl: './reports.component.html',
     styleUrls: ['./reports.component.less'],
-    providers: []
+    providers: [ DatePipe ]
 })
 export class ReportsComponent extends AppComponentBase implements OnInit, OnDestroy {
     @ViewChild('offerStatsGrid') offerStatsGrid: DxDataGridComponent;
@@ -28,12 +31,12 @@ export class ReportsComponent extends AppComponentBase implements OnInit, OnDest
     @ViewChild(SetupStepsComponent) setupStepsComponent: SetupStepsComponent;
 
     headlineConfig;
+    private rootComponent: any;
     private _refresh: Subject<null> = new Subject<null>();
     refresh$: Observable<null> = this._refresh.asObservable();
     section: 'clicks' | 'offers' | 'visitors' = 'clicks';
     dateFrom: moment;
     dateTo: moment;
-    formatting = AppConsts.formatting;
     offerStatsDataSource: DataSource;
     offersStaticFilter = { 'RequestCount': { gt: 0 } };
     offersQuickSearch: string;
@@ -67,14 +70,18 @@ export class ReportsComponent extends AppComponentBase implements OnInit, OnDest
 
     constructor(
         injector: Injector,
-        private _appService: AppService,
-        private _dialog: MatDialog
+        private appService: AppService,
+        private dialog: MatDialog,
+        private cfoService: CFOService,
+        private datePipe: DatePipe
     ) {
         super(injector);
     }
 
     ngOnInit(): void {
         this.initConfigs();
+        this.rootComponent = this.getRootComponent();
+        this.rootComponent.overflowHidden(true);
 
         this.offerStatsDataSource = new DataSource({
             store: {
@@ -137,7 +144,7 @@ export class ReportsComponent extends AppComponentBase implements OnInit, OnDest
 
     initToolbarConfig() {
         if (this.componentIsActivated) {
-            this._appService.updateToolbar([
+            this.appService.updateToolbar([
                 {
                     location: 'before',
                     items: [
@@ -166,7 +173,48 @@ export class ReportsComponent extends AppComponentBase implements OnInit, OnDest
                 },
                 {
                     location: 'after',
+                    locateInMenu: 'auto',
                     items: [
+                        {
+                            name: 'showCompactRowsHeight',
+                            visible: this.section !== 'clicks' && !this.cfoService.hasStaticInstance,
+                            action: DataGridService.showCompactRowsHeight.bind(this, this.openedGrid)
+                        },
+                        {
+                            name: 'download',
+                            widget: 'dxDropDownMenu',
+                            options: {
+                                hint: this.l('Download'),
+                                items: [
+                                    {
+                                        action: Function(),
+                                        text: this.l('Save as PDF'),
+                                        icon: 'pdf',
+                                    },
+                                    {
+                                        action: this.exportToXLS.bind(this, 'all', this.openedGrid),
+                                        text: this.l('Export to Excel'),
+                                        icon: 'xls',
+                                    },
+                                    {
+                                        action: this.exportToCSV.bind(this, 'all', this.openedGrid),
+                                        text: this.l('Export to CSV'),
+                                        icon: 'sheet'
+                                    },
+                                    {
+                                        action: this.exportToGoogleSheet.bind(this, 'all', this.openedGrid),
+                                        text: this.l('Export to Google Sheets'),
+                                        icon: 'sheet'
+                                    }
+                                ],
+                                visible: this.section !== 'clicks'
+                            }
+                        },
+                        {
+                            name: 'columnChooser',
+                            visible: this.section !== 'clicks' && !this.cfoService.hasStaticInstance,
+                            action: DataGridService.showColumnChooser.bind(this, this.openedGrid)
+                        },
                         {
                             widget: 'dxButton',
                             options: {
@@ -178,16 +226,7 @@ export class ReportsComponent extends AppComponentBase implements OnInit, OnDest
                                 }
                             },
                             visible: this.section == 'visitors' && this.visitorsCampaignId
-                        },
-                        {
-                            name: 'download',
-                            widget: 'dxDropDownMenu',
-                            options: {
-                                hint: this.l('Download'),
-                                items: [
-                                ]
-                            }
-                        },
+                        }
                     ]
                 },
             ]);
@@ -204,6 +243,16 @@ export class ReportsComponent extends AppComponentBase implements OnInit, OnDest
 
     onMenuClick(item) {
         this.setSection(item.section);
+    }
+
+    get openedGrid() {
+        let openedGrid = null;
+        if (this.section === 'offers') {
+            openedGrid = this.offerStatsGrid;
+        } else if (this.section === 'visitors') {
+            openedGrid = this.visitorsGrid;
+        }
+        return openedGrid;
     }
 
     setSection(section, repaint = true) {
@@ -289,8 +338,8 @@ export class ReportsComponent extends AppComponentBase implements OnInit, OnDest
     }
 
     showCalendarDialog() {
-        this._dialog.closeAll();
-        this._dialog.open(CalendarDialogComponent, {
+        this.dialog.closeAll();
+        this.dialog.open(CalendarDialogComponent, {
             panelClass: ['slider'],
             disableClose: false,
             hasBackdrop: false,
@@ -316,11 +365,21 @@ export class ReportsComponent extends AppComponentBase implements OnInit, OnDest
 
     activate() {
         super.activate();
+        this.rootComponent.overflowHidden(true);
         this.initConfigs();
     }
 
     deactivate() {
         super.deactivate();
-        this._appService.updateToolbar(null);
+        this.rootComponent.overflowHidden();
+        this.appService.updateToolbar(null);
+    }
+
+    getVisitorFullName = (e) => {
+        return e.FirstName + ' ' + e.LastName;
+    }
+
+    getCreatedDate = (e) => {
+        return this.datePipe.transform(e.Date, AppConsts.formatting.dateTime, this.userTimezone);
     }
 }

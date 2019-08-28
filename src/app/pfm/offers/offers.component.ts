@@ -481,7 +481,7 @@ export class OffersComponent extends AppComponentBase implements OnInit, OnDestr
         super.deactivate();
         this._filtersService.unsubscribe();
         this._appService.updateToolbar(null);
-        this.rootComponent.overflowHidden(true);
+        this.rootComponent.overflowHidden();
         this.itemDetailsService.setItemsSource(ItemTypeEnum.Offer, this.dataGrid.instance.getDataSource());
     }
 

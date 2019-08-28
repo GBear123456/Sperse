@@ -53,6 +53,11 @@ import {
 import { BankAccountsService } from '@shared/cfo/bank-accounts/helpers/bank-accounts.service';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 import { AppConsts } from '@shared/AppConsts';
+import { ChartTypeModel } from '@shared/cfo/dashboard-widgets/trend-by-period/chart-type.model';
+import { ChartType } from '@shared/cfo/dashboard-widgets/trend-by-period/chart-type.enum';
+import { AbpSessionService } from '@abp/session/abp-session.service';
+import { CacheService } from '@node_modules/ng2-cache-service';
+import { BehaviorSubject } from '@node_modules/rxjs';
 
 @Component({
     selector: 'app-trend-by-period',
@@ -69,6 +74,7 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit {
     chartWidth = 650;
     isForecast = false;
     endingBalanceColor = '#ace2f9';
+    forecastEndingBalanceColor = '#f9ba4e';
     historicalCreditColor = '#00aeef';
     historicalDebitColor = '#f05b2a';
     forecastCreditColor = '#a9e3f9';
@@ -170,6 +176,28 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit {
     );
     forecastModelId$ = this.store$.pipe(select(ForecastModelsStoreSelectors.getSelectedForecastModelId));
     loading = true;
+    chartTypes: ChartTypeModel[] = [
+        {
+            displayName: this.l('TrendByPeriod_CashBalancesTrends'),
+            value: ChartType.CashBalancesTrends
+        },
+        {
+            displayName: this.l('TrendByPeriod_CashInflowsAndOutflows'),
+            value: ChartType.CashInflowsAndOutflows
+        },
+        {
+            displayName: this.l('TrendByPeriod_BalancesInflowsOutflows'),
+            value: ChartType.Combined
+        }
+    ];
+    chartType = ChartType;
+    private selectedChartCacheKey = 'CFO_Dashboard_TrendByPeriod_SelectedChart_' + this.sessionService.tenantId + '_' + this.sessionService.userId;
+    selectedChartType: BehaviorSubject<ChartType> = new BehaviorSubject(
+        this.cacheService.exists(this.selectedChartCacheKey)
+            ? this.cacheService.get(this.selectedChartCacheKey)
+            : ( this._cfoService.hasStaticInstance ? ChartType.Combined : ChartType.CashInflowsAndOutflows )
+    );
+    selectedChartType$: Observable<ChartType> = this.selectedChartType.asObservable();
 
     constructor(
         injector: Injector,
@@ -181,7 +209,9 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit {
         private _changeDetectorRef: ChangeDetectorRef,
         private _lifeCycleService: LifecycleSubjectsService,
         private store$: Store<CfoStore.State>,
-        public cfoPreferencesService: CfoPreferencesService,
+        private sessionService: AbpSessionService,
+        private cacheService: CacheService,
+        public cfoPreferencesService: CfoPreferencesService
     ) {
         super(injector);
     }
@@ -232,7 +262,7 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit {
     }
 
     private loadStatsData() {
-        this.trendData$ = combineLatest(
+        const statsData$ = combineLatest(
             this.refresh$,
             this.period$,
             this.currencyId$,
@@ -281,39 +311,55 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit {
             }),
             switchMap(data => this.mergeHistoricalAndForecast(data.historical, data.forecast)),
             map((stats: BankAccountDailyStatDto[]) => {
-                let allValues = [];
                 stats.forEach((statsItem: BankAccountDailyStatDto) => {
-                    /** Get all using in chart values to show gradient well*/
-                    allValues = [
-                        ...allValues,
-                        statsItem.startingBalance,
-                        statsItem.debit,
-                        statsItem.credit
-                    ].concat(
-                        statsItem.isForecast
-                            ? [
-                                statsItem['forecastDebit'] || 0,
-                                statsItem['forecastCredit'] || 0
-                            ]
-                            : []
-                    );
-                });
-                const minValue = Math.min.apply(Math, allValues);
-                const maxValue = Math.max.apply(Math, allValues);
-                const minRange = minValue - (0.2 * Math.abs(maxValue - minValue));
-                stats.forEach((statsItem: BankAccountDailyStatDto) => {
-                    Object.defineProperties(
+                    Object.defineProperty(
                         statsItem,
-                        {
-                            'netChange': { value: statsItem.credit + statsItem.debit, enumerable: true },
-                            'minRange': { value: minRange, enumerable: true }
-                        }
+                        'netChange',
+                        { value: statsItem.credit + statsItem.debit, enumerable: true }
                     );
                 });
                 return <any>stats.map((obj) => {
                     obj['date'].add(obj['date'].toDate().getTimezoneOffset(), 'minutes');
                     return obj;
                 });
+            })
+        );
+        this.trendData$ = combineLatest(
+            statsData$,
+            this.selectedChartType$
+        ).pipe(
+            map(([stats, selectedChartType]: [BankAccountDailyStatDto[], ChartType]) => {
+                if (selectedChartType === ChartType.CashBalancesTrends
+                    || selectedChartType === ChartType.Combined
+                ) {
+                    let allValues = [];
+                    stats.forEach((statsItem: BankAccountDailyStatDto) => {
+                        /** Get all using in chart values to show gradient well*/
+                        allValues = [
+                            ...allValues,
+                            statsItem.endingBalance,
+                        ].concat(
+                            statsItem.isForecast
+                                ? [
+                                    statsItem['forecastDebit'] || 0,
+                                    statsItem['forecastCredit'] || 0,
+                                    statsItem['forecastEndingBalance'] || 0,
+                                ]
+                                : []
+                        );
+                    });
+                    const minValue = Math.min.apply(Math, allValues);
+                    const maxValue = Math.max.apply(Math, allValues);
+                    const minRange = minValue - (0.2 * Math.abs(maxValue - minValue));
+                    stats.forEach((statsItem: BankAccountDailyStatDto) => {
+                        Object.defineProperty(
+                            statsItem,
+                            'minRange',
+                            {value: minRange, enumerable: true}
+                        );
+                    });
+                }
+                return stats;
             }),
             publishReplay(),
             refCount()
@@ -347,6 +393,19 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit {
                     take(this.selectedPeriod.amount),
                     toArray()
                 );
+    }
+
+    saveSelectedChartInCache(e) {
+        this.cacheService.set(this.selectedChartCacheKey, e.selectedItem.value);
+        this.selectedChartType.next(e.selectedItem.value);
+    }
+
+    getAxisName(chartType: ChartType.CashInflowsAndOutflows | ChartType.CashBalancesTrends): string {
+        let axisName = 'leftAxis';
+        if (this.selectedChartType.value === ChartType.Combined) {
+            axisName = chartType === ChartType.CashBalancesTrends ? 'leftAxis' : 'rightAxis';
+        }
+        return axisName;
     }
 
 }

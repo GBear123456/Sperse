@@ -83,7 +83,7 @@
                         <dxi-column dataField="City" caption="{{l('Contact.City')}}"></dxi-column>
                         <dxi-column dataField="StateId" caption="{{l('Contact.State')}}"></dxi-column>
                         <dxi-column dataField="Stage" caption="{{l('Stage')}}"></dxi-column>
-                        <dxi-column dataField="BankCode" cellTemplate="bankCodeCell" [caption]="l('BankCode')" [visible]="userManagementService.checkBankCodeLayout()"></dxi-column>
+                        <dxi-column dataField="BankCode" cellTemplate="bankCodeCell" [caption]="l('BankCode')" [visible]="userManagementService.checkBankCodeFeature()"></dxi-column>
                         <dxi-column dataField="CreationTime" caption="{{l('Created')}}" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
                         <dxi-column dataField="AffiliateCode" caption="{{l('AffiliateCode')}}" [visible]="false"></dxi-column>
                         <dxi-column dataField="CampaignCode" caption="{{l('CampaignCode')}}" [visible]="false"></dxi-column>
@@ -121,7 +121,7 @@
                     [totalsURI]="'LeadCount'"
                     [dragulaName]="'leadStages'"
                     [dataSource]="pipelineDataSource"
-                    [selectFields]="['Id', 'CustomerId', 'Name', 'CompanyName', 'CreationTime', 'StageId', 'Stage', 'PhotoPublicId', 'Email']"
+                    [selectFields]="['Id', 'CustomerId', 'Name', 'CompanyName', 'CreationTime', 'StageId', 'Stage', 'BankCode', 'PhotoPublicId', 'Email']"
                     [pipelinePurposeId]="pipelinePurposeId"
                     [filterModelStages]="filterModelStages"
                     [(selectedEntities)]="selectedLeads"

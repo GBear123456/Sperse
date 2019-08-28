@@ -6,7 +6,11 @@
     </app-headline>
 
     <div class="content">
-        <setup-steps [showIntroductionTourLink]="true" [hidden]="isWideMode"></setup-steps>
+        <setup-steps [showIntroductionTourLink]="true"
+                     [class.hidden]="isWideMode"
+                     [showToggleButton]="isInstanceAdmin"
+                     (onToggle)="toggleLeftMenu()">
+        </setup-steps>
         <div class="right">
             <dx-scroll-view showScrollbar="onHover">
                 <div class="dashboard-wrapper">
@@ -22,11 +26,12 @@
                     <section class="analytics">
                         <div class="analytics-wrap">
                             <div class="bankBalances">
-                                <h2>{{ l('Bank_Balances') }}</h2>
+                                <h2 class="title">{{ l('Bank_Balances') }}</h2>
                                 <bank-accounts-widget
                                     [height]="256"
                                     [saveChangesInCache]="false"
-                                    [nameColumnWidth]="120"
+                                    [nameColumnWidth]="'70%'"
+                                    [balanceColumnWidth]="'30%'"
                                     [showBusinessEntitiesFilter]="false"
                                     [changeOnlyAfterApply]="true"
                                     [showAddAccountButton]="false"

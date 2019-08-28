@@ -15,6 +15,7 @@ import { TotalsByPeriodComponent } from '@shared/cfo/dashboard-widgets/totals-by
 import { TrendByPeriodComponent } from '@shared/cfo/dashboard-widgets/trend-by-period/trend-by-period.component';
 import { DashboardService } from '@shared/cfo/dashboard-widgets/dashboard.service';
 import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
+import { TopSpendingCategoriesComponent } from '@shared/cfo/dashboard-widgets/top-spending-categories/top-spending-categories.component';
 
 @Component({
     selector: 'portal-dashboard',
@@ -26,6 +27,7 @@ export class PortalDashboardComponent extends CFOComponentBase implements OnInit
     @ViewChild(AccountsComponent) accountsComponent: AccountsComponent;
     @ViewChild(TotalsByPeriodComponent) totalsByPeriodComponent: TotalsByPeriodComponent;
     @ViewChild(TrendByPeriodComponent) trendByPeriodComponent: TrendByPeriodComponent;
+    @ViewChild(TopSpendingCategoriesComponent) topSpendingCategoriesComponent: TopSpendingCategoriesComponent;
     @ViewChild(SynchProgressComponent) synchProgressComponent: SynchProgressComponent;
     @HostBinding('class.wide') isWideMode = true;
 
@@ -47,14 +49,12 @@ export class PortalDashboardComponent extends CFOComponentBase implements OnInit
     ) {
         super(injector);
         this.rootComponent = this.getRootComponent();
-        if (this.isInstanceAdmin)
-            this.linksTo.push({name: 'Toggle More Options', action: this.toggleLeftMenu.bind(this)});
     }
 
     ngOnInit(): void {
         this.rootComponent.overflowHidden(true);
         this.headlineConfig = {
-            names: [this.l('Dashboard_Title')],
+            names: [ this.l('Dashboard_Title') ],
             iconSrc: './assets/common/icons/pie-chart.svg',
             onRefresh: this._cfoService.hasStaticInstance ? undefined : this.invalidate.bind(this),
             buttons: []
@@ -68,8 +68,10 @@ export class PortalDashboardComponent extends CFOComponentBase implements OnInit
 
     toggleLeftMenu() {
         this.isWideMode = !this.isWideMode;
-        setTimeout(() => this.trendByPeriodComponent
-            .chartComponent.instance.render(), 300);
+        setTimeout(() => {
+            this.trendByPeriodComponent.chartComponent.instance.render();
+            this.topSpendingCategoriesComponent.pieChart.instance.render();
+        }, 300);
     }
 
     invalidate() {

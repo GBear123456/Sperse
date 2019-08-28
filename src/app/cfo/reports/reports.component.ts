@@ -155,51 +155,6 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
                         }
                     }
                 ]
-            },
-            {
-                location: 'after',
-                locateInMenu: 'auto',
-                items: [
-                    {
-                        name: 'showCompactRowsHeight',
-                        visible: !this._cfoService.hasStaticInstance,
-                        action: DataGridService.showCompactRowsHeight.bind(this, this.dataGrid)
-                    },
-                    {
-                        name: 'download',
-                        widget: 'dxDropDownMenu',
-                        options: {
-                            hint: this.l('Download'),
-                            items: [
-                                {
-                                    action: Function(),
-                                    text: this.l('Save as PDF'),
-                                    icon: 'pdf',
-                                },
-                                {
-                                    action: this.exportToXLS.bind(this),
-                                    text: this.l('Export to Excel'),
-                                    icon: 'xls',
-                                },
-                                {
-                                    action: this.exportToCSV.bind(this),
-                                    text: this.l('Export to CSV'),
-                                    icon: 'sheet'
-                                },
-                                {
-                                    action: this.exportToGoogleSheet.bind(this),
-                                    text: this.l('Export to Google Sheets'),
-                                    icon: 'sheet'
-                                }
-                            ]
-                        }
-                    },
-                    {
-                        name: 'columnChooser',
-                        visible: !this._cfoService.hasStaticInstance,
-                        action: DataGridService.showColumnChooser.bind(this, this.dataGrid)
-                    }
-                ]
             }
         ];
     }

@@ -48,7 +48,7 @@
                 </div>
             </dx-tooltip>
         </div>
-        <div class="column-items" [ngClass]="{'drag-allowed': stage?.dragAllowed}" [dragula]="dragulaName" [dragulaModel]="stage?.entities" accessKey="{{stage?.id}}" (click)="hideStageHighlighting()" #columnItems>
+        <div class="column-items" [ngClass]="{'drag-allowed': stage?.dragAllowed}" [dragula]="dragulaName" [dragulaModel]="stage?.entities" [accessKey]="stage?.id" (click)="hideStageHighlighting()" #columnItems>
             <ng-container *ngFor="let entity of stage.entities">
                 <div class="card" [ngClass]="{ locked: entity?.locked, selected: entity?.selected, compact: compactView }" [accessKey]="entity?.Id" (click)="onCardClickInternal(entity, $event)" [attr.stage]="entity?.StageId" count="">
                     <div class="container-fluid">
@@ -61,14 +61,14 @@
                                     <span class="no-name">{{ l('ClientNoName') }}</span>
                                 </ng-template>
                             </div>
-                            <div class="bank-code" *ngIf="entity?.bankCode && userManagementService.checkBankCodeLayout()">
-                                <bank-code-letter [id]="'bankCode' + entity.Id" [letter]="entity.bankCode[0]"></bank-code-letter>
+                            <div class="bank-code" *ngIf="entity?.BankCode && userManagementService.checkBankCodeFeature()">
+                                <bank-code-letter [id]="'bankCode' + entity.Id" [letter]="entity.BankCode[0]"></bank-code-letter>
                                 <dx-tooltip [target]="'#bankCode' + entity.Id"
                                             showEvent="dxhoverstart"
                                             hideEvent="dxhoverend">
                                     <div *dxTemplate="let data of 'content'">
                                         <div class="bank-code-tooltip">
-                                            <bank-code-letters [bankCode]="entity.bankCode"></bank-code-letters>
+                                            <bank-code-letters [bankCode]="entity.BankCode"></bank-code-letters>
                                         </div>
                                     </div>
                                 </dx-tooltip>

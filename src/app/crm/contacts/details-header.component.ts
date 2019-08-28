@@ -115,7 +115,7 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
     ];
     addContextMenuItems = [];
     addButtonTitle = '';
-    isBankCodeLayout = this.userManagementService.checkBankCodeLayout();
+    isBankCodeLayout = this.userManagementService.checkBankCodeFeature();
 
     constructor(
         injector: Injector,

@@ -22,7 +22,7 @@
             <div class="dx-field-label">{{ls.l('state')}}</div>
             <div class="dx-field-value">
                 <dx-select-box
-                    [items]="states$ | async"
+                    [items]="offersWizardService.states$ | async"
                     valueExpr="code"
                     displayExpr="name"
                     [(value)]="offersWizardService.submitApplicationProfileInput.personalInformation.stateCode"
@@ -95,9 +95,13 @@
         <div class="dx-field">
             <div class="dx-field-label">{{ls.l('license_state')}}</div>
             <div class="dx-field-value">
-                <dx-text-box placeholder="Enter license state"
-                             [(value)]="offersWizardService.submitApplicationProfileInput.personalInformation.licenseState">
-                </dx-text-box>
+                <dx-select-box
+                    [items]="offersWizardService.states$ | async"
+                    valueExpr="code"
+                    displayExpr="name"
+                    [(value)]="offersWizardService.submitApplicationProfileInput.personalInformation.licenseState"
+                    placeholder="Select license state">
+                </dx-select-box>
             </div>
         </div>
     </div>

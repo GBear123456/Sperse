@@ -1,5 +1,5 @@
 :host {
-    top:74px;
+    top: 74px;
     position: relative;
     display: block;
 
@@ -18,15 +18,14 @@
             input {
                 font-size: 15px;
                 font-weight: normal;
-                
                 padding: 0 8px 0 20px;
                 border-bottom: 0;
             }
         }
     }
 
-    .wrapper {    
-        display: flex;    
+    .wrapper {
+        display: flex;
         border-bottom: 0;
 
         /deep/pfm-click-stats {
@@ -35,7 +34,7 @@
             dx-data-grid {
                 height: calc(100vh - 250px);
             }
-        }
+        }   
 
         .offers-section{
             /deep/ #gridContainer {
@@ -55,8 +54,9 @@
                 .clicksCount {
                     padding-right: 43px;
                     cursor: pointer;
+                    text-decoration: underline;
                 }
-        
+
                 .dx-datagrid-rowsview {
                     .dx-column-lines {
                         td {
@@ -66,5 +66,11 @@
                 }
             }
         }
+    }
+}
+
+/deep/ dx-toolbar .dx-toolbar-after {
+    .dx-toolbar-item:last-child {
+        padding-left: 0 !important;
     }
 }

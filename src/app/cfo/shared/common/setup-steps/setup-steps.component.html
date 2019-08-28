@@ -2,13 +2,13 @@
     <p *ngIf="HeaderTitle" class="title"><a [routerLink]="headerLink">{{HeaderTitle}}</a></p>
     <ul class="steps-progress">
         <ng-template ngFor let-step [ngForOf]="SetupSteps" let-i="index">
-            <li [ngClass]="{
-                'steps-progress-item': true,
-                'passed': i < SelectedStepIndex,
-                'current': i == SelectedStepIndex,
-                'disabled': !stepLinkIsEnabled(step)
-            }"
-                *ngIf="step.visible || !step.hasOwnProperty('visible')">
+            <li *ngIf="step.visible || !step.hasOwnProperty('visible')"
+                [ngClass]="{
+                    'steps-progress-item': true,
+                    'passed': i < SelectedStepIndex,
+                    'current': i == SelectedStepIndex,
+                    'disabled': !stepLinkIsEnabled(step)
+                }">
                 <div class="img {{'img-' + step.caption}}"></div>
                 <span class="link" (click)="onClick(step)">
                     {{l('SetupStep_' + step.caption)}}
@@ -20,4 +20,7 @@
             <span class="btn-link intro-link" (click)="showIntro()">{{l('Introduction Tour')}}</span>
         </li>
     </ul>
+    <button class="toggle-button" *ngIf="showToggleButton" (click)="onToggle.emit()">
+        <img src="./assets/common/icons/pipeline/left-arrow.svg" alt="switch">
+    </button>
 </div>

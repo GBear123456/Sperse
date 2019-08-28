@@ -1,24 +1,29 @@
 :host {
     top: 0;
-    position: absolute;
     display: flex;
+    padding-left: 20px;
     justify-content: flex-start;
-    width: calc(~"100% - 430px");
-    padding-left: 240px;
+    width: calc(~"100% - 348px");
     white-space: nowrap;
     height: 75px;
 
     @media (max-width: 580px) {
         width: calc(~"100% - 320px");
-        padding-left: 120px;
     }
 
     @media (max-width: 480px) {
         width: calc(~"100% - 200px");
     }
 
+    @media (max-width: 767px) {
+        position: absolute;
+        padding-left: 120px;
+        margin-left: 0;
+        width: 100%;
+    }
+
     .top-bar-nav {
-        width: calc(~"100% - 50px");
+        width: calc(~"100% - 150px");
         padding: 0 10px;
         &:after {
             right: 40px;
@@ -124,8 +129,13 @@
         padding-top: 20px;
         overflow: hidden;
         margin-left: 0;
-        margin-right: 0;
         width: 36px;
+        margin-right: 10px;
+
+        @media (max-width: 767px) {
+            margin-right: 0;
+        }
+
         @media (max-width: 360px) {
             display: none;
         }
