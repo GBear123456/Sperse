@@ -40,7 +40,7 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
     @Input() showAdvancedColumns = true;
     @Input() highlightUsedRows = false;
     @Input() nameColumnWidth = 350;
-    @Input() balanceColumnWidth = 'auto';
+    @Input() balanceColumnWidth;
     @Input() height;
     @Input() showColumnHeaders = false;
     @Input() allowUpdateAccount = false;

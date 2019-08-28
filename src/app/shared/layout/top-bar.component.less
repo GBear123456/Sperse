@@ -1,11 +1,9 @@
 :host {
     top: 0;
-    position: absolute;
     display: flex;
     padding-left: 20px;
     justify-content: flex-start;
-    width: calc(~"100% - 430px");
-    margin-left: 220px;
+    width: calc(~"100% - 348px");
     white-space: nowrap;
     height: 75px;
 
@@ -18,8 +16,10 @@
     }
 
     @media (max-width: 767px) {
+        position: absolute;
         padding-left: 120px;
         margin-left: 0;
+        width: 100%;
     }
 
     .top-bar-nav {
