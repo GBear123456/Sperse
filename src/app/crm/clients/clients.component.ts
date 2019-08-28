@@ -8,7 +8,7 @@ import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import 'devextreme/data/odata/store';
 import { Store, select } from '@ngrx/store';
 import { Observable } from 'rxjs';
-import { first, finalize } from 'rxjs/operators';
+import { first, finalize, takeUntil } from 'rxjs/operators';
 import * as _ from 'underscore';
 
 /** Application imports */
@@ -45,7 +45,13 @@ import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calenda
 import { FilterCheckBoxesComponent } from '@shared/filters/check-boxes/filter-check-boxes.component';
 import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-boxes.model';
 import { FilterRangeComponent } from '@shared/filters/range/filter-range.component';
-import { CreateContactEmailInput, ContactServiceProxy, ContactEmailServiceProxy, ContactStatusDto } from '@shared/service-proxies/service-proxies';
+import {
+    CreateContactEmailInput,
+    ContactServiceProxy,
+    ContactEmailServiceProxy,
+    ContactStatusDto,
+    OrganizationUnitDto
+} from '@shared/service-proxies/service-proxies';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { CustomReuseStrategy } from '@root/root-routing.module';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
@@ -57,6 +63,8 @@ import { ImpersonationService } from '@app/admin/users/impersonation.service';
 import { AppPermissions } from '@shared/AppPermissions';
 import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
 import { DataGridService } from '@app/shared/common/data-grid.service.ts/data-grid.service';
+import { OrganizationUnitsStoreActions, OrganizationUnitsStoreSelectors } from '@app/crm/store';
+import { DataGridHelper } from '@app/crm/shared/helpers/data-grid.helper';
 
 @Component({
     templateUrl: './clients.component.html',
@@ -77,10 +85,11 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     private readonly dataSourceURI: string = 'Customer';
     private filters: FilterModel[];
     private rootComponent: any;
-    private formatting = AppConsts.formatting;
     private subRouteParams: any;
     private dependencyChanged = false;
+    private organizationUnits: OrganizationUnitDto[];
 
+    formatting = AppConsts.formatting;
     statuses$: Observable<ContactStatusDto[]> = this.store$.pipe(select(StatusesStoreSelectors.getStatuses));
     filterModelLists: FilterModel;
     filterModelTags: FilterModel;
@@ -178,7 +187,18 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             this.dependencyChanged = (lead.Stage == _.last(this._pipelineService.getStages(AppConsts.PipelinePurposeIds.lead)).name);
         });
 
+        this.getOrganizationUnits();
         this.activate();
+    }
+
+    private getOrganizationUnits() {
+        this.store$.dispatch(new OrganizationUnitsStoreActions.LoadRequestAction(false));
+        this.store$.pipe(
+            select(OrganizationUnitsStoreSelectors.getOrganizationUnits),
+            takeUntil(this.lifeCycleSubjectsService.destroy$)
+        ).subscribe((organizationUnits: OrganizationUnitDto[]) => {
+            this.organizationUnits = organizationUnits;
+        });
     }
 
     toggleToolbar() {
@@ -631,6 +651,10 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         }
     }
 
+    getOrganizationUnitName = (e) => {
+        return DataGridHelper.getOrganizationUnitName(e.OrganizationUnitId, this.organizationUnits);
+    }
+
     onCellClick($event) {
         let col = $event.column;
         if (col && (col.command || col.name == 'LinkToCFO'))
@@ -639,6 +663,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     }
 
     ngOnDestroy() {
+        this.lifeCycleSubjectsService.destroy.next();
         this.deactivate();
     }
 

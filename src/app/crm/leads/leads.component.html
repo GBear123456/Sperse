@@ -12,9 +12,7 @@
             <div *dxTemplate="let data of 'selectTemplate'">
                 <div class="select-header">
                     <span>{{data.text}}</span> <i class="dx-dropdowneditor-icon"></i>
-                    <dx-text-box style="display: none"
-                        [readOnly]="true"
-                    ></dx-text-box>
+                    <dx-text-box style="display: none" [readOnly]="true"></dx-text-box>
                 </div>
             </div>
         </dx-select-box>
@@ -68,35 +66,35 @@
                         </dxo-selection>
                         <dxo-editing mode="popup" [popup]="{onShowing: onShowingPopup, height: '0px', width: '0px'}" [allowUpdating]="true"></dxo-editing>
                         <dxi-column [width]="40" [fixed]="true" [fixedPosition]="'left'" [showInColumnChooser]="false" [allowExporting]="false"></dxi-column>
-                        <dxi-column dataField="Id" caption="{{l('Id')}}" cssClass="tabular" [visible]="false" sortOrder="desc"></dxi-column>
-                        <dxi-column dataField="OrganizationUnitId" caption="{{l('Abp.Organizations.OrganizationUnit')}}" cssClass="tabular" [visible]="false"></dxi-column>
+                        <dxi-column dataField="Id" [caption]="l('Id')" cssClass="tabular" [visible]="false" sortOrder="desc"></dxi-column>
+                        <dxi-column dataField="OrganizationUnitId" [calculateDisplayValue]="getOrganizationUnitName" [caption]="l('Abp.Organizations.OrganizationUnit')" cssClass="tabular" [visible]="false"></dxi-column>
                         <dxi-column dataField="PhotoPublicId" caption=" " cellTemplate="photoTemplate"
                             [width]="50" [showInColumnChooser]="false" [allowExporting]="false"
                             [allowGrouping]="false" [allowSorting]="false"></dxi-column>
                         <div *dxTemplate="let data of 'photoTemplate'">
                             <div [ngStyle]="{'background-image': 'url(' + profileService.getContactPhotoUrl(data.data.PhotoPublicId) + ')'}" class="img-circle"></div>
                         </div>
-                        <dxi-column dataField="Name" caption="{{l('Customer.Name')}}"></dxi-column>
-                        <dxi-column dataField="CompanyName" caption="{{l('Customer.CompanyName')}}"></dxi-column>
-                        <dxi-column dataField="Email" caption="{{l('Contact.Email')}}"></dxi-column>
-                        <dxi-column dataField="Phone" caption="{{l('Contact.Phone')}}" cellTemplate="phoneCell" cssClass="tabular"></dxi-column>
-                        <dxi-column dataField="City" caption="{{l('Contact.City')}}"></dxi-column>
-                        <dxi-column dataField="StateId" caption="{{l('Contact.State')}}"></dxi-column>
-                        <dxi-column dataField="Stage" caption="{{l('Stage')}}"></dxi-column>
+                        <dxi-column dataField="Name" [caption]="l('Customer.Name')"></dxi-column>
+                        <dxi-column dataField="CompanyName" [caption]="l('Customer.CompanyName')"></dxi-column>
+                        <dxi-column dataField="Email" [caption]="l('Contact.Email')"></dxi-column>
+                        <dxi-column dataField="Phone" [caption]="l('Contact.Phone')" cellTemplate="phoneCell" cssClass="tabular"></dxi-column>
+                        <dxi-column dataField="City" [caption]="l('Contact.City')"></dxi-column>
+                        <dxi-column dataField="StateId" [caption]="l('Contact.State')"></dxi-column>
+                        <dxi-column dataField="Stage" [caption]="l('Stage')"></dxi-column>
                         <dxi-column dataField="BankCode" cellTemplate="bankCodeCell" [caption]="l('BankCode')" [visible]="userManagementService.checkBankCodeFeature()"></dxi-column>
-                        <dxi-column dataField="CreationTime" caption="{{l('Created')}}" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
-                        <dxi-column dataField="AffiliateCode" caption="{{l('AffiliateCode')}}" [visible]="false"></dxi-column>
-                        <dxi-column dataField="CampaignCode" caption="{{l('CampaignCode')}}" [visible]="false"></dxi-column>
-                        <dxi-column dataField="ChannelCode" caption="{{l('ChannelCode')}}" [visible]="false"></dxi-column>
-                        <dxi-column dataField="EntryUrl" caption="{{l('EntryUrl')}}" [visible]="false"></dxi-column>
-                        <dxi-column dataField="LastModificationTime" caption="{{l('ModificationDate')}}" [visible]="false" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
-                        <dxi-column dataField="LeadRequestDate" caption="{{l('LeadRequestDate')}}" [visible]="false" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
-                        <dxi-column dataField="SourceCode" caption="{{l('SourceCode')}}" [visible]="false"></dxi-column>
-                        <dxi-column dataField="StreetAddress" caption="{{l('Contact.StreetAddress')}}" [visible]="false"></dxi-column>
-                        <dxi-column dataField="ZipCode" caption="{{l('Contact.Zip')}}" [visible]="false" cssClass="tabular"></dxi-column>
-                        <dxi-column dataField="Website" caption="{{l('Website')}}" [visible]="false"></dxi-column>
-                        <dxi-column dataField="PhoneExtension" caption="{{l('Contact.PhoneExtension')}}" [visible]="false" cssClass="tabular"></dxi-column>
-                        <dxi-column dataField="Title" caption="{{l('Title')}}" [visible]="false"></dxi-column>
+                        <dxi-column dataField="CreationTime" [caption]="l('Created')" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
+                        <dxi-column dataField="AffiliateCode" [caption]="l('AffiliateCode')" [visible]="false"></dxi-column>
+                        <dxi-column dataField="CampaignCode" [caption]="l('CampaignCode')" [visible]="false"></dxi-column>
+                        <dxi-column dataField="ChannelCode" [caption]="l('ChannelCode')" [visible]="false"></dxi-column>
+                        <dxi-column dataField="EntryUrl" [caption]="l('EntryUrl')" [visible]="false"></dxi-column>
+                        <dxi-column dataField="LastModificationTime" [caption]="l('ModificationDate')" [visible]="false" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
+                        <dxi-column dataField="LeadRequestDate" [caption]="l('LeadRequestDate')" [visible]="false" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
+                        <dxi-column dataField="SourceCode" [caption]="l('SourceCode')" [visible]="false"></dxi-column>
+                        <dxi-column dataField="StreetAddress" [caption]="l('Contact.StreetAddress')" [visible]="false"></dxi-column>
+                        <dxi-column dataField="ZipCode" [caption]="l('Contact.Zip')" [visible]="false" cssClass="tabular"></dxi-column>
+                        <dxi-column dataField="Website" [caption]="l('Website')" [visible]="false"></dxi-column>
+                        <dxi-column dataField="PhoneExtension" [caption]="l('Contact.PhoneExtension')" [visible]="false" cssClass="tabular"></dxi-column>
+                        <dxi-column dataField="Title" [caption]="l('Title')" [visible]="false"></dxi-column>
                         <div *dxTemplate="let cellData of 'phoneCell'">
                             {{cellData.value | phone}}
                         </div>
