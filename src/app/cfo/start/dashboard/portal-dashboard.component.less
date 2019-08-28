@@ -8,12 +8,6 @@
         }
     }
 
-    &.wide {
-        .right {
-            margin-left: 0;
-        }
-    }
-
     @media (min-width: 768px) {
         /deep/ app-accounts {
             .accounts-list {
@@ -52,7 +46,7 @@
 
     .dashboard-wrapper {
         background-color: #fff;
-        width: 100vw;
+        width: calc(100vw - 322px);
         padding: 0 48px;
 
         /deep/ bank-accounts-widget {
@@ -254,6 +248,16 @@
     }
     /deep/ .dx-scrollable-content {
         background: #FFF;
+    }
+
+    &.wide {
+        .right {
+            margin-left: 0;
+        }
+
+        .dashboard-wrapper {
+            width: 100vw;
+        }
     }
 
     /deep/ .bankBalances {
