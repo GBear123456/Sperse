@@ -1483,6 +1483,66 @@ export class ApplicationServiceProxy {
         }
         return _observableOf<OfferApplicationDto>(<any>null);
     }
+
+    /**
+     * @return Success
+     */
+    postback(campaignId: number, clickId: string, revenue: number): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/PFM/Application/Postback?";
+        if (campaignId === undefined || campaignId === null)
+            throw new Error("The parameter 'campaignId' must be defined and cannot be null.");
+        else
+            url_ += "campaignId=" + encodeURIComponent("" + campaignId) + "&"; 
+        if (clickId === undefined || clickId === null)
+            throw new Error("The parameter 'clickId' must be defined and cannot be null.");
+        else
+            url_ += "clickId=" + encodeURIComponent("" + clickId) + "&"; 
+        if (revenue === undefined || revenue === null)
+            throw new Error("The parameter 'revenue' must be defined and cannot be null.");
+        else
+            url_ += "revenue=" + encodeURIComponent("" + revenue) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processPostback(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processPostback(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processPostback(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
 }
 
 @Injectable()
@@ -17620,6 +17680,61 @@ export class OfferServiceProxy {
     }
 
     /**
+     * @applicationId (optional) 
+     * @return Success
+     */
+    finalizeApplication(applicationId: number | null | undefined): Observable<FinalizeApplicationResponse> {
+        let url_ = this.baseUrl + "/api/services/PFM/Offer/FinalizeApplication?";
+        if (applicationId !== undefined)
+            url_ += "applicationId=" + encodeURIComponent("" + applicationId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processFinalizeApplication(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processFinalizeApplication(<any>response_);
+                } catch (e) {
+                    return <Observable<FinalizeApplicationResponse>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<FinalizeApplicationResponse>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processFinalizeApplication(response: HttpResponseBase): Observable<FinalizeApplicationResponse> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? FinalizeApplicationResponse.fromJS(resultData200) : new FinalizeApplicationResponse();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<FinalizeApplicationResponse>(<any>null);
+    }
+
+    /**
      * @return Success
      */
     getMemberInfo(): Observable<GetMemberInfoResponse> {
@@ -32307,6 +32422,7 @@ export class RegisterApplicantRequest implements IRegisterApplicantRequest {
     systemType!: OfferProviderType;
     testMode!: boolean | undefined;
     newUserPassword!: string | undefined;
+    finalizeLeadUrl!: string | undefined;
     sendWelcomeEmail!: boolean | undefined;
     returnNewUserInfo!: boolean | undefined;
     trackingInformation!: TrackingInformation | undefined;
@@ -32331,6 +32447,7 @@ export class RegisterApplicantRequest implements IRegisterApplicantRequest {
             this.systemType = data["systemType"];
             this.testMode = data["testMode"];
             this.newUserPassword = data["newUserPassword"];
+            this.finalizeLeadUrl = data["finalizeLeadUrl"];
             this.sendWelcomeEmail = data["sendWelcomeEmail"];
             this.returnNewUserInfo = data["returnNewUserInfo"];
             this.trackingInformation = data["trackingInformation"] ? TrackingInformation.fromJS(data["trackingInformation"]) : <any>undefined;
@@ -32355,6 +32472,7 @@ export class RegisterApplicantRequest implements IRegisterApplicantRequest {
         data["systemType"] = this.systemType;
         data["testMode"] = this.testMode;
         data["newUserPassword"] = this.newUserPassword;
+        data["finalizeLeadUrl"] = this.finalizeLeadUrl;
         data["sendWelcomeEmail"] = this.sendWelcomeEmail;
         data["returnNewUserInfo"] = this.returnNewUserInfo;
         data["trackingInformation"] = this.trackingInformation ? this.trackingInformation.toJSON() : <any>undefined;
@@ -32372,6 +32490,7 @@ export interface IRegisterApplicantRequest {
     systemType: OfferProviderType;
     testMode: boolean | undefined;
     newUserPassword: string | undefined;
+    finalizeLeadUrl: string | undefined;
     sendWelcomeEmail: boolean | undefined;
     returnNewUserInfo: boolean | undefined;
     trackingInformation: TrackingInformation | undefined;
@@ -60749,8 +60868,54 @@ export interface ISubmitApplicationOutput {
     applicationId: string | undefined;
 }
 
+export enum FinalizeApplicationStatus {
+    Approved = "Approved", 
+    Declined = "Declined", 
+}
+
+export class FinalizeApplicationResponse implements IFinalizeApplicationResponse {
+    status!: FinalizeApplicationStatus | undefined;
+    redirectUrl!: string | undefined;
+
+    constructor(data?: IFinalizeApplicationResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.status = data["status"];
+            this.redirectUrl = data["redirectUrl"];
+        }
+    }
+
+    static fromJS(data: any): FinalizeApplicationResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new FinalizeApplicationResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["status"] = this.status;
+        data["redirectUrl"] = this.redirectUrl;
+        return data; 
+    }
+}
+
+export interface IFinalizeApplicationResponse {
+    status: FinalizeApplicationStatus | undefined;
+    redirectUrl: string | undefined;
+}
+
 export class GetMemberInfoResponse implements IGetMemberInfoResponse {
     applicantId!: string | undefined;
+    incompleteApplicationId!: number | undefined;
     clickId!: string | undefined;
     firstName!: string | undefined;
     lastName!: string | undefined;
@@ -60779,6 +60944,7 @@ export class GetMemberInfoResponse implements IGetMemberInfoResponse {
     init(data?: any) {
         if (data) {
             this.applicantId = data["applicantId"];
+            this.incompleteApplicationId = data["incompleteApplicationId"];
             this.clickId = data["clickId"];
             this.firstName = data["firstName"];
             this.lastName = data["lastName"];
@@ -60807,6 +60973,7 @@ export class GetMemberInfoResponse implements IGetMemberInfoResponse {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["applicantId"] = this.applicantId;
+        data["incompleteApplicationId"] = this.incompleteApplicationId;
         data["clickId"] = this.clickId;
         data["firstName"] = this.firstName;
         data["lastName"] = this.lastName;
@@ -60828,6 +60995,7 @@ export class GetMemberInfoResponse implements IGetMemberInfoResponse {
 
 export interface IGetMemberInfoResponse {
     applicantId: string | undefined;
+    incompleteApplicationId: number | undefined;
     clickId: string | undefined;
     firstName: string | undefined;
     lastName: string | undefined;
@@ -65700,6 +65868,7 @@ export class UserLoginInfoDto implements IUserLoginInfoDto {
     emailAddress!: string | undefined;
     profilePictureId!: string | undefined;
     profileThumbnailId!: string | undefined;
+    bankCode!: string | undefined;
     id!: number | undefined;
 
     constructor(data?: IUserLoginInfoDto) {
@@ -65719,6 +65888,7 @@ export class UserLoginInfoDto implements IUserLoginInfoDto {
             this.emailAddress = data["emailAddress"];
             this.profilePictureId = data["profilePictureId"];
             this.profileThumbnailId = data["profileThumbnailId"];
+            this.bankCode = data["bankCode"];
             this.id = data["id"];
         }
     }
@@ -65738,6 +65908,7 @@ export class UserLoginInfoDto implements IUserLoginInfoDto {
         data["emailAddress"] = this.emailAddress;
         data["profilePictureId"] = this.profilePictureId;
         data["profileThumbnailId"] = this.profileThumbnailId;
+        data["bankCode"] = this.bankCode;
         data["id"] = this.id;
         return data; 
     }
@@ -65750,6 +65921,7 @@ export interface IUserLoginInfoDto {
     emailAddress: string | undefined;
     profilePictureId: string | undefined;
     profileThumbnailId: string | undefined;
+    bankCode: string | undefined;
     id: number | undefined;
 }
 
@@ -67397,6 +67569,7 @@ export interface IIntegrationsSettings {
 
 export class EPCVIPOfferProviderSettings implements IEPCVIPOfferProviderSettings {
     apiKey!: string | undefined;
+    notificationApiKey!: string | undefined;
 
     constructor(data?: IEPCVIPOfferProviderSettings) {
         if (data) {
@@ -67410,6 +67583,7 @@ export class EPCVIPOfferProviderSettings implements IEPCVIPOfferProviderSettings
     init(data?: any) {
         if (data) {
             this.apiKey = data["apiKey"];
+            this.notificationApiKey = data["notificationApiKey"];
         }
     }
 
@@ -67423,12 +67597,14 @@ export class EPCVIPOfferProviderSettings implements IEPCVIPOfferProviderSettings
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["apiKey"] = this.apiKey;
+        data["notificationApiKey"] = this.notificationApiKey;
         return data; 
     }
 }
 
 export interface IEPCVIPOfferProviderSettings {
     apiKey: string | undefined;
+    notificationApiKey: string | undefined;
 }
 
 export class BaseCommercePaymentSettings implements IBaseCommercePaymentSettings {
