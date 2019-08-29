@@ -1,63 +1,64 @@
-<dx-drop-down-box
-    *ngIf="_layoutService.showPlatformSelectMenu && activeModuleCount > 1"
-    width="760px"
-    [value]="module"
-    (onInitialized)="onDropDownInit($event)">
-    <div *dxTemplate="let data of 'content'" class="platform-select-wrapper">
-        <div class="top-row">
-            <ul class="top__items">
-                <li class="top__item {{item.code | lowercase }}" *ngFor="let item of modules.topItems">
-                    <a (click)="onItemClick(item)"
-                       [class]="isDisabled(item.name) || item.isComingSoon || (item.name == 'CFO' && !permission.isGranted(permissions.CFOMainInstanceAccess)) ? 'top__link disabled' : 'top__link'">
-                        <h2 class="top__item_title">
-                            <img src="./assets/common/images/platform-select/{{ item.name | lowercase }}.svg"
-                                 class="top__item_title-image"
-                                 [alt]="item.name">
-                            {{item.name}}
-                        </h2>
-                        <div class="top__item_descr">
-                            {{l(item.code + 'ModuleDescription')}}
-                        </div>
-                        <div class="top__item_image-wrapper">
-                            <img src="./assets/common/images/platform-select/{{ item.name | lowercase }}.png"
-                                 class="top__item_image"
-                                 width="210"
-                                 height="139"
-                                 [alt]="item.name">
-                        </div>
-                        <div class="coming-soon" *ngIf="item.isComingSoon">
-                            Coming soon...
-                        </div>
-                    </a>
-                </li>
-            </ul>
-        </div>
+<div class="platform-select-component" *ngIf="_layoutService.showPlatformSelectMenu && activeModuleCount > 1">
+    <dx-drop-down-box
+        width="760px"
+        [value]="module"
+        (onInitialized)="onDropDownInit($event)">
+        <div *dxTemplate="let data of 'content'" class="platform-select-wrapper">
+            <div class="top-row">
+                <ul class="top__items">
+                    <li class="top__item {{item.code | lowercase }}" *ngFor="let item of modules.topItems">
+                        <a (click)="onItemClick(item)"
+                           [class]="isDisabled(item.name) || item.isComingSoon || (item.name == 'CFO' && !permission.isGranted(permissions.CFOMainInstanceAccess)) ? 'top__link disabled' : 'top__link'">
+                            <h2 class="top__item_title">
+                                <img src="./assets/common/images/platform-select/{{ item.name | lowercase }}.svg"
+                                     class="top__item_title-image"
+                                     [alt]="item.name">
+                                {{item.name}}
+                            </h2>
+                            <div class="top__item_descr">
+                                {{l(item.code + 'ModuleDescription')}}
+                            </div>
+                            <div class="top__item_image-wrapper">
+                                <img src="./assets/common/images/platform-select/{{ item.name | lowercase }}.png"
+                                     class="top__item_image"
+                                     width="210"
+                                     height="139"
+                                     [alt]="item.name">
+                            </div>
+                            <div class="coming-soon" *ngIf="item.isComingSoon">
+                                Coming soon...
+                            </div>
+                        </a>
+                    </li>
+                </ul>
+            </div>
 
-        <div class="menu-row">
-            <ul class="menu__items">
-                <li class="menu__item {{item.code | lowercase }}" *ngFor="let item of modules.items">
-                    <a (click)="onItemClick(item)"
-                       [class]="isDisabled(item.name) || item.isComingSoon ? 'menu__link disabled' : 'menu__link'">
-                        <h2 class="menu__item_title">{{item.name}}</h2>
-                        <div class="menu__item_descr">
-                            {{l(item.code + 'ModuleDescription')}}
-                        </div>
-                        <div class="coming-soon" *ngIf="item.isComingSoon">
-                            Coming soon...
-                        </div>
-                    </a>
-                </li>
-            </ul>
-        </div>
+            <div class="menu-row">
+                <ul class="menu__items">
+                    <li class="menu__item {{item.code | lowercase }}" *ngFor="let item of modules.items">
+                        <a (click)="onItemClick(item)"
+                           [class]="isDisabled(item.name) || item.isComingSoon ? 'menu__link disabled' : 'menu__link'">
+                            <h2 class="menu__item_title">{{item.name}}</h2>
+                            <div class="menu__item_descr">
+                                {{l(item.code + 'ModuleDescription')}}
+                            </div>
+                            <div class="coming-soon" *ngIf="item.isComingSoon">
+                                Coming soon...
+                            </div>
+                        </a>
+                    </li>
+                </ul>
+            </div>
 
-        <footer>
-            <ul class="footer__items">
-                <li class="footer__item {{item.code | lowercase }}" *ngFor="let item of modules.footerItems">
-                    <a class="footer__link" (click)="onItemClick(item)">
-                        {{l(item.name + 'FooterModuleText')}}
-                    </a>
-                </li>
-            </ul>
-        </footer>
-    </div>
-</dx-drop-down-box>
+            <footer>
+                <ul class="footer__items">
+                    <li class="footer__item {{item.code | lowercase }}" *ngFor="let item of modules.footerItems">
+                        <a class="footer__link" (click)="onItemClick(item)">
+                            {{l(item.name + 'FooterModuleText')}}
+                        </a>
+                    </li>
+                </ul>
+            </footer>
+        </div>
+    </dx-drop-down-box>
+</div>

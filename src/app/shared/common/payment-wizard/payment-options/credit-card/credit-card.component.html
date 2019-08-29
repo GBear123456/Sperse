@@ -91,7 +91,6 @@
                 placeholder="ADDRESS"
                 formControlName="billingAddress"
                 (postal_code)="creditCardData.controls.billingZip.setValue($event)"
-                (city)="creditCardData.controls.billingCity.setValue($event)"
                 (setAddress)="setBillingAddress($event)"
                 angularGooglePlace />
             <mat-error *ngIf="creditCardData.controls.billingAddress.touched && creditCardData.controls.billingAddress.invalid">

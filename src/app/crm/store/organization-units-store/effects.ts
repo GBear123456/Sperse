@@ -9,16 +9,15 @@ import { catchError, exhaustMap, map, withLatestFrom } from 'rxjs/operators';
 
 /** Application imports */
 import * as organizationUnitsActions from './actions';
-import { OrganizationUnitServiceProxy, OrganizationUnitDto } from 'shared/service-proxies/service-proxies';
+import { DictionaryServiceProxy, OrganizationUnitShortDto } from 'shared/service-proxies/service-proxies';
 import { State } from './state';
 import { getLoadedTime } from './selectors';
 import { StoreHelper } from '@root/store/store.helper';
 import { AppConsts } from '@shared/AppConsts';
-import { OrganizationUnitDtoListResultDto } from '@shared/service-proxies/service-proxies';
 
 @Injectable()
 export class OrganizationUnitsEffects {
-    constructor(private organizationUnitServiceProxy: OrganizationUnitServiceProxy,
+    constructor(private dictionaryServiceProxy: DictionaryServiceProxy,
                 private actions$: Actions,
                 private store$: Store<State>) {}
 
@@ -32,10 +31,10 @@ export class OrganizationUnitsEffects {
                 return empty();
             }
 
-            return this.organizationUnitServiceProxy.getOrganizationUnits()
+            return this.dictionaryServiceProxy.getOrganizationUnits()
                 .pipe(
-                    map((organizationUnitsList: OrganizationUnitDtoListResultDto) => {
-                        return new organizationUnitsActions.LoadSuccessAction(organizationUnitsList.items);
+                map((organizationUnitsList: OrganizationUnitShortDto[]) => {
+                        return new organizationUnitsActions.LoadSuccessAction(organizationUnitsList);
                     }),
                     catchError(err => {
                         return of(new organizationUnitsActions.LoadFailureAction(err));

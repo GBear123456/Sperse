@@ -158,13 +158,6 @@ body.advice-period .cdk-overlay-pane.user-info app-modal-dialog .mat-dialog-head
   color: #000!important;
   background: transparent!important;
 }
-body.advice-period .cdk-overlay-pane.footer-slider modal-dialog .mat-dialog-header button,
-body.advice-period .cdk-overlay-pane.user-info modal-dialog .mat-dialog-header button,
-body.advice-period .cdk-overlay-pane.footer-slider app-modal-dialog .mat-dialog-header button,
-body.advice-period .cdk-overlay-pane.user-info app-modal-dialog .mat-dialog-header button {
-  border-radius: 5px!important;
-  margin-right: 10px!important;
-}
 @media all and (max-width: 600px) {
   body.advice-period .cdk-overlay-pane.footer-slider,
   body.advice-period .cdk-overlay-pane.user-info {

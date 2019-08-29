@@ -7,7 +7,6 @@
     </div>
 
     <div class="page-content-wrapper">
-        <contact-info-panel *ngIf="appService.showContactInfoPanel" [data]="appService.contactInfo"></contact-info-panel>
         <app-toolbar
             [config]="appService.toolbarConfig"
             [hidden]="!appService.toolbarConfig || appService.toolbarIsHidden">

@@ -188,6 +188,11 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     ngOnInit() {
+        this.loadOrganizationUnits();
+        this.activate();
+    }
+
+    private loadOrganizationUnits() {
         this.store$.dispatch(new OrganizationUnitsStoreActions.LoadRequestAction(false));
         this.store$.pipe(
             select(OrganizationUnitsStoreSelectors.getOrganizationUnits),
@@ -195,7 +200,6 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         ).subscribe((organizationUnits: OrganizationUnitDto[]) => {
             this.organizationUnits = organizationUnits;
         });
-        this.activate();
     }
 
     getOrganizationUnitName = (e) => {

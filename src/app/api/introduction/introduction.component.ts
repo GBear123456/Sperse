@@ -1,18 +1,22 @@
+/** Core imports */
 import { Component, OnInit, OnDestroy, Injector } from '@angular/core';
-import { AppComponentBase } from '@shared/common/app-component-base';
 
+/** Third party imports */
+import { MatDialog } from '@angular/material/dialog';
 import { ClipboardService } from 'ngx-clipboard';
+import remove from 'lodash/remove';
+
+/** Application imports */
+import { AppComponentBase } from '@shared/common/app-component-base';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { ApiKeyServiceProxy, ApiKeyInfo, GenerateApiKeyInput } from '@shared/service-proxies/service-proxies';
-import { MatDialog } from '@angular/material/dialog';
 import { EditKeyDialog } from '@app/api/introduction/add-key-dialog/add-key-dialog.component';
-import remove from 'lodash/remove';
 
 @Component({
     templateUrl: './introduction.component.html',
     styleUrls: ['./introduction.component.less'],
     animations: [appModuleAnimation()],
-    providers: [ApiKeyServiceProxy]
+    providers: [ ApiKeyServiceProxy ]
 })
 export class IntroductionComponent extends AppComponentBase implements OnInit, OnDestroy {
     public headlineConfig = {
@@ -23,11 +27,12 @@ export class IntroductionComponent extends AppComponentBase implements OnInit, O
 
     public apiKeys: ApiKeyInfo[];
     private elementForBlocking: Element;
+    scrollHeight: number = window.innerHeight - 149;
 
     constructor(injector: Injector,
         public dialog: MatDialog,
-        private _apiKeyService: ApiKeyServiceProxy,
-        private _clipboardService: ClipboardService) {
+        private apiKeyService: ApiKeyServiceProxy,
+        private clipboardService: ClipboardService) {
         super(injector);
     }
 
@@ -36,7 +41,7 @@ export class IntroductionComponent extends AppComponentBase implements OnInit, O
             .afterClosed()
             .subscribe((result: GenerateApiKeyInput) => {
                 if (result) {
-                    this._apiKeyService.generate(result).subscribe(result => {
+                    this.apiKeyService.generate(result).subscribe(result => {
                         if (!this.apiKeys) this.apiKeys = [];
                         this.apiKeys.unshift(result);
                         abp.notify.success(this.l('SuccessfullySaved'));
@@ -54,7 +59,7 @@ export class IntroductionComponent extends AppComponentBase implements OnInit, O
 
     loadApiKeys() {
         abp.ui.setBusy(this.elementForBlocking);
-        this._apiKeyService.getAll(undefined)
+        this.apiKeyService.getAll(undefined)
             .subscribe((apiKeys) => {
                 abp.ui.clearBusy(this.elementForBlocking);
 
@@ -66,7 +71,7 @@ export class IntroductionComponent extends AppComponentBase implements OnInit, O
         abp.message.confirm('', this.l('DeleteConfiramtion'), result => {
             if (result) {
                 abp.ui.setBusy(this.elementForBlocking);
-                this._apiKeyService.delete(data.key)
+                this.apiKeyService.delete(data.key)
                     .subscribe(() => {
                         abp.ui.clearBusy(this.elementForBlocking);
                         if (this.apiKeys.length == 1)
@@ -76,12 +81,12 @@ export class IntroductionComponent extends AppComponentBase implements OnInit, O
 
                         abp.notify.info(this.l('SuccessfullyDeleted'));
                     });
-            };
+            }
         });
     }
 
     copyToClipboard(text) {
-        this._clipboardService.copyFromContent(text);
+        this.clipboardService.copyFromContent(text);
         abp.notify.info(this.l('Copied'));
     }
 

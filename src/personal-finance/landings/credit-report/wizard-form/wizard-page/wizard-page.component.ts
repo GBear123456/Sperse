@@ -5,8 +5,7 @@ import { Component, ViewChild, OnInit, Injector } from '@angular/core';
 import { Store, select } from '@ngrx/store';
 import { finalize } from 'rxjs/operators';
 import * as moment from 'moment';
-import * as _ from 'underscore';
-import { AngularGooglePlaceService } from '@node_modules/angular-google-place';
+import { AngularGooglePlaceService } from 'angular-google-place';
 
 /** Application imports */
 import { RootStore, StatesStoreActions, StatesStoreSelectors } from '@root/store';
@@ -29,12 +28,13 @@ import { RegisterModel } from './register.model';
 import { v4 as UUID } from 'uuid';
 import { PackageIdService } from '../../../../shared/common/packages/package-id.service';
 import { InputStatusesService } from '@shared/utils/input-statuses.service';
+import { GooglePlaceHelper } from '@shared/helpers/GooglePlaceHelper';
 
 @Component({
     selector: 'app-wizard-page',
     templateUrl: 'wizard-page.component.html',
     styleUrls: ['wizard-page.component.less'],
-    providers: [ ApplicationServiceProxy, MemberServiceProxy, LoginService ]
+    providers: [ ApplicationServiceProxy, GooglePlaceHelper, MemberServiceProxy, LoginService ]
 })
 export class CreditWizardPageComponent extends AppComponentBase implements OnInit {
     @ViewChild(WizardComponent) mWizard: WizardComponent;
@@ -96,7 +96,8 @@ export class CreditWizardPageComponent extends AppComponentBase implements OnIni
         private _memberService: MemberServiceProxy,
         private _angularGooglePlaceService: AngularGooglePlaceService,
         public inputStatusesService: InputStatusesService,
-        private store$: Store<RootStore.State>
+        private store$: Store<RootStore.State>,
+        private googlePlaceHelper: GooglePlaceHelper
     ) {
         super(injector);
         this.minAge = this.minDate.setFullYear(this.minDate.getFullYear() - 18);
@@ -268,6 +269,7 @@ export class CreditWizardPageComponent extends AppComponentBase implements OnIni
     onAddressChanged(event) {
         let number = this._angularGooglePlaceService.street_number(event.address_components);
         let street = this._angularGooglePlaceService.street(event.address_components);
+        this.model.address.stateId = this.googlePlaceHelper.getState(event.address_components);
         this.payment.bankCard.billingAddress = number ? (number + ' ' + street) : street;
     }
 
@@ -275,11 +277,6 @@ export class CreditWizardPageComponent extends AppComponentBase implements OnIni
         countryName == 'United States' ?
             this.country = AppConsts.defaultCountryName :
             this.country = countryName;
-    }
-
-    getStateCodeFromName(e) {
-        let state = _.findWhere(this.states, { name: e });
-        return (state && state.code) || null;
     }
 
     addressInfoSubmit(event) {
