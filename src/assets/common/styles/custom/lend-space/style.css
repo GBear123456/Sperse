@@ -87,7 +87,7 @@ body.lend-space .accountsContainer {
 }
 body.lend-space .accountsContainer .row {
   width: auto !important;
-  height: calc(-46vh);
+  height: calc(100vh - 146px);
 }
 body.lend-space .accountsContainer .sidebar {
   padding-left: 0;
@@ -192,13 +192,6 @@ body.lend-space .cdk-overlay-pane.footer-slider app-modal-dialog .mat-dialog-hea
 body.lend-space .cdk-overlay-pane.user-info app-modal-dialog .mat-dialog-header input {
   color: #FFF!important;
   background: transparent!important;
-}
-body.lend-space .cdk-overlay-pane.footer-slider modal-dialog .mat-dialog-header button,
-body.lend-space .cdk-overlay-pane.user-info modal-dialog .mat-dialog-header button,
-body.lend-space .cdk-overlay-pane.footer-slider app-modal-dialog .mat-dialog-header button,
-body.lend-space .cdk-overlay-pane.user-info app-modal-dialog .mat-dialog-header button {
-  border-radius: 5px!important;
-  margin-right: 10px!important;
 }
 body.lend-space .cdk-overlay-pane.footer-slider modal-dialog mat-dialog-content,
 body.lend-space .cdk-overlay-pane.user-info modal-dialog mat-dialog-content,
