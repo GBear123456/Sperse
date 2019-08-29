@@ -14,7 +14,7 @@ import { MatDialog } from '@angular/material/dialog';
 import DataSource from 'devextreme/data/data_source';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { Store, select } from '@ngrx/store';
-import { first } from 'rxjs/operators';
+import { first, takeUntil } from 'rxjs/operators';
 import { CacheService } from 'ng2-cache-service';
 
 /** Application imports */
@@ -29,7 +29,7 @@ import {
     StarsStoreSelectors,
     RatingsStoreSelectors
 } from '@app/store';
-import { PipelinesStoreSelectors } from '@app/crm/store';
+import { OrganizationUnitsStoreSelectors, PipelinesStoreSelectors } from '@app/crm/store';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { FiltersService } from '@shared/filters/filters.service';
 import { FilterHelpers } from '../shared/helpers/filter.helper';
@@ -43,7 +43,7 @@ import { FilterRangeComponent } from '@shared/filters/range/filter-range.compone
 import { FilterStatesComponent } from '@shared/filters/states/filter-states.component';
 import { FilterStatesModel } from '@shared/filters/states/filter-states.model';
 import { DataLayoutType } from '@app/shared/layout/data-layout-type';
-import { LeadServiceProxy, ContactServiceProxy } from '@shared/service-proxies/service-proxies';
+import { LeadServiceProxy, ContactServiceProxy, OrganizationUnitDto } from '@shared/service-proxies/service-proxies';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { CreateClientDialogComponent } from '../shared/create-client-dialog/create-client-dialog.component';
 import { PipelineComponent } from '@app/shared/pipeline/pipeline.component';
@@ -62,6 +62,8 @@ import { ContactsService } from '@app/crm/contacts/contacts.service';
 import { AppPermissions } from '@shared/AppPermissions';
 import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
 import { DataGridService } from '@app/shared/common/data-grid.service.ts/data-grid.service';
+import { OrganizationUnitsStoreActions } from '@app/crm/store';
+import { DataGridHelper } from '@app/crm/shared/helpers/data-grid.helper';
 
 @Component({
     templateUrl: './leads.component.html',
@@ -145,6 +147,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     permissions = AppPermissions;
 
     private readonly CONTACT_GROUP_CACHE_KEY = 'CONTACT_GROUP';
+    private organizationUnits: OrganizationUnitDto[];
 
     constructor(injector: Injector,
         public dialog: MatDialog,
@@ -182,6 +185,25 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             }
         };
         this.searchValue = '';
+    }
+
+    ngOnInit() {
+        this.store$.dispatch(new OrganizationUnitsStoreActions.LoadRequestAction(false));
+        this.store$.pipe(
+            select(OrganizationUnitsStoreSelectors.getOrganizationUnits),
+            takeUntil(this.lifeCycleSubjectsService.destroy$)
+        ).subscribe((organizationUnits: OrganizationUnitDto[]) => {
+            this.organizationUnits = organizationUnits;
+        });
+        this.activate();
+    }
+
+    getOrganizationUnitName = (e) => {
+        return DataGridHelper.getOrganizationUnitName(e.OrganizationUnitId, this.organizationUnits);
+    }
+
+    ngAfterViewInit() {
+        this.initDataSource();
     }
 
     toggleToolbar() {
@@ -363,6 +385,19 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                             {
                                 dataSource$: this.store$.pipe(this.getAssignedUsersSelector()),
                                 nameField: 'name',
+                                keyExpr: 'id'
+                            })
+                    }
+                }),
+                new FilterModel({
+                    component: FilterCheckBoxesComponent,
+                    caption: 'OrganizationUnitId',
+                    field: 'OrganizationUnitId',
+                    items: {
+                        element: new FilterCheckBoxesModel(
+                            {
+                                dataSource$: this.store$.pipe(select(OrganizationUnitsStoreSelectors.getOrganizationUnits)),
+                                nameField: 'displayName',
                                 keyExpr: 'id'
                             })
                     }
@@ -695,6 +730,10 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         return FilterHelpers.filterBySetOfValues(filter);
     }
 
+    filterByOrganizationUnitId(filter: FilterModel) {
+        return FilterHelpers.filterBySetOfValues(filter);
+    }
+
     filterByList(filter: FilterModel) {
         return FilterHelpers.filterBySetOfValues(filter);
     }
@@ -881,16 +920,9 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         });
     }
 
-    ngOnInit() {
-        this.activate();
-    }
-
-    ngAfterViewInit() {
-        this.initDataSource();
-    }
-
     ngOnDestroy() {
         this.deactivate();
+        this.lifeCycleSubjectsService.destroy.next();
     }
 
     activate() {
