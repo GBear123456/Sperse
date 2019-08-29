@@ -2,27 +2,29 @@
     <app-headline [config]="headlineConfig"></app-headline>
     <div class="content">
         <setup-steps></setup-steps>
-        <div class="api-into portlet light no-padding margin-bottom-0">
-            <api-welcome (onAddApiKey)="addApiKey()" [small]="apiKeys"></api-welcome>
-            <div *ngIf="apiKeys">
-                <dx-data-grid id="gridContainer"
-                              keyExpr="id"
-                              [dataSource]="apiKeys">
-                    <dxi-column dataField="name" caption="{{l('ApiKey_Name')}}"></dxi-column>
-                    <dxi-column dataField="key" caption="{{l('ApiKey_Key')}}" cellTemplate="keyTemplate" [width]="400"></dxi-column>
-                    <dxi-column dataField="expirationDate" caption="{{l('ApiKey_ExpirationDate')}}" dataType="date" [width]="150"></dxi-column>
-                    <dxi-column dataField="creationTime" caption="{{l('CreationTime')}}" dataType="date" [width]="150"></dxi-column>
-                    <dxi-column dataField="userName" caption="{{l('UserName')}}"></dxi-column>
-                    <dxi-column [width]="100" [allowFiltering]="false" [allowSorting]="false" [allowReordering]="false" [visible]="canManageApiKeys" cellTemplate="editDeleteTemplate"></dxi-column>
-                    <div *dxTemplate="let data of 'editDeleteTemplate'">
-                        <a class="dx-link" (click)="deleteApiKey(data)">{{l('Delete')}}</a>
-                    </div>
-                    <div *dxTemplate="let data of 'keyTemplate'" class="key-container">
-                        <span title="{{data.data.key}}">{{data.data.key}}</span>
-                        <i class="fa fa-copy" (click)="copyToClipboard(data.data.key)"></i>
-                    </div>
-                </dx-data-grid>
+        <dx-scroll-view showScrollbar="onHover" [height]="scrollHeight">
+            <div class="api-into portlet light no-padding margin-bottom-0">
+                <api-welcome (onAddApiKey)="addApiKey()" [small]="apiKeys"></api-welcome>
+                <div *ngIf="apiKeys">
+                    <dx-data-grid id="gridContainer"
+                                  keyExpr="id"
+                                  [dataSource]="apiKeys">
+                        <dxi-column dataField="name" [caption]="l('ApiKey_Name')"></dxi-column>
+                        <dxi-column dataField="key" [caption]="l('ApiKey_Key')" cellTemplate="keyTemplate" [width]="400"></dxi-column>
+                        <dxi-column dataField="expirationDate" [caption]="l('ApiKey_ExpirationDate')" dataType="date" [width]="150"></dxi-column>
+                        <dxi-column dataField="creationTime" [caption]="l('CreationTime')" dataType="date" [width]="150"></dxi-column>
+                        <dxi-column dataField="userName" [caption]="l('UserName')"></dxi-column>
+                        <dxi-column [width]="100" [allowFiltering]="false" [allowSorting]="false" [allowReordering]="false" [visible]="canManageApiKeys" cellTemplate="editDeleteTemplate"></dxi-column>
+                        <div *dxTemplate="let data of 'editDeleteTemplate'">
+                            <a class="dx-link" (click)="deleteApiKey(data)">{{l('Delete')}}</a>
+                        </div>
+                        <div *dxTemplate="let data of 'keyTemplate'" class="key-container">
+                            <span [title]="data.data.key">{{data.data.key}}</span>
+                            <i class="fa fa-copy" (click)="copyToClipboard(data.data.key)"></i>
+                        </div>
+                    </dx-data-grid>
+                </div>
             </div>
-        </div>
+        </dx-scroll-view>
     </div>
 </div>
