@@ -344,6 +344,19 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                                 })
                         }
                     }),
+                    new FilterModel({
+                        component: FilterCheckBoxesComponent,
+                        caption: 'OrganizationUnitId',
+                        field: 'OrganizationUnitId',
+                        items: {
+                            element: new FilterCheckBoxesModel(
+                                {
+                                    dataSource$: this.store$.pipe(select(OrganizationUnitsStoreSelectors.getOrganizationUnits)),
+                                    nameField: 'displayName',
+                                    keyExpr: 'id'
+                                })
+                        }
+                    }),
                     this.filterModelLists = new FilterModel({
                         component: FilterCheckBoxesComponent,
                         caption: 'List',
@@ -595,6 +608,10 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     }
 
     filterByAssignedUser(filter: FilterModel) {
+        return FilterHelpers.filterBySetOfValues(filter);
+    }
+
+    filterByOrganizationUnitId(filter: FilterModel) {
         return FilterHelpers.filterBySetOfValues(filter);
     }
 

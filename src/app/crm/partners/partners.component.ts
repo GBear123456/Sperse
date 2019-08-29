@@ -161,6 +161,13 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         });
     }
 
+    ngOnInit() {
+        this.getStatuses();
+        this.getPartnerTypes();
+        this.getOrganizationUnits();
+        this.activate();
+    }
+
     toggleToolbar() {
         this._appService.toolbarToggle();
         setTimeout(() => this.dataGrid.instance.repaint(), 0);
@@ -320,6 +327,19 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                                 {
                                     dataSource$: this.store$.pipe(this.getAssignedUsersSelector()),
                                     nameField: 'name',
+                                    keyExpr: 'id'
+                                })
+                        }
+                    }),
+                    new FilterModel({
+                        component: FilterCheckBoxesComponent,
+                        caption: 'OrganizationUnitId',
+                        field: 'OrganizationUnitId',
+                        items: {
+                            element: new FilterCheckBoxesModel(
+                                {
+                                    dataSource$: this.store$.pipe(select(OrganizationUnitsStoreSelectors.getOrganizationUnits)),
+                                    nameField: 'displayName',
                                     keyExpr: 'id'
                                 })
                         }
@@ -589,6 +609,10 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         return FilterHelpers.filterBySetOfValues(filter);
     }
 
+    filterByOrganizationUnitId(filter: FilterModel) {
+        return FilterHelpers.filterBySetOfValues(filter);
+    }
+
     filterByList(filter: FilterModel) {
         return FilterHelpers.filterBySetOfValues(filter);
     }
@@ -680,13 +704,6 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         if (col && (col.command || col.name == 'LinkToCFO'))
             return;
         this.showPartnerDetails($event);
-    }
-
-    ngOnInit() {
-        this.getStatuses();
-        this.getPartnerTypes();
-        this.getOrganizationUnits();
-        this.activate();
     }
 
     ngOnDestroy() {
