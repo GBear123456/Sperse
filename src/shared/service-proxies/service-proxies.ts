@@ -1483,66 +1483,6 @@ export class ApplicationServiceProxy {
         }
         return _observableOf<OfferApplicationDto>(<any>null);
     }
-
-    /**
-     * @return Success
-     */
-    postback(campaignId: number, clickId: string, revenue: number): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/PFM/Application/Postback?";
-        if (campaignId === undefined || campaignId === null)
-            throw new Error("The parameter 'campaignId' must be defined and cannot be null.");
-        else
-            url_ += "campaignId=" + encodeURIComponent("" + campaignId) + "&"; 
-        if (clickId === undefined || clickId === null)
-            throw new Error("The parameter 'clickId' must be defined and cannot be null.");
-        else
-            url_ += "clickId=" + encodeURIComponent("" + clickId) + "&"; 
-        if (revenue === undefined || revenue === null)
-            throw new Error("The parameter 'revenue' must be defined and cannot be null.");
-        else
-            url_ += "revenue=" + encodeURIComponent("" + revenue) + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-            })
-        };
-
-        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processPostback(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processPostback(<any>response_);
-                } catch (e) {
-                    return <Observable<void>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<void>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processPostback(response: HttpResponseBase): Observable<void> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(<any>null);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<void>(<any>null);
-    }
 }
 
 @Injectable()
@@ -67570,6 +67510,7 @@ export interface IIntegrationsSettings {
 export class EPCVIPOfferProviderSettings implements IEPCVIPOfferProviderSettings {
     apiKey!: string | undefined;
     notificationApiKey!: string | undefined;
+    postbackPassCode!: string | undefined;
 
     constructor(data?: IEPCVIPOfferProviderSettings) {
         if (data) {
@@ -67584,6 +67525,7 @@ export class EPCVIPOfferProviderSettings implements IEPCVIPOfferProviderSettings
         if (data) {
             this.apiKey = data["apiKey"];
             this.notificationApiKey = data["notificationApiKey"];
+            this.postbackPassCode = data["postbackPassCode"];
         }
     }
 
@@ -67598,6 +67540,7 @@ export class EPCVIPOfferProviderSettings implements IEPCVIPOfferProviderSettings
         data = typeof data === 'object' ? data : {};
         data["apiKey"] = this.apiKey;
         data["notificationApiKey"] = this.notificationApiKey;
+        data["postbackPassCode"] = this.postbackPassCode;
         return data; 
     }
 }
@@ -67605,6 +67548,7 @@ export class EPCVIPOfferProviderSettings implements IEPCVIPOfferProviderSettings
 export interface IEPCVIPOfferProviderSettings {
     apiKey: string | undefined;
     notificationApiKey: string | undefined;
+    postbackPassCode: string | undefined;
 }
 
 export class BaseCommercePaymentSettings implements IBaseCommercePaymentSettings {
