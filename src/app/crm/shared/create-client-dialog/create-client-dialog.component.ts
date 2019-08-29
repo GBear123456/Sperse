@@ -16,7 +16,7 @@ import { DxContextMenuComponent } from 'devextreme-angular/ui/context-menu';
 import { CacheService } from 'ng2-cache-service';
 import { finalize, filter } from 'rxjs/operators';
 import * as _ from 'underscore';
-import { AngularGooglePlaceService } from '@node_modules/angular-google-place';
+import { AngularGooglePlaceService } from 'angular-google-place';
 
 /** Application imports */
 import { NameParserService } from '@app/crm/shared/name-parser/name-parser.service';
@@ -63,6 +63,7 @@ import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.
 import { ToolbarService } from '@app/shared/common/toolbar/toolbar.service';
 import { ContactsService } from '@app/crm/contacts/contacts.service';
 import { AppPermissions } from '@shared/AppPermissions';
+import { GooglePlaceHelper } from '@shared/helpers/GooglePlaceHelper';
 
 @Component({
     templateUrl: 'create-client-dialog.component.html',
@@ -71,7 +72,7 @@ import { AppPermissions } from '@shared/AppPermissions';
         '../../../shared/common/toolbar/toolbar.component.less',
         'create-client-dialog.component.less'
     ],
-    providers: [ CacheHelper, ContactServiceProxy, ContactPhotoServiceProxy, DialogService, LeadServiceProxy, ToolbarService ],
+    providers: [ CacheHelper, ContactServiceProxy, ContactPhotoServiceProxy, DialogService, GooglePlaceHelper, LeadServiceProxy, ToolbarService ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CreateClientDialogComponent implements OnInit, OnDestroy {
@@ -505,20 +506,11 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
         return event.element.getElementsByTagName('input')[0].value;
     }
 
-    getStateCodeFromComponents(components) {
-        for (const attr of components)
-            for (const type of attr.types)
-                if (type === 'administrative_area_level_1')
-                    return (<any>attr)['short_name'];
-    }
-
     onAddressChanged(event, i) {
         this.checkAddressControls(i);
-
         let number = this._angularGooglePlaceService.street_number(event.address_components);
         let street = this._angularGooglePlaceService.street(event.address_components);
-
-        this.contacts.addresses[i].stateCode = this.getStateCodeFromComponents(event.address_components);
+        this.contacts.addresses[i].stateCode = GooglePlaceHelper.getStateCode(event.address_components);
         this.contacts.addresses[i].address = number ? (number + ' ' + street) : street;
         this._changeDetectorRef.detectChanges();
     }

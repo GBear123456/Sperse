@@ -5,7 +5,7 @@ import { Component, Inject, Injector, ElementRef } from '@angular/core';
 import { Store, select } from '@ngrx/store';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import * as _ from 'underscore';
-import { AngularGooglePlaceService } from '@node_modules/angular-google-place';
+import { AngularGooglePlaceService } from 'angular-google-place';
 
 /** Application imports */
 import { CountriesStoreActions, CountriesStoreSelectors } from '@app/store';
@@ -15,6 +15,7 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { CountryStateDto, CountryDto } from '@shared/service-proxies/service-proxies';
 import { AddressUsageTypesStoreActions, AddressUsageTypesStoreSelectors } from '@app/store';
 import { ContactsService } from '../contacts.service';
+import { GooglePlaceHelper } from '@shared/helpers/GooglePlaceHelper';
 
 @Component({
     selector: 'edit-address-dialog',
@@ -23,7 +24,8 @@ import { ContactsService } from '../contacts.service';
     host: {
         '(document:mouseup)': 'mouseUp($event)',
         '(document:mousemove)': 'mouseMove($event)'
-    }
+    },
+    providers: [ GooglePlaceHelper ]
 })
 export class EditAddressDialog extends AppComponentBase {
     types: any[] = [];
@@ -42,12 +44,13 @@ export class EditAddressDialog extends AppComponentBase {
                 private elementRef: ElementRef,
                 @Inject(MAT_DIALOG_DATA) public data: any,
                 public dialogRef: MatDialogRef<EditAddressDialog>,
-                private _contactsService: ContactsService,
-                private _angularGooglePlaceService: AngularGooglePlaceService,
-                private store$: Store<RootStore.State>
+                private contactsService: ContactsService,
+                private angularGooglePlaceService: AngularGooglePlaceService,
+                private store$: Store<RootStore.State>,
+                private googlePlaceHelper: GooglePlaceHelper
     ) {
         super(injector);
-        this.isEditAllowed = this._contactsService.checkCGPermission(this.data.groupId);
+        this.isEditAllowed = this.contactsService.checkCGPermission(this.data.groupId);
         if (this.validateAddress(data)) {
             this.action = 'Edit';
             this.address =
@@ -87,9 +90,9 @@ export class EditAddressDialog extends AppComponentBase {
     }
 
     onAddressChanged(event) {
-        let number = this._angularGooglePlaceService.street_number(event.address_components);
-        let street = this._angularGooglePlaceService.street(event.address_components);
-        this.state = this._angularGooglePlaceService.state(event.address_components).normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+        let number = this.angularGooglePlaceService.street_number(event.address_components);
+        let street = this.angularGooglePlaceService.street(event.address_components);
+        this.data.state = this.googlePlaceHelper.getState(event.address_components);
         this.address = number ? (number + ' ' + street) : street;
     }
 

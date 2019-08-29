@@ -173,7 +173,7 @@
                     <img src="assets/landing/left-arrow-icon.svg" alt="{{l('Back')}}">{{l("Back")}}
                 </button>
                 <dx-button class="button"
-                           text="{{l('Next')}}"
+                           [text]="l('Next')"
                            icon="assets/landing/right-arrow.svg"
                            [rtlEnabled]="true"
                            [disabled]="checkButtonDisabled('billingInfo')"
@@ -206,7 +206,6 @@
                                            (street_number)='street_number=$event'
                                            (street)='street_name=$event'
                                            (city)='model.address.city=$event'
-                                           (state)='model.address.stateId = getStateCodeFromName($event)'
                                            (postal_code)='model.address.zip=$event'
                                            (setAddress)="onAddressChanged($event)"
                                            angularGooglePlace />

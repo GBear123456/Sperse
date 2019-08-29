@@ -24,11 +24,12 @@ import { NotifyService } from '@abp/notify/notify.service';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
 import { CFOService } from '@shared/cfo/cfo.service';
 import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
+import { GooglePlaceHelper } from '@shared/helpers/GooglePlaceHelper';
 
 @Component({
     templateUrl: 'business-entity-edit-dialog.component.html',
     styleUrls: [ '../../../shared/common/styles/form.less', 'business-entity-edit-dialog.component.less' ],
-    providers: [ BusinessEntityServiceProxy ],
+    providers: [ BusinessEntityServiceProxy, GooglePlaceHelper ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class BusinessEntityEditDialogComponent implements OnInit {
@@ -70,6 +71,7 @@ export class BusinessEntityEditDialogComponent implements OnInit {
         private _changeDetectorRef: ChangeDetectorRef,
         private _cfoService: CFOService,
         private store$: Store<RootStore.State>,
+        private googlePlaceHelper: GooglePlaceHelper,
         public ls: AppLocalizationService,
         @Inject(MAT_DIALOG_DATA) private data: any
     ) {
@@ -258,5 +260,9 @@ export class BusinessEntityEditDialogComponent implements OnInit {
             this.address.country = AppConsts.defaultCountryName :
             this.address.country = countryName;
         this._changeDetectorRef.detectChanges();
+    }
+
+    onAddressChanged(event) {
+        this.address.state = this.googlePlaceHelper.getState(event.address_components);
     }
 }

@@ -17,6 +17,7 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { CountryStateDto } from '@shared/service-proxies/service-proxies';
 import { BankCardDataModel } from '@app/shared/common/payment-wizard/models/bank-card-data.model';
 import { AppConsts } from '@shared/AppConsts';
+import { GooglePlaceHelper } from '@shared/helpers/GooglePlaceHelper';
 
 export interface Country {
     code: string;
@@ -26,7 +27,8 @@ export interface Country {
     selector: 'credit-card',
     templateUrl: './credit-card.component.html',
     styleUrls: ['./credit-card.component.less'],
-    changeDetection: ChangeDetectionStrategy.OnPush
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    providers: [ GooglePlaceHelper ]
 })
 export class CreditCardComponent extends AppComponentBase implements OnInit {
     @Output() onSubmit: EventEmitter<BankCardDataModel> = new EventEmitter<BankCardDataModel>();
@@ -60,8 +62,9 @@ export class CreditCardComponent extends AppComponentBase implements OnInit {
     constructor(
         injector: Injector,
         private formBuilder: FormBuilder,
-        private _angularGooglePlaceService: AngularGooglePlaceService,
-        private store$: Store<RootStore.State>
+        private angularGooglePlaceService: AngularGooglePlaceService,
+        private store$: Store<RootStore.State>,
+        private googlePlaceHelper: GooglePlaceHelper
     ) {
         super(injector);
         this.creditCardData.get('billingStateCode').disable();
@@ -120,17 +123,18 @@ export class CreditCardComponent extends AppComponentBase implements OnInit {
     }
 
     setBillingAddress(event) {
-        let number = this._angularGooglePlaceService.street_number(event.address_components);
-        let street = this._angularGooglePlaceService.street(event.address_components);
+        let number = this.angularGooglePlaceService.street_number(event.address_components);
+        let street = this.angularGooglePlaceService.street(event.address_components);
         let concatAddress = number ? (number + ' ' + street) : street;
         this.creditCardData.controls.billingAddress.setValue(concatAddress); // event.name - short form of address
-        let countryName = this._angularGooglePlaceService.country(event.address_components);
+        let countryName = this.angularGooglePlaceService.country(event.address_components);
         if (countryName == 'United States')
             countryName = AppConsts.defaultCountryName;
 
         this.updateCountryInfo(countryName);
-        let state = this._angularGooglePlaceService.state(event.address_components).normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+        let state = this.googlePlaceHelper.getState(event.address_components);
         this.getStates(() => this.updateStatesInfo(state));
+        this.creditCardData.controls.billingCity.setValue(this.googlePlaceHelper.getCity(event.address_components));
     }
 
     checkIfNumber(e) {

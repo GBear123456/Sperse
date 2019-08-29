@@ -18,27 +18,28 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { EditAddressDialog } from '../edit-address-dialog/edit-address-dialog.component';
 import { ContactsService } from '../contacts.service';
 import {
-    ContactInfoDto, ContactAddressServiceProxy, CountryDto,
+    ContactInfoDto, ContactAddressServiceProxy,
     ContactAddressDto, UpdateContactAddressInput, CreateContactAddressInput, ContactInfoDetailsDto,
     OrganizationContactServiceProxy, CreateOrganizationInput, OrganizationContactInfoDto, OrganizationInfoDto
 } from '@shared/service-proxies/service-proxies';
 import { PersonOrgRelationType } from '@root/shared/AppEnums';
+import { GooglePlaceHelper } from '@shared/helpers/GooglePlaceHelper';
 
 @Component({
     selector: 'addresses',
     templateUrl: './addresses.component.html',
     styleUrls: ['./addresses.component.less'],
-    providers: [ DialogService ]
+    providers: [ DialogService, GooglePlaceHelper ]
 })
 export class AddressesComponent extends AppComponentBase implements OnInit {
     @Input() isCompany = false;
     @Input()
     set contactInfo(val: ContactInfoDto) {
         if (this._contactInfo = val)
-            this.isEditAllowed = this._contactsService.checkCGPermission(this.contactInfo.groupId);
+            this.isEditAllowed = this.contactsService.checkCGPermission(this.contactInfo.groupId);
     }
     get contactInfo(): ContactInfoDto {
-        return this._contactInfo;    
+        return this._contactInfo;
     }
     @Input() contactInfoData: ContactInfoDetailsDto;
 
@@ -61,11 +62,12 @@ export class AddressesComponent extends AppComponentBase implements OnInit {
 
     constructor(injector: Injector,
                 public dialog: MatDialog,
-                private _contactsService: ContactsService,
-                private _addressService: ContactAddressServiceProxy,
-                private _organizationContactService: OrganizationContactServiceProxy,
+                private contactsService: ContactsService,
+                private addressService: ContactAddressServiceProxy,
+                private organizationContactService: OrganizationContactServiceProxy,
                 private dialogService: DialogService,
-                private store$: Store<RootStore.State>
+                private store$: Store<RootStore.State>,
+                private googlePlaceHelper: GooglePlaceHelper
     ) {
         super(injector);
     }
@@ -120,7 +122,7 @@ export class AddressesComponent extends AppComponentBase implements OnInit {
         if (!this.isCompany || this.contactInfoData && this.contactInfoData.contactId)
             this.showAddressDialog(address, event, index);
         else
-            this._contactsService.addCompanyDialog(event, this.contactInfo,
+            this.contactsService.addCompanyDialog(event, this.contactInfo,
                 Math.round(event.target.offsetWidth / 2)
             ).subscribe(result => {
                 if (result) {
@@ -161,7 +163,7 @@ export class AddressesComponent extends AppComponentBase implements OnInit {
 
     createOrganization(address, dialogData) {
         let companyName = AppConsts.defaultCompanyName;
-        this._organizationContactService.createOrganization(CreateOrganizationInput.fromJS({
+        this.organizationContactService.createOrganization(CreateOrganizationInput.fromJS({
             relatedContactId: this.contactInfo.id,
             companyName: companyName,
             relationTypeId: PersonOrgRelationType.Employee
@@ -190,7 +192,7 @@ export class AddressesComponent extends AppComponentBase implements OnInit {
     }
 
     updateDataField(address, data) {
-        this._addressService
+        this.addressService
             [(address ? 'update' : 'create') + 'ContactAddress'](
             (address ? UpdateContactAddressInput : CreateContactAddressInput).fromJS(data)
         ).subscribe(result => {
@@ -209,7 +211,7 @@ export class AddressesComponent extends AppComponentBase implements OnInit {
                 this.contactInfoData.addresses
                     .push(ContactAddressDto.fromJS(data));
             }
-            this._contactsService.verificationUpdate();
+            this.contactsService.verificationUpdate();
         });
     }
 
@@ -222,10 +224,10 @@ export class AddressesComponent extends AppComponentBase implements OnInit {
         }).afterClosed().subscribe(result => {
             if (result) {
                 this.dialog.closeAll();
-                this._addressService.deleteContactAddress(
-                    this.contactInfoData.contactId, address.id).subscribe(result => {
+                this.addressService.deleteContactAddress(
+                    this.contactInfoData.contactId, address.id).subscribe(() => {
                     this.contactInfoData.addresses.splice(index, 1);
-                    this._contactsService.verificationUpdate();
+                    this.contactsService.verificationUpdate();
                 });
             }
         });
@@ -346,6 +348,7 @@ export class AddressesComponent extends AppComponentBase implements OnInit {
 
     addressChanged(address, event) {
         this._latestFormatedAddress = address.autoComplete = event.formatted_address;
+        this.state = this.googlePlaceHelper.getState(event.address_components);
     }
 
     updateCountryInfo(countryName: string) {

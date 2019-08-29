@@ -4,7 +4,6 @@ import { Component, OnInit, Injector, Input } from '@angular/core';
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
 import { Store, select } from '@ngrx/store';
-import * as _ from 'underscore';
 
 /** Application imports */
 import { RootStore, StatesStoreActions, StatesStoreSelectors } from '@root/store';
@@ -13,11 +12,10 @@ import {
     BankCardInfoDto,
     CountryStateDto
 } from '@shared/service-proxies/service-proxies';
-import { until } from '@node_modules/@types/selenium-webdriver';
-import Condition = until.Condition;
 import { ConditionsType } from '@shared/AppEnums';
 import { ConditionsModalComponent } from '@shared/common/conditions-modal/conditions-modal.component';
 import { InputStatusesService } from '@shared/utils/input-statuses.service';
+import { GooglePlaceHelper } from '@shared/helpers/GooglePlaceHelper';
 
 @Component({
     selector: 'payment-info',
@@ -27,19 +25,11 @@ import { InputStatusesService } from '@shared/utils/input-statuses.service';
 export class PaymentInfoComponent extends AppComponentBase implements OnInit {
     @Input() paymentAuthorizationRequired = true;
 
-    private readonly INPUT_MASK = {
-        creditCardNumber: '0000-0000-0000-0099',
-        expirationDate: '00/0000',
-        zipCode: '00000',
-        cvvCode: '0009'
-    };
     validationGroup: any;
-
     expirationDate: string;
     bankCard: BankCardInfoDto = BankCardInfoDto.fromJS({});
     states: CountryStateDto[];
-
-    googleAutoComplete: Boolean;
+    googleAutoComplete: Boolean = Boolean(window['google']);
     countryCode = 'US';
     conditions = ConditionsType;
     public options = {
@@ -53,15 +43,15 @@ export class PaymentInfoComponent extends AppComponentBase implements OnInit {
         injector: Injector,
         private store$: Store<RootStore.State>,
         private dialog: MatDialog,
+        private googlePlaceHelper: GooglePlaceHelper,
         public inputStatusesService: InputStatusesService
     ) {
         super(injector);
-
-        this.googleAutoComplete = Boolean(window['google']);
-        this.getStates();
     }
 
-    ngOnInit() { }
+    ngOnInit() {
+        this.getStates();
+    }
 
     initValidationGroup(event) {
         this.validationGroup = event.component;
@@ -81,11 +71,8 @@ export class PaymentInfoComponent extends AppComponentBase implements OnInit {
         let street = event.address_components[1]['long_name'];
 
         this.bankCard.billingAddress = number ? (number + ' ' + street) : street;
-    }
-
-    getStateCodeFromName(e) {
-        let state = _.findWhere(this.states, { name: e });
-        return (state && state.code) || null;
+        this.bankCard.billingStateCode = this.googlePlaceHelper.getState(event.address_components);
+        this.bankCard.billingCity = this.googlePlaceHelper.getCity(event.address_components);
     }
 
     validateExpirationDate = (options) => {
