@@ -1,5 +1,5 @@
 import { Action } from '@ngrx/store';
-import { OrganizationUnitDto } from 'shared/service-proxies/service-proxies';
+import { OrganizationUnitShortDto } from 'shared/service-proxies/service-proxies';
 
 export enum ActionTypes {
     LOAD_REQUEST       = '[OrganizationUnits] Load Request',
@@ -19,7 +19,7 @@ export class LoadFailureAction implements Action {
 
 export class LoadSuccessAction implements Action {
     readonly type = ActionTypes.LOAD_SUCCESS;
-    constructor(public payload: OrganizationUnitDto[]) {}
+    constructor(public payload: OrganizationUnitShortDto[]) {}
 }
 
 export type Actions = LoadRequestAction | LoadFailureAction | LoadSuccessAction;
