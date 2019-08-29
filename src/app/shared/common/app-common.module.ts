@@ -64,7 +64,6 @@ import { CalendarDialogComponent } from './dialogs/calendar/calendar-dialog.comp
 import { ImportWizardComponent } from './import-wizard/import-wizard.component';
 import { ConfirmImportDialog } from './import-wizard/confirm-import-dialog/confirm-import-dialog.component';
 import { ImportProgressBarComponent } from './import-wizard/import-progress-bar/import-progress-bar.component';
-import { ContactInfoPanelComponent } from './contact-info-panel/contact-info-panel.component';
 import { ToolBarComponent } from './toolbar/toolbar.component';
 import { HeadLineComponent } from './headline/headline.component';
 import { TimeZoneComboComponent } from './timing/timezone-combo.component';
@@ -172,7 +171,6 @@ import { SetupStepsComponent } from './setup-steps/setup-steps.component';
         DatePickerDirective,
         ToolBarComponent,
         HeadLineComponent,
-        ContactInfoPanelComponent,
         InplaceEditComponent,
         InplaceSelectBoxComponent,
         PeriodComponent,
@@ -212,7 +210,6 @@ import { SetupStepsComponent } from './setup-steps/setup-steps.component';
         DatePickerDirective,
         HeadLineComponent,
         ToolBarComponent,
-        ContactInfoPanelComponent,
         InplaceEditComponent,
         InplaceSelectBoxComponent,
         PeriodComponent,

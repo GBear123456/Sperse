@@ -21,6 +21,7 @@ import { UserDropdownMenuItemType } from '@root/shared/common/layout/user-manage
 import { UserDropdownMenuItemModel } from '@root/shared/common/layout/user-management-list/user-dropdown-menu/user-dropdown-menu-item.model';
 import { LayoutService } from '@app/shared/layout/layout.service';
 import { AppFeatures } from '@shared/AppFeatures';
+import { AppService } from '@app/app.service';
 
 @Component({
     templateUrl: './header.component.html',
@@ -109,6 +110,7 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
         private _abpSessionService: AbpSessionService,
         private _profileServiceProxy: ProfileServiceProxy,
         public userManagementService: UserManagementService,
+        public appService: AppService,
         public layoutService: LayoutService,
         private commonUserInfoService: CommonUserInfoServiceProxy
     ) {
