@@ -183,6 +183,28 @@ describe('CashflowService', () => {
             level5: 'SC5632',
             level6: 'TDdescriptor'
         });
+
+        /** Add N/A reporting group if category doesn't belong to some group */
+        transaction.subCategoryId = 777;
+        transaction.accountingTypeId = null;
+        levels = service.addCategorizationLevels(transaction).levels;
+        expect(levels).toEqual({
+            level0: 'CTI',
+            level1: 'RGN/A',
+            level2: 'CA5566',
+            level3: 'SC777',
+            level4: 'TDdescriptor'
+        });
+        transaction.categoryId = null;
+        transaction.subCategoryId = null;
+        levels = service.addCategorizationLevels(transaction).levels;
+        console.log(levels);
+        expect(levels).toEqual({
+            level0: 'CTI',
+            level1: 'RGN/A',
+            level2: null,
+            level3: 'TDdescriptor'
+        });
     }));
 
     it('customizeFieldText should return text', inject([ CashflowService ], (service: CashflowService) => {
@@ -209,6 +231,7 @@ describe('CashflowService', () => {
         expect(service.customizeFieldText({ value: 'AT2' })).toBe('Expense');
         expect(service.customizeFieldText({ value: 'RGCostOfSales' })).toBe('SectionGroup_CostOfSales');
         expect(service.customizeFieldText({ value: 'RS11' })).toBe('Business Expenses');
+        expect(service.customizeFieldText({ value: 'RGN/A' })).toBe('N/A');
     }));
 
     it('getDetailFilterFromCell should return filter from cell', inject([ CashflowService ], (service: CashflowService) => {

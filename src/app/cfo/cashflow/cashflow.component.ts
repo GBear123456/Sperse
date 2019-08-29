@@ -4722,7 +4722,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                         name: 'follow',
                         widget: 'dxDropDownMenu',
                         options: {
-                            hint: this.l('Configuration'),
+                            hint: this.l('Show'),
                             items: [
                                 {
                                     type: 'header',
