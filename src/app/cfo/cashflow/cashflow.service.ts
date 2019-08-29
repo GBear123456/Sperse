@@ -24,6 +24,7 @@ import {
     GetCategoryTreeOutput,
     GetReportTemplateDefinitionOutput,
     GroupByPeriod,
+    SectionGroup,
     StatsDetailFilter,
     StatsFilter
 } from '@shared/service-proxies/service-proxies';
@@ -177,15 +178,7 @@ export class CashflowService {
             sortOrder: 'asc',
             expanded: false,
             showTotals: true,
-            sortingMethod: (firstItem, secondItem) => {
-                let result = 0;
-                if (!firstItem.value ||  firstItem.value.slice(2) === 'N/A') {
-                    result = 1;
-                } else if (!secondItem.value || secondItem.value.slice(2) === 'N/A') {
-                    result = -1;
-                }
-                return result;
-            },
+            sortingMethod: (a, b) => this.sortReportingGroup(a, b),
             resortable: true,
             customizeText: cellInfo => this.customizeFieldText.bind(this, cellInfo, this.ls.l('Unclassified'))()
         },
@@ -378,6 +371,30 @@ export class CashflowService {
         private currencyPipe: CurrencyPipe,
         public userPreferencesService: UserPreferencesService
     ) {}
+
+    /**
+     * This function accepts two field values and should return a number indicating their sort order:
+         Less than zero - a goes before b.
+         Zero - a and b remain unchanged relative to each other.
+         Greater than zero - a goes after b.
+     * @param firstItem
+     * @param secondItem
+     * @return {number}
+     */
+    sortReportingGroup(firstItem, secondItem): number {
+        let result = 0;
+        const firstItemValue = firstItem.value && firstItem.value.slice(2);
+        const secondItemValue = secondItem.value && secondItem.value.slice(2);
+        if (!firstItemValue || firstItemValue === 'N/A') {
+            result = 1;
+        } else if (!secondItemValue || secondItemValue === 'N/A') {
+            result = -1;
+        } else if (firstItem.value.slice(0, 2) === CategorizationPrefixes.ReportingGroup) {
+            const sectionGroups = Object.keys(SectionGroup);
+            result = sectionGroups.indexOf(firstItemValue) > sectionGroups.indexOf(secondItemValue) ? 1 : -1;
+        }
+        return result;
+    }
 
     addEvents(element: HTMLElement, events: IEventDescription[]) {
         for (let event of events) {
@@ -1314,16 +1331,6 @@ export class CashflowService {
             let endDate = moment(weekInfoObj.endDate).utc().format('MM.DD');
             return startDate === endDate ? startDate : `${startDate} - ${endDate}`;
         };
-    }
-
-    /**
-     * Gets the historical field object in tableFields
-     * @returns {Object}
-     */
-    getHistoricField(): any {
-        return this.apiTableFields.find(
-            field => field['caption'] === 'Historical'
-        );
     }
 
     getCurrentValueForStartingBalanceCell(summaryCell) {

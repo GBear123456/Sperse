@@ -198,7 +198,6 @@ describe('CashflowService', () => {
         transaction.categoryId = null;
         transaction.subCategoryId = null;
         levels = service.addCategorizationLevels(transaction).levels;
-        console.log(levels);
         expect(levels).toEqual({
             level0: 'CTI',
             level1: 'RGN/A',
@@ -656,5 +655,31 @@ describe('CashflowService', () => {
             0,
             fields
         );
+    }));
+
+    it('sortReportingGroup should correctly sort two items', inject([ CashflowService ], (service: CashflowService) => {
+        let firstItem = {
+            value: 'RGOtherIncomeExpense'
+        };
+        let secondItem = {
+            value: 'RGCostOfSales'
+        };
+        expect(service.sortReportingGroup(firstItem, secondItem)).toBe(1);
+
+        firstItem = {
+            value: 'RGOtherIncomeExpense'
+        };
+        secondItem = {
+            value: null
+        };
+        expect(service.sortReportingGroup(firstItem, secondItem)).toBe(-1);
+
+        firstItem = {
+            value: 'CA15'
+        };
+        secondItem = {
+            value: 'CA18'
+        };
+        expect(service.sortReportingGroup(firstItem, secondItem)).toBe(0);
     }));
 });
