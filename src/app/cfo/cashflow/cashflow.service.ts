@@ -1230,7 +1230,7 @@ export class CashflowService {
             }
 
             if (this.isCellIsStartingBalanceSummary(summaryCell, cellRow, cellValue)) {
-                return this.getCurrentValueForStartingBalanceCell(summaryCell);
+                return (summaryCell.value() || 0) + this.getCurrentValueForStartingBalanceCell(summaryCell);
             }
 
             return this.cellRowIsNotEmpty(cellRow, cellValue) ? summaryCell.value() || 0 : null;
