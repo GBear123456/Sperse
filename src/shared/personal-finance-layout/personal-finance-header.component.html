@@ -1,6 +1,6 @@
 <app-pages-header *ngIf="!showDefaultHeader"></app-pages-header>
 <div class="top-headline">
-    <div class="container d-flex justify-content-between align-items-center" *ngIf="registerIsNecessary">
+    <div class="container d-flex justify-content-between align-items-center" *ngIf="applicationCompleteIsRequired$ | async">
         <a href="//lendspace.com" class="url">www.lendspace.com</a>
         <a class="get-free-score" (click)="registerComponent.showRegisterPopup()">Your application is incomplete. Click here to continue...</a>
         <p class="date">{{currentDate | date:'longDate' : userTimezone}}</p>

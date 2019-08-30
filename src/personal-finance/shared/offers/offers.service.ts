@@ -50,6 +50,11 @@ export class OffersService {
     memberInfo$: Observable<GetMemberInfoResponse> = this._memberInfo.asObservable();
     memberInfo: GetMemberInfoResponse;
     memberInfoApplyOfferParams: string;
+    private applicationId: ReplaySubject<number> = new ReplaySubject<number>(1);
+    applicationId$: Observable<number> = this.applicationId.asObservable();
+    applicationCompleteIsRequired$: Observable<Boolean> = this.applicationId$.pipe(
+        map((applicationId: number) => !!(applicationId))
+    );
     processingSteps = [
         {
             name: 'Verifying Loan Request'
@@ -145,6 +150,7 @@ export class OffersService {
             (memberInfo: GetMemberInfoResponse) => {
                 this.memberInfo = memberInfo;
                 this.state$.next(memberInfo.stateCode || 'all');
+                this.setApplicationId(memberInfo.incompleteApplicationId);
                 this.memberInfoApplyOfferParams = this.getApplyOffersParams(memberInfo);
             }
         );
@@ -160,6 +166,10 @@ export class OffersService {
 
     static getCategoryRouteNameByCategoryEnum(category: CampaignCategory): string {
         return OffersService.categoryToRouteMapping[category] || kebabCase(category);
+    }
+
+    setApplicationId(applicationId: number) {
+        this.applicationId.next(applicationId);
     }
 
     getCategoryDisplayName(category: CampaignCategory): string {

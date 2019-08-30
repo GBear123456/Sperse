@@ -1,15 +1,21 @@
 /** Core imports */
-import { Component, Injector, HostBinding, ViewChild, ViewContainerRef, Directive } from '@angular/core';
+import { Component, HostBinding, ViewChild, ViewContainerRef, Directive } from '@angular/core';
+import { Router } from '@angular/router';
+
+/** Third party imports */
+import { Observable } from 'rxjs';
 
 /** Application imports */
 import { AppConsts } from 'shared/AppConsts';
-import { AppComponentBase } from 'shared/common/app-component-base';
 import { PersonalFinanceLayoutService } from './personal-finance-layout.service';
 import { AbpSessionService } from '@abp/session/abp-session.service';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { environment } from 'environments/environment';
 import { AppFeatures } from '@shared/AppFeatures';
 import { RegisterComponent } from '@root/shared/personal-finance-layout/register/register.component';
+import { FeatureCheckerService } from '@abp/features/feature-checker.service';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { OffersService } from '@root/personal-finance/shared/offers/offers.service';
 
 @Directive({
     selector: '[ad-header-host]'
@@ -23,7 +29,7 @@ export class AdHeaderHostDirective {
     styleUrls: ['personal-finance-header.component.less'],
     selector: 'personal-finance-header'
 })
-export class PersonalFinanceHeaderComponent extends AppComponentBase {
+export class PersonalFinanceHeaderComponent {
     @ViewChild(AdHeaderHostDirective) adHeaderHost: AdHeaderHostDirective;
     @ViewChild(RegisterComponent) registerComponent: RegisterComponent;
     @HostBinding('class.pfm-app') hasPfmAppFeature = false;
@@ -59,22 +65,24 @@ export class PersonalFinanceHeaderComponent extends AppComponentBase {
         {name: 'SIGN UP', class: 'member-signup', url: environment.LENDSPACE_DOMAIN + '/sign-up', disabled: false},
         {name: 'Member Login', class: 'member-login', url: environment.LENDSPACE_DOMAIN + '/login.html', disabled: false}
     ];
-    registerIsNecessary = true;
+    applicationCompleteIsRequired$: Observable<Boolean> = this.offersService.applicationCompleteIsRequired$;
 
     constructor(
-        injector: Injector,
-        private _pfmLayoutService: PersonalFinanceLayoutService,
-        private _abpSessionService: AbpSessionService,
+        private pfmLayoutService: PersonalFinanceLayoutService,
+        private abpSessionService: AbpSessionService,
+        private featureService: FeatureCheckerService,
+        private router: Router,
+        private offersService: OffersService,
+        private ls: AppLocalizationService,
         public sessionService: AppSessionService
     ) {
-        super(injector);
-        _pfmLayoutService.headerContentSubscribe((component) => {
+        pfmLayoutService.headerContentSubscribe((component) => {
             setTimeout(() => {
                 this.adHeaderHost.viewContainerRef.clear();
                 this.adHeaderHost.viewContainerRef.createComponent(component);
             });
         });
-        if (this.feature.isEnabled(AppFeatures.CFOPartner)) {
+        if (this.featureService.isEnabled(AppFeatures.CFOPartner)) {
             this.memberAreaLinks.unshift(
                 {
                     name: 'accountsLink',
@@ -84,12 +92,12 @@ export class PersonalFinanceHeaderComponent extends AppComponentBase {
                 });
         }
 
-        this.hasPfmAppFeature = this.feature.isEnabled(AppFeatures.PFMApplications);
+        this.hasPfmAppFeature = this.featureService.isEnabled(AppFeatures.PFMApplications);
         this.showDefaultHeader = this.isMemberArea() || this.hasPfmAppFeature;
     }
 
     get notificationEnabled(): boolean {
-        return (!this._abpSessionService.tenantId || this.feature.isEnabled(AppFeatures.Notification));
+        return (!this.abpSessionService.tenantId || this.featureService.isEnabled(AppFeatures.Notification));
     }
 
     private getAppAreaLinks() {
@@ -98,15 +106,15 @@ export class PersonalFinanceHeaderComponent extends AppComponentBase {
                 name: 'Loans',
                 sublinks: [
                     {
-                        name: this.ls('PFM', 'Offers_PersonalLoans'),
+                        name: this.ls.ls('PFM', 'Offers_PersonalLoans'),
                         routerUrl: '/personal-finance/offers/personal-loans'
                     },
                     {
-                        name: this.ls('PFM', 'Offers_BusinessLoans'),
+                        name: this.ls.ls('PFM', 'Offers_BusinessLoans'),
                         routerUrl: '/personal-finance/offers/business-loans'
                     },
                     {
-                        name: this.ls('PFM', 'Offers_AutoLoans'),
+                        name: this.ls.ls('PFM', 'Offers_AutoLoans'),
                         routerUrl: '/personal-finance/offers/auto-loans'
                     }
                 ]
@@ -119,26 +127,26 @@ export class PersonalFinanceHeaderComponent extends AppComponentBase {
                 name: 'My Credit',
                 sublinks: [
                     {
-                        name: this.ls('PFM', 'creditScores'),
+                        name: this.ls.ls('PFM', 'creditScores'),
                         routerUrl: '/personal-finance/offers/credit-scores'
                     },
                     // {
-                    //     name: this.ls('PFM', 'Offers_CreditRepair'),
+                    //     name: this.ls.ls('PFM', 'Offers_CreditRepair'),
                     //     routerUrl: '/personal-finance/offers/credit-repair'
                     // },
                     {
-                        name: this.ls('PFM', 'Offers_DebtConsolidation'),
+                        name: this.ls.ls('PFM', 'Offers_DebtConsolidation'),
                         routerUrl: '/personal-finance/offers/debt-consolidation'
                     },
                     {
-                        name: this.ls('PFM', 'Offers_IdTheftProtection'),
+                        name: this.ls.ls('PFM', 'Offers_IdTheftProtection'),
                         routerUrl: '/personal-finance/offers/id-theft-protection'
                     }
                 ]
             },
             {
                 name: 'My Finances',
-                hidden: !this.feature.isEnabled(AppFeatures.CFOPartner),
+                hidden: !this.featureService.isEnabled(AppFeatures.CFOPartner),
                 sublinks: [
                     {
                         name: 'Accounts',
@@ -184,7 +192,7 @@ export class PersonalFinanceHeaderComponent extends AppComponentBase {
 
     logoClick(event) {
         if (this.loggedUserId)
-            this._router.navigate(['/personal-finance/home']);
+            this.router.navigate(['/personal-finance/home']);
         else
             window.open(environment.LENDSPACE_DOMAIN, '_self');
     }

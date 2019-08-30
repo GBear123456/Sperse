@@ -3,13 +3,18 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 
 /** Third party imports */
-import { first } from 'rxjs/operators';
+import { first, filter, finalize, tap, switchMap } from 'rxjs/operators';
 import swal from 'sweetalert';
 
 /** Application imports */
-import { GetMemberInfoResponse } from '@shared/service-proxies/service-proxies';
+import {
+    FinalizeApplicationResponse, FinalizeApplicationStatus,
+    GetMemberInfoResponse,
+    OfferServiceProxy
+} from '@shared/service-proxies/service-proxies';
 import { OffersService } from '@root/personal-finance/shared/offers/offers.service';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
+import { Observable } from '@node_modules/rxjs';
 
 @Component({
     selector: 'register',
@@ -21,18 +26,22 @@ import { LoadingService } from '@shared/common/loading-service/loading.service';
 })
 
 export class RegisterComponent implements OnInit {
-    success = false;
-    registerIsNecessary = true;
+    applicationCompleteIsRequired$: Observable<Boolean> = this.offersService.applicationCompleteIsRequired$;
+    getMoreOptionsLink = 'personal-finance/offers/personal-loans';
     constructor(
         private offersService: OffersService,
+        private offerServiceProxy: OfferServiceProxy,
         private loadingService: LoadingService,
         @Inject(DOCUMENT) private document: any
     ) {}
 
     ngOnInit() {
-        if (this.registerIsNecessary) {
+        this.applicationCompleteIsRequired$.pipe(
+            filter(Boolean),
+            first()
+        ).subscribe(() => {
             this.showRegisterPopup();
-        }
+        });
     }
 
     showRegisterPopup() {
@@ -43,7 +52,8 @@ export class RegisterComponent implements OnInit {
                     title: memberInfo.firstName + ', please click below to',
                     button: {
                         text: 'Get approved',
-                        className: 'applyButton'
+                        className: 'applyButton',
+                        closeModal: true
                     },
                     className: 'finalize',
                     content: this.document.getElementById('registerPopup').cloneNode(true)
@@ -58,15 +68,15 @@ export class RegisterComponent implements OnInit {
     }
 
     private register() {
-
-        /** Start spinner */
-        this.loadingService.startLoading();
-
-        this.success = !this.success;
-        /** Delay for simulating finalizeApplication request */
-        setTimeout(() => {
-            this.loadingService.finishLoading();
-            if (this.success) {
+        this.offersService.applicationId$.pipe(
+            first(),
+            filter(Boolean),
+            tap(() => this.loadingService.startLoading()),
+            switchMap((applicationId: number) => this.offerServiceProxy.finalizeApplication(applicationId).pipe(
+                finalize(() => this.loadingService.finishLoading())
+            ))
+        ).subscribe((response: FinalizeApplicationResponse) => {
+            if (response.status === FinalizeApplicationStatus.Approved) {
                 let messageContent = {
                     title: 'Congratulations',
                     button: false,
@@ -75,26 +85,32 @@ export class RegisterComponent implements OnInit {
                     content: this.document.getElementById('successPopup').cloneNode(true)
                 };
                 messageContent['content'].style.display = 'block';
-                const redirectUrl = 'https://www.lendspace.com';
                 messageContent['content'].querySelector('.continue').onclick = () => {
                     swal.close('confirm');
-                    window.open(redirectUrl, '_blank');
+                    window.open(response.redirectUrl, '_blank');
                 };
                 swal(messageContent);
-                /** Redirect to the coming from api redirectUrl */
-                setTimeout(() => {});
-            } else {
+            } else if (response.status === FinalizeApplicationStatus.Declined) {
                 let messageContent = {
                     title: 'We\'re sorry testing, but you have been declined',
                     button: {
-                        text: 'Get more options'
+                        text: 'Get more options',
+                        value: true,
+                        closeModal: true
                     },
                     className: 'failure',
                     content: this.document.getElementById('failurePopup').cloneNode(true)
                 };
                 messageContent.content.style.display = 'block';
-                swal(messageContent);
+                swal(messageContent).then((res) => {
+                    if (res) {
+                        /** @todo find out where to redirect in a case of decline */
+                        window.open(this.getMoreOptionsLink, '_self');
+                    }
+                });
             }
-        }, 1000);
+            /** To hide complete header */
+            this.offersService.setApplicationId(null);
+        });
     }
 }
