@@ -341,22 +341,12 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit, 
                     stats.forEach((statsItem: BankAccountDailyStatDto) => {
                         /** Get all using in chart values to show gradient well*/
                         allValues.push(statsItem.endingBalance);
-                        if (statsItem.isForecast) {
-                            allValues.push(statsItem['forecastEndingBalance'] || 0);
-                        }
                         if (selectedChartType === ChartType.Combined) {
                             allValues.push(
                                 statsItem.debit,
                                 statsItem.credit,
                                 statsItem['netChange']
                             );
-                            if (statsItem.isForecast) {
-                                allValues.push(
-                                    statsItem['forecastDebit'] || 0,
-                                    statsItem['forecastCredit'] || 0,
-                                    statsItem['forecastNetChange'] || 0
-                                );
-                            }
                         }
                     });
                     const minValue = Math.min.apply(Math, allValues);
