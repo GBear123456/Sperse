@@ -50,9 +50,9 @@ export class OffersService {
     memberInfo$: Observable<GetMemberInfoResponse> = this._memberInfo.asObservable();
     memberInfo: GetMemberInfoResponse;
     memberInfoApplyOfferParams: string;
-    private applicationId: ReplaySubject<number> = new ReplaySubject<number>(1);
-    applicationId$: Observable<number> = this.applicationId.asObservable();
-    applicationCompleteIsRequired$: Observable<Boolean> = this.applicationId$.pipe(
+    private incompleteApplicationId: ReplaySubject<number> = new ReplaySubject<number>(1);
+    incompleteApplicationId$: Observable<number> = this.incompleteApplicationId.asObservable();
+    applicationCompleteIsRequired$: Observable<Boolean> = this.incompleteApplicationId.pipe(
         map((applicationId: number) => !!(applicationId))
     );
     processingSteps = [
@@ -150,7 +150,7 @@ export class OffersService {
             (memberInfo: GetMemberInfoResponse) => {
                 this.memberInfo = memberInfo;
                 this.state$.next(memberInfo.stateCode || 'all');
-                this.setApplicationId(memberInfo.incompleteApplicationId);
+                this.setIncompleteApplicationId(memberInfo.incompleteApplicationId);
                 this.memberInfoApplyOfferParams = this.getApplyOffersParams(memberInfo);
             }
         );
@@ -168,8 +168,8 @@ export class OffersService {
         return OffersService.categoryToRouteMapping[category] || kebabCase(category);
     }
 
-    setApplicationId(applicationId: number) {
-        this.applicationId.next(applicationId);
+    setIncompleteApplicationId(incompleteApplicationId: number) {
+        this.incompleteApplicationId.next(incompleteApplicationId);
     }
 
     getCategoryDisplayName(category: CampaignCategory): string {
