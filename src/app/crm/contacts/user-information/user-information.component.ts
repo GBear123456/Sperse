@@ -57,7 +57,7 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
     initialPhoneNumber: any;
 
     roles: any = [];
-    checkedByDefaultRoles: AppRoles[] = [ AppRoles.CRMPartnerUser ];
+    checkedByDefaultRoles: AppRoles[] = [AppRoles.CRMPartner, AppRoles.CFOPartner];
     emails: any = [];
     phones: any = [];
     contactInfoData: any;

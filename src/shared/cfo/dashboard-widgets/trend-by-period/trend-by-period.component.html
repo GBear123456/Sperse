@@ -3,8 +3,8 @@
         <dx-select-box [dataSource]="chartTypes"
                        valueExpr="value"
                        displayExpr="displayName"
-                       [value]="selectedChartType.value"
-                       (onSelectionChanged)="saveSelectedChartInCache($event)">
+                       [value]="selectedChartType$ | async"
+                       (onSelectionChanged)="changeSelectedChartType($event)">
         </dx-select-box>
 
         <ng-container *ngIf="trendData$ | async as trendData">

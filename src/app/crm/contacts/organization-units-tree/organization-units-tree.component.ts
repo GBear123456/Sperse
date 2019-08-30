@@ -97,7 +97,7 @@ export class OrganizationUnitsTreeComponent implements OnDestroy {
         private loadingService: LoadingService
     ) {
         contactsService.orgUnitsSubscribe((userData) => {
-            this.userId = userData.user.id;
+            this.userId = userData.user && userData.user.id;
             this.setOrganizationUnitsData(userData.allOrganizationUnits, userData.memberedOrganizationUnits);
         }, this.ident);
 

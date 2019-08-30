@@ -4726,7 +4726,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                             items: [
                                 {
                                     type: 'header',
-                                    text: this.l('Configuration'),
+                                    text: this.l('Show'),
                                     action: (event) => {
                                         event.event.stopPropagation();
                                         event.event.preventDefault();
