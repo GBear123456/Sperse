@@ -1,5 +1,6 @@
 /** Core imports */
-import { Component } from '@angular/core';
+import { Component, Inject } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
 import { Router, NavigationEnd } from '@angular/router';
 
 /** Third party imports */
@@ -38,7 +39,8 @@ export class TopBarComponent {
         private appService: AppService,
         private permissionChecker: AppPermissionService,
         public router: Router,
-        public ls: AppLocalizationService
+        public ls: AppLocalizationService,
+        @Inject(DOCUMENT) private document: any
     ) {
         this.router.events.subscribe(event => {
             if (event instanceof NavigationEnd) {
@@ -103,7 +105,15 @@ export class TopBarComponent {
             clearTimeout(this.updateTimeout);
             this.updateTimeout = setTimeout(() => {
                 this.lastInnerWidth = window.innerWidth;
-                let availableWidth = this.lastInnerWidth - 685;
+                const userManagementElement = this.document.body.querySelector('user-management-list');
+                const userManagementWidth = userManagementElement ? userManagementElement.offsetWidth : 0;
+                const contactInfoPanelElement = this.document.body.querySelector('contact-info-panel');
+                const contactInfoPanelElementWidth = contactInfoPanelElement ? contactInfoPanelElement.offsetWidth : 0;
+                const pageLogoElement = this.document.body.querySelector('.page-header-inner .page-logo');
+                const pageLogoElementWidth = pageLogoElement ? pageLogoElement.offsetWidth : 0;
+                const platformSelectElement = this.document.body.querySelector('platform-select');
+                const platformSelectElementWidth = platformSelectElement ? platformSelectElement.offsetWidth : 0;
+                let availableWidth = this.lastInnerWidth - userManagementWidth - contactInfoPanelElementWidth - pageLogoElementWidth - platformSelectElementWidth - 150;
                 if (availableWidth < this.visibleMenuItemsWidth) {
                     let switchItemIndex;
                     this.menu.items.every((item, index) => {
