@@ -969,8 +969,6 @@ export class CashflowService {
     getDetailFilterFromCell(cellObj): StatsDetailFilter {
         const datePeriod = this.formattingDate(cellObj.cell.columnPath);
 
-        //console.log(StatsDetailFilter.fromJS(filterParams));
-
         /** if somehow user click on the cell that is not in the filter date range - return null */
         if (this.requestFilter.startDate && datePeriod.endDate < this.requestFilter.startDate ||
             this.requestFilter.endDate && datePeriod.startDate > this.requestFilter.endDate) {
@@ -1001,10 +999,8 @@ export class CashflowService {
             if (item) {
                 let [ key, prefix ] = [ item.slice(2), item.slice(0, 2) ];
 
-                //console.log(key, prefix);
-                if (key !== CashflowTypeTotal) {
+                if (key !== CashflowTypeTotal && item !== CategorizationPrefixes.ReportingGroup + 'N/A') {
                     const property = this.getCategoryParams(prefix)['statsKeyName'];
-                    //console.log(property);
                     filterParams[property] = key;
                 }
             } else {
