@@ -3,6 +3,7 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 
 /** Third party imports */
+import { Observable } from 'rxjs';
 import { first, filter, finalize, tap, switchMap } from 'rxjs/operators';
 import swal from 'sweetalert';
 
@@ -14,7 +15,6 @@ import {
 } from '@shared/service-proxies/service-proxies';
 import { OffersService } from '@root/personal-finance/shared/offers/offers.service';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
-import { Observable } from '@node_modules/rxjs';
 
 @Component({
     selector: 'register',
@@ -68,7 +68,7 @@ export class RegisterComponent implements OnInit {
     }
 
     private register() {
-        this.offersService.applicationId$.pipe(
+        this.offersService.incompleteApplicationId$.pipe(
             first(),
             filter(Boolean),
             tap(() => this.loadingService.startLoading()),
@@ -82,14 +82,17 @@ export class RegisterComponent implements OnInit {
                     button: false,
                     className: 'success',
                     icon: 'success',
-                    content: this.document.getElementById('successPopup').cloneNode(true)
+                    content: this.document.getElementById('successPopup').cloneNode(true),
+                    closeOnClickOutside: false,
+                    closeOnEsc: false
                 };
                 messageContent['content'].style.display = 'block';
-                messageContent['content'].querySelector('.continue').onclick = () => {
-                    swal.close('confirm');
+                const successModal = swal(messageContent);
+                setTimeout(() => swal.close('confirm'), 1000);
+                successModal.then(() => {
+                    /** Redirect to url from response */
                     window.open(response.redirectUrl, '_blank');
-                };
-                swal(messageContent);
+                });
             } else if (response.status === FinalizeApplicationStatus.Declined) {
                 let messageContent = {
                     title: 'We\'re sorry testing, but you have been declined',
@@ -110,7 +113,7 @@ export class RegisterComponent implements OnInit {
                 });
             }
             /** To hide complete header */
-            this.offersService.setApplicationId(null);
+            this.offersService.setIncompleteApplicationId(null);
         });
     }
 }
