@@ -183,12 +183,14 @@
 }
 
 :host {
-    width: 66px;
-    min-width: 66px;
-    float: right;
-    overflow: hidden;
-    padding-top: 20px;
-    margin: 0 10px 0 10px;
+    .platform-select-component {
+        width: 66px;
+        min-width: 66px;
+        float: right;
+        overflow: hidden;
+        padding-top: 20px;
+        margin: 0 10px 0 10px;
+    }
 
     /deep/ .dx-texteditor {
         .dx-texteditor-container {
@@ -237,7 +239,7 @@
     footer {
         max-width: 100%;
     }
-    
+
     footer {
         min-height: 51px;
         background-color: #edf9fe;

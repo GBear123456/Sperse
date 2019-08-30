@@ -322,7 +322,7 @@
                                     <dx-select-box
                                         width="380px"
                                         name="addressType"
-                                        placeholder="{{ls.l('Type')}}"
+                                        [placeholder]="ls.l('Type')"
                                         [dataSource]="addressTypes"
                                         displayExpr="name"
                                         valueExpr="id"
@@ -335,19 +335,18 @@
                                 </div>
                                 <input *ngIf="!googleAutoComplete" type="text"
                                        name="Address"
-                                       placeholder="{{ls.l('Street')}}"
+                                       [placeholder]="ls.l('Street')"
                                        [(ngModel)]="address['address']"
                                        class="dx-texteditor-input"/>
                                 <input *ngIf="googleAutoComplete" type="text"
                                        name="Address"
-                                       placeholder="{{ls.l('Street')}}"
+                                       [placeholder]="ls.l('Street')"
                                        [(ngModel)]="address['address']"
                                        class="dx-texteditor-input"
                                        (country)="updateCountryInfo($event, i)"
                                        (street_number)="address['streetNumber']=$event"
                                        (street)="address['streetAddress']=$event"
                                        (city)="address['city']=$event"
-                                       (state)="address['state']=$event"
                                        (postal_code)="address['zip']=$event"
                                        (setAddress)="onAddressChanged($event, i)"
                                        angularGooglePlace/>
@@ -357,7 +356,7 @@
                                 <dx-text-box
                                     name="city"
                                     maxLength="50"
-                                    placeholder="{{ls.l('City')}}"
+                                    [placeholder]="ls.l('City')"
                                     [width]="'270px'"
                                     [(value)]="address['city']"
                                     [valueChangeEvent]="'keyup'"
@@ -368,7 +367,7 @@
                                     displayExpr="name"
                                     valueExpr="code"
                                     name="state"
-                                    placeholder="{{ls.l('State')}}"
+                                    [placeholder]="ls.l('State')"
                                     [width]="'270px'"
                                     [searchEnabled]="true"
                                     [(value)]="address['stateCode']"
@@ -378,7 +377,7 @@
                             <div class="field addr padding-right" style="padding-bottom: 10px;">
                                 <dx-text-box
                                     maxLength="10"
-                                    placeholder="{{ls.l('Zip')}}"
+                                    [placeholder]="ls.l('Zip')"
                                     [width]="'270px'"
                                     [(value)]="address['zip']"
                                     [valueChangeEvent]="'keyup'"
@@ -389,7 +388,7 @@
                                     displayExpr="name"
                                     valueExpr="name"
                                     name="country"
-                                    placeholder="{{ls.l('Country')}}"
+                                    [placeholder]="ls.l('Country')"
                                     [width]="'270px'"
                                     [searchEnabled]="true"
                                     [(value)]="address['country']"

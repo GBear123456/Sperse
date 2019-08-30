@@ -6,7 +6,7 @@
                 <img *ngIf="appSession.tenant && appSession.tenant.logoId" [src]="remoteServiceBaseUrl + '/api/TenantCustomization/GetLogo?logoId=' + appSession.tenant.logoId" alt="logo" class="logo-layout"/>
             </a>
         </div>
-
+        <contact-info-panel *ngIf="appService.showContactInfoPanel" [data]="appService.contactInfo"></contact-info-panel>
         <user-management-list>
             <li *ngIf="languages.length" class="m-nav__item m-dropdown m-dropdown--large m-dropdown--arrow m-dropdown--align-center m-dropdown--mobile-full-width m-dropdown--skin-light m-list-search m-list-search--skin-light m-dropdown--open dropdown-language">
                 <a href="javascript:;" class="m-nav__link m-dropdown__toggle" data-toggle="dropdown" data-hover="dropdown" data-close-others="true">
@@ -45,7 +45,6 @@
 
             <user-dropdown-menu *ngIf="layoutService.showUserProfileMenu" [subtitle]="userCompany$ | async" [dropdownMenuItems]="dropdownMenuItems"></user-dropdown-menu>
         </user-management-list>
-
         <top-bar></top-bar>
     </div>
 </div>

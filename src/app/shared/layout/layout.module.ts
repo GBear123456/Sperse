@@ -34,12 +34,14 @@ import 'assets/metronic/src/js/framework/base/util.js';
 import 'assets/metronic/src/js/framework/base/app.js';
 import 'assets/metronic/src/js/framework/components/general/dropdown.js';
 import 'assets/metronic/src/js/framework/components/general/offcanvas.js';
+import { ContactInfoPanelComponent } from '@app/shared/common/contact-info-panel/contact-info-panel.component';
 
 let COMPONENTS = [
     PlatformSelectComponent,
     HeaderComponent,
     TopBarComponent,
-    SideBarComponent
+    SideBarComponent,
+    ContactInfoPanelComponent
 ];
 
 @NgModule({

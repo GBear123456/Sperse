@@ -34,16 +34,16 @@
                         </dxo-selection>
                         <dxo-editing mode="popup" [popup]="{onShowing: onShowingPopup, height: '0px', width: '0px'}" [allowUpdating]="true"></dxo-editing>
 
-                        <dxi-column dataField="creationTime" caption="{{l('CreationTime')}}" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
-                        <dxi-column dataField="lastLoginTime" caption="{{l('LastLoginTime')}}" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
-                        <dxi-column dataField="isActive" caption="{{l('Active')}}"></dxi-column>
-                        <dxi-column dataField="isEmailConfirmed" caption="{{l('EmailConfirmed')}}"></dxi-column>
-                        <dxi-column dataField="phoneNumber" caption="{{l('PhoneNumber')}}" cellTemplate="phoneCell" cssClass="tabular"></dxi-column>
-                        <dxi-column dataField="emailAddress" caption="{{l('EmailAddress')}}"></dxi-column>
-                        <dxi-column dataField="roles" caption="{{l('Roles')}}" cellTemplate="roleCell" [allowSorting]="false"></dxi-column>
-                        <dxi-column dataField="surname" caption="{{l('Surname')}}"></dxi-column>
-                        <dxi-column dataField="name" caption="{{l('Name')}}"></dxi-column>
-                        <dxi-column dataField="userName" caption="{{l('UserName')}}"></dxi-column>
+                        <dxi-column dataField="creationTime" [caption]="l('CreationTime')" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
+                        <dxi-column dataField="lastLoginTime" [caption]="l('LastLoginTime')" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
+                        <dxi-column dataField="isActive" [caption]="l('Active')"></dxi-column>
+                        <dxi-column dataField="isEmailConfirmed" [caption]="l('EmailConfirmed')"></dxi-column>
+                        <dxi-column dataField="phoneNumber" [caption]="l('PhoneNumber')" cellTemplate="phoneCell" cssClass="tabular"></dxi-column>
+                        <dxi-column dataField="emailAddress" [caption]="l('EmailAddress')"></dxi-column>
+                        <dxi-column dataField="roles" [caption]="l('Roles')" cellTemplate="roleCell" [allowSorting]="false"></dxi-column>
+                        <dxi-column dataField="surname" [caption]="l('Surname')"></dxi-column>
+                        <dxi-column dataField="name" [caption]="l('Name')"></dxi-column>
+                        <dxi-column dataField="userName" [caption]="l('UserName')"></dxi-column>
                         <dxi-column dataField="profileThumbnailId" caption=" " cellTemplate="photoTemplate"
                             [width]="50" [showInColumnChooser]="false" [allowExporting]="false"
                             [allowGrouping]="false" [allowSorting]="false"></dxi-column>

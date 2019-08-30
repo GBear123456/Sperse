@@ -12,6 +12,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import 'devextreme/data/odata/store';
 import { Store, select } from '@ngrx/store';
+import { takeUntil } from 'rxjs/operators';
 import * as _ from 'underscore';
 
 /** Application imports */
@@ -27,7 +28,7 @@ import {
     TagsStoreSelectors
 } from '@app/store';
 import { AppConsts } from '@shared/AppConsts';
-import { ODataSearchStrategy, ContactGroup } from '@shared/AppEnums';
+import { ContactGroup } from '@shared/AppEnums';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { StaticListComponent } from '@app/shared/common/static-list/static-list.component';
 import { TagsListComponent } from '../shared/tags-list/tags-list.component';
@@ -49,7 +50,14 @@ import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-
 import { FilterRangeComponent } from '@shared/filters/range/filter-range.component';
 import { FilterHelpers } from '@app/crm/shared/helpers/filter.helper';
 import { DataLayoutType } from '@app/shared/layout/data-layout-type';
-import { ContactStatusDto, BulkUpdatePartnerTypeInput, PartnerTypeServiceProxy, PartnerServiceProxy, ContactServiceProxy } from '@shared/service-proxies/service-proxies';
+import {
+    ContactStatusDto,
+    BulkUpdatePartnerTypeInput,
+    PartnerTypeServiceProxy,
+    PartnerServiceProxy,
+    ContactServiceProxy,
+    OrganizationUnitDto
+} from '@shared/service-proxies/service-proxies';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { ClientService } from '@app/crm/clients/clients.service';
 import { PipelineService } from '@app/shared/pipeline/pipeline.service';
@@ -59,12 +67,15 @@ import { ContactsService } from '@app/crm/contacts/contacts.service';
 import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
 import { DataGridService } from '@app/shared/common/data-grid.service.ts/data-grid.service';
 import { AppPermissions } from '@shared/AppPermissions';
+import { OrganizationUnitsStoreActions, OrganizationUnitsStoreSelectors } from '@app/crm/store';
+import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
+import { DataGridHelper } from '@app/crm/shared/helpers/data-grid.helper';
 
 @Component({
     templateUrl: './partners.component.html',
     styleUrls: ['./partners.component.less'],
     animations: [appModuleAnimation()],
-    providers: [ ClientService, PartnerServiceProxy, PartnerTypeServiceProxy, ContactServiceProxy ]
+    providers: [ ClientService, PartnerServiceProxy, PartnerTypeServiceProxy, ContactServiceProxy, LifecycleSubjectsService ]
 })
 export class PartnersComponent extends AppComponentBase implements OnInit, OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
@@ -80,10 +91,11 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     private readonly dataSourceURI = 'Partner';
     private filters: FilterModel[];
     private rootComponent: any;
-    private formatting = AppConsts.formatting;
     private subRouteParams: any;
     private dependencyChanged = false;
+    private organizationUnits: OrganizationUnitDto[];
 
+    formatting = AppConsts.formatting;
     statuses: ContactStatusDto[];
     filterModelLists: FilterModel;
     filterModelTags: FilterModel;
@@ -122,9 +134,10 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         private _partnerTypeService: PartnerTypeServiceProxy,
         private store$: Store<AppStore.State>,
         private itemDetailsService: ItemDetailsService,
+        private lifeCycleSubjectsService: LifecycleSubjectsService,
         public dialog: MatDialog,
         public contactProxy: ContactServiceProxy,
-        public userManagementService: UserManagementService
+        public userManagementService: UserManagementService,
     ) {
         super(injector);
         this.dataSource = {
@@ -146,6 +159,13 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         this._pipelineService.stageChange.asObservable().subscribe((lead) => {
             this.dependencyChanged = (lead.Stage == _.last(this._pipelineService.getStages(AppConsts.PipelinePurposeIds.lead)).name);
         });
+    }
+
+    ngOnInit() {
+        this.getStatuses();
+        this.getPartnerTypes();
+        this.getOrganizationUnits();
+        this.activate();
     }
 
     toggleToolbar() {
@@ -311,6 +331,19 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                                 })
                         }
                     }),
+                    new FilterModel({
+                        component: FilterCheckBoxesComponent,
+                        caption: 'OrganizationUnitId',
+                        field: 'OrganizationUnitId',
+                        items: {
+                            element: new FilterCheckBoxesModel(
+                                {
+                                    dataSource$: this.store$.pipe(select(OrganizationUnitsStoreSelectors.getOrganizationUnits)),
+                                    nameField: 'displayName',
+                                    keyExpr: 'id'
+                                })
+                        }
+                    }),
                     this.filterModelLists = new FilterModel({
                         component: FilterCheckBoxesComponent,
                         caption: 'List',
@@ -384,10 +417,10 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                             checkPressed: () => {
                                 return this._filtersService.fixed;
                             },
-                            mouseover: event => {
+                            mouseover: () => {
                                 this._filtersService.enable();
                             },
-                            mouseout: event => {
+                            mouseout: () => {
                                 if (!this._filtersService.fixed)
                                     this._filtersService.disable();
                             }
@@ -576,6 +609,10 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         return FilterHelpers.filterBySetOfValues(filter);
     }
 
+    filterByOrganizationUnitId(filter: FilterModel) {
+        return FilterHelpers.filterBySetOfValues(filter);
+    }
+
     filterByList(filter: FilterModel) {
         return FilterHelpers.filterBySetOfValues(filter);
     }
@@ -612,6 +649,10 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         );
     }
 
+    getOrganizationUnitName = (e) => {
+        return DataGridHelper.getOrganizationUnitName(e.OrganizationUnitId, this.organizationUnits);
+    }
+
     updatePartnerStatuses(status) {
         let selectedIds: number[] = this.dataGrid.instance.getSelectedRowKeys();
         this._clientService.updateContactStatuses(
@@ -642,6 +683,16 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         );
     }
 
+    private getOrganizationUnits() {
+        this.store$.dispatch(new OrganizationUnitsStoreActions.LoadRequestAction(false));
+        this.store$.pipe(
+            select(OrganizationUnitsStoreSelectors.getOrganizationUnits),
+            takeUntil(this.lifeCycleSubjectsService.destroy$)
+        ).subscribe((organizationUnits: OrganizationUnitDto[]) => {
+            this.organizationUnits = organizationUnits;
+        });
+    }
+
     private getPartnerTypes() {
         this.store$.pipe(select(PartnerTypesStoreSelectors.getPartnerTypes)).subscribe(
             partnerTypes => this.partnerTypes = partnerTypes
@@ -653,12 +704,6 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         if (col && (col.command || col.name == 'LinkToCFO'))
             return;
         this.showPartnerDetails($event);
-    }
-
-    ngOnInit() {
-        this.getStatuses();
-        this.getPartnerTypes();
-        this.activate();
     }
 
     ngOnDestroy() {

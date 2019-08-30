@@ -158,7 +158,7 @@
                        (street_number)='address.streetNumber=$event'
                        (street)='address.street=$event'
                        (city)='businessEntity.city=$event'
-                       (state)='address.state=$event'
+                       (setAddress)="onAddressChanged($event)"
                        (postal_code)='businessEntity.zip=$event'
                        angularGooglePlace />
                 <span *ngIf="!googleAutoComplete" [class]="businessEntity.address && 'clear-contact' || 'hidden'" (click)="emptyValue('address')"><i class="minus-icon"></i></span>
@@ -168,7 +168,7 @@
                 <label></label>
                 <dx-text-box name="city"
                              maxLength="50"
-                             placeholder="{{ls.l('BusinessEntity_City')}}"
+                             [placeholder]="ls.l('BusinessEntity_City')"
                              [width]="'360px'"
                              (onKeyUp)="onKeyUp($event, 'city')"
                              [value]="businessEntity.city">
@@ -181,7 +181,7 @@
                                displayExpr="name"
                                valueExpr="name"
                                name="state"
-                               placeholder="{{ls.l('BusinessEntity_State')}}"
+                               [placeholder]="ls.l('BusinessEntity_State')"
                                [width]="'360px'"
                                [searchEnabled]="true"
                                [(value)]="address.state">
@@ -205,7 +205,7 @@
                                displayExpr="name"
                                valueExpr="name"
                                name="country"
-                               placeholder="{{ls.l('BusinessEntity_Country')}}"
+                               [placeholder]="ls.l('BusinessEntity_Country')"
                                [width]="'360px'"
                                [searchEnabled]="true"
                                [(value)]="address.country"

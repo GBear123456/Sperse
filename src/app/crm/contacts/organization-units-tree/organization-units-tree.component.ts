@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, Input, Injector, ViewChild, OnDestroy } from '@angular/core';
+import { Component, Input, ViewChild, OnDestroy } from '@angular/core';
 
 /** Third party imports */
 import DataSource from 'devextreme/data/data_source';
@@ -11,16 +11,19 @@ import * as _ from 'underscore';
 /** Application imports */
 import { OrganizationUnitDto, OrganizationUnitServiceProxy,
     UsersToOrganizationUnitInput } from '@shared/service-proxies/service-proxies';
-import { AppComponentBase } from '@shared/common/app-component-base';
 import { ContactsService } from '../contacts.service';
 import { AppPermissions } from '@shared/AppPermissions';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { AppPermissionService } from '@shared/common/auth/permission.service';
+import { NotifyService } from '@abp/notify/notify.service';
+import { LoadingService } from '@shared/common/loading-service/loading.service';
 
 @Component({
     selector: 'oranization-units-tree',
     templateUrl: './organization-units-tree.component.html',
     styleUrls: ['./organization-units-tree.component.less']
 })
-export class OrganizationUnitsTreeComponent extends AppComponentBase implements OnDestroy {
+export class OrganizationUnitsTreeComponent implements OnDestroy {
     @ViewChild(DxTreeViewComponent) organizationUnitsTree: DxTreeViewComponent;
 
     @Input() selectionMode = 'multiple';
@@ -63,21 +66,21 @@ export class OrganizationUnitsTreeComponent extends AppComponentBase implements 
                     name: 'expandTree',
                     widget: 'dxDropDownMenu',
                     options: {
-                        hint: this.l('Expand'),
+                        hint: this.ls.l('Expand'),
                         items: [{
                             action: this.processExpandTree.bind(this, 1),
-                            text: this.l('Expand 1st level')
+                            text: this.ls.l('Expand 1st level')
                         }, {
                             action: this.processExpandTree.bind(this, 2),
-                            text: this.l('Expand 2nd level')
+                            text: this.ls.l('Expand 2nd level')
                         }, {
                             action: this.processExpandTree.bind(this, 10),
-                            text: this.l('Expand all')
+                            text: this.ls.l('Expand all')
                         }, {
                             type: 'delimiter'
                         }, {
                             action: this.processExpandTree.bind(this, 0),
-                            text: this.l('Collapse all'),
+                            text: this.ls.l('Collapse all'),
                         }]
                     }
                 }
@@ -85,18 +88,20 @@ export class OrganizationUnitsTreeComponent extends AppComponentBase implements 
         }
     ];
 
-    constructor(injector: Injector,
-        private _userOrgUnitsService: OrganizationUnitServiceProxy,
-        private _contactsService: ContactsService
+    constructor(
+        private userOrgUnitsService: OrganizationUnitServiceProxy,
+        private contactsService: ContactsService,
+        private ls: AppLocalizationService,
+        private permissionChecker: AppPermissionService,
+        private notifyService: NotifyService,
+        private loadingService: LoadingService
     ) {
-        super(injector);
-
-        _contactsService.orgUnitsSubscribe((userData) => {
+        contactsService.orgUnitsSubscribe((userData) => {
             this.userId = userData.user.id;
             this.setOrganizationUnitsData(userData.allOrganizationUnits, userData.memberedOrganizationUnits);
         }, this.ident);
 
-        this.isEditAllowed = this.isGranted(AppPermissions.AdministrationOrganizationUnitsManageMembers);
+        this.isEditAllowed = this.permissionChecker.isGranted(AppPermissions.AdministrationOrganizationUnitsManageMembers);
     }
 
     setOrganizationUnitsData(orgUnits: OrganizationUnitDto[], memberedOrganizationUnits: string[]) {
@@ -143,27 +148,32 @@ export class OrganizationUnitsTreeComponent extends AppComponentBase implements 
 
     onChange(event) {
         if (this.userId && this.selectionMode == 'multiple')
-            (event.itemData.selected ?
-                this._userOrgUnitsService.addUsersToOrganizationUnit(UsersToOrganizationUnitInput.fromJS({
+            (event.itemData.selected
+                ? this.userOrgUnitsService.addUsersToOrganizationUnit(UsersToOrganizationUnitInput.fromJS({
                     userIds: [this.userId],
                     organizationUnitId: event.itemData.id
-                })) : this._userOrgUnitsService.removeUserFromOrganizationUnit(this.userId, event.itemData.id)
-            ).pipe(finalize(() => this.finishLoading(true))).subscribe(() => {
-                this._contactsService.orgUnitsSave(this.getSelectedOrganizationUnits());
-                this.notify.info(this.l('SavedSuccessfully'));
+                }))
+                : this.userOrgUnitsService.removeUserFromOrganizationUnit(this.userId, event.itemData.id)
+            ).pipe(finalize(() => this.loadingService.finishLoading())).subscribe(() => {
+                this.contactsService.orgUnitsSave(this.getSelectedOrganizationUnits());
+                this.notifyService.info(this.ls.l('SavedSuccessfully'));
             });
         else if (event.event) {
-            if (this.lastSeletedItemId == event.itemData.id) {
-                if (!event.itemData.selected)
-                    event.component.selectItem(event.node.key);
+            if (this.selectionMode == 'single') {
+                if (this.lastSeletedItemId == event.itemData.id) {
+                    if (!event.itemData.selected)
+                        event.component.selectItem(event.node.key);
+                } else {
+                    this.lastSeletedItemId = event.itemData.id;
+                    this.contactsService.orgUnitsSave(this.getSelectedOrganizationUnits());
+                }
             } else {
-                this.lastSeletedItemId = event.itemData.id;
-                this._contactsService.orgUnitsSave(this.getSelectedOrganizationUnits());
+                this.contactsService.orgUnitsSave(this.getSelectedOrganizationUnits());
             }
         }
     }
 
     ngOnDestroy() {
-        this._contactsService.unsubscribe(this.ident);
+        this.contactsService.unsubscribe(this.ident);
     }
 }

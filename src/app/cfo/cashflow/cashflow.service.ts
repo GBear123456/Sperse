@@ -24,6 +24,7 @@ import {
     GetCategoryTreeOutput,
     GetReportTemplateDefinitionOutput,
     GroupByPeriod,
+    SectionGroup,
     StatsDetailFilter,
     StatsFilter
 } from '@shared/service-proxies/service-proxies';
@@ -177,6 +178,7 @@ export class CashflowService {
             sortOrder: 'asc',
             expanded: false,
             showTotals: true,
+            sortingMethod: (a, b) => this.sortReportingGroup(a, b),
             resortable: true,
             customizeText: cellInfo => this.customizeFieldText.bind(this, cellInfo, this.ls.l('Unclassified'))()
         },
@@ -370,6 +372,30 @@ export class CashflowService {
         public userPreferencesService: UserPreferencesService
     ) {}
 
+    /**
+     * This function accepts two field values and should return a number indicating their sort order:
+         Less than zero - a goes before b.
+         Zero - a and b remain unchanged relative to each other.
+         Greater than zero - a goes after b.
+     * @param firstItem
+     * @param secondItem
+     * @return {number}
+     */
+    sortReportingGroup(firstItem, secondItem): number {
+        let result = 0;
+        const firstItemValue = firstItem.value && firstItem.value.slice(2);
+        const secondItemValue = secondItem.value && secondItem.value.slice(2);
+        if (!firstItemValue || firstItemValue === 'N/A') {
+            result = 1;
+        } else if (!secondItemValue || secondItemValue === 'N/A') {
+            result = -1;
+        } else if (firstItem.value.slice(0, 2) === CategorizationPrefixes.ReportingGroup) {
+            const sectionGroups = Object.keys(SectionGroup);
+            result = sectionGroups.indexOf(firstItemValue) > sectionGroups.indexOf(secondItemValue) ? 1 : -1;
+        }
+        return result;
+    }
+
     addEvents(element: HTMLElement, events: IEventDescription[]) {
         for (let event of events) {
             element.addEventListener(event.name, event.handler, event.useCapture);
@@ -384,7 +410,7 @@ export class CashflowService {
 
     /**
      * Gets categorization properties and their values depend on targets and forecasts data
-     * @param forecast
+     * @param {CellInfo} source
      * @param {CellInfo} target
      * @param {boolean} subCategoryIsCategory
      * @return {{categoryId: number; transactionDescriptor: string}}
@@ -510,7 +536,7 @@ export class CashflowService {
 
     /**
      * Get forecasts interval for adding forecasts
-     * @param futureForecastsYearCount
+     * @param forecastsYearCount
      * @returns {CellInterval}
      */
     getAllowedForecastsInterval(forecastsYearCount: number): CellInterval {
@@ -596,7 +622,7 @@ export class CashflowService {
                 onValueChanged: (e) => {
                     options.onValueChanged(e, cellObj);
                 },
-                onFocusOut: (e) => {
+                onFocusOut: () => {
                     if (!this.valueIsChanging) {
                         this.removeModifyingCellInput();
                     }
@@ -611,7 +637,7 @@ export class CashflowService {
                 onValueChanged: (e) => {
                     options.onValueChanged(e, cellObj);
                 },
-                onFocusOut: (e) => {
+                onFocusOut: () => {
                     if (!this.valueIsChanging) {
                         this.removeModifyingCellInput();
                     }
@@ -784,9 +810,10 @@ export class CashflowService {
                 }
 
                 if (level.prefix === CategorizationPrefixes.ReportingGroup || level.prefix === CategorizationPrefixes.ReportingSection) {
+                    let reportSectionId;
                     const categoryId = transactionObj.subCategoryId || transactionObj.categoryId;
                     if (categoryId) {
-                        const reportSectionId = this.reportSections.categorySectionMap[categoryId];
+                        reportSectionId = this.reportSections.categorySectionMap[categoryId];
                         if (reportSectionId) {
                             const reportSection = this.reportSections.sections[reportSectionId];
                             if (reportSection) {
@@ -797,6 +824,11 @@ export class CashflowService {
                                 );
                             }
                         }
+                    }
+                    if ((!categoryId || !reportSectionId) &&
+                        level.prefix === CategorizationPrefixes.ReportingGroup
+                    ) {
+                        transactionObj['levels'][`level${levelNumber++}`] = level.prefix + 'N/A';
                     }
                     return true;
                 }
@@ -901,7 +933,7 @@ export class CashflowService {
 
             /** Text customizing for reporting groups */
             if (prefix === CategorizationPrefixes.ReportingGroup) {
-                text = this.ls.l('SectionGroup_' + key);
+                text = key === 'N/A' ? key : this.ls.l('SectionGroup_' + key);
             }
 
             /** Text customizing for accounts names */
@@ -937,8 +969,6 @@ export class CashflowService {
     getDetailFilterFromCell(cellObj): StatsDetailFilter {
         const datePeriod = this.formattingDate(cellObj.cell.columnPath);
 
-        //console.log(StatsDetailFilter.fromJS(filterParams));
-
         /** if somehow user click on the cell that is not in the filter date range - return null */
         if (this.requestFilter.startDate && datePeriod.endDate < this.requestFilter.startDate ||
             this.requestFilter.endDate && datePeriod.startDate > this.requestFilter.endDate) {
@@ -969,10 +999,8 @@ export class CashflowService {
             if (item) {
                 let [ key, prefix ] = [ item.slice(2), item.slice(0, 2) ];
 
-                //console.log(key, prefix);
-                if (key !== CashflowTypeTotal) {
+                if (key !== CashflowTypeTotal && item !== CategorizationPrefixes.ReportingGroup + 'N/A') {
                     const property = this.getCategoryParams(prefix)['statsKeyName'];
-                    //console.log(property);
                     filterParams[property] = key;
                 }
             } else {
@@ -1198,7 +1226,7 @@ export class CashflowService {
             }
 
             if (this.isCellIsStartingBalanceSummary(summaryCell, cellRow, cellValue)) {
-                return this.getCurrentValueForStartingBalanceCell(summaryCell);
+                return (summaryCell.value() || 0) + this.getCurrentValueForStartingBalanceCell(summaryCell);
             }
 
             return this.cellRowIsNotEmpty(cellRow, cellValue) ? summaryCell.value() || 0 : null;
@@ -1260,7 +1288,8 @@ export class CashflowService {
     }
 
     cellRowIsNotEmpty(cellRow, cellValue) {
-        return cellRow && (cellValue !== undefined || cellRow.dataField === 'levels.level1');
+        return cellRow && (cellValue !== undefined || cellRow.dataField === 'levels.level1' ||
+               (this.userPreferencesService.localPreferences.value.showReportingSectionTotals && cellRow.dataField === 'levels.level2'));
     }
 
     isEndingBalanceAccountCell(summaryCell, cellRow) {
@@ -1300,16 +1329,6 @@ export class CashflowService {
         };
     }
 
-    /**
-     * Gets the historical field object in tableFields
-     * @returns {Object}
-     */
-    getHistoricField(): any {
-        return this.apiTableFields.find(
-            field => field['caption'] === 'Historical'
-        );
-    }
-
     getCurrentValueForStartingBalanceCell(summaryCell) {
         const cellData = <any>this.getCellData(summaryCell, summaryCell.value(summaryCell.field('row')).slice(2), StartedBalance);
         return this.calculateCellValue(cellData, this.zeroAdjustmentsList, true);
@@ -1326,8 +1345,8 @@ export class CashflowService {
         const prevIsFirstColumn = this.getPrevWithParent(prevWithParent) ? true : false;
         const prevCellValue = prevWithParent ? prevWithParent.value(prevIsFirstColumn) || 0 : 0;
         const prevReconciliation = this.getCellValue(prevWithParent, Reconciliation);
-        const adjustmentsAlreadyIncludedInStartedBalances = this.getCurrentValueForStartingBalanceCell(prevWithParent);
-        return prevEndingAccountValue - adjustmentsAlreadyIncludedInStartedBalances + prevCellValue + prevReconciliation;
+        //const adjustmentsAlreadyIncludedInStartedBalances = this.getCurrentValueForStartingBalanceCell(prevWithParent);
+        return prevEndingAccountValue /*- adjustmentsAlreadyIncludedInStartedBalances*/ + prevCellValue + prevReconciliation;
     }
 
     /**
@@ -1337,15 +1356,15 @@ export class CashflowService {
      * @return {number}
      */
     modifyStartingBalanceSummaryCell(summaryCell, prevWithParent) {
-        let prevTotal = prevWithParent.slice(0, PT),
-            currentCellValue = summaryCell.value() || 0,
-            prevTotalValue = prevTotal ? prevTotal.value() || 0 : 0,
-            prevIsFirstColumn = this.getPrevWithParent(prevWithParent) ? true : false,
-            prevCellValue = prevWithParent ? prevWithParent.value(prevIsFirstColumn) || 0 : 0,
-            prevReconciliation = prevWithParent.slice(0, PR),
-            prevReconciliationValue = prevReconciliation ? prevReconciliation.value() || 0 : 0,
-            adjustmentsAlreadyIncludedInStartedBalances = this.getCurrentValueForStartingBalanceCell(prevWithParent);
-        return currentCellValue + prevTotalValue + prevCellValue + prevReconciliationValue - adjustmentsAlreadyIncludedInStartedBalances;
+        const prevTotal = prevWithParent.slice(0, PT);
+        const currentCellValue = summaryCell.value() || 0;
+        const prevTotalValue = prevTotal ? prevTotal.value() || 0 : 0;
+        const prevIsFirstColumn = this.getPrevWithParent(prevWithParent) ? true : false;
+        const prevCellValue = prevWithParent ? prevWithParent.value(prevIsFirstColumn) || 0 : 0;
+        const prevReconciliation = prevWithParent.slice(0, PR);
+        const prevReconciliationValue = prevReconciliation ? prevReconciliation.value() || 0 : 0;
+        //const adjustmentsAlreadyIncludedInStartedBalances = this.getCurrentValueForStartingBalanceCell(prevWithParent);
+        return currentCellValue + prevTotalValue + prevCellValue + prevReconciliationValue /*- adjustmentsAlreadyIncludedInStartedBalances*/;
     }
 
     /**
@@ -1372,7 +1391,9 @@ export class CashflowService {
             currentCellValue = summaryCell.value() || 0,
             reconciliationTotal = summaryCell.slice(0, PR),
             reconciliationTotalValue = reconciliationTotal && reconciliationTotal.value() || 0,
-            adjustmentsAlreadyIncludedInStartedBalances = this.getCurrentValueForStartingBalanceCell(summaryCell);
+            adjustmentsAlreadyIncludedInStartedBalances = calculatedStartedBalance
+                ? this.getCurrentValueForStartingBalanceCell(summaryCell)
+                : 0;
         return currentCellValue + startedBalanceCellValue + reconciliationTotalValue - adjustmentsAlreadyIncludedInStartedBalances;
     }
 
@@ -1630,7 +1651,7 @@ export class CashflowService {
         let result = false;
         if (area === 'row' || area === 'data') {
             let path = cell.path || cell.rowPath;
-            result = path && !cell.isWhiteSpace && path.length === 2 && path[2] === undefined;
+            result = path && !cell.isWhiteSpace && path[path.length - 1] === undefined;
         }
         return result;
     }
