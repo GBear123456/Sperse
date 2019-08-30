@@ -169,6 +169,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 })
             }
         });
+        this.filterModelStatus.updateCaptions();
         this.dataSource = {
             store: {
                 key: 'Id',
