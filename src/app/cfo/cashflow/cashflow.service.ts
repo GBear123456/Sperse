@@ -1349,8 +1349,8 @@ export class CashflowService {
         const prevIsFirstColumn = this.getPrevWithParent(prevWithParent) ? true : false;
         const prevCellValue = prevWithParent ? prevWithParent.value(prevIsFirstColumn) || 0 : 0;
         const prevReconciliation = this.getCellValue(prevWithParent, Reconciliation);
-        const adjustmentsAlreadyIncludedInStartedBalances = this.getCurrentValueForStartingBalanceCell(prevWithParent);
-        return prevEndingAccountValue - adjustmentsAlreadyIncludedInStartedBalances + prevCellValue + prevReconciliation;
+        //const adjustmentsAlreadyIncludedInStartedBalances = this.getCurrentValueForStartingBalanceCell(prevWithParent);
+        return prevEndingAccountValue /*- adjustmentsAlreadyIncludedInStartedBalances*/ + prevCellValue + prevReconciliation;
     }
 
     /**
@@ -1360,15 +1360,15 @@ export class CashflowService {
      * @return {number}
      */
     modifyStartingBalanceSummaryCell(summaryCell, prevWithParent) {
-        let prevTotal = prevWithParent.slice(0, PT),
-            currentCellValue = summaryCell.value() || 0,
-            prevTotalValue = prevTotal ? prevTotal.value() || 0 : 0,
-            prevIsFirstColumn = this.getPrevWithParent(prevWithParent) ? true : false,
-            prevCellValue = prevWithParent ? prevWithParent.value(prevIsFirstColumn) || 0 : 0,
-            prevReconciliation = prevWithParent.slice(0, PR),
-            prevReconciliationValue = prevReconciliation ? prevReconciliation.value() || 0 : 0,
-            adjustmentsAlreadyIncludedInStartedBalances = this.getCurrentValueForStartingBalanceCell(prevWithParent);
-        return currentCellValue + prevTotalValue + prevCellValue + prevReconciliationValue - adjustmentsAlreadyIncludedInStartedBalances;
+        const prevTotal = prevWithParent.slice(0, PT);
+        const currentCellValue = summaryCell.value() || 0;
+        const prevTotalValue = prevTotal ? prevTotal.value() || 0 : 0;
+        const prevIsFirstColumn = this.getPrevWithParent(prevWithParent) ? true : false;
+        const prevCellValue = prevWithParent ? prevWithParent.value(prevIsFirstColumn) || 0 : 0;
+        const prevReconciliation = prevWithParent.slice(0, PR);
+        const prevReconciliationValue = prevReconciliation ? prevReconciliation.value() || 0 : 0;
+        //const adjustmentsAlreadyIncludedInStartedBalances = this.getCurrentValueForStartingBalanceCell(prevWithParent);
+        return currentCellValue + prevTotalValue + prevCellValue + prevReconciliationValue /*- adjustmentsAlreadyIncludedInStartedBalances*/;
     }
 
     /**
@@ -1395,7 +1395,9 @@ export class CashflowService {
             currentCellValue = summaryCell.value() || 0,
             reconciliationTotal = summaryCell.slice(0, PR),
             reconciliationTotalValue = reconciliationTotal && reconciliationTotal.value() || 0,
-            adjustmentsAlreadyIncludedInStartedBalances = this.getCurrentValueForStartingBalanceCell(summaryCell);
+            adjustmentsAlreadyIncludedInStartedBalances = calculatedStartedBalance
+                ? this.getCurrentValueForStartingBalanceCell(summaryCell)
+                : 0;
         return currentCellValue + startedBalanceCellValue + reconciliationTotalValue - adjustmentsAlreadyIncludedInStartedBalances;
     }
 
