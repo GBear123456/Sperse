@@ -65,7 +65,7 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
         contactId: undefined,
         emailAddress: '',
         phoneNumber: undefined,
-        assignedRoleNames: [],
+        assignedRoleNames: [AppRoles.CRMPartner, AppRoles.CFOPartner],
         organizationUnitIds: []
     });
 

@@ -337,18 +337,7 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit, 
                 if (selectedChartType === ChartType.CashBalancesTrends
                     || selectedChartType === ChartType.Combined
                 ) {
-                    let allValues = [];
-                    stats.forEach((statsItem: BankAccountDailyStatDto) => {
-                        /** Get all using in chart values to show gradient well*/
-                        allValues.push(statsItem.endingBalance);
-                        if (selectedChartType === ChartType.Combined) {
-                            allValues.push(
-                                statsItem.debit,
-                                statsItem.credit,
-                                statsItem['netChange']
-                            );
-                        }
-                    });
+                    let allValues = stats.map(statsItem => statsItem.endingBalance);
                     const minValue = Math.min.apply(Math, allValues);
                     const maxValue = Math.max.apply(Math, allValues);
                     const minRange = minValue - (0.2 * Math.abs(maxValue - minValue));
