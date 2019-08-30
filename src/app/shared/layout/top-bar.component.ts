@@ -34,17 +34,17 @@ export class TopBarComponent {
     };
 
     constructor(
-        private _appSessionService: AppSessionService,
-        private _appService: AppService,
-        private _permissionChecker: AppPermissionService,
+        private appSessionService: AppSessionService,
+        private appService: AppService,
+        private permissionChecker: AppPermissionService,
         public router: Router,
         public ls: AppLocalizationService
     ) {
         this.router.events.subscribe(event => {
             if (event instanceof NavigationEnd) {
                 let currModuleName = (this.config.name || '').toLowerCase();
-                if (currModuleName && currModuleName != _appService.getModule())
-                    _appService.initModule();
+                if (currModuleName && currModuleName != appService.getModule())
+                    appService.initModule();
 
                 setTimeout(() => {
                     let route = event.urlAfterRedirects.split('?').shift();
@@ -56,14 +56,14 @@ export class TopBarComponent {
             }
         });
 
-        this._appService.subscribeModuleChange((config) => {
+        this.appService.subscribeModuleChange((config) => {
             this.config = config;
             this.visibleMenuItemsWidth = 0;
             this.menu = new PanelMenu('MainMenu', 'MainMenu',
                 this.initMenu(config['navigation'], config['localizationSource'], 0)
             );
 
-            this._appService.topMenu = this.menu;
+            this.appService.topMenu = this.menu;
             this.updateNavMenu(true);
         });
     }
@@ -78,7 +78,7 @@ export class TopBarComponent {
                 value[1], value[2], value[3], value[4], value[5], value[6], value[7]);
             item.visible = this.showMenuItem(item);
             if (!level && item.visible) {
-                item['length'] = (item.text.length * 10 + 32);
+                item['length'] = item.text.length * 10 + 38;
                 this.visibleMenuItemsWidth += item['length'];
             }
             navList.push(item);
@@ -123,14 +123,14 @@ export class TopBarComponent {
     private checkMenuItemPermission(item: PanelMenuItem): boolean {
         //!!VP Should be considered on module configuration level
         if (this.config['name'] == 'CRM') {
-            if (!this._appService.isHostTenant) {
+            if (!this.appService.isHostTenant) {
                 if (['Editions'].indexOf(item.text) >= 0)
                     return false;
             } else if (['Products'].indexOf(item.text) >= 0)
                 return false;
         }
 
-        return this._appService.isFeatureEnable(item.featureName) && (this._permissionChecker.isGranted(item.permissionName) ||
+        return this.appService.isFeatureEnable(item.featureName) && (this.permissionChecker.isGranted(item.permissionName) ||
             (item.items && item.items.length && this.checkChildMenuItemPermission(item) || !item.permissionName));
     }
 
