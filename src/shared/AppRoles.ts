@@ -3,9 +3,10 @@ export enum AppRoles {
     CRMAdmin = 'CRM Admin',
     CRMUser = 'CRM User',
     CRMReader = 'CRM Reader',
-    CRMPartnerUser = 'CRM Partner User',
+    CRMPartner = 'CRM Partner',
     PFMAdmin = 'PFM Admin',
     CFOAdmin = 'CFO Admin',
     CFOUser = 'CFO User',
-    CFOMember = 'CFO Member'
+    CFOMember = 'CFO Member',
+    CFOPartner = 'CFO Partner'
 }

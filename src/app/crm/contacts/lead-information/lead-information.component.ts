@@ -143,7 +143,7 @@ export class LeadInformationComponent extends AppComponentBase implements OnInit
             takeUntil(this.lifeCycleService.destroy$),
             filter(Boolean)
         ).subscribe((organizationUnits: OrganizationUnitDto[]) => {
-            let data = { organizationUnits: organizationUnits };
+            let data = { allOrganizationUnits: organizationUnits };
             const orgUnit = organizationUnits.find((organizationUnit: OrganizationUnitDto) => {
                 return organizationUnit.id === (this.data.leadInfo.organizationUnitId || this.data.contactInfo.organizationUnitId);
             });

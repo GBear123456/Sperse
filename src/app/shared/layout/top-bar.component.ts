@@ -1,5 +1,6 @@
 /** Core imports */
-import { Component } from '@angular/core';
+import { Component, Inject } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
 import { Router, NavigationEnd } from '@angular/router';
 
 /** Third party imports */
@@ -34,17 +35,18 @@ export class TopBarComponent {
     };
 
     constructor(
-        private _appSessionService: AppSessionService,
-        private _appService: AppService,
-        private _permissionChecker: AppPermissionService,
+        private appSessionService: AppSessionService,
+        private appService: AppService,
+        private permissionChecker: AppPermissionService,
         public router: Router,
-        public ls: AppLocalizationService
+        public ls: AppLocalizationService,
+        @Inject(DOCUMENT) private document: any
     ) {
         this.router.events.subscribe(event => {
             if (event instanceof NavigationEnd) {
                 let currModuleName = (this.config.name || '').toLowerCase();
-                if (currModuleName && currModuleName != _appService.getModule())
-                    _appService.initModule();
+                if (currModuleName && currModuleName != appService.getModule())
+                    appService.initModule();
 
                 setTimeout(() => {
                     let route = event.urlAfterRedirects.split('?').shift();
@@ -56,14 +58,14 @@ export class TopBarComponent {
             }
         });
 
-        this._appService.subscribeModuleChange((config) => {
+        this.appService.subscribeModuleChange((config) => {
             this.config = config;
             this.visibleMenuItemsWidth = 0;
             this.menu = new PanelMenu('MainMenu', 'MainMenu',
                 this.initMenu(config['navigation'], config['localizationSource'], 0)
             );
 
-            this._appService.topMenu = this.menu;
+            this.appService.topMenu = this.menu;
             this.updateNavMenu(true);
         });
     }
@@ -78,7 +80,7 @@ export class TopBarComponent {
                 value[1], value[2], value[3], value[4], value[5], value[6], value[7]);
             item.visible = this.showMenuItem(item);
             if (!level && item.visible) {
-                item['length'] = (item.text.length * 10 + 32);
+                item['length'] = item.text.length * 10 + 38;
                 this.visibleMenuItemsWidth += item['length'];
             }
             navList.push(item);
@@ -103,7 +105,15 @@ export class TopBarComponent {
             clearTimeout(this.updateTimeout);
             this.updateTimeout = setTimeout(() => {
                 this.lastInnerWidth = window.innerWidth;
-                let availableWidth = this.lastInnerWidth - 685;
+                const userManagementElement = this.document.body.querySelector('user-management-list');
+                const userManagementWidth = userManagementElement ? userManagementElement.offsetWidth : 0;
+                const contactInfoPanelElement = this.document.body.querySelector('contact-info-panel');
+                const contactInfoPanelElementWidth = contactInfoPanelElement ? contactInfoPanelElement.offsetWidth : 0;
+                const pageLogoElement = this.document.body.querySelector('.page-header-inner .page-logo');
+                const pageLogoElementWidth = pageLogoElement ? pageLogoElement.offsetWidth : 0;
+                const platformSelectElement = this.document.body.querySelector('platform-select');
+                const platformSelectElementWidth = platformSelectElement ? platformSelectElement.offsetWidth : 0;
+                let availableWidth = this.lastInnerWidth - userManagementWidth - contactInfoPanelElementWidth - pageLogoElementWidth - platformSelectElementWidth - 150;
                 if (availableWidth < this.visibleMenuItemsWidth) {
                     let switchItemIndex;
                     this.menu.items.every((item, index) => {
@@ -123,14 +133,14 @@ export class TopBarComponent {
     private checkMenuItemPermission(item: PanelMenuItem): boolean {
         //!!VP Should be considered on module configuration level
         if (this.config['name'] == 'CRM') {
-            if (!this._appService.isHostTenant) {
+            if (!this.appService.isHostTenant) {
                 if (['Editions'].indexOf(item.text) >= 0)
                     return false;
             } else if (['Products'].indexOf(item.text) >= 0)
                 return false;
         }
 
-        return this._appService.isFeatureEnable(item.featureName) && (this._permissionChecker.isGranted(item.permissionName) ||
+        return this.appService.isFeatureEnable(item.featureName) && (this.permissionChecker.isGranted(item.permissionName) ||
             (item.items && item.items.length && this.checkChildMenuItemPermission(item) || !item.permissionName));
     }
 

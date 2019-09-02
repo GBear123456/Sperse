@@ -2,7 +2,7 @@
     <app-headline [config]="headlineConfig"></app-headline>
     <div class="content">
         <setup-steps></setup-steps>
-        <dx-scroll-view showScrollbar="onHover" [height]="scrollHeight">
+        <dx-scroll-view showScrollbar="onHover" [height]="scrollHeight" width="100%">
             <div class="api-into portlet light no-padding margin-bottom-0">
                 <api-welcome (onAddApiKey)="addApiKey()" [small]="apiKeys"></api-welcome>
                 <div *ngIf="apiKeys">

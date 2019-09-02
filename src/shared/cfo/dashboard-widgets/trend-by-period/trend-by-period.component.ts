@@ -6,14 +6,15 @@ import {
     Injector,
     HostListener,
     ViewChild,
-    ChangeDetectorRef
+    ChangeDetectorRef,
+    OnDestroy
 } from '@angular/core';
 import { CurrencyPipe } from '@angular/common';
 
 /** Third party imports */
 import { select, Store } from '@ngrx/store';
 import { DxChartComponent } from 'devextreme-angular/ui/chart';
-import { Observable, asapScheduler, combineLatest, merge, from, of } from 'rxjs';
+import { BehaviorSubject, Observable, asapScheduler, combineLatest, merge, from, of } from 'rxjs';
 import {
     catchError,
     filter,
@@ -57,7 +58,6 @@ import { ChartTypeModel } from '@shared/cfo/dashboard-widgets/trend-by-period/ch
 import { ChartType } from '@shared/cfo/dashboard-widgets/trend-by-period/chart-type.enum';
 import { AbpSessionService } from '@abp/session/abp-session.service';
 import { CacheService } from '@node_modules/ng2-cache-service';
-import { BehaviorSubject } from '@node_modules/rxjs';
 
 @Component({
     selector: 'app-trend-by-period',
@@ -66,9 +66,9 @@ import { BehaviorSubject } from '@node_modules/rxjs';
     styleUrls: ['./trend-by-period.component.less'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class TrendByPeriodComponent extends CFOComponentBase implements OnInit {
+export class TrendByPeriodComponent extends CFOComponentBase implements OnInit, OnDestroy {
     @ViewChild(DxChartComponent) chartComponent: DxChartComponent;
-    bankAccountIds$: Observable<number[]> = this._bankAccountService.selectedBankAccountsIds$;
+    bankAccountIds$: Observable<number[]> = this.bankAccountService.selectedBankAccountsIds$;
     trendData$: Observable<Array<BankAccountDailyStatDto>>;
     trendData: Array<BankAccountDailyStatDto>;
     chartWidth = 650;
@@ -152,8 +152,8 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit {
         }
     ];
     selectedPeriod: TrendByPeriodModel = this.periods.find(period => period.name === 'month');
-    refresh$: Observable<null> = this._dashboardService.refresh$;
-    period$ = this._dashboardService.period$.pipe(
+    refresh$: Observable<null> = this.dashboardService.refresh$;
+    period$ = this.dashboardService.period$.pipe(
         map((period: PeriodModel) => {
             let periodName = period.period;
             if (periodName === 'year' || periodName === 'all') {
@@ -201,13 +201,13 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit {
 
     constructor(
         injector: Injector,
-        private _dashboardService: DashboardService,
-        private _bankAccountServiceProxy: BankAccountsServiceProxy,
-        private _statsService: StatsService,
-        private _cashFlowForecastServiceProxy: CashFlowForecastServiceProxy,
-        private _bankAccountService: BankAccountsService,
-        private _changeDetectorRef: ChangeDetectorRef,
-        private _lifeCycleService: LifecycleSubjectsService,
+        private dashboardService: DashboardService,
+        private bankAccountServiceProxy: BankAccountsServiceProxy,
+        private statsService: StatsService,
+        private cashFlowForecastServiceProxy: CashFlowForecastServiceProxy,
+        private bankAccountService: BankAccountsService,
+        private changeDetectorRef: ChangeDetectorRef,
+        private lifeCycleService: LifecycleSubjectsService,
         private store$: Store<CfoStore.State>,
         private sessionService: AbpSessionService,
         private cacheService: CacheService,
@@ -219,6 +219,11 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit {
     ngOnInit() {
         this.store$.dispatch(new ForecastModelsStoreActions.LoadRequestAction());
         this.loadStatsData();
+        this.selectedChartType$.pipe(
+            takeUntil(this.lifeCycleService.destroy$)
+        ).subscribe((chartType: ChartType) => {
+            this.saveSelectedChartInCache(chartType);
+        });
     }
 
     @HostListener('window:resize', ['$event']) onResize() {
@@ -231,7 +236,7 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit {
 
     /** Replace minus for the brackets */
     customizeAxisValues = (arg: any) => {
-        return arg.value < 0 ? this._statsService.replaceMinusWithBrackets(arg.valueText, this.cfoPreferencesService.selectedCurrencySymbol) : arg.valueText.replace('$', this.cfoPreferencesService.selectedCurrencySymbol);
+        return arg.value < 0 ? this.statsService.replaceMinusWithBrackets(arg.valueText, this.cfoPreferencesService.selectedCurrencySymbol) : arg.valueText.replace('$', this.cfoPreferencesService.selectedCurrencySymbol);
     }
 
     customizeBottomAxis = (elem) => {
@@ -257,7 +262,7 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit {
 
     customizeBarTooltip = (pointInfo) => {
         return {
-            html: this._statsService.getTooltipInfoHtml(this.trendData, this.barChartTooltipFields, pointInfo)
+            html: this.statsService.getTooltipInfoHtml(this.trendData, this.barChartTooltipFields, pointInfo)
         };
     }
 
@@ -269,9 +274,9 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit {
             this.forecastModelId$.pipe(filter(Boolean)),
             this.bankAccountIds$
         ).pipe(
-            switchMap((data) => this.componentIsActivated ? of(data) : this._lifeCycleService.activate$.pipe(first(), mapTo(data))),
+            switchMap((data) => this.componentIsActivated ? of(data) : this.lifeCycleService.activate$.pipe(first(), mapTo(data))),
             tap(() => this.startLoading()),
-            switchMap(([, period, currencyId, forecastModelId, bankAccountIds]: [null, TrendByPeriodModel, string, number, number[]]) => this._bankAccountServiceProxy.getStats(
+            switchMap(([, period, currencyId, forecastModelId, bankAccountIds]: [null, TrendByPeriodModel, string, number, number[]]) => this.bankAccountServiceProxy.getStats(
                     InstanceType[this.instanceType],
                     this.instanceId,
                     currencyId,
@@ -332,22 +337,7 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit {
                 if (selectedChartType === ChartType.CashBalancesTrends
                     || selectedChartType === ChartType.Combined
                 ) {
-                    let allValues = [];
-                    stats.forEach((statsItem: BankAccountDailyStatDto) => {
-                        /** Get all using in chart values to show gradient well*/
-                        allValues = [
-                            ...allValues,
-                            statsItem.endingBalance,
-                        ].concat(
-                            statsItem.isForecast
-                                ? [
-                                    statsItem['forecastDebit'] || 0,
-                                    statsItem['forecastCredit'] || 0,
-                                    statsItem['forecastEndingBalance'] || 0,
-                                ]
-                                : []
-                        );
-                    });
+                    let allValues = stats.map(statsItem => statsItem.endingBalance);
                     const minValue = Math.min.apply(Math, allValues);
                     const maxValue = Math.max.apply(Math, allValues);
                     const minRange = minValue - (0.2 * Math.abs(maxValue - minValue));
@@ -367,12 +357,12 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit {
         this.trendData$.pipe(takeUntil(this.destroy$)).subscribe(trendData => {
             this.trendData = trendData;
             this.chartWidth = this.getChartWidth();
-            this._changeDetectorRef.detectChanges();
+            this.changeDetectorRef.detectChanges();
         });
     }
 
     activate() {
-        this._lifeCycleService.activate.next();
+        this.lifeCycleService.activate.next();
     }
 
     /**
@@ -395,8 +385,11 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit {
                 );
     }
 
-    saveSelectedChartInCache(e) {
-        this.cacheService.set(this.selectedChartCacheKey, e.selectedItem.value);
+    private saveSelectedChartInCache(chartType: ChartType) {
+        this.cacheService.set(this.selectedChartCacheKey, chartType);
+    }
+
+    changeSelectedChartType(e) {
         this.selectedChartType.next(e.selectedItem.value);
     }
 
@@ -406,6 +399,10 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit {
             axisName = chartType === ChartType.CashBalancesTrends ? 'leftAxis' : 'rightAxis';
         }
         return axisName;
+    }
+
+    ngOnDestroy() {
+        this.lifeCycleService.destroy.next();
     }
 
 }

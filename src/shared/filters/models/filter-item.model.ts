@@ -10,7 +10,7 @@ export class FilterItemModel {
     protected _value: any = '';
 
     public constructor(value?: any, isPartial = false) {
-        if (isPartial) 
+        if (isPartial)
             Object.assign(this, value);
         else if (value)
             this.value = value;
