@@ -110,6 +110,8 @@ export class CreditWizardPageComponent extends AppComponentBase implements OnIni
         this.model.gender = null;
         this.model.address = new MemberAddressDto();
         this.model.address.countryId = this.countryCode;
+        this.model.trackingInfo = new TrackingInfo();
+        this.model.trackingInfo.sourceCode = this.sourceCode;
 
         this.googleAutoComplete = Boolean(window['google']);
     }
@@ -342,7 +344,7 @@ export class CreditWizardPageComponent extends AppComponentBase implements OnIni
         memberInfo.gender = <Gender><any>model.gender;
         memberInfo.address = model.address;
         memberInfo.trackingInfo = new TrackingInfo();
-        memberInfo.trackingInfo.sourceCode = 'LS';
+        memberInfo.trackingInfo.sourceCode = model.trackingInfo.sourceCode;
 
         return memberInfo;
     }
