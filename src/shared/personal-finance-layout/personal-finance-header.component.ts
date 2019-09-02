@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, HostBinding, ViewChild, ViewContainerRef, Directive } from '@angular/core';
+import { Component, HostBinding, ViewChild, ViewContainerRef, Directive, Injector } from '@angular/core';
 import { Router } from '@angular/router';
 
 /** Third party imports */
@@ -65,17 +65,21 @@ export class PersonalFinanceHeaderComponent {
         {name: 'SIGN UP', class: 'member-signup', url: environment.LENDSPACE_DOMAIN + '/sign-up', disabled: false},
         {name: 'Member Login', class: 'member-login', url: environment.LENDSPACE_DOMAIN + '/login.html', disabled: false}
     ];
-    applicationCompleteIsRequired$: Observable<Boolean> = this.offersService.applicationCompleteIsRequired$;
+    applicationCompleteIsRequired$: Observable<Boolean>;
 
     constructor(
+        injector: Injector,
         private pfmLayoutService: PersonalFinanceLayoutService,
         private abpSessionService: AbpSessionService,
         private featureService: FeatureCheckerService,
         private router: Router,
-        private offersService: OffersService,
         private ls: AppLocalizationService,
         public sessionService: AppSessionService
     ) {
+        const offersService = injector.get(OffersService, null);
+        if (offersService) {
+            this.applicationCompleteIsRequired$ = offersService.applicationCompleteIsRequired$;
+        }
         pfmLayoutService.headerContentSubscribe((component) => {
             setTimeout(() => {
                 this.adHeaderHost.viewContainerRef.clear();
