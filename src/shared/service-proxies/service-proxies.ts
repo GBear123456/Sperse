@@ -58795,6 +58795,50 @@ export interface IUTMParameterInfo {
     name: string | undefined;
 }
 
+export class TrackingInfo implements ITrackingInfo {
+    sourceCode!: string | undefined;
+    channelCode!: string | undefined;
+    affiliateCode!: string | undefined;
+
+    constructor(data?: ITrackingInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.sourceCode = data["sourceCode"];
+            this.channelCode = data["channelCode"];
+            this.affiliateCode = data["affiliateCode"];
+        }
+    }
+
+    static fromJS(data: any): TrackingInfo {
+        data = typeof data === 'object' ? data : {};
+        let result = new TrackingInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["sourceCode"] = this.sourceCode;
+        data["channelCode"] = this.channelCode;
+        data["affiliateCode"] = this.affiliateCode;
+        return data; 
+    }
+}
+
+export interface ITrackingInfo {
+    sourceCode: string | undefined;
+    channelCode: string | undefined;
+    affiliateCode: string | undefined;
+}
+
 export class MemberInfoDto implements IMemberInfoDto {
     registrationId!: string;
     name!: string;
@@ -58808,6 +58852,7 @@ export class MemberInfoDto implements IMemberInfoDto {
     isUSCitizen!: boolean;
     packageId!: number;
     utmParameter!: UTMParameterInfo | undefined;
+    trackingInfo!: TrackingInfo | undefined;
 
     constructor(data?: IMemberInfoDto) {
         if (data) {
@@ -58832,6 +58877,7 @@ export class MemberInfoDto implements IMemberInfoDto {
             this.isUSCitizen = data["isUSCitizen"];
             this.packageId = data["packageId"];
             this.utmParameter = data["utmParameter"] ? UTMParameterInfo.fromJS(data["utmParameter"]) : <any>undefined;
+            this.trackingInfo = data["trackingInfo"] ? TrackingInfo.fromJS(data["trackingInfo"]) : <any>undefined;
         }
     }
 
@@ -58856,6 +58902,7 @@ export class MemberInfoDto implements IMemberInfoDto {
         data["isUSCitizen"] = this.isUSCitizen;
         data["packageId"] = this.packageId;
         data["utmParameter"] = this.utmParameter ? this.utmParameter.toJSON() : <any>undefined;
+        data["trackingInfo"] = this.trackingInfo ? this.trackingInfo.toJSON() : <any>undefined;
         return data; 
     }
 }
@@ -58873,6 +58920,7 @@ export interface IMemberInfoDto {
     isUSCitizen: boolean;
     packageId: number;
     utmParameter: UTMParameterInfo | undefined;
+    trackingInfo: TrackingInfo | undefined;
 }
 
 export class SelectPackageResponseDto implements ISelectPackageResponseDto {
@@ -59233,6 +59281,7 @@ export class RegisterMemberRequest implements IRegisterMemberRequest {
     isUSCitizen!: boolean;
     packageId!: number;
     utmParameter!: UTMParameterInfo | undefined;
+    trackingInfo!: TrackingInfo | undefined;
 
     constructor(data?: IRegisterMemberRequest) {
         if (data) {
@@ -59258,6 +59307,7 @@ export class RegisterMemberRequest implements IRegisterMemberRequest {
             this.isUSCitizen = data["isUSCitizen"];
             this.packageId = data["packageId"];
             this.utmParameter = data["utmParameter"] ? UTMParameterInfo.fromJS(data["utmParameter"]) : <any>undefined;
+            this.trackingInfo = data["trackingInfo"] ? TrackingInfo.fromJS(data["trackingInfo"]) : <any>undefined;
         }
     }
 
@@ -59283,6 +59333,7 @@ export class RegisterMemberRequest implements IRegisterMemberRequest {
         data["isUSCitizen"] = this.isUSCitizen;
         data["packageId"] = this.packageId;
         data["utmParameter"] = this.utmParameter ? this.utmParameter.toJSON() : <any>undefined;
+        data["trackingInfo"] = this.trackingInfo ? this.trackingInfo.toJSON() : <any>undefined;
         return data; 
     }
 }
@@ -59301,6 +59352,7 @@ export interface IRegisterMemberRequest {
     isUSCitizen: boolean;
     packageId: number;
     utmParameter: UTMParameterInfo | undefined;
+    trackingInfo: TrackingInfo | undefined;
 }
 
 export class GetProviderUITokenOutput implements IGetProviderUITokenOutput {
