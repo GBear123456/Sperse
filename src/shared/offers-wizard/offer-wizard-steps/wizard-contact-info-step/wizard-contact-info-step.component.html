@@ -19,9 +19,10 @@
                              (onContentReady)="inputStatusesService.setMask($event)"
                              (onFocusIn)="inputStatusesService.focusInput($event)"
                              (onFocusOut)="inputStatusesService.blurInput($event)"
-                             [(value)]="offersWizardService.submitApplicationProfileInput.personalInformation.phoneMobile"
-                             useMaskedValue="true"
-                             [maskRules]="offersWizardService.rules">
+                             [value]="phoneMobile"
+                             [useMaskedValue]="true"
+                             [maskRules]="offersWizardService.rules"
+                             (onValueChanged)="mobileChange($event, 'phoneMobile')">
                 </dx-text-box>
             </div>
         </div>
@@ -34,9 +35,10 @@
                              (onContentReady)="inputStatusesService.setMask($event)"
                              (onFocusIn)="inputStatusesService.focusInput($event)"
                              (onFocusOut)="inputStatusesService.blurInput($event)"
-                             [(value)]="offersWizardService.submitApplicationProfileInput.personalInformation.phone"
-                             useMaskedValue="true"
-                             [maskRules]="offersWizardService.rules">
+                             [value]="phone"
+                             [useMaskedValue]="true"
+                             [maskRules]="offersWizardService.rules"
+                             (onValueChanged)="mobileChange($event, 'phone')">
                 </dx-text-box>
             </div>
         </div>
