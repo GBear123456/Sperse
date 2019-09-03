@@ -74,7 +74,7 @@ export class PersonalFinanceHeaderComponent {
         private featureService: FeatureCheckerService,
         private router: Router,
         private ls: AppLocalizationService,
-        public sessionService: AppSessionService
+        public appSession: AppSessionService
     ) {
         const offersService = injector.get(OffersService, null);
         if (offersService) {

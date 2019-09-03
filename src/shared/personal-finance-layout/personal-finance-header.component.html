@@ -16,7 +16,7 @@
 
     <ng-template ad-header-host></ng-template>
 
-    <app-area-navigation *ngIf="hasPfmAppFeature && !sessionService.isLendspaceDemoUser"
+    <app-area-navigation *ngIf="hasPfmAppFeature && !appSession.isLendspaceDemoUser"
                          id="header-app-menu"
                          [memberAreaLinks]="appAreaLinks"
                          [actionsButtons]="actionsButtons">
