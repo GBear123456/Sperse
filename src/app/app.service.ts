@@ -27,8 +27,12 @@ import { FeatureCheckerService } from '@abp/features/feature-checker.service';
 import { NotifyService } from '@abp/notify/notify.service';
 import { AppPermissions } from '@shared/AppPermissions';
 import { AppFeatures } from '@shared/AppFeatures';
-
-declare let require: any;
+import { AdminConfig } from '@admin/admin.config';
+import { ApiConfig } from '@app/api/api.config';
+import { CrmConfig } from '@app/crm/crm.config';
+import { CfoConfig } from '@app/cfo/cfo.config';
+import { CfoPortalConfig } from '@app/cfo-portal/cfo-portal.config';
+import { PfmConfig } from '@app/pfm/pfm.config';
 
 @Injectable()
 export class AppService extends AppServiceBase {
@@ -150,12 +154,12 @@ export class AppService extends AppServiceBase {
                 }
             ],
             {
-                admin: require('./admin/module.config.json'),
-                api: require('./api/module.config.json'),
-                crm: require('./crm/module.config.json'),
-                cfo: require('./cfo/module.config.json'),
-                cfoPortal: require('./cfo-portal/module.config.json'),
-                pfm: require('./pfm/module.config.json')
+                admin: AdminConfig,
+                api: ApiConfig,
+                crm: CrmConfig,
+                cfo: CfoConfig,
+                cfoPortal: CfoPortalConfig,
+                pfm: PfmConfig
             },
         );
 

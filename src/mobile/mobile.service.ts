@@ -1,6 +1,6 @@
 import { Injectable, Injector } from '@angular/core';
 import { AppServiceBase } from '@shared/common/app-service-base';
-declare let require: any;
+import { CfoConfig } from '@root/mobile/cfo/cfo.config';
 
 @Injectable()
 export class AppService extends AppServiceBase {
@@ -16,7 +16,7 @@ export class AppService extends AppServiceBase {
                 }
             ],
             {
-                cfo: require('./cfo/module.config.json')
+                cfo: CfoConfig
             }
         );
     }
