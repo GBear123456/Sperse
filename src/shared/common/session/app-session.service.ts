@@ -18,7 +18,7 @@ export class AppSessionService {
     }
 
     get isLendspaceDemoUser() {  //!!VP should be added corresponding permissions for such case (temp solution)
-        return this.user && this.user.userName == "demo@lendspace.com";
+        return this.user && this.user.userName == 'demo@lendspace.com';
     }
 
     get application(): ApplicationInfoDto {

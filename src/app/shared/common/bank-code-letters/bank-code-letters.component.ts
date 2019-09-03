@@ -7,4 +7,5 @@ import { Component, Input } from '@angular/core';
 })
 export class BankCodeLettersComponent {
     @Input() bankCode: string;
+    @Input() showDescriptionsOnHover = false;
 }

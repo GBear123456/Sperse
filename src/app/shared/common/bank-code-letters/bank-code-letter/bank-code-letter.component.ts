@@ -1,4 +1,5 @@
 import { Component, Input } from '@angular/core';
+import { BankCodeService } from '@app/shared/common/bank-code/bank-code.service';
 
 @Component({
     selector: 'bank-code-letter',
@@ -7,4 +8,7 @@ import { Component, Input } from '@angular/core';
 })
 export class BankCodeLetterComponent {
     @Input() letter: string;
+    @Input() showDescriptionOnHover = false;
+
+    constructor(public bankCodeService: BankCodeService) {}
 }

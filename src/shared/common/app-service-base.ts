@@ -5,7 +5,6 @@ import { DefaultUrlSerializer, UrlTree } from '@angular/router';
 /** Third party imports */
 import { Subscription, Subject } from 'rxjs';
 import camelCase from 'lodash/camelCase';
-import * as _ from 'underscore';
 
 /** Application imports */
 import { FeatureCheckerService } from '@abp/features/feature-checker.service';

@@ -1,1 +1,14 @@
-<span [ngClass]="letter">{{ letter }}</span>
+<span [class]="letter"
+      [ngStyle]="bankCodeService.getColorsByLetter(letter)">
+    {{ letter }}
+</span>
+<dx-tooltip *ngIf="showDescriptionOnHover"
+            [target]="'.' + letter"
+            position="bottom"
+            accessKey="bankCodeLetterTooltip"
+            showEvent="dxhoverstart"
+            hideEvent="dxhoverend">
+    <div *dxTemplate="let data = data of 'content'">
+        <img width="600px" height="500px" src="./assets/common/images/bank-code/{{letter}}_SalesTips.jpg">
+    </div>
+</dx-tooltip>
