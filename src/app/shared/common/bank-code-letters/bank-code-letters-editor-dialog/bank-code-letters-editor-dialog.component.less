@@ -1,0 +1,35 @@
+:host {
+    display: block;
+    /deep/ .mat-dialog-content {
+        ul {
+            display: flex;
+            justify-content: space-between;
+            padding-left: 0;
+            margin-bottom: 5px;
+            li {
+                list-style: none;
+                flex: 1;
+                text-align: center;
+                height: 70px;
+                line-height: 70px;
+                cursor: pointer;
+                font-size: 20px;
+                padding: 0 10px;
+                &:not(:last-child) {
+                    margin-right: 10px;
+                }
+                &:not(.active) {
+                    opacity: .4;
+                }
+                .first-letter {
+                    font-weight: 700;
+                }
+            }
+            &:last-child {
+                margin-bottom: 0;
+            }
+        }
+
+    }
+
+}

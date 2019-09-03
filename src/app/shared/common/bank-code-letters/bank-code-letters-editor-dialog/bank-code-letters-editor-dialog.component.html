@@ -1,0 +1,11 @@
+<mat-dialog-content>
+    <ul *ngFor="let bankCodeDefinition of bankCodeDefinitions">
+        <ng-container *ngFor="let a of bankCodeDefinitions; let i = index">
+            <li [ngClass]="{ active: isActive(bankCodeDefinition, i) }"
+                [ngStyle]="bankCodeService.getColorsByLetter(bankCodeDefinition.letter)"
+                (click)="changeBankCode(bankCodeDefinition, i)">
+                <span class="first-letter">{{ bankCodeDefinition.name[0] }}</span>{{ bankCodeDefinition.name.slice(1) }}
+            </li>
+        </ng-container>
+    </ul>
+</mat-dialog-content>

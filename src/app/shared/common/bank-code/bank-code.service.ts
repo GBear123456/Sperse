@@ -1,27 +1,28 @@
 import { Injectable } from '@angular/core';
+import { BankCodeLetter } from '@app/shared/common/bank-code-letters/bank-code-letter.enum';
 
 @Injectable()
 export class BankCodeService {
-    bankCodeColors = {
-        A: {
+    private bankCodeColors = {
+        [BankCodeLetter.A]: {
             background: '#ad1d21',
             color: '#de6669'
         },
-        B: {
+        [BankCodeLetter.B]: {
             background: '#104579',
             color: '#719eca'
         },
-        N: {
+        [BankCodeLetter.N]: {
             background: '#f39e1c',
             color: '#e4c89c'
         },
-        K: {
+        [BankCodeLetter.K]: {
             background: '#186434',
             color: '#3e9c61'
         }
     };
 
-    getColorsByLetter(bankCodeLetter: 'A' | 'B' | 'N' | 'K') {
+    getColorsByLetter(bankCodeLetter: BankCodeLetter) {
         return this.bankCodeColors[bankCodeLetter];
     }
 }

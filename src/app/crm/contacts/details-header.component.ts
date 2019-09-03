@@ -8,7 +8,6 @@ import { DxContextMenuComponent } from 'devextreme-angular/ui/context-menu';
 import * as _ from 'underscore';
 import { BehaviorSubject } from 'rxjs';
 import { filter, finalize, takeUntil, map } from 'rxjs/operators';
-import startCase from 'lodash/startCase';
 
 /** Application imports */
 import { DialogService } from '@app/shared/common/dialogs/dialog.service';

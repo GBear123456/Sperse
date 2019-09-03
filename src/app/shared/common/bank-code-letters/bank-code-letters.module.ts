@@ -3,21 +3,26 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 /** Third party imports */
-import { DxTooltipModule } from 'devextreme-angular';
+import { MatDialogModule } from '@angular/material/dialog';
+import { DxTooltipModule } from 'devextreme-angular/ui/tooltip';
 
 /** Application imports */
 import { BankCodeLetterComponent } from '@app/shared/common/bank-code-letters/bank-code-letter/bank-code-letter.component';
 import { BankCodeLettersComponent } from '@app/shared/common/bank-code-letters/bank-code-letters.component';
 import { BankCodeService } from '@app/shared/common/bank-code/bank-code.service';
+import { BankCodeLettersEditorDialogComponent } from './bank-code-letters-editor-dialog/bank-code-letters-editor-dialog.component';
+
 
 @NgModule({
     imports: [
         CommonModule,
-        DxTooltipModule
+        DxTooltipModule,
+        MatDialogModule
     ],
     declarations: [
         BankCodeLettersComponent,
-        BankCodeLetterComponent
+        BankCodeLetterComponent,
+        BankCodeLettersEditorDialogComponent
     ],
     exports: [
         BankCodeLetterComponent,
@@ -25,6 +30,9 @@ import { BankCodeService } from '@app/shared/common/bank-code/bank-code.service'
     ],
     providers: [
         BankCodeService
+    ],
+    entryComponents: [
+        BankCodeLettersEditorDialogComponent
     ]
 })
 export class BankCodeLettersModule {}

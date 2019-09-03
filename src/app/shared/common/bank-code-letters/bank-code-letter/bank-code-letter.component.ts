@@ -9,6 +9,7 @@ import { BankCodeService } from '@app/shared/common/bank-code/bank-code.service'
 export class BankCodeLetterComponent {
     @Input() letter: string;
     @Input() showDescriptionOnHover = false;
+    @Input() allowEdit = false;
 
     constructor(public bankCodeService: BankCodeService) {}
 }

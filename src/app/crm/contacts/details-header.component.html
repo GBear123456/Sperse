@@ -6,13 +6,16 @@
     <div class="personal_info">
         <div class="full_name">
             <h1 *ngIf="data && data?.personContactInfo">
-                <inplace-edit [data]="getNameInplaceEditData() | async" (valueChanged)="updatePrimaryContactName($event)" (openDialog)="showEditPersonDialog($event)"></inplace-edit>
+                <inplace-edit [data]="getNameInplaceEditData() | async"
+                              (valueChanged)="updatePrimaryContactName($event)"
+                              (openDialog)="showEditPersonDialog($event)">
+                </inplace-edit>
             </h1>
         </div>
         <rating-bar *ngIf="!isBankCodeLayout; else bankCode" [rating]="ratingId || 0"></rating-bar>
         <ng-template #bankCode>
             <div class="bank-code" *ngIf="data?.personContactInfo?.person?.bankCode as bankCodeLetters">
-                <bank-code-letters [bankCode]="bankCodeLetters"></bank-code-letters>
+                <bank-code-letters [bankCode]="bankCodeLetters" [allowEdit]="true" [personId]="data.id"></bank-code-letters>
             </div>
         </ng-template>
     </div>
@@ -25,7 +28,10 @@
             </div>
             <div class="titles">
                 <h2 class="shift-top">
-                    <inplace-edit #companyName [data]="getNameInplaceEditData('organizationContactInfo') | async" (valueChanged)="updateCompanyField($event)"></inplace-edit>
+                    <inplace-edit #companyName
+                                  [data]="getNameInplaceEditData('organizationContactInfo') | async"
+                                  (valueChanged)="updateCompanyField($event)">
+                    </inplace-edit>
                     <i class="fa fa-angle-down" *ngIf="!companyName.isEditModeEnabled && (data?.personContactInfo?.orgRelations?.length > 1)" (click)="showCompanyList($event)"></i>
                     <div class="actions" [hidden]="!manageAllowed || companyName.isEditModeEnabled">
                         <i class="edit fa fa-pencil" (click)="showCompanyDialog($event)"></i>

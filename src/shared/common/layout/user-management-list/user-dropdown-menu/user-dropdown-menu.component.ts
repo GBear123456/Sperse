@@ -26,6 +26,7 @@ import { FeatureCheckerService } from '@abp/features/feature-checker.service';
 import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
 import { Router } from '@angular/router';
 import { BankCodeService } from '@app/shared/common/bank-code/bank-code.service';
+import { BankCodeLetter } from '@app/shared/common/bank-code-letters/bank-code-letter.enum';
 
 @Component({
     selector: 'user-dropdown-menu',
@@ -174,13 +175,13 @@ export class UserDropdownMenuComponent implements OnInit {
         });
     }
 
-    getBankCodeDefinition(bankCodeLetter: 'B' | 'A' | 'N' | 'K'): string {
+    getBankCodeDefinition(bankCodeLetter: BankCodeLetter): string {
         let definition: string;
         switch (bankCodeLetter) {
-            case 'B': definition = this.ls.l('BankCode_BluePrint'); break;
-            case 'A': definition = this.ls.l('BankCode_Action'); break;
-            case 'N': definition = this.ls.l('BankCode_Nurturing'); break;
-            case 'K': definition = this.ls.l('BankCode_Knowledge'); break;
+            case BankCodeLetter.K: definition = this.ls.l('BankCode_BluePrint'); break;
+            case BankCodeLetter.A: definition = this.ls.l('BankCode_Action'); break;
+            case BankCodeLetter.N: definition = this.ls.l('BankCode_Nurturing'); break;
+            case BankCodeLetter.K: definition = this.ls.l('BankCode_Knowledge'); break;
         }
         return definition;
     }
