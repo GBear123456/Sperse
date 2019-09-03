@@ -1,10 +1,16 @@
+/** Core imports */
 import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
+
+/** Third party imports */
+import { DxScrollViewModule } from 'devextreme-angular/ui/scroll-view';
+
+/** Application imports */
 import { UserDropdownMenuComponent } from '@shared/common/layout/user-management-list/user-dropdown-menu/user-dropdown-menu.component';
 import { UserManagementListComponent } from '@shared/common/layout/user-management-list/user-management-list.component';
 import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
-import { CommonModule } from '@angular/common';
 import { ImpersonationService } from '@admin/users/impersonation.service';
-import { DxScrollViewModule } from 'devextreme-angular/ui/scroll-view';
+import { BankCodeLettersModule } from '@app/shared/common/bank-code-letters/bank-code-letters.module';
 
 @NgModule({
     declarations: [
@@ -13,7 +19,8 @@ import { DxScrollViewModule } from 'devextreme-angular/ui/scroll-view';
     ],
     imports: [
         CommonModule,
-        DxScrollViewModule
+        DxScrollViewModule,
+        BankCodeLettersModule
     ],
     exports: [
         UserManagementListComponent,
