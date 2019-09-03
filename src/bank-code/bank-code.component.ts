@@ -6,7 +6,10 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 
 @Component({
     templateUrl: './bank-code.component.html',
-    styleUrls: ['./bank-code.component.less'],
+    styleUrls: [
+        '../account/layouts/bank-code/bank-code-dialog.component.less',
+        './bank-code.component.less'
+    ],
     host: {
         '(window:blur)': 'closeUserMenuPopup($event)'
     }
