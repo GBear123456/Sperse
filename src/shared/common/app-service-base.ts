@@ -70,11 +70,12 @@ export abstract class AppServiceBase {
     }
 
     getModuleConfig(name: string) {
-        return this._configs[camelCase(name)];
+        const config = this._configs[camelCase(name)];
+        return config && new config();
     }
 
     isModuleActive(name: string) {
-        let config = this._configs[camelCase(name)];
+        let config = this.getModuleConfig(name);
         return (config && typeof (config.navigation) == 'object'
             && (this.isHostTenant || !config.requiredFeature || this._featureChecker.isEnabled(config.requiredFeature))
             && (!config.requiredPermission || this._permissionChecker.isGranted(config.requiredPermission))
@@ -87,13 +88,13 @@ export abstract class AppServiceBase {
     }
 
     switchModule(name: string, params: {}) {
-        let config = _.clone(this._configs[camelCase(name)]);
+        let config = this.getModuleConfig(name);
         config.navigation = config.navigation.map((record) => {
             let clone = record.slice(0);
             clone[3] = this.replaceParams(record[3], params);
             if (record[5] && record[5].length) {
                 clone[5] = [];
-                record[5].forEach((el, i) => {
+                record[5].forEach((el) => {
                     clone[5].push(this.replaceParams(el, params));
                 });
             }

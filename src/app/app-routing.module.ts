@@ -68,7 +68,7 @@ export class CfoActivateService implements CanActivate {
                 children: [
                     {
                         path: '',
-                        data: { permission: 'Pages.Detect.Route' }
+                        data: { permission: 'Detect.Route' }
                     },
                     { path: 'access-denied', component: AccessDeniedComponent },
                     {

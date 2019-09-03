@@ -7,9 +7,6 @@ import { AppConsts } from '@shared/AppConsts';
 export class InputStatusesService {
     masks = AppConsts.masks;
 
-    constructor() {
-    }
-
     setMask(event) {
         const inputName = event.element.attributes.name.value;
         if (event.component.option('value')) {
