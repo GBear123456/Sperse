@@ -213,4 +213,8 @@ export class OffersWizardService {
         );
         return submitApplication$;
     }
+
+    clearPhoneMask(value: string) {
+        return value.replace(/\D/g, '').slice(1);
+    }
 }
