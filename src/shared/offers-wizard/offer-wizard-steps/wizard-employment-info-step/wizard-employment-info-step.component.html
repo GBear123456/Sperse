@@ -74,7 +74,8 @@
                              (onFocusOut)="inputStatusesService.blurInput($event)"
                              [maskRules]="offersWizardService.rules"
                              useMaskedValue="true"
-                             [(value)]="offersWizardService.submitApplicationProfileInput.employmentInformation.phoneWork">
+                             [value]="phoneWork"
+                             (onValueChanged)="mobileChange($event)">
                 </dx-text-box>
             </div>
         </div>

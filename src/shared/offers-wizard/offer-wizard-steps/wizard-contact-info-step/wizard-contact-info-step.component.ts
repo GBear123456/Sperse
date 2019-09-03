@@ -19,11 +19,7 @@ export class WizardContactInfoStepComponent {
     ) {}
 
     mobileChange(e, propertyName: string) {
-        this.offersWizardService.submitApplicationProfileInput.personalInformation[propertyName] = this.clearMask(e.value);
-    }
-
-    clearMask(value: string) {
-        return value.replace(/\D/g, '').slice(1);
+        this.offersWizardService.submitApplicationProfileInput.personalInformation[propertyName] = this.offersWizardService.clearPhoneMask(e.value);
     }
 
 }

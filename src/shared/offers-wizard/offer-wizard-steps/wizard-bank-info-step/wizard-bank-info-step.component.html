@@ -43,7 +43,8 @@
                      (onFocusOut)="inputStatusesService.blurInput($event)"
                      [maskRules]="offersWizardService.rules"
                      useMaskedValue="true"
-                     [(value)]="offersWizardService.submitApplicationProfileInput.bankInformation.bankPhone">
+                     [value]="bankPhone"
+                     (onValueChanged)="mobileChange($event)">
         </dx-text-box>
     </div>
 </div>
