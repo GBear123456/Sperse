@@ -15,7 +15,7 @@
     </div>
     <div class="col-md-6 col-sm-12">
         <div class="dx-field">
-            <div class="dx-field-label">{{ls.l('active_military')}}</div>
+            <div class="dx-field-label">{{ls.l('active_military')}}<span *ngIf="offersWizardService.isSpecialOffer">*</span></div>
             <div class="dx-field-value">
                 <dx-radio-group
                     [items]="offersWizardService.radioGroup"
@@ -23,6 +23,12 @@
                     displayExpr="text"
                     valueExpr="value"
                     layout="horizontal">
+                    <dx-validator>
+                        <dxi-validation-rule type="custom"
+                                             [validationCallback]="offersWizardService.validateField"
+                                             [message]="this.ls.l('ThisFieldIsRequired')">
+                        </dxi-validation-rule>
+                    </dx-validator>
                 </dx-radio-group>
             </div>
         </div>
@@ -31,10 +37,16 @@
 <div class="row">
     <div class="col-md-6 col-sm-12">
         <div class="dx-field">
-            <div class="dx-field-label">{{ls.l('employer_name')}}</div>
+            <div class="dx-field-label">{{ls.l('employer_name')}}<span *ngIf="offersWizardService.isSpecialOffer">*</span></div>
             <div class="dx-field-value">
                 <dx-text-box placeholder="Enter employer name"
                              [(value)]="offersWizardService.submitApplicationProfileInput.employmentInformation.employerName">
+                    <dx-validator>
+                        <dxi-validation-rule type="custom"
+                                             [validationCallback]="offersWizardService.validateField"
+                                             [message]="this.ls.l('ThisFieldIsRequired')">
+                        </dxi-validation-rule>
+                    </dx-validator>
                 </dx-text-box>
             </div>
         </div>
@@ -53,10 +65,16 @@
 <div class="row">
     <div class="col-md-12">
         <div class="dx-field">
-            <div class="dx-field-label">{{ls.l('months_at_employer')}}</div>
+            <div class="dx-field-label">{{ls.l('months_at_employer')}}<span *ngIf="offersWizardService.isSpecialOffer">*</span></div>
             <div class="dx-field-value">
                 <dx-text-box placeholder="Enter period"
                              [(value)]="offersWizardService.submitApplicationProfileInput.employmentInformation.monthsAtEmployer">
+                    <dx-validator>
+                        <dxi-validation-rule type="custom"
+                                             [validationCallback]="offersWizardService.validateField"
+                                             [message]="this.ls.l('ThisFieldIsRequired')">
+                        </dxi-validation-rule>
+                    </dx-validator>
                 </dx-text-box>
             </div>
         </div>
@@ -65,7 +83,7 @@
 <div class="row">
     <div class="col-md-6 col-sm-12">
         <div class="dx-field">
-            <div class="dx-field-label">{{ls.l('phone_work')}}</div>
+            <div class="dx-field-label">{{ls.l('phone_work')}}<span *ngIf="offersWizardService.isSpecialOffer">*</span></div>
             <div class="dx-field-value">
                 <dx-text-box name="phone"
                              [placeholder]="ls.l('Enter') + ' ' + ls.l('phone_work')"
@@ -76,6 +94,12 @@
                              useMaskedValue="true"
                              [value]="phoneWork"
                              (onValueChanged)="mobileChange($event)">
+                    <dx-validator>
+                        <dxi-validation-rule type="custom"
+                                             [validationCallback]="offersWizardService.validateField"
+                                             [message]="this.ls.l('ThisFieldIsRequired')">
+                        </dxi-validation-rule>
+                    </dx-validator>
                 </dx-text-box>
             </div>
         </div>

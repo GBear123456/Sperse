@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 
 /** Third party imports */
 import { MaskPipe } from 'ngx-mask';
@@ -16,7 +16,7 @@ import { AppConsts } from '@shared/AppConsts';
     styleUrls: ['./wizard-home-info-step.component.less'],
     providers: [MaskPipe]
 })
-export class WizardHomeInfoStepComponent implements OnInit {
+export class WizardHomeInfoStepComponent {
     zipRegex = AppConsts.regexPatterns.zipUsPattern;
 
     constructor(
@@ -25,8 +25,6 @@ export class WizardHomeInfoStepComponent implements OnInit {
         public offersWizardService: OffersWizardService,
         private maskPipe: MaskPipe
     ) {}
-
-    ngOnInit() {}
 
     onInput(e, maxLength: number, mask?: string) {
         const inputElement = e.event.target;

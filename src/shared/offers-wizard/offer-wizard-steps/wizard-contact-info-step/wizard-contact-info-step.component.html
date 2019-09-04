@@ -29,7 +29,7 @@
     </div>
     <div class="col-md-6 col-sm-12">
         <div class="dx-field">
-            <div class="dx-field-label">{{ls.l('phone')}}</div>
+            <div class="dx-field-label">{{ls.l('phone')}}<span *ngIf="offersWizardService.isSpecialOffer">*</span></div>
             <div class="dx-field-value">
                 <dx-text-box name="phone"
                              (onContentReady)="inputStatusesService.setMask($event)"
@@ -39,6 +39,12 @@
                              [useMaskedValue]="true"
                              [maskRules]="offersWizardService.rules"
                              (onValueChanged)="mobileChange($event, 'phone')">
+                    <dx-validator>
+                        <dxi-validation-rule type="custom"
+                                             [validationCallback]="offersWizardService.validateField"
+                                             [message]="this.ls.l('ThisFieldIsRequired')">
+                        </dxi-validation-rule>
+                    </dx-validator>
                 </dx-text-box>
             </div>
         </div>
@@ -47,7 +53,7 @@
 <div class="row">
     <div class="col-md-6 col-sm-12">
         <div class="dx-field">
-            <div class="dx-field-label">{{ls.l('PreferredContactTime')}}</div>
+            <div class="dx-field-label">{{ls.l('PreferredContactTime')}}<span *ngIf="offersWizardService.isSpecialOffer">*</span></div>
             <div class="dx-field-value">
                 <dx-select-box
                     [items]="offersWizardService.contactTime"
@@ -55,6 +61,12 @@
                     displayExpr="text"
                     [(value)]="offersWizardService.submitApplicationProfileInput.personalInformation.preferredContactTOD"
                     placeholder="Select contact time">
+                    <dx-validator>
+                        <dxi-validation-rule type="custom"
+                                             [validationCallback]="offersWizardService.validateField"
+                                             [message]="this.ls.l('ThisFieldIsRequired')">
+                        </dxi-validation-rule>
+                    </dx-validator>
                 </dx-select-box>
             </div>
         </div>

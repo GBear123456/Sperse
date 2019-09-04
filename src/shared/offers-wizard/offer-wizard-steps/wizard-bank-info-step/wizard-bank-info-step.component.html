@@ -1,5 +1,5 @@
 <div class="dx-field">
-    <div class="dx-field-label">{{ls.l('bank_account_type')}}</div>
+    <div class="dx-field-label">{{ls.l('bank_account_type')}}<span *ngIf="offersWizardService.isSpecialOffer">*</span></div>
     <div class="dx-field-value">
         <dx-select-box
             [items]="offersWizardService.bankAccountType"
@@ -7,30 +7,54 @@
             displayExpr="text"
             [(value)]="offersWizardService.submitApplicationProfileInput.bankInformation.bankAccountType"
             placeholder="Choose Bank Account Type">
+            <dx-validator>
+                <dxi-validation-rule type="custom"
+                                     [validationCallback]="offersWizardService.validateField"
+                                     [message]="this.ls.l('ThisFieldIsRequired')">
+                </dxi-validation-rule>
+            </dx-validator>
         </dx-select-box>
     </div>
 </div>
 <div class="dx-field">
-    <div class="dx-field-label">{{ls.l('bank_name')}}</div>
+    <div class="dx-field-label">{{ls.l('bank_name')}}<span *ngIf="offersWizardService.isSpecialOffer">*</span></div>
     <div class="dx-field-value">
         <dx-text-box placeholder="Enter bank name"
                      [(value)]="offersWizardService.submitApplicationProfileInput.bankInformation.bankName">
+            <dx-validator>
+                <dxi-validation-rule type="custom"
+                                     [validationCallback]="offersWizardService.validateField"
+                                     [message]="this.ls.l('ThisFieldIsRequired')">
+                </dxi-validation-rule>
+            </dx-validator>
         </dx-text-box>
     </div>
 </div>
 <div class="dx-field">
-    <div class="dx-field-label">{{ls.l('bank_account_number')}}</div>
+    <div class="dx-field-label">{{ls.l('bank_account_number')}}<span *ngIf="offersWizardService.isSpecialOffer">*</span></div>
     <div class="dx-field-value">
         <dx-text-box placeholder="Enter bank account number"
                      [(value)]="offersWizardService.submitApplicationProfileInput.bankInformation.bankAccountNumber">
+            <dx-validator>
+                <dxi-validation-rule type="custom"
+                                     [validationCallback]="offersWizardService.validateField"
+                                     [message]="this.ls.l('ThisFieldIsRequired')">
+                </dxi-validation-rule>
+            </dx-validator>
         </dx-text-box>
     </div>
 </div>
 <div class="dx-field">
-    <div class="dx-field-label">{{ls.l('bank_aba')}}</div>
+    <div class="dx-field-label">{{ls.l('bank_aba')}}<span *ngIf="offersWizardService.isSpecialOffer">*</span></div>
     <div class="dx-field-value">
         <dx-text-box placeholder="Enter bank ABA"
                      [(value)]="offersWizardService.submitApplicationProfileInput.bankInformation.bankABA">
+            <dx-validator>
+                <dxi-validation-rule type="custom"
+                                     [validationCallback]="offersWizardService.validateField"
+                                     [message]="this.ls.l('ThisFieldIsRequired')">
+                </dxi-validation-rule>
+            </dx-validator>
         </dx-text-box>
     </div>
 </div>
@@ -42,7 +66,7 @@
                      (onFocusIn)="inputStatusesService.focusInput($event)"
                      (onFocusOut)="inputStatusesService.blurInput($event)"
                      [maskRules]="offersWizardService.rules"
-                     useMaskedValue="true"
+                     [useMaskedValue]="true"
                      [value]="bankPhone"
                      (onValueChanged)="mobileChange($event)">
         </dx-text-box>
@@ -61,7 +85,7 @@
     </div>
     <div class="col-md-6 col-sm-12">
         <div class="dx-field">
-            <div class="dx-field-label">{{ls.l('direct_deposit')}}</div>
+            <div class="dx-field-label">{{ls.l('direct_deposit')}}<span *ngIf="offersWizardService.isSpecialOffer">*</span></div>
             <div class="dx-field-value">
                 <dx-radio-group
                     [items]="offersWizardService.radioGroup"
@@ -69,6 +93,12 @@
                     displayExpr="text"
                     valueExpr="value"
                     layout="horizontal">
+                    <dx-validator>
+                        <dxi-validation-rule type="custom"
+                                             [validationCallback]="offersWizardService.validateField"
+                                             [message]="this.ls.l('ThisFieldIsRequired')">
+                        </dxi-validation-rule>
+                    </dx-validator>
                 </dx-radio-group>
             </div>
         </div>

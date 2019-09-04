@@ -102,6 +102,10 @@ export class OffersWizardService {
         this.getStates();
     }
 
+    get isSpecialOffer() {
+        return !!this.data.campaignId;
+    }
+
     arrayFromEnum(enumData) {
         return Object.keys(enumData).map(e => ({key: e, text: this.ls.l(e)}));
     }
@@ -186,7 +190,10 @@ export class OffersWizardService {
         this.submitApplicationProfileInput.legalInformation.isTCPAChecked = true;
         this.submitApplicationProfileInput.campaignId = this.data.campaignId;
         this.appHttpConfiguration.avoidErrorHandling = true;
-        const submitApplication$ = this.offersServiceProxy.submitApplication(this.submitApplicationProfileInput).pipe(publishReplay(), refCount());
+        const submitApplication$ = this.offersServiceProxy.submitApplication(this.submitApplicationProfileInput).pipe(
+            publishReplay(),
+            refCount()
+        );
         submitApplication$.subscribe(
             (result: SubmitApplicationOutput) => {
                 if (result) {
@@ -216,5 +223,10 @@ export class OffersWizardService {
 
     clearPhoneMask(value: string) {
         return value.replace(/\D/g, '').slice(1);
+    }
+
+    validateField = (options) => {
+        return !this.isSpecialOffer ||
+            (options.value !== undefined && options.value !== null && options.value !== '' && options.value !== 0);
     }
 }
