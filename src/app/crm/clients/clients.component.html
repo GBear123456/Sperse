@@ -73,7 +73,14 @@
                         <dxi-column dataField="Phone" [caption]="l('Contact.Phone')" cellTemplate="phoneCell" cssClass="tabular"></dxi-column>
                         <dxi-column dataField="City" [caption]="l('Contact.City')"></dxi-column>
                         <dxi-column dataField="StateId" [caption]="l('Contact.State')"></dxi-column>
-                        <dxi-column dataField="BankCode" cellTemplate="bankCodeCell" [caption]="l('BankCode')" [visible]="userManagementService.checkBankCodeFeature()"></dxi-column>
+                        <ng-container *ngIf="userManagementService.checkBankCodeFeature() as tenantHasBankCodeFeature">
+                            <dxi-column dataField="BankCode"
+                                        cellTemplate="bankCodeCell"
+                                        [caption]="l('BankCode')"
+                                        [visible]="tenantHasBankCodeFeature"
+                                        [showInColumnChooser]="tenantHasBankCodeFeature">
+                            </dxi-column>
+                        </ng-container>
                         <dxi-column dataField="Status" [caption]="l('Status')" cellTemplate="statusCell"></dxi-column>
                         <div *dxTemplate="let cellData of 'statusCell'">
                             <div [class]="'client-status ' + cellData.value | lowercase">

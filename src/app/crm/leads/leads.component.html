@@ -81,7 +81,14 @@
                         <dxi-column dataField="City" [caption]="l('Contact.City')"></dxi-column>
                         <dxi-column dataField="StateId" [caption]="l('Contact.State')"></dxi-column>
                         <dxi-column dataField="Stage" [caption]="l('Stage')"></dxi-column>
-                        <dxi-column dataField="BankCode" cellTemplate="bankCodeCell" [caption]="l('BankCode')" [visible]="userManagementService.checkBankCodeFeature()"></dxi-column>
+                        <ng-container *ngIf="userManagementService.checkBankCodeFeature() as tenantHasBankCodeFeature">
+                            <dxi-column dataField="BankCode"
+                                        cellTemplate="bankCodeCell"
+                                        [caption]="l('BankCode')"
+                                        [visible]="tenantHasBankCodeFeature"
+                                        [showInColumnChooser]="tenantHasBankCodeFeature">
+                            </dxi-column>
+                        </ng-container>
                         <dxi-column dataField="CreationTime" [caption]="l('Created')" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
                         <dxi-column dataField="AffiliateCode" [caption]="l('AffiliateCode')" [visible]="false"></dxi-column>
                         <dxi-column dataField="CampaignCode" [caption]="l('CampaignCode')" [visible]="false"></dxi-column>
