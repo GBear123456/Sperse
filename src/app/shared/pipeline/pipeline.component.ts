@@ -68,6 +68,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
     renameStageInput: RenameStageInput = new RenameStageInput();
     mergeStagesInput: MergeStagesInput = new MergeStagesInput();
     currentTooltip: dxTooltip;
+    bankCodeTooltipVisible = false;
 
     @Output() selectedEntitiesChange = new EventEmitter<any>();
     @Input() get selectedEntities() {
@@ -114,20 +115,20 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
     private _contactGroupId: ContactGroup;
 
     constructor(injector: Injector,
-        private _odataService: ODataService,
-        private _dragulaService: DragulaService,
-        private _pipelineService: PipelineService,
-        private _stageServiceProxy: StageServiceProxy,
-        private _changeDetector: ChangeDetectorRef,
-        private _filtersService: FiltersService,
+        private odataService: ODataService,
+        private dragulaService: DragulaService,
+        private pipelineService: PipelineService,
+        private stageServiceProxy: StageServiceProxy,
+        private changeDetector: ChangeDetectorRef,
+        private filtersService: FiltersService,
         private store$: Store<CrmStore.State>,
         public userManagementService: UserManagementService,
         public dialog: MatDialog
     ) {
         super(injector);
 
-        this._filtersService.filterFixed$.pipe(
-            switchMap(() => this._pipelineService.dataLayoutType$),
+        this.filtersService.filterFixed$.pipe(
+            switchMap(() => this.pipelineService.dataLayoutType$),
             filter((dlt: DataLayoutType) => dlt === DataLayoutType.Pipeline)
         ).subscribe(() => {
             setTimeout(() => this.detectChanges(), 1000);
@@ -135,18 +136,18 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     detectChanges() {
-        this._changeDetector.detectChanges();
+        this.changeDetector.detectChanges();
     }
 
     private initPipeline() {
         this.startLoading();
-        this.subscribers.push(this._dragulaService.drop.subscribe((value) => {
+        this.subscribers.push(this.dragulaService.drop.subscribe((value) => {
             setTimeout(() => this.detectChanges());
             if (value[0] == this.dragulaName) {
                 let entityId = this.getAccessKey(value[1]),
                     newStage = this.getStageByElement(value[2]),
                     reloadStageList = [newStage['stageIndex']],
-                    newSortOrder = this._pipelineService.getEntityNewSortOrder(
+                    newSortOrder = this.pipelineService.getEntityNewSortOrder(
                         this.getEntityById(this.getAccessKey(value[4]), newStage), newStage);
 
                 if (value[1].classList.contains('selected')) {
@@ -191,16 +192,16 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
             }
         }));
         this.subscribers.push(
-            this._dragulaService.dragend.subscribe((value) => {
+            this.dragulaService.dragend.subscribe((value) => {
                 if (value[0] == this.dragulaName)
                     this.hideStageHighlighting();
             })
         );
         this.subscribers.push(
-            this._pipelineService.dataLayoutType$.pipe(
+            this.pipelineService.dataLayoutType$.pipe(
                 filter((dlt: DataLayoutType) => dlt === DataLayoutType.Pipeline
                     && (!this.pipeline || this.pipeline.contactGroupId != this.contactGroupId)),
-                switchMap(() => this._pipelineService.getPipelineDefinitionObservable(this.pipelinePurposeId, this.contactGroupId)),
+                switchMap(() => this.pipelineService.getPipelineDefinitionObservable(this.pipelinePurposeId, this.contactGroupId)),
                 map((pipeline) => {
                     return this._dataSource ?
                         of(pipeline) :
@@ -229,9 +230,9 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                 }
             })
         );
-        const bag: any = this._dragulaService.find(this.dragulaName);
-        if (bag !== undefined ) this._dragulaService.destroy(this.dragulaName);
-        this._dragulaService.setOptions(this.dragulaName, {
+        const bag: any = this.dragulaService.find(this.dragulaName);
+        if (bag !== undefined ) this.dragulaService.destroy(this.dragulaName);
+        this.dragulaService.setOptions(this.dragulaName, {
             revertOnSpill: true,
             copySortSource: false,
             ignoreInputTextSelection: false,
@@ -276,17 +277,17 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
             }
         });
 
-        this._pipelineService.compactView$.pipe(takeUntil(this.destroy$)).subscribe((compactView: boolean) => {
+        this.pipelineService.compactView$.pipe(takeUntil(this.destroy$)).subscribe((compactView: boolean) => {
             this.compactView = compactView;
             this.stagePageCount = compactView ? this.COMPACT_VIEW_PAGE_COUNT : this.DEFAULT_PAGE_COUNT;
             this.detectChanges();
         });
-        this._pipelineService.compactView$.pipe(
+        this.pipelineService.compactView$.pipe(
             takeUntil(this.destroy$),
             /** If user choose compact view  */
             filter((compactView: boolean) => compactView),
             /** Listen dataLayoutType stream */
-            switchMap(() => this._pipelineService.dataLayoutType$),
+            switchMap(() => this.pipelineService.dataLayoutType$),
             /** Wait until layout type will became Pipeline (it may already be pipeline) */
             filter((dataLayoutType: DataLayoutType) => dataLayoutType === DataLayoutType.Pipeline),
             /** Switch to stages stream */
@@ -386,7 +387,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
             dataSource.pageSize(Math.max(!page && stage['entities']
                 && stage['entities'].length || 0, this.stagePageCount));
             dataSource.sort({getter: 'SortOrder', desc: true});
-            response = from(this._odataService.loadDataSource(
+            response = from(this.odataService.loadDataSource(
                 dataSource,
                 this._dataSource.uri + stage.id,
                 this.getODataUrl(this._dataSource.uri,
@@ -463,7 +464,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         }
 
         if (!this._totalDataSource.isLoading()) {
-            this._odataService.loadDataSource(
+            this.odataService.loadDataSource(
                 this._totalDataSource,
                 this.totalsURI
             ).then((res) => {
@@ -560,16 +561,16 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
             setTimeout(() => {
                 this.startLoading();
                 if (newStage.name != oldStage.name) {
-                    this._pipelineService.updateEntityStage(
+                    this.pipelineService.updateEntityStage(
                         this.pipelinePurposeId, entity, oldStage, newStage, complete);
                 } else
-                    this._pipelineService.updateEntitySortOrder(this.pipeline.id, entity, complete);
+                    this.pipelineService.updateEntitySortOrder(this.pipeline.id, entity, complete);
             });
         }
     }
 
     destroyPipeline() {
-        this._dragulaService.destroy(this.dragulaName);
+        this.dragulaService.destroy(this.dragulaName);
         this.subscribers.forEach((sub) => sub.unsubscribe());
         this.subscribers = [];
     }
@@ -706,7 +707,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                 case 'Add':
                     if (result && result.newStageName) {
                         this.createStageInput.name = result.newStageName;
-                        this._stageServiceProxy.createStage(this.createStageInput).subscribe(() => {
+                        this.stageServiceProxy.createStage(this.createStageInput).subscribe(() => {
                             this.store$.dispatch(new PipelinesStoreActions.LoadRequestAction(true));
                         });
                     }
@@ -714,7 +715,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                 case 'Rename':
                     if (result && result.newStageName) {
                         this.renameStageInput.name = result.newStageName;
-                        this._stageServiceProxy.renameStage(this.renameStageInput).subscribe(() => {
+                        this.stageServiceProxy.renameStage(this.renameStageInput).subscribe(() => {
                             this.store$.dispatch(new PipelinesStoreActions.LoadRequestAction(true));
                         });
                     }
@@ -722,12 +723,12 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                 case 'Merge':
                     if (result && result.moveToStage) {
                         this.mergeStagesInput.destinationStageId = result.moveToStage;
-                        this._stageServiceProxy.mergeStages(this.mergeStagesInput).subscribe(() => {
+                        this.stageServiceProxy.mergeStages(this.mergeStagesInput).subscribe(() => {
                                 this.store$.dispatch(new PipelinesStoreActions.LoadRequestAction(true));
                             }
                         );
                     } else if (result && !result.moveToStage) {
-                        this._stageServiceProxy.mergeStages(this.mergeStagesInput).subscribe(() => {
+                        this.stageServiceProxy.mergeStages(this.mergeStagesInput).subscribe(() => {
                             this.store$.dispatch(new PipelinesStoreActions.LoadRequestAction(true));
                         });
                     }
@@ -771,7 +772,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         }
 
         this.startLoading(true);
-        this._stageServiceProxy.updateStageSortOrder(new UpdateSortOrderInput({
+        this.stageServiceProxy.updateStageSortOrder(new UpdateSortOrderInput({
             id: stage.id,
             sortOrder: sortOrder
         })).pipe(

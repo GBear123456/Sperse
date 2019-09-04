@@ -62,10 +62,14 @@
                                 </ng-template>
                             </div>
                             <div class="bank-code" *ngIf="entity?.BankCode && userManagementService.checkBankCodeFeature()">
-                                <bank-code-letter [id]="'bankCode' + entity.Id" [letter]="entity.BankCode[0]"></bank-code-letter>
+                                <bank-code-letter [id]="'bankCode' + entity.Id"
+                                                  [letter]="entity.BankCode[0]"
+                                                  (click)="bankCodeTooltipVisible = false">
+                                </bank-code-letter>
                                 <dx-tooltip [target]="'#bankCode' + entity.Id"
                                             showEvent="dxhoverstart"
-                                            hideEvent="dxhoverend">
+                                            hideEvent="dxhoverend"
+                                            [(visible)]="bankCodeTooltipVisible">
                                     <div *dxTemplate="let data of 'content'">
                                         <div class="bank-code-tooltip">
                                             <bank-code-letters [bankCode]="entity.BankCode"></bank-code-letters>
