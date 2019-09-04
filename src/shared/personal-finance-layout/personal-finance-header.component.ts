@@ -16,6 +16,7 @@ import { RegisterComponent } from '@root/shared/personal-finance-layout/register
 import { FeatureCheckerService } from '@abp/features/feature-checker.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { OffersService } from '@root/personal-finance/shared/offers/offers.service';
+import { LayoutType } from '../service-proxies/service-proxies';
 
 @Directive({
     selector: '[ad-header-host]'
@@ -46,13 +47,8 @@ export class PersonalFinanceHeaderComponent {
             name: 'creditReportLink',
             imgUrl: 'assets/images/icons/credit-report-icon.svg',
             activeImgUrl: 'assets/images/icons/credit-report-active-icon.svg',
-            routerUrl: '/personal-finance'
-        },
-        {
-            name: 'creditSimulatorLink',
-            imgUrl: 'assets/images/icons/credit-simulator-icon.svg',
-            activeImgUrl: 'assets/images/icons/credit-simulator-active-icon.svg',
-            routerUrl: '/personal-finance/credit-simulator'
+            routerUrl: '/personal-finance/credit-reports',
+            sublinks: null
         },
         {
             name: 'creditResources',
@@ -91,16 +87,46 @@ export class PersonalFinanceHeaderComponent {
             });
         });
         if (this.featureService.isEnabled(AppFeatures.CFOPartner)) {
-            this.memberAreaLinks.unshift(
+            this.memberAreaLinks.splice(1, 0,
                 {
                     name: 'accountsLink',
                     imgUrl: 'assets/images/icons/credit-report-icon.svg',
                     activeImgUrl: 'assets/images/icons/credit-report-active-icon.svg',
-                    routerUrl: '/personal-finance/my-finances'
+                    routerUrl: '/personal-finance/my-finances',
+                    sublinks: [
+                        {
+                            name: 'Accounts',
+                            routerUrl: '/personal-finance/my-finances/accounts'
+                        },
+                        {
+                            name: 'Overview',
+                            routerUrl: '/personal-finance/my-finances/summary'
+                        },
+                        {
+                            name: 'Budgeting',
+                            routerUrl: '/personal-finance/my-finances/spending'
+                        },
+                        {
+                            name: 'Transactions',
+                            routerUrl: '/personal-finance/my-finances/transactions'
+                        },
+                        {
+                            name: 'Holdings',
+                            routerUrl: '/personal-finance/my-finances/holdings'
+                        },
+                        {
+                            name: 'Allocation',
+                            routerUrl: '/personal-finance/my-finances/allocation'
+                        },
+                        {
+                            name: 'Goals',
+                            routerUrl: '/personal-finance/my-finances/goals'
+                        }
+                    ]
                 });
         }
 
-        this.hasPfmAppFeature = this.featureService.isEnabled(AppFeatures.PFMApplications);
+        this.hasPfmAppFeature = this.featureService.isEnabled(AppFeatures.PFMApplications) && this.appSession.tenant.customLayoutType == LayoutType.LendSpace;
         this.showDefaultHeader = this.isMemberArea() || this.hasPfmAppFeature;
     }
 
@@ -199,6 +225,9 @@ export class PersonalFinanceHeaderComponent {
     }
 
     logoClick(event) {
+        if (!this.hasPfmAppFeature)
+            return;
+
         if (this.loggedUserId)
             this.router.navigate(['/personal-finance/home']);
         else
