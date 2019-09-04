@@ -193,7 +193,7 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
             if (orgUnitIds && orgUnitIds.length) {
                 this.selectedOrgUnits = orgUnitIds;
                 data.memberedOrganizationUnits = orgUnitIds.map(id =>
-                    find(data.allOrganizationUnits, {id: id})['code']);
+                    find(data.allOrganizationUnits, {id: id})['id']);
             }
         }
 

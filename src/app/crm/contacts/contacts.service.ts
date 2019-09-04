@@ -12,7 +12,11 @@ import invert from 'lodash/invert';
 /** Application imports */
 import { DialogService } from '@app/shared/common/dialogs/dialog.service';
 import { AddCompanyDialogComponent } from './add-company-dialog/add-company-dialog.component';
-import { ContactInfoDto, OrganizationContactInfoDto, UserServiceProxy } from '@shared/service-proxies/service-proxies';
+import {
+    ContactInfoDto,
+    OrganizationContactInfoDto,
+    UserServiceProxy
+} from '@shared/service-proxies/service-proxies';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { ContactGroup, ContactGroupPermission } from '@shared/AppEnums';
 import { AppPermissions } from '@shared/AppPermissions';
@@ -26,8 +30,8 @@ export class ContactsService {
     private organizationUnitsSave: Subject<any>;
     private invalidateSubject: Subject<any>;
     private leadInfoSubject: Subject<any>;
-    private contactInfoSubject: ReplaySubject<ContactInfoDto> = new ReplaySubject<ContactInfoDto>(1);
-    contactInfo$: Observable<ContactInfoDto> = this.contactInfoSubject.asObservable();
+    private contactInfo: ReplaySubject<ContactInfoDto> = new ReplaySubject<ContactInfoDto>(1);
+    contactInfo$: Observable<ContactInfoDto> = this.contactInfo.asObservable();
     organizationContactInfo: ReplaySubject<OrganizationContactInfoDto> = new ReplaySubject<OrganizationContactInfoDto>(1);
     private subscribers: any = {
         common: []
@@ -36,11 +40,11 @@ export class ContactsService {
     readonly CONTACT_GROUP_KEYS = invert(ContactGroup);
 
     constructor(injector: Injector,
-        private _userService: UserServiceProxy,
-        private _permission: AppPermissionService,
-        private _dialogService: DialogService,
-        private _router: Router,
-        private _location: Location,
+        private userService: UserServiceProxy,
+        private permission: AppPermissionService,
+        private dialogService: DialogService,
+        private router: Router,
+        private location: Location,
         public dialog: MatDialog
     ) {
         this.verificationSubject = new Subject<any>();
@@ -66,7 +70,7 @@ export class ContactsService {
     }
 
     checkCGPermission(contactGroup, permission = 'Manage') {
-        return this._permission.isGranted(this.getCGPermissionKey(contactGroup, permission) as AppPermissions);
+        return this.permission.isGranted(this.getCGPermissionKey(contactGroup, permission) as AppPermissions);
     }
 
     verificationSubscribe(callback, ident?: string) {
@@ -94,7 +98,7 @@ export class ContactsService {
     }
 
     invalidateUserData() {
-        let userData = this._userService['data'];
+        let userData = this.userService['data'];
         if (userData) {
             userData.raw = undefined;
             this.userUpdate(userData.userId);
@@ -102,11 +106,11 @@ export class ContactsService {
     }
 
     contactInfoSubscribe(callback, ident?: string) {
-        return this.subscribe(this.contactInfoSubject.asObservable().subscribe(callback), ident);
+        return this.subscribe(this.contactInfo.asObservable().subscribe(callback), ident);
     }
 
     contactInfoUpdate(contactInfo: ContactInfoDto) {
-        this.contactInfoSubject.next(contactInfo);
+        this.contactInfo.next(contactInfo);
     }
 
     organizationInfoSubscribe(callback, ident?: string) {
@@ -169,7 +173,7 @@ export class ContactsService {
                 updateLocation: this.updateLocation.bind(this)
             },
             hasBackdrop: false,
-            position: this._dialogService.calculateDialogPosition(
+            position: this.dialogService.calculateDialogPosition(
                 event, event.target, shiftX, shiftY)
         }).afterClosed().pipe(tap(responce => {
             if (responce.organizationId)
@@ -178,8 +182,8 @@ export class ContactsService {
     }
 
     updateLocation(contactId?, leadId?, companyId?, userId?) {
-        this._location.replaceState(
-            this._router.createUrlTree(
+        this.location.replaceState(
+            this.router.createUrlTree(
                 ['app/' + (userId ? 'admin' : 'crm')].concat(
                     contactId ? ['contact', contactId] : [],
                     leadId ? ['lead', leadId] : [],

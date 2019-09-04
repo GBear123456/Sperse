@@ -96,10 +96,13 @@ export class OrganizationUnitsTreeComponent implements OnDestroy {
         private notifyService: NotifyService,
         private loadingService: LoadingService
     ) {
-        contactsService.orgUnitsSubscribe((userData) => {
-            this.userId = userData.user && userData.user.id;
-            this.setOrganizationUnitsData(userData.allOrganizationUnits, userData.memberedOrganizationUnits);
-        }, this.ident);
+        contactsService.orgUnitsSubscribe(
+            (userData) => {
+                this.userId = userData.user && userData.user.id;
+                this.setOrganizationUnitsData(userData.allOrganizationUnits, userData.memberedOrganizationUnits);
+            },
+            this.ident
+        );
 
         this.isEditAllowed = this.permissionChecker.isGranted(AppPermissions.AdministrationOrganizationUnitsManageMembers);
     }
@@ -108,7 +111,7 @@ export class OrganizationUnitsTreeComponent implements OnDestroy {
         this.organizationUnitsData = orgUnits;
 
         this.organizationUnitsData.forEach((item) => {
-            if (item['selected'] = includes(memberedOrganizationUnits, item.code))
+            if (item['selected'] = includes(memberedOrganizationUnits, item.id as any))
                 this.lastSeletedItemId = item.id;
             item['expanded'] = true;
         });
