@@ -57,6 +57,11 @@ export class CreditReportComponent extends AppComponentBase implements OnInit {
         this.getCreditReport();
     }
 
+    onSelectChanged() {
+        abp.ui.setBusy();
+        this._router.navigate(['personal-finance/credit-simulator']).then(() => abp.ui.clearBusy());
+    }
+
     getCreditReport(date?: moment.Moment): void {
         abp.ui.setBusy();
         this._creditReportService

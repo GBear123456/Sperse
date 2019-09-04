@@ -40,6 +40,11 @@ export class CreditSimulatorComponent extends AppComponentBase implements OnInit
             });
     }
 
+    onSelectChanged() {
+        abp.ui.setBusy();
+        this._router.navigate(['personal-finance/credit-reports']).then(() => abp.ui.clearBusy());
+    }
+
     simulateScore(request): void {
         this.clearModelBeforeSubmit();
         this._simulateScoreService

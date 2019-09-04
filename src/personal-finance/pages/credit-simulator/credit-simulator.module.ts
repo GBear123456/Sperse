@@ -15,6 +15,7 @@ import { DxRadioGroupModule } from 'devextreme-angular/ui/radio-group';
 import { DxButtonModule } from 'devextreme-angular/ui/button';
 import { DxNumberBoxModule } from 'devextreme-angular/ui/number-box';
 import { SimulationGroupComponent } from './simulation-group/simulation-group.component';
+import { DxSelectBoxModule } from 'devextreme-angular';
 
 @NgModule({
     imports: [
@@ -29,6 +30,7 @@ import { SimulationGroupComponent } from './simulation-group/simulation-group.co
         DxSwitchModule,
         DxRadioGroupModule,
         DxNumberBoxModule,
+        DxSelectBoxModule,
         RouterModule.forChild([{
             path: '',
             component: CreditSimulatorComponent

@@ -69,7 +69,13 @@
                     </aside>
                     <div class="p-content">
                         <h1>
-                            {{l('creditReportTitle')}}
+                            <dx-select-box
+                                placeholder=""
+                                [items]="[l('creditReportTitle'), l('creditSimulatorLink')]"
+                                [value]="l('creditReportTitle')"
+                                [width]="220"
+                                (onValueChanged)="onSelectChanged($event)">
+                            </dx-select-box>
                             <!--<a href="/" class="button">{{l('upgrade')}} <img src="assets/landing/right-arrow.svg" alt="arrow" width="16" class="btn-icon"></a>-->
                             <a [attr.href]="pdfUrl" target="_blank" (click)="generatePdf($event.target)" class="button" download="Credit Report - {{creditReportResult.memberFullName}} - {{creditReportResult.providerCreatedDate | date: 'yyyyMMdd' : userTimezone }}.pdf" [ngClass]="{'disabled spinner': isPdfGenerating}">
                                 {{l('generatePdf')}}
