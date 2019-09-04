@@ -161,6 +161,11 @@ export class PersonalFinanceHeaderComponent {
                 name: 'My Credit',
                 sublinks: [
                     {
+                        name: this.ls.ls('PFM', 'creditReportLink'),
+                        routerUrl: '/personal-finance/credit-reports',
+                        hidden: !this.featureService.isEnabled(AppFeatures.PFMCreditReport)
+                    },
+                    {
                         name: this.ls.ls('PFM', 'creditScores'),
                         routerUrl: '/personal-finance/offers/credit-scores'
                     },

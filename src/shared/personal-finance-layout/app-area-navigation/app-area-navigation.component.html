@@ -17,7 +17,7 @@
             </a>
         </ng-template>
         <ul *ngIf="item.sublinks && item.sublinks.length" class="sublinks" #sublinks>
-            <li *ngFor="let sublink of item.sublinks">
+            <li *ngFor="let sublink of item.sublinks" [hidden]="sublink.hidden">
                 <a [routerLink]="sublink.routerUrl" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}" #simlink>
                     {{l(sublink.name)}}
                 </a>
@@ -47,7 +47,7 @@
                 </a>
             </ng-template>
             <ul *ngIf="item.sublinks && item.sublinks.length" class="responsive-sublinks">
-                <li *ngFor="let sublink of item.sublinks">
+                <li *ngFor="let sublink of item.sublinks" [hidden]="sublink.hidden">
                     <a [routerLink]="sublink.routerUrl" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}">
                         {{l(sublink.name)}}
                     </a>
