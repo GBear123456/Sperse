@@ -1,5 +1,13 @@
 /** Core imports */
-import { Component, Output, EventEmitter, Inject, ElementRef } from '@angular/core';
+import {
+    ChangeDetectionStrategy,
+    Component,
+    Output,
+    EventEmitter,
+    Inject,
+    ElementRef,
+    ChangeDetectorRef
+} from '@angular/core';
 
 /** Third party imports */
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
@@ -16,7 +24,8 @@ import { BankCodeLetter } from '@app/shared/common/bank-code-letters/bank-code-l
 @Component({
     selector: 'bank-code-letters-editor',
     templateUrl: './bank-code-letters-editor-dialog.component.html',
-    styleUrls: ['./bank-code-letters-editor-dialog.component.less']
+    styleUrls: ['./bank-code-letters-editor-dialog.component.less'],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class BankCodeLettersEditorDialogComponent {
     bankCode: string;
@@ -28,6 +37,7 @@ export class BankCodeLettersEditorDialogComponent {
         private elementRef: ElementRef,
         private loadingService: LoadingService,
         private personContactServiceProxy: PersonContactServiceProxy,
+        private changeDetectorRef: ChangeDetectorRef,
         public bankCodeService: BankCodeService,
         @Inject(MAT_DIALOG_DATA) data: any
     ) {
@@ -61,6 +71,7 @@ export class BankCodeLettersEditorDialogComponent {
         ).subscribe(() => {
             this.bankCode = newBankCode;
             this.bankCodeChange.emit(this.bankCode);
+            this.changeDetectorRef.detectChanges();
         });
     }
 
