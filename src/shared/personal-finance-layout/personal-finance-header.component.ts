@@ -76,10 +76,14 @@ export class PersonalFinanceHeaderComponent {
         private ls: AppLocalizationService,
         public appSession: AppSessionService
     ) {
-        const offersService = injector.get(OffersService, null);
-        if (offersService) {
-            this.applicationCompleteIsRequired$ = offersService.applicationCompleteIsRequired$;
+        if (this.featureService.isEnabled(AppFeatures.PFMApplications))
+        {
+            const offersService = injector.get(OffersService, null);
+            if (offersService) {
+                this.applicationCompleteIsRequired$ = offersService.applicationCompleteIsRequired$;
+            }
         }
+        
         pfmLayoutService.headerContentSubscribe((component) => {
             setTimeout(() => {
                 this.adHeaderHost.viewContainerRef.clear();
