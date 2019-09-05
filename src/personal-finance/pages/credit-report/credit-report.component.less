@@ -67,6 +67,8 @@
         }
 
         .left-navigation {
+            position: sticky;
+            top: 75px;
             margin-top: 28px;
             list-style-type: none;
             padding-left: 0;
@@ -497,6 +499,7 @@
     margin: 25px 0;
 
     .report-item-title {
+        position: relative;
         padding: 10px 16px 9px;
         font-size: 15px;
         font-weight: bold;
@@ -507,6 +510,11 @@
         display: inline-block;
         width: 100%;
         text-transform: uppercase;
+
+        .anchor {
+            position: absolute;
+            top: -71px;
+        }
 
         span {
             line-height: 28px;

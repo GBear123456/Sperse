@@ -1,5 +1,8 @@
 <div class="report-item">
-  <div class="report-item-title" id="creditScores">{{l("creditScores")}}</div>
+  <div class="report-item-title">
+    <a class="anchor" id="creditScores">&nbsp;</a>
+    {{l("creditScores")}}
+  </div>
   <div class="info-alert">{{l("creditScoreRepresentation")}}</div>
   <div class="row">
     <div class="report-score-block col-md-4 text-center" *ngFor="let item of creditReport?.bureauReports">
