@@ -1,15 +1,10 @@
 @import url(_settings);
 :host {
     z-index: 1;
-    border-top: 1px solid rgba(209, 208, 208, 0.5);
     
     &:not(.default) {
         display: block;
-    }
-    &.default {
-        bottom: 0px;
-        position: fixed;
-        width: 100%;        
+        border-top: 1px solid rgba(209, 208, 208, 0.5);
     }
 
     .page-footer-inner {
@@ -26,7 +21,7 @@
         font-size: 16px;
         line-height: 24px;
         // background: @footer-color;
-        background-image: linear-gradient(to right, rgba(1, 121, 122, .2), rgba(1, 110, 112, .2));
+        background: #97f6f7 linear-gradient(178deg, #0dc1c3, #97f6f7);
 
         @media all and (max-height: 870px) {
             position: static;
@@ -69,5 +64,12 @@
         .footer-menu-block_secure {
             display: none;
         }
+    }
+}
+
+/deep/ body.finance-page .default {
+    .page-footer-inner {
+        margin-top: 15px;
+        background: #949a9d;
     }
 }
