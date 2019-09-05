@@ -1,4 +1,4 @@
-import {Component, Injector, OnInit, Input, EventEmitter, Output} from '@angular/core';
+import { Component, Injector, Input, EventEmitter, Output } from '@angular/core';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 
 @Component({
@@ -16,10 +16,6 @@ export class ReportPeriodComponent extends CFOComponentBase {
         injector: Injector,
     ) {
         super(injector);
-    }
-
-    toggleReportPeriodFilter() {
-        this.reportPeriodTooltipVisible = !this.reportPeriodTooltipVisible;
     }
 
     apply() {

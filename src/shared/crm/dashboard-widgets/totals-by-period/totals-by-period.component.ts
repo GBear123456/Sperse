@@ -87,6 +87,12 @@ export class TotalsByPeriodComponent extends AppComponentBase implements OnInit,
             name: 'Monthly',
             text: `12 ${this.l('Periods_Month_plural')}`,
             amount: 12
+        },
+        {
+            key: GroupByPeriod.Quarterly,
+            name: 'Quarterly',
+            text: `3 ${this.l('Periods_Month_plural')}`,
+            amount: 3
         }
     ];
     selectItems = [
@@ -147,10 +153,12 @@ export class TotalsByPeriodComponent extends AppComponentBase implements OnInit,
         ).pipe(
             takeUntil(this.destroy$),
             tap(() => this.startLoading()),
-            switchMap(([period, isCumulative]) => this.loadCustomersAndLeadsStats(period, isCumulative).pipe(
-                catchError(() => of([])),
-                finalize(() => { this.finishLoading(); })
-            )),
+            switchMap(([period, isCumulative]: [TotalsByPeriodModel, boolean]) => {
+                return this.loadCustomersAndLeadsStats(period, isCumulative).pipe(
+                    catchError(() => of([])),
+                    finalize(() => { this.finishLoading(); })
+                );
+            }),
             publishReplay(),
             refCount()
         );
@@ -208,14 +216,17 @@ export class TotalsByPeriodComponent extends AppComponentBase implements OnInit,
     private savePeriod(period) {
         if (period) {
             if ([this.l('Today'), this.l('Yesterday'), this.l('This_Week'), this.l('This_Month'), this.l('Last_Month')].indexOf(period.name) >= 0)
-                this.selectedPeriod = this.periods[0];
-            else
-                this.selectedPeriod = this.periods[2];
+                this.selectedPeriod = { ...this.periods[0] };
+            else if (period.name === this.l('Last_Quarter')) {
+                this.selectedPeriod = { ...this.periods[3] };
+            } else {
+                this.selectedPeriod = { ...this.periods[2] };
+            }
         }
         return this.selectedPeriod;
     }
 
-    private loadCustomersAndLeadsStats(period: any, isCumulative: boolean): Observable<GetCustomerAndLeadStatsOutput[]> {
+    private loadCustomersAndLeadsStats(period: TotalsByPeriodModel, isCumulative: boolean): Observable<GetCustomerAndLeadStatsOutput[]> {
         return this._dashboardServiceProxy.getCustomerAndLeadStats(
             GroupByPeriod[(period.name as GroupByPeriod)],
             period.amount,

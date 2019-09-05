@@ -25,9 +25,9 @@ export class CfoPreferencesService {
     dateRange: BehaviorSubject<CalendarValuesModel> = new BehaviorSubject<CalendarValuesModel>(
         this.cfoService.hasStaticInstance
         ? {
-            from: { value: DateHelper.addTimezoneOffset(moment().subtract(1, 'month').startOf('month').toDate(), true) },
-            to: { value: DateHelper.addTimezoneOffset(moment().subtract(1, 'month').endOf('month').toDate(), true) },
-            period: 'LastMonth'
+            from: { value: DateHelper.addTimezoneOffset(moment().subtract(1, 'quarter').startOf('quarter').toDate(), true) },
+            to: { value: DateHelper.addTimezoneOffset(moment().subtract(1, 'quarter').endOf('quarter').toDate(), true) },
+            period: 'LastQuarter'
         }
         : {
             from: { value: DateHelper.addTimezoneOffset(moment().startOf('year').toDate(), true) },
@@ -44,7 +44,7 @@ export class CfoPreferencesService {
                         ? this.formatDate(dateRange.from.value) + ' - ' + this.formatDate(dateRange.to.value)
                         : this.formatDate(dateRange.from.value)
                     )
-                    : (this.cfoService.hasStaticInstance ? this.ls.l('Periods_LastMonth') : this.ls.l('Periods_ThisYear'))
+                    : (this.cfoService.hasStaticInstance ? this.ls.l('Periods_LastQuarter') : this.ls.l('Periods_ThisYear'))
             );
         })
     );

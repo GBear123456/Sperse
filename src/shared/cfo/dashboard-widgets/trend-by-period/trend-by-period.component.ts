@@ -133,7 +133,7 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit, 
     ];
     periods: TrendByPeriodModel[] = [
          {
-            key: GroupByPeriod.Daily,
+             key: GroupByPeriod.Daily,
              name: 'day',
              text: `30 ${this.ls('Platform', 'Periods_Day_plural')}`,
              amount: 30
@@ -156,7 +156,7 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit, 
     period$ = this.dashboardService.period$.pipe(
         map((period: PeriodModel) => {
             let periodName = period.period;
-            if (periodName === 'year' || periodName === 'all') {
+            if (periodName === 'year' || periodName === 'quarter' || periodName === 'all') {
                 periodName = 'month';
             } else {
                 periodName = 'day';
