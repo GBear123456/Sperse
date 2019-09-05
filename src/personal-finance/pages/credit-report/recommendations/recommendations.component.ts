@@ -1,10 +1,11 @@
-import { Component, Input, Injector } from '@angular/core';
+import { Component, Input, Injector, ChangeDetectionStrategy } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 
 @Component({
   selector: 'app-recommendations',
   templateUrl: './recommendations.component.html',
-  styleUrls: ['./recommendations.component.less']
+  styleUrls: ['./recommendations.component.less'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class RecommendationsComponent extends AppComponentBase {
   @Input() creditReport;

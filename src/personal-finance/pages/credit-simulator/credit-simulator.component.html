@@ -2,7 +2,15 @@
     <div class="credit-simulator" *ngIf="simulatorInfo">
         <ng-container *ngIf="simulatorInfo.accessStatus == scoreSimulatorInfoDtoAccessStatus.Ok; else accessDenied">
             <div class="heading">
-                <h1 class="heading-title">{{l("creditSimulatorLink")}}</h1>
+                <h1>
+                    <dx-select-box
+                        placeholder=""
+                        [items]="[l('creditReportTitle'), l('creditSimulatorLink')]"
+                        [value]="l('creditSimulatorLink')"
+                        [width]="260"
+                        (onValueChanged)="onSelectChanged($event)">
+                    </dx-select-box>
+                </h1>
             </div>
             <div class="row">
                 <div class="col-md-7">

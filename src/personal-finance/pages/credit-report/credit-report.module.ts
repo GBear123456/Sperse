@@ -33,6 +33,7 @@ import { ConsumerStatementsComponent } from './consumer-statements/consumer-stat
 import { KbaComponent } from './kba-request/kba-request.component';
 import { LayoutModule } from '../../shared/layout/layout.module';
 import { CreditReportServiceProxy } from '@shared/service-proxies/service-proxies';
+import { DxSelectBoxModule } from 'devextreme-angular';
 
 @NgModule({
     imports: [
@@ -48,6 +49,7 @@ import { CreditReportServiceProxy } from '@shared/service-proxies/service-proxie
         DxLoadPanelModule,
         DxTemplateModule,
         DxChartModule,
+        DxSelectBoxModule,
         PersonalFinanceCommonModule,
         RouterModule.forChild([{
             path: '',

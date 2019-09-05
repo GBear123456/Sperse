@@ -4,12 +4,16 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { ActivationEnd } from '@angular/router';
 import humanize from 'underscore.string/humanize';
 import { AppFeatures } from '@shared/AppFeatures';
+import { LayoutType } from '@root/shared/service-proxies/service-proxies';
 
 declare const Typekit: any;
 
 @Component({
     templateUrl: './personal-finance.component.html',
-    styleUrls: ['./personal-finance.component.less']
+    styleUrls: [
+        './shared/common/styles/apply-button.less',
+        './personal-finance.component.less'
+    ]
 })
 export class PersonalFinanceComponent extends AppComponentBase implements OnInit, OnDestroy {
     @HostBinding('class.pfm-app') hasPfmAppFeature = false;
@@ -25,9 +29,9 @@ export class PersonalFinanceComponent extends AppComponentBase implements OnInit
         private _render: Renderer2
     ) {
         super(injector);
-        this.viewContainerRef = viewContainerRef;
-        // You need this small hack in order to catch application root view container ref (required by ng2 bootstrap modal)
-        this.hasPfmAppFeature = this.feature.isEnabled(AppFeatures.PFMApplications);
+        this.viewContainerRef = viewContainerRef; // You need this small hack in order to catch application root view container ref (required by ng2 bootstrap modal)
+        
+        this.hasPfmAppFeature = this.feature.isEnabled(AppFeatures.PFMApplications) && this.appSession.tenant.customLayoutType == LayoutType.LendSpace;
         this.loggedUserId = this.appSession.userId;
         this._router.events.subscribe(event => {
             if (event instanceof ActivationEnd && !event.snapshot.children.length) {

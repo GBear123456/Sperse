@@ -104,6 +104,6 @@ import { LoggedInCreditReportGuard } from '@root/personal-finance/shared/common/
         ])
     ],
     exports: [ RouterModule ],
-    providers: [LoggedOutCreditReportGuard, LoggedInCreditReportGuard ]
+    providers: [ LoggedOutCreditReportGuard, LoggedInCreditReportGuard ]
 })
 export class PersonalFinanceRoutingModule { }

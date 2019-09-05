@@ -67,7 +67,7 @@
                                 <span class="closed"><i class="fa fa-circle" aria-hidden="true"></i> {{l("closed")}}</span>
                             </ng-template>
                         </td>
-                        <td *ngFor="let item of ['totalCreditLimit', 'availableCredit', 'balance']">{{bureauRow[item] | currency:'USD':true:'1.0'}}</td>
+                        <td *ngFor="let item of ['totalCreditLimit', 'availableCredit', 'balance']">{{bureauRow[item] | currency:'USD':'symbol':'1.0'}}</td>
                         <td>
                             <ng-container *ngIf="bureauRow['creditUtilization']">
                                 <div class="creditUtilizationWrap">

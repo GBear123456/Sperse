@@ -1,4 +1,4 @@
-import { Component, OnInit, Injector, Input } from '@angular/core';
+import { Component, OnInit, Injector, Input, ChangeDetectionStrategy } from '@angular/core';
 import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { CreditReportDto, CreditScoreRank } from '@shared/service-proxies/service-proxies';
@@ -6,7 +6,8 @@ import { CreditReportDto, CreditScoreRank } from '@shared/service-proxies/servic
 @Component({
   selector: 'app-credit-scores',
   templateUrl: './credit-scores.component.html',
-  styleUrls: ['./credit-scores.component.less']
+  styleUrls: ['./credit-scores.component.less'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CreditScoresComponent extends AppComponentBase implements OnInit {
 

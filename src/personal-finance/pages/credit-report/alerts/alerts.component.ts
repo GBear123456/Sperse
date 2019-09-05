@@ -1,11 +1,12 @@
-import { Component, OnInit, Input, Injector } from '@angular/core';
+import { Component, OnInit, Input, Injector, ChangeDetectionStrategy } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { CreditReportServiceProxy, AlertDto } from '@shared/service-proxies/service-proxies';
 
 @Component({
   selector: 'app-alerts',
   templateUrl: './alerts.component.html',
-  styleUrls: ['./alerts.component.less']
+  styleUrls: ['./alerts.component.less'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AlertsComponent extends AppComponentBase implements OnInit {
   @Input() creditReport;

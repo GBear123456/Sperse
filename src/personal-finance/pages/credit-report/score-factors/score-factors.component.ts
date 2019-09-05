@@ -1,10 +1,11 @@
-import { Component, OnInit, Input, Injector } from '@angular/core';
+import { Component, OnInit, Input, Injector, ChangeDetectionStrategy } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 
 @Component({
   selector: 'app-score-factors',
   templateUrl: './score-factors.component.html',
-  styleUrls: ['./score-factors.component.less']
+  styleUrls: ['./score-factors.component.less'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ScoreFactorsComponent extends AppComponentBase implements OnInit {
   @Input() creditReport;

@@ -236,7 +236,6 @@
         }
 
         h1 {
-            font-family: @robotoslab;
             font-size: 30px;
             letter-spacing: 0.2px;
             color: rgb(2, 31, 68);
@@ -498,7 +497,6 @@
     margin: 25px 0;
 
     .report-item-title {
-        font-family: "roboto-slab", serif;
         padding: 10px 16px 9px;
         font-size: 15px;
         font-weight: bold;
@@ -531,6 +529,10 @@
         line-height: 1.6;
         letter-spacing: 0.2px;
         color: rgb(93, 102, 106);
+
+        .table {
+            width: 100%;
+        }
 
         .table-striped {
             thead {
@@ -787,6 +789,20 @@
         .tooltip-info {
             display: block;
             opacity: 1;
+        }
+    }
+}
+
+:host {
+    /deep/.dx-dropdowneditor {
+        display: inline-block;
+
+        .dx-dropdowneditor-icon {
+            background-color: transparent !important;
+        }
+        input {
+            font-size: 30px;
+            border: 0;
         }
     }
 }

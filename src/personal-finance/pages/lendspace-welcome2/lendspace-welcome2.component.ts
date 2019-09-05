@@ -12,9 +12,9 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 import { FeatureCheckerService } from '@abp/features/feature-checker.service';
 
 @Component({
-  selector: 'app-lendspace-welcome2',
-  templateUrl: './lendspace-welcome2.component.html',
-  styleUrls: ['./lendspace-welcome2.component.less']
+    selector: 'app-lendspace-welcome2',
+    templateUrl: './lendspace-welcome2.component.html',
+    styleUrls: ['./lendspace-welcome2.component.less']
 })
 
 export class LendspaceWelcome2Component implements OnInit {

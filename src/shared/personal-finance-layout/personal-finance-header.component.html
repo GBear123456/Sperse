@@ -1,9 +1,10 @@
 <app-pages-header *ngIf="!showDefaultHeader"></app-pages-header>
 <div class="top-headline">
-    <div class="container d-flex justify-content-between align-items-center">
+    <div class="container d-flex justify-content-between align-items-center" *ngIf="applicationCompleteIsRequired$ | async">
         <a href="//lendspace.com" class="url">www.lendspace.com</a>
-        <p class="get-free-score">Get Your Free Credit Score with LendSpace</p>
+        <a class="get-free-score" (click)="registerComponent.showRegisterPopup()">Your application is incomplete. Click here to continue...</a>
         <p class="date">{{currentDate | date:'longDate' : userTimezone}}</p>
+        <register></register>
     </div>
 </div>
 <div class="page-header navbar navbar-fixed-top navbar-light container" [ngClass]="{'pfm-app': hasPfmAppFeature}" *ngIf="showDefaultHeader">
@@ -15,15 +16,24 @@
 
     <ng-template ad-header-host></ng-template>
 
-    <app-area-navigation *ngIf="hasPfmAppFeature && !sessionService.isLendspaceDemoUser"
+    <app-area-navigation *ngIf="hasPfmAppFeature && !appSession.isLendspaceDemoUser; else memberNav"
                          id="header-app-menu"
                          [memberAreaLinks]="appAreaLinks"
                          [actionsButtons]="actionsButtons">
     </app-area-navigation>
 
-    <member-area-navigation
-        *ngIf="!hasPfmAppFeature"
-        id="header-menu"
-        [memberAreaLinks]="memberAreaLinks">
-    </member-area-navigation>
+    <ng-template #memberNav>
+        <app-area-navigation
+            id="header-app-menu"
+            [memberAreaLinks]="memberAreaLinks">
+        </app-area-navigation>
+    </ng-template>
+<!-- 
+    <ng-template #memberNav>
+        <member-area-navigation
+            id="header-menu"
+            [memberAreaLinks]="memberAreaLinks">
+        </member-area-navigation>
+    </ng-template> -->
+    
 </div>
