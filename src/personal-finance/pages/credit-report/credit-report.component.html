@@ -57,15 +57,13 @@
             <div *ngIf="creditReportResult.creditReport; else refreshBtn">
                 <div class="content-wrap" [@routerTransition]>
                     <aside class="sidebar">
-                        <sticky [sticky-offset-top]="20">
-                            <ul class="left-navigation">
-                                <li class="left-navigation-item" *ngFor="let item of menuItems; let i = index;" (click)="isClicked=i" [class.active]="isClicked==i">
-                                    <a pageScroll href="#{{item.name}}" class="left-navigation-link">
-                                        <span class="menu-icon {{item.class}} {{item.class}}-dims"></span> {{ l(item.name) }}
-                                    </a>
-                                </li>
-                            </ul><!-- TODO: need something like waypoint for check which section is active -->
-                        </sticky>
+                        <ul class="left-navigation">
+                            <li class="left-navigation-item" *ngFor="let item of menuItems; let i = index;" (click)="isClicked=i" [class.active]="isClicked==i">
+                                <a pageScroll href="#{{item.name}}" class="left-navigation-link">
+                                    <span class="menu-icon {{item.class}} {{item.class}}-dims"></span> {{ l(item.name) }}
+                                </a>
+                            </li>
+                        </ul><!-- TODO: need something like waypoint for check which section is active -->
                     </aside>
                     <div class="p-content">
                         <h1>

@@ -13,7 +13,6 @@ import { DxLoadPanelModule } from 'devextreme-angular/ui/load-panel';
 import { DxTemplateModule } from 'devextreme-angular/core/template';
 import { DxChartModule } from 'devextreme-angular/ui/chart';
 import { NgxPageScrollModule } from 'ngx-page-scroll';
-import { StickyModule } from 'ng2-sticky-kit/ng2-sticky-kit';
 
 /** Application imports */
 import { PersonalFinanceCommonModule } from '../../shared/common/personal-finance-common.module';
@@ -41,7 +40,6 @@ import { DxSelectBoxModule } from 'devextreme-angular';
         DxCircularGaugeModule,
         RoundProgressModule,
         NgxPageScrollModule,
-        StickyModule,
         LayoutModule,
         DxBarGaugeModule,
         DxTabsModule,
