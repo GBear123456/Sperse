@@ -1,5 +1,5 @@
 /** Core imports */
-import { Injectable, Inject, Optional } from '@angular/core';
+import { Injectable, Inject, Optional, Injector } from '@angular/core';
 
 /** Third party imports */
 import { CacheService } from 'ng2-cache-service';
@@ -9,6 +9,7 @@ import * as moment from 'moment';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { PeriodModel } from '@app/shared/common/period/period.model';
 import { DateHelper } from '@shared/helpers/DateHelper';
+import { CFOService } from '@shared/cfo/cfo.service';
 
 @Injectable()
 export class PeriodService {
@@ -19,21 +20,26 @@ export class PeriodService {
         this.ls.l('This_Week'),
         this.ls.l('This_Month'),
         this.ls.l('Last_Month'),
+        this.ls.l('Last_Quarter'),
         this.ls.l('This_Year'),
         this.ls.l('Last_Year'),
         this.ls.l('All_Periods')
     ];
-    selectedPeriod: PeriodModel = this.getDatePeriodFromName(this.cacheService.exists(this.PERIOD_CACHE_KEY)
-        ? this.cacheService.get(this.PERIOD_CACHE_KEY)
-        : this.ls.l('This_Month')
-    );
+    cfoService: CFOService;
+    selectedPeriod: PeriodModel;
     considerSettingsTimezone = true;
 
     constructor(
+        injector: Injector,
         private cacheService: CacheService,
         private ls: AppLocalizationService,
         @Inject('considerSettingsTimezone') @Optional() considerSettingsTimezone?: boolean
     ) {
+        this.cfoService = injector.get(CFOService);
+        this.selectedPeriod = this.getDatePeriodFromName(this.cacheService.exists(this.PERIOD_CACHE_KEY)
+            ? this.cacheService.get(this.PERIOD_CACHE_KEY)
+            : (this.cfoService && this.cfoService.hasStaticInstance ? this.ls.l('Last_Quarter') : this.ls.l('This_Year'))
+        );
         if (considerSettingsTimezone !== null) {
             this.considerSettingsTimezone = considerSettingsTimezone;
         }
@@ -66,6 +72,11 @@ export class PeriodService {
                 period = 'month';
                 startDate.subtract(1, 'month');
                 endDate.subtract(1, 'month');
+                break;
+            case this.ls.l('Last_Quarter'):
+                period = 'quarter';
+                startDate.subtract(1, 'quarter');
+                endDate.subtract(1, 'quarter');
                 break;
             case this.ls.l('This_Year'):
                 period = 'year';
