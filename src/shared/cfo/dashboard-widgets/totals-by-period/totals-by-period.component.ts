@@ -76,9 +76,7 @@ export class TotalsByPeriodComponent extends CFOComponentBase implements OnInit 
                 case this.l('Last_Quarter'):
                     groupBy = 'Monthly';
                     break;
-                case this.l('This_Year'):
-                case this.l('Last_Year'):
-                case this.l('All_Periods'):
+                default:
                     groupBy = 'Yearly';
                     break;
             }

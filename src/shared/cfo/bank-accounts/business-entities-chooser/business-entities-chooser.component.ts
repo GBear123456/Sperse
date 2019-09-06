@@ -10,6 +10,7 @@ import difference from 'lodash/difference';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { BankAccountsService } from '@shared/cfo/bank-accounts/helpers/bank-accounts.service';
 import { AppConsts } from '@shared/AppConsts';
+import { ArrayHelper } from '@shared/helpers/ArrayHelper';
 
 @Component({
     selector: 'business-entities-chooser',
@@ -37,8 +38,8 @@ export class BusinessEntitiesChooserComponent implements OnDestroy {
     selectedAll;
 
     constructor(
-        public bankAccountsService: BankAccountsService,
-        private ls: AppLocalizationService
+        private ls: AppLocalizationService,
+        public bankAccountsService: BankAccountsService
     ) {
         this._syncAccSub = bankAccountsService.syncAccounts$.subscribe(
             syncAccounts => this.syncAccounts = syncAccounts);
@@ -96,24 +97,29 @@ export class BusinessEntitiesChooserComponent implements OnDestroy {
         let businessEntitiesIds = this.getSelectedIds();
         if (this.applyFilter) {
             let selectedBankAccountIds = [];
-            let newBusinessEntitiesIds = difference(businessEntitiesIds,
-                this.bankAccountsService.state.selectedBusinessEntitiesIds);
+
+            let newBusinessEntitiesIds = difference(
+                businessEntitiesIds,
+                this.bankAccountsService.state.selectedBusinessEntitiesIds
+            );
 
             this.syncAccounts.forEach(syncAccount => {
                 syncAccount.bankAccounts.forEach(bankAccount => {
-                    if (newBusinessEntitiesIds.indexOf(bankAccount.businessEntityId) >= 0
+                    if (!businessEntitiesIds.length || (newBusinessEntitiesIds.indexOf(bankAccount.businessEntityId) >= 0
                         || businessEntitiesIds.indexOf(bankAccount.businessEntityId) >= 0
                         && this.bankAccountsService.state.selectedBankAccountIds.indexOf(bankAccount.id) >= 0
-                    )
+                    ))
                         selectedBankAccountIds.push(bankAccount.id);
                 });
             });
-
-            this.bankAccountsService.changeState({
-                selectedBusinessEntitiesIds: businessEntitiesIds,
-                selectedBankAccountIds: selectedBankAccountIds
-            });
-
+            const state = { selectedBusinessEntitiesIds: businessEntitiesIds };
+            if (
+                selectedBankAccountIds.length &&
+                ArrayHelper.dataChanged(this.bankAccountsService.state.selectedBankAccountIds, selectedBankAccountIds)
+            ) {
+                state['selectedBankAccountIds'] = selectedBankAccountIds;
+            }
+            this.bankAccountsService.changeState(state);
             this.bankAccountsService.applyFilter();
         }
         this.onClosed.emit(businessEntitiesIds);
