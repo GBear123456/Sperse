@@ -294,7 +294,20 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
         return photoBase64 ? { source: 'data:image/jpeg;base64,' + photoBase64 } : {};
     }
 
-    getNameInplaceEditData(field = 'personContactInfo') {
+    getNameInplaceEditData() {
+        return this.getInplaceEditData('personContactInfo', [
+            {type: 'required', message: this.l('FullNameIsRequired')},
+            {type: 'pattern', pattern: AppConsts.regexPatterns.fullName, message: this.l('FullNameIsNotValid')}
+        ]);
+    }
+
+    getCompanyNameInplaceEditData() {
+        return this.getInplaceEditData('organizationContactInfo', [
+            {type: 'required', message: this.l('CompanyNameIsRequired')}
+        ]);
+    }
+
+    getInplaceEditData(field, validationRules) {
         return this._contactInfoBehaviorSubject.asObservable().pipe(map((data) => {
             let contactInfo = this.data && this.data[field];
             if (contactInfo)
@@ -302,10 +315,7 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
                     id: contactInfo.id,
                     isReadOnlyField: !this.manageAllowed,
                     value: (contactInfo.fullName || '').trim(),
-                    validationRules: [
-                        {type: 'required', message: this.l('FullNameIsRequired')},
-                        {type: 'pattern', pattern: AppConsts.regexPatterns.fullName, message: this.l('FullNameIsNotValid')}
-                    ],
+                    validationRules: validationRules,
                     isEditDialogEnabled: true,
                     lEntityName: 'Name',
                     lEditPlaceholder: this.l('ClientNamePlaceholder')

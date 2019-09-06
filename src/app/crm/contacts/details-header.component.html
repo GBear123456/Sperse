@@ -29,7 +29,7 @@
             <div class="titles">
                 <h2 class="shift-top">
                     <inplace-edit #companyName
-                                  [data]="getNameInplaceEditData('organizationContactInfo') | async"
+                                  [data]="getCompanyNameInplaceEditData() | async"
                                   (valueChanged)="updateCompanyField($event)">
                     </inplace-edit>
                     <i class="fa fa-angle-down" *ngIf="!companyName.isEditModeEnabled && (data?.personContactInfo?.orgRelations?.length > 1)" (click)="showCompanyList($event)"></i>
