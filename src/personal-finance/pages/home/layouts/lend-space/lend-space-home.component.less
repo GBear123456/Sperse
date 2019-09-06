@@ -1,0 +1,169 @@
+:host {
+
+    .jumbotron {
+        margin-bottom:0;
+
+        & > div {
+            padding-bottom: 50px;
+            text-align: right;
+        }
+        h1 {
+            font-size: 46px;
+            margin-left: 40%;
+        }
+        h3 {
+            font-size: 20px;
+            padding-top: 10px;
+            padding-bottom: 40px;
+            width: 315px;
+            margin-left: auto;
+        }
+        &.top {
+            min-height:540px;
+            border-bottom: 1px solid #666666;
+            background:url(../../../../../assets/common/images/lend-space-dark/welcome/bg2.png) 90% 90%/cover no-repeat;
+        }
+
+        @media all and (max-width:1200px){
+            h1 {
+                margin-left: 27%;
+            }
+        }
+
+        @media all and (max-width:768px){
+            .container.align-self-center {
+                max-width: 400px;
+                margin-right: 0;
+                h1 {
+                    font-size: 38px;
+                    margin-left: 0;
+                }
+                h3 {
+                    font-size: 20px;
+                }
+            }
+            &.top {
+                background-position: 50% 90%;
+            }
+        }
+
+        @media all and (max-width:600px){
+            padding: 0;
+            height: 540px;
+
+            .container.align-self-center {
+                max-width: 100%;
+                padding-left: 15px;
+                background: rgba(255,255,255,.65);
+                display: flex;
+                align-items: flex-end;
+
+                h1 {
+                    font-size: 28px;
+                }
+
+                h3 {
+                    font-size: 16px;
+                    width: auto;
+                    max-width: 100%;
+                }
+            }
+            &.top {
+                background-position: 40% 90%;
+            }
+        }
+    }
+
+    .get-free {
+        height:auto;
+        background: #feaa1e;
+
+        a {
+            width: 380px;
+            padding:10px 26px;
+            font-size:18px;
+            font-weight:700;
+            line-height:35.35px;
+            letter-spacing:-1.07px;
+            color:#FFF;
+            border:2px solid #FFF;
+            border-radius:0;
+            white-space: normal;
+            margin-top: 30px;
+
+            &:hover{
+                color: #dcdcdc;
+                border:2px solid #dcdcdc;
+            }
+
+            @media all and (max-width: 600px) {
+                width: 95%;
+                margin: 30px auto 0;
+            }
+        }
+
+        .wrapper{
+            display: flex;
+            justify-content: center;
+
+            & > div {
+                width: 50%;
+            }
+
+            campaign-offers {
+                width: 50%;
+                flex-flow: column;
+            }
+
+            .right-panel {
+
+                .top {
+                    text-align: center;
+                    height: 360px;
+
+                    h1 {
+                        color: #FFF;
+                        font-size: 42px;
+                        font-weight: 700;
+                        padding-top: 40px;
+                    }
+                }
+
+                .bottom {
+                    width: 100%;
+                    height: 540px;
+                    background: url(../../../../../assets/common/images/lend-space-dark/welcome/bottom-right.png) no-repeat center/contain;
+                    background-position: bottom;
+                    background-size: auto 600px;
+
+                    @media all and (max-width: 600px) {
+                        background-size: auto 570px;
+                    }
+                }
+            }
+        }
+
+        @media all and (max-width:1200px){
+            .wrapper {
+                flex-direction: column;
+                & > div, campaign-offers {
+                    width: 100%;
+                }
+            }
+        }
+        @media all and (max-width:768px){
+            .right-panel {
+                h1 {
+                    font-size: 36px!important;
+                }
+                h3 {
+                    font-size: 18px;
+                }
+            }
+        }
+    }
+
+    /deep/ .why-us {
+        border-bottom: 1px solid #666666;
+    }
+}

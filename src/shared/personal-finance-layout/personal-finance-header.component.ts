@@ -229,9 +229,6 @@ export class PersonalFinanceHeaderComponent {
     }
 
     logoClick(event) {
-        if (!this.hasPfmAppFeature)
-            return;
-
         if (this.loggedUserId)
             this.router.navigate(['/personal-finance/home']);
         else
