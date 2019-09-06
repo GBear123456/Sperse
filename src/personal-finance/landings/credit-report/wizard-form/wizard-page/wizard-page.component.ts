@@ -99,8 +99,7 @@ export class CreditWizardPageComponent extends AppComponentBase implements OnIni
         private _memberService: MemberServiceProxy,
         private _angularGooglePlaceService: AngularGooglePlaceService,
         public inputStatusesService: InputStatusesService,
-        private store$: Store<RootStore.State>,
-        private googlePlaceHelper: GooglePlaceHelper
+        private store$: Store<RootStore.State>
     ) {
         super(injector);
         this.minAge = this.minDate.setFullYear(this.minDate.getFullYear() - 18);
@@ -274,7 +273,7 @@ export class CreditWizardPageComponent extends AppComponentBase implements OnIni
     onAddressChanged(event) {
         let number = this._angularGooglePlaceService.street_number(event.address_components);
         let street = this._angularGooglePlaceService.street(event.address_components);
-        this.model.address.stateId = this.googlePlaceHelper.getState(event.address_components);
+        this.model.address.stateId = GooglePlaceHelper.getStateCode(event.address_components);
         this.payment.bankCard.billingAddress = number ? (number + ' ' + street) : street;
     }
 
@@ -309,7 +308,8 @@ export class CreditWizardPageComponent extends AppComponentBase implements OnIni
                     this.loginService.authenticateModel.password = this.model.password;
                     this.loginService.authenticate(() => this.finalizeRegistering(), AppConsts.appBaseUrl + '/personal-finance');
                 } else {
-                    this._router.navigate(['personal-finance']);
+                    this.finalizeRegistering();
+                    this._router.navigate(['personal-finance/credit-reports']);
                 }
             }, () => {
                 if (this.isExistingUser)
