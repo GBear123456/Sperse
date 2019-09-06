@@ -19,6 +19,7 @@ export class PeriodComponent  {
     ) {}
 
     onPeriodChanged($event) {
+        this.periodService.selectedPeriod = this.periodService.getDatePeriodFromName($event.value);
         this.periodService.saveSelectedPeriodInCache($event.value);
         this.onChange.emit($event.value);
     }
