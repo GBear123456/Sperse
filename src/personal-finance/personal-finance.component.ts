@@ -1,5 +1,7 @@
-import { Component, HostBinding, ViewContainerRef,
-     OnInit, OnDestroy, Injector, Renderer2 } from '@angular/core';
+import {
+    Component, HostBinding, ViewContainerRef,
+    OnInit, OnDestroy, Injector, Renderer2
+} from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { ActivationEnd } from '@angular/router';
 import humanize from 'underscore.string/humanize';
@@ -30,7 +32,7 @@ export class PersonalFinanceComponent extends AppComponentBase implements OnInit
     ) {
         super(injector);
         this.viewContainerRef = viewContainerRef; // You need this small hack in order to catch application root view container ref (required by ng2 bootstrap modal)
-        
+
         this.hasPfmAppFeature = this.feature.isEnabled(AppFeatures.PFMApplications) && this.appSession.tenant.customLayoutType == LayoutType.LendSpace;
         this.loggedUserId = this.appSession.userId;
         this._router.events.subscribe(event => {
@@ -44,7 +46,7 @@ export class PersonalFinanceComponent extends AppComponentBase implements OnInit
                             (txt) => {
                                 return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
                             }
-                    ));
+                        ));
                 });
             }
         });
@@ -53,11 +55,11 @@ export class PersonalFinanceComponent extends AppComponentBase implements OnInit
     ngOnInit(): void {
         this._render.addClass(document.body, 'pfm');
 
-/*
-        this.getRootComponent().addScriptLink('https://use.typekit.net/ocj2gqu.js', 'text/javascript', () => {
-            try { Typekit.load({ async: true }); } catch (e) { }
-        });
-*/
+        /*
+                this.getRootComponent().addScriptLink('https://use.typekit.net/ocj2gqu.js', 'text/javascript', () => {
+                    try { Typekit.load({ async: true }); } catch (e) { }
+                });
+        */
     }
 
     ngOnDestroy() {

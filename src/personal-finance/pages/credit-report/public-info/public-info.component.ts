@@ -1,24 +1,20 @@
-import { Component, OnInit, Input, Injector } from '@angular/core';
-import { AppComponentBase } from '@shared/common/app-component-base';
+import { Component, Input } from '@angular/core';
 import { CreditReportDto } from '@shared/service-proxies/service-proxies';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 
 @Component({
-  selector: 'app-public-info',
-  templateUrl: './public-info.component.html',
-  styleUrls: ['./public-info.component.less']
+    selector: 'app-public-info',
+    templateUrl: './public-info.component.html',
+    styleUrls: ['./public-info.component.less']
 })
-export class PublicInfoComponent extends AppComponentBase implements OnInit {
+export class PublicInfoComponent {
     @Input() creditReport: CreditReportDto;
 
     dateFields = ['dateFiledOrReported', 'dateVerified', 'dateUpdated']
 
     constructor(
-      injector: Injector
+        public ls: AppLocalizationService
     ) {
-      super(injector);
-    }
-
-    ngOnInit() {
     }
 
     getItemValue(item, node) {

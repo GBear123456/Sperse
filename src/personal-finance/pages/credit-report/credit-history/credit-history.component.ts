@@ -1,15 +1,15 @@
-import { Component, OnInit, Input, Injector, ViewChild } from '@angular/core';
-import { AppComponentBase } from '@shared/common/app-component-base';
+import { Component, OnInit, Input, ViewChild } from '@angular/core';
 import { CreditReportServiceProxy, CreditReportDto } from '@shared/service-proxies/service-proxies';
 import { DxChartComponent } from 'devextreme-angular/ui/chart';
 import * as moment from 'moment';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 
 @Component({
     selector: 'app-credit-history',
     templateUrl: './credit-history.component.html',
     styleUrls: ['./credit-history.component.less']
 })
-export class CreditHistoryComponent extends AppComponentBase implements OnInit {
+export class CreditHistoryComponent implements OnInit {
     @ViewChild(DxChartComponent) chart: DxChartComponent;
     @Input() creditReport: CreditReportDto;
     public scoreHistory: ScoreHistory[];
@@ -20,10 +20,9 @@ export class CreditHistoryComponent extends AppComponentBase implements OnInit {
     };
 
     constructor(
-        injector: Injector,
-        private _creditReportService: CreditReportServiceProxy
+        private _creditReportService: CreditReportServiceProxy,
+        public ls: AppLocalizationService
     ) {
-        super(injector);
     }
 
     ngOnInit() {
@@ -64,8 +63,8 @@ export class CreditHistoryComponent extends AppComponentBase implements OnInit {
     customizeTooltip = (args: any) => {
         return {
             html: "<div><img src='assets/images/credit-report/" + args.seriesName.toLowerCase() + ".png' />" +
-            "<div><b>" + this.l('CR_CreditHistoryTooltip_Score') + "</b>: " + args.value + "</div>" +
-            "<div><b>" + this.l('CR_CreditHistoryTooltip_ScoreDate') + "</b>: " + this.formatDate(args.argument) + "</div></div>"
+                "<div><b>" + this.ls.l('CR_CreditHistoryTooltip_Score') + "</b>: " + args.value + "</div>" +
+                "<div><b>" + this.ls.l('CR_CreditHistoryTooltip_ScoreDate') + "</b>: " + this.formatDate(args.argument) + "</div></div>"
         };
     }
 

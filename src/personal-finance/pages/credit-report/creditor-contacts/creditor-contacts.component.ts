@@ -1,19 +1,17 @@
-import { Component, Input, Injector, ChangeDetectionStrategy } from '@angular/core';
-import { AppComponentBase } from '@shared/common/app-component-base';
+import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 
 @Component({
-  selector: 'app-creditor-contacts',
-  templateUrl: './creditor-contacts.component.html',
-  styleUrls: ['./creditor-contacts.component.less'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'app-creditor-contacts',
+    templateUrl: './creditor-contacts.component.html',
+    styleUrls: ['./creditor-contacts.component.less'],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class CreditorContactsComponent extends AppComponentBase {
-  @Input() creditReport;
+export class CreditorContactsComponent {
+    @Input() creditReport;
 
-  constructor(
-    injector: Injector
-  ) {
-    super(injector);
-  }
-
+    constructor(
+        public ls: AppLocalizationService
+    ) {
+    }
 }

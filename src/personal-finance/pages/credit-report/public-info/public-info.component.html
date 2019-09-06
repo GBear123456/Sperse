@@ -1,7 +1,7 @@
 <div class="report-item">
     <div class="report-item-title">
         <a class="anchor" id="publicInfo">&nbsp;</a>
-        <span>{{l("publicInfo")}}</span>
+        <span>{{ls.l("publicInfo")}}</span>
     </div>
     <div class="report-item-content">
         <dx-data-grid [hoverStateEnabled]="true"
@@ -30,7 +30,7 @@
                     <tbody>
                         <tr *ngFor="let node of ['type', 'dateFiledOrReported','referenceNo','court','dateVerified','dateUpdated', 'remarks']">
                             <td class="row-title" width="200">
-                                {{ l(node) }}
+                                {{ ls.l(node) }}
                             </td>
                             <td *ngFor="let item of record.data.publicRecordDetails">
                                 {{ getItemValue(item, node) }}
