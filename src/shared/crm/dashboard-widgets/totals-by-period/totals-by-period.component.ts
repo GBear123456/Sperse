@@ -86,9 +86,9 @@ export class TotalsByPeriodComponent extends AppComponentBase implements OnInit,
             amount: 12
         },
         {
-            key: GroupByPeriod.Quarterly,
-            name: 'Quarterly',
-            amount: 3
+            key: GroupByPeriod.Monthly,
+            name: 'Monthly',
+            amount: 5
         }
     ];
     selectItems = [
