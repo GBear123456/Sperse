@@ -59,9 +59,13 @@ export class CreditReportComponent implements OnInit {
         this.getCreditReport();
     }
 
-    onSelectChanged() {
-        abp.ui.setBusy();
-        this._router.navigate(['personal-finance/credit-simulator']).then(() => abp.ui.clearBusy());
+    onSelectChanged(event) {
+        if (!event.component.cancel) {
+            event.component.cancel = true;
+            event.component.option('value', event.previousValue);
+            abp.ui.setBusy();
+            this._router.navigate(['personal-finance/credit-simulator']).then(() => abp.ui.clearBusy());
+        }
     }
 
     getCreditReport(date?: moment.Moment): void {
