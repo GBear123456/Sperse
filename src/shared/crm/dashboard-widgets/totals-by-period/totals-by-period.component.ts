@@ -73,25 +73,21 @@ export class TotalsByPeriodComponent extends AppComponentBase implements OnInit,
          {
              key: GroupByPeriod.Daily,
              name: 'Daily',
-             text: `30 ${this.ls('Platform', 'Periods_Day_plural')}`,
              amount: 30
          },
          {
              key: GroupByPeriod.Weekly,
              name: 'Weekly',
-             text: `15 ${this.ls('Platform', 'Periods_Week_plural')}`,
              amount: 15
         },
         {
             key: GroupByPeriod.Monthly,
             name: 'Monthly',
-            text: `12 ${this.l('Periods_Month_plural')}`,
             amount: 12
         },
         {
             key: GroupByPeriod.Quarterly,
             name: 'Quarterly',
-            text: `3 ${this.l('Periods_Month_plural')}`,
             amount: 3
         }
     ];
