@@ -100,7 +100,7 @@
                         </dx-number-box>
                         <span [class]="company.businessSicCode && 'clear-contact' || 'hidden'" (click)="company.businessSicCode = ''"><i class="minus-icon"></i></span>
                     </div>
-                    <div *ngIf="company.organizationUnitId" class="field affiliateCode">
+                    <div *ngIf="company.rootOrganizationUnitId" class="field affiliateCode">
                         <label for="affiliateCode">{{ls.l('Company_affiliateCode')}}</label>
                         <dx-text-box name="affiliateCode"
                                      (onInput)="onInput($event, 50)"
@@ -175,7 +175,7 @@
                         </dx-text-box>
                         <span [class]="company.ticker && 'clear-contact' || 'hidden'" (click)="company.ticker = ''"><i class="minus-icon"></i></span>
                     </div>
-                    <div *ngIf="company.organizationUnitId" class="field stubField">
+                    <div *ngIf="company.rootOrganizationUnitId" class="field stubField">
                     </div>
                     <div class="field notes">
                         <label for="notes">{{ls.l('Company_Notes')}}</label>

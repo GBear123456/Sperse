@@ -74,8 +74,8 @@ export class AddCompanyDialogComponent extends AppComponentBase {
         if (responce && contactInfo) {
             let orgId = responce.organizationId;
             this.orgServiceProxy.getOrganizationContactInfo(orgId).subscribe((result) => {
-                contactInfo.personContactInfo['personOrgRelationInfo'].organization.organizationUnitId = 
-                    (contactInfo['organizationContactInfo'] = result).organization.organizationUnitId;
+                contactInfo.personContactInfo['personOrgRelationInfo'].organization.rootOrganizationUnitId =
+                    (contactInfo['organizationContactInfo'] = result).organization.rootOrganizationUnitId;
             });
             contactInfo.personContactInfo.orgRelationId = responce.id;
             contactInfo.primaryOrganizationContactId = orgId;
@@ -107,7 +107,7 @@ export class AddCompanyDialogComponent extends AppComponentBase {
             this.data.id = undefined;
             this.finishLoading(true);
         })).subscribe((responce) => {
-            if (responce.organizationId) {                
+            if (responce.organizationId) {
                 this.data.updateLocation(this.data.contactId, this.data.contactInfo['leadId'], responce.organizationId);
                 this.applyContactInfo(responce);
             }

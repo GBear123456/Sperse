@@ -39041,7 +39041,7 @@ export class OrganizationShortInfo implements IOrganizationShortInfo {
     id!: number | undefined;
     name!: string | undefined;
     thumbnail!: string | undefined;
-    organizationUnitId!: number | undefined;
+    rootOrganizationUnitId!: number | undefined;
 
     constructor(data?: IOrganizationShortInfo) {
         if (data) {
@@ -39057,7 +39057,7 @@ export class OrganizationShortInfo implements IOrganizationShortInfo {
             this.id = data["id"];
             this.name = data["name"];
             this.thumbnail = data["thumbnail"];
-            this.organizationUnitId = data["organizationUnitId"];
+            this.rootOrganizationUnitId = data["rootOrganizationUnitId"];
         }
     }
 
@@ -39073,7 +39073,7 @@ export class OrganizationShortInfo implements IOrganizationShortInfo {
         data["id"] = this.id;
         data["name"] = this.name;
         data["thumbnail"] = this.thumbnail;
-        data["organizationUnitId"] = this.organizationUnitId;
+        data["rootOrganizationUnitId"] = this.rootOrganizationUnitId;
         return data; 
     }
 }
@@ -39082,7 +39082,7 @@ export interface IOrganizationShortInfo {
     id: number | undefined;
     name: string | undefined;
     thumbnail: string | undefined;
-    organizationUnitId: number | undefined;
+    rootOrganizationUnitId: number | undefined;
 }
 
 export class PersonOrgRelationTypeInfo implements IPersonOrgRelationTypeInfo {
@@ -62198,7 +62198,7 @@ export class OrganizationInfoDto implements IOrganizationInfoDto {
     sizeTo!: number | undefined;
     duns!: string | undefined;
     ticker!: string | undefined;
-    organizationUnitId!: number | undefined;
+    rootOrganizationUnitId!: number | undefined;
     affiliateCode!: string | undefined;
 
     constructor(data?: IOrganizationInfoDto) {
@@ -62227,7 +62227,7 @@ export class OrganizationInfoDto implements IOrganizationInfoDto {
             this.sizeTo = data["sizeTo"];
             this.duns = data["duns"];
             this.ticker = data["ticker"];
-            this.organizationUnitId = data["organizationUnitId"];
+            this.rootOrganizationUnitId = data["rootOrganizationUnitId"];
             this.affiliateCode = data["affiliateCode"];
         }
     }
@@ -62256,7 +62256,7 @@ export class OrganizationInfoDto implements IOrganizationInfoDto {
         data["sizeTo"] = this.sizeTo;
         data["duns"] = this.duns;
         data["ticker"] = this.ticker;
-        data["organizationUnitId"] = this.organizationUnitId;
+        data["rootOrganizationUnitId"] = this.rootOrganizationUnitId;
         data["affiliateCode"] = this.affiliateCode;
         return data; 
     }
@@ -62278,7 +62278,7 @@ export interface IOrganizationInfoDto {
     sizeTo: number | undefined;
     duns: string | undefined;
     ticker: string | undefined;
-    organizationUnitId: number | undefined;
+    rootOrganizationUnitId: number | undefined;
     affiliateCode: string | undefined;
 }
 
@@ -62436,7 +62436,7 @@ export class CreateOrganizationInput implements ICreateOrganizationInput {
     sizeTo!: number | undefined;
     duns!: string | undefined;
     ticker!: string | undefined;
-    organizationUnitId!: number | undefined;
+    rootOrganizationUnitId!: number | undefined;
     affiliateCode!: string | undefined;
 
     constructor(data?: ICreateOrganizationInput) {
@@ -62467,7 +62467,7 @@ export class CreateOrganizationInput implements ICreateOrganizationInput {
             this.sizeTo = data["sizeTo"];
             this.duns = data["duns"];
             this.ticker = data["ticker"];
-            this.organizationUnitId = data["organizationUnitId"];
+            this.rootOrganizationUnitId = data["rootOrganizationUnitId"];
             this.affiliateCode = data["affiliateCode"];
         }
     }
@@ -62498,7 +62498,7 @@ export class CreateOrganizationInput implements ICreateOrganizationInput {
         data["sizeTo"] = this.sizeTo;
         data["duns"] = this.duns;
         data["ticker"] = this.ticker;
-        data["organizationUnitId"] = this.organizationUnitId;
+        data["rootOrganizationUnitId"] = this.rootOrganizationUnitId;
         data["affiliateCode"] = this.affiliateCode;
         return data; 
     }
@@ -62522,7 +62522,7 @@ export interface ICreateOrganizationInput {
     sizeTo: number | undefined;
     duns: string | undefined;
     ticker: string | undefined;
-    organizationUnitId: number | undefined;
+    rootOrganizationUnitId: number | undefined;
     affiliateCode: string | undefined;
 }
 
@@ -62579,7 +62579,7 @@ export class UpdateOrganizationInfoInput implements IUpdateOrganizationInfoInput
     sizeTo!: number | undefined;
     duns!: string | undefined;
     ticker!: string | undefined;
-    organizationUnitId!: number | undefined;
+    rootOrganizationUnitId!: number | undefined;
     affiliateCode!: string | undefined;
 
     constructor(data?: IUpdateOrganizationInfoInput) {
@@ -62609,7 +62609,7 @@ export class UpdateOrganizationInfoInput implements IUpdateOrganizationInfoInput
             this.sizeTo = data["sizeTo"];
             this.duns = data["duns"];
             this.ticker = data["ticker"];
-            this.organizationUnitId = data["organizationUnitId"];
+            this.rootOrganizationUnitId = data["rootOrganizationUnitId"];
             this.affiliateCode = data["affiliateCode"];
         }
     }
@@ -62639,7 +62639,7 @@ export class UpdateOrganizationInfoInput implements IUpdateOrganizationInfoInput
         data["sizeTo"] = this.sizeTo;
         data["duns"] = this.duns;
         data["ticker"] = this.ticker;
-        data["organizationUnitId"] = this.organizationUnitId;
+        data["rootOrganizationUnitId"] = this.rootOrganizationUnitId;
         data["affiliateCode"] = this.affiliateCode;
         return data; 
     }
@@ -62662,7 +62662,7 @@ export interface IUpdateOrganizationInfoInput {
     sizeTo: number | undefined;
     duns: string | undefined;
     ticker: string | undefined;
-    organizationUnitId: number | undefined;
+    rootOrganizationUnitId: number | undefined;
     affiliateCode: string | undefined;
 }
 

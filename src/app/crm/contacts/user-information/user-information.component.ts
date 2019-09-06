@@ -188,7 +188,7 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
             this.userData = data;
         } else {
             let orgUnitIds = this.contactInfoData.contactInfo.personContactInfo.orgRelations && this.contactInfoData.contactInfo.personContactInfo.orgRelations.map(item => {
-                return item.organization && item.organization.organizationUnitId;
+                return item.organization && item.organization.rootOrganizationUnitId;
             }).filter(Boolean);
             if (orgUnitIds && orgUnitIds.length) {
                 this.selectedOrgUnits = orgUnitIds;
