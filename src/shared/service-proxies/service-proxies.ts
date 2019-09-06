@@ -24935,7 +24935,7 @@ export class TenantHostServiceProxy {
      * @body (optional) 
      * @return Success
      */
-    addSslBinding(body: AddSslBindingInput | null | undefined): Observable<TenantSslBindingInfo> {
+    addSslBinding(body: AddSslBindingInput | null | undefined): Observable<void> {
         let url_ = this.baseUrl + "/api/services/Platform/TenantHost/AddSslBinding";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -24947,7 +24947,6 @@ export class TenantHostServiceProxy {
             responseType: "blob",
             headers: new HttpHeaders({
                 "Content-Type": "application/json", 
-                "Accept": "application/json"
             })
         };
 
@@ -24958,14 +24957,14 @@ export class TenantHostServiceProxy {
                 try {
                     return this.processAddSslBinding(<any>response_);
                 } catch (e) {
-                    return <Observable<TenantSslBindingInfo>><any>_observableThrow(e);
+                    return <Observable<void>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<TenantSslBindingInfo>><any>_observableThrow(response_);
+                return <Observable<void>><any>_observableThrow(response_);
         }));
     }
 
-    protected processAddSslBinding(response: HttpResponseBase): Observable<TenantSslBindingInfo> {
+    protected processAddSslBinding(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -24974,25 +24973,22 @@ export class TenantHostServiceProxy {
         let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
         if (status === 200) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? TenantSslBindingInfo.fromJS(resultData200) : new TenantSslBindingInfo();
-            return _observableOf(result200);
+            return _observableOf<void>(<any>null);
             }));
         } else if (status !== 200 && status !== 204) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<TenantSslBindingInfo>(<any>null);
+        return _observableOf<void>(<any>null);
     }
 
     /**
      * @body (optional) 
      * @return Success
      */
-    updateSslBindingCertificate(body: UpdateSslBindingCertificateInput | null | undefined): Observable<TenantSslBindingInfo> {
-        let url_ = this.baseUrl + "/api/services/Platform/TenantHost/UpdateSslBindingCertificate";
+    updateSslBinding(body: UpdateSslBindingInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/Platform/TenantHost/UpdateSslBinding";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(body);
@@ -25003,25 +24999,24 @@ export class TenantHostServiceProxy {
             responseType: "blob",
             headers: new HttpHeaders({
                 "Content-Type": "application/json", 
-                "Accept": "application/json"
             })
         };
 
         return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processUpdateSslBindingCertificate(response_);
+            return this.processUpdateSslBinding(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processUpdateSslBindingCertificate(<any>response_);
+                    return this.processUpdateSslBinding(<any>response_);
                 } catch (e) {
-                    return <Observable<TenantSslBindingInfo>><any>_observableThrow(e);
+                    return <Observable<void>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<TenantSslBindingInfo>><any>_observableThrow(response_);
+                return <Observable<void>><any>_observableThrow(response_);
         }));
     }
 
-    protected processUpdateSslBindingCertificate(response: HttpResponseBase): Observable<TenantSslBindingInfo> {
+    protected processUpdateSslBinding(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -25030,83 +25025,25 @@ export class TenantHostServiceProxy {
         let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
         if (status === 200) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? TenantSslBindingInfo.fromJS(resultData200) : new TenantSslBindingInfo();
-            return _observableOf(result200);
+            return _observableOf<void>(<any>null);
             }));
         } else if (status !== 200 && status !== 204) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<TenantSslBindingInfo>(<any>null);
+        return _observableOf<void>(<any>null);
     }
 
     /**
-     * @body (optional) 
      * @return Success
      */
-    updateSslBindingIsActive(body: UpdateSslBindingIsActiveInput | null | undefined): Observable<TenantSslBindingInfo> {
-        let url_ = this.baseUrl + "/api/services/Platform/TenantHost/UpdateSslBindingIsActive";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(body);
-
-        let options_ : any = {
-            body: content_,
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processUpdateSslBindingIsActive(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processUpdateSslBindingIsActive(<any>response_);
-                } catch (e) {
-                    return <Observable<TenantSslBindingInfo>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<TenantSslBindingInfo>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processUpdateSslBindingIsActive(response: HttpResponseBase): Observable<TenantSslBindingInfo> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? TenantSslBindingInfo.fromJS(resultData200) : new TenantSslBindingInfo();
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<TenantSslBindingInfo>(<any>null);
-    }
-
-    /**
-     * @tenantHostType (optional) 
-     * @return Success
-     */
-    deleteSslBinding(tenantHostType: TenantHostType | null | undefined): Observable<void> {
+    deleteSslBinding(id: number): Observable<void> {
         let url_ = this.baseUrl + "/api/services/Platform/TenantHost/DeleteSslBinding?";
-        if (tenantHostType !== undefined)
-            url_ += "TenantHostType=" + encodeURIComponent("" + tenantHostType) + "&"; 
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined and cannot be null.");
+        else
+            url_ += "Id=" + encodeURIComponent("" + id) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -46670,7 +46607,7 @@ export class Organization implements IOrganization {
     sizeFrom!: number | undefined;
     sizeTo!: number | undefined;
     description!: string | undefined;
-    organizationUnitId!: number | undefined;
+    rootOrganizationUnitId!: number | undefined;
     affiliateCode!: string | undefined;
     orgType!: OrganizationType | undefined;
     contact!: Contact | undefined;
@@ -46716,7 +46653,7 @@ export class Organization implements IOrganization {
             this.sizeFrom = data["sizeFrom"];
             this.sizeTo = data["sizeTo"];
             this.description = data["description"];
-            this.organizationUnitId = data["organizationUnitId"];
+            this.rootOrganizationUnitId = data["rootOrganizationUnitId"];
             this.affiliateCode = data["affiliateCode"];
             this.orgType = data["orgType"] ? OrganizationType.fromJS(data["orgType"]) : <any>undefined;
             this.contact = data["contact"] ? Contact.fromJS(data["contact"]) : <any>undefined;
@@ -46778,7 +46715,7 @@ export class Organization implements IOrganization {
         data["sizeFrom"] = this.sizeFrom;
         data["sizeTo"] = this.sizeTo;
         data["description"] = this.description;
-        data["organizationUnitId"] = this.organizationUnitId;
+        data["rootOrganizationUnitId"] = this.rootOrganizationUnitId;
         data["affiliateCode"] = this.affiliateCode;
         data["orgType"] = this.orgType ? this.orgType.toJSON() : <any>undefined;
         data["contact"] = this.contact ? this.contact.toJSON() : <any>undefined;
@@ -46833,7 +46770,7 @@ export interface IOrganization {
     sizeFrom: number | undefined;
     sizeTo: number | undefined;
     description: string | undefined;
-    organizationUnitId: number | undefined;
+    rootOrganizationUnitId: number | undefined;
     affiliateCode: string | undefined;
     orgType: OrganizationType | undefined;
     contact: Contact | undefined;
@@ -48995,6 +48932,7 @@ export class OrganizationBusinessInfo implements IOrganizationBusinessInfo {
     assignedUserId!: number | undefined;
     ratingId!: number | undefined;
     userId!: number | undefined;
+    organizationUnitId!: number | undefined;
 
     constructor(data?: IOrganizationBusinessInfo) {
         if (data) {
@@ -49063,6 +49001,7 @@ export class OrganizationBusinessInfo implements IOrganizationBusinessInfo {
             this.assignedUserId = data["assignedUserId"];
             this.ratingId = data["ratingId"];
             this.userId = data["userId"];
+            this.organizationUnitId = data["organizationUnitId"];
         }
     }
 
@@ -49131,6 +49070,7 @@ export class OrganizationBusinessInfo implements IOrganizationBusinessInfo {
         data["assignedUserId"] = this.assignedUserId;
         data["ratingId"] = this.ratingId;
         data["userId"] = this.userId;
+        data["organizationUnitId"] = this.organizationUnitId;
         return data; 
     }
 }
@@ -49168,6 +49108,7 @@ export interface IOrganizationBusinessInfo {
     assignedUserId: number | undefined;
     ratingId: number | undefined;
     userId: number | undefined;
+    organizationUnitId: number | undefined;
 }
 
 export class GetContactBusinessOutput implements IGetContactBusinessOutput {
@@ -67443,6 +67384,7 @@ export class TenantSslBindingInfo implements ITenantSslBindingInfo {
     sslCertificateId!: number | undefined;
     sslCertificateExpiration!: moment.Moment | undefined;
     sslCertificateThumbprint!: string | undefined;
+    organizationUnitId!: number | undefined;
 
     constructor(data?: ITenantSslBindingInfo) {
         if (data) {
@@ -67462,6 +67404,7 @@ export class TenantSslBindingInfo implements ITenantSslBindingInfo {
             this.sslCertificateId = data["sslCertificateId"];
             this.sslCertificateExpiration = data["sslCertificateExpiration"] ? moment(data["sslCertificateExpiration"].toString()) : <any>undefined;
             this.sslCertificateThumbprint = data["sslCertificateThumbprint"];
+            this.organizationUnitId = data["organizationUnitId"];
         }
     }
 
@@ -67481,6 +67424,7 @@ export class TenantSslBindingInfo implements ITenantSslBindingInfo {
         data["sslCertificateId"] = this.sslCertificateId;
         data["sslCertificateExpiration"] = this.sslCertificateExpiration ? this.sslCertificateExpiration.toISOString() : <any>undefined;
         data["sslCertificateThumbprint"] = this.sslCertificateThumbprint;
+        data["organizationUnitId"] = this.organizationUnitId;
         return data; 
     }
 }
@@ -67493,12 +67437,14 @@ export interface ITenantSslBindingInfo {
     sslCertificateId: number | undefined;
     sslCertificateExpiration: moment.Moment | undefined;
     sslCertificateThumbprint: string | undefined;
+    organizationUnitId: number | undefined;
 }
 
 export class AddSslBindingInput implements IAddSslBindingInput {
     tenantHostType!: TenantHostType;
     domainName!: string | undefined;
     sslCertificateId!: number | undefined;
+    organizationUnitId!: number | undefined;
 
     constructor(data?: IAddSslBindingInput) {
         if (data) {
@@ -67514,6 +67460,7 @@ export class AddSslBindingInput implements IAddSslBindingInput {
             this.tenantHostType = data["tenantHostType"];
             this.domainName = data["domainName"];
             this.sslCertificateId = data["sslCertificateId"];
+            this.organizationUnitId = data["organizationUnitId"];
         }
     }
 
@@ -67529,6 +67476,7 @@ export class AddSslBindingInput implements IAddSslBindingInput {
         data["tenantHostType"] = this.tenantHostType;
         data["domainName"] = this.domainName;
         data["sslCertificateId"] = this.sslCertificateId;
+        data["organizationUnitId"] = this.organizationUnitId;
         return data; 
     }
 }
@@ -67537,53 +67485,16 @@ export interface IAddSslBindingInput {
     tenantHostType: TenantHostType;
     domainName: string | undefined;
     sslCertificateId: number | undefined;
+    organizationUnitId: number | undefined;
 }
 
-export class UpdateSslBindingCertificateInput implements IUpdateSslBindingCertificateInput {
-    tenantHostType!: TenantHostType;
-    sslCertificateId!: number | undefined;
-
-    constructor(data?: IUpdateSslBindingCertificateInput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.tenantHostType = data["tenantHostType"];
-            this.sslCertificateId = data["sslCertificateId"];
-        }
-    }
-
-    static fromJS(data: any): UpdateSslBindingCertificateInput {
-        data = typeof data === 'object' ? data : {};
-        let result = new UpdateSslBindingCertificateInput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["tenantHostType"] = this.tenantHostType;
-        data["sslCertificateId"] = this.sslCertificateId;
-        return data; 
-    }
-}
-
-export interface IUpdateSslBindingCertificateInput {
-    tenantHostType: TenantHostType;
-    sslCertificateId: number | undefined;
-}
-
-export class UpdateSslBindingIsActiveInput implements IUpdateSslBindingIsActiveInput {
-    tenantHostType!: TenantHostType;
+export class UpdateSslBindingInput implements IUpdateSslBindingInput {
+    id!: number;
+    sslCertificateId!: number;
+    organizationUnitId!: number | undefined;
     isActive!: boolean;
 
-    constructor(data?: IUpdateSslBindingIsActiveInput) {
+    constructor(data?: IUpdateSslBindingInput) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -67594,28 +67505,34 @@ export class UpdateSslBindingIsActiveInput implements IUpdateSslBindingIsActiveI
 
     init(data?: any) {
         if (data) {
-            this.tenantHostType = data["tenantHostType"];
+            this.id = data["id"];
+            this.sslCertificateId = data["sslCertificateId"];
+            this.organizationUnitId = data["organizationUnitId"];
             this.isActive = data["isActive"];
         }
     }
 
-    static fromJS(data: any): UpdateSslBindingIsActiveInput {
+    static fromJS(data: any): UpdateSslBindingInput {
         data = typeof data === 'object' ? data : {};
-        let result = new UpdateSslBindingIsActiveInput();
+        let result = new UpdateSslBindingInput();
         result.init(data);
         return result;
     }
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["tenantHostType"] = this.tenantHostType;
+        data["id"] = this.id;
+        data["sslCertificateId"] = this.sslCertificateId;
+        data["organizationUnitId"] = this.organizationUnitId;
         data["isActive"] = this.isActive;
         return data; 
     }
 }
 
-export interface IUpdateSslBindingIsActiveInput {
-    tenantHostType: TenantHostType;
+export interface IUpdateSslBindingInput {
+    id: number;
+    sslCertificateId: number;
+    organizationUnitId: number | undefined;
     isActive: boolean;
 }
 

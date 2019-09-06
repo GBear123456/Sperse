@@ -2,7 +2,7 @@ import { Component, ViewChild, Injector, Input, Output, EventEmitter, ElementRef
 import { ModalDirective } from 'ngx-bootstrap';
 import {
     TenantHostServiceProxy, AddSslBindingInput, TenantSslCertificateServiceProxy,
-    TenantSslCertificateInfo, TenantSslBindingInfo, UpdateSslBindingCertificateInput
+    TenantSslCertificateInfo, TenantSslBindingInfo, UpdateSslBindingInput
 } from '@shared/service-proxies/service-proxies';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { finalize } from 'rxjs/operators';
@@ -59,11 +59,13 @@ export class AddOrEditSSLBindingModal extends AppComponentBase {
         this.saving = true;
 
         if (this.editing) {
-            let updateModel: UpdateSslBindingCertificateInput = new UpdateSslBindingCertificateInput();
-            updateModel.tenantHostType = <any>this.model.tenantHostType;
+            let updateModel: UpdateSslBindingInput = new UpdateSslBindingInput();
+            updateModel.id = null;
             updateModel.sslCertificateId = this.model.sslCertificateId;
+            updateModel.organizationUnitId = this.model.organizationUnitId;
+            updateModel.isActive = null;
 
-            this._tenantHostService.updateSslBindingCertificate(updateModel)
+            this._tenantHostService.updateSslBinding(updateModel)
                 .pipe(finalize(() => { this.saving = false; }))
                 .subscribe(result => {
                     this.closeSuccess();
