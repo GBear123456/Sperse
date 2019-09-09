@@ -1,19 +1,23 @@
+/** Core imports */
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
+
+/** Third party imports */
+import * as moment from 'moment';
+import { PageScrollConfig } from 'ngx-page-scroll';
+
+/** Application imports */
 import { PackageIdService } from '../../shared/common/packages/package-id.service';
 import { KBAServiceProxy, CreditReportServiceProxy, CreditReportOutput } from '@shared/service-proxies/service-proxies';
-import { PageScrollConfig } from 'ngx-page-scroll';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
-
-import * as moment from 'moment';
-import { Router } from '@angular/router';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
-import { AppConsts } from '@root/shared/AppConsts';
+
 @Component({
     selector: 'app-root',
     templateUrl: './credit-report.component.html',
     styleUrls: ['./credit-report.component.less'],
-    providers: [KBAServiceProxy],
+    providers: [ KBAServiceProxy ],
     animations: [appModuleAnimation()]
 })
 export class CreditReportComponent implements OnInit {
@@ -46,10 +50,10 @@ export class CreditReportComponent implements OnInit {
     ];
 
     constructor(
-        private _router: Router,
-        private _creditReportService: CreditReportServiceProxy,
-        private _packageService: PackageIdService,
-        private _sanitizer: DomSanitizer,
+        private router: Router,
+        private creditReportService: CreditReportServiceProxy,
+        private packageService: PackageIdService,
+        private sanitizer: DomSanitizer,
         public ls: AppLocalizationService
     ) {
         PageScrollConfig.defaultDuration = 500;
@@ -64,21 +68,21 @@ export class CreditReportComponent implements OnInit {
             event.component.cancel = true;
             event.component.option('value', event.previousValue);
             abp.ui.setBusy();
-            this._router.navigate(['personal-finance/credit-simulator']).then(() => abp.ui.clearBusy());
+            this.router.navigate(['personal-finance/credit-simulator']).then(() => abp.ui.clearBusy());
         }
     }
 
     getCreditReport(date?: moment.Moment): void {
         abp.ui.setBusy();
-        this._creditReportService
+        this.creditReportService
             .getLastCreditReport(date)
             .subscribe(result => {
                 sessionStorage.setItem('showSCWarning', String(result.isSubscriptionCancelled));
                 sessionStorage.setItem('showPDWarning', String(result.isPaymentDelayed));
 
                 if (!result.memberExists && result.uncompletedPackageId) {
-                    this._packageService.choosePackage(result.uncompletedPackageId);
-                    this._router.navigate(['personal-finance/signup']);
+                    this.packageService.choosePackage(result.uncompletedPackageId);
+                    this.router.navigate(['personal-finance/signup']);
                 }
                 this.creditReportResult = result;
                 abp.ui.clearBusy();
@@ -93,14 +97,14 @@ export class CreditReportComponent implements OnInit {
         element.firstChild.textContent = this.ls.l('generatingPdf');
 
         if (this.creditReportResult && this.creditReportResult.creditReport) {
-            this._creditReportService
+            this.creditReportService
                 .downloadCreditReport(this.creditReportResult.creditReport.creditReportId)
                 .subscribe(result => {
                     let bytes = this.base64ToArrayBuffer(result);
 
                     let blob = new Blob([bytes], { type: 'application/pdf' });
                     let url = window.URL.createObjectURL(blob);
-                    this.pdfUrl = this._sanitizer.bypassSecurityTrustUrl(url);
+                    this.pdfUrl = this.sanitizer.bypassSecurityTrustUrl(url);
 
                     element.firstChild.textContent = this.ls.l('downloadPdf');
 
