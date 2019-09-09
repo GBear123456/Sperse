@@ -102,7 +102,7 @@ export class OffersWizardService {
         this.getStates();
     }
 
-    get isSpecialOffer() {
+    get isApplicationSubmission() {
         return !!this.data.campaignId;
     }
 
@@ -225,8 +225,8 @@ export class OffersWizardService {
         return value.replace(/\D/g, '').slice(1);
     }
 
-    validateField = (options) => {
-        return !this.isSpecialOffer ||
+    validateRequiredField = (options) => {
+        return !this.isApplicationSubmission ||
             (options.value !== undefined && options.value !== null && options.value !== '' && options.value !== 0);
     }
 }

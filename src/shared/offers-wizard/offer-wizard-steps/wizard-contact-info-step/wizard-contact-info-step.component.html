@@ -29,7 +29,7 @@
     </div>
     <div class="col-md-6 col-sm-12">
         <div class="dx-field">
-            <div class="dx-field-label">{{ls.l('phone')}}<span *ngIf="offersWizardService.isSpecialOffer">*</span></div>
+            <div class="dx-field-label">{{ls.l('phone')}}<span *ngIf="offersWizardService.isApplicationSubmission">*</span></div>
             <div class="dx-field-value">
                 <dx-text-box name="phone"
                              (onContentReady)="inputStatusesService.setMask($event)"
@@ -41,7 +41,7 @@
                              (onValueChanged)="mobileChange($event, 'phone')">
                     <dx-validator>
                         <dxi-validation-rule type="custom"
-                                             [validationCallback]="offersWizardService.validateField"
+                                             [validationCallback]="offersWizardService.validateRequiredField"
                                              [message]="this.ls.l('ThisFieldIsRequired')">
                         </dxi-validation-rule>
                     </dx-validator>
@@ -53,7 +53,7 @@
 <div class="row">
     <div class="col-md-6 col-sm-12">
         <div class="dx-field">
-            <div class="dx-field-label">{{ls.l('PreferredContactTime')}}<span *ngIf="offersWizardService.isSpecialOffer">*</span></div>
+            <div class="dx-field-label">{{ls.l('PreferredContactTime')}}<span *ngIf="offersWizardService.isApplicationSubmission">*</span></div>
             <div class="dx-field-value">
                 <dx-select-box
                     [items]="offersWizardService.contactTime"
@@ -63,7 +63,7 @@
                     placeholder="Select contact time">
                     <dx-validator>
                         <dxi-validation-rule type="custom"
-                                             [validationCallback]="offersWizardService.validateField"
+                                             [validationCallback]="offersWizardService.validateRequiredField"
                                              [message]="this.ls.l('ThisFieldIsRequired')">
                         </dxi-validation-rule>
                     </dx-validator>

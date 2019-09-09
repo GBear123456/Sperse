@@ -1,7 +1,7 @@
 <div class="row">
     <div class="col-md-6 col-sm-12">
         <div class="dx-field">
-            <div class="dx-field-label">{{ls.l('CreditScoreRating')}}</div>
+            <div class="dx-field-label">{{ls.l('CreditScoreRating')}}<span *ngIf="offersWizardService.isApplicationSubmission">*</span></div>
             <div class="dx-field-value">
                 <dx-select-box
                     [items]="offersWizardService.creditScore"
@@ -9,13 +9,19 @@
                     displayExpr="text"
                     [(value)]="offersWizardService.submitApplicationProfileInput.personalInformation.creditScoreRating"
                     placeholder="Choose credit score">
+                    <dx-validator>
+                        <dxi-validation-rule type="custom"
+                                             [validationCallback]="offersWizardService.validateRequiredField"
+                                             [message]="this.ls.l('ThisFieldIsRequired')">
+                        </dxi-validation-rule>
+                    </dx-validator>
                 </dx-select-box>
             </div>
         </div>
     </div>
     <div class="col-md-6 col-sm-12">
         <div class="dx-field">
-            <div class="dx-field-label">{{ls.l('LoanReason')}}</div>
+            <div class="dx-field-label">{{ls.l('LoanReason')}}<span *ngIf="offersWizardService.isApplicationSubmission">*</span></div>
             <div class="dx-field-value">
                 <dx-select-box
                     [items]="offersWizardService.loanReason"
@@ -23,6 +29,12 @@
                     displayExpr="text"
                     [(value)]="offersWizardService.submitApplicationProfileInput.loanInformation.loanReason"
                     placeholder="Choose loan reason">
+                    <dx-validator>
+                        <dxi-validation-rule type="custom"
+                                             [validationCallback]="offersWizardService.validateRequiredField"
+                                             [message]="this.ls.l('ThisFieldIsRequired')">
+                        </dxi-validation-rule>
+                    </dx-validator>
                 </dx-select-box>
             </div>
         </div>
@@ -31,14 +43,14 @@
 <div class="row">
     <div class="col-md-12">
         <div class="dx-field">
-            <div class="dx-field-label">{{ls.l('RequestedLoanAmount')}}<span *ngIf="offersWizardService.isSpecialOffer">*</span></div>
+            <div class="dx-field-label">{{ls.l('RequestedLoanAmount')}}<span *ngIf="offersWizardService.isApplicationSubmission">*</span></div>
             <div class="dx-field-value">
                 <dx-number-box
                     format="$ #,##0.##"
                     [(value)]="offersWizardService.submitApplicationProfileInput.loanInformation.requestedLoanAmount">
                     <dx-validator>
                         <dxi-validation-rule type="custom"
-                                             [validationCallback]="offersWizardService.validateField"
+                                             [validationCallback]="offersWizardService.validateRequiredField"
                                              [message]="this.ls.l('ThisFieldIsRequired')">
                         </dxi-validation-rule>
                     </dx-validator>

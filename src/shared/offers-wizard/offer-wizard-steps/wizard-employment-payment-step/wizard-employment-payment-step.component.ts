@@ -19,6 +19,9 @@ export class WizardEmploymentPaymentStepComponent {
 
     get payAfterNextDateMinDate() {
         return this.offersWizardService.submitApplicationProfileInput.employmentInformation.payNextDate
-               || this.minDate;
+               ? new Date(this.offersWizardService.submitApplicationProfileInput.employmentInformation.payNextDate).setDate(
+                    this.offersWizardService.submitApplicationProfileInput.employmentInformation.payNextDate.getDate() + 1
+               )
+               : this.minDate;
     }
 }

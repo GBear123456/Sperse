@@ -21,19 +21,21 @@
         </mat-step>
         <mat-step>
             <div class="step-item">
-                <div class="header">
-                    {{ls.l('ContactInfo')}}
-                </div>
-                <div class="main">
-                    <app-wizard-contact-info-step></app-wizard-contact-info-step>
-                </div>
-                <div class="footer">
-                    <button matStepperPrevious class="btn btn-default">{{ls.l('Back')}}</button>
-                    <dx-button class="btn btn-layout btn-next"
-                               text="Next"
-                               (onClick)="goToNextStep($event)">
-                    </dx-button>
-                </div>
+                <dx-validation-group>
+                    <div class="header">
+                        {{ls.l('ContactInfo')}}
+                    </div>
+                    <div class="main">
+                        <app-wizard-contact-info-step></app-wizard-contact-info-step>
+                    </div>
+                    <div class="footer">
+                        <button matStepperPrevious class="btn btn-default">{{ls.l('Back')}}</button>
+                        <dx-button class="btn btn-layout btn-next"
+                                   text="Next"
+                                   (onClick)="goToNextStep($event)">
+                        </dx-button>
+                    </div>
+                </dx-validation-group>
             </div>
         </mat-step>
         <mat-step>

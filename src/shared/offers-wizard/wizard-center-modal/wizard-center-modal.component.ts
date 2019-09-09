@@ -54,6 +54,6 @@ export class WizardCenterModalComponent {
     }
 
     get submitButtonIsDisabled() {
-        return this.lastValidationGroup && !this.lastValidationGroup.instance.validate().isValid;
+        return !this.lastValidationGroup || !this.lastValidationGroup.instance.validate().isValid;
     }
 }
