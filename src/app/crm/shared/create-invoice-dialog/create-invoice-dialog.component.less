@@ -179,7 +179,8 @@
             }
             .credentials {
                 height: 100px;
-                span {
+                span, pre {
+                    font-family: Montserrat;
                     display: block;
                     font-size: 15px;
                     font-weight: 300;
@@ -188,6 +189,10 @@
                     line-height: 1.47;
                     letter-spacing: 0.3px;
                     color: #424c56;
+                }
+                pre {
+                    overflow-y: auto;
+                    height: 100px;
                 }
             }
             label {
@@ -285,11 +290,12 @@
                     color: #424c56;
                     margin: 10px 0px;
                 }
-                &.total {
+                &.total {                    
                     span {
                         font-weight: bold;
                     }
                     a {
+                        visibility: hidden;
                         margin: 11px;
                         font-size: 14px;
                         font-weight: 300;
@@ -361,6 +367,8 @@
             justify-content: space-between;
             align-items: center;
             span {
+                height: 40px;
+                padding: 0 10px;
                 font-size: 14px;
                 font-weight: 300;
                 font-style: normal;
@@ -371,6 +379,7 @@
                     top: 6px;
                     width: 24px;
                     height: 24px;
+                    cursor: pointer;
                     display: inline-block;
                     position: relative;
                     margin-right: 10px;
@@ -387,6 +396,7 @@
             }
             div.icons {
                 display: flex;
+                visibility: hidden;
                 justify-content: space-between;
                 width: 80px;
                 margin: 0 10px;

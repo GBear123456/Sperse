@@ -55,7 +55,7 @@
                         <label class="from-label">{{ls.l('From')}}<a><i class="edit fa fa-pencil"></i>{{ls.l('Edit') + ' ' + ls.l('Profile')}}</a></label>
                         <div class="credentials">
                             <span>{{billingSettings?.legalName || ''}} {{billingSettings?.taxVatNo || ''}}</span>
-                            <span>{{billingSettings?.address || ''}}</span>
+                            <pre>{{billingSettings?.address || ''}}</pre>
                         </div>
                     </div>
                     <div class="field-area">
@@ -135,7 +135,7 @@
                     <div *dxTemplate="let cellData of 'description'">
                         <dx-text-box
                             width="350px"
-                            [placeholder]="ls.l('Invoice_EnterItemDescription')"
+                            [placeholder]="ls.l('Invoice_EnterDescription')"
                             [showClearButton]="true"
                             [value]="cellData.value"
                             (onValueChanged)="onValueChanged($event, cellData)">

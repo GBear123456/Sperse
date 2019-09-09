@@ -11,6 +11,7 @@ import { CacheService } from 'ng2-cache-service';
 import { finalize } from 'rxjs/operators';
 
 /** Application imports */
+import { DateHelper } from '@shared/helpers/DateHelper';
 import { DialogService } from '@app/shared/common/dialogs/dialog.service';
 import { ContactGroup } from '@shared/AppEnums';
 import {
@@ -192,10 +193,14 @@ export class CreateInvoiceDialogComponent implements OnInit {
 
     private setRequestCommonFields(data) {
         data.number = this.invoiceNo;
-        data.date = new Date(this.date);
-        data.dueDate = new Date(this.dueDate);
+        data.date = this.getDate(this.date);
+        data.dueDate = this.getDate(this.dueDate);
         data.description = this.description;
         data.note = this.notes;
+    }
+
+    private getDate(value) {
+        return DateHelper.removeTimezoneOffset(new Date(value), false, 'from');
     }
 
     private createUpdateEntity(): void {
@@ -425,9 +430,15 @@ export class CreateInvoiceDialogComponent implements OnInit {
             disableClose: true,
             closeOnNavigation: false,
             data: {
-                refreshParent: () => {},
                 customerType: ContactGroup.Client
             }
-        }).afterClosed().subscribe(() => {});
+        }).afterClosed().subscribe((data) => {
+            if (data) {
+                this.contactId = data.id;
+                this.customer = [data.firstName, data.middleName, 
+                    data.lastName].filter(Boolean).join(' ');
+                this._changeDetectorRef.detectChanges();
+            }
+        });
     }
 }

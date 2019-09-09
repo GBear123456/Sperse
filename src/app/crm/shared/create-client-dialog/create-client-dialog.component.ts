@@ -245,7 +245,7 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
         let tags = this.tagsComponent.selectedItems;
         let partnerTypeName = this.partnerTypesComponent.selectedItems.length ? this.partnerTypesComponent.selectedItems[0].name : undefined;
         let ratingId = this.ratingComponent.ratingValue;
-        let dataObj = {
+        let dataObj: any = {
             firstName: this.person.firstName,
             middleName: this.person.middleName,
             lastName: this.person.lastName,
@@ -278,20 +278,29 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
         if (this.data.isInLeadMode)
             this._leadService.createLead(CreateLeadInput.fromJS(dataObj))
                 .pipe(finalize(() => { saveButton.disabled = false; this.modalDialog.finishLoading(); }))
-                .subscribe(result => this.afterSave(result.contactId, result.id));
+                .subscribe(result => {
+                    dataObj.id = result.contactId;
+                    dataObj.leadId = result.id;
+                    this.afterSave(dataObj);
+                });
         else
             this.contactProxy.createContact(CreateContactInput.fromJS(dataObj))
                 .pipe(finalize(() => { saveButton.disabled = false; this.modalDialog.finishLoading(); }))
-                .subscribe(result => this.afterSave(result.id));
+                .subscribe(result => {
+                    dataObj.id = result.id;
+                    this.afterSave(dataObj);
+                });
     }
 
-    private afterSave(contactId: number, leadId?: number): void {
-        if (this.saveContextMenuItems[0].selected) {
+    private afterSave(data): void {
+        if (!this.data.refreshParent) {
+            this.close(data);
+        } else if (this.saveContextMenuItems[0].selected) {
             this.resetFullDialog();
             this._notifyService.info(this.ls.l('SavedSuccessfully'));
             this.data.refreshParent(true, this.stageId);
         } else if (this.saveContextMenuItems[1].selected) {
-            this.redirectToClientDetails(contactId, leadId);
+            this.redirectToClientDetails(data.id, data.leadId);
             this.data.refreshParent(true, this.stageId);
         } else {
             this.data.refreshParent(false, this.stageId);
@@ -888,8 +897,8 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
         this.isRatingSelected = Boolean(event.value);
     }
 
-    close() {
-        this._dialogRef.close();
+    close(data?) {
+        this._dialogRef.close(data);
     }
 
     getAssignedUsersSelector() {
