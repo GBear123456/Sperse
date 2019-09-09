@@ -1,5 +1,4 @@
-import { Component, OnInit, Injector } from '@angular/core';
-import { AppComponentBase } from '@shared/common/app-component-base';
+import { Component, OnInit } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { KBAServiceProxy } from '@shared/service-proxies/service-proxies';
 import { KbaInputModel } from './kba-request.model';
@@ -11,17 +10,15 @@ import { finalize } from 'rxjs/operators';
     providers: [KBAServiceProxy],
     styleUrls: ['./kba-request.component.less']
 })
-export class KbaComponent extends AppComponentBase implements OnInit {
+export class KbaComponent implements OnInit {
     model: KbaInputModel = new KbaInputModel();
     sourceUrl: SafeResourceUrl;
     error: string;
 
     constructor(
-        injector: Injector,
         private sanitizer: DomSanitizer,
         private _KBAService: KBAServiceProxy
     ) {
-        super(injector);
         this.model.redirectUrl = window.location.protocol + '//' + window.location.host + '/personal-finance/kba-result';
     }
 

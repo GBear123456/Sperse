@@ -1,9 +1,12 @@
 <div class="report-item">
-    <div class="report-item-title" id="creditHistory">{{l("creditHistory")}}</div>
+    <div class="report-item-title">
+        <a class="anchor" id="creditHistory">&nbsp;</a>
+        {{ls.l("creditHistory")}}
+    </div>
     <div class="report-item-content">
         <ng-container *ngIf="scoreHistory; else noData">
             <dx-chart [dataSource]="scoreHistory"
-                      title="{{l('creditHistory')}}"
+                      title="{{ls.l('creditHistory')}}"
                       (onLegendClick)="onLegendClick($event)">
                 <dxo-common-series-settings argumentField="scoreDate"
                                             valueField="score"
@@ -29,7 +32,7 @@
             </dx-chart>
         </ng-container>
         <ng-template #noData>
-            <p class="text-center no-data">{{l('CR_CreditHistory_NoData')}}</p>
+            <p class="text-center no-data">{{ls.l('CR_CreditHistory_NoData')}}</p>
         </ng-template>
     </div>
 </div>

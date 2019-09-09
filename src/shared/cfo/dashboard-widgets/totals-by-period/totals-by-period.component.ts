@@ -49,7 +49,7 @@ import { TotalDataModel } from '@shared/cfo/dashboard-widgets/totals-by-period/t
 })
 export class TotalsByPeriodComponent extends CFOComponentBase implements OnInit {
     @ViewChild(DxChartComponent) chartComponent: DxChartComponent;
-    bankAccountIds$: Observable<number[]> = this._bankAccountService.selectedBankAccountsIds$;
+    bankAccountIds$: Observable<number[]> = this.bankAccountService.selectedBankAccountsIds$;
     totalData$: Observable<TotalDataModel>;
     totalData: TotalDataModel;
     startDate;
@@ -60,13 +60,11 @@ export class TotalsByPeriodComponent extends CFOComponentBase implements OnInit 
     loading = true;
     allPeriodLocalizationValue = this.l('All_Periods');
     currentPeriod: string;
-    period$: Observable<any> = this._dashboardService.period$.pipe(
+    period$: Observable<any> = this.dashboardService.period$.pipe(
         map((period: PeriodModel) => {
             let groupBy;
             switch (period.name) {
                 case this.l('Today'):
-                    groupBy = 'Daily';
-                    break;
                 case this.l('Yesterday'):
                     groupBy = 'Daily';
                     break;
@@ -74,19 +72,9 @@ export class TotalsByPeriodComponent extends CFOComponentBase implements OnInit 
                     groupBy = 'Weekly';
                     break;
                 case this.l('This_Month'):
-                    groupBy = 'Monthly';
-                    break;
                 case this.l('Last_Month'):
+                case this.l('Last_Quarter'):
                     groupBy = 'Monthly';
-                    break;
-                case this.l('This_Year'):
-                    groupBy = 'Yearly';
-                    break;
-                case this.l('Last_Year'):
-                    groupBy = 'Yearly';
-                    break;
-                case this.l('All_Periods'):
-                    groupBy = 'Yearly';
                     break;
                 default:
                     groupBy = 'Yearly';
@@ -99,18 +87,18 @@ export class TotalsByPeriodComponent extends CFOComponentBase implements OnInit 
             };
         })
     );
-    refresh$: Observable<null> = this._dashboardService.refresh$;
+    refresh$: Observable<null> = this.dashboardService.refresh$;
     currencyId$ = this.store$.pipe(
         select(CurrenciesStoreSelectors.getSelectedCurrencyId),
         filter(Boolean)
     );
     constructor(
         injector: Injector,
-        private _dashboardService: DashboardService,
-        private _bankAccountServiceProxy: BankAccountsServiceProxy,
-        private _bankAccountService: BankAccountsService,
-        private _lifeCycleService: LifecycleSubjectsService,
-        private _changeDetectorRef: ChangeDetectorRef,
+        private dashboardService: DashboardService,
+        private bankAccountServiceProxy: BankAccountsServiceProxy,
+        private bankAccountService: BankAccountsService,
+        private lifeCycleService: LifecycleSubjectsService,
+        private changeDetectorRef: ChangeDetectorRef,
         public cfoPreferencesService: CfoPreferencesService,
         private store$: Store<CfoStore.State>,
     ) {
@@ -129,9 +117,9 @@ export class TotalsByPeriodComponent extends CFOComponentBase implements OnInit 
             this.currencyId$,
             this.bankAccountIds$
         ).pipe(
-            switchMap((data) => this.componentIsActivated ? of(data) : this._lifeCycleService.activate$.pipe(first(), mapTo(data))),
+            switchMap((data) => this.componentIsActivated ? of(data) : this.lifeCycleService.activate$.pipe(first(), mapTo(data))),
             tap(() => this.startLoading()),
-            switchMap(([, period, currencyId, bankAccountIds]: [null, any, string, number[]]) => this._bankAccountServiceProxy.getStats(
+            switchMap(([, period, currencyId, bankAccountIds]: [null, any, string, number[]]) => this.bankAccountServiceProxy.getStats(
                 InstanceType[this.instanceType],
                 this.instanceId,
                 currencyId,
@@ -144,12 +132,12 @@ export class TotalsByPeriodComponent extends CFOComponentBase implements OnInit 
                 catchError(() => of([])),
                 finalize(() => {
                     this.finishLoading();
-                    this._changeDetectorRef.detectChanges();
+                    this.changeDetectorRef.detectChanges();
                 }),
                 tap(result => {
                     if (!result || !result.length) {
                         this.totalData = null;
-                        this._changeDetectorRef.detectChanges();
+                        this.changeDetectorRef.detectChanges();
                     }
                 }),
                 mergeAll(),
@@ -198,7 +186,7 @@ export class TotalsByPeriodComponent extends CFOComponentBase implements OnInit 
         );
         this.totalData$.pipe(takeUntil(this.destroy$)).subscribe((totalData: TotalDataModel) => {
             this.totalData = totalData;
-            this._changeDetectorRef.detectChanges();
+            this.changeDetectorRef.detectChanges();
         });
     }
 
@@ -215,6 +203,6 @@ export class TotalsByPeriodComponent extends CFOComponentBase implements OnInit 
     }
 
     activate() {
-        this._lifeCycleService.activate.next();
+        this.lifeCycleService.activate.next();
     }
 }

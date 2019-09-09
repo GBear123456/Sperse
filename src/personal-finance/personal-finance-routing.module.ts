@@ -23,7 +23,7 @@ import { LoggedInCreditReportGuard } from '@root/personal-finance/shared/common/
                     },
                     {
                         path: 'home',
-                        loadChildren: 'personal-finance/pages/lendspace-welcome2/lendspace-welcome2.module#LendspaceWelcome2Module',
+                        loadChildren: 'personal-finance/pages/home/home.module#HomeModule',
                         data: {
                             wrapperDisabled: true
                         }

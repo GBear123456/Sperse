@@ -792,17 +792,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             this.updateAfterActivation = true;
         });
 
-        this._cfoPreferencesService.dateRange$.pipe(
-            takeUntil(this.destroy$),
-            switchMap((dateRange) => this.componentIsActivated ? of(dateRange) : this._lifecycleService.activate$.pipe(first(), mapTo(dateRange)))
-        ).subscribe((dateRange: CalendarValuesModel) => {
-            this.dateFilter.items = {
-                from: new FilterItemModel(dateRange.from.value),
-                to: new FilterItemModel(dateRange.to.value)
-            };
-            this._filtersService.change(this.dateFilter);
-        });
-
         /** Create parallel operations */
         const cashFlowInitialData$: Observable<CashFlowInitialData> = this._cashflowServiceProxy.getCashFlowInitialData(InstanceType[this.instanceType], this.instanceId);
         const categoryTree$: Observable<GetCategoryTreeOutput> = this._categoryTreeServiceProxy.get(InstanceType[this.instanceType], this.instanceId, true);
@@ -825,6 +814,18 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 this.handleGetCashflowGridSettingsResult(cashflowSettings);
 
                 this.initFiltering();
+
+                /** @todo fix double initial loading */
+                this._cfoPreferencesService.dateRange$.pipe(
+                    takeUntil(this.destroy$),
+                    switchMap((dateRange) => this.componentIsActivated ? of(dateRange) : this._lifecycleService.activate$.pipe(first(), mapTo(dateRange)))
+                ).subscribe((dateRange: CalendarValuesModel) => {
+                    this.dateFilter.items = {
+                        from: new FilterItemModel(dateRange.from.value),
+                        to: new FilterItemModel(dateRange.to.value)
+                    };
+                    this._filtersService.change(this.dateFilter);
+                });
 
                 /** After selected accounts change */
                 this.bankAccountsService.selectedBankAccountsIds$.pipe(first()).subscribe(() => {

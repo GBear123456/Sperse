@@ -1,22 +1,17 @@
-import { Component, OnInit, Input, Injector, ChangeDetectionStrategy } from '@angular/core';
-import { AppComponentBase } from '@shared/common/app-component-base';
+import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 
 @Component({
-  selector: 'app-consumer-statements',
-  templateUrl: './consumer-statements.component.html',
-  styleUrls: ['./consumer-statements.component.less'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'app-consumer-statements',
+    templateUrl: './consumer-statements.component.html',
+    styleUrls: ['./consumer-statements.component.less'],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ConsumerStatementsComponent extends AppComponentBase implements OnInit {
-  @Input() creditReport;
+export class ConsumerStatementsComponent  {
+    @Input() creditReport;
 
-  constructor(
-    injector: Injector
-  ) {
-    super(injector);
-  }
-
-  ngOnInit() {
-  }
-
+    constructor(
+        public ls: AppLocalizationService
+    ) {
+    }
 }

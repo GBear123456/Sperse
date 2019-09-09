@@ -1,19 +1,17 @@
-import { Component, Input, Injector, ChangeDetectionStrategy } from '@angular/core';
-import { AppComponentBase } from '@shared/common/app-component-base';
+import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 
 @Component({
-  selector: 'app-recommendations',
-  templateUrl: './recommendations.component.html',
-  styleUrls: ['./recommendations.component.less'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'app-recommendations',
+    templateUrl: './recommendations.component.html',
+    styleUrls: ['./recommendations.component.less'],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class RecommendationsComponent extends AppComponentBase {
-  @Input() creditReport;
+export class RecommendationsComponent {
+    @Input() creditReport;
 
-  constructor(
-    injector: Injector
-  ) {
-    super(injector);
-  }
-
+    constructor(
+        public ls: AppLocalizationService
+    ) {
+    }
 }

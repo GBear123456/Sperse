@@ -1,5 +1,5 @@
-import { Component, OnInit, Input, Injector, ChangeDetectionStrategy } from '@angular/core';
-import { AppComponentBase } from '@shared/common/app-component-base';
+import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 
 @Component({
     selector: 'app-credit-summary',
@@ -7,16 +7,12 @@ import { AppComponentBase } from '@shared/common/app-component-base';
     styleUrls: ['./credit-summary.component.less'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class CreditSummaryComponent extends AppComponentBase implements OnInit {
+export class CreditSummaryComponent {
     @Input() creditReport;
 
     constructor(
-        injector: Injector
+        public ls: AppLocalizationService
     ) {
-        super(injector);
-    }
-
-    ngOnInit() {
     }
 
     getCreditSummary(item, node) {

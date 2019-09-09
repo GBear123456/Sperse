@@ -1,12 +1,14 @@
-import { Component, OnInit, Injector } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
-import { AppComponentBase } from '@shared/common/app-component-base';
 import { PackageIdService } from '../../shared/common/packages/package-id.service';
 import { KBAServiceProxy, CreditReportServiceProxy, CreditReportOutput } from '@shared/service-proxies/service-proxies';
 import { PageScrollConfig } from 'ngx-page-scroll';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 
 import * as moment from 'moment';
+import { Router } from '@angular/router';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { AppConsts } from '@root/shared/AppConsts';
 @Component({
     selector: 'app-root',
     templateUrl: './credit-report.component.html',
@@ -14,7 +16,7 @@ import * as moment from 'moment';
     providers: [KBAServiceProxy],
     animations: [appModuleAnimation()]
 })
-export class CreditReportComponent extends AppComponentBase implements OnInit {
+export class CreditReportComponent implements OnInit {
     creditReportResult: CreditReportOutput;
     today: moment.Moment = moment();
     storage = sessionStorage;
@@ -44,12 +46,12 @@ export class CreditReportComponent extends AppComponentBase implements OnInit {
     ];
 
     constructor(
-        injector: Injector,
+        private _router: Router,
         private _creditReportService: CreditReportServiceProxy,
         private _packageService: PackageIdService,
-        private _sanitizer: DomSanitizer
+        private _sanitizer: DomSanitizer,
+        public ls: AppLocalizationService
     ) {
-        super(injector);
         PageScrollConfig.defaultDuration = 500;
     }
 
@@ -57,9 +59,13 @@ export class CreditReportComponent extends AppComponentBase implements OnInit {
         this.getCreditReport();
     }
 
-    onSelectChanged() {
-        abp.ui.setBusy();
-        this._router.navigate(['personal-finance/credit-simulator']).then(() => abp.ui.clearBusy());
+    onSelectChanged(event) {
+        if (!event.component.cancel) {
+            event.component.cancel = true;
+            event.component.option('value', event.previousValue);
+            abp.ui.setBusy();
+            this._router.navigate(['personal-finance/credit-simulator']).then(() => abp.ui.clearBusy());
+        }
     }
 
     getCreditReport(date?: moment.Moment): void {
@@ -84,7 +90,7 @@ export class CreditReportComponent extends AppComponentBase implements OnInit {
         if (this.isPdfGenerating || this.isPdfGenerated) return;
 
         this.isPdfGenerating = true;
-        element.firstChild.textContent = this.l('generatingPdf');
+        element.firstChild.textContent = this.ls.l('generatingPdf');
 
         if (this.creditReportResult && this.creditReportResult.creditReport) {
             this._creditReportService
@@ -96,14 +102,14 @@ export class CreditReportComponent extends AppComponentBase implements OnInit {
                     let url = window.URL.createObjectURL(blob);
                     this.pdfUrl = this._sanitizer.bypassSecurityTrustUrl(url);
 
-                    element.firstChild.textContent = this.l('downloadPdf');
+                    element.firstChild.textContent = this.ls.l('downloadPdf');
 
                     this.isPdfGenerating = false;
                     this.isPdfGenerated = true;
                 },
                 () => {
                     this.isPdfGenerating = false;
-                    element.firstChild.textContent = this.l('generatePdf');
+                    element.firstChild.textContent = this.ls.l('generatePdf');
                 });
         }
     }

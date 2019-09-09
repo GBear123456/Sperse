@@ -1,6 +1,7 @@
 <div class="report-item accounts">
-    <div class="report-item-title" id="accountBalances">
-        <span>{{l("accountBalances")}}</span>
+    <div class="report-item-title">
+        <a class="anchor" id="accountBalances">&nbsp;</a>
+        <span>{{ls.l("accountBalances")}}</span>
         <ul class="tab-btn pull-right" id="account-filter">
             <li><button (click)="statusButtonUpdate($event, 0)" type="button" class="active">Active</button></li>
             <li><button (click)="statusButtonUpdate($event, 1)" type="button">Closed</button></li>
@@ -14,9 +15,9 @@
                   (onRowClick)="toggleMasterRow($event)"
                   [masterDetail]="{ enabled: false, template: 'detail' }">
         <dxo-selection mode="single"></dxo-selection>
-        <dxi-column dataField="accountName" caption="{{l('accountName')}}" sortOrder="asc"></dxi-column>
-        <dxi-column dataField="creditLimit" caption="{{l('creditLimit')}}" format="currency"></dxi-column>
-        <dxi-column dataField="availableCredit" caption="{{l('availableCredit')}}" [width]="135" format="currency" cssClass="availableCredit" cellTemplate="availableCredit">
+        <dxi-column dataField="accountName" caption="{{ls.l('accountName')}}" sortOrder="asc"></dxi-column>
+        <dxi-column dataField="creditLimit" caption="{{ls.l('creditLimit')}}" format="currency"></dxi-column>
+        <dxi-column dataField="availableCredit" caption="{{ls.l('availableCredit')}}" [width]="135" format="currency" cssClass="availableCredit" cellTemplate="availableCredit">
             <div *dxTemplate="let credit of 'availableCredit'">
                 <div class="availableCreditField">
                     <span class="progress" [style.width]="(100-credit.data.ratio) + '%'"></span>
@@ -24,7 +25,7 @@
                 </div>
             </div>
         </dxi-column>
-        <dxi-column dataField="outstandingBalance" caption="{{l('outstandingBalance')}}" [width]="135" format="currency" cssClass="outstandingBalance" cellTemplate="outstandingBalance">
+        <dxi-column dataField="outstandingBalance" caption="{{ls.l('outstandingBalance')}}" [width]="135" format="currency" cssClass="outstandingBalance" cellTemplate="outstandingBalance">
             <div *dxTemplate="let balance of 'outstandingBalance'">
                 <div class="outstandingBalanceField"
                      [style.border-color]="balance.text !== '$0' ? '#e78372' : '#8F999F'"
@@ -34,7 +35,7 @@
                 </div>
             </div>
         </dxi-column>
-        <dxi-column dataField="ratio" caption="{{l('ratio')}}" cellTemplate="accountRatio">
+        <dxi-column dataField="ratio" caption="{{ls.l('ratio')}}" cellTemplate="accountRatio">
             <div *dxTemplate="let ratio of 'accountRatio'">
                 <div class="ratioField">
                     <span class="text">{{ ratio.text }}%</span>
@@ -50,7 +51,7 @@
                 <thead>
                     <tr>
                         <th *ngFor="let item of ['AccountSummary', 'status', 'totalCreditLimit', 'availableCredit', 'outstandingBalance', 'creditUtilization']">
-                            {{l(item)}}
+                            {{ls.l(item)}}
                         </th>
                     </tr>
                 </thead>
@@ -61,10 +62,10 @@
                         </td>
                         <td class="status">
                             <ng-container *ngIf="bureauRow.status == 0; else closed">
-                                <span class="open"><i class="fa fa-circle" aria-hidden="true"></i> {{l("open")}}</span>
+                                <span class="open"><i class="fa fa-circle" aria-hidden="true"></i> {{ls.l("open")}}</span>
                             </ng-container>
                             <ng-template #closed>
-                                <span class="closed"><i class="fa fa-circle" aria-hidden="true"></i> {{l("closed")}}</span>
+                                <span class="closed"><i class="fa fa-circle" aria-hidden="true"></i> {{ls.l("closed")}}</span>
                             </ng-template>
                         </td>
                         <td *ngFor="let item of ['totalCreditLimit', 'availableCredit', 'balance']">{{bureauRow[item] | currency:'USD':'symbol':'1.0'}}</td>
@@ -84,14 +85,14 @@
             <table class="table credit-history">
                 <thead>
                     <tr>
-                        <th rowspan="2">{{l('CreditHistory')}}</th>
+                        <th rowspan="2">{{ls.l('CreditHistory')}}</th>
                         <th *ngFor="let year of creditHistoryYears" [colSpan]="getCreditHistoryYearSpan(year)">
                             {{year}}
                         </th>
                     </tr>
                     <tr>
                         <th *ngFor="let month of creditHistoryMonths" class="text-center">
-                            {{l('MonthLetters')[month]}}
+                            {{ls.l('MonthLetters')[month]}}
                         </th>
                     </tr>
                 </thead>
@@ -107,7 +108,7 @@
             <table class="table table-striped">
                 <thead>
                     <tr>
-                        <th>{{l("AccountDetails")}}</th>
+                        <th>{{ls.l("AccountDetails")}}</th>
                         <th *ngFor="let item of accountInfo">
                             <img src="assets/images/credit-report/{{item.bureau | lowercase}}.png" srcset="assets/images/credit-report/{{item.bureau | lowercase}}@2x.png 2x, assets/images/credit-report/{{item.bureau | lowercase}}@3x.png 3x" class="bureau-img">
                         </th>
@@ -116,7 +117,7 @@
                 <tbody>
                     <tr *ngFor="let node of ['accountName','accountNumber','balance','pastDue','dateOpened','status','moPayment','paymentStatus','terms', 'comment']">
                         <td class="row-title" width="200">
-                            {{ l(node) }}
+                            {{ ls.l(node) }}
                         </td>
                         <td *ngFor="let item of accountInfo">
                             {{ getAccountInfoValue(item, node) }}

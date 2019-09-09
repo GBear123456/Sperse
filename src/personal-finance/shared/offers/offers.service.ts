@@ -1,7 +1,8 @@
 /** Core imports */
-import { Injectable } from '@angular/core';
-import { ActivatedRoute, Router, UrlSegment } from '@angular/router';
+import { Injectable, Inject } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
 import { HttpParams } from '@angular/common/http';
+import { ActivatedRoute, Router, UrlSegment } from '@angular/router';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
@@ -144,7 +145,8 @@ export class OffersService {
         private ls: AppLocalizationService,
         private offerServiceProxy: OfferServiceProxy,
         private currencyPipe: CurrencyPipe,
-        private dialog: MatDialog
+        private dialog: MatDialog,
+        @Inject(DOCUMENT) private document: any
     ) {
         this.memberInfo$.subscribe(
             (memberInfo: GetMemberInfoResponse) => {
@@ -215,6 +217,8 @@ export class OffersService {
         };
 
         if (!linkIsDirect) {
+            /** @todo change to rootComponent.overflowHidden (not work now (No provider for RootComponent!)) */
+            this.document.body.classList.add('overflow-hidden');
             this.dialog.open(WizardCenterModalComponent, {
                 width: '1200px',
                 height: '800px',
@@ -228,6 +232,7 @@ export class OffersService {
                     isCreditCard: isCreditCard
                 }
             }).afterClosed().subscribe((output: SubmitApplicationOutput)  => {
+                this.document.body.classList.remove('overflow-hidden');
                 if (output) {
                     const applyOfferDialog = this.dialog.open(ApplyOfferDialogComponent, {
                         width: '530px',
@@ -244,6 +249,7 @@ export class OffersService {
             });
         } else {
             if (this.isOldLastSubmitDate()) {
+                this.document.body.classList.add('overflow-hidden');
                 this.dialog.open(WizardCenterModalComponent, {
                     width: '1200px',
                     height: '800px',
@@ -257,6 +263,7 @@ export class OffersService {
                         isCreditCard: isCreditCard
                     }
                 }).afterClosed().subscribe((output: SubmitApplicationOutput)  => {
+                    this.document.body.classList.remove('overflow-hidden');
                     if (output) {
                          const applyOfferDialog = this.dialog.open(ApplyOfferDialogComponent, {
                             width: '530px',

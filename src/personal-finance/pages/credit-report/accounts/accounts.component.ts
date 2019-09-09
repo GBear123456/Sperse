@@ -1,15 +1,15 @@
-import { Component, AfterViewInit, Input, Injector, ViewChild } from '@angular/core';
-import { AppComponentBase } from '@shared/common/app-component-base';
+import { Component, AfterViewInit, Input, ViewChild } from '@angular/core';
 import { CreditReportServiceProxy, AccountInfoDto, CreditReportDto } from '@shared/service-proxies/service-proxies';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import * as moment from 'moment';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 
 @Component({
     selector: 'app-accounts',
     templateUrl: './accounts.component.html',
     styleUrls: ['./accounts.component.less']
 })
-export class AccountsComponent extends AppComponentBase implements AfterViewInit {
+export class AccountsComponent implements AfterViewInit {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
     @Input() creditReport: CreditReportDto;
     selectionChangedRaised: boolean;
@@ -26,10 +26,9 @@ export class AccountsComponent extends AppComponentBase implements AfterViewInit
     ];
 
     constructor(
-        injector: Injector,
-        private _accountInfoService: CreditReportServiceProxy
+        private _accountInfoService: CreditReportServiceProxy,
+        public ls: AppLocalizationService
     ) {
-        super(injector);
     }
 
     ngAfterViewInit() {
@@ -54,8 +53,8 @@ export class AccountsComponent extends AppComponentBase implements AfterViewInit
         }
         if (node == 'status') {
             if (item[node])
-                return this.l('closed');
-            else return this.l('open');
+                return this.ls.l('closed');
+            else return this.ls.l('open');
         }
 
         return item[node];
@@ -103,7 +102,7 @@ export class AccountsComponent extends AppComponentBase implements AfterViewInit
                 history[historyIndex] = {};
                 history[historyIndex].status = this.accountStatuses[data.statusType];
                 history[historyIndex].isPositive = data.isPositiveStatus;
-                history[historyIndex].title = this.l(this.accountStatuses[data.statusType]);
+                history[historyIndex].title = this.ls.l(this.accountStatuses[data.statusType]);
             });
         });
 
@@ -128,7 +127,7 @@ export class AccountsComponent extends AppComponentBase implements AfterViewInit
         if (!this.creditHistoryStartDate) return {};
         let historyIndex = String(this.creditHistoryStartDate.clone().add(monthIndex, 'months').year()) + month;
         let accInfo = this.creditHistory[bureau][historyIndex];
-        return accInfo ? accInfo : {status: 'undefined'};
+        return accInfo ? accInfo : { status: 'undefined' };
     }
 
     getAccountInfo(creditReportId, accountsIds): void {

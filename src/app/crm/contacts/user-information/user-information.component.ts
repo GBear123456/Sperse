@@ -14,9 +14,11 @@ import filter from 'lodash/filter';
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { UserServiceProxy, GetUserForEditOutput, UpdateUserPhoneDto, RoleServiceProxy,
+import {
+    UserServiceProxy, GetUserForEditOutput, UpdateUserPhoneDto, RoleServiceProxy,
     UpdateUserOptionsDto, UpdateUserRoleInput, ContactServiceProxy, PersonContactServiceProxy,
-    CreateOrUpdateUserInput, TenantHostType, UpdateUserEmailDto, CreateUserForContactInput } from '@shared/service-proxies/service-proxies';
+    CreateOrUpdateUserInput, TenantHostType, UpdateUserEmailDto, CreateUserForContactInput, RoleListDto
+} from '@shared/service-proxies/service-proxies';
 import { PhoneFormatPipe } from '@shared/common/pipes/phone-format/phone-format.pipe';
 import { InplaceEditModel } from '@app/shared/common/inplace-edit/inplace-edit.model';
 import { ContactsService } from '../contacts.service';
@@ -57,7 +59,8 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
     initialPhoneNumber: any;
 
     roles: any = [];
-    checkedByDefaultRoles: AppRoles[] = [AppRoles.CRMPartner, AppRoles.CFOPartner];
+    partnerRoles: AppRoles[] = [ AppRoles.CRMPartner, AppRoles.CFOPartner ];
+    checkedByDefaultRoles: AppRoles[];
     emails: any = [];
     phones: any = [];
     contactInfoData: any;
@@ -65,7 +68,7 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
         contactId: undefined,
         emailAddress: '',
         phoneNumber: undefined,
-        assignedRoleNames: this.checkedByDefaultRoles,
+        assignedRoleNames: undefined,
         organizationUnitIds: []
     });
 
@@ -120,6 +123,7 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
         if (!(this.roles = _roleServiceProxy['data']))
             _roleServiceProxy.getRoles(undefined, undefined).subscribe((res) => {
                 _roleServiceProxy['data'] = this.roles = res.items;
+                this.updateInviteDataRoles();
             });
 
         this.isEditAllowed = this.isGranted(AppPermissions.AdministrationUsersEdit);
@@ -130,10 +134,22 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
     ngOnInit() {
         this.onResize();
         this.contactInfoData = this._contactService['data'];
+        this.updateInviteDataRoles();
         if ((this.data = this._userService['data']).userId)
             this.loadData();
         else
             setTimeout(() => this.checkShowInviteForm(), 500);
+    }
+
+    private updateInviteDataRoles() {
+        if (this.roles) {
+            this.checkedByDefaultRoles = this.isPartner()
+                ? this.partnerRoles.filter((partnerRole: AppRoles) => {
+                    return this.roles.map((role: RoleListDto) => role.name).indexOf(partnerRole) > 0;
+                })
+                : [];
+            this.inviteData.assignedRoleNames = this.checkedByDefaultRoles;
+        }
     }
 
     roleIsCheckedByDefault(roleName: AppRoles) {

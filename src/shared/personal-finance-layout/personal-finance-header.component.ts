@@ -58,8 +58,8 @@ export class PersonalFinanceHeaderComponent {
         }
     ];
     actionsButtons = [
-        {name: 'SIGN UP', class: 'member-signup', url: environment.LENDSPACE_DOMAIN + '/sign-up', disabled: false},
-        {name: 'Member Login', class: 'member-login', url: environment.LENDSPACE_DOMAIN + '/login.html', disabled: false}
+        { name: 'SIGN UP', class: 'member-signup', url: environment.LENDSPACE_DOMAIN + '/sign-up', disabled: false },
+        { name: 'Member Login', class: 'member-login', url: environment.LENDSPACE_DOMAIN + '/login.html', disabled: false }
     ];
     applicationCompleteIsRequired$: Observable<Boolean>;
 
@@ -72,14 +72,13 @@ export class PersonalFinanceHeaderComponent {
         private ls: AppLocalizationService,
         public appSession: AppSessionService
     ) {
-        if (this.featureService.isEnabled(AppFeatures.PFMApplications))
-        {
+        if (this.featureService.isEnabled(AppFeatures.PFMApplications)) {
             const offersService = injector.get(OffersService, null);
             if (offersService) {
                 this.applicationCompleteIsRequired$ = offersService.applicationCompleteIsRequired$;
             }
         }
-        
+
         pfmLayoutService.headerContentSubscribe((component) => {
             setTimeout(() => {
                 this.adHeaderHost.viewContainerRef.clear();
@@ -135,7 +134,7 @@ export class PersonalFinanceHeaderComponent {
     }
 
     private getAppAreaLinks() {
-        return [
+        var links = [
             {
                 name: 'Loans',
                 sublinks: [
@@ -160,11 +159,6 @@ export class PersonalFinanceHeaderComponent {
             {
                 name: 'My Credit',
                 sublinks: [
-                    {
-                        name: this.ls.ls('PFM', 'creditReportLink'),
-                        routerUrl: '/personal-finance/credit-reports',
-                        hidden: !this.featureService.isEnabled(AppFeatures.PFMCreditReport)
-                    },
                     {
                         name: this.ls.ls('PFM', 'creditScores'),
                         routerUrl: '/personal-finance/offers/credit-scores'
@@ -223,6 +217,15 @@ export class PersonalFinanceHeaderComponent {
                 routerUrl: this.loggedUserId ? '/personal-finance/resources' : null
             }
         ];
+
+        if (this.featureService.isEnabled(AppFeatures.PFMCreditReport)) {
+            links[2].sublinks.unshift({
+                name: this.ls.ls('PFM', 'creditReportLink'),
+                routerUrl: '/personal-finance/credit-reports'
+            });
+        }
+
+        return links;
     }
 
     isMemberArea() {
@@ -230,9 +233,6 @@ export class PersonalFinanceHeaderComponent {
     }
 
     logoClick(event) {
-        if (!this.hasPfmAppFeature)
-            return;
-
         if (this.loggedUserId)
             this.router.navigate(['/personal-finance/home']);
         else

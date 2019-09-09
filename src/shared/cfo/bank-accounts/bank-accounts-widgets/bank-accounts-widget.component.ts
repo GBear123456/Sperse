@@ -16,7 +16,8 @@ import {
     SyncServiceProxy,
     SyncAccountBankDto,
     UpdateBankAccountDto,
-    RenameSyncAccountInput
+    RenameSyncAccountInput,
+    BankAccountDto
 } from 'shared/service-proxies/service-proxies';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { CFOService } from '@shared/cfo/cfo.service';
@@ -558,5 +559,19 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
             },
             this.saveChangesInCache
         );
+    }
+
+    calculateBalanceDisplayValue = (e) => {
+        let syncAccountBalance = 0;
+        if (this.showCheckboxes) {
+            e.bankAccounts.forEach((bankAccount: BankAccountDto) => {
+                if (bankAccount['selected']) {
+                    syncAccountBalance += bankAccount.balance;
+                }
+            });
+        } else {
+            syncAccountBalance = e.balance;
+        }
+        return syncAccountBalance;
     }
 }

@@ -133,21 +133,18 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit, 
     ];
     periods: TrendByPeriodModel[] = [
          {
-            key: GroupByPeriod.Daily,
+             key: GroupByPeriod.Daily,
              name: 'day',
-             text: `30 ${this.ls('Platform', 'Periods_Day_plural')}`,
              amount: 30
          },
          {
              key: GroupByPeriod.Weekly,
              name: 'week',
-             text: `15 ${this.ls('Platform', 'Periods_Week_plural')}`,
              amount: 15
         },
         {
             key: GroupByPeriod.Monthly,
             name: 'month',
-            text: `12 ${this.l('Periods_Month_plural')}`,
             amount: 12
         }
     ];
@@ -156,7 +153,7 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit, 
     period$ = this.dashboardService.period$.pipe(
         map((period: PeriodModel) => {
             let periodName = period.period;
-            if (periodName === 'year' || periodName === 'all') {
+            if (periodName === 'year' || periodName === 'quarter' || periodName === 'all') {
                 periodName = 'month';
             } else {
                 periodName = 'day';

@@ -1,5 +1,8 @@
 <div class="report-item">
-    <div class="report-item-title" id="recommendations">{{l("recommendations")}}</div>
+    <div class="report-item-title">
+        <a class="anchor" id="recommendations">&nbsp;</a>
+        {{ls.l("recommendations")}}
+    </div>
     <div class="report-item-content">
         <div class="recomendation-list" role="tablist" aria-multiselectable="true">
             <div class="card recomendation-item {{item.isPositive ? 'positive' : 'negative'}}" *ngFor="let item of creditReport?.recommendations; let i = index;">
@@ -20,4 +23,3 @@
         </div>
     </div>
 </div>
-

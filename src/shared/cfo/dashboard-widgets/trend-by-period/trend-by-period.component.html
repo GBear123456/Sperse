@@ -38,15 +38,6 @@
             </div>
         </ng-container>
     </div>
-    <div class="right-section">
-        <!-- dx-select-box
-            [dataSource]="periods"
-            valueExpr="key"
-            displayExpr="text"
-            [value]="selectedPeriod.key"
-            (onValueChanged)="onSelectChange($event)">
-        </dx-select-box -->
-    </div>
 </header>
 <ng-container *ngIf="trendData$ | async as trendData">
     <div *ngIf="trendData && trendData.length">

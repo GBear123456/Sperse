@@ -4,6 +4,7 @@ import { ConditionsType } from '@shared/AppEnums';
 import { MatDialog } from '@angular/material/dialog';
 import { ConditionsModalComponent } from '@shared/common/conditions-modal/conditions-modal.component';
 import { AppFeatures } from '@shared/AppFeatures';
+import { LayoutType } from '../service-proxies/service-proxies';
 
 @Component({
     templateUrl: 'personal-finance-footer.component.html',
@@ -22,7 +23,7 @@ export class PersonalFinanceFooterComponent extends AppComponentBase {
     ) {
         super(injector);
 
-        this.hasPfmAppFeature = this.feature.isEnabled(AppFeatures.PFMApplications);
+        this.hasPfmAppFeature = this.feature.isEnabled(AppFeatures.PFMApplications) && this.appSession.tenant.customLayoutType == LayoutType.LendSpace;
         this.showDefaultFooter = this.isMemberArea() && !this.hasPfmAppFeature;
     }
 

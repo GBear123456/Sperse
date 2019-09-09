@@ -1,23 +1,16 @@
-/** Core imports */
-import { Component, Inject, OnInit } from '@angular/core';
-import { DOCUMENT } from '@angular/common';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-
-/** Third party imports */
 import kebabCase from 'lodash/kebabCase';
-
-/** Application imports */
 import { AppFeatures } from '@shared/AppFeatures';
-import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { FeatureCheckerService } from '@abp/features/feature-checker.service';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 
 @Component({
-    selector: 'app-lendspace-welcome2',
-    templateUrl: './lendspace-welcome2.component.html',
-    styleUrls: ['./lendspace-welcome2.component.less']
+    selector: 'lend-space-home',
+    templateUrl: 'lend-space-home.component.html',
+    styleUrls: [ './lend-space-home.component.less' ]
 })
-
-export class LendspaceWelcome2Component implements OnInit {
+export class LendSpaceHomeComponent implements OnInit {
     kebabCase = kebabCase;
     categoryItems = [
         {
@@ -45,18 +38,13 @@ export class LendspaceWelcome2Component implements OnInit {
             hidden: !this.featureService.isEnabled(AppFeatures.CFOPartner),
         }
     ];
-
     constructor(
         private featureService: FeatureCheckerService,
         private router: Router,
-        public ls: AppLocalizationService,
-        @Inject(DOCUMENT) private document: any
-    ) {
-    }
+        private ls: AppLocalizationService
+    ) {}
 
-    ngOnInit() {
-        this.document.body.scrollTo(0, 0);
-    }
+    ngOnInit() { }
 
     navigate(route) {
         this.router.navigate(route);
