@@ -581,11 +581,13 @@
                 text-align: center;
                 color: #686f76;
 
-                &:active, &:focus {
+                &.active, &:active, &:focus {
                     background-color: #e7f7ff;
                     font-size: 13px;
                     letter-spacing: 0.3px;
-                    color: #00aeef
+                    color: #00aeef;
+                    outline: 0;
+                    box-shadow: 0 0 0 0.2rem rgba(88,163,220,.25);
                 }
                 &.availableDates {
                     width: 187px!important;

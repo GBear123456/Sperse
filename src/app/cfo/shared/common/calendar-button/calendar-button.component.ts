@@ -5,6 +5,7 @@ import { Component, Input } from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { Observable } from 'rxjs';
 import { filter, map, withLatestFrom } from 'rxjs/operators';
+import lowerFirst from 'lodash/lowerFirst';
 import * as moment from 'moment';
 
 /** Application imports */
@@ -43,7 +44,8 @@ export class CalendarButtonComponent {
                     from: { value: this.cfoPreferencesService.dateRange.value && new Date(this.cfoPreferencesService.dateRange.value.from.value) },
                     options: {
                         allowFutureDates: true,
-                        endDate: moment(new Date()).add(10, 'years').toDate()
+                        endDate: moment(new Date()).add(10, 'years').toDate(),
+                        rangeSelectedPeriod: lowerFirst(this.cfoPreferencesService.dateRange.value.period)
                     }
                 }
             }).afterClosed().pipe(

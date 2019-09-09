@@ -91,8 +91,8 @@ export class DateRangePickerComponent extends AppComponentBase implements AfterV
 
             options.ranges[self.l('Today')] = [moment().startOf('day'), moment().endOf('day')];
             options.ranges[self.l('Yesterday')] = [moment().subtract(1, 'days').startOf('day'), moment().subtract(1, 'days').endOf('day')];
-            options.ranges[self.l('Last7Days')] = [moment().subtract(6, 'days').startOf('day'), moment().endOf('day')];
-            options.ranges[self.l('Last30Days')] = [moment().subtract(29, 'days').startOf('day'), moment().endOf('day')];
+            options.ranges[self.l('LastSevenDays')] = [moment().subtract(6, 'days').startOf('day'), moment().endOf('day')];
+            options.ranges[self.l('LastThirtyDays')] = [moment().subtract(29, 'days').startOf('day'), moment().endOf('day')];
             options.ranges[self.l('ThisMonth')] = [moment().startOf('month'), moment().endOf('month')];
             options.ranges[self.l('LastMonth')] = [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')];
         }
