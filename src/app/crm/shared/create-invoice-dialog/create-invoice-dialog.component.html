@@ -80,7 +80,10 @@
                 </div>
                 <div class="col-sm-4">
                     <div class="field-area">
-                        <div class="logo-container"><a>+ {{ls.l('Company_AddLogo')}}</a></div>
+                        <div class="logo-container">
+                            <img *ngIf="appSession.tenant && appSession.tenant.logoId" 
+                                [src]="remoteServiceBaseUrl + '/api/TenantCustomization/GetLogo?logoId=' + appSession.tenant.logoId" alt="logo"/>
+                        </div>
                     </div>
                     <div class="field-area">
                         <dx-date-box

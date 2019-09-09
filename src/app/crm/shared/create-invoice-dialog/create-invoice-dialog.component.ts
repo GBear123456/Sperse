@@ -25,6 +25,8 @@ import { MessageService } from '@abp/message/message.service';
 import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
 import { CreateClientDialogComponent } from '../create-client-dialog/create-client-dialog.component';
+import { AppSessionService } from '@shared/common/session/app-session.service';
+import { AppConsts } from '@shared/AppConsts';
 
 @Component({
     templateUrl: 'create-invoice-dialog.component.html',
@@ -55,6 +57,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
     saveButtonId = 'saveInvoiceOptions';
     saveContextMenuItems = [];
     billingSettings: InvoiceSettingsInfoDto = InvoiceSettingsInfoDto.fromJS({});
+    remoteServiceBaseUrl: string = AppConsts.remoteServiceBaseUrl;
 
     currencies = [
         {name: 'US Dollar', code: 'USD'},
@@ -101,6 +104,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
         private _cacheHelper: CacheHelper,
         private _dialogRef: MatDialogRef<CreateInvoiceDialogComponent>,
         private _changeDetectorRef: ChangeDetectorRef,
+        public appSession: AppSessionService,
         public dialog: MatDialog,
         public ls: AppLocalizationService,
         @Inject(MAT_DIALOG_DATA) public data: any
