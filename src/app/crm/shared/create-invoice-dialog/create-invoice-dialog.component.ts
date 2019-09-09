@@ -53,7 +53,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
 
     saveButtonId = 'saveInvoiceOptions';
     saveContextMenuItems = [];
-    billingSettings: InvoiceSettingsInfoDto;
+    billingSettings: InvoiceSettingsInfoDto = InvoiceSettingsInfoDto.fromJS({});
 
     currencies = [
         {name: 'US Dollar', code: 'USD'},
@@ -360,7 +360,6 @@ export class CreateInvoiceDialogComponent implements OnInit {
                 this.total =
                 this.balance = this.total + amount;
         });
-        this._changeDetectorRef.detectChanges();
     }
 
     selectContact(event) {

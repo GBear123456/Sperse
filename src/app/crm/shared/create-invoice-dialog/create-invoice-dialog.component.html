@@ -41,7 +41,7 @@
         <dx-scroll-view showScrollbar="onHover">
             <div class="row">
                 <div class="col-sm-8">
-                    <div class="field description">
+                    <div class="field-area description">
                         <dx-text-area
                             name="description"
                             width="500px"
@@ -51,14 +51,14 @@
                             [(value)]="description">
                         </dx-text-area>
                     </div>
-                    <div class="field">
+                    <div class="field-area">
                         <label class="from-label">{{ls.l('From')}}<a><i class="edit fa fa-pencil"></i>{{ls.l('Edit') + ' ' + ls.l('Profile')}}</a></label>
                         <div class="credentials">
                             <span>{{billingSettings?.legalName || ''}} {{billingSettings?.taxVatNo || ''}}</span>
                             <span>{{billingSettings?.address || ''}}</span>
                         </div>
                     </div>
-                    <div class="field">
+                    <div class="field-area">
                         <label class="customer-label">{{ls.l('To')}}<a (click)="createClient()">+ {{ls.l('New') + ' ' + ls.l('Client')}}</a></label>
                         <dx-select-box #contact
                             name="customer"
@@ -79,10 +79,10 @@
                     </div>
                 </div>
                 <div class="col-sm-4">
-                    <div class="field">
+                    <div class="field-area">
                         <div class="logo-container"><a>+ {{ls.l('Company_AddLogo')}}</a></div>
                     </div>
-                    <div class="field">
+                    <div class="field-area">
                         <dx-date-box
                             placeholder="{{ls.l('Date')}}"
                             [min]="currentDate"
@@ -92,7 +92,7 @@
                             [(value)]="date">
                         </dx-date-box>
                     </div>
-                    <div class="field">
+                    <div class="field-area">
                         <dx-date-box
                             [min]="currentDate"
                             placeholder="{{ls.l('Invoice_DueOnReceipt')}}"
@@ -102,7 +102,7 @@
                             [(value)]="dueDate">
                         </dx-date-box>
                     </div>
-                    <div class="field">
+                    <div class="field-area">
                         <dx-text-box
                             maxLength="10"
                             [disabled]="data.invoice"
@@ -114,7 +114,7 @@
                     </div>
                 </div>
             </div>
-            <div class="field lines">
+            <div class="field-area lines">
                 <dx-data-grid
                     width="820px"
                     [height]="linesGridHeight"
@@ -186,7 +186,7 @@
         </dx-scroll-view>
         <div class="row bottom-container">
             <div class="col-sm-6">
-                <div class="field notes">
+                <div class="field-area notes">
                     <label class="notes-label">{{ls.l('Invoice Note')}} <a (click)="resetNoteDefault()">({{ls.l('default')}} {{ls.l('note')}})</a></label>
                     <dx-text-area
                         name="comment"
