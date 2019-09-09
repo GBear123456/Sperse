@@ -134,7 +134,7 @@ export class PersonalFinanceHeaderComponent {
     }
 
     private getAppAreaLinks() {
-        var links = [
+        let links = [
             {
                 name: 'Loans',
                 sublinks: [
