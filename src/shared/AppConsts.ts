@@ -65,6 +65,7 @@ export class AppConsts {
         ssn: '000-00-0000',
         taxNumber: '00-0000000',
         zipCode: '00000',
+        zipCodeLong: '00000-0000',
         phoneExt: '99999'
     };
 

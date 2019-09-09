@@ -18,7 +18,11 @@ import { AppConsts } from '@shared/AppConsts';
 })
 export class WizardHomeInfoStepComponent {
     zipRegex = AppConsts.regexPatterns.zipUsPattern;
-
+    maxLength = 10;
+    postalCode = this.maskPipe.transform(
+        this.offersWizardService.submitApplicationProfileInput.personalInformation.postalCode,
+        AppConsts.masks.zipCodeLong
+    );
     constructor(
         public ls: AppLocalizationService,
         public inputStatusesService: InputStatusesService,
@@ -26,12 +30,15 @@ export class WizardHomeInfoStepComponent {
         private maskPipe: MaskPipe
     ) {}
 
-    onInput(e, maxLength: number, mask?: string) {
+    onInput(e) {
         const inputElement = e.event.target;
-        if (inputElement.value.length > maxLength)
-            inputElement.value = inputElement.value.slice(0, maxLength);
-        if (mask)
-            inputElement.value = this.maskPipe.transform(inputElement.value, mask);
+        if (inputElement.value.length > this.maxLength)
+            inputElement.value = inputElement.value.slice(0, this.maxLength);
+        inputElement.value = this.maskPipe.transform(inputElement.value, AppConsts.masks.zipCodeLong);
+    }
+
+    postalCodeChange(e) {
+        this.offersWizardService.submitApplicationProfileInput.personalInformation.postalCode = e.value.replace('-', '');
     }
 
 }

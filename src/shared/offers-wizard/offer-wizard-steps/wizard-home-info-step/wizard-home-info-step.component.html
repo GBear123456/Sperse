@@ -67,10 +67,10 @@
             <div class="dx-field-value">
                 <dx-text-box placeholder="Enter postal code"
                              name="zipCode"
-                             minLength="5"
-                             (onContentReady)="inputStatusesService.setMask($event)"
-                             (onInput)="onInput($event, 10, '00000-0000')"
-                             [(value)]="offersWizardService.submitApplicationProfileInput.personalInformation.postalCode">
+                             [maxLength]="maxLength"
+                             [value]="postalCode"
+                             (onInput)="onInput($event)"
+                             (onValueChanged)="postalCodeChange($event)">
                     <dx-validator>
                         <dxi-validation-rule type="pattern"
                                              [pattern]="zipRegex"
