@@ -17,10 +17,10 @@
                     <td class="row-title">{{item.name}}</td>
                     <td class="address">
                         <address>
-                            {{item.address.line1}}
-                            {{item.address.line2}}
-                            {{item.address.line3}}
-                            {{item.address.line4}}
+                            {{item.address?.line1}}
+                            {{item.address?.line2}}
+                            {{item.address?.line3}}
+                            {{item.address?.line4}}
                         </address>
                     </td>
                     <td class="phone">{{item.phoneNumber}}</td>
