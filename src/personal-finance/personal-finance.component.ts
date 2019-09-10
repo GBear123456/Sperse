@@ -23,6 +23,7 @@ export class PersonalFinanceComponent extends AppComponentBase implements OnInit
     wrapperEnabled = false;
     hideFooter = false;
     loggedUserId: number;
+    scrollbarWidth: string;
 
     private viewContainerRef: ViewContainerRef;
     public constructor(
@@ -54,12 +55,35 @@ export class PersonalFinanceComponent extends AppComponentBase implements OnInit
 
     ngOnInit(): void {
         this._render.addClass(document.body, 'pfm');
-
+        this.scrollbarWidth = this.getScrollbarWidth();
         /*
                 this.getRootComponent().addScriptLink('https://use.typekit.net/ocj2gqu.js', 'text/javascript', () => {
                     try { Typekit.load({ async: true }); } catch (e) { }
                 });
         */
+    }
+
+    getScrollbarWidth(): string {
+
+        // Creating invisible container
+        const outer = document.createElement('div');
+        outer.style.visibility = 'hidden';
+        outer.style.overflow = 'scroll'; // forcing scrollbar to appear
+        outer.style.msOverflowStyle = 'scrollbar'; // needed for WinJS apps
+        document.body.appendChild(outer);
+
+        // Creating inner element and placing it in the container
+        const inner = document.createElement('div');
+        outer.appendChild(inner);
+
+        // Calculating difference between container's full width and the child width
+        const scrollbarWidth = (outer.offsetWidth - inner.offsetWidth);
+
+        // Removing temporary elements from the DOM
+        outer.parentNode.removeChild(outer);
+
+        return scrollbarWidth + 'px';
+
     }
 
     ngOnDestroy() {
