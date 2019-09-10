@@ -27,6 +27,7 @@
         background: #fff;
         border-top: 1px solid #dfdfdf;
         position: relative;
+        flex-direction: column;
         height: calc(100% + 62px);
 
         /deep/ .dxc-labels {
@@ -46,6 +47,7 @@
         }
 
         .charts {
+            align-self: flex-end;
             padding: 10px 10px 0;
 
             .header {
@@ -255,12 +257,6 @@
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-        }
-    }
-
-    setup-steps {
-        @media (max-width: 767px) {
-            display: none;
         }
     }
 }

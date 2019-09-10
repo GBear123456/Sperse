@@ -40,6 +40,7 @@ import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/life
 import { CalendarValuesModel } from '@shared/common/widgets/calendar/calendar-values.model';
 import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calendar.component';
 import { FilterItemModel } from '@shared/filters/models/filter-item.model';
+import { SetupStepComponent } from '@app/cfo/shared/common/setup-steps/setup-steps.component';
 
 @Component({
     'selector': 'app-stats',
@@ -51,6 +52,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
     @ViewChild('linearChart') private linearChart: DxChartComponent;
     @ViewChild('barChart') private barChart: DxChartComponent;
     @ViewChild(SynchProgressComponent) synchProgressComponent: SynchProgressComponent;
+    @ViewChild(SetupStepComponent) setupStepComponent: SetupStepComponent;
     statsData: Array<BankAccountDailyStatDto>;
     historicalSourceData: Array<BankAccountDailyStatDto> = [];
     forecastSourceData: Array<BankAccountDailyStatDto> = [];
@@ -476,8 +478,8 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
     /** Recalculates the height of the charts to squeeze them both into the window to avoid scrolling */
     calculateChartsSize() {
         let chartsHeight = window.innerHeight - 390;
-        this.chartsHeight = chartsHeight > this.chartsHeight ? chartsHeight : this.chartsHeight;
-        this.chartsWidth = window.innerWidth < 768 ? window.innerWidth - 20 : window.innerWidth - 371;
+        this.chartsHeight = chartsHeight > this.chartsHeight ? chartsHeight : this.chartsHeight;        
+        this.chartsWidth = window.innerWidth - (window.innerWidth < 768 || this.setupStepComponent.collapsed ? 40 : 371);
     }
 
     /** Calculates the height of the charts scrollable height after resizing */

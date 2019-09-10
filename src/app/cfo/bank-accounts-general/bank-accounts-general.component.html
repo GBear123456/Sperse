@@ -5,8 +5,8 @@
 <!--        <sync-date-picker></sync-date-picker>-->
     </app-headline>
     <div class="content-wrap">
-        <setup-steps SelectedStepIndex="0" [class.hidden]="leftMenuHidden"></setup-steps>
-        <div class="frame-wrap">
+        <setup-steps #setupStep [SelectedStepIndex]="0"></setup-steps>
+        <div class="frame-wrap {{setupStep?.collapsed ? '' : 'expanded'}}">
             <router-outlet></router-outlet>
         </div>
     </div>

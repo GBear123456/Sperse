@@ -1,12 +1,15 @@
 :host {
+    position: absolute;
     border-right: 1.4px solid #dfdfdf;
     transform: translate(0);
     transition: transform 0.5s;
-    position: relative;
     z-index: 2;
-    @media (max-width: 991px) {
-        &.hidden {
-            transform: translate(-100%);
+
+    &.collapsed {
+        transform: translate(-100%);
+        .toggle-button img {
+            transform: rotate(180deg);
+            left: 0;
         }
     }
 
@@ -222,13 +225,6 @@
         }
         &:focus {
             outline: none;
-        }
-    }
-
-    &.hidden {
-        .toggle-button img {
-            transform: rotate(180deg);
-            left: 0;
         }
     }
 }

@@ -38,7 +38,6 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, OnDe
         {name: 'View_Transaction_Details', route: '../transactions'},
         {name: 'View_Financial_Statistics', route: '../stats'},
     ];
-    leftMenuHidden = true;
 
     constructor(
         injector: Injector,
@@ -57,14 +56,7 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, OnDe
             names: [this.l('Dashboard_Title')],
             iconSrc: './assets/common/icons/pie-chart.svg',
             onRefresh: this._cfoService.hasStaticInstance ? undefined : this.invalidate.bind(this),
-            buttons: [
-                {
-                    enabled: true,
-                    action: () => this.leftMenuHidden = !this.leftMenuHidden,
-                    lable: '',
-                    class: 'toggle dx-button'
-                }
-            ]
+            buttons: []
         };
         /** Load sync accounts */
         this.bankAccountsService.load();

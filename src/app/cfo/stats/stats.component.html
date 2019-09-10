@@ -6,7 +6,11 @@
 
 <div [hidden]="!statsData || !statsData.length">
     <div class="mainStatsView">
-        <setup-steps [SetupSteps]="leftSideBarItems" SelectedStepIndex="0" HeaderTitle=""></setup-steps>
+        <setup-steps 
+            [SetupSteps]="leftSideBarItems" 
+            SelectedStepIndex="0" 
+            HeaderTitle=""
+            (onToggle)="calculateChartsSize()"></setup-steps>
         <source-data [ngClass]="{'showen': showSourceData}"
                      (onClose)="hideSourceDataWidget()"
                      [historicalSourceData]="historicalSourceData"

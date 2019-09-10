@@ -1,5 +1,5 @@
 /** Core imports */
-import { ChangeDetectionStrategy, Component, Injector, Input, EventEmitter, Output } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Injector, Input, EventEmitter, Output, HostBinding } from '@angular/core';
 
 /** Third party imports */
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
@@ -16,6 +16,9 @@ import { CfoIntroComponent } from '../../cfo-intro/cfo-intro.component';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SetupStepComponent extends CFOComponentBase {
+    @HostBinding('class.collapsed') @Input() collapsed: boolean =
+        this._cfoService.hasStaticInstance || !!this.instanceId;
+
     @Input() SelectedStepIndex: number;
     @Input() SetupSteps = [
         { caption: 'FinancialAccounts', component: '/linkaccounts', isAlwaysActive: false },
@@ -27,8 +30,9 @@ export class SetupStepComponent extends CFOComponentBase {
     @Input() HeaderTitle: string = this.l(this._cfoService.initialized ? 'SetupStep_MainHeader' : 'SetupStep_InitialHeader');
     @Input() headerLink: string = this.instanceUri + '/start';
     @Input() showIntroductionTourLink = false;
-    @Input() showToggleButton = false;
-    @Output() onToggle: EventEmitter<null> = new EventEmitter<null>();
+    @Input() showToggleButton = !this._cfoService.hasStaticInstance && !this.instanceId 
+        || this.isInstanceAdmin || this._cfoService.isMainInstanceType;
+    @Output() onToggle: EventEmitter<boolean> = new EventEmitter<boolean>();
 
     private dialogConfig = new MatDialogConfig();
 
@@ -61,5 +65,10 @@ export class SetupStepComponent extends CFOComponentBase {
         this.dialogConfig.panelClass = ['cfo-intro', 'dashboard'];
         this.dialogConfig.data = { alreadyStarted: true };
         this.dialog.open(CfoIntroComponent, this.dialogConfig);
+    }
+
+    toggle() {
+        this.collapsed = !this.collapsed;
+        this.onToggle.emit(this.collapsed);
     }
 }

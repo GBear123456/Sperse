@@ -20,7 +20,7 @@
             <span class="btn-link intro-link" (click)="showIntro()">{{l('Introduction Tour')}}</span>
         </li>
     </ul>
-    <button class="toggle-button" *ngIf="showToggleButton" (click)="onToggle.emit()">
+    <button class="toggle-button" *ngIf="showToggleButton" (click)="toggle()">
         <img src="./assets/common/icons/pipeline/left-arrow.svg" alt="switch">
     </button>
 </div>

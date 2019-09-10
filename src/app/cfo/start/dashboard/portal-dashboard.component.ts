@@ -66,11 +66,13 @@ export class PortalDashboardComponent extends CFOComponentBase implements OnInit
         this.rootComponent.addScriptLink('https://fast.wistia.com/assets/external/E-v1.js');
     }
 
-    toggleLeftMenu() {
-        this.isWideMode = !this.isWideMode;
+    toggleLeftMenu(collapsed) {
+        this.isWideMode = collapsed;
         setTimeout(() => {
-            this.trendByPeriodComponent.chartComponent.instance.render();
-            this.topSpendingCategoriesComponent.pieChart.instance.render();
+            if (this.trendByPeriodComponent.chartComponent)
+                this.trendByPeriodComponent.chartComponent.instance.render();
+            if (this.topSpendingCategoriesComponent.pieChart)
+                this.topSpendingCategoriesComponent.pieChart.instance.render();
         }, 300);
     }
 
