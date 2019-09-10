@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { AppFeatures } from '@shared/AppFeatures';
 import { FeatureCheckerService } from '@abp/features/feature-checker.service';
 import kebabCase from 'lodash/kebabCase';
@@ -11,14 +11,14 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
     styleUrls: [ './host-home.component.less' ]
 })
 
-export class HostHomeComponent implements OnInit {
+export class HostHomeComponent {
     kebabCase = kebabCase;
     categoryItems = [
         {
             name: 'CreditReports',
-            button: 'GetMyScore',
+            button: 'GetMyReport',
             router: 'personal-finance/credit-reports',
-            hidden: false
+            hidden: !this.featureService.isEnabled(AppFeatures.PFMCreditReport)
         },
         {
             name: 'PersonalFinance',
@@ -27,13 +27,12 @@ export class HostHomeComponent implements OnInit {
             hidden: !this.featureService.isEnabled(AppFeatures.CFOPartner),
         }
     ];
+    showCategoryItemsList = this.categoryItems.some(item => !item.hidden);
     constructor(
         private featureService: FeatureCheckerService,
         private router: Router,
         public ls: AppLocalizationService
-    ) { }
-
-    ngOnInit() {}
+    ) {}
 
     navigate(route) {
         this.router.navigate(route);

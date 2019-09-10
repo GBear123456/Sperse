@@ -48,7 +48,8 @@ export class PersonalFinanceHeaderComponent {
             imgUrl: 'assets/images/icons/credit-report-icon.svg',
             activeImgUrl: 'assets/images/icons/credit-report-active-icon.svg',
             routerUrl: '/personal-finance/credit-reports',
-            sublinks: null
+            sublinks: null,
+            hidden: !this.featureService.isEnabled(AppFeatures.PFMCreditReport)
         },
         {
             name: 'creditResources',
@@ -92,6 +93,7 @@ export class PersonalFinanceHeaderComponent {
                     imgUrl: 'assets/images/icons/credit-report-icon.svg',
                     activeImgUrl: 'assets/images/icons/credit-report-active-icon.svg',
                     routerUrl: '/personal-finance/my-finances',
+                    hidden: false,
                     sublinks: [
                         {
                             name: 'Accounts',
