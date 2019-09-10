@@ -160,6 +160,11 @@ export class PersonalFinanceHeaderComponent {
                 name: 'My Credit',
                 sublinks: [
                     {
+                        name: this.ls.ls('PFM', 'creditReportLink'),
+                        routerUrl: '/personal-finance/credit-reports',
+                        hidden: !this.featureService.isEnabled(AppFeatures.PFMCreditReport)
+                    },
+                    {
                         name: this.ls.ls('PFM', 'creditScores'),
                         routerUrl: '/personal-finance/offers/credit-scores'
                     },
@@ -217,13 +222,6 @@ export class PersonalFinanceHeaderComponent {
                 routerUrl: this.loggedUserId ? '/personal-finance/resources' : null
             }
         ];
-
-        if (this.featureService.isEnabled(AppFeatures.PFMCreditReport)) {
-            links[2].sublinks.unshift({
-                name: this.ls.ls('PFM', 'creditReportLink'),
-                routerUrl: '/personal-finance/credit-reports'
-            });
-        }
 
         return links;
     }

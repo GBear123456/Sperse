@@ -99,6 +99,14 @@ export class AppAreaNavigationComponent extends AppComponentBase implements Afte
         }
     }
 
+    getFirstVisibleLink(sublinks: any[]): string {
+        if (!sublinks)
+            return;
+
+        let firstVisibleItem = sublinks.find(x => !x.hidden);
+        return firstVisibleItem && firstVisibleItem.routerUrl;
+    }
+
     private closeAllOpenedMenuItems() {
         this.sublinksRefs.toArray().forEach(sublinkRef => this.renderer.removeClass(sublinkRef.nativeElement.parentElement, 'opened'));
     }
