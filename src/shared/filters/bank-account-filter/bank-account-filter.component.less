@@ -20,6 +20,9 @@
 
                 .left-header {
                     order: 1;
+                    .entities .dx-checkbox {
+                        margin-left: 0 !important;
+                    }
                 }
 
                 .connections,
@@ -52,16 +55,26 @@
                 font-size: 13px;
             }
 
-            #gridContainer table.dx-datagrid-table .account-status {
-                text-align: left;
-                max-width: 112px;
-                overflow: hidden;
-                text-overflow: ellipsis;
-                padding-left: 18px;
+            #gridContainer table.dx-datagrid-table {
+                .account-status {
+                    text-align: left;
+                    max-width: 112px;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    padding-left: 18px;
 
-                &::before {
-                    left: 7px;
+                    &::before {
+                        left: 7px;
+                    }
                 }
+
+                .dx-row.dx-data-row td.checkbox {
+                    padding-left: 8px !important;
+                }
+            }
+
+            .dx-scrollable-wrapper .dx-scrollable-content {
+                padding-right: 8px !important;
             }
         }
     }

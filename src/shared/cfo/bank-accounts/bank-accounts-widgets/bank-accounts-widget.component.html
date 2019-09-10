@@ -60,7 +60,7 @@
         </div>
     </div>
 </div>
-<div class="grid-container {{highlightUsedRows ? 'highlight-used-rows' : '' }}">
+<div [ngClass]="{ 'grid-container': true, 'highlight-used-rows' : highlightUsedRows }">
     <dx-data-grid id="gridContainer"
                   [width]="'99.9%'"
                   [height]="calculateHeight()"
@@ -81,9 +81,7 @@
                                 minWidth: 150,
                                 indicatorSrc: './assets/common/images/spinner.gif'
                               }"
-                  [elementAttr]="{
-                    class: 'with-custom-loader'
-                  }"
+                  [elementAttr]="{ class: 'with-custom-loader' }"
                   (onRowPrepared)="rowPrepared($event)"
                   (onContentReady)="contentReady()"
                   (onRowClick)="dataRowClick($event)"
@@ -95,7 +93,7 @@
         <dxo-filter-row [visible]="false"></dxo-filter-row>
         <dxi-column dataField="id" [visible]="false" sortOrder="desc"></dxi-column>
         <dxi-column dataField="selected" caption="" [width]="30" [visible]="showCheckboxes" cssClass="checkbox" alignment="center" dataType="boolean"></dxi-column>
-        <dxi-column dataField="name" [caption]="l('Account')" [sortIndex]="0" sortOrder="asc" [width]="nameColumnWidth" alignment="left" [allowEditing]="false" cssClass="bold"></dxi-column>
+        <dxi-column dataField="name" [caption]="l('Account')" [sortIndex]="0" sortOrder="asc" [width]="nameColumnWidth" alignment="left" [allowEditing]="false" cssClass="accountNumber bold"></dxi-column>
         <dxi-column dataField="syncAccountStatus" [visible]="showStatus" [caption]="l('BankAccountsWidget_Sync_status')" [width]="200" alignment="center" sortOrder="asc" [sortIndex]="2" cellTemplate="statusTemplate" [allowEditing]="false"></dxi-column>
         <dxi-column dataField="lastSyncDate" alignment="left" [caption]="l('BankAccountsWidget_Last_sync')" [width]="510" [allowEditing]="false" cellTemplate="syncDateTemplate" [visible]="showSyncDate"></dxi-column>
         <dxi-column dataField="bankAccounts.length" [visible]="showAdvancedColumns && showAccountsCount" [width]="10" [sortIndex]="1" sortOrder="asc" [calculateSortValue]="calculateSyncAccountSortValue" alignment="right" [calculateDisplayValue]="calculateSyncAccountDisplayValue" [allowEditing]="false"></dxi-column>
@@ -133,7 +131,7 @@
                     <dxo-filter-row [visible]="false"></dxo-filter-row>
                     <dxi-column dataField="id" [allowEditing]="false" [visible]="false" sortOrder="desc" [sortIndex]="0"></dxi-column>
                     <dxi-column dataField="selected" [visible]="showCheckboxes" cssClass="checkbox" [visibleIndex]="0" [allowEditing]="false" [width]="30" alignment="center" dataType="boolean" caption=""></dxi-column>
-                    <dxi-column dataField="accountNumber" [visible]="showAccountNumber" [visibleIndex]="2" cssClass="accountNumber" cssClass="tabular" [width]="166" alignment="left" [allowEditing]="allowEditing" [editorOptions]="{ disabled: true }"></dxi-column>
+                    <dxi-column dataField="accountNumber" [visible]="showAccountNumber" [visibleIndex]="2" cssClass="accountNumber tabular" [width]="166" alignment="left" [allowEditing]="allowEditing" [editorOptions]="{ disabled: true }"></dxi-column>
                     <dxi-column dataField="accountName" [visibleIndex]="1" [width]="nameColumnWidth" alignment="left" [allowEditing]="allowEditing"></dxi-column>
                     <dxi-column dataField="typeName" cssClass="type-container" [width]="160" alignment="left" [allowEditing]="false"
                                 cellTemplate="typeTemplate" [(visible)]="showAdvancedColumns && showAccountType"></dxi-column>
