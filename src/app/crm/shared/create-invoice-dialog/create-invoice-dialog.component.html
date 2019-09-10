@@ -86,7 +86,7 @@
                         </div>
                     </div>
                     <div class="field-area">
-                        <dx-date-box
+                        <dx-date-box #dateComponent
                             placeholder="{{ls.l('Date')}}"
                             [min]="currentDate"
                             [disabled]="disabledForUpdate"
@@ -96,7 +96,7 @@
                         </dx-date-box>
                     </div>
                     <div class="field-area">
-                        <dx-date-box
+                        <dx-date-box #dueDateComponent
                             [min]="currentDate"
                             placeholder="{{ls.l('Invoice_DueOnReceipt')}}"
                             [disabled]="disabledForUpdate"

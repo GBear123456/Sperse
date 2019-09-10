@@ -4,9 +4,10 @@ import { Component, ChangeDetectionStrategy, OnInit, ViewChild, Inject, ChangeDe
 /** Third party imports */
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { DxContextMenuComponent } from 'devextreme-angular/ui/context-menu';
-import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { DxSelectBoxComponent } from 'devextreme-angular/ui/select-box';
+import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { DxTextBoxComponent } from 'devextreme-angular/ui/text-box';
+import { DxDateBoxComponent } from 'devextreme-angular/ui/date-box';
 import { CacheService } from 'ng2-cache-service';
 import { finalize } from 'rxjs/operators';
 
@@ -38,6 +39,8 @@ export class CreateInvoiceDialogComponent implements OnInit {
     @ViewChild(ModalDialogComponent) modalDialog: ModalDialogComponent;
     @ViewChild(DxContextMenuComponent) saveContextComponent: DxContextMenuComponent;
     @ViewChild(DxDataGridComponent) linesComponent: DxDataGridComponent;
+    @ViewChild('dueDateComponent') dueDateComponent: DxDateBoxComponent;
+    @ViewChild('dateComponent') dateComponent: DxDateBoxComponent;
     @ViewChild('invoice') invoiceNoComponent: DxTextBoxComponent;
     @ViewChild('contact') contactComponent: DxSelectBoxComponent;
 
@@ -204,7 +207,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
     }
 
     private getDate(value) {
-        return DateHelper.removeTimezoneOffset(new Date(value), false, 'from');
+        return value ? DateHelper.removeTimezoneOffset(new Date(value), false, 'from') : undefined;
     }
 
     private createUpdateEntity(): void {
@@ -272,6 +275,10 @@ export class CreateInvoiceDialogComponent implements OnInit {
         this.data.refreshParent && this.data.refreshParent();
     }
 
+    private validateDate(caption, value) {
+        return value || this._notifyService.error(this.ls.l('RequiredField', '', caption));
+    }
+
     save(event?): void {
         if (event && event.offsetX > event.target.closest('button').offsetWidth - 32)
             return this.saveContextComponent.instance.option('visible', true);
@@ -279,10 +286,18 @@ export class CreateInvoiceDialogComponent implements OnInit {
         if (!this.invoiceNo)
             return this.invoiceNoComponent.instance.option('isValid', false);
 
-        if (isNaN(this.contactId))
+        if (isNaN(this.contactId)) {
+            this._notifyService.error(this.ls.l('RequiredField', '', this.ls.l('Client')));
             return this.contactComponent.instance.option('isValid', false);
+        }
 
-        if (!this.lines.length)
+        if (!this.validateDate(this.ls.l('Date'), this.date))
+            return this.dateComponent.instance.option('isValid', false);
+
+        if (!this.validateDate(this.ls.l('Invoice_DueOnReceipt'), this.dueDate))
+            return this.dueDateComponent.instance.option('isValid', false);
+
+        if (this.lines.some(line => !(line['Description'] && line['Quantity'] && line['Rate'])))
             return this._notifyService.error(this.ls.l('InvoiceLinesShouldBeDefined'));
 
         this.saveContextMenuItems.some((item, index) => {
