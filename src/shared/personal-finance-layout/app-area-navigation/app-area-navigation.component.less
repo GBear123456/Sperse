@@ -26,7 +26,6 @@
         flex-wrap: nowrap;
         justify-content: center;
         li {
-            display: inline-block;
             padding: 0 15px;
             a {
                 padding: 12px 25px;
@@ -48,8 +47,8 @@
                 border-width: 0 1px 1px 0 !important;
                 display: inline-block;
                 padding: 2px;
-                width: 0px;
-                height: 0px;
+                width: 0;
+                height: 0;
                 margin: 3px;
             }
             &:hover, &.active {
@@ -59,8 +58,8 @@
                     border: solid #fff;
                     display: inline-block;
                     padding: 2px;
-                    width: 0px;
-                    height: 0px;
+                    width: 0;
+                    height: 0;
                     margin: 3px;
                 }
             }
@@ -80,10 +79,12 @@
             a {
                 display: block;
                 text-decoration: none;
-                font-family: Poppins;
-                font-size: 14px;
-                font-weight: 600;
                 white-space: nowrap;
+                font-family: Montserrat;
+                font-size: 16px;
+                font-weight: 300;
+                letter-spacing: 0.2px;
+                color: rgb(51, 51, 51);
 
                 &.disabled {
                     color: #535354 !important;
@@ -102,8 +103,7 @@
             a.active,
             a:hover,
             &.active > a {
-                color: #fff;
-                background: #000;
+                text-shadow: 0 0 1px #202b35;
                 img {
                     opacity: 0;
                     &.active-img {
@@ -121,9 +121,9 @@
     .sublinks,
     .app-responsive-menu {
         background-color: #FFF;
-        border: 1px solid #000;
+        border: 1px solid #dfdfdf;
         border-radius: 8px;
-        padding: 19px 0px 17px 0px;
+        padding: 19px 0 17px 0;
         top: 60px;
         li {
             display: block;
@@ -204,7 +204,7 @@
             display: inline-block;
             &:last-child {
                 padding-right: 0;
-                margin-right: 0px;
+                margin-right: 0;
             }
 
             + li {
@@ -276,6 +276,17 @@
             }
         }
     }
+
+    .app-area-navigation,
+    .app-responsive-menu,
+    .sublinks {
+        li a {
+            font-family: Poppins;
+            font-size: 14px;
+            font-weight: 600;
+        }
+    }
+
     .app-responsive-menu,
     .sublinks {
         background-color: #313131 !important;

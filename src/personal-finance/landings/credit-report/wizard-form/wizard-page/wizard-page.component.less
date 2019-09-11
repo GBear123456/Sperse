@@ -1,6 +1,5 @@
 /deep/ .wizard-wrap {
     position: relative;
-    min-height: 100vh;
     height: 100%;
     background: #97f6f7 linear-gradient(77deg, #0dc1c3, #97f6f7);
     overflow: hidden;
@@ -168,6 +167,7 @@ p {
 
 .dx-field-value {
     float: left;
+    width: 55% !important;
 }
 
 .dx-fieldset {
@@ -225,7 +225,7 @@ p {
 }
 
 .lastName {
-    width: 35%;
+    width: 30%;
 }
 
 .lastName, .firstName {
@@ -234,6 +234,10 @@ p {
     /deep/ input {
         text-transform: capitalize !important;
     }
+}
+
+.dx-field-label {
+    width: 45%;
 }
 
 .dx-field-label,

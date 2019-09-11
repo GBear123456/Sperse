@@ -138,6 +138,8 @@ export class AccountsComponent extends AppComponentBase implements OnInit, OnDes
         };
         if (this.appSession.tenant.customLayoutType === LayoutType.LendSpace) {
             settings['userCss'] = AppConsts.appBaseHref + 'assets/common/styles/custom/lend-space/lend-space-quovo.css';
+        } else {
+            settings['userCss'] = AppConsts.appBaseHref + 'assets/accounts/accounts-quovo.css';
         }
         Quovo.embed(settings);
         this.lastQuouvoActivity = new Date();
