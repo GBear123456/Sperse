@@ -48,7 +48,8 @@ export class PersonalFinanceHeaderComponent {
             imgUrl: 'assets/images/icons/credit-report-icon.svg',
             activeImgUrl: 'assets/images/icons/credit-report-active-icon.svg',
             routerUrl: '/personal-finance/credit-reports',
-            sublinks: null
+            sublinks: null,
+            hidden: !this.featureService.isEnabled(AppFeatures.PFMCreditReport)
         },
         {
             name: 'creditResources',
@@ -92,6 +93,7 @@ export class PersonalFinanceHeaderComponent {
                     imgUrl: 'assets/images/icons/credit-report-icon.svg',
                     activeImgUrl: 'assets/images/icons/credit-report-active-icon.svg',
                     routerUrl: '/personal-finance/my-finances',
+                    hidden: false,
                     sublinks: [
                         {
                             name: 'Accounts',
@@ -134,7 +136,7 @@ export class PersonalFinanceHeaderComponent {
     }
 
     private getAppAreaLinks() {
-        var links = [
+        let links = [
             {
                 name: 'Loans',
                 sublinks: [
@@ -159,6 +161,11 @@ export class PersonalFinanceHeaderComponent {
             {
                 name: 'My Credit',
                 sublinks: [
+                    {
+                        name: this.ls.ls('PFM', 'creditReportLink'),
+                        routerUrl: '/personal-finance/credit-reports',
+                        hidden: !this.featureService.isEnabled(AppFeatures.PFMCreditReport)
+                    },
                     {
                         name: this.ls.ls('PFM', 'creditScores'),
                         routerUrl: '/personal-finance/offers/credit-scores'
@@ -217,13 +224,6 @@ export class PersonalFinanceHeaderComponent {
                 routerUrl: this.loggedUserId ? '/personal-finance/resources' : null
             }
         ];
-
-        if (this.featureService.isEnabled(AppFeatures.PFMCreditReport)) {
-            links[2].sublinks.unshift({
-                name: this.ls.ls('PFM', 'creditReportLink'),
-                routerUrl: '/personal-finance/credit-reports'
-            });
-        }
 
         return links;
     }

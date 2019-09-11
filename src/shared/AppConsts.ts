@@ -66,7 +66,10 @@ export class AppConsts {
         taxNumber: '00-0000000',
         zipCode: '00000',
         zipCodeLong: '00000-0000',
-        phoneExt: '99999'
+        phoneExt: '99999',
+        creditCardNumber: '0000-0000-0000-0099',
+        expirationDate: '00/0000',
+        cvvCode: '0009'
     };
 
     static readonly formatting = {
