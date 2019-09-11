@@ -1,9 +1,10 @@
 import {
     Component, HostBinding, ViewContainerRef,
-    OnInit, OnDestroy, Injector, Renderer2
+    OnInit, OnDestroy, Injector, Renderer2, Inject
 } from '@angular/core';
-import { AppComponentBase } from '@shared/common/app-component-base';
+import { DOCUMENT } from '@angular/common';
 import { ActivationEnd } from '@angular/router';
+import { AppComponentBase } from '@shared/common/app-component-base';
 import humanize from 'underscore.string/humanize';
 import { AppFeatures } from '@shared/AppFeatures';
 import { LayoutType } from '@root/shared/service-proxies/service-proxies';
@@ -23,13 +24,14 @@ export class PersonalFinanceComponent extends AppComponentBase implements OnInit
     wrapperEnabled = false;
     hideFooter = false;
     loggedUserId: number;
-    scrollbarWidth: string;
+    widthWithoutScrollbar: string = this.document.body.clientWidth + 'px';
 
     private viewContainerRef: ViewContainerRef;
     public constructor(
         injector: Injector,
         viewContainerRef: ViewContainerRef,
-        private _render: Renderer2
+        private render: Renderer2,
+        @Inject(DOCUMENT) public document: any
     ) {
         super(injector);
         this.viewContainerRef = viewContainerRef; // You need this small hack in order to catch application root view container ref (required by ng2 bootstrap modal)
@@ -54,8 +56,7 @@ export class PersonalFinanceComponent extends AppComponentBase implements OnInit
     }
 
     ngOnInit(): void {
-        this._render.addClass(document.body, 'pfm');
-        this.scrollbarWidth = this.getScrollbarWidth();
+        this.render.addClass(document.body, 'pfm');
         /*
                 this.getRootComponent().addScriptLink('https://use.typekit.net/ocj2gqu.js', 'text/javascript', () => {
                     try { Typekit.load({ async: true }); } catch (e) { }
@@ -63,30 +64,7 @@ export class PersonalFinanceComponent extends AppComponentBase implements OnInit
         */
     }
 
-    getScrollbarWidth(): string {
-
-        // Creating invisible container
-        const outer = document.createElement('div');
-        outer.style.visibility = 'hidden';
-        outer.style.overflow = 'scroll'; // forcing scrollbar to appear
-        outer.style.msOverflowStyle = 'scrollbar'; // needed for WinJS apps
-        document.body.appendChild(outer);
-
-        // Creating inner element and placing it in the container
-        const inner = document.createElement('div');
-        outer.appendChild(inner);
-
-        // Calculating difference between container's full width and the child width
-        const scrollbarWidth = (outer.offsetWidth - inner.offsetWidth);
-
-        // Removing temporary elements from the DOM
-        outer.parentNode.removeChild(outer);
-
-        return scrollbarWidth + 'px';
-
-    }
-
     ngOnDestroy() {
-        this._render.removeClass(document.body, 'pfm');
+        this.render.removeClass(document.body, 'pfm');
     }
 }
