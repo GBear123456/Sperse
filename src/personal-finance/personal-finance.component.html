@@ -1,10 +1,10 @@
-<personal-finance-header [ngStyle]="{ width: 'calc(100% - ' + scrollbarWidth + ')' }"></personal-finance-header>
+<personal-finance-header [ngStyle]="{ width: widthWithoutScrollbar }"></personal-finance-header>
 
 <main id="main" class="page-content">
-    <div [ngClass]="{'wrapper': wrapperEnabled}">
+    <div [ngClass]="{ wrapper: wrapperEnabled }">
         <div *ngIf="wrapperEnabled"
              class="wrapperBackground"
-             [ngStyle]="{ width: 'calc(100% - ' + scrollbarWidth + ')' }"></div>
+             [ngStyle]="{ width: widthWithoutScrollbar }"></div>
         <router-outlet></router-outlet>
     </div>
 </main>
