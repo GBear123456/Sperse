@@ -1,11 +1,14 @@
 /** Core imports */
 import { Component, Injector, OnInit } from '@angular/core';
 
+/** Third party imports */
+import * as moment from 'moment';
+
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppSessionService } from '@shared/common/session/app-session.service';
-import * as moment from 'moment';
+import { environment } from '@root/environments/environment';
 
 @Component({
     templateUrl: './host-layout.component.html',
@@ -30,5 +33,8 @@ export class HostLayoutComponent extends AppComponentBase implements OnInit {
         let tenant = this._appSession.tenant;
         if (tenant)
             this.tenantName = tenant.name || tenant.tenancyName;
+
+        if (abp.session.multiTenancySide == abp.multiTenancy.sides.HOST)
+            this.originUrl = environment.publicUrl;
     }
 }

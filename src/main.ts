@@ -29,7 +29,7 @@ if (environment.hmr) {
 } else {
     let loginPageHandler = window['loginPageHandler'];
     if (loginPageHandler) {
-        loginPageHandler(this, bootstrap);
+        loginPageHandler(this, bootstrap, environment);
     } else
         bootstrap(); //Regular bootstrap
 }
