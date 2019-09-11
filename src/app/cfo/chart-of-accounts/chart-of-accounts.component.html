@@ -1,7 +1,7 @@
 <div [@routerTransition]>
     <app-headline [config]="headlineConfig"></app-headline>
     <div class="content-wrap">
-        <setup-steps #setupStep SelectedStepIndex="2" [ngStyle]="{position: setupStep.collapsed ? 'absolute' : 'relative'}" ></setup-steps>
+        <setup-steps #setupStep SelectedStepIndex="2"></setup-steps>
         <div class="grid-wrapper" [ngStyle]="{flex: isInstanceAdmin ? 'unset': 1}">
             <categorization [width]="'calc(100vw - ' + (setupStep.collapsed ? 420 : 744) + 'px)'"
                             [height]="'calc(100vh - 218px)'"

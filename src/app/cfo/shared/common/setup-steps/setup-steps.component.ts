@@ -1,13 +1,16 @@
 /** Core imports */
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Injector, Input, EventEmitter, Output, HostBinding } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Injector, 
+    Input, EventEmitter, Output, HostBinding, OnDestroy } from '@angular/core';
 
 /** Third party imports */
+import { Subscription } from 'rxjs';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 
 /** Application imports */
 import { InstanceType } from '@shared/service-proxies/service-proxies';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { CfoIntroComponent } from '../../cfo-intro/cfo-intro.component';
+import { SetupStepsService } from './setup-steps.service';
 
 @Component({
     templateUrl: './setup-steps.component.html',
@@ -15,9 +18,8 @@ import { CfoIntroComponent } from '../../cfo-intro/cfo-intro.component';
     selector: 'setup-steps',
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class SetupStepComponent extends CFOComponentBase {
-    @HostBinding('class.collapsed') @Input() collapsed: boolean =
-        this._cfoService.hasStaticInstance || !!this.instanceId;
+export class SetupStepComponent extends CFOComponentBase implements OnDestroy {
+    @HostBinding('class.collapsed') @Input() collapsed: boolean;
 
     @Input() SelectedStepIndex: number;
     @Input() SetupSteps = [
@@ -35,12 +37,18 @@ export class SetupStepComponent extends CFOComponentBase {
     @Output() onToggle: EventEmitter<boolean> = new EventEmitter<boolean>();
 
     private dialogConfig = new MatDialogConfig();
+    private subscription: Subscription;
 
     constructor(
         injector: Injector,
-        public dialog: MatDialog
+        public dialog: MatDialog,
+        private setupStepsService: SetupStepsService
     ) {
         super(injector);
+
+        this.subscription = setupStepsService.collapsed$.subscribe(collapsed => {
+            this.collapsed = collapsed;
+        });
     }
 
     onClick(elem) {
@@ -68,7 +76,11 @@ export class SetupStepComponent extends CFOComponentBase {
     }
 
     toggle() {
-        this.collapsed = !this.collapsed;
-        this.onToggle.emit(this.collapsed);
+        this.setupStepsService.toggle();
+        this.onToggle.emit(!this.collapsed);
+    }
+
+    ngOnDestroy() {
+        this.subscription.unsubscribe();
     }
 }

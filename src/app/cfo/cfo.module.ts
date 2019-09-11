@@ -94,6 +94,7 @@ import { ReportsComponent } from './reports/reports.component';
 import { CalendarButtonComponent } from '@app/cfo/shared/common/calendar-button/calendar-button.component';
 import { SendNotificationDialogComponent } from '@app/cfo/reports/send-notification-dialog/send-notification-dialog.component';
 import { GenerateReportDialogComponent } from '@app/cfo/reports/generate-report-dialog/generate-report-dialog.component';
+import { SetupStepsService } from '@app/cfo/shared/common/setup-steps/setup-steps.service';
 
 let COMPONENTS = [
     StartComponent,
@@ -206,6 +207,7 @@ let COMPONENTS = [
         DashboardComponent
     ],
     providers: [
+        SetupStepsService,
         CashflowServiceProxy,
         ContactServiceProxy,
         SyncServiceProxy,
