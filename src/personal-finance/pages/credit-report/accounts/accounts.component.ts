@@ -96,7 +96,8 @@ export class AccountsComponent implements AfterViewInit {
         let maxHistoryDate = moment(new Date(0));
         this.accountInfo.forEach(account => {
             let history = this.creditHistory[account.bureau] = {};
-            maxHistoryDate = moment.max(maxHistoryDate, account.maxAccountHistoryDate);
+            if (account.maxAccountHistoryDate)
+                maxHistoryDate = moment.max(maxHistoryDate, account.maxAccountHistoryDate);
             account.twoYearHistory.forEach(data => {
                 let historyIndex = String(data.year) + (data.month - 1);
                 history[historyIndex] = {};
