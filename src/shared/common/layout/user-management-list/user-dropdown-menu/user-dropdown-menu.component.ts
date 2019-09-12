@@ -42,6 +42,7 @@ export class UserDropdownMenuComponent implements OnInit {
     shownLoginInfo: { fullName, email, tenantName?};
     recentlyLinkedUsers: LinkedUserDto[];
     menuItemTypes = UserDropdownMenuItemType;
+    bankCode = [];
 
     constructor(
         injector: Injector,

@@ -41,7 +41,7 @@
             <dxi-column dataField="sslCertificateId" caption="{{ls.l('SslCertificateId')}}" [visible]="false"></dxi-column>
             <dxi-column dataField="hostName" caption="{{ls.l('HostName')}}"></dxi-column>
             <dxi-column dataField="hostType" caption="{{ls.l('Type')}}">
-                <dxo-lookup [dataSource]="hostType" valueExpr="id" displayExpr="name"></dxo-lookup>
+                <dxo-lookup [dataSource]="hostTypes" valueExpr="id" displayExpr="name"></dxo-lookup>
             </dxi-column>
             <dxi-column dataField="organizationUnitId" caption="{{ls.l('OrganizationUnits')}}">
                 <dxo-lookup [dataSource]="orgUnits | async" valueExpr="id" displayExpr="displayName"></dxo-lookup>
