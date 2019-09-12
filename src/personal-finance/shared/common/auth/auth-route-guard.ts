@@ -43,10 +43,11 @@ export class CreditReportsRouteGuard implements CanActivate, CanActivateChild {
 
     canActivateChild(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
         if (UrlHelper.isPfmAppUrl(state.url)) {
-            if (this._featureChecker.isEnabled(AppFeatures.PFMApplications))
+            if (this._featureChecker.isEnabled(AppFeatures.PFMApplications)
+                || this._featureChecker.isEnabled(AppFeatures.PFMCreditReport))
                 this._router.navigate([this._sessionService.user ? '/personal-finance/home' : '/account/login']);
             else
-                this._router.navigate([this.selectBestRoute()]);
+                this._router.navigate(['/']);
             return false;
         } else if (this._sessionService.user) {
             if (!route.data || !route.data['permission']
@@ -71,13 +72,4 @@ export class CreditReportsRouteGuard implements CanActivate, CanActivateChild {
         }
     }
 
-    selectBestRoute(): string {
-        if (this._featureChecker.isEnabled(AppFeatures.PFMApplications))
-            return '/personal-finance/home';
-
-        if (this._featureChecker.isEnabled(AppFeatures.PFMCreditReport))
-            return '/personal-finance/credit-report';
-
-        return '/';
-    }
 }

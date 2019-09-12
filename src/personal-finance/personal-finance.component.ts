@@ -24,7 +24,6 @@ export class PersonalFinanceComponent extends AppComponentBase implements OnInit
     wrapperEnabled = false;
     hideFooter = false;
     loggedUserId: number;
-    widthWithoutScrollbar: string = this.document.body.clientWidth + 'px';
 
     private viewContainerRef: ViewContainerRef;
     public constructor(
@@ -53,6 +52,10 @@ export class PersonalFinanceComponent extends AppComponentBase implements OnInit
                 });
             }
         });
+    }
+
+    get widthWithoutScrollbar() {
+        return this.document.body.clientWidth + 'px';
     }
 
     ngOnInit(): void {

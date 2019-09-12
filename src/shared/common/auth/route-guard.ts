@@ -111,10 +111,10 @@ export class RouteGuard implements CanActivate, CanActivateChild {
 
         if (!preferedModule) {
             if (this._feature.isEnabled(AppFeatures.PFMApplications))
-            return '/personal-finance';
+                return '/personal-finance';
 
             if (this._feature.isEnabled(AppFeatures.PFMCreditReport)) {
-                return '/personal-finance/credit-report';
+                return '/personal-finance/home';
             }
         }
 

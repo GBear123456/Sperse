@@ -43,7 +43,7 @@
                 </a>
             </li>
 
-            <user-dropdown-menu *ngIf="layoutService.showUserProfileMenu" [subtitle]="userCompany$ | async" [dropdownMenuItems]="dropdownMenuItems"></user-dropdown-menu>
+            <user-dropdown-menu *ngIf="layoutService.showUserProfileMenu" [subtitle]="userCompany$ | async" [dropdownMenuItems]="userManagementService.defaultDropDownItems"></user-dropdown-menu>
         </user-management-list>
         <top-bar></top-bar>
     </div>

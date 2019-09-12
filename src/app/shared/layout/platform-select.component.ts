@@ -26,14 +26,14 @@ export class PlatformSelectComponent extends AppComponentBase {
 
     constructor(
         injector: Injector,
-        public _appService: AppService,
-        public _layoutService: LayoutService
+        private appService: AppService,
+        public layoutService: LayoutService
     ) {
         super(injector);
 
-        _appService.getModules().forEach((module) => {
-            if (_appService.isModuleActive(module.name) && !module.isMemberPortal) this.activeModuleCount++;
-            let config = _appService.getModuleConfig(module.name);
+        appService.getModules().forEach((module) => {
+            if (appService.isModuleActive(module.name) && !module.isMemberPortal) this.activeModuleCount++;
+            let config = appService.getModuleConfig(module.name);
             if (module.showInDropdown) {
                 let moduleConfig = {
                     code: config ? config.code : module.name,
@@ -52,16 +52,16 @@ export class PlatformSelectComponent extends AppComponentBase {
                     if (module.name !== 'CFO' && module.name !== 'PFM' && !this.isDisabled(module.name)) {
                         this.modules.footerItems.push(moduleConfig);
                     } else if (module.name === 'CFO'
-                        && this._appService.isModuleActive(module.name)
-                        && !_appService.isHostTenant
+                        && this.appService.isModuleActive(module.name)
+                        && !appService.isHostTenant
                         && this.feature.isEnabled(AppFeatures.CFOPartner)
                         && this.permission.isGranted(AppPermissions.CFOMemberAccess)
                     ) {
                         this.modules.footerItems.push(moduleConfig);
                     } else if (
                         module.name === 'PFM'
-                        && this._appService.isModuleActive(module.name)
-                        && this.feature.isEnabled(AppFeatures.PFMApplications)
+                        && this.appService.isModuleActive(module.name)
+                        && (this.feature.isEnabled(AppFeatures.PFMApplications) || this.feature.isEnabled(AppFeatures.PFMCreditReport))
                     ) {
                         this.modules.footerItems = this.modules.footerItems.filter((item) => item.name !== 'CFO');
                         this.modules.footerItems.push(moduleConfig);
@@ -71,9 +71,9 @@ export class PlatformSelectComponent extends AppComponentBase {
                 }
             }
         });
-        _appService.subscribeModuleChange((config) => {
+        appService.subscribeModuleChange((config) => {
             this.module = config['name'];
-            this.uri = _appService.params.instance;
+            this.uri = appService.params.instance;
             this.cssClass = this.module.toLowerCase();
             this.hoverModule = this.module;
             this.setTitle(config['name']);
@@ -82,10 +82,10 @@ export class PlatformSelectComponent extends AppComponentBase {
 
     onItemClick(module) {
         if ((this.module !== module.name || this.uri !== module.uri || module.footerItem) &&
-            this._appService.isModuleActive(module.name)
+            this.appService.isModuleActive(module.name)
         ) {
             let navigate = null;
-            let moduleConfig = this._appService.getModuleConfig(module.name);
+            let moduleConfig = this.appService.getModuleConfig(module.name);
             if (moduleConfig.defaultPath) {
                 navigate = this._router.navigate([moduleConfig.defaultPath]);
             } else if (module.name === 'PFM' && module.footerItem) {
@@ -100,7 +100,7 @@ export class PlatformSelectComponent extends AppComponentBase {
                 if (result) {
                     this.module = module.name;
                     this.uri = module.uri;
-                    this._appService.switchModule(this.module, { instance: this.uri });
+                    this.appService.switchModule(this.module, { instance: this.uri });
                 }
                 this._dropDown.option('disabled', false);
             });
@@ -109,7 +109,7 @@ export class PlatformSelectComponent extends AppComponentBase {
     }
 
     isDisabled(item) {
-        return !this._appService.isModuleActive(item);
+        return !this.appService.isModuleActive(item);
     }
 
     onDropDownInit(event) {
