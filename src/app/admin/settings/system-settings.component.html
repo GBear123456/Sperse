@@ -18,7 +18,7 @@
             <dxi-column dataField="thumbprint" caption="{{ls.l('Thumbprint')}}"></dxi-column>
             <dxi-column [width]="100" [allowFiltering]="false" [allowSorting]="false" [allowReordering]="false" cellTemplate="editDeleteTemplate"></dxi-column>
             <div *dxTemplate="let data of 'editDeleteTemplate'">
-                <a class="dx-link" (click)="deleteCertificate(data)">{{ls.l('Delete')}}</a>
+                <a class="dx-link action" (click)="deleteCertificate(data)">{{ls.l('Delete')}}</a>
             </div>
             <div *dxTemplate="let cellData of 'dateCell'">
                 {{cellData.value | date: 'MM/dd/yyyy, h:mm a'}}
@@ -41,20 +41,24 @@
             <dxi-column dataField="sslCertificateId" caption="{{ls.l('SslCertificateId')}}" [visible]="false"></dxi-column>
             <dxi-column dataField="hostName" caption="{{ls.l('HostName')}}"></dxi-column>
             <dxi-column dataField="hostType" caption="{{ls.l('Type')}}">
-                <dxo-lookup [dataSource]="hostTypes" valueExpr="Id" displayExpr="Name"></dxo-lookup>
+                <dxo-lookup [dataSource]="hostType" valueExpr="id" displayExpr="name"></dxo-lookup>
             </dxi-column>
+            <dxi-column dataField="organizationUnitId" caption="{{ls.l('OrganizationUnits')}}">
+                <dxo-lookup [dataSource]="orgUnits | async" valueExpr="id" displayExpr="displayName"></dxo-lookup>
+            </dxi-column>            
             <dxi-column dataField="isActive" caption="{{ls.l('Active')}}"></dxi-column>
             <dxi-column dataField="sslCertificateExpiration" caption="{{ls.l('ExpirationDate')}}" cellTemplate="dateCell"></dxi-column>
             <dxi-column dataField="sslCertificateThumbprint" caption="{{ls.l('Thumbprint')}}"></dxi-column>
             <dxi-column [width]="100" [allowFiltering]="false" [allowSorting]="false" [allowReordering]="false" cellTemplate="editDeleteTemplate"></dxi-column>
             <div *dxTemplate="let data of 'editDeleteTemplate'">
-                <a class="dx-link" (click)="showSSLBindingDialog(data)">{{ls.l('Edit')}}</a>
-                <a class="dx-link" (click)="deleteSSLBinding(data)">{{ls.l('Delete')}}</a>
+                <a class="dx-link action" (click)="showSSLBindingDialog(data)">{{ls.l('Edit')}}</a>
+                <a class="dx-link action" (click)="deleteSSLBinding(data)">{{ls.l('Delete')}}</a>
             </div>
             <div *dxTemplate="let cellData of 'dateCell'">
                 {{cellData.value | date: 'MM/dd/yyyy, h:mm a'}}
             </div>
         </dx-data-grid>
-    </div>
-    <addOrEditSSLBindingModal #addOrEditSSLBindingModal [hostTypes]="hostTypes" (modalSave)="refreshSSLBindingGrid()"></addOrEditSSLBindingModal>
+    </div>    
 </dx-scroll-view>
+
+<addOrEditSSLBindingModal #addOrEditSSLBindingModal [hostTypes]="hostTypes" [orgUnits]="orgUnits" (modalSave)="refreshSSLBindingGrid()"></addOrEditSSLBindingModal>
