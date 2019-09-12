@@ -1,6 +1,6 @@
 import { Component, Input, Output, EventEmitter, ContentChildren, QueryList, AfterContentInit } from '@angular/core';
 
-import { WizardStepComponent } from './wizard-step.component'
+import { WizardStepComponent } from './wizard-step.component';
 /**
  * # WizardComponent
  * @version 2.0.0
@@ -40,7 +40,7 @@ import { WizardStepComponent } from './wizard-step.component'
 })
 
 export class WizardComponent implements AfterContentInit {
-    private version: string = "1.0.3.0";
+    private version = '1.0.3.0';
 
     /**
      * @property {object}   defaults                       - The default values for wizard.
@@ -52,7 +52,7 @@ export class WizardComponent implements AfterContentInit {
      * @property {number}   defaults.hiddenDisableSteps    - The default hiddenDisableSteps.
      */
     public defaults = {
-        orientation: "landscape",
+        orientation: 'landscape',
         disableTabs: false,
         hiddenTabs: false,
         currentTab: 0,
@@ -86,7 +86,7 @@ export class WizardComponent implements AfterContentInit {
     @Input()
     set orientation(format: string) {
         this.defaults.orientation = format;
-    };
+    }
     get orientation() {
         return this.defaults.orientation;
     }
@@ -117,13 +117,13 @@ export class WizardComponent implements AfterContentInit {
     @Input()
     set disableTabs(status: any) {
 
-        if (typeof status == "boolean") {
+        if (typeof status == 'boolean') {
             this.defaults.disableTabs = status;
             return;
         }
 
-        if (typeof status == "string") {
-            this.defaults.disableTabs = status == "yes";
+        if (typeof status == 'string') {
+            this.defaults.disableTabs = status == 'yes';
             return;
         }
     }
@@ -156,13 +156,13 @@ export class WizardComponent implements AfterContentInit {
      */
      @Input()
      set hiddenTabs(status: any) {
-         if (typeof status == "boolean") {
+         if (typeof status == 'boolean') {
              this.defaults.hiddenTabs = status;
              return;
          }
 
-         if (typeof status == "string") {
-             this.defaults.hiddenTabs = status == "yes";
+         if (typeof status == 'string') {
+             this.defaults.hiddenTabs = status == 'yes';
              return;
          }
      }
@@ -198,7 +198,7 @@ export class WizardComponent implements AfterContentInit {
             return;
 
         this.defaults.disableSteps = indexs;
-    };
+    }
     get disableSteps(): Array<number> {
         return this.defaults.disableSteps;
     }
@@ -227,16 +227,16 @@ export class WizardComponent implements AfterContentInit {
      */
     @Input()
     set hiddenDisableSteps(status: any) {
-      if (typeof status == "boolean") {
+      if (typeof status == 'boolean') {
           this.defaults.hiddenDisableSteps = status;
           return;
       }
 
-      if (typeof status == "string") {
-          this.defaults.hiddenDisableSteps = status == "yes";
+      if (typeof status == 'string') {
+          this.defaults.hiddenDisableSteps = status == 'yes';
           return;
       }
-    };
+    }
     get hiddenDisableSteps() {
         return this.defaults.hiddenDisableSteps;
     }
@@ -268,7 +268,7 @@ export class WizardComponent implements AfterContentInit {
 
     @Input()
     set currentStep(index: number) {
-        this.defaults.currentTab = this.getRealIndex(parseInt("" + index));
+        this.defaults.currentTab = this.getRealIndex(parseInt('' + index));
 
         if (this.wizardSteps != null && this.wizardSteps.length > 0) {
             this.setPanel(this.defaults.currentTab);
@@ -359,7 +359,7 @@ export class WizardComponent implements AfterContentInit {
             return;
         }
         let i = this.defaults.disableSteps.indexOf(index);
-        if(i > -1) {
+        if (i > -1) {
           this.defaults.disableSteps.splice(i, 1);
         }
     }
@@ -409,7 +409,7 @@ export class WizardComponent implements AfterContentInit {
             && nindex <= this.wizardSteps.length
         ) {
             nindex += i;
-        };
+        }
 
         if (nindex == 0)
             return 0;
