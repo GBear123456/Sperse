@@ -1,9 +1,20 @@
-/deep/ .dx-state-readonly input,
-.dx-selectbox .dx-texteditor-input:read-only {
-    color: #ababab;
-    cursor: not-allowed !important;
-}
+:host {
+    .modal-header {
+        flex-flow: column;
+    }
 
-/deep/ .dx-selectbox.dx-state-hover.dx-state-readonly .dx-dropdowneditor-icon {
-    background-color: transparent;
+    .modal-title span { 
+        position: relative;
+        top: 15px;
+    }
+
+    /deep/ .dx-state-readonly input,
+    .dx-selectbox .dx-texteditor-input:read-only {
+        color: #ababab;
+        cursor: not-allowed !important;
+    }
+
+    /deep/ .dx-selectbox.dx-state-hover.dx-state-readonly .dx-dropdowneditor-icon {
+        background-color: transparent;
+    }
 }
