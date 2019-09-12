@@ -122,11 +122,10 @@
     }
 
     .adaptive-menu {
-        float: left;
+        overflow: hidden;
         padding-top: 20px;
-        margin-left: 0;
-        width: 36px;
-        margin-right: 10px;
+        min-width: 36px;
+        max-width: 36px;
 
         @media (max-width: 767px) {
             margin-right: 0;
@@ -173,6 +172,7 @@
 }
 
 /deep/ .dx-menu-adaptive-mode {
+    max-width: 200px;
     [accesskey="nav-menu"] {
         background: #fff;
     }
