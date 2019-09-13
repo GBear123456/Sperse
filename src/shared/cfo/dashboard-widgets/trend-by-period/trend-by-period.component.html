@@ -164,6 +164,7 @@
                 <dxo-label [customizeText]="customizeAxisValues">
                     <dxo-format type="currency largeNumber"></dxo-format>
                 </dxo-label>
+                <dxo-title [text]="leftAxisTitle$ | async"></dxo-title>
                 <dxo-grid color="#e5e9ec" [visible]="true"></dxo-grid>
             </dxi-value-axis>
 
@@ -174,6 +175,7 @@
                 <dxo-label [customizeText]="customizeAxisValues">
                     <dxo-format type="currency largeNumber"></dxo-format>
                 </dxo-label>
+                <dxo-title [text]="rightAxisTitle$ | async"></dxo-title>
                 <dxo-grid color="#e5e9ec" [visible]="true"></dxo-grid>
             </dxi-value-axis>
 
