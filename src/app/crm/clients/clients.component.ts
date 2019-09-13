@@ -288,7 +288,6 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                     }),
                     new FilterModel({
                         component: FilterInputsComponent,
-                        operator: 'contains',
                         caption: 'email',
                         items: { Email: new FilterItemModel() }
                     }),
