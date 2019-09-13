@@ -249,7 +249,6 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                     }),
                     new FilterModel({
                         component: FilterInputsComponent,
-                        operator: 'contains',
                         caption: 'email',
                         items: { Email: new FilterItemModel() }
                     }),
