@@ -192,7 +192,7 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit, 
         'CFO_Dashboard_TrendByPeriod_SelectedChart',
         this.sessionService.tenantId,
         this.sessionService.userId,
-        this._cfoService.instanceId || 
+        this._cfoService.instanceId ||
         this._cfoService.instanceType
     ].join('_');
     selectedChartType: BehaviorSubject<ChartType> = new BehaviorSubject(
@@ -201,6 +201,12 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit, 
             : ( this._cfoService.hasStaticInstance ? ChartType.Combined : ChartType.CashInflowsAndOutflows )
     );
     selectedChartType$: Observable<ChartType> = this.selectedChartType.asObservable();
+    leftAxisTitle$: Observable<string> = this.selectedChartType$.pipe(
+        map(selectedChartType => selectedChartType === ChartType.Combined ? this.l('TrendByPeriod_CashBalancesTrends') : '')
+    );
+    rightAxisTitle$: Observable<string> = this.selectedChartType$.pipe(
+        map(selectedChartType => selectedChartType === ChartType.Combined ? this.l('TrendByPeriod_CashInflowsAndOutflows') : '')
+    );
 
     constructor(
         injector: Injector,
