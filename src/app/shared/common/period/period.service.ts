@@ -26,28 +26,36 @@ export class PeriodService {
         Period.LastYear,
         Period.AllPeriods
     ];
-    cfoService: CFOService;
+    
     selectedPeriod: PeriodModel;
     considerSettingsTimezone = true;
 
     constructor(
         injector: Injector,
+        private cfoService: CFOService,
         private cacheService: CacheService,
         private ls: AppLocalizationService,
         @Inject('considerSettingsTimezone') @Optional() considerSettingsTimezone?: boolean,
         @Inject('defaultPeriod') @Optional() defaultPeriod?: Period
     ) {
-        this.cfoService = injector.get(CFOService);
         this.selectedPeriod = this.getDatePeriod(
-            this.cacheService.get(this.PERIOD_CACHE_KEY) || defaultPeriod || Period.ThisYear
+            this.cacheService.get(this.getCacheKey()) || defaultPeriod || Period.ThisYear
         );
         if (considerSettingsTimezone !== null) {
             this.considerSettingsTimezone = considerSettingsTimezone;
         }
     }
 
+    getCacheKey() {
+        return [
+            this.PERIOD_CACHE_KEY, 
+            this.cfoService.instanceId || 
+            this.cfoService.instanceType
+        ].join('_');
+    }
+
     saveSelectedPeriodInCache(period: Period) {
-        this.cacheService.set(this.PERIOD_CACHE_KEY, period.toString());
+        this.cacheService.set(this.getCacheKey(), period.toString());
     }
 
     getDatePeriod(period: Period): PeriodModel {
