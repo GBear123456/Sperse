@@ -576,7 +576,9 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 items: [
                     {
                         name: 'delete',
-                        disabled: !this.selectedLeads.length,
+                        disabled: !this.selectedLeads.length || 
+                            !this._contactService.checkCGPermission(this.contactGroupId) ||
+                            this.selectedLeads.length > 1 && !this.isGranted(AppPermissions.CRMBulkUpdates),
                         action: this.deleteLeads.bind(this)
                     }
                 ]

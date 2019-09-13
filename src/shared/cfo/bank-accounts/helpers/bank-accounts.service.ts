@@ -45,7 +45,13 @@ export class BankAccountsService {
     businessEntitiesAmount$: Observable<number>;
     selectedBusinessEntities$: Observable<BusinessEntityDto[]>;
     selectedBusinessEntitiesIds$: Observable<number[]>;
-    bankAccountsCacheKey = `Dashboard_BankAccounts_${abp.session.tenantId}_${abp.session.userId}_${this.cfoService.instanceType}`;
+    bankAccountsCacheKey = [
+        'Dashboard_BankAccounts',
+        abp.session.tenantId,
+        abp.session.userId,
+        this.cfoService.instanceId || 
+        this.cfoService.instanceType
+    ].join('_');
     state: BankAccountsState = {
         selectedBankAccountIds: [],
         statuses: [
@@ -117,7 +123,7 @@ export class BankAccountsService {
         private ls: AppLocalizationService
     ) {
         this.cfoService.instanceChanged$.subscribe((instance: InstanceModel) => {
-            const instanceText = instance.instanceType || instance.instanceId;
+            const instanceText = instance.instanceId || instance.instanceType;
             this.bankAccountsCacheKey = `Dashboard_BankAccounts_${abp.session.tenantId}_${abp.session.userId}_${instanceText}`;
         });
         this.syncAccounts$ = this._syncAccounts.asObservable().pipe(distinctUntilChanged(this.arrayDistinct));

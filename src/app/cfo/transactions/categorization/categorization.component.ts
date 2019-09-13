@@ -98,7 +98,13 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
         }
     };
     private currentTypeId: any;
-    private readonly _expandedCacheKey = `Categorization_Tree_Expanded_${abp.session.tenantId}_${abp.session.userId}`;
+    private readonly _expandedCacheKey = [
+        'Categorization_Tree_Expanded',
+        abp.session.tenantId,
+        abp.session.userId,
+        this._cfoService.instanceId ||
+        this._cfoService.instanceType
+    ].join('_');
 
     toolbarConfig: any;
     excelData = [];

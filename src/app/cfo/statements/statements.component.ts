@@ -7,7 +7,6 @@ import { AppConsts } from '@shared/AppConsts';
 import { MatDialog } from '@angular/material';
 import { Store, select } from '@ngrx/store';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
-import { CacheService } from 'ng2-cache-service';
 import * as moment from 'moment';
 import { Observable, Subject, combineLatest, of } from 'rxjs';
 import {
@@ -128,7 +127,6 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
         private _filtersService: FiltersService,
         private _bankAccountService: BankAccountsServiceProxy,
         private _cashFlowForecastServiceProxy: CashFlowForecastServiceProxy,
-        private _cacheService: CacheService,
         private _cfoPreferences: CfoPreferencesService,
         private _dialog: MatDialog,
         private _lifecycleService: LifecycleSubjectsService,

@@ -6,7 +6,6 @@ import { CurrencyPipe } from '@angular/common';
 import { MatDialog } from '@angular/material';
 import { DxChartComponent } from 'devextreme-angular/ui/chart';
 import { getMarkup, exportFromMarkup } from 'devextreme/viz/export';
-import { CacheService } from 'ng2-cache-service';
 import { BehaviorSubject, Observable, Subject, combineLatest, of } from 'rxjs';
 import { catchError, finalize, first, filter, switchMap, tap, takeUntil, mapTo, withLatestFrom } from 'rxjs/operators';
 import * as moment from 'moment';
@@ -178,7 +177,6 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
         private _filtersService: FiltersService,
         private _bankAccountService: BankAccountsServiceProxy,
         private _cashFlowForecastServiceProxy: CashFlowForecastServiceProxy,
-        private _cacheService: CacheService,
         private _statsService: StatsService,
         private _dialog: MatDialog,
         private _lifecycleService: LifecycleSubjectsService,
