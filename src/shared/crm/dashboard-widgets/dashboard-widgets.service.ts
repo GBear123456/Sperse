@@ -12,6 +12,7 @@ import { GetTotalsOutput } from '@shared/service-proxies/service-proxies';
 import { CacheService } from '@node_modules/ng2-cache-service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { PeriodService } from '@app/shared/common/period/period.service';
+import { Period } from '@app/shared/common/period/period.enum';
 
 @Injectable()
 export class DashboardWidgetsService  {
@@ -92,8 +93,8 @@ export class DashboardWidgetsService  {
         this._refresh.next(null);
     }
 
-    periodChanged(period: string) {
-        this._period.next(this._periodService.getDatePeriodFromName(period));
+    periodChanged(period: Period) {
+        this._period.next(this._periodService.getDatePeriod(period));
     }
 
     getPercentage(value, total) {

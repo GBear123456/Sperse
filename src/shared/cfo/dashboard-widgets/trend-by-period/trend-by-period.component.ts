@@ -152,7 +152,7 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit, 
     refresh$: Observable<null> = this.dashboardService.refresh$;
     period$ = this.dashboardService.period$.pipe(
         map((period: PeriodModel) => {
-            let periodName = period.period;
+            let periodName = period.name;
             if (periodName === 'year' || periodName === 'quarter' || periodName === 'all') {
                 periodName = 'month';
             } else {

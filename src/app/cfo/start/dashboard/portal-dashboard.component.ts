@@ -16,6 +16,7 @@ import { TrendByPeriodComponent } from '@shared/cfo/dashboard-widgets/trend-by-p
 import { DashboardService } from '@shared/cfo/dashboard-widgets/dashboard.service';
 import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
 import { TopSpendingCategoriesComponent } from '@shared/cfo/dashboard-widgets/top-spending-categories/top-spending-categories.component';
+import { Period } from '@app/shared/common/period/period.enum';
 
 @Component({
     selector: 'portal-dashboard',
@@ -92,7 +93,7 @@ export class PortalDashboardComponent extends CFOComponentBase implements OnInit
         this.bankAccountsService.load(true, false).subscribe();
     }
 
-    periodChanged(period: string) {
+    periodChanged(period: Period) {
         this._dashboardService.periodChanged(period);
     }
 

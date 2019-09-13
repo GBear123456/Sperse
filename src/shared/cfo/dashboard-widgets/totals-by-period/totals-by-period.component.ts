@@ -39,6 +39,7 @@ import {
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 import { BankAccountsService } from '@shared/cfo/bank-accounts/helpers/bank-accounts.service';
 import { TotalDataModel } from '@shared/cfo/dashboard-widgets/totals-by-period/total-data.model';
+import { Period } from '@app/shared/common/period/period.enum';
 
 @Component({
     selector: 'app-totals-by-period',
@@ -63,17 +64,17 @@ export class TotalsByPeriodComponent extends CFOComponentBase implements OnInit 
     period$: Observable<any> = this.dashboardService.period$.pipe(
         map((period: PeriodModel) => {
             let groupBy;
-            switch (period.name) {
-                case this.l('Today'):
-                case this.l('Yesterday'):
+            switch (period.period) {
+                case Period.Today:
+                case Period.Yesterday:
                     groupBy = 'Daily';
                     break;
-                case this.l('This_Week'):
+                case Period.ThisWeek:
                     groupBy = 'Weekly';
                     break;
-                case this.l('This_Month'):
-                case this.l('Last_Month'):
-                case this.l('Last_Quarter'):
+                case Period.ThisMonth:
+                case Period.LastMonth:
+                case Period.LastQuarter:
                     groupBy = 'Monthly';
                     break;
                 default:

@@ -16,6 +16,7 @@ import { TotalsByPeriodComponent } from '@shared/cfo/dashboard-widgets/totals-by
 import { TrendByPeriodComponent } from '@shared/cfo/dashboard-widgets/trend-by-period/trend-by-period.component';
 import { DashboardService } from '@shared/cfo/dashboard-widgets/dashboard.service';
 import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
+import { Period } from '@app/shared/common/period/period.enum';
 
 @Component({
     selector: 'dashboard',
@@ -81,7 +82,7 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, OnDe
         this.bankAccountsService.load(true, false).subscribe();
     }
 
-    periodChanged(period: string) {
+    periodChanged(period: Period) {
         this._dashboardService.periodChanged(period);
     }
 
