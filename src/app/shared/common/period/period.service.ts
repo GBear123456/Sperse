@@ -34,12 +34,12 @@ export class PeriodService {
         injector: Injector,
         private cacheService: CacheService,
         private ls: AppLocalizationService,
-        @Inject('considerSettingsTimezone') @Optional() considerSettingsTimezone?: boolean
+        @Inject('considerSettingsTimezone') @Optional() considerSettingsTimezone?: boolean,
+        @Inject('defaultPeriod') @Optional() defaultPeriod?: Period
     ) {
         this.cfoService = injector.get(CFOService);
-        this.selectedPeriod = this.getDatePeriod(this.cacheService.exists(this.PERIOD_CACHE_KEY)
-            ? this.cacheService.get(this.PERIOD_CACHE_KEY)
-            : (this.cfoService && this.cfoService.hasStaticInstance ? Period.LastQuarter : Period.ThisYear)
+        this.selectedPeriod = this.getDatePeriod(
+            this.cacheService.get(this.PERIOD_CACHE_KEY) || defaultPeriod || Period.ThisYear
         );
         if (considerSettingsTimezone !== null) {
             this.considerSettingsTimezone = considerSettingsTimezone;
