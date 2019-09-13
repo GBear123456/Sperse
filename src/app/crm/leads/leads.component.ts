@@ -320,7 +320,6 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 }),
                 new FilterModel({
                     component: FilterInputsComponent,
-                    operator: 'contains',
                     caption: 'Email',
                     items: {Email: new FilterItemModel()}
                 }),
