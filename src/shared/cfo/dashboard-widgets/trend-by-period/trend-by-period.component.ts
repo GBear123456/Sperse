@@ -188,7 +188,13 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit, 
         }
     ];
     chartType = ChartType;
-    private selectedChartCacheKey = 'CFO_Dashboard_TrendByPeriod_SelectedChart_' + this.sessionService.tenantId + '_' + this.sessionService.userId;
+    private selectedChartCacheKey = [
+        'CFO_Dashboard_TrendByPeriod_SelectedChart',
+        this.sessionService.tenantId,
+        this.sessionService.userId,
+        this._cfoService.instanceId || 
+        this._cfoService.instanceType
+    ].join('_');
     selectedChartType: BehaviorSubject<ChartType> = new BehaviorSubject(
         this.cacheService.exists(this.selectedChartCacheKey)
             ? this.cacheService.get(this.selectedChartCacheKey)
