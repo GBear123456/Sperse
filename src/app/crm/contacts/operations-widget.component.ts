@@ -199,7 +199,8 @@ export class OperationsWidgetComponent extends AppComponentBase {
                         {
                             name: 'delete',
                             action: this.delete.bind(this),
-                            visible: Boolean(this.leadId)
+                            visible: Boolean(this.leadId) &&
+                                this._contactService.checkCGPermission(this.customerType)
                         }
                     ]
                 },

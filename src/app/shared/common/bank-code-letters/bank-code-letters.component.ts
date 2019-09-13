@@ -6,7 +6,8 @@ import { DialogService } from '@app/shared/common/dialogs/dialog.service';
 @Component({
     selector: 'bank-code-letters',
     templateUrl: './bank-code-letters.component.html',
-    styleUrls: ['./bank-code-letters.component.less']
+    styleUrls: ['./bank-code-letters.component.less'],
+    providers: [ DialogService ]
 })
 export class BankCodeLettersComponent {
     @Input() bankCode: string;

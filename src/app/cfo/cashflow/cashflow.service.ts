@@ -742,8 +742,8 @@ export class CashflowService {
                     .startOf('year')
                     .set({
                         quarter: cellData.quarter,
-                        month: cellData.month ? cellData.month - 1 : cellData.month,
-                        date: cellData.day
+                        month: cellData.month ? (cellData.month - 1) || this.requestFilter.startDate.getMonth() : null,
+                        date: cellData.day || this.requestFilter.startDate.getDate()
                     });
             }
         }
@@ -1182,7 +1182,7 @@ export class CashflowService {
             }
 
             if (this.isColumnGrandTotal(summaryCell, cellRow)) {
-                return this.modifyGrandTotalSummary(summaryCell, false);
+                return this.modifyGrandTotalSummary(summaryCell);
             }
 
             /** if cell is starting balance account cell - then add account sum from previous period */
@@ -1226,7 +1226,7 @@ export class CashflowService {
             }
 
             if (this.isCellIsStartingBalanceSummary(summaryCell, cellRow, cellValue)) {
-                return (summaryCell.value() || 0) + this.getCurrentValueForStartingBalanceCell(summaryCell);
+                return (summaryCell.value(true) || 0) + this.getCurrentValueForStartingBalanceCell(summaryCell);
             }
 
             return this.cellRowIsNotEmpty(cellRow, cellValue) ? summaryCell.value() || 0 : null;
@@ -1342,11 +1342,13 @@ export class CashflowService {
      */
     modifyStartingBalanceAccountCell(summaryCell, prevWithParent) {
         const prevEndingAccountValue = this.getCellValue(prevWithParent, Total);
-        const prevIsFirstColumn = this.getPrevWithParent(prevWithParent) ? true : false;
-        const prevCellValue = prevWithParent ? prevWithParent.value(prevIsFirstColumn) || 0 : 0;
+        const prevIsNotFirstColumn = !!this.getPrevWithParent(prevWithParent);
+        const prevCellValue = prevWithParent ? prevWithParent.value(prevIsNotFirstColumn) || 0 : 0;
         const prevReconciliation = this.getCellValue(prevWithParent, Reconciliation);
-        //const adjustmentsAlreadyIncludedInStartedBalances = this.getCurrentValueForStartingBalanceCell(prevWithParent);
-        return prevEndingAccountValue /*- adjustmentsAlreadyIncludedInStartedBalances*/ + prevCellValue + prevReconciliation;
+        const adjustmentsAlreadyIncludedInStartedBalances = prevIsNotFirstColumn
+            ? this.getCurrentValueForStartingBalanceCell(prevWithParent)
+            : 0;
+        return prevEndingAccountValue + prevCellValue + prevReconciliation - adjustmentsAlreadyIncludedInStartedBalances;
     }
 
     /**
@@ -1359,12 +1361,14 @@ export class CashflowService {
         const prevTotal = prevWithParent.slice(0, PT);
         const currentCellValue = summaryCell.value() || 0;
         const prevTotalValue = prevTotal ? prevTotal.value() || 0 : 0;
-        const prevIsFirstColumn = this.getPrevWithParent(prevWithParent) ? true : false;
-        const prevCellValue = prevWithParent ? prevWithParent.value(prevIsFirstColumn) || 0 : 0;
+        const prevIsNotFirstColumn = !!this.getPrevWithParent(prevWithParent);
+        const prevCellValue = prevWithParent ? prevWithParent.value(prevIsNotFirstColumn) || 0 : 0;
         const prevReconciliation = prevWithParent.slice(0, PR);
         const prevReconciliationValue = prevReconciliation ? prevReconciliation.value() || 0 : 0;
-        //const adjustmentsAlreadyIncludedInStartedBalances = this.getCurrentValueForStartingBalanceCell(prevWithParent);
-        return currentCellValue + prevTotalValue + prevCellValue + prevReconciliationValue /*- adjustmentsAlreadyIncludedInStartedBalances*/;
+        const adjustmentsAlreadyIncludedInStartedBalances = prevIsNotFirstColumn
+            ? this.getCurrentValueForStartingBalanceCell(prevWithParent)
+            : 0;
+        return currentCellValue + prevTotalValue + prevCellValue + prevReconciliationValue - adjustmentsAlreadyIncludedInStartedBalances;
     }
 
     /**
@@ -1385,15 +1389,13 @@ export class CashflowService {
      * @param summaryCell
      * @return {number}
      */
-    modifyGrandTotalSummary(summaryCell, calculatedStartedBalance = true) {
+    modifyGrandTotalSummary(summaryCell) {
         let startedBalanceCell = summaryCell.slice(0, PSB),
-            startedBalanceCellValue = startedBalanceCell ? (startedBalanceCell.value(calculatedStartedBalance) || 0) : 0,
+            startedBalanceCellValue = startedBalanceCell ? (startedBalanceCell.value(true) || 0) : 0,
             currentCellValue = summaryCell.value() || 0,
             reconciliationTotal = summaryCell.slice(0, PR),
             reconciliationTotalValue = reconciliationTotal && reconciliationTotal.value() || 0,
-            adjustmentsAlreadyIncludedInStartedBalances = calculatedStartedBalance
-                ? this.getCurrentValueForStartingBalanceCell(summaryCell)
-                : 0;
+            adjustmentsAlreadyIncludedInStartedBalances = this.getCurrentValueForStartingBalanceCell(summaryCell);
         return currentCellValue + startedBalanceCellValue + reconciliationTotalValue - adjustmentsAlreadyIncludedInStartedBalances;
     }
 
@@ -1595,6 +1597,49 @@ export class CashflowService {
      */
     isStartingBalanceDataColumn(cell, area): boolean {
         return area === 'data' && cell.rowPath !== undefined && cell.rowPath[0] === PSB;
+    }
+
+    /**
+     * whether or not the cell is balance sheet data cell
+     * @param cell - info about cell
+     * @param area - area of the cell ('data', 'row', 'column')
+     * return {boolean}
+     */
+    isEndingBalanceDataColumn(cell, area): boolean {
+        return area === 'data' && cell.rowPath !== undefined && cell.rowPath[0] === PT;
+    }
+
+    getStartingBalanceAdjustments(cell) {
+        return this.zeroAdjustmentsList.filter(cashflowItem => {
+            return (
+                    cell.rowPath[1] === CategorizationPrefixes.AccountName + cashflowItem.accountId
+                    || (cell.rowPath.length === 1 && cell.rowPath[0] === PSB)
+                ) &&
+                this.cellStartsFromPeriod(cashflowItem.initialDate, cell.columnPath);
+        });
+    }
+
+    getEndingBalanceAdjustments(cell) {
+        return this.zeroAdjustmentsList.filter(cashflowItem => {
+            return cashflowItem.adjustmentType === AdjustmentType._0 &&
+                (
+                    cell.rowPath[1] === CategorizationPrefixes.AccountName + cashflowItem.accountId
+                    || (cell.rowPath.length === 1 && cell.rowPath[0] === PT)
+                ) &&
+                this.cellIsInPeriod(cashflowItem.initialDate, cell.columnPath)
+                && !this.cellStartsFromPeriod(cashflowItem.initialDate, cell.columnPath);
+        });
+    }
+
+    private cellStartsFromPeriod(cellDate: moment.Moment, columnPath: string[]) {
+        const period = this.formattingDate(columnPath);
+        const startDate = moment.max(moment(this.requestFilter.startDate).utc(), period.startDate);
+        return cellDate.isSame(startDate);
+    }
+
+    private cellIsInPeriod(cellDate: moment.Moment, columnPath: string[]): boolean {
+        const period = this.formattingDate(columnPath);
+        return cellDate.isBetween(period.startDate, period.endDate, 'days', '[]');
     }
 
     /**
