@@ -940,7 +940,10 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
     toggleToolbar() {
         this.appService.toolbarToggle();
-        setTimeout(() => this.pivotGrid.instance.repaint(), 0);
+        setTimeout(() => {
+            if (this.pivotGrid && this.pivotGrid.instance)
+                this.pivotGrid.instance.repaint();
+        }, 0);
         this._filtersService.fixed = false;
         this._filtersService.disable();
         this.initToolbarConfig();
