@@ -430,20 +430,15 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 options.elementsToAppend.push(actionButton);
             }
 
-            if (this.cashflowService.isStartingBalanceDataColumn(cell, area)) {
-                let elements = this.cashflowService.zeroAdjustmentsList.filter(cashflowItem => {
-                    return (
-                            cell.rowPath[1] === CategorizationPrefixes.AccountName + cashflowItem.accountId
-                            || (
-                                cell.rowPath.length === 1
-                                && cell.rowPath[0] === CategorizationPrefixes.CashflowType + StartedBalance
-                            )
-                        ) &&
-                        this.cellIsInPeriod(cashflowItem.initialDate, cell.columnPath);
-                });
+            const isStartingBalanceAccountCell = this.cashflowService.isStartingBalanceDataColumn(cell, area);
+            const isEndingBalanceAccountCell = this.cashflowService.isEndingBalanceDataColumn(cell, area);
+            if (isStartingBalanceAccountCell || isEndingBalanceAccountCell) {
+                let elements = isStartingBalanceAccountCell
+                    ? this.cashflowService.getStartingBalanceAdjustments(cell)
+                    : this.cashflowService.getEndingBalanceAdjustments(cell);
                 if (elements.length) {
                     let sum = elements.reduce((x, y) => x + y.amount, 0);
-                    options.classes.push('containsInfo');
+                    options.classes.push('containsInfo', isStartingBalanceAccountCell ? 'starting-balance-info' : 'ending-balance-info');
                     let infoElement = this.cashflowService.createActionButton('info', {
                         'data-sum': sum
                     });
@@ -824,6 +819,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                         from: new FilterItemModel(dateRange.from.value),
                         to: new FilterItemModel(dateRange.to.value)
                     };
+                    this.getCellOptionsFromCell.cache = {};
                     this._filtersService.change(this.dateFilter);
                 });
 
@@ -1279,7 +1275,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 this.cashflowService.requestFilter.forecastModelId = forecastModelId;
                 return this._cashflowServiceProxy.getStats(InstanceType[this.instanceType], this.instanceId, this.cashflowService.requestFilter);
             }),
-            pluck('transactionStats')
+            pluck('transactionStats'),
+            finalize(() => this.finishLoading())
         ).subscribe((transactions: TransactionStatsDto[]) => {
             this.handleCashflowData(transactions, period);
             /** override cashflow data push method to add totals and net change automatically after adding of cashflow */
@@ -1301,8 +1298,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             if (completeCallback) {
                 completeCallback.call(this);
             }
-
-            this.finishLoading();
         });
     }
 
@@ -2387,11 +2382,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         }
     }
 
-    private cellIsInPeriod(cellDate: moment.Moment, columnPath: string[]): boolean {
-        const period = this.cashflowService.formattingDate(columnPath);
-        return cellDate.isBetween(period.startDate, period.endDate, 'days', '[]');
-    }
-
     cellIsHistorical(cell) {
         let path = cell.path || cell.columnPath;
         let cellInterval = this.cashflowService.formattingDate(path);
@@ -2611,7 +2601,9 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 infoTooltip.className = 'tootipWrapper';
                 this.infoTooltip = new Tooltip(infoTooltip, {
                     target: targetCell,
-                    contentTemplate: `<div>New account added: ${this.cashflowService.formatAsCurrencyWithLocale(sum)}</div>`,
+                    contentTemplate: `
+                        <div>New account ${targetCell.classList.contains('starting-balance-info') ? 'included' : 'added' }: ${this.cashflowService.formatAsCurrencyWithLocale(sum)}</div>
+                    `,
                 });
                 targetCell.appendChild(infoTooltip);
                 this.infoTooltip.show();
