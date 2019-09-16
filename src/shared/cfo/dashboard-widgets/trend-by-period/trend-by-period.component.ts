@@ -179,6 +179,10 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit, 
             value: ChartType.CashBalancesTrends
         },
         {
+            displayName: this.l('TrendByPeriod_CashBalanceWithNetChange'),
+            value: ChartType.CashBalanceWithNetChange
+        },
+        {
             displayName: this.l('TrendByPeriod_CashInflowsAndOutflows'),
             value: ChartType.CashInflowsAndOutflows
         },
@@ -202,10 +206,39 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit, 
     );
     selectedChartType$: Observable<ChartType> = this.selectedChartType.asObservable();
     leftAxisTitle$: Observable<string> = this.selectedChartType$.pipe(
-        map(selectedChartType => selectedChartType === ChartType.Combined ? this.l('TrendByPeriod_CashBalancesTrends') : '')
+        map((selectedChartType: ChartType) => {
+            return selectedChartType === ChartType.Combined
+                   || selectedChartType === ChartType.CashBalanceWithNetChange
+                   ? this.l('TrendByPeriod_CashBalancesTrends')
+                   : '';
+        })
     );
     rightAxisTitle$: Observable<string> = this.selectedChartType$.pipe(
-        map(selectedChartType => selectedChartType === ChartType.Combined ? this.l('TrendByPeriod_CashInflowsAndOutflows') : '')
+        map((selectedChartType: ChartType) => {
+            let rightAxisTitle = '';
+            if (selectedChartType === ChartType.Combined) {
+                rightAxisTitle = this.l('TrendByPeriod_CashInflowsAndOutflows');
+            }
+            if (selectedChartType === ChartType.CashBalanceWithNetChange) {
+                rightAxisTitle = this.l('TrendByPeriod_NetChange');
+            }
+            return rightAxisTitle;
+        })
+    );
+    showInflowsOutflowsCharts$: Observable<boolean> = this.selectedChartType$.pipe(
+        map((selectedChartType: ChartType) => (selectedChartType === ChartType.CashInflowsAndOutflows
+        || selectedChartType === ChartType.Combined))
+    );
+    showNetChangeChart$ = this.selectedChartType$.pipe(
+        map((selectedChartType: ChartType) => (selectedChartType === ChartType.CashInflowsAndOutflows
+            || selectedChartType === ChartType.Combined || selectedChartType === ChartType.CashBalanceWithNetChange))
+    );
+    showBalancesChart$ = this.selectedChartType$.pipe(
+        map((selectedChartType: ChartType) => (selectedChartType === ChartType.CashBalancesTrends
+            || selectedChartType === ChartType.Combined || selectedChartType === ChartType.CashBalanceWithNetChange))
+    );
+    showRightAxis$ = this.selectedChartType$.pipe(
+        map((selectedChartType: ChartType) => (selectedChartType === ChartType.Combined || selectedChartType === ChartType.CashBalanceWithNetChange))
     );
 
     constructor(
@@ -350,6 +383,7 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit, 
             map(([stats, selectedChartType]: [BankAccountDailyStatDto[], ChartType]) => {
                 if (selectedChartType === ChartType.CashBalancesTrends
                     || selectedChartType === ChartType.Combined
+                    || selectedChartType === ChartType.CashBalanceWithNetChange
                 ) {
                     let allValues = stats.map(statsItem => statsItem.endingBalance || statsItem['forecastEndingBalance']);
                     const minValue = Math.min.apply(Math, allValues);
@@ -409,7 +443,8 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit, 
 
     getAxisName(chartType: ChartType.CashInflowsAndOutflows | ChartType.CashBalancesTrends): string {
         let axisName = 'leftAxis';
-        if (this.selectedChartType.value === ChartType.Combined) {
+        if (this.selectedChartType.value === ChartType.Combined
+            || this.selectedChartType.value === ChartType.CashBalanceWithNetChange) {
             axisName = chartType === ChartType.CashBalancesTrends ? 'leftAxis' : 'rightAxis';
         }
         return axisName;
