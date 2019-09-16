@@ -5,7 +5,7 @@
             [value]="getSelectedTitle(dataSource)"
             [placeholder]="ls.l('All_Entities') + ' \u25BE'"
             (onOpened)="onPopupOpened($event, dataSource)"
-            (onClosed)="onPopupClosed($event)">
+            (onClosed)="onPopupClosed()">
             <div *dxTemplate="let contentData of 'content'" class="bussiness-entities-chooser">
                 <div class="select-all">
                     <dx-check-box #selectAll
