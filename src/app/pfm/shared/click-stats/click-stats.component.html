@@ -1,16 +1,18 @@
-<dx-data-grid
-    [columns]="columns"
-    [showRowLines]="true"
-    [remoteOperations]="true"
-    [dataSource]="dataSource"
-    [allowColumnReordering]="false"
-    [columnAutoWidth]="true"
-    [allowColumnResizing]="false"
-    [hoverStateEnabled]="true"
-    (onContentReady)="onContentReady($event)">
+<dx-data-grid [columns]="columns"
+              [showRowLines]="true"
+              [remoteOperations]="true"
+              [dataSource]="dataSource"
+              [allowColumnReordering]="false"
+              [columnAutoWidth]="true"
+              [allowColumnResizing]="false"
+              [hoverStateEnabled]="true"
+              (onContentReady)="onContentReady($event)">
 
     <div *dxTemplate="let record of 'countCell'">
         <div><span class="cell-value" (click)="showVisitors(record)">{{ record.data[record.column.dataField] | number }}</span> <span class="percentage">{{ getColumnPercentage(record) }}</span></div>
+    </div>
+    <div *dxTemplate="let record of 'totalCell'">
+        <span class="total-value" (click)="showVisitorsTotal(record)">{{ record.value }}</span>
     </div>
 
     <dxo-sorting mode="none"></dxo-sorting>
