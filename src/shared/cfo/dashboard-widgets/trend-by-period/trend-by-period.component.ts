@@ -329,7 +329,12 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit, 
                     Object.defineProperty(
                         statsItem,
                         'netChange',
-                        { value: statsItem.credit + statsItem.debit, enumerable: true }
+                        {
+                            value: statsItem.isForecast
+                                   ? statsItem['forecastCredit'] + statsItem['forecastDebit']
+                                   : statsItem.credit + statsItem.debit,
+                            enumerable: true
+                        }
                     );
                 });
                 return <any>stats.map((obj) => {
@@ -346,7 +351,7 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit, 
                 if (selectedChartType === ChartType.CashBalancesTrends
                     || selectedChartType === ChartType.Combined
                 ) {
-                    let allValues = stats.map(statsItem => statsItem.endingBalance);
+                    let allValues = stats.map(statsItem => statsItem.endingBalance || statsItem['forecastEndingBalance']);
                     const minValue = Math.min.apply(Math, allValues);
                     const maxValue = Math.max.apply(Math, allValues);
                     const minRange = minValue - (0.2 * Math.abs(maxValue - minValue));
