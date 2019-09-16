@@ -26,7 +26,7 @@ import { PeriodService } from '@app/shared/common/period/period.service';
 import { Period } from '@app/shared/common/period/period.enum';
 import { CFOService } from '@shared/cfo/cfo.service';
 
-function defaultPeriodFactory(cfoService: CFOService) {
+export function defaultPeriodFactory(cfoService: CFOService) {
     return cfoService && cfoService.hasStaticInstance ? Period.LastQuarter : Period.ThisYear;
 }
 
