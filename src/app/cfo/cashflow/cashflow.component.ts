@@ -1047,7 +1047,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 caption: 'BusinessEntity',
                 items: {
                     element: new FilterCheckBoxesModel({
-                        dataSource$: this.bankAccountsService.businessEntities$.pipe(takeUntil(this.destroy$)),
+                        dataSource$: this.bankAccountsService.sortedBusinessEntities$.pipe(takeUntil(this.destroy$)),
                         selectedKeys$: this.bankAccountsService.selectedBusinessEntitiesIds$.pipe(takeUntil(this.destroy$)),
                         nameField: 'name',
                         parentExpr: 'parent',

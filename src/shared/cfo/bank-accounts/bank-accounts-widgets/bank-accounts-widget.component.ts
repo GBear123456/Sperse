@@ -142,7 +142,7 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
         this.bankAccountsService.selectedBankAccountTypes$,
         this.bankAccountsService.selectedStatuses$
     ).pipe(map(([selectedBusinessEntities, selectedBankAccountTypes, selectedStatuses]) => {
-        return !!(selectedBusinessEntities.length || selectedBankAccountTypes.length || selectedStatuses.length);
+        return !!(selectedBusinessEntities.length || (selectedBankAccountTypes && selectedBankAccountTypes.length) || selectedStatuses.length);
     }));
 
     constructor(

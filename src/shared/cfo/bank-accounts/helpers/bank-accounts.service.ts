@@ -49,7 +49,7 @@ export class BankAccountsService {
         'Dashboard_BankAccounts',
         abp.session.tenantId,
         abp.session.userId,
-        this.cfoService.instanceId || 
+        this.cfoService.instanceId ||
         this.cfoService.instanceType
     ].join('_');
     state: BankAccountsState = {
@@ -60,7 +60,7 @@ export class BankAccountsService {
         usedBankAccountIds: [],
         visibleBankAccountIds: [],
         selectedBusinessEntitiesIds: [],
-        selectedBankAccountTypes: []
+        selectedBankAccountTypes: undefined
     };
     tempState: BankAccountsState;
     filteredBankAccounts$: Observable<BankAccountDto[]>;
@@ -84,11 +84,12 @@ export class BankAccountsService {
 
     private _applyFilter = new BehaviorSubject<Boolean>(false);
     applyFilter$ = this._applyFilter.asObservable();
-    _syncAccounts: ReplaySubject<SyncAccountBankDto[]> = new ReplaySubject(1);
-    _businessEntities: BehaviorSubject<BusinessEntityDto[]> = new BehaviorSubject([]);
+    private _syncAccounts: ReplaySubject<SyncAccountBankDto[]> = new ReplaySubject(1);
+    private _businessEntities: BehaviorSubject<BusinessEntityDto[]> = new BehaviorSubject([]);
     syncAccounts$: Observable<SyncAccountBankDto[]>;
     bankAccountsIds$: Observable<number[]>;
     businessEntities$: Observable<BusinessEntityDto[]>;
+    sortedBusinessEntities$: Observable<BusinessEntityDto[]>;
     syncAccountsRequest$;
     businessEntitiesRequest$;
     searchValue: BehaviorSubject<string> = new BehaviorSubject<string>('');
@@ -128,7 +129,8 @@ export class BankAccountsService {
         });
         this.syncAccounts$ = this._syncAccounts.asObservable().pipe(distinctUntilChanged(this.arrayDistinct));
         this.businessEntities$ = this._businessEntities.asObservable().pipe(
-            map((businessEntities: BusinessEntityDto[]) => {
+            tap((businessEntities: BusinessEntityDto[]) => {
+                console.log('business entities', businessEntities);
                 if (this.selectDefaultBusinessEntity) {
                     /** Get default business entities ids and select it */
                     const defaultBusinessEntitiesIds = businessEntities
@@ -139,10 +141,10 @@ export class BankAccountsService {
                     }
                     this.selectDefaultBusinessEntity = false;
                 }
-                return this.sortBusinessEntities(businessEntities);
             }),
             distinctUntilChanged(this.arrayDistinct)
         );
+
         this.bankAccountsIds$ = this.syncAccounts$
             .pipe(
                 map(syncAccounts => {
@@ -192,6 +194,15 @@ export class BankAccountsService {
                 return entitiesIds.concat(entity.id);
             }, [])),
             distinctUntilChanged((oldIds, newIds) => !ArrayHelper.dataChanged(oldIds, newIds))
+        );
+
+        this.sortedBusinessEntities$ = combineLatest(
+            this.businessEntities$,
+            this.selectedBusinessEntitiesIds$
+        ).pipe(
+            map(([businessEntities, selectedBusinessEntitiesIds]: [BusinessEntityDto[], number[]]) => {
+                return this.sortBusinessEntities(businessEntities, selectedBusinessEntitiesIds);
+            })
         );
 
         /**
@@ -388,11 +399,11 @@ export class BankAccountsService {
         }
     }
 
-    sortBusinessEntities(list) {
-        list.forEach(item => {
-            item['selected'] = this.state.selectedBusinessEntitiesIds.indexOf(item.id) >= 0;
+    sortBusinessEntities(businessEntities: BusinessEntityDto[], selectedBusinessEntitiesIds: number[]): BusinessEntityDto[] {
+        businessEntities.forEach(item => {
+            item['selected'] = selectedBusinessEntitiesIds.indexOf(item.id) >= 0;
         });
-        return orderBy(list, ['selected', 'hasChildren', 'name'], ['desc', 'desc', 'asc']);
+        return orderBy(businessEntities, ['selected', 'hasChildren', 'name'], ['desc', 'desc', 'asc']);
     }
 
     load(acceptFilterOnlyOnApply = true, applyFilter = true) {
@@ -498,7 +509,9 @@ export class BankAccountsService {
             map((types: BankAccountType[]) => types.sort(this.sortBankAccountsTypes)),
             distinctUntilChanged(this.arrayDistinct),
             tap(list => {
-                if (!this.cacheService.get(this.bankAccountsCacheKey)) {
+                const cachedState = this.cacheService.get(this.bankAccountsCacheKey);
+                const firstUserLogin = !cachedState || !cachedState.selectedBankAccountTypes;
+                if (firstUserLogin) {
                     this._selectedBankAccountTypes.next(
                         list.filter(item => item.name != 'Bill.com' && item.name != 'Accounting').map(item => item.id)
                     );
@@ -587,7 +600,7 @@ export class BankAccountsService {
         syncAccounts.forEach(syncAccount => {
             let syncAccountCopy: any = { ...{}, ...syncAccount };
             syncAccountCopy['bankAccounts'] = [];
-            if (!selectedTypes.length || selectedTypes.length === allTypes.length) {
+            if (!selectedTypes || !selectedTypes.length || selectedTypes.length === allTypes.length) {
                 syncAccount.bankAccounts.forEach(bankAccount => {
                     syncAccountCopy.bankAccounts.push({ ...{}, ...bankAccount });
                 });
@@ -623,9 +636,6 @@ export class BankAccountsService {
         }
         if (state.hasOwnProperty('statuses')) {
             this.selectedStatuses.next(tempFilter.statuses);
-        }
-        if (saveInCache && state.hasOwnProperty('selectedBusinessEntitiesIds')) {
-            this._businessEntities.next(this._businessEntities.getValue());
         }
         this._syncAccountsState.next(tempFilter);
     }
