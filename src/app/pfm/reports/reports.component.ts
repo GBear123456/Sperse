@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, Injector, OnInit, OnDestroy, ViewChild } from '@angular/core';
+import { Component, Injector, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
 import { DatePipe } from '@angular/common';
 
 /** Third party imports */
@@ -29,6 +29,7 @@ export class ReportsComponent extends AppComponentBase implements OnInit, OnDest
     @ViewChild('offerStatsGrid') offerStatsGrid: DxDataGridComponent;
     @ViewChild('visitorsGrid') visitorsGrid: DxDataGridComponent;
     @ViewChild(SetupStepsComponent) setupStepsComponent: SetupStepsComponent;
+    @ViewChild('rightSection') rightSection: ElementRef;
 
     headlineConfig;
     private rootComponent: any;
@@ -259,6 +260,7 @@ export class ReportsComponent extends AppComponentBase implements OnInit, OnDest
         if (this.section == section)
             return;
 
+        this.loadingService.startLoading(this.rightSection.nativeElement);
         this.section = section;
         this.initConfigs();
         if (repaint) {
@@ -267,7 +269,10 @@ export class ReportsComponent extends AppComponentBase implements OnInit, OnDest
                     this.offerStatsGrid.instance.repaint();
                 else if (section == 'visitors')
                     this.visitorsGrid.instance.repaint();
+                this.loadingService.finishLoading(this.rightSection.nativeElement);
             });
+        } else {
+            this.loadingService.finishLoading(this.rightSection.nativeElement);
         }
     }
 
