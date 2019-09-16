@@ -1,5 +1,5 @@
 /** Core imports */
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Injector, 
+import { ChangeDetectionStrategy, Component, Injector,
     Input, EventEmitter, Output, HostBinding, OnDestroy } from '@angular/core';
 
 /** Third party imports */
@@ -32,7 +32,7 @@ export class SetupStepComponent extends CFOComponentBase implements OnDestroy {
     @Input() HeaderTitle: string = this.l(this._cfoService.initialized ? 'SetupStep_MainHeader' : 'SetupStep_InitialHeader');
     @Input() headerLink: string = this.instanceUri + '/start';
     @Input() showIntroductionTourLink = false;
-    @Input() showToggleButton = !this._cfoService.hasStaticInstance && !this.instanceId 
+    @Input() showToggleButton = !this._cfoService.hasStaticInstance && !this.instanceId
         || this.isInstanceAdmin || this._cfoService.isMainInstanceType;
     @Output() onToggle: EventEmitter<boolean> = new EventEmitter<boolean>();
 

@@ -82,6 +82,10 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, OnDe
         this.bankAccountsService.load(true, false).subscribe();
     }
 
+    rerenderWidgets() {
+        this.trendByPeriodComponent.update();
+    }
+
     periodChanged(period: Period) {
         this._dashboardService.periodChanged(period);
     }

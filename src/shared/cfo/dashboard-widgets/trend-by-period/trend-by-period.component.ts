@@ -272,6 +272,12 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit, 
         this.chartWidth = this.getChartWidth();
     }
 
+    update() {
+        if (this.chartComponent && this.chartComponent.instance) {
+            setTimeout(() => this.chartComponent.instance.render(), 300);
+        }
+    }
+
     getChartWidth() {
         return this.getElementRef().nativeElement.clientWidth - ( AppConsts.isMobile ? 30 : 60 );
     }
@@ -410,6 +416,7 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit, 
     }
 
     activate() {
+        this.update();
         this.lifeCycleService.activate.next();
     }
 
