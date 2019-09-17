@@ -130,7 +130,6 @@ export class BankAccountsService {
         this.syncAccounts$ = this._syncAccounts.asObservable().pipe(distinctUntilChanged(this.arrayDistinct));
         this.businessEntities$ = this._businessEntities.asObservable().pipe(
             tap((businessEntities: BusinessEntityDto[]) => {
-                console.log('business entities', businessEntities);
                 if (this.selectDefaultBusinessEntity) {
                     /** Get default business entities ids and select it */
                     const defaultBusinessEntitiesIds = businessEntities

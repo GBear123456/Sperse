@@ -30,8 +30,9 @@ export class BusinessEntitiesChooserComponent implements OnDestroy {
     @Input() allSelectedTitle = false;
 
     @Output() selectionChanged: EventEmitter<any> = new EventEmitter();
-    @Output() onClosed: EventEmitter<any> = new EventEmitter();
     @Output() onFilterButtonClick: EventEmitter<any> = new EventEmitter();
+    @Output() onChanged: EventEmitter<any> = new EventEmitter();    
+    @Output() onClosed: EventEmitter<any> = new EventEmitter();
 
     syncAccounts  = [];
     selectedItems = [];
@@ -122,10 +123,10 @@ export class BusinessEntitiesChooserComponent implements OnDestroy {
                 }
                 this.bankAccountsService.changeState(state);
                 this.bankAccountsService.applyFilter();
+                this.onChanged.emit(businessEntitiesIds);
             }
         }
-        this.onClosed.emit(businessEntitiesIds);
-
+        this.onClosed.emit();
         if (this._isFilterClick)
             this.onFilterButtonClick.emit(businessEntitiesIds);
         this._isFilterClick = false;
