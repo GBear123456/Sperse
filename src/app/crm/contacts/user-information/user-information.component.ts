@@ -232,9 +232,9 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
                 if (isConfirmed) {
                     this.startLoading(true);
                     this.inviteData.contactId = this.contactInfoData.contactInfo.personContactInfo.id;
-                    let phoneNumber = this.inviteData.phoneNumber;
+                    let phoneNumber = this.phoneFormatPipe.transform(this.inviteData.phoneNumber);
                     this._personContactServiceProxy.createUserForContact(extend(clone(this.inviteData), {
-                        phoneNumber: phoneNumber && phoneNumber.replace(/\D/g, ''),
+                        phoneNumber: phoneNumber && phoneNumber.replace(/[^0-9\+]/g, ''),
                         organizationUnitIds: this.selectedOrgUnits
                     })).pipe(finalize(() => this.finishLoading(true))).subscribe(() => {
                         this._contactsService.invalidate();
