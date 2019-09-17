@@ -50,7 +50,10 @@ export class BankCodeHeaderComponent implements OnInit, OnDestroy {
     }
 
     logoClick() {
-        this.router.navigate(['/code-breaker']);
+        if (this.loggedUserId)
+            this.router.navigate(['/code-breaker']);
+        else 
+            location = location.origin;
     }
 
     ngOnDestroy() {
