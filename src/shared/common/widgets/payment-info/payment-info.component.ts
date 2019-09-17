@@ -71,7 +71,7 @@ export class PaymentInfoComponent extends AppComponentBase implements OnInit {
         let street = event.address_components[1]['long_name'];
 
         this.bankCard.billingAddress = number ? (number + ' ' + street) : street;
-        this.bankCard.billingStateCode = this.googlePlaceHelper.getState(event.address_components);
+        this.bankCard.billingStateCode = GooglePlaceHelper.getStateCode(event.address_components);
         this.bankCard.billingCity = this.googlePlaceHelper.getCity(event.address_components);
     }
 

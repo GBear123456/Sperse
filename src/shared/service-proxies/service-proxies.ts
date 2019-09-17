@@ -22908,6 +22908,58 @@ export class SessionServiceProxy {
         }
         return _observableOf<UpdateUserSignInTokenOutput>(<any>null);
     }
+
+    /**
+     * @return Success
+     */
+    authTest(): Observable<AuthTestOutput> {
+        let url_ = this.baseUrl + "/api/services/Platform/Session/AuthTest";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processAuthTest(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processAuthTest(<any>response_);
+                } catch (e) {
+                    return <Observable<AuthTestOutput>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<AuthTestOutput>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processAuthTest(response: HttpResponseBase): Observable<AuthTestOutput> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? AuthTestOutput.fromJS(resultData200) : new AuthTestOutput();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<AuthTestOutput>(<any>null);
+    }
 }
 
 @Injectable()
@@ -63162,23 +63214,15 @@ export interface IFindOrganizationUnitUsersInput {
 }
 
 export class PackageDto implements IPackageDto {
-    tenantId!: number | undefined;
+    id!: number | undefined;
     name!: string | undefined;
-    idcsPackageId!: number | undefined;
     description!: string | undefined;
     initialPaymentAmount!: number | undefined;
     trialPeriodDays!: number | undefined;
     monthlyPaymentAmount!: number | undefined;
     isActive!: boolean | undefined;
+    isDemo!: boolean | undefined;
     isSimulatorEnabled!: boolean | undefined;
-    isDeleted!: boolean | undefined;
-    deleterUserId!: number | undefined;
-    deletionTime!: moment.Moment | undefined;
-    lastModificationTime!: moment.Moment | undefined;
-    lastModifierUserId!: number | undefined;
-    creationTime!: moment.Moment | undefined;
-    creatorUserId!: number | undefined;
-    id!: number | undefined;
 
     constructor(data?: IPackageDto) {
         if (data) {
@@ -63191,23 +63235,15 @@ export class PackageDto implements IPackageDto {
 
     init(data?: any) {
         if (data) {
-            this.tenantId = data["tenantId"];
+            this.id = data["id"];
             this.name = data["name"];
-            this.idcsPackageId = data["idcsPackageId"];
             this.description = data["description"];
             this.initialPaymentAmount = data["initialPaymentAmount"];
             this.trialPeriodDays = data["trialPeriodDays"];
             this.monthlyPaymentAmount = data["monthlyPaymentAmount"];
             this.isActive = data["isActive"];
+            this.isDemo = data["isDemo"];
             this.isSimulatorEnabled = data["isSimulatorEnabled"];
-            this.isDeleted = data["isDeleted"];
-            this.deleterUserId = data["deleterUserId"];
-            this.deletionTime = data["deletionTime"] ? moment(data["deletionTime"].toString()) : <any>undefined;
-            this.lastModificationTime = data["lastModificationTime"] ? moment(data["lastModificationTime"].toString()) : <any>undefined;
-            this.lastModifierUserId = data["lastModifierUserId"];
-            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
-            this.creatorUserId = data["creatorUserId"];
-            this.id = data["id"];
         }
     }
 
@@ -63220,45 +63256,29 @@ export class PackageDto implements IPackageDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["tenantId"] = this.tenantId;
+        data["id"] = this.id;
         data["name"] = this.name;
-        data["idcsPackageId"] = this.idcsPackageId;
         data["description"] = this.description;
         data["initialPaymentAmount"] = this.initialPaymentAmount;
         data["trialPeriodDays"] = this.trialPeriodDays;
         data["monthlyPaymentAmount"] = this.monthlyPaymentAmount;
         data["isActive"] = this.isActive;
+        data["isDemo"] = this.isDemo;
         data["isSimulatorEnabled"] = this.isSimulatorEnabled;
-        data["isDeleted"] = this.isDeleted;
-        data["deleterUserId"] = this.deleterUserId;
-        data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
-        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
-        data["lastModifierUserId"] = this.lastModifierUserId;
-        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
-        data["creatorUserId"] = this.creatorUserId;
-        data["id"] = this.id;
         return data; 
     }
 }
 
 export interface IPackageDto {
-    tenantId: number | undefined;
+    id: number | undefined;
     name: string | undefined;
-    idcsPackageId: number | undefined;
     description: string | undefined;
     initialPaymentAmount: number | undefined;
     trialPeriodDays: number | undefined;
     monthlyPaymentAmount: number | undefined;
     isActive: boolean | undefined;
+    isDemo: boolean | undefined;
     isSimulatorEnabled: boolean | undefined;
-    isDeleted: boolean | undefined;
-    deleterUserId: number | undefined;
-    deletionTime: moment.Moment | undefined;
-    lastModificationTime: moment.Moment | undefined;
-    lastModifierUserId: number | undefined;
-    creationTime: moment.Moment | undefined;
-    creatorUserId: number | undefined;
-    id: number | undefined;
 }
 
 export class PackageDtoListResultDto implements IPackageDtoListResultDto {
@@ -66384,6 +66404,46 @@ export interface IUpdateUserSignInTokenOutput {
     encodedTenantId: string | undefined;
 }
 
+export class AuthTestOutput implements IAuthTestOutput {
+    tenantName!: string | undefined;
+    userName!: string | undefined;
+
+    constructor(data?: IAuthTestOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.tenantName = data["tenantName"];
+            this.userName = data["userName"];
+        }
+    }
+
+    static fromJS(data: any): AuthTestOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new AuthTestOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["tenantName"] = this.tenantName;
+        data["userName"] = this.userName;
+        return data; 
+    }
+}
+
+export interface IAuthTestOutput {
+    tenantName: string | undefined;
+    userName: string | undefined;
+}
+
 export class CreateStageInput implements ICreateStageInput {
     pipelineId!: number;
     name!: string;
@@ -67657,7 +67717,6 @@ export interface IIntegrationsSettings {
 
 export class EPCVIPOfferProviderSettings implements IEPCVIPOfferProviderSettings {
     apiKey!: string | undefined;
-    notificationApiKey!: string | undefined;
     postbackPassCode!: string | undefined;
 
     constructor(data?: IEPCVIPOfferProviderSettings) {
@@ -67672,7 +67731,6 @@ export class EPCVIPOfferProviderSettings implements IEPCVIPOfferProviderSettings
     init(data?: any) {
         if (data) {
             this.apiKey = data["apiKey"];
-            this.notificationApiKey = data["notificationApiKey"];
             this.postbackPassCode = data["postbackPassCode"];
         }
     }
@@ -67687,7 +67745,6 @@ export class EPCVIPOfferProviderSettings implements IEPCVIPOfferProviderSettings
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["apiKey"] = this.apiKey;
-        data["notificationApiKey"] = this.notificationApiKey;
         data["postbackPassCode"] = this.postbackPassCode;
         return data; 
     }
@@ -67695,7 +67752,6 @@ export class EPCVIPOfferProviderSettings implements IEPCVIPOfferProviderSettings
 
 export interface IEPCVIPOfferProviderSettings {
     apiKey: string | undefined;
-    notificationApiKey: string | undefined;
     postbackPassCode: string | undefined;
 }
 
