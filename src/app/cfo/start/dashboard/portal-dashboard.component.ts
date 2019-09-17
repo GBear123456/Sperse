@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, OnInit, OnDestroy, Injector, ViewChild, HostBinding } from '@angular/core';
+import { Component, OnInit, OnDestroy, Injector, ViewChild } from '@angular/core';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
@@ -30,7 +30,6 @@ export class PortalDashboardComponent extends CFOComponentBase implements OnInit
     @ViewChild(TrendByPeriodComponent) trendByPeriodComponent: TrendByPeriodComponent;
     @ViewChild(TopSpendingCategoriesComponent) topSpendingCategoriesComponent: TopSpendingCategoriesComponent;
     @ViewChild(SynchProgressComponent) synchProgressComponent: SynchProgressComponent;
-    @HostBinding('class.wide') isWideMode = true;
 
     private rootComponent: any;
 
@@ -67,8 +66,7 @@ export class PortalDashboardComponent extends CFOComponentBase implements OnInit
         this.rootComponent.addScriptLink('https://fast.wistia.com/assets/external/E-v1.js');
     }
 
-    toggleLeftMenu(collapsed) {
-        this.isWideMode = collapsed;
+    toggleLeftMenu() {
         setTimeout(() => {
             if (this.trendByPeriodComponent.chartComponent)
                 this.trendByPeriodComponent.chartComponent.instance.render();
