@@ -1,11 +1,22 @@
 /** Core imports */
-import { Component, Injector, Input, Output, ViewChild, OnInit, EventEmitter, ElementRef } from '@angular/core';
+import {
+    Component,
+    Injector,
+    Input,
+    Output,
+    ViewChild,
+    OnInit,
+    OnChanges,
+    EventEmitter,
+    ElementRef,
+    SimpleChanges
+} from '@angular/core';
 
 /** Third party imports */
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import Form from 'devextreme/ui/form';
 import { BehaviorSubject, Observable, combineLatest, forkJoin } from 'rxjs';
-import { finalize, map } from 'rxjs/operators';
+import { distinctUntilChanged, finalize, map } from 'rxjs/operators';
 
 /** Application imports */
 import { BankAccountsService } from '@shared/cfo/bank-accounts/helpers/bank-accounts.service';
@@ -26,6 +37,7 @@ import { ISortItem } from '@app/shared/common/sort-button/sort-item.interface';
 import { IExpandItem } from '@app/shared/common/expand-button/expand-item.interface';
 import { SyncTypeIds } from '@shared/AppEnums';
 import { AppConsts } from '@shared/AppConsts';
+import { ArrayHelper } from '@shared/helpers/ArrayHelper';
 
 @Component({
     selector: 'bank-accounts-widget',
@@ -33,7 +45,7 @@ import { AppConsts } from '@shared/AppConsts';
     styleUrls: ['./bank-accounts-widget.component.less'],
     providers: [ BankAccountsServiceProxy, BusinessEntityServiceProxy, SyncAccountServiceProxy, SyncServiceProxy ]
 })
-export class BankAccountsWidgetComponent extends CFOComponentBase implements OnInit {
+export class BankAccountsWidgetComponent extends CFOComponentBase implements OnInit, OnChanges {
     @ViewChild(DxDataGridComponent) mainDataGrid: DxDataGridComponent;
     @ViewChild('header', { read: ElementRef }) header: ElementRef;
     @Input() showSyncDate = false;
@@ -68,7 +80,6 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
     @Output() onDataChange: EventEmitter<any> = new EventEmitter();
 
     allowEditing = false;
-    bankAccountIdsForHighlight = [];
     editingStarted = false;
 
     /** Editing form instance */
@@ -125,42 +136,21 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
         }
     ];
     refresh$: BehaviorSubject<null> = new BehaviorSubject<null>(null);
-    syncAccounts$: Observable<SyncAccountBankDto[]> = (this.changeOnlyAfterApply
-        ? this.bankAccountsService.filteredSyncAccountsWithApply$
-        : this.bankAccountsService.distinctUntilChangedFilteredSyncAccounts$
-    ).pipe(
-        map((syncAccounts: SyncAccountBankDto[]) => {
-            if (!this.showSyncAccountWithoutBankAccounts) {
-                syncAccounts = syncAccounts.filter(syncAccount => syncAccount.bankAccounts && syncAccount.bankAccounts.length);
-            }
-            if (this.showOnlySelected) {
-                syncAccounts = syncAccounts.filter((syncAccount: SyncAccountBankDto) => {
-                    const selectedBankAccounts = syncAccount.bankAccounts.filter(bankAccount => {
-                        return bankAccount['selected'];
-                    });
-                    if (selectedBankAccounts) {
-                        syncAccount.bankAccounts = selectedBankAccounts;
-                    }
-                    return selectedBankAccounts.length;
-                });
-            }
-            return syncAccounts;
-        })
-    );
+    syncAccounts$: Observable<SyncAccountBankDto[]> = this.getSyncAccounts(this.changeOnlyAfterApply);
     clearButtonIsVisible$: Observable<boolean> = combineLatest(
         this.bankAccountsService.selectedBusinessEntitiesIds$,
         this.bankAccountsService.selectedBankAccountTypes$,
         this.bankAccountsService.selectedStatuses$
     ).pipe(map(([selectedBusinessEntities, selectedBankAccountTypes, selectedStatuses]) => {
-        return !!(selectedBusinessEntities.length || selectedBankAccountTypes.length || selectedStatuses.length);
+        return !!(selectedBusinessEntities.length || (selectedBankAccountTypes && selectedBankAccountTypes.length) || selectedStatuses.length);
     }));
 
     constructor(
         injector: Injector,
-        private _bankAccountsServiceProxy: BankAccountsServiceProxy,
-        private _businessEntityService: BusinessEntityServiceProxy,
-        private _syncAccountServiceProxy: SyncAccountServiceProxy,
-        private _syncServiceProxy: SyncServiceProxy,
+        private bankAccountsServiceProxy: BankAccountsServiceProxy,
+        private businessEntityService: BusinessEntityServiceProxy,
+        private syncAccountServiceProxy: SyncAccountServiceProxy,
+        private syncServiceProxy: SyncServiceProxy,
         public bankAccountsService: BankAccountsService,
         public cfoPreferencesService: CfoPreferencesService
     ) {
@@ -176,6 +166,12 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
 
         if (!this.isInstanceAdmin && !this.isMemberAccessManage) {
             this.contextMenuItems = [];
+        }
+    }
+
+    ngOnChanges(changes: SimpleChanges) {
+        if (changes.changeOnlyAfterApply && changes.changeOnlyAfterApply.firstChange) {
+            this.syncAccounts$ = this.getSyncAccounts(changes['changeOnlyAfterApply'].currentValue);
         }
     }
 
@@ -218,6 +214,32 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
                 method(row.key);
             }
         });
+    }
+
+    private getSyncAccounts(changeOnlyAfterApply: boolean): Observable<SyncAccountBankDto[]> {
+        return (changeOnlyAfterApply
+                ? this.bankAccountsService.filteredSyncAccountsWithApply$
+                : this.bankAccountsService.distinctUntilChangedFilteredSyncAccounts$
+        ).pipe(
+            map((syncAccounts: SyncAccountBankDto[]) => {
+                if (!this.showSyncAccountWithoutBankAccounts) {
+                    syncAccounts = syncAccounts.filter(syncAccount => syncAccount.bankAccounts && syncAccount.bankAccounts.length);
+                }
+                if (this.showOnlySelected) {
+                    syncAccounts = syncAccounts.filter((syncAccount: SyncAccountBankDto) => {
+                        const selectedBankAccounts = syncAccount.bankAccounts.filter(bankAccount => {
+                            return bankAccount['selected'];
+                        });
+                        if (selectedBankAccounts) {
+                            syncAccount.bankAccounts = selectedBankAccounts;
+                        }
+                        return selectedBankAccounts.length;
+                    });
+                }
+                return syncAccounts;
+            }),
+            distinctUntilChanged((oldAccounts, newAccounts) => !ArrayHelper.dataChanged(oldAccounts, newAccounts))
+        );
     }
 
     rowPrepared(e) {
@@ -323,7 +345,7 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
     }
 
     detailCellClick(cell) {
-        if (cell.column.dataField === 'accountName' && this.allowBankAccountsEditing && this.cfoService) {
+        if (cell.rowType === 'data' && cell.column.dataField === 'accountName' && this.allowBankAccountsEditing && this.cfoService) {
             this.openEditPopup(cell);
             return false;
         }
@@ -353,7 +375,7 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
         if (this.allowBankAccountsEditing && this.cfoService && this.businessEntities.length === 1 && !this.accountsTypes) {
             this.instanceType = <any>this.cfoService.instanceType;
             this.instanceId = <any>this.cfoService.instanceId;
-            const businessEntities$ = this._businessEntityService.getBusinessEntities(this.instanceType, this.instanceId);
+            const businessEntities$ = this.businessEntityService.getBusinessEntities(this.instanceType, this.instanceId);
             /** @todo update when api will be ready */
             //let accountsTypesObservable = this._bankAccountsServiceProxy.getAccountsTypes(this.instanceType, this.instanceId);
             forkJoin(businessEntities$/*, accountsTypesObservable*/)
@@ -409,7 +431,7 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
             ...this.getMappedDataForUpdate(e.newData)
         });
         /** Send update request */
-        this._bankAccountsServiceProxy
+        this.bankAccountsServiceProxy
             .updateBankAccount(this.instanceType, this.instanceId, bankAccount)
             .subscribe(
                 () => {
@@ -451,7 +473,7 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
 
     removeAccount(syncAccountId) {
         this.dataSource = this.dataSource.filter(item => item.syncAccountId != syncAccountId);
-        this._syncAccountServiceProxy
+        this.syncAccountServiceProxy
             .delete(this.instanceType, this.instanceId, syncAccountId)
             .subscribe(() => {
                 this.onDataChange.emit();
@@ -459,7 +481,7 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
     }
 
     requestSyncForAccounts(fullResync = false) {
-        this._syncServiceProxy
+        this.syncServiceProxy
             .requestSyncForAccounts(this.instanceType, this.instanceId, fullResync, this.syncAccountIds)
             .subscribe(res => {
                 if (res) {
@@ -472,7 +494,7 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
     }
 
     renameBankAccount() {
-        this._syncAccountServiceProxy
+        this.syncAccountServiceProxy
             .rename(this.instanceType, this.instanceId, this.bankAccountInfo)
             .subscribe(() => {
                 this.reloadDataSource.emit();
@@ -563,15 +585,11 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
 
     calculateBalanceDisplayValue = (e) => {
         let syncAccountBalance = 0;
-        if (this.showCheckboxes) {
-            e.bankAccounts.forEach((bankAccount: BankAccountDto) => {
-                if (bankAccount['selected']) {
-                    syncAccountBalance += bankAccount.balance;
-                }
-            });
-        } else {
-            syncAccountBalance = e.balance;
-        }
+        e.bankAccounts.forEach((bankAccount: BankAccountDto) => {
+            if (bankAccount['selected']) {
+                syncAccountBalance += bankAccount.balance;
+            }
+        });
         return syncAccountBalance;
     }
 }

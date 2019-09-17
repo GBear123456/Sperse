@@ -27,19 +27,25 @@
                 background-color: #f3f3f3;
                 font-weight: bold;
                 color: #000;
+                outline: none;
                 .dx-template-wrapper div {
                     text-align: center;
                     span.cell-value {
                         text-decoration: underline;
                         cursor: pointer;
-                    }                    
+                    }
+                }
+
+                span.total-value {
+                    text-decoration: underline;
+                    cursor: pointer;
                 }
             }
         }
         .dx-datagrid-rowsview {
             .dx-template-wrapper {
-                padding-left: 10px;
                 & > div {
+                    padding-left: 10px;
                     display: flex;
                     justify-content: flex-end;
                     align-items: flex-end;
@@ -58,6 +64,10 @@
             font-weight: 400;
             color: #a0a0a0;
             padding: 0 5px;
+        }
+
+        .dx-datagrid-focus-overlay {
+            border: none !important;
         }
     }
 }

@@ -7,7 +7,7 @@
                           [autoExpandAll]="true"
                           [scrolling]="{showScrollbar: 'never'}"
                           [selectedRowKeys]="bankAccountsService.selectedBusinessEntitiesIds$ | async"
-                          [dataSource]="bankAccountsService.businessEntities$ | async"
+                          [dataSource]="bankAccountsService.sortedBusinessEntities$ | async"
                           (onContentReady)="onContentReady($event)"
                           (onSelectionChanged)="onSelectionChanged($event)"
                           (onInitialized)="onInitialized($event)">

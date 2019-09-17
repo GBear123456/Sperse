@@ -62,14 +62,14 @@
 <div class="row">
     <div class="col-md-6 col-sm-12">
         <div class="dx-field">
-            <div class="dx-field-label">{{ls.l('dob')}}<span *ngIf="offersWizardService.isSpecialOffer">*</span></div>
+            <div class="dx-field-label">{{ls.l('dob')}}<span *ngIf="offersWizardService.isApplicationSubmission">*</span></div>
             <div class="dx-field-value">
                 <dx-date-box
                     [(value)]="offersWizardService.submitApplicationProfileInput.personalInformation.doB"
                     type="date">
                     <dx-validator>
                         <dxi-validation-rule type="custom"
-                                             [validationCallback]="offersWizardService.validateField"
+                                             [validationCallback]="offersWizardService.validateRequiredField"
                                              [message]="this.ls.l('ThisFieldIsRequired')">
                         </dxi-validation-rule>
                     </dx-validator>
@@ -79,7 +79,7 @@
     </div>
     <div class="col-md-6 col-sm-12">
         <div class="dx-field">
-            <div class="dx-field-label">SSN<span *ngIf="offersWizardService.isSpecialOffer">*</span></div>
+            <div class="dx-field-label">SSN<span *ngIf="offersWizardService.isApplicationSubmission">*</span></div>
             <div class="dx-field-value">
                 <dx-text-box name="ssn"
                              showMaskMode="onfocus"
@@ -89,7 +89,7 @@
                              [(value)]="offersWizardService.submitApplicationProfileInput.personalInformation.ssn">
                     <dx-validator>
                         <dxi-validation-rule type="custom"
-                                             [validationCallback]="offersWizardService.validateField"
+                                             [validationCallback]="offersWizardService.validateRequiredField"
                                              [message]="this.ls.l('ThisFieldIsRequired')">
                         </dxi-validation-rule>
                     </dx-validator>

@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, OnInit, OnDestroy, Injector, ViewChild, HostBinding } from '@angular/core';
+import { Component, OnInit, OnDestroy, Injector, ViewChild } from '@angular/core';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
@@ -16,6 +16,7 @@ import { TrendByPeriodComponent } from '@shared/cfo/dashboard-widgets/trend-by-p
 import { DashboardService } from '@shared/cfo/dashboard-widgets/dashboard.service';
 import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
 import { TopSpendingCategoriesComponent } from '@shared/cfo/dashboard-widgets/top-spending-categories/top-spending-categories.component';
+import { Period } from '@app/shared/common/period/period.enum';
 
 @Component({
     selector: 'portal-dashboard',
@@ -29,7 +30,6 @@ export class PortalDashboardComponent extends CFOComponentBase implements OnInit
     @ViewChild(TrendByPeriodComponent) trendByPeriodComponent: TrendByPeriodComponent;
     @ViewChild(TopSpendingCategoriesComponent) topSpendingCategoriesComponent: TopSpendingCategoriesComponent;
     @ViewChild(SynchProgressComponent) synchProgressComponent: SynchProgressComponent;
-    @HostBinding('class.wide') isWideMode = true;
 
     private rootComponent: any;
 
@@ -67,10 +67,11 @@ export class PortalDashboardComponent extends CFOComponentBase implements OnInit
     }
 
     toggleLeftMenu() {
-        this.isWideMode = !this.isWideMode;
         setTimeout(() => {
-            this.trendByPeriodComponent.chartComponent.instance.render();
-            this.topSpendingCategoriesComponent.pieChart.instance.render();
+            if (this.trendByPeriodComponent.chartComponent)
+                this.trendByPeriodComponent.chartComponent.instance.render();
+            if (this.topSpendingCategoriesComponent.pieChart)
+                this.topSpendingCategoriesComponent.pieChart.instance.render();
         }, 300);
     }
 
@@ -90,7 +91,7 @@ export class PortalDashboardComponent extends CFOComponentBase implements OnInit
         this.bankAccountsService.load(true, false).subscribe();
     }
 
-    periodChanged(period: string) {
+    periodChanged(period: Period) {
         this._dashboardService.periodChanged(period);
     }
 

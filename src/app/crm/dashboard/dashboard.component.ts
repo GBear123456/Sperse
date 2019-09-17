@@ -32,6 +32,7 @@ import { CrmIntroComponent } from '../shared/crm-intro/crm-intro.component';
 import { CustomReuseStrategy } from '@root/root-routing.module';
 import { RouteReuseStrategy } from '@angular/router';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
+import { Period } from '@app/shared/common/period/period.enum';
 
 @Component({
     templateUrl: './dashboard.component.html',
@@ -130,7 +131,7 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
         this.dialog.open(CrmIntroComponent, this.dialogConfig);
     }
 
-    periodChanged(period: string) {
+    periodChanged(period: Period) {
         this._dashboardWidgetsService.periodChanged(period);
     }
 

@@ -36,7 +36,7 @@ export class OrganizationUnitsTreeComponent implements OnDestroy {
 
     private userId: number;
     private organizationUnitsData: OrganizationUnitDto[];
-    private lastSeletedItemId: number;
+    private lastSelectedItemId: number;
     private ident = _.uniqueId(this.constructor.name);
 
     toolbarConfig = [
@@ -112,7 +112,7 @@ export class OrganizationUnitsTreeComponent implements OnDestroy {
 
         this.organizationUnitsData.forEach((item) => {
             if (item['selected'] = includes(memberedOrganizationUnits, item.id as any))
-                this.lastSeletedItemId = item.id;
+                this.lastSelectedItemId = item.id;
             item['expanded'] = true;
         });
 
@@ -163,11 +163,11 @@ export class OrganizationUnitsTreeComponent implements OnDestroy {
             });
         else if (event.event) {
             if (this.selectionMode == 'single') {
-                if (this.lastSeletedItemId == event.itemData.id) {
+                if (this.lastSelectedItemId == event.itemData.id) {
                     if (!event.itemData.selected)
                         event.component.selectItem(event.node.key);
                 } else {
-                    this.lastSeletedItemId = event.itemData.id;
+                    this.lastSelectedItemId = event.itemData.id;
                     this.contactsService.orgUnitsSave(this.getSelectedOrganizationUnits());
                 }
             } else {

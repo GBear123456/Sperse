@@ -11,7 +11,7 @@ import { LoggedInCreditReportGuard } from '@root/personal-finance/shared/common/
             {
                 path: '',
                 component: PersonalFinanceComponent,
-                canActivate: [ CreditReportsRouteGuard],
+                canActivate: [ CreditReportsRouteGuard ],
                 canActivateChild: [ CreditReportsRouteGuard ],
                 children: [
                     {

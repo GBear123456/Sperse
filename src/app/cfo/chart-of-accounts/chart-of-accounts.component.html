@@ -1,9 +1,9 @@
 <div [@routerTransition]>
     <app-headline [config]="headlineConfig"></app-headline>
     <div class="content-wrap">
-        <setup-steps SelectedStepIndex="2"></setup-steps>
+        <setup-steps #setupStep SelectedStepIndex="2"></setup-steps>
         <div class="grid-wrapper" [ngStyle]="{flex: isInstanceAdmin ? 'unset': 1}">
-            <categorization [width]="isInstanceAdmin ? 'calc(100vw - 744px)': '100%'"
+            <categorization [width]="'calc(100vw - ' + (setupStep.collapsed ? 420 : 744) + 'px)'"
                             [height]="'calc(100vh - 218px)'"
                             [showTitle]="false"
                             [showHeader]="true"
@@ -45,7 +45,6 @@
                 </div>
             </div>
         </div>
-
     </div>
 
     <dx-data-grid id="gridForExcelContainer" class="hidden-grid" [dataSource]="categorizationComponent.excelData">

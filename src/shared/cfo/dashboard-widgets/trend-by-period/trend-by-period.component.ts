@@ -152,7 +152,7 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit, 
     refresh$: Observable<null> = this.dashboardService.refresh$;
     period$ = this.dashboardService.period$.pipe(
         map((period: PeriodModel) => {
-            let periodName = period.period;
+            let periodName = period.name;
             if (periodName === 'year' || periodName === 'quarter' || periodName === 'all') {
                 periodName = 'month';
             } else {
@@ -179,6 +179,10 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit, 
             value: ChartType.CashBalancesTrends
         },
         {
+            displayName: this.l('TrendByPeriod_CashBalanceWithNetChange'),
+            value: ChartType.CashBalanceWithNetChange
+        },
+        {
             displayName: this.l('TrendByPeriod_CashInflowsAndOutflows'),
             value: ChartType.CashInflowsAndOutflows
         },
@@ -188,13 +192,54 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit, 
         }
     ];
     chartType = ChartType;
-    private selectedChartCacheKey = 'CFO_Dashboard_TrendByPeriod_SelectedChart_' + this.sessionService.tenantId + '_' + this.sessionService.userId;
+    private selectedChartCacheKey = [
+        'CFO_Dashboard_TrendByPeriod_SelectedChart',
+        this.sessionService.tenantId,
+        this.sessionService.userId,
+        this._cfoService.instanceId ||
+        this._cfoService.instanceType
+    ].join('_');
     selectedChartType: BehaviorSubject<ChartType> = new BehaviorSubject(
         this.cacheService.exists(this.selectedChartCacheKey)
             ? this.cacheService.get(this.selectedChartCacheKey)
             : ( this._cfoService.hasStaticInstance ? ChartType.Combined : ChartType.CashInflowsAndOutflows )
     );
     selectedChartType$: Observable<ChartType> = this.selectedChartType.asObservable();
+    leftAxisTitle$: Observable<string> = this.selectedChartType$.pipe(
+        map((selectedChartType: ChartType) => {
+            return selectedChartType === ChartType.Combined
+                   || selectedChartType === ChartType.CashBalanceWithNetChange
+                   ? this.l('TrendByPeriod_CashBalancesTrends')
+                   : '';
+        })
+    );
+    rightAxisTitle$: Observable<string> = this.selectedChartType$.pipe(
+        map((selectedChartType: ChartType) => {
+            let rightAxisTitle = '';
+            if (selectedChartType === ChartType.Combined) {
+                rightAxisTitle = this.l('TrendByPeriod_CashInflowsAndOutflows');
+            }
+            if (selectedChartType === ChartType.CashBalanceWithNetChange) {
+                rightAxisTitle = this.l('TrendByPeriod_NetChange');
+            }
+            return rightAxisTitle;
+        })
+    );
+    showInflowsOutflowsCharts$: Observable<boolean> = this.selectedChartType$.pipe(
+        map((selectedChartType: ChartType) => (selectedChartType === ChartType.CashInflowsAndOutflows
+        || selectedChartType === ChartType.Combined))
+    );
+    showNetChangeChart$ = this.selectedChartType$.pipe(
+        map((selectedChartType: ChartType) => (selectedChartType === ChartType.CashInflowsAndOutflows
+            || selectedChartType === ChartType.Combined || selectedChartType === ChartType.CashBalanceWithNetChange))
+    );
+    showBalancesChart$ = this.selectedChartType$.pipe(
+        map((selectedChartType: ChartType) => (selectedChartType === ChartType.CashBalancesTrends
+            || selectedChartType === ChartType.Combined || selectedChartType === ChartType.CashBalanceWithNetChange))
+    );
+    showRightAxis$ = this.selectedChartType$.pipe(
+        map((selectedChartType: ChartType) => (selectedChartType === ChartType.Combined || selectedChartType === ChartType.CashBalanceWithNetChange))
+    );
 
     constructor(
         injector: Injector,
@@ -225,6 +270,12 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit, 
 
     @HostListener('window:resize', ['$event']) onResize() {
         this.chartWidth = this.getChartWidth();
+    }
+
+    update() {
+        if (this.chartComponent && this.chartComponent.instance) {
+            setTimeout(() => this.chartComponent.instance.render(), 300);
+        }
     }
 
     getChartWidth() {
@@ -317,7 +368,12 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit, 
                     Object.defineProperty(
                         statsItem,
                         'netChange',
-                        { value: statsItem.credit + statsItem.debit, enumerable: true }
+                        {
+                            value: statsItem.isForecast
+                                   ? statsItem['forecastCredit'] + statsItem['forecastDebit']
+                                   : statsItem.credit + statsItem.debit,
+                            enumerable: true
+                        }
                     );
                 });
                 return <any>stats.map((obj) => {
@@ -333,8 +389,9 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit, 
             map(([stats, selectedChartType]: [BankAccountDailyStatDto[], ChartType]) => {
                 if (selectedChartType === ChartType.CashBalancesTrends
                     || selectedChartType === ChartType.Combined
+                    || selectedChartType === ChartType.CashBalanceWithNetChange
                 ) {
-                    let allValues = stats.map(statsItem => statsItem.endingBalance);
+                    let allValues = stats.map(statsItem => statsItem.endingBalance || statsItem['forecastEndingBalance']);
                     const minValue = Math.min.apply(Math, allValues);
                     const maxValue = Math.max.apply(Math, allValues);
                     const minRange = minValue - (0.2 * Math.abs(maxValue - minValue));
@@ -359,6 +416,7 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit, 
     }
 
     activate() {
+        this.update();
         this.lifeCycleService.activate.next();
     }
 
@@ -392,7 +450,8 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit, 
 
     getAxisName(chartType: ChartType.CashInflowsAndOutflows | ChartType.CashBalancesTrends): string {
         let axisName = 'leftAxis';
-        if (this.selectedChartType.value === ChartType.Combined) {
+        if (this.selectedChartType.value === ChartType.Combined
+            || this.selectedChartType.value === ChartType.CashBalanceWithNetChange) {
             axisName = chartType === ChartType.CashBalancesTrends ? 'leftAxis' : 'rightAxis';
         }
         return axisName;

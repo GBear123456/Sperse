@@ -23,6 +23,12 @@ import { DashboardService } from './dashboard.service';
 import { ChooseResetRulesComponent } from './categorization-status/choose-reset-rules/choose-reset-rules.component';
 import { TopSpendingCategoriesComponent } from './top-spending-categories/top-spending-categories.component';
 import { PeriodService } from '@app/shared/common/period/period.service';
+import { Period } from '@app/shared/common/period/period.enum';
+import { CFOService } from '@shared/cfo/cfo.service';
+
+export function defaultPeriodFactory(cfoService: CFOService) {
+    return cfoService && cfoService.hasStaticInstance ? Period.LastQuarter : Period.ThisYear;
+}
 
 @NgModule({
     imports: [
@@ -60,6 +66,11 @@ import { PeriodService } from '@app/shared/common/period/period.service';
     ],
     providers: [
         { provide: 'considerSettingsTimezone', useValue: false },
+        {
+            provide: 'defaultPeriod',
+            useFactory: defaultPeriodFactory,
+            deps: [ CFOService ]
+        },
         PeriodService,
         DashboardService
     ]

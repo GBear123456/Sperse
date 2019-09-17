@@ -10174,7 +10174,7 @@ export class CreditReportServiceProxy {
      * @reportId (optional) 
      * @return Success
      */
-    getCreditReportHistory(periodYears: number | null | undefined, reportId: number | null | undefined): Observable<StringScoreHistoryDtoListKeyValuePair[]> {
+    getCreditReportHistory(periodYears: number | null | undefined, reportId: number | null | undefined): Observable<BureauScoreHistoryDtoListKeyValuePair[]> {
         let url_ = this.baseUrl + "/api/services/PFM/CreditReport/GetCreditReportHistory?";
         if (periodYears !== undefined)
             url_ += "periodYears=" + encodeURIComponent("" + periodYears) + "&"; 
@@ -10198,14 +10198,14 @@ export class CreditReportServiceProxy {
                 try {
                     return this.processGetCreditReportHistory(<any>response_);
                 } catch (e) {
-                    return <Observable<StringScoreHistoryDtoListKeyValuePair[]>><any>_observableThrow(e);
+                    return <Observable<BureauScoreHistoryDtoListKeyValuePair[]>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<StringScoreHistoryDtoListKeyValuePair[]>><any>_observableThrow(response_);
+                return <Observable<BureauScoreHistoryDtoListKeyValuePair[]>><any>_observableThrow(response_);
         }));
     }
 
-    protected processGetCreditReportHistory(response: HttpResponseBase): Observable<StringScoreHistoryDtoListKeyValuePair[]> {
+    protected processGetCreditReportHistory(response: HttpResponseBase): Observable<BureauScoreHistoryDtoListKeyValuePair[]> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -10219,7 +10219,7 @@ export class CreditReportServiceProxy {
             if (resultData200 && resultData200.constructor === Array) {
                 result200 = [];
                 for (let item of resultData200)
-                    result200.push(StringScoreHistoryDtoListKeyValuePair.fromJS(item));
+                    result200.push(BureauScoreHistoryDtoListKeyValuePair.fromJS(item));
             }
             return _observableOf(result200);
             }));
@@ -10228,7 +10228,7 @@ export class CreditReportServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<StringScoreHistoryDtoListKeyValuePair[]>(<any>null);
+        return _observableOf<BureauScoreHistoryDtoListKeyValuePair[]>(<any>null);
     }
 
     /**
@@ -11748,10 +11748,13 @@ export class DictionaryServiceProxy {
     }
 
     /**
+     * @partnersOnly (optional) 
      * @return Success
      */
-    getOrganizationUnits(): Observable<OrganizationUnitShortDto[]> {
-        let url_ = this.baseUrl + "/api/services/CRM/Dictionary/GetOrganizationUnits";
+    getOrganizationUnits(partnersOnly: boolean | null | undefined): Observable<OrganizationUnitShortDto[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/Dictionary/GetOrganizationUnits?";
+        if (partnersOnly !== undefined)
+            url_ += "partnersOnly=" + encodeURIComponent("" + partnersOnly) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -22907,6 +22910,58 @@ export class SessionServiceProxy {
             }));
         }
         return _observableOf<UpdateUserSignInTokenOutput>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    authTest(): Observable<AuthTestOutput> {
+        let url_ = this.baseUrl + "/api/services/Platform/Session/AuthTest";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processAuthTest(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processAuthTest(<any>response_);
+                } catch (e) {
+                    return <Observable<AuthTestOutput>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<AuthTestOutput>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processAuthTest(response: HttpResponseBase): Observable<AuthTestOutput> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? AuthTestOutput.fromJS(resultData200) : new AuthTestOutput();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<AuthTestOutput>(<any>null);
     }
 }
 
@@ -50697,6 +50752,12 @@ export interface ICountryStateDto {
     name: string | undefined;
 }
 
+export enum Bureau {
+    TransUnion = "TransUnion", 
+    Experian = "Experian", 
+    Equifax = "Equifax", 
+}
+
 export enum CreditScoreRank {
     Poor = "Poor", 
     Fair = "Fair", 
@@ -51073,7 +51134,7 @@ export interface IScoreFactorDto {
 }
 
 export class CreditBureauReportDto implements ICreditBureauReportDto {
-    bureau!: string | undefined;
+    bureau!: Bureau | undefined;
     creditScore!: CreditScoreDto | undefined;
     creditSummary!: CreditSummaryDto | undefined;
     personalInfo!: PersonalInfoDto | undefined;
@@ -51136,7 +51197,7 @@ export class CreditBureauReportDto implements ICreditBureauReportDto {
 }
 
 export interface ICreditBureauReportDto {
-    bureau: string | undefined;
+    bureau: Bureau | undefined;
     creditScore: CreditScoreDto | undefined;
     creditSummary: CreditSummaryDto | undefined;
     personalInfo: PersonalInfoDto | undefined;
@@ -51222,7 +51283,7 @@ export interface IAccountCreditHistoryDto {
 }
 
 export class AccountInfoDto implements IAccountInfoDto {
-    bureau!: string | undefined;
+    bureau!: Bureau | undefined;
     status!: AccountStatus | undefined;
     totalCreditLimit!: number | undefined;
     availableCredit!: number | undefined;
@@ -51307,7 +51368,7 @@ export class AccountInfoDto implements IAccountInfoDto {
 }
 
 export interface IAccountInfoDto {
-    bureau: string | undefined;
+    bureau: Bureau | undefined;
     status: AccountStatus | undefined;
     totalCreditLimit: number | undefined;
     availableCredit: number | undefined;
@@ -51417,7 +51478,7 @@ export enum AlertType {
 
 export class AlertDto implements IAlertDto {
     type!: AlertType | undefined;
-    bureau!: string | undefined;
+    bureau!: Bureau | undefined;
     date!: moment.Moment | undefined;
     text!: string | undefined;
 
@@ -51458,7 +51519,7 @@ export class AlertDto implements IAlertDto {
 
 export interface IAlertDto {
     type: AlertType | undefined;
-    bureau: string | undefined;
+    bureau: Bureau | undefined;
     date: moment.Moment | undefined;
     text: string | undefined;
 }
@@ -51552,7 +51613,7 @@ export interface ICreditorContactDto {
 }
 
 export class ConsumerStatementDto implements IConsumerStatementDto {
-    bureau!: string | undefined;
+    bureau!: Bureau | undefined;
     date!: moment.Moment | undefined;
     statement!: string | undefined;
 
@@ -51590,13 +51651,13 @@ export class ConsumerStatementDto implements IConsumerStatementDto {
 }
 
 export interface IConsumerStatementDto {
-    bureau: string | undefined;
+    bureau: Bureau | undefined;
     date: moment.Moment | undefined;
     statement: string | undefined;
 }
 
 export class PublicRecordBureauInfoDto implements IPublicRecordBureauInfoDto {
-    bureau!: string | undefined;
+    bureau!: Bureau | undefined;
     title!: string | undefined;
     type!: string | undefined;
     status!: string | undefined;
@@ -51661,7 +51722,7 @@ export class PublicRecordBureauInfoDto implements IPublicRecordBureauInfoDto {
 }
 
 export interface IPublicRecordBureauInfoDto {
-    bureau: string | undefined;
+    bureau: Bureau | undefined;
     title: string | undefined;
     type: string | undefined;
     status: string | undefined;
@@ -51979,11 +52040,11 @@ export interface IScoreHistoryDto {
     score: number | undefined;
 }
 
-export class StringScoreHistoryDtoListKeyValuePair implements IStringScoreHistoryDtoListKeyValuePair {
-    key!: string | undefined;
+export class BureauScoreHistoryDtoListKeyValuePair implements IBureauScoreHistoryDtoListKeyValuePair {
+    key!: Bureau | undefined;
     value!: ScoreHistoryDto[] | undefined;
 
-    constructor(data?: IStringScoreHistoryDtoListKeyValuePair) {
+    constructor(data?: IBureauScoreHistoryDtoListKeyValuePair) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -52003,9 +52064,9 @@ export class StringScoreHistoryDtoListKeyValuePair implements IStringScoreHistor
         }
     }
 
-    static fromJS(data: any): StringScoreHistoryDtoListKeyValuePair {
+    static fromJS(data: any): BureauScoreHistoryDtoListKeyValuePair {
         data = typeof data === 'object' ? data : {};
-        let result = new StringScoreHistoryDtoListKeyValuePair();
+        let result = new BureauScoreHistoryDtoListKeyValuePair();
         result.init(data);
         return result;
     }
@@ -52022,8 +52083,8 @@ export class StringScoreHistoryDtoListKeyValuePair implements IStringScoreHistor
     }
 }
 
-export interface IStringScoreHistoryDtoListKeyValuePair {
-    key: string | undefined;
+export interface IBureauScoreHistoryDtoListKeyValuePair {
+    key: Bureau | undefined;
     value: ScoreHistoryDto[] | undefined;
 }
 
@@ -63103,23 +63164,15 @@ export interface IFindOrganizationUnitUsersInput {
 }
 
 export class PackageDto implements IPackageDto {
-    tenantId!: number | undefined;
+    id!: number | undefined;
     name!: string | undefined;
-    idcsPackageId!: number | undefined;
     description!: string | undefined;
     initialPaymentAmount!: number | undefined;
     trialPeriodDays!: number | undefined;
     monthlyPaymentAmount!: number | undefined;
     isActive!: boolean | undefined;
+    isDemo!: boolean | undefined;
     isSimulatorEnabled!: boolean | undefined;
-    isDeleted!: boolean | undefined;
-    deleterUserId!: number | undefined;
-    deletionTime!: moment.Moment | undefined;
-    lastModificationTime!: moment.Moment | undefined;
-    lastModifierUserId!: number | undefined;
-    creationTime!: moment.Moment | undefined;
-    creatorUserId!: number | undefined;
-    id!: number | undefined;
 
     constructor(data?: IPackageDto) {
         if (data) {
@@ -63132,23 +63185,15 @@ export class PackageDto implements IPackageDto {
 
     init(data?: any) {
         if (data) {
-            this.tenantId = data["tenantId"];
+            this.id = data["id"];
             this.name = data["name"];
-            this.idcsPackageId = data["idcsPackageId"];
             this.description = data["description"];
             this.initialPaymentAmount = data["initialPaymentAmount"];
             this.trialPeriodDays = data["trialPeriodDays"];
             this.monthlyPaymentAmount = data["monthlyPaymentAmount"];
             this.isActive = data["isActive"];
+            this.isDemo = data["isDemo"];
             this.isSimulatorEnabled = data["isSimulatorEnabled"];
-            this.isDeleted = data["isDeleted"];
-            this.deleterUserId = data["deleterUserId"];
-            this.deletionTime = data["deletionTime"] ? moment(data["deletionTime"].toString()) : <any>undefined;
-            this.lastModificationTime = data["lastModificationTime"] ? moment(data["lastModificationTime"].toString()) : <any>undefined;
-            this.lastModifierUserId = data["lastModifierUserId"];
-            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
-            this.creatorUserId = data["creatorUserId"];
-            this.id = data["id"];
         }
     }
 
@@ -63161,45 +63206,29 @@ export class PackageDto implements IPackageDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["tenantId"] = this.tenantId;
+        data["id"] = this.id;
         data["name"] = this.name;
-        data["idcsPackageId"] = this.idcsPackageId;
         data["description"] = this.description;
         data["initialPaymentAmount"] = this.initialPaymentAmount;
         data["trialPeriodDays"] = this.trialPeriodDays;
         data["monthlyPaymentAmount"] = this.monthlyPaymentAmount;
         data["isActive"] = this.isActive;
+        data["isDemo"] = this.isDemo;
         data["isSimulatorEnabled"] = this.isSimulatorEnabled;
-        data["isDeleted"] = this.isDeleted;
-        data["deleterUserId"] = this.deleterUserId;
-        data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
-        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
-        data["lastModifierUserId"] = this.lastModifierUserId;
-        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
-        data["creatorUserId"] = this.creatorUserId;
-        data["id"] = this.id;
         return data; 
     }
 }
 
 export interface IPackageDto {
-    tenantId: number | undefined;
+    id: number | undefined;
     name: string | undefined;
-    idcsPackageId: number | undefined;
     description: string | undefined;
     initialPaymentAmount: number | undefined;
     trialPeriodDays: number | undefined;
     monthlyPaymentAmount: number | undefined;
     isActive: boolean | undefined;
+    isDemo: boolean | undefined;
     isSimulatorEnabled: boolean | undefined;
-    isDeleted: boolean | undefined;
-    deleterUserId: number | undefined;
-    deletionTime: moment.Moment | undefined;
-    lastModificationTime: moment.Moment | undefined;
-    lastModifierUserId: number | undefined;
-    creationTime: moment.Moment | undefined;
-    creatorUserId: number | undefined;
-    id: number | undefined;
 }
 
 export class PackageDtoListResultDto implements IPackageDtoListResultDto {
@@ -66323,6 +66352,46 @@ export interface IUpdateUserSignInTokenOutput {
     signInToken: string | undefined;
     encodedUserId: string | undefined;
     encodedTenantId: string | undefined;
+}
+
+export class AuthTestOutput implements IAuthTestOutput {
+    tenantName!: string | undefined;
+    userName!: string | undefined;
+
+    constructor(data?: IAuthTestOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.tenantName = data["tenantName"];
+            this.userName = data["userName"];
+        }
+    }
+
+    static fromJS(data: any): AuthTestOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new AuthTestOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["tenantName"] = this.tenantName;
+        data["userName"] = this.userName;
+        return data; 
+    }
+}
+
+export interface IAuthTestOutput {
+    tenantName: string | undefined;
+    userName: string | undefined;
 }
 
 export class CreateStageInput implements ICreateStageInput {

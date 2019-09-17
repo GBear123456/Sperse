@@ -2,12 +2,6 @@
     position: relative;
     top: 75px;
 
-    .right {
-        @media (min-width: 1200px) {
-            margin-left: 322px;
-        }
-    }
-
     @media (min-width: 768px) {
         /deep/ app-accounts {
             .accounts-list {
@@ -46,7 +40,6 @@
 
     .dashboard-wrapper {
         background-color: #fff;
-        width: calc(100vw - 322px);
         padding: 0 48px;
 
         /deep/ bank-accounts-widget {
@@ -250,16 +243,6 @@
         background: #FFF;
     }
 
-    &.wide {
-        .right {
-            margin-left: 0;
-        }
-
-        .dashboard-wrapper {
-            width: 100vw;
-        }
-    }
-
     /deep/ .bankBalances {
         .dx-scrollable-wrapper {
             padding-right: 6px;
@@ -299,12 +282,4 @@
             }
         }
     }
-
-    setup-steps {
-        position: absolute;
-        &.hidden {
-            transform: translate(-100%);
-        }
-    }
-
 }

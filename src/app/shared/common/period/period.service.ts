@@ -10,95 +10,101 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 import { PeriodModel } from '@app/shared/common/period/period.model';
 import { DateHelper } from '@shared/helpers/DateHelper';
 import { CFOService } from '@shared/cfo/cfo.service';
+import { Period } from '@app/shared/common/period/period.enum';
 
 @Injectable()
 export class PeriodService {
     private readonly PERIOD_CACHE_KEY = 'dashboard.selected.period';
-    availablePeriods: string[] = [
-        this.ls.l('Today'),
-        this.ls.l('Yesterday'),
-        this.ls.l('This_Week'),
-        this.ls.l('This_Month'),
-        this.ls.l('Last_Month'),
-        this.ls.l('Last_Quarter'),
-        this.ls.l('This_Year'),
-        this.ls.l('Last_Year'),
-        this.ls.l('All_Periods')
+    availablePeriods: Period[] = [
+        Period.Today,
+        Period.Yesterday,
+        Period.ThisWeek,
+        Period.ThisMonth,
+        Period.LastMonth,
+        Period.LastQuarter,
+        Period.ThisYear,
+        Period.LastYear,
+        Period.AllPeriods
     ];
-    cfoService: CFOService;
+
     selectedPeriod: PeriodModel;
     considerSettingsTimezone = true;
 
     constructor(
         injector: Injector,
+        private cfoService: CFOService,
         private cacheService: CacheService,
         private ls: AppLocalizationService,
-        @Inject('considerSettingsTimezone') @Optional() considerSettingsTimezone?: boolean
+        @Inject('considerSettingsTimezone') @Optional() considerSettingsTimezone?: boolean,
+        @Inject('defaultPeriod') @Optional() defaultPeriod?: Period
     ) {
-        this.cfoService = injector.get(CFOService);
-        this.selectedPeriod = this.getDatePeriodFromName(this.cacheService.exists(this.PERIOD_CACHE_KEY)
-            ? this.cacheService.get(this.PERIOD_CACHE_KEY)
-            : (this.cfoService && this.cfoService.hasStaticInstance ? this.ls.l('Last_Quarter') : this.ls.l('This_Year'))
+        this.selectedPeriod = this.getDatePeriod(
+            this.cacheService.get(this.getCacheKey()) || defaultPeriod || Period.ThisYear
         );
         if (considerSettingsTimezone !== null) {
             this.considerSettingsTimezone = considerSettingsTimezone;
         }
     }
 
-    saveSelectedPeriodInCache(period: string) {
-        this.cacheService.set(this.PERIOD_CACHE_KEY, period);
+    getCacheKey() {
+        return [
+            this.PERIOD_CACHE_KEY,
+            this.cfoService.instanceId ||
+            this.cfoService.instanceType
+        ].join('_');
     }
 
-    getDatePeriodFromName(name: string): PeriodModel {
-        let period: string;
+    saveSelectedPeriodInCache(period: Period) {
+        this.cacheService.set(this.getCacheKey(), period.toString());
+    }
+
+    getDatePeriod(period: Period): PeriodModel {
+        let periodName: string;
         let startDate: moment.Moment = this.considerSettingsTimezone ? moment() : DateHelper.getCurrentUtcDate();
         let endDate: moment.Moment = this.considerSettingsTimezone ? moment() : DateHelper.getCurrentUtcDate();
-        switch (name) {
-            case this.ls.l('Today'):
-                period = 'day';
+        switch (period) {
+            case Period.Today:
+                periodName = 'day';
                 break;
-            case this.ls.l('Yesterday'):
-                period = 'day';
+            case Period.Yesterday:
+                periodName = 'day';
                 startDate.subtract(1, 'day');
                 endDate.subtract(1, 'day');
                 break;
-            case this.ls.l('This_Week'):
-                period = 'isoWeek';
+            case Period.ThisWeek:
+                periodName = 'isoWeek';
                 break;
-            case this.ls.l('This_Month'):
-                period = 'month';
+            case Period.ThisMonth:
+                periodName = 'month';
                 break;
-            case this.ls.l('Last_Month'):
-                period = 'month';
+            case Period.LastMonth:
+                periodName = 'month';
                 startDate.subtract(1, 'month');
                 endDate.subtract(1, 'month');
                 break;
-            case this.ls.l('Last_Quarter'):
-                period = 'quarter';
+            case Period.LastQuarter:
+                periodName = 'quarter';
                 startDate.subtract(1, 'quarter');
                 endDate.subtract(1, 'quarter');
                 break;
-            case this.ls.l('This_Year'):
-                period = 'year';
+            case Period.ThisYear:
+                periodName = 'year';
                 break;
-            case this.ls.l('Last_Year'):
-                period = 'year';
+            case Period.LastYear:
+                periodName = 'year';
                 startDate.subtract(1, 'year');
                 endDate.subtract(1, 'year');
                 break;
-            case this.ls.l('All_Periods'):
-                period = 'all';
-                break;
             default:
-                period = 'all';
+                periodName = 'all';
                 break;
         }
 
         return {
-            name: name,
+            name: periodName,
             period: period,
-            from: period !== 'all' ? startDate.startOf(period) : undefined,
-            to: period !== 'all' ? endDate.endOf(period) : undefined
+            from: periodName !== 'all' ? startDate.startOf(periodName) : undefined,
+            to: periodName !== 'all' ? endDate.endOf(periodName) : undefined
         };
     }
 }

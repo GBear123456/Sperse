@@ -239,15 +239,14 @@
     &:not(.pfm-app) {
         .wrapper {
             position: relative;
-            min-height: calc(~"100vh - 79px");
+            min-height: calc(~"100vh - 141px");
             background: #97f6f7 linear-gradient(77deg, #0dc1c3, #97f6f7);
             padding-top: 18px;
 
-            &::before {
-                content: '';
-                width: 100%;
+            .wrapperBackground {
                 height: 900px;
                 display: block;
+                pointer-events: none;
                 background: #fff;
                 position: fixed;
                 top: -300px;
@@ -522,6 +521,6 @@
         background-color: #ffffff;
         box-shadow: 0 10px 40px 0 rgba(23, 28, 29, 0.15);
         box-sizing: border-box;
-        padding: 32px 48px 48px;
+        padding: 32px 48px;
     }
 }

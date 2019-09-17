@@ -1,4 +1,4 @@
-import { Component, ViewChild, Injector, Input, Output, EventEmitter, ElementRef } from '@angular/core';
+import { Component, ViewChild, Injector, Input, Output, EventEmitter, ElementRef, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { ModalDirective } from 'ngx-bootstrap';
 import {
     TenantHostServiceProxy, AddSslBindingInput, TenantSslCertificateServiceProxy,
@@ -11,23 +11,27 @@ import { finalize } from 'rxjs/operators';
     selector: 'addOrEditSSLBindingModal',
     templateUrl: 'add-or-edit-ssl-binding-modal.component.html',
     styleUrls: ['add-or-edit-ssl-binding-modal.component.less'],
-    providers: [TenantHostServiceProxy, TenantSslCertificateServiceProxy]
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    providers: [TenantHostServiceProxy, TenantSslCertificateServiceProxy ]
 })
 export class AddOrEditSSLBindingModal extends AppComponentBase {
     @ViewChild('createOrEditModal') modal: ModalDirective;
     @Input() hostTypes: any;
+    @Input() orgUnits: any;
     @Output() modalSave: EventEmitter<any> = new EventEmitter<any>();
 
     active = false;
     saving = false;
 
-    model: AddSslBindingInput = new AddSslBindingInput();
+    model: any;
+
     sslCertificates: TenantSslCertificateInfo[];
     editing = false;
     titleText: string;
 
     constructor(
         injector: Injector,
+        private changeDetection: ChangeDetectorRef,
         private _tenantHostService: TenantHostServiceProxy,
         private _tenantSslCertificateService: TenantSslCertificateServiceProxy
     ) {
@@ -35,9 +39,22 @@ export class AddOrEditSSLBindingModal extends AppComponentBase {
     }
 
     show(data: TenantSslBindingInfo): void {
-        this.model = new AddSslBindingInput();
-        this.editing = !!data;
-        this.titleText = this.editing ? this.l('EditSSLBinding') : this.l('AddSSLBinding');
+        this.model = {
+            id: undefined,
+            sslCertificateId: undefined,
+            organizationUnitId: undefined,
+            isActive: undefined,
+            tenantHostType: undefined,
+            domainName: undefined
+        };
+
+        if (this.editing = Boolean(data && data.id)) {
+            this.model.id = data.id;
+            this.model.tenantHostType = data.hostType;
+            this.model.isActive = data.isActive;
+            this.titleText = this.l('EditSSLBinding');
+        } else
+            this.titleText = this.l('AddSSLBinding');
 
         this._tenantSslCertificateService.getTenantSslCertificates()
             .subscribe(result => {
@@ -51,6 +68,8 @@ export class AddOrEditSSLBindingModal extends AppComponentBase {
 
                 this.active = true;
                 this.modal.show();
+
+                this.changeDetection.markForCheck();
             });
     }
 
@@ -59,19 +78,13 @@ export class AddOrEditSSLBindingModal extends AppComponentBase {
         this.saving = true;
 
         if (this.editing) {
-            let updateModel: UpdateSslBindingInput = new UpdateSslBindingInput();
-            updateModel.id = null;
-            updateModel.sslCertificateId = this.model.sslCertificateId;
-            updateModel.organizationUnitId = this.model.organizationUnitId;
-            updateModel.isActive = null;
-
-            this._tenantHostService.updateSslBinding(updateModel)
+            this._tenantHostService.updateSslBinding(new UpdateSslBindingInput(this.model))
                 .pipe(finalize(() => { this.saving = false; }))
                 .subscribe(result => {
                     this.closeSuccess();
             });
         } else {
-            this._tenantHostService.addSslBinding(this.model)
+            this._tenantHostService.addSslBinding(new AddSslBindingInput(this.model))
             .pipe(finalize(() => { this.saving = false; }))
             .subscribe(result => {
                 this.closeSuccess();
@@ -82,6 +95,8 @@ export class AddOrEditSSLBindingModal extends AppComponentBase {
     close(): void {
         this.active = false;
         this.modal.hide();
+
+        this.changeDetection.markForCheck();
     }
 
     closeSuccess(): void {
@@ -96,6 +111,4 @@ export class AddOrEditSSLBindingModal extends AppComponentBase {
             return true;
         }
     }
-
-
 }

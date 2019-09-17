@@ -1,6 +1,5 @@
 <div bsModal #createOrEditModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="createOrEditModal" aria-hidden="true" [config]="{backdrop: 'static'}">
   <div class="modal-dialog">
-
     <div class="modal-content">
 
     <form *ngIf="active" #clientForm="ngForm" novalidate>
@@ -17,7 +16,7 @@
       <div class="modal-body">
         <div class="dx-field">
             <dx-select-box [(value)]="model.tenantHostType" [dataSource]="hostTypes" [placeholder]="l('Type')" [readOnly]="editing"
-                            valueExpr="Id" displayExpr="Name">
+                            valueExpr="id" displayExpr="name">
             </dx-select-box>
         </div>
 
@@ -31,6 +30,12 @@
         <div class="dx-field">
             <dx-select-box [(value)]="model.sslCertificateId" [dataSource]="sslCertificates" [placeholder]="l('SSLCertificate')"
                             valueExpr="id" displayExpr="hostNames">
+            </dx-select-box>
+        </div>
+
+        <div class="dx-field">
+            <dx-select-box [(value)]="model.organizationUnitId" [dataSource]="orgUnits | async" [placeholder]="l('OrganizationUnits')"
+                            valueExpr="id" displayExpr="displayName">
             </dx-select-box>
         </div>
       </div>

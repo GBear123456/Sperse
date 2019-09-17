@@ -10,6 +10,7 @@ import * as moment from 'moment';
 import { PeriodModel } from '@app/shared/common/period/period.model';
 import { PeriodService } from '@app/shared/common/period/period.service';
 import { DailyStatsPeriodModel } from '@shared/cfo/dashboard-widgets/accounts/daily-stats-period.model';
+import { Period } from '@app/shared/common/period/period.enum';
 
 @Injectable()
 export class DashboardService {
@@ -47,8 +48,8 @@ export class DashboardService {
         this._refresh.next(null);
     }
 
-    periodChanged(period: string) {
-        this._period.next(this.periodService.getDatePeriodFromName(period));
+    periodChanged(period: Period) {
+        this._period.next(this.periodService.getDatePeriod(period));
     }
 
 }

@@ -1,11 +1,11 @@
 <div class="dx-field">
-    <div class="dx-field-label">{{ls.l('address1')}}<span *ngIf="offersWizardService.isSpecialOffer">*</span></div>
+    <div class="dx-field-label">{{ls.l('address1')}}<span *ngIf="offersWizardService.isApplicationSubmission">*</span></div>
     <div class="dx-field-value">
         <dx-text-box placeholder="Enter address"
                      [(value)]="offersWizardService.submitApplicationProfileInput.personalInformation.address1">
             <dx-validator>
                 <dxi-validation-rule type="custom"
-                                     [validationCallback]="offersWizardService.validateField"
+                                     [validationCallback]="offersWizardService.validateRequiredField"
                                      [message]="this.ls.l('ThisFieldIsRequired')">
                 </dxi-validation-rule>
             </dx-validator>
@@ -25,7 +25,7 @@
     </div>
     <div class="col-md-6 col-sm-12">
         <div class="dx-field">
-            <div class="dx-field-label">{{ls.l('state')}}<span *ngIf="offersWizardService.isSpecialOffer">*</span></div>
+            <div class="dx-field-label">{{ls.l('state')}}<span *ngIf="offersWizardService.isApplicationSubmission">*</span></div>
             <div class="dx-field-value">
                 <dx-select-box
                     [items]="offersWizardService.states$ | async"
@@ -35,7 +35,7 @@
                     placeholder="Select state">
                     <dx-validator>
                         <dxi-validation-rule type="custom"
-                                             [validationCallback]="offersWizardService.validateField"
+                                             [validationCallback]="offersWizardService.validateRequiredField"
                                              [message]="this.ls.l('ThisFieldIsRequired')">
                         </dxi-validation-rule>
                     </dx-validator>
@@ -47,13 +47,13 @@
 <div class="row">
     <div class="col-md-6 col-sm-12">
         <div class="dx-field">
-            <div class="dx-field-label">{{ls.l('city')}}<span *ngIf="offersWizardService.isSpecialOffer">*</span></div>
+            <div class="dx-field-label">{{ls.l('city')}}<span *ngIf="offersWizardService.isApplicationSubmission">*</span></div>
             <div class="dx-field-value">
                 <dx-text-box placeholder="Enter city"
                              [(value)]="offersWizardService.submitApplicationProfileInput.personalInformation.city">
                     <dx-validator>
                         <dxi-validation-rule type="custom"
-                                             [validationCallback]="offersWizardService.validateField"
+                                             [validationCallback]="offersWizardService.validateRequiredField"
                                              [message]="this.ls.l('ThisFieldIsRequired')">
                         </dxi-validation-rule>
                     </dx-validator>
@@ -63,18 +63,22 @@
     </div>
     <div class="col-md-6 col-sm-12">
         <div class="dx-field">
-            <div class="dx-field-label">{{ls.l('postal_code')}}<span *ngIf="offersWizardService.isSpecialOffer">*</span></div>
+            <div class="dx-field-label">{{ls.l('postal_code')}}<span *ngIf="offersWizardService.isApplicationSubmission">*</span></div>
             <div class="dx-field-value">
                 <dx-text-box placeholder="Enter postal code"
                              name="zipCode"
-                             minLength="5"
-                             (onContentReady)="inputStatusesService.setMask($event)"
-                             (onInput)="onInput($event, 10, '00000-0000')"
-                             [(value)]="offersWizardService.submitApplicationProfileInput.personalInformation.postalCode">
+                             [maxLength]="maxLength"
+                             [value]="postalCode"
+                             (onInput)="onInput($event)"
+                             (onValueChanged)="postalCodeChange($event)">
                     <dx-validator>
                         <dxi-validation-rule type="pattern"
                                              [pattern]="zipRegex"
                                              message="Zip Code is invalid">
+                        </dxi-validation-rule>
+                        <dxi-validation-rule type="custom"
+                                             [validationCallback]="offersWizardService.validateRequiredField"
+                                             [message]="this.ls.l('ThisFieldIsRequired')">
                         </dxi-validation-rule>
                     </dx-validator>
                 </dx-text-box>
@@ -85,13 +89,13 @@
 <div class="row">
     <div class="col-md-6 col-sm-12">
         <div class="dx-field">
-            <div class="dx-field-label">{{ls.l('months_at_address')}}<span *ngIf="offersWizardService.isSpecialOffer">*</span></div>
+            <div class="dx-field-label">{{ls.l('months_at_address')}}<span *ngIf="offersWizardService.isApplicationSubmission">*</span></div>
             <div class="dx-field-value">
                 <dx-text-box placeholder="Enter number of years"
                              [(value)]="offersWizardService.submitApplicationProfileInput.personalInformation.monthsAtAddress">
                     <dx-validator>
                         <dxi-validation-rule type="custom"
-                                             [validationCallback]="offersWizardService.validateField"
+                                             [validationCallback]="offersWizardService.validateRequiredField"
                                              [message]="this.ls.l('ThisFieldIsRequired')">
                         </dxi-validation-rule>
                     </dx-validator>
@@ -101,7 +105,7 @@
     </div>
     <div class="col-md-6 col-sm-12">
         <div class="dx-field">
-            <div class="dx-field-label">{{ls.l('DoYouOwnYourHome')}}<span *ngIf="offersWizardService.isSpecialOffer">*</span></div>
+            <div class="dx-field-label">{{ls.l('DoYouOwnYourHome')}}<span *ngIf="offersWizardService.isApplicationSubmission">*</span></div>
             <div class="dx-field-value">
                 <dx-radio-group
                     [items]="offersWizardService.radioGroup"
@@ -111,7 +115,7 @@
                     layout="horizontal">
                     <dx-validator>
                         <dxi-validation-rule type="custom"
-                                             [validationCallback]="offersWizardService.validateField"
+                                             [validationCallback]="offersWizardService.validateRequiredField"
                                              [message]="this.ls.l('ThisFieldIsRequired')">
                         </dxi-validation-rule>
                     </dx-validator>
@@ -123,7 +127,7 @@
 <div class="row">
     <div class="col-md-6 col-sm-12">
         <div class="dx-field">
-            <div class="dx-field-label">{{ls.l('license_state')}}<span *ngIf="offersWizardService.isSpecialOffer">*</span></div>
+            <div class="dx-field-label">{{ls.l('license_state')}}<span *ngIf="offersWizardService.isApplicationSubmission">*</span></div>
             <div class="dx-field-value">
                 <dx-select-box
                     [items]="offersWizardService.states$ | async"
@@ -133,7 +137,7 @@
                     placeholder="Select license state">
                     <dx-validator>
                         <dxi-validation-rule type="custom"
-                                             [validationCallback]="offersWizardService.validateField"
+                                             [validationCallback]="offersWizardService.validateRequiredField"
                                              [message]="this.ls.l('ThisFieldIsRequired')">
                         </dxi-validation-rule>
                     </dx-validator>
@@ -143,13 +147,13 @@
     </div>
     <div class="col-md-6 col-sm-12">
         <div class="dx-field">
-            <div class="dx-field-label">{{ls.l('license_number')}}<span *ngIf="offersWizardService.isSpecialOffer">*</span></div>
+            <div class="dx-field-label">{{ls.l('license_number')}}<span *ngIf="offersWizardService.isApplicationSubmission">*</span></div>
             <div class="dx-field-value">
                 <dx-text-box placeholder="Enter license number"
                              [(value)]="offersWizardService.submitApplicationProfileInput.personalInformation.licenseNumber">
                     <dx-validator>
                         <dxi-validation-rule type="custom"
-                                             [validationCallback]="offersWizardService.validateField"
+                                             [validationCallback]="offersWizardService.validateRequiredField"
                                              [message]="this.ls.l('ThisFieldIsRequired')">
                         </dxi-validation-rule>
                     </dx-validator>

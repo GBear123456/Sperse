@@ -93,40 +93,51 @@ export class BusinessEntitiesChooserComponent implements OnDestroy {
         }
     }
 
-    onPopupClosed(event) {
+    onPopupClosed() {
         let businessEntitiesIds = this.getSelectedIds();
         if (this.applyFilter) {
             let selectedBankAccountIds = [];
 
-            let newBusinessEntitiesIds = difference(
-                businessEntitiesIds,
-                this.bankAccountsService.state.selectedBusinessEntitiesIds
-            );
+            if (this.selectedBusinessEntitiesChanged(businessEntitiesIds)) {
+                let newBusinessEntitiesIds = difference(
+                    businessEntitiesIds,
+                    this.bankAccountsService.state.selectedBusinessEntitiesIds
+                );
 
-            this.syncAccounts.forEach(syncAccount => {
-                syncAccount.bankAccounts.forEach(bankAccount => {
-                    if (!businessEntitiesIds.length || (newBusinessEntitiesIds.indexOf(bankAccount.businessEntityId) >= 0
-                        || businessEntitiesIds.indexOf(bankAccount.businessEntityId) >= 0
-                        && this.bankAccountsService.state.selectedBankAccountIds.indexOf(bankAccount.id) >= 0
-                    ))
-                        selectedBankAccountIds.push(bankAccount.id);
+                this.syncAccounts.forEach(syncAccount => {
+                    syncAccount.bankAccounts.forEach(bankAccount => {
+                        if (!businessEntitiesIds.length || (newBusinessEntitiesIds.indexOf(bankAccount.businessEntityId) >= 0
+                            || businessEntitiesIds.indexOf(bankAccount.businessEntityId) >= 0
+                            && this.bankAccountsService.state.selectedBankAccountIds.indexOf(bankAccount.id) >= 0
+                        ))
+                            selectedBankAccountIds.push(bankAccount.id);
+                    });
                 });
-            });
-            const state = { selectedBusinessEntitiesIds: businessEntitiesIds };
-            if (
-                selectedBankAccountIds.length &&
-                ArrayHelper.dataChanged(this.bankAccountsService.state.selectedBankAccountIds, selectedBankAccountIds)
-            ) {
-                state['selectedBankAccountIds'] = selectedBankAccountIds;
+                const state = { selectedBusinessEntitiesIds: businessEntitiesIds };
+                if (
+                    selectedBankAccountIds.length &&
+                    ArrayHelper.dataChanged(this.bankAccountsService.state.selectedBankAccountIds, selectedBankAccountIds)
+                ) {
+                    state['selectedBankAccountIds'] = selectedBankAccountIds;
+                }
+                this.bankAccountsService.changeState(state);
+                this.bankAccountsService.applyFilter();
             }
-            this.bankAccountsService.changeState(state);
-            this.bankAccountsService.applyFilter();
         }
         this.onClosed.emit(businessEntitiesIds);
 
         if (this._isFilterClick)
             this.onFilterButtonClick.emit(businessEntitiesIds);
         this._isFilterClick = false;
+    }
+
+    /**
+     * Whether selected business entities changed
+     * @param {number[]} selectedBusinessEntitiesIds
+     * @return {boolean}
+     */
+    private selectedBusinessEntitiesChanged(selectedBusinessEntitiesIds: number[]): boolean {
+        return ArrayHelper.dataChanged(this.bankAccountsService.state.selectedBusinessEntitiesIds, selectedBusinessEntitiesIds);
     }
 
     filterButtonClick(event) {

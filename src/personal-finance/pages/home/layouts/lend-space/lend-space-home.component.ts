@@ -41,7 +41,7 @@ export class LendSpaceHomeComponent implements OnInit {
     constructor(
         private featureService: FeatureCheckerService,
         private router: Router,
-        private ls: AppLocalizationService
+        public ls: AppLocalizationService
     ) {}
 
     ngOnInit() { }

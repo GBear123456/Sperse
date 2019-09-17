@@ -19,7 +19,8 @@ export class InputStatusesService {
     }
 
     focusInput(event) {
-        if (!(event.component._value && event.component._value.trim())) {
+        const value = this.getComponentValue(event.component);
+        if (!(value && value.trim())) {
             let input = event.event.target;
             event.component.option({
                 mask: this.masks[input.name],
@@ -40,7 +41,12 @@ export class InputStatusesService {
     }
 
     blurInput(event) {
-        if (!(event.component._value && event.component._value.trim()))
+        const value = this.getComponentValue(event.component);
+        if (!(value && value.trim()))
             event.component.option({ mask: '', value: '' });
+    }
+
+    private getComponentValue(component) {
+        return component.option('value') || component._value;
     }
 }

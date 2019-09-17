@@ -4,7 +4,7 @@ import { Component, ElementRef, Injector, OnInit, OnDestroy, ViewChildren, Query
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
 import { Observable, forkJoin } from 'rxjs';
-import { finalize, first, filter, pluck, takeUntil, tap, skip, map } from 'rxjs/operators';
+import { finalize, first, filter, pluck, takeUntil, tap, skip, map, switchMap } from 'rxjs/operators';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
@@ -138,6 +138,8 @@ export class AccountsComponent extends AppComponentBase implements OnInit, OnDes
         };
         if (this.appSession.tenant.customLayoutType === LayoutType.LendSpace) {
             settings['userCss'] = AppConsts.appBaseHref + 'assets/common/styles/custom/lend-space/lend-space-quovo.css';
+        } else {
+            settings['userCss'] = AppConsts.appBaseHref + 'assets/accounts/accounts-quovo.css';
         }
         Quovo.embed(settings);
         this.lastQuouvoActivity = new Date();
@@ -178,13 +180,16 @@ export class AccountsComponent extends AppComponentBase implements OnInit, OnDes
         else {
             abp.ui.setBusy(this.contentElement);
             this._myFinanceService.setupUserInstance(undefined)
-                .subscribe(() => {
-                    this._cfoService.instanceChangeProcess().subscribe(() => {
-                        abp.ui.clearBusy(this.contentElement);
+                .pipe(
+                    switchMap(() => this._cfoService.instanceChangeProcess()),
+                    finalize(() => abp.ui.clearBusy(this.contentElement))
+                ).subscribe(
+                    () => {
                         this.isInstanceInfoLoaded = true;
                         this.addAccount();
-                    });
-                }, () => this.isStartDisabled = false);
+                    },
+                    () => this.isStartDisabled = false
+                );
         }
     }
 

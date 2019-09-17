@@ -16,6 +16,7 @@ import { TotalsByPeriodComponent } from '@shared/cfo/dashboard-widgets/totals-by
 import { TrendByPeriodComponent } from '@shared/cfo/dashboard-widgets/trend-by-period/trend-by-period.component';
 import { DashboardService } from '@shared/cfo/dashboard-widgets/dashboard.service';
 import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
+import { Period } from '@app/shared/common/period/period.enum';
 
 @Component({
     selector: 'dashboard',
@@ -38,7 +39,6 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, OnDe
         {name: 'View_Transaction_Details', route: '../transactions'},
         {name: 'View_Financial_Statistics', route: '../stats'},
     ];
-    leftMenuHidden = true;
 
     constructor(
         injector: Injector,
@@ -57,14 +57,7 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, OnDe
             names: [this.l('Dashboard_Title')],
             iconSrc: './assets/common/icons/pie-chart.svg',
             onRefresh: this._cfoService.hasStaticInstance ? undefined : this.invalidate.bind(this),
-            buttons: [
-                {
-                    enabled: true,
-                    action: () => this.leftMenuHidden = !this.leftMenuHidden,
-                    lable: '',
-                    class: 'toggle dx-button'
-                }
-            ]
+            buttons: []
         };
         /** Load sync accounts */
         this.bankAccountsService.load();
@@ -89,7 +82,11 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, OnDe
         this.bankAccountsService.load(true, false).subscribe();
     }
 
-    periodChanged(period: string) {
+    rerenderWidgets() {
+        this.trendByPeriodComponent.update();
+    }
+
+    periodChanged(period: Period) {
         this._dashboardService.periodChanged(period);
     }
 

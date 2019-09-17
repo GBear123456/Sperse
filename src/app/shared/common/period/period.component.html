@@ -1,4 +1,7 @@
-<dx-select-box [items]="availablePeriods"
+<dx-select-box
+    valueExpr="value"
+    displayExpr="displayValue"
+    [items]="availablePeriods"
     [width]="'135px'"
     [value]="selectedPeriod"
     (onValueChanged)="onPeriodChanged($event)">

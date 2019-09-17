@@ -30,7 +30,6 @@ export class BankAccountsGeneralComponent extends CFOComponentBase implements On
     headlineConfig: any;
     private rootComponent: any;
     createAccountAvailable = false;
-    leftMenuHidden = true;
 
     constructor(
         injector: Injector,
@@ -76,14 +75,7 @@ export class BankAccountsGeneralComponent extends CFOComponentBase implements On
             names: [this.l('Setup_Title'), this.l('Accounts')],
             iconSrc: './assets/common/icons/magic-stick-icon.svg',
             onRefresh: this._cfoService.hasStaticInstance ? undefined : this.refresh.bind(this),
-            buttons: [
-                {
-                    enabled: true,
-                    action: () => this.leftMenuHidden = !this.leftMenuHidden,
-                    lable: '',
-                    class: 'toggle dx-button'
-                }
-            ]
+            buttons: []
         };
     }
 

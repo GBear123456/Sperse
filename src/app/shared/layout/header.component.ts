@@ -14,11 +14,9 @@ import { AbpSessionService } from '@abp/session/abp-session.service';
 import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import {
-    ChangeUserLanguageDto, LinkedUserDto, ProfileServiceProxy, LayoutType, CommonUserInfoServiceProxy
+    ChangeUserLanguageDto, ProfileServiceProxy, LayoutType, CommonUserInfoServiceProxy
 } from '@shared/service-proxies/service-proxies';
 import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
-import { UserDropdownMenuItemType } from '@root/shared/common/layout/user-management-list/user-dropdown-menu/user-dropdown-menu-item-type';
-import { UserDropdownMenuItemModel } from '@root/shared/common/layout/user-management-list/user-dropdown-menu/user-dropdown-menu-item.model';
 import { LayoutService } from '@app/shared/layout/layout.service';
 import { AppFeatures } from '@shared/AppFeatures';
 import { AppService } from '@app/app.service';
@@ -34,76 +32,12 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
     customLayoutType = '';
     languages: abp.localization.ILanguageInfo[];
     currentLanguage: abp.localization.ILanguageInfo;
-    isImpersonatedLogin = this._abpSessionService.impersonatorUserId > 0;
     tenancyName = '';
     userName = '';
-    recentlyLinkedUsers: LinkedUserDto[];
     unreadChatMessageCount = 0;
     remoteServiceBaseUrl: string = AppConsts.remoteServiceBaseUrl;
     chatConnected = false;
     userCompany$: Observable<string>;
-    dropdownMenuItems: UserDropdownMenuItemModel[] = [
-        {
-            name: this.l('BackToMyAccount'),
-            visible: this.isImpersonatedLogin,
-            id: 'UserProfileBackToMyAccountButton',
-            iconSrc: 'assets/common/images/lend-space-dark/icons/back.svg',
-            onClick: () => this.userManagementService.backToMyAccount()
-        },
-        {
-            name: this.l('ManageLinkedAccounts'),
-            iconClass: 'flaticon-user-settings',
-            visible: this.isImpersonatedLogin,
-            id: 'ManageLinkedAccountsLink',
-            onClick: (e) => this.userManagementService.showLinkedAccounts(e),
-            submenuItems: {
-                items: this.recentlyLinkedUsers,
-                id: 'RecentlyUsedLinkedUsers',
-                onItemClick: (linkedUser) => this.userManagementService.switchToLinkedUser(linkedUser),
-                onItemDisplay: (linkedUser) => this.userManagementService.getShownUserName(linkedUser)
-            }
-        },
-        {
-            name: this.l('ChangePassword'),
-            id: 'UserProfileChangePasswordLink',
-            iconClass: 'flaticon-more-v6',
-            onClick: (e) => this.userManagementService.changePassword(e)
-        },
-        {
-            name: this.l('LoginAttempts'),
-            id: 'ShowLoginAttemptsLink',
-            iconClass: 'flaticon-list',
-            onClick: (e) => this.userManagementService.showLoginAttempts(e)
-        },
-        {
-            name: this.l('ChangeProfilePicture'),
-            id: 'UserProfileChangePictureLink',
-            iconClass: 'flaticon-profile-1',
-            onClick: (e) => this.userManagementService.changeProfilePicture(e)
-        },
-        {
-            name: this.l('MySettings'),
-            id: 'UserProfileMySettingsLink',
-            iconClass: 'flaticon-cogwheel',
-            onClick: (e) => this.userManagementService.changeMySettings(e)
-        },
-        {
-            name: this.l('Help'),
-            iconClass: 'flaticon-info',
-            onClick: () => {
-                window.open(this.userManagementService.helpLink, '_blank');
-            }
-        },
-        {
-            type: UserDropdownMenuItemType.Separator,
-        },
-        {
-            name: this.l('Logout'),
-            onClick: (e) => this.userManagementService.logout(),
-            cssClass: 'bottom-logout',
-            iconSrc: 'assets/common/icons/logout.svg'
-        }
-    ];
     constructor(
         injector: Injector,
         private dialog: MatDialog,
@@ -127,7 +61,7 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
         if (tenant && tenant.customLayoutType && tenant.customLayoutType != LayoutType.Default)
             this.customLayoutType = kebabCase(tenant.customLayoutType);
         this.userManagementService.getRecentlyLinkedUsers().subscribe(
-            recentlyLinkedUsers => this.recentlyLinkedUsers = recentlyLinkedUsers
+            recentlyLinkedUsers => this.userManagementService.recentlyLinkedUsers = recentlyLinkedUsers
         );
 
         this.registerToEvents();

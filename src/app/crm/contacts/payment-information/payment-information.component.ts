@@ -17,7 +17,6 @@ import * as moment from 'moment';
 import * as _ from 'underscore';
 
 /** Application imports */
-import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { ContactsService } from '../contacts.service';
 import { ContactServiceProxy, MonthlyPaymentInfo, PaymentMethodInfo, PaymentInfoType, PaymentServiceProxy } from '@shared/service-proxies/service-proxies';

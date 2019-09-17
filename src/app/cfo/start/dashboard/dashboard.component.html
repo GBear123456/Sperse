@@ -8,10 +8,13 @@
     </app-headline>
 
     <div class="content">
-        <setup-steps [showIntroductionTourLink]="true" [class.hidden]="leftMenuHidden"></setup-steps>
+        <setup-steps #setupSteps
+                     [showIntroductionTourLink]="true"
+                     (onToggle)="rerenderWidgets()">
+        </setup-steps>
         <div class="right">
             <dx-scroll-view showScrollbar="onHover">
-                <div class="dashboard-wrapper">
+                <div class="dashboard-wrapper {{setupSteps.collapsed ? 'expanded' : ''}}">
                     <section class="accounts-info">
                         <header>
                             <h2 class="dashboard-title">

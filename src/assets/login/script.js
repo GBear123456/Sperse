@@ -26,9 +26,12 @@
             (pathParts.pop() == 'login')
         )
     ) {
-        window.loginPageHandler = function(context, boot) {
+        window.loginPageHandler = function(context, boot, environment) {
             appContext = context;
             appBootstrap = boot;
+
+            if (window['logoImage'])
+                window['logoImage'].parentNode.setAttribute('href', environment.publicUrl);
         };
 
         getAppConfig();

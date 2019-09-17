@@ -2,16 +2,18 @@
     <div class="container">
         <h2 class="dark-title">{{ls.l('Welcome_WelcomeToPersonalFinanceManagement')}}</h2>
         <div class="table-box">
-            <ul class="list-unstyled d-flex flex-wrap why-list">
+            <ul class="list-unstyled d-flex flex-wrap why-list" *ngIf="showCategoryItemsList">
                 <!---->
-                <li class="why-item" *ngFor="let category of categoryItems" [hidden]="category.hidden">
-                    <div class="img-wrapper {{kebabCase(category.name)}}"></div>
-                    <div class="text-wrapper">
-                        <h3>{{ls.l('Welcome_' + category.name)}}</h3>
-                        <p>{{ls.l('Welcome_' + category.name + 'Desc')}}</p>
-                        <button class="yellow lock" (click)="navigate([category.router])">{{ls.l('Welcome_' + category.button)}}</button>
-                    </div>
-                </li>
+                <ng-container *ngFor="let category of categoryItems">
+                    <li class="why-item" *ngIf="!category.hidden">
+                        <div class="img-wrapper {{kebabCase(category.name)}}"></div>
+                        <div class="text-wrapper">
+                            <h3>{{ls.l('Welcome_' + category.name)}}</h3>
+                            <p>{{ls.l('Welcome_' + category.name + 'Desc')}}</p>
+                            <button class="yellow lock" (click)="navigate([category.router])">{{ls.l('Welcome_' + category.button)}}</button>
+                        </div>
+                    </li>
+                </ng-container>
             </ul>
         </div>
     </div>

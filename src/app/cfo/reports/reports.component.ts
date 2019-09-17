@@ -344,9 +344,10 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
             RequestHelper.downloadFileBlob(urlInfo.url, (blob) => {
                     let reader = new FileReader();
                     reader.addEventListener('loadend', () => {
+                        if (!this.openReportMode)
+                            setTimeout(() => this.showReportFullscreen(), 300);
                         this.openReportMode = true;
                         this.previewContent = StringHelper.getBase64(reader.result);
-                        setTimeout(() => this.showReportFullscreen(), 300);
                         this._changeDetector.markForCheck();
                     });
                     reader.readAsDataURL(blob);

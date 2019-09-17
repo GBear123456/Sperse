@@ -73,73 +73,79 @@
             margin-top: 30px;
             padding: 30px;
             background-color: #f3f3f3;
-            justify-content:space-between;
+            justify-content: space-between;
             border: 1px solid #999;
-           .why-item{
-                padding:25px;
-                border:1px solid #999;
-                background-color: #FFF;
-                width:510px;
-                margin-bottom:20px;
-                transition:.2s;
-                display: flex;
+           .why-item {
+               padding:25px;
+               border:1px solid #999;
+               background-color: #FFF;
+               width:510px;
+               margin-bottom:20px;
+               transition:.2s;
+               display: flex;
 
-                &.hover, &:hover {
-                    h3, p {
-                        color:#000!important;
-                    }
-                }
+               &.hover, &:hover {
+                   h3, p {
+                       color:#000!important;
+                   }
+               }
 
-                * {
-                    transition:.2s
-                }
-                h3{
-                    color:#333;
-                    font-size:28px;
-                    font-weight:700;
-                    margin:14px 0;
-                    overflow: hidden;
-                    text-overflow: ellipsis;
-                    width: 302px;
-                }
-                p {
-                    color:#333;
-                    font-size:12px;
-                    font-weight:400;
-                }
-                .img-wrapper{
-                    width:40%;
-                    height:100%;
-                    transition:.2s;
-                    background-size:contain!important;
+               * {
+                   transition:.2s
+               }
+               h3{
+                   color:#333;
+                   font-size:28px;
+                   font-weight:700;
+                   margin:14px 0;
+                   overflow: hidden;
+                   text-overflow: ellipsis;
+                   width: 302px;
+               }
+               p {
+                   color:#333;
+                   font-size:12px;
+                   font-weight:400;
+               }
+               .img-wrapper{
+                   width:40%;
+                   height:100%;
+                   transition:.2s;
+                   background-size:contain!important;
 
-                    &.credit-scores,
-                    &.credit-reports {
-                        background:url(../../../assets/common/images/lend-space-dark/welcome/vector-level.png) no-repeat center;
-                    }
-                    &.credit-cards {
-                        background:url(../../../assets/common/images/lend-space-dark/welcome/vector-card.png) no-repeat center;
-                    }
-                    &.personal-loans {
-                        background:url(../../../assets/common/images/lend-space-dark/welcome/vector-money.jpg) no-repeat center;
-                    }
-                    &.personal-finance {
-                        background:url(../../../assets/common/images/lend-space-dark/welcome/vector-graph.png) no-repeat center;
-                    }
-                }
-                .text-wrapper{
-                    width:60%;
-                    min-height:215px;
-                    padding-left: 20px;
-                    position: relative;
-                    h3 {
-                        margin-top: 0px;
-                    }
-                    button {
-                        position: absolute;
-                        bottom: 0px;
-                    }
-                }
+                   &.credit-scores,
+                   &.credit-reports {
+                       background:url(../../../assets/common/images/lend-space-dark/welcome/vector-level.png) no-repeat center;
+                   }
+                   &.credit-cards {
+                       background:url(../../../assets/common/images/lend-space-dark/welcome/vector-card.png) no-repeat center;
+                   }
+                   &.personal-loans {
+                       background:url(../../../assets/common/images/lend-space-dark/welcome/vector-money.jpg) no-repeat center;
+                   }
+                   &.personal-finance {
+                       background:url(../../../assets/common/images/lend-space-dark/welcome/vector-graph.png) no-repeat center;
+                   }
+               }
+               .text-wrapper{
+                   width:60%;
+                   min-height:215px;
+                   padding-left: 20px;
+                   position: relative;
+                   h3 {
+                       margin-top: 0;
+                   }
+                   button {
+                       position: absolute;
+                       bottom: 0;
+                   }
+               }
+
+               &:only-child {
+                   margin-left: auto;
+                   margin-right: auto;
+                   margin-bottom: 0;
+               }
             }
         }
 
@@ -191,7 +197,7 @@
                             }
                             button {
                                 top: 160px;
-                                left: 0px;
+                                left: 0;
                                 height: 55px;
                                 font-size: 20px;
                             }
