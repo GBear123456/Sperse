@@ -56,7 +56,7 @@ export class UserManagementService {
         {
             name: this.ls.l('ManageLinkedAccounts'),
             iconClass: 'flaticon-user-settings',
-            visible: this.isImpersonatedLogin,
+            visible: this.feature.isEnabled(AppFeatures.AdminCustomizations),
             id: 'ManageLinkedAccountsLink',
             onClick: (e) => this.showLinkedAccounts(e),
             submenuItems: {

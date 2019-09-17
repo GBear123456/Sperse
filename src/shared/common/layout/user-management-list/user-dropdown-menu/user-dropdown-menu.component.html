@@ -28,7 +28,7 @@
                         <ul class="m-nav m-nav--skin-light">
                             <ng-container *ngFor="let menuItem of dropdownMenuItems">
                                 <li class="m-nav__item" [ngClass]="menuItem.cssClass" *ngIf="menuItem.type !== menuItemTypes.Separator && (menuItem.visible === undefined || menuItem.visible)">
-                                    <a href="javascript:;" class="m-nav__link" (click)="menuItem.onClick($event)">
+                                    <a href="javascript:;" class="m-nav__link" (click)="menuItemClick(menuItem, $event)">
                                         <i class="m-nav__link-icon" *ngIf="menuItem.iconClass" [ngClass]="menuItem.iconClass"></i>
                                         <img class="m-nav__link-icon" *ngIf="menuItem.iconSrc" [src]="menuItem.iconSrc">
                                         <span class="m-nav__link-title">

@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, OnInit, Input, Injector } from '@angular/core';
+import { Component, OnInit, Input, Injector, ElementRef } from '@angular/core';
 
 /** Application imports */
 import { ImpersonationService } from 'app/admin/users/impersonation.service';
@@ -41,6 +41,7 @@ export class UserDropdownMenuComponent implements OnInit {
 
     constructor(
         injector: Injector,
+        private elementRef: ElementRef,
         private featureCheckerService: FeatureCheckerService,
         public appSession: AppSessionService,
         public userManagementService: UserManagementService,
@@ -52,6 +53,12 @@ export class UserDropdownMenuComponent implements OnInit {
     getScrollHeight() {
         let height = innerHeight - 170;
         return height > 490 ? '100%' : height;
+    }
+
+    menuItemClick(menuItem, event) {
+        menuItem.onClick(event);
+        this.elementRef.nativeElement.childNodes[0]
+            .classList.remove('m-dropdown--open');
     }
 
     ngOnInit() {
