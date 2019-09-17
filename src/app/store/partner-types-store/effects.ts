@@ -24,7 +24,8 @@ import {
     DictionaryServiceProxy,
     PartnerServiceProxy,
     PartnerTypeDto,
-    RenamePartnerTypeInput
+    RenamePartnerTypeInput,
+    UpdatePartnerTypeInput
 } from 'shared/service-proxies/service-proxies';
 import { State } from './state';
 import { getLoadedTime } from './selectors';
@@ -70,11 +71,17 @@ export class PartnerTypesStoreEffects {
         ofType<partnerTypesActions.AddPartnerType>(partnerTypesActions.ActionTypes.ADD_PARTNER_TYPE),
         map(action => action.payload),
         mergeMap(payload => {
-            const request = this.injector.get(PartnerServiceProxy).bulkUpdateType(BulkUpdatePartnerTypeInput.fromJS({
-                partnerIds: payload.partnerIds,
-                typeName: payload.typeName
-            }));
-            return request.pipe(
+            let partnerProxy = this.injector.get(PartnerServiceProxy);
+            return (payload.partnerIds.length > 1 ? 
+                partnerProxy.bulkUpdateType(new BulkUpdatePartnerTypeInput({
+                    partnerIds: payload.partnerIds,
+                    typeName: payload.typeName
+                })) :
+                partnerProxy.updateType(new UpdatePartnerTypeInput({
+                    partnerId: payload.partnerIds[0],
+                    typeName: payload.typeName                    
+                }))
+            ).pipe(
                 map(() => {
                     this.notifyService.success(payload.successMessage);
                     /** Reload data from server */
