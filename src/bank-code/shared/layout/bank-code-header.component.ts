@@ -53,7 +53,7 @@ export class BankCodeHeaderComponent implements OnInit, OnDestroy {
         if (this.loggedUserId)
             this.router.navigate(['/code-breaker']);
         else 
-            location = location.origin;
+            location.href = location.origin;
     }
 
     ngOnDestroy() {
