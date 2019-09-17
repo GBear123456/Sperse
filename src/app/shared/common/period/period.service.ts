@@ -26,7 +26,7 @@ export class PeriodService {
         Period.LastYear,
         Period.AllPeriods
     ];
-    
+
     selectedPeriod: PeriodModel;
     considerSettingsTimezone = true;
 
@@ -48,8 +48,8 @@ export class PeriodService {
 
     getCacheKey() {
         return [
-            this.PERIOD_CACHE_KEY, 
-            this.cfoService.instanceId || 
+            this.PERIOD_CACHE_KEY,
+            this.cfoService.instanceId ||
             this.cfoService.instanceType
         ].join('_');
     }
@@ -103,8 +103,8 @@ export class PeriodService {
         return {
             name: periodName,
             period: period,
-            from: periodName !== 'all' ? startDate.startOf(period) : undefined,
-            to: periodName !== 'all' ? endDate.endOf(period) : undefined
+            from: periodName !== 'all' ? startDate.startOf(periodName) : undefined,
+            to: periodName !== 'all' ? endDate.endOf(periodName) : undefined
         };
     }
 }

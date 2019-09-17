@@ -60,86 +60,97 @@
                 [customizeTooltip]="customizeBarTooltip">
             </dxo-tooltip>
 
-            <ng-container *ngIf="selectedChartType.value !== chartType.CashBalancesTrends && getAxisName(chartType.CashInflowsAndOutflows) as axisName">
-                <dxi-series [axis]="axisName"
-                            [color]="historicalCreditColor"
-                            valueField="credit"
-                            [name]="l('Stats_Inflows')">
-                </dxi-series>
-                <dxi-series [axis]="axisName"
-                            [color]="historicalDebitColor"
-                            valueField="debit"
-                            [name]="l('Stats_Outflows')">
-                </dxi-series>
-                <dxi-series [axis]="axisName"
-                            [color]="forecastCreditColor"
-                            [visible]="isForecast"
-                            valueField="forecastCredit"
-                            [showInLegend]="false"
-                            name="forecast">
-                </dxi-series>
-                <dxi-series [axis]="axisName"
-                            [color]="forecastDebitColor"
-                            [visible]="isForecast"
-                            valueField="forecastDebit"
-                            [showInLegend]="false"
-                            name="forecastDebit">
-                </dxi-series>
-                <dxi-series [axis]="axisName"
-                            type="line"
-                            [color]="historicalNetChangeColor"
-                            valueField="netChange"
-                            [name]="l('Net_Change')"
-                            [showInLegend]="false">
-                </dxi-series>
-                <dxi-series [axis]="axisName"
-                            type="line"
-                            [visible]="isForecast"
-                            [color]="forecastNetChangeColor"
-                            valueField="forecastNetChange"
-                            name="forecastNetChange"
-                            [showInLegend]="false">
-                </dxi-series>
+            <ng-container *ngIf="showInflowsOutflowsCharts$ | async">
+                <ng-container *ngIf="getAxisName(chartType.CashInflowsAndOutflows) as axisName">
+                    <dxi-series [axis]="axisName"
+                                [color]="historicalCreditColor"
+                                valueField="credit"
+                                [name]="l('Stats_Inflows')">
+                    </dxi-series>
+                    <dxi-series [axis]="axisName"
+                                [color]="historicalDebitColor"
+                                valueField="debit"
+                                [name]="l('Stats_Outflows')">
+                    </dxi-series>
+                    <dxi-series [axis]="axisName"
+                                [color]="forecastCreditColor"
+                                [visible]="isForecast"
+                                valueField="forecastCredit"
+                                [showInLegend]="false"
+                                name="forecast">
+                    </dxi-series>
+                    <dxi-series [axis]="axisName"
+                                [color]="forecastDebitColor"
+                                [visible]="isForecast"
+                                valueField="forecastDebit"
+                                [showInLegend]="false"
+                                name="forecastDebit">
+                    </dxi-series>
+                </ng-container>
             </ng-container>
 
-            <ng-container *ngIf="selectedChartType.value !== chartType.CashInflowsAndOutflows && getAxisName(chartType.CashBalancesTrends) as axisName">
-                <dxi-series [axis]="axisName"
-                            name="endingBalanceGradient"
-                            pane="topPane"
-                            color="url(#ending-balance-gradient)"
-                            type="rangeArea"
-                            hoverMode="none"
-                            rangeValue1Field="minRange"
-                            rangeValue2Field="endingBalance">
-                    <dxo-label [visible]="false"></dxo-label>
-                </dxi-series>
-                <dxi-series [axis]="axisName"
-                            name="endingBalance"
-                            [color]="endingBalanceColor"
-                            type="line"
-                            valueField="endingBalance"
-                            pane="topPane">
-                    <dxo-point size="8"></dxo-point>
-                </dxi-series>
+            <ng-container *ngIf="showNetChangeChart$ | async">
+                <ng-container *ngIf="getAxisName(chartType.CashBalanceWithNetChange) as axisName">
+                    <dxi-series [axis]="axisName"
+                                type="line"
+                                [color]="historicalNetChangeColor"
+                                valueField="netChange"
+                                [name]="l('Net_Change')"
+                                [showInLegend]="false">
+                    </dxi-series>
+                    <dxi-series [axis]="axisName"
+                                type="line"
+                                [visible]="isForecast"
+                                [color]="forecastNetChangeColor"
+                                valueField="forecastNetChange"
+                                name="forecastNetChange"
+                                [showInLegend]="false">
+                    </dxi-series>
+                </ng-container>
+            </ng-container>
 
-                <dxi-series [axis]="axisName"
-                            name="forecastEndingBalanceGradient"
-                            pane="topPane"
-                            color="url(#forecast-ending-balance-gradient)"
-                            type="rangeArea"
-                            rangeValue1Field="minRange"
-                            [visible]="isForecast"
-                            rangeValue2Field="forecastEndingBalance">
-                    <dxo-label [visible]="false"></dxo-label>
-                </dxi-series>
-                <dxi-series [axis]="axisName"
-                            [visible]="isForecast"
-                            name="forecastEndingBalance"
-                            [color]="forecastEndingBalanceColor"
-                            valueField="forecastEndingBalance"
-                            pane="topPane">
-                </dxi-series>
-                <dxi-pane name="topPane"></dxi-pane>
+            <ng-container *ngIf="showBalancesChart$ | async">
+                <ng-container *ngIf="getAxisName(chartType.CashBalancesTrends) as axisName">
+                    <dxi-series [axis]="axisName"
+                                name="endingBalanceGradient"
+                                pane="topPane"
+                                color="url(#ending-balance-gradient)"
+                                type="rangeArea"
+                                hoverMode="none"
+                                rangeValue1Field="minRange"
+                                rangeValue2Field="endingBalance">
+                        <dxo-label [visible]="false"></dxo-label>
+                    </dxi-series>
+                    <dxi-series [axis]="axisName"
+                                name="endingBalance"
+                                [color]="endingBalanceColor"
+                                type="line"
+                                valueField="endingBalance"
+                                pane="topPane">
+                        <dxo-point size="8"></dxo-point>
+                    </dxi-series>
+
+                    <dxi-series [axis]="axisName"
+                                name="forecastEndingBalanceGradient"
+                                pane="topPane"
+                                color="url(#forecast-ending-balance-gradient)"
+                                type="rangeArea"
+                                hoverMode="none"
+                                rangeValue1Field="minRange"
+                                [visible]="isForecast"
+                                rangeValue2Field="forecastEndingBalance">
+                        <dxo-label [visible]="false"></dxo-label>
+                    </dxi-series>
+                    <dxi-series [axis]="axisName"
+                                [visible]="isForecast"
+                                name="forecastEndingBalance"
+                                [color]="forecastEndingBalanceColor"
+                                type="line"
+                                valueField="forecastEndingBalance"
+                                pane="topPane">
+                    </dxi-series>
+                    <dxi-pane name="topPane"></dxi-pane>
+                </ng-container>
             </ng-container>
 
             <!-- Bottom axis -->
@@ -148,7 +159,6 @@
                 [visible]="true"
                 type="discrete">
                 <dxo-label [customizeText]="customizeBottomAxis"></dxo-label>
-                <!--<dxo-tick-interval months="1"></dxo-tick-interval>-->
             </dxo-argument-axis>
 
             <dxo-legend
@@ -170,7 +180,7 @@
 
             <!-- Right axis -->
             <dxi-value-axis name="rightAxis"
-                            [visible]="selectedChartType.value === chartType.Combined"
+                            [visible]="showRightAxis$ | async"
                             position="right">
                 <dxo-label [customizeText]="customizeAxisValues">
                     <dxo-format type="currency largeNumber"></dxo-format>

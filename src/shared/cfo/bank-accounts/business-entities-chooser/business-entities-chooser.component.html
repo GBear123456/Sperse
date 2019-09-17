@@ -1,11 +1,11 @@
 <div class="selectionList">
-    <ng-container *ngIf="bankAccountsService.businessEntities$ | async as dataSource">
+    <ng-container *ngIf="bankAccountsService.sortedBusinessEntities$ | async as dataSource">
         <dx-drop-down-box *ngIf="dataSource.length"
             width="300px"
             [value]="getSelectedTitle(dataSource)"
             [placeholder]="ls.l('All_Entities') + ' \u25BE'"
             (onOpened)="onPopupOpened($event, dataSource)"
-            (onClosed)="onPopupClosed($event)">
+            (onClosed)="onPopupClosed()">
             <div *dxTemplate="let contentData of 'content'" class="bussiness-entities-chooser">
                 <div class="select-all">
                     <dx-check-box #selectAll

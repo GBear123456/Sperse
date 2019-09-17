@@ -8,7 +8,10 @@
     </app-headline>
 
     <div class="content">
-        <setup-steps #setupSteps [showIntroductionTourLink]="true"></setup-steps>
+        <setup-steps #setupSteps
+                     [showIntroductionTourLink]="true"
+                     (onToggle)="rerenderWidgets()">
+        </setup-steps>
         <div class="right">
             <dx-scroll-view showScrollbar="onHover">
                 <div class="dashboard-wrapper {{setupSteps.collapsed ? 'expanded' : ''}}">

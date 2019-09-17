@@ -84,7 +84,8 @@ export class ClickStatsComponent extends AppComponentBase implements OnInit {
             dataField: this.TOTAL_DATA_FIELD,
             caption: 'Monthly Totals',
             alignment: 'center',
-            width: 120
+            width: 120,
+            cellTemplate: 'totalCell'
         });
     }
 
@@ -144,6 +145,16 @@ export class ClickStatsComponent extends AppComponentBase implements OnInit {
             dateTo = this.getQueryStringDate(isOneDay ? day : 
                 this.getMonthLastDay(record.column.index), month);
         
+        this.onStatsClick.emit({ from: dateFrom, to: dateTo });
+    }
+
+    showVisitorsTotal(record) {
+        if (record.rowIndex)
+            return;
+
+        let dateFrom = this.getQueryStringDate(1, 'Jan'),
+            dateTo = this.getQueryStringDate(31, 'Dec');
+
         this.onStatsClick.emit({ from: dateFrom, to: dateTo });
     }
 }

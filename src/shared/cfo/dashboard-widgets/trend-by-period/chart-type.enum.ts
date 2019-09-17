@@ -1,5 +1,6 @@
 export enum ChartType {
     CashBalancesTrends = 0,
-    CashInflowsAndOutflows = 1,
-    Combined = 2
+    CashBalanceWithNetChange = 1,
+    CashInflowsAndOutflows = 2,
+    Combined = 3
 }
