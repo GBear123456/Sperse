@@ -118,21 +118,23 @@ export class LeadInformationComponent extends AppComponentBase implements OnInit
             let orgUnitId = data.length ? data[0] : undefined;
             if (orgUnitId && orgUnitId != this.data.leadInfo.organizationUnitId) {
                 this.data.leadInfo.organizationUnitId = orgUnitId;
-                contactProxy.updateOrganizationUnit(new UpdateContactOrganizationUnitInput(
-                    {contactId: this.data.contactInfo.id, organizationUnitId: orgUnitId})).subscribe();
+                contactProxy.updateOrganizationUnit(new UpdateContactOrganizationUnitInput({
+                    contactId: this.data.contactInfo.id,
+                    organizationUnitId: orgUnitId
+                })).subscribe(() =>
+                    this.notify.info(this.l('SavedSuccessfully'))
+                );
             }
         }, this.constructor.name);
     }
 
     ngOnInit() {
         this.data = this.contactProxy['data'];
-        this.contactsService.contactInfoSubscribe((contactInfo) => {
+        this.contactsService.contactInfoSubscribe(contactInfo => {
             this.data.contactInfo = contactInfo;
-            this.isEditAllowed = this.data.leadInfo && this.data.leadInfo.id &&
-                this.contactsService.checkCGPermission(contactInfo.groupId);
             this.showApplicationAllowed = this.isGranted(AppPermissions.PFMApplicationsViewApplications) &&
                 contactInfo.personContactInfo.userId && contactInfo.groupId == ContactGroup.Client;
-        });
+        }, this.constructor.name);
         this.loadOrganizationUnits();
     }
 
@@ -143,14 +145,16 @@ export class LeadInformationComponent extends AppComponentBase implements OnInit
             takeUntil(this.lifeCycleService.destroy$),
             filter(Boolean)
         ).subscribe((organizationUnits: OrganizationUnitShortDto[]) => {
-            let data = { allOrganizationUnits: organizationUnits };
-            const orgUnit = organizationUnits.find((organizationUnit: OrganizationUnitShortDto) => {
-                return organizationUnit.id === (this.data.leadInfo.organizationUnitId || this.data.contactInfo.organizationUnitId);
-            });
-            if (orgUnit) {
-                data['memberedOrganizationUnits'] = [orgUnit.id];
-                setTimeout(() => this.contactsService.orgUnitsUpdate(data));
-            }
+            this.contactsService.leadInfoSubscribe(leadInfo => {
+                this.isEditAllowed = leadInfo && leadInfo.id &&
+                    this.contactsService.checkCGPermission(this.data.contactInfo.groupId);
+                this.contactsService.orgUnitsUpdate({
+                    allOrganizationUnits: organizationUnits,
+                    selectedOrgUnits: [organizationUnits.find((organizationUnit: OrganizationUnitShortDto) => {
+                        return organizationUnit.id === (leadInfo.organizationUnitId || this.data.contactInfo.organizationUnitId);
+                    })].filter(Boolean).map(item => item.id)
+                });
+            }, this.constructor.name);
         });
     }
 

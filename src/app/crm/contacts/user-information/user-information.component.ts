@@ -196,25 +196,22 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
         });
 
         if (data.user.id) {
-            this._userService['data'].user = data.user;
             data.user['setRandomPassword'] = false;
             data.user['sendActivationEmail'] = false;
 
+            this._userService['data'].user = data.user;
             this._userService['data'].roles = data.roles;
             this.userData = data;
-            data.memberedOrganizationUnits = this.selectedOrgUnits;
         } else {
-            let orgUnitIds = this.contactInfoData.contactInfo.personContactInfo.orgRelations && this.contactInfoData.contactInfo.personContactInfo.orgRelations.map(item => {
+            this.selectedOrgUnits = (
+                this.contactInfoData.contactInfo.personContactInfo.orgRelations || []
+            ).map(item => {
                 return item.organization && item.organization.rootOrganizationUnitId;
             }).filter(Boolean);
-            if (orgUnitIds && orgUnitIds.length) {
-                this.selectedOrgUnits = orgUnitIds;
-                data.memberedOrganizationUnits = orgUnitIds.map(id =>
-                    find(data.allOrganizationUnits, {id: id})['id']);
-            }
         }
 
         this._userService['data'].raw = data;
+        data.selectedOrgUnits = this.selectedOrgUnits;
         setTimeout(() => this._contactsService.orgUnitsUpdate(data));
     }
 

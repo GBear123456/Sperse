@@ -290,7 +290,6 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
         this.contactGroup = result.groupId;
 
         contactId = contactId || result.personContactInfo.id;
-
         if (result.organizationContactInfo && result.organizationContactInfo.contactPersons) {
             result.organizationContactInfo.contactPersons.map((contact) => {
                 return (contact.id == contactId ? result.personContactInfo : contact);
@@ -299,7 +298,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
 
         this.ratingId = result.ratingId;
         this.primaryContact = result.personContactInfo;
-        this.contactInfo = { ...this.contactInfo, ...result };
+        this.contactInfo = result;
         this.personContactInfo = result.personContactInfo;
         this.initVerificationChecklist();
 
@@ -314,6 +313,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
     private fillLeadDetails(result) {
         this.contactService['data'].leadInfo = this.leadInfo = result;
         this.leadId = this.contactInfo['leadId'] = result.id;
+        this.contactsService.leadInfoUpdate(result);
 
         this.loadLeadsStages(() => {
             if (this.leadInfo.stage) {
@@ -448,7 +448,8 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
                 personContactInfo && this.InitNavLinks(personContactInfo);
                 lastLeadCallback && lastLeadCallback();
             });
-        }
+        } else
+            this.contactsService.leadInfoUpdate(leadInfo);
     }
 
     private loadLeadsStages(callback?: () => any) {
