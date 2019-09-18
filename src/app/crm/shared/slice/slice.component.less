@@ -1,0 +1,70 @@
+:host {
+    /deep/ .dx-loadpanel-indicator,
+    /deep/ .dx-overlay-content {
+        width: 150px !important;
+        height: 150px !important;
+    }
+
+    /deep/ .dx-pivotgrid {
+
+        .dx-pivotgrid .dx-data-header,
+        .dx-area-description-cell.dx-pivotgrid-background {
+            background-color: rgba(243, 247, 250, 0.4);
+        }
+
+        .dx-area-field-content {
+            font-size: 15px;
+            font-weight: 500;
+            font-style: normal;
+            font-stretch: normal;
+            line-height: 1.6;
+            letter-spacing: 0.11px;
+            color: #424c56;
+        }
+
+        .dx-pivotgrid-fields-container .dx-column-indicators {
+            margin-top: 4px;
+        }
+
+        .dx-pivotgrid-horizontal-headers,
+        .dx-pivotgrid-vertical-headers {
+            td {
+                background-color: rgba(224, 244, 251, 0.5);
+                font-weight: 600;
+                font-style: normal;
+                font-stretch: normal;
+                line-height: normal;
+                letter-spacing: 0.11px;
+                color: #212c36;
+                vertical-align: middle;
+            }
+        }
+
+        .dx-pivotgrid-horizontal-headers {
+            td {
+                text-align: center;
+            }
+        }
+
+        .dx-area-data-cell {
+            td {
+                font-family: Roboto;
+                font-size: 15px;
+                font-weight: normal;
+                font-style: normal;
+                font-stretch: normal;
+                line-height: normal;
+                letter-spacing: 0.11px;
+                text-align: right;
+                color: #424c56;
+            }
+        }
+
+        td {
+            &.dx-row-total,
+            &.dx-grandtotal {
+                background-color: #def9f3;
+            }
+        }
+    }
+}

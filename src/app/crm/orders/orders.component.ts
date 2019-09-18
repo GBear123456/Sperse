@@ -455,11 +455,11 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                             }
                         },
                         {
-                            name: 'grid',
-                            action: this.toggleDataLayout.bind(this, DataLayoutType.Grid),
+                            name: 'data-grid',
+                            action: this.toggleDataLayout.bind(this, DataLayoutType.DataGrid),
                             options: {
                                 checkPressed: () => {
-                                    return (this.dataLayoutType == DataLayoutType.Grid);
+                                    return (this.dataLayoutType == DataLayoutType.DataGrid);
                                 },
                             }
                         }

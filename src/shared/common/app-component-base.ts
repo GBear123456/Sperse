@@ -6,6 +6,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import * as moment from 'moment-timezone';
 import { Subject, Observable } from 'rxjs';
 import capitalize from 'underscore.string/capitalize';
+import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 
 /** Application imports */
 import { AppPermissionService } from '@shared/common/auth/permission.service';
@@ -29,7 +30,6 @@ import { CacheHelper } from '@shared/common/cache-helper/cache-helper';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
 import { ProfileService } from '@shared/common/profile-service/profile.service';
 import { AppPermissions } from '@shared/AppPermissions';
-import { DxDataGridComponent } from '@root/node_modules/devextreme-angular/ui/data-grid';
 
 export abstract class AppComponentBase implements OnDestroy {
     @HostBinding('class.fullscreen') public isFullscreenMode = false;

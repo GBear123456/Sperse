@@ -11,7 +11,7 @@ import { InstanceType } from '@shared/service-proxies/service-proxies';
 })
 export class ODataService {
     private _dxRequestPool = {};
-
+    private pivotGridInitialBeforeSend;
     constructor() {
         dxAjax.setStrategy((options) => {
             options.responseType = 'application/json';
@@ -32,7 +32,7 @@ export class ODataService {
 
             if (url)
                 dataSource['_store']['_url'] = url;
-            promise = dataSource.load();
+            promise = dataSource.reload();
             dataSource['operationId'] = promise['operationId'];
         }
         return promise;
@@ -66,6 +66,21 @@ export class ODataService {
     private advancedODataFilter(grid: any, uri: string, query: any[], searchColumns: any[], searchValue: string, instanceData = null, params = null) {
         let queryWithSearch = query.concat(this.getSearchFilter(searchColumns, searchValue)),
             url = this.getODataUrl(uri, queryWithSearch, instanceData, params);
+
+        /** Add filter to the params for pivot grid data source */
+        if (grid.NAME === 'dxPivotGrid') {
+            const filter = queryWithSearch ? buildQuery({ filter: queryWithSearch }) : '';
+            if (filter) {
+                if (!this.pivotGridInitialBeforeSend) {
+                    this.pivotGridInitialBeforeSend = grid.getDataSource()._store._dataSource._store._beforeSend;
+                }
+                const newBeforeSend = (request) => {
+                    request.params['$filter'] = filter.slice('?$filter='.length);
+                    this.pivotGridInitialBeforeSend(request);
+                };
+                grid.getDataSource()._store._dataSource._store._beforeSend = newBeforeSend;
+            }
+        }
 
         this.loadDataSource(grid.getDataSource(), uri, url);
 
