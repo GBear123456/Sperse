@@ -21,7 +21,8 @@
 
     var params = queryString(document.location.search.substr(1), '&');
     if (
-        !checkSetDomainToken() && !params.secureId && !params.tenantId && (
+        !checkSetDomainToken() && !params.secureId && 
+        !params.tenantId && !params.switchAccountToken && (
             (!pathParts.length && !cookie['Abp.AuthToken']) ||
             (pathParts.pop() == 'login')
         )
