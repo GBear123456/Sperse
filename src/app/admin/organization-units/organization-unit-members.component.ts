@@ -8,6 +8,7 @@ import { Table } from 'primeng/components/table/table';
 import { IBasicOrganizationUnitInfo } from './basic-organization-unit-info';
 import { IUserWithOrganizationUnit } from './user-with-organization-unit';
 import { IUsersWithOrganizationUnit } from './users-with-organization-unit';
+import { AppPermissions } from '@shared/AppPermissions';
 
 @Component({
     selector: 'organization-unit-members',
@@ -21,6 +22,8 @@ export class OrganizationUnitMembersComponent extends AppComponentBase implement
     @ViewChild('addMemberModal') addMemberModal: AddMemberModalComponent;
     @ViewChild('dataTable') dataTable: Table;
     @ViewChild('paginator') paginator: Paginator;
+
+    public permissions = AppPermissions;
 
     private _organizationUnit: IBasicOrganizationUnitInfo = null;
 

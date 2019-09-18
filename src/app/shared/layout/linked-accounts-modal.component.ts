@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, ChangeDetectionStrategy, EventEmitter, Output, ViewChild } from '@angular/core';
+import { Component, ChangeDetectionStrategy, ChangeDetectorRef, EventEmitter, Output, ViewChild } from '@angular/core';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
@@ -37,6 +37,7 @@ export class LinkedAccountsModalComponent {
 
     constructor(
         private dialog: MatDialog,
+        private changeDetectorRef: ChangeDetectorRef,
         private _userLinkService: UserLinkServiceProxy,
         private _linkedAccountService: LinkedAccountService,
         private _messageService: MessageService,
@@ -55,6 +56,7 @@ export class LinkedAccountsModalComponent {
                 .subscribe(result => {
                     this.primengTableHelper.totalRecordsCount = result.totalCount;
                     this.primengTableHelper.records = result.items;
+                    this.changeDetectorRef.markForCheck();
                 });
     }
 
@@ -84,6 +86,7 @@ export class LinkedAccountsModalComponent {
 
     reloadPage(): void {
         this.paginator.changePage(this.paginator.getPage());
+        this.changeDetectorRef.markForCheck();
     }
 
     manageLinkedAccounts(e): void {
