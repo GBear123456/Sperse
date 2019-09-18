@@ -4,6 +4,7 @@ import { Injectable, Inject, Optional, Injector } from '@angular/core';
 /** Third party imports */
 import { CacheService } from 'ng2-cache-service';
 import * as moment from 'moment';
+import values from 'lodash/values';
 
 /** Application imports */
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -15,18 +16,7 @@ import { Period } from '@app/shared/common/period/period.enum';
 @Injectable()
 export class PeriodService {
     private readonly PERIOD_CACHE_KEY = 'dashboard.selected.period';
-    availablePeriods: Period[] = [
-        Period.Today,
-        Period.Yesterday,
-        Period.ThisWeek,
-        Period.ThisMonth,
-        Period.LastMonth,
-        Period.LastQuarter,
-        Period.ThisYear,
-        Period.LastYear,
-        Period.AllPeriods
-    ];
-
+    availablePeriods: Period[] = values(Period) as Period[];
     selectedPeriod: PeriodModel;
     considerSettingsTimezone = true;
 
