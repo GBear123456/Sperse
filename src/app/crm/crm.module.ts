@@ -77,6 +77,7 @@ import { AppStore } from '@app/store';
 import { LoadingSpinnerModule } from '@app/shared/common/loading-spinner/loading-spinner.module';
 import { AppPermissions } from '@shared/AppPermissions';
 import { BankCodeLettersModule } from '@app/shared/common/bank-code-letters/bank-code-letters.module';
+import { SliceComponent } from '@app/crm/shared/slice/slice.component';
 
 @NgModule({
     imports: [
@@ -88,6 +89,7 @@ import { BankCodeLettersModule } from '@app/shared/common/bank-code-letters/bank
         DxDropDownBoxModule,
         DxTreeListModule,
         DxDataGridModule,
+        DxPivotGridModule,
         DxToolbarModule,
         DxTemplateModule,
         DxDateBoxModule,
@@ -98,7 +100,6 @@ import { BankCodeLettersModule } from '@app/shared/common/bank-code-letters/bank
         DxButtonModule,
         DxFileUploaderModule,
         DxSelectBoxModule,
-        DxPivotGridModule,
         DxNumberBoxModule,
         DxScrollViewModule,
         DxTextAreaModule,
@@ -145,7 +146,8 @@ import { BankCodeLettersModule } from '@app/shared/common/bank-code-letters/bank
         CreateInvoiceDialogComponent,
         CreateActivityDialogComponent,
         CrmIntroComponent,
-        ActivityComponent
+        ActivityComponent,
+        SliceComponent
     ],
     providers: [
         AppStoreService,

@@ -1,5 +1,5 @@
 export enum DataLayoutType {
-    Box,
     Pipeline,
-    Grid
+    DataGrid,
+    PivotGrid
 }

@@ -42,7 +42,7 @@
     </crm-user-assignment-list>
     <crm-rating [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [filterModel]="filterModelRating"></crm-rating>
     <crm-stars-list [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [filterModel]="filterModelStar"></crm-stars-list>
-    <div [hidden]="(isDataLoaded && !totalRowCount) || showPipeline" class="portlet light no-padding margin-bottom-0">
+    <div [hidden]="(isDataLoaded && !totalRowCount) || !showDataGrid" class="portlet light no-padding margin-bottom-0">
         <div class="portlet-body">
             <div>
                 <div id="LeadsTable">
@@ -64,7 +64,7 @@
                             showCheckBoxesMode="always"
                             mode="multiple">
                         </dxo-selection>
-                        <dxo-editing mode="popup" [popup]="{onShowing: onShowingPopup, height: '0px', width: '0px'}" [allowUpdating]="true"></dxo-editing>
+                        <dxo-editing mode="popup" [popup]="{onShowing: onShowingPopup, height: '0', width: '0'}" [allowUpdating]="true"></dxo-editing>
                         <dxi-column [width]="40" [fixed]="true" [fixedPosition]="'left'" [showInColumnChooser]="false" [allowExporting]="false"></dxi-column>
                         <dxi-column dataField="Id" [caption]="l('Id')" cssClass="tabular" [visible]="false" sortOrder="desc"></dxi-column>
                         <dxi-column dataField="OrganizationUnitId" [calculateDisplayValue]="getOrganizationUnitName" [caption]="l('Abp.Organizations.OrganizationUnit')" cssClass="tabular" [visible]="false"></dxi-column>
@@ -140,9 +140,12 @@
             </div>
         </div>
     </div>
+    <div [hidden]="!showPivotGrid">
+        <slice [storageKey]="sliceStorageKey" [height]="visibleContentHeight"></slice>
+    </div>
 </div>
 
 <app-no-data
-    [hidden]="!isDataLoaded || totalRowCount"
+    [hidden]="!isDataLoaded || totalRowCount || showPivotGrid"
     [showLink]="false">
 </app-no-data>

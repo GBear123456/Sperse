@@ -31,7 +31,7 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
     schedulerHeight = window.innerHeight - 210;
 
     private rootComponent: any;
-    private dataLayoutType: DataLayoutType = DataLayoutType.Grid;
+    private dataLayoutType: DataLayoutType = DataLayoutType.DataGrid;
     private dataSourceURI = 'Activity';
     private stages: any;
 
@@ -385,16 +385,16 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
                         options: {
                             checkPressed: () => {
                                 return (this.dataLayoutType == DataLayoutType.Pipeline);
-                            },
+                            }
                         }
                     },
                     {
-                        name: 'grid',
-                        action: this.toggleDataLayout.bind(this, DataLayoutType.Grid),
+                        name: 'dataGrid',
+                        action: this.toggleDataLayout.bind(this, DataLayoutType.DataGrid),
                         options: {
                             checkPressed: () => {
-                                return (this.dataLayoutType == DataLayoutType.Grid);
-                            },
+                                return (this.dataLayoutType == DataLayoutType.DataGrid);
+                            }
                         }
                     }
                 ]

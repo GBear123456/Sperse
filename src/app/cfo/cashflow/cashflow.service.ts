@@ -243,7 +243,6 @@ export class CashflowService {
             customizeText: this.customizeFieldText.bind(this)
         },
         {
-            caption: 'Amount',
             dataField: 'amount',
             dataType: 'number',
             summaryType: 'sum',

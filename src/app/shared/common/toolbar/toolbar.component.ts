@@ -126,9 +126,14 @@ export class ToolBarComponent implements OnDestroy {
                 hint: this.ls.l('Pipeline'),
                 icon: this.getImgURI('funnel-icon')
             },
-            grid: {
-                accessKey: 'grid',
-                hint: this.ls.l('Grid'),
+            dataGrid: {
+                accessKey: 'dataGrid',
+                hint: this.ls.l('Data Grid'),
+                icon: this.getImgURI('table-icon')
+            },
+            pivotGrid: {
+                accessKey: 'pivotGrid',
+                hint: this.ls.l('Pivot Grid'),
                 icon: this.getImgURI('table-icon')
             },
             prev: {
