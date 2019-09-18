@@ -59,7 +59,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
 
     saveButtonId = 'saveInvoiceOptions';
     saveContextMenuItems = [];
-    billingSettings: InvoiceSettingsInfoDto = InvoiceSettingsInfoDto.fromJS({});
+    billingSettings: InvoiceSettingsInfoDto = new InvoiceSettingsInfoDto();
     remoteServiceBaseUrl: string = AppConsts.remoteServiceBaseUrl;
 
     currencies = [
