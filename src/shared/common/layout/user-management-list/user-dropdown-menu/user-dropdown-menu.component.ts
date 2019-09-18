@@ -59,22 +59,17 @@ export class UserDropdownMenuComponent implements OnInit {
         this.commonUserInfoService = injector.get(CommonUserInfoServiceProxy);
     }
 
-    getScrollHeight() {
-        let height = innerHeight - 170;
-        return height > 490 ? '100%' : height;
+    ngOnInit() {
+        this.shownLoginInfo = this.appSession.getShownLoginInfo();
+        this.userManagementService.getRecentlyLinkedUsers().subscribe(
+            recentlyLinkedUsers => this.recentlyLinkedUsers = recentlyLinkedUsers
+        );
     }
 
     menuItemClick(menuItem, event) {
         menuItem.onClick(event);
         this.elementRef.nativeElement.childNodes[0]
             .classList.remove('m-dropdown--open');
-    }
-
-    ngOnInit() {
-        this.shownLoginInfo = this.appSession.getShownLoginInfo();
-        this.userManagementService.getRecentlyLinkedUsers().subscribe(
-            recentlyLinkedUsers => this.recentlyLinkedUsers = recentlyLinkedUsers
-        );
     }
 
     getScrollHeight() {
