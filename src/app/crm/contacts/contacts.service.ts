@@ -177,7 +177,7 @@ export class ContactsService {
             position: this.dialogService.calculateDialogPosition(
                 event, event.target, shiftX, shiftY)
         }).afterClosed().pipe(tap(responce => {
-            if (responce.organizationId)
+            if (responce && responce.organizationId)
                 setTimeout(() => this.invalidateUserData(), 300);
         }));
     }
