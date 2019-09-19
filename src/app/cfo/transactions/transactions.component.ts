@@ -9,6 +9,7 @@ import {
     ChangeDetectionStrategy,
     ChangeDetectorRef
 } from '@angular/core';
+import { ActivatedRoute, ParamMap } from '@angular/router';
 
 /** Third party imports */
 import { CacheService } from 'ng2-cache-service';
@@ -19,7 +20,7 @@ import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import DataSource from 'devextreme/data/data_source';
 import 'devextreme/data/odata/store';
 import { Subject, forkJoin, of } from 'rxjs';
-import { first, skip, switchMap, mapTo, takeUntil } from 'rxjs/operators';
+import { first, skip, switchMap, mapTo, map, takeUntil } from 'rxjs/operators';
 import * as _ from 'underscore';
 
 /** Application imports */
@@ -51,7 +52,7 @@ import { ChooseResetRulesComponent } from './choose-reset-rules/choose-reset-rul
 import { BankAccountFilterComponent } from 'shared/filters/bank-account-filter/bank-account-filter.component';
 import { BankAccountFilterModel } from 'shared/filters/bank-account-filter/bank-account-filter.model';
 import { BankAccountsSelectDialogComponent } from 'app/cfo/shared/bank-accounts-select-dialog/bank-accounts-select-dialog.component';
-import { CurrenciesStoreSelectors, RootStore } from '@root/store';
+import { CurrenciesStoreSelectors, CurrenciesStoreActions, RootStore } from '@root/store';
 import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 import { CalendarValuesModel } from '@shared/common/widgets/calendar/calendar-values.model';
@@ -95,7 +96,12 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         operator: { from: 'ge', to: 'le' },
         caption: 'Date',
         field: 'Date',
-        items: { from: new FilterItemModel(), to: new FilterItemModel() },
+        items$: this.cfoPreferencesService.dateRange$.pipe(
+                map((dateRange: CalendarValuesModel) => ({
+                    from: new FilterItemModel(dateRange.from.value),
+                    to: new FilterItemModel(dateRange.to.value)
+                }))
+        ),
         options: { method: 'getFilterByDate' }
     });
     private bankAccountFilter: FilterModel;
@@ -108,7 +114,6 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     public selectedCashflowCategoryKey: any;
 
     public bankAccountCount;
-    visibleAccountCount = 0;
     public bankAccounts: number[];
     public bankAccountsLookup = [];
     public creditTransactionCount = 0;
@@ -146,17 +151,18 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     private updateAfterActivation: boolean;
 
     constructor(injector: Injector,
-        private _appService: AppService,
-        private _TransactionsServiceProxy: TransactionsServiceProxy,
-        private _classificationServiceProxy: ClassificationServiceProxy,
-        public bankAccountsService: BankAccountsService,
-        private _changeDetectionRef: ChangeDetectorRef,
-        private _cacheService: CacheService,
-        private _lifecycleService: LifecycleSubjectsService,
+        private appService: AppService,
+        private transactionsServiceProxy: TransactionsServiceProxy,
+        private classificationServiceProxy: ClassificationServiceProxy,
+        private changeDetectionRef: ChangeDetectorRef,
+        private cacheService: CacheService,
+        private lifecycleService: LifecycleSubjectsService,
         private store$: Store<RootStore.State>,
+        private route: ActivatedRoute,
         public cfoPreferencesService: CfoPreferencesService,
         public filtersService: FiltersService,
-        public dialog: MatDialog
+        public dialog: MatDialog,
+        public bankAccountsService: BankAccountsService
     ) {
         super(injector);
         if (filtersService.fixed)
@@ -174,16 +180,16 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         /** If component is not activated - wait until it will activate and then reload */
         selectedCurrencyId$.pipe(
             skip(1),
-            switchMap((selectedCurrencyId) => this.componentIsActivated ? of(selectedCurrencyId) : this._lifecycleService.activate$.pipe(first(), mapTo(selectedCurrencyId)))
+            switchMap((selectedCurrencyId) => this.componentIsActivated ? of(selectedCurrencyId) : this.lifecycleService.activate$.pipe(first(), mapTo(selectedCurrencyId)))
         ).subscribe((selectedCurrencyId) => {
             this.filtersService.change(this.setCurrenciesFilter(selectedCurrencyId));
         });
 
         this.cfoPreferencesService.dateRange$.pipe(
             takeUntil(this.destroy$),
-            switchMap((dateRange) => this.componentIsActivated ? of(dateRange) : this._lifecycleService.activate$.pipe(first(), mapTo(dateRange)))
-        ).subscribe((dateRange: CalendarValuesModel) => {
-            this.filtersService.change(this.updateDateFilter(dateRange));
+            switchMap((dateRange) => this.componentIsActivated ? of(dateRange) : this.lifecycleService.activate$.pipe(first(), mapTo(dateRange)))
+        ).subscribe(() => {
+            this.filtersService.change(this.dateFilter);
         });
 
         this.dataSource = new DataSource({
@@ -196,12 +202,12 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                     if (request.params.$filter && request.url.indexOf('$filter')) {
                         let parts = request.url.split('?');
                         request.url = parts.shift() + '?' + parts.pop().split('&').reduce((acc, item) => {
-                            let arrgs = item.split('=');
-                            if (arrgs[0] == '$filter') {
-                                request.params.$filter = '(' + request.params.$filter + ') and (' + arrgs[1] + ')';
+                            let args = item.split('=');
+                            if (args[0] == '$filter') {
+                                request.params.$filter = '(' + request.params.$filter + ') and (' + args[1] + ')';
                                 return acc;
                             } else
-                                return acc + (acc ? '&' : '') + arrgs.join('=');
+                                return acc + (acc ? '&' : '') + args.join('=');
                         }, '');
                     }
                 }
@@ -220,14 +226,42 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             onChanged: () => {
                 this.dataGrid.instance.clearSelection();
                 this.processTotalValues();
-                this._changeDetectionRef.detectChanges();
+                this.changeDetectionRef.detectChanges();
+            }
+        });
+
+        /** If we get some filters in url - set them as selected */
+        this.route.queryParamMap.pipe(
+            takeUntil(this.lifecycleService.destroy$)
+        ).subscribe((params: ParamMap) => {
+            const state = {};
+            const businessEntitiesIds: string = params.get('businessEntitiesIds');
+            if (businessEntitiesIds) {
+                state['selectedBusinessEntitiesIds'] = businessEntitiesIds.split(',').map((id: string) => +id);
+            }
+            const bankAccountsIds: string = params.get('bankAccountIds');
+            if (bankAccountsIds) {
+                state['selectedBankAccountIds'] = bankAccountsIds.split(',').map((id: string) => +id);
+            }
+            const currencyId: string = params.get('currencyId');
+            if (currencyId) {
+                /** Update selected currency id with the currency id from cashflow preferences */
+                this.store$.dispatch(new CurrenciesStoreActions.ChangeCurrencyAction(currencyId));
+            }
+            const startDate = params.get('startDate');
+            const endDate = params.get('endDate');
+            if (startDate || endDate) {
+                this.cfoPreferencesService.dateRange.next({
+                    from: { value: startDate ? new Date(startDate) : undefined },
+                    to: { value: endDate ? new Date(endDate) : undefined }
+                });
             }
         });
 
         this.bankAccountsService.load();
         forkJoin(
-            this._TransactionsServiceProxy.getTransactionTypesAndCategories(),
-            this._TransactionsServiceProxy.getFiltersInitialData(InstanceType[this.instanceType], this.instanceId),
+            this.transactionsServiceProxy.getTransactionTypesAndCategories(),
+            this.transactionsServiceProxy.getFiltersInitialData(InstanceType[this.instanceType], this.instanceId),
             this.bankAccountsService.syncAccounts$.pipe(first())
         ).subscribe(([typeAndCategories, filtersInitialData, syncAccounts]) => {
             this.syncAccounts = syncAccounts;
@@ -355,7 +389,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                 } else {
                     /** if change is on another component - mark this for future update */
                     this.updateAfterActivation = true;
-                    this._changeDetectionRef.detectChanges();
+                    this.changeDetectionRef.detectChanges();
                 }
             });
         });
@@ -363,7 +397,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         this.bankAccountsService.accountsAmountWithApply$.subscribe(amount => {
             this.bankAccountCount = amount;
             this.initToolbarConfig();
-            this._changeDetectionRef.detectChanges();
+            this.changeDetectionRef.detectChanges();
         });
     }
 
@@ -383,11 +417,11 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                 }
             ]
         };
-        this._changeDetectionRef.detectChanges();
+        this.changeDetectionRef.detectChanges();
     }
 
     toggleToolbar() {
-        this._appService.toolbarToggle();
+        this.appService.toolbarToggle();
         this.filtersService.fixed = false;
         this.filtersService.disable();
         setTimeout(() => this.dataGrid.instance.repaint());
@@ -396,7 +430,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
 
     initToolbarConfig() {
         if (this.componentIsActivated) {
-            this._appService.updateToolbar([
+            this.appService.updateToolbar([
                 {
                     location: 'before', items: [
                         {
@@ -608,7 +642,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             });
             setTimeout(() => {
                 this.bankAccounts = _.uniq(bankAccounts);
-                this._changeDetectionRef.detectChanges();
+                this.changeDetectionRef.detectChanges();
             });
 
             this.creditTransactionTotal = creditTotal;
@@ -635,7 +669,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                 } else {
                     this.bankAccounts = [];
                 }
-                this._changeDetectionRef.detectChanges();
+                this.changeDetectionRef.detectChanges();
             });
 
             this.adjustmentStartingBalanceTotal = totals[0].adjustmentStartingBalanceTotal + startingBalanceTotal;
@@ -659,32 +693,25 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             this.adjustmentTotal = 0;
         }
 
-        this._changeDetectionRef.markForCheck();
+        this.changeDetectionRef.markForCheck();
     }
 
     processTotalValues(rowSelection = false) {
         let totals = this.totalDataSource && this.totalDataSource.items();
         if (!rowSelection && this.dateFilter.items.from.value) {
-            let dateFrom = new Date(this.dateFilter.items.from.value);
-            let dateTo = new Date(this.dateFilter.items.to.value);
-            this._TransactionsServiceProxy.getStartingBalance(
+            let dateFrom = this.dateFilter.items.from.value ? new Date(this.dateFilter.items.from.value) : undefined;
+            let dateTo = this.dateFilter.items.to.value ? new Date(this.dateFilter.items.to.value) : undefined;
+            this.transactionsServiceProxy.getStartingBalance(
                 this.instanceType as InstanceType,
                 this.instanceId,
                 DateHelper.removeTimezoneOffset(dateFrom, false, 'from'),
-                dateTo ? DateHelper.removeTimezoneOffset(dateTo, false, 'to') : null,
+                dateTo ? DateHelper.removeTimezoneOffset(dateTo, false, 'to') : undefined,
                 this.cfoPreferencesService.selectedCurrencyId,
                 this.bankAccountFilter.items.element.value,
                 this.businessEntityFilter.items.element.value
             ).subscribe(res => this.processTotalValuesInternal(totals, res));
         } else
             this.processTotalValuesInternal(totals);
-    }
-
-    getFloatPart(value) {
-        let x = Math.abs(value);
-        let int_part = Math.trunc(x);
-        let float_part = (x - int_part) * 100;
-        return float_part;
     }
 
     showRefreshButton() {
@@ -719,17 +746,17 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
 
     toggleCreditDefault() {
         this.defaultCreditTooltipVisible = !this.defaultCreditTooltipVisible;
-        this._changeDetectionRef.detectChanges();
+        this.changeDetectionRef.detectChanges();
     }
 
     toggleDebitDefault() {
         this.defaultDebitTooltipVisible = !this.defaultDebitTooltipVisible;
-        this._changeDetectionRef.detectChanges();
+        this.changeDetectionRef.detectChanges();
     }
 
     toggleTotalDefault() {
         this.defaultTotalTooltipVisible = !this.defaultTotalTooltipVisible;
-        this._changeDetectionRef.detectChanges();
+        this.changeDetectionRef.detectChanges();
     }
 
     applyTotalFilters(classified: boolean, credit: boolean, debit: boolean) {
@@ -801,13 +828,9 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     setDataSource() {
         if (this.dataGrid && !this.dataGrid.dataSource) {
             this.dataGrid.dataSource = this.dataSource;
-            this._changeDetectionRef.markForCheck();
+            this.changeDetectionRef.markForCheck();
         }
     }
-
-    // setBankAccountCount(bankAccountIds, visibleAccountCount) {
-    //     this.bankAccountCount = this.bankAccountsService.getBankAccountCount(bankAccountIds, visibleAccountCount);
-    // }
 
     applyTotalBankAccountFilter(emitFilterChange = false) {
         this.setDataSource();
@@ -818,14 +841,6 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     setCurrenciesFilter(currencyId: string) {
         let currenciesFilter: FilterModel = _.find(this.filters, function (f: FilterModel) { return f.caption.toLowerCase() === 'currency'; });
         return this.changeAndGetCurrenciesFilter(currenciesFilter, currencyId);
-    }
-
-    updateDateFilter(dateRange: CalendarValuesModel) {
-        this.dateFilter.items = {
-            from: new FilterItemModel(dateRange.from.value),
-            to: new FilterItemModel(dateRange.to.value)
-        };
-        return this.dateFilter;
     }
 
     changeAndGetCurrenciesFilter(currenciesFilter: FilterModel, countryId: string): FilterModel {
@@ -855,7 +870,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         this.transactionsFilterQuery = _.reject(filterQuery, (x) => _.has(x, 'AccountingTypeId')
             || (_.has(x, 'CashflowCategoryId') && typeof x['CashflowCategoryId'] == 'number')
             || _.has(x, 'CashflowSubCategoryId'));
-        this._changeDetectionRef.detectChanges();
+        this.changeDetectionRef.detectChanges();
     }
 
     getODataUrl(uri: string, filter?: Object) {
@@ -1004,7 +1019,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             e.originalEvent.dataTransfer.effectAllowed = 'all';
             e.originalEvent.dataTransfer.dropEffect = 'move';
             document.addEventListener('dxpointermove', this.stopPropagation, true);
-            this._changeDetectionRef.detectChanges();
+            this.changeDetectionRef.detectChanges();
         }).on('dragend', (e) => {
             e.originalEvent.preventDefault();
             e.originalEvent.stopPropagation();
@@ -1012,11 +1027,11 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             this.draggedTransactionRow = null;
             this.dragInProgress = false;
             document.removeEventListener('dxpointermove', this.stopPropagation);
-            this._changeDetectionRef.detectChanges();
+            this.changeDetectionRef.detectChanges();
         }).on('click', (e) => {
             this.draggedTransactionRow = null;
             this.dragInProgress = false;
-            this._changeDetectionRef.detectChanges();
+            this.changeDetectionRef.detectChanges();
         });
     }
 
@@ -1070,14 +1085,14 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         this.dataGridStateTimeout = setTimeout(() => {
             instance = instance || this.dataGrid && this.dataGrid.instance;
             if (instance)
-                this._cacheService.set(this.getCacheKey('dataGridState'), instance.state());
+                this.cacheService.set(this.getCacheKey('dataGridState'), instance.state());
         }, 500);
     }
 
     applyGridState(instance) {
         instance = instance || this.dataGrid && this.dataGrid.instance;
         if (instance) {
-            let state = this._cacheService.get(
+            let state = this.cacheService.get(
                 this.getCacheKey('dataGridState'));
             if (state) {
                 instance.state(state);
@@ -1107,7 +1122,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
 
         if ($event.categoryId) {
             let updateTransactionCategoryMethod = (suppressCashflowTypeMismatch: boolean = false) => {
-                this._classificationServiceProxy.updateTransactionsCategory(
+                this.classificationServiceProxy.updateTransactionsCategory(
                     InstanceType[this.instanceType],
                     this.instanceId,
                     new UpdateTransactionsCategoryInput({
@@ -1205,7 +1220,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                 break;
         }
         this.notify.info('Auto-classification has started');
-        this._classificationServiceProxy.autoClassify(InstanceType[this.instanceType], this.instanceId, this.autoClassifyData)
+        this.classificationServiceProxy.autoClassify(InstanceType[this.instanceType], this.instanceId, this.autoClassifyData)
             .subscribe((result) => {
                 this.notify.info('Auto-classification has ended');
                 return result;
@@ -1238,7 +1253,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
 
     reset(): void {
         this.notify.info('Reset process has started');
-        this._classificationServiceProxy.reset(InstanceType[this.instanceType], this.instanceId, this.resetRules)
+        this.classificationServiceProxy.reset(InstanceType[this.instanceType], this.instanceId, this.resetRules)
             .subscribe((result) => {
                 this.notify.info('Reset process has ended');
                 return result;
@@ -1307,7 +1322,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     }
 
     ngOnDestroy() {
-        this._appService.updateToolbar(null);
+        this.appService.updateToolbar(null);
         this.filtersService.unsubscribe();
         this.rootComponent.overflowHidden();
 
@@ -1319,7 +1334,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
 
         this.initFiltering();
         this.initToolbarConfig();
-        this._lifecycleService.activate.next();
+        this.lifecycleService.activate.next();
         /** Load sync accounts (if something change - subscription in ngOnInit fires) */
         this.bankAccountsService.load();
 
@@ -1339,7 +1354,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         super.deactivate();
 
         this.dialog.closeAll();
-        this._appService.updateToolbar(null);
+        this.appService.updateToolbar(null);
         this.filtersService.unsubscribe();
         this.synchProgressComponent.deactivate();
         this.rootComponent.overflowHidden(false);
