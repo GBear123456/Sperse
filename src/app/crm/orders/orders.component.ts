@@ -80,7 +80,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         icon: 'briefcase',
         buttons: [
             {
-                enabled: true,
+                enabled: this.isGranted(AppPermissions.CRMOrdersInvoicesManage),
                 action: this.createInvoice.bind(this),
                 lable: this.l('CreateInvoice')
             }

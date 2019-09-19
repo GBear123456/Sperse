@@ -14,6 +14,7 @@ import { finalize, filter, first } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 
 /** Application imports */
+import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { DateHelper } from '@shared/helpers/DateHelper';
 import { DialogService } from '@app/shared/common/dialogs/dialog.service';
 import { ContactGroup } from '@shared/AppEnums';
@@ -31,6 +32,7 @@ import { CreateClientDialogComponent } from '../create-client-dialog/create-clie
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { RootStore, CurrenciesStoreActions, CurrenciesStoreSelectors } from '@root/store';
 import { AppConsts } from '@shared/AppConsts';
+import { AppPermissions } from '@shared/AppPermissions';
 
 @Component({
     templateUrl: 'create-invoice-dialog.component.html',
@@ -96,7 +98,8 @@ export class CreateInvoiceDialogComponent implements OnInit {
             id: this.saveButtonId,
             title: this.ls.l('Save'),
             class: 'primary menu',
-            action: this.save.bind(this)
+            action: this.save.bind(this),
+            disabled: !this.permission.isGranted(AppPermissions.CRMOrdersInvoicesManage)
         }
     ];
     linesGridHeight = 200;
@@ -111,6 +114,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
         private _cacheHelper: CacheHelper,
         private _dialogRef: MatDialogRef<CreateInvoiceDialogComponent>,
         private _changeDetectorRef: ChangeDetectorRef,
+        private permission: AppPermissionService,
         public appSession: AppSessionService,
         public dialog: MatDialog,
         public ls: AppLocalizationService,
