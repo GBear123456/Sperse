@@ -20,6 +20,7 @@
                         [showFilterIcon]="true"
                         [dragMode]="dragInProgress"
                         (close)="categoriesShowed = false"
+                        [filteredRowData]="categoriesRowData"
                         [transactionsFilter]="transactionsFilterQuery"
                         (onTransactionDrop)="categorizeTransactions($event)"
                         (onFilterSelected)="filterByCashflowCategory($event)"

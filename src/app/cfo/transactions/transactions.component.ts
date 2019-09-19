@@ -150,6 +150,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     private syncAccounts: any;
 
     private updateAfterActivation: boolean;
+    categoriesRowData;
 
     constructor(injector: Injector,
         private appService: AppService,
@@ -244,6 +245,9 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             if (bankAccountsIds) {
                 state['selectedBankAccountIds'] = bankAccountsIds.split(',').map((id: string) => +id);
             }
+            if (Object.keys(state).length) {
+                this.bankAccountsService.changeState(state);
+            }
             const currencyId: string = params.get('currencyId');
             if (currencyId) {
                 /** Update selected currency id with the currency id from cashflow preferences */
@@ -256,6 +260,26 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                     from: { value: startDate ? new Date(startDate) : undefined },
                     to: { value: endDate ? new Date(endDate) : undefined }
                 });
+            }
+
+            const categoryIdsString: string = params.get('categoryIds');
+            if (categoryIdsString) {
+                const categoryIds: number[] = categoryIdsString.split(',').map((id: string) => +id);
+                this.categoriesRowData = {
+                    key: categoryIds
+                };
+                this.cashFlowCategoryFilter = [
+                    new FilterModel({
+                        field: 'CashflowCategoryId',
+                        caption: 'TransactionCategory',
+                        items: {
+                            element: new FilterCheckBoxesModel({
+                                dataSource: categoryIds,
+                                value: categoryIds
+                            })
+                        }
+                    })
+                ];
             }
         });
 
@@ -870,7 +894,8 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
 
         this.transactionsFilterQuery = _.reject(filterQuery, (x) => _.has(x, 'AccountingTypeId')
             || (_.has(x, 'CashflowCategoryId') && typeof x['CashflowCategoryId'] == 'number')
-            || _.has(x, 'CashflowSubCategoryId'));
+            || _.has(x, 'CashflowSubCategoryId')
+        );
         this.changeDetectionRef.detectChanges();
     }
 
