@@ -32,7 +32,8 @@ import {
 import { BankAccountsSelectDialogComponent } from '@app/cfo/shared/bank-accounts-select-dialog/bank-accounts-select-dialog.component';
 import { BankAccountFilterComponent } from '@shared/filters/bank-account-filter/bank-account-filter.component';
 import { BankAccountFilterModel } from '@shared/filters/bank-account-filter/bank-account-filter.model';
-import { CfoStore, CurrenciesStoreSelectors, ForecastModelsStoreActions, ForecastModelsStoreSelectors } from '@app/cfo/store';
+import { CfoStore, ForecastModelsStoreActions, ForecastModelsStoreSelectors } from '@app/cfo/store';
+import { RootStore, CurrenciesStoreSelectors } from '@root/store';
 import { FilterHelpers } from '../shared/helpers/filter.helper';
 import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
@@ -151,13 +152,13 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
     private requestFilter: Subject<StatsFilter> = new Subject<StatsFilter>();
     requestFilter$: Observable<StatsFilter> = this.requestFilter.asObservable();
     private syncAccounts: any;
-    private forecastModels$ = this.store$.pipe(select(ForecastModelsStoreSelectors.getForecastModels), filter(Boolean));
-    private selectedForecastModelIndex$ = this.store$.pipe(select(ForecastModelsStoreSelectors.getSelectedForecastModelIndex, filter(i => i !== null)));
-    private selectedForecastModelId$ = this.store$.pipe(
+    private forecastModels$ = this.cfoStore$.pipe(select(ForecastModelsStoreSelectors.getForecastModels), filter(Boolean));
+    private selectedForecastModelIndex$ = this.cfoStore$.pipe(select(ForecastModelsStoreSelectors.getSelectedForecastModelIndex, filter(i => i !== null)));
+    private selectedForecastModelId$ = this.cfoStore$.pipe(
         select(ForecastModelsStoreSelectors.getSelectedForecastModelId),
         filter(Boolean),
     );
-    private currencyId$ = this.store$.pipe(select(CurrenciesStoreSelectors.getSelectedCurrencyId), filter(Boolean));
+    private currencyId$ = this.rootStore$.pipe(select(CurrenciesStoreSelectors.getSelectedCurrencyId), filter(Boolean));
     private selectedBankAccountIds$ = this.bankAccountsService.selectedBankAccountsIds$;
     private refresh: BehaviorSubject<null> = new BehaviorSubject<null>(null);
     refresh$: Observable<null> = this.refresh.asObservable();
@@ -180,7 +181,8 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
         private _statsService: StatsService,
         private _dialog: MatDialog,
         private _lifecycleService: LifecycleSubjectsService,
-        private store$: Store<CfoStore.State>,
+        private cfoStore$: Store<CfoStore.State>,
+        private rootStore$: Store<RootStore.State>,
         public bankAccountsService: BankAccountsService,
         public cfoPreferencesService: CfoPreferencesService
     ) {
@@ -189,7 +191,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
     }
 
     ngOnInit() {
-        this.store$.dispatch(new ForecastModelsStoreActions.LoadRequestAction());
+        this.cfoStore$.dispatch(new ForecastModelsStoreActions.LoadRequestAction());
         this.bankAccountsService.accountsAmountWithApply$.subscribe(amount => {
             this.bankAccountsCount = amount;
             this.initToolbarConfig();
@@ -347,7 +349,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
                                     width: AppConsts.isMobile ? 150 : 243,
                                     onSelectionChanged: (e) => {
                                         if (e) {
-                                            this.store$.dispatch(new ForecastModelsStoreActions.ChangeForecastModelAction(e.itemData.id));
+                                            this.cfoStore$.dispatch(new ForecastModelsStoreActions.ChangeForecastModelAction(e.itemData.id));
                                         }
                                     }
                                 }

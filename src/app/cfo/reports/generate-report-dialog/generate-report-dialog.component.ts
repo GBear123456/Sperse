@@ -24,7 +24,7 @@ import {
 } from '@root/shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { GenerateReportStep } from './generate-report-step.enum';
-import { CfoStore, CurrenciesStoreSelectors } from '@app/cfo/store';
+import { RootStore, CurrenciesStoreSelectors } from '@root/store';
 import { CFOService } from '@shared/cfo/cfo.service';
 import { AppConsts } from '@shared/AppConsts';
 import { SendReportNotificationInput } from '@shared/service-proxies/service-proxies';
@@ -88,7 +88,7 @@ export class GenerateReportDialogComponent implements OnInit {
         @Inject(MAT_DIALOG_DATA) public data: any,
         private reportsProxy: ReportsServiceProxy,
         private notify: NotifyService,
-        private store$: Store<CfoStore.State>,
+        private store$: Store<RootStore.State>,
         private dialogRef: MatDialogRef<GenerateReportDialogComponent>,
         private instanceAppService: InstanceServiceProxy,
         public cfoService: CFOService,

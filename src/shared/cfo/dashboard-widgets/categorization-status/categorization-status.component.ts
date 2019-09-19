@@ -11,7 +11,7 @@ import { catchError, filter, first, tap, switchMap, finalize, takeUntil, mapTo }
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { DashboardServiceProxy, ClassificationServiceProxy, InstanceType, AutoClassifyDto, ResetClassificationDto } from 'shared/service-proxies/service-proxies';
 import { ChooseResetRulesComponent } from './choose-reset-rules/choose-reset-rules.component';
-import { CfoStore, CurrenciesStoreSelectors } from '@app/cfo/store';
+import { RootStore, CurrenciesStoreSelectors } from '@root/store';
 import { BankAccountsService } from '../../bank-accounts/helpers/bank-accounts.service';
 import { DashboardService } from '../dashboard.service';
 import { LifecycleSubjectsService } from '@root/shared/common/lifecycle-subjects/lifecycle-subjects.service';
@@ -40,7 +40,7 @@ export class CategorizationStatusComponent extends CFOComponentBase implements O
         private _dashboardServiceProxy: DashboardServiceProxy,
         private _classificationService: ClassificationServiceProxy,
         private _lifeCycleService: LifecycleSubjectsService,
-        private store$: Store<CfoStore.State>,
+        private store$: Store<RootStore.State>,
         public dialog: MatDialog
     ) {
         super(injector);

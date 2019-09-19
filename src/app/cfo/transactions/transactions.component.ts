@@ -51,7 +51,7 @@ import { ChooseResetRulesComponent } from './choose-reset-rules/choose-reset-rul
 import { BankAccountFilterComponent } from 'shared/filters/bank-account-filter/bank-account-filter.component';
 import { BankAccountFilterModel } from 'shared/filters/bank-account-filter/bank-account-filter.model';
 import { BankAccountsSelectDialogComponent } from 'app/cfo/shared/bank-accounts-select-dialog/bank-accounts-select-dialog.component';
-import { CurrenciesStoreSelectors, CfoStore } from '@app/cfo/store';
+import { CurrenciesStoreSelectors, RootStore } from '@root/store';
 import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 import { CalendarValuesModel } from '@shared/common/widgets/calendar/calendar-values.model';
@@ -153,7 +153,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         private _changeDetectionRef: ChangeDetectorRef,
         private _cacheService: CacheService,
         private _lifecycleService: LifecycleSubjectsService,
-        private store$: Store<CfoStore.State>,
+        private store$: Store<RootStore.State>,
         public cfoPreferencesService: CfoPreferencesService,
         public filtersService: FiltersService,
         public dialog: MatDialog

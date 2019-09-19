@@ -28,10 +28,10 @@
             width="125px"
             height="40px"
             displayExpr="name"
-            valueExpr="code"
+            valueExpr="id"
             [placeholder]="ls.l('Currency')"
             [(value)]="currency"
-            [dataSource]="currencies"
+            [dataSource]="currencies$ | async"
             (onValueChanged)="linesComponent.instance.repaint()">
         </dx-select-box>
         <span>{{ status | uppercase }}</span>

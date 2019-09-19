@@ -44,11 +44,14 @@ import {
 } from '@shared/service-proxies/service-proxies';
 import { FilterHelpers } from '../shared/helpers/filter.helper';
 import {
-    CurrenciesStoreSelectors,
     CfoStore,
     ForecastModelsStoreActions,
     ForecastModelsStoreSelectors
 } from '@app/cfo/store';
+import {
+    RootStore,
+    CurrenciesStoreSelectors
+} from '@root/store';
 import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
 import { BankAccountsSelectDialogComponent } from '@app/cfo/shared/bank-accounts-select-dialog/bank-accounts-select-dialog.component';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
@@ -83,7 +86,7 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
         precision: 2
     };
     private updateAfterActivation = false;
-    private forecastModels$ = this.store$.pipe(
+    private forecastModels$ = this.cfoStore$.pipe(
         takeUntil(this.destroy$),
         select(ForecastModelsStoreSelectors.getForecastModels),
         filter(Boolean),
@@ -105,7 +108,7 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
     );
     private selectedForecastModelId: Subject<number> = new Subject<number>();
     selectedForecastModelId$: Observable<number> = this.selectedForecastModelId.asObservable();
-    selectedCurrencyId$ = this.store$.pipe(select(CurrenciesStoreSelectors.getSelectedCurrencyId), filter(Boolean));
+    selectedCurrencyId$ = this.rootStore$.pipe(select(CurrenciesStoreSelectors.getSelectedCurrencyId), filter(Boolean));
     refresh: Subject<null> = new Subject<null>();
     private refresh$: Observable<null> = this.refresh.asObservable().pipe(startWith(null));
     private refreshToolbar: Subject<null> = new Subject<null>();
@@ -130,15 +133,16 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
         private _cfoPreferences: CfoPreferencesService,
         private _dialog: MatDialog,
         private _lifecycleService: LifecycleSubjectsService,
-        public bankAccountsService: BankAccountsService,
-        private store$: Store<CfoStore.State>
+        private rootStore$: Store<RootStore.State>,
+        private cfoStore$: Store<CfoStore.State>,
+        public bankAccountsService: BankAccountsService
     ) {
         super(injector);
     }
 
     ngOnInit(): void {
         this.bankAccountsService.load();
-        this.store$.dispatch(new ForecastModelsStoreActions.LoadRequestAction());
+        this.cfoStore$.dispatch(new ForecastModelsStoreActions.LoadRequestAction());
 
         this._cfoPreferences.dateRange$.pipe(
             takeUntil(this.destroy$),
@@ -275,7 +279,7 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
                                 onSelectionChanged: (e) => {
                                     if (e) {
                                         if (e.itemData.id !== undefined) {
-                                            this.store$.dispatch(new ForecastModelsStoreActions.ChangeForecastModelAction(e.itemData.id));
+                                            this.cfoStore$.dispatch(new ForecastModelsStoreActions.ChangeForecastModelAction(e.itemData.id));
                                         } else {
                                             this.selectedForecastModelId.next(undefined);
                                         }
@@ -355,7 +359,7 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
             this.refreshToolbar.next();
         });
 
-        this.store$.pipe(
+        this.cfoStore$.pipe(
             select(ForecastModelsStoreSelectors.getSelectedForecastModelId, { defaultId: undefined })
         ).subscribe(
             (selectedForecastModelId: number) => this.selectedForecastModelId.next(selectedForecastModelId)

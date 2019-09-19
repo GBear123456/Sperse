@@ -15,7 +15,7 @@ import { BankAccountsGeneralService } from '@shared/cfo/bank-accounts/helpers/ba
 import { BankAccountsService } from '@shared/cfo/bank-accounts/helpers/bank-accounts.service';
 import { SyncAccountServiceProxy, InstanceType } from '@shared/service-proxies/service-proxies';
 import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
-import { CfoStore, CurrenciesStoreSelectors } from '@app/cfo/store';
+import { RootStore, CurrenciesStoreSelectors } from '@root/store';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 
 @Component({
@@ -39,7 +39,7 @@ export class BankAccountsGeneralComponent extends CFOComponentBase implements On
         private _dialog: MatDialog,
         public bankAccountsService: BankAccountsService,
         public cfoPreferencesService: CfoPreferencesService,
-        private store$: Store<CfoStore.State>,
+        private store$: Store<RootStore.State>,
         private _lifeCycleService: LifecycleSubjectsService
     ) {
         super(injector);

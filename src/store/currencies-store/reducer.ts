@@ -1,5 +1,5 @@
 import { State, initialState } from './state';
-import { ActionTypes } from '@app/cfo/store/currencies-store/actions';
+import { ActionTypes } from './actions';
 
 export function currenciesReducer(state: State = initialState, action) {
     switch (action.type) {

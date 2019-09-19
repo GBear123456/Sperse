@@ -19,8 +19,7 @@ import { CurrencyInfo, CurrencyServiceProxy } from '@shared/service-proxies/serv
 export class CurrenciesStoreEffects {
     constructor(private injector: Injector,
                 private actions$: Actions,
-                private store$: Store<State>,
-                private currencyServiceProxy: CurrencyServiceProxy
+                private store$: Store<State>
     ) {}
 
     @Effect()
@@ -33,7 +32,7 @@ export class CurrenciesStoreEffects {
                 return empty();
             }
 
-            return this.currencyServiceProxy.getAll()
+            return this.injector.get(CurrencyServiceProxy).getAll()
                 .pipe(
                     map((currencies: CurrencyInfo[]) => {
                         return new currenciesActions.LoadSuccessAction(currencies);

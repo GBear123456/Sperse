@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { StoreModule } from '@ngrx/store';
-import { currenciesReducer } from '@app/cfo/store/currencies-store/reducer';
-import { CurrenciesStoreEffects } from '@app/cfo/store/currencies-store/effects';
+import { currenciesReducer } from './reducer';
+import { CurrenciesStoreEffects } from './effects';
 import { EffectsModule } from '@node_modules/@ngrx/effects';
 import { CurrencyServiceProxy } from '@shared/service-proxies/service-proxies';
 

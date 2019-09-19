@@ -47,10 +47,13 @@ import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
 import { PeriodModel } from '@app/shared/common/period/period.model';
 import {
     CfoStore,
-    CurrenciesStoreSelectors,
     ForecastModelsStoreActions,
     ForecastModelsStoreSelectors
 } from '@app/cfo/store';
+import {
+    RootStore,
+    CurrenciesStoreSelectors
+} from '@root/store';
 import { BankAccountsService } from '@shared/cfo/bank-accounts/helpers/bank-accounts.service';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 import { AppConsts } from '@shared/AppConsts';
@@ -167,11 +170,11 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit, 
             return this.selectedPeriod;
         })
     );
-    currencyId$ = this.store$.pipe(
+    currencyId$ = this.rootStore$.pipe(
         select(CurrenciesStoreSelectors.getSelectedCurrencyId),
         filter(Boolean)
     );
-    forecastModelId$ = this.store$.pipe(select(ForecastModelsStoreSelectors.getSelectedForecastModelId));
+    forecastModelId$ = this.cfoStore$.pipe(select(ForecastModelsStoreSelectors.getSelectedForecastModelId));
     loading = true;
     chartTypes: ChartTypeModel[] = [
         {
@@ -250,7 +253,8 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit, 
         private bankAccountService: BankAccountsService,
         private changeDetectorRef: ChangeDetectorRef,
         private lifeCycleService: LifecycleSubjectsService,
-        private store$: Store<CfoStore.State>,
+        private rootStore$: Store<RootStore.State>,
+        private cfoStore$: Store<CfoStore.State>,
         private sessionService: AbpSessionService,
         private cacheService: CacheService,
         public cfoPreferencesService: CfoPreferencesService
@@ -259,7 +263,7 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit, 
     }
 
     ngOnInit() {
-        this.store$.dispatch(new ForecastModelsStoreActions.LoadRequestAction());
+        this.cfoStore$.dispatch(new ForecastModelsStoreActions.LoadRequestAction());
         this.loadStatsData();
         this.selectedChartType$.pipe(
             takeUntil(this.lifeCycleService.destroy$)

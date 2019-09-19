@@ -8,7 +8,7 @@ import { first, filter, map } from 'rxjs/operators';
 import * as moment from 'moment';
 
 /** Application imports */
-import { CfoStore, CurrenciesStoreActions, CurrenciesStoreSelectors } from '@app/cfo/store';
+import { RootStore, CurrenciesStoreActions, CurrenciesStoreSelectors } from '@root/store';
 import { UserPreferencesService } from '@app/cfo/cashflow/preferences-dialog/preferences.service';
 import { CashFlowGridSettingsDto, CurrencyInfo } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -50,7 +50,7 @@ export class CfoPreferencesService {
     );
 
     constructor(
-        private store$: Store<CfoStore.State>,
+        private store$: Store<RootStore.State>,
         private cashflowPreferencesService: UserPreferencesService,
         private ls: AppLocalizationService,
         private cfoService: CFOService

@@ -17,8 +17,7 @@ import {
 import { CFOService } from '@shared/cfo/cfo.service';
 import { BankAccountsService } from '@shared/cfo/bank-accounts/helpers/bank-accounts.service';
 import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
-import { CurrenciesStoreSelectors } from '@app/cfo/store';
-import { CfoStore } from '@app/cfo/store';
+import { RootStore, CurrenciesStoreSelectors } from '@root/store';
 import { DashboardService } from '@shared/cfo/dashboard-widgets/dashboard.service';
 import { DailyStatsPeriodModel } from '@shared/cfo/dashboard-widgets/accounts/daily-stats-period.model';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
@@ -64,7 +63,7 @@ export class TopSpendingCategoriesComponent implements OnInit, OnDestroy {
         private cfoService: CFOService,
         private bankAccountsService: BankAccountsService,
         private cfoPreferences: CfoPreferencesService,
-        private store$: Store<CfoStore.State>,
+        private store$: Store<RootStore.State>,
         private loadingService: LoadingService,
         private elementRef: ElementRef,
         private currencyPipe: CurrencyPipe,

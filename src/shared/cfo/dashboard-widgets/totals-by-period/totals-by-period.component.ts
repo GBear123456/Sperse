@@ -33,9 +33,12 @@ import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
 import { PeriodModel } from '@app/shared/common/period/period.model';
 import {
     CfoStore,
-    CurrenciesStoreSelectors,
     ForecastModelsStoreActions
 } from '@app/cfo/store';
+import {
+    RootStore,
+    CurrenciesStoreSelectors
+} from '@root/store';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 import { BankAccountsService } from '@shared/cfo/bank-accounts/helpers/bank-accounts.service';
 import { TotalDataModel } from '@shared/cfo/dashboard-widgets/totals-by-period/total-data.model';
@@ -89,7 +92,7 @@ export class TotalsByPeriodComponent extends CFOComponentBase implements OnInit 
         })
     );
     refresh$: Observable<null> = this.dashboardService.refresh$;
-    currencyId$ = this.store$.pipe(
+    currencyId$ = this.rootStore$.pipe(
         select(CurrenciesStoreSelectors.getSelectedCurrencyId),
         filter(Boolean)
     );
@@ -101,13 +104,14 @@ export class TotalsByPeriodComponent extends CFOComponentBase implements OnInit 
         private lifeCycleService: LifecycleSubjectsService,
         private changeDetectorRef: ChangeDetectorRef,
         public cfoPreferencesService: CfoPreferencesService,
-        private store$: Store<CfoStore.State>,
+        private rootStore$: Store<RootStore.State>,
+        private cfoStore$: Store<CfoStore.State>
     ) {
         super(injector);
     }
 
     ngOnInit() {
-        this.store$.dispatch(new ForecastModelsStoreActions.LoadRequestAction());
+        this.cfoStore$.dispatch(new ForecastModelsStoreActions.LoadRequestAction());
         this.loadStatsData();
     }
 

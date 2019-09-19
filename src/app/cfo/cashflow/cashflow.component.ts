@@ -111,9 +111,12 @@ import { PreferencesDialogComponent } from './preferences-dialog/preferences-dia
 import { RuleDialogComponent } from '../rules/rule-edit-dialog/rule-edit-dialog.component';
 import { FilterHelpers } from '../shared/helpers/filter.helper';
 import {
-    CfoStore,
+    RootStore,
     CurrenciesStoreActions,
-    CurrenciesStoreSelectors,
+    CurrenciesStoreSelectors
+} from '@root/store';
+import {
+    CfoStore,
     ForecastModelsStoreActions,
     ForecastModelsStoreSelectors
 } from '@app/cfo/store';
@@ -709,7 +712,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         private _cellsCopyingService: CellsCopyingService,
         public cashflowService: CashflowService,
         public bankAccountsService: BankAccountsService,
-        private store$: Store<CfoStore.State>,
+        private cfoStore$: Store<CfoStore.State>,
+        private rootStore$: Store<RootStore.State>,
         private actions$: ActionsSubject,
         private _cfoPreferencesService: CfoPreferencesService,
         private _currencyPipe: CurrencyPipe,
@@ -741,14 +745,14 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             this.statsDetailResult = details;
             this.detailsTab.next('all');
         });
-        this.store$.dispatch(new ForecastModelsStoreActions.LoadRequestAction());
-        this.store$.pipe(
+        this.cfoStore$.dispatch(new ForecastModelsStoreActions.LoadRequestAction());
+        this.cfoStore$.pipe(
             select(ForecastModelsStoreSelectors.getSelectedForecastModelId),
             takeUntil(this.destroy$)
         ).subscribe((selectedForecastModelIdodelId: number) => {
             this.cashflowService.selectedForecastModelId = selectedForecastModelIdodelId;
         });
-        this.store$.pipe(
+        this.cfoStore$.pipe(
             select(ForecastModelsStoreSelectors.getSelectedForecastModelId),
             skip(1),
             filter(() => this.componentIsActivated)
@@ -762,7 +766,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         this.userPreferencesService.removeLocalModel();
         this.bankAccountsService.load();
 
-        const selectedCurrencyId$ = this.store$.pipe(
+        const selectedCurrencyId$ = this.rootStore$.pipe(
             select(CurrenciesStoreSelectors.getSelectedCurrencyId),
             takeUntil(this.destroy$),
             tap((selectedCurrencyId: string) => this.cashflowService.requestFilter.currencyId = selectedCurrencyId)
@@ -780,7 +784,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         /** If component is not activated - wait until it will activate and then reload */
         merge(
             selectedCurrencyId$,
-            this.store$.pipe(select(ForecastModelsStoreSelectors.getSelectedForecastModelId))
+            this.rootStore$.pipe(select(ForecastModelsStoreSelectors.getSelectedForecastModelId))
         ).pipe(
             filter(() => !this.componentIsActivated)
         ).subscribe(() => {
@@ -1064,8 +1068,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
     initFooterToolbar() {
         combineLatest(
-            this.store$.pipe(select(ForecastModelsStoreSelectors.getForecastModels), filter(Boolean)),
-            this.store$.pipe(select(ForecastModelsStoreSelectors.getSelectedForecastModelIndex, filter(Boolean)))
+            this.cfoStore$.pipe(select(ForecastModelsStoreSelectors.getForecastModels), filter(Boolean)),
+            this.cfoStore$.pipe(select(ForecastModelsStoreSelectors.getSelectedForecastModelIndex, filter(Boolean)))
         ).pipe(
             first()
         ).subscribe(([forecastModels, selectedForecastModelIndex]) => {
@@ -1157,11 +1161,11 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     addForecastModel(modelName: CreateForecastModelInput) {
-        this.store$.dispatch(new ForecastModelsStoreActions.AddForecastModelAction(modelName));
+        this.cfoStore$.dispatch(new ForecastModelsStoreActions.AddForecastModelAction(modelName));
     }
 
     renameForecastModel(modelData: RenameForecastModelInput) {
-        this.store$.dispatch(new ForecastModelsStoreActions.RenameForecastModelAction(modelData));
+        this.cfoStore$.dispatch(new ForecastModelsStoreActions.RenameForecastModelAction(modelData));
     }
 
     /** @todo continue implementing in other task */
@@ -1226,7 +1230,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
      */
     changeSelectedForecastModelId(modelObj) {
         if (!$(modelObj.element).find('.editModel').length) {
-            this.store$.dispatch(new ForecastModelsStoreActions.ChangeForecastModelAction(modelObj.itemData.id));
+            this.cfoStore$.dispatch(new ForecastModelsStoreActions.ChangeForecastModelAction(modelObj.itemData.id));
         }
     }
 
@@ -1267,7 +1271,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             sparkLine.dispose();
         });
         this.cachedRowsSparkLines.clear();
-        this.store$.pipe(
+        this.cfoStore$.pipe(
             select(ForecastModelsStoreSelectors.getSelectedForecastModelId),
             filter(Boolean),
             first(),
@@ -1659,7 +1663,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
         /** @todo refactor (move to the userPreferencesHandlers to avoid if else structure) */
         if (updateCurrency) {
-            this.store$.dispatch(new CurrenciesStoreActions.ChangeCurrencyAction(this.cashflowService.cashflowGridSettings.localizationAndCurrency.currency));
+            this.rootStore$.dispatch(new CurrenciesStoreActions.ChangeCurrencyAction(this.cashflowService.cashflowGridSettings.localizationAndCurrency.currency));
             /** Hide spinner if nothing change to prevent infinite loading */
             if (this.cashflowService.cashflowGridSettings.localizationAndCurrency.currency === this._cfoPreferencesService.selectedCurrencyId) {
                 this.finishLoading();

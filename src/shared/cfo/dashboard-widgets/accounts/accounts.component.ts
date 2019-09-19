@@ -17,8 +17,7 @@ import {
 } from 'shared/service-proxies/service-proxies';
 import { DashboardService } from '../dashboard.service';
 import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
-import { CurrenciesStoreSelectors } from '@app/cfo/store';
-import { CfoStore } from '@app/cfo/store';
+import { RootStore, CurrenciesStoreSelectors } from '@root/store';
 import { AccountTotals } from '@shared/service-proxies/service-proxies';
 import { DailyStatsPeriodModel } from '@shared/cfo/dashboard-widgets/accounts/daily-stats-period.model';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
@@ -57,7 +56,7 @@ export class AccountsComponent extends CFOComponentBase implements OnInit {
         private _dashboardProxy: DashboardServiceProxy,
         private _loadingService: LoadingService,
         private _lifeCycleService: LifecycleSubjectsService,
-        private store$: Store<CfoStore.State>,
+        private store$: Store<RootStore.State>,
         public bankAccountsService: BankAccountsService,
         public cfoPreferencesService: CfoPreferencesService,
     ) {

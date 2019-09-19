@@ -9,7 +9,9 @@ import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { DxTextBoxComponent } from 'devextreme-angular/ui/text-box';
 import { DxDateBoxComponent } from 'devextreme-angular/ui/date-box';
 import { CacheService } from 'ng2-cache-service';
-import { finalize } from 'rxjs/operators';
+import { Store, select } from '@ngrx/store';
+import { finalize, filter, first } from 'rxjs/operators';
+import { Observable } from 'rxjs';
 
 /** Application imports */
 import { DateHelper } from '@shared/helpers/DateHelper';
@@ -17,7 +19,7 @@ import { DialogService } from '@app/shared/common/dialogs/dialog.service';
 import { ContactGroup } from '@shared/AppEnums';
 import {
     InvoiceServiceProxy, CreateInvoiceInput, UpdateInvoiceLineInput, UpdateInvoiceStatusInput, UpdateInvoiceInput, CustomerServiceProxy, InvoiceStatus,
-    CreateInvoiceLineInput, InvoiceSettingsInfoDto
+    CreateInvoiceLineInput, InvoiceSettingsInfoDto, CurrencyInfo
 } from '@shared/service-proxies/service-proxies';
 import { NotifyService } from '@abp/notify/notify.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -27,6 +29,7 @@ import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interf
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
 import { CreateClientDialogComponent } from '../create-client-dialog/create-client-dialog.component';
 import { AppSessionService } from '@shared/common/session/app-session.service';
+import { RootStore, CurrenciesStoreActions, CurrenciesStoreSelectors } from '@root/store';
 import { AppConsts } from '@shared/AppConsts';
 
 @Component({
@@ -51,6 +54,11 @@ export class CreateInvoiceDialogComponent implements OnInit {
 
     private validationError: string;
 
+    currencies$: Observable<Partial<CurrencyInfo>[]> = this.store$.pipe(
+        select(CurrenciesStoreSelectors.getCurrencies),
+        filter(Boolean)
+    );
+
     invoiceNo;
     orderId: number;
     invoiceId: number;
@@ -62,12 +70,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
     billingSettings: InvoiceSettingsInfoDto = new InvoiceSettingsInfoDto();
     remoteServiceBaseUrl: string = AppConsts.remoteServiceBaseUrl;
 
-    currencies = [
-        {name: 'US Dollar', code: 'USD'},
-        {name: 'GB Pound', code: 'GBP'},
-        {name: 'Euro', code: 'EUR'}
-    ];
-    currency = this.currencies[0].code;
+    currency;
 
     customer: any;
     contactId: number;
@@ -99,6 +102,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
     linesGridHeight = 200;
 
     constructor(
+        private store$: Store<RootStore.State>,
         private _invoiceProxy: InvoiceServiceProxy,
         private _customerProxy: CustomerServiceProxy,
         private _cacheService: CacheService,
@@ -119,6 +123,13 @@ export class CreateInvoiceDialogComponent implements OnInit {
             {text: this.ls.l('Invoice_SaveAndSend'), selected: false, disabled: true},
             {text: this.ls.l('Invoice_SaveAndMarkSent'), selected: false, disabled: true}
         ];
+        this.store$.dispatch(new CurrenciesStoreActions.LoadRequestAction());
+        this.store$.pipe(
+            select(CurrenciesStoreSelectors.getSelectedCurrencyId),
+            filter(Boolean), first()
+        ).subscribe((selectedCurrencyId: string) => {
+            this.currency = selectedCurrencyId;
+        });
     }
 
     ngOnInit() {

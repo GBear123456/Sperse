@@ -8,6 +8,7 @@ import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { localStorageSync } from 'ngrx-store-localstorage';
 
 /** Application imports */
+import { CurrenciesStoreModule } from './currencies-store';
 import { StatesStoreModule } from './states-store';
 import { environment } from '../environments/environment';
 
@@ -44,6 +45,7 @@ const metaReducers: Array<MetaReducer<any, any>> = [ localStorageSyncReducer ];
 @NgModule({
     imports: [
         StatesStoreModule,
+        CurrenciesStoreModule,
         StoreModule.forRoot({}, { metaReducers }),
         EffectsModule.forRoot([]),
         environment.production ? [] :
