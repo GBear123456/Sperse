@@ -111,8 +111,7 @@ export class OffersService {
             logoUrl: './assets/images/credit-report/offers/demo/marcus.png',
             redirectUrl: 'https://www.marcus.com/us/en',
             name: 'Marcus by Goldman Sachs',
-            systemType: 'EPCVIP',
-            buttonCaption: 'Check Rate'
+            systemType: 'EPCVIP'
         }),
         OfferDto.fromJS({
             campaignId: 3,
@@ -143,6 +142,7 @@ export class OffersService {
         private currencyPipe: CurrencyPipe,
         private dialog: MatDialog
     ) {
+        this.demoUserOffers[1]['buttonCaption'] = 'Check Rate';
         this.memberInfo$.subscribe(
             (memberInfo: GetMemberInfoResponse) => {
                 this.memberInfo = memberInfo;
