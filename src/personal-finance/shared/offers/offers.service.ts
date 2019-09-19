@@ -111,7 +111,8 @@ export class OffersService {
             logoUrl: './assets/images/credit-report/offers/demo/marcus.png',
             redirectUrl: 'https://www.marcus.com/us/en',
             name: 'Marcus by Goldman Sachs',
-            systemType: 'EPCVIP'
+            systemType: 'EPCVIP',
+            buttonCaption: 'Check Rate'
         }),
         OfferDto.fromJS({
             campaignId: 3,
