@@ -485,7 +485,6 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
         this.group = group;
 
         this.initToolbarConfig();
-        this.invalidate();
         this.updateGroupFilter(group);
     }
 
@@ -497,7 +496,6 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
         this.isActive = isActive;
 
         this.initToolbarConfig();
-        this.invalidate();
         this.updateIsActiveFilter(isActive);
     }
 
@@ -528,10 +526,10 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
     }
 
     invalidate(quietly = false) {
-        if (this.dataGrid && this.dataGrid.instance)
-            this.dataGrid.instance.option('loadPanel.enabled', !quietly);
-
-        super.invalidate();
+        this.isDataLoaded = false;
+        let grid = this.dataGrid && this.dataGrid.instance;
+        grid && grid.option('loadPanel.enabled', !quietly);
+        setTimeout(() => super.invalidate());
     }
 
     createUser(): void {
