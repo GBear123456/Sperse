@@ -5,12 +5,13 @@
         <ng-content select="[underHeader]"></ng-content>
     </div>
     <mat-sidenav-container>
-        <mat-sidenav mode="side" opened="true" [disableClose]="true" position="start">
+        <mat-sidenav mode="side" [opened]="true" [disableClose]="true" position="start">
             <ng-content select="[aboveNavigation]"></ng-content>
             <dx-scroll-view showScrollbar="onHover">
                 <nav mat-tab-nav-bar>
                     <a mat-tab-link *ngFor="let link of navLinks" [hidden]="link.hidden" [disabled]="link.disabled"
-                       [routerLink]="link.route" [routerLinkActive]="'active'" [queryParams]="referrerParams">
+                       [routerLink]="link.route" [routerLinkActive]="'active'" [queryParams]="referrerParams"
+                       (click)="navChanged(link)">
                         {{link.label}}
                     </a>
                 </nav>

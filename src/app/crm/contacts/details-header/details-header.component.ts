@@ -14,10 +14,10 @@ import { DialogService } from '@app/shared/common/dialogs/dialog.service';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppConsts } from '@shared/AppConsts';
 import { UploadPhotoDialogComponent } from '@app/shared/common/upload-photo-dialog/upload-photo-dialog.component';
-import { PersonDialogComponent } from './person-dialog/person-dialog.component';
-import { CreateClientDialogComponent } from '../shared/create-client-dialog/create-client-dialog.component';
-import { UploadDocumentsDialogComponent } from './documents/upload-documents-dialog/upload-documents-dialog.component';
-import { RelationCompaniesDialogComponent } from './relation-companies-dialog/relation-companies-dialog.component';
+import { PersonDialogComponent } from '../person-dialog/person-dialog.component';
+import { CreateClientDialogComponent } from '../../shared/create-client-dialog/create-client-dialog.component';
+import { UploadDocumentsDialogComponent } from '../documents/upload-documents-dialog/upload-documents-dialog.component';
+import { RelationCompaniesDialogComponent } from '../relation-companies-dialog/relation-companies-dialog.component';
 import { CreateInvoiceDialogComponent } from '@app/crm/shared/create-invoice-dialog/create-invoice-dialog.component';
 import {
     ContactInfoDto,
@@ -34,14 +34,16 @@ import {
     UpdatePersonNameInput
 } from '@shared/service-proxies/service-proxies';
 import { NameParserService } from '@app/crm/shared/name-parser/name-parser.service';
-import { NoteAddDialogComponent } from './notes/note-add-dialog/note-add-dialog.component';
+import { NoteAddDialogComponent } from '../notes/note-add-dialog/note-add-dialog.component';
 import { AppService } from '@app/app.service';
 import { StringHelper } from '@shared/helpers/StringHelper';
 import { ContactGroup } from '@shared/AppEnums';
 import { CompanyDialogComponent } from '@app/crm/contacts/company-dialog/company-dialog.component';
-import { ContactsService } from './contacts.service';
+import { ContactsService } from '../contacts.service';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
+import { ContextType } from '@app/crm/contacts/details-header/context-type.enum';
+import { ContextMenuItem } from '@app/crm/contacts/details-header/context-menu-item.interface';
 
 @Component({
     selector: 'details-header',
@@ -69,50 +71,51 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
     }
 
     @Input() ratingId: number;
+    private readonly ADD_OPTION_DEFAULT = ContextType.AddFiles;
 
     @Output() onContactSelected: EventEmitter<any> = new EventEmitter();
     @Output() onInvalidate: EventEmitter<any> = new EventEmitter();
 
     private _contactInfoBehaviorSubject = new BehaviorSubject<ContactInfoDto>(ContactInfoDto.fromJS({}));
     private _personContactInfoBehaviorSubject = new BehaviorSubject<PersonContactInfoDto>(PersonContactInfoDto.fromJS({}));
-    private readonly ADD_FILES_OPTION   = 0;
-    private readonly ADD_NOTES_OPTION   = 1;
-    private readonly ADD_CONTACT_OPTION = 2;
-    private readonly ADD_INVOICE_OPTION = 3;
-    private readonly ADD_OPTION_DEFAULT = this.ADD_FILES_OPTION;
+
     private readonly ADD_OPTION_CACHE_KEY = 'add_option_active_index';
     private contactGroup: ContactGroup;
     private showRemovingOrgRelationProgress = false;
 
     isAdminModule;
     manageAllowed;
-    defaultContextMenuItems = [
+    defaultContextMenuItems: ContextMenuItem[] = [
         {
+            type: ContextType.AddFiles,
             text: this.l('AddFiles'),
             selected: false,
             icon: 'files',
             contactGroups: [ ContactGroup.Client, ContactGroup.Partner, ContactGroup.UserProfile ]
         },
         {
+            type: ContextType.AddNotes,
             text: this.l('AddNotes'),
             selected: false,
             icon: 'note',
             contactGroups: [ ContactGroup.Client, ContactGroup.Partner, ContactGroup.UserProfile ]
         },
         {
+            type: ContextType.AddContact,
             text: this.l('AddContact'),
             selected: false,
             icon: 'add-contact',
             contactGroups: [ ContactGroup.Client, ContactGroup.Partner ]
         },
         {
+            type: ContextType.AddInvoice,
             text: this.l('AddInvoice'),
             selected: false,
             icon: 'money',
             contactGroups: [ ContactGroup.Client, ContactGroup.Partner ]
         }
     ];
-    addContextMenuItems = [];
+    addContextMenuItems: ContextMenuItem[] = [];
     addButtonTitle = '';
     isBankCodeLayout = this.userManagementService.checkBankCodeFeature();
 
@@ -183,7 +186,7 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
                     let orgRelationToDelete = _.find(orgRelations, orgRelation => orgRelation.id === orgRelationId);
                     if (this.data.primaryOrganizationContactId == orgRelationToDelete.organization.id) {
                         this.data['organizationContactInfo'] = undefined;
-                        this.data.primaryOrganizationContactId = orgRelations.length ? 
+                        this.data.primaryOrganizationContactId = orgRelations.length ?
                             orgRelations.reverse()[0].organization.id : undefined;
                     }
                     orgRelations.splice(orgRelations.indexOf(orgRelationToDelete), 1);
@@ -314,7 +317,7 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
     }
 
     getInplaceEditData(field, validationRules) {
-        return this._contactInfoBehaviorSubject.asObservable().pipe(map((data) => {
+        return this._contactInfoBehaviorSubject.asObservable().pipe(map(() => {
             let contactInfo = this.data && this.data[field];
             if (contactInfo)
                 return {
@@ -388,29 +391,30 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
 
     addOptionsInit() {
         let cacheKey = this.getCacheKey(this.addOptionCacheKey),
-            selectedIndex = this.ADD_OPTION_DEFAULT;
+            selectedContextType = this.ADD_OPTION_DEFAULT;
         if (this._cacheService.exists(cacheKey))
-            selectedIndex = this._cacheService.get(cacheKey);
+            selectedContextType = this._cacheService.get(cacheKey);
         if (this.addContextMenuItems.length) {
-            this.addContextMenuItems[selectedIndex].selected = true;
-            this.addButtonTitle = this.addContextMenuItems[selectedIndex].text;
+            const selectedMenuItem = this.getContextMenuItemByType(selectedContextType);
+            selectedMenuItem.selected = true;
+            this.addButtonTitle = selectedMenuItem.text;
         }
     }
 
-    updateSaveOption(option) {
+    updateSaveOption(option: ContextMenuItem) {
         this.addButtonTitle = option.text;
-        this._cacheService.set(this.getCacheKey(this.addOptionCacheKey),
-            this.addContextMenuItems.findIndex((elm) => elm.text == option.text).toString());
+        option.selected = true;
+        this.addContextComponent.instance.option('selectedItem', option);
+        this._cacheService.set(
+            this.getCacheKey(this.addOptionCacheKey),
+            option.type.toString()
+        );
     }
 
     addOptionSelectionChanged(event) {
-        let option = event.addedItems.pop() || event.removedItems.pop() ||
-            this.addContextMenuItems[this.ADD_OPTION_DEFAULT];
-        option.selected = true;
-        event.component.option('selectedItem', option);
-
+        const option: ContextMenuItem = event.addedItems.pop() || event.removedItems.pop() ||
+            this.getContextMenuItemByType(this.ADD_OPTION_DEFAULT);
         this.updateSaveOption(option);
-
         this.addEntity();
     }
 
@@ -419,7 +423,10 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
             return this.addContextComponent
                 .instance.option('visible', true);
 
-        if (this.addContextMenuItems[this.ADD_CONTACT_OPTION] && this.addContextMenuItems[this.ADD_CONTACT_OPTION].selected)
+        const selectedMenuItem = this.addContextMenuItems.find((contextMenuItem: ContextMenuItem) => {
+            return contextMenuItem.selected === true;
+        });
+        if (selectedMenuItem.type === ContextType.AddContact)
             setTimeout(() => {
                 this.dialog.open(CreateClientDialogComponent, {
                     panelClass: 'slider',
@@ -431,10 +438,10 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
                     }
                 });
             });
-        else if (this.addContextMenuItems[this.ADD_FILES_OPTION] && this.addContextMenuItems[this.ADD_FILES_OPTION].selected)
+        else if (selectedMenuItem.type === ContextType.AddFiles)
             setTimeout(() => {
                 this.dialog.open(UploadDocumentsDialogComponent, {
-                    panelClass: ['slider'],
+                    panelClass: 'slider',
                     disableClose: false,
                     hasBackdrop: false,
                     closeOnNavigation: true,
@@ -443,10 +450,10 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
                     }
                 });
             });
-        else if (this.addContextMenuItems[this.ADD_NOTES_OPTION] && this.addContextMenuItems[this.ADD_NOTES_OPTION].selected)
+        else if (selectedMenuItem.type === ContextType.AddNotes)
             setTimeout(() => {
                 this.dialog.open(NoteAddDialogComponent, {
-                    panelClass: ['slider'],
+                    panelClass: 'slider',
                     disableClose: false,
                     hasBackdrop: false,
                     closeOnNavigation: true,
@@ -455,7 +462,7 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
                     }
                 });
             });
-        else if (this.addContextMenuItems[this.ADD_INVOICE_OPTION] && this.addContextMenuItems[this.ADD_INVOICE_OPTION].selected)
+        else if (selectedMenuItem.type === ContextType.AddInvoice)
             setTimeout(() => {
                 this.dialog.open(CreateInvoiceDialogComponent, {
                     panelClass: 'slider',
@@ -466,9 +473,15 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
             });
     }
 
+    private getContextMenuItemByType(contextType: ContextType): ContextMenuItem {
+        return this.addContextMenuItems.find((contextMenuItem: ContextMenuItem) => {
+            return contextMenuItem.type == contextType;
+        });
+    }
+
     addCompanyDialog(event) {
         if (this.manageAllowed)
-            this._contactsService.addCompanyDialog(event, this.data).subscribe(result => {});
+            this._contactsService.addCompanyDialog(event, this.data).subscribe(() => {});
     }
 
     showCompanyList(event) {

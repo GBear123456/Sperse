@@ -2,7 +2,8 @@
     [navLinks]="navLinks"
     [referrerParams]="referrerParams"
     [rightPanelOpened]="rightPanelSetting.opened"
-    (onClose)="close()">
+    (onClose)="close()"
+    (onChanged)="updateContextType($event)">
     <ng-container topHeader>
         <details-header [data]="contactInfo"
                         [personContactInfo]="personContactInfo"
