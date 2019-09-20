@@ -13,11 +13,36 @@
 .heading {
     padding-bottom: 30px;
     border-bottom: 1px solid #dfdfdf;
+    display: flex;
 
     &-title {
         font-size: 30px;
         color: #021f44;
         margin: 0;
+    }
+
+    .warning {
+        margin-left: auto;
+        border: 1px solid #ed9d1a;
+        padding: 0 20px;
+        position: relative;
+        border-radius: 5px;
+        text-align: center;
+
+        span {
+            font-weight: bold;
+            line-height: 28px;
+        }
+
+        i {
+            color: #ed9d1a;
+            position: relative;
+
+            &.fa-exclamation-triangle {
+                top: 8px;
+                right: 10px;
+            }
+        }
     }
 }
 

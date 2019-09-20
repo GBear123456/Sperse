@@ -12,29 +12,27 @@
                 <ng-container *ngIf="selectedChartType.value !== chartType.CashBalancesTrends">
                     <ul class="legend-list">
                         <li class="label legend-item">{{l('Historical')}}:</li>
-                        <li class="legend-item inflow">{{l('Stats_Inflows')}}</li>
-                        <li class="legend-item outflows">{{l('Stats_Outflows')}}</li>
-                        <li class="legend-item net-change">{{l('Net_Change')}}</li>
+                        <ng-container *ngIf="showInflowsOutflowsCharts$ | async" >
+                            <li class="legend-item inflow">{{l('Stats_Inflows')}}</li>
+                            <li class="legend-item outflows">{{l('Stats_Outflows')}}</li>
+                        </ng-container>
+                        <li *ngIf="showNetChangeChart$" class="legend-item net-change">{{l('Net_Change')}}</li>
+                        <li *ngIf="showBalancesChart$ | async" class="legend-item endingBalance" >{{l('Stats_Ending_Balances')}}</li>
                     </ul>
-                    <ng-container *ngIf="isForecast">
-                        <ul class="legend-list">
-                            <li class="label legend-item">{{l('Forecast')}}:</li>
+                    <ul class="legend-list" *ngIf="isForecast">
+                        <li class="label legend-item">{{l('Forecast')}}:</li>
+                        <ng-container *ngIf="showInflowsOutflowsCharts$ | async" >
                             <li class="legend-item forecast inflow">{{l('Stats_Inflows')}}</li>
                             <li class="legend-item forecast outflows">{{l('Stats_Outflows')}}</li>
-                            <li class="legend-item forecast net-change">{{l('Net_Change')}}</li>
-                        </ul>
-                    </ng-container>
-                </ng-container>
-                <ng-container *ngIf="selectedChartType.value !== chartType.CashInflowsAndOutflows">
-                    <ul class="legend-list">
-                        <li class="legend-item endingBalance">{{l('Stats_Historical_Ending_Balance')}}</li>
+                        </ng-container>
+                        <li *ngIf="showBalancesChart$ | async" class="legend-item forecast endingBalance" >{{l('Stats_Ending_Balances')}}</li>
                     </ul>
-                    <ng-container *ngIf="isForecast">
-                        <ul class="legend-list">
-                            <li class="legend-item forecast endingBalance">{{l('Stats_Forecast_Ending_Balance')}}</li>
-                        </ul>
-                    </ng-container>
                 </ng-container>
+                <ul class="legend-list" *ngIf="selectedChartType.value === chartType.CashBalancesTrends">
+                    <li class="label legend-item">{{l('Stats_Ending_Balances')}}:</li>
+                    <li class="legend-item endingBalance">{{l('Historical')}}</li>
+                    <li class="legend-item endingBalance forecast" *ngIf="isForecast">{{l('Forecast')}}</li>
+                </ul>
             </div>
         </ng-container>
     </div>

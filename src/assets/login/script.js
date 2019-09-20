@@ -14,14 +14,15 @@
 
     var tenant;
     var remoteServiceUrl = '';
-    var appContext, appBootstrap;
+    var appContext, appBootstrap, appEnvironment;
     var pathParts = location.pathname.split('/').filter(Boolean);
     var cookie = queryString(document.cookie, ';');
     setOriginalReferer(cookie);
 
     var params = queryString(document.location.search.substr(1), '&');
     if (
-        !checkSetDomainToken() && !params.secureId && !params.tenantId && (
+        !checkSetDomainToken() && !params.secureId && 
+        !params.tenantId && !params.switchAccountToken && (
             (!pathParts.length && !cookie['Abp.AuthToken']) ||
             (pathParts.pop() == 'login')
         )
@@ -29,9 +30,8 @@
         window.loginPageHandler = function(context, boot, environment) {
             appContext = context;
             appBootstrap = boot;
-
-            if (window['logoImage'])
-                window['logoImage'].parentNode.setAttribute('href', environment.publicUrl);
+            appEnvironment = environment;
+            checkSetLogoLink(window['logoImage']);
         };
 
         getAppConfig();
@@ -300,6 +300,11 @@
             remoteServiceUrl + '/api/TenantCustomization/GetLogo?id=' + tenant.logoId);
     }
 
+    function checkSetLogoLink(logoImage) {
+        if (logoImage && appEnvironment && abp.session.multiTenancySide == abp.multiTenancy.sides.HOST)
+            logoImage.parentNode.setAttribute('href', appEnvironment.publicUrl);
+    }
+
     function loginPageAfterInit() {
         var tenantName = tenant && (tenant.name || tenant.tenancyName) || 'Sperse';
         document.getElementById('forget-password').href = location.origin + '/account/forgot-password';
@@ -314,8 +319,8 @@
                 getBaseHref() + 'assets/common/images/app-logo-on-dark.png'
             );
             logoImage.style.display = 'block';
+            checkSetLogoLink(logoImage);
         }
-
 
         var form = window['loginForm'], loginInProgress = false;
         form.elements['userNameOrEmailAddress'].onkeyup =

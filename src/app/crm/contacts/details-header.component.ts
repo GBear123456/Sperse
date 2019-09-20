@@ -181,6 +181,11 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
                 .subscribe(() => {
                     let orgRelations = this.data.personContactInfo.orgRelations;
                     let orgRelationToDelete = _.find(orgRelations, orgRelation => orgRelation.id === orgRelationId);
+                    if (this.data.primaryOrganizationContactId == orgRelationToDelete.organization.id) {
+                        this.data['organizationContactInfo'] = undefined;
+                        this.data.primaryOrganizationContactId = orgRelations.length ? 
+                            orgRelations.reverse()[0].organization.id : undefined;
+                    }
                     orgRelations.splice(orgRelations.indexOf(orgRelationToDelete), 1);
                     this.displayOrgRelation(orgRelationToDelete.organization.id);
                     this.contactsService.invalidateUserData();
@@ -232,8 +237,9 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
                 this.contactsService.updateLocation(this.data.id, this.data['leadId']);
             }
         } else {
-            let orgRelation = _.find(orgRelations, item => item.isPrimary);
-            this.displaySelectedCompany(orgRelation.organization.id, orgRelation.id);
+            let orgRelation = _.find(orgRelations, item => item.isPrimary) || orgRelations[0];
+            if (orgRelation && orgRelation.organization)
+                this.displaySelectedCompany(orgRelation.organization.id, orgRelation.id);
         }
     }
 

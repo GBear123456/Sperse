@@ -22928,7 +22928,7 @@ export class SessionServiceProxy {
             })
         };
 
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
             return this.processAuthTest(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
@@ -52101,6 +52101,7 @@ export class ScoreSimulatorInfoDto implements IScoreSimulatorInfoDto {
     initialScore!: number | undefined;
     totalCreditLimit!: number | undefined;
     outstandingBalance!: number | undefined;
+    isDemoPackage!: boolean | undefined;
     accessStatus!: MemberSimulatorAccessStatus | undefined;
 
     constructor(data?: IScoreSimulatorInfoDto) {
@@ -52117,6 +52118,7 @@ export class ScoreSimulatorInfoDto implements IScoreSimulatorInfoDto {
             this.initialScore = data["initialScore"];
             this.totalCreditLimit = data["totalCreditLimit"];
             this.outstandingBalance = data["outstandingBalance"];
+            this.isDemoPackage = data["isDemoPackage"];
             this.accessStatus = data["accessStatus"];
         }
     }
@@ -52133,6 +52135,7 @@ export class ScoreSimulatorInfoDto implements IScoreSimulatorInfoDto {
         data["initialScore"] = this.initialScore;
         data["totalCreditLimit"] = this.totalCreditLimit;
         data["outstandingBalance"] = this.outstandingBalance;
+        data["isDemoPackage"] = this.isDemoPackage;
         data["accessStatus"] = this.accessStatus;
         return data; 
     }
@@ -52142,6 +52145,7 @@ export interface IScoreSimulatorInfoDto {
     initialScore: number | undefined;
     totalCreditLimit: number | undefined;
     outstandingBalance: number | undefined;
+    isDemoPackage: boolean | undefined;
     accessStatus: MemberSimulatorAccessStatus | undefined;
 }
 
@@ -67643,7 +67647,6 @@ export interface IIntegrationsSettings {
 
 export class EPCVIPOfferProviderSettings implements IEPCVIPOfferProviderSettings {
     apiKey!: string | undefined;
-    notificationApiKey!: string | undefined;
     postbackPassCode!: string | undefined;
 
     constructor(data?: IEPCVIPOfferProviderSettings) {
@@ -67658,7 +67661,6 @@ export class EPCVIPOfferProviderSettings implements IEPCVIPOfferProviderSettings
     init(data?: any) {
         if (data) {
             this.apiKey = data["apiKey"];
-            this.notificationApiKey = data["notificationApiKey"];
             this.postbackPassCode = data["postbackPassCode"];
         }
     }
@@ -67673,7 +67675,6 @@ export class EPCVIPOfferProviderSettings implements IEPCVIPOfferProviderSettings
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["apiKey"] = this.apiKey;
-        data["notificationApiKey"] = this.notificationApiKey;
         data["postbackPassCode"] = this.postbackPassCode;
         return data; 
     }
@@ -67681,7 +67682,6 @@ export class EPCVIPOfferProviderSettings implements IEPCVIPOfferProviderSettings
 
 export interface IEPCVIPOfferProviderSettings {
     apiKey: string | undefined;
-    notificationApiKey: string | undefined;
     postbackPassCode: string | undefined;
 }
 

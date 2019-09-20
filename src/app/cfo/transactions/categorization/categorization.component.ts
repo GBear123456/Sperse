@@ -44,6 +44,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
     @Input() showAddEntity: boolean;
     @Input() includeNonCashflowNodes = true;
     @Input() categoryId: number;
+    @Input() filteredRowData: any;
     @Input('dragMode')
     set dragMode(value: boolean) {
         if (this.categoryList.instance)
@@ -75,8 +76,6 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
     categorization: GetCategoryTreeOutput;
     columnClassName = '';
     showSearch = false;
-
-    filteredRowData: any;
     noDataText: string;
 
     transactionsCountDataSource: DataSource;
@@ -429,9 +428,14 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
     onContentReady($event) {
         this.initDragAndDropEvents($event);
         if (this.filteredRowData) {
-            let rowIndex = this.categoryList.instance.getRowIndexByKey(this.filteredRowData.key);
-            let row = this.categoryList.instance.getRowElement(rowIndex);
-            if (row && row[0]) row[0].classList.add('filtered-category');
+            const filteredRowsKeys = Array.isArray(this.filteredRowData.key)
+                ? this.filteredRowData.key
+                : [ this.filteredRowData.key ];
+            filteredRowsKeys.forEach(filteredRowKey => {
+                let rowIndex = this.categoryList.instance.getRowIndexByKey(filteredRowKey);
+                let row = this.categoryList.instance.getRowElement(rowIndex);
+                if (row && row[0]) row[0].classList.add('filtered-category');
+            });
         }
     }
 
@@ -792,7 +796,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
             if (this.showFilterIcon)
                 this.addActionButton('filter', $event.cellElement, (event) => {
                     let wrapper = $event.cellElement.parentElement;
-                    if (!this.clearSelection(wrapper.classList.contains('filtered-category'))) {
+                    if (!this.clearSelection(wrapper)) {
                         wrapper.classList.add('filtered-category');
                         this.filteredRowData = $event.data;
                         this.onFilterSelected.emit($event.data);
@@ -958,12 +962,14 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
         }
     }
 
-    clearSelection(clearFilter) {
+    clearSelection(wrapper) {
         this.categoryList.instance.deselectAll();
         this.filteredRowData = null;
-        $('.filtered-category').removeClass('filtered-category');
-        if (clearFilter)
+        const clearFilter = wrapper.classList.contains('filtered-category');
+        if (clearFilter) {
+            wrapper.classList.remove('filtered-category');
             this.onFilterSelected.emit(null);
+        }
         return clearFilter;
     }
 

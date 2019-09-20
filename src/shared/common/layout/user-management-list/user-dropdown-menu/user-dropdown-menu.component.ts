@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, OnInit, Input, Injector, ApplicationRef } from '@angular/core';
+import { ApplicationRef, Component, OnInit, Input, Injector, ElementRef } from '@angular/core';
 
 /** Application imports */
 import { AbpSessionService } from '@abp/session/abp-session.service';
@@ -47,6 +47,7 @@ export class UserDropdownMenuComponent implements OnInit {
     constructor(
         injector: Injector,
         private applicationRef: ApplicationRef,
+        private elementRef: ElementRef,
         private featureCheckerService: FeatureCheckerService,
         private abpSessionService: AbpSessionService,
         private ls: AppLocalizationService,
@@ -63,6 +64,12 @@ export class UserDropdownMenuComponent implements OnInit {
         this.userManagementService.getRecentlyLinkedUsers().subscribe(
             recentlyLinkedUsers => this.recentlyLinkedUsers = recentlyLinkedUsers
         );
+    }
+
+    menuItemClick(menuItem, event) {
+        menuItem.onClick(event);
+        this.elementRef.nativeElement.childNodes[0]
+            .classList.remove('m-dropdown--open');
     }
 
     getScrollHeight() {

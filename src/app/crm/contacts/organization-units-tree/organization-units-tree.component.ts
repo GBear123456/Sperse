@@ -99,7 +99,10 @@ export class OrganizationUnitsTreeComponent implements OnDestroy {
         contactsService.orgUnitsSubscribe(
             (userData) => {
                 this.userId = userData.user && userData.user.id;
-                this.setOrganizationUnitsData(userData.allOrganizationUnits, userData.memberedOrganizationUnits);
+                this.setOrganizationUnitsData(
+                    userData.allOrganizationUnits, 
+                    userData.selectedOrgUnits
+                );
             },
             this.ident
         );
@@ -107,11 +110,11 @@ export class OrganizationUnitsTreeComponent implements OnDestroy {
         this.isEditAllowed = this.permissionChecker.isGranted(AppPermissions.AdministrationOrganizationUnitsManageMembers);
     }
 
-    setOrganizationUnitsData(orgUnits: OrganizationUnitDto[], memberedOrganizationUnits: string[]) {
+    setOrganizationUnitsData(orgUnits: OrganizationUnitDto[], selectedOrgUnits: number[]) {
         this.organizationUnitsData = orgUnits;
 
         this.organizationUnitsData.forEach((item) => {
-            if (item['selected'] = includes(memberedOrganizationUnits, item.id as any))
+            if (item['selected'] = includes(selectedOrgUnits, item.id))
                 this.lastSelectedItemId = item.id;
             item['expanded'] = true;
         });
@@ -120,14 +123,8 @@ export class OrganizationUnitsTreeComponent implements OnDestroy {
         this.oranizationUnitsDataSource.sort({ getter: 'displayName', desc: this.sortTreeDesc });
     }
 
-    getSelectedOrganizationUnits(): number[] {
-        let organizationUnitCodes: number[] = [];
-        this.organizationUnitsData.forEach(item => {
-            if (item['selected'])
-                organizationUnitCodes.push(item.id);
-        });
-
-        return organizationUnitCodes;
+    getSelectedOrganizationUnits(): number[] {        
+        return this.organizationUnitsData.filter(item => item['selected']).map(item => item.id);
     }
 
     processExpandTree(expandLevel: number) {

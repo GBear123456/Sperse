@@ -106,18 +106,22 @@ export class OffersService {
             regularAPR: '5.73%-16.59%',
             systemType: 'EPCVIP'
         }),
-        OfferDto.fromJS({
-            campaignId: 2,
-            details: [
-                'Marcus is backed by Goldman Sachs\' 150 years of financial expertise.',
-                'No origination fee, prepayment fee, or late fee - You only pay interest for the additional days.',
-                'Loans from $3,500 to $40,000 and fixed rates from 5.99% to 28.99% APR. For NY residents, rates range from 5.99% to 24.99% APR. Only the most creditworthy applicants qualify for the lowest rates and largest loans amounts. Rates will generally be higher for longer-term loans.'
-            ],
-            logoUrl: './assets/images/credit-report/offers/demo/marcus.png',
-            redirectUrl: 'https://www.marcus.com/us/en',
-            name: 'Marcus by Goldman Sachs',
-            systemType: 'EPCVIP'
-        }),
+        {
+            ...OfferDto.fromJS({
+                campaignId: 2,
+                details: [
+                    'Marcus is backed by Goldman Sachs\' 150 years of financial expertise.',
+                    'No origination fee, prepayment fee, or late fee - You only pay interest for the additional days.',
+                    'Loans from $3,500 to $40,000 and fixed rates from 6.99% to 28.99% APR. For NY residents, rates range from 5.99% to 24.99% APR. Only the most creditworthy applicants qualify for the lowest rates and largest loans amounts. Rates will generally be higher for longer-term loans.',
+                    'APR discounts may be available for Direct Payment of outstanding credit card debt and AutoPay.'
+                ],
+                logoUrl: './assets/images/credit-report/offers/demo/marcus.png',
+                redirectUrl: 'https://www.marcus.com/us/en',
+                name: 'Marcus by Goldman Sachs',
+                systemType: 'EPCVIP'
+            }),
+            buttonCaption: 'Check Rate'
+        },
         OfferDto.fromJS({
             campaignId: 3,
             details: ['APR: 3.99%-35.99%', 'Loan Term: 3-180 months', 'Credit Score: Poor/Fair/Good/Excellent'],

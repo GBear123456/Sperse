@@ -11,6 +11,9 @@
                         (onValueChanged)="onSelectChanged($event)">
                     </dx-select-box>
                 </h1>
+                <p class="warning" *ngIf="simulatorInfo.isDemoPackage">
+                    <i class="fa fa-exclamation-triangle fa-3x"></i><span>{{l('SimulatorDemoMode')}}</span>
+                </p>
             </div>
             <div class="row">
                 <div class="col-md-7">

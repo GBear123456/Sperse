@@ -274,7 +274,7 @@ export class CreditWizardPageComponent extends AppComponentBase implements OnIni
         let number = this._angularGooglePlaceService.street_number(event.address_components);
         let street = this._angularGooglePlaceService.street(event.address_components);
         this.model.address.stateId = GooglePlaceHelper.getStateCode(event.address_components);
-        this.payment.bankCard.billingAddress = number ? (number + ' ' + street) : street;
+        this.model.address.streetAddress = this.payment.bankCard.billingAddress = number ? (number + ' ' + street) : street;
     }
 
     updateCountryInfo(countryName: string) {

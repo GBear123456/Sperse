@@ -60,8 +60,13 @@
                             }
                         }
 
-                        &.endingBalance::before {
-                            background: #ace2f9;
+                        &.endingBalance {
+                            &::before {
+                                background: #ace2f9;
+                            }
+                            &.forecast::before {
+                                background: #f9ba4e;
+                            }
                         }
 
                         &.outflows::before {
@@ -86,18 +91,11 @@
                                     background: #a82aba;
                                 }
                             }
-
-                            &.endingBalance::before {
-                                background: #f9ba4e;
-                            }
                         }
 
                         &.label {
                             &::before{
                                 content: none;
-                            }
-                            @media (min-width: 992px) {
-                                width: 60px;
                             }
                         }
 

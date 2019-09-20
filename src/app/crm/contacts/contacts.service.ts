@@ -23,13 +23,14 @@ import { AppPermissions } from '@shared/AppPermissions';
 
 @Injectable()
 export class ContactsService {
-    private verificationSubject: Subject<any>;
-    private toolbarSubject: Subject<any>;
-    private userSubject: Subject<number>;
-    private organizationUnits: Subject<any>;
-    private organizationUnitsSave: Subject<any>;
-    private invalidateSubject: Subject<any>;
-    private leadInfoSubject: Subject<any>;
+    private verificationSubject: Subject<any> = new Subject<any>();
+    private toolbarSubject: Subject<any> = new Subject<any>();
+    private userSubject: Subject<number> = new Subject<any>();
+    private organizationUnits: ReplaySubject<any> = new ReplaySubject<any>(1);
+    private organizationUnitsSave: Subject<any> = new Subject<any>();
+    private invalidateSubject: Subject<any> = new Subject<any>();
+    private loadLeadInfoSubject: Subject<any> =  new Subject<any>();
+    private leadInfoSubject: ReplaySubject<any> = new ReplaySubject<any>(1);
     private contactInfo: ReplaySubject<ContactInfoDto> = new ReplaySubject<ContactInfoDto>(1);
     contactInfo$: Observable<ContactInfoDto> = this.contactInfo.asObservable();
     organizationContactInfo: ReplaySubject<OrganizationContactInfoDto> = new ReplaySubject<OrganizationContactInfoDto>(1);
@@ -46,15 +47,7 @@ export class ContactsService {
         private router: Router,
         private location: Location,
         public dialog: MatDialog
-    ) {
-        this.verificationSubject = new Subject<any>();
-        this.toolbarSubject = new Subject<any>();
-        this.userSubject = new Subject<any>();
-        this.organizationUnits = new Subject<any>();
-        this.organizationUnitsSave = new Subject<any>();
-        this.invalidateSubject = new Subject<any>();
-        this.leadInfoSubject =  new Subject<any>();
-    }
+    ) {  }
 
     private subscribe(sub, ident = 'common') {
         if (!this.subscribers[ident])
@@ -145,12 +138,20 @@ export class ContactsService {
         this.invalidateSubject.next(area);
     }
 
-    loadLeadInfoSubscribe(callback, ident?: string) {
+    leadInfoSubscribe(callback, ident?: string) {
         return this.subscribe(this.leadInfoSubject.asObservable().subscribe(callback), ident);
     }
 
+    leadInfoUpdate(data?) {
+        this.leadInfoSubject.next(data);
+    }
+
+    loadLeadInfoSubscribe(callback, ident?: string) {
+        return this.subscribe(this.loadLeadInfoSubject.asObservable().subscribe(callback), ident);
+    }
+
     loadLeadInfo() {
-        this.leadInfoSubject.next();
+        this.loadLeadInfoSubject.next();
     }
 
     unsubscribe(ident = 'common') {
@@ -176,7 +177,7 @@ export class ContactsService {
             position: this.dialogService.calculateDialogPosition(
                 event, event.target, shiftX, shiftY)
         }).afterClosed().pipe(tap(responce => {
-            if (responce.organizationId)
+            if (responce && responce.organizationId)
                 setTimeout(() => this.invalidateUserData(), 300);
         }));
     }
