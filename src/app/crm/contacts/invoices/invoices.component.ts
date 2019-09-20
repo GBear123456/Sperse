@@ -164,9 +164,6 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     editInvoice() {
-        let tooltip = this.actionsTooltip.instance;
-        if (tooltip.option('visible'))
-            tooltip.hide();
         this.dialog.open(CreateInvoiceDialogComponent, {
             panelClass: 'slider',
             disableClose: true,
@@ -181,6 +178,9 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     onMenuItemClick(event) {
+        let tooltip = this.actionsTooltip.instance;
+        if (tooltip.option('visible'))
+            tooltip.hide();
         event.itemData.action.call(this);
     }
 }
