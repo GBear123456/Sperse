@@ -21,6 +21,7 @@ import { FilterModel } from '@shared/filters/models/filter.model';
 import {
     ContactServiceProxy,
     InvoiceServiceProxy,
+    InvoiceStatus,
     SetAmountInfo
 } from '@shared/service-proxies/service-proxies';
 import { ContactsService } from '@app/crm/contacts/contacts.service';
@@ -43,11 +44,13 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
     actionMenuItems = [
         {
             text: this.l('Edit'),
-            action: this.editInvoice.bind(this)
+            action: this.editInvoice.bind(this),
+            disabled: false
         },
         {
             text: this.l('Delete'),
-            action: this.deleteInvoice.bind(this)
+            action: this.deleteInvoice.bind(this),
+            disabled: false
         }
     ];
 
@@ -125,9 +128,21 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
     onCellClick(event) {
         if (event.rowType === 'data') {
             /** If user click on actions icon */
-            if (event.event.target.closest('.dx-link.dx-link-edit')) {
-                this.actionRecordData = event.data;
-                this.showActionsMenu(event.event.target);
+            if (event.columnIndex && event.data) { 
+                if (event.data.Status == InvoiceStatus.Draft) {
+                    this.actionRecordData = event.data;
+                    setTimeout(() => this.editInvoice());
+                }
+            } else {
+                if (event.event.target.closest('.dx-link.dx-link-edit')) {
+                    this.actionMenuItems.map((item, index) => {                        
+                        item.disabled = index && 
+                            (event.data.Status == InvoiceStatus.Paid) ||
+                            (event.data.Status != InvoiceStatus.Draft);
+                    });
+                    this.actionRecordData = event.data;
+                    this.showActionsMenu(event.event.target);
+                }
             }
         }
     }
@@ -149,7 +164,9 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     editInvoice() {
-        this.actionsTooltip.instance.hide();
+        let tooltip = this.actionsTooltip.instance;
+        if (tooltip.option('visible'))
+            tooltip.hide();
         this.dialog.open(CreateInvoiceDialogComponent, {
             panelClass: 'slider',
             disableClose: true,

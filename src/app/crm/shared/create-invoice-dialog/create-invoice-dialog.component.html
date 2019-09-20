@@ -4,6 +4,7 @@
     [dataSource]="saveContextMenuItems"
     [position]="{ my: 'top right', at: 'bottom right' }"
     (onSelectionChanged)="onSaveOptionSelectionChanged($event)"
+    (onItemClick)="onSaveItemClick($event)"
     target="#{{saveButtonId}}">
 </dx-context-menu>
 

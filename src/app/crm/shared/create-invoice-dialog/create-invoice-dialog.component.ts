@@ -10,7 +10,7 @@ import { DxTextBoxComponent } from 'devextreme-angular/ui/text-box';
 import { DxDateBoxComponent } from 'devextreme-angular/ui/date-box';
 import { CacheService } from 'ng2-cache-service';
 import { Store, select } from '@ngrx/store';
-import { finalize, filter, first } from 'rxjs/operators';
+import { finalize, filter, last } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 
 /** Application imports */
@@ -72,7 +72,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
     billingSettings: InvoiceSettingsInfoDto = new InvoiceSettingsInfoDto();
     remoteServiceBaseUrl: string = AppConsts.remoteServiceBaseUrl;
 
-    currency;
+    currency = 'USD';
 
     customer: any;
     contactId: number;
@@ -130,7 +130,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
         this.store$.dispatch(new CurrenciesStoreActions.LoadRequestAction());
         this.store$.pipe(
             select(CurrenciesStoreSelectors.getSelectedCurrencyId),
-            filter(Boolean), first()
+            filter(Boolean), last()
         ).subscribe((selectedCurrencyId: string) => {
             this.currency = selectedCurrencyId;
         });
@@ -181,10 +181,16 @@ export class CreateInvoiceDialogComponent implements OnInit {
                             Description: res.description
                         };
                     });
+                    this.calculateBalance();
                     this._changeDetectorRef.detectChanges();
                 });
         } else {
             this.resetNoteDefault();
+            let contact = this.data.contactInfo;
+            if (contact) {
+                this.contactId = contact.id;
+                this.customer = contact.personContactInfo.fullName;
+            }
         }
     }
 
@@ -197,12 +203,16 @@ export class CreateInvoiceDialogComponent implements OnInit {
         this.buttons[0].title = this.saveContextMenuItems[selectedIndex].text;
     }
 
+    onSaveItemClick(event) {
+        event.event.stopPropagation();
+        event.event.preventDefault();
+    }
+
     onSaveOptionSelectionChanged($event) {
         let option = $event.addedItems.pop() || $event.removedItems.pop() ||
             this.saveContextMenuItems[this.SAVE_OPTION_DEFAULT];
         option.selected = true;
         $event.component.option('selectedItem', option);
-
         this.updateSaveOption(option);
         this.save();
     }
@@ -285,9 +295,9 @@ export class CreateInvoiceDialogComponent implements OnInit {
     }
 
     private afterSave(): void {
-        this.close();
         this._notifyService.info(this.ls.l('SavedSuccessfully'));
         this.data.refreshParent && this.data.refreshParent();
+        this.close();
     }
 
     private validateDate(caption, value) {
@@ -317,7 +327,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
 
         this.saveContextMenuItems.some((item, index) => {
             if (item.selected) {
-                this.status = InvoiceStatus[index == 1 ? 'Draft' : 'Final'];
+                this.status = InvoiceStatus[index == this.SAVE_OPTION_DEFAULT ? 'Final' : 'Draft'];
                 this._changeDetectorRef.detectChanges();
             }
             return item.selected;

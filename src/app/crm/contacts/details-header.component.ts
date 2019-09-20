@@ -119,7 +119,7 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
     constructor(
         injector: Injector,
         public dialog: MatDialog,
-        private _contactsService: ContactsService,
+        private contactsService: ContactsService,
         private _personOrgRelationService: PersonOrgRelationServiceProxy,
         private _orgContactService: OrganizationContactServiceProxy,
         private userManagementService: UserManagementService,
@@ -145,7 +145,7 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
             .subscribe(
                 (contactInfo: ContactInfoDto) => {
                     this.contactGroup = contactInfo.groupId;
-                    this.manageAllowed = this._contactsService.checkCGPermission(contactInfo.groupId);
+                    this.manageAllowed = this.contactsService.checkCGPermission(contactInfo.groupId);
                     this.addContextMenuItems = this.defaultContextMenuItems.filter(menuItem => menuItem.contactGroups.indexOf(contactInfo.groupId) >= 0);
                     this.addOptionsInit();
                 }
@@ -183,7 +183,7 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
                     let orgRelationToDelete = _.find(orgRelations, orgRelation => orgRelation.id === orgRelationId);
                     orgRelations.splice(orgRelations.indexOf(orgRelationToDelete), 1);
                     this.displayOrgRelation(orgRelationToDelete.organization.id);
-                    this._contactsService.invalidateUserData();
+                    this.contactsService.invalidateUserData();
                 });
             }
         });
@@ -229,7 +229,7 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
             } else {
                 this.data.primaryOrganizationContactId = null;
                 this.data.personContactInfo.orgRelations = [];
-                this._contactsService.updateLocation(this.data.id, this.data['leadId']);
+                this.contactsService.updateLocation(this.data.id, this.data['leadId']);
             }
         } else {
             let orgRelation = _.find(orgRelations, item => item.isPrimary);
@@ -356,7 +356,7 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
                 _.extend({id: data.id}, data.organization))
         ).subscribe(() => {
             data.fullName = value;
-            this._contactsService.invalidateUserData();
+            this.contactsService.invalidateUserData();
         });
     }
 
@@ -455,14 +455,19 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
                     panelClass: 'slider',
                     disableClose: true,
                     closeOnNavigation: false,
-                    data: { }
+                    data: { 
+                        contactInfo: this.data,
+                        refreshParent: () => {
+                            this.contactsService.invalidate('invoices');
+                        },
+                    }
                 });
             });
     }
 
     addCompanyDialog(event) {
         if (this.manageAllowed)
-            this._contactsService.addCompanyDialog(event, this.data).subscribe(result => {});
+            this.contactsService.addCompanyDialog(event, this.data).subscribe(result => {});
     }
 
     showCompanyList(event) {
@@ -487,7 +492,7 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
         this._orgContactService.getOrganizationContactInfo(orgId)
             .pipe(finalize(() => this.finishLoading(true))).subscribe((result) => {
                 this.data['organizationContactInfo'] = result;
-                this._contactsService.updateLocation(this.data.id, this.data['leadId'], result && result.id);
+                this.contactsService.updateLocation(this.data.id, this.data['leadId'], result && result.id);
             });
     }
 
