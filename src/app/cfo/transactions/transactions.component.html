@@ -20,10 +20,10 @@
                         [showFilterIcon]="true"
                         [dragMode]="dragInProgress"
                         (close)="categoriesShowed = false"
-                        [filteredRowData]="categoriesRowData"
+                        [filteredRowsData]="categoriesRowsData"
                         [transactionsFilter]="transactionsFilterQuery"
                         (onTransactionDrop)="categorizeTransactions($event)"
-                        (onFilterSelected)="filterByCashflowCategory($event)"
+                        (onFilterSelected)="filterByCashflowCategories($event)"
                         (onCategoriesChanged)="refreshDataGrid()">
                     </categorization>
                 </div>

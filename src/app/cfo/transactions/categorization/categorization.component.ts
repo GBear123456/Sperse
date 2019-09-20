@@ -13,10 +13,18 @@ import { AppConsts } from '@shared/AppConsts';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { FiltersService } from '@shared/filters/filters.service';
 import {
-    CategoryTreeServiceProxy, InstanceType, UpdateCategoryInput, CreateCategoryInput,
-    GetCategoryTreeOutput, UpdateAccountingTypeInput, CreateAccountingTypeInput
+    CategoryTreeServiceProxy,
+    InstanceType,
+    UpdateCategoryInput,
+    CreateCategoryInput,
+    GetCategoryTreeOutput,
+    UpdateAccountingTypeInput,
+    CreateAccountingTypeInput,
+    CategoryDto,
+    AccountingTypeDto
 } from '@shared/service-proxies/service-proxies';
 import { CategoryDeleteDialogComponent } from './category-delete-dialog/category-delete-dialog.component';
+import { Category } from '@app/cfo/transactions/categorization/category.model';
 
 @Component({
     selector: 'categorization',
@@ -31,7 +39,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
     @ViewChild(DxTreeListComponent) categoryList: DxTreeListComponent;
     @Output() close: EventEmitter<any> = new EventEmitter();
     @Output() onSelectionChanged: EventEmitter<any> = new EventEmitter();
-    @Output() onFilterSelected: EventEmitter<any> = new EventEmitter();
+    @Output() onFilterSelected: EventEmitter<Category[]> = new EventEmitter();
     @Output() onTransactionDrop: EventEmitter<any> = new EventEmitter();
     @Output() onCategoriesChanged: EventEmitter<any> = new EventEmitter();
 
@@ -44,7 +52,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
     @Input() showAddEntity: boolean;
     @Input() includeNonCashflowNodes = true;
     @Input() categoryId: number;
-    @Input() filteredRowData: any;
+    @Input() filteredRowsData: Category[] = [];
     @Input('dragMode')
     set dragMode(value: boolean) {
         if (this.categoryList.instance)
@@ -68,7 +76,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
     }
     private _transactionsFilterQuery: any[];
 
-    categories: any[] = [];
+    categories: Category[] = [];
     types = [
         { id: 'E', name: 'Outflows' },
         { id: 'I', name: 'Inflows' }
@@ -82,7 +90,6 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
 
     private _prevClickDate = new Date();
     private _selectedKeys = [];
-    private _expandedRowKeys = [];
     private readonly MIN_PADDING = 7;
     private readonly MAX_PADDING = 17;
     settings = {
@@ -218,7 +225,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
                     {
                         name: 'addEntity',
                         widget: 'dxDropDownMenu',
-                        visible: !!(this.showAddEntity && this.settings.showAT),
+                        visible: this.showAddEntity && this.settings.showAT,
                         options: {
 //                            text: this.l('AddAccountingType'),
                             hint: this.l('AddAccountingType'),
@@ -427,10 +434,8 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
 
     onContentReady($event) {
         this.initDragAndDropEvents($event);
-        if (this.filteredRowData) {
-            const filteredRowsKeys = Array.isArray(this.filteredRowData.key)
-                ? this.filteredRowData.key
-                : [ this.filteredRowData.key ];
+        if (this.filteredRowsData && this.filteredRowsData.length) {
+            const filteredRowsKeys = this.filteredRowsData.map((row: Category) => row.key);
             filteredRowsKeys.forEach(filteredRowKey => {
                 let rowIndex = this.categoryList.instance.getRowIndexByKey(filteredRowKey);
                 let row = this.categoryList.instance.getRowElement(rowIndex);
@@ -638,7 +643,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
             this._cfoService.instanceId,
             this.includeNonCashflowNodes
         ).subscribe((data) => {
-            let categories = [];
+            let categories: Category[] = [];
             this.categorization = data;
             if (this.settings.showAT && data.accountingTypes) {
                 _.mapObject(data.accountingTypes, (item, key) => {
@@ -652,8 +657,8 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
                 });
             }
             if (data.categories)
-                _.mapObject(data.categories, (item, key) => {
-                    let accounting = data.accountingTypes[item.accountingTypeId];
+                _.mapObject(data.categories, (item: CategoryDto, key) => {
+                    let accounting: AccountingTypeDto = data.accountingTypes[item.accountingTypeId];
                     if (accounting && (!item.parentId || data.categories[item.parentId])) {
                         categories.push({
                             key: parseInt(key),
@@ -706,20 +711,20 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
         let accountingTypes: any[] = [];
         let parentCategories: any[] = [];
 
-        this.categories.forEach(item => {
+        this.categories.forEach((item: Category) => {
             item.transactionsCount = items[0][item.key];
 
             if (isNaN(item.key))
                 accountingTypes[item.key] = item;
-            else if (parseInt(item.parent) != item.parent)
+            else if (+item.parent != item.parent)
                 parentCategories[item.key] = item;
         });
 
-        this.categories.forEach(x => {
-            if (parseInt(x.parent) == x.parent && x.transactionsCount) {
-                let parentCategory = parentCategories[x.parent];
-                if (parentCategory && x.transactionsCount)
-                    parentCategory.transactionsCount = parentCategory.transactionsCount ? parentCategory.transactionsCount + x.transactionsCount : x.transactionsCount;
+        this.categories.forEach((category: Category) => {
+            if (+category.parent == category.parent && category.transactionsCount) {
+                let parentCategory = parentCategories[category.parent];
+                if (parentCategory && category.transactionsCount)
+                    parentCategory.transactionsCount = parentCategory.transactionsCount ? parentCategory.transactionsCount + category.transactionsCount : category.transactionsCount;
             }
         });
 
@@ -789,17 +794,19 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
     onCellPrepared($event) {
         if ($event.rowType === 'data' && $event.column.command === 'edit') {
             if ($event.data.key)
-                this.addActionButton('delete', $event.cellElement, (event) => {
+                this.addActionButton('delete', $event.cellElement, () => {
                     this.categoryList.instance.deleteRow(
                         this.categoryList.instance.getRowIndexByKey($event.data.key));
                 });
             if (this.showFilterIcon)
-                this.addActionButton('filter', $event.cellElement, (event) => {
+                this.addActionButton('filter', $event.cellElement, () => {
+                    const category: Category = $event.data;
                     let wrapper = $event.cellElement.parentElement;
-                    if (!this.clearSelection(wrapper)) {
+                    if (!this.clearSelection(wrapper, category.key)) {
                         wrapper.classList.add('filtered-category');
-                        this.filteredRowData = $event.data;
-                        this.onFilterSelected.emit($event.data);
+                        /** We can select only one category for now */
+                        this.filteredRowsData = [category];
+                        this.onFilterSelected.emit(this.filteredRowsData);
                     }
                 });
         }
@@ -962,13 +969,25 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
         }
     }
 
-    clearSelection(wrapper) {
+    clearSelection(wrapper?: HTMLElement, clearedItemKey?: number): boolean {
+        let clearFilter = true;
         this.categoryList.instance.deselectAll();
-        this.filteredRowData = null;
-        const clearFilter = wrapper.classList.contains('filtered-category');
-        if (clearFilter) {
-            wrapper.classList.remove('filtered-category');
-            this.onFilterSelected.emit(null);
+        if (clearedItemKey && this.filteredRowsData && this.filteredRowsData.length) {
+            const filterItemIndex = this.filteredRowsData.findIndex((category: Category) => category.key === clearedItemKey);
+            if (filterItemIndex !== -1) {
+                this.filteredRowsData.splice(filterItemIndex, 1);
+            } else {
+                this.filteredRowsData = [];
+            }
+        }
+        if (wrapper) {
+            clearFilter = wrapper.classList.contains('filtered-category');
+            if (clearFilter) {
+                wrapper.classList.remove('filtered-category');
+                this.onFilterSelected.emit(this.filteredRowsData);
+            } else {
+                $('.filtered-category').removeClass('filtered-category');
+            }
         }
         return clearFilter;
     }
