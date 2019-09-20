@@ -172,7 +172,15 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         component: FilterCBoxesComponent,
         caption: 'classified',
         field: 'CashflowCategoryId',
-        items: { yes: new FilterItemModel(), no: new FilterItemModel() }
+        items$: this.route.queryParamMap.pipe(
+            map((params: ParamMap) => {
+                const classified = params.get('classified');
+                return {
+                    yes: new FilterItemModel(classified === 'yes'),
+                    no: new FilterItemModel(classified === 'no')
+                };
+            })
+        )
     });
     private selectedCategoriesIds: BehaviorSubject<number[]> = new BehaviorSubject<number[]>([]);
     selectedCategoriesIds$: Observable<number[]> = this.selectedCategoriesIds.asObservable();
