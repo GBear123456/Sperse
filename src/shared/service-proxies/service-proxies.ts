@@ -52101,6 +52101,7 @@ export class ScoreSimulatorInfoDto implements IScoreSimulatorInfoDto {
     initialScore!: number | undefined;
     totalCreditLimit!: number | undefined;
     outstandingBalance!: number | undefined;
+    isDemoPackage!: boolean | undefined;
     accessStatus!: MemberSimulatorAccessStatus | undefined;
 
     constructor(data?: IScoreSimulatorInfoDto) {
@@ -52117,6 +52118,7 @@ export class ScoreSimulatorInfoDto implements IScoreSimulatorInfoDto {
             this.initialScore = data["initialScore"];
             this.totalCreditLimit = data["totalCreditLimit"];
             this.outstandingBalance = data["outstandingBalance"];
+            this.isDemoPackage = data["isDemoPackage"];
             this.accessStatus = data["accessStatus"];
         }
     }
@@ -52133,6 +52135,7 @@ export class ScoreSimulatorInfoDto implements IScoreSimulatorInfoDto {
         data["initialScore"] = this.initialScore;
         data["totalCreditLimit"] = this.totalCreditLimit;
         data["outstandingBalance"] = this.outstandingBalance;
+        data["isDemoPackage"] = this.isDemoPackage;
         data["accessStatus"] = this.accessStatus;
         return data; 
     }
@@ -52142,6 +52145,7 @@ export interface IScoreSimulatorInfoDto {
     initialScore: number | undefined;
     totalCreditLimit: number | undefined;
     outstandingBalance: number | undefined;
+    isDemoPackage: boolean | undefined;
     accessStatus: MemberSimulatorAccessStatus | undefined;
 }
 
