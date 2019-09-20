@@ -186,7 +186,7 @@
 
                             <div class="actions-wrap">
                                 <button class="applyButton" (click)="applyOffer(offerItem)">
-                                    <span>{{ ls.l(buttonCaption) }}</span>
+                                    <span>{{ offerItem.buttonCaption || ls.l(buttonCaption) }}</span>
                                 </button>
                                 <a class="viewDetails" (click)="viewCardDetails(offerItem)">{{ ls.l('View_details') }}</a>
                             </div>
