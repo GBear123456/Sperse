@@ -15,6 +15,7 @@ import { finalize } from 'rxjs/operators';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
+import { ActionButtonType } from '@shared/AppEnums';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { FilterModel } from '@shared/filters/models/filter.model';
@@ -45,11 +46,13 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
         {
             text: this.l('Edit'),
             action: this.editInvoice.bind(this),
+            type: ActionButtonType.Edit,
             disabled: false
         },
         {
             text: this.l('Delete'),
             action: this.deleteInvoice.bind(this),
+            type: ActionButtonType.Delete,
             disabled: false
         }
     ];
@@ -135,8 +138,8 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
                 }
             } else {
                 if (event.event.target.closest('.dx-link.dx-link-edit')) {
-                    this.actionMenuItems.map((item, index) => {                        
-                        item.disabled = index && 
+                    this.actionMenuItems.map(item => {                        
+                        item.disabled = (item.type == ActionButtonType.Delete) &&
                             (event.data.Status == InvoiceStatus.Paid) ||
                             (event.data.Status != InvoiceStatus.Draft);
                     });

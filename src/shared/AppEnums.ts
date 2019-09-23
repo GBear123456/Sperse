@@ -159,3 +159,8 @@ export enum ModuleType {
     CFO_CRM = CFO | CRM,
     PFM = 4,
 }
+
+export enum ActionButtonType {
+    Edit,
+    Delete    
+}
