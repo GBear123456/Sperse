@@ -80,7 +80,7 @@ export class UserDropdownMenuComponent implements OnInit {
     getBankCodeDefinition(bankCodeLetter: BankCodeLetter): string {
         let definition: string;
         switch (bankCodeLetter) {
-            case BankCodeLetter.B: definition = this.ls.l('BankCode_BluePrint'); break;
+            case BankCodeLetter.B: definition = this.ls.l('BankCode_Blueprint'); break;
             case BankCodeLetter.A: definition = this.ls.l('BankCode_Action'); break;
             case BankCodeLetter.N: definition = this.ls.l('BankCode_Nurturing'); break;
             case BankCodeLetter.K: definition = this.ls.l('BankCode_Knowledge'); break;

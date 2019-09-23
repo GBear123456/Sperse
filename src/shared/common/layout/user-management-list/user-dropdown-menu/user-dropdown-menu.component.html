@@ -27,7 +27,7 @@
                  [ngStyle]="{ borderBottom: '3px solid ' + bankCodeService.getColorsByLetter(bankCode[0]).background }">
                 <bank-code-letters [bankCode]="bankCode" [showDescriptionsOnHover]="true"></bank-code-letters>
                 <div class="bank-code-definition" *ngIf="getBankCodeDefinition(bankCode[0]) as bankCodeDefinition">
-                    <span [ngStyle]="{ color: bankCodeService.getColorsByLetter(bankCode[0]).background}">{{ getBankCodeDefinition(bankCode[0]) }}</span>
+                    <span [ngStyle]="{ color: bankCodeService.getColorsByLetter(bankCode[0]).background}">{{ bankCodeDefinition }}</span>
                     <a [href]="'http://www.crackmycode.com/SalesReportFiles/' + bankCode + 'SalesReport.pdf'"
                        target="_blank"
                        download>

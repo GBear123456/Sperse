@@ -1,6 +1,6 @@
 <ng-container *ngIf="bankCode">
     <ng-container *ngFor="let letter of bankCode.split('')">
-        <bank-code-letter [letter]="letter"></bank-code-letter>
+        <bank-code-letter [letter]="letter" [showDescriptionOnHover]="showDescriptionsOnHover"></bank-code-letter>
     </ng-container>
     <i *ngIf="allowEdit"
        class="edit fa fa-pencil bank-code-edit"
