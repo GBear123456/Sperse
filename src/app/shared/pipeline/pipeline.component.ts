@@ -1,6 +1,8 @@
 /** Core imports */
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Injector, EventEmitter,
-    HostBinding, Output, Input, OnInit, OnDestroy } from '@angular/core';
+import {
+    ChangeDetectionStrategy, ChangeDetectorRef, Component, Injector, EventEmitter,
+    HostBinding, Output, Input, OnInit, OnDestroy, ViewChildren, QueryList
+} from '@angular/core';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
@@ -37,6 +39,7 @@ import { ContactGroup } from '@shared/AppEnums';
 import { DataLayoutType } from '@app/shared/layout/data-layout-type';
 import { FiltersService } from '@shared/filters/filters.service';
 import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
+import { DxoTooltipComponent } from '@root/node_modules/devextreme-angular/ui/nested/tooltip';
 
 @Component({
     selector: 'app-pipeline',
@@ -50,6 +53,7 @@ import { UserManagementService } from '@shared/common/layout/user-management-lis
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PipelineComponent extends AppComponentBase implements OnInit, OnDestroy {
+    @ViewChildren('bankCodeTooltip') bankCodeTooltips: QueryList<DxoTooltipComponent>;
     @HostBinding('class.disabled') public disabled = false;
     @Output() onStagesLoaded: EventEmitter<any> = new EventEmitter<any>();
     @Output() onCardClick: EventEmitter<any> = new EventEmitter<any>();
@@ -68,7 +72,6 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
     renameStageInput: RenameStageInput = new RenameStageInput();
     mergeStagesInput: MergeStagesInput = new MergeStagesInput();
     currentTooltip: dxTooltip;
-    bankCodeTooltipVisible = false;
 
     @Output() selectedEntitiesChange = new EventEmitter<any>();
     @Input() get selectedEntities() {
@@ -798,5 +801,16 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                 else
                     targetStage = lookupStage;
             });
+    }
+
+    hideBankCodeTooltip(entityId: number) {
+        this.bankCodeTooltips.some((bankCodeTooltip: DxoTooltipComponent) => {
+            if (bankCodeTooltip.instance.option('target') === '#bankCode' + entityId) {
+                bankCodeTooltip.instance.hide();
+                return true;
+            }
+            return false;
+        });
+        this.changeDetector.markForCheck();
     }
 }
