@@ -69,7 +69,7 @@
                              name="zipCode"
                              [maxLength]="maxLength"
                              [value]="postalCode"
-                             (onInput)="onInput($event)"
+                             (onInput)="onPostalCodeInput($event)"
                              (onValueChanged)="postalCodeChange($event)">
                     <dx-validator>
                         <dxi-validation-rule type="pattern"
