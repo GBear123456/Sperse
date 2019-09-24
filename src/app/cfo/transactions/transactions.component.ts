@@ -195,7 +195,8 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                 nameField: 'name',
                 keyExpr: 'id'
             })
-        }
+        },
+        options: { method: 'filterByFilterElement' }
     });
 
     private _categoriesShowedBefore = !AppConsts.isMobile;
@@ -374,7 +375,8 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                             parentExpr: 'parent',
                             keyExpr: 'id',
                         })
-                    }
+                    },
+                    options: { method: 'filterByFilterElement' }
                 })].concat(this._cfoService.hasStaticInstance ? [] : [
 /*
                 new FilterModel({
@@ -406,7 +408,8 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                             keyExpr: 'id',
                             value: [ this.cfoPreferencesService.selectedCurrencyId ]
                         })
-                    }
+                    },
+                    options: { method: 'filterByFilterElement' }
                 })
                 /*,
                 new FilterModel({
@@ -910,8 +913,6 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                 let filterMethod = this['filterBy' + this.capitalize(filter.caption)];
                 if (filterMethod)
                     return filterMethod.call(this, filter);
-                else
-                    return this.filterByFilterElement(filter);
             }
         );
 
