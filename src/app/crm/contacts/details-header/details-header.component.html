@@ -44,7 +44,7 @@
                 </h3>
             </div>
         </div>
-        <div *ngIf="manageAllowed && !data?.primaryOrganizationContactId" class="add-new-company">
+        <div *ngIf="!data?.primaryOrganizationContactId" class="add-new-company">
             <a (click)="addCompanyDialog($event)">+ {{ l('Add Company') }}</a>
         </div>
         <div class="organization_logo">
@@ -52,7 +52,7 @@
         </div>
     </div>
 
-    <div class="header_buttons" *ngIf="manageAllowed && addContextMenuItems.length">
+    <div class="header_buttons" [ngStyle]="{visibility: manageAllowed && addContextMenuItems.length ? 'visible' : 'hidden'}">
         <button id="addEntity" class="button-layout button-primary menu" (click)="addEntity($event)">
             + {{addButtonTitle}}
         </button>
