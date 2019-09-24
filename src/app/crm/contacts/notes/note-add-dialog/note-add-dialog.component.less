@@ -11,13 +11,13 @@
     max-width: 400px;
 
     h2 {
-        padding: 31px 23px 0px;
+        padding: 31px 23px 0;
     }
 
     .content {
         height: 100%;
-        margin: 0px;
-        padding-right: 0px;
+        margin: 0;
+        padding-right: 0;
         padding-bottom: 25px;
 
         .add-phone {
@@ -28,7 +28,7 @@
           vertical-align: top;
           padding-left: 7px;
           cursor: pointer;
-          margin: 0px;
+          margin: 0;
         }
 
         .show-origin {
@@ -72,6 +72,9 @@
                 color: #424c56;
             }
             &.type {
+                display: flex;
+                padding-right: 60px;
+                position: relative;
                 /deep/ input {
                     border: none!important;
                     font-size: 18px;
@@ -83,6 +86,8 @@
                 width: 40px;
                 height: 40px;
                 top: 0;
+                bottom: 0;
+                margin: auto;
                 right: 20px;
                 cursor: pointer;
                 display: block;
@@ -114,11 +119,12 @@
     }
 
     mat-dialog-actions {
-        height: 90px;
+        padding-top: 0;
         justify-content: center;
+        position: relative;
 
         .button-primary {
-            width: 85px;
+            width: 150px;
         }
     }
 }

@@ -83,7 +83,7 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, OnDe
     }
 
     rerenderWidgets() {
-        this.trendByPeriodComponent.update();
+        setTimeout(() => this.trendByPeriodComponent.updateWidth());
     }
 
     periodChanged(period: Period) {

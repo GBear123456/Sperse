@@ -736,13 +736,14 @@ export class CashflowService {
                 const weekInterval = JSON.parse(cellData.projected);
                 cellMoment = moment.utc(weekInterval.startDate);
             } else {
+                const filterStartDate = this.requestFilter.startDate;
                 cellMoment = moment()
                     .set({ year: cellData.year })
                     .startOf('year')
                     .set({
                         quarter: cellData.quarter,
-                        month: cellData.month ? (cellData.month - 1) || this.requestFilter.startDate.getMonth() : null,
-                        date: cellData.day || this.requestFilter.startDate.getDate()
+                        month: cellData.month ? (cellData.month - 1) || (filterStartDate && filterStartDate.getMonth()) : null,
+                        date: cellData.day || (filterStartDate && filterStartDate.getDate())
                     });
             }
         }

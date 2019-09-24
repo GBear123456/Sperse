@@ -74,10 +74,11 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit, 
     bankAccountIds$: Observable<number[]> = this.bankAccountService.selectedBankAccountsIds$;
     trendData$: Observable<Array<BankAccountDailyStatDto>>;
     trendData: Array<BankAccountDailyStatDto>;
+    chartHeight = 245;
     chartWidth = 650;
     isForecast = false;
-    endingBalanceColor = '#ace2f9';
-    forecastEndingBalanceColor = '#f9ba4e';
+    endingBalanceColor = '#F9E784';
+    forecastEndingBalanceColor = '#f9c4e4';
     historicalCreditColor = '#00aeef';
     historicalDebitColor = '#f05b2a';
     forecastCreditColor = '#a9e3f9';
@@ -135,15 +136,15 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit, 
         }
     ];
     periods: TrendByPeriodModel[] = [
-         {
-             key: GroupByPeriod.Daily,
-             name: 'day',
-             amount: 30
-         },
-         {
-             key: GroupByPeriod.Weekly,
-             name: 'week',
-             amount: 15
+        {
+            key: GroupByPeriod.Daily,
+            name: 'day',
+            amount: 30
+        },
+        {
+            key: GroupByPeriod.Weekly,
+            name: 'week',
+            amount: 15
         },
         {
             key: GroupByPeriod.Monthly,
@@ -243,6 +244,7 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit, 
     showRightAxis$ = this.selectedChartType$.pipe(
         map((selectedChartType: ChartType) => (selectedChartType === ChartType.Combined || selectedChartType === ChartType.CashBalanceWithNetChange))
     );
+    updateChartWidthAfterActivation = false;
 
     constructor(
         injector: Injector,
@@ -273,13 +275,16 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit, 
     }
 
     @HostListener('window:resize', ['$event']) onResize() {
-        this.chartWidth = this.getChartWidth();
+        if (this.componentIsActivated) {
+            this.updateWidth();
+        } else {
+            this.updateChartWidthAfterActivation = true;
+        }
     }
 
-    update() {
-        if (this.chartComponent && this.chartComponent.instance) {
-            setTimeout(() => this.chartComponent.instance.render(), 300);
-        }
+    updateWidth() {
+        this.chartWidth = this.getChartWidth();
+        this.changeDetectorRef.markForCheck();
     }
 
     getChartWidth() {
@@ -371,7 +376,7 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit, 
                 stats.forEach((statsItem: BankAccountDailyStatDto) => {
                     Object.defineProperty(
                         statsItem,
-                        'netChange',
+                        statsItem.isForecast ? 'forecastNetChange' : 'netChange',
                         {
                             value: statsItem.isForecast
                                    ? statsItem['forecastCredit'] + statsItem['forecastDebit']
@@ -417,13 +422,16 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit, 
         );
         this.trendData$.pipe(takeUntil(this.destroy$)).subscribe(trendData => {
             this.trendData = trendData;
-            this.chartWidth = this.getChartWidth();
+            this.updateWidth();
             this.changeDetectorRef.detectChanges();
         });
     }
 
     activate() {
-        this.update();
+        if (this.updateChartWidthAfterActivation) {
+            this.updateWidth();
+            this.updateChartWidthAfterActivation = false;
+        }
         this.lifeCycleService.activate.next();
     }
 

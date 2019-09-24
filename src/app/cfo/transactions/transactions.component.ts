@@ -19,8 +19,8 @@ import { Store, select } from '@ngrx/store';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import DataSource from 'devextreme/data/data_source';
 import 'devextreme/data/odata/store';
-import { Subject, forkJoin, of } from 'rxjs';
-import { first, skip, switchMap, mapTo, map, takeUntil } from 'rxjs/operators';
+import { BehaviorSubject, Observable, Subject, forkJoin, of } from 'rxjs';
+import { first, skip, switchMap, mapTo, map, takeUntil, publishReplay, refCount } from 'rxjs/operators';
 import * as _ from 'underscore';
 
 /** Application imports */
@@ -36,7 +36,10 @@ import {
     UpdateTransactionsCategoryInput,
     AutoClassifyDto,
     ResetClassificationDto,
-    BankAccountsServiceProxy
+    BankAccountsServiceProxy,
+    TransactionTypesAndCategoriesDto,
+    TransactionTypeDto,
+    StringFilterElementDto
 } from '@shared/service-proxies/service-proxies';
 import { FiltersService } from '@shared/filters/filters.service';
 import { FilterModel } from '@shared/filters/models/filter.model';
@@ -58,6 +61,8 @@ import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/life
 import { CalendarValuesModel } from '@shared/common/widgets/calendar/calendar-values.model';
 import { DateHelper } from '@shared/helpers/DateHelper';
 import { DataGridService } from '@app/shared/common/data-grid.service.ts/data-grid.service';
+import { FilterHelpers } from '@app/cfo/shared/helpers/filter.helper';
+import { Category } from '@app/cfo/transactions/categorization/category.model';
 
 @Component({
     templateUrl: './transactions.component.html',
@@ -111,7 +116,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     public manageAllowed = false;
     public dragInProgress = false;
     private draggedTransactionRow;
-    public selectedCashflowCategoryKey: any;
+    public selectedCashflowCategoryKeys: number[];
 
     public bankAccountCount;
     public bankAccounts: number[];
@@ -130,8 +135,68 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     public adjustmentTotal = 0;
     public adjustmentStartingBalanceTotal = 0;
     headlineConfig: any;
-    categories: any;
-    types: any;
+    transactionTypesAndCategories$: Observable<TransactionTypesAndCategoriesDto> = this.transactionsServiceProxy.getTransactionTypesAndCategories().pipe(
+        publishReplay(),
+        refCount()
+    );
+    categories$: Observable<StringFilterElementDto[]> = this.transactionTypesAndCategories$.pipe(
+        map((transactionTypesAndCategories: TransactionTypesAndCategoriesDto) => transactionTypesAndCategories.categories)
+    );
+    categories: string[];
+    types$: Observable<TransactionTypeDto[]> = this.transactionTypesAndCategories$.pipe(
+        map((transactionTypesAndCategories: TransactionTypesAndCategoriesDto) => transactionTypesAndCategories.types)
+    );
+    excludedTypesKeys$: Observable<string[]> = this.route.queryParamMap.pipe(
+        map((params: ParamMap) => {
+            const excludedKeys = params.get('excludedTypeIds');
+            return excludedKeys ? excludedKeys.split(',') : [];
+        })
+    );
+    types: string[];
+    typesFilter: FilterModel = new FilterModel({
+        component: FilterCheckBoxesComponent,
+        field: 'TypeId',
+        caption: 'TransactionType',
+        hidden: true,
+        items: {
+            element: new FilterCheckBoxesModel({
+                dataSource$: this.types$,
+                selectedKeys$: this.excludedTypesKeys$,
+                nameField: 'name',
+                keyExpr: 'id'
+            })
+        }
+    });
+    classifiedFilter: FilterModel = new FilterModel({
+        component: FilterCBoxesComponent,
+        caption: 'classified',
+        field: 'CashflowCategoryId',
+        items$: this.route.queryParamMap.pipe(
+            map((params: ParamMap) => {
+                const classified = params.get('classified');
+                return {
+                    yes: new FilterItemModel(classified === 'yes'),
+                    no: new FilterItemModel(classified === 'no')
+                };
+            })
+        )
+    });
+    private selectedCategoriesIds: BehaviorSubject<number[]> = new BehaviorSubject<number[]>([]);
+    selectedCategoriesIds$: Observable<number[]> = this.selectedCategoriesIds.asObservable();
+    categoriesFilter: FilterModel = new FilterModel({
+        component: FilterCheckBoxesComponent,
+        field: 'CashflowCategoryId',
+        caption: 'TransactionCategory',
+        items: {
+            element: new FilterCheckBoxesModel({
+                dataSource$: this.categories$,
+                selectedKeys$: this.selectedCategoriesIds$,
+                nameField: 'name',
+                keyExpr: 'id'
+            })
+        },
+        options: { method: 'filterByFilterElement' }
+    });
 
     private _categoriesShowedBefore = !AppConsts.isMobile;
     private _categoriesShowed = this._categoriesShowedBefore;
@@ -149,7 +214,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     private syncAccounts: any;
 
     private updateAfterActivation: boolean;
-    categoriesRowData;
+    categoriesRowsData: Category[] = [];
 
     constructor(injector: Injector,
         private appService: AppService,
@@ -238,11 +303,11 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             const state = {};
             const businessEntitiesIds: string = params.get('businessEntitiesIds');
             if (businessEntitiesIds) {
-                state['selectedBusinessEntitiesIds'] = businessEntitiesIds.split(',').map((id: string) => +id);
+                state['selectedBusinessEntitiesIds'] = this.getIdsFromString(businessEntitiesIds);
             }
             const bankAccountsIds: string = params.get('bankAccountIds');
             if (bankAccountsIds) {
-                state['selectedBankAccountIds'] = bankAccountsIds.split(',').map((id: string) => +id);
+                state['selectedBankAccountIds'] = this.getIdsFromString(bankAccountsIds);
             }
 
             if (Object.keys(state).length) {
@@ -265,28 +330,15 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
 
             const categoryIdsString: string = params.get('categoryIds');
             if (categoryIdsString) {
-                const categoryIds: number[] = categoryIdsString.split(',').map((id: string) => +id);
-                this.categoriesRowData = {
-                    key: categoryIds
-                };
-                this.cashFlowCategoryFilter = [
-                    new FilterModel({
-                        field: 'CashflowCategoryId',
-                        caption: 'TransactionCategory',
-                        items: {
-                            element: new FilterCheckBoxesModel({
-                                dataSource: categoryIds,
-                                value: categoryIds
-                            })
-                        }
-                    })
-                ];
+                const categoryIds: number[] = this.getIdsFromString(categoryIdsString);
+                this.categoriesRowsData = <any>categoryIds.map(id => ({ key: id }));
+                this.selectedCategoriesIds.next(categoryIds);
             }
         });
 
         this.bankAccountsService.load();
         forkJoin(
-            this.transactionsServiceProxy.getTransactionTypesAndCategories(),
+            this.transactionTypesAndCategories$,
             this.transactionsServiceProxy.getFiltersInitialData(InstanceType[this.instanceType], this.instanceId),
             this.bankAccountsService.syncAccounts$.pipe(first())
         ).subscribe(([typeAndCategories, filtersInitialData, syncAccounts]) => {
@@ -324,7 +376,8 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                             parentExpr: 'parent',
                             keyExpr: 'id',
                         })
-                    }
+                    },
+                    options: { method: 'filterByFilterElement' }
                 })].concat(this._cfoService.hasStaticInstance ? [] : [
 /*
                 new FilterModel({
@@ -340,38 +393,10 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                     caption: 'Amount',
                     field: 'Amount',
                     items: { from: new FilterItemModel(), to: new FilterItemModel() }
-                }),
-                new FilterModel({
-                    component: FilterCheckBoxesComponent,
-                    field: 'CategoryId',
-                    caption: 'TransactionCategory',
-                    items: {
-                        element: new FilterCheckBoxesModel({
-                            dataSource: typeAndCategories.categories,
-                            nameField: 'name',
-                            keyExpr: 'id'
-                        })
-                    }
-                }),
-                new FilterModel({
-                    component: FilterCheckBoxesComponent,
-                    field: 'TypeId',
-                    caption: 'TransactionType',
-                    items: {
-                        element: new FilterCheckBoxesModel({
-                            dataSource: typeAndCategories.types,
-                            nameField: 'name',
-                            keyExpr: 'id'
-                        })
-                    }
-                }),
-*/
-                new FilterModel({
-                    component: FilterCBoxesComponent,
-                    caption: 'classified',
-                    field: 'CashflowCategoryId',
-                    items: { yes: new FilterItemModel(), no: new FilterItemModel() }
-                }),
+                }),*/
+                this.categoriesFilter,
+                this.typesFilter,
+                this.classifiedFilter,
                 new FilterModel({
                     component: FilterCheckBoxesComponent,
                     field: 'CurrencyId',
@@ -384,7 +409,8 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                             keyExpr: 'id',
                             value: [ this.cfoPreferencesService.selectedCurrencyId ]
                         })
-                    }
+                    },
+                    options: { method: 'filterByFilterElement' }
                 })
                 /*,
                 new FilterModel({
@@ -444,6 +470,10 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             ]
         };
         this.changeDetectionRef.detectChanges();
+    }
+
+    private getIdsFromString(ids: string): number[] {
+        return ids.split(',').map((id: string) => +id);
     }
 
     toggleToolbar() {
@@ -515,12 +545,12 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                         {
                             name: 'searchAll',
                             action: this.searchAllClick.bind(this),
-                            visible: (this.searchValue && this.searchValue.length > 0) && (this.filtersService.hasFilterSelected || this.selectedCashflowCategoryKey),
+                            visible: this.searchValue && this.searchValue.length > 0 && (this.filtersService.hasFilterSelected || this.selectedCashflowCategoryKeys),
                             options: {
                                 text: this.l('Search All')
                             },
                             attr: {
-                                'filter-selected': (this.searchValue && this.searchValue.length > 0) && (this.filtersService.hasFilterSelected || this.selectedCashflowCategoryKey),
+                                'filter-selected': this.searchValue && this.searchValue.length > 0 && (this.filtersService.hasFilterSelected || this.selectedCashflowCategoryKeys),
                                 'custaccesskey': 'search-container'
                             }
                         }
@@ -762,11 +792,11 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     }
 
     searchAllClick() {
-        this.cashFlowCategoryFilter = [];
-        this.categorizationComponent.clearSelection(false);
+        this.clearCategoriesFilters();
+        this.categorizationComponent.clearSelection();
 
         this.filtersService.clearAllFilters();
-        this.selectedCashflowCategoryKey = null;
+        this.selectedCashflowCategoryKeys = null;
         this.initToolbarConfig();
     }
 
@@ -815,12 +845,9 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     }
 
     clearClassifiedFilter() {
-        let classifiedFilter: FilterModel = _.find(this.filters, (f: FilterModel) => f.caption === 'classified' );
-        if (classifiedFilter) {
-            classifiedFilter.items['yes'].value = false;
-            classifiedFilter.items['no'].value = false;
-            this.filtersService.change(classifiedFilter);
-        }
+        this.classifiedFilter.items['yes'].value = false;
+        this.classifiedFilter.items['no'].value = false;
+        this.filtersService.change(this.classifiedFilter);
     }
 
     initFiltering() {
@@ -834,10 +861,10 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                 }
 
                 if (filterName == 'classified') {
-                    if (this.selectedCashflowCategoryKey && filter.items['no'].value === true && filter.items['yes'].value !== true) {
-                        this.cashFlowCategoryFilter = [];
-                        this.categorizationComponent.clearSelection(false);
-                        this.selectedCashflowCategoryKey = null;
+                    if (this.selectedCashflowCategoryKeys && filter.items['no'].value === true && filter.items['yes'].value !== true) {
+                        this.clearCategoriesFilters();
+                        this.categorizationComponent.clearSelection();
+                        this.selectedCashflowCategoryKeys = null;
                     }
                 }
             } else {
@@ -895,6 +922,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
 
         this.transactionsFilterQuery = _.reject(filterQuery, (x) => _.has(x, 'AccountingTypeId')
             || (_.has(x, 'CashflowCategoryId') && typeof x['CashflowCategoryId'] == 'number')
+            || (_.has(x, 'or') &&  _.has(x.or[0], 'CashflowCategoryId'))
             || _.has(x, 'CashflowSubCategoryId')
         );
         this.changeDetectionRef.detectChanges();
@@ -926,8 +954,8 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         let data = {};
         if (filter.items.element) {
             let bankAccountIds = [];
-            filter.items.element.dataSource.forEach((syncAccount, i) => {
-                syncAccount.bankAccounts.forEach((bankAccount, i) => {
+            filter.items.element.dataSource.forEach((syncAccount) => {
+                syncAccount.bankAccounts.forEach((bankAccount) => {
                     if (bankAccount['selected']) {
                         bankAccountIds.push(bankAccount.id);
                     }
@@ -958,20 +986,8 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         return data;
     }
 
-    filterByTransactionCategory(filter) {
-        return this.filterByFilterElement(filter);
-    }
-
-    filterByCurrency(filter) {
-        return this.filterByFilterElement(filter);
-    }
-
-    filterByTransactionType(filter) {
-        return this.filterByFilterElement(filter);
-    }
-
-    filterByBusinessEntity(filter) {
-        return this.filterByFilterElement(filter);
+    filterByTransactionType(filter: FilterModel) {
+        return FilterHelpers.filterByExcludeElement(filter);
     }
 
     filterByFilterElement(filter) {
@@ -991,32 +1007,52 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         return data;
     }
 
-    filterByCashflowCategory(data) {
-        if (data && data.key) {
-            let field = {};
-            if (!parseInt(data.key))
-                field['CashFlowTypeId'] = new FilterItemModel(data.key);
-            else if (isNaN(data.key))
-                field['AccountingTypeId'] = new FilterItemModel(parseInt(data.key));
-            else if (isNaN(data.parent))
-                field['CashflowCategoryId'] = new FilterItemModel(parseInt(data.key));
-            else
-                field['CashflowSubCategoryId'] = new FilterItemModel(parseInt(data.key));
-
-            this.cashFlowCategoryFilter = [
-                new FilterModel({
-                    items: field
-                })
-            ];
+    filterByCashflowCategories(categories: Category[]) {
+        this.clearCategoriesFilters();
+        if (categories && categories.length) {
+            if (categories.length === 1 && !this.isCategory(categories[0])) {
+                let field = {};
+                if (this.isCashflowType(categories[0]))
+                    field['CashFlowTypeId'] = new FilterItemModel(categories[0].key);
+                else if (this.isAccountingTypeId(categories[0]))
+                    field['AccountingTypeId'] = new FilterItemModel(+categories[0].key);
+                else
+                    field['CashflowSubCategoryId'] = new FilterItemModel(+categories[0].key);
+                this.cashFlowCategoryFilter = [
+                    new FilterModel({
+                        items: field
+                    })
+                ];
+            } else {
+                this.selectedCategoriesIds.next(categories.map((category: Category) => category.key));
+            }
             this.clearClassifiedFilter();
             this.processFilterInternal();
-        } else if (this.selectedCashflowCategoryKey) {
-            this.cashFlowCategoryFilter = [];
+        } else if (this.selectedCashflowCategoryKeys) {
             this.processFilterInternal();
         }
 
-        this.selectedCashflowCategoryKey = data && data.key;
+        this.selectedCashflowCategoryKeys = categories && categories.map((category: Category) => {
+            return category.key;
+        });
         this.initToolbarConfig();
+    }
+
+    private isCashflowType(category: Category): boolean {
+        return !+category.key;
+    }
+
+    private isAccountingTypeId(category: Category): boolean {
+        return isNaN(category.key);
+    }
+
+    private isCategory(category: Category): boolean {
+        return isNaN(+category.parent);
+    }
+
+    private clearCategoriesFilters() {
+        this.cashFlowCategoryFilter = [];
+        this.selectedCategoriesIds.next([]);
     }
 
     onSelectionChanged($event, initial = false) {
@@ -1027,7 +1063,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             return ;
 
         let transactionKeys = this.dataGrid.instance ? this.dataGrid.instance.getSelectedRowKeys() : [];
-        if (!initial && (Boolean(this.selectedCashflowCategoryKey) || Boolean(transactionKeys.length)))
+        if (!initial && (Boolean(this.selectedCashflowCategoryKeys) || Boolean(transactionKeys.length)))
             this.categoriesShowed = true;
 
         let img = new Image();
@@ -1055,7 +1091,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             this.dragInProgress = false;
             document.removeEventListener('dxpointermove', this.stopPropagation);
             this.changeDetectionRef.detectChanges();
-        }).on('click', (e) => {
+        }).on('click', () => {
             this.draggedTransactionRow = null;
             this.dragInProgress = false;
             this.changeDetectionRef.detectChanges();
@@ -1140,8 +1176,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     }
 
     categorizeTransactions($event) {
-        let transactions: any[] = this.dataGrid
-            .instance.getSelectedRowKeys();
+        let transactions: any[] = this.dataGrid.instance.getSelectedRowKeys();
         if (!transactions.length && this.draggedTransactionRow)
             transactions = [this.draggedTransactionRow];
         let transactionIds = transactions.map(t => t.Id);
@@ -1160,7 +1195,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                         suppressCashflowMismatch: suppressCashflowTypeMismatch
                     })
                 ).subscribe(() => {
-                    if (this.filtersService.hasFilterSelected || this.selectedCashflowCategoryKey) {
+                    if (this.filtersService.hasFilterSelected || this.selectedCashflowCategoryKeys) {
                         this.dataGrid.instance.deselectAll();
                         this.refreshDataGrid();
                     } else {

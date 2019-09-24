@@ -8,6 +8,7 @@ import { MatDialog } from '@angular/material/dialog';
 import * as moment from 'moment';
 import { Store, select } from '@ngrx/store';
 import { RootStore, StatesStoreActions, StatesStoreSelectors } from '@root/store';
+import { MaskPipe } from 'ngx-mask';
 
 /** Application imports */
 import {
@@ -82,7 +83,8 @@ export class OffersWizardService {
         private _timingService: TimingServiceProxy,
         private appHttpConfiguration: AppHttpConfiguration,
         private store$: Store<RootStore.State>,
-        private dialog: MatDialog
+        private dialog: MatDialog,
+        private maskPipe: MaskPipe
     ) {
         this.submitApplicationProfileInput.systemType = OfferProviderType.EPCVIP;
         this.timeZones$ = this._timingService.getTimezones(this.defaultTimezoneScope).pipe(
@@ -228,5 +230,11 @@ export class OffersWizardService {
     validateRequiredField = (options) => {
         return !this.isApplicationSubmission ||
             (options.value !== undefined && options.value !== null && options.value !== '' && options.value !== 0);
+    }
+
+    transformPostalCode(inputElement): string {
+        if (inputElement.value.length > 10)
+            inputElement.value = inputElement.value.slice(0, 10);
+        return this.maskPipe.transform(inputElement.value, AppConsts.masks.zipCodeLong);
     }
 }
