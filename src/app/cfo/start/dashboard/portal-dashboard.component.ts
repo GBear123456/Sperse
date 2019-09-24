@@ -68,11 +68,15 @@ export class PortalDashboardComponent extends CFOComponentBase implements OnInit
 
     toggleLeftMenu() {
         setTimeout(() => {
-            if (this.trendByPeriodComponent.chartComponent)
-                this.trendByPeriodComponent.chartComponent.instance.render();
-            if (this.topSpendingCategoriesComponent.pieChart)
-                this.topSpendingCategoriesComponent.pieChart.instance.render();
-        }, 300);
+            let component: any = this.trendByPeriodComponent;
+            if (component) {
+                component.updateWidth();
+                if (component = component.chartComponent.instance)
+                    component.render();
+            }
+            if (component = this.topSpendingCategoriesComponent.pieChart)
+                component.instance.render();
+        });
     }
 
     invalidate() {
