@@ -272,10 +272,15 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit, 
 
     @HostListener('window:resize', ['$event']) onResize() {
         if (this.componentIsActivated) {
-            this.chartWidth = this.getChartWidth();
+            this.updateWidth();
         } else {
             this.updateChartWidthAfterActivation = true;
         }
+    }
+
+    updateWidth() {
+        this.chartWidth = this.getChartWidth();
+        this.changeDetectorRef.markForCheck();
     }
 
     getChartWidth() {
@@ -413,14 +418,14 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit, 
         );
         this.trendData$.pipe(takeUntil(this.destroy$)).subscribe(trendData => {
             this.trendData = trendData;
-            this.chartWidth = this.getChartWidth();
+            this.updateWidth();
             this.changeDetectorRef.detectChanges();
         });
     }
 
     activate() {
         if (this.updateChartWidthAfterActivation) {
-            this.chartWidth = this.getChartWidth();
+            this.updateWidth();
             this.updateChartWidthAfterActivation = false;
         }
         this.lifeCycleService.activate.next();
