@@ -30,12 +30,12 @@
     <main class="text-left container">
         <dx-scroll-view showScrollbar="onHover">
             <div class="row">
-                <div class="col-3 text-right light-gray">ID</div>
-                <div class="col-9 tabular">{{transactionInfo?.id}}</div>
+                <div class="col-4 col-sm-3 text-right light-gray">ID</div>
+                <div class="col-8 col-sm-9 tabular">{{transactionInfo?.id}}</div>
             </div>
             <div class="row aligned-center">
-                <div class="col-3 text-right light-gray">{{ls.l("Category")}}</div>
-                <div class="col-9 truncate category-row" [title]="categoryPathTitle">
+                <div class="col-4 col-sm-3 text-right light-gray">{{ls.l("Category")}}</div>
+                <div class="col-8 col-sm-9 truncate category-row" [title]="categoryPathTitle">
                     <dx-select-box [items]="accountingTypes"
                                    displayExpr="name"
                                    accessKey="accType-select"
@@ -91,8 +91,8 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-3 text-right light-gray">{{ls.l("TransactionDetail_Notes")}}</div>
-                <div class="col-9">
+                <div class="col-4 col-sm-3 text-right light-gray">{{ls.l("TransactionDetail_Notes")}}</div>
+                <div class="col-8 col-sm-9">
                     <div class="comments" *ngFor="let comment of transactionInfo?.comments">
                         <div (click)="inPlaceEdit('text', comment)" *ngIf="!comment.inplaceEdit">
                             {{comment.text}} <i class="icon blue-edit-pencil">&nbsp;</i>
@@ -118,50 +118,50 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-3"></div>
-                <div class="col-9">
+                <div class="col-4 col-sm-3"></div>
+                <div class="col-8 col-sm-9">
                     <hr>
                 </div>
             </div>
             <div class="row">
-                <div class="col-3 text-right light-gray">{{ls.l("TransactionDetail_Date")}}</div>
-                <div class="col-4">{{transactionInfo?.date | date : 'MMM d, y'}}</div>
-                <div class="col-3 text-right light-gray truncate" title="{{transactionInfo?.bankAccountBankName}}">{{transactionInfo?.bankAccountBankName}}</div>
-                <div class="col-2 text-right tabular"><b>{{transactionInfo?.bankAccountNumber}}</b></div>
+                <div class="col-12 col-sm-3 text-right light-gray">{{ls.l("TransactionDetail_Date")}}</div>
+                <div class="col-4 col-sm-4">{{transactionInfo?.date | date : 'MMM d, y'}}</div>
+                <div class="col-5 col-sm-3 text-right light-gray truncate" title="{{transactionInfo?.bankAccountBankName}}">{{transactionInfo?.bankAccountBankName}}</div>
+                <div class="col-3 col-sm-2 text-right tabular"><b>{{transactionInfo?.bankAccountNumber}}</b></div>
             </div>
             <div class="row">
-                <div class="col-3 text-right light-gray">{{ls.l("TransactionDetail_Amount")}}</div>
-                <div class="col-4 amount">{{transactionInfo?.amount | currency:cfoPreferencesService.selectedCurrencyId:cfoPreferencesService.selectedCurrencySymbol:'1.2-2'}}</div>
-                <div class="col-3 text-right light-gray">{{ls.l("TransactionDetail_Status")}}</div>
-                <div class="col-2 text-right tabular status"><span ngClass="{{transactionInfo?.transactionStatus | lowercase}}">{{transactionInfo?.transactionStatus}}</span></div>
+                <div class="col-12 col-sm-3 text-right light-gray">{{ls.l("TransactionDetail_Amount")}}</div>
+                <div class="col-4 col-sm-4 amount">{{transactionInfo?.amount | currency:cfoPreferencesService.selectedCurrencyId:cfoPreferencesService.selectedCurrencySymbol:'1.2-2'}}</div>
+                <div class="col-4 col-sm-3 text-right light-gray">{{ls.l("TransactionDetail_Status")}}</div>
+                <div class="col-4 col-sm-2 text-right tabular status"><span ngClass="{{transactionInfo?.transactionStatus | lowercase}}">{{transactionInfo?.transactionStatus}}</span></div>
             </div>
             <div class="row">
-                <div class="col-3"></div>
-                <div class="col-9">
+                <div class="col-4 col-sm-3"></div>
+                <div class="col-8 col-sm-9">
                     <hr>
                 </div>
             </div>
             <div class="row">
-                <div class="col-3 text-right light-gray">{{ls.l("TransactionDetail_Vendor")}}</div>
-                <div class="col-9 wrap uppercase">{{transactionInfo?.counterpartyName}}</div>
+                <div class="col-4 col-sm-3 text-right light-gray">{{ls.l("TransactionDetail_Vendor")}}</div>
+                <div class="col-8 col-sm-9 wrap uppercase">{{transactionInfo?.counterpartyName}}</div>
             </div>
             <div class="row">
-                <div class="col-3 text-right light-gray">{{ls.l("TransactionDetail_Description")}}</div>
-                <div class="col-9 wrap uppercase">{{transactionInfo?.description}}</div>
+                <div class="col-4 col-sm-3 text-right light-gray">{{ls.l("TransactionDetail_Description")}}</div>
+                <div class="col-8 col-sm-9 wrap uppercase">{{transactionInfo?.description}}</div>
             </div>
 
             <ng-container *ngIf="transactionInfo?.attributes && transactionInfo?.attributes.length">
                 <div class="row">
-                    <div class="col-3"></div>
-                    <div class="col-9">
+                    <div class="col-4 col-sm-3"></div>
+                    <div class="col-8 col-sm-9">
                         <hr>
                     </div>
                 </div>
                 <div class="sorted-attributes">
                     <ng-container *ngFor="let attr of transactionInfo?.attributes; trackBy: trackElement">
                         <div class="row align-items-center" [ngClass]="attr.typeId">
-                            <div class="col-3 text-right light-gray">{{ transactionAttributeTypes ? transactionAttributeTypes[attr.typeId].name : '' }}</div>
-                            <div class="col-9">{{attr.value}}</div>
+                            <div class="col-4 col-sm-3 text-right light-gray">{{ transactionAttributeTypes ? transactionAttributeTypes[attr.typeId].name : '' }}</div>
+                            <div class="col-8 col-sm-9">{{attr.value}}</div>
                         </div>
                     </ng-container>
                 </div>

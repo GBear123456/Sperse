@@ -527,7 +527,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                             widget: 'dxTextBox',
                             options: {
                                 value: this.searchValue,
-                                width: '279',
+                                width: AppConsts.isMobile ? '215' : '279',
                                 mode: 'search',
                                 placeholder: this.l('Search') + ' '
                                 + this.l('Transactions').toLowerCase(),
@@ -544,7 +544,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                         {
                             name: 'searchAll',
                             action: this.searchAllClick.bind(this),
-                            visible: this.searchValue && this.searchValue.length > 0 && (this.filtersService.hasFilterSelected || this.selectedCashflowCategoryKeys),
+                            visible: !AppConsts.isMobile && this.searchValue && this.searchValue.length > 0 && (this.filtersService.hasFilterSelected || this.selectedCashflowCategoryKeys),
                             options: {
                                 text: this.l('Search All')
                             },

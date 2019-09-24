@@ -1,6 +1,11 @@
 :host {
+    display: block;
     main.container {
-        width: 700px;
+        padding: 10px;
+        @media (min-width: 768px) {
+            width: 700px;
+            padding: 15px;
+        }
     }
 
     *:not(.fa) {
@@ -13,12 +18,12 @@
         letter-spacing: 0.3px;
         color: #424c56;
     }
-    
+
     .sorted-attributes {
         display: flex;
         flex-direction: column;
         width: 100%;
-        
+
         .CC {
             order: 1;
         }
@@ -52,7 +57,7 @@
 
     .row {
         padding: 2px 0;
-        
+
         [class^='col'] {
             white-space: normal;
         }
@@ -181,7 +186,6 @@
         align-items: center;
         background-color: rgb(243, 247, 250);
         padding: 5px 5px 15px 35px;
-        width: 700px;
         top: 18px;
 
         h1 {
@@ -235,6 +239,7 @@
                 opacity: 0.8;
             }
         }
+
     }
 
     main {
@@ -302,6 +307,12 @@
             .dx-texteditor-buttons-container {
                 display: none !important;
             }
+        }
+    }
+
+    .text-right {
+        @media(max-width: 767px) {
+            text-align: initial !important;
         }
     }
 }
