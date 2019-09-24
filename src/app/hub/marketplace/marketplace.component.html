@@ -1,0 +1,24 @@
+<app-headline [config]="headlineConfig"></app-headline>
+<div>
+    <div class="left-wrapper">
+        <div class="left-menu">
+            <h2 class="small-title">{{l('Categories')}}</h2>
+            <dx-scroll-view showScrollbar="onHover">
+                <ul class="category__list">
+                    <li *ngFor="let item of extentionCategories" class="category__item">
+                        <a (click)="filterByCategory(item.id)" class="category__link">{{ item.name }}</a>
+                    </li>
+                </ul>
+            </dx-scroll-view>
+        </div>
+    </div>
+
+    <div class="content-wrapper">
+        <h2 class="small-title">Content wrapper</h2>
+        <dx-scroll-view showScrollbar="onHover">
+            <pre>
+                {{ extentionList | json}}
+            </pre>
+        </dx-scroll-view>
+    </div>
+</div>

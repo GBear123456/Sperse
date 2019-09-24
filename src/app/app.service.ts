@@ -33,6 +33,7 @@ import { CrmConfig } from '@app/crm/crm.config';
 import { CfoConfig } from '@app/cfo/cfo.config';
 import { CfoPortalConfig } from '@app/cfo-portal/cfo-portal.config';
 import { PfmConfig } from '@app/pfm/pfm.config';
+import { HubConfig } from '@app/hub/hub.config';
 
 @Injectable()
 export class AppService extends AppServiceBase {
@@ -138,7 +139,7 @@ export class AppService extends AppServiceBase {
                     name: 'HUB',
                     showDescription: false,
                     showInDropdown: true,
-                    isComingSoon: true
+                    isComingSoon: false
                 },
                 {
                     name: 'Slice',
@@ -159,7 +160,8 @@ export class AppService extends AppServiceBase {
                 crm: CrmConfig,
                 cfo: CfoConfig,
                 cfoPortal: CfoPortalConfig,
-                pfm: PfmConfig
+                pfm: PfmConfig,
+                hub: HubConfig
             },
         );
 

@@ -44,6 +44,8 @@ export enum AppPermissions {
     APIManageKeysAccessAll = 'Pages.API.ManageKeys.AccessAll',
     System = 'Pages.System',
     SystemEmailing = 'Pages.System.Emailing',
+    HUB = 'Pages.HUB',
+    HUBImport = 'Pages.HUB.Import',
     CRM = 'Pages.CRM',
     CRMBulkUpdates = 'Pages.CRM.BulkUpdates',
     CRMPipelinesConfigure = 'Pages.CRM.PipelinesConfigure',

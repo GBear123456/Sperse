@@ -18,6 +18,7 @@ export enum AppFeatures {
     CRMMaxActiveContactCount = 'CRM.MaxActiveContactCount',
     CRMMaxActivePartnerCount = 'CRM.MaxActivePartnerCount',
     CRMMaxUserCount = 'CRM.MaxUserCount',
+    HUB = 'HUB',
     MaxSpaceGB = 'MaxSpaceGB',
     Notification = 'Notification',
     PFM = 'PFM',

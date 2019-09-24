@@ -15,7 +15,7 @@ export class ModulesEditionsSelectComponent {
 
     constructor(
         private _notifyService: NotifyService,
-        private _ls: AppLocalizationService,
+        private _ls: AppLocalizationService
     ) {
     }
 
