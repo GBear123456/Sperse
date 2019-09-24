@@ -93,11 +93,11 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
         },
         {
             'name': 'credit',
-            'label': this.ls('Platform', 'Stats_Inflows')
+            'label': this.l('Stats_Inflows')
         },
         {
             'name': 'debit',
-            'label': this.ls('Platform', 'Stats_Outflows')
+            'label': this.l('Stats_Outflows')
         },
         {
             'name': 'netChange',
@@ -476,7 +476,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
     /** Recalculates the height of the charts to squeeze them both into the window to avoid scrolling */
     calculateChartsSize() {
         let chartsHeight = window.innerHeight - 390;
-        this.chartsHeight = chartsHeight > this.chartsHeight ? chartsHeight : this.chartsHeight;        
+        this.chartsHeight = chartsHeight > this.chartsHeight ? chartsHeight : this.chartsHeight;
         this.chartsWidth = window.innerWidth - (window.innerWidth < 768 || this.setupStepComponent.collapsed ? 40 : 371);
     }
 

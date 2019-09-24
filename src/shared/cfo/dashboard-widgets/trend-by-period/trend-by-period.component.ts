@@ -74,8 +74,8 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit, 
     chartHeight = 245;
     chartWidth = 650;
     isForecast = false;
-    endingBalanceColor = '#ace2f9';
-    forecastEndingBalanceColor = '#f9ba4e';
+    endingBalanceColor = '#F9E784';
+    forecastEndingBalanceColor = '#f9c4e4';
     historicalCreditColor = '#00aeef';
     historicalDebitColor = '#f05b2a';
     forecastCreditColor = '#a9e3f9';
@@ -372,7 +372,7 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit, 
                 stats.forEach((statsItem: BankAccountDailyStatDto) => {
                     Object.defineProperty(
                         statsItem,
-                        'netChange',
+                        statsItem.isForecast ? 'forecastNetChange' : 'netChange',
                         {
                             value: statsItem.isForecast
                                    ? statsItem['forecastCredit'] + statsItem['forecastDebit']
