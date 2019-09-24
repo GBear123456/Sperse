@@ -71,6 +71,7 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit, 
     bankAccountIds$: Observable<number[]> = this.bankAccountService.selectedBankAccountsIds$;
     trendData$: Observable<Array<BankAccountDailyStatDto>>;
     trendData: Array<BankAccountDailyStatDto>;
+    chartHeight = 245;
     chartWidth = 650;
     isForecast = false;
     endingBalanceColor = '#ace2f9';
@@ -132,15 +133,15 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit, 
         }
     ];
     periods: TrendByPeriodModel[] = [
-         {
-             key: GroupByPeriod.Daily,
-             name: 'day',
-             amount: 30
-         },
-         {
-             key: GroupByPeriod.Weekly,
-             name: 'week',
-             amount: 15
+        {
+            key: GroupByPeriod.Daily,
+            name: 'day',
+            amount: 30
+        },
+        {
+            key: GroupByPeriod.Weekly,
+            name: 'week',
+            amount: 15
         },
         {
             key: GroupByPeriod.Monthly,
@@ -240,6 +241,7 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit, 
     showRightAxis$ = this.selectedChartType$.pipe(
         map((selectedChartType: ChartType) => (selectedChartType === ChartType.Combined || selectedChartType === ChartType.CashBalanceWithNetChange))
     );
+    updateChartWidthAfterActivation = false;
 
     constructor(
         injector: Injector,
@@ -269,12 +271,10 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit, 
     }
 
     @HostListener('window:resize', ['$event']) onResize() {
-        this.chartWidth = this.getChartWidth();
-    }
-
-    update() {
-        if (this.chartComponent && this.chartComponent.instance) {
-            setTimeout(() => this.chartComponent.instance.render(), 300);
+        if (this.componentIsActivated) {
+            this.chartWidth = this.getChartWidth();
+        } else {
+            this.updateChartWidthAfterActivation = true;
         }
     }
 
@@ -419,7 +419,10 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit, 
     }
 
     activate() {
-        this.update();
+        if (this.updateChartWidthAfterActivation) {
+            this.chartWidth = this.getChartWidth();
+            this.updateChartWidthAfterActivation = false;
+        }
         this.lifeCycleService.activate.next();
     }
 

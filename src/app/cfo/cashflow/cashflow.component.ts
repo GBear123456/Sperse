@@ -664,6 +664,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
     tabularFontName;
     updateAfterActivation: boolean;
+    updateCashflowPositionsAfterActivation: boolean;
     detailsTabs = [
         { text: this.l('ShowAll'), value: 'all' },
         { text: this.l('History'), value: 'history' },
@@ -1929,6 +1930,14 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     @HostListener('window:resize', ['$event']) onResize() {
+        if (this.componentIsActivated) {
+            this.updateCashflowPositions();
+        } else {
+            this.updateCashflowPositionsAfterActivation = true;
+        }
+    }
+
+    private updateCashflowPositions() {
         this.synchronizeHeaderHeightWithCashflow();
         this.handleBottomHorizontalScrollPosition();
         this.handleVerticalScrollPosition();
@@ -4596,6 +4605,11 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             this.setBankAccountsFilter();
             this.loadGridDataSource();
             this.updateAfterActivation = false;
+        }
+
+        if (this.updateCashflowPositionsAfterActivation) {
+            this.updateCashflowPositions();
+            this.updateCashflowPositionsAfterActivation = false;
         }
 
         this.synchProgressComponent.activate();
