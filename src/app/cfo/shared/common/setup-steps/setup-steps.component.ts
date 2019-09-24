@@ -7,6 +7,7 @@ import { Subscription } from 'rxjs';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 
 /** Application imports */
+import { AppConsts } from '@shared/AppConsts';
 import { InstanceType } from '@shared/service-proxies/service-proxies';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { CfoIntroComponent } from '../../cfo-intro/cfo-intro.component';
@@ -19,7 +20,8 @@ import { SetupStepsService } from './setup-steps.service';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SetupStepComponent extends CFOComponentBase implements OnDestroy {
-    @HostBinding('class.collapsed') @Input() collapsed: boolean;
+    @HostBinding('class.collapsed') @Input() collapsed: boolean = true;
+    @HostBinding('class.mobile') mobile: boolean = AppConsts.isMobile;
 
     @Input() SelectedStepIndex: number;
     @Input() SetupSteps = [
@@ -32,8 +34,9 @@ export class SetupStepComponent extends CFOComponentBase implements OnDestroy {
     @Input() HeaderTitle: string = this.l(this._cfoService.initialized ? 'SetupStep_MainHeader' : 'SetupStep_InitialHeader');
     @Input() headerLink: string = this.instanceUri + '/start';
     @Input() showIntroductionTourLink = false;
-    @Input() showToggleButton = !this._cfoService.hasStaticInstance && !this.instanceId
-        || this.isInstanceAdmin || this._cfoService.isMainInstanceType;
+    @Input() showToggleButton = 
+         !this._cfoService.hasStaticInstance && !this.instanceId ||
+         this.isInstanceAdmin || this._cfoService.isMainInstanceType;
     @Output() onToggle: EventEmitter<boolean> = new EventEmitter<boolean>();
 
     private dialogConfig = new MatDialogConfig();
