@@ -122,4 +122,21 @@ export class FilterModel extends FilterModelBase<FilterItemModel> {
         });
         return data;
     }
+
+    private filterByFilterElement() {
+        let data = {};
+        if (this.items.element && this.items.element.value) {
+            let filterData = _.map(this.items.element.value, x => {
+                let el = {};
+                el[this.field] = x;
+                return el;
+            });
+
+            data = {
+                or: filterData
+            };
+        }
+
+        return data;
+    }
 }
