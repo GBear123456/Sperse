@@ -25,6 +25,7 @@
                             <li class="legend-item forecast inflow">{{l('Stats_Inflows')}}</li>
                             <li class="legend-item forecast outflows">{{l('Stats_Outflows')}}</li>
                         </ng-container>
+                        <li *ngIf="showNetChangeChart$" class="legend-item forecast net-change">{{l('Net_Change')}}</li>
                         <li *ngIf="showBalancesChart$ | async" class="legend-item forecast endingBalance" >{{l('Stats_Ending_Balances')}}</li>
                     </ul>
                 </ng-container>
@@ -73,14 +74,12 @@
                                 [color]="forecastCreditColor"
                                 [visible]="isForecast"
                                 valueField="forecastCredit"
-                                [showInLegend]="false"
                                 name="forecast">
                     </dxi-series>
                     <dxi-series [axis]="axisName"
                                 [color]="forecastDebitColor"
                                 [visible]="isForecast"
                                 valueField="forecastDebit"
-                                [showInLegend]="false"
                                 name="forecastDebit">
                     </dxi-series>
                 </ng-container>
@@ -92,16 +91,14 @@
                                 type="line"
                                 [color]="historicalNetChangeColor"
                                 valueField="netChange"
-                                [name]="l('Net_Change')"
-                                [showInLegend]="false">
+                                [name]="l('Net_Change')">
                     </dxi-series>
                     <dxi-series [axis]="axisName"
                                 type="line"
                                 [visible]="isForecast"
                                 [color]="forecastNetChangeColor"
                                 valueField="forecastNetChange"
-                                name="forecastNetChange"
-                                [showInLegend]="false">
+                                name="forecastNetChange">
                     </dxi-series>
                 </ng-container>
             </ng-container>
@@ -199,12 +196,12 @@
 
         <svg>
             <linearGradient id="ending-balance-gradient" x1="0" x2="0" y1="0" y2="1">
-                <stop offset="0%" stop-color="rgba(0, 174, 239, .1)"/>
+                <stop offset="0%" stop-color="rgba(249, 231, 132, .5)"/>
                 <stop offset="100%" stop-color="#fff"/>
             </linearGradient>
 
             <linearGradient id="forecast-ending-balance-gradient" x1="0" x2="0" y1="0" y2="1">
-                <stop offset="0%" stop-color="rgba(249, 186, 78, .5)"/>
+                <stop offset="0%" stop-color="rgba(249, 196, 228, .5)"/>
                 <stop offset="100%" stop-color="#fff"/>
             </linearGradient>
         </svg>
