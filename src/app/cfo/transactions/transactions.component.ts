@@ -20,7 +20,7 @@ import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import DataSource from 'devextreme/data/data_source';
 import 'devextreme/data/odata/store';
 import { BehaviorSubject, Observable, Subject, forkJoin, of } from 'rxjs';
-import { first, skip, switchMap, mapTo, map, takeUntil, publishReplay, refCount } from 'rxjs/operators';
+import { first, skip, switchMap, mapTo, map, takeUntil, pluck, publishReplay, refCount } from 'rxjs/operators';
 import * as _ from 'underscore';
 
 /** Application imports */
@@ -39,7 +39,8 @@ import {
     BankAccountsServiceProxy,
     TransactionTypesAndCategoriesDto,
     TransactionTypeDto,
-    StringFilterElementDto
+    StringFilterElementDto,
+    FiltersInitialData
 } from '@shared/service-proxies/service-proxies';
 import { FiltersService } from '@shared/filters/filters.service';
 import { FilterModel } from '@shared/filters/models/filter.model';
@@ -83,7 +84,11 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     private transId$: Subject<number> = new Subject<number>();
 
     dataGridStateTimeout: any;
-    filtersInitialData: any;
+    filtersInitialData: FiltersInitialData;
+    filtersInitialData$: Observable<FiltersInitialData> = this.transactionsServiceProxy.getFiltersInitialData(InstanceType[this.instanceType], this.instanceId).pipe(
+        publishReplay(),
+        refCount()
+    );
     noRefreshedAfterSync: boolean;
     items: any;
     transactionId: any;
@@ -181,6 +186,21 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                 };
             })
         )
+    });
+    currencyFilter: FilterModel = new FilterModel({
+        component: FilterCheckBoxesComponent,
+        field: 'CurrencyId',
+        caption: 'Currency',
+        hidden: true,
+        items: {
+            element: new FilterCheckBoxesModel({
+                dataSource$: this.filtersInitialData$.pipe(pluck('currencies')),
+                nameField: 'name',
+                keyExpr: 'id',
+                value: [ this.cfoPreferencesService.selectedCurrencyId ]
+            })
+        },
+        options: { method: 'filterByFilterElement' }
     });
     private selectedCategoriesIds: BehaviorSubject<number[]> = new BehaviorSubject<number[]>([]);
     selectedCategoriesIds$: Observable<number[]> = this.selectedCategoriesIds.asObservable();
@@ -338,7 +358,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         this.bankAccountsService.load();
         forkJoin(
             this.transactionTypesAndCategories$,
-            this.transactionsServiceProxy.getFiltersInitialData(InstanceType[this.instanceType], this.instanceId),
+            this.filtersInitialData$,
             this.bankAccountsService.syncAccounts$.pipe(first())
         ).subscribe(([typeAndCategories, filtersInitialData, syncAccounts]) => {
             this.syncAccounts = syncAccounts;
@@ -396,21 +416,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                 this.categoriesFilter,
                 this.typesFilter,
                 this.classifiedFilter,
-                new FilterModel({
-                    component: FilterCheckBoxesComponent,
-                    field: 'CurrencyId',
-                    caption: 'Currency',
-                    hidden: true,
-                    items: {
-                        element: new FilterCheckBoxesModel({
-                            dataSource: filtersInitialData.currencies,
-                            nameField: 'name',
-                            keyExpr: 'id',
-                            value: [ this.cfoPreferencesService.selectedCurrencyId ]
-                        })
-                    },
-                    options: { method: 'filterByFilterElement' }
-                })
+                this.currencyFilter,
                 /*,
                 new FilterModel({
                     component: FilterInputsComponent,
@@ -891,8 +897,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     }
 
     setCurrenciesFilter(currencyId: string) {
-        let currenciesFilter: FilterModel = _.find(this.filters, function (f: FilterModel) { return f.caption.toLowerCase() === 'currency'; });
-        return this.changeAndGetCurrenciesFilter(currenciesFilter, currencyId);
+        return this.changeAndGetCurrenciesFilter(this.currencyFilter, currencyId);
     }
 
     changeAndGetCurrenciesFilter(currenciesFilter: FilterModel, countryId: string): FilterModel {
@@ -1380,6 +1385,10 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             selectedBankAccountIds: selectedBankAccountIds
         });
         this.bankAccountsService.applyFilter();
+    }
+
+    get gridHeight() {
+        return window.innerHeight - (AppConsts.isMobile ? 160 : 220) - (this.appService.toolbarIsHidden ? 0 : 62) + 'px';
     }
 
     ngOnDestroy() {

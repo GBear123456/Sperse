@@ -44,11 +44,7 @@
                                     minWidth: 150,
                                     indicatorSrc: './assets/common/images/spinner.gif'
                                   }"
-                                  [remoteOperations]="{
-                                    filtering: false,
-                                    paging: false,
-                                    sorting: false
-                                  }"
+                                  [height]="gridHeight"
                                   [elementAttr]="{
                                     class: 'with-custom-loader'
                                   }"
@@ -66,7 +62,7 @@
                         </dxo-selection>
                         <dxo-group-panel [visible]="true"></dxo-group-panel>
                         <dxo-sorting mode="multiple"></dxo-sorting>
-                        <dxo-paging [pageSize]="20" [enabled]="true"></dxo-paging>
+                        <dxo-paging [pageSize]="20"></dxo-paging>
                         <dxo-filter-row [visible]="false" [showOperationChooser]="true"></dxo-filter-row>
 
                         <dxi-column dataField="Date" dataType="date" cssClass="tabular" [caption]="l('Transactions_Date')" cellTemplate="dateCell" width="100px"></dxi-column>
