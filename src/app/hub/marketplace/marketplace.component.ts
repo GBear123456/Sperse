@@ -22,8 +22,9 @@ export class MarketplaceComponent extends AppComponentBase implements OnInit {
         icon: 'globe',
         buttons: []
     };
-    extentionList: any;
-    extentionCategories: any;
+    extensionList: any;
+    extensionCategories: any;
+    sortedList = [];
 
     private rootComponent: any;
 
@@ -38,26 +39,31 @@ export class MarketplaceComponent extends AppComponentBase implements OnInit {
         this.rootComponent = this.getRootComponent();
         this.rootComponent.overflowHidden(true);
         this.getExtentionCategories();
-        this.getAll(undefined, undefined);
     }
 
-    refresh() {
-        console.log('refresh clicked');
-    }
+    refresh() {}
 
     filterByCategory(categoryId: number) {
-        console.log(categoryId);
     }
 
     getExtentionCategories() {
         this.extensionServiceProxy.getCategories().subscribe((result) => {
-            this.extentionCategories = result;
+            this.extensionCategories = result;
+            this.getAll(undefined, undefined);
+        });
+    }
+
+    getSortedItems() {
+        this.extensionCategories.forEach((category) => {
+            category['items'] = this.extensionList.filter((item) => item.categoryId === category.id);
+            this.sortedList.push(category);
         });
     }
 
     getAll(categoryId, topCount) {
         this.extensionServiceProxy.getAll(categoryId, topCount).subscribe((result) => {
-            this.extentionList = result;
+            this.extensionList = result;
+            this.getSortedItems();
         });
     }
 }

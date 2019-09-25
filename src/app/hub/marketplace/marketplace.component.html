@@ -5,8 +5,8 @@
             <h2 class="small-title">{{l('Categories')}}</h2>
             <dx-scroll-view showScrollbar="onHover">
                 <ul class="category__list">
-                    <li *ngFor="let item of extentionCategories" class="category__item">
-                        <a (click)="filterByCategory(item.id)" class="category__link">{{ item.name }}</a>
+                    <li *ngFor="let item of extensionCategories" class="category__item">
+                        <a (click)="filterByCategory(item.id)" class="category__link">{{ item.name }} ({{ item.count }})</a>
                     </li>
                 </ul>
             </dx-scroll-view>
@@ -14,11 +14,26 @@
     </div>
 
     <div class="content-wrapper">
-        <h2 class="small-title">Content wrapper</h2>
         <dx-scroll-view showScrollbar="onHover">
-            <pre>
-                {{ extentionList | json}}
-            </pre>
+            <ng-container *ngFor="let category of sortedList">
+                <ng-container *ngIf="category.items && category.items.length">
+                    <h2 class="small-title">{{category.name}} ({{category.count}})</h2>
+                    <ul class="category-items__list">
+                        <li *ngFor="let item of category.items" class="category-items__element">
+                            <figure>
+                                <img [src]="item.logo" [alt]="item.name">
+                            </figure>
+                            <h2>{{item.name}} <span class="rating" [ngClass]="'rating-' + item.rank">{{item.rank}}</span></h2>
+                            <p>{{item.description}}</p>
+                            <div class="text-center">
+                                <a [href]="item.url" target="_blank" class="visit-website">
+                                    {{l('Visit website')}} <img src="./assets/common/icons/shape-arrow-right.svg" alt="Arrow">
+                                </a>
+                            </div>
+                        </li>
+                    </ul>
+                </ng-container>
+            </ng-container>
         </dx-scroll-view>
     </div>
 </div>
