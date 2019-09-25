@@ -46,7 +46,7 @@ import { CommonModule } from '@shared/common/common.module';
 import { AppCommonModule } from '@app/shared/common/app-common.module';
 import { ContactsService } from './contacts.service';
 import { ContactsComponent } from './contacts.component';
-import { DetailsHeaderComponent } from './details-header.component';
+import { DetailsHeaderComponent } from './details-header/details-header.component';
 import { OperationsWidgetComponent } from './operations-widget.component';
 import { DocumentsComponent } from './documents/documents.component';
 import { NotesComponent } from './notes/notes.component';

@@ -13,12 +13,12 @@ import { flatMap, finalize } from 'rxjs/operators';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
+import { NavigationState } from '@shared/AppEnums';
 import { FileSizePipe } from '@shared/common/pipes/file-size.pipe';
 import { ReportsServiceProxy, ReportPeriod, GetReportUrlOutput } from '@shared/service-proxies/service-proxies';
 import { BankAccountsService } from '@shared/cfo/bank-accounts/helpers/bank-accounts.service';
 import { StringHelper } from '@root/shared/helpers/StringHelper';
 import { RequestHelper } from '@root/shared/helpers/RequestHelper';
-import { ReportViewType } from './report-view-type.enum';
 import { GenerateReportDialogComponent } from './generate-report-dialog/generate-report-dialog.component';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { AppService } from '@app/app.service';
@@ -200,14 +200,14 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
                     {
                         name: 'prev',
                         action: e => {
-                            this.viewReport.call(this, ReportViewType.Prev, e.event.originalEvent);
+                            this.viewReport.call(this, NavigationState.Prev, e.event.originalEvent);
                         },
                         disabled: conf.prevButtonDisabled
                     },
                     {
                         name: 'next',
                         action: e => {
-                            this.viewReport.call(this, ReportViewType.Next, e.event.originalEvent);
+                            this.viewReport.call(this, NavigationState.Next, e.event.originalEvent);
                         },
                         disabled: conf.nextButtonDisabled
                     }
@@ -300,7 +300,7 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
                 /** Save sorted visible rows to get next and prev properly */
                 this.visibleReports = $event.component.getVisibleRows().map(row => row.data);
                 /** If user click the whole row */
-                this.viewReport(ReportViewType.Current, $event);
+                this.viewReport(NavigationState.Current, $event);
     }
         }
     }
@@ -324,22 +324,29 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
             }));
     }
 
-    viewReport(type: ReportViewType = ReportViewType.Current, event?: any) {
-        let currentReportIndex = this.visibleReports.indexOf(this.currentReportInfo);
-        if (type !== ReportViewType.Current) {
-            currentReportIndex = currentReportIndex + type;
-            const prevOrNextReport = this.visibleReports[currentReportIndex];
-            /** If there is no next or prev report - just don't do any action */
-            if (!prevOrNextReport) {
-                return;
-            }
-            this.currentReportInfo = prevOrNextReport;
-        }
+    viewReport(state: NavigationState = NavigationState.Current, event?: any) {
         super.startLoading(true);
-        this.initViewerToolbar({
-            prevButtonDisabled: currentReportIndex === 0, // report is first in list
-            nextButtonDisabled: currentReportIndex === this.visibleReports.length - 1, // report is last in list
-        });
+        let dataSource = this.dataGrid.instance.getDataSource();
+        let currentReportIndex = this.visibleReports.indexOf(this.currentReportInfo) + state;
+        if (this.currentReportInfo = this.visibleReports[currentReportIndex])
+            this.initViewerToolbar({
+                prevButtonDisabled: currentReportIndex === 0 && !dataSource.pageIndex(), // report is first in list
+                nextButtonDisabled: currentReportIndex === this.visibleReports.length - 1 && dataSource.isLastPage(), // report is last in list
+            });
+        else {
+            if (state == NavigationState.Next && dataSource.isLastPage() ||
+                state == NavigationState.Prev && !dataSource.pageIndex()
+            )
+                return ;
+
+            dataSource.pageIndex(dataSource.pageIndex() + state);
+            return dataSource.load().then(() => {                
+                this.visibleReports = this.dataGrid.instance.getVisibleRows().map(row => row.data);
+                this.currentReportInfo = this.visibleReports[(state == NavigationState.Next ? 0 : dataSource.pageSize() - 1)];
+                this.viewReport();
+            });
+        }
+
         this.getReportUrlInfoObservable(this.currentReportInfo.Id).subscribe((urlInfo) => {
             RequestHelper.downloadFileBlob(urlInfo.url, (blob) => {
                     let reader = new FileReader();
@@ -455,11 +462,11 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
         if (this.openReportMode) {
             /** Arrow left is pressed */
             if (event.keyCode === 37) {
-                this.viewReport(ReportViewType.Prev, event);
+                this.viewReport(NavigationState.Prev, event);
             }
             /** Arrow right is pressed */
             if (event.keyCode === 39) {
-                this.viewReport(ReportViewType.Next, event);
+                this.viewReport(NavigationState.Next, event);
             }
         }
     }

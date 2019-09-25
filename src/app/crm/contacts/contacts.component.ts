@@ -54,6 +54,9 @@ import { BehaviorSubject, Observable } from '@node_modules/rxjs';
 import { TargetDirectionEnum } from '@app/crm/contacts/target-direction.enum';
 import { AppPermissions } from '@shared/AppPermissions';
 import { AppFeatures } from '@shared/AppFeatures';
+import { NavLink } from '@app/crm/contacts/nav-link.model';
+import { ContextType } from '@app/crm/contacts/details-header/context-type.enum';
+import { DetailsHeaderComponent } from '@app/crm/contacts/details-header/details-header.component';
 
 @Component({
     templateUrl: './contacts.component.html',
@@ -65,6 +68,7 @@ import { AppFeatures } from '@shared/AppFeatures';
 })
 export class ContactsComponent extends AppComponentBase implements OnDestroy {
     @ViewChild(OperationsWidgetComponent) toolbarComponent: OperationsWidgetComponent;
+    @ViewChild(DetailsHeaderComponent) detailsHeaderComponent: DetailsHeaderComponent;
 
     readonly RP_DEFAULT_ID   = RP_DEFAULT_ID;
     readonly RP_USER_INFO_ID = RP_USER_INFO_ID;
@@ -88,7 +92,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
 
     private initialData: string;
 
-    navLinks = [];
+    navLinks: NavLink[] = [];
 
     rightPanelSetting: any = {
         id: RP_DEFAULT_ID,
@@ -248,31 +252,43 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
         return obj.hasOwnProperty(prop) ? obj[prop] : def;
     }
 
-    private InitNavLinks(contact) {
+    private initNavLinks(contact) {
         this.navLinks = [
-            {label: 'Contact Information', route: 'contact-information'},
-            {label: 'Personal Details', route: 'personal-details'},
+            { name: 'contact-information', label: 'Contact Information', route: 'contact-information' },
+            { name: 'personal-details', label: 'Personal Details', route: 'personal-details'},
             {
+                name: 'user-information',
                 label: contact.userId ? 'User Information' : 'Invite User',
                 hidden: !this.permission.isGranted(contact.userId ?
                     AppPermissions.AdministrationUsers : AppPermissions.AdministrationUsersCreate),
                 route: 'user-information'
             },
-            {label: 'Documents', route: 'documents'},
-            {label: 'Notes', route: 'notes'},
-            {label: 'Orders', route: 'orders', hidden: this.contactGroup !== ContactGroup.Client || this.contactInfo.statusId === ContactStatus.Prospective},
-            {label: 'Invoices', route: 'invoices', hidden: this.contactGroup !== ContactGroup.Client || this.contactInfo.statusId === ContactStatus.Prospective},
-            {label: 'Subscriptions', route: 'subscriptions', hidden: !this.isClientDetailPage()},
-            {label: 'Payment Information', route: 'payment-information', hidden: !this.isClientDetailPage()},
-            {label: 'Lead Information', route: 'lead-information'},
+            { name: 'documents', label: 'Documents', route: 'documents' },
+            { name: 'notes', label: 'Notes', route: 'notes'},
             {
+                name: 'orders',
+                label: 'Orders',
+                route: 'orders',
+                hidden: this.contactGroup !== ContactGroup.Client || this.contactInfo.statusId === ContactStatus.Prospective
+            },
+            {
+                name: 'invoices',
+                label: 'Invoices',
+                route: 'invoices',
+                hidden: this.contactGroup !== ContactGroup.Client || this.contactInfo.statusId === ContactStatus.Prospective
+            },
+            { name: 'subscriptions', label: 'Subscriptions', route: 'subscriptions', hidden: !this.isClientDetailPage() },
+            { name: 'payment-information', label: 'Payment Information', route: 'payment-information', hidden: !this.isClientDetailPage() },
+            { name: 'lead-information', label: 'Lead Information', route: 'lead-information' },
+            {
+                name: 'activity-logs',
                 label: 'Activity Logs',
                 route: 'activity-logs',
                 disabled: !this.permission.isGranted(AppPermissions.PFMApplications)
             },
-            {label: 'Referral History', route: 'referral-history', disabled: true},
-            {label: 'Application Status', route: 'application-status', hidden: !!this.leadId, disabled: true},
-            {label: 'Questionnaire', route: 'questionnaire', disabled: true}
+            { name: 'referral-history', label: 'Referral History', route: 'referral-history', disabled: true },
+            { name: 'application-status', label: 'Application Status', route: 'application-status', hidden: !!this.leadId, disabled: true },
+            { name: 'questionnaire', label: 'Questionnaire', route: 'questionnaire', disabled: true }
         ];
     }
 
@@ -305,7 +321,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
         this.contactsService.userUpdate(
             this.userService['data'].userId = this.primaryContact.userId
         );
-        this.InitNavLinks(this.primaryContact);
+        this.initNavLinks(this.primaryContact);
         this.contactsService.toolbarUpdate();
         this.storeInitialData();
     }
@@ -396,6 +412,22 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
         return res$;
     }
 
+    updateContextType(navLink: NavLink): ContextType {
+        let newSelectedContextType: ContextType;
+        switch (navLink.name) {
+            case 'documents': newSelectedContextType = ContextType.AddFiles;  break;
+            case 'contact-information': newSelectedContextType = ContextType.AddContact;  break;
+            case 'notes': newSelectedContextType = ContextType.AddNotes;  break;
+            case 'invoices': newSelectedContextType = ContextType.AddInvoice;  break;
+        }
+        if (newSelectedContextType !== undefined) {
+            this.detailsHeaderComponent.updateSaveOption(
+                this.detailsHeaderComponent.addContextMenuItems[newSelectedContextType]
+            );
+        }
+        return newSelectedContextType;
+    }
+
     loadDataForClient(contactId: number, leadId: number, companyId: number): Observable<any> {
         let contactInfo$ = of(null);
         if (contactId) {
@@ -445,7 +477,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
                 this.finishLoading(true);
             })).subscribe(result => {
                 this.fillLeadDetails(result);
-                personContactInfo && this.InitNavLinks(personContactInfo);
+                personContactInfo && this.initNavLinks(personContactInfo);
                 lastLeadCallback && lastLeadCallback();
             });
         } else
@@ -718,7 +750,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
     }
 
     onContactSelected(contact) {
-        this.InitNavLinks(contact);
+        this.initNavLinks(contact);
         this.contactsService.userUpdate(
             this.userService['data'].userId = contact.userId);
     }

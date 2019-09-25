@@ -10,7 +10,7 @@ import { DxTextBoxComponent } from 'devextreme-angular/ui/text-box';
 import { DxDateBoxComponent } from 'devextreme-angular/ui/date-box';
 import { CacheService } from 'ng2-cache-service';
 import { Store, select } from '@ngrx/store';
-import { finalize, filter, last } from 'rxjs/operators';
+import { finalize, filter, first } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 
 /** Application imports */
@@ -130,7 +130,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
         this.store$.dispatch(new CurrenciesStoreActions.LoadRequestAction());
         this.store$.pipe(
             select(CurrenciesStoreSelectors.getSelectedCurrencyId),
-            filter(Boolean), last()
+            filter(Boolean), first()
         ).subscribe((selectedCurrencyId: string) => {
             this.currency = selectedCurrencyId;
         });

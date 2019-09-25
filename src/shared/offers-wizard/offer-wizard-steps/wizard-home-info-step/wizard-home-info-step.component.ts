@@ -13,8 +13,7 @@ import { AppConsts } from '@shared/AppConsts';
 @Component({
     selector: 'app-wizard-home-info-step',
     templateUrl: './wizard-home-info-step.component.html',
-    styleUrls: ['./wizard-home-info-step.component.less'],
-    providers: [MaskPipe]
+    styleUrls: ['./wizard-home-info-step.component.less']
 })
 export class WizardHomeInfoStepComponent {
     zipRegex = AppConsts.regexPatterns.zipUsPattern;
@@ -30,11 +29,8 @@ export class WizardHomeInfoStepComponent {
         private maskPipe: MaskPipe
     ) {}
 
-    onInput(e) {
-        const inputElement = e.event.target;
-        if (inputElement.value.length > this.maxLength)
-            inputElement.value = inputElement.value.slice(0, this.maxLength);
-        inputElement.value = this.maskPipe.transform(inputElement.value, AppConsts.masks.zipCodeLong);
+    onPostalCodeInput(e) {
+        e.event.target.value = this.offersWizardService.transformPostalCode(e.event.target);
     }
 
     postalCodeChange(e) {

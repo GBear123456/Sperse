@@ -159,3 +159,14 @@ export enum ModuleType {
     CFO_CRM = CFO | CRM,
     PFM = 4,
 }
+
+export enum ActionButtonType {
+    Edit,
+    Delete
+}
+
+export enum NavigationState {
+    Prev    = -1,
+    Current = 0,
+    Next    = 1
+}

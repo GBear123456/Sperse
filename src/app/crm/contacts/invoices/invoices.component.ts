@@ -15,6 +15,7 @@ import { finalize } from 'rxjs/operators';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
+import { ActionButtonType } from '@shared/AppEnums';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { FilterModel } from '@shared/filters/models/filter.model';
@@ -26,6 +27,7 @@ import {
 } from '@shared/service-proxies/service-proxies';
 import { ContactsService } from '@app/crm/contacts/contacts.service';
 import { CreateInvoiceDialogComponent } from '@app/crm/shared/create-invoice-dialog/create-invoice-dialog.component';
+import { EmailTemplateDialogComponent } from '@app/crm/shared/email-template-dialog/email-template-dialog.component';
 
 @Component({
     templateUrl: './invoices.component.html',
@@ -45,11 +47,19 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
         {
             text: this.l('Edit'),
             action: this.editInvoice.bind(this),
+            type: ActionButtonType.Edit,
             disabled: false
         },
         {
             text: this.l('Delete'),
             action: this.deleteInvoice.bind(this),
+            type: ActionButtonType.Delete,
+            disabled: false
+        },
+        {
+            text: this.l('Email'),
+            action: this.emailInvoice.bind(this),
+            type: null,
             disabled: false
         }
     ];
@@ -135,8 +145,8 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
                 }
             } else {
                 if (event.event.target.closest('.dx-link.dx-link-edit')) {
-                    this.actionMenuItems.map((item, index) => {                        
-                        item.disabled = index && 
+                    this.actionMenuItems.map(item => {                        
+                        item.disabled = (item.type == ActionButtonType.Delete) &&
                             (event.data.Status == InvoiceStatus.Paid) ||
                             (event.data.Status != InvoiceStatus.Draft);
                     });
@@ -161,6 +171,19 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
                 }
             }
         );
+    }
+
+    emailInvoice() {
+        this.dialog.open(EmailTemplateDialogComponent, {
+            panelClass: 'slider',
+            disableClose: true,
+            closeOnNavigation: false,
+            data: {
+                invoice: this.actionRecordData,
+                refreshParent: () => {
+                }
+            }
+        });
     }
 
     editInvoice() {

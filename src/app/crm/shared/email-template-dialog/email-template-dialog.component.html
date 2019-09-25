@@ -1,0 +1,54 @@
+<modal-dialog [title]="ls.l('Invoice Settings')"
+              [titleClearButton]="false"
+              [buttons]="buttons"
+              [editTitle]="false">
+    <ng-container headerContent>
+        <dx-select-box
+            name="template"
+            width="125px"
+            height="40px"
+            displayExpr="name"
+            valueExpr="id"
+            [placeholder]="ls.l('Template')"
+            [(value)]="template"
+            [dataSource]="templates$ | async"
+            (onValueChanged)="onTemplateChnaged($event)">
+        </dx-select-box>
+    </ng-container>
+
+    <div class="form-content">
+        <dx-scroll-view showScrollbar="onHover">
+            <div class="row">
+                <div class="col-sm-8">
+                    <div class="field-area description">
+                        <dx-text-box
+                            name="to"
+                            width="500px"
+                            height="85px"
+                            [placeholder]="ls.l('To')"
+                            [(value)]="emailTo">
+                        </dx-text-box>
+                    </div>
+                    <div class="field-area">
+                        <dx-text-box
+                            name="bcc"
+                            width="500px"
+                            height="85px"
+                            [placeholder]="ls.l('BCC')"
+                            [(value)]="bcc">
+                        </dx-text-box>
+                    </div>
+                    <div class="field-area">
+                        <dx-text-box
+                            name="subject"
+                            width="500px"
+                            height="85px"
+                            [placeholder]="ls.l('Subject')"
+                            [(value)]="subject">
+                        </dx-text-box>
+                    </div>
+                </div>
+            </div>
+        </dx-scroll-view>
+    </div>
+</modal-dialog>

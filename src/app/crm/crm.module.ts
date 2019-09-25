@@ -39,7 +39,7 @@ import { DxDropDownBoxModule } from 'devextreme-angular/ui/drop-down-box';
 import { DxSchedulerModule } from 'devextreme-angular/ui/scheduler';
 import { DxPopoverModule } from 'devextreme-angular/ui/popover';
 import { DxCalendarModule } from 'devextreme-angular/ui/calendar';
-
+//import { DxHtmlEditorModule } from 'devextreme-angular/ui/html-editor';
 import { FileUploadModule } from 'ng2-file-upload';
 
 /** Application imports */
@@ -63,6 +63,7 @@ import { ImportLeadsService } from './import-leads/import-leads.service';
 import { ActivityComponent } from './activity/activity.component';
 import { CreateActivityDialogComponent } from './activity/create-activity-dialog/create-activity-dialog.component';
 import { CreateInvoiceDialogComponent } from './shared/create-invoice-dialog/create-invoice-dialog.component';
+import { EmailTemplateDialogComponent } from './shared/email-template-dialog/email-template-dialog.component';
 import { CrmIntroComponent } from './shared/crm-intro/crm-intro.component';
 import { SharedIntroStepsModule } from '@shared/shared-intro-steps/shared-intro-steps.module';
 import { ImportServiceProxy } from '@shared/service-proxies/service-proxies';
@@ -113,6 +114,7 @@ import { SliceComponent } from '@app/crm/shared/slice/slice.component';
         DxSchedulerModule,
         DxPopoverModule,
         DxCalendarModule,
+//        DxHtmlEditorModule,
 
         MatSidenavModule,
         MatProgressBarModule,
@@ -145,6 +147,7 @@ import { SliceComponent } from '@app/crm/shared/slice/slice.component';
         DeleteAndReassignDialogComponent,
         CreateInvoiceDialogComponent,
         CreateActivityDialogComponent,
+        EmailTemplateDialogComponent,
         CrmIntroComponent,
         ActivityComponent,
         SliceComponent
@@ -159,6 +162,7 @@ import { SliceComponent } from '@app/crm/shared/slice/slice.component';
         CreateInvoiceDialogComponent,
         CreateActivityDialogComponent,
         DeleteAndReassignDialogComponent,
+        EmailTemplateDialogComponent,
         CrmIntroComponent
     ]
 })

@@ -1,5 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter, HostListener } from '@angular/core';
 import { Params } from '@angular/router';
+import { NavLink } from '@app/crm/contacts/nav-link.model';
 
 @Component({
     selector: 'item-details-layout',
@@ -7,10 +8,11 @@ import { Params } from '@angular/router';
     styleUrls: ['./item-details-layout.component.less']
 })
 export class ItemDetailsLayoutComponent implements OnInit {
-    @Input() navLinks: string[];
+    @Input() navLinks: NavLink[];
     @Input() referrerParams: Params;
     @Input() rightPanelOpened: boolean;
     @Output() onClose: EventEmitter<null> = new EventEmitter<null>();
+    @Output() onChanged: EventEmitter<NavLink> = new EventEmitter<NavLink>();
 
     rightSideVisible;
     @HostListener('window:resize') onResize() {
@@ -23,5 +25,9 @@ export class ItemDetailsLayoutComponent implements OnInit {
 
     close() {
         this.onClose.emit();
+    }
+
+    navChanged(navLink: NavLink) {
+        this.onChanged.emit(navLink);
     }
 }

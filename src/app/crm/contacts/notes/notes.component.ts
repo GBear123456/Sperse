@@ -31,7 +31,6 @@ export class NotesComponent extends AppComponentBase implements OnInit {
     public data: {
         contactInfo: ContactInfoDto
     };
-
     private formatting = AppConsts.formatting;
 
     constructor(injector: Injector,

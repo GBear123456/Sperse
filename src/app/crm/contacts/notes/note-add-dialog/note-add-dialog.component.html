@@ -11,13 +11,16 @@
                         [valueExpr]="'id'"
                         [(value)]="type">
                     </dx-select-box>
+                    <mat-dialog-actions>
+                        <button mat-button (click)="saveNote()" class="button-layout button-primary">{{l('Save')}}</button>
+                    </mat-dialog-actions>
                     <span class="close" (click)="close()"></span>
                 </div>
                 <div class="field">
                     <label>{{l('Summary') | uppercase }}</label>
                     <dx-text-area width="355px" [height]="'100px'" [(value)]="summary">
                         <dx-validator>
-                            <dxi-validation-rule type="required" message="{{l('NoteIsRequired')}}"></dxi-validation-rule>
+                            <dxi-validation-rule type="required" [message]="l('NoteIsRequired')"></dxi-validation-rule>
                         </dx-validator>
                     </dx-text-area>
                 </div>
@@ -88,9 +91,5 @@
                 </div>
             </dx-validation-group>
         </div>
-        <mat-dialog-actions>
-            <button mat-button mat-dialog-close class="button-layout button-default">{{l('Cancel')}}</button>
-            <button mat-button (click)="saveNote()" class="button-layout button-primary">{{l('Save')}}</button>
-        </mat-dialog-actions>
     </mat-dialog-content>
 </dx-scroll-view>

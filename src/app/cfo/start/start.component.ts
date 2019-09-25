@@ -47,9 +47,11 @@ export class StartComponent extends CFOComponentBase implements AfterViewInit, O
                 first()
             )
             .subscribe(() => {
-                this._hostComponent = this.adHostDirective.viewContainerRef.createComponent(
-                    this._componentFactoryResolver.resolveComponentFactory(this._hostClass)
-                );
+                if (!this._hostComponent) {
+                    this._hostComponent = this.adHostDirective.viewContainerRef.createComponent(
+                        this._componentFactoryResolver.resolveComponentFactory(this._hostClass)
+                    );
+                }
             });
     }
 

@@ -30,6 +30,7 @@ import { CommonModule } from '@shared/common/common.module';
 import { DxScrollViewModule } from '@root/node_modules/devextreme-angular';
 import { MatTabsModule } from '@angular/material';
 import { LoadingSpinnerModule } from '@app/shared/common/loading-spinner/loading-spinner.module';
+import { MaskPipe } from '@node_modules/ngx-mask';
 
 @NgModule({
     imports: [
@@ -72,7 +73,8 @@ import { LoadingSpinnerModule } from '@app/shared/common/loading-spinner/loading
         WizardRightSideComponent
     ],
     providers: [
-        OffersWizardService
+        OffersWizardService,
+        MaskPipe
     ]
 })
 export class OffersWizardModule {

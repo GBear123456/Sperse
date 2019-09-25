@@ -20,10 +20,10 @@
                         [showFilterIcon]="true"
                         [dragMode]="dragInProgress"
                         (close)="categoriesShowed = false"
-                        [filteredRowData]="categoriesRowData"
+                        [filteredRowsData]="categoriesRowsData"
                         [transactionsFilter]="transactionsFilterQuery"
                         (onTransactionDrop)="categorizeTransactions($event)"
-                        (onFilterSelected)="filterByCashflowCategory($event)"
+                        (onFilterSelected)="filterByCashflowCategories($event)"
                         (onCategoriesChanged)="refreshDataGrid()">
                     </categorization>
                 </div>
@@ -44,6 +44,7 @@
                                     minWidth: 150,
                                     indicatorSrc: './assets/common/images/spinner.gif'
                                   }"
+                                  [height]="gridHeight"
                                   [elementAttr]="{
                                     class: 'with-custom-loader'
                                   }"
