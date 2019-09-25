@@ -27,6 +27,7 @@ import {
 } from '@shared/service-proxies/service-proxies';
 import { ContactsService } from '@app/crm/contacts/contacts.service';
 import { CreateInvoiceDialogComponent } from '@app/crm/shared/create-invoice-dialog/create-invoice-dialog.component';
+import { EmailTemplateDialogComponent } from '@app/crm/shared/email-template-dialog/email-template-dialog.component';
 
 @Component({
     templateUrl: './invoices.component.html',
@@ -53,6 +54,12 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
             text: this.l('Delete'),
             action: this.deleteInvoice.bind(this),
             type: ActionButtonType.Delete,
+            disabled: false
+        },
+        {
+            text: this.l('Email'),
+            action: this.emailInvoice.bind(this),
+            type: null,
             disabled: false
         }
     ];
@@ -164,6 +171,19 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
                 }
             }
         );
+    }
+
+    emailInvoice() {
+        this.dialog.open(EmailTemplateDialogComponent, {
+            panelClass: 'slider',
+            disableClose: true,
+            closeOnNavigation: false,
+            data: {
+                invoice: this.actionRecordData,
+                refreshParent: () => {
+                }
+            }
+        });
     }
 
     editInvoice() {

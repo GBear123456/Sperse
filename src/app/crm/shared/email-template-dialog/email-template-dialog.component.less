@@ -1,0 +1,157 @@
+:host {
+    /deep/ .mat-dialog-actions {
+        width: 200px;
+        .mat-dialog-buttons {
+            height: 50px!important;
+        }
+        #saveTemplateOptions {
+            width: 150px;
+        }
+    }
+
+    /deep/ .mat-dialog-header {
+        label {
+            color: #8a969b;
+            padding: 20px 0px;
+            font-size: 28px;
+            position: relative;
+        }
+        .title-wrapper {
+            width: 670px;
+            justify-content: space-between;
+            span {
+                height: 30px;
+                background: #dadee1;
+                font-size: 11px;
+                font-weight: normal;
+                font-style: normal;
+                font-stretch: normal;
+                letter-spacing: 0.9px;
+                text-align: center;
+                border-radius: 15px;
+                color: #677380;
+                padding: 7px 15px;
+                align-self: center;
+                margin-left: auto;
+            }
+        }
+        dx-text-box {
+            &, input {
+                background: transparent !important;
+            }
+            &[name="title"] {
+                width: 140px !important;
+                input {
+                    border: none;
+                    font-weight: 800 !important;
+                }
+            }
+            input {
+                &, &:read-only {
+                    font-size: 22px;
+                    font-weight: 500;
+                    line-height: 1.09;
+                    letter-spacing: 0.4px;
+                    padding-left: 17px;
+                    background-color: #F3F7FA;
+                }
+            }
+        }
+    }
+
+    .form-content {
+        display: flex;
+        flex-direction: column;
+        padding: 30px 0px 30px 50px;
+        height: calc(~"100vh - 82px");
+        width: 900px;
+
+        .row {
+            width: 820px;
+        }
+
+        .drop-down-box-wrapper {
+            width: 130px;
+            height: 34px;
+            overflow: hidden;
+            display: inline-block;
+            /deep/ .dx-widget {
+                margin: 0px;
+                input {
+                    font-size: 15px;
+                    font-weight: 400;
+                    line-height: 1.79;
+                    letter-spacing: 0.3px;
+                    color: #424c56;
+                    padding: 0px;
+                }
+                .dx-texteditor-buttons-container {
+                    left: 97px;
+                    .dx-dropdowneditor-button {
+                        float: left;
+                    }
+                }
+            }
+        }
+
+        /deep/ .field-area {
+            display: block;
+            margin-bottom: 30px;
+            label {
+                display: flex;
+                min-width: 100px;
+                justify-content: space-between;
+                a {
+                    font-size: 14px;
+                    font-weight: 300;
+                    font-style: normal;
+                    font-stretch: normal;
+                    letter-spacing: 0.3px;
+                    text-align: right;
+                    color: #00aeef;
+                    i {
+                        color: #00aeef;
+                        padding-right: 8px;
+                    }
+                }
+            }
+
+            p {
+                width: 100%;
+                height: 22px;
+                max-width: 750px;
+                position: relative;
+                padding-left: 290px;
+                padding-right: 32px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+
+            dx-text-box {
+                display: inline-block;
+
+                &.dx-invalid {
+                    input {
+                        color: #d9534f!important;
+                    }
+                }
+                &.dx-state-focused {
+                    .dx-placeholder {
+                        top: -30px;
+                    }
+                }
+                input, textarea {
+                    color: #424c56;
+                }
+                .dx-placeholder, input, textarea {
+                    font-size: 15px;
+                    font-weight: 400;
+                    line-height: 1.79;
+                    letter-spacing: 0.3px;
+                    padding: 0px;
+                }
+            }
+        }
+    }
+}
