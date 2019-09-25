@@ -1057,7 +1057,11 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     private deleteLeadsInternal(selectedIds: number[]) {
-        this.leadService.deleteLeads(selectedIds).subscribe(() => {
+        let request = selectedIds.length > 1 ? 
+            this.leadService.deleteLeads(selectedIds) :
+            this.leadService.deleteLead(selectedIds[0]);
+
+        request.subscribe(() => {
             this.refresh();
             this.dataGrid.instance.deselectAll();
             this.notify.success(this.l('SuccessfullyDeleted'));
