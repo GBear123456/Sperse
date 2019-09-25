@@ -1,5 +1,5 @@
 /** Core imports */
-import { ChangeDetectionStrategy, Component, Injector,
+import { ChangeDetectionStrategy, Component, Injector, AfterViewInit,
     Input, EventEmitter, Output, HostBinding, OnDestroy } from '@angular/core';
 
 /** Third party imports */
@@ -19,9 +19,10 @@ import { SetupStepsService } from './setup-steps.service';
     selector: 'setup-steps',
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class SetupStepComponent extends CFOComponentBase implements OnDestroy {
+export class SetupStepComponent extends CFOComponentBase implements OnDestroy, AfterViewInit {
     @HostBinding('class.collapsed') @Input() collapsed: boolean = true;
     @HostBinding('class.mobile') mobile: boolean = AppConsts.isMobile;
+    @HostBinding('style.visibility') visibility = 'hidden'; 
 
     @Input() SelectedStepIndex: number;
     @Input() SetupSteps = [
@@ -52,6 +53,12 @@ export class SetupStepComponent extends CFOComponentBase implements OnDestroy {
         this.subscription = setupStepsService.collapsed$.subscribe(collapsed => {
             this.collapsed = collapsed;
         });
+    }
+
+    ngAfterViewInit() {
+        setTimeout(() => {
+            this.visibility = 'visible';
+        }, 600);
     }
 
     onClick(elem) {

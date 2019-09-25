@@ -7,14 +7,14 @@
         <app-period (onChange)="periodChanged($event)"></app-period>
     </app-headline>
 
-    <div class="content">
+    <div class="content" #content>
         <setup-steps #setupSteps
                      [showIntroductionTourLink]="true"
                      (onToggle)="rerenderWidgets()">
         </setup-steps>
         <div class="right">
-            <dx-scroll-view showScrollbar="onHover">
-                <div class="dashboard-wrapper {{setupSteps.collapsed ? 'expanded' : ''}}">
+            <dx-scroll-view [useNative]="false" [showScrollbar]="dashboard.offsetHeight > content.offsetHeight ? 'onHover' : 'Never'">
+                <div #dashboard class="dashboard-wrapper {{setupSteps.collapsed ? 'expanded' : ''}}">
                     <section class="accounts-info">
                         <header>
                             <h2 class="dashboard-title">

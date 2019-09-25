@@ -6,7 +6,7 @@
     </app-headline>
     <div class="content-wrap">
         <setup-steps #setupStep [SelectedStepIndex]="0"></setup-steps>
-        <div class="frame-wrap {{setupStep?.collapsed ? '' : 'expanded'}}">
+        <div [ngClass]="{'frame-wrap': true, 'expanded': !setupStep?.collapsed}">
             <router-outlet></router-outlet>
         </div>
     </div>
