@@ -15,11 +15,11 @@
 
     <div class="content-wrapper">
         <dx-scroll-view showScrollbar="onHover">
-            <ng-container *ngFor="let category of sortedList">
+            <ng-container *ngFor="let category of sortedList; let j=index; ">
                 <ng-container *ngIf="category.items && category.items.length">
                     <h2 class="small-title">{{category.name}} ({{category.count}})</h2>
                     <ul class="category-items__list">
-                        <li *ngFor="let item of category.items" class="category-items__element">
+                        <li *ngFor="let item of category.items | slice:0:(j==0?6:3);" class="category-items__element">
                             <figure>
                                 <img [src]="item.logo" [alt]="item.name">
                             </figure>
