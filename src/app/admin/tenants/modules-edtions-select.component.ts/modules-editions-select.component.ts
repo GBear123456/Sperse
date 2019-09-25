@@ -24,15 +24,12 @@ export class ModulesEditionsSelectComponent {
         if (this.editionsModels[moduleId].editionId == 0) {
             this.editionsModels[moduleId].maxUserCount = null;
         }
-
-        console.log(this.editionsModels, this.editionsGroups);
     }
 
-    validateModel() : boolean {
+    validateModel(): boolean {
         let emptyMaxCount = Object.keys(this.editionsModels)
             .filter(key => {
-                if (this.editionsModels[key].editionId != 0 && !this.editionsModels[key].maxUserCount)
-                {
+                if (this.editionsModels[key].editionId != 0 && !this.editionsModels[key].maxUserCount) {
                     let editionGroup = this.editionsGroups.find(v => v[1].moduleId == key);
                     let edition = editionGroup.find(v => v.value == this.editionsModels[key].editionId.toString());
                     if (!edition.isFree)

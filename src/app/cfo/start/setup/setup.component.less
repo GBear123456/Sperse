@@ -10,27 +10,47 @@
         flex: 1;
         text-align: center;
         height: calc(~"100vh - 150px");
+        width: 100%;
         border: none;
+
+        .portlet-body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            height: 100%;
+        }
 
         .sperse-cfo {
             color: #f3f6fa;
             font-family: Montserrat;
-            font-size: 133px;
+            font-size: 60px;
             font-weight: 600;
             vertical-align: middle;
+            @media (min-width: 1200px) {
+                font-size: 133px;
+            }
         }
 
         .outlook {
             color: #f3f6fa;
             font-family: Montserrat;
-            font-size: 63px;
+            font-size: 30px;
             font-weight: bold;
             letter-spacing: 1.5px;
+            margin-bottom: 0;
+            @media (min-width: 1200px) {
+                font-size: 63px;
+                margin-bottom: 1rem;
+            }
         }
 
         .logo-cfo {
-            height: 121px;
-            width: 121px;
+            height: 100px;
+            width: 100px;
+            @media (min-width: 1200px) {
+                height: 121px;
+                width: 121px;
+            }
         }
 
         .welcome-cfo {
@@ -45,7 +65,14 @@
             font-weight: 500;
             line-height: 22px;
             max-width: 650px;
-            margin: 27px auto 38px;
+            margin: 0px auto 10px;
+            @media (min-width: 1200px) {
+                margin: 27px auto 38px;
+            }
+        }
+
+        @media (max-width: 767px) {
+            padding: 0 10px !important;
         }
     }
 
@@ -57,6 +84,7 @@
         border-radius: 26px !important;
         font-size: 16px !important;
         font-weight: 500 !important;
+        margin: 0 auto;
 
         &:after {
             content: none;
