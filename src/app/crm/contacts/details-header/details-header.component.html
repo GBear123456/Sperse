@@ -52,8 +52,8 @@
         </div>
     </div>
 
-    <div class="header_buttons" [ngStyle]="{visibility: manageAllowed && addContextMenuItems.length ? 'visible' : 'hidden'}">
-        <button id="addEntity" class="button-layout button-primary menu" (click)="addEntity($event)">
+    <div class="header_buttons">
+        <button id="addEntity" *ngIf="manageAllowed && addContextMenuItems.length" class="button-layout button-primary menu" (click)="addEntity($event)">
             + {{addButtonTitle}}
         </button>
 
