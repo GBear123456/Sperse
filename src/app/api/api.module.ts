@@ -11,6 +11,7 @@ import { DxDateBoxModule } from 'devextreme-angular/ui/date-box';
 import { DxValidatorModule } from 'devextreme-angular/ui/validator';
 import { DxScrollViewModule } from 'devextreme-angular/ui/scroll-view';
 import { DxValidationGroupModule } from 'devextreme-angular/ui/validation-group';
+import { DxTooltipModule } from 'devextreme-angular/ui/tooltip';
 
 /** Application imports */
 import { AppCommonModule } from '@app/shared/common/app-common.module';
@@ -31,6 +32,7 @@ import { ApiWelcomeComponent } from './introduction/api-welcome/api-welcome.comp
         DxDateBoxModule,
         DxValidatorModule,
         DxValidationGroupModule,
+        DxTooltipModule,
         DxScrollViewModule,
         MatDialogModule,
         ClipboardModule
