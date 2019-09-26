@@ -52,6 +52,7 @@ export class AddOrEditSSLBindingModal extends AppComponentBase {
             this.model.id = data.id;
             this.model.tenantHostType = data.hostType;
             this.model.isActive = data.isActive;
+            this.model.organizationUnitId = data.organizationUnitId;
             this.titleText = this.l('EditSSLBinding');
         } else
             this.titleText = this.l('AddSSLBinding');

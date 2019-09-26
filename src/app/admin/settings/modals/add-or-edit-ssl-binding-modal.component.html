@@ -35,7 +35,7 @@
 
         <div class="dx-field">
             <dx-select-box [(value)]="model.organizationUnitId" [dataSource]="orgUnits | async" [placeholder]="l('OrganizationUnits')"
-                            valueExpr="id" displayExpr="displayName">
+                            valueExpr="id" displayExpr="displayName" [showClearButton]="true">
             </dx-select-box>
         </div>
       </div>
