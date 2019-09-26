@@ -15086,6 +15086,121 @@ export class InvoiceServiceProxy {
         }
         return _observableOf<InvoiceSettingsInfoDto>(<any>null);
     }
+
+    /**
+     * @id (optional) 
+     * @return Success
+     */
+    generatePdf(id: number | null | undefined): Observable<string> {
+        let url_ = this.baseUrl + "/api/services/CRM/Invoice/GeneratePdf?";
+        if (id !== undefined)
+            url_ += "id=" + encodeURIComponent("" + id) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGeneratePdf(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGeneratePdf(<any>response_);
+                } catch (e) {
+                    return <Observable<string>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<string>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGeneratePdf(response: HttpResponseBase): Observable<string> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 !== undefined ? resultData200 : <any>null;
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<string>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    getPreprocessedEmail(templateId: number, invoiceId: number): Observable<GetPreprocessedEmailOutput> {
+        let url_ = this.baseUrl + "/api/services/CRM/Invoice/GetPreprocessedEmail?";
+        if (templateId === undefined || templateId === null)
+            throw new Error("The parameter 'templateId' must be defined and cannot be null.");
+        else
+            url_ += "TemplateId=" + encodeURIComponent("" + templateId) + "&"; 
+        if (invoiceId === undefined || invoiceId === null)
+            throw new Error("The parameter 'invoiceId' must be defined and cannot be null.");
+        else
+            url_ += "InvoiceId=" + encodeURIComponent("" + invoiceId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetPreprocessedEmail(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetPreprocessedEmail(<any>response_);
+                } catch (e) {
+                    return <Observable<GetPreprocessedEmailOutput>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<GetPreprocessedEmailOutput>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetPreprocessedEmail(response: HttpResponseBase): Observable<GetPreprocessedEmailOutput> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? GetPreprocessedEmailOutput.fromJS(resultData200) : new GetPreprocessedEmailOutput();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<GetPreprocessedEmailOutput>(<any>null);
+    }
 }
 
 @Injectable()
@@ -46225,6 +46340,182 @@ export interface IInvoiceLine {
     id: number | undefined;
 }
 
+export class DocumentType implements IDocumentType {
+    tenantId!: number | undefined;
+    name!: string;
+    documents!: Document[] | undefined;
+    isDeleted!: boolean | undefined;
+    deleterUserId!: number | undefined;
+    deletionTime!: moment.Moment | undefined;
+    lastModificationTime!: moment.Moment | undefined;
+    lastModifierUserId!: number | undefined;
+    creationTime!: moment.Moment | undefined;
+    creatorUserId!: number | undefined;
+    id!: number | undefined;
+
+    constructor(data?: IDocumentType) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.tenantId = data["tenantId"];
+            this.name = data["name"];
+            if (data["documents"] && data["documents"].constructor === Array) {
+                this.documents = [];
+                for (let item of data["documents"])
+                    this.documents.push(Document.fromJS(item));
+            }
+            this.isDeleted = data["isDeleted"];
+            this.deleterUserId = data["deleterUserId"];
+            this.deletionTime = data["deletionTime"] ? moment(data["deletionTime"].toString()) : <any>undefined;
+            this.lastModificationTime = data["lastModificationTime"] ? moment(data["lastModificationTime"].toString()) : <any>undefined;
+            this.lastModifierUserId = data["lastModifierUserId"];
+            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
+            this.creatorUserId = data["creatorUserId"];
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): DocumentType {
+        data = typeof data === 'object' ? data : {};
+        let result = new DocumentType();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["tenantId"] = this.tenantId;
+        data["name"] = this.name;
+        if (this.documents && this.documents.constructor === Array) {
+            data["documents"] = [];
+            for (let item of this.documents)
+                data["documents"].push(item.toJSON());
+        }
+        data["isDeleted"] = this.isDeleted;
+        data["deleterUserId"] = this.deleterUserId;
+        data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
+        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
+        data["lastModifierUserId"] = this.lastModifierUserId;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        data["creatorUserId"] = this.creatorUserId;
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface IDocumentType {
+    tenantId: number | undefined;
+    name: string;
+    documents: Document[] | undefined;
+    isDeleted: boolean | undefined;
+    deleterUserId: number | undefined;
+    deletionTime: moment.Moment | undefined;
+    lastModificationTime: moment.Moment | undefined;
+    lastModifierUserId: number | undefined;
+    creationTime: moment.Moment | undefined;
+    creatorUserId: number | undefined;
+    id: number | undefined;
+}
+
+export class Document implements IDocument {
+    tenantId!: number | undefined;
+    contactId!: number | undefined;
+    fileName!: string;
+    size!: number | undefined;
+    typeId!: number | undefined;
+    contact!: Contact | undefined;
+    documentType!: DocumentType | undefined;
+    isDeleted!: boolean | undefined;
+    deleterUserId!: number | undefined;
+    deletionTime!: moment.Moment | undefined;
+    lastModificationTime!: moment.Moment | undefined;
+    lastModifierUserId!: number | undefined;
+    creationTime!: moment.Moment | undefined;
+    creatorUserId!: number | undefined;
+    id!: string | undefined;
+
+    constructor(data?: IDocument) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.tenantId = data["tenantId"];
+            this.contactId = data["contactId"];
+            this.fileName = data["fileName"];
+            this.size = data["size"];
+            this.typeId = data["typeId"];
+            this.contact = data["contact"] ? Contact.fromJS(data["contact"]) : <any>undefined;
+            this.documentType = data["documentType"] ? DocumentType.fromJS(data["documentType"]) : <any>undefined;
+            this.isDeleted = data["isDeleted"];
+            this.deleterUserId = data["deleterUserId"];
+            this.deletionTime = data["deletionTime"] ? moment(data["deletionTime"].toString()) : <any>undefined;
+            this.lastModificationTime = data["lastModificationTime"] ? moment(data["lastModificationTime"].toString()) : <any>undefined;
+            this.lastModifierUserId = data["lastModifierUserId"];
+            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
+            this.creatorUserId = data["creatorUserId"];
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): Document {
+        data = typeof data === 'object' ? data : {};
+        let result = new Document();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["tenantId"] = this.tenantId;
+        data["contactId"] = this.contactId;
+        data["fileName"] = this.fileName;
+        data["size"] = this.size;
+        data["typeId"] = this.typeId;
+        data["contact"] = this.contact ? this.contact.toJSON() : <any>undefined;
+        data["documentType"] = this.documentType ? this.documentType.toJSON() : <any>undefined;
+        data["isDeleted"] = this.isDeleted;
+        data["deleterUserId"] = this.deleterUserId;
+        data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
+        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
+        data["lastModifierUserId"] = this.lastModifierUserId;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        data["creatorUserId"] = this.creatorUserId;
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface IDocument {
+    tenantId: number | undefined;
+    contactId: number | undefined;
+    fileName: string;
+    size: number | undefined;
+    typeId: number | undefined;
+    contact: Contact | undefined;
+    documentType: DocumentType | undefined;
+    isDeleted: boolean | undefined;
+    deleterUserId: number | undefined;
+    deletionTime: moment.Moment | undefined;
+    lastModificationTime: moment.Moment | undefined;
+    lastModifierUserId: number | undefined;
+    creationTime: moment.Moment | undefined;
+    creatorUserId: number | undefined;
+    id: string | undefined;
+}
+
 export class Invoice implements IInvoice {
     tenantId!: number | undefined;
     orderId!: number | undefined;
@@ -46235,8 +46526,10 @@ export class Invoice implements IInvoice {
     dueDate!: moment.Moment | undefined;
     description!: string | undefined;
     note!: string | undefined;
+    documentId!: string | undefined;
     order!: Order | undefined;
     lines!: InvoiceLine[] | undefined;
+    document!: Document | undefined;
     isDeleted!: boolean | undefined;
     deleterUserId!: number | undefined;
     deletionTime!: moment.Moment | undefined;
@@ -46266,12 +46559,14 @@ export class Invoice implements IInvoice {
             this.dueDate = data["dueDate"] ? moment(data["dueDate"].toString()) : <any>undefined;
             this.description = data["description"];
             this.note = data["note"];
+            this.documentId = data["documentId"];
             this.order = data["order"] ? Order.fromJS(data["order"]) : <any>undefined;
             if (data["lines"] && data["lines"].constructor === Array) {
                 this.lines = [];
                 for (let item of data["lines"])
                     this.lines.push(InvoiceLine.fromJS(item));
             }
+            this.document = data["document"] ? Document.fromJS(data["document"]) : <any>undefined;
             this.isDeleted = data["isDeleted"];
             this.deleterUserId = data["deleterUserId"];
             this.deletionTime = data["deletionTime"] ? moment(data["deletionTime"].toString()) : <any>undefined;
@@ -46301,12 +46596,14 @@ export class Invoice implements IInvoice {
         data["dueDate"] = this.dueDate ? this.dueDate.toISOString() : <any>undefined;
         data["description"] = this.description;
         data["note"] = this.note;
+        data["documentId"] = this.documentId;
         data["order"] = this.order ? this.order.toJSON() : <any>undefined;
         if (this.lines && this.lines.constructor === Array) {
             data["lines"] = [];
             for (let item of this.lines)
                 data["lines"].push(item.toJSON());
         }
+        data["document"] = this.document ? this.document.toJSON() : <any>undefined;
         data["isDeleted"] = this.isDeleted;
         data["deleterUserId"] = this.deleterUserId;
         data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
@@ -46329,8 +46626,10 @@ export interface IInvoice {
     dueDate: moment.Moment | undefined;
     description: string | undefined;
     note: string | undefined;
+    documentId: string | undefined;
     order: Order | undefined;
     lines: InvoiceLine[] | undefined;
+    document: Document | undefined;
     isDeleted: boolean | undefined;
     deleterUserId: number | undefined;
     deletionTime: moment.Moment | undefined;
@@ -48209,182 +48508,6 @@ export interface IContactListAssignment {
     creationTime: moment.Moment | undefined;
     creatorUserId: number | undefined;
     id: number | undefined;
-}
-
-export class DocumentType implements IDocumentType {
-    tenantId!: number | undefined;
-    name!: string;
-    documents!: Document[] | undefined;
-    isDeleted!: boolean | undefined;
-    deleterUserId!: number | undefined;
-    deletionTime!: moment.Moment | undefined;
-    lastModificationTime!: moment.Moment | undefined;
-    lastModifierUserId!: number | undefined;
-    creationTime!: moment.Moment | undefined;
-    creatorUserId!: number | undefined;
-    id!: number | undefined;
-
-    constructor(data?: IDocumentType) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.tenantId = data["tenantId"];
-            this.name = data["name"];
-            if (data["documents"] && data["documents"].constructor === Array) {
-                this.documents = [];
-                for (let item of data["documents"])
-                    this.documents.push(Document.fromJS(item));
-            }
-            this.isDeleted = data["isDeleted"];
-            this.deleterUserId = data["deleterUserId"];
-            this.deletionTime = data["deletionTime"] ? moment(data["deletionTime"].toString()) : <any>undefined;
-            this.lastModificationTime = data["lastModificationTime"] ? moment(data["lastModificationTime"].toString()) : <any>undefined;
-            this.lastModifierUserId = data["lastModifierUserId"];
-            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
-            this.creatorUserId = data["creatorUserId"];
-            this.id = data["id"];
-        }
-    }
-
-    static fromJS(data: any): DocumentType {
-        data = typeof data === 'object' ? data : {};
-        let result = new DocumentType();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["tenantId"] = this.tenantId;
-        data["name"] = this.name;
-        if (this.documents && this.documents.constructor === Array) {
-            data["documents"] = [];
-            for (let item of this.documents)
-                data["documents"].push(item.toJSON());
-        }
-        data["isDeleted"] = this.isDeleted;
-        data["deleterUserId"] = this.deleterUserId;
-        data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
-        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
-        data["lastModifierUserId"] = this.lastModifierUserId;
-        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
-        data["creatorUserId"] = this.creatorUserId;
-        data["id"] = this.id;
-        return data; 
-    }
-}
-
-export interface IDocumentType {
-    tenantId: number | undefined;
-    name: string;
-    documents: Document[] | undefined;
-    isDeleted: boolean | undefined;
-    deleterUserId: number | undefined;
-    deletionTime: moment.Moment | undefined;
-    lastModificationTime: moment.Moment | undefined;
-    lastModifierUserId: number | undefined;
-    creationTime: moment.Moment | undefined;
-    creatorUserId: number | undefined;
-    id: number | undefined;
-}
-
-export class Document implements IDocument {
-    tenantId!: number | undefined;
-    contactId!: number | undefined;
-    fileName!: string;
-    size!: number | undefined;
-    typeId!: number | undefined;
-    contact!: Contact | undefined;
-    documentType!: DocumentType | undefined;
-    isDeleted!: boolean | undefined;
-    deleterUserId!: number | undefined;
-    deletionTime!: moment.Moment | undefined;
-    lastModificationTime!: moment.Moment | undefined;
-    lastModifierUserId!: number | undefined;
-    creationTime!: moment.Moment | undefined;
-    creatorUserId!: number | undefined;
-    id!: string | undefined;
-
-    constructor(data?: IDocument) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.tenantId = data["tenantId"];
-            this.contactId = data["contactId"];
-            this.fileName = data["fileName"];
-            this.size = data["size"];
-            this.typeId = data["typeId"];
-            this.contact = data["contact"] ? Contact.fromJS(data["contact"]) : <any>undefined;
-            this.documentType = data["documentType"] ? DocumentType.fromJS(data["documentType"]) : <any>undefined;
-            this.isDeleted = data["isDeleted"];
-            this.deleterUserId = data["deleterUserId"];
-            this.deletionTime = data["deletionTime"] ? moment(data["deletionTime"].toString()) : <any>undefined;
-            this.lastModificationTime = data["lastModificationTime"] ? moment(data["lastModificationTime"].toString()) : <any>undefined;
-            this.lastModifierUserId = data["lastModifierUserId"];
-            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
-            this.creatorUserId = data["creatorUserId"];
-            this.id = data["id"];
-        }
-    }
-
-    static fromJS(data: any): Document {
-        data = typeof data === 'object' ? data : {};
-        let result = new Document();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["tenantId"] = this.tenantId;
-        data["contactId"] = this.contactId;
-        data["fileName"] = this.fileName;
-        data["size"] = this.size;
-        data["typeId"] = this.typeId;
-        data["contact"] = this.contact ? this.contact.toJSON() : <any>undefined;
-        data["documentType"] = this.documentType ? this.documentType.toJSON() : <any>undefined;
-        data["isDeleted"] = this.isDeleted;
-        data["deleterUserId"] = this.deleterUserId;
-        data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
-        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
-        data["lastModifierUserId"] = this.lastModifierUserId;
-        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
-        data["creatorUserId"] = this.creatorUserId;
-        data["id"] = this.id;
-        return data; 
-    }
-}
-
-export interface IDocument {
-    tenantId: number | undefined;
-    contactId: number | undefined;
-    fileName: string;
-    size: number | undefined;
-    typeId: number | undefined;
-    contact: Contact | undefined;
-    documentType: DocumentType | undefined;
-    isDeleted: boolean | undefined;
-    deleterUserId: number | undefined;
-    deletionTime: moment.Moment | undefined;
-    lastModificationTime: moment.Moment | undefined;
-    lastModifierUserId: number | undefined;
-    creationTime: moment.Moment | undefined;
-    creatorUserId: number | undefined;
-    id: string | undefined;
 }
 
 export enum ContactStarColorType {
@@ -52323,6 +52446,7 @@ export class ScoreSimulatorInfoDto implements IScoreSimulatorInfoDto {
     initialScore!: number | undefined;
     totalCreditLimit!: number | undefined;
     outstandingBalance!: number | undefined;
+    isDemoPackage!: boolean | undefined;
     accessStatus!: MemberSimulatorAccessStatus | undefined;
 
     constructor(data?: IScoreSimulatorInfoDto) {
@@ -52339,6 +52463,7 @@ export class ScoreSimulatorInfoDto implements IScoreSimulatorInfoDto {
             this.initialScore = data["initialScore"];
             this.totalCreditLimit = data["totalCreditLimit"];
             this.outstandingBalance = data["outstandingBalance"];
+            this.isDemoPackage = data["isDemoPackage"];
             this.accessStatus = data["accessStatus"];
         }
     }
@@ -52355,6 +52480,7 @@ export class ScoreSimulatorInfoDto implements IScoreSimulatorInfoDto {
         data["initialScore"] = this.initialScore;
         data["totalCreditLimit"] = this.totalCreditLimit;
         data["outstandingBalance"] = this.outstandingBalance;
+        data["isDemoPackage"] = this.isDemoPackage;
         data["accessStatus"] = this.accessStatus;
         return data; 
     }
@@ -52364,6 +52490,7 @@ export interface IScoreSimulatorInfoDto {
     initialScore: number | undefined;
     totalCreditLimit: number | undefined;
     outstandingBalance: number | undefined;
+    isDemoPackage: boolean | undefined;
     accessStatus: MemberSimulatorAccessStatus | undefined;
 }
 
@@ -57596,6 +57723,110 @@ export interface IInvoiceSettingsInfoDto {
     taxVatNo: string | undefined;
 }
 
+export class Attachment implements IAttachment {
+    id!: string | undefined;
+    size!: number | undefined;
+    name!: string | undefined;
+
+    constructor(data?: IAttachment) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.size = data["size"];
+            this.name = data["name"];
+        }
+    }
+
+    static fromJS(data: any): Attachment {
+        data = typeof data === 'object' ? data : {};
+        let result = new Attachment();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["size"] = this.size;
+        data["name"] = this.name;
+        return data; 
+    }
+}
+
+export interface IAttachment {
+    id: string | undefined;
+    size: number | undefined;
+    name: string | undefined;
+}
+
+export class GetPreprocessedEmailOutput implements IGetPreprocessedEmailOutput {
+    subject!: string | undefined;
+    cc!: string | undefined;
+    bcc!: string | undefined;
+    body!: string | undefined;
+    attachments!: Attachment[] | undefined;
+
+    constructor(data?: IGetPreprocessedEmailOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.subject = data["subject"];
+            this.cc = data["cc"];
+            this.bcc = data["bcc"];
+            this.body = data["body"];
+            if (data["attachments"] && data["attachments"].constructor === Array) {
+                this.attachments = [];
+                for (let item of data["attachments"])
+                    this.attachments.push(Attachment.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): GetPreprocessedEmailOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new GetPreprocessedEmailOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["subject"] = this.subject;
+        data["cc"] = this.cc;
+        data["bcc"] = this.bcc;
+        data["body"] = this.body;
+        if (this.attachments && this.attachments.constructor === Array) {
+            data["attachments"] = [];
+            for (let item of this.attachments)
+                data["attachments"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface IGetPreprocessedEmailOutput {
+    subject: string | undefined;
+    cc: string | undefined;
+    bcc: string | undefined;
+    body: string | undefined;
+    attachments: Attachment[] | undefined;
+}
+
 export class RequestKBAInput implements IRequestKBAInput {
     redirectUrl!: string;
     cssUrl!: string | undefined;
@@ -62798,6 +63029,7 @@ export interface IOrderSubscriptionDto {
 }
 
 export class OrganizationInfoDto implements IOrganizationInfoDto {
+    rootOrganizationUnitId!: number | undefined;
     companyName!: string;
     shortName!: string | undefined;
     typeId!: string | undefined;
@@ -62813,7 +63045,6 @@ export class OrganizationInfoDto implements IOrganizationInfoDto {
     sizeTo!: number | undefined;
     duns!: string | undefined;
     ticker!: string | undefined;
-    rootOrganizationUnitId!: number | undefined;
     affiliateCode!: string | undefined;
 
     constructor(data?: IOrganizationInfoDto) {
@@ -62827,6 +63058,7 @@ export class OrganizationInfoDto implements IOrganizationInfoDto {
 
     init(data?: any) {
         if (data) {
+            this.rootOrganizationUnitId = data["rootOrganizationUnitId"];
             this.companyName = data["companyName"];
             this.shortName = data["shortName"];
             this.typeId = data["typeId"];
@@ -62842,7 +63074,6 @@ export class OrganizationInfoDto implements IOrganizationInfoDto {
             this.sizeTo = data["sizeTo"];
             this.duns = data["duns"];
             this.ticker = data["ticker"];
-            this.rootOrganizationUnitId = data["rootOrganizationUnitId"];
             this.affiliateCode = data["affiliateCode"];
         }
     }
@@ -62856,6 +63087,7 @@ export class OrganizationInfoDto implements IOrganizationInfoDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["rootOrganizationUnitId"] = this.rootOrganizationUnitId;
         data["companyName"] = this.companyName;
         data["shortName"] = this.shortName;
         data["typeId"] = this.typeId;
@@ -62871,13 +63103,13 @@ export class OrganizationInfoDto implements IOrganizationInfoDto {
         data["sizeTo"] = this.sizeTo;
         data["duns"] = this.duns;
         data["ticker"] = this.ticker;
-        data["rootOrganizationUnitId"] = this.rootOrganizationUnitId;
         data["affiliateCode"] = this.affiliateCode;
         return data; 
     }
 }
 
 export interface IOrganizationInfoDto {
+    rootOrganizationUnitId: number | undefined;
     companyName: string;
     shortName: string | undefined;
     typeId: string | undefined;
@@ -62893,7 +63125,6 @@ export interface IOrganizationInfoDto {
     sizeTo: number | undefined;
     duns: string | undefined;
     ticker: string | undefined;
-    rootOrganizationUnitId: number | undefined;
     affiliateCode: string | undefined;
 }
 
@@ -63051,7 +63282,6 @@ export class CreateOrganizationInput implements ICreateOrganizationInput {
     sizeTo!: number | undefined;
     duns!: string | undefined;
     ticker!: string | undefined;
-    rootOrganizationUnitId!: number | undefined;
     affiliateCode!: string | undefined;
 
     constructor(data?: ICreateOrganizationInput) {
@@ -63082,7 +63312,6 @@ export class CreateOrganizationInput implements ICreateOrganizationInput {
             this.sizeTo = data["sizeTo"];
             this.duns = data["duns"];
             this.ticker = data["ticker"];
-            this.rootOrganizationUnitId = data["rootOrganizationUnitId"];
             this.affiliateCode = data["affiliateCode"];
         }
     }
@@ -63113,7 +63342,6 @@ export class CreateOrganizationInput implements ICreateOrganizationInput {
         data["sizeTo"] = this.sizeTo;
         data["duns"] = this.duns;
         data["ticker"] = this.ticker;
-        data["rootOrganizationUnitId"] = this.rootOrganizationUnitId;
         data["affiliateCode"] = this.affiliateCode;
         return data; 
     }
@@ -63137,7 +63365,6 @@ export interface ICreateOrganizationInput {
     sizeTo: number | undefined;
     duns: string | undefined;
     ticker: string | undefined;
-    rootOrganizationUnitId: number | undefined;
     affiliateCode: string | undefined;
 }
 
@@ -63194,7 +63421,6 @@ export class UpdateOrganizationInfoInput implements IUpdateOrganizationInfoInput
     sizeTo!: number | undefined;
     duns!: string | undefined;
     ticker!: string | undefined;
-    rootOrganizationUnitId!: number | undefined;
     affiliateCode!: string | undefined;
 
     constructor(data?: IUpdateOrganizationInfoInput) {
@@ -63224,7 +63450,6 @@ export class UpdateOrganizationInfoInput implements IUpdateOrganizationInfoInput
             this.sizeTo = data["sizeTo"];
             this.duns = data["duns"];
             this.ticker = data["ticker"];
-            this.rootOrganizationUnitId = data["rootOrganizationUnitId"];
             this.affiliateCode = data["affiliateCode"];
         }
     }
@@ -63254,7 +63479,6 @@ export class UpdateOrganizationInfoInput implements IUpdateOrganizationInfoInput
         data["sizeTo"] = this.sizeTo;
         data["duns"] = this.duns;
         data["ticker"] = this.ticker;
-        data["rootOrganizationUnitId"] = this.rootOrganizationUnitId;
         data["affiliateCode"] = this.affiliateCode;
         return data; 
     }
@@ -63277,7 +63501,6 @@ export interface IUpdateOrganizationInfoInput {
     sizeTo: number | undefined;
     duns: string | undefined;
     ticker: string | undefined;
-    rootOrganizationUnitId: number | undefined;
     affiliateCode: string | undefined;
 }
 
