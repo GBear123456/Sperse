@@ -61,7 +61,7 @@ export class ExportService {
                 });
             dataSource.load().done((res) => {
                 callback(this.checkJustifyData(res));
-            }).fail((e) => {
+            }).fail(() => {
                 callback([]);
             });
         } else
@@ -81,7 +81,7 @@ export class ExportService {
     }
 
     exportToCSV(dataGrid: DxDataGridComponent, exportAllData: boolean) {
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve) => {
             this.getDataFromGrid(dataGrid, (data) => {
                 this.moveItemsToCSV(data, dataGrid);
                 resolve();
@@ -90,7 +90,7 @@ export class ExportService {
     }
 
     exportToGoogleSheets(dataGrid: DxDataGridComponent, exportAllData: boolean) {
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve) => {
             this.getDataFromGrid(dataGrid, (data) => {
                 let visibleColumns = dataGrid.instance.getVisibleColumns(),
                     rowData = [this._exportGoogleSheetService.getHeaderRow(visibleColumns)];
@@ -114,7 +114,7 @@ export class ExportService {
     }
 
     exportToExcel(dataGrid: DxDataGridComponent, exportAllData: boolean) {
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve) => {
             let instance = dataGrid.instance,
                 dataStore = instance.getDataSource().store(),
                 initialBeforeSend = dataStore._beforeSend,

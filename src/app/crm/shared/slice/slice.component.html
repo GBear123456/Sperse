@@ -4,11 +4,10 @@
                [allowSorting]="true"
                [height]="height"
                [allowSortingBySummary]="true"
-               [showBorders]="true">
-    <dxo-export [enabled]="true"></dxo-export>
-    <dxo-field-chooser [allowSearch]="true"
-                       [layout]="2">
-    </dxo-field-chooser>
+               [ngClass]="{ 'filter-opened': filtersService.filterFixed$ | async }"
+               [showBorders]="true"
+               (onContextMenuPreparing)="prepareContextMenu($event)">
+    <dxo-field-chooser [enabled]="false"></dxo-field-chooser>
     <dxo-field-panel [visible]="true"></dxo-field-panel>
     <dxo-header-filter [allowSearch]="true">
     </dxo-header-filter>
