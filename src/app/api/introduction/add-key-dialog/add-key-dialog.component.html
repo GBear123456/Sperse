@@ -16,6 +16,7 @@
             <div class="dx-field-label">{{l('ApiKey_ExpirationDate')}}</div>
             <div class="dx-field-value">
                 <dx-date-box name="expirationDate"
+                             [max]="maxCalendarDate"
                              [(value)]="model.expirationDate">
                     <dx-validator></dx-validator>
                 </dx-date-box>
