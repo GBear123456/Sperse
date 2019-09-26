@@ -149,6 +149,152 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     };
     permissions = AppPermissions;
     pivotGridDataSource: any;
+    private pivotGridDataSourceConfig = {
+        fields: [
+            {
+                area: 'row',
+                dataField: 'CountryId',
+                name: 'country',
+                expanded: true,
+                sortBy: 'displayText'
+            },
+            {
+                area: 'row',
+                dataField: 'StateId',
+                name: 'state',
+                sortBy: 'displayText'
+            },
+            {
+                area: 'row',
+                dataField: 'City',
+                name: 'city',
+                sortBy: 'displayText'
+            },
+            {
+                area: 'row',
+                dataField: 'Name',
+                name: 'customerName',
+                sortBy: 'displayText'
+            },
+            {
+                dataType: 'number',
+                area: 'data',
+                summaryType: 'count',
+                name: 'count',
+                isMeasure: true
+            },
+            {
+                area: 'column',
+                dataField: 'CreationTime',
+                dataType: 'date',
+                groupInterval: 'year',
+                name: 'year',
+                showTotals: false
+            },
+            {
+                area: 'column',
+                dataField: 'CreationTime',
+                dataType: 'date',
+                groupInterval: 'quarter',
+                showTotals: false,
+            },
+            {
+                area: 'column',
+                dataField: 'CreationTime',
+                dataType: 'date',
+                groupInterval: 'month',
+                showTotals: false
+            },
+            {
+                area: 'filter',
+                dataField: 'AffiliateCode'
+            },
+            {
+                area: 'filter',
+                dataField: 'BankCode'
+            },
+            {
+                area: 'filter',
+                dataField: 'CampaignCode'
+            },
+            {
+                area: 'filter',
+                dataField: 'ChannelCode'
+            },
+            {
+                area: 'filter',
+                dataField: 'ChannelCode'
+            },
+            {
+                area: 'filter',
+                dataField: 'City'
+            },
+            {
+                area: 'filter',
+                dataField: 'CompanyName'
+            },
+            {
+                area: 'filter',
+                dataField: 'CreationTime'
+            },
+            {
+                area: 'filter',
+                dataField: 'EntryUrl'
+            },
+            {
+                area: 'filter',
+                dataField: 'Industry'
+            },
+            {
+                area: 'filter',
+                dataField: 'Rating'
+            },
+            {
+                area: 'filter',
+                dataField: 'SourceCode'
+            },
+            {
+                area: 'filter',
+                dataField: 'Stage'
+            },
+            {
+                area: 'filter',
+                dataField: 'StreetAddress'
+            },
+            {
+                area: 'filter',
+                dataField: 'Title'
+            },
+            {
+                area: 'filter',
+                dataField: 'Website'
+            },
+            {
+                area: 'filter',
+                dataField: 'ZipCode'
+            }
+        ],
+        select: [
+            'AffiliateCode',
+            'BankCode',
+            'CampaignCode',
+            'ChannelCode',
+            'City',
+            'CompanyName',
+            'CountryId',
+            'CreationTime',
+            'EntryUrl',
+            'Industry',
+            'Rating',
+            'SourceCode',
+            'Stage',
+            'StateId',
+            'StreetAddress',
+            'Title',
+            'Website',
+            'ZipCode'
+        ]
+    };
 
     private readonly CONTACT_GROUP_CACHE_KEY = 'CONTACT_GROUP';
     private organizationUnits: OrganizationUnitDto[];
@@ -201,80 +347,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     private getPivotGridDataSource(dataSource) {
         return {
             ...dataSource,
-            fields: [
-                {
-                    area: 'row',
-                    dataField: 'CountryId',
-                    name: 'country',
-                    expanded: true,
-                    sortBy: 'displayText'
-                },
-                {
-                    area: 'row',
-                    dataField: 'StateId',
-                    name: 'state',
-                    sortBy: 'displayText'
-                },
-                {
-                    area: 'row',
-                    dataField: 'City',
-                    name: 'city',
-                    sortBy: 'displayText'
-                },
-                {
-                    area: 'row',
-                    dataField: 'Name',
-                    name: 'customerName',
-                    sortBy: 'displayText'
-                },
-                {
-                    dataType: 'number',
-                    area: 'data',
-                    summaryType: 'count'
-                },
-                {
-                    area: 'column',
-                    dataField: 'CreationTime',
-                    dataType: 'date',
-                    groupInterval: 'year',
-                    name: 'year',
-                    showTotals: false
-                },
-                {
-                    area: 'column',
-                    dataField: 'CreationTime',
-                    dataType: 'date',
-                    groupInterval: 'quarter',
-                    showTotals: false,
-                },
-                {
-                    area: 'column',
-                    dataField: 'CreationTime',
-                    dataType: 'date',
-                    groupInterval: 'month',
-                    showTotals: false
-                }
-            ],
-            select: [
-                'AffiliateCode',
-                'BankCode',
-                'CampaignCode',
-                'ChannelCode',
-                'City',
-                'CompanyName',
-                'CountryId',
-                'CreationTime',
-                'EntryUrl',
-                'Industry',
-                'Rating',
-                'SourceCode',
-                'Stage',
-                'StateId',
-                'StreetAddress',
-                'Title',
-                'Website',
-                'ZipCode'
-            ]
+            ...this.pivotGridDataSourceConfig
         };
     }
 
@@ -696,29 +769,37 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                         widget: 'dxDropDownMenu',
                         options: {
                             hint: this.l('Download'),
-                            items: [{
-                                action: Function(),
-                                text: this.l('Save as PDF'),
-                                icon: 'pdf',
-                            }, {
-                                action: this.exportData.bind(this, options => {
-                                    return this.exportToXLS(options);
-                                }),
-                                text: this.l('Export to Excel'),
-                                icon: 'xls',
-                            }, {
-                                action: this.exportData.bind(this, options => {
-                                    return this.exportToCSV(options);
-                                }),
-                                text: this.l('Export to CSV'),
-                                icon: 'sheet'
-                            }, {
-                                action: this.exportData.bind(this, options => {
-                                    return this.exportToGoogleSheet(options);
-                                }),
-                                text: this.l('Export to Google Sheets'),
-                                icon: 'sheet'
-                            }, { type: 'downloadOptions' }]
+                            items: [
+                                {
+                                    action: Function(),
+                                    text: this.l('Save as PDF'),
+                                    icon: 'pdf',
+                                },
+                                {
+                                    action: this.exportData.bind(this, options => {
+                                        if (this.dataLayoutType === DataLayoutType.PivotGrid) {
+                                            this.sliceComponent.pivotGrid.instance.exportToExcel();
+                                        } else {
+                                            this.exportToXLS(options);
+                                        }
+                                    }),
+                                    text: this.l('Export to Excel'),
+                                    icon: 'xls',
+                                },
+                                {
+                                    action: this.exportData.bind(this, options => this.exportToCSV(options)),
+                                    text: this.l('Export to CSV'),
+                                    icon: 'sheet'
+                                },
+                                {
+                                    action: this.exportData.bind(this, options => this.exportToGoogleSheet(options)),
+                                    text: this.l('Export to Google Sheets'),
+                                    icon: 'sheet'
+                                },
+                                {
+                                    type: 'downloadOptions'
+                                }
+                            ]
                         }
                     },
                     { name: 'print', action: Function() }
@@ -819,8 +900,9 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                         () => dataSource.filter(null));
                 };
             }
-        } else
+        } else {
             callback(options);
+        }
     }
 
     toggleCompactView() {

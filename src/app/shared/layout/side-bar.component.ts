@@ -1,18 +1,16 @@
 /** Core imports */
-import { Component, Injector, ElementRef } from '@angular/core';
+import { Component, ElementRef } from '@angular/core';
 
 /** Third party imports */
 import capitalize from 'underscore.string/capitalize';
 
 /** Application imports */
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
-import { AppSessionService } from '@shared/common/session/app-session.service';
 import { FiltersService } from '@shared/filters/filters.service';
 import { FilterModel } from '@shared/filters/models/filter.model';
 import { DisplayElement } from '@shared/filters/models/filter-item.model';
 import { Router, NavigationStart } from '@angular/router';
 import { AppService } from '@app/app.service';
-import { AppConsts } from '@shared/AppConsts';
 
 @Component({
     templateUrl: './side-bar.component.html',
@@ -31,17 +29,16 @@ export class SideBarComponent {
     capitalize = capitalize;
 
     constructor(
-        private _eref: ElementRef,
-        private _appService: AppService,
-        private _filtersService: FiltersService,
-        private _appSessionService: AppSessionService,
+        private eref: ElementRef,
+        private appService: AppService,
+        private filtersService: FiltersService,
         public ls: AppLocalizationService,
         public router: Router
     ) {
-        _filtersService.update(filters => {
+        filtersService.update(filters => {
             this.filters = filters;
         });
-        _filtersService.apply(() => {
+        filtersService.apply(() => {
             this.filters.forEach((filter: FilterModel) => filter.updateCaptions());
         }, true);
 
@@ -50,8 +47,8 @@ export class SideBarComponent {
                 this.filters = [];
         });
 
-        this._filtersService.filterToggle$.subscribe(enabled => {
-            enabled || this._appService.toolbarRefresh();
+        this.filtersService.filterToggle$.subscribe(enabled => {
+            enabled || this.appService.toolbarRefresh();
         });
     }
 
@@ -60,17 +57,17 @@ export class SideBarComponent {
         if (displayElement.item.removeFilterItem)
             displayElement.item.removeFilterItem(filter, displayElement.args);
 
-        this._filtersService.change(filter);
+        this.filtersService.change(filter);
         event.stopPropagation();
     }
 
     clearAllFilters() {
         $('.show-all-elements').removeClass('show-all-elements');
-        this._filtersService.clearAllFilters();
+        this.filtersService.clearAllFilters();
     }
 
     filterApply(event) {
-        this._filtersService
+        this.filtersService
             .change(this.activeFilter);
         this.activeFilter = undefined;
         this.checkFilterDisable(event);
@@ -87,11 +84,11 @@ export class SideBarComponent {
 
     closeFilters(event) {
         this.hideFilterDialog(event);
-        this._filtersService.toggle();
+        this.filtersService.toggle();
     }
 
     hideFilterDialog(event) {
-        let sideBar = this._eref.nativeElement.querySelector('.sidebar-filters');
+        let sideBar = this.eref.nativeElement.querySelector('.sidebar-filters');
         if (sideBar) {
             let rect = sideBar.getBoundingClientRect();
             if (rect.top > event.clientY || rect.bottom < event.clientY ||
@@ -102,14 +99,14 @@ export class SideBarComponent {
     }
 
     preventFilterDisable($event) {
-        this._filtersService.preventDisable();
+        this.filtersService.preventDisable();
     }
 
     checkFilterDisable(event) {
-        if (!this._filtersService.fixed &&
+        if (!this.filtersService.fixed &&
             event.path.every(el => el.localName != 'filter')
         ) {
-            this._filtersService.disable(() => {
+            this.filtersService.disable(() => {
                 this.activeFilter = undefined;
             });
         }
