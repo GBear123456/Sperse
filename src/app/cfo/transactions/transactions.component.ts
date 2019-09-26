@@ -1388,7 +1388,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     }
 
     get gridHeight() {
-        return window.innerHeight - (AppConsts.isMobile ? 160 : 220) - (this.appService.toolbarIsHidden ? 0 : 62) + 'px';
+        return window.innerHeight - (AppConsts.isMobile ? 160 : 150) - (this.appService.toolbarIsHidden ? 0 : 62) + 'px';
     }
 
     ngOnDestroy() {
