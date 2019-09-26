@@ -1,7 +1,8 @@
 /** Core imports */
-import { Component, Injector, OnInit } from '@angular/core';
+import { Component, Injector, OnInit, ViewChild } from '@angular/core';
 
 /** Third party imports */
+import { DxScrollViewComponent } from 'devextreme-angular/ui/scroll-view';
 
 /** Application imports */
 import { AppComponentBase } from '@shared/common/app-component-base';
@@ -14,6 +15,7 @@ import { ExtensionServiceProxy } from '@shared/service-proxies/service-proxies';
     providers: [ ExtensionServiceProxy ]
 })
 export class MarketplaceComponent extends AppComponentBase implements OnInit {
+    @ViewChild('content') scrollView: DxScrollViewComponent;
     public headlineConfig = {
         names: [this.l('Marketplace')],
         onRefresh: () => {
@@ -43,7 +45,9 @@ export class MarketplaceComponent extends AppComponentBase implements OnInit {
 
     refresh() {}
 
-    filterByCategory(categoryId: number) {
+    scrollToCategory(categoryId: number) {
+        let element = document.getElementById('category-' + categoryId);
+        if (element) this.scrollView.instance.scrollTo(element.offsetTop);
     }
 
     getExtentionCategories() {
@@ -56,6 +60,7 @@ export class MarketplaceComponent extends AppComponentBase implements OnInit {
     getSortedItems() {
         this.extensionCategories.forEach((category) => {
             category['items'] = this.extensionList.filter((item) => item.categoryId === category.id);
+            category['visibleItems'] = category.id === 1 ? 6 : 3;
             this.sortedList.push(category);
         });
     }

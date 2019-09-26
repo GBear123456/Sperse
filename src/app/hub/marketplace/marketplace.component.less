@@ -49,6 +49,11 @@
         text-transform: uppercase;
     }
     
+    .category-title {
+        display: flex;
+        align-items: center;
+    }
+    
     .category {
         &__list {
             margin: 0;
@@ -153,6 +158,13 @@
                 
                 .rating {
                     margin-left: auto;
+                    
+                    .fa-star {
+                        color: #f9a541;
+                    }
+                    .fa-star-o {
+                        color: #d5dadd;
+                    }
                 }
             }
             
@@ -184,6 +196,23 @@
                     margin-left: 5px;
                 }
             }
+        }
+    }
+    
+    .view-all {
+        font-size: 15px;
+        line-height: 1.6;
+        letter-spacing: 0.3px;
+        text-align: left;
+        color: #00aeef;
+        transition: .3s;
+        text-decoration: none;
+        margin-left: auto;
+        text-transform: none;
+        font-weight: 400;
+        
+        &:hover {
+            color: darken(#00aeef, 12%);
         }
     }
 }

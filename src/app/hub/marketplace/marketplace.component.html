@@ -6,7 +6,7 @@
             <dx-scroll-view showScrollbar="onHover">
                 <ul class="category__list">
                     <li *ngFor="let item of extensionCategories" class="category__item">
-                        <a (click)="filterByCategory(item.id)" class="category__link">{{ item.name }} ({{ item.count }})</a>
+                        <a (click)="scrollToCategory(item.id)" class="category__link">{{ item.name }} ({{ item.count }})</a>
                     </li>
                 </ul>
             </dx-scroll-view>
@@ -14,16 +14,30 @@
     </div>
 
     <div class="content-wrapper">
-        <dx-scroll-view showScrollbar="onHover">
-            <ng-container *ngFor="let category of sortedList; let j=index; ">
-                <ng-container *ngIf="category.items && category.items.length">
-                    <h2 class="small-title">{{category.name}} ({{category.count}})</h2>
+        <dx-scroll-view [bounceEnabled]="true" #content>
+            <ng-container *ngFor="let category of sortedList; let i=index;">
+                <div *ngIf="category.items && category.items.length" id="category-{{category.id}}">
+                    <h2 class="small-title category-title">{{category.name}} ({{category.count}}) <a (click)="category.visibleItems = category.count" class="view-all">View all</a></h2>
                     <ul class="category-items__list">
-                        <li *ngFor="let item of category.items | slice:0:(j==0?6:3);" class="category-items__element">
+                        <li *ngFor="let item of category.items | slice:0:category.visibleItems;" class="category-items__element">
                             <figure>
                                 <img [src]="item.logo" [alt]="item.name">
                             </figure>
-                            <h2>{{item.name}} <span class="rating" [ngClass]="'rating-' + item.rank">{{item.rank}}</span></h2>
+                            <h2>
+                                {{item.name}}
+                                <span class="rating" [ngClass]="'rating-' + item.rank">
+                                    <i class="fa fa-star" *ngIf="item.rank >= 1"></i>
+                                    <i class="fa fa-star" *ngIf="item.rank >= 2"></i>
+                                    <i class="fa fa-star" *ngIf="item.rank >= 3"></i>
+                                    <i class="fa fa-star" *ngIf="item.rank >= 4"></i>
+                                    <i class="fa fa-star" *ngIf="item.rank >= 5"></i>
+                                    <i class="fa fa-star-o" *ngIf="item.rank < 5"></i>
+                                    <i class="fa fa-star-o" *ngIf="item.rank < 4"></i>
+                                    <i class="fa fa-star-o" *ngIf="item.rank < 3"></i>
+                                    <i class="fa fa-star-o" *ngIf="item.rank < 2"></i>
+                                    <i class="fa fa-star-o" *ngIf="item.rank < 1"></i>
+                                </span>
+                            </h2>
                             <p>{{item.description}}</p>
                             <div class="text-center">
                                 <a [href]="item.url" target="_blank" class="visit-website">
@@ -32,7 +46,7 @@
                             </div>
                         </li>
                     </ul>
-                </ng-container>
+                </div>
             </ng-container>
         </dx-scroll-view>
     </div>
