@@ -322,11 +322,11 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             takeUntil(this.lifecycleService.destroy$)
         ).subscribe((params: ParamMap) => {
             const state = {};
-            const businessEntitiesIds: string = params.get('businessEntitiesIds');
+            const businessEntitiesIds: string = params.get('selectedBusinessEntitiesIds');
             if (businessEntitiesIds) {
                 state['selectedBusinessEntitiesIds'] = this.getIdsFromString(businessEntitiesIds);
             }
-            const bankAccountsIds: string = params.get('bankAccountIds');
+            const bankAccountsIds: string = params.get('selectedBankAccountIds');
             if (bankAccountsIds) {
                 state['selectedBankAccountIds'] = this.getIdsFromString(bankAccountsIds);
             }
