@@ -134,7 +134,7 @@ export class ToolBarComponent implements OnDestroy {
             pivotGrid: {
                 accessKey: 'pivotGrid',
                 hint: this.ls.l('Pivot Grid'),
-                icon: './assets/common/icons/pivot-grid.png'
+                icon: this.getImgURI('pivot-grid')
             },
             prev: {
                 hint: this.ls.l('Previous'),

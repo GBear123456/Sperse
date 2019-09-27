@@ -126,7 +126,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
 
     private rootComponent: any;
     private exportCallback: Function;
-    private dataLayoutType: DataLayoutType = DataLayoutType.PivotGrid;
+    private dataLayoutType: DataLayoutType = DataLayoutType.Pipeline;
     private readonly dataSourceURI = 'Lead';
     private filters: FilterModel[];
     private subRouteParams: any;
