@@ -81,7 +81,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     private autoClassifyData = new AutoClassifyDto();
     private transactionDetailDialogRef: MatDialogRef<TransactionDetailInfoComponent>;
 
-    private transId$: Subject<number> = new Subject<number>();
+    private transactionId$: Subject<number> = new Subject<number>();
 
     dataGridStateTimeout: any;
     filtersInitialData: FiltersInitialData;
@@ -352,6 +352,11 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                 const categoryIds: number[] = this.getIdsFromString(categoryIdsString);
                 this.categoriesRowsData = <any>categoryIds.map(id => ({ key: id }));
                 this.selectedCategoriesIds.next(categoryIds);
+            }
+            const transactionIdToOpen: string = params.get('transactionId');
+            if (transactionIdToOpen) {
+                this.transactionId = transactionIdToOpen;
+                this.showTransactionDetailsInfo();
             }
         });
 
@@ -1351,12 +1356,12 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                 closeOnNavigation: true,
                 data: {
                     refreshParent: this.invalidate.bind(this),
-                    transactionId$: this.transId$
+                    transactionId$: this.transactionId$
                 }
             });
 
             this.transactionDetailDialogRef.afterOpen().subscribe(
-                () => this.transId$.next(this.transactionId)
+                () => this.transactionId$.next(this.transactionId)
             );
 
             this.transactionDetailDialogRef.afterClosed().subscribe(
@@ -1365,7 +1370,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                 }
             );
         } else {
-            this.transId$.next(this.transactionId);
+            this.transactionId$.next(this.transactionId);
         }
     }
 
