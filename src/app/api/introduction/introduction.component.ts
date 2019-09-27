@@ -24,6 +24,7 @@ export class IntroductionComponent extends AppComponentBase implements OnInit, O
         iconSrc: './assets/common/icons/api-icon.svg',
         buttons: []
     };
+    toggleTooltip = true;
 
     public apiKeys: ApiKeyInfo[];
     private elementForBlocking: Element;
@@ -88,6 +89,10 @@ export class IntroductionComponent extends AppComponentBase implements OnInit, O
     copyToClipboard(text) {
         this.clipboardService.copyFromContent(text);
         abp.notify.info(this.l('Copied'));
+    }
+
+    showTooltip() {
+        this.toggleTooltip = true;
     }
 
     ngOnDestroy() {

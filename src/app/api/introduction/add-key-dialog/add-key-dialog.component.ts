@@ -15,6 +15,7 @@ import { GenerateApiKeyInput } from '@shared/service-proxies/service-proxies';
 export class EditKeyDialog extends AppComponentBase {
     isValid = false;
     validator: any;
+    maxCalendarDate = new Date(2038, 0, 19);
     model: GenerateApiKeyInput = new GenerateApiKeyInput();
 
     constructor(injector: Injector,
