@@ -39,7 +39,7 @@ export class FilterModelBase<T extends FilterItemModel> {
         _.each(_.values(_.mapObject(
             this.items, (item: FilterItemModel, key: string) => item && item.getDisplayElements && item.getDisplayElements(key)
         )), x => { displayElements = displayElements.concat(x); });
-        this.displayElements = displayElements.filter((val, i, arr) =>  val && val.displayValue);
+        this.displayElements = displayElements.filter((val) =>  val && val.displayValue);
     }
 
     clearFilterItems() {

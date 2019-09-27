@@ -13,7 +13,6 @@ import { FiltersService } from '@shared/filters/filters.service';
     styleUrls: [ './slice.component.less'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-
 export class SliceComponent {
     @Input() dataSource: any;
     @Input() storageKey: string;
@@ -32,24 +31,15 @@ export class SliceComponent {
     constructor(public filtersService: FiltersService) {}
 
     prepareContextMenu(e) {
-        if (e.field.name === 'count') {
+        if (e.field && e.field.name === 'count') {
             this.summaryDisplayModes.forEach(mode => {
                 e.items.push({
                     text: mode.text,
                     selected: e.field.summaryDisplayMode === mode.value,
                     onItemClick: () => {
-                        //let format,
-                        //let caption = mode.value === 'none' ? 'Total Sales' : 'Relative Sales';
-                        // if (mode.value === 'none'
-                        //     || mode.value === 'absoluteVariation') {
-                        //     format = 'currency';
-                        // }
                         this.pivotGrid.instance.getDataSource().field(e.field.index, {
-                            summaryDisplayMode: mode.value,
-                            //format: format,
-                            //caption: caption
+                            summaryDisplayMode: mode.value
                         });
-
                         this.pivotGrid.instance.getDataSource().load();
                     }
                 });

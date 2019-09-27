@@ -115,7 +115,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     pipelinePurposeId = AppConsts.PipelinePurposeIds.lead;
     selectedClientKeys = [];
     manageDisabled = true;
-    sliceStorageKey = 'CRM_Slice_' + this.sessionService.tenantId + '_' + this.sessionService.userId;
+    sliceStorageKey = 'CRM_Contacts_Slice_' + this.sessionService.tenantId + '_' + this.sessionService.userId;
 
     filterModelLists: FilterModel;
     filterModelTags: FilterModel;
