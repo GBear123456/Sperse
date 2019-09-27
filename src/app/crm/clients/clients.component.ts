@@ -7,7 +7,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import 'devextreme/data/odata/store';
 import { Store, select } from '@ngrx/store';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { first, finalize, takeUntil } from 'rxjs/operators';
 import * as _ from 'underscore';
 
@@ -98,7 +98,20 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     filterModelLists: FilterModel;
     filterModelTags: FilterModel;
     filterModelAssignment: FilterModel;
-    filterModelStatus: FilterModel;
+    filterModelStatus: FilterModel = new FilterModel({
+        component: FilterCheckBoxesComponent,
+        caption: 'status',
+        field: 'StatusId',
+        isSelected: true,
+        items: {
+            element: new FilterCheckBoxesModel({
+                dataSource$: this.statuses$,
+                nameField: 'name',
+                keyExpr: 'id',
+                selectedKeys$: of(['A'])
+            })
+        }
+    });
     filterModelRating: FilterModel;
     filterModelStar: FilterModel;
 
@@ -251,20 +264,6 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     }
 
     ngOnInit() {
-        this.filterModelStatus = new FilterModel({
-            component: FilterCheckBoxesComponent,
-            caption: 'status',
-            field: 'StatusId',
-            isSelected: true,
-            items: {
-                element: new FilterCheckBoxesModel({
-                    dataSource$: this.statuses$,
-                    nameField: 'name',
-                    keyExpr: 'id',
-                    value: 'A'
-                })
-            }
-        });
         this.filterModelStatus.updateCaptions();
         this.dataSource = {
             store: {
