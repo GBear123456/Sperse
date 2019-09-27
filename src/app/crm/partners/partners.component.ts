@@ -70,6 +70,8 @@ import { AppPermissions } from '@shared/AppPermissions';
 import { OrganizationUnitsStoreActions, OrganizationUnitsStoreSelectors } from '@app/crm/store';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 import { DataGridHelper } from '@app/crm/shared/helpers/data-grid.helper';
+import { AppSessionService } from '@shared/common/session/app-session.service';
+import { SliceComponent } from '@app/crm/shared/slice/slice.component';
 
 @Component({
     templateUrl: './partners.component.html',
@@ -86,8 +88,9 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     @ViewChild(RatingComponent) ratingComponent: RatingComponent;
     @ViewChild(StarsListComponent) starsListComponent: StarsListComponent;
     @ViewChild('statusesList') statusComponent: StaticListComponent;
+    @ViewChild(SliceComponent) sliceComponent: SliceComponent;
 
-    private dataLayoutType: DataLayoutType = DataLayoutType.Pipeline;
+    private dataLayoutType: DataLayoutType = DataLayoutType.DataGrid;
     private readonly dataSourceURI = 'Partner';
     private filters: FilterModel[];
     private rootComponent: any;
@@ -113,7 +116,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         toggleToolbar: this.toggleToolbar.bind(this),
         buttons: [
             {
-                enabled: this._contactService.checkCGPermission(ContactGroup.Partner),
+                enabled: this.contactService.checkCGPermission(ContactGroup.Partner),
                 action: this.createPartner.bind(this),
                 lable: this.l('CreateNewPartner')
             }
@@ -122,19 +125,111 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
 
     partnerTypes: any/*PartnerTypeDto*/[];
     permissions = AppPermissions;
+    private pivotGridDataSourceConfig = {
+        fields: [
+            {
+                area: 'row',
+                dataField: 'CountryId',
+                name: 'country',
+                expanded: true,
+                sortBy: 'displayText'
+            },
+            {
+                area: 'row',
+                dataField: 'StateId',
+                name: 'state',
+                sortBy: 'displayText'
+            },
+            {
+                area: 'row',
+                dataField: 'City',
+                name: 'city',
+                sortBy: 'displayText'
+            },
+            {
+                dataType: 'number',
+                area: 'data',
+                summaryType: 'count',
+                name: 'count',
+                isMeasure: true
+            },
+            {
+                area: 'column',
+                dataField: 'CreationTime',
+                dataType: 'date',
+                groupInterval: 'year',
+                name: 'year',
+                showTotals: false
+            },
+            {
+                area: 'column',
+                dataField: 'CreationTime',
+                dataType: 'date',
+                groupInterval: 'quarter',
+                showTotals: false,
+            },
+            {
+                area: 'column',
+                dataField: 'CreationTime',
+                dataType: 'date',
+                groupInterval: 'month',
+                showTotals: false
+            },
+            {
+                area: 'filter',
+                dataField: 'BankCode'
+            },
+            {
+                area: 'filter',
+                dataField: 'CompanyName'
+            },
+            {
+                area: 'filter',
+                dataField: 'PartnerType'
+            },
+            {
+                area: 'filter',
+                dataField: 'Rating'
+            },
+            {
+                area: 'filter',
+                dataField: 'Status'
+            },
+            {
+                area: 'filter',
+                dataField: 'ZipCode'
+            }
+        ],
+        select: [
+            'BankCode',
+            'City',
+            'CompanyName',
+            'CountryId',
+            'CreationTime',
+            'PartnerType',
+            'Rating',
+            'StateId',
+            'Status',
+            'ZipCode'
+        ]
+    };
+    pivotGridDataSource: any;
+    sliceStorageKey = 'CRM_Partners_Slice_' + this.sessionService.tenantId + '_' + this.sessionService.userId;
+    private filterChanged = false;
 
     constructor(
         injector: Injector,
-        private _contactService: ContactsService,
-        private _partnerService: PartnerServiceProxy,
-        private _appService: AppService,
-        private _pipelineService: PipelineService,
-        private _filtersService: FiltersService,
-        private _clientService: ClientService,
-        private _partnerTypeService: PartnerTypeServiceProxy,
+        private contactService: ContactsService,
+        private partnerService: PartnerServiceProxy,
+        private appService: AppService,
+        private pipelineService: PipelineService,
+        private filtersService: FiltersService,
+        private clientService: ClientService,
+        private partnerTypeService: PartnerTypeServiceProxy,
         private store$: Store<AppStore.State>,
         private itemDetailsService: ItemDetailsService,
         private lifeCycleSubjectsService: LifecycleSubjectsService,
+        private sessionService: AppSessionService,
         public dialog: MatDialog,
         public contactProxy: ContactServiceProxy,
         public userManagementService: UserManagementService,
@@ -153,11 +248,15 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                 }
             }
         };
+        this.pivotGridDataSource = {
+            ...this.dataSource,
+            ...this.pivotGridDataSourceConfig
+        };
 
         this.searchValue = '';
 
-        this._pipelineService.stageChange.asObservable().subscribe((lead) => {
-            this.dependencyChanged = (lead.Stage == _.last(this._pipelineService.getStages(AppConsts.PipelinePurposeIds.lead)).name);
+        this.pipelineService.stageChange.asObservable().subscribe((lead) => {
+            this.dependencyChanged = (lead.Stage == _.last(this.pipelineService.getStages(AppConsts.PipelinePurposeIds.lead)).name);
         });
     }
 
@@ -169,10 +268,10 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     toggleToolbar() {
-        this._appService.toolbarToggle();
+        this.appService.toolbarToggle();
         setTimeout(() => this.dataGrid.instance.repaint(), 0);
-        this._filtersService.fixed = false;
-        this._filtersService.disable();
+        this.filtersService.fixed = false;
+        this.filtersService.disable();
         this.initToolbarConfig();
     }
 
@@ -182,8 +281,10 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                 .subscribe(params => {
                     if ('addNew' == params['action'])
                         setTimeout(() => this.createPartner());
-                    if (params['refresh'])
+                    if (params['refresh']) {
                         this.invalidate();
+                        this.filterChanged = true;
+                    }
             });
     }
 
@@ -212,7 +313,10 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
             disableClose: true,
             closeOnNavigation: false,
             data: {
-                refreshParent: this.invalidate.bind(this),
+                refreshParent: () => {
+                    this.invalidate.bind(this);
+                    this.filterChanged = true;
+                },
                 customerType: ContactGroup.Partner
             }
         }).afterClosed().subscribe(() => this.invalidate());
@@ -232,14 +336,27 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
 
     toggleDataLayout(dataLayoutType) {
         this.dataLayoutType = dataLayoutType;
+        this.initDataSource();
+        if (this.showDataGrid) {
+            setTimeout(() => this.dataGrid.instance.repaint());
+        }
+        if (this.filterChanged) {
+            this.filterChanged = false;
+            setTimeout(() => {
+                if (this.showPivotGrid) {
+                    this.sliceComponent.pivotGrid.instance.updateDimensions();
+                }
+                this.processFilterInternal();
+            });
+        }
     }
 
     initFilterConfig() {
         if (this.filters) {
-            this._filtersService.setup(this.filters);
-            this._filtersService.checkIfAnySelected();
+            this.filtersService.setup(this.filters);
+            this.filtersService.checkIfAnySelected();
         } else {
-            this._filtersService.setup(
+            this.filtersService.setup(
                 this.filters = [
                     new FilterModel({
                         component: FilterInputsComponent,
@@ -393,15 +510,16 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
             );
         }
 
-        this._filtersService.apply(() => {
+        this.filtersService.apply(() => {
             this.selectedPartnerKeys = [];
+            this.filterChanged = true;
             this.initToolbarConfig();
             this.processFilterInternal();
         });
     }
 
     initToolbarConfig() {
-        this._appService.updateToolbar([
+        this.appService.updateToolbar([
             {
                 location: 'before', items: [
                     {
@@ -410,22 +528,22 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                             setTimeout(() => {
                                 this.dataGrid.instance.repaint();
                             }, 1000);
-                            this._filtersService.fixed = !this._filtersService.fixed;
+                            this.filtersService.fixed = !this.filtersService.fixed;
                         },
                         options: {
                             checkPressed: () => {
-                                return this._filtersService.fixed;
+                                return this.filtersService.fixed;
                             },
                             mouseover: () => {
-                                this._filtersService.enable();
+                                this.filtersService.enable();
                             },
                             mouseout: () => {
-                                if (!this._filtersService.fixed)
-                                    this._filtersService.disable();
+                                if (!this.filtersService.fixed)
+                                    this.filtersService.disable();
                             }
                         },
                         attr: {
-                            'filter-selected': this._filtersService.hasFilterSelected
+                            'filter-selected': this.filtersService.hasFilterSelected
                         }
                     }
                 ]
@@ -455,7 +573,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                     {
                         name: 'assign',
                         action: this.toggleUserAssignment.bind(this),
-                        disabled: !this._contactService.checkCGPermission(ContactGroup.Partner, 'ManageAssignments'),
+                        disabled: !this.contactService.checkCGPermission(ContactGroup.Partner, 'ManageAssignments'),
                         attr: {
                             'filter-selected': this.filterModelAssignment && this.filterModelAssignment.isSelected
                         }
@@ -470,7 +588,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                     {
                         name: 'partnerType',
                         action: this.toggleType.bind(this),
-                        disabled: !this._contactService.checkCGPermission(ContactGroup.Partner),
+                        disabled: !this.contactService.checkCGPermission(ContactGroup.Partner),
                         attr: {
                             'filter-selected': this.filterModelTypes && this.filterModelTypes.isSelected
                         }
@@ -478,7 +596,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                     {
                         name: 'lists',
                         action: this.toggleLists.bind(this),
-                        disabled: !this._contactService.checkCGPermission(ContactGroup.Partner, 'ManageListsAndTags'),
+                        disabled: !this.contactService.checkCGPermission(ContactGroup.Partner, 'ManageListsAndTags'),
                         attr: {
                             'filter-selected': this.filterModelLists && this.filterModelLists.isSelected
                         }
@@ -486,7 +604,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                     {
                         name: 'tags',
                         action: this.toggleTags.bind(this),
-                        disabled: !this._contactService.checkCGPermission(ContactGroup.Partner, 'ManageListsAndTags'),
+                        disabled: !this.contactService.checkCGPermission(ContactGroup.Partner, 'ManageListsAndTags'),
                         attr: {
                             'filter-selected': this.filterModelTags && this.filterModelTags.isSelected
                         }
@@ -494,7 +612,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                     {
                         name: 'rating',
                         action: this.toggleRating.bind(this),
-                        disabled: !this._contactService.checkCGPermission(ContactGroup.Partner, 'ManageRatingAndStars'),
+                        disabled: !this.contactService.checkCGPermission(ContactGroup.Partner, 'ManageRatingAndStars'),
                         attr: {
                             'filter-selected': this.filterModelRating && this.filterModelRating.isSelected
                         }
@@ -502,7 +620,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                     {
                         name: 'star',
                         action: this.toggleStars.bind(this),
-                        disabled: !this._contactService.checkCGPermission(ContactGroup.Partner, 'ManageRatingAndStars'),
+                        disabled: !this.contactService.checkCGPermission(ContactGroup.Partner, 'ManageRatingAndStars'),
                         attr: {
                             'filter-selected': this.filterModelStar && this.filterModelStar.isSelected
                         }
@@ -523,7 +641,13 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                                 text: this.l('Save as PDF'),
                                 icon: 'pdf',
                             }, {
-                                action: this.exportToXLS.bind(this),
+                                action: () => {
+                                    if (this.dataLayoutType === DataLayoutType.PivotGrid) {
+                                        this.sliceComponent.pivotGrid.instance.exportToExcel();
+                                    } else if (this.dataLayoutType === DataLayoutType.DataGrid) {
+                                        this.exportToXLS.bind(this);
+                                    }
+                                },
                                 text: this.l('Export to Excel'),
                                 icon: 'xls',
                             }, {
@@ -546,6 +670,27 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                 items: [
                     { name: 'showCompactRowsHeight', action: DataGridService.showCompactRowsHeight.bind(this, this.dataGrid, true) },
                     { name: 'columnChooser', action: DataGridService.showColumnChooser.bind(this, this.dataGrid) }
+                ]
+            },
+            {
+                location: 'after',
+                locateInMenu: 'auto',
+                areItemsDependent: true,
+                items: [
+                    {
+                        name: 'dataGrid',
+                        action: this.toggleDataLayout.bind(this, DataLayoutType.DataGrid),
+                        options: {
+                            checkPressed: () => this.showDataGrid
+                        }
+                    },
+                    {
+                        name: 'pivotGrid',
+                        action: this.toggleDataLayout.bind(this, DataLayoutType.PivotGrid),
+                        options: {
+                            checkPressed: () => this.showPivotGrid
+                        }
+                    }
                 ]
             },
             {
@@ -628,15 +773,25 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         return FilterHelpers.filterBySetOfValues(filter);
     }
 
+    get showDataGrid(): boolean {
+        return this.dataLayoutType === DataLayoutType.DataGrid;
+    }
+
+    get showPivotGrid(): boolean {
+        return this.dataLayoutType === DataLayoutType.PivotGrid;
+    }
+
     searchValueChange(e: object) {
-        this.searchValue = e['value'];
-        this.initToolbarConfig();
-        this.processFilterInternal();
+        if (this.filterChanged = (this.searchValue != e['value'])) {
+            this.searchValue = e['value'];
+            this.initToolbarConfig();
+            this.processFilterInternal();
+        }
     }
 
     processFilterInternal() {
         this.processODataFilter(
-            this.dataGrid.instance,
+            this.showPivotGrid ? this.sliceComponent.pivotGrid.instance : this.dataGrid.instance,
             this.dataSourceURI,
             this.filters,
             (filter) => {
@@ -648,13 +803,36 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         );
     }
 
+    initDataSource() {
+        if (this.showDataGrid) {
+            this.setDataGridInstance();
+        } else if (this.showPivotGrid) {
+            this.setPivotGridInstance();
+        }
+    }
+
+    setDataGridInstance() {
+        let instance = this.dataGrid && this.dataGrid.instance;
+        if (instance && !instance.option('dataSource')) {
+            instance.option('dataSource', this.dataSource);
+            this.startLoading();
+        }
+    }
+
+    setPivotGridInstance() {
+        let instance = this.sliceComponent && this.sliceComponent.pivotGrid && this.sliceComponent.pivotGrid.instance;
+        if (instance && !instance.option('dataSource')) {
+            instance.option('dataSource', this.pivotGridDataSource);
+        }
+    }
+
     getOrganizationUnitName = (e) => {
         return DataGridHelper.getOrganizationUnitName(e.OrganizationUnitId, this.organizationUnits);
     }
 
     updatePartnerStatuses(status) {
         let selectedIds: number[] = this.dataGrid.instance.getSelectedRowKeys();
-        this._clientService.updateContactStatuses(
+        this.clientService.updateContactStatuses(
             selectedIds,
             ContactGroup.Partner,
             status.id,
@@ -667,7 +845,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
 
     updatePartnerTypes($event) {
         let selectedIds: number[] = this.dataGrid.instance.getSelectedRowKeys();
-        this._partnerService.bulkUpdateType(BulkUpdatePartnerTypeInput.fromJS({
+        this.partnerService.bulkUpdateType(BulkUpdatePartnerTypeInput.fromJS({
             partnerIds: selectedIds,
             typeId: $event.id
         })).subscribe(() => {
@@ -727,8 +905,8 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     deactivate() {
         super.deactivate();
         this.subRouteParams.unsubscribe();
-        this._appService.updateToolbar(null);
-        this._filtersService.unsubscribe();
+        this.appService.updateToolbar(null);
+        this.filtersService.unsubscribe();
         this.rootComponent.overflowHidden();
         this.itemDetailsService.setItemsSource(ItemTypeEnum.Partner, this.dataGrid.instance.getDataSource());
         this.hideHostElement();
@@ -737,6 +915,10 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     onShowingPopup(e) {
         e.component.option('visible', false);
         e.component.hide();
+    }
+
+    get visibleContentHeight(): string {
+        return (window.innerHeight - (this.isFullscreenMode ? 60 : (this.appService.toolbarIsHidden ? 149 : 211))) + 'px';
     }
 
     getAssignedUsersSelector() {

@@ -14,7 +14,6 @@ import { FiltersService } from '@shared/filters/filters.service';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SliceComponent {
-    @Input() dataSource: any;
     @Input() storageKey: string;
     @Input() height = 'auto';
     @ViewChild(DxPivotGridComponent) pivotGrid: DxPivotGridComponent;

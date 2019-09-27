@@ -61,10 +61,9 @@
     </crm-user-assignment-list>
     <crm-rating [selectedKeys]="selectedPartnerKeys" [bulkUpdateMode]="true" [filterModel]="filterModelRating"></crm-rating>
     <crm-stars-list [selectedKeys]="selectedPartnerKeys" [bulkUpdateMode]="true" [filterModel]="filterModelStar"></crm-stars-list>
-    <div [hidden]="isDataLoaded && !totalRowCount" class="portlet light no-padding margin-bottom-0">
+    <div [hidden]="!showDataGrid || (isDataLoaded && !totalRowCount)" class="portlet light no-padding margin-bottom-0">
         <div class="portlet-body">
-            <div>
-                <div id="ClientsTable">
+            <div id="ClientsTable">
                     <dx-data-grid id="gridContainer"
                                   accesskey="narrowHeaderPanel"
                                   [dataSource]="dataSource"
@@ -132,8 +131,12 @@
                     </dx-data-grid>
 
                 </div>
-            </div>
         </div>
+    </div>
+    <div [hidden]="!showPivotGrid">
+        <slice [storageKey]="sliceStorageKey"
+               [height]="visibleContentHeight">
+        </slice>
     </div>
 </div>
 

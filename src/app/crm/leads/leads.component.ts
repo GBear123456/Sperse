@@ -822,27 +822,21 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                         name: 'pipeline',
                         action: this.toggleDataLayout.bind(this, DataLayoutType.Pipeline),
                         options: {
-                            checkPressed: () => {
-                                return (this.dataLayoutType == DataLayoutType.Pipeline);
-                            }
+                            checkPressed: () => this.showPipeline
                         }
                     },
                     {
                         name: 'dataGrid',
                         action: this.toggleDataLayout.bind(this, DataLayoutType.DataGrid),
                         options: {
-                            checkPressed: () => {
-                                return (this.dataLayoutType == DataLayoutType.DataGrid);
-                            }
+                            checkPressed: () => this.showDataGrid
                         }
                     },
                     {
                         name: 'pivotGrid',
                         action: this.toggleDataLayout.bind(this, DataLayoutType.PivotGrid),
                         options: {
-                            checkPressed: () => {
-                                return (this.dataLayoutType == DataLayoutType.PivotGrid);
-                            }
+                            checkPressed: () => this.showPivotGrid
                         }
                     }
                 ]

@@ -214,10 +214,6 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             },
             {
                 area: 'filter',
-                dataField: 'StateId'
-            },
-            {
-                area: 'filter',
                 dataField: 'Status'
             },
             {
@@ -679,18 +675,14 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                         name: 'dataGrid',
                         action: this.toggleDataLayout.bind(this, DataLayoutType.DataGrid),
                         options: {
-                            checkPressed: () => {
-                                return (this.dataLayoutType == DataLayoutType.DataGrid);
-                            }
+                            checkPressed: () => this.showDataGrid
                         }
                     },
                     {
                         name: 'pivotGrid',
                         action: this.toggleDataLayout.bind(this, DataLayoutType.PivotGrid),
                         options: {
-                            checkPressed: () => {
-                                return (this.dataLayoutType == DataLayoutType.PivotGrid);
-                            }
+                            checkPressed: () => this.showPivotGrid
                         }
                     }
                 ]
