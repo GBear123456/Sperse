@@ -78,7 +78,6 @@ import { AppStore } from '@app/store';
 import { LoadingSpinnerModule } from '@app/shared/common/loading-spinner/loading-spinner.module';
 import { AppPermissions } from '@shared/AppPermissions';
 import { BankCodeLettersModule } from '@app/shared/common/bank-code-letters/bank-code-letters.module';
-import { SliceComponent } from '@app/crm/shared/slice/slice.component';
 
 @NgModule({
     imports: [
@@ -149,8 +148,7 @@ import { SliceComponent } from '@app/crm/shared/slice/slice.component';
         CreateActivityDialogComponent,
         EmailTemplateDialogComponent,
         CrmIntroComponent,
-        ActivityComponent,
-        SliceComponent
+        ActivityComponent
     ],
     providers: [
         AppStoreService,

@@ -1302,15 +1302,6 @@ export class CashflowService {
         return cellInfo => this.ls.l(this.historicalTextsKeys[cellInfo.value]).toUpperCase();
     }
 
-    /**
-     * Gets quarter from the year
-     * @param date
-     * @returns {number}
-     */
-    getQuarter(date: Date = new Date()) {
-        return Math.floor(date.getMonth() / 3) + 1;
-    }
-
     weekHeaderSelector(dataItem): string {
         let weekInfo = new WeekInfo(dataItem.initialDate);
         return JSON.stringify(weekInfo);

@@ -64,7 +64,7 @@ import { UserManagementService } from '@shared/common/layout/user-management-lis
 import { DataGridService } from '@app/shared/common/data-grid.service.ts/data-grid.service';
 import { OrganizationUnitsStoreActions } from '@app/crm/store';
 import { DataGridHelper } from '@app/crm/shared/helpers/data-grid.helper';
-import { SliceComponent } from '@app/crm/shared/slice/slice.component';
+import { SlicePivotGridComponent } from '@app/shared/common/slice/pivot-grid/slice-pivot-grid.component';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 
 @Component({
@@ -82,7 +82,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     @ViewChild(RatingComponent) ratingComponent: RatingComponent;
     @ViewChild(StarsListComponent) starsListComponent: StarsListComponent;
     @ViewChild(StaticListComponent) stagesComponent: StaticListComponent;
-    @ViewChild(SliceComponent) sliceComponent: SliceComponent;
+    @ViewChild(SlicePivotGridComponent) slicePivotGridComponent: SlicePivotGridComponent;
 
     private _selectedLeads: any;
     get selectedLeads() {
@@ -335,7 +335,6 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 paginate: true
             }
         };
-        this.pivotGridDataSource = this.getPivotGridDataSource(this.dataSource);
         this.searchValue = '';
     }
 
@@ -371,6 +370,10 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
 
     get showPivotGrid(): boolean {
         return this.dataLayoutType === DataLayoutType.PivotGrid;
+    }
+
+    get showChart(): boolean {
+        return this.dataLayoutType === DataLayoutType.Chart;
     }
 
     getOrganizationUnitName = (e) => {
@@ -474,7 +477,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             if (!this.showPipeline) {
                 setTimeout(() => {
                     if (this.showPivotGrid) {
-                        this.sliceComponent.pivotGrid.instance.updateDimensions();
+                        this.slicePivotGridComponent.pivotGrid.instance.updateDimensions();
                     }
                     this.processFilterInternal();
                 });
@@ -653,7 +656,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                         action: () => {
                             setTimeout(() => {
                                 this.dataGrid.instance.repaint();
-                                this.sliceComponent.pivotGrid.instance.updateDimensions();
+                                this.slicePivotGridComponent.pivotGrid.instance.updateDimensions();
                             }, 1000);
                             this.filtersService.fixed = !this.filtersService.fixed;
                         },
@@ -778,7 +781,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                                 {
                                     action: this.exportData.bind(this, options => {
                                         if (this.dataLayoutType === DataLayoutType.PivotGrid) {
-                                            this.sliceComponent.pivotGrid.instance.exportToExcel();
+                                            this.slicePivotGridComponent.pivotGrid.instance.exportToExcel();
                                         } else {
                                             this.exportToXLS(options);
                                         }
@@ -876,7 +879,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     exportData(callback, options) {
         if (this.dataLayoutType === DataLayoutType.Pipeline) {
             let importOption = 'all',
-                instance = this.showDataGrid ? this.dataGrid.instance : this.sliceComponent.pivotGrid.instance,
+                instance = this.showDataGrid ? this.dataGrid.instance : this.slicePivotGridComponent.pivotGrid.instance,
                 dataSource = instance.option('dataSource'),
                 checkExportOption = (dataSource, ignoreFilter = false) => {
                     if (options == importOption)
@@ -970,7 +973,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             if (context && context.processODataFilter) {
                 context.processODataFilter.call(
                     context,
-                    this.showPivotGrid ? this.sliceComponent.pivotGrid.instance : this.dataGrid.instance,
+                    this.showPivotGrid ? this.slicePivotGridComponent.pivotGrid.instance : this.dataGrid.instance,
                     this.dataSourceURI,
                     this.filters,
                     (filter) => {
@@ -991,6 +994,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         } else if (this.showDataGrid) {
             this.setDataGridInstance();
         } else if (this.showPivotGrid) {
+            this.pivotGridDataSource = this.getPivotGridDataSource(this.dataSource);
             this.setPivotGridInstance();
         }
     }
@@ -1004,7 +1008,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     setPivotGridInstance() {
-        let instance = this.sliceComponent && this.sliceComponent.pivotGrid && this.sliceComponent.pivotGrid.instance;
+        let instance = this.slicePivotGridComponent && this.slicePivotGridComponent.pivotGrid && this.slicePivotGridComponent.pivotGrid.instance;
         if (instance && !instance.option('dataSource')) {
             instance.option('dataSource', this.pivotGridDataSource);
         }

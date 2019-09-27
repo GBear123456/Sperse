@@ -6,9 +6,9 @@
 
 <div [hidden]="!statsData || !statsData.length">
     <div class="mainStatsView">
-        <setup-steps 
-            [SetupSteps]="leftSideBarItems" 
-            SelectedStepIndex="0" 
+        <setup-steps
+            [SetupSteps]="leftSideBarItems"
+            SelectedStepIndex="0"
             HeaderTitle=""
             (onToggle)="calculateChartsSize()"></setup-steps>
         <source-data [ngClass]="{'showen': showSourceData}"
@@ -48,7 +48,7 @@
                             <dxo-label [visible]="false" [backgroundColor]="labelPositiveBackgroundColor">
                                 <dxo-format type="currency largeNumber" [currency]="cfoPreferencesService.selectedCurrencyId">
                                 </dxo-format>
-                                <dxo-font size="10px" weight="300"></dxo-font>
+                                <dxo-font size="10px" [weight]="300"></dxo-font>
                             </dxo-label>
                             <dxo-point size="8"></dxo-point>
                         </dxo-common-series-settings>
@@ -91,16 +91,16 @@
                             <dxo-grid color="#e5e9ec" [visible]="true"></dxo-grid>
                         </dxi-value-axis>
                         <!-- Bottom axis -->
-                        <dxo-argument-axis argumentType="datetime" visible="true" type="discrete">
+                        <dxo-argument-axis argumentType="datetime" [visible]="true" type="discrete">
                             <dxo-label [customizeText]="customizeBottomAxis">
                                 <dxo-format [type]="axisDateFormat"></dxo-format>
                             </dxo-label>
-                            <dxo-tick-interval months="1"></dxo-tick-interval>
+                            <dxo-tick-interval [months]="1"></dxo-tick-interval>
                         </dxo-argument-axis>
                         <!-- Common settings for axis -->
-                        <dxo-common-axis-settings allowDecimals="false">
+                        <dxo-common-axis-settings [allowDecimals]="false">
                             <dxo-label alignment="center" overlappingBehavior="hide">
-                                <dxo-font weight="300" color="#677380" size="12px"></dxo-font>
+                                <dxo-font [weight]="300" color="#677380" size="12px"></dxo-font>
                             </dxo-label>
                             <dxo-strip-style>
                                 <dxo-label horizontal-allignment="center"></dxo-label>
@@ -140,10 +140,10 @@
                         <dxo-common-series-settings argumentField="date"
                                                     type="stackedBar"
                                                     [showInLegend]="false"
-                                                    ignoreEmptyPoints="true">
+                                                    [ignoreEmptyPoints]="true">
                         </dxo-common-series-settings>
-                        <dxo-tooltip enabled="true"
-                                     zIndex="1"
+                        <dxo-tooltip [enabled]="true"
+                                     [zIndex]="1"
                                      [customizeTooltip]="customizeBarTooltip">
                         </dxo-tooltip>
                         <dxi-series [color]="historicalCreditColor" valueField="credit" name="historical"></dxi-series>
@@ -169,7 +169,7 @@
                                 <dxo-format [type]="axisDateFormat">
                                 </dxo-format>
                             </dxo-label>
-                            <dxo-tick-interval months="1"></dxo-tick-interval>
+                            <dxo-tick-interval [months]="1"></dxo-tick-interval>
                         </dxo-argument-axis>
 
                         <!-- Left axis -->
@@ -183,7 +183,7 @@
                         <!-- Common settings for axis -->
                         <dxo-common-axis-settings [allowDecimals]="false">
                             <dxo-label alignment="center">
-                                <dxo-font weight="300" color="#677380" size="12px"></dxo-font>
+                                <dxo-font [weight]="300" color="#677380" size="12px"></dxo-font>
                             </dxo-label>
                             <dxo-strip-style>
                                 <dxo-label horizontal-allignment="center"></dxo-label>

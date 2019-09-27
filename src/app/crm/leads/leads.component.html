@@ -141,7 +141,15 @@
         </div>
     </div>
     <div [hidden]="!showPivotGrid">
-        <slice [storageKey]="sliceStorageKey" [height]="visibleContentHeight"></slice>
+        <slice-pivot-grid [storageKey]="sliceStorageKey"
+                          [dataSource]="pivotGridDataSource"
+                          [height]="visibleContentHeight">
+        </slice-pivot-grid>
+    </div>
+    <div [hidden]="!showChart">
+        <slice-chart argumentField="CreationTime"
+                     valueField="">
+        </slice-chart>
     </div>
 </div>
 

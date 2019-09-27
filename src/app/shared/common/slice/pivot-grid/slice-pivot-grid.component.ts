@@ -8,13 +8,12 @@ import { DxPivotGridComponent } from 'devextreme-angular/ui/pivot-grid';
 import { FiltersService } from '@shared/filters/filters.service';
 
 @Component({
-    selector: 'slice',
-    templateUrl: 'slice.component.html',
-    styleUrls: [ './slice.component.less'],
+    selector: 'slice-pivot-grid',
+    templateUrl: 'slice-pivot-grid.component.html',
+    styleUrls: [ './slice-pivot-grid.component.less'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-
-export class SliceComponent {
+export class SlicePivotGridComponent {
     @Input() dataSource: any;
     @Input() storageKey: string;
     @Input() height = 'auto';
@@ -38,18 +37,9 @@ export class SliceComponent {
                     text: mode.text,
                     selected: e.field.summaryDisplayMode === mode.value,
                     onItemClick: () => {
-                        //let format,
-                        //let caption = mode.value === 'none' ? 'Total Sales' : 'Relative Sales';
-                        // if (mode.value === 'none'
-                        //     || mode.value === 'absoluteVariation') {
-                        //     format = 'currency';
-                        // }
                         this.pivotGrid.instance.getDataSource().field(e.field.index, {
-                            summaryDisplayMode: mode.value,
-                            //format: format,
-                            //caption: caption
+                            summaryDisplayMode: mode.value
                         });
-
                         this.pivotGrid.instance.getDataSource().load();
                     }
                 });

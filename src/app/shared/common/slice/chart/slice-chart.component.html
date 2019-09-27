@@ -1,0 +1,45 @@
+<h2>{{ title }}</h2>
+<dx-select-box [items]="summaryByList"
+               [placeholder]="ls.l('SummaryBy')"
+               (onValueChanged)="summaryBy.next($event.value)">
+</dx-select-box>
+<dx-chart>
+
+    <dxo-tooltip [enabled]="true"
+                 [zIndex]="1">
+    </dxo-tooltip>
+
+    <!-- common settings for charts -->
+    <dxo-common-series-settings [argumentField]="argumentField"
+                                type="stackedBar"
+                                [showInLegend]="false"
+                                [ignoreEmptyPoints]="true">
+    </dxo-common-series-settings>
+
+    <!-- Left axis -->
+    <dxi-value-axis>
+        <dxo-grid color="#8a8c8e" [visible]="true"></dxo-grid>
+    </dxi-value-axis>
+
+    <!-- Bottom axis -->
+    <dxo-argument-axis argumentType="datetime"
+                       [visible]="true"
+                       type="discrete">
+        <dxo-label [customizeText]="customizeBottomAxis">
+            <dxo-format [type]="summaryBy$ | async"></dxo-format>
+        </dxo-label>
+        <dxo-tick-interval [months]="1"></dxo-tick-interval>
+    </dxo-argument-axis>
+
+    <dxi-series color="url(#linear-gradient)"
+                [valueField]="valueField">
+    </dxi-series>
+
+</dx-chart>
+
+<svg>
+    <linearGradient id="linear-gradient" x1="0" x2="0" y1="0" y2="1">
+        <stop offset="0%" stop-color="#00aeef"/>
+        <stop offset="100%" stop-color="#a4e2f9"/>
+    </linearGradient>
+</svg>

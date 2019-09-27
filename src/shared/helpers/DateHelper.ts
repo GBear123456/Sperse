@@ -33,4 +33,13 @@ export class DateHelper {
         return moment.tz(moment().format('DD-MM-YYYY'), 'DD-MM-YYYY', 'utc');
     }
 
+    /**
+     * Gets quarter from the date
+     * @param date
+     * @returns {number}
+     */
+    static getQuarter(date: Date = new Date()) {
+        return Math.floor(date.getMonth() / 3) + 1;
+    }
+
 }

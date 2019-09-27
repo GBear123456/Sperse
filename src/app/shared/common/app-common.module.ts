@@ -43,6 +43,8 @@ import { DxTooltipModule } from 'devextreme-angular/ui/tooltip';
 import { DxSwitchModule } from 'devextreme-angular/ui/switch';
 import { DxTreeListModule } from 'devextreme-angular/ui/tree-list';
 import { DxiValidationRuleModule } from 'devextreme-angular/ui/nested/validation-rule-dxi';
+import { DxPivotGridModule } from 'devextreme-angular/ui/pivot-grid';
+import { DxChartModule } from 'devextreme-angular/ui/chart';
 
 import { TableModule } from 'primeng/table';
 import { PaginatorModule } from 'primeng/primeng';
@@ -97,6 +99,8 @@ import { TypesListComponent } from '@app/crm/shared/types-list/types-list.compon
 import { StaticListComponent } from './static-list/static-list.component';
 import { LoadingSpinnerModule } from '@app/shared/common/loading-spinner/loading-spinner.module';
 import { SetupStepsComponent } from './setup-steps/setup-steps.component';
+import { SlicePivotGridComponent } from '@app/shared/common/slice/pivot-grid/slice-pivot-grid.component';
+import { SliceChartComponent } from '@app/shared/common/slice/chart/slice-chart.component';
 
 @NgModule({
     imports: [
@@ -144,6 +148,8 @@ import { SetupStepsComponent } from './setup-steps/setup-steps.component';
         DxDataGridModule,
         DxContextMenuModule,
         DxTreeViewModule,
+        DxPivotGridModule,
+        DxChartModule,
         DxRadioGroupModule,
         DxTextBoxModule,
         DxDataGridModule,
@@ -199,7 +205,9 @@ import { SetupStepsComponent } from './setup-steps/setup-steps.component';
         RatingComponent,
         StarsListComponent,
         TypesListComponent,
-        SetupStepsComponent
+        SetupStepsComponent,
+        SlicePivotGridComponent,
+        SliceChartComponent
     ],
     exports: [
         TimeAgoPipe,
@@ -227,7 +235,9 @@ import { SetupStepsComponent } from './setup-steps/setup-steps.component';
         RatingComponent,
         StarsListComponent,
         TypesListComponent,
-        SetupStepsComponent
+        SetupStepsComponent,
+        SlicePivotGridComponent,
+        SliceChartComponent
     ],
     providers: [
         DateTimeService,
