@@ -15,6 +15,7 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 import { CFOService } from '@shared/cfo/cfo.service';
 import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
 import { IDialogOption } from '@shared/common/dialogs/modal/dialog-option.interface';
+import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
 
 @Component({
     selector: 'preferences-modal',
@@ -95,7 +96,8 @@ export class PreferencesDialogComponent implements OnInit {
         private _changeDetectorRef: ChangeDetectorRef,
         public userPreferencesService: UserPreferencesService,
         public cfoPreferencesService: CfoPreferencesService,
-        public ls: AppLocalizationService
+        public ls: AppLocalizationService,
+        public userManagementService: UserManagementService
     ) {
         for (let i = 10; i < 21; i++)
             this.fontSizes.push(i + 'px');
