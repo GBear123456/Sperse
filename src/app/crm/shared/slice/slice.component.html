@@ -1,0 +1,21 @@
+<dx-pivot-grid [allowExpandAll]="true"
+               [allowFiltering]="true"
+               [allowSorting]="true"
+               [height]="height"
+               [allowSortingBySummary]="true"
+               [ngClass]="{ 'filter-opened': filtersService.filterFixed$ | async }"
+               [showBorders]="true"
+               (onContextMenuPreparing)="prepareContextMenu($event)">
+    <dxo-field-chooser [enabled]="false"></dxo-field-chooser>
+    <dxo-field-panel [visible]="true"></dxo-field-panel>
+    <dxo-header-filter [allowSearch]="true">
+    </dxo-header-filter>
+    <dxo-load-panel indicatorSrc="./assets/common/images/spinner.gif"
+                    text=""
+                    [showPane]="false">
+    </dxo-load-panel>
+    <dxo-scrolling mode="virtual"></dxo-scrolling>
+    <dxo-state-storing [enabled]="true"
+                       [storageKey]="storageKey">
+    </dxo-state-storing>
+</dx-pivot-grid>

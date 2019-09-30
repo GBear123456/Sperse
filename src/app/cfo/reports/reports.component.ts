@@ -90,10 +90,10 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
 
     constructor(
         private injector: Injector,
-        private _appService: AppService,
-        private _dialog: MatDialog,
-        private _fileSizePipe: FileSizePipe,
-        private _changeDetector: ChangeDetectorRef,
+        private appService: AppService,
+        private dialog: MatDialog,
+        private fileSizePipe: FileSizePipe,
+        private changeDetector: ChangeDetectorRef,
         private cacheService: CacheService,
         public reportsProxy: ReportsServiceProxy,
         public bankAccountsService: BankAccountsService
@@ -130,7 +130,7 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
     }
 
     private openSendNotificationDialog() {
-        this._dialog.open(SendNotificationDialogComponent, {
+        this.dialog.open(SendNotificationDialogComponent, {
             panelClass: 'slider',
             data: { reportId: this.currentReportInfo.Id }
         });
@@ -173,7 +173,7 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
                         action: this.closeReport.bind(this)
                     },
                     {
-                        html: `<div class="file-name pdf image" title="${this.currentReportInfo.FileName} ${this._fileSizePipe.transform(this.currentReportInfo.Size)}">
+                        html: `<div class="file-name pdf image" title="${this.currentReportInfo.FileName} ${this.fileSizePipe.transform(this.currentReportInfo.Size)}">
                                     ${this.currentReportInfo.FileName.split('.').shift()}
                                </div>`
                     }
@@ -266,8 +266,8 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
     }
 
     showGenerateReportDialog() {
-        this._dialog.closeAll();
-        this._dialog.open(GenerateReportDialogComponent, {
+        this.dialog.closeAll();
+        this.dialog.open(GenerateReportDialogComponent, {
             panelClass: [ 'slider' ],
             disableClose: true,
             hasBackdrop: true,
@@ -281,12 +281,12 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
         });
     }
 
-    calculateFileSizeValue = (data) => this._fileSizePipe.transform(data.Size);
+    calculateFileSizeValue = (data) => this.fileSizePipe.transform(data.Size);
 
     numerizeFileSizeSortValue = (data) => +data.Size;
 
     onDataGridInit(event) {
-        this._changeDetector.markForCheck();
+        this.changeDetector.markForCheck();
     }
 
     onCellClick($event) {
@@ -355,7 +355,7 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
                             setTimeout(() => this.showReportFullscreen(), 300);
                         this.openReportMode = true;
                         this.previewContent = StringHelper.getBase64(reader.result);
-                        this._changeDetector.markForCheck();
+                        this.changeDetector.markForCheck();
                     });
                     reader.readAsDataURL(blob);
                 super.finishLoading(true);
@@ -419,7 +419,7 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
         this.openReportMode = false;
         this.previewContent = undefined;
         this.viewerToolbarConfig = [];
-        this._changeDetector.markForCheck();
+        this.changeDetector.markForCheck();
         setTimeout(() => this.dataGrid.instance.repaint());
     }
 
@@ -450,9 +450,9 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
 
         if (this.openReportMode) {
             this.openReportMode = false;
-            this._changeDetector.markForCheck();
-            if (this._dialog) {
-                this._dialog.closeAll();
+            this.changeDetector.markForCheck();
+            if (this.dialog) {
+                this.dialog.closeAll();
             }
         }
     }
@@ -481,6 +481,8 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
     }
 
     activate() {
+        setTimeout(() => 
+            this.changeDetector.markForCheck(), 600);
         this.getRootComponent().overflowHidden(true);
     }
 

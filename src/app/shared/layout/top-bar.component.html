@@ -1,15 +1,15 @@
 ﻿<platform-select></platform-select>
 
-<div class="top-bar-nav" *ngIf="navbarItems.length">
+<div class="top-bar-nav" [ngStyle]="{'visibility': lastInnerWidth ? 'visible' : 'hidden'}">
     <dx-nav-bar
         height="74px"
+        [dataSource]="navbarItems"
         [hoverStateEnabled]="true"
         [selectedIndex]="selectedIndex"
-        selectionMode="single">
-        <dxi-item
-            *ngFor="let link of navbarItems; let i = index;"
-            [visible]="showMenuItem(link)"
-            [disabled]="link.disabled">
+        [itemTemplate]="'navBarItem'"
+        selectionMode="single"
+        (onInitialized)="onNavBarInitialized()">
+        <div *dxTemplate="let link of 'navBarItem'">
             <dx-menu
                 [dataSource]="[link]"
                 [selectionMode]="none"
@@ -19,7 +19,7 @@
                 [showSubmenuMode]="{name: 'onHover', delay: {hide:0, show: 0}}"
                 (onItemClick)="navigate($event)">
             </dx-menu>
-        </dxi-item>
+        </div>
     </dx-nav-bar>
 </div>
 

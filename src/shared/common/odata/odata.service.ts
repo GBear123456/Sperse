@@ -75,6 +75,10 @@ export class ODataService {
                     this.pivotGridInitialBeforeSend = grid.getDataSource()._store._dataSource._store._beforeSend;
                 }
                 const newBeforeSend = (request) => {
+                    const filterIndex = request.url.indexOf('?$filter');
+                    if (filterIndex !== -1) {
+                        request.url = request.url.slice(0, filterIndex);
+                    }
                     request.params['$filter'] = filter.slice('?$filter='.length);
                     this.pivotGridInitialBeforeSend(request);
                 };

@@ -1,9 +1,10 @@
 /** Core imports */
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, ViewChild } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { Router, NavigationEnd } from '@angular/router';
 
 /** Third party imports */
+import { DxNavBarComponent } from 'devextreme-angular/ui/nav-bar';
 import * as _ from 'underscore';
 
 /** Application imports */
@@ -23,13 +24,15 @@ import { AppPermissionService } from '@shared/common/auth/permission.service';
     }
 })
 export class TopBarComponent {
+    @ViewChild(DxNavBarComponent) navBar: DxNavBarComponent;
+
     config: any = {};
     selectedIndex: number;
     lastInnerWidth: number;
-    visibleMenuItemsWidth: 0;
     updateTimeout: any;
     navbarItems: any = [];
     adaptiveMenuItems: any = [];
+    mutationObservers: any = {};
     menu: PanelMenu = <PanelMenu>{
         items: []
     };
@@ -60,13 +63,11 @@ export class TopBarComponent {
 
         this.appService.subscribeModuleChange((config) => {
             this.config = config;
-            this.visibleMenuItemsWidth = 0;
             this.menu = new PanelMenu('MainMenu', 'MainMenu',
                 this.initMenu(config['navigation'], config['localizationSource'], 0)
             );
-
+            this.navbarItems = this.menu.items;
             this.appService.topMenu = this.menu;
-            this.updateNavMenu(true);
         });
     }
 
@@ -79,15 +80,11 @@ export class TopBarComponent {
             let item = new PanelMenuItem(value[0] && this.ls.l('Navigation_' + value[0], localizationSource),
                 value[1], value[2], value[3], value[4], value[5], value[6], value[7]);
             item.visible = this.showMenuItem(item);
-            if (!level && item.visible) {
-                item['length'] = item.text.length * 10 + 38;
-                this.visibleMenuItemsWidth += item['length'];
-            }
             navList.push(item);
         });
         return navList;
     }
-
+                                                       
     navigate(event) {
         let route = event.itemData.route;
         if (route) {
@@ -100,34 +97,71 @@ export class TopBarComponent {
 
     updateNavMenu(forced = false) {
         if (forced || (window.innerWidth != this.lastInnerWidth)) {
-            this.navbarItems = [];
-            this.adaptiveMenuItems = [];
             clearTimeout(this.updateTimeout);
             this.updateTimeout = setTimeout(() => {
+                forced && this.calculateItemsWidth();
                 this.lastInnerWidth = window.innerWidth;
-                const userManagementElement = this.document.body.querySelector('user-management-list');
-                const userManagementWidth = userManagementElement ? userManagementElement.offsetWidth : 0;
-                const contactInfoPanelElement = this.document.body.querySelector('contact-info-panel');
-                const contactInfoPanelElementWidth = contactInfoPanelElement ? contactInfoPanelElement.offsetWidth : 0;
-                const pageLogoElement = this.document.body.querySelector('.page-header-inner .page-logo');
-                const pageLogoElementWidth = pageLogoElement ? pageLogoElement.offsetWidth : 0;
-                const platformSelectElement = this.document.body.querySelector('platform-select');
-                const platformSelectElementWidth = platformSelectElement ? platformSelectElement.offsetWidth : 0;
-                let availableWidth = this.lastInnerWidth - userManagementWidth - contactInfoPanelElementWidth - pageLogoElementWidth - platformSelectElementWidth - 150;
-                if (availableWidth < this.visibleMenuItemsWidth) {
-                    let switchItemIndex;
-                    this.menu.items.every((item, index) => {
+                if (this.lastInnerWidth < 768) {
+                    this.navbarItems = [];
+                    this.adaptiveMenuItems = this.menu.items;
+                } else {
+                    let switchItemIndex,
+                        availableWidth = this.getAvailableWidth();
+
+                    if (this.menu.items.every((item, index) => {
                         switchItemIndex = index;
                         if (item.visible)
-                            availableWidth -= item['length'];
+                            availableWidth -= item['width'];
                         return availableWidth >= 0;
-                    });
-                    this.navbarItems = switchItemIndex ? this.menu.items.slice(0, --switchItemIndex) : [];
-                    this.adaptiveMenuItems = switchItemIndex ? this.menu.items.slice(switchItemIndex) : this.menu.items;
-                } else
-                    this.navbarItems = this.menu.items;
+                    })) {
+                        this.navbarItems = this.menu.items;
+                        this.adaptiveMenuItems = [];
+                    } else {
+                        this.navbarItems = switchItemIndex ? this.menu.items.slice(0, switchItemIndex) : [];
+                        this.adaptiveMenuItems = switchItemIndex ? this.menu.items.slice(switchItemIndex) : this.menu.items;
+                    }
+                }
             }, 300);
         }
+    }
+
+    contentChangeObserve() {
+        [
+            'user-management-list', 'contact-info-panel',
+            'platform-select', '.page-header-inner .page-logo'
+        ].forEach((sel) => {
+            let element = this.document.body.querySelector(sel);
+            if (element && !this.mutationObservers[sel]) {
+                this.mutationObservers[sel] = new MutationObserver(() => {
+                    this.updateNavMenu(true);
+                });
+                this.mutationObservers[sel].observe(element, { 
+                    attributes: true, 
+                    childList: true, 
+                    subtree: true 
+                });
+            }
+        });
+    }
+
+    getNavBarElement() {
+        return this.navBar.instance.element() as any;
+    }
+
+    calculateItemsWidth() {
+        let items = this.getNavBarElement().querySelectorAll('div.dx-tab.dx-nav-item');
+        Array.prototype.forEach.call(items, (elm, index) => {
+            this.menu.items[index]['width'] = elm.offsetWidth + 20;
+        });
+    }
+
+    getAvailableWidth() {
+        return this.getNavBarElement().offsetWidth;
+    }
+
+    onNavBarInitialized() {        
+        this.contentChangeObserve();
+        this.updateNavMenu(true);
     }
 
     private checkMenuItemPermission(item: PanelMenuItem): boolean {

@@ -16,8 +16,8 @@ export class DataGridService {
         }
     }
 
-    static showColumnChooser(dataGrid) {
-        dataGrid.instance.showColumnChooser();
+    static showColumnChooser(grid) {
+        grid.instance.showColumnChooser();
     }
 
     static getGridOption(dataGrid, option: string) {

@@ -115,7 +115,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     pipelinePurposeId = AppConsts.PipelinePurposeIds.lead;
     selectedClientKeys = [];
     manageDisabled = true;
-    sliceStorageKey = 'CRM_Slice_' + this.sessionService.tenantId + '_' + this.sessionService.userId;
+    sliceStorageKey = 'CRM_Contacts_Slice_' + this.sessionService.tenantId + '_' + this.sessionService.userId;
 
     filterModelLists: FilterModel;
     filterModelTags: FilterModel;
@@ -335,6 +335,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 paginate: true
             }
         };
+        this.pivotGridDataSource = this.getPivotGridDataSource(this.dataSource);
         this.searchValue = '';
     }
 
@@ -825,27 +826,21 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                         name: 'pipeline',
                         action: this.toggleDataLayout.bind(this, DataLayoutType.Pipeline),
                         options: {
-                            checkPressed: () => {
-                                return (this.dataLayoutType == DataLayoutType.Pipeline);
-                            }
+                            checkPressed: () => this.showPipeline
                         }
                     },
                     {
                         name: 'dataGrid',
                         action: this.toggleDataLayout.bind(this, DataLayoutType.DataGrid),
                         options: {
-                            checkPressed: () => {
-                                return (this.dataLayoutType == DataLayoutType.DataGrid);
-                            }
+                            checkPressed: () => this.showDataGrid
                         }
                     },
                     {
                         name: 'pivotGrid',
                         action: this.toggleDataLayout.bind(this, DataLayoutType.PivotGrid),
                         options: {
-                            checkPressed: () => {
-                                return (this.dataLayoutType == DataLayoutType.PivotGrid);
-                            }
+                            checkPressed: () => this.showPivotGrid
                         }
                     }
                 ]
@@ -994,7 +989,6 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         } else if (this.showDataGrid) {
             this.setDataGridInstance();
         } else if (this.showPivotGrid) {
-            this.pivotGridDataSource = this.getPivotGridDataSource(this.dataSource);
             this.setPivotGridInstance();
         }
     }

@@ -51,14 +51,14 @@ export class PipelineService {
 
     constructor(
         injector: Injector,
-        private _dialog: MatDialog,
-        private _reuseService: RouteReuseStrategy,
-        private _leadService: LeadServiceProxy,
-        private _orderService: OrderServiceProxy,
-        private _activityService: ActivityServiceProxy,
-        private _pipelineServiceProxy: PipelineServiceProxy,
-        private _ls: AppLocalizationService,
-        private _notify: NotifyService,
+        private dialog: MatDialog,
+        private reuseService: RouteReuseStrategy,
+        private leadService: LeadServiceProxy,
+        private orderService: OrderServiceProxy,
+        private activityService: ActivityServiceProxy,
+        private pipelineServiceProxy: PipelineServiceProxy,
+        private ls: AppLocalizationService,
+        private notify: NotifyService,
         private store$: Store<CrmStore.State>
     ) {
         this.stageChange = new Subject<any>();
@@ -126,7 +126,7 @@ export class PipelineService {
                     complete && complete();
                 }
             } else {
-                entity.Name && this._notify.warn(this._ls.l('StageCannotBeUpdated',
+                entity.Name && this.notify.warn(this.ls.l('StageCannotBeUpdated',
                     AppConsts.localization.defaultLocalizationSourceName, entity.Name));
                 complete && setTimeout(() => complete());
             }
@@ -176,7 +176,7 @@ export class PipelineService {
     }
 
     activityTransition(fromStage, toStage, entity, complete) {
-        this._activityService.transition(TransitionActivityDto.fromJS({
+        this.activityService.transition(TransitionActivityDto.fromJS({
             id: this.getEntityId(entity),
             stageId: toStage.id,
             sortOrder: entity.SortOrder
@@ -189,7 +189,7 @@ export class PipelineService {
     }
 
     updateLeadStage(fromStage, toStage, entity, complete) {
-        this._leadService.updateLeadStage(
+        this.leadService.updateLeadStage(
             UpdateLeadStageInfo.fromJS({
                 leadId: this.getEntityId(entity),
                 stageId: toStage.id,
@@ -209,7 +209,7 @@ export class PipelineService {
         else
             this.getPipelineDefinitionObservable(AppConsts.PipelinePurposeIds.order).subscribe(
                 (pipeline) => {
-                    this._dialog.open(LeadCompleteDialogComponent, {
+                    this.dialog.open(LeadCompleteDialogComponent, {
                         data: {
                             stages: pipeline.stages
                         }
@@ -226,7 +226,7 @@ export class PipelineService {
     }
 
     private processLeadInternal(entity, data, complete) {
-        this._leadService.processLead(
+        this.leadService.processLead(
             ProcessLeadInput.fromJS({
                 leadId: this.getEntityId(entity),
                 orderStageId: data.orderStageId,
@@ -236,7 +236,7 @@ export class PipelineService {
         ).pipe(finalize(() => {
             entity.locked = false;
             complete && complete(data);
-            (this._reuseService as CustomReuseStrategy).invalidate('orders');
+            (this.reuseService as CustomReuseStrategy).invalidate('orders');
         })).subscribe(() => {
             this.completeEntityUpdate(entity, data.fromStage, data.toStage);
         });
@@ -246,7 +246,7 @@ export class PipelineService {
         if (entity.data)
             this.cancelLeadInternal(entity, {...entity.data, fromStage, toStage}, complete);
         else
-            this._dialog.open(EntityCancelDialogComponent, {
+            this.dialog.open(EntityCancelDialogComponent, {
                 data: {
                     showReasonField: true
                 }
@@ -261,7 +261,7 @@ export class PipelineService {
     }
 
     private cancelLeadInternal(entity, data, complete) {
-        this._leadService.cancelLead(
+        this.leadService.cancelLead(
             CancelLeadInfo.fromJS({
                 leadId: this.getEntityId(entity),
                 cancellationReasonId: data.reasonId,
@@ -276,7 +276,7 @@ export class PipelineService {
     }
 
     updateOrderStage(fromStage, toStage, entity, complete) {
-        this._orderService.updateStage(
+        this.orderService.updateStage(
             UpdateOrderStageInfo.fromJS({
                 orderId: this.getEntityId(entity),
                 stageId: toStage.id,
@@ -294,7 +294,7 @@ export class PipelineService {
         let model: ProcessOrderInfo = new ProcessOrderInfo();
         model.id = this.getEntityId(entity);
         model.sortOrder = entity.SortOrder;
-        this._orderService.process(
+        this.orderService.process(
             model
         ).pipe(finalize(() => {
             entity.locked = false;
@@ -308,7 +308,7 @@ export class PipelineService {
         if (entity.data)
             this.cancelOrderInternal(entity, {...entity.data, fromStage, toStage}, complete);
         else
-            this._dialog.open(EntityCancelDialogComponent, {
+            this.dialog.open(EntityCancelDialogComponent, {
                 data: {}
             }).afterClosed().subscribe(data => {
                 if (data)
@@ -321,7 +321,7 @@ export class PipelineService {
     }
 
     private cancelOrderInternal(entity, data, complete) {
-        this._orderService.cancel(
+        this.orderService.cancel(
             CancelOrderInfo.fromJS({
                 orderId: this.getEntityId(entity),
                 comment: data.comment
@@ -372,7 +372,7 @@ export class PipelineService {
     updateEntitySortOrder(pipelineId, entity, complete) {
         if (!entity.locked) {
             entity.locked = true;
-            this._pipelineServiceProxy.updateEntitySortOrder(
+            this.pipelineServiceProxy.updateEntitySortOrder(
                 pipelineId, entity.Id, entity.SortOrder
             ).pipe(finalize(() => {
                 entity.locked = false;

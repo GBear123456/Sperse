@@ -83,6 +83,9 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
     private contactGroup: ContactGroup;
     private showRemovingOrgRelationProgress = false;
 
+    private readonly allContactGroups = _.values(ContactGroup);
+    private readonly allContactGroupsExceptUser = this.allContactGroups.filter(v => v != ContactGroup.UserProfile);
+
     isAdminModule;
     manageAllowed;
     defaultContextMenuItems: ContextMenuItem[] = [
@@ -91,28 +94,28 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
             text: this.l('AddFiles'),
             selected: false,
             icon: 'files',
-            contactGroups: [ ContactGroup.Client, ContactGroup.Partner, ContactGroup.UserProfile ]
+            contactGroups: this.allContactGroups
         },
         {
             type: ContextType.AddNotes,
             text: this.l('AddNotes'),
             selected: false,
             icon: 'note',
-            contactGroups: [ ContactGroup.Client, ContactGroup.Partner, ContactGroup.UserProfile ]
+            contactGroups: this.allContactGroups
         },
         {
             type: ContextType.AddContact,
             text: this.l('AddContact'),
             selected: false,
             icon: 'add-contact',
-            contactGroups: [ ContactGroup.Client, ContactGroup.Partner ]
+            contactGroups: this.allContactGroupsExceptUser
         },
         {
             type: ContextType.AddInvoice,
             text: this.l('AddInvoice'),
             selected: false,
             icon: 'money',
-            contactGroups: [ ContactGroup.Client, ContactGroup.Partner ]
+            contactGroups: this.allContactGroupsExceptUser
         }
     ];
     addContextMenuItems: ContextMenuItem[] = [];

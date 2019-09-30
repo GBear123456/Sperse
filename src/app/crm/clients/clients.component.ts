@@ -7,7 +7,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import 'devextreme/data/odata/store';
 import { Store, select } from '@ngrx/store';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { first, finalize, takeUntil } from 'rxjs/operators';
 import * as _ from 'underscore';
 
@@ -65,6 +65,9 @@ import { UserManagementService } from '@shared/common/layout/user-management-lis
 import { DataGridService } from '@app/shared/common/data-grid.service.ts/data-grid.service';
 import { OrganizationUnitsStoreActions, OrganizationUnitsStoreSelectors } from '@app/crm/store';
 import { DataGridHelper } from '@app/crm/shared/helpers/data-grid.helper';
+import { DataLayoutType } from '@app/shared/layout/data-layout-type';
+import { AppSessionService } from '@shared/common/session/app-session.service';
+import { SliceComponent } from '@app/crm/shared/slice/slice.component';
 
 @Component({
     templateUrl: './clients.component.html',
@@ -80,6 +83,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     @ViewChild(RatingComponent) ratingComponent: RatingComponent;
     @ViewChild(StarsListComponent) starsListComponent: StarsListComponent;
     @ViewChild(StaticListComponent) statusComponent: StaticListComponent;
+    @ViewChild(SliceComponent) sliceComponent: SliceComponent;
 
     private readonly MENU_LOGIN_INDEX = 1;
     private readonly dataSourceURI: string = 'Customer';
@@ -94,7 +98,20 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     filterModelLists: FilterModel;
     filterModelTags: FilterModel;
     filterModelAssignment: FilterModel;
-    filterModelStatus: FilterModel;
+    filterModelStatus: FilterModel = new FilterModel({
+        component: FilterCheckBoxesComponent,
+        caption: 'status',
+        field: 'StatusId',
+        isSelected: true,
+        items: {
+            element: new FilterCheckBoxesModel({
+                dataSource$: this.statuses$,
+                nameField: 'name',
+                keyExpr: 'id',
+                selectedKeys$: of(['A'])
+            })
+        }
+    });
     filterModelRating: FilterModel;
     filterModelStar: FilterModel;
 
@@ -108,7 +125,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         toggleToolbar: this.toggleToolbar.bind(this),
         buttons: [
             {
-                enabled: this._contactService.checkCGPermission(ContactGroup.Client),
+                enabled: this.contactService.checkCGPermission(ContactGroup.Client),
                 action: this.createClient.bind(this),
                 lable: this.l('CreateNewCustomer')
             }
@@ -128,24 +145,112 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             text: this.l('LoginAsThisUser'),
             visible: this.permission.isGranted(AppPermissions.AdministrationUsersImpersonation),
             action: () => {
-                this._impersonationService.impersonate(this.actionEvent.data.UserId, this.appSession.tenantId);
+                this.impersonationService.impersonate(this.actionEvent.data.UserId, this.appSession.tenantId);
             }
         }
     ];
     permissions = AppPermissions;
+    private pivotGridDataSourceConfig = {
+        fields: [
+            {
+                area: 'row',
+                dataField: 'CountryId',
+                name: 'country',
+                expanded: true,
+                sortBy: 'displayText'
+            },
+            {
+                area: 'row',
+                dataField: 'StateId',
+                name: 'state',
+                sortBy: 'displayText'
+            },
+            {
+                area: 'row',
+                dataField: 'City',
+                name: 'city',
+                sortBy: 'displayText'
+            },
+            {
+                dataType: 'number',
+                area: 'data',
+                summaryType: 'count',
+                name: 'count',
+                isMeasure: true
+            },
+            {
+                area: 'column',
+                dataField: 'CreationTime',
+                dataType: 'date',
+                groupInterval: 'year',
+                name: 'year',
+                showTotals: false
+            },
+            {
+                area: 'column',
+                dataField: 'CreationTime',
+                dataType: 'date',
+                groupInterval: 'quarter',
+                showTotals: false,
+            },
+            {
+                area: 'column',
+                dataField: 'CreationTime',
+                dataType: 'date',
+                groupInterval: 'month',
+                showTotals: false
+            },
+            {
+                area: 'filter',
+                dataField: 'BankCode'
+            },
+            {
+                area: 'filter',
+                dataField: 'CompanyName'
+            },
+            {
+                area: 'filter',
+                dataField: 'Rating'
+            },
+            {
+                area: 'filter',
+                dataField: 'Status'
+            },
+            {
+                area: 'filter',
+                dataField: 'ZipCode'
+            }
+        ],
+        select: [
+            'BankCode',
+            'City',
+            'CompanyName',
+            'CountryId',
+            'CreationTime',
+            'Rating',
+            'StateId',
+            'Status',
+            'ZipCode'
+        ]
+    };
+    pivotGridDataSource: any;
+    dataLayoutType: DataLayoutType = DataLayoutType.DataGrid;
+    sliceStorageKey = 'CRM_Clients_Slice_' + this.sessionService.tenantId + '_' + this.sessionService.userId;
+    private filterChanged = false;
 
     constructor(
         injector: Injector,
-        private _contactService: ContactsService,
-        private _pipelineService: PipelineService,
-        private _filtersService: FiltersService,
-        private _clientService: ClientService,
-        private _contactEmailService: ContactEmailServiceProxy,
+        private contactService: ContactsService,
+        private pipelineService: PipelineService,
+        private filtersService: FiltersService,
+        private clientService: ClientService,
+        private contactEmailService: ContactEmailServiceProxy,
         private store$: Store<AppStore.State>,
-        private _reuseService: RouteReuseStrategy,
+        private reuseService: RouteReuseStrategy,
         private lifeCycleSubjectsService: LifecycleSubjectsService,
         private itemDetailsService: ItemDetailsService,
-        private _impersonationService: ImpersonationService,
+        private impersonationService: ImpersonationService,
+        private sessionService: AppSessionService,
         public dialog: MatDialog,
         public appService: AppService,
         public contactProxy: ContactServiceProxy,
@@ -155,20 +260,6 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     }
 
     ngOnInit() {
-        this.filterModelStatus = new FilterModel({
-            component: FilterCheckBoxesComponent,
-            caption: 'status',
-            field: 'StatusId',
-            isSelected: true,
-            items: {
-                element: new FilterCheckBoxesModel({
-                    dataSource$: this.statuses$,
-                    nameField: 'name',
-                    keyExpr: 'id',
-                    value: 'A'
-                })
-            }
-        });
         this.filterModelStatus.updateCaptions();
         this.dataSource = {
             store: {
@@ -183,9 +274,13 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 }
             }
         };
+        this.pivotGridDataSource = {
+            ...this.dataSource,
+            ...this.pivotGridDataSourceConfig
+        };
         this.searchValue = '';
-        this._pipelineService.stageChange.asObservable().subscribe((lead) => {
-            this.dependencyChanged = (lead.Stage == _.last(this._pipelineService.getStages(AppConsts.PipelinePurposeIds.lead)).name);
+        this.pipelineService.stageChange.asObservable().subscribe((lead) => {
+            this.dependencyChanged = (lead.Stage == _.last(this.pipelineService.getStages(AppConsts.PipelinePurposeIds.lead)).name);
         });
 
         this.getOrganizationUnits();
@@ -213,8 +308,10 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 .subscribe(params => {
                     if ('addNew' == params['action'])
                         setTimeout(() => this.createClient());
-                    if (params['refresh'])
+                    if (params['refresh']) {
                         this.refresh();
+                        this.filterChanged = true;
+                    }
             });
     }
 
@@ -236,7 +333,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             this.dependencyChanged = false;
         this.processFilterInternal();
         if (refreshDashboard) {
-            (this._reuseService as CustomReuseStrategy).invalidate('dashboard');
+            (this.reuseService as CustomReuseStrategy).invalidate('dashboard');
         }
     }
 
@@ -252,7 +349,10 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             disableClose: true,
             closeOnNavigation: false,
             data: {
-                refreshParent: this.invalidate.bind(this),
+                refreshParent: () => {
+                    this.invalidate();
+                    this.filterChanged = true;
+                },
                 customerType: ContactGroup.Client
             }
         }).afterClosed().subscribe(() => this.refresh());
@@ -275,10 +375,10 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
 
     initFilterConfig() {
         if (this.filters) {
-            this._filtersService.setup(this.filters);
-            this._filtersService.checkIfAnySelected();
+            this.filtersService.setup(this.filters);
+            this.filtersService.checkIfAnySelected();
         } else {
-            this._filtersService.setup(
+            this.filtersService.setup(
                 this.filters = [
                     new FilterModel({
                         component: FilterInputsComponent,
@@ -412,8 +512,9 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             );
         }
 
-        this._filtersService.apply(() => {
+        this.filtersService.apply(() => {
             this.selectedClientKeys = [];
+            this.filterChanged = true;
             this.initToolbarConfig();
             this.processFilterInternal();
         });
@@ -429,22 +530,22 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                             setTimeout(() => {
                                 this.dataGrid.instance.repaint();
                             }, 1000);
-                            this._filtersService.fixed = !this._filtersService.fixed;
+                            this.filtersService.fixed = !this.filtersService.fixed;
                         },
                         options: {
                             checkPressed: () => {
-                                return this._filtersService.fixed;
+                                return this.filtersService.fixed;
                             },
                             mouseover: () => {
-                                this._filtersService.enable();
+                                this.filtersService.enable();
                             },
                             mouseout: () => {
-                                if (!this._filtersService.fixed)
-                                    this._filtersService.disable();
+                                if (!this.filtersService.fixed)
+                                    this.filtersService.disable();
                             }
                         },
                         attr: {
-                            'filter-selected': this._filtersService.hasFilterSelected
+                            'filter-selected': this.filtersService.hasFilterSelected
                         }
                     }
                 ]
@@ -474,7 +575,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                     {
                         name: 'assign',
                         action: this.toggleUserAssignment.bind(this),
-                        disabled: !this._contactService.checkCGPermission(ContactGroup.Client, 'ManageAssignments'),
+                        disabled: !this.contactService.checkCGPermission(ContactGroup.Client, 'ManageAssignments'),
                         attr: {
                             'filter-selected': this.filterModelAssignment && this.filterModelAssignment.isSelected
                         }
@@ -489,7 +590,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                     {
                         name: 'lists',
                         action: this.toggleLists.bind(this),
-                        disabled: !this._contactService.checkCGPermission(ContactGroup.Client, 'ManageListsAndTags'),
+                        disabled: !this.contactService.checkCGPermission(ContactGroup.Client, 'ManageListsAndTags'),
                         attr: {
                             'filter-selected': this.filterModelLists && this.filterModelLists.isSelected
                         }
@@ -497,7 +598,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                     {
                         name: 'tags',
                         action: this.toggleTags.bind(this),
-                        disabled: !this._contactService.checkCGPermission(ContactGroup.Client, 'ManageListsAndTags'),
+                        disabled: !this.contactService.checkCGPermission(ContactGroup.Client, 'ManageListsAndTags'),
                         attr: {
                             'filter-selected': this.filterModelTags && this.filterModelTags.isSelected
                         }
@@ -505,7 +606,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                     {
                         name: 'rating',
                         action: this.toggleRating.bind(this),
-                        disabled: !this._contactService.checkCGPermission(ContactGroup.Client, 'ManageRatingAndStars'),
+                        disabled: !this.contactService.checkCGPermission(ContactGroup.Client, 'ManageRatingAndStars'),
                         attr: {
                             'filter-selected': this.filterModelRating && this.filterModelRating.isSelected
                         }
@@ -513,7 +614,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                     {
                         name: 'star',
                         action: this.toggleStars.bind(this),
-                        disabled: !this._contactService.checkCGPermission(ContactGroup.Client, 'ManageRatingAndStars'),
+                        disabled: !this.contactService.checkCGPermission(ContactGroup.Client, 'ManageRatingAndStars'),
                         attr: {
                             'filter-selected': this.filterModelStar && this.filterModelStar.isSelected
                         }
@@ -534,7 +635,13 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                                 text: this.l('Save as PDF'),
                                 icon: 'pdf',
                             }, {
-                                action: this.exportToXLS.bind(this),
+                                action: () => {
+                                    if (this.dataLayoutType === DataLayoutType.PivotGrid) {
+                                        this.sliceComponent.pivotGrid.instance.exportToExcel();
+                                    } else if (this.dataLayoutType === DataLayoutType.DataGrid) {
+                                        this.exportToXLS.bind(this);
+                                    }
+                                },
                                 text: this.l('Export to Excel'),
                                 icon: 'xls',
                             }, {
@@ -557,6 +664,27 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 items: [
                     { name: 'showCompactRowsHeight', action: DataGridService.showCompactRowsHeight.bind(this, this.dataGrid, true) },
                     { name: 'columnChooser', action: DataGridService.showColumnChooser.bind(this, this.dataGrid) }
+                ]
+            },
+            {
+                location: 'after',
+                locateInMenu: 'auto',
+                areItemsDependent: true,
+                items: [
+                    {
+                        name: 'dataGrid',
+                        action: this.toggleDataLayout.bind(this, DataLayoutType.DataGrid),
+                        options: {
+                            checkPressed: () => this.showDataGrid
+                        }
+                    },
+                    {
+                        name: 'pivotGrid',
+                        action: this.toggleDataLayout.bind(this, DataLayoutType.PivotGrid),
+                        options: {
+                            checkPressed: () => this.showPivotGrid
+                        }
+                    }
                 ]
             },
             {
@@ -599,6 +727,55 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         this.starsListComponent.toggle();
     }
 
+    toggleDataLayout(dataLayoutType: DataLayoutType) {
+        this.selectedClientKeys = [];
+        this.dataLayoutType = dataLayoutType;
+        this.initDataSource();
+        if (this.showDataGrid) {
+            setTimeout(() => this.dataGrid.instance.repaint());
+        }
+        if (this.filterChanged) {
+            this.filterChanged = false;
+            setTimeout(() => {
+                if (this.showPivotGrid) {
+                    this.sliceComponent.pivotGrid.instance.updateDimensions();
+                }
+                this.processFilterInternal();
+            });
+        }
+    }
+
+    initDataSource() {
+        if (this.showDataGrid) {
+            this.setDataGridInstance();
+        } else if (this.showPivotGrid) {
+            this.setPivotGridInstance();
+        }
+    }
+
+    setDataGridInstance() {
+        let instance = this.dataGrid && this.dataGrid.instance;
+        if (instance && !instance.option('dataSource')) {
+            instance.option('dataSource', this.dataSource);
+            this.startLoading();
+        }
+    }
+
+    setPivotGridInstance() {
+        let instance = this.sliceComponent && this.sliceComponent.pivotGrid && this.sliceComponent.pivotGrid.instance;
+        if (instance && !instance.option('dataSource')) {
+            instance.option('dataSource', this.pivotGridDataSource);
+        }
+    }
+
+    get showDataGrid(): boolean {
+        return this.dataLayoutType === DataLayoutType.DataGrid;
+    }
+
+    get showPivotGrid(): boolean {
+        return this.dataLayoutType === DataLayoutType.PivotGrid;
+    }
+
     filterByStates(filter: FilterModel) {
         return FilterHelpers.filterByStates(filter);
     }
@@ -632,15 +809,18 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     }
 
     searchValueChange(e: object) {
-        this.searchValue = e['value'];
-        this.initToolbarConfig();
-        this.processFilterInternal();
+        if (this.filterChanged = (this.searchValue != e['value'])) {
+            this.searchValue = e['value'];
+            this.initToolbarConfig();
+            this.processFilterInternal();
+        }
     }
 
     processFilterInternal() {
-        if (this.dataGrid && this.dataGrid.instance) {
+        if (this.dataGrid && this.dataGrid.instance
+            || this.sliceComponent && this.sliceComponent.pivotGrid && this.sliceComponent.pivotGrid.instance) {
             this.processODataFilter(
-                this.dataGrid.instance,
+                this.showPivotGrid ? this.sliceComponent.pivotGrid.instance : this.dataGrid.instance,
                 this.dataSourceURI,
                 this.filters,
                 (filter) => {
@@ -654,9 +834,9 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     }
 
     updateClientStatuses(status) {
-        if (this._contactService.checkCGPermission(ContactGroup.Client)) {
+        if (this.contactService.checkCGPermission(ContactGroup.Client)) {
             let selectedIds: number[] = this.dataGrid.instance.getSelectedRowKeys();
-            this._clientService.updateContactStatuses(
+            this.clientService.updateContactStatuses(
                 selectedIds,
                 ContactGroup.Client,
                 status.id,
@@ -714,7 +894,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             }).afterClosed().subscribe(result => {
                 if (result) {
                     this.startLoading();
-                    this._contactEmailService.createContactEmail(new CreateContactEmailInput({
+                    this.contactEmailService.createContactEmail(new CreateContactEmailInput({
                         contactId: data.Id,
                         emailAddress: dialogData.emailAddress,
                         isActive: dialogData.isActive,
@@ -748,12 +928,16 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         this.showHostElement();
     }
 
+    get visibleContentHeight(): string {
+        return (window.innerHeight - (this.isFullscreenMode ? 60 : (this.appService.toolbarIsHidden ? 149 : 211))) + 'px';
+    }
+
     deactivate() {
         super.deactivate();
 
         this.subRouteParams.unsubscribe();
         this.appService.updateToolbar(null);
-        this._filtersService.unsubscribe();
+        this.filtersService.unsubscribe();
         this.rootComponent.overflowHidden();
         this.itemDetailsService.setItemsSource(ItemTypeEnum.Customer, this.dataGrid.instance.getDataSource());
         this.hideHostElement();

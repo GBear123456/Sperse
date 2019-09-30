@@ -48,6 +48,7 @@
     <div class="dx-field-label">{{ls.l('bank_aba')}}<span *ngIf="offersWizardService.isApplicationSubmission">*</span></div>
     <div class="dx-field-value">
         <dx-text-box placeholder="Enter bank ABA"
+                     [maxLength]="9"
                      [(value)]="offersWizardService.submitApplicationProfileInput.bankInformation.bankABA">
             <dx-validator>
                 <dxi-validation-rule type="custom"

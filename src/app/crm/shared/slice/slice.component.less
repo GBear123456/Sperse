@@ -1,0 +1,134 @@
+:host {
+    /deep/ .dx-loadpanel-indicator,
+    /deep/ .dx-overlay-content {
+        width: 150px !important;
+        height: 150px !important;
+    }
+
+    /deep/ .dx-pivotgrid {
+
+        .dx-pivotgrid .dx-data-header,
+        .dx-area-description-cell.dx-pivotgrid-background {
+            background-color: rgba(243, 247, 250, 0.4);
+        }
+
+        .dx-area-field-content {
+            font-size: 15px;
+            font-weight: 500;
+            letter-spacing: 0.11px;
+            color: #424c56;
+        }
+
+        .dx-filter-header .dx-pivotgrid-fields-area {
+            padding: 15px 19px 15px 10px;
+            width: calc(100vw - 15px);
+            overflow: auto;
+            transition: width 1s;
+            .dx-area-field-container {
+                border: 2px dashed #dadee1;
+                .dx-area-field {
+                    border: none;
+                    background-color: #f3f7fa;
+                    letter-spacing: 0.1px;
+                    color: #424c56;
+                    flex-direction: row;
+                    position: relative;
+                    .dx-header-filter:not(.dx-header-filter-empty) {
+                        &:after {
+                            content: '';
+                            position: absolute;
+                            display: block;
+                            width: 5px;
+                            height: 5px;
+                            border-radius: 50%;
+                            background: red;
+                            top: 5px;
+                            right: 5px;
+                        }
+                    }
+                }
+            }
+        }
+
+        &.dx-widget {
+            .dx-sort-up:before, .dx-widget .dx-sort-down:before,
+            .dx-header-filter.dx-header-filter-empty:before {
+                top: 0;
+            }
+
+
+            dx-header-filter {
+                width: 15px;
+                height: 15px;
+            }
+        }
+
+        &.filter-opened {
+            .dx-filter-header .dx-pivotgrid-fields-area {
+                width: calc(100vw - 356px);
+            }
+        }
+
+        &.dx-pivotgrid-fields-container {
+
+            .dx-area-field.dx-area-box {
+                border-radius: 4px;
+                color: #424c56;
+                display: flex;
+                flex-direction: row-reverse;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .dx-column-indicators {
+                margin-top: 4px;
+            }
+        }
+
+
+
+
+        .dx-pivotgrid-horizontal-headers,
+        .dx-pivotgrid-vertical-headers {
+            td {
+                background-color: rgba(224, 244, 251, 0.5);
+                font-weight: 600;
+                font-style: normal;
+                font-stretch: normal;
+                line-height: normal;
+                letter-spacing: 0.11px;
+                color: #212c36;
+            }
+        }
+
+        .dx-pivotgrid-toolbar .dx-button {
+            width: 50px;
+            height: 37px;
+        }
+
+        .dx-pivotgrid-horizontal-headers {
+            td {
+                vertical-align: middle;
+                text-align: center;
+            }
+        }
+
+        .dx-area-data-cell {
+            td {
+                font-family: Roboto;
+                font-size: 15px;
+                letter-spacing: 0.11px;
+                text-align: right;
+                color: #424c56;
+                padding: 0 10px;
+            }
+        }
+
+        td {
+            &.dx-row-total,
+            &.dx-grandtotal {
+                background-color: #def9f3;
+            }
+        }
+    }
+}

@@ -139,7 +139,8 @@
                     </div>
                 </div>
             </div>
-            <div class="section clearfix" *ngIf="cfoService.isInstanceAdmin || cfoService.isMemberAccessManage">
+
+            <div class="section clearfix" *ngIf="(cfoService.isInstanceAdmin || cfoService.isMemberAccessManage) && userManagementService.checkAdvicePeriodLayout()">
                 <div class="header header-date">
                     {{ls.l("Cut-off date")}}
                 </div>

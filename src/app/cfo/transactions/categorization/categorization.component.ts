@@ -427,7 +427,6 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
         this.categoryList.instance.endUpdate();
     }
 
-
     onRowExpandChange() {
         this._cacheService.set(this._expandedCacheKey, this.categoryList.expandedRowKeys);
     }
