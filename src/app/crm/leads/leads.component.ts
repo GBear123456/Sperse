@@ -8,13 +8,15 @@ import {
     ViewChild
 } from '@angular/core';
 import { RouteReuseStrategy } from '@angular/router';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
 import DataSource from 'devextreme/data/data_source';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { Store, select } from '@ngrx/store';
-import { first, takeUntil } from 'rxjs/operators';
+import { combineLatest } from 'rxjs';
+import { first, startWith, takeUntil } from 'rxjs/operators';
 import { CacheService } from 'ng2-cache-service';
 
 /** Application imports */
@@ -66,6 +68,7 @@ import { OrganizationUnitsStoreActions } from '@app/crm/store';
 import { DataGridHelper } from '@app/crm/shared/helpers/data-grid.helper';
 import { SlicePivotGridComponent } from '@app/shared/common/slice/pivot-grid/slice-pivot-grid.component';
 import { AppSessionService } from '@shared/common/session/app-session.service';
+import { SliceChartComponent } from '@app/shared/common/slice/chart/slice-chart.component';
 
 @Component({
     templateUrl: './leads.component.html',
@@ -83,6 +86,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     @ViewChild(StarsListComponent) starsListComponent: StarsListComponent;
     @ViewChild(StaticListComponent) stagesComponent: StaticListComponent;
     @ViewChild(SlicePivotGridComponent) slicePivotGridComponent: SlicePivotGridComponent;
+    @ViewChild(SliceChartComponent) sliceChartComponent: SliceChartComponent;
 
     private _selectedLeads: any;
     get selectedLeads() {
@@ -128,6 +132,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     private exportCallback: Function;
     private dataLayoutType: DataLayoutType = DataLayoutType.PivotGrid;
     private readonly dataSourceURI = 'Lead';
+    private readonly groupDataSourceURI = 'LeadGroup';
     private filters: FilterModel[];
     private subRouteParams: any;
     private filterChanged = false;
@@ -149,6 +154,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     };
     permissions = AppPermissions;
     pivotGridDataSource: any;
+    chartDataSource: any;
     private pivotGridDataSourceConfig = {
         fields: [
             {
@@ -300,8 +306,6 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     private organizationUnits: OrganizationUnitDto[];
 
     constructor(injector: Injector,
-        public dialog: MatDialog,
-        public contactProxy: ContactServiceProxy,
         private contactService: ContactsService,
         private leadService: LeadServiceProxy,
         private pipelineService: PipelineService,
@@ -313,6 +317,9 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         private itemDetailsService: ItemDetailsService,
         private cacheService: CacheService,
         private sessionService: AppSessionService,
+        private http: HttpClient,
+        public dialog: MatDialog,
+        public contactProxy: ContactServiceProxy,
         public userManagementService: UserManagementService
     ) {
         super(injector);
@@ -336,11 +343,46 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             }
         };
         this.pivotGridDataSource = this.getPivotGridDataSource(this.dataSource);
+        this.chartDataSource = new DataSource({
+            key: 'id',
+            load: () => {
+                const params = {
+                    contactGroupId: this.contactGroupId,
+                    group: `[{"selector":"CreationTime","groupInterval":"${this.sliceChartComponent.summaryBy.value}","isExpanded":false}]`,
+                    groupSummary: '[{"selector":"CreationTime","summaryType":"min"}]'
+                };
+                const filter = this.oDataService.getODataFilter(this.filters, this.getCheckCustom);
+                if (filter) {
+                    params['$filter'] = filter;
+                }
+                return this.http.get(this.getODataUrl(this.groupDataSourceURI), {
+                    headers: new HttpHeaders({
+                        'Authorization': 'Bearer ' + abp.auth.getToken()
+                    }),
+                    params: params
+                }).toPromise().then((contacts: any) => {
+                    return contacts.data.map(contact => ({
+                        creationDate: contact.summary[0],
+                        count: contact.count
+                    }));
+                });
+            }
+        });
         this.searchValue = '';
     }
 
     ngOnInit() {
         this.loadOrganizationUnits();
+        combineLatest(
+            this.sliceChartComponent.summaryBy$,
+            this.filtersService.filterChanged$.pipe(startWith(null))
+        ).pipe(
+            takeUntil(this.lifeCycleSubjectsService.destroy$),
+        ).subscribe(() => {
+            if (this.dataLayoutType === DataLayoutType.Chart) {
+                this.chartDataSource.load();
+            }
+        });
         this.activate();
     }
 
@@ -480,7 +522,11 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     if (this.showPivotGrid) {
                         this.slicePivotGridComponent.pivotGrid.instance.updateDimensions();
                     }
-                    this.processFilterInternal();
+                    if (this.showChart) {
+                        this.chartDataSource.load();
+                    } else {
+                        this.processFilterInternal();
+                    }
                 });
             }
         }
@@ -690,9 +736,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                             width: '279',
                             mode: 'search',
                             placeholder: this.l('Search') + ' ' + this.l('Leads').toLowerCase(),
-                            onValueChanged: (e) => {
-                                this.searchValueChange(e);
-                            }
+                            onValueChanged: (e) => this.searchValueChange(e)
                         }
                     }
                 ]
@@ -842,6 +886,13 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                         options: {
                             checkPressed: () => this.showPivotGrid
                         }
+                    },
+                    {
+                        name: 'chart',
+                        action: this.toggleDataLayout.bind(this, DataLayoutType.Chart),
+                        options: {
+                            checkPressed: () => this.showChart
+                        }
                     }
                 ]
             },
@@ -971,15 +1022,17 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     this.showPivotGrid ? this.slicePivotGridComponent.pivotGrid.instance : this.dataGrid.instance,
                     this.dataSourceURI,
                     this.filters,
-                    (filter) => {
-                        let filterMethod = this['filterBy' +
-                        this.capitalize(filter.caption)];
-                        if (filterMethod)
-                            return filterMethod.call(this, filter);
-                    }
+                    this.getCheckCustom
                 );
             }
         });
+    }
+
+    getCheckCustom = (filter: FilterModel) => {
+        let filterMethod = this['filterBy' +
+        this.capitalize(filter.caption)];
+        if (filterMethod)
+            return filterMethod.call(this, filter);
     }
 
     initDataSource() {
@@ -990,10 +1043,12 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             this.setDataGridInstance();
         } else if (this.showPivotGrid) {
             this.setPivotGridInstance();
+        } else if (this.showChart) {
+            this.setChartInstance();
         }
     }
 
-    setDataGridInstance() {
+    private setDataGridInstance() {
         let instance = this.dataGrid && this.dataGrid.instance;
         if (instance && !instance.option('dataSource')) {
             instance.option('dataSource', this.dataSource);
@@ -1001,10 +1056,19 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         }
     }
 
-    setPivotGridInstance() {
-        let instance = this.slicePivotGridComponent && this.slicePivotGridComponent.pivotGrid && this.slicePivotGridComponent.pivotGrid.instance;
-        if (instance && !instance.option('dataSource')) {
-            instance.option('dataSource', this.pivotGridDataSource);
+    private setPivotGridInstance() {
+        const pivotGridInstance = this.slicePivotGridComponent && this.slicePivotGridComponent.pivotGrid && this.slicePivotGridComponent.pivotGrid.instance;
+        this.setDataSourceToComponent(this.pivotGridDataSource, pivotGridInstance);
+    }
+
+    private setChartInstance() {
+        const chartInstance = this.sliceChartComponent && this.sliceChartComponent.chartComponent && this.sliceChartComponent.chartComponent.instance;
+        this.setDataSourceToComponent(this.chartDataSource, chartInstance);
+    }
+
+    private setDataSourceToComponent(dataSource: DataSource, componentInstance: any) {
+        if (componentInstance && !componentInstance.option('dataSource')) {
+            componentInstance.option('dataSource', dataSource);
         }
     }
 

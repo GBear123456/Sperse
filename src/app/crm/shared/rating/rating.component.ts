@@ -64,7 +64,7 @@ export class RatingComponent {
             })).pipe(finalize(() => {
                 if (!ratingValue)
                     this.ratingComponent.reset();
-            })).subscribe((result) => {
+            })).subscribe(() => {
                 this.onRatingUpdated.emit(ratingValue);
                 this._notify.success(this._ls.l('CustomersRated'));
             });

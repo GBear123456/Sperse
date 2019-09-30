@@ -146,8 +146,9 @@
         </slice-pivot-grid>
     </div>
     <div [hidden]="!showChart">
-        <slice-chart argumentField="CreationTime"
-                     valueField="">
+        <slice-chart width="800px"
+                     argumentField="creationDate"
+                     valueField="count">
         </slice-chart>
     </div>
 </div>

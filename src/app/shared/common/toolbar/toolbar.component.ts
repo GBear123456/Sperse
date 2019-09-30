@@ -136,6 +136,11 @@ export class ToolBarComponent implements OnDestroy {
                 hint: this.ls.l('Pivot Grid'),
                 icon: this.getImgURI('pivot-grid')
             },
+            chart: {
+                accessKey: 'chart',
+                hint: this.ls.l('Chart'),
+                icon: this.getImgURI('slice-chart')
+            },
             prev: {
                 hint: this.ls.l('Previous'),
                 icon: 'chevronprev'

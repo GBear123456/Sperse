@@ -1,13 +1,16 @@
 <h2>{{ title }}</h2>
 <dx-select-box [items]="summaryByList"
                [placeholder]="ls.l('SummaryBy')"
-               (onValueChanged)="summaryBy.next($event.value)">
+               [value]="capitalize(summaryBy.value)"
+               (onValueChanged)="summaryBy.next($event.value.toLowerCase())">
 </dx-select-box>
 <dx-chart>
 
     <dxo-tooltip [enabled]="true"
                  [zIndex]="1">
     </dxo-tooltip>
+
+    <dxo-size [width]="'800px'"></dxo-size>
 
     <!-- common settings for charts -->
     <dxo-common-series-settings [argumentField]="argumentField"
@@ -22,10 +25,9 @@
     </dxi-value-axis>
 
     <!-- Bottom axis -->
-    <dxo-argument-axis argumentType="datetime"
-                       [visible]="true"
+    <dxo-argument-axis [visible]="true"
                        type="discrete">
-        <dxo-label [customizeText]="customizeBottomAxis">
+        <dxo-label [customizeText]="customizeBottomAxis.bind(this)">
             <dxo-format [type]="summaryBy$ | async"></dxo-format>
         </dxo-label>
         <dxo-tick-interval [months]="1"></dxo-tick-interval>

@@ -16,6 +16,7 @@ export class FiltersService {
     private subjectFixedToggle: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
     private subjectFilters: Subject<FilterModel[]> = new Subject<FilterModel[]>();
     private subjectFilter: Subject<FilterModel> = new Subject<FilterModel>();
+    filterChanged$: Observable<FilterModel> = this.subjectFilter.asObservable();
     private subscribers: Array<Subscription> = [];
     private disableTimeout: any;
 

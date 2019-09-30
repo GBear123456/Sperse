@@ -1,8 +1,10 @@
 /** Core imports */
-import { ChangeDetectionStrategy, Component, OnInit, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, Input, ViewChild } from '@angular/core';
 
 /** Third party imports */
+import { DxChartComponent } from 'devextreme-angular/ui/chart';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { distinctUntilChanged } from 'rxjs/operators';
 import values from 'lodash/values';
 import capitalize from 'lodash/capitalize';
 
@@ -18,24 +20,31 @@ import { DateHelper } from '@shared/helpers/DateHelper';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SliceChartComponent implements OnInit {
-    @Input() dataSource: any;
     @Input() title = '';
     @Input() valueField: string;
     @Input() argumentField: string;
+    @Input() width: string;
+    @ViewChild(DxChartComponent) chartComponent: DxChartComponent;
     summaryBy: BehaviorSubject<SummaryBy> = new BehaviorSubject<SummaryBy>(SummaryBy.Month);
-    summaryBy$: Observable<SummaryBy> = this.summaryBy.asObservable();
+    summaryBy$: Observable<SummaryBy> = this.summaryBy.asObservable().pipe(distinctUntilChanged());
     summaryByList: string[] = values(SummaryBy).map((summaryBy: string) => capitalize(summaryBy));
+    capitalize = capitalize;
 
-    constructor(public ls: AppLocalizationService) { }
+    constructor(
+        public ls: AppLocalizationService
+    ) {}
 
-    ngOnInit() {}
+    ngOnInit() {
+        window['t'] = this;
+    }
 
     customizeBottomAxis(elem): string {
-        let label: string = elem.value.getFullYear().toString();
+        const itemDate = new Date(elem.value);
+        let label: string = itemDate.getFullYear().toString();
         if (this.summaryBy.value === SummaryBy.Quarter) {
-            label += '/' + DateHelper.getQuarter(elem.value);
+            label += '/' + DateHelper.getQuarter(itemDate);
         } else if (this.summaryBy.value === SummaryBy.Month) {
-            label += '/' + elem.value.getMonth() + 1;
+            label += '/' + (+itemDate.getMonth() + 1);
         }
         return label;
     }

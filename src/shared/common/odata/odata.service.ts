@@ -63,6 +63,10 @@ export class ODataService {
         return url;
     }
 
+    private getODataFilterString(filter): string {
+        return filter ? buildQuery({ filter }) : '';
+    }
+
     private advancedODataFilter(grid: any, uri: string, query: any[], searchColumns: any[], searchValue: string, instanceData = null, params = null) {
         let queryWithSearch = query.concat(this.getSearchFilter(searchColumns, searchValue)),
             url = this.getODataUrl(uri, queryWithSearch, instanceData, params);
@@ -131,6 +135,12 @@ export class ODataService {
         }
 
         return data;
+    }
+
+    getODataFilter(filters: FilterModel[], getCheckCustom) {
+        filters = (filters || []).map((filter) => getCheckCustom && getCheckCustom(filter) || filter.getODataFilterObject());
+        const odataQueryString = this.getODataFilterString(filters);
+        return odataQueryString.slice('?$filter='.length);
     }
 
     private getFilterExpression(colName: string, strategy: string, value: string): object {

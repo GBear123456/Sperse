@@ -1024,11 +1024,11 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         this.cashflowService.bankAccounts = this.cashflowService.initialData.banks.map(x => x.bankAccounts).reduce((x, y) => x.concat(y), []);
         this.activeBankAccounts = this.cashflowService.bankAccounts.filter(b => b.isActive);
         this.syncAccounts = syncAccounts;
-        this.createFilters(initialDataResult, syncAccounts);
+        this.createFilters();
         this.setupFilters(this.filters);
     }
 
-    createFilters(initialData, syncAccounts) {
+    createFilters() {
         this.filters = [
             new FilterModel({
                 field: 'accountIds',

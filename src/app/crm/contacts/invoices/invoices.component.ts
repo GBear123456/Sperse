@@ -22,8 +22,7 @@ import { FilterModel } from '@shared/filters/models/filter.model';
 import {
     ContactServiceProxy,
     InvoiceServiceProxy,
-    InvoiceStatus,
-    SetAmountInfo
+    InvoiceStatus
 } from '@shared/service-proxies/service-proxies';
 import { ContactsService } from '@app/crm/contacts/contacts.service';
 import { CreateInvoiceDialogComponent } from '@app/crm/shared/create-invoice-dialog/create-invoice-dialog.component';
@@ -138,14 +137,14 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
     onCellClick(event) {
         if (event.rowType === 'data') {
             /** If user click on actions icon */
-            if (event.columnIndex && event.data) { 
+            if (event.columnIndex && event.data) {
                 if (event.data.Status == InvoiceStatus.Draft) {
                     this.actionRecordData = event.data;
                     setTimeout(() => this.editInvoice());
                 }
             } else {
                 if (event.event.target.closest('.dx-link.dx-link-edit')) {
-                    this.actionMenuItems.map(item => {                        
+                    this.actionMenuItems.map(item => {
                         item.disabled = (item.type == ActionButtonType.Delete) &&
                             (event.data.Status == InvoiceStatus.Paid) ||
                             (event.data.Status != InvoiceStatus.Draft);
@@ -165,7 +164,7 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
                     this.startLoading(true);
                     this._invoiceService.deleteInvoice(this.actionRecordData.Id).pipe(
                         finalize(() => this.finishLoading(true))
-                    ).subscribe((response) => {
+                    ).subscribe(() => {
                         this.dataGrid.instance.refresh();
                     });
                 }
