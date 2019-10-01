@@ -3,6 +3,7 @@
         <dx-drop-down-box *ngIf="dataSource.length"
             width="330px"
             [value]="getSelectedTitle(dataSource)"
+            [hint]="getItemsTitle(dataSource)"
             [placeholder]="ls.l('All_Entities') + ' \u25BE'"
             (onOpened)="onPopupOpened($event, dataSource)"
             (onClosed)="onPopupClosed()">
