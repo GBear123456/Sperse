@@ -14,6 +14,7 @@ import { PaymentWizardComponent } from './shared/common/payment-wizard/payment-w
 import { SignalRHelper } from 'shared/helpers/SignalRHelper';
 import { AppService } from './app.service';
 import { FiltersService } from '@shared/filters/filters.service';
+import { FullScreenService } from '@shared/common/fullscreen/fullscreen.service';
 
 @Component({
     templateUrl: './app.component.html',
@@ -25,20 +26,20 @@ import { FiltersService } from '@shared/filters/filters.service';
 })
 export class AppComponent implements OnInit {
     installationMode = false;
-
     @HostBinding('class.fullscreen') isFullscreenMode = false;
     @HostListener('document:webkitfullscreenchange', ['$event'])
     @HostListener('document:mozfullscreenchange', ['$event'])
     @HostListener('document:fullscreenchange', ['$event'])
-    onWebkitFullscreenChange($event) {
-        this.isFullscreenMode = document['fullScreen']
-            || document['mozFullScreen'] || document.webkitIsFullScreen;
+    onWebkitFullscreenChange() {
+        this.isFullscreenMode = document['fullScreen'] || document['mozFullScreen'] || document.webkitIsFullScreen;
+        this.fullScreenService.isFullScreenMode.next(this.isFullscreenMode);
     }
 
     public constructor(
-        private _ngZone: NgZone,
-        private _router: Router,
-        private _chatSignalrService: ChatSignalrService,
+        private ngZone: NgZone,
+        private router: Router,
+        private chatSignalrService: ChatSignalrService,
+        private fullScreenService: FullScreenService,
         public ls: AppLocalizationService,
         public appSession: AppSessionService,
         public appService: AppService,
@@ -52,7 +53,7 @@ export class AppComponent implements OnInit {
                 if (moduleName != appService.getDefaultModule()) {
                     clearTimeout(paymentDialogTimeout);
                     if (!appService.subscriptionInGracePeriod(moduleName))
-                        this._router.navigate(['app/admin/users']);
+                        this.router.navigate(['app/admin/users']);
                     paymentDialogTimeout = setTimeout(() => {
                         if (!this.dialog.getDialogById('payment-wizard')) {
                             const sub = appService.getModuleSubscription(name);
@@ -82,7 +83,7 @@ export class AppComponent implements OnInit {
         this.appService.initModule();
 
         if (this.appSession.application) {
-            SignalRHelper.initSignalR(() => { this._chatSignalrService.init(); });
+            SignalRHelper.initSignalR(() => { this.chatSignalrService.init(); });
         }
 
         this.installationMode = UrlHelper.isInstallUrl(location.href);

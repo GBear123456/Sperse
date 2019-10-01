@@ -155,7 +155,7 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
                 location: 'before', items: [
                     {
                         name: 'filters',
-                        action: event => {
+                        action: () => {
                             setTimeout(() => {
                                 this.dataGrid.instance.repaint();
                             }, 1000);
@@ -165,10 +165,10 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
                             checkPressed: () => {
                                 return this._filtersService.fixed;
                             },
-                            mouseover: event => {
+                            mouseover: () => {
                                 this._filtersService.enable();
                             },
-                            mouseout: event => {
+                            mouseout: () => {
                                 if (!this._filtersService.fixed)
                                     this._filtersService.disable();
                             }
@@ -362,7 +362,7 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
                     {
                         name: 'fullscreen',
                         action: () => {
-                            this.toggleFullscreen(document.documentElement);
+                            this.fullScreenService.toggleFullscreen(document.documentElement);
                             setTimeout(() => this.dataGrid.instance.repaint(), 100);
                         }
                     }
@@ -400,7 +400,7 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
                         items: {
                             element: new FilterTreeListModel({
                                 value: this.selectedPermissions,
-                                list: res[0].items.map((item, index) => {
+                                list: res[0].items.map((item) => {
                                     return {
                                         id: item.name,
                                         parent: item.parentName,

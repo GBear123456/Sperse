@@ -1250,7 +1250,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
         /** Remove cashflow events handlers */
         this.cashflowService.removeEvents(this.getElementRef().nativeElement, this.cashflowEvents);
-        this.appService.toolbarIsHidden = false;
+        this.appService.toolbarIsHidden.next(false);
 
         document.removeEventListener('keydown', this.keyDownEventHandler);
         super.ngOnDestroy();

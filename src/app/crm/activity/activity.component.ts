@@ -6,6 +6,8 @@ import { DxSchedulerComponent } from 'devextreme-angular/ui/scheduler';
 import { MatDialog } from '@angular/material/dialog';
 import * as moment from 'moment';
 import buildQuery from 'odata-query';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 /** Application imports */
 import { AppService } from '@app/app.service';
@@ -28,7 +30,9 @@ import { FiltersService } from '@shared/filters/filters.service';
 export class ActivityComponent extends AppComponentBase implements AfterViewInit, OnDestroy {
     @ViewChild(DxSchedulerComponent) schedulerComponent: DxSchedulerComponent;
     @ViewChild(PipelineComponent) pipelineComponent: PipelineComponent;
-    schedulerHeight = window.innerHeight - 210;
+    schedulerHeight$: Observable<number> = this.appService.toolbarIsHidden$.pipe(map((hidden: boolean) => {
+        return hidden ? window.innerHeight - 150 : window.innerHeight - 210;
+    }));
 
     private rootComponent: any;
     private dataLayoutType: DataLayoutType = DataLayoutType.DataGrid;
@@ -91,9 +95,9 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
     constructor(
         injector: Injector,
         public dialog: MatDialog,
-        private _pipelineService: PipelineService,
-        private _appService: AppService,
-        private _filtersService: FiltersService
+        private pipelineService: PipelineService,
+        private appService: AppService,
+        private filtersService: FiltersService
     ) {
         super(injector);
 
@@ -109,11 +113,10 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
     }
 
     toggleToolbar() {
-        this._appService.toolbarToggle();
-        this._appService.toolbarIsHidden ? this.schedulerHeight = window.innerHeight - 150 : this.schedulerHeight = window.innerHeight - 210;
+        this.appService.toolbarToggle();
         setTimeout(() => this.repaint(), 0);
-        this._filtersService.fixed = false;
-        this._filtersService.disable();
+        this.filtersService.fixed = false;
+        this.filtersService.disable();
         this.initToolbarConfig();
     }
 
@@ -217,30 +220,30 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
     }
 
     initToolbarConfig() {
-        this._appService.updateToolbar([
+        this.appService.updateToolbar([
             {
                 location: 'before',
                 items: [
                     {
                         name: 'filters',
                         action: () => {
-                            this._filtersService.fixed = !this._filtersService.fixed;
+                            this.filtersService.fixed = !this.filtersService.fixed;
                         },
                         options: {
                             visible: false,
                             checkPressed: () => {
-                                return this._filtersService.fixed;
+                                return this.filtersService.fixed;
                             },
-                            mouseover: event => {
-                                this._filtersService.enable();
+                            mouseover: () => {
+                                this.filtersService.enable();
                             },
-                            mouseout: event => {
-                                if (!this._filtersService.fixed)
-                                    this._filtersService.disable();
+                            mouseout: () => {
+                                if (!this.filtersService.fixed)
+                                    this.filtersService.disable();
                             }
                         },
                         attr: {
-                            'filter-selected': this._filtersService.hasFilterSelected
+                            'filter-selected': this.filtersService.hasFilterSelected
                         }
                     }
                 ]
@@ -372,7 +375,7 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
                 location: 'after',
                 locateInMenu: 'auto',
                 items: [
-                    { name: 'showCompactRowsHeight', action: () => this._pipelineService.toggleContactView() }
+                    { name: 'showCompactRowsHeight', action: () => this.pipelineService.toggleContactView() }
                 ]
             },
             {
@@ -406,7 +409,7 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
                     {
                         name: 'fullscreen',
                         action: () => {
-                            this.toggleFullscreen(document.documentElement);
+                            this.fullScreenService.toggleFullscreen(document.documentElement);
                             !this.showPipeline && setTimeout(() => {
                                 this.schedulerComponent.instance.repaint();
                             }, 100);
@@ -450,7 +453,7 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
     }
 
     toggleDataLayout(dataLayoutType: DataLayoutType) {
-        this._pipelineService.toggleDataLayoutType(dataLayoutType);
+        this.pipelineService.toggleDataLayoutType(dataLayoutType);
         let showPipeline = dataLayoutType == DataLayoutType.Pipeline;
         if (this.showPipeline != showPipeline) {
             this.dataLayoutType = dataLayoutType;
@@ -536,8 +539,8 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
     }
 
     activate() {
-        this._filtersService.fixed = false;
-        this._appService.hideSubscriptionCallback = () => {
+        this.filtersService.fixed = false;
+        this.appService.hideSubscriptionCallback = () => {
             if (!this.showPipeline)
                 this.repaint();
         };
@@ -549,9 +552,8 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
     }
 
     deactivate() {
-        this._appService.hideSubscriptionCallback = null;
-
-        this._appService.updateToolbar(null);
+        this.appService.hideSubscriptionCallback = null;
+        this.appService.updateToolbar(null);
         this.rootComponent.overflowHidden();
     }
 
@@ -565,7 +567,7 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
     }
 
     activityStagesLoad() {
-        this._pipelineService.getPipelineDefinitionObservable(AppConsts.PipelinePurposeIds.activity)
+        this.pipelineService.getPipelineDefinitionObservable(AppConsts.PipelinePurposeIds.activity)
             .subscribe(result => {
                 this.stages = result.stages.map((stage) => {
                     return {

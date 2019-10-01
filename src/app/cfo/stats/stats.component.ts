@@ -424,7 +424,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
                             {
                                 name: 'fullscreen',
                                 visible: !this._cfoService.hasStaticInstance,
-                                action: this.toggleFullscreen.bind(this, document.documentElement)
+                                action: () => this.fullScreenService.toggleFullscreen(document.documentElement)
                             }
                         ]
                     }
@@ -484,7 +484,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
 
     /** Calculates the height of the charts scrollable height after resizing */
     calculateChartsScrolableHeight() {
-        return this._appService.toolbarIsHidden ? window.innerHeight - 199 : window.innerHeight - 260;
+        return this._appService.toolbarIsHidden.value ? window.innerHeight - 199 : window.innerHeight - 260;
     }
 
     handleCashFlowInitialResult() {

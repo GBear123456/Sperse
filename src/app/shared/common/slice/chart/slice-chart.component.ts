@@ -1,5 +1,5 @@
 /** Core imports */
-import { ChangeDetectionStrategy, Component, OnInit, Input, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, ViewChild, OnChanges, SimpleChanges } from '@angular/core';
 
 /** Third party imports */
 import { DxChartComponent } from 'devextreme-angular/ui/chart';
@@ -19,12 +19,15 @@ import { DateHelper } from '@shared/helpers/DateHelper';
     styleUrls: [ './slice-chart.component.less' ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class SliceChartComponent implements OnInit {
+export class SliceChartComponent implements OnChanges {
     @Input() title = '';
     @Input() valueField: string;
     @Input() argumentField: string;
-    @Input() width: string;
+    @Input() width: number;
+    @Input() height: number;
     @ViewChild(DxChartComponent) chartComponent: DxChartComponent;
+    chartHeight: number;
+    chartWidth: number;
     summaryBy: BehaviorSubject<SummaryBy> = new BehaviorSubject<SummaryBy>(SummaryBy.Month);
     summaryBy$: Observable<SummaryBy> = this.summaryBy.asObservable().pipe(distinctUntilChanged());
     summaryByList: string[] = values(SummaryBy).map((summaryBy: string) => capitalize(summaryBy));
@@ -34,8 +37,13 @@ export class SliceChartComponent implements OnInit {
         public ls: AppLocalizationService
     ) {}
 
-    ngOnInit() {
-        window['t'] = this;
+    ngOnChanges(changes: SimpleChanges) {
+        if (changes.height) {
+            this.chartHeight = changes.height.currentValue - 100;
+        }
+        if (changes.width) {
+            this.chartWidth = changes.width.currentValue - 40;
+        }
     }
 
     customizeBottomAxis(elem): string {
@@ -47,5 +55,9 @@ export class SliceChartComponent implements OnInit {
             label += '/' + (+itemDate.getMonth() + 1);
         }
         return label;
+    }
+
+    summaryByChanged(e) {
+        this.summaryBy.next(e.value.toLowerCase());
     }
 }

@@ -129,11 +129,11 @@ export class AuditLogsComponent extends AppComponentBase implements OnInit, OnDe
 
     constructor(
         injector: Injector,
-        private _auditLogService: AuditLogServiceProxy,
-        private _appService: AppService,
-        private _fileDownloadService: FileDownloadService,
-        private _dialog: MatDialog,
-        private _filtersService: FiltersService
+        private auditLogService: AuditLogServiceProxy,
+        private appService: AppService,
+        private fileDownloadService: FileDownloadService,
+        private dialog: MatDialog,
+        private filtersService: FiltersService
     ) {
         super(injector);
         this.rootComponent = this.getRootComponent();
@@ -143,7 +143,7 @@ export class AuditLogsComponent extends AppComponentBase implements OnInit, OnDe
     }
 
     ngOnInit() {
-        this._filtersService.filtersValues$
+        this.filtersService.filtersValues$
             .pipe(takeUntil(this.destroy$))
             .subscribe(filtersValues => {
                 this.filtersValues = filtersValues;
@@ -153,7 +153,7 @@ export class AuditLogsComponent extends AppComponentBase implements OnInit, OnDe
         this.operationLogsDataSource = new DataSource({
             key: 'id',
             load: (loadOptions) => {
-                return this._auditLogService.getAuditLogs(
+                return this.auditLogService.getAuditLogs(
                     this.filtersValues.date.startDate,
                     this.filtersValues.date.endDate,
                     this.filtersValues.userId,
@@ -180,7 +180,7 @@ export class AuditLogsComponent extends AppComponentBase implements OnInit, OnDe
     }
 
     initToolbarConfig() {
-        this._appService.updateToolbar([
+        this.appService.updateToolbar([
             {
                 location: 'before', items: [
                     {
@@ -189,22 +189,22 @@ export class AuditLogsComponent extends AppComponentBase implements OnInit, OnDe
                             // setTimeout(() => {
                             //     this.dataGrid.instance.repaint();
                             // }, 1000);
-                            this._filtersService.fixed = !this._filtersService.fixed;
+                            this.filtersService.fixed = !this.filtersService.fixed;
                         },
                         options: {
                             checkPressed: () => {
-                                return this._filtersService.fixed;
+                                return this.filtersService.fixed;
                             },
                             mouseover: () => {
-                                this._filtersService.enable();
+                                this.filtersService.enable();
                             },
                             mouseout: () => {
-                                if (!this._filtersService.fixed)
-                                    this._filtersService.disable();
+                                if (!this.filtersService.fixed)
+                                    this.filtersService.disable();
                             }
                         },
                         attr: {
-                            'filter-selected': this._filtersService.hasFilterSelected
+                            'filter-selected': this.filtersService.hasFilterSelected
                         }
                     }
                 ]
@@ -273,7 +273,7 @@ export class AuditLogsComponent extends AppComponentBase implements OnInit, OnDe
                     {
                         name: 'fullscreen',
                         action: () => {
-                            this.toggleFullscreen(document.documentElement);
+                            this.fullScreenService.toggleFullscreen(document.documentElement);
                             setTimeout(() => this.dataGrid.instance.repaint(), 100);
                         }
                     }
@@ -283,7 +283,7 @@ export class AuditLogsComponent extends AppComponentBase implements OnInit, OnDe
     }
 
     toggleToolbar() {
-        this._appService.toolbarToggle();
+        this.appService.toolbarToggle();
         setTimeout(() => this.dataGrid.instance.repaint(), 0);
     }
 
@@ -297,7 +297,7 @@ export class AuditLogsComponent extends AppComponentBase implements OnInit, OnDe
     }
 
     openAuditLogDetailModal(record: AuditLogListDto) {
-        const dialogRef = this._dialog.open(AuditLogDetailModalComponent, {
+        const dialogRef = this.dialog.open(AuditLogDetailModalComponent, {
             panelClass: 'slider',
             data: {
                 record: record
@@ -307,7 +307,7 @@ export class AuditLogsComponent extends AppComponentBase implements OnInit, OnDe
     }
 
     exportToExcelAuditLogs(): void {
-        this._auditLogService.getAuditLogsToExcel(
+        this.auditLogService.getAuditLogsToExcel(
             this.filtersValues.date.startDate,
             this.filtersValues.date.endDate,
             this.filtersValues.userId,
@@ -322,22 +322,22 @@ export class AuditLogsComponent extends AppComponentBase implements OnInit, OnDe
             1,
             0)
             .subscribe(result => {
-                this._fileDownloadService.downloadTempFile(result);
+                this.fileDownloadService.downloadTempFile(result);
             });
     }
 
     exportToExcelEntityChanges(): void {
-        this._auditLogService.getEntityChangesToExcel(
+        this.auditLogService.getEntityChangesToExcel(
             this.filtersValues.date.startDate,
             this.filtersValues.date.endDate,
             this.filtersValues.usernameEntityChange,
             this.filtersValues.entityTypeFullName,
             undefined,
             1,
-            0)
-            .subscribe(result => {
-                this._fileDownloadService.downloadTempFile(result);
-            });
+            0
+        ).subscribe(result => {
+            this.fileDownloadService.downloadTempFile(result);
+        });
     }
 
     truncateStringWithPostfix(text: string, length: number): string {
@@ -345,9 +345,9 @@ export class AuditLogsComponent extends AppComponentBase implements OnInit, OnDe
     }
 
     initFilterConfig() {
-        this._filtersService.setup(this.filtersModels);
-        this._filtersService.checkIfAnySelected();
-        this._filtersService.apply(() => {
+        this.filtersService.setup(this.filtersModels);
+        this.filtersService.checkIfAnySelected();
+        this.filtersService.apply(() => {
             this.initToolbarConfig();
         });
     }
@@ -358,7 +358,7 @@ export class AuditLogsComponent extends AppComponentBase implements OnInit, OnDe
 
     ngOnDestroy() {
         this.rootComponent.overflowHidden(false);
-        this._appService.updateToolbar(null);
-        this._filtersService.unsubscribe();
+        this.appService.updateToolbar(null);
+        this.filtersService.unsubscribe();
     }
 }

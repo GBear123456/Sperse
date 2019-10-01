@@ -78,7 +78,7 @@ import { AppStore } from '@app/store';
 import { LoadingSpinnerModule } from '@app/shared/common/loading-spinner/loading-spinner.module';
 import { AppPermissions } from '@shared/AppPermissions';
 import { BankCodeLettersModule } from '@app/shared/common/bank-code-letters/bank-code-letters.module';
-import { SliceComponent } from '@app/crm/shared/slice/slice.component';
+import { CrmService } from '@app/crm/crm.service';
 
 @NgModule({
     imports: [
@@ -149,14 +149,14 @@ import { SliceComponent } from '@app/crm/shared/slice/slice.component';
         CreateActivityDialogComponent,
         EmailTemplateDialogComponent,
         CrmIntroComponent,
-        ActivityComponent,
-        SliceComponent
+        ActivityComponent
     ],
     providers: [
         AppStoreService,
         ImportServiceProxy,
         ImportLeadsService,
-        DataSourceService
+        DataSourceService,
+        CrmService
     ],
     entryComponents: [
         CreateInvoiceDialogComponent,
@@ -170,20 +170,20 @@ export class CrmModule {
     private readonly name = 'CRM';
 
     constructor(
-        private _appService: AppService,
-        private _appStoreService: AppStoreService,
-        private _importLeadsService: ImportLeadsService,
-        private _permissionService: AppPermissionService,
+        private appService: AppService,
+        private appStoreService: AppStoreService,
+        private importLeadsService: ImportLeadsService,
+        private permissionService: AppPermissionService,
         private store$: Store<AppStore.State>
     ) {
         if (abp.session.userId) {
-            setTimeout(() => this._appStoreService.loadUserDictionaries(), 2000);
-            if (_permissionService.isGranted(AppPermissions.CRMBulkImport))
-                _appService.subscribeModuleChange((config) => {
+            setTimeout(() => this.appStoreService.loadUserDictionaries(), 2000);
+            if (permissionService.isGranted(AppPermissions.CRMBulkImport))
+                appService.subscribeModuleChange((config) => {
                     if (config['name'] == this.name)
-                        _importLeadsService.setupImportCheck();
+                        importLeadsService.setupImportCheck();
                     else
-                        _importLeadsService.stopImportCheck();
+                        importLeadsService.stopImportCheck();
                 });
             this.store$.dispatch(new PipelinesStoreActions.LoadRequestAction(false));
         }

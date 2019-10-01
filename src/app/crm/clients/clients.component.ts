@@ -67,7 +67,8 @@ import { OrganizationUnitsStoreActions, OrganizationUnitsStoreSelectors } from '
 import { DataGridHelper } from '@app/crm/shared/helpers/data-grid.helper';
 import { DataLayoutType } from '@app/shared/layout/data-layout-type';
 import { AppSessionService } from '@shared/common/session/app-session.service';
-import { SliceComponent } from '@app/crm/shared/slice/slice.component';
+import { SlicePivotGridComponent } from '@app/shared/common/slice/pivot-grid/slice-pivot-grid.component';
+import { CrmService } from '@app/crm/crm.service';
 
 @Component({
     templateUrl: './clients.component.html',
@@ -83,7 +84,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     @ViewChild(RatingComponent) ratingComponent: RatingComponent;
     @ViewChild(StarsListComponent) starsListComponent: StarsListComponent;
     @ViewChild(StaticListComponent) statusComponent: StaticListComponent;
-    @ViewChild(SliceComponent) sliceComponent: SliceComponent;
+    @ViewChild(SlicePivotGridComponent) slicePivotGridComponent: SlicePivotGridComponent;
 
     private readonly MENU_LOGIN_INDEX = 1;
     private readonly dataSourceURI: string = 'Customer';
@@ -237,6 +238,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     dataLayoutType: DataLayoutType = DataLayoutType.DataGrid;
     sliceStorageKey = 'CRM_Clients_Slice_' + this.sessionService.tenantId + '_' + this.sessionService.userId;
     private filterChanged = false;
+    contentHeight$: Observable<number> = this.crmService.contentHeight$;
 
     constructor(
         injector: Injector,
@@ -251,6 +253,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         private itemDetailsService: ItemDetailsService,
         private impersonationService: ImpersonationService,
         private sessionService: AppSessionService,
+        private crmService: CrmService,
         public dialog: MatDialog,
         public appService: AppService,
         public contactProxy: ContactServiceProxy,
@@ -637,7 +640,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                             }, {
                                 action: () => {
                                     if (this.dataLayoutType === DataLayoutType.PivotGrid) {
-                                        this.sliceComponent.pivotGrid.instance.exportToExcel();
+                                        this.slicePivotGridComponent.pivotGrid.instance.exportToExcel();
                                     } else if (this.dataLayoutType === DataLayoutType.DataGrid) {
                                         this.exportToXLS.bind(this);
                                     }
@@ -694,7 +697,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                     {
                         name: 'fullscreen',
                         action: () => {
-                            this.toggleFullscreen(document.documentElement);
+                            this.fullScreenService.toggleFullscreen(document.documentElement);
                             setTimeout(() => this.dataGrid.instance.repaint(), 100);
                         }
                     }
@@ -738,7 +741,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             this.filterChanged = false;
             setTimeout(() => {
                 if (this.showPivotGrid) {
-                    this.sliceComponent.pivotGrid.instance.updateDimensions();
+                    this.slicePivotGridComponent.pivotGrid.instance.updateDimensions();
                 }
                 this.processFilterInternal();
             });
@@ -762,7 +765,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     }
 
     setPivotGridInstance() {
-        let instance = this.sliceComponent && this.sliceComponent.pivotGrid && this.sliceComponent.pivotGrid.instance;
+        let instance = this.slicePivotGridComponent && this.slicePivotGridComponent.pivotGrid && this.slicePivotGridComponent.pivotGrid.instance;
         if (instance && !instance.option('dataSource')) {
             instance.option('dataSource', this.pivotGridDataSource);
         }
@@ -818,9 +821,9 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
 
     processFilterInternal() {
         if (this.dataGrid && this.dataGrid.instance
-            || this.sliceComponent && this.sliceComponent.pivotGrid && this.sliceComponent.pivotGrid.instance) {
+            || this.slicePivotGridComponent && this.slicePivotGridComponent.pivotGrid && this.slicePivotGridComponent.pivotGrid.instance) {
             this.processODataFilter(
-                this.showPivotGrid ? this.sliceComponent.pivotGrid.instance : this.dataGrid.instance,
+                this.showPivotGrid ? this.slicePivotGridComponent.pivotGrid.instance : this.dataGrid.instance,
                 this.dataSourceURI,
                 this.filters,
                 (filter) => {
@@ -926,10 +929,6 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             this.refresh();
 
         this.showHostElement();
-    }
-
-    get visibleContentHeight(): string {
-        return (window.innerHeight - (this.isFullscreenMode ? 60 : (this.appService.toolbarIsHidden ? 149 : 211))) + 'px';
     }
 
     deactivate() {

@@ -33,12 +33,14 @@ import { CrmConfig } from '@app/crm/crm.config';
 import { CfoConfig } from '@app/cfo/cfo.config';
 import { CfoPortalConfig } from '@app/cfo-portal/cfo-portal.config';
 import { PfmConfig } from '@app/pfm/pfm.config';
+import { BehaviorSubject } from '@node_modules/rxjs';
 
 @Injectable()
 export class AppService extends AppServiceBase {
     public topMenu: PanelMenu;
     public toolbarConfig: any = null;
-    public toolbarIsHidden = false;
+    public toolbarIsHidden: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+    public toolbarIsHidden$: Observable<boolean> = this.toolbarIsHidden.asObservable();
     public narrowingPageContentWhenFixedFilter = true;
     public hideSubscriptionCallback: Function;
     public showContactInfoPanel = false;
@@ -55,10 +57,10 @@ export class AppService extends AppServiceBase {
     private personContactServiceProxy: PersonContactServiceProxy;
     private notify: NotifyService;
     private appLocalizationService: AppLocalizationService;
-    private _setToolbarTimeout: number;
-    private _tenantSubscriptionProxy: TenantSubscriptionServiceProxy;
-    private _subscriptionBarsClosed = {};
-    private _subscriptionBarVisible: Boolean;
+    private setToolbarTimeout: number;
+    private tenantSubscriptionProxy: TenantSubscriptionServiceProxy;
+    private subscriptionBarsClosed = {};
+    private subscriptionBarVisible: Boolean;
 
     constructor(
         injector: Injector,
@@ -169,17 +171,24 @@ export class AppService extends AppServiceBase {
         this.personContactServiceProxy = injector.get(PersonContactServiceProxy);
         this.notify = injector.get(NotifyService);
         this.appLocalizationService = injector.get(AppLocalizationService);
-        this._tenantSubscriptionProxy = injector.get(TenantSubscriptionServiceProxy);
+        this.tenantSubscriptionProxy = injector.get(TenantSubscriptionServiceProxy);
 
         this.toolbarSubject = new Subject<undefined>();
         if (!this.isHostTenant) {
             this.expiredModule = new Subject<string>();
             this.loadModeuleSubscriptions();
         }
+        this.toolbarIsHidden$.subscribe((hidden: boolean) => {
+            if (!hidden) {
+                this.document.body.classList.add('toolbar-hidden');
+            } else {
+                this.document.body.classList.remove('toolbar-hidden');
+            }
+        });
     }
 
     loadModeuleSubscriptions() {
-        this.moduleSubscriptions$ = this._tenantSubscriptionProxy.getModuleSubscriptions()
+        this.moduleSubscriptions$ = this.tenantSubscriptionProxy.getModuleSubscriptions()
             .pipe(publishReplay(), refCount());
         this.moduleSubscriptions$.subscribe((res) => {
             this.moduleSubscriptions = res.sort((left, right) => {
@@ -235,11 +244,11 @@ export class AppService extends AppServiceBase {
         if (!ModuleType[module.toUpperCase()])
             return true;
 
-        if (!this._subscriptionBarVisible)
-            this._subscriptionBarVisible = !this.showContactInfoPanel &&
+        if (!this.subscriptionBarVisible)
+            this.subscriptionBarVisible = !this.showContactInfoPanel &&
                 (this.subscriptionIsExpiringSoon() || this.subscriptionInGracePeriod());
 
-        return this._subscriptionBarsClosed[module] || !this._subscriptionBarVisible;
+        return this.subscriptionBarsClosed[module] || !this.subscriptionBarVisible;
     }
 
     subscriptionIsExpiringSoon(name?: string): boolean {
@@ -312,7 +321,7 @@ export class AppService extends AppServiceBase {
     }
 
     switchModule(name: string, params = {}) {
-        this._subscriptionBarVisible = undefined;
+        this.subscriptionBarVisible = undefined;
         if (this.checkModuleExpired(name)
             && !this.subscriptionInGracePeriod(name)
         ) {
@@ -328,8 +337,8 @@ export class AppService extends AppServiceBase {
     }
 
     updateToolbar(config) {
-        clearTimeout(this._setToolbarTimeout);
-        this._setToolbarTimeout = setTimeout(() => { this.toolbarConfig = config; });
+        clearTimeout(this.setToolbarTimeout);
+        this.setToolbarTimeout = setTimeout(() => { this.toolbarConfig = config; });
     }
 
     setContactInfoVisibility(value: boolean) {
@@ -389,9 +398,7 @@ export class AppService extends AppServiceBase {
     }
 
     toolbarToggle() {
-        this.toolbarIsHidden = !this.toolbarIsHidden;
-        this.toolbarIsHidden ?
-            this.document.body.classList.add('toolbar-hidden') : this.document.body.classList.remove('toolbar-hidden');
+        this.toolbarIsHidden.next(!this.toolbarIsHidden.value);
     }
 
     toolbarSubscribe(callback) {

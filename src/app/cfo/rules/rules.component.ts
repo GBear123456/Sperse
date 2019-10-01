@@ -135,10 +135,10 @@ export class RulesComponent extends CFOComponentBase implements OnInit, AfterVie
                             checkPressed: () => {
                                 return this.filtersService.fixed;
                             },
-                            mouseover: (event) => {
+                            mouseover: () => {
                                 this.filtersService.enable();
                             },
-                            mouseout: (event) => {
+                            mouseout: () => {
                                 if (!this.filtersService.fixed)
                                     this.filtersService.disable();
                             }
@@ -174,7 +174,7 @@ export class RulesComponent extends CFOComponentBase implements OnInit, AfterVie
     }
 
     fullscreen() {
-        this.toggleFullscreen(document.documentElement);
+        this.fullScreenService.toggleFullscreen(document.documentElement);
         setTimeout(() => {
             if (this.treeList && this.treeList.instance)
                 this.treeList.instance.repaint();
@@ -205,7 +205,7 @@ export class RulesComponent extends CFOComponentBase implements OnInit, AfterVie
                     this.startLoading(true);
                     this._ClassificationService.deleteRule(InstanceType[this.instanceType], this.instanceId,
                         [], ApplyToTransactionsOption[dialogData.reclassify ? 'MatchedAndUnclassified' : 'None'], itemId)
-                        .subscribe((id) => {
+                        .subscribe(() => {
                             this.lastRemovedItemID = itemId;
                             $event.component.deleteRow($event.component.getRowIndexByKey(itemId));
                             this.finishLoading(true);

@@ -5,7 +5,7 @@
     <div [hidden]="showPipeline" class="portlet light no-padding margin-bottom-0">
         <div class="portlet-body">
             <dx-scheduler
-                [height]="schedulerHeight"
+                [height]="schedulerHeight$ | async"
                 [dataSource]="dataSource"
                 [views]="['day', 'week', 'month', 'agenda']"
                 [resources]="resources"

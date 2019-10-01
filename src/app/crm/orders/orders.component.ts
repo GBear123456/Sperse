@@ -455,7 +455,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                             }
                         },
                         {
-                            name: 'data-grid',
+                            name: 'dataGrid',
                             action: this.toggleDataLayout.bind(this, DataLayoutType.DataGrid),
                             options: {
                                 checkPressed: () => {

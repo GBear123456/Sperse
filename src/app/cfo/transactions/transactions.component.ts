@@ -650,7 +650,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                             name: 'fullscreen',
                             visible: !this._cfoService.hasStaticInstance,
                             action: () => {
-                                this.toggleFullscreen(document.documentElement);
+                                this.fullScreenService.toggleFullscreen(document.documentElement);
                                 setTimeout(() => this.dataGrid.instance.repaint(), 100);
                             }
                         }
@@ -1394,7 +1394,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     }
 
     get gridHeight() {
-        return window.innerHeight - (AppConsts.isMobile ? 160 : 150) - (this.appService.toolbarIsHidden ? 0 : 62) + 'px';
+        return window.innerHeight - (AppConsts.isMobile ? 160 : 150) - (this.appService.toolbarIsHidden.value ? 0 : 62) + 'px';
     }
 
     ngOnDestroy() {

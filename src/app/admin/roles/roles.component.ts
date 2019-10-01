@@ -38,7 +38,7 @@ export class RolesComponent extends AppComponentBase implements OnDestroy {
     private selectedPermission: string;
     private selectedModule: ModuleType;
     private rootComponent: any;
-    private formatting = AppConsts.formatting;
+    public formatting = AppConsts.formatting;
     public actionMenuItems: any;
     public actionRecord: any;
     public headlineConfig = {
@@ -59,11 +59,11 @@ export class RolesComponent extends AppComponentBase implements OnDestroy {
     moduleFilterModel: FilterModel;
     constructor(
         injector: Injector,
-        private _roleService: RoleServiceProxy,
-        private _appService: AppService,
-        private _filtersService: FiltersService,
-        private _permissionService: PermissionServiceProxy,
-        private _dialog: MatDialog
+        private roleService: RoleServiceProxy,
+        private appService: AppService,
+        private filtersService: FiltersService,
+        private permissionService: PermissionServiceProxy,
+        private dialog: MatDialog
     ) {
         super(injector);
         this.rootComponent = this.getRootComponent();
@@ -92,7 +92,7 @@ export class RolesComponent extends AppComponentBase implements OnDestroy {
         this.dataSource = new DataSource({
             key: 'id',
             load: () => {
-                return this._roleService.getRoles(
+                return this.roleService.getRoles(
                     this.selectedPermission,
                     this.selectedModule
                 ).toPromise().then(response => {
@@ -106,12 +106,12 @@ export class RolesComponent extends AppComponentBase implements OnDestroy {
     }
 
     toggleToolbar() {
-        this._appService.toolbarToggle();
+        this.appService.toolbarToggle();
         setTimeout(() => this.dataGrid.instance.repaint(), 0);
     }
 
     initToolbarConfig() {
-        this._appService.updateToolbar([
+        this.appService.updateToolbar([
             {
                 location: 'before', items: [
                     {
@@ -120,22 +120,22 @@ export class RolesComponent extends AppComponentBase implements OnDestroy {
                             setTimeout(() => {
                                 this.dataGrid.instance.repaint();
                             }, 1000);
-                            this._filtersService.fixed = !this._filtersService.fixed;
+                            this.filtersService.fixed = !this.filtersService.fixed;
                         },
                         options: {
                             checkPressed: () => {
-                                return this._filtersService.fixed;
+                                return this.filtersService.fixed;
                             },
                             mouseover: () => {
-                                this._filtersService.enable();
+                                this.filtersService.enable();
                             },
                             mouseout: () => {
-                                if (!this._filtersService.fixed)
-                                    this._filtersService.disable();
+                                if (!this.filtersService.fixed)
+                                    this.filtersService.disable();
                             }
                         },
                         attr: {
-                            'filter-selected': this._filtersService.hasFilterSelected
+                            'filter-selected': this.filtersService.hasFilterSelected
                         }
                     }
                 ]
@@ -204,7 +204,7 @@ export class RolesComponent extends AppComponentBase implements OnDestroy {
                     {
                         name: 'fullscreen',
                         action: () => {
-                            this.toggleFullscreen(document.documentElement);
+                            this.fullScreenService.toggleFullscreen(document.documentElement);
                             setTimeout(() => this.dataGrid.instance.repaint(), 100);
                         }
                     }
@@ -214,8 +214,8 @@ export class RolesComponent extends AppComponentBase implements OnDestroy {
     }
 
     initFilterConfig() {
-        this._permissionService.getAllPermissions(false).subscribe((res) => {
-            this._filtersService.setup(
+        this.permissionService.getAllPermissions(false).subscribe((res) => {
+            this.filtersService.setup(
                 this.filters = [
                     this.permissionFilterModel = new FilterModel({
                         component: FilterRadioGroupComponent,
@@ -252,7 +252,7 @@ export class RolesComponent extends AppComponentBase implements OnDestroy {
             );
         });
 
-        this._filtersService.apply(() => {
+        this.filtersService.apply(() => {
             this.selectedPermission = this.permissionFilterModel && this.permissionFilterModel.items.element.value;
             this.selectedModule = this.moduleFilterModel && this.moduleFilterModel.items.element.value;
             this.initToolbarConfig();
@@ -276,8 +276,8 @@ export class RolesComponent extends AppComponentBase implements OnDestroy {
 
     ngOnDestroy() {
         this.rootComponent.overflowHidden();
-        this._appService.updateToolbar(null);
-        this._filtersService.unsubscribe();
+        this.appService.updateToolbar(null);
+        this.filtersService.unsubscribe();
     }
 
     onContentReady() {
@@ -314,7 +314,7 @@ export class RolesComponent extends AppComponentBase implements OnDestroy {
     }
 
     openCreateOrEditRoleModal(roleId?: number) {
-        const dialogRef = this._dialog.open(CreateOrEditRoleModalComponent, {
+        const dialogRef = this.dialog.open(CreateOrEditRoleModalComponent, {
             panelClass: 'slider',
             data: {
                 roleId: roleId
@@ -332,7 +332,7 @@ export class RolesComponent extends AppComponentBase implements OnDestroy {
             this.l('AreYouSure'),
             isConfirmed => {
                 if (isConfirmed) {
-                    this._roleService.deleteRole(role.id).subscribe(() => {
+                    this.roleService.deleteRole(role.id).subscribe(() => {
                         this.refreshDataGrid();
                         abp.notify.success(this.l('SuccessfullyDeleted'));
                     });

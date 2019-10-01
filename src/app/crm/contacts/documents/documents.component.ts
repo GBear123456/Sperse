@@ -240,7 +240,7 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
                         name: 'fullscreen',
                         action: () => {
                             const fullScreenTarget = this.getViewedDocumentElement();
-                            this.toggleFullscreen(fullScreenTarget);
+                            this.fullScreenService.toggleFullscreen(fullScreenTarget);
                         }
                     }
                 ]

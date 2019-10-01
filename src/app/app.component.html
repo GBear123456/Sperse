@@ -9,7 +9,7 @@
     <div class="page-content-wrapper">
         <app-toolbar
             [config]="appService.toolbarConfig"
-            [hidden]="!appService.toolbarConfig || appService.toolbarIsHidden">
+            [hidden]="!appService.toolbarConfig || appService.toolbarIsHidden.value">
         </app-toolbar>
         <div class="page-content"
             [ngClass]="{'fixed-filters': appService.narrowingPageContentWhenFixedFilter && appService.toolbarConfig && filtersService.fixed}">

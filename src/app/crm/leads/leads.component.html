@@ -142,11 +142,13 @@
     </div>
     <div [hidden]="!showPivotGrid">
         <slice-pivot-grid [storageKey]="sliceStorageKey"
-                          [height]="visibleContentHeight">
+                          [height]="contentHeight$ | async">
         </slice-pivot-grid>
     </div>
     <div [hidden]="!showChart">
-        <slice-chart width="800px"
+        <slice-chart [width]="contentWidth$ | async"
+                     [height]="contentHeight$ | async"
+                     [title]="l('ContactGroup_' + selectedContactGroup) + ' number'"
                      argumentField="creationDate"
                      valueField="count">
         </slice-chart>

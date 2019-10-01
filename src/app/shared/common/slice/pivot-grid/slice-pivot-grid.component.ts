@@ -31,7 +31,7 @@ export class SlicePivotGridComponent {
     constructor(public filtersService: FiltersService) {}
 
     prepareContextMenu(e) {
-        if (e.field.name === 'count') {
+        if (e.field && e.field.name === 'count') {
             this.summaryDisplayModes.forEach(mode => {
                 e.items.push({
                     text: mode.text,

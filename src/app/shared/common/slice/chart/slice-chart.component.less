@@ -1,4 +1,36 @@
 :host {
     display: block;
     padding: 0 20px;
+    header {
+        display: flex;
+        justify-content: space-between;
+        padding: 20px 0;
+        /deep/ dx-select-box  {
+            border-radius: 4px;
+            border: solid 1px #dadee1;
+            max-width: 207px;
+            .dx-selectbox-container {
+                padding-left: 105px;
+                &:before {
+                    content: 'Summary By';
+                    position: absolute;
+                    left: 16px;
+                    top: 13px;
+                    bottom: 0;
+                    margin: auto;
+                    font-size: 13px;
+                    letter-spacing: 0.26px;
+                    color: #677380;
+                }
+                .dx-texteditor-input, input.form-control {
+                    border-bottom: none;
+                    font-size: 14px;
+                    font-weight: 600;
+                    letter-spacing: 0.1px;
+                    color: #212c36;
+                    text-transform: capitalize;
+                }
+            }
+        }
+    }
 }

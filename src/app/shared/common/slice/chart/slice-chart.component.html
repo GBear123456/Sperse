@@ -1,16 +1,18 @@
-<h2>{{ title }}</h2>
-<dx-select-box [items]="summaryByList"
-               [placeholder]="ls.l('SummaryBy')"
-               [value]="capitalize(summaryBy.value)"
-               (onValueChanged)="summaryBy.next($event.value.toLowerCase())">
-</dx-select-box>
+<header>
+    <h2>{{ title }}</h2>
+    <dx-select-box [items]="summaryByList"
+                   [placeholder]="ls.l('SummaryBy')"
+                   [value]="capitalize(summaryBy.value)"
+                   (onValueChanged)="summaryByChanged($event)">
+    </dx-select-box>
+</header>
 <dx-chart>
 
     <dxo-tooltip [enabled]="true"
                  [zIndex]="1">
     </dxo-tooltip>
 
-    <dxo-size [width]="'800px'"></dxo-size>
+    <dxo-size [width]="chartWidth" [height]="chartHeight"></dxo-size>
 
     <!-- common settings for charts -->
     <dxo-common-series-settings [argumentField]="argumentField"

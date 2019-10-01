@@ -119,9 +119,9 @@
         </div>
     </div>
     <div [hidden]="!showPivotGrid">
-        <slice [storageKey]="sliceStorageKey"
-               [height]="visibleContentHeight">
-        </slice>
+        <slice-pivot-grid [storageKey]="sliceStorageKey"
+                          [height]="contentHeight$ | async">
+        </slice-pivot-grid>
     </div>
 </div>
 

@@ -1,10 +1,11 @@
 /** Core imports */
-import { Injector, ApplicationRef, ElementRef, HostBinding, HostListener, OnDestroy } from '@angular/core';
+import { Injector, ApplicationRef, ElementRef, HostBinding, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
 /** Third party imports */
 import * as moment from 'moment-timezone';
 import { Subject, Observable } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import capitalize from 'underscore.string/capitalize';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 
@@ -20,7 +21,6 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 import { AppConsts } from '@shared/AppConsts';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { ExportService } from '@shared/common/export/export.service';
-import { ScreenHelper } from '@shared/helpers/ScreenHelper';
 import { PrimengTableHelper } from 'shared/helpers/PrimengTableHelper';
 import { AppUiCustomizationService } from '@shared/common/ui/app-ui-customization.service';
 import { AppUrlService } from '@shared/common/nav/app-url.service';
@@ -30,9 +30,10 @@ import { CacheHelper } from '@shared/common/cache-helper/cache-helper';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
 import { ProfileService } from '@shared/common/profile-service/profile.service';
 import { AppPermissions } from '@shared/AppPermissions';
+import { FullScreenService } from '@shared/common/fullscreen/fullscreen.service';
 
 export abstract class AppComponentBase implements OnDestroy {
-    @HostBinding('class.fullscreen') public isFullscreenMode = false;
+    @HostBinding('class.fullscreen') public isFullscreenMode;
     private destroySubject: Subject<boolean> = new Subject<boolean>();
     destroy$: Observable<boolean> = this.destroySubject.asObservable();
     private deactivateSubject: Subject<boolean> = new Subject<boolean>();
@@ -54,6 +55,7 @@ export abstract class AppComponentBase implements OnDestroy {
     primengTableHelper: PrimengTableHelper;
     ui: AppUiCustomizationService;
     profileService: ProfileService;
+    fullScreenService: FullScreenService;
     loading: boolean;
     appUrlService: AppUrlService;
     localizationService: AppLocalizationService;
@@ -113,14 +115,12 @@ export abstract class AppComponentBase implements OnDestroy {
         this.loadingService = _injector.get(LoadingService);
         this.profileService = _injector.get(ProfileService);
         this.userTimezone = this.getUserTimezone();
-    }
-
-    @HostListener('document:webkitfullscreenchange', ['$event'])
-    @HostListener('document:mozfullscreenchange', ['$event'])
-    @HostListener('document:fullscreenchange', ['$event'])
-    onWebkitFullscreenChange($event) {
-        this.isFullscreenMode = document['fullScreen']
-            || document['mozFullScreen'] || document.webkitIsFullScreen;
+        this.fullScreenService = _injector.get(FullScreenService);
+        this.fullScreenService.isFullScreenMode$
+            .pipe(takeUntil(this.destroy$))
+            .subscribe((isFullScreenMode: boolean) => {
+                this.isFullscreenMode = isFullScreenMode;
+            });
     }
 
     getRootComponent() {
@@ -174,13 +174,6 @@ export abstract class AppComponentBase implements OnDestroy {
 
     exportToGoogleSheet(option, dataGrid: DxDataGridComponent = null) {
         return this.exportTo(option, 'GoogleSheets', dataGrid);
-    }
-
-    toggleFullscreen(element: any) {
-        if (this.isFullscreenMode)
-            ScreenHelper.exitFullscreen();
-        else
-            ScreenHelper.openFullscreen(element);
     }
 
     startLoading(globally = false, element: any = null) {

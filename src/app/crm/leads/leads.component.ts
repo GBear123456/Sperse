@@ -15,8 +15,8 @@ import { MatDialog } from '@angular/material/dialog';
 import DataSource from 'devextreme/data/data_source';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { Store, select } from '@ngrx/store';
-import { combineLatest } from 'rxjs';
-import { first, startWith, takeUntil } from 'rxjs/operators';
+import { Observable, combineLatest } from 'rxjs';
+import { first, filter, startWith, takeUntil } from 'rxjs/operators';
 import { CacheService } from 'ng2-cache-service';
 
 /** Application imports */
@@ -69,6 +69,7 @@ import { DataGridHelper } from '@app/crm/shared/helpers/data-grid.helper';
 import { SlicePivotGridComponent } from '@app/shared/common/slice/pivot-grid/slice-pivot-grid.component';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { SliceChartComponent } from '@app/shared/common/slice/chart/slice-chart.component';
+import { CrmService } from '@app/crm/crm.service';
 
 @Component({
     templateUrl: './leads.component.html',
@@ -304,6 +305,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
 
     private readonly CONTACT_GROUP_CACHE_KEY = 'CONTACT_GROUP';
     private organizationUnits: OrganizationUnitDto[];
+    contentWidth$: Observable<number> = this.crmService.contentWidth$;
+    contentHeight$: Observable<number> = this.crmService.contentHeight$;
 
     constructor(injector: Injector,
         private contactService: ContactsService,
@@ -318,6 +321,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         private cacheService: CacheService,
         private sessionService: AppSessionService,
         private http: HttpClient,
+        private crmService: CrmService,
         public dialog: MatDialog,
         public contactProxy: ContactServiceProxy,
         public userManagementService: UserManagementService
@@ -378,10 +382,9 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             this.filtersService.filterChanged$.pipe(startWith(null))
         ).pipe(
             takeUntil(this.lifeCycleSubjectsService.destroy$),
+            filter(() => this.dataLayoutType === DataLayoutType.Chart)
         ).subscribe(() => {
-            if (this.dataLayoutType === DataLayoutType.Chart) {
-                this.chartDataSource.load();
-            }
+            this.chartDataSource.load();
         });
         this.activate();
     }
@@ -490,9 +493,14 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     refresh(invalidateDashboard = true, allViews = false) {
-        setTimeout(() => {
-            this.processFilterInternal(allViews ? [ this.pipelineComponent, this ] : undefined);
-        });
+        if (this.showPivotGrid || this.showDataGrid) {
+            setTimeout(() => {
+                this.processFilterInternal(allViews ? [ this.pipelineComponent, this ] : undefined);
+            });
+        }
+        if (this.showChart) {
+            this.chartDataSource.load();
+        }
         if (invalidateDashboard) {
             (this.reuseService as CustomReuseStrategy).invalidate('dashboard');
         }
@@ -903,7 +911,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     {
                         name: 'fullscreen',
                         action: () => {
-                            this.toggleFullscreen(document.documentElement);
+                            this.fullScreenService.toggleFullscreen(document.documentElement);
                             setTimeout(() => this.dataGrid.instance.repaint(), 100);
                         }
                     }
@@ -1266,7 +1274,4 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         }
     }
 
-    get visibleContentHeight(): string {
-        return (window.innerHeight - (this.isFullscreenMode ? 60 : (this.appService.toolbarIsHidden ? 149 : 211))) + 'px';
-    }
 }

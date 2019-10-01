@@ -233,7 +233,7 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
     }
 
     showReportFullscreen() {
-        this.toggleFullscreen(this.getViewedReportElement());
+        this.fullScreenService.toggleFullscreen(this.getViewedReportElement());
     }
 
     getViewedReportElement() {
@@ -340,7 +340,7 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
                 return ;
 
             dataSource.pageIndex(dataSource.pageIndex() + state);
-            return dataSource.load().then(() => {                
+            return dataSource.load().then(() => {
                 this.visibleReports = this.dataGrid.instance.getVisibleRows().map(row => row.data);
                 this.currentReportInfo = this.visibleReports[(state == NavigationState.Next ? 0 : dataSource.pageSize() - 1)];
                 this.viewReport();
@@ -481,7 +481,7 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
     }
 
     activate() {
-        setTimeout(() => 
+        setTimeout(() =>
             this.changeDetector.markForCheck(), 600);
         this.getRootComponent().overflowHidden(true);
     }

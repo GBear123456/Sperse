@@ -3,7 +3,7 @@ import * as ngCommon from '@angular/common';
 import { NgModule } from '@angular/core';
 
 /** Third party imports */
-import {ngxZendeskWebwidgetModule, ngxZendeskWebwidgetConfig, ngxZendeskWebwidgetService} from 'ngx-zendesk-webwidget';
+import { ngxZendeskWebwidgetModule, ngxZendeskWebwidgetConfig, ngxZendeskWebwidgetService } from 'ngx-zendesk-webwidget';
 
 /** Application imports */
 import { AppStoreModule } from '@app/store/app-store.module';
@@ -25,6 +25,7 @@ import {
 } from '@shared/service-proxies/service-proxies';
 import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
 import { UserPreferencesService } from '@app/cfo/cashflow/preferences-dialog/preferences.service';
+import { FullScreenService } from '@shared/common/fullscreen/fullscreen.service';
 
 export class ZendeskConfig extends ngxZendeskWebwidgetConfig {
     accountUrl = abp.setting.values['Integrations:Zendesk:AccountUrl'];
@@ -64,7 +65,8 @@ export class ZendeskConfig extends ngxZendeskWebwidgetConfig {
         CashflowServiceProxy,
         UserPreferencesService,
         CfoPreferencesService,
-        CashFlowForecastServiceProxy
+        CashFlowForecastServiceProxy,
+        FullScreenService
     ]
 })
 export class AppModule {}
