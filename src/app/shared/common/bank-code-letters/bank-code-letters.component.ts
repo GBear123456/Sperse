@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, HostBinding, Input } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { BankCodeLettersEditorDialogComponent } from '@app/shared/common/bank-code-letters/bank-code-letters-editor-dialog/bank-code-letters-editor-dialog.component';
 import { DialogService } from '@app/shared/common/dialogs/dialog.service';
@@ -12,8 +12,8 @@ import { DialogService } from '@app/shared/common/dialogs/dialog.service';
 export class BankCodeLettersComponent {
     @Input() bankCode: string;
     @Input() showDescriptionsOnHover = false;
-    @Input() allowEdit = false;
     @Input() personId: number;
+    @HostBinding('class.allow-edit') @Input() allowEdit = false;
 
     constructor(
         private dialog: MatDialog,
