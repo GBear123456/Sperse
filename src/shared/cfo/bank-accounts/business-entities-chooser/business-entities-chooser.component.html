@@ -1,8 +1,9 @@
 <div class="selectionList">
     <ng-container *ngIf="bankAccountsService.sortedBusinessEntities$ | async as dataSource">
         <dx-drop-down-box *ngIf="dataSource.length"
-            width="300px"
+            width="330px"
             [value]="getSelectedTitle(dataSource)"
+            [hint]="getItemsTitle(dataSource)"
             [placeholder]="ls.l('All_Entities') + ' \u25BE'"
             (onOpened)="onPopupOpened($event, dataSource)"
             (onClosed)="onPopupClosed()">
