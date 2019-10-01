@@ -17836,6 +17836,62 @@ export class OfferServiceProxy {
         }
         return _observableOf<void>(<any>null);
     }
+
+    /**
+     * @return Success
+     */
+    getPostDeclineOffers(): Observable<OfferDto[]> {
+        let url_ = this.baseUrl + "/api/services/PFM/Offer/GetPostDeclineOffers";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetPostDeclineOffers(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetPostDeclineOffers(<any>response_);
+                } catch (e) {
+                    return <Observable<OfferDto[]>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<OfferDto[]>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetPostDeclineOffers(response: HttpResponseBase): Observable<OfferDto[]> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(OfferDto.fromJS(item));
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<OfferDto[]>(<any>null);
+    }
 }
 
 @Injectable()
@@ -62248,6 +62304,7 @@ export interface IOrderSubscriptionDto {
 }
 
 export class OrganizationInfoDto implements IOrganizationInfoDto {
+    rootOrganizationUnitId!: number | undefined;
     companyName!: string;
     shortName!: string | undefined;
     typeId!: string | undefined;
@@ -62263,7 +62320,6 @@ export class OrganizationInfoDto implements IOrganizationInfoDto {
     sizeTo!: number | undefined;
     duns!: string | undefined;
     ticker!: string | undefined;
-    rootOrganizationUnitId!: number | undefined;
     affiliateCode!: string | undefined;
 
     constructor(data?: IOrganizationInfoDto) {
@@ -62277,6 +62333,7 @@ export class OrganizationInfoDto implements IOrganizationInfoDto {
 
     init(data?: any) {
         if (data) {
+            this.rootOrganizationUnitId = data["rootOrganizationUnitId"];
             this.companyName = data["companyName"];
             this.shortName = data["shortName"];
             this.typeId = data["typeId"];
@@ -62292,7 +62349,6 @@ export class OrganizationInfoDto implements IOrganizationInfoDto {
             this.sizeTo = data["sizeTo"];
             this.duns = data["duns"];
             this.ticker = data["ticker"];
-            this.rootOrganizationUnitId = data["rootOrganizationUnitId"];
             this.affiliateCode = data["affiliateCode"];
         }
     }
@@ -62306,6 +62362,7 @@ export class OrganizationInfoDto implements IOrganizationInfoDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["rootOrganizationUnitId"] = this.rootOrganizationUnitId;
         data["companyName"] = this.companyName;
         data["shortName"] = this.shortName;
         data["typeId"] = this.typeId;
@@ -62321,13 +62378,13 @@ export class OrganizationInfoDto implements IOrganizationInfoDto {
         data["sizeTo"] = this.sizeTo;
         data["duns"] = this.duns;
         data["ticker"] = this.ticker;
-        data["rootOrganizationUnitId"] = this.rootOrganizationUnitId;
         data["affiliateCode"] = this.affiliateCode;
         return data; 
     }
 }
 
 export interface IOrganizationInfoDto {
+    rootOrganizationUnitId: number | undefined;
     companyName: string;
     shortName: string | undefined;
     typeId: string | undefined;
@@ -62343,7 +62400,6 @@ export interface IOrganizationInfoDto {
     sizeTo: number | undefined;
     duns: string | undefined;
     ticker: string | undefined;
-    rootOrganizationUnitId: number | undefined;
     affiliateCode: string | undefined;
 }
 
@@ -62501,7 +62557,6 @@ export class CreateOrganizationInput implements ICreateOrganizationInput {
     sizeTo!: number | undefined;
     duns!: string | undefined;
     ticker!: string | undefined;
-    rootOrganizationUnitId!: number | undefined;
     affiliateCode!: string | undefined;
 
     constructor(data?: ICreateOrganizationInput) {
@@ -62532,7 +62587,6 @@ export class CreateOrganizationInput implements ICreateOrganizationInput {
             this.sizeTo = data["sizeTo"];
             this.duns = data["duns"];
             this.ticker = data["ticker"];
-            this.rootOrganizationUnitId = data["rootOrganizationUnitId"];
             this.affiliateCode = data["affiliateCode"];
         }
     }
@@ -62563,7 +62617,6 @@ export class CreateOrganizationInput implements ICreateOrganizationInput {
         data["sizeTo"] = this.sizeTo;
         data["duns"] = this.duns;
         data["ticker"] = this.ticker;
-        data["rootOrganizationUnitId"] = this.rootOrganizationUnitId;
         data["affiliateCode"] = this.affiliateCode;
         return data; 
     }
@@ -62587,7 +62640,6 @@ export interface ICreateOrganizationInput {
     sizeTo: number | undefined;
     duns: string | undefined;
     ticker: string | undefined;
-    rootOrganizationUnitId: number | undefined;
     affiliateCode: string | undefined;
 }
 
@@ -62644,7 +62696,6 @@ export class UpdateOrganizationInfoInput implements IUpdateOrganizationInfoInput
     sizeTo!: number | undefined;
     duns!: string | undefined;
     ticker!: string | undefined;
-    rootOrganizationUnitId!: number | undefined;
     affiliateCode!: string | undefined;
 
     constructor(data?: IUpdateOrganizationInfoInput) {
@@ -62674,7 +62725,6 @@ export class UpdateOrganizationInfoInput implements IUpdateOrganizationInfoInput
             this.sizeTo = data["sizeTo"];
             this.duns = data["duns"];
             this.ticker = data["ticker"];
-            this.rootOrganizationUnitId = data["rootOrganizationUnitId"];
             this.affiliateCode = data["affiliateCode"];
         }
     }
@@ -62704,7 +62754,6 @@ export class UpdateOrganizationInfoInput implements IUpdateOrganizationInfoInput
         data["sizeTo"] = this.sizeTo;
         data["duns"] = this.duns;
         data["ticker"] = this.ticker;
-        data["rootOrganizationUnitId"] = this.rootOrganizationUnitId;
         data["affiliateCode"] = this.affiliateCode;
         return data; 
     }
@@ -62727,7 +62776,6 @@ export interface IUpdateOrganizationInfoInput {
     sizeTo: number | undefined;
     duns: string | undefined;
     ticker: string | undefined;
-    rootOrganizationUnitId: number | undefined;
     affiliateCode: string | undefined;
 }
 
