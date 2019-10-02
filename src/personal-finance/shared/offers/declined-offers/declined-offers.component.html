@@ -1,3 +1,5 @@
 <div class="container">
-    <offers-list [offers]="declinedOffers$ | async"></offers-list>
+    <offers-list [offers]="declinedOffers$ | async"
+                 [offersAreLoading]="offersAreLoading">
+    </offers-list>
 </div>

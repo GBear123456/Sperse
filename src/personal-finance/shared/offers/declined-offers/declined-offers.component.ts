@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { OfferDto, OfferServiceProxy } from '@shared/service-proxies/service-proxies';
-import { Observable } from '@node_modules/rxjs';
+import { Observable, of } from 'rxjs';
+import { finalize, switchMap } from 'rxjs/operators';
 
 @Component({
     selector: 'declined-offers',
@@ -9,6 +10,12 @@ import { Observable } from '@node_modules/rxjs';
 })
 
 export class DeclinedOffersComponent {
-    declinedOffers$: Observable<OfferDto[]> = this.offersServiceProxy.getPostDeclineOffers();
-    constructor(private offersServiceProxy: OfferServiceProxy) {}
+    offersAreLoading = false;
+    declinedOffers$: Observable<OfferDto[]> = of(this.offersAreLoading = true).pipe(
+        switchMap(() => this.offersServiceProxy.getPostDeclineOffers()),
+        finalize(() => this.offersAreLoading = false)
+    );
+    constructor(
+        private offersServiceProxy: OfferServiceProxy
+    ) {}
 }

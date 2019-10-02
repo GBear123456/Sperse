@@ -110,7 +110,6 @@ export class OffersLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
 
     isMobile = AppConsts.isMobile;
     hideFilters = this.isMobile;
-    offersCount: number;
     offersAreLoading = false;
     brands$: BehaviorSubject<SelectFilterModel[]> = new BehaviorSubject<SelectFilterModel[]>([]);
     category$: Observable<CampaignCategory> = OffersService.getCategoryFromRoute(this.route);
@@ -606,10 +605,6 @@ export class OffersLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
                     );
                 }
             ),
-            tap(offers => {
-                this.offersCount = offers.length;
-                this.changeDetectorRef.detectChanges();
-            }),
             publishReplay(),
             refCount()
         );

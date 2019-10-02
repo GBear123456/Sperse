@@ -164,6 +164,7 @@
             <div *ngIf="rightRef.childNodes.length === 0">
                 <ng-container *ngIf="displayedOffers$ | async as offers">
                     <offers-list [offers]="offers"
+                                 [offersAreLoading]="offersAreLoading"
                                  [areCreditCards]="areCreditCards$ | async"
                                  [buttonCaption]="buttonCaption"
                                  [headerTitle]="category$ | async"

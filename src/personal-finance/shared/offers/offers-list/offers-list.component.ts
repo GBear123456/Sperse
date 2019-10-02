@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
 /** Third party imports */
@@ -15,16 +15,19 @@ import { OffersService } from '@root/personal-finance/shared/offers/offers.servi
 @Component({
     selector: 'offers-list',
     templateUrl: 'offers-list.component.html',
-    styleUrls: [ './offers-list.component.less' ]
+    styleUrls: [ './offers-list.component.less' ],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class OffersListComponent {
+export class OffersListComponent implements OnChanges {
     @Input() offers: OfferDto[];
     @Input() areCreditCards = false;
     @Input() headerTitle: string;
     @Input() buttonCaption = 'Apply';
     @Input() creditScore: number;
+    @Input() offersAreLoading = false;
     readonly defaultVisibleOffersCount = 6;
     visibleOffersCount = this.defaultVisibleOffersCount;
+    offersCount: number;
     constructor(
         private sessionService: AppSessionService,
         private router: Router,
@@ -33,6 +36,12 @@ export class OffersListComponent {
         public offersService: OffersService,
         public ls: AppLocalizationService
     ) {}
+
+    ngOnChanges(changes: SimpleChanges) {
+        if (changes.offers && !changes.offers.firstChange) {
+            this.offersCount = changes.offers.currentValue && changes.offers.currentValue.length;
+        }
+    }
 
     showNextItems() {
         this.visibleOffersCount += this.defaultVisibleOffersCount;
