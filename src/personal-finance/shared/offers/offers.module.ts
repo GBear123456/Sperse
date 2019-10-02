@@ -32,6 +32,8 @@ import { OffersCategoryDetailsComponent } from '@root/personal-finance/shared/of
 import { DebtConsolidationComponent } from '@root/personal-finance/shared/offers/debt-consolidation/debt-consolidation.component';
 import { PersonalFinanceCommonModule } from '../../shared/common/personal-finance-common.module';
 import { StarsRatingModule } from '@shared/common/stars-rating/stars-rating.module';
+import { DeclinedOffersComponent } from '@root/personal-finance/shared/offers/declined-offers/declined-offers.component';
+import { OffersListComponent } from '@root/personal-finance/shared/offers/offers-list/offers-list.component';
 
 @NgModule({
     imports: [
@@ -55,6 +57,8 @@ import { StarsRatingModule } from '@shared/common/stars-rating/stars-rating.modu
     declarations: [
         MarcusDetailsComponent,
         OffersLayoutComponent,
+        DeclinedOffersComponent,
+        OffersListComponent,
         OfferDetailsComponent,
         NumberAbbrPipe,
         CreditCardsComponent,

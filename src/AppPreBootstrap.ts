@@ -108,7 +108,7 @@ export class AppPreBootstrap {
             abp.auth.setToken(result.accessToken);
             AppPreBootstrap.setEncryptedTokenCookie(result.encryptedAccessToken);
             abp.multiTenancy.setTenantIdCookie();
-            if (result.shouldResetPassword) 
+            if (result.shouldResetPassword)
                 location.href = location.origin + '/account/reset-password?resetCode=' +
                     result.passwordResetCode + (tenantId ? '&tenantId=' + tenantId : '') + '&userId=' + result.userId;
             else

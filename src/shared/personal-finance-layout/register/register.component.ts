@@ -15,6 +15,7 @@ import {
 } from '@shared/service-proxies/service-proxies';
 import { OffersService } from '@root/personal-finance/shared/offers/offers.service';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
+import { AppConsts } from '@shared/AppConsts';
 
 @Component({
     selector: 'register',
@@ -27,7 +28,7 @@ import { LoadingService } from '@shared/common/loading-service/loading.service';
 
 export class RegisterComponent implements OnInit {
     applicationCompleteIsRequired$: Observable<Boolean> = this.offersService.applicationCompleteIsRequired$;
-    getMoreOptionsLink = 'personal-finance/offers/personal-loans';
+    getMoreOptionsLink = '/personal-finance/offers/personal-loans';
     constructor(
         private offersService: OffersService,
         private offerServiceProxy: OfferServiceProxy,
@@ -107,8 +108,7 @@ export class RegisterComponent implements OnInit {
                 messageContent.content.style.display = 'block';
                 swal(messageContent).then((res) => {
                     if (res) {
-                        /** @todo find out where to redirect in a case of decline */
-                        window.open(this.getMoreOptionsLink, '_self');
+                        window.open(AppConsts.appBaseUrl + this.getMoreOptionsLink, '_self');
                     }
                 });
             }

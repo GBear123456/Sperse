@@ -1,0 +1,57 @@
+<div class="subHeader"  *ngIf="headerTitle" [ngClass]="headerTitle">
+    <h2 class="text-center">
+        {{ ls.l(headerTitle + '_Right_Title') }}
+    </h2>
+</div>
+<ul class="credit-cards-list">
+    <li *ngFor="let offerItem of offers | slice:0:visibleOffersCount; let i = index"
+        [ngClass]="{'row': true, 'recommend': i < 3}">
+        <ng-container *ngIf="i == 0">
+            <div class="best-offer">
+                {{ls.l('Top_Deal_Found')}}
+            </div>
+        </ng-container>
+        <div class="corner-block" [ngClass]="{'secondary': i > 2}">
+            <span class="number">
+                {{i+1}}
+            </span>
+        </div>
+        <div class="left-side col-12 col-md-6 col-lg-5">
+            <div class="img-wrap">
+                <img [src]="offerItem.logoUrl" [alt]="offerItem.name" (click)="applyOffer(offerItem)">
+            </div>
+            <div class="actions-wrap">
+                <button class="applyButton" (click)="applyOffer(offerItem)">
+                    <span>{{ offerItem.buttonCaption || ls.l(buttonCaption) }}</span>
+                </button>
+                <a class="viewDetails" (click)="viewCardDetails(offerItem)">{{ ls.l('View_details') }}</a>
+            </div>
+        </div>
+        <div class="description col-12 col-md-6 col-lg-7">
+            <small *ngIf="offerItem.issuingBank" class="bank-name">{{ offerItem.issuingBank }}</small>
+            <h4 (click)="applyOffer(offerItem)">{{ offerItem.name }}</h4>
+            <p *ngIf="offerItem.minLoanAmount || offerItem.maxLoanAmount">{{ ls.l('Offers_LoanAmount') }}: {{offersService.formatLoanAmountValues(offerItem.minLoanAmount, offerItem.maxLoanAmount)}}</p>
+            <!-- div class="rating" *ngIf="offerItem.overallRating">
+                <stars-rating [currentRating]="offerItem.overallRating" color="#f0d500"></stars-rating>
+                <span>({{ offerItem.reviewsAmount + ' ' + ls.l('Offers_reviews') }})</span>
+            </div -->
+            <ul class="descriptionItems">
+                <ng-container *ngIf="pagePrefix == 'CreditCards'">
+                    <ng-container *ngFor="let param of ['annualFee', 'rewardsRate', 'introRewardsBonus', 'regularAPR']">
+                        <li *ngIf="offerItem[param]">
+                            <p>{{ ls.l('Offers_' + param) }}: {{ offersService.getParamDisplayValue(offerItem[param]) }}</p>
+                        </li>
+                    </ng-container>
+                </ng-container>
+                <ng-container *ngFor="let item of offerItem.details">
+                    <li>
+                        <p>{{item}}</p>
+                    </li>
+                </ng-container>
+            </ul>
+        </div>
+    </li>
+</ul>
+
+<button (click)="showNextItems()" class="load-more-items" *ngIf="offersCount > visibleOffersCount">{{ls.l('Load_More_Offers_Found')}}</button>
+<app-no-data *ngIf="!offersAreLoading && offersCount === 0"></app-no-data>
