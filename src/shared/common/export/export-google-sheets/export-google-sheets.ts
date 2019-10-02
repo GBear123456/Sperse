@@ -35,7 +35,7 @@ export class ExportGoogleSheetService {
             let auth = gAPI.auth2.getAuthInstance();
             if (auth.isSignedIn.get()) {
                 loader.then(data => this.createSheet(data, sheetName));
-            } else 
+            } else
                 auth.signIn().then(() => {
                     loader.then(data => this.createSheet(data, sheetName));
                 });

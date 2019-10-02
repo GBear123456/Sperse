@@ -368,7 +368,11 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     return contacts.data.map(contact => ({
                         creationDate: contact.summary[0],
                         count: contact.count
-                    }));
+                    })).sort((contactA, contactB) => {
+                        const dateA = new Date(contactA.creationDate);
+                        const dateB = new Date(contactB.creationDate);
+                        return dateA > dateB ? 1 : (dateA === dateB ? 0 : -1);
+                    });
                 });
             }
         });

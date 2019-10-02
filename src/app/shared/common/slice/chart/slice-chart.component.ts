@@ -1,5 +1,14 @@
 /** Core imports */
-import { ChangeDetectionStrategy, Component, Input, ViewChild, OnChanges, SimpleChanges } from '@angular/core';
+import {
+    ChangeDetectionStrategy,
+    ChangeDetectorRef,
+    Component,
+    Input,
+    ViewChild,
+    OnChanges,
+    OnInit,
+    SimpleChanges
+} from '@angular/core';
 
 /** Third party imports */
 import { DxChartComponent } from 'devextreme-angular/ui/chart';
@@ -19,7 +28,7 @@ import { DateHelper } from '@shared/helpers/DateHelper';
     styleUrls: [ './slice-chart.component.less' ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class SliceChartComponent implements OnChanges {
+export class SliceChartComponent implements OnInit, OnChanges {
     @Input() title = '';
     @Input() valueField: string;
     @Input() argumentField: string;
@@ -34,8 +43,14 @@ export class SliceChartComponent implements OnChanges {
     capitalize = capitalize;
 
     constructor(
+        private changeDetectorRef: ChangeDetectorRef,
         public ls: AppLocalizationService
     ) {}
+
+    ngOnInit() {
+        /** To avoid updating of UI after every devextreme event */
+        this.changeDetectorRef.detach();
+    }
 
     ngOnChanges(changes: SimpleChanges) {
         if (changes.height) {
@@ -43,6 +58,9 @@ export class SliceChartComponent implements OnChanges {
         }
         if (changes.width) {
             this.chartWidth = changes.width.currentValue - 40;
+        }
+        if (changes.height || changes.width) {
+            this.changeDetectorRef.detectChanges();
         }
     }
 
