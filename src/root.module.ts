@@ -35,6 +35,7 @@ import { RootStoreModule } from '@root/store';
 import { FaviconService } from '@shared/common/favicon-service/favicon.service';
 import { ProfileService } from '@shared/common/profile-service/profile.service';
 import { BugsnagService } from '@shared/common/bugsnag/bugsnag.service';
+import { FullScreenService } from '@shared/common/fullscreen/fullscreen.service';
 
 export function errorHandlerFactory(
     bugsnagService: BugsnagService
@@ -181,6 +182,7 @@ function handleLogoutRequest(authService: AppAuthService) {
         ProfileService,
         AppHttpConfiguration,
         AppHttpInterceptor,
+        FullScreenService,
         {
             provide: CacheStorageAbstract,
             useClass: CacheLocalStorage
