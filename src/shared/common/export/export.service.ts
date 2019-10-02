@@ -7,7 +7,6 @@ import { ExportGoogleSheetService } from './export-google-sheets/export-google-s
 import { Angular5Csv } from './export-csv/export-csv';
 import DataSource from 'devextreme/data/data_source';
 import capitalize from 'underscore.string/capitalize';
-import * as _ from 'underscore';
 import * as moment from 'moment';
 
 @Injectable()
@@ -48,20 +47,24 @@ export class ExportService {
     private getDataFromGrid(dataGrid: DxDataGridComponent, callback, exportAllData) {
         if (exportAllData) {
             let initialDataSource = dataGrid.instance.getDataSource(),
-                dataSource = new DataSource({
-                    paginate: false,
-                    filter: initialDataSource.filter(),
-                    requireTotalCount: true,
-                    store: _.extend(initialDataSource.store(), {
-                        _beforeSend: (request) => {
-                            request.timeout = this.EXPORT_REQUEST_TIMEOUT;
-                            request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
-                        }
-                    })
-                });
-            dataSource.load().done((res) => {
+                initialStore = initialDataSource.store(),
+                initialBeforeSend = initialStore._beforeSend;
+
+            initialStore._beforeSend = (request) => {
+                initialBeforeSend.call(initialStore, request);
+                request.timeout = this.EXPORT_REQUEST_TIMEOUT;
+            }
+
+            (new DataSource({
+                paginate: false,
+                filter: initialDataSource.filter(),
+                requireTotalCount: true,
+                store: initialStore
+            })).load().done(res => {
+                initialStore._beforeSend = initialBeforeSend;
                 callback(this.checkJustifyData(res));
-            }).fail(() => {
+            }).fail(err => {
+                initialStore._beforeSend = initialBeforeSend;
                 callback([]);
             });
         } else
@@ -95,9 +98,9 @@ export class ExportService {
                 let visibleColumns = dataGrid.instance.getVisibleColumns(),
                     rowData = [this._exportGoogleSheetService.getHeaderRow(visibleColumns)];
 
-                _.each(data, (val: any) => {
+                data.forEach((val: any) => {
                     let row = { values: [] };
-                    _.each(visibleColumns, (col: any) => {
+                    visibleColumns.forEach((col: any) => {
                         if (col.allowExporting) {
                             let value = val[col.dataField];
 

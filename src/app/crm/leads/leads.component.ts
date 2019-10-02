@@ -778,9 +778,9 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                                 {
                                     action: this.exportData.bind(this, options => {
                                         if (this.dataLayoutType === DataLayoutType.PivotGrid) {
-                                            this.sliceComponent.pivotGrid.instance.exportToExcel();
+                                            return this.sliceComponent.pivotGrid.instance.exportToExcel();
                                         } else {
-                                            this.exportToXLS(options);
+                                            return this.exportToXLS(options);
                                         }
                                     }),
                                     text: this.l('Export to Excel'),
@@ -868,10 +868,10 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     exportData(callback, options) {
-        if (this.dataLayoutType === DataLayoutType.Pipeline) {
+        if (this.showPipeline) {
             let importOption = 'all',
-                instance = this.showDataGrid ? this.dataGrid.instance : this.sliceComponent.pivotGrid.instance,
-                dataSource = instance.option('dataSource'),
+                instance = this.dataGrid.instance,
+                dataSource = instance && instance.getDataSource(),
                 checkExportOption = (dataSource, ignoreFilter = false) => {
                     if (options == importOption)
                         ignoreFilter || this.processFilterInternal([this]);
