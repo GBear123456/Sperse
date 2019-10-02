@@ -210,11 +210,11 @@ export class OffersService {
         });
         const modalData = {
             processingSteps: [null, null, null, null],
-            completeDelays: linkIsDirect ? [ 250, 250, 250, 250 ] : [ 1000, 1000, 1000, null ],
+            completeDelays: [ 1000, 1000, 1000, null ],
             delayMessages: linkIsDirect ? null : <any>[ null, null, null, this.ls.l('Offers_TheNextStepWillTake') ],
             title: linkIsDirect ? 'Offers_ConnectingToPartners' : 'Offers_ProcessingLoanRequest',
             subtitle: linkIsDirect ? 'Offers_NewWindowWillBeOpen' : 'Offers_WaitLoanRequestProcessing',
-            redirectUrl: linkIsDirect ? redirectUrl : offer.redirectUrl,
+            redirectUrl: null,
             logoUrl: offer.campaignProviderType === CampaignProviderType.CreditLand
                 ? this.creditLandLogoUrl
                 : (isCreditCard ? null : offer.logoUrl)
@@ -258,7 +258,7 @@ export class OffersService {
                     width: '1200px',
                     height: '800px',
                     id: 'offers-wizard',
-                    panelClass: ['offers-wizard', 'setup'],
+                    panelClass: [ 'offers-wizard', 'setup' ],
                     disableClose: true,
                     data: {
                         offer: offer,
@@ -269,7 +269,7 @@ export class OffersService {
                 }).afterClosed().subscribe((output: SubmitApplicationOutput)  => {
                     this.document.body.classList.remove('overflow-hidden');
                     if (output) {
-                         const applyOfferDialog = this.dialog.open(ApplyOfferDialogComponent, {
+                        const applyOfferDialog = this.dialog.open(ApplyOfferDialogComponent, {
                             width: '530px',
                             panelClass: 'apply-offer-dialog',
                             data: modalData
@@ -289,9 +289,13 @@ export class OffersService {
                     data: modalData
                 });
                 this.offerServiceProxy.submitRequest(submitRequestInput)
-                    .subscribe(
-                        () => applyOfferDialog.close()
-                    );
+                    .subscribe((output: SubmitApplicationOutput) => {
+                        if (output.redirectUrl) {
+                            !window.open(output.redirectUrl, '_blank')
+                                ? applyOfferDialog.componentInstance.showBlockedMessage = true
+                                : applyOfferDialog.close();
+                        }
+                    });
             }
         }
     }
