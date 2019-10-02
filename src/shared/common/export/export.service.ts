@@ -90,7 +90,7 @@ export class ExportService {
     }
 
     exportToGoogleSheets(dataGrid: DxDataGridComponent, exportAllData: boolean) {
-        return new Promise((resolve) => {
+        return this._exportGoogleSheetService.export(new Promise((resolve) => {
             this.getDataFromGrid(dataGrid, (data) => {
                 let visibleColumns = dataGrid.instance.getVisibleColumns(),
                     rowData = [this._exportGoogleSheetService.getHeaderRow(visibleColumns)];
@@ -106,11 +106,9 @@ export class ExportService {
                     });
                     rowData.push(row);
                 });
-
-                this._exportGoogleSheetService.export(rowData, this.getFileName(dataGrid));
-                resolve();
+                resolve(rowData);
             }, exportAllData);
-        });
+        }), this.getFileName(dataGrid));
     }
 
     exportToExcel(dataGrid: DxDataGridComponent, exportAllData: boolean) {

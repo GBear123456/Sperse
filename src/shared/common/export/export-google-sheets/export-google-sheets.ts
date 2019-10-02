@@ -1,13 +1,20 @@
-﻿import { Injectable } from '@angular/core';
-import { AppConsts } from '@shared/AppConsts';
+﻿/** Core imports */
+import { Injectable } from '@angular/core';
 
+/** Third party imports */
+import { ReplaySubject } from 'rxjs';
+import { first } from 'rxjs/operators';
 import capitalize from 'underscore.string/capitalize';
 import * as _ from 'underscore';
+
+/** Application imports */
+import { AppConsts } from '@shared/AppConsts';
 
 declare const gapi: any;
 
 @Injectable()
 export class ExportGoogleSheetService {
+    private gAPISubject = new ReplaySubject<any>(1);
 
     constructor() {
         jQuery.getScript('https://apis.google.com/js/api.js', () => {
@@ -18,20 +25,22 @@ export class ExportGoogleSheetService {
                         scope: 'https://www.googleapis.com/auth/spreadsheets',
                         discoveryDocs: ['https://sheets.googleapis.com/$discovery/rest?version=v4']
                     });
+                    this.gAPISubject.next(gapi);
                 });
         });
     }
 
-    export(data: any, sheetName: string) {
-        let auth = gapi.auth2.getAuthInstance();
-        if (auth.isSignedIn.get()) {
-            this.createSheet(data, sheetName);
-        } else {
-            let exportService = this;
-            auth.signIn().then(function () {
-                exportService.createSheet(data, sheetName);
-            });
-        }
+    export(loader: Promise<any>, sheetName: string) {
+        this.gAPISubject.asObservable().pipe(first()).subscribe(gAPI => {
+            let auth = gAPI.auth2.getAuthInstance();
+            if (auth.isSignedIn.get()) {
+                loader.then(data => this.createSheet(data, sheetName));
+            } else 
+                auth.signIn().then(() => {
+                    loader.then(data => this.createSheet(data, sheetName));
+                });
+        });
+        return loader;
     }
 
     createSheet(data: any, sheetName: string) {

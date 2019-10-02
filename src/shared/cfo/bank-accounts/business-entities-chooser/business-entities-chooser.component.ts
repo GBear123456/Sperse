@@ -63,13 +63,13 @@ export class BusinessEntitiesChooserComponent implements OnDestroy {
         let selectedCount = this.selectedItems.length,
             totalCount = data.length;
         return selectedCount ? (this.allSelectedTitle && selectedCount == totalCount
-            ? '' : this.getItemsTitle(data)) : '';
+            ? '' : this.getItemsTitle(data)) + ' \u25BE' : '';
     }
 
     getItemsTitle(data) {
         let firstSelected = data.find(item => item.selected),
             moreCount = this.selectedItems.length - 1;
-        return firstSelected ? firstSelected.name + (moreCount ? ' +' + moreCount : '') + ' \u25BE' : '';
+        return firstSelected ? firstSelected.name + (moreCount ? ' +' + moreCount : '') : '';
     }
 
     updateSelectedItems(data) {
