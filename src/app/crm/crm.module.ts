@@ -79,6 +79,7 @@ import { LoadingSpinnerModule } from '@app/shared/common/loading-spinner/loading
 import { AppPermissions } from '@shared/AppPermissions';
 import { BankCodeLettersModule } from '@app/shared/common/bank-code-letters/bank-code-letters.module';
 import { CrmService } from '@app/crm/crm.service';
+import { SliceModule } from '@app/shared/common/slice/slice.module';
 
 @NgModule({
     imports: [
@@ -133,7 +134,8 @@ import { CrmService } from '@app/crm/crm.service';
         SharedIntroStepsModule,
         CrmStoreModule,
         LoadingSpinnerModule,
-        BankCodeLettersModule
+        BankCodeLettersModule,
+        SliceModule
     ],
     declarations: [
         ClientsComponent,

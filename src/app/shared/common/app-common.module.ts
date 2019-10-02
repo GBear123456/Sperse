@@ -99,8 +99,6 @@ import { TypesListComponent } from '@app/crm/shared/types-list/types-list.compon
 import { StaticListComponent } from './static-list/static-list.component';
 import { LoadingSpinnerModule } from '@app/shared/common/loading-spinner/loading-spinner.module';
 import { SetupStepsComponent } from './setup-steps/setup-steps.component';
-import { SlicePivotGridComponent } from '@app/shared/common/slice/pivot-grid/slice-pivot-grid.component';
-import { SliceChartComponent } from '@app/shared/common/slice/chart/slice-chart.component';
 
 @NgModule({
     imports: [
@@ -205,9 +203,7 @@ import { SliceChartComponent } from '@app/shared/common/slice/chart/slice-chart.
         RatingComponent,
         StarsListComponent,
         TypesListComponent,
-        SetupStepsComponent,
-        SlicePivotGridComponent,
-        SliceChartComponent
+        SetupStepsComponent
     ],
     exports: [
         TimeAgoPipe,
@@ -235,9 +231,7 @@ import { SliceChartComponent } from '@app/shared/common/slice/chart/slice-chart.
         RatingComponent,
         StarsListComponent,
         TypesListComponent,
-        SetupStepsComponent,
-        SlicePivotGridComponent,
-        SliceChartComponent
+        SetupStepsComponent
     ],
     providers: [
         DateTimeService,

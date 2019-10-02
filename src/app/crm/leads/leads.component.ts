@@ -70,6 +70,7 @@ import { SlicePivotGridComponent } from '@app/shared/common/slice/pivot-grid/sli
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { SliceChartComponent } from '@app/shared/common/slice/chart/slice-chart.component';
 import { CrmService } from '@app/crm/crm.service';
+import { InfoItem } from '@app/shared/common/slice/info/info-item.model';
 
 @Component({
     templateUrl: './leads.component.html',
@@ -155,7 +156,57 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     };
     permissions = AppPermissions;
     pivotGridDataSource: any;
-    chartDataSource: any;
+    chartInfoItems: InfoItem[];
+    chartDataSource = new DataSource({
+        key: 'id',
+        load: () => {
+            const params = {
+                contactGroupId: this.contactGroupId,
+                group: `[{"selector":"CreationTime","groupInterval":"${this.sliceChartComponent.summaryBy.value}","isExpanded":false,"desc":true}]`,
+                groupSummary: '[{"selector":"CreationTime","summaryType":"min"}]'
+            };
+            const filter = this.oDataService.getODataFilter(this.filters, this.getCheckCustom);
+            if (filter) {
+                params['$filter'] = filter;
+            }
+            return this.http.get(this.getODataUrl(this.groupDataSourceURI), {
+                headers: new HttpHeaders({
+                    'Authorization': 'Bearer ' + abp.auth.getToken()
+                }),
+                params: params
+            }).toPromise().then((contacts: any) => {
+                const avgGroupValue = contacts.totalCount ? (contacts.totalCount / contacts.data.length).toFixed(2) : 0;
+                let minGroupValue, maxGroupValue;
+                const result = contacts.data.map(contact => {
+                    minGroupValue = !minGroupValue || contact.count < minGroupValue ? contact.count : minGroupValue;
+                    maxGroupValue = !maxGroupValue || contact.count > maxGroupValue ? contact.count : maxGroupValue;
+                    return {
+                        creationDate: contact.summary[0],
+                        count: contact.count
+                    };
+                });
+                this.chartInfoItems = [
+                    {
+                        label: this.l('Totals'),
+                        value: contacts.totalCount
+                    },
+                    {
+                        label: this.l('Average'),
+                        value: avgGroupValue
+                    },
+                    {
+                        label: this.l('Lowest'),
+                        value: minGroupValue
+                    },
+                    {
+                        label: this.l('Highest'),
+                        value: maxGroupValue
+                    }
+                ];
+                return result;
+            });
+        }
+    });
     private pivotGridDataSourceConfig = {
         fields: [
             {
@@ -347,35 +398,6 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             }
         };
         this.pivotGridDataSource = this.getPivotGridDataSource(this.dataSource);
-        this.chartDataSource = new DataSource({
-            key: 'id',
-            load: () => {
-                const params = {
-                    contactGroupId: this.contactGroupId,
-                    group: `[{"selector":"CreationTime","groupInterval":"${this.sliceChartComponent.summaryBy.value}","isExpanded":false}]`,
-                    groupSummary: '[{"selector":"CreationTime","summaryType":"min"}]'
-                };
-                const filter = this.oDataService.getODataFilter(this.filters, this.getCheckCustom);
-                if (filter) {
-                    params['$filter'] = filter;
-                }
-                return this.http.get(this.getODataUrl(this.groupDataSourceURI), {
-                    headers: new HttpHeaders({
-                        'Authorization': 'Bearer ' + abp.auth.getToken()
-                    }),
-                    params: params
-                }).toPromise().then((contacts: any) => {
-                    return contacts.data.map(contact => ({
-                        creationDate: contact.summary[0],
-                        count: contact.count
-                    })).sort((contactA, contactB) => {
-                        const dateA = new Date(contactA.creationDate);
-                        const dateB = new Date(contactB.creationDate);
-                        return dateA > dateB ? 1 : (dateA === dateB ? 0 : -1);
-                    });
-                });
-            }
-        });
         this.searchValue = '';
     }
 

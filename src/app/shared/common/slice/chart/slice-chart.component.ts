@@ -21,6 +21,7 @@ import capitalize from 'lodash/capitalize';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { SummaryBy } from '@app/shared/common/slice/chart/summary-by.enum';
 import { DateHelper } from '@shared/helpers/DateHelper';
+import { InfoItem } from '@app/shared/common/slice/info/info-item.model';
 
 @Component({
     selector: 'slice-chart',
@@ -34,6 +35,7 @@ export class SliceChartComponent implements OnInit, OnChanges {
     @Input() argumentField: string;
     @Input() width: number;
     @Input() height: number;
+    @Input() infoItems: InfoItem[];
     @ViewChild(DxChartComponent) chartComponent: DxChartComponent;
     chartHeight: number;
     chartWidth: number;
@@ -54,12 +56,12 @@ export class SliceChartComponent implements OnInit, OnChanges {
 
     ngOnChanges(changes: SimpleChanges) {
         if (changes.height) {
-            this.chartHeight = changes.height.currentValue - 100;
+            this.chartHeight = changes.height.currentValue - 183;
         }
         if (changes.width) {
             this.chartWidth = changes.width.currentValue - 40;
         }
-        if (changes.height || changes.width) {
+        if (changes.height || changes.width || changes.infoItems) {
             this.changeDetectorRef.detectChanges();
         }
     }

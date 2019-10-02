@@ -1,49 +1,52 @@
-<header>
-    <h2>{{ title }}</h2>
-    <dx-select-box [items]="summaryByList"
-                   [placeholder]="ls.l('SummaryBy')"
-                   [value]="capitalize(summaryBy.value)"
-                   (onValueChanged)="summaryByChanged($event)">
-    </dx-select-box>
-</header>
-<dx-chart>
+<slice-info [items]="infoItems"></slice-info>
+<div class="chart">
+    <header>
+        <h2>{{ title }}</h2>
+        <dx-select-box [items]="summaryByList"
+                       [placeholder]="ls.l('SummaryBy')"
+                       [value]="capitalize(summaryBy.value)"
+                       (onValueChanged)="summaryByChanged($event)">
+        </dx-select-box>
+    </header>
+    <dx-chart>
 
-    <dxo-tooltip [enabled]="true"
-                 [zIndex]="1">
-    </dxo-tooltip>
+        <dxo-tooltip [enabled]="true"
+                     [zIndex]="1">
+        </dxo-tooltip>
 
-    <dxo-size [width]="chartWidth" [height]="chartHeight"></dxo-size>
+        <dxo-size [width]="chartWidth" [height]="chartHeight"></dxo-size>
 
-    <!-- common settings for charts -->
-    <dxo-common-series-settings [argumentField]="argumentField"
-                                type="stackedBar"
-                                [showInLegend]="false"
-                                [ignoreEmptyPoints]="true">
-    </dxo-common-series-settings>
+        <!-- common settings for charts -->
+        <dxo-common-series-settings [argumentField]="argumentField"
+                                    type="stackedBar"
+                                    [showInLegend]="false"
+                                    [ignoreEmptyPoints]="true">
+        </dxo-common-series-settings>
 
-    <!-- Left axis -->
-    <dxi-value-axis>
-        <dxo-grid color="#8a8c8e" [visible]="true"></dxo-grid>
-    </dxi-value-axis>
+        <!-- Left axis -->
+        <dxi-value-axis>
+            <dxo-grid color="#8a8c8e" [visible]="true"></dxo-grid>
+        </dxi-value-axis>
 
-    <!-- Bottom axis -->
-    <dxo-argument-axis [visible]="true"
-                       type="discrete">
-        <dxo-label [customizeText]="customizeBottomAxis.bind(this)">
-            <dxo-format [type]="summaryBy$ | async"></dxo-format>
-        </dxo-label>
-        <dxo-tick-interval [months]="1"></dxo-tick-interval>
-    </dxo-argument-axis>
+        <!-- Bottom axis -->
+        <dxo-argument-axis [visible]="true"
+                           type="discrete">
+            <dxo-label [customizeText]="customizeBottomAxis.bind(this)">
+                <dxo-format [type]="summaryBy$ | async"></dxo-format>
+            </dxo-label>
+            <dxo-tick-interval [months]="1"></dxo-tick-interval>
+        </dxo-argument-axis>
 
-    <dxi-series color="url(#linear-gradient)"
-                [valueField]="valueField">
-    </dxi-series>
+        <dxi-series color="url(#linear-gradient)"
+                    [valueField]="valueField">
+        </dxi-series>
 
-</dx-chart>
+    </dx-chart>
 
-<svg>
-    <linearGradient id="linear-gradient" x1="0" x2="0" y1="0" y2="1">
-        <stop offset="0%" stop-color="#00aeef"/>
-        <stop offset="100%" stop-color="#a4e2f9"/>
-    </linearGradient>
-</svg>
+    <svg>
+        <linearGradient id="linear-gradient" x1="0" x2="0" y1="0" y2="1">
+            <stop offset="0%" stop-color="#00aeef"/>
+            <stop offset="100%" stop-color="#a4e2f9"/>
+        </linearGradient>
+    </svg>
+</div>
