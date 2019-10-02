@@ -32465,6 +32465,7 @@ export interface ILegalInformation {
 export class RegisterApplicantRequest implements IRegisterApplicantRequest {
     systemType!: OfferProviderType;
     testMode!: boolean | undefined;
+    isAuthenticated!: boolean | undefined;
     newUserPassword!: string | undefined;
     finalizeLeadUrl!: string | undefined;
     sendWelcomeEmail!: boolean | undefined;
@@ -32490,6 +32491,7 @@ export class RegisterApplicantRequest implements IRegisterApplicantRequest {
         if (data) {
             this.systemType = data["systemType"];
             this.testMode = data["testMode"];
+            this.isAuthenticated = data["isAuthenticated"];
             this.newUserPassword = data["newUserPassword"];
             this.finalizeLeadUrl = data["finalizeLeadUrl"];
             this.sendWelcomeEmail = data["sendWelcomeEmail"];
@@ -32515,6 +32517,7 @@ export class RegisterApplicantRequest implements IRegisterApplicantRequest {
         data = typeof data === 'object' ? data : {};
         data["systemType"] = this.systemType;
         data["testMode"] = this.testMode;
+        data["isAuthenticated"] = this.isAuthenticated;
         data["newUserPassword"] = this.newUserPassword;
         data["finalizeLeadUrl"] = this.finalizeLeadUrl;
         data["sendWelcomeEmail"] = this.sendWelcomeEmail;
@@ -32533,6 +32536,7 @@ export class RegisterApplicantRequest implements IRegisterApplicantRequest {
 export interface IRegisterApplicantRequest {
     systemType: OfferProviderType;
     testMode: boolean | undefined;
+    isAuthenticated: boolean | undefined;
     newUserPassword: string | undefined;
     finalizeLeadUrl: string | undefined;
     sendWelcomeEmail: boolean | undefined;
@@ -67695,7 +67699,6 @@ export interface IIntegrationsSettings {
 
 export class EPCVIPOfferProviderSettings implements IEPCVIPOfferProviderSettings {
     apiKey!: string | undefined;
-    postbackPassCode!: string | undefined;
 
     constructor(data?: IEPCVIPOfferProviderSettings) {
         if (data) {
@@ -67709,7 +67712,6 @@ export class EPCVIPOfferProviderSettings implements IEPCVIPOfferProviderSettings
     init(data?: any) {
         if (data) {
             this.apiKey = data["apiKey"];
-            this.postbackPassCode = data["postbackPassCode"];
         }
     }
 
@@ -67723,14 +67725,12 @@ export class EPCVIPOfferProviderSettings implements IEPCVIPOfferProviderSettings
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["apiKey"] = this.apiKey;
-        data["postbackPassCode"] = this.postbackPassCode;
         return data; 
     }
 }
 
 export interface IEPCVIPOfferProviderSettings {
     apiKey: string | undefined;
-    postbackPassCode: string | undefined;
 }
 
 export class BaseCommercePaymentSettings implements IBaseCommercePaymentSettings {
