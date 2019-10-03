@@ -155,59 +155,44 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         ]
     };
     permissions = AppPermissions;
-    pivotGridDataSource: any;
-    chartInfoItems: InfoItem[];
-    chartDataSource = new DataSource({
-        key: 'id',
-        load: () => {
+    pivotGridDataSource = {
+        remoteOperations: true,
+        load: (loadOptions) => {
             const params = {
                 contactGroupId: this.contactGroupId,
-                group: `[{"selector":"CreationTime","groupInterval":"${this.sliceChartComponent.summaryBy.value}","isExpanded":false,"desc":true}]`,
-                groupSummary: '[{"selector":"CreationTime","summaryType":"min"}]'
             };
+            if (loadOptions.take !== undefined) {
+                params['take'] = loadOptions.take;
+            }
+            if (loadOptions.skip !== undefined) {
+                params['skip'] = loadOptions.skip;
+            }
+            if (loadOptions.group) {
+                params['group'] = JSON.stringify(loadOptions.group);
+            }
+            if (loadOptions.filter) {
+                params['filter'] = JSON.stringify(loadOptions.filter);
+            }
+            if (loadOptions.totalSummary && loadOptions.totalSummary.length) {
+                params['totalSummary'] = JSON.stringify(loadOptions.totalSummary);
+            }
+            if (loadOptions.groupSummary) {
+                params['groupSummary'] = JSON.stringify(loadOptions.groupSummary);
+            }
             const filter = this.oDataService.getODataFilter(this.filters, this.getCheckCustom);
             if (filter) {
                 params['$filter'] = filter;
             }
             return this.http.get(this.getODataUrl(this.groupDataSourceURI), {
+                params: params,
                 headers: new HttpHeaders({
                     'Authorization': 'Bearer ' + abp.auth.getToken()
-                }),
-                params: params
-            }).toPromise().then((contacts: any) => {
-                const avgGroupValue = contacts.totalCount ? (contacts.totalCount / contacts.data.length).toFixed(2) : 0;
-                let minGroupValue, maxGroupValue;
-                const result = contacts.data.map(contact => {
-                    minGroupValue = !minGroupValue || contact.count < minGroupValue ? contact.count : minGroupValue;
-                    maxGroupValue = !maxGroupValue || contact.count > maxGroupValue ? contact.count : maxGroupValue;
-                    return {
-                        creationDate: contact.summary[0],
-                        count: contact.count
-                    };
-                });
-                this.chartInfoItems = [
-                    {
-                        label: this.l('Totals'),
-                        value: contacts.totalCount
-                    },
-                    {
-                        label: this.l('Average'),
-                        value: avgGroupValue
-                    },
-                    {
-                        label: this.l('Lowest'),
-                        value: minGroupValue
-                    },
-                    {
-                        label: this.l('Highest'),
-                        value: maxGroupValue
-                    }
-                ];
-                return result;
+                })
+            }).toPromise().then((data: any) => {
+                console.log(data);
+                return data;
             });
-        }
-    });
-    private pivotGridDataSourceConfig = {
+        },
         fields: [
             {
                 area: 'row',
@@ -353,6 +338,57 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             'ZipCode'
         ]
     };
+    chartInfoItems: InfoItem[];
+    chartDataSource = new DataSource({
+        key: 'id',
+        load: () => {
+            const params = {
+                contactGroupId: this.contactGroupId,
+                group: `[{"selector":"CreationTime","groupInterval":"${this.sliceChartComponent.summaryBy.value}","isExpanded":false,"desc":true}]`,
+                groupSummary: '[{"selector":"CreationTime","summaryType":"min"}]'
+            };
+            const filter = this.oDataService.getODataFilter(this.filters, this.getCheckCustom);
+            if (filter) {
+                params['$filter'] = filter;
+            }
+            return this.http.get(this.getODataUrl(this.groupDataSourceURI), {
+                headers: new HttpHeaders({
+                    'Authorization': 'Bearer ' + abp.auth.getToken()
+                }),
+                params: params
+            }).toPromise().then((contacts: any) => {
+                const avgGroupValue = contacts.totalCount ? (contacts.totalCount / contacts.data.length).toFixed(2) : 0;
+                let minGroupValue, maxGroupValue;
+                const result = contacts.data.map(contact => {
+                    minGroupValue = !minGroupValue || contact.count < minGroupValue ? contact.count : minGroupValue;
+                    maxGroupValue = !maxGroupValue || contact.count > maxGroupValue ? contact.count : maxGroupValue;
+                    return {
+                        creationDate: contact.summary[0],
+                        count: contact.count
+                    };
+                });
+                this.chartInfoItems = [
+                    {
+                        label: this.l('Totals'),
+                        value: contacts.totalCount
+                    },
+                    {
+                        label: this.l('Average'),
+                        value: avgGroupValue
+                    },
+                    {
+                        label: this.l('Lowest'),
+                        value: minGroupValue
+                    },
+                    {
+                        label: this.l('Highest'),
+                        value: maxGroupValue
+                    }
+                ];
+                return result;
+            });
+        }
+    });
 
     private readonly CONTACT_GROUP_CACHE_KEY = 'CONTACT_GROUP';
     private organizationUnits: OrganizationUnitDto[];
@@ -380,8 +416,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         super(injector);
 
         this.contactGroupOptionInit();
-        this.dataSource = {
-            uri: this.dataSourceURI,
+        this.dataSource = new DataSource({
             requireTotalCount: true,
             store: {
                 key: 'Id',
@@ -396,9 +431,14 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 deserializeDates: false,
                 paginate: true
             }
-        };
-        this.pivotGridDataSource = this.getPivotGridDataSource(this.dataSource);
+        });
         this.searchValue = '';
+    }
+
+    private static setDataSourceToComponent(dataSource: any, componentInstance: any) {
+        if (componentInstance && !componentInstance.option('dataSource')) {
+            componentInstance.option('dataSource', dataSource);
+        }
     }
 
     ngOnInit() {
@@ -413,13 +453,6 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             this.chartDataSource.load();
         });
         this.activate();
-    }
-
-    private getPivotGridDataSource(dataSource) {
-        return {
-            ...dataSource,
-            ...this.pivotGridDataSourceConfig
-        };
     }
 
     private loadOrganizationUnits() {
@@ -576,20 +609,20 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     component: FilterInputsComponent,
                     operator: 'startswith',
                     caption: 'name',
-                    items: {Name: new FilterItemModel()}
+                    items: { Name: new FilterItemModel() }
                 }),
                 new FilterModel({
                     component: FilterInputsComponent,
                     caption: 'Email',
-                    items: {Email: new FilterItemModel()}
+                    items: { Email: new FilterItemModel() }
                 }),
                 new FilterModel({
                     component: FilterCalendarComponent,
-                    operator: {from: 'ge', to: 'le'},
+                    operator: { from: 'ge', to: 'le' },
                     caption: 'creation',
                     field: 'CreationTime',
-                    items: {from: new FilterItemModel(), to: new FilterItemModel()},
-                    options: {method: 'getFilterByDate', params: { useUserTimezone: true }}
+                    items: { from: new FilterItemModel(), to: new FilterItemModel() },
+                    options: { method: 'getFilterByDate', params: { useUserTimezone: true } }
                 }),
                 this.filterModelStages = new FilterModel({
                     component: FilterCheckBoxesComponent,
@@ -614,30 +647,30 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     component: FilterInputsComponent,
                     operator: 'startswith',
                     caption: 'city',
-                    items: {City: new FilterItemModel()}
+                    items: { City: new FilterItemModel() }
                 }),
                 new FilterModel({
                     component: FilterInputsComponent,
                     operator: 'contains',
                     caption: 'streetAddress',
-                    items: {StreetAddress: new FilterItemModel()}
+                    items: { StreetAddress: new FilterItemModel() }
                 }),
                 new FilterModel({
                     component: FilterInputsComponent,
                     operator: 'startswith',
                     caption: 'zipCode',
-                    items: {ZipCode: new FilterItemModel()}
+                    items: { ZipCode: new FilterItemModel() }
                 }),
                 new FilterModel({
                     component: FilterInputsComponent,
                     caption: 'SourceCode',
-                    items: {SourceCode: new FilterItemModel()}
+                    items: { SourceCode: new FilterItemModel() }
                 }),
                 new FilterModel({
                     component: FilterInputsComponent,
                     operator: 'startswith',
                     caption: 'Industry',
-                    items: {Industry: new FilterItemModel()}
+                    items: { Industry: new FilterItemModel() }
                 }),
                 this.filterModelAssignment = new FilterModel({
                     component: FilterCheckBoxesComponent,
@@ -669,7 +702,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     component: FilterInputsComponent,
                     caption: 'Campaign',
                     field: 'CampaignCode',
-                    items: {CampaignCode: new FilterItemModel()}
+                    items: { CampaignCode: new FilterItemModel() }
                 }),
                 this.filterModelLists = new FilterModel({
                     component: FilterCheckBoxesComponent,
@@ -699,7 +732,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 }),
                 this.filterModelRating = new FilterModel({
                     component: FilterRangeComponent,
-                    operator: {from: 'ge', to: 'le'},
+                    operator: { from: 'ge', to: 'le' },
                     caption: 'Rating',
                     field: 'Rating',
                     items$: this.store$.pipe(select(RatingsStoreSelectors.getRatingItems))
@@ -1092,18 +1125,12 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
 
     private setPivotGridInstance() {
         const pivotGridInstance = this.slicePivotGridComponent && this.slicePivotGridComponent.pivotGrid && this.slicePivotGridComponent.pivotGrid.instance;
-        this.setDataSourceToComponent(this.pivotGridDataSource, pivotGridInstance);
+        LeadsComponent.setDataSourceToComponent(this.pivotGridDataSource, pivotGridInstance);
     }
 
     private setChartInstance() {
         const chartInstance = this.sliceChartComponent && this.sliceChartComponent.chartComponent && this.sliceChartComponent.chartComponent.instance;
-        this.setDataSourceToComponent(this.chartDataSource, chartInstance);
-    }
-
-    private setDataSourceToComponent(dataSource: DataSource, componentInstance: any) {
-        if (componentInstance && !componentInstance.option('dataSource')) {
-            componentInstance.option('dataSource', dataSource);
-        }
+        LeadsComponent.setDataSourceToComponent(this.chartDataSource, chartInstance);
     }
 
     createLead() {
