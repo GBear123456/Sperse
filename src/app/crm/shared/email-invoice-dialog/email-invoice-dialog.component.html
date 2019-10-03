@@ -1,0 +1,17 @@
+<email-template-dialog (onSave)="save($event)" (onTemplateChange)="templateChanged($event)">
+    <ng-container templateSettings>
+        <div class="settings-wrapper">
+            <div class="left-side">
+                <h3>Other Settings</h3>
+                <dx-check-box
+                    text="Attach PDF copy to email when sending invoices"
+                    [(value)]="data.isActive">
+                </dx-check-box>
+            </div>
+            <div class="right-side">
+                <h3>Payment Method</h3>
+                <p>Looks like you have not enabled any payment integrations yet. You can add one below</p>
+            </div>
+        </div>
+    </ng-container>
+</email-template-dialog>

@@ -1,17 +1,19 @@
-<modal-dialog [title]="ls.l('Invoice Settings')"
+<modal-dialog [title]="data.title"
               [titleClearButton]="false"
               [buttons]="buttons"
               [editTitle]="false">
     <ng-container headerContent>
         <dx-select-box
             name="template"
-            width="125px"
+            width="150px"
             height="40px"
             displayExpr="name"
             valueExpr="id"
+            [visible]="data.templates$"
             [placeholder]="ls.l('Template')"
             [(value)]="template"
-            [dataSource]="templates$ | async"
+            [dataSource]="data.templates$ | async"
+            [acceptCustomValue]="true"
             (onValueChanged)="onTemplateChnaged($event)">
         </dx-select-box>
     </ng-container>
@@ -19,35 +21,69 @@
     <div class="form-content">
         <dx-scroll-view showScrollbar="onHover">
             <div class="row">
-                <div class="col-sm-8">
-                    <div class="field-area description">
-                        <dx-text-box
-                            name="to"
-                            width="500px"
-                            height="85px"
-                            [placeholder]="ls.l('To')"
-                            [(value)]="emailTo">
-                        </dx-text-box>
-                    </div>
-                    <div class="field-area">
-                        <dx-text-box
-                            name="bcc"
-                            width="500px"
-                            height="85px"
-                            [placeholder]="ls.l('BCC')"
-                            [(value)]="bcc">
-                        </dx-text-box>
-                    </div>
-                    <div class="field-area">
-                        <dx-text-box
-                            name="subject"
-                            width="500px"
-                            height="85px"
-                            [placeholder]="ls.l('Subject')"
-                            [(value)]="subject">
-                        </dx-text-box>
+                <div class="field-area description">
+                    <dx-tag-box
+                        name="to"
+                        width="100%"
+                        height="40px"
+                        noDataText=""
+                        [multiline]="false"
+                        [acceptCustomValue]="true"
+                        [placeholder]="ls.l('To')"
+                        [(value)]="data.emailTo"
+                        (onOpened)="emailInputFocusIn($event)"
+                        (onCustomItemCreating)="onCustomItemCreating($event)">
+                    </dx-tag-box>
+                    <div class="bcc-links">
+                        <span (click)="showInputField(CCElement)" [hidden]="showCC">{{ls.l('CC')}}</span>
+                        <span (click)="showInputField(BCCElement)" [hidden]="showBCC">{{ls.l('BCC')}}</span>
                     </div>
                 </div>
+                <div class="field-area">
+                    <dx-tag-box #CCElement
+                        name="showCC"
+                        width="100%"
+                        height="40px"
+                        [visible]="showCC"
+                        noDataText=""
+                        [multiline]="false"
+                        [acceptCustomValue]="true"
+                        [placeholder]="ls.l('CC')"
+                        [(value)]="data.cc"
+                        (onOpened)="emailInputFocusIn($event)"
+                        (onFocusOut)="emailInputFocusOut($event)"
+                        (onCustomItemCreating)="onCustomItemCreating($event)">
+                    </dx-tag-box>
+                </div>
+                <div class="field-area">
+                    <dx-tag-box #BCCElement
+                        name="showBCC"
+                        width="100%"
+                        height="40px"
+                        [visible]="showBCC"
+                        noDataText=""
+                        [multiline]="false"
+                        [acceptCustomValue]="true"
+                        [placeholder]="ls.l('BCC')"                        
+                        [(value)]="data.bcc"
+                        (onOpened)="emailInputFocusIn($event)"
+                        (onFocusOut)="emailInputFocusOut($event)"
+                        (onCustomItemCreating)="onCustomItemCreating($event)">
+                    </dx-tag-box>
+                </div>
+                <div class="field-area">
+                    <dx-text-box
+                        name="subject"
+                        width="100%"
+                        height="40px"
+                        [placeholder]="ls.l('Subject')"
+                        [(value)]="data.subject">
+                    </dx-text-box>
+                </div>
+                <div class="field-area">
+                    <ckeditor [editor]="Editor" [(data)]="data.body"></ckeditor>
+                </div>
+                <ng-content select="[templateSettings]"></ng-content>
             </div>
         </dx-scroll-view>
     </div>

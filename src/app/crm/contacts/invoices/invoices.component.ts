@@ -12,6 +12,7 @@ import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { DxTooltipComponent } from 'devextreme-angular/ui/tooltip';
 import { MatDialog } from '@angular/material/dialog';
 import { finalize } from 'rxjs/operators';
+import { of } from 'rxjs';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
@@ -26,7 +27,7 @@ import {
 } from '@shared/service-proxies/service-proxies';
 import { ContactsService } from '@app/crm/contacts/contacts.service';
 import { CreateInvoiceDialogComponent } from '@app/crm/shared/create-invoice-dialog/create-invoice-dialog.component';
-import { EmailTemplateDialogComponent } from '@app/crm/shared/email-template-dialog/email-template-dialog.component';
+import { EmailInvoiceDialogComponent } from '@app/crm/shared/email-invoice-dialog/email-invoice-dialog.component';
 
 @Component({
     templateUrl: './invoices.component.html',
@@ -173,12 +174,15 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     emailInvoice() {
-        this.dialog.open(EmailTemplateDialogComponent, {
+        this.dialog.open(EmailInvoiceDialogComponent, {
             panelClass: 'slider',
             disableClose: true,
             closeOnNavigation: false,
             data: {
+                saveTitle: this.l('Save'),
+                title: this.l('Invoice Settings'),
                 invoice: this.actionRecordData,
+                templates$: of([]),
                 refreshParent: () => {
                 }
             }

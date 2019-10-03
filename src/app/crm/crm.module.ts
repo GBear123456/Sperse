@@ -39,7 +39,7 @@ import { DxDropDownBoxModule } from 'devextreme-angular/ui/drop-down-box';
 import { DxSchedulerModule } from 'devextreme-angular/ui/scheduler';
 import { DxPopoverModule } from 'devextreme-angular/ui/popover';
 import { DxCalendarModule } from 'devextreme-angular/ui/calendar';
-//import { DxHtmlEditorModule } from 'devextreme-angular/ui/html-editor';
+import { CKEditorModule } from '@ckeditor/ckeditor5-angular';
 import { FileUploadModule } from 'ng2-file-upload';
 
 /** Application imports */
@@ -64,6 +64,7 @@ import { ActivityComponent } from './activity/activity.component';
 import { CreateActivityDialogComponent } from './activity/create-activity-dialog/create-activity-dialog.component';
 import { CreateInvoiceDialogComponent } from './shared/create-invoice-dialog/create-invoice-dialog.component';
 import { EmailTemplateDialogComponent } from './shared/email-template-dialog/email-template-dialog.component';
+import { EmailInvoiceDialogComponent } from './shared/email-invoice-dialog/email-invoice-dialog.component';
 import { CrmIntroComponent } from './shared/crm-intro/crm-intro.component';
 import { SharedIntroStepsModule } from '@shared/shared-intro-steps/shared-intro-steps.module';
 import { ImportServiceProxy } from '@shared/service-proxies/service-proxies';
@@ -115,7 +116,7 @@ import { SliceModule } from '@app/shared/common/slice/slice.module';
         DxSchedulerModule,
         DxPopoverModule,
         DxCalendarModule,
-//        DxHtmlEditorModule,
+        CKEditorModule,
 
         MatSidenavModule,
         MatProgressBarModule,
@@ -150,6 +151,7 @@ import { SliceModule } from '@app/shared/common/slice/slice.module';
         CreateInvoiceDialogComponent,
         CreateActivityDialogComponent,
         EmailTemplateDialogComponent,
+        EmailInvoiceDialogComponent,
         CrmIntroComponent,
         ActivityComponent
     ],
@@ -165,6 +167,7 @@ import { SliceModule } from '@app/shared/common/slice/slice.module';
         CreateActivityDialogComponent,
         DeleteAndReassignDialogComponent,
         EmailTemplateDialogComponent,
+        EmailInvoiceDialogComponent,
         CrmIntroComponent
     ]
 })

@@ -1,62 +1,83 @@
 /** Core imports */
-import { Component, ChangeDetectionStrategy, OnInit, ViewChild, Inject, ChangeDetectorRef } from '@angular/core';
+import { Component, ChangeDetectionStrategy, Inject, ChangeDetectorRef, Output, EventEmitter } from '@angular/core';
 
 /** Third party imports */
+import * as ClassicEditor from 'ckeditor5-build-classic/build/ckeditor';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { DxContextMenuComponent } from 'devextreme-angular/ui/context-menu';
 import { DxSelectBoxComponent } from 'devextreme-angular/ui/select-box';
 import { DxTextBoxComponent } from 'devextreme-angular/ui/text-box';
-import { CacheService } from 'ng2-cache-service';
-import { finalize, filter, first } from 'rxjs/operators';
-import { Observable } from 'rxjs';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
-import { AppPermissions } from '@shared/AppPermissions';
-import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { DialogService } from '@app/shared/common/dialogs/dialog.service';
-import { CurrencyInfo } from '@shared/service-proxies/service-proxies';
-import { NotifyService } from '@abp/notify/notify.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
-import { CacheHelper } from '@shared/common/cache-helper/cache-helper';
-import { MessageService } from '@abp/message/message.service';
 import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
-import { AppSessionService } from '@shared/common/session/app-session.service';
 
 @Component({
+    selector: 'email-template-dialog',
     templateUrl: 'email-template-dialog.component.html',
     styleUrls: [ 'email-template-dialog.component.less' ],
-    providers: [ CacheHelper, DialogService ],
+    providers: [ DialogService ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class EmailTemplateDialogComponent implements OnInit {
+export class EmailTemplateDialogComponent {
+    Editor = ClassicEditor;
+
+    showCC = false;
+    showBSS = false;
+
+    @Output() onSave: EventEmitter<any> = new EventEmitter<any>();
+    @Output() onTemplateChange: EventEmitter<any> = new EventEmitter<any>();
+
     buttons: IDialogButton[] = [
         {
+            id: 'cancelTemplateOptions',
+            title: this.ls.l('Cancel'),
+            class: 'default',
+            action: () => this.dialogRef.close()
+        }, {
             id: 'saveTemplateOptions',
-            title: this.ls.l('Save'),
+            title: this.data.saveTitle,
             class: 'primary',
             action: this.save.bind(this)
         }
     ];
 
     constructor(
-        private cacheService: CacheService,
-        private notifyService: NotifyService,
-        private messageService: MessageService,
-        private cacheHelper: CacheHelper,
         private dialogRef: MatDialogRef<EmailTemplateDialogComponent>,
         private changeDetectorRef: ChangeDetectorRef,
-        private permission: AppPermissionService,
-        public appSession: AppSessionService,
         public dialog: MatDialog,
         public ls: AppLocalizationService,
         @Inject(MAT_DIALOG_DATA) public data: any
     ) {
     }
 
-    ngOnInit() {
+    save() {
+        this.onSave.emit(this.data);
     }
 
-    save(event?): void {
+    onTemplateChnaged(event) {
+        this.onTemplateChange.emit(event);
+    }
+
+    emailInputFocusIn(event) {
+        event.component.option('opened', false);
+    }
+
+    emailInputFocusOut(event) {
+        if (!event.component.option('value'))
+            this[event.component.option('name')] = false;
+    }
+
+    showInputField(element) {
+        let component = element.instance;
+        this[component.option('name')] = true;
+        setTimeout(() => component.focus());
+    }
+
+    onCustomItemCreating(event) {
+        let isValid = AppConsts.regexPatterns.email.test(event.text);
+        event.component.option('isValid', isValid);
+        return event.customItem = isValid ? event.text : '';
     }
 }
