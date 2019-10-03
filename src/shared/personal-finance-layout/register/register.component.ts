@@ -28,7 +28,7 @@ import { AppConsts } from '@shared/AppConsts';
 
 export class RegisterComponent implements OnInit {
     applicationCompleteIsRequired$: Observable<Boolean> = this.offersService.applicationCompleteIsRequired$;
-    getMoreOptionsLink = '/personal-finance/offers/personal-loans';
+    getMoreOptionsLink = '/personal-finance/offers/post-offers';
     constructor(
         private offersService: OffersService,
         private offerServiceProxy: OfferServiceProxy,
