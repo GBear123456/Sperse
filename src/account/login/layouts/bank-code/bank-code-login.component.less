@@ -1,22 +1,55 @@
 @font-family: 'Poppins', sans-serif;
 
 ::-webkit-input-placeholder {
-    color: #4a4a4a;
+    //color: #4a4a4a;
+    color: #959494;
 }
 
 ::-moz-placeholder {
-    color: #4a4a4a;
+    //color: #4a4a4a;
+    color: #959494;
 }
 
 :-ms-input-placeholder {
-    color: #4a4a4a;
+    //color: #4a4a4a;
+    color: #959494;
 }
 
 :-moz-placeholder {
-    color: #4a4a4a;
+    //color: #4a4a4a;
+    color: #959494;
 }
 
 :host {
+    .login-box {
+        box-shadow: 0 20px 100px 0 rgba(0, 0, 0, 0.15);
+        border: solid 1px #ebecec;
+        background-color: #ffffff;
+        min-height: 565px;
+        padding: 0;
+        border-radius: 0;
+        width: 96%;
+        display: flex;
+        flex-direction: column;
+        
+        .login-form {
+            padding: 50px 80px 0;
+            width: 100%;
+            
+            input {
+                border-radius: 0;
+                color: #000;
+                
+                border: solid 1px rgba(149, 148, 148, 0.35);
+                background-color: rgba(242, 242, 242, 0.5);
+            }
+        }
+    
+        @media all and (min-width: 768px) {
+            width: 670px;
+        }
+    }
+    
     .row {
         height: 100%;
         align-items: center;
@@ -51,6 +84,14 @@
         button {
             outline: none;
         }
+        
+        h3 {
+            font-size: 40px;
+            font-weight: 900;
+            letter-spacing: -0.8px;
+            text-align: center;
+            color: #000000;
+        }
 
         .icon-input {
             position: relative;
@@ -64,7 +105,7 @@
                 transform: translateY(-50%);
                 width: 18px;
                 height: 18px;
-                background: url(../../../../assets/images/icons/single-man.svg) no-repeat;
+                background: url(/assets/common/images/bank-code/user.svg) no-repeat;
                 background-size: contain;
             }
 
@@ -73,7 +114,7 @@
                     left: 20px;
                     width: 14px;
                     height: 22px;
-                    background: url(../../../../assets/images/icons/lock-circle.svg) no-repeat;
+                    background: url(/assets/common/images/bank-code/padlock.svg) no-repeat;
                     background-size: contain;
                 }
 
@@ -113,14 +154,14 @@
             height: 56px;
             border-radius: 2px;
             border: 0;
-            background-color: #ee8615;
+            background-color: #ac1f22;
             font-family: @font-family;
             font-size: 18px;
             font-weight: bold;
             line-height: normal;
             letter-spacing: normal;
             text-align: center;
-            color: #000000;
+            color: #fff;
             transition: .2s;
 
             img {
@@ -130,8 +171,8 @@
             }
 
             &:hover {
-                background-color: darken(#ee8615, 6%);
-                box-shadow: 0 0 3px rgba(#ee8615, .5);
+                background-color: darken(#ac1f22, 6%);
+                box-shadow: 0 0 3px rgba(#ac1f22, .5);
             }
 
             &[disabled] {
@@ -147,12 +188,13 @@
                 font-weight: 500;
                 font-style: normal;
                 font-stretch: normal;
-                line-height: 1.92;
                 letter-spacing: 0.2px;
                 text-align: right;
-                color: #6491D9;
+                color: #7a7979;
                 transition: .2s;
                 text-decoration: none;
+                text-transform: uppercase;
+                line-height: 25px;
 
                 &:hover {
                     color: lighten(#6491D9, 6%);
@@ -170,10 +212,11 @@
                     }
 
                     input ~ span {
-                        border-radius: 50%;
-                        width: 20px;
-                        height: 20px;
-                        border: 1px solid #ee8615;
+                        border-radius: 0;
+                        width: 25px;
+                        height: 25px;
+                        border: solid 1px rgba(149, 148, 148, 0.35);
+                        background-color: #ffffff;
                         display: block;
                         position: absolute;
                         left: 0;
@@ -181,16 +224,16 @@
                     }
 
                     input:checked ~ span {
-                        border-color: #ee8615;
-                        background-color: #ee8615;
+                        border-color: #ac1f22;
+                        background-color: #ac1f22;
 
                         &::after {
-                            border: 2px solid #000;
+                            border: 2px solid #fff;
                             transform: rotate(-45deg);
                             left: 3px;
                             top: 4px;
-                            width: 11px;
-                            height: 7px;
+                            width: 15px;
+                            height: 9px;
                             display: block;
                             content: '';
                             position: relative;
@@ -205,13 +248,14 @@
                     font-family: @font-family;
                     font-size: 14px;
                     font-weight: 500;
-                    line-height: normal;
                     letter-spacing: 0.2px;
-                    color: #fff;
+                    color: #7a7979;
                     margin-bottom: 0;
                     display: block;
                     position: relative;
                     text-align: left;
+                    text-transform: uppercase;
+                    line-height: 25px;
                 }
             }
             
@@ -279,7 +323,6 @@
         }
 
         .social-icons {
-            padding-top: 10px;
             padding: 0;
             margin: 0;
             text-align: center;
@@ -311,20 +354,19 @@
     }
 
     .login-terms-and-condition {
-        color: white;
+        color: #7a7979;
         text-align: center;
-        padding: 20px 0px;
+        padding: 20px 0;
 
         a {
-            color: #ee8615;
+            color: #ac1f22;
             transition: .2s;
             padding: 0 2px;
             font-weight: bold;
             text-decoration: underline;
-            
 
             &:hover {
-                color: darken(#fff, 18%);
+                color: lighten(#ac1f22, 18%);
             }
         }
     }
