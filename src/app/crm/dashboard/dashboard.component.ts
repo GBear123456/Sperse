@@ -65,15 +65,15 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
         ]
     };
     dataEmpty = false;
-    totalsData$ = this._dashboardWidgetsService.totalsData$;
-    dataAvailable$ = this._dashboardWidgetsService.totalsDataAvailable$;
+    totalsData$ = this.dashboardWidgetsService.totalsData$;
+    dataAvailable$ = this.dashboardWidgetsService.totalsDataAvailable$;
     dialogConfig = new MatDialogConfig();
     leftMenuHidden = true;
     constructor(
         injector: Injector,
-        private _appService: AppService,
-        private _dashboardWidgetsService: DashboardWidgetsService,
-        private _changeDetectorRef: ChangeDetectorRef,
+        private appService: AppService,
+        private dashboardWidgetsService: DashboardWidgetsService,
+        private changeDetectorRef: ChangeDetectorRef,
         public dialog: MatDialog,
         private store$: Store<RootStore.State>,
         private reuseService: RouteReuseStrategy,
@@ -84,15 +84,15 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
     }
 
     ngOnInit() {
-        this._dashboardWidgetsService.totalsDataAvailable$.pipe(
+        this.dashboardWidgetsService.totalsDataAvailable$.pipe(
             takeUntil(this.destroy$),
-            filter((dataAvailable: boolean) => this.componentIsActivated && !dataAvailable && this._appService.hasModuleSubscription())
+            filter((dataAvailable: boolean) => this.componentIsActivated && !dataAvailable && this.appService.hasModuleSubscription())
         ).subscribe(() => {
             this.openDialog();
         });
-        this._dashboardWidgetsService.totalsDataAvailable$.subscribe((totalsDataAvailable: boolean) => {
+        this.dashboardWidgetsService.totalsDataAvailable$.subscribe((totalsDataAvailable: boolean) => {
             this.dataEmpty = !totalsDataAvailable;
-            this._changeDetectorRef.detectChanges();
+            this.changeDetectorRef.detectChanges();
         });
     }
 
@@ -103,7 +103,7 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
     }
 
     refresh(refreshLeadsAndClients = true) {
-        this._dashboardWidgetsService.refresh();
+        this.dashboardWidgetsService.refresh();
         if (refreshLeadsAndClients) {
             /** Invalidate leads and clients */
             (this.reuseService as CustomReuseStrategy).invalidate('leads');
@@ -132,7 +132,7 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
     }
 
     periodChanged(period: Period) {
-        this._dashboardWidgetsService.periodChanged(period);
+        this.dashboardWidgetsService.periodChanged(period);
     }
 
     openPaymentWizardDialog() {
@@ -142,11 +142,11 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
             id: 'payment-wizard',
             panelClass: ['payment-wizard', 'setup'],
             data: {
-                module: this._appService.getModuleSubscription(ModuleType.CRM).module,
+                module: this.appService.getModuleSubscription(ModuleType.CRM).module,
                 title: this.ls(
                     'Platform',
                     'UpgradeYourSubscription',
-                    this._appService.getSubscriptionName(ModuleType.CRM)
+                    this.appService.getSubscriptionName(ModuleType.CRM)
                 )
             }
         });
@@ -158,13 +158,13 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
         this.rootComponent = this.getRootComponent();
         this.rootComponent.overflowHidden(true);
         this.subscribeToRefreshParam();
-        this._appService.updateToolbar(null);
+        this.appService.updateToolbar(null);
         this.showHostElement(() => {
             if (this.clientsByRegion && this.clientsByRegion.mapComponent)
-                this.clientsByRegion.mapComponent.instance.render();
+                this.clientsByRegion.mapComponent.vectorMapComponent.instance.render();
             if (this.totalsBySource && this.totalsBySource.chartComponent)
                 this.totalsBySource.chartComponent.instance.render();
-            this._changeDetectorRef.detectChanges();
+            this.changeDetectorRef.detectChanges();
         });
     }
 

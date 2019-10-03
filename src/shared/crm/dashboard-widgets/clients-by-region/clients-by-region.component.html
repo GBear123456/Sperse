@@ -1,25 +1,5 @@
-<dx-vector-map
-    id="vector-map"
-    [background]="{ borderColor: '#FFFFFF' }"
-    [bounds]="[-118, 52, -80, 20]">
-    <dxo-loading-indicator [show]="true"></dxo-loading-indicator>
-    <dxo-tooltip
-        [enabled]="true"
-        [customizeTooltip]="customizeTooltip"></dxo-tooltip>
-    <dxo-export [enabled]="false"></dxo-export>
-    <dxo-title text="">
-        <dxo-subtitle text=""></dxo-subtitle>
-    </dxo-title>
-    <dxi-layer
-        [customize]="customizeLayers"
-        [dataSource]="usaMap"
-        [colorGroups]="[0, 100, 500, 1000, 2500, 5000, 10000, 50000]"
-        [palette]="['#e3deff', '#cdc6ff', '#c1bbff', '#b5afff', '#a9a4ff', '#9b99ff', '#8487e7']"
-        colorGroupingField="total"
-        name="areas">
-        <dxo-label [enabled]="true" dataField="postal"></dxo-label>
-    </dxi-layer>
-    <dxi-legend [customizeText]="customizeText">
-        <dxo-source layer="areas" grouping="color"></dxo-source>
-    </dxi-legend>
-</dx-vector-map>
+<slice-map [palette]="palette"
+           [colorGroups]="colorGroups"
+           [showLegendBorder]="true"
+           color="#d2d2d2">
+</slice-map>

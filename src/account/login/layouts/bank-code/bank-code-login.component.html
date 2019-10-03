@@ -1,40 +1,42 @@
 <div [@routerTransition]>
-    <form #loginForm="ngForm" class="login-form" method="post" novalidate (ngSubmit)="login()">
-        <div class="form-group icon-input icon-input__user clearfix">
-            <input [(ngModel)]="loginService.authenticateModel.userNameOrEmailAddress" autoFocus
-                   class="form-control form-control-solid placeholder-no-fix input-ltr" type="text" autocomplete="off"
-                   placeholder="{{l('EmailAddress')}}" name="userNameOrEmailAddress" required tabindex="1" />
-        </div>
-        <div class="form-group icon-input icon-input__password clearfix">
-            <input [(ngModel)]="loginService.authenticateModel.password"
-                   class="form-control form-control-solid placeholder-no-fix input-ltr" type="{{showPassword ? 'text' : 'password'}}" autocomplete="off"
-                   placeholder="{{l('Password')}}" name="password" required maxlength="32" tabindex="2" />
-            <a class="show-password" (click)="showHidePassword($event)">{{l("Show")}}</a>
-        </div>
-        <div class="form-group clearfix options row">
-            <div class="col">
-                <div class="mt-checkbox-list">
-                    <label class="mt-checkbox mt-checkbox-outline">
-                        <input class="form-control" [(ngModel)]="loginService.authenticateModel.rememberClient" type="checkbox" name="rememberMe"
-                               value="true" />{{l("RememberMe")}}
-                        <span></span>
-                    </label>
+    <div class="login-box">
+        <form #loginForm="ngForm" class="login-form" method="post" novalidate (ngSubmit)="login()">
+            <h3>Log In</h3>
+            <div class="form-group icon-input icon-input__user clearfix">
+                <input [(ngModel)]="loginService.authenticateModel.userNameOrEmailAddress" autoFocus
+                       class="form-control form-control-solid placeholder-no-fix input-ltr" type="text" autocomplete="off"
+                       placeholder="{{l('EmailAddress')}}" name="userNameOrEmailAddress" required tabindex="1" />
+            </div>
+            <div class="form-group icon-input icon-input__password clearfix">
+                <input [(ngModel)]="loginService.authenticateModel.password"
+                       class="form-control form-control-solid placeholder-no-fix input-ltr" type="{{showPassword ? 'text' : 'password'}}" autocomplete="off"
+                       placeholder="{{l('Password')}}" name="password" required maxlength="32" tabindex="2" />
+                <a class="show-password" (click)="showHidePassword($event)">{{l("Show")}}</a>
+            </div>
+            <div class="form-group clearfix options row">
+                <div class="col">
+                    <div class="mt-checkbox-list">
+                        <label class="mt-checkbox mt-checkbox-outline">
+                            <input class="form-control" [(ngModel)]="loginService.authenticateModel.rememberClient" type="checkbox" name="rememberMe"
+                                   value="true" />{{l("RememberMe")}}
+                            <span></span>
+                        </label>
+                    </div>
+                </div>
+                <div class="col">
+                    <a routerLink="/account/forgot-password" id="forget-password" class="forget-password pull-right">
+                        {{l("ForgotPassword")}}
+                    </a>
                 </div>
             </div>
-            <div class="col">
-                <a routerLink="/account/forgot-password" id="forget-password" class="forget-password pull-right">
-                    {{l("ForgotPassword")}}
-                </a>
+            <div class="form-actions">
+                <button type="submit" class="submit" [disabled]="loginInProgress">
+                    {{l("Log In")}}
+                </button>
             </div>
+        </form>
+        <div class="login-terms-and-condition">
+            <span>{{l('ByContinuingYouAgree')}} <br><a (click)="openConditionsDialog(conditions.Terms)">{{l('TermsOfUse')}}</a> {{l('and')}} <a (click)="openConditionsDialog(conditions.Policies)">{{l('PrivacyPolicy')}}</a></span>
         </div>
-        <div class="form-actions">
-            <button type="submit" class="submit" [disabled]="loginInProgress">
-                {{l("SIGN IN")}}
-                <img src="./assets/common/icons/arrow-right-long-icon.svg" alt="right arrow" class="pull-right">
-            </button>
-        </div>
-    </form>
-    <div class="login-terms-and-condition">
-        <span>{{l('ByContinuingYouAgree')}} <br><a (click)="openConditionsDialog(conditions.Terms)">{{l('TermsOfUse')}}</a> {{l('and')}} <a (click)="openConditionsDialog(conditions.Policies)">{{l('PrivacyPolicy')}}</a></span>
     </div>
 </div>

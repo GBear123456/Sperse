@@ -1,0 +1,30 @@
+<dx-vector-map
+    *ngIf="data"
+    id="vector-map"
+    [background]="{ borderColor: '#FFFFFF' }"
+    [bounds]="[-118, 52, -80, 20]">
+    <dxo-loading-indicator [show]="true"></dxo-loading-indicator>
+    <dxo-tooltip
+        [enabled]="true"
+        [customizeTooltip]="customizeTooltip"></dxo-tooltip>
+    <dxo-export [enabled]="false"></dxo-export>
+    <dxo-title text="">
+        <dxo-subtitle text=""></dxo-subtitle>
+    </dxo-title>
+    <dxo-size [height]="height" [width]="width"></dxo-size>
+    <dxi-layer
+        [customize]="customizeLayers"
+        [dataSource]="usaMap"
+        [color]="color"
+        [colorGroups]="colorGroups"
+        [palette]="palette"
+        colorGroupingField="total"
+        name="areas">
+        <dxo-label [enabled]="true" dataField="postal"></dxo-label>
+    </dxi-layer>
+    <dxi-legend [customizeText]="customizeText">
+        <dxo-source layer="areas" grouping="color"></dxo-source>
+        <dxo-border [visible]="showLegendBorder"></dxo-border>
+    </dxi-legend>
+</dx-vector-map>
+<loading-spinner *ngIf="dataIsLoading"></loading-spinner>

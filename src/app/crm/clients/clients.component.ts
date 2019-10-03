@@ -67,7 +67,7 @@ import { OrganizationUnitsStoreActions, OrganizationUnitsStoreSelectors } from '
 import { DataGridHelper } from '@app/crm/shared/helpers/data-grid.helper';
 import { DataLayoutType } from '@app/shared/layout/data-layout-type';
 import { AppSessionService } from '@shared/common/session/app-session.service';
-import { SlicePivotGridComponent } from '@app/shared/common/slice/pivot-grid/slice-pivot-grid.component';
+import { PivotGridComponent } from '@app/shared/common/slice/pivot-grid/pivot-grid.component';
 import { CrmService } from '@app/crm/crm.service';
 
 @Component({
@@ -84,7 +84,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     @ViewChild(RatingComponent) ratingComponent: RatingComponent;
     @ViewChild(StarsListComponent) starsListComponent: StarsListComponent;
     @ViewChild(StaticListComponent) statusComponent: StaticListComponent;
-    @ViewChild(SlicePivotGridComponent) slicePivotGridComponent: SlicePivotGridComponent;
+    @ViewChild(PivotGridComponent) slicePivotGridComponent: PivotGridComponent;
 
     private readonly MENU_LOGIN_INDEX = 1;
     private readonly dataSourceURI: string = 'Customer';

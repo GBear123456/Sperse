@@ -71,7 +71,7 @@ import { OrganizationUnitsStoreActions, OrganizationUnitsStoreSelectors } from '
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 import { DataGridHelper } from '@app/crm/shared/helpers/data-grid.helper';
 import { AppSessionService } from '@shared/common/session/app-session.service';
-import { SlicePivotGridComponent } from '@app/shared/common/slice/pivot-grid/slice-pivot-grid.component';
+import { PivotGridComponent } from '@app/shared/common/slice/pivot-grid/pivot-grid.component';
 import { Observable } from '@node_modules/rxjs';
 import { CrmService } from '@app/crm/crm.service';
 
@@ -90,7 +90,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     @ViewChild(RatingComponent) ratingComponent: RatingComponent;
     @ViewChild(StarsListComponent) starsListComponent: StarsListComponent;
     @ViewChild('statusesList') statusComponent: StaticListComponent;
-    @ViewChild(SlicePivotGridComponent) slicePivotGridComponent: SlicePivotGridComponent;
+    @ViewChild(PivotGridComponent) slicePivotGridComponent: PivotGridComponent;
 
     private dataLayoutType: DataLayoutType = DataLayoutType.DataGrid;
     private readonly dataSourceURI = 'Partner';
