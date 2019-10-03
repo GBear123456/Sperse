@@ -28,6 +28,7 @@ import { DashboardWidgetsService } from './dashboard-widgets.service';
 import { DashboardServiceProxy } from 'shared/service-proxies/service-proxies';
 import { LoadingSpinnerModule } from '@app/shared/common/loading-spinner/loading-spinner.module';
 import { PeriodService } from '@app/shared/common/period/period.service';
+import { MapModule } from '@app/shared/common/slice/map/map.module';
 
 @NgModule({
     imports: [
@@ -45,7 +46,8 @@ import { PeriodService } from '@app/shared/common/period/period.service';
         MatDialogModule,
         DxVectorMapModule,
         LoadingSpinnerModule,
-        ngCommon.CommonModule
+        ngCommon.CommonModule,
+        MapModule
     ],
     declarations: [
         ClientsByRegionComponent,

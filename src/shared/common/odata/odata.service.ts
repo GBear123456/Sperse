@@ -137,7 +137,7 @@ export class ODataService {
         return data;
     }
 
-    getODataFilter(filters: FilterModel[], getCheckCustom) {
+    getODataFilter(filters: FilterModel[], getCheckCustom): string {
         filters = (filters || []).map((filter) => getCheckCustom && getCheckCustom(filter) || filter.getODataFilterObject());
         const odataQueryString = this.getODataFilterString(filters);
         return odataQueryString.slice('?$filter='.length);

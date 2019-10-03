@@ -2,5 +2,6 @@ export enum DataLayoutType {
     Pipeline,
     DataGrid,
     PivotGrid,
-    Chart
+    Chart,
+    Map
 }

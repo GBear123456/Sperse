@@ -15,8 +15,8 @@ import { MatDialog } from '@angular/material/dialog';
 import DataSource from 'devextreme/data/data_source';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { Store, select } from '@ngrx/store';
-import { Observable, combineLatest } from 'rxjs';
-import { first, filter, startWith, takeUntil } from 'rxjs/operators';
+import { BehaviorSubject, Observable, combineLatest, of } from 'rxjs';
+import { first, filter, startWith, tap, switchMap, map, mapTo, takeUntil, publishReplay, refCount } from 'rxjs/operators';
 import { CacheService } from 'ng2-cache-service';
 
 /** Application imports */
@@ -66,11 +66,13 @@ import { UserManagementService } from '@shared/common/layout/user-management-lis
 import { DataGridService } from '@app/shared/common/data-grid.service.ts/data-grid.service';
 import { OrganizationUnitsStoreActions } from '@app/crm/store';
 import { DataGridHelper } from '@app/crm/shared/helpers/data-grid.helper';
-import { SlicePivotGridComponent } from '@app/shared/common/slice/pivot-grid/slice-pivot-grid.component';
+import { PivotGridComponent } from '@app/shared/common/slice/pivot-grid/pivot-grid.component';
 import { AppSessionService } from '@shared/common/session/app-session.service';
-import { SliceChartComponent } from '@app/shared/common/slice/chart/slice-chart.component';
+import { ChartComponent } from '@app/shared/common/slice/chart/chart.component';
 import { CrmService } from '@app/crm/crm.service';
 import { InfoItem } from '@app/shared/common/slice/info/info-item.model';
+import { MapData } from '@app/shared/common/slice/map/map-data.model';
+import { MapComponent } from '@app/shared/common/slice/map/map.component';
 
 @Component({
     templateUrl: './leads.component.html',
@@ -87,8 +89,9 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     @ViewChild(RatingComponent) ratingComponent: RatingComponent;
     @ViewChild(StarsListComponent) starsListComponent: StarsListComponent;
     @ViewChild(StaticListComponent) stagesComponent: StaticListComponent;
-    @ViewChild(SlicePivotGridComponent) slicePivotGridComponent: SlicePivotGridComponent;
-    @ViewChild(SliceChartComponent) sliceChartComponent: SliceChartComponent;
+    @ViewChild(PivotGridComponent) pivotGridComponent: PivotGridComponent;
+    @ViewChild(ChartComponent) chartComponent: ChartComponent;
+    @ViewChild(MapComponent) mapComponent: MapComponent;
 
     private _selectedLeads: any;
     get selectedLeads() {
@@ -113,7 +116,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         };
     });
     selectedContactGroup = Object.keys(ContactGroup).shift();
-    contactGroupId = ContactGroup[this.selectedContactGroup];
+    contactGroupId: BehaviorSubject<ContactGroup> = new BehaviorSubject(ContactGroup[this.selectedContactGroup]);
+    contactGroupId$: Observable<ContactGroup> = this.contactGroupId.asObservable();
 
     stages = [];
     pipelineDataSource: any;
@@ -132,7 +136,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
 
     private rootComponent: any;
     private exportCallback: Function;
-    private dataLayoutType: DataLayoutType = DataLayoutType.PivotGrid;
+    private dataLayoutType: BehaviorSubject<DataLayoutType> = new BehaviorSubject(DataLayoutType.PivotGrid);
+    dataLayoutType$: Observable<DataLayoutType> = this.dataLayoutType.asObservable();
     private readonly dataSourceURI = 'Lead';
     private readonly groupDataSourceURI = 'LeadGroup';
     private filters: FilterModel[];
@@ -158,8 +163,13 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     pivotGridDataSource = {
         remoteOperations: true,
         load: (loadOptions) => {
+            let d = $.Deferred();
             const params = {
-                contactGroupId: this.contactGroupId,
+                contactGroupId: this.contactGroupId.value.toString(),
+                group: loadOptions.group ? JSON.stringify(loadOptions.group) : '',
+                filter: loadOptions.filter ? JSON.stringify(loadOptions.filter) : '',
+                totalSummary: loadOptions.totalSummary ? JSON.stringify(loadOptions.totalSummary) : '',
+                groupSummary: loadOptions.groupSummary ? JSON.stringify(loadOptions.groupSummary) : ''
             };
             if (loadOptions.take !== undefined) {
                 params['take'] = loadOptions.take;
@@ -167,31 +177,23 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             if (loadOptions.skip !== undefined) {
                 params['skip'] = loadOptions.skip;
             }
-            if (loadOptions.group) {
-                params['group'] = JSON.stringify(loadOptions.group);
-            }
-            if (loadOptions.filter) {
-                params['filter'] = JSON.stringify(loadOptions.filter);
-            }
-            if (loadOptions.totalSummary && loadOptions.totalSummary.length) {
-                params['totalSummary'] = JSON.stringify(loadOptions.totalSummary);
-            }
-            if (loadOptions.groupSummary) {
-                params['groupSummary'] = JSON.stringify(loadOptions.groupSummary);
-            }
             const filter = this.oDataService.getODataFilter(this.filters, this.getCheckCustom);
             if (filter) {
                 params['$filter'] = filter;
             }
-            return this.http.get(this.getODataUrl(this.groupDataSourceURI), {
+            this.http.get(this.getODataUrl(this.groupDataSourceURI), {
                 params: params,
                 headers: new HttpHeaders({
                     'Authorization': 'Bearer ' + abp.auth.getToken()
                 })
-            }).toPromise().then((data: any) => {
-                console.log(data);
-                return data;
+            }).subscribe((result) => {
+                if ('data' in result) {
+                    d.resolve(result['data'], { summary: result['summary'] });
+                } else {
+                    d.resolve(result);
+                }
             });
+            return d.promise();
         },
         fields: [
             {
@@ -343,8 +345,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         key: 'id',
         load: () => {
             const params = {
-                contactGroupId: this.contactGroupId,
-                group: `[{"selector":"CreationTime","groupInterval":"${this.sliceChartComponent.summaryBy.value}","isExpanded":false,"desc":true}]`,
+                contactGroupId: this.contactGroupId.value.toString(),
+                group: `[{"selector":"CreationTime","groupInterval":"${this.chartComponent.summaryBy.value}","isExpanded":false,"desc":true}]`,
                 groupSummary: '[{"selector":"CreationTime","summaryType":"min"}]'
             };
             const filter = this.oDataService.getODataFilter(this.filters, this.getCheckCustom);
@@ -389,11 +391,90 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             });
         }
     });
+    odataFilter$: Observable<string> = this.filtersService.filterChanged$.pipe(
+        startWith(() => this.oDataService.getODataFilter(this.filters, this.getCheckCustom)),
+        map(() => this.oDataService.getODataFilter(this.filters, this.getCheckCustom))
+    );
+    mapDataIsLoading = false;
+    contactsData$: Observable<any> = combineLatest(
+        this.contactGroupId$,
+        this.odataFilter$
+    ).pipe(
+        tap(() => this.mapDataIsLoading = true),
+        switchMap((data) => this.showMap ? of(data) : this.dataLayoutType$.pipe(
+            filter((dataLayoutType: DataLayoutType) => dataLayoutType === DataLayoutType.Map),
+            first(),
+            mapTo(data)
+        )),
+        tap((x) => console.log('after checking of map layout', x)),
+        switchMap(([contactGroupId, filter]: [ContactGroup, any]) => {
+            const params = {
+                contactGroupId: contactGroupId.toString(),
+                group: `[{"selector":"StateId","isExpanded":false,"desc":true}]`,
+                groupSummary: '[{"selector":"CreationTime","summaryType":"min"}]'
+            };
+            if (filter) {
+                params['$filter'] = filter;
+            }
+            return this.http.get(this.getODataUrl(this.groupDataSourceURI), {
+                headers: new HttpHeaders({
+                    'Authorization': 'Bearer ' + abp.auth.getToken()
+                }),
+                params: params
+            });
+        }),
+        publishReplay(),
+        refCount()
+    );
+    mapData$: Observable<MapData> = this.contactsData$.pipe(
+        map((contacts: any) => {
+            const data: MapData = {};
+            contacts.data.forEach(contact => {
+                data[contact.key] = {
+                    name: contact.key,
+                    total: contact.count
+                };
+            });
+            return data;
+        }),
+        tap(() => this.mapDataIsLoading = false)
+    );
+    mapInfoItems$: Observable<InfoItem[]> = this.contactsData$.pipe(
+        map((contacts: any) => {
+            const avgGroupValue = contacts.totalCount ? (contacts.totalCount / contacts.data.length).toFixed(2) : 0;
+            let minGroupValue, maxGroupValue;
+            contacts.data.forEach(contact => {
+                minGroupValue = !minGroupValue || contact.count < minGroupValue ? contact.count : minGroupValue;
+                maxGroupValue = !maxGroupValue || contact.count > maxGroupValue ? contact.count : maxGroupValue;
+            });
+            return [
+                {
+                    label: this.l('Totals'),
+                    value: contacts.totalCount
+                },
+                {
+                    label: this.l('Average'),
+                    value: avgGroupValue
+                },
+                {
+                    label: this.l('Lowest'),
+                    value: minGroupValue || 0
+                },
+                {
+                    label: this.l('Highest'),
+                    value: maxGroupValue || 0
+                }
+            ];
+        })
+    );
 
     private readonly CONTACT_GROUP_CACHE_KEY = 'CONTACT_GROUP';
     private organizationUnits: OrganizationUnitDto[];
     contentWidth$: Observable<number> = this.crmService.contentWidth$;
     contentHeight$: Observable<number> = this.crmService.contentHeight$;
+    mapHeight$: Observable<number> = this.contentHeight$.pipe(
+        map((contentHeight) => contentHeight - 88)
+    );
 
     constructor(injector: Injector,
         private contactService: ContactsService,
@@ -414,7 +495,6 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         public userManagementService: UserManagementService
     ) {
         super(injector);
-
         this.contactGroupOptionInit();
         this.dataSource = new DataSource({
             requireTotalCount: true,
@@ -424,7 +504,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 url: this.getODataUrl(this.dataSourceURI),
                 version: AppConsts.ODataVersion,
                 beforeSend: (request) => {
-                    request.params.contactGroupId = this.contactGroupId;
+                    request.params.contactGroupId = this.contactGroupId.value;
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                     request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
                 },
@@ -444,11 +524,11 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     ngOnInit() {
         this.loadOrganizationUnits();
         combineLatest(
-            this.sliceChartComponent.summaryBy$,
+            this.chartComponent.summaryBy$,
             this.filtersService.filterChanged$.pipe(startWith(null))
         ).pipe(
             takeUntil(this.lifeCycleSubjectsService.destroy$),
-            filter(() => this.dataLayoutType === DataLayoutType.Chart)
+            filter(() => this.showChart)
         ).subscribe(() => {
             this.chartDataSource.load();
         });
@@ -466,19 +546,23 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     get showPipeline(): boolean {
-        return this.dataLayoutType === DataLayoutType.Pipeline;
+        return this.dataLayoutType.value === DataLayoutType.Pipeline;
     }
 
     get showDataGrid(): boolean {
-        return this.dataLayoutType === DataLayoutType.DataGrid;
+        return this.dataLayoutType.value === DataLayoutType.DataGrid;
     }
 
     get showPivotGrid(): boolean {
-        return this.dataLayoutType === DataLayoutType.PivotGrid;
+        return this.dataLayoutType.value === DataLayoutType.PivotGrid;
     }
 
     get showChart(): boolean {
-        return this.dataLayoutType === DataLayoutType.Chart;
+        return this.dataLayoutType.value === DataLayoutType.Chart;
+    }
+
+    get showMap(): boolean {
+        return this.dataLayoutType.value === DataLayoutType.Map;
     }
 
     getOrganizationUnitName = (e) => {
@@ -501,14 +585,14 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         let cacheKey = this.getCacheKey(this.CONTACT_GROUP_CACHE_KEY);
         if (this.cacheService.exists(cacheKey)) {
             this.selectedContactGroup = this.cacheService.get(cacheKey);
-            this.contactGroupId = ContactGroup[this.selectedContactGroup];
+            this.contactGroupId.next(ContactGroup[this.selectedContactGroup]);
             this.createButtonEnabledSet();
         }
     }
 
     private createButtonEnabledSet() {
         this.headlineConfig.buttons[0].enabled =
-            this.contactService.checkCGPermission(this.contactGroupId);
+            this.contactService.checkCGPermission(this.contactGroupId.value);
     }
 
     private isActivated() {
@@ -542,7 +626,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         if (this.exportCallback)
             this.exportCallback();
         else {
-            if (this.dataLayoutType == DataLayoutType.DataGrid)
+            if (this.showDataGrid)
                 this.setGridDataLoaded();
             event.component.columnOption('command:edit', {
                 visibleIndex: -1,
@@ -573,8 +657,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
 
     toggleDataLayout(dataLayoutType: DataLayoutType) {
         this.selectedClientKeys = [];
-        this.dataLayoutType = dataLayoutType;
-        this.pipelineService.toggleDataLayoutType(this.dataLayoutType);
+        this.dataLayoutType.next(dataLayoutType);
+        this.pipelineService.toggleDataLayoutType(this.dataLayoutType.value);
         this.initDataSource();
         if (!this.showPipeline) {
             this.pipelineComponent.deselectAllCards();
@@ -587,7 +671,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             if (!this.showPipeline) {
                 setTimeout(() => {
                     if (this.showPivotGrid) {
-                        this.slicePivotGridComponent.pivotGrid.instance.updateDimensions();
+                        this.pivotGridComponent.pivotGrid.instance.updateDimensions();
                     }
                     if (this.showChart) {
                         this.chartDataSource.load();
@@ -761,7 +845,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     initToolbarConfig() {
-        this.manageDisabled = !this.contactService.checkCGPermission(this.contactGroupId);
+        this.manageDisabled = !this.contactService.checkCGPermission(this.contactGroupId.value);
         this.isActivated() && this.appService.updateToolbar([
             {
                 location: 'before', items: [
@@ -770,7 +854,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                         action: () => {
                             setTimeout(() => {
                                 this.dataGrid.instance.repaint();
-                                this.slicePivotGridComponent.pivotGrid.instance.updateDimensions();
+                                this.pivotGridComponent.pivotGrid.instance.updateDimensions();
                             }, 1000);
                             this.filtersService.fixed = !this.filtersService.fixed;
                         },
@@ -815,7 +899,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     {
                         name: 'assign',
                         action: this.toggleUserAssignment.bind(this),
-                        disabled: !this.contactService.checkCGPermission(this.contactGroupId, 'ManageAssignments'),
+                        disabled: !this.contactService.checkCGPermission(this.contactGroupId.value, 'ManageAssignments'),
                         attr: {
                             'filter-selected': this.filterModelAssignment && this.filterModelAssignment.isSelected
                         }
@@ -830,7 +914,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     },
                     {
                         name: 'lists',
-                        disabled: !this.contactService.checkCGPermission(this.contactGroupId, 'ManageListsAndTags'),
+                        disabled: !this.contactService.checkCGPermission(this.contactGroupId.value, 'ManageListsAndTags'),
                         action: this.toggleLists.bind(this),
                         attr: {
                             'filter-selected': this.filterModelLists && this.filterModelLists.isSelected
@@ -838,7 +922,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     },
                     {
                         name: 'tags',
-                        disabled: !this.contactService.checkCGPermission(this.contactGroupId, 'ManageListsAndTags'),
+                        disabled: !this.contactService.checkCGPermission(this.contactGroupId.value, 'ManageListsAndTags'),
                         action: this.toggleTags.bind(this),
                         attr: {
                             'filter-selected': this.filterModelTags && this.filterModelTags.isSelected
@@ -846,7 +930,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     },
                     {
                         name: 'rating',
-                        disabled: !this.contactService.checkCGPermission(this.contactGroupId, 'ManageRatingAndStars'),
+                        disabled: !this.contactService.checkCGPermission(this.contactGroupId.value, 'ManageRatingAndStars'),
                         action: this.toggleRating.bind(this),
                         attr: {
                             'filter-selected': this.filterModelRating && this.filterModelRating.isSelected
@@ -854,7 +938,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     },
                     {
                         name: 'star',
-                        disabled: !this.contactService.checkCGPermission(this.contactGroupId, 'ManageRatingAndStars'),
+                        disabled: !this.contactService.checkCGPermission(this.contactGroupId.value, 'ManageRatingAndStars'),
                         action: this.toggleStars.bind(this),
                         attr: {
                             'filter-selected': this.filterModelStar && this.filterModelStar.isSelected
@@ -869,7 +953,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     {
                         name: 'delete',
                         disabled: !this.selectedLeads.length ||
-                            !this.contactService.checkCGPermission(this.contactGroupId) ||
+                            !this.contactService.checkCGPermission(this.contactGroupId.value) ||
                             this.selectedLeads.length > 1 && !this.isGranted(AppPermissions.CRMBulkUpdates),
                         action: this.deleteLeads.bind(this)
                     }
@@ -892,8 +976,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                                 },
                                 {
                                     action: this.exportData.bind(this, options => {
-                                        if (this.dataLayoutType === DataLayoutType.PivotGrid) {
-                                            this.slicePivotGridComponent.pivotGrid.instance.exportToExcel();
+                                        if (this.showPivotGrid) {
+                                            this.pivotGridComponent.pivotGrid.instance.exportToExcel();
                                         } else {
                                             this.exportToXLS(options);
                                         }
@@ -960,6 +1044,13 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                         options: {
                             checkPressed: () => this.showChart
                         }
+                    },
+                    {
+                        name: 'map',
+                        action: this.toggleDataLayout.bind(this, DataLayoutType.Map),
+                        options: {
+                            checkPressed: () => this.showMap
+                        }
                     }
                 ]
             },
@@ -990,9 +1081,9 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     exportData(callback, options) {
-        if (this.dataLayoutType === DataLayoutType.Pipeline) {
+        if (this.showPipeline) {
             let importOption = 'all',
-                instance = this.showDataGrid ? this.dataGrid.instance : this.slicePivotGridComponent.pivotGrid.instance,
+                instance = this.dataGrid.instance,
                 dataSource = instance.option('dataSource'),
                 checkExportOption = (dataSource, ignoreFilter = false) => {
                     if (options == importOption)
@@ -1086,7 +1177,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             if (context && context.processODataFilter) {
                 context.processODataFilter.call(
                     context,
-                    this.showPivotGrid ? this.slicePivotGridComponent.pivotGrid.instance : this.dataGrid.instance,
+                    this.showPivotGrid ? this.pivotGridComponent.pivotGrid.instance : this.dataGrid.instance,
                     this.dataSourceURI,
                     this.filters,
                     this.getCheckCustom
@@ -1096,8 +1187,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     getCheckCustom = (filter: FilterModel) => {
-        let filterMethod = this['filterBy' +
-        this.capitalize(filter.caption)];
+        let filterMethod = this['filterBy' + this.capitalize(filter.caption)];
         if (filterMethod)
             return filterMethod.call(this, filter);
     }
@@ -1124,12 +1214,12 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     private setPivotGridInstance() {
-        const pivotGridInstance = this.slicePivotGridComponent && this.slicePivotGridComponent.pivotGrid && this.slicePivotGridComponent.pivotGrid.instance;
+        const pivotGridInstance = this.pivotGridComponent && this.pivotGridComponent.pivotGrid && this.pivotGridComponent.pivotGrid.instance;
         LeadsComponent.setDataSourceToComponent(this.pivotGridDataSource, pivotGridInstance);
     }
 
     private setChartInstance() {
-        const chartInstance = this.sliceChartComponent && this.sliceChartComponent.chartComponent && this.sliceChartComponent.chartComponent.instance;
+        const chartInstance = this.chartComponent && this.chartComponent.chartComponent && this.chartComponent.chartComponent.instance;
         LeadsComponent.setDataSourceToComponent(this.chartDataSource, chartInstance);
     }
 
@@ -1317,7 +1407,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
 
     onContactGroupChanged(event) {
         if (event.previousValue != event.value) {
-            this.contactGroupId = ContactGroup[event.value];
+            this.contactGroupId.next(ContactGroup[event.value]);
             this.cacheService.set(this.getCacheKey(this.CONTACT_GROUP_CACHE_KEY), event.value);
             this.createButtonEnabledSet();
             this.filterChanged = true;

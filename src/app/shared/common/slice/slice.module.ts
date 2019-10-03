@@ -6,28 +6,30 @@ import { CommonModule } from '@angular/common';
 import { DxPivotGridModule } from 'devextreme-angular/ui/pivot-grid';
 import { DxChartModule } from 'devextreme-angular/ui/chart';
 import { DxSelectBoxModule } from 'devextreme-angular/ui/select-box';
+import { DxVectorMapModule } from 'devextreme-angular/ui/vector-map';
 
 /** Application imports */
-import { SlicePivotGridComponent } from '@app/shared/common/slice/pivot-grid/slice-pivot-grid.component';
-import { SliceChartComponent } from '@app/shared/common/slice/chart/slice-chart.component';
-import { SliceInfoComponent } from '@app/shared/common/slice/info/slice-info.component';
+import { PivotGridComponent } from '@app/shared/common/slice/pivot-grid/pivot-grid.component';
+import { ChartComponent } from '@app/shared/common/slice/chart/chart.component';
+import { InfoComponent } from '@app/shared/common/slice/info/info.component';
 
 @NgModule({
     imports: [
         CommonModule,
         DxPivotGridModule,
         DxChartModule,
-        DxSelectBoxModule
+        DxSelectBoxModule,
+        DxVectorMapModule
     ],
     declarations: [
-        SlicePivotGridComponent,
-        SliceChartComponent,
-        SliceInfoComponent
+        PivotGridComponent,
+        ChartComponent,
+        InfoComponent
     ],
     exports: [
-        SlicePivotGridComponent,
-        SliceChartComponent,
-        SliceInfoComponent
+        PivotGridComponent,
+        ChartComponent,
+        InfoComponent
     ],
     providers: [],
 })

@@ -9,11 +9,11 @@ import { FiltersService } from '@shared/filters/filters.service';
 
 @Component({
     selector: 'slice-pivot-grid',
-    templateUrl: 'slice-pivot-grid.component.html',
-    styleUrls: [ './slice-pivot-grid.component.less'],
+    templateUrl: 'pivot-grid.component.html',
+    styleUrls: [ './pivot-grid.component.less'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class SlicePivotGridComponent {
+export class PivotGridComponent {
     @Input() dataSource: any;
     @Input() storageKey: string;
     @Input() height = 'auto';

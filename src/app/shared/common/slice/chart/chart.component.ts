@@ -25,11 +25,11 @@ import { InfoItem } from '@app/shared/common/slice/info/info-item.model';
 
 @Component({
     selector: 'slice-chart',
-    templateUrl: 'slice-chart.component.html',
-    styleUrls: [ './slice-chart.component.less' ],
+    templateUrl: 'chart.component.html',
+    styleUrls: [ './chart.component.less' ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class SliceChartComponent implements OnInit, OnChanges {
+export class ChartComponent implements OnInit, OnChanges {
     @Input() title = '';
     @Input() valueField: string;
     @Input() argumentField: string;
