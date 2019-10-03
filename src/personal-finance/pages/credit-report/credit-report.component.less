@@ -813,10 +813,15 @@
         }
     }
     
-    /deep/ dx-select-box {
+    ::ng-deep dx-select-box {
         .dx-dropdowneditor-icon {
             &::before {
-                content: "" !important;
+                content: '' !important;
+            }
+        }
+        .dx-texteditor-container {
+            &::before {
+                content: '' !important;
                 margin: 0 !important;
                 width: 0;
                 height: 0;
@@ -824,6 +829,9 @@
                 border-right: 4px solid transparent;
                 border-top: 4px solid #171c1d;
                 transform: translate(-50%, -50%);
+                right: 14px;
+                top: 50%;
+                position: absolute;
             }
         }
     }
