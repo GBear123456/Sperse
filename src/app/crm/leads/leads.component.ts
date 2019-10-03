@@ -380,11 +380,11 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     },
                     {
                         label: this.l('Lowest'),
-                        value: minGroupValue
+                        value: minGroupValue || 0
                     },
                     {
                         label: this.l('Highest'),
-                        value: maxGroupValue
+                        value: maxGroupValue || 0
                     }
                 ];
                 return result;
@@ -496,7 +496,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     ) {
         super(injector);
         this.contactGroupOptionInit();
-        this.dataSource = new DataSource({
+        this.dataSource = {
+            uri: this.dataSourceURI,
             requireTotalCount: true,
             store: {
                 key: 'Id',
@@ -511,7 +512,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 deserializeDates: false,
                 paginate: true
             }
-        });
+        };
         this.searchValue = '';
     }
 
