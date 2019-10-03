@@ -15,6 +15,7 @@
     <dxi-layer
         [customize]="customizeLayers"
         [dataSource]="usaMap"
+        [color]="color"
         [colorGroups]="colorGroups"
         [palette]="palette"
         colorGroupingField="total"
@@ -23,6 +24,7 @@
     </dxi-layer>
     <dxi-legend [customizeText]="customizeText">
         <dxo-source layer="areas" grouping="color"></dxo-source>
+        <dxo-border [visible]="showLegendBorder"></dxo-border>
     </dxi-legend>
 </dx-vector-map>
 <loading-spinner *ngIf="dataIsLoading"></loading-spinner>

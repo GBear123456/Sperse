@@ -23,11 +23,14 @@ import { MapData } from '@app/shared/common/slice/map/map-data.model';
 export class MapComponent implements OnChanges {
     @Input() data: MapData = {};
     @Input() palette: string[] = [ '#d4f3ff', '#c1ecfc', '#8addfd', '#30bef3', '#309ad9' ];
-    @Input() colorGroups: number[] = [ 0, 100, 500, 1000, 5000 ];
+    @Input() colorGroups: number[] = [ 0, 100, 500, 1000, 5000, 9999 ];
+    /** Default color */
+    @Input() color = '#309ad9';
     @Input() infoItems: InfoItem[];
     @Input() width: InfoItem[];
     @Input() height: InfoItem[];
     @Input() dataIsLoading;
+    @Input() showLegendBorder = false;
     @ViewChild(DxVectorMapComponent) vectorMapComponent: DxVectorMapComponent;
     usaMap: any = mapsData.usa;
     pipe: any = new DecimalPipe('en-US');
@@ -35,12 +38,10 @@ export class MapComponent implements OnChanges {
     constructor(
         private loadingService: LoadingService,
         private ls: AppLocalizationService
-    ) {
-        window['t'] = this;
-    }
+    ) {}
 
     ngOnChanges(changes: SimpleChanges) {
-        if (changes.data && !changes.data.firstChange && changes.data.currentValue) {
+        if (changes.data && !changes.data.firstChange && changes.data.currentValue && this.vectorMapComponent.instance) {
             /** Update widget with new data */
             this.vectorMapComponent.instance.option('layers[0].dataSource', this.usaMap);
         }
@@ -63,7 +64,14 @@ export class MapComponent implements OnChanges {
         });
     }
 
-    customizeText = (arg) => this.pipe.transform(arg.start, '1.0-0') +
-        ' to ' + this.pipe.transform(arg.end, '1.0-0')
+    customizeText = (arg) => {
+        let text;
+        if (arg.end === 9999) {
+            text = '> 5000';
+        } else {
+            text = this.pipe.transform(arg.start, '1.0-0') + ' to ' + this.pipe.transform(arg.end, '1.0-0');
+        }
+        return text;
+    }
 
 }
