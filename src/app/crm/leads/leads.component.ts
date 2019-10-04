@@ -73,6 +73,7 @@ import { CrmService } from '@app/crm/crm.service';
 import { InfoItem } from '@app/shared/common/slice/info/info-item.model';
 import { MapData } from '@app/shared/common/slice/map/map-data.model';
 import { MapComponent } from '@app/shared/common/slice/map/map.component';
+import { ImageFormat } from '@shared/common/export/image-format.enum';
 
 @Component({
     templateUrl: './leads.component.html',
@@ -403,10 +404,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         tap(() => this.mapDataIsLoading = true),
         switchMap((data) => this.showMap ? of(data) : this.dataLayoutType$.pipe(
             filter((dataLayoutType: DataLayoutType) => dataLayoutType === DataLayoutType.Map),
-            first(),
             mapTo(data)
         )),
-        tap((x) => console.log('after checking of map layout', x)),
         switchMap(([contactGroupId, filter]: [ContactGroup, any]) => {
             const params = {
                 contactGroupId: contactGroupId.toString(),
@@ -659,6 +658,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     toggleDataLayout(dataLayoutType: DataLayoutType) {
         this.selectedClientKeys = [];
         this.dataLayoutType.next(dataLayoutType);
+        this.initToolbarConfig();
         this.pipelineService.toggleDataLayoutType(this.dataLayoutType.value);
         this.initDataSource();
         if (!this.showPipeline) {
@@ -971,33 +971,65 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                             hint: this.l('Download'),
                             items: [
                                 {
-                                    action: Function(),
+                                    action: this.downloadImage.bind(this, ImageFormat.PDF),
                                     text: this.l('Save as PDF'),
-                                    icon: 'pdf',
+                                    icon: 'pdf'
+                                },
+                                {
+                                    action: this.downloadImage.bind(this, ImageFormat.PNG),
+                                    text: this.l('Save as PNG'),
+                                    icon: 'png',
+                                    visible: this.showChart || this.showMap
+                                },
+                                {
+                                    action: this.downloadImage.bind(this, ImageFormat.JPEG),
+                                    text: this.l('Save as JPEG'),
+                                    icon: 'jpg',
+                                    visible: this.showChart || this.showMap
+                                },
+                                {
+                                    action: this.downloadImage.bind(this, ImageFormat.SVG),
+                                    text: this.l('Save as SVG'),
+                                    icon: 'svg',
+                                    visible: this.showChart || this.showMap
+                                },
+                                {
+                                    action: this.downloadImage.bind(this, ImageFormat.GIF),
+                                    text: this.l('Save as GIF'),
+                                    icon: 'gif',
+                                    visible: this.showChart || this.showMap
                                 },
                                 {
                                     action: this.exportData.bind(this, options => {
                                         if (this.showPivotGrid) {
+                                            this.pivotGridComponent.pivotGrid.instance.option(
+                                                'export.fileName',
+                                                this.exportService.getFileName()
+                                            );
                                             this.pivotGridComponent.pivotGrid.instance.exportToExcel();
-                                        } else {
+                                        } else if (this.showPipeline || this.showDataGrid) {
                                             return this.exportToXLS(options);
                                         }
                                     }),
                                     text: this.l('Export to Excel'),
                                     icon: 'xls',
+                                    visible: !(this.showChart || this.showMap)
                                 },
                                 {
                                     action: this.exportData.bind(this, options => this.exportToCSV(options)),
                                     text: this.l('Export to CSV'),
-                                    icon: 'sheet'
+                                    icon: 'sheet',
+                                    visible: !(this.showChart || this.showMap)
                                 },
                                 {
                                     action: this.exportData.bind(this, options => this.exportToGoogleSheet(options)),
                                     text: this.l('Export to Google Sheets'),
-                                    icon: 'sheet'
+                                    icon: 'sheet',
+                                    visible: !(this.showChart || this.showMap)
                                 },
                                 {
-                                    type: 'downloadOptions'
+                                    type: 'downloadOptions',
+                                    visible: this.showPipeline || this.showDataGrid
                                 }
                             ]
                         }
@@ -1009,7 +1041,11 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 location: 'after',
                 locateInMenu: 'auto',
                 items: [
-                    { name: 'showCompactRowsHeight', action: this.toggleCompactView.bind(this) },
+                    {
+                        name: 'showCompactRowsHeight',
+                        action: this.toggleCompactView.bind(this),
+                        disabled: this.showChart || this.showMap
+                    },
                     { name: 'columnChooser', action: DataGridService.showColumnChooser.bind(this, this.dataGrid) }
                 ]
             },
@@ -1079,6 +1115,14 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             }).reduce((r, a) => r.concat([a, 'or']), []));
         }
         return selectedLeads.length;
+    }
+
+    private downloadImage(format: ImageFormat) {
+        if (this.showChart) {
+            this.chartComponent.exportTo(format);
+        } else if (this.showMap) {
+            this.mapComponent.exportTo(format);
+        }
     }
 
     exportData(callback, options) {
@@ -1220,7 +1264,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     private setChartInstance() {
-        const chartInstance = this.chartComponent && this.chartComponent.chartComponent && this.chartComponent.chartComponent.instance;
+        const chartInstance = this.chartComponent && this.chartComponent.chart && this.chartComponent.chart.instance;
         LeadsComponent.setDataSourceToComponent(this.chartDataSource, chartInstance);
     }
 

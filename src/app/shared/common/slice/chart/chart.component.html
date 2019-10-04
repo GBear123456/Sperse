@@ -8,13 +8,15 @@
                        (onValueChanged)="summaryByChanged($event)">
         </dx-select-box>
     </header>
-    <dx-chart>
+    <dx-chart #chart>
 
         <dxo-tooltip [enabled]="true"
                      [zIndex]="1">
         </dxo-tooltip>
 
         <dxo-size [width]="chartWidth" [height]="chartHeight"></dxo-size>
+
+        <dxo-animation [enabled]="false"></dxo-animation>
 
         <!-- common settings for charts -->
         <dxo-common-series-settings [argumentField]="argumentField"

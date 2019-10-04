@@ -5,7 +5,7 @@ import { CurrencyPipe } from '@angular/common';
 /** Third party imports */
 import { MatDialog } from '@angular/material';
 import { DxChartComponent } from 'devextreme-angular/ui/chart';
-import { getMarkup, exportFromMarkup } from 'devextreme/viz/export';
+import { getMarkup } from 'devextreme/viz/export';
 import { BehaviorSubject, Observable, Subject, combineLatest, of } from 'rxjs';
 import { catchError, finalize, first, filter, switchMap, tap, takeUntil, mapTo, withLatestFrom } from 'rxjs/operators';
 import * as moment from 'moment';
@@ -41,6 +41,7 @@ import { CalendarValuesModel } from '@shared/common/widgets/calendar/calendar-va
 import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calendar.component';
 import { FilterItemModel } from '@shared/filters/models/filter-item.model';
 import { SetupStepComponent } from '@app/cfo/shared/common/setup-steps/setup-steps.component';
+import { ImageFormat } from '@shared/common/export/image-format.enum';
 
 @Component({
     'selector': 'app-stats',
@@ -73,7 +74,6 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
     maxLabelCount = 0;
     labelWidth = 45;
     showSourceData = false;
-    exporting = false;
     loadingFinished = false;
     chartsHeight = 400;
     chartsWidth;
@@ -174,20 +174,20 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
 
     constructor(
         injector: Injector,
-        private _appService: AppService,
-        private _filtersService: FiltersService,
-        private _bankAccountService: BankAccountsServiceProxy,
-        private _cashFlowForecastServiceProxy: CashFlowForecastServiceProxy,
-        private _statsService: StatsService,
-        private _dialog: MatDialog,
-        private _lifecycleService: LifecycleSubjectsService,
+        private appService: AppService,
+        private filtersService: FiltersService,
+        private bankAccountService: BankAccountsServiceProxy,
+        private cashFlowForecastServiceProxy: CashFlowForecastServiceProxy,
+        private statsService: StatsService,
+        private dialog: MatDialog,
+        private lifecycleService: LifecycleSubjectsService,
         private cfoStore$: Store<CfoStore.State>,
         private rootStore$: Store<RootStore.State>,
         public bankAccountsService: BankAccountsService,
         public cfoPreferencesService: CfoPreferencesService
     ) {
         super(injector);
-        this._appService.narrowingPageContentWhenFixedFilter = false;
+        this.appService.narrowingPageContentWhenFixedFilter = false;
     }
 
     ngOnInit() {
@@ -199,13 +199,13 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
 
         this.cfoPreferencesService.dateRange$.pipe(
             takeUntil(this.destroy$),
-            switchMap((dateRange) => this.componentIsActivated ? of(dateRange) : this._lifecycleService.activate$.pipe(first(), mapTo(dateRange)))
+            switchMap((dateRange) => this.componentIsActivated ? of(dateRange) : this.lifecycleService.activate$.pipe(first(), mapTo(dateRange)))
         ).subscribe((dateRange: CalendarValuesModel) => {
             this.dateFilter.items = {
                 from: new FilterItemModel(dateRange.from.value),
                 to: new FilterItemModel(dateRange.to.value)
             };
-            this._filtersService.change(this.dateFilter);
+            this.filtersService.change(this.dateFilter);
         });
 
         combineLatest(
@@ -215,10 +215,10 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
             this.refresh$
         ).pipe(
             takeUntil(this.destroy$),
-            switchMap((data) => this.componentIsActivated ? of(data) : this._lifecycleService.activate$.pipe(first(), mapTo(data))),
+            switchMap((data) => this.componentIsActivated ? of(data) : this.lifecycleService.activate$.pipe(first(), mapTo(data))),
             tap(() => abp.ui.setBusy()),
             switchMap(([currencyId, forecastModelId, requestFilter]: [string, number, StatsFilter]) => {
-                return this._bankAccountService.getStats(
+                return this.bankAccountService.getStats(
                     InstanceType[this.instanceType],
                     this.instanceId,
                     currencyId,
@@ -277,7 +277,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
                 /** After selected accounts change */
                 this.selectedBankAccountIds$.pipe(
                     takeUntil(this.destroy$),
-                    switchMap(() => this.componentIsActivated ? of(null) : this._lifecycleService.activate$.pipe(first()))
+                    switchMap(() => this.componentIsActivated ? of(null) : this.lifecycleService.activate$.pipe(first()))
                 ).subscribe(() => {
                     this.setBankAccountsFilter(true);
                 });
@@ -300,7 +300,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
                 first()
             ).subscribe(([selectedForecastModelIndex, forecastModels]: [number, ForecastModelDto[]]) => {
                 /** Get currencies list and selected currency index */
-                this._appService.updateToolbar([
+                this.appService.updateToolbar([
                     {
                         location: 'before',
                         items: [
@@ -312,22 +312,22 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
                                         this.linearChart.instance.render();
                                         this.barChart.instance.render();
                                     }, 1000);
-                                    this._filtersService.fixed = !this._filtersService.fixed;
+                                    this.filtersService.fixed = !this.filtersService.fixed;
                                 },
                                 options: {
                                     checkPressed: () => {
-                                        return this._filtersService.fixed;
+                                        return this.filtersService.fixed;
                                     },
                                     mouseover: () => {
-                                        this._filtersService.enable();
+                                        this.filtersService.enable();
                                     },
                                     mouseout: () => {
-                                        if (!this._filtersService.fixed)
-                                            this._filtersService.disable();
+                                        if (!this.filtersService.fixed)
+                                            this.filtersService.disable();
                                     }
                                 },
                                 attr: {
-                                    'filter-selected': this._filtersService.hasFilterSelected
+                                    'filter-selected': this.filtersService.hasFilterSelected
                                 }
                             }
                         ]
@@ -387,28 +387,28 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
                                     hint: this.l('Download'),
                                     items: [
                                         {
-                                            action: this.download.bind(this, 'pdf'),
-                                            text: this.ls(AppConsts.localization.defaultLocalizationSourceName, 'SaveAs', 'PDF'),
+                                            action: this.download.bind(this, ImageFormat.PDF),
+                                            text: this.ls(AppConsts.localization.defaultLocalizationSourceName, 'SaveAs', ImageFormat.PDF),
                                             icon: 'pdf',
                                         },
                                         {
-                                            action: this.download.bind(this, 'png'),
-                                            text: this.ls(AppConsts.localization.defaultLocalizationSourceName, 'SaveAs', 'PNG'),
+                                            action: this.download.bind(this, ImageFormat.PNG),
+                                            text: this.ls(AppConsts.localization.defaultLocalizationSourceName, 'SaveAs', ImageFormat.PNG),
                                             icon: 'png',
                                         },
                                         {
-                                            action: this.download.bind(this, 'jpeg'),
-                                            text: this.ls(AppConsts.localization.defaultLocalizationSourceName, 'SaveAs', 'JPEG'),
-                                            icon: 'jpeg',
+                                            action: this.download.bind(this, ImageFormat.JPEG),
+                                            text: this.ls(AppConsts.localization.defaultLocalizationSourceName, 'SaveAs', ImageFormat.JPEG),
+                                            icon: 'jpg',
                                         },
                                         {
-                                            action: this.download.bind(this, 'svg'),
-                                            text: this.ls(AppConsts.localization.defaultLocalizationSourceName, 'SaveAs', 'SVG'),
+                                            action: this.download.bind(this, ImageFormat.SVG),
+                                            text: this.ls(AppConsts.localization.defaultLocalizationSourceName, 'SaveAs', ImageFormat.SVG),
                                             icon: 'svg',
                                         },
                                         {
-                                            action: this.download.bind(this, 'gif'),
-                                            text: this.ls(AppConsts.localization.defaultLocalizationSourceName, 'SaveAs', 'GIF'),
+                                            action: this.download.bind(this, ImageFormat.GIF),
+                                            text: this.ls(AppConsts.localization.defaultLocalizationSourceName, 'SaveAs', ImageFormat.GIF),
                                             icon: 'gif',
                                         }
                                     ]
@@ -450,15 +450,15 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
     }
 
     toggleToolbar() {
-        this._appService.toolbarToggle();
-        this._filtersService.fixed = false;
-        this._filtersService.disable();
+        this.appService.toolbarToggle();
+        this.filtersService.fixed = false;
+        this.filtersService.disable();
         this.calculateChartsScrolableHeight();
         this.initToolbarConfig();
     }
 
     initFiltering() {
-        this._filtersService.apply(() => {
+        this.filtersService.apply(() => {
             let requestFilter = this.defaultRequestFilter;
             for (let filter of this.filters) {
                 if (filter.caption.toLowerCase() === 'account')
@@ -484,7 +484,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
 
     /** Calculates the height of the charts scrollable height after resizing */
     calculateChartsScrolableHeight() {
-        return this._appService.toolbarIsHidden.value ? window.innerHeight - 199 : window.innerHeight - 260;
+        return this.appService.toolbarIsHidden.value ? window.innerHeight - 199 : window.innerHeight - 260;
     }
 
     handleCashFlowInitialResult() {
@@ -493,9 +493,9 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
 
     setupFilters() {
         if (this.filters.length) {
-            this._filtersService.setup(this.filters);
+            this.filtersService.setup(this.filters);
         } else {
-            this._filtersService.setup(
+            this.filtersService.setup(
                 this.filters = [
                     this.dateFilter,
                     new FilterModel({
@@ -523,8 +523,8 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
     }
 
     ngOnDestroy() {
-        this._appService.updateToolbar(null);
-        this._filtersService.unsubscribe();
+        this.appService.updateToolbar(null);
+        this.filtersService.unsubscribe();
         this.rootComponent.overflowHidden();
 
         super.ngOnDestroy();
@@ -558,7 +558,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
     }
 
     openBankAccountsSelectDialog() {
-        this._dialog.open(BankAccountsSelectDialogComponent, {
+        this.dialog.open(BankAccountsSelectDialogComponent, {
             panelClass: 'slider',
         }).componentInstance.onApply.subscribe(() => {
             this.setBankAccountsFilter(true);
@@ -572,7 +572,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
                 backgroundColor: this.labelNegativeBackgroundColor,
                 visible: this.maxLabelCount >= this.statsData.length,
                 customizeText: (e: any) => {
-                    return this._statsService.replaceMinusWithBrackets(e.valueText, this.cfoPreferencesService.selectedCurrencySymbol);
+                    return this.statsService.replaceMinusWithBrackets(e.valueText, this.cfoPreferencesService.selectedCurrencySymbol);
                 }
             };
         }
@@ -580,7 +580,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
 
     /** Replace minus for the brackets */
     customizeAxisValues = (arg: any) => {
-        return arg.value < 0 ? this._statsService.replaceMinusWithBrackets(arg.valueText, this.cfoPreferencesService.selectedCurrencySymbol) : arg.valueText.replace('$', this.cfoPreferencesService.selectedCurrencySymbol);
+        return arg.value < 0 ? this.statsService.replaceMinusWithBrackets(arg.valueText, this.cfoPreferencesService.selectedCurrencySymbol) : arg.valueText.replace('$', this.cfoPreferencesService.selectedCurrencySymbol);
     }
 
     customizePoint = (arg: any) => {
@@ -663,23 +663,13 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
 
     /**
      * Download the charts into file
-     * @param {'png' | 'pdf' | 'jpeg' | 'svg' | 'gif'} format
+     * @param ImageFormat format
      */
-    download(format: 'png' | 'pdf' | 'jpeg' | 'svg' | 'gif') {
-        /** hack to avoid 3 exports */
-        if (this.exporting) return; this.exporting = true;
+    download(format: ImageFormat) {
         let lineChartSize = this.linearChart.instance.getSize(),
             barChartSize = this.barChart.instance.getSize(),
             markup = this.getChartsMarkup();
-        exportFromMarkup(markup, {
-            fileName: 'stats',
-            format: format.toUpperCase(),
-            height: lineChartSize.height + barChartSize.height,
-            width: lineChartSize.width,
-            backgroundColor: '#fff'
-        });
-        /** hack to avoid 3 exporting */
-        setTimeout(() => { this.exporting = false; }, 200);
+        this.exportService.exportIntoImage(format, markup, lineChartSize.width, lineChartSize.height + barChartSize.height);
     }
 
     /**
@@ -695,7 +685,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
     customizeBarTooltip = pointInfo => {
         return {
             html: (pointInfo.seriesName !== 'historicalGradient' && pointInfo.seriesName !== 'forecastGradient') ?
-                  this._statsService.getTooltipInfoHtml(this.statsData, this.barChartTooltipFields, pointInfo) : ''
+                  this.statsService.getTooltipInfoHtml(this.statsData, this.barChartTooltipFields, pointInfo) : ''
         };
     }
 
@@ -706,7 +696,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
 
         /** Load sync accounts (if something change - subscription in ngOnInit fires) */
         this.bankAccountsService.load();
-        this._lifecycleService.activate.next();
+        this.lifecycleService.activate.next();
 
         this.synchProgressComponent.activate();
         this.rootComponent.overflowHidden(true);
@@ -714,9 +704,9 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
     }
 
     deactivate() {
-        this._dialog.closeAll();
-        this._appService.updateToolbar(null);
-        this._filtersService.unsubscribe();
+        this.dialog.closeAll();
+        this.appService.updateToolbar(null);
+        this.filtersService.unsubscribe();
         this.synchProgressComponent.deactivate();
         this.rootComponent.overflowHidden();
     }

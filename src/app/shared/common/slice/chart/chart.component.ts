@@ -16,12 +16,16 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { distinctUntilChanged } from 'rxjs/operators';
 import values from 'lodash/values';
 import capitalize from 'lodash/capitalize';
+import { getMarkup } from 'devextreme/viz/export';
 
 /** Application imports */
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { SummaryBy } from '@app/shared/common/slice/chart/summary-by.enum';
 import { DateHelper } from '@shared/helpers/DateHelper';
 import { InfoItem } from '@app/shared/common/slice/info/info-item.model';
+import { ExportService } from '@shared/common/export/export.service';
+import { ChartData } from '@app/shared/common/slice/chart/chart-data.model';
+import { ImageFormat } from '@shared/common/export/image-format.enum';
 
 @Component({
     selector: 'slice-chart',
@@ -36,7 +40,7 @@ export class ChartComponent implements OnInit, OnChanges {
     @Input() width: number;
     @Input() height: number;
     @Input() infoItems: InfoItem[];
-    @ViewChild(DxChartComponent) chartComponent: DxChartComponent;
+    @ViewChild(DxChartComponent) chart: DxChartComponent;
     chartHeight: number;
     chartWidth: number;
     summaryBy: BehaviorSubject<SummaryBy> = new BehaviorSubject<SummaryBy>(SummaryBy.Month);
@@ -46,6 +50,7 @@ export class ChartComponent implements OnInit, OnChanges {
 
     constructor(
         private changeDetectorRef: ChangeDetectorRef,
+        private exportService: ExportService,
         public ls: AppLocalizationService
     ) {}
 
@@ -80,4 +85,28 @@ export class ChartComponent implements OnInit, OnChanges {
     summaryByChanged(e) {
         this.summaryBy.next(e.value.toLowerCase());
     }
+
+    private getChartData(): ChartData[] {
+        return this.chart.instance.getDataSource().items().map((item) => {
+            return {
+                name: this.customizeBottomAxis(item[this.argumentField]),
+                value: item[this.valueField]
+            };
+        });
+    }
+
+    exportTo(format: ImageFormat) {
+        const markup = this.getChartMarkup();
+        this.exportService.exportIntoImage(format, markup, this.width, this.height);
+    }
+
+    /**
+     * Get the markup using devextreme getMarkup method and replacing linear gradient url with the simple color
+     * @return {string}
+     */
+    getChartMarkup() {
+        return getMarkup([this.chart.instance])
+            .replace(new RegExp('url\\(#linear-gradient\\)', 'g'), '#00aeef');
+    }
+
 }

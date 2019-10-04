@@ -8,6 +8,9 @@ import { Angular5Csv } from './export-csv/export-csv';
 import DataSource from 'devextreme/data/data_source';
 import capitalize from 'underscore.string/capitalize';
 import * as moment from 'moment';
+import { ChartData } from '@app/shared/common/slice/chart/chart-data.model';
+import { exportFromMarkup } from 'devextreme/viz/export';
+import { ImageFormat } from '@shared/common/export/image-format.enum';
 
 @Injectable()
 export class ExportService {
@@ -15,8 +18,8 @@ export class ExportService {
     private _exportGoogleSheetService: ExportGoogleSheetService;
     private readonly EXPORT_REQUEST_TIMEOUT = 3 * 60 * 1000;
 
-    constructor(private _injector: Injector) {
-        this._exportGoogleSheetService = _injector.get(ExportGoogleSheetService);
+    constructor(private injector: Injector) {
+        this._exportGoogleSheetService = injector.get(ExportGoogleSheetService);
     }
 
     getFileName(dataGrid?) {
@@ -53,7 +56,7 @@ export class ExportService {
             initialStore._beforeSend = (request) => {
                 initialBeforeSend.call(initialStore, request);
                 request.timeout = this.EXPORT_REQUEST_TIMEOUT;
-            }
+            };
 
             (new DataSource({
                 paginate: false,
@@ -153,4 +156,21 @@ export class ExportService {
             instance.exportToExcel(!exportAllData);
         });
     }
+
+    /**
+     * Download the charts into file
+     * @param ImageFormat format
+     */
+    exportIntoImage(format: ImageFormat, markup, width, height) {
+        setTimeout(() => {
+            exportFromMarkup(markup, {
+                fileName: this.getFileName(),
+                format: format,
+                height: height,
+                width: width,
+                backgroundColor: '#fff'
+            });
+        });
+    }
+
 }

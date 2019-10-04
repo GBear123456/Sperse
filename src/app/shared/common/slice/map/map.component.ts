@@ -12,6 +12,8 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 import { InfoItem } from '@app/shared/common/slice/info/info-item.model';
 import { MapData } from '@app/shared/common/slice/map/map-data.model';
+import { ImageFormat } from '@shared/common/export/image-format.enum';
+import { ExportService } from '@shared/common/export/export.service';
 
 @Component({
     selector: 'slice-map',
@@ -37,11 +39,12 @@ export class MapComponent implements OnChanges {
 
     constructor(
         private loadingService: LoadingService,
-        private ls: AppLocalizationService
+        private ls: AppLocalizationService,
+        private exportService: ExportService
     ) {}
 
     ngOnChanges(changes: SimpleChanges) {
-        if (changes.data && !changes.data.firstChange && changes.data.currentValue && this.vectorMapComponent.instance) {
+        if (changes.data && !changes.data.firstChange && changes.data.currentValue && this.vectorMapComponent) {
             /** Update widget with new data */
             this.vectorMapComponent.instance.option('layers[0].dataSource', this.usaMap);
         }
@@ -72,6 +75,15 @@ export class MapComponent implements OnChanges {
             text = this.pipe.transform(arg.start, '1.0-0') + ' to ' + this.pipe.transform(arg.end, '1.0-0');
         }
         return text;
+    }
+
+    exportTo(format: ImageFormat) {
+        setTimeout(() => {
+            this.vectorMapComponent.instance.exportTo(
+                this.exportService.getFileName(),
+                format
+            );
+        });
     }
 
 }
