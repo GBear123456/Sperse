@@ -30,7 +30,6 @@
 
     .get-free {
         min-height: 441px;
-        background-color: transaparent;
         font-family: @mainFont;
 
         dx-text-box {
@@ -58,28 +57,28 @@
 
         h2 {
             text-align: center;
-            color: #FFF;
-            font-size: 29px;
+            color: #000;
+            font-size: 32px;
             font-weight: 600;
-            line-height: 45px;
-            letter-spacing: -0.68px;
             margin-bottom: 0;
+            line-height: 1.03;
+            letter-spacing: -0.64px;
         }
 
         h4 {
-            color: #FFF;
-            text-transform: uppercase;
+            text-transform: none;
             font-size: 21px;
             margin-bottom: 0;
             line-height: 31px;
             margin-top: 0;
+            color: #7a7979;
         }
 
         p {
-            color: #FFF;
             font-size: 14px;
             line-height: 20px;
             font-weight: 500;
+            color: #7a7979;
 
             .and {
                 font-weight: 700;
@@ -94,18 +93,18 @@
         }
 
         form {
-            margin: 10px 0;
+            margin: 25px 0 10px;
         }
 
         .form-group {
             position: relative;
 
             &--name {
-                padding-right: 0;
+                //padding-right: 0;
             }
 
             &--surname {
-                padding-left: 0;
+                //padding-left: 0;
 
                 label {
                     left: 10px !important;
@@ -166,7 +165,7 @@
                 span {
                     border: 1px solid #000;
                     background: #fff;
-                    color: lighten(#FFF, 50%);
+                    //color: lighten(#FFF, 50%);
                     display: inline-block;
                     width: 40px;
                     line-height: 28px;
@@ -204,7 +203,7 @@
             text-align: center;
 
             h3 {
-                color: #FFF;
+                //color: #FFF;
                 font-weight: 600;
                 font-size: 16px;
             }
@@ -214,14 +213,15 @@
 
                 a {
                     padding: 0 10px;
-                    text-decoration: underline;
+                    text-decoration: none;
                     letter-spacing: 1px;
-                    color: #FFF;
+                    //color: #FFF;
                     font-weight: normal;
                     transition: .3s;
+                    color: #ac1f22;
 
                     &:hover {
-                        color: lighten(#262626, 10%);
+                        color: lighten(#ac1f22, 10%);
                     }
                 }
             }
@@ -237,7 +237,7 @@
 
             a {
                 font-weight: 700;
-                color: #FFF;
+                //color: #FFF;
                 text-decoration: none;
                 transition: .2s;
 
@@ -302,9 +302,9 @@
         font-size: 12px;
 
         a {
-            color: #FFF;
+            color: #ac1f22;
             font-weight: bold;
-            text-decoration: underline;
+            text-decoration: none;
 
             &:hover {
                 opacity: .8;
@@ -321,17 +321,21 @@
     }
 
     input[type="text"].dx-texteditor-input {
-        color: #FFF;
-        background-color: transparent;
-        border: 0;
         border-radius: 0;
-        border-bottom: 2px solid #FFF;
+        color: #000;
+    
+        border: solid 1px rgba(149, 148, 148, 0.35);
+        background-color: rgba(242, 242, 242, 0.5);
+    
+        padding: 16px 8px;
+        font-size: 17px;
+        font-weight: 400;
     }
 
     .dx-placeholder {
         font-size: 15px;
-        font-weight: 600;
-        color: #FFF !important;
+        font-weight: 400;
+        color: #959494 !important;
         transition: .2s;
     }
     //.custom-radio-2-btn {
@@ -357,16 +361,18 @@
     //    }
     //}
     dx-button {
-        border: 2px solid #333;
+        border: 2px solid #ac1f22;
         border-radius: 0;
         color: #FFF;
         padding: 5px 10px;
+        font-weight: 400;
+        width: 100%;
 
 
         &.dx-state-focused {
-            background-color: #333 !important;
+            background-color: darken(#ac1f22, 20%) !important;
             color: #fff !important;
-            border-color: #333 !important;
+            border-color: darken(#ac1f22, 20%) !important;
         }
     }
 
@@ -384,7 +390,12 @@
     }
 
     .activate-button {
-        background-color: #fe8600;
+        background-color: #ac1f22;
+        
+        &:hover {
+            border-color: #ac1f22 !important;
+            background-color: #ac1f22 !important;
+        }
     }
 
     .privacy-term {
@@ -395,7 +406,8 @@
 
         &.dx-checkbox-checked {
             .dx-checkbox-icon {
-                background-color: #f58023 !important;
+                border-color: #ac1f22 !important;
+                background-color: #ac1f22 !important;
             }
         }
 
@@ -469,5 +481,54 @@
             background-size: cover;
             border-radius: 0;
         }
+    }
+}
+
+.signup-box {
+    box-shadow: 0 20px 100px 0 rgba(0, 0, 0, 0.15);
+    border: solid 1px #ebecec;
+    background-color: #ffffff;
+    min-height: 565px;
+    padding: 0;
+    border-radius: 0;
+    width: 96%;
+    display: flex;
+    flex-direction: column;
+    
+    .login-form {
+        padding: 50px 80px 0;
+        width: 100%;
+        
+        input {
+            border-radius: 0;
+            color: #000;
+            
+            border: solid 1px rgba(149, 148, 148, 0.35);
+            background-color: rgba(242, 242, 242, 0.5);
+        }
+    }
+    
+    @media all and (min-width: 800px) {
+        width: 770px;
+    }
+}
+
+.content-wrap {
+    padding: 55px 80px 0;
+}
+
+.signup-footer {
+    margin-top: auto;
+    background: #f8f8f8;
+    border-top: 1px solid #d5d5d5;
+    padding: 10px 0;
+    
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #959494;
+    
+    img {
+        margin-right: 8px;
     }
 }
