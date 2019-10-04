@@ -25,6 +25,8 @@ export class OffersListComponent implements OnChanges {
     @Input() buttonCaption = 'Apply';
     @Input() creditScore: number;
     @Input() offersAreLoading = false;
+    @Input() showDetailsButton = true;
+    @Input() simpleDesign = false;
     readonly defaultVisibleOffersCount = 6;
     visibleOffersCount = this.defaultVisibleOffersCount;
     offersCount: number;
