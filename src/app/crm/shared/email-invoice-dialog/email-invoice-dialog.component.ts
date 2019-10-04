@@ -9,6 +9,7 @@ import { DxTextBoxComponent } from 'devextreme-angular/ui/text-box';
 import { AppConsts } from '@shared/AppConsts';
 import { DialogService } from '@app/shared/common/dialogs/dialog.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { EmailTemplateParamDto } from '@shared/service-proxies/service-proxies';
 
 @Component({
     templateUrl: 'email-invoice-dialog.component.html',
@@ -17,6 +18,30 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class EmailInvoiceDialogComponent {
+    attachPDF = {
+        key: 'attachPDF',
+        value: true
+    };
+    sendReminders = {
+        key: 'sendReminders',
+        value: false
+    };
+    partialPayment = {
+        key: 'partialPayment',
+        value: true
+    };
+    autoPayment = {
+        key: 'autoPayment',
+        value: true
+    };
+    sendAlerts = {
+        key: 'sendAlerts',
+        value: true
+    };
+    dueDate = {
+        key: 'dueDate',
+        value: null
+    };
 
     constructor(
         private dialogRef: MatDialogRef<EmailInvoiceDialogComponent>,
@@ -24,11 +49,14 @@ export class EmailInvoiceDialogComponent {
         public ls: AppLocalizationService,
         @Inject(MAT_DIALOG_DATA) public data: any
     ) {
-        data.attachPDF = true;
-        data.sendReminders = false;
-        data.partialPayment = true;
-        data.autoPayment = true;
-        data.sendAlerts = true;
+        data.templateSettings = [
+            this.attachPDF, 
+            this.sendReminders, 
+            this.partialPayment,
+            this.autoPayment,
+            this.sendAlerts,
+            this.dueDate
+        ];
     }
 
     allowDigitsOnly(event, exceptions = []) {
@@ -40,8 +68,19 @@ export class EmailInvoiceDialogComponent {
     }
 
     save() {
+        this.changeDetectorRef.markForCheck();
     }
 
-    templateChnaged(event) {
+    templateChanged(data) {
+        this.data.templateSettings.forEach(item => {
+            let newItem = data.emailTemplateParams
+                .find(v => v.key == item.key);
+            if (newItem)
+                item.value = item.key != 'dueDate' ? 
+                    JSON.parse(newItem.value) : newItem.value;
+            else
+                item.value = null;
+        });
+        this.changeDetectorRef.markForCheck();
     }
 }
