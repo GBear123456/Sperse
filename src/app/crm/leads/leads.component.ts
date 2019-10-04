@@ -980,7 +980,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                                         if (this.showPivotGrid) {
                                             this.pivotGridComponent.pivotGrid.instance.exportToExcel();
                                         } else {
-                                            this.exportToXLS(options);
+                                            return this.exportToXLS(options);
                                         }
                                     }),
                                     text: this.l('Export to Excel'),
@@ -1085,7 +1085,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         if (this.showPipeline) {
             let importOption = 'all',
                 instance = this.dataGrid.instance,
-                dataSource = instance.option('dataSource'),
+                dataSource = instance && instance.getDataSource(),
                 checkExportOption = (dataSource, ignoreFilter = false) => {
                     if (options == importOption)
                         ignoreFilter || this.processFilterInternal([this]);

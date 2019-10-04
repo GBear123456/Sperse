@@ -710,6 +710,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
 
         this.synchProgressComponent.activate();
         this.rootComponent.overflowHidden(true);
+        setTimeout(() => this.calculateChartsSize());
     }
 
     deactivate() {
