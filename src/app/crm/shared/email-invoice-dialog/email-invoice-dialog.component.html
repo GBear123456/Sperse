@@ -5,23 +5,23 @@
                 <h3>{{ls.l('InvoiceEmail_OtherSettings')}}</h3>
                 <dx-check-box
                     [text]="ls.l('InvoiceEmail_AttachPDF')"
-                    [(value)]="data.attachPDF">
+                    [(value)]="attachPDF.value">
                 </dx-check-box>
                 <dx-check-box
                     [text]="ls.l('InvoiceEmail_SendReminders')"
-                    [(value)]="data.sendReminders">
+                    [(value)]="sendReminders.value">
                 </dx-check-box>
                 <dx-check-box
                     [text]="ls.l('InvoiceEmail_PartialPayment')"
-                    [(value)]="data.partialPayment">
+                    [(value)]="partialPayment.value">
                 </dx-check-box>
                 <dx-check-box
                     [text]="ls.l('InvoiceEmail_AutoPeyment')"
-                    [(value)]="data.autoPayment">
+                    [(value)]="autoPayment.value">
                 </dx-check-box>
                 <dx-check-box
-                    [text]="ls.l('InvoiceEmail_SendAlers')"
-                    [(value)]="data.sendAlerts">
+                    [text]="ls.l('InvoiceEmail_SendAlerts')"
+                    [(value)]="sendAlerts.value">
                 </dx-check-box>
             </div>
             <div class="right-side">
@@ -33,7 +33,7 @@
                     placeholder="{{ls.l('Invoice_DueOnReceipt')}}"
                     (onKeyDown)="allowDigitsOnly($event, ['/'])"
                     [width]="'260px'"
-                    [(value)]="data.dueDate">
+                    [(value)]="dueDate.value">
                 </dx-date-box>
             </div>
         </div>

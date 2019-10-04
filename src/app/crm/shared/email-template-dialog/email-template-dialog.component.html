@@ -9,13 +9,13 @@
             height="40px"
             displayExpr="name"
             valueExpr="id"
-            [visible]="data.templates$"
+            [visible]="data.templateType"
             [placeholder]="ls.l('Template')"
-            [(value)]="data.template"
-            [dataSource]="data.templates$ | async"
+            [(value)]="data.templateId"
+            [dataSource]="templates$ | async"
             [acceptCustomValue]="true"
             (onCustomItemCreating)="onNewTemplate($event)"
-            (onValueChanged)="onTemplateChnaged($event)">
+            (onValueChanged)="onTemplateChanged($event)">
         </dx-select-box>
     </ng-container>
 
@@ -32,6 +32,7 @@
                         [acceptCustomValue]="true"
                         [placeholder]="ls.l('To')"
                         [(value)]="data.emailTo"
+                        [disabled]="data.templateType"
                         (onOpened)="emailInputFocusIn($event)"
                         (onCustomItemCreating)="onCustomItemCreating($event)">
                     </dx-tag-box>
@@ -82,9 +83,9 @@
                     </dx-text-box>
                 </div>
                 <div class="field-area">
-                    <ckeditor [editor]="Editor" [(data)]="data.body"></ckeditor>
+                    <ckeditor #ckeditor [editor]="EditorClass" [data]="data.body" (change)="onBodyChange($event)"></ckeditor>
                 </div>
-                <ng-content select="[templateSettings]"></ng-content>
+                <ng-content *ngIf="data.templateType" select="[templateSettings]"></ng-content>
             </div>
         </dx-scroll-view>
     </div>

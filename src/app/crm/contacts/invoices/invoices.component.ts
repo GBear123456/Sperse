@@ -21,6 +21,7 @@ import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { FilterModel } from '@shared/filters/models/filter.model';
 import {
+    EmailTemplateType,
     ContactServiceProxy,
     InvoiceServiceProxy,
     InvoiceStatus
@@ -182,7 +183,7 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
                 saveTitle: this.l('Save'),
                 title: this.l('Invoice Settings'),
                 invoice: this.actionRecordData,
-                templates$: of([]),
+                templateType: EmailTemplateType.Invoice,
                 refreshParent: () => {
                 }
             }

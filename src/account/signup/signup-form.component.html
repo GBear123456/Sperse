@@ -1,119 +1,127 @@
 <section class="get-free">
     <div class="container h-100">
         <div class="row h-100 girl-bg">
-            <div class="col-lg-7 col-md-12 align-self-center" style="margin: auto;">
-                <h2>Gain Insights to Increase Your Sales Prospects</h2>
-                <h4>SIGN UP AND GET ACCESS TO CODEBREAKER AI</h4>
-
-                <form class="sign-up" (ngSubmit)="signUpMember()">
-                    <div class="dx-field form-row align-items-center">
-                        <div class="form-group form-group--name col">
-                            <dx-text-box placeholder="First Name"
-                                         (keydown)="validateName($event)"
-                                         [(value)]="registerData.firstName">
-                                <dx-validator>
-                                    <dxi-validation-rule type="required" message="Name is required"></dxi-validation-rule>
-                                    <dxi-validation-rule type="stringLength" [min]="2" message="Name must have at least 2 symbols"></dxi-validation-rule>
-                                </dx-validator>
-                            </dx-text-box>
+            <div class="col-lg-7 col-md-12 align-self-center signup-box" style="margin: auto;">
+                <div class="content-wrap">
+                    <h2>Gain Insights to Increase Your Sales Prospects</h2>
+                    <h4>Sign up and get access to Codebreaker AI</h4>
+                    <form class="sign-up" (ngSubmit)="signUpMember()">
+                        <div class="dx-field form-row align-items-center">
+                            <div class="form-group form-group--name col">
+                                <dx-text-box placeholder="First Name"
+                                             (keydown)="validateName($event)"
+                                             [(value)]="registerData.firstName">
+                                    <dx-validator>
+                                        <dxi-validation-rule type="required" message="Name is required"></dxi-validation-rule>
+                                        <dxi-validation-rule type="stringLength" [min]="2"
+                                                             message="Name must have at least 2 symbols"></dxi-validation-rule>
+                                    </dx-validator>
+                                </dx-text-box>
+                            </div>
+                            <div class="form-group form-group--surname col">
+                                <dx-text-box placeholder="Last Name"
+                                             (keydown)="validateName($event)"
+                                             [(value)]="registerData.lastName">
+                                    <dx-validator>
+                                        <dxi-validation-rule type="required" message="Name is required"></dxi-validation-rule>
+                                        <dxi-validation-rule type="stringLength" [min]="2"
+                                                             message="Name must have at least 2 symbols"></dxi-validation-rule>
+                                    </dx-validator>
+                                </dx-text-box>
+                            </div>
                         </div>
-                        <div class="form-group form-group--surname col">
-                            <dx-text-box placeholder="Last Name"
-                                         (keydown)="validateName($event)"
-                                         [(value)]="registerData.lastName">
-                                <dx-validator>
-                                    <dxi-validation-rule type="required" message="Name is required"></dxi-validation-rule>
-                                    <dxi-validation-rule type="stringLength" [min]="2" message="Name must have at least 2 symbols"></dxi-validation-rule>
-                                </dx-validator>
-                            </dx-text-box>
+                        <div class="dx-field form-row">
+                            <div class="form-group col">
+                                <dx-text-box placeholder="Your email address" [(value)]="registerData.email">
+                                    <dx-validator>
+                                        <dxi-validation-rule type="required" message="Email is required"></dxi-validation-rule>
+                                        <dxi-validation-rule type="pattern" [pattern]="patterns.emailPattern"
+                                                             message="Email is invalid"></dxi-validation-rule>
+                                    </dx-validator>
+                                </dx-text-box>
+                            </div>
                         </div>
-                    </div>
-                    <div class="dx-field form-row">
-                        <div class="form-group col">
-                            <dx-text-box placeholder="Your email address" [(value)]="registerData.email">
-                                <dx-validator>
-                                    <dxi-validation-rule type="required" message="Email is required"></dxi-validation-rule>
-                                    <dxi-validation-rule type="pattern" [pattern]="patterns.emailPattern" message="Email is invalid"></dxi-validation-rule>
-                                </dx-validator>
-                            </dx-text-box>
+                        <div class="dx-field form-row zip-citizen-row align-items-center">
+                            <div class="form-group col">
+                                <dx-text-box placeholder="Phone Number"
+                                             mask="+1 (999) 999-9999"
+                                             showMaskMode="onFocus"
+                                             [(value)]="registerData.phoneNumber">
+                                    <dx-validator>
+                                        <dxi-validation-rule type="pattern" [pattern]="patterns.phonePattern"
+                                                             message="Phone is incorrect"></dxi-validation-rule>
+                                        <dxi-validation-rule type="stringLength" [max]="15"
+                                                             message="Phone length is invalid"></dxi-validation-rule>
+                                    </dx-validator>
+                                </dx-text-box>
+                            </div>
+                            <div class="form-group zip-field col">
+                                <dx-text-box placeholder="Zip"
+                                             [(value)]="registerData.postalCode"
+                                             minLength="5"
+                                             maxLength="10">
+                                    <dx-validator>
+                                        <dxi-validation-rule type="pattern"
+                                                             [pattern]="patterns.zipPattern"
+                                                             message="Zip Code is invalid">
+                                        </dxi-validation-rule>
+                                    </dx-validator>
+                                </dx-text-box>
+                            </div>
                         </div>
-                    </div>
-                    <div class="dx-field form-row zip-citizen-row align-items-center">
-                        <div class="form-group col">
-                            <dx-text-box placeholder="Phone Number"
-                                         mask="+1 (999) 999-9999"
-                                         showMaskMode="onFocus"
-                                         [(value)]="registerData.phoneNumber">
-                                <dx-validator>
-                                    <dxi-validation-rule type="pattern" [pattern]="patterns.phonePattern" message="Phone is incorrect"></dxi-validation-rule>
-                                    <dxi-validation-rule type="stringLength" [max]="15" message="Phone length is invalid"></dxi-validation-rule>
-                                </dx-validator>
-                            </dx-text-box>
+                        <div class="form-group d-flex">
+                            <div>
+                                <dx-check-box #agreeToReceiveCallsCheckBox
+                                              class="privacy-term"
+                                              validationMessageMode="always"
+                                              [(value)]="isAgreedToReceiveCalls">
+                                    <dx-validator>
+                                        <dxi-validation-rule type="required"
+                                                             message="Check this box to confirm your consent."></dxi-validation-rule>
+                                    </dx-validator>
+                                </dx-check-box>
+                            </div>
+                            <p class="agreement">
+                                Yes, send me updates and special offers.
+                            </p>
                         </div>
-                        <div class="form-group zip-field col">
-                            <dx-text-box placeholder="Zip"
-                                         [(value)]="registerData.postalCode"
-                                         minLength="5"
-                                         maxLength="10">
-                                <dx-validator>
-                                    <dxi-validation-rule type="pattern"
-                                                         [pattern]="patterns.zipPattern"
-                                                         message="Zip Code is invalid">
-                                    </dxi-validation-rule>
-                                </dx-validator>
-                            </dx-text-box>
+                        <div class="form-group d-flex">
+                            <div>
+                                <dx-check-box #agreeWithTermsCheckBox
+                                              class="privacy-term"
+                                              validationMessageMode="always"
+                                              [(value)]="isAgreeWithTerms">
+                                    <dx-validator>
+                                        <dxi-validation-rule type="required"
+                                                             message="You must agree to the Terms and Conditions"></dxi-validation-rule>
+                                    </dx-validator>
+                                </dx-check-box>
+                            </div>
+                            <p class="agreement">
+                                Yes, I agree to the <a (click)="openConditionsDialog(conditions.Terms)">Terms of Use</a> and <a
+                                (click)="openConditionsDialog(conditions.Policies)">Privacy Policy</a>.
+                            </p>
                         </div>
-                    </div>
-                    <div class="form-group d-flex">
-                        <div>
-                            <dx-check-box #agreeToReceiveCallsCheckBox
-                                          class="privacy-term"
-                                          validationMessageMode="always"
-                                          [(value)]="isAgreedToReceiveCalls">
-                                <dx-validator>
-                                    <dxi-validation-rule type="required" message="Check this box to confirm your consent."></dxi-validation-rule>
-                                </dx-validator>
-                            </dx-check-box>
+                        <div class="dx-field actions-field align-items-center">
+                            <dx-button text="Activate my free account"
+                                       type="success"
+                                       class="btn btn-outline-dark activate-button"
+                                       [useSubmitBehavior]="true">
+                            </dx-button>
                         </div>
-                        <p class="agreement">
-                            Yes, send me updates and special offers.
-                        </p>
-                    </div>
-                    <div class="form-group d-flex">
-                        <div>
-                            <dx-check-box #agreeWithTermsCheckBox
-                                          class="privacy-term"
-                                          validationMessageMode="always"
-                                          [(value)]="isAgreeWithTerms">
-                                <dx-validator>
-                                    <dxi-validation-rule type="required" message="You must agree to the Terms and Conditions"></dxi-validation-rule>
-                                </dx-validator>
-                            </dx-check-box>
+                        <div class="form-group already-registered">
+                            <h3>Do you already have a BANKCODE account?</h3>
+                            <p class="links">
+                                <a [routerLink]="'/account/login'">Click here to login</a> | <a [routerLink]="'/account/forgot-password'">Reset
+                                your password</a>
+                            </p>
                         </div>
-                        <p class="agreement">
-                            Yes, I agree to the <a (click)="openConditionsDialog(conditions.Terms)">Terms of Use</a> and <a (click)="openConditionsDialog(conditions.Policies)">Privacy Policy</a>.
-                        </p>
-                    </div>
-                    <div class="dx-field actions-field align-items-center">
-                        <dx-button text="Activate my free account"
-                                   type="success"
-                                   class="btn btn-outline-dark activate-button"
-                                   [useSubmitBehavior]="true">
-                        </dx-button>
-                    </div>
-                    <div class="form-group already-registered">
-                        <h3>Do you already have a BANKCODE account?</h3>
-                        <p class="links">
-                            <a [routerLink]="'/account/login'">Click here to login</a> | <a [routerLink]="'/account/forgot-password'">Reset your password</a>
-                        </p>
-                    </div>
-                    <div class="form-group">
-                        <p class="ssl-secure text-center">
-                            <i class="fa fa-lock"></i>
-                            we use 256 ssl technology to encrypt your data
-                        </p>
-                    </div>
-                </form>
+                    </form>
+                </div>
+                <div class="signup-footer">
+                    <img src="./assets/common/images/bank-code/lock.svg" alt="Lock">
+                    <span>We use 256 SSL technology to encrypt your data</span>
+                </div>
             </div>
         </div>
     </div>
