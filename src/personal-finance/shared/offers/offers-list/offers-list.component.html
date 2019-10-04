@@ -28,7 +28,6 @@
                     <button class="applyButton" (click)="applyOffer(offerItem)">
                         <span>{{ offerItem.buttonCaption || ls.l(buttonCaption) }}</span>
                     </button>
-                    <a class="viewDetails" (click)="viewCardDetails(offerItem)" *ngIf="showDetailsButton">{{ ls.l('View_details') }}</a>
                 </div>
             </div>
         </ng-container>
@@ -41,7 +40,7 @@
                     <button class="applyButton" (click)="applyOffer(offerItem)">
                         <span>{{ offerItem.buttonCaption || ls.l(buttonCaption) }}</span>
                     </button>
-                    <a class="viewDetails" (click)="viewCardDetails(offerItem)" *ngIf="showDetailsButton">{{ ls.l('View_details') }}</a>
+                    <a class="viewDetails" (click)="viewCardDetails(offerItem)">{{ ls.l('View_details') }}</a>
                 </div>
             </div>
             <div class="description col-12 col-md-6 col-lg-7">
