@@ -3,19 +3,21 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 
 /** Third party imports */
+import { MatDialog } from '@angular/material';
 import { Observable } from 'rxjs';
-import { first, filter, finalize, tap, switchMap } from 'rxjs/operators';
+import { first, filter, switchMap } from 'rxjs/operators';
 import swal from 'sweetalert';
+import cloneDeep from 'lodash/cloneDeep';
 
 /** Application imports */
-import {
-    FinalizeApplicationResponse, FinalizeApplicationStatus,
+import {FinalizeApplicationResponse, FinalizeApplicationStatus,
     GetMemberInfoResponse,
     OfferServiceProxy
 } from '@shared/service-proxies/service-proxies';
 import { OffersService } from '@root/personal-finance/shared/offers/offers.service';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
 import { AppConsts } from '@shared/AppConsts';
+import { ApplyOfferDialogComponent } from '@root/personal-finance/shared/offers/apply-offer-modal/apply-offer-dialog.component';
 
 @Component({
     selector: 'register',
@@ -33,6 +35,7 @@ export class RegisterComponent implements OnInit {
         private offersService: OffersService,
         private offerServiceProxy: OfferServiceProxy,
         private loadingService: LoadingService,
+        private dialog: MatDialog,
         @Inject(DOCUMENT) private document: any
     ) {}
 
@@ -69,51 +72,67 @@ export class RegisterComponent implements OnInit {
     }
 
     private register() {
+        const modalData = {
+            processingSteps: cloneDeep(this.offersService.processingSteps),
+            completeDelays: [ 1000, 1000, 1000, null ],
+            delayMessages: null,
+            title: 'Offers_ConnectingToPartners',
+            subtitle: 'Offers_NewWindowWillBeOpen',
+            redirectUrl: null,
+            logoUrl: null
+        };
+        const applyOfferDialog = this.dialog.open(ApplyOfferDialogComponent, {
+            width: '530px',
+            panelClass: 'apply-offer-dialog',
+            data: modalData
+        });
+
         this.offersService.incompleteApplicationId$.pipe(
             first(),
             filter(Boolean),
-            tap(() => this.loadingService.startLoading()),
-            switchMap((applicationId: number) => this.offerServiceProxy.finalizeApplication(applicationId).pipe(
-                finalize(() => this.loadingService.finishLoading())
-            ))
-        ).subscribe((response: FinalizeApplicationResponse) => {
-            if (response.status === FinalizeApplicationStatus.Approved) {
-                let messageContent = {
-                    title: 'Congratulations',
-                    button: false,
-                    className: 'success',
-                    icon: 'success',
-                    content: this.document.getElementById('successPopup').cloneNode(true),
-                    closeOnClickOutside: false,
-                    closeOnEsc: false
-                };
-                messageContent['content'].style.display = 'block';
-                const successModal = swal(messageContent);
-                setTimeout(() => swal.close('confirm'), 1000);
-                successModal.then(() => {
-                    /** Redirect to url from response */
-                    window.open(response.redirectUrl, '_blank');
-                });
-            } else if (response.status === FinalizeApplicationStatus.Declined) {
-                let messageContent = {
-                    title: 'We\'re sorry testing, but you have been declined',
-                    button: {
-                        text: 'Get more options',
-                        value: true,
-                        closeModal: true
-                    },
-                    className: 'failure',
-                    content: this.document.getElementById('failurePopup').cloneNode(true)
-                };
-                messageContent.content.style.display = 'block';
-                swal(messageContent).then((res) => {
-                    if (res) {
-                        window.open(AppConsts.appBaseUrl + this.getMoreOptionsLink, '_self');
-                    }
-                });
-            }
-            /** To hide complete header */
-            this.offersService.setIncompleteApplicationId(null);
-        });
+            switchMap((applicationId: number) => this.offerServiceProxy.finalizeApplication(applicationId))
+        ).subscribe(
+            (response: FinalizeApplicationResponse) => {
+                if (response.status === FinalizeApplicationStatus.Approved) {
+                    let messageContent = {
+                        title: 'Congratulations',
+                        button: false,
+                        className: 'success',
+                        icon: 'success',
+                        content: this.document.getElementById('successPopup').cloneNode(true),
+                        closeOnClickOutside: false,
+                        closeOnEsc: false
+                    };
+                    messageContent['content'].style.display = 'block';
+                    const successModal = swal(messageContent);
+                    setTimeout(() => swal.close('confirm'), 1000);
+                    successModal.then(() => {
+                        /** Redirect to url from response */
+                        window.open(response.redirectUrl, '_blank');
+                    });
+                } else if (response.status === FinalizeApplicationStatus.Declined) {
+                    let messageContent = {
+                        title: 'We\'re sorry testing, but you have been declined',
+                        button: {
+                            text: 'Get more options',
+                            value: true,
+                            closeModal: true
+                        },
+                        className: 'failure',
+                        content: this.document.getElementById('failurePopup').cloneNode(true)
+                    };
+                    messageContent.content.style.display = 'block';
+                    swal(messageContent).then((res) => {
+                        if (res) {
+                            window.open(AppConsts.appBaseUrl + this.getMoreOptionsLink, '_self');
+                        }
+                    });
+                }
+                /** To hide complete header */
+                this.offersService.setIncompleteApplicationId(null);
+                applyOfferDialog.close();
+            },
+            () => applyOfferDialog.close()
+        );
     }
 }
