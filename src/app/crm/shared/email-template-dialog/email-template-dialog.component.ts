@@ -2,7 +2,7 @@
 import { Component, ChangeDetectionStrategy, Inject, ChangeDetectorRef, Output, EventEmitter } from '@angular/core';
 
 /** Third party imports */
-import * as ClassicEditor from 'ckeditor5-build-classic/build/ckeditor';
+import * as ClassicEditor from 'ckeditor5-build/build/ckeditor';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { DxSelectBoxComponent } from 'devextreme-angular/ui/select-box';
 import { DxTextBoxComponent } from 'devextreme-angular/ui/text-box';
@@ -79,5 +79,9 @@ export class EmailTemplateDialogComponent {
         let isValid = AppConsts.regexPatterns.email.test(event.text);
         event.component.option('isValid', isValid);
         return event.customItem = isValid ? event.text : '';
+    }
+
+    onNewTemplate(event) {
+        event.customItem = {name: event.text, id: null};
     }
 }

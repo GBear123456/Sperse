@@ -24,6 +24,19 @@ export class EmailInvoiceDialogComponent {
         public ls: AppLocalizationService,
         @Inject(MAT_DIALOG_DATA) public data: any
     ) {
+        data.attachPDF = true;
+        data.sendReminders = false;
+        data.partialPayment = true;
+        data.autoPayment = true;
+        data.sendAlerts = true;
+    }
+
+    allowDigitsOnly(event, exceptions = []) {
+        let key = event.event.key;
+        if (exceptions.indexOf(key) < 0 && key.length == 1 && isNaN(key)) {
+            event.event.preventDefault();
+            event.event.stopPropagation();
+        }
     }
 
     save() {

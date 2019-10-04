@@ -4,13 +4,74 @@
         display: flex;
         & > div {
             width: 50%;
-            padding: 10px;
+            h3 {
+                padding: 15px 0;
+                font-family: Montserrat;
+                font-size: 15px;
+                font-weight: normal;
+                font-style: normal;
+                font-stretch: normal;
+                line-height: 1.33;
+                letter-spacing: 0.3px;
+                color: #202b35;
+              
+            }
+
+            p {
+                font-size: 14px;
+                font-weight: 300;
+                font-style: normal;
+                font-stretch: normal;
+                line-height: 1.57;
+                letter-spacing: 0.28px;
+                color: #424c56;
+            }
+
+            /deep/ dx-check-box {
+                .dx-checkbox-text {
+                    white-space: normal;
+                    font-size: 14px;
+                    font-weight: 300;
+                    font-style: normal;
+                    font-stretch: normal;
+                    line-height: 1.57;
+                    letter-spacing: 0.28px;
+                    color: #424c56;
+                }
+                .dx-checkbox-icon {
+                    vertical-align: top;
+                }
+            }
+            /deep/ dx-date-box {
+                padding-top: 30px;
+                .dx-placeholder {
+                    font-size: 15px;
+                    font-weight: 400;
+                    line-height: 1.79;
+                    letter-spacing: 0.3px;
+                    padding: 0px;
+                }
+                &.dx-state-focused .dx-placeholder {
+                    top: -30px!important;
+                }
+            }
         }
         .left-side {
+            padding-right: 15px;
             border-right: 1px solid #dedede;
         }
         .right-side {
+            padding-left: 15px;
             border-left: 1px solid #dedede;
+            a {
+                font-size: 14px;
+                font-weight: 300;
+                font-style: normal;
+                font-stretch: normal;
+                line-height: 1.79;
+                letter-spacing: 0.28px;
+                color: #00aeef;
+            }
         }
     }
 }

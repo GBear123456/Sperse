@@ -5,15 +5,16 @@
     <ng-container headerContent>
         <dx-select-box
             name="template"
-            width="150px"
+            width="250px"
             height="40px"
             displayExpr="name"
             valueExpr="id"
             [visible]="data.templates$"
             [placeholder]="ls.l('Template')"
-            [(value)]="template"
+            [(value)]="data.template"
             [dataSource]="data.templates$ | async"
             [acceptCustomValue]="true"
+            (onCustomItemCreating)="onNewTemplate($event)"
             (onValueChanged)="onTemplateChnaged($event)">
         </dx-select-box>
     </ng-container>

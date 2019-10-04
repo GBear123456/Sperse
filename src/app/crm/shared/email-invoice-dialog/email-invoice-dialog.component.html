@@ -2,15 +2,39 @@
     <ng-container templateSettings>
         <div class="settings-wrapper">
             <div class="left-side">
-                <h3>Other Settings</h3>
+                <h3>{{ls.l('InvoiceEmail_OtherSettings')}}</h3>
                 <dx-check-box
-                    text="Attach PDF copy to email when sending invoices"
-                    [(value)]="data.isActive">
+                    [text]="ls.l('InvoiceEmail_AttachPDF')"
+                    [(value)]="data.attachPDF">
+                </dx-check-box>
+                <dx-check-box
+                    [text]="ls.l('InvoiceEmail_SendReminders')"
+                    [(value)]="data.sendReminders">
+                </dx-check-box>
+                <dx-check-box
+                    [text]="ls.l('InvoiceEmail_PartialPayment')"
+                    [(value)]="data.partialPayment">
+                </dx-check-box>
+                <dx-check-box
+                    [text]="ls.l('InvoiceEmail_AutoPeyment')"
+                    [(value)]="data.autoPayment">
+                </dx-check-box>
+                <dx-check-box
+                    [text]="ls.l('InvoiceEmail_SendAlers')"
+                    [(value)]="data.sendAlerts">
                 </dx-check-box>
             </div>
             <div class="right-side">
-                <h3>Payment Method</h3>
-                <p>Looks like you have not enabled any payment integrations yet. You can add one below</p>
+                <h3>{{ls.l('InvoiceEmail_PaymentMethod')}}&nbsp;<img src="assets/images/icons/information-button.svg"></h3>
+                <p>{{ls.l('InvoiceEmail_AddMethod')}}</p>
+                <a>{{ls.l('InvoiceEmail_PaymentIntegrations')}}</a>
+
+                <dx-date-box
+                    placeholder="{{ls.l('Invoice_DueOnReceipt')}}"
+                    (onKeyDown)="allowDigitsOnly($event, ['/'])"
+                    [width]="'260px'"
+                    [(value)]="data.dueDate">
+                </dx-date-box>
             </div>
         </div>
     </ng-container>

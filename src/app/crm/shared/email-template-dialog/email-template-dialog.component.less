@@ -16,6 +16,9 @@
             font-size: 28px;
             position: relative;
         }
+        dx-text-box[name="title"] {
+            width: 340px!important;
+        }
         .title-wrapper {
             width: 100%;
             justify-content: space-between;
@@ -48,10 +51,7 @@
                 color: #424c56;
             }
         }
-        dx-text-box, dx-select-box, dx-tag-box {
-            &, input {                    
-                background: transparent !important;
-            }
+        dx-text-box {
             input {
                 &, &:read-only {
                     font-size: 22px;
@@ -61,6 +61,11 @@
                     padding-left: 17px;
                     background-color: #F3F7FA;
                 }
+            }
+        }
+        dx-text-box, dx-select-box {
+            &, input {                    
+                background: transparent !important;
             }
             .dx-placeholder {
                 font-size: 15px;
