@@ -91,6 +91,7 @@
             letter-spacing: -0.8px;
             text-align: center;
             color: #000000;
+            margin-bottom: 55px;
         }
 
         .icon-input {
@@ -163,6 +164,7 @@
             text-align: center;
             color: #fff;
             transition: .2s;
+            cursor: pointer;
 
             img {
                 float: right;
@@ -182,6 +184,9 @@
         }
 
         .options {
+            margin-top: 20px;
+            margin-bottom: 20px;
+            
             .forget-password {
                 font-family: @font-family;
                 font-size: 13px;
@@ -356,7 +361,7 @@
     .login-terms-and-condition {
         color: #7a7979;
         text-align: center;
-        padding: 20px 0;
+        padding: 40px 0;
 
         a {
             color: #ac1f22;
@@ -367,6 +372,53 @@
 
             &:hover {
                 color: lighten(#ac1f22, 18%);
+            }
+        }
+    }
+    
+    .login-box-footer {
+        margin-top: auto;
+        background: #f8f8f8;
+        border-top: 1px solid #d5d5d5;
+        padding: 10px 0;
+        
+        .logos {
+            list-style-type: none;
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 0;
+            
+            li {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                position: relative;
+                
+                &.active {
+                    &::before {
+                        content: '';
+                        position: absolute;
+                        top: -25px;
+                        
+                        width: 0;
+                        height: 0;
+                        border-left: 15px solid transparent;
+                        border-right: 15px solid transparent;
+                        border-bottom: 15px solid #d5d5d5;
+                    }
+                    
+                    &::after {
+                        content: '';
+                        position: absolute;
+                        top: -24px;
+                        
+                        width: 0;
+                        height: 0;
+                        border-left: 14px solid transparent;
+                        border-right: 14px solid transparent;
+                        border-bottom: 14px solid #f8f8f8;
+                    }
+                }
             }
         }
     }
