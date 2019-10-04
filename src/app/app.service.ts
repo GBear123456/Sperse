@@ -174,7 +174,7 @@ export class AppService extends AppServiceBase {
         this.tenantSubscriptionProxy = injector.get(TenantSubscriptionServiceProxy);
 
         this.toolbarSubject = new Subject<undefined>();
-        if (!this.isHostTenant) {
+        if (!this.isHostTenant && abp.session.userId) {
             this.expiredModule = new Subject<string>();
             this.loadModeuleSubscriptions();
         }
