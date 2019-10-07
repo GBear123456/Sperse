@@ -107,8 +107,9 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
     private paramsSubscribe: any = [];
     referrerParams: Params;
 
-    dataSourceURI = 'Customer';
+    showToolbar;
     currentItemId;
+    dataSourceURI = 'Customer';
     targetDirections = TargetDirectionEnum;
     private targetEntity: BehaviorSubject<TargetDirectionEnum> = new BehaviorSubject<TargetDirectionEnum>(TargetDirectionEnum.Current);
     public targetEntity$: Observable<TargetDirectionEnum> = this.targetEntity.asObservable();
@@ -148,19 +149,20 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
             this.initVerificationChecklist.bind(this)
         );
         let optionTimeout = null;
-        this._router.events.subscribe((event) => {
+        this._router.events.subscribe(event => {
             if (event instanceof ActivationEnd && !optionTimeout)
                 optionTimeout = setTimeout(() => {
                     optionTimeout = null;
                     let data = event.snapshot.data,
                         rightPanelId = this.getCheckPropertyValue(data, 'rightPanelId', RP_DEFAULT_ID);
+                    this.showToolbar = this.getCheckPropertyValue(data, 'showToolbar', true);
                     this.rightPanelSetting.opened = this.getCheckPropertyValue(data, 'rightPanelOpened',
                         rightPanelId == RP_DEFAULT_ID && abp.features.isEnabled(AppFeatures.PFMCreditReport)
                     );
                     this.rightPanelSetting.id = rightPanelId;
                 });
         });
-        contactsService.invalidateSubscribe((area) => { this.invalidate(area); });
+        contactsService.invalidateSubscribe(area => this.invalidate(area));
         contactsService.loadLeadInfoSubscribe(() => this.loadLeadData());
     }
 

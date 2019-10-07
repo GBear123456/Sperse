@@ -14,12 +14,12 @@
     </ng-container>
     <ng-container underHeader>
         <div class="general-links">
-            <i class="fa fa-envelope-o" aria-hidden="true"></i>
+            <a [routerLink]="'user-inbox'"><i class="fa fa-envelope-o" aria-hidden="true"></i></a>
             <i class="fa fa-phone" aria-hidden="true"></i>
             <a [routerLink]="'notes'"><i class="fa fa-file-text-o" aria-hidden="true"></i></a>
         </div>
         <operations-widget
-            [enabled]="!!contactInfo"
+            [enabled]="contactInfo && showToolbar"
             [customerType]="contactGroup"
             [leadId]="leadId"
             [contactInfo]="contactInfo"

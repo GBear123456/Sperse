@@ -77,6 +77,7 @@ import { SubscriptionsComponent } from './subscriptions/subscriptions.component'
 import { ActivityLogsComponent } from './activity-logs/activity-logs.component';
 import { PersonDialogComponent } from './person-dialog/person-dialog.component';
 import { PersonInfoComponent } from './person-info/person-info.component';
+import { UserInboxComponent } from './user-inbox/user-inbox.component';
 import { SimilarCustomersDialogComponent } from '@app/crm/shared/similar-customers-dialog/similar-customers-dialog.component';
 import { ContactPersonsDialogComponent } from './contact-persons-dialog/contact-persons-dialog.component';
 import { UploadDocumentDialogComponent } from './upload-document-dialog/upload-document-dialog.component';
@@ -153,6 +154,7 @@ import { BankCodeLettersModule } from '@app/shared/common/bank-code-letters/bank
         ContactListDialogComponent,
         NotSupportedTypeDialogComponent,
         HistoryListDialogComponent,
+        UserInboxComponent,
         OrdersComponent,
         InvoicesComponent,
         PersonalDetailsComponent
