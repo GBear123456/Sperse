@@ -194,7 +194,7 @@
             }
 
             &.actions {
-                margin-top: 20px;
+                margin-top: 30px;
                 margin-bottom: 30px;
             }
         }
@@ -203,19 +203,19 @@
             text-align: center;
 
             h3 {
-                //color: #FFF;
-                font-weight: 600;
+                color: #7a7979;
+                //font-weight: 600;
                 font-size: 16px;
             }
 
             .links {
                 margin-bottom: 20px;
+                color: #7a7979;
 
                 a {
                     padding: 0 10px;
                     text-decoration: none;
                     letter-spacing: 1px;
-                    //color: #FFF;
                     font-weight: normal;
                     transition: .3s;
                     color: #ac1f22;
@@ -331,12 +331,21 @@
         font-size: 17px;
         font-weight: 400;
     }
-
+    
+    .dx-texteditor-container {
+        padding-top: 20px;
+    }
+    
     .dx-placeholder {
-        font-size: 15px;
+        font-size: 9px;
         font-weight: 400;
         color: #959494 !important;
         transition: .2s;
+        top: -2px;
+        left: -9px;
+        text-transform: uppercase;
+        height: auto;
+        
     }
     //.custom-radio-2-btn {
     //    .dx-field-value {
@@ -375,7 +384,11 @@
             border-color: darken(#ac1f22, 20%) !important;
         }
     }
-
+    
+    .dx-field.form-row {
+        margin-bottom: 0;
+    }
+    
     .dx-button-text {
         font-size: 18px;
         font-weight: 700;
