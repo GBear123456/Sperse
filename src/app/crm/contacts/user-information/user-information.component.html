@@ -102,7 +102,7 @@
                     </div>
                     <ul *ngIf="data && data?.user" class="items-list">
                         <li>
-                            <dx-check-box [disabled]="!isEditAllowed" [(value)]="data.user.isActive" [text]="l('Active')" (onValueChanged)="update(ACTIVE_FIELD, data.user.isActive)"></dx-check-box>
+                            <dx-check-box [disabled]="!isEditAllowed" [(value)]="data.user.isActive" [text]="l('Active')" (onValueChanged)="isActiveChanged($event)"></dx-check-box>
                         </li>
                         <li>
                             <dx-check-box [disabled]="!isEditAllowed" [(value)]="data.user.isTwoFactorEnabled" [text]="l('IsTwoFactorEnabled')" (onValueChanged)="update(TWO_FACTOR_FIELD, data.user.isTwoFactorEnabled)"></dx-check-box>
