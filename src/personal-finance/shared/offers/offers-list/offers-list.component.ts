@@ -26,6 +26,7 @@ export class OffersListComponent implements OnChanges {
     @Input() creditScore: number;
     @Input() offersAreLoading = false;
     @Input() simpleDesign = false;
+    @Input() checkSubmitDateAfterApply = true;
     readonly defaultVisibleOffersCount = 6;
     visibleOffersCount = this.defaultVisibleOffersCount;
     offersCount: number;
@@ -70,6 +71,6 @@ export class OffersListComponent implements OnChanges {
 
     applyOffer(offer: OfferDto) {
         if (this.checkDemoUserActionAllowed(offer, true))
-            this.offersService.applyOffer(offer, this.areCreditCards);
+            this.offersService.applyOffer(offer, this.areCreditCards, this.checkSubmitDateAfterApply);
     }
 }
