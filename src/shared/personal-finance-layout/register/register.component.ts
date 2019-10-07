@@ -94,6 +94,7 @@ export class RegisterComponent implements OnInit {
         ).subscribe(
             (response: FinalizeApplicationResponse) => {
                 if (response.status === FinalizeApplicationStatus.Approved) {
+                    applyOfferDialog.close();
                     let messageContent = {
                         title: 'Congratulations',
                         button: false,
@@ -104,12 +105,19 @@ export class RegisterComponent implements OnInit {
                         closeOnEsc: false
                     };
                     messageContent['content'].style.display = 'block';
-                    const successModal = swal(messageContent);
-                    setTimeout(() => swal.close('confirm'), 1000);
-                    successModal.then(() => {
-                        /** Redirect to url from response */
-                        window.open(response.redirectUrl, '_blank');
-                    });
+                    swal(messageContent);
+                    setTimeout(() => {
+                        if (window.open(response.redirectUrl, '_blank')) {
+                            swal.close('confirm');
+                        } else {
+                            const redirectButton = messageContent['content'].querySelector('.redirect-link');
+                            redirectButton.onclick = () => {
+                                window.open(response.redirectUrl, '_blank');
+                                swal.close('confirm');
+                            };
+                            redirectButton.style.display = 'block';
+                        }
+                    }, 1000);
                 } else if (response.status === FinalizeApplicationStatus.Declined) {
                     let messageContent = {
                         title: 'We\'re sorry testing, but you have been declined',
