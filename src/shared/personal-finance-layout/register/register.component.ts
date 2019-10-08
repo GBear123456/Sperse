@@ -31,6 +31,7 @@ import { ApplyOfferDialogComponent } from '@root/personal-finance/shared/offers/
 export class RegisterComponent implements OnInit {
     applicationCompleteIsRequired$: Observable<Boolean> = this.offersService.applicationCompleteIsRequired$;
     getMoreOptionsLink = '/personal-finance/offers/post-offers';
+    firstName: string;
     constructor(
         private offersService: OffersService,
         private offerServiceProxy: OfferServiceProxy,
@@ -52,8 +53,9 @@ export class RegisterComponent implements OnInit {
         this.offersService.memberInfo$
             .pipe(first())
             .subscribe((memberInfo: GetMemberInfoResponse) => {
+                this.firstName = memberInfo.firstName;
                 const messageContent = {
-                    title: memberInfo.firstName + ', please click below to',
+                    title: this.firstName + ', please click below to',
                     button: {
                         text: 'Get approved',
                         className: 'applyButton',
@@ -120,7 +122,7 @@ export class RegisterComponent implements OnInit {
                     }, 1000);
                 } else if (response.status === FinalizeApplicationStatus.Declined) {
                     let messageContent = {
-                        title: 'We\'re sorry testing, but you have been declined',
+                        title: `We\'re sorry ${this.firstName}, but you have been declined`,
                         button: {
                             text: 'Get more options',
                             value: true,
