@@ -1019,13 +1019,13 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                                     action: this.exportData.bind(this, options => this.exportToCSV(options)),
                                     text: this.l('Export to CSV'),
                                     icon: 'sheet',
-                                    visible: !(this.showChart || this.showMap)
+                                    visible: this.showPipeline || this.showDataGrid
                                 },
                                 {
                                     action: this.exportData.bind(this, options => this.exportToGoogleSheet(options)),
                                     text: this.l('Export to Google Sheets'),
                                     icon: 'sheet',
-                                    visible: !(this.showChart || this.showMap)
+                                    visible: this.showPipeline || this.showDataGrid
                                 },
                                 {
                                     type: 'downloadOptions',
