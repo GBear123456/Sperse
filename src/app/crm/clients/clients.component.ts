@@ -633,29 +633,40 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                         widget: 'dxDropDownMenu',
                         options: {
                             hint: this.l('Download'),
-                            items: [{
-                                action: Function(),
-                                text: this.l('Save as PDF'),
-                                icon: 'pdf',
-                            }, {
-                                action: () => {
-                                    if (this.dataLayoutType === DataLayoutType.PivotGrid) {
-                                        this.slicePivotGridComponent.pivotGrid.instance.exportToExcel();
-                                    } else if (this.dataLayoutType === DataLayoutType.DataGrid) {
-                                        this.exportToXLS.bind(this);
-                                    }
+                            items: [
+                                {
+                                    action: Function(),
+                                    text: this.l('Save as PDF'),
+                                    icon: 'pdf',
                                 },
-                                text: this.l('Export to Excel'),
-                                icon: 'xls',
-                            }, {
-                                action: this.exportToCSV.bind(this),
-                                text: this.l('Export to CSV'),
-                                icon: 'sheet'
-                            }, {
-                                action: this.exportToGoogleSheet.bind(this),
-                                text: this.l('Export to Google Sheets'),
-                                icon: 'sheet'
-                            }, { type: 'downloadOptions' }]
+                                {
+                                    action: () => {
+                                        if (this.dataLayoutType === DataLayoutType.PivotGrid) {
+                                            this.slicePivotGridComponent.pivotGrid.instance.exportToExcel();
+                                        } else if (this.dataLayoutType === DataLayoutType.DataGrid) {
+                                            this.exportToXLS.bind(this);
+                                        }
+                                    },
+                                    text: this.l('Export to Excel'),
+                                    icon: 'xls',
+                                },
+                                {
+                                    action: this.exportToCSV.bind(this),
+                                    text: this.l('Export to CSV'),
+                                    icon: 'sheet',
+                                    visible: this.showDataGrid
+                                },
+                                {
+                                    action: this.exportToGoogleSheet.bind(this),
+                                    text: this.l('Export to Google Sheets'),
+                                    icon: 'sheet',
+                                    visible: this.showDataGrid
+                                },
+                                {
+                                    type: 'downloadOptions',
+                                    visible: this.showDataGrid
+                                }
+                            ]
                         }
                     },
                     { name: 'print', action: Function() }
@@ -734,6 +745,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         this.selectedClientKeys = [];
         this.dataLayoutType = dataLayoutType;
         this.initDataSource();
+        this.initToolbarConfig();
         if (this.showDataGrid) {
             setTimeout(() => this.dataGrid.instance.repaint());
         }

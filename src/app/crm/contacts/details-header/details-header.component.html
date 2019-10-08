@@ -15,7 +15,11 @@
         <rating-bar *ngIf="!isBankCodeLayout; else bankCode" [rating]="ratingId || 0"></rating-bar>
         <ng-template #bankCode>
             <div class="bank-code" *ngIf="data?.personContactInfo?.person?.bankCode as bankCodeLetters">
-                <bank-code-letters [bankCode]="bankCodeLetters" [allowEdit]="true" [personId]="data.id"></bank-code-letters>
+                <bank-code-letters [bankCode]="bankCodeLetters"
+                                   [allowEdit]="true"
+                                   [personId]="data.id"
+                                   [showDescriptionsOnHover]="true">
+                </bank-code-letters>
             </div>
         </ng-template>
     </div>
