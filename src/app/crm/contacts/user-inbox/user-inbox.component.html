@@ -1,5 +1,41 @@
 <div class="inbox-user-form" >
-    <dx-scroll-view showScrollbar="onHover">
-CONTENT
-    </dx-scroll-view>
+    <div class="inbox-list">
+        <dx-list 
+            width="100%"
+            height="100%"
+            [items]="emails"
+            [searchEditorOptions]="{placeholder: l('SearchMessage')}"
+            [searchEnabled]="true"
+            searchExpr="Name"
+            searchMode="contains">
+                <div *dxTemplate="let item of 'item'">
+                    <div class="email" title="{{item.date | date: formatting.inboxDate : userTimezone}}">
+                        <img [src]="profileService.getPhoto(item.avatar)" class="avatar small"/>
+                        <div class="details">
+                            <span class="from">{{item.from}}</span>
+                            <span class="subject">{{item.subject}}</span>
+                            <span class="body">{{item.body}}</span>
+                        </div>
+                        <div class="date">{{item.date | date: formatting.monthDay : userTimezone}}</div>
+                    </div>
+                </div>
+        </dx-list>
+    </div>
+    <div class="inbox-content">
+        <app-toolbar [config]="contentToolbar"></app-toolbar>        
+        <div class="header">
+            <img [src]="profileService.getPhoto(activeEmail.avatar)" class="avatar"/>
+            <div class="details">
+                <span class="from">{{activeEmail.from}}</span>
+                <span class="subject">{{activeEmail.subject}}</span>
+                <span class="to">{{l('to')}} {{activeEmail.to}}</span>
+            </div>
+            <div class="date">{{activeEmail.date | date: formatting.inboxDate : userTimezone}}</div>
+        </div>
+        <dx-scroll-view showScrollbar="onHover">
+            <div class="body">    
+                {{activeEmail.body}}
+            </div>
+        </dx-scroll-view>
+    </div>
 </div>

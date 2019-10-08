@@ -113,6 +113,7 @@
         /deep/ .field-area {
             width: 100%;
             display: block;
+            position: relative;
             label {
                 display: flex;
                 min-width: 100px;
@@ -134,7 +135,7 @@
 
             .bcc-links {  
                 position: absolute;
-                right: 50px;
+                right: 5px;
                 z-index: 1;
                 top: 8px;
                 span {
@@ -158,7 +159,9 @@
                 }
                 .dx-texteditor-container.dx-tag-container {
                     border-bottom: 1px solid #dfdfdf;
-                    &:after {
+                }
+                &[name="to"] {
+                    .dx-texteditor-container.dx-tag-container:after {
                         margin-right: 75px;
                     }
                 }

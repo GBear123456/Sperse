@@ -44,6 +44,22 @@ export class ToolBarComponent implements OnDestroy {
 
     private getSupportedButtons() {
         return {
+            forward: {
+                hint: this.ls.l('Forward'),
+                icon: this.getImgURI('forward')
+            },          
+            replyToAll: {
+                hint: this.ls.l('ReplyToAll'),
+                icon: this.getImgURI('replyToAll')
+            },
+            reply: {
+                hint: this.ls.l('Reply'),
+                icon: this.getImgURI('reply')
+            },
+            archive: {
+                text: this.ls.l('Archive'),
+                icon: this.getImgURI('folder')
+            },
             search: {
                 accessKey: 'search'
             },

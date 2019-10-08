@@ -91,6 +91,7 @@ export class OperationsWidgetComponent extends AppComponentBase {
     isNextDisabled = false;
 
     toolbarConfig = [];
+    customToolbarConfig;
     printButtonConfig = {
         location: 'after',
         locateInMenu: 'auto',
@@ -111,16 +112,17 @@ export class OperationsWidgetComponent extends AppComponentBase {
     ) {
         super(injector);
 
-        _contactService.toolbarSubscribe((config) => {
-            this.initToolbarConfig(config);
+        _contactService.toolbarSubscribe(config => {
+            this.customToolbarConfig = config;
+            this.initToolbarConfig();
         });
     }
 
-    initToolbarConfig(config = null, ms = 300) {
+    initToolbarConfig(ms = 300) {
         clearTimeout(this.initTimeout);
         this.initTimeout = setTimeout(() => {
-            if (config)
-                return (this.toolbarConfig = config);
+            if (this.customToolbarConfig)
+                return (this.toolbarConfig = this.customToolbarConfig);
 
             let items = [
                 {
@@ -362,7 +364,7 @@ export class OperationsWidgetComponent extends AppComponentBase {
         this.isPrevDisabled = isFirst;
         this.isNextDisabled = isLast;
         if (updateToolbar) {
-            this.initToolbarConfig(null, 0);
+            this.initToolbarConfig(0);
         }
     }
 }

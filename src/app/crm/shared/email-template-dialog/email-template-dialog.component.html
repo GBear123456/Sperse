@@ -9,11 +9,10 @@
             height="40px"
             displayExpr="name"
             valueExpr="id"
-            [visible]="data.templateType"
             [placeholder]="ls.l('Template')"
             [(value)]="data.templateId"
             [dataSource]="templates$ | async"
-            [acceptCustomValue]="true"
+            [acceptCustomValue]="templateEditMode"
             (onCustomItemCreating)="onNewTemplate($event)"
             (onValueChanged)="onTemplateChanged($event)">
         </dx-select-box>
@@ -22,7 +21,22 @@
     <div class="form-content">
         <dx-scroll-view showScrollbar="onHover">
             <div class="row">
-                <div class="field-area description">
+                <div class="field-area">
+                    <dx-tag-box
+                        name="from"
+                        width="100%"
+                        height="40px"
+                        noDataText=""
+                        [multiline]="false"
+                        [acceptCustomValue]="true"
+                        [placeholder]="ls.l('From')"
+                        [(value)]="data.emailFrom"
+                        [visible]="!templateEditMode"
+                        (onOpened)="emailInputFocusIn($event)"
+                        (onCustomItemCreating)="onCustomItemCreating($event)">
+                    </dx-tag-box>
+                </div>
+                <div class="field-area">
                     <dx-tag-box
                         name="to"
                         width="100%"

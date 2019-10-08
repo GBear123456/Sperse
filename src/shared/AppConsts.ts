@@ -75,7 +75,9 @@ export class AppConsts {
     static readonly formatting = {
         date: 'MM/dd/yyyy',
         dateTime: 'MM/dd/yyyy hh:mm a',
-        dateMoment: 'MM/DD/YYYY'
+        dateMoment: 'MM/DD/YYYY',
+        monthDay: 'MMM d',
+        inboxDate: 'MMM d, yyyy hh:mm a'
     };
 
     static readonly otherLinkTypeId = '-';

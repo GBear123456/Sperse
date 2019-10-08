@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, ChangeDetectionStrategy, ViewChild, Inject, ChangeDetectorRef, Output, EventEmitter } from '@angular/core';
+import { Component, ChangeDetectionStrategy, ViewChild, Inject, ChangeDetectorRef, Input, Output, EventEmitter } from '@angular/core';
 
 /** Third party imports */
 import { Observable } from 'rxjs';
@@ -33,6 +33,7 @@ export class EmailTemplateDialogComponent {
     showCC = false;
     showBSS = false;    
 
+    @Input() templateEditMode = false;
     @Output() onSave: EventEmitter<any> = new EventEmitter<any>();
     @Output() onTemplateChange: EventEmitter<any> = new EventEmitter<any>();
 
@@ -60,13 +61,12 @@ export class EmailTemplateDialogComponent {
         public ls: AppLocalizationService,
         @Inject(MAT_DIALOG_DATA) public data: any
     ) {
-        if (this.data.templateType)
-            this.initTemplateList();
+        this.initTemplateList();
     }
 
     save() {
         if (this.validateData()) {
-            if (this.data.templateType)
+            if (this.templateEditMode)
                 this.saveTemplateData();
 
             this.onSave.emit(this.data);
@@ -74,7 +74,7 @@ export class EmailTemplateDialogComponent {
     }
 
     validateData() {
-        if (!this.getTemplateName())
+        if (this.templateEditMode && !this.getTemplateName())
             return this.notifyService.error(
                 this.ls.l('RequiredField', '', this.ls.l('Template')));
 

@@ -2,4 +2,173 @@
     height: 100%;
     display: block;
     position: relative;
+
+    .inbox-user-form {
+        display: flex;
+        overflow: hidden;
+        height: calc(100% - 5px);
+
+        /deep/ .avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background-color: #F4F4F4;
+            background-size: cover;
+            background-image: url('../../../../assets/common/images/no-photo.png');
+            &.small {
+                width: 38px;
+                height: 38px;
+            }
+        }
+
+        .inbox-list {
+            width: 30%;
+            /deep/ dx-list {
+                .dx-placeholder {
+                    font-size: 14px;
+                    font-weight: 300;
+                    font-style: normal;
+                    font-stretch: normal;
+                    line-height: 1.71;
+                    letter-spacing: 0.28px;
+                    text-align: left;
+                    color: #677380;
+                }
+                .dx-state-focused {
+                    .dx-placeholder {
+                        top: -35px !important;
+                    }
+                }
+                .email {
+                    display: flex;
+                    width: 100%;
+                    .details {
+                        display: flex;
+                        flex-flow: column;
+                        padding-left: 12px;
+                        width: calc(100% - 80px);
+                        .from {
+                            font-size: 15px;
+                            font-weight: 500;
+                            font-style: normal;
+                            font-stretch: normal;
+                            line-height: 1.6;
+                            letter-spacing: 0.3px;
+                            text-align: left;
+                            color: #202b35;
+                        }
+                        .subject, .body {
+                            font-weight: 300;
+                            font-style: normal;
+                            font-stretch: normal;
+                            line-height: 1.67;
+                            letter-spacing: 0.24px;
+                            text-align: left;
+                        }
+                        .subject {
+                            font-size: 13px;
+                            letter-spacing: 0.26px;
+                            color: #424c56;
+                            overflow: hidden;
+                            text-overflow: ellipsis;
+                        }
+                        .body {
+                            font-size: 12px;
+                            color: #677380;
+                            overflow: hidden;
+                            text-overflow: ellipsis;
+                        }
+                    }
+                    .date {
+                        margin-left: auto;
+                        font-size: 11px;
+                        font-weight: 300;
+                        font-style: normal;
+                        font-stretch: normal;
+                        line-height: 2.18;
+                        letter-spacing: 0.22px;
+                        text-align: left;
+                        color: #677380;
+                    }
+                }
+            }
+        }
+        .inbox-content {
+            width: 70%; 
+            border-left: 1px solid #dfdfdf;
+
+            /deep/ app-toolbar dx-toolbar {
+                border-bottom: none !important;
+            }
+          
+            .header {
+                display: flex;
+                margin: 20px;
+                border-bottom: 1px solid #dfdfdf;
+                padding-bottom: 20px;
+                .details {
+                    display: flex;
+                    flex-flow: column;
+                    justify-content: space-between;
+                    padding-left: 12px;
+                    width: calc(100% - 80px);
+                    .from {
+                        font-size: 18px;
+                        font-weight: 500;
+                        font-style: normal;
+                        font-stretch: normal;
+                        line-height: 1.33;
+                        letter-spacing: 0.36px;
+                        text-align: left;
+                        color: #202b35;
+                    }
+                    .to {
+                        font-size: 13px;
+                        font-weight: 300;
+                        font-style: normal;
+                        font-stretch: normal;
+                        line-height: 1.54;
+                        letter-spacing: 0.26px;
+                        text-align: left;
+                        color: #677380;
+                    }
+                    .subject {
+                        font-size: 15px;
+                        font-weight: 300;
+                        font-style: normal;
+                        font-stretch: normal;
+                        line-height: 1.33;
+                        letter-spacing: 0.3px;
+                        text-align: left;
+                        color: #424c56;
+                    }
+                }
+                .date {
+                    margin-left: auto;
+                    font-size: 13px;
+                    font-weight: 300;
+                    font-style: normal;
+                    font-stretch: normal;
+                    line-height: 1.85;
+                    letter-spacing: 0.26px;
+                    text-align: left;
+                    color: #677380;
+                    white-space: nowrap;
+                    align-self: center;
+                }
+            }
+            .body {
+                display: block;
+                padding: 20px 40px;
+                font-size: 14px;
+                font-weight: 300;
+                font-style: normal;
+                font-stretch: normal;
+                line-height: 1.57;
+                letter-spacing: 0.28px;
+                text-align: left;
+                color: #424c56;
+            }
+        }
+    }
 }
