@@ -65,6 +65,7 @@ import { DateHelper } from '@shared/helpers/DateHelper';
 import { DataGridService } from '@app/shared/common/data-grid.service.ts/data-grid.service';
 import { FilterHelpers } from '@app/cfo/shared/helpers/filter.helper';
 import { Category } from '@app/cfo/transactions/categorization/category.model';
+import { BankAccountsState } from '@shared/cfo/bank-accounts-widgets/bank-accounts-state.model';
 
 @Component({
     templateUrl: './transactions.component.html',
@@ -321,18 +322,6 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         this.route.queryParamMap.pipe(
             takeUntil(this.lifecycleService.destroy$)
         ).subscribe((params: ParamMap) => {
-            const state = {};
-            const businessEntitiesIds: string = params.get('selectedBusinessEntitiesIds');
-            if (businessEntitiesIds) {
-                state['selectedBusinessEntitiesIds'] = this.getIdsFromString(businessEntitiesIds);
-            }
-            const bankAccountsIds: string = params.get('selectedBankAccountIds');
-            if (bankAccountsIds) {
-                state['selectedBankAccountIds'] = this.getIdsFromString(bankAccountsIds);
-            }
-            if (Object.keys(state).length) {
-                this.bankAccountsService.changeState(state);
-            }
             const currencyId: string = params.get('currencyId');
             if (currencyId) {
                 /** Update selected currency id with the currency id from cashflow preferences */
@@ -357,6 +346,22 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             if (transactionIdToOpen) {
                 this.transactionId = transactionIdToOpen;
                 this.showTransactionDetailsInfo();
+            }
+            const businessEntitiesIds: string = params.get('selectedBusinessEntitiesIds');
+            const bankAccountsIds: string = params.get('selectedBankAccountIds');
+            const externalFilter = businessEntitiesIds || bankAccountsIds ||
+                  currencyId || startDate || endDate || categoryIdsString ||
+                  transactionIdToOpen;
+            if (externalFilter) {
+                const state: BankAccountsState = {
+                    selectedBankAccountTypes: [],
+                    statuses: [],
+                    selectedBusinessEntitiesIds: businessEntitiesIds ? this.getIdsFromString(businessEntitiesIds) : [],
+                    selectedBankAccountIds: bankAccountsIds ? this.getIdsFromString(bankAccountsIds) : [],
+                    usedBankAccountIds: [],
+                    visibleBankAccountIds: []
+                };
+                this.bankAccountsService.changeState(state, true);
             }
         });
 
