@@ -11401,6 +11401,80 @@ export class DashboardServiceProxy {
 }
 
 @Injectable()
+export class DepartmentsServiceProxy {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @instanceType (optional) 
+     * @instanceId (optional) 
+     * @return Success
+     */
+    getAccessibleDepartments(instanceType: InstanceType | null | undefined, instanceId: number | null | undefined): Observable<string[]> {
+        let url_ = this.baseUrl + "/api/services/CFO/Departments/GetAccessibleDepartments?";
+        if (instanceType !== undefined)
+            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
+        if (instanceId !== undefined)
+            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetAccessibleDepartments(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetAccessibleDepartments(<any>response_);
+                } catch (e) {
+                    return <Observable<string[]>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<string[]>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetAccessibleDepartments(response: HttpResponseBase): Observable<string[]> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(item);
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<string[]>(<any>null);
+    }
+}
+
+@Injectable()
 export class DictionaryServiceProxy {
     private http: HttpClient;
     private baseUrl: string;
@@ -46582,6 +46656,7 @@ export class Invoice implements IInvoice {
     status!: InvoiceStatus;
     number!: string;
     amount!: number | undefined;
+    currencyId!: string;
     date!: moment.Moment | undefined;
     dueDate!: moment.Moment | undefined;
     description!: string | undefined;
@@ -46615,6 +46690,7 @@ export class Invoice implements IInvoice {
             this.status = data["status"];
             this.number = data["number"];
             this.amount = data["amount"];
+            this.currencyId = data["currencyId"];
             this.date = data["date"] ? moment(data["date"].toString()) : <any>undefined;
             this.dueDate = data["dueDate"] ? moment(data["dueDate"].toString()) : <any>undefined;
             this.description = data["description"];
@@ -46652,6 +46728,7 @@ export class Invoice implements IInvoice {
         data["status"] = this.status;
         data["number"] = this.number;
         data["amount"] = this.amount;
+        data["currencyId"] = this.currencyId;
         data["date"] = this.date ? this.date.toISOString() : <any>undefined;
         data["dueDate"] = this.dueDate ? this.dueDate.toISOString() : <any>undefined;
         data["description"] = this.description;
@@ -46682,6 +46759,7 @@ export interface IInvoice {
     status: InvoiceStatus;
     number: string;
     amount: number | undefined;
+    currencyId: string;
     date: moment.Moment | undefined;
     dueDate: moment.Moment | undefined;
     description: string | undefined;
@@ -47041,7 +47119,6 @@ export class Order implements IOrder {
     sortOrder!: number | undefined;
     leadId!: number | undefined;
     dateProcessed!: moment.Moment | undefined;
-    organizationUnitId!: number | undefined;
     amount!: number | undefined;
     systemType!: string | undefined;
     systemMemberId!: string | undefined;
@@ -47086,7 +47163,6 @@ export class Order implements IOrder {
             this.sortOrder = data["sortOrder"];
             this.leadId = data["leadId"];
             this.dateProcessed = data["dateProcessed"] ? moment(data["dateProcessed"].toString()) : <any>undefined;
-            this.organizationUnitId = data["organizationUnitId"];
             this.amount = data["amount"];
             this.systemType = data["systemType"];
             this.systemMemberId = data["systemMemberId"];
@@ -47147,7 +47223,6 @@ export class Order implements IOrder {
         data["sortOrder"] = this.sortOrder;
         data["leadId"] = this.leadId;
         data["dateProcessed"] = this.dateProcessed ? this.dateProcessed.toISOString() : <any>undefined;
-        data["organizationUnitId"] = this.organizationUnitId;
         data["amount"] = this.amount;
         data["systemType"] = this.systemType;
         data["systemMemberId"] = this.systemMemberId;
@@ -47201,7 +47276,6 @@ export interface IOrder {
     sortOrder: number | undefined;
     leadId: number | undefined;
     dateProcessed: moment.Moment | undefined;
-    organizationUnitId: number | undefined;
     amount: number | undefined;
     systemType: string | undefined;
     systemMemberId: string | undefined;
@@ -52943,12 +53017,12 @@ export interface IGetSpendingCategoriesOutput {
 }
 
 export class GetTotalsOutput implements IGetTotalsOutput {
-    newOrderAmount!: number | undefined;
     newLeadCount!: number | undefined;
     newClientCount!: number | undefined;
-    totalOrderAmount!: number | undefined;
+    newOrderAmount!: number | undefined;
     totalLeadCount!: number | undefined;
     totalClientCount!: number | undefined;
+    totalOrderAmount!: number | undefined;
 
     constructor(data?: IGetTotalsOutput) {
         if (data) {
@@ -52961,12 +53035,12 @@ export class GetTotalsOutput implements IGetTotalsOutput {
 
     init(data?: any) {
         if (data) {
-            this.newOrderAmount = data["newOrderAmount"];
             this.newLeadCount = data["newLeadCount"];
             this.newClientCount = data["newClientCount"];
-            this.totalOrderAmount = data["totalOrderAmount"];
+            this.newOrderAmount = data["newOrderAmount"];
             this.totalLeadCount = data["totalLeadCount"];
             this.totalClientCount = data["totalClientCount"];
+            this.totalOrderAmount = data["totalOrderAmount"];
         }
     }
 
@@ -52979,23 +53053,23 @@ export class GetTotalsOutput implements IGetTotalsOutput {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["newOrderAmount"] = this.newOrderAmount;
         data["newLeadCount"] = this.newLeadCount;
         data["newClientCount"] = this.newClientCount;
-        data["totalOrderAmount"] = this.totalOrderAmount;
+        data["newOrderAmount"] = this.newOrderAmount;
         data["totalLeadCount"] = this.totalLeadCount;
         data["totalClientCount"] = this.totalClientCount;
+        data["totalOrderAmount"] = this.totalOrderAmount;
         return data; 
     }
 }
 
 export interface IGetTotalsOutput {
-    newOrderAmount: number | undefined;
     newLeadCount: number | undefined;
     newClientCount: number | undefined;
-    totalOrderAmount: number | undefined;
+    newOrderAmount: number | undefined;
     totalLeadCount: number | undefined;
     totalClientCount: number | undefined;
+    totalOrderAmount: number | undefined;
 }
 
 export class GetCustomerAndLeadStatsOutput implements IGetCustomerAndLeadStatsOutput {
@@ -57364,6 +57438,7 @@ export class CreateInvoiceInput implements ICreateInvoiceInput {
     dueDate!: moment.Moment;
     description!: string | undefined;
     note!: string | undefined;
+    currencyId!: string;
     lines!: CreateInvoiceLineInput[] | undefined;
 
     constructor(data?: ICreateInvoiceInput) {
@@ -57385,6 +57460,7 @@ export class CreateInvoiceInput implements ICreateInvoiceInput {
             this.dueDate = data["dueDate"] ? moment(data["dueDate"].toString()) : <any>undefined;
             this.description = data["description"];
             this.note = data["note"];
+            this.currencyId = data["currencyId"];
             if (data["lines"] && data["lines"].constructor === Array) {
                 this.lines = [];
                 for (let item of data["lines"])
@@ -57410,6 +57486,7 @@ export class CreateInvoiceInput implements ICreateInvoiceInput {
         data["dueDate"] = this.dueDate ? this.dueDate.toISOString() : <any>undefined;
         data["description"] = this.description;
         data["note"] = this.note;
+        data["currencyId"] = this.currencyId;
         if (this.lines && this.lines.constructor === Array) {
             data["lines"] = [];
             for (let item of this.lines)
@@ -57428,6 +57505,7 @@ export interface ICreateInvoiceInput {
     dueDate: moment.Moment;
     description: string | undefined;
     note: string | undefined;
+    currencyId: string;
     lines: CreateInvoiceLineInput[] | undefined;
 }
 
@@ -57500,6 +57578,7 @@ export class InvoiceInfo implements IInvoiceInfo {
     dueDate!: moment.Moment | undefined;
     description!: string | undefined;
     note!: string | undefined;
+    currencyId!: string | undefined;
     lines!: InvoiceLineInfo[] | undefined;
 
     constructor(data?: IInvoiceInfo) {
@@ -57521,6 +57600,7 @@ export class InvoiceInfo implements IInvoiceInfo {
             this.dueDate = data["dueDate"] ? moment(data["dueDate"].toString()) : <any>undefined;
             this.description = data["description"];
             this.note = data["note"];
+            this.currencyId = data["currencyId"];
             if (data["lines"] && data["lines"].constructor === Array) {
                 this.lines = [];
                 for (let item of data["lines"])
@@ -57546,6 +57626,7 @@ export class InvoiceInfo implements IInvoiceInfo {
         data["dueDate"] = this.dueDate ? this.dueDate.toISOString() : <any>undefined;
         data["description"] = this.description;
         data["note"] = this.note;
+        data["currencyId"] = this.currencyId;
         if (this.lines && this.lines.constructor === Array) {
             data["lines"] = [];
             for (let item of this.lines)
@@ -57564,6 +57645,7 @@ export interface IInvoiceInfo {
     dueDate: moment.Moment | undefined;
     description: string | undefined;
     note: string | undefined;
+    currencyId: string | undefined;
     lines: InvoiceLineInfo[] | undefined;
 }
 
@@ -57631,6 +57713,7 @@ export class UpdateInvoiceInput implements IUpdateInvoiceInput {
     dueDate!: moment.Moment;
     description!: string | undefined;
     note!: string | undefined;
+    currencyId!: string;
     lines!: UpdateInvoiceLineInput[] | undefined;
 
     constructor(data?: IUpdateInvoiceInput) {
@@ -57651,6 +57734,7 @@ export class UpdateInvoiceInput implements IUpdateInvoiceInput {
             this.dueDate = data["dueDate"] ? moment(data["dueDate"].toString()) : <any>undefined;
             this.description = data["description"];
             this.note = data["note"];
+            this.currencyId = data["currencyId"];
             if (data["lines"] && data["lines"].constructor === Array) {
                 this.lines = [];
                 for (let item of data["lines"])
@@ -57675,6 +57759,7 @@ export class UpdateInvoiceInput implements IUpdateInvoiceInput {
         data["dueDate"] = this.dueDate ? this.dueDate.toISOString() : <any>undefined;
         data["description"] = this.description;
         data["note"] = this.note;
+        data["currencyId"] = this.currencyId;
         if (this.lines && this.lines.constructor === Array) {
             data["lines"] = [];
             for (let item of this.lines)
@@ -57692,6 +57777,7 @@ export interface IUpdateInvoiceInput {
     dueDate: moment.Moment;
     description: string | undefined;
     note: string | undefined;
+    currencyId: string;
     lines: UpdateInvoiceLineInput[] | undefined;
 }
 
@@ -63110,6 +63196,7 @@ export class OrganizationInfoDto implements IOrganizationInfoDto {
     duns!: string | undefined;
     ticker!: string | undefined;
     affiliateCode!: string | undefined;
+    departmentCode!: string | undefined;
 
     constructor(data?: IOrganizationInfoDto) {
         if (data) {
@@ -63139,6 +63226,7 @@ export class OrganizationInfoDto implements IOrganizationInfoDto {
             this.duns = data["duns"];
             this.ticker = data["ticker"];
             this.affiliateCode = data["affiliateCode"];
+            this.departmentCode = data["departmentCode"];
         }
     }
 
@@ -63168,6 +63256,7 @@ export class OrganizationInfoDto implements IOrganizationInfoDto {
         data["duns"] = this.duns;
         data["ticker"] = this.ticker;
         data["affiliateCode"] = this.affiliateCode;
+        data["departmentCode"] = this.departmentCode;
         return data; 
     }
 }
@@ -63190,6 +63279,7 @@ export interface IOrganizationInfoDto {
     duns: string | undefined;
     ticker: string | undefined;
     affiliateCode: string | undefined;
+    departmentCode: string | undefined;
 }
 
 export class PersonShortInfoDto implements IPersonShortInfoDto {
@@ -63347,6 +63437,7 @@ export class CreateOrganizationInput implements ICreateOrganizationInput {
     duns!: string | undefined;
     ticker!: string | undefined;
     affiliateCode!: string | undefined;
+    departmentCode!: string | undefined;
 
     constructor(data?: ICreateOrganizationInput) {
         if (data) {
@@ -63377,6 +63468,7 @@ export class CreateOrganizationInput implements ICreateOrganizationInput {
             this.duns = data["duns"];
             this.ticker = data["ticker"];
             this.affiliateCode = data["affiliateCode"];
+            this.departmentCode = data["departmentCode"];
         }
     }
 
@@ -63407,6 +63499,7 @@ export class CreateOrganizationInput implements ICreateOrganizationInput {
         data["duns"] = this.duns;
         data["ticker"] = this.ticker;
         data["affiliateCode"] = this.affiliateCode;
+        data["departmentCode"] = this.departmentCode;
         return data; 
     }
 }
@@ -63430,6 +63523,7 @@ export interface ICreateOrganizationInput {
     duns: string | undefined;
     ticker: string | undefined;
     affiliateCode: string | undefined;
+    departmentCode: string | undefined;
 }
 
 export class CreateOrganizationOutput implements ICreateOrganizationOutput {
@@ -63486,6 +63580,7 @@ export class UpdateOrganizationInfoInput implements IUpdateOrganizationInfoInput
     duns!: string | undefined;
     ticker!: string | undefined;
     affiliateCode!: string | undefined;
+    departmentCode!: string | undefined;
 
     constructor(data?: IUpdateOrganizationInfoInput) {
         if (data) {
@@ -63515,6 +63610,7 @@ export class UpdateOrganizationInfoInput implements IUpdateOrganizationInfoInput
             this.duns = data["duns"];
             this.ticker = data["ticker"];
             this.affiliateCode = data["affiliateCode"];
+            this.departmentCode = data["departmentCode"];
         }
     }
 
@@ -63544,6 +63640,7 @@ export class UpdateOrganizationInfoInput implements IUpdateOrganizationInfoInput
         data["duns"] = this.duns;
         data["ticker"] = this.ticker;
         data["affiliateCode"] = this.affiliateCode;
+        data["departmentCode"] = this.departmentCode;
         return data; 
     }
 }
@@ -63566,6 +63663,7 @@ export interface IUpdateOrganizationInfoInput {
     duns: string | undefined;
     ticker: string | undefined;
     affiliateCode: string | undefined;
+    departmentCode: string | undefined;
 }
 
 export class OrganizationUnitDto implements IOrganizationUnitDto {
