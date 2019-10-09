@@ -34,7 +34,7 @@ export class ApplyOfferDialogComponent implements OnInit {
             if (!this.completeDelays || (this.completeDelays[index])) {
                 setTimeout(
                     () => {
-                        this.currentStepIndex = index;
+                        this.currentStepIndex = index + 1;
                         if ((index + 1) === this.processingSteps.length) {
                             /** Redirect to the provided link */
                             if (this.data.redirectUrl) {

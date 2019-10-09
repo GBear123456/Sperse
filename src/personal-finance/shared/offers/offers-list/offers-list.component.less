@@ -3,6 +3,7 @@
 @blue: #3463ae;
 
 :host {
+    display: block;
     @media all and (max-width: 540px) {
         padding: 0 15px;
     }
@@ -140,11 +141,6 @@
             .left-side {
                 text-align: center;
 
-                .img-wrap,
-                .actions-wrap {
-                    padding: 15px 0;
-                }
-
                 .img-wrap {
                     max-width: 230px;
                     width: 100%;
@@ -160,29 +156,34 @@
                         max-width: 180px;
                     }
                 }
+            }
 
-                .actions-wrap {
-                    button {
-                        border: 1px solid #b1770b;
-                        border-radius: 3px;
-                        background-image: linear-gradient(0deg, #fdb337, #f3ea80);
+            .img-wrap,
+            .actions-wrap {
+                padding: 15px 0;
+            }
 
-                        font-size: 20px;
-                        font-weight: bold;
-                        color: #333;
-                        display: flex;
-                        align-items: center;
-                        margin: 0 auto;
+            .actions-wrap {
+                button {
+                    border: 1px solid #b1770b;
+                    border-radius: 3px;
+                    background-image: linear-gradient(0deg, #fdb337, #f3ea80);
 
-                        &.applyButton {
-                            padding: 10px 20px;
-                            width: 100%;
-                            max-width: 180px;
-                        }
+                    font-size: 20px;
+                    font-weight: bold;
+                    color: #333;
+                    display: flex;
+                    align-items: center;
+                    margin: 0 auto;
 
-                        &:hover {
-                            background-image: linear-gradient(0deg, #f3ea80, #fdb337);
-                        }
+                    &.applyButton {
+                        padding: 10px 20px;
+                        width: 100%;
+                        max-width: 180px;
+                    }
+
+                    &:hover {
+                        background-image: linear-gradient(0deg, #f3ea80, #fdb337);
                     }
                 }
             }
@@ -374,6 +375,23 @@
                         display: none;
                     }
                 }
+            }
+        }
+
+        &.simple-design {
+            .img-wrap {
+                max-width: 400px !important;
+                padding-top: 0 !important;
+                width: 100%;
+                margin: 0 auto;
+                padding-bottom: 0;
+                img {
+                    cursor: pointer;
+                    max-width: 100% !important;
+                }
+            }
+            & > li .description h4 {
+                text-align: center;
             }
         }
     }

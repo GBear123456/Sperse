@@ -33,6 +33,13 @@
             cursor: pointer;
         }
 
+        button.redirect-link {
+            display: block;
+            background: #9fc358;
+            color: #fff;
+            margin: auto 90px auto auto;
+        }
+
         button:hover {
             background: #F0BF1E;
         }
@@ -47,131 +54,131 @@
                 top: 85px;
             }
         }
+    }
 
-        &.finalize {
+    &.success {
 
-            .swal-title {
-                font-weight: 700;
+        .swal-title {
+            color: #004999 !important;
+            text-transform: uppercase;
+            font-weight: 700 !important;
+            letter-spacing: -.03em;
+            margin-bottom: 0;
+            padding-bottom: 0;
+            font-size: 25px !important;
+            @media (min-width: 768px) {
+                font-size: 40px !important;
+                margin-top: 20px;
+            }
+        }
+
+        .swal-content {
+            padding: 0;
+            margin-bottom: 0;
+            @media (min-width: 768px) {
+                margin-top: 50px;
+            }
+        }
+
+        .approved {
+            color: #9fc358;
+            text-transform: uppercase;
+            font-weight: 500;
+            margin-left: 100px;
+            margin-bottom: 2px;
+
+            div {
+                font-size: 30px;
+            }
+        }
+
+        .info {
+            background: #dce8c1;
+            padding: 10px;
+            margin-top: 25px;
+            border-bottom-left-radius: 5px;
+            border-bottom-right-radius: 5px;
+
+            @media (min-width: 768px) {
+                position: absolute;
+                bottom: 0;
+            }
+
+            p {
                 margin-bottom: 0;
-                padding-bottom: 0;
-                margin-top: 55px;
-                font-size: 28px !important;
-                @media (min-width: 768px) {
-                    margin-top: 80px;
-                }
+            }
+        }
+
+    }
+
+    &.failure {
+        background: #fdcd01;
+        text-align: left;
+        .swal-title {
+            font-weight: 700;
+            color: #000;
+            line-height: 28px;
+            padding-bottom: 27px;
+            &:after {
+                content: '';
+                border-bottom: 2px solid #000;
+                width: 200px;
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                margin: auto;
+            }
+        }
+
+        .swal-footer {
+            .swal-button-container {
+                position: absolute;
+                bottom: -20px;
+                width: 300px;
+                left: 0;
+                right: 0;
+                margin: auto;
             }
 
-            .swal-content {
-                margin-top: 0;
-                h2 {
-                    font-weight: 700;
-                    font-size: 28px;
-                    color: #019c4f;
-                }
-            }
             .swal-button {
+                background: #38cbca;
+                width: 100%;
+                text-transform: uppercase;
                 border-radius: 0;
-                text-transform: uppercase;
-                &:after {
-                    display: none;
+                &:hover {
+                    background: #3cb3b2;
                 }
             }
         }
+    }
 
-        &.success {
+    &.finalize {
 
-            .swal-title {
-                color: #004999 !important;
-                text-transform: uppercase;
-                font-weight: 700 !important;
-                letter-spacing: -.03em;
-                margin-bottom: 0;
-                padding-bottom: 0;
-                font-size: 25px !important;
-                @media (min-width: 768px) {
-                    font-size: 40px !important;
-                    margin-top: 20px;
-                }
+        .swal-title {
+            font-weight: 700;
+            margin-bottom: 0;
+            padding-bottom: 0;
+            margin-top: 55px;
+            font-size: 28px !important;
+            @media (min-width: 768px) {
+                margin-top: 80px;
             }
-
-            .swal-content {
-                padding: 0;
-                margin-bottom: 0;
-                @media (min-width: 768px) {
-                    margin-top: 50px;
-                }
-            }
-
-            .approved {
-                color: #9fc358;
-                text-transform: uppercase;
-                font-weight: 500;
-                margin-left: 100px;
-                margin-bottom: 20px;
-
-                div {
-                    font-size: 30px;
-                }
-            }
-
-            .info {
-                background: #dce8c1;
-                padding: 10px;
-                margin-top: 25px;
-                border-bottom-left-radius: 5px;
-                border-bottom-right-radius: 5px;
-
-                @media (min-width: 768px) {
-                    position: absolute;
-                    bottom: 0;
-                }
-
-                p {
-                    margin-bottom: 0;
-                }
-            }
-
         }
 
-        &.failure {
-            background: #fdcd01;
-            text-align: left;
-            .swal-title {
+        .swal-content {
+            margin-top: 0;
+            h2 {
                 font-weight: 700;
-                color: #000;
-                line-height: 28px;
-                padding-bottom: 27px;
-                &:after {
-                    content: '';
-                    border-bottom: 2px solid #000;
-                    width: 200px;
-                    position: absolute;
-                    bottom: 0;
-                    left: 0;
-                    right: 0;
-                    margin: auto;
-                }
+                font-size: 28px;
+                color: #019c4f;
             }
-
-            .swal-footer {
-                .swal-button-container {
-                    position: absolute;
-                    bottom: -20px;
-                    width: 300px;
-                    left: 0;
-                    right: 0;
-                    margin: auto;
-                }
-
-                .swal-button {
-                    background: #38cbca;
-                    width: 100%;
-                    text-transform: uppercase;
-                    border-radius: 0;
-                    &:hover {
-                        background: #3cb3b2;
-                    }
-                }
+        }
+        .swal-button {
+            border-radius: 0;
+            text-transform: uppercase;
+            &:after {
+                display: none;
             }
         }
     }

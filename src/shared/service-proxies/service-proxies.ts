@@ -58514,6 +58514,7 @@ export class CreateLeadInput implements ICreateLeadInput {
     leadTypeId!: number | undefined;
     stageId!: number | undefined;
     matchByEmail!: boolean | undefined;
+    affiliateId!: string | undefined;
     namePrefix!: string | undefined;
     firstName!: string | undefined;
     middleName!: string | undefined;
@@ -58557,6 +58558,7 @@ export class CreateLeadInput implements ICreateLeadInput {
             this.leadTypeId = data["leadTypeId"];
             this.stageId = data["stageId"];
             this.matchByEmail = data["matchByEmail"];
+            this.affiliateId = data["affiliateId"];
             this.namePrefix = data["namePrefix"];
             this.firstName = data["firstName"];
             this.middleName = data["middleName"];
@@ -58628,6 +58630,7 @@ export class CreateLeadInput implements ICreateLeadInput {
         data["leadTypeId"] = this.leadTypeId;
         data["stageId"] = this.stageId;
         data["matchByEmail"] = this.matchByEmail;
+        data["affiliateId"] = this.affiliateId;
         data["namePrefix"] = this.namePrefix;
         data["firstName"] = this.firstName;
         data["middleName"] = this.middleName;
@@ -58692,6 +58695,7 @@ export interface ICreateLeadInput {
     leadTypeId: number | undefined;
     stageId: number | undefined;
     matchByEmail: boolean | undefined;
+    affiliateId: string | undefined;
     namePrefix: string | undefined;
     firstName: string | undefined;
     middleName: string | undefined;

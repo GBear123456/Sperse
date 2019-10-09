@@ -24,10 +24,8 @@ import { ExportService } from '@shared/common/export/export.service';
 })
 export class MapComponent implements OnChanges {
     @Input() data: MapData = {};
-    @Input() palette: string[] = [ '#d4f3ff', '#c1ecfc', '#8addfd', '#30bef3', '#309ad9' ];
-    @Input() colorGroups: number[] = [ 0, 100, 500, 1000, 5000, 9999 ];
-    /** Default color */
-    @Input() color = '#309ad9';
+    @Input() palette: string[] = [ '#ade8ff', '#86ddff', '#5fd2ff', '#38c8ff', '#11bdff', '#00a8ea' ];
+    @Input() colorGroups: number[] = [ 1, 10, 100, 500, 1000, 5000, 9999999999 ];
     @Input() infoItems: InfoItem[];
     @Input() width: InfoItem[];
     @Input() height: InfoItem[];
@@ -69,10 +67,10 @@ export class MapComponent implements OnChanges {
 
     customizeText = (arg) => {
         let text;
-        if (arg.end === 9999) {
+        if (arg.end === 9999999999) {
             text = '> 5000';
         } else {
-            text = this.pipe.transform(arg.start, '1.0-0') + ' to ' + this.pipe.transform(arg.end, '1.0-0');
+            text = this.pipe.transform(arg.start, '1.0-0') + ' to ' + this.pipe.transform(arg.end - 1, '1.0-0');
         }
         return text;
     }
