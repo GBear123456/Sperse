@@ -140,7 +140,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     private dataLayoutType: BehaviorSubject<DataLayoutType> = new BehaviorSubject(DataLayoutType.Pipeline);
     dataLayoutType$: Observable<DataLayoutType> = this.dataLayoutType.asObservable();
     private readonly dataSourceURI = 'Lead';
-    private readonly groupDataSourceURI = 'LeadGroup';
+    private readonly groupDataSourceURI = 'LeadSlice';
     private filters: FilterModel[];
     private subRouteParams: any;
     private filterChanged = false;
