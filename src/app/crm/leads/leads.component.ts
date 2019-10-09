@@ -199,14 +199,14 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         fields: [
             {
                 area: 'row',
-                dataField: 'CountryId',
+                dataField: 'Country',
                 name: 'country',
                 expanded: true,
                 sortBy: 'displayText'
             },
             {
                 area: 'row',
-                dataField: 'StateId',
+                dataField: 'State',
                 name: 'state',
                 sortBy: 'displayText'
             },
@@ -327,14 +327,14 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             'ChannelCode',
             'City',
             'CompanyName',
-            'CountryId',
+            'Country',
             'CreationTime',
             'EntryUrl',
             'Industry',
             'Rating',
             'SourceCode',
             'Stage',
-            'StateId',
+            'State',
             'StreetAddress',
             'Title',
             'Website',
