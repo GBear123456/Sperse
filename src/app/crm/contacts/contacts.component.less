@@ -68,18 +68,27 @@
 
         i {
             color: #686f76;
-            width: 16px;
-            height: 16px;
+            width: 20px;
+            height: 20px;
             margin: 10px 0px 0px 20px;
+            display: inline-block;
             cursor: pointer;
+            background-repeat: no-repeat;
+            background-position: center;
         }
 
-        a.general-active-link i:before {
-            width: 20px;
-            display: block;
-            padding-bottom: 5px;
+        a.general-active-link i {
             border-bottom: 2px solid #58a3dc;
-            text-align: center;            
+        }
+
+        i.sms-icon {
+            background-image: url(../../../assets/common/icons/sms.svg);
+        }
+        i.phone-icon {
+            background-image: url(../../../assets/common/icons/phone2.svg);
+        }
+        i.inbox-icon {
+            background-image: url(../../../assets/common/icons/inbox.svg);
         }
     }
 

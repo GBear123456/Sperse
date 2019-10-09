@@ -57,6 +57,7 @@ import { AppFeatures } from '@shared/AppFeatures';
 import { NavLink } from '@app/crm/contacts/nav-link.model';
 import { ContextType } from '@app/crm/contacts/details-header/context-type.enum';
 import { DetailsHeaderComponent } from '@app/crm/contacts/details-header/details-header.component';
+import { SMSDialogComponent } from '@app/crm/shared/sms-dialog/sms-dialog.component';
 
 @Component({
     templateUrl: './contacts.component.html',
@@ -792,6 +793,20 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
             });
         });
         event.stopPropagation();
+    }
+
+    showSMSDialog() {
+        this.dialog.closeAll();
+        this.dialog.open(SMSDialogComponent, {
+            id: 'permanent',
+            panelClass: 'slider',
+            disableClose: true,
+            closeOnNavigation: false,
+            data: { 
+                contact: this.contactInfo
+            }
+        }).afterClosed().subscribe(() => {
+        });
     }
 
     reloadCurrentSection(params = this.params) {

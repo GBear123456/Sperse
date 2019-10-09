@@ -1,0 +1,15 @@
+:host {
+    /deep/ .dx-widget {
+        &:not(.dx-state-focused) {
+            .dx-placeholder {
+                font-size: 16px;
+                font-weight: 500;
+            }
+        }
+        &.dx-state-focused {
+            .dx-placeholder {
+                top:-30px!important;
+            }
+        }
+    }
+}
