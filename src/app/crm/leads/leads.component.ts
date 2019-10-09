@@ -440,7 +440,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     );
     mapInfoItems$: Observable<InfoItem[]> = this.contactsData$.pipe(
         map((contacts: any) => {
-            const avgGroupValue = contacts.totalCount ? (contacts.totalCount / contacts.data.length).toFixed(2) : 0;
+            const avgGroupValue = contacts.totalCount ? (contacts.totalCount / contacts.data.length).toFixed(0) : 0;
             let minGroupValue, maxGroupValue;
             contacts.data.forEach(contact => {
                 minGroupValue = !minGroupValue || contact.count < minGroupValue ? contact.count : minGroupValue;
