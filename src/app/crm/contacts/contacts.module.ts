@@ -106,6 +106,7 @@ import { InvoicesComponent } from '@app/crm/contacts/invoices/invoices.component
 import { PersonalDetailsComponent } from './personal-details/personal-details.component';
 import { CRMDashboardWidgetsModule } from '@shared/crm/dashboard-widgets/dashboard-widgets.module';
 import { BankCodeLettersModule } from '@app/shared/common/bank-code-letters/bank-code-letters.module';
+import { SMSDialogComponent } from '@app/crm/shared/sms-dialog/sms-dialog.component';
 
 @NgModule({
     declarations: [
@@ -157,7 +158,8 @@ import { BankCodeLettersModule } from '@app/shared/common/bank-code-letters/bank
         UserInboxComponent,
         OrdersComponent,
         InvoicesComponent,
-        PersonalDetailsComponent
+        PersonalDetailsComponent,
+        SMSDialogComponent
     ],
     imports: [
         FormsModule,
@@ -220,7 +222,8 @@ import { BankCodeLettersModule } from '@app/shared/common/bank-code-letters/bank
         RelationCompaniesDialogComponent,
         CreateClientDialogComponent,
         NotSupportedTypeDialogComponent,
-        HistoryListDialogComponent
+        HistoryListDialogComponent,
+        SMSDialogComponent
     ],
     providers: [
         DialogService,

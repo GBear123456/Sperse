@@ -14,9 +14,9 @@
     </ng-container>
     <ng-container underHeader>
         <div class="general-links">
-            <a routerLink="user-inbox" routerLinkActive="general-active-link"><i class="fa fa-envelope-o" aria-hidden="true"></i></a>
-            <i class="fa fa-phone" aria-hidden="true"></i>
-            <a routerLink="notes" routerLinkActive="general-active-link"><i class="fa fa-file-text-o" aria-hidden="true"></i></a>
+            <a routerLink="user-inbox" routerLinkActive="general-active-link"><i class="inbox-icon" aria-hidden="true"></i></a>
+            <i class="phone-icon" aria-hidden="true"></i>
+            <a (click)="showSMSDialog()"><i class="sms-icon"></i></a>
         </div>
         <operations-widget
             [enabled]="contactInfo && showToolbar"
