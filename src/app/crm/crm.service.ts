@@ -33,4 +33,10 @@ export class CrmService {
         private appService: AppService,
         private fullScreenService: FullScreenService
     ) { }
+
+    static setDataSourceToComponent(dataSource: any, componentInstance: any) {
+        if (componentInstance && !componentInstance.option('dataSource')) {
+            componentInstance.option('dataSource', dataSource);
+        }
+    }
 }

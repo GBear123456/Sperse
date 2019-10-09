@@ -360,7 +360,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 }),
                 params: params
             }).toPromise().then((contacts: any) => {
-                const avgGroupValue = contacts.totalCount ? (contacts.totalCount / contacts.data.length).toFixed(2) : 0;
+                const avgGroupValue = contacts.totalCount ? (contacts.totalCount / contacts.data.length).toFixed(0) : 0;
                 let minGroupValue, maxGroupValue;
                 const result = contacts.data.map(contact => {
                     minGroupValue = !minGroupValue || contact.count < minGroupValue ? contact.count : minGroupValue;
@@ -513,12 +513,6 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             }
         };
         this.searchValue = '';
-    }
-
-    private static setDataSourceToComponent(dataSource: any, componentInstance: any) {
-        if (componentInstance && !componentInstance.option('dataSource')) {
-            componentInstance.option('dataSource', dataSource);
-        }
     }
 
     ngOnInit() {
@@ -1013,7 +1007,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                                     }),
                                     text: this.l('Export to Excel'),
                                     icon: 'xls',
-                                    visible: !(this.showChart || this.showMap)
+                                    visible: this.showDataGrid || this.showPipeline || this.showPivotGrid
                                 },
                                 {
                                     action: this.exportData.bind(this, options => this.exportToCSV(options)),
@@ -1260,12 +1254,12 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
 
     private setPivotGridInstance() {
         const pivotGridInstance = this.pivotGridComponent && this.pivotGridComponent.pivotGrid && this.pivotGridComponent.pivotGrid.instance;
-        LeadsComponent.setDataSourceToComponent(this.pivotGridDataSource, pivotGridInstance);
+        CrmService.setDataSourceToComponent(this.pivotGridDataSource, pivotGridInstance);
     }
 
     private setChartInstance() {
         const chartInstance = this.chartComponent && this.chartComponent.chart && this.chartComponent.chart.instance;
-        LeadsComponent.setDataSourceToComponent(this.chartDataSource, chartInstance);
+        CrmService.setDataSourceToComponent(this.chartDataSource, chartInstance);
     }
 
     createLead() {

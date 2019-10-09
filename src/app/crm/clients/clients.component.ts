@@ -1,5 +1,6 @@
 /** Core imports */
 import { Component, OnInit, OnDestroy, Injector, ViewChild } from '@angular/core';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { RouteReuseStrategy } from '@angular/router';
 
 /** Third party imports */
@@ -7,8 +8,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import 'devextreme/data/odata/store';
 import { Store, select } from '@ngrx/store';
-import { Observable, of } from 'rxjs';
-import { first, finalize, takeUntil } from 'rxjs/operators';
+import { Observable, combineLatest, of } from 'rxjs';
+import { first, filter, finalize, takeUntil, startWith } from 'rxjs/operators';
 import * as _ from 'underscore';
 
 /** Application imports */
@@ -69,6 +70,10 @@ import { DataLayoutType } from '@app/shared/layout/data-layout-type';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { PivotGridComponent } from '@app/shared/common/slice/pivot-grid/pivot-grid.component';
 import { CrmService } from '@app/crm/crm.service';
+import DataSource from '@root/node_modules/devextreme/data/data_source';
+import { InfoItem } from '@app/shared/common/slice/info/info-item.model';
+import { ChartComponent } from '@app/shared/common/slice/chart/chart.component';
+import { ImageFormat } from '@shared/common/export/image-format.enum';
 
 @Component({
     templateUrl: './clients.component.html',
@@ -84,10 +89,12 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     @ViewChild(RatingComponent) ratingComponent: RatingComponent;
     @ViewChild(StarsListComponent) starsListComponent: StarsListComponent;
     @ViewChild(StaticListComponent) statusComponent: StaticListComponent;
-    @ViewChild(PivotGridComponent) slicePivotGridComponent: PivotGridComponent;
+    @ViewChild(PivotGridComponent) pivotGridComponent: PivotGridComponent;
+    @ViewChild(ChartComponent) chartComponent: ChartComponent;
 
     private readonly MENU_LOGIN_INDEX = 1;
     private readonly dataSourceURI: string = 'Customer';
+    private readonly groupDataSourceURI: string = 'CustomerSlice';
     private filters: FilterModel[];
     private rootComponent: any;
     private subRouteParams: any;
@@ -235,9 +242,60 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         ]
     };
     pivotGridDataSource: any;
+    chartInfoItems: InfoItem[];
+    chartDataSource = new DataSource({
+        key: 'id',
+        load: () => {
+            const params = {
+                group: `[{"selector":"CreationTime","groupInterval":"${this.chartComponent.summaryBy.value}","isExpanded":false,"desc":true}]`,
+                groupSummary: '[{"selector":"CreationTime","summaryType":"min"}]'
+            };
+            const filter = this.oDataService.getODataFilter(this.filters, this.getCheckCustom);
+            if (filter) {
+                params['$filter'] = filter;
+            }
+            return this.http.get(this.getODataUrl(this.groupDataSourceURI), {
+                headers: new HttpHeaders({
+                    'Authorization': 'Bearer ' + abp.auth.getToken()
+                }),
+                params: params
+            }).toPromise().then((contacts: any) => {
+                const avgGroupValue = contacts.totalCount ? (contacts.totalCount / contacts.data.length).toFixed(0) : 0;
+                let minGroupValue, maxGroupValue;
+                const result = contacts.data.map(contact => {
+                    minGroupValue = !minGroupValue || contact.count < minGroupValue ? contact.count : minGroupValue;
+                    maxGroupValue = !maxGroupValue || contact.count > maxGroupValue ? contact.count : maxGroupValue;
+                    return {
+                        creationDate: contact.summary[0],
+                        count: contact.count
+                    };
+                });
+                this.chartInfoItems = [
+                    {
+                        label: this.l('Totals'),
+                        value: contacts.totalCount
+                    },
+                    {
+                        label: this.l('Average'),
+                        value: avgGroupValue
+                    },
+                    {
+                        label: this.l('Lowest'),
+                        value: minGroupValue || 0
+                    },
+                    {
+                        label: this.l('Highest'),
+                        value: maxGroupValue || 0
+                    }
+                ];
+                return result;
+            });
+        }
+    });
     dataLayoutType: DataLayoutType = DataLayoutType.DataGrid;
     sliceStorageKey = 'CRM_Clients_Slice_' + this.sessionService.tenantId + '_' + this.sessionService.userId;
     private filterChanged = false;
+    contentWidth$: Observable<number> = this.crmService.contentWidth$;
     contentHeight$: Observable<number> = this.crmService.contentHeight$;
 
     constructor(
@@ -254,6 +312,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         private impersonationService: ImpersonationService,
         private sessionService: AppSessionService,
         private crmService: CrmService,
+        private http: HttpClient,
         public dialog: MatDialog,
         public appService: AppService,
         public contactProxy: ContactServiceProxy,
@@ -285,7 +344,15 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         this.pipelineService.stageChange.asObservable().subscribe((lead) => {
             this.dependencyChanged = (lead.Stage == _.last(this.pipelineService.getStages(AppConsts.PipelinePurposeIds.lead)).name);
         });
-
+        combineLatest(
+            this.chartComponent.summaryBy$,
+            this.filtersService.filterChanged$.pipe(startWith(null))
+        ).pipe(
+            takeUntil(this.lifeCycleSubjectsService.destroy$),
+            filter(() => this.showChart)
+        ).subscribe(() => {
+            this.chartDataSource.load();
+        });
         this.getOrganizationUnits();
         this.activate();
     }
@@ -344,6 +411,12 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         this.lifeCycleSubjectsService.activate$.pipe(first()).subscribe(() => {
             this.refresh(false);
         });
+    }
+
+    getCheckCustom = (filter: FilterModel) => {
+        let filterMethod = this['filterBy' + this.capitalize(filter.caption)];
+        if (filterMethod)
+            return filterMethod.call(this, filter);
     }
 
     createClient() {
@@ -635,20 +708,45 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                             hint: this.l('Download'),
                             items: [
                                 {
-                                    action: Function(),
+                                    action: this.downloadImage.bind(this, ImageFormat.PDF),
                                     text: this.l('Save as PDF'),
-                                    icon: 'pdf',
+                                    icon: 'pdf'
+                                },
+                                {
+                                    action: this.downloadImage.bind(this, ImageFormat.PNG),
+                                    text: this.l('Save as PNG'),
+                                    icon: 'png',
+                                    visible: this.showChart
+                                },
+                                {
+                                    action: this.downloadImage.bind(this, ImageFormat.JPEG),
+                                    text: this.l('Save as JPEG'),
+                                    icon: 'jpg',
+                                    visible: this.showChart
+                                },
+                                {
+                                    action: this.downloadImage.bind(this, ImageFormat.SVG),
+                                    text: this.l('Save as SVG'),
+                                    icon: 'svg',
+                                    visible: this.showChart
+                                },
+                                {
+                                    action: this.downloadImage.bind(this, ImageFormat.GIF),
+                                    text: this.l('Save as GIF'),
+                                    icon: 'gif',
+                                    visible: this.showChart
                                 },
                                 {
                                     action: () => {
                                         if (this.dataLayoutType === DataLayoutType.PivotGrid) {
-                                            this.slicePivotGridComponent.pivotGrid.instance.exportToExcel();
+                                            this.pivotGridComponent.pivotGrid.instance.exportToExcel();
                                         } else if (this.dataLayoutType === DataLayoutType.DataGrid) {
                                             this.exportToXLS.bind(this);
                                         }
                                     },
                                     text: this.l('Export to Excel'),
                                     icon: 'xls',
+                                    visible: this.showDataGrid || this.showPivotGrid
                                 },
                                 {
                                     action: this.exportToCSV.bind(this),
@@ -698,6 +796,13 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                         options: {
                             checkPressed: () => this.showPivotGrid
                         }
+                    },
+                    {
+                        name: 'chart',
+                        action: this.toggleDataLayout.bind(this, DataLayoutType.Chart),
+                        options: {
+                            checkPressed: () => this.showChart
+                        }
                     }
                 ]
             },
@@ -741,6 +846,12 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         this.starsListComponent.toggle();
     }
 
+    private downloadImage(format: ImageFormat) {
+        if (this.showChart) {
+            this.chartComponent.exportTo(format);
+        }
+    }
+
     toggleDataLayout(dataLayoutType: DataLayoutType) {
         this.selectedClientKeys = [];
         this.dataLayoutType = dataLayoutType;
@@ -753,9 +864,13 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             this.filterChanged = false;
             setTimeout(() => {
                 if (this.showPivotGrid) {
-                    this.slicePivotGridComponent.pivotGrid.instance.updateDimensions();
+                    this.pivotGridComponent.pivotGrid.instance.updateDimensions();
                 }
-                this.processFilterInternal();
+                if (this.showChart) {
+                    this.chartDataSource.load();
+                } else {
+                    this.processFilterInternal();
+                }
             });
         }
     }
@@ -765,6 +880,8 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             this.setDataGridInstance();
         } else if (this.showPivotGrid) {
             this.setPivotGridInstance();
+        } else if (this.showChart) {
+            this.setChartInstance();
         }
     }
 
@@ -776,11 +893,14 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         }
     }
 
-    setPivotGridInstance() {
-        let instance = this.slicePivotGridComponent && this.slicePivotGridComponent.pivotGrid && this.slicePivotGridComponent.pivotGrid.instance;
-        if (instance && !instance.option('dataSource')) {
-            instance.option('dataSource', this.pivotGridDataSource);
-        }
+    private setPivotGridInstance() {
+        const pivotGridInstance = this.pivotGridComponent && this.pivotGridComponent.pivotGrid && this.pivotGridComponent.pivotGrid.instance;
+        CrmService.setDataSourceToComponent(this.pivotGridDataSource, pivotGridInstance);
+    }
+
+    private setChartInstance() {
+        const chartInstance = this.chartComponent && this.chartComponent.chart && this.chartComponent.chart.instance;
+        CrmService.setDataSourceToComponent(this.chartDataSource, chartInstance);
     }
 
     get showDataGrid(): boolean {
@@ -789,6 +909,10 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
 
     get showPivotGrid(): boolean {
         return this.dataLayoutType === DataLayoutType.PivotGrid;
+    }
+
+    get showChart(): boolean {
+        return this.dataLayoutType === DataLayoutType.Chart;
     }
 
     filterByStates(filter: FilterModel) {
@@ -833,17 +957,12 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
 
     processFilterInternal() {
         if (this.dataGrid && this.dataGrid.instance
-            || this.slicePivotGridComponent && this.slicePivotGridComponent.pivotGrid && this.slicePivotGridComponent.pivotGrid.instance) {
+            || this.pivotGridComponent && this.pivotGridComponent.pivotGrid && this.pivotGridComponent.pivotGrid.instance) {
             this.processODataFilter(
-                this.showPivotGrid ? this.slicePivotGridComponent.pivotGrid.instance : this.dataGrid.instance,
+                this.showPivotGrid ? this.pivotGridComponent.pivotGrid.instance : this.dataGrid.instance,
                 this.dataSourceURI,
                 this.filters,
-                (filter) => {
-                    let filterMethod = this['filterBy' +
-                        this.capitalize(filter.caption)];
-                    if (filterMethod)
-                        return filterMethod.call(this, filter);
-                }
+                this.getCheckCustom
             );
         }
     }
