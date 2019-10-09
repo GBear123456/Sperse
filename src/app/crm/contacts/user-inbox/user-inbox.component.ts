@@ -64,15 +64,15 @@ export class UserInboxComponent extends AppComponentBase implements OnDestroy {
         items: [
             {
                 name: 'reply',
-                action: Function()
+                action: this.reply.bind(this)
             },
             {
                 name: 'replyToAll',
-                action: Function()
+                action: this.replyToAll.bind(this)
             },
             {
                 name: 'forward',
-                action: Function()
+                action: this.forward.bind(this)
             }
         ]
     }];
@@ -111,7 +111,19 @@ export class UserInboxComponent extends AppComponentBase implements OnDestroy {
         }, this.constructor.name);
     }
 
-    showNewEmailDialog() {
+    reply() {
+        this.showNewEmailDialog('Reply', this.activeEmail);
+    }
+
+    forward() {
+        this.showNewEmailDialog('Forward', this.activeEmail);
+    }
+
+    replyToAll() {
+        this.showNewEmailDialog('ReplyToAll', this.activeEmail);
+    }
+
+    showNewEmailDialog(title = 'NewEmail', data = {}) {
         this.dialog.open(EmailTemplateDialogComponent, {
             id: 'permanent',
             panelClass: 'slider',
@@ -119,8 +131,9 @@ export class UserInboxComponent extends AppComponentBase implements OnDestroy {
             closeOnNavigation: false,
             data: {
                 saveTitle: this.l('Send'),
-                title: this.l('NewEmail'),
-                refreshParent: () => { }
+                title: this.l(title),
+                refreshParent: () => { },
+                ...data
             }
         }).afterClosed().subscribe((data) => {
         });
