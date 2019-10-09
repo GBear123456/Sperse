@@ -103,6 +103,7 @@ export class PortalDashboardComponent extends CFOComponentBase implements OnInit
         /** Load sync accounts (if something change - subscription in ngOnInit fires) */
         this.bankAccountsService.load();
         this.totalsByPeriodComponent.activate();
+        this.trendByPeriodComponent.updateChartWidthAfterActivation = true;
         this.trendByPeriodComponent.activate();
         this.synchProgressComponent.activate();
         if (this.accountsComponent)

@@ -154,6 +154,10 @@ export class OffersComponent extends AppComponentBase implements OnInit, OnDestr
                 caption: 'Rank',
                 field: 'Rank',
                 items$: this.store$.pipe(select(RatingsStoreSelectors.getRatingItems))
+            }),
+            this.filterModelRank = new FilterModel({
+                caption: 'TrafficSource',
+                hidden: true
             })
         ];
 
@@ -161,7 +165,7 @@ export class OffersComponent extends AppComponentBase implements OnInit, OnDestr
             store: {
                 type: 'odata',
                 url: this.getODataUrl(this.dataSourceURI,
-                    this.filterByStatus(this.filterModelStatuses)),
+                    [this.filterByStatus(this.filterModelStatuses), this.filterByTrafficSource()]),
                 deserializeDates: false,
                 version: AppConsts.ODataVersion,
                 beforeSend: function (request) {
@@ -395,6 +399,10 @@ export class OffersComponent extends AppComponentBase implements OnInit, OnDestr
         return FilterHelpers.filterByRating(filter);
     }
 
+    filterByTrafficSource() {
+        return {'TrafficSource': {'ne': 'Decline'}};
+    }
+
     refreshDataGrid() {
         this.dataGrid.instance.refresh();
     }
@@ -423,7 +431,7 @@ export class OffersComponent extends AppComponentBase implements OnInit, OnDestr
     }
 
     private getCustomFiltersParams() {
-        return [ ...this.getFilterParams('Flags'), ...this.getFilterParams('Attributes') ];
+        return [ ...this.getFilterParams('Flags'), ...this.getFilterParams('Attributes')];
     }
 
     private getFilterParams(filterField: string): { name: string, value: string }[] {

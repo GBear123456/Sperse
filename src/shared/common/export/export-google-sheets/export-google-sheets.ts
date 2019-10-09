@@ -34,16 +34,16 @@ export class ExportGoogleSheetService {
         this.gAPISubject.asObservable().pipe(first()).subscribe(gAPI => {
             let auth = gAPI.auth2.getAuthInstance();
             if (auth.isSignedIn.get()) {
-                loader.then(data => this.createSheet(data, sheetName));
+                loader.then(data => this.createSheet(gAPI, data, sheetName));
             } else
                 auth.signIn().then(() => {
-                    loader.then(data => this.createSheet(data, sheetName));
+                    loader.then(data => this.createSheet(gAPI, data, sheetName));
                 });
         });
         return loader;
     }
 
-    createSheet(data: any, sheetName: string) {
+    private createSheet(gAPI: any, data: any, sheetName: string) {
         let spreadsheetBody = {
             properties: {
                 title: sheetName
@@ -65,10 +65,9 @@ export class ExportGoogleSheetService {
             ]
         };
 
-        let request = gapi.client.sheets.spreadsheets.create({}, spreadsheetBody);
-        request.then(function (response) {
+        gAPI.client.sheets.spreadsheets.create({}, spreadsheetBody).then(response => {
             window.open(response.result.spreadsheetUrl, '_blank');
-        }, function (reason) {
+        }, reason => {
             console.error('error: ' + reason.result.error.message);
         });
     }

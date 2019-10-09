@@ -200,7 +200,7 @@ export class OffersService {
         return CreditScoreRating[scoreName] ? CreditScoreRating[scoreName] : CreditScoreRating.NotSure;
     }
 
-    applyOffer(offer: OfferDto, isCreditCard = false) {
+    applyOffer(offer: OfferDto, isCreditCard = false, checkSubmitDateAfterApply = true) {
         const linkIsDirect = !!offer.redirectUrl;
         let redirectUrl = !linkIsDirect ? offer.redirectUrl : offer.redirectUrl + '&' + this.memberInfoApplyOfferParams;
         let submitRequestInput = SubmitRequestInput.fromJS({
@@ -252,7 +252,7 @@ export class OffersService {
                 }
             });
         } else {
-            if (this.isOldLastSubmitDate()) {
+            if (checkSubmitDateAfterApply && this.isOldLastSubmitDate()) {
                 this.document.body.classList.add('overflow-hidden');
                 this.dialog.open(WizardCenterModalComponent, {
                     width: '1200px',

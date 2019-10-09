@@ -306,6 +306,24 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
         });
     }
 
+    isActiveChanged(event) {
+        if (event.event) {
+            if (this.data.user.isActive)
+                this.update(this.ACTIVE_FIELD, this.data.user.isActive);
+            else
+                this.message.confirm(
+                    this.l('DeactivateUserConfirm'),
+                    this.l('AreYouSure'),
+                    isConfirmed => {
+                        if (isConfirmed)
+                            this.update(this.ACTIVE_FIELD, this.data.user.isActive);
+                        else
+                            this.data.user.isActive = true;
+                    }
+                );
+        }
+    }
+
     update(fieldName?, value?, callback?) {
         let sub, data = { id: this.userData.user.id },
             initialValue = this.data.user[fieldName];
