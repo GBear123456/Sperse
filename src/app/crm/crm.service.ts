@@ -14,6 +14,7 @@ import { ODataService } from '@shared/common/odata/odata.service';
 import { SummaryBy } from '@app/shared/common/slice/chart/summary-by.enum';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { InfoItem } from '@app/shared/common/slice/info/info-item.model';
+import { FilterModel } from '@shared/filters/models/filter.model';
 
 @Injectable()
 export class CrmService {
@@ -51,6 +52,40 @@ export class CrmService {
         if (componentInstance && !componentInstance.option('dataSource')) {
             componentInstance.option('dataSource', dataSource);
         }
+    }
+
+    loadPivotGridData(sourceUri: string, filters: FilterModel[], loadOptions, params?: { [paramName: string]: string }) {
+        let d = $.Deferred();
+        params = {
+            group: loadOptions.group ? JSON.stringify(loadOptions.group) : '',
+            filter: loadOptions.filter ? JSON.stringify(loadOptions.filter) : '',
+            totalSummary: loadOptions.totalSummary ? JSON.stringify(loadOptions.totalSummary) : '',
+            groupSummary: loadOptions.groupSummary ? JSON.stringify(loadOptions.groupSummary) : '',
+            ...params
+        };
+        if (loadOptions.take !== undefined) {
+            params['take'] = loadOptions.take;
+        }
+        if (loadOptions.skip !== undefined) {
+            params['skip'] = loadOptions.skip;
+        }
+        const filter = this.oDataService.getODataFilter(filters, this.filtersService.getCheckCustom);
+        if (filter) {
+            params['$filter'] = filter;
+        }
+        this.http.get(sourceUri, {
+            params: params,
+            headers: new HttpHeaders({
+                'Authorization': 'Bearer ' + abp.auth.getToken()
+            })
+        }).subscribe((result) => {
+            if ('data' in result) {
+                d.resolve(result['data'], { summary: result['summary'] });
+            } else {
+                d.resolve(result);
+            }
+        });
+        return d.promise();
     }
 
     loadSliceChartData(sourceURI: string, filters, summaryBy: SummaryBy, additionalParams?: { [name: string]: any}): Promise<{ items: any[], infoItems: InfoItem[] }> {
