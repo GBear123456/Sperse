@@ -2,12 +2,14 @@
 import { Injectable } from '@angular/core';
 
 /** Third party imports */
+import capitalize from 'lodash/capitalize';
 import { Subscription, Subject, BehaviorSubject, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import * as _ from 'underscore';
 
 /** Application imports */
 import { FilterModel } from './models/filter.model';
+import { FilterHelpers } from '@app/crm/shared/helpers/filter.helper';
 
 @Injectable()
 export class FiltersService {
@@ -137,4 +139,59 @@ export class FiltersService {
             }
         });
     }
+
+    getCheckCustom = (filter: FilterModel) => {
+        let filterMethod = this['filterBy' + capitalize(filter.caption)];
+        if (filterMethod)
+            return filterMethod.call(this, filter);
+    }
+
+    filterByStates(filter: FilterModel) {
+        return FilterHelpers.filterByStates(filter);
+    }
+
+    filterByStatus(filter: FilterModel) {
+        return FilterHelpers.filterBySetOfValues(filter);
+    }
+
+    filterByType(filter: FilterModel) {
+        return FilterHelpers.filterBySetOfValues(filter);
+    }
+
+    filterByAssignedUser(filter: FilterModel) {
+        return FilterHelpers.filterBySetOfValues(filter);
+    }
+
+    filterByOrganizationUnitId(filter: FilterModel) {
+        return FilterHelpers.filterBySetOfValues(filter);
+    }
+
+    filterByList(filter: FilterModel) {
+        return FilterHelpers.filterBySetOfValues(filter);
+    }
+
+    filterByTag(filter: FilterModel) {
+        return FilterHelpers.filterBySetOfValues(filter);
+    }
+
+    filterByRating(filter: FilterModel) {
+        return FilterHelpers.filterByRating(filter);
+    }
+
+    filterByStar(filter: FilterModel) {
+        return FilterHelpers.filterBySetOfValues(filter);
+    }
+
+    filterByStages(filter: FilterModel) {
+        let data = {};
+        if (filter.items.element) {
+            let filterData = FilterHelpers.ParsePipelineIds(filter.items.element.value);
+            data = {
+                or: filterData
+            };
+        }
+
+        return data;
+    }
+
 }

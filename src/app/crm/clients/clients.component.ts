@@ -14,7 +14,6 @@ import * as _ from 'underscore';
 
 /** Application imports */
 import { AppService } from '@app/app.service';
-import { FilterHelpers } from '@app/crm/shared/helpers/filter.helper';
 import {
     AppStore,
     ContactAssignedUsersStoreSelectors,
@@ -246,49 +245,13 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     chartDataSource = new DataSource({
         key: 'id',
         load: () => {
-            const params = {
-                group: `[{"selector":"CreationTime","groupInterval":"${this.chartComponent.summaryBy.value}","isExpanded":false,"desc":true}]`,
-                groupSummary: '[{"selector":"CreationTime","summaryType":"min"}]'
-            };
-            const filter = this.oDataService.getODataFilter(this.filters, this.getCheckCustom);
-            if (filter) {
-                params['$filter'] = filter;
-            }
-            return this.http.get(this.getODataUrl(this.groupDataSourceURI), {
-                headers: new HttpHeaders({
-                    'Authorization': 'Bearer ' + abp.auth.getToken()
-                }),
-                params: params
-            }).toPromise().then((contacts: any) => {
-                const avgGroupValue = contacts.totalCount ? (contacts.totalCount / contacts.data.length).toFixed(0) : 0;
-                let minGroupValue, maxGroupValue;
-                const result = contacts.data.map(contact => {
-                    minGroupValue = !minGroupValue || contact.count < minGroupValue ? contact.count : minGroupValue;
-                    maxGroupValue = !maxGroupValue || contact.count > maxGroupValue ? contact.count : maxGroupValue;
-                    return {
-                        creationDate: contact.summary[0],
-                        count: contact.count
-                    };
-                });
-                this.chartInfoItems = [
-                    {
-                        label: this.l('Totals'),
-                        value: contacts.totalCount
-                    },
-                    {
-                        label: this.l('Average'),
-                        value: avgGroupValue
-                    },
-                    {
-                        label: this.l('Lowest'),
-                        value: minGroupValue || 0
-                    },
-                    {
-                        label: this.l('Highest'),
-                        value: maxGroupValue || 0
-                    }
-                ];
-                return result;
+            return this.crmService.loadSliceChartData(
+                this.getODataUrl(this.groupDataSourceURI),
+                this.filters,
+                this.chartComponent.summaryBy.value
+            ).then((result) => {
+                this.chartInfoItems = result.infoItems;
+                return result.items;
             });
         }
     });
@@ -327,7 +290,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             store: {
                 key: 'Id',
                 type: 'odata',
-                url: this.getODataUrl(this.dataSourceURI, this.filterByStatus(this.filterModelStatus)),
+                url: this.getODataUrl(this.dataSourceURI, this.filtersService.filterByStatus(this.filterModelStatus)),
                 version: AppConsts.ODataVersion,
                 deserializeDates: false,
                 beforeSend: (request) => {
@@ -915,38 +878,6 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         return this.dataLayoutType === DataLayoutType.Chart;
     }
 
-    filterByStates(filter: FilterModel) {
-        return FilterHelpers.filterByStates(filter);
-    }
-
-    filterByStatus(filter: FilterModel) {
-        return FilterHelpers.filterBySetOfValues(filter);
-    }
-
-    filterByAssignedUser(filter: FilterModel) {
-        return FilterHelpers.filterBySetOfValues(filter);
-    }
-
-    filterByOrganizationUnitId(filter: FilterModel) {
-        return FilterHelpers.filterBySetOfValues(filter);
-    }
-
-    filterByList(filter: FilterModel) {
-        return FilterHelpers.filterBySetOfValues(filter);
-    }
-
-    filterByTag(filter: FilterModel) {
-        return FilterHelpers.filterBySetOfValues(filter);
-    }
-
-    filterByRating(filter: FilterModel) {
-        return FilterHelpers.filterByRating(filter);
-    }
-
-    filterByStar(filter: FilterModel) {
-        return FilterHelpers.filterBySetOfValues(filter);
-    }
-
     searchValueChange(e: object) {
         if (this.filterChanged = (this.searchValue != e['value'])) {
             this.searchValue = e['value'];
@@ -962,7 +893,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 this.showPivotGrid ? this.pivotGridComponent.pivotGrid.instance : this.dataGrid.instance,
                 this.dataSourceURI,
                 this.filters,
-                this.getCheckCustom
+                this.filtersService.getCheckCustom
             );
         }
     }
