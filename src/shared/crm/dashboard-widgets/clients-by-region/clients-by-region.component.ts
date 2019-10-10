@@ -69,8 +69,10 @@ export class ClientsByRegionComponent implements OnInit, OnDestroy {
                     total: val.count
                 };
             });
-            this.mapComponent.vectorMapComponent.instance.getLayerByName('areas').getDataSource().reload();
-            this.changeDetectorRef.detectChanges();
+            if (this.mapComponent.vectorMapComponent.instance['_layerCollection']) {
+                this.mapComponent.vectorMapComponent.instance.getLayerByName('areas').getDataSource().reload();
+                this.changeDetectorRef.detectChanges();
+            }
         });
     }
 

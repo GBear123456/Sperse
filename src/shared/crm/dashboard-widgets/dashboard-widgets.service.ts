@@ -16,7 +16,7 @@ import { Period } from '@app/shared/common/period/period.enum';
 
 @Injectable()
 export class DashboardWidgetsService  {
-    private _period: BehaviorSubject<PeriodModel> = new BehaviorSubject<PeriodModel>(this._periodService.selectedPeriod);
+    private _period: BehaviorSubject<PeriodModel> = new BehaviorSubject<PeriodModel>(this.periodService.selectedPeriod);
     private _totalsData: ReplaySubject<GetTotalsOutput> = new ReplaySubject<GetTotalsOutput>(1);
     totalsData$: Observable<GetTotalsOutput> = this._totalsData.asObservable();
     totalsDataAvailable$: Observable<boolean> = this.totalsData$.pipe(
@@ -62,17 +62,17 @@ export class DashboardWidgetsService  {
     };
 
     constructor(
-        private _dashboardServiceProxy: DashboardServiceProxy,
-        private _cacheService: CacheService,
-        private _ls: AppLocalizationService,
-        private _periodService: PeriodService
+        private dashboardServiceProxy: DashboardServiceProxy,
+        private cacheService: CacheService,
+        private ls: AppLocalizationService,
+        private periodService: PeriodService
     ) {
         combineLatest(
             this.period$,
             this.refresh$
         ).pipe(
             tap(() => this.totalsDataLoading.next(true)),
-            switchMap(([period]: [PeriodModel]) => this._dashboardServiceProxy.getTotals(period && period.from, period && period.to).pipe(
+            switchMap(([period]: [PeriodModel]) => this.dashboardServiceProxy.getTotals(period && period.from, period && period.to).pipe(
                 catchError(() => of(new GetTotalsOutput())),
                 finalize(() => this.totalsDataLoading.next(false))
             )),
@@ -94,7 +94,7 @@ export class DashboardWidgetsService  {
     }
 
     periodChanged(period: Period) {
-        this._period.next(this._periodService.getDatePeriod(period));
+        this._period.next(this.periodService.getDatePeriod(period));
     }
 
     getPercentage(value, total) {

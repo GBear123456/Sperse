@@ -86,7 +86,8 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
     ngOnInit() {
         this.dashboardWidgetsService.totalsDataAvailable$.pipe(
             takeUntil(this.destroy$),
-            filter((dataAvailable: boolean) => this.componentIsActivated && !dataAvailable && this.appService.hasModuleSubscription())
+            first(),
+            filter((dataAvailable: boolean) => this.componentIsActivated && !dataAvailable && this.appService.hasModuleSubscription()),
         ).subscribe(() => {
             this.openDialog();
         });
