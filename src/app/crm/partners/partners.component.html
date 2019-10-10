@@ -147,6 +147,14 @@
                      valueField="count">
         </slice-chart>
     </div>
+    <div [hidden]="!showMap">
+        <slice-info [items]="mapInfoItems$ | async"></slice-info>
+        <slice-map [width]="contentWidth$ | async"
+                   [height]="mapHeight$ | async"
+                   [dataIsLoading]="mapDataIsLoading"
+                   [data]="mapData$ | async">
+        </slice-map>
+    </div>
 </div>
 
 <app-no-data

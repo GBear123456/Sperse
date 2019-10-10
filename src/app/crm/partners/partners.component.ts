@@ -13,7 +13,7 @@ import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import 'devextreme/data/odata/store';
 import { Store, select } from '@ngrx/store';
 import { Observable, combineLatest } from 'rxjs';
-import { filter, startWith, takeUntil } from 'rxjs/operators';
+import { filter, first, startWith, takeUntil } from 'rxjs/operators';
 import * as _ from 'underscore';
 
 /** Application imports */
@@ -77,6 +77,9 @@ import { InfoItem } from '@app/shared/common/slice/info/info-item.model';
 import DataSource from '@root/node_modules/devextreme/data/data_source';
 import { ChartComponent } from '@app/shared/common/slice/chart/chart.component';
 import { ImageFormat } from '@shared/common/export/image-format.enum';
+import { MapData } from '@app/shared/common/slice/map/map-data.model';
+import { map, mapTo, publishReplay, refCount, switchMap, tap } from '@node_modules/rxjs/operators';
+import { BehaviorSubject, of } from '@node_modules/rxjs';
 
 @Component({
     templateUrl: './partners.component.html',
@@ -96,7 +99,8 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     @ViewChild(PivotGridComponent) pivotGridComponent: PivotGridComponent;
     @ViewChild(ChartComponent) chartComponent: ChartComponent;
 
-    private dataLayoutType: DataLayoutType = DataLayoutType.DataGrid;
+    private dataLayoutType: BehaviorSubject<DataLayoutType> = new BehaviorSubject(DataLayoutType.DataGrid);
+    dataLayoutType$: Observable<DataLayoutType> = this.dataLayoutType.asObservable();
     private readonly dataSourceURI = 'Partner';
     private readonly groupDataSourceURI = 'PartnerSlice';
     private filters: FilterModel[];
@@ -230,6 +234,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     private filterChanged = false;
     contentHeight$: Observable<number> = this.crmService.contentHeight$;
     contentWidth$: Observable<number> = this.crmService.contentWidth$;
+    mapHeight$: Observable<number> = this.crmService.mapHeight$;
     chartInfoItems: InfoItem[];
     chartDataSource = new DataSource({
         key: 'id',
@@ -244,6 +249,33 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
             });
         }
     });
+    private _refresh: BehaviorSubject<null> = new BehaviorSubject<null>(null);
+    private refresh$: Observable<null> = this._refresh.asObservable();
+    mapDataIsLoading = false;
+    odataFilter$: Observable<string> = this.filtersService.filterChanged$.pipe(
+        startWith(() => this.oDataService.getODataFilter(this.filters, this.filtersService.getCheckCustom)),
+        map(() => this.oDataService.getODataFilter(this.filters, this.filtersService.getCheckCustom))
+    );
+    partnersData$: Observable<any> = combineLatest(
+        this.odataFilter$,
+        this.refresh$
+    ).pipe(
+        tap(() => this.mapDataIsLoading = true),
+        switchMap((data) => this.showMap ? of(data) : this.dataLayoutType$.pipe(
+            filter((dataLayoutType: DataLayoutType) => dataLayoutType === DataLayoutType.Map),
+            first(),
+            mapTo(data)
+        )),
+        switchMap(([filter]: [any]) => this.crmService.loadSliceMapData(
+            this.getODataUrl(this.groupDataSourceURI),
+            filter
+        )),
+        publishReplay(),
+        refCount(),
+        tap(() => this.mapDataIsLoading = false)
+    );
+    mapData$: Observable<MapData> = this.crmService.getAdjustedMapData(this.partnersData$);
+    mapInfoItems$: Observable<InfoItem[]> = this.crmService.getMapInfoItems(this.partnersData$);
 
     constructor(
         injector: Injector,
@@ -336,7 +368,13 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     invalidate() {
         if (this.dataGrid && this.dataGrid.instance)
             this.dependencyChanged = false;
-        this.processFilterInternal();
+        if (this.showDataGrid || this.showPivotGrid) {
+            this.processFilterInternal();
+        } else if (this.showChart) {
+            this.chartDataSource.load();
+        } else if (this.showMap) {
+            this._refresh.next(null);
+        }
     }
 
     createPartner() {
@@ -367,7 +405,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     toggleDataLayout(dataLayoutType: DataLayoutType) {
-        this.dataLayoutType = dataLayoutType;
+        this.dataLayoutType.next(dataLayoutType);
         this.initDataSource();
         this.initToolbarConfig();
         if (this.showDataGrid) {
@@ -682,31 +720,31 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                                     action: this.downloadImage.bind(this, ImageFormat.PNG),
                                     text: this.l('Save as PNG'),
                                     icon: 'png',
-                                    visible: this.showChart
+                                    visible: this.showChart || this.showMap
                                 },
                                 {
                                     action: this.downloadImage.bind(this, ImageFormat.JPEG),
                                     text: this.l('Save as JPEG'),
                                     icon: 'jpg',
-                                    visible: this.showChart
+                                    visible: this.showChart || this.showMap
                                 },
                                 {
                                     action: this.downloadImage.bind(this, ImageFormat.SVG),
                                     text: this.l('Save as SVG'),
                                     icon: 'svg',
-                                    visible: this.showChart
+                                    visible: this.showChart || this.showMap
                                 },
                                 {
                                     action: this.downloadImage.bind(this, ImageFormat.GIF),
                                     text: this.l('Save as GIF'),
                                     icon: 'gif',
-                                    visible: this.showChart
+                                    visible: this.showChart || this.showMap
                                 },
                                 {
                                     action: () => {
-                                        if (this.dataLayoutType === DataLayoutType.PivotGrid) {
+                                        if (this.showPivotGrid) {
                                             this.pivotGridComponent.pivotGrid.instance.exportToExcel();
-                                        } else if (this.dataLayoutType === DataLayoutType.DataGrid) {
+                                        } else if (this.showDataGrid) {
                                             this.exportToXLS.bind(this);
                                         }
                                     },
@@ -769,6 +807,13 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                         options: {
                             checkPressed: () => this.showChart
                         }
+                    },
+                    {
+                        name: 'map',
+                        action: this.toggleDataLayout.bind(this, DataLayoutType.Map),
+                        options: {
+                            checkPressed: () => this.showMap
+                        }
                     }
                 ]
             },
@@ -817,15 +862,19 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     get showDataGrid(): boolean {
-        return this.dataLayoutType === DataLayoutType.DataGrid;
+        return this.dataLayoutType.value === DataLayoutType.DataGrid;
     }
 
     get showPivotGrid(): boolean {
-        return this.dataLayoutType === DataLayoutType.PivotGrid;
+        return this.dataLayoutType.value === DataLayoutType.PivotGrid;
     }
 
     get showChart(): boolean {
-        return this.dataLayoutType === DataLayoutType.Chart;
+        return this.dataLayoutType.value === DataLayoutType.Chart;
+    }
+
+    get showMap(): boolean {
+        return this.dataLayoutType.value === DataLayoutType.Map;
     }
 
     private downloadImage(format: ImageFormat) {

@@ -259,13 +259,14 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         startWith(() => this.oDataService.getODataFilter(this.filters, this.filtersService.getCheckCustom)),
         map(() => this.oDataService.getODataFilter(this.filters, this.filtersService.getCheckCustom))
     );
-    contactsData$: Observable<any> = combineLatest(
+    clientsData$: Observable<any> = combineLatest(
         this.odataFilter$,
         this.refresh$
     ).pipe(
         tap(() => this.mapDataIsLoading = true),
         switchMap((data) => this.showMap ? of(data) : this.dataLayoutType$.pipe(
             filter((dataLayoutType: DataLayoutType) => dataLayoutType === DataLayoutType.Map),
+            first(),
             mapTo(data)
         )),
         switchMap(([filter]: [any]) => this.crmService.loadSliceMapData(
@@ -276,8 +277,8 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         refCount(),
         tap(() => this.mapDataIsLoading = false)
     );
-    mapData$: Observable<MapData> = this.crmService.getAdjustedMapData(this.contactsData$);
-    mapInfoItems$: Observable<InfoItem[]> = this.crmService.getMapInfoItems(this.contactsData$);
+    mapData$: Observable<MapData> = this.crmService.getAdjustedMapData(this.clientsData$);
+    mapInfoItems$: Observable<InfoItem[]> = this.crmService.getMapInfoItems(this.clientsData$);
 
     chartInfoItems: InfoItem[];
     chartDataSource = new DataSource({
@@ -873,8 +874,6 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 }
                 if (this.showChart) {
                     this.chartDataSource.load();
-                } else if (this.showMap) {
-                    this._refresh.next(null);
                 } else {
                     this.processFilterInternal();
                 }

@@ -343,6 +343,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         tap(() => this.mapDataIsLoading = true),
         switchMap((data) => this.showMap ? of(data) : this.dataLayoutType$.pipe(
             filter((dataLayoutType: DataLayoutType) => dataLayoutType === DataLayoutType.Map),
+            first(),
             mapTo(data)
         )),
         switchMap(([contactGroupId, filter]: [ContactGroup, any]) => this.crmService.loadSliceMapData(
