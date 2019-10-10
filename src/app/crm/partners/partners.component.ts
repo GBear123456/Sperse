@@ -132,18 +132,24 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
 
     partnerTypes: any/*PartnerTypeDto*/[];
     permissions = AppPermissions;
-    private pivotGridDataSourceConfig = {
+    pivotGridDataSource = {
+        remoteOperations: true,
+        load: (loadOptions) => this.crmService.loadPivotGridData(
+            this.getODataUrl(this.groupDataSourceURI),
+            this.filters,
+            loadOptions
+        ),
         fields: [
             {
                 area: 'row',
-                dataField: 'CountryId',
+                dataField: 'Country',
                 name: 'country',
                 expanded: true,
                 sortBy: 'displayText'
             },
             {
                 area: 'row',
-                dataField: 'StateId',
+                dataField: 'State',
                 name: 'state',
                 sortBy: 'displayText'
             },
@@ -211,16 +217,15 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
             'BankCode',
             'City',
             'CompanyName',
-            'CountryId',
+            'Country',
             'CreationTime',
             'PartnerType',
             'Rating',
-            'StateId',
+            'State',
             'Status',
             'ZipCode'
         ]
     };
-    pivotGridDataSource: any;
     sliceStorageKey = 'CRM_Partners_Slice_' + this.sessionService.tenantId + '_' + this.sessionService.userId;
     private filterChanged = false;
     contentHeight$: Observable<number> = this.crmService.contentHeight$;
@@ -272,13 +277,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                 }
             }
         };
-        this.pivotGridDataSource = {
-            ...this.dataSource,
-            ...this.pivotGridDataSourceConfig
-        };
-
         this.searchValue = '';
-
         this.pipelineService.stageChange.asObservable().subscribe((lead) => {
             this.dependencyChanged = (lead.Stage == _.last(this.pipelineService.getStages(AppConsts.PipelinePurposeIds.lead)).name);
         });

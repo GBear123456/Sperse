@@ -12,7 +12,8 @@ export class AppHttpInterceptor extends AbpHttpInterceptor {
         'CFO_BankAccounts_GetStats',
         'CFO_Dashboard_GetCategorizationStatus',
         'odata_LeadSlice',
-        'odata_CustomerSlice'
+        'odata_CustomerSlice',
+        'odata_PartnerSlice'
     ];
 
     constructor(public configuration: AppHttpConfiguration) {
