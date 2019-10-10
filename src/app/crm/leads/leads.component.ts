@@ -73,6 +73,7 @@ import { InfoItem } from '@app/shared/common/slice/info/info-item.model';
 import { MapData } from '@app/shared/common/slice/map/map-data.model';
 import { MapComponent } from '@app/shared/common/slice/map/map.component';
 import { ImageFormat } from '@shared/common/export/image-format.enum';
+import { AppFeatures } from '@shared/AppFeatures';
 
 @Component({
     templateUrl: './leads.component.html',
@@ -229,10 +230,6 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             },
             {
                 area: 'filter',
-                dataField: 'BankCode'
-            },
-            {
-                area: 'filter',
                 dataField: 'CampaignCode'
             },
             {
@@ -291,26 +288,6 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 area: 'filter',
                 dataField: 'ZipCode'
             }
-        ],
-        select: [
-            'AffiliateCode',
-            'BankCode',
-            'CampaignCode',
-            'ChannelCode',
-            'City',
-            'CompanyName',
-            'Country',
-            'CreationTime',
-            'EntryUrl',
-            'Industry',
-            'Rating',
-            'SourceCode',
-            'Stage',
-            'State',
-            'StreetAddress',
-            'Title',
-            'Website',
-            'ZipCode'
         ]
     };
     chartInfoItems: InfoItem[];
@@ -402,6 +379,12 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             }
         };
         this.searchValue = '';
+        if (this.userManagementService.checkBankCodeFeature()) {
+            this.pivotGridDataSource.fields.unshift({
+                area: 'filter',
+                dataField: 'BankCode'
+            });
+        }
     }
 
     ngOnInit() {

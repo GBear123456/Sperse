@@ -216,18 +216,6 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                 area: 'filter',
                 dataField: 'ZipCode'
             }
-        ],
-        select: [
-            'BankCode',
-            'City',
-            'CompanyName',
-            'Country',
-            'CreationTime',
-            'PartnerType',
-            'Rating',
-            'State',
-            'Status',
-            'ZipCode'
         ]
     };
     sliceStorageKey = 'CRM_Partners_Slice_' + this.sessionService.tenantId + '_' + this.sessionService.userId;
@@ -313,6 +301,12 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         this.pipelineService.stageChange.asObservable().subscribe((lead) => {
             this.dependencyChanged = (lead.Stage == _.last(this.pipelineService.getStages(AppConsts.PipelinePurposeIds.lead)).name);
         });
+        if (this.userManagementService.checkBankCodeFeature()) {
+            this.pivotGridDataSource.fields.unshift({
+                area: 'filter',
+                dataField: 'BankCode'
+            });
+        }
     }
 
     ngOnInit() {

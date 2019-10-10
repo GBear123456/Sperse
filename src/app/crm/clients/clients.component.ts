@@ -237,17 +237,6 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 area: 'filter',
                 dataField: 'ZipCode'
             }
-        ],
-        select: [
-            'BankCode',
-            'City',
-            'CompanyName',
-            'Country',
-            'CreationTime',
-            'Rating',
-            'State',
-            'Status',
-            'ZipCode'
         ]
     };
     private dataLayoutType: BehaviorSubject<DataLayoutType> = new BehaviorSubject(DataLayoutType.DataGrid);
@@ -320,6 +309,12 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         public userManagementService: UserManagementService
     ) {
         super(injector);
+        if (this.userManagementService.checkBankCodeFeature()) {
+            this.pivotGridDataSource.fields.unshift({
+                area: 'filter',
+                dataField: 'BankCode'
+            });
+        }
     }
 
     ngOnInit() {
