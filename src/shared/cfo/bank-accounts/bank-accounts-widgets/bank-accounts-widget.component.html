@@ -98,7 +98,7 @@
         <dxi-column dataField="lastSyncDate" alignment="left" [caption]="l('BankAccountsWidget_Last_sync')" [width]="510" [allowEditing]="false" cellTemplate="syncDateTemplate" [visible]="showSyncDate"></dxi-column>
         <dxi-column dataField="bankAccounts.length" [visible]="showAdvancedColumns && showAccountsCount" [width]="10" [sortIndex]="1" sortOrder="asc" [calculateSortValue]="calculateSyncAccountSortValue" alignment="right" [calculateDisplayValue]="calculateSyncAccountDisplayValue" [allowEditing]="false"></dxi-column>
         <dxi-column [width]="30" alignment="right" [allowEditing]="false" [visible]="showAdvancedColumns && showAccountsCount" cellTemplate="expandTemplate"></dxi-column>
-        <dxi-column dataField="balance" [minWidth]="70" [width]="balanceColumnWidth" [caption]="l('BankAccountsWidget_Value')" cellTemplate="amountTemplate" alignment="right" [allowEditing]="false" [calculateDisplayValue]="calculateBalanceDisplayValue"></dxi-column>
+        <dxi-column dataField="balance" [minWidth]="70" [width]="balanceColumnWidth" [caption]="l('BankAccountsWidget_Value')" cellTemplate="amountTemplate" alignment="right" [allowEditing]="false" [calculateDisplayValue]="calculateBalanceDisplayValue" [visible]="cfoService.accessAllDepartments"></dxi-column>
         <dxi-column [width]="40" alignment="right" dataField="syncRef" [allowEditing]="false"
                     [visible]="allowUpdateAccount && (contextMenuItems && contextMenuItems.length)" cellTemplate="actionsTemplate"></dxi-column>
         <div *dxTemplate="let syncAccount of 'detail'">
