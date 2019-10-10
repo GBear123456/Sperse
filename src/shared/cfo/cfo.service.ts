@@ -85,7 +85,7 @@ export class CFOService extends CFOServiceBase {
     get isInstanceAdmin() {
         return this.checkMemberAccessPermission(
             'Manage.Administrate',
-            !isNaN(parseInt(this.instanceType)) || (this.instanceType == InstanceType.Main && this._permission.isGranted(AppPermissions.CFOMainInstanceAdmin))
+            !isNaN(parseInt(this.instanceType)) || (this.isMainInstanceType && this._permission.isGranted(AppPermissions.CFOMainInstanceAdmin))
         );
     }
 
@@ -98,7 +98,12 @@ export class CFOService extends CFOServiceBase {
     }
 
     get classifyTransactionsAllowed() {
-        return this.checkMemberAccessPermission('ClassifyTransaction', this.isInstanceAdmin);
+        return this.checkMemberAccessPermission('ClassifyTransaction', this.isInstanceAdmin && 
+            !this.isMainInstanceType || this._permission.isGranted(AppPermissions.CFOMainInstanceClassifyTransactions));
+    }
+
+    get accessAllDepartments() {
+        return !this.isMainInstanceType || this._permission.isGranted(AppPermissions.CFOMainInstanceAccessAllDepartments);
     }
 
     checkMemberAccessPermission(permission, defaultResult = true) {
@@ -145,16 +150,18 @@ export class CFOService extends CFOServiceBase {
     private updateMenuItems(disabled?: boolean) {
         setTimeout(() => {
             let menu = this._appService.topMenu;
-            menu && menu.items.forEach((item, i) => {
-                if (!i) {
-                    if (!this.hasStaticInstance)
-                        item.text = this._appLocalizationService.l(this.initialized ? 'Navigation_Dashboard'
-                            : 'Navigation_Setup', AppConsts.localization.CFOLocalizationSourceName);
-                } else if (i == 1) {
-                    item.disabled = disabled == undefined ? !this.initialized : disabled;
-                } else {
-                    item.disabled = disabled == undefined ? !this.hasTransactions : disabled;
-                }
+            menu && menu.items.forEach((item, index) => {
+                let uri = item.route.split('/').pop(),
+                    isAccounts = (uri == 'linkaccounts'),
+                    isStatements = (uri == 'statements');
+                if (index) {
+                    if (isAccounts || isStatements)
+                        item.visible = this.accessAllDepartments;
+                    item.disabled = disabled == undefined ? !(isAccounts 
+                        ? this.initialized : this.hasTransactions) : disabled;
+                } else if (!this.hasStaticInstance)
+                    item.text = this._appLocalizationService.l(this.initialized ? 'Navigation_Dashboard'
+                        : 'Navigation_Setup', AppConsts.localization.CFOLocalizationSourceName);
             });
         });
     }
