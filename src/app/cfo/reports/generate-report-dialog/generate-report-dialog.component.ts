@@ -17,6 +17,7 @@ import { IDialogButton } from '@root/shared/common/dialogs/modal/dialog-button.i
 import { ModalDialogComponent } from '@root/shared/common/dialogs/modal/modal-dialog.component';
 import { BankAccountsService } from '@root/shared/cfo/bank-accounts/helpers/bank-accounts.service';
 import {
+    DepartmentsServiceProxy,
     ReportsServiceProxy,
     GenerateInput,
     InstanceServiceProxy,
@@ -35,7 +36,7 @@ import { SendReportNotificationInput } from '@shared/service-proxies/service-pro
         '../report-dialog.less',
         'generate-report-dialog.component.less'
     ],
-    providers: [ ReportsServiceProxy ]
+    providers: [ DepartmentsServiceProxy, ReportsServiceProxy ]
 })
 export class GenerateReportDialogComponent implements OnInit {
     @ViewChild(DxTreeListComponent) treeList: DxTreeListComponent;
@@ -58,6 +59,7 @@ export class GenerateReportDialogComponent implements OnInit {
             disabled: true
         }
     ];
+    selectedDepartments = [];
     buttons: IDialogButton[] = this.initButtons;
     currentStep = GenerateReportStep.Step1;
     generateReportSteps = GenerateReportStep;
@@ -80,12 +82,15 @@ export class GenerateReportDialogComponent implements OnInit {
     sendReportInAttachments = false;
     emailRegEx = AppConsts.regexPatterns.email;
     dontSendEmailNotification = false;
+    departmentsEntities$ = this.departmentsProxy.getAccessibleDepartments(
+        this.cfoService.instanceType as InstanceType, this.cfoService.instanceId);
 
     private readonly BACK_BTN_INDEX = 0;
     private readonly NEXT_BTN_INDEX = 1;
 
     constructor(
         @Inject(MAT_DIALOG_DATA) public data: any,
+        private departmentsProxy: DepartmentsServiceProxy,
         private reportsProxy: ReportsServiceProxy,
         private notify: NotifyService,
         private store$: Store<RootStore.State>,
@@ -153,7 +158,7 @@ export class GenerateReportDialogComponent implements OnInit {
         if (this.currentStep == GenerateReportStep.Step2) {
             this.applyBusinessEntity();
         }
-        if (this.currentStep == GenerateReportStep.Step3) {
+        if (this.currentStep == GenerateReportStep.Step4) {
             this.applyDateRange();
         }
         this.processStep();
@@ -163,17 +168,14 @@ export class GenerateReportDialogComponent implements OnInit {
         this.buttons = this.initButtons;
         if (this.currentStep == GenerateReportStep.Step1) {
             this.title = this.ls.l('SelectBusinessEntity');
-            this.buttons[this.NEXT_BTN_INDEX].title = this.ls.l('Next');
-            this.buttons[this.NEXT_BTN_INDEX].action = this.next.bind(this);
             this.buttons[this.BACK_BTN_INDEX].disabled = true;
-        }
-        if (this.currentStep == GenerateReportStep.Step2) {
-            this.title = this.ls.l('SelectDateRange');
-            this.buttons[this.NEXT_BTN_INDEX].title = this.ls.l('Next');
-            this.buttons[this.NEXT_BTN_INDEX].action = this.next.bind(this);
+        } else if (this.currentStep == GenerateReportStep.Step2) {
+            this.title = this.ls.l('SelectDepartments');
             this.buttons[this.BACK_BTN_INDEX].disabled = false;
-        }
-        if (this.currentStep == GenerateReportStep.Step3) {
+        } else if (this.currentStep == GenerateReportStep.Step3) {
+            this.title = this.ls.l('SelectDateRange');
+            this.buttons[this.BACK_BTN_INDEX].disabled = false;
+        } else if (this.currentStep == GenerateReportStep.Step4) {
             this.title = this.ls.l('ReportGenerationOptions');
             this.buttons = null;
         }
@@ -195,13 +197,8 @@ export class GenerateReportDialogComponent implements OnInit {
         return this.notificationToEmailTextBox && this.notificationToEmailTextBox.instance && this.notificationToEmailTextBox.instance.option('isValid');
     }
 
-    editDate() {
-        this.currentStep = GenerateReportStep.Step2;
-        this.processStep();
-    }
-
-    editBusinessEntities() {
-        this.currentStep = GenerateReportStep.Step1;
+    editStep(step: GenerateReportStep) {
+        this.currentStep = step;
         this.processStep();
     }
 

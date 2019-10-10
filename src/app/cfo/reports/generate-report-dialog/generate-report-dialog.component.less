@@ -1,7 +1,7 @@
 :host {
     height: calc(100% - 85px);
     display: block;
-    .step1-container, .step3-container {
+    .step1-container, .step2-container, .step3-container {
         height: 100%;
         padding: 20px 30px 30px 30px;
 
@@ -27,13 +27,21 @@
     }
 
     .step2-container {
+        /deep/ dx-list {
+            .dx-list-select-all-label {
+                line-height: 24px;
+            }
+        }
+    }
+
+    .step3-container {
         padding-top: 30px;
         margin-left: auto;
         margin-right: auto;
         width: 380px;
     }
 
-    .step3-container {
+    .step4-container {
         padding-right: 61px;
         .container .row {
 
