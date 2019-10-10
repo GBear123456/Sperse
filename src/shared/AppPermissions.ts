@@ -98,8 +98,6 @@ export enum AppPermissions {
     PFMApplicationsSendOfferAnnouncements = 'Pages.PFM.Applications.SendOfferAnnouncements',
     CFO = 'Pages.CFO',
     CFOMainInstanceAccess = 'Pages.CFO.MainInstanceAccess',
-    CFOMainInstanceAccessAllDepartments = 'Pages.CFO.MainInstanceAccess.AccessAllDepartments',
-    CFOMainInstanceClassifyTransactions = 'Pages.CFO.MainInstanceAccess.ClassifyTransactions',
     CFOMainInstanceAdmin = 'Pages.CFO.MainInstanceAdmin',
     CFOMainInstanceAccessClassifyTransactions = 'Pages.CFO.MainInstanceAccess.ClassifyTransactions',
     CFOMainInstanceAccessAccessAllDepartments = 'Pages.CFO.MainInstanceAccess.AccessAllDepartments',
