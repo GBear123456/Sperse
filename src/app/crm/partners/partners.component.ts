@@ -12,7 +12,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import 'devextreme/data/odata/store';
 import { Store, select } from '@ngrx/store';
-import { takeUntil } from 'rxjs/operators';
+import { Observable, combineLatest } from 'rxjs';
+import { filter, startWith, takeUntil } from 'rxjs/operators';
 import * as _ from 'underscore';
 
 /** Application imports */
@@ -48,7 +49,6 @@ import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calenda
 import { FilterCheckBoxesComponent } from '@shared/filters/check-boxes/filter-check-boxes.component';
 import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-boxes.model';
 import { FilterRangeComponent } from '@shared/filters/range/filter-range.component';
-import { FilterHelpers } from '@app/crm/shared/helpers/filter.helper';
 import { DataLayoutType } from '@app/shared/layout/data-layout-type';
 import {
     ContactStatusDto,
@@ -72,8 +72,11 @@ import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/life
 import { DataGridHelper } from '@app/crm/shared/helpers/data-grid.helper';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { PivotGridComponent } from '@app/shared/common/slice/pivot-grid/pivot-grid.component';
-import { Observable } from '@node_modules/rxjs';
 import { CrmService } from '@app/crm/crm.service';
+import { InfoItem } from '@app/shared/common/slice/info/info-item.model';
+import DataSource from '@root/node_modules/devextreme/data/data_source';
+import { ChartComponent } from '@app/shared/common/slice/chart/chart.component';
+import { ImageFormat } from '@shared/common/export/image-format.enum';
 
 @Component({
     templateUrl: './partners.component.html',
@@ -90,10 +93,12 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     @ViewChild(RatingComponent) ratingComponent: RatingComponent;
     @ViewChild(StarsListComponent) starsListComponent: StarsListComponent;
     @ViewChild('statusesList') statusComponent: StaticListComponent;
-    @ViewChild(PivotGridComponent) slicePivotGridComponent: PivotGridComponent;
+    @ViewChild(PivotGridComponent) pivotGridComponent: PivotGridComponent;
+    @ViewChild(ChartComponent) chartComponent: ChartComponent;
 
     private dataLayoutType: DataLayoutType = DataLayoutType.DataGrid;
     private readonly dataSourceURI = 'Partner';
+    private readonly groupDataSourceURI = 'PartnerSlice';
     private filters: FilterModel[];
     private rootComponent: any;
     private subRouteParams: any;
@@ -219,6 +224,21 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     sliceStorageKey = 'CRM_Partners_Slice_' + this.sessionService.tenantId + '_' + this.sessionService.userId;
     private filterChanged = false;
     contentHeight$: Observable<number> = this.crmService.contentHeight$;
+    contentWidth$: Observable<number> = this.crmService.contentWidth$;
+    chartInfoItems: InfoItem[];
+    chartDataSource = new DataSource({
+        key: 'id',
+        load: () => {
+            return this.crmService.loadSliceChartData(
+                this.getODataUrl(this.groupDataSourceURI),
+                this.filters,
+                this.chartComponent.summaryBy.value
+            ).then((result) => {
+                this.chartInfoItems = result.infoItems;
+                return result.items;
+            });
+        }
+    });
 
     constructor(
         injector: Injector,
@@ -268,6 +288,15 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         this.getStatuses();
         this.getPartnerTypes();
         this.getOrganizationUnits();
+        combineLatest(
+            this.chartComponent.summaryBy$,
+            this.filtersService.filterChanged$.pipe(startWith(null))
+        ).pipe(
+            takeUntil(this.lifeCycleSubjectsService.destroy$),
+            filter(() => this.showChart)
+        ).subscribe(() => {
+            this.chartDataSource.load();
+        });
         this.activate();
     }
 
@@ -338,7 +367,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
             { queryParams: { referrer: 'app/crm/partners'} });
     }
 
-    toggleDataLayout(dataLayoutType) {
+    toggleDataLayout(dataLayoutType: DataLayoutType) {
         this.dataLayoutType = dataLayoutType;
         this.initDataSource();
         this.initToolbarConfig();
@@ -349,9 +378,12 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
             this.filterChanged = false;
             setTimeout(() => {
                 if (this.showPivotGrid) {
-                    this.slicePivotGridComponent.pivotGrid.instance.updateDimensions();
+                    this.pivotGridComponent.pivotGrid.instance.updateDimensions();
+                } else if (this.showChart) {
+                    this.chartDataSource.load();
+                } else {
+                    this.processFilterInternal();
                 }
-                this.processFilterInternal();
             });
         }
     }
@@ -643,20 +675,45 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                             hint: this.l('Download'),
                             items: [
                                 {
-                                    action: Function(),
+                                    action: this.downloadImage.bind(this, ImageFormat.PDF),
                                     text: this.l('Save as PDF'),
-                                    icon: 'pdf',
+                                    icon: 'pdf'
+                                },
+                                {
+                                    action: this.downloadImage.bind(this, ImageFormat.PNG),
+                                    text: this.l('Save as PNG'),
+                                    icon: 'png',
+                                    visible: this.showChart
+                                },
+                                {
+                                    action: this.downloadImage.bind(this, ImageFormat.JPEG),
+                                    text: this.l('Save as JPEG'),
+                                    icon: 'jpg',
+                                    visible: this.showChart
+                                },
+                                {
+                                    action: this.downloadImage.bind(this, ImageFormat.SVG),
+                                    text: this.l('Save as SVG'),
+                                    icon: 'svg',
+                                    visible: this.showChart
+                                },
+                                {
+                                    action: this.downloadImage.bind(this, ImageFormat.GIF),
+                                    text: this.l('Save as GIF'),
+                                    icon: 'gif',
+                                    visible: this.showChart
                                 },
                                 {
                                     action: () => {
                                         if (this.dataLayoutType === DataLayoutType.PivotGrid) {
-                                            this.slicePivotGridComponent.pivotGrid.instance.exportToExcel();
+                                            this.pivotGridComponent.pivotGrid.instance.exportToExcel();
                                         } else if (this.dataLayoutType === DataLayoutType.DataGrid) {
                                             this.exportToXLS.bind(this);
                                         }
                                     },
                                     text: this.l('Export to Excel'),
                                     icon: 'xls',
+                                    visible: this.showDataGrid || this.showPivotGrid
                                 },
                                 {
                                     action: this.exportToCSV.bind(this),
@@ -706,6 +763,13 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                         options: {
                             checkPressed: () => this.showPivotGrid
                         }
+                    },
+                    {
+                        name: 'chart',
+                        action: this.toggleDataLayout.bind(this, DataLayoutType.Chart),
+                        options: {
+                            checkPressed: () => this.showChart
+                        }
                     }
                 ]
             },
@@ -753,48 +817,22 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         this.starsListComponent.toggle();
     }
 
-    filterByStates(filter: FilterModel) {
-        return FilterHelpers.filterByStates(filter);
-    }
-
-    filterByStatus(filter: FilterModel) {
-        return FilterHelpers.filterBySetOfValues(filter);
-    }
-
-    filterByType(filter: FilterModel) {
-        return FilterHelpers.filterBySetOfValues(filter);
-    }
-
-    filterByAssignedUser(filter: FilterModel) {
-        return FilterHelpers.filterBySetOfValues(filter);
-    }
-
-    filterByOrganizationUnitId(filter: FilterModel) {
-        return FilterHelpers.filterBySetOfValues(filter);
-    }
-
-    filterByList(filter: FilterModel) {
-        return FilterHelpers.filterBySetOfValues(filter);
-    }
-
-    filterByTag(filter: FilterModel) {
-        return FilterHelpers.filterBySetOfValues(filter);
-    }
-
-    filterByRating(filter: FilterModel) {
-        return FilterHelpers.filterByRating(filter);
-    }
-
-    filterByStar(filter: FilterModel) {
-        return FilterHelpers.filterBySetOfValues(filter);
-    }
-
     get showDataGrid(): boolean {
         return this.dataLayoutType === DataLayoutType.DataGrid;
     }
 
     get showPivotGrid(): boolean {
         return this.dataLayoutType === DataLayoutType.PivotGrid;
+    }
+
+    get showChart(): boolean {
+        return this.dataLayoutType === DataLayoutType.Chart;
+    }
+
+    private downloadImage(format: ImageFormat) {
+        if (this.showChart) {
+            this.chartComponent.exportTo(format);
+        }
     }
 
     searchValueChange(e: object) {
@@ -807,15 +845,10 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
 
     processFilterInternal() {
         this.processODataFilter(
-            this.showPivotGrid ? this.slicePivotGridComponent.pivotGrid.instance : this.dataGrid.instance,
+            this.showPivotGrid ? this.pivotGridComponent.pivotGrid.instance : this.dataGrid.instance,
             this.dataSourceURI,
             this.filters,
-            (filter) => {
-                let filterMethod = this['filterBy' +
-                    this.capitalize(filter.caption)];
-                if (filterMethod)
-                    return filterMethod.call(this, filter);
-            }
+            this.filtersService.getCheckCustom
         );
     }
 
@@ -824,6 +857,8 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
             this.setDataGridInstance();
         } else if (this.showPivotGrid) {
             this.setPivotGridInstance();
+        } else if (this.showChart) {
+            this.setChartInstance();
         }
     }
 
@@ -835,11 +870,14 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         }
     }
 
-    setPivotGridInstance() {
-        let instance = this.slicePivotGridComponent && this.slicePivotGridComponent.pivotGrid && this.slicePivotGridComponent.pivotGrid.instance;
-        if (instance && !instance.option('dataSource')) {
-            instance.option('dataSource', this.pivotGridDataSource);
-        }
+    private setPivotGridInstance() {
+        const pivotGridInstance = this.pivotGridComponent && this.pivotGridComponent.pivotGrid && this.pivotGridComponent.pivotGrid.instance;
+        CrmService.setDataSourceToComponent(this.pivotGridDataSource, pivotGridInstance);
+    }
+
+    private setChartInstance() {
+        const chartInstance = this.chartComponent && this.chartComponent.chart && this.chartComponent.chart.instance;
+        CrmService.setDataSourceToComponent(this.chartDataSource, chartInstance);
     }
 
     getOrganizationUnitName = (e) => {

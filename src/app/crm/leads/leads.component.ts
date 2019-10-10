@@ -34,7 +34,6 @@ import {
 import { OrganizationUnitsStoreSelectors, PipelinesStoreSelectors } from '@app/crm/store';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { FiltersService } from '@shared/filters/filters.service';
-import { FilterHelpers } from '../shared/helpers/filter.helper';
 import { FilterModel } from '@shared/filters/models/filter.model';
 import { FilterItemModel } from '@shared/filters/models/filter-item.model';
 import { FilterInputsComponent } from '@shared/filters/inputs/filter-inputs.component';
@@ -178,7 +177,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             if (loadOptions.skip !== undefined) {
                 params['skip'] = loadOptions.skip;
             }
-            const filter = this.oDataService.getODataFilter(this.filters, this.getCheckCustom);
+            const filter = this.oDataService.getODataFilter(this.filters, this.filtersService.getCheckCustom);
             if (filter) {
                 params['$filter'] = filter;
             }
@@ -199,14 +198,14 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         fields: [
             {
                 area: 'row',
-                dataField: 'CountryId',
+                dataField: 'Country',
                 name: 'country',
                 expanded: true,
                 sortBy: 'displayText'
             },
             {
                 area: 'row',
-                dataField: 'StateId',
+                dataField: 'State',
                 name: 'state',
                 sortBy: 'displayText'
             },
@@ -327,14 +326,14 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             'ChannelCode',
             'City',
             'CompanyName',
-            'CountryId',
+            'Country',
             'CreationTime',
             'EntryUrl',
             'Industry',
             'Rating',
             'SourceCode',
             'Stage',
-            'StateId',
+            'State',
             'StreetAddress',
             'Title',
             'Website',
@@ -345,56 +344,20 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     chartDataSource = new DataSource({
         key: 'id',
         load: () => {
-            const params = {
-                contactGroupId: this.contactGroupId.value.toString(),
-                group: `[{"selector":"CreationTime","groupInterval":"${this.chartComponent.summaryBy.value}","isExpanded":false,"desc":true}]`,
-                groupSummary: '[{"selector":"CreationTime","summaryType":"min"}]'
-            };
-            const filter = this.oDataService.getODataFilter(this.filters, this.getCheckCustom);
-            if (filter) {
-                params['$filter'] = filter;
-            }
-            return this.http.get(this.getODataUrl(this.groupDataSourceURI), {
-                headers: new HttpHeaders({
-                    'Authorization': 'Bearer ' + abp.auth.getToken()
-                }),
-                params: params
-            }).toPromise().then((contacts: any) => {
-                const avgGroupValue = contacts.totalCount ? (contacts.totalCount / contacts.data.length).toFixed(2) : 0;
-                let minGroupValue, maxGroupValue;
-                const result = contacts.data.map(contact => {
-                    minGroupValue = !minGroupValue || contact.count < minGroupValue ? contact.count : minGroupValue;
-                    maxGroupValue = !maxGroupValue || contact.count > maxGroupValue ? contact.count : maxGroupValue;
-                    return {
-                        creationDate: contact.summary[0],
-                        count: contact.count
-                    };
-                });
-                this.chartInfoItems = [
-                    {
-                        label: this.l('Totals'),
-                        value: contacts.totalCount
-                    },
-                    {
-                        label: this.l('Average'),
-                        value: avgGroupValue
-                    },
-                    {
-                        label: this.l('Lowest'),
-                        value: minGroupValue || 0
-                    },
-                    {
-                        label: this.l('Highest'),
-                        value: maxGroupValue || 0
-                    }
-                ];
-                return result;
+            return this.crmService.loadSliceChartData(
+                this.getODataUrl(this.groupDataSourceURI),
+                this.filters,
+                this.chartComponent.summaryBy.value,
+                { contactGroupId: this.contactGroupId.value.toString() }
+            ).then((result) => {
+                this.chartInfoItems = result.infoItems;
+                return result.items;
             });
         }
     });
     odataFilter$: Observable<string> = this.filtersService.filterChanged$.pipe(
-        startWith(() => this.oDataService.getODataFilter(this.filters, this.getCheckCustom)),
-        map(() => this.oDataService.getODataFilter(this.filters, this.getCheckCustom))
+        startWith(() => this.oDataService.getODataFilter(this.filters, this.filtersService.getCheckCustom)),
+        map(() => this.oDataService.getODataFilter(this.filters, this.filtersService.getCheckCustom))
     );
     mapDataIsLoading = false;
     contactsData$: Observable<any> = combineLatest(
@@ -513,12 +476,6 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             }
         };
         this.searchValue = '';
-    }
-
-    private static setDataSourceToComponent(dataSource: any, componentInstance: any) {
-        if (componentInstance && !componentInstance.option('dataSource')) {
-            componentInstance.option('dataSource', dataSource);
-        }
     }
 
     ngOnInit() {
@@ -1013,7 +970,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                                     }),
                                     text: this.l('Export to Excel'),
                                     icon: 'xls',
-                                    visible: !(this.showChart || this.showMap)
+                                    visible: this.showDataGrid || this.showPipeline || this.showPivotGrid
                                 },
                                 {
                                     action: this.exportData.bind(this, options => this.exportToCSV(options)),
@@ -1163,46 +1120,6 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         this.dataGrid.instance.updateDimensions();
     }
 
-    filterByStages(filter: FilterModel) {
-        let data = {};
-        if (filter.items.element) {
-            let filterData = FilterHelpers.ParsePipelineIds(filter.items.element.value);
-            data = {
-                or: filterData
-            };
-        }
-
-        return data;
-    }
-
-    filterByStates(filter: FilterModel) {
-        return FilterHelpers.filterByStates(filter);
-    }
-
-    filterByAssignedUser(filter: FilterModel) {
-        return FilterHelpers.filterBySetOfValues(filter);
-    }
-
-    filterByOrganizationUnitId(filter: FilterModel) {
-        return FilterHelpers.filterBySetOfValues(filter);
-    }
-
-    filterByList(filter: FilterModel) {
-        return FilterHelpers.filterBySetOfValues(filter);
-    }
-
-    filterByTag(filter: FilterModel) {
-        return FilterHelpers.filterBySetOfValues(filter);
-    }
-
-    filterByRating(filter: FilterModel) {
-        return FilterHelpers.filterByRating(filter);
-    }
-
-    filterByStar(filter: FilterModel) {
-        return FilterHelpers.filterBySetOfValues(filter);
-    }
-
     searchValueChange(e: object) {
         if (this.filterChanged = (this.searchValue != e['value'])) {
             this.searchValue = e['value'];
@@ -1225,16 +1142,10 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     this.showPivotGrid ? this.pivotGridComponent.pivotGrid.instance : this.dataGrid.instance,
                     this.dataSourceURI,
                     this.filters,
-                    this.getCheckCustom
+                    this.filtersService.getCheckCustom
                 );
             }
         });
-    }
-
-    getCheckCustom = (filter: FilterModel) => {
-        let filterMethod = this['filterBy' + this.capitalize(filter.caption)];
-        if (filterMethod)
-            return filterMethod.call(this, filter);
     }
 
     initDataSource() {
@@ -1260,12 +1171,12 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
 
     private setPivotGridInstance() {
         const pivotGridInstance = this.pivotGridComponent && this.pivotGridComponent.pivotGrid && this.pivotGridComponent.pivotGrid.instance;
-        LeadsComponent.setDataSourceToComponent(this.pivotGridDataSource, pivotGridInstance);
+        CrmService.setDataSourceToComponent(this.pivotGridDataSource, pivotGridInstance);
     }
 
     private setChartInstance() {
         const chartInstance = this.chartComponent && this.chartComponent.chart && this.chartComponent.chart.instance;
-        LeadsComponent.setDataSourceToComponent(this.chartDataSource, chartInstance);
+        CrmService.setDataSourceToComponent(this.chartDataSource, chartInstance);
     }
 
     createLead() {

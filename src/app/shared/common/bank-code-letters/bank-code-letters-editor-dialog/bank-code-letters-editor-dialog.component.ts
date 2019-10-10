@@ -6,12 +6,16 @@ import {
     EventEmitter,
     Inject,
     ElementRef,
-    ChangeDetectorRef
+    ChangeDetectorRef,
+    OnDestroy,
+    OnInit
 } from '@angular/core';
 
 /** Third party imports */
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { Subscription } from 'rxjs';
 import { finalize } from 'rxjs/operators';
+import { DragulaService } from 'ng2-dragula';
 
 /** Application imports */
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -27,10 +31,18 @@ import { BankCodeLetter } from '@app/shared/common/bank-code-letters/bank-code-l
     styleUrls: ['./bank-code-letters-editor-dialog.component.less'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class BankCodeLettersEditorDialogComponent {
+export class BankCodeLettersEditorDialogComponent implements OnInit, OnDestroy {
+    @Output() bankCodeChange: EventEmitter<string> = new EventEmitter<string>();
     bankCode: string;
     personId: number;
-    @Output() bankCodeChange: EventEmitter<string> = new EventEmitter<string>();
+    dragDropSubscription: Subscription = new Subscription();
+    bankCodeDefinitions: BankCodeDefinition[] = [
+        { letter: BankCodeLetter.B, name: this.ls.l('Blueprint') },
+        { letter: BankCodeLetter.A, name: this.ls.l('Action') },
+        { letter: BankCodeLetter.N, name: this.ls.l('Nurturing') },
+        { letter: BankCodeLetter.K, name: this.ls.l('Knowledge') }
+    ];
+    dragDropName = 'bankCodeDefinitions';
 
     constructor(
         private ls: AppLocalizationService,
@@ -38,40 +50,53 @@ export class BankCodeLettersEditorDialogComponent {
         private loadingService: LoadingService,
         private personContactServiceProxy: PersonContactServiceProxy,
         private changeDetectorRef: ChangeDetectorRef,
+        private dragulaService: DragulaService,
         public bankCodeService: BankCodeService,
         @Inject(MAT_DIALOG_DATA) data: any
     ) {
         this.bankCode = data.bankCode;
+        this.resortDefinitions();
         this.personId = data.personId;
     }
 
-    bankCodeDefinitions: BankCodeDefinition[] = [
-        { letter: BankCodeLetter.B, name: this.ls.l('Blueprint') },
-        { letter: BankCodeLetter.A, name: this.ls.l('Action') },
-        { letter: BankCodeLetter.N, name: this.ls.l('Nurturing') },
-        { letter: BankCodeLetter.K, name: this.ls.l('Knowledge') }
-    ];
-
-    isActive(bankCodeDefinition: BankCodeDefinition, i: number): boolean {
-        return bankCodeDefinition.letter.toString() === this.bankCode[i];
+    ngOnInit() {
+        this.dragDropSubscription.add(this.dragulaService.drop.subscribe((dropObject) => {
+            const name = dropObject[1].getAttribute('definitionLetter');
+            const el = dropObject[1];
+            const newIndex = Array.prototype.indexOf.call(dropObject[2].children, el);
+            this.changeBankCode(name, newIndex);
+        }));
+        this.dragDropSubscription.add(this.dragulaService.setOptions(this.dragDropName, {
+            direction: 'horizontal'
+        }));
     }
 
-    changeBankCode(bankCodeDefinition: BankCodeDefinition, i: number) {
-        if (this.isActive(bankCodeDefinition, i)) {
-            return;
-        }
+    changeBankCode(bankCodeDefinitionLetter: BankCodeLetter, i: number) {
         this.loadingService.startLoading(this.elementRef.nativeElement);
         const oldDefinitionLetter = this.bankCode[i];
-        const newBankCode = this.swap(this.bankCode, bankCodeDefinition.letter.toString(), oldDefinitionLetter);
+        const newBankCode = this.swap(this.bankCode, bankCodeDefinitionLetter.toString(), oldDefinitionLetter);
         this.personContactServiceProxy.updatePersonBANKCode(new UpdatePersonBANKCodeInput({
             id: this.personId,
             bankCode: newBankCode
         })).pipe(
             finalize(() => this.loadingService.finishLoading(this.elementRef.nativeElement))
-        ).subscribe(() => {
-            this.bankCode = newBankCode;
-            this.bankCodeChange.emit(this.bankCode);
-            this.changeDetectorRef.detectChanges();
+        ).subscribe(
+            () => {
+                this.bankCode = newBankCode;
+                this.bankCodeChange.emit(this.bankCode);
+                this.changeDetectorRef.detectChanges();
+            },
+            () => this.resortDefinitions
+        );
+    }
+
+    private resortDefinitions() {
+        this.bankCodeDefinitions.sort((definitionA: BankCodeDefinition, definitionB: BankCodeDefinition) => {
+            const definitionAIndex = this.bankCode.indexOf(definitionA.letter);
+            const definitionBIndex = this.bankCode.indexOf(definitionB.letter);
+            return definitionAIndex > definitionBIndex
+                ? 1
+                : (definitionAIndex === definitionBIndex ? 0 : -1);
         });
     }
 
@@ -82,6 +107,11 @@ export class BankCodeLettersEditorDialogComponent {
         arr[firstIndex] = last;
         arr[lastIndex] = first;
         return arr.join('');
+    }
+
+    ngOnDestroy() {
+        this.dragDropSubscription.unsubscribe();
+        this.dragulaService.destroy(this.dragDropName);
     }
 
 }

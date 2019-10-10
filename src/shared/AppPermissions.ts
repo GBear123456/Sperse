@@ -101,6 +101,8 @@ export enum AppPermissions {
     CFOMainInstanceAccessAllDepartments = 'Pages.CFO.MainInstanceAccess.AccessAllDepartments',
     CFOMainInstanceClassifyTransactions = 'Pages.CFO.MainInstanceAccess.ClassifyTransactions',
     CFOMainInstanceAdmin = 'Pages.CFO.MainInstanceAdmin',
+    CFOMainInstanceAccessClassifyTransactions = 'Pages.CFO.MainInstanceAccess.ClassifyTransactions',
+    CFOMainInstanceAccessAccessAllDepartments = 'Pages.CFO.MainInstanceAccess.AccessAllDepartments',
     CFOMembersAdministration = 'Pages.CFO.MembersAdministration',
     CFOMembersAdministrationAllMemberInstancesAdmin = 'Pages.CFO.MembersAdministration.AllMemberInstancesAdmin',
     CFOMembersAdministrationNewMemberRegistration = 'Pages.CFO.MembersAdministration.NewMemberRegistration',

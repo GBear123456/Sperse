@@ -123,6 +123,15 @@
                           [height]="contentHeight$ | async">
         </slice-pivot-grid>
     </div>
+    <div [hidden]="!showChart">
+        <slice-chart [width]="contentWidth$ | async"
+                     [height]="contentHeight$ | async"
+                     [infoItems]="chartInfoItems"
+                     [title]="l('CustomersNumber')"
+                     argumentField="creationDate"
+                     valueField="count">
+        </slice-chart>
+    </div>
 </div>
 
 <app-no-data
