@@ -1,6 +1,5 @@
 /** Core imports */
 import { Component, OnInit, OnDestroy, Injector, ViewChild } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { RouteReuseStrategy } from '@angular/router';
 
 /** Third party imports */
@@ -157,18 +156,24 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         }
     ];
     permissions = AppPermissions;
-    private pivotGridDataSourceConfig = {
+    pivotGridDataSource = {
+        remoteOperations: true,
+        load: (loadOptions) => this.crmService.loadPivotGridData(
+            this.getODataUrl(this.groupDataSourceURI),
+            this.filters,
+            loadOptions
+        ),
         fields: [
             {
                 area: 'row',
-                dataField: 'CountryId',
+                dataField: 'Country',
                 name: 'country',
                 expanded: true,
                 sortBy: 'displayText'
             },
             {
                 area: 'row',
-                dataField: 'StateId',
+                dataField: 'State',
                 name: 'state',
                 sortBy: 'displayText'
             },
@@ -232,15 +237,15 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             'BankCode',
             'City',
             'CompanyName',
-            'CountryId',
+            'Country',
             'CreationTime',
             'Rating',
-            'StateId',
+            'State',
             'Status',
             'ZipCode'
         ]
     };
-    pivotGridDataSource: any;
+
     chartInfoItems: InfoItem[];
     chartDataSource = new DataSource({
         key: 'id',
@@ -275,7 +280,6 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         private impersonationService: ImpersonationService,
         private sessionService: AppSessionService,
         private crmService: CrmService,
-        private http: HttpClient,
         public dialog: MatDialog,
         public appService: AppService,
         public contactProxy: ContactServiceProxy,
@@ -298,10 +302,6 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                     request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
                 }
             }
-        };
-        this.pivotGridDataSource = {
-            ...this.dataSource,
-            ...this.pivotGridDataSourceConfig
         };
         this.searchValue = '';
         this.pipelineService.stageChange.asObservable().subscribe((lead) => {
@@ -374,12 +374,6 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         this.lifeCycleSubjectsService.activate$.pipe(first()).subscribe(() => {
             this.refresh(false);
         });
-    }
-
-    getCheckCustom = (filter: FilterModel) => {
-        let filterMethod = this['filterBy' + this.capitalize(filter.caption)];
-        if (filterMethod)
-            return filterMethod.call(this, filter);
     }
 
     createClient() {

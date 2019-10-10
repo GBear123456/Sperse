@@ -11,7 +11,8 @@ export class AppHttpInterceptor extends AbpHttpInterceptor {
     private readonly EXCEPTION_KEYS = [
         'CFO_BankAccounts_GetStats',
         'CFO_Dashboard_GetCategorizationStatus',
-        'odata_LeadSlice'
+        'odata_LeadSlice',
+        'odata_CustomerSlice'
     ];
 
     constructor(public configuration: AppHttpConfiguration) {

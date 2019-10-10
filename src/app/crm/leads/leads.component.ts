@@ -162,39 +162,12 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     permissions = AppPermissions;
     pivotGridDataSource = {
         remoteOperations: true,
-        load: (loadOptions) => {
-            let d = $.Deferred();
-            const params = {
-                contactGroupId: this.contactGroupId.value.toString(),
-                group: loadOptions.group ? JSON.stringify(loadOptions.group) : '',
-                filter: loadOptions.filter ? JSON.stringify(loadOptions.filter) : '',
-                totalSummary: loadOptions.totalSummary ? JSON.stringify(loadOptions.totalSummary) : '',
-                groupSummary: loadOptions.groupSummary ? JSON.stringify(loadOptions.groupSummary) : ''
-            };
-            if (loadOptions.take !== undefined) {
-                params['take'] = loadOptions.take;
-            }
-            if (loadOptions.skip !== undefined) {
-                params['skip'] = loadOptions.skip;
-            }
-            const filter = this.oDataService.getODataFilter(this.filters, this.filtersService.getCheckCustom);
-            if (filter) {
-                params['$filter'] = filter;
-            }
-            this.http.get(this.getODataUrl(this.groupDataSourceURI), {
-                params: params,
-                headers: new HttpHeaders({
-                    'Authorization': 'Bearer ' + abp.auth.getToken()
-                })
-            }).subscribe((result) => {
-                if ('data' in result) {
-                    d.resolve(result['data'], { summary: result['summary'] });
-                } else {
-                    d.resolve(result);
-                }
-            });
-            return d.promise();
-        },
+        load: (loadOptions) => this.crmService.loadPivotGridData(
+            this.getODataUrl(this.groupDataSourceURI),
+            this.filters,
+            loadOptions,
+            { contactGroupId: this.contactGroupId.value.toString() },
+        ),
         fields: [
             {
                 area: 'row',
