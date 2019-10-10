@@ -157,7 +157,7 @@ export class CFOService extends CFOServiceBase {
                 if (index) {
                     if (isAccounts || isStatements)
                         item.visible = this.accessAllDepartments;
-                    item.disabled = isNaN(disabled) ? !(isAccounts 
+                    item.disabled = disabled == undefined ? !(isAccounts 
                         ? this.initialized : this.hasTransactions) : disabled;
                 } else if (!this.hasStaticInstance)
                     item.text = this._appLocalizationService.l(this.initialized ? 'Navigation_Dashboard'
