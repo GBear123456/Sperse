@@ -99,11 +99,11 @@ export class CFOService extends CFOServiceBase {
 
     get classifyTransactionsAllowed() {
         return this.checkMemberAccessPermission('ClassifyTransaction', this.isInstanceAdmin && 
-            !this.isMainInstanceType || this._permission.isGranted(AppPermissions.CFOMainInstanceClassifyTransactions));
+            !this.isMainInstanceType || this._permission.isGranted(AppPermissions.CFOMainInstanceAccessClassifyTransactions));
     }
 
     get accessAllDepartments() {
-        return !this.isMainInstanceType || this._permission.isGranted(AppPermissions.CFOMainInstanceAccessAllDepartments);
+        return !this.isMainInstanceType || this._permission.isGranted(AppPermissions.CFOMainInstanceAccessAccessAllDepartments);
     }
 
     checkMemberAccessPermission(permission, defaultResult = true) {
