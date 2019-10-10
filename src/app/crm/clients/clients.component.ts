@@ -72,6 +72,10 @@ import DataSource from '@root/node_modules/devextreme/data/data_source';
 import { InfoItem } from '@app/shared/common/slice/info/info-item.model';
 import { ChartComponent } from '@app/shared/common/slice/chart/chart.component';
 import { ImageFormat } from '@shared/common/export/image-format.enum';
+import { map, mapTo, publishReplay, refCount, switchMap, tap } from '@node_modules/rxjs/operators';
+import { MapData } from '@app/shared/common/slice/map/map-data.model';
+import { BehaviorSubject } from '@node_modules/rxjs';
+import { MapComponent } from '@app/shared/common/slice/map/map.component';
 
 @Component({
     templateUrl: './clients.component.html',
@@ -89,6 +93,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     @ViewChild(StaticListComponent) statusComponent: StaticListComponent;
     @ViewChild(PivotGridComponent) pivotGridComponent: PivotGridComponent;
     @ViewChild(ChartComponent) chartComponent: ChartComponent;
+    @ViewChild(MapComponent) mapComponent: MapComponent;
 
     private readonly MENU_LOGIN_INDEX = 1;
     private readonly dataSourceURI: string = 'Customer';
@@ -158,7 +163,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     permissions = AppPermissions;
     pivotGridDataSource = {
         remoteOperations: true,
-        load: (loadOptions) => this.crmService.loadPivotGridData(
+        load: (loadOptions) => this.crmService.loadSlicePivotGridData(
             this.getODataUrl(this.groupDataSourceURI),
             this.filters,
             loadOptions
@@ -245,6 +250,34 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             'ZipCode'
         ]
     };
+    private dataLayoutType: BehaviorSubject<DataLayoutType> = new BehaviorSubject(DataLayoutType.DataGrid);
+    dataLayoutType$: Observable<DataLayoutType> = this.dataLayoutType.asObservable();
+    private _refresh: BehaviorSubject<null> = new BehaviorSubject<null>(null);
+    private refresh$: Observable<null> = this._refresh.asObservable();
+    mapDataIsLoading = false;
+    odataFilter$: Observable<string> = this.filtersService.filterChanged$.pipe(
+        startWith(() => this.oDataService.getODataFilter(this.filters, this.filtersService.getCheckCustom)),
+        map(() => this.oDataService.getODataFilter(this.filters, this.filtersService.getCheckCustom))
+    );
+    contactsData$: Observable<any> = combineLatest(
+        this.odataFilter$,
+        this.refresh$
+    ).pipe(
+        tap(() => this.mapDataIsLoading = true),
+        switchMap((data) => this.showMap ? of(data) : this.dataLayoutType$.pipe(
+            filter((dataLayoutType: DataLayoutType) => dataLayoutType === DataLayoutType.Map),
+            mapTo(data)
+        )),
+        switchMap(([filter]: [any]) => this.crmService.loadSliceMapData(
+            this.getODataUrl(this.groupDataSourceURI),
+            filter
+        )),
+        publishReplay(),
+        refCount(),
+        tap(() => this.mapDataIsLoading = false)
+    );
+    mapData$: Observable<MapData> = this.crmService.getAdjustedMapData(this.contactsData$);
+    mapInfoItems$: Observable<InfoItem[]> = this.crmService.getMapInfoItems(this.contactsData$);
 
     chartInfoItems: InfoItem[];
     chartDataSource = new DataSource({
@@ -260,11 +293,11 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             });
         }
     });
-    dataLayoutType: DataLayoutType = DataLayoutType.DataGrid;
     sliceStorageKey = 'CRM_Clients_Slice_' + this.sessionService.tenantId + '_' + this.sessionService.userId;
     private filterChanged = false;
     contentWidth$: Observable<number> = this.crmService.contentWidth$;
     contentHeight$: Observable<number> = this.crmService.contentHeight$;
+    mapHeight$: Observable<number> = this.crmService.mapHeight$;
 
     constructor(
         injector: Injector,
@@ -364,7 +397,13 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     refresh(refreshDashboard = true) {
         if (this.dataGrid && this.dataGrid.instance)
             this.dependencyChanged = false;
-        this.processFilterInternal();
+        if (this.showDataGrid || this.showPivotGrid) {
+            this.processFilterInternal();
+        }
+        if (this.showChart) {
+            this.chartDataSource.load();
+        }
+        this._refresh.next(null);
         if (refreshDashboard) {
             (this.reuseService as CustomReuseStrategy).invalidate('dashboard');
         }
@@ -673,31 +712,31 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                                     action: this.downloadImage.bind(this, ImageFormat.PNG),
                                     text: this.l('Save as PNG'),
                                     icon: 'png',
-                                    visible: this.showChart
+                                    visible: this.showChart || this.showMap
                                 },
                                 {
                                     action: this.downloadImage.bind(this, ImageFormat.JPEG),
                                     text: this.l('Save as JPEG'),
                                     icon: 'jpg',
-                                    visible: this.showChart
+                                    visible: this.showChart || this.showMap
                                 },
                                 {
                                     action: this.downloadImage.bind(this, ImageFormat.SVG),
                                     text: this.l('Save as SVG'),
                                     icon: 'svg',
-                                    visible: this.showChart
+                                    visible: this.showChart || this.showMap
                                 },
                                 {
                                     action: this.downloadImage.bind(this, ImageFormat.GIF),
                                     text: this.l('Save as GIF'),
                                     icon: 'gif',
-                                    visible: this.showChart
+                                    visible: this.showChart || this.showMap
                                 },
                                 {
                                     action: () => {
-                                        if (this.dataLayoutType === DataLayoutType.PivotGrid) {
+                                        if (this.dataLayoutType.value === DataLayoutType.PivotGrid) {
                                             this.pivotGridComponent.pivotGrid.instance.exportToExcel();
-                                        } else if (this.dataLayoutType === DataLayoutType.DataGrid) {
+                                        } else if (this.dataLayoutType.value === DataLayoutType.DataGrid) {
                                             this.exportToXLS.bind(this);
                                         }
                                     },
@@ -760,6 +799,13 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                         options: {
                             checkPressed: () => this.showChart
                         }
+                    },
+                    {
+                        name: 'map',
+                        action: this.toggleDataLayout.bind(this, DataLayoutType.Map),
+                        options: {
+                            checkPressed: () => this.showMap
+                        }
                     }
                 ]
             },
@@ -806,12 +852,14 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     private downloadImage(format: ImageFormat) {
         if (this.showChart) {
             this.chartComponent.exportTo(format);
+        } else if (this.showMap) {
+            this.mapComponent.exportTo(format);
         }
     }
 
     toggleDataLayout(dataLayoutType: DataLayoutType) {
         this.selectedClientKeys = [];
-        this.dataLayoutType = dataLayoutType;
+        this.dataLayoutType.next(dataLayoutType);
         this.initDataSource();
         this.initToolbarConfig();
         if (this.showDataGrid) {
@@ -825,6 +873,8 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 }
                 if (this.showChart) {
                     this.chartDataSource.load();
+                } else if (this.showMap) {
+                    this._refresh.next(null);
                 } else {
                     this.processFilterInternal();
                 }
@@ -861,15 +911,19 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     }
 
     get showDataGrid(): boolean {
-        return this.dataLayoutType === DataLayoutType.DataGrid;
+        return this.dataLayoutType.value === DataLayoutType.DataGrid;
     }
 
     get showPivotGrid(): boolean {
-        return this.dataLayoutType === DataLayoutType.PivotGrid;
+        return this.dataLayoutType.value === DataLayoutType.PivotGrid;
     }
 
     get showChart(): boolean {
-        return this.dataLayoutType === DataLayoutType.Chart;
+        return this.dataLayoutType.value === DataLayoutType.Chart;
+    }
+
+    get showMap(): boolean {
+        return this.dataLayoutType.value === DataLayoutType.Map;
     }
 
     searchValueChange(e: object) {

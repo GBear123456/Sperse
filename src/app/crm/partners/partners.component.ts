@@ -134,7 +134,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     permissions = AppPermissions;
     pivotGridDataSource = {
         remoteOperations: true,
-        load: (loadOptions) => this.crmService.loadPivotGridData(
+        load: (loadOptions) => this.crmService.loadSlicePivotGridData(
             this.getODataUrl(this.groupDataSourceURI),
             this.filters,
             loadOptions

@@ -162,7 +162,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     permissions = AppPermissions;
     pivotGridDataSource = {
         remoteOperations: true,
-        load: (loadOptions) => this.crmService.loadPivotGridData(
+        load: (loadOptions) => this.crmService.loadSlicePivotGridData(
             this.getODataUrl(this.groupDataSourceURI),
             this.filters,
             loadOptions,
@@ -332,84 +332,36 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         startWith(() => this.oDataService.getODataFilter(this.filters, this.filtersService.getCheckCustom)),
         map(() => this.oDataService.getODataFilter(this.filters, this.filtersService.getCheckCustom))
     );
+    private _refresh: BehaviorSubject<null> = new BehaviorSubject<null>(null);
+    private refresh$: Observable<null> = this._refresh.asObservable();
     mapDataIsLoading = false;
     contactsData$: Observable<any> = combineLatest(
         this.contactGroupId$,
-        this.odataFilter$
+        this.odataFilter$,
+        this.refresh$
     ).pipe(
         tap(() => this.mapDataIsLoading = true),
         switchMap((data) => this.showMap ? of(data) : this.dataLayoutType$.pipe(
             filter((dataLayoutType: DataLayoutType) => dataLayoutType === DataLayoutType.Map),
             mapTo(data)
         )),
-        switchMap(([contactGroupId, filter]: [ContactGroup, any]) => {
-            const params = {
-                contactGroupId: contactGroupId.toString(),
-                group: `[{"selector":"StateId","isExpanded":false,"desc":true}]`,
-                groupSummary: '[{"selector":"CreationTime","summaryType":"min"}]'
-            };
-            if (filter) {
-                params['$filter'] = filter;
-            }
-            return this.http.get(this.getODataUrl(this.groupDataSourceURI), {
-                headers: new HttpHeaders({
-                    'Authorization': 'Bearer ' + abp.auth.getToken()
-                }),
-                params: params
-            });
-        }),
+        switchMap(([contactGroupId, filter]: [ContactGroup, any]) => this.crmService.loadSliceMapData(
+            this.getODataUrl(this.groupDataSourceURI),
+            filter,
+            { contactGroupId: contactGroupId.toString() }
+        )),
         publishReplay(),
-        refCount()
-    );
-    mapData$: Observable<MapData> = this.contactsData$.pipe(
-        map((contacts: any) => {
-            const data: MapData = {};
-            contacts.data.forEach(contact => {
-                data[contact.key] = {
-                    name: contact.key,
-                    total: contact.count
-                };
-            });
-            return data;
-        }),
+        refCount(),
         tap(() => this.mapDataIsLoading = false)
     );
-    mapInfoItems$: Observable<InfoItem[]> = this.contactsData$.pipe(
-        map((contacts: any) => {
-            const avgGroupValue = contacts.totalCount ? (contacts.totalCount / contacts.data.length).toFixed(0) : 0;
-            let minGroupValue, maxGroupValue;
-            contacts.data.forEach(contact => {
-                minGroupValue = !minGroupValue || contact.count < minGroupValue ? contact.count : minGroupValue;
-                maxGroupValue = !maxGroupValue || contact.count > maxGroupValue ? contact.count : maxGroupValue;
-            });
-            return [
-                {
-                    label: this.l('Totals'),
-                    value: contacts.totalCount
-                },
-                {
-                    label: this.l('Average'),
-                    value: avgGroupValue
-                },
-                {
-                    label: this.l('Lowest'),
-                    value: minGroupValue || 0
-                },
-                {
-                    label: this.l('Highest'),
-                    value: maxGroupValue || 0
-                }
-            ];
-        })
-    );
+    mapData$: Observable<MapData> = this.crmService.getAdjustedMapData(this.contactsData$);
+    mapInfoItems$: Observable<InfoItem[]> = this.crmService.getMapInfoItems(this.contactsData$);
 
     private readonly CONTACT_GROUP_CACHE_KEY = 'CONTACT_GROUP';
     private organizationUnits: OrganizationUnitDto[];
     contentWidth$: Observable<number> = this.crmService.contentWidth$;
     contentHeight$: Observable<number> = this.crmService.contentHeight$;
-    mapHeight$: Observable<number> = this.contentHeight$.pipe(
-        map((contentHeight) => contentHeight - 88)
-    );
+    mapHeight$: Observable<number> = this.crmService.mapHeight$;
 
     constructor(injector: Injector,
         private contactService: ContactsService,
@@ -574,6 +526,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         if (this.showChart) {
             this.chartDataSource.load();
         }
+        this._refresh.next(null);
         if (invalidateDashboard) {
             (this.reuseService as CustomReuseStrategy).invalidate('dashboard');
         }

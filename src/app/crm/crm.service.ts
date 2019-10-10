@@ -15,6 +15,7 @@ import { SummaryBy } from '@app/shared/common/slice/chart/summary-by.enum';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { InfoItem } from '@app/shared/common/slice/info/info-item.model';
 import { FilterModel } from '@shared/filters/models/filter.model';
+import { MapData } from '@app/shared/common/slice/map/map-data.model';
 
 @Injectable()
 export class CrmService {
@@ -38,6 +39,9 @@ export class CrmService {
         }
         return height;
     }));
+    mapHeight$: Observable<number> = this.contentHeight$.pipe(
+        map((contentHeight) => contentHeight - 88)
+    );
 
     constructor(
         private filtersService: FiltersService,
@@ -54,7 +58,7 @@ export class CrmService {
         }
     }
 
-    loadPivotGridData(sourceUri: string, filters: FilterModel[], loadOptions, params?: { [paramName: string]: string }) {
+    loadSlicePivotGridData(sourceUri: string, filters: FilterModel[], loadOptions, params?: { [paramName: string]: string }) {
         let d = $.Deferred();
         params = {
             group: loadOptions.group ? JSON.stringify(loadOptions.group) : '',
@@ -88,7 +92,7 @@ export class CrmService {
         return d.promise();
     }
 
-    loadSliceChartData(sourceURI: string, filters, summaryBy: SummaryBy, additionalParams?: { [name: string]: any}): Promise<{ items: any[], infoItems: InfoItem[] }> {
+    loadSliceChartData(sourceUri: string, filters, summaryBy: SummaryBy, additionalParams?: { [name: string]: any}): Promise<{ items: any[], infoItems: InfoItem[] }> {
         const params = {
             group: `[{"selector":"CreationTime","groupInterval":"${summaryBy}","isExpanded":false,"desc":true}]`,
             groupSummary: '[{"selector":"CreationTime","summaryType":"min"}]',
@@ -98,7 +102,7 @@ export class CrmService {
         if (filter) {
             params['$filter'] = filter;
         }
-        return this.http.get(sourceURI, {
+        return this.http.get(sourceUri, {
             headers: new HttpHeaders({
                 'Authorization': 'Bearer ' + abp.auth.getToken()
             }),
@@ -137,5 +141,68 @@ export class CrmService {
                 infoItems: chartInfoItems
             };
         });
+    }
+
+    loadSliceMapData(sourceUri: string, filter, params?: { [name: string]: any }): Observable<any> {
+        params = {
+            group: `[{"selector":"StateId","isExpanded":false,"desc":true}]`,
+            groupSummary: '[{"selector":"CreationTime","summaryType":"min"}]',
+            ...params
+        };
+        if (filter) {
+            params['$filter'] = filter;
+        }
+        return this.http.get(sourceUri, {
+            headers: new HttpHeaders({
+                'Authorization': 'Bearer ' + abp.auth.getToken()
+            }),
+            params: params
+        });
+    }
+
+    getAdjustedMapData(mapData$: Observable<any>): Observable<MapData> {
+        return mapData$.pipe(
+            map((mapData: any) => {
+                const data: MapData = {};
+                mapData.data.forEach(contact => {
+                    data[contact.key] = {
+                        name: contact.key,
+                        total: contact.count
+                    };
+                });
+                return data;
+            })
+        );
+    }
+
+    getMapInfoItems(mapData$: Observable<any>): Observable<InfoItem[]> {
+        return mapData$.pipe(
+            map((contacts: any) => {
+                const avgGroupValue = contacts.totalCount ? (contacts.totalCount / contacts.data.length).toFixed(0) : 0;
+                let minGroupValue, maxGroupValue;
+                contacts.data.forEach(contact => {
+                    minGroupValue = !minGroupValue || contact.count < minGroupValue ? contact.count : minGroupValue;
+                    maxGroupValue = !maxGroupValue || contact.count > maxGroupValue ? contact.count : maxGroupValue;
+                });
+                return [
+                    {
+                        label: this.ls.l('Totals'),
+                        value: contacts.totalCount
+                    },
+                    {
+                        label: this.ls.l('Average'),
+                        value: avgGroupValue
+                    },
+                    {
+                        label: this.ls.l('Lowest'),
+                        value: minGroupValue || 0
+                    },
+                    {
+                        label: this.ls.l('Highest'),
+                        value: maxGroupValue || 0
+                    }
+                ];
+            })
+        );
     }
 }
