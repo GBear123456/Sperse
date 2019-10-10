@@ -19,6 +19,7 @@ export class PeriodService {
     availablePeriods: Period[] = values(Period) as Period[];
     selectedPeriod: PeriodModel;
     considerSettingsTimezone = true;
+    cachedPeriod = this.cacheService.get(this.getCacheKey()) ;
 
     constructor(
         injector: Injector,
@@ -29,7 +30,7 @@ export class PeriodService {
         @Inject('defaultPeriod') @Optional() defaultPeriod?: Period
     ) {
         this.selectedPeriod = this.getDatePeriod(
-            this.cacheService.get(this.getCacheKey()) || defaultPeriod || Period.ThisYear
+            this.cachedPeriod || defaultPeriod || Period.ThisYear
         );
         if (considerSettingsTimezone !== null) {
             this.considerSettingsTimezone = considerSettingsTimezone;

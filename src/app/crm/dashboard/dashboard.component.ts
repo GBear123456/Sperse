@@ -13,7 +13,8 @@ import {
 /** Third party imports */
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
-import { filter, first, takeUntil } from 'rxjs/operators';
+import { Observable, merge, of } from 'rxjs';
+import { filter, first, skip, takeUntil, mapTo } from 'rxjs/operators';
 
 /** Application imports */
 import { AppService } from '@app/app.service';
@@ -33,6 +34,7 @@ import { CustomReuseStrategy } from '@root/root-routing.module';
 import { RouteReuseStrategy } from '@angular/router';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 import { Period } from '@app/shared/common/period/period.enum';
+import { PeriodService } from '@app/shared/common/period/period.service';
 
 @Component({
     templateUrl: './dashboard.component.html',
@@ -64,9 +66,14 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
             }
         ]
     };
-    dataEmpty = false;
     totalsData$ = this.dashboardWidgetsService.totalsData$;
-    dataAvailable$ = this.dashboardWidgetsService.totalsDataAvailable$;
+    totalsDataAvailable$ = this.dashboardWidgetsService.totalsDataAvailable$;
+    showWelcomeSection$: Observable<boolean> = merge(
+        /** if no cache */
+        of(!this.periodService.cachedPeriod),
+        /** wait until next totals data and hide welcome section */
+        this.totalsData$.pipe(skip(1), first(), mapTo(false))
+    );
     dialogConfig = new MatDialogConfig();
     leftMenuHidden = true;
     constructor(
@@ -74,6 +81,7 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
         private appService: AppService,
         private dashboardWidgetsService: DashboardWidgetsService,
         private changeDetectorRef: ChangeDetectorRef,
+        private periodService: PeriodService,
         public dialog: MatDialog,
         private store$: Store<RootStore.State>,
         private reuseService: RouteReuseStrategy,
@@ -84,16 +92,12 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
     }
 
     ngOnInit() {
-        this.dashboardWidgetsService.totalsDataAvailable$.pipe(
-            takeUntil(this.destroy$),
-            first(),
-            filter((dataAvailable: boolean) => this.componentIsActivated && !dataAvailable && this.appService.hasModuleSubscription()),
+        this.showWelcomeSection$.pipe(
+            takeUntil(this.deactivate$),
+            filter(Boolean),
+            first()
         ).subscribe(() => {
             this.openDialog();
-        });
-        this.dashboardWidgetsService.totalsDataAvailable$.subscribe((totalsDataAvailable: boolean) => {
-            this.dataEmpty = !totalsDataAvailable;
-            this.changeDetectorRef.detectChanges();
         });
     }
 

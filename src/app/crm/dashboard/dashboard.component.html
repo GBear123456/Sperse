@@ -8,41 +8,44 @@
       <div class="col-lg-6 col-xs-12 col-sm-12 wrapper">
           <!-- BEGIN PORTLET-->
           <ng-container *ngIf="totalsData$ | async; else loading">
-              <dx-scroll-view *ngIf="dataAvailable$ | async; else start" showScrollbar="onHover">
-                  <div class="dashboard-widgets">
-                      <counts-and-totals></counts-and-totals>
-                      <div class="analytics-wrap row">
-                          <div class="left-side col-xl-4">
-                              <new-items-totals></new-items-totals>
-                          </div>
-                          <div class="right-side col-xl-8">
-                              <totals-by-period></totals-by-period>
-                          </div>
-                      </div>
-                      <div class="analytics-wrap row">
-                          <div class="left-side col-lg-6 col-xl-4">
-                              <totals-by-source></totals-by-source>
-                          </div>
-                          <div class="right-side col-lg-6 col-xl-8">
-                              <recent-clients></recent-clients>
-                          </div>
-                      </div>
-                      <clients-by-region></clients-by-region>
+              <div class="dashboard-stub" *ngIf="showWelcomeSection$ | async; else default">
+                  <div>
+                      <img class="logo-crm" alt="CRM Logo" src="./assets/common/icons/cfo.png" />
+                      <span class="sperse-crm big-gray-text">{{l('CRM')}}</span>
                   </div>
-              </dx-scroll-view>
-              <ng-template #start>
-                  <div class="dashboard-stub" >
-                      <div>
-                          <img class="logo-crm" alt="CRM Logo" src="./assets/common/icons/cfo.png" />
-                          <span class="sperse-crm big-gray-text">{{l('CRM')}}</span>
+                  <p class="second-line big-gray-text">{{l('CRM_Long')}}</p>
+                  <p class="welcome-crm">{{l('CRMDashboard_WelcomeText')}}</p>
+                  <p class="text-crm">{{l('CRMDashboard_StartText')}}</p>
+                  <p class="manage-crm">{{l('CRMDashboard_ManageText')}} <a [routerLink]="['/app/crm/leads']">{{l('Leads')}}</a>, <a [routerLink]="['/app/crm/clients']">{{l('Clients')}}</a> and <a [routerLink]="['/app/crm/orders']">{{l('Orders')}}</a></p>
+                  <!-- p class="last-line"><a [routerLink]="['/app/crm/clients']">{{l('CRMDashboard_AddContact')}}</a> | {{l('CRMDashboard_ImportContact')}}</p -->
+                  <button (click)="addClient()" class="btn btn-layout add-client">{{ l('CRMDashboard_AddClient') }}</button>
+              </div>
+              <ng-template #default>
+                  <dx-scroll-view showScrollbar="onHover" *ngIf="totalsDataAvailable$ | async; else noData">
+                      <div class="dashboard-widgets">
+                          <counts-and-totals></counts-and-totals>
+                          <div class="analytics-wrap row">
+                              <div class="left-side col-xl-4">
+                                  <new-items-totals></new-items-totals>
+                              </div>
+                              <div class="right-side col-xl-8">
+                                  <totals-by-period></totals-by-period>
+                              </div>
+                          </div>
+                          <div class="analytics-wrap row">
+                              <div class="left-side col-lg-6 col-xl-4">
+                                  <totals-by-source></totals-by-source>
+                              </div>
+                              <div class="right-side col-lg-6 col-xl-8">
+                                  <recent-clients></recent-clients>
+                              </div>
+                          </div>
+                          <clients-by-region></clients-by-region>
                       </div>
-                      <p class="second-line big-gray-text">{{l('CRM_Long')}}</p>
-                      <p class="welcome-crm">{{l('CRMDashboard_WelcomeText')}}</p>
-                      <p class="text-crm">{{l('CRMDashboard_StartText')}}</p>
-                      <p class="manage-crm">{{l('CRMDashboard_ManageText')}} <a [routerLink]="['/app/crm/leads']">{{l('Leads')}}</a>, <a [routerLink]="['/app/crm/clients']">{{l('Clients')}}</a> and <a [routerLink]="['/app/crm/orders']">{{l('Orders')}}</a></p>
-                      <!-- p class="last-line"><a [routerLink]="['/app/crm/clients']">{{l('CRMDashboard_AddContact')}}</a> | {{l('CRMDashboard_ImportContact')}}</p -->
-                      <button (click)="addClient()" class="btn btn-layout add-client">{{ l('CRMDashboard_AddClient') }}</button>
-                  </div>
+                  </dx-scroll-view>
+                  <ng-template #noData>
+                      <app-no-data></app-no-data>
+                  </ng-template>
               </ng-template>
           </ng-container>
           <ng-template #loading>
