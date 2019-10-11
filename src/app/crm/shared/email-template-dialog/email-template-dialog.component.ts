@@ -4,8 +4,6 @@ import { Component, ChangeDetectionStrategy, ViewChild, Inject, ChangeDetectorRe
 /** Third party imports */
 import { Observable } from 'rxjs';
 import { finalize } from 'rxjs/operators';
-import * as ClassicEditor from 'ckeditor5-build/build/ckeditor';
-import { ChangeEvent } from '@ckeditor/ckeditor5-angular/ckeditor.component';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { DxSelectBoxComponent } from 'devextreme-angular/ui/select-box';
 import { DxTextBoxComponent } from 'devextreme-angular/ui/text-box';
@@ -27,8 +25,7 @@ import { EmailTemplatesServiceProxy, GetTemplatesResponse, CreateEmailTemplateRe
 })
 export class EmailTemplateDialogComponent {
     @ViewChild(DxSelectBoxComponent) templateComponent: DxSelectBoxComponent;
-    @ViewChild('ckeditor') ckEditor: ClassicEditor;
-    EditorClass = ClassicEditor;
+    @ViewChild('ckeditor') ckEditor: any;
 
     showCC = false;
     showBCC = false;    
@@ -148,8 +145,8 @@ export class EmailTemplateDialogComponent {
         abp.ui.clearBusy(this.dialogRef.id);
     }
 
-    onBodyChange({ editor }: ChangeEvent) {
-        this.data.body = editor.getData();
+    onBodyChange(event) {
+        this.data.body = event.editor.getData();
     }
 
     onTemplateChanged(event) {

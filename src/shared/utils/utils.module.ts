@@ -7,7 +7,6 @@ import { FileDownloadService } from './file-download.service';
 import { FriendProfilePictureComponent } from './friend-profile-picture.component';
 import { LocalStorageService } from './local-storage.service';
 import { MomentFormatPipe } from './moment-format.pipe';
-import { NormalizeDropdownPositionDirective } from './normalize-dropdown-position.directive';
 import { ValidationMessagesComponent } from './validation-messages.component';
 import { EqualValidator } from './validation/equal-validator.directive';
 import { MinValueValidator } from './validation/min-value-validator.directive';
@@ -30,7 +29,6 @@ import { PasswordComplexityValidator } from './validation/password-complexity-va
         BusyIfDirective,
         FriendProfilePictureComponent,
         MomentFormatPipe,
-        NormalizeDropdownPositionDirective,
         ValidationMessagesComponent
     ],
     exports: [
@@ -42,7 +40,6 @@ import { PasswordComplexityValidator } from './validation/password-complexity-va
         BusyIfDirective,
         FriendProfilePictureComponent,
         MomentFormatPipe,
-        NormalizeDropdownPositionDirective,
         ValidationMessagesComponent
     ]
 })
