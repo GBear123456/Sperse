@@ -171,6 +171,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
                 .pipe(finalize(() => this.modalDialog.finishLoading()))
                 .subscribe((res) => {
                     this.description = res.description;
+                    this.currency = res.currencyId;
                     this.notes = res.note;
                     this.customer = res.contactName;
                     this.lines = res.lines.map((res) => {
@@ -225,6 +226,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
 
     private setRequestCommonFields(data) {
         data.number = this.invoiceNo;
+        data.currencyId = this.currency;
         data.date = this.getDate(this.date);
         data.dueDate = this.getDate(this.dueDate);
         data.description = this.description;
