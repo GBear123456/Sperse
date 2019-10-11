@@ -4,6 +4,7 @@ import * as ngCommon from '@angular/common';
 
 /** Third party imports */
 import { DxScrollViewModule } from 'devextreme-angular/ui/scroll-view';
+import { RatingModule } from 'ng-starrating';
 
 /** Application imports */
 import { AppCommonModule } from '../shared/common/app-common.module';
@@ -17,7 +18,8 @@ import { MarketplaceComponent } from './marketplace/marketplace.component';
         HubRoutingModule,
         AppCommonModule,
         CommonModule,
-        DxScrollViewModule
+        DxScrollViewModule,
+        RatingModule
     ],
     declarations: [
         MarketplaceComponent

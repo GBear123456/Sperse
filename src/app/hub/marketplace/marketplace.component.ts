@@ -8,6 +8,9 @@ import { DxScrollViewComponent } from 'devextreme-angular/ui/scroll-view';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { ExtensionServiceProxy } from '@shared/service-proxies/service-proxies';
 
+const defaultVisibleItems = 3,
+      firstCategoryVisibleItems = 6;
+
 @Component({
     selector: 'app-marketplace',
     templateUrl: './marketplace.component.html',
@@ -40,7 +43,7 @@ export class MarketplaceComponent extends AppComponentBase implements OnInit {
     ngOnInit() {
         this.rootComponent = this.getRootComponent();
         this.rootComponent.overflowHidden(true);
-        this.getExtentionCategories();
+        this.loadExtensionCategories();
     }
 
     refresh() {}
@@ -50,25 +53,25 @@ export class MarketplaceComponent extends AppComponentBase implements OnInit {
         if (element) this.scrollView.instance.scrollTo(element.offsetTop);
     }
 
-    getExtentionCategories() {
+    loadExtensionCategories() {
         this.extensionServiceProxy.getCategories().subscribe((result) => {
             this.extensionCategories = result;
-            this.getAll(undefined, undefined);
+            this.loadExtensions(undefined, undefined);
         });
     }
 
-    getSortedItems() {
+    sortingExtensions() {
         this.extensionCategories.forEach((category) => {
             category['items'] = this.extensionList.filter((item) => item.categoryId === category.id);
-            category['visibleItems'] = category.id === 1 ? 6 : 3;
+            category['visibleItems'] = category.id === 1 ? firstCategoryVisibleItems : defaultVisibleItems;
             this.sortedList.push(category);
         });
     }
 
-    getAll(categoryId, topCount) {
+    loadExtensions(categoryId, topCount) {
         this.extensionServiceProxy.getAll(categoryId, topCount).subscribe((result) => {
             this.extensionList = result;
-            this.getSortedItems();
+            this.sortingExtensions();
         });
     }
 }
