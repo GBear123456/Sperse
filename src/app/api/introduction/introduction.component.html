@@ -9,18 +9,18 @@
             </i>
             <dx-tooltip target="#infoTarget"
                         [(visible)]="toggleTooltip"
-                        [width]="350"
+                        [width]="370"
                         [height]="140"
                         [closeOnOutsideClick]="true">
                 <div *dxTemplate="let data = data of 'content'">
                     <div class="tooltip-data">
-                        <h6>Pass generated API key as a part of the HTTP header:</h6>
+                        <h6>{{l('Api_Intro_Text')}}:</h6>
                         <ul>
-                            <li><b>api-key:</b> XXXXXX-XXXXXX-XXXXXX-XXXXXX-XXXXXX</li>
-                            <li><b>Accept:</b> application/json</li>
-                            <li><b>Content-Type:</b> application/json</li>
+                            <li><b>{{l('API_Api-Key')}}:</b> XXXXXX-XXXXXX-XXXXXX-XXXXXX-XXXXXX</li>
+                            <li><b>{{l('Accept')}}:</b> {{l('API_Application-Json')}}</li>
+                            <li><b>{{l('API_Content_Type')}}:</b> {{l('API_Application-Json')}}</li>
                         </ul>
-                        <h6>or in query string via parameter "api-key".</h6>
+                        <h6>{{l('Api_Intro_Text_2')}}</h6>
                     </div>
                 </div>
             </dx-tooltip>
