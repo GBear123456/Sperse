@@ -44,7 +44,6 @@ export class AppStoreService {
         this.store$.dispatch(new StarsStoreActions.LoadRequestAction(false));
         this.store$.dispatch(new StatusesStoreActions.LoadRequestAction(false));
         this.store$.dispatch(new TagsStoreActions.LoadRequestAction(false));
-        this.store$.dispatch(new ActivityAssignedUsersStoreActions.LoadRequestAction(false));
         this.store$.dispatch(new ListsStoreActions.LoadRequestAction(false));
         this.store$.dispatch(new OrganizationTypeStoreActions.LoadRequestAction(false));
     }
