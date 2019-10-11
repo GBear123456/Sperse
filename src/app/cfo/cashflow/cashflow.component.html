@@ -9,7 +9,7 @@
 <cashflow-operations
     (repaintCashflow)="repaintDataGrid()"
     (onGroupBy)="changeGroupBy($event)"
-    (handleFullscreen)="toggleFullscreen(getFullscreenElement())"
+    (handleFullscreen)="fullScreenService.toggleFullscreen(getFullscreenElement())"
     (onToggleRows)="togglePivotGridRows($event)"
     (download)="downloadData($event)"
     (showPreferencesDialog)="showPreferencesDialog()"

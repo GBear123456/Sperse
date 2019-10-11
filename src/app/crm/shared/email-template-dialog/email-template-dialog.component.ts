@@ -31,7 +31,7 @@ export class EmailTemplateDialogComponent {
     EditorClass = ClassicEditor;
 
     showCC = false;
-    showBSS = false;    
+    showBCC = false;    
 
     @Input() templateEditMode = false;
     @Output() onSave: EventEmitter<any> = new EventEmitter<any>();
