@@ -370,16 +370,6 @@
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/@bugsnag/safe-json-stringify/-/safe-json-stringify-4.0.0.tgz#da4d9321524c6a1c33472f7151af7c7a0604cd3d"
 
-"@ckeditor/ckeditor5-angular@^1.1.0":
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/@ckeditor/ckeditor5-angular/-/ckeditor5-angular-1.1.0.tgz#f1ba15b4eab1315a357bb6718b6e6c1582b5e52f"
-  dependencies:
-    tslib "^1.9.0"
-
-"@ckeditor/ckeditor5-build-classic@^12.4.0":
-  version "12.4.0"
-  resolved "https://registry.yarnpkg.com/@ckeditor/ckeditor5-build-classic/-/ckeditor5-build-classic-12.4.0.tgz#d5eefb00424d6c559f826d8509ba6ce7e1ce12b9"
-
 "@fancyapps/fancybox@^3.1.25":
   version "3.3.5"
   resolved "https://registry.yarnpkg.com/@fancyapps/fancybox/-/fancybox-3.3.5.tgz#e0bead520450ff0af51d353a17ac6bf864ba0f49"
