@@ -73,8 +73,11 @@ export class BankCodeLettersEditorDialogComponent implements OnInit, OnDestroy {
 
     changeBankCode(bankCodeDefinitionLetter: BankCodeLetter, i: number) {
         this.loadingService.startLoading(this.elementRef.nativeElement);
-        const oldDefinitionLetter = this.bankCode[i];
-        const newBankCode = this.swap(this.bankCode, bankCodeDefinitionLetter.toString(), oldDefinitionLetter);
+        const newBankCode = this.swap(
+            this.bankCode,
+            this.bankCode.indexOf(bankCodeDefinitionLetter.toString()),
+            i
+        );
         this.personContactServiceProxy.updatePersonBANKCode(new UpdatePersonBANKCodeInput({
             id: this.personId,
             bankCode: newBankCode
@@ -100,13 +103,15 @@ export class BankCodeLettersEditorDialogComponent implements OnInit, OnDestroy {
         });
     }
 
-    private swap(str: string, first: string, last: string): string {
-        let arr = str.split('');
-        const firstIndex = arr.indexOf(first);
-        const lastIndex = arr.indexOf(last);
-        arr[firstIndex] = last;
-        arr[lastIndex] = first;
-        return arr.join('');
+    private swap(str: string, fromIndex: number, toIndex: number): string {
+        return this.arrayMove(str.split(''), fromIndex, toIndex).join('');
+    }
+
+    private arrayMove(arr: string[], fromIndex: number, toIndex: number): string[] {
+        let element = arr[fromIndex];
+        arr.splice(fromIndex, 1);
+        arr.splice(toIndex, 0, element);
+        return arr;
     }
 
     ngOnDestroy() {
