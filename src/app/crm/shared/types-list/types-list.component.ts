@@ -54,9 +54,9 @@ export class TypesListComponent extends AppComponentBase implements OnInit {
     constructor(
         injector: Injector,
         public dialog: MatDialog,
-        private _filterService: FiltersService,
-        private _partnerService: PartnerServiceProxy,
-        private _partnerTypeService: PartnerTypeServiceProxy,
+        private filterService: FiltersService,
+        private partnerService: PartnerServiceProxy,
+        private partnerTypeService: PartnerTypeServiceProxy,
         private store$: Store<AppStore.State>,
         private actions$: ActionsSubject
     ) {
@@ -71,13 +71,16 @@ export class TypesListComponent extends AppComponentBase implements OnInit {
         }
     }
 
-    apply(isRemove: boolean = false, selectedKeys = undefined) {
+    apply(isRemove: boolean = false, selectedKeys?: number[]) {
         if (this.listComponent) {
             this.selectedKeys = selectedKeys || this.selectedKeys;
             if (this.selectedKeys && this.selectedKeys.length) {
                 if (this.bulkUpdateMode)
                     this.message.confirm(
-                        this.l(isRemove ? 'RemoveFromTypeBulkUpdateConfirmation' : 'AddToTypeUpdateConfirmation', this.selectedKeys.length, this.selectedItems[0].name),
+                        this.l(isRemove
+                            ? 'RemoveFromTypeBulkUpdateConfirmation'
+                            : 'AddToTypeUpdateConfirmation', this.selectedKeys.length, this.selectedItems[0].name
+                        ),
                         isConfirmed => {
                             if (isConfirmed)
                                 this.process(isRemove);
@@ -153,7 +156,7 @@ export class TypesListComponent extends AppComponentBase implements OnInit {
 
     onCellPrepared($event) {
         if ($event.rowType === 'data' && $event.column.command === 'edit') {
-            this.addActionButton('delete', $event.cellElement, (event) => {
+            this.addActionButton('delete', $event.cellElement, () => {
                 if ($event.data.hasOwnProperty('id'))
                     this.listComponent.deleteRow(
                         this.listComponent.getRowIndexByKey($event.data.id));
@@ -161,7 +164,7 @@ export class TypesListComponent extends AppComponentBase implements OnInit {
                     $event.component.cancelEditData();
             });
             if (this.filterModel && Number.isInteger($event.data.id))
-                this.addActionButton('filter', $event.cellElement, (event) => {
+                this.addActionButton('filter', $event.cellElement, () => {
                     this.clearFiltersHighlight();
 
                     let modelItems = this.filterModel.items.element.value;
@@ -172,7 +175,7 @@ export class TypesListComponent extends AppComponentBase implements OnInit {
                         $event.cellElement.parentElement.classList.add('filtered');
                     }
 
-                    this._filterService.change(this.filterModel);
+                    this.filterService.change(this.filterModel);
                 });
         }
     }
@@ -183,7 +186,7 @@ export class TypesListComponent extends AppComponentBase implements OnInit {
             this.clearFiltersHighlight();
             this.filterModel.items.element.value = [];
         }
-        this._filterService.change(this.filterModel);
+        this.filterService.change(this.filterModel);
     }
 
     onRowRemoving($event) {
