@@ -102,14 +102,14 @@ export class AddressesComponent extends AppComponentBase implements OnInit {
         return this.store$.pipe(select(CountriesStoreSelectors.getCountries), filter(countries => !!countries));
     }
 
-    getDialogPossition(event) {
+    getDialogPosition(event) {
         let shiftY = this.calculateShiftY(event);
         let parent = event.target && event.target.closest('.address-wrapper') || document.body;
         return this.dialogService.calculateDialogPosition(event, parent, 0, shiftY);
     }
 
     calculateShiftY(event) {
-        let shift = 245;
+        let shift = 300;
 
         let availableSpaceY = window.innerHeight - event.clientY;
         if (availableSpaceY < shift + 40)
@@ -146,7 +146,7 @@ export class AddressesComponent extends AppComponentBase implements OnInit {
         this.dialog.open(EditAddressDialog, {
             data: dialogData,
             hasBackdrop: false,
-            position: this.getDialogPossition(event)
+            position: this.getDialogPosition(event)
         }).afterClosed().subscribe(result => {
             scrollTo(0, 0);
             if (result) {
