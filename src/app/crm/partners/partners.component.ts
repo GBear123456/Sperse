@@ -80,6 +80,7 @@ import { ImageFormat } from '@shared/common/export/image-format.enum';
 import { MapData } from '@app/shared/common/slice/map/map-data.model';
 import { map, mapTo, publishReplay, refCount, switchMap, tap } from '@node_modules/rxjs/operators';
 import { BehaviorSubject, of } from '@node_modules/rxjs';
+import { ImpersonationService } from '@admin/users/impersonation.service';
 
 @Component({
     templateUrl: './partners.component.html',
@@ -99,6 +100,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     @ViewChild(PivotGridComponent) pivotGridComponent: PivotGridComponent;
     @ViewChild(ChartComponent) chartComponent: ChartComponent;
 
+    private readonly MENU_LOGIN_INDEX = 1;
     private dataLayoutType: BehaviorSubject<DataLayoutType> = new BehaviorSubject(DataLayoutType.DataGrid);
     dataLayoutType$: Observable<DataLayoutType> = this.dataLayoutType.asObservable();
     private readonly dataSourceURI = 'Partner';
@@ -108,6 +110,20 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     private subRouteParams: any;
     private dependencyChanged = false;
     private organizationUnits: OrganizationUnitDto[];
+
+    actionEvent: any;
+    actionMenuItems = [
+        {
+            text: this.l('Edit'),
+            visible: true,
+            action: () => this.showPartnerDetails(this.actionEvent)
+        },
+        {
+            text: this.l('LoginAsThisUser'),
+            visible: this.permission.isGranted(AppPermissions.AdministrationUsersImpersonation),
+            action: () => this.impersonationService.impersonate(this.actionEvent.data.UserId, this.appSession.tenantId)
+        }
+    ];
 
     formatting = AppConsts.formatting;
     statuses: ContactStatusDto[];
@@ -279,6 +295,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         private lifeCycleSubjectsService: LifecycleSubjectsService,
         private sessionService: AppSessionService,
         private crmService: CrmService,
+        private impersonationService: ImpersonationService,
         public dialog: MatDialog,
         public contactProxy: ContactServiceProxy,
         public userManagementService: UserManagementService,
@@ -394,8 +411,10 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         this.searchClear = false;
         event.component.cancelEditData();
         let orgId = event.data.OrganizationId;
-        this._router.navigate(['app/crm/contact', partnerId].concat(orgId ? ['company', orgId] : []),
+        setTimeout(() => {
+            this._router.navigate(['app/crm/contact', partnerId].concat(orgId ? ['company', orgId] : []),
             { queryParams: { referrer: 'app/crm/partners'} });
+        });
     }
 
     toggleDataLayout(dataLayoutType: DataLayoutType) {
@@ -1006,6 +1025,19 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         this.rootComponent.overflowHidden();
         this.itemDetailsService.setItemsSource(ItemTypeEnum.Partner, this.dataGrid.instance.getDataSource());
         this.hideHostElement();
+    }
+
+    showActionsMenu(event) {
+        event.cancel = true;
+        this.actionEvent = null;
+        this.actionMenuItems[this.MENU_LOGIN_INDEX].visible = Boolean(event.data.UserId)
+            && this.permission.isGranted(AppPermissions.AdministrationUsersImpersonation);
+        setTimeout(() => this.actionEvent = event);
+    }
+
+    onMenuItemClick(event) {
+        event.itemData.action.call(this);
+        this.actionEvent = null;
     }
 
     onShowingPopup(e) {
