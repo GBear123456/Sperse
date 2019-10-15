@@ -335,7 +335,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         });
         combineLatest(
             this.chartComponent.summaryBy$,
-            this.filtersService.filterChanged$.pipe(startWith(null))
+            this.filterChanged$.pipe(startWith(null))
         ).pipe(
             takeUntil(this.lifeCycleSubjectsService.destroy$),
             filter(() => this.showChart)
@@ -930,8 +930,8 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     }
 
     processFilterInternal() {
-        if (this.dataGrid && this.dataGrid.instance
-            || this.pivotGridComponent && this.pivotGridComponent.pivotGrid && this.pivotGridComponent.pivotGrid.instance) {
+        if (this.showDataGrid && this.dataGrid && this.dataGrid.instance
+            || this.showPivotGrid && this.pivotGridComponent && this.pivotGridComponent.pivotGrid && this.pivotGridComponent.pivotGrid.instance) {
             this.processODataFilter(
                 this.showPivotGrid ? this.pivotGridComponent.pivotGrid.instance : this.dataGrid.instance,
                 this.dataSourceURI,

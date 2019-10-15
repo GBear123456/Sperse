@@ -335,7 +335,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         this.getOrganizationUnits();
         combineLatest(
             this.chartComponent.summaryBy$,
-            this.filtersService.filterChanged$.pipe(startWith(null))
+            this.filterChanged$.pipe(startWith(null))
         ).pipe(
             takeUntil(this.lifeCycleSubjectsService.destroy$),
             filter(() => this.showChart)
@@ -912,12 +912,14 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     processFilterInternal() {
-        this.processODataFilter(
-            this.showPivotGrid ? this.pivotGridComponent.pivotGrid.instance : this.dataGrid.instance,
-            this.dataSourceURI,
-            this.filters,
-            this.filtersService.getCheckCustom
-        );
+        if (this.showDataGrid || this.showDataGrid) {
+            this.processODataFilter(
+                this.showPivotGrid ? this.pivotGridComponent.pivotGrid.instance : this.dataGrid.instance,
+                this.dataSourceURI,
+                this.filters,
+                this.filtersService.getCheckCustom
+            );
+        }
     }
 
     initDataSource() {
