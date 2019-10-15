@@ -59,7 +59,9 @@ export class GenerateReportDialogComponent implements OnInit {
             disabled: true
         }
     ];
+    departmentsEntities = [];
     selectedDepartments = [];
+    noDepartmentItem = this.ls.l('NoDepartment');
     buttons: IDialogButton[] = this.initButtons;
     currentStep = GenerateReportStep.Step1;
     generateReportSteps = GenerateReportStep;
@@ -82,8 +84,6 @@ export class GenerateReportDialogComponent implements OnInit {
     sendReportInAttachments = false;
     emailRegEx = AppConsts.regexPatterns.email;
     dontSendEmailNotification = false;
-    departmentsEntities$ = this.departmentsProxy.getAccessibleDepartments(
-        this.cfoService.instanceType as InstanceType, this.cfoService.instanceId);
 
     private readonly BACK_BTN_INDEX = 0;
     private readonly NEXT_BTN_INDEX = 1;
@@ -101,6 +101,11 @@ export class GenerateReportDialogComponent implements OnInit {
         public ls: AppLocalizationService
     ) {
         this.dialogRef['_overlayRef'].hostElement.classList.add('generate-report');
+
+        this.departmentsProxy.getAccessibleDepartments(this.cfoService.instanceType as InstanceType, 
+            this.cfoService.instanceId).subscribe(res => {
+                this.departmentsEntities = [this.noDepartmentItem].concat(res);
+            });
     }
 
     ngOnInit() {
@@ -125,6 +130,7 @@ export class GenerateReportDialogComponent implements OnInit {
             to: this.dateTo && DateHelper.getDateWithoutTime(this.dateTo),
             period: this.data.period,
             currencyId,
+            departments: this.selectedDepartments.map(item => item == this.noDepartmentItem ? null : item),
             businessEntityIds: businessEntityIds,
             bankAccountIds: [],
             notificationData: !this.dontSendEmailNotification && !this.cfoService.isMainInstanceType && this.emailIsValidAndNotEmpty
@@ -157,6 +163,8 @@ export class GenerateReportDialogComponent implements OnInit {
         this.currentStep++;
         if (this.currentStep == GenerateReportStep.Step2) {
             this.applyBusinessEntity();
+            if (this.departmentsEntities.length <= 1)
+                this.currentStep++;
         }
         if (this.currentStep == GenerateReportStep.Step4) {
             this.applyDateRange();

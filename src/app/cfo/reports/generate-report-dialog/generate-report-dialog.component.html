@@ -22,7 +22,7 @@
                 selectAllMode="allPages"
                 [(selectedItems)]="selectedDepartments"
                 [showSelectionControls]="true"
-                [items]="departmentsEntities$ | async"
+                [items]="departmentsEntities"
                 (onInitialized)="onInitialized($event)">
             </dx-list>
         </div>
@@ -62,7 +62,7 @@
                         <i class="icon blue-edit-pencil" (click)="editStep(generateReportSteps.Step1)">&nbsp;</i>
                     </div>
                 </div>
-                <div class="row business-entities">
+                <div class="row business-entities" *ngIf="departmentsEntities.length > 1">
                     <div class="text-left">{{ ls.l('Departments') }}</div>
                     <div class="text-right">
                         <ul *ngIf="selectedDepartments.length; else all">
