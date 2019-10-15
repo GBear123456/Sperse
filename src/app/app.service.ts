@@ -122,6 +122,14 @@ export class AppService extends AppServiceBase {
                     isMemberPortal: true
                 },
                 {
+                    name: 'BankCode',
+                    showDescription: false,
+                    showInDropdown: true,
+                    footerItem: true,
+                    isComingSoon: false,
+                    isMemberPortal: true
+                },
+                {
                     name: 'Cloud',
                     showDescription: true,
                     isComingSoon: true

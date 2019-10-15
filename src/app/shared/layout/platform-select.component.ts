@@ -4,6 +4,7 @@ import { AppService } from '@app/app.service';
 import { LayoutService } from '@app/shared/layout/layout.service';
 import { AppPermissions } from '@shared/AppPermissions';
 import { AppFeatures } from '@shared/AppFeatures';
+import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
 
 @Component({
     templateUrl: './platform-select.component.html',
@@ -27,6 +28,7 @@ export class PlatformSelectComponent extends AppComponentBase {
     constructor(
         injector: Injector,
         private appService: AppService,
+        private userManagementService: UserManagementService,
         public layoutService: LayoutService
     ) {
         super(injector);
@@ -65,6 +67,12 @@ export class PlatformSelectComponent extends AppComponentBase {
                     ) {
                         this.modules.footerItems = this.modules.footerItems.filter((item) => item.name !== 'CFO');
                         this.modules.footerItems.push(moduleConfig);
+                    } else if (
+                        module.name === 'BankCode'
+                        && !appService.isHostTenant
+                        && this.feature.isEnabled(AppFeatures.CRMBANKCode)
+                    ) {
+                        this.modules.footerItems.push(moduleConfig);
                     }
                 } else if (module.showInDropdown) {
                     this.modules.items.push(moduleConfig);
@@ -82,16 +90,18 @@ export class PlatformSelectComponent extends AppComponentBase {
 
     onItemClick(module) {
         if ((this.module !== module.name || this.uri !== module.uri || module.footerItem) &&
-            this.appService.isModuleActive(module.name)
+            (this.appService.isModuleActive(module.name) || module.name === 'BankCode')
         ) {
             let navigate = null;
             let moduleConfig = this.appService.getModuleConfig(module.name);
-            if (moduleConfig.defaultPath) {
+            if (moduleConfig && moduleConfig.defaultPath) {
                 navigate = this._router.navigate([moduleConfig.defaultPath]);
             } else if (module.name === 'PFM' && module.footerItem) {
                 return window.open(location.origin + '/personal-finance', '_blank');
             } else if (module.name === 'CFO' && module.footerItem && this.permission.isGranted(AppPermissions.CFOMemberAccess)) {
                 return window.open(location.origin + '/app/cfo-portal', '_blank');
+            } else if (module.name === 'BankCode' && this.userManagementService.checkBankCodeFeature()) {
+                return window.open(location.origin + '/code-breaker/dashboard', '_blank');
             } else {
                 navigate = this._router.navigate(['app/' + module.name.toLowerCase() + (module.uri ? '/' + module.uri.toLowerCase() : '')]);
             }

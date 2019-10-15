@@ -17,6 +17,7 @@ import { FeatureCheckerService } from '@abp/features/feature-checker.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { OffersService } from '@root/personal-finance/shared/offers/offers.service';
 import { LayoutType } from '../service-proxies/service-proxies';
+import { MemberAreaLink } from '@shared/common/area-navigation/member-area-link.enum';
 
 @Directive({
     selector: '[ad-header-host]'
@@ -41,8 +42,8 @@ export class PersonalFinanceHeaderComponent {
     remoteServiceBaseUrl: string = AppConsts.remoteServiceBaseUrl;
     showDefaultHeader = true;
     currentDate = new Date();
-    appAreaLinks = this.getAppAreaLinks();
-    memberAreaLinks = [
+    appAreaLinks: MemberAreaLink[] = this.getAppAreaLinks();
+    memberAreaLinks: MemberAreaLink[] = [
         {
             name: 'creditReportLink',
             imgUrl: 'assets/images/icons/credit-report-icon.svg',

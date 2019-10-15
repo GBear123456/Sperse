@@ -1,0 +1,10 @@
+<div class="container">
+    <div class="row">
+        <div class="col-md-3">
+            <sidebar [sidebarTitle]="ls.l('BankCode_Products')" [items]="sidebarLinks"></sidebar>
+        </div>
+        <div class="col-md-9 right-side">
+            <router-outlet></router-outlet>
+        </div>
+    </div>
+</div>
