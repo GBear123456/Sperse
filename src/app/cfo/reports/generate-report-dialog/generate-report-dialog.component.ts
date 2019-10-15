@@ -29,6 +29,8 @@ import { RootStore, CurrenciesStoreSelectors } from '@root/store';
 import { CFOService } from '@shared/cfo/cfo.service';
 import { AppConsts } from '@shared/AppConsts';
 import { SendReportNotificationInput } from '@shared/service-proxies/service-proxies';
+import { FeatureCheckerService } from '@abp/features/feature-checker.service';
+import { AppFeatures } from '@shared/AppFeatures';
 
 @Component({
     templateUrl: 'generate-report-dialog.component.html',
@@ -96,16 +98,18 @@ export class GenerateReportDialogComponent implements OnInit {
         private store$: Store<RootStore.State>,
         private dialogRef: MatDialogRef<GenerateReportDialogComponent>,
         private instanceAppService: InstanceServiceProxy,
+        private feature: FeatureCheckerService,
         public cfoService: CFOService,
         public bankAccountsService: BankAccountsService,
         public ls: AppLocalizationService
     ) {
         this.dialogRef['_overlayRef'].hostElement.classList.add('generate-report');
-
-        this.departmentsProxy.getAccessibleDepartments(this.cfoService.instanceType as InstanceType, 
-            this.cfoService.instanceId).subscribe(res => {
-                this.departmentsEntities = [this.noDepartmentItem].concat(res);
-            });
+      
+        if (feature.isEnabled(AppFeatures.CFODepartmentsManagement))
+            this.departmentsProxy.getAccessibleDepartments(this.cfoService.instanceType as InstanceType, 
+                this.cfoService.instanceId).subscribe(res => {
+                    this.departmentsEntities = [this.noDepartmentItem].concat(res);
+                });
     }
 
     ngOnInit() {
@@ -156,6 +160,9 @@ export class GenerateReportDialogComponent implements OnInit {
 
     private prev() {
         this.currentStep--;
+        if (this.currentStep == GenerateReportStep.Step2 
+            && this.departmentsEntities.length <= 1
+        ) this.currentStep--;
         this.processStep();
     }
 
