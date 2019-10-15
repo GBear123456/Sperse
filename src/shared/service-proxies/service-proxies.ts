@@ -66422,6 +66422,7 @@ export class GenerateInput implements IGenerateInput {
     currencyId!: string;
     businessEntityIds!: number[] | undefined;
     bankAccountIds!: number[] | undefined;
+    departments!: string[] | undefined;
     notificationData!: SendReportNotificationInput | undefined;
 
     constructor(data?: IGenerateInput) {
@@ -66448,6 +66449,11 @@ export class GenerateInput implements IGenerateInput {
                 this.bankAccountIds = [];
                 for (let item of data["bankAccountIds"])
                     this.bankAccountIds.push(item);
+            }
+            if (data["departments"] && data["departments"].constructor === Array) {
+                this.departments = [];
+                for (let item of data["departments"])
+                    this.departments.push(item);
             }
             this.notificationData = data["notificationData"] ? SendReportNotificationInput.fromJS(data["notificationData"]) : <any>undefined;
         }
@@ -66476,6 +66482,11 @@ export class GenerateInput implements IGenerateInput {
             for (let item of this.bankAccountIds)
                 data["bankAccountIds"].push(item);
         }
+        if (this.departments && this.departments.constructor === Array) {
+            data["departments"] = [];
+            for (let item of this.departments)
+                data["departments"].push(item);
+        }
         data["notificationData"] = this.notificationData ? this.notificationData.toJSON() : <any>undefined;
         return data; 
     }
@@ -66488,6 +66499,7 @@ export interface IGenerateInput {
     currencyId: string;
     businessEntityIds: number[] | undefined;
     bankAccountIds: number[] | undefined;
+    departments: string[] | undefined;
     notificationData: SendReportNotificationInput | undefined;
 }
 
