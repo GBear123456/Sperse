@@ -22,8 +22,8 @@ export class ExportService {
         this._exportGoogleSheetService = injector.get(ExportGoogleSheetService);
     }
 
-    getFileName(dataGrid?) {
-        let name = dataGrid && dataGrid.export.fileName || '';
+    getFileName(dataGrid?, name?: string) {
+        name = name || dataGrid && dataGrid.export.fileName || '';
         return capitalize(location.href.split('/').pop()) + '_' +
             (!name || name == 'DataGrid' ? '' : name + '_') + moment().local().format('YYYY-MM-DD_hhmmss_a');
     }
@@ -164,7 +164,7 @@ export class ExportService {
     exportIntoImage(format: ImageFormat, markup, width, height) {
         setTimeout(() => {
             exportFromMarkup(markup, {
-                fileName: this.getFileName(),
+                fileName: this.getFileName(null, 'Chart'),
                 format: format,
                 height: height,
                 width: width,

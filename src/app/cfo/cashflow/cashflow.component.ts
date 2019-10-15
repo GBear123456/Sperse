@@ -2126,7 +2126,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     downloadData(event) {
         let format = event.itemData.format;
         if (format === 'xls') {
-            this.pivotGrid.export.fileName = this.exportService.getFileName();
+            this.pivotGrid.export.fileName = this.exportService.getFileName(null, 'PivotGrid');
             this.pivotGrid.instance.exportToExcel();
         }
     }

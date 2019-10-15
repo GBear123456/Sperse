@@ -295,7 +295,10 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             });
         }
     });
-    odataFilter$: Observable<string> = this.filtersService.filterChanged$.pipe(
+    filterChanged$: Observable<FilterModel> = this.filtersService.filterChanged$.pipe(
+        filter(() => this.componentIsActivated)
+    );
+    odataFilter$: Observable<string> = this.filterChanged$.pipe(
         startWith(() => this.oDataService.getODataFilter(this.filters, this.filtersService.getCheckCustom)),
         map(() => this.oDataService.getODataFilter(this.filters, this.filtersService.getCheckCustom))
     );
@@ -861,7 +864,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                                         if (this.showPivotGrid) {
                                             this.pivotGridComponent.pivotGrid.instance.option(
                                                 'export.fileName',
-                                                this.exportService.getFileName()
+                                                this.exportService.getFileName(null, 'PivotGrid')
                                             );
                                             this.pivotGridComponent.pivotGrid.instance.exportToExcel();
                                         } else if (this.showPipeline || this.showDataGrid) {
