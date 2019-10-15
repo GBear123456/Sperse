@@ -16,18 +16,20 @@
 
     <ng-template ad-header-host></ng-template>
 
-    <app-area-navigation *ngIf="hasPfmAppFeature && !appSession.isLendspaceDemoUser; else memberNav"
-                         id="header-app-menu"
-                         [memberAreaLinks]="appAreaLinks"
-                         [actionsButtons]="actionsButtons">
-    </app-area-navigation>
-
-    <ng-template #memberNav>
-        <app-area-navigation
-            id="header-app-menu"
-            [memberAreaLinks]="memberAreaLinks">
+    <ng-container *ngIf="!appSession.isLendspaceDemoUser">
+        <app-area-navigation *ngIf="hasPfmAppFeature; else memberNav"
+                             id="header-app-menu"
+                             [memberAreaLinks]="appAreaLinks"
+                             [actionsButtons]="actionsButtons">
         </app-area-navigation>
-    </ng-template>
+
+        <ng-template #memberNav>
+            <app-area-navigation
+                id="header-app-menu"
+                [memberAreaLinks]="memberAreaLinks">
+            </app-area-navigation>
+        </ng-template>
+    </ng-container>
 <!-- 
     <ng-template #memberNav>
         <member-area-navigation
