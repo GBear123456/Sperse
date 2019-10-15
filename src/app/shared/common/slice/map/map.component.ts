@@ -78,7 +78,7 @@ export class MapComponent implements OnChanges {
     exportTo(format: ImageFormat) {
         setTimeout(() => {
             this.vectorMapComponent.instance.exportTo(
-                this.exportService.getFileName(),
+                this.exportService.getFileName(null, 'Map'),
                 format
             );
         });

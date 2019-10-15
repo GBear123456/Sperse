@@ -864,7 +864,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                                         if (this.showPivotGrid) {
                                             this.pivotGridComponent.pivotGrid.instance.option(
                                                 'export.fileName',
-                                                this.exportService.getFileName()
+                                                this.exportService.getFileName(null, 'PivotGrid')
                                             );
                                             this.pivotGridComponent.pivotGrid.instance.exportToExcel();
                                         } else if (this.showPipeline || this.showDataGrid) {

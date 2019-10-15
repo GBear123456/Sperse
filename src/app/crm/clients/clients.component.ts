@@ -728,6 +728,10 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                                 {
                                     action: () => {
                                         if (this.dataLayoutType.value === DataLayoutType.PivotGrid) {
+                                            this.pivotGridComponent.pivotGrid.instance.option(
+                                                'export.fileName',
+                                                this.exportService.getFileName(null, 'PivotGrid')
+                                            );
                                             this.pivotGridComponent.pivotGrid.instance.exportToExcel();
                                         } else if (this.dataLayoutType.value === DataLayoutType.DataGrid) {
                                             this.exportToXLS.bind(this);

@@ -759,6 +759,10 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                                 {
                                     action: () => {
                                         if (this.showPivotGrid) {
+                                            this.pivotGridComponent.pivotGrid.instance.option(
+                                                'export.fileName',
+                                                this.exportService.getFileName(null, 'PivotGrid')
+                                            );
                                             this.pivotGridComponent.pivotGrid.instance.exportToExcel();
                                         } else if (this.showDataGrid) {
                                             this.exportToXLS.bind(this);
