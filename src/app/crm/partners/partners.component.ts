@@ -256,7 +256,10 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     private _refresh: BehaviorSubject<null> = new BehaviorSubject<null>(null);
     private refresh$: Observable<null> = this._refresh.asObservable();
     mapDataIsLoading = false;
-    odataFilter$: Observable<string> = this.filtersService.filterChanged$.pipe(
+    filterChanged$: Observable<FilterModel> = this.filtersService.filterChanged$.pipe(
+        filter(() => this.componentIsActivated)
+    );
+    odataFilter$: Observable<string> = this.filterChanged$.pipe(
         startWith(() => this.oDataService.getODataFilter(this.filters, this.filtersService.getCheckCustom)),
         map(() => this.oDataService.getODataFilter(this.filters, this.filtersService.getCheckCustom))
     );

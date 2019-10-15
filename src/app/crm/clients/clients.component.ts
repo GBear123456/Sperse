@@ -7,8 +7,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import 'devextreme/data/odata/store';
 import { Store, select } from '@ngrx/store';
-import { Observable, combineLatest, of } from 'rxjs';
-import { first, filter, finalize, takeUntil, startWith } from 'rxjs/operators';
+import { BehaviorSubject, Observable, combineLatest, of } from 'rxjs';
+import { first, filter, finalize, takeUntil, startWith, map, mapTo, publishReplay, refCount, switchMap, tap } from 'rxjs/operators';
 import * as _ from 'underscore';
 
 /** Application imports */
@@ -72,9 +72,7 @@ import DataSource from '@root/node_modules/devextreme/data/data_source';
 import { InfoItem } from '@app/shared/common/slice/info/info-item.model';
 import { ChartComponent } from '@app/shared/common/slice/chart/chart.component';
 import { ImageFormat } from '@shared/common/export/image-format.enum';
-import { map, mapTo, publishReplay, refCount, switchMap, tap } from '@node_modules/rxjs/operators';
 import { MapData } from '@app/shared/common/slice/map/map-data.model';
-import { BehaviorSubject } from '@node_modules/rxjs';
 import { MapComponent } from '@app/shared/common/slice/map/map.component';
 
 @Component({
@@ -240,7 +238,10 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     private _refresh: BehaviorSubject<null> = new BehaviorSubject<null>(null);
     private refresh$: Observable<null> = this._refresh.asObservable();
     mapDataIsLoading = false;
-    odataFilter$: Observable<string> = this.filtersService.filterChanged$.pipe(
+    filterChanged$: Observable<FilterModel> = this.filtersService.filterChanged$.pipe(
+        filter(() => this.componentIsActivated)
+    );
+    odataFilter$: Observable<string> = this.filterChanged$.pipe(
         startWith(() => this.oDataService.getODataFilter(this.filters, this.filtersService.getCheckCustom)),
         map(() => this.oDataService.getODataFilter(this.filters, this.filtersService.getCheckCustom))
     );
