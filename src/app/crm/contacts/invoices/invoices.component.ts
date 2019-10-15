@@ -29,6 +29,7 @@ import {
 import { ContactsService } from '@app/crm/contacts/contacts.service';
 import { CreateInvoiceDialogComponent } from '@app/crm/shared/create-invoice-dialog/create-invoice-dialog.component';
 import { EmailInvoiceDialogComponent } from '@app/crm/shared/email-invoice-dialog/email-invoice-dialog.component';
+import { AppPermissions } from '@shared/AppPermissions';
 
 @Component({
     templateUrl: './invoices.component.html',
@@ -137,7 +138,7 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     onCellClick(event) {
-        if (event.rowType === 'data') {
+        if (event.rowType === 'data' && this.isGranted(AppPermissions.CRMOrdersInvoicesManage)) {
             /** If user click on actions icon */
             if (event.columnIndex && event.data) {
                 if (event.data.Status == InvoiceStatus.Draft) {
@@ -205,9 +206,11 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     onMenuItemClick(event) {
-        let tooltip = this.actionsTooltip.instance;
-        if (tooltip.option('visible'))
-            tooltip.hide();
-        event.itemData.action.call(this);
+        if (this.isGranted(AppPermissions.CRMOrdersInvoicesManage)) {
+            let tooltip = this.actionsTooltip.instance;
+            if (tooltip.option('visible'))
+                tooltip.hide();
+            event.itemData.action.call(this);
+        }
     }
 }

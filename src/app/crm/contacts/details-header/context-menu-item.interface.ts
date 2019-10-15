@@ -6,5 +6,6 @@ export interface ContextMenuItem {
     text: string;
     selected: boolean;
     icon: string;
+    visible: boolean;
     contactGroups: ContactGroup[];
 }

@@ -187,11 +187,7 @@ export class AppService extends AppServiceBase {
             this.loadModeuleSubscriptions();
         }
         this.toolbarIsHidden$.subscribe((hidden: boolean) => {
-            if (!hidden) {
-                this.document.body.classList.add('toolbar-hidden');
-            } else {
-                this.document.body.classList.remove('toolbar-hidden');
-            }
+            this.document.body.classList[hidden ? 'add' : 'remove']('toolbar-hidden');
         });
     }
 
