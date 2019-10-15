@@ -44,6 +44,7 @@ import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/life
 import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
 import { ContextType } from '@app/crm/contacts/details-header/context-type.enum';
 import { ContextMenuItem } from '@app/crm/contacts/details-header/context-menu-item.interface';
+import { AppPermissions } from '@shared/AppPermissions';
 
 @Component({
     selector: 'details-header',
@@ -94,6 +95,7 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
             text: this.l('AddFiles'),
             selected: false,
             icon: 'files',
+            visible: true,
             contactGroups: this.allContactGroups
         },
         {
@@ -101,6 +103,7 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
             text: this.l('AddNotes'),
             selected: false,
             icon: 'note',
+            visible: true,
             contactGroups: this.allContactGroups
         },
         {
@@ -108,6 +111,7 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
             text: this.l('AddContact'),
             selected: false,
             icon: 'add-contact',
+            visible: true,
             contactGroups: this.allContactGroupsExceptUser
         },
         {
@@ -115,6 +119,7 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
             text: this.l('AddInvoice'),
             selected: false,
             icon: 'money',
+            visible: this.isGranted(AppPermissions.CRMOrdersInvoicesManage),
             contactGroups: this.allContactGroupsExceptUser
         }
     ];
@@ -393,14 +398,16 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
     }
 
     addOptionsInit() {
-        let cacheKey = this.getCacheKey(this.addOptionCacheKey),
-            selectedContextType = this.ADD_OPTION_DEFAULT;
-        if (this._cacheService.exists(cacheKey))
-            selectedContextType = this._cacheService.get(cacheKey);
         if (this.addContextMenuItems.length) {
-            const selectedMenuItem = this.getContextMenuItemByType(selectedContextType);
+            let cacheKey = this.getCacheKey(this.addOptionCacheKey), 
+                selectedMenuItem = this.getContextMenuItemByType(
+                    this._cacheService.exists(cacheKey) ? this._cacheService.get(cacheKey) : this.ADD_OPTION_DEFAULT
+                );
+            if (!selectedMenuItem.visible)
+                selectedMenuItem = this.getContextMenuItemByType(this.ADD_OPTION_DEFAULT);
+
             selectedMenuItem.selected = true;
-            this.addButtonTitle = selectedMenuItem.text;
+            this.addButtonTitle = selectedMenuItem.text;          
         }
     }
 
