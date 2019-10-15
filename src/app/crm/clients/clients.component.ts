@@ -148,16 +148,12 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         {
             text: this.l('Edit'),
             visible: true,
-            action: () => {
-                this.showClientDetails(this.actionEvent);
-            }
+            action: () => this.showClientDetails(this.actionEvent)
         },
         {
             text: this.l('LoginAsThisUser'),
             visible: this.permission.isGranted(AppPermissions.AdministrationUsersImpersonation),
-            action: () => {
-                this.impersonationService.impersonate(this.actionEvent.data.UserId, this.appSession.tenantId);
-            }
+            action: () => this.impersonationService.impersonate(this.actionEvent.data.UserId, this.appSession.tenantId)
         }
     ];
     permissions = AppPermissions;

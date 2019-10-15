@@ -175,7 +175,8 @@ export class ContactsService {
             },
             hasBackdrop: false,
             position: this.dialogService.calculateDialogPosition(
-                event, event.target, shiftX, shiftY)
+                event, event.target, shiftX, shiftY
+            )
         }).afterClosed().pipe(tap(responce => {
             if (responce && responce.organizationId)
                 setTimeout(() => this.invalidateUserData(), 300);
