@@ -17,6 +17,7 @@ import { distinctUntilChanged } from 'rxjs/operators';
 import values from 'lodash/values';
 import capitalize from 'lodash/capitalize';
 import { getMarkup } from 'devextreme/viz/export';
+import * as moment from 'moment';
 
 /** Application imports */
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -35,6 +36,7 @@ import { ImageFormat } from '@shared/common/export/image-format.enum';
 })
 export class ChartComponent implements OnInit, OnChanges {
     @Input() title = '';
+    @Input() itemsName: string;
     @Input() valueField: string;
     @Input() argumentField: string;
     @Input() width: number;
@@ -93,6 +95,20 @@ export class ChartComponent implements OnInit, OnChanges {
                 value: item[this.valueField]
             };
         });
+    }
+
+    customizeTooltip = (arg) => {
+        let date = moment(arg.argument);
+        let firstItem: string;
+        switch (this.summaryBy.value) {
+            case SummaryBy.Month: firstItem = date.format('MMM YYYY'); break;
+            case SummaryBy.Quarter: firstItem = this.ls.l('Quarter') + ' ' + date.format('Q, YYYY'); break;
+            case SummaryBy.Year: firstItem = date.format('YYYY'); break;
+        }
+        return {
+            html: `<div style="text-align: center"><b>${firstItem}</b></div>
+                   </b>${arg.value}</b> ${this.itemsName ? ' ' + this.itemsName.toLowerCase() : ''}`
+        };
     }
 
     exportTo(format: ImageFormat) {

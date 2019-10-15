@@ -127,7 +127,8 @@
         <slice-chart [width]="contentWidth$ | async"
                      [height]="contentHeight$ | async"
                      [infoItems]="chartInfoItems"
-                     [title]="l('CustomersNumber')"
+                     [itemsName]="l('Customers')"
+                     [title]="l('Customers') + ' ' + l('number')"
                      argumentField="creationDate"
                      valueField="count">
         </slice-chart>

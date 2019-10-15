@@ -94,7 +94,7 @@ export class CrmService {
 
     loadSliceChartData(sourceUri: string, filters, summaryBy: SummaryBy, additionalParams?: { [name: string]: any}): Promise<{ items: any[], infoItems: InfoItem[] }> {
         const params = {
-            group: `[{"selector":"CreationTime","groupInterval":"${summaryBy}","isExpanded":false,"desc":true}]`,
+            group: `[{"selector":"CreationTime","groupInterval":"${summaryBy}","isExpanded":false,"desc":false}]`,
             groupSummary: '[{"selector":"CreationTime","summaryType":"min"}]',
             ...additionalParams
         };
@@ -107,10 +107,10 @@ export class CrmService {
                 'Authorization': 'Bearer ' + abp.auth.getToken()
             }),
             params: params
-        }).toPromise().then((contacts: any) => {
-            const avgGroupValue = contacts.totalCount ? (contacts.totalCount / contacts.data.length).toFixed(0) : 0;
+        }).toPromise().then((result: any) => {
+            const avgGroupValue = result.totalCount ? (result.totalCount / result.data.length).toFixed(0) : 0;
             let minGroupValue, maxGroupValue;
-            const result = contacts.data.map(contact => {
+            const items = result.data.map(contact => {
                 minGroupValue = !minGroupValue || contact.count < minGroupValue ? contact.count : minGroupValue;
                 maxGroupValue = !maxGroupValue || contact.count > maxGroupValue ? contact.count : maxGroupValue;
                 return {
@@ -121,7 +121,7 @@ export class CrmService {
             const chartInfoItems: InfoItem[] = [
                 {
                     label: this.ls.l('Totals'),
-                    value: contacts.totalCount
+                    value: result.totalCount
                 },
                 {
                     label: this.ls.l('Average'),
@@ -137,15 +137,21 @@ export class CrmService {
                 }
             ];
             return {
-                items: result,
+                items: items.sort(this.sortByDate),
                 infoItems: chartInfoItems
             };
         });
     }
 
+    sortByDate = (a: any, b: any) => {
+        const dateA = new Date(a.creationDate);
+        const dateB = new Date(b.creationDate);
+        return dateA > dateB ? 1 : (dateA < dateB ? -1 : 0);
+    }
+
     loadSliceMapData(sourceUri: string, filter, params?: { [name: string]: any }): Observable<any> {
         params = {
-            group: `[{"selector":"StateId","isExpanded":false,"desc":true}]`,
+            group: `[{"selector":"StateId","isExpanded":false}]`,
             groupSummary: '[{"selector":"CreationTime","summaryType":"min"}]',
             ...params
         };
