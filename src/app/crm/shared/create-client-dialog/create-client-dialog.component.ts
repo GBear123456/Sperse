@@ -169,23 +169,23 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
     constructor(
         public dialog: MatDialog,
         public contactProxy: ContactServiceProxy,
-        private _contactService: ContactsService,
-        private _cacheService: CacheService,
-        private _router: Router,
-        private _contactPhoneService: ContactPhoneServiceProxy,
-        private _contactEmailService: ContactEmailServiceProxy,
-        private _contactAddressService: ContactAddressServiceProxy,
-        private _leadService: LeadServiceProxy,
-        private _nameParser: NameParserService,
-        private _pipelineService: PipelineService,
-        private _dialogService: DialogService,
-        private _angularGooglePlaceService: AngularGooglePlaceService,
-        private _orgServiceProxy: OrganizationContactServiceProxy,
-        private _notifyService: NotifyService,
-        private _messageService: MessageService,
-        private _cacheHelper: CacheHelper,
-        private _dialogRef: MatDialogRef<CreateClientDialogComponent>,
-        private _changeDetectorRef: ChangeDetectorRef,
+        private contactService: ContactsService,
+        private cacheService: CacheService,
+        private router: Router,
+        private contactPhoneService: ContactPhoneServiceProxy,
+        private contactEmailService: ContactEmailServiceProxy,
+        private contactAddressService: ContactAddressServiceProxy,
+        private leadService: LeadServiceProxy,
+        private nameParser: NameParserService,
+        private pipelineService: PipelineService,
+        private dialogService: DialogService,
+        private angularGooglePlaceService: AngularGooglePlaceService,
+        private orgServiceProxy: OrganizationContactServiceProxy,
+        private notifyService: NotifyService,
+        private messageService: MessageService,
+        private cacheHelper: CacheHelper,
+        private dialogRef: MatDialogRef<CreateClientDialogComponent>,
+        private changeDetectorRef: ChangeDetectorRef,
         private store$: Store<RootStore.State>,
         public ls: AppLocalizationService,
         public toolbarService: ToolbarService,
@@ -199,9 +199,9 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
             {text: this.ls.l('SaveAndClose'), selected: false}
         ];
 
-        this.isAssignDisabled = !_contactService.checkCGPermission(data.customerType, 'ManageAssignments');
-        this.isListAndTagsDisabled = !_contactService.checkCGPermission(data.customerType, 'ManageListsAndTags');
-        this.isRatingAndStarsDisabled = !_contactService.checkCGPermission(data.customerType, 'ManageRatingAndStars');
+        this.isAssignDisabled = !contactService.checkCGPermission(data.customerType, 'ManageAssignments');
+        this.isListAndTagsDisabled = !contactService.checkCGPermission(data.customerType, 'ManageListsAndTags');
+        this.isRatingAndStarsDisabled = !contactService.checkCGPermission(data.customerType, 'ManageRatingAndStars');
     }
 
     ngOnInit() {
@@ -216,20 +216,20 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
     }
 
     saveOptionsInit() {
-        let cacheKey = this._cacheHelper.getCacheKey(this.SAVE_OPTION_CACHE_KEY, this.constructor.name),
+        let cacheKey = this.cacheHelper.getCacheKey(this.SAVE_OPTION_CACHE_KEY, this.constructor.name),
             selectedIndex = this.SAVE_OPTION_DEFAULT;
-        if (this._cacheService.exists(cacheKey))
-            selectedIndex = this._cacheService.get(cacheKey);
+        if (this.cacheService.exists(cacheKey))
+            selectedIndex = this.cacheService.get(cacheKey);
         this.saveContextMenuItems[selectedIndex].selected = true;
         this.buttons[0].title = this.saveContextMenuItems[selectedIndex].text;
-        this._changeDetectorRef.detectChanges();
+        this.changeDetectorRef.detectChanges();
     }
 
     updateSaveOption(option) {
         this.buttons[0].title = option.text;
-        this._cacheService.set(this._cacheHelper.getCacheKey(this.SAVE_OPTION_CACHE_KEY, this.constructor.name),
+        this.cacheService.set(this.cacheHelper.getCacheKey(this.SAVE_OPTION_CACHE_KEY, this.constructor.name),
             this.saveContextMenuItems.findIndex((elm) => elm.text == option.text).toString());
-        this._changeDetectorRef.detectChanges();
+        this.changeDetectorRef.detectChanges();
     }
 
     getCountryCode(name) {
@@ -276,7 +276,7 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
         let saveButton: any = document.getElementById(this.saveButtonId);
         saveButton.disabled = true;
         if (this.data.isInLeadMode)
-            this._leadService.createLead(CreateLeadInput.fromJS(dataObj))
+            this.leadService.createLead(CreateLeadInput.fromJS(dataObj))
                 .pipe(finalize(() => { saveButton.disabled = false; this.modalDialog.finishLoading(); }))
                 .subscribe(result => {
                     dataObj.id = result.contactId;
@@ -297,7 +297,7 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
             this.close(data);
         } else if (this.saveContextMenuItems[0].selected) {
             this.resetFullDialog();
-            this._notifyService.info(this.ls.l('SavedSuccessfully'));
+            this.notifyService.info(this.ls.l('SavedSuccessfully'));
             this.data.refreshParent(true, this.stageId);
         } else if (this.saveContextMenuItems[1].selected) {
             this.redirectToClientDetails(data.id, data.leadId);
@@ -315,12 +315,12 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
 
         if (!this.person.firstName && !this.person.lastName && !this.company) {
             this.isTitleValid = false;
-            return this._notifyService.error(this.ls.l('NameFieldsValidationError'));
+            return this.notifyService.error(this.ls.l('NameFieldsValidationError'));
         }
 
-        if (!ValidationHelper.ValidateName(this.title)) {
+        if (this.title && !ValidationHelper.ValidateName(this.title)) {
             this.isTitleValid = false;
-            return this._notifyService.error(this.ls.l('FullNameIsNotValid'));
+            return this.notifyService.error(this.ls.l('FullNameIsNotValid'));
         }
 
         if (!this.validateMultiple(this.emailValidators) ||
@@ -332,7 +332,7 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
         if (['emails', 'phones', 'links', 'addresses'].some((type) => {
             let result = this.checkDuplicateContact(type);
             if (result)
-                this._notifyService.error(this.ls.l('DuplicateContactDetected', this.ls.l(type)));
+                this.notifyService.error(this.ls.l('DuplicateContactDetected', this.ls.l(type)));
             return result;
         })) return;
 
@@ -411,7 +411,7 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
             let path = this.data.customerType == ContactGroup.Partner ?
                 `app/crm/contact/${id}/contact-information` :
                 `app/crm/contact/${id}/${this.data.isInLeadMode ? `lead/${leadId}/` : ''}contact-information`;
-            this._router.navigate([path], {queryParams: {referrer: this._router.url.split('?').shift()}});
+            this.router.navigate([path], {queryParams: {referrer: this.router.url.split('?').shift()}});
         }, 1000);
         this.close();
     }
@@ -438,7 +438,7 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
     }
 
     getDialogPossition(event, shiftX) {
-        return this._dialogService.calculateDialogPosition(event, event.target.closest('div'), shiftX, -12);
+        return this.dialogService.calculateDialogPosition(event, event.target.closest('div'), shiftX, -12);
     }
 
     toggleStages() {
@@ -517,18 +517,18 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
 
     onAddressChanged(event, i) {
         this.checkAddressControls(i);
-        let number = this._angularGooglePlaceService.street_number(event.address_components);
-        let street = this._angularGooglePlaceService.street(event.address_components);
+        let number = this.angularGooglePlaceService.street_number(event.address_components);
+        let street = this.angularGooglePlaceService.street(event.address_components);
         this.contacts.addresses[i].stateCode = GooglePlaceHelper.getStateCode(event.address_components);
         this.contacts.addresses[i].address = number ? (number + ' ' + street) : street;
-        this._changeDetectorRef.detectChanges();
+        this.changeDetectorRef.detectChanges();
     }
 
     updateCountryInfo(countryName: string, i) {
         this.contacts.addresses[i]['country'] =
             (countryName == 'United States' ?
                 AppConsts.defaultCountryName : countryName);
-        this._changeDetectorRef.detectChanges();
+        this.changeDetectorRef.detectChanges();
     }
 
     countriesStateLoad(): void {
@@ -546,7 +546,7 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
             filter(types => !!types)
         ).subscribe(types => {
             this.addressTypes = types;
-            this._changeDetectorRef.detectChanges();
+            this.changeDetectorRef.detectChanges();
         });
     }
 
@@ -556,7 +556,7 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
             .subscribe(result => {
                 setTimeout(() => {
                     this.states[country.name] = result;
-                    this._changeDetectorRef.detectChanges();
+                    this.changeDetectorRef.detectChanges();
                 });
             });
     }
@@ -568,7 +568,7 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
             filter(types => !!types)
         ).subscribe(types => {
             this.phoneTypes = types;
-            this._changeDetectorRef.detectChanges();
+            this.changeDetectorRef.detectChanges();
         });
     }
 
@@ -579,7 +579,7 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
             filter(types => !!types)
         ).subscribe(types => {
             this.emailTypes = types;
-            this._changeDetectorRef.detectChanges();
+            this.changeDetectorRef.detectChanges();
         });
     }
 
@@ -593,7 +593,7 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
                 entity['uri'] = entity.name.replace(/ /g, '');
                 return entity;
             });
-            this._changeDetectorRef.detectChanges();
+            this.changeDetectorRef.detectChanges();
         });
     }
 
@@ -613,7 +613,7 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
             this.addButtonVisible[field] =
                 this.checkEveryContactValid(field) &&
                     !this.checkDuplicateContact(field);
-            this._changeDetectorRef.detectChanges();
+            this.changeDetectorRef.detectChanges();
         }, 300);
     }
 
@@ -634,7 +634,7 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
                 type: this[field + 'TypeDefault']
             });
             this.addButtonVisible[field] = false;
-            this._changeDetectorRef.detectChanges();
+            this.changeDetectorRef.detectChanges();
         }
     }
 
@@ -670,7 +670,7 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
             this.contacts[field][index] = {type: this[field + 'TypeDefault']};
             this.addButtonVisible[field] = false;
         }
-        this._changeDetectorRef.detectChanges();
+        this.changeDetectorRef.detectChanges();
     }
 
     resetComponent(component) {
@@ -702,7 +702,7 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
                 !this.checkDuplicateContact(field);
 
         this.checkSimilarCustomers(field, i);
-        this._changeDetectorRef.detectChanges();
+        this.changeDetectorRef.detectChanges();
     }
 
     onPhoneChanged(component, i) {
@@ -712,14 +712,14 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
             this.addButtonVisible[field] = !component.isEmpty() &&
                 component.isValid() && !this.checkDuplicateContact(field);
             this.checkSimilarCustomers(field, i);
-            this._changeDetectorRef.detectChanges();
+            this.changeDetectorRef.detectChanges();
         });
     }
 
     onPhoneKeyUp(event) {
         if (event.keyCode == 8/*Backspace*/) {
             this.addButtonVisible['phones'] = false;
-            this._changeDetectorRef.detectChanges();
+            this.changeDetectorRef.detectChanges();
         }
     }
 
@@ -730,10 +730,10 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
 
         clearTimeout(this.lookupTimeout);
         this.lookupTimeout = setTimeout(() => {
-            this._orgServiceProxy.getOrganizations(search, this.data.customerType || ContactGroup.Client, 10).subscribe((res) => {
+            this.orgServiceProxy.getOrganizations(search, this.data.customerType || ContactGroup.Client, 10).subscribe((res) => {
                 if (search == this.company)
                     this.companies = res;
-                this._changeDetectorRef.detectChanges();
+                this.changeDetectorRef.detectChanges();
                 setTimeout(() => this.companyOptionChanged($event, true));
             });
         }, 500);
@@ -747,7 +747,7 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
     onCustomCompanyCreate(e) {
         setTimeout(() => {
             this.company = e.text;
-            this._changeDetectorRef.detectChanges();
+            this.changeDetectorRef.detectChanges();
         });
     }
 
@@ -809,13 +809,13 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
             this.userAssignmentComponent.selectedItemKey = this.currentUserId;
             this.stageId = this.stages.length ? this.stages.find(v => v.index === this.defaultStageSortOrder).id : undefined;
             this.ratingComponent.reset();
-            this._changeDetectorRef.detectChanges();
+            this.changeDetectorRef.detectChanges();
         };
 
         if (forced)
             resetInternal();
         else
-            this._messageService.confirm(this.ls.l('DiscardConfirmation'), '', (confirmed) => {
+            this.messageService.confirm(this.ls.l('DiscardConfirmation'), '', (confirmed) => {
                 if (confirmed)
                     resetInternal();
             });
@@ -833,7 +833,7 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
 
     onFullNameKeyUp(inputValue: string) {
         this.title = inputValue;
-        this._nameParser.parseIntoPerson(this.title, this.person);
+        this.nameParser.parseIntoPerson(this.title, this.person);
         this.checkSimilarCustomers();
     }
 
@@ -844,7 +844,7 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
 
     leadStagesLoad() {
         this.modalDialog.startLoading();
-        this._pipelineService.getPipelineDefinitionObservable(AppConsts.PipelinePurposeIds.lead, this.data.customerType)
+        this.pipelineService.getPipelineDefinitionObservable(AppConsts.PipelinePurposeIds.lead, this.data.customerType)
             .subscribe(
                 result => {
                     this.stages = result.stages.map((stage) => {
@@ -857,7 +857,7 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
                             index: stage.sortOrder
                         };
                     });
-                    this._changeDetectorRef.detectChanges();
+                    this.changeDetectorRef.detectChanges();
                     this.modalDialog.finishLoading();
                 },
                 () => this.modalDialog.finishLoading()
@@ -898,7 +898,7 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
     }
 
     close(data?) {
-        this._dialogRef.close(data);
+        this.dialogRef.close(data);
     }
 
     getAssignedUsersSelector() {
