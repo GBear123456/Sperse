@@ -10,6 +10,10 @@ import { AppConsts } from 'shared/AppConsts';
 import { BankCodeLayoutService } from './bank-code-layout.service';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
+import { MemberAreaLink } from '@shared/common/area-navigation/member-area-link.enum';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { AppPermissionService } from '@shared/common/auth/permission.service';
+import { AppPermissions } from '@shared/AppPermissions';
 
 @Directive({
     selector: '[ad-header-host]'
@@ -30,11 +34,66 @@ export class BankCodeHeaderComponent implements OnInit, OnDestroy {
     loggedUserId = abp.session.userId;
     remoteServiceBaseUrl: string = AppConsts.remoteServiceBaseUrl;
     currentDate = new Date();
+    memberAreaLinks: MemberAreaLink[] = [
+        {
+            name: this.ls.l('BankCode_Dashboard'),
+            routerUrl: 'dashboard'
+        },
+        {
+            name: this.ls.l('BankCode_Products'),
+            routerUrl: 'products',
+            sublinks: [
+                {
+                    name: this.ls.l('BankCode_CodebreakerAI'),
+                    routerUrl: 'products/codebreaker-ai'
+                },
+                {
+                    name: this.ls.l('BankCode_BankPass'),
+                    routerUrl: 'products/bank-pass'
+                },
+                {
+                    name: this.ls.l('BankCode_BankVault'),
+                    routerUrl: 'products/bank-vault'
+                },
+                {
+                    name: this.ls.l('BankCode_BankTrainer'),
+                    routerUrl: 'products/bank-trainer'
+                },
+                {
+                    name: this.ls.l('BankCode_BankAffiliate'),
+                    routerUrl: 'products/bank-affiliate'
+                },
+                {
+                    name: this.ls.l('BankCode_BankCards'),
+                    routerUrl: 'products/bank-cards'
+                },
+                {
+                    name: this.ls.l('BankCode_BankGear'),
+                    routerUrl: 'products/bank-gear'
+                }
+            ]
+        },
+        {
+            name: this.ls.l('BankCode_Resources'),
+            routerUrl: 'resources'
+        },
+        {
+            name: this.ls.l('BankCode_Events'),
+            routerUrl: 'events'
+        },
+        {
+            name: this.ls.l('BankCode_BCRM'),
+            routerUrl: '../app/crm',
+            hidden: !this.permissionService.isGranted(AppPermissions.CRM)
+        }
+    ];
 
     constructor(
         private layoutService: BankCodeLayoutService,
         private router: Router,
         private lifecycleService: LifecycleSubjectsService,
+        private ls: AppLocalizationService,
+        private permissionService: AppPermissionService,
         public sessionService: AppSessionService
     ) {}
 
@@ -52,7 +111,7 @@ export class BankCodeHeaderComponent implements OnInit, OnDestroy {
     logoClick() {
         if (this.loggedUserId)
             this.router.navigate(['/code-breaker']);
-        else 
+        else
             location.href = location.origin;
     }
 

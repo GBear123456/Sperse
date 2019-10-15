@@ -190,12 +190,6 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 sortBy: 'displayText'
             },
             {
-                area: 'row',
-                dataField: 'Name',
-                name: 'customerName',
-                sortBy: 'displayText'
-            },
-            {
                 dataType: 'number',
                 area: 'data',
                 summaryType: 'count',

@@ -1,0 +1,10 @@
+<h3 class="title" *ngIf="sidebarTitle">{{sidebarTitle}}</h3>
+<ul>
+    <li *ngFor="let item of items">
+        <a [routerLink]="item.routerUrl"
+           routerLinkActive="active"
+           [routerLinkActiveOptions]="{exact:true}">
+            <span *ngIf="item.namePrefix">{{ item.namePrefix }}</span> {{ item.name }}
+        </a>
+    </li>
+</ul>

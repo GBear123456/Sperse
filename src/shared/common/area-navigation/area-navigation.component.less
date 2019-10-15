@@ -1,4 +1,4 @@
-@import url('../_settings');
+@import url('../../personal-finance-layout/_settings');
 @import url('../../../assets/common/styles/custom/lend-space/colors.less');
 
 :host {
@@ -16,7 +16,7 @@
         right: calc(~"50% - 80px");
     }
 
-    .app-area-navigation {
+    .area-navigation {
         width: 100%;
         padding-left: 0;
         list-style-type: none;
@@ -72,7 +72,7 @@
         }
     }
 
-    .app-area-navigation,
+    .area-navigation,
     .app-responsive-menu {
         li {
             position: relative;
@@ -142,7 +142,7 @@
     }
 
     /** Dark triangle for opened items */
-    .app-area-navigation > li.opened,
+    .area-navigation > li.opened,
     .dropdown {
         position: relative;
         &.show {
@@ -260,7 +260,7 @@
 }
 
 /deep/ body.lend-space .pfm-app {
-    .app-area-navigation li {
+    .area-navigation li {
         span.dropdown-mark {
             border: solid #fff !important;
         }
@@ -277,7 +277,7 @@
         }
     }
 
-    .app-area-navigation,
+    .area-navigation,
     .app-responsive-menu,
     .sublinks {
         li a {
@@ -297,6 +297,22 @@
             &:hover, &.active, &.active > a  {
                 background: #000 !important;
                 color: #fff000 !important;
+            }
+        }
+    }
+}
+
+/deep/ body.bank-code {
+    .area-navigation li {
+
+        &.app-list-item {
+            & > a {
+                padding: 24px 0 !important;
+            }
+            &:hover, &.active {
+                & > a {
+                    border-bottom: 2px solid #ac1f22;
+                }
             }
         }
     }

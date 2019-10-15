@@ -15,14 +15,15 @@ import {
 
 import { AppComponentBase } from 'shared/common/app-component-base';
 import { takeUntil } from 'rxjs/operators';
+import { MemberAreaLink } from '@shared/common/area-navigation/member-area-link.enum';
 
 @Component({
-    selector: 'app-area-navigation',
-    templateUrl: './app-area-navigation.component.html',
-    styleUrls: ['./app-area-navigation.component.less']
+    selector: 'area-navigation',
+    templateUrl: './area-navigation.component.html',
+    styleUrls: ['./area-navigation.component.less']
 })
-export class AppAreaNavigationComponent extends AppComponentBase implements AfterViewInit, OnChanges {
-    @Input() memberAreaLinks: any[];
+export class AreaNavigationComponent extends AppComponentBase implements AfterViewInit, OnChanges {
+    @Input() memberAreaLinks: MemberAreaLink[];
     @Input() actionsButtons: any[];
     @ViewChildren('sublinks') sublinksRefs: QueryList<ElementRef>;
     @ViewChild('linksList') linksList: ElementRef;

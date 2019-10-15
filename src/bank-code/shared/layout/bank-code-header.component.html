@@ -6,7 +6,7 @@
     </div>
 
     <div *ngIf="!loggedUserId" class="navigation">
-        <ul class="app-area-navigation">
+        <ul class="area-navigation">
             <!--<li class="app-list-item">
                 <a href="https://www.bankcode.pro/" class="try-free">
                     Try it Free
@@ -26,4 +26,6 @@
     </div>
 
     <ng-template ad-header-host></ng-template>
+
+    <area-navigation [memberAreaLinks]="memberAreaLinks"></area-navigation>
 </div>
