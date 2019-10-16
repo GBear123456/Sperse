@@ -40450,6 +40450,8 @@ export class ContactInfoDto implements IContactInfoDto {
     lists!: number[] | undefined;
     personContactInfo!: PersonContactInfoDto | undefined;
     primaryOrganizationContactId!: number | undefined;
+    affiliateCode!: string | undefined;
+    sourceContactId!: number | undefined;
     organizationUnitId!: number | undefined;
 
     constructor(data?: IContactInfoDto) {
@@ -40481,6 +40483,8 @@ export class ContactInfoDto implements IContactInfoDto {
             }
             this.personContactInfo = data["personContactInfo"] ? PersonContactInfoDto.fromJS(data["personContactInfo"]) : <any>undefined;
             this.primaryOrganizationContactId = data["primaryOrganizationContactId"];
+            this.affiliateCode = data["affiliateCode"];
+            this.sourceContactId = data["sourceContactId"];
             this.organizationUnitId = data["organizationUnitId"];
         }
     }
@@ -40512,6 +40516,8 @@ export class ContactInfoDto implements IContactInfoDto {
         }
         data["personContactInfo"] = this.personContactInfo ? this.personContactInfo.toJSON() : <any>undefined;
         data["primaryOrganizationContactId"] = this.primaryOrganizationContactId;
+        data["affiliateCode"] = this.affiliateCode;
+        data["sourceContactId"] = this.sourceContactId;
         data["organizationUnitId"] = this.organizationUnitId;
         return data; 
     }
@@ -40528,6 +40534,8 @@ export interface IContactInfoDto {
     lists: number[] | undefined;
     personContactInfo: PersonContactInfoDto | undefined;
     primaryOrganizationContactId: number | undefined;
+    affiliateCode: string | undefined;
+    sourceContactId: number | undefined;
     organizationUnitId: number | undefined;
 }
 
@@ -41037,6 +41045,7 @@ export class CreateContactInput implements ICreateContactInput {
     industry!: string | undefined;
     photo!: ContactPhotoInput | undefined;
     organizationUnitId!: number | undefined;
+    sourceContactId!: number | undefined;
     title!: string | undefined;
     tags!: ContactTagInput[] | undefined;
     lists!: ContactListInput[] | undefined;
@@ -41097,6 +41106,7 @@ export class CreateContactInput implements ICreateContactInput {
             this.industry = data["industry"];
             this.photo = data["photo"] ? ContactPhotoInput.fromJS(data["photo"]) : <any>undefined;
             this.organizationUnitId = data["organizationUnitId"];
+            this.sourceContactId = data["sourceContactId"];
             this.title = data["title"];
             if (data["tags"] && data["tags"].constructor === Array) {
                 this.tags = [];
@@ -41165,6 +41175,7 @@ export class CreateContactInput implements ICreateContactInput {
         data["industry"] = this.industry;
         data["photo"] = this.photo ? this.photo.toJSON() : <any>undefined;
         data["organizationUnitId"] = this.organizationUnitId;
+        data["sourceContactId"] = this.sourceContactId;
         data["title"] = this.title;
         if (this.tags && this.tags.constructor === Array) {
             data["tags"] = [];
@@ -41206,6 +41217,7 @@ export interface ICreateContactInput {
     industry: string | undefined;
     photo: ContactPhotoInput | undefined;
     organizationUnitId: number | undefined;
+    sourceContactId: number | undefined;
     title: string | undefined;
     tags: ContactTagInput[] | undefined;
     lists: ContactListInput[] | undefined;
@@ -47630,7 +47642,6 @@ export class Organization implements IOrganization {
     sizeTo!: number | undefined;
     description!: string | undefined;
     rootOrganizationUnitId!: number | undefined;
-    affiliateCode!: string | undefined;
     orgType!: OrganizationType | undefined;
     contact!: Contact | undefined;
     formedCountry!: Country | undefined;
@@ -47676,7 +47687,6 @@ export class Organization implements IOrganization {
             this.sizeTo = data["sizeTo"];
             this.description = data["description"];
             this.rootOrganizationUnitId = data["rootOrganizationUnitId"];
-            this.affiliateCode = data["affiliateCode"];
             this.orgType = data["orgType"] ? OrganizationType.fromJS(data["orgType"]) : <any>undefined;
             this.contact = data["contact"] ? Contact.fromJS(data["contact"]) : <any>undefined;
             this.formedCountry = data["formedCountry"] ? Country.fromJS(data["formedCountry"]) : <any>undefined;
@@ -47738,7 +47748,6 @@ export class Organization implements IOrganization {
         data["sizeTo"] = this.sizeTo;
         data["description"] = this.description;
         data["rootOrganizationUnitId"] = this.rootOrganizationUnitId;
-        data["affiliateCode"] = this.affiliateCode;
         data["orgType"] = this.orgType ? this.orgType.toJSON() : <any>undefined;
         data["contact"] = this.contact ? this.contact.toJSON() : <any>undefined;
         data["formedCountry"] = this.formedCountry ? this.formedCountry.toJSON() : <any>undefined;
@@ -47793,7 +47802,6 @@ export interface IOrganization {
     sizeTo: number | undefined;
     description: string | undefined;
     rootOrganizationUnitId: number | undefined;
-    affiliateCode: string | undefined;
     orgType: OrganizationType | undefined;
     contact: Contact | undefined;
     formedCountry: Country | undefined;
@@ -49279,6 +49287,8 @@ export class Contact implements IContact {
     terminationDate!: moment.Moment | undefined;
     comment!: string | undefined;
     userId!: number | undefined;
+    affiliateCode!: string | undefined;
+    sourceContactId!: number | undefined;
     organizationUnitId!: number | undefined;
     primaryAddressId!: number | undefined;
     primaryEmailId!: number | undefined;
@@ -49298,6 +49308,7 @@ export class Contact implements IContact {
     status!: ContactStatus | undefined;
     type!: ContactType | undefined;
     group!: ContactGroup | undefined;
+    sourceContact!: Contact | undefined;
     primaryAddress!: ContactAddress | undefined;
     primaryEmail!: ContactEmail | undefined;
     primaryPhone!: ContactPhone | undefined;
@@ -49341,6 +49352,8 @@ export class Contact implements IContact {
             this.terminationDate = data["terminationDate"] ? moment(data["terminationDate"].toString()) : <any>undefined;
             this.comment = data["comment"];
             this.userId = data["userId"];
+            this.affiliateCode = data["affiliateCode"];
+            this.sourceContactId = data["sourceContactId"];
             this.organizationUnitId = data["organizationUnitId"];
             this.primaryAddressId = data["primaryAddressId"];
             this.primaryEmailId = data["primaryEmailId"];
@@ -49380,6 +49393,7 @@ export class Contact implements IContact {
             this.status = data["status"] ? ContactStatus.fromJS(data["status"]) : <any>undefined;
             this.type = data["type"] ? ContactType.fromJS(data["type"]) : <any>undefined;
             this.group = data["group"] ? ContactGroup.fromJS(data["group"]) : <any>undefined;
+            this.sourceContact = data["sourceContact"] ? Contact.fromJS(data["sourceContact"]) : <any>undefined;
             this.primaryAddress = data["primaryAddress"] ? ContactAddress.fromJS(data["primaryAddress"]) : <any>undefined;
             this.primaryEmail = data["primaryEmail"] ? ContactEmail.fromJS(data["primaryEmail"]) : <any>undefined;
             this.primaryPhone = data["primaryPhone"] ? ContactPhone.fromJS(data["primaryPhone"]) : <any>undefined;
@@ -49451,6 +49465,8 @@ export class Contact implements IContact {
         data["terminationDate"] = this.terminationDate ? this.terminationDate.toISOString() : <any>undefined;
         data["comment"] = this.comment;
         data["userId"] = this.userId;
+        data["affiliateCode"] = this.affiliateCode;
+        data["sourceContactId"] = this.sourceContactId;
         data["organizationUnitId"] = this.organizationUnitId;
         data["primaryAddressId"] = this.primaryAddressId;
         data["primaryEmailId"] = this.primaryEmailId;
@@ -49490,6 +49506,7 @@ export class Contact implements IContact {
         data["status"] = this.status ? this.status.toJSON() : <any>undefined;
         data["type"] = this.type ? this.type.toJSON() : <any>undefined;
         data["group"] = this.group ? this.group.toJSON() : <any>undefined;
+        data["sourceContact"] = this.sourceContact ? this.sourceContact.toJSON() : <any>undefined;
         data["primaryAddress"] = this.primaryAddress ? this.primaryAddress.toJSON() : <any>undefined;
         data["primaryEmail"] = this.primaryEmail ? this.primaryEmail.toJSON() : <any>undefined;
         data["primaryPhone"] = this.primaryPhone ? this.primaryPhone.toJSON() : <any>undefined;
@@ -49554,6 +49571,8 @@ export interface IContact {
     terminationDate: moment.Moment | undefined;
     comment: string | undefined;
     userId: number | undefined;
+    affiliateCode: string | undefined;
+    sourceContactId: number | undefined;
     organizationUnitId: number | undefined;
     primaryAddressId: number | undefined;
     primaryEmailId: number | undefined;
@@ -49573,6 +49592,7 @@ export interface IContact {
     status: ContactStatus | undefined;
     type: ContactType | undefined;
     group: ContactGroup | undefined;
+    sourceContact: Contact | undefined;
     primaryAddress: ContactAddress | undefined;
     primaryEmail: ContactEmail | undefined;
     primaryPhone: ContactPhone | undefined;
@@ -49778,6 +49798,7 @@ export class OrganizationBusinessInfo implements IOrganizationBusinessInfo {
     assignedUserId!: number | undefined;
     ratingId!: number | undefined;
     userId!: number | undefined;
+    sourceContactId!: number | undefined;
     organizationUnitId!: number | undefined;
 
     constructor(data?: IOrganizationBusinessInfo) {
@@ -49847,6 +49868,7 @@ export class OrganizationBusinessInfo implements IOrganizationBusinessInfo {
             this.assignedUserId = data["assignedUserId"];
             this.ratingId = data["ratingId"];
             this.userId = data["userId"];
+            this.sourceContactId = data["sourceContactId"];
             this.organizationUnitId = data["organizationUnitId"];
         }
     }
@@ -49916,6 +49938,7 @@ export class OrganizationBusinessInfo implements IOrganizationBusinessInfo {
         data["assignedUserId"] = this.assignedUserId;
         data["ratingId"] = this.ratingId;
         data["userId"] = this.userId;
+        data["sourceContactId"] = this.sourceContactId;
         data["organizationUnitId"] = this.organizationUnitId;
         return data; 
     }
@@ -49954,6 +49977,7 @@ export interface IOrganizationBusinessInfo {
     assignedUserId: number | undefined;
     ratingId: number | undefined;
     userId: number | undefined;
+    sourceContactId: number | undefined;
     organizationUnitId: number | undefined;
 }
 
@@ -59026,6 +59050,7 @@ export class CreateLeadInput implements ICreateLeadInput {
     industry!: string | undefined;
     photo!: ContactPhotoInput | undefined;
     organizationUnitId!: number | undefined;
+    sourceContactId!: number | undefined;
     title!: string | undefined;
     tags!: ContactTagInput[] | undefined;
     lists!: ContactListInput[] | undefined;
@@ -59090,6 +59115,7 @@ export class CreateLeadInput implements ICreateLeadInput {
             this.industry = data["industry"];
             this.photo = data["photo"] ? ContactPhotoInput.fromJS(data["photo"]) : <any>undefined;
             this.organizationUnitId = data["organizationUnitId"];
+            this.sourceContactId = data["sourceContactId"];
             this.title = data["title"];
             if (data["tags"] && data["tags"].constructor === Array) {
                 this.tags = [];
@@ -59162,6 +59188,7 @@ export class CreateLeadInput implements ICreateLeadInput {
         data["industry"] = this.industry;
         data["photo"] = this.photo ? this.photo.toJSON() : <any>undefined;
         data["organizationUnitId"] = this.organizationUnitId;
+        data["sourceContactId"] = this.sourceContactId;
         data["title"] = this.title;
         if (this.tags && this.tags.constructor === Array) {
             data["tags"] = [];
@@ -59207,6 +59234,7 @@ export interface ICreateLeadInput {
     industry: string | undefined;
     photo: ContactPhotoInput | undefined;
     organizationUnitId: number | undefined;
+    sourceContactId: number | undefined;
     title: string | undefined;
     tags: ContactTagInput[] | undefined;
     lists: ContactListInput[] | undefined;
