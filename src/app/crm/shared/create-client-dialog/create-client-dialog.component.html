@@ -264,7 +264,7 @@
                                 <dx-drop-down-box
                                     width="330px"
                                     name="linkType"
-                                    placeholder="{{ls.l('Type')}}"
+                                    [placeholder]="ls.l('Type')"
                                     displayExpr="name"
                                     valueExpr="id"
                                     accessKey="link-type-dialog"
@@ -274,8 +274,8 @@
                                         <div>
                                             <mat-sidenav mode="side" opened="true" position="start" style="height:50px;width:100%;">
                                                 <mat-tab-group (selectedTabChange)="link.isCompany = !!$event.index">
-                                                    <mat-tab label="{{ls.l('Person')}}"></mat-tab>
-                                                    <mat-tab label="{{ls.l('Company')}}"></mat-tab>
+                                                    <mat-tab [label]="ls.l('Person')"></mat-tab>
+                                                    <mat-tab [label]="ls.l('Company')"></mat-tab>
                                                 </mat-tab-group>
                                             </mat-sidenav>
                                             <dx-list

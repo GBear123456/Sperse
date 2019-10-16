@@ -2,10 +2,10 @@
 import { Injectable } from '@angular/core';
 
 /** Third party imports */
-import capitalize from 'lodash/capitalize';
 import { Subscription, Subject, BehaviorSubject, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import * as _ from 'underscore';
+import capitalize from 'underscore.string/capitalize';
 
 /** Application imports */
 import { FilterModel } from './models/filter.model';

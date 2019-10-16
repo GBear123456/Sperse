@@ -11,6 +11,7 @@ export class BankCodeLetterComponent {
     @Input() letter: BankCodeLetter;
     @Input() showDescriptionOnHover = false;
     @Input() allowEdit = false;
+    @Input() key: string;
 
     constructor(public bankCodeService: BankCodeService) {}
 }

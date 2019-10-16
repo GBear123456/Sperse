@@ -384,7 +384,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         this.loadOrganizationUnits();
         combineLatest(
             this.chartComponent.summaryBy$,
-            this.filtersService.filterChanged$.pipe(startWith(null))
+            this.filterChanged$.pipe(startWith(null))
         ).pipe(
             takeUntil(this.lifeCycleSubjectsService.destroy$),
             filter(() => this.showChart)
@@ -1037,18 +1037,20 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             this.pipelineComponent.searchValue = this.searchValue;
         }
 
-        let contexts = cxts && cxts.length ? cxts : [ this.showPipeline ? this.pipelineComponent : this ];
-        contexts.forEach(context => {
-            if (context && context.processODataFilter) {
-                context.processODataFilter.call(
-                    context,
-                    this.showPivotGrid ? this.pivotGridComponent.pivotGrid.instance : this.dataGrid.instance,
-                    this.dataSourceURI,
-                    this.filters,
-                    this.filtersService.getCheckCustom
-                );
-            }
-        });
+        if (this.showPipeline || this.showDataGrid || this.showPivotGrid) {
+            let contexts = cxts && cxts.length ? cxts : [ this.showPipeline ? this.pipelineComponent : this ];
+            contexts.forEach(context => {
+                if (context && context.processODataFilter) {
+                    context.processODataFilter.call(
+                        context,
+                        this.showPivotGrid ? this.pivotGridComponent.pivotGrid.instance : this.dataGrid.instance,
+                        this.dataSourceURI,
+                        this.filters,
+                        this.filtersService.getCheckCustom
+                    );
+                }
+            });
+        }
     }
 
     initDataSource() {

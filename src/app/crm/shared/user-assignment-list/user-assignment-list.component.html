@@ -27,8 +27,8 @@
                         <div class="user">
                             <img src="{{ profileService.getProfilePictureUrl(data.profileThumbnailId, noPhotoUrl) }}" alt="Person Photo">
                             <span class="item-name">{{data.name}}<span *ngIf="!data.isActive"> (inactive)</span></span>
-                        </div>                    
-                        <a *ngIf="filterModel" class="dx-link dx-link-filter" title="{{l('Filter')}}" (click)="applyFilter($event, data)"></a>
+                        </div>
+                        <a *ngIf="filterModel" class="dx-link dx-link-filter" [title]="l('Filter')" (click)="applyFilter($event, data)"></a>
                     </div>
                 </div>
             </dx-list>

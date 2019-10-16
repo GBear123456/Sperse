@@ -3,9 +3,8 @@
     <div class="header">
         <div class="logo">
             <a [href]="originUrl">
-                <img src="./assets/common/images/bank-code/cb-technologies.png"
-                     srcset="./assets/common/images/bank-code/cb-technologies@2x.png 2x, ./assets/common/images/bank-code/cb-technologies@3x.png 3x"
-                     alt="logo" width="115px" height="auto"/>
+                <img *ngIf="!appSession.tenant || !appSession.tenant.logoId" src="./assets/common/images/bank-code/bank-code-logo@3x.png" alt="logo" class="logo-layout" width="200px" height="auto" />
+                <img *ngIf="appSession.tenant && appSession.tenant.logoId" [src]="remoteServiceBaseUrl + '/api/TenantCustomization/GetLogo?logoId=' + appSession.tenant.logoId" alt="logo" class="logo-layout" width="200px" height="auto"/>
             </a>
         </div>
     </div>

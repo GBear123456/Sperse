@@ -50,7 +50,7 @@ export class UserAssignmentComponent extends AppComponentBase implements OnInit 
 
     constructor(
         injector: Injector,
-	    private _appStoreService: AppStoreService,
+        private _appStoreService: AppStoreService,
         private _filtersService: FiltersService,
         private store$: Store<AppStore.State>,
     ) {
@@ -65,7 +65,7 @@ export class UserAssignmentComponent extends AppComponentBase implements OnInit 
             return;
 
         let items = this.listComponent.getDataSource().items();
-        if (items.some((el, i, a) => {
+        if (items.some((el) => {
             if (index > 0 && el.id == this.selectedItemKey)
                 return true;
             index++;
@@ -85,9 +85,9 @@ export class UserAssignmentComponent extends AppComponentBase implements OnInit 
             this.highlightSelectedFilters();
     }
 
-    apply(selectedKeys = undefined) {
+    apply(selectedKeys?: number[]) {
         if (this.listComponent) {
-            this.selectedItemKeys = this.list.map((item, index) => {
+            this.selectedItemKeys = this.list.map((item) => {
                 return this.listComponent.isItemSelected(item) && item.id;
             }).filter(Boolean);
             this.selectedKeys = selectedKeys || this.selectedKeys;
