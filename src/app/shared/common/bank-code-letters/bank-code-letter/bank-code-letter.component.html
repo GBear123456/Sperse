@@ -1,9 +1,9 @@
-<span [class]="letter"
+<span [class]="key + letter"
       [ngStyle]="bankCodeService.getColorsByLetter(letter)">
     {{ letter }}
 </span>
 <dx-tooltip *ngIf="showDescriptionOnHover"
-            [target]="'.' + letter"
+            [target]="'.' + key + letter"
             position="bottom"
             showEvent="dxhoverstart"
             hideEvent="dxhoverend">

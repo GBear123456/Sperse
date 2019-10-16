@@ -13,6 +13,7 @@ export class BankCodeLettersComponent {
     @Input() bankCode: string;
     @Input() showDescriptionsOnHover = false;
     @Input() personId: number;
+    @Input() key: string;
     @HostBinding('class.allow-edit') @Input() allowEdit = false;
 
     constructor(
