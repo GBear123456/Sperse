@@ -72,7 +72,7 @@ export class CFOService extends CFOServiceBase {
 
         if (changed) {
             this.instanceId = instanceId;
-            this.instanceType = instanceType;
+            this.instanceType = InstanceType[instanceType];
             this.instanceChanged.next({
                 instanceType: this.instanceType,
                 instanceId: this.instanceId

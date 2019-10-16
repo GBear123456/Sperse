@@ -6,10 +6,10 @@ import { map } from 'rxjs/operators';
 
 @Injectable()
 export class UserOnlyCFOService extends CFOServiceBase {
-    get instanceType() {
+    get instanceType(): InstanceType {
         return InstanceType.User;
     }
-    set instanceType(val) { }
+    set instanceType(val: InstanceType) { }
 
     constructor(
         private _myFinancesService: MyFinancesServiceProxy
