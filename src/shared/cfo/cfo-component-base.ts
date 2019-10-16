@@ -1,10 +1,14 @@
-import { AppComponentBase } from '@shared/common/app-component-base';
+/** Core imports */
 import { OnDestroy, Injector } from '@angular/core';
+
+/** Application imports */
+import { AppComponentBase } from '@shared/common/app-component-base';
+import { InstanceType } from '@shared/service-proxies/service-proxies';
 import { CFOService } from './cfo.service';
 
 export abstract class CFOComponentBase extends AppComponentBase implements OnDestroy {
     instanceId: number;
-    instanceType: string;
+    instanceType: InstanceType;
     get isInstanceAdmin() {
         return this._cfoService.isInstanceAdmin;
     }

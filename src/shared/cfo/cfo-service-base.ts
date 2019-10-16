@@ -1,9 +1,10 @@
 import { BehaviorSubject, ReplaySubject, Subject, Observable } from 'rxjs';
+import { InstanceType } from '@shared/service-proxies/service-proxies';
 import { InstanceModel } from '@shared/cfo/instance.model';
 
 export abstract class CFOServiceBase {
     instanceId: number;
-    instanceType: string;
+    instanceType: InstanceType;
     initialized: boolean;
     protected _initialized: ReplaySubject<boolean> = new ReplaySubject<boolean>(1);
     initialized$: Observable<boolean> = this._initialized.asObservable();

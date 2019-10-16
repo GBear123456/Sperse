@@ -106,7 +106,7 @@ export class GenerateReportDialogComponent implements OnInit {
         this.dialogRef['_overlayRef'].hostElement.classList.add('generate-report');
       
         if (feature.isEnabled(AppFeatures.CFODepartmentsManagement))
-            this.departmentsProxy.getAccessibleDepartments(this.cfoService.instanceType as InstanceType, 
+            this.departmentsProxy.getAccessibleDepartments(this.cfoService.instanceType, 
                 this.cfoService.instanceId).subscribe(res => {
                     this.departmentsEntities = [this.noDepartmentItem].concat(res);
                 });
