@@ -6,7 +6,7 @@ import { CFOService } from '../../cfo.service';
 
 export abstract class CFOComponentBase extends AppComponentBase implements OnDestroy {
     instanceId: number;
-    instanceType: string;
+    instanceType: InstanceType;
 
     protected _route: ActivatedRoute;
     _cfoService: CFOService;

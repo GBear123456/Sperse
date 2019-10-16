@@ -121,9 +121,9 @@ export class CreateInvoiceDialogComponent implements OnInit {
         @Inject(MAT_DIALOG_DATA) public data: any
     ) {
         this.saveContextMenuItems = [
-            {text: this.ls.l('Save'), selected: false},
+            {text: this.ls.l('Save'), selected: false, status: InvoiceStatus.Final},
             {text: this.ls.l('Invoice_SaveAsDraft'), selected: false, disabled: this.data.invoice
-                && this.data.invoice.Status != InvoiceStatus.Draft},
+                && this.data.invoice.Status != InvoiceStatus.Draft, status: InvoiceStatus.Draft},
             {text: this.ls.l('Invoice_SaveAndSend'), selected: false, disabled: true},
             {text: this.ls.l('Invoice_SaveAndMarkSent'), selected: false, disabled: true}
         ];
@@ -197,11 +197,11 @@ export class CreateInvoiceDialogComponent implements OnInit {
 
     saveOptionsInit() {
         let cacheKey = this._cacheHelper.getCacheKey(this.SAVE_OPTION_CACHE_KEY, this.constructor.name),
-            selectedIndex = this.SAVE_OPTION_DEFAULT;
-        if (this._cacheService.exists(cacheKey))
-            selectedIndex = this._cacheService.get(cacheKey);
-        this.saveContextMenuItems[selectedIndex].selected = true;
-        this.buttons[0].title = this.saveContextMenuItems[selectedIndex].text;
+            selectedOption = this.saveContextMenuItems[this._cacheService.exists(cacheKey) ? 
+                this._cacheService.get(cacheKey) : this.SAVE_OPTION_DEFAULT];
+        selectedOption.selected = true;
+        this.buttons[0].title = selectedOption.text;
+        this.status = selectedOption.status;
     }
 
     onSaveItemClick(event) {
@@ -209,12 +209,13 @@ export class CreateInvoiceDialogComponent implements OnInit {
         event.event.preventDefault();
     }
 
-    onSaveOptionSelectionChanged($event) {
-        let option = $event.addedItems.pop() || $event.removedItems.pop() ||
+    onSaveOptionSelectionChanged(event) {
+        let option = event.addedItems.pop() || event.removedItems.pop() ||
             this.saveContextMenuItems[this.SAVE_OPTION_DEFAULT];
         option.selected = true;
-        $event.component.option('selectedItem', option);
+        event.component.option('selectedItem', option);
         this.updateSaveOption(option);
+        this.status = option.status;
         this.save();
     }
 
@@ -327,13 +328,6 @@ export class CreateInvoiceDialogComponent implements OnInit {
         if (this.lines.some(line => !(line['Description'] && line['Quantity'] && line['Rate'])))
             return this._notifyService.error(this.ls.l('InvoiceLinesShouldBeDefined'));
 
-        this.saveContextMenuItems.some((item, index) => {
-            if (item.selected) {
-                this.status = InvoiceStatus[index == this.SAVE_OPTION_DEFAULT ? 'Final' : 'Draft'];
-                this._changeDetectorRef.detectChanges();
-            }
-            return item.selected;
-        });
 
         if (this.disabledForUpdate)
             this.updateStatus();

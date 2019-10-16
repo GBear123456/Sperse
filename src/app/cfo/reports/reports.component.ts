@@ -9,13 +9,13 @@ import { Observable, of } from 'rxjs';
 import { CacheService } from 'ng2-cache-service';
 import { ImageViewerComponent } from 'ng2-image-viewer';
 import '@node_modules/ng2-image-viewer/imageviewer.js';
-import { flatMap, finalize } from 'rxjs/operators';
+import { flatMap, finalize, map } from 'rxjs/operators';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
 import { NavigationState } from '@shared/AppEnums';
 import { FileSizePipe } from '@shared/common/pipes/file-size.pipe';
-import { ReportsServiceProxy, ReportPeriod, GetReportUrlOutput } from '@shared/service-proxies/service-proxies';
+import { DepartmentsServiceProxy, ReportsServiceProxy, ReportPeriod, GetReportUrlOutput } from '@shared/service-proxies/service-proxies';
 import { BankAccountsService } from '@shared/cfo/bank-accounts/helpers/bank-accounts.service';
 import { StringHelper } from '@root/shared/helpers/StringHelper';
 import { RequestHelper } from '@root/shared/helpers/RequestHelper';
@@ -24,11 +24,15 @@ import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { AppService } from '@app/app.service';
 import { SendNotificationDialogComponent } from '@app/cfo/reports/send-notification-dialog/send-notification-dialog.component';
 import { DataGridService } from '@app/shared/common/data-grid.service.ts/data-grid.service';
+import { FilterCheckBoxesComponent } from '@shared/filters/check-boxes/filter-check-boxes.component';
+import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-boxes.model';
+import { FiltersService } from '@shared/filters/filters.service';
+import { FilterModel } from '@shared/filters/models/filter.model';
 
 @Component({
     templateUrl: './reports.component.html',
     styleUrls: ['./reports.component.less'],
-    providers: [ ReportsServiceProxy, FileSizePipe ],
+    providers: [ ReportsServiceProxy, FileSizePipe, DepartmentsServiceProxy ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ReportsComponent extends CFOComponentBase implements OnInit, AfterViewInit, OnDestroy {
@@ -82,9 +86,12 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
     previewContent: string;
     reportUrls = {};
 
+    filters: FilterModel[];
+    departmentsFilterModel: FilterModel;
     selectedPeriod = ReportPeriod.Monthly;
     formatting = AppConsts.formatting;
     dataSourceURI = 'Reporting';
+    noDepartmentItem = this.l('NoDepartment');
 
     readonly RESERVED_TIME_SECONDS = 30;
 
@@ -95,6 +102,8 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
         private fileSizePipe: FileSizePipe,
         private changeDetector: ChangeDetectorRef,
         private cacheService: CacheService,
+        private filtersService: FiltersService,
+        private departmentsProxy: DepartmentsServiceProxy,
         public reportsProxy: ReportsServiceProxy,
         public bankAccountsService: BankAccountsService
     ) {
@@ -119,6 +128,12 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
                                 return acc + (acc ? '&' : '') + arrgs.join('=');
                         }, '');
                     }
+
+                    if (this.departmentsFilterModel && this.departmentsFilterModel.items.element.value.length) {
+                        request.url += '&' + this.departmentsFilterModel.items.element.value.map(item => {
+                            return 'departments=' + (item == this.noDepartmentItem ? '' : item);
+                        }).join('&');
+                    }
                 }
             }
         };
@@ -142,6 +157,31 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
                 location: 'before',
                 items: [
                     {
+                        name: 'filters',
+                        action: () => {
+                            this.filtersService.fixed = !this.filtersService.fixed;
+                        },
+                        options: {
+                            checkPressed: () => {
+                                return this.filtersService.fixed;
+                            },
+                            mouseover: () => {
+                                this.filtersService.enable();
+                            },
+                            mouseout: () => {
+                                if (!this.filtersService.fixed)
+                                    this.filtersService.disable();
+                            }
+                        },
+                        attr: {
+                            'filter-selected': this.filtersService.hasFilterSelected
+                        }
+                    }
+                ]
+            }, {
+                location: 'before',
+                items: [
+                    {
                         name: 'search',
                         widget: 'dxTextBox',
                         options: {
@@ -162,6 +202,40 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
     searchValueChange(e: object) {
         this.searchValue = e['value'];
         this.processFilterInternal();
+    }
+
+    setupFilters() {
+        if (this.filters && this.filters.length)
+            this.filtersService.setup(this.filters);
+        else
+            this.filtersService.setup(
+                this.filters = [
+                    this.departmentsFilterModel = new FilterModel({
+                        component: FilterCheckBoxesComponent,
+                        caption: 'departments',
+                        field: 'departments',
+                        items: {
+                            element: new FilterCheckBoxesModel({
+                                dataSource$: this.departmentsProxy.getAccessibleDepartments(
+                                    this._cfoService.instanceType, this._cfoService.instanceId).pipe(map(items => {
+                                        items.unshift(this.noDepartmentItem);
+                                        return items.map(item => {
+                                            return {name: item};
+                                        })
+                                    })
+                                ),
+                                nameField: 'name',
+                                keyExpr: 'name'
+                            })
+                        }
+                    })
+                ]
+            );
+
+        this.filtersService.apply(() => {
+            this.initToolbarConfig();
+            this.processFilterInternal();
+        });
     }
 
     initViewerToolbar(conf: any = {}) {
@@ -484,9 +558,11 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
         setTimeout(() =>
             this.changeDetector.markForCheck(), 600);
         this.getRootComponent().overflowHidden(true);
+        this.setupFilters();
     }
 
     deactivate() {
         this.getRootComponent().overflowHidden();
+        this.filtersService.unsubscribe();
     }
 }
