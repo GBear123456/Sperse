@@ -13,14 +13,14 @@ import { AppConsts } from '@shared/AppConsts';
 import { NotifyService } from '@abp/notify/notify.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
-import { EmailTemplatesServiceProxy, GetTemplatesResponse, CreateEmailTemplateRequest,
+import { EmailTemplateServiceProxy, GetTemplatesResponse, CreateEmailTemplateRequest,
     UpdateEmailTemplateRequest, EmailTemplateParamDto } from '@shared/service-proxies/service-proxies';
 
 @Component({
     selector: 'email-template-dialog',
     templateUrl: 'email-template-dialog.component.html',
     styleUrls: [ 'email-template-dialog.component.less' ],
-    providers: [ EmailTemplatesServiceProxy ],
+    providers: [ EmailTemplateServiceProxy ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class EmailTemplateDialogComponent {
@@ -52,7 +52,7 @@ export class EmailTemplateDialogComponent {
     constructor(
         private notifyService: NotifyService,
         private dialogRef: MatDialogRef<EmailTemplateDialogComponent>,
-        private emailTemplatesProxy: EmailTemplatesServiceProxy,
+        private emailTemplateProxy: EmailTemplateServiceProxy,
         private changeDetectorRef: ChangeDetectorRef,
         public dialog: MatDialog,
         public ls: AppLocalizationService,
@@ -96,8 +96,8 @@ export class EmailTemplateDialogComponent {
 
         this.startLoading();
         (this.data.templateId ?
-            this.emailTemplatesProxy.updateTemplate(new UpdateEmailTemplateRequest(data)) :
-            this.emailTemplatesProxy.createTemplate(new CreateEmailTemplateRequest(data))
+            this.emailTemplateProxy.update(new UpdateEmailTemplateRequest(data)) :
+            this.emailTemplateProxy.create(new CreateEmailTemplateRequest(data))
         ).pipe(finalize(() => this.finishLoading())).subscribe(() => {
             this.notifyService.info(this.ls.l('SavedSuccessfully'));
             this.initTemplateList();
@@ -118,7 +118,7 @@ export class EmailTemplateDialogComponent {
     }
 
     initTemplateList() {  
-        this.templates$ = this.emailTemplatesProxy.getTemplates(this.data.templateType);
+        this.templates$ = this.emailTemplateProxy.getTemplates(this.data.templateType);
         this.changeDetectorRef.markForCheck();
     }
 
@@ -152,7 +152,7 @@ export class EmailTemplateDialogComponent {
     onTemplateChanged(event) {
         if (event.value) {
             this.startLoading();
-            this.emailTemplatesProxy.getTemplate(event.value).pipe(
+            this.emailTemplateProxy.getTemplate(event.value).pipe(
                 finalize(() => this.finishLoading())
             ).subscribe(res => {
                 this.data.bcc = res.bcc;

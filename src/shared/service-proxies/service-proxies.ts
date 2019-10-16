@@ -12966,7 +12966,7 @@ export class EmailingServiceProxy {
 }
 
 @Injectable()
-export class EmailTemplatesServiceProxy {
+export class EmailTemplateServiceProxy {
     private http: HttpClient;
     private baseUrl: string;
     protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
@@ -12981,7 +12981,7 @@ export class EmailTemplatesServiceProxy {
      * @return Success
      */
     getTemplates(type: EmailTemplateType | null | undefined): Observable<GetTemplatesResponse[]> {
-        let url_ = this.baseUrl + "/api/services/CRM/EmailTemplates/GetTemplates?";
+        let url_ = this.baseUrl + "/api/services/CRM/EmailTemplate/GetTemplates?";
         if (type !== undefined)
             url_ += "type=" + encodeURIComponent("" + type) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
@@ -13040,7 +13040,7 @@ export class EmailTemplatesServiceProxy {
      * @return Success
      */
     getTemplate(id: number | null | undefined): Observable<GetTemplateReponse> {
-        let url_ = this.baseUrl + "/api/services/CRM/EmailTemplates/GetTemplate?";
+        let url_ = this.baseUrl + "/api/services/CRM/EmailTemplate/GetTemplate?";
         if (id !== undefined)
             url_ += "id=" + encodeURIComponent("" + id) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
@@ -13094,8 +13094,8 @@ export class EmailTemplatesServiceProxy {
      * @body (optional) 
      * @return Success
      */
-    createTemplate(body: CreateEmailTemplateRequest | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CRM/EmailTemplates/CreateTemplate";
+    create(body: CreateEmailTemplateRequest | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/EmailTemplate/Create";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(body);
@@ -13110,11 +13110,11 @@ export class EmailTemplatesServiceProxy {
         };
 
         return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processCreateTemplate(response_);
+            return this.processCreate(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processCreateTemplate(<any>response_);
+                    return this.processCreate(<any>response_);
                 } catch (e) {
                     return <Observable<void>><any>_observableThrow(e);
                 }
@@ -13123,7 +13123,7 @@ export class EmailTemplatesServiceProxy {
         }));
     }
 
-    protected processCreateTemplate(response: HttpResponseBase): Observable<void> {
+    protected processCreate(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -13146,8 +13146,8 @@ export class EmailTemplatesServiceProxy {
      * @body (optional) 
      * @return Success
      */
-    updateTemplate(body: UpdateEmailTemplateRequest | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CRM/EmailTemplates/UpdateTemplate";
+    update(body: UpdateEmailTemplateRequest | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/EmailTemplate/Update";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(body);
@@ -13162,11 +13162,11 @@ export class EmailTemplatesServiceProxy {
         };
 
         return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processUpdateTemplate(response_);
+            return this.processUpdate(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processUpdateTemplate(<any>response_);
+                    return this.processUpdate(<any>response_);
                 } catch (e) {
                     return <Observable<void>><any>_observableThrow(e);
                 }
@@ -13175,7 +13175,7 @@ export class EmailTemplatesServiceProxy {
         }));
     }
 
-    protected processUpdateTemplate(response: HttpResponseBase): Observable<void> {
+    protected processUpdate(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
