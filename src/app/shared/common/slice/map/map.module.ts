@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 
 /** Third party imports */
 import { DxVectorMapModule } from 'devextreme-angular/ui/vector-map';
+import { DxSelectBoxModule } from 'devextreme-angular/ui/select-box';
 
 /** Application imports */
 import { MapComponent } from '@app/shared/common/slice/map/map.component';
@@ -12,6 +13,7 @@ import { LoadingSpinnerModule } from '@app/shared/common/loading-spinner/loading
 @NgModule({
     imports: [
         CommonModule,
+        DxSelectBoxModule,
         DxVectorMapModule,
         LoadingSpinnerModule
     ],

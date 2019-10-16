@@ -8,7 +8,7 @@ import {
     ViewChild
 } from '@angular/core';
 import { RouteReuseStrategy } from '@angular/router';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
@@ -73,12 +73,13 @@ import { InfoItem } from '@app/shared/common/slice/info/info-item.model';
 import { MapData } from '@app/shared/common/slice/map/map-data.model';
 import { MapComponent } from '@app/shared/common/slice/map/map.component';
 import { ImageFormat } from '@shared/common/export/image-format.enum';
-import { AppFeatures } from '@shared/AppFeatures';
+import { MapArea } from '@app/shared/common/slice/map/map-area.enum';
+import { MapService } from '@app/shared/common/slice/map/map.service';
 
 @Component({
     templateUrl: './leads.component.html',
     styleUrls: ['./leads.component.less'],
-    providers: [ LeadServiceProxy, ContactServiceProxy, LifecycleSubjectsService, PipelineService ],
+    providers: [ LeadServiceProxy, ContactServiceProxy, LifecycleSubjectsService, PipelineService, MapService ],
     animations: [ appModuleAnimation() ]
 })
 export class LeadsComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy {
@@ -305,9 +306,11 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     private _refresh: BehaviorSubject<null> = new BehaviorSubject<null>(null);
     private refresh$: Observable<null> = this._refresh.asObservable();
     mapDataIsLoading = false;
+    selectedMapArea$: Observable<MapArea> = this.mapService.selectedMapArea$;
     contactsData$: Observable<any> = combineLatest(
         this.contactGroupId$,
         this.odataFilter$,
+        this.selectedMapArea$,
         this.refresh$
     ).pipe(
         tap(() => this.mapDataIsLoading = true),
@@ -316,17 +319,18 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             first(),
             mapTo(data)
         )),
-        switchMap(([contactGroupId, filter]: [ContactGroup, any]) => this.crmService.loadSliceMapData(
+        switchMap(([contactGroupId, filter, mapArea]: [ContactGroup, any, MapArea]) => this.mapService.loadSliceMapData(
             this.getODataUrl(this.groupDataSourceURI),
             filter,
+            mapArea,
             { contactGroupId: contactGroupId.toString() }
         )),
         publishReplay(),
         refCount(),
         tap(() => this.mapDataIsLoading = false)
     );
-    mapData$: Observable<MapData> = this.crmService.getAdjustedMapData(this.contactsData$);
-    mapInfoItems$: Observable<InfoItem[]> = this.crmService.getMapInfoItems(this.contactsData$);
+    mapData$: Observable<MapData> = this.mapService.getAdjustedMapData(this.contactsData$);
+    mapInfoItems$: Observable<InfoItem[]> = this.mapService.getMapInfoItems(this.contactsData$, this.selectedMapArea$);
 
     private readonly CONTACT_GROUP_CACHE_KEY = 'CONTACT_GROUP';
     private organizationUnits: OrganizationUnitDto[];
@@ -348,6 +352,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         private sessionService: AppSessionService,
         private http: HttpClient,
         private crmService: CrmService,
+        private mapService: MapService,
         public dialog: MatDialog,
         public contactProxy: ContactServiceProxy,
         public userManagementService: UserManagementService
@@ -394,6 +399,10 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         this.activate();
     }
 
+    ngAfterViewInit() {
+        this.initDataSource();
+    }
+
     private loadOrganizationUnits() {
         this.store$.dispatch(new OrganizationUnitsStoreActions.LoadRequestAction(false));
         this.store$.pipe(
@@ -426,10 +435,6 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
 
     getOrganizationUnitName = (e) => {
         return DataGridHelper.getOrganizationUnitName(e.OrganizationUnitId, this.organizationUnits);
-    }
-
-    ngAfterViewInit() {
-        this.initDataSource();
     }
 
     toggleToolbar() {

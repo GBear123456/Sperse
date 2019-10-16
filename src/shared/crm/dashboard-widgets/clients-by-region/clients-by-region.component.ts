@@ -23,12 +23,13 @@ import { PeriodModel } from '@app/shared/common/period/period.model';
 import { GetContactsByRegionOutput } from '@shared/service-proxies/service-proxies';
 import { MapComponent } from '@app/shared/common/slice/map/map.component';
 import { MapData } from '@app/shared/common/slice/map/map-data.model';
+import { MapService } from '@app/shared/common/slice/map/map.service';
 
 @Component({
     selector: 'clients-by-region',
     templateUrl: './clients-by-region.component.html',
     styleUrls: ['./clients-by-region.component.less'],
-    providers: [ LifecycleSubjectsService ],
+    providers: [ LifecycleSubjectsService, MapService ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ClientsByRegionComponent implements OnInit, OnDestroy {
@@ -65,7 +66,7 @@ export class ClientsByRegionComponent implements OnInit, OnDestroy {
             this.data = {};
             contactsByRegion.forEach((val: GetContactsByRegionOutput) => {
                 this.data[val.stateId] = {
-                    name: val.stateId  || 'Other',
+                    name: val.stateId || 'Other',
                     total: val.count
                 };
             });

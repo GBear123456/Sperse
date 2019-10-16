@@ -15,7 +15,6 @@ import { SummaryBy } from '@app/shared/common/slice/chart/summary-by.enum';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { InfoItem } from '@app/shared/common/slice/info/info-item.model';
 import { FilterModel } from '@shared/filters/models/filter.model';
-import { MapData } from '@app/shared/common/slice/map/map-data.model';
 
 @Injectable()
 export class CrmService {
@@ -147,68 +146,5 @@ export class CrmService {
         const dateA = new Date(a.creationDate);
         const dateB = new Date(b.creationDate);
         return dateA > dateB ? 1 : (dateA < dateB ? -1 : 0);
-    }
-
-    loadSliceMapData(sourceUri: string, filter, params?: { [name: string]: any }): Observable<any> {
-        params = {
-            group: `[{"selector":"StateId","isExpanded":false}]`,
-            groupSummary: '[{"selector":"CreationTime","summaryType":"min"}]',
-            ...params
-        };
-        if (filter) {
-            params['$filter'] = filter;
-        }
-        return this.http.get(sourceUri, {
-            headers: new HttpHeaders({
-                'Authorization': 'Bearer ' + abp.auth.getToken()
-            }),
-            params: params
-        });
-    }
-
-    getAdjustedMapData(mapData$: Observable<any>): Observable<MapData> {
-        return mapData$.pipe(
-            map((mapData: any) => {
-                const data: MapData = {};
-                mapData.data.forEach(contact => {
-                    data[contact.key] = {
-                        name: contact.key,
-                        total: contact.count
-                    };
-                });
-                return data;
-            })
-        );
-    }
-
-    getMapInfoItems(mapData$: Observable<any>): Observable<InfoItem[]> {
-        return mapData$.pipe(
-            map((contacts: any) => {
-                const avgGroupValue = contacts.totalCount ? (contacts.totalCount / contacts.data.length).toFixed(0) : 0;
-                let minGroupValue, maxGroupValue;
-                contacts.data.forEach(contact => {
-                    minGroupValue = !minGroupValue || contact.count < minGroupValue ? contact.count : minGroupValue;
-                    maxGroupValue = !maxGroupValue || contact.count > maxGroupValue ? contact.count : maxGroupValue;
-                });
-                return [
-                    {
-                        label: this.ls.l('Totals'),
-                        value: contacts.totalCount
-                    },
-                    {
-                        label: this.ls.l('Average'),
-                        value: avgGroupValue
-                    },
-                    {
-                        label: this.ls.l('Lowest'),
-                        value: minGroupValue || 0
-                    },
-                    {
-                        label: this.ls.l('Highest'),
-                        value: maxGroupValue || 0
-                    }
-                ];
-            })
-        );
     }
 }
