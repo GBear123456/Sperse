@@ -65766,7 +65766,7 @@ export class CreatePersonOrgRelationInput implements ICreatePersonOrgRelationInp
     organizationId!: number | undefined;
     organizationName!: string | undefined;
     relationshipType!: string;
-    jobTitle!: string;
+    jobTitle!: string | undefined;
 
     constructor(data?: ICreatePersonOrgRelationInput) {
         if (data) {
@@ -65810,7 +65810,7 @@ export interface ICreatePersonOrgRelationInput {
     organizationId: number | undefined;
     organizationName: string | undefined;
     relationshipType: string;
-    jobTitle: string;
+    jobTitle: string | undefined;
 }
 
 export class CreatePersonOrgRelationOutput implements ICreatePersonOrgRelationOutput {
@@ -65856,7 +65856,7 @@ export interface ICreatePersonOrgRelationOutput {
 export class UpdatePersonOrgRelationInput implements IUpdatePersonOrgRelationInput {
     id!: number;
     relationshipType!: string;
-    jobTitle!: string;
+    jobTitle!: string | undefined;
 
     constructor(data?: IUpdatePersonOrgRelationInput) {
         if (data) {
@@ -65894,7 +65894,7 @@ export class UpdatePersonOrgRelationInput implements IUpdatePersonOrgRelationInp
 export interface IUpdatePersonOrgRelationInput {
     id: number;
     relationshipType: string;
-    jobTitle: string;
+    jobTitle: string | undefined;
 }
 
 export class ActionDto implements IActionDto {
