@@ -7592,6 +7592,58 @@ export class ContactServiceProxy {
         }
         return _observableOf<void>(<any>null);
     }
+
+    /**
+     * @body (optional) 
+     * @return Success
+     */
+    sendSMSToContact(body: SendSMSToContactInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Contact/SendSMSToContact";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processSendSMSToContact(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processSendSMSToContact(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processSendSMSToContact(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
 }
 
 @Injectable()
@@ -8153,6 +8205,70 @@ export class ContactBusinessServiceProxy {
             }));
         }
         return _observableOf<PersonOrgRelationTypeDto[]>(<any>null);
+    }
+}
+
+@Injectable()
+export class ContactCommunicationServiceProxy {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @body (optional) 
+     * @return Success
+     */
+    sendEmail(body: SendEmailInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/ContactCommunication/SendEmail";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processSendEmail(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processSendEmail(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processSendEmail(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
     }
 }
 
@@ -11397,6 +11513,58 @@ export class DashboardServiceProxy {
             }));
         }
         return _observableOf<GetCountByStarOutput[]>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    getStatus(): Observable<boolean> {
+        let url_ = this.baseUrl + "/api/services/CRM/Dashboard/GetStatus";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetStatus(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetStatus(<any>response_);
+                } catch (e) {
+                    return <Observable<boolean>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<boolean>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetStatus(response: HttpResponseBase): Observable<boolean> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 !== undefined ? resultData200 : <any>null;
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<boolean>(<any>null);
     }
 }
 
@@ -26602,6 +26770,58 @@ export class TenantSettingsServiceProxy {
     }
 
     /**
+     * @return Success
+     */
+    getYTelSettings(): Observable<YTelSettingsEditDto> {
+        let url_ = this.baseUrl + "/api/services/Platform/TenantSettings/GetYTelSettings";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetYTelSettings(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetYTelSettings(<any>response_);
+                } catch (e) {
+                    return <Observable<YTelSettingsEditDto>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<YTelSettingsEditDto>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetYTelSettings(response: HttpResponseBase): Observable<YTelSettingsEditDto> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? YTelSettingsEditDto.fromJS(resultData200) : new YTelSettingsEditDto();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<YTelSettingsEditDto>(<any>null);
+    }
+
+    /**
      * @body (optional) 
      * @return Success
      */
@@ -26791,6 +27011,58 @@ export class TenantSettingsServiceProxy {
     }
 
     protected processUpdateIAgeSettings(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @body (optional) 
+     * @return Success
+     */
+    updateYTelSettings(body: YTelSettingsEditDto | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/Platform/TenantSettings/UpdateYTelSettings";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUpdateYTelSettings(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUpdateYTelSettings(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processUpdateYTelSettings(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -41341,6 +41613,46 @@ export interface IUpdateContactOrganizationUnitInput {
     organizationUnitId: number;
 }
 
+export class SendSMSToContactInput implements ISendSMSToContactInput {
+    contactId!: number;
+    message!: string | undefined;
+
+    constructor(data?: ISendSMSToContactInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.contactId = data["contactId"];
+            this.message = data["message"];
+        }
+    }
+
+    static fromJS(data: any): SendSMSToContactInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new SendSMSToContactInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["contactId"] = this.contactId;
+        data["message"] = this.message;
+        return data; 
+    }
+}
+
+export interface ISendSMSToContactInput {
+    contactId: number;
+    message: string | undefined;
+}
+
 export class CreateContactAddressOutput implements ICreateContactAddressOutput {
     id!: number | undefined;
 
@@ -49977,6 +50289,98 @@ export interface IPersonOrgRelationTypeDto {
     id: string | undefined;
     name: string | undefined;
     isDeleted: boolean | undefined;
+}
+
+export class SendEmailInput implements ISendEmailInput {
+    contactId!: number | undefined;
+    replyTo!: string[] | undefined;
+    to!: string[] | undefined;
+    cc!: string[] | undefined;
+    bcc!: string[] | undefined;
+    subject!: string;
+    body!: string;
+
+    constructor(data?: ISendEmailInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.contactId = data["contactId"];
+            if (data["replyTo"] && data["replyTo"].constructor === Array) {
+                this.replyTo = [];
+                for (let item of data["replyTo"])
+                    this.replyTo.push(item);
+            }
+            if (data["to"] && data["to"].constructor === Array) {
+                this.to = [];
+                for (let item of data["to"])
+                    this.to.push(item);
+            }
+            if (data["cc"] && data["cc"].constructor === Array) {
+                this.cc = [];
+                for (let item of data["cc"])
+                    this.cc.push(item);
+            }
+            if (data["bcc"] && data["bcc"].constructor === Array) {
+                this.bcc = [];
+                for (let item of data["bcc"])
+                    this.bcc.push(item);
+            }
+            this.subject = data["subject"];
+            this.body = data["body"];
+        }
+    }
+
+    static fromJS(data: any): SendEmailInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new SendEmailInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["contactId"] = this.contactId;
+        if (this.replyTo && this.replyTo.constructor === Array) {
+            data["replyTo"] = [];
+            for (let item of this.replyTo)
+                data["replyTo"].push(item);
+        }
+        if (this.to && this.to.constructor === Array) {
+            data["to"] = [];
+            for (let item of this.to)
+                data["to"].push(item);
+        }
+        if (this.cc && this.cc.constructor === Array) {
+            data["cc"] = [];
+            for (let item of this.cc)
+                data["cc"].push(item);
+        }
+        if (this.bcc && this.bcc.constructor === Array) {
+            data["bcc"] = [];
+            for (let item of this.bcc)
+                data["bcc"].push(item);
+        }
+        data["subject"] = this.subject;
+        data["body"] = this.body;
+        return data; 
+    }
+}
+
+export interface ISendEmailInput {
+    contactId: number | undefined;
+    replyTo: string[] | undefined;
+    to: string[] | undefined;
+    cc: string[] | undefined;
+    bcc: string[] | undefined;
+    subject: string;
+    body: string;
 }
 
 export class CreateContactEmailOutput implements ICreateContactEmailOutput {
@@ -69285,6 +69689,50 @@ export interface IIAgeSettingsEditDto {
     passwordResetEmailId: number | undefined;
     isEnabled: boolean | undefined;
     offerAnnouncementEmailId: number | undefined;
+}
+
+export class YTelSettingsEditDto implements IYTelSettingsEditDto {
+    userName!: string | undefined;
+    password!: string | undefined;
+    from!: string | undefined;
+
+    constructor(data?: IYTelSettingsEditDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.userName = data["userName"];
+            this.password = data["password"];
+            this.from = data["from"];
+        }
+    }
+
+    static fromJS(data: any): YTelSettingsEditDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new YTelSettingsEditDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["userName"] = this.userName;
+        data["password"] = this.password;
+        data["from"] = this.from;
+        return data; 
+    }
+}
+
+export interface IYTelSettingsEditDto {
+    userName: string | undefined;
+    password: string | undefined;
+    from: string | undefined;
 }
 
 export class IdcsSettings implements IIdcsSettings {

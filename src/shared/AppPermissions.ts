@@ -49,6 +49,7 @@ export enum AppPermissions {
     CRM = 'Pages.CRM',
     CRMBulkUpdates = 'Pages.CRM.BulkUpdates',
     CRMPipelinesConfigure = 'Pages.CRM.PipelinesConfigure',
+    CRMSendEmails = 'Pages.CRM.SendEmails',
     CRMCustomers = 'Pages.CRM.Customers',
     CRMCustomersManage = 'Pages.CRM.Customers.Manage',
     CRMCustomersManageListsAndTags = 'Pages.CRM.Customers.ManageListsAndTags',
