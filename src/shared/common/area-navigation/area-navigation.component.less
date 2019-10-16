@@ -308,11 +308,17 @@
         &.app-list-item {
             & > a {
                 padding: 24px 0 !important;
+                border-bottom: 2px solid transparent;
             }
+            
             &:hover, &.active {
                 & > a {
                     border-bottom: 2px solid #ac1f22;
                 }
+            }
+            
+            .sublinks {
+                top: 74px;
             }
         }
     }

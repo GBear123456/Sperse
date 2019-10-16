@@ -22,13 +22,13 @@ export class BankCodeLayoutComponent extends AppComponentBase implements OnInit 
 
     constructor(
         injector: Injector,
-        private _appSession: AppSessionService
+        private appSession: AppSessionService
     ) {
         super(injector);
     }
 
     ngOnInit(): void {
-        let tenant = this._appSession.tenant;
+        let tenant = this.appSession.tenant;
         if (tenant)
             this.tenantName = tenant.name || tenant.tenancyName;
     }

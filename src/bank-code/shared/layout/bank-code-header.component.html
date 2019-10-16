@@ -1,31 +1,33 @@
 <div class="page-header navbar navbar-fixed-top navbar-light">
     <div class="page-logo">
         <a href="javascript:void(0);" (click)="logoClick()">
-            <img src="./assets/common/images/bank-code/bank-code-logo@3x.png" alt="logo" class="logo-default" width="200px" height="auto"/>
+            <!--<img src="./assets/common/images/bank-code/bank-code-logo@3x.png" alt="logo" class="logo-default" width="200px" height="auto"/>-->
+            <img *ngIf="!appSession.tenant || !appSession.tenant.logoId" src="./assets/common/images/bank-code/bank-code-logo@3x.png" alt="logo" class="logo-layout" width="200px" height="auto" />
+            <img *ngIf="appSession.tenant && appSession.tenant.logoId" [src]="remoteServiceBaseUrl + '/api/TenantCustomization/GetLogo?logoId=' + appSession.tenant.logoId" alt="logo" class="logo-layout" width="200px" height="auto"/>
         </a>
     </div>
 
-    <div *ngIf="!loggedUserId" class="navigation">
-        <ul class="area-navigation">
+    <ng-template ad-header-host></ng-template>
+
+    <area-navigation [memberAreaLinks]="memberAreaLinks"></area-navigation>
+
+    <div *ngIf="!loggedUserId" class="navigation btns">
+        <ul class="buttons">
             <!--<li class="app-list-item">
                 <a href="https://www.bankcode.pro/" class="try-free">
                     Try it Free
                 </a>
             </li>-->
-            <li class="app-list-item">
+            <li class="item">
                 <a routerLink="signup" class="sign-up">
                     Sign Up
                 </a>
             </li>
-            <li class="app-list-item">
+            <li class="item">
                 <a routerLink="login" class="login">
                     Log In
                 </a>
             </li>
         </ul>
     </div>
-
-    <ng-template ad-header-host></ng-template>
-
-    <area-navigation [memberAreaLinks]="memberAreaLinks"></area-navigation>
 </div>
