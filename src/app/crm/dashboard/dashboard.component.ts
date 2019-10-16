@@ -9,11 +9,13 @@ import {
     OnDestroy,
     ChangeDetectorRef
 } from '@angular/core';
+import { RouteReuseStrategy } from '@angular/router';
 
 /** Third party imports */
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
-import { Observable, merge, of } from 'rxjs';
+import { CacheService } from 'ng2-cache-service';
+import { Observable, ReplaySubject, merge, of } from 'rxjs';
 import { filter, first, skip, takeUntil, mapTo } from 'rxjs/operators';
 
 /** Application imports */
@@ -21,7 +23,7 @@ import { AppService } from '@app/app.service';
 import { PaymentWizardComponent } from '@app/shared/common/payment-wizard/payment-wizard.component';
 import { PeriodComponent } from '@app/shared/common/period/period.component';
 import { RootStore, StatesStoreActions } from '@root/store';
-import { ModuleType } from '@shared/service-proxies/service-proxies';
+import { DashboardServiceProxy, ModuleType } from '@shared/service-proxies/service-proxies';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { DashboardWidgetsService } from '@shared/crm/dashboard-widgets/dashboard-widgets.service';
@@ -31,7 +33,6 @@ import { TotalsBySourceComponent } from '@shared/crm/dashboard-widgets/totals-by
 import { ClientsByRegionComponent } from '@shared/crm/dashboard-widgets/clients-by-region/clients-by-region.component';
 import { CrmIntroComponent } from '../shared/crm-intro/crm-intro.component';
 import { CustomReuseStrategy } from '@root/root-routing.module';
-import { RouteReuseStrategy } from '@angular/router';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 import { Period } from '@app/shared/common/period/period.enum';
 import { PeriodService } from '@app/shared/common/period/period.service';
@@ -66,14 +67,9 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
             }
         ]
     };
-    totalsData$ = this.dashboardWidgetsService.totalsData$;
-    totalsDataAvailable$ = this.dashboardWidgetsService.totalsDataAvailable$;
-    showWelcomeSection$: Observable<boolean> = merge(
-        /** if no cache */
-        of(!this.periodService.cachedPeriod),
-        /** wait until next totals data and hide welcome section */
-        this.totalsData$.pipe(skip(1), first(), mapTo(false))
-    );
+    private showWelcomeSection: ReplaySubject<boolean> = new ReplaySubject<boolean>(1);
+    showWelcomeSection$: Observable<boolean> = this.showWelcomeSection.asObservable();
+    private introAcceptedCacheKey: string = this.cacheHelper.getCacheKey('CRMWizard', 'IntroAccepted');
     dialogConfig = new MatDialogConfig();
     leftMenuHidden = true;
     constructor(
@@ -82,23 +78,24 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
         private dashboardWidgetsService: DashboardWidgetsService,
         private changeDetectorRef: ChangeDetectorRef,
         private periodService: PeriodService,
-        public dialog: MatDialog,
         private store$: Store<RootStore.State>,
         private reuseService: RouteReuseStrategy,
-        private lifeCycleSubject: LifecycleSubjectsService
+        private cacheService: CacheService,
+        private lifeCycleSubject: LifecycleSubjectsService,
+        private dashboardServiceProxy: DashboardServiceProxy,
+        public dialog: MatDialog
     ) {
         super(injector);
         this.store$.dispatch(new StatesStoreActions.LoadRequestAction('US'));
     }
 
     ngOnInit() {
-        this.showWelcomeSection$.pipe(
-            takeUntil(this.deactivate$),
-            filter(Boolean),
-            first()
-        ).subscribe(() => {
+        /** Show crm wizard if there is no cache for it */
+        if (!this.cacheService.exists(this.introAcceptedCacheKey)) {
+            this.cacheService.set(this.introAcceptedCacheKey, 'true');
             this.openDialog();
-        });
+        }
+        this.loadStatus();
     }
 
     ngAfterViewInit(): void {
@@ -118,6 +115,12 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
 
     addClient() {
         this._router.navigate(['app/crm/clients'], { queryParams: { action: 'addNew' } });
+    }
+
+    private loadStatus() {
+        this.dashboardServiceProxy.getStatus().subscribe((crmActive: boolean) => {
+            this.showWelcomeSection.next(crmActive);
+        });
     }
 
     ngOnDestroy() {
@@ -159,6 +162,7 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
 
     activate() {
         super.activate();
+        this.loadStatus();
         this.lifeCycleSubject.activate.next();
         this.rootComponent = this.getRootComponent();
         this.rootComponent.overflowHidden(true);
