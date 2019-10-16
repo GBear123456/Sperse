@@ -4,7 +4,6 @@ import { Component, Injector, OnInit } from '@angular/core';
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { AppSessionService } from '@shared/common/session/app-session.service';
 import * as moment from 'moment';
 
 @Component({
@@ -21,8 +20,7 @@ export class BankCodeLayoutComponent extends AppComponentBase implements OnInit 
     originUrl = location.origin;
 
     constructor(
-        injector: Injector,
-        private appSession: AppSessionService
+        injector: Injector
     ) {
         super(injector);
     }
