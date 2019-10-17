@@ -34,6 +34,7 @@ import {
     EPCVIPServer,
     OngageSettingsEditDto,
     IAgeSettingsEditDto,
+    YTelSettingsEditDto
 } from '@shared/service-proxies/service-proxies';
 import { FaviconService } from '@shared/common/favicon-service/favicon.service';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
@@ -82,6 +83,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
 
     ongageSettings: OngageSettingsEditDto = new OngageSettingsEditDto();
     iageSettings: IAgeSettingsEditDto = new IAgeSettingsEditDto();
+    yTelSettings: YTelSettingsEditDto = new YTelSettingsEditDto();
 
     logoUploader: FileUploader;
     faviconsUploader: FileUploader;
@@ -149,7 +151,8 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
                 this.isPFMApplicationsFeatureEnabled ? this._tenantOfferProviderSettingsService.getEPCVIPOfferProviderSettings() : of<EPCVIPOfferProviderSettings>(<any>null),
                 this.isPFMApplicationsFeatureEnabled ? this._tenantSettingsService.getEPCVIPMailerSettings() : of<EPCVIPMailerSettingsEditDto>(<any>null),
                 this.isPFMApplicationsFeatureEnabled ? this._tenantSettingsService.getOngageSettings() : of<OngageSettingsEditDto>(<any>null),
-                this.isPFMApplicationsFeatureEnabled ? this._tenantSettingsService.getIAgeSettings() : of<IAgeSettingsEditDto>(<any>null)
+                this.isPFMApplicationsFeatureEnabled ? this._tenantSettingsService.getIAgeSettings() : of<IAgeSettingsEditDto>(<any>null),
+                this._tenantSettingsService.getYTelSettings()
             ];
         if (this.isPFMApplicationsFeatureEnabled) {
             this.epcvipEmailServers = Object.keys(EPCVIPServer);
@@ -172,7 +175,8 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
                     this.epcvipSettings,
                     this.epcvipEmailSettings,
                     this.ongageSettings,
-                    this.iageSettings
+                    this.iageSettings,
+                    this.yTelSettings
                 ] = results;
 
                 if (this.settings.general) {
@@ -328,7 +332,8 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
             this._tenantPaymentSettingsService.updateBaseCommercePaymentSettings(this.baseCommercePaymentSettings),
             this._tenantPaymentSettingsService.updatePayPalSettings(this.payPalPaymentSettings),
             this._tenantPaymentSettingsService.updateACHWorksSettings(this.achWorksSettings),
-            this._tenantPaymentSettingsService.updateRecurlyPaymentSettings(this.recurlySettings)
+            this._tenantPaymentSettingsService.updateRecurlyPaymentSettings(this.recurlySettings),
+            this._tenantSettingsService.updateYTelSettings(this.yTelSettings)
         ];
         if (this.isCreditReportFeatureEnabled)
             requests.push(this._tenantSettingsCreditReportService.updateIdcsSettings(this.idcsSettings));
