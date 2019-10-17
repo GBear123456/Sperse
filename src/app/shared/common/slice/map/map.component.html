@@ -1,8 +1,15 @@
+<dx-select-box *ngIf="!usaOnly"
+               [items]="mapAreasItems"
+               displayExpr="name"
+               [value]="selectedMapAreaItem$ | async"
+               (onValueChanged)="onSelectedMapAreaChanged($event)">
+</dx-select-box>
 <dx-vector-map
     *ngIf="data"
     id="vector-map"
     [background]="{ borderColor: '#FFFFFF' }"
-    [bounds]="[-118, 52, -80, 20]">
+    [zoomFactor]="selectedMapAreaZoomFactor$ | async"
+    [bounds]="selectedMapAreaBounds$ | async">
     <dxo-loading-indicator [show]="true"></dxo-loading-indicator>
     <dxo-tooltip
         [enabled]="true"
@@ -14,7 +21,7 @@
     <dxo-size [height]="height" [width]="width"></dxo-size>
     <dxi-layer
         [customize]="customizeLayers"
-        [dataSource]="usaMap"
+        [dataSource]="selectedMap$ | async"
         [colorGroups]="colorGroups"
         [palette]="palette"
         colorGroupingField="total"

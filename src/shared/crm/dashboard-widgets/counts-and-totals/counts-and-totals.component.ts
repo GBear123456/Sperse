@@ -21,42 +21,42 @@ import { LoadingService } from '@shared/common/loading-service/loading.service';
 })
 export class CountsAndTotalsComponent implements OnInit, OnDestroy {
     data: GetTotalsOutput;
-    fields = this._dashboardService.totalsDataFields;
-    totalsDataLoading$ = this._dashboardService.totalsDataLoading$.pipe(takeUntil(this._lifeCycleService.destroy$));
+    fields = this.dashboardService.totalsDataFields;
+    totalsDataLoading$ = this.dashboardService.totalsDataLoading$.pipe(takeUntil(this.lifeCycleService.destroy$));
 
     constructor(
-        private _dashboardService: DashboardWidgetsService,
-        private _lifeCycleService: LifecycleSubjectsService,
-        private _loadingService: LoadingService,
-        private _elementRef: ElementRef,
-        private _changeDetectorRef: ChangeDetectorRef,
+        private dashboardService: DashboardWidgetsService,
+        private lifeCycleService: LifecycleSubjectsService,
+        private loadingService: LoadingService,
+        private elementRef: ElementRef,
+        private changeDetectorRef: ChangeDetectorRef,
         public ls: AppLocalizationService
     ) {}
 
     ngOnInit() {
-        this._dashboardService.totalsData$
-            .pipe(takeUntil(this._lifeCycleService.destroy$))
+        this.dashboardService.totalsData$
+            .pipe(takeUntil(this.lifeCycleService.destroy$))
             .subscribe((totalsData: GetTotalsOutput) => {
                 this.data = totalsData;
                 this.fields.forEach((field) => {
-                    field.percent = this._dashboardService.getPercentage(
+                    field.percent = this.dashboardService.getPercentage(
                         totalsData[field.name.replace('total', 'new')],
                         totalsData[field.name]
                     );
                 });
-                this._changeDetectorRef.detectChanges();
+                this.changeDetectorRef.detectChanges();
             });
 
         this.totalsDataLoading$.pipe(
-            takeUntil(this._lifeCycleService.destroy$)
+            takeUntil(this.lifeCycleService.destroy$)
         ).subscribe((loading: boolean) => {
             loading
-                ? this._loadingService.startLoading(this._elementRef.nativeElement)
-                : this._loadingService.finishLoading(this._elementRef.nativeElement);
+                ? this.loadingService.startLoading(this.elementRef.nativeElement)
+                : this.loadingService.finishLoading(this.elementRef.nativeElement);
         });
     }
 
     ngOnDestroy() {
-        this._lifeCycleService.destroy.next();
+        this.lifeCycleService.destroy.next();
     }
 }

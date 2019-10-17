@@ -12,8 +12,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import 'devextreme/data/odata/store';
 import { Store, select } from '@ngrx/store';
-import { Observable, combineLatest } from 'rxjs';
-import { filter, first, startWith, takeUntil } from 'rxjs/operators';
+import { BehaviorSubject, Observable, combineLatest, of } from 'rxjs';
+import { filter, first, startWith, takeUntil, map, mapTo, publishReplay, refCount, switchMap, tap } from 'rxjs/operators';
 import * as _ from 'underscore';
 
 /** Application imports */
@@ -78,15 +78,23 @@ import DataSource from '@root/node_modules/devextreme/data/data_source';
 import { ChartComponent } from '@app/shared/common/slice/chart/chart.component';
 import { ImageFormat } from '@shared/common/export/image-format.enum';
 import { MapData } from '@app/shared/common/slice/map/map-data.model';
-import { map, mapTo, publishReplay, refCount, switchMap, tap } from '@node_modules/rxjs/operators';
-import { BehaviorSubject, of } from '@node_modules/rxjs';
 import { ImpersonationService } from '@admin/users/impersonation.service';
+import { MapArea } from '@app/shared/common/slice/map/map-area.enum';
+import { MapComponent } from '@app/shared/common/slice/map/map.component';
+import { MapService } from '@app/shared/common/slice/map/map.service';
 
 @Component({
     templateUrl: './partners.component.html',
     styleUrls: ['./partners.component.less'],
     animations: [appModuleAnimation()],
-    providers: [ ClientService, PartnerServiceProxy, PartnerTypeServiceProxy, ContactServiceProxy, LifecycleSubjectsService ]
+    providers: [
+        ClientService,
+        ContactServiceProxy,
+        MapService,
+        PartnerServiceProxy,
+        PartnerTypeServiceProxy,
+        LifecycleSubjectsService
+    ]
 })
 export class PartnersComponent extends AppComponentBase implements OnInit, OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
@@ -99,6 +107,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     @ViewChild('statusesList') statusComponent: StaticListComponent;
     @ViewChild(PivotGridComponent) pivotGridComponent: PivotGridComponent;
     @ViewChild(ChartComponent) chartComponent: ChartComponent;
+    @ViewChild(MapComponent) mapComponent: MapComponent;
 
     private readonly MENU_LOGIN_INDEX = 1;
     private dataLayoutType: BehaviorSubject<DataLayoutType> = new BehaviorSubject(DataLayoutType.DataGrid);
@@ -263,8 +272,10 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         startWith(() => this.oDataService.getODataFilter(this.filters, this.filtersService.getCheckCustom)),
         map(() => this.oDataService.getODataFilter(this.filters, this.filtersService.getCheckCustom))
     );
+    selectedMapArea$: Observable<MapArea> = this.mapService.selectedMapArea$;
     partnersData$: Observable<any> = combineLatest(
         this.odataFilter$,
+        this.selectedMapArea$,
         this.refresh$
     ).pipe(
         tap(() => this.mapDataIsLoading = true),
@@ -273,16 +284,17 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
             first(),
             mapTo(data)
         )),
-        switchMap(([filter]: [any]) => this.crmService.loadSliceMapData(
+        switchMap(([filter, mapArea]: [any, MapArea]) => this.mapService.loadSliceMapData(
             this.getODataUrl(this.groupDataSourceURI),
-            filter
+            filter,
+            mapArea
         )),
         publishReplay(),
         refCount(),
         tap(() => this.mapDataIsLoading = false)
     );
-    mapData$: Observable<MapData> = this.crmService.getAdjustedMapData(this.partnersData$);
-    mapInfoItems$: Observable<InfoItem[]> = this.crmService.getMapInfoItems(this.partnersData$);
+    mapData$: Observable<MapData> = this.mapService.getAdjustedMapData(this.partnersData$);
+    mapInfoItems$: Observable<InfoItem[]> = this.mapService.getMapInfoItems(this.partnersData$, this.selectedMapArea$);
 
     constructor(
         injector: Injector,
@@ -299,6 +311,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         private sessionService: AppSessionService,
         private crmService: CrmService,
         private impersonationService: ImpersonationService,
+        private mapService: MapService,
         public dialog: MatDialog,
         public contactProxy: ContactServiceProxy,
         public userManagementService: UserManagementService,
@@ -912,7 +925,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     processFilterInternal() {
-        if (this.showDataGrid || this.showDataGrid) {
+        if (this.showDataGrid || this.showPivotGrid) {
             this.processODataFilter(
                 this.showPivotGrid ? this.pivotGridComponent.pivotGrid.instance : this.dataGrid.instance,
                 this.dataSourceURI,

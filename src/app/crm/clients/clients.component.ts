@@ -74,12 +74,20 @@ import { ChartComponent } from '@app/shared/common/slice/chart/chart.component';
 import { ImageFormat } from '@shared/common/export/image-format.enum';
 import { MapData } from '@app/shared/common/slice/map/map-data.model';
 import { MapComponent } from '@app/shared/common/slice/map/map.component';
+import { MapArea } from '@app/shared/common/slice/map/map-area.enum';
+import { MapService } from '@app/shared/common/slice/map/map.service';
 
 @Component({
     templateUrl: './clients.component.html',
     styleUrls: ['./clients.component.less'],
     animations: [appModuleAnimation()],
-    providers: [ ClientService, LifecycleSubjectsService, ContactServiceProxy, ImpersonationService ]
+    providers: [
+        ClientService,
+        ContactServiceProxy,
+        MapService,
+        LifecycleSubjectsService,
+        ImpersonationService
+    ]
 })
 export class ClientsComponent extends AppComponentBase implements OnInit, OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
@@ -245,8 +253,10 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         startWith(() => this.oDataService.getODataFilter(this.filters, this.filtersService.getCheckCustom)),
         map(() => this.oDataService.getODataFilter(this.filters, this.filtersService.getCheckCustom))
     );
+    selectedMapArea$: Observable<MapArea> = this.mapService.selectedMapArea$;
     clientsData$: Observable<any> = combineLatest(
         this.odataFilter$,
+        this.selectedMapArea$,
         this.refresh$
     ).pipe(
         tap(() => this.mapDataIsLoading = true),
@@ -255,17 +265,17 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             first(),
             mapTo(data)
         )),
-        switchMap(([filter]: [any]) => this.crmService.loadSliceMapData(
+        switchMap(([filter, mapArea]: [any, MapArea]) => this.mapService.loadSliceMapData(
             this.getODataUrl(this.groupDataSourceURI),
-            filter
+            filter,
+            mapArea
         )),
         publishReplay(),
         refCount(),
         tap(() => this.mapDataIsLoading = false)
     );
-    mapData$: Observable<MapData> = this.crmService.getAdjustedMapData(this.clientsData$);
-    mapInfoItems$: Observable<InfoItem[]> = this.crmService.getMapInfoItems(this.clientsData$);
-
+    mapData$: Observable<MapData> = this.mapService.getAdjustedMapData(this.clientsData$);
+    mapInfoItems$: Observable<InfoItem[]> = this.mapService.getMapInfoItems(this.clientsData$, this.selectedMapArea$);
     chartInfoItems: InfoItem[];
     chartDataSource = new DataSource({
         key: 'id',
@@ -300,6 +310,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         private impersonationService: ImpersonationService,
         private sessionService: AppSessionService,
         private crmService: CrmService,
+        private mapService: MapService,
         public dialog: MatDialog,
         public appService: AppService,
         public contactProxy: ContactServiceProxy,

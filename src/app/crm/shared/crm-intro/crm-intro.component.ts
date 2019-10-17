@@ -36,8 +36,8 @@ export class CrmIntroComponent extends AppComponentBase implements OnInit {
 
     constructor(
         injector: Injector,
+        private userService: UserServiceProxy,
         public appService: AppService,
-        private _userService: UserServiceProxy,
         @Inject(MAT_DIALOG_DATA) public data: any
     ) {
         super(injector);
@@ -80,7 +80,7 @@ export class CrmIntroComponent extends AppComponentBase implements OnInit {
 
     // GetAvailableUserCount
     getAvailableUserCount() {
-        this._userService.getAvailableUserCount(ModuleType[this.moduleType]).subscribe(result => {
+        this.userService.getAvailableUserCount(ModuleType[this.moduleType]).subscribe(result => {
             this.maxAvailableUserCount = result;
         });
     }

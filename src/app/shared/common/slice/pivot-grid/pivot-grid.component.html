@@ -6,6 +6,7 @@
                [allowSortingBySummary]="true"
                [ngClass]="{ 'filter-opened': filtersService.filterFixed$ | async }"
                [showBorders]="true"
+               (onContentReady)="onContentReady($event)"
                (onContextMenuPreparing)="prepareContextMenu($event)">
     <dxo-field-chooser [enabled]="false"></dxo-field-chooser>
     <dxo-field-panel [visible]="true"></dxo-field-panel>
@@ -15,7 +16,6 @@
                     text=""
                     [showPane]="false">
     </dxo-load-panel>
-    <dxo-scrolling mode="virtual"></dxo-scrolling>
     <dxo-state-storing [enabled]="true"
                        [storageKey]="storageKey">
     </dxo-state-storing>

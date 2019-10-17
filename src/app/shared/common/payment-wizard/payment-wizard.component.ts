@@ -47,13 +47,14 @@ export class PaymentWizardComponent extends AppComponentBase implements OnInit {
     subscriptionIsFree: boolean;
     trackingCode: string;
 
-    constructor(private injector: Injector,
-                private appService: AppService,
-                private dialogRef: MatDialogRef<PaymentWizardComponent>,
-                private paymentService: PaymentService,
-                private tenantSubscriptionService: TenantSubscriptionServiceProxy,
-                private changeDetectorRef: ChangeDetectorRef,
-                @Inject(MAT_DIALOG_DATA) public data: any
+    constructor(
+        private injector: Injector,
+        private appService: AppService,
+        private dialogRef: MatDialogRef<PaymentWizardComponent>,
+        private paymentService: PaymentService,
+        private tenantSubscriptionService: TenantSubscriptionServiceProxy,
+        private changeDetectorRef: ChangeDetectorRef,
+        @Inject(MAT_DIALOG_DATA) public data: any
     ) {
         super(injector);
         this.module = data.module;

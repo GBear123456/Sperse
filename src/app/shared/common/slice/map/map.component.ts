@@ -3,8 +3,9 @@ import { ChangeDetectionStrategy, Component, ViewChild, Input, SimpleChanges, On
 import { DecimalPipe } from '@angular/common';
 
 /** Third party imports */
-import * as mapsData from 'devextreme/dist/js/vectormap-data/usa.js';
 import { DxVectorMapComponent } from 'devextreme-angular/ui/vector-map';
+import { Observable } from 'rxjs';
+import { pluck } from 'rxjs/operators';
 
 /** Application imports */
 import { LoadingService } from '@shared/common/loading-service/loading.service';
@@ -14,6 +15,8 @@ import { InfoItem } from '@app/shared/common/slice/info/info-item.model';
 import { MapData } from '@app/shared/common/slice/map/map-data.model';
 import { ImageFormat } from '@shared/common/export/image-format.enum';
 import { ExportService } from '@shared/common/export/export.service';
+import { MapService } from '@app/shared/common/slice/map/map.service';
+import { MapAreaItem } from '@app/shared/common/slice/map/map-area-item.model';
 
 @Component({
     selector: 'slice-map',
@@ -31,20 +34,32 @@ export class MapComponent implements OnChanges {
     @Input() height: InfoItem[];
     @Input() dataIsLoading;
     @Input() showLegendBorder = false;
+    @Input() usaOnly = false;
     @ViewChild(DxVectorMapComponent) vectorMapComponent: DxVectorMapComponent;
-    usaMap: any = mapsData.usa;
     pipe: any = new DecimalPipe('en-US');
+    mapAreasItems: MapAreaItem[] = this.mapService.mapAreasItems;
+    selectedMapAreaItem$: Observable<MapAreaItem> = this.mapService.selectedMapAreaItem$;
+    selectedMapAreaZoomFactor$: Observable<MapAreaItem> = this.mapService.selectedMapAreaItem$.pipe(
+        pluck('zoomFactor')
+    );
+    selectedMapAreaBounds$: Observable<MapAreaItem> = this.mapService.selectedMapAreaItem$.pipe(
+        pluck('bounds')
+    );
+    selectedMap$: Observable<any> = this.mapService.selectedMapAreaItem$.pipe(
+        pluck('map')
+    );
 
     constructor(
         private loadingService: LoadingService,
         private ls: AppLocalizationService,
-        private exportService: ExportService
+        private exportService: ExportService,
+        private mapService: MapService
     ) {}
 
     ngOnChanges(changes: SimpleChanges) {
         if (changes.data && !changes.data.firstChange && changes.data.currentValue && this.vectorMapComponent) {
             /** Update widget with new data */
-            this.vectorMapComponent.instance.option('layers[0].dataSource', this.usaMap);
+            this.vectorMapComponent.instance.option('layers[0].dataSource', this.mapService.selectedMapAreaItem.value.map);
         }
     }
 
@@ -82,6 +97,10 @@ export class MapComponent implements OnChanges {
                 format
             );
         });
+    }
+
+    onSelectedMapAreaChanged(e) {
+        this.mapService.selectedMapAreaItem.next(e.value);
     }
 
 }

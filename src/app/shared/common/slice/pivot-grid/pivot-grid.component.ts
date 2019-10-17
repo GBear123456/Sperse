@@ -46,4 +46,16 @@ export class PivotGridComponent {
             });
         }
     }
+
+    onContentReady(e) {
+        e.element.querySelectorAll('.dx-scrollable-content > table tbody tr:last-of-type .dx-grandtotal').forEach(grandTotalCell => {
+            grandTotalCell.parentElement.style.position = 'fixed';
+            grandTotalCell.parentElement.style.bottom = '0';
+            /** Get width and height of cell from previous row */
+            const cellIndex = grandTotalCell.cellIndex;
+            const sameElementFromPrevRow = grandTotalCell.parentElement.previousSibling.children[cellIndex];
+            grandTotalCell.style.width = (sameElementFromPrevRow.getBoundingClientRect().width - 20) + 'px';
+            grandTotalCell.style.height = (sameElementFromPrevRow.getBoundingClientRect().width - 20) + 'px';
+        });
+    }
 }

@@ -1,4 +1,4 @@
-@mainFont: 'Poppins', sans-serif;
+@mainFont: 'AvianoSans-Reg', sans-serif;
 
 :host {
     @media all and (min-width: 1280px) {
@@ -61,29 +61,28 @@
             text-align: center;
             color: #000;
             font-size: 32px;
-            font-weight: 600;
             margin-bottom: 0;
             line-height: 1.03;
             letter-spacing: -0.64px;
+            font-family: 'AvianoSans-Bla', sans-serif;
         }
 
         h4 {
             text-transform: none;
-            font-size: 21px;
+            font-size: 16px;
             margin-bottom: 0;
-            line-height: 31px;
+            line-height: 1.44;
             margin-top: 0;
             color: #7a7979;
         }
 
         p {
-            font-size: 14px;
+            font-size: 16px;
             line-height: 20px;
-            font-weight: 500;
             color: #7a7979;
+            text-align: left;
 
             .and {
-                font-weight: 700;
                 text-transform: uppercase;
             }
         }
@@ -213,6 +212,7 @@
             .links {
                 margin-bottom: 20px;
                 color: #7a7979;
+                text-align: center;
 
                 a {
                     padding: 0 10px;
@@ -221,6 +221,7 @@
                     font-weight: normal;
                     transition: .3s;
                     color: #ac1f22;
+                    font-family: 'AvianoSans-Bla', sans-serif;
 
                     &:hover {
                         color: lighten(#ac1f22, 10%);
@@ -315,7 +316,6 @@
 
         a {
             color: #ac1f22;
-            font-weight: bold;
             text-decoration: none;
 
             &:hover {
@@ -349,15 +349,14 @@
     }
 
     .dx-placeholder {
-        font-size: 9px;
+        font-size: 12px;
         font-weight: 400;
         color: #959494 !important;
         transition: .2s;
         top: -2px;
         left: -9px;
-        text-transform: uppercase;
         height: auto;
-
+        font-family: @mainFont !important;
     }
     //.custom-radio-2-btn {
     //    .dx-field-value {
@@ -386,8 +385,12 @@
         border-radius: 0;
         color: #FFF;
         padding: 5px 10px;
-        font-weight: 400;
         width: 100%;
+    
+        .dx-button-text {
+            font-family: 'AvianoSans-Bla', sans-serif;
+            font-weight: normal;
+        }
 
 
         &.dx-state-focused {
@@ -416,6 +419,8 @@
 
     .activate-button {
         background-color: #ac1f22;
+        font-weight: normal;
+        font-family: 'AvianoSans-Bla', sans-serif;
 
         &:hover {
             border-color: #ac1f22 !important;
@@ -537,7 +542,8 @@
     }
 
     @media all and (min-width: 800px) {
-        width: 770px;
+        width: 100%;
+        min-width: 770px;
     }
 }
 
