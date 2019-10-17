@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, Component, ElementRef, OnDestroy, OnInit } fro
 
 /** Third party imports */
 import { Observable } from 'rxjs';
-import { filter, takeUntil } from 'rxjs/operators';
+import { takeUntil } from 'rxjs/operators';
 
 /** Application imports */
 import { DashboardWidgetsService } from '../dashboard-widgets.service';
@@ -20,29 +20,29 @@ import { LoadingService } from '@shared/common/loading-service/loading.service';
 })
 export class NewItemsTotalsComponent implements OnDestroy, OnInit {
     fields: any;
-    totalsData$: Observable<GetTotalsOutput> = this._dashboardService.totalsData$;
-    totalsDataAvailable$: Observable<boolean> = this._dashboardService.totalsDataAvailable$;
-    totalsDataLoading$ = this._dashboardService.totalsDataLoading$.pipe(takeUntil(this._lifeCycleService.destroy$));
+    totalsData$: Observable<GetTotalsOutput> = this.dashboardService.totalsData$;
+    totalsDataAvailable$: Observable<boolean> = this.dashboardService.totalsDataAvailable$;
+    totalsDataLoading$ = this.dashboardService.totalsDataLoading$.pipe(takeUntil(this.lifeCycleService.destroy$));
 
     constructor(
-        private _lifeCycleService: LifecycleSubjectsService,
-        private _dashboardService: DashboardWidgetsService,
-        private _loadingService: LoadingService,
-        private _elementRef: ElementRef,
+        private lifeCycleService: LifecycleSubjectsService,
+        private dashboardService: DashboardWidgetsService,
+        private loadingService: LoadingService,
+        private elementRef: ElementRef,
         public ls: AppLocalizationService
     ) {
-        this.fields = this._dashboardService.totalsDataFields;
+        this.fields = this.dashboardService.totalsDataFields;
     }
 
     ngOnInit() {
-        this.totalsDataLoading$.pipe(takeUntil(this._lifeCycleService.destroy$)).subscribe((loading: boolean) => {
+        this.totalsDataLoading$.pipe(takeUntil(this.lifeCycleService.destroy$)).subscribe((loading: boolean) => {
             loading
-                ? this._loadingService.startLoading(this._elementRef.nativeElement)
-                : this._loadingService.finishLoading(this._elementRef.nativeElement);
+                ? this.loadingService.startLoading(this.elementRef.nativeElement)
+                : this.loadingService.finishLoading(this.elementRef.nativeElement);
         });
     }
 
     ngOnDestroy() {
-        this._lifeCycleService.destroy.next();
+        this.lifeCycleService.destroy.next();
     }
 }

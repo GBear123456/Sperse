@@ -90,9 +90,10 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
     }
 
     ngOnInit() {
+        const introAcceptedCache = this.cacheService.get(this.introAcceptedCacheKey);
         /** Show crm wizard if there is no cache for it */
-        if (!this.cacheService.exists(this.introAcceptedCacheKey)) {
-            this.cacheService.set(this.introAcceptedCacheKey, 'true');
+        if (!introAcceptedCache || introAcceptedCache === 'false') {
+            this.cacheService.set(this.introAcceptedCacheKey, 'false');
             this.openDialog();
         }
         this.loadStatus();
@@ -136,7 +137,10 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
         this.dialogConfig.id = 'crm-intro';
         this.dialogConfig.panelClass = ['crm-intro', 'setup'];
         this.dialogConfig.data = { alreadyStarted: false };
-        this.dialog.open(CrmIntroComponent, this.dialogConfig);
+        this.dialog.open(CrmIntroComponent, this.dialogConfig).afterClosed().subscribe(() => {
+            /** Mark accepted cache with true when user closed wizard and don't want to see it anymore) */
+            this.cacheService.set(this.introAcceptedCacheKey, 'true');
+        });
     }
 
     periodChanged(period: Period) {

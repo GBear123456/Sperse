@@ -67,35 +67,35 @@ export class TotalsBySourceComponent implements OnInit, OnDestroy {
         {
             key: 'star',
             label: this.ls.l('TotalsByStar/CreditRating'),
-            method: this._dashboardServiceProxy.getCustomersByStar,
+            method: this.dashboardServiceProxy.getCustomersByStar,
             argumentField: 'key',
             valueField: 'count',
             getColor: (item) => {
-                return this._dashboardWidgetsService.getStarColorByType(this.rawData[item.index].colorType);
+                return this.dashboardWidgetsService.getStarColorByType(this.rawData[item.index].colorType);
             }
         },
         {
             key: 'stageDistribution',
             label: this.ls.l('TotalsByStageDistribution'),
-            method: this._dashboardServiceProxy.getLeadsCountByStage,
+            method: this.dashboardServiceProxy.getLeadsCountByStage,
             argumentField: 'key',
             valueField: 'count',
             getColor: (item) => {
-                const stage: StageDto = this._pipelineService.getStageByName('Lead', item.argument);
-                return this._pipelineService.getStageDefaultColorByStageSortOrder(stage.sortOrder);
+                const stage: StageDto = this.pipelineService.getStageByName('Lead', item.argument);
+                return this.pipelineService.getStageDefaultColorByStageSortOrder(stage.sortOrder);
             }
         },
         {
             key: 'ageDistribution',
             label: this.ls.l('TotalsByLeadAgeDistribution'),
-            method: this._dashboardServiceProxy.getContactsCountByAge,
+            method: this.dashboardServiceProxy.getContactsCountByAge,
             argumentField: 'key',
             valueField: 'count'
         },
         {
             key: 'companySize',
             label: this.ls.l('TotalsByCompanySize'),
-            method: this._dashboardServiceProxy.getCustomersByCompanySize,
+            method: this.dashboardServiceProxy.getCustomersByCompanySize,
             argumentField: 'companySizeRange',
             valueField: 'customerCount',
             sorting: (a, b) => {
@@ -105,13 +105,13 @@ export class TotalsBySourceComponent implements OnInit, OnDestroy {
         {
             key: 'rating',
             label: this.ls.l('TotalsByRating'),
-            method: this._dashboardServiceProxy.getCustomersByRating,
+            method: this.dashboardServiceProxy.getCustomersByRating,
             argumentField: 'key',
             valueField: 'count'
         }
     ];
     selectedTotal: BehaviorSubject<ITotalOption> = new BehaviorSubject<ITotalOption>(
-        this._appSession.tenant && this._appSession.tenant.customLayoutType === LayoutType.LendSpace
+        this.appSession.tenant && this.appSession.tenant.customLayoutType === LayoutType.LendSpace
         ? this.totalsOptions.find(option => option.key === 'star')
         : this.totalsOptions.find(option => option.key === 'companySize')
     );
@@ -121,34 +121,34 @@ export class TotalsBySourceComponent implements OnInit, OnDestroy {
     loading = false;
 
     constructor(
-        private _dashboardWidgetsService: DashboardWidgetsService,
-        private _dashboardServiceProxy: DashboardServiceProxy,
-        private _elementRef: ElementRef,
-        private _loadingService: LoadingService,
-        private _lifeCycleService: LifecycleSubjectsService,
-        private _changeDetectorRef: ChangeDetectorRef,
-        private _appSession: AppSessionService,
-        private _pipelineService: PipelineService,
+        private dashboardWidgetsService: DashboardWidgetsService,
+        private dashboardServiceProxy: DashboardServiceProxy,
+        private elementRef: ElementRef,
+        private loadingService: LoadingService,
+        private lifeCycleService: LifecycleSubjectsService,
+        private changeDetectorRef: ChangeDetectorRef,
+        private appSession: AppSessionService,
+        private pipelineService: PipelineService,
         public ls: AppLocalizationService
     ) {}
 
     ngOnInit() {
         /** Get pipeline definitions to get colors for stage distributions */
-        this._pipelineService.getPipelineDefinitionObservable('Lead', ContactGroup.Client).subscribe();
+        this.pipelineService.getPipelineDefinitionObservable('Lead', ContactGroup.Client).subscribe();
         this.data$ = combineLatest(
             this.selectedTotal$,
-            this._dashboardWidgetsService.period$,
-            this._dashboardWidgetsService.refresh$,
+            this.dashboardWidgetsService.period$,
+            this.dashboardWidgetsService.refresh$,
         ).pipe(
-            takeUntil(this._lifeCycleService.destroy$),
+            takeUntil(this.lifeCycleService.destroy$),
             tap(() => {
                 this.loading = true;
-                this._loadingService.startLoading(this._elementRef.nativeElement);
+                this.loadingService.startLoading(this.elementRef.nativeElement);
             }),
             switchMap(([selectedTotal, period]: [ITotalOption, PeriodModel]) => selectedTotal.method.call(
-                this._dashboardServiceProxy, period && period.from || new Date('2000-01-01'), period && period.to || new Date()).pipe(
+                this.dashboardServiceProxy, period && period.from || new Date('2000-01-01'), period && period.to || new Date()).pipe(
                     catchError(() => of([])),
-                    finalize(() => this._loadingService.finishLoading(this._elementRef.nativeElement))
+                    finalize(() => this.loadingService.finishLoading(this.elementRef.nativeElement))
                 )
             ),
             map((data: any[]) => {
@@ -194,7 +194,7 @@ export class TotalsBySourceComponent implements OnInit, OnDestroy {
         this.rangeCount = (isHoverIn ? item.initialValue : this.totalCount).toLocaleString('en');
         this.rangeColor = isHoverIn ? this.getItemColor(item) : undefined;
         this.rangeName = item.argument;
-        this._changeDetectorRef.detectChanges();
+        this.changeDetectorRef.detectChanges();
     }
 
     onDrawn(e) {
@@ -202,15 +202,15 @@ export class TotalsBySourceComponent implements OnInit, OnDestroy {
     }
 
     private updatePieChartTopPositions(e) {
-        const componentTop = this._elementRef.nativeElement.getBoundingClientRect().top;
+        const componentTop = this.elementRef.nativeElement.getBoundingClientRect().top;
         const circleBoundingRect = e.component.getAllSeries()[0]._group.element.getBoundingClientRect();
         const circleTop = circleBoundingRect.top;
         const circleCenterY = circleTop - componentTop + circleBoundingRect.height / 2;
         this.totalNumbersTop = circleCenterY - 55 + 'px';
-        this._changeDetectorRef.detectChanges();
+        this.changeDetectorRef.detectChanges();
     }
 
     ngOnDestroy() {
-        this._lifeCycleService.destroy.next();
+        this.lifeCycleService.destroy.next();
     }
 }

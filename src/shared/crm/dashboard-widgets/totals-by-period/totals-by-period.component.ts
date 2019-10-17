@@ -128,11 +128,11 @@ export class TotalsByPeriodComponent extends AppComponentBase implements OnInit,
 
     constructor(
         injector: Injector,
-        private _dashboardServiceProxy: DashboardServiceProxy,
-        private _dashboardWidgetsService: DashboardWidgetsService,
-        private _changeDetectorRef: ChangeDetectorRef,
+        private dashboardServiceProxy: DashboardServiceProxy,
+        private dashboardWidgetsService: DashboardWidgetsService,
+        private changeDetectorRef: ChangeDetectorRef,
         private store$: Store<CrmStore.State>,
-        private _pipelineService: PipelineService,
+        private pipelineService: PipelineService,
         private cacheService: CacheService,
         private sessionService: AbpSessionService,
         private decimalPipe: DecimalPipe,
@@ -143,9 +143,9 @@ export class TotalsByPeriodComponent extends AppComponentBase implements OnInit,
 
     ngOnInit() {
         this.totalsData$ = combineLatest(
-            this._dashboardWidgetsService.period$.pipe(map((period: PeriodModel) => this.savePeriod(period))),
+            this.dashboardWidgetsService.period$.pipe(map((period: PeriodModel) => this.savePeriod(period))),
             this.isCumulative$,
-            this._dashboardWidgetsService.refresh$
+            this.dashboardWidgetsService.refresh$
         ).pipe(
             takeUntil(this.destroy$),
             tap(() => this.startLoading()),
@@ -223,7 +223,7 @@ export class TotalsByPeriodComponent extends AppComponentBase implements OnInit,
     }
 
     private loadCustomersAndLeadsStats(period: TotalsByPeriodModel, isCumulative: boolean): Observable<GetCustomerAndLeadStatsOutput[]> {
-        return this._dashboardServiceProxy.getCustomerAndLeadStats(
+        return this.dashboardServiceProxy.getCustomerAndLeadStats(
             GroupByPeriod[(period.name as GroupByPeriod)],
             period.amount,
             isCumulative
@@ -252,7 +252,7 @@ export class TotalsByPeriodComponent extends AppComponentBase implements OnInit,
             map(stage => ({
                 valueField: stageId.toString(),
                 name: stage && stage.name,
-                color: (stage && stage.color) || this._pipelineService.getStageDefaultColorByStageSortOrder(stage && stage.sortOrder),
+                color: (stage && stage.color) || this.pipelineService.getStageDefaultColorByStageSortOrder(stage && stage.sortOrder),
                 type: 'stackedBar',
                 sortOrder: stage && stage.sortOrder
             }))
@@ -342,7 +342,7 @@ export class TotalsByPeriodComponent extends AppComponentBase implements OnInit,
 
     toggleFullLegend() {
         this.showFullLegend = !this.showFullLegend;
-        this._changeDetectorRef.detectChanges();
+        this.changeDetectorRef.detectChanges();
     }
 
     ngOnDestroy() {

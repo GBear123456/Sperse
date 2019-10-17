@@ -34,14 +34,14 @@ export class RecentClientsComponent implements OnInit {
             message: this.ls.l('CRMDashboard_LastNLeadsRecords', 'CRM',  [this.recordsCount]),
             dataLink: '',
             allRecordsLink: '/app/crm/leads',
-            dataSource: this._dashboardServiceProxy.getRecentlyCreatedCustomers(this.recordsCount, true)
+            dataSource: this.dashboardServiceProxy.getRecentlyCreatedCustomers(this.recordsCount, true)
         },
         {
             name: this.ls.l('CRMDashboard_RecentClients'),
             message: this.ls.l('CRMDashboard_LastNClientsRecords', 'CRM',  [this.recordsCount]),
             dataLink: 'app/crm/contact',
             allRecordsLink: '/app/crm/clients',
-            dataSource: this._dashboardServiceProxy.getRecentlyCreatedCustomers(this.recordsCount, false)
+            dataSource: this.dashboardServiceProxy.getRecentlyCreatedCustomers(this.recordsCount, false)
         }
     ];
 
@@ -49,11 +49,11 @@ export class RecentClientsComponent implements OnInit {
     selectedItem$: Observable<IRecentClientsSelectItem> = this.selectedItem.asObservable().pipe(distinctUntilChanged());
 
     constructor(
-        private _dashboardServiceProxy: DashboardServiceProxy,
-        private _dashboardWidgetsService: DashboardWidgetsService,
-        private _loadingService: LoadingService,
-        private _router: Router,
-        private _elementRef: ElementRef,
+        private dashboardServiceProxy: DashboardServiceProxy,
+        private dashboardWidgetsService: DashboardWidgetsService,
+        private loadingService: LoadingService,
+        private router: Router,
+        private elementRef: ElementRef,
         public ls: AppLocalizationService,
         public httpInterceptor: AppHttpInterceptor
     ) {}
@@ -61,21 +61,21 @@ export class RecentClientsComponent implements OnInit {
     ngOnInit() {
         this.recentlyCreatedCustomers$ = combineLatest(
             this.selectedItem$,
-            this._dashboardWidgetsService.refresh$
+            this.dashboardWidgetsService.refresh$
         ).pipe(
-            tap(() => this._loadingService.startLoading(this._elementRef.nativeElement)),
+            tap(() => this.loadingService.startLoading(this.elementRef.nativeElement)),
             switchMap(([selectedItem]) => selectedItem.dataSource.pipe(
                 catchError(() => of([])),
-                finalize(() => this._loadingService.finishLoading(this._elementRef.nativeElement))
+                finalize(() => this.loadingService.finishLoading(this.elementRef.nativeElement))
             ))
         );
     }
 
     onCellClick($event) {
         if (this.selectedItem.value && this.selectedItem.value.dataLink) {
-            $event.row && this._router.navigate(
+            $event.row && this.router.navigate(
                 [this.selectedItem.value.dataLink, $event.row.data.id],
-                {queryParams: {referrer: this._router.url}}
+                {queryParams: {referrer: this.router.url}}
             );
         }
     }
