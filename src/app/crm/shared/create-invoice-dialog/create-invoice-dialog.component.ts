@@ -19,8 +19,17 @@ import { DateHelper } from '@shared/helpers/DateHelper';
 import { DialogService } from '@app/shared/common/dialogs/dialog.service';
 import { ContactGroup } from '@shared/AppEnums';
 import {
-    InvoiceServiceProxy, CreateInvoiceInput, UpdateInvoiceLineInput, UpdateInvoiceStatusInput, UpdateInvoiceInput, CustomerServiceProxy, InvoiceStatus,
-    CreateInvoiceLineInput, InvoiceSettingsInfoDto, CurrencyInfo, InvoiceLineUnit
+    InvoiceServiceProxy,
+    CreateInvoiceInput,
+    UpdateInvoiceLineInput,
+    UpdateInvoiceStatusInput,
+    UpdateInvoiceInput,
+    CustomerServiceProxy,
+    InvoiceStatus,
+    CreateInvoiceLineInput,
+    InvoiceSettingsInfoDto,
+    CurrencyInfo,
+    InvoiceLineUnit
 } from '@shared/service-proxies/service-proxies';
 import { NotifyService } from '@abp/notify/notify.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -198,8 +207,9 @@ export class CreateInvoiceDialogComponent implements OnInit {
 
     saveOptionsInit() {
         let cacheKey = this._cacheHelper.getCacheKey(this.SAVE_OPTION_CACHE_KEY, this.constructor.name),
-            selectedOption = this.saveContextMenuItems[this._cacheService.exists(cacheKey) ? 
-                this._cacheService.get(cacheKey) : this.SAVE_OPTION_DEFAULT];
+            selectedOption = this.saveContextMenuItems[this._cacheService.exists(cacheKey)
+                ? this._cacheService.get(cacheKey)
+                : this.SAVE_OPTION_DEFAULT];
         selectedOption.selected = true;
         this.buttons[0].title = selectedOption.text;
         this.status = selectedOption.status;
@@ -476,7 +486,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
         }).afterClosed().subscribe((data) => {
             if (data) {
                 this.contactId = data.id;
-                this.customer = [data.firstName, data.middleName, 
+                this.customer = [data.firstName, data.middleName,
                     data.lastName].filter(Boolean).join(' ');
                 this._changeDetectorRef.detectChanges();
             }
