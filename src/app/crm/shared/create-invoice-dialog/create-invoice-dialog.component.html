@@ -172,7 +172,8 @@
                             name="unit"
                             width="130px"
                             [placeholder]="ls.l('Unit')"
-                            [dataSource]="[ls.l('Item'), ls.l('Box'), ls.l('Package')]">
+                            [dataSource]="invoiceUnits"
+                            (onValueChanged)="onValueChanged($event, cellData, 'unit')">
                         </dx-select-box>
                     </div>
                     <div *dxTemplate="let cellData of 'amount'">

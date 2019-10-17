@@ -20,7 +20,7 @@ import { DialogService } from '@app/shared/common/dialogs/dialog.service';
 import { ContactGroup } from '@shared/AppEnums';
 import {
     InvoiceServiceProxy, CreateInvoiceInput, UpdateInvoiceLineInput, UpdateInvoiceStatusInput, UpdateInvoiceInput, CustomerServiceProxy, InvoiceStatus,
-    CreateInvoiceLineInput, InvoiceSettingsInfoDto, CurrencyInfo
+    CreateInvoiceLineInput, InvoiceSettingsInfoDto, CurrencyInfo, InvoiceLineUnit
 } from '@shared/service-proxies/service-proxies';
 import { NotifyService } from '@abp/notify/notify.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -103,6 +103,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
         }
     ];
     linesGridHeight = 200;
+    invoiceUnits = Object.keys(InvoiceLineUnit);
 
     constructor(
         private store$: Store<RootStore.State>,
@@ -251,7 +252,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
                     id: row['id'],
                     quantity: row['Quantity'],
                     rate: row['Rate'],
-                    unitId: 'UT',
+                    unitId: row['unit'] as InvoiceLineUnit,
                     description: row['Description'],
                     sortOrder: index
                 });
@@ -267,7 +268,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
                 return new CreateInvoiceLineInput({
                     quantity: row['Quantity'],
                     rate: row['Rate'],
-                    unitId: 'UT',
+                    unitId: row['unit'] as InvoiceLineUnit,
                     description: row['Description'],
                     sortOrder: index
                 });
@@ -439,8 +440,8 @@ export class CreateInvoiceDialogComponent implements OnInit {
         this._changeDetectorRef.detectChanges();
     }
 
-    onValueChanged(event, data) {
-        this.lines[data.rowIndex][data.column.dataField] = event.value;
+    onValueChanged(event, data, field?) {
+        this.lines[data.rowIndex][field || data.column.dataField] = event.value;
         this._changeDetectorRef.detectChanges();
     }
 
