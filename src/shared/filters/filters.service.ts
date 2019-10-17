@@ -6,10 +6,12 @@ import { Subscription, Subject, BehaviorSubject, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import * as _ from 'underscore';
 import capitalize from 'underscore.string/capitalize';
+import each from 'lodash/each';
 
 /** Application imports */
 import { FilterModel } from './models/filter.model';
 import { FilterHelpers } from '@app/crm/shared/helpers/filter.helper';
+import { FilterItemModel } from '@shared/filters/models/filter-item.model';
 
 @Injectable()
 export class FiltersService {
@@ -183,6 +185,27 @@ export class FiltersService {
     }
 
     filterByStages(filter: FilterModel) {
+        let data = {};
+        if (filter.items.element) {
+            let filterData = FilterHelpers.ParsePipelineIds(filter.items.element.value);
+            data = {
+                or: filterData
+            };
+        }
+
+        return data;
+    }
+
+    filterByAmount(filter) {
+        let data = {};
+        data[filter.field] = {};
+        each(filter.items, (item: FilterItemModel, key) => {
+            item && item.value && (data[filter.field][filter.operator[key]] = +item.value);
+        });
+        return data;
+    }
+
+    filterByOrderStages(filter: FilterModel) {
         let data = {};
         if (filter.items.element) {
             let filterData = FilterHelpers.ParsePipelineIds(filter.items.element.value);
