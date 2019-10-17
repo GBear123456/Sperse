@@ -26,7 +26,7 @@
                             <p *ngIf="appSession.tenant.customPrivacyPolicyDocumentId"><a [href]="remoteServiceBaseUrl + '/api/TenantCustomization/GetPrivacyPolicyDocument?tenantId=' + appSession.tenant.id" target="_blank">{{l('Download')}}</a></p>
                             <form #privacyPolicyUploadForm>
                                 <div class="form-group row">
-                                    <input type="file" ng2FileSelect [uploader]="customPrivacyPolicyUploader" class="col-lg-12" required accept=".html" #privacyInput/>
+                                    <input type="file" ng2FileSelect [uploader]="customPrivacyPolicyUploader" class="col-lg-12" required accept=".html" #privacyInput />
                                     <span class="m-form__help col-lg-12">{{l("UploadPrivacyPolicy_Info")}}</span>
                                 </div>
                                 <button class="btn btn-primary" type="button" (click)="uploadCustomPrivacyPolicy()">{{l("Upload")}}</button>
@@ -38,7 +38,7 @@
                             <p *ngIf="appSession.tenant.customToSDocumentId"><a [href]="remoteServiceBaseUrl + '/api/TenantCustomization/GetTermsOfServiceDocument?tenantId=' + appSession.tenant.id" target="_blank">{{l('Download')}}</a></p>
                             <form #toSUploadForm>
                                 <div class="form-group row">
-                                    <input type="file" ng2FileSelect [uploader]="customToSUploader" class="col-lg-12" required accept=".html" #tosInput/>
+                                    <input type="file" ng2FileSelect [uploader]="customToSUploader" class="col-lg-12" required accept=".html" #tosInput />
                                     <span class="m-form__help col-lg-12">{{l("UploadToS_Info")}}</span>
                                 </div>
                                 <button class="btn btn-primary" type="button" (click)="uploadCustomToS()">{{l("Upload")}}</button>
@@ -47,7 +47,7 @@
                         </div>
                     </div>
                 </dx-scroll-view>
-            </mat-tab>           
+            </mat-tab>
             <mat-tab label="{{l('Appearance')}}" *ngIf="isAdminCustomizations">
                 <dx-scroll-view showScrollbar="onHover">
                     <div class="row m-form">
@@ -59,7 +59,7 @@
                             </p>
                             <form #logoUploadForm>
                                 <div class="form-group row">
-                                    <input type="file" ng2FileSelect [uploader]="logoUploader" class="col-lg-12" required #logoInput/>
+                                    <input type="file" ng2FileSelect [uploader]="logoUploader" class="col-lg-12" required #logoInput />
                                     <span class="m-form__help col-lg-12">{{l("UploadLogo_Info")}}</span>
                                 </div>
                                 <button class="btn btn-primary" type="button" (click)="uploadLogo()">{{l("Upload")}}</button>
@@ -73,7 +73,7 @@
                             </p>
                             <form #cssUploadForm>
                                 <div class="form-group row">
-                                    <input type="file" ng2FileSelect [uploader]="customCssUploader" class="col-lg-12" required #cssInput/>
+                                    <input type="file" ng2FileSelect [uploader]="customCssUploader" class="col-lg-12" required #cssInput />
                                     <span class="m-form__help col-lg-12">{{l("UploadCSS_Info")}}</span>
                                 </div>
                                 <button class="btn btn-primary" type="button" (click)="uploadCustomCss()">{{l("Upload")}}</button>
@@ -84,7 +84,7 @@
                             <h5>{{l('CustomFavicons')}}</h5>
                             <form #faviconsUploadForm>
                                 <div class="form-group row">
-                                    <input type="file" ng2FileSelect [uploader]="faviconsUploader" class="col-lg-12" required #faviconInput/>
+                                    <input type="file" ng2FileSelect [uploader]="faviconsUploader" class="col-lg-12" required #faviconInput />
                                     <span class="m-form__help col-lg-12">{{l("UploadFavicons_Info")}}</span>
                                 </div>
                                 <button class="btn btn-primary" type="button" (click)="uploadFavicons()">{{l("Upload")}}</button>
@@ -569,6 +569,28 @@
                                 {{l("OngageIsEnabled")}}
                                 <span></span>
                             </label>
+                        </div>
+                    </div>
+                </dx-scroll-view>
+            </mat-tab>
+            <mat-tab label="{{l('YTel')}}">
+                <dx-scroll-view showScrollbar="onHover">
+                    <div>
+                        <div class="form-group">
+                            <label for="YTelUserName">{{l("YTelUserName")}}</label>
+                            <input id="YTelUserName" type="text" name="YTelUserName" class="form-control" [(ngModel)]="yTelSettings.userName" maxlength="128">
+                        </div>
+                    </div>
+                    <div>
+                        <div class="form-group">
+                            <label for="YTelPassword">{{l("YTelPassword")}}</label>
+                            <input id="YTelPassword" type="text" name="YTelPassword" class="form-control" [(ngModel)]="yTelSettings.password" maxlength="128">
+                        </div>
+                    </div>
+                    <div>
+                        <div class="form-group">
+                            <label for="YTelFrom">{{l("YTelFrom")}}</label>
+                            <input id="YTelFrom" type="text" name="YTelFrom" class="form-control" [(ngModel)]="yTelSettings.from" maxlength="128">
                         </div>
                     </div>
                 </dx-scroll-view>
