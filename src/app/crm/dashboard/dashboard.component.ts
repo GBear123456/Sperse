@@ -23,7 +23,7 @@ import { AppService } from '@app/app.service';
 import { PaymentWizardComponent } from '@app/shared/common/payment-wizard/payment-wizard.component';
 import { PeriodComponent } from '@app/shared/common/period/period.component';
 import { RootStore, StatesStoreActions } from '@root/store';
-import { DashboardServiceProxy, ModuleType } from '@shared/service-proxies/service-proxies';
+import { DashboardServiceProxy, GetCRMStatusOutput, ModuleType } from '@shared/service-proxies/service-proxies';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { DashboardWidgetsService } from '@shared/crm/dashboard-widgets/dashboard-widgets.service';
@@ -119,8 +119,8 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
     }
 
     private loadStatus() {
-        this.dashboardServiceProxy.getStatus().subscribe((crmActive: boolean) => {
-            this.showWelcomeSection.next(crmActive);
+        this.dashboardServiceProxy.getStatus().subscribe((status: GetCRMStatusOutput) => {
+            this.showWelcomeSection.next(status.hasData);
         });
     }
 
