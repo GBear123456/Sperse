@@ -7597,6 +7597,58 @@ export class ContactServiceProxy {
      * @body (optional) 
      * @return Success
      */
+    updateAffiliateCode(body: UpdateContactAffiliateCodeInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Contact/UpdateAffiliateCode";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUpdateAffiliateCode(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUpdateAffiliateCode(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processUpdateAffiliateCode(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @body (optional) 
+     * @return Success
+     */
     sendSMSToContact(body: SendSMSToContactInput | null | undefined): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CRM/Contact/SendSMSToContact";
         url_ = url_.replace(/[?&]$/, "");
@@ -11518,7 +11570,7 @@ export class DashboardServiceProxy {
     /**
      * @return Success
      */
-    getStatus(): Observable<boolean> {
+    getStatus(): Observable<GetCRMStatusOutput> {
         let url_ = this.baseUrl + "/api/services/CRM/Dashboard/GetStatus";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -11538,14 +11590,14 @@ export class DashboardServiceProxy {
                 try {
                     return this.processGetStatus(<any>response_);
                 } catch (e) {
-                    return <Observable<boolean>><any>_observableThrow(e);
+                    return <Observable<GetCRMStatusOutput>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<boolean>><any>_observableThrow(response_);
+                return <Observable<GetCRMStatusOutput>><any>_observableThrow(response_);
         }));
     }
 
-    protected processGetStatus(response: HttpResponseBase): Observable<boolean> {
+    protected processGetStatus(response: HttpResponseBase): Observable<GetCRMStatusOutput> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -11556,7 +11608,7 @@ export class DashboardServiceProxy {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 !== undefined ? resultData200 : <any>null;
+            result200 = resultData200 ? GetCRMStatusOutput.fromJS(resultData200) : new GetCRMStatusOutput();
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -11564,7 +11616,7 @@ export class DashboardServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<boolean>(<any>null);
+        return _observableOf<GetCRMStatusOutput>(<any>null);
     }
 }
 
@@ -41625,6 +41677,46 @@ export interface IUpdateContactOrganizationUnitInput {
     organizationUnitId: number;
 }
 
+export class UpdateContactAffiliateCodeInput implements IUpdateContactAffiliateCodeInput {
+    contactId!: number;
+    affiliateCode!: string;
+
+    constructor(data?: IUpdateContactAffiliateCodeInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.contactId = data["contactId"];
+            this.affiliateCode = data["affiliateCode"];
+        }
+    }
+
+    static fromJS(data: any): UpdateContactAffiliateCodeInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateContactAffiliateCodeInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["contactId"] = this.contactId;
+        data["affiliateCode"] = this.affiliateCode;
+        return data; 
+    }
+}
+
+export interface IUpdateContactAffiliateCodeInput {
+    contactId: number;
+    affiliateCode: string;
+}
+
 export class SendSMSToContactInput implements ISendSMSToContactInput {
     contactId!: number;
     message!: string | undefined;
@@ -53748,6 +53840,42 @@ export interface IGetCountByStarOutput {
     colorType: ContactStarColorType | undefined;
     key: string | undefined;
     count: number | undefined;
+}
+
+export class GetCRMStatusOutput implements IGetCRMStatusOutput {
+    hasData!: boolean | undefined;
+
+    constructor(data?: IGetCRMStatusOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.hasData = data["hasData"];
+        }
+    }
+
+    static fromJS(data: any): GetCRMStatusOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new GetCRMStatusOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["hasData"] = this.hasData;
+        return data; 
+    }
+}
+
+export interface IGetCRMStatusOutput {
+    hasData: boolean | undefined;
 }
 
 export class PartnerTypeDto implements IPartnerTypeDto {
