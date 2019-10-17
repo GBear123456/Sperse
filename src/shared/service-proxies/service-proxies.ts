@@ -46614,84 +46614,17 @@ export enum InvoiceStatus {
     Canceled = "Canceled", 
 }
 
-export class InvoiceLineUnit implements IInvoiceLineUnit {
-    name!: string;
-    lines!: InvoiceLine[] | undefined;
-    isDeleted!: boolean | undefined;
-    deleterUserId!: number | undefined;
-    deletionTime!: moment.Moment | undefined;
-    lastModificationTime!: moment.Moment | undefined;
-    lastModifierUserId!: number | undefined;
-    creationTime!: moment.Moment | undefined;
-    creatorUserId!: number | undefined;
-    id!: string | undefined;
-
-    constructor(data?: IInvoiceLineUnit) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.name = data["name"];
-            if (data["lines"] && data["lines"].constructor === Array) {
-                this.lines = [];
-                for (let item of data["lines"])
-                    this.lines.push(InvoiceLine.fromJS(item));
-            }
-            this.isDeleted = data["isDeleted"];
-            this.deleterUserId = data["deleterUserId"];
-            this.deletionTime = data["deletionTime"] ? moment(data["deletionTime"].toString()) : <any>undefined;
-            this.lastModificationTime = data["lastModificationTime"] ? moment(data["lastModificationTime"].toString()) : <any>undefined;
-            this.lastModifierUserId = data["lastModifierUserId"];
-            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
-            this.creatorUserId = data["creatorUserId"];
-            this.id = data["id"];
-        }
-    }
-
-    static fromJS(data: any): InvoiceLineUnit {
-        data = typeof data === 'object' ? data : {};
-        let result = new InvoiceLineUnit();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["name"] = this.name;
-        if (this.lines && this.lines.constructor === Array) {
-            data["lines"] = [];
-            for (let item of this.lines)
-                data["lines"].push(item.toJSON());
-        }
-        data["isDeleted"] = this.isDeleted;
-        data["deleterUserId"] = this.deleterUserId;
-        data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
-        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
-        data["lastModifierUserId"] = this.lastModifierUserId;
-        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
-        data["creatorUserId"] = this.creatorUserId;
-        data["id"] = this.id;
-        return data; 
-    }
-}
-
-export interface IInvoiceLineUnit {
-    name: string;
-    lines: InvoiceLine[] | undefined;
-    isDeleted: boolean | undefined;
-    deleterUserId: number | undefined;
-    deletionTime: moment.Moment | undefined;
-    lastModificationTime: moment.Moment | undefined;
-    lastModifierUserId: number | undefined;
-    creationTime: moment.Moment | undefined;
-    creatorUserId: number | undefined;
-    id: string | undefined;
+export enum InvoiceLineUnit {
+    Day = "Day", 
+    Feet = "Feet", 
+    Hour = "Hour", 
+    Kilogram = "Kilogram", 
+    Pound = "Pound", 
+    Month = "Month", 
+    Package = "Package", 
+    Piece = "Piece", 
+    Unit = "Unit", 
+    Year = "Year", 
 }
 
 export class InvoiceLine implements IInvoiceLine {
@@ -46699,12 +46632,11 @@ export class InvoiceLine implements IInvoiceLine {
     invoiceId!: number | undefined;
     quantity!: number | undefined;
     rate!: number | undefined;
-    unitId!: string;
+    unitId!: InvoiceLineUnit;
     amount!: number | undefined;
     description!: string | undefined;
     sortOrder!: number | undefined;
     invoice!: Invoice | undefined;
-    unit!: InvoiceLineUnit | undefined;
     isDeleted!: boolean | undefined;
     deleterUserId!: number | undefined;
     deletionTime!: moment.Moment | undefined;
@@ -46734,7 +46666,6 @@ export class InvoiceLine implements IInvoiceLine {
             this.description = data["description"];
             this.sortOrder = data["sortOrder"];
             this.invoice = data["invoice"] ? Invoice.fromJS(data["invoice"]) : <any>undefined;
-            this.unit = data["unit"] ? InvoiceLineUnit.fromJS(data["unit"]) : <any>undefined;
             this.isDeleted = data["isDeleted"];
             this.deleterUserId = data["deleterUserId"];
             this.deletionTime = data["deletionTime"] ? moment(data["deletionTime"].toString()) : <any>undefined;
@@ -46764,7 +46695,6 @@ export class InvoiceLine implements IInvoiceLine {
         data["description"] = this.description;
         data["sortOrder"] = this.sortOrder;
         data["invoice"] = this.invoice ? this.invoice.toJSON() : <any>undefined;
-        data["unit"] = this.unit ? this.unit.toJSON() : <any>undefined;
         data["isDeleted"] = this.isDeleted;
         data["deleterUserId"] = this.deleterUserId;
         data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
@@ -46782,12 +46712,11 @@ export interface IInvoiceLine {
     invoiceId: number | undefined;
     quantity: number | undefined;
     rate: number | undefined;
-    unitId: string;
+    unitId: InvoiceLineUnit;
     amount: number | undefined;
     description: string | undefined;
     sortOrder: number | undefined;
     invoice: Invoice | undefined;
-    unit: InvoiceLineUnit | undefined;
     isDeleted: boolean | undefined;
     deleterUserId: number | undefined;
     deletionTime: moment.Moment | undefined;
@@ -57808,7 +57737,7 @@ export interface IGetUserInstanceInfoOutput {
 export class CreateInvoiceLineInput implements ICreateInvoiceLineInput {
     quantity!: number;
     rate!: number;
-    unitId!: string;
+    unitId!: InvoiceLineUnit;
     description!: string | undefined;
     sortOrder!: number;
 
@@ -57852,7 +57781,7 @@ export class CreateInvoiceLineInput implements ICreateInvoiceLineInput {
 export interface ICreateInvoiceLineInput {
     quantity: number;
     rate: number;
-    unitId: string;
+    unitId: InvoiceLineUnit;
     description: string | undefined;
     sortOrder: number;
 }
@@ -57941,7 +57870,7 @@ export class InvoiceLineInfo implements IInvoiceLineInfo {
     id!: number | undefined;
     quantity!: number | undefined;
     rate!: number | undefined;
-    unitId!: string | undefined;
+    unitId!: InvoiceLineUnit | undefined;
     amount!: number | undefined;
     description!: string | undefined;
     sortOrder!: number | undefined;
@@ -57991,7 +57920,7 @@ export interface IInvoiceLineInfo {
     id: number | undefined;
     quantity: number | undefined;
     rate: number | undefined;
-    unitId: string | undefined;
+    unitId: InvoiceLineUnit | undefined;
     amount: number | undefined;
     description: string | undefined;
     sortOrder: number | undefined;
@@ -58081,7 +58010,7 @@ export class UpdateInvoiceLineInput implements IUpdateInvoiceLineInput {
     id!: number | undefined;
     quantity!: number;
     rate!: number;
-    unitId!: string;
+    unitId!: InvoiceLineUnit;
     description!: string | undefined;
     sortOrder!: number;
 
@@ -58128,7 +58057,7 @@ export interface IUpdateInvoiceLineInput {
     id: number | undefined;
     quantity: number;
     rate: number;
-    unitId: string;
+    unitId: InvoiceLineUnit;
     description: string | undefined;
     sortOrder: number;
 }
