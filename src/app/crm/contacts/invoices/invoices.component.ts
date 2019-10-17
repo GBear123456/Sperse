@@ -59,7 +59,7 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
             disabled: false
         },
         {
-            text: this.l('Email'),
+            text: this.l('Settings'),
             action: this.emailInvoice.bind(this),
             type: null,
             disabled: false

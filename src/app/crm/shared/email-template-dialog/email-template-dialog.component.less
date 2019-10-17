@@ -83,18 +83,24 @@
     }
 
     ::ng-deep ckeditor {
-        .ck-editor__editable_inline {
-            min-height: 400px;
-            border-right: none;
-            border-top: none;
-            border-left: none;
+        & > div {
+            padding-top: 25px;
         }
-        label.ck-voice-label {
-            visibility: hidden;
-        }
-        .ck-toolbar {
-            border: none;
-            background: #f3f7fa;
+
+        .cke_chrome {
+            border: none!important;
+            .cke_top {
+                border-bottom: none!important;
+                background: #f3f7fa!important;
+            }
+            .cke_bottom {
+                border-top: none!important;
+                background: #f3f7fa!important;
+                border-bottom: 1px solid #dfdfdf;
+            }
+            .cke_contents {
+                min-height: 380px;
+            }
         }
     }
 

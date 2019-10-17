@@ -97,7 +97,7 @@
                     </dx-text-box>
                 </div>
                 <div class="field-area">
-                    <ckeditor #ckeditor [data]="data.body" (change)="onBodyChange($event)"></ckeditor>
+                    <ckeditor #ckeditor [(data)]="data.body" [config]="ckConfig"></ckeditor>
                 </div>
                 <ng-content *ngIf="data.templateType" select="[templateSettings]"></ng-content>
             </div>

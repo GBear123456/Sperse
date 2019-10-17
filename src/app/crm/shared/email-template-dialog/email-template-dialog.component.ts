@@ -25,10 +25,23 @@ import { EmailTemplatesServiceProxy, GetTemplatesResponse, CreateEmailTemplateRe
 })
 export class EmailTemplateDialogComponent {
     @ViewChild(DxSelectBoxComponent) templateComponent: DxSelectBoxComponent;
-    @ViewChild('ckeditor') ckEditor: any;
 
     showCC = false;
-    showBCC = false;    
+    showBCC = false;
+
+    ckConfig = { 
+        toolbarGroups: [
+        		{ name: 'document', groups: [ 'mode', 'document', 'doctools' ] },
+        		{ name: 'editing', groups: [ 'find', 'selection', 'editing' ] },
+        		{ name: 'forms', groups: [ 'forms' ] },
+        		{ name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ] },
+        		{ name: 'paragraph', groups: [ 'list', 'indent', 'blocks', 'align', 'bidi', 'paragraph' ] },
+        		{ name: 'styles', groups: [ 'styles' ] },
+        		{ name: 'colors', groups: [ 'colors' ] },
+        		{ name: 'clipboard', groups: [ 'clipboard', 'undo' ] }
+        ], 
+        removeButtons: 'Anchor,Subscript,Superscript,Source'
+    };
 
     @Input() templateEditMode = false;
     @Output() onSave: EventEmitter<any> = new EventEmitter<any>();
@@ -145,10 +158,6 @@ export class EmailTemplateDialogComponent {
         abp.ui.clearBusy(this.dialogRef.id);
     }
 
-    onBodyChange(event) {
-        this.data.body = event.editor.getData();
-    }
-
     onTemplateChanged(event) {
         if (event.value) {
             this.startLoading();
@@ -159,7 +168,6 @@ export class EmailTemplateDialogComponent {
                 this.data.body = res.body;
                 this.data.cc = res.cc;
                 this.data.subject = res.subject;
-                this.ckEditor.editorInstance.setData(res.body);
                 this.changeDetectorRef.markForCheck();
                 this.onTemplateChange.emit(res);
             });
