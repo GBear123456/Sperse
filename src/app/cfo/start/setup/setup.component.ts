@@ -1,18 +1,16 @@
 /** Core imports */
-import { AfterViewInit, Component, OnInit, Injector, OnDestroy } from '@angular/core';
+import { AfterViewInit, Component, OnInit, Injector, OnDestroy, Output, EventEmitter } from '@angular/core';
 
 /** Third party imports */
-import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { of } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
 
 /** Application imports */
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
-import { InstanceServiceProxy, InstanceType, SyncServiceProxy } from 'shared/service-proxies/service-proxies';
-import { CfoIntroComponent } from '../../shared/cfo-intro/cfo-intro.component';
+import { InstanceServiceProxy, InstanceType } from 'shared/service-proxies/service-proxies';
 import { AccountConnectorDialogComponent } from '@shared/common/account-connector-dialog/account-connector-dialog';
-import { AppService } from '@app/app.service';
 
 @Component({
     selector: 'setup',
@@ -21,17 +19,15 @@ import { AppService } from '@app/app.service';
     animations: [appModuleAnimation()]
 })
 export class SetupComponent extends CFOComponentBase implements AfterViewInit, OnInit, OnDestroy {
+    @Output() onOpenIntro: EventEmitter<boolean> = new EventEmitter<boolean>();
     private rootComponent: any;
     public headlineConfig;
     isDisabled = !this.isInstanceAdmin;
-    dialogConfig = new MatDialogConfig();
     setupContainerElement: Element;
 
     constructor(
         injector: Injector,
-        private _instanceServiceProxy: InstanceServiceProxy,
-        private _syncService: SyncServiceProxy,
-        private _appService: AppService,
+        private instanceServiceProxy: InstanceServiceProxy,
         public dialog: MatDialog
     ) {
         super(injector);
@@ -47,8 +43,6 @@ export class SetupComponent extends CFOComponentBase implements AfterViewInit, O
         this.rootComponent.overflowHidden(true);
         this.rootComponent.addScriptLink('https://fast.wistia.com/embed/medias/kqjpmot28u.jsonp');
         this.rootComponent.addScriptLink('https://fast.wistia.com/assets/external/E-v1.js');
-        if (this._appService.hasModuleSubscription() && this.instanceType == InstanceType.Main)
-            setTimeout(() => this.openDialog(), 300);
     }
 
     ngAfterViewInit() {
@@ -75,7 +69,7 @@ export class SetupComponent extends CFOComponentBase implements AfterViewInit, O
         this.startLoading(false, this.setupContainerElement);
         this.addAccount();
         if (this._cfoService.instanceId == null)
-            this._instanceServiceProxy.setup(InstanceType[this.instanceType], undefined).pipe(
+            this.instanceServiceProxy.setup(InstanceType[this.instanceType], undefined).pipe(
                 switchMap(() => this._cfoService.instanceChangeProcess()),
                 catchError(() => of(this.isDisabled = !this.isInstanceAdmin))
             ).subscribe();
@@ -85,18 +79,5 @@ export class SetupComponent extends CFOComponentBase implements AfterViewInit, O
         this.rootComponent.removeScriptLink('https://fast.wistia.com/embed/medias/kqjpmot28u.jsonp');
         this.rootComponent.removeScriptLink('https://fast.wistia.com/assets/external/E-v1.js');
         this.rootComponent.overflowHidden();
-    }
-
-    openDialog() {
-        this.dialogConfig.height = '655px';
-        this.dialogConfig.width = '880px';
-        this.dialogConfig.id = 'cfo-intro';
-        this.dialogConfig.panelClass = ['cfo-intro', 'setup'];
-        this.dialogConfig.data = { alreadyStarted: false };
-
-        const dialogRef = this.dialog.open(CfoIntroComponent, this.dialogConfig);
-        dialogRef.afterClosed().subscribe(result => {
-            if (result && result.isGetStartedButtonClicked) this.onStart();
-        });
     }
 }

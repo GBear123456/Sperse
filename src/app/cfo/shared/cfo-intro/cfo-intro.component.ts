@@ -36,7 +36,7 @@ export class CfoIntroComponent extends CFOComponentBase implements OnInit {
 
     constructor(
         injector: Injector,
-        private _userService: UserServiceProxy,
+        private userService: UserServiceProxy,
         public appService: AppService,
         @Inject(MAT_DIALOG_DATA) public data: any,
     ) {
@@ -80,7 +80,7 @@ export class CfoIntroComponent extends CFOComponentBase implements OnInit {
 
     // GetAvailableUserCount
     getAvailableUserCount() {
-        this._userService.getAvailableUserCount(ModuleType[this.moduleType]).subscribe(result => {
+        this.userService.getAvailableUserCount(ModuleType[this.moduleType]).subscribe(result => {
             this.maxAvailableUserCount = result;
         });
     }

@@ -1,7 +1,7 @@
 <div [@routerTransition]>
     <app-headline [config]="headlineConfig"></app-headline>
     <div class="content">
-        <setup-steps (openIntro)="openDialog()"></setup-steps>
+        <setup-steps (openIntro)="onOpenIntro.next(true)"></setup-steps>
         <div class="cashflow-setup portlet light no-padding margin-bottom-0">
             <div class="portlet-body">
                 <div>
