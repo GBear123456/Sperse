@@ -5,7 +5,6 @@ import { Component, Injector, Input, Output, ViewChild, EventEmitter } from '@an
 import { takeUntil } from 'rxjs/operators';
 
 /** Application imports */
-import { DataLayoutType } from '@app/shared/layout/data-layout-type';
 import { TagsListComponent } from '../shared/tags-list/tags-list.component';
 import { ListsListComponent } from '../shared/lists-list/lists-list.component';
 import { TypesListComponent } from '../shared/types-list/types-list.component';
@@ -86,7 +85,6 @@ export class OperationsWidgetComponent extends AppComponentBase {
     private _enabled: Boolean;
     private _stages: any[] = [];
     private _partnerTypes: any[] = [];
-    private dataLayoutType: DataLayoutType = DataLayoutType.Pipeline;
     isPrevDisabled = false;
     isNextDisabled = false;
 
@@ -105,14 +103,14 @@ export class OperationsWidgetComponent extends AppComponentBase {
     permissions = AppPermissions;
     constructor(
         injector: Injector,
-        private _appService: AppService,
-        private _userService: UserServiceProxy,
-        private _contactService: ContactsService,
-        private _impersonationService: ImpersonationService
+        private appService: AppService,
+        private userService: UserServiceProxy,
+        private contactService: ContactsService,
+        private impersonationService: ImpersonationService
     ) {
         super(injector);
 
-        _contactService.toolbarSubscribe(config => {
+        contactService.toolbarSubscribe(config => {
             this.customToolbarConfig = config;
             this.initToolbarConfig();
         });
@@ -128,46 +126,46 @@ export class OperationsWidgetComponent extends AppComponentBase {
                 {
                     name: 'assign',
                     action: this.toggleUserAssignment.bind(this),
-                    disabled: !this._contactService.checkCGPermission(this.customerType, 'ManageAssignments')
+                    disabled: !this.contactService.checkCGPermission(this.customerType, 'ManageAssignments')
                 },
                 this.leadId ? {
                     name: 'stage',
                     action: this.toggleStages.bind(this),
-                    disabled: !this._contactService.checkCGPermission(this.customerType)
+                    disabled: !this.contactService.checkCGPermission(this.customerType)
                 } :
                 {
                     name: 'status',
                     action: this.toggleStatus.bind(this),
-                    disabled: !this._contactService.checkCGPermission(this.customerType)
+                    disabled: !this.contactService.checkCGPermission(this.customerType)
                 }
             ];
             if (this.customerType == ContactGroup.Partner) {
                 items.push({
                     name: 'partnerType',
                     action: this.togglePartnerTypes.bind(this),
-                    disabled: !this._contactService.checkCGPermission(this.customerType)
+                    disabled: !this.contactService.checkCGPermission(this.customerType)
                 });
             }
             items = items.concat([
                 {
                     name: 'lists',
                     action: this.toggleLists.bind(this),
-                    disabled: !this._contactService.checkCGPermission(this.customerType, 'ManageListsAndTags')
+                    disabled: !this.contactService.checkCGPermission(this.customerType, 'ManageListsAndTags')
                 },
                 {
                     name: 'tags',
                     action: this.toggleTags.bind(this),
-                    disabled: !this._contactService.checkCGPermission(this.customerType, 'ManageListsAndTags')
+                    disabled: !this.contactService.checkCGPermission(this.customerType, 'ManageListsAndTags')
                 },
                 {
                     name: 'rating',
                     action: this.toggleRating.bind(this),
-                    disabled: !this._contactService.checkCGPermission(this.customerType, 'ManageRatingAndStars')
+                    disabled: !this.contactService.checkCGPermission(this.customerType, 'ManageRatingAndStars')
                 },
                 {
                     name: 'star',
                     action: this.toggleStars.bind(this),
-                    disabled: !this._contactService.checkCGPermission(this.customerType, 'ManageRatingAndStars')
+                    disabled: !this.contactService.checkCGPermission(this.customerType, 'ManageRatingAndStars')
                 }
             ]);
             let impersonationItem = {
@@ -182,7 +180,7 @@ export class OperationsWidgetComponent extends AppComponentBase {
                         visible: this.contactInfo && this.contactInfo.personContactInfo && this.contactInfo.personContactInfo.userId &&
                             this.permission.isGranted(AppPermissions.AdministrationUsersImpersonation),
                         action: () => {
-                            this._impersonationService.impersonate(this.contactInfo.personContactInfo.userId, this.appSession.tenantId);
+                            this.impersonationService.impersonate(this.contactInfo.personContactInfo.userId, this.appSession.tenantId);
                         }
                     }
                 ]
@@ -202,7 +200,7 @@ export class OperationsWidgetComponent extends AppComponentBase {
                             name: 'delete',
                             action: this.delete.bind(this),
                             visible: Boolean(this.leadId) &&
-                                this._contactService.checkCGPermission(this.customerType)
+                                this.contactService.checkCGPermission(this.customerType)
                         }
                     ]
                 },
@@ -218,10 +216,10 @@ export class OperationsWidgetComponent extends AppComponentBase {
             const isCfoLinkOrVerifyEnabled = this.contactInfo
                 && this.contactInfo.personContactInfo
                 && this.contactInfo.groupId == ContactGroup.Client
-                && this._appService.isCfoLinkOrVerifyEnabled
+                && this.appService.isCfoLinkOrVerifyEnabled
                 && (
-                    this.isClientCFOAvailable() && this._appService.checkCFOClientAccessPermission()
-                    || (!this.isClientCFOAvailable() && this._appService.canSendVerificationRequest() && this.contactInfo.statusId === ContactStatus.Active)
+                    this.isClientCFOAvailable() && this.appService.checkCFOClientAccessPermission()
+                    || (!this.isClientCFOAvailable() && this.appService.canSendVerificationRequest() && this.contactInfo.statusId === ContactStatus.Active)
                 );
             if (isCfoLinkOrVerifyEnabled) {
                 this.toolbarConfig.push(
@@ -279,11 +277,7 @@ export class OperationsWidgetComponent extends AppComponentBase {
         this.partnerTypesComponent.toggle();
     }
 
-    toggleDataLayout(dataLayoutType) {
-        this.dataLayoutType = dataLayoutType;
-    }
-
-    toggleUserAssignment(dataLayoutType) {
+    toggleUserAssignment() {
         this.userAssignmentComponent.toggle();
     }
 
@@ -336,17 +330,13 @@ export class OperationsWidgetComponent extends AppComponentBase {
         this.next.emit(this);
     }
 
-    isClientProspective() {
-        return this.contactInfo ? this.contactInfo.statusId == ContactStatus.Prospective : true;
-    }
-
     isClientCFOAvailable() {
         return this.contactInfo && this.contactInfo.personContactInfo &&
-            this._appService.isCFOAvailable(this.contactInfo.personContactInfo.userId);
+            this.appService.isCFOAvailable(this.contactInfo.personContactInfo.userId);
     }
 
     requestVerification() {
-        this._appService.requestVerification(this.contactInfo.personContactInfo.id)
+        this.appService.requestVerification(this.contactInfo.personContactInfo.id)
             .pipe(takeUntil(this.deactivate$))
             .subscribe(result => {
                 if (this.contactInfo && this.contactInfo.personContactInfo)
@@ -356,7 +346,7 @@ export class OperationsWidgetComponent extends AppComponentBase {
     }
 
     redirectToCFO() {
-        this._appService.redirectToCFO(this.contactInfo.personContactInfo.userId);
+        this.appService.redirectToCFO(this.contactInfo.personContactInfo.userId);
     }
 
     updateNavButtons(isFirst, isLast) {

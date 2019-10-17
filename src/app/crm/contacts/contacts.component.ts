@@ -115,21 +115,22 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
     private targetEntity: BehaviorSubject<TargetDirectionEnum> = new BehaviorSubject<TargetDirectionEnum>(TargetDirectionEnum.Current);
     public targetEntity$: Observable<TargetDirectionEnum> = this.targetEntity.asObservable();
 
-    constructor(injector: Injector,
-                private dialog: MatDialog,
-                private dialogService: DialogService,
-                private cacheService: CacheService,
-                private userService: UserServiceProxy,
-                private contactService: ContactServiceProxy,
-                private orgContactService: OrganizationContactServiceProxy,
-                private partnerService: PartnerServiceProxy,
-                private leadService: LeadServiceProxy,
-                private pipelineService: PipelineService,
-                private contactsService: ContactsService,
-                private store$: Store<AppStore.State>,
-                private appStoreService: AppStoreService,
-                private customerService: CustomerServiceProxy,
-                private itemDetailsService: ItemDetailsService
+    constructor(
+        injector: Injector,
+        private dialog: MatDialog,
+        private dialogService: DialogService,
+        private cacheService: CacheService,
+        private userService: UserServiceProxy,
+        private contactService: ContactServiceProxy,
+        private orgContactService: OrganizationContactServiceProxy,
+        private partnerService: PartnerServiceProxy,
+        private leadService: LeadServiceProxy,
+        private pipelineService: PipelineService,
+        private contactsService: ContactsService,
+        private store$: Store<AppStore.State>,
+        private appStoreService: AppStoreService,
+        private customerService: CustomerServiceProxy,
+        private itemDetailsService: ItemDetailsService
     ) {
         super(injector);
         this.appStoreService.loadUserDictionaries();
@@ -803,7 +804,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
             panelClass: 'slider',
             disableClose: true,
             closeOnNavigation: false,
-            data: { 
+            data: {
                 contact: this.contactInfo
             }
         }).afterClosed().subscribe(() => {
