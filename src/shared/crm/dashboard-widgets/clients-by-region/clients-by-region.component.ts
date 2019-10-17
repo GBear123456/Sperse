@@ -37,7 +37,6 @@ export class ClientsByRegionComponent implements OnInit, OnDestroy {
     data: MapData = {};
     pipe: any = new DecimalPipe('en-US');
     palette: string[] = ['#c1b9ff', '#b6abff', '#aa9eff', '#9e91ff', '#9383ff', '#8776ff', '#7b69ff', '#705bff'];
-    colorGroups: number[] = [ 1, 10, 100, 500, 1000, 2500, 5000, 10000, 50000 ];
 
     constructor(
         private dashboardWidgetsService: DashboardWidgetsService,

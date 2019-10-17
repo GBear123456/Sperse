@@ -17,6 +17,7 @@ import { ImageFormat } from '@shared/common/export/image-format.enum';
 import { ExportService } from '@shared/common/export/export.service';
 import { MapService } from '@app/shared/common/slice/map/map.service';
 import { MapAreaItem } from '@app/shared/common/slice/map/map-area-item.model';
+import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
 
 @Component({
     selector: 'slice-map',
@@ -28,7 +29,6 @@ import { MapAreaItem } from '@app/shared/common/slice/map/map-area-item.model';
 export class MapComponent implements OnChanges {
     @Input() data: MapData = {};
     @Input() palette: string[] = [ '#ade8ff', '#86ddff', '#5fd2ff', '#38c8ff', '#11bdff', '#00a8ea' ];
-    @Input() colorGroups: number[] = [ 1, 10, 100, 500, 1000, 5000, 9999999999 ];
     @Input() infoItems: InfoItem[];
     @Input() width: InfoItem[];
     @Input() height: InfoItem[];
@@ -36,6 +36,10 @@ export class MapComponent implements OnChanges {
     @Input() showLegendBorder = false;
     @Input() usaOnly = false;
     @ViewChild(DxVectorMapComponent) vectorMapComponent: DxVectorMapComponent;
+    isLendspace: boolean = this.userMananagementService.checkLendSpaceLayout();
+    colorGroups: number[] = this.isLendspace
+        ? [ 1, 101, 1001, 10001, 50001, 100001, 500001, Number.MAX_SAFE_INTEGER ]
+        : [ 1, 101, 501, 1001, 5001, 25001, 50001, Number.MAX_SAFE_INTEGER ];
     pipe: any = new DecimalPipe('en-US');
     mapAreasItems: MapAreaItem[] = this.mapService.mapAreasItems;
     selectedMapAreaItem$: Observable<MapAreaItem> = this.mapService.selectedMapAreaItem$;
@@ -53,7 +57,8 @@ export class MapComponent implements OnChanges {
         private loadingService: LoadingService,
         private ls: AppLocalizationService,
         private exportService: ExportService,
-        private mapService: MapService
+        private mapService: MapService,
+        private userMananagementService: UserManagementService
     ) {}
 
     ngOnChanges(changes: SimpleChanges) {
@@ -82,8 +87,8 @@ export class MapComponent implements OnChanges {
 
     customizeText = (arg) => {
         let text;
-        if (arg.end === 9999999999) {
-            text = '> 5000';
+        if (arg.end === Number.MAX_SAFE_INTEGER) {
+            text = this.isLendspace ? '> 500001' : '> 50001';
         } else {
             text = this.pipe.transform(arg.start, '1.0-0') + ' to ' + this.pipe.transform(arg.end - 1, '1.0-0');
         }
