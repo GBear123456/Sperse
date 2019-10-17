@@ -112,6 +112,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
         }
     ];
     linesGridHeight = 200;
+    invoiceUnits = Object.keys(InvoiceLineUnit);
 
     constructor(
         private store$: Store<RootStore.State>,
@@ -261,7 +262,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
                     id: row['id'],
                     quantity: row['Quantity'],
                     rate: row['Rate'],
-                    unitId: InvoiceLineUnit.Unit,
+                    unitId: row['unit'] as InvoiceLineUnit,
                     description: row['Description'],
                     sortOrder: index
                 });
@@ -277,7 +278,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
                 return new CreateInvoiceLineInput({
                     quantity: row['Quantity'],
                     rate: row['Rate'],
-                    unitId: InvoiceLineUnit.Unit,
+                    unitId: row['unit'] as InvoiceLineUnit,
                     description: row['Description'],
                     sortOrder: index
                 });
@@ -449,8 +450,8 @@ export class CreateInvoiceDialogComponent implements OnInit {
         this._changeDetectorRef.detectChanges();
     }
 
-    onValueChanged(event, data) {
-        this.lines[data.rowIndex][data.column.dataField] = event.value;
+    onValueChanged(event, data, field?) {
+        this.lines[data.rowIndex][field || data.column.dataField] = event.value;
         this._changeDetectorRef.detectChanges();
     }
 
