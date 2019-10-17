@@ -1,8 +1,9 @@
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { BankCodeExternalComponent } from './shared/bank-code-external/bank-code-external.component';
 import { BankCodeComponent } from './bank-code.component';
 import { DashboardComponent } from '@root/bank-code/dashboard/dashboard.component';
+import { ResourcesComponent } from '@root/bank-code/resources/resources.component';
+import { RedirectGuard } from '@shared/common/redirect-guard/redirect-guard';
 
 @NgModule({
     imports: [
@@ -15,7 +16,8 @@ import { DashboardComponent } from '@root/bank-code/dashboard/dashboard.componen
                 children: [
                     {
                         path: '',
-                        component: BankCodeExternalComponent
+                        redirectTo: 'dashboard',
+                        pathMatch: 'full'
                     },
                     {
                         path: 'dashboard',
@@ -24,11 +26,24 @@ import { DashboardComponent } from '@root/bank-code/dashboard/dashboard.componen
                     {
                         path: 'products',
                         loadChildren: 'bank-code/products/products.module#ProductsModule'
+                    },
+                    {
+                        path: 'resources',
+                        component: ResourcesComponent
+                    },
+                    {
+                        path: 'events',
+                        canActivate: [ RedirectGuard ],
+                        component: RedirectGuard,
+                        data: {
+                            externalUrl: 'https://www.eventbrite.com/o/cheri-tree-14479776861'
+                        }
                     }
                 ]
             }
         ])
     ],
-    exports: [ RouterModule ]
+    exports: [ RouterModule ],
+    providers: [ RedirectGuard ]
 })
 export class BankCodeRoutingModule { }

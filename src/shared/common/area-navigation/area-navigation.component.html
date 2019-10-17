@@ -10,15 +10,18 @@
         </ng-container>
         <ng-template #internalBlock>
             <a routerLinkActive="active"
-                [routerLink]="item.routerUrl || getFirstVisibleLink(item.sublinks)"
-                [ngClass]="{ active: currentUrl === item.routerUrl, disabled: !item.url && !item.routerUrl && (!item.sublinks || !item.sublinks.length)}"
-                [routerLinkActiveOptions]="{exact:true}">
-                {{l(item.name)}} <span *ngIf="item.sublinks && item.sublinks.length" class="dropdown-mark"></span>
+               [routerLink]="item.routerUrl || getFirstVisibleLink(item.sublinks)"
+               [ngClass]="{ active: currentUrl === item.routerUrl, disabled: !item.url && !item.routerUrl && (!item.sublinks || !item.sublinks.length)}"
+               [routerLinkActiveOptions]="{exact:true}">
+               {{l(item.name)}} <span *ngIf="item.sublinks && item.sublinks.length" class="dropdown-mark"></span>
             </a>
         </ng-template>
         <ul *ngIf="item.sublinks && item.sublinks.length" class="sublinks" #sublinks>
             <li *ngFor="let sublink of item.sublinks" [hidden]="sublink.hidden">
-                <a [routerLink]="sublink.routerUrl" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}" #simlink>
+                <a [routerLink]="sublink.routerUrl"
+                   routerLinkActive="active"
+                   [routerLinkActiveOptions]="{exact:true}"
+                   #simlink>
                     {{l(sublink.name)}}
                 </a>
             </li>

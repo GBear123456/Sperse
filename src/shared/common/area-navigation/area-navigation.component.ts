@@ -84,7 +84,7 @@ export class AreaNavigationComponent extends AppComponentBase implements AfterVi
         }
     }
 
-    navigationItemEnter(e, link) {
+    navigationItemEnter(e, link: MemberAreaLink) {
         if (link.sublinks && link.sublinks.length) {
             setTimeout(() => this.renderer.addClass(e.target, 'opened'));
         } else {
@@ -100,7 +100,7 @@ export class AreaNavigationComponent extends AppComponentBase implements AfterVi
         }
     }
 
-    getFirstVisibleLink(sublinks: any[]): string {
+    getFirstVisibleLink(sublinks: MemberAreaLink[]): string {
         if (!sublinks)
             return;
 
