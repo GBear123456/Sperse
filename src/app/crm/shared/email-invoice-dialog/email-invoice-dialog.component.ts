@@ -76,8 +76,8 @@ export class EmailInvoiceDialogComponent {
             let newItem = data.emailTemplateParams
                 .find(v => v.key == item.key);
             if (newItem)
-                item.value = item.key != 'dueDate' ? 
-                    JSON.parse(newItem.value) : newItem.value;
+                item.value = item.key != 'dueDate' ? JSON.parse(newItem.value) 
+                    : (newItem.value == 'null' ? null : newItem.value);
             else
                 item.value = null;
         });
