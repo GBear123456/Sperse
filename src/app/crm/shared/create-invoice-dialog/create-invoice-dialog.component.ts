@@ -14,6 +14,7 @@ import { finalize, filter, first } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 
 /** Application imports */
+import { ContactsService } from '@app/crm/contacts/contacts.service';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { DateHelper } from '@shared/helpers/DateHelper';
 import { DialogService } from '@app/shared/common/dialogs/dialog.service';
@@ -38,6 +39,7 @@ import { MessageService } from '@abp/message/message.service';
 import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
 import { CreateClientDialogComponent } from '../create-client-dialog/create-client-dialog.component';
+import { EmailTemplateDialogComponent } from '@app/crm/shared/email-template-dialog/email-template-dialog.component';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { RootStore, CurrenciesStoreActions, CurrenciesStoreSelectors } from '@root/store';
 import { AppConsts } from '@shared/AppConsts';
@@ -80,6 +82,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
     saveContextMenuItems = [];
     billingSettings: InvoiceSettingsInfoDto = new InvoiceSettingsInfoDto();
     remoteServiceBaseUrl: string = AppConsts.remoteServiceBaseUrl;
+    selectedOption: any;
 
     currency = 'USD';
 
@@ -116,15 +119,16 @@ export class CreateInvoiceDialogComponent implements OnInit {
 
     constructor(
         private store$: Store<RootStore.State>,
-        private _invoiceProxy: InvoiceServiceProxy,
-        private _customerProxy: CustomerServiceProxy,
-        private _cacheService: CacheService,
-        private _notifyService: NotifyService,
-        private _messageService: MessageService,
-        private _cacheHelper: CacheHelper,
-        private _dialogRef: MatDialogRef<CreateInvoiceDialogComponent>,
-        private _changeDetectorRef: ChangeDetectorRef,
+        private invoiceProxy: InvoiceServiceProxy,
+        private customerProxy: CustomerServiceProxy,
+        private cacheService: CacheService,
+        private notifyService: NotifyService,
+        private messageService: MessageService,
+        private cacheHelper: CacheHelper,
+        private dialogRef: MatDialogRef<CreateInvoiceDialogComponent>,
+        private changeDetectorRef: ChangeDetectorRef,
         private permission: AppPermissionService,
+        private contactsService: ContactsService,
         public appSession: AppSessionService,
         public dialog: MatDialog,
         public ls: AppLocalizationService,
@@ -134,7 +138,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
             {text: this.ls.l('Save'), selected: false, status: InvoiceStatus.Final},
             {text: this.ls.l('Invoice_SaveAsDraft'), selected: false, disabled: this.data.invoice
                 && this.data.invoice.Status != InvoiceStatus.Draft, status: InvoiceStatus.Draft},
-            {text: this.ls.l('Invoice_SaveAndSend'), selected: false, disabled: true},
+            {text: this.ls.l('Invoice_SaveAndSend'), selected: false, status: InvoiceStatus.Final, email: true},
             {text: this.ls.l('Invoice_SaveAndMarkSent'), selected: false, disabled: true}
         ];
         this.store$.dispatch(new CurrenciesStoreActions.LoadRequestAction());
@@ -147,16 +151,16 @@ export class CreateInvoiceDialogComponent implements OnInit {
     }
 
     ngOnInit() {
-        this._customerProxy.getAllByPhrase('', 10).subscribe((res) => {
+        this.customerProxy.getAllByPhrase('', 10).subscribe((res) => {
             this.customers = res;
-            this._changeDetectorRef.detectChanges();
+            this.changeDetectorRef.detectChanges();
         });
 
-        this._invoiceProxy.getSettings().subscribe((settings) => {
+        this.invoiceProxy.getSettings().subscribe((settings) => {
             this.billingSettings = settings;
             if (!this.data.invoice)
                 this.invoiceNo = settings.nextInvoiceNumber;
-            this._changeDetectorRef.detectChanges();
+            this.changeDetectorRef.detectChanges();
         });
 
         this.initInvoiceData();
@@ -176,8 +180,8 @@ export class CreateInvoiceDialogComponent implements OnInit {
             this.contactId = invoice.ContactId;
             this.disabledForUpdate = this.status != InvoiceStatus.Draft
                 && this.status != InvoiceStatus.Final;
-            this._changeDetectorRef.detectChanges();
-            this._invoiceProxy.getInvoiceInfo(invoice.Id)
+            this.changeDetectorRef.detectChanges();
+            this.invoiceProxy.getInvoiceInfo(invoice.Id)
                 .pipe(finalize(() => this.modalDialog.finishLoading()))
                 .subscribe((res) => {
                     this.description = res.description;
@@ -193,7 +197,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
                         };
                     });
                     this.calculateBalance();
-                    this._changeDetectorRef.detectChanges();
+                    this.changeDetectorRef.detectChanges();
                 });
         } else {
             this.resetNoteDefault();
@@ -206,13 +210,13 @@ export class CreateInvoiceDialogComponent implements OnInit {
     }
 
     saveOptionsInit() {
-        let cacheKey = this._cacheHelper.getCacheKey(this.SAVE_OPTION_CACHE_KEY, this.constructor.name),
-            selectedOption = this.saveContextMenuItems[this._cacheService.exists(cacheKey)
-                ? this._cacheService.get(cacheKey)
+        let cacheKey = this.cacheHelper.getCacheKey(this.SAVE_OPTION_CACHE_KEY, this.constructor.name);
+        this.selectedOption = this.saveContextMenuItems[this.cacheService.exists(cacheKey)
+                ? this.cacheService.get(cacheKey)
                 : this.SAVE_OPTION_DEFAULT];
-        selectedOption.selected = true;
-        this.buttons[0].title = selectedOption.text;
-        this.status = selectedOption.status;
+        this.selectedOption.selected = true;
+        this.buttons[0].title = this.selectedOption.text;
+        this.status = this.selectedOption.status;
     }
 
     onSaveItemClick(event) {
@@ -221,18 +225,18 @@ export class CreateInvoiceDialogComponent implements OnInit {
     }
 
     onSaveOptionSelectionChanged(event) {
-        let option = event.addedItems.pop() || event.removedItems.pop() ||
+        this.selectedOption = event.addedItems.pop() || event.removedItems.pop() ||
             this.saveContextMenuItems[this.SAVE_OPTION_DEFAULT];
-        option.selected = true;
-        event.component.option('selectedItem', option);
-        this.updateSaveOption(option);
-        this.status = option.status;
+        this.selectedOption.selected = true;
+        event.component.option('selectedItem', this.selectedOption);
+        this.updateSaveOption(this.selectedOption);
+        this.status = this.selectedOption.status;
         this.save();
     }
 
     updateSaveOption(option) {
         this.buttons[0].title = option.text;
-        this._cacheService.set(this._cacheHelper.getCacheKey(this.SAVE_OPTION_CACHE_KEY, this.constructor.name),
+        this.cacheService.set(this.cacheHelper.getCacheKey(this.SAVE_OPTION_CACHE_KEY, this.constructor.name),
             this.saveContextMenuItems.findIndex((elm) => elm.text == option.text).toString());
     }
 
@@ -267,7 +271,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
                     sortOrder: index
                 });
             });
-            subscription$ = this._invoiceProxy.update(data);
+            subscription$ = this.invoiceProxy.update(data);
         } else {
             let data = new CreateInvoiceInput();
             this.setRequestCommonFields(data);
@@ -283,7 +287,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
                     sortOrder: index
                 });
             });
-            subscription$ = this._invoiceProxy.create(data);
+            subscription$ = this.invoiceProxy.create(data);
         }
 
         saveButton.disabled = true;
@@ -298,7 +302,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
     updateStatus() {
         if (this.status != this.data.invoice.Status) {
             this.modalDialog.startLoading();
-            this._invoiceProxy.updateStatus(new UpdateInvoiceStatusInput({
+            this.invoiceProxy.updateStatus(new UpdateInvoiceStatusInput({
                 id: this.invoiceId,
                 status: InvoiceStatus[this.status]
             })).pipe(finalize(() => this.modalDialog.finishLoading()))
@@ -309,13 +313,20 @@ export class CreateInvoiceDialogComponent implements OnInit {
     }
 
     private afterSave(): void {
-        this._notifyService.info(this.ls.l('SavedSuccessfully'));
+        this.notifyService.info(this.ls.l('SavedSuccessfully'));
         this.data.refreshParent && this.data.refreshParent();
+        if (this.selectedOption.email)
+            this.showNewEmailDialog();
+            
         this.close();
     }
 
+    private showNewEmailDialog() {
+        this.contactsService.showEmailDialog(this.data).subscribe();
+    }
+
     private validateDate(caption, value) {
-        return value || this._notifyService.error(this.ls.l('RequiredField', '', caption));
+        return value || this.notifyService.error(this.ls.l('RequiredField', '', caption));
     }
 
     save(event?): void {
@@ -326,7 +337,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
             return this.invoiceNoComponent.instance.option('isValid', false);
 
         if (isNaN(this.contactId)) {
-            this._notifyService.error(this.ls.l('RequiredField', '', this.ls.l('Client')));
+            this.notifyService.error(this.ls.l('RequiredField', '', this.ls.l('Client')));
             return this.contactComponent.instance.option('isValid', false);
         }
 
@@ -337,8 +348,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
             return this.dueDateComponent.instance.option('isValid', false);
 
         if (this.lines.some(line => !(line['Description'] && line['Quantity'] && line['Rate'])))
-            return this._notifyService.error(this.ls.l('InvoiceLinesShouldBeDefined'));
-
+            return this.notifyService.error(this.ls.l('InvoiceLinesShouldBeDefined'));
 
         if (this.disabledForUpdate)
             this.updateStatus();
@@ -363,7 +373,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
             $event.component.option('opened', true);
             $event.component.option('noDataText', this.ls.l('LookingForItems'));
 
-            this._customerProxy.getAllByPhrase(search, 10).subscribe((res) => {
+            this.customerProxy.getAllByPhrase(search, 10).subscribe((res) => {
                 if (search == this.customer) {
                     if (!res['length'])
                         $event.component.option('noDataText', this.ls.l('NoItemsFound'));
@@ -384,13 +394,13 @@ export class CreateInvoiceDialogComponent implements OnInit {
             this.description = '';
             this.notes = '';
             this.lines = [];
-            this._changeDetectorRef.detectChanges();
+            this.changeDetectorRef.detectChanges();
         };
 
         if (forced)
             resetInternal();
         else
-            this._messageService.confirm(this.ls.l('DiscardConfirmation'), '', (confirmed) => {
+            this.messageService.confirm(this.ls.l('DiscardConfirmation'), '', (confirmed) => {
                 if (confirmed)
                     resetInternal();
             });
@@ -423,20 +433,20 @@ export class CreateInvoiceDialogComponent implements OnInit {
     }
 
     close() {
-        this._dialogRef.close();
+        this.dialogRef.close();
     }
 
     deleteInvoice() {
         if (this.invoiceId)
-            this._messageService.confirm(
+            this.messageService.confirm(
                 this.ls.l('InvoiceDeleteWarningMessage', this.invoiceNo),
                 isConfirmed => {
                     if (isConfirmed) {
                         this.modalDialog.startLoading();
-                        this._invoiceProxy.deleteInvoice(this.invoiceId).pipe(
+                        this.invoiceProxy.deleteInvoice(this.invoiceId).pipe(
                             finalize(() => this.modalDialog.finishLoading())
                         ).subscribe(() => {
-                            this._notifyService.info(this.ls.l('SuccessfullyDeleted'));
+                            this.notifyService.info(this.ls.l('SuccessfullyDeleted'));
                             this.data.refreshParent && this.data.refreshParent();
                             this.close();
                         });
@@ -447,12 +457,22 @@ export class CreateInvoiceDialogComponent implements OnInit {
 
     resetNoteDefault() {
         this.notes = this.ls.l('Invoice_DefaultNote');
-        this._changeDetectorRef.detectChanges();
+        this.changeDetectorRef.detectChanges();
     }
 
     onValueChanged(event, data, field?) {
         this.lines[data.rowIndex][field || data.column.dataField] = event.value;
-        this._changeDetectorRef.detectChanges();
+        this.changeDetectorRef.detectChanges();
+    }
+
+    onCurrencyChanged(event) {
+        this.linesComponent.instance.repaint();
+    }
+
+    setCurrencyHintValue(event) {
+        if (event.name == 'displayValue')
+            setTimeout(() => event.component.option(
+                'hint', event.component.field().value));
     }
 
     allowDigitsOnly(event, exceptions = []) {
@@ -466,13 +486,13 @@ export class CreateInvoiceDialogComponent implements OnInit {
     addNewLine(data) {
         this.lines.push({});
         this.linesGridHeight += 100;
-        this._changeDetectorRef.detectChanges();
+        this.changeDetectorRef.detectChanges();
     }
 
     deleteLine(data) {
         this.lines.splice(data.rowIndex, 1);
         this.linesGridHeight -= 100;
-        this._changeDetectorRef.detectChanges();
+        this.changeDetectorRef.detectChanges();
     }
 
     createClient() {
@@ -488,7 +508,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
                 this.contactId = data.id;
                 this.customer = [data.firstName, data.middleName,
                     data.lastName].filter(Boolean).join(' ');
-                this._changeDetectorRef.detectChanges();
+                this.changeDetectorRef.detectChanges();
             }
         });
     }

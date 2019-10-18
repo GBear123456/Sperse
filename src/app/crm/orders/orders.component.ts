@@ -36,6 +36,8 @@ import { PipelineComponent } from '@app/shared/pipeline/pipeline.component';
 import { CreateInvoiceDialogComponent } from '../shared/create-invoice-dialog/create-invoice-dialog.component';
 import { AppPermissions } from '@shared/AppPermissions';
 import { DataGridService } from '@app/shared/common/data-grid.service.ts/data-grid.service';
+import { EmailInvoiceDialogComponent } from '@app/crm/shared/email-invoice-dialog/email-invoice-dialog.component';
+import { EmailTemplateType } from '@shared/service-proxies/service-proxies';
 
 @Component({
     templateUrl: './orders.component.html',
@@ -396,6 +398,17 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                 {
                     location: 'after',
                     locateInMenu: 'auto',
+                    items: [{
+                        name: 'rules',
+                        options: {
+                            text: this.l('Settings')
+                        },
+                        action: this.invoiceSettings.bind(this)
+                    }]
+                },
+                {
+                    location: 'after',
+                    locateInMenu: 'auto',
                     items: [
                         {
                             name: 'download',
@@ -548,6 +561,20 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             closeOnNavigation: false,
             data: {
                 refreshParent: this.invalidate.bind(this)
+            }
+        });
+    }
+
+    invoiceSettings() {
+        this.dialog.open(EmailInvoiceDialogComponent, {
+            panelClass: 'slider',
+            disableClose: true,
+            closeOnNavigation: false,
+            data: {
+                saveTitle: this.l('Save'),
+                title: this.l('Invoice Settings'),
+                templateType: EmailTemplateType.Invoice,
+                refreshParent: () => { }
             }
         });
     }

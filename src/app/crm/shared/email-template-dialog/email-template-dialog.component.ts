@@ -14,7 +14,8 @@ import { NotifyService } from '@abp/notify/notify.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
 import { EmailTemplateServiceProxy, GetTemplatesResponse, CreateEmailTemplateRequest,
-    UpdateEmailTemplateRequest, EmailTemplateParamDto } from '@shared/service-proxies/service-proxies';
+    UpdateEmailTemplateRequest } from '@shared/service-proxies/service-proxies';
+import { AppSessionService } from '@shared/common/session/app-session.service';
 
 @Component({
     selector: 'email-template-dialog',
@@ -67,11 +68,13 @@ export class EmailTemplateDialogComponent {
         private dialogRef: MatDialogRef<EmailTemplateDialogComponent>,
         private emailTemplateProxy: EmailTemplateServiceProxy,
         private changeDetectorRef: ChangeDetectorRef,
+        private sessionService: AppSessionService,
         public dialog: MatDialog,
         public ls: AppLocalizationService,
         @Inject(MAT_DIALOG_DATA) public data: any
     ) {
         this.initTemplateList();
+        data.from = [sessionService.user.emailAddress];
     }
 
     save() {
@@ -84,9 +87,23 @@ export class EmailTemplateDialogComponent {
     }
 
     validateData() {
-        if (this.templateEditMode && !this.getTemplateName())
-            return this.notifyService.error(
-                this.ls.l('RequiredField', '', this.ls.l('Template')));
+        if (this.templateEditMode) {
+            if (!this.getTemplateName())
+                return this.notifyService.error(
+                    this.ls.l('RequiredField', '', this.ls.l('Template')));
+        } else {
+            if (!this.data.from)
+                return this.notifyService.error(
+                    this.ls.l('RequiredField', '', this.ls.l('From')));
+
+            if (!this.data.to)
+                return this.notifyService.error(
+                    this.ls.l('RequiredField', '', this.ls.l('To')));
+
+            if (!this.data.subject)
+                return this.notifyService.error(
+                    this.ls.l('RequiredField', '', this.ls.l('Subject')));
+        }
 
         if (!this.data.body)
             return this.notifyService.error(
@@ -121,13 +138,9 @@ export class EmailTemplateDialogComponent {
         return this.templateComponent.instance.field()['value'];
     }
 
-    getEmailTemplateParams(): EmailTemplateParamDto[] {
-        return this.data.templateSettings.map(item => {
-            return new EmailTemplateParamDto({
-                key: item.key,
-                value: String(item.value)
-            });
-        });
+    getEmailTemplateParams(): any[] {
+        //TODO: return something
+        return [];
     }
 
     initTemplateList() {  
@@ -139,8 +152,13 @@ export class EmailTemplateDialogComponent {
         event.component.option('opened', false);
     }
 
-    emailInputFocusOut(event) {
-        if (!event.component.option('value'))
+    emailInputFocusOut(event, checkDisplay) {
+        let inputValue = event.event.target.value,
+            comboValue = event.component.option('value') || [];
+        if (AppConsts.regexPatterns.email.test(inputValue))
+            event.component.option('value', comboValue = comboValue.concat([inputValue]));
+
+        if (checkDisplay && !comboValue.length)
             this[event.component.option('name')] = false;
     }
 

@@ -21,18 +21,32 @@
     <div class="form-content">
         <dx-scroll-view showScrollbar="onHover">
             <div class="row">
-                <div class="field-area">
+                <div class="field-area from" [hidden]="templateEditMode">
                     <dx-tag-box
                         name="from"
-                        width="100%"
+                        width="50%"
                         height="40px"
                         noDataText=""
                         [multiline]="false"
                         [acceptCustomValue]="true"
                         [placeholder]="ls.l('From')"
-                        [(value)]="data.emailFrom"
-                        [visible]="!templateEditMode"
+                        [(value)]="data.from"
+                        [disabled]="true"
                         (onOpened)="emailInputFocusIn($event)"
+                        (onFocusOut)="emailInputFocusOut($event)"
+                        (onCustomItemCreating)="onCustomItemCreating($event)">
+                    </dx-tag-box>
+                    <dx-tag-box
+                        name="replyTo"
+                        width="50%"
+                        height="40px"
+                        noDataText=""
+                        [multiline]="false"
+                        [acceptCustomValue]="true"
+                        [placeholder]="ls.l('ReplyTo')"
+                        [(value)]="data.replyTo"
+                        (onOpened)="emailInputFocusIn($event)"
+                        (onFocusOut)="emailInputFocusOut($event)"
                         (onCustomItemCreating)="onCustomItemCreating($event)">
                     </dx-tag-box>
                 </div>
@@ -45,9 +59,10 @@
                         [multiline]="false"
                         [acceptCustomValue]="true"
                         [placeholder]="ls.l('To')"
-                        [(value)]="data.emailTo"
+                        [(value)]="data.to"
                         [disabled]="data.templateType"
                         (onOpened)="emailInputFocusIn($event)"
+                        (onFocusOut)="emailInputFocusOut($event)"
                         (onCustomItemCreating)="onCustomItemCreating($event)">
                     </dx-tag-box>
                     <div class="bcc-links">
@@ -67,7 +82,7 @@
                         [placeholder]="ls.l('CC')"
                         [(value)]="data.cc"
                         (onOpened)="emailInputFocusIn($event)"
-                        (onFocusOut)="emailInputFocusOut($event)"
+                        (onFocusOut)="emailInputFocusOut($event, true)"
                         (onCustomItemCreating)="onCustomItemCreating($event)">
                     </dx-tag-box>
                 </div>
@@ -83,7 +98,7 @@
                         [placeholder]="ls.l('BCC')"                        
                         [(value)]="data.bcc"
                         (onOpened)="emailInputFocusIn($event)"
-                        (onFocusOut)="emailInputFocusOut($event)"
+                        (onFocusOut)="emailInputFocusOut($event, true)"
                         (onCustomItemCreating)="onCustomItemCreating($event)">
                     </dx-tag-box>
                 </div>

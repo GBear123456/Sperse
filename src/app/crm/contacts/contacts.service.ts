@@ -6,7 +6,7 @@ import { Location } from '@angular/common';
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
 import { Observable, ReplaySubject, Subject } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { tap, switchMap } from 'rxjs/operators';
 import invert from 'lodash/invert';
 
 /** Application imports */
@@ -15,11 +15,16 @@ import { AddCompanyDialogComponent } from './add-company-dialog/add-company-dial
 import {
     ContactInfoDto,
     OrganizationContactInfoDto,
-    UserServiceProxy
+    UserServiceProxy,
+    ContactCommunicationServiceProxy, 
+    SendEmailInput
 } from '@shared/service-proxies/service-proxies';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { EmailTemplateDialogComponent } from '@app/crm/shared/email-template-dialog/email-template-dialog.component';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { ContactGroup, ContactGroupPermission } from '@shared/AppEnums';
 import { AppPermissions } from '@shared/AppPermissions';
+import { NotifyService } from '@abp/notify/notify.service';
 
 @Injectable()
 export class ContactsService {
@@ -41,9 +46,12 @@ export class ContactsService {
     readonly CONTACT_GROUP_KEYS = invert(ContactGroup);
 
     constructor(injector: Injector,
+        private emailProxy: ContactCommunicationServiceProxy,
         private userService: UserServiceProxy,
         private permission: AppPermissionService,
         private dialogService: DialogService,
+        private notifyService: NotifyService,
+        private ls: AppLocalizationService,
         private router: Router,
         private location: Location,
         public dialog: MatDialog
@@ -195,5 +203,27 @@ export class ContactsService {
             ).toString(),
             location.search
         );
+    }
+
+    showEmailDialog(data = {}, title = 'Email') {
+        let dialogComponent = this.dialog.open(EmailTemplateDialogComponent, {
+            id: 'permanent',
+            panelClass: 'slider',
+            disableClose: true,
+            closeOnNavigation: false,
+            data: {
+                saveTitle: this.ls.l('Send'),
+                title: this.ls.l(title),
+                ...data
+            }
+        }).componentInstance;
+  
+        return dialogComponent.onSave.asObservable().pipe(switchMap(res => {
+            dialogComponent.startLoading();
+            return this.emailProxy.sendEmail(new SendEmailInput(res));
+        }), tap(() => {
+            dialogComponent.finishLoading();
+            this.notifyService.info(this.ls.l('MailSent'));
+        }));
     }
 }
