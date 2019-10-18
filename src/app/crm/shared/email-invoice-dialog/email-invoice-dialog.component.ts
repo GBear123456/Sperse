@@ -28,15 +28,15 @@ export class EmailInvoiceDialogComponent {
     };
     partialPayment = {
         key: 'partialPayment',
-        value: true
+        value: false
     };
     autoPayment = {
         key: 'autoPayment',
-        value: true
+        value: false
     };
     sendAlerts = {
         key: 'sendAlerts',
-        value: true
+        value: false
     };
     dueDate = {
         key: 'dueDate',

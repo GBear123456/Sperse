@@ -20,7 +20,7 @@ export class UserInboxComponent extends AppComponentBase implements OnDestroy {
     emails = [{
         avatar: '',
         from: 'Test Tester',
-        to: 'Some Person',
+        to: ['Some@Person.com'],
         subject: 'About important styling subject text',
         body: 'The CKEditor 5 rich text editor component for Angular can be styled using the component stylesheet or using a global stylesheet. See how to set the CKEditor 5 components height using these two approaches.',
         date: new Date()
@@ -77,7 +77,8 @@ export class UserInboxComponent extends AppComponentBase implements OnDestroy {
         ]
     }];
 
-    public formatting = AppConsts.formatting;
+    contactId: Number;
+    formatting = AppConsts.formatting;
 
     constructor(injector: Injector,
         public dialog: MatDialog,
@@ -85,7 +86,8 @@ export class UserInboxComponent extends AppComponentBase implements OnDestroy {
     ) {
         super(injector);
 
-        contactsService.contactInfoSubscribe(() => {
+        contactsService.contactInfoSubscribe((res) => {
+            this.contactId = res.id;
             setTimeout(() => {
                 contactsService.toolbarUpdate([{
                     location: 'before',
@@ -104,11 +106,15 @@ export class UserInboxComponent extends AppComponentBase implements OnDestroy {
                         options: {
                             text: '+ ' + this.l('NewEmail')
                         },
-                        action: this.showNewEmailDialog.bind(this)
+                        action: () => this.showNewEmailDialog()
                     }]
                 }]);
             });
         }, this.constructor.name);
+    }
+
+    invalidate() {
+        this.dialog.closeAll();
     }
 
     reply() {
@@ -124,19 +130,9 @@ export class UserInboxComponent extends AppComponentBase implements OnDestroy {
     }
 
     showNewEmailDialog(title = 'NewEmail', data = {}) {
-        this.dialog.open(EmailTemplateDialogComponent, {
-            id: 'permanent',
-            panelClass: 'slider',
-            disableClose: true,
-            closeOnNavigation: false,
-            data: {
-                saveTitle: this.l('Send'),
-                title: this.l(title),
-                refreshParent: () => { },
-                ...data
-            }
-        }).afterClosed().subscribe((data) => {
-        });
+        data['contactId'] = this.contactId;
+        this.contactsService.showEmailDialog(data, title)
+            .subscribe(() => this.invalidate());
     }
 
     ngOnDestroy() {

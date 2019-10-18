@@ -21,14 +21,12 @@ import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { FilterModel } from '@shared/filters/models/filter.model';
 import {
-    EmailTemplateType,
     ContactServiceProxy,
     InvoiceServiceProxy,
     InvoiceStatus
 } from '@shared/service-proxies/service-proxies';
 import { ContactsService } from '@app/crm/contacts/contacts.service';
 import { CreateInvoiceDialogComponent } from '@app/crm/shared/create-invoice-dialog/create-invoice-dialog.component';
-import { EmailInvoiceDialogComponent } from '@app/crm/shared/email-invoice-dialog/email-invoice-dialog.component';
 import { AppPermissions } from '@shared/AppPermissions';
 
 @Component({
@@ -56,12 +54,6 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
             text: this.l('Delete'),
             action: this.deleteInvoice.bind(this),
             type: ActionButtonType.Delete,
-            disabled: false
-        },
-        {
-            text: this.l('Settings'),
-            action: this.emailInvoice.bind(this),
-            type: null,
             disabled: false
         }
     ];
@@ -173,22 +165,6 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
                 }
             }
         );
-    }
-
-    emailInvoice() {
-        this.dialog.open(EmailInvoiceDialogComponent, {
-            panelClass: 'slider',
-            disableClose: true,
-            closeOnNavigation: false,
-            data: {
-                saveTitle: this.l('Save'),
-                title: this.l('Invoice Settings'),
-                invoice: this.actionRecordData,
-                templateType: EmailTemplateType.Invoice,
-                refreshParent: () => {
-                }
-            }
-        });
     }
 
     editInvoice() {

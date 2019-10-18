@@ -88,7 +88,7 @@ import { PermissionTreeComponent } from './permission-tree/permission-tree.compo
 import { ContactsRoutingModule } from './contacts-routing.module';
 import {
     ContactServiceProxy, MemberServiceProxy, OrganizationContactServiceProxy, DocumentServiceProxy,
-    PersonOrgRelationServiceProxy, PersonContactServiceProxy, DocumentTypeServiceProxy,
+    PersonOrgRelationServiceProxy, PersonContactServiceProxy, DocumentTypeServiceProxy, ContactCommunicationServiceProxy,
     PartnerServiceProxy, PartnerTypeServiceProxy, NotesServiceProxy, OrderSubscriptionServiceProxy, CustomerServiceProxy
 } from '@shared/service-proxies/service-proxies';
 import { NameParserService } from '@app/crm/shared/name-parser/name-parser.service';
@@ -241,6 +241,7 @@ import { SMSDialogComponent } from '@app/crm/shared/sms-dialog/sms-dialog.compon
         DocumentServiceProxy,
         DocumentTypeServiceProxy,
         OrderSubscriptionServiceProxy,
+        ContactCommunicationServiceProxy,
         DocumentsService
     ]
 })
