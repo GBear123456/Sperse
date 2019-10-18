@@ -1,6 +1,7 @@
 /** Core imports */
 import { Component, Inject, OnInit } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 
 /** Third party imports */
@@ -11,10 +12,7 @@ import swal from 'sweetalert';
 import cloneDeep from 'lodash/cloneDeep';
 
 /** Application imports */
-import {FinalizeApplicationResponse, FinalizeApplicationStatus,
-    GetMemberInfoResponse,
-    OfferServiceProxy
-} from '@shared/service-proxies/service-proxies';
+import { FinalizeApplicationResponse, FinalizeApplicationStatus, GetMemberInfoResponse, OfferServiceProxy } from '@shared/service-proxies/service-proxies';
 import { OffersService } from '@root/personal-finance/shared/offers/offers.service';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
 import { AppConsts } from '@shared/AppConsts';
@@ -33,12 +31,14 @@ export class RegisterComponent implements OnInit {
     applicationCompleteIsRequired$: Observable<Boolean> = this.offersService.applicationCompleteIsRequired$;
     getMoreOptionsLink = '/personal-finance/offers/post-offers';
     firstName: string;
+    clickId: string;
     constructor(
         private offersService: OffersService,
         private offerServiceProxy: OfferServiceProxy,
         private loadingService: LoadingService,
         private dialog: MatDialog,
         private router: Router,
+        private http: HttpClient,
         @Inject(DOCUMENT) private document: any
     ) {}
 
@@ -56,6 +56,7 @@ export class RegisterComponent implements OnInit {
             .pipe(first())
             .subscribe((memberInfo: GetMemberInfoResponse) => {
                 this.firstName = memberInfo.firstName;
+                this.clickId = memberInfo.clickId;
                 const messageContent = {
                     title: this.firstName + ', please click below to',
                     button: {
@@ -97,6 +98,7 @@ export class RegisterComponent implements OnInit {
             switchMap((applicationId: number) => this.offerServiceProxy.finalizeApplication(applicationId))
         ).subscribe(
             (response: FinalizeApplicationResponse) => {
+                this.sendDecisionToLS(response.status);
                 if (response.status === FinalizeApplicationStatus.Approved) {
                     applyOfferDialog.close();
                     let messageContent = {
@@ -145,8 +147,15 @@ export class RegisterComponent implements OnInit {
         );
     }
 
-    completeAprove(modal): Promise<boolean> {
+    private completeAprove(modal): Promise<boolean> {
         modal.close('confirm');
         return this.router.navigate(['/personal-finance/offers/personal-loans']);
+    }
+
+    private sendDecisionToLS(status: FinalizeApplicationStatus) {
+        if (this.clickId) {
+            const evt = status === FinalizeApplicationStatus.Approved ? 'LSAP' : 'LSDP';
+            this.http.get(`https://offer.lendspace.com/pxl.php?rxid=${this.clickId}&tdat=&evt=${evt}`).subscribe();
+        }
     }
 }
