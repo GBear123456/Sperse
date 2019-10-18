@@ -465,6 +465,16 @@ export class CreateInvoiceDialogComponent implements OnInit {
         this.changeDetectorRef.detectChanges();
     }
 
+    onCurrencyChanged(event) {
+        this.linesComponent.instance.repaint();
+    }
+
+    setCurrencyHintValue(event) {
+        if (event.name == 'displayValue')
+            setTimeout(() => event.component.option(
+                'hint', event.component.field().value));
+    }
+
     allowDigitsOnly(event, exceptions = []) {
         let key = event.event.key;
         if (exceptions.indexOf(key) < 0 && key.length == 1 && isNaN(key)) {

@@ -28,12 +28,13 @@
             name="currency"
             width="125px"
             height="40px"
-            displayExpr="name"
+            displayExpr="text"
             valueExpr="id"
             [placeholder]="ls.l('Currency')"
             [(value)]="currency"
             [dataSource]="currencies$ | async"
-            (onValueChanged)="linesComponent.instance.repaint()">
+            (onOptionChanged)="setCurrencyHintValue($event)"
+            (onValueChanged)="onCurrencyChanged($event)">
         </dx-select-box>
         <span>{{ status | uppercase }}</span>
     </ng-container>
