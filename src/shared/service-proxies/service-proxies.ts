@@ -7715,8 +7715,8 @@ export class ContactServiceProxy {
      * @body (optional) 
      * @return Success
      */
-    updateSourceContactId(body: UpdateSourceContactIdInput | null | undefined): Observable<number> {
-        let url_ = this.baseUrl + "/api/services/CRM/Contact/UpdateSourceContactId";
+    updateSourceContact(body: UpdateSourceContactInput | null | undefined): Observable<number> {
+        let url_ = this.baseUrl + "/api/services/CRM/Contact/UpdateSourceContact";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(body);
@@ -7732,11 +7732,11 @@ export class ContactServiceProxy {
         };
 
         return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processUpdateSourceContactId(response_);
+            return this.processUpdateSourceContact(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processUpdateSourceContactId(<any>response_);
+                    return this.processUpdateSourceContact(<any>response_);
                 } catch (e) {
                     return <Observable<number>><any>_observableThrow(e);
                 }
@@ -7745,7 +7745,7 @@ export class ContactServiceProxy {
         }));
     }
 
-    protected processUpdateSourceContactId(response: HttpResponseBase): Observable<number> {
+    protected processUpdateSourceContact(response: HttpResponseBase): Observable<number> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -15501,6 +15501,58 @@ export class InvoiceServiceProxy {
             }));
         }
         return _observableOf<InvoiceSettingsInfoDto>(<any>null);
+    }
+
+    /**
+     * @body (optional) 
+     * @return Success
+     */
+    updateSettings(body: InvoiceSettings | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Invoice/UpdateSettings";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUpdateSettings(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUpdateSettings(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processUpdateSettings(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
     }
 
     /**
@@ -41879,11 +41931,11 @@ export interface IUpdateContactAffiliateCodeInput {
     affiliateCode: string;
 }
 
-export class UpdateSourceContactIdInput implements IUpdateSourceContactIdInput {
+export class UpdateSourceContactInput implements IUpdateSourceContactInput {
     contactId!: number;
     sourceContactId!: number | undefined;
 
-    constructor(data?: IUpdateSourceContactIdInput) {
+    constructor(data?: IUpdateSourceContactInput) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -41899,9 +41951,9 @@ export class UpdateSourceContactIdInput implements IUpdateSourceContactIdInput {
         }
     }
 
-    static fromJS(data: any): UpdateSourceContactIdInput {
+    static fromJS(data: any): UpdateSourceContactInput {
         data = typeof data === 'object' ? data : {};
-        let result = new UpdateSourceContactIdInput();
+        let result = new UpdateSourceContactInput();
         result.init(data);
         return result;
     }
@@ -41914,7 +41966,7 @@ export class UpdateSourceContactIdInput implements IUpdateSourceContactIdInput {
     }
 }
 
-export interface IUpdateSourceContactIdInput {
+export interface IUpdateSourceContactInput {
     contactId: number;
     sourceContactId: number | undefined;
 }
@@ -55263,46 +55315,6 @@ export interface IGetTemplatesResponse {
     name: string | undefined;
 }
 
-export class TemplateParam implements ITemplateParam {
-    key!: string | undefined;
-    value!: string | undefined;
-
-    constructor(data?: ITemplateParam) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.key = data["key"];
-            this.value = data["value"];
-        }
-    }
-
-    static fromJS(data: any): TemplateParam {
-        data = typeof data === 'object' ? data : {};
-        let result = new TemplateParam();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["key"] = this.key;
-        data["value"] = this.value;
-        return data; 
-    }
-}
-
-export interface ITemplateParam {
-    key: string | undefined;
-    value: string | undefined;
-}
-
 export class GetTemplateReponse implements IGetTemplateReponse {
     name!: string | undefined;
     type!: EmailTemplateType | undefined;
@@ -55310,7 +55322,6 @@ export class GetTemplateReponse implements IGetTemplateReponse {
     cc!: string | undefined;
     bcc!: string | undefined;
     body!: string | undefined;
-    emailTemplateParams!: TemplateParam[] | undefined;
 
     constructor(data?: IGetTemplateReponse) {
         if (data) {
@@ -55329,11 +55340,6 @@ export class GetTemplateReponse implements IGetTemplateReponse {
             this.cc = data["cc"];
             this.bcc = data["bcc"];
             this.body = data["body"];
-            if (data["emailTemplateParams"] && data["emailTemplateParams"].constructor === Array) {
-                this.emailTemplateParams = [];
-                for (let item of data["emailTemplateParams"])
-                    this.emailTemplateParams.push(TemplateParam.fromJS(item));
-            }
         }
     }
 
@@ -55352,11 +55358,6 @@ export class GetTemplateReponse implements IGetTemplateReponse {
         data["cc"] = this.cc;
         data["bcc"] = this.bcc;
         data["body"] = this.body;
-        if (this.emailTemplateParams && this.emailTemplateParams.constructor === Array) {
-            data["emailTemplateParams"] = [];
-            for (let item of this.emailTemplateParams)
-                data["emailTemplateParams"].push(item.toJSON());
-        }
         return data; 
     }
 }
@@ -55368,47 +55369,6 @@ export interface IGetTemplateReponse {
     cc: string | undefined;
     bcc: string | undefined;
     body: string | undefined;
-    emailTemplateParams: TemplateParam[] | undefined;
-}
-
-export class EmailTemplateParamDto implements IEmailTemplateParamDto {
-    key!: string;
-    value!: string;
-
-    constructor(data?: IEmailTemplateParamDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.key = data["key"];
-            this.value = data["value"];
-        }
-    }
-
-    static fromJS(data: any): EmailTemplateParamDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new EmailTemplateParamDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["key"] = this.key;
-        data["value"] = this.value;
-        return data; 
-    }
-}
-
-export interface IEmailTemplateParamDto {
-    key: string;
-    value: string;
 }
 
 export class CreateEmailTemplateRequest implements ICreateEmailTemplateRequest {
@@ -55418,7 +55378,6 @@ export class CreateEmailTemplateRequest implements ICreateEmailTemplateRequest {
     cc!: string | undefined;
     bcc!: string | undefined;
     body!: string;
-    emailTemplateParams!: EmailTemplateParamDto[] | undefined;
 
     constructor(data?: ICreateEmailTemplateRequest) {
         if (data) {
@@ -55437,11 +55396,6 @@ export class CreateEmailTemplateRequest implements ICreateEmailTemplateRequest {
             this.cc = data["cc"];
             this.bcc = data["bcc"];
             this.body = data["body"];
-            if (data["emailTemplateParams"] && data["emailTemplateParams"].constructor === Array) {
-                this.emailTemplateParams = [];
-                for (let item of data["emailTemplateParams"])
-                    this.emailTemplateParams.push(EmailTemplateParamDto.fromJS(item));
-            }
         }
     }
 
@@ -55460,11 +55414,6 @@ export class CreateEmailTemplateRequest implements ICreateEmailTemplateRequest {
         data["cc"] = this.cc;
         data["bcc"] = this.bcc;
         data["body"] = this.body;
-        if (this.emailTemplateParams && this.emailTemplateParams.constructor === Array) {
-            data["emailTemplateParams"] = [];
-            for (let item of this.emailTemplateParams)
-                data["emailTemplateParams"].push(item.toJSON());
-        }
         return data; 
     }
 }
@@ -55476,7 +55425,6 @@ export interface ICreateEmailTemplateRequest {
     cc: string | undefined;
     bcc: string | undefined;
     body: string;
-    emailTemplateParams: EmailTemplateParamDto[] | undefined;
 }
 
 export class UpdateEmailTemplateRequest implements IUpdateEmailTemplateRequest {
@@ -55487,7 +55435,6 @@ export class UpdateEmailTemplateRequest implements IUpdateEmailTemplateRequest {
     cc!: string | undefined;
     bcc!: string | undefined;
     body!: string;
-    emailTemplateParams!: EmailTemplateParamDto[] | undefined;
 
     constructor(data?: IUpdateEmailTemplateRequest) {
         if (data) {
@@ -55507,11 +55454,6 @@ export class UpdateEmailTemplateRequest implements IUpdateEmailTemplateRequest {
             this.cc = data["cc"];
             this.bcc = data["bcc"];
             this.body = data["body"];
-            if (data["emailTemplateParams"] && data["emailTemplateParams"].constructor === Array) {
-                this.emailTemplateParams = [];
-                for (let item of data["emailTemplateParams"])
-                    this.emailTemplateParams.push(EmailTemplateParamDto.fromJS(item));
-            }
         }
     }
 
@@ -55531,11 +55473,6 @@ export class UpdateEmailTemplateRequest implements IUpdateEmailTemplateRequest {
         data["cc"] = this.cc;
         data["bcc"] = this.bcc;
         data["body"] = this.body;
-        if (this.emailTemplateParams && this.emailTemplateParams.constructor === Array) {
-            data["emailTemplateParams"] = [];
-            for (let item of this.emailTemplateParams)
-                data["emailTemplateParams"].push(item.toJSON());
-        }
         return data; 
     }
 }
@@ -55548,7 +55485,6 @@ export interface IUpdateEmailTemplateRequest {
     cc: string | undefined;
     bcc: string | undefined;
     body: string;
-    emailTemplateParams: EmailTemplateParamDto[] | undefined;
 }
 
 export enum DimentionName {
@@ -56636,46 +56572,6 @@ export interface ISecuritySettingsEditDto {
     twoFactorLogin: TwoFactorLoginSettingsEditDto | undefined;
 }
 
-export class HostBillingSettingsEditDto implements IHostBillingSettingsEditDto {
-    legalName!: string | undefined;
-    address!: string | undefined;
-
-    constructor(data?: IHostBillingSettingsEditDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.legalName = data["legalName"];
-            this.address = data["address"];
-        }
-    }
-
-    static fromJS(data: any): HostBillingSettingsEditDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new HostBillingSettingsEditDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["legalName"] = this.legalName;
-        data["address"] = this.address;
-        return data; 
-    }
-}
-
-export interface IHostBillingSettingsEditDto {
-    legalName: string | undefined;
-    address: string | undefined;
-}
-
 export class BugsnagSettingsDto implements IBugsnagSettingsDto {
     appApiKey!: string | undefined;
     uiApiKey!: string | undefined;
@@ -56722,7 +56618,6 @@ export class HostSettingsEditDto implements IHostSettingsEditDto {
     email!: EmailSettingsEditDto;
     tenantManagement!: TenantManagementSettingsEditDto;
     security!: SecuritySettingsEditDto;
-    billing!: HostBillingSettingsEditDto | undefined;
     bugsnag!: BugsnagSettingsDto | undefined;
 
     constructor(data?: IHostSettingsEditDto) {
@@ -56748,7 +56643,6 @@ export class HostSettingsEditDto implements IHostSettingsEditDto {
             this.email = data["email"] ? EmailSettingsEditDto.fromJS(data["email"]) : new EmailSettingsEditDto();
             this.tenantManagement = data["tenantManagement"] ? TenantManagementSettingsEditDto.fromJS(data["tenantManagement"]) : new TenantManagementSettingsEditDto();
             this.security = data["security"] ? SecuritySettingsEditDto.fromJS(data["security"]) : new SecuritySettingsEditDto();
-            this.billing = data["billing"] ? HostBillingSettingsEditDto.fromJS(data["billing"]) : <any>undefined;
             this.bugsnag = data["bugsnag"] ? BugsnagSettingsDto.fromJS(data["bugsnag"]) : <any>undefined;
         }
     }
@@ -56767,7 +56661,6 @@ export class HostSettingsEditDto implements IHostSettingsEditDto {
         data["email"] = this.email ? this.email.toJSON() : <any>undefined;
         data["tenantManagement"] = this.tenantManagement ? this.tenantManagement.toJSON() : <any>undefined;
         data["security"] = this.security ? this.security.toJSON() : <any>undefined;
-        data["billing"] = this.billing ? this.billing.toJSON() : <any>undefined;
         data["bugsnag"] = this.bugsnag ? this.bugsnag.toJSON() : <any>undefined;
         return data; 
     }
@@ -56779,7 +56672,6 @@ export interface IHostSettingsEditDto {
     email: EmailSettingsEditDto;
     tenantManagement: TenantManagementSettingsEditDto;
     security: SecuritySettingsEditDto;
-    billing: HostBillingSettingsEditDto | undefined;
     bugsnag: BugsnagSettingsDto | undefined;
 }
 
@@ -58513,6 +58405,9 @@ export class InvoiceSettingsInfoDto implements IInvoiceSettingsInfoDto {
     legalName!: string | undefined;
     address!: string | undefined;
     taxVatNo!: string | undefined;
+    defaultTemplateId!: number | undefined;
+    attachPDF!: boolean | undefined;
+    note!: string | undefined;
 
     constructor(data?: IInvoiceSettingsInfoDto) {
         if (data) {
@@ -58529,6 +58424,9 @@ export class InvoiceSettingsInfoDto implements IInvoiceSettingsInfoDto {
             this.legalName = data["legalName"];
             this.address = data["address"];
             this.taxVatNo = data["taxVatNo"];
+            this.defaultTemplateId = data["defaultTemplateId"];
+            this.attachPDF = data["attachPDF"];
+            this.note = data["note"];
         }
     }
 
@@ -58545,6 +58443,9 @@ export class InvoiceSettingsInfoDto implements IInvoiceSettingsInfoDto {
         data["legalName"] = this.legalName;
         data["address"] = this.address;
         data["taxVatNo"] = this.taxVatNo;
+        data["defaultTemplateId"] = this.defaultTemplateId;
+        data["attachPDF"] = this.attachPDF;
+        data["note"] = this.note;
         return data; 
     }
 }
@@ -58554,6 +58455,65 @@ export interface IInvoiceSettingsInfoDto {
     legalName: string | undefined;
     address: string | undefined;
     taxVatNo: string | undefined;
+    defaultTemplateId: number | undefined;
+    attachPDF: boolean | undefined;
+    note: string | undefined;
+}
+
+export class InvoiceSettings implements IInvoiceSettings {
+    legalName!: string | undefined;
+    address!: string | undefined;
+    taxVatNo!: string | undefined;
+    defaultTemplateId!: number | undefined;
+    attachPDF!: boolean | undefined;
+    note!: string | undefined;
+
+    constructor(data?: IInvoiceSettings) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.legalName = data["legalName"];
+            this.address = data["address"];
+            this.taxVatNo = data["taxVatNo"];
+            this.defaultTemplateId = data["defaultTemplateId"];
+            this.attachPDF = data["attachPDF"];
+            this.note = data["note"];
+        }
+    }
+
+    static fromJS(data: any): InvoiceSettings {
+        data = typeof data === 'object' ? data : {};
+        let result = new InvoiceSettings();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["legalName"] = this.legalName;
+        data["address"] = this.address;
+        data["taxVatNo"] = this.taxVatNo;
+        data["defaultTemplateId"] = this.defaultTemplateId;
+        data["attachPDF"] = this.attachPDF;
+        data["note"] = this.note;
+        return data; 
+    }
+}
+
+export interface IInvoiceSettings {
+    legalName: string | undefined;
+    address: string | undefined;
+    taxVatNo: string | undefined;
+    defaultTemplateId: number | undefined;
+    attachPDF: boolean | undefined;
+    note: string | undefined;
 }
 
 export class Attachment implements IAttachment {
@@ -69711,57 +69671,12 @@ export interface ILdapSettingsEditDto {
     password: string | undefined;
 }
 
-export class TenantBillingSettingsEditDto implements ITenantBillingSettingsEditDto {
-    legalName!: string | undefined;
-    address!: string | undefined;
-    taxVatNo!: string | undefined;
-
-    constructor(data?: ITenantBillingSettingsEditDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.legalName = data["legalName"];
-            this.address = data["address"];
-            this.taxVatNo = data["taxVatNo"];
-        }
-    }
-
-    static fromJS(data: any): TenantBillingSettingsEditDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new TenantBillingSettingsEditDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["legalName"] = this.legalName;
-        data["address"] = this.address;
-        data["taxVatNo"] = this.taxVatNo;
-        return data; 
-    }
-}
-
-export interface ITenantBillingSettingsEditDto {
-    legalName: string | undefined;
-    address: string | undefined;
-    taxVatNo: string | undefined;
-}
-
 export class TenantSettingsEditDto implements ITenantSettingsEditDto {
     general!: GeneralSettingsEditDto | undefined;
     userManagement!: TenantUserManagementSettingsEditDto;
     email!: EmailSettingsEditDto | undefined;
     ldap!: LdapSettingsEditDto | undefined;
     security!: SecuritySettingsEditDto;
-    billing!: TenantBillingSettingsEditDto | undefined;
 
     constructor(data?: ITenantSettingsEditDto) {
         if (data) {
@@ -69783,7 +69698,6 @@ export class TenantSettingsEditDto implements ITenantSettingsEditDto {
             this.email = data["email"] ? EmailSettingsEditDto.fromJS(data["email"]) : <any>undefined;
             this.ldap = data["ldap"] ? LdapSettingsEditDto.fromJS(data["ldap"]) : <any>undefined;
             this.security = data["security"] ? SecuritySettingsEditDto.fromJS(data["security"]) : new SecuritySettingsEditDto();
-            this.billing = data["billing"] ? TenantBillingSettingsEditDto.fromJS(data["billing"]) : <any>undefined;
         }
     }
 
@@ -69801,7 +69715,6 @@ export class TenantSettingsEditDto implements ITenantSettingsEditDto {
         data["email"] = this.email ? this.email.toJSON() : <any>undefined;
         data["ldap"] = this.ldap ? this.ldap.toJSON() : <any>undefined;
         data["security"] = this.security ? this.security.toJSON() : <any>undefined;
-        data["billing"] = this.billing ? this.billing.toJSON() : <any>undefined;
         return data; 
     }
 }
@@ -69812,7 +69725,6 @@ export interface ITenantSettingsEditDto {
     email: EmailSettingsEditDto | undefined;
     ldap: LdapSettingsEditDto | undefined;
     security: SecuritySettingsEditDto;
-    billing: TenantBillingSettingsEditDto | undefined;
 }
 
 export enum EPCVIPServer {
