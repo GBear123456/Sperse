@@ -8,8 +8,10 @@ import * as moment from 'moment';
 import buildQuery from 'odata-query';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { Store } from '@ngrx/store';
 
 /** Application imports */
+import { AppStore, ActivityAssignedUsersStoreActions } from '@app/store';
 import { AppService } from '@app/app.service';
 import { AppConsts } from '@shared/AppConsts';
 import { PipelineComponent } from '@app/shared/pipeline/pipeline.component';
@@ -97,10 +99,12 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
         public dialog: MatDialog,
         private pipelineService: PipelineService,
         private appService: AppService,
-        private filtersService: FiltersService
+        private filtersService: FiltersService,
+        private store$: Store<AppStore.State>
     ) {
         super(injector);
 
+        this.store$.dispatch(new ActivityAssignedUsersStoreActions.LoadRequestAction(false));
         this.headlineConfig.buttons.forEach((button) => {
             button.lable = this.l(button.lable);
         });
