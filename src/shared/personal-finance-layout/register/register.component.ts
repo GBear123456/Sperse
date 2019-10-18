@@ -1,6 +1,7 @@
 /** Core imports */
 import { Component, Inject, OnInit } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
+import { Router } from '@angular/router';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material';
@@ -37,6 +38,7 @@ export class RegisterComponent implements OnInit {
         private offerServiceProxy: OfferServiceProxy,
         private loadingService: LoadingService,
         private dialog: MatDialog,
+        private router: Router,
         @Inject(DOCUMENT) private document: any
     ) {}
 
@@ -108,18 +110,15 @@ export class RegisterComponent implements OnInit {
                     };
                     messageContent['content'].style.display = 'block';
                     swal(messageContent);
+                    messageContent['content'].querySelector('.redirect-link').onclick = () => {
+                        window.open(response.redirectUrl, '_blank');
+                        this.completeAprove(swal);
+                    };
                     setTimeout(() => {
                         if (window.open(response.redirectUrl, '_blank')) {
-                            swal.close('confirm');
-                        } else {
-                            const redirectButton = messageContent['content'].querySelector('.redirect-link');
-                            redirectButton.onclick = () => {
-                                window.open(response.redirectUrl, '_blank');
-                                swal.close('confirm');
-                            };
-                            redirectButton.style.display = 'block';
+                            this.completeAprove(swal);
                         }
-                    }, 1000);
+                    }, 8000);
                 } else if (response.status === FinalizeApplicationStatus.Declined) {
                     let messageContent = {
                         title: `We\'re sorry ${this.firstName}, but you have been declined`,
@@ -144,5 +143,10 @@ export class RegisterComponent implements OnInit {
             },
             () => applyOfferDialog.close()
         );
+    }
+
+    completeAprove(modal): Promise<boolean> {
+        modal.close('confirm');
+        return this.router.navigate(['/personal-finance/offers/personal-loans']);
     }
 }
