@@ -1,6 +1,17 @@
 :host {
     display: block;
     height: 100%;
+
+    @media (min-width: 960px) {
+        max-width: initial;
+        position: absolute;
+        width: calc(100vw - (100vw - 960px)/2 - 320px - 14px);
+    }
+
+    @media (min-width: 1200px) {
+        width: calc(100vw - (100vw - 1140px)/2 - 285px - 14px);
+    }
+
     iframe {
         width:100%;
         height:100%;
