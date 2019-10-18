@@ -610,19 +610,19 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
                             width: 130,
                             selectedIndex: this.importTypeIndex,
                             hint: this.l('Import Type'),
-                            items: Object.keys(ImportTypeInput).map((type) => {
-                                if (type == ImportTypeInput.Lead)
-                                    type = 'Client';
-                                if (type == ImportTypeInput.Employee)
-                                    type = 'UserProfile';
-                                return {
-                                    disabled: type == ImportTypeInput.Order
-                                        || !this._contactService.checkCGPermission(ContactGroup[type]),
-                                    action: this.importTypeChanged.bind(this),
-                                    text: this.l(type + 's'),
-                                    value: ImportTypeInput[type]
-                                };
-                            })
+                            items: Object.keys(ImportTypeInput)
+                                .filter((type: string) => type !== 'Lead')
+                                .map((type) => {
+                                    if (type == ImportTypeInput.Employee)
+                                        type = 'UserProfile';
+                                    return {
+                                        disabled: type == ImportTypeInput.Order
+                                            || !this._contactService.checkCGPermission(ContactGroup[type]),
+                                        action: this.importTypeChanged.bind(this),
+                                        text: this.l(type + 's'),
+                                        value: ImportTypeInput[type]
+                                    };
+                                })
                         }
                     }
                 ]
