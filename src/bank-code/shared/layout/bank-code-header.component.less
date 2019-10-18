@@ -23,7 +23,8 @@
 
     .navigation {
         width: auto;
-        @media all and (max-width: 768px) {
+        
+        @media all and (max-width: 767px) {
             margin: 0 auto;
         }
         
@@ -151,8 +152,8 @@
             }
 
             @media all and (max-width: 767px) {
-                max-width: 100%;
-                min-width: 180px !important;
+                max-width: 150px;
+                min-width: 140px !important;
 
                 a {
                     max-width: 100%;
@@ -239,6 +240,11 @@
                         color: #fff;
                         background: lighten(#ac1f22, 10%);
                     }
+    
+                    @media all and (max-width: 767px) {
+                        font-size: 14px;
+                        padding: 8px 16px;
+                    }
                 }
         
                 &.login {
@@ -252,6 +258,11 @@
                     &:hover {
                         color: #000;
                         background: lighten(#f09e1f, 10%);
+                    }
+    
+                    @media all and (max-width: 767px) {
+                        font-size: 14px;
+                        padding: 8px 16px;
                     }
                 }
             }

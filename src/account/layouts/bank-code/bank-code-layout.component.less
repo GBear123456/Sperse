@@ -18,14 +18,18 @@ bank-code-header {
 
 .login {
     display: flex;
-    min-height: 100%;
+    //min-height: 100%;
     flex-direction: column;
     background-color: #fff;
     background-image: url('/assets/common/images/bank-code/background@3x.jpg');
     background-repeat: no-repeat;
     background-size: cover;
-    background-position-y: -20px;
-
+    height: calc(~"100% - 80px");
+    
+    @media all and (min-width: 769px) {
+        background-position-y: -20px;
+    }
+    
     .header {
         margin-top: 69px;
 
