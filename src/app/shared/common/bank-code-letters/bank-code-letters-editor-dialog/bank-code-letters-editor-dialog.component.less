@@ -1,6 +1,8 @@
 :host {
     display: block;
     /deep/ .mat-dialog-content {
+        margin: 0 -15px;
+        padding: 0 15px;
         ul {
             display: flex;
             justify-content: space-between;
@@ -8,6 +10,7 @@
             margin-bottom: 5px;
             li {
                 list-style: none;
+                user-select: none;
                 flex: 1;
                 width: 135px;
                 text-align: center;
@@ -50,4 +53,8 @@
     pointer-events: none;
     position: absolute;
     cursor: grabbing;
+}
+
+/deep/ #bankCodeLettersEditorDialog {
+    padding: 15px;
 }
