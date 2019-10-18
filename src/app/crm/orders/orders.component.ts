@@ -492,18 +492,6 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         this.dataGrid.instance.updateDimensions();
     }
 
-    filterByOrderStages(filter: FilterModel) {
-        let data = {};
-        if (filter.items.element) {
-            let filterData = FilterHelpers.ParsePipelineIds(filter.items.element.value);
-            data = {
-                or: filterData
-            };
-        }
-
-        return data;
-    }
-
     processFilterInternal() {
         if (this.showPipeline) {
             this.pipelineComponent.searchColumns = this.searchColumns;
@@ -512,13 +500,10 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
 
         let context = this.showPipeline ? this.pipelineComponent : this;
         context.processODataFilter.call(context,
-            this.dataGrid.instance, this.dataSourceURI,
-                this.filters, (filter) => {
-                let filterMethod = this['filterBy' +
-                    this.capitalize(filter.caption)];
-                if (filterMethod)
-                    return filterMethod.call(this, filter);
-                }
+            this.dataGrid.instance,
+            this.dataSourceURI,
+            this.filters,
+            this._filtersService.getCheckCustom
         );
     }
 
@@ -616,15 +601,6 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                     return true;
                 }
             });
-    }
-
-    filterByAmount(filter) {
-        let data = {};
-        data[filter.field] = {};
-        each(filter.items, (item: FilterItemModel, key) => {
-            item && item.value && (data[filter.field][filter.operator[key]] = +item.value);
-        });
-        return data;
     }
 
     updateOrdersStage($event) {

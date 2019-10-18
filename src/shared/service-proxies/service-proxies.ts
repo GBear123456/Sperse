@@ -7096,6 +7096,72 @@ export class ContactServiceProxy {
     }
 
     /**
+     * @searchPhrase (optional) 
+     * @contactId (optional) 
+     * @return Success
+     */
+    getSourceContacts(searchPhrase: string | null | undefined, contactId: number | null | undefined, topCount: number): Observable<SourceContactInfo[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/Contact/GetSourceContacts?";
+        if (searchPhrase !== undefined)
+            url_ += "SearchPhrase=" + encodeURIComponent("" + searchPhrase) + "&"; 
+        if (contactId !== undefined)
+            url_ += "ContactId=" + encodeURIComponent("" + contactId) + "&"; 
+        if (topCount === undefined || topCount === null)
+            throw new Error("The parameter 'topCount' must be defined and cannot be null.");
+        else
+            url_ += "TopCount=" + encodeURIComponent("" + topCount) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetSourceContacts(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetSourceContacts(<any>response_);
+                } catch (e) {
+                    return <Observable<SourceContactInfo[]>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<SourceContactInfo[]>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetSourceContacts(response: HttpResponseBase): Observable<SourceContactInfo[]> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(SourceContactInfo.fromJS(item));
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<SourceContactInfo[]>(<any>null);
+    }
+
+    /**
      * @body (optional) 
      * @return Success
      */
@@ -7643,6 +7709,62 @@ export class ContactServiceProxy {
             }));
         }
         return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @body (optional) 
+     * @return Success
+     */
+    updateSourceContactId(body: UpdateSourceContactIdInput | null | undefined): Observable<number> {
+        let url_ = this.baseUrl + "/api/services/CRM/Contact/UpdateSourceContactId";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUpdateSourceContactId(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUpdateSourceContactId(<any>response_);
+                } catch (e) {
+                    return <Observable<number>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<number>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processUpdateSourceContactId(response: HttpResponseBase): Observable<number> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 !== undefined ? resultData200 : <any>null;
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<number>(<any>null);
     }
 
     /**
@@ -41375,6 +41497,46 @@ export interface ISimilarContactOutput {
     score: number | undefined;
 }
 
+export class SourceContactInfo implements ISourceContactInfo {
+    id!: number | undefined;
+    name!: string | undefined;
+
+    constructor(data?: ISourceContactInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.name = data["name"];
+        }
+    }
+
+    static fromJS(data: any): SourceContactInfo {
+        data = typeof data === 'object' ? data : {};
+        let result = new SourceContactInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        return data; 
+    }
+}
+
+export interface ISourceContactInfo {
+    id: number | undefined;
+    name: string | undefined;
+}
+
 export class UpdateContactStatusInput implements IUpdateContactStatusInput {
     contactId!: number;
     statusId!: string;
@@ -41715,6 +41877,46 @@ export class UpdateContactAffiliateCodeInput implements IUpdateContactAffiliateC
 export interface IUpdateContactAffiliateCodeInput {
     contactId: number;
     affiliateCode: string;
+}
+
+export class UpdateSourceContactIdInput implements IUpdateSourceContactIdInput {
+    contactId!: number;
+    sourceContactId!: number | undefined;
+
+    constructor(data?: IUpdateSourceContactIdInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.contactId = data["contactId"];
+            this.sourceContactId = data["sourceContactId"];
+        }
+    }
+
+    static fromJS(data: any): UpdateSourceContactIdInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateSourceContactIdInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["contactId"] = this.contactId;
+        data["sourceContactId"] = this.sourceContactId;
+        return data; 
+    }
+}
+
+export interface IUpdateSourceContactIdInput {
+    contactId: number;
+    sourceContactId: number | undefined;
 }
 
 export class SendSMSToContactInput implements ISendSMSToContactInput {

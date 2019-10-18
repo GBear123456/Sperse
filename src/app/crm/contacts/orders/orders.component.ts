@@ -34,21 +34,20 @@ import { CurrencyPipe } from '@angular/common';
 export class OrdersComponent extends AppComponentBase implements OnInit, OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
     private readonly dataSourceURI = 'Order';
-    private filters: FilterModel[];
     private formatting = AppConsts.formatting;
 
     constructor(injector: Injector,
         private dialog: MatDialog,
-        private _contactService: ContactServiceProxy,
-        private _clientService: ContactsService,
+        private contactService: ContactServiceProxy,
+        private clientService: ContactsService,
         private orderServiceProxy: OrderServiceProxy,
         private currencyPipe: CurrencyPipe
     ) {
         super(injector);
-        this.dataSource = this.getDataSource(+this._contactService['data'].contactInfo.id);
-        this._clientService.invalidateSubscribe((area) => {
+        this.dataSource = this.getDataSource(+this.contactService['data'].contactInfo.id);
+        this.clientService.invalidateSubscribe((area) => {
             if (area == 'orders') {
-                this.dataSource = this.getDataSource(+this._contactService['data'].contactInfo.id);
+                this.dataSource = this.getDataSource(+this.contactService['data'].contactInfo.id);
                 const dataSource = this.dataGrid.instance.getDataSource();
                 if (dataSource) {
                     dataSource.load();
@@ -97,13 +96,8 @@ export class OrdersComponent extends AppComponentBase implements OnInit, OnDestr
             this.processODataFilter(
                 this.dataGrid.instance,
                 this.dataSourceURI,
-                this.filters,
-                (filter) => {
-                    let filterMethod = this['filterBy' +
-                    this.capitalize(filter.caption)];
-                    if (filterMethod)
-                        return filterMethod.call(this, filter);
-                }
+                [],
+                null
             );
         }
     }

@@ -31,6 +31,7 @@ import { LoadingService } from '@shared/common/loading-service/loading.service';
 import { ProfileService } from '@shared/common/profile-service/profile.service';
 import { AppPermissions } from '@shared/AppPermissions';
 import { FullScreenService } from '@shared/common/fullscreen/fullscreen.service';
+import { FilterModel } from '@shared/filters/models/filter.model';
 
 export abstract class AppComponentBase implements OnDestroy {
     @HostBinding('class.fullscreen') public isFullscreenMode;
@@ -220,17 +221,13 @@ export abstract class AppComponentBase implements OnDestroy {
         }
     }
 
-    appRootUrl(): string {
-        return this.appUrlService.appRootUrl;
-    }
-
     getODataUrl(uri: string, filter?: Object, instanceData = null) {
         const searchParam = this.getQuickSearchParam();
         const params = searchParam && [searchParam];
         return this.oDataService.getODataUrl(uri, filter, instanceData, params);
     }
 
-    processODataFilter(grid, uri, filters, getCheckCustom, instanceData = null, params = null) {
+    processODataFilter(grid, uri, filters: FilterModel[], getCheckCustom, instanceData = null, params = null) {
         this.isDataLoaded = false;
         const searchParam = this.getQuickSearchParam();
         params = searchParam ? params && params.concat([searchParam]) || [searchParam] : params;

@@ -95,9 +95,9 @@ export class ODataService {
         return queryWithSearch;
     }
 
-    processODataFilter(grid, uri, filters, getCheckCustom, searchColumns: any[], searchValue: string, instanceData = null, params = null) {
+    processODataFilter(grid, uri, filters: FilterModel[], getCheckCustom, searchColumns: any[], searchValue: string, instanceData = null, params = null) {
         return this.advancedODataFilter(grid, uri,
-            (filters || []).map((filter) => {
+            (filters || []).map((filter: FilterModel) => {
                 return getCheckCustom && getCheckCustom(filter) ||
                     filter.getODataFilterObject();
             }),

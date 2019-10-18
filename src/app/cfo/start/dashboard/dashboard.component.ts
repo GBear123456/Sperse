@@ -42,7 +42,7 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, OnDe
 
     constructor(
         injector: Injector,
-        private _dashboardService: DashboardService,
+        private dashboardService: DashboardService,
         public bankAccountsService: BankAccountsService,
         public dialog: MatDialog,
         public cfoPreferencesService: CfoPreferencesService
@@ -67,7 +67,7 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, OnDe
     }
 
     invalidate() {
-        this._dashboardService.refresh();
+        this.dashboardService.refresh();
         this.refreshWidgets();
     }
 
@@ -87,7 +87,7 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, OnDe
     }
 
     periodChanged(period: Period) {
-        this._dashboardService.periodChanged(period);
+        this.dashboardService.periodChanged(period);
     }
 
     activate() {

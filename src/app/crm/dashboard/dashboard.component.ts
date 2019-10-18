@@ -69,7 +69,7 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
     };
     private showWelcomeSection: ReplaySubject<boolean> = new ReplaySubject<boolean>(1);
     showWelcomeSection$: Observable<boolean> = this.showWelcomeSection.asObservable();
-    private introAcceptedCacheKey: string = this.cacheHelper.getCacheKey('CRMWizard', 'IntroAccepted');
+    private introAcceptedCacheKey: string = this.cacheHelper.getCacheKey('CRMIntro', 'IntroAccepted');
     dialogConfig = new MatDialogConfig();
     leftMenuHidden = true;
     constructor(
@@ -138,7 +138,7 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
         this.dialogConfig.panelClass = ['crm-intro', 'setup'];
         this.dialogConfig.data = { alreadyStarted: false };
         this.dialog.open(CrmIntroComponent, this.dialogConfig).afterClosed().subscribe(() => {
-            /** Mark accepted cache with true when user closed wizard and don't want to see it anymore) */
+            /** Mark accepted cache with true when user closed intro and don't want to see it anymore) */
             this.cacheService.set(this.introAcceptedCacheKey, 'true');
         });
     }

@@ -399,7 +399,7 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
 
     addOptionsInit() {
         if (this.addContextMenuItems.length) {
-            let cacheKey = this.getCacheKey(this.addOptionCacheKey), 
+            let cacheKey = this.getCacheKey(this.addOptionCacheKey),
                 selectedMenuItem = this.getContextMenuItemByType(
                     this._cacheService.exists(cacheKey) ? this._cacheService.get(cacheKey) : this.ADD_OPTION_DEFAULT
                 );
@@ -407,7 +407,7 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
                 selectedMenuItem = this.getContextMenuItemByType(this.ADD_OPTION_DEFAULT);
 
             selectedMenuItem.selected = true;
-            this.addButtonTitle = selectedMenuItem.text;          
+            this.addButtonTitle = selectedMenuItem.text;
         }
     }
 
@@ -444,7 +444,7 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
                     closeOnNavigation: false,
                     data: {
                         refreshParent: () => {},
-                        customerType: ContactGroup.Client
+                        customerType: this.contactGroup
                     }
                 });
             });

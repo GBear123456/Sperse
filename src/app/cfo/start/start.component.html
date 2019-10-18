@@ -1,4 +1,6 @@
 <div [@routerTransition]>
-    <setup *ngIf="_cfoService.initialized === false"></setup>
+    <setup *ngIf="_cfoService.initialized === false"
+           (onOpenIntro)="openDialog()">
+    </setup>
     <ng-template ad-dashboard-host></ng-template>
 </div>
