@@ -14,7 +14,7 @@ import { NotifyService } from '@abp/notify/notify.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
 import { EmailTemplateServiceProxy, GetTemplatesResponse, CreateEmailTemplateRequest,
-    UpdateEmailTemplateRequest, EmailTemplateParamDto } from '@shared/service-proxies/service-proxies';
+    UpdateEmailTemplateRequest } from '@shared/service-proxies/service-proxies';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 
 @Component({
@@ -30,17 +30,17 @@ export class EmailTemplateDialogComponent {
     showCC = false;
     showBCC = false;
 
-    ckConfig = { 
+    ckConfig = {
         toolbarGroups: [
-        		{ name: 'document', groups: [ 'mode', 'document', 'doctools' ] },
-        		{ name: 'editing', groups: [ 'find', 'selection', 'editing' ] },
-        		{ name: 'forms', groups: [ 'forms' ] },
-        		{ name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ] },
-        		{ name: 'paragraph', groups: [ 'list', 'indent', 'blocks', 'align', 'bidi', 'paragraph' ] },
-        		{ name: 'styles', groups: [ 'styles' ] },
-        		{ name: 'colors', groups: [ 'colors' ] },
-        		{ name: 'clipboard', groups: [ 'clipboard', 'undo' ] }
-        ], 
+                { name: 'document', groups: [ 'mode', 'document', 'doctools' ] },
+                { name: 'editing', groups: [ 'find', 'selection', 'editing' ] },
+                { name: 'forms', groups: [ 'forms' ] },
+                { name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ] },
+                { name: 'paragraph', groups: [ 'list', 'indent', 'blocks', 'align', 'bidi', 'paragraph' ] },
+                { name: 'styles', groups: [ 'styles' ] },
+                { name: 'colors', groups: [ 'colors' ] },
+                { name: 'clipboard', groups: [ 'clipboard', 'undo' ] }
+        ],
         removeButtons: 'Anchor,Subscript,Superscript,Source'
     };
 
@@ -138,16 +138,12 @@ export class EmailTemplateDialogComponent {
         return this.templateComponent.instance.field()['value'];
     }
 
-    getEmailTemplateParams(): EmailTemplateParamDto[] {
-        return this.data.templateSettings.map(item => {
-            return new EmailTemplateParamDto({
-                key: item.key,
-                value: String(item.value)
-            });
-        });
+    getEmailTemplateParams(): any[] {
+        //TODO: return something
+        return [];
     }
 
-    initTemplateList() {  
+    initTemplateList() {
         this.templates$ = this.emailTemplateProxy.getTemplates(this.data.templateType);
         this.changeDetectorRef.markForCheck();
     }
@@ -156,7 +152,7 @@ export class EmailTemplateDialogComponent {
         event.component.option('opened', false);
     }
 
-    emailInputFocusOut(event, checkDisplay) {
+    emailInputFocusOut(event, checkDisplay?) {
         let inputValue = event.event.target.value,
             comboValue = event.component.option('value') || [];
         if (AppConsts.regexPatterns.email.test(inputValue))
