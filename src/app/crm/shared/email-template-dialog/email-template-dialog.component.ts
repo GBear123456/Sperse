@@ -30,17 +30,17 @@ export class EmailTemplateDialogComponent {
     showCC = false;
     showBCC = false;
 
-    ckConfig = { 
+    ckConfig = {
         toolbarGroups: [
-        		{ name: 'document', groups: [ 'mode', 'document', 'doctools' ] },
-        		{ name: 'editing', groups: [ 'find', 'selection', 'editing' ] },
-        		{ name: 'forms', groups: [ 'forms' ] },
-        		{ name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ] },
-        		{ name: 'paragraph', groups: [ 'list', 'indent', 'blocks', 'align', 'bidi', 'paragraph' ] },
-        		{ name: 'styles', groups: [ 'styles' ] },
-        		{ name: 'colors', groups: [ 'colors' ] },
-        		{ name: 'clipboard', groups: [ 'clipboard', 'undo' ] }
-        ], 
+                { name: 'document', groups: [ 'mode', 'document', 'doctools' ] },
+                { name: 'editing', groups: [ 'find', 'selection', 'editing' ] },
+                { name: 'forms', groups: [ 'forms' ] },
+                { name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ] },
+                { name: 'paragraph', groups: [ 'list', 'indent', 'blocks', 'align', 'bidi', 'paragraph' ] },
+                { name: 'styles', groups: [ 'styles' ] },
+                { name: 'colors', groups: [ 'colors' ] },
+                { name: 'clipboard', groups: [ 'clipboard', 'undo' ] }
+        ],
         removeButtons: 'Anchor,Subscript,Superscript,Source'
     };
 
@@ -143,7 +143,7 @@ export class EmailTemplateDialogComponent {
         return [];
     }
 
-    initTemplateList() {  
+    initTemplateList() {
         this.templates$ = this.emailTemplateProxy.getTemplates(this.data.templateType);
         this.changeDetectorRef.markForCheck();
     }
@@ -152,7 +152,7 @@ export class EmailTemplateDialogComponent {
         event.component.option('opened', false);
     }
 
-    emailInputFocusOut(event, checkDisplay) {
+    emailInputFocusOut(event, checkDisplay?) {
         let inputValue = event.event.target.value,
             comboValue = event.component.option('value') || [];
         if (AppConsts.regexPatterns.email.test(inputValue))
