@@ -21,6 +21,7 @@ import {
 } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { EmailTemplateDialogComponent } from '@app/crm/shared/email-template-dialog/email-template-dialog.component';
+import { InvoiceSettingsDialogComponent } from './invoice-settings-dialog/invoice-settings-dialog.component';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { ContactGroup, ContactGroupPermission } from '@shared/AppEnums';
 import { AppPermissions } from '@shared/AppPermissions';
@@ -225,5 +226,14 @@ export class ContactsService {
             dialogComponent.finishLoading();
             this.notifyService.info(this.ls.l('MailSent'));
         }));
+    }
+
+    showInvoiceSettingsDialog() {
+        this.dialog.open(InvoiceSettingsDialogComponent, {
+            panelClass: 'slider',
+            disableClose: true,
+            closeOnNavigation: false,
+            data: { }
+        });
     }
 }

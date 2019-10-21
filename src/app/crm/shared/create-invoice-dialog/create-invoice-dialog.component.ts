@@ -92,7 +92,6 @@ export class CreateInvoiceDialogComponent implements OnInit {
 
     date;
     dueDate;
-    currentDate = new Date();
 
     description = '';
     notes = '';
@@ -377,8 +376,8 @@ export class CreateInvoiceDialogComponent implements OnInit {
                 if (search == this.customer) {
                     if (!res['length'])
                         $event.component.option('noDataText', this.ls.l('NoItemsFound'));
-
                     this.customers = res;
+                    this.changeDetectorRef.markForCheck();
                 }
             });
         }, 500);
@@ -511,5 +510,9 @@ export class CreateInvoiceDialogComponent implements OnInit {
                 this.changeDetectorRef.detectChanges();
             }
         });
+    }
+
+    openInvoiceSettings() {
+        this.contactsService.showInvoiceSettingsDialog();
     }
 }
