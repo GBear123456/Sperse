@@ -50076,6 +50076,7 @@ export class OrganizationBusinessInfo implements IOrganizationBusinessInfo {
     assignedUserId!: number | undefined;
     ratingId!: number | undefined;
     userId!: number | undefined;
+    affiliateId!: string | undefined;
     sourceContactId!: number | undefined;
     organizationUnitId!: number | undefined;
 
@@ -50146,6 +50147,7 @@ export class OrganizationBusinessInfo implements IOrganizationBusinessInfo {
             this.assignedUserId = data["assignedUserId"];
             this.ratingId = data["ratingId"];
             this.userId = data["userId"];
+            this.affiliateId = data["affiliateId"];
             this.sourceContactId = data["sourceContactId"];
             this.organizationUnitId = data["organizationUnitId"];
         }
@@ -50216,6 +50218,7 @@ export class OrganizationBusinessInfo implements IOrganizationBusinessInfo {
         data["assignedUserId"] = this.assignedUserId;
         data["ratingId"] = this.ratingId;
         data["userId"] = this.userId;
+        data["affiliateId"] = this.affiliateId;
         data["sourceContactId"] = this.sourceContactId;
         data["organizationUnitId"] = this.organizationUnitId;
         return data; 
@@ -50255,6 +50258,7 @@ export interface IOrganizationBusinessInfo {
     assignedUserId: number | undefined;
     ratingId: number | undefined;
     userId: number | undefined;
+    affiliateId: string | undefined;
     sourceContactId: number | undefined;
     organizationUnitId: number | undefined;
 }
@@ -54342,6 +54346,7 @@ export interface IOrganizationTypeDto {
 export class OrganizationUnitShortDto implements IOrganizationUnitShortDto {
     id!: number | undefined;
     displayName!: string | undefined;
+    parentId!: number | undefined;
 
     constructor(data?: IOrganizationUnitShortDto) {
         if (data) {
@@ -54356,6 +54361,7 @@ export class OrganizationUnitShortDto implements IOrganizationUnitShortDto {
         if (data) {
             this.id = data["id"];
             this.displayName = data["displayName"];
+            this.parentId = data["parentId"];
         }
     }
 
@@ -54370,6 +54376,7 @@ export class OrganizationUnitShortDto implements IOrganizationUnitShortDto {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
         data["displayName"] = this.displayName;
+        data["parentId"] = this.parentId;
         return data; 
     }
 }
@@ -54377,6 +54384,7 @@ export class OrganizationUnitShortDto implements IOrganizationUnitShortDto {
 export interface IOrganizationUnitShortDto {
     id: number | undefined;
     displayName: string | undefined;
+    parentId: number | undefined;
 }
 
 export class DocumentInfo implements IDocumentInfo {
@@ -56860,6 +56868,7 @@ export class ImportPersonalInput implements IImportPersonalInput {
     experience!: string | undefined;
     profileSummary!: string | undefined;
     interests!: string[] | undefined;
+    affiliateId!: string | undefined;
 
     constructor(data?: IImportPersonalInput) {
         if (data) {
@@ -56905,6 +56914,7 @@ export class ImportPersonalInput implements IImportPersonalInput {
                 for (let item of data["interests"])
                     this.interests.push(item);
             }
+            this.affiliateId = data["affiliateId"];
         }
     }
 
@@ -56950,6 +56960,7 @@ export class ImportPersonalInput implements IImportPersonalInput {
             for (let item of this.interests)
                 data["interests"].push(item);
         }
+        data["affiliateId"] = this.affiliateId;
         return data; 
     }
 }
@@ -56984,6 +56995,7 @@ export interface IImportPersonalInput {
     experience: string | undefined;
     profileSummary: string | undefined;
     interests: string[] | undefined;
+    affiliateId: string | undefined;
 }
 
 export class ImportBusinessInput implements IImportBusinessInput {
@@ -57019,6 +57031,7 @@ export class ImportBusinessInput implements IImportBusinessInput {
     workEmail2!: string | undefined;
     workEmail3!: string | undefined;
     workFullAddress!: ImportAddressInput | undefined;
+    affiliateId!: string | undefined;
 
     constructor(data?: IImportBusinessInput) {
         if (data) {
@@ -57063,6 +57076,7 @@ export class ImportBusinessInput implements IImportBusinessInput {
             this.workEmail2 = data["workEmail2"];
             this.workEmail3 = data["workEmail3"];
             this.workFullAddress = data["workFullAddress"] ? ImportAddressInput.fromJS(data["workFullAddress"]) : <any>undefined;
+            this.affiliateId = data["affiliateId"];
         }
     }
 
@@ -57107,6 +57121,7 @@ export class ImportBusinessInput implements IImportBusinessInput {
         data["workEmail2"] = this.workEmail2;
         data["workEmail3"] = this.workEmail3;
         data["workFullAddress"] = this.workFullAddress ? this.workFullAddress.toJSON() : <any>undefined;
+        data["affiliateId"] = this.affiliateId;
         return data; 
     }
 }
@@ -57144,6 +57159,7 @@ export interface IImportBusinessInput {
     workEmail2: string | undefined;
     workEmail3: string | undefined;
     workFullAddress: ImportAddressInput | undefined;
+    affiliateId: string | undefined;
 }
 
 export class ImportItemInput implements IImportItemInput {
