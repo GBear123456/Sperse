@@ -9,7 +9,6 @@ import { DxTextBoxComponent } from 'devextreme-angular/ui/text-box';
 import { AppConsts } from '@shared/AppConsts';
 import { DialogService } from '@app/shared/common/dialogs/dialog.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
-import { EmailTemplateParamDto } from '@shared/service-proxies/service-proxies';
 
 @Component({
     templateUrl: 'email-invoice-dialog.component.html',
