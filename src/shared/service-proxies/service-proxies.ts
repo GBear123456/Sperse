@@ -15142,7 +15142,7 @@ export class InvoiceServiceProxy {
      * @body (optional) 
      * @return Success
      */
-    create(body: CreateInvoiceInput | null | undefined): Observable<void> {
+    create(body: CreateInvoiceInput | null | undefined): Observable<number> {
         let url_ = this.baseUrl + "/api/services/CRM/Invoice/Create";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -15154,6 +15154,7 @@ export class InvoiceServiceProxy {
             responseType: "blob",
             headers: new HttpHeaders({
                 "Content-Type": "application/json", 
+                "Accept": "application/json"
             })
         };
 
@@ -15164,14 +15165,14 @@ export class InvoiceServiceProxy {
                 try {
                     return this.processCreate(<any>response_);
                 } catch (e) {
-                    return <Observable<void>><any>_observableThrow(e);
+                    return <Observable<number>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<void>><any>_observableThrow(response_);
+                return <Observable<number>><any>_observableThrow(response_);
         }));
     }
 
-    protected processCreate(response: HttpResponseBase): Observable<void> {
+    protected processCreate(response: HttpResponseBase): Observable<number> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -15180,14 +15181,17 @@ export class InvoiceServiceProxy {
         let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
         if (status === 200) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(<any>null);
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 !== undefined ? resultData200 : <any>null;
+            return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<void>(<any>null);
+        return _observableOf<number>(<any>null);
     }
 
     /**
@@ -15611,13 +15615,12 @@ export class InvoiceServiceProxy {
     }
 
     /**
+     * @templateId (optional) 
      * @return Success
      */
-    getPreprocessedEmail(templateId: number, invoiceId: number): Observable<GetPreprocessedEmailOutput> {
+    getPreprocessedEmail(templateId: number | null | undefined, invoiceId: number): Observable<GetPreprocessedEmailOutput> {
         let url_ = this.baseUrl + "/api/services/CRM/Invoice/GetPreprocessedEmail?";
-        if (templateId === undefined || templateId === null)
-            throw new Error("The parameter 'templateId' must be defined and cannot be null.");
-        else
+        if (templateId !== undefined)
             url_ += "TemplateId=" + encodeURIComponent("" + templateId) + "&"; 
         if (invoiceId === undefined || invoiceId === null)
             throw new Error("The parameter 'invoiceId' must be defined and cannot be null.");
