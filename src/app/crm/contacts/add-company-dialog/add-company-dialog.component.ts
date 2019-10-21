@@ -3,15 +3,20 @@ import { Component, Inject, Injector, ElementRef } from '@angular/core';
 
 /** Third party imports */
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { Store } from '@ngrx/store';
 import { finalize } from 'rxjs/operators';
 
 /** Application imports */
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { AppConsts } from '@shared/AppConsts';
-import { ContactGroup } from '@shared/AppEnums';
-import { PersonOrgRelationType } from '@shared/AppEnums';
-import { OrganizationContactServiceProxy, CreatePersonOrgRelationInput,
-    PersonOrgRelationServiceProxy, PersonOrgRelationShortInfo } from '@shared/service-proxies/service-proxies';
+import { ContactGroup, PersonOrgRelationType } from '@shared/AppEnums';
+import {
+    CreatePersonOrgRelationInput,
+    CreatePersonOrgRelationOutput,
+    OrganizationContactServiceProxy,
+    PersonOrgRelationServiceProxy,
+    PersonOrgRelationShortInfo
+} from '@shared/service-proxies/service-proxies';
+import { CrmStore, OrganizationUnitsStoreActions } from '@app/crm/store';
 
 @Component({
     templateUrl: 'add-company-dialog.html',
@@ -21,12 +26,14 @@ export class AddCompanyDialogComponent extends AppComponentBase {
     companies: any = [];
     private lookupTimeout: any;
     private latestSearchPhrase: string;
-    constructor(injector: Injector,
-                @Inject(MAT_DIALOG_DATA) public data: any,
-                private elementRef: ElementRef,
-                private relationServiceProxy: PersonOrgRelationServiceProxy,
-                private orgServiceProxy: OrganizationContactServiceProxy,
-                public dialogRef: MatDialogRef<AddCompanyDialogComponent>,
+    constructor(
+        injector: Injector,
+        private elementRef: ElementRef,
+        private relationServiceProxy: PersonOrgRelationServiceProxy,
+        private orgServiceProxy: OrganizationContactServiceProxy,
+        private store$: Store<CrmStore.State>,
+        public dialogRef: MatDialogRef<AddCompanyDialogComponent>,
+        @Inject(MAT_DIALOG_DATA) public data: any
     ) {
         super(injector);
     }
@@ -69,21 +76,21 @@ export class AddCompanyDialogComponent extends AppComponentBase {
         $event.component.option('opened', Boolean(this.companies.length));
     }
 
-    applyContactInfo(responce) {
+    private applyContactInfo(response: CreatePersonOrgRelationOutput) {
         let contactInfo = this.data.contactInfo;
-        if (responce && contactInfo) {
-            let orgId = responce.organizationId;
+        if (response && contactInfo) {
+            let orgId = response.organizationId;
             this.orgServiceProxy.getOrganizationContactInfo(orgId).subscribe((result) => {
                 contactInfo.personContactInfo['personOrgRelationInfo'].organization.rootOrganizationUnitId =
                     (contactInfo['organizationContactInfo'] = result).organization.rootOrganizationUnitId;
             });
-            contactInfo.personContactInfo.orgRelationId = responce.id;
+            contactInfo.personContactInfo.orgRelationId = response.id;
             contactInfo.primaryOrganizationContactId = orgId;
             if (!contactInfo.personContactInfo.orgRelations)
                 contactInfo.personContactInfo.orgRelations = [];
             contactInfo.personContactInfo.orgRelations.push(
                 contactInfo.personContactInfo['personOrgRelationInfo'] = PersonOrgRelationShortInfo.fromJS({
-                    id: responce.id,
+                    id: response.id,
                     isActive: true,
                     jobTitle: this.data.title,
                     organization: {id: orgId, name: this.data.company, thumbnail: ''},
@@ -93,7 +100,7 @@ export class AddCompanyDialogComponent extends AppComponentBase {
         }
     }
 
-    onSave(event) {
+    onSave() {
         this.startLoading(true);
         this.relationServiceProxy.create(
             CreatePersonOrgRelationInput.fromJS({
@@ -106,12 +113,16 @@ export class AddCompanyDialogComponent extends AppComponentBase {
         )).pipe(finalize(() => {
             this.data.id = undefined;
             this.finishLoading(true);
-        })).subscribe((responce) => {
-            if (responce.organizationId) {
-                this.data.updateLocation(this.data.contactId, this.data.contactInfo['leadId'], responce.organizationId);
-                this.applyContactInfo(responce);
+        })).subscribe((response: CreatePersonOrgRelationOutput) => {
+            if (response.organizationId) {
+                this.data.updateLocation(this.data.contactId, this.data.contactInfo['leadId'], response.organizationId);
+                this.applyContactInfo(response);
+                /** Reload list of organization units */
+                if (this.data.contactInfo.groupId === ContactGroup.Partner) {
+                    this.store$.dispatch(new OrganizationUnitsStoreActions.LoadRequestAction(true));
+                }
             }
-            this.dialogRef.close(responce);
+            this.dialogRef.close(response);
         });
     }
 }

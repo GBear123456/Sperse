@@ -98,21 +98,21 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
     constructor(injector: Injector,
         public dialog: MatDialog,
         public phoneFormatPipe: PhoneFormatPipe,
-        private _userService: UserServiceProxy,
-        private _contactsService: ContactsService,
-        private _personContactServiceProxy: PersonContactServiceProxy,
-        private _contactService: ContactServiceProxy,
-        private _roleServiceProxy: RoleServiceProxy
+        private userService: UserServiceProxy,
+        private contactsService: ContactsService,
+        private personContactServiceProxy: PersonContactServiceProxy,
+        private contactService: ContactServiceProxy,
+        private roleServiceProxy: RoleServiceProxy
     ) {
         super(injector);
 
-        _contactsService.userSubscribe((userId) => {
-            this.data = _userService['data'];
+        contactsService.userSubscribe((userId) => {
+            this.data = userService['data'];
             this.data.userId = userId;
             this.checkShowInviteForm();
         }, this.constructor.name);
 
-        _contactsService.orgUnitsSaveSubscribe((data) => {
+        contactsService.orgUnitsSaveSubscribe((data) => {
             this.data.raw.memberedOrganizationUnits = [];
             (this.selectedOrgUnits = data).forEach((item) => {
                 this.data.raw.memberedOrganizationUnits.push(
@@ -120,9 +120,9 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
             });
         }, this.constructor.name);
 
-        if (!(this.roles = _roleServiceProxy['data']))
-            _roleServiceProxy.getRoles(undefined, undefined).subscribe((res) => {
-                _roleServiceProxy['data'] = this.roles = res.items;
+        if (!(this.roles = roleServiceProxy['data']))
+            roleServiceProxy.getRoles(undefined, undefined).subscribe((res) => {
+                roleServiceProxy['data'] = this.roles = res.items;
                 this.updateInviteDataRoles();
             });
 
@@ -133,9 +133,9 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
 
     ngOnInit() {
         this.onResize();
-        this.contactInfoData = this._contactService['data'];
+        this.contactInfoData = this.contactService['data'];
         this.updateInviteDataRoles();
-        if ((this.data = this._userService['data']).userId)
+        if ((this.data = this.userService['data']).userId)
             this.loadData();
         else
             setTimeout(() => this.checkShowInviteForm(), 500);
@@ -175,8 +175,8 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
             this.fillUserData(this.data['raw']);
         else if (!this.loading) {
             this.startLoading(true);
-            this._contactsService.contactInfoSubscribe((contactInfo) =>
-                this._userService.getUserForEdit(contactInfo.personContactInfo.userId || undefined)
+            this.contactsService.contactInfoSubscribe((contactInfo) =>
+                this.userService.getUserForEdit(contactInfo.personContactInfo.userId || undefined)
                     .pipe(finalize(() => this.finishLoading(true)))
                     .subscribe(userEditOutput => {
                         this.fillUserData(userEditOutput);
@@ -199,8 +199,8 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
             data.user['setRandomPassword'] = false;
             data.user['sendActivationEmail'] = false;
 
-            this._userService['data'].user = data.user;
-            this._userService['data'].roles = data.roles;
+            this.userService['data'].user = data.user;
+            this.userService['data'].roles = data.roles;
             this.userData = data;
         } else {
             this.selectedOrgUnits = (
@@ -210,9 +210,9 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
             }).filter(Boolean);
         }
 
-        this._userService['data'].raw = data;
+        this.userService['data'].raw = data;
         data.selectedOrgUnits = this.selectedOrgUnits;
-        setTimeout(() => this._contactsService.orgUnitsUpdate(data));
+        setTimeout(() => this.contactsService.orgUnitsUpdate(data));
     }
 
     inviteUser() {
@@ -230,11 +230,11 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
                     this.startLoading(true);
                     this.inviteData.contactId = this.contactInfoData.contactInfo.personContactInfo.id;
                     let phoneNumber = this.phoneFormatPipe.transform(this.inviteData.phoneNumber);
-                    this._personContactServiceProxy.createUserForContact(extend(clone(this.inviteData), {
+                    this.personContactServiceProxy.createUserForContact(extend(clone(this.inviteData), {
                         phoneNumber: phoneNumber && phoneNumber.replace(/[^0-9\+]/g, ''),
                         organizationUnitIds: this.selectedOrgUnits
                     })).pipe(finalize(() => this.finishLoading(true))).subscribe(() => {
-                        this._contactsService.invalidate();
+                        this.contactsService.invalidate();
                     });
                 }
             }
@@ -293,12 +293,12 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
     roleUpdate(role) {
         let sub;
         if (role.isAssigned)
-            sub = this._userService.addToRole(UpdateUserRoleInput.fromJS({
+            sub = this.userService.addToRole(UpdateUserRoleInput.fromJS({
                 id: this.userData.user.id,
                 roleName: role.roleName
             }));
         else
-            sub = this._userService.removeFromRole(this.userData.user.id, role.roleName);
+            sub = this.userService.removeFromRole(this.userData.user.id, role.roleName);
 
         this.startLoading();
         sub.pipe(finalize(() => this.finishLoading())).subscribe(() => {
@@ -330,16 +330,16 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
 
         this.data.user[fieldName] = data[fieldName] = value;
         if (fieldName == this.EMAIL_FIELD)
-            sub = this._userService.updateEmail(UpdateUserEmailDto.fromJS(data));
+            sub = this.userService.updateEmail(UpdateUserEmailDto.fromJS(data));
         else if (fieldName == this.PHONE_FIELD)
-            sub = this._userService.updatePhone(UpdateUserPhoneDto.fromJS(data));
+            sub = this.userService.updatePhone(UpdateUserPhoneDto.fromJS(data));
         else if ([this.ACTIVE_FIELD, this.LOCKOUT_FIELD, this.TWO_FACTOR_FIELD].indexOf(fieldName) >= 0) {
-            sub = this._userService.updateOptions(UpdateUserOptionsDto.fromJS(data));
+            sub = this.userService.updateOptions(UpdateUserOptionsDto.fromJS(data));
             if (fieldName == this.ACTIVE_FIELD && value == true) {
-                this._contactService['data'].contactInfo.statusId = ContactStatus.Active;
+                this.contactService['data'].contactInfo.statusId = ContactStatus.Active;
             }
         } else {
-            sub = this._userService.createOrUpdateUser(CreateOrUpdateUserInput.fromJS({
+            sub = this.userService.createOrUpdateUser(CreateOrUpdateUserInput.fromJS({
                 user: this.userData.user,
                 setRandomPassword: this.userData.user['setRandomPassword'],
                 sendActivationEmail: this.userData.user['sendActivationEmail'],
@@ -393,8 +393,8 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
     }
 
     ngOnDestroy() {
-        this._contactsService.unsubscribe(this.constructor.name);
+        this.contactsService.unsubscribe(this.constructor.name);
         if (this.dependencyChanged)
-            this._contactsService.invalidate();
+            this.contactsService.invalidate();
     }
 }

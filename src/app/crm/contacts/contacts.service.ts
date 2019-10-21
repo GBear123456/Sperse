@@ -16,7 +16,7 @@ import {
     ContactInfoDto,
     OrganizationContactInfoDto,
     UserServiceProxy,
-    ContactCommunicationServiceProxy, 
+    ContactCommunicationServiceProxy,
     SendEmailInput
 } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -55,7 +55,7 @@ export class ContactsService {
         private router: Router,
         private location: Location,
         public dialog: MatDialog
-    ) {  }
+    ) {}
 
     private subscribe(sub, ident = 'common') {
         if (!this.subscribers[ident])
@@ -185,8 +185,8 @@ export class ContactsService {
             position: this.dialogService.calculateDialogPosition(
                 event, event.target, shiftX, shiftY
             )
-        }).afterClosed().pipe(tap(responce => {
-            if (responce && responce.organizationId)
+        }).afterClosed().pipe(tap(response => {
+            if (response && response.organizationId)
                 setTimeout(() => this.invalidateUserData(), 300);
         }));
     }
@@ -217,7 +217,6 @@ export class ContactsService {
                 ...data
             }
         }).componentInstance;
-  
         return dialogComponent.onSave.asObservable().pipe(switchMap(res => {
             dialogComponent.startLoading();
             return this.emailProxy.sendEmail(new SendEmailInput(res));
