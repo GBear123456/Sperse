@@ -9,4 +9,16 @@
        class="edit fa fa-pencil bank-code-edit"
        (click)="showEditPopup($event)">
     </i>
+    <span *ngIf="showBankCodeDefinition"
+          class="bankCodeDefinition"
+          [ngStyle]="{ color: bankCodeService.getColorsByLetter(bankCode[0]).background}">
+        {{ bankCodeDefinition }}
+    </span>
+    <a *ngIf="showReportLink"
+       class="reportLink"
+       [href]="'https://www.crackmycode.com/ProfileReportFiles/' + bankCode + 'ProfileReport.pdf'"
+       target="_blank"
+       download>
+        <img src="./assets/common/images/bank-code/download-icon-{{reportIconSrc}}.png" [alt]="bankCodeDefinition">
+    </a>
 </ng-container>

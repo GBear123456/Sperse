@@ -62,7 +62,6 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
 
     uploadFile: FormGroup;
     dataMapping: FormGroup;
-    mapAllowedNextValue: any;
 
     _toolbarConfig: any[];
     private files: UploadFile[] = [];
@@ -254,7 +253,8 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
                 columnsIndex = {}, columnCount = 0;
 
             let processPartially = () => {
-                for (var index = onePercentCount * progress; index < Math.min(onePercentCount * (progress + 1), totalCount); index++) {
+                let index = onePercentCount * progress;
+                for (index; index < Math.min(onePercentCount * (progress + 1), totalCount); index++) {
                     let row = this.fileData.data[index];
                     if (index) {
                         if (row.length == columnCount) {
@@ -397,7 +397,7 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
     checkFileDataValid() {
         let errors = this.fileData && this.fileData.errors || [];
         return this.fileData
-            && (!errors.length || (errors.length == 1 && errors[0].code == "UndetectableDelimiter"))
+            && (!errors.length || (errors.length == 1 && errors[0].code == 'UndetectableDelimiter'))
             && this.fileData.data.length;
     }
 
@@ -448,7 +448,7 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
     fileDropped(event) {
         this.files = event.files;
         if (this.files.length) {
-            var file = this.files[0];
+            let file = this.files[0];
 
             if (file.fileEntry)
                 file.fileEntry['file'](this.loadFileContent.bind(this));

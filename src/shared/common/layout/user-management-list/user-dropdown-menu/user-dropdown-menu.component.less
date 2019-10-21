@@ -117,12 +117,11 @@
         }
     }
 
-    .bank-code-container {
+    /deep/ bank-code-letters {
         display: flex;
-        justify-content: space-between;
+        align-items: center;
         padding: 5px 11px 5px 30px;
-
-        /deep/ bank-code-letter {
+        bank-code-letter {
             span {
                 width: 25px;
                 height: 25px;
@@ -132,14 +131,10 @@
                 margin-right: 6px;
             }
         }
-
-        .bank-code-definition {
-            line-height: 25px;
-            span {
-                text-transform: uppercase;
-                font-weight: 600;
-                margin-right: 5px;
-            }
+        .bankCodeDefinition {
+            margin-left: auto;
+        }
+        a.reportLink {
             img {
                 max-width: 25px;
                 max-height: 25px;
