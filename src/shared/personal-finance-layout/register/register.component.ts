@@ -94,14 +94,14 @@ export class RegisterComponent implements AfterViewInit, OnInit {
             data: modalData
         });
 
-        this.offersService.incompleteApplicationId$.pipe(
-            first(),
-            filter(Boolean),
-            switchMap((applicationId: number) => this.offerServiceProxy.finalizeApplication(applicationId))
-        ).subscribe(
-            (response: FinalizeApplicationResponse) => {
-                this.sendDecisionToLS(response.status);
-                if (response.status === FinalizeApplicationStatus.Approved) {
+        // this.offersService.incompleteApplicationId$.pipe(
+        //     first(),
+        //     filter(Boolean),
+        //     switchMap((applicationId: number) => this.offerServiceProxy.finalizeApplication(applicationId))
+        // ).subscribe(
+        //     (response: FinalizeApplicationResponse) => {
+        //         this.sendDecisionToLS(response.status);
+        //         if (response.status === FinalizeApplicationStatus.Approved) {
                     applyOfferDialog.close();
                     let messageContent = {
                         title: 'Congratulations',
@@ -114,39 +114,39 @@ export class RegisterComponent implements AfterViewInit, OnInit {
                     };
                     messageContent['content'].style.display = 'block';
                     swal(messageContent);
-                    messageContent['content'].querySelector('.redirect-link').onclick = () => {
-                        window.open(response.redirectUrl, '_blank');
-                        this.completeAprove(swal);
-                    };
-                    setTimeout(() => {
-                        if (window.open(response.redirectUrl, '_blank')) {
-                            this.completeAprove(swal);
-                        }
-                    }, 8000);
-                } else if (response.status === FinalizeApplicationStatus.Declined) {
-                    let messageContent = {
-                        title: `We\'re sorry ${this.firstName}, but you have been declined`,
-                        button: {
-                            text: 'Get more options',
-                            value: true,
-                            closeModal: true
-                        },
-                        className: 'failure',
-                        content: this.document.getElementById('failurePopup').cloneNode(true)
-                    };
-                    messageContent.content.style.display = 'block';
-                    swal(messageContent).then((res) => {
-                        if (res) {
-                            window.open(AppConsts.appBaseUrl + this.getMoreOptionsLink, '_self');
-                        }
-                    });
-                }
-                /** To hide complete header */
-                this.offersService.setIncompleteApplicationId(null);
-                applyOfferDialog.close();
-            },
-            () => applyOfferDialog.close()
-        );
+                    // messageContent['content'].querySelector('.redirect-link').onclick = () => {
+                    //     window.open(response.redirectUrl, '_blank');
+                    //     this.completeAprove(swal);
+                    // };
+                    // setTimeout(() => {
+                    //     if (window.open(response.redirectUrl, '_blank')) {
+                    //         this.completeAprove(swal);
+                    //     }
+                    // }, 8000);
+        //         } else if (response.status === FinalizeApplicationStatus.Declined) {
+        //             let messageContent = {
+        //                 title: `We\'re sorry ${this.firstName}, but you have been declined`,
+        //                 button: {
+        //                     text: 'Get more options',
+        //                     value: true,
+        //                     closeModal: true
+        //                 },
+        //                 className: 'failure',
+        //                 content: this.document.getElementById('failurePopup').cloneNode(true)
+        //             };
+        //             messageContent.content.style.display = 'block';
+        //             swal(messageContent).then((res) => {
+        //                 if (res) {
+        //                     window.open(AppConsts.appBaseUrl + this.getMoreOptionsLink, '_self');
+        //                 }
+        //             });
+        //         }
+        //         /** To hide complete header */
+        //         this.offersService.setIncompleteApplicationId(null);
+        //         applyOfferDialog.close();
+        //     },
+        //     () => applyOfferDialog.close()
+        // );
     }
 
     private completeAprove(modal): Promise<boolean> {
