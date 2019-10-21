@@ -40,6 +40,7 @@ import { VgControlsModule } from 'videogular2/controls';
 import { VgOverlayPlayModule } from 'videogular2/overlay-play';
 import { VgBufferingModule } from 'videogular2/buffering';
 import { NgxMaskModule } from '@node_modules/ngx-mask';
+import { CKEditorModule } from 'ckeditor4-angular';
 
 /** Application imports */
 import { CommonModule } from '@shared/common/common.module';
@@ -107,6 +108,8 @@ import { PersonalDetailsComponent } from './personal-details/personal-details.co
 import { CRMDashboardWidgetsModule } from '@shared/crm/dashboard-widgets/dashboard-widgets.module';
 import { BankCodeLettersModule } from '@app/shared/common/bank-code-letters/bank-code-letters.module';
 import { SMSDialogComponent } from '@app/crm/shared/sms-dialog/sms-dialog.component';
+import { InvoiceSettingsDialogComponent } from './invoice-settings-dialog/invoice-settings-dialog.component';
+import { EmailTemplateDialogComponent } from '@app/crm/shared/email-template-dialog/email-template-dialog.component';
 
 @NgModule({
     declarations: [
@@ -154,6 +157,8 @@ import { SMSDialogComponent } from '@app/crm/shared/sms-dialog/sms-dialog.compon
         CreateClientDialogComponent,
         ContactListDialogComponent,
         NotSupportedTypeDialogComponent,
+        EmailTemplateDialogComponent,
+        InvoiceSettingsDialogComponent,
         HistoryListDialogComponent,
         UserInboxComponent,
         OrdersComponent,
@@ -204,7 +209,8 @@ import { SMSDialogComponent } from '@app/crm/shared/sms-dialog/sms-dialog.compon
         NgxMaskModule.forRoot(),
         ItemDetailsLayoutModule,
         CRMDashboardWidgetsModule,
-        BankCodeLettersModule
+        BankCodeLettersModule,
+        CKEditorModule
     ],
     entryComponents: [
         EditContactDialog,
@@ -222,6 +228,8 @@ import { SMSDialogComponent } from '@app/crm/shared/sms-dialog/sms-dialog.compon
         RelationCompaniesDialogComponent,
         CreateClientDialogComponent,
         NotSupportedTypeDialogComponent,
+        InvoiceSettingsDialogComponent,
+        EmailTemplateDialogComponent,
         HistoryListDialogComponent,
         SMSDialogComponent
     ],

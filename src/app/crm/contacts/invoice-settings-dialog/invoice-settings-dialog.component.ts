@@ -9,14 +9,15 @@ import { DxTextBoxComponent } from 'devextreme-angular/ui/text-box';
 import { AppConsts } from '@shared/AppConsts';
 import { DialogService } from '@app/shared/common/dialogs/dialog.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { EmailTemplateType } from '@shared/service-proxies/service-proxies';
 
 @Component({
-    templateUrl: 'email-invoice-dialog.component.html',
-    styleUrls: [ 'email-invoice-dialog.component.less' ],
+    templateUrl: 'invoice-settings-dialog.component.html',
+    styleUrls: [ 'invoice-settings-dialog.component.less' ],
     providers: [ DialogService ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class EmailInvoiceDialogComponent {
+export class InvoiceSettingsDialogComponent {
     attachPDF = {
         key: 'attachPDF',
         value: true
@@ -43,11 +44,15 @@ export class EmailInvoiceDialogComponent {
     };
 
     constructor(
-        private dialogRef: MatDialogRef<EmailInvoiceDialogComponent>,
+        private dialogRef: MatDialogRef<InvoiceSettingsDialogComponent>,
         private changeDetectorRef: ChangeDetectorRef,
         public ls: AppLocalizationService,
         @Inject(MAT_DIALOG_DATA) public data: any
     ) {
+        data.templateType = EmailTemplateType.Invoice;
+        data.title = ls.l('Invoice Settings');
+        data.saveTitle = ls.l('Save');
+
         data.templateSettings = [
             this.attachPDF, 
             this.sendReminders, 
