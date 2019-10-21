@@ -2,14 +2,14 @@
 import { Component, Injector, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
 
 /** Third party imports */
-import { Store, select } from '@ngrx/store';
+import { select } from '@ngrx/store';
 import { finalize } from 'rxjs/operators';
 import * as addressParser from 'parse-address';
 import * as _ from 'underscore';
 
 /** Application imports */
 import { AppService } from '@app/app.service';
-import { AppStore, PartnerTypesStoreSelectors, ContactAssignedUsersStoreSelectors } from '@app/store';
+import { ContactAssignedUsersStoreSelectors } from '@app/store';
 import { ImportWizardService } from '@app/shared/common/import-wizard/import-wizard.service';
 import { NameParserService } from '@app/crm/shared/name-parser/name-parser.service';
 import { StaticListComponent } from '@app/shared/common/static-list/static-list.component';
@@ -210,16 +210,15 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
 
     constructor(
         injector: Injector,
-        private _appService: AppService,
-        private _importProxy: ImportServiceProxy,
-        private _pipelineService: PipelineService,
-        private _nameParser: NameParserService,
-        private _importLeadsService: ImportLeadsService,
-        private _partnerService: PartnerServiceProxy,
+        private appService: AppService,
+        private importProxy: ImportServiceProxy,
+        private pipelineService: PipelineService,
+        private nameParser: NameParserService,
+        private importLeadsService: ImportLeadsService,
+        private partnerService: PartnerServiceProxy,
         private zipFormatterPipe: ZipCodeFormatterPipe,
-        public importWizardService: ImportWizardService,
-        private _contactService: ContactsService,
-        private store$: Store<AppStore.State>
+        private contactService: ContactsService,
+        public importWizardService: ImportWizardService
     ) {
         super(injector);
         this.setMappingFields(ImportItemInput.fromJS({}));
@@ -241,8 +240,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         this.userAssignmentComponent.assignedUsersSelector = this.getAssignedUsersSelector();
         this.userAssignmentComponent.refreshList();
 
-        let contactGroupId = this.importType == ImportTypeInput.Client ? undefined :
-            (ContactGroup[this.importType == ImportTypeInput.Lead ? 'Client' : this.importType]);
+        let contactGroupId = ContactGroup[this.importType == ImportTypeInput.Lead ? 'Client' : this.importType];
         if (contactGroupId != this.contactGroupId) {
             if (this.contactGroupId = contactGroupId)
                 this.getStages();
@@ -292,7 +290,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     }
 
     private parseFullNameIntoDataSource(fullName, dataSource) {
-        let parsed = this._nameParser.getParsed(fullName);
+        let parsed = this.nameParser.getParsed(fullName);
 
         this.setFieldIfDefined(parsed.title, this.NAME_PREFIX_FIELD, dataSource);
         this.setFieldIfDefined(parsed.first, this.FIRST_NAME_FIELD, dataSource);
@@ -384,23 +382,22 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
                 if (isConfirmed) {
                     this.startLoading(true);
                     let leadsInput = this.createLeadsInput(data);
-                    this._importProxy.import(leadsInput)
-                        .pipe(
-                            finalize(() => this.finishLoading(true))
-                        ).subscribe((importId) => {
-                            if (importId && !isNaN(importId))
-                                this._importProxy.getStatuses(importId).subscribe((res) => {
-                                    let importStatus  = res[0];
-                                    this.updateImportStatus(importStatus);
-                                    if (!this.showedFinishStep())
-                                         this.wizard.showFinishStep();
-                                    if (<ImportStatus>importStatus.statusId == ImportStatus.InProgress)
-                                        this._importLeadsService.setupImportCheck(importId, (importStatus) => {
-                                            this.updateImportStatus(importStatus);
-                                        }, uri);
-                                });
-                            this.clearToolbarSelectedItems();
-                        });
+                    this.importProxy.import(leadsInput).pipe(
+                        finalize(() => this.finishLoading(true))
+                    ).subscribe((importId) => {
+                        if (importId && !isNaN(importId))
+                            this.importProxy.getStatuses(importId).subscribe((res) => {
+                                let importStatus  = res[0];
+                                this.updateImportStatus(importStatus);
+                                if (!this.showedFinishStep())
+                                     this.wizard.showFinishStep();
+                                if (<ImportStatus>importStatus.statusId == ImportStatus.InProgress)
+                                    this.importLeadsService.setupImportCheck(importId, (importStatus) => {
+                                        this.updateImportStatus(importStatus);
+                                    }, uri);
+                            });
+                        this.clearToolbarSelectedItems();
+                    });
                 }
             }
         );
@@ -487,7 +484,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     }
 
     getStages() {
-        this._pipelineService.getPipelineDefinitionObservable(this.pipelinePurposeId, this.contactGroupId)
+        this.pipelineService.getPipelineDefinitionObservable(this.pipelinePurposeId, this.contactGroupId)
             .subscribe(result => {
                 this.stages = result.stages.map((stage) => {
                     return {
@@ -517,7 +514,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
 
     deactivate() {
         this.rootComponent.overflowHidden();
-        this._importLeadsService.setupImportCheck();
+        this.importLeadsService.setupImportCheck();
     }
 
     preProcessFieldBeforeReview = (field, sourceValue, reviewDataSource) => {
@@ -596,7 +593,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     }
 
     initToolbarConfig() {
-        let disabledManage = !this._contactService.checkCGPermission(this.contactGroupId);
+        let disabledManage = !this.contactService.checkCGPermission(this.contactGroupId);
         this.toolbarConfig = [
             {
                 location: 'before',
@@ -611,16 +608,19 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
                             selectedIndex: this.importTypeIndex,
                             hint: this.l('Import Type'),
                             items: Object.keys(ImportTypeInput)
-                                .filter((type: string) => type !== 'Lead')
                                 .map((type) => {
+                                    const text = this.l(type + 's');
+                                    const value = ImportTypeInput[type];
+                                    if (type == ImportTypeInput.Lead)
+                                        type = 'Client';
                                     if (type == ImportTypeInput.Employee)
                                         type = 'UserProfile';
                                     return {
                                         disabled: type == ImportTypeInput.Order
-                                            || !this._contactService.checkCGPermission(ContactGroup[type]),
+                                            || !this.contactService.checkCGPermission(ContactGroup[type]),
                                         action: this.importTypeChanged.bind(this),
-                                        text: this.l(type + 's'),
-                                        value: ImportTypeInput[type]
+                                        text: text,
+                                        value: value
                                     };
                                 })
                         }
@@ -634,7 +634,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
                     {
                         name: 'assign',
                         action: () => this.userAssignmentComponent.toggle(),
-                        disabled: !this._contactService.checkCGPermission(this.contactGroupId, 'ManageAssignments'),
+                        disabled: !this.contactService.checkCGPermission(this.contactGroupId, 'ManageAssignments'),
                         attr: {
                             'filter-selected': this.isUserSelected
                         }
@@ -645,7 +645,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
                         attr: {
                             'filter-selected': !!this.selectedStageId
                         },
-                        disabled: !this.contactGroupId || disabledManage
+                        disabled: this.importType === ImportTypeInput.Client || disabledManage
                     },
                     {
                         name: 'partnerType',
@@ -658,7 +658,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
                     {
                         name: 'lists',
                         action: () => this.listsComponent.toggle(),
-                        disabled: !this._contactService.checkCGPermission(this.contactGroupId, 'ManageListsAndTags'),
+                        disabled: !this.contactService.checkCGPermission(this.contactGroupId, 'ManageListsAndTags'),
                         attr: {
                             'filter-selected': this.isListsSelected
                         }
@@ -666,7 +666,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
                     {
                         name: 'tags',
                         action: () => this.tagsComponent.toggle(),
-                        disabled: !this._contactService.checkCGPermission(this.contactGroupId, 'ManageListsAndTags'),
+                        disabled: !this.contactService.checkCGPermission(this.contactGroupId, 'ManageListsAndTags'),
                         attr: {
                             'filter-selected': this.isTagsSelected
                         }
@@ -674,7 +674,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
                     {
                         name: 'rating',
                         action: () => this.ratingComponent.toggle(),
-                        disabled: !this._contactService.checkCGPermission(this.contactGroupId, 'ManageRatingAndStars'),
+                        disabled: !this.contactService.checkCGPermission(this.contactGroupId, 'ManageRatingAndStars'),
                         attr: {
                             'filter-selected': this.isRatingSelected
                         }
@@ -685,7 +685,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
                             width: 30,
                         },
                         action: () => this.starsListComponent.toggle(),
-                        disabled: !this._contactService.checkCGPermission(this.contactGroupId, 'ManageRatingAndStars'),
+                        disabled: !this.contactService.checkCGPermission(this.contactGroupId, 'ManageRatingAndStars'),
                         attr: {
                             'filter-selected': this.isStarSelected
                         }
@@ -693,7 +693,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
                 ]
             }
         ];
-        this._appService.updateToolbar(null);
+        this.appService.updateToolbar(null);
     }
 
     clearToolbarSelectedItems() {
@@ -705,17 +705,11 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         this.listsComponent.reset();
         this.tagsComponent.reset();
         this.ratingComponent.ratingValue = this.defaultRating;
-        this._appService.updateToolbar(null);
+        this.appService.updateToolbar(null);
     }
 
     cancelImport() {
         this.importWizardService.cancelImport();
-    }
-
-    loadPartnerTypes() {
-        this.store$.pipe(select(PartnerTypesStoreSelectors.getPartnerTypes)).subscribe(
-            partnerTypes => this.partnerTypes = partnerTypes
-        );
     }
 
     onStepChanged(event) {
@@ -727,6 +721,6 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     }
 
     getUserAssignmentPermissionKey() {
-        return this._contactService.getCGPermissionKey(this.contactGroupId, 'ManageAssignments');
+        return this.contactService.getCGPermissionKey(this.contactGroupId, 'ManageAssignments');
     }
 }

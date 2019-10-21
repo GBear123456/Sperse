@@ -65,13 +65,13 @@ export class ContactsService {
         return sub;
     }
 
-    getCGPermissionKey(contactGroup, permission = ''): string {
+    getCGPermissionKey(contactGroup: string, permission = ''): string {
         return ContactGroupPermission[
             this.CONTACT_GROUP_KEYS[contactGroup]
         ] + (permission ? '.' : '') + permission;
     }
 
-    checkCGPermission(contactGroup, permission = 'Manage') {
+    checkCGPermission(contactGroup: string, permission = 'Manage') {
         return this.permission.isGranted(this.getCGPermissionKey(contactGroup, permission) as AppPermissions);
     }
 
