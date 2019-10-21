@@ -134,10 +134,9 @@ export class CreateInvoiceDialogComponent implements OnInit {
         @Inject(MAT_DIALOG_DATA) public data: any
     ) {
         this.saveContextMenuItems = [
-            {text: this.ls.l('Save'), selected: false, status: InvoiceStatus.Final},
-            {text: this.ls.l('Invoice_SaveAsDraft'), selected: false, disabled: this.data.invoice
-                && this.data.invoice.Status != InvoiceStatus.Draft, status: InvoiceStatus.Draft},
-            {text: this.ls.l('Invoice_SaveAndSend'), selected: false, status: InvoiceStatus.Final, email: true},
+            {text: this.ls.l('Save'), selected: false, status: InvoiceStatus.Final, disabled: this.disabledForUpdate},
+            {text: this.ls.l('Invoice_SaveAsDraft'), selected: false, disabled: this.disabledForUpdate, status: InvoiceStatus.Draft},
+            {text: this.ls.l('Invoice_SaveAndSend'), selected: false, status: InvoiceStatus.Final, email: true, disabled: this.disabledForUpdate},
             {text: this.ls.l('Invoice_SaveAndMarkSent'), selected: false, disabled: true}
         ];
         this.store$.dispatch(new CurrenciesStoreActions.LoadRequestAction());
@@ -146,6 +145,10 @@ export class CreateInvoiceDialogComponent implements OnInit {
             filter(Boolean), first()
         ).subscribe((selectedCurrencyId: string) => {
             this.currency = selectedCurrencyId;
+        });
+
+        invoiceProxy.getSettings().subscribe(res => {
+            console.log(res);
         });
     }
 
@@ -177,8 +180,8 @@ export class CreateInvoiceDialogComponent implements OnInit {
             this.date = invoice.Date;
             this.dueDate = invoice.DueDate;
             this.contactId = invoice.ContactId;
-            this.disabledForUpdate = this.status != InvoiceStatus.Draft
-                && this.status != InvoiceStatus.Final;
+            if (this.disabledForUpdate = this.status != InvoiceStatus.Draft)
+                this.buttons[0].disabled = this.disabledForUpdate;
             this.changeDetectorRef.detectChanges();
             this.invoiceProxy.getInvoiceInfo(invoice.Id)
                 .pipe(finalize(() => this.modalDialog.finishLoading()))
@@ -293,35 +296,49 @@ export class CreateInvoiceDialogComponent implements OnInit {
         subscription$.pipe(finalize(() => {
             saveButton.disabled = false;
             this.modalDialog.finishLoading();
-        })).subscribe(() => {
+        })).subscribe(invoiceId => {
+            if (invoiceId)
+                this.invoiceId = invoiceId;
             this.afterSave();
         });
     }
 
-    updateStatus() {
+    updateStatus(status?) {
+        if (status)
+            this.status = status;
         if (this.status != this.data.invoice.Status) {
-            this.modalDialog.startLoading();
+            status || this.modalDialog.startLoading();
             this.invoiceProxy.updateStatus(new UpdateInvoiceStatusInput({
                 id: this.invoiceId,
                 status: InvoiceStatus[this.status]
-            })).pipe(finalize(() => this.modalDialog.finishLoading()))
+            })).pipe(finalize(() => status || this.modalDialog.finishLoading()))
                 .subscribe(() => {
-                    this.afterSave();
+                    status || this.afterSave();
                 });
         }
     }
 
     private afterSave(): void {
-        this.notifyService.info(this.ls.l('SavedSuccessfully'));
         this.data.refreshParent && this.data.refreshParent();
         if (this.selectedOption.email)
             this.showNewEmailDialog();
-            
-        this.close();
+        else {
+            this.notifyService.info(this.ls.l('SavedSuccessfully'));
+            this.close();
+        }
     }
 
     private showNewEmailDialog() {
-        this.contactsService.showEmailDialog(this.data).subscribe();
+        this.modalDialog.startLoading();
+        this.invoiceProxy.getPreprocessedEmail(undefined, this.invoiceId).subscribe((data) => {
+            this.close();
+            data['contactId'] = this.contactId;
+            this.modalDialog.finishLoading();
+            this.contactsService.showEmailDialog(data).subscribe(() => {
+                this.updateStatus(InvoiceStatus.Sent);
+                this.dialog.closeAll();
+            });
+        });
     }
 
     private validateDate(caption, value) {
@@ -455,8 +472,10 @@ export class CreateInvoiceDialogComponent implements OnInit {
     }
 
     resetNoteDefault() {
-        this.notes = this.ls.l('Invoice_DefaultNote');
-        this.changeDetectorRef.detectChanges();
+        if (!this.disabledForUpdate) {
+            this.notes = this.ls.l('Invoice_DefaultNote');
+            this.changeDetectorRef.detectChanges();
+        }
     }
 
     onValueChanged(event, data, field?) {
@@ -495,21 +514,22 @@ export class CreateInvoiceDialogComponent implements OnInit {
     }
 
     createClient() {
-        this.dialog.open(CreateClientDialogComponent, {
-            panelClass: 'slider',
-            disableClose: true,
-            closeOnNavigation: false,
-            data: {
-                customerType: ContactGroup.Client
-            }
-        }).afterClosed().subscribe((data) => {
-            if (data) {
-                this.contactId = data.id;
-                this.customer = [data.firstName, data.middleName,
-                    data.lastName].filter(Boolean).join(' ');
-                this.changeDetectorRef.detectChanges();
-            }
-        });
+        if (!this.disabledForUpdate)
+            this.dialog.open(CreateClientDialogComponent, {
+                panelClass: 'slider',
+                disableClose: true,
+                closeOnNavigation: false,
+                data: {
+                    customerType: ContactGroup.Client
+                }
+            }).afterClosed().subscribe(data => {
+                if (data) {
+                    this.contactId = data.id;
+                    this.customer = [data.firstName, data.middleName,
+                        data.lastName].filter(Boolean).join(' ');
+                    this.changeDetectorRef.detectChanges();
+                }
+            });
     }
 
     openInvoiceSettings() {

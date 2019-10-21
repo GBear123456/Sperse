@@ -20,6 +20,7 @@
             width="270px"
             height="40px"
             name="invoiceNo"
+            [disabled]="disabledForUpdate"
             [placeholder]="'INV-XXXXXXXX-XXXX'"
             [(value)]="invoiceNo"
             [showClearButton]="false">
@@ -32,6 +33,7 @@
             valueExpr="id"
             [placeholder]="ls.l('Currency')"
             [(value)]="currency"
+            [disabled]="disabledForUpdate"
             [dataSource]="currencies$ | async"
             (onOptionChanged)="setCurrencyHintValue($event)"
             (onValueChanged)="onCurrencyChanged($event)">
@@ -61,7 +63,7 @@
                         </div>
                     </div>
                     <div class="field-area">
-                        <label class="customer-label">{{ls.l('To')}}<a (click)="createClient()">+ {{ls.l('New') + ' ' + ls.l('Client')}}</a></label>
+                        <label class="customer-label">{{ls.l('To')}}<a (click)="createClient()" [class.disabled]="disabledForUpdate">+ {{ls.l('New') + ' ' + ls.l('Client')}}</a></label>
                         <dx-select-box #contact
                             name="customer"
                             width="500px"
