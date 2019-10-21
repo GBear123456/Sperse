@@ -107,6 +107,13 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
 
     refresh(refreshLeadsAndClients = true) {
         this.dashboardWidgetsService.refresh();
+        /** Reload status after refresh if it's showing welcome page */
+        this.showWelcomeSection$.pipe(
+            first(),
+            filter(Boolean)
+        ).subscribe(() => {
+            this.loadStatus();
+        });
         if (refreshLeadsAndClients) {
             /** Invalidate leads and clients */
             (this.reuseService as CustomReuseStrategy).invalidate('leads');
