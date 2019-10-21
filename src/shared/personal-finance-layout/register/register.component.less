@@ -7,11 +7,13 @@
     &.finalize,
     &.success,
     &.failure {
+        font-family: Poppins;
         box-shadow: 4px 9px 7px -2px rgba(0,0,0,0.74);
         background: #fff !important;
+        border-radius: 12px;
         @media (min-width: 768px) {
-            width: 550px;
-            height: 330px;
+            width: 640px;
+            height: 480px;
         }
 
         h1 {
@@ -154,32 +156,67 @@
     }
 
     &.finalize {
-
-        .swal-title {
-            font-weight: 700;
-            margin-bottom: 0;
-            padding-bottom: 0;
-            margin-top: 55px;
-            font-size: 28px !important;
-            @media (min-width: 768px) {
-                margin-top: 80px;
-            }
-        }
-
+        text-align: center;
+        display: inline-flex;
+        flex-direction: column;
+        justify-content: center;
         .swal-content {
-            margin-top: 0;
-            h2 {
+            margin-top: 5px;
+            h1 {
+                font-size: 32px;
                 font-weight: 700;
-                font-size: 28px;
-                color: #019c4f;
+                text-align: center;
+                color: #000000;
+                margin-top: 20px;
+                margin-bottom: 15px;
+            }
+
+            h2 {
+                font-size: 18px;
+                font-weight: 400;
+                color: #4a4a4a;
+                margin-bottom: 0;
             }
         }
-        .swal-button {
-            border-radius: 0;
-            text-transform: uppercase;
-            &:after {
-                display: none;
+        .swal-footer {
+            margin-top: 30px;
+            .swal-button-container {
+                margin-top: 0;
             }
+            .swal-button {
+                font-family: Poppins;
+                font-size: 19px;
+                font-weight: 700;
+                letter-spacing: 0.15px;
+                text-align: center;
+                color: #000;
+                border-radius: 2px;
+                background: #ffcc00;
+                border: none;
+                text-transform: uppercase;
+                position: relative;
+                &:after {
+                    content: url('../../../assets/common/icons/offers/approved-arrow.svg');
+                    width: 18px;
+                    height: 13px;
+                    display: block;
+                    position: absolute;
+                    right: 32px;
+                    top: -15px;
+                    bottom: 0;
+                    margin: auto 0;
+                }
+                &:hover:after {
+                    content: url('../../../assets/common/icons/offers/approved-arrow-white.svg');
+                }
+                @media (min-width: 768px) {
+                    width: 358px;
+                    height: 60px;
+                }
+            }
+        }
+        @media (min-width: 768px) {
+            padding: 0 75px;
         }
     }
 

@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, Inject, OnInit } from '@angular/core';
+import { AfterViewInit, Component, Inject, OnInit } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
@@ -17,6 +17,7 @@ import { OffersService } from '@root/personal-finance/shared/offers/offers.servi
 import { LoadingService } from '@shared/common/loading-service/loading.service';
 import { AppConsts } from '@shared/AppConsts';
 import { ApplyOfferDialogComponent } from '@root/personal-finance/shared/offers/apply-offer-modal/apply-offer-dialog.component';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 
 @Component({
     selector: 'register',
@@ -27,7 +28,7 @@ import { ApplyOfferDialogComponent } from '@root/personal-finance/shared/offers/
     ]
 })
 
-export class RegisterComponent implements OnInit {
+export class RegisterComponent implements AfterViewInit, OnInit {
     applicationCompleteIsRequired$: Observable<Boolean> = this.offersService.applicationCompleteIsRequired$;
     getMoreOptionsLink = '/personal-finance/offers/post-offers';
     firstName: string;
@@ -39,10 +40,18 @@ export class RegisterComponent implements OnInit {
         private dialog: MatDialog,
         private router: Router,
         private http: HttpClient,
+        public ls: AppLocalizationService,
         @Inject(DOCUMENT) private document: any
     ) {}
 
     ngOnInit() {
+        this.offersService.memberInfo$.pipe(first()).subscribe((memberInfo: GetMemberInfoResponse) => {
+            this.firstName = memberInfo.firstName;
+            this.clickId = memberInfo.clickId;
+        });
+    }
+
+    ngAfterViewInit() {
         this.applicationCompleteIsRequired$.pipe(
             filter(Boolean),
             first()
@@ -52,28 +61,21 @@ export class RegisterComponent implements OnInit {
     }
 
     showRegisterPopup() {
-        this.offersService.memberInfo$
-            .pipe(first())
-            .subscribe((memberInfo: GetMemberInfoResponse) => {
-                this.firstName = memberInfo.firstName;
-                this.clickId = memberInfo.clickId;
-                const messageContent = {
-                    title: this.firstName + ', please click below to',
-                    button: {
-                        text: 'Get approved',
-                        className: 'applyButton',
-                        closeModal: true
-                    },
-                    className: 'finalize',
-                    content: this.document.getElementById('registerPopup').cloneNode(true)
-                };
-                messageContent['content'].style.display = 'block';
-                swal(messageContent).then((result) => {
-                    if (result) {
-                        this.register();
-                    }
-                });
-            });
+        const messageContent = {
+            button: {
+                text: 'Get approved',
+                className: 'applyButton',
+                closeModal: true
+            },
+            className: 'finalize',
+            content: this.document.getElementById('registerPopup').cloneNode(true)
+        };
+        messageContent['content'].style.display = 'block';
+        swal(messageContent).then((result) => {
+            if (result) {
+                this.register();
+            }
+        });
     }
 
     private register() {
