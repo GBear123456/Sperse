@@ -120,7 +120,7 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
 
     private loadStatus() {
         this.dashboardServiceProxy.getStatus().subscribe((status: GetCRMStatusOutput) => {
-            this.showWelcomeSection.next(status.hasData);
+            this.showWelcomeSection.next(!status.hasData);
         });
     }
 
