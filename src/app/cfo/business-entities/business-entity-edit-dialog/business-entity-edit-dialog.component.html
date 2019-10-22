@@ -8,7 +8,7 @@
                              (onKeyUp)="onKeyUp($event, 'name')"
                              [(value)]="businessEntity.name">
                     <dx-validator>
-                        <dxi-validation-rule type="required" message="{{ls.l('BusinessEntity_NameIsRequired')}}"></dxi-validation-rule>
+                        <dxi-validation-rule type="required" [message]="ls.l('BusinessEntity_NameIsRequired')"></dxi-validation-rule>
                     </dx-validator>
                 </dx-text-box>
                 <span [class]="businessEntity.name && 'clear-contact' || 'hidden'" (click)="emptyValue('name')"><i class="minus-icon"></i></span>

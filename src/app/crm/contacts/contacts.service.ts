@@ -67,7 +67,7 @@ export class ContactsService {
 
     getCGPermissionKey(contactGroup: ContactGroup, permission = ''): string {
         return ContactGroupPermission[
-            this.CONTACT_GROUP_KEYS[contactGroup.toString()]
+            this.CONTACT_GROUP_KEYS[contactGroup ? contactGroup.toString() : undefined]
         ] + (permission ? '.' : '') + permission;
     }
 

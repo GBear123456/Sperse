@@ -807,8 +807,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
             data: {
                 contact: this.contactInfo
             }
-        }).afterClosed().subscribe(() => {
-        });
+        }).afterClosed().subscribe();
     }
 
     reloadCurrentSection(params = this.params) {
