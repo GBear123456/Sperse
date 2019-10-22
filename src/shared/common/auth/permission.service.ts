@@ -5,12 +5,12 @@ import { AppPermissions } from '@shared/AppPermissions';
 @Injectable()
 export class AppPermissionService {
     constructor(
-        private _permissionChecker: PermissionCheckerService
+        private permissionChecker: PermissionCheckerService
     ) {}
 
-    isGranted(permission: AppPermissions): boolean {
+    isGranted(permission: AppPermissions | string): boolean {
         return !permission || permission.split('|').some((item) => {
-            return item.split('&').every((key) => this._permissionChecker.isGranted(key));
+            return item.split('&').every((key) => this.permissionChecker.isGranted(key));
         });
     }
 }

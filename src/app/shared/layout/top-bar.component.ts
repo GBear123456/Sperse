@@ -84,7 +84,7 @@ export class TopBarComponent {
         });
         return navList;
     }
-                                                       
+
     navigate(event) {
         let route = event.itemData.route;
         if (route) {
@@ -135,10 +135,10 @@ export class TopBarComponent {
                 this.mutationObservers[sel] = new MutationObserver(() => {
                     this.updateNavMenu(true);
                 });
-                this.mutationObservers[sel].observe(element, { 
-                    attributes: true, 
-                    childList: true, 
-                    subtree: true 
+                this.mutationObservers[sel].observe(element, {
+                    attributes: true,
+                    childList: true,
+                    subtree: true
                 });
             }
         });
@@ -159,7 +159,7 @@ export class TopBarComponent {
         return this.getNavBarElement().offsetWidth;
     }
 
-    onNavBarInitialized() {        
+    onNavBarInitialized() {
         this.contentChangeObserve();
         this.updateNavMenu(true);
     }
