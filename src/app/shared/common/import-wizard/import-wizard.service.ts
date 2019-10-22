@@ -16,9 +16,9 @@ export class ImportWizardService {
     public activeImportId = 0;
 
     constructor(injector: Injector,
-        private _reuseService: RouteReuseStrategy,
-        private _importProxy: ImportServiceProxy,
-        private _permissionService: AppPermissionService
+        private reuseService: RouteReuseStrategy,
+        private importProxy: ImportServiceProxy,
+        private permissionService: AppPermissionService
     ) {
         this.subjectProgress = new Subject<any>();
         this.subjectCancel = new Subject<any>();
@@ -44,9 +44,9 @@ export class ImportWizardService {
     }
 
     startStatusCheck(importId = undefined, method = undefined, invalUri = undefined) {
-        if (this._permissionService.isGranted(AppPermissions.CRMBulkImport))
+        if (this.permissionService.isGranted(AppPermissions.CRMBulkImport))
             this.setupCheckTimeout((callback) => {
-                this._importProxy.getStatuses(importId).subscribe((res) => {
+                this.importProxy.getStatuses(importId).subscribe((res) => {
                     if (res && res.length) {
                         if (res.length > 1)
                             this.activeImportId = undefined;
@@ -54,7 +54,7 @@ export class ImportWizardService {
                             let importStatus = res[0];
                             method && method(importStatus);
                             if ([ImportStatus.Completed, ImportStatus.Cancelled].indexOf(<ImportStatus>importStatus.statusId) >= 0) {
-                                invalUri && (<any>this._reuseService).invalidate(invalUri);
+                                invalUri && (<any>this.reuseService).invalidate(invalUri);
                                 this.activeImportId = undefined;
                             }
                             if (<ImportStatus>importStatus.statusId == ImportStatus.InProgress)

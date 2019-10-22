@@ -528,10 +528,9 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
         });
     }
 
-    refresh(quietly = false, stageId) {
+    refresh(stageId?: number) {
         this.schedulerComponent.instance.repaint();
-        this.pipelineComponent.refresh(
-            quietly || !this.showPipeline, stageId);
+        this.pipelineComponent.refresh(stageId);
     }
 
     repaint() {
