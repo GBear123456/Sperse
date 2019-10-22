@@ -133,16 +133,13 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
         if (event.rowType === 'data' && this.isGranted(AppPermissions.CRMOrdersInvoicesManage)) {
             /** If user click on actions icon */
             if (event.columnIndex && event.data) {
-                if (event.data.Status == InvoiceStatus.Draft) {
-                    this.actionRecordData = event.data;
-                    setTimeout(() => this.editInvoice());
-                }
+                this.actionRecordData = event.data;
+                setTimeout(() => this.editInvoice());
             } else {
                 if (event.event.target.closest('.dx-link.dx-link-edit')) {
                     this.actionMenuItems.map(item => {
                         item.disabled = (item.type == ActionButtonType.Delete) &&
-                            (event.data.Status == InvoiceStatus.Paid) ||
-                            (event.data.Status != InvoiceStatus.Draft);
+                            (event.data.Status == InvoiceStatus.Paid);
                     });
                     this.actionRecordData = event.data;
                     this.showActionsMenu(event.event.target);

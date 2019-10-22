@@ -3,11 +3,19 @@
         <div class="settings-wrapper">
             <div class="left-side">
                 <h3>{{ls.l('InvoiceEmail_OtherSettings')}}</h3>
+                <dx-text-box 
+                    [placeholder]="ls.l('NextInvoiceNumber')"
+                    [(value)]="nextInvoiceNumber">
+                </dx-text-box>
                 <dx-check-box
                     [text]="ls.l('InvoiceEmail_AttachPDF')"
-                    [(value)]="attachPDF.value">
+                    [(value)]="attachPDF">
                 </dx-check-box>
-                <dx-check-box
+                <dx-text-area 
+                    [placeholder]="ls.l('Note')"
+                    [(value)]="note">
+                </dx-text-area>
+                <!-- dx-check-box
                     disabled="true"
                     [text]="ls.l('InvoiceEmail_SendReminders')"
                     [(value)]="sendReminders.value">
@@ -26,7 +34,7 @@
                     disabled="true"
                     [text]="ls.l('InvoiceEmail_SendAlerts')"
                     [(value)]="sendAlerts.value">
-                </dx-check-box>
+                </dx-check-box -->
             </div>
             <div class="right-side">
                 <h3>{{ls.l('InvoiceEmail_PaymentMethod')}}&nbsp;<img src="assets/images/icons/information-button.svg"></h3>
