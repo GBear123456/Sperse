@@ -18,30 +18,9 @@ import { EmailTemplateType } from '@shared/service-proxies/service-proxies';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class InvoiceSettingsDialogComponent {
-    attachPDF = {
-        key: 'attachPDF',
-        value: true
-    };
-    sendReminders = {
-        key: 'sendReminders',
-        value: false
-    };
-    partialPayment = {
-        key: 'partialPayment',
-        value: false
-    };
-    autoPayment = {
-        key: 'autoPayment',
-        value: false
-    };
-    sendAlerts = {
-        key: 'sendAlerts',
-        value: false
-    };
-    dueDate = {
-        key: 'dueDate',
-        value: null
-    };
+    attachPDF;
+    nextInvoiceNumber;
+    note;
 
     constructor(
         private dialogRef: MatDialogRef<InvoiceSettingsDialogComponent>,
@@ -53,14 +32,7 @@ export class InvoiceSettingsDialogComponent {
         data.title = ls.l('Invoice Settings');
         data.saveTitle = ls.l('Save');
 
-        data.templateSettings = [
-            this.attachPDF, 
-            this.sendReminders, 
-            this.partialPayment,
-            this.autoPayment,
-            this.sendAlerts,
-            this.dueDate
-        ];
+        data.templateSettings = [];
     }
 
     allowDigitsOnly(event, exceptions = []) {
