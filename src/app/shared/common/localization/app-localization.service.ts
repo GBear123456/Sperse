@@ -31,6 +31,6 @@ export class AppLocalizationService extends LocalizationService {
     }
 
     lr(key: string) {
-        return '* ' + this.l(key);
+        return this.l(key) + '*';
     }
 }

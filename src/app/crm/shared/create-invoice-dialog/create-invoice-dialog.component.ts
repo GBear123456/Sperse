@@ -2,6 +2,7 @@
 import { Component, ChangeDetectionStrategy, OnInit, ViewChild, Inject, ChangeDetectorRef } from '@angular/core';
 
 /** Third party imports */
+import { DxValidationGroupComponent } from '@root/node_modules/devextreme-angular';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { DxContextMenuComponent } from 'devextreme-angular/ui/context-menu';
 import { DxSelectBoxComponent } from 'devextreme-angular/ui/select-box';
@@ -52,6 +53,7 @@ import { AppPermissions } from '@shared/AppPermissions';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CreateInvoiceDialogComponent implements OnInit {
+    @ViewChild(DxValidationGroupComponent) linesValidationGroup: DxValidationGroupComponent;
     @ViewChild(ModalDialogComponent) modalDialog: ModalDialogComponent;
     @ViewChild(DxContextMenuComponent) saveContextComponent: DxContextMenuComponent;
     @ViewChild(DxDataGridComponent) linesComponent: DxDataGridComponent;
@@ -364,8 +366,8 @@ export class CreateInvoiceDialogComponent implements OnInit {
 
         if (!this.validateDate(this.ls.l('Invoice_DueOnReceipt'), this.dueDate))
             return this.dueDateComponent.instance.option('isValid', false);
-
-        if (this.lines.some(line => !(line['Description'] && line['Quantity'] && line['Rate'])))
+        
+        if (!this.linesValidationGroup.instance.validate().isValid)
             return this.notifyService.error(this.ls.l('InvoiceLinesShouldBeDefined'));
 
         if (this.disabledForUpdate)

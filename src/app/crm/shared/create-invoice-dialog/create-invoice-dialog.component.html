@@ -118,74 +118,85 @@
                 </div>
             </div>
             <div class="field-area lines">
-                <dx-data-grid
-                    width="820px"
-                    [height]="linesGridHeight"
-                    [disabled]="disabledForUpdate"
-                    [(dataSource)]="lines"
-                    [allowColumnReordering]="false"
-                    [columnAutoWidth]="true"
-                    [focusStateEnabled]="true"
-                    [showColumnLines]="false"
-                    [scrolling]="{showScrollbar: 'never'}"
-                    [allowColumnResizing]="false">
+                <dx-validation-group>
+                    <dx-data-grid
+                        width="820px"
+                        [height]="linesGridHeight"
+                        [disabled]="disabledForUpdate"
+                        [(dataSource)]="lines"
+                        [allowColumnReordering]="false"
+                        [columnAutoWidth]="true"
+                        [focusStateEnabled]="true"
+                        [showColumnLines]="false"
+                        [scrolling]="{showScrollbar: 'never'}"
+                        [allowColumnResizing]="false">
 
-                    <dxi-column dataField="Description" width="360" caption="{{ls.l('Description')}}" [allowSorting]="false" cellTemplate="description"></dxi-column>
-                    <dxi-column dataField="Quantity" width="140" caption="{{ls.l('Quantity')}}" [allowSorting]="false" cellTemplate="quantity"></dxi-column>
-                    <dxi-column dataField="Rate" width="140" caption="{{ls.l('Rate')}}" [allowSorting]="false" cellTemplate="rate"></dxi-column>
-                    <dxi-column dataField="Amount" width="140" caption="{{ls.l('Amount')}}" [allowSorting]="false" [allowEditing]="false" [calculateCellValue]="calculateLineAmount" cellTemplate="amount"></dxi-column>
+                        <dxi-column dataField="Description" width="360" caption="{{ls.l('Description')}}" [allowSorting]="false" cellTemplate="description"></dxi-column>
+                        <dxi-column dataField="Quantity" width="140" caption="{{ls.l('Quantity')}}" [allowSorting]="false" cellTemplate="quantity"></dxi-column>
+                        <dxi-column dataField="Rate" width="140" caption="{{ls.l('Rate')}}" [allowSorting]="false" cellTemplate="rate"></dxi-column>
+                        <dxi-column dataField="Amount" width="140" caption="{{ls.l('Amount')}}" [allowSorting]="false" [allowEditing]="false" [calculateCellValue]="calculateLineAmount" cellTemplate="amount"></dxi-column>
 
-                    <div *dxTemplate="let cellData of 'description'">
-                        <dx-text-box
-                            width="350px"
-                            [placeholder]="ls.lr('Invoice_EnterDescription')"
-                            [showClearButton]="true"
-                            [value]="cellData.value"
-                            (onValueChanged)="onValueChanged($event, cellData)">
-                        </dx-text-box>
-                        <div class="row-actions">
-                            <span *ngIf="cellData.rowIndex == lines.length - 1" (click)="addNewLine(cellData)"><i class="add-icon"></i>{{ls.l('Add new line')}}</span>
-                            <span *ngIf="cellData.rowIndex != lines.length - 1" (click)="deleteLine(cellData)"><i class="delete-icon"></i>{{ls.l('Delete this line')}}</span>
-                            <div class="icons"><i class="link"></i><i class="tag"></i></div>
+                        <div *dxTemplate="let cellData of 'description'">
+                            <dx-text-box
+                                width="350px"
+                                [placeholder]="ls.lr('Invoice_EnterDescription')"
+                                [showClearButton]="true"
+                                [value]="cellData.value"
+                                (onValueChanged)="onValueChanged($event, cellData)">
+                                <dx-validator>
+                                    <dxi-validation-rule type="required" [message]="ls.l('RequiredField', '', ls.l('Description'))"></dxi-validation-rule>
+                                </dx-validator>
+                            </dx-text-box>
+                            <div class="row-actions">
+                                <span *ngIf="cellData.rowIndex == lines.length - 1" (click)="addNewLine(cellData)"><i class="add-icon"></i>{{ls.l('Add new line')}}</span>
+                                <span *ngIf="cellData.rowIndex != lines.length - 1" (click)="deleteLine(cellData)"><i class="delete-icon"></i>{{ls.l('Delete this line')}}</span>
+                                <div class="icons"><i class="link"></i><i class="tag"></i></div>
+                            </div>
                         </div>
-                    </div>
-                    <div *dxTemplate="let cellData of 'quantity'">
-                        <dx-text-box
-                            width="130px"
-                            [placeholder]="ls.lr('EditValuePlaceholder')"
-                            [showClearButton]="true"
-                            [value]="cellData.value"
-                            (onKeyDown)="allowDigitsOnly($event)"
-                            (onValueChanged)="onValueChanged($event, cellData)">
-                        </dx-text-box>
-                    </div>
-                    <div *dxTemplate="let cellData of 'rate'">
-                        <dx-text-box
-                            width="130px"
-                            [placeholder]="ls.lr('EditValuePlaceholder')"
-                            [showClearButton]="true"
-                            (onKeyDown)="allowDigitsOnly($event, ['.'])"
-                            value="{{cellData.value | currency: currency}}"
-                            (onValueChanged)="onValueChanged($event, cellData)">
-                        </dx-text-box><br>
-                        <dx-select-box
-                            name="unit"
-                            width="130px"
-                            [placeholder]="ls.lr('Unit')"
-                            [dataSource]="invoiceUnits"
-                            (onValueChanged)="onValueChanged($event, cellData, 'unit')">
-                        </dx-select-box>
-                    </div>
-                    <div *dxTemplate="let cellData of 'amount'">
-                        <dx-text-box
-                            width="130px"
-                            placeholder=""
-                            dataType="number"
-                            [readOnly]="true"
-                            value="{{cellData.value | currency: currency}}">
-                        </dx-text-box>
-                    </div>
-                </dx-data-grid>
+                        <div *dxTemplate="let cellData of 'quantity'">
+                            <dx-text-box
+                                width="130px"
+                                [placeholder]="ls.lr('EditValuePlaceholder')"
+                                [showClearButton]="true"
+                                [value]="cellData.value"
+                                (onKeyDown)="allowDigitsOnly($event)"
+                                (onValueChanged)="onValueChanged($event, cellData)">
+                                <dx-validator>
+                                    <dxi-validation-rule type="required" [message]="ls.l('RequiredField', '', ls.l('Quantity'))"></dxi-validation-rule>
+                                </dx-validator>
+                            </dx-text-box>
+                        </div>
+                        <div *dxTemplate="let cellData of 'rate'">
+                            <dx-text-box
+                                width="130px"
+                                [placeholder]="ls.lr('EditValuePlaceholder')"
+                                [showClearButton]="true"
+                                (onKeyDown)="allowDigitsOnly($event, ['.'])"
+                                value="{{cellData.value | currency: currency}}"
+                                (onValueChanged)="onValueChanged($event, cellData)">
+                                <dx-validator>
+                                    <dxi-validation-rule type="required" [message]="ls.l('RequiredField', '', ls.l('Rate'))"></dxi-validation-rule>
+                                </dx-validator>
+                            </dx-text-box><br>
+                            <dx-select-box
+                                name="unit"
+                                width="130px"
+                                [placeholder]="ls.lr('Unit')"
+                                [dataSource]="invoiceUnits"
+                                (onValueChanged)="onValueChanged($event, cellData, 'unit')">
+                            </dx-select-box>
+                        </div>
+                        <div *dxTemplate="let cellData of 'amount'">
+                            <dx-text-box
+                                width="130px"
+                                placeholder=""
+                                dataType="number"
+                                [readOnly]="true"
+                                value="{{cellData.value | currency: currency}}">
+                            </dx-text-box>
+                        </div>
+                    </dx-data-grid>
+                </dx-validation-group>
             </div>
         </dx-scroll-view>
         <div class="row bottom-container">
