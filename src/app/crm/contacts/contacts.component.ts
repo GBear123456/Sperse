@@ -76,7 +76,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
     readonly RP_LEAD_INFO_ID = RP_LEAD_INFO_ID;
 
     customerId: number;
-    contactGroup: string;
+    contactGroup: ContactGroup;
     contactInfo: ContactInfoDto = new ContactInfoDto();
     personContactInfo: PersonContactInfoDto;
     primaryContact: any;

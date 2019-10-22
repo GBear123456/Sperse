@@ -11,6 +11,7 @@ import { DxTextBoxComponent } from 'devextreme-angular/ui/text-box';
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
 import { NotifyService } from '@abp/notify/notify.service';
+import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
 import { EmailTemplateServiceProxy, GetTemplatesResponse, CreateEmailTemplateRequest,
@@ -25,6 +26,7 @@ import { AppSessionService } from '@shared/common/session/app-session.service';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class EmailTemplateDialogComponent {
+    @ViewChild(ModalDialogComponent) modalDialog: ModalDialogComponent;
     @ViewChild(DxSelectBoxComponent) templateComponent: DxSelectBoxComponent;
 
     showCC = false;
@@ -53,7 +55,7 @@ export class EmailTemplateDialogComponent {
             id: 'cancelTemplateOptions',
             title: this.ls.l('Cancel'),
             class: 'default',
-            action: () => this.dialogRef.close()
+            action: () => this.close()
         }, {
             id: 'saveTemplateOptions',
             title: this.data.saveTitle,
@@ -75,14 +77,16 @@ export class EmailTemplateDialogComponent {
     ) {
         this.initTemplateList();
         data.from = [sessionService.user.emailAddress];
+        if (!data.suggestionEmails)
+            data.suggestionEmails = [];
     }
 
     save() {
         if (this.validateData()) {
             if (this.templateEditMode)
                 this.saveTemplateData();
-
-            this.onSave.emit(this.data);
+            else 
+                this.onSave.emit(this.data);
         }
     }
 
@@ -120,8 +124,7 @@ export class EmailTemplateDialogComponent {
             subject: this.data.subject,
             cc: this.data.cc,
             bcc: this.data.bcc,
-            body: this.data.body,
-            emailTemplateParams: this.getEmailTemplateParams()
+            body: this.data.body
         };
 
         this.startLoading();
@@ -129,7 +132,7 @@ export class EmailTemplateDialogComponent {
             this.emailTemplateProxy.update(new UpdateEmailTemplateRequest(data)) :
             this.emailTemplateProxy.create(new CreateEmailTemplateRequest(data))
         ).pipe(finalize(() => this.finishLoading())).subscribe(() => {
-            this.notifyService.info(this.ls.l('SavedSuccessfully'));
+            this.onSave.emit(this.data);
             this.initTemplateList();
         });
     }
@@ -138,18 +141,14 @@ export class EmailTemplateDialogComponent {
         return this.templateComponent.instance.field()['value'];
     }
 
-    getEmailTemplateParams(): any[] {
-        //TODO: return something
-        return [];
-    }
-
     initTemplateList() {
         this.templates$ = this.emailTemplateProxy.getTemplates(this.data.templateType);
         this.changeDetectorRef.markForCheck();
     }
 
     emailInputFocusIn(event) {
-        event.component.option('opened', false);
+        if (!event.component.option('dataSource'))
+            event.component.option('opened', false);
     }
 
     emailInputFocusOut(event, checkDisplay?) {
@@ -169,11 +168,11 @@ export class EmailTemplateDialogComponent {
     }
 
     startLoading() {
-        abp.ui.setBusy(this.dialogRef.id);
+        this.modalDialog.startLoading();
     }
 
     finishLoading() {
-        abp.ui.clearBusy(this.dialogRef.id);
+        this.modalDialog.finishLoading();
     }
 
     onTemplateChanged(event) {
@@ -200,5 +199,9 @@ export class EmailTemplateDialogComponent {
 
     onNewTemplate(event) {
         event.customItem = {name: event.text, id: undefined};
+    }
+
+    close() {
+        this.modalDialog.close();
     }
 }

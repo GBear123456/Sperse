@@ -2,45 +2,32 @@
     <ng-container templateSettings>
         <div class="settings-wrapper">
             <div class="left-side">
-                <h3>{{ls.l('InvoiceEmail_OtherSettings')}}</h3>
+                <h3>{{ls.l('InvoiceEmail_PaymentSettings')}}</h3>
                 <dx-text-box 
-                    [placeholder]="ls.l('NextInvoiceNumber')"
-                    [(value)]="nextInvoiceNumber">
+                    [placeholder]="ls.l('LegalName')"
+                    [(value)]="settings.legalName">
                 </dx-text-box>
-                <dx-check-box
-                    [text]="ls.l('InvoiceEmail_AttachPDF')"
-                    [(value)]="attachPDF">
-                </dx-check-box>
                 <dx-text-area 
-                    [placeholder]="ls.l('Note')"
-                    [(value)]="note">
+                    height="135px"
+                    [placeholder]="ls.l('Address')"
+                    [(value)]="settings.address">
                 </dx-text-area>
-                <!-- dx-check-box
-                    disabled="true"
-                    [text]="ls.l('InvoiceEmail_SendReminders')"
-                    [(value)]="sendReminders.value">
-                </dx-check-box>
-                <dx-check-box
-                    disabled="true"
-                    [text]="ls.l('InvoiceEmail_PartialPayment')"
-                    [(value)]="partialPayment.value">
-                </dx-check-box>
-                <dx-check-box
-                    disabled="true"
-                    [text]="ls.l('InvoiceEmail_AutoPeyment')"
-                    [(value)]="autoPayment.value">
-                </dx-check-box>
-                <dx-check-box
-                    disabled="true"
-                    [text]="ls.l('InvoiceEmail_SendAlerts')"
-                    [(value)]="sendAlerts.value">
-                </dx-check-box -->
+                <dx-text-box 
+                    [placeholder]="ls.l('Tax/VatNo')"
+                    [(value)]="settings.taxVatNo">
+                </dx-text-box>    
             </div>
             <div class="right-side">
-                <h3>{{ls.l('InvoiceEmail_PaymentMethod')}}&nbsp;<img src="assets/images/icons/information-button.svg"></h3>
-                <p>{{ls.l('InvoiceEmail_AddMethod')}}</p>
-                <a>{{ls.l('InvoiceEmail_PaymentIntegrations')}}</a>
-
+                <h3>{{ls.l('InvoiceEmail_OtherSettings')}}</h3>
+                <dx-text-area 
+                    height="135px"
+                    [placeholder]="ls.l('Note')"
+                    [(value)]="settings.note">
+                </dx-text-area>
+                <dx-check-box
+                    [text]="ls.l('InvoiceEmail_AttachPDF')"
+                    [(value)]="settings.attachPDF">
+                </dx-check-box>
             </div>
         </div>
     </ng-container>

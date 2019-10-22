@@ -5,7 +5,7 @@ import { Location } from '@angular/common';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
-import { Observable, ReplaySubject, Subject } from 'rxjs';
+import { Observable, ReplaySubject, Subject, of } from 'rxjs';
 import { tap, switchMap } from 'rxjs/operators';
 import invert from 'lodash/invert';
 
@@ -16,6 +16,7 @@ import {
     ContactInfoDto,
     OrganizationContactInfoDto,
     UserServiceProxy,
+    ContactServiceProxy,
     ContactCommunicationServiceProxy,
     SendEmailInput
 } from '@shared/service-proxies/service-proxies';
@@ -47,6 +48,7 @@ export class ContactsService {
     readonly CONTACT_GROUP_KEYS = invert(ContactGroup);
 
     constructor(injector: Injector,
+        private contactProxy: ContactServiceProxy,
         private emailProxy: ContactCommunicationServiceProxy,
         private userService: UserServiceProxy,
         private permission: AppPermissionService,
@@ -67,7 +69,7 @@ export class ContactsService {
 
     getCGPermissionKey(contactGroup: ContactGroup, permission = ''): string {
         return ContactGroupPermission[
-            this.CONTACT_GROUP_KEYS[contactGroup.toString()]
+            this.CONTACT_GROUP_KEYS[contactGroup ? contactGroup.toString() : undefined]
         ] + (permission ? '.' : '') + permission;
     }
 
@@ -206,24 +208,42 @@ export class ContactsService {
         );
     }
 
-    showEmailDialog(data = {}, title = 'Email') {
+    getContactInfo(contactId): Observable<any> {
+        let contactInfo = this.contactProxy['data'].contactInfo;
+        return contactInfo.id == contactId ? 
+            of(contactInfo) : this.contactProxy.getContactInfo(contactId);
+    }
+
+    showEmailDialog(data: any = {}, title = 'Email') {            
+        let emailData: any = {
+            saveTitle: this.ls.l('Send'),
+            title: this.ls.l(title),
+            ...data
+        };
+
+        if (emailData.contactId && !emailData.to) 
+            this.getContactInfo(data.contactId).subscribe(res => {                  
+                  emailData.suggestionEmails = res.personContactInfo.details.emails
+                      .filter(item => item.isActive).map(item => item.emailAddress);
+                  if (emailData.suggestionEmails.length)
+                      emailData.to = [emailData.suggestionEmails[0]];
+            });
+
         let dialogComponent = this.dialog.open(EmailTemplateDialogComponent, {
             id: 'permanent',
             panelClass: 'slider',
             disableClose: true,
             closeOnNavigation: false,
-            data: {
-                saveTitle: this.ls.l('Send'),
-                title: this.ls.l(title),
-                ...data
-            }
+            data: emailData
         }).componentInstance;
-        return dialogComponent.onSave.asObservable().pipe(switchMap(res => {
+
+        return dialogComponent.onSave.pipe(switchMap(res => {
             dialogComponent.startLoading();
             return this.emailProxy.sendEmail(new SendEmailInput(res));
         }), tap(() => {
-            dialogComponent.finishLoading();
             this.notifyService.info(this.ls.l('MailSent'));
+            dialogComponent.finishLoading();
+            dialogComponent.close();
         }));
     }
 

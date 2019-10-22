@@ -162,7 +162,8 @@ export enum ModuleType {
 
 export enum ActionButtonType {
     Edit,
-    Delete
+    Delete,
+    Send
 }
 
 export enum NavigationState {

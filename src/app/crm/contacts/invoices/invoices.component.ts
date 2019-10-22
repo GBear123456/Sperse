@@ -12,7 +12,7 @@ import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { DxTooltipComponent } from 'devextreme-angular/ui/tooltip';
 import { MatDialog } from '@angular/material/dialog';
 import { finalize } from 'rxjs/operators';
-import { of } from 'rxjs';
+import { of, forkJoin } from 'rxjs';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
@@ -55,20 +55,28 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
             action: this.deleteInvoice.bind(this),
             type: ActionButtonType.Delete,
             disabled: false
+        },
+        {
+            text: this.l('Send'),
+            action: this.sendInvoice.bind(this),
+            type: ActionButtonType.Send,
+            disabled: false
         }
     ];
 
+    contactId = Number(this.contactService['data'].contactInfo.id);
+
     constructor(injector: Injector,
         private dialog: MatDialog,
-        private _contactService: ContactServiceProxy,
-        private _clientService: ContactsService,
-        private _invoiceService: InvoiceServiceProxy
+        private contactService: ContactServiceProxy,
+        private clientService: ContactsService,
+        private invoiceService: InvoiceServiceProxy
     ) {
         super(injector);
-        this.dataSource = this.getDataSource(+this._contactService['data'].contactInfo.id);
-        this._clientService.invalidateSubscribe((area) => {
+        this.dataSource = this.getDataSource();
+        this.clientService.invalidateSubscribe((area) => {
             if (area == 'invoices') {
-                this.dataSource = this.getDataSource(+this._contactService['data'].contactInfo.id);
+                this.dataSource = this.getDataSource();
                 const dataSource = this.dataGrid.instance.getDataSource();
                 if (dataSource) {
                     dataSource.load();
@@ -86,11 +94,11 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
         this.processFilterInternal();
     }
 
-    private getDataSource(contactId) {
+    private getDataSource() {
         return {
             uri: this.dataSourceURI,
             requireTotalCount: true,
-            filter: [ 'ContactId', '=', contactId],
+            filter: [ 'ContactId', '=', this.contactId],
             store: {
                 key: 'Id',
                 type: 'odata',
@@ -138,8 +146,9 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
             } else {
                 if (event.event.target.closest('.dx-link.dx-link-edit')) {
                     this.actionMenuItems.map(item => {
-                        item.disabled = (item.type == ActionButtonType.Delete) &&
-                            (event.data.Status == InvoiceStatus.Paid);
+                        item.disabled = (item.type == ActionButtonType.Edit && event.data.Status != InvoiceStatus.Draft) || 
+                            (item.type == ActionButtonType.Delete && [InvoiceStatus.Paid, InvoiceStatus.Sent].indexOf(event.data.Status) >= 0) ||
+                            (item.type == ActionButtonType.Send && [InvoiceStatus.Paid, InvoiceStatus.Canceled].indexOf(event.data.Status) >= 0);
                     });
                     this.actionRecordData = event.data;
                     this.showActionsMenu(event.event.target);
@@ -154,7 +163,7 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
             isConfirmed => {
                 if (isConfirmed) {
                     this.startLoading(true);
-                    this._invoiceService.deleteInvoice(this.actionRecordData.Id).pipe(
+                    this.invoiceService.deleteInvoice(this.actionRecordData.Id).pipe(
                         finalize(() => this.finishLoading(true))
                     ).subscribe(() => {
                         this.dataGrid.instance.refresh();
@@ -175,6 +184,22 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
                     this.dataGrid.instance.refresh();
                 }
             }
+        });
+    }
+
+    sendInvoice() {
+        this.startLoading(true);
+        forkJoin(
+            this.invoiceService.getPreprocessedEmail(undefined, this.actionRecordData.Id),
+            this.invoiceService.getSettings()
+        ).pipe(
+            finalize(() => this.finishLoading(true))
+        ).subscribe(([data, settings]) => {
+            data['contactId'] = this.contactId;
+            data['templateId'] = settings.defaultTemplateId;
+            this.clientService.showEmailDialog(data).subscribe(() => {
+                this.invalidate();
+            });
         });
     }
 

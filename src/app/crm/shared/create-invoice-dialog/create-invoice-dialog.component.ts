@@ -80,7 +80,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
 
     saveButtonId = 'saveInvoiceOptions';
     saveContextMenuItems = [];
-    billingSettings: InvoiceSettingsInfoDto = new InvoiceSettingsInfoDto();
+    invoiceSettings: InvoiceSettingsInfoDto = new InvoiceSettingsInfoDto();
     remoteServiceBaseUrl: string = AppConsts.remoteServiceBaseUrl;
     selectedOption: any;
 
@@ -146,10 +146,6 @@ export class CreateInvoiceDialogComponent implements OnInit {
         ).subscribe((selectedCurrencyId: string) => {
             this.currency = selectedCurrencyId;
         });
-
-        invoiceProxy.getSettings().subscribe(res => {
-            console.log(res);
-        });
     }
 
     ngOnInit() {
@@ -159,9 +155,11 @@ export class CreateInvoiceDialogComponent implements OnInit {
         });
 
         this.invoiceProxy.getSettings().subscribe((settings) => {
-            this.billingSettings = settings;
-            if (!this.data.invoice)
+            this.invoiceSettings = settings;
+            if (!this.data.invoice) {
                 this.invoiceNo = settings.nextInvoiceNumber;
+                this.notes = settings.note;
+            }
             this.changeDetectorRef.detectChanges();
         });
 
@@ -306,14 +304,17 @@ export class CreateInvoiceDialogComponent implements OnInit {
     updateStatus(status?) {
         if (status)
             this.status = status;
-        if (this.status != this.data.invoice.Status) {
+        if (this.status != this.data.status) {
             status || this.modalDialog.startLoading();
             this.invoiceProxy.updateStatus(new UpdateInvoiceStatusInput({
                 id: this.invoiceId,
                 status: InvoiceStatus[this.status]
             })).pipe(finalize(() => status || this.modalDialog.finishLoading()))
                 .subscribe(() => {
-                    status || this.afterSave();
+                    if (status)
+                        this.data.refreshParent && this.data.refreshParent(); 
+                    else 
+                        this.afterSave();
                 });
         }
     }
@@ -321,7 +322,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
     private afterSave(): void {
         this.data.refreshParent && this.data.refreshParent();
         if (this.selectedOption.email)
-            this.showNewEmailDialog();
+            setTimeout(() => this.showNewEmailDialog());
         else {
             this.notifyService.info(this.ls.l('SavedSuccessfully'));
             this.close();
@@ -330,14 +331,15 @@ export class CreateInvoiceDialogComponent implements OnInit {
 
     private showNewEmailDialog() {
         this.modalDialog.startLoading();
-        this.invoiceProxy.getPreprocessedEmail(undefined, this.invoiceId).subscribe((data) => {
-            this.close();
-            data['contactId'] = this.contactId;
+        this.invoiceProxy.getPreprocessedEmail(this.invoiceSettings.defaultTemplateId, this.invoiceId).subscribe((data) => {
             this.modalDialog.finishLoading();
+            data['contactId'] = this.contactId;
+            data['templateId'] = this.invoiceSettings.defaultTemplateId;
             this.contactsService.showEmailDialog(data).subscribe(() => {
                 this.updateStatus(InvoiceStatus.Sent);
                 this.dialog.closeAll();
             });
+            this.close();
         });
     }
 
@@ -402,7 +404,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
 
     resetFullDialog(forced = true) {
         let resetInternal = () => {
-            this.invoiceNo = this.billingSettings.nextInvoiceNumber;
+            this.invoiceNo = this.invoiceSettings.nextInvoiceNumber;
             this.status = InvoiceStatus.Draft;
             this.customer = undefined;
             this.date = undefined;
@@ -473,7 +475,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
 
     resetNoteDefault() {
         if (!this.disabledForUpdate) {
-            this.notes = this.ls.l('Invoice_DefaultNote');
+            this.notes = this.invoiceSettings.note;
             this.changeDetectorRef.detectChanges();
         }
     }
