@@ -14,11 +14,6 @@
     -ms-user-select: none;
     user-select: none;
 
-    &.disabled {
-        pointer-events: none!important;
-        opacity: 0.5!important;
-    }
-
     .load-more {
         z-index: 1;
         cursor: pointer;
@@ -45,6 +40,7 @@
             min-width: 80px;
             margin: 0;
             padding: 70px 0 0 0;
+            position: relative;
 
             .column-title {
                 position: absolute!important;
@@ -536,6 +532,14 @@
                         display: none;
                     }
                 }
+            }
+
+            loading-spinner {
+                position: absolute;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                top: 0;
             }
         }
         .column0 {

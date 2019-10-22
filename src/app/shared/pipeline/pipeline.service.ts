@@ -24,6 +24,7 @@ import { CustomReuseStrategy } from '@root/root-routing.module';
 import { AppConsts } from '@shared/AppConsts';
 import { ContactGroup } from '@shared/AppEnums';
 import { DataLayoutType } from '@app/shared/layout/data-layout-type';
+import { Stage } from '@app/shared/pipeline/stage.model';
 
 interface StageColor {
     [stageSortOrder: string]: string;
@@ -32,7 +33,7 @@ interface StageColor {
 @Injectable()
 export class PipelineService {
     public stageChange: Subject<any>;
-    private _pipelineDefinitions: any = {};
+    private pipelineDefinitions: any = {};
     private defaultStagesColors: StageColor = {
         '-4': '#f02929',
         '-3': '#f05b29',
@@ -44,10 +45,10 @@ export class PipelineService {
         '3': '#46aa6e',
         '4': '#0e9360'
     };
-    private _dataLayoutType: BehaviorSubject<DataLayoutType> = new BehaviorSubject<DataLayoutType>(DataLayoutType.Pipeline);
-    dataLayoutType$: Observable<DataLayoutType> = this._dataLayoutType.asObservable();
-    private _compactView: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
-    compactView$: Observable<boolean> = this._compactView.asObservable();
+    private dataLayoutType: BehaviorSubject<DataLayoutType> = new BehaviorSubject<DataLayoutType>(DataLayoutType.Pipeline);
+    dataLayoutType$: Observable<DataLayoutType> = this.dataLayoutType.asObservable();
+    private compactView: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+    compactView$: Observable<boolean> = this.compactView.asObservable();
 
     constructor(
         injector: Injector,
@@ -65,11 +66,11 @@ export class PipelineService {
     }
 
     toggleDataLayoutType(dataLayoutType: DataLayoutType) {
-        this._dataLayoutType.next(dataLayoutType);
+        this.dataLayoutType.next(dataLayoutType);
     }
 
     toggleContactView() {
-        this._compactView.next(!this._compactView.value);
+        this.compactView.next(!this.compactView.value);
     }
 
     getPipelineDefinitionObservable(pipelinePurposeId: string, contactGroupId?: ContactGroup): Observable<PipelineDto> {
@@ -78,9 +79,9 @@ export class PipelineService {
                 purpose: pipelinePurposeId,
                 contactGroupId: contactGroupId
             })),
-            filter(pipelineDefinition => pipelineDefinition),
+            filter(Boolean),
             map(pipelineDefinition => {
-                this._pipelineDefinitions[pipelinePurposeId] = pipelineDefinition;
+                this.pipelineDefinitions[pipelinePurposeId] = pipelineDefinition;
                 pipelineDefinition.stages = _.sortBy(pipelineDefinition.stages,
                     (stage) => {
                         return stage.sortOrder;
@@ -95,14 +96,14 @@ export class PipelineService {
     }
 
     getPipeline(pipelinePurposeId: string): PipelineDto {
-        return this._pipelineDefinitions[pipelinePurposeId];
+        return this.pipelineDefinitions[pipelinePurposeId];
     }
 
-    getStageByName(pipelinePurposeId: string, stageName: string): StageDto {
+    getStageByName(pipelinePurposeId: string, stageName: string): Stage {
         return _.findWhere(this.getStages(pipelinePurposeId), {name: stageName});
     }
 
-    updateEntityStage(pipelinePurposeId, entity, fromStage, toStage, complete = null) {
+    updateEntityStage(pipelinePurposeId: string, entity, fromStage: Stage, toStage: Stage, complete = null) {
         if (fromStage && toStage) {
             let action = _.findWhere(fromStage.accessibleActions, {targetStageId: toStage.id});
             if (action && action.sysId && entity && !entity.locked) {
@@ -135,13 +136,13 @@ export class PipelineService {
             complete && complete();
     }
 
-    updateEntitiesStage(pipelineId, entities, targetStage) {
+    updateEntitiesStage(pipelineId, entities, targetStageName: string) {
         let subject = new Subject<any>();
 
         this.updateEntitiesStageInternal(
             pipelineId,
             entities.slice(0),
-            targetStage,
+            targetStageName,
             null,
             (declinedList) => subject.next(declinedList),
             []
@@ -150,7 +151,7 @@ export class PipelineService {
         return subject.asObservable();
     }
 
-    private updateEntitiesStageInternal(pipelineId, entities, targetStage, data, complete, declinedList) {
+    private updateEntitiesStageInternal(pipelineId, entities, targetStageName: string, data, complete, declinedList) {
         let entity = entities.pop();
         if (entity) {
             if (data)
@@ -160,9 +161,16 @@ export class PipelineService {
                     pipelineId,
                     entity,
                     this.getStageByName(pipelineId, entity.Stage || entity.stage),
-                    this.getStageByName(pipelineId, targetStage),
+                    this.getStageByName(pipelineId, targetStageName),
                     (data) => {
-                        this.updateEntitiesStageInternal(pipelineId, entities, targetStage, data || entity.data, complete, declinedList);
+                        this.updateEntitiesStageInternal(
+                            pipelineId,
+                            entities,
+                            targetStageName,
+                            data || entity.data,
+                            complete,
+                            declinedList
+                        );
                         delete entity.data;
                     }
                 )
@@ -175,7 +183,7 @@ export class PipelineService {
         return entity['Id'] || entity['id'];
     }
 
-    activityTransition(fromStage, toStage, entity, complete) {
+    activityTransition(fromStage: Stage, toStage: Stage, entity, complete) {
         this.activityService.transition(TransitionActivityDto.fromJS({
             id: this.getEntityId(entity),
             stageId: toStage.id,
@@ -188,9 +196,9 @@ export class PipelineService {
         });
     }
 
-    updateLeadStage(fromStage, toStage, entity, complete) {
+    updateLeadStage(fromStage: Stage, toStage: Stage, entity, complete) {
         this.leadService.updateLeadStage(
-            UpdateLeadStageInfo.fromJS({
+            new UpdateLeadStageInfo({
                 leadId: this.getEntityId(entity),
                 stageId: toStage.id,
                 sortOrder: entity.SortOrder
@@ -203,7 +211,7 @@ export class PipelineService {
         });
     }
 
-    processLead(fromStage, toStage, entity, complete) {
+    processLead(fromStage: Stage, toStage: Stage, entity, complete) {
         if (entity.data)
             this.processLeadInternal(entity, {...entity.data, fromStage, toStage}, complete);
         else
@@ -242,7 +250,7 @@ export class PipelineService {
         });
     }
 
-    cancelLead(fromStage, toStage, entity, complete) {
+    cancelLead(fromStage: Stage, toStage: Stage, entity, complete) {
         if (entity.data)
             this.cancelLeadInternal(entity, {...entity.data, fromStage, toStage}, complete);
         else
@@ -275,7 +283,7 @@ export class PipelineService {
         });
     }
 
-    updateOrderStage(fromStage, toStage, entity, complete) {
+    updateOrderStage(fromStage: Stage, toStage: Stage, entity, complete) {
         this.orderService.updateStage(
             UpdateOrderStageInfo.fromJS({
                 orderId: this.getEntityId(entity),
@@ -290,7 +298,7 @@ export class PipelineService {
         });
     }
 
-    processOrder(fromStage, toStage, entity, complete) {
+    processOrder(fromStage: Stage, toStage: Stage, entity, complete) {
         let model: ProcessOrderInfo = new ProcessOrderInfo();
         model.id = this.getEntityId(entity);
         model.sortOrder = entity.SortOrder;
@@ -304,7 +312,7 @@ export class PipelineService {
         });
     }
 
-    cancelOrder(fromStage, toStage, entity, complete) {
+    cancelOrder(fromStage: Stage, toStage: Stage, entity, complete) {
         if (entity.data)
             this.cancelOrderInternal(entity, {...entity.data, fromStage, toStage}, complete);
         else
@@ -334,7 +342,7 @@ export class PipelineService {
         });
     }
 
-    moveEntityTo(entity, sourceStage, targetStage) {
+    moveEntityTo(entity, sourceStage: Stage, targetStage: Stage) {
         if (sourceStage.entities && targetStage.entities)
             targetStage.entities.unshift(
                 sourceStage.entities.splice(sourceStage.entities.indexOf(entity), 1).pop()
@@ -344,7 +352,7 @@ export class PipelineService {
         entity.locked = false;
     }
 
-    completeEntityUpdate(entity, fromStage, toStage) {
+    completeEntityUpdate(entity, fromStage: Stage, toStage: Stage) {
         entity.StageId = toStage.id;
         entity.stage = entity.Stage = toStage.name;
         fromStage.total--;
@@ -359,8 +367,8 @@ export class PipelineService {
         }
     }
 
-    getEntityNewSortOrder(entity, stage) {
-        let entities = stage['entities'];
+    getEntityNewSortOrder(entity, stage: Stage) {
+        let entities = stage.entities;
         if (entity) {
             let prevEntity = this.getPrevEntity(entity, entities);
             return entities.length > 1 ? prevEntity && prevEntity.SortOrder
