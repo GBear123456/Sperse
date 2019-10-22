@@ -41,13 +41,6 @@
                 <p>{{ls.l('InvoiceEmail_AddMethod')}}</p>
                 <a>{{ls.l('InvoiceEmail_PaymentIntegrations')}}</a>
 
-                <dx-date-box
-                    [visible]="false"
-                    placeholder="{{ls.l('Invoice_DueOnReceipt')}}"
-                    (onKeyDown)="allowDigitsOnly($event, ['/'])"
-                    [width]="'260px'"
-                    [(value)]="dueDate.value">
-                </dx-date-box>
             </div>
         </div>
     </ng-container>
