@@ -180,7 +180,8 @@ export class CreateInvoiceDialogComponent implements OnInit {
             this.date = invoice.Date;
             this.dueDate = invoice.DueDate;
             this.contactId = invoice.ContactId;
-            if (this.disabledForUpdate = this.status != InvoiceStatus.Draft)
+            this.disabledForUpdate = [InvoiceStatus.Draft, InvoiceStatus.Final].indexOf(this.status) < 0;
+            if (this.disabledForUpdate)
                 this.buttons[0].disabled = this.disabledForUpdate;
             this.changeDetectorRef.detectChanges();
             this.invoiceProxy.getInvoiceInfo(invoice.Id)
@@ -537,6 +538,9 @@ export class CreateInvoiceDialogComponent implements OnInit {
     }
 
     openInvoiceSettings() {
-        this.contactsService.showInvoiceSettingsDialog();
+        this.contactsService.showInvoiceSettingsDialog().subscribe(settings => {
+            if (settings)
+                this.invoiceSettings = settings;
+        });
     }
 }

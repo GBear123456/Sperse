@@ -67,7 +67,7 @@ export class InvoiceSettingsDialogComponent implements AfterViewInit {
             finalize(() => this.modalDialog.finishLoading())
         ).subscribe(() => {
             this.notifyService.info(this.ls.l('SavedSuccessfully'));
-            this.dialogRef.close();
+            this.dialogRef.close(this.settings);
         });
     }
 

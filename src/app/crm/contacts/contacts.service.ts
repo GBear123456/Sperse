@@ -248,11 +248,11 @@ export class ContactsService {
     }
 
     showInvoiceSettingsDialog() {
-        this.dialog.open(InvoiceSettingsDialogComponent, {
+        return this.dialog.open(InvoiceSettingsDialogComponent, {
             panelClass: 'slider',
             disableClose: true,
             closeOnNavigation: false,
             data: { }
-        });
+        }).afterClosed();
     }
 }
