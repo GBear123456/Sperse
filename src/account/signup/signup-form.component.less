@@ -333,7 +333,6 @@
 }
 
 /deep/ .sign-up {
-
     .dx-texteditor {
         background-color: transparent;
         border-radius: 0;
@@ -466,7 +465,7 @@
             position: absolute;
             top: 0;
 
-            @media all and (min-width: 768px) {
+            @media all and (min-width: 769px) {
                 .dx-overlay-content {
                     max-width: 292px !important;
                     width: 292px !important;
@@ -474,6 +473,19 @@
                     bottom: auto !important;
                     right: 5px !important;
                     left: auto !important;
+                    top: -8px !important;
+                    transform: translate(0, 0) !important;
+                }
+            }
+            
+            @media all and (max-width: 768px) {
+                .dx-overlay-content {
+                    max-width: 272px !important;
+                    width: 272px !important;
+                    position: absolute !important;
+                    bottom: auto !important;
+                    right: auto !important;
+                    left: 26px !important;
                     top: -8px !important;
                     transform: translate(0, 0) !important;
                 }
