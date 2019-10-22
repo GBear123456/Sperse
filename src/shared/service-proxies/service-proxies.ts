@@ -41977,6 +41977,7 @@ export interface IUpdateSourceContactInput {
 export class SendSMSToContactInput implements ISendSMSToContactInput {
     contactId!: number;
     message!: string | undefined;
+    phoneNumber!: string | undefined;
 
     constructor(data?: ISendSMSToContactInput) {
         if (data) {
@@ -41991,6 +41992,7 @@ export class SendSMSToContactInput implements ISendSMSToContactInput {
         if (data) {
             this.contactId = data["contactId"];
             this.message = data["message"];
+            this.phoneNumber = data["phoneNumber"];
         }
     }
 
@@ -42005,6 +42007,7 @@ export class SendSMSToContactInput implements ISendSMSToContactInput {
         data = typeof data === 'object' ? data : {};
         data["contactId"] = this.contactId;
         data["message"] = this.message;
+        data["phoneNumber"] = this.phoneNumber;
         return data; 
     }
 }
@@ -42012,6 +42015,7 @@ export class SendSMSToContactInput implements ISendSMSToContactInput {
 export interface ISendSMSToContactInput {
     contactId: number;
     message: string | undefined;
+    phoneNumber: string | undefined;
 }
 
 export class CreateContactAddressOutput implements ICreateContactAddressOutput {

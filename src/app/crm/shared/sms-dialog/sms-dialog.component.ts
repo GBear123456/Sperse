@@ -51,7 +51,6 @@ export class SMSDialogComponent {
         public ls: AppLocalizationService,
         @Inject(MAT_DIALOG_DATA) public data: any
     ) {
-        window['t'] = this;
         let person: PersonContactInfoDto = data.contact.personContactInfo,
             primary: ContactPhoneDto = person.details.phones.find(item => item.id == person.primaryPhoneId);
         this.phones = person.details.phones
@@ -66,7 +65,8 @@ export class SMSDialogComponent {
             this.loadingService.startLoading(this.elementRef.nativeElement);
             this.contactServiceProxy.sendSMSToContact(new SendSMSToContactInput({
                 contactId: this.data.contact.id,
-                message: this.smsText
+                message: this.smsText,
+                phoneNumber: this.phoneNumber
             })).pipe(
                 finalize(() => this.loadingService.finishLoading(this.elementRef.nativeElement))
             ).subscribe(
