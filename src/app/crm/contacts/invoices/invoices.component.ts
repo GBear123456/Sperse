@@ -42,7 +42,7 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
     @ViewChild(DxTooltipComponent) actionsTooltip: DxTooltipComponent;
 
     private actionRecordData;
-    private settings: InvoiceSettingsInfoDto;
+    private settings = new InvoiceSettingsInfoDto();
     private readonly dataSourceURI = 'Invoice';
     private filters: FilterModel[];
     private formatting = AppConsts.formatting;
