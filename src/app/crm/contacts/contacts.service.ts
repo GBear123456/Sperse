@@ -210,19 +210,20 @@ export class ContactsService {
 
     getContactInfo(contactId): Observable<any> {
         let contactInfo = this.contactProxy['data'].contactInfo;
-        return contactInfo.id == contactId ? 
-            of(contactInfo) : this.contactProxy.getContactInfo(contactId);
+        return contactInfo.id == contactId
+            ? of(contactInfo)
+            : this.contactProxy.getContactInfo(contactId);
     }
 
-    showEmailDialog(data: any = {}, title = 'Email') {            
+    showEmailDialog(data: any = {}, title = 'Email') {
         let emailData: any = {
             saveTitle: this.ls.l('Send'),
             title: this.ls.l(title),
             ...data
         };
 
-        if (emailData.contactId && !emailData.to) 
-            this.getContactInfo(data.contactId).subscribe(res => {                  
+        if (emailData.contactId && !emailData.to)
+            this.getContactInfo(data.contactId).subscribe(res => {
                   emailData.suggestionEmails = res.personContactInfo.details.emails
                       .filter(item => item.isActive).map(item => item.emailAddress);
                   if (emailData.suggestionEmails.length)

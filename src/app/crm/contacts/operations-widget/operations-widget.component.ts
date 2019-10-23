@@ -5,15 +5,15 @@ import { Component, Injector, Input, Output, ViewChild, EventEmitter } from '@an
 import { takeUntil } from 'rxjs/operators';
 
 /** Application imports */
-import { TagsListComponent } from '../shared/tags-list/tags-list.component';
-import { ListsListComponent } from '../shared/lists-list/lists-list.component';
-import { TypesListComponent } from '../shared/types-list/types-list.component';
-import { UserAssignmentComponent } from '../shared/user-assignment-list/user-assignment-list.component';
-import { RatingComponent } from '../shared/rating/rating.component';
-import { StarsListComponent } from '../shared/stars-list/stars-list.component';
+import { TagsListComponent } from '../../shared/tags-list/tags-list.component';
+import { ListsListComponent } from '../../shared/lists-list/lists-list.component';
+import { TypesListComponent } from '@app/crm/shared/types-list/types-list.component';
+import { UserAssignmentComponent } from '@app/crm/shared/user-assignment-list/user-assignment-list.component';
+import { RatingComponent } from '@app/crm/shared/rating/rating.component';
+import { StarsListComponent } from '@app/crm/shared/stars-list/stars-list.component';
 import { StaticListComponent } from '@app/shared/common/static-list/static-list.component';
 import { ContactInfoDto, UserServiceProxy } from '@shared/service-proxies/service-proxies';
-import { ContactsService } from './contacts.service';
+import { ContactsService } from '@app/crm/contacts/contacts.service';
 import { ContactGroup, ContactStatus } from '@shared/AppEnums';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { ImpersonationService } from '@app/admin/users/impersonation.service';
