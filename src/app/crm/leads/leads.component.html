@@ -58,6 +58,7 @@
             <div>
                 <div id="LeadsTable">
                     <dx-data-grid id="gridContainer"
+                                class="limitedPagerTotal"
                                 accessKey="narrowHeaderPanel"
                                 [noDataText]="''"
                                 [allowColumnReordering]="true"
@@ -137,7 +138,7 @@
                     [totalsURI]="'LeadCount'"
                     [dragulaName]="'leadStages'"
                     [dataSource]="pipelineDataSource"
-                    [selectFields]="['Id', 'CustomerId', 'Name', 'CompanyName', 'CreationTime', 'StageId', 'Stage', 'BankCode', 'PhotoPublicId', 'Email']"
+                    [selectFields]="pipelineSelectFields"
                     [pipelinePurposeId]="pipelinePurposeId"
                     [filterModelStages]="filterModelStages"
                     [(selectedEntities)]="selectedLeads"
