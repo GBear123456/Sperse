@@ -47262,7 +47262,6 @@ export class Invoice implements IInvoice {
     status!: InvoiceStatus;
     number!: string;
     amount!: number | undefined;
-    currencyId!: string;
     date!: moment.Moment | undefined;
     dueDate!: moment.Moment | undefined;
     description!: string | undefined;
@@ -47296,7 +47295,6 @@ export class Invoice implements IInvoice {
             this.status = data["status"];
             this.number = data["number"];
             this.amount = data["amount"];
-            this.currencyId = data["currencyId"];
             this.date = data["date"] ? moment(data["date"].toString()) : <any>undefined;
             this.dueDate = data["dueDate"] ? moment(data["dueDate"].toString()) : <any>undefined;
             this.description = data["description"];
@@ -47334,7 +47332,6 @@ export class Invoice implements IInvoice {
         data["status"] = this.status;
         data["number"] = this.number;
         data["amount"] = this.amount;
-        data["currencyId"] = this.currencyId;
         data["date"] = this.date ? this.date.toISOString() : <any>undefined;
         data["dueDate"] = this.dueDate ? this.dueDate.toISOString() : <any>undefined;
         data["description"] = this.description;
@@ -47365,7 +47362,6 @@ export interface IInvoice {
     status: InvoiceStatus;
     number: string;
     amount: number | undefined;
-    currencyId: string;
     date: moment.Moment | undefined;
     dueDate: moment.Moment | undefined;
     description: string | undefined;
@@ -58040,7 +58036,6 @@ export class CreateInvoiceInput implements ICreateInvoiceInput {
     dueDate!: moment.Moment;
     description!: string | undefined;
     note!: string | undefined;
-    currencyId!: string;
     lines!: CreateInvoiceLineInput[] | undefined;
 
     constructor(data?: ICreateInvoiceInput) {
@@ -58062,7 +58057,6 @@ export class CreateInvoiceInput implements ICreateInvoiceInput {
             this.dueDate = data["dueDate"] ? moment(data["dueDate"].toString()) : <any>undefined;
             this.description = data["description"];
             this.note = data["note"];
-            this.currencyId = data["currencyId"];
             if (data["lines"] && data["lines"].constructor === Array) {
                 this.lines = [];
                 for (let item of data["lines"])
@@ -58088,7 +58082,6 @@ export class CreateInvoiceInput implements ICreateInvoiceInput {
         data["dueDate"] = this.dueDate ? this.dueDate.toISOString() : <any>undefined;
         data["description"] = this.description;
         data["note"] = this.note;
-        data["currencyId"] = this.currencyId;
         if (this.lines && this.lines.constructor === Array) {
             data["lines"] = [];
             for (let item of this.lines)
@@ -58107,7 +58100,6 @@ export interface ICreateInvoiceInput {
     dueDate: moment.Moment;
     description: string | undefined;
     note: string | undefined;
-    currencyId: string;
     lines: CreateInvoiceLineInput[] | undefined;
 }
 
@@ -58180,7 +58172,6 @@ export class InvoiceInfo implements IInvoiceInfo {
     dueDate!: moment.Moment | undefined;
     description!: string | undefined;
     note!: string | undefined;
-    currencyId!: string | undefined;
     lines!: InvoiceLineInfo[] | undefined;
 
     constructor(data?: IInvoiceInfo) {
@@ -58202,7 +58193,6 @@ export class InvoiceInfo implements IInvoiceInfo {
             this.dueDate = data["dueDate"] ? moment(data["dueDate"].toString()) : <any>undefined;
             this.description = data["description"];
             this.note = data["note"];
-            this.currencyId = data["currencyId"];
             if (data["lines"] && data["lines"].constructor === Array) {
                 this.lines = [];
                 for (let item of data["lines"])
@@ -58228,7 +58218,6 @@ export class InvoiceInfo implements IInvoiceInfo {
         data["dueDate"] = this.dueDate ? this.dueDate.toISOString() : <any>undefined;
         data["description"] = this.description;
         data["note"] = this.note;
-        data["currencyId"] = this.currencyId;
         if (this.lines && this.lines.constructor === Array) {
             data["lines"] = [];
             for (let item of this.lines)
@@ -58247,7 +58236,6 @@ export interface IInvoiceInfo {
     dueDate: moment.Moment | undefined;
     description: string | undefined;
     note: string | undefined;
-    currencyId: string | undefined;
     lines: InvoiceLineInfo[] | undefined;
 }
 
@@ -58315,7 +58303,6 @@ export class UpdateInvoiceInput implements IUpdateInvoiceInput {
     dueDate!: moment.Moment;
     description!: string | undefined;
     note!: string | undefined;
-    currencyId!: string;
     lines!: UpdateInvoiceLineInput[] | undefined;
 
     constructor(data?: IUpdateInvoiceInput) {
@@ -58336,7 +58323,6 @@ export class UpdateInvoiceInput implements IUpdateInvoiceInput {
             this.dueDate = data["dueDate"] ? moment(data["dueDate"].toString()) : <any>undefined;
             this.description = data["description"];
             this.note = data["note"];
-            this.currencyId = data["currencyId"];
             if (data["lines"] && data["lines"].constructor === Array) {
                 this.lines = [];
                 for (let item of data["lines"])
@@ -58361,7 +58347,6 @@ export class UpdateInvoiceInput implements IUpdateInvoiceInput {
         data["dueDate"] = this.dueDate ? this.dueDate.toISOString() : <any>undefined;
         data["description"] = this.description;
         data["note"] = this.note;
-        data["currencyId"] = this.currencyId;
         if (this.lines && this.lines.constructor === Array) {
             data["lines"] = [];
             for (let item of this.lines)
@@ -58379,7 +58364,6 @@ export interface IUpdateInvoiceInput {
     dueDate: moment.Moment;
     description: string | undefined;
     note: string | undefined;
-    currencyId: string;
     lines: UpdateInvoiceLineInput[] | undefined;
 }
 
@@ -58423,6 +58407,12 @@ export interface IUpdateInvoiceStatusInput {
     status: InvoiceStatus;
 }
 
+export enum InvoiceCurrency {
+    USD = "USD", 
+    CAD = "CAD", 
+    EUR = "EUR", 
+}
+
 export class InvoiceSettingsInfoDto implements IInvoiceSettingsInfoDto {
     nextInvoiceNumber!: string | undefined;
     legalName!: string | undefined;
@@ -58431,6 +58421,7 @@ export class InvoiceSettingsInfoDto implements IInvoiceSettingsInfoDto {
     defaultTemplateId!: number | undefined;
     attachPDF!: boolean | undefined;
     note!: string | undefined;
+    currency!: InvoiceCurrency | undefined;
 
     constructor(data?: IInvoiceSettingsInfoDto) {
         if (data) {
@@ -58450,6 +58441,7 @@ export class InvoiceSettingsInfoDto implements IInvoiceSettingsInfoDto {
             this.defaultTemplateId = data["defaultTemplateId"];
             this.attachPDF = data["attachPDF"];
             this.note = data["note"];
+            this.currency = data["currency"];
         }
     }
 
@@ -58469,6 +58461,7 @@ export class InvoiceSettingsInfoDto implements IInvoiceSettingsInfoDto {
         data["defaultTemplateId"] = this.defaultTemplateId;
         data["attachPDF"] = this.attachPDF;
         data["note"] = this.note;
+        data["currency"] = this.currency;
         return data; 
     }
 }
@@ -58481,6 +58474,7 @@ export interface IInvoiceSettingsInfoDto {
     defaultTemplateId: number | undefined;
     attachPDF: boolean | undefined;
     note: string | undefined;
+    currency: InvoiceCurrency | undefined;
 }
 
 export class InvoiceSettings implements IInvoiceSettings {
@@ -58490,6 +58484,7 @@ export class InvoiceSettings implements IInvoiceSettings {
     defaultTemplateId!: number | undefined;
     attachPDF!: boolean | undefined;
     note!: string | undefined;
+    currency!: InvoiceCurrency | undefined;
 
     constructor(data?: IInvoiceSettings) {
         if (data) {
@@ -58508,6 +58503,7 @@ export class InvoiceSettings implements IInvoiceSettings {
             this.defaultTemplateId = data["defaultTemplateId"];
             this.attachPDF = data["attachPDF"];
             this.note = data["note"];
+            this.currency = data["currency"];
         }
     }
 
@@ -58526,6 +58522,7 @@ export class InvoiceSettings implements IInvoiceSettings {
         data["defaultTemplateId"] = this.defaultTemplateId;
         data["attachPDF"] = this.attachPDF;
         data["note"] = this.note;
+        data["currency"] = this.currency;
         return data; 
     }
 }
@@ -58537,6 +58534,7 @@ export interface IInvoiceSettings {
     defaultTemplateId: number | undefined;
     attachPDF: boolean | undefined;
     note: string | undefined;
+    currency: InvoiceCurrency | undefined;
 }
 
 export class Attachment implements IAttachment {
