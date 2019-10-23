@@ -55382,8 +55382,8 @@ export class GetTemplateReponse implements IGetTemplateReponse {
     name!: string | undefined;
     type!: EmailTemplateType | undefined;
     subject!: string | undefined;
-    cc!: string | undefined;
-    bcc!: string | undefined;
+    cc!: string[] | undefined;
+    bcc!: string[] | undefined;
     body!: string | undefined;
 
     constructor(data?: IGetTemplateReponse) {
@@ -55400,8 +55400,16 @@ export class GetTemplateReponse implements IGetTemplateReponse {
             this.name = data["name"];
             this.type = data["type"];
             this.subject = data["subject"];
-            this.cc = data["cc"];
-            this.bcc = data["bcc"];
+            if (data["cc"] && data["cc"].constructor === Array) {
+                this.cc = [];
+                for (let item of data["cc"])
+                    this.cc.push(item);
+            }
+            if (data["bcc"] && data["bcc"].constructor === Array) {
+                this.bcc = [];
+                for (let item of data["bcc"])
+                    this.bcc.push(item);
+            }
             this.body = data["body"];
         }
     }
@@ -55418,8 +55426,16 @@ export class GetTemplateReponse implements IGetTemplateReponse {
         data["name"] = this.name;
         data["type"] = this.type;
         data["subject"] = this.subject;
-        data["cc"] = this.cc;
-        data["bcc"] = this.bcc;
+        if (this.cc && this.cc.constructor === Array) {
+            data["cc"] = [];
+            for (let item of this.cc)
+                data["cc"].push(item);
+        }
+        if (this.bcc && this.bcc.constructor === Array) {
+            data["bcc"] = [];
+            for (let item of this.bcc)
+                data["bcc"].push(item);
+        }
         data["body"] = this.body;
         return data; 
     }
@@ -55429,8 +55445,8 @@ export interface IGetTemplateReponse {
     name: string | undefined;
     type: EmailTemplateType | undefined;
     subject: string | undefined;
-    cc: string | undefined;
-    bcc: string | undefined;
+    cc: string[] | undefined;
+    bcc: string[] | undefined;
     body: string | undefined;
 }
 
@@ -55438,8 +55454,8 @@ export class CreateEmailTemplateRequest implements ICreateEmailTemplateRequest {
     name!: string;
     type!: EmailTemplateType;
     subject!: string | undefined;
-    cc!: string | undefined;
-    bcc!: string | undefined;
+    cc!: string[] | undefined;
+    bcc!: string[] | undefined;
     body!: string;
 
     constructor(data?: ICreateEmailTemplateRequest) {
@@ -55456,8 +55472,16 @@ export class CreateEmailTemplateRequest implements ICreateEmailTemplateRequest {
             this.name = data["name"];
             this.type = data["type"];
             this.subject = data["subject"];
-            this.cc = data["cc"];
-            this.bcc = data["bcc"];
+            if (data["cc"] && data["cc"].constructor === Array) {
+                this.cc = [];
+                for (let item of data["cc"])
+                    this.cc.push(item);
+            }
+            if (data["bcc"] && data["bcc"].constructor === Array) {
+                this.bcc = [];
+                for (let item of data["bcc"])
+                    this.bcc.push(item);
+            }
             this.body = data["body"];
         }
     }
@@ -55474,8 +55498,16 @@ export class CreateEmailTemplateRequest implements ICreateEmailTemplateRequest {
         data["name"] = this.name;
         data["type"] = this.type;
         data["subject"] = this.subject;
-        data["cc"] = this.cc;
-        data["bcc"] = this.bcc;
+        if (this.cc && this.cc.constructor === Array) {
+            data["cc"] = [];
+            for (let item of this.cc)
+                data["cc"].push(item);
+        }
+        if (this.bcc && this.bcc.constructor === Array) {
+            data["bcc"] = [];
+            for (let item of this.bcc)
+                data["bcc"].push(item);
+        }
         data["body"] = this.body;
         return data; 
     }
@@ -55485,8 +55517,8 @@ export interface ICreateEmailTemplateRequest {
     name: string;
     type: EmailTemplateType;
     subject: string | undefined;
-    cc: string | undefined;
-    bcc: string | undefined;
+    cc: string[] | undefined;
+    bcc: string[] | undefined;
     body: string;
 }
 
@@ -55495,8 +55527,8 @@ export class UpdateEmailTemplateRequest implements IUpdateEmailTemplateRequest {
     name!: string;
     type!: EmailTemplateType;
     subject!: string | undefined;
-    cc!: string | undefined;
-    bcc!: string | undefined;
+    cc!: string[] | undefined;
+    bcc!: string[] | undefined;
     body!: string;
 
     constructor(data?: IUpdateEmailTemplateRequest) {
@@ -55514,8 +55546,16 @@ export class UpdateEmailTemplateRequest implements IUpdateEmailTemplateRequest {
             this.name = data["name"];
             this.type = data["type"];
             this.subject = data["subject"];
-            this.cc = data["cc"];
-            this.bcc = data["bcc"];
+            if (data["cc"] && data["cc"].constructor === Array) {
+                this.cc = [];
+                for (let item of data["cc"])
+                    this.cc.push(item);
+            }
+            if (data["bcc"] && data["bcc"].constructor === Array) {
+                this.bcc = [];
+                for (let item of data["bcc"])
+                    this.bcc.push(item);
+            }
             this.body = data["body"];
         }
     }
@@ -55533,8 +55573,16 @@ export class UpdateEmailTemplateRequest implements IUpdateEmailTemplateRequest {
         data["name"] = this.name;
         data["type"] = this.type;
         data["subject"] = this.subject;
-        data["cc"] = this.cc;
-        data["bcc"] = this.bcc;
+        if (this.cc && this.cc.constructor === Array) {
+            data["cc"] = [];
+            for (let item of this.cc)
+                data["cc"].push(item);
+        }
+        if (this.bcc && this.bcc.constructor === Array) {
+            data["bcc"] = [];
+            for (let item of this.bcc)
+                data["bcc"].push(item);
+        }
         data["body"] = this.body;
         return data; 
     }
@@ -55545,8 +55593,8 @@ export interface IUpdateEmailTemplateRequest {
     name: string;
     type: EmailTemplateType;
     subject: string | undefined;
-    cc: string | undefined;
-    bcc: string | undefined;
+    cc: string[] | undefined;
+    bcc: string[] | undefined;
     body: string;
 }
 
@@ -56320,11 +56368,11 @@ export class EmailSettingsEditDto implements IEmailSettingsEditDto {
     defaultFromDisplayName!: string | undefined;
     smtpHost!: string | undefined;
     smtpPort!: number | undefined;
-    smtpUserName!: string | undefined;
-    smtpPassword!: string | undefined;
-    smtpDomain!: string | undefined;
     smtpEnableSsl!: boolean | undefined;
     smtpUseDefaultCredentials!: boolean | undefined;
+    smtpDomain!: string | undefined;
+    smtpUserName!: string | undefined;
+    smtpPassword!: string | undefined;
 
     constructor(data?: IEmailSettingsEditDto) {
         if (data) {
@@ -56341,11 +56389,11 @@ export class EmailSettingsEditDto implements IEmailSettingsEditDto {
             this.defaultFromDisplayName = data["defaultFromDisplayName"];
             this.smtpHost = data["smtpHost"];
             this.smtpPort = data["smtpPort"];
-            this.smtpUserName = data["smtpUserName"];
-            this.smtpPassword = data["smtpPassword"];
-            this.smtpDomain = data["smtpDomain"];
             this.smtpEnableSsl = data["smtpEnableSsl"];
             this.smtpUseDefaultCredentials = data["smtpUseDefaultCredentials"];
+            this.smtpDomain = data["smtpDomain"];
+            this.smtpUserName = data["smtpUserName"];
+            this.smtpPassword = data["smtpPassword"];
         }
     }
 
@@ -56362,11 +56410,11 @@ export class EmailSettingsEditDto implements IEmailSettingsEditDto {
         data["defaultFromDisplayName"] = this.defaultFromDisplayName;
         data["smtpHost"] = this.smtpHost;
         data["smtpPort"] = this.smtpPort;
-        data["smtpUserName"] = this.smtpUserName;
-        data["smtpPassword"] = this.smtpPassword;
-        data["smtpDomain"] = this.smtpDomain;
         data["smtpEnableSsl"] = this.smtpEnableSsl;
         data["smtpUseDefaultCredentials"] = this.smtpUseDefaultCredentials;
+        data["smtpDomain"] = this.smtpDomain;
+        data["smtpUserName"] = this.smtpUserName;
+        data["smtpPassword"] = this.smtpPassword;
         return data; 
     }
 }
@@ -56376,11 +56424,11 @@ export interface IEmailSettingsEditDto {
     defaultFromDisplayName: string | undefined;
     smtpHost: string | undefined;
     smtpPort: number | undefined;
-    smtpUserName: string | undefined;
-    smtpPassword: string | undefined;
-    smtpDomain: string | undefined;
     smtpEnableSsl: boolean | undefined;
     smtpUseDefaultCredentials: boolean | undefined;
+    smtpDomain: string | undefined;
+    smtpUserName: string | undefined;
+    smtpPassword: string | undefined;
 }
 
 export class TenantManagementSettingsEditDto implements ITenantManagementSettingsEditDto {
@@ -58607,8 +58655,8 @@ export interface IAttachment {
 
 export class GetPreprocessedEmailOutput implements IGetPreprocessedEmailOutput {
     subject!: string | undefined;
-    cc!: string | undefined;
-    bcc!: string | undefined;
+    cc!: string[] | undefined;
+    bcc!: string[] | undefined;
     body!: string | undefined;
     attachments!: Attachment[] | undefined;
 
@@ -58624,8 +58672,16 @@ export class GetPreprocessedEmailOutput implements IGetPreprocessedEmailOutput {
     init(data?: any) {
         if (data) {
             this.subject = data["subject"];
-            this.cc = data["cc"];
-            this.bcc = data["bcc"];
+            if (data["cc"] && data["cc"].constructor === Array) {
+                this.cc = [];
+                for (let item of data["cc"])
+                    this.cc.push(item);
+            }
+            if (data["bcc"] && data["bcc"].constructor === Array) {
+                this.bcc = [];
+                for (let item of data["bcc"])
+                    this.bcc.push(item);
+            }
             this.body = data["body"];
             if (data["attachments"] && data["attachments"].constructor === Array) {
                 this.attachments = [];
@@ -58645,8 +58701,16 @@ export class GetPreprocessedEmailOutput implements IGetPreprocessedEmailOutput {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["subject"] = this.subject;
-        data["cc"] = this.cc;
-        data["bcc"] = this.bcc;
+        if (this.cc && this.cc.constructor === Array) {
+            data["cc"] = [];
+            for (let item of this.cc)
+                data["cc"].push(item);
+        }
+        if (this.bcc && this.bcc.constructor === Array) {
+            data["bcc"] = [];
+            for (let item of this.bcc)
+                data["bcc"].push(item);
+        }
         data["body"] = this.body;
         if (this.attachments && this.attachments.constructor === Array) {
             data["attachments"] = [];
@@ -58659,8 +58723,8 @@ export class GetPreprocessedEmailOutput implements IGetPreprocessedEmailOutput {
 
 export interface IGetPreprocessedEmailOutput {
     subject: string | undefined;
-    cc: string | undefined;
-    bcc: string | undefined;
+    cc: string[] | undefined;
+    bcc: string[] | undefined;
     body: string | undefined;
     attachments: Attachment[] | undefined;
 }
