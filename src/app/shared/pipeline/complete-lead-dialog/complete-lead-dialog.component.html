@@ -9,7 +9,7 @@
     </dx-select-box>
     <dx-number-box
         [placeholder]="l('Amount')"
-        format="$ #,##0.##"
+        [format]="currency + ' #,##0.##'"
         [(value)]="amount"  
         [disabled]="!orderStageId">
     </dx-number-box>

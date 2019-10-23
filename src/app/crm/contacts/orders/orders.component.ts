@@ -1,4 +1,5 @@
 /** Core imports */
+import { CurrencyPipe } from '@angular/common';
 import {
     Component,
     OnInit,
@@ -10,6 +11,7 @@ import {
 /** Third party imports */
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { MatDialog } from '@angular/material/dialog';
+import { first } from 'rxjs/operators';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
@@ -23,7 +25,7 @@ import {
 } from '@shared/service-proxies/service-proxies';
 import { HistoryListDialogComponent } from './history-list-dialog/history-list-dialog.component';
 import { ContactsService } from '@app/crm/contacts/contacts.service';
-import { CurrencyPipe } from '@angular/common';
+import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 
 @Component({
     templateUrl: './orders.component.html',
@@ -35,9 +37,11 @@ export class OrdersComponent extends AppComponentBase implements OnInit, OnDestr
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
     private readonly dataSourceURI = 'Order';
     private formatting = AppConsts.formatting;
+    currency: string;
 
     constructor(injector: Injector,
         private dialog: MatDialog,
+        private invoicesService: InvoicesService,
         private contactService: ContactServiceProxy,
         private clientService: ContactsService,
         private orderServiceProxy: OrderServiceProxy,
@@ -45,7 +49,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, OnDestr
     ) {
         super(injector);
         this.dataSource = this.getDataSource(+this.contactService['data'].contactInfo.id);
-        this.clientService.invalidateSubscribe((area) => {
+        clientService.invalidateSubscribe((area) => {
             if (area == 'orders') {
                 this.dataSource = this.getDataSource(+this.contactService['data'].contactInfo.id);
                 const dataSource = this.dataGrid.instance.getDataSource();
@@ -54,6 +58,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, OnDestr
                 }
             }
         });
+        invoicesService.settings$.pipe(first()).subscribe(res => this.currency = res.currency);
     }
 
     ngOnInit(): void {
@@ -129,6 +134,6 @@ export class OrdersComponent extends AppComponentBase implements OnInit, OnDestr
     }
 
     customizeAmountValue = (e) => {
-        return this.currencyPipe.transform(e.value);
+        return this.currencyPipe.transform(e.value, this.currency);
     }
 }

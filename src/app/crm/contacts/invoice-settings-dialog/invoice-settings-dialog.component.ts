@@ -2,7 +2,7 @@
 import { Component, ChangeDetectionStrategy, Inject, ChangeDetectorRef, ViewChild, AfterViewInit } from '@angular/core';
 
 /** Third party imports */
-import { finalize } from 'rxjs/operators';
+import { finalize, first } from 'rxjs/operators';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { DxTextBoxComponent } from 'devextreme-angular/ui/text-box';
 import { NotifyService } from '@abp/notify/notify.service';
@@ -12,7 +12,8 @@ import { AppConsts } from '@shared/AppConsts';
 import { DialogService } from '@app/shared/common/dialogs/dialog.service';
 import { EmailTemplateDialogComponent } from '@app/crm/shared/email-template-dialog/email-template-dialog.component';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
-import { EmailTemplateType, InvoiceServiceProxy, InvoiceSettings } from '@shared/service-proxies/service-proxies';
+import { EmailTemplateType, InvoiceServiceProxy, InvoiceSettings, InvoiceCurrency } from '@shared/service-proxies/service-proxies';
+import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 
 @Component({
     templateUrl: 'invoice-settings-dialog.component.html',
@@ -23,11 +24,17 @@ import { EmailTemplateType, InvoiceServiceProxy, InvoiceSettings } from '@shared
 export class InvoiceSettingsDialogComponent implements AfterViewInit {
     @ViewChild(EmailTemplateDialogComponent) modalDialog: EmailTemplateDialogComponent;
     settings = new InvoiceSettings();
-    
+    currencies = Object.keys(InvoiceCurrency).map(item => {
+        return {
+            id: item,
+            text: this.ls.l(item)
+        }
+    });
     nextInvoiceNumber;
 
     constructor(
         private notifyService: NotifyService,
+        private invoicesService: InvoicesService,
         private dialogRef: MatDialogRef<InvoiceSettingsDialogComponent>,
         private changeDetectorRef: ChangeDetectorRef,
         private invoiceProxy: InvoiceServiceProxy,
@@ -40,8 +47,8 @@ export class InvoiceSettingsDialogComponent implements AfterViewInit {
     }
 
     ngAfterViewInit() {
-        this.modalDialog.startLoading();
-        this.invoiceProxy.getSettings().pipe(
+        this.modalDialog.startLoading();        
+        this.invoicesService.settings$.pipe(first(),
             finalize(() => this.modalDialog.finishLoading())
         ).subscribe(res => {
             this.settings = new InvoiceSettings(res);
@@ -67,6 +74,7 @@ export class InvoiceSettingsDialogComponent implements AfterViewInit {
             finalize(() => this.modalDialog.finishLoading())
         ).subscribe(() => {
             this.notifyService.info(this.ls.l('SavedSuccessfully'));
+            this.invoicesService.invalidateSettings(this.settings);
             this.dialogRef.close(this.settings);
         });
     }

@@ -104,6 +104,7 @@ import { NotSupportedTypeDialogComponent } from '@app/crm/contacts/documents/not
 import { DocumentsService } from '@app/crm/contacts/documents/documents.service';
 import { OrdersComponent } from '@app/crm/contacts/orders/orders.component';
 import { InvoicesComponent } from '@app/crm/contacts/invoices/invoices.component';
+import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 import { PersonalDetailsComponent } from './personal-details/personal-details.component';
 import { CRMDashboardWidgetsModule } from '@shared/crm/dashboard-widgets/dashboard-widgets.module';
 import { BankCodeLettersModule } from '@app/shared/common/bank-code-letters/bank-code-letters.module';
@@ -250,7 +251,8 @@ import { EmailTemplateDialogComponent } from '@app/crm/shared/email-template-dia
         DocumentTypeServiceProxy,
         OrderSubscriptionServiceProxy,
         ContactCommunicationServiceProxy,
-        DocumentsService
+        DocumentsService,
+        InvoicesService
     ]
 })
 export class ContactsModule {}

@@ -11,8 +11,8 @@ import {
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { DxTooltipComponent } from 'devextreme-angular/ui/tooltip';
 import { MatDialog } from '@angular/material/dialog';
-import { finalize } from 'rxjs/operators';
-import { of, forkJoin } from 'rxjs';
+import { finalize, switchMap, first } from 'rxjs/operators';
+import { of } from 'rxjs';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
@@ -23,10 +23,12 @@ import { FilterModel } from '@shared/filters/models/filter.model';
 import {
     ContactServiceProxy,
     InvoiceServiceProxy,
-    InvoiceStatus
+    InvoiceStatus,
+    InvoiceSettingsInfoDto
 } from '@shared/service-proxies/service-proxies';
 import { ContactsService } from '@app/crm/contacts/contacts.service';
 import { CreateInvoiceDialogComponent } from '@app/crm/shared/create-invoice-dialog/create-invoice-dialog.component';
+import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 import { AppPermissions } from '@shared/AppPermissions';
 
 @Component({
@@ -40,6 +42,7 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
     @ViewChild(DxTooltipComponent) actionsTooltip: DxTooltipComponent;
 
     private actionRecordData;
+    private settings: InvoiceSettingsInfoDto;
     private readonly dataSourceURI = 'Invoice';
     private filters: FilterModel[];
     private formatting = AppConsts.formatting;
@@ -68,6 +71,7 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
 
     constructor(injector: Injector,
         private dialog: MatDialog,
+        private invoicesService: InvoicesService,
         private contactService: ContactServiceProxy,
         private clientService: ContactsService,
         private invoiceService: InvoiceServiceProxy
@@ -82,6 +86,10 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
                     dataSource.load();
                 }
             }
+        });
+
+        this.invoicesService.settings$.pipe(first()).subscribe(res => {
+            this.settings = res;
         });
     }
 
@@ -189,18 +197,14 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
 
     sendInvoice() {
         this.startLoading(true);
-        forkJoin(
-            this.invoiceService.getPreprocessedEmail(undefined, this.actionRecordData.Id),
-            this.invoiceService.getSettings()
-        ).pipe(
-            finalize(() => this.finishLoading(true))
-        ).subscribe(([data, settings]) => {
-            data['contactId'] = this.contactId;
-            data['templateId'] = settings.defaultTemplateId;
-            this.clientService.showEmailDialog(data).subscribe(() => {
-                this.invalidate();
-            });
-        });
+        this.invoiceService.getPreprocessedEmail(undefined, this.actionRecordData.Id).pipe(
+            finalize(() => this.finishLoading(true)),
+            switchMap(data => {
+                data['contactId'] = this.contactId;
+                data['templateId'] = this.settings.defaultTemplateId;
+                return this.clientService.showEmailDialog(data);
+            })
+        ).subscribe(() => this.invalidate());
     }
 
     onMenuItemClick(event) {

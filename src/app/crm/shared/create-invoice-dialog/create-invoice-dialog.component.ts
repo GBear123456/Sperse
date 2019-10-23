@@ -30,7 +30,6 @@ import {
     InvoiceStatus,
     CreateInvoiceLineInput,
     InvoiceSettingsInfoDto,
-    CurrencyInfo,
     InvoiceLineUnit
 } from '@shared/service-proxies/service-proxies';
 import { NotifyService } from '@abp/notify/notify.service';
@@ -42,7 +41,7 @@ import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.
 import { CreateClientDialogComponent } from '../create-client-dialog/create-client-dialog.component';
 import { EmailTemplateDialogComponent } from '@app/crm/shared/email-template-dialog/email-template-dialog.component';
 import { AppSessionService } from '@shared/common/session/app-session.service';
-import { RootStore, CurrenciesStoreActions, CurrenciesStoreSelectors } from '@root/store';
+import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 import { AppConsts } from '@shared/AppConsts';
 import { AppPermissions } from '@shared/AppPermissions';
 
@@ -69,11 +68,6 @@ export class CreateInvoiceDialogComponent implements OnInit {
 
     private validationError: string;
 
-    currencies$: Observable<Partial<CurrencyInfo>[]> = this.store$.pipe(
-        select(CurrenciesStoreSelectors.getCurrencies),
-        filter(Boolean)
-    );
-
     invoiceNo;
     orderId: number;
     invoiceId: number;
@@ -85,8 +79,6 @@ export class CreateInvoiceDialogComponent implements OnInit {
     invoiceSettings: InvoiceSettingsInfoDto = new InvoiceSettingsInfoDto();
     remoteServiceBaseUrl: string = AppConsts.remoteServiceBaseUrl;
     selectedOption: any;
-
-    currency = 'USD';
 
     customer: any;
     contactId: number;
@@ -119,8 +111,8 @@ export class CreateInvoiceDialogComponent implements OnInit {
     invoiceUnits = Object.keys(InvoiceLineUnit);
 
     constructor(
-        private store$: Store<RootStore.State>,
         private invoiceProxy: InvoiceServiceProxy,
+        private invoicesService: InvoicesService,
         private customerProxy: CustomerServiceProxy,
         private cacheService: CacheService,
         private notifyService: NotifyService,
@@ -141,13 +133,6 @@ export class CreateInvoiceDialogComponent implements OnInit {
             {text: this.ls.l('Invoice_SaveAndSend'), selected: false, status: InvoiceStatus.Final, email: true, disabled: this.disabledForUpdate},
             {text: this.ls.l('Invoice_SaveAndMarkSent'), selected: false, disabled: true}
         ];
-        this.store$.dispatch(new CurrenciesStoreActions.LoadRequestAction());
-        this.store$.pipe(
-            select(CurrenciesStoreSelectors.getSelectedCurrencyId),
-            filter(Boolean), first()
-        ).subscribe((selectedCurrencyId: string) => {
-            this.currency = selectedCurrencyId;
-        });
     }
 
     ngOnInit() {
@@ -156,11 +141,11 @@ export class CreateInvoiceDialogComponent implements OnInit {
             this.changeDetectorRef.detectChanges();
         });
 
-        this.invoiceProxy.getSettings().subscribe((settings) => {
+        this.invoicesService.settings$.pipe(first()).subscribe(settings => {
             this.invoiceSettings = settings;
             if (!this.data.invoice) {
                 this.invoiceNo = settings.nextInvoiceNumber;
-                this.notes = settings.note;
+                this.notes = settings.note;                
             }
             this.changeDetectorRef.detectChanges();
         });
@@ -188,7 +173,6 @@ export class CreateInvoiceDialogComponent implements OnInit {
                 .pipe(finalize(() => this.modalDialog.finishLoading()))
                 .subscribe((res) => {
                     this.description = res.description;
-                    this.currency = res.currencyId;
                     this.notes = res.note;
                     this.customer = res.contactName;
                     this.lines = res.lines.map((res) => {
@@ -245,7 +229,6 @@ export class CreateInvoiceDialogComponent implements OnInit {
 
     private setRequestCommonFields(data) {
         data.number = this.invoiceNo;
-        data.currencyId = this.currency;
         data.date = this.getDate(this.date);
         data.dueDate = this.getDate(this.dueDate);
         data.description = this.description;
@@ -486,16 +469,6 @@ export class CreateInvoiceDialogComponent implements OnInit {
     onValueChanged(event, data, field?) {
         this.lines[data.rowIndex][field || data.column.dataField] = event.value;
         this.changeDetectorRef.detectChanges();
-    }
-
-    onCurrencyChanged(event) {
-        this.linesComponent.instance.repaint();
-    }
-
-    setCurrencyHintValue(event) {
-        if (event.name == 'displayValue')
-            setTimeout(() => event.component.option(
-                'hint', event.component.field().value));
     }
 
     allowDigitsOnly(event, exceptions = []) {

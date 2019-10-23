@@ -56,7 +56,7 @@
                                 }">
                             </dxi-column>
                             <dxi-column dataField="Stage" caption="{{l('Stage')}}"></dxi-column>
-                            <dxi-column dataField="Amount" caption="{{l('Amount')}}" format="$ #,##0.##"></dxi-column>
+                            <dxi-column dataField="Amount" caption="{{l('Amount')}}" cellTemplate="amountCell"></dxi-column>
                             <dxi-column dataField="OrderType" caption="{{l('Type')}}"></dxi-column>
                             <dxi-column dataField="CurrentNumber" caption="{{l('CurrentNumber')}}" [visible]="false"></dxi-column>
                             <dxi-column dataField="TotalNumber" caption="{{l('TotalNumber')}}" [visible]="false"></dxi-column>
@@ -69,6 +69,9 @@
                             <dxo-paging [pageSize]="20"></dxo-paging>
                             <div *dxTemplate="let cellData of 'phoneCell'">
                                 {{cellData.value | phone}}
+                            </div>
+                            <div *dxTemplate="let cellData of 'amountCell'">
+                                {{cellData.value | currency: currency}}
                             </div>
                             <div *dxTemplate="let cellData of 'dateCell'">
                                 {{cellData.value | date: formatting.dateTime : userTimezone}}
