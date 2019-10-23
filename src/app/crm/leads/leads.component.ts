@@ -75,6 +75,7 @@ import { MapComponent } from '@app/shared/common/slice/map/map.component';
 import { ImageFormat } from '@shared/common/export/image-format.enum';
 import { MapArea } from '@app/shared/common/slice/map/map-area.enum';
 import { MapService } from '@app/shared/common/slice/map/map.service';
+import { ImpersonationService } from '@admin/users/impersonation.service';
 
 @Component({
     templateUrl: './leads.component.html',
@@ -95,6 +96,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     @ViewChild(ChartComponent) chartComponent: ChartComponent;
     @ViewChild(MapComponent) mapComponent: MapComponent;
 
+    private readonly MENU_LOGIN_INDEX = 1;
     private _selectedLeads: any;
     get selectedLeads() {
         return this._selectedLeads || [];
@@ -109,7 +111,19 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         if (this.appService.toolbarConfig)
             this.initToolbarConfig();
     }
-
+    actionEvent: any;
+    actionMenuItems = [
+        {
+            text: this.l('Edit'),
+            visible: true,
+            action: () => this.showLeadDetails(this.actionEvent)
+        },
+        {
+            text: this.l('LoginAsThisUser'),
+            visible: this.permission.isGranted(AppPermissions.AdministrationUsersImpersonation),
+            action: () => this.impersonationService.impersonate(this.actionEvent.data.UserId, this.appSession.tenantId)
+        }
+    ];
     contactGroups = Object.keys(ContactGroup).map((group) => {
         return {
             text: this.l('ContactGroup_' + group),
@@ -337,6 +351,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     contentWidth$: Observable<number> = this.crmService.contentWidth$;
     contentHeight$: Observable<number> = this.crmService.contentHeight$;
     mapHeight$: Observable<number> = this.crmService.mapHeight$;
+    pipelineSelectFields: string[] = ['Id', 'CustomerId', 'Name', 'CompanyName', 'CreationTime', 'PhotoPublicId', 'Email'];
 
     constructor(injector: Injector,
         private contactService: ContactsService,
@@ -353,6 +368,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         private http: HttpClient,
         private crmService: CrmService,
         private mapService: MapService,
+        private impersonationService: ImpersonationService,
         public dialog: MatDialog,
         public contactProxy: ContactServiceProxy,
         public userManagementService: UserManagementService
@@ -382,6 +398,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 area: 'filter',
                 dataField: 'BankCode'
             });
+            this.pipelineSelectFields.push('BankCode');
         }
     }
 
@@ -1154,8 +1171,10 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         this.searchClear = false;
         let orgId = event.data.OrganizationId;
         event.component && event.component.cancelEditData();
-        this._router.navigate(['app/crm/contact', clientId, 'lead', leadId].concat(orgId ? ['company', orgId] : []),
-            { queryParams: { referrer: 'app/crm/leads', dataLayoutType: this.dataLayoutType } });
+        setTimeout(() => {
+            this._router.navigate(['app/crm/contact', clientId, 'lead', leadId].concat(orgId ? ['company', orgId] : []),
+                {queryParams: {referrer: 'app/crm/leads', dataLayoutType: this.dataLayoutType}});
+        });
     }
 
     onCellClick($event) {
@@ -1269,6 +1288,19 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
 
     getAssignedUsersSelector() {
         return select(ContactAssignedUsersStoreSelectors.getContactGroupAssignedUsers, { contactGroup: ContactGroup.Client });
+    }
+
+    showActionsMenu(event) {
+        event.cancel = true;
+        this.actionEvent = null;
+        this.actionMenuItems[this.MENU_LOGIN_INDEX].visible = Boolean(event.data.UserId)
+            && this.permission.isGranted(AppPermissions.AdministrationUsersImpersonation);
+        setTimeout(() => this.actionEvent = event);
+    }
+
+    onMenuItemClick(event) {
+        event.itemData.action.call(this);
+        this.actionEvent = null;
     }
 
     onContactGroupChanged(event) {

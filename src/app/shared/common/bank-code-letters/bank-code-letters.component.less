@@ -1,4 +1,6 @@
 :host {
+    display: flex;
+    align-items: center;
     bank-code-letter {
         display: inline-block;
         &:not(:last-child) {
@@ -11,13 +13,12 @@
         font-size: 18px;
         margin-left: 10px;
         cursor: pointer;
-        display: none;
+        visibility: hidden;
+        margin-right: 5px;
     }
 
-    &:hover {
-        .fa-pencil {
-            display: inline-block;
-        }
+    &:hover .fa-pencil {
+        visibility: visible;
     }
     &.allow-edit {
         padding-right: 25px;
@@ -25,4 +26,20 @@
             cursor: pointer;
         }
     }
+    span.bankCodeDefinition {
+        text-transform: uppercase;
+        font-weight: 600;
+        margin-right: 5px;
+    }
+    a.reportLink {
+        margin-left: 5px;
+        img {
+            max-width: 20px;
+            max-height: 20px;
+        }
+    }
+}
+
+#bankCodeLettersEditorDialog {
+    padding: 15px;
 }

@@ -19,10 +19,17 @@
                                    [allowEdit]="true"
                                    [personId]="data.id"
                                    key="detailsHeader"
-                                   [showDescriptionsOnHover]="true">
+                                   [showDescriptionsOnHover]="true"
+                                   [showReportLink]="true"
+                                   reportIconName="blue">
                 </bank-code-letters>
             </div>
         </ng-template>
+    </div>
+    <div class="affiliate-code">
+        <inplace-edit [data]="affiliateCodeInplaceEditData$ | async"
+                      (valueChanged)="updateAffiliateCode($event)">
+        </inplace-edit>
     </div>
     <div *ngIf="data" class="organization_info">
         <div class="delimiter"></div>

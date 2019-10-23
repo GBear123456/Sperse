@@ -40,6 +40,7 @@ import { VgControlsModule } from 'videogular2/controls';
 import { VgOverlayPlayModule } from 'videogular2/overlay-play';
 import { VgBufferingModule } from 'videogular2/buffering';
 import { NgxMaskModule } from '@node_modules/ngx-mask';
+import { CKEditorModule } from 'ckeditor4-angular';
 
 /** Application imports */
 import { CommonModule } from '@shared/common/common.module';
@@ -88,7 +89,7 @@ import { PermissionTreeComponent } from './permission-tree/permission-tree.compo
 import { ContactsRoutingModule } from './contacts-routing.module';
 import {
     ContactServiceProxy, MemberServiceProxy, OrganizationContactServiceProxy, DocumentServiceProxy,
-    PersonOrgRelationServiceProxy, PersonContactServiceProxy, DocumentTypeServiceProxy,
+    PersonOrgRelationServiceProxy, PersonContactServiceProxy, DocumentTypeServiceProxy, ContactCommunicationServiceProxy,
     PartnerServiceProxy, PartnerTypeServiceProxy, NotesServiceProxy, OrderSubscriptionServiceProxy, CustomerServiceProxy
 } from '@shared/service-proxies/service-proxies';
 import { NameParserService } from '@app/crm/shared/name-parser/name-parser.service';
@@ -103,10 +104,13 @@ import { NotSupportedTypeDialogComponent } from '@app/crm/contacts/documents/not
 import { DocumentsService } from '@app/crm/contacts/documents/documents.service';
 import { OrdersComponent } from '@app/crm/contacts/orders/orders.component';
 import { InvoicesComponent } from '@app/crm/contacts/invoices/invoices.component';
+import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 import { PersonalDetailsComponent } from './personal-details/personal-details.component';
 import { CRMDashboardWidgetsModule } from '@shared/crm/dashboard-widgets/dashboard-widgets.module';
 import { BankCodeLettersModule } from '@app/shared/common/bank-code-letters/bank-code-letters.module';
 import { SMSDialogComponent } from '@app/crm/shared/sms-dialog/sms-dialog.component';
+import { InvoiceSettingsDialogComponent } from './invoice-settings-dialog/invoice-settings-dialog.component';
+import { EmailTemplateDialogComponent } from '@app/crm/shared/email-template-dialog/email-template-dialog.component';
 
 @NgModule({
     declarations: [
@@ -154,6 +158,8 @@ import { SMSDialogComponent } from '@app/crm/shared/sms-dialog/sms-dialog.compon
         CreateClientDialogComponent,
         ContactListDialogComponent,
         NotSupportedTypeDialogComponent,
+        EmailTemplateDialogComponent,
+        InvoiceSettingsDialogComponent,
         HistoryListDialogComponent,
         UserInboxComponent,
         OrdersComponent,
@@ -179,6 +185,7 @@ import { SMSDialogComponent } from '@app/crm/shared/sms-dialog/sms-dialog.compon
         DxButtonModule,
         DxTextBoxModule,
         DxValidatorModule,
+        DxValidationGroupModule,
         DxNumberBoxModule,
         DxScrollViewModule,
         DxToolbarModule,
@@ -191,7 +198,6 @@ import { SMSDialogComponent } from '@app/crm/shared/sms-dialog/sms-dialog.compon
         DxTreeViewModule,
         DxTagBoxModule,
         RoundProgressModule,
-        DxValidationGroupModule,
         PipelineModule,
         DxRadioGroupModule,
         FileDropModule,
@@ -204,7 +210,8 @@ import { SMSDialogComponent } from '@app/crm/shared/sms-dialog/sms-dialog.compon
         NgxMaskModule.forRoot(),
         ItemDetailsLayoutModule,
         CRMDashboardWidgetsModule,
-        BankCodeLettersModule
+        BankCodeLettersModule,
+        CKEditorModule
     ],
     entryComponents: [
         EditContactDialog,
@@ -222,6 +229,8 @@ import { SMSDialogComponent } from '@app/crm/shared/sms-dialog/sms-dialog.compon
         RelationCompaniesDialogComponent,
         CreateClientDialogComponent,
         NotSupportedTypeDialogComponent,
+        InvoiceSettingsDialogComponent,
+        EmailTemplateDialogComponent,
         HistoryListDialogComponent,
         SMSDialogComponent
     ],
@@ -241,7 +250,9 @@ import { SMSDialogComponent } from '@app/crm/shared/sms-dialog/sms-dialog.compon
         DocumentServiceProxy,
         DocumentTypeServiceProxy,
         OrderSubscriptionServiceProxy,
-        DocumentsService
+        ContactCommunicationServiceProxy,
+        DocumentsService,
+        InvoicesService
     ]
 })
 export class ContactsModule {}

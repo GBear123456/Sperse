@@ -100,7 +100,7 @@ export class OrganizationUnitsTreeComponent implements OnDestroy {
             (userData) => {
                 this.userId = userData.user && userData.user.id;
                 this.setOrganizationUnitsData(
-                    userData.allOrganizationUnits, 
+                    userData.allOrganizationUnits,
                     userData.selectedOrgUnits
                 );
             },
@@ -123,7 +123,7 @@ export class OrganizationUnitsTreeComponent implements OnDestroy {
         this.oranizationUnitsDataSource.sort({ getter: 'displayName', desc: this.sortTreeDesc });
     }
 
-    getSelectedOrganizationUnits(): number[] {        
+    getSelectedOrganizationUnits(): number[] {
         return this.organizationUnitsData.filter(item => item['selected']).map(item => item.id);
     }
 

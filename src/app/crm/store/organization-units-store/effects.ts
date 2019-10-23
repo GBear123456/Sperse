@@ -17,9 +17,11 @@ import { AppConsts } from '@shared/AppConsts';
 
 @Injectable()
 export class OrganizationUnitsEffects {
-    constructor(private dictionaryServiceProxy: DictionaryServiceProxy,
-                private actions$: Actions,
-                private store$: Store<State>) {}
+    constructor(
+        private dictionaryServiceProxy: DictionaryServiceProxy,
+        private actions$: Actions,
+        private store$: Store<State>
+    ) {}
 
     @Effect()
     loadRequestEffect$: Observable<Action> = this.actions$.pipe(
@@ -33,7 +35,7 @@ export class OrganizationUnitsEffects {
 
             return this.dictionaryServiceProxy.getOrganizationUnits(false)
                 .pipe(
-                map((organizationUnitsList: OrganizationUnitShortDto[]) => {
+                    map((organizationUnitsList: OrganizationUnitShortDto[]) => {
                         return new organizationUnitsActions.LoadSuccessAction(organizationUnitsList);
                     }),
                     catchError(err => {

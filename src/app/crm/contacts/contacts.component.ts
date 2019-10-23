@@ -41,7 +41,7 @@ import {
     OrganizationContactInfoDto
 } from '@shared/service-proxies/service-proxies';
 import { VerificationChecklistItemType, VerificationChecklistItem, VerificationChecklistItemStatus } from './verification-checklist/verification-checklist.model';
-import { OperationsWidgetComponent } from './operations-widget.component';
+import { OperationsWidgetComponent } from './operations-widget/operations-widget.component';
 import { ContactsService } from './contacts.service';
 import { AppStoreService } from '@app/store/app-store.service';
 import { RP_DEFAULT_ID, RP_USER_INFO_ID, RP_LEAD_INFO_ID } from './contacts.const';
@@ -76,7 +76,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
     readonly RP_LEAD_INFO_ID = RP_LEAD_INFO_ID;
 
     customerId: number;
-    contactGroup: string;
+    contactGroup: ContactGroup;
     contactInfo: ContactInfoDto = new ContactInfoDto();
     personContactInfo: PersonContactInfoDto;
     primaryContact: any;
@@ -388,19 +388,20 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
             companyId
                 ? this.orgContactService.getOrganizationContactInfo(companyId)
                 : of(OrganizationContactInfoDto.fromJS({}))
-        ).pipe(map((contactInfo) => {
-            contactInfo[0]['organizationContactInfo'] = contactInfo[1];
-            if (!companyId && contactInfo[0]['primaryOrganizationContactId'])
-                this.orgContactService.getOrganizationContactInfo(
-                    contactInfo[0]['primaryOrganizationContactId']).subscribe((result) => {
-                        contactInfo[0]['organizationContactInfo'] = result;
-                        this.contactsService.organizationInfoUpdate(result);
-                    });
-            else
-                this.contactsService.organizationInfoUpdate(OrganizationContactInfoDto.fromJS({}));
-
-            return contactInfo[0];
-        }));
+        ).pipe(
+            map((contactInfo) => {
+                contactInfo[0]['organizationContactInfo'] = contactInfo[1];
+                if (!companyId && contactInfo[0]['primaryOrganizationContactId'])
+                    this.orgContactService.getOrganizationContactInfo(
+                        contactInfo[0]['primaryOrganizationContactId']).subscribe((result) => {
+                            contactInfo[0]['organizationContactInfo'] = result;
+                            this.contactsService.organizationInfoUpdate(result);
+                        });
+                else
+                    this.contactsService.organizationInfoUpdate(OrganizationContactInfoDto.fromJS({}));
+                return contactInfo[0];
+            })
+        );
     }
 
     loadDataForUser(userId, companyId) {
@@ -807,8 +808,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
             data: {
                 contact: this.contactInfo
             }
-        }).afterClosed().subscribe(() => {
-        });
+        }).afterClosed().subscribe();
     }
 
     reloadCurrentSection(params = this.params) {

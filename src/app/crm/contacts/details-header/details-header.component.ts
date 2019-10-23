@@ -6,7 +6,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { CacheService } from 'ng2-cache-service';
 import { DxContextMenuComponent } from 'devextreme-angular/ui/context-menu';
 import * as _ from 'underscore';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable, ReplaySubject } from 'rxjs';
 import { filter, finalize, takeUntil, map } from 'rxjs/operators';
 
 /** Application imports */
@@ -23,6 +23,7 @@ import {
     ContactInfoDto,
     PersonContactInfoDto,
     ContactPhotoServiceProxy,
+    ContactServiceProxy,
     CreateContactPhotoInput,
     OrganizationInfoDto,
     OrganizationContactServiceProxy,
@@ -31,7 +32,8 @@ import {
     PersonOrgRelationShortInfo,
     UpdatePersonOrgRelationInput,
     UpdateOrganizationInfoInput,
-    UpdatePersonNameInput
+    UpdatePersonNameInput,
+    UpdateContactAffiliateCodeInput
 } from '@shared/service-proxies/service-proxies';
 import { NameParserService } from '@app/crm/shared/name-parser/name-parser.service';
 import { NoteAddDialogComponent } from '../notes/note-add-dialog/note-add-dialog.component';
@@ -45,6 +47,7 @@ import { UserManagementService } from '@shared/common/layout/user-management-lis
 import { ContextType } from '@app/crm/contacts/details-header/context-type.enum';
 import { ContextMenuItem } from '@app/crm/contacts/details-header/context-menu-item.interface';
 import { AppPermissions } from '@shared/AppPermissions';
+import { InplaceEditModel } from '@app/shared/common/inplace-edit/inplace-edit.model';
 
 @Component({
     selector: 'details-header',
@@ -57,18 +60,18 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
 
     @Input()
     public set data(data: ContactInfoDto) {
-        data && this._contactInfoBehaviorSubject.next(data);
+        data && this._contactInfo.next(data);
     }
     public get data(): ContactInfoDto {
-        return this._contactInfoBehaviorSubject.getValue();
+        return this._contactInfo.getValue();
     }
 
     @Input()
     public set personContactInfo(data: PersonContactInfoDto) {
-        this._personContactInfoBehaviorSubject.next(data);
+        this._personContactInfo.next(data);
     }
     public get personContactInfo(): PersonContactInfoDto {
-        return this._personContactInfoBehaviorSubject.getValue();
+        return this._personContactInfo.getValue();
     }
 
     @Input() ratingId: number;
@@ -77,8 +80,11 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
     @Output() onContactSelected: EventEmitter<any> = new EventEmitter();
     @Output() onInvalidate: EventEmitter<any> = new EventEmitter();
 
-    private _contactInfoBehaviorSubject = new BehaviorSubject<ContactInfoDto>(ContactInfoDto.fromJS({}));
-    private _personContactInfoBehaviorSubject = new BehaviorSubject<PersonContactInfoDto>(PersonContactInfoDto.fromJS({}));
+    private _contactInfo: BehaviorSubject<ContactInfoDto> = new BehaviorSubject<ContactInfoDto>(new ContactInfoDto());
+    contactInfo$: Observable<ContactInfoDto> = this._contactInfo.asObservable();
+    private _personContactInfo: BehaviorSubject<PersonContactInfoDto> = new BehaviorSubject<PersonContactInfoDto>(new PersonContactInfoDto());
+    personContactInfo$: Observable<PersonContactInfoDto> = this._personContactInfo.asObservable();
+    contactId: number;
 
     private readonly ADD_OPTION_CACHE_KEY = 'add_option_active_index';
     private contactGroup: ContactGroup;
@@ -126,21 +132,49 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
     addContextMenuItems: ContextMenuItem[] = [];
     addButtonTitle = '';
     isBankCodeLayout = this.userManagementService.checkBankCodeFeature();
+    private affiliateCode: ReplaySubject<string> = new ReplaySubject(1);
+    affiliateCode$: Observable<string> = this.affiliateCode.asObservable();
+    affiliateCodeInplaceEditData$: Observable<InplaceEditModel> = this.affiliateCode$.pipe(
+        map((affiliateCode: string) => {
+            console.log(this.manageAllowed ? 'manage allowed' : 'manage not allowed');
+            return {
+                id: this.contactId,
+                isReadOnlyField: !this.manageAllowed,
+                value: (affiliateCode || '').trim(),
+                validationRules: [
+                    {
+                        type: 'pattern',
+                        pattern: AppConsts.regexPatterns.affiliateCode,
+                        message: this.l('AffiliateCodeIsNotValid')
+                    },
+                    {
+                        type: 'stringLength',
+                        max: 50,
+                        message: this.l('MaxLengthIs', 50)
+                    }
+                ],
+                isEditDialogEnabled: true,
+                lEntityName: 'Name',
+                lEditPlaceholder: this.l('AffiliateCode')
+            };
+        })
+    );
 
     constructor(
         injector: Injector,
-        public dialog: MatDialog,
         private contactsService: ContactsService,
-        private _personOrgRelationService: PersonOrgRelationServiceProxy,
-        private _orgContactService: OrganizationContactServiceProxy,
+        private contactServiceProxy: ContactServiceProxy,
+        private personOrgRelationService: PersonOrgRelationServiceProxy,
+        private orgContactService: OrganizationContactServiceProxy,
         private userManagementService: UserManagementService,
         private personContactServiceProxy: PersonContactServiceProxy,
         private contactPhotoServiceProxy: ContactPhotoServiceProxy,
         private nameParserService: NameParserService,
         private appService: AppService,
         private dialogService: DialogService,
-        private _cacheService: CacheService,
-        private lifeCycleService: LifecycleSubjectsService
+        private cacheService: CacheService,
+        private lifeCycleService: LifecycleSubjectsService,
+        public dialog: MatDialog
     ) {
         super(injector);
 
@@ -148,33 +182,41 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
     }
 
     ngOnInit(): void {
-        this._personContactInfoBehaviorSubject.subscribe(data => {
+        this.personContactInfo$.pipe(takeUntil(this.lifeCycleService.destroy$)).subscribe(data => {
             this.initializePersonOrgRelationInfo(data);
         });
-        this._contactInfoBehaviorSubject
-            .pipe(filter(Boolean), takeUntil(this.lifeCycleService.destroy$))
-            .subscribe(
-                (contactInfo: ContactInfoDto) => {
-                    this.contactGroup = contactInfo.groupId;
-                    this.manageAllowed = this.contactsService.checkCGPermission(contactInfo.groupId);
-                    this.addContextMenuItems = this.defaultContextMenuItems.filter(menuItem => menuItem.contactGroups.indexOf(contactInfo.groupId) >= 0);
-                    this.addOptionsInit();
+        this.contactInfo$.pipe(
+            filter(Boolean),
+            takeUntil(this.lifeCycleService.destroy$)
+        ).subscribe(
+            (contactInfo: ContactInfoDto) => {
+                this.contactId = contactInfo.id;
+                this.contactGroup = contactInfo.groupId;
+                this.manageAllowed = this.contactsService.checkCGPermission(contactInfo.groupId);
+                if (contactInfo.id) {
+                    this.affiliateCode.next(contactInfo.affiliateCode);
                 }
-            );
+                this.addContextMenuItems = this.defaultContextMenuItems.filter(menuItem => {
+                    return menuItem.contactGroups.indexOf(contactInfo.groupId) >= 0;
+                });
+                this.addOptionsInit();
+            }
+        );
     }
 
-    initializePersonOrgRelationInfo(data?) {
-        data = data || this.personContactInfo;
-        if (data && data.orgRelations)
-            data['personOrgRelationInfo'] = PersonOrgRelationShortInfo.fromJS(
-                _.find(data.orgRelations, orgRelation => orgRelation.id === data.orgRelationId)
+    initializePersonOrgRelationInfo(personContactInfo?: PersonContactInfoDto): PersonContactInfoDto {
+        personContactInfo = personContactInfo || this.personContactInfo;
+        if (personContactInfo && personContactInfo.orgRelations && !personContactInfo['personOrgRelationInfo'])
+            personContactInfo['personOrgRelationInfo'] = PersonOrgRelationShortInfo.fromJS(
+                _.find(personContactInfo.orgRelations, orgRelation => orgRelation.id === personContactInfo.orgRelationId)
             );
+        return personContactInfo;
     }
 
     updateJobTitle(value) {
         let orgRelationInfo = this.personContactInfo['personOrgRelationInfo'];
         orgRelationInfo.jobTitle = value;
-        this._personOrgRelationService.update(UpdatePersonOrgRelationInput.fromJS({
+        this.personOrgRelationService.update(UpdatePersonOrgRelationInput.fromJS({
             id: orgRelationInfo.id,
             relationshipType: orgRelationInfo.relationType.id,
             jobTitle: orgRelationInfo.jobTitle
@@ -187,20 +229,21 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
             if (result) {
                 let orgRelationId = this.personContactInfo['personOrgRelationInfo'].id;
                 this.showRemovingOrgRelationProgress = true;
-                this._personOrgRelationService.delete(orgRelationId)
-                .pipe(finalize(() => this.showRemovingOrgRelationProgress = false))
-                .subscribe(() => {
-                    let orgRelations = this.data.personContactInfo.orgRelations;
-                    let orgRelationToDelete = _.find(orgRelations, orgRelation => orgRelation.id === orgRelationId);
-                    if (this.data.primaryOrganizationContactId == orgRelationToDelete.organization.id) {
-                        this.data['organizationContactInfo'] = undefined;
-                        this.data.primaryOrganizationContactId = orgRelations.length ?
-                            orgRelations.reverse()[0].organization.id : undefined;
-                    }
-                    orgRelations.splice(orgRelations.indexOf(orgRelationToDelete), 1);
-                    this.displayOrgRelation(orgRelationToDelete.organization.id);
-                    this.contactsService.invalidateUserData();
-                });
+                this.personOrgRelationService.delete(orgRelationId)
+                    .pipe(finalize(() => this.showRemovingOrgRelationProgress = false))
+                    .subscribe(() => {
+                        let orgRelations = this.data.personContactInfo.orgRelations;
+                        let orgRelationToDelete = _.find(orgRelations, orgRelation => orgRelation.id === orgRelationId);
+                        if (this.data.primaryOrganizationContactId == orgRelationToDelete.organization.id) {
+                            this.data['organizationContactInfo'] = undefined;
+                            this.data.primaryOrganizationContactId = orgRelations.length ?
+                                orgRelations.reverse()[0].organization.id : undefined;
+                            this._contactInfo.next(this.data);
+                        }
+                        orgRelations.splice(orgRelations.indexOf(orgRelationToDelete), 1);
+                        this.displayOrgRelation(orgRelationToDelete.organization.id);
+                        this.contactsService.invalidateUserData();
+                    });
             }
         });
         event && event.stopPropagation();
@@ -311,21 +354,23 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
         return photoBase64 ? { source: 'data:image/jpeg;base64,' + photoBase64 } : {};
     }
 
-    getNameInplaceEditData() {
+    /** @todo refactor as there is infinite calling after mouse move */
+    getNameInplaceEditData(): Observable<InplaceEditModel> {
         return this.getInplaceEditData('personContactInfo', [
             {type: 'required', message: this.l('FullNameIsRequired')},
             {type: 'pattern', pattern: AppConsts.regexPatterns.fullName, message: this.l('FullNameIsNotValid')}
         ]);
     }
 
-    getCompanyNameInplaceEditData() {
+    /** @todo refactor as there is infinite calling after mouse move */
+    getCompanyNameInplaceEditData(): Observable<InplaceEditModel> {
         return this.getInplaceEditData('organizationContactInfo', [
             {type: 'required', message: this.l('CompanyNameIsRequired')}
         ]);
     }
 
-    getInplaceEditData(field, validationRules) {
-        return this._contactInfoBehaviorSubject.asObservable().pipe(map(() => {
+    getInplaceEditData(field, validationRules): Observable<InplaceEditModel> {
+        return this.contactInfo$.pipe(map(() => {
             let contactInfo = this.data && this.data[field];
             if (contactInfo)
                 return {
@@ -341,7 +386,7 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
     }
 
     getJobTitleInplaceEditData() {
-        return this._personContactInfoBehaviorSubject.asObservable().pipe(map((data) => {
+        return this.personContactInfo$.pipe(map((data) => {
             let orgRelationInfo = data && data['personOrgRelationInfo'];
             if (orgRelationInfo)
                 return {
@@ -368,9 +413,8 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
     updateCompanyField(value, field = 'companyName') {
         let data = this.data['organizationContactInfo'];
         data.organization[field] = value;
-        this._orgContactService.updateOrganizationInfo(
-            UpdateOrganizationInfoInput.fromJS(
-                _.extend({id: data.id}, data.organization))
+        this.orgContactService.updateOrganizationInfo(
+            UpdateOrganizationInfoInput.fromJS(_.extend({id: data.id}, data.organization))
         ).subscribe(() => {
             data.fullName = value;
             this.contactsService.invalidateUserData();
@@ -381,16 +425,25 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
         value = value.trim();
         if (!value)
             return;
-
         this.data.personContactInfo.fullName = value;
-
         let person = this.data.personContactInfo.person;
         this.nameParserService.parseIntoPerson(value, person);
-
         this.personContactServiceProxy.updatePersonName(
-            UpdatePersonNameInput.fromJS(
-                _.extend({id:  person.contactId},  person))
+            UpdatePersonNameInput.fromJS(_.extend({id:  person.contactId}, person))
         ).subscribe(() => {});
+    }
+
+    updateAffiliateCode(value) {
+        value = value.trim();
+        if (!value)
+            return;
+        this.contactServiceProxy.updateAffiliateCode(new UpdateContactAffiliateCodeInput({
+            contactId: this.contactId,
+            affiliateCode: value
+        })).subscribe(() => {
+            this.data.affiliateCode = value;
+            this.affiliateCode.next(value);
+        });
     }
 
     get addOptionCacheKey() {
@@ -401,7 +454,7 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
         if (this.addContextMenuItems.length) {
             let cacheKey = this.getCacheKey(this.addOptionCacheKey),
                 selectedMenuItem = this.getContextMenuItemByType(
-                    this._cacheService.exists(cacheKey) ? this._cacheService.get(cacheKey) : this.ADD_OPTION_DEFAULT
+                    this.cacheService.exists(cacheKey) ? this.cacheService.get(cacheKey) : this.ADD_OPTION_DEFAULT
                 );
             if (!selectedMenuItem.visible)
                 selectedMenuItem = this.getContextMenuItemByType(this.ADD_OPTION_DEFAULT);
@@ -415,7 +468,7 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
         this.addButtonTitle = option.text;
         option.selected = true;
         this.addContextComponent.instance.option('selectedItem', option);
-        this._cacheService.set(
+        this.cacheService.set(
             this.getCacheKey(this.addOptionCacheKey),
             option.type.toString()
         );
@@ -496,7 +549,7 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
 
     addCompanyDialog(event) {
         if (this.manageAllowed)
-            this.contactsService.addCompanyDialog(event, this.data).subscribe(result => {});
+            this.contactsService.addCompanyDialog(event, this.data).subscribe(() => {});
     }
 
     showCompanyList(event) {
@@ -518,8 +571,9 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
         this.startLoading(true);
         this.personContactInfo.orgRelationId = orgRelationId;
         this.initializePersonOrgRelationInfo();
-        this._orgContactService.getOrganizationContactInfo(orgId)
-            .pipe(finalize(() => this.finishLoading(true))).subscribe((result) => {
+        this.orgContactService.getOrganizationContactInfo(orgId)
+            .pipe(finalize(() => this.finishLoading(true)))
+            .subscribe((result) => {
                 this.data['organizationContactInfo'] = result;
                 this.contactsService.updateLocation(this.data.id, this.data['leadId'], result && result.id);
             });

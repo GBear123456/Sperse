@@ -29,4 +29,8 @@ export class AppLocalizationService extends LocalizationService {
         args.unshift(localizedText);
         return abp.utils.formatString.apply(this, args);
     }
+
+    lr(key: string) {
+        return this.l(key) + '*';
+    }
 }

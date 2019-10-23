@@ -30,6 +30,7 @@ import { PipelineService } from './pipeline.service';
 import { ReplacePipe } from '@shared/common/pipes/replace.pipe';
 import { AddRenameMergeDialogComponent } from './add-rename-merge-dialog/add-rename-merge-dialog.component';
 import { BankCodeLettersModule } from '@app/shared/common/bank-code-letters/bank-code-letters.module';
+import { LoadingSpinnerModule } from '@app/shared/common/loading-spinner/loading-spinner.module';
 
 @NgModule({
     imports: [
@@ -50,7 +51,8 @@ import { BankCodeLettersModule } from '@app/shared/common/bank-code-letters/bank
         MatButtonModule,
         MatSelectModule,
         BankCodeLettersModule,
-        FormsModule
+        FormsModule,
+        LoadingSpinnerModule
     ],
     declarations: [
         PipelineComponent,

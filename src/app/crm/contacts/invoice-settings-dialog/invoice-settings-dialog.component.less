@@ -1,11 +1,15 @@
 :host {
+    /deep/ ckeditor .cke_chrome .cke_contents {
+        min-height: 330px!important;
+    }
+
     .settings-wrapper {
         width: 100%;
         display: flex;
         & > div {
             width: 50%;
             h3 {
-                padding: 15px 0;
+                padding: 15px 0 0;
                 font-family: Montserrat;
                 font-size: 15px;
                 font-weight: normal;
@@ -13,8 +17,7 @@
                 font-stretch: normal;
                 line-height: 1.33;
                 letter-spacing: 0.3px;
-                color: #202b35;
-              
+                color: #202b35;              
             }
 
             p {
@@ -28,6 +31,7 @@
             }
 
             /deep/ dx-check-box {
+                padding-top: 15px!important;
                 .dx-checkbox-text {
                     white-space: normal;
                     font-size: 14px;
@@ -42,8 +46,8 @@
                     vertical-align: top;
                 }
             }
-            /deep/ dx-date-box {
-                padding-top: 30px;
+            /deep/ .dx-widget {
+                padding-top: 5px;
                 .dx-placeholder {
                     font-size: 15px;
                     font-weight: 400;
@@ -52,7 +56,11 @@
                     padding: 0px;
                 }
                 &.dx-state-focused .dx-placeholder {
-                    top: -30px!important;
+                    top: -35px!important;
+                }
+                input, textarea {
+                    font-size: 16px;
+                    font-weight: 300;
                 }
             }
         }

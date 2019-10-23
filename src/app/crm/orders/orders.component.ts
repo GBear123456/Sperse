@@ -36,6 +36,8 @@ import { PipelineComponent } from '@app/shared/pipeline/pipeline.component';
 import { CreateInvoiceDialogComponent } from '../shared/create-invoice-dialog/create-invoice-dialog.component';
 import { AppPermissions } from '@shared/AppPermissions';
 import { DataGridService } from '@app/shared/common/data-grid.service.ts/data-grid.service';
+import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
+import { ContactsService } from '@app/crm/contacts/contacts.service';
 
 @Component({
     templateUrl: './orders.component.html',
@@ -87,9 +89,12 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         ]
     };
     permissions = AppPermissions;
+    currency: string;
 
     constructor(injector: Injector,
         public dialog: MatDialog,
+        private invoicesService: InvoicesService,
+        private contactsService: ContactsService,
         private _filtersService: FiltersService,
         private _appService: AppService,
         private _pipelineService: PipelineService,
@@ -112,6 +117,8 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                 paginate: true
             }
         };
+
+        invoicesService.settings$.subscribe(res => this.currency = res.currency);
 
         this.initToolbarConfig();
     }
@@ -396,6 +403,17 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                 {
                     location: 'after',
                     locateInMenu: 'auto',
+                    items: [{
+                        name: 'rules',
+                        options: {
+                            text: this.l('Settings')
+                        },
+                        action: this.invoiceSettings.bind(this)
+                    }]
+                },
+                {
+                    location: 'after',
+                    locateInMenu: 'auto',
                     items: [
                         {
                             name: 'download',
@@ -550,6 +568,10 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                 refreshParent: this.invalidate.bind(this)
             }
         });
+    }
+
+    invoiceSettings() {
+        this.contactsService.showInvoiceSettingsDialog();
     }
 
     activate() {

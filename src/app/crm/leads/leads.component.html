@@ -18,6 +18,17 @@
         </dx-select-box>
         <import-progress-bar></import-progress-bar>
     </app-headline>
+    <dx-tooltip width="200px"
+                [target]="'.dx-state-hover .dx-link.dx-link-edit'"
+                [visible]="actionEvent">
+        <div *dxTemplate="let data of 'content'">
+            <div class="lists-tooltip-container">
+                <dx-list [dataSource]="actionMenuItems"
+                         (onItemClick)="onMenuItemClick($event)">
+                </dx-list>
+            </div>
+        </div>
+    </dx-tooltip>
     <app-static-list
         [width]="'210px'"
         [title]="l('Stages')"
@@ -47,6 +58,7 @@
             <div>
                 <div id="LeadsTable">
                     <dx-data-grid id="gridContainer"
+                                class="limitedPagerTotal"
                                 accessKey="narrowHeaderPanel"
                                 [noDataText]="''"
                                 [allowColumnReordering]="true"
@@ -56,7 +68,7 @@
                                 [pager]="defaultGridPagerConfig"
                                 (onContentReady)="onContentReady($event)"
                                 (onCellClick)="onCellClick($event)"
-                                (onEditingStart)="showLeadDetails($event)"
+                                (onEditingStart)="showActionsMenu($event)"
                                 (onSelectionChanged)="onSelectionChanged($event)"
                                 (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
                         <dxo-selection
@@ -126,7 +138,7 @@
                     [totalsURI]="'LeadCount'"
                     [dragulaName]="'leadStages'"
                     [dataSource]="pipelineDataSource"
-                    [selectFields]="['Id', 'CustomerId', 'Name', 'CompanyName', 'CreationTime', 'StageId', 'Stage', 'BankCode', 'PhotoPublicId', 'Email']"
+                    [selectFields]="pipelineSelectFields"
                     [pipelinePurposeId]="pipelinePurposeId"
                     [filterModelStages]="filterModelStages"
                     [(selectedEntities)]="selectedLeads"

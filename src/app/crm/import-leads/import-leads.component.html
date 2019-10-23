@@ -41,7 +41,8 @@
 
 <crm-user-assignment-list
     [selectedKeys]="selectedClientKeys"
-    [selectedItemKey]="userId" [bulkUpdateMode]="true"
+    [selectedItemKey]="userId"
+    [bulkUpdateMode]="true"
     [hideButtons]="true"
     (onSelectionChanged)="onUserAssignmentChanged($event)"
     [permissionKey]="getUserAssignmentPermissionKey()"

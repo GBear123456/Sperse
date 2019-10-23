@@ -1,20 +1,20 @@
 <div id="registerPopup" style="display: none">
-    <h2>finalize your application</h2>
+    <img src="./assets/common/icons/offers/finalize.svg">
+    <h1>{{ ls.l('FinalizeYourApplication') }}</h1>
+    <h2>{{ firstName + ', ' + ls.l('PleaseClickBelow') }}</h2>
 </div>
-
 <div id="successPopup" style="display: none">
     <div class="approved">
         Your loan has been
         <div>Approved!</div>
     </div>
-    <button class="redirect-link swal-button swal-button--confirm" style="display: none">
+    <button class="redirect-link swal-button swal-button--confirm">
         Accept the loan offer
     </button>
     <div class="info">
         <p>You will receive an email with your credentials to access your LendSpace member area</p>
     </div>
 </div>
-
 <div id="failurePopup" style="display: none">
     <p>Please try other offers such as secured loans, or credit repair, to help assist you in getting the funds you requested</p>
 </div>

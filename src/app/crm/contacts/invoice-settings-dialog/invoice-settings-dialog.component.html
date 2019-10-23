@@ -1,0 +1,42 @@
+<email-template-dialog (onSave)="save()" (onTemplateChange)="templateChanged($event)" [templateEditMode]="true">
+    <ng-container templateSettings>
+        <div class="settings-wrapper">
+            <div class="left-side">
+                <h3>{{ls.l('InvoiceEmail_PaymentSettings')}}</h3>
+                <dx-text-box 
+                    [placeholder]="ls.l('LegalName')"
+                    [(value)]="settings.legalName">
+                </dx-text-box>
+                <dx-text-area 
+                    height="135px"
+                    [placeholder]="ls.l('Address')"
+                    [(value)]="settings.address">
+                </dx-text-area>
+                <dx-text-box 
+                    [placeholder]="ls.l('Tax/VatNo')"
+                    [(value)]="settings.taxVatNo">
+                </dx-text-box>    
+            </div>
+            <div class="right-side">
+                <h3>{{ls.l('InvoiceEmail_OtherSettings')}}</h3>
+                <dx-select-box
+                    name="currency"
+                    displayExpr="text"
+                    valueExpr="id"
+                    [placeholder]="ls.l('Currency')"
+                    [(value)]="settings.currency"
+                    [dataSource]="currencies">
+                </dx-select-box>
+                <dx-text-area 
+                    height="135px"
+                    [placeholder]="ls.l('Note')"
+                    [(value)]="settings.note">
+                </dx-text-area>
+                <dx-check-box
+                    [text]="ls.l('InvoiceEmail_AttachPDF')"
+                    [(value)]="settings.attachPDF">
+                </dx-check-box>
+            </div>
+        </div>
+    </ng-container>
+</email-template-dialog>

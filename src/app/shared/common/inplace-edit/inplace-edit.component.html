@@ -9,21 +9,21 @@
 </div>
 <div *ngIf="!data?.isReadOnlyField && isEditModeEnabled" class="inplace-edit-edit-mode {{multiline ? 'multiline': ''}}">
     <dx-text-area *ngIf="multiline"
-        [placeholder]="data?.lEditPlaceholder" 
-        [(value)]="valueOriginal" 
+        [placeholder]="data?.lEditPlaceholder"
+        [(value)]="valueOriginal"
         [autoResizeEnabled]="true"
         (onInitialized)="onTextAreaInitialized($event)">
         <dx-validator [validationRules]="data?.validationRules || []"></dx-validator>
     </dx-text-area>
     <dx-text-box *ngIf="!multiline"
-        [placeholder]="data?.lEditPlaceholder" 
+        [placeholder]="data?.lEditPlaceholder"
         [(value)]="valueOriginal"
-        [maskInvalidMessage]="maskInvalidMessage" 
+        [maskInvalidMessage]="maskInvalidMessage"
         [maxLength]="maxLength"
         (onFocusIn)="onFocusIn($event)"
         (onFocusOut)="onFocusOut($event)">
         <dx-validator [validationRules]="data?.validationRules || []"></dx-validator>
     </dx-text-box>
-    <dx-button class="button-update" icon="todo" (onClick)="updateItem($event)"></dx-button>
+    <dx-button class="button-update" icon="todo" (onClick)="updateItem()"></dx-button>
     <dx-button class="button-exit" icon="refresh" (onClick)="setEditModeEnabled(false)"></dx-button>
 </div>

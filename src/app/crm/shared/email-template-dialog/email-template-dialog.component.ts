@@ -11,10 +11,12 @@ import { DxTextBoxComponent } from 'devextreme-angular/ui/text-box';
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
 import { NotifyService } from '@abp/notify/notify.service';
+import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
 import { EmailTemplateServiceProxy, GetTemplatesResponse, CreateEmailTemplateRequest,
-    UpdateEmailTemplateRequest, EmailTemplateParamDto } from '@shared/service-proxies/service-proxies';
+    UpdateEmailTemplateRequest } from '@shared/service-proxies/service-proxies';
+import { AppSessionService } from '@shared/common/session/app-session.service';
 
 @Component({
     selector: 'email-template-dialog',
@@ -24,22 +26,23 @@ import { EmailTemplateServiceProxy, GetTemplatesResponse, CreateEmailTemplateReq
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class EmailTemplateDialogComponent {
+    @ViewChild(ModalDialogComponent) modalDialog: ModalDialogComponent;
     @ViewChild(DxSelectBoxComponent) templateComponent: DxSelectBoxComponent;
 
     showCC = false;
     showBCC = false;
 
-    ckConfig = { 
+    ckConfig = {
         toolbarGroups: [
-        		{ name: 'document', groups: [ 'mode', 'document', 'doctools' ] },
-        		{ name: 'editing', groups: [ 'find', 'selection', 'editing' ] },
-        		{ name: 'forms', groups: [ 'forms' ] },
-        		{ name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ] },
-        		{ name: 'paragraph', groups: [ 'list', 'indent', 'blocks', 'align', 'bidi', 'paragraph' ] },
-        		{ name: 'styles', groups: [ 'styles' ] },
-        		{ name: 'colors', groups: [ 'colors' ] },
-        		{ name: 'clipboard', groups: [ 'clipboard', 'undo' ] }
-        ], 
+                { name: 'document', groups: [ 'mode', 'document', 'doctools' ] },
+                { name: 'editing', groups: [ 'find', 'selection', 'editing' ] },
+                { name: 'forms', groups: [ 'forms' ] },
+                { name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ] },
+                { name: 'paragraph', groups: [ 'list', 'indent', 'blocks', 'align', 'bidi', 'paragraph' ] },
+                { name: 'styles', groups: [ 'styles' ] },
+                { name: 'colors', groups: [ 'colors' ] },
+                { name: 'clipboard', groups: [ 'clipboard', 'undo' ] }
+        ],
         removeButtons: 'Anchor,Subscript,Superscript,Source'
     };
 
@@ -52,7 +55,7 @@ export class EmailTemplateDialogComponent {
             id: 'cancelTemplateOptions',
             title: this.ls.l('Cancel'),
             class: 'default',
-            action: () => this.dialogRef.close()
+            action: () => this.close()
         }, {
             id: 'saveTemplateOptions',
             title: this.data.saveTitle,
@@ -67,26 +70,44 @@ export class EmailTemplateDialogComponent {
         private dialogRef: MatDialogRef<EmailTemplateDialogComponent>,
         private emailTemplateProxy: EmailTemplateServiceProxy,
         private changeDetectorRef: ChangeDetectorRef,
+        private sessionService: AppSessionService,
         public dialog: MatDialog,
         public ls: AppLocalizationService,
         @Inject(MAT_DIALOG_DATA) public data: any
     ) {
         this.initTemplateList();
+        data.from = [sessionService.user.emailAddress];
+        if (!data.suggestionEmails)
+            data.suggestionEmails = [];
     }
 
     save() {
         if (this.validateData()) {
             if (this.templateEditMode)
                 this.saveTemplateData();
-
-            this.onSave.emit(this.data);
+            else 
+                this.onSave.emit(this.data);
         }
     }
 
     validateData() {
-        if (this.templateEditMode && !this.getTemplateName())
-            return this.notifyService.error(
-                this.ls.l('RequiredField', '', this.ls.l('Template')));
+        if (this.templateEditMode) {
+            if (!this.getTemplateName())
+                return this.notifyService.error(
+                    this.ls.l('RequiredField', '', this.ls.l('Template')));
+        } else {
+            if (!this.data.from)
+                return this.notifyService.error(
+                    this.ls.l('RequiredField', '', this.ls.l('From')));
+
+            if (!this.data.to)
+                return this.notifyService.error(
+                    this.ls.l('RequiredField', '', this.ls.l('To')));
+
+            if (!this.data.subject)
+                return this.notifyService.error(
+                    this.ls.l('RequiredField', '', this.ls.l('Subject')));
+        }
 
         if (!this.data.body)
             return this.notifyService.error(
@@ -103,8 +124,7 @@ export class EmailTemplateDialogComponent {
             subject: this.data.subject,
             cc: this.data.cc,
             bcc: this.data.bcc,
-            body: this.data.body,
-            emailTemplateParams: this.getEmailTemplateParams()
+            body: this.data.body
         };
 
         this.startLoading();
@@ -112,7 +132,7 @@ export class EmailTemplateDialogComponent {
             this.emailTemplateProxy.update(new UpdateEmailTemplateRequest(data)) :
             this.emailTemplateProxy.create(new CreateEmailTemplateRequest(data))
         ).pipe(finalize(() => this.finishLoading())).subscribe(() => {
-            this.notifyService.info(this.ls.l('SavedSuccessfully'));
+            this.onSave.emit(this.data);
             this.initTemplateList();
         });
     }
@@ -121,26 +141,23 @@ export class EmailTemplateDialogComponent {
         return this.templateComponent.instance.field()['value'];
     }
 
-    getEmailTemplateParams(): EmailTemplateParamDto[] {
-        return this.data.templateSettings.map(item => {
-            return new EmailTemplateParamDto({
-                key: item.key,
-                value: String(item.value)
-            });
-        });
-    }
-
-    initTemplateList() {  
+    initTemplateList() {
         this.templates$ = this.emailTemplateProxy.getTemplates(this.data.templateType);
         this.changeDetectorRef.markForCheck();
     }
 
     emailInputFocusIn(event) {
-        event.component.option('opened', false);
+        if (!event.component.option('dataSource'))
+            event.component.option('opened', false);
     }
 
-    emailInputFocusOut(event) {
-        if (!event.component.option('value'))
+    emailInputFocusOut(event, checkDisplay?) {
+        let inputValue = event.event.target.value,
+            comboValue = event.component.option('value') || [];
+        if (AppConsts.regexPatterns.email.test(inputValue))
+            event.component.option('value', comboValue = comboValue.concat([inputValue]));
+
+        if (checkDisplay && !comboValue.length)
             this[event.component.option('name')] = false;
     }
 
@@ -151,11 +168,11 @@ export class EmailTemplateDialogComponent {
     }
 
     startLoading() {
-        abp.ui.setBusy(this.dialogRef.id);
+        this.modalDialog.startLoading();
     }
 
     finishLoading() {
-        abp.ui.clearBusy(this.dialogRef.id);
+        this.modalDialog.finishLoading();
     }
 
     onTemplateChanged(event) {
@@ -182,5 +199,9 @@ export class EmailTemplateDialogComponent {
 
     onNewTemplate(event) {
         event.customItem = {name: event.text, id: undefined};
+    }
+
+    close() {
+        this.modalDialog.close();
     }
 }

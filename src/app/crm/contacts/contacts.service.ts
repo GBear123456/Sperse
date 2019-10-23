@@ -5,8 +5,8 @@ import { Location } from '@angular/common';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
-import { Observable, ReplaySubject, Subject } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { Observable, ReplaySubject, Subject, of } from 'rxjs';
+import { tap, switchMap } from 'rxjs/operators';
 import invert from 'lodash/invert';
 
 /** Application imports */
@@ -15,11 +15,18 @@ import { AddCompanyDialogComponent } from './add-company-dialog/add-company-dial
 import {
     ContactInfoDto,
     OrganizationContactInfoDto,
-    UserServiceProxy
+    UserServiceProxy,
+    ContactServiceProxy,
+    ContactCommunicationServiceProxy,
+    SendEmailInput
 } from '@shared/service-proxies/service-proxies';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { EmailTemplateDialogComponent } from '@app/crm/shared/email-template-dialog/email-template-dialog.component';
+import { InvoiceSettingsDialogComponent } from './invoice-settings-dialog/invoice-settings-dialog.component';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { ContactGroup, ContactGroupPermission } from '@shared/AppEnums';
 import { AppPermissions } from '@shared/AppPermissions';
+import { NotifyService } from '@abp/notify/notify.service';
 
 @Injectable()
 export class ContactsService {
@@ -41,9 +48,13 @@ export class ContactsService {
     readonly CONTACT_GROUP_KEYS = invert(ContactGroup);
 
     constructor(injector: Injector,
-        private userService: UserServiceProxy,
+        private contactProxy: ContactServiceProxy,
+        private emailProxy: ContactCommunicationServiceProxy,
         private permission: AppPermissionService,
+        private userService: UserServiceProxy,
         private dialogService: DialogService,
+        private notifyService: NotifyService,
+        private ls: AppLocalizationService,
         private router: Router,
         private location: Location,
         public dialog: MatDialog
@@ -56,13 +67,13 @@ export class ContactsService {
         return sub;
     }
 
-    getCGPermissionKey(contactGroup, permission = ''): string {
+    getCGPermissionKey(contactGroup: ContactGroup, permission = ''): string {
         return ContactGroupPermission[
-            this.CONTACT_GROUP_KEYS[contactGroup]
+            this.CONTACT_GROUP_KEYS[contactGroup ? contactGroup.toString() : undefined]
         ] + (permission ? '.' : '') + permission;
     }
 
-    checkCGPermission(contactGroup, permission = 'Manage') {
+    checkCGPermission(contactGroup: ContactGroup, permission = 'Manage') {
         return this.permission.isGranted(this.getCGPermissionKey(contactGroup, permission) as AppPermissions);
     }
 
@@ -177,8 +188,8 @@ export class ContactsService {
             position: this.dialogService.calculateDialogPosition(
                 event, event.target, shiftX, shiftY
             )
-        }).afterClosed().pipe(tap(responce => {
-            if (responce && responce.organizationId)
+        }).afterClosed().pipe(tap(response => {
+            if (response && response.organizationId)
                 setTimeout(() => this.invalidateUserData(), 300);
         }));
     }
@@ -195,5 +206,54 @@ export class ContactsService {
             ).toString(),
             location.search
         );
+    }
+
+    getContactInfo(contactId): Observable<any> {
+        let contactInfo = this.contactProxy['data'].contactInfo;
+        return contactInfo.id == contactId
+            ? of(contactInfo)
+            : this.contactProxy.getContactInfo(contactId);
+    }
+
+    showEmailDialog(data: any = {}, title = 'Email') {
+        let emailData: any = {
+            saveTitle: this.ls.l('Send'),
+            title: this.ls.l(title),
+            ...data
+        };
+
+        if (emailData.contactId && !emailData.to)
+            this.getContactInfo(data.contactId).subscribe(res => {
+                  emailData.suggestionEmails = res.personContactInfo.details.emails
+                      .filter(item => item.isActive).map(item => item.emailAddress);
+                  if (emailData.suggestionEmails.length)
+                      emailData.to = [emailData.suggestionEmails[0]];
+            });
+
+        let dialogComponent = this.dialog.open(EmailTemplateDialogComponent, {
+            id: 'permanent',
+            panelClass: 'slider',
+            disableClose: true,
+            closeOnNavigation: false,
+            data: emailData
+        }).componentInstance;
+
+        return dialogComponent.onSave.pipe(switchMap(res => {
+            dialogComponent.startLoading();
+            return this.emailProxy.sendEmail(new SendEmailInput(res));
+        }), tap(() => {
+            this.notifyService.info(this.ls.l('MailSent'));
+            dialogComponent.finishLoading();
+            dialogComponent.close();
+        }));
+    }
+
+    showInvoiceSettingsDialog() {
+        return this.dialog.open(InvoiceSettingsDialogComponent, {
+            panelClass: 'slider',
+            disableClose: true,
+            closeOnNavigation: false,
+            data: { }
+        }).afterClosed();
     }
 }

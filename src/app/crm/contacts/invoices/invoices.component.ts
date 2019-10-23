@@ -11,7 +11,7 @@ import {
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { DxTooltipComponent } from 'devextreme-angular/ui/tooltip';
 import { MatDialog } from '@angular/material/dialog';
-import { finalize } from 'rxjs/operators';
+import { finalize, switchMap, first } from 'rxjs/operators';
 import { of } from 'rxjs';
 
 /** Application imports */
@@ -21,14 +21,14 @@ import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { FilterModel } from '@shared/filters/models/filter.model';
 import {
-    EmailTemplateType,
     ContactServiceProxy,
     InvoiceServiceProxy,
-    InvoiceStatus
+    InvoiceStatus,
+    InvoiceSettings
 } from '@shared/service-proxies/service-proxies';
 import { ContactsService } from '@app/crm/contacts/contacts.service';
 import { CreateInvoiceDialogComponent } from '@app/crm/shared/create-invoice-dialog/create-invoice-dialog.component';
-import { EmailInvoiceDialogComponent } from '@app/crm/shared/email-invoice-dialog/email-invoice-dialog.component';
+import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 import { AppPermissions } from '@shared/AppPermissions';
 
 @Component({
@@ -42,6 +42,7 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
     @ViewChild(DxTooltipComponent) actionsTooltip: DxTooltipComponent;
 
     private actionRecordData;
+    private settings = new InvoiceSettings();
     private readonly dataSourceURI = 'Invoice';
     private filters: FilterModel[];
     private formatting = AppConsts.formatting;
@@ -59,29 +60,36 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
             disabled: false
         },
         {
-            text: this.l('Settings'),
-            action: this.emailInvoice.bind(this),
-            type: null,
+            text: this.l('Send'),
+            action: this.sendInvoice.bind(this),
+            type: ActionButtonType.Send,
             disabled: false
         }
     ];
 
+    contactId = Number(this.contactService['data'].contactInfo.id);
+
     constructor(injector: Injector,
         private dialog: MatDialog,
-        private _contactService: ContactServiceProxy,
-        private _clientService: ContactsService,
-        private _invoiceService: InvoiceServiceProxy
+        private invoicesService: InvoicesService,
+        private contactService: ContactServiceProxy,
+        private clientService: ContactsService,
+        private invoiceService: InvoiceServiceProxy
     ) {
         super(injector);
-        this.dataSource = this.getDataSource(+this._contactService['data'].contactInfo.id);
-        this._clientService.invalidateSubscribe((area) => {
+        this.dataSource = this.getDataSource();
+        this.clientService.invalidateSubscribe((area) => {
             if (area == 'invoices') {
-                this.dataSource = this.getDataSource(+this._contactService['data'].contactInfo.id);
+                this.dataSource = this.getDataSource();
                 const dataSource = this.dataGrid.instance.getDataSource();
                 if (dataSource) {
                     dataSource.load();
                 }
             }
+        });
+
+        this.invoicesService.settings$.pipe(first()).subscribe(res => {
+            this.settings = res;
         });
     }
 
@@ -94,11 +102,11 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
         this.processFilterInternal();
     }
 
-    private getDataSource(contactId) {
+    private getDataSource() {
         return {
             uri: this.dataSourceURI,
             requireTotalCount: true,
-            filter: [ 'ContactId', '=', contactId],
+            filter: [ 'ContactId', '=', this.contactId],
             store: {
                 key: 'Id',
                 type: 'odata',
@@ -141,16 +149,14 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
         if (event.rowType === 'data' && this.isGranted(AppPermissions.CRMOrdersInvoicesManage)) {
             /** If user click on actions icon */
             if (event.columnIndex && event.data) {
-                if (event.data.Status == InvoiceStatus.Draft) {
-                    this.actionRecordData = event.data;
-                    setTimeout(() => this.editInvoice());
-                }
+                this.actionRecordData = event.data;
+                setTimeout(() => this.editInvoice());
             } else {
                 if (event.event.target.closest('.dx-link.dx-link-edit')) {
                     this.actionMenuItems.map(item => {
-                        item.disabled = (item.type == ActionButtonType.Delete) &&
-                            (event.data.Status == InvoiceStatus.Paid) ||
-                            (event.data.Status != InvoiceStatus.Draft);
+                        item.disabled = (item.type == ActionButtonType.Edit && event.data.Status != InvoiceStatus.Draft) ||
+                            (item.type == ActionButtonType.Delete && [InvoiceStatus.Paid, InvoiceStatus.Sent].indexOf(event.data.Status) >= 0) ||
+                            (item.type == ActionButtonType.Send && [InvoiceStatus.Paid, InvoiceStatus.Canceled].indexOf(event.data.Status) >= 0);
                     });
                     this.actionRecordData = event.data;
                     this.showActionsMenu(event.event.target);
@@ -165,7 +171,7 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
             isConfirmed => {
                 if (isConfirmed) {
                     this.startLoading(true);
-                    this._invoiceService.deleteInvoice(this.actionRecordData.Id).pipe(
+                    this.invoiceService.deleteInvoice(this.actionRecordData.Id).pipe(
                         finalize(() => this.finishLoading(true))
                     ).subscribe(() => {
                         this.dataGrid.instance.refresh();
@@ -173,22 +179,6 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
                 }
             }
         );
-    }
-
-    emailInvoice() {
-        this.dialog.open(EmailInvoiceDialogComponent, {
-            panelClass: 'slider',
-            disableClose: true,
-            closeOnNavigation: false,
-            data: {
-                saveTitle: this.l('Save'),
-                title: this.l('Invoice Settings'),
-                invoice: this.actionRecordData,
-                templateType: EmailTemplateType.Invoice,
-                refreshParent: () => {
-                }
-            }
-        });
     }
 
     editInvoice() {
@@ -203,6 +193,18 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
                 }
             }
         });
+    }
+
+    sendInvoice() {
+        this.startLoading(true);
+        this.invoiceService.getPreprocessedEmail(undefined, this.actionRecordData.Id).pipe(
+            finalize(() => this.finishLoading(true)),
+            switchMap(data => {
+                data['contactId'] = this.contactId;
+                data['templateId'] = this.settings.defaultTemplateId;
+                return this.clientService.showEmailDialog(data);
+            })
+        ).subscribe(() => this.invalidate());
     }
 
     onMenuItemClick(event) {

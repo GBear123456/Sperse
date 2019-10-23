@@ -1,16 +1,24 @@
 /** Core imports */
-import { Component, ChangeDetectionStrategy, Inject, ChangeDetectorRef } from '@angular/core';
+import { Component, ChangeDetectionStrategy, Inject, ElementRef, ViewChild } from '@angular/core';
 
 /** Third party imports */
-import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { DxTextBoxComponent } from 'devextreme-angular/ui/text-box';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { finalize } from 'rxjs/operators';
 
 /** Application imports */
-import { AppConsts } from '@shared/AppConsts';
 import { DialogService } from '@app/shared/common/dialogs/dialog.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { PhoneFormatPipe } from '@shared/common/pipes/phone-format/phone-format.pipe';
 import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
+import {
+    ContactPhoneDto,
+    ContactServiceProxy,
+    SendSMSToContactInput,
+    PersonContactInfoDto
+} from '@shared/service-proxies/service-proxies';
+import { LoadingService } from '@shared/common/loading-service/loading.service';
+import { NotifyService } from '@abp/notify/notify.service';
+import { DxValidationGroupComponent } from '@root/node_modules/devextreme-angular';
 
 @Component({
     templateUrl: 'sms-dialog.component.html',
@@ -19,10 +27,11 @@ import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interf
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SMSDialogComponent {
+    @ViewChild(DxValidationGroupComponent) validationGroup: DxValidationGroupComponent;
     phonePattern = /^[\d\+\-\(\)\s]{10,24}$/;
-    phoneNumber;
-    phones;
-
+    phoneNumber: string;
+    phones: string[];
+    smsText: string;
     buttons: IDialogButton[] = [
         {
             id: 'sendSMS',
@@ -33,20 +42,36 @@ export class SMSDialogComponent {
     ];
 
     constructor(
+        private contactServiceProxy: ContactServiceProxy,
         private dialogRef: MatDialogRef<SMSDialogComponent>,
-        private changeDetectorRef: ChangeDetectorRef,
+        private loadingService: LoadingService,
+        private elementRef: ElementRef,
+        private notifyService: NotifyService,
         public phoneFormatPipe: PhoneFormatPipe,
         public ls: AppLocalizationService,
         @Inject(MAT_DIALOG_DATA) public data: any
     ) {
-        let person = data.contact.personContactInfo, 
-            primary = person.details.phones.find(item => item.id == person.primaryPhoneId);
-        this.phones = person.details.phones.concat(data.contact
-            .organizationContactInfo.details.phones).map(item => item.phoneNumber);
+        let person: PersonContactInfoDto = data.contact.personContactInfo,
+            primary: ContactPhoneDto = person.details.phones.find(item => item.id == person.primaryPhoneId);
+        this.phones = person.details.phones
+            .concat(data.contact.organizationContactInfo.details ? data.contact.organizationContactInfo.details.phones : [])
+            .map((item: ContactPhoneDto) => item.phoneNumber);
         if (primary)
-            this.phoneNumber = primary.phoneNumber;            
+            this.phoneNumber = primary.phoneNumber;
     }
 
     save() {
+        if (this.validationGroup.instance.validate().isValid) {
+            this.loadingService.startLoading(this.elementRef.nativeElement);
+            this.contactServiceProxy.sendSMSToContact(new SendSMSToContactInput({
+                contactId: this.data.contact.id,
+                message: this.smsText,
+                phoneNumber: this.phoneNumber
+            })).pipe(
+                finalize(() => this.loadingService.finishLoading(this.elementRef.nativeElement))
+            ).subscribe(
+                () => this.notifyService.success(this.ls.l('MessageSuccessfullySent'))
+            );
+        }
     }
 }

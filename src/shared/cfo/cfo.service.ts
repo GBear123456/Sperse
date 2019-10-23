@@ -98,7 +98,7 @@ export class CFOService extends CFOServiceBase {
     }
 
     get classifyTransactionsAllowed() {
-        return this.checkMemberAccessPermission('ClassifyTransaction', this.isInstanceAdmin && 
+        return this.checkMemberAccessPermission('ClassifyTransaction', this.isInstanceAdmin &&
             !this.isMainInstanceType || this._permission.isGranted(AppPermissions.CFOMainInstanceAccessClassifyTransactions));
     }
 
@@ -157,7 +157,7 @@ export class CFOService extends CFOServiceBase {
                 if (index) {
                     if (isAccounts || isStatements)
                         item.visible = this.accessAllDepartments;
-                    item.disabled = disabled == undefined ? !(isAccounts 
+                    item.disabled = disabled == undefined ? !(isAccounts
                         ? this.initialized : this.hasTransactions) : disabled;
                 } else if (!this.hasStaticInstance)
                     item.text = this._appLocalizationService.l(this.initialized ? 'Navigation_Dashboard'

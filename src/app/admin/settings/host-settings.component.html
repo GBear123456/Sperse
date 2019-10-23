@@ -383,19 +383,6 @@
                 </div>
                 </dx-scroll-view>
             </mat-tab>
-            <mat-tab label="{{l('Invoice')}}">
-                <dx-scroll-view showScrollbar="onHover">
-                    <h5>{{l("InvoiceInformation")}}</h5>
-                    <div class="form-group">
-                        <label for="LegalName">{{l("LegalName")}}</label>
-                        <input id="LegalName" type="text" name="legalName" class="form-control" [ngClass]="{'edited':hostSettings.billing.legalName}" [(ngModel)]="hostSettings.billing.legalName" maxlength="64">
-                    </div>
-                    <div class="form-group">
-                    <label for="Address">{{l("Address")}}</label>
-                    <textarea id="Address" rows="5" name="address" class="form-control" [ngClass]="{'edited':hostSettings.billing.address}" [(ngModel)]="hostSettings.billing.address" maxlength="256"></textarea>
-                </div>
-                </dx-scroll-view>
-            </mat-tab>
         </mat-tab-group>
     </div>
 </div>

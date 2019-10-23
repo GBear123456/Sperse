@@ -2,7 +2,6 @@
 import { ApplicationRef, Component, OnInit, Input, Injector, ElementRef } from '@angular/core';
 
 /** Application imports */
-import { AbpSessionService } from '@abp/session/abp-session.service';
 import { ImpersonationService } from 'app/admin/users/impersonation.service';
 import {
     CommonUserInfoServiceProxy,
@@ -16,9 +15,7 @@ import 'assets/metronic/src/js/framework/base/util.js';
 import 'assets/metronic/src/js/framework/components/general/dropdown.js';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { AppFeatures } from '@shared/AppFeatures';
-import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { BankCodeService } from '@app/shared/common/bank-code/bank-code.service';
-import { BankCodeLetter } from '@app/shared/common/bank-code-letters/bank-code-letter.enum';
 import { FeatureCheckerService } from '@abp/features/feature-checker.service';
 
 @Component({
@@ -49,8 +46,6 @@ export class UserDropdownMenuComponent implements OnInit {
         private applicationRef: ApplicationRef,
         private elementRef: ElementRef,
         private featureCheckerService: FeatureCheckerService,
-        private abpSessionService: AbpSessionService,
-        private ls: AppLocalizationService,
         public bankCodeService: BankCodeService,
         public appSession: AppSessionService,
         public userManagementService: UserManagementService
@@ -75,16 +70,5 @@ export class UserDropdownMenuComponent implements OnInit {
     getScrollHeight() {
         let height = innerHeight - 170 - (this.userManagementService.checkBankCodeFeature() ? 38 : 0);
         return height > 490 ? '100%' : height;
-    }
-
-    getBankCodeDefinition(bankCodeLetter: BankCodeLetter): string {
-        let definition: string;
-        switch (bankCodeLetter) {
-            case BankCodeLetter.B: definition = this.ls.l('BankCode_Blueprint'); break;
-            case BankCodeLetter.A: definition = this.ls.l('BankCode_Action'); break;
-            case BankCodeLetter.N: definition = this.ls.l('BankCode_Nurturing'); break;
-            case BankCodeLetter.K: definition = this.ls.l('BankCode_Knowledge'); break;
-        }
-        return definition;
     }
 }

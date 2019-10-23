@@ -65,6 +65,13 @@
             line-height: 1.03;
             letter-spacing: -0.64px;
             font-family: 'AvianoSans-Bla', sans-serif;
+            
+            @media all and (max-width: 767px) {
+                font-size: 25px;
+                padding: 8px 16px;
+                margin-top: 0;
+            }
+            
         }
 
         h4 {
@@ -326,7 +333,6 @@
 }
 
 /deep/ .sign-up {
-
     .dx-texteditor {
         background-color: transparent;
         border-radius: 0;
@@ -390,6 +396,10 @@
         .dx-button-text {
             font-family: 'AvianoSans-Bla', sans-serif;
             font-weight: normal;
+            
+            @media all and (max-width: 767px) {
+                font-size: 14px;
+            }
         }
 
 
@@ -455,7 +465,7 @@
             position: absolute;
             top: 0;
 
-            @media all and (min-width: 768px) {
+            @media all and (min-width: 769px) {
                 .dx-overlay-content {
                     max-width: 292px !important;
                     width: 292px !important;
@@ -463,6 +473,19 @@
                     bottom: auto !important;
                     right: 5px !important;
                     left: auto !important;
+                    top: -8px !important;
+                    transform: translate(0, 0) !important;
+                }
+            }
+            
+            @media all and (max-width: 768px) {
+                .dx-overlay-content {
+                    max-width: 272px !important;
+                    width: 272px !important;
+                    position: absolute !important;
+                    bottom: auto !important;
+                    right: auto !important;
+                    left: 26px !important;
                     top: -8px !important;
                     transform: translate(0, 0) !important;
                 }
@@ -524,8 +547,10 @@
     width: 96%;
     display: flex;
     flex-direction: column;
+    margin: 0 auto 20px;
+    
     @media all and (min-width: 768px) {
-        margin-bottom: 45px !important;
+        margin-bottom: 35px !important;
     }
 
     .login-form {
@@ -559,7 +584,7 @@
     margin-top: auto;
     background: #f8f8f8;
     border-top: 1px solid #d5d5d5;
-    padding: 10px 0;
+    padding: 10px;
 
     display: flex;
     align-items: center;
@@ -572,16 +597,12 @@
     
     @media all and (max-width: 769px) {
         span {
-            font-size: 12px;
+            font-size: 11px;
         }
     }
 }
 
 @media all and (max-width: 768px) {
-    /deep/ .main-content {
-        display: block !important;
-    }
-
     .form-row {
         display: block;
     }
