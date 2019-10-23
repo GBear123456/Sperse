@@ -2,17 +2,16 @@
 import { Component, ChangeDetectionStrategy, Inject, ChangeDetectorRef, ViewChild, AfterViewInit } from '@angular/core';
 
 /** Third party imports */
-import { finalize } from 'rxjs/operators';
-import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { DxTextBoxComponent } from 'devextreme-angular/ui/text-box';
+import { finalize, first } from 'rxjs/operators';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { NotifyService } from '@abp/notify/notify.service';
 
 /** Application imports */
-import { AppConsts } from '@shared/AppConsts';
 import { DialogService } from '@app/shared/common/dialogs/dialog.service';
 import { EmailTemplateDialogComponent } from '@app/crm/shared/email-template-dialog/email-template-dialog.component';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
-import { EmailTemplateType, InvoiceServiceProxy, InvoiceSettings } from '@shared/service-proxies/service-proxies';
+import { EmailTemplateType, InvoiceServiceProxy, InvoiceSettings, InvoiceCurrency } from '@shared/service-proxies/service-proxies';
+import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 
 @Component({
     templateUrl: 'invoice-settings-dialog.component.html',
@@ -23,11 +22,16 @@ import { EmailTemplateType, InvoiceServiceProxy, InvoiceSettings } from '@shared
 export class InvoiceSettingsDialogComponent implements AfterViewInit {
     @ViewChild(EmailTemplateDialogComponent) modalDialog: EmailTemplateDialogComponent;
     settings = new InvoiceSettings();
-    
-    nextInvoiceNumber;
+    currencies = Object.keys(InvoiceCurrency).map(item => {
+        return {
+            id: item,
+            text: this.ls.l(item)
+        };
+    });
 
     constructor(
         private notifyService: NotifyService,
+        private invoicesService: InvoicesService,
         private dialogRef: MatDialogRef<InvoiceSettingsDialogComponent>,
         private changeDetectorRef: ChangeDetectorRef,
         private invoiceProxy: InvoiceServiceProxy,
@@ -41,32 +45,24 @@ export class InvoiceSettingsDialogComponent implements AfterViewInit {
 
     ngAfterViewInit() {
         this.modalDialog.startLoading();
-        this.invoiceProxy.getSettings().pipe(
+        this.invoicesService.settings$.pipe(first(),
             finalize(() => this.modalDialog.finishLoading())
         ).subscribe(res => {
             this.settings = new InvoiceSettings(res);
-            this.nextInvoiceNumber = res.nextInvoiceNumber;
             this.data.templateId = res.defaultTemplateId;
             this.changeDetectorRef.markForCheck();
         });
         this.changeDetectorRef.detectChanges();
     }
 
-    allowDigitsOnly(event, exceptions = []) {
-        let key = event.event.key;
-        if (exceptions.indexOf(key) < 0 && key.length == 1 && isNaN(key)) {
-            event.event.preventDefault();
-            event.event.stopPropagation();
-        }
-    }
-
-    save() {        
+    save() {
         this.modalDialog.startLoading();
         this.settings.defaultTemplateId = this.data.templateId;
         this.invoiceProxy.updateSettings(this.settings).pipe(
             finalize(() => this.modalDialog.finishLoading())
         ).subscribe(() => {
             this.notifyService.info(this.ls.l('SavedSuccessfully'));
+            this.invoicesService.invalidateSettings(this.settings);
             this.dialogRef.close(this.settings);
         });
     }

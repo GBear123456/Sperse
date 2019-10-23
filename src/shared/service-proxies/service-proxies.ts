@@ -519,6 +519,61 @@ export class AccountServiceProxy {
     }
 
     /**
+     * @tenantId (optional) 
+     * @return Success
+     */
+    impersonateAsAdmin(tenantId: number | null | undefined): Observable<ImpersonateOutput> {
+        let url_ = this.baseUrl + "/api/services/Platform/Account/ImpersonateAsAdmin?";
+        if (tenantId !== undefined)
+            url_ += "tenantId=" + encodeURIComponent("" + tenantId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processImpersonateAsAdmin(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processImpersonateAsAdmin(<any>response_);
+                } catch (e) {
+                    return <Observable<ImpersonateOutput>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<ImpersonateOutput>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processImpersonateAsAdmin(response: HttpResponseBase): Observable<ImpersonateOutput> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? ImpersonateOutput.fromJS(resultData200) : new ImpersonateOutput();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<ImpersonateOutput>(<any>null);
+    }
+
+    /**
      * @return Success
      */
     backToImpersonator(): Observable<ImpersonateOutput> {
@@ -15458,7 +15513,59 @@ export class InvoiceServiceProxy {
     /**
      * @return Success
      */
-    getSettings(): Observable<InvoiceSettingsInfoDto> {
+    getNewInvoiceInfo(): Observable<GetNewInvoiceInfoOutput> {
+        let url_ = this.baseUrl + "/api/services/CRM/Invoice/GetNewInvoiceInfo";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetNewInvoiceInfo(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetNewInvoiceInfo(<any>response_);
+                } catch (e) {
+                    return <Observable<GetNewInvoiceInfoOutput>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<GetNewInvoiceInfoOutput>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetNewInvoiceInfo(response: HttpResponseBase): Observable<GetNewInvoiceInfoOutput> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? GetNewInvoiceInfoOutput.fromJS(resultData200) : new GetNewInvoiceInfoOutput();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<GetNewInvoiceInfoOutput>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    getSettings(): Observable<InvoiceSettings> {
         let url_ = this.baseUrl + "/api/services/CRM/Invoice/GetSettings";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -15478,14 +15585,14 @@ export class InvoiceServiceProxy {
                 try {
                     return this.processGetSettings(<any>response_);
                 } catch (e) {
-                    return <Observable<InvoiceSettingsInfoDto>><any>_observableThrow(e);
+                    return <Observable<InvoiceSettings>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<InvoiceSettingsInfoDto>><any>_observableThrow(response_);
+                return <Observable<InvoiceSettings>><any>_observableThrow(response_);
         }));
     }
 
-    protected processGetSettings(response: HttpResponseBase): Observable<InvoiceSettingsInfoDto> {
+    protected processGetSettings(response: HttpResponseBase): Observable<InvoiceSettings> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -15496,7 +15603,7 @@ export class InvoiceServiceProxy {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? InvoiceSettingsInfoDto.fromJS(resultData200) : new InvoiceSettingsInfoDto();
+            result200 = resultData200 ? InvoiceSettings.fromJS(resultData200) : new InvoiceSettings();
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -15504,7 +15611,7 @@ export class InvoiceServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<InvoiceSettingsInfoDto>(<any>null);
+        return _observableOf<InvoiceSettings>(<any>null);
     }
 
     /**
@@ -50598,7 +50705,7 @@ export interface IPersonOrgRelationTypeDto {
 }
 
 export class SendEmailInput implements ISendEmailInput {
-    contactId!: number | undefined;
+    contactId!: number;
     replyTo!: string[] | undefined;
     to!: string[] | undefined;
     cc!: string[] | undefined;
@@ -50680,7 +50787,7 @@ export class SendEmailInput implements ISendEmailInput {
 }
 
 export interface ISendEmailInput {
-    contactId: number | undefined;
+    contactId: number;
     replyTo: string[] | undefined;
     to: string[] | undefined;
     cc: string[] | undefined;
@@ -55330,8 +55437,8 @@ export class GetTemplateReponse implements IGetTemplateReponse {
     name!: string | undefined;
     type!: EmailTemplateType | undefined;
     subject!: string | undefined;
-    cc!: string | undefined;
-    bcc!: string | undefined;
+    cc!: string[] | undefined;
+    bcc!: string[] | undefined;
     body!: string | undefined;
 
     constructor(data?: IGetTemplateReponse) {
@@ -55348,8 +55455,16 @@ export class GetTemplateReponse implements IGetTemplateReponse {
             this.name = data["name"];
             this.type = data["type"];
             this.subject = data["subject"];
-            this.cc = data["cc"];
-            this.bcc = data["bcc"];
+            if (data["cc"] && data["cc"].constructor === Array) {
+                this.cc = [];
+                for (let item of data["cc"])
+                    this.cc.push(item);
+            }
+            if (data["bcc"] && data["bcc"].constructor === Array) {
+                this.bcc = [];
+                for (let item of data["bcc"])
+                    this.bcc.push(item);
+            }
             this.body = data["body"];
         }
     }
@@ -55366,8 +55481,16 @@ export class GetTemplateReponse implements IGetTemplateReponse {
         data["name"] = this.name;
         data["type"] = this.type;
         data["subject"] = this.subject;
-        data["cc"] = this.cc;
-        data["bcc"] = this.bcc;
+        if (this.cc && this.cc.constructor === Array) {
+            data["cc"] = [];
+            for (let item of this.cc)
+                data["cc"].push(item);
+        }
+        if (this.bcc && this.bcc.constructor === Array) {
+            data["bcc"] = [];
+            for (let item of this.bcc)
+                data["bcc"].push(item);
+        }
         data["body"] = this.body;
         return data; 
     }
@@ -55377,8 +55500,8 @@ export interface IGetTemplateReponse {
     name: string | undefined;
     type: EmailTemplateType | undefined;
     subject: string | undefined;
-    cc: string | undefined;
-    bcc: string | undefined;
+    cc: string[] | undefined;
+    bcc: string[] | undefined;
     body: string | undefined;
 }
 
@@ -55386,8 +55509,8 @@ export class CreateEmailTemplateRequest implements ICreateEmailTemplateRequest {
     name!: string;
     type!: EmailTemplateType;
     subject!: string | undefined;
-    cc!: string | undefined;
-    bcc!: string | undefined;
+    cc!: string[] | undefined;
+    bcc!: string[] | undefined;
     body!: string;
 
     constructor(data?: ICreateEmailTemplateRequest) {
@@ -55404,8 +55527,16 @@ export class CreateEmailTemplateRequest implements ICreateEmailTemplateRequest {
             this.name = data["name"];
             this.type = data["type"];
             this.subject = data["subject"];
-            this.cc = data["cc"];
-            this.bcc = data["bcc"];
+            if (data["cc"] && data["cc"].constructor === Array) {
+                this.cc = [];
+                for (let item of data["cc"])
+                    this.cc.push(item);
+            }
+            if (data["bcc"] && data["bcc"].constructor === Array) {
+                this.bcc = [];
+                for (let item of data["bcc"])
+                    this.bcc.push(item);
+            }
             this.body = data["body"];
         }
     }
@@ -55422,8 +55553,16 @@ export class CreateEmailTemplateRequest implements ICreateEmailTemplateRequest {
         data["name"] = this.name;
         data["type"] = this.type;
         data["subject"] = this.subject;
-        data["cc"] = this.cc;
-        data["bcc"] = this.bcc;
+        if (this.cc && this.cc.constructor === Array) {
+            data["cc"] = [];
+            for (let item of this.cc)
+                data["cc"].push(item);
+        }
+        if (this.bcc && this.bcc.constructor === Array) {
+            data["bcc"] = [];
+            for (let item of this.bcc)
+                data["bcc"].push(item);
+        }
         data["body"] = this.body;
         return data; 
     }
@@ -55433,8 +55572,8 @@ export interface ICreateEmailTemplateRequest {
     name: string;
     type: EmailTemplateType;
     subject: string | undefined;
-    cc: string | undefined;
-    bcc: string | undefined;
+    cc: string[] | undefined;
+    bcc: string[] | undefined;
     body: string;
 }
 
@@ -55443,8 +55582,8 @@ export class UpdateEmailTemplateRequest implements IUpdateEmailTemplateRequest {
     name!: string;
     type!: EmailTemplateType;
     subject!: string | undefined;
-    cc!: string | undefined;
-    bcc!: string | undefined;
+    cc!: string[] | undefined;
+    bcc!: string[] | undefined;
     body!: string;
 
     constructor(data?: IUpdateEmailTemplateRequest) {
@@ -55462,8 +55601,16 @@ export class UpdateEmailTemplateRequest implements IUpdateEmailTemplateRequest {
             this.name = data["name"];
             this.type = data["type"];
             this.subject = data["subject"];
-            this.cc = data["cc"];
-            this.bcc = data["bcc"];
+            if (data["cc"] && data["cc"].constructor === Array) {
+                this.cc = [];
+                for (let item of data["cc"])
+                    this.cc.push(item);
+            }
+            if (data["bcc"] && data["bcc"].constructor === Array) {
+                this.bcc = [];
+                for (let item of data["bcc"])
+                    this.bcc.push(item);
+            }
             this.body = data["body"];
         }
     }
@@ -55481,8 +55628,16 @@ export class UpdateEmailTemplateRequest implements IUpdateEmailTemplateRequest {
         data["name"] = this.name;
         data["type"] = this.type;
         data["subject"] = this.subject;
-        data["cc"] = this.cc;
-        data["bcc"] = this.bcc;
+        if (this.cc && this.cc.constructor === Array) {
+            data["cc"] = [];
+            for (let item of this.cc)
+                data["cc"].push(item);
+        }
+        if (this.bcc && this.bcc.constructor === Array) {
+            data["bcc"] = [];
+            for (let item of this.bcc)
+                data["bcc"].push(item);
+        }
         data["body"] = this.body;
         return data; 
     }
@@ -55493,8 +55648,8 @@ export interface IUpdateEmailTemplateRequest {
     name: string;
     type: EmailTemplateType;
     subject: string | undefined;
-    cc: string | undefined;
-    bcc: string | undefined;
+    cc: string[] | undefined;
+    bcc: string[] | undefined;
     body: string;
 }
 
@@ -56268,11 +56423,11 @@ export class EmailSettingsEditDto implements IEmailSettingsEditDto {
     defaultFromDisplayName!: string | undefined;
     smtpHost!: string | undefined;
     smtpPort!: number | undefined;
-    smtpUserName!: string | undefined;
-    smtpPassword!: string | undefined;
-    smtpDomain!: string | undefined;
     smtpEnableSsl!: boolean | undefined;
     smtpUseDefaultCredentials!: boolean | undefined;
+    smtpDomain!: string | undefined;
+    smtpUserName!: string | undefined;
+    smtpPassword!: string | undefined;
 
     constructor(data?: IEmailSettingsEditDto) {
         if (data) {
@@ -56289,11 +56444,11 @@ export class EmailSettingsEditDto implements IEmailSettingsEditDto {
             this.defaultFromDisplayName = data["defaultFromDisplayName"];
             this.smtpHost = data["smtpHost"];
             this.smtpPort = data["smtpPort"];
-            this.smtpUserName = data["smtpUserName"];
-            this.smtpPassword = data["smtpPassword"];
-            this.smtpDomain = data["smtpDomain"];
             this.smtpEnableSsl = data["smtpEnableSsl"];
             this.smtpUseDefaultCredentials = data["smtpUseDefaultCredentials"];
+            this.smtpDomain = data["smtpDomain"];
+            this.smtpUserName = data["smtpUserName"];
+            this.smtpPassword = data["smtpPassword"];
         }
     }
 
@@ -56310,11 +56465,11 @@ export class EmailSettingsEditDto implements IEmailSettingsEditDto {
         data["defaultFromDisplayName"] = this.defaultFromDisplayName;
         data["smtpHost"] = this.smtpHost;
         data["smtpPort"] = this.smtpPort;
-        data["smtpUserName"] = this.smtpUserName;
-        data["smtpPassword"] = this.smtpPassword;
-        data["smtpDomain"] = this.smtpDomain;
         data["smtpEnableSsl"] = this.smtpEnableSsl;
         data["smtpUseDefaultCredentials"] = this.smtpUseDefaultCredentials;
+        data["smtpDomain"] = this.smtpDomain;
+        data["smtpUserName"] = this.smtpUserName;
+        data["smtpPassword"] = this.smtpPassword;
         return data; 
     }
 }
@@ -56324,11 +56479,11 @@ export interface IEmailSettingsEditDto {
     defaultFromDisplayName: string | undefined;
     smtpHost: string | undefined;
     smtpPort: number | undefined;
-    smtpUserName: string | undefined;
-    smtpPassword: string | undefined;
-    smtpDomain: string | undefined;
     smtpEnableSsl: boolean | undefined;
     smtpUseDefaultCredentials: boolean | undefined;
+    smtpDomain: string | undefined;
+    smtpUserName: string | undefined;
+    smtpPassword: string | undefined;
 }
 
 export class TenantManagementSettingsEditDto implements ITenantManagementSettingsEditDto {
@@ -58407,23 +58562,10 @@ export interface IUpdateInvoiceStatusInput {
     status: InvoiceStatus;
 }
 
-export enum InvoiceCurrency {
-    USD = "USD", 
-    CAD = "CAD", 
-    EUR = "EUR", 
-}
-
-export class InvoiceSettingsInfoDto implements IInvoiceSettingsInfoDto {
+export class GetNewInvoiceInfoOutput implements IGetNewInvoiceInfoOutput {
     nextInvoiceNumber!: string | undefined;
-    legalName!: string | undefined;
-    address!: string | undefined;
-    taxVatNo!: string | undefined;
-    defaultTemplateId!: number | undefined;
-    attachPDF!: boolean | undefined;
-    note!: string | undefined;
-    currency!: InvoiceCurrency | undefined;
 
-    constructor(data?: IInvoiceSettingsInfoDto) {
+    constructor(data?: IGetNewInvoiceInfoOutput) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -58435,19 +58577,12 @@ export class InvoiceSettingsInfoDto implements IInvoiceSettingsInfoDto {
     init(data?: any) {
         if (data) {
             this.nextInvoiceNumber = data["nextInvoiceNumber"];
-            this.legalName = data["legalName"];
-            this.address = data["address"];
-            this.taxVatNo = data["taxVatNo"];
-            this.defaultTemplateId = data["defaultTemplateId"];
-            this.attachPDF = data["attachPDF"];
-            this.note = data["note"];
-            this.currency = data["currency"];
         }
     }
 
-    static fromJS(data: any): InvoiceSettingsInfoDto {
+    static fromJS(data: any): GetNewInvoiceInfoOutput {
         data = typeof data === 'object' ? data : {};
-        let result = new InvoiceSettingsInfoDto();
+        let result = new GetNewInvoiceInfoOutput();
         result.init(data);
         return result;
     }
@@ -58455,26 +58590,18 @@ export class InvoiceSettingsInfoDto implements IInvoiceSettingsInfoDto {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["nextInvoiceNumber"] = this.nextInvoiceNumber;
-        data["legalName"] = this.legalName;
-        data["address"] = this.address;
-        data["taxVatNo"] = this.taxVatNo;
-        data["defaultTemplateId"] = this.defaultTemplateId;
-        data["attachPDF"] = this.attachPDF;
-        data["note"] = this.note;
-        data["currency"] = this.currency;
         return data; 
     }
 }
 
-export interface IInvoiceSettingsInfoDto {
+export interface IGetNewInvoiceInfoOutput {
     nextInvoiceNumber: string | undefined;
-    legalName: string | undefined;
-    address: string | undefined;
-    taxVatNo: string | undefined;
-    defaultTemplateId: number | undefined;
-    attachPDF: boolean | undefined;
-    note: string | undefined;
-    currency: InvoiceCurrency | undefined;
+}
+
+export enum InvoiceCurrency {
+    USD = "USD", 
+    CAD = "CAD", 
+    EUR = "EUR", 
 }
 
 export class InvoiceSettings implements IInvoiceSettings {
@@ -58583,8 +58710,8 @@ export interface IAttachment {
 
 export class GetPreprocessedEmailOutput implements IGetPreprocessedEmailOutput {
     subject!: string | undefined;
-    cc!: string | undefined;
-    bcc!: string | undefined;
+    cc!: string[] | undefined;
+    bcc!: string[] | undefined;
     body!: string | undefined;
     attachments!: Attachment[] | undefined;
 
@@ -58600,8 +58727,16 @@ export class GetPreprocessedEmailOutput implements IGetPreprocessedEmailOutput {
     init(data?: any) {
         if (data) {
             this.subject = data["subject"];
-            this.cc = data["cc"];
-            this.bcc = data["bcc"];
+            if (data["cc"] && data["cc"].constructor === Array) {
+                this.cc = [];
+                for (let item of data["cc"])
+                    this.cc.push(item);
+            }
+            if (data["bcc"] && data["bcc"].constructor === Array) {
+                this.bcc = [];
+                for (let item of data["bcc"])
+                    this.bcc.push(item);
+            }
             this.body = data["body"];
             if (data["attachments"] && data["attachments"].constructor === Array) {
                 this.attachments = [];
@@ -58621,8 +58756,16 @@ export class GetPreprocessedEmailOutput implements IGetPreprocessedEmailOutput {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["subject"] = this.subject;
-        data["cc"] = this.cc;
-        data["bcc"] = this.bcc;
+        if (this.cc && this.cc.constructor === Array) {
+            data["cc"] = [];
+            for (let item of this.cc)
+                data["cc"].push(item);
+        }
+        if (this.bcc && this.bcc.constructor === Array) {
+            data["bcc"] = [];
+            for (let item of this.bcc)
+                data["bcc"].push(item);
+        }
         data["body"] = this.body;
         if (this.attachments && this.attachments.constructor === Array) {
             data["attachments"] = [];
@@ -58635,8 +58778,8 @@ export class GetPreprocessedEmailOutput implements IGetPreprocessedEmailOutput {
 
 export interface IGetPreprocessedEmailOutput {
     subject: string | undefined;
-    cc: string | undefined;
-    bcc: string | undefined;
+    cc: string[] | undefined;
+    bcc: string[] | undefined;
     body: string | undefined;
     attachments: Attachment[] | undefined;
 }

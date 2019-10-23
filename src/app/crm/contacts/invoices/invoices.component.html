@@ -40,7 +40,7 @@
                                 {{ cellData.value | date: formatting.date }}
                             </div>
                             <div *dxTemplate="let cellData of 'amountCell'">
-                                {{ cellData.value | currency: cellData.data.Currency }}
+                                {{ cellData.value | currency: settings.currency }}
                             </div>
 
                             <dxo-load-panel [enabled]="false"></dxo-load-panel>

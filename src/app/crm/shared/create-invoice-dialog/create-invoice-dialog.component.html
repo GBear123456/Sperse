@@ -25,19 +25,6 @@
             [(value)]="invoiceNo"
             [showClearButton]="false">
         </dx-text-box>
-        <dx-select-box
-            name="currency"
-            width="125px"
-            height="40px"
-            displayExpr="text"
-            valueExpr="id"
-            [placeholder]="ls.l('Currency')"
-            [(value)]="currency"
-            [disabled]="disabledForUpdate"
-            [dataSource]="currencies$ | async"
-            (onOptionChanged)="setCurrencyHintValue($event)"
-            (onValueChanged)="onCurrencyChanged($event)">
-        </dx-select-box>
         <span>{{ status | uppercase }}</span>
     </ng-container>
 
@@ -172,7 +159,7 @@
                                 [placeholder]="ls.lr('EditValuePlaceholder')"
                                 [showClearButton]="true"
                                 (onKeyDown)="allowDigitsOnly($event, ['.'])"
-                                value="{{cellData.value | currency: currency}}"
+                                value="{{cellData.value | currency: invoiceSettings.currency}}"
                                 (onValueChanged)="onValueChanged($event, cellData)">
                                 <dx-validator>
                                     <dxi-validation-rule type="required" [message]="ls.l('RequiredField', '', ls.l('Rate'))"></dxi-validation-rule>
@@ -182,8 +169,12 @@
                                 name="unit"
                                 width="130px"
                                 [placeholder]="ls.lr('Unit')"
+                                [value]="cellData.data.unitId"
                                 [dataSource]="invoiceUnits"
                                 (onValueChanged)="onValueChanged($event, cellData, 'unit')">
+                                <dx-validator>
+                                    <dxi-validation-rule type="required" [message]="ls.l('RequiredField', '', ls.l('Unit'))"></dxi-validation-rule>
+                                </dx-validator>
                             </dx-select-box>
                         </div>
                         <div *dxTemplate="let cellData of 'amount'">
@@ -192,7 +183,7 @@
                                 placeholder=""
                                 dataType="number"
                                 [readOnly]="true"
-                                value="{{cellData.value | currency: currency}}">
+                                value="{{cellData.value | currency: invoiceSettings.currency}}">
                             </dx-text-box>
                         </div>
                     </dx-data-grid>
@@ -213,9 +204,9 @@
                 </div>
             </div>
             <div class="col-sm-6 conclusion">
-                <div class="sub-total"><span>{{ls.l('Sub Total')}}</span><span>{{subTotal | currency: currency}}</span></div>
-                <div class="total"><span>{{ls.l('Total')}} ({{currency}})</span><a>{{ls.l('Manage Default Taxes')}}</a><span>{{total | currency: currency}}</span></div>
-                <div class="balance"><span>{{ls.l('Balance')}} ({{currency}})</span><span>{{balance | currency: currency}}</span></div>
+                <div class="sub-total"><span>{{ls.l('Sub Total')}}</span><span>{{subTotal | currency: invoiceSettings.currency}}</span></div>
+                <div class="total"><span>{{ls.l('Total')}} ({{invoiceSettings.currency}})</span><a>{{ls.l('Manage Default Taxes')}}</a><span>{{total | currency: invoiceSettings.currency}}</span></div>
+                <div class="balance"><span>{{ls.l('Balance')}} ({{invoiceSettings.currency}})</span><span>{{balance | currency: invoiceSettings.currency}}</span></div>
             </div>
         </div>
     </div>

@@ -11,7 +11,7 @@ import { DxTextBoxComponent } from 'devextreme-angular/ui/text-box';
 import { DxDateBoxComponent } from 'devextreme-angular/ui/date-box';
 import { CacheService } from 'ng2-cache-service';
 import { Store, select } from '@ngrx/store';
-import { finalize, filter, first } from 'rxjs/operators';
+import { finalize, filter, first, switchMap } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 
 /** Application imports */
@@ -29,9 +29,8 @@ import {
     CustomerServiceProxy,
     InvoiceStatus,
     CreateInvoiceLineInput,
-    InvoiceSettingsInfoDto,
-    CurrencyInfo,
-    InvoiceLineUnit
+    InvoiceLineUnit,
+    InvoiceSettings
 } from '@shared/service-proxies/service-proxies';
 import { NotifyService } from '@abp/notify/notify.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -41,7 +40,7 @@ import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interf
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
 import { CreateClientDialogComponent } from '../create-client-dialog/create-client-dialog.component';
 import { AppSessionService } from '@shared/common/session/app-session.service';
-import { RootStore, CurrenciesStoreActions, CurrenciesStoreSelectors } from '@root/store';
+import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 import { AppConsts } from '@shared/AppConsts';
 import { AppPermissions } from '@shared/AppPermissions';
 
@@ -68,11 +67,6 @@ export class CreateInvoiceDialogComponent implements OnInit {
 
     private validationError: string;
 
-    currencies$: Observable<Partial<CurrencyInfo>[]> = this.store$.pipe(
-        select(CurrenciesStoreSelectors.getCurrencies),
-        filter(Boolean)
-    );
-
     invoiceNo;
     orderId: number;
     invoiceId: number;
@@ -81,11 +75,9 @@ export class CreateInvoiceDialogComponent implements OnInit {
 
     saveButtonId = 'saveInvoiceOptions';
     saveContextMenuItems = [];
-    invoiceSettings: InvoiceSettingsInfoDto = new InvoiceSettingsInfoDto();
+    invoiceSettings: InvoiceSettings = new InvoiceSettings();
     remoteServiceBaseUrl: string = AppConsts.remoteServiceBaseUrl;
     selectedOption: any;
-
-    currency = 'USD';
 
     customer: any;
     contactId: number;
@@ -118,8 +110,8 @@ export class CreateInvoiceDialogComponent implements OnInit {
     invoiceUnits = Object.keys(InvoiceLineUnit);
 
     constructor(
-        private store$: Store<RootStore.State>,
         private invoiceProxy: InvoiceServiceProxy,
+        private invoicesService: InvoicesService,
         private customerProxy: CustomerServiceProxy,
         private cacheService: CacheService,
         private notifyService: NotifyService,
@@ -140,13 +132,6 @@ export class CreateInvoiceDialogComponent implements OnInit {
             {text: this.ls.l('Invoice_SaveAndSend'), selected: false, status: InvoiceStatus.Final, email: true, disabled: this.disabledForUpdate},
             {text: this.ls.l('Invoice_SaveAndMarkSent'), selected: false, disabled: true}
         ];
-        this.store$.dispatch(new CurrenciesStoreActions.LoadRequestAction());
-        this.store$.pipe(
-            select(CurrenciesStoreSelectors.getSelectedCurrencyId),
-            filter(Boolean), first()
-        ).subscribe((selectedCurrencyId: string) => {
-            this.currency = selectedCurrencyId;
-        });
     }
 
     ngOnInit() {
@@ -155,10 +140,9 @@ export class CreateInvoiceDialogComponent implements OnInit {
             this.changeDetectorRef.detectChanges();
         });
 
-        this.invoiceProxy.getSettings().subscribe((settings) => {
+        this.invoicesService.settings$.pipe(first()).subscribe(settings => {
             this.invoiceSettings = settings;
             if (!this.data.invoice) {
-                this.invoiceNo = settings.nextInvoiceNumber;
                 this.notes = settings.note;
             }
             this.changeDetectorRef.detectChanges();
@@ -187,7 +171,6 @@ export class CreateInvoiceDialogComponent implements OnInit {
                 .pipe(finalize(() => this.modalDialog.finishLoading()))
                 .subscribe((res) => {
                     this.description = res.description;
-                    this.currency = res.currencyId;
                     this.notes = res.note;
                     this.customer = res.contactName;
                     this.lines = res.lines.map((res) => {
@@ -195,7 +178,8 @@ export class CreateInvoiceDialogComponent implements OnInit {
                             id: res.id,
                             Quantity: res.quantity,
                             Rate: res.rate,
-                            Description: res.description
+                            Description: res.description,
+                            unitId: res.unitId
                         };
                     });
                     this.calculateBalance();
@@ -203,6 +187,11 @@ export class CreateInvoiceDialogComponent implements OnInit {
                 });
         } else {
             this.resetNoteDefault();
+
+            this.invoiceProxy.getNewInvoiceInfo().subscribe(res => {
+                this.invoiceNo = res.nextInvoiceNumber;
+            });
+
             let contact = this.data.contactInfo;
             if (contact) {
                 this.contactId = contact.id;
@@ -244,7 +233,6 @@ export class CreateInvoiceDialogComponent implements OnInit {
 
     private setRequestCommonFields(data) {
         data.number = this.invoiceNo;
-        data.currencyId = this.currency;
         data.date = this.getDate(this.date);
         data.dueDate = this.getDate(this.dueDate);
         data.description = this.description;
@@ -303,7 +291,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
         });
     }
 
-    updateStatus(status?) {
+    updateStatus(status?: InvoiceStatus) {
         if (status)
             this.status = status;
         if (this.status != this.data.status) {
@@ -333,15 +321,17 @@ export class CreateInvoiceDialogComponent implements OnInit {
 
     private showNewEmailDialog() {
         this.modalDialog.startLoading();
-        this.invoiceProxy.getPreprocessedEmail(this.invoiceSettings.defaultTemplateId, this.invoiceId).subscribe((data) => {
-            this.modalDialog.finishLoading();
-            data['contactId'] = this.contactId;
-            data['templateId'] = this.invoiceSettings.defaultTemplateId;
-            this.contactsService.showEmailDialog(data).subscribe(() => {
-                this.updateStatus(InvoiceStatus.Sent);
-                this.dialog.closeAll();
-            });
-            this.close();
+        this.invoiceProxy.getPreprocessedEmail(this.invoiceSettings.defaultTemplateId, this.invoiceId).pipe(
+              finalize(() => this.modalDialog.finishLoading()),
+              switchMap(data => {
+                  this.close();
+                  data['contactId'] = this.contactId;
+                  data['templateId'] = this.invoiceSettings.defaultTemplateId;
+                  return this.contactsService.showEmailDialog(data);
+              })
+        ).subscribe(() => {
+            this.updateStatus(InvoiceStatus.Sent);
+            this.dialog.closeAll();
         });
     }
 
@@ -406,7 +396,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
 
     resetFullDialog(forced = true) {
         let resetInternal = () => {
-            this.invoiceNo = this.invoiceSettings.nextInvoiceNumber;
+            //this.invoiceNo = this.invoiceSettings.nextInvoiceNumber;
             this.status = InvoiceStatus.Draft;
             this.customer = undefined;
             this.date = undefined;
@@ -487,16 +477,6 @@ export class CreateInvoiceDialogComponent implements OnInit {
         this.changeDetectorRef.detectChanges();
     }
 
-    onCurrencyChanged(event) {
-        this.linesComponent.instance.repaint();
-    }
-
-    setCurrencyHintValue(event) {
-        if (event.name == 'displayValue')
-            setTimeout(() => event.component.option(
-                'hint', event.component.field().value));
-    }
-
     allowDigitsOnly(event, exceptions = []) {
         let key = event.event.key;
         if (exceptions.indexOf(key) < 0 && key.length == 1 && isNaN(key)) {
@@ -538,8 +518,10 @@ export class CreateInvoiceDialogComponent implements OnInit {
 
     openInvoiceSettings() {
         this.contactsService.showInvoiceSettingsDialog().subscribe(settings => {
-            if (settings)
+            if (settings) {
                 this.invoiceSettings = settings;
+                this.changeDetectorRef.detectChanges();
+            }
         });
     }
 }

@@ -50,15 +50,15 @@ export class ContactsService {
     constructor(injector: Injector,
         private contactProxy: ContactServiceProxy,
         private emailProxy: ContactCommunicationServiceProxy,
-        private userService: UserServiceProxy,
         private permission: AppPermissionService,
+        private userService: UserServiceProxy,
         private dialogService: DialogService,
         private notifyService: NotifyService,
         private ls: AppLocalizationService,
         private router: Router,
         private location: Location,
         public dialog: MatDialog
-    ) {}
+    ) {  }
 
     private subscribe(sub, ident = 'common') {
         if (!this.subscribers[ident])

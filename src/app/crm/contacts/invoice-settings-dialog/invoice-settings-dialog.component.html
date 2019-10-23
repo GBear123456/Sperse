@@ -19,6 +19,14 @@
             </div>
             <div class="right-side">
                 <h3>{{ls.l('InvoiceEmail_OtherSettings')}}</h3>
+                <dx-select-box
+                    name="currency"
+                    displayExpr="text"
+                    valueExpr="id"
+                    [placeholder]="ls.l('Currency')"
+                    [(value)]="settings.currency"
+                    [dataSource]="currencies">
+                </dx-select-box>
                 <dx-text-area 
                     height="135px"
                     [placeholder]="ls.l('Note')"

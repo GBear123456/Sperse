@@ -54,7 +54,7 @@ export class SMSDialogComponent {
         let person: PersonContactInfoDto = data.contact.personContactInfo,
             primary: ContactPhoneDto = person.details.phones.find(item => item.id == person.primaryPhoneId);
         this.phones = person.details.phones
-            .concat(data.contact.organizationContactInfo.details.phones)
+            .concat(data.contact.organizationContactInfo.details ? data.contact.organizationContactInfo.details.phones : [])
             .map((item: ContactPhoneDto) => item.phoneNumber);
         if (primary)
             this.phoneNumber = primary.phoneNumber;
