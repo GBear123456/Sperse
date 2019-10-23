@@ -351,6 +351,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     contentWidth$: Observable<number> = this.crmService.contentWidth$;
     contentHeight$: Observable<number> = this.crmService.contentHeight$;
     mapHeight$: Observable<number> = this.crmService.mapHeight$;
+    pipelineSelectFields: string[] = ['Id', 'CustomerId', 'Name', 'CompanyName', 'CreationTime', 'PhotoPublicId', 'Email'];
 
     constructor(injector: Injector,
         private contactService: ContactsService,
@@ -397,6 +398,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 area: 'filter',
                 dataField: 'BankCode'
             });
+            this.pipelineSelectFields.push('BankCode');
         }
     }
 

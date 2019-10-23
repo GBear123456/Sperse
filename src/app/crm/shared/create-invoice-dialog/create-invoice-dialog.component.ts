@@ -315,8 +315,8 @@ export class CreateInvoiceDialogComponent implements OnInit {
             })).pipe(finalize(() => status || this.modalDialog.finishLoading()))
                 .subscribe(() => {
                     if (status)
-                        this.data.refreshParent && this.data.refreshParent(); 
-                    else 
+                        this.data.refreshParent && this.data.refreshParent();
+                    else
                         this.afterSave();
                 });
         }
@@ -367,7 +367,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
 
         if (!this.validateDate(this.ls.l('Invoice_DueOnReceipt'), this.dueDate))
             return this.dueDateComponent.instance.option('isValid', false);
-        
+
         if (!this.linesValidationGroup.instance.validate().isValid)
             return this.notifyService.error(this.ls.l('InvoiceLinesShouldBeDefined'));
 

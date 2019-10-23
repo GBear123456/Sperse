@@ -117,7 +117,8 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
     private subscribers = [];
     private _contactGroupId: ContactGroup;
 
-    constructor(injector: Injector,
+    constructor(
+        injector: Injector,
         private odataService: ODataService,
         private dragulaService: DragulaService,
         private pipelineService: PipelineService,
@@ -421,11 +422,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                 ]}))
             )).pipe(
                 finalize(() => {
-                    if (this.isAllStagesLoaded())
-                        setTimeout(() => {
-                            this.finishLoading();
-                            this.detectChanges();
-                        });
+                    this.detectChanges();
                     if (!skipTotalRequest && oneStageOnly && stage.isFull)
                         this.processTotalsRequest(this.queryWithSearch);
                 }),
@@ -509,8 +506,8 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                             stage.isFull = stage.total
                                 <= stage.entities.length;
                             this.allStagesEntitiesTotal += stage.total;
+                            this.detectChanges();
                         });
-                        this.detectChanges();
                     }
                 },
                 () => this.notify.error(this.l('AnErrorOccurred'))
@@ -537,11 +534,6 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
             requireTotalCount: !this.totalsURI,
             select: this.selectFields.concat('SortOrder'),
         }));
-    }
-
-    private isAllStagesLoaded() {
-        return Object['values'](this._dataSources)
-            .every(dataSource => dataSource.isLoaded() && !dataSource.isLoading());
     }
 
     private get internalMoveDisabled() {
