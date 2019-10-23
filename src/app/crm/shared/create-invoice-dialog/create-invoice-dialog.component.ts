@@ -11,7 +11,7 @@ import { DxTextBoxComponent } from 'devextreme-angular/ui/text-box';
 import { DxDateBoxComponent } from 'devextreme-angular/ui/date-box';
 import { CacheService } from 'ng2-cache-service';
 import { Store, select } from '@ngrx/store';
-import { finalize, filter, first } from 'rxjs/operators';
+import { finalize, filter, first, switchMap } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 
 /** Application imports */
@@ -144,7 +144,6 @@ export class CreateInvoiceDialogComponent implements OnInit {
         this.invoicesService.settings$.pipe(first()).subscribe(settings => {
             this.invoiceSettings = settings;
             if (!this.data.invoice) {
-                //this.invoiceNo = settings.nextInvoiceNumber;
                 this.notes = settings.note;
             }
             this.changeDetectorRef.detectChanges();
@@ -180,7 +179,8 @@ export class CreateInvoiceDialogComponent implements OnInit {
                             id: res.id,
                             Quantity: res.quantity,
                             Rate: res.rate,
-                            Description: res.description
+                            Description: res.description,
+                            unitId: res.unitId
                         };
                     });
                     this.calculateBalance();
@@ -188,6 +188,11 @@ export class CreateInvoiceDialogComponent implements OnInit {
                 });
         } else {
             this.resetNoteDefault();
+
+            this.invoiceProxy.getNewInvoiceInfo().subscribe(res => {
+                this.invoiceNo = res.nextInvoiceNumber;
+            });
+
             let contact = this.data.contactInfo;
             if (contact) {
                 this.contactId = contact.id;
@@ -287,7 +292,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
         });
     }
 
-    updateStatus(status?) {
+    updateStatus(status?: InvoiceStatus) {
         if (status)
             this.status = status;
         if (this.status != this.data.status) {
@@ -317,15 +322,17 @@ export class CreateInvoiceDialogComponent implements OnInit {
 
     private showNewEmailDialog() {
         this.modalDialog.startLoading();
-        this.invoiceProxy.getPreprocessedEmail(this.invoiceSettings.defaultTemplateId, this.invoiceId).subscribe((data) => {
-            this.modalDialog.finishLoading();
-            data['contactId'] = this.contactId;
-            data['templateId'] = this.invoiceSettings.defaultTemplateId;
-            this.contactsService.showEmailDialog(data).subscribe(() => {
-                this.updateStatus(InvoiceStatus.Sent);
-                this.dialog.closeAll();
-            });
-            this.close();
+        this.invoiceProxy.getPreprocessedEmail(this.invoiceSettings.defaultTemplateId, this.invoiceId).pipe(
+              finalize(() => this.modalDialog.finishLoading()),
+              switchMap(data => {
+                  this.close();
+                  data['contactId'] = this.contactId;
+                  data['templateId'] = this.invoiceSettings.defaultTemplateId;
+                  return this.contactsService.showEmailDialog(data);
+              })
+        ).subscribe(() => {
+            this.updateStatus(InvoiceStatus.Sent);
+            this.dialog.closeAll();
         });
     }
 
@@ -512,8 +519,10 @@ export class CreateInvoiceDialogComponent implements OnInit {
 
     openInvoiceSettings() {
         this.contactsService.showInvoiceSettingsDialog().subscribe(settings => {
-            if (settings)
+            if (settings) {
                 this.invoiceSettings = settings;
+                this.changeDetectorRef.detectChanges();
+            }
         });
     }
 }

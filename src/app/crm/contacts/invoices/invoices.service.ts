@@ -12,7 +12,7 @@ import {
 
 @Injectable()
 export class InvoicesService {
-    private settings: ReplaySubject<InvoiceSettings> = new ReplaySubject<any>(1); 
+    private settings: ReplaySubject<InvoiceSettings> = new ReplaySubject<any>(1);
     settings$: Observable<InvoiceSettings> = this.settings.asObservable();
 
     constructor(
@@ -24,7 +24,7 @@ export class InvoicesService {
     invalidateSettings(settings?) {
         if (settings)
             this.settings.next(settings);
-        else 
+        else
             this.invoiceProxy.getSettings().subscribe(res => {
                 this.settings.next(res);
             });

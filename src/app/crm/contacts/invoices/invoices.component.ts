@@ -154,7 +154,7 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
             } else {
                 if (event.event.target.closest('.dx-link.dx-link-edit')) {
                     this.actionMenuItems.map(item => {
-                        item.disabled = (item.type == ActionButtonType.Edit && event.data.Status != InvoiceStatus.Draft) || 
+                        item.disabled = (item.type == ActionButtonType.Edit && event.data.Status != InvoiceStatus.Draft) ||
                             (item.type == ActionButtonType.Delete && [InvoiceStatus.Paid, InvoiceStatus.Sent].indexOf(event.data.Status) >= 0) ||
                             (item.type == ActionButtonType.Send && [InvoiceStatus.Paid, InvoiceStatus.Canceled].indexOf(event.data.Status) >= 0);
                     });
