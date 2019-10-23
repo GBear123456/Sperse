@@ -318,10 +318,7 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
             return this.notifyService.error(this.ls.l('NameFieldsValidationError'));
         }
 
-        /** Do not allow empty full name for lead creation and allow for contact */
-        if ((this.data.isInLeadMode || this.title)
-             && !ValidationHelper.ValidateName(this.title)
-        ) {
+        if (!ValidationHelper.ValidateName(this.title)) {
             this.isTitleValid = false;
             return this.notifyService.error(this.ls.l('FullNameIsNotValid'));
         }
