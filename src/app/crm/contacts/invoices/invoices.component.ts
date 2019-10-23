@@ -24,7 +24,7 @@ import {
     ContactServiceProxy,
     InvoiceServiceProxy,
     InvoiceStatus,
-    InvoiceSettingsInfoDto
+    InvoiceSettings
 } from '@shared/service-proxies/service-proxies';
 import { ContactsService } from '@app/crm/contacts/contacts.service';
 import { CreateInvoiceDialogComponent } from '@app/crm/shared/create-invoice-dialog/create-invoice-dialog.component';
@@ -42,7 +42,7 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
     @ViewChild(DxTooltipComponent) actionsTooltip: DxTooltipComponent;
 
     private actionRecordData;
-    private settings = new InvoiceSettingsInfoDto();
+    private settings = new InvoiceSettings();
     private readonly dataSourceURI = 'Invoice';
     private filters: FilterModel[];
     private formatting = AppConsts.formatting;

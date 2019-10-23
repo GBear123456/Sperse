@@ -3,20 +3,19 @@ import { Injectable, Injector } from '@angular/core';
 
 /** Third party imports */
 import { Observable, ReplaySubject } from 'rxjs';
-import { tap, switchMap } from 'rxjs/operators';
 
 /** Application imports */
 import {
     InvoiceServiceProxy,
-    InvoiceSettingsInfoDto,
+    InvoiceSettings,
 } from '@shared/service-proxies/service-proxies';
 
 @Injectable()
 export class InvoicesService {
-    private settings: ReplaySubject<InvoiceSettingsInfoDto> = new ReplaySubject<any>(1); 
-    settings$: Observable<InvoiceSettingsInfoDto> = this.settings.asObservable();
+    private settings: ReplaySubject<InvoiceSettings> = new ReplaySubject<any>(1); 
+    settings$: Observable<InvoiceSettings> = this.settings.asObservable();
 
-    constructor(injector: Injector,
+    constructor(
         private invoiceProxy: InvoiceServiceProxy
     ) {
         this.invalidateSettings();

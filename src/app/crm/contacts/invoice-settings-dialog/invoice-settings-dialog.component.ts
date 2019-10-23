@@ -52,7 +52,7 @@ export class InvoiceSettingsDialogComponent implements AfterViewInit {
             finalize(() => this.modalDialog.finishLoading())
         ).subscribe(res => {
             this.settings = new InvoiceSettings(res);
-            this.nextInvoiceNumber = res.nextInvoiceNumber;
+            //this.nextInvoiceNumber = res.nextInvoiceNumber; TODO:
             this.data.templateId = res.defaultTemplateId;
             this.changeDetectorRef.markForCheck();
         });

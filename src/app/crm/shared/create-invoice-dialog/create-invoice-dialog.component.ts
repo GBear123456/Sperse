@@ -29,8 +29,8 @@ import {
     CustomerServiceProxy,
     InvoiceStatus,
     CreateInvoiceLineInput,
-    InvoiceSettingsInfoDto,
-    InvoiceLineUnit
+    InvoiceLineUnit,
+    InvoiceSettings
 } from '@shared/service-proxies/service-proxies';
 import { NotifyService } from '@abp/notify/notify.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -76,7 +76,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
 
     saveButtonId = 'saveInvoiceOptions';
     saveContextMenuItems = [];
-    invoiceSettings: InvoiceSettingsInfoDto = new InvoiceSettingsInfoDto();
+    invoiceSettings: InvoiceSettings = new InvoiceSettings();
     remoteServiceBaseUrl: string = AppConsts.remoteServiceBaseUrl;
     selectedOption: any;
 
@@ -144,8 +144,8 @@ export class CreateInvoiceDialogComponent implements OnInit {
         this.invoicesService.settings$.pipe(first()).subscribe(settings => {
             this.invoiceSettings = settings;
             if (!this.data.invoice) {
-                this.invoiceNo = settings.nextInvoiceNumber;
-                this.notes = settings.note;                
+                //this.invoiceNo = settings.nextInvoiceNumber;
+                this.notes = settings.note;
             }
             this.changeDetectorRef.detectChanges();
         });
@@ -390,7 +390,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
 
     resetFullDialog(forced = true) {
         let resetInternal = () => {
-            this.invoiceNo = this.invoiceSettings.nextInvoiceNumber;
+            //this.invoiceNo = this.invoiceSettings.nextInvoiceNumber;
             this.status = InvoiceStatus.Draft;
             this.customer = undefined;
             this.date = undefined;
