@@ -386,6 +386,7 @@ button {
     .dx-datagrid-pager {
         height: 60px;
         padding-left: 10px;
+
         .dx-pages,
         .dx-page-sizes {
             .dx-selection {
@@ -399,6 +400,7 @@ button {
                 font-weight: 600 !important;
                 padding: 4px 10px 5px;
             }
+
             @media (min-width: 768px) {
                 margin-right: 4px;
             }
@@ -407,10 +409,12 @@ button {
         .dx-pages {
             display: flex;
             align-items: center;
+
             .dx-pages-count {
                 font-size: 18px;
                 padding-right: 6px;
             }
+
             .dx-info-text {
                 padding-left: 0;
             }
@@ -454,6 +458,7 @@ button {
                     display: inline-block;
                     position: relative;
                     width: 100%;
+
                     &::before {
                         content: '';
                         background: url("../../assets/common/icons/edit-icon.svg");
@@ -466,9 +471,11 @@ button {
                         top: 19px;
                         opacity: 0.5;
                     }
+
                     + td {
                         position: relative;
                         width: 100%;
+
                         &::before {
                             content: '';
                             background: url("../../assets/common/icons/star-icon.svg");
@@ -555,6 +562,7 @@ button {
                 position: relative;
                 width: 18px;
                 color: #ffffff;
+
                 &::before {
                     content: '';
                     background: url("../../assets/common/icons/edit-icon.svg");
@@ -569,9 +577,11 @@ button {
                 }
             }
         }
+
         .dx-command-edit + td {
             position: relative;
             width: 100%;
+
             &::before {
                 content: '';
                 background: url("../../assets/common/icons/star-icon.svg");
@@ -585,6 +595,7 @@ button {
                 opacity: 0.5;
             }
         }
+
         .dx-group-row {
             .dx-command-edit {
                 + td {
@@ -593,24 +604,29 @@ button {
                     }
                 }
             }
+
             .dx-group-cell {
                 font-weight: 600;
             }
+
             .dx-datagrid-group-opened, .dx-datagrid-group-closed {
                 color: #424c56;
             }
         }
+
         .dx-datagrid-group-panel {
             .dx-group-panel-item {
                 font-weight: 600;
                 border: 0;
                 color: #424c56;
                 text-transform: uppercase;
+
                 .dx-sort-up {
                     &::before {
                         content: '\f176'
                     }
                 }
+
                 .dx-sort-down {
                     &::before {
                         content: '\f175'
@@ -618,6 +634,7 @@ button {
                 }
             }
         }
+
         .dx-freespace-row {
             .dx-command-edit + td {
                 &::before {
@@ -625,6 +642,7 @@ button {
                 }
             }
         }
+
         .dx-data-row {
             &:hover {
                 .dx-link {
@@ -636,12 +654,15 @@ button {
                 }
             }
         }
+
         .dx-data-row.dx-state-hover:not(.dx-selection):not(.dx-row-inserted):not(.dx-row-removed):not(.dx-edit-row) > td:not(.dx-focused),
         .dx-datagrid-rowsview .dx-selection.dx-row > td, .dx-datagrid-rowsview .dx-selection.dx-row:hover > td {
             background-color: rgba(244, 245, 246, .6);
+
             .dx-checkbox-icon {
                 border-color: rgba(104, 111, 118, .5);
             }
+
             .dx-link-edit {
                 &::before {
                     opacity: 1;
@@ -699,6 +720,14 @@ button {
         }
     }
 
+    &.limitedPagerTotal {
+        .dx-pages {
+            .dx-info,
+            .dx-selection ~ .dx-separator + .dx-page {
+                display: none;
+            }
+        }
+    }
 }
 
 .toolbar-hidden {

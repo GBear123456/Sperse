@@ -87,7 +87,7 @@ export abstract class AppComponentBase implements OnDestroy {
     public loadingService: LoadingService;
     public defaultGridPagerConfig = {
         showPageSizeSelector: true,
-        allowedPageSizes: [20, 100, 500, 1000],
+        allowedPageSizes: [10, 20, 50, 100],
         showInfo: true,
         visible: true
     };
