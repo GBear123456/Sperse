@@ -107,20 +107,6 @@ export class OrdersComponent extends AppComponentBase implements OnInit, OnDestr
         }
     }
 
-    onRowUpdating(e) {
-        if (e.newData.Amount !== e.oldData.Amount) {
-            e.cancel = true;
-            this.dataGrid.instance.beginCustomLoading('');
-            const setAmountInput = new SetAmountInfo({
-                orderId: e.oldData.Id,
-                amount: e.newData.Amount
-            });
-            this.orderServiceProxy.setAmount(setAmountInput).subscribe(
-                () => this.processFilterInternal()
-            );
-        }
-    }
-
     showHistory(data) {
         setTimeout(() =>
             this.dialog.open(HistoryListDialogComponent, {
