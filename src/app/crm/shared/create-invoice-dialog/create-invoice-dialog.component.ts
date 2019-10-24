@@ -325,10 +325,8 @@ export class CreateInvoiceDialogComponent implements OnInit {
             this.status = status;
         if (this.status != this.data.status) {
             status || this.modalDialog.startLoading();
-            this.invoiceProxy.updateStatus(new UpdateInvoiceStatusInput({
-                id: this.invoiceId,
-                status: InvoiceStatus[this.status]
-            })).pipe(finalize(() => status || this.modalDialog.finishLoading()))
+            this.invoicesService.updateStatus(this.invoiceId, this.status)
+                .pipe(finalize(() => status || this.modalDialog.finishLoading()))
                 .subscribe(() => {
                     if (status)
                         this.data.refreshParent && this.data.refreshParent();
@@ -508,6 +506,13 @@ export class CreateInvoiceDialogComponent implements OnInit {
     onValueChanged(event, data, field?) {
         this.lines[data.rowIndex][field || data.column.dataField] = event.value;
         this.changeDetectorRef.detectChanges();
+    }
+
+    onRateChanged(event, data) {
+        let value = event.value;
+        if (isNaN(value))
+            value = value.replace(/(?!\.)\D/igm, '');
+        this.onValueChanged({value: value}, data);
     }
 
     onOrderSelected(event, dropBox) {

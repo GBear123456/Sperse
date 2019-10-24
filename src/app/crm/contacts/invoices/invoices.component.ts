@@ -51,19 +51,37 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
             text: this.l('Edit'),
             action: this.editInvoice.bind(this),
             type: ActionButtonType.Edit,
-            disabled: false
+            visible: true
         },
         {
             text: this.l('Delete'),
             action: this.deleteInvoice.bind(this),
             type: ActionButtonType.Delete,
-            disabled: false
+            visible: true
         },
         {
             text: this.l('Send'),
             action: this.sendInvoice.bind(this),
             type: ActionButtonType.Send,
-            disabled: false
+            visible: true
+        },
+        {
+            text: this.l('Cancel'),
+            action: this.updateStatus.bind(this, InvoiceStatus.Canceled),
+            type: ActionButtonType.Cancel,
+            visible: true
+        },
+        {
+            text: this.l('Invoice_MarkAsSent'),
+            action: this.updateStatus.bind(this, InvoiceStatus.Sent),
+            type: ActionButtonType.MarkAsSent,
+            visible: true
+        },
+        {
+            text: this.l('Invoice_MarkAsDraft'),
+            action: this.updateStatus.bind(this, InvoiceStatus.Draft),
+            type: ActionButtonType.MarkAsDraft,
+            visible: true
         }
     ];
 
@@ -142,7 +160,10 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     showActionsMenu(target) {
-        this.actionsTooltip.instance.show(target);
+        setTimeout(() => {
+            this.actionsTooltip.instance.show(target);
+        });
+        this.actionsTooltip.instance.repaint();
     }
 
     onCellClick(event) {
@@ -154,9 +175,13 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
             } else {
                 if (event.event.target.closest('.dx-link.dx-link-edit')) {
                     this.actionMenuItems.map(item => {
-                        item.disabled = (item.type == ActionButtonType.Edit && event.data.Status != InvoiceStatus.Draft) ||
-                            (item.type == ActionButtonType.Delete && [InvoiceStatus.Paid, InvoiceStatus.Sent].indexOf(event.data.Status) >= 0) ||
-                            (item.type == ActionButtonType.Send && [InvoiceStatus.Paid, InvoiceStatus.Canceled].indexOf(event.data.Status) >= 0);
+                        item.visible = 
+                            (item.type == ActionButtonType.Edit && [InvoiceStatus.Draft, InvoiceStatus.Final].indexOf(event.data.Status) >= 0) ||
+                            (item.type == ActionButtonType.Delete && [InvoiceStatus.Paid, InvoiceStatus.Sent].indexOf(event.data.Status) < 0) ||
+                            (item.type == ActionButtonType.Send && [InvoiceStatus.Final, InvoiceStatus.Sent].indexOf(event.data.Status) >= 0) ||
+                            (item.type == ActionButtonType.Cancel && InvoiceStatus.Sent == event.data.Status) ||
+                            ([ActionButtonType.MarkAsDraft, ActionButtonType.MarkAsSent].indexOf(item.type) >= 0 && 
+                                [InvoiceStatus.Final, InvoiceStatus.Canceled].indexOf(event.data.Status) >= 0);
                     });
                     this.actionRecordData = event.data;
                     this.showActionsMenu(event.event.target);
@@ -214,5 +239,12 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
                 tooltip.hide();
             event.itemData.action.call(this);
         }
+    }
+
+    updateStatus(newStatus: InvoiceStatus) {
+        this.startLoading(true);
+        this.invoicesService.updateStatus(this.actionRecordData.Id, newStatus).pipe(
+            finalize(() => this.finishLoading(true))
+        ).subscribe(() => this.invalidate());
     }
 }

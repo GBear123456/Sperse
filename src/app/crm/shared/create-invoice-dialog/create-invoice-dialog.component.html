@@ -174,7 +174,7 @@
                                 [showClearButton]="true"
                                 (onKeyDown)="allowDigitsOnly($event, ['.'])"
                                 value="{{cellData.value | currency: invoiceSettings.currency}}"
-                                (onValueChanged)="onValueChanged($event, cellData)">
+                                (onValueChanged)="onRateChanged($event, cellData)">
                                 <dx-validator>
                                     <dxi-validation-rule type="required" [message]="ls.l('RequiredField', '', ls.l('Rate'))"></dxi-validation-rule>
                                 </dx-validator>
