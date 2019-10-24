@@ -6,6 +6,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { DxTreeListComponent } from 'devextreme-angular/ui/tree-list';
 import 'devextreme/data/odata/store';
 import DataSource from 'devextreme/data/data_source';
+import { finalize } from 'rxjs/operators';
 import * as _ from 'underscore';
 
 /** Application imports */
@@ -25,7 +26,7 @@ import { appModuleAnimation } from '@shared/animations/routerTransition';
     templateUrl: './rules.component.html',
     styleUrls: ['./rules.component.less'],
     animations: [appModuleAnimation()],
-    providers: [ClassificationServiceProxy]
+    providers: [ ClassificationServiceProxy ]
 })
 export class RulesComponent extends CFOComponentBase implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(DxTreeListComponent) treeList: DxTreeListComponent;
@@ -43,11 +44,10 @@ export class RulesComponent extends CFOComponentBase implements OnInit, AfterVie
     constructor(injector: Injector,
         public dialog: MatDialog,
         public filtersService: FiltersService,
-        private _appService: AppService,
-        private _ClassificationService: ClassificationServiceProxy
+        private appService: AppService,
+        private classificationService: ClassificationServiceProxy
     ) {
         super(injector);
-
         this.initToolbarConfig();
     }
 
@@ -85,7 +85,7 @@ export class RulesComponent extends CFOComponentBase implements OnInit, AfterVie
                         customFilters.forEach((v) => dataSourceFilters.push(v));
                 } else {
                     _.pairs(filter.items).forEach((pair) => {
-                        let val = pair.pop().value, key = pair.pop(), operator = {};
+                        let val = pair.pop().value, key = pair.pop();
                         if (val)
                             dataSourceFilters.push([key, filter.operator, val]);
                     });
@@ -108,7 +108,7 @@ export class RulesComponent extends CFOComponentBase implements OnInit, AfterVie
             this.headlineConfig.buttons.push({
                 enabled: true,
                 action: this.showEditDialog.bind(this),
-                lable: this.l('+ Add New')
+                label: this.l('+ Add New')
             });
         }
 
@@ -117,7 +117,7 @@ export class RulesComponent extends CFOComponentBase implements OnInit, AfterVie
     }
 
     initToolbarConfig() {
-        this._appService.updateToolbar([
+        this.appService.updateToolbar([
             {
                 location: 'before',
                 items: [
@@ -160,9 +160,9 @@ export class RulesComponent extends CFOComponentBase implements OnInit, AfterVie
 
     refreshList() {
         this.startLoading();
-        this._ClassificationService.getRules(InstanceType[this.instanceType], this.instanceId, null)
+        this.classificationService.getRules(InstanceType[this.instanceType], this.instanceId, null)
+            .pipe(finalize(() => this.finishLoading()))
             .subscribe(result => {
-                this.finishLoading();
                 this.ruleTreeListDataSource = new DataSource({
                     store: {
                         key: 'id',
@@ -203,13 +203,18 @@ export class RulesComponent extends CFOComponentBase implements OnInit, AfterVie
             }).afterClosed().subscribe((result) => {
                 if (result) {
                     this.startLoading(true);
-                    this._ClassificationService.deleteRule(InstanceType[this.instanceType], this.instanceId,
-                        [], ApplyToTransactionsOption[dialogData.reclassify ? 'MatchedAndUnclassified' : 'None'], itemId)
-                        .subscribe(() => {
-                            this.lastRemovedItemID = itemId;
-                            $event.component.deleteRow($event.component.getRowIndexByKey(itemId));
-                            this.finishLoading(true);
-                        });
+                    this.classificationService.deleteRule(
+                        InstanceType[this.instanceType],
+                        this.instanceId,
+                        [],
+                        ApplyToTransactionsOption[dialogData.reclassify ? 'MatchedAndUnclassified' : 'None'],
+                        itemId
+                    ).pipe(
+                        finalize(() => this.finishLoading(true))
+                    ).subscribe(() => {
+                        this.lastRemovedItemID = itemId;
+                        $event.component.deleteRow($event.component.getRowIndexByKey(itemId));
+                    });
                 }
             });
     }
@@ -218,13 +223,13 @@ export class RulesComponent extends CFOComponentBase implements OnInit, AfterVie
         this.dialog.open(RuleDialogComponent, {
             panelClass: 'slider',
             data: _.extend(data, {
-                refershParent: this.refreshList.bind(this)
+                refreshParent: this.refreshList.bind(this)
             })
         }).afterClosed().subscribe(() => {});
     }
 
     ngOnDestroy() {
-        this._appService.updateToolbar(null);
+        this.appService.updateToolbar(null);
         this.rootComponent.overflowHidden();
         this.filtersService.unsubscribe();
         super.ngOnDestroy();

@@ -144,7 +144,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             {
                 enabled: this.contactService.checkCGPermission(ContactGroup.Client),
                 action: this.createClient.bind(this),
-                lable: this.l('CreateNewCustomer')
+                label: this.l('CreateNewCustomer')
             }
         ]
     };

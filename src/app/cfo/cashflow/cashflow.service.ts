@@ -178,7 +178,7 @@ export class CashflowService {
             sortOrder: 'asc',
             expanded: false,
             showTotals: true,
-            sortingMethod: (a, b) => this.sortReportingGroup(a, b),
+            sortingMethod: (a, b) => CashflowService.sortReportingGroup(a, b),
             resortable: true,
             customizeText: cellInfo => this.customizeFieldText.bind(this, cellInfo, this.ls.l('Unclassified'))()
         },
@@ -371,6 +371,25 @@ export class CashflowService {
         public userPreferencesService: UserPreferencesService
     ) {}
 
+
+    static addLocalTimezoneOffset(date) {
+        if (date) {
+            let offset = new Date(date).getTimezoneOffset();
+            date.add(-offset, 'minutes');
+        }
+    }
+
+    /**
+     * Change moment date to the offset of local timezone
+     * @param date
+     */
+    static removeLocalTimezoneOffset(date) {
+        if (date) {
+            let offset = new Date(date).getTimezoneOffset();
+            date.add(offset, 'minutes');
+        }
+    }
+
     /**
      * This function accepts two field values and should return a number indicating their sort order:
          Less than zero - a goes before b.
@@ -380,7 +399,7 @@ export class CashflowService {
      * @param secondItem
      * @return {number}
      */
-    sortReportingGroup(firstItem, secondItem): number {
+    static sortReportingGroup(firstItem, secondItem): number {
         let result = 0;
         const firstItemValue = firstItem.value && firstItem.value.slice(2);
         const secondItemValue = secondItem.value && secondItem.value.slice(2);
@@ -395,16 +414,27 @@ export class CashflowService {
         return result;
     }
 
-    addEvents(element: HTMLElement, events: IEventDescription[]) {
+    static addEvents(element: HTMLElement, events: IEventDescription[]) {
         for (let event of events) {
             element.addEventListener(event.name, event.handler, event.useCapture);
         }
     }
 
-    removeEvents(element: HTMLElement, events: IEventDescription[]) {
+    static removeEvents(element: HTMLElement, events: IEventDescription[]) {
         for (let event of events) {
             element.removeEventListener(event.name, event.handler);
         }
+    }
+
+    static applyNewTextWidth(cellObj, element, newCellWidth) {
+        cellObj.cellElement.setAttribute('title', cellObj.cell.text.toUpperCase());
+        /** Extend text to the whole cell */
+        element.style.whiteSpace = 'nowrap';
+        element.classList.add('truncated');
+        /** created another span inside to avoid inline-flex and text-overflow: ellipsis conflicts */
+        element.innerHTML = `<span>${element.textContent}</span>`;
+        /** Set new width to the text element */
+        element.style.width = newCellWidth + 'px';
     }
 
     /**
@@ -2164,4 +2194,5 @@ export class CashflowService {
         }
         return this.addCategorizationLevels({ ...stubTransaction, ...stubObj });
     }
+
 }

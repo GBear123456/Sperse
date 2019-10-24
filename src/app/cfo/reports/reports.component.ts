@@ -332,7 +332,7 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
             buttons: [
                 {
                     action: this.showGenerateReportDialog.bind(this),
-                    lable: this.l('GenerateNewReport'),
+                    label: this.l('GenerateNewReport'),
                     enabled: this.isInstanceAdmin || this.isMemberAccessManage
                 }
             ]

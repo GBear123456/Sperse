@@ -47,7 +47,7 @@ export class HostSettingsComponent extends AppComponentBase implements OnInit, O
                 enabled: this.isGranted(AppPermissions.AdministrationLanguagesCreate),
                 action: this.saveAll.bind(this),
                 icon: 'la la la-floppy-o',
-                lable: this.l('SaveAll')
+                label: this.l('SaveAll')
             }
         ]
     };

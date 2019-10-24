@@ -38,9 +38,7 @@ export class BankAccountsSelectDialogComponent implements OnInit {
             {
                 title: this.ls.l('Cancel'),
                 class: 'default',
-                action: () => {
-                    this.modalDialog.close(true, true);
-                }
+                action: () => this.modalDialog.close(true, true)
             },
             {
                 id: 'saveCompany',

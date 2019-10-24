@@ -29,15 +29,15 @@ export class BusinessEntitiesComponent extends CFOComponentBase implements OnIni
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
     headlineConfig: any;
     private rootComponent: any;
-
     private readonly dataSourceURI = 'BusinessEntity';
     private isAddButtonDisabled = false;
     private lastSelectedBusinessEntity;
 
-    constructor(injector: Injector,
-        public dialog: MatDialog,
-        private _businessEntityService: BusinessEntityServiceProxy,
-        private bankAccountsService: BankAccountsService
+    constructor(
+        injector: Injector,
+        private businessEntityService: BusinessEntityServiceProxy,
+        private bankAccountsService: BankAccountsService,
+        public dialog: MatDialog
     ) {
         super(injector);
         this.rootComponent = this.getRootComponent();
@@ -54,7 +54,7 @@ export class BusinessEntitiesComponent extends CFOComponentBase implements OnIni
                 {
                     enabled: true,
                     action: this.onNextClick.bind(this),
-                    lable: this.l('Next'),
+                    label: this.l('Next'),
                     class: 'btn-layout next-button'
                 }
             ]
@@ -160,8 +160,7 @@ export class BusinessEntitiesComponent extends CFOComponentBase implements OnIni
             panelClass: 'slider',
             data: {
                 applyForLink: true,
-                applyDisabled: !this.isInstanceAdmin &&
-                    !this.isMemberAccessManage,
+                applyDisabled: !this.isInstanceAdmin,
                 highlightUsedRows: true,
                 showBusinessEntitiesFilter: false
             }
@@ -172,15 +171,28 @@ export class BusinessEntitiesComponent extends CFOComponentBase implements OnIni
 
     applyBankAccountIds() {
         if (this.lastSelectedBusinessEntity) {
-            let bankAccountIdsForLink = _.difference(this.bankAccountsService._syncAccountsState.value.selectedBankAccountIds, this.lastSelectedBusinessEntity.BankAccountIds);
-            let bankAccountIdsForRemoveLink = _.difference(this.lastSelectedBusinessEntity.BankAccountIds, this.bankAccountsService._syncAccountsState.value.selectedBankAccountIds);
-            let bankAccountIdsForRelink = _.intersection(bankAccountIdsForLink, this.bankAccountsService._syncAccountsState.value.usedBankAccountIds);
+            let bankAccountIdsForLink = _.difference(
+                this.bankAccountsService._syncAccountsState.value.selectedBankAccountIds,
+                this.lastSelectedBusinessEntity.BankAccountIds
+            );
+            let bankAccountIdsForRemoveLink = _.difference(
+                this.lastSelectedBusinessEntity.BankAccountIds,
+                this.bankAccountsService._syncAccountsState.value.selectedBankAccountIds
+            );
+            let bankAccountIdsForRelink = _.intersection(
+                bankAccountIdsForLink,
+                this.bankAccountsService._syncAccountsState.value.usedBankAccountIds
+            );
             if (bankAccountIdsForRelink && bankAccountIdsForRelink.length) {
-                abp.message.confirm(this.l('BusinessEntities_UpdateBankAccount_Confirm_Text'), this.l('BusinessEntities_UpdateBankAccount_Confirm_Title'), (result) => {
-                    if (result) {
-                        this.updateBankAccounts(bankAccountIdsForLink, bankAccountIdsForRemoveLink);
+                abp.message.confirm(
+                    this.l('BusinessEntities_UpdateBankAccount_Confirm_Text'),
+                    this.l('BusinessEntities_UpdateBankAccount_Confirm_Title'),
+                    (result) => {
+                        if (result) {
+                            this.updateBankAccounts(bankAccountIdsForLink, bankAccountIdsForRemoveLink);
+                        }
                     }
-                });
+                );
             } else {
                 this.updateBankAccounts(bankAccountIdsForLink, bankAccountIdsForRemoveLink);
             }
@@ -196,7 +208,11 @@ export class BusinessEntitiesComponent extends CFOComponentBase implements OnIni
             linkInput.businessEntityId = this.lastSelectedBusinessEntity.Id;
             linkInput.isLinked = true;
 
-            updateBankAccountsObservable.push(this._businessEntityService.updateBankAccounts(InstanceType[this.instanceType], this.instanceId, linkInput));
+            updateBankAccountsObservable.push(this.businessEntityService.updateBankAccounts(
+                InstanceType[this.instanceType],
+                this.instanceId,
+                linkInput
+            ));
         }
         if (bankAccountIdsForRemoveLink.length) {
             let removeLinkInput = new BusinessEntityUpdateBankAccountsInput();
@@ -204,7 +220,11 @@ export class BusinessEntitiesComponent extends CFOComponentBase implements OnIni
             removeLinkInput.businessEntityId = this.lastSelectedBusinessEntity.Id;
             removeLinkInput.isLinked = false;
 
-            updateBankAccountsObservable.push(this._businessEntityService.updateBankAccounts(InstanceType[this.instanceType], this.instanceId, removeLinkInput));
+            updateBankAccountsObservable.push(this.businessEntityService.updateBankAccounts(
+                InstanceType[this.instanceType],
+                this.instanceId,
+                removeLinkInput
+            ));
         }
 
         if (updateBankAccountsObservable.length) {

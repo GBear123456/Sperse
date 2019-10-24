@@ -196,7 +196,7 @@ export class OffersComponent extends AppComponentBase implements OnInit, OnDestr
                     action: (event) => {
                         this.pullOffers(false, event);
                     },
-                    lable: this.l('Offers_PullChanges')
+                    label: this.l('Offers_PullChanges')
                 }
             ]
         };

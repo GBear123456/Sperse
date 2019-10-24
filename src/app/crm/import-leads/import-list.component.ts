@@ -66,7 +66,7 @@ export class ImportListComponent extends AppComponentBase implements AfterViewIn
                 {
                     enabled: true,
                     action: this.navigateToWizard.bind(this),
-                    lable: this.l('AddNewImport')
+                    label: this.l('AddNewImport')
                 }
             ]
         };

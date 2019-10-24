@@ -478,7 +478,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                 {
                     enabled: true,
                     action: () => this.categoriesShowed = !this.categoriesShowed,
-                    lable: '',
+                    label: '',
                     class: 'toggle dx-button'
                 }
             ]

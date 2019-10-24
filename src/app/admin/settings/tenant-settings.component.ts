@@ -105,7 +105,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
                 enabled: true, // this.isGranted(AppPermissions.AdministrationLanguagesCreate),
                 action: this.saveAll.bind(this),
                 icon: 'la la la-floppy-o',
-                lable: this.l('SaveAll')
+                label: this.l('SaveAll')
             }
         ]
     };

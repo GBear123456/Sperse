@@ -171,7 +171,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             {
                 enabled: this.contactService.checkCGPermission(ContactGroup.Client),
                 action: this.createLead.bind(this),
-                lable: this.l('CreateNewLead')
+                label: this.l('CreateNewLead')
             }
         ]
     };

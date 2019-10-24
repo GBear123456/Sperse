@@ -84,7 +84,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             {
                 enabled: this.isGranted(AppPermissions.CRMOrdersInvoicesManage),
                 action: this.createInvoice.bind(this),
-                lable: this.l('CreateInvoice')
+                label: this.l('CreateInvoice')
             }
         ]
     };

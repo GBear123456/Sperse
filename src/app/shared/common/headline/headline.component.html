@@ -14,7 +14,7 @@
     </div>
     <div class="headline-buttons" [ngClass]="data?.class">
         <ng-template ngFor let-item [ngForOf]="data.buttons">
-            <button *ngIf="item.enabled" id="{{item?.id}}" class="btn {{item?.class || 'btn-layout'}}" (click)="item.action($event)"><i class="icon-{{item.icon}}"></i> {{item.lable}}</button>
+            <button *ngIf="item.enabled" id="{{item?.id}}" class="btn {{item?.class || 'btn-layout'}}" (click)="item.action($event)"><i class="icon-{{item.icon}}"></i> {{item.label}}</button>
         </ng-template>
         <div *ngIf="data.onRefresh || data.toggleToolbar" class="vertical-delimiter"></div>
         <button *ngIf="data.onRefresh" class="refresh-button" (click)="data.onRefresh($event)"></button>

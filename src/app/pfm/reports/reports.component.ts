@@ -136,7 +136,7 @@ export class ReportsComponent extends AppComponentBase implements OnInit, OnDest
                     action: () => {
                         this.showCalendarDialog();
                     },
-                    lable: (this.dateFrom ? this.dateFrom.format('DD/MM/YYYY') : this.l('Start Date')) +
+                    label: (this.dateFrom ? this.dateFrom.format('DD/MM/YYYY') : this.l('Start Date')) +
                         ' - ' + (this.dateTo ? this.dateTo.format('DD/MM/YYYY') : this.l('End Date'))
                 }
             ]

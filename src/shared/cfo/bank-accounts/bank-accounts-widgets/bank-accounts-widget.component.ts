@@ -345,7 +345,12 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
     }
 
     detailCellClick(cell) {
-        if (cell.rowType === 'data' && cell.column.dataField === 'accountName' && this.allowBankAccountsEditing && this.cfoService) {
+        if (this.cfoService
+            && this.isInstanceAdmin
+            && cell.rowType === 'data'
+            && cell.column.dataField === 'accountName'
+            && this.allowBankAccountsEditing
+        ) {
             this.openEditPopup(cell);
             return false;
         }

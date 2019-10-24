@@ -50,7 +50,7 @@ export class RolesComponent extends AppComponentBase implements OnDestroy {
             {
                 enabled: this.isGranted(AppPermissions.AdministrationRolesCreate),
                 action: this.createRole.bind(this),
-                lable: this.l('CreateNewRole')
+                label: this.l('CreateNewRole')
             }
         ]
     };

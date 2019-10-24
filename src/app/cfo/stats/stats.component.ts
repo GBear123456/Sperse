@@ -443,7 +443,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
                 {
                     enabled: !AppConsts.isMobile && !!(this.statsData && this.statsData.length),
                     action: this.showSourceDataWidget.bind(this),
-                    lable: this.l('Show source data')
+                    label: this.l('Show source data')
                 }
             ]
         };

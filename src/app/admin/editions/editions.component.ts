@@ -36,7 +36,7 @@ export class EditionsComponent extends AppComponentBase implements OnDestroy {
             {
                 enabled: this.isGranted(AppPermissions.EditionsCreate),
                 action: this.createEdition.bind(this),
-                lable: this.l('CreateNewEdition')
+                label: this.l('CreateNewEdition')
             }
         ]
     };
