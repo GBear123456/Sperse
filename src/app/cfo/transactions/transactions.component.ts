@@ -80,7 +80,6 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     resetRules = new ResetClassificationDto();
     private autoClassifyData = new AutoClassifyDto();
     private transactionDetailDialogRef: MatDialogRef<TransactionDetailInfoComponent>;
-
     private transactionId$: Subject<number> = new Subject<number>();
 
     dataGridStateTimeout: any;
@@ -119,7 +118,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     private businessEntityFilter: FilterModel;
     public transactionsFilterQuery: any[];
 
-    public manageAllowed = false;
+    public manageAllowed = this._cfoService.classifyTransactionsAllowed(false);
     public dragInProgress = false;
     private draggedTransactionRow;
     public selectedCashflowCategoryKeys: number[];
@@ -257,7 +256,6 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
 
         this.searchColumns = ['Description', 'CashflowSubCategoryName', 'CashflowCategoryName', 'Descriptor'];
         this.searchValue = '';
-        this.manageAllowed = this._cfoService.classifyTransactionsAllowed;
     }
 
     ngOnInit(): void {
@@ -274,7 +272,10 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
 
         this.cfoPreferencesService.dateRange$.pipe(
             takeUntil(this.destroy$),
-            switchMap((dateRange) => this.componentIsActivated ? of(dateRange) : this.lifecycleService.activate$.pipe(first(), mapTo(dateRange)))
+            switchMap((dateRange) => this.componentIsActivated
+                ? of(dateRange)
+                : this.lifecycleService.activate$.pipe(first(), mapTo(dateRange))
+            )
         ).subscribe(() => {
             this.filtersService.change(this.dateFilter);
         });
@@ -1073,7 +1074,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             this.processTotalValues($event.selectedRowKeys.length);
 
         if (!this.manageAllowed)
-            return ;
+            return;
 
         let transactionKeys = this.dataGrid.instance ? this.dataGrid.instance.getSelectedRowKeys() : [];
         if (!initial && (Boolean(this.selectedCashflowCategoryKeys) || Boolean(transactionKeys.length)))
@@ -1117,7 +1118,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
 
     onCellClick($event) {
         if ($event.rowType === 'data') {
-            if (this.manageAllowed &&
+            if (this._cfoService.classifyTransactionsAllowed() &&
                 (($event.column.dataField == 'CashflowCategoryName' && $event.data.CashflowCategoryId) ||
                 ($event.column.dataField == 'CashflowSubCategoryName' && $event.data.CashflowSubCategoryId))) {
                 this.dialog.open(RuleDialogComponent, {

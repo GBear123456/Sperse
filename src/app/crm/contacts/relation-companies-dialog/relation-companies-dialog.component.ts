@@ -49,16 +49,19 @@ export class RelationCompaniesDialogComponent extends AppComponentBase implement
     }
 
     setPrimary(event, contact) {
-        this._relationsServiceProxy.setPrimaryOrgRelation(contact.relation.id).subscribe(() => {
-            let orgRelations = this.data.personContactInfo.orgRelations;
-            let orgRelation = _.find(orgRelations, orgRelation => orgRelation.isPrimary);
-            orgRelation.isPrimary = false;
-            orgRelation = _.find(orgRelations, orgRelation => orgRelation.id === contact.relation.id);
-            orgRelation.isPrimary = true;
-            this.data.primaryOrganizationContactId = contact.id;
-            this.notify.info(this.l('SavedSuccessfully'));
-            this.dialogRef.close(contact);
-        }, (e) => { this.notify.error(e); });
+        this._relationsServiceProxy.setPrimaryOrgRelation(contact.relation.id).subscribe(
+            () => {
+                let orgRelations = this.data.personContactInfo.orgRelations;
+                let orgRelation = _.find(orgRelations, orgRelation => orgRelation.isPrimary);
+                orgRelation.isPrimary = false;
+                orgRelation = _.find(orgRelations, orgRelation => orgRelation.id === contact.relation.id);
+                orgRelation.isPrimary = true;
+                this.data.primaryOrganizationContactId = contact.id;
+                this.notify.info(this.l('SavedSuccessfully'));
+                this.dialogRef.close(contact);
+            },
+            (e) => { this.notify.error(e); }
+        );
         event.stopPropagation();
     }
 }
