@@ -58598,7 +58598,7 @@ export interface IGetNewInvoiceInfoOutput {
     nextInvoiceNumber: string | undefined;
 }
 
-export enum InvoiceCurrency {
+export enum Currency {
     USD = "USD", 
     CAD = "CAD", 
     EUR = "EUR", 
@@ -58611,7 +58611,7 @@ export class InvoiceSettings implements IInvoiceSettings {
     defaultTemplateId!: number | undefined;
     attachPDF!: boolean | undefined;
     note!: string | undefined;
-    currency!: InvoiceCurrency | undefined;
+    currency!: Currency | undefined;
 
     constructor(data?: IInvoiceSettings) {
         if (data) {
@@ -58661,7 +58661,7 @@ export interface IInvoiceSettings {
     defaultTemplateId: number | undefined;
     attachPDF: boolean | undefined;
     note: string | undefined;
-    currency: InvoiceCurrency | undefined;
+    currency: Currency | undefined;
 }
 
 export class Attachment implements IAttachment {
