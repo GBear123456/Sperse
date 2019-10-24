@@ -32,6 +32,20 @@ export class ImpersonationService {
             });
     }
 
+    impersonateAsAdmin(tenantId?: number): void {
+        this._accountService.impersonateAsAdmin(tenantId)
+            .subscribe((result: ImpersonateOutput) => {
+                this._authService.logout(false);
+
+                let targetUrl = AppConsts.appBaseUrl + '?secureId=' + result.impersonationToken;
+                if (tenantId) {
+                    targetUrl = targetUrl + '&tenantId=' + tenantId;
+                }
+
+                location.href = targetUrl;
+            });
+    }
+
     backToImpersonator(): void {
         this._accountService.backToImpersonator()
             .subscribe((result: ImpersonateOutput) => {

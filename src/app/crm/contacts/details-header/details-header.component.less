@@ -152,7 +152,7 @@
     }
 
     .personal_info {
-        margin: 10px 0 0 150px;
+        margin: 10px 65px 0 150px;
 
         .status-group-wrapper {
             padding: 0;
@@ -170,6 +170,34 @@
         }
         @media (max-width: 1280px) {
             width: 280px;
+        }
+    }
+
+    .organization_info,
+    .affiliate-code {
+        /deep/ inplace-edit {
+            .inplace-edit-view-mode {
+                height: auto;
+            }
+            i.dx-icon {
+                font-size: 14px !important;
+            }
+            i.edit {
+                display: none !important;
+            }
+            span {
+                display: inline-block;
+                white-space: nowrap;
+                @media (max-width: 1366px) {
+                    max-width: 260px;
+                }
+            }
+            input {
+                font-size: 16px !important;
+            }
+            dx-button.button-exit {
+                right: -50px;
+            }
         }
     }
 
@@ -252,28 +280,6 @@
         }
 
         h2, h3 {
-            /deep/ inplace-edit {
-                .inplace-edit-view-mode {
-                    height: auto;
-                }
-                i.dx-icon {
-                    font-size: 14px !important;
-                }
-                i.edit {
-                    display: none !important;
-                }
-                span {
-                    display: inline-block;
-                    white-space: nowrap;
-                    @media (max-width: 1366px) {
-                        max-width: 260px;
-                    }
-                }
-                input {
-                    font-size: 16px !important;
-                }
-            }
-
             .actions {
                 top: 0;
                 bottom: 0;
@@ -309,6 +315,11 @@
             width: calc(100% - 30px);
             padding-left: 15px;
         }
+    }
+
+    .affiliate-code {
+        width: 200px;
+        margin-right: 50px;
     }
 
     .header_financial_info {
@@ -378,18 +389,18 @@
     }
 
     .loadindicator {
-            height: 16px;
-            width: 16px;
-            left: -9px;
-            border: 2px solid #00aeef;
-            border-left-color: rgba(255, 255, 255, .2);
-            border-bottom-color: rgba(255, 255, 255, .2);
-            border-radius: 50%;
-            position: relative;
-            -webkit-animation: rotation .6s infinite linear;
-            -moz-animation: rotation .6s infinite linear;
-            -o-animation: rotation .6s infinite linear;
-            animation: rotation .6s infinite linear;
-        }
+        height: 16px;
+        width: 16px;
+        left: -9px;
+        border: 2px solid #00aeef;
+        border-left-color: rgba(255, 255, 255, .2);
+        border-bottom-color: rgba(255, 255, 255, .2);
+        border-radius: 50%;
+        position: relative;
+        -webkit-animation: rotation .6s infinite linear;
+        -moz-animation: rotation .6s infinite linear;
+        -o-animation: rotation .6s infinite linear;
+        animation: rotation .6s infinite linear;
+    }
 }
 

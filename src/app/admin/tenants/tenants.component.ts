@@ -123,6 +123,13 @@ export class TenantsComponent extends AppComponentBase implements OnDestroy {
                 }
             },
             {
+                text: this.l('LoginAsAdmin'),
+                visible: this.permission.isGranted(AppPermissions.TenantsImpersonation),
+                action: () => {
+                    this.impersonateAsAdmin(this.actionRecord);
+                }
+            },
+            {
                 text: this.l('Edit'),
                 visible: this.permission.isGranted(AppPermissions.TenantsEdit),
                 action: () => {
@@ -329,6 +336,13 @@ export class TenantsComponent extends AppComponentBase implements OnDestroy {
         impersonateDialog.componentInstance.itemSelected.subscribe((item: NameValueDto) => {
             this.impersonateUser(item);
         });
+    }
+
+    impersonateAsAdmin(record: any): void {
+        this.impersonateTenantId = record.id;
+        this._impersonationService.impersonateAsAdmin(
+            this.impersonateTenantId
+        );
     }
 
     unlockUser(record: any): void {

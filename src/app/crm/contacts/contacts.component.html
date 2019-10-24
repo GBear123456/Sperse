@@ -58,7 +58,7 @@
     </ng-container>
     <ng-container rightPanel>
         <mat-tab-group>
-            <mat-tab label="{{l('Overview')}}" *ngIf="rightPanelSetting.id == RP_DEFAULT_ID">
+            <mat-tab [label]="l('Overview')" *ngIf="rightPanelSetting.id == RP_DEFAULT_ID">
                 <span class="gear-icon" (click)="toggleConfigMode()"></span>
                 <dx-scroll-view showScrollbar="onHover">
                     <div class="right-content" [ngClass]="{'config-mode': configMode}">

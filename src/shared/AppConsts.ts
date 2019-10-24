@@ -88,6 +88,7 @@ export class AppConsts {
         phone: /^[0-9]{10}$/,
         url: /^(http[s]?:\/\/)?[a-z0-9-]+(\.[a-z0-9-]+)+(:[0-9]+)?(\/.*)?$/,
         fullName: /^[^\d]+$/,
+        affiliateCode: /^[a-zA-Z0-9_-]+/,
         ein: /^\d{2}\-?\d{7}$/,
         duns: /^\d{2}\-?\d{3}-?\d{4}$/,
         siteUrl: /^(http:\/\/| https:\/\/)[a-z0-9-]+(\.[a-z0-9-]+)+(:[0-9]+)?(\/.*)?$/,
