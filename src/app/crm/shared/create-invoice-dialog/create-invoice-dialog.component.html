@@ -145,7 +145,7 @@
                                 [value]="cellData.value"
                                 (onValueChanged)="onValueChanged($event, cellData)">
                                 <dx-validator>
-                                    <dxi-validation-rule type="required" [message]="ls.l('RequiredField', '', ls.l('Description'))"></dxi-validation-rule>
+                                    <dxi-validation-rule type="required" [message]="ls.l('RequiredAllFields')"></dxi-validation-rule>
                                 </dx-validator>
                             </dx-text-box>
                             <div class="row-actions">
@@ -163,7 +163,7 @@
                                 (onKeyDown)="allowDigitsOnly($event)"
                                 (onValueChanged)="onValueChanged($event, cellData)">
                                 <dx-validator>
-                                    <dxi-validation-rule type="required" [message]="ls.l('RequiredField', '', ls.l('Quantity'))"></dxi-validation-rule>
+                                    <dxi-validation-rule type="required" message=""></dxi-validation-rule>
                                 </dx-validator>
                             </dx-text-box>
                         </div>
@@ -176,7 +176,7 @@
                                 value="{{cellData.value | currency: invoiceSettings.currency}}"
                                 (onValueChanged)="onRateChanged($event, cellData)">
                                 <dx-validator>
-                                    <dxi-validation-rule type="required" [message]="ls.l('RequiredField', '', ls.l('Rate'))"></dxi-validation-rule>
+                                    <dxi-validation-rule type="required" message=""></dxi-validation-rule>
                                 </dx-validator>
                             </dx-text-box><br>
                             <dx-select-box
@@ -187,7 +187,7 @@
                                 [dataSource]="invoiceUnits"
                                 (onValueChanged)="onValueChanged($event, cellData, 'unit')">
                                 <dx-validator>
-                                    <dxi-validation-rule type="required" [message]="ls.l('RequiredField', '', ls.l('Unit'))"></dxi-validation-rule>
+                                    <dxi-validation-rule type="required" message=""></dxi-validation-rule>
                                 </dx-validator>
                             </dx-select-box>
                         </div>
