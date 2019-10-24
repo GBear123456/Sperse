@@ -154,7 +154,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
             {
                 enabled: this.contactService.checkCGPermission(ContactGroup.Partner),
                 action: this.createPartner.bind(this),
-                lable: this.l('CreateNewPartner')
+                label: this.l('CreateNewPartner')
             }
         ]
     };

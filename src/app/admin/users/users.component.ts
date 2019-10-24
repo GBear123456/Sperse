@@ -61,7 +61,7 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
             {
                 enabled: this.isGranted(AppPermissions.AdministrationUsersCreate),
                 action: this.createUser.bind(this),
-                lable: this.l('CreateNewUser')
+                label: this.l('CreateNewUser')
             }
         ]
     };

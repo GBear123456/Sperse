@@ -62,7 +62,7 @@ export class TenantsComponent extends AppComponentBase implements OnDestroy {
             {
                 enabled: this.isGranted(AppPermissions.Administration),
                 action: this.createTenant.bind(this),
-                lable: this.l('CreateNewTenant')
+                label: this.l('CreateNewTenant')
             }
         ]
     };

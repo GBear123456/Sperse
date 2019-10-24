@@ -23,16 +23,16 @@ export class CFOService extends CFOServiceBase {
     instanceChanged$: Observable<InstanceModel> = this.instanceChanged.asObservable();
     instanceStatus$: Observable<boolean>;
     constructor(
-        private _appService: AppService,
-        private _appLocalizationService: AppLocalizationService,
-        private _layoutService: LayoutService,
-        private _instanceServiceProxy: InstanceServiceProxy,
-        private _contactService: ContactServiceProxy,
-        private _permission: AppPermissionService
+        private appService: AppService,
+        private appLocalizationService: AppLocalizationService,
+        private layoutService: LayoutService,
+        private instanceServiceProxy: InstanceServiceProxy,
+        private contactService: ContactServiceProxy,
+        private permission: AppPermissionService
     ) {
         super();
         this.statusActive = new BehaviorSubject<boolean>(false);
-        _appService.subscribeModuleChange(config => {
+        appService.subscribeModuleChange(config => {
             switch (config['code']) {
                 case 'CFO':
                     if (this.hasStaticInstance) {
@@ -85,7 +85,7 @@ export class CFOService extends CFOServiceBase {
     get isInstanceAdmin() {
         return this.checkMemberAccessPermission(
             'Manage.Administrate',
-            !isNaN(parseInt(this.instanceType)) || (this.isMainInstanceType && this._permission.isGranted(AppPermissions.CFOMainInstanceAdmin))
+            this.isMainInstanceType && this.permission.isGranted(AppPermissions.CFOMainInstanceAdmin)
         );
     }
 
@@ -94,41 +94,48 @@ export class CFOService extends CFOServiceBase {
     }
 
     get isMemberAccessManage() {
-        return this.checkMemberAccessPermission('Manage', false);
+        return this.checkMemberAccessPermission(
+            'Manage',
+            false
+        );
     }
 
     get classifyTransactionsAllowed() {
-        return this.checkMemberAccessPermission('ClassifyTransaction', this.isInstanceAdmin &&
-            !this.isMainInstanceType || this._permission.isGranted(AppPermissions.CFOMainInstanceAccessClassifyTransactions));
+        return this.checkMemberAccessPermission(
+            'ClassifyTransaction',
+            this.isInstanceAdmin
+                && !this.isMainInstanceType
+                || this.permission.isGranted(AppPermissions.CFOMainInstanceAccessClassifyTransactions)
+        );
     }
 
     get accessAllDepartments() {
-        return !this.isMainInstanceType || this._permission.isGranted(AppPermissions.CFOMainInstanceAccessAccessAllDepartments);
+        return !this.isMainInstanceType || this.permission.isGranted(AppPermissions.CFOMainInstanceAccessAccessAllDepartments);
     }
 
     checkMemberAccessPermission(permission, defaultResult = true) {
         if (this.instanceId)
-            return this._permission.isGranted(AppPermissions.CFOMembersAdministrationAllMemberInstancesAdmin);
+            return this.permission.isGranted(AppPermissions.CFOMembersAdministrationAllMemberInstancesAdmin);
 
         if (this.instanceType == InstanceType.User)
-            return this._permission.isGranted(AppPermissions.CFOMemberAccess + '.' + permission as AppPermissions);
+            return this.permission.isGranted(AppPermissions.CFOMemberAccess + '.' + permission as AppPermissions);
 
         return defaultResult;
     }
 
     initContactInfo(userId) {
-        this._contactService.getContactShortInfoForUser(userId).subscribe(response => {
-            this._appService.contactInfo = response;
+        this.contactService.getContactShortInfoForUser(userId).subscribe(response => {
+            this.appService.contactInfo = response;
         });
     }
 
     instanceChangeProcess(invalidateServerCache: boolean = false): Observable<boolean> {
         if (this.instanceId) {
-            this._appService.setContactInfoVisibility(true);
-            this._layoutService.hideDefaultPageHeader();
+            this.appService.setContactInfoVisibility(true);
+            this.layoutService.hideDefaultPageHeader();
         }
         if (!this.instanceStatus$)
-            this.instanceStatus$ = this._instanceServiceProxy
+            this.instanceStatus$ = this.instanceServiceProxy
                 .getStatus(InstanceType[this.instanceType], this.instanceId, invalidateServerCache)
                 .pipe(
                     finalize(() => this.instanceStatus$ = undefined),
@@ -149,7 +156,7 @@ export class CFOService extends CFOServiceBase {
 
     private updateMenuItems(disabled?: boolean) {
         setTimeout(() => {
-            let menu = this._appService.topMenu;
+            let menu = this.appService.topMenu;
             menu && menu.items.forEach((item, index) => {
                 let uri = item.route.split('/').pop(),
                     isAccounts = (uri == 'linkaccounts'),
@@ -160,7 +167,7 @@ export class CFOService extends CFOServiceBase {
                     item.disabled = disabled == undefined ? !(isAccounts
                         ? this.initialized : this.hasTransactions) : disabled;
                 } else if (!this.hasStaticInstance)
-                    item.text = this._appLocalizationService.l(this.initialized ? 'Navigation_Dashboard'
+                    item.text = this.appLocalizationService.l(this.initialized ? 'Navigation_Dashboard'
                         : 'Navigation_Setup', AppConsts.localization.CFOLocalizationSourceName);
             });
         });

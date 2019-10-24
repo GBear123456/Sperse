@@ -62,7 +62,7 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
             {
                 enabled: true,
                 action: () => this.leftMenuHidden = !this.leftMenuHidden,
-                lable: '',
+                label: '',
                 class: 'toggle dx-button'
             }
         ]

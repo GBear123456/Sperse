@@ -88,7 +88,7 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
                 action: () => {
                     this.showActivityDialog(new Date());
                 },
-                lable: 'AddNewTask'
+                label: 'AddNewTask'
             }
         ]
     };
@@ -106,7 +106,7 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
 
         this.store$.dispatch(new ActivityAssignedUsersStoreActions.LoadRequestAction(false));
         this.headlineConfig.buttons.forEach((button) => {
-            button.lable = this.l(button.lable);
+            button.label = this.l(button.label);
         });
 
         if (abp.clock.provider.supportsMultipleTimezone)

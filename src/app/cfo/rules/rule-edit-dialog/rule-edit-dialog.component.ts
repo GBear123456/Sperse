@@ -71,12 +71,12 @@ export class RuleDialogComponent implements OnInit, AfterViewInit {
                 if (this.validate()) {
                     event.target.disabled = true;
                     const request$ = this.data.id
-                        ? this._classificationServiceProxy.editRule(
-                            this._cfoService.instanceType as any, this._cfoService.instanceId,
+                        ? this.classificationServiceProxy.editRule(
+                            this.cfoService.instanceType as any, this.cfoService.instanceId,
                             EditRuleDto.fromJS(this.getDataObject()))
-                        : this._classificationServiceProxy.createRule(
-                            this._cfoService.instanceType as any,
-                            this._cfoService.instanceId,
+                        : this.classificationServiceProxy.createRule(
+                            this.cfoService.instanceType as any,
+                            this.cfoService.instanceId,
                             CreateRuleDto.fromJS(this.getDataObject()));
                     request$.pipe(finalize(() => {
                                 this.modalDialog.finishLoading();
@@ -94,12 +94,12 @@ export class RuleDialogComponent implements OnInit, AfterViewInit {
         }
     ];
     constructor(
-        private _classificationServiceProxy: ClassificationServiceProxy,
-        private _cashflowServiceProxy: CashflowServiceProxy,
-        private _cfoService: CFOService,
-        private _transactionsServiceProxy: TransactionsServiceProxy,
-        private _notifyService: NotifyService,
-        private _elementRef: ElementRef,
+        private classificationServiceProxy: ClassificationServiceProxy,
+        private cashflowServiceProxy: CashflowServiceProxy,
+        private cfoService: CFOService,
+        private transactionsServiceProxy: TransactionsServiceProxy,
+        private notifyService: NotifyService,
+        private elementRef: ElementRef,
         public ls: AppLocalizationService,
         @Inject(MAT_DIALOG_DATA) public data: any
     ) {}
@@ -116,15 +116,15 @@ export class RuleDialogComponent implements OnInit, AfterViewInit {
             };
         });
         let requests: Observable<any>[] = [
-            this._transactionsServiceProxy.getTransactionAttributeTypes(this._cfoService.instanceType as any, this._cfoService.instanceId),
-            this._classificationServiceProxy.getKeyAttributeValues(this._cfoService.instanceType as any, this._cfoService.instanceId, new GetKeyAttributeValuesInput({ ruleId: this.data.id, transactionIds: <number[] > this.data.transactionIds })),
-            this._cashflowServiceProxy.getCashFlowInitialData(this._cfoService.instanceType as any, this._cfoService.instanceId)
+            this.transactionsServiceProxy.getTransactionAttributeTypes(this.cfoService.instanceType as any, this.cfoService.instanceId),
+            this.classificationServiceProxy.getKeyAttributeValues(this.cfoService.instanceType as any, this.cfoService.instanceId, new GetKeyAttributeValuesInput({ ruleId: this.data.id, transactionIds: <number[] > this.data.transactionIds })),
+            this.cashflowServiceProxy.getCashFlowInitialData(this.cfoService.instanceType as any, this.cfoService.instanceId)
         ];
 
         if (this.data.id)
-            requests.push(this._classificationServiceProxy.getRuleForEdit(this._cfoService.instanceType as any, this._cfoService.instanceId, this.data.id));
+            requests.push(this.classificationServiceProxy.getRuleForEdit(this.cfoService.instanceType as any, this.cfoService.instanceId, this.data.id));
         else if (this.data.transactionIds && this.data.transactionIds.length)
-            requests.push(this._classificationServiceProxy.getTransactionCommonDetails(this._cfoService.instanceType as any, this._cfoService.instanceId, GetTransactionCommonDetailsInput.fromJS(this.data)));
+            requests.push(this.classificationServiceProxy.getTransactionCommonDetails(this.cfoService.instanceType as any, this.cfoService.instanceId, GetTransactionCommonDetailsInput.fromJS(this.data)));
 
         forkJoin(requests).subscribe(([transactionAttributeTypesResult, keyAttributeValuesResult, cashFlowInitialDataResult, data]) => {
             // getTransactionAttributeTypes
@@ -203,9 +203,9 @@ export class RuleDialogComponent implements OnInit, AfterViewInit {
 
                             let updateTransactionCategoryMethod = (suppressCashflowTypeMismatch: boolean = false) => {
                                 this.modalDialog.startLoading();
-                                this._classificationServiceProxy.updateTransactionsCategory(
-                                    this._cfoService.instanceType as any,
-                                    this._cfoService.instanceId,
+                                this.classificationServiceProxy.updateTransactionsCategory(
+                                    this.cfoService.instanceType as any,
+                                    this.cfoService.instanceId,
                                     UpdateTransactionsCategoryInput.fromJS({
                                         transactionIds: this.data.transactionIds,
                                         categoryId: this.data.categoryId,
@@ -235,7 +235,7 @@ export class RuleDialogComponent implements OnInit, AfterViewInit {
                         this.modalDialog.close(true);
                 }
             });
-        this._transactionsServiceProxy.getTransactionTypesAndCategories().subscribe((data) => {
+        this.transactionsServiceProxy.getTransactionTypesAndCategories().subscribe((data) => {
             this.transactionTypesAndCategoriesData = data;
             this.transactionTypes = data.types;
             this.transactionCategories = data.categories;
@@ -248,7 +248,7 @@ export class RuleDialogComponent implements OnInit, AfterViewInit {
 
     ngAfterViewInit() {
         setTimeout(() => {
-            let input = this._elementRef.nativeElement
+            let input = this.elementRef.nativeElement
                 .querySelector('.dx-texteditor-input');
             input.focus();
             input.select();
@@ -307,10 +307,10 @@ export class RuleDialogComponent implements OnInit, AfterViewInit {
 
     updateDataHandler(error) {
         if (error)
-            this._notifyService.error(error);
+            this.notifyService.error(error);
         else {
-            this._notifyService.info(this.ls.l('SavedSuccessfully'));
-            this.data.refershParent && this.data.refershParent();
+            this.notifyService.info(this.ls.l('SavedSuccessfully'));
+            this.data.refreshParent && this.data.refreshParent();
             this.modalDialog.close(true);
         }
     }
@@ -341,7 +341,7 @@ export class RuleDialogComponent implements OnInit, AfterViewInit {
     getAttributes() {
         let attributes = {};
         let dataSource = <any>this.attributeList.dataSource;
-        let list = dataSource.filter((item) => {
+        dataSource.filter((item) => {
             return (item['attributeTypeId'] != 'keyword');
         }).forEach((v) => attributes[v['attributeTypeId']] = ConditionAttributeDto.fromJS(v));
 
@@ -371,22 +371,22 @@ export class RuleDialogComponent implements OnInit, AfterViewInit {
                 this.title = this.descriptor;
                 if (!this.title) {
                     this.isTitleValid = false;
-                    return this._notifyService.error(this.ls.l('RuleDialog_NameError'));
+                    return this.notifyService.error(this.ls.l('RuleDialog_NameError'));
                 }
             }
 
             if (!this.getDescriptionKeywords() && !Object.keys(this.getAttributes()).length) {
                 this.attributeList.instance.option('elementAttr', {invalid: true});
-                return this._notifyService.error(this.ls.l('RuleDialog_AttributeOrKeywordRequired'));
+                return this.notifyService.error(this.ls.l('RuleDialog_AttributeOrKeywordRequired'));
             }
 
             if (this.minAmount && this.maxAmount && this.minAmount > this.maxAmount)
-                return this._notifyService.error(this.ls.l('RuleDialog_AmountError'));
+                return this.notifyService.error(this.ls.l('RuleDialog_AmountError'));
         }
 
         if (isNaN(this.data.categoryId)) {
             this.isCategoryValid = false;
-            return this._notifyService.error(this.ls.l('RuleDialog_CategoryError'));
+            return this.notifyService.error(this.ls.l('RuleDialog_CategoryError'));
         }
 
         return true;

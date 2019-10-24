@@ -38,7 +38,7 @@ export class LanguagesComponent extends AppComponentBase implements OnDestroy {
             {
                 enabled: this.isGranted(AppPermissions.AdministrationLanguagesCreate) && this._appService.isHostTenant,
                 action: this.createNewLanguage.bind(this),
-                lable: this.l('CreateNewLanguage')
+                label: this.l('CreateNewLanguage')
             }
         ]
     };

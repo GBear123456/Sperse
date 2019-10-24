@@ -17,7 +17,7 @@ export class RuleDeleteDialogComponent extends ConfirmDialogComponent implements
         this.data.reclassify = false;
     }
 
-    confirm($event) {
+    confirm() {
         this.dialogRef.close(true);
     }
 }

@@ -664,7 +664,7 @@ describe('CashflowService', () => {
         let secondItem = {
             value: 'RGCostOfSales'
         };
-        expect(service.sortReportingGroup(firstItem, secondItem)).toBe(1);
+        expect(CashflowService.sortReportingGroup(firstItem, secondItem)).toBe(1);
 
         firstItem = {
             value: 'RGOtherIncomeExpense'
@@ -672,7 +672,7 @@ describe('CashflowService', () => {
         secondItem = {
             value: null
         };
-        expect(service.sortReportingGroup(firstItem, secondItem)).toBe(-1);
+        expect(CashflowService.sortReportingGroup(firstItem, secondItem)).toBe(-1);
 
         firstItem = {
             value: 'CA15'
@@ -680,6 +680,6 @@ describe('CashflowService', () => {
         secondItem = {
             value: 'CA18'
         };
-        expect(service.sortReportingGroup(firstItem, secondItem)).toBe(0);
+        expect(CashflowService.sortReportingGroup(firstItem, secondItem)).toBe(0);
     }));
 });

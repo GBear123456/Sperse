@@ -3,20 +3,20 @@ import { AppComponentBase } from '../../../../../shared/common/app-component-bas
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 @Component({
-  selector: 'confirm-dialog',
-  templateUrl: 'confirm-dialog.component.html',
-  styleUrls: ['confirm-dialog.component.less']
+    selector: 'confirm-dialog',
+    templateUrl: 'confirm-dialog.component.html',
+    styleUrls: ['confirm-dialog.component.less']
 })
 export class ConfirmDialogComponent extends AppComponentBase {
     public data: any;
     public dialogRef: MatDialogRef<ConfirmDialogComponent, any>;
 
     constructor(
-      injector: Injector
+        injector: Injector
     ) {
-      super(injector);
+        super(injector);
 
-      this.data = injector.get(MAT_DIALOG_DATA);
-      this.dialogRef = <any>injector.get(MatDialogRef);
+        this.data = injector.get(MAT_DIALOG_DATA);
+        this.dialogRef = <any>injector.get(MatDialogRef);
     }
 }
