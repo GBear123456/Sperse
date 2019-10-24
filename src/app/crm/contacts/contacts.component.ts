@@ -77,6 +77,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
 
     customerId: number;
     contactGroup: ContactGroup;
+    assignedUsersSelector: (source$: Observable<any>) => Observable<any>;
     contactInfo: ContactInfoDto = new ContactInfoDto();
     personContactInfo: PersonContactInfoDto;
     primaryContact: any;
@@ -309,7 +310,10 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
         this.contactService['data'].contactInfo = result;
         this.contactsService.contactInfoUpdate(result);
         this.contactGroup = result.groupId;
-
+        this.assignedUsersSelector = select(
+            ContactAssignedUsersStoreSelectors.getContactGroupAssignedUsers,
+            { contactGroup: this.contactGroup }
+        );
         contactId = contactId || result.personContactInfo.id;
         if (result.organizationContactInfo && result.organizationContactInfo.contactPersons) {
             result.organizationContactInfo.contactPersons.map((contact) => {
@@ -339,7 +343,8 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
         this.loadLeadsStages(() => {
             if (this.leadInfo.stage) {
                 let leadStage = this.leadStages.find(
-                    stage => stage.name === this.leadInfo.stage);
+                    stage => stage.name === this.leadInfo.stage
+                );
                 this.clientStageId = leadStage && leadStage.id;
             }
         });
@@ -761,11 +766,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
             this.userService['data'].userId = contact.userId);
     }
 
-    getAssignedUsersSelector = () => {
-        return select(ContactAssignedUsersStoreSelectors.getContactGroupAssignedUsers, { contactGroup: this.contactGroup });
-    }
-
-    getAssignmentsPermissinKey = () => {
+    getAssignmentsPermissionKey = () => {
         return this.contactsService.getCGPermissionKey(this.contactGroup, 'ManageAssignments');
     }
 

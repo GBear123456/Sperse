@@ -2,6 +2,7 @@
 import { Component, Injector, Input, Output, ViewChild, EventEmitter } from '@angular/core';
 
 /** Third party imports */
+import { Observable } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 /** Application imports */
@@ -69,7 +70,7 @@ export class OperationsWidgetComponent extends AppComponentBase {
         return this._partnerTypes;
     }
     @Input() getProxyService;
-    @Input() getAssignedUsersSelector;
+    @Input() assignedUsersSelector: (source$: Observable<any>) => Observable<any>;
     @Input() getAssignmentsPermissionKey;
 
     @Output() onDelete: EventEmitter<any> = new EventEmitter();
