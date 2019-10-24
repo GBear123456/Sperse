@@ -163,7 +163,10 @@ export enum ModuleType {
 export enum ActionButtonType {
     Edit,
     Delete,
-    Send
+    Send,
+    Cancel,
+    MarkAsSent,
+    MarkAsDraft
 }
 
 export enum NavigationState {

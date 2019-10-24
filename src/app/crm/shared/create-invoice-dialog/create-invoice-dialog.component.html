@@ -94,13 +94,27 @@
                         </dx-date-box>
                     </div>
                     <div class="field-area">
-                        <dx-text-box
-                            maxLength="10"
-                            [placeholder]="ls.l('Invoice_PurchaseOrderNumber')"
-                            [disabled]="disabledForUpdate"
-                            [width]="'260px'"
-                            [value]="orderId">
-                        </dx-text-box>
+                        <dx-drop-down-box #orderDropBox
+                            width="260px"
+                            [value]="orderNumber"
+                            [disabled]="data.invoice"
+                            [dataSource]="[orderNumber]"
+                            [placeholder]="ls.l('Invoice_PurchaseOrderNumber')">
+                            <div *dxTemplate="let contentData of 'content'">
+                                <dx-data-grid #ordersGrid
+                                    height="350px"
+                                    accessKey="orderNumber"
+                                    [dataSource]="ordersDataSource"
+                                    [showColumnHeaders]="false"
+                                    [showColumnLines]="false"
+                                    [searchPanel]="{visible: true}"
+                                    [selection]="{mode: 'single'}"
+                                    (onRowClick)="onOrderSelected($event, orderDropBox)">
+                                    <dxi-column dataField="Number" caption="{{ls.l('Number')}}"></dxi-column>
+                                    <dxo-paging [pageSize]="20"></dxo-paging>
+                                </dx-data-grid>
+                            </div>
+                        </dx-drop-down-box>
                     </div>
                 </div>
             </div>
@@ -160,7 +174,7 @@
                                 [showClearButton]="true"
                                 (onKeyDown)="allowDigitsOnly($event, ['.'])"
                                 value="{{cellData.value | currency: invoiceSettings.currency}}"
-                                (onValueChanged)="onValueChanged($event, cellData)">
+                                (onValueChanged)="onRateChanged($event, cellData)">
                                 <dx-validator>
                                     <dxi-validation-rule type="required" [message]="ls.l('RequiredField', '', ls.l('Rate'))"></dxi-validation-rule>
                                 </dx-validator>

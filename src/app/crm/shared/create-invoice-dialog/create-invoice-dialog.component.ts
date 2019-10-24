@@ -15,6 +15,7 @@ import { finalize, filter, first, switchMap } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 
 /** Application imports */
+import { ODataService } from '@shared/common/odata/odata.service';
 import { ContactsService } from '@app/crm/contacts/contacts.service';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { DateHelper } from '@shared/helpers/DateHelper';
@@ -30,7 +31,8 @@ import {
     InvoiceStatus,
     CreateInvoiceLineInput,
     InvoiceLineUnit,
-    InvoiceSettings
+    InvoiceSettings,
+    GetNewInvoiceInfoOutput
 } from '@shared/service-proxies/service-proxies';
 import { NotifyService } from '@abp/notify/notify.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -70,11 +72,13 @@ export class CreateInvoiceDialogComponent implements OnInit {
     invoiceNo;
     orderId: number;
     invoiceId: number;
+    orderNumber: string;
     statuses: any[] = [];
     status = InvoiceStatus.Draft;
 
     saveButtonId = 'saveInvoiceOptions';
     saveContextMenuItems = [];
+    invoiceInfo = new GetNewInvoiceInfoOutput();
     invoiceSettings: InvoiceSettings = new InvoiceSettings();
     remoteServiceBaseUrl: string = AppConsts.remoteServiceBaseUrl;
     selectedOption: any;
@@ -108,8 +112,10 @@ export class CreateInvoiceDialogComponent implements OnInit {
     ];
     linesGridHeight = 200;
     invoiceUnits = Object.keys(InvoiceLineUnit);
+    ordersDataSource;
 
     constructor(
+        private oDataService: ODataService,
         private invoiceProxy: InvoiceServiceProxy,
         private invoicesService: InvoicesService,
         private customerProxy: CustomerServiceProxy,
@@ -152,6 +158,24 @@ export class CreateInvoiceDialogComponent implements OnInit {
         this.saveOptionsInit();
     }
 
+    initOrderDataSource() {
+        this.ordersDataSource = {
+            uri: 'order',
+            requireTotalCount: true,
+            store: {
+                key: 'Id',
+                type: 'odata',
+                url: this.oDataService.getODataUrl('order', {ContactId: this.contactId}),
+                version: AppConsts.ODataVersion,
+                deserializeDates: false,
+                beforeSend: function (request) {
+                    request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
+                },
+                paginate: true
+            }
+        };
+    }
+
     initInvoiceData() {
         let invoice = this.data.invoice;
         if (invoice) {
@@ -163,6 +187,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
             this.date = invoice.Date;
             this.dueDate = invoice.DueDate;
             this.contactId = invoice.ContactId;
+            this.initOrderDataSource();
             this.disabledForUpdate = [InvoiceStatus.Draft, InvoiceStatus.Final].indexOf(this.status) < 0;
             if (this.disabledForUpdate)
                 this.buttons[0].disabled = this.disabledForUpdate;
@@ -172,6 +197,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
                 .subscribe((res) => {
                     this.description = res.description;
                     this.notes = res.note;
+                    this.orderNumber = res.orderNumber;
                     this.customer = res.contactName;
                     this.lines = res.lines.map((res) => {
                         return {
@@ -189,12 +215,15 @@ export class CreateInvoiceDialogComponent implements OnInit {
             this.resetNoteDefault();
 
             this.invoiceProxy.getNewInvoiceInfo().subscribe(res => {
+                this.invoiceInfo = res;
                 this.invoiceNo = res.nextInvoiceNumber;
+                this.changeDetectorRef.detectChanges();
             });
 
             let contact = this.data.contactInfo;
             if (contact) {
                 this.contactId = contact.id;
+                this.initOrderDataSource();
                 this.customer = contact.personContactInfo.fullName;
             }
         }
@@ -296,10 +325,8 @@ export class CreateInvoiceDialogComponent implements OnInit {
             this.status = status;
         if (this.status != this.data.status) {
             status || this.modalDialog.startLoading();
-            this.invoiceProxy.updateStatus(new UpdateInvoiceStatusInput({
-                id: this.invoiceId,
-                status: InvoiceStatus[this.status]
-            })).pipe(finalize(() => status || this.modalDialog.finishLoading()))
+            this.invoicesService.updateStatus(this.invoiceId, this.status)
+                .pipe(finalize(() => status || this.modalDialog.finishLoading()))
                 .subscribe(() => {
                     if (status)
                         this.data.refreshParent && this.data.refreshParent();
@@ -396,7 +423,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
 
     resetFullDialog(forced = true) {
         let resetInternal = () => {
-            //this.invoiceNo = this.invoiceSettings.nextInvoiceNumber;
+            this.invoiceNo = this.invoiceInfo.nextInvoiceNumber;
             this.status = InvoiceStatus.Draft;
             this.customer = undefined;
             this.date = undefined;
@@ -440,6 +467,10 @@ export class CreateInvoiceDialogComponent implements OnInit {
 
     selectContact(event) {
         this.contactId = event.selectedItem && event.selectedItem.id;
+        this.orderId = undefined;
+        this.orderNumber = undefined;
+        this.initOrderDataSource();
+        this.changeDetectorRef.detectChanges();
     }
 
     close() {
@@ -475,6 +506,23 @@ export class CreateInvoiceDialogComponent implements OnInit {
     onValueChanged(event, data, field?) {
         this.lines[data.rowIndex][field || data.column.dataField] = event.value;
         this.changeDetectorRef.detectChanges();
+    }
+
+    onRateChanged(event, data) {
+        let value = event.value;
+        if (isNaN(value))
+            value = value.replace(/(?!\.)\D/igm, '');
+        this.onValueChanged({value: value}, data);
+    }
+
+    onOrderSelected(event, dropBox) {
+        let data = event.data;
+        if (data) {
+            this.orderId = data.Id;
+            this.orderNumber = data.Number;
+            dropBox.instance.option('opened', false);
+            this.changeDetectorRef.detectChanges();
+        }
     }
 
     allowDigitsOnly(event, exceptions = []) {

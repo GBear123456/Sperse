@@ -6,8 +6,10 @@ import { Observable, ReplaySubject } from 'rxjs';
 
 /** Application imports */
 import {
+    UpdateInvoiceStatusInput,
     InvoiceServiceProxy,
     InvoiceSettings,
+    InvoiceStatus
 } from '@shared/service-proxies/service-proxies';
 
 @Injectable()
@@ -28,5 +30,12 @@ export class InvoicesService {
             this.invoiceProxy.getSettings().subscribe(res => {
                 this.settings.next(res);
             });
+    }
+
+    updateStatus(invoiceId: number, status: InvoiceStatus) {
+        return this.invoiceProxy.updateStatus(new UpdateInvoiceStatusInput({
+            id: invoiceId,
+            status: InvoiceStatus[status]
+        }));
     }
 }
