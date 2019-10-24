@@ -238,8 +238,6 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
             this.selectedPartnerTypeName = null;
 
         this.userAssignmentComponent.assignedUsersSelector = this.getAssignedUsersSelector();
-        this.userAssignmentComponent.refreshList();
-
         let contactGroupId = ContactGroup[this.importType == ImportTypeInput.Lead ? 'Client' : this.importType];
         if (contactGroupId != this.contactGroupId) {
             if (this.contactGroupId = contactGroupId)
