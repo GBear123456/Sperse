@@ -15,8 +15,8 @@ import { RouteReuseStrategy } from '@angular/router';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import { CacheService } from 'ng2-cache-service';
-import { Observable, ReplaySubject, merge, of } from 'rxjs';
-import { filter, first, skip, takeUntil, mapTo } from 'rxjs/operators';
+import { Observable, ReplaySubject } from 'rxjs';
+import { filter, first, takeUntil, map } from 'rxjs/operators';
 
 /** Application imports */
 import { AppService } from '@app/app.service';
@@ -69,6 +69,10 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
     };
     private showWelcomeSection: ReplaySubject<boolean> = new ReplaySubject<boolean>(1);
     showWelcomeSection$: Observable<boolean> = this.showWelcomeSection.asObservable();
+    showDefaultSection$: Observable<boolean> = this.showWelcomeSection$.pipe(
+        map((showWelcomeSection: boolean) => showWelcomeSection === false)
+    );
+    showLoadingSpinner = true;
     private introAcceptedCacheKey: string = this.cacheHelper.getCacheKey('CRMIntro', 'IntroAccepted');
     dialogConfig = new MatDialogConfig();
     leftMenuHidden = true;
@@ -90,13 +94,13 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
     }
 
     ngOnInit() {
+        this.loadStatus();
         const introAcceptedCache = this.cacheService.get(this.introAcceptedCacheKey);
         /** Show crm wizard if there is no cache for it */
         if (!introAcceptedCache || introAcceptedCache === 'false') {
             this.cacheService.set(this.introAcceptedCacheKey, 'false');
             this.openDialog();
         }
-        this.loadStatus();
     }
 
     ngAfterViewInit(): void {
@@ -128,6 +132,7 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
     private loadStatus() {
         this.dashboardServiceProxy.getStatus().subscribe((status: GetCRMStatusOutput) => {
             this.showWelcomeSection.next(!status.hasData);
+            this.showLoadingSpinner = false;
         });
     }
 

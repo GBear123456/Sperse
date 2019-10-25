@@ -49,7 +49,7 @@ export class CrmService {
         private oDataService: ODataService,
         private http: HttpClient,
         private ls: AppLocalizationService
-    ) { }
+    ) {}
 
     static setDataSourceToComponent(dataSource: any, componentInstance: any) {
         if (componentInstance && !componentInstance.option('dataSource')) {
