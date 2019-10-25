@@ -49,10 +49,10 @@
         </div>
         <div class="right-header col-sm-12">
             <div class="row">
-                <div class="col-4 col-sm-3 connections"><info-component imgSrc="assets/common/icons/total-icon.svg" [value]="bankAccountsService.syncAccountsAmount$ | async" [description]="l('Connections')"></info-component></div>
-                <div class="col-4 col-sm-3 accounts"><info-component imgSrc="assets/common/icons/total-icon.svg" [value]="bankAccountsService.accountsAmount$ | async" [description]="l('Accounts')"></info-component></div>
-                <div class="col-4 col-sm-6 current-balance">
-                    <info-component imgSrc="assets/common/icons/coins-icon.svg" *ngIf="cfoService.accessAllDepartments"
+                <div class="{{cfoService.accessAllDepartments ? 'col-sm-3 connections' : 'col-sm-6'}}"><info-component imgSrc="assets/common/icons/total-icon.svg" [value]="bankAccountsService.syncAccountsAmount$ | async" [description]="l('Connections')"></info-component></div>
+                <div class="{{cfoService.accessAllDepartments ? 'col-sm-3 accounts' : 'col-sm-6'}}"><info-component imgSrc="assets/common/icons/total-icon.svg" [value]="bankAccountsService.accountsAmount$ | async" [description]="l('Accounts')"></info-component></div>
+                <div class="col-sm-6 current-balance" *ngIf="cfoService.accessAllDepartments">
+                    <info-component imgSrc="assets/common/icons/coins-icon.svg"
                                     [value]="bankAccountsService.accountsDataTotalNetWorth$ | async | currency:cfoPreferencesService.selectedCurrencyId:cfoPreferencesService.selectedCurrencySymbol:'1.2-2'"
                                     [description]="l('Current_Balance')">
                     </info-component>
