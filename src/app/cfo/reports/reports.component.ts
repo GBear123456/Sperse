@@ -364,10 +364,8 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
     numerizeFileSizeSortValue = (data) => +data.Size;
 
     formatDepartments(departments: string[]): string {
-        if (departments || departments.length)
-        {
+        if (departments && departments.length) 
             return departments.map(x => x || this.l('NoDepartment')).join(', ');
-        }
         return null;
     }
 
@@ -387,7 +385,7 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
                 this.visibleReports = $event.component.getVisibleRows().map(row => row.data);
                 /** If user click the whole row */
                 this.viewReport(NavigationState.Current, $event);
-    }
+            }
         }
     }
 
