@@ -1,6 +1,14 @@
 :host {
     display: flex;
     flex-direction: column;
+    &.fullpage {
+        height: calc(100vh - 350px);
+        h2 {
+            text-align: center;
+            padding-top: 40px;
+            font-size: 28px;
+        }
+    }
     h2 {
         font-size: 18px;
         font-weight: 700;

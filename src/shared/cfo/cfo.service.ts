@@ -172,9 +172,10 @@ export class CFOService extends CFOServiceBase {
             menu && menu.items.forEach((item, index) => {
                 let uri = item.route.split('/').pop(),
                     isAccounts = (uri == 'linkaccounts'),
-                    isStatements = (uri == 'statements');
+                    isStatements = (uri == 'statements'),
+                    isStats = (uri == 'stats');
                 if (index) {
-                    if (isAccounts || isStatements)
+                    if (isAccounts || isStatements || isStats)
                         item.visible = this.accessAllDepartments;
                     item.disabled = disabled == undefined ? !(isAccounts
                         ? this.initialized : this.hasTransactions) : disabled;

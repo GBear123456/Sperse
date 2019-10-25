@@ -17,7 +17,11 @@
         </ng-template>
         <li class="steps-progress-item" *ngIf="showIntroductionTourLink && instanceType == 'Main'">
             <div class="img img-IntroductionTour"></div>
-            <span class="btn-link intro-link" (click)="showIntro()">{{l('Introduction Tour')}}</span>
+            <span class="btn-link intro-link" (click)="showIntro()">{{l('SetupStep_IntroductionTour')}}</span>
+        </li>
+        <li class="steps-progress-item" *ngIf="!showIntroductionTourLink && instanceType == 'Main'">
+            <div class="img img-dashboard"></div>
+            <span class="link" (click)="onClick({isAlwaysActive: true, component: '/start'})">{{l('SetupStep_YourDashboard')}}</span>
         </li>
     </ul>
     <button class="toggle-button" *ngIf="showToggleButton" (click)="toggle()">

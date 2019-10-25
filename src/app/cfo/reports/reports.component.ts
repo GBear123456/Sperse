@@ -158,6 +158,7 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
                 items: [
                     {
                         name: 'filters',
+                        visible: this._cfoService.accessAllDepartments,
                         action: () => {
                             this.filtersService.fixed = !this.filtersService.fixed;
                         },
@@ -205,6 +206,9 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
     }
 
     setupFilters() {
+        if (!this._cfoService.accessAllDepartments)
+            return;
+
         if (this.filters && this.filters.length)
             this.filtersService.setup(this.filters);
         else

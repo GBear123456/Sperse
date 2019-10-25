@@ -52,10 +52,11 @@
                 <div class="col-4 col-sm-3 connections"><info-component imgSrc="assets/common/icons/total-icon.svg" [value]="bankAccountsService.syncAccountsAmount$ | async" [description]="l('Connections')"></info-component></div>
                 <div class="col-4 col-sm-3 accounts"><info-component imgSrc="assets/common/icons/total-icon.svg" [value]="bankAccountsService.accountsAmount$ | async" [description]="l('Accounts')"></info-component></div>
                 <div class="col-4 col-sm-6 current-balance">
-                    <info-component imgSrc="assets/common/icons/coins-icon.svg"
+                    <info-component imgSrc="assets/common/icons/coins-icon.svg" *ngIf="cfoService.accessAllDepartments"
                                     [value]="bankAccountsService.accountsDataTotalNetWorth$ | async | currency:cfoPreferencesService.selectedCurrencyId:cfoPreferencesService.selectedCurrencySymbol:'1.2-2'"
                                     [description]="l('Current_Balance')">
-                </info-component></div>
+                    </info-component>
+                </div>
             </div>
         </div>
     </div>
@@ -95,6 +96,7 @@
         <dxi-column dataField="selected" caption="" [width]="30" [visible]="showCheckboxes" cssClass="checkbox" alignment="center" dataType="boolean"></dxi-column>
         <dxi-column dataField="name" [caption]="l('Account')" [sortIndex]="0" sortOrder="asc" [width]="nameColumnWidth" alignment="left" [allowEditing]="false" cssClass="accountNumber bold"></dxi-column>
         <dxi-column dataField="syncAccountStatus" [visible]="showStatus" [caption]="l('BankAccountsWidget_Sync_status')" [width]="200" alignment="center" sortOrder="asc" [sortIndex]="2" cellTemplate="statusTemplate" [allowEditing]="false"></dxi-column>
+        <dxi-column alignment="right" [visible]="!cfoService.accessAllDepartments"></dxi-column>
         <dxi-column dataField="lastSyncDate" alignment="left" [caption]="l('BankAccountsWidget_Last_sync')" [width]="510" [allowEditing]="false" cellTemplate="syncDateTemplate" [visible]="showSyncDate"></dxi-column>
         <dxi-column dataField="bankAccounts.length" [visible]="showAdvancedColumns && showAccountsCount" [width]="10" [sortIndex]="1" sortOrder="asc" [calculateSortValue]="calculateSyncAccountSortValue" alignment="right" [calculateDisplayValue]="calculateSyncAccountDisplayValue" [allowEditing]="false"></dxi-column>
         <dxi-column [width]="30" alignment="right" [allowEditing]="false" [visible]="showAdvancedColumns && showAccountsCount" cellTemplate="expandTemplate"></dxi-column>
@@ -133,16 +135,17 @@
                     <dxi-column dataField="selected" [visible]="showCheckboxes" cssClass="checkbox" [visibleIndex]="0" [allowEditing]="false" [width]="30" alignment="center" dataType="boolean" caption=""></dxi-column>
                     <dxi-column dataField="accountNumber" [visible]="showAccountNumber" [visibleIndex]="2" cssClass="accountNumber tabular" [width]="166" alignment="left" [allowEditing]="allowEditing" [editorOptions]="{ disabled: true }"></dxi-column>
                     <dxi-column dataField="accountName" [visibleIndex]="1" [width]="nameColumnWidth" alignment="left" [allowEditing]="allowEditing"></dxi-column>
+                    <dxi-column alignment="right" [visible]="!cfoService.accessAllDepartments"></dxi-column>
                     <dxi-column dataField="typeName" cssClass="type-container" [width]="160" alignment="left" [allowEditing]="false"
                                 cellTemplate="typeTemplate" [(visible)]="showAdvancedColumns && showAccountType"></dxi-column>
                     <dxi-column dataField="businessEntityId" [allowEditing]="allowEditing" [visible]="false" editCellTemplate="businessEntityEditSelect"></dxi-column>
                     <dxi-column dataField="isActive" [allowEditing]="allowEditing" [visible]="false"></dxi-column>
-                    <dxi-column dataField="balance" cssClass="tabular" [minWidth]="70" [width]="balanceColumnWidth" alignment="right" cellTemplate="amountTemplate" [(visible)]="showAdvancedColumns" [allowEditing]="false"></dxi-column>
+                    <dxi-column dataField="balance" cssClass="tabular" [minWidth]="70" [width]="balanceColumnWidth" alignment="right" cellTemplate="amountTemplate" [visible]="cfoService.accessAllDepartments && showAdvancedColumns" [allowEditing]="false"></dxi-column>
                     <dxi-column [width]="200" dataField="availableBalance" cssClass="available-balance" cellTemplate="colorBalanceTemplate" alignment="right" [allowEditing]="false" [(visible)]="showCreditInfo"></dxi-column>
                     <dxi-column [width]="200" dataField="totalCreditLine" cssClass="totalCreditLine-balance"  cellTemplate="colorBalanceTemplate" alignment="right" [allowEditing]="false" [(visible)]="showCreditInfo"></dxi-column>
                     <dxi-column [width]="100" dataField="utilized" cellTemplate="utilizedTemplate" alignment="right" [allowEditing]="false" [(visible)]="showCreditInfo"></dxi-column>
                     <div *dxTemplate="let cell of 'amountTemplate'">
-                        <ng-container *ngIf="(cell.text)">
+                        <ng-container *ngIf="cfoService.accessAllDepartments && cell.text">
                             <div class="number-value bold">
                                 {{cell.text | currency:cfoPreferencesService.selectedCurrencyId:cfoPreferencesService.selectedCurrencySymbol:'1.2-2' }}
                             </div>
