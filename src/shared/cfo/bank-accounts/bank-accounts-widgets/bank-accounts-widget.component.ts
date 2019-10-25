@@ -589,6 +589,9 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
     }
 
     calculateBalanceDisplayValue = (e) => {
+        if (!this.cfoService.accessAllDepartments)
+            return '';
+
         let syncAccountBalance = 0;
         e.bankAccounts.forEach((bankAccount: BankAccountDto) => {
             if (bankAccount['selected']) {

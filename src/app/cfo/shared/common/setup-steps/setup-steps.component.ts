@@ -26,10 +26,10 @@ export class SetupStepComponent extends CFOComponentBase implements OnDestroy, A
 
     @Input() SelectedStepIndex: number;
     @Input() SetupSteps = [
-        { caption: 'FinancialAccounts', component: '/linkaccounts', isAlwaysActive: false },
+        { caption: 'FinancialAccounts', component: '/linkaccounts', isAlwaysActive: false, visible: this._cfoService.accessAllDepartments },
         { caption: 'BusinessEntity', component: '/business-entities', isAlwaysActive: true },
         { caption: 'Chart', component: '/chart-of-accounts', isAlwaysActive: true },
-        { caption: 'Rules', component: '/rules', isAlwaysActive: false },
+        { caption: 'Rules', component: '/rules', isAlwaysActive: false, visible: this._cfoService.accessAllDepartments },
         { caption: 'Permissions', component: '/permissions', visible: this.isInstanceAdmin && this.instanceType == InstanceType.Main, isAlwaysActive: false }
     ];
     @Input() HeaderTitle: string = this.l(this._cfoService.initialized ? 'SetupStep_MainHeader' : 'SetupStep_InitialHeader');
