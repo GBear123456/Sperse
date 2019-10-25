@@ -19,7 +19,10 @@ import { AppFeatures } from '@shared/AppFeatures';
 @Component({
     selector: 'app-cfo-intro',
     templateUrl: './cfo-intro.component.html',
-    styleUrls: ['./cfo-intro.component.less'],
+    styleUrls: [
+        '../../../../shared/common/styles/close-button.less',
+        './cfo-intro.component.less'
+    ],
     animations: [appModuleAnimation()],
     providers: [UserServiceProxy]
 })

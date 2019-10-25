@@ -12,25 +12,14 @@
         color: #00aeef !important;
     }
 
-    .close-dialog {
-        position: absolute;
-        background: transparent;
-        border: 0;
-        right: 15px;
-        top: 4%;
-        padding: 0;
-        outline: none;
-        cursor: pointer;
+    .close-button {
+        box-shadow: none;
+        border: none;
+        right: 7px;
+        left: initial;
+        top: 3%;
         z-index: 9999;
-
-        i {
-            font-size: 25px;
-            margin: 0;
-        }
-
-        &:hover {
-            opacity: .8;
-        }
+        background: none;
     }
 
     // section
@@ -40,7 +29,7 @@
         flex-direction: column;
         justify-content: space-between;
         position: relative;
-        
+
         .step-bg {
             display: block;
             position: absolute;
@@ -50,14 +39,14 @@
             clip-path: polygon(0 0, 100% 0, 100% 44%, 0 65%);
             z-index: 0;
         }
-    
+
         .brain-bg {
             position: absolute;
             top: 0;
             left: 0;
             z-index: 1;
         }
-        
+
         .header {
             height: 12%;
             padding: 11px 52px 11px 24px;
@@ -69,7 +58,7 @@
             color: #fff;
             position: relative;
             z-index: 5;
-    
+
             .crm-intro-logo {
                 margin-right: auto !important;
             }
@@ -97,12 +86,12 @@
                 color: #ffffff;
                 margin-top: -12px;
             }
-            
+
             small {
                 font-size: 14px;
                 color: rgb(255, 255, 255);
             }
-    
+
             .two-cols {
                 width: 100%;
                 display: flex;
@@ -127,11 +116,11 @@
                 width: 100%;
                 max-width: 43%;
                 padding-top: 10px;
-                
+
                 * {
                     text-align: left;
                 }
-                
+
                 h2 {
                     font-family: @mainFont;
                     font-size: 90px;
@@ -140,7 +129,7 @@
                     letter-spacing: 7px;
                     color: rgb(255, 255, 255);
                 }
-                
+
                 p {
                     font-family: @mainFont;
                     font-size: 26px;
@@ -150,13 +139,13 @@
                     color: rgb(255, 255, 255);
                 }
             }
-            
+
             .img {
                 max-width: 57%;
             }
-            
+
             .know-customers {
-        
+
                 &--text {
                     font-family: @mainFont;
                     font-size: 22px;
@@ -168,19 +157,19 @@
                     text-align: center;
                     color: #424c56;
                 }
-        
+
                 &--list {
                     list-style-type: none;
                     margin: 0;
                     padding: 0;
                 }
-        
+
                 &--item {
                     display: inline-block;
                     width: 142px;
                     height: 40px;
                     line-height: 40px;
-            
+
                     font-family: @mainFont;
                     font-size: 14px;
                     font-weight: 600;
@@ -190,10 +179,10 @@
                     letter-spacing: 1.1px;
                     text-align: center;
                     color: #ffffff;
-            
+
                     background-repeat: no-repeat;
                     background-size: contain;
-            
+
                     &.prospect {
                         background-image: url(../../../../assets/common/images/intro/first.svg);
                     }
@@ -263,7 +252,7 @@
             font-family: @mainFont;
             text-align: left;
             margin-bottom: 15px;
-    
+
             font-size: 16px;
             font-weight: 400;
             font-style: normal;
@@ -289,12 +278,12 @@
         .step-bg {
             clip-path: polygon(0 0, 100% 0, 100% 19%, 0 39.5%);
         }
-        
+
         .main {
             padding-top: 40px;
             display: flex;
             align-items: center;
-            
+
             .title {
                 font-size: 26px;
                 font-weight: 600;
@@ -303,24 +292,24 @@
                 text-align: center;
                 color: rgb(255, 255, 255);
             }
-            
+
             .two-cols {
                 padding: 50px 0 0;
                 align-items: center;
-                
+
                 .img {
                     width: 55%;
                 }
-                
+
                 .content {
                     width: 45%;
                     padding-left: 16px;
                     padding-right: 46px;
-                    
+
                     * {
                         text-align: left;
                     }
-                    
+
                     h2 {
                         font-size: 24px;
                         font-weight: 900;
@@ -329,7 +318,7 @@
                         color: rgb(66, 76, 86);
                         margin-bottom: 20px;
                     }
-                    
+
                     p {
                         font-size: 16px;
                         font-weight: 400;
@@ -341,30 +330,30 @@
             }
         }
     }
-    
+
     .forth-step .main {
         .content {
             text-align: left;
         }
     }
-    
+
     .documents-management-list {
         padding: 0;
         margin: 0 0 30px;
         list-style-type: none;
-        
+
         li {
             font-size: 16px;
             font-weight: 400;
             line-height: 1.63;
             color: rgb(66, 76, 86);
-            
+
             &::before {
                 content: '- ';
             }
         }
     }
-    
+
     // fifth-step
     .fifth-step {
         .title {
@@ -376,12 +365,12 @@
                 .img {
                     width: 60%;
                 }
-        
+
                 .content {
                     width: 40%;
                     padding-left: 0;
                     padding-right: 46px;
-                    
+
                     h2 {
                         margin-top: 42px;
                     }
@@ -395,18 +384,18 @@
             width: 555px;
             max-width: 100%;
         }
-        
+
         .main {
             .two-cols {
                 .img {
                     width: 58%;
                 }
-            
+
                 .content {
                     width: 42%;
                     padding-left: 30px;
                     padding-right: 50px;
-                    
+
                     h2 {
                         max-width: 70%;
                     }
@@ -414,7 +403,7 @@
             }
         }
     }
-    
+
     .dashboards {
         .title {
             width: 555px;
@@ -439,7 +428,6 @@
         }
     }
 
-    
     // video
     .video {
         .header {

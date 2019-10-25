@@ -7,7 +7,10 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 
 @Component({
   templateUrl: 'calendar-dialog.component.html',
-  styleUrls: ['calendar-dialog.component.less']
+  styleUrls: [
+      '../../../../../shared/common/styles/close-button.less',
+      'calendar-dialog.component.less'
+  ]
 })
 export class CalendarDialogComponent implements OnInit, AfterViewInit {
     private slider: any;

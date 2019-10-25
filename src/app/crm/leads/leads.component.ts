@@ -247,10 +247,6 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             },
             {
                 area: 'filter',
-                dataField: 'City'
-            },
-            {
-                area: 'filter',
                 dataField: 'CompanyName'
             },
             {
@@ -928,7 +924,16 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                         action: this.toggleCompactView.bind(this),
                         disabled: this.showChart || this.showMap
                     },
-                    { name: 'columnChooser', action: DataGridService.showColumnChooser.bind(this, this.dataGrid) }
+                    {
+                        name: 'columnChooser',
+                        action: () => {
+                            if (this.showDataGrid) {
+                                DataGridService.showColumnChooser.bind(this, this.dataGrid)
+                            } else if (this.showPivotGrid) {
+                                this.pivotGridComponent.toggleFieldPanel();
+                            }
+                        }
+                    }
                 ]
             },
             {

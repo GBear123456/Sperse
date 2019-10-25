@@ -23,41 +23,4 @@
             }
         }
     }
-
-    .close-details {
-        position: absolute;
-        width: 42px;
-        height: 40px;
-        top: 0;
-        left: -42px;
-        cursor: pointer;
-        border-radius: 5px 0 0 5px;
-        border-right: none;
-        background-color: #fff !important;
-        box-shadow: -2px 0 6px 0 rgba(0, 0, 0, 0.1);
-        min-width: 0;
-        outline: none;
-
-        &:before, &:after {
-            position: absolute;
-            top: 10px;
-            left: 20px;
-            content: ' ';
-            height: 20px;
-            width: 2px;
-            background-color: #1b1b1b;
-        }
-
-        &:before {
-            transform: rotate(45deg);
-        }
-
-        &:after {
-            transform: rotate(-45deg);
-        }
-
-        /deep/ .mat-button-focus-overlay {
-            opacity: 0;
-        }
-    }
 }

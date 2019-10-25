@@ -19,35 +19,61 @@
             color: #424c56;
         }
 
-        .dx-filter-header .dx-pivotgrid-fields-area {
-            padding: 15px 19px 15px 10px;
-            width: calc(100vw - 15px);
-            overflow: auto;
-            transition: width 1s;
-            .dx-area-field-container {
-                border: 2px dashed #dadee1;
-                .dx-area-field {
-                    border: none;
-                    background-color: #f3f7fa;
-                    letter-spacing: 0.1px;
-                    color: #424c56;
-                    flex-direction: row;
-                    position: relative;
-                    .dx-header-filter:not(.dx-header-filter-empty) {
-                        &:after {
-                            content: '';
-                            position: absolute;
-                            display: block;
-                            width: 5px;
-                            height: 5px;
-                            border-radius: 50%;
-                            background: red;
-                            top: 5px;
-                            right: 5px;
+        .dx-filter-header {
+            z-index: 1;
+            position: absolute;
+            width: 500px;
+            right: 50px;
+            border: none;
+            /** Allows not to decrease pivot grid height by the field-area height */
+            height: 0;
+            .dx-pivotgrid-fields-area {
+                background: #fff;
+                overflow: auto;
+                transition: width 1s;
+                .dx-area-field-container {
+                    border: 2px dashed #dadee1;
+
+                    .dx-pivotgrid-fields-area-head {
+                        tr {
+                            display: flex;
+                            flex-wrap: wrap;
+                            padding: 15px;
+                            & > td:first-child {
+                                padding-left: 0;
+                            }
+                        }
+                    }
+
+                    .dx-area-field {
+                        border: none;
+                        background-color: #f3f7fa;
+                        letter-spacing: 0.1px;
+                        color: #424c56;
+                        flex-direction: row;
+                        position: relative;
+
+                        .dx-header-filter:not(.dx-header-filter-empty) {
+                            &:after {
+                                content: '';
+                                position: absolute;
+                                display: block;
+                                width: 5px;
+                                height: 5px;
+                                border-radius: 50%;
+                                background: red;
+                                top: 5px;
+                                right: 5px;
+                            }
                         }
                     }
                 }
             }
+        }
+
+        &.field-panel-hidden .dx-filter-header {
+            display: none;
+            position: static;
         }
 
         &.dx-widget {
@@ -55,7 +81,6 @@
             .dx-header-filter.dx-header-filter-empty:before {
                 top: 0;
             }
-
 
             dx-header-filter {
                 width: 15px;
@@ -84,9 +109,6 @@
                 margin-top: 4px;
             }
         }
-
-
-
 
         .dx-pivotgrid-horizontal-headers,
         .dx-pivotgrid-vertical-headers {
@@ -130,5 +152,14 @@
                 background-color: #def9f3;
             }
         }
+    }
+
+    .close-button {
+        left: initial;
+        right: 51px;
+        z-index: 1;
+        border: none;
+        box-shadow: none;
+        top: 1px;
     }
 }

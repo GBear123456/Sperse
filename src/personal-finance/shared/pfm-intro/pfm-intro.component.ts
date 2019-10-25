@@ -14,7 +14,10 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
     selector: 'app-pfm-intro',
     changeDetection: ChangeDetectionStrategy.OnPush,
     templateUrl: './pfm-intro.component.html',
-    styleUrls: ['./pfm-intro.component.less'],
+    styleUrls: [
+        '../../../shared/common/styles/close-button.less',
+        './pfm-intro.component.less'
+    ],
     animations: [ appModuleAnimation() ]
 })
 export class PfmIntroComponent {

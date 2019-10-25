@@ -10,7 +10,7 @@
             top: 0;
             height: 100vh;
 
-            .close-details {
+            .close-button {
                 display: none;
             }
         }
@@ -311,40 +311,11 @@
         border: 1px solid #dfdfdf;
         background-color: #fff;
 
-        .close-details {
-            position: absolute;
-            width: 42px;
-            height: 40px;
+        .close-button {
             top: 15px;
+            left: initial;
             right: -42px;
             transform: rotate(180deg);
-            cursor: pointer;
-            border-radius: 5px 0px 0px 5px;
-            border-right: none;
-            background-color: #FFF;
-            box-shadow: -2px 0px 6px 0 rgba(0, 0, 0, 0.1);
-
-            &:before, &:after {
-                position: absolute;
-                top: 10px;
-                left: 20px;
-                content: ' ';
-                height: 20px;
-                width: 2px;
-                background-color: #1b1b1b;
-            }
-
-            &:before {
-                transform: rotate(45deg);
-            }
-
-            &:after {
-                transform: rotate(-45deg);
-            }
-
-            &:hover {
-                opacity: 1;
-            }
         }
     }
 

@@ -5,7 +5,10 @@ import { NavLink } from '@app/crm/contacts/nav-link.model';
 @Component({
     selector: 'item-details-layout',
     templateUrl: './item-details-layout.component.html',
-    styleUrls: ['./item-details-layout.component.less']
+    styleUrls: [
+        '../styles/close-button.less',
+        './item-details-layout.component.less'
+    ]
 })
 export class ItemDetailsLayoutComponent implements OnInit {
     @Input() navLinks: NavLink[];

@@ -3,8 +3,12 @@
                [allowFiltering]="true"
                [allowSorting]="true"
                [height]="height"
+               rowHeaderLayout="tree"
                [allowSortingBySummary]="true"
-               [ngClass]="{ 'filter-opened': filtersService.filterFixed$ | async }"
+               [ngClass]="{
+                   'filter-opened': filtersService.filterFixed$ | async,
+                   'field-panel-hidden': !showFieldPanel
+               }"
                [showBorders]="true"
                (onContentReady)="onContentReady($event)"
                (onContextMenuPreparing)="prepareContextMenu($event)">
@@ -12,11 +16,12 @@
     <dxo-field-panel [visible]="true"></dxo-field-panel>
     <dxo-header-filter [allowSearch]="true">
     </dxo-header-filter>
-    <dxo-load-panel indicatorSrc="./assets/common/images/spinner.gif"
+    <dxo-load-panel indicatorSrc="./assets/commonupdateDimensions/images/spinner.gif"
                     text=""
                     [showPane]="false">
-    </dxo-load-panel>
+    </dxo-load-panel>dx-area-data-cell
     <dxo-state-storing [enabled]="true"
                        [storageKey]="storageKey">
     </dxo-state-storing>
 </dx-pivot-grid>
+<button class="close-button" *ngIf="showFieldPanel" (click)="toggleFieldPanel()"></button>

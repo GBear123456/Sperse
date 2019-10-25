@@ -17,7 +17,10 @@ import { LoadingService } from '@shared/common/loading-service/loading.service';
 @Component({
     selector: 'modal-dialog',
     templateUrl: 'modal-dialog.component.html',
-    styleUrls: ['modal-dialog.component.less'],
+    styleUrls: [
+        '../../styles/close-button.less',
+        'modal-dialog.component.less'
+    ],
     host: {
         '(window:keydown)': 'onKeydown($event)'
     }
