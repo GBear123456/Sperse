@@ -1998,29 +1998,26 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         let colspanAmountForCurrent =  this.getIntervalColspansAmountForCurrent(lowestOpenedCurrentInterval);
         let colspanAmountForForecast = this.getIntervalColspansAmount(lowestOpenedCurrentInterval, 'next');
 
-        const currentHistorical$ = $('.historicalRow .currentHistorical');
-        let currentHasRowspan = currentHistorical$.attr('rowspan');
+        let currentHasRowspan = $('.historicalRow .currentHistorical').attr('rowspan');
         /** Hide current cell if there is no current opened lowest period and change the colspan */
         if (colspanAmountForCurrent === 0 && !currentHasRowspan) {
-            currentHistorical$.hide();
+            $('.historicalRow .currentHistorical').hide();
         }
-        const prevHistorical$ = $('.historicalRow .prevHistorical');
         /** If historical cell is absent - create it */
-        if (!prevHistorical$.length && colspanAmountForPrevious) {
+        if (!$('.historicalRow .prevHistorical').length && colspanAmountForPrevious) {
             this.cashflowService.createHistoricalCell('prev');
         }
-        const nextHistorical$ = $('.historicalRow .nextHistorical');
         /** If forecast cell is absent - create it */
-        if (!nextHistorical$.length && colspanAmountForForecast) {
+        if (!$('.historicalRow .nextHistorical').length && colspanAmountForForecast) {
             this.cashflowService.createHistoricalCell('next');
         }
         /** Change the colspan for the historical period */
-        prevHistorical$.attr('colspan', (colspanAmountForPrevious));
+        $('.historicalRow .prevHistorical').attr('colspan', (colspanAmountForPrevious));
         if (!currentHasRowspan) {
-            currentHistorical$.attr('colspan', colspanAmountForCurrent);
+            $('.historicalRow .currentHistorical').attr('colspan', colspanAmountForCurrent);
         }
         /** Change colspan for forecast cell */
-        nextHistorical$.attr('colspan', (colspanAmountForForecast));
+        $('.historicalRow .nextHistorical').attr('colspan', (colspanAmountForForecast));
     }
 
     getIntervalColspansAmountForCurrent(lowestColumnCaption) {
