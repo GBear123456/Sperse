@@ -363,6 +363,14 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
 
     numerizeFileSizeSortValue = (data) => +data.Size;
 
+    formatDepartments(departments: string[]): string {
+        if (departments || departments.length)
+        {
+            return departments.map(x => x || this.l('NoDepartment')).join(', ');
+        }
+        return null;
+    }
+
     onDataGridInit(event) {
         this.changeDetector.markForCheck();
     }
