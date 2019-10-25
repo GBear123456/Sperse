@@ -348,7 +348,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
 
     private showNewEmailDialog() {
         this.modalDialog.startLoading();
-        this.invoiceProxy.getPreprocessedEmail(this.invoiceSettings.defaultTemplateId, this.invoiceId).pipe(
+        this.invoiceProxy.getEmailData(this.invoiceSettings.defaultTemplateId, this.invoiceId).pipe(
               finalize(() => this.modalDialog.finishLoading()),
               switchMap(data => {
                   this.close();

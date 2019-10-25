@@ -7,7 +7,7 @@ import moment from 'moment-timezone';
 import { NotifyService } from 'abp-ng2-module/dist/src/notify/notify.service';
 import { DxTreeListComponent } from 'devextreme-angular/ui/tree-list';
 import { DxTextBoxComponent } from '@root/node_modules/devextreme-angular';
-import { forkJoin } from 'rxjs';
+import { forkJoin, Observable } from 'rxjs';
 import { first, switchMap, tap, finalize } from 'rxjs/operators';
 import { select, Store } from '@ngrx/store';
 
@@ -61,8 +61,8 @@ export class GenerateReportDialogComponent implements OnInit {
             disabled: true
         }
     ];
-    departmentsEntities = [];
-    selectedDepartments = [];
+    departmentsEntities: string[] = [];
+    selectedDepartments: string[] = [];
     noDepartmentItem = this.ls.l('NoDepartment');
     buttons: IDialogButton[] = this.initButtons;
     currentStep = GenerateReportStep.Step1;
@@ -81,7 +81,7 @@ export class GenerateReportDialogComponent implements OnInit {
         { text: 'Separate', value: true },
         { text: 'Combined', value: false }
     ];
-    isSeparateGrouping = true;
+    isSeparateGrouping = false;
     notificationToEmail: string;
     sendReportInAttachments = false;
     emailRegEx = AppConsts.regexPatterns.email;
@@ -128,13 +128,13 @@ export class GenerateReportDialogComponent implements OnInit {
      * @param {number[]} businessEntityIds
      * @return {GenerateInput}
      */
-    private getGenerateInput(currencyId: string, businessEntityIds: number[]): GenerateInput {
+    private getGenerateInput(currencyId: string, businessEntityIds: number[], departments: string[]): GenerateInput {
         return new GenerateInput({
             from: this.dateFrom && DateHelper.getDateWithoutTime(this.dateFrom),
             to: this.dateTo && DateHelper.getDateWithoutTime(this.dateTo),
             period: this.data.period,
             currencyId,
-            departments: this.selectedDepartments.map(item => item == this.noDepartmentItem ? null : item),
+            departments: departments.map(item => item == this.noDepartmentItem ? null : item),
             businessEntityIds: businessEntityIds,
             bankAccountIds: [],
             notificationData: !this.dontSendEmailNotification && !this.cfoService.isMainInstanceType && this.emailIsValidAndNotEmpty
@@ -224,19 +224,37 @@ export class GenerateReportDialogComponent implements OnInit {
             first(),
             tap(() => this.notify.info(this.ls.l('GeneratingStarted'))),
             switchMap((currencyId: string) => {
-                return this.isSeparateGrouping
-                    ? forkJoin(this.selectedBusinessEntityIds.map(param => {
-                        return this.reportsProxy.generate(
-                            <any>this.data.instanceType,
-                            this.data.instanceId,
-                            this.getGenerateInput(currencyId, [+param])
-                        );
-                    }))
-                    : this.reportsProxy.generate(
+                if (this.isSeparateGrouping) {
+                    let observables: Observable<void>[] = [];
+                    this.selectedBusinessEntityIds.map(param => {
+                        if (this.departmentsEntities.length) {
+                            let departments = this.selectedDepartments.length ? this.selectedDepartments : this.departmentsEntities;
+                            departments.forEach(dept => {
+                                observables.push(this.reportsProxy.generate(
+                                    <any>this.data.instanceType,
+                                    this.data.instanceId,
+                                    this.getGenerateInput(currencyId, [+param], [dept])
+                                ));
+                            });
+                        }
+                        else {
+                            observables.push(this.reportsProxy.generate(
+                                <any>this.data.instanceType,
+                                this.data.instanceId,
+                                this.getGenerateInput(currencyId, [+param], this.selectedDepartments)
+                            ));
+                        }
+                    });
+
+                    return forkJoin(observables);
+                }
+                else {
+                    return this.reportsProxy.generate(
                         <any>this.data.instanceType,
                         this.data.instanceId,
-                        this.getGenerateInput(currencyId, this.selectedBusinessEntityIds)
+                        this.getGenerateInput(currencyId, this.selectedBusinessEntityIds, this.selectedDepartments)
                     );
+                }
             }),
             finalize(() => {
                 this.modalDialog.finishLoading();
