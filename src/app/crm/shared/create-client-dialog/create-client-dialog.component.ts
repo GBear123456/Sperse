@@ -874,7 +874,7 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
         this.isPartnerTypeSelected = Boolean(event.selectedRowKeys.length);
     }
 
-    getAssignmentsPermissinKey() {
+    getAssignmentsPermissionKey() {
         if (this.partnerTypesComponent.selectedItems.length)
             return AppPermissions.CRMPartnersManageAssignments;
 
