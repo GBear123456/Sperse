@@ -1,5 +1,5 @@
 /** Core import */
-import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit, ViewChild, HostBinding, Input } from '@angular/core';
 
 /** Third party import */
 import { select, Store } from '@ngrx/store';
@@ -32,6 +32,8 @@ import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/life
 })
 export class TopSpendingCategoriesComponent implements OnInit, OnDestroy {
     @ViewChild(DxPieChartComponent) pieChart: DxPieChartComponent;
+    @HostBinding('class.fullpage') @Input() fullpage: boolean = false;
+
     period$: Observable<DailyStatsPeriodModel> = this.dashboardService.dailyStatsPeriod$;
     currencyId: string;
     topSpendingCategories: GetSpendingCategoriesOutput[];

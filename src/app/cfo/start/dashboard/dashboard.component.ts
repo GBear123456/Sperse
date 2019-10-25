@@ -92,13 +92,15 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, OnDe
 
     activate() {
         /** Load sync accounts (if something change - subscription in ngOnInit fires) */
-        this.bankAccountsService.load();
-        this.totalsByPeriodComponent.activate();
-        this.trendByPeriodComponent.updateChartWidthAfterActivation = true;
-        this.trendByPeriodComponent.activate();
-        this.categorizationStatusComponent.activate();
+        if (this._cfoService.accessAllDepartments) {
+            this.bankAccountsService.load();
+            this.totalsByPeriodComponent.activate();
+            this.trendByPeriodComponent.updateChartWidthAfterActivation = true;
+            this.trendByPeriodComponent.activate();
+            this.categorizationStatusComponent.activate();
+            this.accountsComponent.activate();
+        }
         this.synchProgressComponent.activate();
-        this.accountsComponent.activate();
         this.rootComponent.overflowHidden(true);
     }
 
