@@ -90,6 +90,12 @@ export class CfoActivateService implements CanActivate {
                         data: { feature: 'CRM', localizationSource: 'CRM' }
                     },
                     {
+                        path: 'slice',
+                        loadChildren: 'app/crm/crm.module#CrmModule',
+                        resolve: { crm: ModulePathResolverService },
+                        data: { feature: 'CRM', localizationSource: 'CRM' }
+                    },
+                    {
                         path: 'pfm',
                         loadChildren: 'app/pfm/pfm.module#PfmModule', //Lazy load admin module
                         resolve: { crm: ModulePathResolverService },

@@ -7,7 +7,7 @@ import {
     Injector,
     ViewChild
 } from '@angular/core';
-import { RouteReuseStrategy } from '@angular/router';
+import { ActivatedRoute, Router, RouteReuseStrategy } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 
 /** Third party imports */
@@ -152,7 +152,10 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
 
     private rootComponent: any;
     private exportCallback: Function;
-    private dataLayoutType: BehaviorSubject<DataLayoutType> = new BehaviorSubject(DataLayoutType.Pipeline);
+    private isSlice = this.appService.getModule() === 'slice';
+    private dataLayoutType: BehaviorSubject<DataLayoutType> = new BehaviorSubject(
+        this.isSlice ? DataLayoutType.PivotGrid : DataLayoutType.Pipeline
+    );
     dataLayoutType$: Observable<DataLayoutType> = this.dataLayoutType.asObservable();
     private readonly dataSourceURI = 'Lead';
     private readonly groupDataSourceURI = 'LeadSlice';
@@ -365,6 +368,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         private crmService: CrmService,
         private mapService: MapService,
         private impersonationService: ImpersonationService,
+        private router: Router,
+        private route: ActivatedRoute,
         public dialog: MatDialog,
         public contactProxy: ContactServiceProxy,
         public userManagementService: UserManagementService
@@ -481,7 +486,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             this.subRouteParams = this._activatedRoute.queryParams.subscribe(params => {
                 if (params['dataLayoutType']) {
                     let dataLayoutType = params['dataLayoutType'];
-                    if (dataLayoutType != this.dataLayoutType) {
+                    if (dataLayoutType != this.dataLayoutType.value) {
                         if (dataLayoutType == DataLayoutType.DataGrid)
                             this.pipelineService.getPipelineDefinitionObservable(this.pipelinePurposeId)
                                 .subscribe(this.onStagesLoaded.bind(this));
@@ -534,6 +539,10 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     toggleDataLayout(dataLayoutType: DataLayoutType) {
+        this.crmService.handleModuleChange(
+            dataLayoutType,
+            this.router.createUrlTree(['.'], { relativeTo: this.route })
+        );
         this.selectedClientKeys = [];
         this.dataLayoutType.next(dataLayoutType);
         this.initToolbarConfig();
@@ -928,7 +937,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                         name: 'columnChooser',
                         action: () => {
                             if (this.showDataGrid) {
-                                DataGridService.showColumnChooser.bind(this, this.dataGrid)
+                                DataGridService.showColumnChooser.bind(this, this.dataGrid);
                             } else if (this.showPivotGrid) {
                                 this.pivotGridComponent.toggleFieldPanel();
                             }

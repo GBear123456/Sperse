@@ -1,6 +1,7 @@
 /** Core imports */
 import { Component, OnInit, OnDestroy, Injector, ViewChild } from '@angular/core';
-import { RouteReuseStrategy } from '@angular/router';
+import { Location } from '@angular/common';
+import { ActivatedRoute, Router, RouteReuseStrategy } from '@angular/router';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
@@ -131,7 +132,6 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     });
     filterModelRating: FilterModel;
     filterModelStar: FilterModel;
-
     assignedUsersSelector = select(ContactAssignedUsersStoreSelectors.getContactGroupAssignedUsers, { contactGroup: ContactGroup.Client });
     contactStatus = ContactStatus;
     selectedClientKeys: any = [];
@@ -241,7 +241,9 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             }
         ]
     };
-    private dataLayoutType: BehaviorSubject<DataLayoutType> = new BehaviorSubject(DataLayoutType.DataGrid);
+    private dataLayoutType: BehaviorSubject<DataLayoutType> = new BehaviorSubject(
+        this.isSlice ? DataLayoutType.PivotGrid : DataLayoutType.DataGrid
+    );
     dataLayoutType$: Observable<DataLayoutType> = this.dataLayoutType.asObservable();
     private _refresh: BehaviorSubject<null> = new BehaviorSubject<null>(null);
     private refresh$: Observable<null> = this._refresh.asObservable();
@@ -311,6 +313,9 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         private sessionService: AppSessionService,
         private crmService: CrmService,
         private mapService: MapService,
+        private location: Location,
+        private router: Router,
+        private route: ActivatedRoute,
         public dialog: MatDialog,
         public appService: AppService,
         public contactProxy: ContactServiceProxy,
@@ -355,6 +360,10 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         });
         this.getOrganizationUnits();
         this.activate();
+    }
+
+    get isSlice() {
+        return this.appService.getModule() === 'slice';
     }
 
     private getOrganizationUnits() {
@@ -783,7 +792,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                         name: 'columnChooser',
                         action: () => {
                             if (this.showDataGrid) {
-                                DataGridService.showColumnChooser.bind(this, this.dataGrid)
+                                DataGridService.showColumnChooser.bind(this, this.dataGrid);
                             } else if (this.showPivotGrid) {
                                 this.pivotGridComponent.toggleFieldPanel();
                             }
@@ -875,6 +884,10 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     }
 
     toggleDataLayout(dataLayoutType: DataLayoutType) {
+        this.crmService.handleModuleChange(
+            dataLayoutType,
+            this.router.createUrlTree(['.'], { relativeTo: this.route })
+        );
         this.selectedClientKeys = [];
         this.dataLayoutType.next(dataLayoutType);
         this.initDataSource();

@@ -1,6 +1,8 @@
 /** Core imports */
 import { Injectable } from '@angular/core';
+import { Location } from '@angular/common';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { ActivatedRoute, Router, UrlTree } from '@angular/router';
 
 /** Third party imports */
 import { Observable, combineLatest, fromEvent} from 'rxjs';
@@ -15,6 +17,7 @@ import { SummaryBy } from '@app/shared/common/slice/chart/summary-by.enum';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { InfoItem } from '@app/shared/common/slice/info/info-item.model';
 import { FilterModel } from '@shared/filters/models/filter.model';
+import { DataLayoutType } from '@app/shared/layout/data-layout-type';
 
 @Injectable()
 export class CrmService {
@@ -48,8 +51,25 @@ export class CrmService {
         private fullScreenService: FullScreenService,
         private oDataService: ODataService,
         private http: HttpClient,
-        private ls: AppLocalizationService
+        private ls: AppLocalizationService,
+        private router: Router,
+        private route: ActivatedRoute,
+        private location: Location
     ) {}
+
+    static getModuleNameFromLayoutType(dataLayoutType: DataLayoutType) {
+        let moduleName: string;
+        switch (dataLayoutType) {
+            case DataLayoutType.PivotGrid:
+            case DataLayoutType.Chart:
+            case DataLayoutType.Map: {
+                moduleName = 'slice';
+                break;
+            }
+            default: moduleName = 'crm';
+        }
+        return moduleName;
+    }
 
     static setDataSourceToComponent(dataSource: any, componentInstance: any) {
         if (componentInstance && !componentInstance.option('dataSource')) {
@@ -147,4 +167,16 @@ export class CrmService {
         const dateB = new Date(b.creationDate);
         return dateA > dateB ? 1 : (dateA < dateB ? -1 : 0);
     }
+
+    handleModuleChange(newDataLayoutType: DataLayoutType, urlTree: UrlTree) {
+        const currentModule = this.appService.getModule();
+        const targetModule = CrmService.getModuleNameFromLayoutType(newDataLayoutType);
+        if (targetModule !== currentModule) {
+            this.appService.switchModule(targetModule);
+            /** Update url */
+            const newUrl = urlTree.toString().replace(currentModule, targetModule);
+            this.location.replaceState(newUrl);
+        }
+    }
+
 }

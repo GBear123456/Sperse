@@ -6,6 +6,7 @@ import {
     Injector,
     ViewChild
 } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
@@ -110,7 +111,10 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     @ViewChild(MapComponent) mapComponent: MapComponent;
 
     private readonly MENU_LOGIN_INDEX = 1;
-    private dataLayoutType: BehaviorSubject<DataLayoutType> = new BehaviorSubject(DataLayoutType.DataGrid);
+    private isSlice = this.appService.getModule() === 'slice';
+    private dataLayoutType: BehaviorSubject<DataLayoutType> = new BehaviorSubject(
+        this.isSlice ? DataLayoutType.PivotGrid : DataLayoutType.DataGrid
+    );
     dataLayoutType$: Observable<DataLayoutType> = this.dataLayoutType.asObservable();
     private readonly dataSourceURI = 'Partner';
     private readonly groupDataSourceURI = 'PartnerSlice';
@@ -312,6 +316,8 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         private crmService: CrmService,
         private impersonationService: ImpersonationService,
         private mapService: MapService,
+        private router: Router,
+        private route: ActivatedRoute,
         public dialog: MatDialog,
         public contactProxy: ContactServiceProxy,
         public userManagementService: UserManagementService,
@@ -434,6 +440,10 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     toggleDataLayout(dataLayoutType: DataLayoutType) {
+        this.crmService.handleModuleChange(
+            dataLayoutType,
+            this.router.createUrlTree(['.'], { relativeTo: this.route })
+        );
         this.dataLayoutType.next(dataLayoutType);
         this.initDataSource();
         this.initToolbarConfig();
@@ -816,7 +826,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                         name: 'columnChooser',
                         action: () => {
                             if (this.showDataGrid) {
-                                DataGridService.showColumnChooser.bind(this, this.dataGrid)
+                                DataGridService.showColumnChooser.bind(this, this.dataGrid);
                             } else if (this.showPivotGrid) {
                                 this.pivotGridComponent.toggleFieldPanel();
                             }

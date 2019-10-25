@@ -20,7 +20,7 @@ import { PaginatorModule } from 'primeng/paginator';
 
 /** Application imports */
 import { LayoutCommonModule } from './layout-common.module';
-import { PlatformSelectComponent } from './platform-select.component';
+import { PlatformSelectComponent } from './platform-select/platform-select.component';
 import { HeaderComponent } from './header.component';
 import { SideBarComponent } from './side-bar.component';
 import { TopBarComponent } from './top-bar.component';
