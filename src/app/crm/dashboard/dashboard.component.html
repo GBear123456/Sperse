@@ -6,7 +6,7 @@
   <left-menu (openIntro)="openDialog()" [class.hidden]="leftMenuHidden" (openPaymentWizard)="openPaymentWizardDialog()"></left-menu>
   <div class="widgets-wrapper">
       <div class="col-lg-6 col-xs-12 col-sm-12 wrapper">
-          <div class="dashboard-stub" *ngIf="showWelcomeSection$ | async; else default">
+          <div class="dashboard-stub" *ngIf="showWelcomeSection$ | async">
               <div>
                   <img class="logo-crm" alt="CRM Logo" src="./assets/common/icons/cfo.png" />
                   <span class="sperse-crm big-gray-text">{{l('CRM')}}</span>
@@ -18,30 +18,29 @@
               <!-- p class="last-line"><a [routerLink]="['/app/crm/clients']">{{l('CRMDashboard_AddContact')}}</a> | {{l('CRMDashboard_ImportContact')}}</p -->
               <button (click)="addClient()" class="btn btn-layout add-client">{{ l('CRMDashboard_AddClient') }}</button>
           </div>
-          <ng-template #default>
-              <dx-scroll-view showScrollbar="onHover">
-                  <div class="dashboard-widgets">
-                      <counts-and-totals></counts-and-totals>
-                      <div class="analytics-wrap row">
-                          <div class="left-side col-xl-4">
-                              <new-items-totals></new-items-totals>
-                          </div>
-                          <div class="right-side col-xl-8">
-                              <totals-by-period></totals-by-period>
-                          </div>
+          <dx-scroll-view *ngIf="showDefaultSection$ | async" showScrollbar="onHover">
+              <div class="dashboard-widgets">
+                  <counts-and-totals></counts-and-totals>
+                  <div class="analytics-wrap row">
+                      <div class="left-side col-xl-4">
+                          <new-items-totals></new-items-totals>
                       </div>
-                      <div class="analytics-wrap row">
-                          <div class="left-side col-lg-6 col-xl-4">
-                              <totals-by-source></totals-by-source>
-                          </div>
-                          <div class="right-side col-lg-6 col-xl-8">
-                              <recent-clients></recent-clients>
-                          </div>
+                      <div class="right-side col-xl-8">
+                          <totals-by-period></totals-by-period>
                       </div>
-                      <clients-by-region></clients-by-region>
                   </div>
-              </dx-scroll-view>
-          </ng-template>
+                  <div class="analytics-wrap row">
+                      <div class="left-side col-lg-6 col-xl-4">
+                          <totals-by-source></totals-by-source>
+                      </div>
+                      <div class="right-side col-lg-6 col-xl-8">
+                          <recent-clients></recent-clients>
+                      </div>
+                  </div>
+                  <clients-by-region></clients-by-region>
+              </div>
+          </dx-scroll-view>
+          <loading-spinner *ngIf="showLoadingSpinner"></loading-spinner>
       </div>
   </div>
 </div>
