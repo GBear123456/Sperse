@@ -7,7 +7,7 @@ import {
     Injector,
     ViewChild
 } from '@angular/core';
-import { ActivatedRoute, Router, RouteReuseStrategy } from '@angular/router';
+import { RouteReuseStrategy } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 
 /** Third party imports */
@@ -157,6 +157,21 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         this.isSlice ? DataLayoutType.PivotGrid : DataLayoutType.Pipeline
     );
     dataLayoutType$: Observable<DataLayoutType> = this.dataLayoutType.asObservable();
+    hidePipeline$: Observable<boolean> = this.dataLayoutType$.pipe(map((dataLayoutType: DataLayoutType) => {
+        return dataLayoutType !== DataLayoutType.Pipeline;
+    }));
+    hideDataGrid$: Observable<boolean> = this.dataLayoutType$.pipe(map((dataLayoutType: DataLayoutType) => {
+        return dataLayoutType !== DataLayoutType.DataGrid;
+    }));
+    hidePivotGrid$: Observable<boolean> = this.dataLayoutType$.pipe(map((dataLayoutType: DataLayoutType) => {
+        return dataLayoutType !== DataLayoutType.PivotGrid;
+    }));
+    hideChart$: Observable<boolean> = this.dataLayoutType$.pipe(map((dataLayoutType: DataLayoutType) => {
+        return dataLayoutType !== DataLayoutType.Chart;
+    }));
+    hideMap$: Observable<boolean> = this.dataLayoutType$.pipe(map((dataLayoutType: DataLayoutType) => {
+        return dataLayoutType !== DataLayoutType.Map;
+    }));
     private readonly dataSourceURI = 'Lead';
     private readonly groupDataSourceURI = 'LeadSlice';
     private filters: FilterModel[];
@@ -368,8 +383,6 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         private crmService: CrmService,
         private mapService: MapService,
         private impersonationService: ImpersonationService,
-        private router: Router,
-        private route: ActivatedRoute,
         public dialog: MatDialog,
         public contactProxy: ContactServiceProxy,
         public userManagementService: UserManagementService
@@ -539,10 +552,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     toggleDataLayout(dataLayoutType: DataLayoutType) {
-        this.crmService.handleModuleChange(
-            dataLayoutType,
-            this.router.createUrlTree(['.'], { relativeTo: this.route })
-        );
+        this.crmService.handleModuleChange(dataLayoutType);
         this.selectedClientKeys = [];
         this.dataLayoutType.next(dataLayoutType);
         this.initToolbarConfig();
@@ -1254,10 +1264,9 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     activate() {
         super.activate();
         this.lifeCycleSubjectsService.activate.next();
-
         this.paramsSubscribe();
+        //this.crmService.handleModuleChange(this.dataLayoutType.value);
         this.initFilterConfig();
-
         this.initToolbarConfig();
         this.rootComponent = this.getRootComponent();
         this.rootComponent.overflowHidden(true);
@@ -1268,7 +1277,6 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
 
     deactivate() {
         super.deactivate();
-
         this.appService.updateToolbar(null);
         this.filtersService.unsubscribe();
         this.rootComponent.overflowHidden();

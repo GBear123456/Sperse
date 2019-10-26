@@ -35,7 +35,7 @@
     </crm-user-assignment-list>
     <crm-rating [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [filterModel]="filterModelRating"></crm-rating>
     <crm-stars-list [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [filterModel]="filterModelStar"></crm-stars-list>
-    <div [hidden]="!showDataGrid || (isDataLoaded && !totalRowCount)" class="portlet light no-padding margin-bottom-0">
+    <div [hidden]="hideDataGrid$ | async" class="portlet light no-padding margin-bottom-0">
         <div class="portlet-body">
             <div id="ClientsTable">
                 <dx-data-grid id="gridContainer"
@@ -119,12 +119,12 @@
             </div>
         </div>
     </div>
-    <div [hidden]="!showPivotGrid">
+    <div [hidden]="hidePivotGrid$ | async">
         <slice-pivot-grid [storageKey]="sliceStorageKey"
                           [height]="contentHeight$ | async">
         </slice-pivot-grid>
     </div>
-    <div [hidden]="!showChart">
+    <div [hidden]="hideChart$ | async">
         <slice-chart [width]="contentWidth$ | async"
                      [height]="contentHeight$ | async"
                      [infoItems]="chartInfoItems"
@@ -134,7 +134,7 @@
                      valueField="count">
         </slice-chart>
     </div>
-    <div [hidden]="!showMap">
+    <div [hidden]="hideMap$ | async">
         <slice-info [items]="mapInfoItems$ | async"></slice-info>
         <slice-map [width]="contentWidth$ | async"
                    [height]="mapHeight$ | async"

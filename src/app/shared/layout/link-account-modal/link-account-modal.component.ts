@@ -26,15 +26,15 @@ export class LinkAccountModalComponent implements AfterViewInit {
     buttons: IDialogButton[];
 
     constructor(
-        private _userLinkService: UserLinkServiceProxy,
-        private _sessionAppService: AppSessionService,
-        private _notifyService: NotifyService,
+        private userLinkService: UserLinkServiceProxy,
+        private sessionAppService: AppSessionService,
+        private notifyService: NotifyService,
         private changeDetectorRef: ChangeDetectorRef,
-        private _dialogRef: MatDialogRef<LinkAccountModalComponent>,
+        private dialogRef: MatDialogRef<LinkAccountModalComponent>,
         public ls: AppLocalizationService
     ) {
         this.linkUser = new LinkToUserInput();
-        this.linkUser.tenancyName = this._sessionAppService.tenancyName;
+        this.linkUser.tenancyName = this.sessionAppService.tenancyName;
     }
 
     ngAfterViewInit() {
@@ -49,11 +49,11 @@ export class LinkAccountModalComponent implements AfterViewInit {
 
     save(): void {
         this.modalDialog.startLoading();
-        this._userLinkService.linkToUser(this.linkUser)
+        this.userLinkService.linkToUser(this.linkUser)
             .pipe(finalize(() => this.modalDialog.finishLoading()))
             .subscribe(() => {
-                this._notifyService.info(this.ls.l('SavedSuccessfully'));
-                this._dialogRef.close();
+                this.notifyService.info(this.ls.l('SavedSuccessfully'));
+                this.dialogRef.close();
             });
     }
 

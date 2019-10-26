@@ -9,10 +9,10 @@ import { Table } from 'primeng/table';
 import { finalize } from 'rxjs/operators';
 
 /** Application imports */
-import { LinkedAccountService } from '@app/shared/layout/linked-account.service';
+import { LinkedAccountService } from '@app/shared/layout/linked-accounts-modal/linked-account.service';
 import { LinkedUserDto, UnlinkUserInput, UserLinkServiceProxy } from '@shared/service-proxies/service-proxies';
-import { LinkAccountModalComponent } from './link-account-modal.component';
-import { UserHelper } from '../helpers/UserHelper';
+import { LinkAccountModalComponent } from '../link-account-modal/link-account-modal.component';
+import { UserHelper } from '../../helpers/UserHelper';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { MessageService } from '@abp/message/message.service';
 import { NotifyService } from '@abp/notify/notify.service';
@@ -23,7 +23,7 @@ import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.
     selector: 'linkedAccountsModal',
     templateUrl: './linked-accounts-modal.component.html',
     styleUrls: [
-        '../../../assets/primeng/datatable/css/primeng.datatable.less',
+        '../../../../assets/primeng/datatable/css/primeng.datatable.less',
         './linked-accounts-modal.component.less'
     ],
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -38,17 +38,17 @@ export class LinkedAccountsModalComponent {
     constructor(
         private dialog: MatDialog,
         private changeDetectorRef: ChangeDetectorRef,
-        private _userLinkService: UserLinkServiceProxy,
-        private _linkedAccountService: LinkedAccountService,
-        private _messageService: MessageService,
-        private _notifyService: NotifyService,
+        private userLinkService: UserLinkServiceProxy,
+        private linkedAccountService: LinkedAccountService,
+        private messageService: MessageService,
+        private notifyService: NotifyService,
         public primengTableHelper: PrimengTableHelper,
         public ls: AppLocalizationService
     ) {}
 
     getLinkedUsers(event?: LazyLoadEvent) {
         this.modalDialog.startLoading();
-        this._userLinkService.getLinkedUsers(
+        this.userLinkService.getLinkedUsers(
             this.primengTableHelper.getMaxResultCount(this.paginator, event),
             this.primengTableHelper.getSkipCount(this.paginator, event),
             this.primengTableHelper.getSorting(this.dataTable))
@@ -65,7 +65,7 @@ export class LinkedAccountsModalComponent {
     }
 
     deleteLinkedUser(linkedUser: LinkedUserDto): void {
-        this._messageService.confirm(
+        this.messageService.confirm(
             this.ls.l('LinkedUserDeleteWarningMessage', linkedUser.username),
             isConfirmed => {
                 if (isConfirmed) {
@@ -73,11 +73,11 @@ export class LinkedAccountsModalComponent {
                     const unlinkUserInput = new UnlinkUserInput();
                     unlinkUserInput.userId = linkedUser.id;
                     unlinkUserInput.tenantId = linkedUser.tenantId;
-                    this._userLinkService.unlinkUser(unlinkUserInput)
+                    this.userLinkService.unlinkUser(unlinkUserInput)
                         .pipe(finalize(() => this.modalDialog.startLoading()))
                         .subscribe(() => {
                             this.reloadPage();
-                            this._notifyService.success(this.ls.l('SuccessfullyUnlinked'));
+                            this.notifyService.success(this.ls.l('SuccessfullyUnlinked'));
                         });
                 }
             }
@@ -105,6 +105,6 @@ export class LinkedAccountsModalComponent {
     }
 
     switchToUser(linkedUser: LinkedUserDto): void {
-        this._linkedAccountService.switchToAccount(linkedUser.id, linkedUser.tenantId);
+        this.linkedAccountService.switchToAccount(linkedUser.id, linkedUser.tenantId);
     }
 }

@@ -7,12 +7,10 @@ import { AccountServiceProxy, SwitchToLinkedAccountInput, SwitchToLinkedAccountO
 export class LinkedAccountService {
 
     constructor(
-        private _accountService: AccountServiceProxy,
-        private _appUrlService: AppUrlService,
-        private _authService: AppAuthService
-    ) {
-
-    }
+        private accountService: AccountServiceProxy,
+        private appUrlService: AppUrlService,
+        private authService: AppAuthService
+    ) {}
 
     switchToAccount(userId: number, tenantId?: number): void {
 
@@ -20,15 +18,13 @@ export class LinkedAccountService {
         input.targetUserId = userId;
         input.targetTenantId = tenantId;
 
-        this._accountService.switchToLinkedAccount(input)
+        this.accountService.switchToLinkedAccount(input)
             .subscribe((result: SwitchToLinkedAccountOutput) => {
-                this._authService.logout(false);
-
-                let targetUrl = this._appUrlService.getAppRootUrlOfTenant(result.tenancyName) + '?switchAccountToken=' + result.switchAccountToken;
+                this.authService.logout(false);
+                let targetUrl = this.appUrlService.getAppRootUrlOfTenant(result.tenancyName) + '?switchAccountToken=' + result.switchAccountToken;
                 if (input.targetTenantId) {
                     targetUrl = targetUrl + '&tenantId=' + input.targetTenantId;
                 }
-
                 location.href = targetUrl;
             });
     }

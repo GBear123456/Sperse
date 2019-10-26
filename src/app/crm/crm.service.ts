@@ -2,7 +2,7 @@
 import { Injectable } from '@angular/core';
 import { Location } from '@angular/common';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { ActivatedRoute, Router, UrlTree } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 /** Third party imports */
 import { Observable, combineLatest, fromEvent} from 'rxjs';
@@ -168,13 +168,13 @@ export class CrmService {
         return dateA > dateB ? 1 : (dateA < dateB ? -1 : 0);
     }
 
-    handleModuleChange(newDataLayoutType: DataLayoutType, urlTree: UrlTree) {
+    handleModuleChange(newDataLayoutType: DataLayoutType) {
         const currentModule = this.appService.getModule();
         const targetModule = CrmService.getModuleNameFromLayoutType(newDataLayoutType);
         if (targetModule !== currentModule) {
             this.appService.switchModule(targetModule);
             /** Update url */
-            const newUrl = urlTree.toString().replace(currentModule, targetModule);
+            const newUrl = this.router.url.replace(currentModule, targetModule);
             this.location.replaceState(newUrl);
         }
     }

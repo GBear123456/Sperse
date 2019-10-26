@@ -3,11 +3,12 @@
 <div class="top-bar-nav" [ngStyle]="{'visibility': lastInnerWidth ? 'visible' : 'hidden'}">
     <dx-nav-bar
         height="74px"
-        [dataSource]="navbarItems"
+        [items]="navbarItems"
         [hoverStateEnabled]="true"
         [selectedIndex]="selectedIndex"
         [itemTemplate]="'navBarItem'"
         selectionMode="single"
+        (selectedIndexChange)="change($event)"
         (onInitialized)="onNavBarInitialized()">
         <div *dxTemplate="let link of 'navBarItem'">
             <dx-menu
