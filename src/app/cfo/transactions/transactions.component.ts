@@ -19,7 +19,7 @@ import { Store, select } from '@ngrx/store';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import DataSource from 'devextreme/data/data_source';
 import 'devextreme/data/odata/store';
-import { BehaviorSubject, Observable, Subject, forkJoin, of } from 'rxjs';
+import { BehaviorSubject, Observable, ReplaySubject, Subject, forkJoin, of } from 'rxjs';
 import { first, skip, switchMap, mapTo, map, takeUntil, pluck, publishReplay, refCount } from 'rxjs/operators';
 import * as _ from 'underscore';
 
@@ -62,7 +62,6 @@ import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/life
 import { CalendarValuesModel } from '@shared/common/widgets/calendar/calendar-values.model';
 import { DateHelper } from '@shared/helpers/DateHelper';
 import { DataGridService } from '@app/shared/common/data-grid.service.ts/data-grid.service';
-import { FilterHelpers } from '@app/cfo/shared/helpers/filter.helper';
 import { Category } from '@app/cfo/transactions/categorization/category.model';
 import { BankAccountsState } from '@shared/cfo/bank-accounts-widgets/bank-accounts-state.model';
 
@@ -80,7 +79,6 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     resetRules = new ResetClassificationDto();
     private autoClassifyData = new AutoClassifyDto();
     private transactionDetailDialogRef: MatDialogRef<TransactionDetailInfoComponent>;
-
     private transactionId$: Subject<number> = new Subject<number>();
 
     dataGridStateTimeout: any;
@@ -119,7 +117,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     private businessEntityFilter: FilterModel;
     public transactionsFilterQuery: any[];
 
-    public manageAllowed = false;
+    public manageAllowed = this._cfoService.classifyTransactionsAllowed(false);
     public dragInProgress = false;
     private draggedTransactionRow;
     public selectedCashflowCategoryKeys: number[];
@@ -204,19 +202,45 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     });
     private selectedCategoriesIds: BehaviorSubject<number[]> = new BehaviorSubject<number[]>([]);
     selectedCategoriesIds$: Observable<number[]> = this.selectedCategoriesIds.asObservable();
+    selectedDepartments: ReplaySubject<string[]> = new ReplaySubject<string[]>(1);
+    selectedDepartments$: Observable<string[]> = this.selectedDepartments.asObservable();
     categoriesFilter: FilterModel = new FilterModel({
         component: FilterCheckBoxesComponent,
-        field: 'CashflowCategoryId',
-        caption: 'TransactionCategory',
+        field: 'CategoryId',
+        caption: 'Category',
         items: {
             element: new FilterCheckBoxesModel({
                 dataSource$: this.categories$,
+                nameField: 'name',
+                keyExpr: 'id'
+            })
+        },
+        options: { method: 'filterByFilterElement' }
+    });
+    cashflowCategoriesFilter: FilterModel = new FilterModel({
+        component: FilterCheckBoxesComponent,
+        field: 'CashflowCategoryId',
+        caption: 'TransactionCategory',
+        hidden: true,
+        items: {
+            element: new FilterCheckBoxesModel({
                 selectedKeys$: this.selectedCategoriesIds$,
                 nameField: 'name',
                 keyExpr: 'id'
             })
         },
         options: { method: 'filterByFilterElement' }
+    });
+    departmentsFilter: FilterModel = new FilterModel({
+        component: FilterCheckBoxesComponent,
+        field: 'Department',
+        caption: 'Department',
+        hidden: true,
+        items: {
+            element: new FilterCheckBoxesModel({
+                selectedKeys$: this.selectedDepartments$
+            })
+        }
     });
 
     private _categoriesShowedBefore = !AppConsts.isMobile;
@@ -257,7 +281,6 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
 
         this.searchColumns = ['Description', 'CashflowSubCategoryName', 'CashflowCategoryName', 'Descriptor'];
         this.searchValue = '';
-        this.manageAllowed = this._cfoService.classifyTransactionsAllowed;
     }
 
     ngOnInit(): void {
@@ -274,7 +297,10 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
 
         this.cfoPreferencesService.dateRange$.pipe(
             takeUntil(this.destroy$),
-            switchMap((dateRange) => this.componentIsActivated ? of(dateRange) : this.lifecycleService.activate$.pipe(first(), mapTo(dateRange)))
+            switchMap((dateRange) => this.componentIsActivated
+                ? of(dateRange)
+                : this.lifecycleService.activate$.pipe(first(), mapTo(dateRange))
+            )
         ).subscribe(() => {
             this.filtersService.change(this.dateFilter);
         });
@@ -346,11 +372,18 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                 this.transactionId = transactionIdToOpen;
                 this.showTransactionDetailsInfo();
             }
+            const departments: string = params.get('selectedDepartments');
+            if (departments) {
+                const departmentsList: string[] = departments.split(',').map((department: string) => {
+                    return department === 'n/a' ? null : department;
+                });
+                this.selectedDepartments.next(departmentsList);
+            }
             const businessEntitiesIds: string = params.get('selectedBusinessEntitiesIds');
             const bankAccountsIds: string = params.get('selectedBankAccountIds');
             const externalFilter = businessEntitiesIds || bankAccountsIds ||
                   currencyId || startDate || endDate || categoryIdsString ||
-                  transactionIdToOpen;
+                  departments || transactionIdToOpen;
             if (externalFilter) {
                 const state: BankAccountsState = {
                     selectedBankAccountTypes: [],
@@ -423,9 +456,11 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                     items: { from: new FilterItemModel(), to: new FilterItemModel() }
                 }),*/
                 this.categoriesFilter,
+                this.cashflowCategoriesFilter,
                 this.typesFilter,
                 this.classifiedFilter,
                 this.currencyFilter,
+                this.departmentsFilter
                 /*,
                 new FilterModel({
                     component: FilterInputsComponent,
@@ -924,7 +959,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                 if (filter.caption && filter.caption.toLowerCase() === 'account')
                     this.bankAccountsService.applyFilter();
 
-                let filterMethod = this['filterBy' + this.capitalize(filter.caption)];
+                let filterMethod = FiltersService['filterBy' + this.capitalize(filter.caption)];
                 if (filterMethod)
                     return filterMethod.call(this, filter);
             }
@@ -945,62 +980,6 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         let url = super.getODataUrl(uri, filter);
         url += (url.indexOf('?') == -1 ? '?' : '&') + 'currencyId=' + this.cfoPreferencesService.selectedCurrencyId;
         return url;
-    }
-
-    filterByClassified(filter: FilterModel) {
-        let isYes = filter.items.yes.value;
-        let isNo = filter.items.no.value;
-
-        if (isYes ^ isNo) {
-            let obj = {};
-            obj[filter.field] = {};
-            if (isYes) {
-                obj[filter.field]['ne'] = null;
-            } else {
-                obj[filter.field] = null;
-            }
-            return obj;
-        }
-    }
-
-    filterByAccount(filter) {
-        let data = {};
-        if (filter.items.element) {
-            let bankAccountIds = [];
-            filter.items.element.dataSource.forEach((syncAccount) => {
-                syncAccount.bankAccounts.forEach((bankAccount) => {
-                    if (bankAccount['selected']) {
-                        bankAccountIds.push(bankAccount.id);
-                    }
-                });
-            });
-
-            if (bankAccountIds.length) {
-                //Should be like this, but IN is not currently implemented by odata-query lib >:-(. https://github.com/techniq/odata-query/issues/22
-                //data = {
-                //    BankAccountId: {
-                //        in: bankAccountIds
-                //    }
-                //};
-
-                data = `BankAccountId in (${bankAccountIds.join(',')})`;
-            }
-        }
-
-        return data;
-    }
-
-    filterByAmount(filter) {
-        let data = {};
-        data[filter.field] = {};
-        _.each(filter.items, (item: FilterItemModel, key) => {
-            item && item.value && (data[filter.field][filter.operator[key]] = +item.value);
-        });
-        return data;
-    }
-
-    filterByTransactionType(filter: FilterModel) {
-        return FilterHelpers.filterByExcludeElement(filter);
     }
 
     filterByFilterElement(filter) {
@@ -1073,7 +1052,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             this.processTotalValues($event.selectedRowKeys.length);
 
         if (!this.manageAllowed)
-            return ;
+            return;
 
         let transactionKeys = this.dataGrid.instance ? this.dataGrid.instance.getSelectedRowKeys() : [];
         if (!initial && (Boolean(this.selectedCashflowCategoryKeys) || Boolean(transactionKeys.length)))
@@ -1117,7 +1096,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
 
     onCellClick($event) {
         if ($event.rowType === 'data') {
-            if (this.manageAllowed &&
+            if (this._cfoService.classifyTransactionsAllowed() &&
                 (($event.column.dataField == 'CashflowCategoryName' && $event.data.CashflowCategoryId) ||
                 ($event.column.dataField == 'CashflowSubCategoryName' && $event.data.CashflowSubCategoryId))) {
                 this.dialog.open(RuleDialogComponent, {

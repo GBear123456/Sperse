@@ -38,7 +38,7 @@
 </div>
 
 <div class="sidebar-filters" *ngIf="activeFilter">
-    <div class="close-details"></div>
+    <div class="close-button"></div>
     <div class="sidebar-filter-head">
         {{ls.ls('Platform', 'SideBarFilterHeader')}} {{ls.l('FilterBy' + capitalize(activeFilter.caption) + 'Header')}}
         <button class="button-layout button-primary" (click)="filterApply($event)">

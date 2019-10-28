@@ -16,6 +16,8 @@ import { AppConsts } from '@shared/AppConsts';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { AppPermissions } from '@shared/AppPermissions';
 import { InstanceModel } from '@shared/cfo/instance.model';
+import { FeatureCheckerService } from '@abp/features/feature-checker.service';
+import { AppFeatures } from '@shared/AppFeatures';
 
 @Injectable()
 export class CFOService extends CFOServiceBase {
@@ -28,7 +30,8 @@ export class CFOService extends CFOServiceBase {
         private layoutService: LayoutService,
         private instanceServiceProxy: InstanceServiceProxy,
         private contactService: ContactServiceProxy,
-        private permission: AppPermissionService
+        private permission: AppPermissionService,
+        private feature: FeatureCheckerService
     ) {
         super();
         this.statusActive = new BehaviorSubject<boolean>(false);
@@ -84,8 +87,7 @@ export class CFOService extends CFOServiceBase {
 
     get isInstanceAdmin() {
         return this.checkMemberAccessPermission(
-            'Manage.Administrate',
-            this.isMainInstanceType && this.permission.isGranted(AppPermissions.CFOMainInstanceAdmin)
+            'Manage.Administrate'
         );
     }
 
@@ -95,32 +97,42 @@ export class CFOService extends CFOServiceBase {
 
     get isMemberAccessManage() {
         return this.checkMemberAccessPermission(
-            'Manage',
-            false
+            'Manage'
         );
     }
 
-    get classifyTransactionsAllowed() {
+    /**
+     * @param {boolean} requireAllDepartmentsAccess
+     * @return {boolean}
+     */
+    classifyTransactionsAllowed(requireAllDepartmentsAccess = true): boolean {
         return this.checkMemberAccessPermission(
             'ClassifyTransaction',
-            this.isInstanceAdmin
-                && !this.isMainInstanceType
-                || this.permission.isGranted(AppPermissions.CFOMainInstanceAccessClassifyTransactions)
+            this.permission.isGranted(AppPermissions.CFOMainInstanceAccessClassifyTransactions)
+                && (!requireAllDepartmentsAccess || this.hasAllDepartmentsPermission)
         );
     }
 
     get accessAllDepartments() {
-        return !this.isMainInstanceType || this.permission.isGranted(AppPermissions.CFOMainInstanceAccessAccessAllDepartments);
+        return !this.isMainInstanceType
+               || this.permission.isGranted(AppPermissions.CFOMainInstanceAdmin)
+               || this.hasAllDepartmentsPermission;
     }
 
-    checkMemberAccessPermission(permission, defaultResult = true) {
+    get hasAllDepartmentsPermission(): boolean {
+        return !this.feature.isEnabled(AppFeatures.CFODepartmentsManagement)
+               || this.permission.isGranted(AppPermissions.CFOMainInstanceAccessAccessAllDepartments);
+    }
+
+    checkMemberAccessPermission(userInstancePermission, mainInstanceAccessible = false) {
         if (this.instanceId)
             return this.permission.isGranted(AppPermissions.CFOMembersAdministrationAllMemberInstancesAdmin);
 
         if (this.instanceType == InstanceType.User)
-            return this.permission.isGranted(AppPermissions.CFOMemberAccess + '.' + permission as AppPermissions);
+            return this.permission.isGranted(AppPermissions.CFOMemberAccessManageAdministrate)
+                   || this.permission.isGranted(AppPermissions.CFOMemberAccess + '.' + userInstancePermission as AppPermissions);
 
-        return defaultResult;
+        return this.permission.isGranted(AppPermissions.CFOMainInstanceAdmin) || mainInstanceAccessible;
     }
 
     initContactInfo(userId) {
@@ -160,9 +172,10 @@ export class CFOService extends CFOServiceBase {
             menu && menu.items.forEach((item, index) => {
                 let uri = item.route.split('/').pop(),
                     isAccounts = (uri == 'linkaccounts'),
-                    isStatements = (uri == 'statements');
+                    isStatements = (uri == 'statements'),
+                    isStats = (uri == 'stats');
                 if (index) {
-                    if (isAccounts || isStatements)
+                    if (isAccounts || isStatements || isStats)
                         item.visible = this.accessAllDepartments;
                     item.disabled = disabled == undefined ? !(isAccounts
                         ? this.initialized : this.hasTransactions) : disabled;

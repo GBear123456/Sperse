@@ -47,7 +47,7 @@ export class TransactionDetailInfoComponent implements OnInit {
     transactionInfo = new TransactionDetailsDto();
     transactionTypeId: string;
     transactionAttributeTypes: any;
-    isEditAllowed = false;
+    isEditAllowed = this.cfoService.classifyTransactionsAllowed(false);
     private _itemInEditMode: any;
     categorization: GetCategoryTreeOutput;
     categories: any;
@@ -64,19 +64,18 @@ export class TransactionDetailInfoComponent implements OnInit {
     dropDownWidth = '200';
     isDescriptorUpdated = false;
     constructor(
-        private _cfoService: CFOService,
-        private _transactionsService: TransactionsServiceProxy,
-        private _categoryTreeServiceProxy: CategoryTreeServiceProxy,
-        private _classificationServiceProxy: ClassificationServiceProxy,
-        private _commentServiceProxy: CommentServiceProxy,
-        private _changeDetectorRef: ChangeDetectorRef,
-        private _notifyService: NotifyService,
+        private cfoService: CFOService,
+        private transactionsService: TransactionsServiceProxy,
+        private categoryTreeServiceProxy: CategoryTreeServiceProxy,
+        private classificationServiceProxy: ClassificationServiceProxy,
+        private commentServiceProxy: CommentServiceProxy,
+        private changeDetectorRef: ChangeDetectorRef,
+        private notifyService: NotifyService,
         public ls: AppLocalizationService,
         public cfoPreferencesService: CfoPreferencesService,
         @Inject(MAT_DIALOG_DATA) private data: any
     ) {
         this.transactionId = this.data.transactionId;
-        this.isEditAllowed = _cfoService.classifyTransactionsAllowed;
     }
 
     ngOnInit() {
@@ -93,7 +92,7 @@ export class TransactionDetailInfoComponent implements OnInit {
     }
 
     getTransactionDetails() {
-        this._transactionsService.getTransactionDetails(InstanceType[this._cfoService.instanceType], this._cfoService.instanceId, this.transactionId)
+        this.transactionsService.getTransactionDetails(InstanceType[this.cfoService.instanceType], this.cfoService.instanceId, this.transactionId)
             .subscribe(result => {
                 this.transactionInfo = result.transactionDetails;
 
@@ -103,8 +102,8 @@ export class TransactionDetailInfoComponent implements OnInit {
                     this.selectedCashflowTypeId = this.transactionInfo.cashFlowTypeId;
                     this.getAccountingTypes(this.transactionInfo);
                 }
-                if (!this._changeDetectorRef['destroyed']) {
-                    this._changeDetectorRef.detectChanges();
+                if (!this.changeDetectorRef['destroyed']) {
+                    this.changeDetectorRef.detectChanges();
                 }
             });
     }
@@ -121,8 +120,8 @@ export class TransactionDetailInfoComponent implements OnInit {
             }
         });
         this.getFilteredCategoriesData(transactionInfo, this.selectedAccountingTypeKey);
-        if (!this._changeDetectorRef['destroyed']) {
-            this._changeDetectorRef.detectChanges();
+        if (!this.changeDetectorRef['destroyed']) {
+            this.changeDetectorRef.detectChanges();
         }
     }
 
@@ -138,8 +137,8 @@ export class TransactionDetailInfoComponent implements OnInit {
             }
         });
         this.getFilteredSubCategoriesData(transactionInfo, this.selectedCategoryKey);
-        if (!this._changeDetectorRef['destroyed']) {
-            this._changeDetectorRef.detectChanges();
+        if (!this.changeDetectorRef['destroyed']) {
+            this.changeDetectorRef.detectChanges();
         }
     }
 
@@ -154,8 +153,8 @@ export class TransactionDetailInfoComponent implements OnInit {
                 }
             }
         });
-        if (!this._changeDetectorRef['destroyed']) {
-            this._changeDetectorRef.detectChanges();
+        if (!this.changeDetectorRef['destroyed']) {
+            this.changeDetectorRef.detectChanges();
         }
     }
 
@@ -165,11 +164,11 @@ export class TransactionDetailInfoComponent implements OnInit {
     }
 
     getTransactionAttributeTypes() {
-        this._transactionsService.getTransactionAttributeTypes(InstanceType[this._cfoService.instanceType], this._cfoService.instanceId)
+        this.transactionsService.getTransactionAttributeTypes(InstanceType[this.cfoService.instanceType], this.cfoService.instanceId)
             .subscribe(result => {
                 this.transactionAttributeTypes = result.transactionAttributeTypes;
-                if (!this._changeDetectorRef['destroyed']) {
-                    this._changeDetectorRef.detectChanges();
+                if (!this.changeDetectorRef['destroyed']) {
+                    this.changeDetectorRef.detectChanges();
                 }
             });
     }
@@ -186,8 +185,8 @@ export class TransactionDetailInfoComponent implements OnInit {
                         if (this.selectedSubCategoryKey) this.selectedSubCategoryKey = this.TRANSACTION_SUBCATEGORY_ID;
                         this.getFilteredCategoriesData(this.transactionInfo, this.TRANSACTION_ACCOUNTING_TYPE_KEY);
                         this.getFilteredSubCategoriesData(this.transactionInfo, this.TRANSACTION_CATEGORY_ID);
-                        if (!this._changeDetectorRef['destroyed']) {
-                            this._changeDetectorRef.detectChanges();
+                        if (!this.changeDetectorRef['destroyed']) {
+                            this.changeDetectorRef.detectChanges();
                         }
                     }
             });
@@ -197,9 +196,9 @@ export class TransactionDetailInfoComponent implements OnInit {
     }
 
     updateTransactionCategory($event) {
-        this._classificationServiceProxy.updateTransactionsCategory(
-            InstanceType[this._cfoService.instanceType],
-            this._cfoService.instanceId,
+        this.classificationServiceProxy.updateTransactionsCategory(
+            InstanceType[this.cfoService.instanceType],
+            this.cfoService.instanceId,
             new UpdateTransactionsCategoryInput({
                 transactionIds: [this.transactionId],
                 categoryId: $event.itemData.key,
@@ -210,7 +209,7 @@ export class TransactionDetailInfoComponent implements OnInit {
         ).subscribe(() => {
             this.refreshParent();
             this.getTransactionDetails();
-            this._notifyService.info(this.ls.l('SavedSuccessfully'));
+            this.notifyService.info(this.ls.l('SavedSuccessfully'));
         });
     }
 
@@ -233,8 +232,8 @@ export class TransactionDetailInfoComponent implements OnInit {
 
     getCategoryTree() {
         this.modalDialog.startLoading();
-        this._categoryTreeServiceProxy.get(
-            InstanceType[this._cfoService.instanceType], this._cfoService.instanceId, true
+        this.categoryTreeServiceProxy.get(
+            InstanceType[this.cfoService.instanceType], this.cfoService.instanceId, true
         ).pipe(finalize(() => this.modalDialog.finishLoading()))
             .subscribe(data => {
                 let categories = [];
@@ -264,17 +263,17 @@ export class TransactionDetailInfoComponent implements OnInit {
                         }
                     });
                 this.categories = categories;
-                if (!this._changeDetectorRef['destroyed']) {
-                    this._changeDetectorRef.detectChanges();
+                if (!this.changeDetectorRef['destroyed']) {
+                    this.changeDetectorRef.detectChanges();
                 }
             });
     }
 
     updateDescriptor() {
         this.modalDialog.startLoading();
-        this._classificationServiceProxy.updateTransactionsCategory(
-            InstanceType[this._cfoService.instanceType],
-            this._cfoService.instanceId,
+        this.classificationServiceProxy.updateTransactionsCategory(
+            InstanceType[this.cfoService.instanceType],
+            this.cfoService.instanceId,
             new UpdateTransactionsCategoryInput({
                 transactionIds: [this.transactionId],
                 categoryId: this.transactionInfo.cashflowSubCategoryId ? this.transactionInfo.cashflowSubCategoryId : this.transactionInfo.cashflowCategoryId,
@@ -288,25 +287,25 @@ export class TransactionDetailInfoComponent implements OnInit {
                 this.refreshParent();
                 this.getTransactionDetails();
                 this.transactionInfo['inplaceEdit'] = false;
-                this._notifyService.info(this.ls.l('SavedSuccessfully'));
-                if (!this._changeDetectorRef['destroyed']) {
-                    this._changeDetectorRef.detectChanges();
+                this.notifyService.info(this.ls.l('SavedSuccessfully'));
+                if (!this.changeDetectorRef['destroyed']) {
+                    this.changeDetectorRef.detectChanges();
                 }
             });
     }
 
-    inPlaceCreateComment(e) {
+    inPlaceCreateComment() {
         this.newComment.inplaceEdit = true;
-        if (!this._changeDetectorRef['destroyed']) {
-            this._changeDetectorRef.detectChanges();
+        if (!this.changeDetectorRef['destroyed']) {
+            this.changeDetectorRef.detectChanges();
         }
     }
 
     addNewComment() {
         this.modalDialog.startLoading();
-        this._commentServiceProxy.createTransactionCommentThread(
-            InstanceType[this._cfoService.instanceType],
-            this._cfoService.instanceId,
+        this.commentServiceProxy.createTransactionCommentThread(
+            InstanceType[this.cfoService.instanceType],
+            this.cfoService.instanceId,
             new CreateTransactionCommentThreadInput({
                 transactionId: this.transactionId,
                 comment: this.newComment.text
@@ -316,7 +315,7 @@ export class TransactionDetailInfoComponent implements OnInit {
             this.refreshParent();
             this.newComment.inplaceEdit = false;
             this.newComment.text = '';
-            this._notifyService.info(this.ls.l('SavedSuccessfully'));
+            this.notifyService.info(this.ls.l('SavedSuccessfully'));
             this.getTransactionDetails();
         });
     }
@@ -324,17 +323,17 @@ export class TransactionDetailInfoComponent implements OnInit {
     updateComment(field, data) {
         this.modalDialog.startLoading();
         let request$ = data.text
-            ? this._commentServiceProxy.updateComment(
-                InstanceType[this._cfoService.instanceType],
-                this._cfoService.instanceId,
+            ? this.commentServiceProxy.updateComment(
+                InstanceType[this.cfoService.instanceType],
+                this.cfoService.instanceId,
                 new UpdateCommentInput({
                     comment: data.text,
                     id: data.commentId
                 })
             )
-            : this._commentServiceProxy.deleteComment(
-                InstanceType[this._cfoService.instanceType],
-                this._cfoService.instanceId,
+            : this.commentServiceProxy.deleteComment(
+                InstanceType[this.cfoService.instanceType],
+                this.cfoService.instanceId,
                 data.commentId
             );
         request$
@@ -342,7 +341,7 @@ export class TransactionDetailInfoComponent implements OnInit {
             .subscribe(() => {
                 this.refreshParent();
                 data.inplaceEdit = false;
-                this._notifyService.info(this.ls.l('SavedSuccessfully'));
+                this.notifyService.info(this.ls.l('SavedSuccessfully'));
                 this.getTransactionDetails();
             });
     }

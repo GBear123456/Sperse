@@ -10,7 +10,8 @@ import each from 'lodash/each';
 
 /** Application imports */
 import { FilterModel } from './models/filter.model';
-import { FilterHelpers } from '@app/crm/shared/helpers/filter.helper';
+import { FilterHelpers as CrmFilterHelpers } from '@app/crm/shared/helpers/filter.helper';
+import { FilterHelpers as CfoFilterHelpers } from '@app/cfo/shared/helpers/filter.helper';
 import { FilterItemModel } from '@shared/filters/models/filter-item.model';
 
 @Injectable()
@@ -52,6 +53,126 @@ export class FiltersService {
             return filtersValues;
         })
     );
+
+    static filterByStates(filter: FilterModel) {
+        return CrmFilterHelpers.filterByStates(filter);
+    }
+
+    static filterByStatus(filter: FilterModel) {
+        return CrmFilterHelpers.filterBySetOfValues(filter);
+    }
+
+    static filterByType(filter: FilterModel) {
+        return CrmFilterHelpers.filterBySetOfValues(filter);
+    }
+
+    static filterByAssignedUser(filter: FilterModel) {
+        return CrmFilterHelpers.filterBySetOfValues(filter);
+    }
+
+    static filterByOrganizationUnitId(filter: FilterModel) {
+        return CrmFilterHelpers.filterBySetOfValues(filter);
+    }
+
+    static filterByDepartment(filter: FilterModel) {
+        return CrmFilterHelpers.filterBySetOfValues(filter);
+    }
+
+    static filterByList(filter: FilterModel) {
+        return CrmFilterHelpers.filterBySetOfValues(filter);
+    }
+
+    static filterByTag(filter: FilterModel) {
+        return CrmFilterHelpers.filterBySetOfValues(filter);
+    }
+
+    static filterByRating(filter: FilterModel) {
+        return CrmFilterHelpers.filterByRating(filter);
+    }
+
+    static filterByStar(filter: FilterModel) {
+        return CrmFilterHelpers.filterBySetOfValues(filter);
+    }
+
+    static filterByStages(filter: FilterModel) {
+        let data = {};
+        if (filter.items.element) {
+            let filterData = CrmFilterHelpers.ParsePipelineIds(filter.items.element.value);
+            data = {
+                or: filterData
+            };
+        }
+
+        return data;
+    }
+
+    static filterByAmount(filter) {
+        let data = {};
+        data[filter.field] = {};
+        each(filter.items, (item: FilterItemModel, key) => {
+            item && item.value && (data[filter.field][filter.operator[key]] = +item.value);
+        });
+        return data;
+    }
+
+    static filterByOrderStages(filter: FilterModel) {
+        let data = {};
+        if (filter.items.element) {
+            let filterData = CrmFilterHelpers.ParsePipelineIds(filter.items.element.value);
+            data = {
+                or: filterData
+            };
+        }
+
+        return data;
+    }
+
+    static filterByClassified(filter: FilterModel) {
+        let isYes = filter.items.yes.value;
+        let isNo = filter.items.no.value;
+
+        if (isYes ^ isNo) {
+            let obj = {};
+            obj[filter.field] = {};
+            if (isYes) {
+                obj[filter.field]['ne'] = null;
+            } else {
+                obj[filter.field] = null;
+            }
+            return obj;
+        }
+    }
+
+    static filterByAccount(filter: FilterModel) {
+        let data = {};
+        if (filter.items.element) {
+            let bankAccountIds = [];
+            filter.items.element.dataSource.forEach((syncAccount) => {
+                syncAccount.bankAccounts.forEach((bankAccount) => {
+                    if (bankAccount['selected']) {
+                        bankAccountIds.push(bankAccount.id);
+                    }
+                });
+            });
+
+            if (bankAccountIds.length) {
+                //Should be like this, but IN is not currently implemented by odata-query lib >:-(. https://github.com/techniq/odata-query/issues/22
+                //data = {
+                //    BankAccountId: {
+                //        in: bankAccountIds
+                //    }
+                //};
+
+                data = `BankAccountId in (${bankAccountIds.join(',')})`;
+            }
+        }
+
+        return data;
+    }
+
+    static filterByTransactionType(filter: FilterModel) {
+        return CfoFilterHelpers.filterByExcludeElement(filter);
+    }
 
     setup(filters: FilterModel[], initialValues?: any, applyFilterImmediately = true) {
         this.subjectFilters.next(this.filters = filters);
@@ -143,78 +264,9 @@ export class FiltersService {
     }
 
     getCheckCustom = (filter: FilterModel) => {
-        let filterMethod = this['filterBy' + capitalize(filter.caption)];
+        let filterMethod = FiltersService['filterBy' + capitalize(filter.caption)];
         if (filterMethod)
             return filterMethod.call(this, filter);
-    }
-
-    filterByStates(filter: FilterModel) {
-        return FilterHelpers.filterByStates(filter);
-    }
-
-    filterByStatus(filter: FilterModel) {
-        return FilterHelpers.filterBySetOfValues(filter);
-    }
-
-    filterByType(filter: FilterModel) {
-        return FilterHelpers.filterBySetOfValues(filter);
-    }
-
-    filterByAssignedUser(filter: FilterModel) {
-        return FilterHelpers.filterBySetOfValues(filter);
-    }
-
-    filterByOrganizationUnitId(filter: FilterModel) {
-        return FilterHelpers.filterBySetOfValues(filter);
-    }
-
-    filterByList(filter: FilterModel) {
-        return FilterHelpers.filterBySetOfValues(filter);
-    }
-
-    filterByTag(filter: FilterModel) {
-        return FilterHelpers.filterBySetOfValues(filter);
-    }
-
-    filterByRating(filter: FilterModel) {
-        return FilterHelpers.filterByRating(filter);
-    }
-
-    filterByStar(filter: FilterModel) {
-        return FilterHelpers.filterBySetOfValues(filter);
-    }
-
-    filterByStages(filter: FilterModel) {
-        let data = {};
-        if (filter.items.element) {
-            let filterData = FilterHelpers.ParsePipelineIds(filter.items.element.value);
-            data = {
-                or: filterData
-            };
-        }
-
-        return data;
-    }
-
-    filterByAmount(filter) {
-        let data = {};
-        data[filter.field] = {};
-        each(filter.items, (item: FilterItemModel, key) => {
-            item && item.value && (data[filter.field][filter.operator[key]] = +item.value);
-        });
-        return data;
-    }
-
-    filterByOrderStages(filter: FilterModel) {
-        let data = {};
-        if (filter.items.element) {
-            let filterData = FilterHelpers.ParsePipelineIds(filter.items.element.value);
-            data = {
-                or: filterData
-            };
-        }
-
-        return data;
     }
 
 }

@@ -1,6 +1,11 @@
+/** Core imports */
 import { Injectable, Injector } from '@angular/core';
-import { Subscription, Subject } from 'rxjs';
 import { RouteReuseStrategy } from '@angular/router';
+
+/** Third party imports */
+import { Subscription, Subject } from 'rxjs';
+
+/** Application imports */
 import { ImportStatus } from '@shared/AppEnums';
 import { ImportServiceProxy } from '@shared/service-proxies/service-proxies';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
@@ -21,7 +26,7 @@ export class ImportWizardService {
         private permissionService: AppPermissionService
     ) {
         this.subjectProgress = new Subject<any>();
-        this.subjectCancel = new Subject<any>();
+        this.subjectCancel = new Subject<number[]>();
     }
 
     progressListen(callback: (progress: any) => any) {
@@ -35,15 +40,15 @@ export class ImportWizardService {
         this.subjectProgress.next(data);
     }
 
-    cancelListen(callback: (importIds) => any) {
+    cancelListen(callback: (importIds: number[]) => any) {
         this.subjectCancel.asObservable().subscribe(callback);
     }
 
-    cancelImport(importIds = undefined) {
+    cancelImport(importIds?: number[]) {
         this.subjectCancel.next(importIds);
     }
 
-    startStatusCheck(importId = undefined, method = undefined, invalUri = undefined) {
+    startStatusCheck(importId?: number, method?: Function, invalUri?: string) {
         if (this.permissionService.isGranted(AppPermissions.CRMBulkImport))
             this.setupCheckTimeout((callback) => {
                 this.importProxy.getStatuses(importId).subscribe((res) => {

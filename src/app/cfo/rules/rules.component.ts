@@ -42,10 +42,10 @@ export class RulesComponent extends CFOComponentBase implements OnInit, AfterVie
     };
 
     constructor(injector: Injector,
-        public dialog: MatDialog,
-        public filtersService: FiltersService,
         private appService: AppService,
-        private classificationService: ClassificationServiceProxy
+        private classificationService: ClassificationServiceProxy,
+        public dialog: MatDialog,
+        public filtersService: FiltersService
     ) {
         super(injector);
         this.initToolbarConfig();
@@ -99,7 +99,7 @@ export class RulesComponent extends CFOComponentBase implements OnInit, AfterVie
     }
 
     ngAfterViewInit(): void {
-        if (this._cfoService.classifyTransactionsAllowed) {
+        if (this._cfoService.classifyTransactionsAllowed()) {
             this.treeList.editing.allowAdding = true;
             this.treeList.editing.allowDeleting = true;
             this.treeList.editing.allowUpdating = true;

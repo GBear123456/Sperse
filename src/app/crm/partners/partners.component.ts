@@ -110,8 +110,24 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     @ViewChild(MapComponent) mapComponent: MapComponent;
 
     private readonly MENU_LOGIN_INDEX = 1;
-    private dataLayoutType: BehaviorSubject<DataLayoutType> = new BehaviorSubject(DataLayoutType.DataGrid);
+    private isSlice = this.appService.getModule() === 'slice';
+    private dataLayoutType: BehaviorSubject<DataLayoutType> = new BehaviorSubject(
+        this.isSlice ? DataLayoutType.PivotGrid : DataLayoutType.DataGrid
+    );
     dataLayoutType$: Observable<DataLayoutType> = this.dataLayoutType.asObservable();
+    hideDataGrid$: Observable<boolean> = this.dataLayoutType$.pipe(map((dataLayoutType: DataLayoutType) => {
+        return dataLayoutType !== DataLayoutType.DataGrid;
+    }));
+    hidePivotGrid$: Observable<boolean> = this.dataLayoutType$.pipe(map((dataLayoutType: DataLayoutType) => {
+        return dataLayoutType !== DataLayoutType.PivotGrid;
+    }));
+    hideChart$: Observable<boolean> = this.dataLayoutType$.pipe(map((dataLayoutType: DataLayoutType) => {
+        return dataLayoutType !== DataLayoutType.Chart;
+    }));
+    hideMap$: Observable<boolean> = this.dataLayoutType$.pipe(map((dataLayoutType: DataLayoutType) => {
+        return dataLayoutType !== DataLayoutType.Map;
+    }));
+
     private readonly dataSourceURI = 'Partner';
     private readonly groupDataSourceURI = 'PartnerSlice';
     private filters: FilterModel[];
@@ -317,6 +333,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         public userManagementService: UserManagementService,
     ) {
         super(injector);
+        window['t'] = this;
         this.dataSource = {
             store: {
                 key: 'Id',
@@ -434,6 +451,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     toggleDataLayout(dataLayoutType: DataLayoutType) {
+        this.crmService.handleModuleChange(dataLayoutType);
         this.dataLayoutType.next(dataLayoutType);
         this.initDataSource();
         this.initToolbarConfig();
@@ -812,7 +830,16 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                 locateInMenu: 'auto',
                 items: [
                     { name: 'showCompactRowsHeight', action: DataGridService.showCompactRowsHeight.bind(this, this.dataGrid, true) },
-                    { name: 'columnChooser', action: DataGridService.showColumnChooser.bind(this, this.dataGrid) }
+                    {
+                        name: 'columnChooser',
+                        action: () => {
+                            if (this.showDataGrid) {
+                                DataGridService.showColumnChooser.bind(this, this.dataGrid);
+                            } else if (this.showPivotGrid) {
+                                this.pivotGridComponent.toggleFieldPanel();
+                            }
+                        }
+                    }
                 ]
             },
             {
@@ -1026,7 +1053,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
 
     activate() {
         super.activate();
-
+        this.crmService.handleModuleChange(this.dataLayoutType.value);
         this.paramsSubscribe();
         this.initFilterConfig();
         this.initToolbarConfig();

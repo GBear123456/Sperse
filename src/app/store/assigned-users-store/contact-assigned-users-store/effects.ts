@@ -18,10 +18,12 @@ import { AppPermissions } from '@shared/AppPermissions';
 
 @Injectable()
 export class ContactAssignedUsersStoreEffects {
-    constructor(private _contactService: ContactServiceProxy,
-                private actions$: Actions,
-                private store$: Store<State>,
-                private permissionCheckerService: AppPermissionService) {}
+    constructor(
+        private contactService: ContactServiceProxy,
+        private actions$: Actions,
+        private store$: Store<State>,
+        private permissionCheckerService: AppPermissionService
+    ) {}
 
     @Effect()
     loadRequestEffect$: Observable<Action> = this.actions$.pipe(
@@ -35,7 +37,7 @@ export class ContactAssignedUsersStoreEffects {
                 return empty();
             }
 
-            return this._contactService.getAllowedAssignableUsers(payload, undefined, undefined)
+            return this.contactService.getAllowedAssignableUsers(payload, undefined, undefined)
                 .pipe(
                     map((users: UserInfoDto[]) => {
                         return new assignedUsersActions.LoadSuccessAction({

@@ -152,8 +152,26 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
 
     private rootComponent: any;
     private exportCallback: Function;
-    private dataLayoutType: BehaviorSubject<DataLayoutType> = new BehaviorSubject(DataLayoutType.Pipeline);
+    private isSlice = this.appService.getModule() === 'slice';
+    private dataLayoutType: BehaviorSubject<DataLayoutType> = new BehaviorSubject(
+        this.isSlice ? DataLayoutType.PivotGrid : DataLayoutType.Pipeline
+    );
     dataLayoutType$: Observable<DataLayoutType> = this.dataLayoutType.asObservable();
+    hidePipeline$: Observable<boolean> = this.dataLayoutType$.pipe(map((dataLayoutType: DataLayoutType) => {
+        return dataLayoutType !== DataLayoutType.Pipeline;
+    }));
+    hideDataGrid$: Observable<boolean> = this.dataLayoutType$.pipe(map((dataLayoutType: DataLayoutType) => {
+        return dataLayoutType !== DataLayoutType.DataGrid;
+    }));
+    hidePivotGrid$: Observable<boolean> = this.dataLayoutType$.pipe(map((dataLayoutType: DataLayoutType) => {
+        return dataLayoutType !== DataLayoutType.PivotGrid;
+    }));
+    hideChart$: Observable<boolean> = this.dataLayoutType$.pipe(map((dataLayoutType: DataLayoutType) => {
+        return dataLayoutType !== DataLayoutType.Chart;
+    }));
+    hideMap$: Observable<boolean> = this.dataLayoutType$.pipe(map((dataLayoutType: DataLayoutType) => {
+        return dataLayoutType !== DataLayoutType.Map;
+    }));
     private readonly dataSourceURI = 'Lead';
     private readonly groupDataSourceURI = 'LeadSlice';
     private filters: FilterModel[];
@@ -244,10 +262,6 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             {
                 area: 'filter',
                 dataField: 'ChannelCode'
-            },
-            {
-                area: 'filter',
-                dataField: 'City'
             },
             {
                 area: 'filter',
@@ -485,7 +499,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             this.subRouteParams = this._activatedRoute.queryParams.subscribe(params => {
                 if (params['dataLayoutType']) {
                     let dataLayoutType = params['dataLayoutType'];
-                    if (dataLayoutType != this.dataLayoutType) {
+                    if (dataLayoutType != this.dataLayoutType.value) {
                         if (dataLayoutType == DataLayoutType.DataGrid)
                             this.pipelineService.getPipelineDefinitionObservable(this.pipelinePurposeId)
                                 .subscribe(this.onStagesLoaded.bind(this));
@@ -538,6 +552,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     toggleDataLayout(dataLayoutType: DataLayoutType) {
+        this.crmService.handleModuleChange(dataLayoutType);
         this.selectedClientKeys = [];
         this.dataLayoutType.next(dataLayoutType);
         this.initToolbarConfig();
@@ -928,7 +943,16 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                         action: this.toggleCompactView.bind(this),
                         disabled: this.showChart || this.showMap
                     },
-                    { name: 'columnChooser', action: DataGridService.showColumnChooser.bind(this, this.dataGrid) }
+                    {
+                        name: 'columnChooser',
+                        action: () => {
+                            if (this.showDataGrid) {
+                                DataGridService.showColumnChooser.bind(this, this.dataGrid);
+                            } else if (this.showPivotGrid) {
+                                this.pivotGridComponent.toggleFieldPanel();
+                            }
+                        }
+                    }
                 ]
             },
             {
@@ -1240,10 +1264,9 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     activate() {
         super.activate();
         this.lifeCycleSubjectsService.activate.next();
-
         this.paramsSubscribe();
+        //this.crmService.handleModuleChange(this.dataLayoutType.value);
         this.initFilterConfig();
-
         this.initToolbarConfig();
         this.rootComponent = this.getRootComponent();
         this.rootComponent.overflowHidden(true);
@@ -1254,7 +1277,6 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
 
     deactivate() {
         super.deactivate();
-
         this.appService.updateToolbar(null);
         this.filtersService.unsubscribe();
         this.rootComponent.overflowHidden();

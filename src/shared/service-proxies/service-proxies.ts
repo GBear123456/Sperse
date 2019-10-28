@@ -7770,7 +7770,7 @@ export class ContactServiceProxy {
      * @body (optional) 
      * @return Success
      */
-    updateSourceContact(body: UpdateSourceContactInput | null | undefined): Observable<number> {
+    updateSourceContact(body: UpdateSourceContactInput | null | undefined): Observable<UpdateSourceContactOutput> {
         let url_ = this.baseUrl + "/api/services/CRM/Contact/UpdateSourceContact";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -7793,14 +7793,14 @@ export class ContactServiceProxy {
                 try {
                     return this.processUpdateSourceContact(<any>response_);
                 } catch (e) {
-                    return <Observable<number>><any>_observableThrow(e);
+                    return <Observable<UpdateSourceContactOutput>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<number>><any>_observableThrow(response_);
+                return <Observable<UpdateSourceContactOutput>><any>_observableThrow(response_);
         }));
     }
 
-    protected processUpdateSourceContact(response: HttpResponseBase): Observable<number> {
+    protected processUpdateSourceContact(response: HttpResponseBase): Observable<UpdateSourceContactOutput> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -7811,7 +7811,7 @@ export class ContactServiceProxy {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 !== undefined ? resultData200 : <any>null;
+            result200 = resultData200 ? UpdateSourceContactOutput.fromJS(resultData200) : new UpdateSourceContactOutput();
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -7819,7 +7819,7 @@ export class ContactServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<number>(<any>null);
+        return _observableOf<UpdateSourceContactOutput>(<any>null);
     }
 
     /**
@@ -15180,6 +15180,65 @@ export class InstanceServiceProxy {
         }
         return _observableOf<string>(<any>null);
     }
+
+    /**
+     * @userIds (optional) 
+     * @return Success
+     */
+    getUsersWithInstance(userIds: number[] | null | undefined): Observable<number[]> {
+        let url_ = this.baseUrl + "/api/services/CFO/Instance/GetUsersWithInstance?";
+        if (userIds !== undefined)
+            userIds && userIds.forEach(item => { url_ += "userIds=" + encodeURIComponent("" + item) + "&"; });
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetUsersWithInstance(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetUsersWithInstance(<any>response_);
+                } catch (e) {
+                    return <Observable<number[]>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<number[]>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetUsersWithInstance(response: HttpResponseBase): Observable<number[]> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(item);
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<number[]>(<any>null);
+    }
 }
 
 @Injectable()
@@ -15668,12 +15727,15 @@ export class InvoiceServiceProxy {
 
     /**
      * @id (optional) 
+     * @regenerateNew (optional) 
      * @return Success
      */
-    generatePdf(id: number | null | undefined): Observable<string> {
+    generatePdf(id: number | null | undefined, regenerateNew: boolean | null | undefined): Observable<string> {
         let url_ = this.baseUrl + "/api/services/CRM/Invoice/GeneratePdf?";
         if (id !== undefined)
             url_ += "id=" + encodeURIComponent("" + id) + "&"; 
+        if (regenerateNew !== undefined)
+            url_ += "regenerateNew=" + encodeURIComponent("" + regenerateNew) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -15725,8 +15787,8 @@ export class InvoiceServiceProxy {
      * @templateId (optional) 
      * @return Success
      */
-    getPreprocessedEmail(templateId: number | null | undefined, invoiceId: number): Observable<GetPreprocessedEmailOutput> {
-        let url_ = this.baseUrl + "/api/services/CRM/Invoice/GetPreprocessedEmail?";
+    getEmailData(templateId: number | null | undefined, invoiceId: number): Observable<GetEmailDataOutput> {
+        let url_ = this.baseUrl + "/api/services/CRM/Invoice/GetEmailData?";
         if (templateId !== undefined)
             url_ += "TemplateId=" + encodeURIComponent("" + templateId) + "&"; 
         if (invoiceId === undefined || invoiceId === null)
@@ -15745,20 +15807,20 @@ export class InvoiceServiceProxy {
         };
 
         return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetPreprocessedEmail(response_);
+            return this.processGetEmailData(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processGetPreprocessedEmail(<any>response_);
+                    return this.processGetEmailData(<any>response_);
                 } catch (e) {
-                    return <Observable<GetPreprocessedEmailOutput>><any>_observableThrow(e);
+                    return <Observable<GetEmailDataOutput>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<GetPreprocessedEmailOutput>><any>_observableThrow(response_);
+                return <Observable<GetEmailDataOutput>><any>_observableThrow(response_);
         }));
     }
 
-    protected processGetPreprocessedEmail(response: HttpResponseBase): Observable<GetPreprocessedEmailOutput> {
+    protected processGetEmailData(response: HttpResponseBase): Observable<GetEmailDataOutput> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -15769,7 +15831,7 @@ export class InvoiceServiceProxy {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? GetPreprocessedEmailOutput.fromJS(resultData200) : new GetPreprocessedEmailOutput();
+            result200 = resultData200 ? GetEmailDataOutput.fromJS(resultData200) : new GetEmailDataOutput();
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -15777,7 +15839,7 @@ export class InvoiceServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<GetPreprocessedEmailOutput>(<any>null);
+        return _observableOf<GetEmailDataOutput>(<any>null);
     }
 }
 
@@ -42081,6 +42143,42 @@ export interface IUpdateSourceContactInput {
     sourceContactId: number | undefined;
 }
 
+export class UpdateSourceContactOutput implements IUpdateSourceContactOutput {
+    newOrganizationUnitId!: number | undefined;
+
+    constructor(data?: IUpdateSourceContactOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.newOrganizationUnitId = data["newOrganizationUnitId"];
+        }
+    }
+
+    static fromJS(data: any): UpdateSourceContactOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateSourceContactOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["newOrganizationUnitId"] = this.newOrganizationUnitId;
+        return data; 
+    }
+}
+
+export interface IUpdateSourceContactOutput {
+    newOrganizationUnitId: number | undefined;
+}
+
 export class SendSMSToContactInput implements ISendSMSToContactInput {
     contactId!: number;
     message!: string | undefined;
@@ -47374,6 +47472,7 @@ export class Invoice implements IInvoice {
     description!: string | undefined;
     note!: string | undefined;
     documentId!: string | undefined;
+    documentDataHash!: number | undefined;
     order!: Order | undefined;
     lines!: InvoiceLine[] | undefined;
     document!: Document | undefined;
@@ -47407,6 +47506,7 @@ export class Invoice implements IInvoice {
             this.description = data["description"];
             this.note = data["note"];
             this.documentId = data["documentId"];
+            this.documentDataHash = data["documentDataHash"];
             this.order = data["order"] ? Order.fromJS(data["order"]) : <any>undefined;
             if (data["lines"] && data["lines"].constructor === Array) {
                 this.lines = [];
@@ -47444,6 +47544,7 @@ export class Invoice implements IInvoice {
         data["description"] = this.description;
         data["note"] = this.note;
         data["documentId"] = this.documentId;
+        data["documentDataHash"] = this.documentDataHash;
         data["order"] = this.order ? this.order.toJSON() : <any>undefined;
         if (this.lines && this.lines.constructor === Array) {
             data["lines"] = [];
@@ -47474,6 +47575,7 @@ export interface IInvoice {
     description: string | undefined;
     note: string | undefined;
     documentId: string | undefined;
+    documentDataHash: number | undefined;
     order: Order | undefined;
     lines: InvoiceLine[] | undefined;
     document: Document | undefined;
@@ -50706,8 +50808,8 @@ export interface IPersonOrgRelationTypeDto {
 
 export class SendEmailInput implements ISendEmailInput {
     contactId!: number;
-    replyTo!: string[] | undefined;
     to!: string[] | undefined;
+    replyTo!: string[] | undefined;
     cc!: string[] | undefined;
     bcc!: string[] | undefined;
     subject!: string;
@@ -50725,15 +50827,15 @@ export class SendEmailInput implements ISendEmailInput {
     init(data?: any) {
         if (data) {
             this.contactId = data["contactId"];
-            if (data["replyTo"] && data["replyTo"].constructor === Array) {
-                this.replyTo = [];
-                for (let item of data["replyTo"])
-                    this.replyTo.push(item);
-            }
             if (data["to"] && data["to"].constructor === Array) {
                 this.to = [];
                 for (let item of data["to"])
                     this.to.push(item);
+            }
+            if (data["replyTo"] && data["replyTo"].constructor === Array) {
+                this.replyTo = [];
+                for (let item of data["replyTo"])
+                    this.replyTo.push(item);
             }
             if (data["cc"] && data["cc"].constructor === Array) {
                 this.cc = [];
@@ -50760,15 +50862,15 @@ export class SendEmailInput implements ISendEmailInput {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["contactId"] = this.contactId;
-        if (this.replyTo && this.replyTo.constructor === Array) {
-            data["replyTo"] = [];
-            for (let item of this.replyTo)
-                data["replyTo"].push(item);
-        }
         if (this.to && this.to.constructor === Array) {
             data["to"] = [];
             for (let item of this.to)
                 data["to"].push(item);
+        }
+        if (this.replyTo && this.replyTo.constructor === Array) {
+            data["replyTo"] = [];
+            for (let item of this.replyTo)
+                data["replyTo"].push(item);
         }
         if (this.cc && this.cc.constructor === Array) {
             data["cc"] = [];
@@ -50788,8 +50890,8 @@ export class SendEmailInput implements ISendEmailInput {
 
 export interface ISendEmailInput {
     contactId: number;
-    replyTo: string[] | undefined;
     to: string[] | undefined;
+    replyTo: string[] | undefined;
     cc: string[] | undefined;
     bcc: string[] | undefined;
     subject: string;
@@ -58668,6 +58770,7 @@ export class Attachment implements IAttachment {
     id!: string | undefined;
     size!: number | undefined;
     name!: string | undefined;
+    url!: string | undefined;
 
     constructor(data?: IAttachment) {
         if (data) {
@@ -58683,6 +58786,7 @@ export class Attachment implements IAttachment {
             this.id = data["id"];
             this.size = data["size"];
             this.name = data["name"];
+            this.url = data["url"];
         }
     }
 
@@ -58698,6 +58802,7 @@ export class Attachment implements IAttachment {
         data["id"] = this.id;
         data["size"] = this.size;
         data["name"] = this.name;
+        data["url"] = this.url;
         return data; 
     }
 }
@@ -58706,16 +58811,17 @@ export interface IAttachment {
     id: string | undefined;
     size: number | undefined;
     name: string | undefined;
+    url: string | undefined;
 }
 
-export class GetPreprocessedEmailOutput implements IGetPreprocessedEmailOutput {
+export class GetEmailDataOutput implements IGetEmailDataOutput {
     subject!: string | undefined;
     cc!: string[] | undefined;
     bcc!: string[] | undefined;
     body!: string | undefined;
     attachments!: Attachment[] | undefined;
 
-    constructor(data?: IGetPreprocessedEmailOutput) {
+    constructor(data?: IGetEmailDataOutput) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -58746,9 +58852,9 @@ export class GetPreprocessedEmailOutput implements IGetPreprocessedEmailOutput {
         }
     }
 
-    static fromJS(data: any): GetPreprocessedEmailOutput {
+    static fromJS(data: any): GetEmailDataOutput {
         data = typeof data === 'object' ? data : {};
-        let result = new GetPreprocessedEmailOutput();
+        let result = new GetEmailDataOutput();
         result.init(data);
         return result;
     }
@@ -58776,7 +58882,7 @@ export class GetPreprocessedEmailOutput implements IGetPreprocessedEmailOutput {
     }
 }
 
-export interface IGetPreprocessedEmailOutput {
+export interface IGetEmailDataOutput {
     subject: string | undefined;
     cc: string[] | undefined;
     bcc: string[] | undefined;

@@ -20,10 +20,10 @@ import { PaginatorModule } from 'primeng/paginator';
 
 /** Application imports */
 import { LayoutCommonModule } from './layout-common.module';
-import { PlatformSelectComponent } from './platform-select.component';
-import { HeaderComponent } from './header.component';
-import { SideBarComponent } from './side-bar.component';
-import { TopBarComponent } from './top-bar.component';
+import { PlatformSelectComponent } from './platform-select/platform-select.component';
+import { HeaderComponent } from './header/header.component';
+import { SideBarComponent } from './side-bar/side-bar.component';
+import { TopBarComponent } from './top-bar/top-bar.component';
 import { FiltersModule } from '@shared/filters/filters.module';
 import { UtilsModule } from '@shared/utils/utils.module';
 import { LayoutService } from '@app/shared/layout/layout.service';

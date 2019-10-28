@@ -12,7 +12,6 @@ import kebabCase from 'lodash/kebabCase';
 /** Application imports */
 import { AbpSessionService } from '@abp/session/abp-session.service';
 import { AppConsts } from '@shared/AppConsts';
-import { AppComponentBase } from '@shared/common/app-component-base';
 import {
     ChangeUserLanguageDto, ProfileServiceProxy, LayoutType, CommonUserInfoServiceProxy
 } from '@shared/service-proxies/service-proxies';
@@ -20,6 +19,9 @@ import { UserManagementService } from '@shared/common/layout/user-management-lis
 import { LayoutService } from '@app/shared/layout/layout.service';
 import { AppFeatures } from '@shared/AppFeatures';
 import { AppService } from '@app/app.service';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { AppSessionService } from '@shared/common/session/app-session.service';
+import { FeatureCheckerService } from '@abp/features/feature-checker.service';
 
 @Component({
     templateUrl: './header.component.html',
@@ -27,7 +29,7 @@ import { AppService } from '@app/app.service';
     selector: 'app-header',
     providers: [ CommonUserInfoServiceProxy ]
 })
-export class HeaderComponent extends AppComponentBase implements OnInit {
+export class HeaderComponent implements OnInit {
 
     customLayoutType = '';
     languages: abp.localization.ILanguageInfo[];
@@ -41,19 +43,20 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
     constructor(
         injector: Injector,
         private dialog: MatDialog,
-        private _abpSessionService: AbpSessionService,
-        private _profileServiceProxy: ProfileServiceProxy,
+        private abpSessionService: AbpSessionService,
+        private profileServiceProxy: ProfileServiceProxy,
+        private commonUserInfoService: CommonUserInfoServiceProxy,
+        private feature: FeatureCheckerService,
+        public appSession: AppSessionService,
         public userManagementService: UserManagementService,
         public appService: AppService,
         public layoutService: LayoutService,
-        private commonUserInfoService: CommonUserInfoServiceProxy
-    ) {
-        super(injector);
-    }
+        public ls: AppLocalizationService
+    ) {}
 
     ngOnInit() {
-        this.languages = filter(this.localization.languages, l => (<any>l).isDisabled === false);
-        this.currentLanguage = this.localization.currentLanguage;
+        this.languages = filter(this.ls.languages, l => (<any>l).isDisabled === false);
+        this.currentLanguage = this.ls.currentLanguage;
         this.userCompany$ = this.commonUserInfoService.getCompany().pipe(
             map(x => isEqual(x, {}) ? null : x)
         );
@@ -82,7 +85,7 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
         const input = new ChangeUserLanguageDto();
         input.languageName = languageName;
 
-        this._profileServiceProxy.changeLanguage(input).subscribe(() => {
+        this.profileServiceProxy.changeLanguage(input).subscribe(() => {
             abp.utils.setCookieValue(
                 'Abp.Localization.CultureName',
                 languageName,
@@ -96,7 +99,7 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
 
 
     get chatEnabled(): boolean {
-        return (!this._abpSessionService.tenantId || this.feature.isEnabled(AppFeatures.AppChatFeature));
+        return (!this.abpSessionService.tenantId || this.feature.isEnabled(AppFeatures.AppChatFeature));
     }
 
 }

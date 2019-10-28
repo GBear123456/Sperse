@@ -4,15 +4,15 @@
         <dx-pie-chart
             id="pie"
             palette="bright"
-            type="donut"
+            type="donut"              
             [innerRadius]="0.7"
             [dataSource]="topSpendingCategories">
             <dxi-series
                 argumentField="fullName"
                 valueField="amount">
             </dxi-series>
-            <dxo-legend [customizeText]="customizeLegendText"></dxo-legend>
-            <dxo-size [width]="'50%'" [height]="180"></dxo-size>
+            <dxo-legend verticalAlignment="bottom" horizontalAlignment="center" [customizeText]="customizeLegendText"></dxo-legend>
+            <dxo-size [width]="fullpage ? '100%' : '50%'" [height]="fullpage ? elementRef.nativeElement.offsetHeight : 180"></dxo-size>
         </dx-pie-chart>
     </ng-container>
     <ng-template #noData>

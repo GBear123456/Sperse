@@ -1,5 +1,5 @@
 /** Core imports */
-import { ChangeDetectionStrategy, Component, Input, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, ViewChild } from '@angular/core';
 
 /** Third party imports */
 import { DxPivotGridComponent } from 'devextreme-angular/ui/pivot-grid';
@@ -10,7 +10,10 @@ import { FiltersService } from '@shared/filters/filters.service';
 @Component({
     selector: 'slice-pivot-grid',
     templateUrl: 'pivot-grid.component.html',
-    styleUrls: [ './pivot-grid.component.less'],
+    styleUrls: [
+        '../../../../../shared/common/styles/close-button.less',
+        './pivot-grid.component.less'
+    ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PivotGridComponent {
@@ -18,6 +21,7 @@ export class PivotGridComponent {
     @Input() storageKey: string;
     @Input() height = 'auto';
     @ViewChild(DxPivotGridComponent) pivotGrid: DxPivotGridComponent;
+    showFieldPanel = false;
     summaryDisplayModes: any[] = [
         { text: 'None', value: 'none' },
         { text: 'Absolute Variation', value: 'absoluteVariation' },
@@ -28,7 +32,10 @@ export class PivotGridComponent {
         { text: 'Percent of Row Grand Total', value: 'percentOfRowGrandTotal' },
         { text: 'Percent of Grand Total', value: 'percentOfGrandTotal' }
     ];
-    constructor(public filtersService: FiltersService) {}
+    constructor(
+        private changeDetectorRef: ChangeDetectorRef,
+        public filtersService: FiltersService
+    ) {}
 
     prepareContextMenu(e) {
         if (e.field && e.field.name === 'count') {
@@ -61,5 +68,10 @@ export class PivotGridComponent {
                 grandTotalCell.style.height = (sameElementFromPrevRow.getBoundingClientRect().width - 20) + 'px';
             }
         });
+    }
+
+    toggleFieldPanel() {
+        this.showFieldPanel = !this.showFieldPanel;
+        this.changeDetectorRef.detectChanges();
     }
 }

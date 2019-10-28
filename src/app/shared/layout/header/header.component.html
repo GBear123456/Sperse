@@ -3,12 +3,16 @@
         <div class="page-logo" *ngIf="layoutService.showPageLogo">
             <a routerLink="/app">
                 <img *ngIf="!appSession.tenant || !appSession.tenant.logoId" src="./assets/common/images/sperse-logo.png" alt="logo" class="logo-layout"/>
-                <img *ngIf="appSession.tenant && appSession.tenant.logoId" [src]="remoteServiceBaseUrl + '/api/TenantCustomization/GetLogo?logoId=' + appSession.tenant.logoId" alt="logo" class="logo-layout"/>
+                <img *ngIf="appSession.tenant && appSession.tenant.logoId"
+                     [src]="remoteServiceBaseUrl + '/api/TenantCustomization/GetLogo?logoId=' + appSession.tenant.logoId"
+                     alt="logo"
+                     class="logo-layout"/>
             </a>
         </div>
         <contact-info-panel *ngIf="appService.showContactInfoPanel" [data]="appService.contactInfo"></contact-info-panel>
         <user-management-list>
-            <li *ngIf="languages.length" class="m-nav__item m-dropdown m-dropdown--large m-dropdown--arrow m-dropdown--align-center m-dropdown--mobile-full-width m-dropdown--skin-light m-list-search m-list-search--skin-light m-dropdown--open dropdown-language">
+            <li *ngIf="languages.length"
+                class="m-nav__item m-dropdown m-dropdown--large m-dropdown--arrow m-dropdown--align-center m-dropdown--mobile-full-width m-dropdown--skin-light m-list-search m-list-search--skin-light m-dropdown--open dropdown-language">
                 <a href="javascript:;" class="m-nav__link m-dropdown__toggle" data-toggle="dropdown" data-hover="dropdown" data-close-others="true">
                     <i [class]="currentLanguage.icon"></i>
                     <span class="m-menu__link-text langname">
@@ -25,16 +29,25 @@
                 </ul>
             </li>
 
-            <li *ngIf="userManagementService.notificationEnabled && layoutService.showNotificationsButton" headerNotifications class="m-nav__item m-topbar__notifications m-topbar__notifications--img m-dropdown m-dropdown--large m-dropdown--header-bg-fill m-dropdown--arrow m-dropdown--align-right m-dropdown--mobile-full-width" data-dropdown-toggle="click" data-dropdown-persistent="true" id="header_notification_bar"></li>
+            <li *ngIf="userManagementService.notificationEnabled && layoutService.showNotificationsButton"
+                headerNotifications
+                class="m-nav__item m-topbar__notifications m-topbar__notifications--img m-dropdown m-dropdown--large m-dropdown--header-bg-fill m-dropdown--arrow m-dropdown--align-right m-dropdown--mobile-full-width"
+                data-dropdown-toggle="click"
+                data-dropdown-persistent="true"
+                id="header_notification_bar">
+            </li>
 
-            <li *ngIf="chatEnabled && !chatConnected && layoutService.showChatButton" class="m-nav__item m-topbar__notifications m-topbar__notifications--img m-dropdown m-dropdown--large m-dropdown--header-bg-fill m-dropdown--arrow m-dropdown--align-center 	m-dropdown--mobile-full-width">
+            <li *ngIf="chatEnabled && !chatConnected && layoutService.showChatButton"
+                class="m-nav__item m-topbar__notifications m-topbar__notifications--img m-dropdown m-dropdown--large m-dropdown--header-bg-fill m-dropdown--arrow m-dropdown--align-center 	m-dropdown--mobile-full-width">
                 <a href="javascript:;" class="m-nav__link">
                     <span class="m-nav__link-icon">
-                        <img *ngIf="!chatConnected" src="./assets/common/images/loading.gif" style="width: 23px;" tooltip="{{l('ChatIsConnecting')}}" placement="left"/>
+                        <img *ngIf="!chatConnected" src="./assets/common/images/loading.gif" style="width: 23px;" [tooltip]="ls.l('ChatIsConnecting')" placement="left"/>
                     </span>
                 </a>
             </li>
-            <li [hidden]="!chatEnabled || !chatConnected || !layoutService.showChatButton" id="m_quick_sidebar_toggle" class="m-nav__item m-topbar__notifications m-topbar__notifications--img m-dropdown m-dropdown--large m-dropdown--header-bg-fill m-dropdown--arrow m-dropdown--align-center 	m-dropdown--mobile-full-width">
+            <li [hidden]="!chatEnabled || !chatConnected || !layoutService.showChatButton"
+                id="m_quick_sidebar_toggle"
+                class="m-nav__item m-topbar__notifications m-topbar__notifications--img m-dropdown m-dropdown--large m-dropdown--header-bg-fill m-dropdown--arrow m-dropdown--align-center 	m-dropdown--mobile-full-width">
                 <a href="javascript:;" class="m-nav__link m-dropdown__toggle">
                     <span class="m-nav__link-icon">
                         <img [src]="'./assets/common/icons/feedback' + (customLayoutType ? '-' + customLayoutType: '')  + '.svg'">

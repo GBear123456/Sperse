@@ -10,5 +10,5 @@ export const getAssignedUsers = createSelector(
 
 export const getContactGroupAssignedUsers = createSelector(
     getAssignedUsers,
-    (states, props) => states[props.contactGroup]
+    (groups, props) => groups[props.contactGroup]
 );

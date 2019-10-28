@@ -34,6 +34,7 @@ import { CfoConfig } from '@app/cfo/cfo.config';
 import { CfoPortalConfig } from '@app/cfo-portal/cfo-portal.config';
 import { PfmConfig } from '@app/pfm/pfm.config';
 import { BehaviorSubject } from '@node_modules/rxjs';
+import { SliceConfig } from '@app/shared/common/slice/slice.config';
 
 @Injectable()
 export class AppService extends AppServiceBase {
@@ -154,8 +155,7 @@ export class AppService extends AppServiceBase {
                     name: 'Slice',
                     showDescription: false,
                     showInDropdown: true,
-                    focusItem: true,
-                    isComingSoon: true
+                    focusItem: true
                 },
                 {
                     name: 'Store',
@@ -169,7 +169,8 @@ export class AppService extends AppServiceBase {
                 crm: CrmConfig,
                 cfo: CfoConfig,
                 cfoPortal: CfoPortalConfig,
-                pfm: PfmConfig
+                pfm: PfmConfig,
+                slice: SliceConfig
             },
         );
 

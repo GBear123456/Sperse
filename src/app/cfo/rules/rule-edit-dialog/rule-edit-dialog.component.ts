@@ -79,10 +79,10 @@ export class RuleDialogComponent implements OnInit, AfterViewInit {
                             this.cfoService.instanceId,
                             CreateRuleDto.fromJS(this.getDataObject()));
                     request$.pipe(finalize(() => {
-                                this.modalDialog.finishLoading();
-                                event.target.disabled = false;
-                            }))
-                            .subscribe(this.updateDataHandler.bind(this));
+                        this.modalDialog.finishLoading();
+                        event.target.disabled = false;
+                    }))
+                    .subscribe(this.updateDataHandler.bind(this));
                 }
             }
         }
@@ -213,20 +213,24 @@ export class RuleDialogComponent implements OnInit, AfterViewInit {
                                         descriptorAttributeTypeId: this.transactionAttributeTypes[this.descriptor] ? this.descriptor : undefined,
                                         suppressCashflowMismatch: suppressCashflowTypeMismatch
                                     })
-                                ).pipe(finalize(() => {
-                                    this.modalDialog.finishLoading();
-                                    event.target.disabled = false;
-                                }))
-                                    .subscribe(this.updateDataHandler.bind(this));
+                                ).pipe(
+                                    finalize(() => {
+                                        this.modalDialog.finishLoading();
+                                        event.target.disabled = false;
+                                    })
+                                ).subscribe(this.updateDataHandler.bind(this));
                             };
 
                             if (this.data.categoryCashflowTypeId && _.some(this.data.transactions, x => x.CashFlowTypeId != this.data.categoryCashflowTypeId)) {
-                                abp.message.confirm(this.ls.l('RuleDialog_ChangeCashTypeMessage'), this.ls.l('RuleDialog_ChangeCashTypeTitle'),
+                                abp.message.confirm(
+                                    this.ls.l('RuleDialog_ChangeCashTypeMessage'),
+                                    this.ls.l('RuleDialog_ChangeCashTypeTitle'),
                                     (result) => {
                                         if (result) {
                                             updateTransactionCategoryMethod(true);
                                         }
-                                    });
+                                    }
+                                );
                             } else {
                                 updateTransactionCategoryMethod(false);
                             }

@@ -131,7 +131,6 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     });
     filterModelRating: FilterModel;
     filterModelStar: FilterModel;
-
     assignedUsersSelector = select(ContactAssignedUsersStoreSelectors.getContactGroupAssignedUsers, { contactGroup: ContactGroup.Client });
     contactStatus = ContactStatus;
     selectedClientKeys: any = [];
@@ -241,8 +240,22 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             }
         ]
     };
-    private dataLayoutType: BehaviorSubject<DataLayoutType> = new BehaviorSubject(DataLayoutType.DataGrid);
+    private dataLayoutType: BehaviorSubject<DataLayoutType> = new BehaviorSubject(
+        this.isSlice ? DataLayoutType.PivotGrid : DataLayoutType.DataGrid
+    );
     dataLayoutType$: Observable<DataLayoutType> = this.dataLayoutType.asObservable();
+    hideDataGrid$: Observable<boolean> = this.dataLayoutType$.pipe(map((dataLayoutType: DataLayoutType) => {
+        return dataLayoutType !== DataLayoutType.DataGrid;
+    }));
+    hidePivotGrid$: Observable<boolean> = this.dataLayoutType$.pipe(map((dataLayoutType: DataLayoutType) => {
+        return dataLayoutType !== DataLayoutType.PivotGrid;
+    }));
+    hideChart$: Observable<boolean> = this.dataLayoutType$.pipe(map((dataLayoutType: DataLayoutType) => {
+        return dataLayoutType !== DataLayoutType.Chart;
+    }));
+    hideMap$: Observable<boolean> = this.dataLayoutType$.pipe(map((dataLayoutType: DataLayoutType) => {
+        return dataLayoutType !== DataLayoutType.Map;
+    }));
     private _refresh: BehaviorSubject<null> = new BehaviorSubject<null>(null);
     private refresh$: Observable<null> = this._refresh.asObservable();
     mapDataIsLoading = false;
@@ -331,7 +344,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             store: {
                 key: 'Id',
                 type: 'odata',
-                url: this.getODataUrl(this.dataSourceURI, this.filtersService.filterByStatus(this.filterModelStatus)),
+                url: this.getODataUrl(this.dataSourceURI, FiltersService.filterByStatus(this.filterModelStatus)),
                 version: AppConsts.ODataVersion,
                 deserializeDates: false,
                 beforeSend: (request) => {
@@ -355,6 +368,10 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         });
         this.getOrganizationUnits();
         this.activate();
+    }
+
+    get isSlice() {
+        return this.appService.getModule() === 'slice';
     }
 
     private getOrganizationUnits() {
@@ -779,7 +796,16 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 locateInMenu: 'auto',
                 items: [
                     { name: 'showCompactRowsHeight', action: DataGridService.showCompactRowsHeight.bind(this, this.dataGrid, true) },
-                    { name: 'columnChooser', action: DataGridService.showColumnChooser.bind(this, this.dataGrid) }
+                    {
+                        name: 'columnChooser',
+                        action: () => {
+                            if (this.showDataGrid) {
+                                DataGridService.showColumnChooser.bind(this, this.dataGrid);
+                            } else if (this.showPivotGrid) {
+                                this.pivotGridComponent.toggleFieldPanel();
+                            }
+                        }
+                    }
                 ]
             },
             {
@@ -866,6 +892,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     }
 
     toggleDataLayout(dataLayoutType: DataLayoutType) {
+        this.crmService.handleModuleChange(dataLayoutType);
         this.selectedClientKeys = [];
         this.dataLayoutType.next(dataLayoutType);
         this.initDataSource();
@@ -1032,15 +1059,13 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
 
     activate() {
         super.activate();
+        this.crmService.handleModuleChange(this.dataLayoutType.value);
         this.lifeCycleSubjectsService.activate.next();
-
         this.paramsSubscribe();
         this.initFilterConfig();
         this.initToolbarConfig();
-
         this.rootComponent = this.getRootComponent();
         this.rootComponent.overflowHidden(true);
-
         if (this.dependencyChanged)
             this.refresh();
 

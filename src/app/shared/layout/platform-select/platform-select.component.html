@@ -16,7 +16,7 @@
                                 {{item.name}}
                             </h2>
                             <div class="top__item_descr">
-                                {{l(item.code + 'ModuleDescription')}}
+                                {{ls.l(item.code + 'ModuleDescription')}}
                             </div>
                             <div class="top__item_image-wrapper">
                                 <img src="./assets/common/images/platform-select/{{ item.name | lowercase }}.png"
@@ -40,7 +40,7 @@
                            [class]="isDisabled(item.name) || item.isComingSoon ? 'menu__link disabled' : 'menu__link'">
                             <h2 class="menu__item_title">{{item.name}}</h2>
                             <div class="menu__item_descr">
-                                {{l(item.code + 'ModuleDescription')}}
+                                {{ls.l(item.code + 'ModuleDescription')}}
                             </div>
                             <div class="coming-soon" *ngIf="item.isComingSoon">
                                 Coming soon...
@@ -54,7 +54,7 @@
                 <ul class="footer__items">
                     <li class="footer__item {{item.code | lowercase }}" *ngFor="let item of modules.footerItems">
                         <a class="footer__link" (click)="onItemClick(item)">
-                            {{l(item.name + 'FooterModuleText')}}
+                            {{ls.l(item.name + 'FooterModuleText')}}
                         </a>
                     </li>
                 </ul>

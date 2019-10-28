@@ -32,6 +32,7 @@ import { ProfileService } from '@shared/common/profile-service/profile.service';
 import { AppPermissions } from '@shared/AppPermissions';
 import { FullScreenService } from '@shared/common/fullscreen/fullscreen.service';
 import { FilterModel } from '@shared/filters/models/filter.model';
+import { TitleService } from '@shared/common/title/title.service';
 
 export abstract class AppComponentBase implements OnDestroy {
     @HostBinding('class.fullscreen') public isFullscreenMode;
@@ -61,6 +62,7 @@ export abstract class AppComponentBase implements OnDestroy {
     appUrlService: AppUrlService;
     localizationService: AppLocalizationService;
     oDataService: ODataService;
+    titleService: TitleService;
     protected _activatedRoute: ActivatedRoute;
     protected _router: Router;
     get componentIsActivated(): boolean {
@@ -117,6 +119,7 @@ export abstract class AppComponentBase implements OnDestroy {
         this.profileService = _injector.get(ProfileService);
         this.userTimezone = this.getUserTimezone();
         this.fullScreenService = _injector.get(FullScreenService);
+        this.titleService = _injector.get(TitleService);
         this.fullScreenService.isFullScreenMode$
             .pipe(takeUntil(this.destroy$))
             .subscribe((isFullScreenMode: boolean) => {
@@ -206,8 +209,7 @@ export abstract class AppComponentBase implements OnDestroy {
     }
 
     protected setTitle(moduleName: string) {
-        let rootComponent: any = this.getRootComponent();
-        rootComponent.setTitle(this.appSession.tenantName, moduleName);
+        this.titleService.setTitle(moduleName);
     }
 
     protected setGridDataLoaded() {

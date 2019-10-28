@@ -36,6 +36,7 @@ import { FaviconService } from '@shared/common/favicon-service/favicon.service';
 import { ProfileService } from '@shared/common/profile-service/profile.service';
 import { BugsnagService } from '@shared/common/bugsnag/bugsnag.service';
 import { FullScreenService } from '@shared/common/fullscreen/fullscreen.service';
+import { TitleService } from '@shared/common/title/title.service';
 
 export function errorHandlerFactory(
     bugsnagService: BugsnagService
@@ -182,6 +183,7 @@ function handleLogoutRequest(authService: AppAuthService) {
         ProfileService,
         AppHttpConfiguration,
         AppHttpInterceptor,
+        TitleService,
         FullScreenService,
         {
             provide: CacheStorageAbstract,

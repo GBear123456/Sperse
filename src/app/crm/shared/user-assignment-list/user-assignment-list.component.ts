@@ -1,8 +1,9 @@
 /** Core imports */
-import { Component, Injector, OnInit, Input, EventEmitter, Output } from '@angular/core';
+import { Component, Injector, Input, EventEmitter, Output } from '@angular/core';
 
 /** Third party imports */
 import { Store } from '@ngrx/store';
+import { Observable } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 import * as _ from 'underscore';
 
@@ -21,7 +22,7 @@ import { AppPermissions } from '@shared/AppPermissions';
     templateUrl: './user-assignment-list.component.html',
     styleUrls: ['./user-assignment-list.component.less']
 })
-export class UserAssignmentComponent extends AppComponentBase implements OnInit {
+export class UserAssignmentComponent extends AppComponentBase {
     @Input() multiSelection = false;
     @Input() filterModel: any;
     @Input() selectedKeys: any;
@@ -37,7 +38,11 @@ export class UserAssignmentComponent extends AppComponentBase implements OnInit 
         this.selectedItemKeys = this.multiSelection ? value : [value];
     }
     @Input() proxyService: any;
-    @Input() assignedUsersSelector;
+    @Input() set assignedUsersSelector(value: (source$: Observable<any>) => Observable<any>) {
+        if (value) {
+            this.refreshList(value);
+        }
+    }
     @Output() selectedItemKeyChange = new EventEmitter();
     @Output() onSelectionChanged: EventEmitter<any> = new EventEmitter();
     private selectedItemKeys = [];
@@ -45,18 +50,16 @@ export class UserAssignmentComponent extends AppComponentBase implements OnInit 
     listComponent: any;
     tooltipVisible = false;
     isRelatedUser = false;
-
     noPhotoUrl = AppConsts.imageUrls.noPhoto;
 
     constructor(
         injector: Injector,
-        private _appStoreService: AppStoreService,
-        private _filtersService: FiltersService,
+        private appStoreService: AppStoreService,
+        private filtersService: FiltersService,
         private store$: Store<AppStore.State>,
     ) {
         super(injector);
-
-        _appStoreService.dispatchUserAssignmentsActions(Object.keys(ContactGroup));
+        appStoreService.dispatchUserAssignmentsActions(Object.keys(ContactGroup));
     }
 
     private moveSelectedItemsToTop() {
@@ -142,29 +145,24 @@ export class UserAssignmentComponent extends AppComponentBase implements OnInit 
         this.listComponent = $event.component;
     }
 
-    ngOnInit() {
-        this.refreshList();
-    }
-
-    refreshList() {
-        if (this.assignedUsersSelector)
-            this.store$.pipe(this.assignedUsersSelector).subscribe((result) => {
-                if (this.selectedKeys && this.selectedKeys.length && result && this.proxyService)
-                    this.proxyService.getRelatedAssignableUsers(this.selectedKeys[0], true).subscribe((res) => {
-                        if (res && res.length) {
-                            res.forEach((user) => {
-                                this.isRelatedUser = this.isRelatedUser ||
-                                    (user.id == abp.session.userId);
-                                if (!_.findWhere(this.list, { id: user.id }))
-                                    this.list.unshift(user);
-                            });
-                            if (!this.checkPermissions() && this.isRelatedUser)
-                                this.list = res;
-                        }
-                    });
-                if (result && result instanceof Array)
-                    this.list = result.slice(0);
-            });
+    refreshList(assignedUsersSelector) {
+        this.store$.pipe(assignedUsersSelector).subscribe((result) => {
+            if (this.selectedKeys && this.selectedKeys.length && result && this.proxyService)
+                this.proxyService.getRelatedAssignableUsers(this.selectedKeys[0], true).subscribe((res) => {
+                    if (res && res.length) {
+                        res.forEach((user) => {
+                            this.isRelatedUser = this.isRelatedUser ||
+                                (user.id == abp.session.userId);
+                            if (!_.findWhere(this.list, { id: user.id }))
+                                this.list.unshift(user);
+                        });
+                        if (!this.checkPermissions() && this.isRelatedUser)
+                            this.list = res;
+                    }
+                });
+            if (result && result instanceof Array)
+                this.list = result.slice(0);
+        });
     }
 
     reset() {
@@ -206,10 +204,10 @@ export class UserAssignmentComponent extends AppComponentBase implements OnInit 
             event.target.parentNode.parentNode.parentNode.classList.add('filtered');
         }
 
-        this._filtersService.change(this.filterModel);
+        this.filtersService.change(this.filterModel);
     }
 
-    onContentReady($event) {
+    onContentReady() {
         this.highlightSelectedFilters();
         this.moveSelectedItemsToTop();
         this.disableInactiveUsers();

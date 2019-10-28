@@ -136,7 +136,6 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
     affiliateCode$: Observable<string> = this.affiliateCode.asObservable();
     affiliateCodeInplaceEditData$: Observable<InplaceEditModel> = this.affiliateCode$.pipe(
         map((affiliateCode: string) => {
-            console.log(this.manageAllowed ? 'manage allowed' : 'manage not allowed');
             return {
                 id: this.contactId,
                 isReadOnlyField: !this.manageAllowed,

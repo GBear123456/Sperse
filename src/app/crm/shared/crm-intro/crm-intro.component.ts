@@ -19,7 +19,10 @@ import { AppFeatures } from '@shared/AppFeatures';
 @Component({
     selector: 'app-crm-intro',
     templateUrl: './crm-intro.component.html',
-    styleUrls: ['./crm-intro.component.less'],
+    styleUrls: [
+        '../../../../shared/common/styles/close-button.less',
+        './crm-intro.component.less'
+    ],
     animations: [appModuleAnimation()],
     providers: [RoleServiceProxy, UserServiceProxy]
 })

@@ -5,36 +5,8 @@
     position: relative;
     display: block;
     height: 100%;
-    .close-dialog {
-        position: absolute;
-        width: 42px;
-        height: 40px;
+    .close-button {
         top: 25px;
-        left: -42px;
-        cursor: pointer;
-        border-radius: 5px 0 0 5px;
-        border-right: none;
-        background-color: #FFF;
-        box-shadow: -2px 0 6px 0 rgba(0, 0, 0, 0.1);
-
-        &:before, &:after {
-            position: absolute;
-            top: 10px;
-            left: 20px;
-            content: ' ';
-            height: 20px;
-            width: 2px;
-            background-color: #1b1b1b;
-        }
-        &:before {
-            transform: rotate(45deg);
-        }
-        &:after {
-            transform: rotate(-45deg);
-        }
-        &:hover {
-            opacity: 1;
-        }
     }
 
     .mat-dialog-header {

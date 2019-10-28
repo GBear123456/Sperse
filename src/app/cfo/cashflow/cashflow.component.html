@@ -43,7 +43,7 @@
                 <dx-button *ngIf="detailsContainsForecasts" [disabled]="!isInstanceAdmin || !detailsSomeForecastsItemsSelected" [text]="'x ' + l('DeleteSelectedForecasts')" (onClick)="deleteSelectedForecasts()"></dx-button>
                 <dx-button *ngIf="searchValue?.length" class="search-value-btn" [text]="searchValue" [visible]="!cashflowService.showAllVisible" (onClick)="refreshTransactionDetail(false)"></dx-button>
                 <dx-button class="showall-btn" [text]="l('Show all')" [visible]="cashflowService.showAllVisible" (onClick)="refreshTransactionDetail(true)" [disabled]="cashflowService.showAllDisable"></dx-button>
-                <dx-button *ngIf="!hasStaticInstance" class="reclassify-btn" [text]="l('Reclassify')" [disabled]="!_cfoService.classifyTransactionsAllowed || !detailsSomeHistoricalItemsSelected" (onClick)="reclassifyTransactions()"></dx-button>
+                <dx-button *ngIf="!hasStaticInstance" class="reclassify-btn" [text]="l('Reclassify')" [disabled]="!_cfoService.classifyTransactionsAllowed() || !detailsSomeHistoricalItemsSelected" (onClick)="reclassifyTransactions()"></dx-button>
             </div>
         </div>
 

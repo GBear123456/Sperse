@@ -66,7 +66,7 @@
                 <div class="category-hover"></div>
                 <span> {{ cell.text }} </span>
                 <div class="category-drop-area">
-                    <div *ngIf="isInstanceAdmin || _cfoService.classifyTransactionsAllowed" class="category-drop-add-rule">{{l('AddRule')}}</div>
+                    <div *ngIf="isInstanceAdmin || _cfoService.classifyTransactionsAllowed()" class="category-drop-add-rule">{{l('AddRule')}}</div>
                 </div>
             </ng-container>
         </div>

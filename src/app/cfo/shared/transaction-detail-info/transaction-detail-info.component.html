@@ -105,7 +105,7 @@
                         </span>
                     </div>
                     <div class="add-comment">
-                        <a (click)="inPlaceCreateComment($event)" *ngIf="!newComment.inplaceEdit">
+                        <a (click)="inPlaceCreateComment()" *ngIf="!newComment.inplaceEdit">
                             {{ls.l("TransactionDetail_Add_comment")}} <i class="plus">+</i>
                         </a>
                         <span *ngIf="newComment.inplaceEdit" class="inplace-edit-wrapper">

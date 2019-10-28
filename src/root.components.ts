@@ -1,14 +1,16 @@
+/** Core imports */
 import { Component, Inject, ElementRef, AfterViewInit, OnInit } from '@angular/core';
-import { Title } from '@angular/platform-browser';
 import { DOCUMENT } from '@angular/common';
 
+/** Third party imports */
+import kebabCase from 'lodash/kebabCase';
+import * as _ from 'underscore';
+
+/** Core imports */
 import { AppConsts } from '@shared/AppConsts';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { AppUiCustomizationService } from '@shared/common/ui/app-ui-customization.service';
 import { LayoutType } from '@shared/service-proxies/service-proxies';
-
-import kebabCase from 'lodash/kebabCase';
-import * as _ from 'underscore';
 
 /*
 	Root Document Component (Body Selector)
@@ -18,18 +20,18 @@ import * as _ from 'underscore';
     template: '<app-root></app-root>'
 })
 export class RootComponent implements AfterViewInit {
-    constructor(@Inject(DOCUMENT) private document,
-                public hostElement: ElementRef,
-                private _uiCustomizationService: AppUiCustomizationService,
-                private title: Title
+    constructor(
+        @Inject(DOCUMENT) private document,
+        public hostElement: ElementRef,
+        private uiCustomizationService: AppUiCustomizationService
     ) {
         this.pageHeaderFixed(true);
     }
 
     public checkSetClasses(loggedUser) {
         let classList = this.hostElement.nativeElement.classList,
-            loggedClass = this._uiCustomizationService.getAppModuleBodyClass().split(' ').filter(Boolean),
-            accountClass = this._uiCustomizationService.getAccountModuleBodyClass().split(' ').filter(Boolean);
+            loggedClass = this.uiCustomizationService.getAppModuleBodyClass().split(' ').filter(Boolean),
+            accountClass = this.uiCustomizationService.getAccountModuleBodyClass().split(' ').filter(Boolean);
         classList.remove.apply(classList, accountClass.concat(accountClass));
         classList.add.apply(classList, loggedUser ? loggedClass : accountClass);
     }
@@ -72,14 +74,6 @@ export class RootComponent implements AfterViewInit {
         this.document.head.append(link);
     }
 
-    public setTitle(tenantName: string, moduleName: string) {
-        let newTitle = (tenantName === '' ? AppConsts.defaultTenantName : tenantName) + ': ' + moduleName,
-            ogTitle = document.head.querySelector('meta[property="og:title"]');
-        if (ogTitle)
-            ogTitle.setAttribute('content', newTitle);
-        this.title.setTitle(newTitle);
-    }
-
     ngAfterViewInit() {
         this.checkSetClasses(abp.session.userId);
     }
@@ -94,8 +88,10 @@ export class RootComponent implements AfterViewInit {
     styleUrls: ['./root.component.less']
 })
 export class AppRootComponent implements OnInit {
-    constructor(@Inject(AppSessionService) private SS,
-                @Inject(RootComponent) private parent) {}
+    constructor(
+        @Inject(AppSessionService) private SS,
+        @Inject(RootComponent) private parent
+    ) {}
 
     ngOnInit() {
         if (abp && abp.setting && abp.setting.values && abp.setting.values['Integrations:Google:MapsJavascriptApiKey'] && this.SS.userId)

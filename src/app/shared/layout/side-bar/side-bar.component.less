@@ -10,7 +10,7 @@
             top: 0;
             height: 100vh;
 
-            .close-details {
+            .close-button {
                 display: none;
             }
         }
@@ -73,7 +73,7 @@
 
         &:before {
             content: "";
-            background: url('../../../assets/common/icons/search-icon.svg');
+            background: url('../../../../assets/common/icons/search-icon.svg');
             text-decoration: inherit;
             position: absolute;
             font-size: 20px;
@@ -171,7 +171,7 @@
                     &:after {
                         content: '';
                         display: block;
-                        background: url('../../../assets/common/icons/down-arrow-icon.svg');
+                        background: url('../../../../assets/common/icons/down-arrow-icon.svg');
                         position: absolute;
                         width: 8px;
                         height: 4px;
@@ -251,7 +251,7 @@
                         text-align: right;
                         line-height: 1.4;
                         color: #686f76;
-                        background: url('../../../assets/common/icons/right-arrow-icon.svg') right center no-repeat;
+                        background: url('../../../../assets/common/icons/right-arrow-icon.svg') right center no-repeat;
 
                         &::before {
                             opacity: 0;
@@ -311,40 +311,11 @@
         border: 1px solid #dfdfdf;
         background-color: #fff;
 
-        .close-details {
-            position: absolute;
-            width: 42px;
-            height: 40px;
+        .close-button {
             top: 15px;
+            left: initial;
             right: -42px;
             transform: rotate(180deg);
-            cursor: pointer;
-            border-radius: 5px 0px 0px 5px;
-            border-right: none;
-            background-color: #FFF;
-            box-shadow: -2px 0px 6px 0 rgba(0, 0, 0, 0.1);
-
-            &:before, &:after {
-                position: absolute;
-                top: 10px;
-                left: 20px;
-                content: ' ';
-                height: 20px;
-                width: 2px;
-                background-color: #1b1b1b;
-            }
-
-            &:before {
-                transform: rotate(45deg);
-            }
-
-            &:after {
-                transform: rotate(-45deg);
-            }
-
-            &:hover {
-                opacity: 1;
-            }
         }
     }
 

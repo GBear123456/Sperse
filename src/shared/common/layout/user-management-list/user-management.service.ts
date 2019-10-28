@@ -14,17 +14,17 @@ import {
     LayoutType,
     UpdateProfilePictureInput, UserLinkServiceProxy
 } from 'shared/service-proxies/service-proxies';
-import { LinkedAccountsModalComponent } from 'app/shared/layout/linked-accounts-modal.component';
+import { LinkedAccountsModalComponent } from 'app/shared/layout/linked-accounts-modal/linked-accounts-modal.component';
 import { filter } from '@node_modules/rxjs/operators';
 import { StringHelper } from 'shared/helpers/StringHelper';
 import { AppConsts } from 'shared/AppConsts';
 import { ChangePasswordModalComponent } from 'app/shared/layout/profile/change-password-modal.component';
 import { ImpersonationService } from 'app/admin/users/impersonation.service';
 import { AppAuthService } from 'shared/common/auth/app-auth.service';
-import { LoginAttemptsModalComponent } from 'app/shared/layout/login-attempts-modal.component';
+import { LoginAttemptsModalComponent } from 'app/shared/layout/login-attempts-modal/login-attempts-modal.component';
 import { UserHelper } from 'app/shared/helpers/UserHelper';
 import { AppSessionService } from 'shared/common/session/app-session.service';
-import { LinkedAccountService } from 'app/shared/layout/linked-account.service';
+import { LinkedAccountService } from 'app/shared/layout/linked-accounts-modal/linked-account.service';
 import { Observable } from '@node_modules/rxjs';
 import { FeatureCheckerService } from '@abp/features/feature-checker.service';
 import { AbpSessionService } from '@abp/session/abp-session.service';
