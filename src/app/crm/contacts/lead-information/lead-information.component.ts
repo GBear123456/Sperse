@@ -14,13 +14,14 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { ActivatedRoute } from '@angular/router';
 import {
     ApplicationServiceProxy, LeadServiceProxy, LeadInfoDto, UpdateContactOrganizationUnitInput,
-    ContactInfoDto, ContactServiceProxy, UpdateLeadInfoInput, OrganizationUnitShortDto
+    ContactInfoDto, ContactServiceProxy, UpdateLeadInfoInput, OrganizationUnitShortDto, UpdateSourceContactInput
 } from '@shared/service-proxies/service-proxies';
 import { ContactsService } from '../contacts.service';
 import { AppConsts } from '@shared/AppConsts';
 import { AppPermissions } from '@shared/AppPermissions';
 import { CrmStore, OrganizationUnitsStoreActions, OrganizationUnitsStoreSelectors } from '@app/crm/store';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
+import { SourceContactListComponent } from '../source-contact-list/source-contact-list.component';
 
 @Component({
     selector: 'lead-information',
@@ -29,6 +30,7 @@ import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/life
     providers: [ ApplicationServiceProxy, LifecycleSubjectsService ]
 })
 export class LeadInformationComponent extends AppComponentBase implements OnInit, OnDestroy {
+    @ViewChild(SourceContactListComponent) sourceComponent: SourceContactListComponent;
     @ViewChild('loaderWrapper') loaderWrapper: ElementRef;
     data: {
         contactInfo: ContactInfoDto,
@@ -47,7 +49,9 @@ export class LeadInformationComponent extends AppComponentBase implements OnInit
     private formatting = AppConsts.formatting;
     private _selectedTabIndex = 0;
     private readonly APP_TAB_INDEX = 1;
+    private organizationUnits: any;
 
+    isCGManageAllowed = false;
     isEditAllowed = false;
     startCase = startCase;
     upperCase = upperCase;
@@ -55,7 +59,8 @@ export class LeadInformationComponent extends AppComponentBase implements OnInit
     stages: any[];
     types: any[];
     sources: any[];
-
+    sourceContactId: number;
+    sourceContactName: string;
     layoutColumns: any[] = [
         {
             sections: [
@@ -92,11 +97,11 @@ export class LeadInformationComponent extends AppComponentBase implements OnInit
             sections: [
                 {
                     name: 'Campaign',
-                    items: [ { name: 'campaignCode' }, { name: 'affiliateCode' }, { name: 'channelCode' } ]
+                    items: [ { name: 'campaignCode' }, { name: 'affiliateCode' }, { name: 'partnerSource' }, { name: 'channelCode' } ]
                 },
                 {
                     name: 'Comments',
-                    items: [ { name: 'comments', hideLabel: true} ]
+                    items: [ { name: 'comments', hideLabel: true } ]
                 }
             ]
         }
@@ -132,6 +137,7 @@ export class LeadInformationComponent extends AppComponentBase implements OnInit
         this.data = this.contactProxy['data'];
         this.contactsService.contactInfoSubscribe(contactInfo => {
             this.data.contactInfo = contactInfo;
+            this.sourceContactId = contactInfo.sourceContactId;
             this.showApplicationAllowed = this.isGranted(AppPermissions.PFMApplicationsViewApplications) &&
                 contactInfo.personContactInfo.userId && contactInfo.groupId == ContactGroup.Client;
         }, this.constructor.name);
@@ -145,9 +151,10 @@ export class LeadInformationComponent extends AppComponentBase implements OnInit
             takeUntil(this.lifeCycleService.destroy$),
             filter(Boolean)
         ).subscribe((organizationUnits: OrganizationUnitShortDto[]) => {
+            this.organizationUnits = organizationUnits;
             this.contactsService.leadInfoSubscribe(leadInfo => {
-                this.isEditAllowed = leadInfo && leadInfo.id &&
-                    this.contactsService.checkCGPermission(this.data.contactInfo.groupId);
+                this.isCGManageAllowed = this.contactsService.checkCGPermission(this.data.contactInfo.groupId);
+                this.isEditAllowed = leadInfo && leadInfo.id && this.isCGManageAllowed;
                 this.contactsService.orgUnitsUpdate({
                     allOrganizationUnits: organizationUnits,
                     selectedOrgUnits: [organizationUnits.find((organizationUnit: OrganizationUnitShortDto) => {
@@ -209,6 +216,39 @@ export class LeadInformationComponent extends AppComponentBase implements OnInit
 
     formatFieldValue(value) {
         return value instanceof moment ? value.format(this.formatting.dateMoment) : value;
+    }
+
+    onSourceContactLoaded(contacts) {
+        let contact = contacts.find(item => 
+            item.id == this.sourceContactId);
+        if (contact)
+            this.sourceContactName = contact.name;
+    }
+
+    onSourceContactChanged(event) {
+        if (this.sourceContactId == event.id)
+            event = {id: undefined, name: undefined};
+
+        let prevName = this.sourceContactName;
+        this.sourceContactName = event.name;
+        this.contactProxy.updateSourceContact(
+            new UpdateSourceContactInput({
+                contactId: this.data.contactInfo.id,
+                sourceContactId: event.id
+            })
+        ).subscribe((orgUnitId) => {
+            this.contactsService.orgUnitsUpdate({
+                allOrganizationUnits: this.organizationUnits,
+                selectedOrgUnits: [orgUnitId]
+            });
+
+            this.sourceContactId = event.id;
+            this.notify.info(this.l('SavedSuccessfully'));
+        }, () => {
+            this.sourceContactName = prevName;
+            this.notify.error(this.l('AnErrorOccurred'));
+        });
+        this.sourceComponent.toggle();
     }
 
     ngOnDestroy() {

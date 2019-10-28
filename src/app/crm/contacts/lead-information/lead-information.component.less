@@ -38,6 +38,18 @@
     .section-item {
         display: flex;
         line-height: 35px;
+        a {
+            font-size: 12px;
+            font-style: italic;
+            font-weight: 200;
+            &.selected {
+                font-size: 14px;
+                color: #00aeef;
+                text-decoration: underline;
+                font-style: normal;
+                font-weight: normal;
+            }
+        }        
         .item-link {
             cursor: pointer;
             text-decoration: underline;
