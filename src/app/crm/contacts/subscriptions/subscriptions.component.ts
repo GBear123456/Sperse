@@ -4,7 +4,7 @@ import { Component, OnInit, Injector, ViewChild } from '@angular/core';
 /** Third party imports */
 import DataSource from 'devextreme/data/data_source';
 import { MatDialog } from '@angular/material';
-import { map } from 'rxjs/operators';
+import { map, first } from 'rxjs/operators';
 import * as _ from 'underscore';
 
 /** Application imports */
@@ -14,6 +14,7 @@ import {
     NameValueDto,
     CommonLookupServiceProxy
 } from 'shared/service-proxies/service-proxies';
+import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 import { CommonLookupModalComponent } from '@app/shared/common/lookup/common-lookup-modal.component';
 import { ImpersonationService } from '@app/admin/users/impersonation.service';
 import { ContactsService } from '../contacts.service';
@@ -31,12 +32,14 @@ export class SubscriptionsComponent extends AppComponentBase implements OnInit {
         contactInfo: ContactInfoDto
     };
 
+    currency: string;
     public dataSource: DataSource;
     showAll = false;
     impersonateTenantId: number;
     permissions = AppPermissions;
     constructor(
         injector: Injector,
+        private invoicesService: InvoicesService,
         private _contactService: ContactServiceProxy,
         private _contactsService: ContactsService,
         private _orderSubscriptionService: OrderSubscriptionServiceProxy,
@@ -50,6 +53,7 @@ export class SubscriptionsComponent extends AppComponentBase implements OnInit {
                 this.refreshData(true);
             }
         });
+        invoicesService.settings$.pipe(first()).subscribe(res => this.currency = res.currency);
     }
 
     ngOnInit() {

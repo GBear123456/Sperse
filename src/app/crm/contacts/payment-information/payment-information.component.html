@@ -9,7 +9,7 @@
     <div class="balance">
         <div class="balanceAmount">
             <h4>{{ l('Balance') }}</h4>
-            {{ amountCurrency + (balanceAmount$ | async | number : '1.2-2') }}
+            {{ balanceAmount$ | async | currency:amountCurrency:'symbol': '1.2-2' }}
         </div>
         <ul class="balanceInfo">
             <li>
@@ -18,7 +18,7 @@
             </li>
             <li *ngIf="lastPaymentAmount">
                 <img src="./assets/common/icons/last-payment.svg">
-                {{ l('LastPayment', lastPaymentDate, amountCurrency, (lastPaymentAmount | number : '1.2-2')) }}
+                {{ l('LastPayment', lastPaymentDate, '', lastPaymentAmount | currency:amountCurrency:'symbol': '1.2-2') }}
             </li>
         </ul>
     </div>
@@ -30,7 +30,7 @@
                     <ul>
                         <li *ngFor="let payment of displayedPayments">
                             <span class="date">{{ formatDate(payment.startDate) + ' - ' + formatDate(payment.endDate) }}</span>
-                            <span class="amount">{{ amountCurrency + (payment.amount | number : '1.2-2') }}</span>
+                            <span class="amount">{{ payment.amount | currency:amountCurrency:'symbol': '1.2-2' }}</span>
                         </li>
                     </ul>
                     <button class="viewAllTransactions" *ngIf="displayedPayments.length < (payments$ | async)?.length" (click)="addNewPaymentMethod()" (click)="viewAllTransactions()">{{ l('ViewAllTransactions') }}</button>
