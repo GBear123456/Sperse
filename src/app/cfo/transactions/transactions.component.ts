@@ -206,11 +206,24 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     selectedDepartments$: Observable<string[]> = this.selectedDepartments.asObservable();
     categoriesFilter: FilterModel = new FilterModel({
         component: FilterCheckBoxesComponent,
-        field: 'CashflowCategoryId',
-        caption: 'TransactionCategory',
+        field: 'CategoryId',
+        caption: 'Category',
         items: {
             element: new FilterCheckBoxesModel({
                 dataSource$: this.categories$,
+                nameField: 'name',
+                keyExpr: 'id'
+            })
+        },
+        options: { method: 'filterByFilterElement' }
+    });
+    cashflowCategoriesFilter: FilterModel = new FilterModel({
+        component: FilterCheckBoxesComponent,
+        field: 'CashflowCategoryId',
+        caption: 'TransactionCategory',
+        hidden: true,
+        items: {
+            element: new FilterCheckBoxesModel({
                 selectedKeys$: this.selectedCategoriesIds$,
                 nameField: 'name',
                 keyExpr: 'id'
@@ -443,6 +456,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                     items: { from: new FilterItemModel(), to: new FilterItemModel() }
                 }),*/
                 this.categoriesFilter,
+                this.cashflowCategoriesFilter,
                 this.typesFilter,
                 this.classifiedFilter,
                 this.currencyFilter,
