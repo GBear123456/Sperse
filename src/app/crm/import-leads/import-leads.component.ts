@@ -27,7 +27,7 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { ZipCodeFormatterPipe } from '@shared/common/pipes/zip-code-formatter/zip-code-formatter.pipe';
 import {
     ImportItemInput, ImportInput, ImportPersonalInput, ImportBusinessInput, ImportFullName, ImportAddressInput,
-    ImportServiceProxy, ImportTypeInput, PartnerServiceProxy
+    ImportServiceProxy, ImportTypeInput, PartnerServiceProxy, GetImportStatusOutput
 } from '@shared/service-proxies/service-proxies';
 import { ImportLeadsService } from './import-leads.service';
 import { ImportStatus, ContactGroup } from '@shared/AppEnums';
@@ -238,7 +238,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
             this.selectedPartnerTypeName = null;
 
         this.userAssignmentComponent.assignedUsersSelector = this.getAssignedUsersSelector();
-        let contactGroupId = ContactGroup[this.importType == ImportTypeInput.Lead ? 'Client' : this.importType];
+        let contactGroupId = event.itemData.contactGroupId;
         if (contactGroupId != this.contactGroupId) {
             if (this.contactGroupId = contactGroupId)
                 this.getStages();
@@ -365,7 +365,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         this.wizard.reset(callback);
     }
 
-    updateImportStatus(res) {
+    updateImportStatus(res: GetImportStatusOutput) {
         this.importStatus = <ImportStatus>res.statusId;
         this.importedCount = res.importedCount;
         this.failedCount = res.failedCount;
@@ -382,9 +382,9 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
                     let leadsInput = this.createLeadsInput(data);
                     this.importProxy.import(leadsInput).pipe(
                         finalize(() => this.finishLoading(true))
-                    ).subscribe((importId) => {
+                    ).subscribe((importId: number) => {
                         if (importId && !isNaN(importId))
-                            this.importProxy.getStatuses(importId).subscribe((res) => {
+                            this.importProxy.getStatuses(importId).subscribe((res: GetImportStatusOutput[]) => {
                                 let importStatus  = res[0];
                                 this.updateImportStatus(importStatus);
                                 if (!this.showedFinishStep())
@@ -590,7 +590,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         this.initToolbarConfig();
     }
 
-    initToolbarConfig() {
+    private initToolbarConfig() {
         let disabledManage = !this.contactService.checkCGPermission(this.contactGroupId);
         this.toolbarConfig = [
             {
@@ -606,19 +606,16 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
                             selectedIndex: this.importTypeIndex,
                             hint: this.l('Import Type'),
                             items: Object.keys(ImportTypeInput)
-                                .map((type) => {
-                                    const text = this.l(type + 's');
-                                    const value = ImportTypeInput[type];
-                                    if (type == ImportTypeInput.Lead)
-                                        type = 'Client';
-                                    if (type == ImportTypeInput.Employee)
-                                        type = 'UserProfile';
+                                .map((importType: ImportTypeInput) => {
+                                    const text = this.l(importType + 's');
+                                    const contactGroup = this.importLeadsService.getContactGroupFromInputType(importType);
                                     return {
-                                        disabled: type == ImportTypeInput.Order
-                                            || !this.contactService.checkCGPermission(ContactGroup[type]),
+                                        disabled: importType == ImportTypeInput.Order
+                                            || !this.contactService.checkCGPermission(contactGroup),
                                         action: this.importTypeChanged.bind(this),
+                                        contactGroupId: contactGroup,
                                         text: text,
-                                        value: value
+                                        value: importType
                                     };
                                 })
                         }

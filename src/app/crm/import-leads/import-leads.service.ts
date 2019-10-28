@@ -1,28 +1,38 @@
 import { Injectable, Injector } from '@angular/core';
 import { ImportWizardService } from '@app/shared/common/import-wizard/import-wizard.service';
-import { ImportServiceProxy } from '@shared/service-proxies/service-proxies';
+import { ImportServiceProxy, ImportTypeInput } from '@shared/service-proxies/service-proxies';
+import { ContactGroup } from '@shared/AppEnums';
 
 @Injectable()
 export class ImportLeadsService {
     constructor(injector: Injector,
-        private _importWizardService: ImportWizardService,
-        private _importProxy: ImportServiceProxy
+        private importWizardService: ImportWizardService,
+        private importProxy: ImportServiceProxy
     ) {
-        _importWizardService.cancelListen((importIds) => {
+        importWizardService.cancelListen((importIds) => {
             if (importIds && importIds.length)
-                importIds.forEach((id) => _importProxy.cancel(id).subscribe());
-            else if (_importWizardService.activeImportId)
-                _importProxy.cancel(_importWizardService.activeImportId).subscribe(() => {
-                    _importWizardService.activeImportId = undefined;
+                importIds.forEach((id) => importProxy.cancel(id).subscribe());
+            else if (importWizardService.activeImportId)
+                importProxy.cancel(importWizardService.activeImportId).subscribe(() => {
+                    importWizardService.activeImportId = undefined;
                 });
         });
     }
 
-    setupImportCheck(importId = undefined, method = undefined, uri = 'leads') {
-        this._importWizardService.startStatusCheck(importId, method, uri);
+    setupImportCheck(importId?: number, method?: Function, uri = 'leads') {
+        this.importWizardService.startStatusCheck(importId, method, uri);
     }
 
     stopImportCheck() {
-        this._importWizardService.finishStatusCheck();
+        this.importWizardService.finishStatusCheck();
+    }
+
+    getContactGroupFromInputType(importType: ImportTypeInput): ContactGroup {
+        let contactGroup: ContactGroup = importType;
+        if (importType === ImportTypeInput.Lead)
+            contactGroup = 'Client';
+        if (importType === ImportTypeInput.Employee)
+            contactGroup = 'UserProfile';
+        return ContactGroup[contactGroup as string];
     }
 }
