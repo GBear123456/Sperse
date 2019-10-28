@@ -10,7 +10,7 @@ import * as _ from 'underscore' ;
 
 /** Application imports */
 import { AppServiceBase } from '@shared/common/app-service-base';
-import { PanelMenu } from 'app/shared/layout/panel-menu';
+import { PanelMenu } from '@app/shared/layout/top-bar/panel-menu';
 import { AppConsts } from '@shared/AppConsts';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import {

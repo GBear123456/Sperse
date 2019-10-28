@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, Injector, Input, EventEmitter, Output, ViewChild, 
+import { Component, Injector, Input, EventEmitter, Output, ViewChild,
     ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 
 /** Third party imports */
@@ -21,9 +21,9 @@ export class SourceContactListComponent {
     @ViewChild(StaticListComponent) sourceComponent: StaticListComponent;
     @Output() onItemSelected: EventEmitter<any> = new EventEmitter();
     @Output() onDataLoaded: EventEmitter<any> = new EventEmitter();
-    @Input() targetSelector: string = '#PartnersSource';
+    @Input() targetSelector = '#PartnersSource';
     @Input() selectedKey: number;
-    @Input() 
+    @Input()
     set contactId(value: number) {
         if (value && this._contactId != value) {
             this._contactId = value;
@@ -50,7 +50,7 @@ export class SourceContactListComponent {
                 this.onDataLoaded.emit(this.contacts = res);
                 this.changeDetectorRef.detectChanges();
             });
-    }    
+    }
 
     onSourceFiltered(event) {
         clearTimeout(this.lookupTimeout);
@@ -58,7 +58,7 @@ export class SourceContactListComponent {
             let value = this.getInputElementValue(event);
             this.loadSourceContacts(value, this.sourceComponent.dxList.instance.element());
         }, 600);
-    }    
+    }
 
     getInputElementValue(event) {
         return event.element.getElementsByTagName('input')[0].value;
