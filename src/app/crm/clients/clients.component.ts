@@ -1,7 +1,6 @@
 /** Core imports */
 import { Component, OnInit, OnDestroy, Injector, ViewChild } from '@angular/core';
-import { Location } from '@angular/common';
-import { ActivatedRoute, Router, RouteReuseStrategy } from '@angular/router';
+import { RouteReuseStrategy } from '@angular/router';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
@@ -245,6 +244,18 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         this.isSlice ? DataLayoutType.PivotGrid : DataLayoutType.DataGrid
     );
     dataLayoutType$: Observable<DataLayoutType> = this.dataLayoutType.asObservable();
+    hideDataGrid$: Observable<boolean> = this.dataLayoutType$.pipe(map((dataLayoutType: DataLayoutType) => {
+        return dataLayoutType !== DataLayoutType.DataGrid;
+    }));
+    hidePivotGrid$: Observable<boolean> = this.dataLayoutType$.pipe(map((dataLayoutType: DataLayoutType) => {
+        return dataLayoutType !== DataLayoutType.PivotGrid;
+    }));
+    hideChart$: Observable<boolean> = this.dataLayoutType$.pipe(map((dataLayoutType: DataLayoutType) => {
+        return dataLayoutType !== DataLayoutType.Chart;
+    }));
+    hideMap$: Observable<boolean> = this.dataLayoutType$.pipe(map((dataLayoutType: DataLayoutType) => {
+        return dataLayoutType !== DataLayoutType.Map;
+    }));
     private _refresh: BehaviorSubject<null> = new BehaviorSubject<null>(null);
     private refresh$: Observable<null> = this._refresh.asObservable();
     mapDataIsLoading = false;
@@ -313,9 +324,6 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         private sessionService: AppSessionService,
         private crmService: CrmService,
         private mapService: MapService,
-        private location: Location,
-        private router: Router,
-        private route: ActivatedRoute,
         public dialog: MatDialog,
         public appService: AppService,
         public contactProxy: ContactServiceProxy,
@@ -884,10 +892,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     }
 
     toggleDataLayout(dataLayoutType: DataLayoutType) {
-        this.crmService.handleModuleChange(
-            dataLayoutType,
-            this.router.createUrlTree(['.'], { relativeTo: this.route })
-        );
+        this.crmService.handleModuleChange(dataLayoutType);
         this.selectedClientKeys = [];
         this.dataLayoutType.next(dataLayoutType);
         this.initDataSource();
@@ -1054,15 +1059,13 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
 
     activate() {
         super.activate();
+        this.crmService.handleModuleChange(this.dataLayoutType.value);
         this.lifeCycleSubjectsService.activate.next();
-
         this.paramsSubscribe();
         this.initFilterConfig();
         this.initToolbarConfig();
-
         this.rootComponent = this.getRootComponent();
         this.rootComponent.overflowHidden(true);
-
         if (this.dependencyChanged)
             this.refresh();
 

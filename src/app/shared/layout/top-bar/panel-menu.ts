@@ -1,9 +1,9 @@
 ﻿import {PanelMenuItem} from './panel-menu-item';
 
 export class PanelMenu {
-    name: string = '';
-    text: string = '';
-    visible: boolean = true;
+    name = '';
+    text = '';
+    visible = true;
     items: PanelMenuItem[];
 
     constructor(name: string, text: string, items: PanelMenuItem[]) {

@@ -1,0 +1,33 @@
+<modal-dialog [title]="ls.l('LinkedAccounts')"
+              [buttons]="buttons"
+              [editTitle]="false"
+              [titleClearButton]="false"
+              [placeholder]="ls.l('LinkedAccounts')">
+    <dx-scroll-view showScrollbar="onHover">
+        <div class="content">
+            <form #linkAccountForm="ngForm" novalidate (ngSubmit)="save()">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <span>{{ls.l("LinkNewAccount")}}</span>
+                    </h5>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="TenancyName">{{ls.l("TenancyName")}}</label>
+                        <input id="TenancyName" #tenancyNameInput="ngModel" type="text" name="TenancyName" class="form-control" [ngClass]="{'edited': linkUser.tenancyName}" [(ngModel)]="linkUser.tenancyName" maxlength="64">
+                    </div>
+                    <div class="form-group">
+                        <label for="UserName">{{ls.l("UserName")}} *</label>
+                        <input id="UserName" #usernameOrEmailAddressInput="ngModel" class="form-control" type="text" name="UserName" [ngClass]="{'edited': linkUser.usernameOrEmailAddress}" [(ngModel)]="linkUser.usernameOrEmailAddress" required maxlength="256">
+                        <validation-messages [formCtrl]="usernameOrEmailAddressInput"></validation-messages>
+                    </div>
+                    <div class="form-group">
+                        <label for="Password">{{ls.l("Password")}} *</label>
+                        <input id="Password" #passwordInput="ngModel" type="password" [ngClass]="{'edited': linkUser.password}" name="Password" class="form-control" [(ngModel)]="linkUser.password" required maxlength="128">
+                        <validation-messages [formCtrl]="passwordInput"></validation-messages>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </dx-scroll-view>
+</modal-dialog>

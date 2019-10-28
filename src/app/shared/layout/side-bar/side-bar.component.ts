@@ -15,7 +15,7 @@ import { AppService } from '@app/app.service';
 @Component({
     templateUrl: './side-bar.component.html',
     styleUrls: [
-        '../../../shared/common/styles/close-button.less',
+        '../../../../shared/common/styles/close-button.less',
         './side-bar.component.less'
     ],
     selector: 'side-bar',

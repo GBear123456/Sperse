@@ -1,11 +1,12 @@
 /** Core imports */
-import { Component, Inject, ViewChild } from '@angular/core';
+import { Component, Inject, OnDestroy, ViewChild } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
-import { Router, NavigationEnd } from '@angular/router';
+import { Router, NavigationEnd, ActivatedRoute } from '@angular/router';
 
 /** Third party imports */
 import { DxNavBarComponent } from 'devextreme-angular/ui/nav-bar';
 import * as _ from 'underscore';
+import { filter, takeUntil } from 'rxjs/operators';
 
 /** Application imports */
 import { PanelMenu } from './panel-menu';
@@ -14,6 +15,7 @@ import { AppSessionService } from '@shared/common/session/app-session.service';
 import { AppService } from '@app/app.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
+import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 
 @Component({
     templateUrl: './top-bar.component.html',
@@ -21,9 +23,10 @@ import { AppPermissionService } from '@shared/common/auth/permission.service';
     selector: 'top-bar',
     host: {
         '(window:resize)': 'updateNavMenu()'
-    }
+    },
+    providers: [ LifecycleSubjectsService ]
 })
-export class TopBarComponent {
+export class TopBarComponent implements OnDestroy {
     @ViewChild(DxNavBarComponent) navBar: DxNavBarComponent;
 
     config: any = {};
@@ -41,16 +44,21 @@ export class TopBarComponent {
         private appSessionService: AppSessionService,
         private appService: AppService,
         private permissionChecker: AppPermissionService,
-        public router: Router,
+        private lifecycleService: LifecycleSubjectsService,
+        private router: Router,
+        private route: ActivatedRoute,
         public ls: AppLocalizationService,
         @Inject(DOCUMENT) private document: any
     ) {
-        this.router.events.subscribe(event => {
-            if (event instanceof NavigationEnd) {
+        window['t'] = this;
+        this.router.events
+            .pipe(
+                takeUntil(this.lifecycleService.destroy$),
+                filter(event => event instanceof NavigationEnd)
+            ).subscribe((event: any) => {
                 let currModuleName = (this.config.name || '').toLowerCase();
                 if (currModuleName && currModuleName != appService.getModule())
                     appService.initModule();
-
                 setTimeout(() => {
                     let route = event.urlAfterRedirects.split('?').shift();
                     this.menu.items.forEach((item, i) => {
@@ -58,15 +66,24 @@ export class TopBarComponent {
                             this.selectedIndex = i;
                     });
                 });
-            }
-        });
-
+            });
         this.appService.subscribeModuleChange((config) => {
             this.config = config;
             this.menu = new PanelMenu('MainMenu', 'MainMenu',
                 this.initMenu(config['navigation'], config['localizationSource'], 0)
             );
+            const selectedIndex = this.navbarItems.findIndex((navBarItem) => {
+                return navBarItem.route === this.router.url;
+            });
             this.navbarItems = this.menu.items;
+            this.selectedIndex = selectedIndex === -1 ? this.selectedIndex : selectedIndex;
+            if (this.navBar && this.navBar.instance) {
+                this.navBar.instance.option({
+                    'items': this.navbarItems,
+                    'selectedIndex': this.selectedIndex,
+                    'selectedItems': [this.navbarItems[this.selectedIndex]]
+                });
+            }
             this.appService.topMenu = this.menu;
         });
     }
@@ -177,5 +194,13 @@ export class TopBarComponent {
 
     showMenuItem(item: PanelMenuItem): boolean {
         return (!item.host || (abp.session.multiTenancySide == <any>abp.multiTenancy.sides[item.host.toUpperCase()])) && this.checkMenuItemPermission(item);
+    }
+
+    change(e) {
+        console.log(e);
+    }
+
+    ngOnDestroy() {
+        this.lifecycleService.destroy.next(null);
     }
 }

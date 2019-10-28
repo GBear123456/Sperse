@@ -17,8 +17,8 @@ import { ProfileService } from '@shared/common/profile-service/profile.service';
     selector: 'loginAttemptsModal',
     templateUrl: './login-attempts-modal.component.html',
     styleUrls: [
-        '../../../shared/metronic/m-alert.less',
-        '../../../shared/metronic/m-helpers.less',
+        '../../../../shared/metronic/m-alert.less',
+        '../../../../shared/metronic/m-helpers.less',
         './login-attempts-modal.component.less'
     ],
     providers: [ DialogService ],
@@ -30,21 +30,21 @@ export class LoginAttemptsModalComponent implements OnInit {
     profileThumbnailId: string;
 
     constructor(
-        private _userLoginService: UserLoginServiceProxy,
-        private _changeDetectorRef: ChangeDetectorRef,
-        private _appSession: AppSessionService,
+        private userLoginService: UserLoginServiceProxy,
+        private changeDetectorRef: ChangeDetectorRef,
+        private appSession: AppSessionService,
         public ls: AppLocalizationService,
         public profileService: ProfileService
     ) {}
 
     ngOnInit() {
         this.modalDialog.startLoading();
-        this._userLoginService.getRecentUserLoginAttempts()
+        this.userLoginService.getRecentUserLoginAttempts()
             .pipe(finalize(() => this.modalDialog.finishLoading()))
             .subscribe(result => {
                 this.userLoginAttempts = result.items;
-                this.profileThumbnailId = this._appSession.user.profileThumbnailId;
-                this._changeDetectorRef.detectChanges();
+                this.profileThumbnailId = this.appSession.user.profileThumbnailId;
+                this.changeDetectorRef.detectChanges();
             });
     }
 

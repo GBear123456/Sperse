@@ -23,7 +23,6 @@ import { TitleService } from '@shared/common/title/title.service';
 })
 export class PlatformSelectComponent {
     @HostBinding('class') public cssClass = '';
-    hoverModule = '';
     module = '';
     uri = '';
     modules = {
@@ -33,7 +32,7 @@ export class PlatformSelectComponent {
     };
     activeModuleCount = 0;
     permissions = AppPermissions;
-    private _dropDown: any;
+    private dropDown: any;
 
     constructor(
         private appService: AppService,
@@ -95,7 +94,6 @@ export class PlatformSelectComponent {
             this.module = config['name'];
             this.uri = appService.params.instance;
             this.cssClass = this.module.toLowerCase();
-            this.hoverModule = this.module;
             this.titleService.setTitle(config['name']);
         });
     }
@@ -113,7 +111,8 @@ export class PlatformSelectComponent {
                 const availableSliceLinks: string[] = ['leads', 'clients', 'partners'];
                 const group = availableSliceLinks.indexOf(lastSegment) > 0 ? lastSegment : 'leads';
                 navigate = this.router.navigate(
-                    ['/app/slice/' + group]
+                    ['/app/slice/' + group],
+                    { queryParams: { dataLayoutType: DataLayoutType.PivotGrid }}
                 );
             } else if (module.name === 'PFM' && module.footerItem) {
                 return window.open(location.origin + '/personal-finance', '_blank');
@@ -124,16 +123,16 @@ export class PlatformSelectComponent {
             } else {
                 navigate = this.router.navigate(['app/' + module.name.toLowerCase() + (module.uri ? '/' + module.uri.toLowerCase() : '')]);
             }
-            this._dropDown.option('disabled', true);
+            this.dropDown.option('disabled', true);
             navigate && navigate.then((result) => {
                 if (result) {
                     this.module = module.name;
                     this.uri = module.uri;
                     this.appService.switchModule(this.module, { instance: this.uri });
                 }
-                this._dropDown.option('disabled', false);
+                this.dropDown.option('disabled', false);
             });
-            this._dropDown.close();
+            this.dropDown.close();
         }
     }
 
@@ -142,6 +141,6 @@ export class PlatformSelectComponent {
     }
 
     onDropDownInit(event) {
-        this._dropDown = event.component;
+        this.dropDown = event.component;
     }
 }

@@ -6,7 +6,6 @@ import {
     Injector,
     ViewChild
 } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
@@ -116,6 +115,19 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         this.isSlice ? DataLayoutType.PivotGrid : DataLayoutType.DataGrid
     );
     dataLayoutType$: Observable<DataLayoutType> = this.dataLayoutType.asObservable();
+    hideDataGrid$: Observable<boolean> = this.dataLayoutType$.pipe(map((dataLayoutType: DataLayoutType) => {
+        return dataLayoutType !== DataLayoutType.DataGrid;
+    }));
+    hidePivotGrid$: Observable<boolean> = this.dataLayoutType$.pipe(map((dataLayoutType: DataLayoutType) => {
+        return dataLayoutType !== DataLayoutType.PivotGrid;
+    }));
+    hideChart$: Observable<boolean> = this.dataLayoutType$.pipe(map((dataLayoutType: DataLayoutType) => {
+        return dataLayoutType !== DataLayoutType.Chart;
+    }));
+    hideMap$: Observable<boolean> = this.dataLayoutType$.pipe(map((dataLayoutType: DataLayoutType) => {
+        return dataLayoutType !== DataLayoutType.Map;
+    }));
+
     private readonly dataSourceURI = 'Partner';
     private readonly groupDataSourceURI = 'PartnerSlice';
     private filters: FilterModel[];
@@ -316,13 +328,12 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         private crmService: CrmService,
         private impersonationService: ImpersonationService,
         private mapService: MapService,
-        private router: Router,
-        private route: ActivatedRoute,
         public dialog: MatDialog,
         public contactProxy: ContactServiceProxy,
         public userManagementService: UserManagementService,
     ) {
         super(injector);
+        window['t'] = this;
         this.dataSource = {
             store: {
                 key: 'Id',
@@ -440,10 +451,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     toggleDataLayout(dataLayoutType: DataLayoutType) {
-        this.crmService.handleModuleChange(
-            dataLayoutType,
-            this.router.createUrlTree(['.'], { relativeTo: this.route })
-        );
+        this.crmService.handleModuleChange(dataLayoutType);
         this.dataLayoutType.next(dataLayoutType);
         this.initDataSource();
         this.initToolbarConfig();
@@ -1045,7 +1053,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
 
     activate() {
         super.activate();
-
+        this.crmService.handleModuleChange(this.dataLayoutType.value);
         this.paramsSubscribe();
         this.initFilterConfig();
         this.initToolbarConfig();
