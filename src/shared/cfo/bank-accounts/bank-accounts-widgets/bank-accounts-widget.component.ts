@@ -78,10 +78,9 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
     @Output() onUpdateAccount: EventEmitter<any> = new EventEmitter();
     @Output() reloadDataSource: EventEmitter<any> = new EventEmitter();
     @Output() onDataChange: EventEmitter<any> = new EventEmitter();
-
     allowEditing = false;
     editingStarted = false;
-
+    accessAllDepartments = true;
     /** Editing form instance */
     dxFormInstance: Form;
     instanceType;
@@ -90,7 +89,7 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
     /** Default empty business entity */
     businessEntities = [{ id: null, name: '' }];
     accountsTypes;
-    cfoService: CFOService;
+    private cfoService: CFOService;
     isContextMenuVisible = false;
     contextMenuItems = [
         { text: this.l('Edit_Name'), name: 'edit' },
@@ -156,6 +155,7 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
     ) {
         super(injector);
         this.cfoService = injector.get(CFOService, null);
+        this.accessAllDepartments = !this.cfoService || this.cfoService.accessAllDepartments;
         this.allowEditing = this.isInstanceAdmin || this.isMemberAccessManage;
     }
 
@@ -589,7 +589,7 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
     }
 
     calculateBalanceDisplayValue = (e) => {
-        if (!this.cfoService.accessAllDepartments)
+        if (!this.accessAllDepartments)
             return '';
 
         let syncAccountBalance = 0;
