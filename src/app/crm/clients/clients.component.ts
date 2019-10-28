@@ -344,7 +344,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             store: {
                 key: 'Id',
                 type: 'odata',
-                url: this.getODataUrl(this.dataSourceURI, this.filtersService.filterByStatus(this.filterModelStatus)),
+                url: this.getODataUrl(this.dataSourceURI, FiltersService.filterByStatus(this.filterModelStatus)),
                 version: AppConsts.ODataVersion,
                 deserializeDates: false,
                 beforeSend: (request) => {
