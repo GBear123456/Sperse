@@ -15,8 +15,8 @@
         <div class="right">
             <dx-scroll-view [useNative]="false" [showScrollbar]="dashboard.offsetHeight > content.offsetHeight ? 'onHover' : 'Never'">
                 <div #dashboard class="dashboard-wrapper {{setupSteps.collapsed ? 'expanded' : ''}}">
-                    <top-spending-categories [fullpage]="true" *ngIf="!_cfoService.accessAllDepartments"></top-spending-categories>
-                    <ng-container *ngIf="_cfoService.accessAllDepartments">
+                    <top-spending-categories [fullpage]="true" *ngIf="!accessAllDepartments; else main"></top-spending-categories>
+                    <ng-template #main>
                         <section class="accounts-info">
                             <header>
                                 <h2 class="dashboard-title">
@@ -50,7 +50,7 @@
                                 </div>
                             </div>
                         </section>
-                    </ng-container>
+                    </ng-template>
                 </div>
             </dx-scroll-view>
         </div>
