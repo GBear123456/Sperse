@@ -32,6 +32,7 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, OnDe
     @ViewChild(SynchProgressComponent) synchProgressComponent: SynchProgressComponent;
 
     private rootComponent: any;
+    accessAllDepartments = this._cfoService.accessAllDepartments;
 
     headlineConfig;
     linksTo = [
@@ -92,7 +93,7 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, OnDe
 
     activate() {
         /** Load sync accounts (if something change - subscription in ngOnInit fires) */
-        if (this._cfoService.accessAllDepartments) {
+        if (this.accessAllDepartments) {
             this.bankAccountsService.load();
             this.totalsByPeriodComponent.activate();
             this.trendByPeriodComponent.updateChartWidthAfterActivation = true;
