@@ -3,10 +3,10 @@
         <div class="portlet-body">
               <div>
                     <div id="ClientsTable">
-                        <dx-tooltip width="150px">
+                        <dx-tooltip width="160px">
                             <div *dxTemplate="let data of 'content'">
                                 <div class="lists-tooltip-container">
-                                    <dx-list accessKey="actionsMenu" [dataSource]="actionMenuItems"
+                                    <dx-list accessKey="actionsMenu" [dataSource]="filteredActionMenuItems"
                                         (onItemClick)="onMenuItemClick($event)">
                                     </dx-list>
                                 </div>
