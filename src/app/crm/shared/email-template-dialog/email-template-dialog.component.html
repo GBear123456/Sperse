@@ -3,18 +3,25 @@
               [buttons]="buttons"
               [editTitle]="false">
     <ng-container headerContent>
+        <label class="template">{{ls.l('Template')}}</label> 
         <dx-select-box
             name="template"
             width="250px"
             height="40px"
             displayExpr="name"
             valueExpr="id"
-            [placeholder]="ls.l('Template')"
+            placeholder=""
             [(value)]="data.templateId"
+            [showClearButton]="templateEditMode"
             [dataSource]="templates$ | async"
             [acceptCustomValue]="templateEditMode"
+            (onFocusOut)="onTemplateFocusOut($event)"
+            (onOptionChanged)="onTemplateOptionChanged($event)"
             (onCustomItemCreating)="onNewTemplate($event)"
             (onValueChanged)="onTemplateChanged($event)">
+            <dx-validator>
+                <dxi-validation-rule type="required" [message]="ls.l('RequiredField', '', ls.l('Template'))"></dxi-validation-rule>
+            </dx-validator>
         </dx-select-box>
     </ng-container>
 
@@ -22,46 +29,48 @@
         <dx-scroll-view showScrollbar="onHover">
             <div class="row">
                 <div class="field-area from" [hidden]="templateEditMode">
+                    <label class="caption from">{{ls.l('From')}}:</label> 
                     <dx-tag-box
                         name="from"
-                        width="50%"
+                        width="calc(50% - 52px)"
                         height="40px"
                         noDataText=""
+                        placeholder=""
                         [multiline]="false"
                         [acceptCustomValue]="true"
-                        [placeholder]="ls.l('From')"
                         [(value)]="data.from"
                         [disabled]="true"
                         (onOpened)="emailInputFocusIn($event)"
                         (onFocusOut)="emailInputFocusOut($event)"
                         (onCustomItemCreating)="onCustomItemCreating($event)">
                     </dx-tag-box>
+                    <label class="caption">{{ls.l('replyTo')}}:</label> 
                     <dx-tag-box
                         name="replyTo"
-                        width="50%"
+                        width="calc(50% - 62px)"
                         height="40px"
                         noDataText=""
+                        placeholder=""
                         [multiline]="false"
                         [acceptCustomValue]="true"
-                        [placeholder]="ls.l('ReplyTo')"
                         [(value)]="data.replyTo"
                         (onOpened)="emailInputFocusIn($event)"
                         (onFocusOut)="emailInputFocusOut($event)"
                         (onCustomItemCreating)="onCustomItemCreating($event)">
                     </dx-tag-box>
                 </div>
-                <div class="field-area">
+                <div class="field-area" *ngIf="!templateEditMode">
+                    <label class="caption">{{ls.l('To')}}:</label> 
                     <dx-tag-box
                         name="to"
-                        width="100%"
+                        width="calc(100% - 31px)"
                         height="40px"
                         noDataText=""
+                        placeholder=""
                         [dataSource]="data.suggestionEmails"
                         [multiline]="false"
                         [acceptCustomValue]="true"
-                        [placeholder]="ls.l('To')"
                         [(value)]="data.to"
-                        [disabled]="data.templateType"
                         (onOpened)="emailInputFocusIn($event)"
                         (onFocusOut)="emailInputFocusOut($event)"
                         (onCustomItemCreating)="onCustomItemCreating($event)">
@@ -71,32 +80,32 @@
                         <span (click)="showInputField(BCCElement)" [hidden]="showBCC">{{ls.l('BCC')}}</span>
                     </div>
                 </div>
-                <div class="field-area">
+                <div class="field-area" *ngIf="showCC">
+                    <label class="caption">{{ls.l('CC')}}:</label> 
                     <dx-tag-box #CCElement
-                        name="showCC"
-                        width="100%"
+                        name="cc"
                         height="40px"
-                        [visible]="showCC"
+                        width="calc(100% - 35px)"
+                        placeholder=""
                         noDataText=""
                         [multiline]="false"
                         [acceptCustomValue]="true"
-                        [placeholder]="ls.l('CC')"
                         [(value)]="data.cc"
                         (onOpened)="emailInputFocusIn($event)"
                         (onFocusOut)="emailInputFocusOut($event, true)"
                         (onCustomItemCreating)="onCustomItemCreating($event)">
                     </dx-tag-box>
                 </div>
-                <div class="field-area">
+                <div class="field-area" *ngIf="showBCC">
+                    <label class="caption">{{ls.l('BCC')}}:</label> 
                     <dx-tag-box #BCCElement
-                        name="showBCC"
-                        width="100%"
+                        name="bcc"
                         height="40px"
-                        [visible]="showBCC"
+                        width="calc(100% - 46px)"
                         noDataText=""
+                        placeholder=""
                         [multiline]="false"
                         [acceptCustomValue]="true"
-                        [placeholder]="ls.l('BCC')"                        
                         [(value)]="data.bcc"
                         (onOpened)="emailInputFocusIn($event)"
                         (onFocusOut)="emailInputFocusOut($event, true)"
@@ -104,11 +113,12 @@
                     </dx-tag-box>
                 </div>
                 <div class="field-area">
+                    <label class="caption">{{ls.l('Subject')}}:</label> 
                     <dx-text-box
                         name="subject"
-                        width="100%"
+                        width="calc(100% - 69px)"
                         height="40px"
-                        [placeholder]="ls.l('Subject')"
+                        placeholder=""
                         [(value)]="data.subject">
                     </dx-text-box>
                 </div>
