@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, ChangeDetectionStrategy, ViewChild, Inject, ChangeDetectorRef, Input, Output, EventEmitter } from '@angular/core';
+import { Component, ChangeDetectionStrategy, ViewChild, OnInit, Inject, ChangeDetectorRef, Input, Output, EventEmitter } from '@angular/core';
 
 /** Third party imports */
 import { Observable } from 'rxjs';
@@ -25,7 +25,7 @@ import { AppSessionService } from '@shared/common/session/app-session.service';
     providers: [ EmailTemplateServiceProxy ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class EmailTemplateDialogComponent {
+export class EmailTemplateDialogComponent implements OnInit {
     @ViewChild(ModalDialogComponent) modalDialog: ModalDialogComponent;
     @ViewChild(DxSelectBoxComponent) templateComponent: DxSelectBoxComponent;
 
@@ -79,6 +79,12 @@ export class EmailTemplateDialogComponent {
         data.from = [sessionService.user.emailAddress];
         if (!data.suggestionEmails)
             data.suggestionEmails = [];
+    }
+
+    ngOnInit() {
+        this.showCC = this.templateEditMode || this.data.cc && this.data.cc.length;
+        this.showBCC = this.templateEditMode || this.data.bcc && this.data.bcc.length;
+        this.changeDetectorRef.markForCheck();
     }
 
     save() {
@@ -151,14 +157,20 @@ export class EmailTemplateDialogComponent {
             event.component.option('opened', false);
     }
 
-    emailInputFocusOut(event, checkDisplay?) {
+    emailInputFocusOut(event, checkDisplay?) {      
         let inputValue = event.event.target.value,
-            comboValue = event.component.option('value') || [];
+            comboValue = event.component.option('value') || [],
+            field = event.component.option('name');
         if (AppConsts.regexPatterns.email.test(inputValue))
             event.component.option('value', comboValue = comboValue.concat([inputValue]));
 
-        if (checkDisplay && !comboValue.length)
-            this[event.component.option('name')] = false;
+        if (!this.templateEditMode && checkDisplay && !comboValue.length) {
+            if (field == 'cc')
+                this.showCC = false;
+            else 
+                this.showBCC = false;
+        } else if (field == 'to')
+            event.component.option('isValid', Boolean(comboValue.length));
     }
 
     showInputField(element) {
@@ -192,13 +204,44 @@ export class EmailTemplateDialogComponent {
     }
 
     onCustomItemCreating(event) {
-        let isValid = AppConsts.regexPatterns.email.test(event.text);
-        event.component.option('isValid', isValid);
-        return event.customItem = isValid ? event.text : '';
+        let field = event.component.option('name'),
+            values = event.text.split(/[\s,]+/).map(item => 
+                AppConsts.regexPatterns.email.test(item) ? item : ''),
+            validValues = values.filter(Boolean),
+            currentList = this.data[field];
+
+        validValues = validValues.filter((item, pos) => {
+            return validValues.indexOf(item) == pos && 
+                (!currentList || currentList.indexOf(item) < 0);
+        });
+
+        setTimeout(() => {
+            if (currentList)
+                Array.prototype.push.apply(currentList, validValues);
+            else 
+                this.data[field] = validValues;
+            this.changeDetectorRef.markForCheck();
+        });
+
+        return event.customItem = '';
     }
 
     onNewTemplate(event) {
-        event.customItem = {name: event.text, id: undefined};
+        event.customItem = {name: event.text, id: undefined};       
+    }
+
+    onTemplateFocusOut(event) {
+        event.component.option('isValid', Boolean(this.getTemplateName()));
+    }
+
+    onTemplateOptionChanged(event) {
+        if (event.name == 'selectedItem' && !event.value) {
+            this.data.cc = this.data.bcc = this.data.subject = this.data.body = '';
+            setTimeout(() => {
+                event.component.option('isValid', true);
+                event.component.focus();
+            });
+        }
     }
 
     close() {

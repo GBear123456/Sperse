@@ -46,42 +46,37 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
     private readonly dataSourceURI = 'Invoice';
     private filters: FilterModel[];
     private formatting = AppConsts.formatting;
+    filteredActionMenuItems = [];
     actionMenuItems = [
         {
             text: this.l('Edit'),
             action: this.editInvoice.bind(this),
-            type: ActionButtonType.Edit,
-            visible: true
+            type: ActionButtonType.Edit
         },
         {
             text: this.l('Delete'),
             action: this.deleteInvoice.bind(this),
-            type: ActionButtonType.Delete,
-            visible: true
+            type: ActionButtonType.Delete
         },
         {
             text: this.l('Send'),
             action: this.sendInvoice.bind(this),
-            type: ActionButtonType.Send,
-            visible: true
+            type: ActionButtonType.Send
         },
         {
             text: this.l('Cancel'),
             action: this.updateStatus.bind(this, InvoiceStatus.Canceled),
-            type: ActionButtonType.Cancel,
-            visible: true
+            type: ActionButtonType.Cancel
         },
         {
             text: this.l('Invoice_MarkAsSent'),
             action: this.updateStatus.bind(this, InvoiceStatus.Sent),
-            type: ActionButtonType.MarkAsSent,
-            visible: true
+            type: ActionButtonType.MarkAsSent
         },
         {
             text: this.l('Invoice_MarkAsDraft'),
             action: this.updateStatus.bind(this, InvoiceStatus.Draft),
-            type: ActionButtonType.MarkAsDraft,
-            visible: true
+            type: ActionButtonType.MarkAsDraft
         }
     ];
 
@@ -174,13 +169,14 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
                 setTimeout(() => this.editInvoice());
             } else {
                 if (event.event.target.closest('.dx-link.dx-link-edit')) {
-                    this.actionMenuItems.map(item => {
-                        item.visible = 
-                            (item.type == ActionButtonType.Edit && [InvoiceStatus.Draft, InvoiceStatus.Final].indexOf(event.data.Status) >= 0) ||
+                    this.filteredActionMenuItems = this.actionMenuItems.filter(item => {
+                        if (item.type == ActionButtonType.Send)
+                            item.text = this.l(InvoiceStatus.Sent == event.data.Status ? 'Resend' : 'Send');
+                        return (item.type == ActionButtonType.Edit && [InvoiceStatus.Draft, InvoiceStatus.Final].indexOf(event.data.Status) >= 0) ||
                             (item.type == ActionButtonType.Delete && [InvoiceStatus.Paid, InvoiceStatus.Sent].indexOf(event.data.Status) < 0) ||
                             (item.type == ActionButtonType.Send && [InvoiceStatus.Final, InvoiceStatus.Sent].indexOf(event.data.Status) >= 0) ||
                             (item.type == ActionButtonType.Cancel && InvoiceStatus.Sent == event.data.Status) ||
-                            ([ActionButtonType.MarkAsDraft, ActionButtonType.MarkAsSent].indexOf(item.type) >= 0 && 
+                            ([ActionButtonType.MarkAsDraft, ActionButtonType.MarkAsSent].indexOf(item.type) >= 0 &&
                                 [InvoiceStatus.Final, InvoiceStatus.Canceled].indexOf(event.data.Status) >= 0);
                     });
                     this.actionRecordData = event.data;
