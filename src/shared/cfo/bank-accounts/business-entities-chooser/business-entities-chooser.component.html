@@ -19,15 +19,15 @@
                 </div>
                 <dx-tree-view
                     [expandAllEnabled]="true"
-                    [parentIdExpr]="'parentId'"
-                    [dataStructure]="'plain'"
+                    parentIdExpr="parentId"
+                    dataStructure="plain"
                     [dataSource]="dataSource"
-                    [selectedExpr]="'selected'"
-                    [hasItemsExpr]="'hasChildren'"
-                    [showCheckBoxesMode]="'normal'"
-                    [displayExpr]="'name'"
+                    selectedExpr="selected"
+                    hasItemsExpr="hasChildren"
+                    showCheckBoxesMode="normal"
+                    displayExpr="name"
                     itemTemplate="itemTemplate"
-                    (onSelectionChanged)="selectedItemsChange(dataSource)">
+                    (onSelectionChanged)="selectedItemsChange()">
                     <div *dxTemplate="let item of 'itemTemplate'">
                         <div class="selection-list-item {{item.hasChildren ? 'highlighted' : ''}}">
                             <span [title]="item.name">{{item.name}}</span>

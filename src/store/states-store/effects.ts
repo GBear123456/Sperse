@@ -5,7 +5,7 @@ import { Injectable, Injector } from '@angular/core';
 import { Actions, Effect, ofType } from '@ngrx/effects';
 import { Store, Action, select } from '@ngrx/store';
 import { Observable, of, empty, zip } from 'rxjs';
-import { catchError, exhaustMap, map, mergeMap } from 'rxjs/operators';
+import { catchError, map, mergeMap } from 'rxjs/operators';
 
 /** Application imports */
 import * as statesActions from './actions';
@@ -31,7 +31,7 @@ export class StatesStoreEffects {
             const loadedTime$ = this.store$.pipe(select(getLoadedTime, { countryCode: action.payload }));
             return zip(payload$, countryStates$, loadedTime$);
         }),
-        exhaustMap(([payload, countryStates, loadedTime]) => {
+        mergeMap(([payload, countryStates, loadedTime]) => {
 
             /** If country states have been already loaded - don't do that again */
             if (countryStates && countryStates.length && StoreHelper.dataLoadingIsNotNeeded(loadedTime, AppConsts.generalDictionariesCacheLifetime)) {

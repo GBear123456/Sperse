@@ -8,10 +8,10 @@ import { LogService } from '@abp/log/log.service';
 export class AppHttpConfiguration extends AbpHttpConfiguration {
     avoidErrorHandling = false;
     constructor(
-        _messageService: MessageService,
-        _logService: LogService
+        messageService: MessageService,
+        logService: LogService
     ) {
-        super(_messageService, _logService);
+        super(messageService, logService);
         this.defaultError.details = AppConsts.defaultErrorMessage;
     }
 

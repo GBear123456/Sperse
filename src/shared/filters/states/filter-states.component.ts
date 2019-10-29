@@ -1,105 +1,124 @@
 /** Core imports */
-import { Component, Injector, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 
 /** Third party imports */
 import { Store, select } from '@ngrx/store';
-import { AppComponentBase } from '@shared/common/app-component-base';
-import { filter } from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import { first, filter, map } from 'rxjs/operators';
 import { CacheService } from 'ng2-cache-service';
-import * as _ from 'underscore';
 
 /** Application imports */
 import { CountriesStoreActions, CountriesStoreSelectors } from '@app/store';
 import { RootStore, StatesStoreActions, StatesStoreSelectors } from '@root/store';
 import { FilterComponent } from '../models/filter-component';
 import { FilterStatesModel } from './filter-states.model';
+import { CountryDto, CountryStateDto, ICountryStateDto } from '@shared/service-proxies/service-proxies';
+
+interface ICountryState extends ICountryStateDto {
+    hasItems: boolean;
+    parentId: string;
+    selected: boolean;
+    expanded: boolean;
+}
 
 @Component({
     templateUrl: './filter-states.component.html',
-    styleUrls: ['./filter-states.component.less']
+    styleUrls: ['./filter-states.component.less'],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class FilterStatesComponent extends AppComponentBase implements FilterComponent, OnDestroy, OnInit {
+export class FilterStatesComponent implements FilterComponent, OnInit {
     items: {
         countryStates: FilterStatesModel
     };
     component: any;
     apply: (event) => void;
-    countryStates: any[];
-    preloadIndex: {
-        [code: string]: number
-    } = {};
+    selectedCountries: string[] = [];
+    countriesToExpand: string[] = [];
+    selectedStates: string[] = [];
 
-    constructor(injector: Injector,
-        private _cacheService: CacheService,
+    constructor(
+        private cacheService: CacheService,
         private store$: Store<RootStore.State>
-    ) {
-        super(injector);
+    ) {}
+
+    ngOnInit() {
+        if (this.items.countryStates.value) {
+            this.items.countryStates.value.forEach((countryState: string) => {
+                const [ countryCode, stateCode ] = countryState.split(':');
+                if (stateCode) {
+                    this.selectedStates.push(stateCode);
+                    this.countriesToExpand.push(countryCode);
+                } else {
+                    this.selectedCountries.push(countryCode);
+                }
+            });
+        }
+        /** Load all countries */
+        this.store$.dispatch(new CountriesStoreActions.LoadRequestAction());
     }
 
-    onExpand($event) {
-        if (this.preloadIndex[$event.key]) {
-            this.countryStates.splice(
-                _.findIndex(this.countryStates, { parent: $event.key }), 1);
-            this.preloadIndex[$event.key] = 0;
-            this.component.beginCustomLoading();
-
-            this.store$.dispatch(new StatesStoreActions.LoadRequestAction($event.key));
-            this.store$.pipe(select(StatesStoreSelectors.getState, { countryCode: $event.key }))
-                .pipe(filter(data => !!data))
-                .subscribe((data) => {
-                    data.forEach((state) => {
-                        this.countryStates.push({
-                            parent: $event.key,
-                            code: $event.key + ':' + state.code,
-                            name: state.name
-                        });
-                    });
-                    this.component.endCustomLoading();
-                    this.applySelectedRowKeys();
-                });
+    createChildren = (node) => {
+        if (!node) {
+            /** Return list of countries */
+            return this.getCountries().toPromise();
+        } else {
+            this.store$.dispatch(new StatesStoreActions.LoadRequestAction(node.key));
+            /** Return states of specific country */
+            return this.getStates(node.key).toPromise();
         }
+    }
+
+    private sortCountries(countries: CountryDto[]): CountryDto[] {
+        const usa = countries.splice(
+            countries.findIndex((country: CountryStateDto) => country.code === 'US'), 1
+        )[0];
+        const canada = countries.splice(
+            countries.findIndex((country: CountryStateDto) => country.code === 'CA'), 1
+        )[0];
+        countries.unshift(usa, canada);
+        return countries;
+    }
+
+    private getCountries(): Observable<ICountryState[]> {
+        return this.store$.pipe(
+            select(CountriesStoreSelectors.getCountries),
+            filter(Boolean),
+            first()
+        ).pipe(
+            map((countries: CountryDto[]) => {
+                countries = this.sortCountries(countries);
+                return countries.map((country: CountryDto) => ({
+                    ...country,
+                    hasItems: country.code === 'US' || country.code === 'CA',
+                    selected: this.selectedCountries.indexOf(country.code) >= 0,
+                    expanded: this.countriesToExpand.indexOf(country.code) >= 0,
+                    parentId: null
+                }));
+            })
+        );
+    }
+
+    private getStates(countryCode: string): Observable<ICountryState[]> {
+        return this.store$.pipe(
+            select(StatesStoreSelectors.getState, { countryCode: countryCode }),
+            filter(Boolean),
+            first(),
+            map((states: CountryStateDto[]) => {
+                return states.map(((state: CountryStateDto) => ({
+                    ...state,
+                    code: countryCode + ':' + state.code,
+                    hasItems: false,
+                    selected: this.selectedStates.indexOf(state.code) >= 0,
+                    parentId: countryCode,
+                    expanded: false
+                })));
+            })
+        );
     }
 
     onSelect($event) {
-        this.items.countryStates.value = _.union(_.difference(
-            this.items.countryStates.value, $event.currentDeselectedRowKeys),
-            $event.currentSelectedRowKeys
-        );
+        this.items.countryStates.value = $event.component.getSelectedNodesKeys();
+        this.items.countryStates.list = $event.component.getNodes();
     }
 
-    onInitialized($event) {
-        this.component = $event.component;
-        this.applySelectedRowKeys();
-    }
-
-    applySelectedRowKeys() {
-        this.component.option(
-            'selectedRowKeys', this.items.countryStates.value
-        );
-    }
-
-    ngOnInit() {
-        if (this._cacheService.exists('countryStates_preloadIndex')) {
-            this.items.countryStates.list = this.countryStates = this._cacheService.get('countryStates');
-            this.preloadIndex = this._cacheService.get('countryStates_preloadIndex');
-        } else {
-            this.store$.dispatch(new CountriesStoreActions.LoadRequestAction());
-            this.store$.pipe(select(CountriesStoreSelectors.getCountries)).subscribe((data) => {
-                this.countryStates = data;
-                data.forEach((country, index) => {
-                    this.preloadIndex[country.code] =
-                        this.countryStates.push({
-                            code: index + country.code,
-                            parent: country.code
-                        });
-                });
-                this.items.countryStates.list = data;
-            });
-        }
-    }
-
-    ngOnDestroy() {
-        this._cacheService.set('countryStates', this.countryStates);
-        this._cacheService.set('countryStates_preloadIndex', this.preloadIndex);
-    }
 }

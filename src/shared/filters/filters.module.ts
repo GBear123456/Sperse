@@ -20,6 +20,7 @@ import { FilterRadioGroupComponent } from './radio-group/filter-radio-group.comp
 import { FilterTreeListComponent } from './tree-list/tree-list.component';
 
 import { DxTreeListModule } from 'devextreme-angular/ui/tree-list';
+import { DxTreeViewModule } from 'devextreme-angular/ui/tree-view';
 import { DxCheckBoxModule } from 'devextreme-angular/ui/check-box';
 import { DxSelectBoxModule } from 'devextreme-angular/ui/select-box';
 import { DxTextBoxModule } from 'devextreme-angular/ui/text-box';
@@ -47,6 +48,7 @@ import { FilterRangeComponent } from '@shared/filters/range/filter-range.compone
         DxDropDownBoxModule,
         DxDataGridModule,
         DxTreeListModule,
+        DxTreeViewModule,
         DxRadioGroupModule,
         DxRangeSliderModule
     ],

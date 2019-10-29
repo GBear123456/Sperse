@@ -31,7 +31,7 @@ export class BusinessEntitiesChooserComponent implements OnDestroy {
 
     @Output() selectionChanged: EventEmitter<any> = new EventEmitter();
     @Output() onFilterButtonClick: EventEmitter<any> = new EventEmitter();
-    @Output() onChanged: EventEmitter<any> = new EventEmitter();    
+    @Output() onChanged: EventEmitter<any> = new EventEmitter();
     @Output() onClosed: EventEmitter<any> = new EventEmitter();
 
     syncAccounts  = [];
@@ -46,7 +46,7 @@ export class BusinessEntitiesChooserComponent implements OnDestroy {
             syncAccounts => this.syncAccounts = syncAccounts);
     }
 
-    public selectedItemsChange(data) {
+    public selectedItemsChange() {
         setTimeout(() =>
             this.selectionChanged.emit(this.getSelectedIds()));
     }

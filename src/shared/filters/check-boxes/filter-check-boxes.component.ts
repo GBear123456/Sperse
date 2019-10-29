@@ -1,5 +1,4 @@
-import { Component, Injector, OnInit } from '@angular/core';
-import { AppComponentBase } from '@shared/common/app-component-base';
+import { Component } from '@angular/core';
 import { FilterComponent } from '../models/filter-component';
 import { FilterCheckBoxesModel } from './filter-check-boxes.model';
 
@@ -7,16 +6,9 @@ import { FilterCheckBoxesModel } from './filter-check-boxes.model';
     templateUrl: './filter-check-boxes.component.html',
     styleUrls: ['./filter-check-boxes.component.less']
 })
-export class FilterCheckBoxesComponent extends AppComponentBase implements OnInit, FilterComponent {
+export class FilterCheckBoxesComponent implements FilterComponent {
     items: {
         element: FilterCheckBoxesModel
     };
     apply: (event) => void;
-
-    constructor(injector: Injector) {
-        super(injector);
-    }
-
-    ngOnInit(): void {
-    }
 }

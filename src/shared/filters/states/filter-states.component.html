@@ -1,16 +1,12 @@
-<!--    [searchPanel]="{visible: true, width: 393, placeholder: 'Country and States'}"  -->
 <div class="wrapper">
-  <dx-tree-list 
-    [dataSource]="countryStates"
-    dataStructure="tree"
-    keyExpr="code"
-    parentIdExpr="parent"
-    [loadPanel]="{enabled: true, showPane: true, showIndicator: true}"
-    [selection]="{allowSelectAll: false, mode: 'multiple'}"
-    (onRowExpanding)="onExpand($event)"
-    (onSelectionChanged)="onSelect($event)"
-    (onInitialized)="onInitialized($event)"
-    scrolling="{mode: 'virtual', showScrollbar: 'always'}">
-      <dxi-column dataField="name" caption="Country States"></dxi-column>
-  </dx-tree-list>
+    <dx-tree-view
+        dataStructure="plain"
+        keyExpr="code"
+        displayExpr="name"
+        parentIdExpr="parentId"
+        [createChildren]="createChildren"
+        showCheckBoxesMode="normal"
+        (onItemSelected)="onSelect($event)"
+        (onSelectionChanged)="onSelect($event)">
+    </dx-tree-view>
 </div>

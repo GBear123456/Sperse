@@ -1,60 +1,67 @@
 import { FilterModel } from '@shared/filters/models/filter.model';
 import { FilterItemModel, DisplayElement } from '@shared/filters/models/filter-item.model';
-import find from 'lodash/find';
 import sortBy from 'lodash/sortBy';
 import remove from 'lodash/remove';
-import each from 'lodash/each';
+import DevExpress from 'devextreme/bundles/dx.all';
 
 export class FilterStatesModel extends FilterItemModel {
-    list: any[];
+    list: DevExpress.ui.dxTreeViewNode[];
 
     getDisplayElements(): DisplayElement[] {
-        var result: DisplayElement[] = [];
-        this.value && this.value.map(x => {
-            let data = find(this.list, (val: any, i, arr) => val.code == x);
-            if (data) {
-                let parentName = data.parent ? find(this.list, (val) => val.code == data.parent).name : null;
-                let sortField = (parentName) ? parentName + ':' : '';
-                sortField += data.name;
-                result.push(<DisplayElement>{   
-                    item: this, 
-                    displayValue: data.name, 
-                    args: x, 
-                    parentCode: data.parent, 
-                    sortField: sortField 
+        let displayedElements: DisplayElement[] = [];
+        this.value && this.value.map((selectedCode: string) => {
+            const [ countryCode, stateCode ] = selectedCode.split(':');
+            let itemData, parentData;
+            parentData = itemData = this.list.find((val: DevExpress.ui.dxTreeViewNode) => val.key === countryCode);
+            if (itemData && stateCode) {
+                itemData = itemData.children.find((val: DevExpress.ui.dxTreeViewNode) => val.key === selectedCode);
+            }
+            if (itemData) {
+                let parentName = itemData.parent ? parentData.text : null;
+                let sortField = parentName ? parentName + ':' : '';
+                sortField += itemData.text;
+                displayedElements.push(<DisplayElement>{
+                    item: this,
+                    displayValue: itemData.text,
+                    args: selectedCode,
+                    parentCode: itemData.parent ? itemData.parent.key : null,
+                    parentName: parentName,
+                    sortField: sortField
                 });
             }
         });
-       
-        result = this.generateParents(
-            sortBy(result, 'sortField')
+
+        displayedElements = this.generateParents(
+            sortBy(displayedElements, 'sortField')
         );
-        return result;
+        return displayedElements;
     }
-   
+
     removeFilterItem(filter: FilterModel, args: any) {
         if (args)
-            remove(this.value, (val: any, i, arr) => val == args);
+            remove(this.value, (val: any) => val == args);
         else
             this.value = [];
     }
 
-    private generateParents(arr: DisplayElement[]): DisplayElement[] {
-        let result: DisplayElement[] = [];
-        each(arr, x => {
-            if (x.parentCode) {
-                let parent = find(result, y => y.args == x.parentCode);
+    private generateParents(displayedElements: DisplayElement[]): DisplayElement[] {
+        let parents: DisplayElement[] = [];
+        displayedElements.forEach((displayedElement: DisplayElement) => {
+            if (displayedElement.parentCode) {
+                let parent = parents.find(y => y.args == displayedElement.parentCode);
                 if (!parent) {
-                    let parentName = find(this.list, (val: any, i, arr) => val.code == x.parentCode).name;
-                    result.push(<DisplayElement>{ displayValue: parentName, readonly: true, args: x.parentCode });
+                    parents.push(<DisplayElement>{
+                        displayValue: displayedElement.parentName,
+                        readonly: true,
+                        args: displayedElement.parentCode
+                    });
                 }
-                result.push(x);
-            }
-            else {
-                result.push(x);
+                parents.push(displayedElement);
+            } else {
+                parents.push(displayedElement);
             }
         });
 
-        return result;
+        return parents;
     }
 }

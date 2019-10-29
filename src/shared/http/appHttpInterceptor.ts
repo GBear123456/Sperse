@@ -11,6 +11,7 @@ export class AppHttpInterceptor extends AbpHttpInterceptor {
     private readonly EXCEPTION_KEYS = [
         'CFO_BankAccounts_GetStats',
         'CFO_Dashboard_GetCategorizationStatus',
+        'CRM_Country_GetCountryStates',
         'odata_LeadSlice',
         'odata_CustomerSlice',
         'odata_PartnerSlice'
@@ -53,11 +54,10 @@ export class AppHttpInterceptor extends AbpHttpInterceptor {
 
         this._poolRequests[key].httpSubscriber = next.handle(modifiedRequest)
             .pipe(finalize(() => delete this._poolRequests[key]))
-            .subscribe((event: HttpEvent<any>) => {
-                this.handleSuccessResponse(event, interceptObservable);
-            }, (error: any) => {
-                return this.handleErrorResponse(error, interceptObservable);
-            });
+            .subscribe(
+                (event: HttpEvent<any>) => this.handleSuccessResponse(event, interceptObservable),
+                (error: any) => this.handleErrorResponse(error, interceptObservable)
+            );
 
         return interceptObservable;
     }
