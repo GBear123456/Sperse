@@ -28,15 +28,15 @@ import { PersonOrgRelationType } from '@root/shared/AppEnums';
 export class ContactsAreaComponent extends AppComponentBase {
     @Input() isCompany = false;
     @Input() showContactType: string;
-    @Input() 
+    @Input()
     set contactInfo(val: ContactInfoDto) {
         if (this._contactInfo = val)
-            this.isEditAllowed = this._contactsService.checkCGPermission(this.contactInfo.groupId);
+            this.isEditAllowed = this.contactsService.checkCGPermission(this.contactInfo.groupId);
     }
     get contactInfo(): ContactInfoDto {
-        return this._contactInfo;    
+        return this._contactInfo;
     }
-        
+
     @Input() contactInfoData: ContactInfoDetailsDto;
 
     isEditAllowed = false;
@@ -49,13 +49,14 @@ export class ContactsAreaComponent extends AppComponentBase {
 
     emailRegEx = AppConsts.regexPatterns.email;
 
-    constructor(injector: Injector,
-                public dialog: MatDialog,
-                private _contactsService: ContactsService,
-                private _contactEmailService: ContactEmailServiceProxy,
-                private _contactPhoneService: ContactPhoneServiceProxy,
-                private _organizationContactService: OrganizationContactServiceProxy,
-                private dialogService: DialogService
+    constructor(
+        injector: Injector,
+        private contactsService: ContactsService,
+        private contactEmailService: ContactEmailServiceProxy,
+        private contactPhoneService: ContactPhoneServiceProxy,
+        private organizationContactService: OrganizationContactServiceProxy,
+        private dialogService: DialogService,
+        public dialog: MatDialog
     ) {
         super(injector);
     }
@@ -84,7 +85,7 @@ export class ContactsAreaComponent extends AppComponentBase {
         if (!this.isCompany || this.contactInfoData && this.contactInfoData.contactId)
             this.showContactDialog(field, data, event, index);
         else
-            this._contactsService.addCompanyDialog(event, this.contactInfo,
+            this.contactsService.addCompanyDialog(event, this.contactInfo,
                 Math.round(event.target.offsetWidth / 2)
             ).subscribe(result => {
                 if (result) {
@@ -138,7 +139,7 @@ export class ContactsAreaComponent extends AppComponentBase {
 
     createOrganization(field, data, dialogData) {
         let companyName = AppConsts.defaultCompanyName;
-        this._organizationContactService.createOrganization(CreateOrganizationInput.fromJS({
+        this.organizationContactService.createOrganization(CreateOrganizationInput.fromJS({
             relatedContactId: this.contactInfo.id,
             companyName: companyName,
             relationTypeId: PersonOrgRelationType.Employee
@@ -173,30 +174,33 @@ export class ContactsAreaComponent extends AppComponentBase {
             [(dataItem ? 'update' : 'create') + 'Contact' + name](
             (isPhoneDialog ? (dataItem ? UpdateContactPhoneInput : CreateContactPhoneInput) : (dataItem ? UpdateContactEmailInput : CreateContactEmailInput)
             ).fromJS(updatedData)
-        ).subscribe(result => {
-            if (!result && dataItem) {
-                dataItem[field] = updatedData[field];
-                dataItem.comment = updatedData.comment;
-                dataItem.usageTypeId = updatedData.usageTypeId;
-                dataItem.isConfirmed = updatedData.isConfirmed;
-                dataItem.isActive = updatedData.isActive;
-                if (isPhoneDialog)
-                    dataItem.phoneExtension =
-                        updatedData['phoneExtension'];
-            } else if (result.id) {
-                updatedData.id = result.id;
-                if (isPhoneDialog)
-                    this.contactInfoData.phones
-                        .push(ContactPhoneDto.fromJS(updatedData));
-                else
-                    this.contactInfoData.emails
-                        .push(ContactEmailDto.fromJS(updatedData));
+        ).subscribe(
+            result => {
+                if (!result && dataItem) {
+                    dataItem[field] = updatedData[field];
+                    dataItem.comment = updatedData.comment;
+                    dataItem.usageTypeId = updatedData.usageTypeId;
+                    dataItem.isConfirmed = updatedData.isConfirmed;
+                    dataItem.isActive = updatedData.isActive;
+                    if (isPhoneDialog)
+                        dataItem.phoneExtension =
+                            updatedData['phoneExtension'];
+                } else if (result.id) {
+                    updatedData.id = result.id;
+                    if (isPhoneDialog)
+                        this.contactInfoData.phones
+                            .push(ContactPhoneDto.fromJS(updatedData));
+                    else
+                        this.contactInfoData.emails
+                            .push(ContactEmailDto.fromJS(updatedData));
+                }
+                this.contactsService.verificationUpdate();
+                this.contactsService.invalidateUserData();
+            },
+            () => {
+                dataItem[field] = dataItem.original;
             }
-            this._contactsService.verificationUpdate();
-            this._contactsService.invalidateUserData();
-        }, error => {
-            dataItem[field] = dataItem.original;
-        });
+        );
     }
 
     inPlaceEdit(field, item, event, index) {
@@ -253,11 +257,11 @@ export class ContactsAreaComponent extends AppComponentBase {
         }).afterClosed().subscribe(result => {
             if (result) {
                 this.dialog.closeAll();
-                this._contactEmailService.deleteContactEmail(
+                this.contactEmailService.deleteContactEmail(
                     this.contactInfoData.contactId, email.id).subscribe(result => {
                     if (!result) {
                         this.contactInfoData.emails.splice(index, 1);
-                        this._contactsService.verificationUpdate();
+                        this.contactsService.verificationUpdate();
                     }
                 });
             }
@@ -274,11 +278,11 @@ export class ContactsAreaComponent extends AppComponentBase {
         }).afterClosed().subscribe(result => {
             if (result) {
                 this.dialog.closeAll();
-                this._contactPhoneService.deleteContactPhone(
+                this.contactPhoneService.deleteContactPhone(
                     this.contactInfoData.contactId, phone.id).subscribe(result => {
                     if (!result) {
                         this.contactInfoData.phones.splice(index, 1);
-                        this._contactsService.verificationUpdate();
+                        this.contactsService.verificationUpdate();
                     }
                 });
             }

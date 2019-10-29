@@ -60,10 +60,10 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
 
     @Input()
     public set data(data: ContactInfoDto) {
-        data && this._contactInfo.next(data);
+        data && this.contactInfo.next(data);
     }
     public get data(): ContactInfoDto {
-        return this._contactInfo.getValue();
+        return this.contactInfo.getValue();
     }
 
     @Input()
@@ -80,8 +80,8 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
     @Output() onContactSelected: EventEmitter<any> = new EventEmitter();
     @Output() onInvalidate: EventEmitter<any> = new EventEmitter();
 
-    private _contactInfo: BehaviorSubject<ContactInfoDto> = new BehaviorSubject<ContactInfoDto>(new ContactInfoDto());
-    contactInfo$: Observable<ContactInfoDto> = this._contactInfo.asObservable();
+    private contactInfo: BehaviorSubject<ContactInfoDto> = new BehaviorSubject<ContactInfoDto>(new ContactInfoDto());
+    contactInfo$: Observable<ContactInfoDto> = this.contactInfo.asObservable();
     private _personContactInfo: BehaviorSubject<PersonContactInfoDto> = new BehaviorSubject<PersonContactInfoDto>(new PersonContactInfoDto());
     personContactInfo$: Observable<PersonContactInfoDto> = this._personContactInfo.asObservable();
     contactId: number;
@@ -180,6 +180,16 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
         this.isAdminModule = (appService.getModule() == appService.getDefaultModule());
     }
 
+    private static getPhotoSrc(data: ContactInfoDto, isCompany?: boolean): { source?: string } {
+        let photoBase64;
+        if (isCompany && data['organizationContactInfo'].primaryPhoto) {
+            photoBase64 = data['organizationContactInfo'].primaryPhoto;
+        } else if (!isCompany && data.personContactInfo.primaryPhoto) {
+            photoBase64 = data.personContactInfo.primaryPhoto;
+        }
+        return photoBase64 ? { source: 'data:image/jpeg;base64,' + photoBase64 } : {};
+    }
+
     ngOnInit(): void {
         this.personContactInfo$.pipe(takeUntil(this.lifeCycleService.destroy$)).subscribe(data => {
             this.initializePersonOrgRelationInfo(data);
@@ -237,7 +247,7 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
                             this.data['organizationContactInfo'] = undefined;
                             this.data.primaryOrganizationContactId = orgRelations.length ?
                                 orgRelations.reverse()[0].organization.id : undefined;
-                            this._contactInfo.next(this.data);
+                            this.contactInfo.next(this.data);
                         }
                         orgRelations.splice(orgRelations.indexOf(orgRelationToDelete), 1);
                         this.displayOrgRelation(orgRelationToDelete.organization.id);
@@ -304,7 +314,7 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
         }
 
         this.dialog.closeAll();
-        let data = { ...this.data, ...this.getPhotoSrc(this.data, isCompany) };
+        let data = { ...this.data, ...DetailsHeaderComponent.getPhotoSrc(this.data, isCompany) };
         this.dialog.open(UploadPhotoDialogComponent, {
             data: data,
             hasBackdrop: true
@@ -341,16 +351,6 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
 
         if (this.data[dataField].userId == abp.session.userId)
             abp.event.trigger('profilePictureChanged', thumbnailId);
-    }
-
-    private getPhotoSrc(data: ContactInfoDto, isCompany?: boolean): { source?: string } {
-        let photoBase64;
-        if (isCompany && data['organizationContactInfo'].primaryPhoto) {
-            photoBase64 = data['organizationContactInfo'].primaryPhoto;
-        } else if (!isCompany && data.personContactInfo.primaryPhoto) {
-            photoBase64 = data.personContactInfo.primaryPhoto;
-        }
-        return photoBase64 ? { source: 'data:image/jpeg;base64,' + photoBase64 } : {};
     }
 
     /** @todo refactor as there is infinite calling after mouse move */
