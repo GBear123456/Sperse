@@ -111,6 +111,7 @@ import { BankCodeLettersModule } from '@app/shared/common/bank-code-letters/bank
 import { SMSDialogComponent } from '@app/crm/shared/sms-dialog/sms-dialog.component';
 import { InvoiceSettingsDialogComponent } from './invoice-settings-dialog/invoice-settings-dialog.component';
 import { EmailTemplateDialogComponent } from '@app/crm/shared/email-template-dialog/email-template-dialog.component';
+import { SourceContactListComponent } from './source-contact-list/source-contact-list.component';
 
 @NgModule({
     declarations: [
@@ -165,7 +166,8 @@ import { EmailTemplateDialogComponent } from '@app/crm/shared/email-template-dia
         OrdersComponent,
         InvoicesComponent,
         PersonalDetailsComponent,
-        SMSDialogComponent
+        SMSDialogComponent,
+        SourceContactListComponent
     ],
     imports: [
         FormsModule,

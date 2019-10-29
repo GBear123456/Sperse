@@ -32,7 +32,7 @@
         <a *ngIf="cell.data.statusCode === 'A' && permission.isGranted(permissions.CRMOrdersManage)" (click)="cancelSubscription(cell.data.id)">{{l('cancel')}}</a>
     </div>
     <div *dxTemplate="let cell of 'amountTemplate'">
-        <span> {{ cell.text | currency:'USD':'symbol':'1.2-2' }} </span>
+        <span> {{ cell.text | currency:currency:'symbol':'1.2-2' }} </span>
     </div>
     <div *dxTemplate="let payment of 'detail'">
         <div class="master-detail-caption">{{'Payments info'}}</div>

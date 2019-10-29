@@ -11,6 +11,7 @@ import {
     map,
     switchMap,
     finalize,
+    first
 } from 'rxjs/operators';
 import { CreditCard } from 'angular-cc-library';
 import * as moment from 'moment';
@@ -20,6 +21,7 @@ import * as _ from 'underscore';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { ContactsService } from '../contacts.service';
 import { ContactServiceProxy, MonthlyPaymentInfo, PaymentMethodInfo, PaymentInfoType, PaymentServiceProxy } from '@shared/service-proxies/service-proxies';
+import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 
 @Component({
     selector: 'payment-information',
@@ -45,11 +47,14 @@ export class PaymentInformationComponent extends AppComponentBase implements OnI
     groupId$: Observable<number>;
     constructor(
         injector: Injector,
+        private invoicesService: InvoicesService,
         private paymentServiceProxy: PaymentServiceProxy,
         private contactService: ContactServiceProxy,
         private _contactsService: ContactsService
     ) {
         super(injector);
+        invoicesService.settings$.pipe(first()).subscribe(
+            res => this.amountCurrency = res.currency);
     }
 
     ngOnInit() {

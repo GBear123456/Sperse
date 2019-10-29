@@ -1,0 +1,14 @@
+<app-static-list
+    [width]="'330px'"
+    [height]="'440px'"
+    [targetSelector]="targetSelector"
+    [title]="ls.l('PartnerSource')"
+    [selectedKeys]="[selectedKey]"
+    [showConfirmation]="false"
+    [highlightSelected]="true"
+    [searchEnabled]="true"
+    [customSearchEnabled]="true"
+    (onItemSelected)="onItemSelected.emit($event)"
+    (onListFiltered)="onSourceFiltered($event)"
+    [list]="contacts">
+</app-static-list>

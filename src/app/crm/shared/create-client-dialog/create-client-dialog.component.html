@@ -8,7 +8,7 @@
 </dx-context-menu>
 <app-static-list #stagesList
                  [width]="'210px'"
-                 [selectedKeys]="[this.stageId]"
+                 [selectedKeys]="[stageId]"
                  [showConfirmation]="false"
                  [selectedItems]=""
                  [hideButtons]="true"
@@ -20,6 +20,10 @@
                  [funnelStyling]="true"
                  [disableHindmost]="true">
 </app-static-list>
+<source-contact-list
+    [selectedKey]="sourceContactId"
+    (onItemSelected)="onPartnerSourceSelected($event)">                                            
+</source-contact-list>                                
 <crm-rating targetSelector="#ClientRating"
             [hideButtons]="true"
             (onValueChanged)="onRatingChanged($event)"></crm-rating>
@@ -100,6 +104,16 @@
             </ng-template>
         </ng-template>
 
+       <dxi-item location="before" template="partnerSource"></dxi-item>
+       <div *dxTemplate="let data of 'partnerSource'">
+           <dx-button [icon]="'./assets/common/icons/folder.svg'"
+                      [text]="ls.l('Source')"
+                      id="PartnersSource"
+                      [ngClass]="{ 'filter-selected': isSourceSelected }"
+                      (onClick)="togglePartnerSource()">
+           </dx-button>
+       </div>
+
         <dxi-item location="before" template="lists" [disabled]="isListAndTagsDisabled"></dxi-item>
         <div *dxTemplate="let data of 'lists'">
             <dx-button [icon]="'./assets/common/icons/folder.svg'"
@@ -130,7 +144,7 @@
             </dx-button>
         </div>
 
-        <dxi-item location="after" template="discardTemplate"></dxi-item>
+        <dxi-item location="before" template="discardTemplate"></dxi-item>
         <div *dxTemplate="let data of 'discardTemplate'">
             <dx-button [icon]="'./assets/common/icons/delete-icon.svg'"
                        [text]="ls.l('Discard')"

@@ -1,8 +1,14 @@
-import { Component, Injector, Input, EventEmitter, Output, HostBinding } from '@angular/core';
+/** Core imports */
+import { Component, Injector, Input, EventEmitter, Output, HostBinding, ViewChild } from '@angular/core';
+
+/** Third party imports */
+import { DxListComponent } from 'devextreme-angular/ui/list';
+import startCase from 'lodash/startCase';
+import * as _ from 'underscore';
+
+/** Application imports */
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { FiltersService } from '@shared/filters/filters.service';
-import * as _ from 'underscore';
-import startCase from 'lodash/startCase';
 import { AppPermissions } from '@shared/AppPermissions';
 
 @Component({
@@ -11,6 +17,7 @@ import { AppPermissions } from '@shared/AppPermissions';
   styleUrls: ['./static-list.component.less']
 })
 export class StaticListComponent extends AppComponentBase {
+    @ViewChild('staticList') dxList: DxListComponent;
     @Output() onItemSelected: EventEmitter<any> = new EventEmitter();
     @Output() onListFiltered: EventEmitter<any> = new EventEmitter();
     @Output() onOptionChanged: EventEmitter<any> = new EventEmitter();

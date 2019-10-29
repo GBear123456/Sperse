@@ -64,6 +64,7 @@ import { ToolbarService } from '@app/shared/common/toolbar/toolbar.service';
 import { ContactsService } from '@app/crm/contacts/contacts.service';
 import { AppPermissions } from '@shared/AppPermissions';
 import { GooglePlaceHelper } from '@shared/helpers/GooglePlaceHelper';
+import { SourceContactListComponent } from '@app/crm/contacts/source-contact-list/source-contact-list.component';
 
 @Component({
     templateUrl: 'create-client-dialog.component.html',
@@ -83,6 +84,7 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
     @ViewChild(ListsListComponent) listsComponent: ListsListComponent;
     @ViewChild(TypesListComponent) partnerTypesComponent: TypesListComponent;
     @ViewChild(UserAssignmentComponent) userAssignmentComponent: UserAssignmentComponent;
+    @ViewChild(SourceContactListComponent) sourceComponent: SourceContactListComponent;
     @ViewChild(DxContextMenuComponent) saveContextComponent: DxContextMenuComponent;
 
     currentUserId = abp.session.userId;
@@ -109,6 +111,7 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
     companies = [];
     company: string;
     notes = '';
+    sourceContactId: number;
     emailValidators: any = [];
     phoneValidators: any = [];
     linkValidators: any = [];
@@ -161,6 +164,7 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
     isListsSelected = false;
     isTagsSelected = false;
     isRatingSelected = true;
+    isSourceSelected = false;
 
     isAssignDisabled = true;
     isListAndTagsDisabled = true;
@@ -210,6 +214,8 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
         this.phoneTypesLoad();
         this.emailTypesLoad();
         this.linkTypesLoad();
+        this.sourceComponent
+            .loadSourceContacts();
         if (this.data.isInLeadMode)
             this.leadStagesLoad();
         this.saveOptionsInit();
@@ -270,7 +276,8 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
             tags: this.isListAndTagsDisabled ? undefined : tags,
             ratingId: this.isRatingAndStarsDisabled ? undefined : ratingId,
             contactGroupId: this.data.customerType,
-            partnerTypeName: partnerTypeName
+            partnerTypeName: partnerTypeName,
+            sourceContactId: this.sourceContactId
         };
 
         let saveButton: any = document.getElementById(this.saveButtonId);
@@ -447,6 +454,10 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
 
     togglePartnerTypes() {
         this.partnerTypesComponent.toggle();
+    }
+
+    togglePartnerSource() {
+        this.sourceComponent.toggle();
     }
 
     toggleTags() {
@@ -792,6 +803,7 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
             this.contacts.phones = [{type: this.phonesTypeDefault}];
             this.contacts.links = [{type: this.linksTypeDefault}];
             this.contacts.addresses = [{type: this.addressesTypeDefault}];
+            this.sourceContactId = undefined;
             this.notes = undefined;
 
             this.person = new PersonInfoDto();
@@ -905,5 +917,13 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
         return select(ContactAssignedUsersStoreSelectors.getContactGroupAssignedUsers, {
             contactGroup: this.partnerTypesComponent.selectedItems.length ? ContactGroup.Partner : ContactGroup.Client
         });
+    }
+
+    onPartnerSourceSelected(event) {
+        if (this.isSourceSelected = event.id != this.sourceContactId)
+            this.isSourceSelected = Boolean(this.sourceContactId = event.id);
+        else
+            this.sourceContactId = undefined;
+        this.togglePartnerSource();
     }
 }

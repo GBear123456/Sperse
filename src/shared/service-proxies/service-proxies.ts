@@ -7770,7 +7770,7 @@ export class ContactServiceProxy {
      * @body (optional) 
      * @return Success
      */
-    updateSourceContact(body: UpdateSourceContactInput | null | undefined): Observable<number> {
+    updateSourceContact(body: UpdateSourceContactInput | null | undefined): Observable<UpdateSourceContactOutput> {
         let url_ = this.baseUrl + "/api/services/CRM/Contact/UpdateSourceContact";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -7793,14 +7793,14 @@ export class ContactServiceProxy {
                 try {
                     return this.processUpdateSourceContact(<any>response_);
                 } catch (e) {
-                    return <Observable<number>><any>_observableThrow(e);
+                    return <Observable<UpdateSourceContactOutput>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<number>><any>_observableThrow(response_);
+                return <Observable<UpdateSourceContactOutput>><any>_observableThrow(response_);
         }));
     }
 
-    protected processUpdateSourceContact(response: HttpResponseBase): Observable<number> {
+    protected processUpdateSourceContact(response: HttpResponseBase): Observable<UpdateSourceContactOutput> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -7811,7 +7811,7 @@ export class ContactServiceProxy {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 !== undefined ? resultData200 : <any>null;
+            result200 = resultData200 ? UpdateSourceContactOutput.fromJS(resultData200) : new UpdateSourceContactOutput();
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -7819,7 +7819,7 @@ export class ContactServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<number>(<any>null);
+        return _observableOf<UpdateSourceContactOutput>(<any>null);
     }
 
     /**
@@ -42141,6 +42141,42 @@ export class UpdateSourceContactInput implements IUpdateSourceContactInput {
 export interface IUpdateSourceContactInput {
     contactId: number;
     sourceContactId: number | undefined;
+}
+
+export class UpdateSourceContactOutput implements IUpdateSourceContactOutput {
+    newOrganizationUnitId!: number | undefined;
+
+    constructor(data?: IUpdateSourceContactOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.newOrganizationUnitId = data["newOrganizationUnitId"];
+        }
+    }
+
+    static fromJS(data: any): UpdateSourceContactOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateSourceContactOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["newOrganizationUnitId"] = this.newOrganizationUnitId;
+        return data; 
+    }
+}
+
+export interface IUpdateSourceContactOutput {
+    newOrganizationUnitId: number | undefined;
 }
 
 export class SendSMSToContactInput implements ISendSMSToContactInput {
