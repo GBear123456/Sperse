@@ -274,13 +274,16 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
                 name: 'orders',
                 label: 'Orders',
                 route: 'orders',
-                hidden: this.contactGroup !== ContactGroup.Client || this.contactInfo.statusId === ContactStatus.Prospective
+                hidden: this.contactGroup == ContactGroup.UserProfile || 
+                    this.contactInfo.statusId == ContactStatus.Prospective,
+                disabled: !this.permission.isGranted(AppPermissions.CRMOrdersInvoices)
             },
             {
                 name: 'invoices',
                 label: 'Invoices',
                 route: 'invoices',
-                hidden: this.contactGroup !== ContactGroup.Client || this.contactInfo.statusId === ContactStatus.Prospective,
+                hidden: this.contactGroup == ContactGroup.UserProfile || 
+                    this.contactInfo.statusId == ContactStatus.Prospective,
                 disabled: !this.permission.isGranted(AppPermissions.CRMOrdersInvoices)
             },
             { name: 'subscriptions', label: 'Subscriptions', route: 'subscriptions', hidden: !this.isClientDetailPage() },

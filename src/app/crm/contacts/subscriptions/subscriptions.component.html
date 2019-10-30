@@ -45,7 +45,7 @@
             <dxi-column dataField="startDate" dataType="date"></dxi-column>
             <dxi-column dataField="endDate" dataType="date"></dxi-column>
             <div *dxTemplate="let cell of 'amountTemplate'">
-                <span> {{ cell.text | currency:'USD':'symbol':'1.2-2' }} </span>
+                <span> {{ cell.text | currency:currency:'symbol':'1.2-2' }} </span>
             </div>
         </dx-data-grid>
     </div>
