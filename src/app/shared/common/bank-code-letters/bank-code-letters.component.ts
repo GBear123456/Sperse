@@ -24,6 +24,7 @@ export class BankCodeLettersComponent implements OnChanges {
     @Input() key: string;
     @Input() showBankCodeDefinition = false;
     @Input() showReportLink = false;
+    @Input() reportLinkType: 'Sales' | 'Profile';
     @Input() reportIconName: string;
     @HostBinding('class.allow-edit') @Input() allowEdit = false;
     bankCodeDefinition: string;
