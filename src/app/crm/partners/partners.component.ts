@@ -838,9 +838,10 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                     { name: 'showCompactRowsHeight', action: DataGridService.showCompactRowsHeight.bind(this, this.dataGrid, true) },
                     {
                         name: 'columnChooser',
+                        disabled: !(this.showDataGrid || this.showPivotGrid),
                         action: () => {
                             if (this.showDataGrid) {
-                                DataGridService.showColumnChooser.bind(this, this.dataGrid);
+                                DataGridService.showColumnChooser(this.dataGrid);
                             } else if (this.showPivotGrid) {
                                 this.pivotGridComponent.toggleFieldPanel();
                             }
