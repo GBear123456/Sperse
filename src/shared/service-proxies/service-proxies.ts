@@ -41724,6 +41724,7 @@ export interface ISimilarContactOutput {
 export class SourceContactInfo implements ISourceContactInfo {
     id!: number | undefined;
     name!: string | undefined;
+    groupId!: string | undefined;
 
     constructor(data?: ISourceContactInfo) {
         if (data) {
@@ -41738,6 +41739,7 @@ export class SourceContactInfo implements ISourceContactInfo {
         if (data) {
             this.id = data["id"];
             this.name = data["name"];
+            this.groupId = data["groupId"];
         }
     }
 
@@ -41752,6 +41754,7 @@ export class SourceContactInfo implements ISourceContactInfo {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
         data["name"] = this.name;
+        data["groupId"] = this.groupId;
         return data; 
     }
 }
@@ -41759,6 +41762,7 @@ export class SourceContactInfo implements ISourceContactInfo {
 export interface ISourceContactInfo {
     id: number | undefined;
     name: string | undefined;
+    groupId: string | undefined;
 }
 
 export class UpdateContactStatusInput implements IUpdateContactStatusInput {
@@ -54961,6 +54965,7 @@ export enum ModuleType {
     CRM = "CRM", 
     CFO_CRM = "CFO_CRM", 
     PFM = "PFM", 
+    CFO_Partner = "CFO_Partner", 
 }
 
 export class EditionListDto implements IEditionListDto {
@@ -54969,7 +54974,6 @@ export class EditionListDto implements IEditionListDto {
     creationTime!: moment.Moment | undefined;
     module!: ModuleType | undefined;
     packageName!: string | undefined;
-    isForPartner!: boolean | undefined;
     id!: number | undefined;
 
     constructor(data?: IEditionListDto) {
@@ -54988,7 +54992,6 @@ export class EditionListDto implements IEditionListDto {
             this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
             this.module = data["module"];
             this.packageName = data["packageName"];
-            this.isForPartner = data["isForPartner"];
             this.id = data["id"];
         }
     }
@@ -55007,7 +55010,6 @@ export class EditionListDto implements IEditionListDto {
         data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
         data["module"] = this.module;
         data["packageName"] = this.packageName;
-        data["isForPartner"] = this.isForPartner;
         data["id"] = this.id;
         return data; 
     }
@@ -55019,7 +55021,6 @@ export interface IEditionListDto {
     creationTime: moment.Moment | undefined;
     module: ModuleType | undefined;
     packageName: string | undefined;
-    isForPartner: boolean | undefined;
     id: number | undefined;
 }
 
@@ -65406,7 +65407,6 @@ export class PackageConfigDto implements IPackageConfigDto {
     name!: string | undefined;
     bestValue!: boolean | undefined;
     sortOrder!: number | undefined;
-    isForPartner!: boolean | undefined;
     editions!: PackageEditionConfigDto[] | undefined;
 
     constructor(data?: IPackageConfigDto) {
@@ -65426,7 +65426,6 @@ export class PackageConfigDto implements IPackageConfigDto {
             this.name = data["name"];
             this.bestValue = data["bestValue"];
             this.sortOrder = data["sortOrder"];
-            this.isForPartner = data["isForPartner"];
             if (data["editions"] && data["editions"].constructor === Array) {
                 this.editions = [];
                 for (let item of data["editions"])
@@ -65450,7 +65449,6 @@ export class PackageConfigDto implements IPackageConfigDto {
         data["name"] = this.name;
         data["bestValue"] = this.bestValue;
         data["sortOrder"] = this.sortOrder;
-        data["isForPartner"] = this.isForPartner;
         if (this.editions && this.editions.constructor === Array) {
             data["editions"] = [];
             for (let item of this.editions)
@@ -65467,7 +65465,6 @@ export interface IPackageConfigDto {
     name: string | undefined;
     bestValue: boolean | undefined;
     sortOrder: number | undefined;
-    isForPartner: boolean | undefined;
     editions: PackageEditionConfigDto[] | undefined;
 }
 
@@ -66214,6 +66211,9 @@ export class CreateUserForContactInput implements ICreateUserForContactInput {
     contactId!: number;
     emailAddress!: string | undefined;
     phoneNumber!: string | undefined;
+    password!: string | undefined;
+    changePasswordOnNextLogin!: boolean | undefined;
+    sendActivationEmail!: boolean | undefined;
     assignedRoleNames!: string[] | undefined;
     organizationUnitIds!: number[] | undefined;
 
@@ -66231,6 +66231,9 @@ export class CreateUserForContactInput implements ICreateUserForContactInput {
             this.contactId = data["contactId"];
             this.emailAddress = data["emailAddress"];
             this.phoneNumber = data["phoneNumber"];
+            this.password = data["password"];
+            this.changePasswordOnNextLogin = data["changePasswordOnNextLogin"];
+            this.sendActivationEmail = data["sendActivationEmail"];
             if (data["assignedRoleNames"] && data["assignedRoleNames"].constructor === Array) {
                 this.assignedRoleNames = [];
                 for (let item of data["assignedRoleNames"])
@@ -66256,6 +66259,9 @@ export class CreateUserForContactInput implements ICreateUserForContactInput {
         data["contactId"] = this.contactId;
         data["emailAddress"] = this.emailAddress;
         data["phoneNumber"] = this.phoneNumber;
+        data["password"] = this.password;
+        data["changePasswordOnNextLogin"] = this.changePasswordOnNextLogin;
+        data["sendActivationEmail"] = this.sendActivationEmail;
         if (this.assignedRoleNames && this.assignedRoleNames.constructor === Array) {
             data["assignedRoleNames"] = [];
             for (let item of this.assignedRoleNames)
@@ -66274,6 +66280,9 @@ export interface ICreateUserForContactInput {
     contactId: number;
     emailAddress: string | undefined;
     phoneNumber: string | undefined;
+    password: string | undefined;
+    changePasswordOnNextLogin: boolean | undefined;
+    sendActivationEmail: boolean | undefined;
     assignedRoleNames: string[] | undefined;
     organizationUnitIds: number[] | undefined;
 }
@@ -68857,6 +68866,7 @@ export interface ITenantListDtoPagedResultDto {
 export class TenantEditEditionDto implements ITenantEditEditionDto {
     editionId!: number;
     maxUserCount!: number | undefined;
+    trialDayCount!: number | undefined;
 
     constructor(data?: ITenantEditEditionDto) {
         if (data) {
@@ -68871,6 +68881,7 @@ export class TenantEditEditionDto implements ITenantEditEditionDto {
         if (data) {
             this.editionId = data["editionId"];
             this.maxUserCount = data["maxUserCount"];
+            this.trialDayCount = data["trialDayCount"];
         }
     }
 
@@ -68885,6 +68896,7 @@ export class TenantEditEditionDto implements ITenantEditEditionDto {
         data = typeof data === 'object' ? data : {};
         data["editionId"] = this.editionId;
         data["maxUserCount"] = this.maxUserCount;
+        data["trialDayCount"] = this.trialDayCount;
         return data; 
     }
 }
@@ -68892,6 +68904,7 @@ export class TenantEditEditionDto implements ITenantEditEditionDto {
 export interface ITenantEditEditionDto {
     editionId: number;
     maxUserCount: number | undefined;
+    trialDayCount: number | undefined;
 }
 
 export class CreateTenantInput implements ICreateTenantInput {
