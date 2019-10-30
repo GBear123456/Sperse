@@ -35,6 +35,7 @@ export class FilterStatesComponent implements FilterComponent, OnInit {
     selectedCountries: string[] = [];
     countriesToExpand: string[] = [];
     selectedStates: string[] = [];
+    countriesCodesThatHaveStates = ['US', 'CA'];
 
     constructor(
         private cacheService: CacheService,
@@ -42,7 +43,7 @@ export class FilterStatesComponent implements FilterComponent, OnInit {
     ) {}
 
     ngOnInit() {
-        if (this.items.countryStates.value) {
+        if (this.items.countryStates.value && this.items.countryStates.value.length) {
             this.items.countryStates.value.forEach((countryState: string) => {
                 const [ countryCode, stateCode ] = countryState.split(':');
                 if (stateCode) {
@@ -57,6 +58,11 @@ export class FilterStatesComponent implements FilterComponent, OnInit {
         this.store$.dispatch(new CountriesStoreActions.LoadRequestAction());
     }
 
+    /**
+     * Returns items for expanded node, but also returns items for root
+     * @param node
+     * @return {Promise<ICountryState[]>}
+     */
     createChildren = (node) => {
         if (!node) {
             /** Return list of countries */
@@ -68,14 +74,20 @@ export class FilterStatesComponent implements FilterComponent, OnInit {
         }
     }
 
+    /**
+     * Move countries that have states to the top
+     * @param {CountryDto[]} countries
+     * @return {CountryDto[]}
+     */
     private sortCountries(countries: CountryDto[]): CountryDto[] {
-        const usa = countries.splice(
-            countries.findIndex((country: CountryStateDto) => country.code === 'US'), 1
-        )[0];
-        const canada = countries.splice(
-            countries.findIndex((country: CountryStateDto) => country.code === 'CA'), 1
-        )[0];
-        countries.unshift(usa, canada);
+        const countriesThatHaveStates: CountryDto[] = [];
+        this.countriesCodesThatHaveStates.forEach((countryCode: string) => {
+            const countryIndex = countries.findIndex((country: CountryDto) => {
+                return country.code === countryCode;
+            });
+            countriesThatHaveStates.push(countries.splice(countryIndex, 1)[0]);
+        });
+        countries.unshift(...countriesThatHaveStates);
         return countries;
     }
 
@@ -89,7 +101,7 @@ export class FilterStatesComponent implements FilterComponent, OnInit {
                 countries = this.sortCountries(countries);
                 return countries.map((country: CountryDto) => ({
                     ...country,
-                    hasItems: country.code === 'US' || country.code === 'CA',
+                    hasItems: this.countriesCodesThatHaveStates.indexOf(country.code) >= 0,
                     selected: this.selectedCountries.indexOf(country.code) >= 0,
                     expanded: this.countriesToExpand.indexOf(country.code) >= 0,
                     parentId: null
