@@ -1,0 +1,63 @@
+:host {
+    /deep/ .mat-dialog-actions {
+        width: 160px;
+        .mat-dialog-buttons {
+            height: 50px!important;
+        }
+        #saveOption {
+            width: 140px;
+        }
+    }
+
+    .form-content {
+        display: flex;
+        flex-direction: column;
+        padding: 30px 0px 30px 50px;
+        height: calc(~"100vh - 82px");
+        width: 900px;
+
+        .row {
+            width: 820px;
+            margin-left: 0px !important;
+        }
+
+        /deep/ .field-area {
+            width: 100%;
+            display: block;
+            position: relative;
+            white-space: nowrap;
+            label {
+                line-height: 38px;
+                border-bottom: 1px solid #dfdfdf;
+                vertical-align: top;
+                padding-top: 1px;
+                color: #8a969b;
+            }
+
+            .dx-widget {
+                display: inline-block;
+                input {
+                    &, &:read-only {
+                        font-size: 12px;
+                        font-weight: 500;
+                        line-height: 1.09;
+                        letter-spacing: 0.4px;
+                        padding-left: 17px;
+                    }
+                }
+                .dx-placeholder {
+                    font-size: 15px;
+                    font-weight: 400;
+                    line-height: 1.79;
+                    letter-spacing: 0.3px;
+                    padding: 0px;
+                }
+                &.dx-state-focused {
+                    .dx-placeholder {
+                        top: -30px;
+                    }
+                }
+            }
+        }
+    }
+}

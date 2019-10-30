@@ -1,0 +1,114 @@
+<modal-dialog [title]="ls.l('BankTransferTitleText')"
+              [titleClearButton]="false"
+              [buttons]="buttons"
+              [editTitle]="false">
+    <ng-container headerContent>
+    </ng-container>
+
+    <div class="form-content">
+        <dx-scroll-view showScrollbar="onHover">
+            <div class="row">
+                <div class="field-area">
+                    <label class="caption">{{ls.l('BankAccountNumber')}}:</label> 
+                    <dx-text-box
+                        name="subject"
+                        width="155px"
+                        height="40px"
+                        placeholder=""
+                        [(value)]="settings.bankAccountNumber">
+                    </dx-text-box>
+                    <label class="caption">{{ls.l('BankRoutingNumber')}}</label> 
+                    <dx-text-box
+                        name="subject"
+                        width="310px"
+                        height="40px"
+                        placeholder=""
+                        [(value)]="settings.bankRoutingNumber">
+                    </dx-text-box>
+                </div>
+                <div class="field-area">
+                    <label class="caption">{{ls.l('BankRoutingNumberForACHTransfers')}}:</label> 
+                    <dx-text-box
+                        name="subject"
+                        width="510px"
+                        height="40px"
+                        placeholder=""
+                        [(value)]="settings.bankRoutingNumberForACH">
+                    </dx-text-box>
+                </div>
+
+                <div class="field-area">
+                    <label class="caption">{{ls.l('BeneficiaryBank')}}:</label> 
+                    <dx-text-box
+                        name="subject"
+                        width="200px"
+                        height="40px"
+                        placeholder=""
+                        [(value)]="settings.beneficiaryBank.name">
+                    </dx-text-box>
+                    <label class="caption">{{ls.l('City')}}:</label> 
+                    <dx-text-box
+                        name="subject"
+                        width="200px"
+                        height="40px"
+                        placeholder=""
+                        [(value)]="settings.beneficiaryBank.cityAddress">
+                    </dx-text-box>
+                    <label class="caption">{{ls.l('Address')}}:</label> 
+                    <dx-text-box
+                        name="subject"
+                        width="180px"
+                        height="40px"
+                        placeholder=""
+                        [(value)]="settings.beneficiaryBank.streetAddress">
+                    </dx-text-box>
+                </div>
+                <div class="field-area">
+                    <label class="caption">{{ls.l('BeneficiaryInformation')}}:</label> 
+                    <dx-text-box
+                        name="subject"
+                        width="155px"
+                        height="40px"
+                        placeholder=""
+                        [(value)]="settings.beneficiaryInfo.name">
+                    </dx-text-box>
+                    <label class="caption">{{ls.l('City')}}:</label> 
+                    <dx-text-box
+                        name="subject"
+                        width="200px"
+                        height="40px"
+                        placeholder=""
+                        [(value)]="settings.beneficiaryInfo.cityAddress">
+                    </dx-text-box>
+                    <label class="caption">{{ls.l('Address')}}:</label> 
+                    <dx-text-box
+                        name="subject"
+                        width="180px"
+                        height="40px"
+                        placeholder=""
+                        [(value)]="settings.beneficiaryInfo.streetAddress">
+                    </dx-text-box>
+                </div>
+
+                <div class="field-area">
+                    <label class="caption">{{ls.l('SWIFT_Code')}}</label> 
+                    <dx-text-box
+                        name="subject"
+                        width="240px"
+                        height="40px"
+                        placeholder=""
+                        [(value)]="settings.swiftCode">
+                    </dx-text-box>
+                    <label class="caption">{{ls.l('SWIFT_CodeForUSDollar')}}</label> 
+                    <dx-text-box
+                        name="subject"
+                        width="285px"
+                        height="40px"
+                        placeholder=""
+                        [(value)]="settings.swiftCodeForUSDollar">
+                    </dx-text-box>
+                </div>
+            </div>
+        </dx-scroll-view>
+    </div>
+</modal-dialog>

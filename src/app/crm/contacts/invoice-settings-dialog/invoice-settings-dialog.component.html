@@ -2,7 +2,7 @@
     <ng-container templateSettings>
         <div class="settings-wrapper">
             <div class="left-side">
-                <h3>{{ls.l('InvoiceEmail_PaymentSettings')}}</h3>
+                <h3 >{{ls.l('Company Info')}}<a (click)="showBankSettingsDialog()" href="javascript:void(0)">{{ls.l('InvoiceEmail_BankTransferSettings')}}</a></h3>
                 <dx-text-box 
                     [placeholder]="ls.l('LegalName')"
                     [(value)]="settings.legalName">
