@@ -78,6 +78,10 @@ export class FiltersService {
         return CrmFilterHelpers.filterBySetOfValues(filter);
     }
 
+    static filterByCashflowTypeId(filter: FilterModel) {
+        return CrmFilterHelpers.filterBySetOfValues(filter);
+    }
+
     static filterByList(filter: FilterModel) {
         return CrmFilterHelpers.filterBySetOfValues(filter);
     }

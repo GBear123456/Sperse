@@ -1,6 +1,7 @@
 /** Core imports  */
 import { NgModule } from '@angular/core';
 import * as ngCommon from '@angular/common';
+import { RouterModule } from '@angular/router';
 
 /** Third party imports */
 import { MatDialogModule } from '@angular/material/dialog';
@@ -33,6 +34,7 @@ export function defaultPeriodFactory(cfoService: CFOService) {
 @NgModule({
     imports: [
         CommonModule,
+        RouterModule,
         RoundProgressModule,
         DxSelectBoxModule,
         DxCheckBoxModule,
