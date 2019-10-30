@@ -11,9 +11,8 @@ export class CustomReuseStrategy implements RouteReuseStrategy {
     private activateTimeout: any;
 
     constructor(
-        private _injector: Injector
-    ) {
-    }
+        private injector: Injector
+    ) {}
 
     private getKey(route: ActivatedRouteSnapshot) {
         return route && route.routeConfig.path;
@@ -53,7 +52,7 @@ export class CustomReuseStrategy implements RouteReuseStrategy {
         if (handle && handle.componentRef.instance.activate && this.componentIsTheSame(route, handle)) {
             clearTimeout(this.activateTimeout);
             this.activateTimeout = setTimeout(() => {
-                let router = this._injector.get(Router);
+                let router = this.injector.get(Router);
                 if (route['_routerState'].url == router.url)
                     handle.componentRef.instance.activate();
             });
@@ -126,22 +125,18 @@ const routes: Routes = [
 
 export class RootRoutingModule implements AfterViewInit {
     constructor(
-        private _injector: Injector,
-        private _router: Router,
-        private _applicationRef: ApplicationRef
+        private injector: Injector,
+        private router: Router,
+        private applicationRef: ApplicationRef
     ) {}
 
     ngAfterViewInit() {
-        this._router.events.subscribe((event: NavigationEnd) => {
+        this.router.events.subscribe((event: NavigationEnd) => {
                 setTimeout(() => {
-                    this._injector.get(this._applicationRef.componentTypes[0])
+                    this.injector.get(this.applicationRef.componentTypes[0])
                         .checkSetClasses(abp.session.userId || (event.url.indexOf('/account/') >= 0));
                 }, 0);
             }
         );
-    }
-
-    getSetting(key: string): string {
-        return abp.setting.get(key);
     }
 }

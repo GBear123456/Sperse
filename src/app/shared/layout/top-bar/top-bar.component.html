@@ -8,7 +8,6 @@
         [selectedIndex]="selectedIndex"
         [itemTemplate]="'navBarItem'"
         selectionMode="single"
-        (selectedIndexChange)="change($event)"
         (onInitialized)="onNavBarInitialized()">
         <div *dxTemplate="let link of 'navBarItem'">
             <dx-menu

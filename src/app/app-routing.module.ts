@@ -91,9 +91,7 @@ export class CfoActivateService implements CanActivate {
                     },
                     {
                         path: 'slice',
-                        loadChildren: 'app/crm/crm.module#CrmModule',
-                        resolve: { crm: ModulePathResolverService },
-                        data: { feature: 'CRM', localizationSource: 'CRM' }
+                        redirectTo: 'crm'
                     },
                     {
                         path: 'pfm',

@@ -7,8 +7,20 @@ import { MatDialog } from '@angular/material/dialog';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import 'devextreme/data/odata/store';
 import { Store, select } from '@ngrx/store';
-import { BehaviorSubject, Observable, combineLatest, of } from 'rxjs';
-import { first, filter, finalize, takeUntil, startWith, map, mapTo, publishReplay, refCount, switchMap, tap } from 'rxjs/operators';
+import { BehaviorSubject, Observable, combineLatest, merge, of } from 'rxjs';
+import {
+    first,
+    filter,
+    finalize,
+    takeUntil,
+    startWith,
+    map,
+    mapTo,
+    publishReplay,
+    refCount,
+    switchMap,
+    tap
+} from 'rxjs/operators';
 import * as _ from 'underscore';
 
 /** Application imports */
@@ -354,7 +366,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             }
         };
         this.searchValue = '';
-        this.pipelineService.stageChange.asObservable().subscribe((lead) => {
+        this.pipelineService.stageChange$.subscribe((lead) => {
             this.dependencyChanged = (lead.Stage == _.last(this.pipelineService.getStages(AppConsts.PipelinePurposeIds.lead)).name);
         });
         combineLatest(
@@ -368,6 +380,14 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         });
         this.getOrganizationUnits();
         this.activate();
+        merge(
+            this.dataLayoutType$,
+            this.lifeCycleSubjectsService.activate$
+        ).pipe(
+            takeUntil(this.destroy$)
+        ).subscribe(() => {
+            this.crmService.handleModuleChange(this.dataLayoutType.value);
+        });
     }
 
     get isSlice() {
@@ -892,9 +912,8 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     }
 
     toggleDataLayout(dataLayoutType: DataLayoutType) {
-        this.crmService.handleModuleChange(dataLayoutType);
-        this.selectedClientKeys = [];
         this.dataLayoutType.next(dataLayoutType);
+        this.selectedClientKeys = [];
         this.initDataSource();
         this.initToolbarConfig();
         if (this.showDataGrid) {
@@ -1059,7 +1078,6 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
 
     activate() {
         super.activate();
-        this.crmService.handleModuleChange(this.dataLayoutType.value);
         this.lifeCycleSubjectsService.activate.next();
         this.paramsSubscribe();
         this.initFilterConfig();

@@ -7,7 +7,7 @@ import {
     Injector,
     ViewChild
 } from '@angular/core';
-import { RouteReuseStrategy } from '@angular/router';
+import { Params, RouteReuseStrategy } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 
 /** Third party imports */
@@ -15,8 +15,20 @@ import { MatDialog } from '@angular/material/dialog';
 import DataSource from 'devextreme/data/data_source';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { Store, select } from '@ngrx/store';
-import { BehaviorSubject, Observable, combineLatest, of } from 'rxjs';
-import { first, filter, startWith, tap, switchMap, map, mapTo, takeUntil, publishReplay, refCount } from 'rxjs/operators';
+import { BehaviorSubject, Observable, combineLatest, of, merge } from 'rxjs';
+import {
+    first,
+    filter,
+    startWith,
+    tap,
+    switchMap,
+    map,
+    mapTo,
+    takeUntil,
+    pluck,
+    publishReplay,
+    refCount
+} from 'rxjs/operators';
 import { CacheService } from 'ng2-cache-service';
 
 /** Application imports */
@@ -80,8 +92,8 @@ import { ImpersonationService } from '@admin/users/impersonation.service';
 @Component({
     templateUrl: './leads.component.html',
     styleUrls: ['./leads.component.less'],
-    providers: [ LeadServiceProxy, ContactServiceProxy, LifecycleSubjectsService, PipelineService, MapService ],
-    animations: [ appModuleAnimation() ]
+    providers: [LeadServiceProxy, ContactServiceProxy, LifecycleSubjectsService, PipelineService, MapService],
+    animations: [appModuleAnimation()]
 })
 export class LeadsComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
@@ -175,7 +187,6 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     private readonly dataSourceURI = 'Lead';
     private readonly groupDataSourceURI = 'LeadSlice';
     private filters: FilterModel[];
-    private subRouteParams: any;
     private filterChanged = false;
     formatting = AppConsts.formatting;
 
@@ -366,8 +377,13 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     contentHeight$: Observable<number> = this.crmService.contentHeight$;
     mapHeight$: Observable<number> = this.crmService.mapHeight$;
     pipelineSelectFields: string[] = ['Id', 'CustomerId', 'Name', 'CompanyName', 'CreationTime', 'PhotoPublicId', 'Email'];
+    private queryParams$: Observable<Params> = this._activatedRoute.queryParams.pipe(
+        takeUntil(this.destroy$),
+        filter(() => this.componentIsActivated)
+    );
 
-    constructor(injector: Injector,
+    constructor(
+        injector: Injector,
         private contactService: ContactsService,
         private leadService: LeadServiceProxy,
         private pipelineService: PipelineService,
@@ -427,7 +443,44 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         ).subscribe(() => {
             this.chartDataSource.load();
         });
+
+        this.queryParams$.pipe(
+            pluck('dataLayoutType'),
+            filter(Boolean)
+        ).subscribe((dataLayoutType) => {
+            if (dataLayoutType != this.dataLayoutType.value) {
+                this.toggleDataLayout(+dataLayoutType);
+                if (dataLayoutType == DataLayoutType.DataGrid)
+                    this.pipelineService.getPipelineDefinitionObservable(this.pipelinePurposeId)
+                        .subscribe(this.onStagesLoaded.bind(this));
+            }
+        });
+
+        this.queryParams$.pipe(
+            pluck('action'),
+            filter((action: string) => action === 'addNew')
+        ).subscribe(() => {
+            setTimeout(() => this.createLead());
+        });
+
+        this.queryParams$.pipe(
+            pluck('refresh'),
+            filter(Boolean)
+        ).subscribe(() => {
+            this.refresh();
+            this.filterChanged = true;
+        });
+
         this.activate();
+
+        merge(
+            this.dataLayoutType$,
+            this.lifeCycleSubjectsService.activate$
+        ).pipe(
+            takeUntil(this.destroy$)
+        ).subscribe(() => {
+            this.crmService.handleModuleChange(this.dataLayoutType.value);
+        });
     }
 
     ngAfterViewInit() {
@@ -490,32 +543,6 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             this.contactService.checkCGPermission(this.contactGroupId.value);
     }
 
-    private isActivated() {
-        return this.subRouteParams && !this.subRouteParams.closed;
-    }
-
-    private paramsSubscribe() {
-        if (!this.isActivated())
-            this.subRouteParams = this._activatedRoute.queryParams.subscribe(params => {
-                if (params['dataLayoutType']) {
-                    let dataLayoutType = params['dataLayoutType'];
-                    if (dataLayoutType != this.dataLayoutType.value) {
-                        if (dataLayoutType == DataLayoutType.DataGrid)
-                            this.pipelineService.getPipelineDefinitionObservable(this.pipelinePurposeId)
-                                .subscribe(this.onStagesLoaded.bind(this));
-                        this.toggleDataLayout(dataLayoutType);
-                    }
-                }
-
-                if ('addNew' == params['action'])
-                    setTimeout(() => this.createLead());
-                if (params['refresh']) {
-                    this.refresh();
-                    this.filterChanged = true;
-                }
-            });
-    }
-
     onContentReady(event) {
         this.finishLoading();
         if (this.exportCallback)
@@ -552,7 +579,6 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     toggleDataLayout(dataLayoutType: DataLayoutType) {
-        this.crmService.handleModuleChange(dataLayoutType);
         this.selectedClientKeys = [];
         this.dataLayoutType.next(dataLayoutType);
         this.initToolbarConfig();
@@ -744,7 +770,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
 
     initToolbarConfig() {
         this.manageDisabled = !this.contactService.checkCGPermission(this.contactGroupId.value);
-        this.isActivated() && this.appService.updateToolbar([
+        this.componentIsActivated && this.appService.updateToolbar([
             {
                 location: 'before', items: [
                     {
@@ -851,8 +877,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     {
                         name: 'delete',
                         disabled: !this.selectedLeads.length ||
-                            !this.contactService.checkCGPermission(this.contactGroupId.value) ||
-                            this.selectedLeads.length > 1 && !this.isGranted(AppPermissions.CRMBulkUpdates),
+                        !this.contactService.checkCGPermission(this.contactGroupId.value) ||
+                        this.selectedLeads.length > 1 && !this.isGranted(AppPermissions.CRMBulkUpdates),
                         action: this.deleteLeads.bind(this)
                     }
                 ]
@@ -1264,8 +1290,6 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     activate() {
         super.activate();
         this.lifeCycleSubjectsService.activate.next();
-        this.paramsSubscribe();
-        //this.crmService.handleModuleChange(this.dataLayoutType.value);
         this.initFilterConfig();
         this.initToolbarConfig();
         this.rootComponent = this.getRootComponent();
@@ -1280,7 +1304,6 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         this.appService.updateToolbar(null);
         this.filtersService.unsubscribe();
         this.rootComponent.overflowHidden();
-        this.subRouteParams.unsubscribe();
         if (!this.showPipeline) {
             this.itemDetailsService.setItemsSource(ItemTypeEnum.Lead, this.dataGrid.instance.getDataSource());
         }
