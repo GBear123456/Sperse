@@ -18,6 +18,7 @@ import { OffersLayoutComponent } from '@root/personal-finance/shared/offers/offe
 import { LayoutModule } from '../layout/layout.module';
 import { OfferDetailsComponent } from '@root/personal-finance/shared/offers/offer-details/offer-details.component';
 import { MarcusDetailsComponent } from '@root/personal-finance/shared/offers/marcus-details/marcus-details.component';
+import { LendingClubDetailsComponent } from '@root/personal-finance/shared/offers/lending-club-details/lending-club-details.component';
 import { NoDataModule } from '@shared/common/widgets/no-data/no-data.module';
 import { OffersRoutingModule } from '@root/personal-finance/shared/offers/offers-routing.module';
 import { NumberAbbrPipe } from '@shared/common/pipes/number-abbr/number-abbr.pipe';
@@ -69,10 +70,12 @@ import { OffersListComponent } from '@root/personal-finance/shared/offers/offers
         ScoreFilterComponent,
         BusinessLoansComponent,
         OffersCategoryDetailsComponent,
-        DebtConsolidationComponent
+        DebtConsolidationComponent,
+        LendingClubDetailsComponent
     ],
     entryComponents: [
-        MarcusDetailsComponent
+        MarcusDetailsComponent,
+        LendingClubDetailsComponent
     ]
 })
 export class OffersModule {}

@@ -9,6 +9,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { OfferDto } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { MarcusDetailsComponent } from '@root/personal-finance/shared/offers/marcus-details/marcus-details.component';
+import { LendingClubDetailsComponent } from '@root/personal-finance/shared/offers/lending-club-details/lending-club-details.component';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { OffersService } from '@root/personal-finance/shared/offers/offers.service';
 
@@ -54,9 +55,9 @@ export class OffersListComponent implements OnChanges {
             let result = this.creditScore < 720;
             if (!result && card && card.redirectUrl)
                 redirect ? window.open(card.redirectUrl) :
-                    this.dialog.open(MarcusDetailsComponent, {
+                    this.dialog.open(card.campaignId ? MarcusDetailsComponent : LendingClubDetailsComponent, {
                         width: '900px',
-                        height: '350px'
+                        height: '353px'
                     });
 
             return result;
