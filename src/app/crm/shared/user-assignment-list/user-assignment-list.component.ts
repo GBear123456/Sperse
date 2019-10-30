@@ -4,7 +4,7 @@ import { Component, Injector, Input, EventEmitter, Output } from '@angular/core'
 /** Third party imports */
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
-import { finalize } from 'rxjs/operators';
+import { first, filter, finalize } from 'rxjs/operators';
 import * as _ from 'underscore';
 
 /** Application imports */
@@ -146,23 +146,25 @@ export class UserAssignmentComponent extends AppComponentBase {
     }
 
     refreshList(assignedUsersSelector) {
-        this.store$.pipe(assignedUsersSelector).subscribe((result) => {
-            if (this.selectedKeys && this.selectedKeys.length && result && this.proxyService)
-                this.proxyService.getRelatedAssignableUsers(this.selectedKeys[0], true).subscribe((res) => {
-                    if (res && res.length) {
-                        res.forEach((user) => {
-                            this.isRelatedUser = this.isRelatedUser ||
-                                (user.id == abp.session.userId);
-                            if (!_.findWhere(this.list, { id: user.id }))
-                                this.list.unshift(user);
-                        });
-                        if (!this.checkPermissions() && this.isRelatedUser)
-                            this.list = res;
-                    }
-                });
-            if (result && result instanceof Array)
-                this.list = result.slice(0);
-        });
+        this.store$.pipe(assignedUsersSelector)
+            .pipe(filter(Boolean), first())
+            .subscribe((result) => {
+                if (this.selectedKeys && this.selectedKeys.length && result && this.proxyService)
+                    this.proxyService.getRelatedAssignableUsers(this.selectedKeys[0], true).subscribe((res) => {
+                        if (res && res.length) {
+                            res.forEach((user) => {
+                                this.isRelatedUser = this.isRelatedUser ||
+                                    (user.id == abp.session.userId);
+                                if (!_.findWhere(this.list, { id: user.id }))
+                                    this.list.unshift(user);
+                            });
+                            if (!this.checkPermissions() && this.isRelatedUser)
+                                this.list = res;
+                        }
+                    });
+                if (result && result instanceof Array)
+                    this.list = result.slice(0);
+            });
     }
 
     reset() {

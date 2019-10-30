@@ -207,6 +207,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     private rootComponent: any;
 
     fieldsConfig = {};
+    assignedUsersSelector = this.getAssignedUsersSelector(ContactGroup.Client);
 
     constructor(
         injector: Injector,
@@ -237,17 +238,13 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         if (this.importType != ImportTypeInput.Partner)
             this.selectedPartnerTypeName = null;
 
-        this.userAssignmentComponent.assignedUsersSelector = this.getAssignedUsersSelector();
         let contactGroupId = event.itemData.contactGroupId;
+        this.userAssignmentComponent.assignedUsersSelector = this.getAssignedUsersSelector(contactGroupId);
         if (contactGroupId != this.contactGroupId) {
             if (this.contactGroupId = contactGroupId)
                 this.getStages();
         }
         this.initToolbarConfig();
-    }
-
-    getAssignedUsersSelector() {
-        return select(ContactAssignedUsersStoreSelectors.getContactGroupAssignedUsers, { contactGroup: ContactGroup.Client });
     }
 
     private initFieldsConfig() {
@@ -713,6 +710,10 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
                 != this.wizard.UPLOAD_STEP_INDEX;
         else
             setTimeout(() => this.initToolbarConfig());
+    }
+
+    private getAssignedUsersSelector(contactGroup: ContactGroup) {
+        return select(ContactAssignedUsersStoreSelectors.getContactGroupAssignedUsers, { contactGroup: contactGroup });
     }
 
     getUserAssignmentPermissionKey() {

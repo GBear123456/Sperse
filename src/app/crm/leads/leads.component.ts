@@ -381,6 +381,10 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         takeUntil(this.destroy$),
         filter(() => this.componentIsActivated)
     );
+    assignedUsersSelector = select(
+        ContactAssignedUsersStoreSelectors.getContactGroupAssignedUsers,
+        { contactGroup: ContactGroup.Client }
+    );
 
     constructor(
         injector: Injector,
@@ -687,7 +691,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     items: {
                         element: new FilterCheckBoxesModel(
                             {
-                                dataSource$: this.store$.pipe(this.getAssignedUsersSelector()),
+                                dataSource$: this.store$.pipe(this.assignedUsersSelector),
                                 nameField: 'name',
                                 keyExpr: 'id'
                             })
@@ -1330,10 +1334,6 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     return true;
                 }
             });
-    }
-
-    getAssignedUsersSelector() {
-        return select(ContactAssignedUsersStoreSelectors.getContactGroupAssignedUsers, { contactGroup: ContactGroup.Client });
     }
 
     showActionsMenu(event) {

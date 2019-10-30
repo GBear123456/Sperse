@@ -22,8 +22,8 @@
 </app-static-list>
 <source-contact-list
     [selectedKey]="sourceContactId"
-    (onItemSelected)="onPartnerSourceSelected($event)">                                            
-</source-contact-list>                                
+    (onItemSelected)="onPartnerSourceSelected($event)">
+</source-contact-list>
 <crm-rating targetSelector="#ClientRating"
             [hideButtons]="true"
             (onValueChanged)="onRatingChanged($event)"></crm-rating>
@@ -42,7 +42,7 @@
 <crm-user-assignment-list
     targetSelector="#ClientAssign"
     [permissionKey]="getAssignmentsPermissionKey()"
-    [assignedUsersSelector]="getAssignedUsersSelector()"
+    [assignedUsersSelector]="assignedUsersSelector"
     [selectedItemKey]="currentUserId"
     [proxyService]="contactProxy"
     [hideButtons]="true"

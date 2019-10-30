@@ -311,6 +311,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     );
     mapData$: Observable<MapData> = this.mapService.getAdjustedMapData(this.partnersData$);
     mapInfoItems$: Observable<InfoItem[]> = this.mapService.getMapInfoItems(this.partnersData$, this.selectedMapArea$);
+    assignedUsersSelector = select(ContactAssignedUsersStoreSelectors.getContactGroupAssignedUsers, { contactGroup: ContactGroup.Partner });
 
     constructor(
         injector: Injector,
@@ -568,7 +569,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                         items: {
                             element: new FilterCheckBoxesModel(
                                 {
-                                    dataSource$: this.store$.pipe(this.getAssignedUsersSelector()),
+                                    dataSource$: this.store$.pipe(this.assignedUsersSelector),
                                     nameField: 'name',
                                     keyExpr: 'id'
                                 })
@@ -1100,7 +1101,4 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         e.component.hide();
     }
 
-    getAssignedUsersSelector() {
-        return select(ContactAssignedUsersStoreSelectors.getContactGroupAssignedUsers, { contactGroup: ContactGroup.Partner });
-    }
 }

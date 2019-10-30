@@ -169,6 +169,7 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
     isAssignDisabled = true;
     isListAndTagsDisabled = true;
     isRatingAndStarsDisabled = true;
+    assignedUsersSelector = this.getAssignedUsersSelector();
 
     constructor(
         public dialog: MatDialog,
@@ -884,6 +885,7 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
     onPartnerTypeChanged(event) {
         this.partnerTypesComponent.apply();
         this.isPartnerTypeSelected = Boolean(event.selectedRowKeys.length);
+        this.assignedUsersSelector = this.getAssignedUsersSelector();
     }
 
     getAssignmentsPermissionKey() {
@@ -915,7 +917,7 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
 
     getAssignedUsersSelector() {
         return select(ContactAssignedUsersStoreSelectors.getContactGroupAssignedUsers, {
-            contactGroup: this.partnerTypesComponent.selectedItems.length ? ContactGroup.Partner : ContactGroup.Client
+            contactGroup: this.partnerTypesComponent && this.partnerTypesComponent.selectedItems.length ? ContactGroup.Partner : ContactGroup.Client
         });
     }
 

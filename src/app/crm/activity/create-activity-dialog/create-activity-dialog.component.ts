@@ -101,6 +101,7 @@ export class CreateActivityDialogComponent implements OnInit {
         }
     ];
     permissions = AppPermissions;
+    assignedUsersSelector = select(ActivityAssignedUsersStoreSelectors.getAssignedUsers);
 
     constructor(
         private _cacheService: CacheService,
@@ -449,7 +450,7 @@ export class CreateActivityDialogComponent implements OnInit {
     }
 
     toggleStarsList() {
-        this.starsListComponent.toggle()
+        this.starsListComponent.toggle();
         this.changeDetectorRef.detectChanges();
     }
 
@@ -581,10 +582,6 @@ export class CreateActivityDialogComponent implements OnInit {
 
     initDateValidationGroup($event) {
         this.dateValidator = $event.component;
-    }
-
-    getAssignedUsersSelector() {
-        return select(ActivityAssignedUsersStoreSelectors.getAssignedUsers);
     }
 
     onUserAssignmentChanged(event) {

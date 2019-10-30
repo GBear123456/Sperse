@@ -68,7 +68,7 @@
                               [filterModel]="filterModelAssignment"
                               [proxyService]="contactProxy"
                               [permissionKey]="permissions.CRMPartnersManageAssignments"
-                              [assignedUsersSelector]="getAssignedUsersSelector()">
+                              [assignedUsersSelector]="assignedUsersSelector">
     </crm-user-assignment-list>
     <crm-rating [selectedKeys]="selectedPartnerKeys" [bulkUpdateMode]="true" [filterModel]="filterModelRating"></crm-rating>
     <crm-stars-list [selectedKeys]="selectedPartnerKeys" [bulkUpdateMode]="true" [filterModel]="filterModelStar"></crm-stars-list>
