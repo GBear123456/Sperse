@@ -98,6 +98,16 @@ export class OffersService {
     };
     demoUserOffers = [
         OfferDto.fromJS({
+            campaignId: 0,
+            details: ['Debt Consolidation Loans Made Easy', 'Loans from $1000 - $35,000', 'Rates starting at 4.99%', 'All Credit Types Considered'],
+            logoUrl: './assets/images/credit-report/offers/demo/lending-club.png',
+            redirectUrl: 'https://www.lendingclub.com',
+            minLoanAmount: 1000,
+            maxLoanAmount: 35000,
+            name: 'LendingClub',
+            systemType: 'EPCVIP'
+        }),
+        OfferDto.fromJS({
             campaignId: 1,
             details: ['APR: 5.73%-16.59%', 'Loan Term: 24-84 months', 'Credit Score: Good/Excellent'],
             logoUrl: './assets/images/credit-report/offers/demo/sofi.svg',
