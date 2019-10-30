@@ -11,6 +11,6 @@ export class WeekInfo {
         const endOfWeek = moment(date).endOf(weekPeriod);
         const endOfMonth = moment(date).endOf('month');
         this.endDate = endOfWeek.isSameOrBefore(endOfMonth) ? endOfWeek : endOfMonth;
-        this.weekNumber = date.isoWeek();
+        this.weekNumber = date.week();
     }
 }

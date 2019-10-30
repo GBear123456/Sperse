@@ -2226,18 +2226,12 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     isTransactionDetailHeader(cell, area) {
         let result = false;
         if (area === 'row' && !cell.isWhiteSpace && cell.path) {
-            let prefix = this.getPrefixFromPath(cell.path);
+            let prefix = CashflowService.getPrefixFromPath(cell.path);
             if (prefix && prefix === CategorizationPrefixes.TransactionDescriptor) {
                 result = true;
             }
         }
         return result;
-    }
-
-    getPrefixFromPath(path) {
-        /** get last row - it is opened */
-        let row = path.slice(-1);
-        return row[0] ? row[0].slice(0, 2) : undefined;
     }
 
     cellCanBeDragged(cell, area) {
@@ -2268,7 +2262,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
         let options = this.getCellOptionsFromCell(e.cell, e.area, e.rowIndex, e.isWhiteSpace);
 
-        /** added charts near row titles */
+        /** Added charts near row titles */
         if (this.userPreferencesService.localPreferences.value.showSparklines && e.area === 'row' && !e.cell.isWhiteSpace && e.cell.path) {
             this.addChartToRow(e);
         }
@@ -2276,7 +2270,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         /** Apply all cell options to the cellElement */
         this.cashflowService.applyOptionsToElement(e.cellElement, options, preferencesOptions);
 
-        /** hide long text for row headers and show '...' instead with the hover and long text */
+        /** Hide long text for row headers and show '...' instead with the hover and long text */
         if (e.area === 'row' && !e.cell.isWhiteSpace && e.cell.path && e.cell.text) {
             let textElement: HTMLSpanElement = e.cellElement.parentElement.querySelector(`td:nth-child(${e.cellElement.cellIndex + 1}) > span`);
             let cellClientRect = e.cellElement.getBoundingClientRect();

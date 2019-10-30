@@ -437,6 +437,12 @@ export class CashflowService {
         element.style.width = newCellWidth + 'px';
     }
 
+    static getPrefixFromPath(path) {
+        /** get last row - it is opened */
+        let row = path.slice(-1);
+        return row[0] ? row[0].slice(0, 2) : undefined;
+    }
+
     /**
      * Gets categorization properties and their values depend on targets and forecasts data
      * @param {CellInfo} source
@@ -1927,7 +1933,7 @@ export class CashflowService {
 
     /**
      * Return the date object from the cell
-     * @param path
+     * @param columnPath
      * @param columnFields
      * @return {any}
      */
@@ -1946,7 +1952,7 @@ export class CashflowService {
                 }
             } else if (dateField.caption === 'Week') {
                 let weekNumber = JSON.parse(fieldValue).weekNumber;
-                date.isoWeek(weekNumber);
+                date.week(weekNumber);
             } else if (dateField.caption === 'Projected') {
                 let currentDate = moment().date();
                 if (fieldValue) {
