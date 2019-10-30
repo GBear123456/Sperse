@@ -50,6 +50,10 @@
                     </ul>
                 </div>
             </dx-tooltip>
+            <loading-spinner
+                *ngIf="stage.isLoading"
+                [ngStyle]="{ top: this.getStageSpinnerTopPosition(stage) }">
+            </loading-spinner>
         </div>
         <div [ngClass]="{ 'column-items': true, 'drag-allowed': stage?.dragAllowed}"
              [dragula]="dragulaName"
@@ -113,12 +117,5 @@
               (click)="loadMore(i)">
             <img src="./assets/common/icons/arrow-down.svg">
         </span>
-        <loading-spinner
-            *ngIf="stage.isLoading"
-            [ngStyle]="{
-                top: stage?.entities?.length ? '27px' : '122px',
-                bottom: stage?.entities?.length ? '0' : 'initial'
-            }">
-        </loading-spinner>
     </div>
 </div>

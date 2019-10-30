@@ -40,7 +40,6 @@
             min-width: 80px;
             margin: 0;
             padding: 70px 0 0 0;
-            position: relative;
 
             .column-title {
                 position: absolute!important;
@@ -130,6 +129,12 @@
                     .edit-button {
                         opacity: 1;
                     }
+                }
+
+                loading-spinner {
+                    position: absolute;
+                    left: 0;
+                    right: 0;
                 }
             }
             &:first-child {
@@ -532,12 +537,6 @@
                         display: none;
                     }
                 }
-            }
-
-            loading-spinner {
-                position: absolute;
-                left: 0;
-                right: 0;
             }
         }
         .column0 {

@@ -207,15 +207,24 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                     );
 
                 if (value[1].classList.contains('selected')) {
-                    const checkReloadStages = (entity) => {
+                    const checkReloadStages = (entity, stages?: Stage[]) => {
                         this.selectedEntities.splice(this.selectedEntities.indexOf(entity), 1);
                         if (!this.selectedEntities.length)
-                            this.reloadStagesInternal(reloadStageList).subscribe();
+                            this.reloadStagesInternal(reloadStageList).pipe(
+                                finalize(() => {
+                                    if (stages && stages.length) {
+                                        stages.forEach((stage: Stage) => {
+                                            stage.isLoading = false;
+                                        });
+                                    }
+                                })
+                            ).subscribe();
                     };
                     this.getSelectedEntities().forEach((entity) => {
                         let oldStage = this.stages.find(stage => stage.id == entity.StageId);
-                        if (oldStage.isFinal)
-                            return checkReloadStages(entity);
+                        if (oldStage.isFinal) {
+                            return checkReloadStages(entity, [oldStage]);
+                        }
 
                         if (entity) {
                             entity.SortOrder = newSortOrder;
@@ -226,7 +235,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                                     entities.splice(entities.indexOf(entity), 1);
                                 if (!entities.length)
                                     reloadStageList.push(oldStage.stageIndex);
-                                checkReloadStages(entity);
+                                checkReloadStages(entity, [oldStage]);
                             });
                         }
                     });
@@ -433,6 +442,8 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                             ? uniqBy((stage.entities || []).concat(entities), (entity) => entity['Id'])
                             : entities
                         ).map((entity) => {
+                            entity.StageId = stage.id;
+                            entity.Stage = stage.name;
                             stage.lastStageIndex = Math.min((page ? stage.lastStageIndex : undefined) || Infinity, entity.SortOrder);
                             return entity;
                         });
@@ -817,5 +828,13 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
             return false;
         });
         this.changeDetector.markForCheck();
+    }
+
+    getStageSpinnerTopPosition(stage: Stage): string {
+        let topPosition = '123px';
+        if (stage && stage.entities && stage.entities.length) {
+            topPosition = (window.innerHeight - document.querySelector('.column-title').getBoundingClientRect().top + 60) / 2 + 'px';
+        }
+        return topPosition;
     }
 }
