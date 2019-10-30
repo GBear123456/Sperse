@@ -10,6 +10,7 @@ import { BehaviorSubject, Observable, ReplaySubject } from 'rxjs';
 import { filter, finalize, takeUntil, map } from 'rxjs/operators';
 
 /** Application imports */
+import { ContactStatus } from '@shared/AppEnums';
 import { DialogService } from '@app/shared/common/dialogs/dialog.service';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppConsts } from '@shared/AppConsts';
@@ -125,7 +126,8 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
             text: this.l('AddInvoice'),
             selected: false,
             icon: 'money',
-            visible: this.isGranted(AppPermissions.CRMOrdersInvoicesManage),
+            visible: this.isGranted(AppPermissions.CRMOrdersInvoicesManage) && 
+                this.data.statusId != ContactStatus.Prospective,
             contactGroups: this.allContactGroupsExceptUser
         }
     ];
