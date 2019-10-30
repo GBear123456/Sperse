@@ -24,12 +24,12 @@ class Module {
 export abstract class AppServiceBase {
     private readonly MODULE_DEFAULT: string;
 
-    private _config: Subject<Object>;
-    private _subscribers: Array<Subscription> = [];
-    private _modules: Array<Module>;
-    private _configs: { [id: string]: any; };
-    _featureChecker: FeatureCheckerService;
-    _permissionChecker: AppPermissionService;
+    private config: Subject<Object> = new Subject<Object>();
+    private subscribers: Array<Subscription> = [];
+    private modules: Array<Module>;
+    private configs: { [id: string]: any; };
+    featureChecker: FeatureCheckerService;
+    permissionChecker: AppPermissionService;
 
     public params: any;
 
@@ -39,16 +39,15 @@ export abstract class AppServiceBase {
         modules: Array<Module>,
         configs: { [id: string]: any; }
     ) {
-        this._featureChecker = _injector.get(FeatureCheckerService);
-        this._permissionChecker = _injector.get(AppPermissionService);
-        this._config = new Subject<Object>();
+        this.featureChecker = _injector.get(FeatureCheckerService);
+        this.permissionChecker = _injector.get(AppPermissionService);
         this.MODULE_DEFAULT = defaultModuleName;
-        this._modules = modules;
-        this._configs = configs;
+        this.modules = modules;
+        this.configs = configs;
     }
 
     getModules() {
-        return this._modules;
+        return this.modules;
     }
 
     getModule(): string {
@@ -69,15 +68,15 @@ export abstract class AppServiceBase {
     }
 
     getModuleConfig(name: string) {
-        const config = this._configs[camelCase(name)];
+        const config = this.configs[camelCase(name)];
         return config && new config();
     }
 
     isModuleActive(name: string) {
         let config = this.getModuleConfig(name);
         return (config && typeof (config.navigation) == 'object'
-            && (this.isHostTenant || !config.requiredFeature || this._featureChecker.isEnabled(config.requiredFeature))
-            && (!config.requiredPermission || this._permissionChecker.isGranted(config.requiredPermission))
+            && (this.isHostTenant || !config.requiredFeature || this.featureChecker.isEnabled(config.requiredFeature))
+            && (!config.requiredPermission || this.permissionChecker.isGranted(config.requiredPermission))
             && (!this.isHostTenant || !config.hostDisabled)
         );
     }
@@ -101,21 +100,21 @@ export abstract class AppServiceBase {
                 return clone;
             });
             this.params = params;
-            this._config.next(config);
+            this.config.next(config);
         }
     }
 
     subscribeModuleChange(callback: (config: Object) => any) {
-        this._subscribers.push(
-            this._config.asObservable().subscribe(callback)
+        this.subscribers.push(
+            this.config.asObservable().subscribe(callback)
         );
     }
 
     unsubscribe() {
-        this._subscribers.map((sub) => {
+        this.subscribers.map((sub) => {
             return void (sub.unsubscribe());
         });
-        this._subscribers.length = 0;
+        this.subscribers.length = 0;
     }
 
     replaceParams(url: string, params: {}) {

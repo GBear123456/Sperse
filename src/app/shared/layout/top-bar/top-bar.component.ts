@@ -69,11 +69,13 @@ export class TopBarComponent implements OnDestroy {
             });
         this.appService.subscribeModuleChange((config) => {
             this.config = config;
-            this.menu = new PanelMenu('MainMenu', 'MainMenu',
+            this.menu = new PanelMenu(
+                'MainMenu',
+                'MainMenu',
                 this.initMenu(config['navigation'], config['localizationSource'], 0)
             );
             const selectedIndex = this.navbarItems.findIndex((navBarItem) => {
-                return navBarItem.route === this.router.url;
+                return navBarItem.route === this.router.url.split('?')[0];
             });
             this.navbarItems = this.menu.items;
             this.selectedIndex = selectedIndex === -1 ? this.selectedIndex : selectedIndex;
@@ -196,9 +198,6 @@ export class TopBarComponent implements OnDestroy {
         return (!item.host || (abp.session.multiTenancySide == <any>abp.multiTenancy.sides[item.host.toUpperCase()])) && this.checkMenuItemPermission(item);
     }
 
-    change(e) {
-        console.log(e);
-    }
 
     ngOnDestroy() {
         this.lifecycleService.destroy.next(null);

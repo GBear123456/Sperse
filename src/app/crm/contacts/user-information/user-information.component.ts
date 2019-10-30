@@ -4,6 +4,7 @@ import { Injector, Component, OnInit, OnDestroy, ViewChild, HostListener } from 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
 import { DxSelectBoxComponent } from 'devextreme-angular/ui/select-box';
+import { DxValidationGroupComponent } from 'devextreme-angular';
 import { finalize } from 'rxjs/operators';
 import find from 'lodash/find';
 import extend from 'lodash/extend';
@@ -36,6 +37,7 @@ import { AppRoles } from '@shared/AppRoles';
 export class UserInformationComponent extends AppComponentBase implements OnInit, OnDestroy {
     @ViewChild('emailAddress') emailAddressComponent: DxSelectBoxComponent;
     @ViewChild('phoneNumber') phoneNumberComponent: DxSelectBoxComponent;
+    @ViewChild('inviteValidationGroup') inviteValidationComponent: DxValidationGroupComponent;
     data: any;
 
     readonly GENERAL_TAB_INDEX        = 0;
@@ -68,9 +70,14 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
         contactId: undefined,
         emailAddress: '',
         phoneNumber: undefined,
+        password: undefined,
+        sendActivationEmail: true,
+        changePasswordOnNextLogin: true,
         assignedRoleNames: undefined,
         organizationUnitIds: []
     });
+    inviteSetRandomPassword = true;
+    inviteValidator: any;
 
     showInviteUserForm = false;
     userData: GetUserForEditOutput = new GetUserForEditOutput();
@@ -215,12 +222,19 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
         setTimeout(() => this.contactsService.orgUnitsUpdate(data));
     }
 
+    invitePasswordComparison = () => {
+        return this.inviteData.password;
+    };
+
     inviteUser() {
         if (!this.inviteData.emailAddress || !this.emailAddressComponent.instance.option('isValid'))
             return this.message.warn(this.l('InvalidEmailAddress'));
 
         if (this.inviteData.phoneNumber && !this.phoneNumberComponent.instance.option('isValid'))
             return this.message.warn(this.l('PhoneValidationError'));
+
+        if (!this.inviteValidationComponent.instance.validate().isValid)
+            return;
 
         this.message.confirm(
             this.l('CreateNewUser'),
@@ -230,6 +244,8 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
                     this.startLoading(true);
                     this.inviteData.contactId = this.contactInfoData.contactInfo.personContactInfo.id;
                     let phoneNumber = this.phoneFormatPipe.transform(this.inviteData.phoneNumber);
+                    if (this.inviteSetRandomPassword)
+                        this.inviteData.password = undefined;
                     this.personContactServiceProxy.createUserForContact(extend(clone(this.inviteData), {
                         phoneNumber: phoneNumber && phoneNumber.replace(/[^0-9\+]/g, ''),
                         organizationUnitIds: this.selectedOrgUnits

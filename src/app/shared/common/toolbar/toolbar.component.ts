@@ -47,7 +47,7 @@ export class ToolBarComponent implements OnDestroy {
             forward: {
                 hint: this.ls.l('Forward'),
                 icon: this.getImgURI('forward')
-            },          
+            },
             replyToAll: {
                 hint: this.ls.l('ReplyToAll'),
                 icon: this.getImgURI('replyToAll')

@@ -154,7 +154,7 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
                 ],
                 isEditDialogEnabled: true,
                 lEntityName: 'Name',
-                lEditPlaceholder: this.l('AffiliateCode')
+                lEditPlaceholder: this.l('Affiliate')
             };
         })
     );

@@ -32,7 +32,8 @@ interface StageColor {
 
 @Injectable()
 export class PipelineService {
-    public stageChange: Subject<any>;
+    private stageChange: Subject<any> = new Subject<any>();
+    stageChange$: Observable<any> = this.stageChange.asObservable();
     private pipelineDefinitions: any = {};
     private defaultStagesColors: StageColor = {
         '-4': '#f02929',
@@ -61,9 +62,7 @@ export class PipelineService {
         private ls: AppLocalizationService,
         private notify: NotifyService,
         private store$: Store<CrmStore.State>
-    ) {
-        this.stageChange = new Subject<any>();
-    }
+    ) {}
 
     toggleDataLayoutType(dataLayoutType: DataLayoutType) {
         this.dataLayoutType.next(dataLayoutType);

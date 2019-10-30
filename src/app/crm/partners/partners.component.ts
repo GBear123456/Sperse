@@ -12,7 +12,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import 'devextreme/data/odata/store';
 import { Store, select } from '@ngrx/store';
-import { BehaviorSubject, Observable, combineLatest, of } from 'rxjs';
+import { BehaviorSubject, Observable, combineLatest, of, merge } from 'rxjs';
 import { filter, first, startWith, takeUntil, map, mapTo, publishReplay, refCount, switchMap, tap } from 'rxjs/operators';
 import * as _ from 'underscore';
 
@@ -311,6 +311,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     );
     mapData$: Observable<MapData> = this.mapService.getAdjustedMapData(this.partnersData$);
     mapInfoItems$: Observable<InfoItem[]> = this.mapService.getMapInfoItems(this.partnersData$, this.selectedMapArea$);
+    assignedUsersSelector = select(ContactAssignedUsersStoreSelectors.getContactGroupAssignedUsers, { contactGroup: ContactGroup.Partner });
 
     constructor(
         injector: Injector,
@@ -333,7 +334,6 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         public userManagementService: UserManagementService,
     ) {
         super(injector);
-        window['t'] = this;
         this.dataSource = {
             store: {
                 key: 'Id',
@@ -348,7 +348,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
             }
         };
         this.searchValue = '';
-        this.pipelineService.stageChange.asObservable().subscribe((lead) => {
+        this.pipelineService.stageChange$.subscribe((lead) => {
             this.dependencyChanged = (lead.Stage == _.last(this.pipelineService.getStages(AppConsts.PipelinePurposeIds.lead)).name);
         });
         if (this.userManagementService.checkBankCodeFeature()) {
@@ -373,6 +373,14 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
             this.chartDataSource.load();
         });
         this.activate();
+        merge(
+            this.dataLayoutType$,
+            this.lifeCycleSubjectsService.activate$
+        ).pipe(
+            takeUntil(this.destroy$)
+        ).subscribe(() => {
+            this.crmService.handleModuleChange(this.dataLayoutType.value);
+        });
     }
 
     toggleToolbar() {
@@ -451,7 +459,6 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     toggleDataLayout(dataLayoutType: DataLayoutType) {
-        this.crmService.handleModuleChange(dataLayoutType);
         this.dataLayoutType.next(dataLayoutType);
         this.initDataSource();
         this.initToolbarConfig();
@@ -562,7 +569,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                         items: {
                             element: new FilterCheckBoxesModel(
                                 {
-                                    dataSource$: this.store$.pipe(this.getAssignedUsersSelector()),
+                                    dataSource$: this.store$.pipe(this.assignedUsersSelector),
                                     nameField: 'name',
                                     keyExpr: 'id'
                                 })
@@ -832,9 +839,10 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                     { name: 'showCompactRowsHeight', action: DataGridService.showCompactRowsHeight.bind(this, this.dataGrid, true) },
                     {
                         name: 'columnChooser',
+                        disabled: !(this.showDataGrid || this.showPivotGrid),
                         action: () => {
                             if (this.showDataGrid) {
-                                DataGridService.showColumnChooser.bind(this, this.dataGrid);
+                                DataGridService.showColumnChooser(this.dataGrid);
                             } else if (this.showPivotGrid) {
                                 this.pivotGridComponent.toggleFieldPanel();
                             }
@@ -1053,7 +1061,6 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
 
     activate() {
         super.activate();
-        this.crmService.handleModuleChange(this.dataLayoutType.value);
         this.paramsSubscribe();
         this.initFilterConfig();
         this.initToolbarConfig();
@@ -1094,7 +1101,4 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         e.component.hide();
     }
 
-    getAssignedUsersSelector() {
-        return select(ContactAssignedUsersStoreSelectors.getContactGroupAssignedUsers, { contactGroup: ContactGroup.Partner });
-    }
 }
