@@ -3,7 +3,7 @@ import { Component, ChangeDetectionStrategy, Inject, ChangeDetectorRef, ViewChil
 
 /** Third party imports */
 import { finalize, first } from 'rxjs/operators';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef, MatDialog } from '@angular/material/dialog';
 import { NotifyService } from '@abp/notify/notify.service';
 
 /** Application imports */
@@ -11,6 +11,7 @@ import { DialogService } from '@app/shared/common/dialogs/dialog.service';
 import { EmailTemplateDialogComponent } from '@app/crm/shared/email-template-dialog/email-template-dialog.component';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { EmailTemplateType, InvoiceServiceProxy, InvoiceSettings, Currency } from '@shared/service-proxies/service-proxies';
+import { BankSettingsDialogComponent } from '@app/crm/shared/bank-settings-dialog/bank-settings-dialog.component';
 import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 
 @Component({
@@ -30,6 +31,7 @@ export class InvoiceSettingsDialogComponent implements AfterViewInit {
     });
 
     constructor(
+        public dialog: MatDialog,
         private notifyService: NotifyService,
         private invoicesService: InvoicesService,
         private dialogRef: MatDialogRef<InvoiceSettingsDialogComponent>,
@@ -64,6 +66,15 @@ export class InvoiceSettingsDialogComponent implements AfterViewInit {
             this.notifyService.info(this.ls.l('SavedSuccessfully'));
             this.invoicesService.invalidateSettings(this.settings);
             this.dialogRef.close(this.settings);
+        });
+    }
+
+    showBankSettingsDialog() {
+        this.dialog.open(BankSettingsDialogComponent, {
+            panelClass: 'slider',
+            disableClose: true,
+            closeOnNavigation: false,
+            data: {}
         });
     }
 
