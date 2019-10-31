@@ -29,17 +29,9 @@
                                   [dataSource]="dataSource">
                         <dxo-editing mode="popup" [allowUpdating]="true"></dxo-editing>
                         <dxi-column caption="{{l('CreationTime')}}" dataField="creationTime" dataType="date"></dxi-column>
-                        <dxi-column caption="{{l('IsPartner')}}" dataField="isForPartner" cellTemplate="IsPartnerTemplate"></dxi-column>
                         <dxi-column caption="{{l('EditionName')}}" dataField="displayName"></dxi-column>
                         <dxi-column caption="{{l('PackageName')}}" dataField="packageName"></dxi-column>
                         <dxi-column caption="{{l('ModuleName')}}" dataField="module"></dxi-column>
-
-                        <div *dxTemplate="let cellData of 'IsPartnerTemplate'">
-                            <span class="is-partner"
-                                  [ngClass]="cellData.data.isForPartner ? 'enabled' : 'disabled'">
-                                {{ cellData.data.isForPartner ? 'Yes' : 'No' }}
-                            </span>
-                        </div>
                     </dx-data-grid>
                 </div>
             </div>
