@@ -81,7 +81,8 @@
                             [disabled]="disabledForUpdate"
                             [width]="'260px'"
                             (onKeyDown)="allowDigitsOnly($event, ['/'])"
-                            [(value)]="date">
+                            [(value)]="date"
+                            (onContentReady)="onDateContentReady($event)">
                         </dx-date-box>
                     </div>
                     <div class="field-area">
@@ -90,7 +91,8 @@
                             [disabled]="disabledForUpdate"
                             (onKeyDown)="allowDigitsOnly($event, ['/'])"
                             [width]="'260px'"
-                            [(value)]="dueDate">
+                            [(value)]="dueDate"
+                            (onContentReady)="onDateContentReady($event)">
                         </dx-date-box>
                     </div>
                     <div class="field-area">
@@ -150,7 +152,7 @@
                             </dx-text-box>
                             <div class="row-actions">
                                 <span *ngIf="cellData.rowIndex == lines.length - 1" (click)="addNewLine(cellData)"><i class="add-icon"></i>{{ls.l('Add new line')}}</span>
-                                <span *ngIf="cellData.rowIndex != lines.length - 1" (click)="deleteLine(cellData)"><i class="delete-icon"></i>{{ls.l('Delete this line')}}</span>
+                                <span *ngIf="cellData.rowIndex || lines.length > 1" (click)="deleteLine(cellData)"><i class="delete-icon"></i>{{ls.l('Delete this line')}}</span>
                                 <div class="icons"><i class="link"></i><i class="tag"></i></div>
                             </div>
                         </div>
@@ -185,7 +187,7 @@
                                 [placeholder]="ls.lr('Unit')"
                                 [value]="cellData.data.unitId"
                                 [dataSource]="invoiceUnits"
-                                (onValueChanged)="onValueChanged($event, cellData, 'unit')">
+                                (onValueChanged)="onValueChanged($event, cellData, 'unitId')">
                                 <dx-validator>
                                     <dxi-validation-rule type="required" message=""></dxi-validation-rule>
                                 </dx-validator>
