@@ -16,7 +16,7 @@ import { RegisterComponent } from '@root/shared/personal-finance-layout/register
 import { FeatureCheckerService } from '@abp/features/feature-checker.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { OffersService } from '@root/personal-finance/shared/offers/offers.service';
-import { LayoutType } from '../service-proxies/service-proxies';
+import { LayoutType, MyFinancesServiceProxy } from '../service-proxies/service-proxies';
 
 @Directive({
     selector: '[ad-header-host]'
@@ -28,7 +28,8 @@ export class AdHeaderHostDirective {
 @Component({
     templateUrl: 'personal-finance-header.component.html',
     styleUrls: ['personal-finance-header.component.less'],
-    selector: 'personal-finance-header'
+    selector: 'personal-finance-header',
+    providers: [MyFinancesServiceProxy]
 })
 export class PersonalFinanceHeaderComponent {
     @ViewChild(AdHeaderHostDirective) adHeaderHost: AdHeaderHostDirective;
@@ -41,6 +42,7 @@ export class PersonalFinanceHeaderComponent {
     remoteServiceBaseUrl: string = AppConsts.remoteServiceBaseUrl;
     showDefaultHeader = true;
     currentDate = new Date();
+    showMyFinancesLink = false;
     appAreaLinks = this.getAppAreaLinks();
     memberAreaLinks = [
         {
@@ -69,6 +71,7 @@ export class PersonalFinanceHeaderComponent {
         private pfmLayoutService: PersonalFinanceLayoutService,
         private abpSessionService: AbpSessionService,
         private featureService: FeatureCheckerService,
+        private myFinancesService: MyFinancesServiceProxy,
         private router: Router,
         private ls: AppLocalizationService,
         public appSession: AppSessionService
@@ -125,6 +128,13 @@ export class PersonalFinanceHeaderComponent {
                         }
                     ]
                 });
+
+            this.myFinancesService.getUserInstanceStatus().subscribe(result => {
+                if (result.hasSyncAccounts) {
+                    this.showMyFinancesLink = true;
+                    this.appAreaLinks = this.getAppAreaLinks();
+                }
+            });
         }
 
         this.hasPfmAppFeature = this.featureService.isEnabled(AppFeatures.PFMApplications) && this.appSession.tenant.customLayoutType == LayoutType.LendSpace;
@@ -186,7 +196,7 @@ export class PersonalFinanceHeaderComponent {
             },
             {
                 name: 'My Finances',
-                hidden: !this.featureService.isEnabled(AppFeatures.CFOPartner),
+                hidden: !this.showMyFinancesLink,
                 sublinks: [
                     {
                         name: 'Accounts',
