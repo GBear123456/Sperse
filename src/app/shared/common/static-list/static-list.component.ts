@@ -39,13 +39,14 @@ export class StaticListComponent extends AppComponentBase {
     @Input() pageLoadMode = 'nextButton';
     @Input() searchExprType = 'name';
     @Input() bulkUpdatePermissionKey: AppPermissions = null;
+    @Input() convertNameStartCase = true;
     @Input('list')
     set list(value: any[]) {
-        this._list = value.map((item) => {
+        this._list = this.convertNameStartCase ? value.map((item) => {
             return _.extend(item, {
                 name: startCase(item.name.toLowerCase())
             });
-        });
+        }) : value;
     }
     get list(): any[] {
         return this._list;

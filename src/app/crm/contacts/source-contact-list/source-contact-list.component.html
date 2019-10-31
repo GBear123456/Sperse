@@ -1,6 +1,5 @@
 <app-static-list
     [width]="'330px'"
-    [height]="'440px'"
     [targetSelector]="targetSelector"
     [title]="ls.l('PartnerSource')"
     [selectedKeys]="[selectedKey]"
@@ -8,6 +7,7 @@
     [highlightSelected]="true"
     [searchEnabled]="true"
     [customSearchEnabled]="true"
+    [convertNameStartCase]="false"
     (onItemSelected)="onItemSelected.emit($event)"
     (onListFiltered)="onSourceFiltered($event)"
     [list]="contacts">
