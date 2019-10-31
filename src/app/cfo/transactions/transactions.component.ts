@@ -273,6 +273,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
 
     private updateAfterActivation: boolean;
     categoriesRowsData: Category[] = [];
+    private showDataGridToolbar = true;
 
     constructor(injector: Injector,
         private appService: AppService,
@@ -469,6 +470,12 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         });
     }
 
+    ngAfterViewInit(): void {
+        DataGridService.showCompactRowsHeight(this.dataGrid);
+        this.rootComponent = this.getRootComponent();
+        this.rootComponent.overflowHidden(true);
+    }
+
     initHeadlineConfig() {
         this.headlineConfig = {
             names: [this.l('Transactions')],
@@ -558,6 +565,10 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         this.appService.toolbarToggle();
         this.filtersService.fixed = false;
         this.filtersService.disable();
+        /** Toggle balances widgets if it's mobile */
+        if (AppConsts.isMobile) {
+            this.showDataGridToolbar = !this.showDataGridToolbar;
+        }
         setTimeout(() => this.dataGrid.instance.repaint());
         this.initToolbarConfig();
     }
@@ -728,20 +739,27 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     }
 
     onToolbarPreparing(e) {
-        e.toolbarOptions.items.unshift(
-            {
-                location: 'after',
-                template: 'startBalanceTotal'
-            }, {
-                location: 'after',
-                template: 'creditTotal'
-            }, {
-                location: 'after',
-                template: 'debitTotal'
-            }, {
-                location: 'after',
-                template: 'transactionTotal'
-            });
+        if (this.showDataGridToolbar) {
+            e.toolbarOptions.items.unshift(
+                {
+                    location: 'after',
+                    template: 'startBalanceTotal'
+                },
+                {
+                    location: 'after',
+                    template: 'creditTotal'
+                },
+                {
+                    location: 'after',
+                    template: 'debitTotal'
+                },
+                {
+                    location: 'after',
+                    template: 'transactionTotal'
+                }
+            );
+        }
+        e.toolbarOptions.visible = this.showDataGridToolbar;
     }
 
     processTotalValuesInternal(totals, startingBalanceTotal = 0) {
@@ -1355,13 +1373,6 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         }).componentInstance.onApply.subscribe(() => {
             this.applyTotalBankAccountFilter(true);
         });
-    }
-
-    ngAfterViewInit(): void {
-        DataGridService.showCompactRowsHeight(this.dataGrid);
-
-        this.rootComponent = this.getRootComponent();
-        this.rootComponent.overflowHidden(true);
     }
 
     showTransactionDetailsInfo() {

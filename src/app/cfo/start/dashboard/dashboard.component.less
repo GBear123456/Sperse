@@ -28,14 +28,16 @@
     .dashboard-wrapper {
         background-color: #fff;
         width: calc(~"100vw - 322px");
+        padding: 0 20px;
         @media (max-width: 768px) {
             width: 100%;
+        }
+        @media (min-width: 992px) {
+            padding: 0 48px;
         }
         &.expanded {
             width: 100vw;
         }
-
-        padding: 0 48px;
 
         section {
             + section {
@@ -45,7 +47,7 @@
                 display: flex;
                 align-items: center;
                 justify-content: space-between;
-                padding: 10px 0px 5px 0px;
+                padding: 10px 0 5px 0;
             }
         }
 
@@ -110,8 +112,10 @@
             align-items: center;
         }
         .synch-status .synch-section-wrap .links {
-            width: 32%;
             height: 100%;
+            @media (min-width: 992px) {
+                width: 32%;
+            }
         }
         .synch-status .synch-section-wrap .list-of-links {
             list-style-type: none;
@@ -138,28 +142,38 @@
         }
 
         .synch-status .synch-section-wrap .synch-item {
-            max-width: 66%;
             width: 100%;
             background-color: #FFFFFF;
             border-radius: 4px;
             position: relative;
-            padding: 0px 30px 0px 0;
+            @media (min-width: 992px) {
+                max-width: 66%;
+                padding: 0 30px 0 0;
+            }
         }
 
         .analytics .analytics-wrap {
             align-items: stretch;
 
-            .trendByPeriod {
-                width: 66%;
-            }
-
             .totalByPeriod {
-                width: 32%;
                 border: 1px solid #E5E9EC;
                 background-color: #FFFFFF;
                 border-radius: 4px;
                 position: relative;
                 padding: 10px 30px;
+                margin-bottom: 15px;
+                width: 100%;
+            }
+            .trendByPeriod {
+                width: 100%;
+            }
+            @media (min-width: 992px) {
+                .trendByPeriod {
+                    width: 66%;
+                }
+                .totalByPeriod {
+                    width: 32%;
+                }
             }
         }
     }
