@@ -35,7 +35,7 @@
         [series]="allSeries$ | async"
         [dataSource]="totalsData">
 
-        <dxo-size height="356" [width]="chartWidth"></dxo-size>
+        <dxo-size [height]="356" [width]="chartWidth"></dxo-size>
         <!-- common settings for charts -->
         <dxo-common-series-settings
             argumentField="date"
@@ -45,7 +45,7 @@
         <!-- Bottom axis -->
         <dxo-argument-axis
             argumentType="datetime"
-            visible="true"
+            [visible]="true"
             type="discrete">
             <dxo-label [customizeText]="customizeBottomAxis" [visible]="true"></dxo-label>
         </dxo-argument-axis>
@@ -59,7 +59,7 @@
         <!-- Common settings for axis -->
         <dxo-common-axis-settings [allowDecimals]="false" [visible]="false">
             <dxo-label alignment="center" [visible]="false">
-                <dxo-font weight="300" color="#677380" size="12px"></dxo-font>
+                <dxo-font [weight]="300" color="#677380" size="12px"></dxo-font>
             </dxo-label>
             <dxo-strip-style>
                 <dxo-label horizontal-allignment="center"></dxo-label>
