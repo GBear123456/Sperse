@@ -116,11 +116,11 @@ export class RegisterComponent implements AfterViewInit, OnInit {
                     swal(messageContent);
                     messageContent['content'].querySelector('.redirect-link').onclick = () => {
                         window.open(response.redirectUrl, '_blank');
-                        this.completeAprove(swal);
+                        this.completeApprove(swal);
                     };
                     setTimeout(() => {
                         if (window.open(response.redirectUrl, '_blank')) {
-                            this.completeAprove(swal);
+                            this.completeApprove(swal);
                         }
                     }, 8000);
                 } else if (response.status === FinalizeApplicationStatus.Declined) {
@@ -137,7 +137,7 @@ export class RegisterComponent implements AfterViewInit, OnInit {
                     messageContent.content.style.display = 'block';
                     swal(messageContent).then((res) => {
                         if (res) {
-                            window.open(AppConsts.appBaseUrl + this.getMoreOptionsLink, '_self');
+                            this.router.navigate([this.getMoreOptionsLink]);
                         }
                     });
                 }
@@ -149,7 +149,7 @@ export class RegisterComponent implements AfterViewInit, OnInit {
         );
     }
 
-    private completeAprove(modal): Promise<boolean> {
+    private completeApprove(modal): Promise<boolean> {
         modal.close('confirm');
         return this.router.navigate(['/personal-finance/offers/personal-loans']);
     }
