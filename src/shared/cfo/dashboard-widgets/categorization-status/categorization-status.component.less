@@ -34,11 +34,21 @@
             display: inline-block;
             text-align: left;
             background: transparent;
+            @media (max-width: 991px) {
+                display: block;
+                margin: 5px auto;
+            }
 
             &:hover {
                 background: lighten(#00aeef, 5%);
                 border-color: lighten(#00aeef, 5%);
                 color: #fff !important;
+            }
+        }
+
+        .round-progress {
+            @media (max-width: 991px) {
+                margin: 10px 0;
             }
         }
 

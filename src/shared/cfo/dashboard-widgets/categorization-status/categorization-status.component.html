@@ -1,6 +1,6 @@
 <section class="categorization-status">
     <div class="row">
-        <div class="col-4 round-progress">
+        <div class="col-sm-4 round-progress">
             <div class="progress-wrap">
                 <round-progress [current]="categorySynchData?.classifiedTransactionPercent"
                                 [max]="100"
@@ -18,7 +18,7 @@
                 <span class="total-synch-progress">{{totalCount | number : '1.0-2'}}</span>
             </div>
         </div>
-        <div class="col-8">
+        <div class="col-sm-8">
             <h2 class="title">{{l('Transaction_Classification_Status')}}</h2>
             <ul class="category-synch-list">
                 <li class="category-synch-item">
