@@ -53896,6 +53896,7 @@ export interface IGetDailyBalanceStatsOutput {
 }
 
 export class GetSpendingCategoriesOutput implements IGetSpendingCategoriesOutput {
+    id!: number | undefined;
     name!: string | undefined;
     fullName!: string | undefined;
     amount!: number | undefined;
@@ -53911,6 +53912,7 @@ export class GetSpendingCategoriesOutput implements IGetSpendingCategoriesOutput
 
     init(data?: any) {
         if (data) {
+            this.id = data["id"];
             this.name = data["name"];
             this.fullName = data["fullName"];
             this.amount = data["amount"];
@@ -53926,6 +53928,7 @@ export class GetSpendingCategoriesOutput implements IGetSpendingCategoriesOutput
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
         data["name"] = this.name;
         data["fullName"] = this.fullName;
         data["amount"] = this.amount;
@@ -53934,6 +53937,7 @@ export class GetSpendingCategoriesOutput implements IGetSpendingCategoriesOutput
 }
 
 export interface IGetSpendingCategoriesOutput {
+    id: number | undefined;
     name: string | undefined;
     fullName: string | undefined;
     amount: number | undefined;
