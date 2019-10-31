@@ -129,12 +129,14 @@ export class PersonalFinanceHeaderComponent {
                     ]
                 });
 
-            this.myFinancesService.getUserInstanceStatus().subscribe(result => {
-                if (result.hasSyncAccounts) {
-                    this.showMyFinancesLink = true;
-                    this.appAreaLinks = this.getAppAreaLinks();
-                }
-            });
+            if (abp.session.userId) {
+                this.myFinancesService.getUserInstanceStatus().subscribe(result => {
+                    if (result.hasSyncAccounts) {
+                        this.showMyFinancesLink = true;
+                        this.appAreaLinks = this.getAppAreaLinks();
+                    }
+                });
+            }
         }
 
         this.hasPfmAppFeature = this.featureService.isEnabled(AppFeatures.PFMApplications) && this.appSession.tenant.customLayoutType == LayoutType.LendSpace;
