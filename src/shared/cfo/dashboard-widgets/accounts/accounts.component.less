@@ -14,9 +14,6 @@
             border-radius: 4px;
             position: relative;
 
-            &:not(:last-child) {
-                margin-bottom: 10px;
-            }
             .col-8,
             .col-4 {
                 padding-right: 0;
@@ -32,9 +29,14 @@
                 background-position: 11px 50% !important;
             }
 
+            @media (max-width: 767px) {
+                &:not(:last-child) {
+                    margin-bottom: 10px;
+                }
+            }
+
             &.dailyStats {
                 background-image: url('../../../../assets/common/icons/coins-icon-2.svg');
-
                 .value {
                     font-weight: 400;
                     color: #677380;

@@ -16,6 +16,7 @@
             flex: 1 auto;
             display: flex;
             align-items: center;
+            flex-wrap: wrap;
             .title {
                 font-size: 18px;
                 font-weight: 700;
@@ -34,6 +35,7 @@
                     padding-left: 0;
                     margin-bottom: 0;
                     display: flex;
+                    flex-wrap: wrap;
                     justify-content: flex-end;
 
                     .legend-item {
@@ -41,8 +43,9 @@
                         font-weight: 400;
                         font-size: 10px;
                         margin-right: 8px;
+                        white-space: nowrap;
                         &:last-child {
-                            margin-right: 0px;
+                            margin-right: 0;
                         }
 
                         &::before {
@@ -108,10 +111,6 @@
                 @media (max-width: 767px) {
                     margin: 0 auto;
                 }
-            }
-
-            @media (max-width: 767px) {
-                flex-wrap: wrap;
             }
 
             /deep/ .dx-selectbox {
