@@ -1228,7 +1228,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         event.component && event.component.cancelEditData();
         setTimeout(() => {
             this._router.navigate(['app/crm/contact', clientId, 'lead', leadId].concat(orgId ? ['company', orgId] : []),
-                {queryParams: {referrer: 'app/crm/leads', dataLayoutType: this.dataLayoutType}});
+                {queryParams: {referrer: 'app/crm/leads', dataLayoutType: this.dataLayoutType.value}});
         });
     }
 
