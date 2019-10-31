@@ -388,14 +388,7 @@ export class AppService extends AppServiceBase {
     get isCfoLinkOrVerifyEnabled() {
         return this.feature.isEnabled(AppFeatures.CFOPartner)
                && !this.feature.isEnabled(AppFeatures.PFM)
-               && (
-                   this.permission.isGranted(AppPermissions.CFOMembersAdministrationAllMemberInstancesAdmin)
-                   || this.canSendVerificationRequest
-               );
-    }
-
-    isCFOAvailable(userId) {
-        return userId != null;
+               && this.permission.isGranted(AppPermissions.CFOMembersAdministration);
     }
 
     checkCFOClientAccessPermission() {
@@ -404,10 +397,6 @@ export class AppService extends AppServiceBase {
 
     toolbarToggle() {
         this.toolbarIsHidden.next(!this.toolbarIsHidden.value);
-    }
-
-    toolbarSubscribe(callback) {
-        return this.toolbarSubject.asObservable().subscribe(callback);
     }
 
     toolbarRefresh() {

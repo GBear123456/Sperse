@@ -93,7 +93,7 @@
                     <dxi-column dataField="CreationTime" dataType="string" [caption]="l('Created')" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
                     <dxi-column [visible]="appService.isCfoLinkOrVerifyEnabled" name="LinkToCFO" cellTemplate="linkToCFOTemplate" [width]="80" [fixed]="true" [fixedPosition]="'right'" [showInColumnChooser]="false" [allowExporting]="false"></dxi-column>
                     <div *dxTemplate="let data of 'linkToCFOTemplate'">
-                        <ng-container *ngIf="appService.isCFOAvailable(data.data.UserId); else verify">
+                        <ng-container *ngIf="isCfoAvailable(data.data.UserId) | async; else verify">
                             <span *ngIf="appService.checkCFOClientAccessPermission()">
                                 <span [class]="'link-to-cfo-column'" (click)="appService.redirectToCFO(data.data.UserId)"></span>
                             </span>

@@ -1,8 +1,8 @@
 /** Core imports */
-import { Component, Injector, Input, Output, ViewChild, EventEmitter } from '@angular/core';
+import { Component, Injector, Input, Output, ViewChild, EventEmitter, SimpleChanges, OnChanges } from '@angular/core';
 
 /** Third party imports */
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 /** Application imports */
@@ -21,13 +21,14 @@ import { ImpersonationService } from '@app/admin/users/impersonation.service';
 import { ToolBarComponent } from '@app/shared/common/toolbar/toolbar.component';
 import { AppService } from '@app/app.service';
 import { AppPermissions } from '@shared/AppPermissions';
+import { CrmService } from '@app/crm/crm.service';
 
 @Component({
     selector: 'operations-widget',
     templateUrl: './operations-widget.component.html',
     styleUrls: ['./operations-widget.component.less']
 })
-export class OperationsWidgetComponent extends AppComponentBase {
+export class OperationsWidgetComponent extends AppComponentBase implements OnChanges {
     @ViewChild(TagsListComponent) tagsComponent: TagsListComponent;
     @ViewChild(ListsListComponent) listsComponent: TagsListComponent;
     @ViewChild(TypesListComponent) partnerTypesComponent: TypesListComponent;
@@ -102,12 +103,14 @@ export class OperationsWidgetComponent extends AppComponentBase {
         ]
     };
     permissions = AppPermissions;
+    isCfoAvailable;
     constructor(
         injector: Injector,
         private appService: AppService,
         private userService: UserServiceProxy,
         private contactService: ContactsService,
-        private impersonationService: ImpersonationService
+        private impersonationService: ImpersonationService,
+        private crmService: CrmService
     ) {
         super(injector);
 
@@ -115,6 +118,19 @@ export class OperationsWidgetComponent extends AppComponentBase {
             this.customToolbarConfig = config;
             this.initToolbarConfig();
         });
+    }
+
+    ngOnChanges(changes: SimpleChanges) {
+        /** Load users instance (or get from cache) for user id to find out whether to show cfo or verify button */
+        if (changes.contactInfo && this.contactInfo.groupId == ContactGroup.Client && this.appService.isCfoLinkOrVerifyEnabled) {
+            const contactInfo: ContactInfoDto = changes.contactInfo.currentValue;
+            if (contactInfo.id && contactInfo.personContactInfo) {
+                this.crmService.isCfoAvailable(contactInfo.personContactInfo.userId)
+                    .subscribe((isCfoAvailable: boolean) => {
+                        this.isCfoAvailable = isCfoAvailable;
+                    });
+            }
+        }
     }
 
     initToolbarConfig(ms = 300) {
@@ -214,15 +230,7 @@ export class OperationsWidgetComponent extends AppComponentBase {
                     this.getNavigationConfig(this.isPrevDisabled, this.isNextDisabled)
                 ];
 
-            const isCfoLinkOrVerifyEnabled = this.contactInfo
-                && this.contactInfo.personContactInfo
-                && this.contactInfo.groupId == ContactGroup.Client
-                && this.appService.isCfoLinkOrVerifyEnabled
-                && (
-                    this.isClientCFOAvailable() && this.appService.checkCFOClientAccessPermission()
-                    || (!this.isClientCFOAvailable() && this.appService.canSendVerificationRequest() && this.contactInfo.statusId === ContactStatus.Active)
-                );
-            if (isCfoLinkOrVerifyEnabled) {
+            if (this.cfoLinkOrVerifyEnabled) {
                 this.toolbarConfig.push(
                     {
                         location: 'before',
@@ -230,14 +238,15 @@ export class OperationsWidgetComponent extends AppComponentBase {
                         items: [
                             {
                                 action: () => {
-                                    if (this.isClientCFOAvailable())
+                                    if (this.isCfoAvailable === true) {
                                         this.redirectToCFO();
-                                    else
+                                    } else if (this.isCfoAvailable === false) {
                                         this.requestVerification();
+                                    }
                                 },
                                 options: {
-                                    text: this.l(this.isClientCFOAvailable() ? 'CFO' : 'ClientDetails_RequestVerification'),
-                                    icon: this.isClientCFOAvailable() ? 'cfo-icon' : this.toolbarComponent.getImgURI('verify-icon')
+                                    text: this.l(this.isCfoAvailable ? 'CFO' : 'ClientDetails_RequestVerification'),
+                                    icon: this.isCfoAvailable ? 'cfo-icon' : this.toolbarComponent.getImgURI('verify-icon')
                                 }
                             }
                         ]
@@ -331,11 +340,6 @@ export class OperationsWidgetComponent extends AppComponentBase {
         this.next.emit(this);
     }
 
-    isClientCFOAvailable() {
-        return this.contactInfo && this.contactInfo.personContactInfo &&
-            this.appService.isCFOAvailable(this.contactInfo.personContactInfo.userId);
-    }
-
     requestVerification() {
         this.appService.requestVerification(this.contactInfo.personContactInfo.id)
             .pipe(takeUntil(this.deactivate$))
@@ -357,5 +361,17 @@ export class OperationsWidgetComponent extends AppComponentBase {
         if (updateToolbar) {
             this.initToolbarConfig(0);
         }
+    }
+
+    /**
+     * If isCfoAvailable is undefined - then it hasn't loaded yet and this method returns false
+     * @return {boolean}
+     */
+    get cfoLinkOrVerifyEnabled(): boolean {
+        return this.isCfoAvailable && this.appService.checkCFOClientAccessPermission()
+               || (
+                   this.isCfoAvailable === false && this.appService.canSendVerificationRequest()
+                   && this.contactInfo.statusId === ContactStatus.Active
+               );
     }
 }

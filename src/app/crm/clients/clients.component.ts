@@ -7,7 +7,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import 'devextreme/data/odata/store';
 import { Store, select } from '@ngrx/store';
-import { BehaviorSubject, Observable, combineLatest, merge, of } from 'rxjs';
+import { BehaviorSubject, Observable, Subscription, combineLatest, merge, of } from 'rxjs';
 import {
     first,
     filter,
@@ -320,6 +320,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     contentWidth$: Observable<number> = this.crmService.contentWidth$;
     contentHeight$: Observable<number> = this.crmService.contentHeight$;
     mapHeight$: Observable<number> = this.crmService.mapHeight$;
+    private usersInstancesLoadingSubscription: Subscription;
 
     constructor(
         injector: Injector,
@@ -356,12 +357,24 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             store: {
                 key: 'Id',
                 type: 'odata',
-                url: this.getODataUrl(this.dataSourceURI, FiltersService.filterByStatus(this.filterModelStatus)),
+                url: this.getODataUrl(
+                    this.dataSourceURI,
+                    FiltersService.filterByStatus(this.filterModelStatus)
+                ),
                 version: AppConsts.ODataVersion,
                 deserializeDates: false,
                 beforeSend: (request) => {
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                     request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
+                },
+                onLoaded: (customers) => {
+                    const userIds = [];
+                    customers.forEach((customer) => {
+                        if (customer.UserId) {
+                            userIds.push(customer.UserId);
+                        }
+                    });
+                    this.usersInstancesLoadingSubscription = this.crmService.getUsersWithInstances(userIds);
                 }
             }
         };
@@ -1104,7 +1117,6 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
 
     showActionsMenu(event) {
         event.cancel = true;
-
         this.actionEvent = null;
         this.actionMenuItems[this.MENU_LOGIN_INDEX].visible = Boolean(event.data.UserId)
             && this.permission.isGranted(AppPermissions.AdministrationUsersImpersonation);
@@ -1120,4 +1132,13 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         e.component.option('visible', false);
         e.component.hide();
     }
+
+    isCfoAvailable(userId: number): Observable<boolean> {
+        /** Users instances may load after odata request and we should avoid loading of usersInstances request for every
+         *  individual user */
+        return this.usersInstancesLoadingSubscription && !this.usersInstancesLoadingSubscription.closed
+               ? of(false)
+               : this.crmService.isCfoAvailable(userId);
+    }
+
 }

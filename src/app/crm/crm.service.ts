@@ -5,7 +5,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { ActivatedRoute, Router } from '@angular/router';
 
 /** Third party imports */
-import { Observable, combineLatest, fromEvent} from 'rxjs';
+import { Observable, Subscription, combineLatest, fromEvent, of } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 
 /** Application imports */
@@ -18,6 +18,7 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 import { InfoItem } from '@app/shared/common/slice/info/info-item.model';
 import { FilterModel } from '@shared/filters/models/filter.model';
 import { DataLayoutType } from '@app/shared/layout/data-layout-type';
+import { InstanceServiceProxy } from '@shared/service-proxies/service-proxies';
 
 @Injectable()
 export class CrmService {
@@ -44,6 +45,7 @@ export class CrmService {
     mapHeight$: Observable<number> = this.contentHeight$.pipe(
         map((contentHeight) => contentHeight - 88)
     );
+    private usersIdsWithInstance: { [id: string]: boolean } = {};
 
     constructor(
         private filtersService: FiltersService,
@@ -54,7 +56,8 @@ export class CrmService {
         private ls: AppLocalizationService,
         private router: Router,
         private route: ActivatedRoute,
-        private location: Location
+        private location: Location,
+        private instanceServiceProxy: InstanceServiceProxy
     ) {}
 
     static getModuleNameFromLayoutType(dataLayoutType: DataLayoutType) {
@@ -177,6 +180,31 @@ export class CrmService {
             const newUrl = this.router.url.replace(currentModule, targetModule);
             this.location.replaceState(newUrl);
         }
+    }
+
+    getUsersWithInstances(usersIds: number[]): Subscription {
+        return this.instanceServiceProxy.getUsersWithInstance(usersIds).subscribe((usersIdsWithInstance: number[]) => {
+            this.usersIdsWithInstance = {};
+            usersIds.forEach((userId) => {
+                this.usersIdsWithInstance[userId] = usersIdsWithInstance.indexOf(userId) >= 0;
+            });
+        });
+    }
+
+    isCfoAvailable(userId: number): Observable<boolean> {
+        return !userId || this.usersIdsWithInstance[userId] === false
+               ? of(false)
+               : (
+                   /** Get from cache */
+                   this.usersIdsWithInstance[userId]
+                       ? of(true)
+                       /** Load and get from server and fill the cache */
+                       : this.instanceServiceProxy.getUsersWithInstance([userId]).pipe(
+                           map((usersIds: number[]) => {
+                               return this.usersIdsWithInstance[userId] = !!usersIds.length;
+                           })
+                       )
+               );
     }
 
 }

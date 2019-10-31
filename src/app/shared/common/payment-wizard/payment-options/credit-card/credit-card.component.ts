@@ -13,11 +13,11 @@ import * as _ from 'underscore';
 /** Application imports */
 import { RootStore, StatesStoreActions, StatesStoreSelectors } from '@root/store';
 import { CountriesStoreActions, CountriesStoreSelectors } from '@app/store';
-import { AppComponentBase } from '@shared/common/app-component-base';
 import { CountryStateDto } from '@shared/service-proxies/service-proxies';
 import { BankCardDataModel } from '@app/shared/common/payment-wizard/models/bank-card-data.model';
 import { AppConsts } from '@shared/AppConsts';
 import { GooglePlaceHelper } from '@shared/helpers/GooglePlaceHelper';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 
 export interface Country {
     code: string;
@@ -30,7 +30,7 @@ export interface Country {
     changeDetection: ChangeDetectionStrategy.OnPush,
     providers: [ GooglePlaceHelper ]
 })
-export class CreditCardComponent extends AppComponentBase implements OnInit {
+export class CreditCardComponent implements OnInit {
     @Output() onSubmit: EventEmitter<BankCardDataModel> = new EventEmitter<BankCardDataModel>();
     googleAutoComplete: boolean;
     countryCode: string;
@@ -64,9 +64,9 @@ export class CreditCardComponent extends AppComponentBase implements OnInit {
         private formBuilder: FormBuilder,
         private angularGooglePlaceService: AngularGooglePlaceService,
         private store$: Store<RootStore.State>,
-        private googlePlaceHelper: GooglePlaceHelper
+        private googlePlaceHelper: GooglePlaceHelper,
+        public ls: AppLocalizationService
     ) {
-        super(injector);
         this.creditCardData.get('billingStateCode').disable();
         this.googleAutoComplete = Boolean(window['google']);
         this.getCountries();
@@ -78,12 +78,12 @@ export class CreditCardComponent extends AppComponentBase implements OnInit {
         this.lastYearRegexItem = stringMaxExpYear.slice(0, -1) + '[0-' + stringMaxExpYear[stringMaxExpYear.length - 1] + ']';
     }
 
-    private _filterCountry(name: string): Country[] {
+    private filterCountry(name: string): Country[] {
         const filterValue = name.toLowerCase();
         return this.countries.filter(option => option.name.toLowerCase().indexOf(filterValue) === 0);
     }
 
-    private _filterStates(name: string): CountryStateDto[] {
+    private filterStates(name: string): CountryStateDto[] {
         const filterValue = name.toLowerCase();
         return this.states.filter(option => option.name.toLowerCase().indexOf(filterValue) === 0);
     }
@@ -97,7 +97,7 @@ export class CreditCardComponent extends AppComponentBase implements OnInit {
                 .pipe(
                     startWith<string | CountryStateDto>(''),
                     map(value => typeof value === 'string' ? value : value.name),
-                    map(name => name ? this._filterStates(name) : this.states.slice())
+                    map(name => name ? this.filterStates(name) : this.states.slice())
                 );
 
             this.countryCode = country.code;
@@ -204,7 +204,7 @@ export class CreditCardComponent extends AppComponentBase implements OnInit {
                         .pipe(
                             startWith<string | Country>(''),
                             map(value => typeof value === 'string' ? value : value.name),
-                            map(name => name ? this._filterCountry(name) : this.countries.slice())
+                            map(name => name ? this.filterCountry(name) : this.countries.slice())
                         );
                 }, 0);
             });
@@ -221,7 +221,7 @@ export class CreditCardComponent extends AppComponentBase implements OnInit {
                         .pipe(
                             startWith<string | CountryStateDto>(''),
                             map(value => typeof value === 'string' ? value : value.name),
-                            map(name => name ? this._filterStates(name) : this.states.slice())
+                            map(name => name ? this.filterStates(name) : this.states.slice())
                         );
                 }, 0);
             });

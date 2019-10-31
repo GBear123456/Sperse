@@ -14,7 +14,7 @@
                    (blur)="checkCreditCardNumber($event)"
                    ccNumber>
             <mat-error *ngIf="creditCardData.controls.cardNumber.touched && creditCardData.controls.cardNumber.invalid">
-                {{ l('CardNumberValidationMessage') }}
+                {{ ls.l('CardNumberValidationMessage') }}
             </mat-error>
         </mat-form-field>
 
@@ -49,7 +49,7 @@
                             creditCardData.controls.expirationMonth.invalid ||
                             creditCardData.controls.expirationYear.touched &&
                             creditCardData.controls.expirationYear.invalid">
-                    {{ l('CardExpDateValidationMessage') }}
+                    {{ ls.l('CardExpDateValidationMessage') }}
                 </mat-error>
             </div>
         </div>
@@ -64,7 +64,7 @@
                    autocomplete="cc-name"
                    formControlName="holderName">
             <mat-error *ngIf="creditCardData.controls.holderName.touched && creditCardData.controls.holderName.invalid">
-                {{ l('HolderNameValidationMessage') }}
+                {{ ls.l('HolderNameValidationMessage') }}
             </mat-error>
         </mat-form-field>
 
@@ -79,7 +79,7 @@
                    autocomplete="new-password"
                    ccCVC>
             <mat-error *ngIf="creditCardData.controls.cvv.touched && creditCardData.controls.cvv.invalid">
-                {{ l('CvvValidationMessage') }}
+                {{ ls.l('CvvValidationMessage') }}
             </mat-error>
         </mat-form-field>
     </div>
@@ -94,14 +94,14 @@
                 (setAddress)="setBillingAddress($event)"
                 angularGooglePlace />
             <mat-error *ngIf="creditCardData.controls.billingAddress.touched && creditCardData.controls.billingAddress.invalid">
-                {{ l('BillingAddressValidationMessage') }}
+                {{ ls.l('BillingAddressValidationMessage') }}
             </mat-error>
         </mat-form-field>
 
         <mat-form-field class="col-4">
             <input matInput placeholder="CITY" formControlName="billingCity">
             <mat-error *ngIf="creditCardData.controls.billingCity.touched && creditCardData.controls.billingCity.invalid">
-                {{ l('BillingCityValidationMessage') }}
+                {{ ls.l('BillingCityValidationMessage') }}
             </mat-error>
         </mat-form-field>
     </div>
@@ -118,13 +118,13 @@
                 </mat-option>
             </mat-autocomplete>
             <mat-error *ngIf="creditCardData.controls.billingState.touched && creditCardData.controls.billingState.invalid">
-                {{ l('BillingStateValidationMessage') }}
+                {{ ls.l('BillingStateValidationMessage') }}
             </mat-error>
         </mat-form-field>
         <mat-form-field class="col-4">
             <input matInput placeholder="ZIP CODE" type="tel" maxlength="10" formControlName="billingZip">
             <mat-error *ngIf="creditCardData.controls.billingZip.touched && creditCardData.controls.billingZip.invalid">
-                {{ l('BillingZipValidationMessage') }}
+                {{ ls.l('BillingZipValidationMessage') }}
             </mat-error>
         </mat-form-field>
 
@@ -141,13 +141,13 @@
             </mat-autocomplete>
 
             <mat-error *ngIf="creditCardData.controls.billingCountry.touched && creditCardData.controls.billingCountry.invalid">
-                {{ l('BillingCountryValidationMessage') }}
+                {{ ls.l('BillingCountryValidationMessage') }}
             </mat-error>
         </mat-form-field>
     </div>
 
     <payment-options-footer
-        [submitButtonText]="l('Purchase')"
+        [submitButtonText]="ls.l('Purchase')"
         [submitButtonDisabled]="!creditCardData.touched || !creditCardData.valid"
         (onSubmit)="submit()">
     </payment-options-footer>

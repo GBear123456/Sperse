@@ -21,7 +21,6 @@ export abstract class CFOComponentBase extends AppComponentBase implements OnDes
     constructor(injector: Injector) {
         super(injector);
         this._cfoService = injector.get(CFOService);
-
         this.updateInstance();
     }
 

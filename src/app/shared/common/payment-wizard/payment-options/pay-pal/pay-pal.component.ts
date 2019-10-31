@@ -1,6 +1,4 @@
-import { Component, AfterViewInit, Injector, ChangeDetectionStrategy, Input, Output, EventEmitter } from '@angular/core';
-
-import { AppComponentBase } from '@shared/common/app-component-base';
+import { Component, AfterViewInit, ChangeDetectionStrategy, Input, Output, EventEmitter } from '@angular/core';
 import { BillingPeriod } from '@app/shared/common/payment-wizard/models/billing-period.enum';
 import {
     TenantSubscriptionServiceProxy,
@@ -11,32 +9,32 @@ import {
     RequestPaymentResult
 } from '@shared/service-proxies/service-proxies';
 import { PayPalDataModel } from '@app/shared/common/payment-wizard/models/pay-pal-data.model';
+import { LoadingService } from '@shared/common/loading-service/loading.service';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 
 @Component({
     selector: 'pay-pal',
     templateUrl: './pay-pal.component.html',
     styleUrls: ['./pay-pal.component.less'],
     changeDetection: ChangeDetectionStrategy.OnPush,
-    providers: [TenantSubscriptionServiceProxy]
+    providers: [ TenantSubscriptionServiceProxy ]
 })
-export class PayPalComponent extends AppComponentBase implements AfterViewInit {
+export class PayPalComponent implements AfterViewInit {
     @Input() editionId: number;
     @Input() maxUserCount: number;
     @Input() billingPeriod: BillingPeriod = BillingPeriod.Monthly;
     @Input() clientId: string;
-
     @Output() onSubmit: EventEmitter<PayPalDataModel> = new EventEmitter<PayPalDataModel>();
+    descriptionText = this.ls.l('PayPalPaymentDescriptionText');
 
-    descriptionText = this.l('PayPalPaymentDescriptionText');
-
-    constructor(injector: Injector,
-        private tenantSubscriptionServiceProxy: TenantSubscriptionServiceProxy
-    ) {
-        super(injector);
-    }
+    constructor(
+        private tenantSubscriptionServiceProxy: TenantSubscriptionServiceProxy,
+        private loadingService: LoadingService,
+        private ls: AppLocalizationService
+    ) {}
 
     ngAfterViewInit() {
-        this.startLoading();
+        this.loadingService.startLoading();
         if ((<any>window)['paypal'])
             setTimeout(() => { this.preparePaypalButton(); });
         else {
@@ -59,7 +57,7 @@ export class PayPalComponent extends AppComponentBase implements AfterViewInit {
         model.subscriptionInfo.frequency = frequency;
         model.requestType = RequestPaymentType.PayPal;
 
-        this.finishLoading();
+        this.loadingService.finishLoading();
         (<any>window).paypal.Buttons({
             style: {
                 layout: 'horizontal',
