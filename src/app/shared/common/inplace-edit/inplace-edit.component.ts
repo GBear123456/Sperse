@@ -48,6 +48,7 @@ export class InplaceEditComponent extends AppComponentBase {
     @Input() maskInvalidMessage: string;
     @Input() maxLength;
     @Input() isOptional;
+    @Input() label: string;
 
     @Output() valueChanged: EventEmitter<any> = new EventEmitter();
     @Output() itemDeleted: EventEmitter<any> = new EventEmitter();

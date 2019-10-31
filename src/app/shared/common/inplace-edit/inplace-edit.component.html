@@ -1,3 +1,4 @@
+<div *ngIf="data?.value && label">{{ label }}</div>
 <div [hidden]="isEditModeEnabled" class="inplace-edit-view-mode {{multiline ? 'multiline': ''}}">
     <span class="link" [ngClass]="{ 'placeholder': !data?.value }" [attr.title]="data?.link" (click)="setEditModeEnabled(true, $event)">
         <a (click)="data?.link && $event.stopPropagation()" [attr.href]="data?.link" [attr.title]="data?.displayValue || data?.value || data?.lEditPlaceholder" target="_blank" #editText>{{data?.displayValue || data?.value || data?.lEditPlaceholder}}</a>

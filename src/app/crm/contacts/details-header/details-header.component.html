@@ -29,6 +29,7 @@
     </div>
     <div class="affiliate-code">
         <inplace-edit [data]="affiliateCodeInplaceEditData$ | async"
+                      [label]="l('AffiliateCode')"
                       (valueChanged)="updateAffiliateCode($event)">
         </inplace-edit>
     </div>
