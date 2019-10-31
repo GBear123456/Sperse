@@ -59,6 +59,7 @@ export class LeadInformationComponent extends AppComponentBase implements OnInit
     stages: any[];
     types: any[];
     sources: any[];
+    sourceContacts = [];
     sourceContactId: number;
     sourceContactName: string;
     layoutColumns: any[] = [
@@ -140,6 +141,7 @@ export class LeadInformationComponent extends AppComponentBase implements OnInit
             this.sourceContactId = contactInfo.sourceContactId;
             this.showApplicationAllowed = this.isGranted(AppPermissions.PFMApplicationsViewApplications) &&
                 contactInfo.personContactInfo.userId && contactInfo.groupId == ContactGroup.Client;
+            this.updateSourceContactName();
         }, this.constructor.name);
         this.loadOrganizationUnits();
     }
@@ -218,11 +220,16 @@ export class LeadInformationComponent extends AppComponentBase implements OnInit
         return value instanceof moment ? value.format(this.formatting.dateMoment) : value;
     }
 
-    onSourceContactLoaded(contacts) {
-        let contact = contacts.find(item => 
+    updateSourceContactName() {
+        let contact = this.sourceContacts.find(item => 
             item.id == this.sourceContactId);
         if (contact)
             this.sourceContactName = contact.name;
+    }
+
+    onSourceContactLoaded(contacts) {
+        this.sourceContacts = contacts;
+        this.updateSourceContactName();
     }
 
     onSourceContactChanged(event) {
