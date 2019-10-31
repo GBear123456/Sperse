@@ -12,7 +12,6 @@ import { filter, finalize, takeUntil, map } from 'rxjs/operators';
 /** Application imports */
 import { ContactStatus } from '@shared/AppEnums';
 import { DialogService } from '@app/shared/common/dialogs/dialog.service';
-import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppConsts } from '@shared/AppConsts';
 import { UploadPhotoDialogComponent } from '@app/shared/common/upload-photo-dialog/upload-photo-dialog.component';
 import { PersonDialogComponent } from '../person-dialog/person-dialog.component';
@@ -49,6 +48,11 @@ import { ContextType } from '@app/crm/contacts/details-header/context-type.enum'
 import { ContextMenuItem } from '@app/crm/contacts/details-header/context-menu-item.interface';
 import { AppPermissions } from '@shared/AppPermissions';
 import { InplaceEditModel } from '@app/shared/common/inplace-edit/inplace-edit.model';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { CacheHelper } from '@shared/common/cache-helper/cache-helper';
+import { MessageService } from '@abp/message/message.service';
+import { LoadingService } from '@shared/common/loading-service/loading.service';
+import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
 
 @Component({
     selector: 'details-header',
@@ -56,7 +60,7 @@ import { InplaceEditModel } from '@app/shared/common/inplace-edit/inplace-edit.m
     styleUrls: ['./details-header.component.less'],
     providers: [ ContactPhotoServiceProxy, LifecycleSubjectsService ]
 })
-export class DetailsHeaderComponent extends AppComponentBase implements OnInit, OnDestroy {
+export class DetailsHeaderComponent implements OnInit, OnDestroy {
     @ViewChild(DxContextMenuComponent) addContextComponent: DxContextMenuComponent;
 
     @Input()
@@ -94,12 +98,11 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
     private readonly allContactGroups = _.values(ContactGroup);
     private readonly allContactGroupsExceptUser = this.allContactGroups.filter(v => v != ContactGroup.UserProfile);
 
-    isAdminModule;
     manageAllowed;
     defaultContextMenuItems: ContextMenuItem[] = [
         {
             type: ContextType.AddFiles,
-            text: this.l('AddFiles'),
+            text: this.ls.l('AddFiles'),
             selected: false,
             icon: 'files',
             visible: true,
@@ -107,7 +110,7 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
         },
         {
             type: ContextType.AddNotes,
-            text: this.l('AddNotes'),
+            text: this.ls.l('AddNotes'),
             selected: false,
             icon: 'note',
             visible: true,
@@ -115,7 +118,7 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
         },
         {
             type: ContextType.AddContact,
-            text: this.l('AddContact'),
+            text: this.ls.l('AddContact'),
             selected: false,
             icon: 'add-contact',
             visible: true,
@@ -123,10 +126,10 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
         },
         {
             type: ContextType.AddInvoice,
-            text: this.l('AddInvoice'),
+            text: this.ls.l('AddInvoice'),
             selected: false,
             icon: 'money',
-            visible: this.isGranted(AppPermissions.CRMOrdersInvoicesManage) && 
+            visible: this.permissionChecker.isGranted(AppPermissions.CRMOrdersInvoicesManage) &&
                 this.data.statusId != ContactStatus.Prospective,
             contactGroups: this.allContactGroupsExceptUser
         }
@@ -146,20 +149,21 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
                     {
                         type: 'pattern',
                         pattern: AppConsts.regexPatterns.affiliateCode,
-                        message: this.l('AffiliateCodeIsNotValid')
+                        message: this.ls.l('AffiliateCodeIsNotValid')
                     },
                     {
                         type: 'stringLength',
                         max: 50,
-                        message: this.l('MaxLengthIs', 50)
+                        message: this.ls.l('MaxLengthIs', AppConsts.localization.defaultLocalizationSourceName, 50)
                     }
                 ],
                 isEditDialogEnabled: true,
                 lEntityName: 'Name',
-                lEditPlaceholder: this.l('Affiliate')
+                lEditPlaceholder: this.ls.l('Affiliate')
             };
         })
     );
+    isPartner: boolean;
 
     constructor(
         injector: Injector,
@@ -175,12 +179,13 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
         private dialogService: DialogService,
         private cacheService: CacheService,
         private lifeCycleService: LifecycleSubjectsService,
-        public dialog: MatDialog
-    ) {
-        super(injector);
-
-        this.isAdminModule = (appService.getModule() == appService.getDefaultModule());
-    }
+        private cacheHelper: CacheHelper,
+        private messageService: MessageService,
+        private loadingService: LoadingService,
+        private permissionChecker: PermissionCheckerService,
+        public dialog: MatDialog,
+        public ls: AppLocalizationService
+    ) {}
 
     private static getPhotoSrc(data: ContactInfoDto, isCompany?: boolean): { source?: string } {
         let photoBase64;
@@ -203,6 +208,7 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
             (contactInfo: ContactInfoDto) => {
                 this.contactId = contactInfo.id;
                 this.contactGroup = contactInfo.groupId;
+                this.isPartner = this.contactGroup === ContactGroup.Partner;
                 this.manageAllowed = this.contactsService.checkCGPermission(contactInfo.groupId);
                 if (contactInfo.id) {
                     this.affiliateCode.next(contactInfo.affiliateCode);
@@ -236,7 +242,7 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
 
     removePersonOrgRelation(event) {
         let companyName = this.data['organizationContactInfo'].fullName;
-        this.message.confirm(this.l('ContactRelationRemovalConfirmationMessage', companyName), (result) => {
+        this.messageService.confirm(this.ls.l('ContactRelationRemovalConfirmationMessage', companyName), (result) => {
             if (result) {
                 let orgRelationId = this.personContactInfo['personOrgRelationInfo'].id;
                 this.showRemovingOrgRelationProgress = true;
@@ -358,15 +364,15 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
     /** @todo refactor as there is infinite calling after mouse move */
     getNameInplaceEditData(): Observable<InplaceEditModel> {
         return this.getInplaceEditData('personContactInfo', [
-            {type: 'required', message: this.l('FullNameIsRequired')},
-            {type: 'pattern', pattern: AppConsts.regexPatterns.fullName, message: this.l('FullNameIsNotValid')}
+            {type: 'required', message: this.ls.l('FullNameIsRequired')},
+            {type: 'pattern', pattern: AppConsts.regexPatterns.fullName, message: this.ls.l('FullNameIsNotValid')}
         ]);
     }
 
     /** @todo refactor as there is infinite calling after mouse move */
     getCompanyNameInplaceEditData(): Observable<InplaceEditModel> {
         return this.getInplaceEditData('organizationContactInfo', [
-            {type: 'required', message: this.l('CompanyNameIsRequired')}
+            {type: 'required', message: this.ls.l('CompanyNameIsRequired')}
         ]);
     }
 
@@ -381,7 +387,7 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
                     validationRules: validationRules,
                     isEditDialogEnabled: true,
                     lEntityName: 'Name',
-                    lEditPlaceholder: this.l('ClientNamePlaceholder')
+                    lEditPlaceholder: this.ls.l('ClientNamePlaceholder')
                 };
         }));
     }
@@ -395,7 +401,7 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
                     isReadOnlyField: !this.manageAllowed,
                     value: (orgRelationInfo.jobTitle || '').trim(),
                     lEntityName: 'JobTitle',
-                    lEditPlaceholder: this.l('JobTitle')
+                    lEditPlaceholder: this.ls.l('JobTitle')
                 };
         }));
     }
@@ -453,7 +459,7 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
 
     addOptionsInit() {
         if (this.addContextMenuItems.length) {
-            let cacheKey = this.getCacheKey(this.addOptionCacheKey),
+            let cacheKey = this.cacheHelper.getCacheKey(this.addOptionCacheKey, this.constructor.name),
                 selectedMenuItem = this.getContextMenuItemByType(
                     this.cacheService.exists(cacheKey) ? this.cacheService.get(cacheKey) : this.ADD_OPTION_DEFAULT
                 );
@@ -470,7 +476,7 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
         option.selected = true;
         this.addContextComponent.instance.option('selectedItem', option);
         this.cacheService.set(
-            this.getCacheKey(this.addOptionCacheKey),
+            this.cacheHelper.getCacheKey(this.addOptionCacheKey, this.constructor.name),
             option.type.toString()
         );
     }
@@ -569,11 +575,11 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
     }
 
     displaySelectedCompany(orgId, orgRelationId) {
-        this.startLoading(true);
+        this.loadingService.startLoading(true);
         this.personContactInfo.orgRelationId = orgRelationId;
         this.initializePersonOrgRelationInfo();
         this.orgContactService.getOrganizationContactInfo(orgId)
-            .pipe(finalize(() => this.finishLoading(true)))
+            .pipe(finalize(() => this.loadingService.finishLoading(true)))
             .subscribe((result) => {
                 this.data['organizationContactInfo'] = result;
                 this.contactsService.updateLocation(this.data.id, this.data['leadId'], result && result.id);

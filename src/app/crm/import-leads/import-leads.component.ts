@@ -65,6 +65,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     private readonly PERSONAL_FULL_ADDRESS_ZIP_CODE = 'personalInfo_fullAddress_zipCode';
     private readonly PERSONAL_FULL_ADDRESS_COUNTRY_NAME = 'personalInfo_fullAddress_countryName';
     private readonly PERSONAL_FULL_ADDRESS_COUNTRY_CODE = 'personalInfo_fullAddress_countryCode';
+    private readonly BUSINESS_AFFILIATE_ID = 'businessInfo_affiliateId';
     private readonly BUSINESS_COMPANY_FULL_ADDRESS = 'businessInfo_companyFullAddress';
     private readonly BUSINESS_COMPANY_FULL_ADDRESS_STREET = 'businessInfo_companyFullAddress_street';
     private readonly BUSINESS_COMPANY_FULL_ADDRESS_CITY = 'businessInfo_companyFullAddress_city';
@@ -97,6 +98,8 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     private readonly BUSINESS_WORK_EMAIL3 = 'businessInfo_workEmail3';
     private readonly PERSONAL_PREFERREDTOD = 'personalInfo_preferredToD';
     private readonly PERSONAL_CREDITSCORERATING = 'personalInfo_creditScoreRating';
+    private readonly PERSONAL_AFFILIATE_ID= 'personalInfo_affiliateId';
+    private readonly AFFILIATE_ID = 'affiliateId';
 
     private readonly FIELDS_TO_CAPITALIZE = [
         this.FIRST_NAME_FIELD,
@@ -156,6 +159,12 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     private readonly FIELDS_TO_IGNORE = [
         this.PERSONAL_PREFERREDTOD,
         this.PERSONAL_CREDITSCORERATING
+    ];
+
+    private readonly AFFILIATE_FIELDS = [
+        this.AFFILIATE_ID,
+        this.PERSONAL_AFFILIATE_ID,
+        this.BUSINESS_AFFILIATE_ID
     ];
 
     importStatuses: any = ImportStatus;
@@ -222,7 +231,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         public importWizardService: ImportWizardService
     ) {
         super(injector);
-        this.setMappingFields(ImportItemInput.fromJS({}));
+        this.updateMappingFields();
         this.initFieldsConfig();
         this.userId = abp.session.userId;
         this.selectedClientKeys.push(this.userId);
@@ -241,10 +250,17 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         let contactGroupId = event.itemData.contactGroupId;
         this.userAssignmentComponent.assignedUsersSelector = this.getAssignedUsersSelector(contactGroupId);
         if (contactGroupId != this.contactGroupId) {
-            if (this.contactGroupId = contactGroupId)
+            if (this.contactGroupId = contactGroupId) {
                 this.getStages();
+                this.updateMappingFields();
+            }
         }
         this.initToolbarConfig();
+    }
+
+    private updateMappingFields() {
+        this.mappingFields = [];
+        this.setMappingFields(ImportItemInput.fromJS({}));
     }
 
     private initFieldsConfig() {
@@ -455,7 +471,9 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
                 });
                 this.setMappingFields(this.mappingObjectNames[v], combinedName);
             } else {
-                if (this.FIELDS_TO_IGNORE.indexOf(combinedName) > -1)
+                if (this.FIELDS_TO_IGNORE.indexOf(combinedName) > -1
+                    || (this.contactGroupId !== ContactGroup.Partner && this.AFFILIATE_FIELDS.indexOf(combinedName) > -1)
+                )
                     return;
 
                 this.mappingFields.push({

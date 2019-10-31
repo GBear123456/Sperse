@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, Injector, Input, Output, EventEmitter, ViewChild, OnInit, AfterViewInit } from '@angular/core';
+import { Component, Injector, Input, Output, EventEmitter, ViewChild, AfterViewInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 
@@ -28,6 +28,10 @@ import { StringHelper } from '@root/shared/helpers/StringHelper';
     providers: [ PhoneNumberService ]
 })
 export class ImportWizardComponent extends AppComponentBase implements AfterViewInit {
+
+    public static readonly FieldSeparator = '_';
+    public static readonly FieldLocalizationPrefix = 'Import';
+
     @ViewChild(MatHorizontalStepper) stepper: MatHorizontalStepper;
     @ViewChild('mapGrid') mapGrid: DxDataGridComponent;
     @ViewChild('reviewGrid') reviewGrid: DxDataGridComponent;
@@ -56,9 +60,6 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
     @Output() onCancel: EventEmitter<any> = new EventEmitter();
     @Output() onComplete: EventEmitter<any> = new EventEmitter();
     @Output() onSelectionChanged: EventEmitter<any> = new EventEmitter();
-
-    public static readonly FieldSeparator = '_';
-    public static readonly FieldLocalizationPrefix = 'Import';
 
     uploadFile: FormGroup;
     dataMapping: FormGroup;
@@ -101,20 +102,20 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
 
     constructor(
         injector: Injector,
-        private _parser: Papa,
-        private _dialog: MatDialog,
-        private _formBuilder: FormBuilder,
-        private _importProxy: ImportServiceProxy,
-        private _phoneNumberService: PhoneNumberService
+        private parser: Papa,
+        private dialog: MatDialog,
+        private formBuilder: FormBuilder,
+        private importProxy: ImportServiceProxy,
+        private phoneNumberService: PhoneNumberService
     ) {
         super(injector);
-        this.uploadFile = _formBuilder.group({
+        this.uploadFile = formBuilder.group({
             url: ['', Validators.pattern(/((([A-Za-z]{3,9}:(?:\/\/)?)(?:[\-;:&=\+\$,\w]+@)?[A-Za-z0-9\.\-]+|(?:www\.|[\-;:&=\+\$,\w]+@)[A-Za-z0-9\.\-]+)((?:\/[\+~%\/\.\w\-_]*)?\??(?:[\-\+=&;%@\.\w_]*)#?(?:[\.\!\/\\\w]*))?)/)],
             valid: ['', () => {
                 return this.checkFileDataValid() ? null : { 'required': true };
             }]
         });
-        this.dataMapping = _formBuilder.group({
+        this.dataMapping = formBuilder.group({
             valid: ['', () => {
                 let validationResult: any = { 'required': true };
                 if (this.validateFieldsMapping)
@@ -122,6 +123,13 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
                 return validationResult && validationResult.isMapped && !validationResult.error ? null : validationResult;
             }]
         });
+    }
+
+    public static getFieldLocalizationName(dataField: string): string {
+        let parts = dataField.split(ImportWizardComponent.FieldSeparator);
+        let partsCapitalized = parts.map(p => capitalize(p));
+        partsCapitalized.unshift(ImportWizardComponent.FieldLocalizationPrefix);
+        return partsCapitalized.join(ImportWizardComponent.FieldSeparator);
     }
 
     ngAfterViewInit() {
@@ -162,10 +170,9 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
                 this.message.error(this.dataMapping.controls.valid.errors.error || this.l('MapAllRecords'));
             }
         } else if (this.stepper.selectedIndex == this.REVIEW_STEP_INDEX) {
-            let gridElm = this.reviewGrid.instance.element();
             if (Object.keys(this.invalidRowKeys).length) {
                 let dialogData = { importAll: true };
-                this._dialog.open(ConfirmImportDialog, {
+                this.dialog.open(ConfirmImportDialog, {
                     data: dialogData
                 }).afterClosed().subscribe(result => {
                     if (result) {
@@ -297,7 +304,7 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
     updateGroupNames() {
         let reviewGroupsName = [],
             showFields = this.checkSimilarFields[0][0].split(':');
-        this.reviewGroups.forEach((group, index) => {
+        this.reviewGroups.forEach((group) => {
             if (group && group.length) {
                 let item = group[group.length - 1];
                 if (group.length > 1) {
@@ -403,7 +410,7 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
 
     parse(content) {
         this.fileContent = content;
-        this._parser.parse(this.fileContent, {
+        this.parser.parse(this.fileContent, {
             complete: (results) => {
                 this.fileData = results;
                 if (!this.checkFileDataValid())
@@ -430,7 +437,7 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
         this.loadProgress = 0;
         this.fileName = file.name;
         let reader = new FileReader();
-        reader.onload = (event) => {
+        reader.onload = () => {
             let bytes = StringHelper.convertToBytes(reader.result.toString());
             this.fileOrigSize = bytes.length;
             this.fileSize = this.getFileSize(bytes.length);
@@ -458,7 +465,7 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
     }
 
     getColumnsMappingSuggestions(callback) {
-        this._importProxy.getMappedFields(this.fileData.data[0].filter(Boolean)).subscribe(callback);
+        this.importProxy.getMappedFields(this.fileData.data[0].filter(Boolean)).subscribe(callback);
     }
 
     checkFileHeaderAvailability() {
@@ -478,7 +485,7 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
     }
 
     buildMappingDataSource() {
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve) => {
             if (this.fileData && this.fileData.data && this.fileData.data.length) {
                 this.checkFileHeaderAvailability();
                 let createDataSourceInternal = (mappingSuggestions = []) => {
@@ -649,13 +656,6 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
         });
     }
 
-    public static getFieldLocalizationName(dataField: string): string {
-        let parts = dataField.split(ImportWizardComponent.FieldSeparator);
-        let partsCapitalized = parts.map(p => capitalize(p));
-        partsCapitalized.unshift(ImportWizardComponent.FieldLocalizationPrefix);
-        return partsCapitalized.join(ImportWizardComponent.FieldSeparator);
-    }
-
     customizePreviewColumns = (columns) => {
         columns.forEach((column) => {
             if (['uniqueIdent', 'highliteFields'].indexOf(column.dataField) >= 0)
@@ -729,7 +729,7 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
     checkFieldValid(field, dataCell) {
         let value = dataCell.value;
         if (field == 'phone')
-            return this._phoneNumberService.isPhoneNumberValid(value);
+            return this.phoneNumberService.isPhoneNumberValid(value);
         else if (field == 'revenue')
             return !value || !isNaN(value) || !isNaN(parseFloat(value.replace(/\D/g, '')));
         else
