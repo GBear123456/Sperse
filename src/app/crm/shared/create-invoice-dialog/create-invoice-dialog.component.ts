@@ -15,6 +15,7 @@ import { finalize, filter, first, switchMap } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 
 /** Application imports */
+import Inputmask from "inputmask/dist/inputmask/inputmask.date.extensions";
 import { ODataService } from '@shared/common/odata/odata.service';
 import { ContactsService } from '@app/crm/contacts/contacts.service';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
@@ -310,6 +311,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
         }
 
         saveButton.disabled = true;
+        this.modalDialog.startLoading();
         subscription$.pipe(finalize(() => {
             saveButton.disabled = false;
             this.modalDialog.finishLoading();
@@ -384,13 +386,18 @@ export class CreateInvoiceDialogComponent implements OnInit {
         if (!this.validateDate(this.ls.l('Invoice_DueOnReceipt'), this.dueDate))
             return this.dueDateComponent.instance.option('isValid', false);
 
-        if (!this.linesValidationGroup.instance.validate().isValid)
-            return this.notifyService.error(this.ls.l('InvoiceLinesShouldBeDefined'));
-
-        if (this.disabledForUpdate)
-            this.updateStatus();
-        else
-            this.createUpdateEntity();
+        this.lines = this.lines.filter(item => 
+            item['Description'] || item['Quantity'] || item['Rate']);
+        this.changeDetectorRef.detectChanges();
+        setTimeout(() => {
+            if (!this.linesValidationGroup.instance.validate().isValid)
+                return this.notifyService.error(this.ls.l('InvoiceLinesShouldBeDefined'));
+            
+            if (this.disabledForUpdate)
+                this.updateStatus();
+            else
+                this.createUpdateEntity();
+        }, 300);
     }
 
     onFieldFocus(event) {
@@ -571,5 +578,9 @@ export class CreateInvoiceDialogComponent implements OnInit {
                 this.changeDetectorRef.detectChanges();
             }
         });
+    }
+
+    onDateContentReady(event) {
+        new Inputmask('mm/dd/yyyy').mask(event.component.field());
     }
 }

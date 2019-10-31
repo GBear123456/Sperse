@@ -269,10 +269,15 @@
                     display: none;
                 }
             }
-            dx-date-box .dx-dropdowneditor-icon {
-                background: url(../../../../assets/common/icons/calendar.svg) no-repeat center;
-                &:before {
-                    content: ''!important;
+            dx-date-box {
+                &.dx-state-hover .dx-placeholder {
+                    display: none;
+                }
+                .dx-dropdowneditor-icon {
+                    background: url(../../../../assets/common/icons/calendar.svg) no-repeat center;
+                    &:before {
+                        content: ''!important;
+                    }
                 }
             }
         }
