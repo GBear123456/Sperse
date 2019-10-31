@@ -28,6 +28,7 @@ import { FilterCheckBoxesComponent } from '@shared/filters/check-boxes/filter-ch
 import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-boxes.model';
 import { FiltersService } from '@shared/filters/filters.service';
 import { FilterModel } from '@shared/filters/models/filter.model';
+import { AppFeatures } from '@shared/AppFeatures';
 
 @Component({
     templateUrl: './reports.component.html',
@@ -92,6 +93,7 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
     formatting = AppConsts.formatting;
     dataSourceURI = 'Reporting';
     noDepartmentItem = this.l('NoDepartment');
+    showDepartmentFilter = false;
 
     readonly RESERVED_TIME_SECONDS = 30;
 
@@ -108,6 +110,10 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
         public bankAccountsService: BankAccountsService
     ) {
         super(injector);
+
+        this.showDepartmentFilter = this.feature.isEnabled(AppFeatures.CFODepartmentsManagement) 
+            && this._cfoService.accessAllDepartments;
+
         this.dataSource = {
             store: {
                 key: 'Id',
@@ -158,7 +164,7 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
                 items: [
                     {
                         name: 'filters',
-                        visible: this._cfoService.accessAllDepartments,
+                        visible: this.showDepartmentFilter,
                         action: () => {
                             this.filtersService.fixed = !this.filtersService.fixed;
                         },
@@ -206,7 +212,7 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
     }
 
     setupFilters() {
-        if (!this._cfoService.accessAllDepartments)
+        if (!this.showDepartmentFilter)
             return;
 
         if (this.filters && this.filters.length)
