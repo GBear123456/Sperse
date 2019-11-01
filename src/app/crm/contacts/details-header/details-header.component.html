@@ -27,8 +27,9 @@
             </div>
         </ng-template>
     </div>
-    <div class="affiliate-code">
+    <div class="affiliate-code" *ngIf="isPartner">
         <inplace-edit [data]="affiliateCodeInplaceEditData$ | async"
+                      [label]="ls.l('AffiliateCode')"
                       (valueChanged)="updateAffiliateCode($event)">
         </inplace-edit>
     </div>
@@ -58,7 +59,7 @@
             </div>
         </div>
         <div *ngIf="!data?.primaryOrganizationContactId" class="add-new-company">
-            <a (click)="addCompanyDialog($event)">+ {{ l('Add Company') }}</a>
+            <a (click)="addCompanyDialog($event)">+ {{ ls.l('Add Company') }}</a>
         </div>
         <div class="organization_logo">
             <img (click)="showCompanyDialog($event)" [src]="data?.organizationContactInfo?.primaryPhoto ? 'data:image/png;base64,' + data.organizationContactInfo.primaryPhoto : './assets/common/images/no-photo-Organization.png'" alt="Organization Logo">
