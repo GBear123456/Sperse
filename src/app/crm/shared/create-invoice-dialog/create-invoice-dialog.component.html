@@ -137,21 +137,20 @@
                         <dxi-column dataField="Description" width="360" caption="{{ls.l('Description')}}" [allowSorting]="false" cellTemplate="description"></dxi-column>
                         <dxi-column dataField="Quantity" width="140" caption="{{ls.l('Quantity')}}" [allowSorting]="false" cellTemplate="quantity"></dxi-column>
                         <dxi-column dataField="Rate" width="140" caption="{{ls.l('Rate')}}" [allowSorting]="false" cellTemplate="rate"></dxi-column>
-                        <dxi-column dataField="Amount" width="140" caption="{{ls.l('Amount')}}" [allowSorting]="false" [allowEditing]="false" [calculateCellValue]="calculateLineAmount" cellTemplate="amount"></dxi-column>
+                        <dxi-column dataField="Amount" width="140" caption="{{ls.l('Amount')}}" [allowSorting]="false" [allowEditing]="false" cellTemplate="amount"></dxi-column>
 
                         <div *dxTemplate="let cellData of 'description'">
                             <dx-text-box
                                 width="350px"
                                 [placeholder]="ls.lr('Invoice_EnterDescription')"
                                 [showClearButton]="true"
-                                [value]="cellData.value"
-                                (onValueChanged)="onValueChanged($event, cellData)">
+                                [(value)]="cellData.data.description">
                                 <dx-validator>
                                     <dxi-validation-rule type="required" [message]="ls.l('RequiredAllFields')"></dxi-validation-rule>
                                 </dx-validator>
                             </dx-text-box>
                             <div class="row-actions">
-                                <span *ngIf="cellData.rowIndex == lines.length - 1" (click)="addNewLine(cellData)"><i class="add-icon"></i>{{ls.l('Add new line')}}</span>
+                                <span *ngIf="cellData.rowIndex == lines.length - 1" [class.disabled]="lines.length != getFilteredLines().length" (click)="addNewLine(cellData)"><i class="add-icon"></i>{{ls.l('Add new line')}}</span>
                                 <span *ngIf="cellData.rowIndex || lines.length > 1" (click)="deleteLine(cellData)"><i class="delete-icon"></i>{{ls.l('Delete this line')}}</span>
                                 <div class="icons"><i class="link"></i><i class="tag"></i></div>
                             </div>
@@ -161,9 +160,9 @@
                                 width="130px"
                                 [placeholder]="ls.lr('EditValuePlaceholder')"
                                 [showClearButton]="true"
-                                [value]="cellData.value"
+                                [(value)]="cellData.data.quantity"
                                 (onKeyDown)="allowDigitsOnly($event)"
-                                (onValueChanged)="onValueChanged($event, cellData)">
+                                (onValueChanged)="calculateLineAmount(cellData.data)">
                                 <dx-validator>
                                     <dxi-validation-rule type="required" message=""></dxi-validation-rule>
                                 </dx-validator>
@@ -175,7 +174,7 @@
                                 [placeholder]="ls.lr('EditValuePlaceholder')"
                                 [showClearButton]="true"
                                 (onKeyDown)="allowDigitsOnly($event, ['.'])"
-                                value="{{cellData.value | currency: invoiceSettings.currency}}"
+                                [value]="cellData.data.rate | currency: invoiceSettings.currency"
                                 (onValueChanged)="onRateChanged($event, cellData)">
                                 <dx-validator>
                                     <dxi-validation-rule type="required" message=""></dxi-validation-rule>
@@ -185,9 +184,8 @@
                                 name="unit"
                                 width="130px"
                                 [placeholder]="ls.lr('Unit')"
-                                [value]="cellData.data.unitId"
-                                [dataSource]="invoiceUnits"
-                                (onValueChanged)="onValueChanged($event, cellData, 'unitId')">
+                                [(value)]="cellData.data.unitId"
+                                [dataSource]="invoiceUnits">
                                 <dx-validator>
                                     <dxi-validation-rule type="required" message=""></dxi-validation-rule>
                                 </dx-validator>
@@ -199,7 +197,7 @@
                                 placeholder=""
                                 dataType="number"
                                 [readOnly]="true"
-                                value="{{cellData.value | currency: invoiceSettings.currency}}">
+                                [value]="cellData.data.amount | currency: invoiceSettings.currency">
                             </dx-text-box>
                         </div>
                     </dx-data-grid>

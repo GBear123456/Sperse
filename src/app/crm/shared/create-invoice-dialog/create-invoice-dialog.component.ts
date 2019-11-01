@@ -15,7 +15,7 @@ import { finalize, filter, first, switchMap } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 
 /** Application imports */
-import Inputmask from "inputmask/dist/inputmask/inputmask.date.extensions";
+import Inputmask from 'inputmask/dist/inputmask/inputmask.date.extensions';
 import { ODataService } from '@shared/common/odata/odata.service';
 import { ContactsService } from '@app/crm/contacts/contacts.service';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
@@ -173,8 +173,8 @@ export class CreateInvoiceDialogComponent implements OnInit {
                     let contactFilter = '(ContactId eq ' + this.contactId + ')';
                     if (request.params.$filter)
                         request.params.$filter += ' and ' + contactFilter;
-                    else 
-                        request.params.$filter = contactFilter;                    
+                    else
+                        request.params.$filter = contactFilter;
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                 },
                 paginate: true
@@ -207,11 +207,10 @@ export class CreateInvoiceDialogComponent implements OnInit {
                     this.customer = res.contactName;
                     this.lines = res.lines.map((res) => {
                         return {
-                            id: res.id,
                             Quantity: res.quantity,
                             Rate: res.rate,
                             Description: res.description,
-                            unitId: res.unitId
+                            ...res
                         };
                     });
                     this.calculateBalance();
@@ -289,10 +288,10 @@ export class CreateInvoiceDialogComponent implements OnInit {
             data.lines = this.lines.map((row, index) => {
                 return new UpdateInvoiceLineInput({
                     id: row['id'],
-                    quantity: row['Quantity'],
-                    rate: row['Rate'],
-                    unitId: row['unit'] as InvoiceLineUnit,
-                    description: row['Description'],
+                    quantity: row['quantity'],
+                    rate: row['rate'],
+                    unitId: row['unitId'] as InvoiceLineUnit,
+                    description: row['description'],
                     sortOrder: index
                 });
             });
@@ -305,10 +304,10 @@ export class CreateInvoiceDialogComponent implements OnInit {
             data.status = InvoiceStatus[this.status];
             data.lines = this.lines.map((row, index) => {
                 return new CreateInvoiceLineInput({
-                    quantity: row['Quantity'],
-                    rate: row['Rate'],
-                    unitId: row['unit'] as InvoiceLineUnit,
-                    description: row['Description'],
+                    quantity: row['quantity'],
+                    rate: row['rate'],
+                    unitId: row['unitId'] as InvoiceLineUnit,
+                    description: row['description'],
                     sortOrder: index
                 });
             });
@@ -391,18 +390,25 @@ export class CreateInvoiceDialogComponent implements OnInit {
         if (!this.validateDate(this.ls.l('Invoice_DueOnReceipt'), this.dueDate))
             return this.dueDateComponent.instance.option('isValid', false);
 
-        this.lines = this.lines.filter(item => 
-            item['Description'] || item['Quantity'] || item['Rate']);
+        this.lines = this.getFilteredLines(false);
         this.changeDetectorRef.detectChanges();
         setTimeout(() => {
-            if (!this.linesValidationGroup.instance.validate().isValid)
+            if (!this.lines.length || !this.linesValidationGroup.instance.validate().isValid)
                 return this.notifyService.error(this.ls.l('InvoiceLinesShouldBeDefined'));
-            
+
             if (this.disabledForUpdate)
                 this.updateStatus();
             else
                 this.createUpdateEntity();
         }, 300);
+    }
+
+    getFilteredLines(fulfilled = true) {
+        return this.lines.filter(line => this.checkFulfilledLine(line, fulfilled));
+    }
+
+    checkFulfilledLine(line, fulfilled = true) {
+        return ['description', 'quantity', 'rate', 'unitId'][fulfilled ? 'every' : 'some'](field => line[field]);
     }
 
     onFieldFocus(event) {
@@ -442,7 +448,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
             this.dueDate = this.date;
             this.description = '';
             this.notes = '';
-            this.lines = [];
+            this.lines = [{}];
             this.changeDetectorRef.detectChanges();
         };
 
@@ -455,26 +461,26 @@ export class CreateInvoiceDialogComponent implements OnInit {
             });
     }
 
-    calculateLineAmount = (data) => {
-        let amount = data.Quantity * data.Rate;
-        if (amount)
+    calculateLineAmount(data) {
+        let amount = data.quantity * data.rate;
+        if (amount != data['amount']) {
+            data['amount'] = amount || 0;
             this.calculateBalance();
-
-        return amount || 0;
+        }
     }
 
     calculateBalance() {
         this.subTotal =
         this.total =
         this.balance = 0;
-
-        this.lines.forEach((line) => {
-            let amount = line['Quantity'] * line['Rate'];
+        this.lines.forEach(line => {
+            let amount = line['quantity'] * line['rate'];
             if (amount)
                 this.subTotal =
                 this.total =
                 this.balance = this.total + amount;
         });
+        this.changeDetectorRef.detectChanges();
     }
 
     selectContact(event) {
@@ -515,16 +521,12 @@ export class CreateInvoiceDialogComponent implements OnInit {
         }
     }
 
-    onValueChanged(event, data, field?) {
-        this.lines[data.rowIndex][field || data.column.dataField] = event.value;
-        this.changeDetectorRef.detectChanges();
-    }
-
-    onRateChanged(event, data) {
+    onRateChanged(event, cell) {
         let value = event.value;
         if (isNaN(value))
             value = value.replace(/(?!\.)\D/igm, '');
-        this.onValueChanged({value: value}, data);
+        cell.data.rate = value;
+        this.calculateLineAmount(cell.data);
     }
 
     onOrderSelected(event, dropBox) {
