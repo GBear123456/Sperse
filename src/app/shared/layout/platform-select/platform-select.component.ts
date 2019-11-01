@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, HostBinding } from '@angular/core';
+import { Component, HostBinding, Inject } from '@angular/core';
 import { Router } from '@angular/router';
 
 /** Third party imports */
@@ -15,6 +15,8 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 import { FeatureCheckerService } from '@abp/features/feature-checker.service';
 import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
 import { TitleService } from '@shared/common/title/title.service';
+import { AppConsts } from '@shared/AppConsts';
+import { DOCUMENT } from '@angular/common';
 
 @Component({
     templateUrl: './platform-select.component.html',
@@ -23,6 +25,7 @@ import { TitleService } from '@shared/common/title/title.service';
 })
 export class PlatformSelectComponent {
     @HostBinding('class') public cssClass = '';
+    private dropDown: any;
     module = '';
     uri = '';
     modules = {
@@ -32,7 +35,7 @@ export class PlatformSelectComponent {
     };
     activeModuleCount = 0;
     permissions = AppPermissions;
-    private dropDown: any;
+    width: string = AppConsts.isMobile ? '100vw' : '760px';
 
     constructor(
         private appService: AppService,
@@ -42,7 +45,8 @@ export class PlatformSelectComponent {
         private router: Router,
         private titleService: TitleService,
         public layoutService: LayoutService,
-        public ls: AppLocalizationService
+        public ls: AppLocalizationService,
+        @Inject(DOCUMENT) private document: any
     ) {
         appService.getModules().forEach((module) => {
             if (appService.isModuleActive(module.name) && !module.isMemberPortal) this.activeModuleCount++;
@@ -142,5 +146,15 @@ export class PlatformSelectComponent {
 
     onDropDownInit(event) {
         this.dropDown = event.component;
+        if (AppConsts.isMobile) {
+            this.dropDown.option({
+                'dropDownOptions.position': {
+                    boundary: this.document.body,
+                    my: 'top',
+                    at: 'bottom',
+                    of: this.document.querySelector('app-header')
+                }
+            });
+        }
     }
 }
