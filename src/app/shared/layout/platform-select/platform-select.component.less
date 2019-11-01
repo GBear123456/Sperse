@@ -228,8 +228,8 @@
 
 /deep/ .platform-select-wrapper {
     display: flex;
+    flex-wrap: wrap;
     flex-flow: column;
-    min-height: 490px;
 
     * {
         outline: none;
@@ -255,7 +255,9 @@
     .menu {
 
         &-row {
-            padding: 0 15px;
+            @media (min-width: 768px) {
+                padding: 0 15px;
+            }
         }
 
         &__items {
@@ -264,8 +266,7 @@
         }
 
         &__item {
-            padding: 20px 15px;
-            max-width: 33%;
+            padding: 10px 5px;
             width: 100%;
             text-align: center;
             opacity: .9;
@@ -276,7 +277,7 @@
             }
 
             &_title {
-                font-size: 22px;
+                font-size: 16px;
                 font-weight: bold;
                 letter-spacing: 0.7px;
                 color: #40596b;
@@ -285,9 +286,14 @@
                 justify-content: center;
                 margin-bottom: 15px;
                 text-transform: uppercase;
+                min-height: 35px;
 
                 &-image {
                     margin-right: 7px;
+                }
+
+                @media (min-width: 768px) {
+                    font-size: 22px;
                 }
             }
 
@@ -364,10 +370,18 @@
                 background: #F1F5F6;
                 border-radius: 5px;
                 overflow: hidden;
+                @media (max-width: 767px) {
+                    display: none;
+                }
             }
             &_image {
                 max-width: 100%;
                 width: 100%;
+            }
+
+            @media(min-width: 768px) {
+                max-width: 33%;
+                padding: 20px 15px;
             }
         }
 
@@ -391,10 +405,6 @@
         flex: 1;
         display: flex;
         align-items: center;
-    }
-
-    .top__item_descr {
-        margin-bottom: 10px;
     }
 
     .footer {
@@ -421,7 +431,6 @@
                 width: 14px;
                 height: 8px;
                 margin-left: 5px;
-
                 background: url('../../../../assets/common/images/platform-select/arrow-right.svg') no-repeat;
             }
 
@@ -434,5 +443,12 @@
     .coming-soon {
         font-size: 12px;
         margin-top: 12px;
+    }
+
+    @media (min-width: 768px) {
+        min-height: 490px;
+        .top__item_descr {
+            margin-bottom: 10px;
+        }
     }
 }

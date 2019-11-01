@@ -50,7 +50,6 @@ export class TopBarComponent implements OnDestroy {
         public ls: AppLocalizationService,
         @Inject(DOCUMENT) private document: any
     ) {
-        window['t'] = this;
         this.router.events
             .pipe(
                 takeUntil(this.lifecycleService.destroy$),
