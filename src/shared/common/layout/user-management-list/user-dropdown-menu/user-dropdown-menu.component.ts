@@ -1,11 +1,13 @@
 /** Core imports */
 import {
+    AfterViewInit,
     ApplicationRef,
     Component,
     OnInit,
     Input,
     Injector,
-    ElementRef
+    ElementRef,
+    ViewChild
 } from '@angular/core';
 
 /** Application imports */
@@ -35,7 +37,8 @@ import { FeatureCheckerService } from '@abp/features/feature-checker.service';
     ],
     providers: [ CommonUserInfoServiceProxy, ImpersonationService ]
 })
-export class UserDropdownMenuComponent implements OnInit {
+export class UserDropdownMenuComponent implements AfterViewInit, OnInit {
+    @ViewChild('topBarUserProfile') topBarUserProfile: ElementRef;
     @Input() subtitle: string;
     @Input() dropdownMenuItems: UserDropdownMenuItemModel[] = this.getDropDownItems();
     private impersonationService: ImpersonationService;
@@ -64,19 +67,15 @@ export class UserDropdownMenuComponent implements OnInit {
         this.shownLoginInfo = this.appSession.getShownLoginInfo();
     }
 
-    addBeforeShowEvent() {
-        const dropdown = $('.m-topbar__user-profile')['mDropdown']();
-        if (!dropdown.events.find(event => event.name === 'beforeShow')) {
-            const t = this;
-            dropdown.on('beforeShow', function() {
-                if (!t.userManagementService.recentlyLinkedUsers) {
-                    t.userManagementService.getRecentlyLinkedUsers().subscribe((recentlyLinkedUsers: LinkedUserDto[]) => {
-                        t.userManagementService.recentlyLinkedUsers = recentlyLinkedUsers;
-                        t.dropdownMenuItems[1].submenuItems.items = t.userManagementService.recentlyLinkedUsers;
-                    });
-                }
-            });
-        }
+    ngAfterViewInit() {
+        $(this.topBarUserProfile.nativeElement)['mDropdown']().on('beforeShow', () => {
+            if (!this.userManagementService.recentlyLinkedUsers) {
+                this.userManagementService.getRecentlyLinkedUsers().subscribe((recentlyLinkedUsers: LinkedUserDto[]) => {
+                    this.userManagementService.recentlyLinkedUsers = recentlyLinkedUsers;
+                    this.dropdownMenuItems[1].submenuItems.items = this.userManagementService.recentlyLinkedUsers;
+                });
+            }
+        });
     }
 
     private getDropDownItems() {
