@@ -93,7 +93,8 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
     formatting = AppConsts.formatting;
     dataSourceURI = 'Reporting';
     noDepartmentItem = this.l('NoDepartment');
-    showDepartmentFilter = false;
+    showDepartmentFilter = this.feature.isEnabled(AppFeatures.CFODepartmentsManagement)
+        && this._cfoService.accessAllDepartments;
 
     readonly RESERVED_TIME_SECONDS = 30;
 
@@ -110,10 +111,6 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
         public bankAccountsService: BankAccountsService
     ) {
         super(injector);
-
-        this.showDepartmentFilter = this.feature.isEnabled(AppFeatures.CFODepartmentsManagement) 
-            && this._cfoService.accessAllDepartments;
-
         this.dataSource = {
             store: {
                 key: 'Id',
@@ -231,7 +228,7 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
                                         items.unshift(this.noDepartmentItem);
                                         return items.map(item => {
                                             return {name: item};
-                                        })
+                                        });
                                     })
                                 ),
                                 nameField: 'name',
@@ -370,7 +367,7 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
     numerizeFileSizeSortValue = (data) => +data.Size;
 
     formatDepartments(departments: string[]): string {
-        if (departments && departments.length) 
+        if (departments && departments.length)
             return departments.map(x => x || this.l('NoDepartment')).join(', ');
         return null;
     }

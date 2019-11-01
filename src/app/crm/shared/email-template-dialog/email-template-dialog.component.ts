@@ -158,19 +158,17 @@ export class EmailTemplateDialogComponent implements OnInit {
     }
 
     emailInputFocusOut(event, checkDisplay?) {      
-        let inputValue = event.event.target.value,
-            comboValue = event.component.option('value') || [],
-            field = event.component.option('name');
-        if (AppConsts.regexPatterns.email.test(inputValue))
-            event.component.option('value', comboValue = comboValue.concat([inputValue]));
-
-        if (!this.templateEditMode && checkDisplay && !comboValue.length) {
-            if (field == 'cc')
-                this.showCC = false;
-            else 
-                this.showBCC = false;
-        } else if (field == 'to')
-            event.component.option('isValid', Boolean(comboValue.length));
+        event.text = event.event.target.value;           
+        this.onCustomItemCreating(event, field => {
+            let isComboListEmpty = !this.data[field].length;
+            if (!this.templateEditMode && checkDisplay && isComboListEmpty) {
+                if (field == 'cc')
+                    this.showCC = false;
+                else 
+                    this.showBCC = false;
+            } else if (field == 'to')
+                event.component.option('isValid', !isComboListEmpty);
+        });
     }
 
     showInputField(element) {
@@ -203,7 +201,7 @@ export class EmailTemplateDialogComponent implements OnInit {
         }
     }
 
-    onCustomItemCreating(event) {
+    onCustomItemCreating(event, callback?) {
         let field = event.component.option('name'),
             values = event.text.split(/[\s,]+/).map(item => 
                 AppConsts.regexPatterns.email.test(item) ? item : ''),
@@ -221,6 +219,7 @@ export class EmailTemplateDialogComponent implements OnInit {
             else 
                 this.data[field] = validValues;
             this.changeDetectorRef.markForCheck();
+            callback && callback(field);
         });
 
         return event.customItem = '';

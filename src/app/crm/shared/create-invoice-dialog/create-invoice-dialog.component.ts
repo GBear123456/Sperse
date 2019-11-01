@@ -166,10 +166,15 @@ export class CreateInvoiceDialogComponent implements OnInit {
             store: {
                 key: 'Id',
                 type: 'odata',
-                url: this.oDataService.getODataUrl('order', {ContactId: this.contactId}),
+                url: this.oDataService.getODataUrl('order'),
                 version: AppConsts.ODataVersion,
                 deserializeDates: false,
-                beforeSend: function (request) {
+                beforeSend: (request) => {
+                    let contactFilter = '(ContactId eq ' + this.contactId + ')';
+                    if (request.params.$filter)
+                        request.params.$filter += ' and ' + contactFilter;
+                    else 
+                        request.params.$filter = contactFilter;                    
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                 },
                 paginate: true
