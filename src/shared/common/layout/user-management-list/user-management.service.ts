@@ -4,7 +4,7 @@ import { Injectable } from '@angular/core';
 /** Third party imports */
 import { MatDialog } from '@angular/material';
 import { of } from 'rxjs';
-import { pluck } from 'rxjs/operators';
+import { filter, pluck } from 'rxjs/operators';
 
 /** Application imports */
 import { MySettingsModalComponent } from 'app/shared/layout/profile/my-settings-modal.component';
@@ -15,7 +15,6 @@ import {
     UpdateProfilePictureInput, UserLinkServiceProxy
 } from 'shared/service-proxies/service-proxies';
 import { LinkedAccountsModalComponent } from 'app/shared/layout/linked-accounts-modal.component';
-import { filter } from '@node_modules/rxjs/operators';
 import { StringHelper } from 'shared/helpers/StringHelper';
 import { AppConsts } from 'shared/AppConsts';
 import { ChangePasswordModalComponent } from 'app/shared/layout/profile/change-password-modal.component';
@@ -36,6 +35,7 @@ import { WizardRightSideComponent } from '@shared/offers-wizard/wizard-right-sid
 import { AppPermissions } from '@shared/AppPermissions';
 import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
 import { Router } from '@angular/router';
+import { UserDropdownMenuItemModel } from '@shared/common/layout/user-management-list/user-dropdown-menu/user-dropdown-menu-item.model';
 
 @Injectable()
 export class UserManagementService {
@@ -45,7 +45,7 @@ export class UserManagementService {
     hasPlatformPermissions = (this.feature.isEnabled(AppFeatures.CFO) && this.permissionChecker.isGranted(AppPermissions.CFO)) ||
                              (this.feature.isEnabled(AppFeatures.CRM) && this.permissionChecker.isGranted(AppPermissions.CRM)) ||
                              (this.feature.isEnabled(AppFeatures.Admin) && this.permissionChecker.isGranted(AppPermissions.AdministrationUsers));
-    defaultDropDownItems = [
+    defaultDropDownItems: UserDropdownMenuItemModel[] = [
         {
             name: this.ls.l('BackToMyAccount'),
             visible: this.isImpersonatedLogin,
@@ -107,7 +107,7 @@ export class UserManagementService {
             iconSrc: 'assets/common/icons/logout.svg'
         }
     ];
-    lendspaceDropDownItems = [
+    lendspaceDropDownItems: UserDropdownMenuItemModel[] = [
         {
             name: this.ls.l('BackToMyAccount'),
             visible: this.isImpersonatedLogin,

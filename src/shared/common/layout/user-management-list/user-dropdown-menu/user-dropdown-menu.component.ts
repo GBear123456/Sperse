@@ -1,13 +1,17 @@
 /** Core imports */
-import { ApplicationRef, Component, OnInit, Input, Injector, ElementRef } from '@angular/core';
+import {
+    ApplicationRef,
+    Component,
+    OnInit,
+    Input,
+    Injector,
+    ElementRef
+} from '@angular/core';
 
 /** Application imports */
 import { AbpSessionService } from '@abp/session/abp-session.service';
 import { ImpersonationService } from 'app/admin/users/impersonation.service';
-import {
-    CommonUserInfoServiceProxy,
-    LinkedUserDto
-} from 'shared/service-proxies/service-proxies';
+import { CommonUserInfoServiceProxy, LinkedUserDto } from 'shared/service-proxies/service-proxies';
 import { UserManagementService } from 'shared/common/layout/user-management-list/user-management.service';
 import { UserDropdownMenuItemType } from 'shared/common/layout/user-management-list/user-dropdown-menu/user-dropdown-menu-item-type';
 import { UserDropdownMenuItemModel } from 'shared/common/layout/user-management-list/user-dropdown-menu/user-dropdown-menu-item.model';
@@ -33,14 +37,11 @@ import { FeatureCheckerService } from '@abp/features/feature-checker.service';
 })
 export class UserDropdownMenuComponent implements OnInit {
     @Input() subtitle: string;
-    @Input() dropdownMenuItems: UserDropdownMenuItemModel[] = this.featureCheckerService.isEnabled(AppFeatures.PFMApplications) && this.userManagementService.checkLendSpaceLayout()
-        ? this.userManagementService.lendspaceDropDownItems
-        : this.userManagementService.defaultDropDownItems;
+    @Input() dropdownMenuItems: UserDropdownMenuItemModel[] = this.getDropDownItems();
     private impersonationService: ImpersonationService;
     private commonUserInfoService: CommonUserInfoServiceProxy;
     profileThumbnailId = this.appSession.user.profileThumbnailId;
     shownLoginInfo: { fullName, email, tenantName?};
-    recentlyLinkedUsers: LinkedUserDto[];
     menuItemTypes = UserDropdownMenuItemType;
     bankCode: string = this.appSession.user.bankCode;
 
@@ -61,9 +62,27 @@ export class UserDropdownMenuComponent implements OnInit {
 
     ngOnInit() {
         this.shownLoginInfo = this.appSession.getShownLoginInfo();
-        this.userManagementService.getRecentlyLinkedUsers().subscribe(
-            recentlyLinkedUsers => this.recentlyLinkedUsers = recentlyLinkedUsers
-        );
+    }
+
+    addBeforeShowEvent() {
+        const dropdown = $('.m-topbar__user-profile')['mDropdown']();
+        if (!dropdown.events.find(event => event.name === 'beforeShow')) {
+            const t = this;
+            dropdown.on('beforeShow', function() {
+                if (!t.userManagementService.recentlyLinkedUsers) {
+                    t.userManagementService.getRecentlyLinkedUsers().subscribe((recentlyLinkedUsers: LinkedUserDto[]) => {
+                        t.userManagementService.recentlyLinkedUsers = recentlyLinkedUsers;
+                        t.dropdownMenuItems[1].submenuItems.items = t.userManagementService.recentlyLinkedUsers;
+                    });
+                }
+            });
+        }
+    }
+
+    private getDropDownItems() {
+        return this.featureCheckerService.isEnabled(AppFeatures.PFMApplications) && this.userManagementService.checkLendSpaceLayout()
+            ? this.userManagementService.lendspaceDropDownItems
+            : this.userManagementService.defaultDropDownItems;
     }
 
     menuItemClick(menuItem, event) {
