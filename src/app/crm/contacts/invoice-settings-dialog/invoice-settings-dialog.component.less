@@ -1,4 +1,8 @@
 :host {
+    /deep/ .form-content {
+        padding: 25px 0px 20px 50px!important;
+    }
+
     /deep/ ckeditor .cke_chrome .cke_contents {
         min-height: 330px!important;
     }
@@ -51,22 +55,26 @@
             }
             /deep/ .dx-widget {
                 padding-top: 5px;
+                &.dx-textarea {
+                    .dx-placeholder.dx-state-invisible,
+                    &.dx-state-focused .dx-placeholder {
+                        top: -15px!important;
+                    }
+                }
                 .dx-placeholder {
                     font-size: 15px;
                     font-weight: 400;
-                    line-height: 1.79;
+                    line-height: 2.2;
                     letter-spacing: 0.3px;
                     padding: 0px;
                     &.dx-state-invisible {
                         display: block!important;
                         font-size: 11px!important;
                         opacity: 1!important;
-                        top: -14px;
                     }
                 }
                 &.dx-state-focused .dx-placeholder {
                     font-size: 11px!important;
-                    top: -14px!important;
                 }
                 input, textarea {
                     font-size: 16px;
