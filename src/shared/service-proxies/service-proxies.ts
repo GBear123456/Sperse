@@ -13491,7 +13491,7 @@ export class EmailTemplateServiceProxy {
      * @body (optional) 
      * @return Success
      */
-    create(body: CreateEmailTemplateRequest | null | undefined): Observable<void> {
+    create(body: CreateEmailTemplateRequest | null | undefined): Observable<number> {
         let url_ = this.baseUrl + "/api/services/CRM/EmailTemplate/Create";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -13503,6 +13503,7 @@ export class EmailTemplateServiceProxy {
             responseType: "blob",
             headers: new HttpHeaders({
                 "Content-Type": "application/json", 
+                "Accept": "application/json"
             })
         };
 
@@ -13513,14 +13514,14 @@ export class EmailTemplateServiceProxy {
                 try {
                     return this.processCreate(<any>response_);
                 } catch (e) {
-                    return <Observable<void>><any>_observableThrow(e);
+                    return <Observable<number>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<void>><any>_observableThrow(response_);
+                return <Observable<number>><any>_observableThrow(response_);
         }));
     }
 
-    protected processCreate(response: HttpResponseBase): Observable<void> {
+    protected processCreate(response: HttpResponseBase): Observable<number> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -13529,14 +13530,17 @@ export class EmailTemplateServiceProxy {
         let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
         if (status === 200) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(<any>null);
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 !== undefined ? resultData200 : <any>null;
+            return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<void>(<any>null);
+        return _observableOf<number>(<any>null);
     }
 
     /**
@@ -49768,6 +49772,218 @@ export interface IPartner {
     id: number | undefined;
 }
 
+export class ContactCache implements IContactCache {
+    tenantId!: number | undefined;
+    groupId!: string;
+    statusId!: string;
+    statusName!: string;
+    fullName!: string;
+    emailAddress!: string | undefined;
+    phoneNumber!: string | undefined;
+    phoneExtension!: string | undefined;
+    countryId!: string | undefined;
+    stateId!: string | undefined;
+    city!: string | undefined;
+    streetAddress!: string | undefined;
+    zip!: string | undefined;
+    photoPublicId!: string | undefined;
+    website!: string | undefined;
+    bankCode!: string | undefined;
+    organizationId!: number | undefined;
+    companyName!: string | undefined;
+    industry!: string | undefined;
+    jobTitle!: string | undefined;
+    leadId!: number | undefined;
+    leadStageId!: number | undefined;
+    leadStageName!: string | undefined;
+    leadPipelineId!: number | undefined;
+    leadSortOrder!: number | undefined;
+    leadSourceCode!: string | undefined;
+    leadAffiliateCode!: string | undefined;
+    leadCampaignCode!: string | undefined;
+    leadChannelCode!: string | undefined;
+    leadEntryUrl!: string | undefined;
+    leadRequestDate!: moment.Moment | undefined;
+    partnerTypeId!: number | undefined;
+    partnerTypeName!: number | undefined;
+    sourceContactId!: number | undefined;
+    assignedUserId!: number | undefined;
+    starId!: number | undefined;
+    ratingId!: number | undefined;
+    userId!: number | undefined;
+    organizationUnitId!: number | undefined;
+    contact!: Contact | undefined;
+    lastModificationTime!: moment.Moment | undefined;
+    lastModifierUserId!: number | undefined;
+    creationTime!: moment.Moment | undefined;
+    creatorUserId!: number | undefined;
+    id!: number | undefined;
+
+    constructor(data?: IContactCache) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.tenantId = data["tenantId"];
+            this.groupId = data["groupId"];
+            this.statusId = data["statusId"];
+            this.statusName = data["statusName"];
+            this.fullName = data["fullName"];
+            this.emailAddress = data["emailAddress"];
+            this.phoneNumber = data["phoneNumber"];
+            this.phoneExtension = data["phoneExtension"];
+            this.countryId = data["countryId"];
+            this.stateId = data["stateId"];
+            this.city = data["city"];
+            this.streetAddress = data["streetAddress"];
+            this.zip = data["zip"];
+            this.photoPublicId = data["photoPublicId"];
+            this.website = data["website"];
+            this.bankCode = data["bankCode"];
+            this.organizationId = data["organizationId"];
+            this.companyName = data["companyName"];
+            this.industry = data["industry"];
+            this.jobTitle = data["jobTitle"];
+            this.leadId = data["leadId"];
+            this.leadStageId = data["leadStageId"];
+            this.leadStageName = data["leadStageName"];
+            this.leadPipelineId = data["leadPipelineId"];
+            this.leadSortOrder = data["leadSortOrder"];
+            this.leadSourceCode = data["leadSourceCode"];
+            this.leadAffiliateCode = data["leadAffiliateCode"];
+            this.leadCampaignCode = data["leadCampaignCode"];
+            this.leadChannelCode = data["leadChannelCode"];
+            this.leadEntryUrl = data["leadEntryUrl"];
+            this.leadRequestDate = data["leadRequestDate"] ? moment(data["leadRequestDate"].toString()) : <any>undefined;
+            this.partnerTypeId = data["partnerTypeId"];
+            this.partnerTypeName = data["partnerTypeName"];
+            this.sourceContactId = data["sourceContactId"];
+            this.assignedUserId = data["assignedUserId"];
+            this.starId = data["starId"];
+            this.ratingId = data["ratingId"];
+            this.userId = data["userId"];
+            this.organizationUnitId = data["organizationUnitId"];
+            this.contact = data["contact"] ? Contact.fromJS(data["contact"]) : <any>undefined;
+            this.lastModificationTime = data["lastModificationTime"] ? moment(data["lastModificationTime"].toString()) : <any>undefined;
+            this.lastModifierUserId = data["lastModifierUserId"];
+            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
+            this.creatorUserId = data["creatorUserId"];
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): ContactCache {
+        data = typeof data === 'object' ? data : {};
+        let result = new ContactCache();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["tenantId"] = this.tenantId;
+        data["groupId"] = this.groupId;
+        data["statusId"] = this.statusId;
+        data["statusName"] = this.statusName;
+        data["fullName"] = this.fullName;
+        data["emailAddress"] = this.emailAddress;
+        data["phoneNumber"] = this.phoneNumber;
+        data["phoneExtension"] = this.phoneExtension;
+        data["countryId"] = this.countryId;
+        data["stateId"] = this.stateId;
+        data["city"] = this.city;
+        data["streetAddress"] = this.streetAddress;
+        data["zip"] = this.zip;
+        data["photoPublicId"] = this.photoPublicId;
+        data["website"] = this.website;
+        data["bankCode"] = this.bankCode;
+        data["organizationId"] = this.organizationId;
+        data["companyName"] = this.companyName;
+        data["industry"] = this.industry;
+        data["jobTitle"] = this.jobTitle;
+        data["leadId"] = this.leadId;
+        data["leadStageId"] = this.leadStageId;
+        data["leadStageName"] = this.leadStageName;
+        data["leadPipelineId"] = this.leadPipelineId;
+        data["leadSortOrder"] = this.leadSortOrder;
+        data["leadSourceCode"] = this.leadSourceCode;
+        data["leadAffiliateCode"] = this.leadAffiliateCode;
+        data["leadCampaignCode"] = this.leadCampaignCode;
+        data["leadChannelCode"] = this.leadChannelCode;
+        data["leadEntryUrl"] = this.leadEntryUrl;
+        data["leadRequestDate"] = this.leadRequestDate ? this.leadRequestDate.toISOString() : <any>undefined;
+        data["partnerTypeId"] = this.partnerTypeId;
+        data["partnerTypeName"] = this.partnerTypeName;
+        data["sourceContactId"] = this.sourceContactId;
+        data["assignedUserId"] = this.assignedUserId;
+        data["starId"] = this.starId;
+        data["ratingId"] = this.ratingId;
+        data["userId"] = this.userId;
+        data["organizationUnitId"] = this.organizationUnitId;
+        data["contact"] = this.contact ? this.contact.toJSON() : <any>undefined;
+        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
+        data["lastModifierUserId"] = this.lastModifierUserId;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        data["creatorUserId"] = this.creatorUserId;
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface IContactCache {
+    tenantId: number | undefined;
+    groupId: string;
+    statusId: string;
+    statusName: string;
+    fullName: string;
+    emailAddress: string | undefined;
+    phoneNumber: string | undefined;
+    phoneExtension: string | undefined;
+    countryId: string | undefined;
+    stateId: string | undefined;
+    city: string | undefined;
+    streetAddress: string | undefined;
+    zip: string | undefined;
+    photoPublicId: string | undefined;
+    website: string | undefined;
+    bankCode: string | undefined;
+    organizationId: number | undefined;
+    companyName: string | undefined;
+    industry: string | undefined;
+    jobTitle: string | undefined;
+    leadId: number | undefined;
+    leadStageId: number | undefined;
+    leadStageName: string | undefined;
+    leadPipelineId: number | undefined;
+    leadSortOrder: number | undefined;
+    leadSourceCode: string | undefined;
+    leadAffiliateCode: string | undefined;
+    leadCampaignCode: string | undefined;
+    leadChannelCode: string | undefined;
+    leadEntryUrl: string | undefined;
+    leadRequestDate: moment.Moment | undefined;
+    partnerTypeId: number | undefined;
+    partnerTypeName: number | undefined;
+    sourceContactId: number | undefined;
+    assignedUserId: number | undefined;
+    starId: number | undefined;
+    ratingId: number | undefined;
+    userId: number | undefined;
+    organizationUnitId: number | undefined;
+    contact: Contact | undefined;
+    lastModificationTime: moment.Moment | undefined;
+    lastModifierUserId: number | undefined;
+    creationTime: moment.Moment | undefined;
+    creatorUserId: number | undefined;
+    id: number | undefined;
+}
+
 export class Contact implements IContact {
     isAssignablePermission!: string | undefined;
     tenantId!: number | undefined;
@@ -49813,6 +50029,7 @@ export class Contact implements IContact {
     star!: ContactStar | undefined;
     rating!: ContactRating | undefined;
     partner!: Partner | undefined;
+    contactCache!: ContactCache | undefined;
     assignedUserIds!: number[] | undefined;
     isDeleted!: boolean | undefined;
     deleterUserId!: number | undefined;
@@ -49922,6 +50139,7 @@ export class Contact implements IContact {
             this.star = data["star"] ? ContactStar.fromJS(data["star"]) : <any>undefined;
             this.rating = data["rating"] ? ContactRating.fromJS(data["rating"]) : <any>undefined;
             this.partner = data["partner"] ? Partner.fromJS(data["partner"]) : <any>undefined;
+            this.contactCache = data["contactCache"] ? ContactCache.fromJS(data["contactCache"]) : <any>undefined;
             if (data["assignedUserIds"] && data["assignedUserIds"].constructor === Array) {
                 this.assignedUserIds = [];
                 for (let item of data["assignedUserIds"])
@@ -50035,6 +50253,7 @@ export class Contact implements IContact {
         data["star"] = this.star ? this.star.toJSON() : <any>undefined;
         data["rating"] = this.rating ? this.rating.toJSON() : <any>undefined;
         data["partner"] = this.partner ? this.partner.toJSON() : <any>undefined;
+        data["contactCache"] = this.contactCache ? this.contactCache.toJSON() : <any>undefined;
         if (this.assignedUserIds && this.assignedUserIds.constructor === Array) {
             data["assignedUserIds"] = [];
             for (let item of this.assignedUserIds)
@@ -50097,6 +50316,7 @@ export interface IContact {
     star: ContactStar | undefined;
     rating: ContactRating | undefined;
     partner: Partner | undefined;
+    contactCache: ContactCache | undefined;
     assignedUserIds: number[] | undefined;
     isDeleted: boolean | undefined;
     deleterUserId: number | undefined;
