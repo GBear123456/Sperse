@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import {
-    ActivityAssignedUsersStoreActions,
     ContactAssignedUsersStoreActions,
     ContactAssignedUsersStoreSelectors,
     ListsStoreActions,
@@ -22,14 +21,14 @@ export class AppStoreService {
 
     constructor(
         private store$: Store<AppStore.State>,
-        private _permission: AppPermissionService
+        private permission: AppPermissionService
     ) {}
 
     dispatchUserAssignmentsActions(keyList) {
         if (keyList.length) {
             let contactGroup = keyList.pop(),
                 groupId = ContactGroup[contactGroup];
-            if (this._permission.isGranted(ContactGroupPermission[contactGroup] + '.ManageAssignments' as AppPermissions)) {
+            if (this.permission.isGranted(ContactGroupPermission[contactGroup] + '.ManageAssignments' as AppPermissions)) {
                 this.store$.dispatch(new ContactAssignedUsersStoreActions.LoadRequestAction(groupId));
                 this.store$.pipe(select(ContactAssignedUsersStoreSelectors.getContactGroupAssignedUsers, { contactGroup: groupId }))
                     .pipe(filter((res) => Boolean(res))).subscribe(() => setTimeout(() => this.dispatchUserAssignmentsActions(keyList), 100));

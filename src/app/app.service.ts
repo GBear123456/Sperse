@@ -355,7 +355,7 @@ export class AppService extends AppServiceBase {
     }
 
     requestVerification(contactId: number): Observable<number> {
-        const observable = new Observable<number>((observer) => {
+        return new Observable<number>((observer) => {
             abp.message.confirm(
                 'Please confirm user activation',
                 (isConfirmed) => {
@@ -372,8 +372,6 @@ export class AppService extends AppServiceBase {
                 }
             );
         });
-
-        return observable;
     }
 
     redirectToCFO(userId) {

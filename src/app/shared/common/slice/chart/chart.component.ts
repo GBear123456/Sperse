@@ -111,9 +111,9 @@ export class ChartComponent implements OnInit, OnChanges {
         };
     }
 
-    exportTo(format: ImageFormat) {
+    exportTo(format: ImageFormat, prefix?: string) {
         const markup = this.getChartMarkup();
-        this.exportService.exportIntoImage(format, markup, this.width, this.height);
+        this.exportService.exportIntoImage(format, markup, this.width, this.height, prefix);
     }
 
     /**

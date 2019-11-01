@@ -8,7 +8,6 @@ import { Angular5Csv } from './export-csv/export-csv';
 import DataSource from 'devextreme/data/data_source';
 import capitalize from 'underscore.string/capitalize';
 import * as moment from 'moment';
-import { ChartData } from '@app/shared/common/slice/chart/chart-data.model';
 import { exportFromMarkup } from 'devextreme/viz/export';
 import { ImageFormat } from '@shared/common/export/image-format.enum';
 
@@ -22,9 +21,9 @@ export class ExportService {
         this._exportGoogleSheetService = injector.get(ExportGoogleSheetService);
     }
 
-    getFileName(dataGrid?, name?: string) {
+    getFileName(dataGrid?, name?: string, prefix?: string): string {
         name = name || dataGrid && dataGrid.export.fileName || '';
-        return capitalize(location.href.split('/').pop()) + '_' +
+        return (prefix ? prefix : '') + capitalize(location.href.split('/').pop()) + '_' +
             (!name || name == 'DataGrid' ? '' : name + '_') + moment().local().format('YYYY-MM-DD_hhmmss_a');
     }
 
@@ -66,7 +65,7 @@ export class ExportService {
             })).load().done(res => {
                 initialStore._beforeSend = initialBeforeSend;
                 callback(this.checkJustifyData(res));
-            }).fail(err => {
+            }).fail(() => {
                 initialStore._beforeSend = initialBeforeSend;
                 callback([]);
             });
@@ -74,28 +73,28 @@ export class ExportService {
             callback(dataGrid.instance.getSelectedRowsData());
     }
 
-    moveItemsToCSV(data, dataGrid) {
+    moveItemsToCSV(data, dataGrid, prefix?: string) {
         if (data) {
             setTimeout(() => {
                 let _headers = [''];
                 if (data.length > 0)
                     _headers = Object.keys(data[0]);
 
-                new Angular5Csv(data, this.getFileName(dataGrid), { headers: _headers, replaceNulls: true });
+                new Angular5Csv(data, this.getFileName(dataGrid, null, prefix), { headers: _headers, replaceNulls: true });
             });
         }
     }
 
-    exportToCSV(dataGrid: DxDataGridComponent, exportAllData: boolean) {
+    exportToCSV(dataGrid: DxDataGridComponent, exportAllData: boolean, prefix?: string) {
         return new Promise((resolve) => {
             this.getDataFromGrid(dataGrid, (data) => {
-                this.moveItemsToCSV(data, dataGrid);
+                this.moveItemsToCSV(data, dataGrid, prefix);
                 resolve();
             }, exportAllData);
         });
     }
 
-    exportToGoogleSheets(dataGrid: DxDataGridComponent, exportAllData: boolean) {
+    exportToGoogleSheets(dataGrid: DxDataGridComponent, exportAllData: boolean, prefix?: string) {
         return this._exportGoogleSheetService.export(new Promise((resolve) => {
             this.getDataFromGrid(dataGrid, (data) => {
                 let visibleColumns = dataGrid.instance.getVisibleColumns(),
@@ -106,7 +105,6 @@ export class ExportService {
                     visibleColumns.forEach((col: any) => {
                         if (col.allowExporting) {
                             let value = val[col.dataField];
-
                             row.values.push(this._exportGoogleSheetService.getCellData(value, col));
                         }
                     });
@@ -114,10 +112,10 @@ export class ExportService {
                 });
                 resolve(rowData);
             }, exportAllData);
-        }), this.getFileName(dataGrid));
+        }), this.getFileName(dataGrid, null, prefix));
     }
 
-    exportToExcel(dataGrid: DxDataGridComponent, exportAllData: boolean) {
+    exportToExcel(dataGrid: DxDataGridComponent, exportAllData: boolean, prefix?: string) {
         return new Promise((resolve) => {
             let instance = dataGrid.instance,
                 dataStore = instance.getDataSource().store(),
@@ -125,7 +123,7 @@ export class ExportService {
                 isLoadPanel = instance.option('loadPanel.enabled'),
                 initialFileName = dataGrid.export.fileName;
 
-            dataGrid.export.fileName = this.getFileName(dataGrid);
+            dataGrid.export.fileName = this.getFileName(dataGrid, null, prefix);
             if (isLoadPanel)
                 instance.option('loadPanel.enabled', false);
 
@@ -161,10 +159,10 @@ export class ExportService {
      * Download the charts into file
      * @param ImageFormat format
      */
-    exportIntoImage(format: ImageFormat, markup, width, height) {
+    exportIntoImage(format: ImageFormat, markup, width, height, prefix?: string) {
         setTimeout(() => {
             exportFromMarkup(markup, {
-                fileName: this.getFileName(null, 'Chart'),
+                fileName: this.getFileName(null, 'Chart', prefix),
                 format: format,
                 height: height,
                 width: width,

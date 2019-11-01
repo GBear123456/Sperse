@@ -95,10 +95,10 @@ export class MapComponent implements OnChanges {
         return text;
     }
 
-    exportTo(format: ImageFormat) {
+    exportTo(format: ImageFormat, prefix?: string) {
         setTimeout(() => {
             this.vectorMapComponent.instance.exportTo(
-                this.exportService.getFileName(null, 'Map'),
+                this.exportService.getFileName(null, 'Map', prefix),
                 format
             );
         });

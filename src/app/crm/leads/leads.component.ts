@@ -30,6 +30,7 @@ import {
     refCount
 } from 'rxjs/operators';
 import { CacheService } from 'ng2-cache-service';
+import invert from 'lodash/invert';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
@@ -521,6 +522,10 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         return this.dataLayoutType.value === DataLayoutType.Map;
     }
 
+    private get contactGroup(): string {
+        return invert(ContactGroup)[this.contactGroupId.value.toString()];
+    }
+
     getOrganizationUnitName = (e) => {
         return DataGridHelper.getOrganizationUnitName(e.OrganizationUnitId, this.organizationUnits);
     }
@@ -898,30 +903,30 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                             hint: this.l('Download'),
                             items: [
                                 {
-                                    action: this.downloadImage.bind(this, ImageFormat.PDF),
+                                    action: this.exportToImage.bind(this, ImageFormat.PDF),
                                     text: this.l('Save as PDF'),
                                     icon: 'pdf'
                                 },
                                 {
-                                    action: this.downloadImage.bind(this, ImageFormat.PNG),
+                                    action: this.exportToImage.bind(this, ImageFormat.PNG),
                                     text: this.l('Save as PNG'),
                                     icon: 'png',
                                     visible: this.showChart || this.showMap
                                 },
                                 {
-                                    action: this.downloadImage.bind(this, ImageFormat.JPEG),
+                                    action: this.exportToImage.bind(this, ImageFormat.JPEG),
                                     text: this.l('Save as JPEG'),
                                     icon: 'jpg',
                                     visible: this.showChart || this.showMap
                                 },
                                 {
-                                    action: this.downloadImage.bind(this, ImageFormat.SVG),
+                                    action: this.exportToImage.bind(this, ImageFormat.SVG),
                                     text: this.l('Save as SVG'),
                                     icon: 'svg',
                                     visible: this.showChart || this.showMap
                                 },
                                 {
-                                    action: this.downloadImage.bind(this, ImageFormat.GIF),
+                                    action: this.exportToImage.bind(this, ImageFormat.GIF),
                                     text: this.l('Save as GIF'),
                                     icon: 'gif',
                                     visible: this.showChart || this.showMap
@@ -931,11 +936,11 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                                         if (this.showPivotGrid) {
                                             this.pivotGridComponent.pivotGrid.instance.option(
                                                 'export.fileName',
-                                                this.exportService.getFileName(null, 'PivotGrid')
+                                                this.exportService.getFileName(null, 'PivotGrid', this.contactGroup)
                                             );
                                             this.pivotGridComponent.pivotGrid.instance.exportToExcel();
                                         } else if (this.showPipeline || this.showDataGrid) {
-                                            return this.exportToXLS(options);
+                                            return this.exportToXLS(options, null, this.contactGroup);
                                         }
                                     }),
                                     text: this.l('Export to Excel'),
@@ -943,13 +948,21 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                                     visible: this.showDataGrid || this.showPipeline || this.showPivotGrid
                                 },
                                 {
-                                    action: this.exportData.bind(this, options => this.exportToCSV(options)),
+                                    action: this.exportData.bind(this, options => this.exportToCSV(
+                                        options,
+                                        null,
+                                        this.contactGroup
+                                    )),
                                     text: this.l('Export to CSV'),
                                     icon: 'sheet',
                                     visible: this.showPipeline || this.showDataGrid
                                 },
                                 {
-                                    action: this.exportData.bind(this, options => this.exportToGoogleSheet(options)),
+                                    action: this.exportData.bind(this, options => this.exportToGoogleSheet(
+                                        options,
+                                        null,
+                                        this.contactGroup
+                                    )),
                                     text: this.l('Export to Google Sheets'),
                                     icon: 'sheet',
                                     visible: this.showPipeline || this.showDataGrid
@@ -1054,11 +1067,11 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         return selectedLeads.length;
     }
 
-    private downloadImage(format: ImageFormat) {
+    private exportToImage(format: ImageFormat) {
         if (this.showChart) {
-            this.chartComponent.exportTo(format);
+            this.chartComponent.exportTo(format, this.contactGroup);
         } else if (this.showMap) {
-            this.mapComponent.exportTo(format);
+            this.mapComponent.exportTo(format, this.contactGroup);
         }
     }
 

@@ -758,30 +758,30 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                             hint: this.l('Download'),
                             items: [
                                 {
-                                    action: this.downloadImage.bind(this, ImageFormat.PDF),
+                                    action: this.exportToImage.bind(this, ImageFormat.PDF),
                                     text: this.l('Save as PDF'),
                                     icon: 'pdf'
                                 },
                                 {
-                                    action: this.downloadImage.bind(this, ImageFormat.PNG),
+                                    action: this.exportToImage.bind(this, ImageFormat.PNG),
                                     text: this.l('Save as PNG'),
                                     icon: 'png',
                                     visible: this.showChart || this.showMap
                                 },
                                 {
-                                    action: this.downloadImage.bind(this, ImageFormat.JPEG),
+                                    action: this.exportToImage.bind(this, ImageFormat.JPEG),
                                     text: this.l('Save as JPEG'),
                                     icon: 'jpg',
                                     visible: this.showChart || this.showMap
                                 },
                                 {
-                                    action: this.downloadImage.bind(this, ImageFormat.SVG),
+                                    action: this.exportToImage.bind(this, ImageFormat.SVG),
                                     text: this.l('Save as SVG'),
                                     icon: 'svg',
                                     visible: this.showChart || this.showMap
                                 },
                                 {
-                                    action: this.downloadImage.bind(this, ImageFormat.GIF),
+                                    action: this.exportToImage.bind(this, ImageFormat.GIF),
                                     text: this.l('Save as GIF'),
                                     icon: 'gif',
                                     visible: this.showChart || this.showMap
@@ -917,7 +917,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         this.starsListComponent.toggle();
     }
 
-    private downloadImage(format: ImageFormat) {
+    private exportToImage(format: ImageFormat) {
         if (this.showChart) {
             this.chartComponent.exportTo(format);
         } else if (this.showMap) {
