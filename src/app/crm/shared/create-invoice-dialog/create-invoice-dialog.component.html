@@ -112,7 +112,7 @@
                                     [searchPanel]="{visible: true}"
                                     [selection]="{mode: 'single'}"
                                     (onRowClick)="onOrderSelected($event, orderDropBox)">
-                                    <dxi-column dataField="Number" caption="{{ls.l('Number')}}"></dxi-column>
+                                    <dxi-column dataField="Number" dataType="string" caption="{{ls.l('Number')}}"></dxi-column>
                                     <dxo-paging [pageSize]="20"></dxo-paging>
                                 </dx-data-grid>
                             </div>
