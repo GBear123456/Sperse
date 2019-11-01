@@ -62,7 +62,7 @@ export class StaticListComponent extends AppComponentBase {
     @HostBinding('class.highlightSelected') @Input() highlightSelected = false;
     @HostBinding('class.disableHindmost') @Input() disableHindmost = false;
     @HostBinding('class.funnel-styling') @Input() funnelStyling = false;
-
+    whiteSpaceRegExp = /\s/gim;
     private _list: any[];
 
     constructor(
@@ -75,6 +75,7 @@ export class StaticListComponent extends AppComponentBase {
     toggle() {
         if (this.tooltipVisible = !this.tooltipVisible)
             this.highlightSelectedFilters();
+        return this.tooltipVisible;
     }
 
     apply() {

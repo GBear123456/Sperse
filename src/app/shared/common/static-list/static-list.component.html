@@ -44,7 +44,7 @@
                      (onOptionChanged)="onOptionChanged.emit($event)"
                      (onItemClick)="onItemClick($event)">
                 <div *dxTemplate="let data of 'item'">
-                    <div class="item-row {{data.name.replace(' ', '-') | lowercase}}" data-id="{{data.id}}" [attr.index]="data.index">
+                    <div class="item-row {{data.name.replace(whiteSpaceRegExp, '-') | lowercase}}" data-id="{{data.id}}" [attr.index]="data.index">
                         <span>{{data.name}}</span>
                         <a *ngIf="filterModel"
                            class="dx-link dx-link-filter"

@@ -65,7 +65,8 @@ export class SourceContactListComponent {
     }
 
     toggle() {
-        this.sourceComponent.toggle();
+        if (this.sourceComponent.toggle())
+            this.loadSourceContacts();
         this.changeDetectorRef.detectChanges();
     }
 }
