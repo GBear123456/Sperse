@@ -1,5 +1,6 @@
 /** Core import */
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild, HostBinding, Input } from '@angular/core';
+import { Router } from '@angular/router';
 
 /** Third party import */
 import { select, Store } from '@ngrx/store';
@@ -32,7 +33,7 @@ import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/life
 })
 export class TopSpendingCategoriesComponent implements OnInit, OnDestroy {
     @ViewChild(DxPieChartComponent) pieChart: DxPieChartComponent;
-    @HostBinding('class.fullpage') @Input() fullpage: boolean = false;
+    @HostBinding('class.fullpage') @Input() fullpage = false;
 
     period$: Observable<DailyStatsPeriodModel> = this.dashboardService.dailyStatsPeriod$;
     currencyId: string;
@@ -69,6 +70,7 @@ export class TopSpendingCategoriesComponent implements OnInit, OnDestroy {
         private loadingService: LoadingService,
         private elementRef: ElementRef,
         private currencyPipe: CurrencyPipe,
+        private router: Router,
         private lifeCycleService: LifecycleSubjectsService,
         public ls: AppLocalizationService
     ) {}
@@ -84,6 +86,15 @@ export class TopSpendingCategoriesComponent implements OnInit, OnDestroy {
     customizeLegendText = (pointInfo) => {
         const amount = this.topSpendingCategories[pointInfo.pointIndex].amount;
         return this.currencyPipe.transform(amount, this.currencyId, 'symbol-narrow', '1.2-2') + ' ' + pointInfo.pointName;
+    }
+
+    onClick(e) {
+        const pointInfo = e.points ? e.points[0] : e.target;
+        const category: GetSpendingCategoriesOutput = this.topSpendingCategories[pointInfo.index];
+        this.router.navigate(
+            ['/app/cfo/' + this.cfoService.instanceType.toString().toLowerCase() + '/transactions'],
+            { queryParams: { categoryIds: [ category.id ] }}
+        );
     }
 
     ngOnDestroy() {

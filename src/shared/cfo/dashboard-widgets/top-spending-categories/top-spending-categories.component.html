@@ -6,7 +6,9 @@
             palette="bright"
             type="donut"
             [innerRadius]="0.7"
-            [dataSource]="topSpendingCategories">
+            [dataSource]="topSpendingCategories"
+            (onPointClick)="onClick($event)"
+            (onLegendClick)="onClick($event)">
             <dxi-series
                 argumentField="fullName"
                 valueField="amount">

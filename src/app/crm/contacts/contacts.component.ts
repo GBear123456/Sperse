@@ -199,7 +199,12 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
         this.targetEntity$.pipe(
             /** To avoid fast next/prev clicking */
             debounceTime(100),
-            tap(() => { this.toolbarComponent.updateNavButtons(true, true); this.startLoading(true); }),
+            tap(() => {
+                if (this.toolbarComponent) {
+                    this.toolbarComponent.updateNavButtons(true, true);
+                }
+                this.startLoading(true);
+            }),
             switchMap((direction: TargetDirectionEnum) => this.itemDetailsService.getItemFullInfo(
                 this.dataSourceURI as ItemTypeEnum,
                 this.currentItemId,
@@ -225,7 +230,14 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
                 }).pipe(tap(() => this.currentItemId = currentItemId));
                 this.updateLocation(itemFullInfo);
             }
-            res$.subscribe(() => this.toolbarComponent.updateNavButtons(!itemFullInfo || itemFullInfo.isFirstOnList, !itemFullInfo || itemFullInfo.isLastOnList));
+            res$.subscribe(() => {
+                if (this.toolbarComponent) {
+                    this.toolbarComponent.updateNavButtons(
+                        !itemFullInfo || itemFullInfo.isFirstOnList,
+                        !itemFullInfo || itemFullInfo.isLastOnList
+                    );
+                }
+            });
         });
     }
 
@@ -274,7 +286,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
                 name: 'orders',
                 label: 'Orders',
                 route: 'orders',
-                hidden: this.contactGroup == ContactGroup.UserProfile || 
+                hidden: this.contactGroup == ContactGroup.UserProfile ||
                     this.contactInfo.statusId == ContactStatus.Prospective,
                 disabled: !this.permission.isGranted(AppPermissions.CRMOrdersInvoices)
             },
@@ -282,7 +294,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
                 name: 'invoices',
                 label: 'Invoices',
                 route: 'invoices',
-                hidden: this.contactGroup == ContactGroup.UserProfile || 
+                hidden: this.contactGroup == ContactGroup.UserProfile ||
                     this.contactInfo.statusId == ContactStatus.Prospective,
                 disabled: !this.permission.isGranted(AppPermissions.CRMOrdersInvoices)
             },

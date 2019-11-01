@@ -42,7 +42,7 @@ export class PortalDashboardComponent extends CFOComponentBase implements OnInit
 
     constructor(
         injector: Injector,
-        private _dashboardService: DashboardService,
+        private dashboardService: DashboardService,
         public bankAccountsService: BankAccountsService,
         public dialog: MatDialog,
         public cfoPreferencesService: CfoPreferencesService
@@ -80,7 +80,7 @@ export class PortalDashboardComponent extends CFOComponentBase implements OnInit
     }
 
     invalidate() {
-        this._dashboardService.refresh();
+        this.dashboardService.refresh();
         this.refreshWidgets();
     }
 
@@ -96,7 +96,7 @@ export class PortalDashboardComponent extends CFOComponentBase implements OnInit
     }
 
     periodChanged(period: Period) {
-        this._dashboardService.periodChanged(period);
+        this.dashboardService.periodChanged(period);
     }
 
     activate() {
