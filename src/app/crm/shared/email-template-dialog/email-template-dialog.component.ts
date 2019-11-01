@@ -137,7 +137,8 @@ export class EmailTemplateDialogComponent implements OnInit {
         (this.data.templateId ?
             this.emailTemplateProxy.update(new UpdateEmailTemplateRequest(data)) :
             this.emailTemplateProxy.create(new CreateEmailTemplateRequest(data))
-        ).pipe(finalize(() => this.finishLoading())).subscribe(() => {
+        ).pipe(finalize(() => this.finishLoading())).subscribe(id => {
+            this.data.templateId = id;
             this.onSave.emit(this.data);
             this.initTemplateList();
         });
