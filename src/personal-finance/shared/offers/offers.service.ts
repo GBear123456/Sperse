@@ -210,7 +210,7 @@ export class OffersService {
         return CreditScoreRating[scoreName] ? CreditScoreRating[scoreName] : CreditScoreRating.NotSure;
     }
 
-    applyOffer(offer: OfferDto, isCreditCard = false, checkSubmitDateAfterApply = true) {
+    applyOffer(offer: OfferDto, isCreditCard = false, checkSubmitDateAfterApply = true, redirectUrlText = 'GetMyRate') {
         const linkIsDirect = !!offer.redirectUrl;
         let redirectUrl = !linkIsDirect ? offer.redirectUrl : offer.redirectUrl + '&' + this.memberInfoApplyOfferParams;
         let submitRequestInput = SubmitRequestInput.fromJS({
@@ -225,6 +225,7 @@ export class OffersService {
             title: linkIsDirect ? 'Offers_ConnectingToPartners' : 'Offers_ProcessingLoanRequest',
             subtitle: linkIsDirect ? 'Offers_NewWindowWillBeOpen' : 'Offers_WaitLoanRequestProcessing',
             redirectUrl: null,
+            redirectUrlText: this.ls.l(redirectUrlText),
             logoUrl: offer.campaignProviderType === CampaignProviderType.CreditLand
                 ? this.creditLandLogoUrl
                 : (isCreditCard ? null : offer.logoUrl)
@@ -256,7 +257,7 @@ export class OffersService {
                     this.loadMemberInfo();
                     if (output.redirectUrl) {
                         !window.open(output.redirectUrl, '_blank')
-                            ? applyOfferDialog.componentInstance.showBlockedMessage = true
+                            ? applyOfferDialog.componentInstance.redirectUrl = output.redirectUrl
                             : applyOfferDialog.close();
                     }
                 }
@@ -302,7 +303,7 @@ export class OffersService {
                     .subscribe((output: SubmitApplicationOutput) => {
                         if (output.redirectUrl) {
                             !window.open(output.redirectUrl, '_blank')
-                                ? applyOfferDialog.componentInstance.showBlockedMessage = true
+                                ? applyOfferDialog.componentInstance.redirectUrl = output.redirectUrl
                                 : applyOfferDialog.close();
                         }
                     });

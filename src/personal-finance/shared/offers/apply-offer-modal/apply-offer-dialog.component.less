@@ -95,6 +95,19 @@
             }
         }
 
+        a.applyButton {
+            background: linear-gradient(0deg, #9fc358, #f3ea80);
+            padding: 10px 20px;
+            width: 100%;
+            max-width: 180px;
+            display: block;
+            &:after {
+                display: none;
+            }
+            &:hover {
+                background: linear-gradient(0deg, #f3ea80, #9fc358);
+            }
+        }
         @media (min-width: 768px) {
             padding: 40px 60px 30px;
             p {
@@ -102,21 +115,13 @@
             }
         }
     }
-
-    .blockedMessage {
-        padding: 30px;
-        text-align: center;
-        font-size: 30px;
-        font-family: Poppins;
-        font-weight: 600;
-    }
 }
 /deep/ .cdk-overlay-container {
     .cdk-overlay-pane.apply-offer-dialog {
         .mat-dialog-container {
             overflow: visible;
-            padding: 0px;
-            margin: 0px;
+            padding: 0;
+            margin: 0;
         }
     }
 }

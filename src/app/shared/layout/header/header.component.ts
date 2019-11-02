@@ -22,6 +22,7 @@ import { AppService } from '@app/app.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { FeatureCheckerService } from '@abp/features/feature-checker.service';
+import { UserDropdownMenuItemModel } from '@shared/common/layout/user-management-list/user-dropdown-menu/user-dropdown-menu-item.model';
 
 @Component({
     templateUrl: './header.component.html',
@@ -40,6 +41,8 @@ export class HeaderComponent implements OnInit {
     remoteServiceBaseUrl: string = AppConsts.remoteServiceBaseUrl;
     chatConnected = false;
     userCompany$: Observable<string>;
+    dropdownMenuItems: UserDropdownMenuItemModel[] = this.userManagementService.defaultDropDownItems;
+
     constructor(
         injector: Injector,
         private dialog: MatDialog,
@@ -63,10 +66,6 @@ export class HeaderComponent implements OnInit {
         let tenant = this.appSession.tenant;
         if (tenant && tenant.customLayoutType && tenant.customLayoutType != LayoutType.Default)
             this.customLayoutType = kebabCase(tenant.customLayoutType);
-        this.userManagementService.getRecentlyLinkedUsers().subscribe(
-            recentlyLinkedUsers => this.userManagementService.recentlyLinkedUsers = recentlyLinkedUsers
-        );
-
         this.registerToEvents();
     }
 

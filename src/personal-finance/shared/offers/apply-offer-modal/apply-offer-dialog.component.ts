@@ -12,14 +12,13 @@ export class ApplyOfferDialogComponent implements OnInit {
     completeDelays: number[];
     delayMessages: string[];
     redirectUrl: string;
-    showBlockedMessage = false;
     currentStepIndex = 0;
     title: string;
     subtitle: string;
     constructor(
         private dialogRef: MatDialogRef<ApplyOfferDialogComponent>,
-        @Inject(MAT_DIALOG_DATA) public data: any,
-        public ls: AppLocalizationService
+        public ls: AppLocalizationService,
+        @Inject(MAT_DIALOG_DATA) public data: any
     ) {
         this.processingSteps = this.data.processingSteps;
         this.defaultCompleteInterval = this.data.defaultCompleteInterval || this.defaultCompleteInterval;

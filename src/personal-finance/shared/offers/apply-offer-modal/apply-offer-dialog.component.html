@@ -1,11 +1,11 @@
 <mat-dialog-content>
-    <ng-container *ngIf="!showBlockedMessage">
-        <div class="nextImageBlock">
-            <ng-container *ngIf="data.logoUrl; else pleaseWait">
-                <img [src]="data.logoUrl">
-            </ng-container>
-            <ng-template #pleaseWait><h3>{{ ls.l('ApplyOfferModal_PleaseWait') }}</h3></ng-template>
-        </div>
+    <div class="nextImageBlock">
+        <ng-container *ngIf="data.logoUrl; else pleaseWait">
+            <img [src]="data.logoUrl">
+        </ng-container>
+        <ng-template #pleaseWait><h3>{{ ls.l('ApplyOfferModal_PleaseWait') }}</h3></ng-template>
+    </div>
+    <ng-container *ngIf="!redirectUrl; else redirectUrlTemplate">
         <h2>{{title}}</h2>
         <p>{{subtitle}}</p>
         <ng-container *ngIf="processingSteps[currentStepIndex] as processingStep">
@@ -18,6 +18,11 @@
             </div>
         </ng-container>
     </ng-container>
-
-    <div class="blockedMessage" *ngIf="showBlockedMessage">{{ ls.l('Offers_TurnOffPopupBlockerMessage') }}</div>
+    <ng-template #redirectUrlTemplate>
+        <a class="applyButton"
+           [href]="redirectUrl"
+           target="_blank">
+            <span>{{ data.redirectUrlText }}</span>
+        </a>
+    </ng-template>
 </mat-dialog-content>

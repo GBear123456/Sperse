@@ -149,7 +149,7 @@ export class PersonalFinanceHeaderComponent {
     }
 
     private getAppAreaLinks() {
-        let links = [
+        return [
             {
                 name: 'Loans',
                 sublinks: [
@@ -237,8 +237,6 @@ export class PersonalFinanceHeaderComponent {
                 routerUrl: this.loggedUserId ? '/personal-finance/resources' : null
             }
         ];
-
-        return links;
     }
 
     isMemberArea() {
