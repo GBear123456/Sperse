@@ -15,7 +15,6 @@ import cloneDeep from 'lodash/cloneDeep';
 import { FinalizeApplicationResponse, FinalizeApplicationStatus, GetMemberInfoResponse, OfferServiceProxy } from '@shared/service-proxies/service-proxies';
 import { OffersService } from '@root/personal-finance/shared/offers/offers.service';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
-import { AppConsts } from '@shared/AppConsts';
 import { ApplyOfferDialogComponent } from '@root/personal-finance/shared/offers/apply-offer-modal/apply-offer-dialog.component';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 
@@ -91,6 +90,7 @@ export class RegisterComponent implements AfterViewInit, OnInit {
         };
         const applyOfferDialog = this.dialog.open(ApplyOfferDialogComponent, {
             width: '530px',
+            disableClose: true,
             panelClass: 'apply-offer-dialog',
             data: modalData
         });
