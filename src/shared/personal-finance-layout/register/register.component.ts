@@ -68,6 +68,7 @@ export class RegisterComponent implements AfterViewInit, OnInit {
                 closeModal: true
             },
             className: 'finalize',
+            closeOnClickOutside: false,
             content: this.document.getElementById('registerPopup').cloneNode(true)
         };
         messageContent['content'].style.display = 'block';
