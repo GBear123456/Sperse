@@ -115,15 +115,16 @@ export class RegisterComponent implements AfterViewInit, OnInit {
                     };
                     messageContent['content'].style.display = 'block';
                     swal(messageContent);
-                    messageContent['content'].querySelector('.redirect-link').onclick = () => {
-                        window.open(response.redirectUrl, '_blank');
-                        this.completeApprove(swal);
-                    };
-                    setTimeout(() => {
+                    const autoRedirect = setTimeout(() => {
                         if (window.open(response.redirectUrl, '_blank')) {
                             this.completeApprove(swal);
                         }
                     }, 8000);
+                    messageContent['content'].querySelector('.redirect-link').onclick = () => {
+                        clearTimeout(autoRedirect);
+                        window.open(response.redirectUrl, '_blank');
+                        this.completeApprove(swal);
+                    };
                 } else if (response.status === FinalizeApplicationStatus.Declined) {
                     let messageContent = {
                         title: `We\'re sorry ${this.firstName}, but you have been declined`,
