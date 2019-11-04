@@ -64,6 +64,7 @@ import { DateHelper } from '@shared/helpers/DateHelper';
 import { DataGridService } from '@app/shared/common/data-grid.service.ts/data-grid.service';
 import { Category } from '@app/cfo/transactions/categorization/category.model';
 import { BankAccountsState } from '@shared/cfo/bank-accounts-widgets/bank-accounts-state.model';
+import { AppFeatures } from '@shared/AppFeatures';
 
 @Component({
     templateUrl: './transactions.component.html',
@@ -274,6 +275,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     private updateAfterActivation: boolean;
     categoriesRowsData: Category[] = [];
     private showDataGridToolbar = true;
+    departmentFeatureEnabled: boolean = this.feature.isEnabled(AppFeatures.CFODepartmentsManagement);
 
     constructor(injector: Injector,
         private appService: AppService,

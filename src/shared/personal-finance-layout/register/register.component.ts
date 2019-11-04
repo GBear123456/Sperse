@@ -26,7 +26,6 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
         './register.component.less'
     ]
 })
-
 export class RegisterComponent implements AfterViewInit, OnInit {
     applicationCompleteIsRequired$: Observable<Boolean> = this.offersService.applicationCompleteIsRequired$;
     getMoreOptionsLink = '/personal-finance/offers/post-offers';

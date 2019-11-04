@@ -543,7 +543,11 @@ export class OffersLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     ngAfterViewInit() {
-        setTimeout(() => this.filterScroll.instance.update());
+        setTimeout(() => {
+            let filterComponent = this.filterScroll.instance;
+            filterComponent.scrollTo(0);
+            filterComponent.update();
+        });
     }
 
     activate() {

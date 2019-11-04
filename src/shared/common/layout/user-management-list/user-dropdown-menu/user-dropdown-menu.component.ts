@@ -41,7 +41,7 @@ export class UserDropdownMenuComponent implements AfterViewInit, OnInit {
     private impersonationService: ImpersonationService;
     private commonUserInfoService: CommonUserInfoServiceProxy;
     profileThumbnailId = this.appSession.user.profileThumbnailId;
-    shownLoginInfo: { fullName, email, tenantName?};
+    shownLoginInfo: { fullName, email, tenantName? };
     menuItemTypes = UserDropdownMenuItemType;
     bankCode: string = this.appSession.user.bankCode;
 
