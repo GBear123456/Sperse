@@ -391,9 +391,11 @@ export class CreateInvoiceDialogComponent implements OnInit {
             return this.dueDateComponent.instance.option('isValid', false);
 
         this.lines = this.getFilteredLines(false);
+        if (!this.lines.length)
+            this.lines.push({});
         this.changeDetectorRef.detectChanges();
         setTimeout(() => {
-            if (!this.lines.length || !this.linesValidationGroup.instance.validate().isValid)
+            if (!this.linesValidationGroup.instance.validate().isValid)
                 return this.notifyService.error(this.ls.l('InvoiceLinesShouldBeDefined'));
 
             if (this.disabledForUpdate)
