@@ -225,7 +225,7 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
                 data['templateId'] = this.settings.defaultTemplateId;
                 return this.clientService.showEmailDialog(data);
             })
-        ).subscribe(() => this.invalidate());
+        ).subscribe(data => this.updateStatus(InvoiceStatus.Sent));
     }
 
     onMenuItemClick(event) {
