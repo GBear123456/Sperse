@@ -76,11 +76,11 @@
                         (onCustomItemCreating)="onCustomItemCreating($event)">
                     </dx-tag-box>
                     <div class="bcc-links">
-                        <span (click)="showInputField(CCElement)" [hidden]="showCC">{{ls.l('CC')}}</span>
-                        <span (click)="showInputField(BCCElement)" [hidden]="showBCC">{{ls.l('BCC')}}</span>
+                        <span (click)="showInputField(CCElement, 'showCC')" [hidden]="showCC">{{ls.l('CC')}}</span>
+                        <span (click)="showInputField(BCCElement, 'showBCC')" [hidden]="showBCC">{{ls.l('BCC')}}</span>
                     </div>
                 </div>
-                <div class="field-area" *ngIf="showCC">
+                <div class="field-area" [hidden]="!showCC">
                     <label class="caption">{{ls.l('CC')}}:</label> 
                     <dx-tag-box #CCElement
                         name="cc"
@@ -96,7 +96,7 @@
                         (onCustomItemCreating)="onCustomItemCreating($event)">
                     </dx-tag-box>
                 </div>
-                <div class="field-area" *ngIf="showBCC">
+                <div class="field-area" [hidden]="!showBCC">
                     <label class="caption">{{ls.l('BCC')}}:</label> 
                     <dx-tag-box #BCCElement
                         name="bcc"

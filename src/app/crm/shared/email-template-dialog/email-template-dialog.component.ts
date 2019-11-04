@@ -173,10 +173,10 @@ export class EmailTemplateDialogComponent implements OnInit {
         });
     }
 
-    showInputField(element) {
-        let component = element.instance;
-        this[component.option('name')] = true;
-        setTimeout(() => component.focus());
+    showInputField(element, field) {
+        this[field] = true;
+        setTimeout(() => 
+            element.instance.focus());
     }
 
     startLoading() {
