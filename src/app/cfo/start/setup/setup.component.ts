@@ -24,6 +24,7 @@ export class SetupComponent extends CFOComponentBase implements AfterViewInit, O
     public headlineConfig;
     isDisabled = !this.isInstanceAdmin;
     setupContainerElement: Element;
+    hasAccountsAccess: boolean = this._cfoService.hasAccountsAccess;
 
     constructor(
         injector: Injector,

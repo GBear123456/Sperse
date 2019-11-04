@@ -21,7 +21,8 @@
     <ng-template #redirectUrlTemplate>
         <a class="applyButton"
            [href]="redirectUrl"
-           target="_blank">
+           target="_blank"
+           (click)="hideDialog($event)">
             <span>{{ data.redirectUrlText }}</span>
         </a>
     </ng-template>

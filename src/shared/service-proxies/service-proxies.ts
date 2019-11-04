@@ -58245,6 +58245,7 @@ export class GetStatusOutput implements IGetStatusOutput {
     userId!: number | undefined;
     hasSyncAccounts!: boolean | undefined;
     hasTransactions!: boolean | undefined;
+    hasAccountsAccess!: boolean | undefined;
 
     constructor(data?: IGetStatusOutput) {
         if (data) {
@@ -58261,6 +58262,7 @@ export class GetStatusOutput implements IGetStatusOutput {
             this.userId = data["userId"];
             this.hasSyncAccounts = data["hasSyncAccounts"];
             this.hasTransactions = data["hasTransactions"];
+            this.hasAccountsAccess = data["hasAccountsAccess"];
         }
     }
 
@@ -58277,6 +58279,7 @@ export class GetStatusOutput implements IGetStatusOutput {
         data["userId"] = this.userId;
         data["hasSyncAccounts"] = this.hasSyncAccounts;
         data["hasTransactions"] = this.hasTransactions;
+        data["hasAccountsAccess"] = this.hasAccountsAccess;
         return data; 
     }
 }
@@ -58286,6 +58289,7 @@ export interface IGetStatusOutput {
     userId: number | undefined;
     hasSyncAccounts: boolean | undefined;
     hasTransactions: boolean | undefined;
+    hasAccountsAccess: boolean | undefined;
 }
 
 export enum AccountingTreeType {

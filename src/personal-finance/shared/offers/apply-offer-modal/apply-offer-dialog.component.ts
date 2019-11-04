@@ -60,4 +60,8 @@ export class ApplyOfferDialogComponent implements OnInit {
                     }, 0)
                     || (stepIndex + 1) * (this.defaultCompleteInterval);
     }
+
+    hideDialog() {
+        this.dialogRef.close();
+    }
 }
