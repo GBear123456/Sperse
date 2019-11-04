@@ -1,30 +1,34 @@
+/** Application imports */
 import { Injectable } from '@angular/core';
-import { AppPermissionService } from '@shared/common/auth/permission.service';
-import { FeatureCheckerService } from '@abp/features/feature-checker.service';
-import { AppSessionService } from '@shared/common/session/app-session.service';
-import { UrlHelper } from '@shared/helpers/UrlHelper';
-
 import {
     CanActivate, Router,
     ActivatedRouteSnapshot,
     RouterStateSnapshot,
     CanActivateChild
 } from '@angular/router';
+
+/** Application imports */
+import { AppPermissionService } from '@shared/common/auth/permission.service';
+import { FeatureCheckerService } from '@abp/features/feature-checker.service';
+import { AppSessionService } from '@shared/common/session/app-session.service';
+import { UrlHelper } from '@shared/helpers/UrlHelper';
 import { AppFeatures } from '@shared/AppFeatures';
+import { OffersService } from '@root/personal-finance/shared/offers/offers.service';
 
 @Injectable()
 export class CreditReportsRouteGuard implements CanActivate, CanActivateChild {
 
     constructor(
-        private _featureChecker: FeatureCheckerService,
-        private _permissionChecker: AppPermissionService,
-        private _router: Router,
-        private _sessionService: AppSessionService,
-    ) { }
+        private featureChecker: FeatureCheckerService,
+        private permissionChecker: AppPermissionService,
+        private router: Router,
+        private sessionService: AppSessionService,
+        private offersService: OffersService
+    ) {}
 
     canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
-        if (!this._featureChecker.isEnabled(AppFeatures.PFM)) {
-            this._router.navigate(['/']);
+        if (!this.featureChecker.isEnabled(AppFeatures.PFM)) {
+            this.router.navigate(['/']);
             return false;
         }
 
@@ -36,38 +40,46 @@ export class CreditReportsRouteGuard implements CanActivate, CanActivateChild {
     }
 
     checkLoansSectionForDemoUser(url) {
-        return this._sessionService.isLendspaceDemoUser && ['personal', 'auto', 'business'].every(
+        return this.sessionService.isLendspaceDemoUser && ['personal', 'auto', 'business'].every(
             item => url.indexOf('/personal-finance/offers/' + item + '-loans') < 0
         );
     }
 
     canActivateChild(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
         if (UrlHelper.isPfmAppUrl(state.url)) {
-            if (this._featureChecker.isEnabled(AppFeatures.PFMApplications)
-                || this._featureChecker.isEnabled(AppFeatures.PFMCreditReport))
-                this._router.navigate([this._sessionService.user ? '/personal-finance/home' : '/account/login']);
-            else
-                this._router.navigate(['/']);
+            if (this.featureChecker.isEnabled(AppFeatures.PFMApplications)
+                || this.featureChecker.isEnabled(AppFeatures.PFMCreditReport)) {
+                if (this.sessionService.user) {
+                    this.offersService.applicationCompleteIsRequired$.subscribe((completeIsRequired: boolean) => {
+                        this.router.navigate(
+                            ['/personal-finance/' + (completeIsRequired ? 'offers/personal-loans' : 'home')]
+                        );
+                    });
+                } else {
+                    this.router.navigate(['/account/login']);
+                }
+            } else {
+                this.router.navigate(['/']);
+            }
             return false;
-        } else if (this._sessionService.user) {
+        } else if (this.sessionService.user) {
             if (!route.data || !route.data['permission']
-                || this._permissionChecker.isGranted(route.data['permission'])
+                || this.permissionChecker.isGranted(route.data['permission'])
             ) {
                 if (this.checkLoansSectionForDemoUser(state.url)) {
-                    this._router.navigate(['/personal-finance/offers/personal-loans']);
+                    this.router.navigate(['/personal-finance/offers/personal-loans']);
                     return false;
                 }
-
                 return true;
             } else {
-                this._router.navigate(['/app/access-denied']);
+                this.router.navigate(['/app/access-denied']);
                 return false;
             }
         } else if (UrlHelper.isPfmSignUpUrl(state.url) || this.isPublicSection(route)) {
             return true;
         } else {
             sessionStorage.setItem('redirectUrl', location.origin + state.url);
-            this._router.navigate(['/account/login']);
+            this.router.navigate(['/account/login']);
             return false;
         }
     }

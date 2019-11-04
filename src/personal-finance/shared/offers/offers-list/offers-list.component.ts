@@ -72,6 +72,6 @@ export class OffersListComponent implements OnChanges {
 
     applyOffer(offer: OfferDto) {
         if (this.checkDemoUserActionAllowed(offer, true))
-            this.offersService.applyOffer(offer, this.areCreditCards, this.checkSubmitDateAfterApply);
+            this.offersService.applyOffer(offer, this.areCreditCards, this.checkSubmitDateAfterApply, this.buttonCaption);
     }
 }

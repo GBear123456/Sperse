@@ -15,7 +15,6 @@ import cloneDeep from 'lodash/cloneDeep';
 import { FinalizeApplicationResponse, FinalizeApplicationStatus, GetMemberInfoResponse, OfferServiceProxy } from '@shared/service-proxies/service-proxies';
 import { OffersService } from '@root/personal-finance/shared/offers/offers.service';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
-import { AppConsts } from '@shared/AppConsts';
 import { ApplyOfferDialogComponent } from '@root/personal-finance/shared/offers/apply-offer-modal/apply-offer-dialog.component';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 
@@ -68,6 +67,7 @@ export class RegisterComponent implements AfterViewInit, OnInit {
                 closeModal: true
             },
             className: 'finalize',
+            closeOnClickOutside: false,
             content: this.document.getElementById('registerPopup').cloneNode(true)
         };
         messageContent['content'].style.display = 'block';
@@ -90,6 +90,7 @@ export class RegisterComponent implements AfterViewInit, OnInit {
         };
         const applyOfferDialog = this.dialog.open(ApplyOfferDialogComponent, {
             width: '530px',
+            disableClose: true,
             panelClass: 'apply-offer-dialog',
             data: modalData
         });
@@ -114,15 +115,16 @@ export class RegisterComponent implements AfterViewInit, OnInit {
                     };
                     messageContent['content'].style.display = 'block';
                     swal(messageContent);
-                    messageContent['content'].querySelector('.redirect-link').onclick = () => {
-                        window.open(response.redirectUrl, '_blank');
-                        this.completeApprove(swal);
-                    };
-                    setTimeout(() => {
+                    const autoRedirect = setTimeout(() => {
                         if (window.open(response.redirectUrl, '_blank')) {
                             this.completeApprove(swal);
                         }
                     }, 8000);
+                    messageContent['content'].querySelector('.redirect-link').onclick = () => {
+                        clearTimeout(autoRedirect);
+                        window.open(response.redirectUrl, '_blank');
+                        this.completeApprove(swal);
+                    };
                 } else if (response.status === FinalizeApplicationStatus.Declined) {
                     let messageContent = {
                         title: `We\'re sorry ${this.firstName}, but you have been declined`,
