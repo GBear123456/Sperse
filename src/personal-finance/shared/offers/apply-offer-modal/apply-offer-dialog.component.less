@@ -5,12 +5,13 @@
     background-clip: padding-box;
     outline: 0;
     .mat-dialog-content {
-        background: #fdc84d;
+        background: #fff8d9;
         text-align: center;
         display: flex;
         justify-content: center;
         flex-direction: column;
         padding: 30px 20px;
+        border-radius: 15px;
         .nextImageBlock {
             display: flex;
             justify-content: center;
@@ -32,7 +33,7 @@
             @media (min-width: 768px) {
                 padding: 10px 60px;
                 align-self: center;
-                margin: 0 0px 20px 0px;
+                margin: 0 0 20px 0;
                 img {
                     margin-left: 25px;
                     max-width: 250px;
@@ -96,7 +97,6 @@
         }
 
         a.applyButton {
-            background: linear-gradient(0deg, #9fc358, #f3ea80);
             padding: 10px 20px;
             width: 100%;
             max-width: 180px;
@@ -104,12 +104,9 @@
             &:after {
                 display: none;
             }
-            &:hover {
-                background: linear-gradient(0deg, #f3ea80, #9fc358);
-            }
         }
         @media (min-width: 768px) {
-            padding: 40px 60px 30px;
+            padding: 60px 60px 50px;
             p {
                 margin-bottom: 20px;
             }

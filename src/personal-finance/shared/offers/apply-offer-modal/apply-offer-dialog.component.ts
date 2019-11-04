@@ -4,7 +4,10 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 
 @Component({
     templateUrl: './apply-offer-dialog.component.html',
-    styleUrls: [ './apply-offer-dialog.component.less' ]
+    styleUrls: [
+        '../../common/styles/apply-button.less',
+        './apply-offer-dialog.component.less'
+    ]
 })
 export class ApplyOfferDialogComponent implements OnInit {
     processingSteps;
