@@ -48,19 +48,10 @@ export class CreditReportsRouteGuard implements CanActivate, CanActivateChild {
     canActivateChild(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
         if (UrlHelper.isPfmAppUrl(state.url)) {
             if (this.featureChecker.isEnabled(AppFeatures.PFMApplications)
-                || this.featureChecker.isEnabled(AppFeatures.PFMCreditReport)) {
-                if (this.sessionService.user) {
-                    this.offersService.applicationCompleteIsRequired$.subscribe((completeIsRequired: boolean) => {
-                        this.router.navigate(
-                            ['/personal-finance/' + (completeIsRequired ? 'offers/personal-loans' : 'home')]
-                        );
-                    });
-                } else {
-                    this.router.navigate(['/account/login']);
-                }
-            } else {
+                || this.featureChecker.isEnabled(AppFeatures.PFMCreditReport))
+                this.router.navigate([this.sessionService.user ? '/personal-finance/home' : '/account/login']);
+            else
                 this.router.navigate(['/']);
-            }
             return false;
         } else if (this.sessionService.user) {
             if (!route.data || !route.data['permission']
