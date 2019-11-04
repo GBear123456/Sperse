@@ -32,6 +32,32 @@
             position: absolute;
             background: url(../../../../assets/common/images/lend-space-dark/welcome/card.png) no-repeat 0px/cover;
         }
+        @media all and (max-width: 768px) {
+            height: 520px;
+            text-align: center;
+            .card-view {
+                width: 100%;
+                position: static;
+                background-position: center;
+                background-size: 253px 156px;
+            }
+            h1 {
+                font-size: 35px;
+                margin: 20px 0!important;
+            }
+            h3 {
+                font-size: 24px;
+            }
+            button {
+                width: auto !important;
+                max-width: 100%;
+                position: relative;
+                bottom: unset;
+                margin-top: 10px;
+                font-size: 15px;
+                text-transform: uppercase;
+            }
+        }        
     }
     .bottom {
         position: relative;
@@ -92,7 +118,6 @@
     }
 
     @media all and (max-width: 400px) {
-        .top,
         .bottom {
             text-align: center;
             height: 400px;
