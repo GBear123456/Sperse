@@ -39,7 +39,7 @@ body.lend-space .page-header.navbar .page-top #m_header_topbar .m-dropdown__head
   color: #f1f1f0 !important;
 }
 body.lend-space .swal-modal {
-  background: #FDC84D;
+  background: #fff8d9;
 }
 body.lend-space .swal-modal .swal-icon.swal-icon--error,
 body.lend-space .swal-modal .swal-icon.swal-icon--warning,
@@ -57,7 +57,7 @@ body.lend-space .swal-modal .swal-icon.swal-icon--success .swal-icon--success__h
 }
 body.lend-space .swal-modal .swal-icon.swal-icon--success:before,
 body.lend-space .swal-modal .swal-icon.swal-icon--success:after {
-  width: 0px!important;
+  width: 0!important;
 }
 body.lend-space .swal-modal .swal-icon.swal-icon--warning:before {
   content: "\2713";
