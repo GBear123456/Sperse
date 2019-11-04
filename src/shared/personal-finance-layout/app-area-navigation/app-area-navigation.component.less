@@ -167,8 +167,9 @@
         position: absolute;
         right: unset!important;
         @media all and (max-width: 767px) {
+            height: auto;
             right: 0 !important;
-            height: calc(~"100vh - 90px");
+            max-height: calc(~"100vh - 90px");
             overflow: auto;
         }
         &.show {
