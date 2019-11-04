@@ -99,41 +99,6 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
     private readonly allContactGroupsExceptUser = this.allContactGroups.filter(v => v != ContactGroup.UserProfile);
 
     manageAllowed;
-    defaultContextMenuItems: ContextMenuItem[] = [
-        {
-            type: ContextType.AddFiles,
-            text: this.ls.l('AddFiles'),
-            selected: false,
-            icon: 'files',
-            visible: true,
-            contactGroups: this.allContactGroups
-        },
-        {
-            type: ContextType.AddNotes,
-            text: this.ls.l('AddNotes'),
-            selected: false,
-            icon: 'note',
-            visible: true,
-            contactGroups: this.allContactGroups
-        },
-        {
-            type: ContextType.AddContact,
-            text: this.ls.l('AddContact'),
-            selected: false,
-            icon: 'add-contact',
-            visible: true,
-            contactGroups: this.allContactGroupsExceptUser
-        },
-        {
-            type: ContextType.AddInvoice,
-            text: this.ls.l('AddInvoice'),
-            selected: false,
-            icon: 'money',
-            visible: this.permissionChecker.isGranted(AppPermissions.CRMOrdersInvoicesManage) &&
-                this.data.statusId != ContactStatus.Prospective,
-            contactGroups: this.allContactGroupsExceptUser
-        }
-    ];
     addContextMenuItems: ContextMenuItem[] = [];
     addButtonTitle = '';
     isBankCodeLayout = this.userManagementService.checkBankCodeFeature();
@@ -212,13 +177,51 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
                 this.manageAllowed = this.contactsService.checkCGPermission(contactInfo.groupId);
                 if (contactInfo.id) {
                     this.affiliateCode.next(contactInfo.affiliateCode);
-                }
-                this.addContextMenuItems = this.defaultContextMenuItems.filter(menuItem => {
+                }                
+                this.addContextMenuItems = this.getDefaultContextMenuItems(contactInfo).filter(menuItem => {
                     return menuItem.contactGroups.indexOf(contactInfo.groupId) >= 0;
                 });
                 this.addOptionsInit();
             }
         );
+    }
+
+    getDefaultContextMenuItems(contactInfo: ContactInfoDto) {
+        return [
+            {
+                type: ContextType.AddFiles,
+                text: this.ls.l('AddFiles'),
+                selected: false,
+                icon: 'files',
+                visible: true,
+                contactGroups: this.allContactGroups
+            },
+            {
+                type: ContextType.AddNotes,
+                text: this.ls.l('AddNotes'),
+                selected: false,
+                icon: 'note',
+                visible: true,
+                contactGroups: this.allContactGroups
+            },
+            {
+                type: ContextType.AddContact,
+                text: this.ls.l('AddContact'),
+                selected: false,
+                icon: 'add-contact',
+                visible: true,
+                contactGroups: this.allContactGroupsExceptUser
+            },
+            {
+                type: ContextType.AddInvoice,
+                text: this.ls.l('AddInvoice'),
+                selected: false,
+                icon: 'money',
+                visible: this.permissionChecker.isGranted(AppPermissions.CRMOrdersInvoicesManage) &&
+                    contactInfo.statusId != ContactStatus.Prospective,
+                contactGroups: this.allContactGroupsExceptUser
+            }
+        ];
     }
 
     initializePersonOrgRelationInfo(personContactInfo?: PersonContactInfoDto): PersonContactInfoDto {
