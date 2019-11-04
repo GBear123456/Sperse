@@ -63,9 +63,8 @@ import { OrganizationUnitsTreeComponent } from './shared/organization-unit-tree.
 import { PermissionComboComponent } from './shared/permission-combo.component';
 import { PermissionTreeComponent } from './shared/permission-tree.component';
 import { RoleComboComponent } from './shared/role-combo.component';
-import { CreateTenantModalComponent } from './tenants/create-tenant-modal.component';
-import { EditTenantModalComponent } from './tenants/edit-tenant-modal.component';
-import { TenantFeaturesModalComponent } from './tenants/tenant-features-modal.component';
+import { CreateTenantModalComponent } from './tenants/create-tenant-modal/create-tenant-modal.component';
+import { EditTenantModalComponent } from './tenants/edit-tenant-modal/edit-tenant-modal.component';
 import { TenantsComponent } from './tenants/tenants.component';
 import { UiCustomizationComponent } from './ui-customization/ui-customization.component';
 import { ImpersonationService } from './users/impersonation.service';
@@ -169,14 +168,12 @@ import { LoadingSpinnerModule } from '@app/shared/common/loading-spinner/loading
         CreateTenantModalComponent,
         EditTenantModalComponent,
         ModulesEditionsSelectComponent,
-        TenantFeaturesModalComponent,
         CreateUserDialogComponent
     ],
     entryComponents: [
         CreateUserDialogComponent,
         CreateTenantModalComponent,
         EditTenantModalComponent,
-        TenantFeaturesModalComponent,
         CreateOrEditEditionModalComponent,
         CreateOrEditLanguageModalComponent,
         CreateOrEditRoleModalComponent,

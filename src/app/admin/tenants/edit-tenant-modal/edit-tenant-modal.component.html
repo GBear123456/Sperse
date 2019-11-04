@@ -3,17 +3,32 @@
         <form #tenantEditForm="ngForm" role="form" novalidate class="form-validation" (submit)="save()" *ngIf="tenant">
             <div class="modal-body">
                 <tabset class="tab-container tabbable-line">
-                    <tab heading="{{ls.l('TenantProperties')}}">
+                    <tab [heading]="ls.l('TenantProperties')">
                         <div class="form-group form-md-line-input form-md-floating-label no-hint">
                             <label>{{ls.l("Name")}}</label>
                             <input #nameInput type="text" name="Name" class="form-control input-ltr" [ngClass]="{'edited':tenant.name}" [(ngModel)]="tenant.name" required maxlength="128">
                         </div>
-
-                        <modules-editions-select *ngIf="editionsGroups" [editionsGroups]="editionsGroups" [(editionsModels)]="editionsModels"></modules-editions-select>
-
+                        <modules-editions-select *ngIf="editionsGroups"
+                                                 [editionsGroups]="editionsGroups"
+                                                 [(editionsModels)]="editionsModels">
+                        </modules-editions-select>
                         <dx-check-box [text]="ls.l('Active')" [(value)]="tenant.isActive"></dx-check-box>
                     </tab>
-                    <tab heading="{{ls.l('TenantDatabases')}}">
+                    <tab [heading]="ls.l('Features')">
+                        <dx-scroll-view showScrollbar="onHover">
+                            <form #editTenantFeaturesForm="ngForm" name="editTenantFeaturesForm" role="form" novalidate class="form-validation" (submit)="save()">
+                                <div class="modal-body">
+                                    <feature-tree #featureTree></feature-tree>
+                                </div>
+                            </form>
+                            <button class="button-layout button-primary"
+                                    [title]="ls.l('ResetFeaturesTooltip')"
+                                    (click)="resetFeatures()">
+                                {{ ls.l('ResetSpecialFeatures') }}
+                            </button>
+                        </dx-scroll-view>
+                    </tab>
+                    <tab [heading]="ls.l('TenantDatabases')">
                         <div class="form-group form-md-line-input form-md-floating-label no-hint">
                             <label>{{ls.l("Platform")}}</label>
                         </div>

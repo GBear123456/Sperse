@@ -1,19 +1,24 @@
-import { AfterViewInit, Component, ElementRef, Injector, Input } from '@angular/core';
-import { FeatureTreeEditModel } from '@app/admin/shared/feature-tree-edit.model';
-import { AppComponentBase } from '@shared/common/app-component-base';
-import { FlatFeatureDto, NameValueDto } from '@shared/service-proxies/service-proxies';
+/** Core imports */
+import { ChangeDetectionStrategy, AfterViewInit, Component, ElementRef, Input } from '@angular/core';
+
+/** Third party imports */
 import map from 'lodash/map';
 import some from 'lodash/some';
 import each from 'lodash/each';
 import find from 'lodash/find';
 
+/** Application imports */
+import { FeatureTreeEditModel } from '@app/admin/shared/feature-tree-edit.model';
+import { FlatFeatureDto, NameValueDto } from '@shared/service-proxies/service-proxies';
+
 @Component({
     selector: 'feature-tree',
     template: `<div class="feature-tree"></div>`,
-    styleUrls: ['./feature-tree.component.less']
+    styleUrls: ['./feature-tree.component.less'],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class FeatureTreeComponent extends AppComponentBase implements AfterViewInit {
-
+export class FeatureTreeComponent implements AfterViewInit {
+    @Input()
     @Input() set editData(val: FeatureTreeEditModel) {
         if (val) {
             this._editData = val;
@@ -21,28 +26,24 @@ export class FeatureTreeComponent extends AppComponentBase implements AfterViewI
         }
     }
 
-    private _$tree: JQuery;
     private _editData: FeatureTreeEditModel;
-    private _createdTreeBefore;
+    private $tree: JQuery;
+    private createdTreeBefore;
+    initialGrantedFeatures;
 
-    constructor(private _element: ElementRef,
-        injector: Injector
-    ) {
-        super(injector);
-    }
+    constructor(private element: ElementRef) {}
 
     ngAfterViewInit(): void {
-        this._$tree = $(this._element.nativeElement);
-
+        this.$tree = $(this.element.nativeElement);
         this.refreshTree();
     }
 
     getGrantedFeatures(): NameValueDto[] {
-        if (!this._$tree || !this._createdTreeBefore) {
+        if (!this.$tree || !this.createdTreeBefore) {
             return [];
         }
 
-        const selectedFeatures = this._$tree.jstree('get_selected', true);
+        const selectedFeatures = this.$tree.jstree('get_selected', true);
 
         return map(this._editData.features, item => {
             const feature = new NameValueDto();
@@ -62,13 +63,13 @@ export class FeatureTreeComponent extends AppComponentBase implements AfterViewI
     refreshTree(): void {
         const self = this;
 
-        if (this._createdTreeBefore) {
-            this._$tree.jstree('destroy');
+        if (this.createdTreeBefore) {
+            this.$tree.jstree('destroy');
         }
 
-        this._createdTreeBefore = false;
+        this.createdTreeBefore = false;
 
-        if (!this._editData || !this._$tree) {
+        if (!this._editData || !this.$tree) {
             return;
         }
 
@@ -81,10 +82,10 @@ export class FeatureTreeComponent extends AppComponentBase implements AfterViewI
                 selected: some(this._editData.featureValues, { name: item.name, value: 'true' })
             }
         }));
-
-        this._$tree
+        this.$tree
             .on('ready.jstree', () => {
                 this.customizeTreeNodes();
+                this.initialGrantedFeatures = this.getGrantedFeatures();
             })
             .on('redraw.jstree', () => {
                 this.customizeTreeNodes();
@@ -108,21 +109,21 @@ export class FeatureTreeComponent extends AppComponentBase implements AfterViewI
                 let childrenNodes;
 
                 if (data.node.state.selected) {
-                    selectNodeAndAllParents(this._$tree.jstree('get_parent', data.node));
+                    selectNodeAndAllParents(this.$tree.jstree('get_parent', data.node));
 
-                    childrenNodes = $.makeArray(this._$tree.jstree('get_node', data.node).children);
-                    this._$tree.jstree('select_node', childrenNodes);
+                    childrenNodes = $.makeArray(this.$tree.jstree('get_node', data.node).children);
+                    this.$tree.jstree('select_node', childrenNodes);
 
                 } else {
-                    childrenNodes = $.makeArray(this._$tree.jstree('get_node', data.node).children);
-                    this._$tree.jstree('deselect_node', childrenNodes);
+                    childrenNodes = $.makeArray(this.$tree.jstree('get_node', data.node).children);
+                    this.$tree.jstree('deselect_node', childrenNodes);
                 }
 
                 if (!wasInTreeChangeEvent) {
                     const $nodeLi = this.getNodeLiByFeatureName(data.node.id);
                     const feature = this.findFeatureByName(data.node.id);
                     if (feature && (!feature.inputType || feature.inputType.name === 'CHECKBOX')) {
-                        const value = this._$tree.jstree('is_checked', $nodeLi) ? 'true' : 'false';
+                        const value = this.$tree.jstree('is_checked', $nodeLi) ? 'true' : 'false';
                         this.setFeatureValueByName(data.node.id, value);
                     }
 
@@ -149,19 +150,19 @@ export class FeatureTreeComponent extends AppComponentBase implements AfterViewI
                 plugins: ['checkbox', 'types']
             });
 
-        this._createdTreeBefore = true;
+        this.createdTreeBefore = true;
 
         let inTreeChangeEvent = false;
 
         function selectNodeAndAllParents(node) {
-            self._$tree.jstree('select_node', node, true);
-            const parent = self._$tree.jstree('get_parent', node);
+            self.$tree.jstree('select_node', node, true);
+            const parent = self.$tree.jstree('get_parent', node);
             if (parent) {
                 selectNodeAndAllParents(parent);
             }
         }
 
-        this._$tree.on('changed.jstree', (e, data) => {
+        this.$tree.on('changed.jstree', (e, data) => {
             if (!data.node) {
                 return;
             }
@@ -174,14 +175,14 @@ export class FeatureTreeComponent extends AppComponentBase implements AfterViewI
             let childrenNodes;
 
             if (data.node.state.selected) {
-                selectNodeAndAllParents(this._$tree.jstree('get_parent', data.node));
+                selectNodeAndAllParents(this.$tree.jstree('get_parent', data.node));
 
-                childrenNodes = $.makeArray(this._$tree.jstree('get_node', data.node).children);
-                this._$tree.jstree('select_node', childrenNodes);
+                childrenNodes = $.makeArray(this.$tree.jstree('get_node', data.node).children);
+                this.$tree.jstree('select_node', childrenNodes);
 
             } else {
-                childrenNodes = $.makeArray(this._$tree.jstree('get_node', data.node).children);
-                this._$tree.jstree('deselect_node', childrenNodes);
+                childrenNodes = $.makeArray(this.$tree.jstree('get_node', data.node).children);
+                this.$tree.jstree('deselect_node', childrenNodes);
             }
 
             if (!wasInTreeChangeEvent) {
@@ -192,7 +193,7 @@ export class FeatureTreeComponent extends AppComponentBase implements AfterViewI
 
     customizeTreeNodes(): void {
         const self = this;
-        self._$tree.find('.jstree-node').each(function () {
+        self.$tree.find('.jstree-node').each(function () {
             const $nodeLi = $(this);
             const $nodeA = $nodeLi.find('.jstree-anchor');
 
@@ -281,8 +282,8 @@ export class FeatureTreeComponent extends AppComponentBase implements AfterViewI
 
     selectNodeAndAllParents(node: any): void {
         const self = this;
-        self._$tree.jstree('select_node', node, true);
-        const parent = self._$tree.jstree('get_parent', node);
+        self.$tree.jstree('select_node', node, true);
+        const parent = self.$tree.jstree('get_parent', node);
         if (parent) {
             self.selectNodeAndAllParents(parent);
         }
@@ -366,18 +367,18 @@ export class FeatureTreeComponent extends AppComponentBase implements AfterViewI
 
     areAllValuesValid(): boolean {
         const self = this;
-        self._$tree.find('.jstree-node').each(function () {
+        self.$tree.find('.jstree-node').each(function () {
             const $nodeLi = $(this);
             const featureName = $nodeLi.attr('id');
             const feature = self.findFeatureByName(featureName);
 
             if (feature && (!feature.inputType || feature.inputType.name === 'CHECKBOX')) {
-                const value = self._$tree.jstree('is_checked', $nodeLi) ? 'true' : 'false';
+                const value = self.$tree.jstree('is_checked', $nodeLi) ? 'true' : 'false';
                 self.setFeatureValueByName(featureName, value);
             }
         });
 
-        return self._$tree.find('.feature-tree-textbox-invalid').length <= 0;
+        return self.$tree.find('.feature-tree-textbox-invalid').length <= 0;
     }
 
     setFeatureValueByName(featureName: string, value: string): void {

@@ -14,10 +14,9 @@ export class ModulesEditionsSelectComponent {
     @Input() editionsGroups: SubscribableEditionComboboxItemDto[][];
 
     constructor(
-        private _notifyService: NotifyService,
-        private _ls: AppLocalizationService,
-    ) {
-    }
+        private notifyService: NotifyService,
+        private ls: AppLocalizationService,
+    ) {}
 
     onEditionChange(e, moduleId: string) {
         /** if edition value 'Not Assigned' - clear max count */
@@ -38,8 +37,15 @@ export class ModulesEditionsSelectComponent {
                 return false;
             });
         if (emptyMaxCount.length)
-            this._notifyService.error(this._ls.ls(AppConsts.localization.defaultLocalizationSourceName, 'ProductsWithoutUsersCount', emptyMaxCount.join(', ')));
+            this.notifyService.error(this.ls.ls(AppConsts.localization.defaultLocalizationSourceName, 'ProductsWithoutUsersCount', emptyMaxCount.join(', ')));
 
         return !emptyMaxCount.length;
+    }
+
+    editionIsNotFreeOrNotAssigned(editionId: number, editionGroupIndex: number) {
+        const edition = this.editionsGroups[editionGroupIndex].find((edition: SubscribableEditionComboboxItemDto) => {
+            return +edition.value === +editionId;
+        });
+        return edition && !edition.isFree && edition.value !== '0';
     }
 }

@@ -24,21 +24,22 @@ import {
     ProfileServiceProxy,
     TenantServiceProxy,
     TenantEditEditionDto,
-    SubscribableEditionComboboxItemDto
+    SubscribableEditionComboboxItemDto,
+    GetPasswordComplexitySettingOutput
 } from '@shared/service-proxies/service-proxies';
 import { TenantsService } from '@admin/tenants/tenants.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { NotifyService } from '@abp/notify/notify.service';
 import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
-import { ModulesEditionsSelectComponent } from './modules-edtions-select.component.ts/modules-editions-select.component';
+import { ModulesEditionsSelectComponent } from '../modules-edtions-select.component.ts/modules-editions-select.component';
 
 //!!VP should be reimplemnted to use Dx text box instead of inputs
 @Component({
     selector: 'createTenantModal',
     templateUrl: './create-tenant-modal.component.html',
     styleUrls: [
-        './modal.less',
+        '../modal.less',
         './create-tenant-modal.component.less'
     ],
     providers: [ TenantsService ],
@@ -66,25 +67,25 @@ export class CreateTenantModalComponent implements OnInit {
     ];
 
     constructor(
-        private _tenantService: TenantServiceProxy,
-        private _commonLookupService: CommonLookupServiceProxy,
-        private _profileService: ProfileServiceProxy,
-        private _tenantsService: TenantsService,
-        private _notifyService: NotifyService,
-        private _dialogRef: MatDialogRef<CreateTenantModalComponent>,
-        private _changeDetectorRef: ChangeDetectorRef,
+        private tenantService: TenantServiceProxy,
+        private commonLookupService: CommonLookupServiceProxy,
+        private profileService: ProfileServiceProxy,
+        private tenantsService: TenantsService,
+        private notifyService: NotifyService,
+        private dialogRef: MatDialogRef<CreateTenantModalComponent>,
+        private changeDetectorRef: ChangeDetectorRef,
         public ls: AppLocalizationService
     ) {}
 
     ngOnInit() {
         this.modalDialog.startLoading();
         this.init();
-        this._profileService.getPasswordComplexitySetting()
+        this.profileService.getPasswordComplexitySetting()
             .pipe(finalize(() => {
                 this.modalDialog.finishLoading();
-                this._changeDetectorRef.detectChanges();
+                this.changeDetectorRef.detectChanges();
             }))
-            .subscribe(result => {
+            .subscribe((result: GetPasswordComplexitySettingOutput) => {
                 this.passwordComplexitySetting = result.setting;
             });
     }
@@ -94,8 +95,8 @@ export class CreateTenantModalComponent implements OnInit {
         this.tenant.isActive = true;
         this.tenant.shouldChangePasswordOnNextLogin = true;
         this.tenant.sendActivationEmail = true;
-        this.editionsGroups$ = this._tenantsService.getEditionsGroups();
-        this.editionsModels = this._tenantsService.editionsModels;
+        this.editionsGroups$ = this.tenantsService.getEditionsGroups();
+        this.editionsModels = this.tenantsService.editionsModels;
     }
 
     save(): void {
@@ -106,12 +107,12 @@ export class CreateTenantModalComponent implements OnInit {
         if (this.setRandomPassword) {
             this.tenant.adminPassword = null;
         }
-        this.tenant.editions = this._tenantsService.getTenantEditions();
-        this._tenantService.createTenant(this.tenant)
+        this.tenant.editions = this.tenantsService.getTenantEditions();
+        this.tenantService.createTenant(this.tenant)
             .pipe(finalize(() => this.modalDialog.finishLoading()))
             .subscribe(() => {
-                this._notifyService.info(this.ls.l('SavedSuccessfully'));
-                this._dialogRef.close(true);
+                this.notifyService.info(this.ls.l('SavedSuccessfully'));
+                this.dialogRef.close(true);
                 this.modalSave.emit(null);
             });
     }

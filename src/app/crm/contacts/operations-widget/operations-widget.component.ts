@@ -113,7 +113,6 @@ export class OperationsWidgetComponent extends AppComponentBase implements OnCha
         private crmService: CrmService
     ) {
         super(injector);
-
         contactService.toolbarSubscribe(config => {
             this.customToolbarConfig = config;
             this.initToolbarConfig();

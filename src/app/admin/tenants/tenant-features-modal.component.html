@@ -1,9 +1,0 @@
-<modal-dialog [title]="title" [buttons]="buttons">
-    <dx-scroll-view showScrollbar="onHover">
-        <form #editTenantFeaturesForm="ngForm" name="editTenantFeaturesForm" role="form" novalidate class="form-validation" (submit)="save()">
-            <div class="modal-body">
-                <feature-tree #featureTree></feature-tree>
-            </div>
-        </form>
-    </dx-scroll-view>
-</modal-dialog>

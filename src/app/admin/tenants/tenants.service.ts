@@ -16,9 +16,9 @@ export class TenantsService {
     private defaultEditionId = '0';
 
     constructor(
-        private _tenantService: TenantServiceProxy,
-        private _commonLookupService: CommonLookupServiceProxy,
-        private _appLocalizationService: AppLocalizationService
+        private tenantService: TenantServiceProxy,
+        private commonLookupService: CommonLookupServiceProxy,
+        private appLocalizationService: AppLocalizationService
     ) {}
 
     getEditionsGroupsWithDefaultEdition(): Observable<SubscribableEditionComboboxItemDto[][]> {
@@ -30,7 +30,7 @@ export class TenantsService {
     }
 
     getDefaultEditionName(): Observable<string> {
-        return this._commonLookupService.getDefaultEditionName().pipe(
+        return this.commonLookupService.getDefaultEditionName().pipe(
             publishReplay(),
             refCount(),
             map(res => res.name)
@@ -38,7 +38,7 @@ export class TenantsService {
     }
 
     getEditionsGroups(defaultEditionName = null): Observable<SubscribableEditionComboboxItemDto[][]>  {
-        return this._commonLookupService.getEditionsForCombobox(false).pipe(
+        return this.commonLookupService.getEditionsForCombobox(false).pipe(
             map(res => res.items),
             concatAll(),
             filter(edition => !!edition.moduleId),
@@ -67,7 +67,7 @@ export class TenantsService {
     concatEditionsWithDefault(editions: SubscribableEditionComboboxItemDto[]): SubscribableEditionComboboxItemDto[] {
         let notAssignedItem = new SubscribableEditionComboboxItemDto();
         notAssignedItem.value = this.defaultEditionId;
-        notAssignedItem.displayText = this._appLocalizationService.l('NotAssigned');
+        notAssignedItem.displayText = this.appLocalizationService.l('NotAssigned');
         editions.unshift(notAssignedItem);
         return editions;
     }

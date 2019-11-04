@@ -21,9 +21,8 @@ import {
     TenantServiceProxy,
     EditionServiceProxy
 } from '@shared/service-proxies/service-proxies';
-import { CreateTenantModalComponent } from './create-tenant-modal.component';
-import { EditTenantModalComponent } from './edit-tenant-modal.component';
-import { TenantFeaturesModalComponent } from './tenant-features-modal.component';
+import { CreateTenantModalComponent } from './create-tenant-modal/create-tenant-modal.component';
+import { EditTenantModalComponent } from './edit-tenant-modal/edit-tenant-modal.component';
 import { AppService } from '@app/app.service';
 import { FilterModel } from '@shared/filters/models/filter.model';
 import { FilterRadioGroupComponent } from '@shared/filters/radio-group/filter-radio-group.component';
@@ -72,13 +71,13 @@ export class TenantsComponent extends AppComponentBase implements OnDestroy {
 
     constructor(
         injector: Injector,
-        private _tenantService: TenantServiceProxy,
-        private _editionService: EditionServiceProxy,
-        private _appService: AppService,
-        private _filtersService: FiltersService,
-        private _permissionService: PermissionServiceProxy,
-        private _commonLookupService: CommonLookupServiceProxy,
-        private _impersonationService: ImpersonationService,
+        private tenantService: TenantServiceProxy,
+        private editionService: EditionServiceProxy,
+        private appService: AppService,
+        private filtersService: FiltersService,
+        private permissionService: PermissionServiceProxy,
+        private commonLookupService: CommonLookupServiceProxy,
+        private impersonationService: ImpersonationService,
         private dialog: MatDialog
     ) {
         super(injector);
@@ -86,7 +85,7 @@ export class TenantsComponent extends AppComponentBase implements OnDestroy {
         this.rootComponent.overflowHidden(true);
         this.initToolbarConfig();
 
-        this._editionService.getEditionComboboxItems(0, true, false).subscribe(editions => {
+        this.editionService.getEditionComboboxItems(0, true, false).subscribe(editions => {
             this.editions = editions;
             this.initFilterConfig();
         });
@@ -94,7 +93,7 @@ export class TenantsComponent extends AppComponentBase implements OnDestroy {
         this.dataSource = new DataSource({
             key: 'id',
             load: (loadOptions) => {
-                return this._tenantService.getTenants(
+                return this.tenantService.getTenants(
                     this.searchValue || this.name || undefined,
                     this.creationDateStart || undefined,
                     this.creationDateEnd || undefined,
@@ -137,18 +136,6 @@ export class TenantsComponent extends AppComponentBase implements OnDestroy {
                 }
             },
             {
-                text: this.l('Features'),
-                visible: this.permission.isGranted(AppPermissions.TenantsChangeFeatures),
-                action: () => {
-                    this.dialog.open(TenantFeaturesModalComponent, {
-                        panelClass: ['slider'],
-                        data: {
-                            tenantId: this.actionRecord.id
-                        }
-                    });
-                }
-            },
-            {
                 text: this.l('Delete'),
                 visible: this.permission.isGranted(AppPermissions.TenantsDelete),
                 action: () => {
@@ -165,12 +152,12 @@ export class TenantsComponent extends AppComponentBase implements OnDestroy {
     }
 
     toggleToolbar() {
-        this._appService.toolbarToggle();
+        this.appService.toolbarToggle();
         setTimeout(() => this.dataGrid.instance.repaint(), 0);
     }
 
     initToolbarConfig() {
-        this._appService.updateToolbar([
+        this.appService.updateToolbar([
             {
                 location: 'before', items: [
                     {
@@ -179,22 +166,22 @@ export class TenantsComponent extends AppComponentBase implements OnDestroy {
                             setTimeout(() => {
                                 this.dataGrid.instance.repaint();
                             }, 1000);
-                            this._filtersService.fixed = !this._filtersService.fixed;
+                            this.filtersService.fixed = !this.filtersService.fixed;
                         },
                         options: {
                             checkPressed: () => {
-                                return this._filtersService.fixed;
+                                return this.filtersService.fixed;
                             },
                             mouseover: () => {
-                                this._filtersService.enable();
+                                this.filtersService.enable();
                             },
                             mouseout: () => {
-                                if (!this._filtersService.fixed)
-                                    this._filtersService.disable();
+                                if (!this.filtersService.fixed)
+                                    this.filtersService.disable();
                             }
                         },
                         attr: {
-                            'filter-selected': this._filtersService.hasFilterSelected
+                            'filter-selected': this.filtersService.hasFilterSelected
                         }
                     }
                 ]
@@ -273,7 +260,7 @@ export class TenantsComponent extends AppComponentBase implements OnDestroy {
     }
 
     initFilterConfig() {
-        this._filtersService.setup(
+        this.filtersService.setup(
             this.filters = [
                 new FilterModel({
                     component: FilterInputsComponent,
@@ -312,7 +299,7 @@ export class TenantsComponent extends AppComponentBase implements OnDestroy {
             ]
         );
 
-        this._filtersService.apply((filter) => {
+        this.filtersService.apply((filter) => {
             this.initToolbarConfig();
 
             if (filter.field == 'name')
@@ -340,13 +327,13 @@ export class TenantsComponent extends AppComponentBase implements OnDestroy {
 
     impersonateAsAdmin(record: any): void {
         this.impersonateTenantId = record.id;
-        this._impersonationService.impersonateAsAdmin(
+        this.impersonationService.impersonateAsAdmin(
             this.impersonateTenantId
         );
     }
 
     unlockUser(record: any): void {
-        this._tenantService.unlockTenantAdmin(new Int64EntityDto({ id: record.id })).subscribe(() => {
+        this.tenantService.unlockTenantAdmin(new Int64EntityDto({ id: record.id })).subscribe(() => {
             this.notify.success(this.l('UnlockedTenandAdmin', record.name));
         });
     }
@@ -404,7 +391,7 @@ export class TenantsComponent extends AppComponentBase implements OnDestroy {
             this.l('AreYouSure'),
             isConfirmed => {
                 if (isConfirmed) {
-                    this._tenantService.deleteTenant(tenant.id).subscribe(() => {
+                    this.tenantService.deleteTenant(tenant.id).subscribe(() => {
                         this.dataGrid.instance.refresh();
                         this.notify.success(this.l('SuccessfullyDeleted'));
                     });
@@ -414,7 +401,7 @@ export class TenantsComponent extends AppComponentBase implements OnDestroy {
     }
 
     impersonateUser(item: NameValueDto): void {
-        this._impersonationService.impersonate(
+        this.impersonationService.impersonate(
             parseInt(item.value),
             this.impersonateTenantId
         );
@@ -435,6 +422,6 @@ export class TenantsComponent extends AppComponentBase implements OnDestroy {
 
     ngOnDestroy() {
         this.rootComponent.overflowHidden();
-        this._appService.updateToolbar(null);
+        this.appService.updateToolbar(null);
     }
 }

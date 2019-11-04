@@ -63,12 +63,12 @@ export class CreateOrEditEditionModalComponent implements AfterViewChecked, OnIn
     ];
 
     constructor(
-        private _editionService: EditionServiceProxy,
-        private _commonLookupService: CommonLookupServiceProxy,
-        private _changeDetectorRef: ChangeDetectorRef,
-        private _notifyService: NotifyService,
-        private _dialogRef: MatDialogRef<CreateOrEditEditionModalComponent>,
-        private _changeDetector: ChangeDetectorRef,
+        private editionService: EditionServiceProxy,
+        private commonLookupService: CommonLookupServiceProxy,
+        private changeDetectorRef: ChangeDetectorRef,
+        private notifyService: NotifyService,
+        private dialogRef: MatDialogRef<CreateOrEditEditionModalComponent>,
+        private changeDetector: ChangeDetectorRef,
         public ls: AppLocalizationService,
         @Inject(MAT_DIALOG_DATA) private data: any
     ) {
@@ -77,15 +77,15 @@ export class CreateOrEditEditionModalComponent implements AfterViewChecked, OnIn
 
     ngOnInit() {
         this.modalDialog.startLoading();
-        this._commonLookupService.getEditionsForCombobox(true).subscribe(
+        this.commonLookupService.getEditionsForCombobox(true).subscribe(
             editionsResult => {
                 this.expiringEditions = editionsResult.items;
                 this.expiringEditions.unshift(new ComboboxItemDto({ value: null, displayText: this.ls.l('NotAssigned'), isSelected: true }));
-                this._changeDetectorRef.detectChanges();
-                this._editionService.getEditionForEdit(this.data.editionId).pipe(finalize(() => {
+                this.changeDetectorRef.detectChanges();
+                this.editionService.getEditionForEdit(this.data.editionId).pipe(finalize(() => {
                     this.active = true;
                     this.modalDialog.finishLoading();
-                    this._changeDetectorRef.detectChanges();
+                    this.changeDetectorRef.detectChanges();
                 })).subscribe(editionResult => {
                     this.edition = editionResult.edition;
                     this.title = this.data.editionId ? this.ls.l('EditEdition') + ' ' + this.edition.displayName : this.ls.l('CreateNewEdition');
@@ -94,7 +94,7 @@ export class CreateOrEditEditionModalComponent implements AfterViewChecked, OnIn
                     this.isFree = !editionResult.edition.monthlyPrice && !editionResult.edition.annualPrice;
                     this.isTrialActive = editionResult.edition.trialDayCount > 0;
                     this.isWaitingDayActive = editionResult.edition.waitingDayAfterExpire > 0;
-                    this._changeDetectorRef.detectChanges();
+                    this.changeDetectorRef.detectChanges();
                 });
             },
         () => this.modalDialog.finishLoading()
@@ -131,11 +131,11 @@ export class CreateOrEditEditionModalComponent implements AfterViewChecked, OnIn
         input.edition = this.edition;
         input.featureValues = this.featureTree.getGrantedFeatures();
         this.modalDialog.startLoading();
-        this._editionService.createOrUpdateEdition(input)
+        this.editionService.createOrUpdateEdition(input)
             .pipe(finalize(() => this.modalDialog.finishLoading()))
             .subscribe(() => {
-                this._notifyService.info(this.ls.l('SavedSuccessfully'));
-                this._dialogRef.close(true);
+                this.notifyService.info(this.ls.l('SavedSuccessfully'));
+                this.dialogRef.close(true);
                 this.modalSave.emit(null);
             });
     }
