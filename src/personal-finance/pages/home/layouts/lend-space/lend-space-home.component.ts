@@ -30,13 +30,13 @@ export class LendSpaceHomeComponent implements OnInit {
             button: 'SeeOffers',
             router: 'personal-finance/offers/personal-loans',
             hidden: false
-        },
+        } /*,
         {
             name: 'PersonalFinance',
             button: 'AddAccounts',
             router: 'personal-finance/my-finances',
             hidden: !this.featureService.isEnabled(AppFeatures.CFOPartner),
-        }
+        } */          
     ];
     constructor(
         private featureService: FeatureCheckerService,
