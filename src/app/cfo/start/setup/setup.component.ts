@@ -3,7 +3,7 @@ import { AfterViewInit, Component, OnInit, Injector, OnDestroy, Output, EventEmi
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
-import { of } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
 
 /** Application imports */
@@ -24,7 +24,9 @@ export class SetupComponent extends CFOComponentBase implements AfterViewInit, O
     public headlineConfig;
     isDisabled = !this.isInstanceAdmin;
     setupContainerElement: Element;
-    hasAccountsAccess: boolean = this._cfoService.hasAccountsAccess;
+    showGetStartedSection$: Observable<boolean> = !this._cfoService.isMainInstanceType
+        ? of(true)
+        : this._cfoService.hasAccountsAccess$;
 
     constructor(
         injector: Injector,

@@ -10,7 +10,8 @@ export abstract class CFOServiceBase {
     initialized$: Observable<boolean> = this._initialized.asObservable();
     hasTransactions: boolean;
     hasStaticInstance: boolean;
-    hasAccountsAccess: boolean;
+    protected hasAccountsAccess: ReplaySubject<boolean> = new ReplaySubject<boolean>(1);
+    hasAccountsAccess$: Observable<boolean> = this.hasAccountsAccess.asObservable();
     statusActive: BehaviorSubject<boolean>;
     instanceChanged: Subject<InstanceModel> = new Subject();
     instanceChanged$: Observable<InstanceModel> = this.instanceChanged.asObservable();

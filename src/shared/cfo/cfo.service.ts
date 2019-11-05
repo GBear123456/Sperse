@@ -159,7 +159,7 @@ export class CFOService extends CFOServiceBase {
                         this.initialized = status && data.hasSyncAccounts;
                         this._initialized.next(this.initialized);
                         this.hasTransactions = this.initialized && data.hasTransactions;
-                        this.hasAccountsAccess = data.hasAccountsAccess;
+                        this.hasAccountsAccess.next(data.hasAccountsAccess);
                         this.updateMenuItems();
                         return this.hasTransactions;
                     })

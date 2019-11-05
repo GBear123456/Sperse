@@ -10,14 +10,14 @@
                 </div>
                 <p class="outlook big-gray-text">{{ l('Setup_Outlook') }}</p>
                 <p class="welcome-cfo">{{ l('Setup_Welcome') }}</p>
-                <ng-container *ngIf="hasAccountsAccess === true">
+                <ng-container *ngIf="showGetStartedSection$ | async; else contactAdministrator">
                     <p class="text-cfo">{{ l('Setup_BodyText') }}</p>
                     <button (click)="onStart()" class="btn btn-layout" [disabled]="isDisabled">{{ l('Setup_GetStarted') }}</button>
                 </ng-container>
-                <ng-container *ngIf="hasAccountsAccess === false">
+                <ng-template #contactAdministrator>
                     <p>{{ l('YouAreNotGrantedToViewConnectedAccountsData')}}</p>
                     <p>{{ l('ContactYourAdministrator')}}</p>
-                </ng-container>
+                </ng-template>
             </div>
         </div>
     </div>
