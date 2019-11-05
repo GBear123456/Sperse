@@ -17,7 +17,6 @@ import { OffersService } from '@root/personal-finance/shared/offers/offers.servi
 import { LoadingService } from '@shared/common/loading-service/loading.service';
 import { ApplyOfferDialogComponent } from '@root/personal-finance/shared/offers/apply-offer-modal/apply-offer-dialog.component';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
-import { AppHttpConfiguration } from '@shared/http/appHttpConfiguration';
 
 @Component({
     selector: 'register',
@@ -39,7 +38,6 @@ export class RegisterComponent implements AfterViewInit, OnInit {
         private dialog: MatDialog,
         private router: Router,
         private http: HttpClient,
-        private appHttpConfiguration: AppHttpConfiguration,
         public ls: AppLocalizationService,
         @Inject(DOCUMENT) private document: any
     ) {}
@@ -69,6 +67,7 @@ export class RegisterComponent implements AfterViewInit, OnInit {
             },
             className: 'finalize',
             closeOnClickOutside: false,
+            closeOnEsc: false,
             content: this.document.getElementById('registerPopup').cloneNode(true)
         };
         messageContent['content'].style.display = 'block';
@@ -90,7 +89,8 @@ export class RegisterComponent implements AfterViewInit, OnInit {
             logoUrl: null
         };
         const applyOfferDialog = this.dialog.open(ApplyOfferDialogComponent, {
-            width: '530px',
+            width: '577px',
+            height: '330px',
             disableClose: true,
             panelClass: 'apply-offer-dialog',
             data: modalData
@@ -98,13 +98,7 @@ export class RegisterComponent implements AfterViewInit, OnInit {
         this.offersService.incompleteApplicationId$.pipe(
             first(),
             filter(Boolean),
-            map((applicationId) => {
-                this.appHttpConfiguration.avoidErrorHandling = true;
-                return applicationId;
-            }),
-            switchMap((applicationId: number) => this.offerServiceProxy.finalizeApplication(applicationId).pipe(
-                finalize(() => this.appHttpConfiguration.avoidErrorHandling = false)
-            ))
+            switchMap((applicationId: number) => this.offerServiceProxy.finalizeApplication(applicationId))
         ).subscribe(
             (response: FinalizeApplicationResponse) => {
                 this.sendDecisionToLS(response.status);
@@ -140,6 +134,8 @@ export class RegisterComponent implements AfterViewInit, OnInit {
                             closeModal: true
                         },
                         className: 'failure',
+                        closeOnClickOutside: false,
+                        closeOnEsc: false,
                         content: this.document.getElementById('failurePopup').cloneNode(true)
                     };
                     messageContent.content.style.display = 'block';
@@ -153,10 +149,7 @@ export class RegisterComponent implements AfterViewInit, OnInit {
                 this.offersService.setIncompleteApplicationId(null);
                 applyOfferDialog.close();
             },
-            e => {
-                applyOfferDialog.componentInstance.errorMessage = e.message;
-                applyOfferDialog.disableClose = false;
-            }
+            () => applyOfferDialog.close()
         );
     }
 

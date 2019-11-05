@@ -18,7 +18,6 @@ export class ApplyOfferDialogComponent implements OnInit {
     currentStepIndex = 0;
     title: string;
     subtitle: string;
-    errorMessage: string;
     constructor(
         private dialogRef: MatDialogRef<ApplyOfferDialogComponent>,
         public ls: AppLocalizationService,
