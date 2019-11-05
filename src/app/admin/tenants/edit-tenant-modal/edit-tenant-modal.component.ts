@@ -19,6 +19,7 @@ import { finalize } from 'rxjs/operators';
 /** Application imports */
 import {
     EntityDto,
+    GetTenantFeaturesEditOutput,
     SubscribableEditionComboboxItemDto,
     TenantEditDto,
     TenantEditEditionDto,
@@ -63,6 +64,7 @@ export class EditTenantModalComponent implements OnInit {
         }
     ];
     tenantId: number = this.data.tenantId;
+    features$: Observable<GetTenantFeaturesEditOutput> = this.tenantService.getTenantFeaturesForEdit(this.tenantId);
 
     constructor(
         private tenantService: TenantServiceProxy,
@@ -88,10 +90,9 @@ export class EditTenantModalComponent implements OnInit {
             this.editionsModels = this.tenantsService.getEditionsModels(editionsGroups, tenantResult);
             this.changeDetectorRef.detectChanges();
         });
-        this.loadFeatures();
     }
 
-    resetFeatures(): void {
+    resetFeatures(e): void {
         this.modalDialog.startLoading();
         const input = new EntityDto();
         input.id = this.data.tenantId;
@@ -106,17 +107,13 @@ export class EditTenantModalComponent implements OnInit {
                 this.notifyService.info(this.ls.l('ResetSuccessfully'));
                 this.loadFeatures();
             });
+        e.preventDefault();
     }
 
     private loadFeatures(): void {
         this.modalDialog.startLoading();
-        const self = this;
-        self.tenantService.getTenantFeaturesForEdit(this.tenantId)
-            .pipe(finalize(() => this.modalDialog.finishLoading()))
-            .subscribe((result) => {
-                self.featureTree.editData = result;
-                this.changeDetectorRef.detectChanges();
-            });
+        this.features$ = this.tenantService.getTenantFeaturesForEdit(this.tenantId)
+            .pipe(finalize(() => this.modalDialog.finishLoading()));
     }
 
     save(): void {
