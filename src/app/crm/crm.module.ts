@@ -11,6 +11,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { MatStepperModule } from '@angular/material/stepper';
+import { Store } from '@ngrx/store';
 import { AngularGooglePlaceModule } from 'angular-google-place';
 import { DxListModule } from 'devextreme-angular/ui/list';
 import { DxTreeListModule } from 'devextreme-angular/ui/tree-list';
@@ -72,12 +73,10 @@ import { AppCommonModule } from '@app/shared/common/app-common.module';
 import { CommonModule } from '@shared/common/common.module';
 import { DataSourceService } from '@app/shared/common/data-source/data-source.service';
 import { PipelinesStoreActions } from '@app/crm/store';
-import { Store } from '@node_modules/@ngrx/store';
 import { AppStore } from '@app/store';
 import { LoadingSpinnerModule } from '@app/shared/common/loading-spinner/loading-spinner.module';
 import { AppPermissions } from '@shared/AppPermissions';
 import { BankCodeLettersModule } from '@app/shared/common/bank-code-letters/bank-code-letters.module';
-import { CrmService } from '@app/crm/crm.service';
 import { SliceModule } from '@app/shared/common/slice/slice.module';
 import { MapModule } from '@app/shared/common/slice/map/map.module';
 
@@ -157,8 +156,7 @@ import { MapModule } from '@app/shared/common/slice/map/map.module';
         AppStoreService,
         ImportServiceProxy,
         ImportLeadsService,
-        DataSourceService,
-        CrmService
+        DataSourceService
     ],
     entryComponents: [
         BankSettingsDialogComponent,

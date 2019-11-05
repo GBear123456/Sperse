@@ -210,7 +210,9 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
 
     deactivate() {
         super.deactivate();
-        this.rootComponent.overflowHidden();
+        if (this.rootComponent) {
+            this.rootComponent.overflowHidden();
+        }
         this.hideHostElement();
     }
 }
