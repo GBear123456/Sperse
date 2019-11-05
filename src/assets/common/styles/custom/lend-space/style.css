@@ -12,7 +12,7 @@ body.lend-space app-header dx-nav-bar .dx-state-hover {
   background: transparent!important;
 }
 body.lend-space app-header dx-drop-down-box input {
-  border: 0px!important;
+  border: 0!important;
 }
 body.lend-space app-header dx-nav-bar .dx-item.dx-tab.dx-state-hover .dx-menu-item-text,
 body.lend-space app-header dx-nav-bar .dx-item.dx-tab.dx-tab-selected .dx-menu-item-text {
@@ -39,7 +39,13 @@ body.lend-space .page-header.navbar .page-top #m_header_topbar .m-dropdown__head
   color: #f1f1f0 !important;
 }
 body.lend-space .swal-modal {
-  background: #fff8d9;
+  background: #fee192;
+}
+@media (min-width: 768px) {
+  body.lend-space .swal-modal {
+    width: 577px;
+    height: 330px;
+  }
 }
 body.lend-space .swal-modal .swal-icon.swal-icon--error,
 body.lend-space .swal-modal .swal-icon.swal-icon--warning,

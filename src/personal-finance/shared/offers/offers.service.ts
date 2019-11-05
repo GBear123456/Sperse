@@ -34,7 +34,6 @@ import { ApplyOfferDialogComponent } from '@root/personal-finance/shared/offers/
 import { CategoryGroupEnum } from '@root/personal-finance/shared/offers/category-group.enum';
 import { CurrencyPipe } from '@angular/common';
 import { WizardCenterModalComponent } from '@shared/offers-wizard/wizard-center-modal/wizard-center-modal.component';
-import { AppHttpConfiguration } from '@shared/http/appHttpConfiguration';
 
 @Injectable()
 export class OffersService {
@@ -161,7 +160,6 @@ export class OffersService {
         private offerServiceProxy: OfferServiceProxy,
         private currencyPipe: CurrencyPipe,
         private dialog: MatDialog,
-        private appHttpConfiguration: AppHttpConfiguration,
         @Inject(DOCUMENT) private document: any
     ) {
         this.memberInfo$.subscribe(
@@ -252,7 +250,8 @@ export class OffersService {
                 this.document.body.classList.remove('overflow-hidden');
                 if (output) {
                     const applyOfferDialog = this.dialog.open(ApplyOfferDialogComponent, {
-                        width: '530px',
+                        width: '577px',
+                        height: '330px',
                         panelClass: 'apply-offer-dialog',
                         data: modalData
                     });
@@ -283,28 +282,26 @@ export class OffersService {
                     this.document.body.classList.remove('overflow-hidden');
                     if (output) {
                         const applyOfferDialog = this.dialog.open(ApplyOfferDialogComponent, {
-                            width: '530px',
+                            width: '577px',
+                            height: '330px',
                             panelClass: 'apply-offer-dialog',
                             data: modalData
                         });
                         this.loadMemberInfo();
                         submitRequestInput.redirectUrl = redirectUrl;
-                        this.appHttpConfiguration.avoidErrorHandling = true;
                         this.offerServiceProxy.submitRequest(submitRequestInput).subscribe(
-                            () => applyOfferDialog.close(),
-                            e => applyOfferDialog.componentInstance.errorMessage = e.message,
-                            () => this.appHttpConfiguration.avoidErrorHandling = false
+                            () => applyOfferDialog.close()
                         );
                     }
                 });
             } else {
                 submitRequestInput.redirectUrl = redirectUrl;
                 const applyOfferDialog = this.dialog.open(ApplyOfferDialogComponent, {
-                    width: '530px',
+                    width: '577px',
+                    height: '330px',
                     panelClass: 'apply-offer-dialog',
                     data: modalData
                 });
-                this.appHttpConfiguration.avoidErrorHandling = true;
                 this.offerServiceProxy.submitRequest(submitRequestInput)
                     .subscribe(
                         (output: SubmitApplicationOutput) => {
@@ -313,9 +310,7 @@ export class OffersService {
                                     ? applyOfferDialog.componentInstance.redirectUrl = output.redirectUrl
                                     : applyOfferDialog.close();
                             }
-                        },
-                        e => applyOfferDialog.componentInstance.errorMessage = e.message,
-                        () => this.appHttpConfiguration.avoidErrorHandling = false
+                        }
                     );
             }
         }

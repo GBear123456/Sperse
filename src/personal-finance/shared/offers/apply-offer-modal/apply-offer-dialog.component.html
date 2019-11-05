@@ -1,34 +1,29 @@
 <mat-dialog-content>
-    <div class="errorMessage" *ngIf="errorMessage; else default">
-        {{ errorMessage }}
-    </div>
-    <ng-template #default>
-        <div class="nextImageBlock">
-            <ng-container *ngIf="data.logoUrl; else pleaseWait">
-                <img [src]="data.logoUrl">
-            </ng-container>
-            <ng-template #pleaseWait><h3>{{ ls.l('ApplyOfferModal_PleaseWait') }}</h3></ng-template>
-        </div>
-        <ng-container *ngIf="!redirectUrl; else redirectUrlTemplate">
-            <h2>{{title}}</h2>
-            <p>{{subtitle}}</p>
-            <ng-container *ngIf="processingSteps[currentStepIndex] as processingStep">
-                <div class="alert alert-success text-center" *ngIf="delayMessages && delayMessages[currentStepIndex + 1]">
-                    <strong>{{ delayMessages[currentStepIndex + 1] }}</strong>
-                </div>
-                <div class="process-step alert alert-info">
-                    <div class="spinner fa-spin"></div>
-                    <h4>{{ processingStep.name }}</h4>
-                </div>
-            </ng-container>
+    <div class="nextImageBlock">
+        <ng-container *ngIf="data.logoUrl; else pleaseWait">
+            <img [src]="data.logoUrl">
         </ng-container>
-        <ng-template #redirectUrlTemplate>
-            <a class="applyButton"
-               [href]="redirectUrl"
-               target="_blank"
-               (click)="hideDialog($event)">
-                <span>{{ data.redirectUrlText }}</span>
-            </a>
-        </ng-template>
+        <ng-template #pleaseWait><h3>{{ ls.l('ApplyOfferModal_PleaseWait') }}</h3></ng-template>
+    </div>
+    <ng-container *ngIf="!redirectUrl; else redirectUrlTemplate">
+        <h2>{{title}}</h2>
+        <p>{{subtitle}}</p>
+        <ng-container *ngIf="processingSteps[currentStepIndex] as processingStep">
+            <div class="alert alert-success text-center" *ngIf="delayMessages && delayMessages[currentStepIndex + 1]">
+                <strong>{{ delayMessages[currentStepIndex + 1] }}</strong>
+            </div>
+            <div class="process-step alert alert-info">
+                <div class="spinner fa-spin"></div>
+                <h4>{{ processingStep.name }}</h4>
+            </div>
+        </ng-container>
+    </ng-container>
+    <ng-template #redirectUrlTemplate>
+        <a class="applyButton"
+           [href]="redirectUrl"
+           target="_blank"
+           (click)="hideDialog($event)">
+            <span>{{ data.redirectUrlText }}</span>
+        </a>
     </ng-template>
 </mat-dialog-content>

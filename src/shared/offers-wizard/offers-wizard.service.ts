@@ -184,7 +184,8 @@ export class OffersWizardService {
                     : (this.data.isCreditCard ? null : this.data.offer.logoUrl)
             };
             applyOfferDialog = this.dialog.open(ApplyOfferDialogComponent, {
-                width: '530px',
+                width: '577px',
+                height: '330px',
                 panelClass: 'apply-offer-dialog',
                 data: modalData
             });
