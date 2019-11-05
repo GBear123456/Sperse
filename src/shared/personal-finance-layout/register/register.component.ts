@@ -7,7 +7,7 @@ import { Router } from '@angular/router';
 /** Third party imports */
 import { MatDialog } from '@angular/material';
 import { Observable } from 'rxjs';
-import { first, filter, switchMap } from 'rxjs/operators';
+import { finalize, first, filter, map, switchMap } from 'rxjs/operators';
 import swal from 'sweetalert';
 import cloneDeep from 'lodash/cloneDeep';
 
@@ -17,6 +17,7 @@ import { OffersService } from '@root/personal-finance/shared/offers/offers.servi
 import { LoadingService } from '@shared/common/loading-service/loading.service';
 import { ApplyOfferDialogComponent } from '@root/personal-finance/shared/offers/apply-offer-modal/apply-offer-dialog.component';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { AppHttpConfiguration } from '@shared/http/appHttpConfiguration';
 
 @Component({
     selector: 'register',
@@ -38,6 +39,7 @@ export class RegisterComponent implements AfterViewInit, OnInit {
         private dialog: MatDialog,
         private router: Router,
         private http: HttpClient,
+        private appHttpConfiguration: AppHttpConfiguration,
         public ls: AppLocalizationService,
         @Inject(DOCUMENT) private document: any
     ) {}
@@ -93,11 +95,16 @@ export class RegisterComponent implements AfterViewInit, OnInit {
             panelClass: 'apply-offer-dialog',
             data: modalData
         });
-
         this.offersService.incompleteApplicationId$.pipe(
             first(),
             filter(Boolean),
-            switchMap((applicationId: number) => this.offerServiceProxy.finalizeApplication(applicationId))
+            map((applicationId) => {
+                this.appHttpConfiguration.avoidErrorHandling = true;
+                return applicationId;
+            }),
+            switchMap((applicationId: number) => this.offerServiceProxy.finalizeApplication(applicationId).pipe(
+                finalize(() => this.appHttpConfiguration.avoidErrorHandling = false)
+            ))
         ).subscribe(
             (response: FinalizeApplicationResponse) => {
                 this.sendDecisionToLS(response.status);
@@ -146,7 +153,10 @@ export class RegisterComponent implements AfterViewInit, OnInit {
                 this.offersService.setIncompleteApplicationId(null);
                 applyOfferDialog.close();
             },
-            () => applyOfferDialog.close()
+            e => {
+                applyOfferDialog.componentInstance.errorMessage = e.message;
+                applyOfferDialog.disableClose = false;
+            }
         );
     }
 

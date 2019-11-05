@@ -34,6 +34,7 @@ import { ApplyOfferDialogComponent } from '@root/personal-finance/shared/offers/
 import { CategoryGroupEnum } from '@root/personal-finance/shared/offers/category-group.enum';
 import { CurrencyPipe } from '@angular/common';
 import { WizardCenterModalComponent } from '@shared/offers-wizard/wizard-center-modal/wizard-center-modal.component';
+import { AppHttpConfiguration } from '@shared/http/appHttpConfiguration';
 
 @Injectable()
 export class OffersService {
@@ -160,6 +161,7 @@ export class OffersService {
         private offerServiceProxy: OfferServiceProxy,
         private currencyPipe: CurrencyPipe,
         private dialog: MatDialog,
+        private appHttpConfiguration: AppHttpConfiguration,
         @Inject(DOCUMENT) private document: any
     ) {
         this.memberInfo$.subscribe(
@@ -287,9 +289,12 @@ export class OffersService {
                         });
                         this.loadMemberInfo();
                         submitRequestInput.redirectUrl = redirectUrl;
-                        this.offerServiceProxy.submitRequest(submitRequestInput).subscribe(() => {
-                            applyOfferDialog.close();
-                        });
+                        this.appHttpConfiguration.avoidErrorHandling = true;
+                        this.offerServiceProxy.submitRequest(submitRequestInput).subscribe(
+                            () => applyOfferDialog.close(),
+                            e => applyOfferDialog.componentInstance.errorMessage = e.message,
+                            () => this.appHttpConfiguration.avoidErrorHandling = false
+                        );
                     }
                 });
             } else {
@@ -299,14 +304,19 @@ export class OffersService {
                     panelClass: 'apply-offer-dialog',
                     data: modalData
                 });
+                this.appHttpConfiguration.avoidErrorHandling = true;
                 this.offerServiceProxy.submitRequest(submitRequestInput)
-                    .subscribe((output: SubmitApplicationOutput) => {
-                        if (output.redirectUrl) {
-                            !window.open(output.redirectUrl, '_blank')
-                                ? applyOfferDialog.componentInstance.redirectUrl = output.redirectUrl
-                                : applyOfferDialog.close();
-                        }
-                    });
+                    .subscribe(
+                        (output: SubmitApplicationOutput) => {
+                            if (output.redirectUrl) {
+                                !window.open(output.redirectUrl, '_blank')
+                                    ? applyOfferDialog.componentInstance.redirectUrl = output.redirectUrl
+                                    : applyOfferDialog.close();
+                            }
+                        },
+                        e => applyOfferDialog.componentInstance.errorMessage = e.message,
+                        () => this.appHttpConfiguration.avoidErrorHandling = false
+                    );
             }
         }
     }
