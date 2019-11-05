@@ -32,7 +32,13 @@
             position: absolute;
             background: url(../../../../assets/common/images/lend-space-dark/welcome/card.png) no-repeat 0px/cover;
         }
-        @media all and (max-width: 768px) {
+        @media all and (min-width: 668px) and (max-width: 768px) {
+            h1 {
+                font-size: 32px;
+                margin-bottom: 20px;
+            }
+        }
+        @media all and (max-width: 668px) {
             height: 520px;
             text-align: center;
             .card-view {
@@ -42,11 +48,11 @@
                 background-size: 253px 156px;
             }
             h1 {
-                font-size: 35px;
+                font-size: 34px;
                 margin: 20px 0!important;
             }
             h3 {
-                font-size: 24px;
+                font-size: 23px;
             }
             button {
                 width: auto !important;
