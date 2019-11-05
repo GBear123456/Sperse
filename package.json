@@ -222,6 +222,7 @@
     "karma-jasmine": "~1.1.0",
     "karma-jasmine-html-reporter": "^0.2.2",
     "ngrx-generator": "^1.1.0",
+    "node-sass": "^4.13.0",
     "nswag": "11.17.10",
     "protractor": "~5.1.2",
     "ts-node": "~3.3.0",

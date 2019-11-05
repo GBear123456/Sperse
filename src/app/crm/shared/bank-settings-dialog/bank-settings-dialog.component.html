@@ -12,36 +12,40 @@
                     <label class="caption">{{ls.l('BankAccountNumber')}}:</label> 
                     <dx-text-box
                         name="subject"
-                        width="155px"
+                        width="630px"
                         height="40px"
                         placeholder=""
                         [(value)]="settings.bankAccountNumber">
                     </dx-text-box>
+                </div>
+                <div class="field-area">
                     <label class="caption">{{ls.l('BankRoutingNumber')}}</label> 
-                    <dx-text-box
+                    <dx-number-box
                         name="subject"
-                        width="310px"
+                        width="628px"
                         height="40px"
                         placeholder=""
+                        [inputAttr]="{maxlength:9}"
                         [(value)]="settings.bankRoutingNumber">
-                    </dx-text-box>
+                    </dx-number-box>
                 </div>
                 <div class="field-area">
                     <label class="caption">{{ls.l('BankRoutingNumberForACHTransfers')}}:</label> 
-                    <dx-text-box
+                    <dx-number-box
                         name="subject"
-                        width="510px"
+                        width="512px"
                         height="40px"
                         placeholder=""
+                        [inputAttr]="{maxlength:9}"
                         [(value)]="settings.bankRoutingNumberForACH">
-                    </dx-text-box>
+                    </dx-number-box>
                 </div>
 
                 <div class="field-area">
                     <label class="caption">{{ls.l('BeneficiaryBank')}}:</label> 
                     <dx-text-box
                         name="subject"
-                        width="200px"
+                        width="230px"
                         height="40px"
                         placeholder=""
                         [(value)]="settings.beneficiaryBank.name">
@@ -49,7 +53,7 @@
                     <label class="caption">{{ls.l('City')}}:</label> 
                     <dx-text-box
                         name="subject"
-                        width="200px"
+                        width="170px"
                         height="40px"
                         placeholder=""
                         [(value)]="settings.beneficiaryBank.cityAddress">
@@ -67,7 +71,7 @@
                     <label class="caption">{{ls.l('BeneficiaryInformation')}}:</label> 
                     <dx-text-box
                         name="subject"
-                        width="155px"
+                        width="185px"
                         height="40px"
                         placeholder=""
                         [(value)]="settings.beneficiaryInfo.name">
@@ -75,7 +79,7 @@
                     <label class="caption">{{ls.l('City')}}:</label> 
                     <dx-text-box
                         name="subject"
-                        width="200px"
+                        width="170px"
                         height="40px"
                         placeholder=""
                         [(value)]="settings.beneficiaryInfo.cityAddress">
@@ -94,17 +98,19 @@
                     <label class="caption">{{ls.l('SWIFT_Code')}}</label> 
                     <dx-text-box
                         name="subject"
-                        width="240px"
+                        width="268px"
                         height="40px"
                         placeholder=""
+                        [maxLength]="11"
                         [(value)]="settings.swiftCode">
                     </dx-text-box>
                     <label class="caption">{{ls.l('SWIFT_CodeForUSDollar')}}</label> 
                     <dx-text-box
                         name="subject"
-                        width="285px"
+                        width="257px"
                         height="40px"
                         placeholder=""
+                        [maxLength]="11"
                         [(value)]="settings.swiftCodeForUSDollar">
                     </dx-text-box>
                 </div>
