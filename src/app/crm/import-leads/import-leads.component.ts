@@ -99,7 +99,6 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     private readonly PERSONAL_PREFERREDTOD = 'personalInfo_preferredToD';
     private readonly PERSONAL_CREDITSCORERATING = 'personalInfo_creditScoreRating';
     private readonly PERSONAL_AFFILIATE_ID= 'personalInfo_affiliateId';
-    private readonly AFFILIATE_ID = 'affiliateId';
 
     private readonly FIELDS_TO_CAPITALIZE = [
         this.FIRST_NAME_FIELD,
@@ -162,7 +161,6 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     ];
 
     private readonly AFFILIATE_FIELDS = [
-        this.AFFILIATE_ID,
         this.PERSONAL_AFFILIATE_ID,
         this.BUSINESS_AFFILIATE_ID
     ];
