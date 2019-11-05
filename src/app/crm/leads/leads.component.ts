@@ -137,9 +137,9 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             action: () => this.impersonationService.impersonate(this.actionEvent.data.UserId, this.appSession.tenantId)
         }
     ];
-    contactGroups = Object.keys(ContactGroup).map((group) => {
+    contactGroups = Object.keys(ContactGroup).map((group: string) => {
         return {
-            text: this.l('ContactGroup_' + group),
+            text: this.getUserGroup(group),
             value: group,
             disabled: !this.contactService.checkCGPermission(ContactGroup[group], '')
         };
@@ -524,6 +524,10 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
 
     private get contactGroup(): string {
         return invert(ContactGroup)[this.contactGroupId.value.toString()];
+    }
+
+    private getUserGroup(contactGroup: string): string {
+        return this.l('ContactGroup_' + contactGroup);
     }
 
     getOrganizationUnitName = (e) => {
@@ -936,11 +940,19 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                                         if (this.showPivotGrid) {
                                             this.pivotGridComponent.pivotGrid.instance.option(
                                                 'export.fileName',
-                                                this.exportService.getFileName(null, 'PivotGrid', this.contactGroup)
+                                                this.exportService.getFileName(
+                                                    null,
+                                                    'PivotGrid',
+                                                    this.getUserGroup(this.contactGroup)
+                                                )
                                             );
                                             this.pivotGridComponent.pivotGrid.instance.exportToExcel();
                                         } else if (this.showPipeline || this.showDataGrid) {
-                                            return this.exportToXLS(options, null, this.contactGroup);
+                                            return this.exportToXLS(
+                                                options,
+                                                null,
+                                                this.getUserGroup(this.contactGroup)
+                                            );
                                         }
                                     }),
                                     text: this.l('Export to Excel'),
@@ -951,7 +963,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                                     action: this.exportData.bind(this, options => this.exportToCSV(
                                         options,
                                         null,
-                                        this.contactGroup
+                                        this.getUserGroup(this.contactGroup)
                                     )),
                                     text: this.l('Export to CSV'),
                                     icon: 'sheet',
@@ -961,7 +973,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                                     action: this.exportData.bind(this, options => this.exportToGoogleSheet(
                                         options,
                                         null,
-                                        this.contactGroup
+                                        this.getUserGroup(this.contactGroup)
                                     )),
                                     text: this.l('Export to Google Sheets'),
                                     icon: 'sheet',
@@ -1069,9 +1081,9 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
 
     private exportToImage(format: ImageFormat) {
         if (this.showChart) {
-            this.chartComponent.exportTo(format, this.contactGroup);
+            this.chartComponent.exportTo(format, this.getUserGroup(this.contactGroup));
         } else if (this.showMap) {
-            this.mapComponent.exportTo(format, this.contactGroup);
+            this.mapComponent.exportTo(format, this.getUserGroup(this.contactGroup));
         }
     }
 
