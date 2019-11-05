@@ -153,13 +153,6 @@ export enum ConditionsType {
     Policies = 'Policies'
 }
 
-export enum ModuleType {
-    CFO = 1,
-    CRM = 2,
-    CFO_CRM = CFO | CRM,
-    PFM = 4,
-}
-
 export enum ActionButtonType {
     Edit,
     Delete,

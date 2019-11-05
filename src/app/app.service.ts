@@ -210,7 +210,8 @@ export class AppService extends AppServiceBase {
         let module = (name || this.getModule()).toUpperCase();
         if (moduleSubscriptions && ModuleType[module])
             return _.find(moduleSubscriptions, (subscription) => {
-                return subscription.module.includes(module);
+                return subscription.module.includes(module)
+                    || (module === 'CRM' && subscription.module === ModuleType.CFO_Partner);
             }) || { module: module, endDate: moment(new Date(0)) };
     }
 
