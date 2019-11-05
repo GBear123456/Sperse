@@ -16177,6 +16177,63 @@ export class LocalizationServiceProxy {
     }
 
     /**
+     * @version (optional) 
+     * @return Success
+     */
+    getLocalizationSource(tenantId: number, sourceName: string, version: string | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/Localization/GetLocalizationSource/{tenantId}/{sourceName}?";
+        if (tenantId === undefined || tenantId === null)
+            throw new Error("The parameter 'tenantId' must be defined.");
+        url_ = url_.replace("{tenantId}", encodeURIComponent("" + tenantId)); 
+        if (sourceName === undefined || sourceName === null)
+            throw new Error("The parameter 'sourceName' must be defined.");
+        url_ = url_.replace("{sourceName}", encodeURIComponent("" + sourceName)); 
+        if (version !== undefined)
+            url_ += "version=" + encodeURIComponent("" + version) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetLocalizationSource(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetLocalizationSource(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetLocalizationSource(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
      * @sourceName (optional) 
      * @return Success
      */
@@ -46520,7 +46577,6 @@ export class Order implements IOrder {
     sortOrder!: number | undefined;
     leadId!: number | undefined;
     dateProcessed!: moment.Moment | undefined;
-    organizationUnitId!: number | undefined;
     amount!: number | undefined;
     systemType!: string | undefined;
     systemMemberId!: string | undefined;
@@ -46565,7 +46621,6 @@ export class Order implements IOrder {
             this.sortOrder = data["sortOrder"];
             this.leadId = data["leadId"];
             this.dateProcessed = data["dateProcessed"] ? moment(data["dateProcessed"].toString()) : <any>undefined;
-            this.organizationUnitId = data["organizationUnitId"];
             this.amount = data["amount"];
             this.systemType = data["systemType"];
             this.systemMemberId = data["systemMemberId"];
@@ -46626,7 +46681,6 @@ export class Order implements IOrder {
         data["sortOrder"] = this.sortOrder;
         data["leadId"] = this.leadId;
         data["dateProcessed"] = this.dateProcessed ? this.dateProcessed.toISOString() : <any>undefined;
-        data["organizationUnitId"] = this.organizationUnitId;
         data["amount"] = this.amount;
         data["systemType"] = this.systemType;
         data["systemMemberId"] = this.systemMemberId;
@@ -46680,7 +46734,6 @@ export interface IOrder {
     sortOrder: number | undefined;
     leadId: number | undefined;
     dateProcessed: moment.Moment | undefined;
-    organizationUnitId: number | undefined;
     amount: number | undefined;
     systemType: string | undefined;
     systemMemberId: string | undefined;
@@ -52598,12 +52651,12 @@ export interface IGetSpendingCategoriesOutput {
 }
 
 export class GetTotalsOutput implements IGetTotalsOutput {
-    newOrderAmount!: number | undefined;
     newLeadCount!: number | undefined;
     newClientCount!: number | undefined;
-    totalOrderAmount!: number | undefined;
+    newOrderAmount!: number | undefined;
     totalLeadCount!: number | undefined;
     totalClientCount!: number | undefined;
+    totalOrderAmount!: number | undefined;
 
     constructor(data?: IGetTotalsOutput) {
         if (data) {
@@ -52616,12 +52669,12 @@ export class GetTotalsOutput implements IGetTotalsOutput {
 
     init(data?: any) {
         if (data) {
-            this.newOrderAmount = data["newOrderAmount"];
             this.newLeadCount = data["newLeadCount"];
             this.newClientCount = data["newClientCount"];
-            this.totalOrderAmount = data["totalOrderAmount"];
+            this.newOrderAmount = data["newOrderAmount"];
             this.totalLeadCount = data["totalLeadCount"];
             this.totalClientCount = data["totalClientCount"];
+            this.totalOrderAmount = data["totalOrderAmount"];
         }
     }
 
@@ -52634,23 +52687,23 @@ export class GetTotalsOutput implements IGetTotalsOutput {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["newOrderAmount"] = this.newOrderAmount;
         data["newLeadCount"] = this.newLeadCount;
         data["newClientCount"] = this.newClientCount;
-        data["totalOrderAmount"] = this.totalOrderAmount;
+        data["newOrderAmount"] = this.newOrderAmount;
         data["totalLeadCount"] = this.totalLeadCount;
         data["totalClientCount"] = this.totalClientCount;
+        data["totalOrderAmount"] = this.totalOrderAmount;
         return data; 
     }
 }
 
 export interface IGetTotalsOutput {
-    newOrderAmount: number | undefined;
     newLeadCount: number | undefined;
     newClientCount: number | undefined;
-    totalOrderAmount: number | undefined;
+    newOrderAmount: number | undefined;
     totalLeadCount: number | undefined;
     totalClientCount: number | undefined;
+    totalOrderAmount: number | undefined;
 }
 
 export class GetCustomerAndLeadStatsOutput implements IGetCustomerAndLeadStatsOutput {
