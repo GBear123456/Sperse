@@ -66,6 +66,10 @@
             letter-spacing: -0.64px;
             font-family: 'AvianoSans-Bla', sans-serif;
             
+            @media all and (max-width: 1024px) {
+                font-size: 28px;
+            }
+            
             @media all and (max-width: 767px) {
                 font-size: 25px;
                 padding: 8px 16px;
@@ -299,8 +303,8 @@
     }
 
     .actions-field {
-        margin-top: 20px;
-        margin-bottom: 30px;
+        margin-top: 15px;
+        margin-bottom: 25px;
 
         @media all and (max-width: 600px) {
             flex-direction: column;
@@ -348,6 +352,11 @@
         padding: 16px 8px;
         font-size: 17px;
         font-weight: 400;
+        
+        @media all and (max-width: 1024px) {
+            padding: 10px 8px;
+            font-size: 15px;
+        }
     }
 
     .dx-texteditor-container {

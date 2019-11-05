@@ -26,11 +26,12 @@
         flex-wrap: nowrap;
         justify-content: center;
         li {
-            padding: 0 15px;
+            padding: 0 15px 0 0;
             a {
                 padding: 12px 25px;
                 white-space: nowrap;
                 color: black;
+                position: relative;
             }
 /*
             &.app-list-item {
@@ -42,7 +43,7 @@
 */
             span.dropdown-mark {
                 transform: rotate(45deg);
-                -webkit-transform: rotate(45deg);
+                //-webkit-transform: rotate(45deg);
                 border: solid #000;
                 border-width: 0 1px 1px 0 !important;
                 display: inline-block;
@@ -50,6 +51,10 @@
                 width: 0;
                 height: 0;
                 margin: 3px;
+                position: absolute;
+                top: 50%;
+                -webkit-transform: rotate(45deg) translate(-3px, -6px);
+    
             }
             &:hover, &.active {
                 span.dropdown-mark {
@@ -305,11 +310,13 @@
 
 /deep/ body.bank-code {
     .area-navigation li {
+        padding: 0 5px;
 
         &.app-list-item {
             & > a {
-                padding: 24px 0 !important;
+                padding: 24px 10px !important;
                 border-bottom: 2px solid transparent;
+                text-align: center;
             }
             
             &:hover, &.active {

@@ -36,36 +36,36 @@
         width: 96%;
         display: flex;
         flex-direction: column;
-
+        
         .login-form {
             padding: 50px 80px 0;
             width: 100%;
-
+            
             @media all and (max-width: 768px) {
                 padding: 30px 30px 0;
                 max-width: 100%;
                 min-width: 0;
             }
-
+            
             input {
                 border-radius: 0;
                 color: #000;
-
+                
                 border: solid 1px rgba(149, 148, 148, 0.35);
                 background-color: rgba(242, 242, 242, 0.5);
             }
         }
-
+        
         @media all and (min-width: 768px) {
             width: 670px;
         }
     }
-
+    
     .row {
         height: 100%;
         align-items: center;
     }
-
+    
     i.name {
         width: 100%;
         height: 20px;
@@ -74,7 +74,7 @@
         background-image: url('/assets/common/images/advice-period/name.png');
         background-repeat: no-repeat;
     }
-
+    
     .sign-in {
         margin-top: 0;
         margin-bottom: 40px;
@@ -84,16 +84,16 @@
         text-align: center;
         color: #FFF;
     }
-
+    
     .login-form {
         min-width: 428px;
         margin: 0 auto;
-
+        
         input,
         button {
             outline: none;
         }
-
+        
         h3 {
             font-size: 40px;
             letter-spacing: -0.8px;
@@ -102,10 +102,10 @@
             margin-bottom: 45px;
             font-family: 'AvianoSans-Bla', sans-serif !important;
         }
-
+        
         .icon-input {
             position: relative;
-
+            
             &::before {
                 content: '';
                 display: block;
@@ -118,7 +118,7 @@
                 background: url(/assets/common/images/bank-code/user.svg) no-repeat;
                 background-size: contain;
             }
-
+            
             &.icon-input__password {
                 &::before {
                     left: 20px;
@@ -127,7 +127,7 @@
                     background: url(/assets/common/images/bank-code/padlock.svg) no-repeat;
                     background-size: contain;
                 }
-
+                
                 .show-password {
                     position: absolute;
                     right: 18px;
@@ -139,12 +139,12 @@
                     color: rgba(117, 117, 117, 0.6);
                 }
             }
-
+            
             input {
                 padding-left: 55px;
             }
         }
-
+        
         input {
             border: 1px solid #dfdfdf;
             border-radius: 4px;
@@ -156,7 +156,7 @@
             letter-spacing: normal;
             color: #4a4a4a;
         }
-
+        
         button {
             width: 100%;
             height: 56px;
@@ -171,28 +171,28 @@
             transition: .2s;
             cursor: pointer;
             font-family: 'AvianoSans-Bla', sans-serif !important;
-
+            
             img {
                 float: right;
                 margin-top: 7px;
                 margin-right: 7px;
             }
-
+            
             &:hover {
                 background-color: darken(#ac1f22, 6%);
                 box-shadow: 0 0 3px rgba(#ac1f22, .5);
             }
-
+            
             &[disabled] {
                 cursor: not-allowed;
                 opacity: .7;
             }
         }
-
+        
         .options {
             margin-top: 20px;
             margin-bottom: 20px;
-
+            
             .forget-password {
                 font-size: 16px;
                 font-style: normal;
@@ -204,22 +204,22 @@
                 text-decoration: none;
                 text-transform: uppercase;
                 line-height: 25px;
-
+                
                 &:hover {
                     color: lighten(#ac1f22, 6%);
                 }
             }
-
+            
             .mt-checkbox-list {
                 padding-top: 0;
-
+                
                 .mt-checkbox.mt-checkbox-outline {
                     padding-left: 30px;
-
+                    
                     input {
                         display: none;
                     }
-
+                    
                     input ~ span {
                         border-radius: 0;
                         width: 25px;
@@ -231,11 +231,11 @@
                         left: 0;
                         top: 0;
                     }
-
+                    
                     input:checked ~ span {
                         border-color: #ac1f22;
                         background-color: #ac1f22;
-
+                        
                         &::after {
                             border: 2px solid #fff;
                             transform: rotate(-45deg);
@@ -251,7 +251,7 @@
                         }
                     }
                 }
-
+                
                 label {
                     cursor: pointer;
                     font-size: 16px;
@@ -265,19 +265,19 @@
                     line-height: 25px;
                 }
             }
-
+            
             @media all and (max-width:380px) {
                 .col {
                     width: auto;
                     flex-basis: auto;
                     padding-top: 5px;
                     padding-bottom: 5px;
-
+                    
                     label {
                         text-align: center !important;
                         display: inline-block !important;
                     }
-
+                    
                     .forget-password {
                         float: none;
                         text-align: center;
@@ -286,17 +286,17 @@
             }
         }
     }
-
+    
     .login-options {
         display: none;
         padding-top: 10px;
         max-width: 428px;
         margin: 0 auto;
-
+        
         .login-with {
             width: 100%;
         }
-
+        
         .login-with-or {
             position: relative;
             display: block;
@@ -307,7 +307,7 @@
             line-height: 40px;
             text-transform: capitalize;
             color: #9a9898;
-
+            
             &::before,
             &::after {
                 position: absolute;
@@ -319,22 +319,22 @@
                 top: 50%;
                 transform: translateY(-50%);
             }
-
+            
             &::before {
                 left: 0;
             }
-
+            
             &::after {
                 right: 0;
             }
         }
-
+        
         .social-icons {
             padding: 0;
             margin: 0;
             text-align: center;
         }
-
+        
         .social-icons li {
             display: inline-block;
             list-style: none;
@@ -342,16 +342,16 @@
             margin-bottom: 5px;
             text-indent: -9999px;
         }
-
+        
         li > a {
             display: block;
         }
-
+        
         .social-icons li .facebook {
             &:hover {
                 opacity: .8;
             }
-
+            
             width: 288px;
             height: 52px;
             background: url(../../../../assets/common/images/social/facebook_3.png) no-repeat;
@@ -359,63 +359,63 @@
             border-radius: 0;
         }
     }
-
+    
     .login-terms-and-condition {
         color: #7a7979;
         text-align: center;
         padding: 40px 0;
         font-size: 16px;
         line-height: 1.1;
-
+        
         a {
             color: #ac1f22;
             transition: .2s;
             padding: 0 2px;
             text-decoration: none;
             font-family: 'AvianoSans-Bla', sans-serif !important;
-
+            
             &:hover {
                 color: lighten(#ac1f22, 18%);
             }
         }
     }
-
+    
     .login-box-footer {
         margin-top: auto;
         background: #f8f8f8;
         border-top: 1px solid #d5d5d5;
         padding: 10px 0;
-
+        
         .logos {
             list-style-type: none;
             display: flex;
             justify-content: space-around;
             margin-bottom: 0;
-
+            
             li {
                 display: flex;
                 align-items: center;
                 justify-content: center;
                 position: relative;
-
+                
                 &.active {
                     &::before {
                         content: '';
                         position: absolute;
                         top: -25px;
-
+                        
                         width: 0;
                         height: 0;
                         border-left: 15px solid transparent;
                         border-right: 15px solid transparent;
                         border-bottom: 15px solid #d5d5d5;
                     }
-
+                    
                     &::after {
                         content: '';
                         position: absolute;
                         top: -24px;
-
+                        
                         width: 0;
                         height: 0;
                         border-left: 14px solid transparent;
@@ -425,7 +425,7 @@
                 }
             }
         }
-
+        
         @media all and (max-width: 768px) {
             display: none;
         }
@@ -436,11 +436,11 @@
     .login-box {
         margin: auto;
     }
-
+    
     .form-row {
         display: block;
     }
-
+    
     .links {
         span {
             display: none;
@@ -449,14 +449,14 @@
             display: block;
         }
     }
-
+    
     /deep/ .account-forms {
         padding: 0 !important;
-
+        
         .row {
             margin: 0;
         }
-
+        
         .form-wrapper {
             padding: 0;
         }
