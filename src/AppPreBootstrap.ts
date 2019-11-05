@@ -1,3 +1,4 @@
+import { Router } from '@angular/router';
 import { UtilsService } from '@abp/utils/utils.service';
 import { CompilerOptions, NgModuleRef, Type } from '@angular/core';
 import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
@@ -9,8 +10,7 @@ import { UrlHelper } from './shared/helpers/UrlHelper';
 import { environment } from './environments/environment';
 
 export class AppPreBootstrap {
-
-    static run(appRootUrl: string, callback: () => void, resolve: any, reject: any): void {
+    static run(appRootUrl: string, callback: () => void, resolve: any, reject: any, router: Router): void {
         let abpAjax: any = abp.ajax;
         if (abpAjax.defaultError) {
             abpAjax.defaultError.details = AppConsts.defaultErrorMessage;
@@ -30,22 +30,27 @@ export class AppPreBootstrap {
                     new AppAuthService(null).logout();
                 }
 
-                location.href = AppConsts.appBaseUrl + '/account/select-edition';
+                router.navigate(['app/account/select-edition']);
+                callback();
             } else if (queryStringObj.secureId) {
-                AppPreBootstrap.impersonatedAuthenticate(queryStringObj.secureId, queryStringObj.tenantId);
+                AppPreBootstrap.impersonatedAuthenticate(queryStringObj, router, callback);
             } else if (queryStringObj.switchAccountToken) {
-                AppPreBootstrap.linkedAccountAuthenticate(queryStringObj.switchAccountToken, queryStringObj.tenantId, () => { AppPreBootstrap.getUserConfiguration(callback); });
-            } else {
-                if (queryStringObj.hasOwnProperty('tenantId'))
-                    abp.multiTenancy.setTenantIdCookie(queryStringObj.tenantId);
-
-                AppPreBootstrap.getUserConfiguration(callback);
-            }
+                AppPreBootstrap.linkedAccountAuthenticate(queryStringObj.switchAccountToken, queryStringObj.tenantId,
+                    () => AppPreBootstrap.processRegularBootstrap(queryStringObj, callback), router);
+            } else
+                AppPreBootstrap.processRegularBootstrap(queryStringObj, callback);
         });
     }
 
     static bootstrap<TM>(moduleType: Type<TM>, compilerOptions?: CompilerOptions | CompilerOptions[]): Promise<NgModuleRef<TM>> {
         return platformBrowserDynamic().bootstrapModule(moduleType, compilerOptions);
+    }
+
+    private static processRegularBootstrap(queryStringObj, callback) {
+        if (queryStringObj.hasOwnProperty('tenantId'))
+            abp.multiTenancy.setTenantIdCookie(queryStringObj.tenantId);
+
+        AppPreBootstrap.getUserConfiguration(callback);
     }
 
     private static updateAppConsts(appConfig) {
@@ -86,9 +91,9 @@ export class AppPreBootstrap {
         return abp.timing.localClockProvider;
     }
 
-    private static impersonatedAuthenticate(impersonationToken: string, tenantId: number): JQueryPromise<any> {
+    private static impersonatedAuthenticate(queryStringObj: any, router: Router, callback: Function): JQueryPromise<any> {
         abp.auth.clearToken();
-        abp.multiTenancy.setTenantIdCookie(tenantId);
+        abp.multiTenancy.setTenantIdCookie(queryStringObj.tenantId);
 
         const cookieLangValue = abp.utils.getCookieValue('Abp.Localization.CultureName');
         let requestHeaders = {
@@ -100,7 +105,7 @@ export class AppPreBootstrap {
         }
 
         return abp.ajax({
-            url: AppConsts.remoteServiceBaseUrl + '/api/TokenAuth/ImpersonatedAuthenticate?secureId=' + impersonationToken,
+            url: AppConsts.remoteServiceBaseUrl + '/api/TokenAuth/ImpersonatedAuthenticate?secureId=' + queryStringObj.secureId,
             method: 'POST',
             headers: requestHeaders,
             abpHandleError: false
@@ -108,18 +113,28 @@ export class AppPreBootstrap {
             abp.auth.setToken(result.accessToken);
             AppPreBootstrap.setEncryptedTokenCookie(result.encryptedAccessToken);
             abp.multiTenancy.setTenantIdCookie();
-            if (result.shouldResetPassword)
-                location.href = location.origin + '/account/reset-password?resetCode=' +
-                    result.passwordResetCode + (tenantId ? '&tenantId=' + tenantId : '') + '&userId=' + result.userId;
-            else
-                location.search = '';
+            if (result.shouldResetPassword) {
+                let params = {
+                    resetCode: result.passwordResetCode,
+                    userId: result.userId
+                };
+                if (queryStringObj.tenantId)
+                    params['tenantId'] = queryStringObj.tenantId;
+                router.navigate(['app/account/reset-password'], { queryParams: params });
+                callback();
+            } else
+                AppPreBootstrap.processRegularBootstrap(queryStringObj, () => {
+                    router.navigate([location.pathname]);
+                    callback();
+                });
         }).fail(() => {
             abp.multiTenancy.setTenantIdCookie();
-            location.href = AppConsts.appBaseUrl;
+            router.navigate(['app']);
+            callback();
         });
     }
 
-    private static linkedAccountAuthenticate(switchAccountToken: string, tenantId: number, callback: () => void): JQueryPromise<any> {
+    private static linkedAccountAuthenticate(switchAccountToken: string, tenantId: number, callback: () => void, router: Router): JQueryPromise<any> {
         abp.multiTenancy.setTenantIdCookie(tenantId);
 
         const cookieLangValue = abp.utils.getCookieValue('Abp.Localization.CultureName');
@@ -139,7 +154,7 @@ export class AppPreBootstrap {
             abp.auth.setToken(result.accessToken);
             AppPreBootstrap.setEncryptedTokenCookie(result.encryptedAccessToken);
             abp.multiTenancy.setTenantIdCookie();
-            location.search = '';
+            router.navigate([location.pathname]);
             callback();
         });
     }

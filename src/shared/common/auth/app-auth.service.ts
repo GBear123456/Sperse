@@ -10,9 +10,7 @@ export class AppAuthService implements OnDestroy {
     constructor(
         private _appLocalizationService: AppLocalizationService,
         private _ngZone: NgZone = null,
-    ) {
-        this.startTokenCheck();
-    }
+    ) { }
 
     logout(reload?: boolean, returnUrl?: string): void {
         if (this.tokenCheckBusy) {
