@@ -175,6 +175,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         this.showPipeline = dataLayoutType == DataLayoutType.Pipeline;
         this.dataLayoutType = dataLayoutType;
         this.initDataSource();
+        this.initToolbarConfig();
         if (this.showPipeline)
             this.dataGrid.instance.deselectAll();
         else {
@@ -336,7 +337,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                     location: 'before', items: [
                         {
                             name: 'filters',
-                            action: (event) => {
+                            action: () => {
                                 setTimeout(() => {
                                     this.dataGrid.instance.repaint();
                                 }, 1000);
@@ -439,7 +440,11 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                                 }, { type: 'downloadOptions' }]
                             }
                         },
-                        { name: 'columnChooser', action: DataGridService.showColumnChooser.bind(this, this.dataGrid) }
+                        {
+                            name: 'columnChooser',
+                            action: () => DataGridService.showColumnChooser(this.dataGrid),
+                            disabled: this.showPipeline
+                        }
                     ]
                 },
                 {
