@@ -1,5 +1,4 @@
 :host {
-    display: block;
     position: relative;
     background-color: #fff;
     background-clip: padding-box;
@@ -12,6 +11,8 @@
         flex-direction: column;
         padding: 30px 20px;
         border-radius: 15px;
+        margin: 0;
+        height: 100%;
         .nextImageBlock {
             display: flex;
             justify-content: center;
@@ -105,15 +106,7 @@
                 display: none;
             }
         }
-        .errorMessage {
-            text-align: center;
-            font-size: 30px;
-            font-family: Poppins;
-            font-weight: 600;
-        }
         @media (min-width: 768px) {
-            width: 577px;
-            height: 330px;
             padding: 40px 30px 30px;
             p {
                 margin-bottom: 20px;
@@ -125,6 +118,7 @@
     .cdk-overlay-pane.apply-offer-dialog {
         .mat-dialog-container {
             overflow: visible;
+            border-radius: 15px;
             padding: 0;
             margin: 0;
         }

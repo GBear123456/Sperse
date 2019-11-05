@@ -1,83 +1,109 @@
 @import './colors';
 
 body.lend-space app-header {
-  background: #000;
+    background: #000;
 }
+
 body.lend-space .dx-treeview-node-container {
-  background: #FFF!important;
+    background: #FFF !important;
 }
+
 body.lend-space .dx-menu-adaptive-mode, body.lend-space app-header dx-drop-down-box, #m_header_topbar, body.lend-space app-header dx-nav-bar .dx-item.dx-tab, body.lend-space app-header dx-nav-bar .dx-state-hover {
-  background: transparent!important;
+    background: transparent !important;
 }
+
 body.lend-space app-header dx-drop-down-box input {
-  border: 0px!important;
+    border: 0 !important;
 }
+
 body.lend-space app-header dx-nav-bar .dx-item.dx-tab.dx-state-hover .dx-menu-item-text, body.lend-space app-header dx-nav-bar .dx-item.dx-tab.dx-tab-selected .dx-menu-item-text {
-  color: #f0d500!important;
+    color: #f0d500 !important;
 }
+
 body.lend-space app-header dx-nav-bar .dx-item.dx-tab.dx-tab-selected {
-  border-bottom: none!important;
+    border-bottom: none !important;
 }
+
 body.lend-space app-header dx-nav-bar .dx-item.dx-tab .dx-menu-item-text {
-  color: #FFF!important;
+    color: #FFF !important;
 }
+
 body.lend-space .m-dropdown__arrow {
-  color: #313131 !important;
-  right: 6px !important;
+    color: #313131 !important;
+    right: 6px !important;
 }
+
 body.lend-space .page-header.navbar .page-top #m_header_topbar .m-dropdown__header {
-  box-shadow: none !important;
-  background: #313131 !important;
+    box-shadow: none !important;
+    background: #313131 !important;
 }
+
 body.lend-space .page-header.navbar .page-top #m_header_topbar .m-dropdown__header .user-info.fullName {
-  color: #f0d500 !important;
+    color: #f0d500 !important;
 }
+
 body.lend-space .page-header.navbar .page-top #m_header_topbar .m-dropdown__header .user-info.email {
-  color: #f1f1f0 !important;
+    color: #f1f1f0 !important;
 }
+
 body.lend-space .swal-modal {
-  background: #fff8d9;
+    background: #fee192;
+    border-radius: 15px;
+    @media (min-width: 768px) {
+        width: 577px;
+        height: 330px;
+    }
 }
+
 body.lend-space .swal-modal .swal-icon.swal-icon--error,
 body.lend-space .swal-modal .swal-icon.swal-icon--warning,
 body.lend-space .swal-modal .swal-icon.swal-icon--info {
-  background: #FFF;
-  border: 10px solid #FFD564;
-  box-shadow: none;
+    background: #FFF;
+    border: 10px solid #FFD564;
+    box-shadow: none;
 }
+
 body.lend-space .swal-modal .swal-icon.swal-icon--success {
-  background: #FFF;
-  border: 10px solid #FFD564;
+    background: #FFF;
+    border: 10px solid #FFD564;
 }
+
 body.lend-space .swal-modal .swal-icon.swal-icon--success .swal-icon--success__hide-corners {
-  height: 50px!important;
+    height: 50px !important;
 }
+
 body.lend-space .swal-modal .swal-icon.swal-icon--success:before, body.lend-space .swal-modal .swal-icon.swal-icon--success:after {
-  width: 0!important;
+    width: 0 !important;
 }
+
 body.lend-space .swal-modal .swal-icon.swal-icon--warning:before {
-  content: "\2713";
+    content: "\2713";
 }
-body.lend-space .swal-modal .swal-icon>div:first-child:before {
-  color: #000!important;
+
+body.lend-space .swal-modal .swal-icon > div:first-child:before {
+    color: #000 !important;
 }
+
 body.lend-space .swal-modal .swal-title {
-  color: #000;
-  font-size: 26px;
-  font-weight: bold;
-  white-space: pre-line;
+    color: #000;
+    font-size: 26px;
+    font-weight: bold;
+    white-space: pre-line;
 }
+
 body.lend-space .swal-modal .swal-button {
-  background-color: #FFF;
-  font-size: 18px;
-  font-weight: 600;
-  color: #000;
-  cursor: pointer;
+    background-color: #FFF;
+    font-size: 18px;
+    font-weight: 600;
+    color: #000;
+    cursor: pointer;
 }
+
 body.lend-space .swal-modal .swal-button:hover {
-  color: #FFF;
-  background-color: #000;
+    color: #FFF;
+    background-color: #000;
 }
+
 body.lend-space {
     .accountsContainer {
         display: block !important;
@@ -161,19 +187,19 @@ body.lend-space {
             max-width: 50vw !important;
             modal-dialog, app-modal-dialog {
                 .close-dialog {
-                    background: #313131!important;
+                    background: #313131 !important;
                     &:before, &:after {
-                        background: #FFF!important;
+                        background: #FFF !important;
                     }
                 }
                 .mat-dialog-header {
-                    background: #313131!important;
+                    background: #313131 !important;
                     dx-text-box {
-                        background: transparent!important;
+                        background: transparent !important;
                     }
                     input {
-                        color: #FFF!important;
-                        background: transparent!important;
+                        color: #FFF !important;
+                        background: transparent !important;
                     }
                 }
                 mat-dialog-content {
@@ -194,9 +220,9 @@ body.lend-space {
                                 color: #FFF;
                             }
                             &:hover, &.active {
-                                border-bottom: 1px solid #ffcc00!important;
+                                border-bottom: 1px solid #ffcc00 !important;
                                 span {
-                                    color: #ffcc00!important;
+                                    color: #ffcc00 !important;
                                 }
                             }
                         }
@@ -206,7 +232,7 @@ body.lend-space {
                     }
 
                     #content * {
-                        color: #FFF!important;
+                        color: #FFF !important;
                         .doc-title {
                             text-align: center;
                         }
@@ -272,7 +298,7 @@ body.lend-space {
                     //background-color: transparent !important;
                     z-index: 1;
                     &:before, &:after {
-                        background: #FFF!important;
+                        background: #FFF !important;
                     }
                 }
             }
@@ -410,39 +436,48 @@ body.lend-space {
         }
     }
 }
+
 .yellow .page-header {
-    box-shadow: none!important;
+    box-shadow: none !important;
 }
+
 personal-finance-header.pfm-app.yellow {
-    background:#f0d500!important
+    background: #f0d500 !important
 }
+
 .yellow .area-navigation li a{
     color:#333!important
 }
+
 .yellow .area-navigation .sublinks li a{
     color:#FFF!important
 }
+
 .yellow .area-navigation li span.dropdown-mark{
     border-color: #333!important
 }
+
 .yellow .area-navigation li.active span.dropdown-mark,
 .yellow .area-navigation li:hover span.dropdown-mark{
     border-color: #000!important;
 }
+
 .yellow .area-navigation li a.active,
 .yellow .area-navigation li a:hover,
 .yellow .area-navigation li.active > a,
 .yellow .app-responsive-menu li a.active,
 .yellow .app-responsive-menu li a:hover,
-.yellow .app-responsive-menu li.active > a{
-    color:#000!important;
-    background:transparent!important;
+.yellow .app-responsive-menu li.active > a {
+    color: #000 !important;
+    background: transparent !important;
 }
-.yellow .right-actions li a.member-signup{
-    background-color:#FFF!important;
-    color: #000!important;
+
+.yellow .right-actions li a.member-signup {
+    background-color: #FFF !important;
+    color: #000 !important;
 }
-.yellow .right-actions li a.member-signup:hover{
-    background-color:#000!important;
-    color: #FFF!important;
+
+.yellow .right-actions li a.member-signup:hover {
+    background-color: #000 !important;
+    color: #FFF !important;
 }
