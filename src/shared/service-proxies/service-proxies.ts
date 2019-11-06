@@ -17166,18 +17166,21 @@ export class LocalizationServiceProxy {
     }
 
     /**
-     * @version (optional) 
      * @return Success
      */
-    getLocalizationSource(tenantId: number, sourceName: string, version: string | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/Localization/GetLocalizationSource/{tenantId}/{sourceName}?";
+    getLocalizationSource(tenantId: number, sourceName: string, version: string): Observable<LocalizationSourceDto> {
+        let url_ = this.baseUrl + "/api/Localization/GetLocalizationSource?";
         if (tenantId === undefined || tenantId === null)
-            throw new Error("The parameter 'tenantId' must be defined.");
-        url_ = url_.replace("{tenantId}", encodeURIComponent("" + tenantId)); 
+            throw new Error("The parameter 'tenantId' must be defined and cannot be null.");
+        else
+            url_ += "tenantId=" + encodeURIComponent("" + tenantId) + "&"; 
         if (sourceName === undefined || sourceName === null)
-            throw new Error("The parameter 'sourceName' must be defined.");
-        url_ = url_.replace("{sourceName}", encodeURIComponent("" + sourceName)); 
-        if (version !== undefined)
+            throw new Error("The parameter 'sourceName' must be defined and cannot be null.");
+        else
+            url_ += "sourceName=" + encodeURIComponent("" + sourceName) + "&"; 
+        if (version === undefined || version === null)
+            throw new Error("The parameter 'version' must be defined and cannot be null.");
+        else
             url_ += "version=" + encodeURIComponent("" + version) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
@@ -17186,6 +17189,7 @@ export class LocalizationServiceProxy {
             responseType: "blob",
             headers: new HttpHeaders({
                 "Content-Type": "application/json", 
+                "Accept": "application/json"
             })
         };
 
@@ -17196,14 +17200,14 @@ export class LocalizationServiceProxy {
                 try {
                     return this.processGetLocalizationSource(<any>response_);
                 } catch (e) {
-                    return <Observable<void>><any>_observableThrow(e);
+                    return <Observable<LocalizationSourceDto>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<void>><any>_observableThrow(response_);
+                return <Observable<LocalizationSourceDto>><any>_observableThrow(response_);
         }));
     }
 
-    protected processGetLocalizationSource(response: HttpResponseBase): Observable<void> {
+    protected processGetLocalizationSource(response: HttpResponseBase): Observable<LocalizationSourceDto> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -17212,14 +17216,17 @@ export class LocalizationServiceProxy {
         let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
         if (status === 200) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(<any>null);
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? LocalizationSourceDto.fromJS(resultData200) : new LocalizationSourceDto();
+            return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<void>(<any>null);
+        return _observableOf<LocalizationSourceDto>(<any>null);
     }
 
     /**

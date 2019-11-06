@@ -559,7 +559,7 @@ export class OffersLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
             takeUntil(this.deactivate$),
             skip(1),
             filter(category => category != this.filtersValues.category)
-        ).subscribe((category) => {
+        ).subscribe(category => {
             this.filtersValues.category = category;
             this.selectedFilter.next(this.filtersValues);
         });
