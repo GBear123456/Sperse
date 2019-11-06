@@ -370,7 +370,7 @@ export class PipelineService {
         let entities = stage.entities;
         if (entity) {
             let prevEntity = this.getPrevEntity(entity, entities);
-            return entities.length > 1 ? prevEntity && prevEntity.SortOrder
+            return entities.length ? prevEntity && prevEntity.SortOrder
                 || entities[0].SortOrder + 1 : 0;
         } else
             return entities.length && entities.slice(-1).pop().SortOrder || 0;
