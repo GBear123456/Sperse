@@ -12,6 +12,7 @@ import { DxVectorMapModule } from 'devextreme-angular/ui/vector-map';
 import { PivotGridComponent } from '@app/shared/common/slice/pivot-grid/pivot-grid.component';
 import { ChartComponent } from '@app/shared/common/slice/chart/chart.component';
 import { InfoComponent } from '@app/shared/common/slice/info/info.component';
+import { LoadingSpinnerModule } from '@app/shared/common/loading-spinner/loading-spinner.module';
 
 @NgModule({
     imports: [
@@ -19,7 +20,8 @@ import { InfoComponent } from '@app/shared/common/slice/info/info.component';
         DxPivotGridModule,
         DxChartModule,
         DxSelectBoxModule,
-        DxVectorMapModule
+        DxVectorMapModule,
+        LoadingSpinnerModule
     ],
     declarations: [
         PivotGridComponent,

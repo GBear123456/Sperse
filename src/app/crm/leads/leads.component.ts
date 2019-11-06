@@ -206,14 +206,24 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         ]
     };
     permissions = AppPermissions;
+    pivotGridDataIsLoading: boolean;
     pivotGridDataSource = {
         remoteOperations: true,
-        load: (loadOptions) => this.crmService.loadSlicePivotGridData(
-            this.getODataUrl(this.groupDataSourceURI),
-            this.filters,
-            loadOptions,
-            { contactGroupId: this.contactGroupId.value.toString() },
-        ),
+        load: (loadOptions) => {
+            /** To show global spinner only during the first loading */
+            if (this.pivotGridDataIsLoading === undefined) {
+                this.pivotGridDataIsLoading = true;
+            }
+            return this.crmService.loadSlicePivotGridData(
+                this.getODataUrl(this.groupDataSourceURI),
+                this.filters,
+                loadOptions,
+                { contactGroupId: this.contactGroupId.value.toString() },
+            );
+        },
+        onChanged: () => {
+            this.pivotGridDataIsLoading = false;
+        },
         fields: [
             {
                 area: 'row',

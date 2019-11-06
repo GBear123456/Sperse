@@ -174,13 +174,23 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         }
     ];
     permissions = AppPermissions;
+    pivotGridDataIsLoading: boolean;
     pivotGridDataSource = {
         remoteOperations: true,
-        load: (loadOptions) => this.crmService.loadSlicePivotGridData(
-            this.getODataUrl(this.groupDataSourceURI),
-            this.filters,
-            loadOptions
-        ),
+        load: (loadOptions) => {
+            /** To show global spinner only during the first loading */
+            if (this.pivotGridDataIsLoading === undefined) {
+                this.pivotGridDataIsLoading = true;
+            }
+            return this.crmService.loadSlicePivotGridData(
+                this.getODataUrl(this.groupDataSourceURI),
+                this.filters,
+                loadOptions
+            );
+        },
+        onChanged: () => {
+            this.pivotGridDataIsLoading = false;
+        },
         fields: [
             {
                 area: 'row',
