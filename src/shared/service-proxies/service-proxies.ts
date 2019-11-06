@@ -16177,9 +16177,11 @@ export class LocalizationServiceProxy {
     }
 
     /**
+     * @culture (optional) 
+     * @ui_culture (optional) 
      * @return Success
      */
-    getLocalizationSource(tenantId: number, sourceName: string, version: string): Observable<LocalizationSourceDto> {
+    getLocalizationSource(tenantId: number, sourceName: string, version: string, culture: string | null | undefined, ui_culture: string | null | undefined): Observable<LocalizationSourceDto> {
         let url_ = this.baseUrl + "/api/Localization/GetLocalizationSource?";
         if (tenantId === undefined || tenantId === null)
             throw new Error("The parameter 'tenantId' must be defined and cannot be null.");
@@ -16193,6 +16195,10 @@ export class LocalizationServiceProxy {
             throw new Error("The parameter 'version' must be defined and cannot be null.");
         else
             url_ += "version=" + encodeURIComponent("" + version) + "&"; 
+        if (culture !== undefined)
+            url_ += "culture=" + encodeURIComponent("" + culture) + "&"; 
+        if (ui_culture !== undefined)
+            url_ += "ui-culture=" + encodeURIComponent("" + ui_culture) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
