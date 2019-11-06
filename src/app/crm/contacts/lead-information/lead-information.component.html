@@ -1,3 +1,10 @@
+<source-contact-list
+    [contactId]="data?.contactInfo?.id"
+    [selectedKey]="sourceContactId"
+    [targetSelector]="'#contactSourceLink'"
+    (onDataLoaded)="onSourceContactLoaded($event)"
+    (onItemSelected)="onSourceContactChanged($event)">                                            
+</source-contact-list>                                
 <div #loaderWrapper>
     <mat-tab-group [(selectedIndex)]="selectedTabIndex">
         <mat-tab label="General">
@@ -11,14 +18,7 @@
                                 <div *ngIf="!item.hideLabel" class="item-edit-label">{{l(capitalize(item?.name || item))}}:</div>
                                 <ng-container [ngSwitch]="item?.name">
                                     <ng-container *ngSwitchCase="'partnerSource'">
-                                        <source-contact-list
-                                            [contactId]="data?.contactInfo?.id"
-                                            [selectedKey]="sourceContactId"
-                                            [targetSelector]="'#contactSourceLink'"
-                                            (onDataLoaded)="onSourceContactLoaded($event)"
-                                            (onItemSelected)="onSourceContactChanged($event)">                                            
-                                        </source-contact-list>                                
-                                        <a id="contactSourceLink" [class.selected]="sourceContactName" (click)="isCGManageAllowed && sourceComponent.toggle()">{{sourceContactName || (isCGManageAllowed ? l('SelectAnItem') : '')}}</a>
+                                        <a id="contactSourceLink" [class.selected]="sourceContactName" [class.disabled]="!isCGManageAllowed" (click)="isCGManageAllowed && sourceComponent.toggle()">{{sourceContactName || (isCGManageAllowed ? l('SelectAnItem') : '')}}</a>
                                     </ng-container>
                                     <ng-container *ngSwitchDefault>
                                         <div *ngIf="!isEditAllowed || item.readonly" (click)="showApplicationAllowed && item.action && item.action()" [ngClass]="{'item-link': showApplicationAllowed && item.action}">{{getPropValue(item.name)}}</div>

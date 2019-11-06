@@ -44,6 +44,7 @@ import { CKEditorModule } from 'ckeditor4-angular';
 
 /** Application imports */
 import { CommonModule } from '@shared/common/common.module';
+import { CrmStoreModule } from '@app/crm/store/crm-store.module';
 import { AppCommonModule } from '@app/shared/common/app-common.module';
 import { ContactsService } from './contacts.service';
 import { ContactsComponent } from './contacts.component';
@@ -174,6 +175,7 @@ import { CrmService } from '@app/crm/crm.service';
         FormsModule,
         CommonModule,
         ngCommon.CommonModule,
+        CrmStoreModule,
         AppCommonModule,
         MatProgressBarModule,
         MatTabsModule,

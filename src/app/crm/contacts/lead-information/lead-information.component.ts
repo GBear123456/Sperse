@@ -139,11 +139,12 @@ export class LeadInformationComponent extends AppComponentBase implements OnInit
         this.contactsService.contactInfoSubscribe(contactInfo => {
             this.data.contactInfo = contactInfo;
             this.sourceContactId = contactInfo.sourceContactId;
+            this.isCGManageAllowed = this.contactsService.checkCGPermission(contactInfo.groupId);
             this.showApplicationAllowed = this.isGranted(AppPermissions.PFMApplicationsViewApplications) &&
                 contactInfo.personContactInfo.userId && contactInfo.groupId == ContactGroup.Client;
             this.updateSourceContactName();
+            this.loadOrganizationUnits();
         }, this.constructor.name);
-        this.loadOrganizationUnits();
     }
 
     private loadOrganizationUnits() {
@@ -155,7 +156,6 @@ export class LeadInformationComponent extends AppComponentBase implements OnInit
         ).subscribe((organizationUnits: OrganizationUnitShortDto[]) => {
             this.organizationUnits = organizationUnits;
             this.contactsService.leadInfoSubscribe(leadInfo => {
-                this.isCGManageAllowed = this.contactsService.checkCGPermission(this.data.contactInfo.groupId);
                 this.isEditAllowed = leadInfo && leadInfo.id && this.isCGManageAllowed;
                 this.contactsService.orgUnitsUpdate({
                     allOrganizationUnits: organizationUnits,
