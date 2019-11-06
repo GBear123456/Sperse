@@ -846,7 +846,11 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                 location: 'after',
                 locateInMenu: 'auto',
                 items: [
-                    { name: 'showCompactRowsHeight', action: DataGridService.showCompactRowsHeight.bind(this, this.dataGrid, true) },
+                    {
+                        name: 'showCompactRowsHeight',
+                        action: DataGridService.showCompactRowsHeight.bind(this, this.dataGrid, true),
+                        disabled: !this.showDataGrid
+                    },
                     {
                         name: 'columnChooser',
                         disabled: !(this.showDataGrid || this.showPivotGrid),

@@ -838,7 +838,11 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 location: 'after',
                 locateInMenu: 'auto',
                 items: [
-                    { name: 'showCompactRowsHeight', action: DataGridService.showCompactRowsHeight.bind(this, this.dataGrid, true) },
+                    {
+                        name: 'showCompactRowsHeight',
+                        action: DataGridService.showCompactRowsHeight.bind(this, this.dataGrid, true),
+                        disabled: !this.showDataGrid
+                    },
                     {
                         name: 'columnChooser',
                         disabled: !(this.showDataGrid || this.showPivotGrid),

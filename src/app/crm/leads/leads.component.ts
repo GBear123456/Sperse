@@ -1006,7 +1006,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     {
                         name: 'showCompactRowsHeight',
                         action: this.toggleCompactView.bind(this),
-                        disabled: this.showChart || this.showMap
+                        disabled: !(this.showPipeline || this.showDataGrid)
                     },
                     {
                         name: 'columnChooser',
