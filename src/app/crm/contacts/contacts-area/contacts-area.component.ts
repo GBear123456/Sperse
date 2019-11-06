@@ -41,11 +41,11 @@ export class ContactsAreaComponent extends AppComponentBase {
 
     isEditAllowed = false;
 
-    private _clickTimeout;
-    private _clickCounter = 0;
-    private _isInPlaceEditAllowed = true;
+    private clickTimeout;
+    private clickCounter = 0;
+    private isInPlaceEditAllowed = true;
     private _contactInfo: ContactInfoDto;
-    private _itemInEditMode: any;
+    private itemInEditMode: any;
 
     emailRegEx = AppConsts.regexPatterns.email;
 
@@ -170,7 +170,7 @@ export class ContactsAreaComponent extends AppComponentBase {
     updateDataField(field, dataItem, updatedData) {
         let name = this.getFieldName(field),
             isPhoneDialog = (name == 'Phone');
-        this['_contact' + name + 'Service']
+        this['contact' + name + 'Service']
             [(dataItem ? 'update' : 'create') + 'Contact' + name](
             (isPhoneDialog ? (dataItem ? UpdateContactPhoneInput : CreateContactPhoneInput) : (dataItem ? UpdateContactEmailInput : CreateContactEmailInput)
             ).fromJS(updatedData)
@@ -204,34 +204,34 @@ export class ContactsAreaComponent extends AppComponentBase {
     }
 
     inPlaceEdit(field, item, event, index) {
-        this._clickCounter++;
-        clearTimeout(this._clickTimeout);
-        this._clickTimeout = setTimeout(() => {
-            if (this.isEditAllowed && this._clickCounter > 1) {
-                if (!this._isInPlaceEditAllowed)
+        this.clickCounter++;
+        clearTimeout(this.clickTimeout);
+        this.clickTimeout = setTimeout(() => {
+            if (this.isEditAllowed && this.clickCounter > 1) {
+                if (!this.isInPlaceEditAllowed)
                     return;
 
                 item.inplaceEdit = true;
                 item.original = item[field];
 
-                if (this._itemInEditMode && this._itemInEditMode != item)
-                    this._itemInEditMode.inplaceEdit = false;
+                if (this.itemInEditMode && this.itemInEditMode != item)
+                    this.itemInEditMode.inplaceEdit = false;
 
-                this._itemInEditMode = item;
+                this.itemInEditMode = item;
             } else
                 this.showDialog(field, item, event, index);
-            this._clickCounter = 0;
+            this.clickCounter = 0;
         }, 250);
     }
 
     closeInPlaceEdit(field, item) {
         item.inplaceEdit = false;
         item[field] = item.original;
-        this._isInPlaceEditAllowed = true;
+        this.isInPlaceEditAllowed = true;
     }
 
     itemValueChanged(field, item) {
-        this._isInPlaceEditAllowed = item[field] == item.original;
+        this.isInPlaceEditAllowed = item[field] == item.original;
     }
 
     updatePhoneNumber(isValid, item, event) {
@@ -244,7 +244,7 @@ export class ContactsAreaComponent extends AppComponentBase {
             if (item[field] != item.original)
                 this.updateDataField(field, item, item);
             item.inplaceEdit = false;
-            this._isInPlaceEditAllowed = true;
+            this.isInPlaceEditAllowed = true;
         }
     }
 
