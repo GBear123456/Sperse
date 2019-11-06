@@ -47,7 +47,6 @@ import { AppService } from '@app/app.service';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { PipelineModule } from '@app/shared/pipeline/pipeline.module';
 import { DeleteAndReassignDialogComponent } from '@app/crm/shared/delete-and-reassign-dialog/delete-and-reassign-dialog.component';
-import { CrmStoreModule } from '@app/crm/store/crm-store.module';
 import { UtilsModule } from '@shared/utils/utils.module';
 import { CRMDashboardWidgetsModule } from '@shared/crm/dashboard-widgets/dashboard-widgets.module';
 import { CrmRoutingModule } from './crm-routing.module';
@@ -130,7 +129,6 @@ import { MapModule } from '@app/shared/common/slice/map/map.module';
         UtilsModule,
         PipelineModule,
         SharedIntroStepsModule,
-        CrmStoreModule,
         LoadingSpinnerModule,
         BankCodeLettersModule,
         SliceModule,

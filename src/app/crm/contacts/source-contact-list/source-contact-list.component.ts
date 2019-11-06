@@ -43,7 +43,10 @@ export class SourceContactListComponent {
     ) {  }
 
     loadSourceContacts(searchPhrase?: string, elm?: any) {
-        elm && abp.ui.setBusy(elm);
+        if (!elm)
+            elm = this.sourceComponent.dxList && 
+                this.sourceComponent.dxList.instance.element();
+        elm && abp.ui.setBusy(elm);        
         this.contactProxy.getSourceContacts(searchPhrase, this._contactId, 10)
             .pipe(finalize(() => elm && abp.ui.clearBusy(elm)))
             .subscribe(res => {
