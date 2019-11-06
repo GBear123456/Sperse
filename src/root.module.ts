@@ -58,13 +58,14 @@ export function appInitializerFactory(
         handleLogoutRequest(appAuthService);
         return new Promise<boolean>((resolve, reject) => {
             AppConsts.appBaseHref = getBaseHref(platformLocation);
-            AppPreBootstrap.run(AppConsts.appBaseHref, () => {
+            AppPreBootstrap.run(AppConsts.appBaseHref, (sessionCallback?) => {
                 appAuthService.startTokenCheck();
                 let appSessionService: AppSessionService = injector.get(AppSessionService);
                 let ui: AppUiCustomizationService = injector.get(AppUiCustomizationService);
                 appSessionService.init().then(
                     (result) => {
                         //set og meta tags
+                        sessionCallback && sessionCallback();
                         updateMetadata(appSessionService.tenant, ui);
                         bugsnagService.updateBugsnagWithUserInfo(appSessionService);
                         let customizations = appSessionService.tenant && appSessionService.tenant.tenantCustomizations;
