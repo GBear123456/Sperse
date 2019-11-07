@@ -11,6 +11,8 @@ import {
     InvoiceSettings,
     InvoiceStatus
 } from '@shared/service-proxies/service-proxies';
+import { AppPermissionService } from '@shared/common/auth/permission.service';
+import { AppPermissions } from '@shared/AppPermissions';
 
 @Injectable()
 export class InvoicesService {
@@ -18,7 +20,8 @@ export class InvoicesService {
     settings$: Observable<InvoiceSettings> = this.settings.asObservable();
 
     constructor(
-        private invoiceProxy: InvoiceServiceProxy
+        private invoiceProxy: InvoiceServiceProxy,
+        private permissionService: AppPermissionService
     ) {
         this.invalidateSettings();
     }
@@ -26,7 +29,7 @@ export class InvoicesService {
     invalidateSettings(settings?) {
         if (settings)
             this.settings.next(settings);
-        else
+        else if (this.permissionService.isGranted(AppPermissions.CRMOrdersInvoices))
             this.invoiceProxy.getSettings().subscribe(res => {
                 this.settings.next(res);
             });

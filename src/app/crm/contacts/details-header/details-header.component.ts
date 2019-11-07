@@ -475,13 +475,15 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
     }
 
     updateSaveOption(option: ContextMenuItem) {
-        this.addButtonTitle = option.text;
-        option.selected = true;
-        this.addContextComponent.instance.option('selectedItem', option);
-        this.cacheService.set(
-            this.cacheHelper.getCacheKey(this.addOptionCacheKey, this.constructor.name),
-            option.type.toString()
-        );
+        if (option.visible) {
+            this.addButtonTitle = option.text;
+            option.selected = true;
+            this.addContextComponent.instance.option('selectedItem', option);
+            this.cacheService.set(
+                this.cacheHelper.getCacheKey(this.addOptionCacheKey, this.constructor.name),
+                option.type.toString()
+            );
+        }
     }
 
     addOptionSelectionChanged(event) {

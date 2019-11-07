@@ -141,7 +141,6 @@ export class EmailTemplateDialogComponent implements OnInit {
             if (id)
                 this.data.templateId = id;
             this.onSave.emit(this.data);
-            this.initTemplateList();
         });
     }
 
