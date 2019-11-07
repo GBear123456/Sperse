@@ -31,9 +31,8 @@ export class ModulePathResolverService implements Resolve<any> {
     ) {}
 
     resolve(route: ActivatedRouteSnapshot) {
-        if (this.sessionService.userId !== null) {
+        if (this.sessionService.userId && !location.pathname.match(/app\/cfo\/\d*\//))
             this.cacheService.set('lastVisitedModule_' + this.sessionService.tenantId + '_' + this.sessionService.userId, route.url[0].path);
-        }
         return of('');
     }
 }
