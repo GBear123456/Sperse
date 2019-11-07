@@ -187,13 +187,45 @@
         .mat-tab-header {
             border-bottom-color: rgba(255, 255, 255, .8);
             
+            @media all and (max-width: 660px) {
+                .mat-tab-label-container {
+                    position: relative;
+                    padding-left: 32px;
+                }
+            }
+            
             .mat-tab-header-pagination {
                 background: rgba(255, 255, 255, .8);
+                
+                @media all and (max-width: 660px) {
+                    position: absolute;
+                    left: 0;
+                    right: auto;
+                    top: 0;
+                    height: 100%;
+                    width: 32px;
+    
+                    &-after {
+                        right: 0;
+                        left: auto;
+                        top: 0;
+                    }
+                }
             }
     
             .mat-tab-label {
                 color: rgba(255, 255, 255, .8);
+                padding: 0 !important;
                 background-color: transparent !important;
+                
+                @media all and (max-width: 660px) {
+                    width: 260px;
+                    min-width: 260px;
+                    
+                    &:last-child {
+                        margin-right: 64px;
+                    }
+                }
             }
             
             .mat-tab-label-active {
