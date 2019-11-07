@@ -146,6 +146,7 @@
     </div>
     <div [hidden]="hidePivotGrid$ | async">
         <slice-pivot-grid [storageKey]="sliceStorageKey"
+                          [isLoading]="pivotGridDataIsLoading"
                           [height]="contentHeight$ | async">
         </slice-pivot-grid>
     </div>

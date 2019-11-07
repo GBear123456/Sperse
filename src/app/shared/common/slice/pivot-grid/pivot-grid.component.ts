@@ -20,6 +20,7 @@ export class PivotGridComponent {
     @Input() dataSource: any;
     @Input() storageKey: string;
     @Input() height = 'auto';
+    @Input() isLoading = true;
     @ViewChild(DxPivotGridComponent) pivotGrid: DxPivotGridComponent;
     showFieldPanel = false;
     summaryDisplayModes: any[] = [

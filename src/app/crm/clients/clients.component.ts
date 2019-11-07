@@ -174,13 +174,23 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         }
     ];
     permissions = AppPermissions;
+    pivotGridDataIsLoading: boolean;
     pivotGridDataSource = {
         remoteOperations: true,
-        load: (loadOptions) => this.crmService.loadSlicePivotGridData(
-            this.getODataUrl(this.groupDataSourceURI),
-            this.filters,
-            loadOptions
-        ),
+        load: (loadOptions) => {
+            /** To show global spinner only during the first loading */
+            if (this.pivotGridDataIsLoading === undefined) {
+                this.pivotGridDataIsLoading = true;
+            }
+            return this.crmService.loadSlicePivotGridData(
+                this.getODataUrl(this.groupDataSourceURI),
+                this.filters,
+                loadOptions
+            );
+        },
+        onChanged: () => {
+            this.pivotGridDataIsLoading = false;
+        },
         fields: [
             {
                 area: 'row',
@@ -828,7 +838,11 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 location: 'after',
                 locateInMenu: 'auto',
                 items: [
-                    { name: 'showCompactRowsHeight', action: DataGridService.showCompactRowsHeight.bind(this, this.dataGrid, true) },
+                    {
+                        name: 'showCompactRowsHeight',
+                        action: DataGridService.showCompactRowsHeight.bind(this, this.dataGrid, true),
+                        disabled: !this.showDataGrid
+                    },
                     {
                         name: 'columnChooser',
                         disabled: !(this.showDataGrid || this.showPivotGrid),

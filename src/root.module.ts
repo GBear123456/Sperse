@@ -4,7 +4,7 @@ import { HAMMER_GESTURE_CONFIG } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { APP_BASE_HREF, PlatformLocation, registerLocaleData } from '@angular/common';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
-import { RouteReuseStrategy } from '@angular/router';
+import { RouteReuseStrategy, Router } from '@angular/router';
 
 /** Third party imports */
 import { AbpModule } from '@abp/abp.module';
@@ -58,12 +58,14 @@ export function appInitializerFactory(
         handleLogoutRequest(appAuthService);
         return new Promise<boolean>((resolve, reject) => {
             AppConsts.appBaseHref = getBaseHref(platformLocation);
-            AppPreBootstrap.run(AppConsts.appBaseHref, () => {
+            AppPreBootstrap.run(AppConsts.appBaseHref, (sessionCallback?) => {
+                appAuthService.startTokenCheck();
                 let appSessionService: AppSessionService = injector.get(AppSessionService);
                 let ui: AppUiCustomizationService = injector.get(AppUiCustomizationService);
                 appSessionService.init().then(
                     (result) => {
                         //set og meta tags
+                        sessionCallback && sessionCallback();
                         updateMetadata(appSessionService.tenant, ui);
                         bugsnagService.updateBugsnagWithUserInfo(appSessionService);
                         let customizations = appSessionService.tenant && appSessionService.tenant.tenantCustomizations;
@@ -87,7 +89,7 @@ export function appInitializerFactory(
                         reject(err);
                     }
                 );
-            }, Function(), reject);
+            }, Function(), reject, injector.get(Router));
         });
     };
 }

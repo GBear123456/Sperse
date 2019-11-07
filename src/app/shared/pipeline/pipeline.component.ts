@@ -205,7 +205,6 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                         this.getEntityById(this.getAccessKey(value[4]), newStage),
                         newStage
                     );
-
                 if (value[1].classList.contains('selected')) {
                     const checkReloadStages = (entity, stages?: Stage[]) => {
                         this.selectedEntities.splice(this.selectedEntities.indexOf(entity), 1);
@@ -291,8 +290,12 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                             if (action.targetStageId) {
                                 let target = find(this.stages, (stage) => {
                                     return stage.id == action.targetStageId;
-                                }), targetElm = document.querySelector('[accessKey="' + target.id + '"]');
-                                targetElm && targetElm.classList.add('drop-area');
+                                });
+                                const targetElm: HTMLElement = document.querySelector('[accessKey="' + target.id + '"]');
+                                if (targetElm) {
+                                    this.updateDropColumnHeight(targetElm);
+                                    targetElm.classList.add('drop-area');
+                                }
                             }
                         });
                 });
@@ -311,6 +314,23 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                     return false; // elements can't be dropped in any of the `containers` by default
             }
         });
+    }
+
+    /**
+     * Updates drop column height in a case if source stage entity is much lower then the last entity in target stage
+     * @param {HTMLElement} column
+     */
+    private updateDropColumnHeight(column: HTMLElement) {
+        const targetElmBoundingClientRect = column.getBoundingClientRect();
+        const targetElmBottom = targetElmBoundingClientRect.bottom;
+        const titleBoundingClientRect = column.previousElementSibling.getBoundingClientRect();
+        const titleBottom = titleBoundingClientRect.bottom;
+        const difference = (titleBottom + 106 - targetElmBottom);
+        /** If title is lower then target column */
+        if (difference > 0) {
+            /** Increase target column height to allow to drop to it */
+            column.style.height = (targetElmBoundingClientRect.height + difference) + 'px';
+        }
     }
 
     private handleContactView() {
@@ -606,6 +626,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
     hideStageHighlighting() {
         [].forEach.call(document.querySelectorAll('.drop-area'), (el) => {
             el.classList.remove('drop-area');
+            el.style.height = 'initial';
         });
     }
 

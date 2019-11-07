@@ -3,6 +3,7 @@
                [allowFiltering]="true"
                [allowSorting]="true"
                [height]="height"
+               [visible]="!isLoading"
                rowHeaderLayout="tree"
                [allowSortingBySummary]="true"
                [ngClass]="{
@@ -16,12 +17,13 @@
     <dxo-field-panel [visible]="true"></dxo-field-panel>
     <dxo-header-filter [allowSearch]="true">
     </dxo-header-filter>
-    <dxo-load-panel indicatorSrc="./assets/commonupdateDimensions/images/spinner.gif"
+    <dxo-load-panel indicatorSrc="./assets/common/images/spinner.gif"
                     text=""
                     [showPane]="false">
-    </dxo-load-panel>dx-area-data-cell
+    </dxo-load-panel>
     <dxo-state-storing [enabled]="true"
                        [storageKey]="storageKey">
     </dxo-state-storing>
 </dx-pivot-grid>
 <button class="close-button" *ngIf="showFieldPanel" (click)="toggleFieldPanel()"></button>
+<loading-spinner *ngIf="isLoading"></loading-spinner>
