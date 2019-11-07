@@ -64,17 +64,8 @@ export class RouteGuard implements CanActivate, CanActivateChild {
     }
 
     selectBestRoute(): string {
-        let route;
-        if (abp.session.multiTenancySide == abp.multiTenancy.sides.TENANT) {
-            let module = abp.setting.get('App.UserManagement.DefaultModuleType');
-            route = this.getBestRouteForTenant(module);
-            if (!route && module)
-                route = this.getBestRouteForTenant();
-        } else {
-            route = this.getBestRouteForHost();
-        }
-
-        return route || '/app/access-denied';
+        return (abp.session.multiTenancySide == abp.multiTenancy.sides.TENANT ? 
+            this.getBestRouteForTenant() : this.getBestRouteForHost())  || '/app/access-denied';
     }
 
     getBestRouteForTenant(preferedModule = null): string {
