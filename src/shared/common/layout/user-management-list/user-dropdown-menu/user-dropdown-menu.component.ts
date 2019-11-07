@@ -2,6 +2,7 @@
 import {
     AfterViewInit,
     ApplicationRef,
+    ChangeDetectorRef,
     Component,
     OnInit,
     Input,
@@ -55,6 +56,7 @@ export class UserDropdownMenuComponent implements AfterViewInit, OnInit {
         private featureCheckerService: FeatureCheckerService,
         private abpSessionService: AbpSessionService,
         private ls: AppLocalizationService,
+        private changeDetectorRef: ChangeDetectorRef,
         public bankCodeService: BankCodeService,
         public appSession: AppSessionService,
         public userManagementService: UserManagementService
@@ -73,6 +75,7 @@ export class UserDropdownMenuComponent implements AfterViewInit, OnInit {
                 this.userManagementService.getRecentlyLinkedUsers().subscribe((recentlyLinkedUsers: LinkedUserDto[]) => {
                     this.userManagementService.recentlyLinkedUsers = recentlyLinkedUsers;
                     this.dropdownMenuItems[1].submenuItems.items = this.userManagementService.recentlyLinkedUsers;
+                    this.changeDetectorRef.detectChanges();
                 });
             }
         });
