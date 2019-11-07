@@ -7,7 +7,7 @@ import { Router } from '@angular/router';
 /** Third party imports */
 import { MatDialog } from '@angular/material';
 import { Observable } from 'rxjs';
-import { finalize, first, filter, map, switchMap } from 'rxjs/operators';
+import { first, filter, switchMap } from 'rxjs/operators';
 import swal from 'sweetalert';
 import cloneDeep from 'lodash/cloneDeep';
 
@@ -61,7 +61,7 @@ export class RegisterComponent implements AfterViewInit, OnInit {
     showRegisterPopup() {
         const messageContent = {
             button: {
-                text: 'Get approved',
+                text: this.ls.l('GetApproved'),
                 className: 'applyButton',
                 closeModal: true
             },
@@ -107,7 +107,7 @@ export class RegisterComponent implements AfterViewInit, OnInit {
                     applyOfferDialog.close();
                     let messageContent = {
                         button: {
-                            text: 'Accept the loan offer',
+                            text: this.ls.l('AcceptTheLoanOffer'),
                             className: 'applyButton',
                             closeModal: true
                         },
@@ -132,7 +132,7 @@ export class RegisterComponent implements AfterViewInit, OnInit {
                 } else if (response.status === FinalizeApplicationStatus.Declined) {
                     let messageContent = {
                         button: {
-                            text: 'Get more options',
+                            text: this.ls.l('GetMoreOptions'),
                             value: true,
                             closeModal: true
                         },

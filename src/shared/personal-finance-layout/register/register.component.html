@@ -5,11 +5,11 @@
 </div>
 <div id="successPopup" style="display: none">
     <img src="./assets/common/icons/offers/approved.svg">
-    <h1>Congratulations, your loan has been approved!</h1>
-    <h2>You will receive an email with your credentials to access your LendSpace member area</h2>
+    <h1>{{ 'CongratulationsYourLoanHasBeenApproved' }}</h1>
+    <h2>{{ 'YouWillReceiveAnEmailWithYourCredentials' }}</h2>
 </div>
 <div id="failurePopup" style="display: none">
     <img src="./assets/common/icons/offers/declined.svg">
-    <h1>We're sorry {{ firstName }}, but you have been declined</h1>
-    <h2>Please try other offers such as secured loans, or credit repair, to help assist you in getting the funds you requested</h2>
+    <h1>{{ ls.l('WeAreSorryYouDeclined') }}</h1>
+    <h2>{{ ls.l('PleaseTryOtherOffers', 'PFM', firstName) }}</h2>
 </div>
