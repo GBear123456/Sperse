@@ -105,29 +105,31 @@ export class RegisterComponent implements AfterViewInit, OnInit {
                 if (response.status === FinalizeApplicationStatus.Approved) {
                     applyOfferDialog.close();
                     let messageContent = {
-                        title: 'Congratulations',
-                        button: false,
+                        button: {
+                            text: 'Accept the loan offer',
+                            className: 'applyButton',
+                            closeModal: true
+                        },
                         className: 'success',
-                        icon: 'success',
                         content: this.document.getElementById('successPopup').cloneNode(true),
                         closeOnClickOutside: false,
                         closeOnEsc: false
                     };
                     messageContent['content'].style.display = 'block';
-                    swal(messageContent);
                     const autoRedirect = setTimeout(() => {
                         if (window.open(response.redirectUrl, '_blank')) {
                             this.completeApprove(swal);
                         }
                     }, 8000);
-                    messageContent['content'].querySelector('.redirect-link').onclick = () => {
-                        clearTimeout(autoRedirect);
-                        window.open(response.redirectUrl, '_blank');
-                        this.completeApprove(swal);
-                    };
+                    swal(messageContent).then((result) => {
+                        if (result) {
+                            clearTimeout(autoRedirect);
+                            window.open(response.redirectUrl, '_blank');
+                            this.completeApprove(swal);
+                        }
+                    });
                 } else if (response.status === FinalizeApplicationStatus.Declined) {
                     let messageContent = {
-                        title: `We\'re sorry ${this.firstName}, but you have been declined`,
                         button: {
                             text: 'Get more options',
                             value: true,
@@ -154,7 +156,7 @@ export class RegisterComponent implements AfterViewInit, OnInit {
     }
 
     private completeApprove(modal): Promise<boolean> {
-        modal.close('confirm');
+        modal.close('cancel');
         return this.router.navigate(['/personal-finance/offers/personal-loans']);
     }
 

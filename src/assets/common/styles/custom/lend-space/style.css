@@ -2,27 +2,27 @@ body.lend-space app-header {
   background: #000;
 }
 body.lend-space .dx-treeview-node-container {
-  background: #FFF!important;
+  background: #FFF !important;
 }
 body.lend-space .dx-menu-adaptive-mode,
 body.lend-space app-header dx-drop-down-box,
 #m_header_topbar,
 body.lend-space app-header dx-nav-bar .dx-item.dx-tab,
 body.lend-space app-header dx-nav-bar .dx-state-hover {
-  background: transparent!important;
+  background: transparent !important;
 }
 body.lend-space app-header dx-drop-down-box input {
-  border: 0!important;
+  border: 0 !important;
 }
 body.lend-space app-header dx-nav-bar .dx-item.dx-tab.dx-state-hover .dx-menu-item-text,
 body.lend-space app-header dx-nav-bar .dx-item.dx-tab.dx-tab-selected .dx-menu-item-text {
-  color: #f0d500!important;
+  color: #f0d500 !important;
 }
 body.lend-space app-header dx-nav-bar .dx-item.dx-tab.dx-tab-selected {
-  border-bottom: none!important;
+  border-bottom: none !important;
 }
 body.lend-space app-header dx-nav-bar .dx-item.dx-tab .dx-menu-item-text {
-  color: #FFF!important;
+  color: #FFF !important;
 }
 body.lend-space .m-dropdown__arrow {
   color: #313131 !important;
@@ -39,43 +39,87 @@ body.lend-space .page-header.navbar .page-top #m_header_topbar .m-dropdown__head
   color: #f1f1f0 !important;
 }
 body.lend-space .swal-modal {
-  background: #fee192;
+  border-radius: 12px;
+}
+body.lend-space .swal-modal .swal-title {
+  padding-top: 0;
+  margin-bottom: 6px;
+}
+body.lend-space .swal-modal .swal-footer {
+  margin-top: 0;
+}
+body.lend-space .swal-modal .swal-button.swal-button--confirm {
+  border-radius: 2px;
+  background-color: #ffcc00;
+  font-family: Poppins;
+  letter-spacing: 0.15px;
+  font-size: 19px;
+  font-weight: 700;
+}
+@media (min-width: 768px) {
+  body.lend-space .swal-modal .swal-button.swal-button--confirm {
+    width: 200px;
+    height: 48px;
+  }
+}
+@media (max-width: 768px) {
+  body.lend-space .swal-modal .swal-button.swal-button--confirm {
+    display: none;
+  }
 }
 @media (min-width: 768px) {
   body.lend-space .swal-modal {
-    width: 577px;
-    height: 330px;
+    width: 550px;
+    height: 326px;
   }
 }
 body.lend-space .swal-modal .swal-icon.swal-icon--error,
 body.lend-space .swal-modal .swal-icon.swal-icon--warning,
 body.lend-space .swal-modal .swal-icon.swal-icon--info {
   background: #FFF;
-  border: 10px solid #FFD564;
   box-shadow: none;
+  border: none;
+}
+body.lend-space .swal-modal .swal-icon.swal-icon--error .swal-icon--error__x-mark,
+body.lend-space .swal-modal .swal-icon.swal-icon--warning .swal-icon--error__x-mark,
+body.lend-space .swal-modal .swal-icon.swal-icon--info .swal-icon--error__x-mark {
+  display: none;
+}
+body.lend-space .swal-modal .swal-icon.swal-icon--error:before,
+body.lend-space .swal-modal .swal-icon.swal-icon--warning:before,
+body.lend-space .swal-modal .swal-icon.swal-icon--info:before {
+  content: url('../../../../common/icons/error-explanation-mark.svg');
+  width: 83px;
+  height: 73px;
+}
+body.lend-space .swal-modal .swal-icon.swal-icon--error:first-child,
+body.lend-space .swal-modal .swal-icon.swal-icon--warning:first-child,
+body.lend-space .swal-modal .swal-icon.swal-icon--info:first-child {
+  margin-top: 40px;
 }
 body.lend-space .swal-modal .swal-icon.swal-icon--success {
   background: #FFF;
   border: 10px solid #FFD564;
 }
 body.lend-space .swal-modal .swal-icon.swal-icon--success .swal-icon--success__hide-corners {
-  height: 50px!important;
+  height: 50px !important;
 }
 body.lend-space .swal-modal .swal-icon.swal-icon--success:before,
 body.lend-space .swal-modal .swal-icon.swal-icon--success:after {
-  width: 0!important;
+  width: 0 !important;
 }
 body.lend-space .swal-modal .swal-icon.swal-icon--warning:before {
   content: "\2713";
 }
 body.lend-space .swal-modal .swal-icon > div:first-child:before {
-  color: #000!important;
+  color: #000 !important;
 }
 body.lend-space .swal-modal .swal-title {
   color: #000;
-  font-size: 26px;
+  font-size: 24px;
   font-weight: bold;
   white-space: pre-line;
+  font-family: Poppins;
 }
 body.lend-space .swal-modal .swal-button {
   background-color: #FFF;
@@ -168,7 +212,7 @@ body.lend-space .cdk-overlay-pane.footer-slider modal-dialog .close-dialog,
 body.lend-space .cdk-overlay-pane.user-info modal-dialog .close-dialog,
 body.lend-space .cdk-overlay-pane.footer-slider app-modal-dialog .close-dialog,
 body.lend-space .cdk-overlay-pane.user-info app-modal-dialog .close-dialog {
-  background: #313131!important;
+  background: #313131 !important;
 }
 body.lend-space .cdk-overlay-pane.footer-slider modal-dialog .close-dialog:before,
 body.lend-space .cdk-overlay-pane.user-info modal-dialog .close-dialog:before,
@@ -178,26 +222,26 @@ body.lend-space .cdk-overlay-pane.footer-slider modal-dialog .close-dialog:after
 body.lend-space .cdk-overlay-pane.user-info modal-dialog .close-dialog:after,
 body.lend-space .cdk-overlay-pane.footer-slider app-modal-dialog .close-dialog:after,
 body.lend-space .cdk-overlay-pane.user-info app-modal-dialog .close-dialog:after {
-  background: #FFF!important;
+  background: #FFF !important;
 }
 body.lend-space .cdk-overlay-pane.footer-slider modal-dialog .mat-dialog-header,
 body.lend-space .cdk-overlay-pane.user-info modal-dialog .mat-dialog-header,
 body.lend-space .cdk-overlay-pane.footer-slider app-modal-dialog .mat-dialog-header,
 body.lend-space .cdk-overlay-pane.user-info app-modal-dialog .mat-dialog-header {
-  background: #313131!important;
+  background: #313131 !important;
 }
 body.lend-space .cdk-overlay-pane.footer-slider modal-dialog .mat-dialog-header dx-text-box,
 body.lend-space .cdk-overlay-pane.user-info modal-dialog .mat-dialog-header dx-text-box,
 body.lend-space .cdk-overlay-pane.footer-slider app-modal-dialog .mat-dialog-header dx-text-box,
 body.lend-space .cdk-overlay-pane.user-info app-modal-dialog .mat-dialog-header dx-text-box {
-  background: transparent!important;
+  background: transparent !important;
 }
 body.lend-space .cdk-overlay-pane.footer-slider modal-dialog .mat-dialog-header input,
 body.lend-space .cdk-overlay-pane.user-info modal-dialog .mat-dialog-header input,
 body.lend-space .cdk-overlay-pane.footer-slider app-modal-dialog .mat-dialog-header input,
 body.lend-space .cdk-overlay-pane.user-info app-modal-dialog .mat-dialog-header input {
-  color: #FFF!important;
-  background: transparent!important;
+  color: #FFF !important;
+  background: transparent !important;
 }
 body.lend-space .cdk-overlay-pane.footer-slider modal-dialog mat-dialog-content,
 body.lend-space .cdk-overlay-pane.user-info modal-dialog mat-dialog-content,
@@ -252,7 +296,7 @@ body.lend-space .cdk-overlay-pane.footer-slider modal-dialog mat-dialog-content 
 body.lend-space .cdk-overlay-pane.user-info modal-dialog mat-dialog-content .m-tabs__item .m-tabs__link.active,
 body.lend-space .cdk-overlay-pane.footer-slider app-modal-dialog mat-dialog-content .m-tabs__item .m-tabs__link.active,
 body.lend-space .cdk-overlay-pane.user-info app-modal-dialog mat-dialog-content .m-tabs__item .m-tabs__link.active {
-  border-bottom: 1px solid #ffcc00!important;
+  border-bottom: 1px solid #ffcc00 !important;
 }
 body.lend-space .cdk-overlay-pane.footer-slider modal-dialog mat-dialog-content .m-tabs__item .m-tabs__link:hover span,
 body.lend-space .cdk-overlay-pane.user-info modal-dialog mat-dialog-content .m-tabs__item .m-tabs__link:hover span,
@@ -262,7 +306,7 @@ body.lend-space .cdk-overlay-pane.footer-slider modal-dialog mat-dialog-content 
 body.lend-space .cdk-overlay-pane.user-info modal-dialog mat-dialog-content .m-tabs__item .m-tabs__link.active span,
 body.lend-space .cdk-overlay-pane.footer-slider app-modal-dialog mat-dialog-content .m-tabs__item .m-tabs__link.active span,
 body.lend-space .cdk-overlay-pane.user-info app-modal-dialog mat-dialog-content .m-tabs__item .m-tabs__link.active span {
-  color: #ffcc00!important;
+  color: #ffcc00 !important;
 }
 body.lend-space .cdk-overlay-pane.footer-slider modal-dialog mat-dialog-content /deep/ country-phone-number .wrapper,
 body.lend-space .cdk-overlay-pane.user-info modal-dialog mat-dialog-content /deep/ country-phone-number .wrapper,
@@ -274,7 +318,7 @@ body.lend-space .cdk-overlay-pane.footer-slider modal-dialog mat-dialog-content 
 body.lend-space .cdk-overlay-pane.user-info modal-dialog mat-dialog-content #content *,
 body.lend-space .cdk-overlay-pane.footer-slider app-modal-dialog mat-dialog-content #content *,
 body.lend-space .cdk-overlay-pane.user-info app-modal-dialog mat-dialog-content #content * {
-  color: #FFF!important;
+  color: #FFF !important;
 }
 body.lend-space .cdk-overlay-pane.footer-slider modal-dialog mat-dialog-content #content * .doc-title,
 body.lend-space .cdk-overlay-pane.user-info modal-dialog mat-dialog-content #content * .doc-title,
@@ -337,7 +381,7 @@ body.lend-space .cdk-overlay-pane.user-info app-modal-dialog mat-dialog-content 
   body.lend-space .cdk-overlay-pane.user-info .close-dialog:before,
   body.lend-space .cdk-overlay-pane.footer-slider .close-dialog:after,
   body.lend-space .cdk-overlay-pane.user-info .close-dialog:after {
-    background: #FFF!important;
+    background: #FFF !important;
   }
 }
 body.lend-space .notification-header {
@@ -461,7 +505,7 @@ body.lend-space .primeng-datatable-container .primeng-no-data {
   background: #fff;
 }
 .yellow .page-header {
-  box-shadow: none!important;
+  box-shadow: none !important;
 }
 personal-finance-header.pfm-app.yellow {
   background: #f0d500 !important;
@@ -477,7 +521,7 @@ personal-finance-header.pfm-app.yellow {
 }
 .yellow .app-area-navigation li.active span.dropdown-mark,
 .yellow .app-area-navigation li:hover span.dropdown-mark {
-  border-color: #000!important;
+  border-color: #000 !important;
 }
 .yellow .app-area-navigation li a.active,
 .yellow .app-area-navigation li a:hover,
@@ -485,14 +529,14 @@ personal-finance-header.pfm-app.yellow {
 .yellow .app-responsive-menu li a.active,
 .yellow .app-responsive-menu li a:hover,
 .yellow .app-responsive-menu li.active > a {
-  color: #000!important;
-  background: transparent!important;
+  color: #000 !important;
+  background: transparent !important;
 }
 .yellow .right-actions li a.member-signup {
-  background-color: #FFF!important;
-  color: #000!important;
+  background-color: #FFF !important;
+  color: #000 !important;
 }
 .yellow .right-actions li a.member-signup:hover {
-  background-color: #000!important;
-  color: #FFF!important;
+  background-color: #000 !important;
+  color: #FFF !important;
 }
