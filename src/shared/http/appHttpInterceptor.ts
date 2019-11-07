@@ -83,6 +83,23 @@ export class AppHttpInterceptor extends AbpHttpInterceptor {
         return this.handleErrorResponse(error, new Subject());
     }
 
+    protected normalizeRequestHeaders(request: HttpRequest<any>):HttpRequest<any> {
+        if (this.getKeyFromUrl(request.url) == 'api_Localization_GetLocalizationSource') {
+            let modifiedHeaders = new HttpHeaders();
+
+            this.addXRequestedWithHeader(modifiedHeaders);
+            this.addAuthorizationHeaders(modifiedHeaders);
+            this.addAspNetCoreCultureHeader(modifiedHeaders);
+            this.addAcceptLanguageHeader(modifiedHeaders);
+            this.addTenantIdHeader(modifiedHeaders);
+
+            return request.clone({
+                headers: modifiedHeaders
+            });
+        } else 
+            return super.normalizeRequestHeaders(request);
+    }
+
     protected handleErrorResponse(response, interceptObservable: Subject<HttpEvent<any>>): Observable<any> {
         if (this.configuration['avoidErrorHandling']) {
             this.configuration.blobToText(response.error).subscribe((error) => {

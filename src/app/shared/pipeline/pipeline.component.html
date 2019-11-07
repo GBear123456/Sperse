@@ -55,7 +55,7 @@
                 [ngStyle]="{ top: this.getStageSpinnerTopPosition(stage) }">
             </loading-spinner>
         </div>
-        <div [ngClass]="{ 'column-items': true, 'drag-allowed': stage?.dragAllowed}"
+        <div [ngClass]="{ 'column-items': true, 'drag-allowed': stage?.dragAllowed }"
              [dragula]="dragulaName"
              [dragulaModel]="stage?.entities"
              [accessKey]="stage?.id"

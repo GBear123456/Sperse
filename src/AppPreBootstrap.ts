@@ -118,14 +118,18 @@ export class AppPreBootstrap {
                 };
                 if (queryStringObj.tenantId)
                     params['tenantId'] = queryStringObj.tenantId;
-                callback(() => router.navigate(['app/account/reset-password'], { queryParams: params }));
+                AppPreBootstrap.processRegularBootstrap(queryStringObj, () => {
+                    callback(() => router.navigate(['account/reset-password'], { queryParams: params }));
+                });
             } else
                 AppPreBootstrap.processRegularBootstrap(queryStringObj, () => {
                     callback(() => router.navigate([location.pathname]));
                 });
         }).fail(() => {
             abp.multiTenancy.setTenantIdCookie();
-            callback(() => router.navigate(['/']));
+            AppPreBootstrap.processRegularBootstrap(queryStringObj, () => {
+                callback(() => router.navigate(['/']));
+            });
         });
     }
 
