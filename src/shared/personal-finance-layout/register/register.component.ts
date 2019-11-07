@@ -7,7 +7,7 @@ import { Router } from '@angular/router';
 /** Third party imports */
 import { MatDialog } from '@angular/material';
 import { Observable } from 'rxjs';
-import { finalize, first, filter, map, switchMap } from 'rxjs/operators';
+import { first, filter, switchMap } from 'rxjs/operators';
 import swal from 'sweetalert';
 import cloneDeep from 'lodash/cloneDeep';
 
@@ -61,7 +61,7 @@ export class RegisterComponent implements AfterViewInit, OnInit {
     showRegisterPopup() {
         const messageContent = {
             button: {
-                text: 'Get approved',
+                text: this.ls.l('GetApproved'),
                 className: 'applyButton',
                 closeModal: true
             },
@@ -71,6 +71,7 @@ export class RegisterComponent implements AfterViewInit, OnInit {
             content: this.document.getElementById('registerPopup').cloneNode(true)
         };
         messageContent['content'].style.display = 'block';
+        this.document.body.classList.add('overflow-hidden');
         swal(messageContent).then((result) => {
             if (result) {
                 this.register();
@@ -105,31 +106,33 @@ export class RegisterComponent implements AfterViewInit, OnInit {
                 if (response.status === FinalizeApplicationStatus.Approved) {
                     applyOfferDialog.close();
                     let messageContent = {
-                        title: 'Congratulations',
-                        button: false,
+                        button: {
+                            text: this.ls.l('AcceptTheLoanOffer'),
+                            className: 'applyButton',
+                            closeModal: true
+                        },
                         className: 'success',
-                        icon: 'success',
                         content: this.document.getElementById('successPopup').cloneNode(true),
                         closeOnClickOutside: false,
                         closeOnEsc: false
                     };
                     messageContent['content'].style.display = 'block';
-                    swal(messageContent);
                     const autoRedirect = setTimeout(() => {
                         if (window.open(response.redirectUrl, '_blank')) {
                             this.completeApprove(swal);
                         }
                     }, 8000);
-                    messageContent['content'].querySelector('.redirect-link').onclick = () => {
-                        clearTimeout(autoRedirect);
-                        window.open(response.redirectUrl, '_blank');
-                        this.completeApprove(swal);
-                    };
+                    swal(messageContent).then((result) => {
+                        if (result) {
+                            clearTimeout(autoRedirect);
+                            window.open(response.redirectUrl, '_blank');
+                            this.completeApprove(swal);
+                        }
+                    });
                 } else if (response.status === FinalizeApplicationStatus.Declined) {
                     let messageContent = {
-                        title: `We\'re sorry ${this.firstName}, but you have been declined`,
                         button: {
-                            text: 'Get more options',
+                            text: this.ls.l('GetMoreOptions'),
                             value: true,
                             closeModal: true
                         },
@@ -142,6 +145,7 @@ export class RegisterComponent implements AfterViewInit, OnInit {
                     swal(messageContent).then((res) => {
                         if (res) {
                             this.router.navigate([this.getMoreOptionsLink]);
+                            this.document.body.classList.remove('overflow-hidden');
                         }
                     });
                 }
@@ -149,12 +153,16 @@ export class RegisterComponent implements AfterViewInit, OnInit {
                 this.offersService.setIncompleteApplicationId(null);
                 applyOfferDialog.close();
             },
-            () => applyOfferDialog.close()
+            () => {
+                this.document.body.classList.remove('overflow-hidden');
+                applyOfferDialog.close();
+            }
         );
     }
 
     private completeApprove(modal): Promise<boolean> {
-        modal.close('confirm');
+        modal.close('cancel');
+        this.document.body.classList.remove('overflow-hidden');
         return this.router.navigate(['/personal-finance/offers/personal-loans']);
     }
 

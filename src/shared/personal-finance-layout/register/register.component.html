@@ -4,17 +4,12 @@
     <h2>{{ firstName + ', ' + ls.l('PleaseClickBelow') }}</h2>
 </div>
 <div id="successPopup" style="display: none">
-    <div class="approved">
-        Your loan has been
-        <div>Approved!</div>
-    </div>
-    <button class="redirect-link swal-button swal-button--confirm">
-        Accept the loan offer
-    </button>
-    <div class="info">
-        <p>You will receive an email with your credentials to access your LendSpace member area</p>
-    </div>
+    <img src="./assets/common/icons/offers/approved.svg">
+    <h1>{{ ls.l('CongratulationsYourLoanHasBeenApproved') }}</h1>
+    <h2>{{ ls.l('YouWillReceiveAnEmailWithYourCredentials') }}</h2>
 </div>
 <div id="failurePopup" style="display: none">
-    <p>Please try other offers such as secured loans, or credit repair, to help assist you in getting the funds you requested</p>
+    <img src="./assets/common/icons/offers/declined.svg">
+    <h1>{{ ls.l('WeAreSorryYouDeclined') }}</h1>
+    <h2>{{ ls.l('PleaseTryOtherOffers', 'PFM', firstName) }}</h2>
 </div>

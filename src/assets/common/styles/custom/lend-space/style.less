@@ -47,11 +47,34 @@ body.lend-space .page-header.navbar .page-top #m_header_topbar .m-dropdown__head
 }
 
 body.lend-space .swal-modal {
-    background: #fee192;
-    border-radius: 15px;
+    border-radius: 12px;
+    .swal-title {
+        padding-top: 0;
+        margin-bottom: 6px;
+    }
+    .swal-footer {
+        margin-top: 0;
+    }
+    .swal-button.swal-button--confirm {
+        border-radius: 2px;
+        background-color: #ffcc00;
+        font-family: Poppins;
+        letter-spacing: 0.15px;
+        font-size: 19px;
+        font-weight: 700;
+        @media (min-width: 768px) {
+            width: 200px;
+            height: 48px;
+        }
+        @media (max-width: 768px) {
+            &:after {
+                display: none !important;
+            }
+        }
+    }
     @media (min-width: 768px) {
-        width: 577px;
-        height: 330px;
+        width: 550px;
+        height: 326px;
     }
 }
 
@@ -59,8 +82,19 @@ body.lend-space .swal-modal .swal-icon.swal-icon--error,
 body.lend-space .swal-modal .swal-icon.swal-icon--warning,
 body.lend-space .swal-modal .swal-icon.swal-icon--info {
     background: #FFF;
-    border: 10px solid #FFD564;
     box-shadow: none;
+    border: none;
+    .swal-icon--error__x-mark {
+        display: none;
+    }
+    &:before {
+        content: url('../../../../common/icons/error-explanation-mark.svg');
+        width: 83px;
+        height: 73px;
+    }
+    &:first-child {
+        margin-top: 40px;
+    }
 }
 
 body.lend-space .swal-modal .swal-icon.swal-icon--success {
@@ -86,9 +120,10 @@ body.lend-space .swal-modal .swal-icon > div:first-child:before {
 
 body.lend-space .swal-modal .swal-title {
     color: #000;
-    font-size: 26px;
+    font-size: 24px;
     font-weight: bold;
     white-space: pre-line;
+    font-family: Poppins;
 }
 
 body.lend-space .swal-modal .swal-button {
