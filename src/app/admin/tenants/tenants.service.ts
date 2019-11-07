@@ -1,13 +1,20 @@
+/** Core imports */
 import { Injectable } from '@angular/core';
+
+/** Third party imports */
+import { Observable } from 'rxjs';
+import { groupBy, concatAll, toArray, map, mergeMap, filter, switchMap, publishReplay, refCount } from 'rxjs/operators';
+import values from 'lodash/values';
+
+/** Application imports */
 import {
     CommonLookupServiceProxy,
     SubscribableEditionComboboxItemDto,
     TenantServiceProxy,
-    TenantEditEditionDto, TenantEditDto
+    TenantEditEditionDto,
+    TenantEditDto,
+    ModuleType
 } from '@shared/service-proxies/service-proxies';
-import { Observable } from 'rxjs';
-import { groupBy, concatAll, toArray, map, mergeMap, filter, switchMap, publishReplay, refCount } from 'rxjs/operators';
-import values from 'lodash/values';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 
 @Injectable()
@@ -60,7 +67,10 @@ export class TenantsService {
                     return this.concatEditionsWithDefault(editions);
                 })
             )),
-            toArray()
+            toArray(),
+            map((items: SubscribableEditionComboboxItemDto[]) => items.sort((itemA, itemB) => {
+                return itemA[1].moduleId === ModuleType.CFO_Partner ? 1 : (itemB[1].moduleId === ModuleType.CFO_Partner ? -1 : 0);
+            }))
         );
     }
 
