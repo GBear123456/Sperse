@@ -71,6 +71,7 @@ export class RegisterComponent implements AfterViewInit, OnInit {
             content: this.document.getElementById('registerPopup').cloneNode(true)
         };
         messageContent['content'].style.display = 'block';
+        this.document.body.classList.add('overflow-hidden');
         swal(messageContent).then((result) => {
             if (result) {
                 this.register();
@@ -144,6 +145,7 @@ export class RegisterComponent implements AfterViewInit, OnInit {
                     swal(messageContent).then((res) => {
                         if (res) {
                             this.router.navigate([this.getMoreOptionsLink]);
+                            this.document.body.classList.remove('overflow-hidden');
                         }
                     });
                 }
@@ -151,12 +153,16 @@ export class RegisterComponent implements AfterViewInit, OnInit {
                 this.offersService.setIncompleteApplicationId(null);
                 applyOfferDialog.close();
             },
-            () => applyOfferDialog.close()
+            () => {
+                this.document.body.classList.remove('overflow-hidden');
+                applyOfferDialog.close();
+            }
         );
     }
 
     private completeApprove(modal): Promise<boolean> {
         modal.close('cancel');
+        this.document.body.classList.remove('overflow-hidden');
         return this.router.navigate(['/personal-finance/offers/personal-loans']);
     }
 
