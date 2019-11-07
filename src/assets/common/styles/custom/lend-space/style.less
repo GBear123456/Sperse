@@ -67,7 +67,9 @@ body.lend-space .swal-modal {
             height: 48px;
         }
         @media (max-width: 768px) {
-            display: none;
+            &:after {
+                display: none !important;
+            }
         }
     }
     @media (min-width: 768px) {

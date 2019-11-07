@@ -63,8 +63,8 @@ body.lend-space .swal-modal .swal-button.swal-button--confirm {
   }
 }
 @media (max-width: 768px) {
-  body.lend-space .swal-modal .swal-button.swal-button--confirm {
-    display: none;
+  body.lend-space .swal-modal .swal-button.swal-button--confirm:after {
+    display: none !important;
   }
 }
 @media (min-width: 768px) {

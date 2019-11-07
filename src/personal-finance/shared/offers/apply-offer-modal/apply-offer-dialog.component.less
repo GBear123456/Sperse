@@ -28,8 +28,8 @@
             }
             img {
                 margin-left: 5px;
-                max-width: 200px;
-                max-height: 100px;
+                max-width: calc(100% - 65px);
+                max-height: 60px;
             }
             @media (min-width: 768px) {
                 padding: 10px 60px;
@@ -82,18 +82,25 @@
         }
         .process-step {
             display: flex;
-            padding-left: 20px;
+            align-items: center;
             h4 {
-                margin-top: 4px;
                 margin-bottom: 0;
-                font-size: 18px;
+                font-size: 15px;
                 text-align: left;
+                margin-left: 35px;
+                @media (min-width: 768px) {
+                    font-size: 18px;
+                    margin-left: 60px;
+                }
             }
             .spinner {
                 height: 27px;
                 width: 27px;
-                margin-right: 30px;
+                position: absolute;
                 background: url('../../../../assets/common/icons/offers/spinner.svg') no-repeat;
+            }
+            @media (max-width: 767px) {
+                padding: 7px 10px !important;
             }
         }
 
@@ -116,6 +123,7 @@
 }
 /deep/ .cdk-overlay-container {
     .cdk-overlay-pane.apply-offer-dialog {
+        max-width: 90vw;
         .mat-dialog-container {
             overflow: visible;
             border-radius: 15px;
