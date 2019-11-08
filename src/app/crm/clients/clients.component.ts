@@ -384,7 +384,9 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                             userIds.push(customer.UserId);
                         }
                     });
-                    this.usersInstancesLoadingSubscription = this.crmService.getUsersWithInstances(userIds);
+                    if (this.appService.isCfoLinkOrVerifyEnabled) {
+                        this.usersInstancesLoadingSubscription = this.crmService.getUsersWithInstances(userIds);
+                    }
                 }
             }
         };

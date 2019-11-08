@@ -62,6 +62,7 @@ export class AppService extends AppServiceBase {
     private tenantSubscriptionProxy: TenantSubscriptionServiceProxy;
     private subscriptionBarsClosed = {};
     private subscriptionBarVisible: Boolean;
+    isCfoLinkOrVerifyEnabled: boolean;
 
     constructor(
         injector: Injector,
@@ -181,6 +182,9 @@ export class AppService extends AppServiceBase {
         this.notify = injector.get(NotifyService);
         this.appLocalizationService = injector.get(AppLocalizationService);
         this.tenantSubscriptionProxy = injector.get(TenantSubscriptionServiceProxy);
+        this.isCfoLinkOrVerifyEnabled = this.feature.isEnabled(AppFeatures.CFOPartner)
+            && !this.feature.isEnabled(AppFeatures.PFM)
+            && this.permission.isGranted(AppPermissions.CFOMembersAdministration);
 
         this.toolbarSubject = new Subject<undefined>();
         if (!this.isHostTenant && abp.session.userId) {
@@ -382,12 +386,6 @@ export class AppService extends AppServiceBase {
             else
                 this.notify.error(this.appLocalizationService.ls(AppConsts.localization.CRMLocalizationSourceName, 'CFOInstanceInactive'));
         });
-    }
-
-    get isCfoLinkOrVerifyEnabled() {
-        return this.feature.isEnabled(AppFeatures.CFOPartner)
-               && !this.feature.isEnabled(AppFeatures.PFM)
-               && this.permission.isGranted(AppPermissions.CFOMembersAdministration);
     }
 
     checkCFOClientAccessPermission() {
