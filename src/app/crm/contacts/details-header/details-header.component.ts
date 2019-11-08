@@ -580,11 +580,11 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
     }
 
     displaySelectedCompany(orgId, orgRelationId) {
-        this.loadingService.startLoading(true);
+        this.loadingService.startLoading();
         this.personContactInfo.orgRelationId = orgRelationId;
         this.initializePersonOrgRelationInfo();
         this.orgContactService.getOrganizationContactInfo(orgId)
-            .pipe(finalize(() => this.loadingService.finishLoading(true)))
+            .pipe(finalize(() => this.loadingService.finishLoading()))
             .subscribe((result) => {
                 this.data['organizationContactInfo'] = result;
                 this.contactsService.updateLocation(this.data.id, this.data['leadId'], result && result.id);

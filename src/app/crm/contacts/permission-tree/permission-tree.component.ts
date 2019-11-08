@@ -169,7 +169,7 @@ export class PermissionTreeComponent implements OnInit, OnDestroy {
                 itemsThatWhereDeselected.push(event.node);
             }
 
-            sub.pipe(finalize(() => this.loadingService.finishLoading(true))).subscribe(
+            sub.pipe(finalize(() => this.loadingService.finishLoading())).subscribe(
                 () => { this.notify.info(this.ls.l('SavedSuccessfully')); },
                 () => {
                     /** Revert changes if error happens */
