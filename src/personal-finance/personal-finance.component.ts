@@ -44,6 +44,7 @@ export class PersonalFinanceComponent extends AppComponentBase implements OnInit
                 this.wrapperEnabled = !event.snapshot.data.wrapperDisabled;
                 this.hideFooter = event.snapshot.data.hideFooter;
                 setTimeout(() => {
+                    window.scroll(0,0);
                     let url = event.snapshot.url[0];
                     this.setTitle(humanize(url && url.path || event.snapshot['_routerState']
                         .url.split('?').shift().split('/').pop()).replace(/\w\S*/g,
