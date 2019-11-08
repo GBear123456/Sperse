@@ -1,0 +1,25 @@
+<modal-dialog [title]="ls.l('NotificationSettings')"
+              [buttons]="buttons"
+              [editTitle]="false"
+              [titleClearButton]="false"
+              [placeholder]="ls.l('NotificationSettings')">
+    <dx-scroll-view showScrollbar="onHover">
+        <div class="modal-body" *ngIf="settings">
+            <h4>{{ls.l("ReceiveNotifications")}}</h4>
+            <div>
+                <dx-check-box [text]="ls.l('ReceiveNotifications_Definition')" [(value)]="settings.receiveNotifications"></dx-check-box>
+            </div>
+            <br>
+            <h4 *ngIf="settings.notifications.length" class="m--margin-top-20">{{ls.l("NotificationTypes")}}</h4>
+            <p *ngIf="settings.notifications.length && !settings.receiveNotifications" class="text-danger">
+                <small>{{ls.l("ReceiveNotifications_DisableInfo")}}</small>
+            </p>
+            <div class="m-checkbox-list">
+                <div *ngFor="let notification of settings.notifications">
+                    <dx-check-box [text]="notification.displayName" [(value)]="notification.isSubscribed"></dx-check-box>
+                    <span *ngIf="notification.description" class="help-block">{{notification.description}}</span>
+                </div>
+            </div>
+        </div>
+    </dx-scroll-view>
+</modal-dialog>

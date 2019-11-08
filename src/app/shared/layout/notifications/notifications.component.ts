@@ -30,15 +30,15 @@ export class NotificationsComponent implements OnInit {
     readStateFilter = 'ALL';
     loading = false;
     selectBoxList = [
-        {value: 'ALL', text: this.ls.l('All')},
-        {value: 'UNREAD', text: this.ls.l('Unread')}
+        { value: 'ALL', text: this.ls.l('All') },
+        { value: 'UNREAD', text: this.ls.l('Unread') }
     ];
 
     constructor(
         private dialog: MatDialog,
-        private _notificationService: NotificationServiceProxy,
-        private _userNotificationHelper: UserNotificationHelper,
-        private _changeDetectorRef: ChangeDetectorRef,
+        private notificationService: NotificationServiceProxy,
+        private userNotificationHelper: UserNotificationHelper,
+        private changeDetectorRef: ChangeDetectorRef,
         public ls: AppLocalizationService
     ) {}
 
@@ -49,21 +49,21 @@ export class NotificationsComponent implements OnInit {
 
     loadNotifications(): void {
         this.modalDialog.startLoading();
-        this._notificationService.getUserNotifications(undefined, 3, 0)
+        this.notificationService.getUserNotifications(undefined, 3, 0)
             .pipe(finalize(() => this.modalDialog.finishLoading()))
             .subscribe(result => {
                 this.unreadNotificationCount = result.unreadCount;
                 this.notifications = [];
                 $.each(result.items, (index, item: UserNotificationDto) => {
-                    this.notifications.push(this._userNotificationHelper.format(<any>item, false));
+                    this.notifications.push(this.userNotificationHelper.format(<any>item, false));
                 });
-                this._changeDetectorRef.detectChanges();
+                this.changeDetectorRef.detectChanges();
             });
     }
 
     registerToEvents() {
         abp.event.on('abp.notifications.received', userNotification => {
-            this._userNotificationHelper.show(userNotification);
+            this.userNotificationHelper.show(userNotification);
             this.loadNotifications();
         });
 
@@ -79,21 +79,21 @@ export class NotificationsComponent implements OnInit {
             }
 
             this.unreadNotificationCount -= 1;
-            this._changeDetectorRef.detectChanges();
+            this.changeDetectorRef.detectChanges();
         });
     }
 
     setAllNotificationsAsRead(): void {
-        this._userNotificationHelper.setAllAsRead();
+        this.userNotificationHelper.setAllAsRead();
     }
 
     openNotificationSettingsModal(e): void {
         this.dialog.closeAll();
-        this._userNotificationHelper.openSettingsModal(e);
+        this.userNotificationHelper.openSettingsModal(e);
     }
 
     setNotificationAsRead(userNotification: IFormattedUserNotification): void {
-        this._userNotificationHelper.setAsRead(userNotification.userNotificationId);
+        this.userNotificationHelper.setAsRead(userNotification.userNotificationId);
     }
 
     gotoUrl(url): void {

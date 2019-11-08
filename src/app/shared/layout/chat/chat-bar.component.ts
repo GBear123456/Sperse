@@ -216,7 +216,7 @@ export class ChatBarComponent implements OnInit, AfterViewInit {
         });
         const unreadMessageIds = unreadMessages && unreadMessages.map((message: ChatMessageDto) => message.id);
 
-        if (!unreadMessageIds.length) {
+        if (!unreadMessageIds || !unreadMessageIds.length) {
             return;
         }
 

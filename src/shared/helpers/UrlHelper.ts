@@ -12,7 +12,7 @@ export class UrlHelper {
         return search.replace(/(^\?)/, '').split('&').map(function (n) { return n = n.split('='), this[n[0]] = n[1], this; }.bind({}))[0];
     }
 
-    static getInitialUrlParameters(): any {
+    static getInitialUrlParameters(): string {
         let questionMarkIndex = UrlHelper.initialUrl.indexOf('?');
         if (questionMarkIndex >= 0) {
             return UrlHelper.initialUrl.substr(questionMarkIndex, UrlHelper.initialUrl.length - questionMarkIndex);
@@ -26,7 +26,6 @@ export class UrlHelper {
         if (queryStringObj.returnUrl) {
             return decodeURIComponent(queryStringObj.returnUrl);
         }
-
         return null;
     }
 
