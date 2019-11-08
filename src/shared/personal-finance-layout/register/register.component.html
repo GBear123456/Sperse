@@ -1,15 +1,12 @@
 <div id="registerPopup" style="display: none">
-    <img src="./assets/common/icons/offers/finalize.svg">
     <h1>{{ ls.l('FinalizeYourApplication') }}</h1>
     <h2>{{ firstName + ', ' + ls.l('PleaseClickBelow') }}</h2>
 </div>
 <div id="successPopup" style="display: none">
-    <img src="./assets/common/icons/offers/approved.svg">
     <h1>{{ ls.l('CongratulationsYourLoanHasBeenApproved') }}</h1>
     <h2>{{ ls.l('YouWillReceiveAnEmailWithYourCredentials') }}</h2>
 </div>
 <div id="failurePopup" style="display: none">
-    <img src="./assets/common/icons/offers/declined.svg">
-    <h1>{{ ls.l('WeAreSorryYouDeclined') }}</h1>
-    <h2>{{ ls.l('PleaseTryOtherOffers', 'PFM', firstName) }}</h2>
+    <h1>{{ ls.l('WeAreSorryYouDeclined', 'PFM', firstName) }}</h1>
+    <h2>{{ ls.l('PleaseTryOtherOffers') }}</h2>
 </div>

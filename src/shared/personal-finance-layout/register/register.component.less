@@ -13,6 +13,13 @@
         justify-content: center;
         padding-top: 20px;
 
+        &:before {
+            display: block;
+            height: 120px;
+            width: 131px;
+            margin: auto;
+        }
+
         .swal-content {
             margin-top: 0;
             h1 {
@@ -74,7 +81,17 @@
         }
     }
 
+    &.finalize {
+        &:before {
+            height: 131px;
+            content: url('../../../assets/common/icons/offers/finalize.svg');
+        }
+    }
+
     &.success {
+        &:before {
+            content: url('../../../assets/common/icons/offers/approved.svg');
+        }
         .swal-footer {
             .swal-button.swal-button--confirm {
                 background: #4dba0b;
@@ -90,10 +107,12 @@
                 }
             }
         }
-
     }
 
     &.failure {
+        &:before {
+            content: url('../../../assets/common/icons/offers/declined.svg');
+        }
         @media (min-width: 768px) {
             padding: 0 40px;
         }
