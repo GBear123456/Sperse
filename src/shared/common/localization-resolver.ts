@@ -22,7 +22,11 @@ export class LocalizationResolver implements CanActivateChild {
     ) {}
 
     canActivateChild(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
-        return this.checkLoadLocalization(route.data.localizationSource || AppConsts.localization.defaultLocalizationSourceName).pipe(
+        let defaultLocalization = AppConsts.localization.defaultLocalizationSourceName;
+        if (abp.localization.values[defaultLocalization] && this.session.tenant && this.session.tenant.customLayoutType === LayoutType.LendSpace)
+            defaultLocalization = 'PFM';
+
+        return this.checkLoadLocalization(route.data.localizationSource || defaultLocalization).pipe(
             tap(() => {
                 if (route.data.localizationSource)
                     this.ls.localizationSourceName = route.data.localizationSource;
@@ -34,7 +38,7 @@ export class LocalizationResolver implements CanActivateChild {
         let cultureName = abp.localization.currentLanguage.name,
             source: any = abp.localization.sources.find(item => item.name == sourceName);
         return abp.localization.values[sourceName] ? of(true) :
-            this._LocalizationServiceProxy.getLocalizationSource(Number(this.session.tenantId), 
+            this._LocalizationServiceProxy.getLocalizationSource(Number(this.session.tenantId),
                 sourceName, source ? source.version : undefined, cultureName, cultureName).pipe(
                     take(1),
                     mergeMap(result => {

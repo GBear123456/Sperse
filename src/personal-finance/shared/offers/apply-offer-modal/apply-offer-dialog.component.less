@@ -21,7 +21,7 @@
             background-clip: padding-box;
             box-shadow:  0 0 0 10px rgba(255,255,255,.2);
             background: #fff;
-            margin: 0 5px 20px 5px;
+            margin: 0 5px 50px 5px;
             padding: 10px;
             &:before {
                 content: url(../../../../assets/common/icons/next-arrow.svg);
@@ -34,7 +34,7 @@
             @media (min-width: 768px) {
                 padding: 10px 60px;
                 align-self: center;
-                margin: 0 0 20px 0;
+                margin: 0 0 60px 0;
                 img {
                     margin-left: 25px;
                     max-width: 250px;
@@ -133,6 +133,9 @@
             border-radius: 15px;
             padding: 0;
             margin: 0;
+            .mat-dialog-content {
+                max-height: 100vh;
+            }
         }
     }
 }
