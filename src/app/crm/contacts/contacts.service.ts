@@ -32,7 +32,8 @@ import { NotifyService } from '@abp/notify/notify.service';
 export class ContactsService {
     private verificationSubject: Subject<any> = new Subject<any>();
     private toolbarSubject: Subject<any> = new Subject<any>();
-    private userSubject: Subject<number> = new Subject<any>();
+    private userId: Subject<number> = new Subject<any>();
+    userId$: Observable<number> = this.userId.asObservable();
     private organizationUnits: ReplaySubject<any> = new ReplaySubject<any>(1);
     private organizationUnitsSave: Subject<any> = new Subject<any>();
     private invalidateSubject: Subject<any> = new Subject<any>();
@@ -94,18 +95,18 @@ export class ContactsService {
     }
 
     userSubscribe(callback, ident?: string) {
-        return this.subscribe(this.userSubject.asObservable().subscribe(callback), ident);
+        return this.subscribe(this.userId$.subscribe(callback), ident);
     }
 
-    userUpdate(userId) {
-        this.userSubject.next(userId);
+    updateUserId(userId: number) {
+        this.userId.next(userId);
     }
 
     invalidateUserData() {
         let userData = this.userService['data'];
         if (userData) {
             userData.raw = undefined;
-            this.userUpdate(userData.userId);
+            this.updateUserId(userData.userId);
         }
     }
 
