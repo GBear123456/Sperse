@@ -185,7 +185,7 @@ export class UserInformationComponent implements OnInit, OnDestroy {
             this.contactsService.contactInfoSubscribe((contactInfo) =>
                 this.userService.getUserForEdit(contactInfo.personContactInfo.userId || undefined)
                     .pipe(finalize(() => {
-                        this.loadingService.finishLoading(true);
+                        this.loadingService.finishLoading();
                     }))
                     .subscribe(userEditOutput => {
                         this.fillUserData(userEditOutput);
