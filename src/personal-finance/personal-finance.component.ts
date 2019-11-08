@@ -8,6 +8,7 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import humanize from 'underscore.string/humanize';
 import { AppFeatures } from '@shared/AppFeatures';
 import { LayoutType } from '@root/shared/service-proxies/service-proxies';
+import { OffersService } from '@root/personal-finance/shared/offers/offers.service';
 
 declare const Typekit: any;
 
@@ -16,7 +17,8 @@ declare const Typekit: any;
     styleUrls: [
         './shared/common/styles/apply-button.less',
         './personal-finance.component.less'
-    ]
+    ],
+    providers: [ OffersService ]
 })
 export class PersonalFinanceComponent extends AppComponentBase implements OnInit, OnDestroy {
     @HostBinding('class.pfm-app') hasPfmAppFeature = false;

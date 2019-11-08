@@ -13,7 +13,6 @@ import { FeatureCheckerService } from '@abp/features/feature-checker.service';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { UrlHelper } from '@shared/helpers/UrlHelper';
 import { AppFeatures } from '@shared/AppFeatures';
-import { OffersService } from '@root/personal-finance/shared/offers/offers.service';
 
 @Injectable()
 export class CreditReportsRouteGuard implements CanActivate, CanActivateChild {
@@ -22,8 +21,7 @@ export class CreditReportsRouteGuard implements CanActivate, CanActivateChild {
         private featureChecker: FeatureCheckerService,
         private permissionChecker: AppPermissionService,
         private router: Router,
-        private sessionService: AppSessionService,
-        private offersService: OffersService
+        private sessionService: AppSessionService
     ) {}
 
     canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {

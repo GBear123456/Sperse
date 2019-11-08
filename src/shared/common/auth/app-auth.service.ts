@@ -19,6 +19,7 @@ export class AppAuthService implements OnDestroy {
         }
         this.stopTokenCheck();
         abp.auth.clearToken();
+        abp.multiTenancy.setTenantIdCookie();
         if (reload !== false) {
             if (returnUrl) {
                 location.href = returnUrl;
