@@ -1,5 +1,6 @@
 /** Core imports */
 import {
+    ChangeDetectionStrategy,
     Component,
     Inject,
     ViewChild,
@@ -13,22 +14,22 @@ import { DxValidationGroupComponent } from 'devextreme-angular/ui/validation-gro
 
 /** Application imports */
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
-import { InputStatusesService } from '@shared/utils/input-statuses.service';
 import { OffersWizardService } from '@shared/offers-wizard/offers-wizard.service';
 
 @Component({
-  selector: 'app-wizard-centr-modal',
-  templateUrl: './wizard-center-modal.component.html',
-  styleUrls: ['./wizard-center-modal.component.less']
+    selector: 'app-wizard-centr-modal',
+    templateUrl: './wizard-center-modal.component.html',
+    styleUrls: ['./wizard-center-modal.component.less'],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class WizardCenterModalComponent {
     @ViewChild('stepper') stepper: MatHorizontalStepper;
     @ViewChild('lastValidationGroup') lastValidationGroup: DxValidationGroupComponent;
     dialogRef: MatDialogRef<WizardCenterModalComponent, any>;
+
     constructor(
         injector: Injector,
         public ls: AppLocalizationService,
-        public inputStatusesService: InputStatusesService,
         public offersWizardService: OffersWizardService,
         @Inject(MAT_DIALOG_DATA) public data: any
     ) {

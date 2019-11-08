@@ -69,8 +69,8 @@ body.lend-space .swal-modal .swal-button.swal-button--confirm {
 }
 @media (min-width: 768px) {
   body.lend-space .swal-modal {
-    width: 550px;
-    height: 326px;
+    min-width: 550px;
+    min-height: 326px;
   }
 }
 body.lend-space .swal-modal .swal-icon.swal-icon--error,

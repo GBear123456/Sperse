@@ -10,7 +10,7 @@ import * as moment from 'moment';
     styleUrls: ['./wizard-employment-payment-step.component.less']
 })
 export class WizardEmploymentPaymentStepComponent {
-    minDate = moment().toDate();
+    minDate = moment().add(1, 'day').toDate();
     constructor(
         public ls: AppLocalizationService,
         public inputStatusesService: InputStatusesService,
