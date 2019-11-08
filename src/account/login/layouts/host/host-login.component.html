@@ -1,8 +1,8 @@
 <div class="container-fluid" [@routerTransition]>
      <div class="row">
         <div class="col-md-12 col-sm-12 col-xs-12 text-center form-wrapper">
-            <h1 class="d-none d-md-block">{{tenantName}} {{l("Login")}}</h1>
-            <h1 class="d-md-none">{{l("Login")}}</h1>
+            <h1 class="d-none d-md-block">{{tenantName}} {{ls.l("Login")}}</h1>
+            <h1 class="d-md-none">{{ls.l("Login")}}</h1>
 
             <form #loginForm="ngForm" class="login-form" method="post" novalidate (ngSubmit)="login()">
 
@@ -12,7 +12,7 @@
                     <div class="form-group clearfix">
                         <div class="mt-checkbox-list pull-right">
                             <label class="mt-checkbox mt-checkbox-outline">
-                                <input class="form-control" [(ngModel)]="loginService.authenticateModel.rememberClient" type="checkbox" name="rememberMe" value="true" />{{l("RememberMe")}}
+                                <input class="form-control" [(ngModel)]="loginService.authenticateModel.rememberClient" type="checkbox" name="rememberMe" value="true" />{{ls.l("RememberMe")}}
                                 <span></span>
                             </label>
                         </div>
@@ -20,15 +20,15 @@
                 </div>
 
                 <div class="form-group clearfix">
-                    <input [(ngModel)]="loginService.authenticateModel.password" class="form-control form-control-solid placeholder-no-fix input-ltr" type="password" autocomplete="off" placeholder="{{l('Password')}}" name="password" required maxlength="32" tabindex="2" />
+                    <input [(ngModel)]="loginService.authenticateModel.password" class="form-control form-control-solid placeholder-no-fix input-ltr" type="password" autocomplete="off" placeholder="{{ls.l('Password')}}" name="password" required maxlength="32" tabindex="2" />
                     <div class="form-group clearfix">
-                        <a routerLink="/account/forgot-password" id="forget-password" class="forget-password pull-right">{{l("ForgotPassword")}}</a>
+                        <a routerLink="/account/forgot-password" id="forget-password" class="forget-password pull-right">{{ls.l("ForgotPassword")}}</a>
                     </div>
                 </div>
 
                 <div class="form-actions">
                     <button type="submit" class="submit" [disabled]="loginInProgress || !loginForm.form.valid">
-                        {{l("LoginBtn")}}
+                        {{ls.l("LoginBtn")}}
                         <img src="./assets/common/icons/arrow-right-long-icon.svg" alt="right arrow" class="pull-right">
                     </button>
                 </div>

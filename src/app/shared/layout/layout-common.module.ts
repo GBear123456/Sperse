@@ -15,14 +15,14 @@ import { DxCheckBoxModule } from 'devextreme-angular/ui/check-box';
 
 /** Application imports */
 import { SmsVerificationModalComponent } from '@app/shared/layout/profile/sms-verification-modal.component';
-import { HeaderNotificationsComponent } from './notifications/header-notifications.component';
+import { HeaderNotificationsComponent } from './notifications/header-notifications/header-notifications.component';
 import { LoginAttemptsModalComponent } from './login-attempts-modal/login-attempts-modal.component';
 import { ChangePasswordModalComponent } from './profile/change-password-modal.component';
 import { MySettingsModalComponent } from './profile/my-settings-modal.component';
 import { LinkedAccountsModalComponent } from './linked-accounts-modal/linked-accounts-modal.component';
 import { LinkAccountModalComponent } from './link-account-modal/link-account-modal.component';
 import { NotificationsComponent } from './notifications/notifications.component';
-import { NotificationSettingsModalComponent } from './notifications/notification-settings-modal.component';
+import { NotificationSettingsModalComponent } from './notifications/notification-settings-modal/notification-settings-modal.component';
 import { UserNotificationHelper } from './notifications/UserNotificationHelper';
 import { ChatBarComponent } from './chat/chat-bar.component';
 import { ChatMessageComponent } from './chat/chat-message.component';

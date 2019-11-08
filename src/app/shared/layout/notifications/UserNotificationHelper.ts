@@ -1,10 +1,15 @@
-import { Injectable, Injector } from '@angular/core';
-import { AppComponentBase } from '@shared/common/app-component-base';
-import { GuidEntityDto, NotificationServiceProxy } from '@shared/service-proxies/service-proxies';
-import * as moment from 'moment';
-import * as Push from 'push.js'; // if using ES6
-import { NotificationSettingsModalComponent } from './notification-settings-modal.component';
+/** Core imports */
+import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
+
+/** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
+import * as Push from 'push.js'; // if using ES6
+import * as moment from 'moment';
+
+/** Application imports */
+import { GuidEntityDto, NotificationServiceProxy } from '@shared/service-proxies/service-proxies';
+import { NotificationSettingsModalComponent } from './notification-settings-modal/notification-settings-modal.component';
 
 export interface IFormattedUserNotification {
     userNotificationId: string;
@@ -19,21 +24,19 @@ export interface IFormattedUserNotification {
 }
 
 @Injectable()
-export class UserNotificationHelper extends AppComponentBase {
+export class UserNotificationHelper {
     constructor(
-        injector: Injector,
         private dialog: MatDialog,
-        private _notificationService: NotificationServiceProxy
-    ) {
-        super(injector);
-    }
+        private notificationService: NotificationServiceProxy,
+        private router: Router
+    ) {}
 
-    getUrl(userNotification: abp.notifications.IUserNotification): string {
+    private static getUrl(userNotification: abp.notifications.IUserNotification): string {
         switch (userNotification.notification.notificationName) {
             case 'App.NewUserRegistered':
                 return '/app/admin/users?filterText=' + userNotification.notification.data.properties.emailAddress;
             case 'App.NewTenantRegistered':
-                return '/app/crm/tenants?filterText=' + userNotification.notification.data.properties.tenancyName;
+                return '/app/admin/tenants?filterText=' + userNotification.notification.data.properties.tenancyName;
             //Add your custom notification names to navigate to a URL when user clicks to a notification.
         }
 
@@ -41,9 +44,7 @@ export class UserNotificationHelper extends AppComponentBase {
         return '';
     }
 
-    /* PUBLIC functions ******************************************/
-
-    getUiIconBySeverity(severity: abp.notifications.severity): string {
+    private static getUiIconBySeverity(severity: abp.notifications.severity): string {
         switch (severity) {
             case abp.notifications.severity.SUCCESS:
                 return 'fa fa-check';
@@ -59,16 +60,18 @@ export class UserNotificationHelper extends AppComponentBase {
         }
     }
 
+    /* PUBLIC functions ******************************************/
+
     format(userNotification: abp.notifications.IUserNotification, truncateText?: boolean): IFormattedUserNotification {
         let formatted: IFormattedUserNotification = {
             userNotificationId: userNotification.id,
             text: abp.notifications.getFormattedMessageFromUserNotification(userNotification),
             time: moment(userNotification.notification.creationTime).format('YYYY-MM-DD HH:mm:ss'),
             creationTime: userNotification.notification.creationTime,
-            icon: this.getUiIconBySeverity(userNotification.notification.severity),
+            icon: UserNotificationHelper.getUiIconBySeverity(userNotification.notification.severity),
             state: abp.notifications.getUserNotificationStateAsString(userNotification.state),
             data: userNotification.notification.data,
-            url: this.getUrl(userNotification),
+            url: UserNotificationHelper.getUrl(userNotification),
             isUnread: userNotification.state === abp.notifications.userNotificationState.UNREAD
         };
 
@@ -85,9 +88,9 @@ export class UserNotificationHelper extends AppComponentBase {
         abp.notifications.showUiNotifyForUserNotification(userNotification, {
             'onclick': () => {
                 //Take action when user clicks to live toastr notification
-                let url = this.getUrl(userNotification);
+                let url = UserNotificationHelper.getUrl(userNotification);
                 if (url) {
-                    location.href = url;
+                    this.router.navigate([url]);
                 }
             }
         });
@@ -105,7 +108,7 @@ export class UserNotificationHelper extends AppComponentBase {
     }
 
     setAllAsRead(callback?: () => void): void {
-        this._notificationService.setAllNotificationsAsRead().subscribe(() => {
+        this.notificationService.setAllNotificationsAsRead().subscribe(() => {
             abp.event.trigger('app.notifications.refresh');
             if (callback) {
                 callback();
@@ -116,7 +119,7 @@ export class UserNotificationHelper extends AppComponentBase {
     setAsRead(userNotificationId: string, callback?: (userNotificationId: string) => void): void {
         const input = new GuidEntityDto();
         input.id = userNotificationId;
-        this._notificationService.setNotificationAsRead(input).subscribe(() => {
+        this.notificationService.setNotificationAsRead(input).subscribe(() => {
             abp.event.trigger('app.notifications.read', userNotificationId);
             if (callback) {
                 callback(userNotificationId);
