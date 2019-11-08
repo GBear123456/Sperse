@@ -342,7 +342,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
         this.personContactInfo = result.personContactInfo;
         this.initVerificationChecklist();
 
-        this.contactsService.userUpdate(
+        this.contactsService.updateUserId(
             this.userService['data'].userId = this.primaryContact.userId
         );
         this.initNavLinks(this.primaryContact);
@@ -777,7 +777,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
 
     onContactSelected(contact) {
         this.initNavLinks(contact);
-        this.contactsService.userUpdate(
+        this.contactsService.updateUserId(
             this.userService['data'].userId = contact.userId);
     }
 

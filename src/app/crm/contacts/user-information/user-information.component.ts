@@ -53,9 +53,9 @@ export class UserInformationComponent implements OnInit, OnDestroy {
     readonly LOCKOUT_FIELD = 'isLockoutEnabled';
 
     selectedTabIndex = this.GENERAL_TAB_INDEX;
-    isEditAllowed = false;
-    isInviteAllowed = false;
-    changeRolesAllowed = false;
+    isEditAllowed = this.permissionService.isGranted(AppPermissions.AdministrationUsersEdit);
+    isInviteAllowed = this.permissionService.isGranted(AppPermissions.AdministrationUsersCreate);
+    changeRolesAllowed = this.permissionService.isGranted(AppPermissions.AdministrationUsersChangePermissionsAndRoles);
     phoneInplaceEdit = false;
     initialPhoneNumber: any;
     roles: any = [];
@@ -89,6 +89,7 @@ export class UserInformationComponent implements OnInit, OnDestroy {
         'emailAddress': [{ type: 'pattern', pattern: this.emailRegEx, message: this.ls.l('InvalidEmailAddress') }, { type: 'required', message: this.ls.l('EmailIsRequired') }]
     };
     orgUnitsDisabled;
+    dataIsloading = false;
     @HostListener('window:resize') onResize() {
         if (this.orgUnitsDisabled = (innerWidth > 1200))
             if (this.selectedTabIndex == this.ORG_UNITS_TAB_INDEX)
@@ -96,8 +97,6 @@ export class UserInformationComponent implements OnInit, OnDestroy {
     }
 
     constructor(
-        public dialog: MatDialog,
-        public phoneFormatPipe: PhoneFormatPipe,
         private userService: UserServiceProxy,
         private contactsService: ContactsService,
         private personContactServiceProxy: PersonContactServiceProxy,
@@ -108,44 +107,46 @@ export class UserInformationComponent implements OnInit, OnDestroy {
         private loadingService: LoadingService,
         private notify: NotifyService,
         private elementRef: ElementRef,
+        public dialog: MatDialog,
+        public phoneFormatPipe: PhoneFormatPipe,
         public ls: AppLocalizationService
-    ) {
-        contactsService.userSubscribe((userId) => {
-            this.data = userService['data'];
-            this.data.userId = userId;
-            this.checkShowInviteForm();
-        }, this.constructor.name);
-
-        contactsService.orgUnitsSaveSubscribe((data) => {
-            this.data.raw.memberedOrganizationUnits = [];
-            (this.selectedOrgUnits = data).forEach((item) => {
-                this.data.raw.memberedOrganizationUnits.push(
-                    this.data.raw.allOrganizationUnits.find((organizationUnit) => {
-                        return organizationUnit.id === item;
-                    })['code']
-                );
-            });
-        }, this.constructor.name);
-
-        if (!(this.roles = roleServiceProxy['data']))
-            roleServiceProxy.getRoles(undefined, undefined).subscribe((res) => {
-                roleServiceProxy['data'] = this.roles = res.items;
-                this.updateInviteDataRoles();
-            });
-
-        this.isEditAllowed = this.permissionService.isGranted(AppPermissions.AdministrationUsersEdit);
-        this.isInviteAllowed = this.permissionService.isGranted(AppPermissions.AdministrationUsersCreate);
-        this.changeRolesAllowed = this.permissionService.isGranted(AppPermissions.AdministrationUsersChangePermissionsAndRoles);
-    }
+    ) {}
 
     ngOnInit() {
         this.onResize();
         this.contactInfoData = this.contactService['data'];
+        this.contactsService.userSubscribe(
+            (userId) => {
+                this.data = this.userService['data'];
+                this.data.userId = userId;
+                if (userId)
+                    this.loadData();
+                else
+                    setTimeout(() => this.checkShowInviteForm(), 500);
+            },
+            this.constructor.name
+        );
+
+        this.contactsService.orgUnitsSaveSubscribe(
+            (data) => {
+                this.data.raw.memberedOrganizationUnits = [];
+                (this.selectedOrgUnits = data).forEach((item) => {
+                    this.data.raw.memberedOrganizationUnits.push(
+                        this.data.raw.allOrganizationUnits.find((organizationUnit) => {
+                            return organizationUnit.id === item;
+                        })['code']
+                    );
+                });
+            },
+            this.constructor.name
+        );
+
+        if (!(this.roles = this.roleServiceProxy['data']))
+            this.roleServiceProxy.getRoles(undefined, undefined).subscribe((res) => {
+                this.roleServiceProxy['data'] = this.roles = res.items;
+                this.updateInviteDataRoles();
+            });
         this.updateInviteDataRoles();
-        if ((this.data = this.userService['data']).userId)
-            this.loadData();
-        else
-            setTimeout(() => this.checkShowInviteForm(), 500);
     }
 
     private updateInviteDataRoles() {
@@ -180,16 +181,17 @@ export class UserInformationComponent implements OnInit, OnDestroy {
     loadData() {
         if (this.data && this.data.raw && this.data.raw.user.id == this.data.userId)
             this.fillUserData(this.data['raw']);
-        else if (!this.loadingService.loading) {
+        else if (!this.dataIsloading) {
             this.loadingService.startLoading();
-            this.contactsService.contactInfoSubscribe((contactInfo) =>
-                this.userService.getUserForEdit(contactInfo.personContactInfo.userId || undefined)
-                    .pipe(finalize(() => {
-                        this.loadingService.finishLoading();
-                    }))
-                    .subscribe(userEditOutput => {
-                        this.fillUserData(userEditOutput);
-                    }), this.constructor.name
+            this.dataIsloading = true;
+            this.contactsService.contactInfoSubscribe(
+            (contactInfo) => this.userService.getUserForEdit(contactInfo.personContactInfo.userId || undefined)
+                .pipe(finalize(() => {
+                    this.dataIsloading = false;
+                    this.loadingService.finishLoading();
+                }))
+                .subscribe(userEditOutput => this.fillUserData(userEditOutput)),
+                this.constructor.name
             );
         }
     }

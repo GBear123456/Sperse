@@ -6,9 +6,9 @@
               [dataSource]="userLoginAttempts"
               (onRowPrepared)="onRowPrepared($event)">
     <dxi-column dataField="result" caption="" cellTemplate="statusTemplate"></dxi-column>
-    <dxi-column dataField="clientIpAddress" caption="{{l('IpAddress')}}"></dxi-column>
-    <dxi-column dataField="creationTime" caption="{{l('Time')}}" cellTemplate="dateTemplate"></dxi-column>
-    <dxi-column dataField="browserInfo" caption="{{l('Browser')}}" width="500px"></dxi-column>
+    <dxi-column dataField="clientIpAddress" [caption]="ls.l('IpAddress')"></dxi-column>
+    <dxi-column dataField="creationTime" [caption]="ls.l('Time')" cellTemplate="dateTemplate"></dxi-column>
+    <dxi-column dataField="browserInfo" [caption]="ls.l('Browser')" width="500px"></dxi-column>
 
     <div *dxTemplate="let cell of 'dateTemplate'">
         {{cell.data.creationTime | timeAgo}} ({{cell.data.creationTime | date: 'yyyy-MM-dd hh:mm:ss' : userTimezone}})
