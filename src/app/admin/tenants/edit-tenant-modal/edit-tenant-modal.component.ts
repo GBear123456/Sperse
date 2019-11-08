@@ -48,7 +48,7 @@ export class EditTenantModalComponent implements OnInit {
     @ViewChild('nameInput') nameInput: ElementRef;
     @ViewChild('SubscriptionEndDateUtc') subscriptionEndDateUtc: ElementRef;
     @ViewChild(ModulesEditionsSelectComponent) editionsSelect: ModulesEditionsSelectComponent;
-    @ViewChild('featureTree') featureTree: FeatureTreeComponent;
+    @ViewChild(FeatureTreeComponent) featureTree: FeatureTreeComponent;
     @Output() modalSave: EventEmitter<any> = new EventEmitter<any>();
 
     tenant: TenantEditDto;

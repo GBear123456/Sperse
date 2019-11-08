@@ -53,7 +53,7 @@ export class CreateOrEditEditionModalComponent implements AfterViewChecked, OnIn
     isWaitingDayActive = false;
     editData;
     active = false;
-    title: string;
+    title: string = this.data.editionId ? '' : this.ls.l('CreateNewEdition');
     buttons: IDialogButton[] = [
         {
             title: this.ls.l('Save'),
@@ -71,9 +71,7 @@ export class CreateOrEditEditionModalComponent implements AfterViewChecked, OnIn
         private changeDetector: ChangeDetectorRef,
         public ls: AppLocalizationService,
         @Inject(MAT_DIALOG_DATA) private data: any
-    ) {
-        this.title = this.data.editionId ? '' : this.ls.l('CreateNewEdition');
-    }
+    ) {}
 
     ngOnInit() {
         this.modalDialog.startLoading();
