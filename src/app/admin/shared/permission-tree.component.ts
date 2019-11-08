@@ -1,14 +1,13 @@
-import { AfterViewChecked, AfterViewInit, Component, ElementRef, Injector, Input, OnInit } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, Input } from '@angular/core';
 import { PermissionTreeEditModel } from '@app/admin/shared/permission-tree-edit.model';
-import { AppComponentBase } from '@shared/common/app-component-base';
-import map from 'lodash/map';
 import includes from 'lodash/includes';
+import { FlatPermissionDto } from '@shared/service-proxies/service-proxies';
 
 @Component({
     selector: 'permission-tree',
     template: '<div class="permission-tree"></div>'
 })
-export class PermissionTreeComponent extends AppComponentBase implements OnInit, AfterViewInit, AfterViewChecked {
+export class PermissionTreeComponent implements AfterViewInit {
 
     @Input() set editData(val: PermissionTreeEditModel) {
         if (val) {
@@ -17,37 +16,26 @@ export class PermissionTreeComponent extends AppComponentBase implements OnInit,
         }
     }
 
-    private _$tree: JQuery;
+    private $tree: JQuery;
     private _editData: PermissionTreeEditModel;
-    private _createdTreeBefore;
+    private createdTreeBefore;
 
-    constructor(private _element: ElementRef,
-        injector: Injector
-    ) {
-        super(injector);
-    }
-
-    ngOnInit(): void {
-    }
+    constructor(private element: ElementRef) {}
 
     ngAfterViewInit(): void {
-        this._$tree = $(this._element.nativeElement);
+        this.$tree = $(this.element.nativeElement);
 
         this.refreshTree();
     }
 
-    ngAfterViewChecked(): void {
-
-    }
-
     getGrantedPermissionNames(): string[] {
-        if (!this._$tree || !this._createdTreeBefore) {
+        if (!this.$tree || !this.createdTreeBefore) {
             return [];
         }
 
         let permissionNames = [];
 
-        let selectedPermissions = this._$tree.jstree('get_selected', true);
+        let selectedPermissions = this.$tree.jstree('get_selected', true);
         for (let i = 0; i < selectedPermissions.length; i++) {
             permissionNames.push(selectedPermissions[i].original.id);
         }
@@ -58,29 +46,29 @@ export class PermissionTreeComponent extends AppComponentBase implements OnInit,
     refreshTree(): void {
         let self = this;
 
-        if (this._createdTreeBefore) {
-            this._$tree.jstree('destroy');
+        if (this.createdTreeBefore) {
+            this.$tree.jstree('destroy');
         }
 
-        this._createdTreeBefore = false;
+        this.createdTreeBefore = false;
 
-        if (!this._editData || !this._$tree) {
+        if (!this._editData || !this.$tree) {
             return;
         }
 
-        let treeData = map(this._editData.permissions, function (item) {
+        let treeData = this._editData.permissions.map((permission: FlatPermissionDto) => {
             return {
-                id: item.name,
-                parent: item.parentName ? item.parentName : '#',
-                text: item.displayName,
+                id: permission.name,
+                parent: permission.parentName ? permission.parentName : '#',
+                text: permission.displayName,
                 state: {
                     opened: true,
-                    selected: includes(self._editData.grantedPermissionNames, item.name)
+                    selected: includes(self._editData.grantedPermissionNames, permission.name)
                 }
             };
         });
 
-        this._$tree.jstree({
+        this.$tree.jstree({
             'core': {
                 data: treeData
             },
@@ -100,19 +88,19 @@ export class PermissionTreeComponent extends AppComponentBase implements OnInit,
             plugins: ['checkbox', 'types']
         });
 
-        this._createdTreeBefore = true;
+        this.createdTreeBefore = true;
 
         let inTreeChangeEvent = false;
 
         function selectNodeAndAllParents(node) {
-            self._$tree.jstree('select_node', node, true);
-            let parent = self._$tree.jstree('get_parent', node);
+            self.$tree.jstree('select_node', node, true);
+            let parent = self.$tree.jstree('get_parent', node);
             if (parent) {
                 selectNodeAndAllParents(parent);
             }
         }
 
-        this._$tree.on('changed.jstree', function (e, data) {
+        this.$tree.on('changed.jstree', function (e, data) {
             if (!data.node) {
                 return;
             }
@@ -125,14 +113,14 @@ export class PermissionTreeComponent extends AppComponentBase implements OnInit,
             let childrenNodes;
 
             if (data.node.state.selected) {
-                selectNodeAndAllParents(self._$tree.jstree('get_parent', data.node));
+                selectNodeAndAllParents(self.$tree.jstree('get_parent', data.node));
 
-                childrenNodes = $.makeArray(self._$tree.jstree('get_node', data.node).children);
-                self._$tree.jstree('select_node', childrenNodes);
+                childrenNodes = $.makeArray(self.$tree.jstree('get_node', data.node).children);
+                self.$tree.jstree('select_node', childrenNodes);
 
             } else {
-                childrenNodes = $.makeArray(self._$tree.jstree('get_node', data.node).children);
-                self._$tree.jstree('deselect_node', childrenNodes);
+                childrenNodes = $.makeArray(self.$tree.jstree('get_node', data.node).children);
+                self.$tree.jstree('deselect_node', childrenNodes);
             }
 
             if (!wasInTreeChangeEvent) {

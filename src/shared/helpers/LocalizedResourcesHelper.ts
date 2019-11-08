@@ -1,4 +1,3 @@
-import filter from 'lodash/filter';
 import * as rtlDetect from 'rtl-detect';
 
 export class LocalizedResourcesHelper {
@@ -114,7 +113,7 @@ export class LocalizedResourcesHelper {
             'zh_TW'];
 
         const mappedCulture = LocalizedResourcesHelper.mapCultureForBootstrapSelect(currentCulture);
-        const foundCultures = filter(supportedCultures, sc => sc.indexOf(mappedCulture) === 0);
+        const foundCultures = supportedCultures.filter(sc => sc.indexOf(mappedCulture) === 0);
         if (foundCultures && foundCultures.length > 0) {
             return foundCultures[0];
         }
@@ -180,7 +179,7 @@ export class LocalizedResourcesHelper {
             'zh-TW'];
 
         let mappedCulture = LocalizedResourcesHelper.mapCultureForTimeago(currentCulture);
-        let foundCultures = filter(supportedCultures, sc => sc.indexOf(mappedCulture) === 0);
+        let foundCultures = supportedCultures.filter(sc => sc.indexOf(mappedCulture) === 0);
         if (foundCultures && foundCultures.length > 0) {
             return foundCultures[0];
         }

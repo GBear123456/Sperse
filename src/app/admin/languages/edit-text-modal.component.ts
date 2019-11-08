@@ -11,7 +11,7 @@ import {
 
 /** Third party imports */
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import find from 'lodash/find';
+import { finalize } from 'rxjs/operators';
 
 /** Application imports */
 import { LanguageServiceProxy, UpdateLanguageTextInput } from '@shared/service-proxies/service-proxies';
@@ -19,7 +19,6 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
 import { NotifyService } from '@abp/notify/notify.service';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
-import { finalize } from '@node_modules/rxjs/internal/operators';
 
 @Component({
     selector: 'editTextModal',
@@ -31,11 +30,10 @@ export class EditTextModalComponent {
     @ViewChild(ModalDialogComponent) modalDialog: ModalDialogComponent;
     @Output() modalSave: EventEmitter<any> = new EventEmitter<any>();
 
-    model: UpdateLanguageTextInput = new UpdateLanguageTextInput();
-    baseText: string;
-    baseLanguage: abp.localization.ILanguageInfo;
-    targetLanguage: abp.localization.ILanguageInfo;
-
+    model: UpdateLanguageTextInput = new UpdateLanguageTextInput(this.data);
+    baseText: string = this.data.baseValue;
+    baseLanguage: abp.localization.ILanguageInfo = this.findLanguage(this.data.baseLanguageName);
+    targetLanguage: abp.localization.ILanguageInfo = this.findLanguage(this.data.targetLanguageName);
     active = false;
     title = this.ls.l('EditText');
     buttons: IDialogButton[] = [
@@ -47,38 +45,29 @@ export class EditTextModalComponent {
     ];
 
     constructor(
-        private _languageService: LanguageServiceProxy,
-        private _dialogRef: MatDialogRef<EditTextModalComponent>,
-        private _notifyServer: NotifyService,
+        private languageService: LanguageServiceProxy,
+        private dialogRef: MatDialogRef<EditTextModalComponent>,
+        private notifyServer: NotifyService,
         public ls: AppLocalizationService,
         @Inject(MAT_DIALOG_DATA) private data: any
-    ) {
-        this.model.sourceName = this.data.sourceName;
-        this.model.key = this.data.key;
-        this.model.languageName = this.data.targetLanguageName;
-        this.model.value = this.data.targetValue;
-
-        this.baseText = this.data.baseValue;
-        this.baseLanguage = find(abp.localization.languages, l => l.name === this.data.baseLanguageName);
-        this.targetLanguage = find(abp.localization.languages, l => l.name === this.data.targetLanguageName);
-    }
+    ) {}
 
     save(): void {
         this.modalDialog.startLoading();
-        this._languageService.updateLanguageText(this.model)
+        this.languageService.updateLanguageText(this.model)
             .pipe(finalize(() => this.modalDialog.finishLoading()))
             .subscribe(() => {
-                this._notifyServer.info(this.ls.l('SavedSuccessfully'));
+                this.notifyServer.info(this.ls.l('SavedSuccessfully'));
                 this.close();
                 this.modalSave.emit(null);
             });
     }
 
     close(): void {
-        this._dialogRef.close();
+        this.dialogRef.close();
     }
 
     private findLanguage(name: string): abp.localization.ILanguageInfo {
-        return find(abp.localization.languages, l => l.name === name);
+        return abp.localization.languages.find((l: abp.localization.ILanguageInfo) => l.name === name);
     }
 }

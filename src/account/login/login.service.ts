@@ -1,10 +1,18 @@
+/** Core imports */
+import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
+
+/** Third party imports */
+import { MatDialog } from '@angular/material/dialog';
+import { Observable } from 'rxjs';
+import { finalize, map, publishReplay, refCount } from 'rxjs/operators';
+
+/** Application imports */
 import { AppAuthService } from '@shared/common/auth/app-auth.service';
 import { TokenService } from '@abp/auth/token.service';
 import { LogService } from '@abp/log/log.service';
 import { MessageService } from '@abp/message/message.service';
 import { UtilsService } from '@abp/utils/utils.service';
-import { Injectable } from '@angular/core';
-import { Router } from '@angular/router';
 import { AppConsts } from '@shared/AppConsts';
 import { UrlHelper } from '@shared/helpers/UrlHelper';
 import {
@@ -20,10 +28,6 @@ import {
     SignUpMemberResponse,
     SignUpMemberRequest
 } from '@shared/service-proxies/service-proxies';
-import map from 'lodash/map';
-import { finalize, map as _map, publishReplay, refCount } from 'rxjs/operators';
-import { Observable } from 'rxjs';
-import { MatDialog } from '@angular/material/dialog';
 import { RegisterConfirmComponent } from '@shared/common/dialogs/register-confirm/register-confirm.component';
 import { AppFeatures } from '@shared/AppFeatures';
 
@@ -74,14 +78,14 @@ export class LoginService {
     externalLoginProviders$: Observable<ExternalLoginProvider[]>;
 
     constructor(
-        private _tokenAuthService: TokenAuthServiceProxy,
-        private _router: Router,
-        private _utilsService: UtilsService,
-        private _messageService: MessageService,
-        private _tokenService: TokenService,
-        private _logService: LogService,
-        private _accountService: AccountServiceProxy,
-        private _authService: AppAuthService,
+        private tokenAuthService: TokenAuthServiceProxy,
+        private router: Router,
+        private utilsService: UtilsService,
+        private messageService: MessageService,
+        private tokenService: TokenService,
+        private logService: LogService,
+        private accountService: AccountServiceProxy,
+        private authService: AppAuthService,
         public dialog: MatDialog
     ) {
         this.clear();
@@ -102,20 +106,20 @@ export class LoginService {
 
     authenticate(finallyCallback?: () => void, redirectUrl?: string, autoDetectTenancy: boolean = true): void {
         finallyCallback = finallyCallback || (() => { });
-        this._authService.stopTokenCheck();
+        this.authService.stopTokenCheck();
 
         //We may switch to localStorage instead of cookies
-        this.authenticateModel.twoFactorRememberClientToken = this._utilsService.getCookieValue(LoginService.twoFactorRememberClientTokenName);
+        this.authenticateModel.twoFactorRememberClientToken = this.utilsService.getCookieValue(LoginService.twoFactorRememberClientTokenName);
         this.authenticateModel.singleSignIn = UrlHelper.getSingleSignIn();
         this.authenticateModel.returnUrl = UrlHelper.getReturnUrl();
         this.authenticateModel.autoDetectTenancy = autoDetectTenancy;
 
-        this._tokenAuthService
+        this.tokenAuthService
             .authenticate(this.authenticateModel)
             .pipe(finalize(finallyCallback))
             .subscribe((result: AuthenticateResultModel) => {
                 this.processAuthenticateResult(result, redirectUrl);
-                this._authService.startTokenCheck();
+                this.authService.startTokenCheck();
             });
     }
 
@@ -123,7 +127,7 @@ export class LoginService {
         finallyCallback = finallyCallback || (() => { });
 
         this.resetPasswordModel.autoDetectTenancy = autoDetectTenancy;
-        this._accountService
+        this.accountService
             .sendPasswordResetCode(this.resetPasswordModel)
             .pipe(finalize(finallyCallback))
             .subscribe((result: SendPasswordResetCodeOutput) => {
@@ -134,19 +138,19 @@ export class LoginService {
                 }
 
                 if (result.detectedTenancies.length > 1) {
-                    this._router.navigate(['account/select-tenant']);
+                    this.router.navigate(['account/select-tenant']);
                 } else {
-                    this._messageService.success(
+                    this.messageService.success(
                         abp.localization.localize('PasswordResetMailSentMessage', 'Platform'),
                         abp.localization.localize('MailSent', 'Platform')
-                    ).done(() => { this._router.navigate(['account/login']); });
+                    ).done(() => { this.router.navigate(['account/login']); });
                 }
             });
     }
 
     externalAuthenticate(provider: ExternalLoginProvider): void {
         this.ensureExternalLoginProviderInitialized(provider, () => {
-            this._authService.stopTokenCheck();
+            this.authService.stopTokenCheck();
             if (provider.name === ExternalLoginProvider.FACEBOOK) {
                 this.facebookLogin();
             } else if (provider.name === ExternalLoginProvider.GOOGLE) {
@@ -158,7 +162,7 @@ export class LoginService {
                     scope: ['wl.signin', 'wl.basic', 'wl.emails']
                 });
             }
-            this._authService.startTokenCheck();
+            this.authService.startTokenCheck();
         });
     }
 
@@ -183,7 +187,7 @@ export class LoginService {
             // Password reset
 
             let tenantId = authenticateResult.detectedTenancies[0].id;
-            this._router.navigate(['account/reset-password'], {
+            this.router.navigate(['account/reset-password'], {
                 queryParams: {
                     userId: authenticateResult.userId,
                     tenantId: tenantId,
@@ -198,7 +202,7 @@ export class LoginService {
             let tenantId = authenticateResult.detectedTenancies[0].id;
             abp.multiTenancy.setTenantIdCookie(tenantId);
 
-            this._router.navigate(['account/send-code']);
+            this.router.navigate(['account/send-code']);
 
         } else if (authenticateResult.accessToken) {
             // Successfully logged in
@@ -223,13 +227,13 @@ export class LoginService {
                 panelClass: ['confirm-register'],
                 data: {
                     authenticateResult: authenticateResult,
-                    routerUrl: this._router.routerState.snapshot.url.split('?')[0].split('/').pop()
+                    routerUrl: this.router.routerState.snapshot.url.split('?')[0].split('/').pop()
                 }
             }).afterClosed().subscribe(result => {
                 if (result) {
                     abp.ui.setBusy();
                     this.externalLoginModal.autoRegistration = true;
-                    this._tokenAuthService.externalAuthenticate(this.externalLoginModal)
+                    this.tokenAuthService.externalAuthenticate(this.externalLoginModal)
                         .pipe(finalize(() => abp.ui.clearBusy()))
                         .subscribe((result: ExternalAuthenticateResultModel) => {
                             this.processAuthenticateResult(result, result.returnUrl || AppConsts.appBaseUrl);
@@ -238,19 +242,19 @@ export class LoginService {
             });
         } else if (authenticateResult.detectedTenancies.length > 1) {
             //Select tenant
-            this._router.navigate(['account/select-tenant']);
+            this.router.navigate(['account/select-tenant']);
         } else {
             // Unexpected result!
 
-            this._logService.warn('Unexpected authenticateResult!');
-            this._router.navigate(['account/login']);
+            this.logService.warn('Unexpected authenticateResult!');
+            this.router.navigate(['account/login']);
 
         }
     }
 
     signUpMember(data: SignUpMemberRequest) {
         abp.ui.setBusy();
-        this._accountService.signUpMember(data)
+        this.accountService.signUpMember(data)
             .pipe(finalize(() => {
                 abp.ui.clearBusy();
             }))
@@ -263,7 +267,7 @@ export class LoginService {
     }
 
     private login(accessToken: string, encryptedAccessToken: string, expireInSeconds: number, rememberMe?: boolean, twoFactorRememberClientToken?: string, redirectUrl?: string): void {
-        this._authService.setLoginCookies(accessToken, encryptedAccessToken, expireInSeconds, rememberMe, twoFactorRememberClientToken, redirectUrl);
+        this.authService.setLoginCookies(accessToken, encryptedAccessToken, expireInSeconds, rememberMe, twoFactorRememberClientToken, redirectUrl);
 
         redirectUrl = redirectUrl || sessionStorage.getItem('redirectUrl');
         if (redirectUrl)
@@ -287,12 +291,12 @@ export class LoginService {
     }
 
     private initExternalLoginProviders() {
-        this.externalLoginProviders$ = this._tokenAuthService
+        this.externalLoginProviders$ = this.tokenAuthService
             .getExternalAuthenticationProviders()
             .pipe(
                 publishReplay(),
                 refCount(),
-                _map((providers: ExternalLoginProviderInfoModel[]) => map(providers, p => new ExternalLoginProvider(p)))
+                map((providers: ExternalLoginProviderInfoModel[]) => providers.map(p => new ExternalLoginProvider(p)))
             );
     }
 
@@ -345,10 +349,10 @@ export class LoginService {
             model.singleSignIn = UrlHelper.getSingleSignIn();
             model.returnUrl = UrlHelper.getReturnUrl();
 
-            this._tokenAuthService.externalAuthenticate(model)
+            this.tokenAuthService.externalAuthenticate(model)
                 .subscribe((result: ExternalAuthenticateResultModel) => {
                     if (result.waitingForActivation) {
-                        this._messageService.info('You have successfully registered. Waiting for activation!');
+                        this.messageService.info('You have successfully registered. Waiting for activation!');
                         return;
                     }
                     this.processAuthenticateResult(result, result.returnUrl || AppConsts.appBaseUrl);
@@ -365,10 +369,10 @@ export class LoginService {
             model.singleSignIn = UrlHelper.getSingleSignIn();
             model.returnUrl = UrlHelper.getReturnUrl();
 
-            this._tokenAuthService.externalAuthenticate(model)
+            this.tokenAuthService.externalAuthenticate(model)
                 .subscribe((result: ExternalAuthenticateResultModel) => {
                     if (result.waitingForActivation) {
-                        this._messageService.info('You have successfully registered. Waiting for activation!');
+                        this.messageService.info('You have successfully registered. Waiting for activation!');
                         return;
                     }
 
@@ -381,7 +385,7 @@ export class LoginService {
     * Microsoft login is not completed yet, because of an error thrown by zone.js: https://github.com/angular/zone.js/issues/290
     */
     private microsoftLogin() {
-        this._logService.debug(WL.getSession());
+        this.logService.debug(WL.getSession());
         const model = new ExternalAuthenticateModel();
         model.authProvider = ExternalLoginProvider.MICROSOFT;
         model.providerAccessCode = WL.getSession().access_token;
@@ -389,10 +393,10 @@ export class LoginService {
         model.singleSignIn = UrlHelper.getSingleSignIn();
         model.returnUrl = UrlHelper.getReturnUrl();
 
-        this._tokenAuthService.externalAuthenticate(model)
+        this.tokenAuthService.externalAuthenticate(model)
             .subscribe((result: ExternalAuthenticateResultModel) => {
                 if (result.waitingForActivation) {
-                    this._messageService.info('You have successfully registered. Waiting for activation!');
+                    this.messageService.info('You have successfully registered. Waiting for activation!');
                     return;
                 }
 

@@ -2,10 +2,8 @@
 import { ChangeDetectionStrategy, AfterViewInit, Component, ElementRef, Input } from '@angular/core';
 
 /** Third party imports */
-import map from 'lodash/map';
 import some from 'lodash/some';
 import each from 'lodash/each';
-import find from 'lodash/find';
 
 /** Application imports */
 import { FeatureTreeEditModel } from '@app/admin/shared/feature-tree-edit.model';
@@ -45,7 +43,7 @@ export class FeatureTreeComponent implements AfterViewInit {
 
         const selectedFeatures = this.$tree.jstree('get_selected', true);
 
-        return map(this._editData.features, item => {
+        return this._editData.features.map(item => {
             const feature = new NameValueDto();
 
             feature.name = item.name;
@@ -73,7 +71,7 @@ export class FeatureTreeComponent implements AfterViewInit {
             return;
         }
 
-        const treeData = map(this._editData.features, item => ({
+        const treeData = this._editData.features.map(item => ({
             id: item.name,
             parent: item.parentName ? item.parentName : '#',
             text: item.displayName,
@@ -292,7 +290,7 @@ export class FeatureTreeComponent implements AfterViewInit {
     findFeatureByName(featureName: string): FlatFeatureDto {
         const self = this;
 
-        const feature = find(self._editData.features, f => f.name === featureName);
+        const feature = self._editData.features.find(f => f.name === featureName);
 
         if (!feature) {
             abp.log.warn('Could not find a feature by name: ' + featureName);
@@ -308,7 +306,7 @@ export class FeatureTreeComponent implements AfterViewInit {
             return '';
         }
 
-        const featureValue = find(self._editData.featureValues, f => f.name === featureName);
+        const featureValue = self._editData.featureValues.find(f => f.name === featureName);
         if (!featureValue) {
             return feature.defaultValue;
         }
@@ -382,7 +380,7 @@ export class FeatureTreeComponent implements AfterViewInit {
     }
 
     setFeatureValueByName(featureName: string, value: string): void {
-        const featureValue = find(this._editData.featureValues, f => f.name === featureName);
+        const featureValue = this._editData.featureValues.find(f => f.name === featureName);
         if (!featureValue) {
             return;
         }
@@ -391,7 +389,7 @@ export class FeatureTreeComponent implements AfterViewInit {
     }
 
     getFeatureValueByName(featureName: string): string {
-        const featureValue = find(this._editData.featureValues, f => f.name === featureName);
+        const featureValue = this._editData.featureValues.find(f => f.name === featureName);
         if (!featureValue) {
             return null;
         }

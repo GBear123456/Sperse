@@ -1,29 +1,24 @@
-import { Component, Injector, ViewChild } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
-import { AppComponentBase } from '@shared/common/app-component-base';
-import { OrganizationTreeComponent } from './organization-tree.component';
-import { OrganizationUnitMembersComponent } from './organization-unit-members.component';
+import { OrganizationTreeComponent } from './organization-tree/organization-tree.component';
+import { OrganizationUnitMembersComponent } from './organization-unit-members/organization-unit-members.component';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 
 @Component({
     templateUrl: './organization-units.component.html',
     styleUrls: ['./organization-units.component.less'],
     animations: [appModuleAnimation()]
 })
-export class OrganizationUnitsComponent extends AppComponentBase {
-
+export class OrganizationUnitsComponent {
     @ViewChild('ouMembers') ouMembers: OrganizationUnitMembersComponent;
     @ViewChild('ouTree') ouTree: OrganizationTreeComponent;
 
     public headlineConfig = {
-        names: [this.l('OrganizationUnits')],
-        text: this.l('OrganizationUnitsHeaderInfo'),
+        names: [this.ls.l('OrganizationUnits')],
+        text: this.ls.l('OrganizationUnitsHeaderInfo'),
         icon: 'rocket',
         buttons: []
     };
 
-    constructor(
-        injector: Injector
-    ) {
-        super(injector);
-    }
+    constructor(private ls: AppLocalizationService) {}
 }

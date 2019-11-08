@@ -1,20 +1,22 @@
 /** Core imports */
-import { AfterViewInit, Component, ElementRef, EventEmitter, Injector, Output, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, EventEmitter, Output, ViewChild } from '@angular/core';
 
 /** Third party imports */
-import map from 'lodash/map';
 import { Observable } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
 /** Application imports */
-import { AppComponentBase } from '@shared/common/app-component-base';
 import { HtmlHelper } from '@shared/helpers/HtmlHelper';
 import { OrganizationUnitDtoListResultDto, MoveOrganizationUnitInput, OrganizationUnitDto, OrganizationUnitServiceProxy } from '@shared/service-proxies/service-proxies';
-import { IBasicOrganizationUnitInfo } from './basic-organization-unit-info';
-import { CreateOrEditUnitModalComponent } from './create-or-edit-unit-modal.component';
-import { IUserWithOrganizationUnit } from './user-with-organization-unit';
-import { IUsersWithOrganizationUnit } from './users-with-organization-unit';
+import { IBasicOrganizationUnitInfo } from '../basic-organization-unit-info';
+import { CreateOrEditUnitModalComponent } from '../create-or-edit-unit-modal/create-or-edit-unit-modal.component';
+import { IUserWithOrganizationUnit } from '../user-with-organization-unit';
+import { IUsersWithOrganizationUnit } from '../users-with-organization-unit';
 import { AppPermissions } from '@shared/AppPermissions';
+import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { MessageService } from '@abp/message/message.service';
+import { NotifyService } from '@abp/notify/notify.service';
 
 export interface IOrganizationUnitOnTree extends IBasicOrganizationUnitInfo {
     id: number;
@@ -31,10 +33,9 @@ export interface IOrganizationUnitOnTree extends IBasicOrganizationUnitInfo {
     templateUrl: './organization-tree.component.html',
     styleUrls: ['./organization-tree.component.less']
 })
-export class OrganizationTreeComponent extends AppComponentBase implements AfterViewInit {
+export class OrganizationTreeComponent implements AfterViewInit {
 
     @Output() ouSelected = new EventEmitter<IBasicOrganizationUnitInfo>();
-
     @ViewChild('tree') tree: ElementRef;
     @ViewChild('createOrEditOrganizationUnitModal') createOrEditOrganizationUnitModal: CreateOrEditUnitModalComponent;
 
@@ -43,11 +44,12 @@ export class OrganizationTreeComponent extends AppComponentBase implements After
     permissions = AppPermissions;
 
     constructor(
-        injector: Injector,
-        private _organizationUnitService: OrganizationUnitServiceProxy
-    ) {
-        super(injector);
-    }
+        private organizationUnitService: OrganizationUnitServiceProxy,
+        private message: MessageService,
+        private notify: NotifyService,
+        public permissionChecker: PermissionCheckerService,
+        public ls: AppLocalizationService
+    ) {}
 
     totalUnitCount = 0;
 
@@ -71,7 +73,7 @@ export class OrganizationTreeComponent extends AppComponentBase implements After
                 'sort'
             ];
 
-            if (this.isGranted(AppPermissions.AdministrationOrganizationUnitsManageOrganizationTree)) {
+            if (this.permissionChecker.isGranted(AppPermissions.AdministrationOrganizationUnitsManageOrganizationTree)) {
                 jsTreePlugins.push('dnd');
             }
 
@@ -84,30 +86,30 @@ export class OrganizationTreeComponent extends AppComponentBase implements After
                     }
                 })
                 .on('move_node.jstree', (e, data) => {
-                    if (!this.isGranted(AppPermissions.AdministrationOrganizationUnitsManageOrganizationTree)) {
+                    if (!this.permissionChecker.isGranted(AppPermissions.AdministrationOrganizationUnitsManageOrganizationTree)) {
                         this._$tree.jstree('refresh'); //rollback
                         return;
                     }
 
                     const parentNodeName = (!data.parent || data.parent === '#')
-                        ? this.l('Root')
+                        ? this.ls.l('Root')
                         : this._$tree.jstree('get_node', data.parent).original.displayName;
 
                     this.message.confirm(
-                        this.l('OrganizationUnitMoveConfirmMessage', data.node.original.displayName, parentNodeName),
-                        this.l('AreYouSure'),
+                        this.ls.l('OrganizationUnitMoveConfirmMessage', data.node.original.displayName, parentNodeName),
+                        this.ls.l('AreYouSure'),
                         isConfirmed => {
                             if (isConfirmed) {
                                 const input = new MoveOrganizationUnitInput();
                                 input.id = data.node.id;
                                 input.newParentId = (!data.parent || data.parent === '#') ? undefined : data.parent;
-                                this._organizationUnitService.moveOrganizationUnit(input)
+                                this.organizationUnitService.moveOrganizationUnit(input)
                                     .pipe(catchError(error => {
                                         this._$tree.jstree('refresh'); //rollback
                                         return Observable.throw(error);
                                     }))
                                     .subscribe(() => {
-                                        this.notify.success(this.l('SuccessfullyMoved'));
+                                        this.notify.success(this.ls.l('SuccessfullyMoved'));
                                         this.reload();
                                     });
                             } else {
@@ -163,8 +165,8 @@ export class OrganizationTreeComponent extends AppComponentBase implements After
     }
 
     private getTreeDataFromServer(callback: (ous: IOrganizationUnitOnTree[]) => void): void {
-        this._organizationUnitService.getOrganizationUnits().subscribe((result: OrganizationUnitDtoListResultDto) => {
-            const treeData = map(result.items, item => (<IOrganizationUnitOnTree>{
+        this.organizationUnitService.getOrganizationUnits().subscribe((result: OrganizationUnitDtoListResultDto) => {
+            const treeData = result.items.map(item => (<IOrganizationUnitOnTree>{
                 id: item.id,
                 parent: item.parentId ? item.parentId : '#',
                 code: item.code,
@@ -187,10 +189,10 @@ export class OrganizationTreeComponent extends AppComponentBase implements After
     }
 
     private contextMenu(node: any, self: OrganizationTreeComponent) {
-        const canManageOrganizationTree = self.isGranted(AppPermissions.AdministrationOrganizationUnitsManageOrganizationTree);
+        const canManageOrganizationTree = self.permissionChecker.isGranted(AppPermissions.AdministrationOrganizationUnitsManageOrganizationTree);
         return {
             editUnit: {
-                label: self.l('Edit'),
+                label: self.ls.l('Edit'),
                 _disabled: !canManageOrganizationTree,
                 action: () => {
                     self._updatingNode = node;
@@ -201,26 +203,26 @@ export class OrganizationTreeComponent extends AppComponentBase implements After
                 }
             },
             addSubUnit: {
-                label: self.l('AddSubUnit'),
+                label: self.ls.l('AddSubUnit'),
                 _disabled: !canManageOrganizationTree,
                 action: () => {
                     self.addUnit(node.id);
                 }
             },
             'delete': {
-                label: self.l('Delete'),
+                label: self.ls.l('Delete'),
                 _disabled: !canManageOrganizationTree || node.original.code == '00001',
                 action: data => {
                     const instance = $.jstree.reference(data.reference);
 
                     this.message.confirm(
-                        this.l('OrganizationUnitDeleteWarningMessage', node.original.displayName),
-                        this.l('AreYouSure'),
+                        this.ls.l('OrganizationUnitDeleteWarningMessage', node.original.displayName),
+                        this.ls.l('AreYouSure'),
                         isConfirmed => {
                             if (isConfirmed) {
-                                this._organizationUnitService.deleteOrganizationUnit(node.id).subscribe(() => {
+                                this.organizationUnitService.deleteOrganizationUnit(node.id).subscribe(() => {
                                     this.selectedOu = null;
-                                    this.notify.success(this.l('SuccessfullyDeleted'));
+                                    this.notify.success(this.ls.l('SuccessfullyDeleted'));
                                     instance.delete_node(node);
                                 });
                             }

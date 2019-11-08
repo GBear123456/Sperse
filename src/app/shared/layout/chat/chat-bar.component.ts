@@ -3,20 +3,31 @@ import { AfterViewInit, Component, EventEmitter, Injector, OnInit, Output, ViewE
 
 /** Third party imports */
 import { MatDialog } from '@angular/material';
-import filter from 'lodash/filter';
-import map from 'lodash/map';
 import min from 'lodash/min';
-import reduce from 'lodash/reduce';
-import forEach from 'lodash/forEach';
 import * as moment from 'moment';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
 import { AppChatMessageReadState, AppChatSide, AppFriendshipState } from '@shared/AppEnums';
-import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { DomHelper } from '@shared/helpers/DomHelper';
-import { BlockUserInput, ChatSide, ChatServiceProxy, CommonLookupServiceProxy, CreateFriendshipRequestByUserNameInput, CreateFriendshipRequestInput, FriendDto, FriendshipState, FriendshipServiceProxy, MarkAllUnreadMessagesOfUserAsReadInput, NameValueDto, ProfileServiceProxy, UnblockUserInput, UserLoginInfoDto } from '@shared/service-proxies/service-proxies';
+import {
+    BlockUserInput,
+    ChatSide,
+    ChatServiceProxy,
+    CommonLookupServiceProxy,
+    CreateFriendshipRequestByUserNameInput,
+    CreateFriendshipRequestInput,
+    FriendDto,
+    FriendshipState,
+    FriendshipServiceProxy,
+    MarkAllUnreadMessagesOfUserAsReadInput,
+    NameValueDto,
+    ProfileServiceProxy,
+    UnblockUserInput,
+    UserLoginInfoDto,
+    ChatMessageDto
+} from '@shared/service-proxies/service-proxies';
 import { LocalStorageService } from '@shared/utils/local-storage.service';
 import { QuickSideBarChat } from 'app/shared/layout/chat/QuickSideBarChat';
 import { ChatFriendDto } from './ChatFriendDto';
@@ -24,6 +35,9 @@ import { ChatSignalrService } from './chat-signalr.service';
 import { UserHelper } from '../../helpers/UserHelper';
 import { CommonLookupModalComponent } from '@app/shared/common/lookup/common-lookup-modal.component';
 import { AppFeatures } from '@shared/AppFeatures';
+import { FeatureCheckerService } from '@abp/features/feature-checker.service';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { NotifyService } from '@abp/notify/notify.service';
 
 @Component({
     templateUrl: './chat-bar.component.html',
@@ -36,16 +50,16 @@ import { AppFeatures } from '@shared/AppFeatures';
     ],
     encapsulation: ViewEncapsulation.None
 })
-export class ChatBarComponent extends AppComponentBase implements OnInit, AfterViewInit {
+export class ChatBarComponent implements OnInit, AfterViewInit {
     @Output() onProgress: EventEmitter<any> = new EventEmitter();
 
     public progress = 0;
-    uploadUrl: string;
+    uploadUrl: string = AppConsts.remoteServiceBaseUrl + '/api/Chat/UploadFile';
     isFileSelected = false;
     $_chatMessageInput: JQuery;
     friendDtoState: typeof AppFriendshipState = AppFriendshipState;
-    friends: ChatFriendDto[];
-    currentUser: UserLoginInfoDto = this._appSessionService.user;
+    friends: ChatFriendDto[] = [];
+    currentUser: UserLoginInfoDto = this.appSessionService.user;
     chatMessage = '';
     tenantToTenantChatAllowed = false;
     tenantToHostChatAllowed = false;
@@ -62,7 +76,7 @@ export class ChatBarComponent extends AppComponentBase implements OnInit, AfterV
             return;
         }
 
-        this._localStorageService.setItem('app.chat.isOpen', newValue);
+        this.localStorageService.setItem('app.chat.isOpen', newValue);
         this._isOpen = newValue;
 
         if (newValue) {
@@ -82,7 +96,7 @@ export class ChatBarComponent extends AppComponentBase implements OnInit, AfterV
         }
 
         this._pinned = newValue;
-        this._localStorageService.setItem('app.chat.pinned', newValue);
+        this.localStorageService.setItem('app.chat.pinned', newValue);
     }
     get pinned(): boolean {
         return this._pinned;
@@ -101,26 +115,26 @@ export class ChatBarComponent extends AppComponentBase implements OnInit, AfterV
             newValue.messages = [];
             newValue.messagesLoaded = false;
         }
-        this._localStorageService.setItem('app.chat.selectedUser', newValue);
+        this.localStorageService.setItem('app.chat.selectedUser', newValue);
     }
     get selectedUser(): ChatFriendDto {
         return this._selectedUser;
     }
 
     constructor(injector: Injector,
-        private _appSessionService: AppSessionService,
-        private _friendshipService: FriendshipServiceProxy,
-        private _chatService: ChatServiceProxy,
-        private _commonLookupService: CommonLookupServiceProxy,
-        private _localStorageService: LocalStorageService,
-        private _chatSignalrService: ChatSignalrService,
-        private _profileService: ProfileServiceProxy,
-        private _quickSideBarChat: QuickSideBarChat,
-        private _dialog: MatDialog
-    ) {
-        super(injector);
-        this.uploadUrl = AppConsts.remoteServiceBaseUrl + '/api/Chat/UploadFile';
-    }
+        private appSessionService: AppSessionService,
+        private friendshipService: FriendshipServiceProxy,
+        private chatService: ChatServiceProxy,
+        private commonLookupService: CommonLookupServiceProxy,
+        private localStorageService: LocalStorageService,
+        private chatSignalrService: ChatSignalrService,
+        private profileService: ProfileServiceProxy,
+        private quickSideBarChat: QuickSideBarChat,
+        private dialog: MatDialog,
+        private feature: FeatureCheckerService,
+        private notify: NotifyService,
+        public ls: AppLocalizationService
+    ) {}
 
     shareCurrentLink() {
         this.chatMessage = '[link]{"message":"' + window.location.href + '"}';
@@ -177,8 +191,8 @@ export class ChatBarComponent extends AppComponentBase implements OnInit, AfterV
         blockUserInput.tenantId = user.friendTenantId;
         blockUserInput.userId = user.friendUserId;
 
-        this._friendshipService.blockUser(blockUserInput).subscribe(() => {
-            this.notify.info(this.l('UserBlocked'));
+        this.friendshipService.blockUser(blockUserInput).subscribe(() => {
+            this.notify.info(this.ls.l('UserBlocked'));
         });
     }
 
@@ -187,8 +201,8 @@ export class ChatBarComponent extends AppComponentBase implements OnInit, AfterV
         unblockUserInput.tenantId = user.friendTenantId;
         unblockUserInput.userId = user.friendUserId;
 
-        this._friendshipService.unblockUser(unblockUserInput).subscribe(() => {
-            this.notify.info(this.l('UserUnblocked'));
+        this.friendshipService.unblockUser(unblockUserInput).subscribe(() => {
+            this.notify.info(this.ls.l('UserUnblocked'));
         });
     }
 
@@ -197,8 +211,10 @@ export class ChatBarComponent extends AppComponentBase implements OnInit, AfterV
             return;
         }
 
-        const unreadMessages = filter(user.messages, m => m.readState === AppChatMessageReadState.Unread);
-        const unreadMessageIds = map(unreadMessages, 'id');
+        const unreadMessages = user.messages && user.messages.filter((message: ChatMessageDto) => {
+            return message.readState === AppChatMessageReadState.Unread;
+        });
+        const unreadMessageIds = unreadMessages && unreadMessages.map((message: ChatMessageDto) => message.id);
 
         if (!unreadMessageIds.length) {
             return;
@@ -208,8 +224,8 @@ export class ChatBarComponent extends AppComponentBase implements OnInit, AfterV
         input.tenantId = user.friendTenantId;
         input.userId = user.friendUserId;
 
-        this._chatService.markAllUnreadMessagesOfUserAsRead(input).subscribe(() => {
-            forEach(user.messages, message => {
+        this.chatService.markAllUnreadMessagesOfUserAsRead(input).subscribe(() => {
+            user.messages.forEach((message: ChatMessageDto) => {
                 if (unreadMessageIds.indexOf(message.id) >= 0) {
                     message.readState = AppChatMessageReadState.Read;
                 }
@@ -221,10 +237,10 @@ export class ChatBarComponent extends AppComponentBase implements OnInit, AfterV
         this.loadingPreviousUserMessages = true;
         let minMessageId;
         if (user.messages && user.messages.length) {
-            minMessageId = min(map(user.messages, m => m.id));
+            minMessageId = min(user.messages.map(m => m.id));
         }
 
-        this._chatService.getUserChatMessages(user.friendTenantId ? user.friendTenantId : undefined, user.friendUserId, minMessageId)
+        this.chatService.getUserChatMessages(user.friendTenantId ? user.friendTenantId : undefined, user.friendUserId, minMessageId)
             .subscribe(result => {
                 if (!user.messages) {
                     user.messages = [];
@@ -246,7 +262,7 @@ export class ChatBarComponent extends AppComponentBase implements OnInit, AfterV
     }
 
     openSearchModal(userName: string, tenantId?: number): void {
-        const dialogRef = this._dialog.open(CommonLookupModalComponent, {
+        const dialogRef = this.dialog.open(CommonLookupModalComponent, {
             panelClass: [ 'slider' ],
             data: {
                 filterText: userName,
@@ -262,9 +278,9 @@ export class ChatBarComponent extends AppComponentBase implements OnInit, AfterV
         const userId = item.value;
         const input = new CreateFriendshipRequestInput();
         input.userId = parseInt(userId);
-        input.tenantId = this._appSessionService.tenant ? this._appSessionService.tenant.id : null;
+        input.tenantId = this.appSessionService.tenant ? this.appSessionService.tenant.id : null;
 
-        this._friendshipService.createFriendshipRequest(input).subscribe(() => {
+        this.friendshipService.createFriendshipRequest(input).subscribe(() => {
             this.userNameFilter = '';
         });
     }
@@ -281,17 +297,17 @@ export class ChatBarComponent extends AppComponentBase implements OnInit, AfterV
         }
 
         if (!input.tenancyName || !this.interTenantChatAllowed) {
-            const tenantId = this._appSessionService.tenant ? this._appSessionService.tenant.id : null;
+            const tenantId = this.appSessionService.tenant ? this.appSessionService.tenant.id : null;
             this.openSearchModal(input.userName, tenantId);
         } else {
-            this._friendshipService.createFriendshipRequestByUserName(input).subscribe(() => {
+            this.friendshipService.createFriendshipRequestByUserName(input).subscribe(() => {
                 this.userNameFilter = '';
             });
         }
     }
 
     getFriendOrNull(userId: number, tenantId?: number): ChatFriendDto {
-        const friends = filter(this.friends, friend => friend.friendUserId === userId && friend.friendTenantId === tenantId);
+        const friends = this.friends.filter(friend => friend.friendUserId === userId && friend.friendTenantId === tenantId);
         if (friends.length) {
             return friends[0];
         }
@@ -300,7 +316,7 @@ export class ChatBarComponent extends AppComponentBase implements OnInit, AfterV
     }
 
     getFilteredFriends(state: FriendshipState, userNameFilter: string): FriendDto[] {
-        const foundFriends = filter(this.friends, friend => friend.state === state &&
+        const foundFriends = this.friends && this.friends.filter(friend => friend.state === state &&
             this.getShownUserName(friend)
                 .toLocaleLowerCase()
                 .indexOf(userNameFilter.toLocaleLowerCase()) >= 0);
@@ -309,7 +325,7 @@ export class ChatBarComponent extends AppComponentBase implements OnInit, AfterV
     }
 
     getFilteredFriendsCount(state: FriendshipState): number {
-        return filter(this.friends, friend => friend.state === state).length;
+        return this.friends.filter(friend => friend.state === state).length;
     }
 
     getUserNameByChatSide(chatSide: ChatSide): string {
@@ -332,7 +348,7 @@ export class ChatBarComponent extends AppComponentBase implements OnInit, AfterV
     }
 
     getFriendsAndSettings(callback: any): void {
-        this._chatService.getUserChatFriendsWithSettings().subscribe(result => {
+        this.chatService.getUserChatFriendsWithSettings().subscribe(result => {
             this.friends = (result.friends as ChatFriendDto[]);
             this.serverClientTimeDifference = moment(abp.clock.now()).diff(result.serverTime, 'seconds');
 
@@ -359,16 +375,16 @@ export class ChatBarComponent extends AppComponentBase implements OnInit, AfterV
 
     loadLastState(): void {
         const self = this;
-        self._localStorageService.getItem('app.chat.isOpen', (err, isOpen) => {
+        self.localStorageService.getItem('app.chat.isOpen', (err, isOpen) => {
             self.isOpen = isOpen;
 
-            self._localStorageService.getItem('app.chat.pinned', (err, pinned) => {
+            self.localStorageService.getItem('app.chat.pinned', (err, pinned) => {
                 self.pinned = pinned;
             });
 
             if (isOpen) {
-                self._quickSideBarChat.show();
-                self._localStorageService.getItem('app.chat.selectedUser', (err, selectedUser) => {
+                self.quickSideBarChat.show();
+                self.localStorageService.getItem('app.chat.selectedUser', (err, selectedUser) => {
                     if (selectedUser && selectedUser.friendUserId) {
                         self.showMessagesPanel();
                         self.selectFriend(selectedUser);
@@ -434,14 +450,14 @@ export class ChatBarComponent extends AppComponentBase implements OnInit, AfterV
         }
 
         this.sendingMessage = true;
-        const tenancyName = this._appSessionService.tenant ? this._appSessionService.tenant.tenancyName : null;
-        this._chatSignalrService.sendMessage({
+        const tenancyName = this.appSessionService.tenant ? this.appSessionService.tenant.tenancyName : null;
+        this.chatSignalrService.sendMessage({
             tenantId: this.selectedUser.friendTenantId,
             userId: this.selectedUser.friendUserId,
             message: this.chatMessage,
             tenancyName: tenancyName,
-            userName: this._appSessionService.user.userName,
-            profilePictureId: this._appSessionService.user.profilePictureId
+            userName: this.appSessionService.user.userName,
+            profilePictureId: this.appSessionService.user.profilePictureId
         }, () => {
             this.chatMessage = '';
             this.sendingMessage = false;
@@ -454,7 +470,7 @@ export class ChatBarComponent extends AppComponentBase implements OnInit, AfterV
 
     bindUiEvents(): void {
         const self = this;
-        self._quickSideBarChat.init((e, pos) => {
+        self.quickSideBarChat.init((e, pos) => {
             if (pos === 0 && !this.selectedUser.allPreviousMessagesLoaded && !this.loadingPreviousUserMessages) {
                 self.loadMessages(self.selectedUser, null);
             }
@@ -476,7 +492,7 @@ export class ChatBarComponent extends AppComponentBase implements OnInit, AfterV
                 return;
             }
 
-            self._quickSideBarChat.hide();
+            self.quickSideBarChat.hide();
             this.isOpen = false;
             this.adjustNotifyPosition();
         });
@@ -502,7 +518,7 @@ export class ChatBarComponent extends AppComponentBase implements OnInit, AfterV
         let totalUnreadMessageCount = 0;
 
         if (this.friends) {
-            totalUnreadMessageCount = reduce(this.friends, (memo, friend) => memo + friend.unreadMessageCount, 0);
+            totalUnreadMessageCount = this.friends.reduce((memo, friend) => memo + friend.unreadMessageCount, 0);
         }
 
         abp.event.trigger('app.chat.unreadMessageCountChanged', totalUnreadMessageCount);
@@ -534,7 +550,7 @@ export class ChatBarComponent extends AppComponentBase implements OnInit, AfterV
                         {
                             onclick() {
                                 if (!$('body').hasClass('m-quick-sidebar--on')) {
-                                    self._quickSideBarChat.show();
+                                    self.quickSideBarChat.show();
                                     self.isOpen = true;
                                 }
 
@@ -552,10 +568,12 @@ export class ChatBarComponent extends AppComponentBase implements OnInit, AfterV
 
         abp.event.on('app.chat.friendshipRequestReceived', (data, isOwnRequest) => {
             if (!isOwnRequest) {
-                abp.notify.info(this.l('UserSendYouAFriendshipRequest', data.friendUserName));
+                abp.notify.info(this.ls.l('UserSendYouAFriendshipRequest', data.friendUserName));
             }
 
-            if (!filter(this.friends, f => f.friendUserId === data.friendUserId && f.friendTenantId === data.friendTenantId).length) {
+            if (!(this.friends.filter((friend: ChatFriendDto) => {
+                return friend.friendUserId === data.friendUserId && friend.friendTenantId === data.friendTenantId;
+            }).length)) {
                 this.friends.push(data);
             }
         });
@@ -618,6 +636,6 @@ export class ChatBarComponent extends AppComponentBase implements OnInit, AfterV
         this.registerEvents();
         this.tenantToTenantChatAllowed = this.feature.isEnabled(AppFeatures.AppChatFeatureTenantToTenant);
         this.tenantToHostChatAllowed = this.feature.isEnabled(AppFeatures.AppChatFeatureTenantToHost);
-        this.interTenantChatAllowed = this.feature.isEnabled(AppFeatures.AppChatFeatureTenantToTenant) || this.feature.isEnabled(AppFeatures.AppChatFeatureTenantToHost) || !this._appSessionService.tenant;
+        this.interTenantChatAllowed = this.feature.isEnabled(AppFeatures.AppChatFeatureTenantToTenant) || this.feature.isEnabled(AppFeatures.AppChatFeatureTenantToHost) || !this.appSessionService.tenant;
     }
 }

@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { RouterModule, Router, NavigationEnd } from '@angular/router';
+import { RouterModule } from '@angular/router';
 import { LoginComponent } from './login/login.component';
 //import { RegisterComponent } from './register/register.component';
 //import { BuyComponent } from './payment/buy.component';
@@ -16,7 +16,7 @@ import { ValidateTwoFactorCodeComponent } from './login/validate-two-factor-code
 import { SelectTenantComponent } from './login/select-tenant.component';
 import { AccountComponent } from './account.component';
 import { AppUiCustomizationService } from '@shared/common/ui/app-ui-customization.service';
-import { CompleteTenantRegistrationComponent } from './register/complete-tenant-registration.component';
+import { CompleteTenantRegistrationComponent } from './register/complete-tenant-registration/complete-tenant-registration.component';
 import { SignupComponent } from './signup/signup.component';
 
 @NgModule({

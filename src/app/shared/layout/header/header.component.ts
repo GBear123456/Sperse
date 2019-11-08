@@ -5,7 +5,6 @@ import { Component, Injector, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import filter from 'lodash/filter';
 import isEqual from 'lodash/isEqual';
 import kebabCase from 'lodash/kebabCase';
 
@@ -58,7 +57,7 @@ export class HeaderComponent implements OnInit {
     ) {}
 
     ngOnInit() {
-        this.languages = filter(this.ls.languages, l => (<any>l).isDisabled === false);
+        this.languages = this.ls.languages.filter((l: abp.localization.ILanguageInfo) => l.isDisabled === false);
         this.currentLanguage = this.ls.currentLanguage;
         this.userCompany$ = this.commonUserInfoService.getCompany().pipe(
             map(x => isEqual(x, {}) ? null : x)

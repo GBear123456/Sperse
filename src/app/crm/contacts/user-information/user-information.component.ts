@@ -1,24 +1,20 @@
 /** Core imports */
-import { Injector, Component, OnInit, OnDestroy, ViewChild, HostListener } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, HostListener, ElementRef } from '@angular/core';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
 import { DxSelectBoxComponent } from 'devextreme-angular/ui/select-box';
 import { DxValidationGroupComponent } from 'devextreme-angular';
 import { finalize } from 'rxjs/operators';
-import find from 'lodash/find';
 import extend from 'lodash/extend';
 import clone from 'lodash/clone';
-import map from 'lodash/map';
-import filter from 'lodash/filter';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
-import { AppComponentBase } from '@shared/common/app-component-base';
 import {
     UserServiceProxy, GetUserForEditOutput, UpdateUserPhoneDto, RoleServiceProxy,
     UpdateUserOptionsDto, UpdateUserRoleInput, ContactServiceProxy, PersonContactServiceProxy,
-    CreateOrUpdateUserInput, TenantHostType, UpdateUserEmailDto, CreateUserForContactInput, RoleListDto
+    CreateOrUpdateUserInput, TenantHostType, UpdateUserEmailDto, CreateUserForContactInput, RoleListDto, UserRoleDto
 } from '@shared/service-proxies/service-proxies';
 import { PhoneFormatPipe } from '@shared/common/pipes/phone-format/phone-format.pipe';
 import { InplaceEditModel } from '@app/shared/common/inplace-edit/inplace-edit.model';
@@ -27,6 +23,11 @@ import { ResetPasswordDialog } from './reset-password-dialog/reset-password-dial
 import { ContactGroup, ContactStatus } from '@root/shared/AppEnums';
 import { AppPermissions } from '@shared/AppPermissions';
 import { AppRoles } from '@shared/AppRoles';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
+import { MessageService } from '@abp/message/message.service';
+import { LoadingService } from '@shared/common/loading-service/loading.service';
+import { NotifyService } from '@abp/notify/notify.service';
 
 @Component({
     selector: 'user-information',
@@ -34,7 +35,7 @@ import { AppRoles } from '@shared/AppRoles';
     styleUrls: ['./user-information.component.less'],
     providers: [ PhoneFormatPipe ]
 })
-export class UserInformationComponent extends AppComponentBase implements OnInit, OnDestroy {
+export class UserInformationComponent implements OnInit, OnDestroy {
     @ViewChild('emailAddress') emailAddressComponent: DxSelectBoxComponent;
     @ViewChild('phoneNumber') phoneNumberComponent: DxSelectBoxComponent;
     @ViewChild('inviteValidationGroup') inviteValidationComponent: DxValidationGroupComponent;
@@ -52,14 +53,11 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
     readonly LOCKOUT_FIELD = 'isLockoutEnabled';
 
     selectedTabIndex = this.GENERAL_TAB_INDEX;
-
     isEditAllowed = false;
     isInviteAllowed = false;
     changeRolesAllowed = false;
-
     phoneInplaceEdit = false;
     initialPhoneNumber: any;
-
     roles: any = [];
     partnerRoles: AppRoles[] = [ AppRoles.CRMPartner, AppRoles.CFOPartner ];
     checkedByDefaultRoles: AppRoles[];
@@ -77,24 +75,19 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
         organizationUnitIds: []
     });
     inviteSetRandomPassword = true;
-    inviteValidator: any;
-
     showInviteUserForm = false;
     userData: GetUserForEditOutput = new GetUserForEditOutput();
     selectedOrgUnits: number[] = [];
     dependencyChanged = false;
-
     masks = AppConsts.masks;
     phonePattern = /^[\d\+\-\(\)\s]{10,24}$/;
     emailRegEx = AppConsts.regexPatterns.email;
-
     validationRules = {
         'name': [{ type: 'required' }, { type: 'stringLength', max: 32 }],
         'surname': [{ type: 'required' }, { type: 'stringLength', max: 32 }],
         'phoneNumber': [{ type: 'stringLength', max: 24 }, { type: 'pattern', pattern: AppConsts.regexPatterns.phone }],
-        'emailAddress': [{ type: 'pattern', pattern: this.emailRegEx, message: this.l('InvalidEmailAddress') }, { type: 'required', message: this.l('EmailIsRequired') }]
+        'emailAddress': [{ type: 'pattern', pattern: this.emailRegEx, message: this.ls.l('InvalidEmailAddress') }, { type: 'required', message: this.ls.l('EmailIsRequired') }]
     };
-
     orgUnitsDisabled;
     @HostListener('window:resize') onResize() {
         if (this.orgUnitsDisabled = (innerWidth > 1200))
@@ -102,17 +95,21 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
                 this.selectedTabIndex = this.GENERAL_TAB_INDEX;
     }
 
-    constructor(injector: Injector,
+    constructor(
         public dialog: MatDialog,
         public phoneFormatPipe: PhoneFormatPipe,
         private userService: UserServiceProxy,
         private contactsService: ContactsService,
         private personContactServiceProxy: PersonContactServiceProxy,
         private contactService: ContactServiceProxy,
-        private roleServiceProxy: RoleServiceProxy
+        private roleServiceProxy: RoleServiceProxy,
+        private permissionService: PermissionCheckerService,
+        private message: MessageService,
+        private loadingService: LoadingService,
+        private notify: NotifyService,
+        private elementRef: ElementRef,
+        public ls: AppLocalizationService
     ) {
-        super(injector);
-
         contactsService.userSubscribe((userId) => {
             this.data = userService['data'];
             this.data.userId = userId;
@@ -123,7 +120,10 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
             this.data.raw.memberedOrganizationUnits = [];
             (this.selectedOrgUnits = data).forEach((item) => {
                 this.data.raw.memberedOrganizationUnits.push(
-                    find(this.data.raw.allOrganizationUnits, {id: item})['code']);
+                    this.data.raw.allOrganizationUnits.find((organizationUnit) => {
+                        return organizationUnit.id === item;
+                    })['code']
+                );
             });
         }, this.constructor.name);
 
@@ -133,9 +133,9 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
                 this.updateInviteDataRoles();
             });
 
-        this.isEditAllowed = this.isGranted(AppPermissions.AdministrationUsersEdit);
-        this.isInviteAllowed = this.isGranted(AppPermissions.AdministrationUsersCreate);
-        this.changeRolesAllowed = this.isGranted(AppPermissions.AdministrationUsersChangePermissionsAndRoles);
+        this.isEditAllowed = this.permissionService.isGranted(AppPermissions.AdministrationUsersEdit);
+        this.isInviteAllowed = this.permissionService.isGranted(AppPermissions.AdministrationUsersCreate);
+        this.changeRolesAllowed = this.permissionService.isGranted(AppPermissions.AdministrationUsersChangePermissionsAndRoles);
     }
 
     ngOnInit() {
@@ -165,7 +165,7 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
 
     checkShowInviteForm() {
         this.showInviteUserForm = this.data && !this.data.userId &&
-            this.permission.isGranted(AppPermissions.AdministrationUsersCreate);
+            this.permissionService.isGranted(AppPermissions.AdministrationUsersCreate);
 
         let contactInfo = this.contactInfoData.contactInfo.personContactInfo;
         if (contactInfo) {
@@ -180,11 +180,13 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
     loadData() {
         if (this.data && this.data.raw && this.data.raw.user.id == this.data.userId)
             this.fillUserData(this.data['raw']);
-        else if (!this.loading) {
-            this.startLoading(true);
+        else if (!this.loadingService.loading) {
+            this.loadingService.startLoading();
             this.contactsService.contactInfoSubscribe((contactInfo) =>
                 this.userService.getUserForEdit(contactInfo.personContactInfo.userId || undefined)
-                    .pipe(finalize(() => this.finishLoading(true)))
+                    .pipe(finalize(() => {
+                        this.loadingService.finishLoading(true);
+                    }))
                     .subscribe(userEditOutput => {
                         this.fillUserData(userEditOutput);
                     }), this.constructor.name
@@ -199,7 +201,9 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
 
     fillUserData(data) {
         data.memberedOrganizationUnits.forEach((item) => {
-            this.selectedOrgUnits.push(find(data.allOrganizationUnits, {code: item})['id']);
+            this.selectedOrgUnits.push(
+                data.allOrganizationUnits.find(organizationUnit => organizationUnit.code === item)['id']
+            );
         });
 
         if (data.user.id) {
@@ -224,24 +228,24 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
 
     invitePasswordComparison = () => {
         return this.inviteData.password;
-    };
+    }
 
     inviteUser() {
         if (!this.inviteData.emailAddress || !this.emailAddressComponent.instance.option('isValid'))
-            return this.message.warn(this.l('InvalidEmailAddress'));
+            return this.message.warn(this.ls.l('InvalidEmailAddress'));
 
         if (this.inviteData.phoneNumber && !this.phoneNumberComponent.instance.option('isValid'))
-            return this.message.warn(this.l('PhoneValidationError'));
+            return this.message.warn(this.ls.l('PhoneValidationError'));
 
         if (!this.inviteValidationComponent.instance.validate().isValid)
             return;
 
         this.message.confirm(
-            this.l('CreateNewUser'),
-            this.l('AreYouSure'),
+            this.ls.l('CreateNewUser'),
+            this.ls.l('AreYouSure'),
             isConfirmed => {
                 if (isConfirmed) {
-                    this.startLoading(true);
+                    this.loadingService.startLoading();
                     this.inviteData.contactId = this.contactInfoData.contactInfo.personContactInfo.id;
                     let phoneNumber = this.phoneFormatPipe.transform(this.inviteData.phoneNumber);
                     if (this.inviteSetRandomPassword)
@@ -249,7 +253,7 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
                     this.personContactServiceProxy.createUserForContact(extend(clone(this.inviteData), {
                         phoneNumber: phoneNumber && phoneNumber.replace(/[^0-9\+]/g, ''),
                         organizationUnitIds: this.selectedOrgUnits
-                    })).pipe(finalize(() => this.finishLoading(true))).subscribe(() => {
+                    })).pipe(finalize(() => this.loadingService.finishLoading())).subscribe(() => {
                         this.contactsService.invalidate();
                     });
                 }
@@ -274,21 +278,15 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
             isEditDialogEnabled: true,
             validationRules: validationRules,
             lEntityName: field,
-            lEditPlaceholder: this.l('EditValuePlaceholder')
+            lEditPlaceholder: this.ls.l('EditValuePlaceholder')
         } as InplaceEditModel;
-    }
-
-    getPhoneNumberPropData() {
-        let data = this.getPropData(this.PHONE_FIELD);
-        data.displayValue = this.phoneFormatPipe.transform(data.value);
-        return data;
     }
 
     updateValue(value, fieldName) {
         this.update(fieldName, value);
     }
 
-    updatePhoneNumber(isValid, value) {
+    updatePhoneNumber(isValid) {
         isValid && this.update(this.PHONE_FIELD,
             this.data.user.phoneNumber, () => {
                 this.phoneInplaceEdit = false;
@@ -316,9 +314,9 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
         else
             sub = this.userService.removeFromRole(this.userData.user.id, role.roleName);
 
-        this.startLoading();
-        sub.pipe(finalize(() => this.finishLoading())).subscribe(() => {
-            this.notify.info(this.l('SavedSuccessfully'));
+        this.loadingService.startLoading(this.elementRef.nativeElement);
+        sub.pipe(finalize(() => this.loadingService.finishLoading(this.elementRef.nativeElement))).subscribe(() => {
+            this.notify.info(this.ls.l('SavedSuccessfully'));
         });
     }
 
@@ -328,8 +326,8 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
                 this.update(this.ACTIVE_FIELD, this.data.user.isActive);
             else
                 this.message.confirm(
-                    this.l('DeactivateUserConfirm'),
-                    this.l('AreYouSure'),
+                    this.ls.l('DeactivateUserConfirm'),
+                    this.ls.l('AreYouSure'),
                     isConfirmed => {
                         if (isConfirmed)
                             this.update(this.ACTIVE_FIELD, this.data.user.isActive);
@@ -359,16 +357,18 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
                 user: this.userData.user,
                 setRandomPassword: this.userData.user['setRandomPassword'],
                 sendActivationEmail: this.userData.user['sendActivationEmail'],
-                assignedRoleNames: map(filter(this.userData.roles, { isAssigned: true }), role => role.roleName),
+                assignedRoleNames: this.userData.roles
+                    .filter((role: UserRoleDto) => role.isAssigned)
+                    .map((role: UserRoleDto) => role.roleName),
                 tenantHostType: <any>TenantHostType.PlatformApp,
                 organizationUnits: this.selectedOrgUnits
             }));
         }
 
-        this.startLoading();
-        sub.pipe(finalize(() => this.finishLoading())).subscribe(() => {
+        this.loadingService.startLoading(this.elementRef.nativeElement);
+        sub.pipe(finalize(() => this.loadingService.finishLoading(this.elementRef.nativeElement))).subscribe(() => {
             callback && callback();
-            this.notify.info(this.l('SavedSuccessfully'));
+            this.notify.info(this.ls.l('SavedSuccessfully'));
             if ([this.EMAIL_FIELD, this.PHONE_FIELD].indexOf(fieldName) >= 0)
                 this.dependencyChanged = true;
         }, () => {

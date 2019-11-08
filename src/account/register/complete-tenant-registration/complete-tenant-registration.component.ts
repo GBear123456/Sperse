@@ -11,7 +11,7 @@ import {
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { accountModuleAnimation } from '@shared/animations/routerTransition';
 import { AppUrlService } from '@shared/common/nav/app-url.service';
-import { LoginService } from './../login/login.service';
+import { LoginService } from '../../login/login.service';
 import { AppAuthService } from '@shared/common/auth/app-auth.service';
 
 @Component({

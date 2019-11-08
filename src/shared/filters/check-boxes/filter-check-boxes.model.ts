@@ -1,6 +1,5 @@
 import { FilterModel } from '@shared/filters/models/filter.model';
 import { FilterItemModel, DisplayElement } from '@shared/filters/models/filter-item.model';
-import find from 'lodash/find';
 import each from 'lodash/each';
 import remove from 'lodash/remove';
 
@@ -18,7 +17,7 @@ export class FilterCheckBoxesModel extends FilterItemModel {
         let result: DisplayElement[] = [];
         let values = this.value && this.value.sort ? this.value.sort() : [ this.value ];
         values.forEach(x => {
-            let data = find(this.dataSource, (val: any) => val.id == x);
+            let data = this.dataSource.find((val: any) => val.id == x);
             data && result.push(<DisplayElement>{
                 item: this,
                 displayValue: data.name || data.displayName,
@@ -36,9 +35,9 @@ export class FilterCheckBoxesModel extends FilterItemModel {
         let result: DisplayElement[] = [];
         each(arr, x => {
             if (x.parentCode) {
-                let parent = find(result, y => y.args == x.parentCode);
+                let parent = result.find(y => y.args == x.parentCode);
                 if (!parent) {
-                    let parentName = find(this.dataSource, (val: any, i, arr) => val.id == x.parentCode).name;
+                    let parentName = this.dataSource.find((val: any) => val.id == x.parentCode).name;
                     result.push(<DisplayElement>{ displayValue: parentName, readonly: true, args: x.parentCode });
                 }
                 result.push(x);

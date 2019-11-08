@@ -14,8 +14,6 @@ import { filter, finalize, delayWhen, map, mergeMap, switchMap, takeUntil } from
 import { DragulaService } from 'ng2-dragula';
 import * as moment from 'moment';
 import extend from 'lodash/extend';
-import find from 'lodash/find';
-import findIndex from 'lodash/findIndex';
 import clone from 'lodash/clone';
 import uniqBy from 'lodash/uniqBy';
 
@@ -186,7 +184,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
             if (!this.refreshTimeout) {
                 this.loadData(
                     0,
-                    this.stageId && findIndex(this.stages, obj => obj.id == this.stageId),
+                    this.stageId && this.stages.findIndex(obj => obj.id == this.stageId),
                     Boolean(this.stageId)
                 );
                 this.refreshTimeout = null;
@@ -288,7 +286,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                     if (stage)
                         stage.accessibleActions.forEach((action) => {
                             if (action.targetStageId) {
-                                let target = find(this.stages, (stage) => {
+                                let target = this.stages.find((stage) => {
                                     return stage.id == action.targetStageId;
                                 });
                                 const targetElm: HTMLElement = document.querySelector('[accessKey="' + target.id + '"]');
@@ -368,7 +366,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                 if (this.pipeline) {
                     this.loadData(
                         0,
-                        stageId && findIndex(this.stages, obj => obj.id == stageId),
+                        stageId && this.stages.findIndex(obj => obj.id == stageId),
                         Boolean(stageId)
                     );
                     this.refreshTimeout = null;
@@ -380,7 +378,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     private getEntityById(id, stage: Stage) {
-        return stage && find(stage.entities, (entity) => {
+        return stage && stage.entities.find((entity) => {
             return entity && (entity['Id'] == id);
         });
     }
@@ -394,7 +392,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     private getStageByElement(el): Stage {
-        return find(this.stages, (stage) => {
+        return this.stages.find((stage) => {
             return stage && (stage.id == (el.getAttribute('stage') || this.getAccessKey(el)));
         });
     }

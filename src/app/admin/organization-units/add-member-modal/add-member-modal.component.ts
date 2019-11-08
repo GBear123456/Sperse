@@ -1,27 +1,30 @@
-import { Component, EventEmitter, Injector, Output, ViewChild } from '@angular/core';
-import { AppComponentBase } from '@shared/common/app-component-base';
-import { FindOrganizationUnitUsersInput, NameValueDto, OrganizationUnitServiceProxy, UsersToOrganizationUnitInput } from '@shared/service-proxies/service-proxies';
-import map from 'lodash/map';
+/** Core imports */
+import { Component, EventEmitter, Output, ViewChild } from '@angular/core';
+
+/** Third party imports */
 import { ModalDirective } from 'ngx-bootstrap';
+import { Table } from 'primeng/components/table/table';
+
+/** Application imports */
+import { FindOrganizationUnitUsersInput, NameValueDto, OrganizationUnitServiceProxy, UsersToOrganizationUnitInput } from '@shared/service-proxies/service-proxies';
 import { LazyLoadEvent } from 'primeng/components/common/lazyloadevent';
 import { Paginator } from 'primeng/components/paginator/paginator';
-import { Table } from 'primeng/components/table/table';
-import { IUsersWithOrganizationUnit } from './users-with-organization-unit';
+import { IUsersWithOrganizationUnit } from '../users-with-organization-unit';
+import { PrimengTableHelper } from '@shared/helpers/PrimengTableHelper';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { NotifyService } from '@abp/notify/notify.service';
 
 @Component({
     selector: 'addMemberModal',
     templateUrl: './add-member-modal.component.html'
 })
-export class AddMemberModalComponent extends AppComponentBase {
-
-    organizationUnitId: number;
-
+export class AddMemberModalComponent {
     @Output() membersAdded: EventEmitter<IUsersWithOrganizationUnit> = new EventEmitter<IUsersWithOrganizationUnit>();
-
     @ViewChild('modal') modal: ModalDirective;
     @ViewChild('dataTable') dataTable: Table;
     @ViewChild('paginator') paginator: Paginator;
 
+    organizationUnitId: number;
     isShown = false;
     filterText = '';
     tenantId?: number;
@@ -29,11 +32,11 @@ export class AddMemberModalComponent extends AppComponentBase {
     selectedMembers: NameValueDto[];
 
     constructor(
-        injector: Injector,
-        private _organizationUnitService: OrganizationUnitServiceProxy
-    ) {
-        super(injector);
-    }
+        private organizationUnitService: OrganizationUnitServiceProxy,
+        private notify: NotifyService,
+        public ls: AppLocalizationService,
+        public primengTableHelper: PrimengTableHelper
+    ) {}
 
     show(): void {
         this.modal.show();
@@ -64,7 +67,6 @@ export class AddMemberModalComponent extends AppComponentBase {
 
         if (this.primengTableHelper.shouldResetPaging(event)) {
             this.paginator.changePage(0);
-
             return;
         }
 
@@ -76,7 +78,7 @@ export class AddMemberModalComponent extends AppComponentBase {
         input.skipCount = this.primengTableHelper.getSkipCount(this.paginator, event);
         input.maxResultCount = this.primengTableHelper.getMaxResultCount(this.paginator, event);
 
-        this._organizationUnitService
+        this.organizationUnitService
             .findUsers(input)
             .subscribe(result => {
                 this.primengTableHelper.totalRecordsCount = result.totalCount;
@@ -88,12 +90,12 @@ export class AddMemberModalComponent extends AppComponentBase {
     addUsersToOrganizationUnit(): void {
         const input = new UsersToOrganizationUnitInput();
         input.organizationUnitId = this.organizationUnitId;
-        input.userIds = map(this.selectedMembers, selectedMember => Number(selectedMember.value));
+        input.userIds = this.selectedMembers.map(selectedMember => Number(selectedMember.value));
         this.saving = true;
-        this._organizationUnitService
+        this.organizationUnitService
             .addUsersToOrganizationUnit(input)
             .subscribe(() => {
-                this.notify.success(this.l('SuccessfullyAdded'));
+                this.notify.success(this.ls.l(('SuccessfullyAdded')));
                 this.membersAdded.emit({
                     userIds: input.userIds,
                     ouId: input.organizationUnitId

@@ -12,7 +12,6 @@ import { GestureConfig } from '@angular/material';
 import { CacheService } from 'ng2-cache-service';
 import { CacheStorageAbstract } from 'ng2-cache-service/dist/src/services/storage/cache-storage-abstract.service';
 import { CacheLocalStorage } from 'ng2-cache-service/dist/src/services/storage/local-storage/cache-local-storage.service';
-import filter from 'lodash/filter';
 import { BugsnagErrorHandler } from '@bugsnag/plugin-angular';
 
 /** Application imports */
@@ -133,7 +132,7 @@ export function convertAbpLocaleToAngularLocale(locale: string): string {
         return locale;
     }
 
-    let localeMapings = filter(AppConsts.localeMappings, { from: locale });
+    let localeMapings = AppConsts.localeMappings.filter(mapping => mapping.from === locale);
     if (localeMapings && localeMapings.length) {
         return localeMapings[0]['to'];
     }

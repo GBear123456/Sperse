@@ -2,7 +2,7 @@
 import { Injectable } from '@angular/core';
 import { Location } from '@angular/common';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 
 /** Third party imports */
 import { Observable, Subscription, combineLatest, fromEvent, of } from 'rxjs';
@@ -55,7 +55,6 @@ export class CrmService {
         private http: HttpClient,
         private ls: AppLocalizationService,
         private router: Router,
-        private route: ActivatedRoute,
         private location: Location,
         private instanceServiceProxy: InstanceServiceProxy
     ) {}

@@ -6,7 +6,10 @@
                 <organization-tree #ouTree (ouSelected)="ouMembers.organizationUnit = $event"></organization-tree>
             </div>
             <div class="col-lg-6">
-                <organization-unit-members #ouMembers (membersAdded)="ouTree.membersAdded($event)" (memberRemoved)="ouTree.memberRemoved($event)"></organization-unit-members>
+                <organization-unit-members #ouMembers
+                                           (membersAdded)="ouTree.membersAdded($event)"
+                                           (memberRemoved)="ouTree.memberRemoved($event)">
+                </organization-unit-members>
             </div>
         </div>
     </div>

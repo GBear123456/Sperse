@@ -31,8 +31,8 @@
                             </div>
                         </div>
                         <dx-validator>
-                            <dxi-validation-rule type="required" [message]="l('EmailIsRequired')"></dxi-validation-rule>
-                            <dxi-validation-rule type="pattern" [pattern]="emailRegEx" [message]="l('InvalidEmailAddress')"></dxi-validation-rule>
+                            <dxi-validation-rule type="required" [message]="ls.l('EmailIsRequired')"></dxi-validation-rule>
+                            <dxi-validation-rule type="pattern" [pattern]="emailRegEx" [message]="ls.l('InvalidEmailAddress')"></dxi-validation-rule>
                         </dx-validator>
                     </dx-select-box>
                     <dx-select-box #phoneNumber
@@ -64,10 +64,10 @@
                         </div>
                         <dx-validator>
                             <dxi-validation-rule type="stringLength" max="24"></dxi-validation-rule>
-                            <dxi-validation-rule type="pattern" [pattern]="phonePattern" message="{{l('PhoneValidationError')}}"></dxi-validation-rule>
+                            <dxi-validation-rule type="pattern" [pattern]="phonePattern" message="{{ls.l('PhoneValidationError')}}"></dxi-validation-rule>
                         </dx-validator>
                     </dx-select-box>
-                    <dx-check-box [(value)]="inviteSetRandomPassword" [text]="l('SetRandomPassword')"></dx-check-box>
+                    <dx-check-box [(value)]="inviteSetRandomPassword" [text]="ls.l('SetRandomPassword')"></dx-check-box>
                     <dx-text-box *ngIf="!inviteSetRandomPassword"
                         width="300px"
                         placeholder="Password"
@@ -77,22 +77,22 @@
                             <dxi-validation-rule type="required"></dxi-validation-rule>
                         </dx-validator>
                     </dx-text-box>
-                    <dx-text-box *ngIf="!inviteSetRandomPassword" 
-                        width="300px" 
+                    <dx-text-box *ngIf="!inviteSetRandomPassword"
+                        width="300px"
                         placeholder="Confirm Password"
                         mode="password"
                         [value]="">
                         <dx-validator>
                             <dxi-validation-rule type="required"></dxi-validation-rule>
-                            <dxi-validation-rule type="compare" [comparisonTarget]="invitePasswordComparison" [message]="l('PasswordsDontMatch')"></dxi-validation-rule>
+                            <dxi-validation-rule type="compare" [comparisonTarget]="invitePasswordComparison" [message]="ls.l('PasswordsDontMatch')"></dxi-validation-rule>
                         </dx-validator>
                     </dx-text-box>
 
-                    <dx-check-box [(value)]="inviteData.changePasswordOnNextLogin" [text]="l('ShouldChangePasswordOnNextLogin')"></dx-check-box>
-                    <dx-check-box [(value)]="inviteData.sendActivationEmail" [text]="l('SendActivationEmail')"></dx-check-box>
+                    <dx-check-box [(value)]="inviteData.changePasswordOnNextLogin" [text]="ls.l('ShouldChangePasswordOnNextLogin')"></dx-check-box>
+                    <dx-check-box [(value)]="inviteData.sendActivationEmail" [text]="ls.l('SendActivationEmail')"></dx-check-box>
                 </div>
                 <div class="col-md-4 offset-md-2">
-                    <span>{{l('Roles')}}:</span>
+                    <span>{{ls.l('Roles')}}:</span>
                     <ul class="items-list">
                         <li *ngFor="let role of roles">
                             <dx-check-box [disabled]="!isInviteAllowed"
@@ -104,7 +104,7 @@
                     </ul>
                 </div>
             </div>
-            <button class="button-layout button-primary" (click)="inviteUser($event)">{{l('Invite')}}</button>
+            <button class="button-layout button-primary" (click)="inviteUser($event)">{{ls.l('Invite')}}</button>
         </dx-validation-group>
     </dx-scroll-view>
 </div>
@@ -114,11 +114,11 @@
             <div class="user-info row" #row>
                 <div class="col-md-7" [ngClass]="{ onecolum: row.offsetWidth < 600 }">
                     <div class="section-item clearfix">
-                        <div class="item-edit-label">{{l("EmailAddress")}}:</div>
+                        <div class="item-edit-label">{{ls.l("EmailAddress")}}:</div>
                         <inplace-edit #InPlaceEmail [data]="this.getPropData(EMAIL_FIELD)" (valueChanged)="updateValue($event, EMAIL_FIELD)" (openDialog)="InPlaceEmail.showInput(true)"></inplace-edit>
                     </div>
                     <div class="section-item clearfix">
-                        <div class="item-edit-label">{{l("PhoneNumber")}}:</div>
+                        <div class="item-edit-label">{{ls.l("PhoneNumber")}}:</div>
                         <ul *ngIf="!phoneInplaceEdit">
                             <li (dblclick)="phoneInPlaceEdit()">{{ data?.user?.phoneNumber | phone }}<i class="edit-phone fa fa-pencil" (click)="phoneInPlaceEdit()"></i></li>
                         </ul>
@@ -128,25 +128,25 @@
                             <dx-button class="exit" icon="refresh" (onClick)="closePhoneInPlaceEdit()"></dx-button>
                         </div>
                     </div>
-                    <button class="button-layout button-primary reset-password" [disabled]="!data?.user?.isActive" (click)="resetPasswordDialog($event)">{{l('PasswordReset')}}</button>
+                    <button class="button-layout button-primary reset-password" [disabled]="!data?.user?.isActive" (click)="resetPasswordDialog($event)">{{ls.l('PasswordReset')}}</button>
                     <div class="title">
-                        {{l('Options') + ':'}}
+                        {{ls.l('Options') + ':'}}
                     </div>
                     <ul *ngIf="data && data?.user" class="items-list">
                         <li>
-                            <dx-check-box [disabled]="!isEditAllowed" [(value)]="data.user.isActive" [text]="l('Active')" (onValueChanged)="isActiveChanged($event)"></dx-check-box>
+                            <dx-check-box [disabled]="!isEditAllowed" [(value)]="data.user.isActive" [text]="ls.l('Active')" (onValueChanged)="isActiveChanged($event)"></dx-check-box>
                         </li>
                         <li>
-                            <dx-check-box [disabled]="!isEditAllowed" [(value)]="data.user.isTwoFactorEnabled" [text]="l('IsTwoFactorEnabled')" (onValueChanged)="update(TWO_FACTOR_FIELD, data.user.isTwoFactorEnabled)"></dx-check-box>
+                            <dx-check-box [disabled]="!isEditAllowed" [(value)]="data.user.isTwoFactorEnabled" [text]="ls.l('IsTwoFactorEnabled')" (onValueChanged)="update(TWO_FACTOR_FIELD, data.user.isTwoFactorEnabled)"></dx-check-box>
                         </li>
                         <li>
-                            <dx-check-box [disabled]="!isEditAllowed" [(value)]="data.user.isLockoutEnabled" [text]="l('IsLockoutEnabled')" (onValueChanged)="update(LOCKOUT_FIELD, data.user.isLockoutEnabled)"></dx-check-box>
+                            <dx-check-box [disabled]="!isEditAllowed" [(value)]="data.user.isLockoutEnabled" [text]="ls.l('IsLockoutEnabled')" (onValueChanged)="update(LOCKOUT_FIELD, data.user.isLockoutEnabled)"></dx-check-box>
                         </li>
                     </ul>
                 </div>
                 <div class="col-md-5">
                     <div class="title">
-                        {{l('Roles') + ':'}}
+                        {{ls.l('Roles') + ':'}}
                     </div>
                     <ul class="items-list">
                         <li *ngFor="let role of data?.roles">

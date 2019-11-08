@@ -459,16 +459,18 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             this.chartDataSource.load();
         });
 
-        this.queryParams$.pipe(
+        const queryDataLayoutType$ = this.queryParams$.pipe(
             pluck('dataLayoutType'),
-            filter(Boolean)
-        ).subscribe((dataLayoutType) => {
-            if (dataLayoutType != this.dataLayoutType.value) {
-                this.toggleDataLayout(+dataLayoutType);
-                if (dataLayoutType == DataLayoutType.DataGrid)
-                    this.pipelineService.getPipelineDefinitionObservable(this.pipelinePurposeId)
-                        .subscribe(this.onStagesLoaded.bind(this));
-            }
+            filter((dataLayoutType: DataLayoutType) => dataLayoutType && dataLayoutType != this.dataLayoutType.value)
+        );
+        queryDataLayoutType$.subscribe((dataLayoutType) => {
+            this.toggleDataLayout(+dataLayoutType);
+        });
+        queryDataLayoutType$.pipe(
+            filter((dataLayoutType: DataLayoutType) => dataLayoutType == DataLayoutType.DataGrid),
+            switchMap(() => this.pipelineService.getPipelineDefinitionObservable(this.pipelinePurposeId))
+        ).subscribe(() => {
+            this.onStagesLoaded.bind(this);
         });
 
         this.queryParams$.pipe(

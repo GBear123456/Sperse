@@ -1,39 +1,40 @@
-import { Component, Injector, OnInit } from '@angular/core';
+/** Core imports */
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+
+/** Application imports */
 import { accountModuleAnimation } from '@shared/animations/routerTransition';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppUrlService } from '@shared/common/nav/app-url.service';
 import { RegisterTenantOutput } from '@shared/service-proxies/service-proxies';
 import { TenantRegistrationHelperService } from './tenant-registration-helper.service';
+import { AppLocalizationService } from '../../../app/shared/common/localization/app-localization.service';
 
 @Component({
     templateUrl: './register-tenant-result.component.html',
     animations: [accountModuleAnimation()]
 })
-export class RegisterTenantResultComponent extends AppComponentBase implements OnInit {
+export class RegisterTenantResultComponent implements OnInit {
 
     model: RegisterTenantOutput = new RegisterTenantOutput();
     tenantUrl: string;
-
     saving = false;
 
     constructor(
-        injector: Injector,
-        private _router: Router,
-        private _appUrlService: AppUrlService,
-        private _tenantRegistrationHelper: TenantRegistrationHelperService
-    ) {
-        super(injector);
-    }
+        private router: Router,
+        private appUrlService: AppUrlService,
+        private tenantRegistrationHelper: TenantRegistrationHelperService,
+        public ls: AppLocalizationService
+    ) {}
 
     ngOnInit() {
-        if (!this._tenantRegistrationHelper.registrationResult) {
-            this._router.navigate(['account/login']);
+        if (!this.tenantRegistrationHelper.registrationResult) {
+            this.router.navigate(['account/login']);
             return;
         }
 
-        this.model = this._tenantRegistrationHelper.registrationResult;
+        this.model = this.tenantRegistrationHelper.registrationResult;
         abp.multiTenancy.setTenantIdCookie(this.model.tenantId);
-        this.tenantUrl = this._appUrlService.getAppRootUrlOfTenant(this.model.tenancyName);
+        this.tenantUrl = this.appUrlService.getAppRootUrlOfTenant(this.model.tenancyName);
     }
 }

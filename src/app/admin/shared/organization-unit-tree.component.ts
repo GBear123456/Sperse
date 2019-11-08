@@ -1,9 +1,8 @@
-import { AfterViewInit, Component, ElementRef, Injector } from '@angular/core';
-import { AppComponentBase } from '@shared/common/app-component-base';
+import { AfterViewInit, Component, ElementRef } from '@angular/core';
 import { HtmlHelper } from '@shared/helpers/HtmlHelper';
 import { OrganizationUnitDto } from '@shared/service-proxies/service-proxies';
-import map from 'lodash/map';
 import includes from 'lodash/includes';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 
 export interface IOrganizationUnitsTreeComponentData {
     allOrganizationUnits: OrganizationUnitDto[];
@@ -14,47 +13,43 @@ export interface IOrganizationUnitsTreeComponentData {
     selector: 'organization-unit-tree',
     template:
     `<div class='form-group'>
-        <input id='OrganizationUnitsTreeFilter' type='text' class='form-control' placeholder='{{l("SearchWithThreeDot")}}' >
+        <input id='OrganizationUnitsTreeFilter' type='text' class='form-control' [placeholder]='ls.l("SearchWithThreeDot")' >
     </div>
     <div class="organization-unit-tree"></div>
     `
 })
-export class OrganizationUnitsTreeComponent extends AppComponentBase implements AfterViewInit {
+export class OrganizationUnitsTreeComponent implements AfterViewInit {
 
     set data(data: IOrganizationUnitsTreeComponentData) {
-        this._allOrganizationUnits = data.allOrganizationUnits;
-        this._selectedOrganizationUnits = data.selectedOrganizationUnits;
+        this.allOrganizationUnits = data.allOrganizationUnits;
+        this.selectedOrganizationUnits = data.selectedOrganizationUnits;
         this.refreshTree();
     }
 
-    private _$tree: JQuery;
-    private _createdTreeBefore;
+    private $tree: JQuery;
+    private createdTreeBefore;
+    private allOrganizationUnits: OrganizationUnitDto[];
+    private selectedOrganizationUnits: string[];
 
-    private _allOrganizationUnits: OrganizationUnitDto[];
-    private _selectedOrganizationUnits: string[];
-
-    private filter = '';
-
-    constructor(private _element: ElementRef,
-        injector: Injector
-    ) {
-        super(injector);
-    }
+    constructor(
+        private element: ElementRef,
+        public ls: AppLocalizationService
+    ) {}
 
     ngAfterViewInit(): void {
-        this._$tree = $(this._element.nativeElement).find('.organization-unit-tree');
+        this.$tree = $(this.element.nativeElement).find('.organization-unit-tree');
         this.refreshTree();
         this.initFiltering();
     }
 
     getSelectedOrganizations(): number[] {
-        if (!this._$tree || !this._createdTreeBefore) {
+        if (!this.$tree || !this.createdTreeBefore) {
             return [];
         }
 
         let organizationIds = [];
 
-        let selectedOrganizations = this._$tree.jstree('get_selected', true);
+        let selectedOrganizations = this.$tree.jstree('get_selected', true);
         for (let i = 0; i < selectedOrganizations.length; i++) {
             organizationIds.push(selectedOrganizations[i].original.id);
         }
@@ -65,17 +60,17 @@ export class OrganizationUnitsTreeComponent extends AppComponentBase implements 
     refreshTree(): void {
         let self = this;
 
-        if (this._createdTreeBefore) {
-            this._$tree.jstree('destroy');
+        if (this.createdTreeBefore) {
+            this.$tree.jstree('destroy');
         }
 
-        this._createdTreeBefore = false;
+        this.createdTreeBefore = false;
 
-        if (!this._allOrganizationUnits || !this._$tree) {
+        if (!this.allOrganizationUnits || !this.$tree) {
             return;
         }
 
-        let treeData = map(this._allOrganizationUnits, item => (<any>{
+        let treeData = this.allOrganizationUnits.map(item => (<any>{
             id: item.id,
             parent: item.parentId ? item.parentId : '#',
             code: item.code,
@@ -85,11 +80,11 @@ export class OrganizationUnitsTreeComponent extends AppComponentBase implements 
             dto: item,
             state: {
                 opened: true,
-                selected: includes(self._selectedOrganizationUnits, item.code)
+                selected: includes(self.selectedOrganizationUnits, item.code)
             }
         }));
 
-        this._$tree.jstree({
+        this.$tree.jstree({
             'core': {
                 data: treeData
             },
@@ -112,19 +107,19 @@ export class OrganizationUnitsTreeComponent extends AppComponentBase implements 
             plugins: ['checkbox', 'types', 'search']
         });
 
-        this._createdTreeBefore = true;
+        this.createdTreeBefore = true;
 
         let inTreeChangeEvent = false;
 
         function selectNodeAndAllParents(node) {
-            self._$tree.jstree('select_node', node, true);
-            let parent = self._$tree.jstree('get_parent', node);
+            self.$tree.jstree('select_node', node, true);
+            let parent = self.$tree.jstree('get_parent', node);
             if (parent) {
                 selectNodeAndAllParents(parent);
             }
         }
 
-        this._$tree.on('changed.jstree', (e, data) => {
+        this.$tree.on('changed.jstree', (e, data) => {
             if (!data.node) {
                 return;
             }
@@ -137,14 +132,14 @@ export class OrganizationUnitsTreeComponent extends AppComponentBase implements 
             let childrenNodes;
 
             if (data.node.state.selected) {
-                selectNodeAndAllParents(this._$tree.jstree('get_parent', data.node));
+                selectNodeAndAllParents(this.$tree.jstree('get_parent', data.node));
 
-                childrenNodes = $.makeArray(this._$tree.jstree('get_node', data.node).children);
-                this._$tree.jstree('select_node', childrenNodes);
+                childrenNodes = $.makeArray(this.$tree.jstree('get_node', data.node).children);
+                this.$tree.jstree('select_node', childrenNodes);
 
             } else {
-                childrenNodes = $.makeArray(this._$tree.jstree('get_node', data.node).children);
-                this._$tree.jstree('deselect_node', childrenNodes);
+                childrenNodes = $.makeArray(this.$tree.jstree('get_node', data.node).children);
+                this.$tree.jstree('deselect_node', childrenNodes);
             }
 
             if (!wasInTreeChangeEvent) {
@@ -161,7 +156,7 @@ export class OrganizationUnitsTreeComponent extends AppComponentBase implements 
             if (to) { (window as any).clearTimeout(to); }
             to = (window as any).setTimeout(() => {
                 let v = $('#OrganizationUnitsTreeFilter').val() as string;
-                self._$tree.jstree(true).search(v);
+                self.$tree.jstree(true).search(v);
             }, 250);
         });
     }
