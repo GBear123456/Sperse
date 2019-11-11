@@ -1,13 +1,13 @@
 /** Core imports */
 import { ComponentFactoryResolver, NgModule } from '@angular/core';
 import * as ngCommon from '@angular/common';
-import { BrowserModule } from '@angular/platform-browser';
 
 /** Third party modules */
 import { DxScrollViewModule } from 'devextreme-angular/ui/scroll-view';
+import { DxProgressBarModule } from 'devextreme-angular/ui/progress-bar';
 import { ChartModule } from 'angular2-chartjs';
 import 'chartjs-plugin-labels';
-// import { ProgressBarModule } from 'angular2-progressbar/dist/progressbar.module';
+import { NgCircleProgressModule } from 'ng-circle-progress';
 
 /** Application imports */
 import { CommonModule } from '@shared/common/common.module';
@@ -28,13 +28,28 @@ import { ResourcesComponent } from '@root/bank-code/resources/resources.componen
     ],
     imports: [
         ngCommon.CommonModule,
-        BrowserModule,
-        // ProgressBarModule,
         CommonModule,
         BankCodeLayoutModule,
         BankCodeRoutingModule,
         DxScrollViewModule,
-        ChartModule
+        DxProgressBarModule,
+        ChartModule,
+
+        NgCircleProgressModule.forRoot({
+            // defaults config
+            'radius': 32,
+            'space': -5,
+            'outerStrokeGradient': false,
+            'outerStrokeWidth': 5,
+            'innerStrokeWidth': 5,
+            'animateTitle': true,
+            'animationDuration': 500,
+            'showUnits': false,
+            'showBackground': false,
+            'clockwise': false,
+            'titleFontSize': '13',
+            'startFromZero': false
+        })
     ]
 })
 export class BankCodeModule {
