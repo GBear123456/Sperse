@@ -2,6 +2,12 @@
 import { ComponentFactoryResolver, NgModule } from '@angular/core';
 import * as ngCommon from '@angular/common';
 
+/** Third party modules */
+import { DxScrollViewModule } from 'devextreme-angular/ui/scroll-view';
+import { ChartModule } from 'angular2-chartjs';
+import 'chartjs-plugin-labels';
+import { ProgressBarModule } from 'angular2-progressbar';
+
 /** Application imports */
 import { CommonModule } from '@shared/common/common.module';
 import { BankCodeComponent } from './bank-code.component';
@@ -23,6 +29,9 @@ import { ResourcesComponent } from '@root/bank-code/resources/resources.componen
         CommonModule,
         BankCodeLayoutModule,
         BankCodeRoutingModule,
+        DxScrollViewModule,
+        ChartModule,
+        ProgressBarModule,
         ngCommon.CommonModule
     ]
 })

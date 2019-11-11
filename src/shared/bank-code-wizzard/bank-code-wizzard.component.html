@@ -54,7 +54,8 @@
                     <label class="radio-label" for="primary-code">primary code</label>
                     <input type="radio" id="full-code" name="code" value="full">
                     <label class="radio-label" for="full-code">full b.a.n.k. code</label> -->
-                    <canvas id="bankCodeChart" class="chart-canvas"></canvas>
+<!--                    <canvas id="bankCodeChart" class="chart-canvas"></canvas>-->
+                    <chart [type]="type" [data]="data" [options]="options"></chart>
                 </div>
             </div>
         </form>
