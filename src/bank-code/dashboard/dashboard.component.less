@@ -339,3 +339,41 @@ chart {
     height: 175px !important;
     margin: 0 auto;
 }
+
+/deep/ dx-progress-bar {
+    &.daily-goal {
+        .dx-progressbar-range {
+            border-color: #ac1f22;
+            background-color: #ac1f22;
+        }
+    }
+    &.weekly-goal {
+        .dx-progressbar-range {
+            border-color: #104779;
+            background-color: #104779;
+        }
+    }
+    &.monthly-goal {
+        .dx-progressbar-range {
+            border-color: #f09e1f;
+            background-color: #f09e1f;
+        }
+    }
+    &.quarterly-goal {
+        .dx-progressbar-range {
+            border-color: #1b6634;
+            background-color: #1b6634;
+        }
+    }
+    &.annualy-goal {
+        .dx-progressbar-range {
+            border-color: #615ba5;
+            background-color: #615ba5;
+        }
+    }
+    
+    .dx-trackbar-container {
+        height: 12px;
+        border-radius: 0;
+    }
+}

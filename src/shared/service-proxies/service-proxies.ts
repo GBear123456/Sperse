@@ -10837,7 +10837,7 @@ export class CustomerServiceProxy {
      * @topCount (optional) 
      * @return Success
      */
-    getAllByPhrase(searchPhrase: string | null | undefined, topCount: number | null | undefined): Observable<EntityInfo[]> {
+    getAllByPhrase(searchPhrase: string | null | undefined, topCount: number | null | undefined): Observable<EntityContactInfo[]> {
         let url_ = this.baseUrl + "/api/services/CRM/Customer/GetAllByPhrase?";
         if (searchPhrase !== undefined)
             url_ += "SearchPhrase=" + encodeURIComponent("" + searchPhrase) + "&"; 
@@ -10861,14 +10861,14 @@ export class CustomerServiceProxy {
                 try {
                     return this.processGetAllByPhrase(<any>response_);
                 } catch (e) {
-                    return <Observable<EntityInfo[]>><any>_observableThrow(e);
+                    return <Observable<EntityContactInfo[]>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<EntityInfo[]>><any>_observableThrow(response_);
+                return <Observable<EntityContactInfo[]>><any>_observableThrow(response_);
         }));
     }
 
-    protected processGetAllByPhrase(response: HttpResponseBase): Observable<EntityInfo[]> {
+    protected processGetAllByPhrase(response: HttpResponseBase): Observable<EntityContactInfo[]> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -10882,7 +10882,7 @@ export class CustomerServiceProxy {
             if (resultData200 && resultData200.constructor === Array) {
                 result200 = [];
                 for (let item of resultData200)
-                    result200.push(EntityInfo.fromJS(item));
+                    result200.push(EntityContactInfo.fromJS(item));
             }
             return _observableOf(result200);
             }));
@@ -10891,7 +10891,7 @@ export class CustomerServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<EntityInfo[]>(<any>null);
+        return _observableOf<EntityContactInfo[]>(<any>null);
     }
 }
 
@@ -17028,7 +17028,7 @@ export class LeadServiceProxy {
      * @topCount (optional) 
      * @return Success
      */
-    getAllByPhrase(searchPhrase: string | null | undefined, topCount: number | null | undefined): Observable<EntityInfo[]> {
+    getAllByPhrase(searchPhrase: string | null | undefined, topCount: number | null | undefined): Observable<EntityContactInfo[]> {
         let url_ = this.baseUrl + "/api/services/CRM/Lead/GetAllByPhrase?";
         if (searchPhrase !== undefined)
             url_ += "SearchPhrase=" + encodeURIComponent("" + searchPhrase) + "&"; 
@@ -17052,14 +17052,14 @@ export class LeadServiceProxy {
                 try {
                     return this.processGetAllByPhrase(<any>response_);
                 } catch (e) {
-                    return <Observable<EntityInfo[]>><any>_observableThrow(e);
+                    return <Observable<EntityContactInfo[]>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<EntityInfo[]>><any>_observableThrow(response_);
+                return <Observable<EntityContactInfo[]>><any>_observableThrow(response_);
         }));
     }
 
-    protected processGetAllByPhrase(response: HttpResponseBase): Observable<EntityInfo[]> {
+    protected processGetAllByPhrase(response: HttpResponseBase): Observable<EntityContactInfo[]> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -17073,7 +17073,7 @@ export class LeadServiceProxy {
             if (resultData200 && resultData200.constructor === Array) {
                 result200 = [];
                 for (let item of resultData200)
-                    result200.push(EntityInfo.fromJS(item));
+                    result200.push(EntityContactInfo.fromJS(item));
             }
             return _observableOf(result200);
             }));
@@ -17082,7 +17082,7 @@ export class LeadServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<EntityInfo[]>(<any>null);
+        return _observableOf<EntityContactInfo[]>(<any>null);
     }
 }
 
@@ -19656,7 +19656,7 @@ export class OrderServiceProxy {
      * @topCount (optional) 
      * @return Success
      */
-    getAllByPhrase(searchPhrase: string | null | undefined, topCount: number | null | undefined): Observable<EntityInfo[]> {
+    getAllByPhrase(searchPhrase: string | null | undefined, topCount: number | null | undefined): Observable<EntityContactInfo[]> {
         let url_ = this.baseUrl + "/api/services/CRM/Order/GetAllByPhrase?";
         if (searchPhrase !== undefined)
             url_ += "SearchPhrase=" + encodeURIComponent("" + searchPhrase) + "&"; 
@@ -19680,14 +19680,14 @@ export class OrderServiceProxy {
                 try {
                     return this.processGetAllByPhrase(<any>response_);
                 } catch (e) {
-                    return <Observable<EntityInfo[]>><any>_observableThrow(e);
+                    return <Observable<EntityContactInfo[]>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<EntityInfo[]>><any>_observableThrow(response_);
+                return <Observable<EntityContactInfo[]>><any>_observableThrow(response_);
         }));
     }
 
-    protected processGetAllByPhrase(response: HttpResponseBase): Observable<EntityInfo[]> {
+    protected processGetAllByPhrase(response: HttpResponseBase): Observable<EntityContactInfo[]> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -19701,7 +19701,7 @@ export class OrderServiceProxy {
             if (resultData200 && resultData200.constructor === Array) {
                 result200 = [];
                 for (let item of resultData200)
-                    result200.push(EntityInfo.fromJS(item));
+                    result200.push(EntityContactInfo.fromJS(item));
             }
             return _observableOf(result200);
             }));
@@ -19710,7 +19710,7 @@ export class OrderServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<EntityInfo[]>(<any>null);
+        return _observableOf<EntityContactInfo[]>(<any>null);
     }
 }
 
@@ -20990,7 +20990,7 @@ export class PartnerServiceProxy {
      * @topCount (optional) 
      * @return Success
      */
-    getAllByPhrase(searchPhrase: string | null | undefined, topCount: number | null | undefined): Observable<EntityInfo[]> {
+    getAllByPhrase(searchPhrase: string | null | undefined, topCount: number | null | undefined): Observable<EntityContactInfo[]> {
         let url_ = this.baseUrl + "/api/services/CRM/Partner/GetAllByPhrase?";
         if (searchPhrase !== undefined)
             url_ += "SearchPhrase=" + encodeURIComponent("" + searchPhrase) + "&"; 
@@ -21014,14 +21014,14 @@ export class PartnerServiceProxy {
                 try {
                     return this.processGetAllByPhrase(<any>response_);
                 } catch (e) {
-                    return <Observable<EntityInfo[]>><any>_observableThrow(e);
+                    return <Observable<EntityContactInfo[]>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<EntityInfo[]>><any>_observableThrow(response_);
+                return <Observable<EntityContactInfo[]>><any>_observableThrow(response_);
         }));
     }
 
-    protected processGetAllByPhrase(response: HttpResponseBase): Observable<EntityInfo[]> {
+    protected processGetAllByPhrase(response: HttpResponseBase): Observable<EntityContactInfo[]> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -21035,7 +21035,7 @@ export class PartnerServiceProxy {
             if (resultData200 && resultData200.constructor === Array) {
                 result200 = [];
                 for (let item of resultData200)
-                    result200.push(EntityInfo.fromJS(item));
+                    result200.push(EntityContactInfo.fromJS(item));
             }
             return _observableOf(result200);
             }));
@@ -21044,7 +21044,7 @@ export class PartnerServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<EntityInfo[]>(<any>null);
+        return _observableOf<EntityContactInfo[]>(<any>null);
     }
 }
 
@@ -54001,17 +54001,66 @@ export interface ICurrencyInfo {
     symbol: string | undefined;
 }
 
-export class EntityInfo implements IEntityInfo {
-    id!: number | undefined;
-    name!: string | undefined;
-    email!: string | undefined;
+export class ContactAddressInfo implements IContactAddressInfo {
     streetAddress!: string | undefined;
     city!: string | undefined;
     state!: string | undefined;
+    countryCode!: string | undefined;
     zip!: string | undefined;
+
+    constructor(data?: IContactAddressInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.streetAddress = data["streetAddress"];
+            this.city = data["city"];
+            this.state = data["state"];
+            this.countryCode = data["countryCode"];
+            this.zip = data["zip"];
+        }
+    }
+
+    static fromJS(data: any): ContactAddressInfo {
+        data = typeof data === 'object' ? data : {};
+        let result = new ContactAddressInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["streetAddress"] = this.streetAddress;
+        data["city"] = this.city;
+        data["state"] = this.state;
+        data["countryCode"] = this.countryCode;
+        data["zip"] = this.zip;
+        return data; 
+    }
+}
+
+export interface IContactAddressInfo {
+    streetAddress: string | undefined;
+    city: string | undefined;
+    state: string | undefined;
+    countryCode: string | undefined;
+    zip: string | undefined;
+}
+
+export class EntityContactInfo implements IEntityContactInfo {
+    id!: number | undefined;
+    name!: string | undefined;
+    email!: string | undefined;
+    address!: ContactAddressInfo | undefined;
     isActive!: boolean | undefined;
 
-    constructor(data?: IEntityInfo) {
+    constructor(data?: IEntityContactInfo) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -54025,17 +54074,14 @@ export class EntityInfo implements IEntityInfo {
             this.id = data["id"];
             this.name = data["name"];
             this.email = data["email"];
-            this.streetAddress = data["streetAddress"];
-            this.city = data["city"];
-            this.state = data["state"];
-            this.zip = data["zip"];
+            this.address = data["address"] ? ContactAddressInfo.fromJS(data["address"]) : <any>undefined;
             this.isActive = data["isActive"];
         }
     }
 
-    static fromJS(data: any): EntityInfo {
+    static fromJS(data: any): EntityContactInfo {
         data = typeof data === 'object' ? data : {};
-        let result = new EntityInfo();
+        let result = new EntityContactInfo();
         result.init(data);
         return result;
     }
@@ -54045,23 +54091,17 @@ export class EntityInfo implements IEntityInfo {
         data["id"] = this.id;
         data["name"] = this.name;
         data["email"] = this.email;
-        data["streetAddress"] = this.streetAddress;
-        data["city"] = this.city;
-        data["state"] = this.state;
-        data["zip"] = this.zip;
+        data["address"] = this.address ? this.address.toJSON() : <any>undefined;
         data["isActive"] = this.isActive;
         return data; 
     }
 }
 
-export interface IEntityInfo {
+export interface IEntityContactInfo {
     id: number | undefined;
     name: string | undefined;
     email: string | undefined;
-    streetAddress: string | undefined;
-    city: string | undefined;
-    state: string | undefined;
-    zip: string | undefined;
+    address: ContactAddressInfo | undefined;
     isActive: boolean | undefined;
 }
 
@@ -59043,7 +59083,7 @@ export class InvoiceSettings implements IInvoiceSettings {
     taxVatNo!: string | undefined;
     defaultTemplateId!: number | undefined;
     attachPDF!: boolean | undefined;
-    note!: string | undefined;
+    defaultNote!: string | undefined;
     currency!: Currency | undefined;
 
     constructor(data?: IInvoiceSettings) {
@@ -59062,7 +59102,7 @@ export class InvoiceSettings implements IInvoiceSettings {
             this.taxVatNo = data["taxVatNo"];
             this.defaultTemplateId = data["defaultTemplateId"];
             this.attachPDF = data["attachPDF"];
-            this.note = data["note"];
+            this.defaultNote = data["defaultNote"];
             this.currency = data["currency"];
         }
     }
@@ -59081,7 +59121,7 @@ export class InvoiceSettings implements IInvoiceSettings {
         data["taxVatNo"] = this.taxVatNo;
         data["defaultTemplateId"] = this.defaultTemplateId;
         data["attachPDF"] = this.attachPDF;
-        data["note"] = this.note;
+        data["defaultNote"] = this.defaultNote;
         data["currency"] = this.currency;
         return data; 
     }
@@ -59093,7 +59133,7 @@ export interface IInvoiceSettings {
     taxVatNo: string | undefined;
     defaultTemplateId: number | undefined;
     attachPDF: boolean | undefined;
-    note: string | undefined;
+    defaultNote: string | undefined;
     currency: Currency | undefined;
 }
 

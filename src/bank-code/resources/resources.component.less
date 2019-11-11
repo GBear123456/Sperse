@@ -1,6 +1,310 @@
 :host {
-    h1 {
+    .resources-container h1 {
+        font-size: 40px;
+        font-weight: 900;
+        font-stretch: normal;
+        font-style: normal;
+        line-height: 0.58;
+        letter-spacing: -0.8px;
         text-align: center;
-        margin-top: 30px;
+        color: #000000;
+        margin: 3rem auto;
     }
+    
+    .resources-container h2 {
+        font-size: 20px;
+        color: #000;
+        text-align: center;
+        margin-bottom: 25px
+    }
+    
+    .resources-container .card {
+        margin-bottom: 30px;
+    }
+    
+    .resources > div {
+        margin-bottom: 30px
+    }
+    
+    .resources img {
+        width: 150px;
+    }
+    
+    .resources .title {
+        font-size: 12px;
+        font-weight: 500;
+        margin-top: 12px;
+        margin-bottom: 0;
+        font-family: 'Roboto', sans-serif;
+    }
+    
+    .resources .text {
+        font-family: 'Roboto', sans-serif;
+        font-size: 10px;
+        margin-bottom: 0;
+        color: #ababab;
+    }
+    
+    .sidebar-nav {
+    }
+    
+    .sidebar-nav ul {
+        padding: 0
+    }
+    
+    .sidebar-nav ul li {
+        list-style: none;
+    }
+    
+    .sidebar-nav li a {
+        display: block;
+        padding: 15px 10px;
+        font-weight: 600;
+        color: #000;
+        font-size: 16px;
+        line-height: 1;
+    }
+    
+    .sidebar-nav li a:hover {
+        text-decoration: none;;
+    }
+    
+    .quick-nav {
+        font-size: 14px;
+        font-weight: 100;
+        color: #868686;
+    }
+    
+    .datepicker .ui-datepicker-header {
+        background: none;
+        border: 0;
+    }
+    
+    .datepicker .ui-datepicker {
+        border: 0;
+        margin: 0 auto;
+    }
+    
+    .datepicker .ui-widget.ui-widget-content {
+        border: 0
+    }
+    
+    .datepicker .ui-datepicker.ui-widget-content .ui-state-default {
+        text-align: center;
+        border: 0;
+        font-size: 16px;
+        margin: 3px 0;
+        background: none;
+    }
+    
+    .clndr .clndr-table tr .day {
+        width: 100%;
+        height: inherit;
+    }
+    
+    .clndr .clndr-table tr .day.today {
+    
+    }
+    
+    .clndr .clndr-table tr .empty, .clndr .clndr-table tr .adjacent-month, .clndr .clndr-table tr .my-empty, .clndr .clndr-table tr .my-adjacent-month {
+        width: 100%;
+        height: inherit;
+        color: #c8c9cc;
+        font-weight: bold;
+    }
+    
+    .clndr .clndr-table .header-days .header-day {
+        vertical-align: middle;
+        text-align: center;
+        color: #c8c9cc;
+    }
+    
+    .clndr .clndr-controls {
+        display: inline-block;
+        width: 100%;
+        position: relative;
+        margin-bottom: 10px;
+    }
+    
+    .clndr .clndr-controls .clndr-control-button {
+        float: left;
+        width: 15%;
+    }
+    
+    .clndr .clndr-controls .month {
+        float: left;
+        width: 70%;
+        text-align: center;
+        font-size: 14px;
+        font-weight: bold;
+        font-family: 'Roboto', sans-serif;
+    }
+    
+    .clndr .clndr-controls .clndr-control-button.rightalign {
+        text-align: right;
+        width: 15%;
+    }
+    
+    .clndr td {
+        border: 15px solid #fff;
+        padding: 5px 8px;
+        font-size: 14px;
+        text-align: center;
+        margin: 3px;
+    }
+    
+    .clndr .clndr-table tr .day.event, .clndr .clndr-table tr .day.my-event {
+        background: #f4ddde;
+        color: #ac1f22;
+        font-weight: bold;
+    }
+    
+    footer {
+        margin-top: 6rem;
+        text-align: center;
+    }
+    
+    footer h2 {
+        font-size: 16px;
+        margin-bottom: 1rem;
+    }
+    
+    footer .social-icons img {
+        width: 35px;
+    }
+    
+    footer .social-icons a {
+        display: inline-block;
+        margin: 0 3px;
+    }
+    
+    footer .contacts {
+        margin-top: 10px;
+        font-size: 10px;
+        margin-bottom: 50px;
+    }
+    
+    footer .contacts a {
+        color: #ac1f22
+    }
+    
+    footer .copyright {
+        font-size: 10px;
+        color: #7a7979;
+        margin-bottom: 10px;
+    }
+    
+    footer .copyright a {
+        color: #7a7979;
+    }
+    
+    @media (min-width: 992px) {
+        .navbar-nav .nav-link {
+            padding: 22px 0;
+            min-width: 80px;
+            margin: 0 5px;
+            border-bottom: 3px solid transparent;
+            text-transform: uppercase;
+            font-size: 14px;
+            color: #7a7979
+        }
+        
+        .navbar-nav .nav-item.active .nav-link, .navbar-nav .nav-link:hover {
+            border-bottom: 3px solid #ac1f22;
+            font-weight: bold;
+            color: #000
+        }
+        
+        .level-img {
+            width: 175px;
+        }
+        
+        footer .logo {
+            width: 120px;
+        }
+    }
+    @media (max-width: 991.98px) {
+        .navbar-nav {
+            text-align: left !important
+        }
+        
+        .navbar-collapse.show {
+            padding: 20px 0
+        }
+        
+        .navbar {
+            padding-top: 10px;
+            padding-bottom: 10px;
+        }
+        
+        .vimeo-iframe {
+            height: 350px;
+        }
+        
+        .level-img {
+            width: 100%
+        }
+        
+        footer {
+            margin-top: 3rem;
+        }
+        
+        footer .logo {
+            width: 100px;
+        }
+        
+        .quick-nav-links {
+            display: none;
+        }
+        
+        .quick-nav {
+            background: #ececec;
+            display: block;
+            width: 100%;
+            padding: 15px;
+            border-radius: 3px
+        }
+        
+        .quick-nav:after {
+            content: '';
+            width: 45px;
+            height: 35px;
+            position: absolute;
+            background: #fff;
+            background: url(../../assets/common/images/bank-code/menu-icon.svg) no-repeat center center;
+            top: 7px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            right: 27px;
+        }
+    }
+    
+    @media (min-width: 768px) {
+        .card-body {
+            padding: 2rem 1.7rem;
+        }
+    }
+    
+    @media (max-width: 767.98px) {
+        .vimeo-iframe {
+            height: 190px;
+        }
+        
+        .counters .card-body {
+            padding: 2rem .0rem
+        }
+        
+        .circular-progress {
+            width: 60px;
+        }
+        
+        .counter-1 {
+            margin-bottom: 80px;
+        }
+        
+        .counter-2 {
+            margin-bottom: 50px;
+        }
+    }
+    
 }

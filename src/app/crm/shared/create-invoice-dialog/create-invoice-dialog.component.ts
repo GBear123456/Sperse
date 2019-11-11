@@ -83,7 +83,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
     invoiceSettings: InvoiceSettings = new InvoiceSettings();
     remoteServiceBaseUrl: string = AppConsts.remoteServiceBaseUrl;
     selectedOption: any;
-
+    selectedContact: any;
     customer: any;
     contactId: number;
     customers = [];
@@ -150,7 +150,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
         this.invoicesService.settings$.pipe(first()).subscribe(settings => {
             this.invoiceSettings = settings;
             if (!this.data.invoice) {
-                this.notes = settings.note;
+                this.notes = settings.defaultNote;
             }
             this.changeDetectorRef.detectChanges();
         });
@@ -486,6 +486,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
     }
 
     selectContact(event) {
+        this.selectedContact = event.selectedItem;
         this.contactId = event.selectedItem && event.selectedItem.id;
         this.orderId = undefined;
         this.orderNumber = undefined;
@@ -518,7 +519,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
 
     resetNoteDefault() {
         if (!this.disabledForUpdate) {
-            this.notes = this.invoiceSettings.note;
+            this.notes = this.invoiceSettings.defaultNote;
             this.changeDetectorRef.detectChanges();
         }
     }
