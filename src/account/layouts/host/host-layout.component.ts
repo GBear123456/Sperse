@@ -23,7 +23,7 @@ export class HostLayoutComponent implements OnInit {
     originUrl = location.origin;
 
     constructor(
-        private appSession: AppSessionService,
+        public appSession: AppSessionService,
         public ls: AppLocalizationService
     ) {}
 

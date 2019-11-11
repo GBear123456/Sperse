@@ -27,6 +27,12 @@ export class MaintenanceComponent implements OnInit, AfterViewInit {
         icon: '',
         buttons: []
     };
+    public gridPagerConfig = {
+        showPageSizeSelector: true,
+        allowedPageSizes: [10, 20, 50, 100],
+        showInfo: true,
+        visible: true
+    };
 
     constructor(
         private cacheService: CachingServiceProxy,

@@ -12,4 +12,4 @@ import { HostResetPasswordComponent } from '../host/host-reset-password.componen
     ],
     animations: [accountModuleAnimation()]
 })
-export class LendSpaceResetPasswordComponent extends HostResetPasswordComponent { }
+export class LendSpaceResetPasswordComponent extends HostResetPasswordComponent {}
