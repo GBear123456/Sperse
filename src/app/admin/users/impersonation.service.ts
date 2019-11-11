@@ -8,9 +8,9 @@ import { AppConsts } from '@shared/AppConsts';
 export class ImpersonationService {
 
     constructor(
-        private _accountService: AccountServiceProxy,
-        private _appUrlService: AppUrlService,
-        private _authService: AppAuthService
+        private accountService: AccountServiceProxy,
+        private appUrlService: AppUrlService,
+        private authService: AppAuthService
     ) {}
 
     impersonate(userId: number, tenantId?: number): void {
@@ -19,9 +19,9 @@ export class ImpersonationService {
         input.userId = userId;
         input.tenantId = tenantId;
 
-        this._accountService.impersonate(input)
+        this.accountService.impersonate(input)
             .subscribe((result: ImpersonateOutput) => {
-                this._authService.logout(false);
+                this.authService.logout(false);
 
                 let targetUrl = AppConsts.appBaseUrl + '?secureId=' + result.impersonationToken;
                 if (input.tenantId) {
@@ -33,9 +33,9 @@ export class ImpersonationService {
     }
 
     impersonateAsAdmin(tenantId?: number): void {
-        this._accountService.impersonateAsAdmin(tenantId)
+        this.accountService.impersonateAsAdmin(tenantId)
             .subscribe((result: ImpersonateOutput) => {
-                this._authService.logout(false);
+                this.authService.logout(false);
 
                 let targetUrl = AppConsts.appBaseUrl + '?secureId=' + result.impersonationToken;
                 if (tenantId) {
@@ -47,9 +47,9 @@ export class ImpersonationService {
     }
 
     backToImpersonator(): void {
-        this._accountService.backToImpersonator()
+        this.accountService.backToImpersonator()
             .subscribe((result: ImpersonateOutput) => {
-                this._authService.logout(false);
+                this.authService.logout(false);
 
                 let targetUrl = AppConsts.appBaseUrl + '?secureId=' + result.impersonationToken;
                 if (abp.session.impersonatorTenantId) {

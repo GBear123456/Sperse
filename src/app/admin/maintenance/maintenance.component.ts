@@ -1,5 +1,5 @@
 /** Core imports */
-import { AfterViewInit, Component, Injector, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnInit } from '@angular/core';
 
 /** Third party imports */
 import escape from 'lodash/escape';
@@ -7,73 +7,87 @@ import { finalize } from 'rxjs/operators';
 
 /** Application imports */
 import { appModuleAnimation } from '@shared/animations/routerTransition';
-import { AppComponentBase } from '@shared/common/app-component-base';
 import { CachingServiceProxy, StringEntityDto, WebLogServiceProxy } from '@shared/service-proxies/service-proxies';
 import { FileDownloadService } from '@shared/utils/file-download.service';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { NotifyService } from '@abp/notify/notify.service';
 
 @Component({
     templateUrl: './maintenance.component.html',
     styleUrls: [ '../../../shared/metronic/table.less', './maintenance.component.less' ],
-    animations: [appModuleAnimation()]
+    animations: [ appModuleAnimation() ]
 })
-export class MaintenanceComponent extends AppComponentBase implements OnInit, AfterViewInit {
+export class MaintenanceComponent implements OnInit, AfterViewInit {
 
     loading = false;
     caches: any = null;
     logs: any = '';
     public headlineConfig = {
-        names: [this.l('Maintenance')],
+        names: [ this.ls.l('Maintenance') ],
         icon: '',
         buttons: []
     };
 
     constructor(
-        injector: Injector,
-        private _cacheService: CachingServiceProxy,
-        private _webLogService: WebLogServiceProxy,
-        private _fileDownloadService: FileDownloadService) {
-        super(injector);
+        private cacheService: CachingServiceProxy,
+        private webLogService: WebLogServiceProxy,
+        private fileDownloadService: FileDownloadService,
+        private notify: NotifyService,
+        public ls: AppLocalizationService
+    ) {}
+
+    static fixWebLogsPanelHeight(): void {
+        const windowHeight = $(window).height();
+        const panelHeight = $('.full-height').height();
+        const difference = windowHeight - panelHeight;
+        const fixedHeight = panelHeight + difference;
+        $('.full-height').css('height', (fixedHeight - 350) + 'px');
+    }
+
+    ngOnInit(): void {
+        this.getCaches();
+        this.getWebLogs();
+    }
+
+    ngAfterViewInit(): void {
+        $(window).bind('resize', () => {
+            MaintenanceComponent.fixWebLogsPanelHeight();
+        });
     }
 
     getCaches(): void {
-        const self = this;
-        self.loading = true;
-        self._cacheService.getAllCaches()
-            .pipe(finalize(() => { self.loading = false; }))
+        this.loading = true;
+        this.cacheService.getAllCaches()
+            .pipe(finalize(() => { this.loading = false; }))
             .subscribe((result) => {
-                self.caches = result.items;
+                this.caches = result.items;
             });
     }
 
     clearCache(cacheName): void {
-        const self = this;
         const input = new StringEntityDto();
         input.id = cacheName;
-
-        self._cacheService.clearCache(input).subscribe(() => {
-            self.notify.success(self.l('CacheSuccessfullyCleared'));
+        this.cacheService.clearCache(input).subscribe(() => {
+            this.notify.success(this.ls.l('CacheSuccessfullyCleared'));
         });
     }
 
     clearAllCaches(): void {
-        const self = this;
-        self._cacheService.clearAllCaches().subscribe(() => {
-            self.notify.success(self.l('AllCachesSuccessfullyCleared'));
+        this.cacheService.clearAllCaches().subscribe(() => {
+            this.notify.success(this.ls.l('AllCachesSuccessfullyCleared'));
         });
     }
 
     getWebLogs(): void {
-        const self = this;
-        self._webLogService.getLatestWebLogs().subscribe((result) => {
-            self.logs = result.latestWebLogLines;
-            self.fixWebLogsPanelHeight();
+        this.webLogService.getLatestWebLogs().subscribe((result) => {
+            this.logs = result.latestWebLogLines;
+            MaintenanceComponent.fixWebLogsPanelHeight();
         });
     }
 
     downloadWebLogs = function () {
-        const self = this;
-        self._webLogService.downloadWebLogs().subscribe((result) => {
-            self._fileDownloadService.downloadTempFile(result);
+        this.webLogService.downloadWebLogs().subscribe((result) => {
+            this.fileDownloadService.downloadTempFile(result);
         });
     };
 
@@ -135,23 +149,4 @@ export class MaintenanceComponent extends AppComponentBase implements OnInit, Af
             .replace('FATAL', '');
     }
 
-    fixWebLogsPanelHeight(): void {
-        const windowHeight = $(window).height();
-        const panelHeight = $('.full-height').height();
-        const difference = windowHeight - panelHeight;
-        const fixedHeight = panelHeight + difference;
-        $('.full-height').css('height', (fixedHeight - 350) + 'px');
-    }
-
-    ngAfterViewInit(): void {
-        $(window).bind('resize', () => {
-            this.fixWebLogsPanelHeight();
-        });
-    }
-
-    ngOnInit(): void {
-        const self = this;
-        self.getCaches();
-        self.getWebLogs();
-    }
 }

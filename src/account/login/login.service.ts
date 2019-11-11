@@ -46,7 +46,6 @@ export class ExternalLoginProvider extends ExternalLoginProviderInfoModel {
 
     constructor(providerInfo: ExternalLoginProviderInfoModel) {
         super();
-
         this.name = providerInfo.name;
         this.clientId = providerInfo.clientId;
         this.icon = ExternalLoginProvider.getSocialIcon(this.name);
@@ -67,14 +66,11 @@ export class ExternalLoginProvider extends ExternalLoginProviderInfoModel {
 export class LoginService {
 
     static readonly twoFactorRememberClientTokenName = 'TwoFactorRememberClientToken';
-
     authenticateModel: AuthenticateModel;
     authenticateResult: AuthenticateResultModel;
     externalLoginModal: ExternalAuthenticateModel;
-
     resetPasswordModel: SendPasswordResetCodeInput;
     resetPasswordResult: SendPasswordResetCodeOutput;
-
     externalLoginProviders$: Observable<ExternalLoginProvider[]>;
 
     constructor(
@@ -167,13 +163,16 @@ export class LoginService {
     }
 
     facebookLogin() {
-        FB.login(response => {
-            if (response.authResponse.grantedScopes.split(',').includes('email')) {
-                this.facebookLoginStatusChangeCallback(response);
-            } else {
-                abp.message.error('Email is required', 'Facebook Login Failed');
-            }
-        }, { scope: 'email', return_scopes: true, auth_type: 'rerequest' });
+        FB.login(
+            response => {
+                if (response.authResponse.grantedScopes.split(',').includes('email')) {
+                    this.facebookLoginStatusChangeCallback(response);
+                } else {
+                    abp.message.error('Email is required', 'Facebook Login Failed');
+                }
+            },
+            { scope: 'email', return_scopes: true, auth_type: 'rerequest' }
+        );
     }
 
     init(): void {

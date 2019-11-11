@@ -1,7 +1,5 @@
-import { Directive, Component, Injector, ViewContainerRef, ViewEncapsulation,
+import { Directive, Component, ViewContainerRef, ViewEncapsulation,
     ComponentFactoryResolver, ViewChild, Type, OnInit } from '@angular/core';
-
-import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { HostLayoutComponent } from './layouts/host/host-layout.component';
 import { LendSpaceLayoutComponent } from './layouts/lend-space/lend-space-layout.component';
@@ -24,24 +22,21 @@ export class AdLayoutHostDirective {
     ],
     encapsulation: ViewEncapsulation.None
 })
-export class AccountComponent extends AppComponentBase implements OnInit {
+export class AccountComponent implements OnInit {
     @ViewChild(AdLayoutHostDirective) adLayoutHost: AdLayoutHostDirective;
     private viewContainerRef: ViewContainerRef;
 
     constructor(
-        injector: Injector,
-        private _appSession: AppSessionService,
-        private _componentFactoryResolver: ComponentFactoryResolver,
+        private appSession: AppSessionService,
+        private componentFactoryResolver: ComponentFactoryResolver,
         viewContainerRef: ViewContainerRef
     ) {
-        super(injector);
-
         // We need this small hack in order to catch application root view container ref for modals
         this.viewContainerRef = viewContainerRef;
     }
 
     ngOnInit(): void {
-        this.loadLayoutComponent(this.getLayoutComponent(this._appSession.tenant));
+        this.loadLayoutComponent(this.getLayoutComponent(this.appSession.tenant));
     }
 
     private getLayoutComponent(tenant) {
@@ -57,9 +52,9 @@ export class AccountComponent extends AppComponentBase implements OnInit {
         }
     }
 
-    private loadLayoutComponent(component: Type<AppComponentBase>) {
+    private loadLayoutComponent(component: Type<any>) {
         this.adLayoutHost.viewContainerRef.createComponent(
-            this._componentFactoryResolver.resolveComponentFactory(component)
+            this.componentFactoryResolver.resolveComponentFactory(component)
         );
     }
 }

@@ -6,9 +6,9 @@ import * as moment from 'moment';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
-import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { environment } from '@root/environments/environment';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 
 @Component({
     templateUrl: './host-layout.component.html',
@@ -16,21 +16,19 @@ import { environment } from '@root/environments/environment';
         './host-layout.component.less'
     ]
 })
-export class HostLayoutComponent extends AppComponentBase implements OnInit {
+export class HostLayoutComponent implements OnInit {
     currentYear: number = moment().year();
     tenantName = AppConsts.defaultTenantName;
     remoteServiceBaseUrl = AppConsts.remoteServiceBaseUrl;
     originUrl = location.origin;
 
     constructor(
-        injector: Injector,
-        private _appSession: AppSessionService
-    ) {
-        super(injector);
-    }
+        private appSession: AppSessionService,
+        public ls: AppLocalizationService
+    ) {}
 
     ngOnInit(): void {
-        let tenant = this._appSession.tenant;
+        let tenant = this.appSession.tenant;
         if (tenant)
             this.tenantName = tenant.name || tenant.tenancyName;
 

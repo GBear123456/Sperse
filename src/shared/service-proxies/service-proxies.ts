@@ -41799,6 +41799,7 @@ export class SourceContactInfo implements ISourceContactInfo {
     id!: number | undefined;
     name!: string | undefined;
     groupId!: string | undefined;
+    affiliateCode!: string | undefined;
 
     constructor(data?: ISourceContactInfo) {
         if (data) {
@@ -41814,6 +41815,7 @@ export class SourceContactInfo implements ISourceContactInfo {
             this.id = data["id"];
             this.name = data["name"];
             this.groupId = data["groupId"];
+            this.affiliateCode = data["affiliateCode"];
         }
     }
 
@@ -41829,6 +41831,7 @@ export class SourceContactInfo implements ISourceContactInfo {
         data["id"] = this.id;
         data["name"] = this.name;
         data["groupId"] = this.groupId;
+        data["affiliateCode"] = this.affiliateCode;
         return data; 
     }
 }
@@ -41837,6 +41840,7 @@ export interface ISourceContactInfo {
     id: number | undefined;
     name: string | undefined;
     groupId: string | undefined;
+    affiliateCode: string | undefined;
 }
 
 export class UpdateContactStatusInput implements IUpdateContactStatusInput {
@@ -54001,6 +54005,10 @@ export class EntityInfo implements IEntityInfo {
     id!: number | undefined;
     name!: string | undefined;
     email!: string | undefined;
+    streetAddress!: string | undefined;
+    city!: string | undefined;
+    state!: string | undefined;
+    zip!: string | undefined;
     isActive!: boolean | undefined;
 
     constructor(data?: IEntityInfo) {
@@ -54017,6 +54025,10 @@ export class EntityInfo implements IEntityInfo {
             this.id = data["id"];
             this.name = data["name"];
             this.email = data["email"];
+            this.streetAddress = data["streetAddress"];
+            this.city = data["city"];
+            this.state = data["state"];
+            this.zip = data["zip"];
             this.isActive = data["isActive"];
         }
     }
@@ -54033,6 +54045,10 @@ export class EntityInfo implements IEntityInfo {
         data["id"] = this.id;
         data["name"] = this.name;
         data["email"] = this.email;
+        data["streetAddress"] = this.streetAddress;
+        data["city"] = this.city;
+        data["state"] = this.state;
+        data["zip"] = this.zip;
         data["isActive"] = this.isActive;
         return data; 
     }
@@ -54042,6 +54058,10 @@ export interface IEntityInfo {
     id: number | undefined;
     name: string | undefined;
     email: string | undefined;
+    streetAddress: string | undefined;
+    city: string | undefined;
+    state: string | undefined;
+    zip: string | undefined;
     isActive: boolean | undefined;
 }
 
@@ -59003,6 +59023,18 @@ export enum Currency {
     USD = "USD", 
     CAD = "CAD", 
     EUR = "EUR", 
+    GBP = "GBP", 
+    AUD = "AUD", 
+    NZD = "NZD", 
+    SGD = "SGD", 
+    HKD = "HKD", 
+    UAH = "UAH", 
+    INR = "INR", 
+    JPY = "JPY", 
+    ILS = "ILS", 
+    CHF = "CHF", 
+    MXN = "MXN", 
+    RUB = "RUB", 
 }
 
 export class InvoiceSettings implements IInvoiceSettings {
@@ -59815,7 +59847,7 @@ export interface IUpdateLanguageTextInput {
 export class CreateLeadInput implements ICreateLeadInput {
     leadTypeId!: number | undefined;
     stageId!: number | undefined;
-    matchByEmail!: boolean | undefined;
+    matchExisting!: boolean | undefined;
     affiliateId!: string | undefined;
     namePrefix!: string | undefined;
     firstName!: string | undefined;
@@ -59860,7 +59892,7 @@ export class CreateLeadInput implements ICreateLeadInput {
         if (data) {
             this.leadTypeId = data["leadTypeId"];
             this.stageId = data["stageId"];
-            this.matchByEmail = data["matchByEmail"];
+            this.matchExisting = data["matchExisting"];
             this.affiliateId = data["affiliateId"];
             this.namePrefix = data["namePrefix"];
             this.firstName = data["firstName"];
@@ -59933,7 +59965,7 @@ export class CreateLeadInput implements ICreateLeadInput {
         data = typeof data === 'object' ? data : {};
         data["leadTypeId"] = this.leadTypeId;
         data["stageId"] = this.stageId;
-        data["matchByEmail"] = this.matchByEmail;
+        data["matchExisting"] = this.matchExisting;
         data["affiliateId"] = this.affiliateId;
         data["namePrefix"] = this.namePrefix;
         data["firstName"] = this.firstName;
@@ -59999,7 +60031,7 @@ export class CreateLeadInput implements ICreateLeadInput {
 export interface ICreateLeadInput {
     leadTypeId: number | undefined;
     stageId: number | undefined;
-    matchByEmail: boolean | undefined;
+    matchExisting: boolean | undefined;
     affiliateId: string | undefined;
     namePrefix: string | undefined;
     firstName: string | undefined;
