@@ -34,14 +34,12 @@ import { AppService } from '@app/app.service';
 
 export class CfoPortalModule {
     constructor(
-        private _layoutService: LayoutService,
-        private _cfoService: CFOService,
-        private _appService: AppService
+        private layoutService: LayoutService,
+        private cfoService: CFOService,
+        private appService: AppService
     ) {
-        _layoutService.showPlatformSelectMenu = false;
-
-        _cfoService.hasStaticInstance = true;
-        _cfoService.instanceType = InstanceType.User;
-        _appService.toolbarToggle();
+        cfoService.hasStaticInstance = true;
+        cfoService.instanceType = InstanceType.User;
+        appService.toolbarToggle();
     }
 }

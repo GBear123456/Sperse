@@ -189,14 +189,14 @@ export class AppService extends AppServiceBase {
         this.toolbarSubject = new Subject<undefined>();
         if (!this.isHostTenant && abp.session.userId) {
             this.expiredModule = new Subject<string>();
-            this.loadModeuleSubscriptions();
+            this.loadModuleSubscriptions();
         }
         this.toolbarIsHidden$.subscribe((hidden: boolean) => {
             this.document.body.classList[hidden ? 'add' : 'remove']('toolbar-hidden');
         });
     }
 
-    loadModeuleSubscriptions() {
+    loadModuleSubscriptions() {
         this.moduleSubscriptions$ = this.tenantSubscriptionProxy.getModuleSubscriptions()
             .pipe(publishReplay(), refCount());
         this.moduleSubscriptions$.subscribe((res) => {

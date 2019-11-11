@@ -91,7 +91,7 @@ export class PaymentWizardComponent extends AppComponentBase implements OnInit {
                                       .pipe(finalize(() => abp.ui.clearBusy(this.wizardRef.nativeElement)))
                                       .subscribe(() => {
                                           this.subscriptionIsLocked = false;
-                                          this.appService.loadModeuleSubscriptions();
+                                          this.appService.loadModuleSubscriptions();
                                           this.changeDetectorRef.detectChanges();
                                       });
     }

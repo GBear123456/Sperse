@@ -6,7 +6,6 @@ import { Observable } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { DxSelectBoxComponent } from 'devextreme-angular/ui/select-box';
-import { DxTextBoxComponent } from 'devextreme-angular/ui/text-box';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
@@ -34,14 +33,14 @@ export class EmailTemplateDialogComponent implements OnInit {
 
     ckConfig = {
         toolbarGroups: [
-                { name: 'document', groups: [ 'mode', 'document', 'doctools' ] },
-                { name: 'editing', groups: [ 'find', 'selection', 'editing' ] },
-                { name: 'forms', groups: [ 'forms' ] },
-                { name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ] },
-                { name: 'paragraph', groups: [ 'list', 'indent', 'blocks', 'align', 'bidi', 'paragraph' ] },
-                { name: 'styles', groups: [ 'styles' ] },
-                { name: 'colors', groups: [ 'colors' ] },
-                { name: 'clipboard', groups: [ 'clipboard', 'undo' ] }
+            { name: 'document', groups: [ 'mode', 'document', 'doctools' ] },
+            { name: 'editing', groups: [ 'find', 'selection', 'editing' ] },
+            { name: 'forms', groups: [ 'forms' ] },
+            { name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ] },
+            { name: 'paragraph', groups: [ 'list', 'indent', 'blocks', 'align', 'bidi', 'paragraph' ] },
+            { name: 'styles', groups: [ 'styles' ] },
+            { name: 'colors', groups: [ 'colors' ] },
+            { name: 'clipboard', groups: [ 'clipboard', 'undo' ] }
         ],
         removeButtons: 'Anchor,Subscript,Superscript,Source'
     };
@@ -91,7 +90,7 @@ export class EmailTemplateDialogComponent implements OnInit {
         if (this.validateData()) {
             if (this.templateEditMode)
                 this.saveTemplateData();
-            else 
+            else
                 this.onSave.emit(this.data);
         }
     }
@@ -158,14 +157,14 @@ export class EmailTemplateDialogComponent implements OnInit {
             event.component.option('opened', false);
     }
 
-    emailInputFocusOut(event, checkDisplay?) {      
-        event.text = event.event.target.value;           
+    emailInputFocusOut(event, checkDisplay?) {
+        event.text = event.event.target.value;
         this.onCustomItemCreating(event, field => {
             let isComboListEmpty = !this.data[field].length;
             if (!this.templateEditMode && checkDisplay && isComboListEmpty) {
                 if (field == 'cc')
                     this.showCC = false;
-                else 
+                else
                     this.showBCC = false;
             } else if (field == 'to')
                 event.component.option('isValid', !isComboListEmpty);
@@ -174,7 +173,7 @@ export class EmailTemplateDialogComponent implements OnInit {
 
     showInputField(element, field) {
         this[field] = true;
-        setTimeout(() => 
+        setTimeout(() =>
             element.instance.focus());
     }
 
@@ -204,20 +203,20 @@ export class EmailTemplateDialogComponent implements OnInit {
 
     onCustomItemCreating(event, callback?) {
         let field = event.component.option('name'),
-            values = event.text.split(/[\s,]+/).map(item => 
+            values = event.text.split(/[\s,]+/).map(item =>
                 AppConsts.regexPatterns.email.test(item) ? item : ''),
             validValues = values.filter(Boolean),
             currentList = this.data[field];
 
         validValues = validValues.filter((item, pos) => {
-            return validValues.indexOf(item) == pos && 
+            return validValues.indexOf(item) == pos &&
                 (!currentList || currentList.indexOf(item) < 0);
         });
 
         setTimeout(() => {
             if (currentList)
                 Array.prototype.push.apply(currentList, validValues);
-            else 
+            else
                 this.data[field] = validValues;
             this.changeDetectorRef.markForCheck();
             callback && callback(field);
@@ -227,7 +226,7 @@ export class EmailTemplateDialogComponent implements OnInit {
     }
 
     onNewTemplate(event) {
-        event.customItem = {name: event.text, id: undefined};       
+        event.customItem = { name: event.text, id: undefined };
     }
 
     onTemplateFocusOut(event) {

@@ -1,5 +1,6 @@
 /** Core imports */
 import { Component, HostBinding, Inject } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
 import { Router } from '@angular/router';
 
 /** Third party imports */
@@ -16,7 +17,6 @@ import { FeatureCheckerService } from '@abp/features/feature-checker.service';
 import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
 import { TitleService } from '@shared/common/title/title.service';
 import { AppConsts } from '@shared/AppConsts';
-import { DOCUMENT } from '@angular/common';
 
 @Component({
     templateUrl: './platform-select.component.html',
