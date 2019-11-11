@@ -54005,6 +54005,10 @@ export class EntityInfo implements IEntityInfo {
     id!: number | undefined;
     name!: string | undefined;
     email!: string | undefined;
+    streetAddress!: string | undefined;
+    city!: string | undefined;
+    state!: string | undefined;
+    zip!: string | undefined;
     isActive!: boolean | undefined;
 
     constructor(data?: IEntityInfo) {
@@ -54021,6 +54025,10 @@ export class EntityInfo implements IEntityInfo {
             this.id = data["id"];
             this.name = data["name"];
             this.email = data["email"];
+            this.streetAddress = data["streetAddress"];
+            this.city = data["city"];
+            this.state = data["state"];
+            this.zip = data["zip"];
             this.isActive = data["isActive"];
         }
     }
@@ -54037,6 +54045,10 @@ export class EntityInfo implements IEntityInfo {
         data["id"] = this.id;
         data["name"] = this.name;
         data["email"] = this.email;
+        data["streetAddress"] = this.streetAddress;
+        data["city"] = this.city;
+        data["state"] = this.state;
+        data["zip"] = this.zip;
         data["isActive"] = this.isActive;
         return data; 
     }
@@ -54046,6 +54058,10 @@ export interface IEntityInfo {
     id: number | undefined;
     name: string | undefined;
     email: string | undefined;
+    streetAddress: string | undefined;
+    city: string | undefined;
+    state: string | undefined;
+    zip: string | undefined;
     isActive: boolean | undefined;
 }
 
