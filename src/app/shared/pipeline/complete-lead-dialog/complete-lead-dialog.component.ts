@@ -22,7 +22,7 @@ export class LeadCompleteDialogComponent extends ConfirmDialogComponent {
     @ViewChild(DxTextAreaComponent) textComponent: DxTextAreaComponent;
     orderStages: any = [];
     orderStageId: number;
-    currency: string;
+    currency = '$';
     comment: string;
     amount: string;
 
