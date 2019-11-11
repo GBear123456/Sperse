@@ -1,12 +1,13 @@
 /** Core imports */
 import { ComponentFactoryResolver, NgModule } from '@angular/core';
 import * as ngCommon from '@angular/common';
+import { BrowserModule } from '@angular/platform-browser';
 
 /** Third party modules */
 import { DxScrollViewModule } from 'devextreme-angular/ui/scroll-view';
 import { ChartModule } from 'angular2-chartjs';
 import 'chartjs-plugin-labels';
-import { ProgressBarModule } from 'angular2-progressbar';
+// import { ProgressBarModule } from 'angular2-progressbar/dist/progressbar.module';
 
 /** Application imports */
 import { CommonModule } from '@shared/common/common.module';
@@ -26,13 +27,14 @@ import { ResourcesComponent } from '@root/bank-code/resources/resources.componen
         ResourcesComponent
     ],
     imports: [
+        ngCommon.CommonModule,
+        BrowserModule,
+        // ProgressBarModule,
         CommonModule,
         BankCodeLayoutModule,
         BankCodeRoutingModule,
         DxScrollViewModule,
-        ChartModule,
-        ProgressBarModule,
-        ngCommon.CommonModule
+        ChartModule
     ]
 })
 export class BankCodeModule {
