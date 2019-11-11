@@ -107,7 +107,7 @@
             height: 150px;
             border: 1px solid #dedede;
             text-align: center;
-            background: #f0f0f0;
+            background: #FFF;
             overflow: hidden;
             position: relative;
             img {
@@ -181,7 +181,7 @@
             &.profile {
                 margin-bottom: 9px;
                 .credentials {
-                    height: 134px;
+                    height: 152px;
                     span, pre {
                         font-family: Montserrat;
                         display: block;
@@ -195,7 +195,7 @@
                     }
                     pre {
                         overflow-y: auto;
-                        height: 110px;
+                        height: 130px;
                     }
                 }
             }
@@ -239,6 +239,31 @@
                 white-space: nowrap;
             }
 
+            dx-text-box[name="description"], dx-date-box {
+                .dx-placeholder.dx-state-invisible,
+                &.dx-state-focused .dx-placeholder {
+                    font-size: 11px!important;
+                    top: -17px!important;
+                }
+                .dx-placeholder {
+                    padding: 0px;
+                    &.dx-state-invisible {
+                        display: block!important;
+                        font-size: 11px!important;
+                        opacity: 1!important;
+                    }
+                    &:before {
+                        padding: 0;
+                    }
+                }
+            }
+            dx-text-box, dx-text-area, dx-select-box {
+                &.dx-state-focused {
+                    .dx-placeholder {
+                        top: -30px;
+                    }
+                }
+            }
             dx-text-box, dx-text-area, dx-select-box,
             dx-drop-down-box, dx-date-box {
                 display: inline-block;
@@ -246,11 +271,6 @@
                 &.dx-invalid {
                     input {
                         color: #d9534f!important;
-                    }
-                }
-                &.dx-state-focused {
-                    .dx-placeholder {
-                        top: -30px;
                     }
                 }
                 input, textarea {
