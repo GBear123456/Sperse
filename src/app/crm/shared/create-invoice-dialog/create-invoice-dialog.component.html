@@ -33,14 +33,14 @@
             <div class="row">
                 <div class="col-sm-8">
                     <div class="field-area description">
-                        <dx-text-area
+                        <dx-text-box
                             name="description"
                             width="500px"
-                            height="85px"
+                            height="40px"
                             [placeholder]="ls.l('Invoice_AddDescription')"
                             [disabled]="disabledForUpdate"
                             [(value)]="description">
-                        </dx-text-area>
+                        </dx-text-box>
                     </div>
                     <div class="field-area profile">
                         <label class="from-label">{{ls.l('From')}}<a (click)="openInvoiceSettings()"><i class="edit fa fa-pencil"></i>{{ls.l('Settings')}}</a></label>
@@ -54,6 +54,7 @@
                         <dx-select-box #contact
                             name="customer"
                             width="500px"
+                            height="73px"
                             displayExpr="name"
                             valueExpr="name"
                             [disabled]="data.invoice"
@@ -64,8 +65,8 @@
                             [searchEnabled]="true"
                             [searchTimeout]="0"
                             (onFocusIn)="onFieldFocus($event)"
-                            (onSelectionChanged)="selectContact($event)"
-                            (onInput)="customerLookupItems($event)">
+                            (onInput)="customerLookupItems($event)"
+                            (onSelectionChanged)="selectContact($event)">
                         </dx-select-box>
                     </div>
                 </div>
@@ -79,7 +80,8 @@
                         <dx-date-box #dateComponent
                             [placeholder]="ls.lr('Date')"
                             [disabled]="disabledForUpdate"
-                            [width]="'260px'"
+                            width="260px"
+                            height="40px"
                             (onKeyDown)="allowDigitsOnly($event, ['/'])"
                             [(value)]="date"
                             (onContentReady)="onDateContentReady($event)">
@@ -90,7 +92,8 @@
                             [placeholder]="ls.lr('Invoice_DueOnReceipt')"
                             [disabled]="disabledForUpdate"
                             (onKeyDown)="allowDigitsOnly($event, ['/'])"
-                            [width]="'260px'"
+                            width="260px"
+                            height="40px"
                             [(value)]="dueDate"
                             (onContentReady)="onDateContentReady($event)">
                         </dx-date-box>
