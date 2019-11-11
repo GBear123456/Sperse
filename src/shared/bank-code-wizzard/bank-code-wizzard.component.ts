@@ -6,7 +6,6 @@ import { Chart } from 'chart.js';
 import * as $ from 'jquery';
 
 /** Application imports */
-import { AppConsts } from '@shared/AppConsts';
 
 @Component({
     selector: 'app-bank-code-wizzard',
@@ -16,10 +15,8 @@ import { AppConsts } from '@shared/AppConsts';
 export class BankCodeWizzardComponent implements OnInit {
     requestUrl = 'https://testadmin.sperse.com/api/services/CRM/External/GetBankCode?content=';
     textForAnalyse = '';
-    requestResponse: any;
     chart: any;
     scores;
-    sortedResult = [];
     biggestValue = { name: 'Action', value: 1 };
 
     analyseResult = [
@@ -29,13 +26,27 @@ export class BankCodeWizzardComponent implements OnInit {
         { name: 'Knowledge', value: 3 }
     ];
 
+    type = 'bar';
+    data = {
+        labels: ['Blueprint', 'Action', 'Nurturing', 'Knowledge'],
+        datasets: [{
+            'data': this.scores,
+            'label': 'BANK Score',
+            'fill': true,
+            'backgroundColor': ['#004a81', '#b70000', '#faa000', '#176826']
+        }]
+    };
+    options = {
+        scales: { 'yAxes': [{ 'ticks': { 'beginAtZero': true } }] },
+        responsive: true,
+        maintainAspectRatio: false
+    };
+
     constructor(
     ) {
     }
 
-    ngOnInit() {
-        drawChart();
-    }
+    ngOnInit() {}
 
     categorizeText(text: string) {
         event.preventDefault();
@@ -77,7 +88,6 @@ export class BankCodeWizzardComponent implements OnInit {
                     }
                 }
                 this.scores = scores;
-                drawChart(scores);
             })
             .fail(function (response) {
                 console.log(response);
@@ -94,24 +104,6 @@ export class BankCodeWizzardComponent implements OnInit {
         this.categorizeText(textForAnalyse);
     }
 
-}
-
-function drawChart(scores = [0, 0, 0, 0]) {
-    Array.from(document.getElementsByClassName('chart-canvas')).forEach((element) => {
-        new Chart(element, {
-            'type': 'bar',
-            'data': {
-                'labels': ['Blueprint', 'Action', 'Nurturing', 'Knowledge'],
-                'datasets': [{
-                    'data': scores,
-                    'label': 'BANK Score',
-                    'fill': true,
-                    'backgroundColor': ['#004a81', '#b70000', '#faa000', '#176826']
-                }]
-            },
-            'options': { 'scales': { 'yAxes': [{ 'ticks': { 'beginAtZero': true } }] } }
-        });
-    });
 }
 
 function sortingResult(array, key) {
