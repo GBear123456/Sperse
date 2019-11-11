@@ -12,5 +12,4 @@ import { HostForgotPasswordComponent } from '../host/host-forgot-password.compon
     ],
     animations: [accountModuleAnimation()]
 })
-export class AdvicePeriodForgotPasswordComponent extends HostForgotPasswordComponent {
-}
+export class AdvicePeriodForgotPasswordComponent extends HostForgotPasswordComponent {}
