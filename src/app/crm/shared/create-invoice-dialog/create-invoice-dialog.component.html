@@ -70,9 +70,9 @@
                         </dx-select-box>
                         <div class="selected-contact-info">
                             {{ selectedContact?.email }}<br *ngIf="selectedContact?.email">
-                            {{ selectedContact?.streetAddress }}<br *ngIf="selectedContact?.streetAddress">
-                            {{ selectedContact?.city }}<br *ngIf="selectedContact?.city">
-                            {{ selectedContact?.state }} {{ selectedContact?.zip }}
+                            {{ selectedContact?.address?.streetAddress }}<br *ngIf="selectedContact?.address?.streetAddress">
+                            {{ selectedContact?.address?.city }}<br *ngIf="selectedContact?.address?.city">
+                            {{ selectedContact?.address?.state }} {{ selectedContact?.address?.zip }}
                         </div>
                     </div>
                 </div>
