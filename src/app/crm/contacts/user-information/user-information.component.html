@@ -108,7 +108,7 @@
         </dx-validation-group>
     </dx-scroll-view>
 </div>
-<mat-tab-group [(selectedIndex)]="selectedTabIndex" *ngIf="data.userId">
+<mat-tab-group [(selectedIndex)]="selectedTabIndex" *ngIf="data?.userId">
     <mat-tab label="General">
         <dx-scroll-view showScrollbar="onHover">
             <div class="user-info row" #row>
