@@ -17,7 +17,7 @@ export class FilterCheckBoxesModel extends FilterItemModel {
         let result: DisplayElement[] = [];
         let values = this.value && this.value.sort ? this.value.sort() : [ this.value ];
         values.forEach(x => {
-            let data = this.dataSource.find((val: any) => val.id == x);
+            let data = this.dataSource && this.dataSource.find((val: any) => val.id == x);
             data && result.push(<DisplayElement>{
                 item: this,
                 displayValue: data.name || data.displayName,
