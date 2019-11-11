@@ -22,7 +22,7 @@ export class SetupStepsService {
         private cfoService: CFOService,
         private cacheService: CacheService,
         private cacheHelper: CacheHelper
-    ) { 
+    ) {
         let collapsed = this.cacheService.get(this.getCacheKey());
         if (collapsed && !isNaN(collapsed))
             this.collapsedSubject.next(Boolean(parseInt(collapsed)));

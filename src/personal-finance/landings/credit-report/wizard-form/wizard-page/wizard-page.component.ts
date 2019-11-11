@@ -96,8 +96,8 @@ export class CreditWizardPageComponent extends AppComponentBase implements OnIni
         injector: Injector,
         public loginService: LoginService,
         private data: PackageIdService,
-        private _memberService: MemberServiceProxy,
-        private _angularGooglePlaceService: AngularGooglePlaceService,
+        private memberService: MemberServiceProxy,
+        private angularGooglePlaceService: AngularGooglePlaceService,
         public inputStatusesService: InputStatusesService,
         private store$: Store<RootStore.State>
     ) {
@@ -122,7 +122,7 @@ export class CreditWizardPageComponent extends AppComponentBase implements OnIni
             this.mWizard.addDisabledSteps(this.WIZARD_CONFIRM_STEP_INDEX);
 
         if (this.model.packageId = this.packageId = this.data.packageId) {
-            this._memberService.selectPackage(this.packageId).
+            this.memberService.selectPackage(this.packageId).
                 subscribe(result => {
                     if (result) {
                         if (result.registrationId)
@@ -214,7 +214,7 @@ export class CreditWizardPageComponent extends AppComponentBase implements OnIni
 
         if (!this.validate(event)) return;
 
-        this._memberService.submitMemberInfo(this.convertToMemberInfo(this.model))
+        this.memberService.submitMemberInfo(this.convertToMemberInfo(this.model))
             .pipe(finalize(() => { event.component.option('disabled', false); }))
             .subscribe(result => {
                 this.paymentAuthorizationRequired = result.paymentAuthorizationRequired;
@@ -244,7 +244,7 @@ export class CreditWizardPageComponent extends AppComponentBase implements OnIni
         this.payment.bankCard.holderName = this.model.name + ' ' + this.model.surname;
         this.payment.bankCard.billingCountryCode = this.countryCode;
         this.payment.registrationId = this.uniqueId;
-        this._memberService.paymentAuthorize(this.payment)
+        this.memberService.paymentAuthorize(this.payment)
             .pipe(finalize(() => { event.component.option('disabled', false); }))
             .subscribe((result) => {
                 if (result.success) {
@@ -271,8 +271,8 @@ export class CreditWizardPageComponent extends AppComponentBase implements OnIni
     }
 
     onAddressChanged(event) {
-        let number = this._angularGooglePlaceService.street_number(event.address_components);
-        let street = this._angularGooglePlaceService.street(event.address_components);
+        let number = this.angularGooglePlaceService.street_number(event.address_components);
+        let street = this.angularGooglePlaceService.street(event.address_components);
         this.model.address.stateId = GooglePlaceHelper.getStateCode(event.address_components);
         this.model.address.streetAddress = this.payment.bankCard.billingAddress = number ? (number + ' ' + street) : street;
     }
@@ -286,7 +286,7 @@ export class CreditWizardPageComponent extends AppComponentBase implements OnIni
     addressInfoSubmit(event) {
         if (!this.validate(event)) return;
 
-        this._memberService.submitMemberInfo(this.convertToMemberInfo(this.model))
+        this.memberService.submitMemberInfo(this.convertToMemberInfo(this.model))
             .pipe(finalize(() => { event.component.option('disabled', false); }))
             .subscribe(result => {
                 if (this.isExistingUser) {
@@ -301,7 +301,7 @@ export class CreditWizardPageComponent extends AppComponentBase implements OnIni
     registerMemberSubmit(): void {
         abp.ui.setBusy();
         this.registrationInProgress = true;
-        this._memberService.registerMember(this.model)
+        this.memberService.registerMember(this.model)
             .subscribe(() => {
                 if (!this.isExistingUser) {
                     this.loginService.authenticateModel.userNameOrEmailAddress = this.model.email;

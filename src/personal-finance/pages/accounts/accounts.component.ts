@@ -63,11 +63,11 @@ export class AccountsComponent extends AppComponentBase implements OnInit, OnDes
 
     constructor(
         injector: Injector,
-        private _cfoService: CFOService,
-        private _quovoService: QuovoService,
-        private _syncService: SyncServiceProxy,
-        private _myFinanceService: MyFinancesServiceProxy,
-        private _instanceServiceProxy: InstanceServiceProxy,
+        private cfoService: CFOService,
+        private quovoService: QuovoService,
+        private syncService: SyncServiceProxy,
+        private myFinanceService: MyFinancesServiceProxy,
+        private instanceServiceProxy: InstanceServiceProxy,
         private dialog: MatDialog,
         public featureCheckerService: FeatureCheckerService
     ) {
@@ -87,17 +87,17 @@ export class AccountsComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     private checkInstanceChangeProcess() {
-        this._cfoService.instanceChangeProcess().subscribe(() => {
+        this.cfoService.instanceChangeProcess().subscribe(() => {
             this.isInstanceInfoLoaded = true;
             this.loadQouvoPfm();
         });
     }
 
     private loadQouvoPfm() {
-        if (this._cfoService.initialized) {
+        if (this.cfoService.initialized) {
             const element = this.getElementRef().nativeElement.querySelector('.p-content');
             abp.ui.setBusy(element);
-            this.tokenLoading$ = this._myFinanceService.createUserInstanceProviderUIToken(SyncTypeIds.Quovo);
+            this.tokenLoading$ = this.myFinanceService.createUserInstanceProviderUIToken(SyncTypeIds.Quovo);
             /** Load quovo script (jquery getScript to observable) */
             const quovoLoading$ = new Observable(observer => {
                 jQuery.getScript('https://app.quovo.com/ui.js').done(() => {
@@ -112,7 +112,7 @@ export class AccountsComponent extends AppComponentBase implements OnInit, OnDes
             ).pipe(
                 finalize(() => abp.ui.clearBusy(element)),
                 tap(() => {
-                    this._myFinanceService.syncAllQuovoAccounts(false, false).subscribe();
+                    this.myFinanceService.syncAllQuovoAccounts(false, false).subscribe();
                 })
             ).subscribe(
                 ([token, sectionName]) => {
@@ -175,13 +175,13 @@ export class AccountsComponent extends AppComponentBase implements OnInit, OnDes
 
     onStart(): void {
         this.isStartDisabled = true;
-        if (this._cfoService.initialized)
+        if (this.cfoService.initialized)
             this.addAccount();
         else {
             abp.ui.setBusy(this.contentElement);
-            this._myFinanceService.setupUserInstance(undefined)
+            this.myFinanceService.setupUserInstance(undefined)
                 .pipe(
-                    switchMap(() => this._cfoService.instanceChangeProcess()),
+                    switchMap(() => this.cfoService.instanceChangeProcess()),
                     finalize(() => abp.ui.clearBusy(this.contentElement))
                 ).subscribe(
                     () => {

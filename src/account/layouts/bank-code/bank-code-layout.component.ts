@@ -1,10 +1,10 @@
 /** Core imports */
-import { Component, Injector, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
-import { AppComponentBase } from '@shared/common/app-component-base';
 import * as moment from 'moment';
+import { AppSessionService } from '@shared/common/session/app-session.service';
 
 @Component({
     templateUrl: './bank-code-layout.component.html',
@@ -13,17 +13,15 @@ import * as moment from 'moment';
         './bank-code-layout.component.less'
     ]
 })
-export class BankCodeLayoutComponent extends AppComponentBase implements OnInit {
+export class BankCodeLayoutComponent implements OnInit {
     currentYear: number = moment().year();
     tenantName = AppConsts.defaultTenantName;
     remoteServiceBaseUrl = AppConsts.remoteServiceBaseUrl;
     originUrl = location.origin;
 
     constructor(
-        injector: Injector
-    ) {
-        super(injector);
-    }
+        private appSession: AppSessionService
+    ) {}
 
     ngOnInit(): void {
         let tenant = this.appSession.tenant;

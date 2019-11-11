@@ -17,7 +17,6 @@ import {
 import { NotifyService } from '@abp/notify/notify.service';
 import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { FileDownloadService } from '@shared/utils/file-download.service';
 import { TokenAuthServiceProxy } from '@shared/service-proxies/service-proxies';
 import { CreateUserDialogComponent } from './create-user-dialog/create-user-dialog.component';
 import { ImpersonationService } from './impersonation.service';
@@ -49,7 +48,6 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
     role: number;
     group = UserGroup.Employee;
     isActive = true;
-
     public actionMenuItems: any;
     public actionRecord: any;
     public headlineConfig = {
@@ -65,27 +63,23 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
             }
         ]
     };
-
     noPhotoUrl = AppConsts.imageUrls.noPhoto;
-
     private rootComponent: any;
     formatting = AppConsts.formatting;
-
     dataSource: DataSource;
 
     constructor(
         injector: Injector,
         public dialog: MatDialog,
-        private _appService: AppService,
-        private _filtersService: FiltersService,
-        private _userServiceProxy: UserServiceProxy,
-        private _notifyService: NotifyService,
-        private _fileDownloadService: FileDownloadService,
-        private _tokenAuth: TokenAuthServiceProxy,
-        private _permissionService: PermissionServiceProxy,
-        private _roleService: RoleServiceProxy,
-        public _impersonationService: ImpersonationService,
-        private itemDetailsService: ItemDetailsService
+        private appService: AppService,
+        private filtersService: FiltersService,
+        private userServiceProxy: UserServiceProxy,
+        private notifyService: NotifyService,
+        private tokenAuth: TokenAuthServiceProxy,
+        private permissionService: PermissionServiceProxy,
+        private roleService: RoleServiceProxy,
+        private itemDetailsService: ItemDetailsService,
+        public impersonationService: ImpersonationService
     ) {
         super(injector);
         this.actionMenuItems = [
@@ -93,7 +87,7 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
                 text: this.l('LoginAsThisUser'),
                 visible: this.permission.isGranted(AppPermissions.AdministrationUsersImpersonation),
                 action: () => {
-                    this._impersonationService.impersonate(this.actionRecord.id, this.appSession.tenantId);
+                    this.impersonationService.impersonate(this.actionRecord.id, this.appSession.tenantId);
                 }
             },
             {
@@ -122,7 +116,7 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
         this.dataSource = new DataSource({
             key: 'id',
             load: (loadOptions) => {
-                return this._userServiceProxy.getUsers(
+                return this.userServiceProxy.getUsers(
                     this.searchValue || undefined,
                     this.selectedPermissions || undefined,
                     this.role || undefined,
@@ -145,12 +139,12 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
     }
 
     toggleToolbar() {
-        this._appService.toolbarToggle();
+        this.appService.toolbarToggle();
         setTimeout(() => this.dataGrid.instance.repaint(), 0);
     }
 
     initToolbarConfig() {
-        this._appService.updateToolbar([
+        this.appService.updateToolbar([
             {
                 location: 'before', items: [
                     {
@@ -159,22 +153,22 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
                             setTimeout(() => {
                                 this.dataGrid.instance.repaint();
                             }, 1000);
-                            this._filtersService.fixed = !this._filtersService.fixed;
+                            this.filtersService.fixed = !this.filtersService.fixed;
                         },
                         options: {
                             checkPressed: () => {
-                                return this._filtersService.fixed;
+                                return this.filtersService.fixed;
                             },
                             mouseover: () => {
-                                this._filtersService.enable();
+                                this.filtersService.enable();
                             },
                             mouseout: () => {
-                                if (!this._filtersService.fixed)
-                                    this._filtersService.disable();
+                                if (!this.filtersService.fixed)
+                                    this.filtersService.disable();
                             }
                         },
                         attr: {
-                            'filter-selected': this._filtersService.hasFilterSelected
+                            'filter-selected': this.filtersService.hasFilterSelected
                         }
                     }
                 ]
@@ -207,7 +201,7 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
                             text: this.l('Search All')
                         },
                         attr: {
-                            'filter-selected': ((this.searchValue && this.searchValue.length > 0) && (this._filtersService.hasFilterSelected || this.group || this.isActive != undefined)) ? true : false,
+                            'filter-selected': ((this.searchValue && this.searchValue.length > 0) && (this.filtersService.hasFilterSelected || this.group || this.isActive != undefined)) ? true : false,
                             'custaccesskey': 'search-container'
                         }
                     }
@@ -372,7 +366,7 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
     }
 
     searchAllClick() {
-        this._filtersService.clearAllFilters();
+        this.filtersService.clearAllFilters();
         this.group = undefined;
         this.isActive = undefined;
         this.initToolbarConfig();
@@ -389,10 +383,10 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
 
     initFilterConfig() {
         forkJoin(
-            this._permissionService.getAllPermissions(false),
-            this._roleService.getRoles(undefined, undefined)
+            this.permissionService.getAllPermissions(false),
+            this.roleService.getRoles(undefined, undefined)
         ).subscribe((res) => {
-            this._filtersService.setup(
+            this.filtersService.setup(
                 this.filters = [
                     new FilterModel({
                         component: FilterTreeListComponent,
@@ -461,7 +455,7 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
             this.updateIsActiveFilter(this.isActive);
         });
 
-        this._filtersService.apply((filter) => {
+        this.filtersService.apply((filter) => {
             let filterValue = filter &&
                 filter.items.element.value;
 
@@ -509,7 +503,7 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
         if (filterModel) {
             filterModel.isSelected = true;
             filterModel.items.element.value = value;
-            this._filtersService.change(filterModel);
+            this.filtersService.change(filterModel);
         }
     }
 
@@ -520,7 +514,7 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
     }
 
     unlockUser(record): void {
-        this._userServiceProxy.unlockUser(new Int64EntityDto({ id: record.id })).subscribe(() => {
+        this.userServiceProxy.unlockUser(new Int64EntityDto({ id: record.id })).subscribe(() => {
             this.notify.success(this.l('UnlockedTheUser', record.userName));
         });
     }
@@ -552,7 +546,7 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
             this.l('AreYouSure'),
             (isConfirmed) => {
                 if (isConfirmed) {
-                    this._userServiceProxy.deleteUser(user.id)
+                    this.userServiceProxy.deleteUser(user.id)
                         .subscribe(() => {
                             this.invalidate();
                             this.notify.success(this.l('SuccessfullyDeleted'));
@@ -593,8 +587,8 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
 
     deactivate() {
         super.deactivate();
-        this._appService.updateToolbar(null);
-        this._filtersService.unsubscribe();
+        this.appService.updateToolbar(null);
+        this.filtersService.unsubscribe();
         this.rootComponent.overflowHidden();
         this.itemDetailsService.setItemsSource(ItemTypeEnum.User, this.dataGrid.instance.getDataSource());
         this.hideHostElement();
@@ -615,7 +609,7 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
         });
     }
 
-    onContentReady(event) {
+    onContentReady() {
         this.setGridDataLoaded();
     }
 
