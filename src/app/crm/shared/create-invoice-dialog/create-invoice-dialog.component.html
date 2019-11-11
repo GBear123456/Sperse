@@ -49,12 +49,12 @@
                             <pre>{{invoiceSettings?.address || ''}}</pre>
                         </div>
                     </div>
-                    <div class="field-area">
+                    <div class="field-area customer">
                         <label class="customer-label">{{ls.l('To')}}<a (click)="createClient()" [class.disabled]="disabledForUpdate">+ {{ls.l('New') + ' ' + ls.l('Client')}}</a></label>
                         <dx-select-box #contact
                             name="customer"
                             width="500px"
-                            height="73px"
+                            height="90px"
                             displayExpr="name"
                             valueExpr="name"
                             [disabled]="data.invoice"
@@ -68,6 +68,12 @@
                             (onInput)="customerLookupItems($event)"
                             (onSelectionChanged)="selectContact($event)">
                         </dx-select-box>
+                        <div class="selected-contact-info">
+                            {{ selectedContact?.email }}<br *ngIf="selectedContact?.email">
+                            {{ selectedContact?.streetAddress }}<br *ngIf="selectedContact?.streetAddress">
+                            {{ selectedContact?.city }}<br *ngIf="selectedContact?.city">
+                            {{ selectedContact?.state }} {{ selectedContact?.zip }}
+                        </div>
                     </div>
                 </div>
                 <div class="col-sm-4">

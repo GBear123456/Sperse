@@ -83,7 +83,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
     invoiceSettings: InvoiceSettings = new InvoiceSettings();
     remoteServiceBaseUrl: string = AppConsts.remoteServiceBaseUrl;
     selectedOption: any;
-
+    selectedContact: any;
     customer: any;
     contactId: number;
     customers = [];
@@ -486,6 +486,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
     }
 
     selectContact(event) {
+        this.selectedContact = event.selectedItem;
         this.contactId = event.selectedItem && event.selectedItem.id;
         this.orderId = undefined;
         this.orderNumber = undefined;

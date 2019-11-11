@@ -181,7 +181,7 @@
             &.profile {
                 margin-bottom: 9px;
                 .credentials {
-                    height: 152px;
+                    height: 135px;
                     span, pre {
                         font-family: Montserrat;
                         display: block;
@@ -196,6 +196,22 @@
                     pre {
                         overflow-y: auto;
                         height: 130px;
+                    }
+                }
+            }
+            &.customer {
+                position: relative;
+                .selected-contact-info {
+                    height: 78px;
+                    position: absolute;
+                    bottom: 0px;
+                    font-size: 12px;
+                    color: #aaa;
+                }
+
+                dx-select-box[name="customer"] {
+                    input {
+                        padding-bottom: 70px;
                     }
                 }
             }
