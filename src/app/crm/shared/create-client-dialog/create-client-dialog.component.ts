@@ -15,7 +15,6 @@ import { Store, select } from '@ngrx/store';
 import { DxContextMenuComponent } from 'devextreme-angular/ui/context-menu';
 import { CacheService } from 'ng2-cache-service';
 import { finalize, filter } from 'rxjs/operators';
-import * as _ from 'underscore';
 import { AngularGooglePlaceService } from 'angular-google-place';
 
 /** Application imports */
@@ -240,7 +239,7 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
     }
 
     getCountryCode(name) {
-        let country = _.findWhere(this.countries, {name: name});
+        let country = this.countries && this.countries.find(country => country.name === name);
         return country && country['code'];
     }
 
@@ -436,16 +435,16 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
 
         this.similarCustomersDialog = this.dialog.open(SimilarCustomersDialogComponent, {
             data: {
-                similarCustomers: _.sortBy(this.getSimilarContacts(), 'score'),
+                similarCustomers: this.getSimilarContacts(),
                 componentRef: this
             },
             hasBackdrop: false,
-            position: this.getDialogPossition(event, 300)
+            position: this.getDialogPosition(event, 300)
         });
         event.stopPropagation();
     }
 
-    getDialogPossition(event, shiftX) {
+    getDialogPosition(event, shiftX) {
         return this.dialogService.calculateDialogPosition(event, event.target.closest('div'), shiftX, -12);
     }
 
@@ -503,13 +502,14 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
                 isAddress && this.getCountryCode(contact.country) || undefined,
                 this.data.customerType
             ).subscribe(response => {
-                    if (response) {
-                        if (field)
-                            contact.similarCustomers = response;
-                        else
-                            this.similarCustomers = response;
-                    }
-                });
+                if (response) {
+                    if (field)
+                        contact.similarCustomers = response;
+                    else
+                        this.similarCustomers = response;
+                    this.changeDetectorRef.detectChanges();
+                }
+            });
         }, 1000);
     }
 
@@ -611,7 +611,7 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
 
     onCountryChange(event, index) {
         this.checkAddressControls(index);
-        let country = _.findWhere(this.countries, {name: event.value});
+        let country = this.countries && this.countries.find(country => country.name === event.value);
         if (country) {
             this.loadStatesDataSource(country);
         }

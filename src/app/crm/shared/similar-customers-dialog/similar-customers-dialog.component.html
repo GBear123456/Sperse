@@ -1,20 +1,22 @@
 <mat-dialog-content>
     <div class="close-dialog-button" (click)="closeSimilarCustomersDialog()">Close</div>
     <div class="contact-persons-container">
-        <h5>{{l('RelatedOrSimilarContacts')}}</h5>
+        <h5>{{ls.l('RelatedOrSimilarContacts')}}</h5>
         <div class="contact-person-info" *ngFor="let similarCustomer of data.similarCustomers" (click)='selectSimilarCustomer(similarCustomer)'>
             <div class="avatar">
-                <img src="{{ profileService.getPhoto(similarCustomer?.photo )}}" alt="Person Photo">
+                <img [src]="profileService.getPhoto(similarCustomer?.photo )" alt="Person Photo">
             </div>
             <div class="personal-info">
                 <div class="full-name">
-                    <h1 *ngIf="similarCustomer?.name">{{ similarCustomer?.name }}</h1>
-                    <h1 *ngIf="!similarCustomer?.name" class="no-name">{{ l('ClientNoName') }}</h1>
+                    <h1 *ngIf="similarCustomer?.name; else noName">{{ similarCustomer?.name }}</h1>
+                    <ng-template #noName>
+                        <h1 class="no-name">{{ ls.l('ClientNoName') }}</h1>
+                    </ng-template>
                 </div>
                 <div class="person-title">
                     <h6>{{similarCustomer?.jobTitle}} <span *ngIf="similarCustomer?.companyName">{{similarCustomer?.companyName}}</span></h6>
                 </div>
-                <rating-bar rating="{{ similarCustomer?.ratingId || 0 }}"></rating-bar>
+                <rating-bar *ngIf="similarCustomer?.ratingId" [rating]="similarCustomer.ratingId"></rating-bar>
             </div>
         </div>
     </div>
