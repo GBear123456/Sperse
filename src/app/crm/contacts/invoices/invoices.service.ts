@@ -1,5 +1,5 @@
 /** Core imports */
-import { Injectable, Injector } from '@angular/core';
+import { Injectable } from '@angular/core';
 
 /** Third party imports */
 import { Observable, ReplaySubject } from 'rxjs';
