@@ -150,7 +150,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
         this.invoicesService.settings$.pipe(first()).subscribe(settings => {
             this.invoiceSettings = settings;
             if (!this.data.invoice) {
-                this.notes = settings.note;
+                this.notes = settings.defaultNote;
             }
             this.changeDetectorRef.detectChanges();
         });
@@ -519,7 +519,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
 
     resetNoteDefault() {
         if (!this.disabledForUpdate) {
-            this.notes = this.invoiceSettings.note;
+            this.notes = this.invoiceSettings.defaultNote;
             this.changeDetectorRef.detectChanges();
         }
     }

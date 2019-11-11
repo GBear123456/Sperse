@@ -59043,7 +59043,7 @@ export class InvoiceSettings implements IInvoiceSettings {
     taxVatNo!: string | undefined;
     defaultTemplateId!: number | undefined;
     attachPDF!: boolean | undefined;
-    note!: string | undefined;
+    defaultNote!: string | undefined;
     currency!: Currency | undefined;
 
     constructor(data?: IInvoiceSettings) {
@@ -59062,7 +59062,7 @@ export class InvoiceSettings implements IInvoiceSettings {
             this.taxVatNo = data["taxVatNo"];
             this.defaultTemplateId = data["defaultTemplateId"];
             this.attachPDF = data["attachPDF"];
-            this.note = data["note"];
+            this.defaultNote = data["defaultNote"];
             this.currency = data["currency"];
         }
     }
@@ -59081,7 +59081,7 @@ export class InvoiceSettings implements IInvoiceSettings {
         data["taxVatNo"] = this.taxVatNo;
         data["defaultTemplateId"] = this.defaultTemplateId;
         data["attachPDF"] = this.attachPDF;
-        data["note"] = this.note;
+        data["defaultNote"] = this.defaultNote;
         data["currency"] = this.currency;
         return data; 
     }
@@ -59093,7 +59093,7 @@ export interface IInvoiceSettings {
     taxVatNo: string | undefined;
     defaultTemplateId: number | undefined;
     attachPDF: boolean | undefined;
-    note: string | undefined;
+    defaultNote: string | undefined;
     currency: Currency | undefined;
 }
 
