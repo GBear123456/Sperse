@@ -69,7 +69,6 @@ export class HeaderComponent implements OnInit {
     }
 
     registerToEvents() {
-
         abp.event.on('app.chat.unreadMessageCountChanged', messageCount => {
             this.unreadChatMessageCount = messageCount;
         });
@@ -97,7 +96,7 @@ export class HeaderComponent implements OnInit {
 
 
     get chatEnabled(): boolean {
-        return (!this.abpSessionService.tenantId || this.feature.isEnabled(AppFeatures.AppChatFeature));
+        return !this.abpSessionService.tenantId || this.feature.isEnabled(AppFeatures.AppChatFeature);
     }
 
 }

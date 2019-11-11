@@ -201,7 +201,7 @@ export class PaymentOptionsComponent extends AppComponentBase {
                     if (!this.paymentMethodsConfig[paymentMethod] || !this.paymentMethodsConfig[paymentMethod].skipRefreshAfterClose) {
                         this.refreshAfterClose.emit();
                     }
-                    this.appService.loadModeuleSubscriptions();
+                    this.appService.loadModuleSubscriptions();
                     this.onStatusChange.emit({
                         status: this.getPaymentStatus(paymentMethod, res),
                         statusText: this.getPaymentStatusText(paymentMethod, res),
