@@ -13,7 +13,7 @@
 
             <div class="chart-head">
                 {{l('Cash_Inflows')}}
-                <a [routerLink]="['/app/cfo/' + instanceType.toString().toLowerCase() + '/transactions']"
+                <a [routerLink]="['../transactions']"
                    [queryParams]="{ cashflowTypeIds: 'I' }"
                    [ngStyle]="{'color': creditColor}">
                     <ng-container *ngIf="totalData.credit > 0"><span class="plus">+</span></ng-container>
@@ -23,7 +23,7 @@
             <div class="chart-line"><div [ngStyle]="{width: totalData.creditPercent + '%', 'background-color': creditColor}"></div></div>
             <div class="chart-head">
                 {{l('Cash_Outflows')}}
-                <a [routerLink]="['/app/cfo/' + instanceType.toString().toLowerCase() + '/transactions']"
+                <a [routerLink]="['../transactions']"
                    [queryParams]="{ cashflowTypeIds: 'E' }"
                    [ngStyle]="{'color': debitColor}">
                     <ng-container *ngIf="totalData.debit > 0"><span class="plus">+</span></ng-container>
@@ -35,7 +35,7 @@
 
             <div class="chart-head">
                 {{l('Net_Change')}}
-                <a [routerLink]="['/app/cfo/' + instanceType.toString().toLowerCase() + '/transactions']"
+                <a [routerLink]="['../transactions']"
                    [queryParams]="{ cashflowTypeIds: 'I,E' }"
                    [ngStyle]="{'color': totalData.netChange > 0 ? netChangeColor : debitColor}">
                     <ng-container *ngIf="totalData.netChange > 0"><span class="plus">+</span></ng-container>

@@ -1,6 +1,6 @@
 /** Core import */
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild, HostBinding, Input } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 /** Third party import */
 import { select, Store } from '@ngrx/store';
@@ -71,6 +71,7 @@ export class TopSpendingCategoriesComponent implements OnInit, OnDestroy {
         private elementRef: ElementRef,
         private currencyPipe: CurrencyPipe,
         private router: Router,
+        private route: ActivatedRoute,
         private lifeCycleService: LifecycleSubjectsService,
         public ls: AppLocalizationService
     ) {}
@@ -92,8 +93,11 @@ export class TopSpendingCategoriesComponent implements OnInit, OnDestroy {
         const pointInfo = e.points ? e.points[0] : e.target;
         const category: GetSpendingCategoriesOutput = this.topSpendingCategories[pointInfo.index];
         this.router.navigate(
-            ['/app/cfo/' + this.cfoService.instanceType.toString().toLowerCase() + '/transactions'],
-            { queryParams: { categoryIds: [ category.id ] }}
+            ['../transactions'],
+            {
+                queryParams: { categoryIds: [ category.id ]},
+                relativeTo: this.route
+            }
         );
     }
 
