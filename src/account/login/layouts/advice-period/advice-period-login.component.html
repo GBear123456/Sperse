@@ -5,7 +5,7 @@
         <div class="form-group icon-input icon-input__user clearfix">
             <input [(ngModel)]="loginService.authenticateModel.userNameOrEmailAddress" autoFocus
                    class="form-control form-control-solid placeholder-no-fix input-ltr" type="text" autocomplete="off"
-                   [placeholder]="l('EmailAddress')" name="userNameOrEmailAddress" required tabindex="1" />
+                   [placeholder]="ls.l('EmailAddress')" name="userNameOrEmailAddress" required tabindex="1" />
         </div>
         <div class="form-group icon-input icon-input__password clearfix">
             <input [(ngModel)]="loginService.authenticateModel.password"

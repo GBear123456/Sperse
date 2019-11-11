@@ -1,9 +1,9 @@
 import {AfterViewInit, Component, QueryList, ViewChildren} from '@angular/core';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
-import {
-    ShapeOptions,
-    LineProgressComponent
-} from 'angular2-progressbar';
+// import {
+//     ShapeOptions,
+//     LineProgressComponent
+// } from 'angular2-progressbar';
 
 @Component({
     selector: 'dashboard',
@@ -11,7 +11,7 @@ import {
     styleUrls: ['./dashboard.component.less']
 })
 export class DashboardComponent implements AfterViewInit {
-    @ViewChildren(LineProgressComponent) progressBars: QueryList<any>;
+    // @ViewChildren(LineProgressComponent) progressBars: QueryList<any>;
     type = 'pie';
     data = {
         labels: [
@@ -53,7 +53,7 @@ export class DashboardComponent implements AfterViewInit {
             }
         }
     };
-    goalProgress = [
+    /*goalProgress = [
         0.67, 0.28, 0.88, 0.56, 0.34
     ];
 
@@ -104,15 +104,15 @@ export class DashboardComponent implements AfterViewInit {
         trailColor: 'rgba(149, 148, 148, 0.35)',
         trailWidth: 2,
         svgStyle: { width: '100%' }
-    };
+    };*/
 
     constructor(
         public ls: AppLocalizationService
     ) { }
 
     ngAfterViewInit() {
-        this.progressBars.forEach((i, index) => {
-            i.animate(this.goalProgress[index]);
-        });
+        // this.progressBars.forEach((element, index) => {
+        //     element.animate(this.goalProgress[index]);
+        // });
     }
 }
