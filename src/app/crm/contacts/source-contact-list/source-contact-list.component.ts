@@ -13,7 +13,6 @@ import { ContactServiceProxy } from '@shared/service-proxies/service-proxies';
 @Component({
   selector: 'source-contact-list',
   templateUrl: './source-contact-list.component.html',
-  styleUrls: ['./source-contact-list.component.less'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [ ContactServiceProxy ]
 })
@@ -43,13 +42,16 @@ export class SourceContactListComponent {
     ) {  }
 
     loadSourceContacts(searchPhrase?: string, elm?: any) {
-        if (!elm)
-            elm = this.sourceComponent.dxList &&
-                this.sourceComponent.dxList.instance.element();
+        let dxList  = this.sourceComponent.dxList;
+        if (dxList && !elm)
+            elm = dxList.instance.element();
         elm && abp.ui.setBusy(elm);
         this.contactProxy.getSourceContacts(searchPhrase, this._contactId, 10)
             .pipe(finalize(() => elm && abp.ui.clearBusy(elm)))
             .subscribe(res => {
+                let searchBox = this.sourceComponent.dxSearch;
+                if (searchBox)
+                    searchBox.instance.option('value', searchPhrase);
                 this.onDataLoaded.emit(this.contacts = res);
                 this.changeDetectorRef.detectChanges();
             });
@@ -66,6 +68,11 @@ export class SourceContactListComponent {
     getInputElementValue(event) {
         return event.element.getElementsByTagName('input')[0].value;
     }
+
+    onOptionChanged(event) {
+        if (event.name == 'items')
+            setTimeout(() => this.sourceComponent.dxTooltip.instance.repaint());
+    }                              
 
     toggle() {
         if (this.sourceComponent.toggle())
