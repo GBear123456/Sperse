@@ -62928,6 +62928,7 @@ export interface IOfferApplicationGroup {
 export class SubmitRequestInput implements ISubmitRequestInput {
     systemType!: OfferProviderType;
     campaignId!: number;
+    xref!: string;
     redirectUrl!: string | undefined;
     clickId!: string | undefined;
     firstName!: string | undefined;
@@ -62957,6 +62958,7 @@ export class SubmitRequestInput implements ISubmitRequestInput {
         if (data) {
             this.systemType = data["systemType"];
             this.campaignId = data["campaignId"];
+            this.xref = data["xref"];
             this.redirectUrl = data["redirectUrl"];
             this.clickId = data["clickId"];
             this.firstName = data["firstName"];
@@ -62986,6 +62988,7 @@ export class SubmitRequestInput implements ISubmitRequestInput {
         data = typeof data === 'object' ? data : {};
         data["systemType"] = this.systemType;
         data["campaignId"] = this.campaignId;
+        data["xref"] = this.xref;
         data["redirectUrl"] = this.redirectUrl;
         data["clickId"] = this.clickId;
         data["firstName"] = this.firstName;
@@ -63008,6 +63011,7 @@ export class SubmitRequestInput implements ISubmitRequestInput {
 export interface ISubmitRequestInput {
     systemType: OfferProviderType;
     campaignId: number;
+    xref: string;
     redirectUrl: string | undefined;
     clickId: string | undefined;
     firstName: string | undefined;
