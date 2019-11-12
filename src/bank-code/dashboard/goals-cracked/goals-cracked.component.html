@@ -1,0 +1,17 @@
+<h5 class="card-title">Code cracked at-a-glance</h5>
+
+<div class="bar-info row" *ngFor="let item of goalProgress">
+    <div class="col-4">{{item.name}}</div>
+    <div class="col-4 text-center font-weight-bold">{{item.progress}}%</div>
+    <div class="col-4 text-secondary text-right">2 of 3</div>
+    <div class="col-12 bar bar-red">
+        <dx-progress-bar width="100%"
+                         [class]="item.class"
+                         height="12"
+                         [min]="0"
+                         [max]="100"
+                         [value]="item.progress"
+                         [showStatus]="false">
+        </dx-progress-bar>
+    </div>
+</div>

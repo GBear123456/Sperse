@@ -5,28 +5,12 @@
             <div class="row ">
                 <div class="col-lg-6 d-flex align-items-stretch mb-5">
                     <div class="card">
-                        <div class="card-header">
-                            <h2><img src="../../assets/common/images/bank-code/media-player.svg" alt="Video">Welcome</h2>
-                        </div>
-                        <div class="card-body">
-                            <iframe src="https://player.vimeo.com/video/62998334" class="vimeo-iframe" frameborder="0"
-                                    allow="autoplay; fullscreen" allowfullscreen></iframe>
-                        </div>
+                        <bank-code-welcome-video></bank-code-welcome-video>
                     </div>
                 </div>
                 <div class="col-lg-6 d-flex align-items-stretch mb-5">
                     <div class="card">
-                        <div class="card-header">
-                            <h2><img src="../../assets/common/images/bank-code/speaker.svg" alt="ANNOUNCEMENTS">ANNOUNCEMENTS</h2>
-                        </div>
-                        <div class="card-body">
-                            <h5 class="card-title">Welcome to the private beta version of your virtual office</h5>
-                            <p class="card-text mb-4">You will notice in the upcoming weeks design and UX/UI updates along with tools to
-                                take
-                                your business to the next level. For now - enjoy this Pre-Launch as it will only get better.</p>
-                            <p class="card-text-footer mb-4">Please check this area out daily for updates and exciting news.</p>
-                            <p class="card-text"><a href="#" class="btn btn-default">Forbes - The Future of Sales</a></p>
-                        </div>
+                        <bank-code-announcements></bank-code-announcements>
                     </div>
                 </div>
             </div>
@@ -42,40 +26,10 @@
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-lg-6">
-                                    <h5 class="card-title">Dashboard at-a-glance</h5>
-                                    <div class="row">
-                                        <div class="col-md-6 p-md-5">
-                                            <chart [type]="type" [data]="data" [options]="options">
-                                                <canvas width="300" height="300"></canvas>
-                                            </chart>
-                                            <p class="card-text-footer mt-4">Total Codes Cracked</p>
-                                        </div>
-                                        <div class="col-md-6 p-md-5">
-                                            <img class="level-img" src="../../assets/common/images/bank-code/codebreaker.png" alt="Codebreaker">
-                                            <p class="card-text-footer mt-4">Current Badge Level</p>
-                                        </div>
-                                    </div>
-
+                                    <bank-code-total-codes-cracked></bank-code-total-codes-cracked>
                                 </div>
                                 <div class="col-lg-5 offset-lg-1">
-                                    <h5 class="card-title">Code cracked at-a-glance</h5>
-
-                                    <div class="bar-info row" *ngFor="let item of goalProgress">
-                                        <div class="col-4">{{item.name}}</div>
-                                        <div class="col-4 text-center font-weight-bold">{{item.progress}}%</div>
-                                        <div class="col-4 text-secondary text-right">2 of 3</div>
-                                        <div class="col-12 bar bar-red">
-                                            <dx-progress-bar width="100%"
-                                                             [class]="item.class"
-                                                             height="12"
-                                                             [min]="0"
-                                                             [max]="100"
-                                                             [value]="item.progress"
-                                                             [showStatus]="false">
-                                            </dx-progress-bar>
-                                        </div>
-                                    </div>
-
+                                    <bank-code-goals-cracked></bank-code-goals-cracked>
                                 </div>
                             </div>
                         </div>
@@ -90,143 +44,14 @@
                 <div class="col-md-12">
                     <div class="card">
                         <div class="card-body pb-lg-0 ">
-                            <div class="row">
-                                <div class="counter-1 col-lg-6 mb-md-5 mb-lg-0">
-                                    <h6 class="card-title">MY TOTAL B.A.N.K. CODES CRACKED</h6>
-                                    <div class="numbers">
-                                        <div class="incremental-counter" id="counter-1" data-value="22205">
-                                            <div class="num">2</div>
-                                            <div class="num">2</div>
-                                            <div class="num">2</div>
-                                            <div class="num">0</div>
-                                            <div class="num">5</div>
-                                        </div>
-                                    </div>
-                                    <div class="circular-graph-wrapper">
-                                        <div class="circular-graphs">
-                                            <div class="circular-progress">
-                                                <circle-progress
-                                                    [percent]="90"
-                                                    [outerStrokeColor]="'#004a81'"
-                                                    [innerStrokeColor]="'#91bfdd'"
-                                                    title="90%"
-                                                    subtitle="4230"
-                                                ></circle-progress>
-                                            </div>
-                                            <div class="circular-progress">
-                                                <circle-progress
-                                                    [percent]="40"
-                                                    title="40%"
-                                                    subtitle="930"
-                                                    [outerStrokeColor]="'#ac1f22'"
-                                                    [innerStrokeColor]="'#ce767f'"
-                                                ></circle-progress>
-                                            </div>
-                                            <div class="circular-progress">
-                                                <circle-progress
-                                                    [percent]="48"
-                                                    title="48%"
-                                                    subtitle="2200"
-                                                    [outerStrokeColor]="'#f09e1f'"
-                                                    [innerStrokeColor]="'#ecd68a'"
-                                                ></circle-progress>
-                                            </div>
-                                            <div class="circular-progress">
-                                                <circle-progress
-                                                    [percent]="72"
-                                                    title="72%"
-                                                    subtitle="4230"
-                                                    [outerStrokeColor]="'#1b6634'"
-                                                    [innerStrokeColor]="'#87c796'"
-                                                ></circle-progress>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="counter-2 col-lg-6 mb-md-5 mb-lg-0 mt-md-5 mt-lg-0">
-                                    <h6 class="card-title">Code cracked at-a-glance</h6>
-                                    <div class="numbers">
-                                        <div class="incremental-counter" id="counter-2" data-value="132718">
-                                            <div class="num">1</div>
-                                            <div class="num">3</div>
-                                            <div class="num">2</div>
-                                            <div class="num">7</div>
-                                            <div class="num">1</div>
-                                            <div class="num">8</div>
-                                        </div>
-                                    </div>
-                                    <div class="circular-graph-wrapper">
-                                        <div class="circular-graphs">
-                                            <div class="circular-progress" data-color="#004a81" data-trail="#91bfdd"
-                                                 data-percent="48" data-number="4,230">
-                                                <circle-progress
-                                                    [percent]="85"
-                                                    title="90%"
-                                                    subtitle="4230"
-                                                    [outerStrokeColor]="'#004a81'"
-                                                    [innerStrokeColor]="'#91bfdd'"
-                                                ></circle-progress>
-                                            </div>
-                                            <div class="circular-progress">
-                                                <circle-progress
-                                                    [percent]="63"
-                                                    title="63%"
-                                                    subtitle="455"
-                                                    [outerStrokeColor]="'#ac1f22'"
-                                                    [innerStrokeColor]="'#ce767f'"
-                                                ></circle-progress>
-                                            </div>
-                                            <div class="circular-progress">
-                                                <circle-progress
-                                                    [percent]="77"
-                                                    title="77%"
-                                                    subtitle="6335"
-                                                    [outerStrokeColor]="'#f09e1f'"
-                                                    [innerStrokeColor]="'#ecd68a'"
-                                                ></circle-progress>
-                                            </div>
-                                            <div class="circular-progress">
-                                                <circle-progress
-                                                    [percent]="57"
-                                                    title="57%"
-                                                    subtitle="7433"
-                                                    [outerStrokeColor]="'#1b6634'"
-                                                    [innerStrokeColor]="'#87c796'"
-                                                ></circle-progress>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                </div>
-                            </div>
+                            <bank-code-counters></bank-code-counters>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
     </div>
-    <footer>
-        <div class="container-fluid">
-            <h2>connect with us</h2>
-            <div class="social-icons">
-                <a href="#"><img src="../assets/common/images/bank-code/facebook.svg"></a>
-                <a href="#"><img src="../assets/common/images/bank-code/twitter.svg"></a>
-                <a href="#"><img src="../assets/common/images/bank-code/linkedin.svg"></a>
-                <a href="#"><img src="../assets/common/images/bank-code/youtube.svg"></a>
-            </div>
-            <div class="contacts"><a href="/">bankcode.com</a>  |  <a href="mailto:support@bankcode.com">support@bankcode.com</a></div>
-            <div class="row copyright align-items-center">
-                <div class="col-lg-3 text-lg-left mb-3 mb-lg-0 text-md-center">
-                    <a href="/"><img src="../assets/common/images/bank-code/logo.png" class="logo"></a>
-                </div>
-                <div class="col-lg-6 text-center mb-3 mb-lg-0">
-                    Copyright © 2019 BANKCODE,<br />
-                    A Division of CODEBREAKER TECHNOLOGIES, INC. All Rights Reserved
-                </div>
-                <div class="col-lg-3 text-lg-right text-md-center mb-3 mb-lg-0">
-                    <a href="#">Privacy policy</a>  |   <a href="#">Terms of service</a>
-                </div>
-            </div>
-        </div>
-    </footer>
+
+    <bank-code-footer></bank-code-footer>
+
 </dx-scroll-view>
