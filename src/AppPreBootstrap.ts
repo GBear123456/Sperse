@@ -23,6 +23,7 @@ export class AppPreBootstrap {
             _handleUnAuthorizedRequest.call(abpAjax, messagePromise, targetUrl);
         };
 
+        abp.multiTenancy.setTenantIdCookie();
         AppPreBootstrap.getApplicationConfig(appRootUrl, () => {
             const queryStringObj = UrlHelper.getQueryParameters();
             if (queryStringObj.redirect && queryStringObj.redirect === 'TenantRegistration') {
