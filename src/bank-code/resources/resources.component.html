@@ -21,29 +21,19 @@
             <div class="col-lg-9">
                 <div class="row">
                     <div class="col-md-12">
-                        <div class="card shadow">
+                        <div class="card shadow" *ngFor="let category of data">
                             <div class="card-body">
-                                <h2>Financing</h2>
+                                <h2>{{category.categoryName}}</h2>
                                 <div class="row resources">
-                                    <div class="col-md-3">
-                                        <img src="https://picsum.photos/200">
-                                        <p class="title">ATM Workbook</p>
-                                        <p class="text">ATM+Workbook.pdf</p>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <img src="https://picsum.photos/200">
-                                        <p class="title">BANKCODE Financing Program</p>
-                                        <p class="text">BANKCODE+Financin…ram.pdf</p>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <img src="https://picsum.photos/200">
-                                        <p class="title">Seed Overview Slides</p>
-                                        <p class="text">SEED+OVERVIEW+SL…2.0.pptx</p>
+                                    <div class="col-md-3" *ngFor="let item of category.list">
+                                        <img [src]="item.img" [alt]="item.title">
+                                        <p class="title">{{item.title}}</p>
+                                        <p class="text">{{item.file}}</p>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="card shadow">
+                       <!-- <div class="card shadow">
                             <div class="card-body">
                                 <h2>Graphics and logos</h2>
                                 <div class="row resources">
@@ -461,7 +451,7 @@
 
                                 </div>
                             </div>
-                        </div>
+                        </div>-->
 
                     </div>
                 </div>
