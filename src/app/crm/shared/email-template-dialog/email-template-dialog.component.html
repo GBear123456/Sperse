@@ -122,7 +122,8 @@
                         [(value)]="data.subject">
                     </dx-text-box>
                 </div>
-                <div class="field-area">
+                <div class="field-area ckeditor">
+                    <p>{{templateNote}}</p>
                     <ckeditor #ckeditor [(data)]="data.body" [config]="ckConfig"></ckeditor>
                 </div>
                 <div class="field-area attachments">                    
