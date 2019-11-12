@@ -100,7 +100,7 @@ const routes: Routes = [
             {
                 path: 'app',
                 loadChildren: 'app/app.module#AppModule', //Lazy load desktop module
-                data: { feature: 'Admin', localizationSource: 'Platform' }
+                data: { localizationSource: 'Platform' }
             }
         ]
     },
