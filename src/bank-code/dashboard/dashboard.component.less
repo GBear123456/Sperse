@@ -1,343 +1,285 @@
 :host {
     display: block;
     
-    .dashboard h1 {
-        font-size: 40px;
-        font-weight: 900;
-        font-stretch: normal;
-        font-style: normal;
-        line-height: 0.58;
-        letter-spacing: -0.8px;
-        text-align: center;
-        color: #000000;
-        margin: 3rem auto;
-    }
-    
-    .card {
-        box-shadow: 0 20px 100px 0 rgba(0, 0, 0, 0.15);
-        border: solid 1px #ebecec;
-        background-color: #ffffff;
-        border-radius: 2px;
-        width: 100%;
-    }
-    
-    .card-body {
-        padding: 2rem 1.7rem
-    }
-    
-    .card-header {
-        border-bottom: solid 1px #ebecec;
-        background-color: #f8f8f8;
-        text-align: center;
-    }
-    
-    .card-header h2 {
-        margin-bottom: 0;
-        font-size: 18px;
-        font-weight: bold;
-    }
-    
-    .card-header h2 img {
-        width: 14px;
-        margin-right: 10px;
-    }
-    
-    .card iframe {
-        border: 0;
-        width: 100%;
-    }
-    
-    .card-body h5 {
-        text-align: center;
-        font-weight: bold;
-        font-size: 16px;
-        position: relative;
-        margin-bottom: 30px;
-        padding-bottom: 20px;
-    }
-    
-    .card-body h5:after {
-        content: ' ';
-        width: 50px;
-        height: 3px;
-        background: #ac1f22;
-        position: absolute;
-        bottom: 0;
-        left: calc(50% - 25px);
-    }
-    
-    .card-body .card-text {
-        font-size: 12px;
-        text-align: center;
-    }
-    
-    .card-body .card-text-footer {
-        font-size: 12px;
-        color: #afafaf;
-        text-align: center;
-    }
-    
-    .btn-default {
-        border: 1px solid #ac1f22;
-        text-transform: uppercase;
-        font-size: 14px;
-        color: #ac1f22;
-        border-radius: 0 !important;
-        font-weight: bold;
-        line-height: 42px;
-        padding: 0 20px;
-        transition: .3s;
+    /deep/ .dashboard {
         
-        &:hover {
-            background: #ac1f22;
-            color: #fff;
+        h1 {
+            font-size: 40px;
+            font-weight: 900;
+            font-stretch: normal;
+            font-style: normal;
+            line-height: 0.58;
+            letter-spacing: -0.8px;
+            text-align: center;
+            color: #000000;
+            margin: 3rem auto;
         }
-    }
-    
-    .charts .card-text-footer {
-        color: #7a7979;
-    }
-    
-    .charts h5 {
-        padding-bottom: 8px;
-    }
-    
-    .bar-info {
-        font-size: 12px;
-        font-family: 'Roboto', sans-serif;
-        margin-bottom: 30px;
-    }
-    
-    .bar-info .bar {
-        margin-top: 2px;
-    }
-    
-    .bar-info .bar div {
-        height: 10px;
-        background: rgba(149, 148, 148, 0.35);
-    }
-    
-    .bar-info .bar span {
-        width: 0%;
-        height: 100%;
-        display: block;
-    }
-    
-    .bar-info .bar.bar-red span {
-        background: #ac1f22;
-    }
-    
-    .bar-info .bar.bar-blue span {
-        background: #104779;
-    }
-    
-    .bar-info .bar.bar-yellow span {
-        background: #f09e1f;
-    }
-    
-    .bar-info .bar.bar-green span {
-        background: #1b6634;
-    }
-    
-    .bar-info .bar.bar-purple span {
-        background: #615ba5;
-    }
-    
-    .counters, .counters .card {
-        background: #b12e30
-    }
-    
-    .counters h6 {
-        text-align: center;
-        color: rgba(255, 255, 255, 0.6);
-        margin-bottom: 10px;
-    }
-    
-    .incremental-counter .num {
-        display: inline-block;
-        background: #991719;
-        color: #fff;
-        font-size: 34px;
-        padding: 0px 15px;
-        margin: 0 3px;
-        font-family: AvianoSans;
-        font-weight: bold;
         
-    }
-    
-    .incremental-counter {
-        text-align: center
-    }
-    
-    .circular-graph-wrapper {
-        text-align: center;
-    }
-    
-    .circular-graphs {
-        padding: 20px 15px 10px 15px;
-        background: #fff;
-        display: inline-block;
-        position: relative;
-        top: 35px;
-    }
-    
-    .circular-graphs:before {
-        content: '';
-        width: 20px;
-        height: 20px;
-        background: #fff;
-        position: absolute;
-        top: -10px;
-        left: calc(50% - 10px);
-        transform: rotate(45deg);
-    }
-    
-    .circular-progress {
-        height: 60px;
-        display: inline-block;
-        width: 80px;
-    }
-    
-    .circular-progress > svg {
-        height: 100%;
-        width: 60px;
-        display: inline-block;
-    }
-    
-    .circular-progress .progressbar-text {
-        font-size: 12px;
-        line-height: 1;
-    }
-    
-    .vimeo-iframe {
-        height: 270px;
-        max-height: 100%;
-    }
-    
-    footer {
-        margin-top: 6rem;
-        text-align: center;
-    }
-    
-    footer h2 {
-        font-size: 16px;
-        margin-bottom: 1rem;
-    }
-    
-    footer .social-icons img {
-        width: 35px;
-    }
-    
-    footer .social-icons a {
-        display: inline-block;
-        margin: 0 3px;
-    }
-    
-    footer .contacts {
-        margin-top: 10px;
-        font-size: 10px;
-        margin-bottom: 50px;
-    }
-    
-    footer .contacts a {
-        color: #ac1f22
-    }
-    
-    footer .copyright {
-        font-size: 10px;
-        color: #7a7979;
-        margin-bottom: 10px;
-    }
-    
-    footer .copyright a {
-        color: #7a7979;
-    }
-    
-    @media (min-width: 992px) {
-        .navbar-nav .nav-link {
-            padding: 22px 0;
-            min-width: 80px;
-            margin: 0 5px;
-            border-bottom: 3px solid transparent;
+        .card {
+            box-shadow: 0 20px 100px 0 rgba(0, 0, 0, 0.15);
+            border: solid 1px #ebecec;
+            background-color: #ffffff;
+            border-radius: 2px;
+            width: 100%;
+        }
+        
+        .card-body {
+            padding: 2rem 1.7rem
+        }
+        
+        .card-header {
+            border-bottom: solid 1px #ebecec;
+            background-color: #f8f8f8;
+            text-align: center;
+            padding: 16px 0;
+        }
+        
+        .card-header h2 {
+            margin-bottom: 0;
+            font-size: 18px;
+            font-family: 'AvianoSans-Bla', sans-serif;
+            font-weight: normal !important;
+        }
+        
+        .card-header h2 img {
+            width: 14px;
+            margin-right: 10px;
+        }
+        
+        .card iframe {
+            border: 0;
+            width: 100%;
+        }
+        
+        .card-body h5 {
+            text-align: center;
+            font-weight: bold;
+            font-size: 16px;
+            position: relative;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+        }
+        
+        .card-body h5:after {
+            content: ' ';
+            width: 50px;
+            height: 3px;
+            background: #ac1f22;
+            position: absolute;
+            bottom: 0;
+            left: calc(50% - 25px);
+        }
+        
+        .card-body .card-text {
+            font-size: 12px;
+            text-align: center;
+        }
+        
+        .card-body .card-text-footer {
+            font-size: 12px;
+            color: #afafaf;
+            text-align: center;
+        }
+        
+        .card-title {
+            font-family: 'AvianoSans-Bla', sans-serif;
+            font-weight: normal !important;
+        }
+        
+        .btn-default {
+            border: 1px solid #ac1f22;
             text-transform: uppercase;
             font-size: 14px;
-            color: #7a7979
-        }
-        
-        .navbar-nav .nav-item.active .nav-link, .navbar-nav .nav-link:hover {
-            border-bottom: 3px solid #ac1f22;
+            color: #ac1f22;
+            border-radius: 0 !important;
             font-weight: bold;
-            color: #000
+            line-height: 42px;
+            padding: 0 20px;
+            transition: .3s;
+            
+            &:hover {
+                background: #ac1f22;
+                color: #fff;
+            }
         }
         
-        .level-img {
-            width: 175px;
+        .charts .card-text-footer {
+            color: #7a7979;
         }
         
-        footer .logo {
-            width: 120px;
-        }
-    }
-    @media (max-width: 991.98px) {
-        .navbar-nav {
-            text-align: left !important
+        .charts h5 {
+            padding-bottom: 8px;
         }
         
-        .navbar-collapse.show {
-            padding: 20px 0
+        .bar-info {
+            font-size: 12px;
+            font-family: 'Roboto', sans-serif;
+            margin-bottom: 30px;
         }
         
-        .navbar {
-            padding-top: 10px;
-            padding-bottom: 10px;
+        .bar-info .bar span {
+            width: 0;
+            height: 100%;
+            display: block;
         }
         
-        .vimeo-iframe {
-            height: 350px;
+        .bar-info .bar.bar-red span {
+            background: #ac1f22;
         }
         
-        .level-img {
-            width: 100%
+        .bar-info .bar.bar-blue span {
+            background: #104779;
         }
         
-        footer {
-            margin-top: 3rem;
+        .bar-info .bar.bar-yellow span {
+            background: #f09e1f;
         }
         
-        footer .logo {
-            width: 100px;
-        }
-    }
-    
-    @media (min-width: 768px) {
-    }
-    @media (max-width: 767.98px) {
-        .vimeo-iframe {
-            height: 190px;
+        .bar-info .bar.bar-green span {
+            background: #1b6634;
         }
         
-        .counters .card-body {
-            padding: 2rem .0rem
+        .bar-info .bar.bar-purple span {
+            background: #615ba5;
+        }
+        
+        .counters, .counters .card {
+            background: #b12e30
+        }
+        
+        .counters h6 {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.6);
+            margin-bottom: 10px;
+        }
+        
+        .incremental-counter .num {
+            display: inline-block;
+            background: #991719;
+            color: #fff;
+            font-size: 34px;
+            padding: 0px 15px;
+            margin: 0 3px;
+            font-family: AvianoSans;
+            font-weight: bold;
+            
+        }
+        
+        .incremental-counter {
+            text-align: center
+        }
+        
+        .circular-graph-wrapper {
+            text-align: center;
+        }
+        
+        .circular-graphs {
+            padding: 20px 15px 10px 15px;
+            background: #fff;
+            display: inline-block;
+            position: relative;
+            top: 35px;
+        }
+        
+        .circular-graphs:before {
+            content: '';
+            width: 20px;
+            height: 20px;
+            background: #fff;
+            position: absolute;
+            top: -10px;
+            left: calc(50% - 10px);
+            transform: rotate(45deg);
         }
         
         .circular-progress {
+            height: 60px;
+            display: inline-block;
+            width: 80px;
+        }
+        
+        .circular-progress > svg {
+            height: 100%;
             width: 60px;
+            display: inline-block;
         }
         
-        .counter-1 {
-            margin-bottom: 80px;
+        .circular-progress .progressbar-text {
+            font-size: 12px;
+            line-height: 1;
         }
         
-        .counter-2 {
-            margin-bottom: 50px;
+        
+        
+        @media (min-width: 992px) {
+            .navbar-nav .nav-link {
+                padding: 22px 0;
+                min-width: 80px;
+                margin: 0 5px;
+                border-bottom: 3px solid transparent;
+                text-transform: uppercase;
+                font-size: 14px;
+                color: #7a7979
+            }
+            
+            .navbar-nav .nav-item.active .nav-link, .navbar-nav .nav-link:hover {
+                border-bottom: 3px solid #ac1f22;
+                font-weight: bold;
+                color: #000
+            }
+            
+            .level-img {
+                width: 175px;
+            }
+            
+        }
+        @media (max-width: 991.98px) {
+            .navbar-nav {
+                text-align: left !important
+            }
+            
+            .navbar-collapse.show {
+                padding: 20px 0
+            }
+            
+            .navbar {
+                padding-top: 10px;
+                padding-bottom: 10px;
+            }
+            
+            .vimeo-iframe {
+                height: 350px;
+            }
+            
+            .level-img {
+                width: 100%
+            }
+        }
+        
+        @media (min-width: 768px) {
+        }
+        @media (max-width: 767.98px) {
+            .vimeo-iframe {
+                height: 190px;
+            }
+            
+            .counters .card-body {
+                padding: 2rem .0rem
+            }
+            
+            .circular-progress {
+                width: 60px;
+            }
+            
+            .counter-1 {
+                margin-bottom: 80px;
+            }
+            
+            .counter-2 {
+                margin-bottom: 50px;
+            }
         }
     }
-}
-
-chart {
-    width: 175px !important;
-    height: 175px !important;
-    margin: 0 auto;
 }
 
 /deep/ dx-progress-bar {
