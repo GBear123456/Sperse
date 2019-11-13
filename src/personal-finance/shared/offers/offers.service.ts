@@ -5,7 +5,7 @@ import { HttpParams } from '@angular/common/http';
 import { ActivatedRoute, Router, UrlSegment } from '@angular/router';
 
 /** Third party imports */
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import camelCase from 'lodash/camelCase';
 import kebabCase from 'lodash/kebabCase';
 import capitalize from 'lodash/capitalize';
@@ -225,11 +225,11 @@ export class OffersService {
         });
         const modalData = {
             processingSteps: [null, null, null, null],
-            completeDelays: [ 1000, 1000, 1000, null ],
+            completeDelays: linkIsDirect ? [ 250, 250, 250, 250 ] : [ 1000, 1000, 1000, null ],
             delayMessages: linkIsDirect ? null : <any>[ null, null, null, this.ls.l('Offers_TheNextStepWillTake') ],
             title: linkIsDirect ? 'Offers_ConnectingToPartners' : 'Offers_ProcessingLoanRequest',
             subtitle: linkIsDirect ? 'Offers_NewWindowWillBeOpen' : 'Offers_WaitLoanRequestProcessing',
-            redirectUrl: null,
+            redirectUrl: redirectUrl,
             redirectUrlText: this.ls.l(redirectUrlText),
             logoUrl: offer.campaignProviderType === CampaignProviderType.CreditLand
                 ? this.creditLandLogoUrl
@@ -254,12 +254,7 @@ export class OffersService {
             }).afterClosed().subscribe((output: SubmitApplicationOutput)  => {
                 this.document.body.classList.remove('overflow-hidden');
                 if (output) {
-                    const applyOfferDialog = this.dialog.open(ApplyOfferDialogComponent, {
-                        width: '577px',
-                        height: '330px',
-                        panelClass: 'apply-offer-dialog',
-                        data: modalData
-                    });
+                    const applyOfferDialog = this.openOfferDialog(modalData);
                     this.loadMemberInfo();
                     if (output.redirectUrl) {
                         !window.open(output.redirectUrl, '_blank')
@@ -286,17 +281,10 @@ export class OffersService {
                 }).afterClosed().subscribe((output: SubmitApplicationOutput)  => {
                     this.document.body.classList.remove('overflow-hidden');
                     if (output) {
-                        const applyOfferDialog = this.dialog.open(ApplyOfferDialogComponent, {
-                            width: '577px',
-                            height: '330px',
-                            panelClass: 'apply-offer-dialog',
-                            data: modalData
-                        });
+                        this.openOfferDialog(modalData);
                         this.loadMemberInfo();
                         submitRequestInput.redirectUrl = redirectUrl;
-                        this.offerServiceProxy.submitRequest(submitRequestInput).subscribe(
-                            () => applyOfferDialog.close()
-                        );
+                        this.offerServiceProxy.submitRequest(submitRequestInput).subscribe();
                     }
                 });
             } else {
@@ -305,6 +293,15 @@ export class OffersService {
                 this.offerServiceProxy.submitRequest(submitRequestInput).subscribe();
             }
         }
+    }
+
+    private openOfferDialog(modalData: any): MatDialogRef<ApplyOfferDialogComponent> {
+        return this.dialog.open(ApplyOfferDialogComponent, {
+            width: '577px',
+            height: '330px',
+            panelClass: 'apply-offer-dialog',
+            data: modalData
+        });
     }
 
     getCreditScoreObject(creditScore: CreditScoreRating): CreditScoreInterface {
