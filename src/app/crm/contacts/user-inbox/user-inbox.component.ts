@@ -9,6 +9,7 @@ import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { ContactServiceProxy } from '@shared/service-proxies/service-proxies';
 import { EmailTemplateDialogComponent } from '@app/crm/shared/email-template-dialog/email-template-dialog.component';
+import { AppPermissions } from '@shared/AppPermissions';
 import { ContactsService } from '../contacts.service';
 
 @Component({
@@ -27,6 +28,7 @@ export class UserInboxComponent extends AppComponentBase implements OnDestroy {
     }];
 
     activeEmail = this.emails[0];
+    isSendSmsAndEmailAllowed = false;
 
     contentToolbar = [{
         location: 'before',
@@ -86,8 +88,10 @@ export class UserInboxComponent extends AppComponentBase implements OnDestroy {
     ) {
         super(injector);
 
-        contactsService.contactInfoSubscribe((res) => {
+        contactsService.contactInfoSubscribe(res => {
             this.contactId = res.id;
+            this.isSendSmsAndEmailAllowed = this.contactsService.checkCGPermission(
+                res.groupId, 'ViewCommunicationHistory.SendSMSAndEmail');
             setTimeout(() => {
                 contactsService.toolbarUpdate([{
                     location: 'before',
@@ -106,6 +110,7 @@ export class UserInboxComponent extends AppComponentBase implements OnDestroy {
                         options: {
                             text: '+ ' + this.l('NewEmail')
                         },
+                        visible: this.isSendSmsAndEmailAllowed,
                         action: () => this.showNewEmailDialog()
                     }]
                 }]);
