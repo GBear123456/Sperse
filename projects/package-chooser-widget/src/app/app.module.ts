@@ -1,6 +1,6 @@
 /** Application imports */
 import { NgModule, Injector, APP_INITIALIZER } from '@angular/core';
-import { HTTP_INTERCEPTORS, HttpClient, HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { BrowserModule, HAMMER_GESTURE_CONFIG } from '@angular/platform-browser';
 
 /** Third party imports */

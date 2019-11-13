@@ -1,1 +1,4 @@
-<div id="loadSpinner" class="lds-css ng-scope"><div class="lds-spin"><div><div></div></div><div><div></div></div><div><div></div></div><div><div></div></div><div><div></div></div><div><div></div></div><div><div></div></div><div><div></div></div><div><div></div></div><div><div></div></div><div><div></div></div></div></div>
+<img  *ngIf="type === 'blue'; else default" src="./assets/common/icons/blue-spinner.gif">
+<ng-template #default>
+    <div id="loadSpinner"class="lds-css ng-scope"><div class="lds-spin"><div><div></div></div><div><div></div></div><div><div></div></div><div><div></div></div><div><div></div></div><div><div></div></div><div><div></div></div><div><div></div></div><div><div></div></div><div><div></div></div><div><div></div></div></div></div>
+</ng-template>

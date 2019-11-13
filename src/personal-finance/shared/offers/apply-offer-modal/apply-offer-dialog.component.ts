@@ -40,10 +40,13 @@ export class ApplyOfferDialogComponent implements OnInit {
                         if ((index + 1) === this.processingSteps.length) {
                             /** Redirect to the provided link */
                             if (this.data.redirectUrl) {
-                                window.open(this.data.redirectUrl, '_blank');
+                                !window.open(this.data.redirectUrl, '_blank')
+                                    ? this.redirectUrl = this.data.redirectUrl
+                                    : this.hideDialog();
+                            } else {
+                                /** Close after 100 ms after last completed step */
+                                setTimeout(() => this.hideDialog(), 100);
                             }
-                            /** Close after 100 ms after last completed step */
-                            setTimeout(() => this.dialogRef.close(), 100);
                         }
                     },
                     this.getStepCompleteTimeout(index)
