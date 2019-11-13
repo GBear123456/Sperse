@@ -6,7 +6,7 @@ import { Location } from '@angular/common';
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
 import { Observable, ReplaySubject, Subject, of } from 'rxjs';
-import { tap, switchMap } from 'rxjs/operators';
+import { tap, switchMap, catchError, finalize } from 'rxjs/operators';
 import invert from 'lodash/invert';
 
 /** Application imports */
@@ -241,11 +241,15 @@ export class ContactsService {
 
         return dialogComponent.onSave.pipe(switchMap(res => {
             dialogComponent.startLoading();
-            return this.emailProxy.sendEmail(new SendEmailInput(res));
-        }), tap(() => {
-            this.notifyService.info(this.ls.l('MailSent'));
-            dialogComponent.finishLoading();
-            dialogComponent.close();
+            return this.emailProxy.sendEmail(new SendEmailInput(res)).pipe(
+                finalize(() => dialogComponent.finishLoading()),
+                catchError(error => of(error))
+            );
+        }), tap(error => {
+            if (!error) {
+                this.notifyService.info(this.ls.l('MailSent'));
+                dialogComponent.close();
+            }
         }));
     }
 

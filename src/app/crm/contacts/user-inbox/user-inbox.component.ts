@@ -132,7 +132,7 @@ export class UserInboxComponent extends AppComponentBase implements OnDestroy {
     showNewEmailDialog(title = 'NewEmail', data = {}) {
         data['contactId'] = this.contactId;
         this.contactsService.showEmailDialog(data, title)
-            .subscribe(() => this.invalidate());
+            .subscribe(error => error || this.invalidate());
     }
 
     ngOnDestroy() {
