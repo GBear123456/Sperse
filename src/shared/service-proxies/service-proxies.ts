@@ -58646,6 +58646,7 @@ export interface ICreateInvoiceLineInput {
 export class CreateInvoiceInput implements ICreateInvoiceInput {
     contactId!: number;
     orderId!: number | undefined;
+    orderNumber!: string | undefined;
     status!: InvoiceStatus;
     number!: string | undefined;
     date!: moment.Moment;
@@ -58667,6 +58668,7 @@ export class CreateInvoiceInput implements ICreateInvoiceInput {
         if (data) {
             this.contactId = data["contactId"];
             this.orderId = data["orderId"];
+            this.orderNumber = data["orderNumber"];
             this.status = data["status"];
             this.number = data["number"];
             this.date = data["date"] ? moment(data["date"].toString()) : <any>undefined;
@@ -58692,6 +58694,7 @@ export class CreateInvoiceInput implements ICreateInvoiceInput {
         data = typeof data === 'object' ? data : {};
         data["contactId"] = this.contactId;
         data["orderId"] = this.orderId;
+        data["orderNumber"] = this.orderNumber;
         data["status"] = this.status;
         data["number"] = this.number;
         data["date"] = this.date ? this.date.toISOString() : <any>undefined;
@@ -58710,6 +58713,7 @@ export class CreateInvoiceInput implements ICreateInvoiceInput {
 export interface ICreateInvoiceInput {
     contactId: number;
     orderId: number | undefined;
+    orderNumber: string | undefined;
     status: InvoiceStatus;
     number: string | undefined;
     date: moment.Moment;
