@@ -1,8 +1,13 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 
 @Component({
     selector: 'loading-spinner',
     templateUrl: './loading-spinner.component.html',
-    styleUrls: ['../../../../assets/common/styles/spinner.css']
+    styleUrls: [
+        '../../../../assets/common/styles/spinner.css',
+        './loading-spinner.component.less'
+    ]
 })
-export class LoadingSpinnerComponent {}
+export class LoadingSpinnerComponent {
+    @Input() type: 'standard' | 'blue' = 'standard';
+}
