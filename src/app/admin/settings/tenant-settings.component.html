@@ -1,5 +1,7 @@
 <div [@routerTransition]>
-    <app-headline [config]="headlineConfig"></app-headline>
+    <app-headline [names]="[ l('Settings') ]"
+                  [buttons]="headlineButtons">
+    </app-headline>
 
     <div class="wrapper">
         <mat-tab-group *ngIf="settings">

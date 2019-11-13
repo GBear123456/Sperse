@@ -1,6 +1,14 @@
 <div [@routerTransition]>
-    <app-headline [config]="headlineConfig"></app-headline>
-
+    <app-headline [names]="[ l('AuditLogs') ]"
+                  [showToggleToolbarButton]="true"
+                  [showReloadButton]="true"
+                  [showToggleCompactViewButton]="true"
+                  [showToggleFullScreenButton]="true"
+                  (onReload)="refreshData()"
+                  (onToggleToolbar)="repaintDataGrid()"
+                  (onToggleCompactView)="showCompactRowHeight()"
+                  (onTooggleFullScreen)="repaintDataGrid(100)">
+    </app-headline>
     <div [hidden]="isDataLoaded && !totalRowCount" class="portlet light no-padding margin-bottom-0">
         <div class="portlet-body">
             <dx-scroll-view showScrollbar="onHover">
@@ -13,16 +21,16 @@
                                   [allowColumnResizing]="true"
                                   [hoverStateEnabled]="true"
                                   [pager]="defaultGridPagerConfig">
-                        <dxi-column caption="{{l('Browser')}}" width="350px" dataField="browserInfo" cellTemplate="browserInfoTemplate"></dxi-column>
-                        <dxi-column caption="{{l('Client')}}" dataField="clientName"></dxi-column>
-                        <dxi-column caption="{{l('IpAddress')}}" dataField="clientIpAddress"></dxi-column>
-                        <dxi-column caption="{{l('Duration')}}" dataField="executionDuration" cellTemplate="executionDurationTemplate"></dxi-column>
-                        <dxi-column caption="{{l('Action')}}" dataField="methodName"></dxi-column>
-                        <dxi-column caption="{{l('Service')}}" dataField="serviceName"></dxi-column>
-                        <dxi-column caption="{{l('UserName')}}" [allowSorting]="false" dataField="userName"></dxi-column>
-                        <dxi-column caption="{{l('Time')}}" dataField="executionTime" dataType="datetime" sortOrder="desc" sortIndex="0"></dxi-column>
-                        <dxi-column caption="" width="30px" cellTemplate="statusTemplate"></dxi-column>
-                        <dxi-column caption="" width="45px" alignment="center" cellTemplate="editTemplate"></dxi-column>
+                        <dxi-column [caption]="l('Browser')" width="350px" dataField="browserInfo" cellTemplate="browserInfoTemplate"></dxi-column>
+                        <dxi-column [caption]="l('Client')" dataField="clientName"></dxi-column>
+                        <dxi-column [caption]="l('IpAddress')" dataField="clientIpAddress"></dxi-column>
+                        <dxi-column [caption]="l('Duration')" dataField="executionDuration" cellTemplate="executionDurationTemplate"></dxi-column>
+                        <dxi-column [caption]="l('Action')" dataField="methodName"></dxi-column>
+                        <dxi-column [caption]="l('Service')" dataField="serviceName"></dxi-column>
+                        <dxi-column [caption]="l('UserName')" [allowSorting]="false" dataField="userName"></dxi-column>
+                        <dxi-column [caption]="l('Time')" dataField="executionTime" dataType="datetime" sortOrder="desc" sortIndex="0"></dxi-column>
+                        <dxi-column [caption]="" width="30px" cellTemplate="statusTemplate"></dxi-column>
+                        <dxi-column [caption]="" width="45px" alignment="center" cellTemplate="editTemplate"></dxi-column>
                         <ng-container *dxTemplate="let record of 'editTemplate'">
                             <i class="fa fa-search show-details" (click)="openAuditLogDetailModal(record.data)"></i>
                         </ng-container>

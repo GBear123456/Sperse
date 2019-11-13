@@ -1,4 +1,7 @@
-<app-headline [config]="headlineConfig"></app-headline>
+<app-headline [names]="[ ls.l('OrganizationUnits') ]"
+              [text]="ls.l('OrganizationUnitsHeaderInfo')"
+              icon="rocket">
+</app-headline>
 <div [@routerTransition]>
     <div class="m-content">
         <div class="row">

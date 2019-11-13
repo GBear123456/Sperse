@@ -22,11 +22,6 @@ export class MaintenanceComponent implements OnInit, AfterViewInit {
     loading = false;
     caches: any = null;
     logs: any = '';
-    public headlineConfig = {
-        names: [ this.ls.l('Maintenance') ],
-        icon: '',
-        buttons: []
-    };
     public gridPagerConfig = {
         showPageSizeSelector: true,
         allowedPageSizes: [10, 20, 50, 100],

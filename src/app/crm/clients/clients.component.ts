@@ -88,6 +88,7 @@ import { MapData } from '@app/shared/common/slice/map/map-data.model';
 import { MapComponent } from '@app/shared/common/slice/map/map.component';
 import { MapArea } from '@app/shared/common/slice/map/map-area.enum';
 import { MapService } from '@app/shared/common/slice/map/map.service';
+import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
 
 @Component({
     templateUrl: './clients.component.html',
@@ -146,19 +147,13 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     assignedUsersSelector = select(ContactAssignedUsersStoreSelectors.getContactGroupAssignedUsers, { contactGroup: ContactGroup.Client });
     contactStatus = ContactStatus;
     selectedClientKeys: any = [];
-    public headlineConfig = {
-        names: [this.l('Customers')],
-        icon: 'people',
-        // onRefresh: this.refresh.bind(this),
-        toggleToolbar: this.toggleToolbar.bind(this),
-        buttons: [
-            {
-                enabled: this.contactService.checkCGPermission(ContactGroup.Client),
-                action: this.createClient.bind(this),
-                label: this.l('CreateNewCustomer')
-            }
-        ]
-    };
+    headlineButtons: HeadlineButton[] = [
+        {
+            enabled: this.contactService.checkCGPermission(ContactGroup.Client),
+            action: this.createClient.bind(this),
+            label: this.l('CreateNewCustomer')
+        }
+    ];
 
     actionEvent: any;
     actionMenuItems = [
@@ -429,11 +424,6 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         });
     }
 
-    toggleToolbar() {
-        this.appService.toolbarToggle();
-        setTimeout(() => this.dataGrid.instance.repaint(), 0);
-    }
-
     private paramsSubscribe() {
         if (!this.subRouteParams || this.subRouteParams.closed)
             this.subRouteParams = this._activatedRoute.queryParams
@@ -665,9 +655,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                     {
                         name: 'filters',
                         action: () => {
-                            setTimeout(() => {
-                                this.dataGrid.instance.repaint();
-                            }, 1000);
+                            this.repaintDataGrid(1000);
                             this.filtersService.fixed = !this.filtersService.fixed;
                         },
                         options: {
@@ -841,11 +829,6 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 locateInMenu: 'auto',
                 items: [
                     {
-                        name: 'showCompactRowsHeight',
-                        action: DataGridService.showCompactRowsHeight.bind(this, this.dataGrid, true),
-                        disabled: !this.showDataGrid
-                    },
-                    {
                         name: 'columnChooser',
                         disabled: !(this.showDataGrid || this.showPivotGrid),
                         action: () => {
@@ -892,21 +875,16 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                         }
                     }
                 ]
-            },
-            {
-                location: 'after',
-                locateInMenu: 'auto',
-                items: [
-                    {
-                        name: 'fullscreen',
-                        action: () => {
-                            this.fullScreenService.toggleFullscreen(document.documentElement);
-                            setTimeout(() => this.dataGrid.instance.repaint(), 100);
-                        }
-                    }
-                ]
             }
         ]);
+    }
+
+    repaintDataGrid(delay = 0) {
+        setTimeout(() => this.dataGrid.instance.repaint(), delay);
+    }
+
+    toggleCompactView() {
+        DataGridService.toggleCompactRowsHeight(this.dataGrid, true);
     }
 
     toggleUserAssignment() {
@@ -947,7 +925,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         this.initDataSource();
         this.initToolbarConfig();
         if (this.showDataGrid) {
-            setTimeout(() => this.dataGrid.instance.repaint());
+            this.repaintDataGrid();
         }
         if (this.filterChanged) {
             this.filterChanged = false;

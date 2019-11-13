@@ -42,6 +42,7 @@ import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calenda
 import { FilterItemModel } from '@shared/filters/models/filter-item.model';
 import { SetupStepComponent } from '@app/cfo/shared/common/setup-steps/setup-steps.component';
 import { ImageFormat } from '@shared/common/export/image-format.enum';
+import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
 
 @Component({
     'selector': 'app-stats',
@@ -57,7 +58,13 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
     statsData: Array<BankAccountDailyStatDto>;
     historicalSourceData: Array<BankAccountDailyStatDto> = [];
     forecastSourceData: Array<BankAccountDailyStatDto> = [];
-    headlineConfig: any;
+    headlineButtons: HeadlineButton[] = [
+        {
+            enabled: !AppConsts.isMobile && !!(this.statsData && this.statsData.length),
+            action: this.showSourceDataWidget.bind(this),
+            label: this.l('Show source data')
+        }
+    ];
     axisDateFormat = 'month';
     labelPositiveBackgroundColor = '#626b73';
     labelNegativeBackgroundColor = '#f05b2a';
@@ -253,8 +260,6 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
                     }
                     return statsItem;
                 });
-                /** reinit */
-                this.initHeadlineConfig();
                 this.maxLabelCount = this.calcMaxLabelCount(this.labelWidth);
             } else {
                 this.statsData = null;
@@ -284,7 +289,6 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
 
             });
 
-        this.initHeadlineConfig();
         this.calculateChartsSize();
     }
 
@@ -433,24 +437,13 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
         }
     }
 
-    initHeadlineConfig() {
-        this.headlineConfig = {
-            names: [this.l('Daily Cash Balances')],
-            iconSrc: './assets/common/icons/pulse-icon.svg',
-            // onRefresh: this._cfoService.hasStaticInstance ? undefined : this.getUpdatedDataSource.bind(this),
-            toggleToolbar: this.toggleToolbar.bind(this),
-            buttons: [
-                {
-                    enabled: !AppConsts.isMobile && !!(this.statsData && this.statsData.length),
-                    action: this.showSourceDataWidget.bind(this),
-                    label: this.l('Show source data')
-                }
-            ]
-        };
+    reload() {
+        if (!this._cfoService.hasStaticInstance) {
+            this.getUpdatedDataSource();
+        }
     }
 
     toggleToolbar() {
-        this.appService.toolbarToggle();
         this.filtersService.fixed = false;
         this.filtersService.disable();
         this.calculateChartsScrolableHeight();

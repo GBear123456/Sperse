@@ -43,15 +43,8 @@ import {
     ForecastModelDto
 } from '@shared/service-proxies/service-proxies';
 import { FilterHelpers } from '../shared/helpers/filter.helper';
-import {
-    CfoStore,
-    ForecastModelsStoreActions,
-    ForecastModelsStoreSelectors
-} from '@app/cfo/store';
-import {
-    RootStore,
-    CurrenciesStoreSelectors
-} from '@root/store';
+import { CfoStore, ForecastModelsStoreActions, ForecastModelsStoreSelectors } from '@app/cfo/store';
+import { RootStore, CurrenciesStoreSelectors } from '@root/store';
 import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
 import { BankAccountsSelectDialogComponent } from '@app/cfo/shared/bank-accounts-select-dialog/bank-accounts-select-dialog.component';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
@@ -69,9 +62,8 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
     @ViewChild(SynchProgressComponent) synchProgressComponent: SynchProgressComponent;
 
-    public headlineConfig;
     private bankAccountCount = '';
-    private filters: FilterModel[] = new Array<FilterModel>();
+    private filters: FilterModel[] = [];
     private syncAccounts: any;
     private defaultRequestFilter: StatsFilter =  new StatsFilter({
         currencyId: 'USD',
@@ -126,13 +118,13 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
 
     constructor(
         private injector: Injector,
-        private _appService: AppService,
-        private _filtersService: FiltersService,
-        private _bankAccountService: BankAccountsServiceProxy,
-        private _cashFlowForecastServiceProxy: CashFlowForecastServiceProxy,
-        private _cfoPreferences: CfoPreferencesService,
-        private _dialog: MatDialog,
-        private _lifecycleService: LifecycleSubjectsService,
+        private appService: AppService,
+        private filtersService: FiltersService,
+        private bankAccountService: BankAccountsServiceProxy,
+        private cashFlowForecastServiceProxy: CashFlowForecastServiceProxy,
+        private cfoPreferences: CfoPreferencesService,
+        private dialog: MatDialog,
+        private lifecycleService: LifecycleSubjectsService,
         private rootStore$: Store<RootStore.State>,
         private cfoStore$: Store<CfoStore.State>,
         public bankAccountsService: BankAccountsService
@@ -144,15 +136,15 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
         this.bankAccountsService.load();
         this.cfoStore$.dispatch(new ForecastModelsStoreActions.LoadRequestAction());
 
-        this._cfoPreferences.dateRange$.pipe(
+        this.cfoPreferences.dateRange$.pipe(
             takeUntil(this.destroy$),
-            switchMap((dateRange) => this.componentIsActivated ? of(dateRange) : this._lifecycleService.activate$.pipe(first(), mapTo(dateRange)))
+            switchMap((dateRange) => this.componentIsActivated ? of(dateRange) : this.lifecycleService.activate$.pipe(first(), mapTo(dateRange)))
         ).subscribe((dateRange: CalendarValuesModel) => {
             this.dateFilter.items = {
                 from: new FilterItemModel(dateRange.from.value),
                 to: new FilterItemModel(dateRange.to.value)
             };
-            this._filtersService.change(this.dateFilter);
+            this.filtersService.change(this.dateFilter);
         });
 
         combineLatest(
@@ -162,11 +154,11 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
             this.refresh$
         ).pipe(
             takeUntil(this.destroy$),
-            switchMap(data => this.componentIsActivated ? of(data) : this._lifecycleService.activate$.pipe(first(), mapTo(data))),
+            switchMap(data => this.componentIsActivated ? of(data) : this.lifecycleService.activate$.pipe(first(), mapTo(data))),
             tap(() => abp.ui.setBusy()),
             switchMap(([forecastModelId, currencyId, requestFilter]:
                               [number, string, StatsFilter]) => {
-                return this._bankAccountService.getStats(
+                return this.bankAccountService.getStats(
                     InstanceType[this.instanceType],
                     this.instanceId,
                     currencyId,
@@ -215,9 +207,6 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
                 }
 
                 this.statementsData = result;
-
-                /** reinit */
-                this.initHeadlineConfig();
             } else {
                 this.statementsData = null;
             }
@@ -231,33 +220,33 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
             takeUntil(this.destroy$),
             filter(() => this.componentIsActivated)
         ).subscribe(([forecastModels, selectedForecastModelId]) => {
-            this._appService.updateToolbar([
+            this.appService.updateToolbar([
                 {
                     location: 'before',
                     items: [
                         {
                             name: 'filters',
                             visible: !this._cfoService.hasStaticInstance,
-                            action: (event) => {
+                            action: () => {
                                 setTimeout(() => {
                                     this.dataGrid.instance.repaint();
                                 }, 1000);
-                                this._filtersService.fixed = !this._filtersService.fixed;
+                                this.filtersService.fixed = !this.filtersService.fixed;
                             },
                             options: {
                                 checkPressed: () => {
-                                    return this._filtersService.fixed;
+                                    return this.filtersService.fixed;
                                 },
-                                mouseover: (event) => {
-                                    this._filtersService.enable();
+                                mouseover: () => {
+                                    this.filtersService.enable();
                                 },
-                                mouseout: (event) => {
-                                    if (!this._filtersService.fixed)
-                                        this._filtersService.disable();
+                                mouseout: () => {
+                                    if (!this.filtersService.fixed)
+                                        this.filtersService.disable();
                                 }
                             },
                             attr: {
-                                'filter-selected': this._filtersService.hasFilterSelected
+                                'filter-selected': this.filtersService.hasFilterSelected
                             }
                         }
                     ]
@@ -316,7 +305,7 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
                         {
                             name: 'showCompactRowsHeight',
                             visible: !this._cfoService.hasStaticInstance,
-                            action: DataGridService.showCompactRowsHeight.bind(this, this.dataGrid)
+                            action: DataGridService.toggleCompactRowsHeight.bind(this, this.dataGrid)
                         },
                         {
                             name: 'download',
@@ -353,7 +342,7 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
 
         this.bankAccountsService.accountsAmountWithApply$.pipe(
             takeUntil(this.destroy$),
-            switchMap((count: string) => this.componentIsActivated ? of(count) : this._lifecycleService.activate$.pipe(first(), mapTo(count)))
+            switchMap((count: string) => this.componentIsActivated ? of(count) : this.lifecycleService.activate$.pipe(first(), mapTo(count)))
         ).subscribe((count: string) => {
             this.bankAccountCount = count;
             this.refreshToolbar.next();
@@ -367,43 +356,38 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
 
         this.bankAccountsService.syncAccounts$.pipe(first()).subscribe((syncAccounts) => {
             this.syncAccounts = syncAccounts;
-            this.createFilters(syncAccounts);
-            this._filtersService.setup(this.filters);
+            this.createFilters();
+            this.filtersService.setup(this.filters);
             this.initFiltering();
             this.refreshToolbar.next();
 
             /** After selected accounts change */
             this.selectedBankAccountIds$.pipe(
                 takeUntil(this.destroy$),
-                switchMap(() => this.componentIsActivated ? of(null) : this._lifecycleService.activate$.pipe(first()))
+                switchMap(() => this.componentIsActivated ? of(null) : this.lifecycleService.activate$.pipe(first()))
             ).subscribe(() => {
                 this.setBankAccountsFilter(true);
             });
         });
-
-        this.initHeadlineConfig();
     }
 
     ngAfterViewInit(): void {
-        DataGridService.showCompactRowsHeight(this.dataGrid);
+        DataGridService.toggleCompactRowsHeight(this.dataGrid);
         let rootComponent = this.getRootComponent();
         rootComponent.overflowHidden(true);
     }
 
-    initHeadlineConfig() {
-        this.headlineConfig = {
-            names: [this.l('Statements')],
-            // onRefresh: this._cfoService.hasStaticInstance ? undefined : this.invalidate.bind(true),
-            toggleToolbar: this.toggleToolbar.bind(this),
-            iconSrc: './assets/common/icons/credit-card-icon.svg'
-        };
+    reload() {
+        if (!this._cfoService.hasStaticInstance) {
+            this.invalidate();
+        }
     }
 
     toggleToolbar() {
-        this._appService.toolbarToggle();
+        this.appService.toolbarToggle();
         setTimeout(() => this.dataGrid.instance.repaint());
-        this._filtersService.fixed = false;
-        this._filtersService.disable();
+        this.filtersService.fixed = false;
+        this.filtersService.disable();
     }
 
     invalidate() {
@@ -414,10 +398,10 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
     }
 
     updateCurrencySymbol = (data) => {
-        return data.valueText.replace('$', this._cfoPreferences.selectedCurrencySymbol);
+        return data.valueText.replace('$', this.cfoPreferences.selectedCurrencySymbol);
     }
 
-    createFilters(syncAccounts) {
+    createFilters() {
         this.filters = [
             this.dateFilter,
             new FilterModel({
@@ -438,7 +422,7 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
     }
 
     initFiltering() {
-        this._filtersService.apply(() => {
+        this.filtersService.apply(() => {
             let requestFilter = this.defaultRequestFilter;
             for (let filter of this.filters) {
                 if (filter.caption.toLowerCase() === 'account')
@@ -457,7 +441,7 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
     }
 
     openBankAccountsSelectDialog() {
-        this._dialog.open(BankAccountsSelectDialogComponent, {
+        this.dialog.open(BankAccountsSelectDialogComponent, {
             panelClass: 'slider',
         }).componentInstance.onApply.subscribe(() => {
             this.setBankAccountsFilter(true);
@@ -496,11 +480,11 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
 
     activate() {
         this.refreshToolbar.next();
-        this._filtersService.setup(this.filters);
+        this.filtersService.setup(this.filters);
         this.initFiltering();
         /** Load sync accounts (if something change - subscription in ngOnInit fires) */
         this.bankAccountsService.load();
-        this._lifecycleService.activate.next();
+        this.lifecycleService.activate.next();
         /** If selected accounts changed in another component - update widgets */
         if (this.updateAfterActivation) {
             this.setBankAccountsFilter(true);
@@ -512,9 +496,9 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
     }
 
     deactivate() {
-        this._dialog.closeAll();
-        this._appService.updateToolbar(null);
-        this._filtersService.unsubscribe();
+        this.dialog.closeAll();
+        this.appService.updateToolbar(null);
+        this.filtersService.unsubscribe();
         this.synchProgressComponent.deactivate();
         this.getRootComponent().overflowHidden();
     }

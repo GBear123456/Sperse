@@ -1,23 +1,44 @@
 <div class="headline-row">
     <div class="headline-title">
-        <i *ngIf="data.icon" class="icon-{{data.icon}}"></i><img *ngIf="data.iconSrc" src="{{data.iconSrc}}" alt="icon" />
+        <i *ngIf="icon" class="icon-{{icon}}"></i><img *ngIf="iconSrc" [src]="iconSrc" alt="icon" />
         <div class="header-names">
-            <ng-template ngFor let-item [ngForOf]="data.names" let-i="index">
+            <ng-template ngFor let-item [ngForOf]="names" let-i="index">
                 <span class="header-name">{{item}}</span>
                 <span class="right-arrow"></span>
             </ng-template>
         </div>
-        &nbsp;<small>{{data.text}}</small><div class="transclude"></div>
+        &nbsp;<small>{{text}}</small><div class="transclude"></div>
     </div>
     <div class="headline-content">
         <ng-content></ng-content>
     </div>
-    <div class="headline-buttons" [ngClass]="data?.class">
-        <ng-template ngFor let-item [ngForOf]="data.buttons">
-            <button *ngIf="item.enabled" id="{{item?.id}}" class="btn {{item?.class || 'btn-layout'}}" (click)="item.action($event)"><i class="icon-{{item.icon}}"></i> {{item.label}}</button>
+    <div class="headline-buttons" [ngClass]="{ 'need-refresh': reloadIsNecessary }">
+        <ng-template ngFor let-item [ngForOf]="buttons">
+            <button *ngIf="item.enabled" [id]="item?.id" class="btn {{item?.class || 'btn-layout'}}" (click)="item.action($event)">
+                <i class="icon-{{item.icon}}"></i> {{item.label}}
+            </button>
         </ng-template>
-        <div *ngIf="data.onRefresh || data.toggleToolbar" class="vertical-delimiter"></div>
-        <button *ngIf="data.onRefresh" class="refresh-button" (click)="data.onRefresh($event)"></button>
-        <button *ngIf="data.toggleToolbar" class="toggle-button" title="Toggle toolbar" (click)="data.toggleToolbar($event)"></button>
+        <div class="vertical-delimiter"></div>
+        <ng-container *ngIf="showReloadButton || showToggleToolbarButton || showToggleCompactViewButton || showToggleFullScreenButton">
+            <button class="toggle-button" title="Toggle toolbar" (click)="toggleHeadlineButtons($event)"></button>
+            <ul *ngIf="showHeadlineButtons" class="buttons">
+                <li *ngIf="showReloadButton">
+                    <span class="text">{{ ls.l('ReloadTheCurrentPage') }}</span>
+                    <div class="right"><span class="icon reload" (click)="reload($event)"></span></div>
+                </li>
+                <li *ngIf="showToggleToolbarButton">
+                    <span class="text">{{ toolbarMenuToggleButtonText$ | async }}</span>
+                    <div class="right"><span class="icon toggleToolbar" (click)="toggleToolbar()"></span></div>
+                </li>
+                <li *ngIf="showToggleCompactViewButton">
+                    <span class="text">{{ showCompactView ? ls.l('HideCompactView') : ls.l('ShowCompactView') }}</span>
+                    <div class="right"><span class="icon toggleCompactView" (click)="toggleCompactView()"></span></div>
+                </li>
+                <li *ngIf="showToggleFullScreenButton">
+                    <span class="text">{{ fullScreenButtonText$ | async }}</span>
+                    <div class="right"><span class="icon toggleFullScreenView" (click)="toggleFullScreen()"></span></div>
+                </li>
+            </ul>
+        </ng-container>
     </div>
 </div>

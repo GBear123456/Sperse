@@ -1,4 +1,7 @@
-<app-headline [config]="headlineConfig">
+<app-headline [names]="[ l('SetupStep_Permissions') ]"
+              iconSrc="./assets/common/icons/user-permissions.svg"
+              [showReloadButton]="true"
+              (onReload)="onRefresh()">
     <synch-progress class="synch-progress"></synch-progress>
 </app-headline>
 <div class="content-wrap">

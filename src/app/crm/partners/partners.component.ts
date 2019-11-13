@@ -82,6 +82,7 @@ import { ImpersonationService } from '@admin/users/impersonation.service';
 import { MapArea } from '@app/shared/common/slice/map/map-area.enum';
 import { MapComponent } from '@app/shared/common/slice/map/map.component';
 import { MapService } from '@app/shared/common/slice/map/map.service';
+import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
 
 @Component({
     templateUrl: './partners.component.html',
@@ -161,19 +162,13 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     filterModelStar: FilterModel;
 
     selectedPartnerKeys: any = [];
-    public headlineConfig = {
-        names: [this.l('Partners')],
-        icon: 'people',
-        // onRefresh: this.invalidate.bind(this),
-        toggleToolbar: this.toggleToolbar.bind(this),
-        buttons: [
-            {
-                enabled: this.contactService.checkCGPermission(ContactGroup.Partner),
-                action: this.createPartner.bind(this),
-                label: this.l('CreateNewPartner')
-            }
-        ]
-    };
+    public headlineButtons: HeadlineButton[] = [
+        {
+            enabled: this.contactService.checkCGPermission(ContactGroup.Partner),
+            action: this.createPartner.bind(this),
+            label: this.l('CreateNewPartner')
+        }
+    ];
 
     partnerTypes: any/*PartnerTypeDto*/[];
     permissions = AppPermissions;
@@ -394,8 +389,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     toggleToolbar() {
-        this.appService.toolbarToggle();
-        setTimeout(() => this.dataGrid.instance.repaint(), 0);
+        this.repaintDataGrid();
         this.filtersService.fixed = false;
         this.filtersService.disable();
         this.initToolbarConfig();
@@ -473,7 +467,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         this.initDataSource();
         this.initToolbarConfig();
         if (this.showDataGrid) {
-            setTimeout(() => this.dataGrid.instance.repaint());
+            this.repaintDataGrid();
         }
         if (this.filterChanged) {
             this.filterChanged = false;
@@ -663,9 +657,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                     {
                         name: 'filters',
                         action: () => {
-                            setTimeout(() => {
-                                this.dataGrid.instance.repaint();
-                            }, 1000);
+                            this.repaintDataGrid(1000);
                             this.filtersService.fixed = !this.filtersService.fixed;
                         },
                         options: {
@@ -847,11 +839,6 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                 locateInMenu: 'auto',
                 items: [
                     {
-                        name: 'showCompactRowsHeight',
-                        action: DataGridService.showCompactRowsHeight.bind(this, this.dataGrid, true),
-                        disabled: !this.showDataGrid
-                    },
-                    {
                         name: 'columnChooser',
                         disabled: !(this.showDataGrid || this.showPivotGrid),
                         action: () => {
@@ -898,21 +885,16 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                         }
                     }
                 ]
-            },
-            {
-                location: 'after',
-                locateInMenu: 'auto',
-                items: [
-                    {
-                        name: 'fullscreen',
-                        action: () => {
-                            this.fullScreenService.toggleFullscreen(document.documentElement);
-                            setTimeout(() => this.dataGrid.instance.repaint(), 100);
-                        }
-                    }
-                ]
             }
         ]);
+    }
+
+    repaintDataGrid(delay = 0) {
+        setTimeout(() => this.dataGrid.instance.repaint(), delay);
+    }
+
+    toggleCompactView() {
+        DataGridService.toggleCompactRowsHeight(this.dataGrid, true);
     }
 
     toggleUserAssignment() {

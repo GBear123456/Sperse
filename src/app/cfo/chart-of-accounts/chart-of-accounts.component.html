@@ -1,5 +1,6 @@
 <div [@routerTransition]>
-    <app-headline [config]="headlineConfig"></app-headline>
+    <app-headline [names]="[ l('Setup_Title'), l('SetupStep_Chart') ]"
+                  iconSrc="./assets/common/icons/magic-stick-icon.svg"></app-headline>
     <div class="content-wrap">
         <setup-steps #setupStep SelectedStepIndex="2"></setup-steps>
         <div class="grid-wrapper" [ngStyle]="{flex: isInstanceAdmin ? 'unset': 1}">

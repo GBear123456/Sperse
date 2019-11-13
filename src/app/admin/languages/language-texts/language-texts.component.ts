@@ -13,7 +13,7 @@ import { AppService } from '@app/app.service';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { LanguageServiceProxy } from '@shared/service-proxies/service-proxies';
 import { FiltersService } from '@shared/filters/filters.service';
-import { EditTextModalComponent } from './edit-text-modal.component';
+import { EditTextModalComponent } from '../edit-text-modal/edit-text-modal.component';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { FilterModel } from '@shared/filters/models/filter.model';
 import { FilterDropDownComponent } from '@shared/filters/dropdown/filter-dropdown.component';
@@ -32,13 +32,6 @@ export class LanguageTextsComponent extends AppComponentBase implements AfterVie
     dataSource: DataSource;
     public actionMenuItems: any;
     public actionRecord: any;
-    public headlineConfig = {
-        names: [ this.l('LanguageTexts') ],
-        icon: 'flag',
-        // onRefresh: this.refreshDataGrid.bind(this),
-        toggleToolbar: this.toggleToolbar.bind(this),
-        buttons: []
-    };
     sourceNames = abp.localization.sources.filter(source => source.type === 'MultiTenantLocalizationSource').map(value => value.name);
     languages: abp.localization.ILanguageInfo[] = abp.localization.languages;
     defaultBaseLanguageName: string;
@@ -56,10 +49,10 @@ export class LanguageTextsComponent extends AppComponentBase implements AfterVie
 
     constructor(
         injector: Injector,
-        private _languageService: LanguageServiceProxy,
-        private _filtersService: FiltersService,
-        private _dialog: MatDialog,
-        private _appService: AppService
+        private languageService: LanguageServiceProxy,
+        private filtersService: FiltersService,
+        private dialog: MatDialog,
+        private appService: AppService
     ) {
         super(injector);
         this.rootComponent = this.getRootComponent();
@@ -78,7 +71,7 @@ export class LanguageTextsComponent extends AppComponentBase implements AfterVie
             this.filtersModels.forEach((filter: FilterModel) => filter.updateCaptions());
             this.initToolbarConfig();
         });
-        this._filtersService.filtersValues$
+        this.filtersService.filtersValues$
             .pipe(takeUntil(this.destroy$))
             .subscribe(filtersValues => {
                 this.filtersValues = { ...this.filtersValues, ...filtersValues };
@@ -86,16 +79,15 @@ export class LanguageTextsComponent extends AppComponentBase implements AfterVie
             });
     }
 
-    toggleToolbar() {
-        this._appService.toolbarToggle();
-        setTimeout(() => this.dataGrid.instance.repaint(), 0);
+    repaintDataGrid(delay = 0) {
+        setTimeout(() => this.dataGrid.instance.repaint(), delay);
     }
 
     ngAfterViewInit(): void {
         this.dataSource = new DataSource({
             key: 'id',
             load: (loadOptions) => {
-                return this._languageService.getLanguageTexts(
+                return this.languageService.getLanguageTexts(
                     loadOptions.take,
                     loadOptions.skip,
                     (loadOptions.sort || []).map((item) => {
@@ -181,35 +173,33 @@ export class LanguageTextsComponent extends AppComponentBase implements AfterVie
     }
 
     initFilterConfig() {
-        this._filtersService.setup(this.filtersModels);
+        this.filtersService.setup(this.filtersModels);
     }
 
     initToolbarConfig() {
-        this._appService.updateToolbar([
+        this.appService.updateToolbar([
             {
                 location: 'before', items: [
                     {
                         name: 'filters',
                         action: () => {
-                            setTimeout(() => {
-                                this.dataGrid.instance.repaint();
-                            }, 1000);
-                            this._filtersService.fixed = !this._filtersService.fixed;
+                            this.repaintDataGrid(1000);
+                            this.filtersService.fixed = !this.filtersService.fixed;
                         },
                         options: {
                             checkPressed: () => {
-                                return this._filtersService.fixed;
+                                return this.filtersService.fixed;
                             },
                             mouseover: () => {
-                                this._filtersService.enable();
+                                this.filtersService.enable();
                             },
                             mouseout: () => {
-                                if (!this._filtersService.fixed)
-                                    this._filtersService.disable();
+                                if (!this.filtersService.fixed)
+                                    this.filtersService.disable();
                             }
                         },
                         attr: {
-                            'filter-selected': this._filtersService.hasFilterSelected
+                            'filter-selected': this.filtersService.hasFilterSelected
                         }
                     }
                 ]
@@ -267,24 +257,14 @@ export class LanguageTextsComponent extends AppComponentBase implements AfterVie
                 location: 'after',
                 locateInMenu: 'auto',
                 items: [
-                    { name: 'showCompactRowsHeight', action: DataGridService.showCompactRowsHeight.bind(this, this.dataGrid) },
                     { name: 'columnChooser', action: DataGridService.showColumnChooser.bind(this, this.dataGrid) }
-                ]
-            },
-            {
-                location: 'after',
-                locateInMenu: 'auto',
-                items: [
-                    {
-                        name: 'fullscreen',
-                        action: () => {
-                            this.fullScreenService.toggleFullscreen(document.documentElement);
-                            setTimeout(() => this.dataGrid.instance.repaint(), 100);
-                        }
-                    }
                 ]
             }
         ]);
+    }
+
+    toggleCompactView() {
+        DataGridService.toggleCompactRowsHeight(this.dataGrid);
     }
 
     applyFilters(): void {
@@ -307,7 +287,7 @@ export class LanguageTextsComponent extends AppComponentBase implements AfterVie
     }
 
     openEditTextLanguageModal(key?, baseValue?, targetValue?) {
-        const dialogRef = this._dialog.open(EditTextModalComponent, {
+        const dialogRef = this.dialog.open(EditTextModalComponent, {
             panelClass: 'slider',
             data: {
                 baseLanguageName: this.filtersValues.baseLanguageName,
@@ -325,7 +305,7 @@ export class LanguageTextsComponent extends AppComponentBase implements AfterVie
 
     ngOnDestroy() {
         this.rootComponent.overflowHidden();
-        this._filtersService.unsubscribe();
-        this._appService.updateToolbar(null);
+        this.filtersService.unsubscribe();
+        this.appService.updateToolbar(null);
     }
 }

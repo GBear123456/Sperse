@@ -34,7 +34,6 @@ class UploadCategoryModel {
 export class ChartOfAccountsComponent extends CFOComponentBase implements OnInit, OnDestroy {
     @ViewChild(CategorizationComponent) categorizationComponent: CategorizationComponent;
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
-    headlineConfig: any;
     override = false;
 
     constructor(
@@ -46,10 +45,6 @@ export class ChartOfAccountsComponent extends CFOComponentBase implements OnInit
 
     ngOnInit() {
         this.getRootComponent().overflowHidden(true);
-        this.headlineConfig = {
-            names: [this.l('Setup_Title'), this.l('SetupStep_Chart')],
-            iconSrc: './assets/common/icons/magic-stick-icon.svg'
-        };
 
         //this.dataSource = {
         //  store: {

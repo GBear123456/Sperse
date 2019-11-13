@@ -1,5 +1,8 @@
 <div>
-    <app-headline [config]="headlineConfig">
+    <app-headline [names]="[ l('Setup_Title'), l('Accounts') ]"
+                  iconSrc="'./assets/common/icons/magic-stick-icon.svg'"
+                  [showReloadButton]="true"
+                  (onReload)="reload()">
         <business-entities-chooser></business-entities-chooser>
         <synch-progress [showSyncAccountButton]="true" class="synch-progress" (onSyncStarted)="refresh()" (onComplete)="refresh()"></synch-progress>
 <!--        <sync-date-picker></sync-date-picker>-->

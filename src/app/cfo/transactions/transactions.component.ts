@@ -65,6 +65,7 @@ import { DataGridService } from '@app/shared/common/data-grid.service.ts/data-gr
 import { Category } from '@app/cfo/transactions/categorization/category.model';
 import { BankAccountsState } from '@shared/cfo/bank-accounts-widgets/bank-accounts-state.model';
 import { AppFeatures } from '@shared/AppFeatures';
+import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
 
 @Component({
     templateUrl: './transactions.component.html',
@@ -139,7 +140,14 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
 
     public adjustmentTotal = 0;
     public adjustmentStartingBalanceTotal = 0;
-    headlineConfig: any;
+    headlineButtons: HeadlineButton[] = [
+        {
+            enabled: true,
+            action: () => this.categoriesShowed = !this.categoriesShowed,
+            label: '',
+            class: 'toggle dx-button'
+        }
+    ];
     transactionTypesAndCategories$: Observable<TransactionTypesAndCategoriesDto> = this.transactionsServiceProxy.getTransactionTypesAndCategories().pipe(
         publishReplay(),
         refCount()
@@ -276,6 +284,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     categoriesRowsData: Category[] = [];
     private showDataGridToolbar = true;
     departmentFeatureEnabled: boolean = this.feature.isEnabled(AppFeatures.CFODepartmentsManagement);
+    showToggleCompactViewButton: boolean = !this._cfoService.hasStaticInstance;
 
     constructor(injector: Injector,
         private appService: AppService,
@@ -300,8 +309,6 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     }
 
     ngOnInit(): void {
-        this.initHeadlineConfig();
-
         const selectedCurrencyId$ = this.store$.pipe(select(CurrenciesStoreSelectors.getSelectedCurrencyId));
         /** If component is not activated - wait until it will activate and then reload */
         selectedCurrencyId$.pipe(
@@ -473,28 +480,15 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     }
 
     ngAfterViewInit(): void {
-        DataGridService.showCompactRowsHeight(this.dataGrid);
+        DataGridService.toggleCompactRowsHeight(this.dataGrid);
         this.rootComponent = this.getRootComponent();
         this.rootComponent.overflowHidden(true);
     }
 
-    initHeadlineConfig() {
-        this.headlineConfig = {
-            names: [this.l('Transactions')],
-            // onRefresh: this._cfoService.hasStaticInstance ? undefined : this.refreshDataGrid.bind(this),
-            toggleToolbar: this.toggleToolbar.bind(this),
-            iconSrc: './assets/common/icons/credit-card-icon.svg',
-            class: this.noRefreshedAfterSync ? 'need-refresh' : 'no-need-refresh',
-            buttons: [
-                {
-                    enabled: true,
-                    action: () => this.categoriesShowed = !this.categoriesShowed,
-                    label: '',
-                    class: 'toggle dx-button'
-                }
-            ]
-        };
-        this.changeDetectionRef.detectChanges();
+    reload() {
+        if (!this._cfoService.hasStaticInstance) {
+            this.refreshDataGrid();
+        }
     }
 
     private getIdsFromString(ids: string): number[] {
@@ -564,14 +558,13 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     }
 
     toggleToolbar() {
-        this.appService.toolbarToggle();
         this.filtersService.fixed = false;
         this.filtersService.disable();
         /** Toggle balances widgets if it's mobile */
         if (AppConsts.isMobile) {
             this.showDataGridToolbar = !this.showDataGridToolbar;
         }
-        setTimeout(() => this.dataGrid.instance.repaint());
+        this.repaintDataGrid();
         this.initToolbarConfig();
     }
 
@@ -679,11 +672,6 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                             }
                         },
                         {
-                            name: 'showCompactRowsHeight',
-                            visible: !this._cfoService.hasStaticInstance,
-                            action: DataGridService.showCompactRowsHeight.bind(this, this.dataGrid)
-                        },
-                        {
                             name: 'download',
                             widget: 'dxDropDownMenu',
                             options: {
@@ -721,23 +709,17 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                             action: DataGridService.showColumnChooser.bind(this, this.dataGrid)
                         }
                     ]
-                },
-                {
-                    location: 'after',
-                    locateInMenu: 'auto',
-                    items: [
-                        {
-                            name: 'fullscreen',
-                            visible: !this._cfoService.hasStaticInstance,
-                            action: () => {
-                                this.fullScreenService.toggleFullscreen(document.documentElement);
-                                setTimeout(() => this.dataGrid.instance.repaint(), 100);
-                            }
-                        }
-                    ]
                 }
             ]);
         }
+    }
+
+    toggleCompactView() {
+        DataGridService.toggleCompactRowsHeight(this.dataGrid);
+    }
+
+    repaintDataGrid(delay = 0) {
+        setTimeout(() => this.dataGrid.instance.repaint(), delay);
     }
 
     onToolbarPreparing(e) {
@@ -870,12 +852,10 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
 
     showRefreshButton() {
         this.noRefreshedAfterSync = true;
-        this.initHeadlineConfig();
     }
 
     refreshDataGrid() {
         this.noRefreshedAfterSync = false;
-        this.initHeadlineConfig();
         this.bankAccountsService.load(true, false).subscribe(
             () => this.applyTotalBankAccountFilter()
         );

@@ -22,6 +22,7 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { ActivityServiceProxy, ActivityType } from '@shared/service-proxies/service-proxies';
 import { CreateActivityDialogComponent } from './create-activity-dialog/create-activity-dialog.component';
 import { FiltersService } from '@shared/filters/filters.service';
+import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
 
 @Component({
     templateUrl: './activity.component.html',
@@ -77,21 +78,15 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
             label: this.l('Type')
         }
     ];
-    public headlineConfig = {
-        names: [this.l('Tasks')],
-        // onRefresh: this.refresh.bind(this),
-        toggleToolbar: this.toggleToolbar.bind(this),
-        icon: 'docs',
-        buttons: [
-            {
-                enabled: true,
-                action: () => {
-                    this.showActivityDialog(new Date());
-                },
-                label: 'AddNewTask'
-            }
-        ]
-    };
+    public headlineButtons: HeadlineButton[] = [
+        {
+            enabled: true,
+            action: () => {
+                this.showActivityDialog(new Date());
+            },
+            label: this.l('AddNewTask')
+        }
+    ];
     public searchValue: string;
 
     constructor(
@@ -105,10 +100,6 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
         super(injector);
 
         this.store$.dispatch(new ActivityAssignedUsersStoreActions.LoadRequestAction(false));
-        this.headlineConfig.buttons.forEach((button) => {
-            button.label = this.l(button.label);
-        });
-
         if (abp.clock.provider.supportsMultipleTimezone)
             this.timezone = abp.timing.timeZoneInfo.iana.timeZoneId;
 
@@ -117,7 +108,6 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
     }
 
     toggleToolbar() {
-        this.appService.toolbarToggle();
         setTimeout(() => this.repaint(), 0);
         this.filtersService.fixed = false;
         this.filtersService.disable();
@@ -143,11 +133,8 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
                         if (customize) {
                             request.method = 'POST';
                             if (request.payload.AllDay) {
-                                let startDate = request.payload.StartDate.substring(0, 19) + 'Z';
-                                request.payload.StartDate = startDate;
-
-                                let endDate = request.payload.EndDate.substring(0, 19) + 'Z';
-                                request.payload.EndDate = endDate;
+                                request.payload.StartDate = request.payload.StartDate.substring(0, 19) + 'Z';
+                                request.payload.EndDate = request.payload.EndDate.substring(0, 19) + 'Z';
                             }
                         }
                         let endpoint = this.parseODataURL(request.url);
@@ -173,12 +160,8 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
                     res.forEach((record) => {
                         if (record.AllDay) {
                             record.fieldTimeZone = this.timezone;
-
-                            let startDate = moment(record.StartDate.substring(0, 19)).format();
-                            record.StartDate = startDate;
-
-                            let endDate = moment(record.EndDate.substring(0, 19)).format();
-                            record.EndDate = endDate;
+                            record.StartDate = moment(record.StartDate.substring(0, 19)).format();
+                            record.EndDate = moment(record.EndDate.substring(0, 19)).format();
                         } else {
                             record.fieldTimeZone = 'Etc/UTC';
                         }
@@ -377,13 +360,6 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
             },
             {
                 location: 'after',
-                locateInMenu: 'auto',
-                items: [
-                    { name: 'showCompactRowsHeight', action: () => this.pipelineService.toggleContactView() }
-                ]
-            },
-            {
-                location: 'after',
                 areItemsDependent: true,
                 items: [
                     {
@@ -405,23 +381,20 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
                         }
                     }
                 ]
-            },
-            {
-                location: 'after',
-                locateInMenu: 'auto',
-                items: [
-                    {
-                        name: 'fullscreen',
-                        action: () => {
-                            this.fullScreenService.toggleFullscreen(document.documentElement);
-                            !this.showPipeline && setTimeout(() => {
-                                this.schedulerComponent.instance.repaint();
-                            }, 100);
-                        }
-                    }
-                ]
             }
         ]);
+    }
+
+    toggleCompactView() {
+        this.pipelineService.toggleContactView();
+    }
+
+    repaintDataGrid(delay = 0) {
+        setTimeout(() => this.schedulerComponent.instance.repaint(), delay);
+    }
+
+    toggleFullScreen() {
+        !this.showPipeline && this.repaintDataGrid(100);
     }
 
     searchValueChange(e) {
@@ -445,14 +418,9 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
 
     onAppointmentFormCreated(event) {
         event.component.hideAppointmentPopup(false);
-
-        let startDate = event.appointmentData.StartDate.substring(0, 11) + '00:00:00Z';
-        event.appointmentData.StartDate = startDate;
-
-        let endDate = event.appointmentData.StartDate.substring(0, 11) + '00:00:00Z';
-        event.appointmentData.EndDate = endDate;
+        event.appointmentData.StartDate = event.appointmentData.StartDate.substring(0, 11) + '00:00:00Z';
+        event.appointmentData.EndDate = event.appointmentData.StartDate.substring(0, 11) + '00:00:00Z';
         event.appointmentData.AllDay = true;
-
         this.showActivityDialog(event.appointmentData);
     }
 

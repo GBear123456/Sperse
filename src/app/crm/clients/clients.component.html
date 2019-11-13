@@ -1,5 +1,15 @@
 <div [@routerTransition]>
-    <app-headline [config]="headlineConfig">
+    <app-headline [names]="[ l('Customers') ]"
+                  icon="people"
+                  [buttons]="headlineButtons"
+                  [showToggleCompactViewButton]="showDataGrid"
+                  [showToggleToolbarButton]="true"
+                  [showToggleFullScreenButton]="true"
+                  [showReloadButton]="true"
+                  (onToggleToolbar)="repaintDataGrid()"
+                  (onToggleCompactView)="toggleCompactView()"
+                  (onToggleFullScreen)="repaintDataGrid(100)"
+                  (onReload)="refresh()">
         <import-progress-bar></import-progress-bar>
     </app-headline>
     <dx-tooltip width="200px"

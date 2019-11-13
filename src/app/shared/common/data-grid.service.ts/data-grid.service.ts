@@ -9,7 +9,7 @@ export class DataGridService {
         event.element.setAttribute('button-pressed', visible);
     }
 
-    static showCompactRowsHeight(dataGrid, updateDimensions = false) {
+    static toggleCompactRowsHeight(dataGrid, updateDimensions = false) {
         dataGrid.instance.element().classList.toggle('grid-compact-view');
         if (updateDimensions) {
             dataGrid.instance.updateDimensions();

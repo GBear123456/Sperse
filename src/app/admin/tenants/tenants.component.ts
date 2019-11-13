@@ -34,6 +34,7 @@ import { MatDialog } from '@angular/material';
 import { CommonLookupModalComponent } from '@app/shared/common/lookup/common-lookup-modal.component';
 import { AppPermissions } from '@shared/AppPermissions';
 import { DataGridService } from '@app/shared/common/data-grid.service.ts/data-grid.service';
+import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
 
 @Component({
     templateUrl: './tenants.component.html',
@@ -52,19 +53,13 @@ export class TenantsComponent extends AppComponentBase implements OnDestroy {
     creationDateStart: moment;
     creationDateEnd: moment;
     public actionRecord: any;
-    public headlineConfig = {
-        names: [this.l('Tenants')],
-        icon: '',
-        // onRefresh: this.refreshDataGrid.bind(this),
-        toggleToolbar: this.toggleToolbar.bind(this),
-        buttons: [
-            {
-                enabled: this.isGranted(AppPermissions.Administration),
-                action: this.createTenant.bind(this),
-                label: this.l('CreateNewTenant')
-            }
-        ]
-    };
+    public headlineButtons: HeadlineButton[] = [
+        {
+            enabled: this.isGranted(AppPermissions.Administration),
+            action: this.createTenant.bind(this),
+            label: this.l('CreateNewTenant')
+        }
+    ];
     dataSource: DataSource;
     private rootComponent: any;
     impersonateTenantId: number;
@@ -151,9 +146,8 @@ export class TenantsComponent extends AppComponentBase implements OnDestroy {
         ].filter(Boolean);
     }
 
-    toggleToolbar() {
-        this.appService.toolbarToggle();
-        setTimeout(() => this.dataGrid.instance.repaint(), 0);
+    repaintDataGrid(delay = 0) {
+        setTimeout(() => this.dataGrid.instance.repaint(), delay);
     }
 
     initToolbarConfig() {
@@ -163,9 +157,7 @@ export class TenantsComponent extends AppComponentBase implements OnDestroy {
                     {
                         name: 'filters',
                         action: () => {
-                            setTimeout(() => {
-                                this.dataGrid.instance.repaint();
-                            }, 1000);
+                            this.repaintDataGrid(1000);
                             this.filtersService.fixed = !this.filtersService.fixed;
                         },
                         options: {
@@ -239,24 +231,14 @@ export class TenantsComponent extends AppComponentBase implements OnDestroy {
                 location: 'after',
                 locateInMenu: 'auto',
                 items: [
-                    { name: 'showCompactRowsHeight', action: DataGridService.showCompactRowsHeight.bind(this, this.dataGrid) },
                     { name: 'columnChooser', action: DataGridService.showColumnChooser.bind(this, this.dataGrid) }
-                ]
-            },
-            {
-                location: 'after',
-                locateInMenu: 'auto',
-                items: [
-                    {
-                        name: 'fullscreen',
-                        action: () => {
-                            this.fullScreenService.toggleFullscreen(document.documentElement);
-                            setTimeout(() => this.dataGrid.instance.repaint(), 100);
-                        }
-                    }
                 ]
             }
         ]);
+    }
+
+    toggleCompactView() {
+        DataGridService.toggleCompactRowsHeight(this.dataGrid);
     }
 
     initFilterConfig() {

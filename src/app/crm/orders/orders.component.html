@@ -1,5 +1,11 @@
 <div>
-    <app-headline [config]="headlineConfig">
+    <app-headline [names]="[ l('Orders') ]"
+                  icon="briefcase"
+                  [buttons]="headlineButtons"
+                  [showToggleToolbarButton]="true"
+                  [showReloadButton]="true"
+                  (onToggleToolbar)="toggleToolbar()"
+                  (onReload)="processFilterInternal()">
         <import-progress-bar></import-progress-bar>
     </app-headline>
     <app-static-list
@@ -46,7 +52,7 @@
                             <div *dxTemplate="let data of 'photoTemplate'">
                                 <div [ngStyle]="{'background-image': 'url(' + profileService.getContactPhotoUrl(data.data.PhotoPublicId) + ')'}" class="img-circle"></div>
                             </div>
-                            <dxi-column dataField="Name" caption="{{l('Customer.Name')}}"></dxi-column>                      
+                            <dxi-column dataField="Name" caption="{{l('Customer.Name')}}"></dxi-column>
                             <dxi-column dataField="State" caption="{{l('Contact.State')}}" [visible]="false"></dxi-column>
                             <dxi-column dataField="Email" caption="{{l('Contact.Email')}}" [visible]="false"></dxi-column>
                             <dxi-column dataField="Phone" caption="{{l('Contact.Phone')}}" [visible]="false" cellTemplate="phoneCell"

@@ -1,148 +1,149 @@
 .contacts {
-  max-width: 490px;
-  i.icons {
-    width: 20px;
-    height: 30px;
-    position: absolute;
-    background-position: 0px 8px;
-  }
+    max-width: 490px;
+    i.icons {
+        width: 20px;
+        height: 30px;
+        position: absolute;
+        background-position: 0 8px;
+    }
 
-  .phone {
+    .phone {
+        .inplace-edit-wrapper {
+            margin-left: 30px;
+            height: 49px;
+        }
+    }
+
     .inplace-edit-wrapper {
-      margin-left: 30px;
-      height: 49px;
+        height: 35px;
+
+        /deep/ input {
+            margin: 0;
+            padding: 0 0 0 5px;
+            font-size: 15px;
+            font-weight: 300;
+            line-height: 1.67;
+            letter-spacing: 0.3px;
+            text-align: left;
+            font-family: Montserrat;
+        }
+
+        dx-text-box, dx-button, international-phone-number {
+            display: inline-block;
+        }
+
+        dx-text-box, international-phone-number {
+            min-width: 230px;
+            width: 70%;
+        }
+
+        dx-button {
+            /deep/ &.update i {
+                color: #00aeef;
+            }
+            /deep/ &.exit i {
+                color: #f44336;
+            }
+
+            border: none;
+            position: relative;
+        }
+
+        dx-validation-group {
+            /deep/ dx-button {
+                top: -14px;
+            }
+        }
     }
-  }
 
-  .inplace-edit-wrapper {
-    height: 35px;
-
-    /deep/ input {
-      margin: 0px;
-      padding: 0 0 0 5px;
-      font-size: 15px;
-      font-weight: 300;
-      line-height: 1.67;
-      letter-spacing: 0.3px;
-      text-align: left;
-      font-family: Montserrat;
+    h3 {
+        font-size: 12px;
+        line-height: 1.67;
+        letter-spacing: 0.7px;
+        text-align: left;
+        color: #677380;
+        margin-bottom: 22px;
+        font-weight: 400;
     }
 
-    dx-text-box, dx-button, international-phone-number {
-      display: inline-block;
-    }
-
-    dx-text-box, international-phone-number {
-      min-width: 230px;
-      width: 70%;
-    }
-
-    dx-button {
-      /deep/ &.update i {
+    .add-contact {
+        font-size: 14px;
+        font-weight: 300;
+        font-style: normal;
+        font-stretch: normal;
+        line-height: 1.79;
+        letter-spacing: 0.3px;
         color: #00aeef;
-      }
-      /deep/ &.exit i {
-        color: #f44336;
-      }
-
-      border: none;
-      position: relative;
-    }
-
-    dx-validation-group {
-      /deep/ dx-button {
-        top: -14px;
-      }
-    }
-  }
-
-  h3 {
-    font-size: 12px;
-    line-height: 1.67;
-    letter-spacing: 0.7px;
-    text-align: left;
-    color: #677380;
-    margin-bottom: 22px;
-    font-weight: 400;
-  }
-
-  .add-contact {
-      font-size: 14px;
-      font-weight: 300;
-      font-style: normal;
-      font-stretch: normal;
-      line-height: 1.79;
-      letter-spacing: 0.3px;
-      color: #00aeef;
-      cursor: pointer;
-      margin: 0px;
-      padding-left: 35px;
-  }
-
-  ul {
-    padding-left: 30px;
-    position: relative;
-
-    .actions  {
-      position: absolute;
-      display: none;
-      right: 0px;
-      top: 2px;
-
-      i {
-        font-size: 18px;
-        padding: 7px 5px;
         cursor: pointer;
-      }
-
-      i.edit {
-        color: #00aeef;
-      }
-
-      i.delete {
-        color: #f44336;
-      }
+        margin: 0;
+        padding-left: 35px;
     }
 
-    &:hover {
-      li {
-        background-color: #F8FAFC;
-      }
+    ul {
+        padding-left: 30px;
+        position: relative;
 
-      .actions {
-        display: block;
-      }
+        .actions {
+            position: absolute;
+            display: none;
+            right: 0;
+            top: 2px;
+
+            i {
+                font-size: 18px;
+                padding: 7px 5px;
+                cursor: pointer;
+            }
+
+            i.edit {
+                color: #00aeef;
+            }
+
+            i.delete {
+                color: #f44336;
+            }
+        }
+
+        &:hover {
+            li {
+                background-color: #F8FAFC;
+            }
+
+            .actions {
+                display: block;
+            }
+        }
     }
-  }
 
-  & > div {
-    width: 94%;
-    margin-bottom: 15px;
-  }
+    & > div {
+        width: 94%;
+        margin-bottom: 15px;
+    }
 
-  li {
-    cursor: pointer;
-    padding: 5px;
-    padding-right: 50px;
-    font-size: 15px;
-    font-weight: 300;
-    line-height: 1.67;
-    letter-spacing: 0.3px;
-    text-align: left;
-    color: #424c56;
+    li {
+        cursor: pointer;
+        padding: 5px;
+        padding-right: 50px;
+        font-size: 15px;
+        font-weight: 300;
+        line-height: 1.67;
+        letter-spacing: 0.3px;
+        text-align: left;
+        color: #424c56;
 
-    -webkit-touch-callout: none; /* iOS Safari */
-       -webkit-user-select: none; /* Safari */
+        -webkit-touch-callout: none; /* iOS Safari */
+        -webkit-user-select: none; /* Safari */
         -khtml-user-select: none; /* Konqueror HTML */
-          -moz-user-select: none; /* Firefox */
-           -ms-user-select: none; /* Internet Explorer/Edge */
-               user-select: none; /* Non-prefixed version, currently
-                                  supported by Chrome and Opera */
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
+        -moz-user-select: none; /* Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+        user-select: none;
+        /* Non-prefixed version, currently
+                                         supported by Chrome and Opera */
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
 
-  .phoneExt{
-    padding-left: 20px;
-  }
+    .phoneExt {
+        padding-left: 20px;
+    }
 }

@@ -1,5 +1,8 @@
 <div [@routerTransition]>
-    <app-headline [config]="headlineConfig">
+    <app-headline [names]="[ l('Dashboard_Title') ]"
+                  iconSrc="./assets/common/icons/pie-chart.svg"
+                  [showReloadButton]="true"
+                  (onReload)="reload()">
         <business-entities-chooser (onFilterButtonClick)="openBankAccountsSelectDialog()"></business-entities-chooser>
         <synch-progress class="synch-progress" (onComplete)="refreshWidgets()"></synch-progress>
         <app-period (onChange)="periodChanged($event)"></app-period>

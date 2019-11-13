@@ -36,6 +36,7 @@ import { CustomReuseStrategy } from '@root/root-routing.module';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 import { Period } from '@app/shared/common/period/period.enum';
 import { PeriodService } from '@app/shared/common/period/period.service';
+import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
 
 @Component({
     templateUrl: './dashboard.component.html',
@@ -51,22 +52,14 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
     @ViewChild(TotalsBySourceComponent) totalsBySource: TotalsBySourceComponent;
     @ViewChild(PeriodComponent) periodComponent: PeriodComponent;
     private rootComponent: any;
-    public headlineConfig = {
-        names: [this.l('Dashboard')],
-        onRefresh: (refreshLeadsAndClients = true) => {
-            this.refresh(refreshLeadsAndClients);
-        },
-        text: this.l('statistics and reports'),
-        icon: 'globe',
-        buttons: [
-            {
-                enabled: true,
-                action: () => this.leftMenuHidden = !this.leftMenuHidden,
-                label: '',
-                class: 'toggle dx-button'
-            }
-        ]
-    };
+    public headlineButtons: HeadlineButton[] = [
+        {
+            enabled: true,
+            action: () => this.leftMenuHidden = !this.leftMenuHidden,
+            label: '',
+            class: 'toggle dx-button'
+        }
+    ];
     private showWelcomeSection: ReplaySubject<boolean> = new ReplaySubject<boolean>(1);
     showWelcomeSection$: Observable<boolean> = this.showWelcomeSection.asObservable();
     showDefaultSection$: Observable<boolean> = this.showWelcomeSection$.pipe(

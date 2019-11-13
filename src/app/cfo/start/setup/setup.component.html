@@ -1,5 +1,7 @@
 <div [@routerTransition]>
-    <app-headline [config]="headlineConfig"></app-headline>
+    <app-headline [names]="[ l('Setup_Title') ]"
+                  iconSrc="./assets/common/icons/magic-stick-icon.svg">
+    </app-headline>
     <div class="content">
         <setup-steps (openIntro)="onOpenIntro.next(true)"></setup-steps>
         <div class="cashflow-setup portlet light no-padding margin-bottom-0">

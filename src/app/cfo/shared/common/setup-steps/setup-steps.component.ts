@@ -20,9 +20,9 @@ import { SetupStepsService } from './setup-steps.service';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SetupStepComponent extends CFOComponentBase implements OnDestroy, AfterViewInit {
-    @HostBinding('class.collapsed') @Input() collapsed: boolean = true;
+    @HostBinding('class.collapsed') @Input() collapsed = true;
     @HostBinding('class.mobile') mobile: boolean = AppConsts.isMobile;
-    @HostBinding('style.visibility') visibility = 'hidden'; 
+    @HostBinding('style.visibility') visibility = 'hidden';
 
     @Input() SelectedStepIndex: number;
     @Input() SetupSteps = [
@@ -35,7 +35,7 @@ export class SetupStepComponent extends CFOComponentBase implements OnDestroy, A
     @Input() HeaderTitle: string = this.l(this._cfoService.initialized ? 'SetupStep_MainHeader' : 'SetupStep_InitialHeader');
     @Input() headerLink: string = this.instanceUri + '/start';
     @Input() showIntroductionTourLink = false;
-    @Input() showToggleButton = 
+    @Input() showToggleButton =
          !this._cfoService.hasStaticInstance && !this.instanceId ||
          this.isInstanceAdmin || this._cfoService.isMainInstanceType;
     @Output() onToggle: EventEmitter<boolean> = new EventEmitter<boolean>();

@@ -1,7 +1,11 @@
 <div [@routerTransition] [hidden]="!isDataLoaded || !totalRowCount">
     <left-menu></left-menu>
     <div class="margin-left">
-        <app-headline [config]="headlineConfig">
+        <app-headline [names]="[ l('Import') ]"
+                      icon="docs"
+                      [buttons]="headlineButtons"
+                      [showReloadButton]="true"
+                      (onReload)="refreshDataGrid()">
             <import-progress-bar></import-progress-bar>
         </app-headline>
         <app-toolbar [config]="toolbarConfig"></app-toolbar>

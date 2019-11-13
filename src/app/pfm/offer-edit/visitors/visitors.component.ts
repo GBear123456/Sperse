@@ -162,7 +162,7 @@ export class VisitorsComponent extends AppComponentBase implements AfterViewInit
                 location: 'after',
                 locateInMenu: 'auto',
                 items: [
-                    { name: 'showCompactRowsHeight', action: DataGridService.showCompactRowsHeight.bind(this, this.dataGrid, true) },
+                    { name: 'showCompactRowsHeight', action: DataGridService.toggleCompactRowsHeight.bind(this, this.dataGrid, true) },
                     { name: 'columnChooser', action: DataGridService.showColumnChooser.bind(this, this.dataGrid) }
                 ]
             },
@@ -174,12 +174,16 @@ export class VisitorsComponent extends AppComponentBase implements AfterViewInit
                         name: 'fullscreen',
                         action: () => {
                             this.fullScreenService.toggleFullscreen(document.documentElement);
-                            setTimeout(() => this.dataGrid.instance.repaint(), 100);
+                            this.repaintDataGrid(100);
                         }
                     }
                 ]
             }
         ];
+    }
+
+    repaintDataGrid(delay = 0) {
+        setTimeout(() => this.dataGrid.instance.repaint(), delay);
     }
 
     searchValueChange(e: object) {

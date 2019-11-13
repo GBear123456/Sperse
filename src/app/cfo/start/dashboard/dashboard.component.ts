@@ -54,17 +54,17 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, OnDe
 
     ngOnInit(): void {
         this.rootComponent.overflowHidden(true);
-        this.headlineConfig = {
-            names: [this.l('Dashboard_Title')],
-            iconSrc: './assets/common/icons/pie-chart.svg',
-            onRefresh: this._cfoService.hasStaticInstance ? undefined : this.invalidate.bind(this),
-            buttons: []
-        };
         /** Load sync accounts */
         this.bankAccountsService.load();
         this.rootComponent.overflowHidden(true);
         this.rootComponent.addScriptLink('https://fast.wistia.com/embed/medias/kqjpmot28u.jsonp');
         this.rootComponent.addScriptLink('https://fast.wistia.com/assets/external/E-v1.js');
+    }
+
+    reload() {
+        if (!this._cfoService.hasStaticInstance) {
+            this.invalidate();
+        }
     }
 
     invalidate() {

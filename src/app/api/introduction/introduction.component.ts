@@ -19,21 +19,17 @@ import { EditKeyDialog } from '@app/api/introduction/add-key-dialog/add-key-dial
     providers: [ ApiKeyServiceProxy ]
 })
 export class IntroductionComponent extends AppComponentBase implements OnInit, OnDestroy {
-    public headlineConfig = {
-        names: [this.l('Interactive API Documentation')],
-        iconSrc: './assets/common/icons/api-icon.svg',
-        buttons: []
-    };
     toggleTooltip = true;
-
     public apiKeys: ApiKeyInfo[];
     private elementForBlocking: Element;
     scrollHeight: number = window.innerHeight - 149;
 
-    constructor(injector: Injector,
+    constructor(
+        injector: Injector,
         public dialog: MatDialog,
         private apiKeyService: ApiKeyServiceProxy,
-        private clipboardService: ClipboardService) {
+        private clipboardService: ClipboardService
+    ) {
         super(injector);
     }
 

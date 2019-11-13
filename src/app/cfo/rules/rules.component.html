@@ -1,9 +1,14 @@
 <div [@routerTransition]>
-    <app-headline [config]="headlineConfig">
+    <app-headline [names]="[ l('Manage rules') ]"
+                  iconSrc="./assets/common/icons/manage-icon.svg"
+                  [showReloadButton]="true"
+                  [showToggleFullScreenButton]="true"
+                  (onToggleFullScreen)="fullscreen()"
+                  (onReload)="refreshList()">
         <synch-progress class="synch-progress"></synch-progress>
     </app-headline>
     <div class="portlet light no-padding margin-bottom-0">
-        <setup-steps SelectedStepIndex="3" 
+        <setup-steps SelectedStepIndex="3"
             [collapsed]="filtersService.fixed">
         </setup-steps>
         <div class="portlet-body">

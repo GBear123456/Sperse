@@ -9,15 +9,10 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 })
 export class SwaggerComponent extends AppComponentBase implements AfterViewInit, OnInit, OnDestroy {
     link: SafeResourceUrl;
-    public headlineConfig = {
-        names: [ this.l('Interactive API Documentation') ],
-        icon: 'magic-wand',
-        buttons: []
-    };
 
     constructor(
         injector: Injector,
-        private _sanitizer: DomSanitizer
+        private sanitizer: DomSanitizer
     ) {
         super(injector);
     }
@@ -29,13 +24,13 @@ export class SwaggerComponent extends AppComponentBase implements AfterViewInit,
     ngOnInit() {
         window.addEventListener('message', this.onSwaggerLoaded);
         if (AppConsts.remoteServiceBaseUrl == AppConsts.appBaseUrl) {
-            this.link = this._sanitizer
+            this.link = this.sanitizer
                 .bypassSecurityTrustResourceUrl(
                     AppConsts.remoteServiceBaseUrl +
                     '/api/index.html'
                 );
         } else {
-            this.link = this._sanitizer
+            this.link = this.sanitizer
                 .bypassSecurityTrustResourceUrl(
                     AppConsts.remoteServiceBaseUrl +
                     '/api/index.html?tokenAuth=' + abp.auth.getToken()

@@ -36,6 +36,7 @@ import { FilterHelpers } from '@app/crm/shared/helpers/filter.helper';
 import { FilterRangeComponent } from '@shared/filters/range/filter-range.component';
 import { AppStore, RatingsStoreSelectors } from '@app/store';
 import { DataGridService } from '@app/shared/common/data-grid.service.ts/data-grid.service';
+import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
 
 @Component({
     templateUrl: './offers.component.html',
@@ -53,15 +54,27 @@ export class OffersComponent extends AppComponentBase implements OnInit, OnDestr
 
     private readonly dataSourceURI = 'Offer';
     private rootComponent: any;
-    private filters: FilterModel[] = new Array<FilterModel>();
+    private filters: FilterModel[] = [];
 
-    headlineConfig: any;
+    headlineButtons: HeadlineButton[] = [
+        {
+            id: 'PullOffers',
+            enabled: true,
+            class: 'button-layout button-primary menu',
+            action: (event) => {
+                this.pullOffers(false, event);
+            },
+            label: this.l('Offers_PullChanges')
+        }
+    ];
     filterModelCategories: FilterModel;
     filterModelFlags: FilterModel;
     filterModelAttributes: FilterModel;
     filterModelStatuses: FilterModel;
     filterModelRank: FilterModel;
-    pullContextMenuItems = [];
+    pullContextMenuItems = [
+        { text: this.l('Offers_PullAll'), icon: 'arrowdown', selected: false }
+    ];
     selectedOfferKeys = [];
     categories = [];
     flags = [];
@@ -179,34 +192,9 @@ export class OffersComponent extends AppComponentBase implements OnInit, OnDestr
         });
 
         this.activate();
-        this.initHeadlineConfig();
-    }
-
-    initHeadlineConfig() {
-        this.headlineConfig = {
-            names: [this.l('Offers')],
-            // onRefresh: this.refreshDataGrid.bind(this),
-            toggleToolbar: this.toggleToolbar.bind(this),
-            icon: 'people',
-            buttons: [
-                {
-                    id: 'PullOffers',
-                    enabled: true,
-                    class: 'button-layout button-primary menu',
-                    action: (event) => {
-                        this.pullOffers(false, event);
-                    },
-                    label: this.l('Offers_PullChanges')
-                }
-            ]
-        };
-        this.pullContextMenuItems = [
-            { text: this.l('Offers_PullAll'), icon: 'arrowdown', selected: false }
-        ];
     }
 
     toggleToolbar() {
-        this._appService.toolbarToggle();
         setTimeout(() => this.dataGrid.instance.repaint(), 0);
     }
 
@@ -319,7 +307,7 @@ export class OffersComponent extends AppComponentBase implements OnInit, OnDestr
                     location: 'after',
                     locateInMenu: 'auto',
                     items: [
-                        { name: 'showCompactRowsHeight', action: DataGridService.showCompactRowsHeight.bind(this, this.dataGrid) },
+                        { name: 'showCompactRowsHeight', action: DataGridService.toggleCompactRowsHeight.bind(this, this.dataGrid) },
                         {
                             name: 'download',
                             widget: 'dxDropDownMenu',

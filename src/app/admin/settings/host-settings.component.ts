@@ -15,6 +15,7 @@ import {
     BaseCommercePaymentSettings, TenantPaymentSettingsServiceProxy, ACHWorksSettings, RecurlyPaymentSettings
 } from '@shared/service-proxies/service-proxies';
 import { AppPermissions } from '@shared/AppPermissions';
+import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
 
 @Component({
     templateUrl: './host-settings.component.html',
@@ -35,30 +36,25 @@ export class HostSettingsComponent extends AppComponentBase implements OnInit, O
     payPalPaymentSettings: PayPalSettings = new PayPalSettings();
     achWorksSettings: ACHWorksSettings = new ACHWorksSettings();
     recurlySettings: RecurlyPaymentSettings = new RecurlyPaymentSettings();
-
     usingDefaultTimeZone = false;
     initialTimeZone: string = undefined;
     private rootComponent;
-    public headlineConfig = {
-        names: [this.l('Settings')],
-        icon: '',
-        buttons: [
-            {
-                enabled: this.isGranted(AppPermissions.AdministrationLanguagesCreate),
-                action: this.saveAll.bind(this),
-                icon: 'la la la-floppy-o',
-                label: this.l('SaveAll')
-            }
-        ]
-    };
+    headlineButtons: HeadlineButton[] = [
+        {
+            enabled: this.isGranted(AppPermissions.AdministrationLanguagesCreate),
+            action: this.saveAll.bind(this),
+            icon: 'la la la-floppy-o',
+            label: this.l('SaveAll')
+        }
+    ];
 
     constructor(
         injector: Injector,
-        private _hostSettingService: HostSettingsServiceProxy,
-        private _commonLookupService: CommonLookupServiceProxy,
-        private _tenantPaymentSettingsService: TenantPaymentSettingsServiceProxy,
-        private _appSessionService: AppSessionService,
-        private _changeDetection: ChangeDetectorRef
+        private hostSettingService: HostSettingsServiceProxy,
+        private commonLookupService: CommonLookupServiceProxy,
+        private tenantPaymentSettingsService: TenantPaymentSettingsServiceProxy,
+        private appSessionService: AppSessionService,
+        private changeDetection: ChangeDetectorRef
     ) {
         super(injector);
         this.rootComponent = this.getRootComponent();
@@ -67,13 +63,13 @@ export class HostSettingsComponent extends AppComponentBase implements OnInit, O
 
     loadHostSettings(): void {
         forkJoin(
-            this._hostSettingService.getAllSettings(),
-            this._tenantPaymentSettingsService.getBaseCommercePaymentSettings(),
-            this._tenantPaymentSettingsService.getPayPalSettings(),
-            this._tenantPaymentSettingsService.getACHWorksSettings(),
-            this._tenantPaymentSettingsService.getRecurlyPaymentSettings()
+            this.hostSettingService.getAllSettings(),
+            this.tenantPaymentSettingsService.getBaseCommercePaymentSettings(),
+            this.tenantPaymentSettingsService.getPayPalSettings(),
+            this.tenantPaymentSettingsService.getACHWorksSettings(),
+            this.tenantPaymentSettingsService.getRecurlyPaymentSettings()
         ).pipe(
-            finalize(() => { this._changeDetection.detectChanges(); })
+            finalize(() => { this.changeDetection.detectChanges(); })
         ).subscribe(([allSettings, baseCommerceSettings, payPalSettings, achWorksSettings, recurlySettings]) => {
             this.hostSettings = allSettings;
             this.initialTimeZone = allSettings.general.timezone;
@@ -87,7 +83,7 @@ export class HostSettingsComponent extends AppComponentBase implements OnInit, O
 
     loadEditions(): void {
         const self = this;
-        self._commonLookupService.getEditionsForCombobox(false).subscribe((result) => {
+        self.commonLookupService.getEditionsForCombobox(false).subscribe((result) => {
             self.editions = result.items;
 
             const notAssignedEdition = new ComboboxItemDto();
@@ -100,7 +96,7 @@ export class HostSettingsComponent extends AppComponentBase implements OnInit, O
 
     init(): void {
         const self = this;
-        self.testEmailAddress = self._appSessionService.user.emailAddress;
+        self.testEmailAddress = self.appSessionService.user.emailAddress;
         self.showTimezoneSelection = abp.clock.provider.supportsMultipleTimezone;
         self.loadHostSettings();
         self.loadEditions();
@@ -119,18 +115,18 @@ export class HostSettingsComponent extends AppComponentBase implements OnInit, O
         const self = this;
         const input = new SendTestEmailInput();
         input.emailAddress = self.testEmailAddress;
-        self._hostSettingService.sendTestEmail(input).subscribe(() => {
+        self.hostSettingService.sendTestEmail(input).subscribe(() => {
             self.notify.info(self.l('TestEmailSentSuccessfully'));
         });
     }
 
     saveAll(): void {
         forkJoin(
-            this._hostSettingService.updateAllSettings(this.hostSettings),
-            this._tenantPaymentSettingsService.updateBaseCommercePaymentSettings(this.baseCommercePaymentSettings),
-            this._tenantPaymentSettingsService.updatePayPalSettings(this.payPalPaymentSettings),
-            this._tenantPaymentSettingsService.updateACHWorksSettings(this.achWorksSettings),
-            this._tenantPaymentSettingsService.updateRecurlyPaymentSettings(this.recurlySettings)
+            this.hostSettingService.updateAllSettings(this.hostSettings),
+            this.tenantPaymentSettingsService.updateBaseCommercePaymentSettings(this.baseCommercePaymentSettings),
+            this.tenantPaymentSettingsService.updatePayPalSettings(this.payPalPaymentSettings),
+            this.tenantPaymentSettingsService.updateACHWorksSettings(this.achWorksSettings),
+            this.tenantPaymentSettingsService.updateRecurlyPaymentSettings(this.recurlySettings)
         ).subscribe(() => {
             this.notify.info(this.l('SavedSuccessfully'));
 

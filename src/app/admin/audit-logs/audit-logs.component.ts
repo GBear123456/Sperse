@@ -34,13 +34,6 @@ import { DataGridService } from '@app/shared/common/data-grid.service.ts/data-gr
 export class AuditLogsComponent extends AppComponentBase implements OnInit, OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
     private rootComponent: any;
-    public headlineConfig = {
-        names: [this.l('AuditLogs')],
-        icon: '',
-        // onRefresh: this.refreshData.bind(this),
-        toggleToolbar: this.toggleToolbar.bind(this),
-        buttons: []
-    };
     private filtersValues = {
         date: {
             startDate: moment().startOf('day'),
@@ -262,29 +255,18 @@ export class AuditLogsComponent extends AppComponentBase implements OnInit, OnDe
                 location: 'after',
                 locateInMenu: 'auto',
                 items: [
-                    { name: 'showCompactRowsHeight', action: DataGridService.showCompactRowsHeight.bind(this, this.dataGrid) },
-                    { name: 'columnChooser', action: DataGridService.showColumnChooser.bind(this, this.dataGrid) }
-                ]
-            },
-            {
-                location: 'after',
-                locateInMenu: 'auto',
-                items: [
-                    {
-                        name: 'fullscreen',
-                        action: () => {
-                            this.fullScreenService.toggleFullscreen(document.documentElement);
-                            setTimeout(() => this.dataGrid.instance.repaint(), 100);
-                        }
-                    }
+                    { name: 'columnChooser', action: () => DataGridService.showColumnChooser(this.dataGrid) }
                 ]
             }
         ]);
     }
 
-    toggleToolbar() {
-        this.appService.toolbarToggle();
-        setTimeout(() => this.dataGrid.instance.repaint(), 0);
+    repaintDataGrid(delay = 0) {
+        setTimeout(() => this.dataGrid.instance.repaint(), delay);
+    }
+
+    showCompactRowHeight() {
+        DataGridService.toggleCompactRowsHeight(this.dataGrid);
     }
 
     searchValueChange(e: object) {

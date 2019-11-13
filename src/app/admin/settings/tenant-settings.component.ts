@@ -40,6 +40,7 @@ import { FaviconService } from '@shared/common/favicon-service/favicon.service';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { AppPermissions } from '@shared/AppPermissions';
 import { AppFeatures } from '@shared/AppFeatures';
+import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
 
 @Component({
     templateUrl: './tenant-settings.component.html',
@@ -61,7 +62,6 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
     usingDefaultTimeZone = false;
     initialTimeZone: string = null;
     testEmailAddress: string = undefined;
-
     isMultiTenancyEnabled: boolean = this.multiTenancy.isEnabled;
     showTimezoneSelection: boolean = abp.clock.provider.supportsMultipleTimezone;
     activeTabIndex: number = (abp.clock.provider.supportsMultipleTimezone) ? 0 : 1;
@@ -72,56 +72,46 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
     payPalPaymentSettings: PayPalSettings = new PayPalSettings();
     achWorksSettings: ACHWorksSettings = new ACHWorksSettings();
     recurlySettings: RecurlyPaymentSettings = new RecurlyPaymentSettings();
-    isTenantHosts: boolean = this._permission.isGranted(AppPermissions.AdministrationTenantHosts);
+    isTenantHosts: boolean = this.permission.isGranted(AppPermissions.AdministrationTenantHosts);
     isAdminCustomizations: boolean = abp.features.isEnabled(AppFeatures.AdminCustomizations);
     isCreditReportFeatureEnabled: boolean = abp.features.isEnabled(AppFeatures.PFMCreditReport);
     isPFMApplicationsFeatureEnabled: boolean = abp.features.isEnabled(AppFeatures.PFM) && abp.features.isEnabled(AppFeatures.PFMApplications);
     epcvipSettings: EPCVIPOfferProviderSettings = new EPCVIPOfferProviderSettings();
-
     epcvipEmailSettings: EPCVIPMailerSettingsEditDto = new EPCVIPMailerSettingsEditDto();
     epcvipEmailServers: string[] = [];
-
     ongageSettings: OngageSettingsEditDto = new OngageSettingsEditDto();
     iageSettings: IAgeSettingsEditDto = new IAgeSettingsEditDto();
     yTelSettings: YTelSettingsEditDto = new YTelSettingsEditDto();
-
     logoUploader: FileUploader;
     faviconsUploader: FileUploader;
     customCssUploader: FileUploader;
     customToSUploader: FileUploader;
     customPrivacyPolicyUploader: FileUploader;
-
     remoteServiceBaseUrl = AppConsts.remoteServiceBaseUrl;
     siteUrlRegexPattern = AppConsts.regexPatterns.siteUrl;
-
     defaultTimezoneScope: SettingScopes = AppTimezoneScope.Tenant;
 
     private rootComponent;
-    public headlineConfig = {
-        names: [this.l('Settings')],
-        icon: '',
-        buttons: [
-            {
-                enabled: true, // this.isGranted(AppPermissions.AdministrationLanguagesCreate),
-                action: this.saveAll.bind(this),
-                icon: 'la la la-floppy-o',
-                label: this.l('SaveAll')
-            }
-        ]
-    };
+    headlineButtons: HeadlineButton[] = [
+        {
+            enabled: true, // this.isGranted(AppPermissions.AdministrationLanguagesCreate),
+            action: this.saveAll.bind(this),
+            icon: 'la la la-floppy-o',
+            label: this.l('SaveAll')
+        }
+    ];
 
     constructor(
         injector: Injector,
-        private _tenantSettingsService: TenantSettingsServiceProxy,
-        private _tenantCustomizationService: TenantCustomizationServiceProxy,
-        private _tenantSettingsCreditReportService: TenantSettingsCreditReportServiceProxy,
-        private _tenantPaymentSettingsService: TenantPaymentSettingsServiceProxy,
-        private _appSessionService: AppSessionService,
-        private _tokenService: TokenService,
-        private _tenantOfferProviderSettingsService: TenantOfferProviderSettingsServiceProxy,
-        private _faviconsService: FaviconService,
-        private _changeDetection: ChangeDetectorRef,
-        private _permission: AppPermissionService
+        private tenantSettingsService: TenantSettingsServiceProxy,
+        private tenantCustomizationService: TenantCustomizationServiceProxy,
+        private tenantSettingsCreditReportService: TenantSettingsCreditReportServiceProxy,
+        private tenantPaymentSettingsService: TenantPaymentSettingsServiceProxy,
+        private appSessionService: AppSessionService,
+        private tokenService: TokenService,
+        private tenantOfferProviderSettingsService: TenantOfferProviderSettingsServiceProxy,
+        private faviconsService: FaviconService,
+        private changeDetection: ChangeDetectorRef
     ) {
         super(injector);
         this.rootComponent = this.getRootComponent();
@@ -129,7 +119,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
     }
 
     ngOnInit(): void {
-        this.testEmailAddress = this._appSessionService.user.emailAddress;
+        this.testEmailAddress = this.appSessionService.user.emailAddress;
         this.getSettings();
         this.initUploaders();
     }
@@ -142,17 +132,17 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
         this.loading = true;
 
         let requests: Observable<any>[] = [
-                this._tenantSettingsService.getAllSettings(),
-                this._tenantPaymentSettingsService.getBaseCommercePaymentSettings(),
-                this._tenantPaymentSettingsService.getPayPalSettings(),
-                this._tenantPaymentSettingsService.getACHWorksSettings(),
-                this._tenantPaymentSettingsService.getRecurlyPaymentSettings(),
-                this.isCreditReportFeatureEnabled ? this._tenantSettingsCreditReportService.getIdcsSettings() : of<IdcsSettings>(<any>null),
-                this.isPFMApplicationsFeatureEnabled ? this._tenantOfferProviderSettingsService.getEPCVIPOfferProviderSettings() : of<EPCVIPOfferProviderSettings>(<any>null),
-                this.isPFMApplicationsFeatureEnabled ? this._tenantSettingsService.getEPCVIPMailerSettings() : of<EPCVIPMailerSettingsEditDto>(<any>null),
-                this.isPFMApplicationsFeatureEnabled ? this._tenantSettingsService.getOngageSettings() : of<OngageSettingsEditDto>(<any>null),
-                this.isPFMApplicationsFeatureEnabled ? this._tenantSettingsService.getIAgeSettings() : of<IAgeSettingsEditDto>(<any>null),
-                this._tenantSettingsService.getYTelSettings()
+                this.tenantSettingsService.getAllSettings(),
+                this.tenantPaymentSettingsService.getBaseCommercePaymentSettings(),
+                this.tenantPaymentSettingsService.getPayPalSettings(),
+                this.tenantPaymentSettingsService.getACHWorksSettings(),
+                this.tenantPaymentSettingsService.getRecurlyPaymentSettings(),
+                this.isCreditReportFeatureEnabled ? this.tenantSettingsCreditReportService.getIdcsSettings() : of<IdcsSettings>(<any>null),
+                this.isPFMApplicationsFeatureEnabled ? this.tenantOfferProviderSettingsService.getEPCVIPOfferProviderSettings() : of<EPCVIPOfferProviderSettings>(<any>null),
+                this.isPFMApplicationsFeatureEnabled ? this.tenantSettingsService.getEPCVIPMailerSettings() : of<EPCVIPMailerSettingsEditDto>(<any>null),
+                this.isPFMApplicationsFeatureEnabled ? this.tenantSettingsService.getOngageSettings() : of<OngageSettingsEditDto>(<any>null),
+                this.isPFMApplicationsFeatureEnabled ? this.tenantSettingsService.getIAgeSettings() : of<IAgeSettingsEditDto>(<any>null),
+                this.tenantSettingsService.getYTelSettings()
             ];
         if (this.isPFMApplicationsFeatureEnabled) {
             this.epcvipEmailServers = Object.keys(EPCVIPServer);
@@ -162,7 +152,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
             .pipe(
                 finalize(() => {
                     this.loading = false;
-                    this._changeDetection.detectChanges();
+                    this.changeDetection.detectChanges();
                 })
             ).subscribe((results) => {
                 [
@@ -190,8 +180,8 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
         this.logoUploader = this.createUploader(
             '/api/TenantCustomization/UploadLogo',
             result => {
-                this._appSessionService.tenant.logoFileType = result.fileType;
-                this._appSessionService.tenant.logoId = result.id;
+                this.appSessionService.tenant.logoFileType = result.fileType;
+                this.appSessionService.tenant.logoId = result.id;
             }
         );
 
@@ -209,7 +199,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
             (result: TenantCustomizationInfoDto) => {
                 if (result && result.faviconBaseUrl && result.favicons && result.favicons.length) {
                     this.appSession.tenant.tenantCustomizations = <any>{ ...this.appSession.tenant.tenantCustomizations, result };
-                    this._faviconsService.updateFavicons(this.appSession.tenant.tenantCustomizations.favicons, this.appSession.tenant.tenantCustomizations.faviconBaseUrl);
+                    this.faviconsService.updateFavicons(this.appSession.tenant.tenantCustomizations.favicons, this.appSession.tenant.tenantCustomizations.faviconBaseUrl);
                 }
             }
         );
@@ -250,10 +240,10 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
             } else {
                 this.message.error(ajaxResponse.error.message);
             }
-            this._changeDetection.detectChanges();
+            this.changeDetection.detectChanges();
         };
         const uploaderOptions: FileUploaderOptions = {};
-        uploaderOptions.authToken = 'Bearer ' + this._tokenService.getToken();
+        uploaderOptions.authToken = 'Bearer ' + this.tokenService.getToken();
         uploaderOptions.removeAfterUpload = true;
         uploader.setOptions(uploaderOptions);
         return uploader;
@@ -285,66 +275,66 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
     }
 
     clearLogo(): void {
-        this._tenantCustomizationService.clearLogo().subscribe(() => {
-            this._appSessionService.tenant.logoFileType = null;
-            this._appSessionService.tenant.logoId = null;
+        this.tenantCustomizationService.clearLogo().subscribe(() => {
+            this.appSessionService.tenant.logoFileType = null;
+            this.appSessionService.tenant.logoId = null;
             this.notify.info(this.l('ClearedSuccessfully'));
-            this._changeDetection.detectChanges();
+            this.changeDetection.detectChanges();
         });
     }
 
     clearFavicons(): void {
-        this._tenantCustomizationService.clearFavicons().subscribe(() => {
-            this._faviconsService.resetFavicons();
+        this.tenantCustomizationService.clearFavicons().subscribe(() => {
+            this.faviconsService.resetFavicons();
             this.notify.info(this.l('ClearedSuccessfully'));
-            this._changeDetection.detectChanges();
+            this.changeDetection.detectChanges();
         });
     }
 
     clearCustomCss(): void {
-        this._tenantCustomizationService.clearCustomCss().subscribe(() => {
+        this.tenantCustomizationService.clearCustomCss().subscribe(() => {
             this.appSession.tenant.customCssId = null;
             $('#TenantCustomCss').remove();
             this.notify.info(this.l('ClearedSuccessfully'));
-            this._changeDetection.detectChanges();
+            this.changeDetection.detectChanges();
         });
     }
 
     clearCustomPrivacyPolicy(): void {
-        this._tenantCustomizationService.clearCustomPrivacyPolicyDocument().subscribe(() => {
+        this.tenantCustomizationService.clearCustomPrivacyPolicyDocument().subscribe(() => {
             this.appSession.tenant.customPrivacyPolicyDocumentId = null;
             this.notify.info(this.l('ClearedSuccessfully'));
-            this._changeDetection.detectChanges();
+            this.changeDetection.detectChanges();
         });
     }
 
     clearCustomToS(): void {
-        this._tenantCustomizationService.clearCustomToSDocument().subscribe(() => {
+        this.tenantCustomizationService.clearCustomToSDocument().subscribe(() => {
             this.appSession.tenant.customToSDocumentId = null;
             this.notify.info(this.l('ClearedSuccessfully'));
-            this._changeDetection.detectChanges();
+            this.changeDetection.detectChanges();
         });
     }
 
     saveAll(): void {
         let requests: Observable<any>[] = [
-            this._tenantSettingsService.updateAllSettings(this.settings),
-            this._tenantPaymentSettingsService.updateBaseCommercePaymentSettings(this.baseCommercePaymentSettings),
-            this._tenantPaymentSettingsService.updatePayPalSettings(this.payPalPaymentSettings),
-            this._tenantPaymentSettingsService.updateACHWorksSettings(this.achWorksSettings),
-            this._tenantPaymentSettingsService.updateRecurlyPaymentSettings(this.recurlySettings),
-            this._tenantSettingsService.updateYTelSettings(this.yTelSettings)
+            this.tenantSettingsService.updateAllSettings(this.settings),
+            this.tenantPaymentSettingsService.updateBaseCommercePaymentSettings(this.baseCommercePaymentSettings),
+            this.tenantPaymentSettingsService.updatePayPalSettings(this.payPalPaymentSettings),
+            this.tenantPaymentSettingsService.updateACHWorksSettings(this.achWorksSettings),
+            this.tenantPaymentSettingsService.updateRecurlyPaymentSettings(this.recurlySettings),
+            this.tenantSettingsService.updateYTelSettings(this.yTelSettings)
         ];
         if (this.isCreditReportFeatureEnabled)
-            requests.push(this._tenantSettingsCreditReportService.updateIdcsSettings(this.idcsSettings));
+            requests.push(this.tenantSettingsCreditReportService.updateIdcsSettings(this.idcsSettings));
         if (this.isPFMApplicationsFeatureEnabled)
-            requests.push(this._tenantOfferProviderSettingsService.updateEPCVIPOfferProviderSettings(this.epcvipSettings));
+            requests.push(this.tenantOfferProviderSettingsService.updateEPCVIPOfferProviderSettings(this.epcvipSettings));
         if (this.isPFMApplicationsFeatureEnabled)
-            requests.push(this._tenantSettingsService.updateEPCVIPMailerSettings(this.epcvipEmailSettings));
+            requests.push(this.tenantSettingsService.updateEPCVIPMailerSettings(this.epcvipEmailSettings));
         if (this.isPFMApplicationsFeatureEnabled)
-            requests.push(this._tenantSettingsService.updateOngageSettings(this.ongageSettings));
+            requests.push(this.tenantSettingsService.updateOngageSettings(this.ongageSettings));
         if (this.isPFMApplicationsFeatureEnabled)
-            requests.push(this._tenantSettingsService.updateIAgeSettings(this.iageSettings));
+            requests.push(this.tenantSettingsService.updateIAgeSettings(this.iageSettings));
 
         forkJoin(requests).subscribe(() => {
             this.notify.info(this.l('SavedSuccessfully'));
@@ -360,7 +350,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
     sendTestEmail(): void {
         const input = new SendTestEmailInput();
         input.emailAddress = this.testEmailAddress;
-        this._tenantSettingsService.sendTestEmail(input).subscribe(() => {
+        this.tenantSettingsService.sendTestEmail(input).subscribe(() => {
             this.notify.info(this.l('TestEmailSentSuccessfully'));
         });
     }

@@ -1,4 +1,11 @@
-<app-headline [config]="headlineConfig" *ngIf="!isFullscreenMode">
+<app-headline *ngIf="!isFullscreenMode"
+              [names]="[ l('Cashflow_mainTitle') ]"
+              iconSrc="./assets/common/icons/chart-icon.svg"
+              [reloadIsNecessary]="noRefreshedAfterSync"
+              [showReloadButton]="true"
+              [showToggleToolbarButton]="true"
+              (onReload)="reload()"
+              (onToggleToolbar)="toggleToolbar()">
     <business-entities-chooser (onChanged)="refreshDataGrid()"
         (onFilterButtonClick)="operations.openBankAccountsSelectDialog()">
     </business-entities-chooser>

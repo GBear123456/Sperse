@@ -25,6 +25,7 @@ import { AppService } from '@app/app.service';
 import { AppConsts } from '@shared/AppConsts';
 import { AppPermissions } from '@shared/AppPermissions';
 import { DataGridService } from '@app/shared/common/data-grid.service.ts/data-grid.service';
+import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
 
 @Component({
     templateUrl: './roles.component.html',
@@ -41,19 +42,13 @@ export class RolesComponent extends AppComponentBase implements OnDestroy {
     public formatting = AppConsts.formatting;
     public actionMenuItems: any;
     public actionRecord: any;
-    public headlineConfig = {
-        names: [this.l('Roles')],
-        icon: 'people',
-        // onRefresh: this.refreshDataGrid.bind(this),
-        toggleToolbar: this.toggleToolbar.bind(this),
-        buttons: [
-            {
-                enabled: this.isGranted(AppPermissions.AdministrationRolesCreate),
-                action: this.createRole.bind(this),
-                label: this.l('CreateNewRole')
-            }
-        ]
-    };
+    public headlineButtons: HeadlineButton[] = [
+        {
+            enabled: this.isGranted(AppPermissions.AdministrationRolesCreate),
+            action: this.createRole.bind(this),
+            label: this.l('CreateNewRole')
+        }
+    ];
     dataSource: any;
     permissionFilterModel: FilterModel;
     moduleFilterModel: FilterModel;
@@ -105,9 +100,8 @@ export class RolesComponent extends AppComponentBase implements OnDestroy {
         });
     }
 
-    toggleToolbar() {
-        this.appService.toolbarToggle();
-        setTimeout(() => this.dataGrid.instance.repaint(), 0);
+    repaintDataGrid(delay = 0) {
+        setTimeout(() => this.dataGrid.instance.repaint(), delay);
     }
 
     initToolbarConfig() {
@@ -117,9 +111,7 @@ export class RolesComponent extends AppComponentBase implements OnDestroy {
                     {
                         name: 'filters',
                         action: () => {
-                            setTimeout(() => {
-                                this.dataGrid.instance.repaint();
-                            }, 1000);
+                            this.repaintDataGrid(1000);
                             this.filtersService.fixed = !this.filtersService.fixed;
                         },
                         options: {
@@ -193,24 +185,14 @@ export class RolesComponent extends AppComponentBase implements OnDestroy {
                 location: 'after',
                 locateInMenu: 'auto',
                 items: [
-                    { name: 'showCompactRowsHeight', action: DataGridService.showCompactRowsHeight.bind(this, this.dataGrid) },
                     { name: 'columnChooser', action: DataGridService.showColumnChooser.bind(this, this.dataGrid) }
-                ]
-            },
-            {
-                location: 'after',
-                locateInMenu: 'auto',
-                items: [
-                    {
-                        name: 'fullscreen',
-                        action: () => {
-                            this.fullScreenService.toggleFullscreen(document.documentElement);
-                            setTimeout(() => this.dataGrid.instance.repaint(), 100);
-                        }
-                    }
                 ]
             }
         ]);
+    }
+
+    toggleCompactView() {
+        DataGridService.toggleCompactRowsHeight(this.dataGrid);
     }
 
     initFilterConfig() {

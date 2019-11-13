@@ -15,12 +15,13 @@ import { FileSizePipe } from '@shared/common/pipes/file-size.pipe';
 import { ImportServiceProxy } from '@shared/service-proxies/service-proxies';
 import { ImportLeadsService } from './import-leads.service';
 import { DataGridService } from '@app/shared/common/data-grid.service.ts/data-grid.service';
+import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
 
 @Component({
     templateUrl: './import-list.component.html',
     styleUrls: ['./import-list.component.less'],
     animations: [appModuleAnimation()],
-    providers: [FileSizePipe]
+    providers: [ FileSizePipe ]
 })
 export class ImportListComponent extends AppComponentBase implements AfterViewInit, OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
@@ -30,14 +31,19 @@ export class ImportListComponent extends AppComponentBase implements AfterViewIn
 
     public toolbarConfig: any = [];
     public selectedRowIds: number[] = [];
-    public showImportWizard = false;
-    public headlineConfig: any = {};
+    public headlineButtons: HeadlineButton[] = [
+        {
+            enabled: true,
+            action: this.navigateToWizard.bind(this),
+            label: this.l('AddNewImport')
+        }
+    ];
 
     constructor(injector: Injector,
-        private _importLeadsService: ImportLeadsService,
-        private _sizeFormatPipe: FileSizePipe,
-        private _importProxy: ImportServiceProxy,
-        private _appService: AppService
+        private importLeadsService: ImportLeadsService,
+        private sizeFormatPipe: FileSizePipe,
+        private importProxy: ImportServiceProxy,
+        private appService: AppService
     ) {
         super(injector);
         this.dataSource = {
@@ -52,24 +58,7 @@ export class ImportListComponent extends AppComponentBase implements AfterViewIn
                 key: 'Id'
             }
         };
-
-        this.initHeadlineConfig();
         this.initToolbarConfig();
-    }
-
-    initHeadlineConfig() {
-        this.headlineConfig = {
-            names: [this.l('Import')],
-            onRefresh: this.refreshDataGrid.bind(this),
-            icon: 'docs',
-            buttons: [
-                {
-                    enabled: true,
-                    action: this.navigateToWizard.bind(this),
-                    label: this.l('AddNewImport')
-                }
-            ]
-        };
     }
 
     initToolbarConfig() {
@@ -167,7 +156,7 @@ export class ImportListComponent extends AppComponentBase implements AfterViewIn
                 if (isConfirmed)
                     forkJoin(
                         this.selectedRowIds.map((id) => {
-                            return this._importProxy.delete(id);
+                            return this.importProxy.delete(id);
                         })
                     ).subscribe(() => {
                         this.refreshDataGrid();
@@ -182,9 +171,9 @@ export class ImportListComponent extends AppComponentBase implements AfterViewIn
                 if (isConfirmed)
                   forkJoin(
                       this.selectedRowIds.map((id) => {
-                          return this._importProxy.cancel(id);
+                          return this.importProxy.cancel(id);
                       })
-                  ).subscribe((res) => {
+                  ).subscribe(() => {
                       this.refreshDataGrid();
                   });
             });
@@ -192,7 +181,7 @@ export class ImportListComponent extends AppComponentBase implements AfterViewIn
 
     onCellClick($event) {
         if ($event.rowType == 'data' && $event.column.dataField == 'FileName') {
-            this._importProxy.getFileUrl($event.data.Id).subscribe((responce) => {
+            this.importProxy.getFileUrl($event.data.Id).subscribe((responce) => {
                 if (responce && responce.url)
                     window.open(responce.url, '_self');
             });
@@ -200,7 +189,7 @@ export class ImportListComponent extends AppComponentBase implements AfterViewIn
     }
 
     fileSizeFormat = (data) => {
-        return this._sizeFormatPipe.transform(data.FileSize);
+        return this.sizeFormatPipe.transform(data.FileSize);
     }
 
     activate() {
@@ -209,7 +198,7 @@ export class ImportListComponent extends AppComponentBase implements AfterViewIn
     }
 
     deactivate() {
-        this._appService.updateToolbar(null);
+        this.appService.updateToolbar(null);
         this.rootComponent.overflowHidden();
     }
 

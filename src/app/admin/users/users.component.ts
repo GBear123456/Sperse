@@ -33,6 +33,7 @@ import { ItemTypeEnum } from '@shared/common/item-details-layout/item-type.enum'
 import { ItemDetailsService } from '@shared/common/item-details-layout/item-details.service';
 import { AppPermissions } from '@shared/AppPermissions';
 import { DataGridService } from '@app/shared/common/data-grid.service.ts/data-grid.service';
+import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
 
 @Component({
     templateUrl: './users.component.html',
@@ -50,19 +51,13 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
     isActive = true;
     public actionMenuItems: any;
     public actionRecord: any;
-    public headlineConfig = {
-        names: [this.l('Users')],
-        icon: 'people',
-        // onRefresh: () => this.invalidate(),
-        toggleToolbar: this.toggleToolbar.bind(this),
-        buttons: [
-            {
-                enabled: this.isGranted(AppPermissions.AdministrationUsersCreate),
-                action: this.createUser.bind(this),
-                label: this.l('CreateNewUser')
-            }
-        ]
-    };
+    public headlineButtons: HeadlineButton[] = [
+        {
+            enabled: this.isGranted(AppPermissions.AdministrationUsersCreate),
+            action: this.createUser.bind(this),
+            label: this.l('CreateNewUser')
+        }
+    ];
     noPhotoUrl = AppConsts.imageUrls.noPhoto;
     private rootComponent: any;
     formatting = AppConsts.formatting;
@@ -138,9 +133,8 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
         this.activate();
     }
 
-    toggleToolbar() {
-        this.appService.toolbarToggle();
-        setTimeout(() => this.dataGrid.instance.repaint(), 0);
+    repaintDataGrid(delay = 0) {
+        setTimeout(() => this.dataGrid.instance.repaint(), delay);
     }
 
     initToolbarConfig() {
@@ -150,9 +144,7 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
                     {
                         name: 'filters',
                         action: () => {
-                            setTimeout(() => {
-                                this.dataGrid.instance.repaint();
-                            }, 1000);
+                            this.repaintDataGrid(1000);
                             this.filtersService.fixed = !this.filtersService.fixed;
                         },
                         options: {
@@ -345,24 +337,14 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
                 location: 'after',
                 locateInMenu: 'auto',
                 items: [
-                    { name: 'showCompactRowsHeight', action: DataGridService.showCompactRowsHeight.bind(this, this.dataGrid) },
                     { name: 'columnChooser', action: DataGridService.showColumnChooser.bind(this, this.dataGrid) }
-                ]
-            },
-            {
-                location: 'after',
-                locateInMenu: 'auto',
-                items: [
-                    {
-                        name: 'fullscreen',
-                        action: () => {
-                            this.fullScreenService.toggleFullscreen(document.documentElement);
-                            setTimeout(() => this.dataGrid.instance.repaint(), 100);
-                        }
-                    }
                 ]
             }
         ]);
+    }
+
+    toggleCompactView() {
+        DataGridService.toggleCompactRowsHeight(this.dataGrid);
     }
 
     searchAllClick() {

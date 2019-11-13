@@ -848,8 +848,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 });
             });
 
-        this.initHeadlineConfig();
-
         /** Add event listeners for cashflow component (delegation for cashflow cells mostly) */
         if (this.userPreferencesService.localPreferences.value.showCategoryTotals) {
             CashflowService.addEvents(this.getElementRef().nativeElement, this.cashflowEvents);
@@ -933,17 +931,13 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         }
     }
 
-    initHeadlineConfig() {
-        this.headlineConfig = {
-            names: [this.l('Cashflow_mainTitle')],
-            // onRefresh:  this._cfoService.hasStaticInstance ? undefined : this.refreshDataGrid.bind(this),
-            toggleToolbar: this.toggleToolbar.bind(this),
-            iconSrc: './assets/common/icons/chart-icon.svg'
-        };
+    reload() {
+        if (!this._cfoService.hasStaticInstance) {
+            this.refreshDataGrid();
+        }
     }
 
     toggleToolbar() {
-        this.appService.toolbarToggle();
         setTimeout(() => {
             if (this.pivotGrid && this.pivotGrid.instance)
                 this.pivotGrid.instance.repaint();
@@ -1604,7 +1598,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
     showRefreshButton() {
         this.noRefreshedAfterSync = true;
-        this.initHeadlineConfig();
     }
 
     refreshDataGrid() {
@@ -1620,7 +1613,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             this.setBankAccountsFilter(true);
             this.finishLoading();
         });
-        this.initHeadlineConfig();
     }
 
     repaintDataGrid() {

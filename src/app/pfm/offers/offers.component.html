@@ -7,7 +7,13 @@
         (onSelectionChanged)="pullOffers(true)"
         target="#PullOffers">
     </dx-context-menu>
-    <app-headline [config]="headlineConfig"></app-headline>
+    <app-headline [names]="[ l('Offers') ]"
+                  icon="people"
+                  [showToggleToolbarButton]="true"
+                  [showReloadButton]="true"
+                  (onToggleToolbar)="toggleToolbar()"
+                  (onReload)="refreshDataGrid()">
+    </app-headline>
     <app-static-list #categoriesComponent
         [width]="'310px'"
         [title]="l('Categories')"

@@ -19,6 +19,7 @@ import { AppConsts } from '@root/shared/AppConsts';
 import { SetupStepsComponent } from '@app/shared/common/setup-steps/setup-steps.component';
 import { DataGridService } from '@app/shared/common/data-grid.service.ts/data-grid.service';
 import { CFOService } from '@shared/cfo/cfo.service';
+import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
 
 @Component({
     templateUrl: './reports.component.html',
@@ -31,7 +32,6 @@ export class ReportsComponent extends AppComponentBase implements OnInit, OnDest
     @ViewChild(SetupStepsComponent) setupStepsComponent: SetupStepsComponent;
     @ViewChild('rightSection') rightSection: ElementRef;
 
-    headlineConfig;
     private rootComponent: any;
     private _refresh: Subject<null> = new Subject<null>();
     refresh$: Observable<null> = this._refresh.asObservable();
@@ -68,6 +68,7 @@ export class ReportsComponent extends AppComponentBase implements OnInit, OnDest
             onClick: this.onMenuClick.bind(this)
         }
     ];
+    headlineButtons: HeadlineButton[];
 
     constructor(
         injector: Injector,
@@ -122,25 +123,22 @@ export class ReportsComponent extends AppComponentBase implements OnInit, OnDest
     }
 
     initConfigs() {
-        this.initHeadlineConfig();
+        this.initHeadlineButtons();
         this.initToolbarConfig();
     }
 
-    initHeadlineConfig() {
-        this.headlineConfig = {
-            names: [this.l('Reports')],
-            buttons: [
-                {
-                    enabled: this.section != 'clicks',
-                    class: 'button-layout button-default',
-                    action: () => {
-                        this.showCalendarDialog();
-                    },
-                    label: (this.dateFrom ? this.dateFrom.format('DD/MM/YYYY') : this.l('Start Date')) +
-                        ' - ' + (this.dateTo ? this.dateTo.format('DD/MM/YYYY') : this.l('End Date'))
-                }
-            ]
-        };
+    initHeadlineButtons() {
+        this.headlineButtons = [
+            {
+                enabled: this.section != 'clicks',
+                class: 'button-layout button-default',
+                action: () => {
+                    this.showCalendarDialog();
+                },
+                label: (this.dateFrom ? this.dateFrom.format('DD/MM/YYYY') : this.l('Start Date')) +
+                ' - ' + (this.dateTo ? this.dateTo.format('DD/MM/YYYY') : this.l('End Date'))
+            }
+        ];
     }
 
     initToolbarConfig() {
@@ -179,7 +177,7 @@ export class ReportsComponent extends AppComponentBase implements OnInit, OnDest
                         {
                             name: 'showCompactRowsHeight',
                             visible: this.section !== 'clicks' && !this.cfoService.hasStaticInstance,
-                            action: DataGridService.showCompactRowsHeight.bind(this, this.openedGrid)
+                            action: DataGridService.toggleCompactRowsHeight.bind(this, this.openedGrid)
                         },
                         {
                             name: 'download',
@@ -307,7 +305,7 @@ export class ReportsComponent extends AppComponentBase implements OnInit, OnDest
             if (dateTo != this.dateTo || dateFrom != this.dateFrom) {
                 this.dateTo = dateTo && moment(dateTo);
                 this.dateFrom = dateFrom && moment(dateFrom);
-                this.initHeadlineConfig();
+                this.initHeadlineButtons();
                 return true;
             }
         }
@@ -339,7 +337,7 @@ export class ReportsComponent extends AppComponentBase implements OnInit, OnDest
     }
 
     yearSelectionChanged() {
-        this.initHeadlineConfig();
+        this.initHeadlineButtons();
     }
 
     showCalendarDialog() {

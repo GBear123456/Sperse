@@ -1,5 +1,15 @@
 <div [@routerTransition]>
-    <app-headline [config]="headlineConfig"></app-headline>
+    <app-headline [names]="[ l('LanguageTexts') ]"
+                  icon="flag"
+                  [showToggleToolbarButton]="true"
+                  [showReloadButton]="true"
+                  [showToggleCompactViewButton]="true"
+                  [showToggleFullScreenButton]="true"
+                  (onToggleToolbar)="repaintDataGrid()"
+                  (onToggleCompactView)="toggleCompactView()"
+                  (onToggleFullScreen)="repaintDataGrid(100)"
+                  (onReload)="refreshDataGrid()">
+    </app-headline>
 
     <div id="admin-languages-text" class="portlet light no-padding margin-bottom-0">
         <div class="portlet-body">

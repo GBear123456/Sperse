@@ -21,6 +21,7 @@ import { FilterInputsComponent } from '@shared/filters/inputs/filter-inputs.comp
 import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calendar.component';
 import { ClassificationServiceProxy, ApplyToTransactionsOption, InstanceType } from '@shared/service-proxies/service-proxies';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
+import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
 
 @Component({
     templateUrl: './rules.component.html',
@@ -35,13 +36,10 @@ export class RulesComponent extends CFOComponentBase implements OnInit, AfterVie
     private rootComponent: any;
     public ruleTreeListDataSource: DataSource = new DataSource([]);
     private filters: FilterModel[];
-    public headlineConfig = {
-        names: [this.l('Manage rules')],
-        iconSrc: './assets/common/icons/manage-icon.svg',
-        buttons: []
-    };
+    headlineButtons: HeadlineButton[] = [];
 
-    constructor(injector: Injector,
+    constructor(
+        injector: Injector,
         private appService: AppService,
         private classificationService: ClassificationServiceProxy,
         public dialog: MatDialog,
@@ -105,7 +103,7 @@ export class RulesComponent extends CFOComponentBase implements OnInit, AfterVie
             this.treeList.editing.allowUpdating = true;
             this.treeList.instance.refresh();
 
-            this.headlineConfig.buttons.push({
+            this.headlineButtons.push({
                 enabled: true,
                 action: this.showEditDialog.bind(this),
                 label: this.l('+ Add New')
@@ -148,12 +146,6 @@ export class RulesComponent extends CFOComponentBase implements OnInit, AfterVie
                         }
                     }
                 ]
-            },
-            {
-                location: 'after', items: [
-                    { name: 'refresh', action: this.refreshList.bind(this) },
-                    { name: 'fullscreen', action: this.fullscreen.bind(this) }
-                ]
             }
         ]);
     }
@@ -174,7 +166,6 @@ export class RulesComponent extends CFOComponentBase implements OnInit, AfterVie
     }
 
     fullscreen() {
-        this.fullScreenService.toggleFullscreen(document.documentElement);
         setTimeout(() => {
             if (this.treeList && this.treeList.instance)
                 this.treeList.instance.repaint();

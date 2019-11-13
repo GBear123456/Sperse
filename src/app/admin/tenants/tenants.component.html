@@ -1,5 +1,15 @@
 <div [@routerTransition]>
-    <app-headline [config]="headlineConfig"></app-headline>
+    <app-headline [names]="[ l('Tenants') ]"
+                  [buttons]="headlineButtons"
+                  [showToggleToolbarButton]="true"
+                  [showReloadButton]="true"
+                  [showToggleCompactViewButton]="true"
+                  [showToggleFullScreenButton]="true"
+                  (onToggleToolbar)="repaintDataGrid()"
+                  (onToggleCompactView)="toggleCompactView()"
+                  (onToggleFullScreen)="repaintDataGrid(100)"
+                  (onReload)="refreshDataGrid()">
+    </app-headline>
     <dx-tooltip width="200px"
                 [target]="'.dx-state-hover .dx-link.dx-link-edit'"
                 [visible]="actionRecord"

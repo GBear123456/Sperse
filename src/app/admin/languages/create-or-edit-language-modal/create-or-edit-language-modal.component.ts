@@ -51,17 +51,17 @@ export class CreateOrEditLanguageModalComponent implements OnInit {
     title: string;
 
     constructor(
-        private _languageService: LanguageServiceProxy,
+        private languageService: LanguageServiceProxy,
+        private dialogRef: MatDialogRef<CreateOrEditLanguageModalComponent>,
+        private notifyService: NotifyService,
+        private changeDetectorRef: ChangeDetectorRef,
         public ls: AppLocalizationService,
-        private _dialogRef: MatDialogRef<CreateOrEditLanguageModalComponent>,
-        private _notifyService: NotifyService,
-        private _changeDetectorRef: ChangeDetectorRef,
         @Inject(MAT_DIALOG_DATA) private data: any
     ) {}
 
     ngOnInit() {
         this.modalDialog.startLoading();
-        this._languageService.getLanguageForEdit(this.data.languageId)
+        this.languageService.getLanguageForEdit(this.data.languageId)
             .pipe(finalize(() => this.modalDialog.finishLoading()))
             .subscribe(result => {
                 this.selectBoxData = result;
@@ -78,24 +78,24 @@ export class CreateOrEditLanguageModalComponent implements OnInit {
                 if (this.language && this.language.name) {
                     this.language.name = this.language.name.split('-').shift();
                 }
-                this._changeDetectorRef.detectChanges();
+                this.changeDetectorRef.detectChanges();
             });
     }
 
     save(): void {
         this.modalDialog.startLoading();
-        this.language && this._languageService.createOrUpdateLanguage(CreateOrUpdateLanguageInput.fromJS({
+        this.language && this.languageService.createOrUpdateLanguage(CreateOrUpdateLanguageInput.fromJS({
             language: this.language
         }))
             .pipe(finalize(() => this.modalDialog.finishLoading()))
             .subscribe(() => {
-                this._notifyService.info(this.ls.l('SavedSuccessfully'));
+                this.notifyService.info(this.ls.l('SavedSuccessfully'));
                 this.close();
                 this.modalSave.emit(null);
             });
     }
 
     close(): void {
-        this._dialogRef.close();
+        this.dialogRef.close();
     }
 }

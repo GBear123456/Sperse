@@ -81,11 +81,6 @@ export class PermissionsComponent extends CFOComponentBase implements OnInit, Af
             'visibleIndex': 5
         }
     };
-    public headlineConfig = {
-        names: [this.l('SetupStep_Permissions')],
-        iconSrc: './assets/common/icons/user-permissions.svg',
-        onRefresh: this.onRefresh.bind(this),
-    };
     constructor(injector: Injector,
         private userServiceProxy: UserServiceProxy,
         private bankAccountsServiceProxy: BankAccountsServiceProxy,
@@ -127,7 +122,7 @@ export class PermissionsComponent extends CFOComponentBase implements OnInit, Af
                 this.syncAccounts = res[1];
                 this.bankAccountsUsers = res[2];
             },
-            e => {
+            () => {
                 this.finishLoading(true);
                 this._router.navigate(['app/cfo/main/start']);
             },
@@ -288,7 +283,7 @@ export class PermissionsComponent extends CFOComponentBase implements OnInit, Af
         let methodObservable = permission ?
                                this.securityManagmentServiceProxy.grantBankAccountPermissions(instanceType, this.instanceId, e.oldData.accountId, userId, Permissions.All) :
                                this.securityManagmentServiceProxy.revokeBankAccountPermissions(instanceType, this.instanceId, userId, [e.oldData.accountId]);
-        methodObservable.subscribe(res => {
+        methodObservable.subscribe(() => {
             this.notify.success(this.ls('Platform', 'AppliedSuccessfully'));
         });
     }
@@ -355,7 +350,7 @@ export class PermissionsComponent extends CFOComponentBase implements OnInit, Af
         const bankAccounts = this.bankAccountsUsers.map(bankAccount => bankAccount.bankAccountId);
         this.securityManagmentServiceProxy
             .revokeBankAccountPermissions(instanceType, this.instanceId, userId, bankAccounts)
-            .subscribe(res => {
+            .subscribe(() => {
                 const stringUserId: string = userId.toString();
                 /** Remove user from datagrid */
                 this.dataGrid.instance.deleteColumn(stringUserId);

@@ -1,4 +1,9 @@
-<app-headline [config]="headlineConfig">
+<app-headline [names]="[ l('Dashboard') ]"
+              [text]="l('statistics and reports')"
+              icon="globe"
+              [buttons]="headlineButtons"
+              [showReloadButton]="true"
+              (onReload)="refresh()">
     <import-progress-bar></import-progress-bar>
     <app-period (onChange)="periodChanged($event)"></app-period>
 </app-headline>

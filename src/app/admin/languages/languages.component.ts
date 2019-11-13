@@ -13,10 +13,11 @@ import { FiltersService } from '@shared/filters/filters.service';
 import { AbpSessionService } from '@abp/session/abp-session.service';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { ApplicationLanguageListDto, LanguageServiceProxy, SetDefaultLanguageInput } from '@shared/service-proxies/service-proxies';
-import { CreateOrEditLanguageModalComponent } from './create-or-edit-language-modal.component';
+import { CreateOrEditLanguageModalComponent } from './create-or-edit-language-modal/create-or-edit-language-modal.component';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { AppPermissions } from '@shared/AppPermissions';
 import { DataGridService } from '@app/shared/common/data-grid.service.ts/data-grid.service';
+import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
 
 @Component({
     templateUrl: './languages.component.html',
@@ -29,30 +30,23 @@ export class LanguagesComponent extends AppComponentBase implements OnDestroy {
     dataSource: DataSource;
     public actionMenuItems: any;
     public actionRecord: any;
-    public headlineConfig = {
-        names: [this.l('Languages')],
-        icon: 'flag',
-        // onRefresh: this.refreshDataGrid.bind(this),
-        toggleToolbar: this.toggleToolbar.bind(this),
-        buttons: [
-            {
-                enabled: this.isGranted(AppPermissions.AdministrationLanguagesCreate) && this._appService.isHostTenant,
-                action: this.createNewLanguage.bind(this),
-                label: this.l('CreateNewLanguage')
-            }
-        ]
-    };
-
+    public headlineButtons: HeadlineButton[] = [
+        {
+            enabled: this.isGranted(AppPermissions.AdministrationLanguagesCreate) && this.appService.isHostTenant,
+            action: this.createNewLanguage.bind(this),
+            label: this.l('CreateNewLanguage')
+        }
+    ];
     defaultLanguageName: string;
     private rootComponent: any;
 
     constructor(
         injector: Injector,
-        private _languageService: LanguageServiceProxy,
-        private _filtersService: FiltersService,
-        private _appService: AppService,
-        private _sessionService: AbpSessionService,
-        private _dialog: MatDialog
+        private languageService: LanguageServiceProxy,
+        private filtersService: FiltersService,
+        private appService: AppService,
+        private sessionService: AbpSessionService,
+        private dialog: MatDialog
     ) {
         super(injector);
         this.rootComponent = this.getRootComponent();
@@ -61,7 +55,7 @@ export class LanguagesComponent extends AppComponentBase implements OnDestroy {
         this.dataSource = new DataSource({
             key: 'id',
             load: () => {
-                return this._languageService.getLanguages().toPromise().then(response => {
+                return this.languageService.getLanguages().toPromise().then(response => {
                     this.defaultLanguageName = response.defaultLanguageName;
                     return {
                         data: response.items,
@@ -77,7 +71,7 @@ export class LanguagesComponent extends AppComponentBase implements OnDestroy {
         this.actionMenuItems = [
             {
                 text: this.l('Edit'),
-                visible: this.permission.isGranted(AppPermissions.AdministrationLanguagesEdit)  && this._appService.isHostTenant,
+                visible: this.permission.isGranted(AppPermissions.AdministrationLanguagesEdit)  && this.appService.isHostTenant,
                 action: () => {
                     this.openCreateOrEditLanguageModal(this.actionRecord.id);
                 }
@@ -98,17 +92,12 @@ export class LanguagesComponent extends AppComponentBase implements OnDestroy {
             },
             {
                 text: this.l('Delete'),
-                visible: this.permission.isGranted(AppPermissions.AdministrationLanguagesDelete)  && this._appService.isHostTenant,
+                visible: this.permission.isGranted(AppPermissions.AdministrationLanguagesDelete)  && this.appService.isHostTenant,
                 action: () => {
                     this.deleteLanguage(this.actionRecord);
                 }
             }
         ].filter(Boolean);
-    }
-
-    toggleToolbar() {
-        this._appService.toolbarToggle();
-        setTimeout(() => this.dataGrid.instance.repaint(), 0);
     }
 
     showActionsMenu(event) {
@@ -122,7 +111,7 @@ export class LanguagesComponent extends AppComponentBase implements OnDestroy {
     }
 
     initToolbarConfig() {
-        this._appService.updateToolbar([
+        this.appService.updateToolbar([
             {
                 location: 'after',
                 locateInMenu: 'auto',
@@ -158,24 +147,18 @@ export class LanguagesComponent extends AppComponentBase implements OnDestroy {
                 location: 'after',
                 locateInMenu: 'auto',
                 items: [
-                    { name: 'showCompactRowsHeight', action: DataGridService.showCompactRowsHeight.bind(this, this.dataGrid) },
                     { name: 'columnChooser', action: DataGridService.showColumnChooser.bind(this, this.dataGrid) }
-                ]
-            },
-            {
-                location: 'after',
-                locateInMenu: 'auto',
-                items: [
-                    {
-                        name: 'fullscreen',
-                        action: () => {
-                            this.fullScreenService.toggleFullscreen(document.documentElement);
-                            setTimeout(() => this.dataGrid.instance.repaint(), 100);
-                        }
-                    }
                 ]
             }
         ]);
+    }
+
+    toggleCompactView() {
+        DataGridService.toggleCompactRowsHeight(this.dataGrid);
+    }
+
+    repaintDataGrid(delay = 0) {
+        setTimeout(() => this.dataGrid.instance.repaint(), delay);
     }
 
     createNewLanguage(): void {
@@ -189,7 +172,7 @@ export class LanguagesComponent extends AppComponentBase implements OnDestroy {
     setAsDefaultLanguage(language: ApplicationLanguageListDto): void {
         const input = new SetDefaultLanguageInput();
         input.name = language.name;
-        this._languageService.setDefaultLanguage(input).subscribe(() => {
+        this.languageService.setDefaultLanguage(input).subscribe(() => {
             this.refreshDataGrid();
             this.notify.success(this.l('SuccessfullySaved'));
         });
@@ -201,7 +184,7 @@ export class LanguagesComponent extends AppComponentBase implements OnDestroy {
             this.l('AreYouSure'),
             isConfirmed => {
                 if (isConfirmed) {
-                    this._languageService.deleteLanguage(language.id).subscribe(() => {
+                    this.languageService.deleteLanguage(language.id).subscribe(() => {
                         this.refreshDataGrid();
                         this.notify.success(this.l('SuccessfullyDeleted'));
                     });
@@ -225,7 +208,7 @@ export class LanguagesComponent extends AppComponentBase implements OnDestroy {
 
     ngOnDestroy() {
         this.rootComponent.overflowHidden();
-        this._appService.updateToolbar(null);
+        this.appService.updateToolbar(null);
     }
 
     sortLanguages = (item1, item2) => {
@@ -233,7 +216,7 @@ export class LanguagesComponent extends AppComponentBase implements OnDestroy {
     }
 
     openCreateOrEditLanguageModal(languageId?: number) {
-        const dialogRef = this._dialog.open(CreateOrEditLanguageModalComponent, {
+        const dialogRef = this.dialog.open(CreateOrEditLanguageModalComponent, {
             panelClass: 'slider',
             data: {
                 languageId: languageId

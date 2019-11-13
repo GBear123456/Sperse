@@ -21,7 +21,6 @@ import { AccountConnectorDialogComponent } from '@shared/common/account-connecto
 export class SetupComponent extends CFOComponentBase implements AfterViewInit, OnInit, OnDestroy {
     @Output() onOpenIntro: EventEmitter<boolean> = new EventEmitter<boolean>();
     private rootComponent: any;
-    public headlineConfig;
     isDisabled = !this.isInstanceAdmin;
     setupContainerElement: Element;
     showGetStartedSection$: Observable<boolean> = !this._cfoService.isMainInstanceType
@@ -38,11 +37,6 @@ export class SetupComponent extends CFOComponentBase implements AfterViewInit, O
     }
 
     ngOnInit(): void {
-        this.headlineConfig = {
-            names: [this.l('Setup_Title')],
-            iconSrc: './assets/common/icons/magic-stick-icon.svg',
-            buttons: []
-        };
         this.rootComponent.overflowHidden(true);
         this.rootComponent.addScriptLink('https://fast.wistia.com/embed/medias/kqjpmot28u.jsonp');
         this.rootComponent.addScriptLink('https://fast.wistia.com/assets/external/E-v1.js');

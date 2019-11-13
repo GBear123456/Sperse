@@ -1,5 +1,16 @@
 <div [@routerTransition]>
-    <app-headline [config]="headlineConfig">
+    <app-headline [names]="[ l('Transactions') ]"
+                  [reloadIsNecessary]="noRefreshedAfterSync"
+                  iconSrc="./assets/common/icons/credit-card-icon.svg"
+                  [buttons]="headlineButtons"
+                  [showToggleCompactViewButton]="showToggleCompactViewButton"
+                  [showToggleFullScreenButton]="true"
+                  [showReloadButton]="true"
+                  [showToggleToolbarButton]="true"
+                  (onReload)="reload()"
+                  (onToggleCompactView)="toggleCompactView()"
+                  (onToggleFullScreen)="repaintDataGrid(100)"
+                  (onToggleToolbar)="toggleToolbar()">
         <business-entities-chooser (onChanged)="applyTotalBankAccountFilter(true)"
             (onFilterButtonClick)="openBankAccountsSelectDialog()">
         </business-entities-chooser>

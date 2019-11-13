@@ -23,12 +23,12 @@ import { GenerateReportDialogComponent } from './generate-report-dialog/generate
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { AppService } from '@app/app.service';
 import { SendNotificationDialogComponent } from '@app/cfo/reports/send-notification-dialog/send-notification-dialog.component';
-import { DataGridService } from '@app/shared/common/data-grid.service.ts/data-grid.service';
 import { FilterCheckBoxesComponent } from '@shared/filters/check-boxes/filter-check-boxes.component';
 import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-boxes.model';
 import { FiltersService } from '@shared/filters/filters.service';
 import { FilterModel } from '@shared/filters/models/filter.model';
 import { AppFeatures } from '@shared/AppFeatures';
+import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
 
 @Component({
     templateUrl: './reports.component.html',
@@ -41,7 +41,13 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
     @ViewChild(DxTooltipComponent) actionsTooltip: DxTooltipComponent;
     @ViewChild(ImageViewerComponent) imageViewer: ImageViewerComponent;
 
-    headlineConfig;
+    headlineButtons: HeadlineButton[] = [
+        {
+            action: this.showGenerateReportDialog.bind(this),
+            label: this.l('GenerateNewReport'),
+            enabled: this.isInstanceAdmin || this.isMemberAccessManage
+        }
+    ];
     toolbarConfig: any = [];
     menuItems = [
         {
@@ -143,7 +149,6 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
     }
 
     ngOnInit(): void {
-        this.initHeadlineConfig();
         this.initToolbarConfig();
     }
 
@@ -330,20 +335,6 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
 
     ngAfterViewInit(): void {
         this.activate();
-    }
-
-    initHeadlineConfig() {
-        this.headlineConfig = {
-            names: [this.l('REPORTS')],
-            iconSrc: './assets/common/icons/credit-card-icon.svg',
-            buttons: [
-                {
-                    action: this.showGenerateReportDialog.bind(this),
-                    label: this.l('GenerateNewReport'),
-                    enabled: this.isInstanceAdmin || this.isMemberAccessManage
-                }
-            ]
-        };
     }
 
     showGenerateReportDialog() {

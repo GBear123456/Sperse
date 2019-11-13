@@ -33,33 +33,30 @@ export class BankAccountsGeneralComponent extends CFOComponentBase implements On
 
     constructor(
         injector: Injector,
-        private _synchProgress: SynchProgressService,
-        private _syncAccountServiceProxy: SyncAccountServiceProxy,
-        private _bankAccountsGeneralService: BankAccountsGeneralService,
-        private _dialog: MatDialog,
-        public bankAccountsService: BankAccountsService,
-        public cfoPreferencesService: CfoPreferencesService,
+        private synchProgress: SynchProgressService,
+        private syncAccountServiceProxy: SyncAccountServiceProxy,
+        private bankAccountsGeneralService: BankAccountsGeneralService,
+        private dialog: MatDialog,
         private store$: Store<RootStore.State>,
-        private _lifeCycleService: LifecycleSubjectsService
+        private lifeCycleService: LifecycleSubjectsService,
+        public bankAccountsService: BankAccountsService,
+        public cfoPreferencesService: CfoPreferencesService
     ) {
         super(injector);
-        this._synchProgress.needRefreshSync$.subscribe(() => {
-            this._synchProgress.startSynchronization();
+        this.synchProgress.needRefreshSync$.subscribe(() => {
+            this.synchProgress.startSynchronization();
         });
-        this._syncAccountServiceProxy.createIsAllowed(this._cfoService.instanceType as InstanceType, this.instanceId)
+        this.syncAccountServiceProxy.createIsAllowed(this._cfoService.instanceType as InstanceType, this.instanceId)
             .subscribe((result) => {
                 this.createAccountAvailable = result;
-                this.initHeadlineConfig();
             });
     }
 
     ngOnInit() {
-        this.initHeadlineConfig();
         const selectedCurrencyId$ = this.store$.pipe(select(CurrenciesStoreSelectors.getSelectedCurrencyId));
-
         selectedCurrencyId$.pipe(
             skip(1),
-            switchMap((data) => this.componentIsActivated ? of(data) : this._lifeCycleService.activate$.pipe(first(), mapTo(data))),
+            switchMap((data) => this.componentIsActivated ? of(data) : this.lifeCycleService.activate$.pipe(first(), mapTo(data))),
         ).subscribe(() => {
             this.refresh();
         });
@@ -70,21 +67,18 @@ export class BankAccountsGeneralComponent extends CFOComponentBase implements On
         this.rootComponent.overflowHidden(true);
     }
 
-    private initHeadlineConfig() {
-        this.headlineConfig = {
-            names: [this.l('Setup_Title'), this.l('Accounts')],
-            iconSrc: './assets/common/icons/magic-stick-icon.svg',
-            onRefresh: this._cfoService.hasStaticInstance ? undefined : this.refresh.bind(this),
-            buttons: []
-        };
+    reload() {
+        if (!this._cfoService.hasStaticInstance) {
+            this.refresh();
+        }
     }
 
     refresh() {
-        this._bankAccountsGeneralService.refreshBankAccounts();
+        this.bankAccountsGeneralService.refreshBankAccounts();
     }
 
     activate() {
-        this._lifeCycleService.activate.next();
+        this.lifeCycleService.activate.next();
         this.syncComponent.activate();
         this.rootComponent.overflowHidden(true);
     }

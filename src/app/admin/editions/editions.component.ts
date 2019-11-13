@@ -15,6 +15,7 @@ import { EditionListDto, EditionServiceProxy } from '@shared/service-proxies/ser
 import { CreateOrEditEditionModalComponent } from './create-or-edit-edition-modal.component';
 import { AppPermissions } from '@shared/AppPermissions';
 import { DataGridService } from '@app/shared/common/data-grid.service.ts/data-grid.service';
+import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
 
 @Component({
     templateUrl: './editions.component.html',
@@ -24,72 +25,61 @@ import { DataGridService } from '@app/shared/common/data-grid.service.ts/data-gr
 })
 export class EditionsComponent extends AppComponentBase implements OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
-    public actionMenuItems: any;
-    public actionRecord: any;
-    dataSource: DataSource;
-    public headlineConfig = {
-        names: [this.l('Products')],
-        icon: '',
-        // onRefresh: this.refreshDataGrid.bind(this),
-        toggleToolbar: this.toggleToolbar.bind(this),
-        buttons: [
-            {
-                enabled: this.isGranted(AppPermissions.EditionsCreate),
-                action: this.createEdition.bind(this),
-                label: this.l('CreateNewEdition')
+    public actionMenuItems: any = [
+        {
+            text: this.l('Edit'),
+            visible: this.permission.isGranted(AppPermissions.EditionsEdit),
+            action: () => {
+                this.openCreateOrEditDialog(this.actionRecord.id);
             }
-        ]
-    };
+        },
+        {
+            text: this.l('Delete'),
+            visible: this.permission.isGranted(AppPermissions.EditionsDelete),
+            action: () => {
+                this.deleteEdition(this.actionRecord);
+            }
+        }
+    ].filter(Boolean);
+    public actionRecord: any;
+    dataSource: DataSource = new DataSource({
+        key: 'id',
+        load: () => {
+            return  this.editionService.getEditions().toPromise().then(response => {
+                return {
+                    data: response.items,
+                    totalCount: response.items.length
+                };
+            });
+        }
+    });
+    public headlineButtons: HeadlineButton[] = [
+        {
+            enabled: this.isGranted(AppPermissions.EditionsCreate),
+            action: this.createEdition.bind(this),
+            label: this.l('CreateNewEdition')
+        }
+    ];
     private rootComponent: any;
 
     constructor(
         injector: Injector,
-        private _appService: AppService,
-        private _editionService: EditionServiceProxy,
+        private appService: AppService,
+        private editionService: EditionServiceProxy,
         private dialog: MatDialog
     ) {
         super(injector);
         this.rootComponent = this.getRootComponent();
         this.rootComponent.overflowHidden(true);
         this.initToolbarConfig();
-
-        this.dataSource = new DataSource({
-            key: 'id',
-            load: () => {
-                return  this._editionService.getEditions().toPromise().then(response => {
-                    return {
-                        data: response.items,
-                        totalCount: response.items.length
-                    };
-                });
-            }
-        });
-
-        this.actionMenuItems = [
-            {
-                text: this.l('Edit'),
-                visible: this.permission.isGranted(AppPermissions.EditionsEdit),
-                action: () => {
-                    this.openCreateOrEditDialog(this.actionRecord.id);
-                }
-            },
-            {
-                text: this.l('Delete'),
-                visible: this.permission.isGranted(AppPermissions.EditionsDelete),
-                action: () => {
-                    this.deleteEdition(this.actionRecord);
-                }
-            }
-        ].filter(Boolean);
     }
 
     toggleToolbar() {
-        this._appService.toolbarToggle();
         setTimeout(() => this.dataGrid.instance.repaint(), 0);
     }
 
     initToolbarConfig() {
-        this._appService.updateToolbar([
+        this.appService.updateToolbar([
             {
                 location: 'before',
                 items: [
@@ -143,24 +133,18 @@ export class EditionsComponent extends AppComponentBase implements OnDestroy {
                 location: 'after',
                 locateInMenu: 'auto',
                 items: [
-                    { name: 'showCompactRowsHeight', action: DataGridService.showCompactRowsHeight.bind(this, this.dataGrid) },
                     { name: 'columnChooser', action: DataGridService.showColumnChooser.bind(this, this.dataGrid) }
-                ]
-            },
-            {
-                location: 'after',
-                locateInMenu: 'auto',
-                items: [
-                    {
-                        name: 'fullscreen',
-                        action: () => {
-                            this.fullScreenService.toggleFullscreen(document.documentElement);
-                            setTimeout(() => this.dataGrid.instance.repaint(), 100);
-                        }
-                    }
                 ]
             }
         ]);
+    }
+
+    toggleCompactRowHeight() {
+        DataGridService.toggleCompactRowsHeight(this.dataGrid);
+    }
+
+    toggleFullScreen() {
+        setTimeout(() => this.dataGrid.instance.repaint(), 100);
     }
 
     openCreateOrEditDialog(editionId?: number) {
@@ -199,7 +183,7 @@ export class EditionsComponent extends AppComponentBase implements OnDestroy {
             this.l('AreYouSure'),
             isConfirmed => {
                 if (isConfirmed) {
-                    this._editionService.deleteEdition(edition.id).subscribe(() => {
+                    this.editionService.deleteEdition(edition.id).subscribe(() => {
                         this.refreshDataGrid();
                     });
                 }
@@ -221,6 +205,6 @@ export class EditionsComponent extends AppComponentBase implements OnDestroy {
 
     ngOnDestroy() {
         this.rootComponent.overflowHidden();
-        this._appService.updateToolbar(null);
+        this.appService.updateToolbar(null);
     }
 }

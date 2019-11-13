@@ -89,6 +89,7 @@ import { ImageFormat } from '@shared/common/export/image-format.enum';
 import { MapArea } from '@app/shared/common/slice/map/map-area.enum';
 import { MapService } from '@app/shared/common/slice/map/map.service';
 import { ImpersonationService } from '@admin/users/impersonation.service';
+import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
 
 @Component({
     templateUrl: './leads.component.html',
@@ -191,20 +192,13 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     private filterChanged = false;
     formatting = AppConsts.formatting;
 
-    public headlineConfig = {
-        names: [],
-        // onRefresh: () => {
-        //     this.refresh();
-        // },
-        toggleToolbar: this.toggleToolbar.bind(this),
-        buttons: [
-            {
-                enabled: this.contactService.checkCGPermission(ContactGroup.Client),
-                action: this.createLead.bind(this),
-                label: this.l('CreateNewLead')
-            }
-        ]
-    };
+    public headlineButtons: HeadlineButton[] = [
+        {
+            enabled: this.contactService.checkCGPermission(ContactGroup.Client),
+            action: this.createLead.bind(this),
+            label: this.l('CreateNewLead')
+        }
+    ];
     permissions = AppPermissions;
     pivotGridDataIsLoading: boolean;
     pivotGridDataSource = {
@@ -547,8 +541,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     toggleToolbar() {
-        this.appService.toolbarToggle();
-        setTimeout(() => this.dataGrid.instance.repaint(), 0);
+        this.repaintDataGrid();
         this.filtersService.fixed = false;
         this.filtersService.disable();
         this.initToolbarConfig();
@@ -564,7 +557,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     private createButtonEnabledSet() {
-        this.headlineConfig.buttons[0].enabled =
+        this.headlineButtons[0].enabled =
             this.contactService.checkCGPermission(this.contactGroupId.value);
     }
 
@@ -583,7 +576,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     refresh(invalidateDashboard = true, allViews = false) {
-        if (this.showPivotGrid || this.showDataGrid) {
+        if (this.showPipeline || this.showPivotGrid || this.showDataGrid) {
             setTimeout(() => {
                 this.processFilterInternal(allViews ? [ this.pipelineComponent, this ] : undefined);
             });
@@ -1006,11 +999,6 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 locateInMenu: 'auto',
                 items: [
                     {
-                        name: 'showCompactRowsHeight',
-                        action: this.toggleCompactView.bind(this),
-                        disabled: !(this.showPipeline || this.showDataGrid)
-                    },
-                    {
                         name: 'columnChooser',
                         disabled: !(this.showDataGrid || this.showPivotGrid),
                         action: () => {
@@ -1065,20 +1053,11 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     }
                 ]
             },
-            {
-                location: 'after',
-                locateInMenu: 'auto',
-                items: [
-                    {
-                        name: 'fullscreen',
-                        action: () => {
-                            this.fullScreenService.toggleFullscreen(document.documentElement);
-                            setTimeout(() => this.dataGrid.instance.repaint(), 100);
-                        }
-                    }
-                ]
-            }
         ]);
+    }
+
+    repaintDataGrid(delay = 0) {
+        setTimeout(() => this.dataGrid.instance.repaint(), delay);
     }
 
     exportPipelineSelectedItemsFilter(dataSource) {

@@ -3,7 +3,7 @@ import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { AuditLogsComponent } from './audit-logs/audit-logs.component';
 import { HostDashboardComponent } from './dashboard/host-dashboard.component';
 import { EditionsComponent } from './editions/editions.component';
-import { LanguageTextsComponent } from './languages/language-texts.component';
+import { LanguageTextsComponent } from './languages/language-texts/language-texts.component';
 import { LanguagesComponent } from './languages/languages.component';
 import { MaintenanceComponent } from './maintenance/maintenance.component';
 import { OrganizationUnitsComponent } from './organization-units/organization-units.component';

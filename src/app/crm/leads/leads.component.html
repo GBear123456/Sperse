@@ -1,5 +1,13 @@
 <div [@routerTransition]>
-    <app-headline [config]="headlineConfig">
+    <app-headline [buttons]="headlineButtons"
+                  [showToggleCompactViewButton]="showPipeline || showDataGrid"
+                  [showReloadButton]="true"
+                  [showToggleToolbarButton]="true"
+                  [showToggleFullScreenButton]="true"
+                  (onReload)="refresh()"
+                  (onToggleToolbar)="toggleToolbar()"
+                  (onToggleCompactView)="toggleCompactView()"
+                  (onToggleFullScreen)="repaintDataGrid(100)">
         <dx-select-box
             accessKey="contactGroup"
             displayExpr="text"

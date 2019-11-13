@@ -12,7 +12,6 @@ import {
 import { Store, select } from '@ngrx/store';
 import { MatDialog } from '@angular/material/dialog';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
-import each from 'lodash/each';
 
 /** Application imports */
 import { CrmStore, PipelinesStoreSelectors } from '@app/crm/store';
@@ -30,7 +29,6 @@ import { FilterInputsComponent } from '@shared/filters/inputs/filter-inputs.comp
 import { FilterDropDownModel } from '@shared/filters/dropdown/filter-dropdown.model';
 import { FilterCheckBoxesComponent } from '@shared/filters/check-boxes/filter-check-boxes.component';
 import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-boxes.model';
-import { FilterHelpers } from '../shared/helpers/filter.helper';
 import { PipelineService } from '@app/shared/pipeline/pipeline.service';
 import { PipelineComponent } from '@app/shared/pipeline/pipeline.component';
 import { CreateInvoiceDialogComponent } from '../shared/create-invoice-dialog/create-invoice-dialog.component';
@@ -38,6 +36,7 @@ import { AppPermissions } from '@shared/AppPermissions';
 import { DataGridService } from '@app/shared/common/data-grid.service.ts/data-grid.service';
 import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 import { ContactsService } from '@app/crm/contacts/contacts.service';
+import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
 
 @Component({
     templateUrl: './orders.component.html',
@@ -75,19 +74,13 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     private filterChanged = false;
     masks = AppConsts.masks;
     private formatting = AppConsts.formatting;
-    public headlineConfig = {
-        names: [this.l('Orders')],
-        // onRefresh: this.processFilterInternal.bind(this),
-        toggleToolbar: this.toggleToolbar.bind(this),
-        icon: 'briefcase',
-        buttons: [
-            {
-                enabled: this.isGranted(AppPermissions.CRMOrdersInvoicesManage),
-                action: this.createInvoice.bind(this),
-                label: this.l('CreateInvoice')
-            }
-        ]
-    };
+    public headlineButtons: HeadlineButton[] = [
+        {
+            enabled: this.isGranted(AppPermissions.CRMOrdersInvoicesManage),
+            action: this.createInvoice.bind(this),
+            label: this.l('CreateInvoice')
+        }
+    ];
     permissions = AppPermissions;
     currency: string;
 
@@ -128,7 +121,6 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     }
 
     toggleToolbar() {
-        this._appService.toolbarToggle();
         setTimeout(() => this.dataGrid.instance.repaint(), 0);
         this._filtersService.fixed = false;
         this._filtersService.disable();

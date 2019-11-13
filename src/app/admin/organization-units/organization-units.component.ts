@@ -13,12 +13,5 @@ export class OrganizationUnitsComponent {
     @ViewChild('ouMembers') ouMembers: OrganizationUnitMembersComponent;
     @ViewChild('ouTree') ouTree: OrganizationTreeComponent;
 
-    public headlineConfig = {
-        names: [this.ls.l('OrganizationUnits')],
-        text: this.ls.l('OrganizationUnitsHeaderInfo'),
-        icon: 'rocket',
-        buttons: []
-    };
-
-    constructor(private ls: AppLocalizationService) {}
+    constructor(public ls: AppLocalizationService) {}
 }
