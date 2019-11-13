@@ -189,7 +189,8 @@
     "xlsx": "^0.13.2",
     "xml-js": "^1.6.9",
     "xmlhttprequest": "^1.8.0",
-    "zone.js": "^0.8.26"
+    "zone.js": "^0.8.26",
+    "uuid": "^3.0.1"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^0.7.0-rc.0",
