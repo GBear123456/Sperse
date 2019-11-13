@@ -17,7 +17,7 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 export class LocalizationResolver implements CanActivateChild {
     constructor(
         private session: AppSessionService,
-        private _LocalizationServiceProxy: LocalizationServiceProxy,
+        private localizationServiceProxy: LocalizationServiceProxy,
         private ls: AppLocalizationService
     ) {}
 
@@ -38,8 +38,13 @@ export class LocalizationResolver implements CanActivateChild {
         let cultureName = abp.localization.currentLanguage.name,
             source: any = abp.localization.sources.find(item => item.name == sourceName);
         return abp.localization.values[sourceName] ? of(true) :
-            this._LocalizationServiceProxy.getLocalizationSource(Number(this.session.tenantId),
-                sourceName, source ? source.version : undefined, cultureName, cultureName).pipe(
+            this.localizationServiceProxy.getLocalizationSource(
+                Number(this.session.tenantId),
+                sourceName,
+                source ? source.version : undefined,
+                cultureName,
+                cultureName
+            ).pipe(
                     take(1),
                     mergeMap(result => {
                         if (result)

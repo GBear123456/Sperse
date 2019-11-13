@@ -10,7 +10,8 @@ export class AppHttpInterceptor extends AbpHttpInterceptor {
     private _poolRequests = {};
     private readonly EXCEPTION_KEYS = [
         'CFO_BankAccounts_GetStats',
-        'CFO_Dashboard_GetCategorizationStatus'
+        'CFO_Dashboard_GetCategorizationStatus',
+        'Localization_GetLocalizationSource'
     ];
 
     constructor(public configuration: AppHttpConfiguration) {
@@ -80,7 +81,7 @@ export class AppHttpInterceptor extends AbpHttpInterceptor {
         return this.handleErrorResponse(error, new Subject());
     }
 
-    protected normalizeRequestHeaders(request: HttpRequest<any>):HttpRequest<any> {
+    protected normalizeRequestHeaders(request: HttpRequest<any>): HttpRequest<any> {
         if (this.getKeyFromUrl(request.url) == 'api_Localization_GetLocalizationSource') {
             let modifiedHeaders = new HttpHeaders();
 
@@ -93,7 +94,7 @@ export class AppHttpInterceptor extends AbpHttpInterceptor {
             return request.clone({
                 headers: modifiedHeaders
             });
-        } else 
+        } else
             return super.normalizeRequestHeaders(request);
     }
 
