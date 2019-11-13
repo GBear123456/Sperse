@@ -10,7 +10,8 @@ import { AppSessionService } from '@shared/common/session/app-session.service';
     templateUrl: './bank-code-layout.component.html',
     styleUrls: [
         './bank-code-dialog.component.less',
-        './bank-code-layout.component.less'
+        './bank-code-layout.component.less',
+        '../../../shared/aviano-sans-font.less'
     ]
 })
 export class BankCodeLayoutComponent implements OnInit {

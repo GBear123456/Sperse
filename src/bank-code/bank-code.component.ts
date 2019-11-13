@@ -8,7 +8,8 @@ import { AppComponentBase } from '@shared/common/app-component-base';
     templateUrl: './bank-code.component.html',
     styleUrls: [
         '../account/layouts/bank-code/bank-code-dialog.component.less',
-        './bank-code.component.less'
+        './bank-code.component.less',
+        '../shared/aviano-sans-font.less'
     ],
     host: {
         '(window:blur)': 'closeUserMenuPopup($event)'

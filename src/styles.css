@@ -19,24 +19,11 @@ body, html, *, .btn, .dx-texteditor-input, .dx-widget .dx-texteditor-input {
     font-family: Montserrat;
 }
 
-body.bank-code,
-body.bank-code *,
-body.bank-code .dx-texteditor-input,
-body.bank-code .dx-widget .dx-texteditor-input {
-    font-family: 'AvianoSans-Reg', sans-serif !important;
-    font-weight: normal;
-}
-
-body.bank-code h1, body.bank-code h2, body.bank-code h3, body.bank-code h4, body.bank-code h5, body.bank-code h6 {
-    font-family: 'AvianoSans-Bla', sans-serif !important;
-    font-weight: normal;
-}
-
 a {
     cursor: pointer;
 }
 
-[class^=dx]:not(i):not([class*=icon]):not(.dx-expand):not(.dx-theme-marker):not([class^=dx-sort]):not([class*=fa-]):not(.dx-header-filter):not(.dx-treeview-toggle-item-visibility):not(.dx-datagrid-group-opened):not(.dx-datagrid-group-closed):not(.dx-total):not(.tabular):not(.dx-texteditor-input):not([class*="fontName"]):not(.dx-placeholder):not(.dx-button-text):not(.dx-navigate-button):not(.bank-code *) {
+[class^=dx]:not(i):not([class*=icon]):not(.dx-expand):not(.dx-theme-marker):not([class^=dx-sort]):not([class*=fa-]):not(.dx-header-filter):not(.dx-treeview-toggle-item-visibility):not(.dx-datagrid-group-opened):not(.dx-datagrid-group-closed):not(.dx-total):not(.tabular):not(.dx-texteditor-input):not([class*="fontName"]):not(.dx-placeholder):not(.dx-button-text):not(.dx-navigate-button) {
     font-family: Montserrat !important;
 }
 
