@@ -83,10 +83,6 @@
     }
 
     ::ng-deep ckeditor {
-        & > div {
-            padding-top: 25px;
-        }
-
         .cke_chrome {
             border: none!important;
             .cke_top {
@@ -121,6 +117,15 @@
             display: block;
             position: relative;
             white-space: nowrap;
+    
+            &.ckeditor {
+                & > p {
+                    font-size: 12px;
+                    color: #8a969b;
+                    margin: 10px 0px;
+                }
+            }
+
             label {
                 line-height: 38px;
                 border-bottom: 1px solid #dfdfdf;
@@ -131,7 +136,7 @@
                 &.from {
                     opacity: 0.5;
                 }
-            }
+            }            
 
             .bcc-links {  
                 position: absolute;

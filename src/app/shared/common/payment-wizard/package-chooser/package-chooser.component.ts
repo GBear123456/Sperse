@@ -100,6 +100,7 @@ export class PackageChooserComponent implements OnInit {
 
     ngOnInit() {
         forkJoin([
+            this.localizationResolver.checkLoadLocalization(AppConsts.localization.defaultLocalizationSourceName),
             this.localizationResolver.checkLoadLocalization(AppConsts.localization.CFOLocalizationSourceName),
             this.localizationResolver.checkLoadLocalization(AppConsts.localization.CRMLocalizationSourceName)
         ]).subscribe(() => {

@@ -116,6 +116,9 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
     private targetEntity: BehaviorSubject<TargetDirectionEnum> = new BehaviorSubject<TargetDirectionEnum>(TargetDirectionEnum.Current);
     public targetEntity$: Observable<TargetDirectionEnum> = this.targetEntity.asObservable();
 
+    isCommunicationHistoryAllowed = false;
+    isSendSmsAndEmailAllowed = false;
+
     constructor(
         injector: Injector,
         private dialog: MatDialog,
@@ -335,6 +338,9 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
                 return (contact.id == contactId ? result.personContactInfo : contact);
             });
         }
+
+        this.isCommunicationHistoryAllowed = this.contactsService.checkCGPermission(this.contactGroup, 'ViewCommunicationHistory');
+        this.isSendSmsAndEmailAllowed = this.contactsService.checkCGPermission(this.contactGroup, 'ViewCommunicationHistory.SendSMSAndEmail');
 
         this.ratingId = result.ratingId;
         this.primaryContact = result.personContactInfo;

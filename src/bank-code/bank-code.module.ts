@@ -19,12 +19,24 @@ import { BankCodeLayoutService } from './shared/layout/bank-code-layout.service'
 import { UserManagementListComponent } from '@shared/common/layout/user-management-list/user-management-list.component';
 import { DashboardComponent } from '@root/bank-code/dashboard/dashboard.component';
 import { ResourcesComponent } from '@root/bank-code/resources/resources.component';
+import { WelcomeVideoComponent } from './dashboard/welcome-video/welcome-video.component';
+import { AnnouncementsComponent } from './dashboard/announcements/announcements.component';
+import { FooterComponent } from './shared/footer/footer.component';
+import { TotalCodesCrackedComponent } from './dashboard/total-codes-cracked/total-codes-cracked.component';
+import { GoalsCrackedComponent } from './dashboard/goals-cracked/goals-cracked.component';
+import { CountersComponent } from './dashboard/counters/counters.component';
 
 @NgModule({
     declarations: [
         DashboardComponent,
         BankCodeComponent,
-        ResourcesComponent
+        ResourcesComponent,
+        WelcomeVideoComponent,
+        AnnouncementsComponent,
+        FooterComponent,
+        TotalCodesCrackedComponent,
+        GoalsCrackedComponent,
+        CountersComponent
     ],
     imports: [
         ngCommon.CommonModule,

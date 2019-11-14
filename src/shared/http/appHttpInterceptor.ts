@@ -14,7 +14,8 @@ export class AppHttpInterceptor extends AbpHttpInterceptor {
         'CRM_Country_GetCountryStates',
         'odata_LeadSlice',
         'odata_CustomerSlice',
-        'odata_PartnerSlice'
+        'odata_PartnerSlice',
+        'Localization_GetLocalizationSource'
     ];
 
     constructor(public configuration: AppHttpConfiguration) {
@@ -83,7 +84,7 @@ export class AppHttpInterceptor extends AbpHttpInterceptor {
         return this.handleErrorResponse(error, new Subject());
     }
 
-    protected normalizeRequestHeaders(request: HttpRequest<any>):HttpRequest<any> {
+    protected normalizeRequestHeaders(request: HttpRequest<any>): HttpRequest<any> {
         if (this.getKeyFromUrl(request.url) == 'api_Localization_GetLocalizationSource') {
             let modifiedHeaders = new HttpHeaders();
 
@@ -96,7 +97,7 @@ export class AppHttpInterceptor extends AbpHttpInterceptor {
             return request.clone({
                 headers: modifiedHeaders
             });
-        } else 
+        } else
             return super.normalizeRequestHeaders(request);
     }
 

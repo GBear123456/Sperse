@@ -5,7 +5,7 @@ import { HttpParams } from '@angular/common/http';
 import { ActivatedRoute, Router, UrlSegment } from '@angular/router';
 
 /** Third party imports */
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import camelCase from 'lodash/camelCase';
 import kebabCase from 'lodash/kebabCase';
 import capitalize from 'lodash/capitalize';
@@ -14,6 +14,7 @@ import upperFirst from 'lodash/upperFirst';
 import { ReplaySubject, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import * as moment from 'moment';
+import { v4 as UUID } from 'uuid';
 
 /** Application imports */
 import {
@@ -212,19 +213,23 @@ export class OffersService {
 
     applyOffer(offer: OfferDto, isCreditCard = false, checkSubmitDateAfterApply = true, redirectUrlText = 'GetMyRate') {
         const linkIsDirect = !!offer.redirectUrl;
-        let redirectUrl = !linkIsDirect ? offer.redirectUrl : offer.redirectUrl + '&' + this.memberInfoApplyOfferParams;
+        const xref = UUID();
+        let redirectUrl = !linkIsDirect
+            ? null
+            : offer.redirectUrl + '&' + this.memberInfoApplyOfferParams + '&x_lsclickid=' + xref;
         let submitRequestInput = SubmitRequestInput.fromJS({
             campaignId: offer.campaignId,
             systemType: OfferProviderType.EPCVIP,
+            xref: xref,
             ...this.memberInfo
         });
         const modalData = {
             processingSteps: [null, null, null, null],
-            completeDelays: [ 1000, 1000, 1000, null ],
+            completeDelays: linkIsDirect ? [ 250, 250, 250, 250 ] : [ 1000, 1000, 1000, null ],
             delayMessages: linkIsDirect ? null : <any>[ null, null, null, this.ls.l('Offers_TheNextStepWillTake') ],
             title: linkIsDirect ? 'Offers_ConnectingToPartners' : 'Offers_ProcessingLoanRequest',
             subtitle: linkIsDirect ? 'Offers_NewWindowWillBeOpen' : 'Offers_WaitLoanRequestProcessing',
-            redirectUrl: null,
+            redirectUrl: redirectUrl,
             redirectUrlText: this.ls.l(redirectUrlText),
             logoUrl: offer.campaignProviderType === CampaignProviderType.CreditLand
                 ? this.creditLandLogoUrl
@@ -249,12 +254,7 @@ export class OffersService {
             }).afterClosed().subscribe((output: SubmitApplicationOutput)  => {
                 this.document.body.classList.remove('overflow-hidden');
                 if (output) {
-                    const applyOfferDialog = this.dialog.open(ApplyOfferDialogComponent, {
-                        width: '577px',
-                        height: '330px',
-                        panelClass: 'apply-offer-dialog',
-                        data: modalData
-                    });
+                    const applyOfferDialog = this.openOfferDialog(modalData);
                     this.loadMemberInfo();
                     if (output.redirectUrl) {
                         !window.open(output.redirectUrl, '_blank')
@@ -281,39 +281,27 @@ export class OffersService {
                 }).afterClosed().subscribe((output: SubmitApplicationOutput)  => {
                     this.document.body.classList.remove('overflow-hidden');
                     if (output) {
-                        const applyOfferDialog = this.dialog.open(ApplyOfferDialogComponent, {
-                            width: '577px',
-                            height: '330px',
-                            panelClass: 'apply-offer-dialog',
-                            data: modalData
-                        });
+                        this.openOfferDialog(modalData);
                         this.loadMemberInfo();
                         submitRequestInput.redirectUrl = redirectUrl;
-                        this.offerServiceProxy.submitRequest(submitRequestInput).subscribe(
-                            () => applyOfferDialog.close()
-                        );
+                        this.offerServiceProxy.submitRequest(submitRequestInput).subscribe();
                     }
                 });
             } else {
+                window.open(redirectUrl, '_blank');
                 submitRequestInput.redirectUrl = redirectUrl;
-                const applyOfferDialog = this.dialog.open(ApplyOfferDialogComponent, {
-                    width: '577px',
-                    height: '330px',
-                    panelClass: 'apply-offer-dialog',
-                    data: modalData
-                });
-                this.offerServiceProxy.submitRequest(submitRequestInput)
-                    .subscribe(
-                        (output: SubmitApplicationOutput) => {
-                            if (output.redirectUrl) {
-                                !window.open(output.redirectUrl, '_blank')
-                                    ? applyOfferDialog.componentInstance.redirectUrl = output.redirectUrl
-                                    : applyOfferDialog.close();
-                            }
-                        }
-                    );
+                this.offerServiceProxy.submitRequest(submitRequestInput).subscribe();
             }
         }
+    }
+
+    private openOfferDialog(modalData: any): MatDialogRef<ApplyOfferDialogComponent> {
+        return this.dialog.open(ApplyOfferDialogComponent, {
+            width: '577px',
+            height: '330px',
+            panelClass: 'apply-offer-dialog',
+            data: modalData
+        });
     }
 
     getCreditScoreObject(creditScore: CreditScoreRating): CreditScoreInterface {

@@ -1,5 +1,5 @@
 <div class="packageHeader">
-    <ng-container *ngIf="this.packagesConfig$ | async">
+    <ng-container *ngIf="packagesConfig$ | async">
         <ng-container *ngIf="packages && packages.length; else nopackages">
             <h2 class="title">{{ widgettitle }}</h2>
             <h3 class="subtitle">{{ subtitle }}</h3>
@@ -34,7 +34,7 @@
         </ng-template>
     </ng-container>
 </div>
-<ng-container *ngIf="this.packagesConfig$ | async">
+<ng-container *ngIf="packagesConfig$ | async">
     <ng-container *ngIf="packages && packages.length; else nopackages">
         <div class="packages">
             <ng-container *ngFor="let package of packages; let i = index;">

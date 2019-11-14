@@ -13,9 +13,10 @@
             <div class="custom-search" *ngIf="customSearchEnabled">
                 <div class="dx-field">
                     <div class="dx-field-value w-100">
-                        <dx-text-box [showClearButton]="true"
-                                     (onInput)="getNewListData($event, title)"
-                                     placeholder="{{l('Search')}}">
+                        <dx-text-box #customSearch
+                            [showClearButton]="true"
+                            (onInput)="getNewListData($event, title)"
+                            placeholder="{{l('Search')}}">
                         </dx-text-box>
                     </div>
                 </div>

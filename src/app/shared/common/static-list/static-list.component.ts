@@ -3,6 +3,8 @@ import { Component, Injector, Input, EventEmitter, Output, HostBinding, ViewChil
 
 /** Third party imports */
 import { DxListComponent } from 'devextreme-angular/ui/list';
+import { DxTooltipComponent } from 'devextreme-angular/ui/tooltip';
+import { DxTextBoxComponent } from 'devextreme-angular/ui/text-box';
 import startCase from 'lodash/startCase';
 import * as _ from 'underscore';
 
@@ -18,6 +20,8 @@ import { AppPermissions } from '@shared/AppPermissions';
 })
 export class StaticListComponent extends AppComponentBase {
     @ViewChild('staticList') dxList: DxListComponent;
+    @ViewChild('customSearch') dxSearch: DxTextBoxComponent;
+    @ViewChild(DxTooltipComponent) dxTooltip: DxTooltipComponent;
     @Output() onItemSelected: EventEmitter<any> = new EventEmitter();
     @Output() onListFiltered: EventEmitter<any> = new EventEmitter();
     @Output() onOptionChanged: EventEmitter<any> = new EventEmitter();

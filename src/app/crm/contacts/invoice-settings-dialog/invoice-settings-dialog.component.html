@@ -1,4 +1,4 @@
-<email-template-dialog (onSave)="save()" (onTemplateChange)="templateChanged($event)" [templateEditMode]="true">
+<email-template-dialog (onSave)="save()" (onTemplateChange)="templateChanged($event)" [templateEditMode]="true" [templateNote]="ls.l('InvoiceEmail_SupportedTags')">
     <ng-container templateSettings>
         <div class="settings-wrapper">
             <div class="left-side">
@@ -29,7 +29,7 @@
                 </dx-select-box>
                 <dx-text-area 
                     height="135px"
-                    [placeholder]="ls.l('Note')"
+                    [placeholder]="ls.l('Invoice_DefaultNote')"
                     [(value)]="settings.defaultNote">
                 </dx-text-area>
                 <dx-check-box

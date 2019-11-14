@@ -45,6 +45,7 @@ export class EmailTemplateDialogComponent implements OnInit {
         removeButtons: 'Anchor,Subscript,Superscript,Source'
     };
 
+    @Input() templateNote = '';
     @Input() templateEditMode = false;
     @Output() onSave: EventEmitter<any> = new EventEmitter<any>();
     @Output() onTemplateChange: EventEmitter<any> = new EventEmitter<any>();
