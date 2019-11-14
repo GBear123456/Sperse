@@ -255,6 +255,7 @@ export class ContactsService {
 
     showInvoiceSettingsDialog() {
         return this.dialog.open(InvoiceSettingsDialogComponent, {
+            id: 'permanent',
             panelClass: 'slider',
             disableClose: true,
             closeOnNavigation: false,
