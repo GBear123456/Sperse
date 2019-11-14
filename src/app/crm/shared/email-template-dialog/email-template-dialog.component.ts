@@ -33,16 +33,15 @@ export class EmailTemplateDialogComponent implements OnInit {
 
     ckConfig = {
         toolbarGroups: [
-            { name: 'document', groups: [ 'mode', 'document', 'doctools' ] },
-            { name: 'editing', groups: [ 'find', 'selection', 'editing' ] },
-            { name: 'forms', groups: [ 'forms' ] },
+            { name: 'document', groups: [ 'mode' ] },
             { name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ] },
-            { name: 'paragraph', groups: [ 'list', 'indent', 'blocks', 'align', 'bidi', 'paragraph' ] },
+            { name: 'links', groups: [ 'Link', 'Unlink' ] },
+            { name: 'paragraph', groups: [ 'list', 'align' ] },
             { name: 'styles', groups: [ 'styles' ] },
-            { name: 'colors', groups: [ 'colors' ] },
+            { name: 'other', groups: [ 'simplebutton' ] },
             { name: 'clipboard', groups: [ 'clipboard', 'undo' ] }
         ],
-        removeButtons: 'Anchor,Subscript,Superscript,Source'
+        removeButtons: 'Anchor,Subscript,Superscript'
     };
 
     @Input() templateNote = '';
