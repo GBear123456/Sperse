@@ -4,6 +4,7 @@ import { AppPermissions } from '@shared/AppPermissions';
 export class CfoPortalConfig {
     code = 'CFOP';
     name = 'CFO Portal';
+    displayName = 'Portal';
     requiredFeature = AppFeatures.CFOPartner;
     requiredPermission = AppPermissions.CFOMemberAccess;
     localizationSource = 'CFO';

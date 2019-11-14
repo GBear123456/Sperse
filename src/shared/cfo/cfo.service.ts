@@ -41,7 +41,7 @@ export class CFOService extends CFOServiceBase {
                     if (this.hasStaticInstance) {
                         this.initialized = false;
                         this.hasStaticInstance = false;
-                        this.instanceType = undefined;
+                        //this.instanceType = undefined;
                     }
                     if (this.initialized === undefined) {
                         this.updateMenuItems(true);
@@ -60,6 +60,12 @@ export class CFOService extends CFOServiceBase {
                         this.instanceChangeProcess().subscribe();
                     } else
                         this.updateMenuItems();
+            }
+        });
+        this.instanceChanged$.subscribe((instance) => {
+            if (instance) {
+                this.instanceType = instance.instanceType;
+                this.instanceId = instance.instanceId;
             }
         });
     }

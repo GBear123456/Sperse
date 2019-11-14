@@ -1,7 +1,7 @@
 <div class="platform-select-component" *ngIf="layoutService.showPlatformSelectMenu && activeModuleCount > 1">
     <dx-drop-down-box
         [width]="width"
-        [value]="module"
+        [value]="displayName"
         (onInitialized)="onDropDownInit($event)">
         <div *dxTemplate="let data of 'content'" class="platform-select-wrapper">
             <div class="top-row">
