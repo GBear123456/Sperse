@@ -5,7 +5,6 @@ import { BehaviorSubject, Observable } from 'rxjs';
 export class FullScreenService {
     isFullScreenMode: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
     isFullScreenMode$: Observable<boolean> = this.isFullScreenMode.asObservable();
-    constructor() {}
 
     private openFullscreen(element: any) {
         let method = element.requestFullScreen || element.webkitRequestFullScreen

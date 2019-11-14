@@ -3,13 +3,17 @@ import {
     ChangeDetectionStrategy,
     Component,
     EventEmitter,
+    HostBinding,
     HostListener,
     Input,
-    Output
+    Output,
+    OnInit,
+    OnDestroy
 } from '@angular/core';
 
 /** Third party imports */
-import { map } from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import { map, takeUntil } from 'rxjs/operators';
 
 /** Application imports */
 import { HeadLineConfigModel } from './headline.model';
@@ -17,15 +21,16 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 import { AppService } from '@app/app.service';
 import { FullScreenService } from '@shared/common/fullscreen/fullscreen.service';
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
-import { Observable } from '@node_modules/rxjs';
+import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 
 @Component({
     selector: 'app-headline',
     templateUrl: './headline.component.html',
     styleUrls: ['./headline.component.less'],
+    providers: [ LifecycleSubjectsService ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class HeadLineComponent {
+export class HeadLineComponent implements OnInit, OnDestroy {
     @Input() reloadIsNecessary = false;
     @Input() names: string[];
     @Input() icon: string;
@@ -40,6 +45,7 @@ export class HeadLineComponent {
     @Output() onToggleToolbar: EventEmitter<null> = new EventEmitter<null>();
     @Output() onToggleCompactView: EventEmitter<null> = new EventEmitter<null>();
     @Output() onToggleFullScreen: EventEmitter<null> = new EventEmitter<null>();
+    @HostBinding('class.fullscreen') isFullScreenMode = false;
     data: HeadLineConfigModel;
     showHeadlineButtons = false;
     toolbarMenuToggleButtonText$: Observable<string> = this.appService.toolbarIsHidden$.pipe(
@@ -55,8 +61,17 @@ export class HeadLineComponent {
     constructor(
         private appService: AppService,
         private fullScreenService: FullScreenService,
+        private lifecycleService: LifecycleSubjectsService,
         public ls: AppLocalizationService
     ) {}
+
+    ngOnInit() {
+        this.fullScreenService.isFullScreenMode$
+            .pipe(takeUntil(this.lifecycleService.destroy$))
+            .subscribe((isFullScreenMode: boolean) => {
+                this.isFullScreenMode = isFullScreenMode;
+            });
+    }
 
     @HostListener('document:click', ['$event'])
     onDocumentClick(event) {
@@ -86,5 +101,9 @@ export class HeadLineComponent {
     toggleFullScreen() {
         this.fullScreenService.toggleFullscreen(document.documentElement);
         this.onToggleFullScreen.emit();
+    }
+
+    ngOnDestroy() {
+        this.lifecycleService.destroy.next();
     }
 }
