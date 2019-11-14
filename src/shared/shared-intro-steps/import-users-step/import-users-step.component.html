@@ -12,14 +12,14 @@
                         <dx-text-box [(value)]="user.email"
                                      placeholder="Email"
                                      (onKeyPress)="onEmailKeyPress(i)"
-                                     (onValueChanged)="validateUsers(true);"
+                                     (onValueChanged)="validateUsers(true)"
                                      class="col-4">
                             <dx-validator>
                                 <dxi-validation-rule type="custom" [validationCallback]="validateInviteUserRow" [reevaluate]="true"
-                                                     message="{{l('EmailIsRequired')}}."></dxi-validation-rule>
-                                <dxi-validation-rule type="pattern" [pattern]="emailRegEx" message="{{l('EmailIsNotValid')}}."></dxi-validation-rule>
+                                                     message="{{ls.l('EmailIsRequired')}}."></dxi-validation-rule>
+                                <dxi-validation-rule type="pattern" [pattern]="emailRegEx" message="{{ls.l('EmailIsNotValid')}}."></dxi-validation-rule>
                                 <dxi-validation-rule type="custom" [validationCallback]="validateDuplicatedEmails" [reevaluate]="true"
-                                                     message="{{l('EmailIsDuplicated')}}."></dxi-validation-rule>
+                                                     message="{{ls.l('EmailIsDuplicated')}}."></dxi-validation-rule>
                                 <dxi-validation-rule type="stringLength" [max]="64"></dxi-validation-rule>
                             </dx-validator>
                         </dx-text-box>
@@ -29,9 +29,9 @@
                                      class="col-4">
                             <dx-validator>
                                 <dxi-validation-rule type="custom" [validationCallback]="validateInviteUserRow" [reevaluate]="true"
-                                                     message="{{l('NameIsRequired')}}."></dxi-validation-rule>
+                                                     message="{{ls.l('NameIsRequired')}}."></dxi-validation-rule>
                                 <dxi-validation-rule type="custom" [validationCallback]="validateFullName"
-                                                     message="{{l('NameIsRequired')}}."></dxi-validation-rule>
+                                                     message="{{ls.l('NameIsRequired')}}."></dxi-validation-rule>
                                 <dxi-validation-rule type="stringLength" [max]="32"></dxi-validation-rule>
                             </dx-validator>
                         </dx-text-box>
@@ -45,14 +45,14 @@
                                     [maxDisplayedTags]="0"
                                     [showMultiTagOnly]="true"
                                     (onMultiTagPreparing)="onMultiTagPreparing($event)"
-                                    (onValueChanged)="validateInviteUserGroup(i)"
+                                    (onValueChanged)="validateInviteUserGroup($event, i)"
                                     class="col-4">
                             <div *dxTemplate="let tag of 'customTagTemplate'">
                                 <span class="tag-value">{{tag}}</span>
                             </div>
                             <dx-validator>
                                 <dxi-validation-rule type="custom" [validationCallback]="validateInviteUserRow" [reevaluate]="true"
-                                                     message="{{l('RequiredField', l('Role'))}}"></dxi-validation-rule>
+                                                     [message]="ls.l('RequiredField', ls.l('Role'))"></dxi-validation-rule>
                             </dx-validator>
                         </dx-tag-box>
                         <div class="remove-import-user" (click)="removeImportUser(i)"><i class="fa fa-minus"></i></div>

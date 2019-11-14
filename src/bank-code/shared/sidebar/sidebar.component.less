@@ -11,6 +11,10 @@
         padding-left: 0;
         list-style: none;
         li {
+            + li {
+                margin-top: 10px;
+            }
+            
             a {
                 text-transform: uppercase;
                 font-size: 20px;
@@ -19,10 +23,13 @@
                 padding: 3px 10px 3px 15px;
                 line-height: 50px;
                 display: inline-flex;
+                width: 100%;
+                
                 span {
                     font-weight: 700;
                     margin-right: 9px;
                 }
+                
                 &.active,
                 &:hover {
                     text-decoration: none;
