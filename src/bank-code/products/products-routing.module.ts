@@ -17,6 +17,11 @@ import { BankGearComponent } from '@root/bank-code/products/bank-gear/bank-gear.
                 component: ProductsComponent,
                 children: [
                     {
+                        path: '',
+                        redirectTo: 'codebreaker-ai',
+                        pathMatch: 'full',
+                    },
+                    {
                         path: 'codebreaker-ai',
                         component: CodeBreakerAiComponent
                     },
