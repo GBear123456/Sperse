@@ -34,47 +34,47 @@ export class OperationsComponent extends AppComponentBase implements OnInit, OnD
     selectedGroupByIndex = 0;
 
     constructor(injector: Injector,
-        private _filtersService: FiltersService,
-        private _appService: AppService,
-        private _cfoService: CFOService,
-        private _bankAccountsService: BankAccountsService,
-        private _dialog: MatDialog
+        private filtersService: FiltersService,
+        private appService: AppService,
+        private cfoService: CFOService,
+        private bankAccountsService: BankAccountsService,
+        private dialog: MatDialog
     ) {
         super(injector);
     }
 
     ngOnInit() {
-        this._bankAccountsService.accountsAmountWithApply$.subscribe( amount => {
+        this.bankAccountsService.accountsAmountWithApply$.subscribe( amount => {
             this.bankAccountCount = amount;
         });
     }
 
     initToolbarConfig() {
-        this._appService.updateToolbar([
+        this.appService.updateToolbar([
             {
                 location: 'before',
                 items: [
                     {
                         name: 'filters',
-                        visible: !this._cfoService.hasStaticInstance,
+                        visible: !this.cfoService.hasStaticInstance,
                         action: () => {
                             setTimeout(this.repaint.bind(this), 1000);
-                            this._filtersService.fixed = !this._filtersService.fixed;
+                            this.filtersService.fixed = !this.filtersService.fixed;
                         },
                         options: {
                             checkPressed: () => {
-                                return this._filtersService.fixed;
+                                return this.filtersService.fixed;
                             },
                             mouseover: () => {
-                                this._filtersService.enable();
+                                this.filtersService.enable();
                             },
                             mouseout: () => {
-                                if (!this._filtersService.fixed)
-                                    this._filtersService.disable();
+                                if (!this.filtersService.fixed)
+                                    this.filtersService.disable();
                             }
                         },
                         attr: {
-                            'filter-selected': this._filtersService.hasFilterSelected
+                            'filter-selected': this.filtersService.hasFilterSelected
                         }
                     }
                 ]
@@ -205,11 +205,11 @@ export class OperationsComponent extends AppComponentBase implements OnInit, OnD
                 items: [
                     {
                         name: 'comments',
-                        visible: !this._cfoService.hasStaticInstance,
+                        visible: !this.cfoService.hasStaticInstance,
                     },
                     {
                         name: 'fullscreen',
-                        visible: !this._cfoService.hasStaticInstance,
+                        visible: !this.cfoService.hasStaticInstance,
                         action: this.fullscreen.bind(this)
                     }
                 ]
@@ -252,7 +252,7 @@ export class OperationsComponent extends AppComponentBase implements OnInit, OnD
     }
 
     openBankAccountsSelectDialog() {
-        this._dialog.open(BankAccountsSelectDialogComponent, {
+        this.dialog.open(BankAccountsSelectDialogComponent, {
             panelClass: 'slider',
         }).componentInstance.onApply.subscribe(() => {
             this.filterByBankAccounts();
@@ -260,6 +260,6 @@ export class OperationsComponent extends AppComponentBase implements OnInit, OnD
     }
 
     ngOnDestroy() {
-        this._appService.updateToolbar(null);
+        this.appService.updateToolbar(null);
     }
 }

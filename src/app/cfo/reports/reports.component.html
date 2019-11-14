@@ -1,7 +1,8 @@
 <div>
     <app-headline [names]="[ l('REPORTS') ]"
                   iconSrc="./assets/common/icons/credit-card-icon.svg"
-                  [buttons]="headlineButtons">
+                  [buttons]="headlineButtons"
+                  [showToggleToolbarButton]="true">
         <synch-progress class="synch-progress"></synch-progress>
     </app-headline>
     <app-toolbar [config]="toolbarConfig"></app-toolbar>

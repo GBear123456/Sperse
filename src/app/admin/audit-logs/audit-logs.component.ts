@@ -8,7 +8,7 @@ import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { takeUntil } from 'rxjs/operators';
 
 /** Application imports */
-import { AuditLogDetailModalComponent } from '@app/admin/audit-logs/audit-log-detail-modal.component';
+import { AuditLogDetailModalComponent } from '@app/admin/audit-logs/audit-log-detail/audit-log-detail-modal.component';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AuditLogListDto, AuditLogServiceProxy } from '@shared/service-proxies/service-proxies';

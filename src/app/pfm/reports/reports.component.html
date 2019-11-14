@@ -1,6 +1,7 @@
 <div>
     <app-headline [names]="[ l('Reports') ]"
-                  [buttons]="headlineButtons">
+                  [buttons]="headlineButtons"
+                  [showToggleToolbarButton]="true">
         <dx-select-box *ngIf="section == 'clicks'"
             [items]="years"
             [(value)]="clickStatsYear"

@@ -22,7 +22,7 @@ import {
     RoleEditDto,
     RoleServiceProxy
 } from '@shared/service-proxies/service-proxies';
-import { PermissionTreeComponent } from '../shared/permission-tree.component';
+import { PermissionTreeComponent } from '../../shared/permission-tree.component';
 import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { NotifyService } from '@abp/notify/notify.service';

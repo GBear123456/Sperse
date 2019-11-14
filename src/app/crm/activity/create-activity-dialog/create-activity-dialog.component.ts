@@ -15,8 +15,6 @@ import { DialogService } from '@app/shared/common/dialogs/dialog.service';
 import {
     ActivityServiceProxy,
     CustomerServiceProxy,
-    LeadServiceProxy,
-    OrderServiceProxy,
     ActivityType,
     CreateActivityDto,
     UpdateActivityDto
@@ -41,8 +39,6 @@ import { AppPermissions } from '@shared/AppPermissions';
         ActivityServiceProxy,
         CacheHelper,
         CustomerServiceProxy,
-        LeadServiceProxy,
-        OrderServiceProxy,
         DialogService
     ],
     changeDetection: ChangeDetectionStrategy.OnPush
@@ -75,7 +71,10 @@ export class CreateActivityDialogComponent implements OnInit {
     clients: any = [];
 
     saveButtonId = 'saveActivityOptions';
-    saveContextMenuItems = [];
+    saveContextMenuItems = [
+        { text: this.ls.l('SaveAndAddNew'), selected: false },
+        { text: this.ls.l('SaveAndClose'), selected: false }
+    ];
 
     toolbarConfig = [];
     isAllDay = false;
@@ -104,12 +103,9 @@ export class CreateActivityDialogComponent implements OnInit {
     assignedUsersSelector = select(ActivityAssignedUsersStoreSelectors.getAssignedUsers);
 
     constructor(
-        private _cacheService: CacheService,
-        private _activityProxy: ActivityServiceProxy,
+        private cacheService: CacheService,
+        private activityProxy: ActivityServiceProxy,
         private dialogService: DialogService,
-        private ClientsProxy: CustomerServiceProxy,
-        private LeadsProxy: LeadServiceProxy,
-        private OrdersProxy: OrderServiceProxy,
         private cacheHelper: CacheHelper,
         private appSession: AppSessionService,
         private notifyService: NotifyService,
@@ -120,11 +116,6 @@ export class CreateActivityDialogComponent implements OnInit {
         public ls: AppLocalizationService,
         @Inject(MAT_DIALOG_DATA) public data: any
     ) {
-        this.saveContextMenuItems = [
-            { text: this.ls.l('SaveAndAddNew'), selected: false },
-            { text: this.ls.l('SaveAndClose'), selected: false }
-        ];
-
         if (this.data.appointment.Id) {
             this.isAllDay = Boolean(this.data.appointment.AllDay);
             if (this.data.appointment.StartDate)
@@ -132,7 +123,7 @@ export class CreateActivityDialogComponent implements OnInit {
             if (this.data.appointment.EndDate)
                 this.endDate = this.getDateWithTimezone(this.data.appointment.EndDate);
 
-            this._activityProxy.get(this.data.appointment.Id).subscribe((res) => {
+            this.activityProxy.get(this.data.appointment.Id).subscribe((res) => {
                 this.data.appointment.AssignedUserIds = res.assignedUserIds || [];
             });
         } else {
@@ -317,8 +308,8 @@ export class CreateActivityDialogComponent implements OnInit {
     saveOptionsInit() {
         let cacheKey = this.cacheHelper.getCacheKey(this.SAVE_OPTION_CACHE_KEY, this.constructor.name),
             selectedIndex = this.SAVE_OPTION_DEFAULT;
-        if (this._cacheService.exists(cacheKey))
-            selectedIndex = this._cacheService.get(cacheKey);
+        if (this.cacheService.exists(cacheKey))
+            selectedIndex = this.cacheService.get(cacheKey);
         this.saveContextMenuItems[selectedIndex].selected = true;
         this.buttons[0].title = this.saveContextMenuItems[selectedIndex].text;
         this.changeDetectorRef.detectChanges();
@@ -326,7 +317,7 @@ export class CreateActivityDialogComponent implements OnInit {
 
     updateSaveOption(option) {
         this.buttons[0].title = option.text;
-        this._cacheService.set(this.cacheHelper.getCacheKey(this.SAVE_OPTION_CACHE_KEY, this.constructor.name),
+        this.cacheService.set(this.cacheHelper.getCacheKey(this.SAVE_OPTION_CACHE_KEY, this.constructor.name),
             this.saveContextMenuItems.findIndex((elm) => elm.text == option.text).toString());
         this.changeDetectorRef.detectChanges();
     }
@@ -364,13 +355,13 @@ export class CreateActivityDialogComponent implements OnInit {
     }
 
     createAppointment() {
-        return this._activityProxy.create(
+        return this.activityProxy.create(
             CreateActivityDto.fromJS(this.getEntityData())
         );
     }
 
     updateAppointment() {
-        return this._activityProxy.update(
+        return this.activityProxy.update(
             UpdateActivityDto.fromJS(this.getEntityData(this.data.appointment.Id))
         );
     }

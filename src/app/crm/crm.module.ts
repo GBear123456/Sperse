@@ -57,7 +57,7 @@ import { DashboardMenuComponent } from './dashboard/left-menu/left-menu.componen
 import { LeadsComponent } from './leads/leads.component';
 import { OrdersComponent } from './orders/orders.component';
 import { ImportLeadsComponent } from './import-leads/import-leads.component';
-import { ImportListComponent } from './import-leads/import-list.component';
+import { ImportListComponent } from './import-leads/import-list/import-list.component';
 import { ImportLeadsService } from './import-leads/import-leads.service';
 import { ActivityComponent } from './activity/activity.component';
 import { CreateActivityDialogComponent } from './activity/create-activity-dialog/create-activity-dialog.component';

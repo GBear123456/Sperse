@@ -88,9 +88,9 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         public dialog: MatDialog,
         private invoicesService: InvoicesService,
         private contactsService: ContactsService,
-        private _filtersService: FiltersService,
-        private _appService: AppService,
-        private _pipelineService: PipelineService,
+        private filtersService: FiltersService,
+        private appService: AppService,
+        private pipelineService: PipelineService,
         private store$: Store<CrmStore.State>
     ) {
         super(injector);
@@ -122,8 +122,8 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
 
     toggleToolbar() {
         setTimeout(() => this.dataGrid.instance.repaint(), 0);
-        this._filtersService.fixed = false;
-        this._filtersService.disable();
+        this.filtersService.fixed = false;
+        this.filtersService.disable();
         this.initToolbarConfig();
     }
 
@@ -163,7 +163,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     }
 
     toggleDataLayout(dataLayoutType: DataLayoutType) {
-        this._pipelineService.toggleDataLayoutType(dataLayoutType);
+        this.pipelineService.toggleDataLayoutType(dataLayoutType);
         this.showPipeline = dataLayoutType == DataLayoutType.Pipeline;
         this.dataLayoutType = dataLayoutType;
         this.initDataSource();
@@ -182,10 +182,10 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
 
     initFilterConfig(): void {
         if (this.filters) {
-            this._filtersService.setup(this.filters);
-            this._filtersService.checkIfAnySelected();
+            this.filtersService.setup(this.filters);
+            this.filtersService.checkIfAnySelected();
         } else {
-            this._filtersService.setup(this.filters = [
+            this.filtersService.setup(this.filters = [
                 new FilterModel({
                     component: FilterCalendarComponent,
                     operator: { from: 'ge', to: 'le' },
@@ -313,7 +313,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                 })
             ]);
         }
-        this._filtersService.apply(() => {
+        this.filtersService.apply(() => {
             this.selectedOrderKeys = [];
             this.filterChanged = true;
             this.initToolbarConfig();
@@ -324,7 +324,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     initToolbarConfig() {
         if (this.componentIsActivated) {
             this.manageDisabled = !this.isGranted(AppPermissions.CRMOrdersManage);
-            this._appService.updateToolbar([
+            this.appService.updateToolbar([
                 {
                     location: 'before', items: [
                         {
@@ -333,22 +333,22 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                                 setTimeout(() => {
                                     this.dataGrid.instance.repaint();
                                 }, 1000);
-                                this._filtersService.fixed = !this._filtersService.fixed;
+                                this.filtersService.fixed = !this.filtersService.fixed;
                             },
                             options: {
                                 checkPressed: () => {
-                                    return this._filtersService.fixed;
+                                    return this.filtersService.fixed;
                                 },
                                 mouseover: () => {
-                                    this._filtersService.enable();
+                                    this.filtersService.enable();
                                 },
                                 mouseout: () => {
-                                    if (!this._filtersService.fixed)
-                                        this._filtersService.disable();
+                                    if (!this.filtersService.fixed)
+                                        this.filtersService.disable();
                                 }
                             },
                             attr: {
-                                'filter-selected': this._filtersService.hasFilterSelected
+                                'filter-selected': this.filtersService.hasFilterSelected
                             }
                         }
                     ]
@@ -490,7 +490,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     }
 
     private toggleContactView() {
-        this._pipelineService.toggleContactView();
+        this.pipelineService.toggleContactView();
         this.dataGrid.instance.element().classList.toggle('grid-compact-view');
         this.dataGrid.instance.updateDimensions();
     }
@@ -506,7 +506,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             this.dataGrid.instance,
             this.dataSourceURI,
             this.filters,
-            this._filtersService.getCheckCustom
+            this.filtersService.getCheckCustom
         );
     }
 
@@ -521,7 +521,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     onStagesLoaded($event) {
         this.stages = $event.stages.map((stage) => {
             return {
-                id: this._pipelineService.getPipeline(
+                id: this.pipelineService.getPipeline(
                     this.pipelinePurposeId).id + ':' + stage.id,
                 index: stage.sortOrder,
                 name: stage.name,
@@ -599,7 +599,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     updateOrdersStage($event) {
         if (this.permission.isGranted(AppPermissions.CRMBulkUpdates)) {
             this.stagesComponent.tooltipVisible = false;
-            this._pipelineService.updateEntitiesStage(
+            this.pipelineService.updateEntitiesStage(
                 this.pipelinePurposeId,
                 this.selectedOrders,
                 $event.name
@@ -624,8 +624,8 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
 
     deactivate() {
         super.deactivate();
-        this._appService.updateToolbar(null);
-        this._filtersService.unsubscribe();
+        this.appService.updateToolbar(null);
+        this.filtersService.unsubscribe();
         this.rootComponent.overflowHidden();
 
         this.hideHostElement();

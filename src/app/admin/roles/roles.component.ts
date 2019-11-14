@@ -15,7 +15,7 @@ import {
     ModuleType
 } from '@shared/service-proxies/service-proxies';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { CreateOrEditRoleModalComponent } from './create-or-edit-role-modal.component';
+import { CreateOrEditRoleModalComponent } from './create-or-edit-role-modal/create-or-edit-role-modal.component';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { FiltersService } from '@shared/filters/filters.service';
 import { FilterModel } from '@shared/filters/models/filter.model';

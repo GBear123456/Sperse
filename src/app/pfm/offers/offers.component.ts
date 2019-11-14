@@ -54,7 +54,6 @@ export class OffersComponent extends AppComponentBase implements OnInit, OnDestr
 
     private readonly dataSourceURI = 'Offer';
     private rootComponent: any;
-    private filters: FilterModel[] = [];
 
     headlineButtons: HeadlineButton[] = [
         {
@@ -76,18 +75,83 @@ export class OffersComponent extends AppComponentBase implements OnInit, OnDestr
         { text: this.l('Offers_PullAll'), icon: 'arrowdown', selected: false }
     ];
     selectedOfferKeys = [];
-    categories = [];
-    flags = [];
-    attributes = [];
-    statuses = [];
+    categories = Object.keys(CampaignCategory).map(key => ({ id: CampaignCategory[key], name: this.l(key) }));
+    flags = Object.keys(OfferFlagType).map(key => ({ id: OfferFlagType[key], name: startCase(key) }));
+    attributes = Object.keys(OfferAttributeType).map(key => ({
+        id: OfferAttributeType[key],
+        name: startCase(key) })
+    );
+    statuses = Object.keys(CampaignStatus).map(key => ({ id: CampaignStatus[key], name: startCase(key) }));
     displayedRatingValue: number;
+    private filters: FilterModel[] = [
+        this.filterModelCategories = new FilterModel({
+            component: FilterCheckBoxesComponent,
+            caption: 'Category',
+            items: {
+                element: new FilterCheckBoxesModel({
+                    dataSource: this.categories,
+                    nameField: 'name',
+                    keyExpr: 'id'
+                })
+            }
+        }),
+        this.filterModelFlags = new FilterModel({
+            component: FilterCheckBoxesComponent,
+            caption: 'Flag',
+            field: 'Flags',
+            items: {
+                element: new FilterCheckBoxesModel({
+                    dataSource: this.flags,
+                    nameField: 'name',
+                    keyExpr: 'id'
+                })
+            }
+        }),
+        this.filterModelAttributes = new FilterModel({
+            component: FilterCheckBoxesComponent,
+            caption: 'Attribute',
+            field: 'Attributes',
+            items: {
+                element: new FilterCheckBoxesModel({
+                    dataSource: this.attributes,
+                    nameField: 'name',
+                    keyExpr: 'id'
+                })
+            }
+        }),
+        this.filterModelStatuses = new FilterModel({
+            component: FilterCheckBoxesComponent,
+            caption: 'Status',
+            field: 'Status',
+            isSelected: true,
+            items: {
+                element: new FilterCheckBoxesModel({
+                    dataSource: this.statuses,
+                    nameField: 'name',
+                    keyExpr: 'id',
+                    value: [CampaignStatus.Active]
+                })
+            }
+        }),
+        this.filterModelRank = new FilterModel({
+            component: FilterRangeComponent,
+            operator: {from: 'ge', to: 'le'},
+            caption: 'Rank',
+            field: 'Rank',
+            items$: this.store$.pipe(select(RatingsStoreSelectors.getRatingItems))
+        }),
+        this.filterModelRank = new FilterModel({
+            caption: 'TrafficSource',
+            hidden: true
+        })
+    ];
 
     constructor(
         private injector: Injector,
-        private _appService: AppService,
-        private _filtersService: FiltersService,
-        private _offerProxy: OfferServiceProxy,
-        private _offersProxy: OfferManagementServiceProxy,
+        private appService: AppService,
+        private filtersService: FiltersService,
+        private offerProxy: OfferServiceProxy,
+        private offersProxy: OfferManagementServiceProxy,
         private store$: Store<AppStore.State>,
         private itemDetailsService: ItemDetailsService
     ) {
@@ -99,81 +163,6 @@ export class OffersComponent extends AppComponentBase implements OnInit, OnDestr
 
     ngOnInit(): void {
         this.rootComponent = this.getRootComponent();
-        this.categories = Object.keys(CampaignCategory)
-            .map(key => ({ id: CampaignCategory[key], name: this.l(key) }));
-
-        this.flags = Object.keys(OfferFlagType)
-            .map(key => ({ id: OfferFlagType[key], name: startCase(key) }));
-
-        this.attributes = Object.keys(OfferAttributeType)
-            .map(key => ({ id: OfferAttributeType[key], name: startCase(key) }));
-
-        this.statuses = Object.keys(CampaignStatus)
-            .map(key => ({ id: CampaignStatus[key], name: startCase(key) }));
-
-        this.filters = [
-            this.filterModelCategories = new FilterModel({
-                component: FilterCheckBoxesComponent,
-                caption: 'Category',
-                items: {
-                    element: new FilterCheckBoxesModel({
-                        dataSource: this.categories,
-                        nameField: 'name',
-                        keyExpr: 'id'
-                    })
-                }
-            }),
-            this.filterModelFlags = new FilterModel({
-                component: FilterCheckBoxesComponent,
-                caption: 'Flag',
-                field: 'Flags',
-                items: {
-                    element: new FilterCheckBoxesModel({
-                        dataSource: this.flags,
-                        nameField: 'name',
-                        keyExpr: 'id'
-                    })
-                }
-            }),
-            this.filterModelAttributes = new FilterModel({
-                component: FilterCheckBoxesComponent,
-                caption: 'Attribute',
-                field: 'Attributes',
-                items: {
-                    element: new FilterCheckBoxesModel({
-                        dataSource: this.attributes,
-                        nameField: 'name',
-                        keyExpr: 'id'
-                    })
-                }
-            }),
-            this.filterModelStatuses = new FilterModel({
-                component: FilterCheckBoxesComponent,
-                caption: 'Status',
-                field: 'Status',
-                isSelected: true,
-                items: {
-                    element: new FilterCheckBoxesModel({
-                        dataSource: this.statuses,
-                        nameField: 'name',
-                        keyExpr: 'id',
-                        value: [CampaignStatus.Active]
-                    })
-                }
-            }),
-            this.filterModelRank = new FilterModel({
-                component: FilterRangeComponent,
-                operator: {from: 'ge', to: 'le'},
-                caption: 'Rank',
-                field: 'Rank',
-                items$: this.store$.pipe(select(RatingsStoreSelectors.getRatingItems))
-            }),
-            this.filterModelRank = new FilterModel({
-                caption: 'TrafficSource',
-                hidden: true
-            })
-        ];
-
         this.dataSource = new DataSource({
             store: {
                 type: 'odata',
@@ -190,7 +179,6 @@ export class OffersComponent extends AppComponentBase implements OnInit, OnDestr
                 { selector: 'Created', desc: true }
             ]
         });
-
         this.activate();
     }
 
@@ -200,7 +188,7 @@ export class OffersComponent extends AppComponentBase implements OnInit, OnDestr
 
     initToolbarConfig() {
         if (this.componentIsActivated) {
-            this._appService.updateToolbar([
+            this.appService.updateToolbar([
                 {
                     location: 'before',
                     items: [
@@ -210,22 +198,22 @@ export class OffersComponent extends AppComponentBase implements OnInit, OnDestr
                                 setTimeout(() => {
                                     this.dataGrid.instance.repaint();
                                 }, 1000);
-                                this._filtersService.fixed = !this._filtersService.fixed;
+                                this.filtersService.fixed = !this.filtersService.fixed;
                             },
                             options: {
                                 checkPressed: () => {
-                                    return this._filtersService.fixed;
+                                    return this.filtersService.fixed;
                                 },
                                 mouseover: () => {
-                                    this._filtersService.enable();
+                                    this.filtersService.enable();
                                 },
                                 mouseout: () => {
-                                    if (!this._filtersService.fixed)
-                                        this._filtersService.disable();
+                                    if (!this.filtersService.fixed)
+                                        this.filtersService.disable();
                                 }
                             },
                             attr: {
-                                'filter-selected': this._filtersService.hasFilterSelected
+                                'filter-selected': this.filtersService.hasFilterSelected
                             }
                         }
                     ]
@@ -396,7 +384,7 @@ export class OffersComponent extends AppComponentBase implements OnInit, OnDestr
     }
 
     initFiltering() {
-        this._filtersService.apply(() => {
+        this.filtersService.apply(() => {
             this.processFilterInternal();
             this.initToolbarConfig();
         });
@@ -466,7 +454,7 @@ export class OffersComponent extends AppComponentBase implements OnInit, OnDestr
 
     activate() {
         super.activate();
-        this._filtersService.setup(this.filters, this._activatedRoute.snapshot.queryParams, false);
+        this.filtersService.setup(this.filters, this._activatedRoute.snapshot.queryParams, false);
         this.initFiltering();
         this.initToolbarConfig();
         this.rootComponent.overflowHidden(true);
@@ -475,8 +463,8 @@ export class OffersComponent extends AppComponentBase implements OnInit, OnDestr
 
     deactivate() {
         super.deactivate();
-        this._filtersService.unsubscribe();
-        this._appService.updateToolbar(null);
+        this.filtersService.unsubscribe();
+        this.appService.updateToolbar(null);
         this.rootComponent.overflowHidden();
         this.itemDetailsService.setItemsSource(ItemTypeEnum.Offer, this.dataGrid.instance.getDataSource());
     }
@@ -486,7 +474,7 @@ export class OffersComponent extends AppComponentBase implements OnInit, OnDestr
            return this.pullContextComponent.instance.option('visible', true);
 
         this.notify.info(this.l('Offers_PullStarted'));
-        this._offersProxy.pull(fetchAll).subscribe(
+        this.offersProxy.pull(fetchAll).subscribe(
             () => this.notify.info(this.l('Offers_PullFinished')),
             e => this.message.error(e.message)
         );
@@ -503,7 +491,7 @@ export class OffersComponent extends AppComponentBase implements OnInit, OnDestr
             let exclude = data.previousValue.length > data.value.length,
                 selected = difference(exclude ? data.previousValue : data.value, exclude ? data.value : data.previousValue);
             if (selected.length)
-                this._offersProxy.setFlag(selected[0]['id'], !exclude,
+                this.offersProxy.setFlag(selected[0]['id'], !exclude,
                     OfferFilter.fromJS({ campaignIds: this.selectedOfferKeys })).subscribe(() => {
                         this.notify.info(this.l('AppliedSuccessfully'));
                     }
@@ -512,7 +500,7 @@ export class OffersComponent extends AppComponentBase implements OnInit, OnDestr
     }
 
     onAttributeValueApply(data) {
-        this._offersProxy.setAttribute(
+        this.offersProxy.setAttribute(
             data.id,
             data.bottomInputValue,
             OfferFilter.fromJS({campaignIds: this.selectedOfferKeys})
@@ -522,7 +510,7 @@ export class OffersComponent extends AppComponentBase implements OnInit, OnDestr
     }
 
     onRankChanged(rank) {
-        this._offerProxy.rank(new RankRequest({
+        this.offerProxy.rank(new RankRequest({
             ids: this.dataGrid.instance.getSelectedRowKeys().map(item => item.Id),
             rank: rank
         })).subscribe(() => {

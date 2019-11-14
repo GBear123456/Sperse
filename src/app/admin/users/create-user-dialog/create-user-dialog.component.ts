@@ -47,8 +47,8 @@ export class CreateUserDialogComponent implements OnInit {
     setRandomPassword = false;
     passwordComplexityInfo = '';
 
-    isTwoFactorEnabled: boolean = this._settingService.getBoolean('Abp.Zero.UserManagement.TwoFactorLogin.IsEnabled');
-    isLockoutEnabled: boolean = this._settingService.getBoolean('Abp.Zero.UserManagement.UserLockOut.IsEnabled');
+    isTwoFactorEnabled: boolean = this.settingService.getBoolean('Abp.Zero.UserManagement.TwoFactorLogin.IsEnabled');
+    isLockoutEnabled: boolean = this.settingService.getBoolean('Abp.Zero.UserManagement.UserLockOut.IsEnabled');
     passwordComplexitySetting: PasswordComplexitySetting = new PasswordComplexitySetting();
 
     private orgUnits: any = [];
@@ -67,7 +67,7 @@ export class CreateUserDialogComponent implements OnInit {
     photoThumbnailData: string;
     photoSourceData: string;
     toolbarConfig = [];
-    title: string = '';
+    title = '';
     buttons: IDialogButton[] = [
         {
             id: this.saveButtonId,
@@ -78,16 +78,16 @@ export class CreateUserDialogComponent implements OnInit {
     ];
 
     constructor(
-        private _userService: UserServiceProxy,
-        private _profileService: ProfileServiceProxy,
-        private _cacheService: CacheService,
-        private _notifyService: NotifyService,
-        private _dialogService: DialogService,
-        private _dialogRef: MatDialogRef<CreateUserDialogComponent>,
-        private _messageService: MessageService,
-        private _settingService: SettingService,
-        private _cacheHelper: CacheHelper,
-        private _changeDetectorRef: ChangeDetectorRef,
+        private userService: UserServiceProxy,
+        private profileService: ProfileServiceProxy,
+        private cacheService: CacheService,
+        private notifyService: NotifyService,
+        private dialogService: DialogService,
+        private dialogRef: MatDialogRef<CreateUserDialogComponent>,
+        private messageService: MessageService,
+        private settingService: SettingService,
+        private cacheHelper: CacheHelper,
+        private changeDetectorRef: ChangeDetectorRef,
         public ls: AppLocalizationService,
         public dialog: MatDialog,
         @Inject(MAT_DIALOG_DATA) private data: any
@@ -106,7 +106,7 @@ export class CreateUserDialogComponent implements OnInit {
 
     userDataInit() {
         this.modalDialog.startLoading();
-        this._userService.getUserForEdit(undefined)
+        this.userService.getUserForEdit(undefined)
             .pipe(
                 tap(userResult => {
                     this.user = userResult.user;
@@ -120,12 +120,12 @@ export class CreateUserDialogComponent implements OnInit {
                         allOrganizationUnits: userResult.allOrganizationUnits,
                         selectedOrganizationUnits: userResult.memberedOrganizationUnits
                     };
-                    this._changeDetectorRef.detectChanges();
+                    this.changeDetectorRef.detectChanges();
                 }),
-                switchMap(() => this._profileService.getPasswordComplexitySetting()),
+                switchMap(() => this.profileService.getPasswordComplexitySetting()),
                 finalize(() => {
                     this.modalDialog.finishLoading();
-                    this._changeDetectorRef.detectChanges();
+                    this.changeDetectorRef.detectChanges();
                 })
             ).subscribe((passwordComplexityResult: GetPasswordComplexitySettingOutput) => {
                 this.passwordComplexitySetting = passwordComplexityResult.setting;
@@ -171,28 +171,28 @@ export class CreateUserDialogComponent implements OnInit {
                 ]
             }
         ];
-        this._changeDetectorRef.detectChanges();
+        this.changeDetectorRef.detectChanges();
     }
 
     saveOptionsInit() {
-        let cacheKey = this._cacheHelper.getCacheKey(this.SAVE_OPTION_CACHE_KEY, this.constructor.name),
+        let cacheKey = this.cacheHelper.getCacheKey(this.SAVE_OPTION_CACHE_KEY, this.constructor.name),
             selectedIndex = this.SAVE_OPTION_DEFAULT;
-        if (this._cacheService.exists(cacheKey))
-            selectedIndex = this._cacheService.get(cacheKey);
+        if (this.cacheService.exists(cacheKey))
+            selectedIndex = this.cacheService.get(cacheKey);
         this.saveContextMenuItems[selectedIndex].selected = true;
         this.buttons[0].title = this.saveContextMenuItems[selectedIndex].text;
     }
 
     updateSaveOption(option) {
         this.buttons[0].title = option.text;
-        this._cacheService.set(this._cacheHelper.getCacheKey(this.SAVE_OPTION_CACHE_KEY, this.constructor.name),
+        this.cacheService.set(this.cacheHelper.getCacheKey(this.SAVE_OPTION_CACHE_KEY, this.constructor.name),
             this.saveContextMenuItems.findIndex((elm) => elm.text == option.text).toString());
     }
 
     private afterSave(userId): void {
         if (this.saveContextMenuItems[0].selected) {
             this.resetFullDialog();
-            this._notifyService.info(this.ls.l('SavedSuccessfully'));
+            this.notifyService.info(this.ls.l('SavedSuccessfully'));
             this.data.refreshParent(true);
         } else {
             this.data.refreshParent();
@@ -201,21 +201,21 @@ export class CreateUserDialogComponent implements OnInit {
     }
 
     private close(refresh = false) {
-        this._dialogRef.close(refresh);
+        this.dialogRef.close(refresh);
     }
 
     validateForm() {
         if (!this.user.name || !this.user.surname)
-            return this._notifyService.error(this.ls.l('FullNameIsRequired'));
+            return this.notifyService.error(this.ls.l('FullNameIsRequired'));
 
         if (this.user.emailAddress) {
             if (!this.validateEmailAddress(this.user.emailAddress))
-                return this._notifyService.error(this.ls.l('EmailIsNotValid'));
+                return this.notifyService.error(this.ls.l('EmailIsNotValid'));
         } else
-            return this._notifyService.error(this.ls.l('EmailIsRequired'));
+            return this.notifyService.error(this.ls.l('EmailIsRequired'));
 
         if (!this.validatePhoneNumber(this.user.phoneNumber))
-            return this._notifyService.error(this.ls.l('PhoneValidationError'));
+            return this.notifyService.error(this.ls.l('PhoneValidationError'));
 
         return true;
     }
@@ -246,11 +246,11 @@ export class CreateUserDialogComponent implements OnInit {
         input.profileThumbnail = StringHelper.getBase64(this.photoThumbnailData);
         input.pictureSource = this.photoSourceData;
 
-        this._userService.createOrUpdateUser(input)
+        this.userService.createOrUpdateUser(input)
             .pipe(finalize(() => {
                 saveButton.disabled = false;
                 this.modalDialog.finishLoading();
-                this._changeDetectorRef.detectChanges();
+                this.changeDetectorRef.detectChanges();
             }))
             .subscribe((userId) => this.afterSave(userId || this.user.id));
     }
@@ -275,7 +275,7 @@ export class CreateUserDialogComponent implements OnInit {
                 this.photoOriginalData = result.origImage;
                 this.photoThumbnailData = result.thumImage;
                 this.photoSourceData = result.source;
-                this._changeDetectorRef.detectChanges();
+                this.changeDetectorRef.detectChanges();
             }
         });
         $event.stopPropagation();
@@ -302,14 +302,14 @@ export class CreateUserDialogComponent implements OnInit {
 
             setTimeout(() => {
                 this.setComponentToValid(this.phoneNumber.instance);
-                this._changeDetectorRef.detectChanges();
+                this.changeDetectorRef.detectChanges();
             });
         };
 
         if (forced)
             resetInternal();
         else
-            this._messageService.confirm(this.ls.l('DiscardConfirmation'), '', (confirmed) => {
+            this.messageService.confirm(this.ls.l('DiscardConfirmation'), '', (confirmed) => {
                 if (confirmed)
                     resetInternal();
             });
@@ -334,7 +334,7 @@ export class CreateUserDialogComponent implements OnInit {
             this.user.name = '';
             this.user.surname = '';
         }
-        this._changeDetectorRef.detectChanges();
+        this.changeDetectorRef.detectChanges();
     }
 
     getAssignedRoleCount(): number {
