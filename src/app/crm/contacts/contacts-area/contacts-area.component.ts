@@ -2,7 +2,9 @@
 import { Component, Injector, Input } from '@angular/core';
 
 /** Third party imports  */
+import { NotifyService } from '@abp/notify/notify.service';
 import { MatDialog } from '@angular/material/dialog';
+import { ClipboardService } from 'ngx-clipboard'
 
 /** Application imports */
 import { ConfirmDialogComponent } from '@app/shared/common/dialogs/confirm/confirm-dialog.component';
@@ -55,6 +57,8 @@ export class ContactsAreaComponent extends AppComponentBase {
         private contactEmailService: ContactEmailServiceProxy,
         private contactPhoneService: ContactPhoneServiceProxy,
         private organizationContactService: OrganizationContactServiceProxy,
+        private clipboardService: ClipboardService,
+        private notifyService: NotifyService,
         private dialogService: DialogService,
         public dialog: MatDialog
     ) {
@@ -288,5 +292,10 @@ export class ContactsAreaComponent extends AppComponentBase {
             }
         });
         event.stopPropagation();
+    }
+
+    copyToClipbord(value) {
+        this.clipboardService.copyFromContent(value);
+        this.notifyService.info(this.l('SavedToClipboard'));
     }
 }

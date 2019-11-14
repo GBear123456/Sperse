@@ -2,7 +2,9 @@
 import { Component, OnInit, Injector, Input } from '@angular/core';
 
 /** Third party imports */
+import { NotifyService } from '@abp/notify/notify.service';
 import { MatDialog } from '@angular/material/dialog';
+import { ClipboardService } from 'ngx-clipboard'
 import { Store, select } from '@ngrx/store';
 import { filter, first } from 'rxjs/operators';
 import * as _ from 'underscore';
@@ -61,13 +63,15 @@ export class AddressesComponent extends AppComponentBase implements OnInit {
     private _latestFormatedAddress: string;
 
     constructor(injector: Injector,
-                public dialog: MatDialog,
-                private contactsService: ContactsService,
-                private addressService: ContactAddressServiceProxy,
-                private organizationContactService: OrganizationContactServiceProxy,
-                private dialogService: DialogService,
-                private store$: Store<RootStore.State>,
-                private googlePlaceHelper: GooglePlaceHelper
+        public dialog: MatDialog,
+        private contactsService: ContactsService,
+        private addressService: ContactAddressServiceProxy,
+        private organizationContactService: OrganizationContactServiceProxy,
+        private clipboardService: ClipboardService,
+        private notifyService: NotifyService,
+        private dialogService: DialogService,
+        private store$: Store<RootStore.State>,
+        private googlePlaceHelper: GooglePlaceHelper
     ) {
         super(injector);
     }
@@ -355,5 +359,13 @@ export class AddressesComponent extends AppComponentBase implements OnInit {
         countryName == 'United States' ?
             this.country = AppConsts.defaultCountryName :
             this.country = countryName;
+    }
+
+    copyToClipbord(event, address) {
+        this.clipboardService.copyFromContent(
+            this.aggregateAddress(address));
+        this.notifyService.info(this.l('SavedToClipboard'));
+        event.stopPropagation();
+        event.preventDefault();
     }
 }

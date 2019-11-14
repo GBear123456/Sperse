@@ -13,8 +13,10 @@ import {
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
+import { NotifyService } from '@abp/notify/notify.service';
 import { DxTextBoxComponent } from 'devextreme-angular/ui/text-box';
 import { DxTextAreaComponent } from 'devextreme-angular/ui/text-area';
+import { ClipboardService } from 'ngx-clipboard'
 
 /** Application imports */
 import { AppComponentBase } from '@shared/common/app-component-base';
@@ -64,6 +66,8 @@ export class InplaceEditComponent extends AppComponentBase {
     constructor(
         injector: Injector,
         public dialog: MatDialog,
+        private notifyService: NotifyService,
+        private clipboardService: ClipboardService,
         private changeDetector: ChangeDetectorRef
     ) {
         super(injector);
@@ -126,6 +130,13 @@ export class InplaceEditComponent extends AppComponentBase {
             else
                 this.textBox.instance.focus();
         });
+    }
+
+    copyToClipbord() {
+        if (this._data && this._data.value) {
+            this.clipboardService.copyFromContent(this._data.value);
+            this.notifyService.info(this.l('SavedToClipboard'));
+        }
     }
 
     showDialog(event) {

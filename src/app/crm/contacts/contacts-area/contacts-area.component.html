@@ -4,7 +4,7 @@
             <i class="icons phone type-{{phone?.usageTypeId || 'P'}}"></i>
             <ul *ngIf="!phone.inplaceEdit">
                 <div class="actions" *ngIf="isEditAllowed">
-                    <i class="edit fa fa-pencil" aria-hidden="true" (click)="showDialog('phoneNumber', phone, $event, i)"></i><i class="delete fa fa-times" aria-hidden="true" (click)="deletePhoneNumber(phone, $event, i)"></i>
+                    <i class="copy fa fa-clone" aria-hidden="true" (click)="copyToClipbord(phone.phoneNumber)"></i><i class="edit fa fa-pencil" aria-hidden="true" (click)="showDialog('phoneNumber', phone, $event, i)"></i><i class="delete fa fa-times" aria-hidden="true" (click)="deletePhoneNumber(phone, $event, i)"></i>
                 </div>
                 <li (click)="inPlaceEdit('phoneNumber', phone, $event, i)">{{ phone.phoneNumber | phone }}
                     <span *ngIf="phone.phoneExtension" class="phoneExt">Ext. {{ phone.phoneExtension }}</span>
@@ -24,7 +24,7 @@
             <ul *ngFor="let email of contactInfoData?.emails; let i = index;">
                 <div *ngIf="!email.inplaceEdit">
                     <div class="actions" *ngIf="isEditAllowed">
-                        <i class="edit fa fa-pencil" aria-hidden="true" (click)="showDialog('emailAddress', email, $event, i)"></i><i class="delete fa fa-times" aria-hidden="true" (click)="deleteEmailAddress(email, $event, i)"></i>
+                        <i class="copy fa fa-clone" aria-hidden="true" (click)="copyToClipbord(email.emailAddress)"></i><i class="edit fa fa-pencil" aria-hidden="true" (click)="showDialog('emailAddress', email, $event, i)"></i><i class="delete fa fa-times" aria-hidden="true" (click)="deleteEmailAddress(email, $event, i)"></i>
                     </div>
                     <li (click)="inPlaceEdit('emailAddress', email, $event, i)" [title]="email.emailAddress">{{email.emailAddress}}</li>
                 </div>

@@ -12,6 +12,7 @@ import { ExportService } from '@shared/common/export/export.service';
 import { ExportGoogleSheetService } from '@shared/common/export/export-google-sheets/export-google-sheets';
 import { AppComponent} from './app.component';
 import { AppService } from './app.service';
+import { ClipboardModule } from 'ngx-clipboard';
 import { LayoutModule } from './shared/layout/layout.module';
 import { LayoutCommonModule } from './shared/layout/layout-common.module';
 import { AppCommonModule } from './shared/common/app-common.module';
@@ -40,13 +41,14 @@ export class ZendeskConfig extends ngxZendeskWebwidgetConfig {
         AccessDeniedComponent
     ],
     imports: [
-        LayoutModule,
+        LayoutModule,        
         LayoutCommonModule,
         AppCommonModule.forRoot(),
         ngxZendeskWebwidgetModule.forRoot(ZendeskConfig),
         ngCommon.CommonModule,
         AppRoutingModule,
         FiltersModule.forRoot(),
+        ClipboardModule,
         AppStoreModule
     ],
     providers: [
