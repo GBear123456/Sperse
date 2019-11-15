@@ -77,7 +77,7 @@
                     <div *dxTemplate="let data of 'photoTemplate'">
                         <div [ngStyle]="{'background-image': 'url(' + profileService.getContactPhotoUrl(data.data.PhotoPublicId) + ')'}" class="img-circle"></div>
                     </div>
-                    <dxi-column dataField="Name" [caption]="l('Customer.Name')"></dxi-column>
+                    <dxi-column dataField="Name" [caption]="l('Customer.Name')" cssClass="clipboard-holder"></dxi-column>
                     <dxi-column dataField="CompanyName" [caption]="l('Customer.CompanyName')"></dxi-column>
                     <dxi-column dataField="Email" [caption]="l('Contact.Email')"></dxi-column>
                     <dxi-column dataField="Phone" [caption]="l('Contact.Phone')" cellTemplate="phoneCell" cssClass="tabular"></dxi-column>
