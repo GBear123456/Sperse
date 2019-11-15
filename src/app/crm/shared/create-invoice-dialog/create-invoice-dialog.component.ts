@@ -142,11 +142,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.customerProxy.getAllByPhrase('', 10).subscribe((res) => {
-            this.customers = res;
-            this.changeDetectorRef.detectChanges();
-        });
-
+        this.customerLookupRequest();
         this.invoicesService.settings$.pipe(first()).subscribe(settings => {
             this.invoiceSettings = settings;
             if (!this.data.invoice) {
@@ -418,6 +414,19 @@ export class CreateInvoiceDialogComponent implements OnInit {
         event.component.option('isValid', true);
     }
 
+    customerLookupRequest(phrase = '', callback?) {
+        this.customerProxy.getAllByPhrase(phrase, 10).subscribe(res => {
+            if (!phrase || phrase == this.customer) {
+                this.customers = res.map(item => {
+                    item['display'] = item.name + (item.email ? ' (' + item.email + ')' : '');
+                    return item;
+                });
+                callback && callback(res);
+                this.changeDetectorRef.markForCheck();
+            }
+        });
+    }
+
     customerLookupItems($event) {
         let search = this.customer = $event.event.target.value;
         if (this.customers.length)
@@ -431,13 +440,9 @@ export class CreateInvoiceDialogComponent implements OnInit {
             $event.component.option('opened', true);
             $event.component.option('noDataText', this.ls.l('LookingForItems'));
 
-            this.customerProxy.getAllByPhrase(search, 10).subscribe((res) => {
-                if (search == this.customer) {
-                    if (!res['length'])
-                        $event.component.option('noDataText', this.ls.l('NoItemsFound'));
-                    this.customers = res;
-                    this.changeDetectorRef.markForCheck();
-                }
+            this.customerLookupRequest(search, res => {
+                if (!res['length'])
+                    $event.component.option('noDataText', this.ls.l('NoItemsFound'));
             });
         }, 500);
     }

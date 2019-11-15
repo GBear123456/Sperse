@@ -55,7 +55,7 @@
                             name="customer"
                             width="500px"
                             height="90px"
-                            displayExpr="name"
+                            displayExpr="display"
                             valueExpr="name"
                             [disabled]="data.invoice"
                             [acceptCustomValue]="true"
@@ -69,10 +69,10 @@
                             (onSelectionChanged)="selectContact($event)">
                         </dx-select-box>
                         <div class="selected-contact-info">
-                            {{ selectedContact?.email }}<br *ngIf="selectedContact?.email">
                             {{ selectedContact?.address?.streetAddress }}<br *ngIf="selectedContact?.address?.streetAddress">
                             {{ selectedContact?.address?.city }}<br *ngIf="selectedContact?.address?.city">
-                            {{ selectedContact?.address?.state }} {{ selectedContact?.address?.zip }}
+                            {{ selectedContact?.address?.state }} {{ selectedContact?.address?.zip }}<br *ngIf="selectedContact?.address?.state || selectedContact?.address?.zip">
+                            {{ selectedContact?.address?.countryCode }}
                         </div>
                     </div>
                 </div>
