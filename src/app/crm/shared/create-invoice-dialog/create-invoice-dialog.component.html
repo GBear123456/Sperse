@@ -50,14 +50,14 @@
                         </div>
                     </div>
                     <div class="field-area customer">
-                        <label class="customer-label">{{ls.l('To')}}<a (click)="createClient()" [class.disabled]="disabledForUpdate">+ {{ls.l('New') + ' ' + ls.l('Client')}}</a></label>
+                        <label class="customer-label">{{ls.l('To')}}<a (click)="createClient()" [hidden]="disabledForUpdate || data?.contactInfo">+ {{ls.l('New') + ' ' + ls.l('Client')}}</a></label>
                         <dx-select-box #contact
                             name="customer"
                             width="500px"
                             height="90px"
                             displayExpr="display"
                             valueExpr="name"
-                            [disabled]="data.invoice"
+                            [disabled]="data?.invoice || data?.contactInfo"
                             [acceptCustomValue]="true"
                             [placeholder]="ls.lr('Enter Client Details')"
                             [(value)]="customer"
@@ -109,7 +109,7 @@
                             width="260px"
                             height="40px"
                             [(value)]="orderNumber"
-                            [disabled]="data.invoice"
+                            [disabled]="data?.invoice"
                             [acceptCustomValue]="true"
                             [dataSource]="[orderNumber]"
                             (onFocusIn)="orderFocusIn($event)"

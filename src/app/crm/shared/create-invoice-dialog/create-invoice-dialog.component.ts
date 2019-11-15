@@ -33,7 +33,9 @@ import {
     CreateInvoiceLineInput,
     InvoiceLineUnit,
     InvoiceSettings,
-    GetNewInvoiceInfoOutput
+    GetNewInvoiceInfoOutput,
+    EntityContactInfo, 
+    ContactAddressInfo
 } from '@shared/service-proxies/service-proxies';
 import { NotifyService } from '@abp/notify/notify.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -220,13 +222,29 @@ export class CreateInvoiceDialogComponent implements OnInit {
                 this.invoiceNo = res.nextInvoiceNumber;
                 this.changeDetectorRef.detectChanges();
             });
+        }
 
-            let contact = this.data.contactInfo;
-            if (contact) {
-                this.contactId = contact.id;
-                this.initOrderDataSource();
-                this.customer = contact.personContactInfo.fullName;
-            }
+        let contact = this.data.contactInfo;
+        if (contact) {
+            this.contactId = contact.id;
+            this.initOrderDataSource();
+            this.customer = contact.personContactInfo.fullName;
+            let details = contact.personContactInfo.details,
+                address = details.addresses[0];
+            this.selectedContact = 
+                new EntityContactInfo({
+                    id: contact.id,
+                    name: contact.personContactInfo.fullName,
+                    email: details.emails.length ? details.emails[0].emailAddress : undefined,
+                    address: address ? new ContactAddressInfo({
+                        streetAddress: address.streetAddress,
+                        city: address.city,
+                        state: address.state,
+                        countryCode: address.country,
+                        zip: address.zip
+                    }) : undefined,
+                    isActive: true
+                });
         }
     }
 
