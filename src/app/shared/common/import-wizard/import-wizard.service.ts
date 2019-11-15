@@ -1,6 +1,5 @@
 /** Core imports */
-import { Injectable, Injector } from '@angular/core';
-import { RouteReuseStrategy } from '@angular/router';
+import { Injectable } from '@angular/core';
 
 /** Third party imports */
 import { Subscription, Subject } from 'rxjs';
@@ -10,6 +9,8 @@ import { ImportStatus } from '@shared/AppEnums';
 import { ImportServiceProxy } from '@shared/service-proxies/service-proxies';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { AppPermissions } from '@shared/AppPermissions';
+import { CustomReuseStrategy } from '@root/root-routing.module';
+import { RouteReuseStrategy } from '@angular/router';
 
 @Injectable()
 export class ImportWizardService {
@@ -20,7 +21,7 @@ export class ImportWizardService {
 
     public activeImportId = 0;
 
-    constructor(injector: Injector,
+    constructor(
         private reuseService: RouteReuseStrategy,
         private importProxy: ImportServiceProxy,
         private permissionService: AppPermissionService
@@ -59,7 +60,10 @@ export class ImportWizardService {
                             let importStatus = res[0];
                             method && method(importStatus);
                             if ([ImportStatus.Completed, ImportStatus.Cancelled].indexOf(<ImportStatus>importStatus.statusId) >= 0) {
-                                invalUri && (<any>this.reuseService).invalidate(invalUri);
+                                if (invalUri) {
+                                    invalUri = (this.reuseService as CustomReuseStrategy).keyExists(invalUri) ? invalUri : 'leads';
+                                    (this.reuseService as CustomReuseStrategy).invalidate(invalUri);
+                                }
                                 this.activeImportId = undefined;
                             }
                             if (<ImportStatus>importStatus.statusId == ImportStatus.InProgress)

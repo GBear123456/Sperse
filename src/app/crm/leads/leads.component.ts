@@ -579,7 +579,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     refresh(invalidateDashboard = true, allViews = false) {
-        if (this.showPivotGrid || this.showDataGrid) {
+        if (this.showPipeline || this.showPivotGrid || this.showDataGrid) {
             setTimeout(() => {
                 this.processFilterInternal(allViews ? [ this.pipelineComponent, this ] : undefined);
             });
