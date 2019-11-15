@@ -1,4 +1,4 @@
-<div class="invite-user-form" *ngIf="showInviteUserForm">
+<div class="invite-user-form" *ngIf="showInviteUserForm$ | async">
     <dx-scroll-view showScrollbar="onHover">
         <dx-validation-group #inviteValidationGroup>
             <div class="row">

@@ -32,7 +32,7 @@ import { NotifyService } from '@abp/notify/notify.service';
 export class ContactsService {
     private verificationSubject: Subject<any> = new Subject<any>();
     private toolbarSubject: Subject<any> = new Subject<any>();
-    private userId: Subject<number> = new Subject<any>();
+    private userId: ReplaySubject<number> = new ReplaySubject(1);
     userId$: Observable<number> = this.userId.asObservable();
     private organizationUnits: ReplaySubject<any> = new ReplaySubject<any>(1);
     private organizationUnitsSave: Subject<any> = new Subject<any>();
@@ -255,6 +255,7 @@ export class ContactsService {
 
     showInvoiceSettingsDialog() {
         return this.dialog.open(InvoiceSettingsDialogComponent, {
+            id: 'permanent',
             panelClass: 'slider',
             disableClose: true,
             closeOnNavigation: false,

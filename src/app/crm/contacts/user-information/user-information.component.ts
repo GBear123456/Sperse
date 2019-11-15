@@ -5,7 +5,8 @@ import { Component, OnInit, OnDestroy, ViewChild, HostListener, ElementRef } fro
 import { MatDialog } from '@angular/material/dialog';
 import { DxSelectBoxComponent } from 'devextreme-angular/ui/select-box';
 import { DxValidationGroupComponent } from 'devextreme-angular';
-import { finalize } from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import { finalize, map, startWith } from 'rxjs/operators';
 import extend from 'lodash/extend';
 import clone from 'lodash/clone';
 
@@ -75,7 +76,10 @@ export class UserInformationComponent implements OnInit, OnDestroy {
         organizationUnitIds: []
     });
     inviteSetRandomPassword = true;
-    showInviteUserForm = false;
+    showInviteUserForm$: Observable<boolean> = this.contactsService.userId$.pipe(
+        startWith(null),
+        map((userId) => !userId && this.permissionService.isGranted(AppPermissions.AdministrationUsersCreate))
+    );
     userData: GetUserForEditOutput = new GetUserForEditOutput();
     selectedOrgUnits: number[] = [];
     dependencyChanged = false;
@@ -122,10 +126,11 @@ export class UserInformationComponent implements OnInit, OnDestroy {
                 if (userId)
                     this.loadData();
                 else
-                    setTimeout(() => this.checkShowInviteForm(), 500);
+                    this.getPhonesAndEmails();
             },
             this.constructor.name
         );
+        setTimeout(() => this.getPhonesAndEmails(), 500);
 
         this.contactsService.orgUnitsSaveSubscribe(
             (data) => {
@@ -164,16 +169,11 @@ export class UserInformationComponent implements OnInit, OnDestroy {
         return this.checkedByDefaultRoles.indexOf(roleName) >= 0;
     }
 
-    checkShowInviteForm() {
-        this.showInviteUserForm = this.data && !this.data.userId &&
-            this.permissionService.isGranted(AppPermissions.AdministrationUsersCreate);
-
+    getPhonesAndEmails() {
         let contactInfo = this.contactInfoData.contactInfo.personContactInfo;
         if (contactInfo) {
-            this.phones = contactInfo.details.phones
-                .filter(item => item.isActive );
-            this.emails = contactInfo.details.emails
-                .filter(item => item.isActive );
+            this.phones = contactInfo.details.phones.filter(item => item.isActive );
+            this.emails = contactInfo.details.emails.filter(item => item.isActive );
         }
         this.loadData();
     }
@@ -191,8 +191,8 @@ export class UserInformationComponent implements OnInit, OnDestroy {
                     this.loadingService.finishLoading();
                 }))
                 .subscribe(userEditOutput => this.fillUserData(userEditOutput)),
-                this.constructor.name
-            );
+                    this.constructor.name
+                );
         }
     }
 

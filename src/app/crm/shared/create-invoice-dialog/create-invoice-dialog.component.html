@@ -107,9 +107,12 @@
                     <div class="field-area">
                         <dx-drop-down-box #orderDropBox
                             width="260px"
-                            [value]="orderNumber"
+                            height="40px"
+                            [(value)]="orderNumber"
                             [disabled]="data.invoice"
+                            [acceptCustomValue]="true"
                             [dataSource]="[orderNumber]"
+                            (onFocusIn)="orderFocusIn($event)"
                             [placeholder]="ls.l('Invoice_PurchaseOrderNumber')">
                             <div *dxTemplate="let contentData of 'content'">
                                 <dx-data-grid #ordersGrid

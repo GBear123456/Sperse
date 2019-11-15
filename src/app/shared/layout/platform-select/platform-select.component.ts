@@ -27,6 +27,7 @@ export class PlatformSelectComponent {
     @HostBinding('class') public cssClass = '';
     private dropDown: any;
     module = '';
+    displayName = '';
     uri = '';
     modules = {
         topItems: [],
@@ -96,6 +97,7 @@ export class PlatformSelectComponent {
         });
         appService.subscribeModuleChange((config) => {
             this.module = config['name'];
+            this.displayName = config['displayName'] || config['name'];
             this.uri = appService.params.instance;
             this.cssClass = this.module.toLowerCase();
             this.titleService.setTitle(config['name']);
@@ -131,6 +133,7 @@ export class PlatformSelectComponent {
             navigate && navigate.then((result) => {
                 if (result) {
                     this.module = module.name;
+                    this.displayName = module.displayName || module.name;
                     this.uri = module.uri;
                     this.appService.switchModule(this.module, { instance: this.uri });
                 }

@@ -267,6 +267,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
 
     private setRequestCommonFields(data) {
         data.number = this.invoiceNo;
+        data.orderNumber = this.orderNumber;
         data.date = this.getDate(this.date);
         data.dueDate = this.getDate(this.dueDate);
         data.description = this.description;
@@ -488,8 +489,10 @@ export class CreateInvoiceDialogComponent implements OnInit {
     selectContact(event) {
         this.selectedContact = event.selectedItem;
         this.contactId = event.selectedItem && event.selectedItem.id;
-        this.orderId = undefined;
-        this.orderNumber = undefined;
+        if (this.orderId) {
+            this.orderId = undefined;
+            this.orderNumber = undefined;
+        }
         this.initOrderDataSource();
         this.changeDetectorRef.detectChanges();
     }
@@ -592,5 +595,10 @@ export class CreateInvoiceDialogComponent implements OnInit {
 
     onDateContentReady(event) {
         new Inputmask('mm/dd/yyyy').mask(event.component.field());
+    }
+
+    orderFocusIn(event) {
+        if (event.event.target.tagName == 'INPUT')
+            setTimeout(() => event.event.target.focus(), 150);
     }
 }
