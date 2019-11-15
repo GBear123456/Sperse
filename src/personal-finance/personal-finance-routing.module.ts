@@ -1,9 +1,10 @@
 import { NgModule } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { RouteConfigLoadEnd, Router, RouterModule } from '@angular/router';
 import { PersonalFinanceComponent } from './personal-finance.component';
 import { CreditReportsRouteGuard } from './shared/common/auth/auth-route-guard';
 import { LoggedOutCreditReportGuard } from '@root/personal-finance/shared/common/auth/logged-out-credit-report-guard';
 import { LoggedInCreditReportGuard } from '@root/personal-finance/shared/common/auth/logged-in-credit-report-guard';
+import { LoadingService } from '@shared/common/loading-service/loading.service';
 
 @NgModule({
     imports: [
@@ -106,4 +107,15 @@ import { LoggedInCreditReportGuard } from '@root/personal-finance/shared/common/
     exports: [ RouterModule ],
     providers: [ LoggedOutCreditReportGuard, LoggedInCreditReportGuard ]
 })
-export class PersonalFinanceRoutingModule { }
+export class PersonalFinanceRoutingModule {
+    constructor(
+        private router: Router,
+        private loadingService: LoadingService
+    ) {
+        router.events.subscribe((event) => {
+            if (event instanceof RouteConfigLoadEnd) {
+                this.loadingService.showInitialSpinner = false;
+            }
+        });
+    }
+}

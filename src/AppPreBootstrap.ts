@@ -29,7 +29,7 @@ export class AppPreBootstrap {
             if (queryStringObj.redirect && queryStringObj.redirect === 'TenantRegistration') {
                 if (queryStringObj.forceNewRegistration) {
                     new AppAuthService(null).logout();
-                }                
+                }
                 callback(() => router.navigate(['app/account/select-edition']));
             } else if (queryStringObj.secureId) {
                 AppPreBootstrap.impersonatedAuthenticate(queryStringObj, router, callback);

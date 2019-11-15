@@ -22,6 +22,7 @@ import { FeatureCheckerService } from '@abp/features/feature-checker.service';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { AppPermissions } from '@shared/AppPermissions';
 import { AppFeatures } from '@shared/AppFeatures';
+import { LoadingService } from '@shared/common/loading-service/loading.service';
 
 @Injectable()
 export class ModulePathResolverService implements Resolve<any> {
@@ -123,15 +124,20 @@ export class CfoActivateService implements CanActivate {
 })
 export class AppRoutingModule {
     constructor(
-        private router: Router
+        private router: Router,
+        private loadingService: LoadingService
     ) {
         router.events.subscribe((event) => {
 
             if (event instanceof RouteConfigLoadStart) {
-                abp.ui.setBusy();
+                /** If initial spinner is showing - then avoid showing of the default one */
+                if (!this.loadingService.showInitialSpinner) {
+                    abp.ui.setBusy();
+                }
             }
 
             if (event instanceof RouteConfigLoadEnd) {
+                this.loadingService.showInitialSpinner = false;
                 abp.ui.clearBusy();
             }
 

@@ -1,9 +1,10 @@
 import { NgModule } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { RouteConfigLoadEnd, Router, RouterModule } from '@angular/router';
 import { BankCodeComponent } from './bank-code.component';
 import { DashboardComponent } from '@root/bank-code/dashboard/dashboard.component';
 import { ResourcesComponent } from '@root/bank-code/resources/resources.component';
 import { RedirectGuard } from '@shared/common/redirect-guard/redirect-guard';
+import { LoadingService } from '@shared/common/loading-service/loading.service';
 
 @NgModule({
     imports: [
@@ -46,4 +47,15 @@ import { RedirectGuard } from '@shared/common/redirect-guard/redirect-guard';
     exports: [ RouterModule ],
     providers: [ RedirectGuard ]
 })
-export class BankCodeRoutingModule { }
+export class BankCodeRoutingModule {
+    constructor(
+        private router: Router,
+        private loadingService: LoadingService
+    ) {
+        router.events.subscribe((event) => {
+            if (event instanceof RouteConfigLoadEnd) {
+                this.loadingService.showInitialSpinner = false;
+            }
+        });
+    }
+}

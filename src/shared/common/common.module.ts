@@ -82,7 +82,6 @@ import { PrimengTableHelper } from '@shared/helpers/PrimengTableHelper';
         AppUrlService,
         CellsCopyingService,
         CacheHelper,
-        LoadingService,
         PrimengTableHelper
     ]
 })

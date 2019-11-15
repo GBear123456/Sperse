@@ -41,7 +41,7 @@ export class ZendeskConfig extends ngxZendeskWebwidgetConfig {
         AccessDeniedComponent
     ],
     imports: [
-        LayoutModule,        
+        LayoutModule,
         LayoutCommonModule,
         AppCommonModule.forRoot(),
         ngxZendeskWebwidgetModule.forRoot(ZendeskConfig),

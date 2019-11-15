@@ -1,0 +1,119 @@
+.sperse-spinner {
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    align-content: center;
+    justify-content: center;
+    align-items: center;
+    background-color: white;
+}
+.sperse-spinner svg {
+    transform: scale(0.4);
+}
+
+#lines {
+    stroke-width: 10px;
+    stroke-dasharray: 100 3783;
+    stroke-dashoffset: 3783;
+    stroke-linejoin: round;
+    stroke: none;
+}
+
+.rotate {
+    transform-origin: center;
+    animation: rotate 1.6s linear 0s infinite;
+}
+
+.cells path:not(.rotate) {
+    opacity: 0.3;
+    animation: cell-anim 1.6s linear 0s infinite;
+}
+
+#path24, #path26, #path28, #path36, #path60 {
+    animation-delay: 0.0s;
+}
+#path42, #path58, #path54, #path68, #path56, #path52, #path20 {
+    animation-delay: 0.2s;
+}
+#path44, #path46, #path18 {
+    animation-delay: 0.4s;
+}
+#path40, #path66, #path38, #path30, #path31 {
+    animation-delay: 0.6s;
+}
+#path50, #path70, #path31 {
+    animation-delay: 0.8s;
+}
+#path48, #path34 {
+    animation-delay: 1s;
+}
+#path14, #path62, #path64, #path32, #path16 {
+    animation-delay: 1.2s;
+}
+#path22 {
+    animation-delay: 1.4s;
+}
+
+@keyframes line-flow {
+    0% {
+        stroke-dashoffset: 3783;
+        stroke: red;
+    }
+
+    100% {
+        stroke: blue;
+        stroke-dashoffset: 0;
+    }
+}
+
+@keyframes rotate {
+    0% {
+        transform: rotate(0deg);
+        transform-origin: 50% 51%;
+    }
+    50%
+    {
+        transform-origin: 50.5% 50%;
+    }
+
+    100% {
+        transform: rotate(360deg);
+        transform-origin: 51% 48%;
+    }
+}
+
+@keyframes cell-anim {
+    0% {
+        opacity: 0.3;
+    }
+
+    10% {
+        opacity: 1;
+    }
+    50%
+    {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0.3;
+    }
+}
+@keyframes color
+{
+    0%
+    {
+        background-color: darkslategray;
+    }
+    25%
+    {
+        background-color: darkorchid;
+    }
+    50%
+    {
+        background-color: white;
+    }
+    75%
+    {
+        background-color: black;
+    }
+}

@@ -1,6 +1,7 @@
 /** Core imports */
-import { Component, Inject, ElementRef, AfterViewInit, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Inject, ElementRef, AfterViewInit, OnInit } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
+import { Router } from '@angular/router';
 
 /** Third party imports */
 import kebabCase from 'lodash/kebabCase';
@@ -11,13 +12,15 @@ import { AppConsts } from '@shared/AppConsts';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { AppUiCustomizationService } from '@shared/common/ui/app-ui-customization.service';
 import { LayoutType } from '@shared/service-proxies/service-proxies';
+import { LoadingService } from '@shared/common/loading-service/loading.service';
 
 /*
 	Root Document Component (Body Selector)
 */
 @Component({
     selector: 'body',
-    template: '<app-root></app-root>'
+    template: '<app-root></app-root>',
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class RootComponent implements AfterViewInit {
     constructor(
@@ -84,16 +87,25 @@ export class RootComponent implements AfterViewInit {
 */
 @Component({
     selector: 'app-root',
-    template: '<router-outlet></router-outlet>',
-    styleUrls: ['./root.component.less']
+    template: `<router-outlet>
+                  <loading-spinner [spinner]="spinner" *ngIf="loadingService.showInitialSpinner"></loading-spinner>
+               </router-outlet>`,
+    styleUrls: ['./root.component.less'],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AppRootComponent implements OnInit {
+    spinner: 'default' | 'sperse' = !this.SS.tenant || (this.SS.tenant.customLayoutType && this.SS.tenant.customLayoutType === LayoutType.Default)
+        ? 'sperse'
+        : 'default';
     constructor(
+        public loadingService: LoadingService,
+        private router: Router,
         @Inject(AppSessionService) private SS,
         @Inject(RootComponent) private parent
     ) {}
 
     ngOnInit() {
+        this.loadingService.showInitialSpinner = true;
         if (abp && abp.setting && abp.setting.values && abp.setting.values['Integrations:Google:MapsJavascriptApiKey'] && this.SS.userId)
             this.parent.addScriptLink(AppConsts.googleMapsApiUrl.replace('{KEY}', abp.setting.values['Integrations:Google:MapsJavascriptApiKey']));
 

@@ -21,19 +21,19 @@
 
     var params = queryString(document.location.search.substr(1), '&');
     if (
-        !checkSetDomainToken() && !params.secureId && 
+        !checkSetDomainToken() && !params.secureId &&
         !params.tenantId && !params.switchAccountToken && (
             (!pathParts.length && !cookie['Abp.AuthToken']) ||
             (pathParts.pop() == 'login')
         )
     ) {
+        showSpinner(window.location.href.indexOf('sperse') > 0 || window.location.href.indexOf('localhost') > 0 ? 'sperse-spinner' : 'spinner');
         window.loginPageHandler = function(context, boot, environment) {
             appContext = context;
             appBootstrap = boot;
             appEnvironment = environment;
             checkSetLogoLink(window['logoImage']);
         };
-
         getAppConfig();
     }
 
@@ -113,15 +113,23 @@
         }
     }
 
+    function showSpinner(spinnerClass) {
+        var spinner = document.body.querySelector('.' + spinnerClass);
+        if (spinner) {
+            spinner.style.display = 'flex';
+        }
+    }
+
     function handleGetCurrentLoginInformations(response) {
         var loginInformations = window.loginInfo = response;
         tenant = loginInformations && loginInformations.tenant;
         if (tenant && tenant.customLayoutType != 'Default') {
+            showSpinner('spinner');
             window.loginPageHandler = undefined;
             appBootstrap && appBootstrap.call(appContext);
         } else {
+            showSpinner('sperse-spinner');
             window.history.pushState("", "", location.origin + '/account/login' + document.location.search);
-
             loadLoginStylesheet();
             updateTenantMetadata();
             ajax('./assets/login/login.html', undefined, true).then(
@@ -348,7 +356,7 @@
                     headers: {
                         "Content-Type": "application/json",
                         "Accept": "application/json",
-                        [origRefererKey]: sessionStorage.getItem(origRefererKey) 
+                        [origRefererKey]: sessionStorage.getItem(origRefererKey)
                     },
                     error: function(request) {
                         abp.ui.clearBusy();
