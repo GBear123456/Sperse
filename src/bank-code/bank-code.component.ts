@@ -32,10 +32,10 @@ export class BankCodeComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     ngOnInit(): void {
-        this.getRootComponent().overflowHidden(true);
+        // this.getRootComponent().overflowHidden(true);
     }
 
     ngOnDestroy() {
-        this.getRootComponent().overflowHidden();
+        // this.getRootComponent().overflowHidden();
     }
 }

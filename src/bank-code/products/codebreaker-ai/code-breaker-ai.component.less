@@ -1,15 +1,15 @@
 :host {
     display: block;
-    height: 100%;
+    height: calc(100vh - 75px);
 
     @media (min-width: 960px) {
         max-width: initial;
         position: absolute;
-        width: calc(100vw - (100vw - 960px)/2 - 320px - 14px);
+        width: calc(100vw - (100vw - 960px)/2 - 320px - 15px);
     }
 
     @media (min-width: 1200px) {
-        width: calc(100vw - (100vw - 1140px)/2 - 285px - 14px);
+        width: calc(100vw - (100vw - 1140px)/2 - 285px - 15px);
     }
 
     iframe {

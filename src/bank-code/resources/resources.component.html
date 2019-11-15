@@ -1,20 +1,15 @@
-<dx-scroll-view showScrollbar="onHover" [height]="'calc(100vh - 70px)'">
+<!--<dx-scroll-view showScrollbar="onHover" [height]="'calc(100vh - 70px)'">-->
     <div class="container resources-container">
         <div class="mt-5 mb-5"><h1>Resources</h1></div>
         <div class="row">
             <div class="col-lg-3 sidebar-nav">
                 <p class="quick-nav">Quick navigation </p>
                 <ul class="quick-nav-links">
-                    <li><a href="#">Financing</a></li>
-                    <li><a href="#">Graphics and logos</a></li>
-                    <li><a href="#">Legal documents</a></li>
-                    <li><a href="#">Social Media ads</a></li>
-                    <li><a href="#">Trainer kits</a></li>
-                    <li><a href="#">Application forms</a></li>
-                    <li><a href="#">Videos</a></li>
-                    <li><a href="#">affiliate marketing tools</a></li>
-                    <li><a href="#">slide decks</a></li>
-                    <li><a href="#">weekly deposit calls</a></li>
+                    <li *ngFor="let category of data; let i = index;" (click)="isClicked=i" [class.active]="isClicked==i">
+                        <a pageScroll [pageScrollOffset]="80" [pageScrollDuration]="700" [href]="'#' + category.anchor">
+                            {{category.categoryName}}
+                        </a>
+                    </li>
                 </ul>
 
             </div>
@@ -22,6 +17,7 @@
                 <div class="row">
                     <div class="col-md-12">
                         <div class="card shadow" *ngFor="let category of data">
+                            <a class="anchor" [id]="category.anchor">&nbsp;</a>
                             <div class="card-body">
                                 <h2>{{category.categoryName}}</h2>
                                 <div class="row resources">
@@ -40,4 +36,4 @@
         </div>
     </div>
     <bank-code-footer></bank-code-footer>
-</dx-scroll-view>
+<!--</dx-scroll-view>-->

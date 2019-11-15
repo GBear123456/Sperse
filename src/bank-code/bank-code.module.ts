@@ -25,6 +25,7 @@ import { FooterComponent } from './shared/footer/footer.component';
 import { TotalCodesCrackedComponent } from './dashboard/total-codes-cracked/total-codes-cracked.component';
 import { GoalsCrackedComponent } from './dashboard/goals-cracked/goals-cracked.component';
 import { CountersComponent } from './dashboard/counters/counters.component';
+import {NgxPageScrollModule} from '@node_modules/ngx-page-scroll';
 
 @NgModule({
     declarations: [
@@ -46,6 +47,7 @@ import { CountersComponent } from './dashboard/counters/counters.component';
         DxScrollViewModule,
         DxProgressBarModule,
         ChartModule,
+        NgxPageScrollModule,
 
         NgCircleProgressModule.forRoot({
             // defaults config
