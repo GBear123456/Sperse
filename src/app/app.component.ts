@@ -19,6 +19,7 @@ import { FullScreenService } from '@shared/common/fullscreen/fullscreen.service'
 @Component({
     templateUrl: './app.component.html',
     styleUrls: ['./app.component.less',
+        '../assets/common/styles/spinner.css',
         '../../node_modules/ng2-image-viewer/imageviewer.scss',
         '../shared/metronic/m-toast.less'
     ],
