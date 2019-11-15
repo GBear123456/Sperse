@@ -22,6 +22,10 @@ export class CustomReuseStrategy implements RouteReuseStrategy {
         return handle && (handle.route.value.snapshot.routeConfig == route.routeConfig);
     }
 
+    keyExists(key: string): boolean {
+        return !!this.handlers[key];
+    }
+
     invalidate(key: string) {
         if (this.handlers[key])
             (<any>this.handlers[key]).componentRef.instance.invalidate();
