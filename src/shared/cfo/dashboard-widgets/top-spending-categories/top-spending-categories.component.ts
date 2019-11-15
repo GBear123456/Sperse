@@ -85,8 +85,12 @@ export class TopSpendingCategoriesComponent implements OnInit, OnDestroy {
     }
 
     customizeLegendText = (pointInfo) => {
-        const amount = this.topSpendingCategories[pointInfo.pointIndex].amount;
-        return this.currencyPipe.transform(amount, this.currencyId, 'symbol-narrow', '1.2-2') + ' ' + pointInfo.pointName;
+        let text = pointInfo.pointName;
+        if (this.topSpendingCategories && this.topSpendingCategories.length) {
+            const amount = this.topSpendingCategories[pointInfo.pointIndex].amount;
+            text = this.currencyPipe.transform(amount, this.currencyId, 'symbol-narrow', '1.2-2') + ' ' + pointInfo.pointName;
+        }
+        return text;
     }
 
     onClick(e) {
