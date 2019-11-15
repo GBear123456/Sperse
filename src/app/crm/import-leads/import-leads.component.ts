@@ -238,13 +238,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     private importTypeChanged(event) {
         this.importTypeIndex = event.itemIndex;
         this.importType = event.itemData.value;
-
-        if (this.importType != ImportTypeInput.Lead)
-            this.selectedStageId = null;
-
-        if (this.importType != ImportTypeInput.Partner)
-            this.selectedPartnerTypeName = null;
-
+        this.selectedStageId = null;
         let contactGroupId = event.itemData.contactGroupId;
         this.userAssignmentComponent.assignedUsersSelector = this.getAssignedUsersSelector(contactGroupId);
         if (contactGroupId != this.contactGroupId) {
@@ -421,7 +415,9 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
             ratingId: this.ratingComponent.ratingValue || this.defaultRating,
             starId: this.starsListComponent.selectedItemKey,
             leadStageId: this.selectedStageId,
-            partnerTypeName: this.selectedPartnerTypeName,
+            partnerTypeName: this.importType === ImportTypeInput.Partner
+                ? this.selectedPartnerTypeName
+                : undefined,
             ignoreInvalidValues: data.importAll,
             fields: data.fields
         });
@@ -659,7 +655,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
                         name: 'partnerType',
                         action: () => this.partnerTypesComponent.toggle(),
                         attr: {
-                            'filter-selected': !!this.selectedPartnerTypeName
+                            'filter-selected': this.importType === ImportTypeInput.Partner && !!this.selectedPartnerTypeName
                         },
                         disabled: this.importType != ImportTypeInput.Partner || disabledManage
                     },
