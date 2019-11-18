@@ -63,7 +63,6 @@ import { ActivityComponent } from './activity/activity.component';
 import { CreateActivityDialogComponent } from './activity/create-activity-dialog/create-activity-dialog.component';
 import { CreateInvoiceDialogComponent } from './shared/create-invoice-dialog/create-invoice-dialog.component';
 import { BankSettingsDialogComponent } from './shared/bank-settings-dialog/bank-settings-dialog.component';
-import { dxDataGridClipboardDirective } from '@shared/common/clipboard/dx-data-grid.directive';
 import { CrmIntroComponent } from './shared/crm-intro/crm-intro.component';
 import { SharedIntroStepsModule } from '@shared/shared-intro-steps/shared-intro-steps.module';
 import { ImportServiceProxy } from '@shared/service-proxies/service-proxies';
@@ -148,7 +147,6 @@ import { MapModule } from '@app/shared/common/slice/map/map.module';
         CreateInvoiceDialogComponent,
         CreateActivityDialogComponent,
         BankSettingsDialogComponent,
-        dxDataGridClipboardDirective,
         CrmIntroComponent,
         ActivityComponent
     ],

@@ -38,7 +38,7 @@ export class ZendeskConfig extends ngxZendeskWebwidgetConfig {
 @NgModule({
     declarations: [
         AppComponent,
-        AccessDeniedComponent
+        AccessDeniedComponent        
     ],
     imports: [
         LayoutModule,

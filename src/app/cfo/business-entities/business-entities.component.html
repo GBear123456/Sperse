@@ -25,6 +25,7 @@
                                 mode="multiple"></dxo-selection>
                     <dxo-sorting mode="multiple"></dxo-sorting>
                     <dxi-column [caption]="l('BusinessEntities_Name')"
+                                cssClass="clipboard-holder"
                                 dataField="Name"
                                 [width]="250"></dxi-column>
                     <dxi-column [caption]="l('BusinessEntities_Accounts')"
@@ -33,14 +34,18 @@
                                 [width]="200"
                                 cellTemplate="accountsTemplate"></dxi-column>
                     <dxi-column [caption]="l('BusinessEntities_Parent')"
+                                cssClass="clipboard-holder"
                                 dataField="ParentName"
                                 [width]="250"></dxi-column>
                     <dxi-column [caption]="l('BusinessEntities_Location')"
+                                cssClass="clipboard-holder"
                                 [calculateCellValue]="locationColumn_calculateCellValue"></dxi-column>
                     <dxi-column [caption]="l('BusinessEntities_DateOpened')"
+                                cssClass="clipboard-holder"
                                 dataField="DateOpened"
                                 cellTemplate="dateOpenedTemplate"></dxi-column>
                     <dxi-column [caption]="l('BusinessEntities_TaxNumber')"
+                                cssClass="clipboard-holder"
                                 dataField="TaxNumber"></dxi-column>
                     <dxi-column [caption]="l('BusinessEntities_Phone')"
                                 dataField="Phone"
@@ -48,8 +53,10 @@
                                 cssClass="tabular"
                                 [visible]="false"></dxi-column>
                     <dxi-column [caption]="l('BusinessEntities_Type')"
+                                cssClass="clipboard-holder"
                                 dataField="Type"></dxi-column>
                     <dxi-column [caption]="l('BusinessEntities_Industry')"
+                                cssClass="clipboard-holder"
                                 dataField="Industry"
                                 [visible]="false"></dxi-column>
                     <dxi-column [caption]="l('BusinessEntities_Status')"
@@ -59,11 +66,12 @@
                                 alignment="center"
                                 cellTemplate="statusTemplate"></dxi-column>
                     <dxi-column [caption]="l('BusinessEntities_Default')"
+                                cssClass="clipboard-holder"
                                 dataField="IsDefault"></dxi-column>
 
-                    <div *dxTemplate="let data of 'dateOpenedTemplate'">{{data.value | date: 'EEE dd, yyyy' : userTimezone }}</div>
-                    <div *dxTemplate="let data of 'phoneCell'">{{data.value | phone}}</div>
-                    <div *dxTemplate="let data of 'toolbarTitleTemplate'" class="title">{{l('BusinessEntities')}}</div>
+                    <div *dxTemplate="let data of 'dateOpenedTemplate'" class="clipboard-holder">{{data.value | date: 'EEE dd, yyyy' : userTimezone }}</div>
+                    <div *dxTemplate="let data of 'phoneCell'" class="clipboard-holder">{{data.value | phone}}</div>
+                    <div *dxTemplate="let data of 'toolbarTitleTemplate'" class="title clipboard-holder">{{l('BusinessEntities')}}</div>
                     <div *dxTemplate="let data of 'statusTemplate'" class="statusContent">
                         <span [ngClass]="data.value.toLowerCase()">
                             <span>
