@@ -31,7 +31,8 @@ export class SMSDialogComponent {
     phonePattern = /^[\d\+\-\(\)\s]{10,24}$/;
     phoneNumber: string;
     phones: string[];
-    smsText: string;
+    smsText = '';
+    readonly smsMaxLength = 160;
     buttons: IDialogButton[] = [
         {
             id: 'sendSMS',
@@ -40,7 +41,6 @@ export class SMSDialogComponent {
             action: this.save.bind(this)
         }
     ];
-
     constructor(
         private contactServiceProxy: ContactServiceProxy,
         private dialogRef: MatDialogRef<SMSDialogComponent>,
