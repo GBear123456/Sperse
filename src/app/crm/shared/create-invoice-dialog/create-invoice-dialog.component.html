@@ -113,6 +113,7 @@
                             [acceptCustomValue]="true"
                             [dataSource]="[orderNumber]"
                             (onFocusIn)="orderFocusIn($event)"
+                            (onValueChanged)="onOrderNumberValueChanged($event)"
                             [placeholder]="ls.l('Invoice_PurchaseOrderNumber')">
                             <div *dxTemplate="let contentData of 'content'">
                                 <dx-data-grid #ordersGrid

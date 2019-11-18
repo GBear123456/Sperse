@@ -568,6 +568,11 @@ export class CreateInvoiceDialogComponent implements OnInit {
         }
     }
 
+    onOrderNumberValueChanged(event) {
+        if (event.event)
+            this.orderId = undefined;
+    }
+
     allowDigitsOnly(event, exceptions = []) {
         let key = event.event.key;
         if (exceptions.indexOf(key) < 0 && key.length == 1 && isNaN(key)) {
