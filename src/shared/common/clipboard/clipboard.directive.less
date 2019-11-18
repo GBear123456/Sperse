@@ -1,12 +1,14 @@
 .clipboard-holder {
     position: relative;
+    padding-right: 25px!important;
     &:hover i {
         display: initial;
     }
     i {
         display: none;
+        cursor: pointer;
         position: absolute;
         margin-left: 10px;
-        top: 35%;
+        top: calc((100% - 15px) / 2);
     }
 }

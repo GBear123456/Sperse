@@ -1,54 +1,42 @@
 :host {
-	position: relative;
-	top: 74px;
+    position: relative;
+    top: 74px;
     height: 100%;
-
-  &.fullscreen {
-      top: 0px !important;
-      #gridContainer {
-          height: calc(~"100vh - 60px");
-      }
-  }
-
-	/deep/ .grid-compact-view .dx-datagrid .dx-datagrid-rowsview .dx-column-lines td{
-		height: 40px !important;
-	}		
-
-	/deep/ #gridContainer {
-    table {
-        direction: rtl;
-        td {
-            direction: ltr;
+    &.fullscreen {
+        top: 0px !important;
+        #gridContainer {
+            height: calc(~"100vh - 60px");
         }
     }
-
-    .dx-datagrid .dx-link.dx-link-edit {
-        width: 18px!important;
+    /deep/ .grid-compact-view .dx-datagrid .dx-datagrid-rowsview .dx-column-lines td {
+        height: 40px !important;
     }
-    td.dx-command-edit:before {
-        left: 60px!important;
+    /deep/ #gridContainer {
+        table {
+            direction: rtl;
+            td {
+                direction: ltr;
+            }
+        }
+        .dx-datagrid .dx-link.dx-link-edit {
+            width: 18px!important;
+        }
+        td.dx-command-edit:before {
+            left: 60px!important;
+        }
+        .role-container {
+            display: inline!important;
+        }
+        .dx-datagrid-rowsview {
+            .dx-column-lines {
+                cursor: pointer;
+                & > td {
+                    span {
+                        text-align: center;
+                        display: inherit;
+                    }
+                }
+            }
+        }
     }
-
-		.dx-datagrid-rowsview tr td.tabular,
-		.dx-datagrid-rowsview tr td.tabular * {
-			font-family: 'Lato' !important;
-		}
-		
-    .role-container {
-        display: inline!important;                
-    }
-  			
-		.dx-datagrid-rowsview {
-			.dx-column-lines {
-       		cursor: pointer; 
-       		& > td {
-  					span {
-  						text-align: center;
-  						display: inherit;
-
-  					}
-     		}
-			}
-		}
-	}	
 }
