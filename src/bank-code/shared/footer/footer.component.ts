@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {ConditionsModalComponent} from '@shared/common/conditions-modal/conditions-modal.component';
 import {MatDialog} from '@angular/material';
 import {ConditionsType} from '@shared/AppEnums';
+import {AppLocalizationService} from '@app/shared/common/localization/app-localization.service';
 
 @Component({
     selector: 'bank-code-footer',
@@ -10,9 +11,11 @@ import {ConditionsType} from '@shared/AppEnums';
 })
 export class FooterComponent implements OnInit {
     conditions = ConditionsType;
+    currentYear = new Date().getFullYear();
 
     constructor(
-        private dialog: MatDialog
+        private dialog: MatDialog,
+        public ls: AppLocalizationService
     ) {
     }
 

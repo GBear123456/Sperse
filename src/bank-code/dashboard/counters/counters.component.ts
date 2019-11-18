@@ -1,4 +1,5 @@
 import {Component, OnInit} from '@angular/core';
+import {AppLocalizationService} from '@app/shared/common/localization/app-localization.service';
 
 @Component({
     selector: 'bank-code-counters',
@@ -18,7 +19,7 @@ export class CountersComponent implements OnInit {
         { percent: 77, outerColor: '#f09e1f', innerColor: '#ecd68a', title: '77%', subtitle: '6335' },
         { percent: 57, outerColor: '#1b6634', innerColor: '#87c796', title: '57%', subtitle: '7433' }
     ];
-    constructor() {
+    constructor(public ls: AppLocalizationService) {
     }
 
     ngOnInit() {
