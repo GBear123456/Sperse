@@ -4,7 +4,6 @@
 
 :host {
     z-index: 1;
-    min-width: 810px;
     display: block;
     /deep/ input {
         font-size: 14px;
@@ -12,11 +11,11 @@
         line-height: 1.79;
         letter-spacing: 0.3px;
         color: #424c56;
-        padding: 0px;
+        padding: 0;
     }
 
     /deep/ .mat-dialog-header {
-        padding: 0px 10px 0px 130px!important;
+        padding: 0 10px 0 130px!important;
     }
 
     /deep/ .mat-dialog-actions {
@@ -28,33 +27,41 @@
     /deep/ .main_sidenav {
         visibility: visible!important;
         position: static!important;
+    }
 
-        .roles-checkbox-list {
-            padding: 20px;
-            margin-left: 10px;
+    .roles-checkbox-list {
+        padding: 20px;
+        margin-left: 10px;
+    }
+
+    /deep/ .dx-toolbar {
+        padding-left: 135px !important;
+        .dx-button img.dx-icon {
+            max-height: 100%;
+        }
+    }
+
+    .tab-content {
+        display: flex;
+        flex-direction: column;
+        padding: 30px 50px;
+        height: 700px;
+
+        .user-options-delimiter {
+            margin-top: 40px;
         }
 
-        .tab-content {
-            display: flex;
-            flex-direction: column;
-            padding: 30px 50px;
-            height: 700px;
-
-            .user-options-delimiter {
-                margin-top: 40px;
-            }
-
+        form {
             .form-group {
                 width: 100%;
                 display: flex;
                 justify-content: space-between;
+                margin-bottom: 0;
                 label {
-                    white-space: nowrap;
-                    margin-top: 18px;
-                    height: 20px;
+                    padding-left: 30px;
                 }
                 input, dx-text-box {
-                    width: 70%;
+                    width: 50%;
                 }
 
                 .dx-texteditor {
@@ -64,12 +71,11 @@
                     border-bottom: 1px solid #dfdfdf;
                 }
             }
-        }
-    }
 
-    .m-checkbox-list {
-        label {
-            display: block;
+            & > .form-group {
+                width: 80%;
+                margin-bottom: 5px;
+            }
         }
     }
 
@@ -127,5 +133,14 @@
         font-size: 18px!important;
         text-align: center;
         line-height: 18px;
+    }
+}
+
+/deep/ .create-user-dialog-tooltip {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    .m-checkbox > span {
+        top: 0 !important;
     }
 }

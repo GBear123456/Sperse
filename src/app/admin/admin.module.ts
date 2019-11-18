@@ -17,6 +17,7 @@ import { DxPieChartModule } from 'devextreme-angular/ui/pie-chart';
 import { DxFileUploaderModule } from 'devextreme-angular/ui/file-uploader';
 import { DxDataGridModule } from 'devextreme-angular/ui/data-grid';
 import { DxValidatorModule } from 'devextreme-angular/ui/validator';
+import { DxToolbarModule } from 'devextreme-angular/ui/toolbar';
 import { DxTooltipModule } from 'devextreme-angular/ui/tooltip';
 import { DxContextMenuModule } from 'devextreme-angular/ui/context-menu';
 import { DxListModule } from 'devextreme-angular/ui/list';
@@ -105,6 +106,7 @@ import { LoadingSpinnerModule } from '@app/shared/common/loading-spinner/loading
         DxSelectBoxModule,
         DxTextBoxModule,
         DxButtonModule,
+        DxToolbarModule,
         DxTooltipModule,
         DxTextAreaModule,
         DxNumberBoxModule,

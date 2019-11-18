@@ -1,8 +1,14 @@
-import { AfterViewInit, Component, ElementRef } from '@angular/core';
+/** Core imports */
+import { AfterViewInit, Component, ElementRef, EventEmitter, Input, Output } from '@angular/core';
+
+/** Third party imports */
+import includes from 'lodash/includes';
+
+/** Application imports */
 import { HtmlHelper } from '@shared/helpers/HtmlHelper';
 import { OrganizationUnitDto } from '@shared/service-proxies/service-proxies';
-import includes from 'lodash/includes';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { ArrayHelper } from '@shared/helpers/ArrayHelper';
 
 export interface IOrganizationUnitsTreeComponentData {
     allOrganizationUnits: OrganizationUnitDto[];
@@ -19,12 +25,16 @@ export interface IOrganizationUnitsTreeComponentData {
     `
 })
 export class OrganizationUnitsTreeComponent implements AfterViewInit {
-
-    set data(data: IOrganizationUnitsTreeComponentData) {
-        this.allOrganizationUnits = data.allOrganizationUnits;
-        this.selectedOrganizationUnits = data.selectedOrganizationUnits;
-        this.refreshTree();
+    @Input() set data(data: IOrganizationUnitsTreeComponentData) {
+        if (data && (ArrayHelper.dataChanged(this.allOrganizationUnits, data.allOrganizationUnits)
+            || ArrayHelper.dataChanged(this.selectedOrganizationUnits, data.selectedOrganizationUnits)
+        )) {
+            this.allOrganizationUnits = data.allOrganizationUnits;
+            this.selectedOrganizationUnits = data.selectedOrganizationUnits;
+            this.refreshTree();
+        }
     }
+    @Output() onSelectedOrganizationUnitsChange: EventEmitter<number[]> = new EventEmitter<number[]>();
 
     private $tree: JQuery;
     private createdTreeBefore;
@@ -141,7 +151,7 @@ export class OrganizationUnitsTreeComponent implements AfterViewInit {
                 childrenNodes = $.makeArray(this.$tree.jstree('get_node', data.node).children);
                 this.$tree.jstree('deselect_node', childrenNodes);
             }
-
+            this.onSelectedOrganizationUnitsChange.emit(this.getSelectedOrganizations());
             if (!wasInTreeChangeEvent) {
                 inTreeChangeEvent = false;
             }

@@ -1,6 +1,6 @@
 <dx-context-menu
     [selectByClick]="true"
-    [selectionMode]="'single'"
+    selectionMode="single"
     [dataSource]="saveContextMenuItems"
     [position]="{ my: 'top right', at: 'bottom right' }"
     (onSelectionChanged)="onSaveOptionSelectionChanged($event)"
