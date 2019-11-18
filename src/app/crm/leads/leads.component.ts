@@ -201,7 +201,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             {
                 enabled: this.contactService.checkCGPermission(ContactGroup.Client),
                 action: this.createLead.bind(this),
-                label: this.l('CreateNewLead')
+                label: this.getHeadlineButtonName()
             }
         ]
     };
@@ -1382,9 +1382,14 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         this.actionEvent = null;
     }
 
+    getHeadlineButtonName() {
+        return this.l('CreateNew') + ' ' + this.getUserGroup(this.selectedContactGroup).slice(0, -1);
+    }
+
     onContactGroupChanged(event) {
         if (event.previousValue != event.value) {
             this.contactGroupId.next(ContactGroup[event.value]);
+            this.headlineConfig.buttons[0].label = this.getHeadlineButtonName();
             this.cacheService.set(this.getCacheKey(this.CONTACT_GROUP_CACHE_KEY), event.value);
             this.createButtonEnabledSet();
             this.filterChanged = true;
