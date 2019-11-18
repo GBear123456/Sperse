@@ -1,42 +1,44 @@
 /** Core imports */
-import { Component, Inject, Injector, ElementRef } from '@angular/core';
+import { Component, Inject, ElementRef } from '@angular/core';
 
 /** Third party imports */
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
-import { finalize } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
+import { finalize, switchMap, tap } from 'rxjs/operators';
 
 /** Application imports */
-import { AppComponentBase } from '@shared/common/app-component-base';
 import { ContactGroup, PersonOrgRelationType } from '@shared/AppEnums';
 import {
     CreatePersonOrgRelationInput,
     CreatePersonOrgRelationOutput,
+    OrganizationContactInfoDto,
     OrganizationContactServiceProxy,
     PersonOrgRelationServiceProxy,
     PersonOrgRelationShortInfo
 } from '@shared/service-proxies/service-proxies';
 import { CrmStore, OrganizationUnitsStoreActions } from '@app/crm/store';
+import { LoadingService } from '@shared/common/loading-service/loading.service';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 
 @Component({
     templateUrl: 'add-company-dialog.html',
     styleUrls: ['add-company-dialog.less']
 })
-export class AddCompanyDialogComponent extends AppComponentBase {
+export class AddCompanyDialogComponent {
     companies: any = [];
     private lookupTimeout: any;
     private latestSearchPhrase: string;
     constructor(
-        injector: Injector,
         private elementRef: ElementRef,
         private relationServiceProxy: PersonOrgRelationServiceProxy,
         private orgServiceProxy: OrganizationContactServiceProxy,
         private store$: Store<CrmStore.State>,
+        private loadingService: LoadingService,
         public dialogRef: MatDialogRef<AddCompanyDialogComponent>,
+        public ls: AppLocalizationService,
         @Inject(MAT_DIALOG_DATA) public data: any
-    ) {
-        super(injector);
-    }
+    ) {}
 
     lookupCompanies(search?: string) {
         return this.orgServiceProxy.getOrganizations(search, this.data.contactInfo.groupId, 10);
@@ -52,7 +54,7 @@ export class AddCompanyDialogComponent extends AppComponentBase {
         clearTimeout(this.lookupTimeout);
         this.lookupTimeout = setTimeout(() => {
             $event.component.option('opened', true);
-            $event.component.option('noDataText', this.l('LookingForItems'));
+            $event.component.option('noDataText', this.ls.l('LookingForItems'));
             this.lookupCompanies(search).subscribe((res) => {
                 if (search == this.latestSearchPhrase) {
                     this.companies = res;
@@ -76,14 +78,11 @@ export class AddCompanyDialogComponent extends AppComponentBase {
         $event.component.option('opened', Boolean(this.companies.length));
     }
 
-    private applyContactInfo(response: CreatePersonOrgRelationOutput) {
+    private applyContactInfo(response: CreatePersonOrgRelationOutput): Observable<any> {
+        let result$: Observable<any> = of(true);
         let contactInfo = this.data.contactInfo;
         if (response && contactInfo) {
             let orgId = response.organizationId;
-            this.orgServiceProxy.getOrganizationContactInfo(orgId).subscribe((result) => {
-                contactInfo.personContactInfo['personOrgRelationInfo'].organization.rootOrganizationUnitId =
-                    (contactInfo['organizationContactInfo'] = result).organization.rootOrganizationUnitId;
-            });
             contactInfo.personContactInfo.orgRelationId = response.id;
             contactInfo.primaryOrganizationContactId = orgId;
             if (!contactInfo.personContactInfo.orgRelations)
@@ -97,11 +96,18 @@ export class AddCompanyDialogComponent extends AppComponentBase {
                     relationType: {id: PersonOrgRelationType.Employee, name: 'Employee'}
                 })
             );
+            result$ = this.orgServiceProxy.getOrganizationContactInfo(orgId).pipe(
+                tap((result: OrganizationContactInfoDto) => {
+                    contactInfo.personContactInfo['personOrgRelationInfo'].organization.rootOrganizationUnitId =
+                    (contactInfo['organizationContactInfo'] = result).organization.rootOrganizationUnitId;
+                })
+            );
         }
+        return result$;
     }
 
     onSave() {
-        this.startLoading(true);
+        this.loadingService.startLoading();
         this.relationServiceProxy.create(
             CreatePersonOrgRelationInput.fromJS({
                 personId: this.data.contactId,
@@ -110,18 +116,24 @@ export class AddCompanyDialogComponent extends AppComponentBase {
                 relationshipType: PersonOrgRelationType.Employee,
                 jobTitle: this.data.title
             }
-        )).pipe(finalize(() => {
-            this.data.id = undefined;
-            this.finishLoading(true);
-        })).subscribe((response: CreatePersonOrgRelationOutput) => {
-            if (response.organizationId) {
-                this.data.updateLocation(this.data.contactId, this.data.contactInfo['leadId'], response.organizationId);
-                this.applyContactInfo(response);
-                /** Reload list of organization units */
-                if (this.data.contactInfo.groupId === ContactGroup.Partner) {
-                    this.store$.dispatch(new OrganizationUnitsStoreActions.LoadRequestAction(true));
+        )).pipe(
+            finalize(() => {
+                this.data.id = undefined;
+                this.loadingService.finishLoading();
+            }),
+            switchMap((response: CreatePersonOrgRelationOutput) => {
+                let result = of(response);
+                if (response.organizationId) {
+                    this.data.updateLocation(this.data.contactId, this.data.contactInfo['leadId'], response.organizationId);
+                    /** Reload list of organization units */
+                    if (this.data.contactInfo.groupId === ContactGroup.Partner) {
+                        this.store$.dispatch(new OrganizationUnitsStoreActions.LoadRequestAction(true));
+                    }
+                    result = this.applyContactInfo(response);
                 }
-            }
+                return result;
+            })
+        ).subscribe((response: CreatePersonOrgRelationOutput) => {
             this.dialogRef.close(response);
         });
     }

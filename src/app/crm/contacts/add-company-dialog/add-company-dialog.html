@@ -5,7 +5,7 @@
         displayExpr="name"
         valueExpr="id"
         [acceptCustomValue]="true"
-        [placeholder]="l('CompanyName')"
+        [placeholder]="ls.l('CompanyName')"
         [(value)]="data.company"
         [dataSource]="companies"
         [searchEnabled]="true"
@@ -14,18 +14,18 @@
         (onFocusIn)="lookupFocusIn($event)"
         (onFocusOut)="lookupFocusOut($event)">
         <dx-validator>
-            <dxi-validation-rule type="required" message="{{l('CompanyNameIsRequired')}}."></dxi-validation-rule>
+            <dxi-validation-rule type="required" message="{{ls.l('CompanyNameIsRequired')}}."></dxi-validation-rule>
         </dx-validator>
     </dx-select-box>
     <dx-text-box
         name="title"
         width="350px"
-        [placeholder]="l('JobTitle')"
+        [placeholder]="ls.l('JobTitle')"
         [(value)]="data.title"
         [valueChangeEvent]="'keyup'">
     </dx-text-box>
 </mat-dialog-content>
 <mat-dialog-actions>
-    <button mat-button mat-dialog-close class="button-layout button-default">{{l('Cancel')}}</button>
-    <button mat-button class="button-layout button-primary" (click)="onSave()">{{l('Add')}}</button>
+    <button mat-button mat-dialog-close class="button-layout button-default">{{ls.l('Cancel')}}</button>
+    <button mat-button class="button-layout button-primary" (click)="onSave()">{{ls.l('Add')}}</button>
 </mat-dialog-actions>

@@ -3,26 +3,26 @@
         <table width="100%" height="100%">
             <tr>
                 <th height="70px"></th>
-                <th>{{l('ContactInformation_PersonTitle')}}</th>
-                <th>{{l('ContactInformation_CompanyTitle')}}</th>
+                <th>{{ls.l('ContactInformation_PersonTitle')}}</th>
+                <th>{{ls.l('ContactInformation_CompanyTitle')}}</th>
             </tr>
             <tr>
-                <td>{{l('Emails')}}</td>
+                <td>{{ls.l('Emails')}}</td>
                 <td><contacts-area [contactInfo]="data?.contactInfo" [contactInfoData]="data?.contactInfo?.personContactInfo?.details" [showContactType]="'emails'"></contacts-area></td>
                 <td><contacts-area [isCompany]="true" [contactInfo]="data?.contactInfo" [contactInfoData]="data?.contactInfo['organizationContactInfo']?.details" [showContactType]="'emails'"></contacts-area></td>
             </tr>
             <tr>
-                <td>{{l('Phones')}}</td>
+                <td>{{ls.l('Phones')}}</td>
                 <td><contacts-area [contactInfo]="data?.contactInfo" [contactInfoData]="data?.contactInfo?.personContactInfo?.details" [showContactType]="'phones'"></contacts-area></td>
-                <td><contacts-area [isCompany]="true" [contactInfo]="data?.contactInfo" [contactInfoData]="data?.contactInfo['organizationContactInfo']?.details" [showContactType]="'phones'"></contacts-area></td>        
+                <td><contacts-area [isCompany]="true" [contactInfo]="data?.contactInfo" [contactInfoData]="data?.contactInfo['organizationContactInfo']?.details" [showContactType]="'phones'"></contacts-area></td>
             </tr>
             <tr>
-                <td>{{l('Links')}}</td>
+                <td>{{ls.l('Links')}}</td>
                 <td><socials [contactInfo]="data?.contactInfo" [contactInfoData]="data?.contactInfo?.personContactInfo?.details"></socials></td>
-                <td><socials [isCompany]="true" [contactInfo]="data?.contactInfo" [contactInfoData]="data?.contactInfo['organizationContactInfo']?.details"></socials></td>        
+                <td><socials [isCompany]="true" [contactInfo]="data?.contactInfo" [contactInfoData]="data?.contactInfo['organizationContactInfo']?.details"></socials></td>
             </tr>
             <tr>
-                <td>{{l('Addresses')}}</td>
+                <td>{{ls.l('Addresses')}}</td>
                 <td><addresses [contactInfo]="data?.contactInfo" [contactInfoData]="data?.contactInfo?.personContactInfo?.details"></addresses></td>
                 <td><addresses [isCompany]="true" [contactInfo]="data?.contactInfo" [contactInfoData]="data?.contactInfo['organizationContactInfo']?.details"></addresses></td>
             </tr>

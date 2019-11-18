@@ -1,14 +1,15 @@
 /** Core imports */
-import { Component, Injector, Input } from '@angular/core';
+import { Component, Input } from '@angular/core';
 
 /** Third party imports  */
 import { MatDialog } from '@angular/material/dialog';
+import capitalize from 'underscore.string/capitalize';
+import { filter } from 'rxjs/operators';
 
 /** Application imports */
 import { ConfirmDialogComponent } from '@app/shared/common/dialogs/confirm/confirm-dialog.component';
 import { DialogService } from '@app/shared/common/dialogs/dialog.service';
 import { AppConsts } from '@shared/AppConsts';
-import { AppComponentBase } from '@shared/common/app-component-base';
 import {
     ContactInfoDto, ContactEmailServiceProxy, ContactEmailDto, ContactPhoneDto,
     ContactPhoneServiceProxy, CreateContactEmailInput, ContactInfoDetailsDto,
@@ -18,6 +19,7 @@ import {
 import { EditContactDialog } from '../edit-contact-dialog/edit-contact-dialog.component';
 import { ContactsService } from '../contacts.service';
 import { PersonOrgRelationType } from '@root/shared/AppEnums';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 
 @Component({
     selector: 'contacts-area',
@@ -25,7 +27,7 @@ import { PersonOrgRelationType } from '@root/shared/AppEnums';
     styleUrls: ['./contacts-area.component.less'],
     providers: [ DialogService ]
 })
-export class ContactsAreaComponent extends AppComponentBase {
+export class ContactsAreaComponent {
     @Input() isCompany = false;
     @Input() showContactType: string;
     @Input()
@@ -50,16 +52,14 @@ export class ContactsAreaComponent extends AppComponentBase {
     emailRegEx = AppConsts.regexPatterns.email;
 
     constructor(
-        injector: Injector,
         private contactsService: ContactsService,
         private contactEmailService: ContactEmailServiceProxy,
         private contactPhoneService: ContactPhoneServiceProxy,
         private organizationContactService: OrganizationContactServiceProxy,
         private dialogService: DialogService,
-        public dialog: MatDialog
-    ) {
-        super(injector);
-    }
+        public dialog: MatDialog,
+        public ls: AppLocalizationService
+    ) {}
 
     getDialogPossition(event) {
         let shiftY = this.calculateShiftY(event);
@@ -78,21 +78,22 @@ export class ContactsAreaComponent extends AppComponentBase {
     }
 
     getFieldName(field) {
-        return this.capitalize(field.slice(0, 5));
+        return capitalize(field.slice(0, 5));
     }
 
     showDialog(field, data, event, index) {
         if (!this.isCompany || this.contactInfoData && this.contactInfoData.contactId)
             this.showContactDialog(field, data, event, index);
         else
-            this.contactsService.addCompanyDialog(event, this.contactInfo,
+            this.contactsService.addCompanyDialog(
+                event,
+                this.contactInfo,
                 Math.round(event.target.offsetWidth / 2)
-            ).subscribe(result => {
-                if (result) {
-                    this.contactInfoData = ContactInfoDetailsDto.fromJS({contactId: result.organizationId});
-                    this.showContactDialog(field, data, event, index);
-                }
-            });
+            ).pipe(
+                filter(Boolean)
+            ).subscribe(
+             () => this.showContactDialog(field, data, event, index)
+            );
     }
 
     showContactDialog(field, data, event, index) {
@@ -251,8 +252,8 @@ export class ContactsAreaComponent extends AppComponentBase {
     deleteEmailAddress(email, event, index) {
         this.dialog.open(ConfirmDialogComponent, {
             data: {
-                title: this.l('DeleteContactHeader', this.l('Email')),
-                message: this.l('DeleteContactMessage', this.l('Email').toLowerCase())
+                title: this.ls.l('DeleteContactHeader', AppConsts.localization.CRMLocalizationSourceName, this.ls.l('Email')),
+                message: this.ls.l('DeleteContactMessage', AppConsts.localization.CRMLocalizationSourceName, this.ls.l('Email').toLowerCase())
             }
         }).afterClosed().subscribe(result => {
             if (result) {
@@ -272,8 +273,8 @@ export class ContactsAreaComponent extends AppComponentBase {
     deletePhoneNumber(phone, event, index) {
         this.dialog.open(ConfirmDialogComponent, {
             data: {
-                title: this.l('DeleteContactHeader', this.l('Phone')),
-                message: this.l('DeleteContactMessage', this.l('Phone').toLowerCase())
+                title: this.ls.l('DeleteContactHeader', AppConsts.localization.CRMLocalizationSourceName, this.ls.l('Phone')),
+                message: this.ls.l('DeleteContactMessage', AppConsts.localization.CRMLocalizationSourceName, this.ls.l('Phone').toLowerCase())
             }
         }).afterClosed().subscribe(result => {
             if (result) {

@@ -1,5 +1,5 @@
 /** Application imports */
-import { Component, Inject, Injector, ElementRef } from '@angular/core';
+import { Component, Inject, ElementRef } from '@angular/core';
 
 /** Third party imports */
 import { Store, select } from '@ngrx/store';
@@ -11,11 +11,11 @@ import { AngularGooglePlaceService } from 'angular-google-place';
 import { CountriesStoreActions, CountriesStoreSelectors } from '@app/store';
 import { RootStore, StatesStoreActions, StatesStoreSelectors } from '@root/store';
 import { AppConsts } from '@shared/AppConsts';
-import { AppComponentBase } from '@shared/common/app-component-base';
 import { CountryStateDto, CountryDto } from '@shared/service-proxies/service-proxies';
 import { AddressUsageTypesStoreActions, AddressUsageTypesStoreSelectors } from '@app/store';
 import { ContactsService } from '../contacts.service';
 import { GooglePlaceHelper } from '@shared/helpers/GooglePlaceHelper';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 
 @Component({
     selector: 'edit-address-dialog',
@@ -27,7 +27,7 @@ import { GooglePlaceHelper } from '@shared/helpers/GooglePlaceHelper';
     },
     providers: [ GooglePlaceHelper ]
 })
-export class EditAddressDialog extends AppComponentBase {
+export class EditAddressDialog {
     types: any[] = [];
     validator: any;
     action: string;
@@ -37,19 +37,19 @@ export class EditAddressDialog extends AppComponentBase {
     states: CountryStateDto[];
     countries: CountryDto[];
     state: string;
-
     googleAutoComplete: Boolean;
+    localization = AppConsts.localization;
 
-    constructor(injector: Injector,
-                private elementRef: ElementRef,
-                @Inject(MAT_DIALOG_DATA) public data: any,
-                public dialogRef: MatDialogRef<EditAddressDialog>,
-                private contactsService: ContactsService,
-                private angularGooglePlaceService: AngularGooglePlaceService,
-                private store$: Store<RootStore.State>,
-                private googlePlaceHelper: GooglePlaceHelper
+    constructor(
+        private elementRef: ElementRef,
+        private contactsService: ContactsService,
+        private angularGooglePlaceService: AngularGooglePlaceService,
+        private store$: Store<RootStore.State>,
+        private googlePlaceHelper: GooglePlaceHelper,
+        public dialogRef: MatDialogRef<EditAddressDialog>,
+        public ls: AppLocalizationService,
+        @Inject(MAT_DIALOG_DATA) public data: any
     ) {
-        super(injector);
         this.isEditAllowed = this.contactsService.checkCGPermission(this.data.groupId);
         if (this.validateAddress(data)) {
             this.action = 'Edit';
@@ -168,6 +168,6 @@ export class EditAddressDialog extends AppComponentBase {
     }
 
     getUsageTypeHint(item) {
-        return item ? this.l('ContactInformation_AddressTypeTooltip_' + item.id) : '';
+        return item ? this.ls.l('ContactInformation_AddressTypeTooltip_' + item.id) : '';
     }
 }

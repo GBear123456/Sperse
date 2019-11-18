@@ -218,8 +218,8 @@ export class AddressesComponent extends AppComponentBase implements OnInit {
     deleteAddress(address, event, index) {
         this.dialog.open(ConfirmDialogComponent, {
             data: {
-                title: this.l('DeleteContactHeader', this.l('Address')),
-                message: this.l('DeleteContactMessage', this.l('Address').toLowerCase())
+                title: this.l('DeleteContactHeader', AppConsts.localization.CRMLocalizationSourceName, this.l('Address')),
+                message: this.l('DeleteContactMessage', AppConsts.localization.CRMLocalizationSourceName, this.l('Address').toLowerCase())
             }
         }).afterClosed().subscribe(result => {
             if (result) {

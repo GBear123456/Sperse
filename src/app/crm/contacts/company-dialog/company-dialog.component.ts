@@ -104,9 +104,8 @@ export class CompanyDialogComponent implements OnInit {
     ];
 
     constructor(
-        public dialog: MatDialog,
-        private _organizationContactServiceProxy: OrganizationContactServiceProxy,
-        private _notesService: NotesServiceProxy,
+        private organizationContactServiceProxy: OrganizationContactServiceProxy,
+        private notesService: NotesServiceProxy,
         private contactPhotoServiceProxy: ContactPhotoServiceProxy,
         private store$: Store<RootStore.State>,
         private changeDetectorRef: ChangeDetectorRef,
@@ -114,6 +113,7 @@ export class CompanyDialogComponent implements OnInit {
         private contactService: ContactsService,
         private notifyService: NotifyService,
         public ls: AppLocalizationService,
+        public dialog: MatDialog,
         @Inject(MAT_DIALOG_DATA) private data: any
     ) {}
 
@@ -144,7 +144,7 @@ export class CompanyDialogComponent implements OnInit {
 
         this.modalDialog.startLoading();
         this.company.companyName = this.company.fullName = this.title;
-        let input = new UpdateOrganizationInfoInput(_.mapObject(this.company, (val, key) => {
+        let input = new UpdateOrganizationInfoInput(_.mapObject(this.company, val => {
             return val || null;
         }));
         input.formedDate = this.company.formedDate ? this.getMomentFromDateWithoutTime(this.company.formedDate) : null;
@@ -153,7 +153,7 @@ export class CompanyDialogComponent implements OnInit {
             input.sizeFrom = size.from;
             input.sizeTo = size.to;
         }
-        this._organizationContactServiceProxy.updateOrganizationInfo(input)
+        this.organizationContactServiceProxy.updateOrganizationInfo(input)
             .pipe(finalize(() => this.modalDialog.finishLoading()))
             .subscribe(() => {
                 this.contactService.invalidateUserData();
@@ -164,7 +164,7 @@ export class CompanyDialogComponent implements OnInit {
             });
         if (this.company.notes) {
             this.modalDialog.startLoading();
-            this._notesService.createNote(CreateNoteInput.fromJS({
+            this.notesService.createNote(CreateNoteInput.fromJS({
                 contactId: this.company.id,
                 text: this.company.notes,
                 noteType: NoteType.Note,
@@ -177,15 +177,15 @@ export class CompanyDialogComponent implements OnInit {
     }
 
     delete() {
-        abp.message.confirm(this.ls.l('CompanyRemovalConfirmationMessage', 
+        abp.message.confirm(this.ls.l('CompanyRemovalConfirmationMessage',
             AppConsts.localization.CRMLocalizationSourceName, this.company.fullName), (result) => {
                 if (result) {
                     let personOrgRelationId = this.data.contactInfo.personContactInfo.orgRelationId;
-                    this._organizationContactServiceProxy.delete(this.company.id, personOrgRelationId).subscribe(() => {
+                    this.organizationContactServiceProxy.delete(this.company.id, personOrgRelationId).subscribe(() => {
                         this.dialog.closeAll();
                         this.notifyService.success(this.ls.l('SuccessfullyRemoved'));
                         let contactInfo = this.data.contactInfo;
-                        this.contactService.updateLocation(contactInfo.Id, contactInfo['leadId'], 
+                        this.contactService.updateLocation(contactInfo.Id, contactInfo['leadId'],
                             undefined, contactInfo.personContactInfo.userId);
                         this.data.invalidate.emit({
                             contactId: contactInfo.id,

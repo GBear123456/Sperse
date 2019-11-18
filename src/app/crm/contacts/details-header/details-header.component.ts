@@ -177,7 +177,7 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
                 this.manageAllowed = this.contactsService.checkCGPermission(contactInfo.groupId);
                 if (contactInfo.id) {
                     this.affiliateCode.next(contactInfo.affiliateCode);
-                }                
+                }
                 this.addContextMenuItems = this.getDefaultContextMenuItems(contactInfo).filter(menuItem => {
                     return menuItem.contactGroups.indexOf(contactInfo.groupId) >= 0;
                 });
@@ -245,27 +245,34 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
 
     removePersonOrgRelation(event) {
         let companyName = this.data['organizationContactInfo'].fullName;
-        this.messageService.confirm(this.ls.l('ContactRelationRemovalConfirmationMessage', companyName), (result) => {
-            if (result) {
-                let orgRelationId = this.personContactInfo['personOrgRelationInfo'].id;
-                this.showRemovingOrgRelationProgress = true;
-                this.personOrgRelationService.delete(orgRelationId)
-                    .pipe(finalize(() => this.showRemovingOrgRelationProgress = false))
-                    .subscribe(() => {
-                        let orgRelations = this.data.personContactInfo.orgRelations;
-                        let orgRelationToDelete = _.find(orgRelations, orgRelation => orgRelation.id === orgRelationId);
-                        if (this.data.primaryOrganizationContactId == orgRelationToDelete.organization.id) {
-                            this.data['organizationContactInfo'] = undefined;
-                            this.data.primaryOrganizationContactId = orgRelations.length ?
-                                orgRelations.reverse()[0].organization.id : undefined;
-                            this.contactInfo.next(this.data);
-                        }
-                        orgRelations.splice(orgRelations.indexOf(orgRelationToDelete), 1);
-                        this.displayOrgRelation(orgRelationToDelete.organization.id);
-                        this.contactsService.invalidateUserData();
-                    });
+        this.messageService.confirm(
+            this.ls.l(
+                'ContactRelationRemovalConfirmationMessage',
+                AppConsts.localization.CRMLocalizationSourceName,
+                companyName
+            ),
+            (result) => {
+                if (result) {
+                    let orgRelationId = this.personContactInfo['personOrgRelationInfo'].id;
+                    this.showRemovingOrgRelationProgress = true;
+                    this.personOrgRelationService.delete(orgRelationId)
+                        .pipe(finalize(() => this.showRemovingOrgRelationProgress = false))
+                        .subscribe(() => {
+                            let orgRelations = this.data.personContactInfo.orgRelations;
+                            let orgRelationToDelete = _.find(orgRelations, orgRelation => orgRelation.id === orgRelationId);
+                            if (this.data.primaryOrganizationContactId == orgRelationToDelete.organization.id) {
+                                this.data['organizationContactInfo'] = undefined;
+                                this.data.primaryOrganizationContactId = orgRelations.length ?
+                                    orgRelations.reverse()[0].organization.id : undefined;
+                                this.contactInfo.next(this.data);
+                            }
+                            orgRelations.splice(orgRelations.indexOf(orgRelationToDelete), 1);
+                            this.displayOrgRelation(orgRelationToDelete.organization.id);
+                            this.contactsService.invalidateUserData();
+                        });
+                }
             }
-        });
+        );
         event && event.stopPropagation();
     }
 
