@@ -1,4 +1,5 @@
 import {Component, OnInit} from '@angular/core';
+import {AppLocalizationService} from '@app/shared/common/localization/app-localization.service';
 
 @Component({
     selector: 'bank-code-total-codes-cracked',
@@ -48,7 +49,7 @@ export class TotalCodesCrackedComponent implements OnInit {
         }
     };
 
-    constructor() {
+    constructor(public ls: AppLocalizationService) {
     }
 
     ngOnInit() {

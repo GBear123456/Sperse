@@ -1,6 +1,6 @@
 <footer>
     <div class="container-fluid">
-        <h2>connect with us</h2>
+        <h2>{{ls.l('Connect_With_Us')}}</h2>
         <div class="social-icons">
             <a href="https://www.facebook.com/bankcodeinc/"><img src="./assets/common/images/bank-code/facebook.svg"></a>
             <a href="https://twitter.com/cheritree"><img src="./assets/common/images/bank-code/twitter.svg"></a>
@@ -13,11 +13,11 @@
                 <a href="javascript:void(0);"><img src="./assets/common/images/bank-code/logo.png" class="logo"></a>
             </div>
             <div class="col-lg-6 text-center mb-3 mb-lg-0">
-                Copyright © 2019 BANKCODE,<br />
-                A Division of CODEBREAKER TECHNOLOGIES, INC. All Rights Reserved
+                {{ls.l('Copyright')}} © {{currentYear}} BANKCODE,<br />
+                {{ls.l('BankCode_CopyText')}}
             </div>
             <div class="col-lg-3 text-lg-right text-md-center mb-3 mb-lg-0">
-                <a (click)="openConditionsDialog(conditions.Policies)">Privacy policy</a> | <a (click)="openConditionsDialog(conditions.Terms)">Terms of service</a>
+                <a (click)="openConditionsDialog(conditions.Policies)">{{ls.l('PrivacyPolicy')}}</a> | <a (click)="openConditionsDialog(conditions.Terms)">{{ls.l('TermsOfService')}}</a>
             </div>
         </div>
     </div>
