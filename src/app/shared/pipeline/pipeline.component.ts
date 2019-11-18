@@ -153,7 +153,6 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
 
     private handleDataSource() {
         this.subscribers.push(this.pipelineService.dataLayoutType$.pipe(
-            takeUntil(this.destroy$),
             filter((dlt: DataLayoutType) => dlt === DataLayoutType.Pipeline
                 && (!this.pipeline || this.pipeline.contactGroupId != this.contactGroupId)),
             switchMap(() => this.pipelineService.getPipelineDefinitionObservable(this.pipelinePurposeId, this.contactGroupId)),
@@ -193,7 +192,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     private handleDragAndDrop() {
-        this.subscribers.push(this.dragulaService.drop.pipe(takeUntil(this.destroy$)).subscribe((value) => {
+        this.subscribers.push(this.dragulaService.drop.subscribe((value) => {
             setTimeout(() => this.detectChanges());
             if (value[0] == this.dragulaName) {
                 let entityId = this.getAccessKey(value[1]),
@@ -258,7 +257,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                 }
             }
         }));
-        this.subscribers.push(this.dragulaService.dragend.pipe(takeUntil(this.destroy$)).subscribe((value) => {
+        this.subscribers.push(this.dragulaService.dragend.subscribe((value) => {
             if (value[0] == this.dragulaName)
                 this.hideStageHighlighting();
         }));
