@@ -34,7 +34,7 @@ import {
     InvoiceLineUnit,
     InvoiceSettings,
     GetNewInvoiceInfoOutput,
-    EntityContactInfo, 
+    EntityContactInfo,
     ContactAddressInfo
 } from '@shared/service-proxies/service-proxies';
 import { NotifyService } from '@abp/notify/notify.service';
@@ -195,7 +195,6 @@ export class CreateInvoiceDialogComponent implements OnInit {
             this.disabledForUpdate = [InvoiceStatus.Draft, InvoiceStatus.Final].indexOf(this.status) < 0;
             if (this.disabledForUpdate)
                 this.buttons[0].disabled = this.disabledForUpdate;
-            this.changeDetectorRef.detectChanges();
             this.invoiceProxy.getInvoiceInfo(invoice.Id)
                 .pipe(finalize(() => this.modalDialog.finishLoading()))
                 .subscribe((res) => {
@@ -224,18 +223,24 @@ export class CreateInvoiceDialogComponent implements OnInit {
             });
         }
 
-        let contact = this.data.contactInfo;
+        this.defineContactInfo(this.data.contactInfo);
+        this.changeDetectorRef.detectChanges();
+    }
+
+    defineContactInfo(contact) {
         if (contact) {
             this.contactId = contact.id;
             this.initOrderDataSource();
-            this.customer = contact.personContactInfo.fullName;
             let details = contact.personContactInfo.details,
+                emailAddress = details.emails.length ? details.emails[0].emailAddress : undefined,
                 address = details.addresses[0];
-            this.selectedContact = 
+            this.customer = contact.personContactInfo.fullName +
+                (emailAddress ? ' (' + emailAddress + ')' : '');
+            this.selectedContact =
                 new EntityContactInfo({
                     id: contact.id,
-                    name: contact.personContactInfo.fullName,
-                    email: details.emails.length ? details.emails[0].emailAddress : undefined,
+                    name: this.customer,
+                    email: emailAddress,
                     address: address ? new ContactAddressInfo({
                         streetAddress: address.streetAddress,
                         city: address.city,
@@ -604,9 +609,16 @@ export class CreateInvoiceDialogComponent implements OnInit {
                 }
             }).afterClosed().subscribe(data => {
                 if (data) {
-                    this.contactId = data.id;
-                    this.customer = [data.firstName, data.middleName,
-                        data.lastName].filter(Boolean).join(' ');
+                    this.defineContactInfo({
+                        id: data.id,
+                        personContactInfo: {
+                            fullName: [data.firstName, data.middleName, data.lastName].filter(Boolean).join(' '),
+                            details: {
+                                addresses: data.addresses,
+                                emails: data.emailAddresses
+                            }
+                        }
+                    });
                     this.changeDetectorRef.detectChanges();
                 }
             });
