@@ -92,9 +92,9 @@
         <dxo-editing mode="cell" [allowUpdating]="false"></dxo-editing>
         <dxo-paging [enabled]="false"></dxo-paging>
         <dxo-filter-row [visible]="false"></dxo-filter-row>
-        <dxi-column dataField="id" [visible]="false" sortOrder="desc"></dxi-column>
-        <dxi-column dataField="selected" caption="" [width]="30" [visible]="showCheckboxes" cssClass="checkbox" alignment="center" dataType="boolean"></dxi-column>
-        <dxi-column dataField="name" [caption]="l('Account')" [sortIndex]="0" sortOrder="asc" [width]="nameColumnWidth" alignment="left" [allowEditing]="false" cssClass="accountNumber bold"></dxi-column>
+        <dxi-column dataField="id" [visible]="false" sortOrder="desc" cssClass="clipboard-holder"></dxi-column>
+        <dxi-column dataField="selected" caption="" [width]="30" [visible]="showCheckboxes" cssClass="checkbox clipboard-holder" alignment="center" dataType="boolean"></dxi-column>
+        <dxi-column dataField="name" [caption]="l('Account')" [sortIndex]="0" sortOrder="asc" [width]="nameColumnWidth" alignment="left" [allowEditing]="false" cssClass="accountNumber bold clipboard-holder"></dxi-column>
         <dxi-column dataField="syncAccountStatus" [visible]="showStatus" [caption]="l('BankAccountsWidget_Sync_status')" [width]="200" alignment="center" sortOrder="asc" [sortIndex]="2" cellTemplate="statusTemplate" [allowEditing]="false"></dxi-column>
         <dxi-column alignment="right" [visible]="!accessAllDepartments"></dxi-column>
         <dxi-column dataField="lastSyncDate" alignment="left" [caption]="l('BankAccountsWidget_Last_sync')" [width]="510" [allowEditing]="false" cellTemplate="syncDateTemplate" [visible]="showSyncDate"></dxi-column>
@@ -131,10 +131,10 @@
                     </dxo-editing>
                     <dxo-selection [deferred]="true"></dxo-selection>
                     <dxo-filter-row [visible]="false"></dxo-filter-row>
-                    <dxi-column dataField="id" [allowEditing]="false" [visible]="false" sortOrder="desc" [sortIndex]="0"></dxi-column>
-                    <dxi-column dataField="selected" [visible]="showCheckboxes" cssClass="checkbox" [visibleIndex]="0" [allowEditing]="false" [width]="30" alignment="center" dataType="boolean" caption=""></dxi-column>
-                    <dxi-column dataField="accountNumber" [visible]="showAccountNumber" [visibleIndex]="2" cssClass="accountNumber tabular" [width]="166" alignment="left" [allowEditing]="allowEditing" [editorOptions]="{ disabled: true }"></dxi-column>
-                    <dxi-column dataField="accountName" [visibleIndex]="1" [width]="nameColumnWidth" alignment="left" [allowEditing]="allowEditing"></dxi-column>
+                    <dxi-column dataField="id" [allowEditing]="false" [visible]="false" sortOrder="desc" [sortIndex]="0" cssClass="clipboard-holder"></dxi-column>
+                    <dxi-column dataField="selected" [visible]="showCheckboxes" cssClass="checkbox clipboard-holder" [visibleIndex]="0" [allowEditing]="false" [width]="30" alignment="center" dataType="boolean" caption=""></dxi-column>
+                    <dxi-column dataField="accountNumber" [visible]="showAccountNumber" [visibleIndex]="2" cssClass="accountNumber tabular clipboard-holder" [width]="166" alignment="left" [allowEditing]="allowEditing" [editorOptions]="{ disabled: true }"></dxi-column>
+                    <dxi-column dataField="accountName" [visibleIndex]="1" [width]="nameColumnWidth" alignment="left" [allowEditing]="allowEditing" cssClass="clipboard-holder"></dxi-column>
                     <dxi-column alignment="right" [visible]="!accessAllDepartments"></dxi-column>
                     <dxi-column dataField="typeName" cssClass="type-container" [width]="160" alignment="left" [allowEditing]="false"
                                 cellTemplate="typeTemplate" [(visible)]="showAdvancedColumns && showAccountType"></dxi-column>
@@ -146,14 +146,14 @@
                     <dxi-column [width]="100" dataField="utilized" cellTemplate="utilizedTemplate" alignment="right" [allowEditing]="false" [(visible)]="showCreditInfo"></dxi-column>
                     <div *dxTemplate="let cell of 'amountTemplate'">
                         <ng-container *ngIf="accessAllDepartments && cell.text">
-                            <div class="number-value bold">
+                            <div class="number-value bold clipboard-holder">
                                 {{cell.text | currency:cfoPreferencesService.selectedCurrencyId:cfoPreferencesService.selectedCurrencySymbol:'1.2-2' }}
                             </div>
                         </ng-container>
                     </div>
                     <div *dxTemplate="let cell of 'colorBalanceTemplate'" class="color-div">
                         <ng-container *ngIf="(cell.text)">
-                            <div class="balance-container">
+                            <div class="balance-container clipboard-holder">
                                 {{cell.text | currency:cfoPreferencesService.selectedCurrencyId:cfoPreferencesService.selectedCurrencySymbol:'1.2-2' }}
                             </div>
                         </ng-container>
@@ -161,7 +161,7 @@
                     <div *dxTemplate="let cell of 'utilizedTemplate'">
                         <ng-container *ngIf="(cell.text)">
                             <div class="ratioField">
-                                <span class="text">{{ cell.text | number:'1.2-2'}}%</span>
+                                <span class="text clipboard-holder">{{ cell.text | number:'1.2-2'}}%</span>
                                 <div class="ratioProgressBar">
                                     <span class="progress" [style.width]="cell.text + '%'" [style.background-color]="getRatioColor(cell.text)"></span>
                                 </div>
@@ -169,7 +169,7 @@
                         </ng-container>
                     </div>
                     <div *dxTemplate="let cell of 'typeTemplate'">
-                        <span [attr.data-text]="cell.text | lowercase">{{cell.text}}</span>
+                        <span [attr.data-text]="cell.text | lowercase" class="clipboard-holder">{{cell.text}}</span>
                     </div>
                     <div *dxTemplate="let cell of 'businessEntityEditSelect'">
                         <dx-select-box [items]="businessEntities"
@@ -185,7 +185,7 @@
         </div>
         <div *dxTemplate="let cell of 'amountTemplate'">
             <ng-container *ngIf="(cell.text)">
-                <div class="number-value bold">
+                <div class="number-value bold clipboard-holder">
                     {{cell.text | currency:cfoPreferencesService.selectedCurrencyId:cfoPreferencesService.selectedCurrencySymbol:'1.2-2' }}
                 </div>
             </ng-container>
@@ -208,7 +208,7 @@
         </div>
         <div *dxTemplate="let cell of 'syncDateTemplate'">
             <ng-container *ngIf="(cell.text)">
-                <div class="sync-date">Last sync: {{cell.text | date: 'MMM d, y ' : userTimezone}}</div>
+                <div class="sync-date clipboard-holder">Last sync: {{cell.text | date: 'MMM d, y ' : userTimezone}}</div>
             </ng-container>
         </div>
     </dx-data-grid>

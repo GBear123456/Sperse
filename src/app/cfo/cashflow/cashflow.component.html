@@ -177,7 +177,7 @@
                         dataField="accountNumber"
                         [allowSorting]="false"
                         [allowFiltering]="false"
-                        [cssClass]="tabularFontName"
+                        [cssClass]="tabularFontName + ' clipboard-holder'"
                         [allowEditing]="false"
                         [minWidth]="30"
                         editCellTemplate="accountsEditSelect">
@@ -241,11 +241,11 @@
             <dxo-scrolling mode="virtual"></dxo-scrolling>
 
             <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">{{cellData.value | date: 'MM/dd/yyyy'}}</div>
-            <div *dxTemplate="let cellData of 'typeCell'" class="clipboard-holder">{{cashflowService.cashflowTypes[cellData.value]}}</div>
+            <div *dxTemplate="let cellData of 'typeCell'">{{cashflowService.cashflowTypes[cellData.value]}}</div>
             <div *dxTemplate="let cellData of 'descriptionTemplate'">
                 <span id="transactionDetailTarget-{{cellData.data.id}}" class="clipboard-holder">{{cellData.text}}</span>
             </div>
-            <div *dxTemplate="let cellData of 'descriptorCell'" [class.calculated]="cellData.data.date && cellData.data.isDescriptorCalculated">{{cellData.value}}</div>
+            <div *dxTemplate="let cellData of 'descriptorCell'" [class.calculated]="cellData.data.date && cellData.data.isDescriptorCalculated" class="clipboard-holder">{{cellData.value}}</div>
             <div *dxTemplate="let cell of 'accountsEditSelect'">
                 <dx-select-box [items]="activeBankAccounts"
                                [displayExpr]="getBankAccountName"

@@ -34,7 +34,7 @@ export class dxDataGridClipboardDirective implements AfterViewInit {
     ngAfterViewInit() {
         this.observer = new MutationObserver(mutations => {
             mutations.forEach(mutation => {                
-                this.element.querySelectorAll('.dx-datagrid-rowsview .clipboard-holder').forEach((elm, i) => {
+                this.element.querySelectorAll('.dx-datagrid-rowsview .dx-datagrid-content table:first-child .clipboard-holder').forEach((elm, i) => {
                     if (elm.innerText.trim() && !elm.querySelector('i')) {
                         if (!this.pool[i]) {
                             this.pool[i] = this.renderer.createElement('i');

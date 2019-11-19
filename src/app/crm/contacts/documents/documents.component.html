@@ -27,14 +27,14 @@
             <dxo-header-filter [visible]="true" [allowSearch]="true"></dxo-header-filter>
             <dxi-column [width]="'40px'" [fixed]="true" [fixedPosition]="'left'" [showInColumnChooser]="false" [allowExporting]="false"></dxi-column>
 
-            <dxi-column dataField="size" [calculateSortValue]="numerizeFileSizeSortValue" caption="{{l('DocumentSize')}}" [calculateCellValue]="calculateFileSizeValue"></dxi-column>
+            <dxi-column dataField="size" [calculateSortValue]="numerizeFileSizeSortValue" caption="{{l('DocumentSize')}}" [calculateCellValue]="calculateFileSizeValue" cssClass="clipboard-holder"></dxi-column>
             <dxi-column dataField="creationTime" caption="{{l('Date')}}" cssClass="tabular" cellTemplate="dateCell" sortOrder="desc"></dxi-column>
             <dxi-column dataField="typeName" caption="{{l('DocumentType')}}" cellTemplate="typeCell" [width]="335" [allowSorting]="false" [allowFiltering]="false"></dxi-column>
             <dxi-column dataField="fileName" cellTemplate="fileNameCell" caption="{{l('FileName')}}"></dxi-column>
 
             <div *dxTemplate="let cellData of 'fileNameCell'">
                 <ng-container *ngIf="getFileExtensionByFileName(cellData.value) as extension">
-                    <div [ngClass]="['file-name', extension, getViewerType(extension)]">
+                    <div [ngClass]="['file-name', extension, getViewerType(extension), 'clipboard-holder']">
                         {{ cellData.value }}
                     </div>
                 </ng-container>
@@ -49,7 +49,7 @@
 
             <a class="dx-link dx-link-edit" *dxTemplate="let cellData of 'actionsCellTemplate'">Edit</a>
 
-            <div *dxTemplate="let cellData of 'dateCell'">
+            <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
                 {{ cellData.value | date: formatting.dateTime : userTimezone }}
             </div>
             <div *dxTemplate="let data of 'title'">

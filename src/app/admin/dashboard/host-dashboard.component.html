@@ -307,8 +307,8 @@
                                     <ng-container *ngIf="(expiringTenantsData$ | async) as expiringTenantsData; else loadingSpinner">
                                         <dx-data-grid [dataSource]="expiringTenantsData" *ngIf="expiringTenantsData && expiringTenantsData.length; else noData">
                                             <dxo-paging [pageSize]="10"></dxo-paging>
-                                            <dxi-column dataField="tenantName"></dxi-column>
-                                            <dxi-column dataField="remainingDayCount" alignment="left"></dxi-column>
+                                            <dxi-column dataField="tenantName" cssClass="clipboard-holder"></dxi-column>
+                                            <dxi-column dataField="remainingDayCount" alignment="left" cssClass="clipboard-holder"></dxi-column>
                                         </dx-data-grid>
                                     </ng-container>
                                 </ng-container>
@@ -345,8 +345,8 @@
                                     <ng-container *ngIf="(recentTenantsData$ | async) as recentTenantsData; else loadingSpinner">
                                         <dx-data-grid [dataSource]="recentTenantsData" *ngIf="recentTenantsData && recentTenantsData.length; else noData">
                                             <dxo-paging [pageSize]="10"></dxo-paging>
-                                            <dxi-column dataField="name"></dxi-column>
-                                            <dxi-column dataField="creationTime" [calculateDisplayValue]="reformatCreationTime"></dxi-column>
+                                            <dxi-column dataField="name" cssClass="clipboard-holder"></dxi-column>
+                                            <dxi-column dataField="creationTime" [calculateDisplayValue]="reformatCreationTime" cssClass="clipboard-holder"></dxi-column>
                                         </dx-data-grid>
                                     </ng-container>
                                 </ng-container>

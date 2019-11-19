@@ -12,15 +12,15 @@
                       [allowColumnResizing]="true"
                       (onRowRemoving)="deleteCertificate($event)"
                       (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
-            <dxi-column dataField="id" caption="{{ls.l('Id')}}" [visible]="false"></dxi-column>
-            <dxi-column dataField="hostNames" caption="{{ls.l('HostName')}}"></dxi-column>
+            <dxi-column dataField="id" caption="{{ls.l('Id')}}" [visible]="false" cssClass="clipboard-holder"></dxi-column>
+            <dxi-column dataField="hostNames" caption="{{ls.l('HostName')}}" cssClass="clipboard-holder"></dxi-column>
             <dxi-column dataField="expiration" caption="{{ls.l('ExpirationDate')}}" cellTemplate="dateCell"></dxi-column>
-            <dxi-column dataField="thumbprint" caption="{{ls.l('Thumbprint')}}"></dxi-column>
+            <dxi-column dataField="thumbprint" caption="{{ls.l('Thumbprint')}}" cssClass="clipboard-holder"></dxi-column>
             <dxi-column [width]="100" [allowFiltering]="false" [allowSorting]="false" [allowReordering]="false" cellTemplate="editDeleteTemplate"></dxi-column>
             <div *dxTemplate="let data of 'editDeleteTemplate'">
                 <a class="dx-link action" (click)="deleteCertificate(data)">{{ls.l('Delete')}}</a>
             </div>
-            <div *dxTemplate="let cellData of 'dateCell'">
+            <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
                 {{cellData.value | date: 'MM/dd/yyyy, h:mm a'}}
             </div>
         </dx-data-grid>
@@ -37,24 +37,24 @@
                       [dataSource]="sslBindingsDataSource"
                       [allowColumnReordering]="true"
                       [allowColumnResizing]="true">
-            <dxi-column dataField="id" caption="{{ls.l('Id')}}" [visible]="false"></dxi-column>
-            <dxi-column dataField="sslCertificateId" caption="{{ls.l('SslCertificateId')}}" [visible]="false"></dxi-column>
-            <dxi-column dataField="hostName" caption="{{ls.l('HostName')}}"></dxi-column>
-            <dxi-column dataField="hostType" caption="{{ls.l('Type')}}">
+            <dxi-column dataField="id" caption="{{ls.l('Id')}}" [visible]="false" cssClass="clipboard-holder"></dxi-column>
+            <dxi-column dataField="sslCertificateId" caption="{{ls.l('SslCertificateId')}}" [visible]="false" cssClass="clipboard-holder"></dxi-column>
+            <dxi-column dataField="hostName" caption="{{ls.l('HostName')}}" cssClass="clipboard-holder"></dxi-column>
+            <dxi-column dataField="hostType" caption="{{ls.l('Type')}}" cssClass="clipboard-holder">
                 <dxo-lookup [dataSource]="hostTypes" valueExpr="id" displayExpr="name"></dxo-lookup>
             </dxi-column>
-            <dxi-column dataField="organizationUnitId" caption="{{ls.l('OrganizationUnits')}}">
+            <dxi-column dataField="organizationUnitId" caption="{{ls.l('OrganizationUnits')}}" cssClass="clipboard-holder">
                 <dxo-lookup [dataSource]="orgUnits | async" valueExpr="id" displayExpr="displayName"></dxo-lookup>
             </dxi-column>            
             <dxi-column dataField="isActive" caption="{{ls.l('Active')}}"></dxi-column>
             <dxi-column dataField="sslCertificateExpiration" caption="{{ls.l('ExpirationDate')}}" cellTemplate="dateCell"></dxi-column>
-            <dxi-column dataField="sslCertificateThumbprint" caption="{{ls.l('Thumbprint')}}"></dxi-column>
+            <dxi-column dataField="sslCertificateThumbprint" caption="{{ls.l('Thumbprint')}}" cssClass="clipboard-holder"></dxi-column>
             <dxi-column [width]="100" [allowFiltering]="false" [allowSorting]="false" [allowReordering]="false" cellTemplate="editDeleteTemplate"></dxi-column>
             <div *dxTemplate="let data of 'editDeleteTemplate'">
                 <a class="dx-link action" (click)="showSSLBindingDialog(data)">{{ls.l('Edit')}}</a>
                 <a class="dx-link action" (click)="deleteSSLBinding(data)">{{ls.l('Delete')}}</a>
             </div>
-            <div *dxTemplate="let cellData of 'dateCell'">
+            <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
                 {{cellData.value | date: 'MM/dd/yyyy, h:mm a'}}
             </div>
         </dx-data-grid>

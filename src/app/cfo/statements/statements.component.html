@@ -23,59 +23,80 @@
             </dxo-selection>
             <dxo-sorting mode="multiple"></dxo-sorting>
 
-            <dxi-column dataField="date" [caption]="l('Statements_Period')" dataType="date" format="MMM y" sortOrder="desc"></dxi-column>
+            <dxi-column dataField="date" 
+                        [caption]="l('Statements_Period')" 
+                        dataType="date" 
+                        format="MMM y" 
+                        sortOrder="desc" 
+                        cssClass="clipboard-holder">
+            </dxi-column>
             <dxi-column dataField="startingBalance"
+                        cssClass="clipboard-holder"
                         [caption]="l('Statements_StartingPosition')"
                         [format]="currencyFormat"
-                        [customizeText]="updateCurrencySymbol"></dxi-column>
+                        [customizeText]="updateCurrencySymbol">
+            </dxi-column>
             <dxi-column dataField="credit"
-                        cssClass="positive"
+                        cssClass="positive clipboard-holder"
                         [caption]="l('Statements_Inflows')"
                         [format]="currencyFormat"
-                        [customizeText]="updateCurrencySymbol"></dxi-column>
+                        [customizeText]="updateCurrencySymbol">
+            </dxi-column>
             <dxi-column dataField="debit"
-                        cssClass="negative"
+                        cssClass="negative clipboard-holder"
                         [caption]="l('Statements_Outflows')"
                         [format]="currencyFormat"
-                        [customizeText]="updateCurrencySymbol"></dxi-column>
+                        [customizeText]="updateCurrencySymbol">
+            </dxi-column>
             <dxi-column dataField="endingBalance"
+                        cssClass="clipboard-holder"
                         [caption]="l('Statements_EndingBalance')"
                         [format]="currencyFormat"
-                        [customizeText]="updateCurrencySymbol"></dxi-column>
+                        [customizeText]="updateCurrencySymbol">
+            </dxi-column>
             <dxi-column dataField="netChange"
                         [caption]="l('Statements_NetChange')"
                         cellTemplate="positiveNegativeTemplate"
                         [format]="currencyFormat"
-                        [customizeText]="updateCurrencySymbol"></dxi-column>
+                        [customizeText]="updateCurrencySymbol">
+            </dxi-column>
             <dxi-column dataField="averageDailyBalance"
+                        cssClass="clipboard-holder"
                         [caption]="l('Statements_AvgDailyBalance')"
                         [format]="currencyFormat"
-                        [customizeText]="updateCurrencySymbol"></dxi-column>
-            <dxi-column dataField="creditCount" caption="{{l('Statements_CreditCount')}}"></dxi-column>
-            <dxi-column dataField="debitCount" caption="{{l('Statements_DebitCount')}}"></dxi-column>
+                        [customizeText]="updateCurrencySymbol">
+            </dxi-column>
+            <dxi-column dataField="creditCount" 
+                        caption="{{l('Statements_CreditCount')}}" 
+                        cssClass="clipboard-holder">
+            </dxi-column>
+            <dxi-column dataField="debitCount" 
+                        caption="{{l('Statements_DebitCount')}}" 
+                        cssClass="clipboard-holder">
+            </dxi-column>
 
             <div *dxTemplate="let statement of 'detail'">
                 <dx-data-grid [dataSource]="statement.data.sourceData"
                               [showBorders]="true"
                               [columnAutoWidth]="true">
-                    <dxi-column dataField="itemType" caption=""></dxi-column>
-                    <dxi-column dataField="startingBalance" [caption]="l('Statements_StartingPosition')" [format]="currencyFormat" [customizeText]="updateCurrencySymbol"></dxi-column>
-                    <dxi-column dataField="credit" cssClass="positive" [caption]="l('Statements_Inflows')" [format]="currencyFormat" [customizeText]="updateCurrencySymbol"></dxi-column>
-                    <dxi-column dataField="debit" cssClass="negative" [caption]="l('Statements_Outflows')" [format]="currencyFormat" [customizeText]="updateCurrencySymbol"></dxi-column>
-                    <dxi-column dataField="endingBalance" [caption]="l('Statements_EndingBalance')" [format]="currencyFormat" [customizeText]="updateCurrencySymbol"></dxi-column>
+                    <dxi-column dataField="itemType" caption="" cssClass="clipboard-holder"></dxi-column>
+                    <dxi-column dataField="startingBalance" [caption]="l('Statements_StartingPosition')" [format]="currencyFormat" [customizeText]="updateCurrencySymbol" cssClass="clipboard-holder"></dxi-column>
+                    <dxi-column dataField="credit" cssClass="positive" [caption]="l('Statements_Inflows')" [format]="currencyFormat" [customizeText]="updateCurrencySymbol" cssClass="clipboard-holder"></dxi-column>
+                    <dxi-column dataField="debit" cssClass="negative" [caption]="l('Statements_Outflows')" [format]="currencyFormat" [customizeText]="updateCurrencySymbol" cssClass="clipboard-holder"></dxi-column>
+                    <dxi-column dataField="endingBalance" [caption]="l('Statements_EndingBalance')" [format]="currencyFormat" [customizeText]="updateCurrencySymbol" cssClass="clipboard-holder"></dxi-column>
                     <dxi-column dataField="netChange" [caption]="l('Statements_NetChange')" cellTemplate="positiveNegativeTemplate" [format]="currencyFormat" [customizeText]="updateCurrencySymbol"></dxi-column>
-                    <dxi-column dataField="averageDailyBalance" [caption]="l('Statements_AvgDailyBalance')" [format]="currencyFormat" [customizeText]="updateCurrencySymbol"></dxi-column>
-                    <dxi-column dataField="creditCount" [caption]="l('Statements_CreditCount')"></dxi-column>
-                    <dxi-column dataField="debitCount" [caption]="l('Statements_DebitCount')"></dxi-column>
+                    <dxi-column dataField="averageDailyBalance" [caption]="l('Statements_AvgDailyBalance')" [format]="currencyFormat" [customizeText]="updateCurrencySymbol" cssClass="clipboard-holder"></dxi-column>
+                    <dxi-column dataField="creditCount" [caption]="l('Statements_CreditCount')" cssClass="clipboard-holder"></dxi-column>
+                    <dxi-column dataField="debitCount" [caption]="l('Statements_DebitCount')" cssClass="clipboard-holder"></dxi-column>
 
                     <ng-container *dxTemplate="let cell of 'positiveNegativeTemplate'">
-                        <span [ngClass]="cell.value < 0 ? 'negative' : 'positive'"> {{ cell.text }} </span>
+                        <span [class]="'clipboard-holder ' + (cell.value < 0 ? 'negative' : 'positive')"> {{ cell.text }} </span>
                     </ng-container>
                 </dx-data-grid>
             </div>
 
             <ng-container *dxTemplate="let cell of 'positiveNegativeTemplate'">
-                <span [ngClass]="cell.value < 0 ? 'negative' : 'positive'"> {{ cell.text }} </span>
+                <span [class]="'clipboard-holder ' + (cell.value < 0 ? 'negative' : 'positive')"> {{ cell.text }} </span>
             </ng-container>
         </dx-data-grid>
     </div>

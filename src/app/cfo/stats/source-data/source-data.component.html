@@ -9,10 +9,11 @@
                     <dxo-format [formatter]="formatDate"></dxo-format>
                 </dxi-column>
                 <dxi-column caption="{{l('Stats_SourceData_Inflows_Field').toUpperCase()}}"
-                            [dataField]="period === 'historical' ? 'credit' : 'forecastCredit'"
+                            [dataField]="period === 'historical' ? 'credit' : 'forecastCredit'"                
                             format="currency"
                             [allowSorting]="false"
                             [allowFiltering]="false"
+                            cssClass="clipboard-holder"
                             [customizeText]="updateCurrencySymbol">
                 </dxi-column>
                 <dxi-column caption="{{l('Stats_SourceData_Outflows_Field').toUpperCase()}}"
@@ -20,6 +21,7 @@
                             format="currency"
                             [allowSorting]="false"
                             [allowFiltering]="false"
+                            cssClass="clipboard-holder"
                             [customizeText]="updateCurrencySymbol">
                 </dxi-column>
                 <dxi-column caption="{{l('Stats_SourceData_NetChange_Field').toUpperCase()}}"
@@ -27,6 +29,7 @@
                             format="currency"
                             [allowSorting]="false"
                             [allowFiltering]="false"
+                            cssClass="clipboard-holder"
                             [customizeText]="updateCurrencySymbol">
                 </dxi-column>
                 <dxi-column caption="{{l('Stats_SourceData_Balance_Field').toUpperCase()}}"
@@ -35,6 +38,7 @@
                             [allowSorting]="false"
                             [allowFiltering]="false"
                             [alignment]="'right'"
+                            cssClass="clipboard-holder"
                             [customizeText]="updateCurrencySymbol">
                 </dxi-column>
                 <dxo-load-panel [enabled]="true"></dxo-load-panel>

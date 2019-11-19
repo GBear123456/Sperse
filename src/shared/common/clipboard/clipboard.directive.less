@@ -1,14 +1,19 @@
-.clipboard-holder {
-    position: relative;
-    padding-right: 25px!important;
-    &:hover i {
-        display: initial;
-    }
-    i {
-        display: none;
-        cursor: pointer;
-        position: absolute;
-        margin-left: 10px;
-        top: calc((100% - 15px) / 2);
+.dx-datagrid-rowsview .dx-datagrid-content table:first-child {
+    .clipboard-holder {
+        position: relative;
+        padding-right: 25px!important;
+        &:hover i {
+            display: initial;
+        }
+        i {
+            display: none;
+            cursor: pointer;
+            position: absolute;
+            margin-left: 10px;
+            top: calc((100% - 15px) / 2);            
+        }
+        &.fixed-right i {
+            right: 5px;
+        }
     }
 }

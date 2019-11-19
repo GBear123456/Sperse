@@ -17,7 +17,7 @@
 
                 <dxi-column [width]="40" [fixed]="true" [fixedPosition]="'left'" [showInColumnChooser]="false" [allowExporting]="false"></dxi-column>
                 <dxi-column caption="{{ls.l('Select')}}" cellTemplate="selectCell"></dxi-column>
-                <dxi-column dataField="name" caption="{{ls.l('Name')}}"></dxi-column>
+                <dxi-column dataField="name" caption="{{ls.l('Name')}}" cssClass="clipboard-holder"></dxi-column>
 
                 <div *dxTemplate="let record of 'selectCell'">
                     <button class="btn btn-metal m-btn m-btn--icon m-btn--icon-only"

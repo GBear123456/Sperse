@@ -21,9 +21,9 @@
                               [hoverStateEnabled]="true"
                               [pager]="defaultGridPagerConfig"
                               [dataSource]="dataSource">
-                    <dxi-column [caption]="l('Key')" width="25%" dataField="key"></dxi-column>
-                    <dxi-column [caption]="l('BaseValue')" width="34%" dataField="baseValue"></dxi-column>
-                    <dxi-column [caption]="l('TargetValue')" width="34%" dataField="targetValue"></dxi-column>
+                    <dxi-column [caption]="l('Key')" width="25%" dataField="key" cssClass="clipboard-holder"></dxi-column>
+                    <dxi-column [caption]="l('BaseValue')" width="34%" dataField="baseValue" cssClass="clipboard-holder"></dxi-column>
+                    <dxi-column [caption]="l('TargetValue')" width="34%" dataField="targetValue" cssClass="clipboard-holder"></dxi-column>
                     <dxi-column [caption]="l('Edit')" cellTemplate="editTemplate"></dxi-column>
                     <ng-container *dxTemplate="let data of 'editTemplate'">
                         <button class="btn btn-layout"

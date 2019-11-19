@@ -15,17 +15,17 @@
                           [showRowLines]="false"
                           [showBorders]="false">
                 <dxi-column dataField="Date" cssClass="tabular" caption="{{ls.l('Transactions_Date')}}" cellTemplate="dateCell" sortOrder="desc" sortIndex="0" [width]="100"></dxi-column>
-                <dxi-column dataField="TypeName" caption="{{ls.l('Transactions_Type')}}" [width]="200"></dxi-column>
-                <dxi-column dataField="Description" caption="{{ls.l('Transactions_Description')}}"></dxi-column>
+                <dxi-column dataField="TypeName" caption="{{ls.l('Transactions_Type')}}" [width]="200" cssClass="clipboard-holder"></dxi-column>
+                <dxi-column dataField="Description" caption="{{ls.l('Transactions_Description')}}" cssClass="clipboard-holder"></dxi-column>
                 <dxi-column dataField="Amount" cssClass="tabular" name="Debit" caption="{{ls.l('Transactions_Debit')}}" cellTemplate="amountTemplate" [width]="100"></dxi-column>
                 <dxi-column dataField="Amount" cssClass="tabular" name="Credit" caption="{{ls.l('Transactions_Credit')}}" cellTemplate="amountTemplate" [width]="100"></dxi-column>
                 <dxi-column dataField="close" caption="" [width]="100"></dxi-column>
                 <div *dxTemplate="let cell of 'amountTemplate'">
                     <ng-container *ngIf="(cell.text) && ((cell.column.name == 'Amount') || (cell.value < 0 && cell.column.name == 'Debit') || (cell.value >= 0 && cell.column.name == 'Credit'))">
-                        <span [style.color]="cell.value < 0 ? 'red': '#000'"> {{ cell.text | number:'1.2-2' }} </span>
+                        <span [style.color]="cell.value < 0 ? 'red': '#000'" class="clipboard-holder"> {{ cell.text | number:'1.2-2' }} </span>
                     </ng-container>
                 </div>
-                <div *dxTemplate="let cellData of 'dateCell'">
+                <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
                     {{cellData.value | date: 'MM/dd/yyyy' : userTimezone}}
                 </div>
             </dx-data-grid>

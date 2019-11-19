@@ -98,7 +98,6 @@ import { StarsListComponent } from '@app/crm/shared/stars-list/stars-list.compon
 import { TypesListComponent } from '@app/crm/shared/types-list/types-list.component';
 import { StaticListComponent } from './static-list/static-list.component';
 import { LoadingSpinnerModule } from '@app/shared/common/loading-spinner/loading-spinner.module';
-import { dxDataGridClipboardDirective } from '@shared/common/clipboard/dx-data-grid.directive';
 import { SetupStepsComponent } from './setup-steps/setup-steps.component';
 
 @NgModule({
@@ -192,7 +191,6 @@ import { SetupStepsComponent } from './setup-steps/setup-steps.component';
         PaymentStatusComponent,
         PaymentOptionsComponent,
         PaymentOptionsFooterComponent,
-        dxDataGridClipboardDirective,
         CreditCardComponent,
         PayPalComponent,
         BankTransferComponent,
@@ -211,7 +209,6 @@ import { SetupStepsComponent } from './setup-steps/setup-steps.component';
         TimeAgoPipe,
         TimeZoneComboComponent,
         JqPluginDirective,
-        dxDataGridClipboardDirective,
         CommonLookupModalComponent,
         DateRangePickerComponent,
         DatePickerDirective,

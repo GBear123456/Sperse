@@ -92,19 +92,19 @@
                 <dxi-column dataField="LogoUrl" caption="Logo" cellTemplate="photoTemplate"
                             [width]="100" [showInColumnChooser]="false" [allowExporting]="false"
                             [allowGrouping]="false" [allowSorting]="false"></dxi-column>
-                <dxi-column dataField="Name" caption="{{l('Offer_Name')}}" [sortIndex]="2" sortOrder="asc"></dxi-column>
-                <dxi-column dataField="CardNetwork" caption="{{l('Offer_Network')}}" [width]="150"></dxi-column>
-                <dxi-column dataField="Categories" caption="{{l('Category')}}" [width]="300" [calculateSortValue]="getCategoryValue" [calculateGroupValue]="getCategoryValue" [calculateCellValue]="getCategoryValue"></dxi-column>
-                <dxi-column dataField="Status" caption="{{l('Offer_Status')}}" [width]="180"></dxi-column>
-                <dxi-column dataField="Rank" caption="{{l('Offer_Rank')}}" [sortIndex]="0" sortOrder="desc" dataType="number" alignment="center"></dxi-column>
-                <dxi-column dataField="OverallRating" [visible]="false" [sortIndex]="1" sortOrder="desc"></dxi-column>
+                <dxi-column dataField="Name" caption="{{l('Offer_Name')}}" [sortIndex]="2" sortOrder="asc" cssClass="clipboard-holder"></dxi-column>
+                <dxi-column dataField="CardNetwork" caption="{{l('Offer_Network')}}" [width]="150" cssClass="clipboard-holder"></dxi-column>
+                <dxi-column dataField="Categories" caption="{{l('Category')}}" [width]="300" [calculateSortValue]="getCategoryValue" [calculateGroupValue]="getCategoryValue" [calculateCellValue]="getCategoryValue" cssClass="clipboard-holder"></dxi-column>
+                <dxi-column dataField="Status" caption="{{l('Offer_Status')}}" [width]="180" cssClass="clipboard-holder"></dxi-column>
+                <dxi-column dataField="Rank" caption="{{l('Offer_Rank')}}" [sortIndex]="0" sortOrder="desc" dataType="number" alignment="center" cssClass="clipboard-holder"></dxi-column>
+                <dxi-column dataField="OverallRating" [visible]="false" [sortIndex]="1" sortOrder="desc" cssClass="clipboard-holder"></dxi-column>
                 <dxi-column dataField="IsPublished" caption="{{l('Offer_Published')}}" dataType="boolean"></dxi-column>
                 <dxi-column dataField="Created" caption="{{l('Offer_Created')}}" [width]="180" cellTemplate="dateCell"></dxi-column>
 
                 <div *dxTemplate="let field of 'photoTemplate'">
                     <div [ngStyle]="{'background-image': 'url(' + field.data.LogoUrl + ')'}" class="logo-url"></div>
                 </div>
-                <div *dxTemplate="let cellData of 'dateCell'">
+                <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
                     {{cellData.value | date: 'MM/dd/yyyy' : userTimezone}}
                 </div>
                 <dxo-group-panel [visible]="true"></dxo-group-panel>

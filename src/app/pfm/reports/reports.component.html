@@ -23,8 +23,8 @@
                     <dxi-column dataField="LogoUrl" caption="Logo" cellTemplate="photoTemplate"
                                 [width]="140" [showInColumnChooser]="false" [allowExporting]="false"
                                 [allowGrouping]="false" [allowSorting]="false"></dxi-column>
-                    <dxi-column dataField="Name" [caption]="l('Offer_Name')"></dxi-column>
-                    <dxi-column dataField="Categories" [caption]="l('Offer_Category')" [width]="300" [calculateSortValue]="getCategoryValue" [calculateGroupValue]="getCategoryValue" [calculateCellValue]="getCategoryValue"></dxi-column>
+                    <dxi-column dataField="Name" [caption]="l('Offer_Name')" cssClass="clipboard-holder"></dxi-column>
+                    <dxi-column dataField="Categories" [caption]="l('Offer_Category')" [width]="300" [calculateSortValue]="getCategoryValue" [calculateGroupValue]="getCategoryValue" [calculateCellValue]="getCategoryValue" cssClass="clipboard-holder"></dxi-column>
                     <dxi-column dataField="RequestCount" [caption]="l('Offer_ClickCount')" cellTemplate="clicksTemplate" [width]="150"></dxi-column>
 
                     <div *dxTemplate="let field of 'photoTemplate'">
@@ -32,7 +32,7 @@
                     </div>
 
                     <div *dxTemplate="let field of 'clicksTemplate'">
-                        <div class="clicksCount" (click)="onOfferClicksClick(field)">{{field.data.RequestCount}}</div>
+                        <div class="clicksCount" (click)="onOfferClicksClick(field)" class="clipboard-holder">{{field.data.RequestCount}}</div>
                     </div>
                 </dx-data-grid>
             </div>
@@ -46,13 +46,13 @@
                               [visible]="section == 'visitors'"
                               (onCellClick)="onVisitorCellClick($event)"
                               (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
-                    <dxi-column [caption]="l('Name')" [calculateDisplayValue]="getVisitorFullName"></dxi-column>
-                    <dxi-column dataField="StateCode" [caption]="l('State')" [width]="60"></dxi-column>
-                    <dxi-column dataField="Email" [caption]="l('Email')"></dxi-column>
-                    <dxi-column dataField="PhoneNumber" [caption]="l('PhoneNumber')"></dxi-column>
-                    <dxi-column dataField="Date" [caption]="l('Created')" [calculateDisplayValue]="getCreatedDate"></dxi-column>
-                    <dxi-column dataField="DoB" [caption]="l('Birthday')" dataType="date" format="dd/MM/yyyy"></dxi-column>
-                    <dxi-column dataField="CampaignName" [caption]="l('CampaignName')"></dxi-column>
+                    <dxi-column [caption]="l('Name')" [calculateDisplayValue]="getVisitorFullName" cssClass="clipboard-holder"></dxi-column>
+                    <dxi-column dataField="StateCode" [caption]="l('State')" [width]="60" cssClass="clipboard-holder"></dxi-column>
+                    <dxi-column dataField="Email" [caption]="l('Email')" cssClass="clipboard-holder"></dxi-column>
+                    <dxi-column dataField="PhoneNumber" [caption]="l('PhoneNumber')" cssClass="clipboard-holder"></dxi-column>
+                    <dxi-column dataField="Date" [caption]="l('Created')" [calculateDisplayValue]="getCreatedDate" cssClass="clipboard-holder"></dxi-column>
+                    <dxi-column dataField="DoB" [caption]="l('Birthday')" dataType="date" format="dd/MM/yyyy" cssClass="clipboard-holder"></dxi-column>
+                    <dxi-column dataField="CampaignName" [caption]="l('CampaignName')" cssClass="clipboard-holder"></dxi-column>
 
                     <dxo-group-panel [visible]="false"></dxo-group-panel>
                     <dxo-sorting mode="multiple"></dxo-sorting>

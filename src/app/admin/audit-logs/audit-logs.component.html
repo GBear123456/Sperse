@@ -22,13 +22,13 @@
                                   [hoverStateEnabled]="true"
                                   [pager]="defaultGridPagerConfig">
                         <dxi-column [caption]="l('Browser')" width="350px" dataField="browserInfo" cellTemplate="browserInfoTemplate"></dxi-column>
-                        <dxi-column [caption]="l('Client')" dataField="clientName"></dxi-column>
-                        <dxi-column [caption]="l('IpAddress')" dataField="clientIpAddress"></dxi-column>
+                        <dxi-column [caption]="l('Client')" dataField="clientName" cssClass="clipboard-holder"></dxi-column>
+                        <dxi-column [caption]="l('IpAddress')" dataField="clientIpAddress" cssClass="clipboard-holder"></dxi-column>
                         <dxi-column [caption]="l('Duration')" dataField="executionDuration" cellTemplate="executionDurationTemplate"></dxi-column>
-                        <dxi-column [caption]="l('Action')" dataField="methodName"></dxi-column>
-                        <dxi-column [caption]="l('Service')" dataField="serviceName"></dxi-column>
-                        <dxi-column [caption]="l('UserName')" [allowSorting]="false" dataField="userName"></dxi-column>
-                        <dxi-column [caption]="l('Time')" dataField="executionTime" dataType="datetime" sortOrder="desc" sortIndex="0"></dxi-column>
+                        <dxi-column [caption]="l('Action')" dataField="methodName" cssClass="clipboard-holder"></dxi-column>
+                        <dxi-column [caption]="l('Service')" dataField="serviceName" cssClass="clipboard-holder"></dxi-column>
+                        <dxi-column [caption]="l('UserName')" [allowSorting]="false" dataField="userName" cssClass="clipboard-holder"></dxi-column>
+                        <dxi-column [caption]="l('Time')" dataField="executionTime" dataType="datetime" cssClass="clipboard-holder" sortOrder="desc" sortIndex="0"></dxi-column>
                         <dxi-column [caption]="" width="30px" cellTemplate="statusTemplate"></dxi-column>
                         <dxi-column [caption]="" width="45px" alignment="center" cellTemplate="editTemplate"></dxi-column>
                         <ng-container *dxTemplate="let record of 'editTemplate'">
@@ -39,11 +39,11 @@
                             <i *ngIf="!record.exception" class="fa fa-check-circle" style="color: #37d749;"></i>
                         </ng-container>
                         <ng-container *dxTemplate="let browser of 'browserInfoTemplate'">
-                            <div class="truncated" title="{{browser.value}}">
+                            <div class="truncated clipboard-holder fixed-right" title="{{browser.value}}">
                                 {{browser.value}}
                             </div>
                         </ng-container>
-                        <ng-container *dxTemplate="let duration of 'executionDurationTemplate'">
+                        <ng-container *dxTemplate="let duration of 'executionDurationTemplate'" class="clipboard-holder">
                             {{duration.value}} ms
                         </ng-container>
                     </dx-data-grid>

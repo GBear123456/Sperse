@@ -14,17 +14,17 @@
                 <dxo-editing mode="cell" [allowUpdating]="true"></dxo-editing>
 
                 <dxi-column [width]="40" [alignment]="'center'" [allowEditing]="false" [fixed]="true" [fixedPosition]="'left'" [showInColumnChooser]="false" [allowExporting]="false" [allowEditing]="false" cellTemplate="historyCell"></dxi-column>
-                <dxi-column dataField="Number" caption="{{l('Number')}}" [allowEditing]="false"></dxi-column>
-                <dxi-column dataField="Amount" alignment="left" caption="{{l('Amount')}}" [allowEditing]="false" [customizeText]="customizeAmountValue"></dxi-column>
-                <dxi-column dataField="OrderType" caption="{{l('Type')}}" [allowEditing]="false"></dxi-column>
-                <dxi-column dataField="Stage" caption="{{l('Stage')}}" [allowEditing]="false"></dxi-column>
+                <dxi-column dataField="Number" caption="{{l('Number')}}" [allowEditing]="false" cssClass="clipboard-holder"></dxi-column>
+                <dxi-column dataField="Amount" alignment="left" caption="{{l('Amount')}}" [allowEditing]="false" [customizeText]="customizeAmountValue" cssClass="clipboard-holder"></dxi-column>
+                <dxi-column dataField="OrderType" caption="{{l('Type')}}" [allowEditing]="false" cssClass="clipboard-holder"></dxi-column>
+                <dxi-column dataField="Stage" caption="{{l('Stage')}}" [allowEditing]="false" cssClass="clipboard-holder"></dxi-column>
                 <dxi-column dataField="CreationTime" caption="{{l('Created')}}" cellTemplate="dateCell" [allowEditing]="false"></dxi-column>
                 <dxi-column dataField="DateProcessed" caption="{{l('Processed')}}" cellTemplate="dateCell" [allowEditing]="false"></dxi-column>
                 <dxi-column [fixed]="true" [fixedPosition]="'right'" [showInColumnChooser]="false"></dxi-column>
                 <dxo-sorting mode="multiple"></dxo-sorting>
                 <dxo-group-panel [visible]="true"></dxo-group-panel>
                 <dxo-paging [pageSize]="20"></dxo-paging>
-                <div *dxTemplate="let cellData of 'dateCell'">
+                <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
                     {{cellData.value | date: formatting.dateTime}}
                 </div>
                 <div *dxTemplate="let cellInfo of 'historyCell'">

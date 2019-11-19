@@ -15,15 +15,15 @@
               [masterDetail]="{ enabled: true, template: 'detail' }">
     <dxo-sorting mode="multiple"></dxo-sorting>
 
-    <dxi-column dataField="id" [visible]="false"></dxi-column>
-    <dxi-column dataField="serviceType"></dxi-column>
-    <dxi-column dataField="startDate" dataType="date"></dxi-column>
-    <dxi-column dataField="endDate" dataType="date"></dxi-column>
-    <dxi-column dataField="trialEndDate" dataType="date"></dxi-column>
+    <dxi-column dataField="id" [visible]="false" cssClass="clipboard-holder"></dxi-column>
+    <dxi-column dataField="serviceType" cssClass="clipboard-holder"></dxi-column>
+    <dxi-column dataField="startDate" dataType="date" cssClass="clipboard-holder"></dxi-column>
+    <dxi-column dataField="endDate" dataType="date" cssClass="clipboard-holder"></dxi-column>
+    <dxi-column dataField="trialEndDate" dataType="date" cssClass="clipboard-holder"></dxi-column>
     <dxi-column dataField="fee" cellTemplate="amountTemplate"></dxi-column>
-    <dxi-column dataField="systemType"></dxi-column>
-    <dxi-column dataField="orderType"></dxi-column>
-    <dxi-column dataField="status" caption="{{l('Status')}}"></dxi-column>
+    <dxi-column dataField="systemType" cssClass="clipboard-holder"></dxi-column>
+    <dxi-column dataField="orderType" cssClass="clipboard-holder"></dxi-column>
+    <dxi-column dataField="status" caption="{{l('Status')}}" cssClass="clipboard-holder"></dxi-column>
     <dxi-column caption="" [width]="220" cellTemplate="actionsTemplate"></dxi-column>
     <div *dxTemplate="let cell of 'actionsTemplate'" class="billing-actions">
         <a *ngIf="cell.data.tenantId && permission.isGranted(permissions.TenantsImpersonation)"
@@ -31,7 +31,7 @@
         <br />
         <a *ngIf="cell.data.statusCode === 'A' && permission.isGranted(permissions.CRMOrdersManage)" (click)="cancelSubscription(cell.data.id)">{{l('cancel')}}</a>
     </div>
-    <div *dxTemplate="let cell of 'amountTemplate'">
+    <div *dxTemplate="let cell of 'amountTemplate'" class="clipboard-holder">
         <span> {{ cell.text | currency:currency:'symbol':'1.2-2' }} </span>
     </div>
     <div *dxTemplate="let payment of 'detail'">
@@ -40,11 +40,11 @@
                       [showBorders]="true"
                       [columnAutoWidth]="true">
 
-            <dxi-column dataField="status" [width]="120" caption="{{l('Status')}}"></dxi-column>
+            <dxi-column dataField="status" [width]="120" caption="{{l('Status')}}" cssClass="clipboard-holder"></dxi-column>
             <dxi-column dataField="fee" caption="{{l('Total Fee')}}" cellTemplate="amountTemplate"></dxi-column>
-            <dxi-column dataField="startDate" dataType="date"></dxi-column>
-            <dxi-column dataField="endDate" dataType="date"></dxi-column>
-            <div *dxTemplate="let cell of 'amountTemplate'">
+            <dxi-column dataField="startDate" dataType="date" cssClass="clipboard-holder"></dxi-column>
+            <dxi-column dataField="endDate" dataType="date" cssClass="clipboard-holder"></dxi-column>
+            <div *dxTemplate="let cell of 'amountTemplate'" class="clipboard-holder">
                 <span> {{ cell.text | currency:currency:'symbol':'1.2-2' }} </span>
             </div>
         </dx-data-grid>

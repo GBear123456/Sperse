@@ -33,12 +33,12 @@
                                   [allowUpdating]="false">
                      </dxo-editing>
 
-                     <dxi-column dataField="Id" caption="{{l('Id')}}" sortOrder="desc" [width]="50"></dxi-column>
-                     <dxi-column dataField="FileName" caption="{{l('FileName')}}"></dxi-column>
-                     <dxi-column dataField="FileSize" caption="{{l('FileSize')}}" [calculateDisplayValue]="fileSizeFormat"></dxi-column>
-                     <dxi-column dataField="StatusName" caption="{{l('Status')}}"></dxi-column>
-                     <dxi-column dataField="TotalCount" caption="{{l('RecordCount')}}"></dxi-column>
-                     <dxi-column dataField="TypeName" caption="{{l('Type')}}"></dxi-column>
+                     <dxi-column dataField="Id" caption="{{l('Id')}}" sortOrder="desc" [width]="50" cssClass="clipboard-holder"></dxi-column>
+                     <dxi-column dataField="FileName" caption="{{l('FileName')}}" cssClass="clipboard-holder"></dxi-column>
+                     <dxi-column dataField="FileSize" caption="{{l('FileSize')}}" [calculateDisplayValue]="fileSizeFormat" cssClass="clipboard-holder"></dxi-column>
+                     <dxi-column dataField="StatusName" caption="{{l('Status')}}" cssClass="clipboard-holder"></dxi-column>
+                     <dxi-column dataField="TotalCount" caption="{{l('RecordCount')}}" cssClass="clipboard-holder"></dxi-column>
+                     <dxi-column dataField="TypeName" caption="{{l('Type')}}" cssClass="clipboard-holder"></dxi-column>
 
                      <dxo-sorting mode="multiple"></dxo-sorting>
                      <dxo-group-panel [visible]="true"></dxo-group-panel>

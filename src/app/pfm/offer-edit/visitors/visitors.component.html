@@ -21,17 +21,17 @@
             </dxo-selection>
 
             <dxi-column [caption]="l('Name')" cellTemplate="nameCell"></dxi-column>
-            <dxi-column dataField="StateCode" [caption]="l('State')"></dxi-column>
-            <dxi-column dataField="Email" [caption]="l('Email')"></dxi-column>
-            <dxi-column dataField="PhoneNumber" [caption]="l('PhoneNumber')"></dxi-column>
+            <dxi-column dataField="StateCode" [caption]="l('State')" cssClass="clipboard-holder"></dxi-column>
+            <dxi-column dataField="Email" [caption]="l('Email')" cssClass="clipboard-holder"></dxi-column>
+            <dxi-column dataField="PhoneNumber" [caption]="l('PhoneNumber')" cssClass="clipboard-holder"></dxi-column>
             <dxi-column dataField="Date" [caption]="l('Created')" cellTemplate="dateCell"></dxi-column>
-            <dxi-column dataField="DoB" [caption]="l('Birthday')" dataType="date" format="dd/MM/yyyy"></dxi-column>
+            <dxi-column dataField="DoB" [caption]="l('Birthday')" dataType="date" format="dd/MM/yyyy" cssClass="clipboard-holder"></dxi-column>
 
-            <div *dxTemplate="let cellData of 'nameCell'">
+            <div *dxTemplate="let cellData of 'nameCell'" class="clipboard-holder">
                 {{ cellData.data.FirstName }} {{ cellData.data.LastName }}
             </div>
 
-            <div *dxTemplate="let cellData of 'dateCell'">
+            <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
                 {{ cellData.value | date: formatting.dateTime : userTimezone }}
             </div>
 
