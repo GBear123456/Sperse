@@ -17,12 +17,14 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 })
 export class BankCodeComponent extends AppComponentBase implements OnInit, OnDestroy {
     private viewContainerRef: ViewContainerRef;
+    private rootComponent: any;
     public constructor(
         injector: Injector,
         viewContainerRef: ViewContainerRef
     ) {
         super(injector);
         this.viewContainerRef = viewContainerRef;
+        this.rootComponent = this.getRootComponent();
     }
 
     closeUserMenuPopup(event) {
@@ -32,10 +34,9 @@ export class BankCodeComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     ngOnInit(): void {
-        // this.getRootComponent().overflowHidden(true);
+        this.rootComponent.addStyleSheet('', 'https://fonts.googleapis.com/css?family=IBM+Plex+Sans&display=swap');
     }
 
     ngOnDestroy() {
-        // this.getRootComponent().overflowHidden();
     }
 }
