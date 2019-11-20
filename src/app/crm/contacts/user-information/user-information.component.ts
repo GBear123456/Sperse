@@ -190,9 +190,9 @@ export class UserInformationComponent implements OnInit, OnDestroy {
                     this.dataIsloading = false;
                     this.loadingService.finishLoading();
                 }))
-                .subscribe(userEditOutput => this.fillUserData(userEditOutput)),
-                    this.constructor.name
-                );
+                .subscribe((userEditOutput: GetUserForEditOutput) => this.fillUserData(userEditOutput)),
+                this.constructor.name
+            );
         }
     }
 
