@@ -30,93 +30,94 @@
             justify-content: space-between;
             margin-left: auto;
         }
+    }
+    
+    /deep/ .area-navigation {
+        list-style-type: none;
+        text-align: center;
+        margin: 0 !important;
+        display: flex;
+        flex-wrap: nowrap;
+        justify-content: center;
+        height: 100%;
         
-        .area-navigation {
-            width: 100%;
-            padding-left: 0;
-            list-style-type: none;
-            text-align: center;
-            margin: 10px 0 14px;
-            display: flex;
-            flex-wrap: nowrap;
-            justify-content: center;
+        li {
+            display: inline-block;
+            padding: 0 15px 0 0;
+            position: relative;
+            margin: 0;
             
-            li {
-                display: inline-block;
-                padding: 0 15px 0 0;
-                position: relative;
-                a {
-                    display: block;
-                    text-decoration: none;
-                    font-family: Poppins, sans-serif;
-                    font-size: 18px;
-                    font-weight: 500;
-                    white-space: nowrap;
-                    padding: 12px 10px;
-                    color: #FFF;
+            a {
+                display: block;
+                text-decoration: none;
+                font-family: Poppins, sans-serif;
+                font-size: 18px;
+                font-weight: 500;
+                white-space: nowrap;
+                padding: 12px 10px;
+                color: #FFF;
+                transition: .2s;
+                
+                &.disabled {
+                    color: #535354 !important;
+                }
+                &.member-login {
+                    display: none;
+                    color: #fff !important;
+                    background-color: #ff9933;
                     transition: .2s;
                     
-                    &.disabled {
-                        color: #535354 !important;
-                    }
-                    &.member-login {
-                        display: none;
-                        color: #fff !important;
-                        background-color: #ff9933;
-                        transition: .2s;
-                        
-                        &:hover {
-                            background-color: lighten(#ff9933, 6%);
-                        }
-                    }
-                    
-                    &.try-free {
-                        color: lighten(#2c6935, 10%);
-                        &:hover {
-                            color: lighten(#2c6935, 18%);
-                        }
-                    }
-                    &.sign-up {
-                        color: #fff;
-                        background: #ac1f22;
-                        font-size: 16px;
-                        font-weight: 900;
-                        text-align: center;
-                        padding: 8px 40px;
-                        max-width: 150px;
-                        width: 100%;
-                        
-                        &:hover {
-                            color: #fff;
-                            background: lighten(#ac1f22, 10%);
-                        }
-                    }
-                    
-                    &.login {
-                        color: #000;
-                        background: #f09e1f;
-                        font-size: 16px;
-                        font-weight: 900;
-                        text-align: center;
-                        padding: 8px 40px;
-                        max-width: 150px;
-                        width: 100%;
-                        
-                        &:hover {
-                            color: #000;
-                            background: lighten(#f09e1f, 10%);
-                        }
+                    &:hover {
+                        background-color: lighten(#ff9933, 6%);
                     }
                 }
-                a.active,
-                a:hover,
-                &.active > a {
-                    color: #fff000;
-                    img {
-                        opacity: 0;
-                        &.active-img {
-                            opacity: 1;
-                        }
+                
+                &.try-free {
+                    color: lighten(#2c6935, 10%);
+                    &:hover {
+                        color: lighten(#2c6935, 18%);
+                    }
+                }
+                &.sign-up {
+                    color: #fff;
+                    background: #ac1f22;
+                    font-size: 16px;
+                    font-weight: 900;
+                    text-align: center;
+                    padding: 8px 40px;
+                    max-width: 150px;
+                    width: 100%;
+                    
+                    &:hover {
+                        color: #fff;
+                        background: lighten(#ac1f22, 10%);
+                    }
+                }
+                
+                &.login {
+                    color: #000;
+                    background: #f09e1f;
+                    font-size: 16px;
+                    font-weight: 900;
+                    text-align: center;
+                    padding: 8px 40px;
+                    max-width: 150px;
+                    width: 100%;
+                    
+                    &:hover {
+                        color: #000;
+                        background: lighten(#f09e1f, 10%);
+                    }
+                }
+            }
+            a.active,
+            a:hover,
+            &.active > a {
+                color: #fff000;
+                img {
+                    opacity: 0;
+                    &.active-img {
+                        opacity: 1;
                     }
                 }
             }
