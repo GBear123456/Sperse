@@ -41,7 +41,7 @@ export class MapComponent implements OnChanges {
     colorGroups: number[] = this.isLendspace
         ? [ 1, 101, 1001, 10001, 50001, 100001, 500001, Number.MAX_SAFE_INTEGER ]
         : [ 1, 101, 501, 1001, 5001, 25001, 50001, Number.MAX_SAFE_INTEGER ];
-    pipe: any = new DecimalPipe('en-US');
+    decimalPipe: any = new DecimalPipe('en-US');
     mapAreasItems: MapAreaItem[] = this.mapService.mapAreasItems;
     selectedMapAreaItem$: Observable<MapAreaItem> = this.mapService.selectedMapAreaItem$;
     selectedMapAreaZoomFactor$: Observable<MapAreaItem> = this.mapService.selectedMapAreaItem$.pipe(
@@ -89,9 +89,9 @@ export class MapComponent implements OnChanges {
     customizeText = (arg) => {
         let text;
         if (arg.end === Number.MAX_SAFE_INTEGER) {
-            text = this.isLendspace ? '> 500001' : '> 50001';
+            text = '> ' + this.decimalPipe.transform(this.isLendspace ? '500001' : '50001', '1.0-0');
         } else {
-            text = this.pipe.transform(arg.start, '1.0-0') + ' to ' + this.pipe.transform(arg.end - 1, '1.0-0');
+            text = this.decimalPipe.transform(arg.start, '1.0-0') + ' to ' + this.decimalPipe.transform(arg.end - 1, '1.0-0');
         }
         return text;
     }
