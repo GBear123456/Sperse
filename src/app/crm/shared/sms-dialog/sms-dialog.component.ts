@@ -62,13 +62,13 @@ export class SMSDialogComponent {
 
     save() {
         if (this.validationGroup.instance.validate().isValid) {
-            this.loadingService.startLoading(this.elementRef.nativeElement);
+            this.loadingService.startLoading(this.validationGroup.instance.element());
             this.contactServiceProxy.sendSMSToContact(new SendSMSToContactInput({
                 contactId: this.data.contact.id,
                 message: this.smsText,
                 phoneNumber: this.phoneNumber
             })).pipe(
-                finalize(() => this.loadingService.finishLoading(this.elementRef.nativeElement))
+                finalize(() => this.loadingService.finishLoading(this.validationGroup.instance.element()))
             ).subscribe(
                 () => this.notifyService.success(this.ls.l('MessageSuccessfullySent'))
             );
