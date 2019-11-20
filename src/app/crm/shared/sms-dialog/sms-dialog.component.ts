@@ -12,7 +12,7 @@ import { PhoneFormatPipe } from '@shared/common/pipes/phone-format/phone-format.
 import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
 import {
     ContactPhoneDto,
-    ContactServiceProxy,
+    ContactCommunicationServiceProxy,
     SendSMSToContactInput,
     PersonContactInfoDto
 } from '@shared/service-proxies/service-proxies';
@@ -42,7 +42,7 @@ export class SMSDialogComponent {
         }
     ];
     constructor(
-        private contactServiceProxy: ContactServiceProxy,
+        private contactCommunicationServiceProxy: ContactCommunicationServiceProxy,
         private dialogRef: MatDialogRef<SMSDialogComponent>,
         private loadingService: LoadingService,
         private elementRef: ElementRef,
@@ -63,7 +63,7 @@ export class SMSDialogComponent {
     save() {
         if (this.validationGroup.instance.validate().isValid) {
             this.loadingService.startLoading(this.validationGroup.instance.element());
-            this.contactServiceProxy.sendSMSToContact(new SendSMSToContactInput({
+            this.contactCommunicationServiceProxy.sendSMS(new SendSMSToContactInput({
                 contactId: this.data.contact.id,
                 message: this.smsText,
                 phoneNumber: this.phoneNumber
