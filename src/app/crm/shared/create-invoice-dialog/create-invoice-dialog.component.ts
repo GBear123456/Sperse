@@ -634,7 +634,10 @@ export class CreateInvoiceDialogComponent implements OnInit {
     }
 
     onDateContentReady(event) {
-        new Inputmask('mm/dd/yyyy').mask(event.component.field());
+        new Inputmask('mm/dd/yyyy', {
+            showMaskOnHover: false,
+            showMaskOnFocus: true
+        }).mask(event.component.field());
     }
 
     orderFocusIn(event) {
