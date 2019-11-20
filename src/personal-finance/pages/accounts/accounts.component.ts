@@ -13,7 +13,6 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { CFOService } from '@shared/cfo/cfo.service';
 import { QuovoService } from '@shared/cfo/bank-accounts/quovo/QuovoService';
 import {
-    InstanceType,
     SyncServiceProxy,
     InstanceServiceProxy,
     GetProviderUITokenOutput,
@@ -63,7 +62,7 @@ export class AccountsComponent extends AppComponentBase implements OnInit, OnDes
 
     constructor(
         injector: Injector,
-        private cfoService: CFOService,
+        public cfoService: CFOService,
         private quovoService: QuovoService,
         private syncService: SyncServiceProxy,
         private myFinanceService: MyFinancesServiceProxy,
