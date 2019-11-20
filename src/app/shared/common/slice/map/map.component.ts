@@ -1,5 +1,13 @@
 /** Core imports */
-import { ChangeDetectionStrategy, Component, ViewChild, Input, SimpleChanges, OnChanges } from '@angular/core';
+import {
+    ChangeDetectionStrategy,
+    Component,
+    ViewChild,
+    Input,
+    SimpleChanges,
+    OnChanges,
+    HostBinding
+} from '@angular/core';
 import { DecimalPipe } from '@angular/common';
 
 /** Third party imports */
@@ -37,6 +45,9 @@ export class MapComponent implements OnChanges {
     @Input() usaOnly = false;
     @Input() contactGroupText = false;
     @ViewChild(DxVectorMapComponent) vectorMapComponent: DxVectorMapComponent;
+    @HostBinding('style.height') get componentHeight() {
+        return this.height + 'px';
+    }
     isLendspace: boolean = this.userManagementService.checkLendSpaceLayout();
     colorGroups: number[] = this.isLendspace
         ? [ 1, 101, 1001, 10001, 50001, 100001, 500001, Number.MAX_SAFE_INTEGER ]
