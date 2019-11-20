@@ -133,7 +133,7 @@ export class AddCompanyDialogComponent {
                 }
                 return result;
             })
-        ).subscribe((response: CreatePersonOrgRelationOutput) => {
+        ).subscribe((response: any) => {
             this.dialogRef.close(response);
         });
     }

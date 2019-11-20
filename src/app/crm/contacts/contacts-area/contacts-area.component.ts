@@ -127,45 +127,11 @@ export class ContactsAreaComponent {
             position: this.getDialogPossition(event)
         }).afterClosed().subscribe(result => {
             scrollTo(0, 0);
-            if (result) {
-                if (dialogData.contactId) {
-                    this.updateDataField(field, data, dialogData);
-                } else {
-                    this.createOrganization(field, data, dialogData);
-                }
+            if (result && dialogData.contactId) {
+                this.updateDataField(field, data, dialogData);
             }
         });
         event.stopPropagation();
-    }
-
-    createOrganization(field, data, dialogData) {
-        let companyName = AppConsts.defaultCompanyName;
-        this.organizationContactService.createOrganization(CreateOrganizationInput.fromJS({
-            relatedContactId: this.contactInfo.id,
-            companyName: companyName,
-            relationTypeId: PersonOrgRelationType.Employee
-        })).subscribe(response => {
-            this.initializeOrganizationInfo(companyName, response.id);
-            dialogData.contactId = response.id;
-            this.updateDataField(field, data, dialogData);
-        });
-    }
-
-    initializeOrganizationInfo(companyName, contactId) {
-         this.contactInfo['organizationContactInfo'] = OrganizationContactInfoDto.fromJS({
-             organization: OrganizationInfoDto.fromJS({
-                 companyName: companyName
-             }),
-             id: contactId,
-             fullName: companyName,
-             details: ContactInfoDetailsDto.fromJS({
-                 contactId: contactId,
-                 emails: [],
-                 phones: [],
-                 addresses: [],
-                 links: [],
-             })
-         });
     }
 
     updateDataField(field, dataItem, updatedData) {

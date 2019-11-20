@@ -147,6 +147,11 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     selectedContactGroup = Object.keys(ContactGroup).shift();
     contactGroupId: BehaviorSubject<ContactGroup> = new BehaviorSubject(ContactGroup[this.selectedContactGroup]);
     contactGroupId$: Observable<ContactGroup> = this.contactGroupId.asObservable();
+    userGroupText$: Observable<string> = this.contactGroupId$.pipe(
+        map((contactGroupId: ContactGroup) => {
+            return this.getUserGroup(invert(ContactGroup)[contactGroupId.toString()]).toLowerCase();
+        })
+    );
 
     stages = [];
     pipelineDataSource: any;

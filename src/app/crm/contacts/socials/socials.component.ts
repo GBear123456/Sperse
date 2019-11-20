@@ -12,13 +12,12 @@ import { AppConsts } from '@shared/AppConsts';
 import {
     ContactInfoDto, ContactInfoDetailsDto, ContactLinkServiceProxy,
     ContactLinkDto, CreateContactLinkInput, UpdateContactLinkInput,
-    OrganizationContactServiceProxy, CreateOrganizationInput, OrganizationContactInfoDto, OrganizationInfoDto
+    OrganizationContactServiceProxy
 } from '@shared/service-proxies/service-proxies';
 import { EditContactDialog } from '../edit-contact-dialog/edit-contact-dialog.component';
 import { DialogService } from '@app/shared/common/dialogs/dialog.service';
 import { RootStore } from '@root/store';
 import { ContactLinkTypesStoreActions, ContactLinkTypesStoreSelectors } from '@app/store';
-import { PersonOrgRelationType } from '@root/shared/AppEnums';
 import { ContactsService } from '../contacts.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 
@@ -88,19 +87,18 @@ export class SocialsComponent {
 
     showEditDialog(data, event, index) {
         if (!this.isCompany || this.contactInfoData && this.contactInfoData.contactId)
-            this.showSocialDialog(data, event, index);
+            this.showSocialDialog(data, event);
         else
             this.contactsService.addCompanyDialog(event, this.contactInfo,
                 Math.round(event.target.offsetWidth / 2)
             ).subscribe(result => {
                 if (result) {
-                    this.contactInfoData = ContactInfoDetailsDto.fromJS({contactId: result.organizationId});
-                    this.showSocialDialog(data, event, index);
+                    this.showSocialDialog(data, event);
                 }
             });
     }
 
-    showSocialDialog(data, event, index) {
+    showSocialDialog(data, event) {
         let dialogData = {
             field: 'url',
             id: data && data.id,
@@ -114,7 +112,7 @@ export class SocialsComponent {
             isConfirmed: Boolean(data && data.isConfirmed),
             isActive: Boolean(data ? data.isActive : true),
             comment: data && data.comment,
-            deleteItem: (event) => {
+            deleteItem: () => {
                 this.deleteLink(data.id);
             }
         };
@@ -125,45 +123,11 @@ export class SocialsComponent {
             position: this.getDialogPosition(event)
         }).afterClosed().subscribe(result => {
             scrollTo(0, 0);
-            if (result) {
-                if (dialogData.contactId) {
-                    this.updateDataField(data, dialogData);
-                } else {
-                    this.createOrganization(data, dialogData);
-                }
+            if (result && dialogData.contactId) {
+                this.updateDataField(data, dialogData);
             }
         });
         event.stopPropagation();
-    }
-
-    createOrganization(data, dialogData) {
-        let companyName = AppConsts.defaultCompanyName;
-        this.organizationContactService.createOrganization(CreateOrganizationInput.fromJS({
-            relatedContactId: this.contactInfo.id,
-            companyName: companyName,
-            relationTypeId: PersonOrgRelationType.Employee
-        })).subscribe(response => {
-            this.initializeOrganizationInfo(companyName, response.id);
-            dialogData.contactId = response.id;
-            this.updateDataField(data, dialogData);
-        });
-    }
-
-    initializeOrganizationInfo(companyName, contactId) {
-        this.contactInfo['organizationContactInfo'] = OrganizationContactInfoDto.fromJS({
-            organization: OrganizationInfoDto.fromJS({
-                companyName: companyName
-            }),
-            id: contactId,
-            fullName: companyName,
-            details: ContactInfoDetailsDto.fromJS({
-                contactId: contactId,
-                emails: [],
-                phones: [],
-                addresses: [],
-                links: [],
-            })
-        });
     }
 
     updateDataField(data, dialogData) {
