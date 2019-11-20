@@ -35,8 +35,9 @@ export class MapComponent implements OnChanges {
     @Input() dataIsLoading;
     @Input() showLegendBorder = false;
     @Input() usaOnly = false;
+    @Input() contactGroupText = false;
     @ViewChild(DxVectorMapComponent) vectorMapComponent: DxVectorMapComponent;
-    isLendspace: boolean = this.userMananagementService.checkLendSpaceLayout();
+    isLendspace: boolean = this.userManagementService.checkLendSpaceLayout();
     colorGroups: number[] = this.isLendspace
         ? [ 1, 101, 1001, 10001, 50001, 100001, 500001, Number.MAX_SAFE_INTEGER ]
         : [ 1, 101, 501, 1001, 5001, 25001, 50001, Number.MAX_SAFE_INTEGER ];
@@ -58,7 +59,7 @@ export class MapComponent implements OnChanges {
         private ls: AppLocalizationService,
         private exportService: ExportService,
         private mapService: MapService,
-        private userMananagementService: UserManagementService
+        private userManagementService: UserManagementService
     ) {}
 
     ngOnChanges(changes: SimpleChanges) {
@@ -71,7 +72,7 @@ export class MapComponent implements OnChanges {
     customizeTooltip = (arg) => {
         let stateData = this.data[arg.attribute('postal')];
         let total = stateData && stateData.total;
-        let totalMarkupString = total ? '<div id="nominal"><b>' + total + '</b> ' + this.ls.l('contacts') + '</div>' : '<div>' + this.ls.l('CRMDashboard_NoData') + '</div>';
+        let totalMarkupString = total ? '<div id="nominal"><b>' + total + '</b> ' + this.contactGroupText + '</div>' : '<div>' + this.ls.l('CRMDashboard_NoData') + '</div>';
         let node = '<div #gdp>' + '<h5>' + arg.attribute('name') + '</h5>' + totalMarkupString + '</div>';
         return {
             html: node
