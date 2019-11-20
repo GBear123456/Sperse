@@ -1661,9 +1661,11 @@ export class CashflowService {
         });
     }
 
-    private cellStartsFromPeriod(cellDate: moment.Moment, columnPath: string[]) {
+    private cellStartsFromPeriod(cellDate: moment.Moment, columnPath: string[]): boolean {
         const period = this.formattingDate(columnPath);
-        const startDate = moment.max(moment(this.requestFilter.startDate).utc(), period.startDate);
+        const startDate = this.requestFilter.startDate
+            ? moment.max(moment(this.requestFilter.startDate).utc(), period.startDate)
+            : period.startDate;
         return cellDate.isSame(startDate);
     }
 
