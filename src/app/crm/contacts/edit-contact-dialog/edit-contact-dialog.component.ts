@@ -120,7 +120,7 @@ export class EditContactDialog {
             this.data.isSocialNetwork = true;
     }
 
-    onSave(event) {
+    onSave() {
         if (this.validator.validate().isValid && (this.data.field != 'phoneNumber' || this.countryPhoneNumber.isValid()))
             this.dialogRef.close(true);
     }

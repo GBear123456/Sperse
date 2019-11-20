@@ -102,5 +102,5 @@
         <i class="delete fa fa-times" aria-hidden="true"></i>{{ls.l('Delete')}}
     </button>
     <button mat-button mat-dialog-close class="button-layout button-default">{{ls.l('Cancel')}}</button>
-    <button *ngIf="isEditAllowed" mat-button class="button-layout button-primary" (click)="onSave($event)">{{action == 'Edit' ? ls.l('Update'): action}}</button>
+    <button *ngIf="isEditAllowed" mat-button class="button-layout button-primary" (click)="onSave()">{{action == 'Edit' ? ls.l('Update'): action}}</button>
 </mat-dialog-actions>
