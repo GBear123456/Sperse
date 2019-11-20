@@ -105,7 +105,8 @@ export class TopBarComponent implements OnDestroy {
 
     navigate(event) {
         let route = event.itemData.route;
-        if (route) {
+        /** Avoid redirect to the same route */
+        if (route && location.pathname !== event.itemData.route) {
             if (route.startsWith('/'))
                 this.router.navigate([event.itemData.route]);
             else
@@ -187,8 +188,8 @@ export class TopBarComponent implements OnDestroy {
             (item.items && item.items.length && this.checkChildMenuItemPermission(item) || !item.permissionName));
     }
 
-    private checkChildMenuItemPermission(menu): boolean {
-        return menu.items.every((item) => {
+    private checkChildMenuItemPermission(menu: PanelMenuItem): boolean {
+        return menu.items.every((item: PanelMenuItem) => {
             return this.checkMenuItemPermission(item);
         });
     }
