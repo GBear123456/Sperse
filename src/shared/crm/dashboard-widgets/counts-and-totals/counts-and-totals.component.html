@@ -1,6 +1,6 @@
 <div class="totals-list row" *ngIf="data">
     <div *ngFor="let field of fields" class="col-lg-4">
-        <div class="total-item {{ field.class }}">
+        <div *ngIf="field.visible" class="total-item {{ field.class }}">
             <div class="chart-head">
                 <span>{{ls.l('Total') + ' ' + ls.l(field.title)}}</span>
                 <span [ngStyle]="{'color': field.color}" *ngIf="field.type == 'currency'">

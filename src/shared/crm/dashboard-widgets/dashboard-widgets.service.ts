@@ -11,7 +11,9 @@ import { PeriodModel } from '@app/shared/common/period/period.model';
 import { GetTotalsOutput } from '@shared/service-proxies/service-proxies';
 import { CacheService } from '@node_modules/ng2-cache-service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { PeriodService } from '@app/shared/common/period/period.service';
+import { AppPermissions } from '@shared/AppPermissions';
 import { Period } from '@app/shared/common/period/period.enum';
 
 @Injectable()
@@ -31,19 +33,22 @@ export class DashboardWidgetsService  {
             color: '#8487e7',
             name: 'totalOrderAmount',
             type: 'currency',
-            percent:  '0%'
+            percent:  '0%',
+            visible: this.permissionService.isGranted(AppPermissions.CRMOrders)
         }, {
             title: 'Leads',
             color: '#00aeef',
             name: 'totalLeadCount',
             type: 'number',
-            percent: '0%'
+            percent: '0%',
+            visible: this.permissionService.isGranted(AppPermissions.CRMCustomers)
        }, {
            title: 'Clients',
            color: '#f4ae55',
            name: 'totalClientCount',
            type: 'number',
-           percent: '0%'
+           percent: '0%',
+           visible: this.permissionService.isGranted(AppPermissions.CRMCustomers)
        }];
     private _refresh: BehaviorSubject<null> = new BehaviorSubject<null>(null);
     refresh$: Observable<null> = this._refresh.asObservable();
@@ -62,6 +67,7 @@ export class DashboardWidgetsService  {
     };
 
     constructor(
+        private permissionService: AppPermissionService,
         private dashboardServiceProxy: DashboardServiceProxy,
         private cacheService: CacheService,
         private ls: AppLocalizationService,
