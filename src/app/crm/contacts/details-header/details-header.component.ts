@@ -226,10 +226,13 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
 
     initializePersonOrgRelationInfo(personContactInfo?: PersonContactInfoDto): PersonContactInfoDto {
         personContactInfo = personContactInfo || this.personContactInfo;
-        if (personContactInfo && personContactInfo.orgRelations && !personContactInfo['personOrgRelationInfo'])
-            personContactInfo['personOrgRelationInfo'] = PersonOrgRelationShortInfo.fromJS(
-                _.find(personContactInfo.orgRelations, orgRelation => orgRelation.id === personContactInfo.orgRelationId)
-            );
+        if (personContactInfo && personContactInfo.orgRelations) {
+            let orgRelation = personContactInfo['personOrgRelationInfo'];
+            if (!orgRelation || orgRelation.id != personContactInfo.orgRelationId)
+                personContactInfo['personOrgRelationInfo'] = PersonOrgRelationShortInfo.fromJS(
+                    personContactInfo.orgRelations.find(orgRelation => orgRelation.id === personContactInfo.orgRelationId)
+                );
+        }
         return personContactInfo;
     }
 
@@ -568,7 +571,7 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
 
     addCompanyDialog(event) {
         if (this.manageAllowed)
-            this.contactsService.addCompanyDialog(event, this.data).subscribe(() => {});
+            this.contactsService.addCompanyDialog(event, this.data).subscribe();
     }
 
     showCompanyList(event) {
