@@ -155,7 +155,7 @@ export class HeaderNotificationsComponent implements OnInit {
 
     gotoUrl(url): void {
         if (url) {
-            this.router.navigate([url]);
+            this.router.navigateByUrl(url);
         }
     }
 

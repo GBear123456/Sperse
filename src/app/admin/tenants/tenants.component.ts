@@ -1,7 +1,9 @@
 /** Core imports */
 import { Component, Injector, OnDestroy, ViewChild } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 
 /** Third party imports */
+import { MatDialog } from '@angular/material';
 import DataSource from 'devextreme/data/data_source';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { filter } from 'rxjs/operators';
@@ -30,7 +32,6 @@ import { FilterRadioGroupModel } from '@shared/filters/radio-group/filter-radio-
 import { FilterInputsComponent } from '@shared/filters/inputs/filter-inputs.component';
 import { FilterItemModel } from '@shared/filters/models/filter-item.model';
 import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calendar.component';
-import { MatDialog } from '@angular/material';
 import { CommonLookupModalComponent } from '@app/shared/common/lookup/common-lookup-modal.component';
 import { AppPermissions } from '@shared/AppPermissions';
 import { DataGridService } from '@app/shared/common/data-grid.service.ts/data-grid.service';
@@ -39,16 +40,51 @@ import { HeadlineButton } from '@app/shared/common/headline/headline-button.mode
 @Component({
     templateUrl: './tenants.component.html',
     styleUrls: [ './tenants.component.less' ],
-    animations: [appModuleAnimation()]
+    animations: [ appModuleAnimation() ]
 })
 export class TenantsComponent extends AppComponentBase implements OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
 
     private editions: any = [];
     private filters: FilterModel[];
-    public actionMenuItems: any;
+    public actionMenuItems: any = [
+        {
+            text: this.l('LoginAsThisTenant'),
+            visible: this.permission.isGranted(AppPermissions.TenantsImpersonation),
+            action: () => {
+                this.showUserImpersonateLookUpModal(this.actionRecord);
+            }
+        },
+        {
+            text: this.l('LoginAsAdmin'),
+            visible: this.permission.isGranted(AppPermissions.TenantsImpersonation),
+            action: () => {
+                this.impersonateAsAdmin(this.actionRecord);
+            }
+        },
+        {
+            text: this.l('Edit'),
+            visible: this.permission.isGranted(AppPermissions.TenantsEdit),
+            action: () => {
+                this.openEditDialog(this.actionRecord.id);
+            }
+        },
+        {
+            text: this.l('Delete'),
+            visible: this.permission.isGranted(AppPermissions.TenantsDelete),
+            action: () => {
+                this.deleteTenant(this.actionRecord);
+            }
+        },
+        {
+            text: this.l('Unlock'),
+            action: () => {
+                this.unlockUser(this.actionRecord);
+            }
+        }
+    ].filter(Boolean);
 
-    name: string;
+    tenantName: string = this.route.snapshot.queryParams.name;
     productId = '-1';
     creationDateStart: moment;
     creationDateEnd: moment;
@@ -63,7 +99,6 @@ export class TenantsComponent extends AppComponentBase implements OnDestroy {
     dataSource: DataSource;
     private rootComponent: any;
     impersonateTenantId: number;
-
     constructor(
         injector: Injector,
         private tenantService: TenantServiceProxy,
@@ -73,7 +108,8 @@ export class TenantsComponent extends AppComponentBase implements OnDestroy {
         private permissionService: PermissionServiceProxy,
         private commonLookupService: CommonLookupServiceProxy,
         private impersonationService: ImpersonationService,
-        private dialog: MatDialog
+        private dialog: MatDialog,
+        private route: ActivatedRoute
     ) {
         super(injector);
         this.rootComponent = this.getRootComponent();
@@ -89,7 +125,7 @@ export class TenantsComponent extends AppComponentBase implements OnDestroy {
             key: 'id',
             load: (loadOptions) => {
                 return this.tenantService.getTenants(
-                    this.searchValue || this.name || undefined,
+                    this.searchValue || this.tenantName || undefined,
                     this.creationDateStart || undefined,
                     this.creationDateEnd || undefined,
                     this.productId ? parseInt(this.productId) : undefined,
@@ -107,43 +143,6 @@ export class TenantsComponent extends AppComponentBase implements OnDestroy {
                 });
             }
         });
-
-        this.actionMenuItems = [
-            {
-                text: this.l('LoginAsThisTenant'),
-                visible: this.permission.isGranted(AppPermissions.TenantsImpersonation),
-                action: () => {
-                    this.showUserImpersonateLookUpModal(this.actionRecord);
-                }
-            },
-            {
-                text: this.l('LoginAsAdmin'),
-                visible: this.permission.isGranted(AppPermissions.TenantsImpersonation),
-                action: () => {
-                    this.impersonateAsAdmin(this.actionRecord);
-                }
-            },
-            {
-                text: this.l('Edit'),
-                visible: this.permission.isGranted(AppPermissions.TenantsEdit),
-                action: () => {
-                    this.openEditDialog(this.actionRecord.id);
-                }
-            },
-            {
-                text: this.l('Delete'),
-                visible: this.permission.isGranted(AppPermissions.TenantsDelete),
-                action: () => {
-                    this.deleteTenant(this.actionRecord);
-                }
-            },
-            {
-                text: this.l('Unlock'),
-                action: () => {
-                    this.unlockUser(this.actionRecord);
-                }
-            }
-        ].filter(Boolean);
     }
 
     repaintDataGrid(delay = 0) {
@@ -242,14 +241,14 @@ export class TenantsComponent extends AppComponentBase implements OnDestroy {
     }
 
     initFilterConfig() {
-        this.filtersService.setup(
+        const anyFilterAppied = this.filtersService.setup(
             this.filters = [
                 new FilterModel({
                     component: FilterInputsComponent,
                     operator: 'contains',
                     caption: this.l('Name'),
                     field: 'name',
-                    items: { name: new FilterItemModel() }
+                    items: { name: new FilterItemModel(this.tenantName)}
                 }),
                 new FilterModel({
                     component: FilterCalendarComponent,
@@ -260,7 +259,7 @@ export class TenantsComponent extends AppComponentBase implements OnDestroy {
                         from: new FilterItemModel(),
                         to: new FilterItemModel()
                     },
-                    options: {method: 'getFilterByDate'}
+                    options: { method: 'getFilterByDate' }
                 }),
                 new FilterModel({
                     component: FilterRadioGroupComponent,
@@ -280,12 +279,15 @@ export class TenantsComponent extends AppComponentBase implements OnDestroy {
                 })
             ]
         );
+        if (anyFilterAppied) {
+            this.initToolbarConfig();
+        }
 
         this.filtersService.apply((filter) => {
             this.initToolbarConfig();
 
             if (filter.field == 'name')
-                this.name = filter.items.name.value;
+                this.tenantName = filter.items.name.value;
             else if (filter.field == 'creationTime') {
                 this.creationDateStart = filter.items.from.value;
                 this.creationDateEnd = filter.items.to.value;

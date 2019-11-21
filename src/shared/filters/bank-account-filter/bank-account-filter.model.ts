@@ -13,8 +13,8 @@ export class BankAccountFilterModel extends FilterItemModel {
 
     get value(): any {
         let result = [];
-        this.dataSource.forEach((syncAccount, i) => {
-            syncAccount.bankAccounts.forEach((bankAccount, i) => {
+        this.dataSource.forEach((syncAccount) => {
+            syncAccount.bankAccounts.forEach((bankAccount) => {
                 if (bankAccount['selected']) {
                     result.push(bankAccount.id);
                 }
@@ -32,16 +32,16 @@ export class BankAccountFilterModel extends FilterItemModel {
                     selectedBankAccountCount++;
             });
 
-            syncAccount['selected'] = selectedBankAccountCount ? 
-                selectedBankAccountCount === syncAccount.bankAccounts.length || undefined : 
+            syncAccount['selected'] = selectedBankAccountCount ?
+                selectedBankAccountCount === syncAccount.bankAccounts.length || undefined :
                 false;
         });
     }
 
     getDisplayElements(): DisplayElement[] {
         let result: DisplayElement[] = [];
-        this.dataSource.forEach((syncAccount, i) => {
-            syncAccount.bankAccounts.forEach((bankAccount, i) => {
+        this.dataSource.forEach((syncAccount) => {
+            syncAccount.bankAccounts.forEach((bankAccount) => {
                 if (bankAccount['selected']) {
                     result.push(<DisplayElement>{
                         item: this,
@@ -57,9 +57,9 @@ export class BankAccountFilterModel extends FilterItemModel {
 
     removeFilterItem(filter: FilterModel, args: any) {
         if (args) {
-            this.dataSource.forEach((syncAccount, i) => {
+            this.dataSource.forEach((syncAccount) => {
                 let selectedBankAccountCount = 0;
-                syncAccount.bankAccounts.forEach((bankAccount, i) => {
+                syncAccount.bankAccounts.forEach((bankAccount) => {
                     if (bankAccount.id === args) {
                         bankAccount['selected'] = false;
                     }

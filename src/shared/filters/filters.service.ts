@@ -178,7 +178,7 @@ export class FiltersService {
         return CfoFilterHelpers.filterByExcludeElement(filter);
     }
 
-    setup(filters: FilterModel[], initialValues?: any, applyFilterImmediately = true) {
+    setup(filters: FilterModel[], initialValues?: any, applyFilterImmediately = true): boolean {
         this.subjectFilters.next(this.filters = filters);
         if (initialValues && initialValues.filters) {
             let initFilters = JSON.parse(decodeURIComponent(initialValues.filters));
@@ -197,7 +197,7 @@ export class FiltersService {
             if (applyFilterImmediately)
                 this.change(<FilterModel>{});
         }
-        this.checkIfAnySelected();
+        return this.checkIfAnySelected();
     }
 
     update(callback: (filters: FilterModel[]) => any) {
@@ -254,7 +254,7 @@ export class FiltersService {
         this.disableTimeout = null;
     }
 
-    checkIfAnySelected() {
+    checkIfAnySelected(): boolean {
         this.hasFilterSelected = false;
         _.forEach(this.filters, (x) => {
             if (x.items) {
@@ -265,6 +265,7 @@ export class FiltersService {
                 });
             }
         });
+        return this.hasFilterSelected;
     }
 
     getCheckCustom = (filter: FilterModel) => {

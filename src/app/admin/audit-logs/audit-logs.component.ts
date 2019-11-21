@@ -50,19 +50,19 @@ export class AuditLogsComponent extends AppComponentBase implements OnInit, OnDe
         maxExecutionDuration: undefined,
         entityTypeFullName: undefined
     };
-    private dateFilterModel: FilterModel;
+    private dateFilterModel: FilterModel = new FilterModel({
+        component: FilterCalendarComponent,
+        caption: 'date',
+        operator: { from: 'startDate', to: 'endDate' },
+        field: 'date',
+        items: {
+            from: new FilterItemModel(DateHelper.addTimezoneOffset(this.filtersValues.date.startDate.toDate(), true)),
+            to: new FilterItemModel(DateHelper.addTimezoneOffset(this.filtersValues.date.endDate.toDate(), true))
+        },
+        options: {method: 'getFilterByDate', params: { useUserTimezone: true }}
+    });
     private filtersModels: FilterModel[] = [
-        this.dateFilterModel = new FilterModel({
-            component: FilterCalendarComponent,
-            caption: 'date',
-            operator: { from: 'startDate', to: 'endDate' },
-            field: 'date',
-            items: {
-                from: new FilterItemModel(DateHelper.addTimezoneOffset(this.filtersValues.date.startDate.toDate(), true)),
-                to: new FilterItemModel(DateHelper.addTimezoneOffset(this.filtersValues.date.endDate.toDate(), true))
-            },
-            options: {method: 'getFilterByDate', params: { useUserTimezone: true }}
-        }),
+        this.dateFilterModel,
         new FilterModel({
             component: FilterInputsComponent,
             operator: 'startswith',

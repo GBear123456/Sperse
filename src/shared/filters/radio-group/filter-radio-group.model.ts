@@ -1,4 +1,3 @@
-import { FilterModel } from '@shared/filters/models/filter.model';
 import { FilterItemModel, DisplayElement } from '@shared/filters/models/filter-item.model';
 
 export class FilterRadioGroupModel extends FilterItemModel {
@@ -13,8 +12,8 @@ export class FilterRadioGroupModel extends FilterItemModel {
         this.list.every((item: any) => {
             let selected = item.id == this.value;
             if (selected)
-                result.push(<DisplayElement>{ 
-                    item: this, 
+                result.push(<DisplayElement>{
+                    item: this,
                     displayValue: item.displayName || item.name
                 });
             return !selected;

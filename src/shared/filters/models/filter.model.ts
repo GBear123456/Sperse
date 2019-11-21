@@ -29,7 +29,11 @@ export class FilterModelBase<T extends FilterItemModel> {
         if (this.items$ && this.items$ instanceof Observable) {
             this.items$.subscribe(items => {
                 this.items = items;
+                this.updateCaptions();
             });
+        }
+        if (this.items) {
+            this.updateCaptions();
         }
     }
 
