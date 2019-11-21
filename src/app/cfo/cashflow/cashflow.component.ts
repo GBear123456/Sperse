@@ -3056,9 +3056,10 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         return requestFilter;
     }
 
-    getDailyPeriods() {
-        let dailyPeriods = [];
+    getDailyPeriods(): Period[] {
+        let dailyPeriods: Period[] = [];
         let state = this.pivotGrid ? this.pivotGrid.instance.getDataSource().state() : this.stateLoad();
+        this.monthsDaysLoadedPathes = [];
         if (state && state.columnExpandedPaths.length) {
             let monthIndex = this.cashflowService.getAreaIndexByCaption('month', 'column');
             state.columnExpandedPaths.forEach(columnPath => {
