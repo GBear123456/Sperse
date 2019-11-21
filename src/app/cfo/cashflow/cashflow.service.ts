@@ -1344,10 +1344,7 @@ export class CashflowService {
     }
 
     weekSorting(firstItem, secondItem) {
-        const firstWeekInfo: WeekInfo = JSON.parse(firstItem.value);
-        const secondWeekInfo: WeekInfo = JSON.parse(secondItem.value);
-        return firstWeekInfo.weekNumber > secondWeekInfo.weekNumber
-               && firstWeekInfo.endDate > secondWeekInfo.startDate ? 1 : -1;
+        return JSON.parse(firstItem.value) > JSON.parse(secondItem.value) ? 1 : -1;
     }
 
     getWeekHeaderCustomizer(): any {
