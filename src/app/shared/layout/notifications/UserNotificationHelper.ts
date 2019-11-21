@@ -36,7 +36,7 @@ export class UserNotificationHelper {
             case 'App.NewUserRegistered':
                 return '/app/admin/users?filterText=' + userNotification.notification.data.properties.emailAddress;
             case 'App.NewTenantRegistered':
-                return '/app/admin/tenants?filterText=' + userNotification.notification.data.properties.tenancyName;
+                return '/app/admin/tenants?name=' + userNotification.notification.data.properties.tenancyName;
             //Add your custom notification names to navigate to a URL when user clicks to a notification.
         }
 
@@ -90,7 +90,7 @@ export class UserNotificationHelper {
                 //Take action when user clicks to live toastr notification
                 let url = UserNotificationHelper.getUrl(userNotification);
                 if (url) {
-                    this.router.navigate([url]);
+                    this.router.navigateByUrl(url);
                 }
             }
         });
