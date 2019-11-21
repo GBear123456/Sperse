@@ -5,6 +5,7 @@
                   [showReloadButton]="true"
                   [showToggleCompactViewButton]="true"
                   [showToggleFullScreenButton]="true"
+                  [buttons]="headlineButtons"
                   (onToggleToolbar)="repaintDataGrid()"
                   (onToggleCompactView)="toggleCompactView()"
                   (onToggleFullScreen)="repaintDataGrid(100)"
