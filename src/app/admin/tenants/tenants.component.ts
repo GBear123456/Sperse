@@ -1,12 +1,12 @@
 /** Core imports */
-import { Component, Injector, OnDestroy, ViewChild } from '@angular/core';
+import { Component, Injector, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material';
 import DataSource from 'devextreme/data/data_source';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
-import { filter } from 'rxjs/operators';
+import { filter, takeUntil, pluck } from 'rxjs/operators';
 import * as moment from 'moment-timezone';
 
 /** Application imports */
@@ -42,7 +42,7 @@ import { HeadlineButton } from '@app/shared/common/headline/headline-button.mode
     styleUrls: [ './tenants.component.less' ],
     animations: [ appModuleAnimation() ]
 })
-export class TenantsComponent extends AppComponentBase implements OnDestroy {
+export class TenantsComponent extends AppComponentBase implements OnDestroy, OnInit {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
 
     private editions: any = [];
@@ -99,6 +99,14 @@ export class TenantsComponent extends AppComponentBase implements OnDestroy {
     dataSource: DataSource;
     private rootComponent: any;
     impersonateTenantId: number;
+    tenantNameFilter = new FilterModel({
+        component: FilterInputsComponent,
+        operator: 'contains',
+        caption: this.l('Name'),
+        field: 'name',
+        items: { name: new FilterItemModel(this.tenantName)}
+    });
+
     constructor(
         injector: Injector,
         private tenantService: TenantServiceProxy,
@@ -142,6 +150,18 @@ export class TenantsComponent extends AppComponentBase implements OnDestroy {
                     };
                 });
             }
+        });
+    }
+
+    ngOnInit() {
+        this.route.queryParams.pipe(
+            takeUntil(this.destroy$),
+            pluck('name'),
+            filter((tenantName: string) => tenantName && this.tenantName !== tenantName)
+        ).subscribe((tenantName: string) => {
+            this.tenantName = this.tenantNameFilter.items.name.value = tenantName;
+            this.tenantNameFilter.updateCaptions();
+            this.filtersService.change(this.tenantNameFilter);
         });
     }
 
@@ -243,13 +263,7 @@ export class TenantsComponent extends AppComponentBase implements OnDestroy {
     initFilterConfig() {
         const anyFilterAppied = this.filtersService.setup(
             this.filters = [
-                new FilterModel({
-                    component: FilterInputsComponent,
-                    operator: 'contains',
-                    caption: this.l('Name'),
-                    field: 'name',
-                    items: { name: new FilterItemModel(this.tenantName)}
-                }),
+                this.tenantNameFilter,
                 new FilterModel({
                     component: FilterCalendarComponent,
                     operator: { from: '>=', to: '<=' },
