@@ -2,7 +2,6 @@
     height: auto;
     min-height: 100%;
     background: url('../assets/common/images/bank-code/background.jpg');
-    //background-size: cover;
     
     /deep/ * {
         font-family: 'IBM Plex Sans', sans-serif !important;
@@ -54,10 +53,13 @@
 
 /deep/ .cdk-overlay-container .cdk-overlay-pane.slider.footer-slider {
     max-width: 50vw !important;
+    
+    @media all and (max-width: 768px) {
+        max-width: 85vw !important;
+    }
 }
 
 /deep/ .cdk-global-scrollblock {
     position: static !important;
     width: initial !important;
-    //overflow-y: inherit !important;
 }
