@@ -1,5 +1,5 @@
 /** Core imports */
-import { ChangeDetectionStrategy, Component, Inject, ElementRef, AfterViewInit, OnInit } from '@angular/core';
+import { Component, Inject, ElementRef, AfterViewInit, OnInit } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { Router } from '@angular/router';
 
@@ -19,8 +19,7 @@ import { LoadingService } from '@shared/common/loading-service/loading.service';
 */
 @Component({
     selector: 'body',
-    template: '<app-root></app-root>',
-    changeDetection: ChangeDetectionStrategy.OnPush
+    template: '<app-root></app-root>'
 })
 export class RootComponent implements AfterViewInit {
     constructor(
@@ -90,8 +89,7 @@ export class RootComponent implements AfterViewInit {
     template: `<router-outlet>
                   <loading-spinner [spinner]="spinner" *ngIf="loadingService.showInitialSpinner"></loading-spinner>
                </router-outlet>`,
-    styleUrls: ['./root.component.less'],
-    changeDetection: ChangeDetectionStrategy.OnPush
+    styleUrls: ['./root.component.less']
 })
 export class AppRootComponent implements OnInit {
     spinner: 'default' | 'sperse' = !this.SS.tenant || (this.SS.tenant.customLayoutType && this.SS.tenant.customLayoutType === LayoutType.Default)

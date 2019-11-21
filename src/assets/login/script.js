@@ -2,7 +2,6 @@
     const tokenCookieName = 'Abp.AuthToken';
     const tenantIdCookieName = 'Abp.TenantId';
     const TwoFactorRememberClientToken = 'TwoFactorRememberClientToken';
-    const AbpLocalizationCultureName = 'Abp.Localization.CultureName';
     const EncryptedAuthToken = 'enc_auth_token';
     const origRefererKey = 'OriginalReferer';
     const DEFAULT_FAVICONS = [
@@ -27,7 +26,7 @@
             (pathParts.pop() == 'login')
         )
     ) {
-        showSpinner(window.location.href.indexOf('sperse') > 0 || window.location.href.indexOf('localhost') > 0 ? 'sperse-spinner' : 'spinner');
+        showSpinner(abp.session.multiTenancySide == abp.multiTenancy.sides.HOST > 0 ? 'sperse-spinner' : 'spinner');
         window.loginPageHandler = function(context, boot, environment) {
             appContext = context;
             appBootstrap = boot;
