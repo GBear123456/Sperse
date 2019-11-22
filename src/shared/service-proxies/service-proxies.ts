@@ -7152,15 +7152,15 @@ export class ContactServiceProxy {
 
     /**
      * @searchPhrase (optional) 
-     * @contactId (optional) 
+     * @leadId (optional) 
      * @return Success
      */
-    getSourceContacts(searchPhrase: string | null | undefined, contactId: number | null | undefined, topCount: number): Observable<SourceContactInfo[]> {
+    getSourceContacts(searchPhrase: string | null | undefined, leadId: number | null | undefined, topCount: number): Observable<SourceContactInfo[]> {
         let url_ = this.baseUrl + "/api/services/CRM/Contact/GetSourceContacts?";
         if (searchPhrase !== undefined)
             url_ += "SearchPhrase=" + encodeURIComponent("" + searchPhrase) + "&"; 
-        if (contactId !== undefined)
-            url_ += "ContactId=" + encodeURIComponent("" + contactId) + "&"; 
+        if (leadId !== undefined)
+            url_ += "LeadId=" + encodeURIComponent("" + leadId) + "&"; 
         if (topCount === undefined || topCount === null)
             throw new Error("The parameter 'topCount' must be defined and cannot be null.");
         else
@@ -7666,58 +7666,6 @@ export class ContactServiceProxy {
      * @body (optional) 
      * @return Success
      */
-    updateOrganizationUnit(body: UpdateContactOrganizationUnitInput | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CRM/Contact/UpdateOrganizationUnit";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(body);
-
-        let options_ : any = {
-            body: content_,
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-            })
-        };
-
-        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processUpdateOrganizationUnit(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processUpdateOrganizationUnit(<any>response_);
-                } catch (e) {
-                    return <Observable<void>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<void>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processUpdateOrganizationUnit(response: HttpResponseBase): Observable<void> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(<any>null);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<void>(<any>null);
-    }
-
-    /**
-     * @body (optional) 
-     * @return Success
-     */
     updateAffiliateCode(body: UpdateContactAffiliateCodeInput | null | undefined): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CRM/Contact/UpdateAffiliateCode";
         url_ = url_.replace(/[?&]$/, "");
@@ -7764,62 +7712,6 @@ export class ContactServiceProxy {
             }));
         }
         return _observableOf<void>(<any>null);
-    }
-
-    /**
-     * @body (optional) 
-     * @return Success
-     */
-    updateSourceContact(body: UpdateSourceContactInput | null | undefined): Observable<UpdateSourceContactOutput> {
-        let url_ = this.baseUrl + "/api/services/CRM/Contact/UpdateSourceContact";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(body);
-
-        let options_ : any = {
-            body: content_,
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processUpdateSourceContact(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processUpdateSourceContact(<any>response_);
-                } catch (e) {
-                    return <Observable<UpdateSourceContactOutput>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<UpdateSourceContactOutput>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processUpdateSourceContact(response: HttpResponseBase): Observable<UpdateSourceContactOutput> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? UpdateSourceContactOutput.fromJS(resultData200) : new UpdateSourceContactOutput();
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<UpdateSourceContactOutput>(<any>null);
     }
 }
 
@@ -17006,6 +16898,114 @@ export class LeadServiceProxy {
     }
 
     protected processUpdateLeadInfo(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @body (optional) 
+     * @return Success
+     */
+    updateSourceContact(body: UpdateLeadSourceContactInput | null | undefined): Observable<UpdateLeadSourceContactOutput> {
+        let url_ = this.baseUrl + "/api/services/CRM/Lead/UpdateSourceContact";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUpdateSourceContact(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUpdateSourceContact(<any>response_);
+                } catch (e) {
+                    return <Observable<UpdateLeadSourceContactOutput>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<UpdateLeadSourceContactOutput>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processUpdateSourceContact(response: HttpResponseBase): Observable<UpdateLeadSourceContactOutput> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? UpdateLeadSourceContactOutput.fromJS(resultData200) : new UpdateLeadSourceContactOutput();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<UpdateLeadSourceContactOutput>(<any>null);
+    }
+
+    /**
+     * @body (optional) 
+     * @return Success
+     */
+    updateSourceOrganizationUnit(body: UpdateLeadSourceOrganizationUnitInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Lead/UpdateSourceOrganizationUnit";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUpdateSourceOrganizationUnit(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUpdateSourceOrganizationUnit(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processUpdateSourceOrganizationUnit(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -41027,8 +41027,6 @@ export class ContactInfoDto implements IContactInfoDto {
     personContactInfo!: PersonContactInfoDto | undefined;
     primaryOrganizationContactId!: number | undefined;
     affiliateCode!: string | undefined;
-    sourceContactId!: number | undefined;
-    organizationUnitId!: number | undefined;
 
     constructor(data?: IContactInfoDto) {
         if (data) {
@@ -41060,8 +41058,6 @@ export class ContactInfoDto implements IContactInfoDto {
             this.personContactInfo = data["personContactInfo"] ? PersonContactInfoDto.fromJS(data["personContactInfo"]) : <any>undefined;
             this.primaryOrganizationContactId = data["primaryOrganizationContactId"];
             this.affiliateCode = data["affiliateCode"];
-            this.sourceContactId = data["sourceContactId"];
-            this.organizationUnitId = data["organizationUnitId"];
         }
     }
 
@@ -41093,8 +41089,6 @@ export class ContactInfoDto implements IContactInfoDto {
         data["personContactInfo"] = this.personContactInfo ? this.personContactInfo.toJSON() : <any>undefined;
         data["primaryOrganizationContactId"] = this.primaryOrganizationContactId;
         data["affiliateCode"] = this.affiliateCode;
-        data["sourceContactId"] = this.sourceContactId;
-        data["organizationUnitId"] = this.organizationUnitId;
         return data; 
     }
 }
@@ -41111,8 +41105,6 @@ export interface IContactInfoDto {
     personContactInfo: PersonContactInfoDto | undefined;
     primaryOrganizationContactId: number | undefined;
     affiliateCode: string | undefined;
-    sourceContactId: number | undefined;
-    organizationUnitId: number | undefined;
 }
 
 export class ContactPhotoInfo implements IContactPhotoInfo {
@@ -41620,8 +41612,8 @@ export class CreateContactInput implements ICreateContactInput {
     companyName!: string | undefined;
     industry!: string | undefined;
     photo!: ContactPhotoInput | undefined;
-    organizationUnitId!: number | undefined;
     sourceContactId!: number | undefined;
+    sourceOrganizationUnitId!: number | undefined;
     title!: string | undefined;
     tags!: ContactTagInput[] | undefined;
     lists!: ContactListInput[] | undefined;
@@ -41681,8 +41673,8 @@ export class CreateContactInput implements ICreateContactInput {
             this.companyName = data["companyName"];
             this.industry = data["industry"];
             this.photo = data["photo"] ? ContactPhotoInput.fromJS(data["photo"]) : <any>undefined;
-            this.organizationUnitId = data["organizationUnitId"];
             this.sourceContactId = data["sourceContactId"];
+            this.sourceOrganizationUnitId = data["sourceOrganizationUnitId"];
             this.title = data["title"];
             if (data["tags"] && data["tags"].constructor === Array) {
                 this.tags = [];
@@ -41750,8 +41742,8 @@ export class CreateContactInput implements ICreateContactInput {
         data["companyName"] = this.companyName;
         data["industry"] = this.industry;
         data["photo"] = this.photo ? this.photo.toJSON() : <any>undefined;
-        data["organizationUnitId"] = this.organizationUnitId;
         data["sourceContactId"] = this.sourceContactId;
+        data["sourceOrganizationUnitId"] = this.sourceOrganizationUnitId;
         data["title"] = this.title;
         if (this.tags && this.tags.constructor === Array) {
             data["tags"] = [];
@@ -41792,8 +41784,8 @@ export interface ICreateContactInput {
     companyName: string | undefined;
     industry: string | undefined;
     photo: ContactPhotoInput | undefined;
-    organizationUnitId: number | undefined;
     sourceContactId: number | undefined;
+    sourceOrganizationUnitId: number | undefined;
     title: string | undefined;
     tags: ContactTagInput[] | undefined;
     lists: ContactListInput[] | undefined;
@@ -42209,46 +42201,6 @@ export interface IAssignUserForEachInput {
     userId: number | undefined;
 }
 
-export class UpdateContactOrganizationUnitInput implements IUpdateContactOrganizationUnitInput {
-    contactId!: number;
-    organizationUnitId!: number;
-
-    constructor(data?: IUpdateContactOrganizationUnitInput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.contactId = data["contactId"];
-            this.organizationUnitId = data["organizationUnitId"];
-        }
-    }
-
-    static fromJS(data: any): UpdateContactOrganizationUnitInput {
-        data = typeof data === 'object' ? data : {};
-        let result = new UpdateContactOrganizationUnitInput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["contactId"] = this.contactId;
-        data["organizationUnitId"] = this.organizationUnitId;
-        return data; 
-    }
-}
-
-export interface IUpdateContactOrganizationUnitInput {
-    contactId: number;
-    organizationUnitId: number;
-}
-
 export class UpdateContactAffiliateCodeInput implements IUpdateContactAffiliateCodeInput {
     contactId!: number;
     affiliateCode!: string;
@@ -42287,82 +42239,6 @@ export class UpdateContactAffiliateCodeInput implements IUpdateContactAffiliateC
 export interface IUpdateContactAffiliateCodeInput {
     contactId: number;
     affiliateCode: string;
-}
-
-export class UpdateSourceContactInput implements IUpdateSourceContactInput {
-    contactId!: number;
-    sourceContactId!: number | undefined;
-
-    constructor(data?: IUpdateSourceContactInput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.contactId = data["contactId"];
-            this.sourceContactId = data["sourceContactId"];
-        }
-    }
-
-    static fromJS(data: any): UpdateSourceContactInput {
-        data = typeof data === 'object' ? data : {};
-        let result = new UpdateSourceContactInput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["contactId"] = this.contactId;
-        data["sourceContactId"] = this.sourceContactId;
-        return data; 
-    }
-}
-
-export interface IUpdateSourceContactInput {
-    contactId: number;
-    sourceContactId: number | undefined;
-}
-
-export class UpdateSourceContactOutput implements IUpdateSourceContactOutput {
-    newOrganizationUnitId!: number | undefined;
-
-    constructor(data?: IUpdateSourceContactOutput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.newOrganizationUnitId = data["newOrganizationUnitId"];
-        }
-    }
-
-    static fromJS(data: any): UpdateSourceContactOutput {
-        data = typeof data === 'object' ? data : {};
-        let result = new UpdateSourceContactOutput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["newOrganizationUnitId"] = this.newOrganizationUnitId;
-        return data; 
-    }
-}
-
-export interface IUpdateSourceContactOutput {
-    newOrganizationUnitId: number | undefined;
 }
 
 export class CreateContactAddressOutput implements ICreateContactAddressOutput {
@@ -45603,6 +45479,8 @@ export class Lead implements ILead {
     dateCompleted!: moment.Moment | undefined;
     cancellationReasonId!: string | undefined;
     cancellationComment!: string | undefined;
+    sourceContactId!: number | undefined;
+    sourceOrganizationUnitId!: number | undefined;
     leadType!: LeadType | undefined;
     contactGroup!: ContactGroup | undefined;
     customer!: Contact | undefined;
@@ -45610,6 +45488,7 @@ export class Lead implements ILead {
     primaryLeadRequest!: LeadRequest | undefined;
     stage!: Stage | undefined;
     cancellationReason!: LeadCancellationReason | undefined;
+    sourceContact!: Contact | undefined;
     leadRequests!: LeadRequest[] | undefined;
     orders!: Order[] | undefined;
     isDeleted!: boolean | undefined;
@@ -45644,6 +45523,8 @@ export class Lead implements ILead {
             this.dateCompleted = data["dateCompleted"] ? moment(data["dateCompleted"].toString()) : <any>undefined;
             this.cancellationReasonId = data["cancellationReasonId"];
             this.cancellationComment = data["cancellationComment"];
+            this.sourceContactId = data["sourceContactId"];
+            this.sourceOrganizationUnitId = data["sourceOrganizationUnitId"];
             this.leadType = data["leadType"] ? LeadType.fromJS(data["leadType"]) : <any>undefined;
             this.contactGroup = data["contactGroup"] ? ContactGroup.fromJS(data["contactGroup"]) : <any>undefined;
             this.customer = data["customer"] ? Contact.fromJS(data["customer"]) : <any>undefined;
@@ -45651,6 +45532,7 @@ export class Lead implements ILead {
             this.primaryLeadRequest = data["primaryLeadRequest"] ? LeadRequest.fromJS(data["primaryLeadRequest"]) : <any>undefined;
             this.stage = data["stage"] ? Stage.fromJS(data["stage"]) : <any>undefined;
             this.cancellationReason = data["cancellationReason"] ? LeadCancellationReason.fromJS(data["cancellationReason"]) : <any>undefined;
+            this.sourceContact = data["sourceContact"] ? Contact.fromJS(data["sourceContact"]) : <any>undefined;
             if (data["leadRequests"] && data["leadRequests"].constructor === Array) {
                 this.leadRequests = [];
                 for (let item of data["leadRequests"])
@@ -45693,6 +45575,8 @@ export class Lead implements ILead {
         data["dateCompleted"] = this.dateCompleted ? this.dateCompleted.toISOString() : <any>undefined;
         data["cancellationReasonId"] = this.cancellationReasonId;
         data["cancellationComment"] = this.cancellationComment;
+        data["sourceContactId"] = this.sourceContactId;
+        data["sourceOrganizationUnitId"] = this.sourceOrganizationUnitId;
         data["leadType"] = this.leadType ? this.leadType.toJSON() : <any>undefined;
         data["contactGroup"] = this.contactGroup ? this.contactGroup.toJSON() : <any>undefined;
         data["customer"] = this.customer ? this.customer.toJSON() : <any>undefined;
@@ -45700,6 +45584,7 @@ export class Lead implements ILead {
         data["primaryLeadRequest"] = this.primaryLeadRequest ? this.primaryLeadRequest.toJSON() : <any>undefined;
         data["stage"] = this.stage ? this.stage.toJSON() : <any>undefined;
         data["cancellationReason"] = this.cancellationReason ? this.cancellationReason.toJSON() : <any>undefined;
+        data["sourceContact"] = this.sourceContact ? this.sourceContact.toJSON() : <any>undefined;
         if (this.leadRequests && this.leadRequests.constructor === Array) {
             data["leadRequests"] = [];
             for (let item of this.leadRequests)
@@ -45735,6 +45620,8 @@ export interface ILead {
     dateCompleted: moment.Moment | undefined;
     cancellationReasonId: string | undefined;
     cancellationComment: string | undefined;
+    sourceContactId: number | undefined;
+    sourceOrganizationUnitId: number | undefined;
     leadType: LeadType | undefined;
     contactGroup: ContactGroup | undefined;
     customer: Contact | undefined;
@@ -45742,6 +45629,7 @@ export interface ILead {
     primaryLeadRequest: LeadRequest | undefined;
     stage: Stage | undefined;
     cancellationReason: LeadCancellationReason | undefined;
+    sourceContact: Contact | undefined;
     leadRequests: LeadRequest[] | undefined;
     orders: Order[] | undefined;
     isDeleted: boolean | undefined;
@@ -50129,8 +50017,8 @@ export class Contact implements IContact {
     comment!: string | undefined;
     userId!: number | undefined;
     affiliateCode!: string | undefined;
-    sourceContactId!: number | undefined;
-    organizationUnitId!: number | undefined;
+    old_SourceContactId!: number | undefined;
+    old_OrganizationUnitId!: number | undefined;
     primaryAddressId!: number | undefined;
     primaryEmailId!: number | undefined;
     primaryPhoneId!: number | undefined;
@@ -50149,7 +50037,6 @@ export class Contact implements IContact {
     status!: ContactStatus | undefined;
     type!: ContactType | undefined;
     group!: ContactGroup | undefined;
-    sourceContact!: Contact | undefined;
     primaryAddress!: ContactAddress | undefined;
     primaryEmail!: ContactEmail | undefined;
     primaryPhone!: ContactPhone | undefined;
@@ -50195,8 +50082,8 @@ export class Contact implements IContact {
             this.comment = data["comment"];
             this.userId = data["userId"];
             this.affiliateCode = data["affiliateCode"];
-            this.sourceContactId = data["sourceContactId"];
-            this.organizationUnitId = data["organizationUnitId"];
+            this.old_SourceContactId = data["old_SourceContactId"];
+            this.old_OrganizationUnitId = data["old_OrganizationUnitId"];
             this.primaryAddressId = data["primaryAddressId"];
             this.primaryEmailId = data["primaryEmailId"];
             this.primaryPhoneId = data["primaryPhoneId"];
@@ -50235,7 +50122,6 @@ export class Contact implements IContact {
             this.status = data["status"] ? ContactStatus.fromJS(data["status"]) : <any>undefined;
             this.type = data["type"] ? ContactType.fromJS(data["type"]) : <any>undefined;
             this.group = data["group"] ? ContactGroup.fromJS(data["group"]) : <any>undefined;
-            this.sourceContact = data["sourceContact"] ? Contact.fromJS(data["sourceContact"]) : <any>undefined;
             this.primaryAddress = data["primaryAddress"] ? ContactAddress.fromJS(data["primaryAddress"]) : <any>undefined;
             this.primaryEmail = data["primaryEmail"] ? ContactEmail.fromJS(data["primaryEmail"]) : <any>undefined;
             this.primaryPhone = data["primaryPhone"] ? ContactPhone.fromJS(data["primaryPhone"]) : <any>undefined;
@@ -50309,8 +50195,8 @@ export class Contact implements IContact {
         data["comment"] = this.comment;
         data["userId"] = this.userId;
         data["affiliateCode"] = this.affiliateCode;
-        data["sourceContactId"] = this.sourceContactId;
-        data["organizationUnitId"] = this.organizationUnitId;
+        data["old_SourceContactId"] = this.old_SourceContactId;
+        data["old_OrganizationUnitId"] = this.old_OrganizationUnitId;
         data["primaryAddressId"] = this.primaryAddressId;
         data["primaryEmailId"] = this.primaryEmailId;
         data["primaryPhoneId"] = this.primaryPhoneId;
@@ -50349,7 +50235,6 @@ export class Contact implements IContact {
         data["status"] = this.status ? this.status.toJSON() : <any>undefined;
         data["type"] = this.type ? this.type.toJSON() : <any>undefined;
         data["group"] = this.group ? this.group.toJSON() : <any>undefined;
-        data["sourceContact"] = this.sourceContact ? this.sourceContact.toJSON() : <any>undefined;
         data["primaryAddress"] = this.primaryAddress ? this.primaryAddress.toJSON() : <any>undefined;
         data["primaryEmail"] = this.primaryEmail ? this.primaryEmail.toJSON() : <any>undefined;
         data["primaryPhone"] = this.primaryPhone ? this.primaryPhone.toJSON() : <any>undefined;
@@ -50416,8 +50301,8 @@ export interface IContact {
     comment: string | undefined;
     userId: number | undefined;
     affiliateCode: string | undefined;
-    sourceContactId: number | undefined;
-    organizationUnitId: number | undefined;
+    old_SourceContactId: number | undefined;
+    old_OrganizationUnitId: number | undefined;
     primaryAddressId: number | undefined;
     primaryEmailId: number | undefined;
     primaryPhoneId: number | undefined;
@@ -50436,7 +50321,6 @@ export interface IContact {
     status: ContactStatus | undefined;
     type: ContactType | undefined;
     group: ContactGroup | undefined;
-    sourceContact: Contact | undefined;
     primaryAddress: ContactAddress | undefined;
     primaryEmail: ContactEmail | undefined;
     primaryPhone: ContactPhone | undefined;
@@ -50644,8 +50528,6 @@ export class OrganizationBusinessInfo implements IOrganizationBusinessInfo {
     ratingId!: number | undefined;
     userId!: number | undefined;
     affiliateId!: string | undefined;
-    sourceContactId!: number | undefined;
-    organizationUnitId!: number | undefined;
 
     constructor(data?: IOrganizationBusinessInfo) {
         if (data) {
@@ -50715,8 +50597,6 @@ export class OrganizationBusinessInfo implements IOrganizationBusinessInfo {
             this.ratingId = data["ratingId"];
             this.userId = data["userId"];
             this.affiliateId = data["affiliateId"];
-            this.sourceContactId = data["sourceContactId"];
-            this.organizationUnitId = data["organizationUnitId"];
         }
     }
 
@@ -50786,8 +50666,6 @@ export class OrganizationBusinessInfo implements IOrganizationBusinessInfo {
         data["ratingId"] = this.ratingId;
         data["userId"] = this.userId;
         data["affiliateId"] = this.affiliateId;
-        data["sourceContactId"] = this.sourceContactId;
-        data["organizationUnitId"] = this.organizationUnitId;
         return data; 
     }
 }
@@ -50826,8 +50704,6 @@ export interface IOrganizationBusinessInfo {
     ratingId: number | undefined;
     userId: number | undefined;
     affiliateId: string | undefined;
-    sourceContactId: number | undefined;
-    organizationUnitId: number | undefined;
 }
 
 export class GetContactBusinessOutput implements IGetContactBusinessOutput {
@@ -60061,8 +59937,8 @@ export class CreateLeadInput implements ICreateLeadInput {
     companyName!: string | undefined;
     industry!: string | undefined;
     photo!: ContactPhotoInput | undefined;
-    organizationUnitId!: number | undefined;
     sourceContactId!: number | undefined;
+    sourceOrganizationUnitId!: number | undefined;
     title!: string | undefined;
     tags!: ContactTagInput[] | undefined;
     lists!: ContactListInput[] | undefined;
@@ -60126,8 +60002,8 @@ export class CreateLeadInput implements ICreateLeadInput {
             this.companyName = data["companyName"];
             this.industry = data["industry"];
             this.photo = data["photo"] ? ContactPhotoInput.fromJS(data["photo"]) : <any>undefined;
-            this.organizationUnitId = data["organizationUnitId"];
             this.sourceContactId = data["sourceContactId"];
+            this.sourceOrganizationUnitId = data["sourceOrganizationUnitId"];
             this.title = data["title"];
             if (data["tags"] && data["tags"].constructor === Array) {
                 this.tags = [];
@@ -60199,8 +60075,8 @@ export class CreateLeadInput implements ICreateLeadInput {
         data["companyName"] = this.companyName;
         data["industry"] = this.industry;
         data["photo"] = this.photo ? this.photo.toJSON() : <any>undefined;
-        data["organizationUnitId"] = this.organizationUnitId;
         data["sourceContactId"] = this.sourceContactId;
+        data["sourceOrganizationUnitId"] = this.sourceOrganizationUnitId;
         data["title"] = this.title;
         if (this.tags && this.tags.constructor === Array) {
             data["tags"] = [];
@@ -60245,8 +60121,8 @@ export interface ICreateLeadInput {
     companyName: string | undefined;
     industry: string | undefined;
     photo: ContactPhotoInput | undefined;
-    organizationUnitId: number | undefined;
     sourceContactId: number | undefined;
+    sourceOrganizationUnitId: number | undefined;
     title: string | undefined;
     tags: ContactTagInput[] | undefined;
     lists: ContactListInput[] | undefined;
@@ -60802,7 +60678,8 @@ export class LeadInfoDto implements ILeadInfoDto {
     refererUrl!: string | undefined;
     entryUrl!: string | undefined;
     primaryLeadRequestId!: number | undefined;
-    organizationUnitId!: number | undefined;
+    sourceContactId!: number | undefined;
+    sourceOrganizationUnitId!: number | undefined;
 
     constructor(data?: ILeadInfoDto) {
         if (data) {
@@ -60836,7 +60713,8 @@ export class LeadInfoDto implements ILeadInfoDto {
             this.refererUrl = data["refererUrl"];
             this.entryUrl = data["entryUrl"];
             this.primaryLeadRequestId = data["primaryLeadRequestId"];
-            this.organizationUnitId = data["organizationUnitId"];
+            this.sourceContactId = data["sourceContactId"];
+            this.sourceOrganizationUnitId = data["sourceOrganizationUnitId"];
         }
     }
 
@@ -60870,7 +60748,8 @@ export class LeadInfoDto implements ILeadInfoDto {
         data["refererUrl"] = this.refererUrl;
         data["entryUrl"] = this.entryUrl;
         data["primaryLeadRequestId"] = this.primaryLeadRequestId;
-        data["organizationUnitId"] = this.organizationUnitId;
+        data["sourceContactId"] = this.sourceContactId;
+        data["sourceOrganizationUnitId"] = this.sourceOrganizationUnitId;
         return data; 
     }
 }
@@ -60897,7 +60776,8 @@ export interface ILeadInfoDto {
     refererUrl: string | undefined;
     entryUrl: string | undefined;
     primaryLeadRequestId: number | undefined;
-    organizationUnitId: number | undefined;
+    sourceContactId: number | undefined;
+    sourceOrganizationUnitId: number | undefined;
 }
 
 export class UpdateLeadInfoInput implements IUpdateLeadInfoInput {
@@ -60954,6 +60834,122 @@ export interface IUpdateLeadInfoInput {
     affiliateCode: string | undefined;
     channelCode: string | undefined;
     comments: string | undefined;
+}
+
+export class UpdateLeadSourceContactInput implements IUpdateLeadSourceContactInput {
+    leadId!: number;
+    sourceContactId!: number | undefined;
+
+    constructor(data?: IUpdateLeadSourceContactInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.leadId = data["leadId"];
+            this.sourceContactId = data["sourceContactId"];
+        }
+    }
+
+    static fromJS(data: any): UpdateLeadSourceContactInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateLeadSourceContactInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["leadId"] = this.leadId;
+        data["sourceContactId"] = this.sourceContactId;
+        return data; 
+    }
+}
+
+export interface IUpdateLeadSourceContactInput {
+    leadId: number;
+    sourceContactId: number | undefined;
+}
+
+export class UpdateLeadSourceContactOutput implements IUpdateLeadSourceContactOutput {
+    newSourceOrganizationUnitId!: number | undefined;
+
+    constructor(data?: IUpdateLeadSourceContactOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.newSourceOrganizationUnitId = data["newSourceOrganizationUnitId"];
+        }
+    }
+
+    static fromJS(data: any): UpdateLeadSourceContactOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateLeadSourceContactOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["newSourceOrganizationUnitId"] = this.newSourceOrganizationUnitId;
+        return data; 
+    }
+}
+
+export interface IUpdateLeadSourceContactOutput {
+    newSourceOrganizationUnitId: number | undefined;
+}
+
+export class UpdateLeadSourceOrganizationUnitInput implements IUpdateLeadSourceOrganizationUnitInput {
+    leadId!: number;
+    sourceOrganizationUnitId!: number;
+
+    constructor(data?: IUpdateLeadSourceOrganizationUnitInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.leadId = data["leadId"];
+            this.sourceOrganizationUnitId = data["sourceOrganizationUnitId"];
+        }
+    }
+
+    static fromJS(data: any): UpdateLeadSourceOrganizationUnitInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateLeadSourceOrganizationUnitInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["leadId"] = this.leadId;
+        data["sourceOrganizationUnitId"] = this.sourceOrganizationUnitId;
+        return data; 
+    }
+}
+
+export interface IUpdateLeadSourceOrganizationUnitInput {
+    leadId: number;
+    sourceOrganizationUnitId: number;
 }
 
 export class LeadTypeDto implements ILeadTypeDto {

@@ -13,8 +13,8 @@ import { ContactGroup } from '@shared/AppEnums';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { ActivatedRoute } from '@angular/router';
 import {
-    ApplicationServiceProxy, LeadServiceProxy, LeadInfoDto, UpdateContactOrganizationUnitInput,
-    ContactInfoDto, ContactServiceProxy, UpdateLeadInfoInput, OrganizationUnitShortDto, UpdateSourceContactInput
+    ApplicationServiceProxy, LeadServiceProxy, LeadInfoDto, UpdateLeadSourceOrganizationUnitInput,
+    ContactInfoDto, ContactServiceProxy, UpdateLeadInfoInput, OrganizationUnitShortDto, UpdateLeadSourceContactInput
 } from '@shared/service-proxies/service-proxies';
 import { ContactsService } from '../contacts.service';
 import { AppConsts } from '@shared/AppConsts';
@@ -122,11 +122,11 @@ export class LeadInformationComponent extends AppComponentBase implements OnInit
         this.contactsService.loadLeadInfo();
         contactsService.orgUnitsSaveSubscribe((data) => {
             let orgUnitId = data.length ? data[0] : undefined;
-            if (orgUnitId && orgUnitId != this.data.leadInfo.organizationUnitId) {
-                this.data.leadInfo.organizationUnitId = orgUnitId;
-                contactProxy.updateOrganizationUnit(new UpdateContactOrganizationUnitInput({
-                    contactId: this.data.contactInfo.id,
-                    organizationUnitId: orgUnitId
+            if (orgUnitId && orgUnitId != this.data.leadInfo.sourceOrganizationUnitId) {
+                this.data.leadInfo.sourceOrganizationUnitId = orgUnitId;
+                leadService.updateSourceOrganizationUnit(new UpdateLeadSourceOrganizationUnitInput({
+                    leadId: this.data.leadInfo.id,
+                    sourceOrganizationUnitId: orgUnitId
                 })).subscribe(() =>
                     this.notify.info(this.l('SavedSuccessfully'))
                 );
@@ -136,9 +136,11 @@ export class LeadInformationComponent extends AppComponentBase implements OnInit
 
     ngOnInit() {
         this.data = this.contactProxy['data'];
+        this.contactsService.leadInfoSubscribe(leadInfo => {
+            this.sourceContactId = leadInfo.sourceContactId;
+        });
         this.contactsService.contactInfoSubscribe(contactInfo => {
             this.data.contactInfo = contactInfo;
-            this.sourceContactId = contactInfo.sourceContactId;
             this.isCGManageAllowed = this.contactsService.checkCGPermission(contactInfo.groupId);
             this.showApplicationAllowed = this.isGranted(AppPermissions.PFMApplicationsViewApplications) &&
                 contactInfo.personContactInfo.userId && contactInfo.groupId == ContactGroup.Client;
@@ -160,7 +162,7 @@ export class LeadInformationComponent extends AppComponentBase implements OnInit
                 this.contactsService.orgUnitsUpdate({
                     allOrganizationUnits: organizationUnits,
                     selectedOrgUnits: [organizationUnits.find((organizationUnit: OrganizationUnitShortDto) => {
-                        return organizationUnit.id === (leadInfo.organizationUnitId || this.data.contactInfo.organizationUnitId);
+                        return organizationUnit.id === (leadInfo.organizationUnitId || this.data.leadInfo.sourceOrganizationUnitId);
                     })].filter(Boolean).map(item => item.id)
                 });
             }, this.constructor.name);
@@ -221,7 +223,7 @@ export class LeadInformationComponent extends AppComponentBase implements OnInit
     }
 
     updateSourceContactName() {
-        let contact = this.sourceContacts.find(item => 
+        let contact = this.sourceContacts.find(item =>
             item.id == this.sourceContactId);
         if (contact)
             this.sourceContactName = contact.name;
@@ -238,15 +240,15 @@ export class LeadInformationComponent extends AppComponentBase implements OnInit
 
         let prevName = this.sourceContactName;
         this.sourceContactName = event.name;
-        this.contactProxy.updateSourceContact(
-            new UpdateSourceContactInput({
-                contactId: this.data.contactInfo.id,
+        this.leadService.updateSourceContact(
+            new UpdateLeadSourceContactInput({
+                leadId: this.data.leadInfo.id,
                 sourceContactId: event.id
             })
-        ).subscribe((orgUnitId) => {
+        ).subscribe((response) => {
             this.contactsService.orgUnitsUpdate({
                 allOrganizationUnits: this.organizationUnits,
-                selectedOrgUnits: [orgUnitId]
+                selectedOrgUnits: [response.newSourceOrganizationUnitId]
             });
 
             this.sourceContactId = event.id;

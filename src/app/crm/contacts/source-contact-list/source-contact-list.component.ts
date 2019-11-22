@@ -23,16 +23,16 @@ export class SourceContactListComponent {
     @Input() targetSelector = '#PartnersSource';
     @Input() selectedKey: number;
     @Input()
-    set contactId(value: number) {
-        if (value && this._contactId != value) {
-            this._contactId = value;
+    set leadId(value: number) {
+        if (value && this._leadId != value) {
+            this._leadId = value;
             this.loadSourceContacts();
         }
     }
 
     contacts: any = [];
     private lookupTimeout: any;
-    private _contactId: number;
+    private _leadId: number;
 
     constructor(
         injector: Injector,
@@ -46,7 +46,7 @@ export class SourceContactListComponent {
         if (dxList && !elm)
             elm = dxList.instance.element();
         elm && abp.ui.setBusy(elm);
-        this.contactProxy.getSourceContacts(searchPhrase, this._contactId, 10)
+        this.contactProxy.getSourceContacts(searchPhrase, this._leadId, 10)
             .pipe(finalize(() => elm && abp.ui.clearBusy(elm)))
             .subscribe(res => {
                 let searchBox = this.sourceComponent.dxSearch;
@@ -72,7 +72,7 @@ export class SourceContactListComponent {
     onOptionChanged(event) {
         if (event.name == 'items')
             setTimeout(() => this.sourceComponent.dxTooltip.instance.repaint());
-    }                              
+    }
 
     toggle() {
         if (this.sourceComponent.toggle())
