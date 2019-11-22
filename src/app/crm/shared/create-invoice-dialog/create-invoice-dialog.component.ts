@@ -90,7 +90,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
     contactId: number;
     customers = [];
 
-    date;
+    date = DateHelper.addTimezoneOffset(new Date(), true);
     dueDate;
 
     description = '';
@@ -188,7 +188,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
             this.invoiceNo = invoice.Number;
             this.orderId = invoice.OrderId;
             this.status = invoice.Status;
-            this.date = invoice.Date;
+            this.date = DateHelper.addTimezoneOffset(new Date(invoice.Date), true);
             this.dueDate = invoice.DueDate;
             this.contactId = invoice.ContactId;
             this.initOrderDataSource();
@@ -287,14 +287,14 @@ export class CreateInvoiceDialogComponent implements OnInit {
     private setRequestCommonFields(data) {
         data.number = this.invoiceNo;
         data.orderNumber = this.orderNumber;
-        data.date = this.getDate(this.date);
+        data.date = this.getDate(this.date, true, '');
         data.dueDate = this.getDate(this.dueDate);
         data.description = this.description;
         data.note = this.notes;
     }
 
-    private getDate(value) {
-        return value ? DateHelper.removeTimezoneOffset(new Date(value), false, 'from') : undefined;
+    private getDate(value, userTimezone = false, setTime = 'from') {
+        return value ? DateHelper.removeTimezoneOffset(new Date(value), userTimezone, setTime) : undefined;
     }
 
     private createUpdateEntity(): void {
