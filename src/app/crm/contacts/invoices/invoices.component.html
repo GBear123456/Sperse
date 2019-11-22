@@ -27,7 +27,7 @@
 
                             <dxi-column dataField="Number" caption="{{l('Number')}}"></dxi-column>
                             <dxi-column dataField="Status" caption="{{l('Status')}}"></dxi-column>
-                            <dxi-column dataField="Date" caption="{{l('Date')}}" cellTemplate="dateCell"></dxi-column>
+                            <dxi-column dataField="Date" caption="{{l('Date')}}" cellTemplate="datetimeCell"></dxi-column>
                             <dxi-column dataField="DueDate" caption="{{l('Due Date')}}" cellTemplate="dateCell"></dxi-column>
                             <dxi-column dataField="Amount" alignment="right" caption="{{l('Amount')}}" cellTemplate="amountCell"></dxi-column>
 
@@ -38,6 +38,9 @@
                             <dxo-paging [pageSize]="20"></dxo-paging>
                             <div *dxTemplate="let cellData of 'dateCell'">
                                 {{ cellData.value | date: formatting.date }}
+                            </div>
+                            <div *dxTemplate="let cellData of 'datetimeCell'">
+                                {{ cellData.value | date: formatting.dateTime : userTimezone }}
                             </div>
                             <div *dxTemplate="let cellData of 'amountCell'">
                                 {{ cellData.value | currency: settings.currency }}

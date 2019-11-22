@@ -84,12 +84,12 @@
                     </div>
                     <div class="field-area">
                         <dx-date-box #dateComponent
-                            [placeholder]="ls.lr('Date')"
-                            [disabled]="disabledForUpdate"
                             width="260px"
                             height="41px"
-                            (onKeyDown)="allowDigitsOnly($event, ['/'])"
+                            type="datetime"
                             [(value)]="date"
+                            [placeholder]="ls.lr('Date')"
+                            [disabled]="disabledForUpdate"
                             (onContentReady)="onDateContentReady($event)">
                         </dx-date-box>
                     </div>
