@@ -191,8 +191,8 @@ export class UserInformationComponent implements OnInit, OnDestroy {
                     this.loadingService.finishLoading();
                 }))
                 .subscribe((userEditOutput: GetUserForEditOutput) => this.fillUserData(userEditOutput)),
-                this.constructor.name
-            );
+                    this.constructor.name
+                );
         }
     }
 
@@ -202,10 +202,11 @@ export class UserInformationComponent implements OnInit, OnDestroy {
     }
 
     fillUserData(data) {
-        data.memberedOrganizationUnits.forEach((item) => {
-            this.selectedOrgUnits.push(
-                data.allOrganizationUnits.find(organizationUnit => organizationUnit.code === item)['id']
-            );
+        data.memberedOrganizationUnits.forEach((organizationUnitCode: string) => {
+            const organizationUnit = data.allOrganizationUnits.find(organizationUnit => organizationUnit.code === organizationUnitCode);
+            if (organizationUnit) {
+                this.selectedOrgUnits.push(organizationUnit['id']);
+            }
         });
 
         if (data.user.id) {
