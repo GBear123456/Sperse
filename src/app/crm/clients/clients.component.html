@@ -48,7 +48,9 @@
     <div [hidden]="hideDataGrid$ | async" class="portlet light no-padding margin-bottom-0">
         <div class="portlet-body">
             <div id="ClientsTable">
-                <dx-data-grid id="gridContainer"
+                <ghost-list [hidden]="!dataGridLoading"></ghost-list>
+                <dx-data-grid [hidden]="dataGridLoading"
+                              id="gridContainer"
                               class="limitedPagerTotal"
                               accesskey="narrowHeaderPanel"
                               [dataSource]="dataSource"

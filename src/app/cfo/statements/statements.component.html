@@ -23,11 +23,11 @@
             </dxo-selection>
             <dxo-sorting mode="multiple"></dxo-sorting>
 
-            <dxi-column dataField="date" 
-                        [caption]="l('Statements_Period')" 
-                        dataType="date" 
-                        format="MMM y" 
-                        sortOrder="desc" 
+            <dxi-column dataField="date"
+                        [caption]="l('Statements_Period')"
+                        dataType="date"
+                        format="MMM y"
+                        sortOrder="desc"
                         cssClass="clipboard-holder">
             </dxi-column>
             <dxi-column dataField="startingBalance"
@@ -66,12 +66,12 @@
                         [format]="currencyFormat"
                         [customizeText]="updateCurrencySymbol">
             </dxi-column>
-            <dxi-column dataField="creditCount" 
-                        caption="{{l('Statements_CreditCount')}}" 
+            <dxi-column dataField="creditCount"
+                        [caption]="l('Statements_CreditCount')"
                         cssClass="clipboard-holder">
             </dxi-column>
-            <dxi-column dataField="debitCount" 
-                        caption="{{l('Statements_DebitCount')}}" 
+            <dxi-column dataField="debitCount"
+                        [caption]="l('Statements_DebitCount')"
                         cssClass="clipboard-holder">
             </dxi-column>
 

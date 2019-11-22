@@ -327,6 +327,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     contentHeight$: Observable<number> = this.crmService.contentHeight$;
     mapHeight$: Observable<number> = this.crmService.mapHeight$;
     private usersInstancesLoadingSubscription: Subscription;
+    dataGridLoading = false;
 
     constructor(
         injector: Injector,
@@ -370,6 +371,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 version: AppConsts.ODataVersion,
                 deserializeDates: false,
                 beforeSend: (request) => {
+                    this.dataGridLoading = true;
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                     request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
                 },
@@ -383,6 +385,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                     if (this.appService.isCfoLinkOrVerifyEnabled) {
                         this.usersInstancesLoadingSubscription = this.crmService.getUsersWithInstances(userIds);
                     }
+                    this.dataGridLoading = false;
                 }
             }
         };
@@ -1115,7 +1118,12 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         this.appService.updateToolbar(null);
         this.filtersService.unsubscribe();
         this.rootComponent.overflowHidden();
-        this.itemDetailsService.setItemsSource(ItemTypeEnum.Customer, this.dataGrid.instance.getDataSource());
+        if (this.dataGrid) {
+            this.itemDetailsService.setItemsSource(
+                ItemTypeEnum.Customer,
+                this.dataGrid.instance.getDataSource()
+            );
+        }
         this.hideHostElement();
     }
 
