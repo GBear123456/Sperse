@@ -1,5 +1,8 @@
+/** Core imports */
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+
+/** Application imports */
 import { PersonalFinanceLayoutModule } from '@shared/personal-finance-layout/personal-finance-layout.module';
 import { NotFoundComponent } from '@shared/not-found/not-found.component';
 import { NotFoundRoutingModule } from '@shared/not-found/not-found-routing.module';
