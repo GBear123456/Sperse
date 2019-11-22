@@ -1373,7 +1373,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     onContactGroupChanged(event) {
         if (event.previousValue != event.value) {
             this.contactGroupId.next(ContactGroup[event.value]);
-            this.headlineConfig.buttons[0].label = this.getHeadlineButtonName();
+            this.headlineButtons[0].label = this.getHeadlineButtonName();
             this.cacheService.set(this.getCacheKey(this.CONTACT_GROUP_CACHE_KEY), event.value);
             this.createButtonEnabledSet();
             this.filterChanged = true;

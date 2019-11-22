@@ -5,7 +5,7 @@ import { Component, Input } from '@angular/core';
 import { NotifyService } from '@abp/notify/notify.service';
 import { MatDialog } from '@angular/material/dialog';
 import { filter } from 'rxjs/operators';
-import { ClipboardService } from 'ngx-clipboard'
+import { ClipboardService } from 'ngx-clipboard';
 import capitalize from 'underscore.string/capitalize';
 
 /** Application imports */
@@ -16,11 +16,10 @@ import {
     ContactInfoDto, ContactEmailServiceProxy, ContactEmailDto, ContactPhoneDto,
     ContactPhoneServiceProxy, CreateContactEmailInput, ContactInfoDetailsDto,
     UpdateContactEmailInput, CreateContactPhoneInput, UpdateContactPhoneInput,
-    OrganizationContactServiceProxy, CreateOrganizationInput, OrganizationContactInfoDto, OrganizationInfoDto
+    OrganizationContactServiceProxy
 } from '@shared/service-proxies/service-proxies';
 import { EditContactDialog } from '../edit-contact-dialog/edit-contact-dialog.component';
 import { ContactsService } from '../contacts.service';
-import { PersonOrgRelationType } from '@root/shared/AppEnums';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 
 @Component({
@@ -263,6 +262,6 @@ export class ContactsAreaComponent {
 
     copyToClipbord(value) {
         this.clipboardService.copyFromContent(value);
-        this.notifyService.info(this.l('SavedToClipboard'));
+        this.notifyService.info(this.ls.l('SavedToClipboard'));
     }
 }

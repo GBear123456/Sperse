@@ -332,7 +332,7 @@ export class AddressesComponent implements OnInit {
     copyToClipbord(event, address) {
         this.clipboardService.copyFromContent(
             this.aggregateAddress(address));
-        this.notifyService.info(this.l('SavedToClipboard'));
+        this.notifyService.info(this.ls.l('SavedToClipboard'));
         event.stopPropagation();
         event.preventDefault();
     }
