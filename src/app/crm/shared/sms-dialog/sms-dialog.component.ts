@@ -3,6 +3,7 @@ import { Component, ChangeDetectionStrategy, Inject, ElementRef, ViewChild } fro
 
 /** Third party imports */
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { DxValidationGroupComponent } from 'devextreme-angular/ui/validation-group';
 import { finalize } from 'rxjs/operators';
 
 /** Application imports */
@@ -18,7 +19,6 @@ import {
 } from '@shared/service-proxies/service-proxies';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
 import { NotifyService } from '@abp/notify/notify.service';
-import { DxValidationGroupComponent } from '@root/node_modules/devextreme-angular';
 
 @Component({
     templateUrl: 'sms-dialog.component.html',
@@ -38,9 +38,11 @@ export class SMSDialogComponent {
             id: 'sendSMS',
             title: this.ls.l('Send'),
             class: 'primary',
+            iconName: 'send.svg',
             action: this.save.bind(this)
         }
     ];
+
     constructor(
         private contactCommunicationServiceProxy: ContactCommunicationServiceProxy,
         private dialogRef: MatDialogRef<SMSDialogComponent>,
