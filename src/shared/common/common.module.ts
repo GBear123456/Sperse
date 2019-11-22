@@ -26,7 +26,7 @@ import { AppUrlService } from '@shared/common/nav/app-url.service';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
 import { RegisterConfirmComponent } from '@shared/common/dialogs/register-confirm/register-confirm.component';
 import { ConditionsModalComponent } from '@shared/common/conditions-modal/conditions-modal.component';
-import { dxDataGridClipboardDirective } from '@shared/common/clipboard/dx-data-grid.directive';
+import { DxDataGridClipboardDirective } from '@shared/common/clipboard/dx-data-grid.directive';
 import { NoDataModule } from '@shared/common/widgets/no-data/no-data.module';
 import { CacheHelper } from '@shared/common/cache-helper/cache-helper';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
@@ -47,7 +47,7 @@ import { PrimengTableHelper } from '@shared/helpers/PrimengTableHelper';
         ModalDialogComponent,
         RegisterConfirmComponent,
         ConditionsModalComponent,
-        dxDataGridClipboardDirective
+        DxDataGridClipboardDirective
     ],
     exports: [
         CalendarComponent,
@@ -60,7 +60,7 @@ import { PrimengTableHelper } from '@shared/helpers/PrimengTableHelper';
         InfoComponent,
         CountryPhoneNumberComponent,
         TitleCasePipe,
-        dxDataGridClipboardDirective,
+        DxDataGridClipboardDirective,
         ModalDialogComponent,
         ConditionsModalComponent,
         NoDataModule
