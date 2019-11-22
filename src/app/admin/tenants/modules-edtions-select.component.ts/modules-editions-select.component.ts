@@ -42,10 +42,15 @@ export class ModulesEditionsSelectComponent {
         return !emptyMaxCount.length;
     }
 
-    editionIsNotFreeOrNotAssigned(editionId: number, editionGroupIndex: number) {
+    editionIsNotFreeOrNotAssigned(editionModel: TenantEditEditionDto, editionGroupIndex: number): boolean {
+        const editionId = editionModel.editionId;
         const edition = this.editionsGroups[editionGroupIndex].find((edition: SubscribableEditionComboboxItemDto) => {
             return +edition.value === +editionId;
         });
-        return edition && !edition.isFree && edition.value !== '0';
+        let result: boolean = edition && !edition.isFree && edition.value !== '0';
+        if (!result) {
+            editionModel.trialDayCount = null;
+        }
+        return result;
     }
 }

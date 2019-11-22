@@ -3,12 +3,16 @@
     display: block;
     .moduleEdition {
         display: flex;
-        align-items: center;
+        align-items: flex-end;
         label {
             margin-bottom: 0;
             @media (min-width: 768px) {
                 min-width: 95px;
             }
+        }
+        & > label {
+            height: 37px;
+            line-height: 37px;
         }
         select {
             margin: 0 20px 0 10px;

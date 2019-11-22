@@ -21,7 +21,7 @@
         </div>
         <div>
             <label *ngIf="i === 0">{{ ls.l('Trial') }} ({{ ls.l('days')}})</label>
-            <input *ngIf="editionIsNotFreeOrNotAssigned(editionsModels[moduleId].editionId, i)"
+            <input *ngIf="editionIsNotFreeOrNotAssigned(editionsModels[moduleId], i)"
                    type="number"
                    class="form-control"
                    min="1"
