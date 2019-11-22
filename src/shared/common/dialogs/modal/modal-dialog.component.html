@@ -17,12 +17,21 @@
     <mat-dialog-actions>
         <div class="mat-dialog-options" *ngIf="options">
             <ng-template ngFor let-option [ngForOf]="options" let-i="index">
-                <dx-check-box class="mat-dialog-option pull-right" (onValueChanged)="option.onValueChanged && option.onValueChanged($event)" [(value)]="option.value" [text]="option.text"></dx-check-box>
+                <dx-check-box class="mat-dialog-option pull-right"
+                              [text]="option.text"
+                              [(value)]="option.value"
+                              (onValueChanged)="option.onValueChanged && option.onValueChanged($event)">
+                </dx-check-box>
             </ng-template>
         </div>
         <div class="mat-dialog-buttons" *ngIf="buttons">
             <ng-template ngFor let-button [ngForOf]="buttons" let-i="index">
-                <button mat-button (click)="button.action($event)" [id]="button?.id" [disabled]="button?.disabled" [title]="button.hint ? button.hint : ''" class="button-layout button-{{button.class}}">
+                <button mat-button
+                        [id]="button?.id"
+                        [disabled]="button?.disabled"
+                        [title]="button.hint ? button.hint : ''"
+                        class="button-layout button-{{button.class}}"
+                        (click)="button.action($event)">
                     <span *ngIf="!!button.title">{{ ls.l(button.title )}}</span>
                     <img *ngIf="!!button.iconName" [src]="'./assets/common/icons/' + button.iconName" />
                 </button>
