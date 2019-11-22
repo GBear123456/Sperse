@@ -37,6 +37,7 @@ import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/life
 import { Period } from '@app/shared/common/period/period.enum';
 import { PeriodService } from '@app/shared/common/period/period.service';
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
+import { AppPermissions } from '@shared/AppPermissions';
 
 @Component({
     templateUrl: './dashboard.component.html',
@@ -69,6 +70,8 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
     private introAcceptedCacheKey: string = this.cacheHelper.getCacheKey('CRMIntro', 'IntroAccepted');
     dialogConfig = new MatDialogConfig();
     leftMenuHidden = true;
+    isGrantedCustomers = this.isGranted(AppPermissions.CRMCustomers);
+    isGrantedOrders = this.isGranted(AppPermissions.CRMOrders);
     constructor(
         injector: Injector,
         private appService: AppService,

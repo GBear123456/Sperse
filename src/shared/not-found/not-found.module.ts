@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { PersonalFinanceLayoutModule } from '@shared/personal-finance-layout/personal-finance-layout.module';
 import { NotFoundComponent } from '@shared/not-found/not-found.component';
 import { NotFoundRoutingModule } from '@shared/not-found/not-found-routing.module';
+import { LoadingService } from '@shared/common/loading-service/loading.service';
+import { CacheHelper } from '@shared/common/cache-helper/cache-helper';
 import { AppUrlService } from '@shared/common/nav/app-url.service';
 
 @NgModule({
@@ -18,7 +20,9 @@ import { AppUrlService } from '@shared/common/nav/app-url.service';
         NotFoundComponent
     ],
     providers: [
-        AppUrlService
+        CacheHelper,
+        AppUrlService,
+        LoadingService
     ]
 })
 export class NotFoundModule {}

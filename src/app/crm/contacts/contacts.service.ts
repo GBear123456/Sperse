@@ -18,7 +18,8 @@ import {
     UserServiceProxy,
     ContactServiceProxy,
     ContactCommunicationServiceProxy,
-    SendEmailInput
+    SendEmailInput,
+    CreatePersonOrgRelationOutput
 } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { EmailTemplateDialogComponent } from '@app/crm/shared/email-template-dialog/email-template-dialog.component';
@@ -59,7 +60,7 @@ export class ContactsService {
         private router: Router,
         private location: Location,
         public dialog: MatDialog
-    ) {  }
+    ) {}
 
     private subscribe(sub, ident = 'common') {
         if (!this.subscribers[ident])
@@ -175,7 +176,7 @@ export class ContactsService {
         list.length = 0;
     }
 
-    addCompanyDialog(event, contactInfo, shiftX?, shiftY?) {
+    addCompanyDialog(event, contactInfo, shiftX?, shiftY?): Observable<CreatePersonOrgRelationOutput> {
         this.dialog.closeAll();
         event.stopPropagation();
 
@@ -189,10 +190,12 @@ export class ContactsService {
             position: this.dialogService.calculateDialogPosition(
                 event, event.target, shiftX, shiftY
             )
-        }).afterClosed().pipe(tap(response => {
-            if (response && response.organizationId)
-                setTimeout(() => this.invalidateUserData(), 300);
-        }));
+        }).afterClosed().pipe(
+            tap(response => {
+                if (response && response.organizationId)
+                    setTimeout(() => this.invalidateUserData(), 300);
+            })
+        );
     }
 
     updateLocation(contactId?, leadId?, companyId?, userId?) {
@@ -239,18 +242,21 @@ export class ContactsService {
             data: emailData
         }).componentInstance;
 
-        return dialogComponent.onSave.pipe(switchMap(res => {
-            dialogComponent.startLoading();
-            return this.emailProxy.sendEmail(new SendEmailInput(res)).pipe(
-                finalize(() => dialogComponent.finishLoading()),
-                catchError(error => of(error))
-            );
-        }), tap(error => {
-            if (!error) {
-                this.notifyService.info(this.ls.l('MailSent'));
-                dialogComponent.close();
-            }
-        }));
+        return dialogComponent.onSave.pipe(
+            switchMap(res => {
+                dialogComponent.startLoading();
+                return this.emailProxy.sendEmail(new SendEmailInput(res)).pipe(
+                    finalize(() => dialogComponent.finishLoading()),
+                    catchError(error => of(error))
+                );
+            }),
+            tap(error => {
+                if (!error) {
+                    this.notifyService.info(this.ls.l('MailSent'));
+                    dialogComponent.close();
+                }
+            })
+        );
     }
 
     showInvoiceSettingsDialog() {
@@ -259,7 +265,7 @@ export class ContactsService {
             panelClass: 'slider',
             disableClose: true,
             closeOnNavigation: false,
-            data: { }
+            data: {}
         }).afterClosed();
     }
 }

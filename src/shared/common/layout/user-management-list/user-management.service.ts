@@ -346,8 +346,7 @@ export class UserManagementService {
 
     updateProfileInformation() {
         this.dialog.open(WizardRightSideComponent, {
-            id: 'offers-wizard-right',
-            panelClass: ['slider', 'user-info'],
+            panelClass: ['slider', 'user-info', 'wizard-right'],
             disableClose: true,
             data: {
                 campaignId: null

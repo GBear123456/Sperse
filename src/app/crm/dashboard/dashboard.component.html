@@ -25,24 +25,24 @@
           </div>
           <dx-scroll-view *ngIf="showDefaultSection$ | async" showScrollbar="onHover">
               <div class="dashboard-widgets">
-                  <counts-and-totals></counts-and-totals>
+                  <counts-and-totals *ngIf="isGrantedCustomers || isGrantedOrders"></counts-and-totals>
                   <div class="analytics-wrap row">
                       <div class="left-side col-xl-4">
-                          <new-items-totals></new-items-totals>
+                          <new-items-totals *ngIf="isGrantedCustomers || isGrantedOrders"></new-items-totals>
                       </div>
                       <div class="right-side col-xl-8">
-                          <totals-by-period></totals-by-period>
+                          <totals-by-period *ngIf="isGrantedCustomers"></totals-by-period>
                       </div>
                   </div>
                   <div class="analytics-wrap row">
                       <div class="left-side col-lg-6 col-xl-4">
-                          <totals-by-source></totals-by-source>
+                          <totals-by-source *ngIf="isGrantedCustomers"></totals-by-source>
                       </div>
                       <div class="right-side col-lg-6 col-xl-8">
-                          <recent-clients></recent-clients>
+                          <recent-clients *ngIf="isGrantedCustomers"></recent-clients>
                       </div>
                   </div>
-                  <clients-by-region></clients-by-region>
+                  <clients-by-region *ngIf="isGrantedCustomers"></clients-by-region>
               </div>
           </dx-scroll-view>
           <loading-spinner *ngIf="showLoadingSpinner"></loading-spinner>

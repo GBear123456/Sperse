@@ -16,6 +16,7 @@ import {
     startWith,
     map,
     mapTo,
+    pluck,
     publishReplay,
     refCount,
     switchMap,
@@ -407,6 +408,15 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             takeUntil(this.destroy$)
         ).subscribe(() => {
             this.crmService.handleModuleChange(this.dataLayoutType.value);
+        });
+
+        this._activatedRoute.queryParams.pipe(
+            takeUntil(this.destroy$),
+            filter(() => this.componentIsActivated),
+            pluck('dataLayoutType'),
+            filter((dataLayoutType: DataLayoutType) => dataLayoutType && dataLayoutType != this.dataLayoutType.value)
+        ).subscribe((dataLayoutType) => {
+            this.toggleDataLayout(+dataLayoutType);
         });
     }
 

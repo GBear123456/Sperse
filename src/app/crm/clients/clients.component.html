@@ -149,6 +149,7 @@
         <slice-info [items]="mapInfoItems$ | async"></slice-info>
         <slice-map [width]="contentWidth$ | async"
                    [height]="mapHeight$ | async"
+                   [contactGroupText]="l('Customers').toLowerCase()"
                    [dataIsLoading]="mapDataIsLoading"
                    [data]="mapData$ | async">
         </slice-map>

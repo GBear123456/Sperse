@@ -209,6 +209,7 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
             closeOnNavigation: false,
             data: {
                 invoice: this.actionRecordData,
+                contactInfo: this.contactService['data'].contactInfo,
                 refreshParent: () => {
                     this.dataGrid.instance.refresh();
                 }

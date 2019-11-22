@@ -1,11 +1,24 @@
 :host {
-    height: 100%;
-    background: url('../assets/common/images/bank-code/background.jpg') no-repeat;
-    background-size: cover;
+    height: auto;
+    min-height: 100%;
+    background: url('../assets/common/images/bank-code/background.jpg');
     
     /deep/ * {
-        font-family: 'AvianoSans-Reg', sans-serif !important;
+        font-family: 'IBM Plex Sans', sans-serif !important;
         font-weight: normal;
+        font-size: 15px;
+    }
+    /deep/ .app-list-item {
+        * {
+            font-size: 16px !important;
+            font-family: 'AvianoSans-Reg', sans-serif !important;
+            font-weight: normal !important;
+        }
+        
+        &.active {
+            font-family: 'AvianoSans-Bla', sans-serif !important;
+            font-weight: normal !important;
+        }
     }
 
     /deep/ h1,
@@ -22,6 +35,10 @@
     .page-content {
         flex: 1;
         margin-top: 69px;
+        
+        @media all and (max-width: 800px) and (min-width: 650px) {
+            margin-top: 124px;
+        }
 
         > div {
             height: 100%;
@@ -32,4 +49,17 @@
     .page-content {
         height: calc(~"100% - 75px");
     }
+}
+
+/deep/ .cdk-overlay-container .cdk-overlay-pane.slider.footer-slider {
+    max-width: 50vw !important;
+    
+    @media all and (max-width: 768px) {
+        max-width: 85vw !important;
+    }
+}
+
+/deep/ .cdk-global-scrollblock {
+    position: static !important;
+    width: initial !important;
 }

@@ -1344,7 +1344,7 @@ export class CashflowService {
     }
 
     weekSorting(firstItem, secondItem) {
-        return JSON.parse(firstItem.value).weekNumber > JSON.parse(secondItem.value).weekNumber ? 1 : -1;
+        return JSON.parse(firstItem.value) > JSON.parse(secondItem.value) ? 1 : -1;
     }
 
     getWeekHeaderCustomizer(): any {
@@ -1658,9 +1658,11 @@ export class CashflowService {
         });
     }
 
-    private cellStartsFromPeriod(cellDate: moment.Moment, columnPath: string[]) {
+    private cellStartsFromPeriod(cellDate: moment.Moment, columnPath: string[]): boolean {
         const period = this.formattingDate(columnPath);
-        const startDate = moment.max(moment(this.requestFilter.startDate).utc(), period.startDate);
+        const startDate = this.requestFilter.startDate
+            ? moment.max(moment(this.requestFilter.startDate).utc(), period.startDate)
+            : period.startDate;
         return cellDate.isSame(startDate);
     }
 

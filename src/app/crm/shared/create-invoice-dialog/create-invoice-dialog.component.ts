@@ -33,7 +33,9 @@ import {
     CreateInvoiceLineInput,
     InvoiceLineUnit,
     InvoiceSettings,
-    GetNewInvoiceInfoOutput
+    GetNewInvoiceInfoOutput,
+    EntityContactInfo,
+    ContactAddressInfo
 } from '@shared/service-proxies/service-proxies';
 import { NotifyService } from '@abp/notify/notify.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -88,7 +90,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
     contactId: number;
     customers = [];
 
-    date;
+    date = DateHelper.addTimezoneOffset(new Date(), true);
     dueDate;
 
     description = '';
@@ -142,11 +144,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.customerProxy.getAllByPhrase('', 10).subscribe((res) => {
-            this.customers = res;
-            this.changeDetectorRef.detectChanges();
-        });
-
+        this.customerLookupRequest();
         this.invoicesService.settings$.pipe(first()).subscribe(settings => {
             this.invoiceSettings = settings;
             if (!this.data.invoice) {
@@ -190,14 +188,13 @@ export class CreateInvoiceDialogComponent implements OnInit {
             this.invoiceNo = invoice.Number;
             this.orderId = invoice.OrderId;
             this.status = invoice.Status;
-            this.date = invoice.Date;
+            this.date = DateHelper.addTimezoneOffset(new Date(invoice.Date), true);
             this.dueDate = invoice.DueDate;
             this.contactId = invoice.ContactId;
             this.initOrderDataSource();
             this.disabledForUpdate = [InvoiceStatus.Draft, InvoiceStatus.Final].indexOf(this.status) < 0;
             if (this.disabledForUpdate)
                 this.buttons[0].disabled = this.disabledForUpdate;
-            this.changeDetectorRef.detectChanges();
             this.invoiceProxy.getInvoiceInfo(invoice.Id)
                 .pipe(finalize(() => this.modalDialog.finishLoading()))
                 .subscribe((res) => {
@@ -224,13 +221,35 @@ export class CreateInvoiceDialogComponent implements OnInit {
                 this.invoiceNo = res.nextInvoiceNumber;
                 this.changeDetectorRef.detectChanges();
             });
+        }
 
-            let contact = this.data.contactInfo;
-            if (contact) {
-                this.contactId = contact.id;
-                this.initOrderDataSource();
-                this.customer = contact.personContactInfo.fullName;
-            }
+        this.defineContactInfo(this.data.contactInfo);
+        this.changeDetectorRef.detectChanges();
+    }
+
+    defineContactInfo(contact) {
+        if (contact) {
+            this.contactId = contact.id;
+            this.initOrderDataSource();
+            let details = contact.personContactInfo.details,
+                emailAddress = details.emails.length ? details.emails[0].emailAddress : undefined,
+                address = details.addresses[0];
+            this.customer = contact.personContactInfo.fullName +
+                (emailAddress ? ' (' + emailAddress + ')' : '');
+            this.selectedContact =
+                new EntityContactInfo({
+                    id: contact.id,
+                    name: this.customer,
+                    email: emailAddress,
+                    address: address ? new ContactAddressInfo({
+                        streetAddress: address.streetAddress,
+                        city: address.city,
+                        state: address.state,
+                        countryCode: address.country,
+                        zip: address.zip
+                    }) : undefined,
+                    isActive: true
+                });
         }
     }
 
@@ -268,14 +287,14 @@ export class CreateInvoiceDialogComponent implements OnInit {
     private setRequestCommonFields(data) {
         data.number = this.invoiceNo;
         data.orderNumber = this.orderNumber;
-        data.date = this.getDate(this.date);
+        data.date = this.getDate(this.date, true, '');
         data.dueDate = this.getDate(this.dueDate);
         data.description = this.description;
         data.note = this.notes;
     }
 
-    private getDate(value) {
-        return value ? DateHelper.removeTimezoneOffset(new Date(value), false, 'from') : undefined;
+    private getDate(value, userTimezone = false, setTime = 'from') {
+        return value ? DateHelper.removeTimezoneOffset(new Date(value), userTimezone, setTime) : undefined;
     }
 
     private createUpdateEntity(): void {
@@ -418,6 +437,19 @@ export class CreateInvoiceDialogComponent implements OnInit {
         event.component.option('isValid', true);
     }
 
+    customerLookupRequest(phrase = '', callback?) {
+        this.customerProxy.getAllByPhrase(phrase, 10).subscribe(res => {
+            if (!phrase || phrase == this.customer) {
+                this.customers = res.map(item => {
+                    item['display'] = item.name + (item.email ? ' (' + item.email + ')' : '');
+                    return item;
+                });
+                callback && callback(res);
+                this.changeDetectorRef.markForCheck();
+            }
+        });
+    }
+
     customerLookupItems($event) {
         let search = this.customer = $event.event.target.value;
         if (this.customers.length)
@@ -431,13 +463,9 @@ export class CreateInvoiceDialogComponent implements OnInit {
             $event.component.option('opened', true);
             $event.component.option('noDataText', this.ls.l('LookingForItems'));
 
-            this.customerProxy.getAllByPhrase(search, 10).subscribe((res) => {
-                if (search == this.customer) {
-                    if (!res['length'])
-                        $event.component.option('noDataText', this.ls.l('NoItemsFound'));
-                    this.customers = res;
-                    this.changeDetectorRef.markForCheck();
-                }
+            this.customerLookupRequest(search, res => {
+                if (!res['length'])
+                    $event.component.option('noDataText', this.ls.l('NoItemsFound'));
             });
         }, 500);
     }
@@ -545,6 +573,11 @@ export class CreateInvoiceDialogComponent implements OnInit {
         }
     }
 
+    onOrderNumberValueChanged(event) {
+        if (event.event)
+            this.orderId = undefined;
+    }
+
     allowDigitsOnly(event, exceptions = []) {
         let key = event.event.key;
         if (exceptions.indexOf(key) < 0 && key.length == 1 && isNaN(key)) {
@@ -576,9 +609,16 @@ export class CreateInvoiceDialogComponent implements OnInit {
                 }
             }).afterClosed().subscribe(data => {
                 if (data) {
-                    this.contactId = data.id;
-                    this.customer = [data.firstName, data.middleName,
-                        data.lastName].filter(Boolean).join(' ');
+                    this.defineContactInfo({
+                        id: data.id,
+                        personContactInfo: {
+                            fullName: [data.firstName, data.middleName, data.lastName].filter(Boolean).join(' '),
+                            details: {
+                                addresses: data.addresses,
+                                emails: data.emailAddresses
+                            }
+                        }
+                    });
                     this.changeDetectorRef.detectChanges();
                 }
             });
@@ -594,7 +634,10 @@ export class CreateInvoiceDialogComponent implements OnInit {
     }
 
     onDateContentReady(event) {
-        new Inputmask('mm/dd/yyyy').mask(event.component.field());
+        new Inputmask('mm/dd/yyyy', {
+            showMaskOnHover: false,
+            showMaskOnFocus: true
+        }).mask(event.component.field());
     }
 
     orderFocusIn(event) {

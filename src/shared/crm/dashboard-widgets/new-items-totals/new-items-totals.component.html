@@ -6,7 +6,7 @@
         <div *ngIf="totalsDataAvailable$ | async; else noData" class="align-data">
             <div class="charts-wrapper" *ngIf="(totalsData$ | async) as totalsData">
                 <ng-container *ngFor="let field of fields">
-                    <div class="chart-head">
+                    <div *ngIf="field.visible" class="chart-head">
                         {{ls.l('CRMDashboard_NewAdded', 'CRM', [ls.l(field.title).toLowerCase()])}}
                         <span [ngStyle]="{'color': field.color}">
                             <ng-container *ngIf="field.type == 'currency'">
@@ -18,7 +18,7 @@
                             <ng-container *ngIf="field.type == 'number'">{{ totalsData[field.name.replace('total', 'new')] | number }} of {{ totalsData[field.name] | number }}</ng-container>
                         </span>
                     </div>
-                    <div class="chart-line" [ngStyle]="{'background-color': '#F1F5F6'}"><div [ngStyle]="{width: field.percent, 'background-color': field.color}"></div></div>
+                    <div *ngIf="field.visible" class="chart-line" [ngStyle]="{'background-color': '#F1F5F6'}"><div [ngStyle]="{width: field.percent, 'background-color': field.color}"></div></div>
                 </ng-container>
             </div>
         </div>

@@ -21,13 +21,13 @@
                                       [pager]="defaultGridPagerConfig"
                                       (onCellClick)="onCellClick($event)"
                                       (onContentReady)="onContentReady($event)"
-                                      (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">                
+                                      (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
                             <dxi-column alignment="center" width="90px" cellTemplate="actionsCellTemplate" headerCellTemplate="actionsCellTemplate"></dxi-column>
                             <a class="dx-link dx-link-edit" *dxTemplate="let cellData of 'actionsCellTemplate'">Edit</a>
 
                             <dxi-column dataField="Number" caption="{{l('Number')}}" cssClass="clipboard-holder"></dxi-column>
                             <dxi-column dataField="Status" caption="{{l('Status')}}" cssClass="clipboard-holder"></dxi-column>
-                            <dxi-column dataField="Date" caption="{{l('Date')}}" cellTemplate="dateCell"></dxi-column>
+                            <dxi-column dataField="Date" caption="{{l('Date')}}" cellTemplate="datetimeCell"></dxi-column>
                             <dxi-column dataField="DueDate" caption="{{l('Due Date')}}" cellTemplate="dateCell"></dxi-column>
                             <dxi-column dataField="Amount" alignment="right" caption="{{l('Amount')}}" cellTemplate="amountCell"></dxi-column>
 
@@ -38,6 +38,9 @@
                             <dxo-paging [pageSize]="20"></dxo-paging>
                             <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
                                 {{ cellData.value | date: formatting.date }}
+                            </div>
+                            <div *dxTemplate="let cellData of 'datetimeCell'">
+                                {{ cellData.value | date: formatting.dateTime : userTimezone }}
                             </div>
                             <div *dxTemplate="let cellData of 'amountCell'" class="clipboard-holder">
                                 {{ cellData.value | currency: settings.currency }}

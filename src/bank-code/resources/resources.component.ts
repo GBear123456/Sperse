@@ -7,9 +7,11 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
     styleUrls: ['resources.component.less']
 })
 export class ResourcesComponent {
+    isClicked: number;
     data = [
         {
             categoryName: 'Financing',
+            anchor: 'fin',
             list: [
                 {
                     title: 'ATM Workbook',
@@ -30,6 +32,7 @@ export class ResourcesComponent {
         },
         {
             categoryName: 'Graphics and logos',
+            anchor: 'graph',
             list: [
                 {
                     title: 'BANK Logos',
@@ -55,6 +58,7 @@ export class ResourcesComponent {
         },
         {
             categoryName: 'Legal documents',
+            anchor: 'legal',
             list: [
                 {
                     title: '2019 BANKCODE Compensation Plan',
@@ -94,12 +98,13 @@ export class ResourcesComponent {
                 {
                     title: 'BANKCODE Advertising Guidelines',
                     file: 'BANKCODE+Policies+…res.pdf',
-                    img: './assets/common/images/bank-code/thumbnails/legal-documents/Advertising_Guideline.png'
+                    img: './assets/common/images/bank-code/thumbnails/legal-documents/Guideline.png'
                 }
             ]
         },
         {
             categoryName: 'Social Media Ads',
+            anchor: 'social',
             list: [
                 {
                     title: '300%',
@@ -139,12 +144,13 @@ export class ResourcesComponent {
                 {
                     title: 'Women\'s Day',
                     file: 'BANKCODE+Policies+…res.pdf',
-                    img: './assets/common/images/bank-code/thumbnails/social-media-ads/ATM.png'
+                    img: './assets/common/images/bank-code/thumbnails/ATM.png'
                 }
             ]
         },
         {
             categoryName: 'Trainer Kits',
+            anchor: 'trainer',
             list: [
                 {
                     title: 'L1: BANK Fundamentals Kit',
@@ -195,6 +201,7 @@ export class ResourcesComponent {
         },
         {
             categoryName: 'Application Forms',
+            anchor: 'forms',
             list: [
                 {
                     title: 'Trainer Application Form',
@@ -220,6 +227,7 @@ export class ResourcesComponent {
         },
         {
             categoryName: 'Videos',
+            anchor: 'videos',
             list: [
                 {
                     title: 'Video - BANK Cryptex',
@@ -235,6 +243,7 @@ export class ResourcesComponent {
         },
         {
             categoryName: 'Affiliate Marketing Tools',
+            anchor: 'marketing',
             list: [
                 {
                     title: 'Akzidenz Berthold Font',
@@ -265,6 +274,7 @@ export class ResourcesComponent {
         },
         {
             categoryName: 'Slide Decks',
+            anchor: 'decks',
             list: [
                 {
                     title: 'Affiliate Opportunity',
@@ -300,5 +310,8 @@ export class ResourcesComponent {
         },
     ];
 
-    constructor(public ls: AppLocalizationService) {}
+    constructor(
+        public ls: AppLocalizationService
+    ) {
+    }
 }

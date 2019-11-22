@@ -1,11 +1,11 @@
-import { Injectable, Injector } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { ImportWizardService } from '@app/shared/common/import-wizard/import-wizard.service';
 import { ImportServiceProxy, ImportTypeInput } from '@shared/service-proxies/service-proxies';
 import { ContactGroup } from '@shared/AppEnums';
 
 @Injectable()
 export class ImportLeadsService {
-    constructor(injector: Injector,
+    constructor(
         private importWizardService: ImportWizardService,
         private importProxy: ImportServiceProxy
     ) {

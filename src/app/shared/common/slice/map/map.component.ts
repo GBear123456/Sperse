@@ -1,5 +1,13 @@
 /** Core imports */
-import { ChangeDetectionStrategy, Component, ViewChild, Input, SimpleChanges, OnChanges } from '@angular/core';
+import {
+    ChangeDetectionStrategy,
+    Component,
+    ViewChild,
+    Input,
+    SimpleChanges,
+    OnChanges,
+    HostBinding
+} from '@angular/core';
 import { DecimalPipe } from '@angular/common';
 
 /** Third party imports */
@@ -35,12 +43,16 @@ export class MapComponent implements OnChanges {
     @Input() dataIsLoading;
     @Input() showLegendBorder = false;
     @Input() usaOnly = false;
+    @Input() contactGroupText = false;
     @ViewChild(DxVectorMapComponent) vectorMapComponent: DxVectorMapComponent;
-    isLendspace: boolean = this.userMananagementService.checkLendSpaceLayout();
+    @HostBinding('style.height') get componentHeight() {
+        return this.height + 'px';
+    }
+    isLendspace: boolean = this.userManagementService.checkLendSpaceLayout();
     colorGroups: number[] = this.isLendspace
         ? [ 1, 101, 1001, 10001, 50001, 100001, 500001, Number.MAX_SAFE_INTEGER ]
         : [ 1, 101, 501, 1001, 5001, 25001, 50001, Number.MAX_SAFE_INTEGER ];
-    pipe: any = new DecimalPipe('en-US');
+    decimalPipe: any = new DecimalPipe('en-US');
     mapAreasItems: MapAreaItem[] = this.mapService.mapAreasItems;
     selectedMapAreaItem$: Observable<MapAreaItem> = this.mapService.selectedMapAreaItem$;
     selectedMapAreaZoomFactor$: Observable<MapAreaItem> = this.mapService.selectedMapAreaItem$.pipe(
@@ -58,7 +70,7 @@ export class MapComponent implements OnChanges {
         private ls: AppLocalizationService,
         private exportService: ExportService,
         private mapService: MapService,
-        private userMananagementService: UserManagementService
+        private userManagementService: UserManagementService
     ) {}
 
     ngOnChanges(changes: SimpleChanges) {
@@ -71,7 +83,7 @@ export class MapComponent implements OnChanges {
     customizeTooltip = (arg) => {
         let stateData = this.data[arg.attribute('postal')];
         let total = stateData && stateData.total;
-        let totalMarkupString = total ? '<div id="nominal"><b>' + total + '</b> ' + this.ls.l('contacts') + '</div>' : '<div>' + this.ls.l('CRMDashboard_NoData') + '</div>';
+        let totalMarkupString = total ? '<div id="nominal"><b>' + total + '</b> ' + this.contactGroupText + '</div>' : '<div>' + this.ls.l('CRMDashboard_NoData') + '</div>';
         let node = '<div #gdp>' + '<h5>' + arg.attribute('name') + '</h5>' + totalMarkupString + '</div>';
         return {
             html: node
@@ -88,9 +100,9 @@ export class MapComponent implements OnChanges {
     customizeText = (arg) => {
         let text;
         if (arg.end === Number.MAX_SAFE_INTEGER) {
-            text = this.isLendspace ? '> 500001' : '> 50001';
+            text = '> ' + this.decimalPipe.transform(this.isLendspace ? '500001' : '50001', '1.0-0');
         } else {
-            text = this.pipe.transform(arg.start, '1.0-0') + ' to ' + this.pipe.transform(arg.end - 1, '1.0-0');
+            text = this.decimalPipe.transform(arg.start, '1.0-0') + ' to ' + this.decimalPipe.transform(arg.end - 1, '1.0-0');
         }
         return text;
     }

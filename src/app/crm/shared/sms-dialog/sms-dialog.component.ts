@@ -3,6 +3,7 @@ import { Component, ChangeDetectionStrategy, Inject, ElementRef, ViewChild } fro
 
 /** Third party imports */
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { DxValidationGroupComponent } from 'devextreme-angular/ui/validation-group';
 import { finalize } from 'rxjs/operators';
 
 /** Application imports */
@@ -12,13 +13,12 @@ import { PhoneFormatPipe } from '@shared/common/pipes/phone-format/phone-format.
 import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
 import {
     ContactPhoneDto,
-    ContactServiceProxy,
+    ContactCommunicationServiceProxy,
     SendSMSToContactInput,
     PersonContactInfoDto
 } from '@shared/service-proxies/service-proxies';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
 import { NotifyService } from '@abp/notify/notify.service';
-import { DxValidationGroupComponent } from '@root/node_modules/devextreme-angular';
 
 @Component({
     templateUrl: 'sms-dialog.component.html',
@@ -31,18 +31,20 @@ export class SMSDialogComponent {
     phonePattern = /^[\d\+\-\(\)\s]{10,24}$/;
     phoneNumber: string;
     phones: string[];
-    smsText: string;
+    smsText = '';
+    readonly smsMaxLength = 160;
     buttons: IDialogButton[] = [
         {
             id: 'sendSMS',
             title: this.ls.l('Send'),
             class: 'primary',
+            iconName: 'send.svg',
             action: this.save.bind(this)
         }
     ];
 
     constructor(
-        private contactServiceProxy: ContactServiceProxy,
+        private contactCommunicationServiceProxy: ContactCommunicationServiceProxy,
         private dialogRef: MatDialogRef<SMSDialogComponent>,
         private loadingService: LoadingService,
         private elementRef: ElementRef,
@@ -62,13 +64,13 @@ export class SMSDialogComponent {
 
     save() {
         if (this.validationGroup.instance.validate().isValid) {
-            this.loadingService.startLoading(this.elementRef.nativeElement);
-            this.contactServiceProxy.sendSMSToContact(new SendSMSToContactInput({
+            this.loadingService.startLoading(this.validationGroup.instance.element());
+            this.contactCommunicationServiceProxy.sendSMS(new SendSMSToContactInput({
                 contactId: this.data.contact.id,
                 message: this.smsText,
                 phoneNumber: this.phoneNumber
             })).pipe(
-                finalize(() => this.loadingService.finishLoading(this.elementRef.nativeElement))
+                finalize(() => this.loadingService.finishLoading(this.validationGroup.instance.element()))
             ).subscribe(
                 () => this.notifyService.success(this.ls.l('MessageSuccessfullySent'))
             );

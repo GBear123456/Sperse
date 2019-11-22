@@ -1,29 +1,25 @@
 /** Core imports */
-import { Component, Injector, Input } from '@angular/core';
+import { Component, Input } from '@angular/core';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
+import { Store, select } from '@ngrx/store';
+import * as _ from 'underscore';
+import { filter } from 'rxjs/operators';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
-import { AppComponentBase } from '@shared/common/app-component-base';
 import {
     ContactInfoDto, ContactInfoDetailsDto, ContactLinkServiceProxy,
     ContactLinkDto, CreateContactLinkInput, UpdateContactLinkInput,
-    OrganizationContactServiceProxy, CreateOrganizationInput, OrganizationContactInfoDto, OrganizationInfoDto
+    OrganizationContactServiceProxy
 } from '@shared/service-proxies/service-proxies';
-import { filter } from 'rxjs/operators';
 import { EditContactDialog } from '../edit-contact-dialog/edit-contact-dialog.component';
 import { DialogService } from '@app/shared/common/dialogs/dialog.service';
-import { Store, select } from '@ngrx/store';
 import { RootStore } from '@root/store';
-import {
-    ContactLinkTypesStoreActions,
-    ContactLinkTypesStoreSelectors
-} from '@app/store';
-import { PersonOrgRelationType } from '@root/shared/AppEnums';
+import { ContactLinkTypesStoreActions, ContactLinkTypesStoreSelectors } from '@app/store';
 import { ContactsService } from '../contacts.service';
-import * as _ from 'underscore';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 
 @Component({
     selector: 'socials',
@@ -31,12 +27,12 @@ import * as _ from 'underscore';
     styleUrls: ['./socials.component.less'],
     providers: [ DialogService ]
 })
-export class SocialsComponent extends AppComponentBase {
+export class SocialsComponent {
     @Input() isCompany;
-    @Input() 
+    @Input()
     set contactInfo(val: ContactInfoDto) {
         if (this._contactInfo = val)
-            this.isEditAllowed = this._contactsService.checkCGPermission(this.contactInfo.groupId);
+            this.isEditAllowed = this.contactsService.checkCGPermission(this.contactInfo.groupId);
     }
     get contactInfo(): ContactInfoDto {
         return this._contactInfo;
@@ -49,16 +45,15 @@ export class SocialsComponent extends AppComponentBase {
 
     LINK_TYPES = {};
 
-    constructor(injector: Injector,
-                public dialog: MatDialog,
-                private store$: Store<RootStore.State>,
-                private _contactsService: ContactsService,
-                private _contactLinkService: ContactLinkServiceProxy,
-                private _organizationContactService: OrganizationContactServiceProxy,
-                private dialogService: DialogService
+    constructor(
+        private store$: Store<RootStore.State>,
+        private contactsService: ContactsService,
+        private contactLinkService: ContactLinkServiceProxy,
+        private organizationContactService: OrganizationContactServiceProxy,
+        private dialogService: DialogService,
+        public dialog: MatDialog,
+        public ls: AppLocalizationService
     ) {
-        super(injector);
-
         this.linkTypesLoad();
     }
 
@@ -92,24 +87,23 @@ export class SocialsComponent extends AppComponentBase {
 
     showEditDialog(data, event, index) {
         if (!this.isCompany || this.contactInfoData && this.contactInfoData.contactId)
-            this.showSocialDialog(data, event, index);
+            this.showSocialDialog(data, event);
         else
-            this._contactsService.addCompanyDialog(event, this.contactInfo,
+            this.contactsService.addCompanyDialog(event, this.contactInfo,
                 Math.round(event.target.offsetWidth / 2)
             ).subscribe(result => {
                 if (result) {
-                    this.contactInfoData = ContactInfoDetailsDto.fromJS({contactId: result.organizationId});
-                    this.showSocialDialog(data, event, index);
+                    this.showSocialDialog(data, event);
                 }
             });
     }
 
-    showSocialDialog(data, event, index) {
+    showSocialDialog(data, event) {
         let dialogData = {
             field: 'url',
             id: data && data.id,
             value: data && data.url,
-            name: this.l('Link'),
+            name: this.ls.l('Link'),
             groupId: this.contactInfo.groupId,
             contactId: data && data.contactId
             || this.contactInfoData && this.contactInfoData.contactId,
@@ -118,7 +112,7 @@ export class SocialsComponent extends AppComponentBase {
             isConfirmed: Boolean(data && data.isConfirmed),
             isActive: Boolean(data ? data.isActive : true),
             comment: data && data.comment,
-            deleteItem: (event) => {
+            deleteItem: () => {
                 this.deleteLink(data.id);
             }
         };
@@ -129,52 +123,18 @@ export class SocialsComponent extends AppComponentBase {
             position: this.getDialogPosition(event)
         }).afterClosed().subscribe(result => {
             scrollTo(0, 0);
-            if (result) {
-                if (dialogData.contactId) {
-                    this.updateDataField(data, dialogData);
-                } else {
-                    this.createOrganization(data, dialogData);
-                }
+            if (result && dialogData.contactId) {
+                this.updateDataField(data, dialogData);
             }
         });
         event.stopPropagation();
-    }
-
-    createOrganization(data, dialogData) {
-        let companyName = AppConsts.defaultCompanyName;
-        this._organizationContactService.createOrganization(CreateOrganizationInput.fromJS({
-            relatedContactId: this.contactInfo.id,
-            companyName: companyName,
-            relationTypeId: PersonOrgRelationType.Employee
-        })).subscribe(response => {
-            this.initializeOrganizationInfo(companyName, response.id);
-            dialogData.contactId = response.id;
-            this.updateDataField(data, dialogData);
-        });
-    }
-
-    initializeOrganizationInfo(companyName, contactId) {
-        this.contactInfo['organizationContactInfo'] = OrganizationContactInfoDto.fromJS({
-            organization: OrganizationInfoDto.fromJS({
-                companyName: companyName
-            }),
-            id: contactId,
-            fullName: companyName,
-            details: ContactInfoDetailsDto.fromJS({
-                contactId: contactId,
-                emails: [],
-                phones: [],
-                addresses: [],
-                links: [],
-            })
-        });
     }
 
     updateDataField(data, dialogData) {
         if (dialogData.usageTypeId != AppConsts.otherLinkTypeId)
             dialogData['linkTypeId'] = dialogData.usageTypeId;
 
-        this._contactLinkService
+        this.contactLinkService
             [(data ? 'update' : 'create') + 'ContactLink'](
             (data ? UpdateContactLinkInput : CreateContactLinkInput).fromJS(dialogData)
         ).subscribe(result => {
@@ -199,7 +159,7 @@ export class SocialsComponent extends AppComponentBase {
 
     deleteLink(id) {
         this.dialog.closeAll();
-        this._contactLinkService.deleteContactLink(
+        this.contactLinkService.deleteContactLink(
             this.contactInfoData.contactId, id).subscribe(result => {
             if (!result) {
                 this.contactInfoData.links.every((item, index) => {
@@ -214,20 +174,20 @@ export class SocialsComponent extends AppComponentBase {
     }
 
     getLinkInplaceEditData(link) {
-        let linkLocalization = this.l('Link');
+        let linkLocalization = this.ls.l('Link');
         return {
             id: link.id,
             value: link.url,
             link: this.normalizeLink(link.url),
             validationRules: [
-                {type: 'required', message: this.l('LinkIsRequired')}
+                {type: 'required', message: this.ls.l('LinkIsRequired')}
             ],
             isDeleteEnabled: true,
             isEditDialogEnabled: true,
             lEntityName: linkLocalization,
             lEditPlaceholder: linkLocalization,
-            lDeleteConfirmTitle: this.l('DeleteContactHeader', linkLocalization),
-            lDeleteConfirmMessage: this.l('DeleteContactMessage', linkLocalization.toLowerCase())
+            lDeleteConfirmTitle: this.ls.l('DeleteContactHeader', AppConsts.localization.CRMLocalizationSourceName, linkLocalization),
+            lDeleteConfirmMessage: this.ls.l('DeleteContactMessage', AppConsts.localization.CRMLocalizationSourceName, linkLocalization.toLowerCase())
         };
     }
 

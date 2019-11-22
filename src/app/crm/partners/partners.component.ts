@@ -13,7 +13,7 @@ import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import 'devextreme/data/odata/store';
 import { Store, select } from '@ngrx/store';
 import { BehaviorSubject, Observable, combineLatest, of, merge } from 'rxjs';
-import { filter, first, startWith, takeUntil, map, mapTo, publishReplay, refCount, switchMap, tap } from 'rxjs/operators';
+import { filter, first, startWith, takeUntil, map, mapTo, pluck, publishReplay, refCount, switchMap, tap } from 'rxjs/operators';
 import * as _ from 'underscore';
 
 /** Application imports */
@@ -385,6 +385,15 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
             takeUntil(this.destroy$)
         ).subscribe(() => {
             this.crmService.handleModuleChange(this.dataLayoutType.value);
+        });
+
+        this._activatedRoute.queryParams.pipe(
+            takeUntil(this.destroy$),
+            filter(() => this.componentIsActivated),
+            pluck('dataLayoutType'),
+            filter((dataLayoutType: DataLayoutType) => dataLayoutType && dataLayoutType != this.dataLayoutType.value)
+        ).subscribe((dataLayoutType) => {
+            this.toggleDataLayout(+dataLayoutType);
         });
     }
 
@@ -1057,6 +1066,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
 
     activate() {
         super.activate();
+        this.lifeCycleSubjectsService.activate.next();
         this.paramsSubscribe();
         this.initFilterConfig();
         this.initToolbarConfig();

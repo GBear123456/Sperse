@@ -16,37 +16,37 @@
             <mat-tab label="{{l('TenantManagement')}}" *ngIf="hostSettings.tenantManagement">
                 <dx-scroll-view showScrollbar="onHover">
                     <div class="m-form">
-                    <h5>{{l("FormBasedRegistration")}}</h5>
-                    <div class="m-checkbox-list">
-                        <div class="form-group">
-                            <dx-check-box id="Setting_AllowSelfRegistration"
-                                          [text]="l('AllowTenantsToRegisterThemselves')"
-                                          [(value)]="hostSettings.tenantManagement.allowSelfRegistration">
-                            </dx-check-box>
-                            <span class="m-form__help">{{l("AllowTenantsToRegisterThemselves_Hint")}}</span>
+                        <h5>{{l("FormBasedRegistration")}}</h5>
+                        <div class="m-checkbox-list">
+                            <div class="form-group">
+                                <dx-check-box id="Setting_AllowSelfRegistration"
+                                              [text]="l('AllowTenantsToRegisterThemselves')"
+                                              [(value)]="hostSettings.tenantManagement.allowSelfRegistration">
+                                </dx-check-box>
+                                <span class="m-form__help">{{l("AllowTenantsToRegisterThemselves_Hint")}}</span>
+                            </div>
+                            <div class="form-group">
+                                <dx-check-box id="Setting_IsNewRegisteredTenantActiveByDefault"
+                                              [text]="l('NewRegisteredTenantsIsActiveByDefault')"
+                                              [(value)]="hostSettings.tenantManagement.isNewRegisteredTenantActiveByDefault">
+                                </dx-check-box>
+                                <span class="m-form__help">{{l("NewRegisteredTenantsIsActiveByDefault_Hint")}}</span>
+                            </div>
+                            <div class="form-group">
+                                <dx-check-box id="Setting_UseCaptchaOnRegistration"
+                                              [text]="l('UseCaptchaOnRegistration')"
+                                              [(value)]="hostSettings.tenantManagement.useCaptchaOnRegistration">
+                                </dx-check-box>
+                            </div>
                         </div>
                         <div class="form-group">
-                            <dx-check-box id="Setting_IsNewRegisteredTenantActiveByDefault"
-                                          [text]="l('NewRegisteredTenantsIsActiveByDefault')"
-                                          [(value)]="hostSettings.tenantManagement.isNewRegisteredTenantActiveByDefault">
-                            </dx-check-box>
-                            <span class="m-form__help">{{l("NewRegisteredTenantsIsActiveByDefault_Hint")}}</span>
-                        </div>
-                        <div class="form-group">
-                            <dx-check-box id="Setting_UseCaptchaOnRegistration"
-                                          [text]="l('UseCaptchaOnRegistration')"
-                                          [(value)]="hostSettings.tenantManagement.useCaptchaOnRegistration">
-                            </dx-check-box>
+                            <label for="DefaultEditionId">{{l("Edition")}}</label>
+                            <select id="DefaultEditionId" class="form-control" [(ngModel)]="hostSettings.tenantManagement.defaultEditionId">
+                                <option value="">{{emptyText}}</option>
+                                <option *ngFor="let edition of editions" [value]="edition.value">{{edition.displayText}}</option>
+                            </select>
                         </div>
                     </div>
-                    <div class="form-group">
-                        <label for="DefaultEditionId">{{l("Edition")}}</label>
-                        <select id="DefaultEditionId" class="form-control" [(ngModel)]="hostSettings.tenantManagement.defaultEditionId">
-                            <option value="">{{emptyText}}</option>
-                            <option *ngFor="let edition of editions" [value]="edition.value">{{edition.displayText}}</option>
-                        </select>
-                    </div>
-                </div>
                 </dx-scroll-view>
             </mat-tab>
             <mat-tab label="{{l('UserManagement')}}" *ngIf="hostSettings.userManagement">
@@ -270,7 +270,7 @@
                                [ngClass]="{'edited':hostSettings.email.smtpPassword}" [(ngModel)]="hostSettings.email.smtpPassword"
                                maxlength="128" autocomplete="off">
                     </div>
-                    <hr/>
+                    <hr />
                     <h5>{{l("TestEmailSettingsHeader")}}</h5>
                     <div class="row">
                         <div class="form-group col-md-4">
@@ -299,90 +299,112 @@
             <mat-tab label="{{l('Base Commerce Link')}}">
                 <dx-scroll-view showScrollbar="onHover">
                     <div>
-                    <div class="form-group">
-                        <label for="BCUserName">{{l("User Name")}}</label>
-                        <input id="BCUserName" type="text" name="BCUserName" class="form-control" [(ngModel)]="baseCommercePaymentSettings.userName" maxlength="128">
-                    </div>
-                    <div class="form-group">
-                        <label for="BCPassword">{{l("Password")}}</label>
-                        <input id="BCPassword" type="password" name="BCPassword" class="form-control" [(ngModel)]="baseCommercePaymentSettings.password" maxlength="128">
-                    </div>
-                    <div class="form-group">
-                        <label for="BCKey">{{l("Key")}}</label>
-                        <input id="BCKey" type="text" name="BCKey" class="form-control" [(ngModel)]="baseCommercePaymentSettings.key" maxlength="128">
-                    </div>
-                    <h5>{{l("Environment")}}</h5>
-                    <div class="checkbox-list">
                         <div class="form-group">
-                            <dx-check-box id="BCIsSandBox"
-                                          [text]="l('SandBox')"
-                                          [(value)]="baseCommercePaymentSettings.sandBox">
-                            </dx-check-box>
+                            <label for="BCUserName">{{l("User Name")}}</label>
+                            <input id="BCUserName" type="text" name="BCUserName" class="form-control" [(ngModel)]="baseCommercePaymentSettings.userName" maxlength="128">
+                        </div>
+                        <div class="form-group">
+                            <label for="BCPassword">{{l("Password")}}</label>
+                            <input id="BCPassword" type="password" name="BCPassword" class="form-control" [(ngModel)]="baseCommercePaymentSettings.password" maxlength="128">
+                        </div>
+                        <div class="form-group">
+                            <label for="BCKey">{{l("Key")}}</label>
+                            <input id="BCKey" type="text" name="BCKey" class="form-control" [(ngModel)]="baseCommercePaymentSettings.key" maxlength="128">
+                        </div>
+                        <h5>{{l("Environment")}}</h5>
+                        <div class="checkbox-list">
+                            <div class="form-group">
+                                <dx-check-box id="BCIsSandBox"
+                                              [text]="l('SandBox')"
+                                              [(value)]="baseCommercePaymentSettings.sandBox">
+                                </dx-check-box>
+                            </div>
                         </div>
                     </div>
-                </div>
                 </dx-scroll-view>
             </mat-tab>
             <mat-tab label="{{l('PayPal')}}">
                 <dx-scroll-view showScrollbar="onHover">
                     <div>
-                    <div class="form-group">
-                        <label for="PayPalEnvironment">{{l("PayPal environment")}}</label>
-                        <input id="PayPalEnvironment" type="text" name="PayPalEnvironment" class="form-control" [(ngModel)]="payPalPaymentSettings.environment">
+                        <div class="form-group">
+                            <label for="PayPalEnvironment">{{l("PayPal environment")}}</label>
+                            <input id="PayPalEnvironment" type="text" name="PayPalEnvironment" class="form-control" [(ngModel)]="payPalPaymentSettings.environment">
+                        </div>
+                        <div class="form-group">
+                            <label for="PayPalClientId">{{l("Client ID")}}</label>
+                            <input id="PayPalClientId" type="text" name="PayPalClientId" class="form-control" [(ngModel)]="payPalPaymentSettings.clientId">
+                        </div>
+                        <div class="form-group">
+                            <label for="PayPalClientSecret">{{l("Client Secret")}}</label>
+                            <input id="PayPalClientSecret" type="text" name="PayPalClientSecret" class="form-control" [(ngModel)]="payPalPaymentSettings.clientSecret">
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label for="PayPalClientId">{{l("Client ID")}}</label>
-                        <input id="PayPalClientId" type="text" name="PayPalClientId" class="form-control" [(ngModel)]="payPalPaymentSettings.clientId">
-                    </div>
-                    <div class="form-group">
-                        <label for="PayPalClientSecret">{{l("Client Secret")}}</label>
-                        <input id="PayPalClientSecret" type="text" name="PayPalClientSecret" class="form-control" [(ngModel)]="payPalPaymentSettings.clientSecret">
-                    </div>
-                </div>
                 </dx-scroll-view>
             </mat-tab>
             <mat-tab label="{{l('ACH Works')}}">
                 <dx-scroll-view showScrollbar="onHover">
                     <div>
-                    <div class="form-group">
-                        <label for="achWorksSSS">{{l("SSS")}}</label>
-                        <input id="achWorksSSS" type="text" name="achWorksSSS" class="form-control" [(ngModel)]="achWorksSettings.sss" maxlength="3">
+                        <div class="form-group">
+                            <label for="achWorksSSS">{{l("SSS")}}</label>
+                            <input id="achWorksSSS" type="text" name="achWorksSSS" class="form-control" [(ngModel)]="achWorksSettings.sss" maxlength="3">
+                        </div>
+                        <div class="form-group">
+                            <label for="achWorksLocID">{{l("LocID")}}</label>
+                            <input id="achWorksLocID" type="text" name="achWorksLocID" class="form-control" [(ngModel)]="achWorksSettings.locID" maxlength="128">
+                        </div>
+                        <div class="form-group">
+                            <label for="achWorksSOAPUser">{{l("SOAPUser")}}</label>
+                            <input id="achWorksSOAPUser" type="text" name="achWorksSOAPUser" class="form-control" [(ngModel)]="achWorksSettings.soapUser" maxlength="128">
+                        </div>
+                        <div class="form-group">
+                            <label for="achWorksSOAPKey">{{l("SOAPKey")}}</label>
+                            <input id="achWorksSOAPKey" type="text" name="achWorksSOAPKey" class="form-control" [(ngModel)]="achWorksSettings.soapKey" maxlength="128">
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label for="achWorksLocID">{{l("LocID")}}</label>
-                        <input id="achWorksLocID" type="text" name="achWorksLocID" class="form-control" [(ngModel)]="achWorksSettings.locID" maxlength="128">
-                    </div>
-                    <div class="form-group">
-                        <label for="achWorksSOAPUser">{{l("SOAPUser")}}</label>
-                        <input id="achWorksSOAPUser" type="text" name="achWorksSOAPUser" class="form-control" [(ngModel)]="achWorksSettings.soapUser" maxlength="128">
-                    </div>
-                    <div class="form-group">
-                        <label for="achWorksSOAPKey">{{l("SOAPKey")}}</label>
-                        <input id="achWorksSOAPKey" type="text" name="achWorksSOAPKey" class="form-control" [(ngModel)]="achWorksSettings.soapKey" maxlength="128">
-                    </div>
-                </div>
                 </dx-scroll-view>
             </mat-tab>
             <mat-tab label="{{l('Recurly Link')}}">
                 <dx-scroll-view showScrollbar="onHover">
                     <div>
-                    <div class="form-group">
-                        <label for="RecurlySubdomain">{{l("RecurlySubdomain")}}</label>
-                        <input id="RecurlySubdomain" type="text" name="RecurlySubdomain" class="form-control" [(ngModel)]="recurlySettings.subdomain" maxlength="128">
+                        <div class="form-group">
+                            <label for="RecurlySubdomain">{{l("RecurlySubdomain")}}</label>
+                            <input id="RecurlySubdomain" type="text" name="RecurlySubdomain" class="form-control" [(ngModel)]="recurlySettings.subdomain" maxlength="128">
+                        </div>
+                        <div class="form-group">
+                            <label for="RecurlyApiKey">{{l("RecurlyApiKey")}}</label>
+                            <input id="RecurlyApiKey" type="text" name="RecurlyApiKey" class="form-control" [(ngModel)]="recurlySettings.apiKey" maxlength="128">
+                        </div>
+                        <div class="form-group">
+                            <label for="RecurlyPrivateKey">{{l("RecurlyPrivateKey")}}</label>
+                            <input id="RecurlyPrivateKey" type="text" name="RecurlyPrivateKey" class="form-control" [(ngModel)]="recurlySettings.privateKey" maxlength="128">
+                        </div>
+                        <div class="form-group">
+                            <label for="RecurlyPageSize">{{l("RecurlyPageSize")}}</label>
+                            <input id="RecurlyPageSize" type="text" name="RecurlyPageSize" class="form-control" [(ngModel)]="recurlySettings.pageSize" maxlength="128">
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label for="RecurlyApiKey">{{l("RecurlyApiKey")}}</label>
-                        <input id="RecurlyApiKey" type="text" name="RecurlyApiKey" class="form-control" [(ngModel)]="recurlySettings.apiKey" maxlength="128">
+                </dx-scroll-view>
+            </mat-tab>
+            <mat-tab label="{{l('YTel')}}">
+                <dx-scroll-view showScrollbar="onHover">
+                    <div>
+                        <div class="form-group">
+                            <label for="YTelUserName">{{l("YTelUserName")}}</label>
+                            <input id="YTelUserName" type="text" name="YTelUserName" class="form-control" [(ngModel)]="yTelSettings.userName" maxlength="128">
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label for="RecurlyPrivateKey">{{l("RecurlyPrivateKey")}}</label>
-                        <input id="RecurlyPrivateKey" type="text" name="RecurlyPrivateKey" class="form-control" [(ngModel)]="recurlySettings.privateKey" maxlength="128">
+                    <div>
+                        <div class="form-group">
+                            <label for="YTelPassword">{{l("YTelPassword")}}</label>
+                            <input id="YTelPassword" type="text" name="YTelPassword" class="form-control" [(ngModel)]="yTelSettings.password" maxlength="128">
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label for="RecurlyPageSize">{{l("RecurlyPageSize")}}</label>
-                        <input id="RecurlyPageSize" type="text" name="RecurlyPageSize" class="form-control" [(ngModel)]="recurlySettings.pageSize" maxlength="128">
+                    <div>
+                        <div class="form-group">
+                            <label for="YTelFrom">{{l("YTelFrom")}}</label>
+                            <input id="YTelFrom" type="text" name="YTelFrom" class="form-control" [(ngModel)]="yTelSettings.from" maxlength="128">
+                        </div>
                     </div>
-                </div>
                 </dx-scroll-view>
             </mat-tab>
         </mat-tab-group>

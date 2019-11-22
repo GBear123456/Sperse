@@ -148,6 +148,11 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     selectedContactGroup = Object.keys(ContactGroup).shift();
     contactGroupId: BehaviorSubject<ContactGroup> = new BehaviorSubject(ContactGroup[this.selectedContactGroup]);
     contactGroupId$: Observable<ContactGroup> = this.contactGroupId.asObservable();
+    userGroupText$: Observable<string> = this.contactGroupId$.pipe(
+        map((contactGroupId: ContactGroup) => {
+            return this.getUserGroup(invert(ContactGroup)[contactGroupId.toString()]).toLowerCase();
+        })
+    );
 
     stages = [];
     pipelineDataSource: any;
@@ -196,7 +201,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         {
             enabled: this.contactService.checkCGPermission(ContactGroup.Client),
             action: this.createLead.bind(this),
-            label: this.l('CreateNewLead')
+            label: this.getHeadlineButtonName()
         }
     ];
     permissions = AppPermissions;
@@ -1361,9 +1366,14 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         this.actionEvent = null;
     }
 
+    getHeadlineButtonName() {
+        return this.l('CreateNew') + ' ' + this.getUserGroup(this.selectedContactGroup).slice(0, -1);
+    }
+
     onContactGroupChanged(event) {
         if (event.previousValue != event.value) {
             this.contactGroupId.next(ContactGroup[event.value]);
+            this.headlineConfig.buttons[0].label = this.getHeadlineButtonName();
             this.cacheService.set(this.getCacheKey(this.CONTACT_GROUP_CACHE_KEY), event.value);
             this.createButtonEnabledSet();
             this.filterChanged = true;

@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, OnInit, Injector, Input } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 
 /** Third party imports */
 import { NotifyService } from '@abp/notify/notify.service';
@@ -16,16 +16,20 @@ import { AddressUsageTypesStoreActions, AddressUsageTypesStoreSelectors } from '
 import { ConfirmDialogComponent } from '@app/shared/common/dialogs/confirm/confirm-dialog.component';
 import { DialogService } from '@app/shared/common/dialogs/dialog.service';
 import { AppConsts } from '@shared/AppConsts';
-import { AppComponentBase } from '@shared/common/app-component-base';
 import { EditAddressDialog } from '../edit-address-dialog/edit-address-dialog.component';
 import { ContactsService } from '../contacts.service';
 import {
-    ContactInfoDto, ContactAddressServiceProxy,
-    ContactAddressDto, UpdateContactAddressInput, CreateContactAddressInput, ContactInfoDetailsDto,
-    OrganizationContactServiceProxy, CreateOrganizationInput, OrganizationContactInfoDto, OrganizationInfoDto
+    ContactInfoDto,
+    ContactAddressServiceProxy,
+    ContactAddressDto,
+    UpdateContactAddressInput,
+    CreateContactAddressInput,
+    ContactInfoDetailsDto,
+    OrganizationContactServiceProxy,
+    CountryDto
 } from '@shared/service-proxies/service-proxies';
-import { PersonOrgRelationType } from '@root/shared/AppEnums';
 import { GooglePlaceHelper } from '@shared/helpers/GooglePlaceHelper';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 
 @Component({
     selector: 'addresses',
@@ -33,7 +37,7 @@ import { GooglePlaceHelper } from '@shared/helpers/GooglePlaceHelper';
     styleUrls: ['./addresses.component.less'],
     providers: [ DialogService, GooglePlaceHelper ]
 })
-export class AddressesComponent extends AppComponentBase implements OnInit {
+export class AddressesComponent implements OnInit {
     @Input() isCompany = false;
     @Input()
     set contactInfo(val: ContactInfoDto) {
@@ -62,8 +66,7 @@ export class AddressesComponent extends AppComponentBase implements OnInit {
     private _contactInfo: ContactInfoDto;
     private _latestFormatedAddress: string;
 
-    constructor(injector: Injector,
-        public dialog: MatDialog,
+    constructor(
         private contactsService: ContactsService,
         private addressService: ContactAddressServiceProxy,
         private organizationContactService: OrganizationContactServiceProxy,
@@ -71,10 +74,10 @@ export class AddressesComponent extends AppComponentBase implements OnInit {
         private notifyService: NotifyService,
         private dialogService: DialogService,
         private store$: Store<RootStore.State>,
-        private googlePlaceHelper: GooglePlaceHelper
-    ) {
-        super(injector);
-    }
+        private googlePlaceHelper: GooglePlaceHelper,
+        public ls: AppLocalizationService,
+        public dialog: MatDialog,
+    ) {}
 
     ngOnInit() {
         this.loadAddressTypes();
@@ -130,7 +133,6 @@ export class AddressesComponent extends AppComponentBase implements OnInit {
                 Math.round(event.target.offsetWidth / 2)
             ).subscribe(result => {
                 if (result) {
-                    this.contactInfoData = ContactInfoDetailsDto.fromJS({contactId: result.organizationId});
                     this.showAddressDialog(address, event, index);
                 }
             });
@@ -153,46 +155,12 @@ export class AddressesComponent extends AppComponentBase implements OnInit {
             position: this.getDialogPosition(event)
         }).afterClosed().subscribe(result => {
             scrollTo(0, 0);
-            if (result) {
-                if (dialogData.contactId) {
-                    this.updateDataField(address, dialogData);
-                } else {
-                    this.createOrganization(address, dialogData);
-                }
+            if (result && dialogData.contactId) {
+                this.updateDataField(address, dialogData);
             }
         });
         if (event.stopPropagation)
             event.stopPropagation();
-    }
-
-    createOrganization(address, dialogData) {
-        let companyName = AppConsts.defaultCompanyName;
-        this.organizationContactService.createOrganization(CreateOrganizationInput.fromJS({
-            relatedContactId: this.contactInfo.id,
-            companyName: companyName,
-            relationTypeId: PersonOrgRelationType.Employee
-        })).subscribe(response => {
-            this.initializeOrganizationInfo(companyName, response.id);
-            dialogData.contactId = response.id;
-            this.updateDataField(address, dialogData);
-        });
-    }
-
-    initializeOrganizationInfo(companyName, contactId) {
-         this.contactInfo['organizationContactInfo'] = OrganizationContactInfoDto.fromJS({
-             organization: OrganizationInfoDto.fromJS({
-                 companyName: companyName
-             }),
-             id: contactId,
-             fullName: companyName,
-             details: ContactInfoDetailsDto.fromJS({
-                 contactId: contactId,
-                 emails: [],
-                 phones: [],
-                 addresses: [],
-                 links: [],
-             })
-         });
     }
 
     updateDataField(address, data) {
@@ -222,8 +190,8 @@ export class AddressesComponent extends AppComponentBase implements OnInit {
     deleteAddress(address, event, index) {
         this.dialog.open(ConfirmDialogComponent, {
             data: {
-                title: this.l('DeleteContactHeader', this.l('Address')),
-                message: this.l('DeleteContactMessage', this.l('Address').toLowerCase())
+                title: this.ls.l('DeleteContactHeader', AppConsts.localization.CRMLocalizationSourceName, this.ls.l('Address')),
+                message: this.ls.l('DeleteContactMessage', AppConsts.localization.CRMLocalizationSourceName, this.ls.l('Address').toLowerCase())
             }
         }).afterClosed().subscribe(result => {
             if (result) {
@@ -288,10 +256,10 @@ export class AddressesComponent extends AppComponentBase implements OnInit {
             address.inplaceEdit = false;
             return this.dialog.open(ConfirmDialogComponent, {
                 data: {
-                    title: this.l('AreYouSure'),
-                    message: this.l('EnterAddressManually'),
-                    btnConfirmTitle: this.l('Update'),
-                    btnCancelTitle: this.l('Discard')
+                    title: this.ls.l('AreYouSure'),
+                    message: this.ls.l('EnterAddressManually'),
+                    btnConfirmTitle: this.ls.l('Update'),
+                    btnCancelTitle: this.ls.l('Discard')
                 }
             }).afterClosed().subscribe(isConfirmed => {
                 if (isConfirmed)
@@ -302,7 +270,7 @@ export class AddressesComponent extends AppComponentBase implements OnInit {
         this.loadCountries();
         this.getCountries().pipe(
             first()
-        ).subscribe(countries => {
+        ).subscribe((countries: CountryDto[]) => {
             let country = _.findWhere(countries, { name: this.country }),
                 countryId = country && country['code'];
             if (countryId) {

@@ -43,12 +43,25 @@ export class CreditReportsRouteGuard implements CanActivate, CanActivateChild {
         );
     }
 
+    checkNavigateLoginPage() {
+        let uri = '/account/login';
+        if (abp.session.impersonatorTenantId) {
+             location.pathname = uri;
+             location.search = '';
+         } else 
+             this.router.navigate([uri]);
+    }
+
     canActivateChild(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
         if (UrlHelper.isPfmAppUrl(state.url)) {
             if (this.featureChecker.isEnabled(AppFeatures.PFMApplications)
-                || this.featureChecker.isEnabled(AppFeatures.PFMCreditReport))
-                this.router.navigate([this.sessionService.user ? '/personal-finance/home' : '/account/login']);
-            else
+                || this.featureChecker.isEnabled(AppFeatures.PFMCreditReport)
+            ) {
+                if (this.sessionService.user)
+                    this.router.navigate(['/personal-finance/home']);
+                else 
+                    this.checkNavigateLoginPage();
+            } else
                 this.router.navigate(['/']);
             return false;
         } else if (this.sessionService.user) {
@@ -68,9 +81,8 @@ export class CreditReportsRouteGuard implements CanActivate, CanActivateChild {
             return true;
         } else {
             sessionStorage.setItem('redirectUrl', location.origin + state.url);
-            this.router.navigate(['/account/login']);
+            this.checkNavigateLoginPage();
             return false;
         }
     }
-
 }

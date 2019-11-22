@@ -12,7 +12,7 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import {
     ComboboxItemDto, CommonLookupServiceProxy, SettingScopes, HostSettingsEditDto, HostSettingsServiceProxy, SendTestEmailInput, PayPalSettings,
-    BaseCommercePaymentSettings, TenantPaymentSettingsServiceProxy, ACHWorksSettings, RecurlyPaymentSettings
+    BaseCommercePaymentSettings, TenantPaymentSettingsServiceProxy, ACHWorksSettings, RecurlyPaymentSettings, YTelSettingsEditDto
 } from '@shared/service-proxies/service-proxies';
 import { AppPermissions } from '@shared/AppPermissions';
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
@@ -36,6 +36,8 @@ export class HostSettingsComponent extends AppComponentBase implements OnInit, O
     payPalPaymentSettings: PayPalSettings = new PayPalSettings();
     achWorksSettings: ACHWorksSettings = new ACHWorksSettings();
     recurlySettings: RecurlyPaymentSettings = new RecurlyPaymentSettings();
+    yTelSettings: YTelSettingsEditDto = new YTelSettingsEditDto();
+
     usingDefaultTimeZone = false;
     initialTimeZone: string = undefined;
     private rootComponent;
@@ -67,10 +69,11 @@ export class HostSettingsComponent extends AppComponentBase implements OnInit, O
             this.tenantPaymentSettingsService.getBaseCommercePaymentSettings(),
             this.tenantPaymentSettingsService.getPayPalSettings(),
             this.tenantPaymentSettingsService.getACHWorksSettings(),
-            this.tenantPaymentSettingsService.getRecurlyPaymentSettings()
+            this.tenantPaymentSettingsService.getRecurlyPaymentSettings(),
+            this.hostSettingService.getYTelSettings()
         ).pipe(
             finalize(() => { this.changeDetection.detectChanges(); })
-        ).subscribe(([allSettings, baseCommerceSettings, payPalSettings, achWorksSettings, recurlySettings]) => {
+        ).subscribe(([allSettings, baseCommerceSettings, payPalSettings, achWorksSettings, recurlySettings, yTelSettings]) => {
             this.hostSettings = allSettings;
             this.initialTimeZone = allSettings.general.timezone;
             this.usingDefaultTimeZone = allSettings.general.timezoneForComparison === this.setting.get('Abp.Timing.TimeZone');
@@ -78,6 +81,7 @@ export class HostSettingsComponent extends AppComponentBase implements OnInit, O
             this.payPalPaymentSettings = payPalSettings;
             this.achWorksSettings = achWorksSettings;
             this.recurlySettings = recurlySettings;
+            this.yTelSettings = yTelSettings;
         });
     }
 
@@ -126,7 +130,8 @@ export class HostSettingsComponent extends AppComponentBase implements OnInit, O
             this.tenantPaymentSettingsService.updateBaseCommercePaymentSettings(this.baseCommercePaymentSettings),
             this.tenantPaymentSettingsService.updatePayPalSettings(this.payPalPaymentSettings),
             this.tenantPaymentSettingsService.updateACHWorksSettings(this.achWorksSettings),
-            this.tenantPaymentSettingsService.updateRecurlyPaymentSettings(this.recurlySettings)
+            this.tenantPaymentSettingsService.updateRecurlyPaymentSettings(this.recurlySettings),
+            this.hostSettingService.updateYTelSettings(this.yTelSettings)
         ).subscribe(() => {
             this.notify.info(this.l('SavedSuccessfully'));
 

@@ -16,7 +16,7 @@
                         <dx-text-box #customSearch
                             [showClearButton]="true"
                             (onInput)="getNewListData($event, title)"
-                            placeholder="{{l('Search')}}">
+                            [placeholder]="l('Search')">
                         </dx-text-box>
                     </div>
                 </div>
@@ -49,7 +49,7 @@
                         <span>{{data.name}}</span>
                         <a *ngIf="filterModel"
                            class="dx-link dx-link-filter"
-                           title="{{l('Filter')}}"
+                           [title]="l('Filter')"
                            (click)="applyFilter($event, data)">
                         </a>
                     </div>

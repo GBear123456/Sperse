@@ -255,6 +255,7 @@
                 white-space: nowrap;
             }
 
+            dx-select-box[name="unit"],
             dx-text-box[name="description"], 
             dx-date-box, dx-drop-down-box {
                 .dx-placeholder.dx-state-invisible,
@@ -305,11 +306,11 @@
                 .dx-texteditor-buttons-container {
                     display: none;
                 }
+                .dx-placeholder:before {
+                    vertical-align: top;
+                }
             }
             dx-date-box {
-                &.dx-state-hover .dx-placeholder {
-                    display: none;
-                }
                 .dx-dropdowneditor-icon {
                     background: url(../../../../assets/common/icons/calendar.svg) no-repeat center;
                     &:before {

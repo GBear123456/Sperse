@@ -11,6 +11,15 @@ export class WeekInfo {
         const endOfWeek = moment(date).endOf(weekPeriod);
         const endOfMonth = moment(date).endOf('month');
         this.endDate = endOfWeek.isSameOrBefore(endOfMonth) ? endOfWeek : endOfMonth;
-        this.weekNumber = date.week();
+        const isoWeek = date.isoWeek();
+        const dateMonth = date.month();
+        /** moment.isoWeek return 52 for starting days of some years and 1 for ending days */
+        if (dateMonth === 0 && isoWeek > 50) {
+            this.weekNumber = 0;
+        } else if (dateMonth === 11 && isoWeek === 1) {
+            this.weekNumber = 53;
+        } else {
+            this.weekNumber = isoWeek;
+        }
     }
 }

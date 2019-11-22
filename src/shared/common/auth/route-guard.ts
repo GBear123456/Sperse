@@ -36,8 +36,13 @@ export class RouteGuard implements CanActivate, CanActivateChild {
         }
 
         if (!this.sessionService.user) {
-            let tenant = this.sessionService.tenant;
-            this.router.navigate(['/account/' + (tenant && tenant.customLayoutType == LayoutType.BankCode ? 'signup' : 'login')]);
+            let tenant = this.sessionService.tenant,
+                uri = '/account/' + (tenant && tenant.customLayoutType == LayoutType.BankCode ? 'signup' : 'login');
+            if (abp.session.impersonatorTenantId) {
+                location.pathname = uri;
+                location.search = '';
+            } else 
+                this.router.navigate([uri]);
             return false;
         }
 

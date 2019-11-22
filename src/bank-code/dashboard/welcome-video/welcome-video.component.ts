@@ -1,4 +1,5 @@
 import {Component, OnInit} from '@angular/core';
+import {AppLocalizationService} from '@app/shared/common/localization/app-localization.service';
 
 @Component({
     selector: 'bank-code-welcome-video',
@@ -7,7 +8,7 @@ import {Component, OnInit} from '@angular/core';
 })
 export class WelcomeVideoComponent implements OnInit {
 
-    constructor() {
+    constructor(public ls: AppLocalizationService) {
     }
 
     ngOnInit() {

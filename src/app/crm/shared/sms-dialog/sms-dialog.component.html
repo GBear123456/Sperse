@@ -1,42 +1,50 @@
-<modal-dialog [title]="ls.l('Sms')"
+<modal-dialog [title]="ls.l('NewSms')"
               [buttons]="buttons"
               [editTitle]="false"
               [isTitleValid]="true"
               [titleClearButton]="false">
     <dx-validation-group>
-        <dx-select-box
-            name="phoneNumber"
-            [placeholder]="ls.l('Phone Number')"
-            [acceptCustomValue]="true"
-            [dataSource]="phones"
-            [(value)]="phoneNumber"
-            fieldTemplate="phoneTemplate"
-            itemTemplate="phoneItemTemplate">
-            <div *dxTemplate="let item of 'phoneTemplate'">
-                <div class="phone-wrapper">
-                    <dx-text-box
-                        [value]="phoneFormatPipe.transform(item)">
-                    </dx-text-box>
+        <div class="field">
+            <label class="to">{{ ls.l('To') }}</label>
+            <dx-select-box
+                name="phoneNumber"
+                [placeholder]="ls.l('TypeNumber')"
+                [acceptCustomValue]="true"
+                [dataSource]="phones"
+                [(value)]="phoneNumber"
+                fieldTemplate="phoneTemplate"
+                itemTemplate="phoneItemTemplate">
+                <div *dxTemplate="let item of 'phoneTemplate'">
+                    <div class="phone-wrapper">
+                        <dx-text-box
+                            [value]="phoneFormatPipe.transform(item)">
+                        </dx-text-box>
+                    </div>
                 </div>
-            </div>
-            <div *dxTemplate="let item of 'phoneItemTemplate'">
-                <div class="phone-item-wrapper">
-                    <span>{{phoneFormatPipe.transform(item)}}</span>
+                <div *dxTemplate="let item of 'phoneItemTemplate'">
+                    <div class="phone-item-wrapper">
+                        <span>{{phoneFormatPipe.transform(item)}}</span>
+                    </div>
                 </div>
-            </div>
-            <dx-validator>
-                <dxi-validation-rule type="pattern"  [pattern]="phonePattern" [message]="ls.l('PhoneValidationError')"></dxi-validation-rule>
-                <dxi-validation-rule type="stringLength" [max]="24"></dxi-validation-rule>
-            </dx-validator>
-        </dx-select-box>
-        <dx-text-area
-            height="200px"
-            [placeholder]="ls.l('TypeAMessageHere')"
-            [maxLength]="180"
-            [(value)]="smsText">
-            <dx-validator>
-                <dxi-validation-rule type="required" [message]="ls.l('MessageIsRequired')"></dxi-validation-rule>
-            </dx-validator>
-        </dx-text-area>
+                <dx-validator>
+                    <dxi-validation-rule type="pattern"  [pattern]="phonePattern" [message]="ls.l('PhoneValidationError')"></dxi-validation-rule>
+                    <dxi-validation-rule type="stringLength" [max]="24"></dxi-validation-rule>
+                </dx-validator>
+            </dx-select-box>
+        </div>
+        <div class="text-area field">
+            <label class="message">{{ ls.l('Message') }}</label>
+            <dx-text-area
+                height="200px"
+                [placeholder]="ls.l('TypeYourMessage')"
+                valueChangeEvent="keyup"
+                [maxLength]="smsMaxLength"
+                [(value)]="smsText">
+                <dx-validator>
+                    <dxi-validation-rule type="required" [message]="ls.l('MessageIsRequired')"></dxi-validation-rule>
+                </dx-validator>
+            </dx-text-area>
+            <div class="number-of-symbols">{{ (smsMaxLength - smsText.length) + ' ' + ls.l('CharactersLeft') }}</div>
+        </div>
     </dx-validation-group>
 </modal-dialog>

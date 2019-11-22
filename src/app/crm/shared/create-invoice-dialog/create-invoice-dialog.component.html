@@ -50,14 +50,14 @@
                         </div>
                     </div>
                     <div class="field-area customer">
-                        <label class="customer-label">{{ls.l('To')}}<a (click)="createClient()" [class.disabled]="disabledForUpdate">+ {{ls.l('New') + ' ' + ls.l('Client')}}</a></label>
+                        <label class="customer-label">{{ls.l('To')}}<a (click)="createClient()" [hidden]="disabledForUpdate || data?.contactInfo">+ {{ls.l('New') + ' ' + ls.l('Client')}}</a></label>
                         <dx-select-box #contact
                             name="customer"
                             width="500px"
                             height="90px"
-                            displayExpr="name"
+                            displayExpr="display"
                             valueExpr="name"
-                            [disabled]="data.invoice"
+                            [disabled]="data?.invoice || data?.contactInfo"
                             [acceptCustomValue]="true"
                             [placeholder]="ls.lr('Enter Client Details')"
                             [(value)]="customer"
@@ -69,10 +69,10 @@
                             (onSelectionChanged)="selectContact($event)">
                         </dx-select-box>
                         <div class="selected-contact-info">
-                            {{ selectedContact?.email }}<br *ngIf="selectedContact?.email">
                             {{ selectedContact?.address?.streetAddress }}<br *ngIf="selectedContact?.address?.streetAddress">
                             {{ selectedContact?.address?.city }}<br *ngIf="selectedContact?.address?.city">
-                            {{ selectedContact?.address?.state }} {{ selectedContact?.address?.zip }}
+                            {{ selectedContact?.address?.state }} {{ selectedContact?.address?.zip }}<br *ngIf="selectedContact?.address?.state || selectedContact?.address?.zip">
+                            {{ selectedContact?.address?.countryCode == 'US' ? '' : selectedContact?.address?.countryCode }}
                         </div>
                     </div>
                 </div>
@@ -84,12 +84,12 @@
                     </div>
                     <div class="field-area">
                         <dx-date-box #dateComponent
+                            width="260px"
+                            height="41px"
+                            type="datetime"
+                            [(value)]="date"
                             [placeholder]="ls.lr('Date')"
                             [disabled]="disabledForUpdate"
-                            width="260px"
-                            height="40px"
-                            (onKeyDown)="allowDigitsOnly($event, ['/'])"
-                            [(value)]="date"
                             (onContentReady)="onDateContentReady($event)">
                         </dx-date-box>
                     </div>
@@ -99,7 +99,7 @@
                             [disabled]="disabledForUpdate"
                             (onKeyDown)="allowDigitsOnly($event, ['/'])"
                             width="260px"
-                            height="40px"
+                            height="41px"
                             [(value)]="dueDate"
                             (onContentReady)="onDateContentReady($event)">
                         </dx-date-box>
@@ -109,10 +109,11 @@
                             width="260px"
                             height="40px"
                             [(value)]="orderNumber"
-                            [disabled]="data.invoice"
+                            [disabled]="data?.invoice"
                             [acceptCustomValue]="true"
                             [dataSource]="[orderNumber]"
                             (onFocusIn)="orderFocusIn($event)"
+                            (onValueChanged)="onOrderNumberValueChanged($event)"
                             [placeholder]="ls.l('Invoice_PurchaseOrderNumber')">
                             <div *dxTemplate="let contentData of 'content'">
                                 <dx-data-grid #ordersGrid
@@ -194,6 +195,7 @@
                             </dx-text-box><br>
                             <dx-select-box
                                 name="unit"
+                                height="40px"
                                 width="130px"
                                 [placeholder]="ls.lr('Unit')"
                                 [(value)]="cellData.data.unitId"

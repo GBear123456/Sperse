@@ -2,7 +2,7 @@
     <div [class.content-wrap]="!featureCheckerService.isEnabled(features.PFMApplications)"
          class="container accountsContainer" *ngIf="isInstanceInfoLoaded">
         <div class="row">
-            <ng-container *ngIf="_cfoService.initialized; else notInitialized">
+            <ng-container *ngIf="cfoService.initialized; else notInitialized">
                 <aside class="sidebar col-3">
                     <ul class="left-navigation">
                         <li class="left-navigation-item" *ngFor="let item of menuItems;" (click)="changeQuovoSection(item.sectionName)" [class.active]="(sectionName$ | async) === item.sectionName">
