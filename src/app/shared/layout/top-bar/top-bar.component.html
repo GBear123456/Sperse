@@ -1,6 +1,6 @@
 ﻿<platform-select></platform-select>
 
-<div class="top-bar-nav" [ngStyle]="{'visibility': lastInnerWidth ? 'visible' : 'hidden'}">
+<div class="top-bar-nav" [ngStyle]="{ 'visibility': lastInnerWidth && navbarItems.length ? 'visible' : 'hidden' }">
     <dx-nav-bar
         height="74px"
         [items]="navbarItems"
