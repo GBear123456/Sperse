@@ -1,8 +1,8 @@
 /** Core imports */
-import { Directive, ElementRef, AfterViewInit, Renderer2 } from '@angular/core';
+import { Directive, ElementRef, AfterViewInit, OnDestroy, Renderer2 } from '@angular/core';
 
 /** Third party imports */
-import { ClipboardService } from 'ngx-clipboard'
+import { ClipboardService } from 'ngx-clipboard';
 import { NotifyService } from '@abp/notify/notify.service';
 
 /** Application imports */
@@ -11,7 +11,7 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 @Directive({
   selector: 'dx-data-grid'
 })
-export class dxDataGridClipboardDirective implements AfterViewInit {
+export class DxDataGridClipboardDirective implements AfterViewInit, OnDestroy {
     private observer: MutationObserver;
     private element = this.elRef.nativeElement;
     private pool = [];
@@ -33,7 +33,7 @@ export class dxDataGridClipboardDirective implements AfterViewInit {
 
     ngAfterViewInit() {
         this.observer = new MutationObserver(mutations => {
-            mutations.forEach(mutation => {                
+            mutations.forEach(mutation => {
                 this.element.querySelectorAll('.dx-datagrid-rowsview .dx-datagrid-content table:first-child .clipboard-holder').forEach((elm, i) => {
                     if (elm.innerText.trim() && !elm.querySelector('i')) {
                         if (!this.pool[i]) {
@@ -45,25 +45,25 @@ export class dxDataGridClipboardDirective implements AfterViewInit {
                         this.renderer.appendChild(elm, this.pool[i]);
                     }
                 });
-            });   
+            });
         });
 
-        this.observer.observe(this.element, { 
+        this.observer.observe(this.element, {
             characterData: false,
-            attributes: false, 
+            attributes: false,
             childList: true,
             subtree: true
         });
     }
 
-    ngDestroy() {
+    ngOnDestroy() {
         this.observer.disconnect();
-        this.pool.map(elm => {
+        this.pool.forEach(elm => {
             elm.removeEventListener(this.copyToClipboard);
             this.renderer.removeClass(elm, 'fa-clone');
             this.renderer.removeClass(elm, 'fa');
             this.renderer.destroyNode(elm);
-            return undefined;
         });
+        this.pool.length = 0;
     }
 }
