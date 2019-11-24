@@ -5,12 +5,12 @@
 .swal-modal .swal-icon.swal-icon--warning,
 .swal-modal .swal-icon.swal-icon--info {
   background: #FFF;
-  border: 10px solid #ee8615!important;
-  box-shadow: 0 0 20px 20px #ee8615!important;
+  border: 10px solid #f09e1f !important;
+  box-shadow: 0 0 20px 20px #f09e1f !important;
 }
 .swal-modal .swal-icon.swal-icon--success {
   background: #FFF;
-  border: 10px solid #FFD564;
+  border: 10px solid #f09e1f;
 }
 .swal-modal .swal-icon.swal-icon--success .swal-icon--success__hide-corners {
   height: 50px!important;
@@ -23,37 +23,39 @@
   content: "\2713";
 }
 .swal-modal .swal-icon > div:first-child:before {
-  color: #000!important;
+  color: #000 !important;
 }
 .swal-modal .swal-title {
-  color: #ee8615!important;
+  color: #f09e1f !important;
   font-size: 26px;
   font-weight: bold;
   white-space: pre-line;
+  font-family: 'AvianoSans-Bla', sans-serif !important;
 }
 .swal-modal .swal-text {
   color: #000;
+  font-family: 'IBM Plex Sans', sans-serif !important;
 }
 .swal-modal .swal-button {
-  background-color: #ee8615!important;
+  background-color: #f09e1f !important;
   font-size: 18px;
   font-weight: 600;
-  color: #000!important;
+  color: #000 !important;
   cursor: pointer;
 }
 .swal-modal .swal-button:hover {
-  color: #FFF;
-  background-color: #000;
+  color: #FFF !important;
+  background-color: #000 !important;
 }
 .alert.m-alert--outline.alert-success {
-  border-color: #ffcc00;
+  border-color: #f09e1f;
   color: #000;
 }
 .alert.m-alert--outline.alert-success.alert-success.m-alert--icon-solid .m-alert__icon {
-  background: #ffcc00;
+  background: #f09e1f;
 }
 .alert.m-alert--outline.alert-success.alert-success.m-alert--icon-solid .m-alert__icon span {
-  border-left-color: #ffcc00;
+  border-left-color: #f09e1f;
 }
 .alert.m-alert--outline .m-alert__icon small.label {
   font-weight: 600;
