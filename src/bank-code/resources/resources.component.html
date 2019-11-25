@@ -24,7 +24,7 @@
                                     <div class="col-md-4 col-lg-3" *ngFor="let item of category.list">
                                         <img [src]="item.img" [alt]="item.title">
                                         <p class="title">{{item.title}}</p>
-                                        <p class="text">{{item.file}}</p>
+                                        <p class="text"><a [href]="item.fileLink" target="_blank" [title]="item.fileLink">{{item.fileName}}</a></p>
                                     </div>
                                 </div>
                             </div>

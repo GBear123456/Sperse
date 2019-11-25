@@ -121,10 +121,12 @@ export class BusinessEntityEditDialogComponent implements OnInit {
     businessEntitiesLoad() {
         this.businessEntities$ = this._businessEntityService.getBusinessEntities(this._cfoService.instanceType as any, this._cfoService.instanceId).pipe(
             map((businessEntities: BusinessEntityDto[]) => {
-                if (!this.isNew) {
-                    const index = businessEntities.findIndex(x => x.id === this.data.id);
-                    businessEntities.splice(index, 1);
-                }
+                if (!this.isNew)
+                    businessEntities = businessEntities.map(item => {
+                        item['disabled'] = (item.id === this.data.id)
+                            || (item.parentId === this.data.id);
+                        return item;
+                    });
                 return businessEntities;
             })
         );

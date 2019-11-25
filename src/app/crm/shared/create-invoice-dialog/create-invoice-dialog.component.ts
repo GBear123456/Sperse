@@ -593,9 +593,11 @@ export class CreateInvoiceDialogComponent implements OnInit {
     }
 
     deleteLine(data) {
-        this.lines.splice(data.rowIndex, 1);
-        this.linesGridHeight -= 100;
-        this.changeDetectorRef.detectChanges();
+        if (data.rowIndex || this.lines.length > 1) {
+            this.lines.splice(data.rowIndex, 1);
+            this.linesGridHeight -= 100;
+            this.changeDetectorRef.detectChanges();
+        }
     }
 
     createClient() {

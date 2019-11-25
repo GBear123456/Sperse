@@ -64,3 +64,19 @@
     position: static !important;
     width: initial !important;
 }
+
+/deep/ .bank-code .page-header.navbar .page-logo {
+    @media all and (min-width: 1024px) {
+        position: relative;
+        min-width: 250px !important;
+
+        a {
+            max-width: 100% !important;
+        }
+
+        img {
+            max-width: 100%;
+            max-height: 100% !important;
+        }
+    }
+}
