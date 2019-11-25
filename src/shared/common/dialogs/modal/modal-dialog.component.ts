@@ -1,14 +1,21 @@
+/** Core imports */
 import {
     Component,
     Inject,
     OnInit,
+    ViewChild,
     AfterViewInit,
     ElementRef,
     Input,
     Output,
     EventEmitter
 } from '@angular/core';
+
+/** Third party imports */
+import { DxTextBoxComponent } from 'devextreme-angular/ui/text-box';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+
+/** Application imports */
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
 import { IDialogOption } from '@shared/common/dialogs/modal/dialog-option.interface';
@@ -26,6 +33,8 @@ import { LoadingService } from '@shared/common/loading-service/loading.service';
     }
 })
 export class ModalDialogComponent implements OnInit, AfterViewInit {
+    @ViewChild('titleComponent') titleComponent: DxTextBoxComponent;
+
     @Input() title: string;
     @Input() editTitle = false;
     @Input() titleClearButton = false;
@@ -94,6 +103,11 @@ export class ModalDialogComponent implements OnInit, AfterViewInit {
 
     finishLoading() {
         this.loadingService.finishLoading(this.elementRef.nativeElement);
+    }
+
+    clear() {
+        if (this.titleComponent)
+            this.titleComponent.instance.option('value', '');
     }
 
     close(slide: boolean = false, closeData = null) {

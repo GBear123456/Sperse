@@ -135,32 +135,35 @@ export class CreateActivityDialogComponent implements OnInit {
             this._activityProxy.get(this.data.appointment.Id).subscribe((res) => {
                 this.data.appointment.AssignedUserIds = res.assignedUserIds || [];
             });
+        } else
+            this.initAppointmentDate();
+    }
+
+    initAppointmentDate() {
+        let dateNow = new Date(moment().format('YYYY/MM/DD HH:mm:ss'));
+        if (this.data.appointment.AllDay)
+            this.isAllDay = true;
+
+        if (this.data.appointment.StartDate) {
+            this.startDate = new Date(this.data.appointment.StartDate);
+            if (!this.isAllDay) {
+                this.startDate.setHours(dateNow.getHours());
+                this.startDate.setMinutes(dateNow.getMinutes());
+                this.startDate.setSeconds(dateNow.getSeconds());
+            }
         } else {
-            let dateNow = new Date(moment().format('YYYY/MM/DD HH:mm:ss'));
-            if (this.data.appointment.AllDay)
-                this.isAllDay = true;
+            this.startDate = new Date(dateNow);
+        }
 
-            if (this.data.appointment.StartDate) {
-                this.startDate = new Date(this.data.appointment.StartDate);
-                if (!this.isAllDay) {
-                    this.startDate.setHours(dateNow.getHours());
-                    this.startDate.setMinutes(dateNow.getMinutes());
-                    this.startDate.setSeconds(dateNow.getSeconds());
-                }
-            } else {
-                this.startDate = new Date(dateNow);
+        if (this.data.appointment.EndDate) {
+            this.endDate = new Date(this.data.appointment.EndDate);
+            if (!this.isAllDay) {
+                this.endDate.setHours(dateNow.getHours());
+                this.endDate.setMinutes(dateNow.getMinutes());
+                this.endDate.setSeconds(dateNow.getSeconds());
             }
-
-            if (this.data.appointment.EndDate) {
-                this.endDate = new Date(this.data.appointment.EndDate);
-                if (!this.isAllDay) {
-                    this.endDate.setHours(dateNow.getHours());
-                    this.endDate.setMinutes(dateNow.getMinutes());
-                    this.endDate.setSeconds(dateNow.getSeconds());
-                }
-            } else {
-                this.endDate = new Date(dateNow);
-            }
+        } else {
+            this.endDate = new Date(dateNow);
         }
     }
 
@@ -338,7 +341,7 @@ export class CreateActivityDialogComponent implements OnInit {
 
         (this.data.appointment.Id ? this.updateAppointment() : this.createAppointment())
             .pipe(finalize(() => {
-                this.modalDialog.startLoading();
+                this.modalDialog.finishLoading();
                 saveButton.disabled = false;
             }))
             .subscribe((res) => {
@@ -512,16 +515,20 @@ export class CreateActivityDialogComponent implements OnInit {
                 StageId: this.initialStageId
             };
 
+            this.isAllDay = false;
             this.isUserSelected = false;
             this.isLeadsSelected = false;
             this.isClientSelected = false;
             this.isStarSelected = false;
+            this.initAppointmentDate();
             this.initToolbarConfig();
 
             setTimeout(() => {
                 this.userAssignmentComponent.reset();
                 this.startDateComponent.instance.option('isValid', true);
                 this.endDateComponent.instance.option('isValid', true);
+                this.changeDetectorRef.detectChanges();
+                this.modalDialog.clear();
             }, 100);
         };
 
