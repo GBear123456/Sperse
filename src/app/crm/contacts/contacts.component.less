@@ -71,7 +71,7 @@
             cursor: default;
             pointer-events: none;
         }
-        
+
         i {
             color: #686f76;
             width: 20px;
@@ -121,5 +121,95 @@
         width: 50%;
         display: inline-block;
         font-size: 14px;
+    }
+
+    /deep/ inplace-edit {
+        .inplace-edit-view-mode {
+            height: 30px;
+
+            .actions i {
+                padding: 0 0 2px 7px;
+                vertical-align: middle;
+            }
+        }
+
+        .inplace-edit-edit-mode {
+            dx-text-box {
+                .dx-texteditor-input {
+                    background: #f3f7fa;
+                    color: #202b35;
+                    font-size: 28px !important;
+                    font-weight: 400;
+                }
+            }
+            dx-button {
+                background: inherit;
+            }
+        }
+    }
+
+    /deep/ details-header .organization_info,
+    /deep/ .affiliate-code {
+        inplace-edit {
+            .inplace-edit-view-mode {
+                height: auto;
+            }
+            i.dx-icon {
+                font-size: 14px !important;
+            }
+            i.edit {
+                display: none !important;
+            }
+            span {
+                display: inline-block;
+                white-space: nowrap;
+                @media (max-width: 1366px) {
+                    max-width: 260px;
+                }
+            }
+            input {
+                font-size: 16px !important;
+            }
+            dx-button.button-exit {
+                right: -50px;
+            }
+        }
+    }
+
+    .affiliate-code {
+        padding: 30px;
+        h3 {
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: 0.56px;
+            color: #202b35;
+            text-transform: uppercase;
+            margin-bottom: 25px;
+        }
+        h4 {
+            font-size: 14px;
+            line-height: 1.43;
+            letter-spacing: 0.28px;
+            color: #677380;
+            margin-bottom: 0;
+        }
+        /deep/ inplace-edit {
+            .inplace-edit-edit-mode {
+                width: 80%;
+                dx-text-box input {
+                    font-size: 14px !important;
+                    background: none;
+                }
+            }
+            .inplace-edit-view-mode {
+                min-height: 33px;
+                .link a {
+                    font-size: 15px;
+                    letter-spacing: 0.3px;
+                    color: #424c56;
+                }
+            }
+        }
+
     }
 }
