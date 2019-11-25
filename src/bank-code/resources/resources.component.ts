@@ -21,12 +21,12 @@ export class ResourcesComponent {
                 {
                     title: 'BANKCODE Financing Program',
                     file: 'BANKCODE+Financin…ram.pdf',
-                    img: './assets/common/images/bank-code/thumbnails/ATM.png'
+                    img: './assets/common/images/bank-code/thumbnails/CreditApproval.png'
                 },
                 {
                     title: 'Seed Overview Slides',
                     file: 'SEED+OVERVIEW+SL…2.0.pptx',
-                    img: './assets/common/images/bank-code/thumbnails/ATM.png'
+                    img: './assets/common/images/bank-code/thumbnails/SeedCapital.png'
                 }
             ]
         },
@@ -35,24 +35,25 @@ export class ResourcesComponent {
             anchor: 'graph',
             list: [
                 {
-                    title: 'BANK Logos',
-                    file: 'BANK+Logos.zip',
-                    img: './assets/common/images/bank-code/thumbnails/ATM.png'
-                },
-                {
                     title: 'BANKCODE Logos',
                     file: 'BANKCODE+Logos.zip',
-                    img: './assets/common/images/bank-code/thumbnails/ATM.png'
+                    img: './assets/common/images/bank-code/thumbnails/BANK-Logos.png'
+                },
+                {
+                    title: 'Codebreaker Logos',
+                    // file: 'Codebreaker+Logos.zip',
+                    file: 'BANKCODE+Logos.zip',
+                    img: './assets/common/images/bank-code/thumbnails/Codebreaker-Logos.png'
                 },
                 {
                     title: 'One World One Language',
                     file: 'One+World+One+Language.zip',
-                    img: './assets/common/images/bank-code/thumbnails/ATM.png'
+                    img: './assets/common/images/bank-code/thumbnails/One_World.png'
                 },
                 {
                     title: 'Why They Buy Graphic',
                     file: 'Why+They+Buy.zip',
-                    img: './assets/common/images/bank-code/thumbnails/ATM.png'
+                    img: './assets/common/images/bank-code/thumbnails/Why_They_Buy_Ad.png'
                 }
             ]
         },
