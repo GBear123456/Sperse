@@ -14,11 +14,10 @@ import {
     ContactInfoDto, ContactEmailServiceProxy, ContactEmailDto, ContactPhoneDto,
     ContactPhoneServiceProxy, CreateContactEmailInput, ContactInfoDetailsDto,
     UpdateContactEmailInput, CreateContactPhoneInput, UpdateContactPhoneInput,
-    OrganizationContactServiceProxy, CreateOrganizationInput, OrganizationContactInfoDto, OrganizationInfoDto
+    OrganizationContactServiceProxy
 } from '@shared/service-proxies/service-proxies';
 import { EditContactDialog } from '../edit-contact-dialog/edit-contact-dialog.component';
 import { ContactsService } from '../contacts.service';
-import { PersonOrgRelationType } from '@root/shared/AppEnums';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 
 @Component({
@@ -218,8 +217,8 @@ export class ContactsAreaComponent {
     deleteEmailAddress(email, event, index) {
         this.dialog.open(ConfirmDialogComponent, {
             data: {
-                title: this.ls.l('DeleteContactHeader', AppConsts.localization.CRMLocalizationSourceName, this.ls.l('Email')),
-                message: this.ls.l('DeleteContactMessage', AppConsts.localization.CRMLocalizationSourceName, this.ls.l('Email').toLowerCase())
+                title: this.ls.l('DeleteContactHeader', this.ls.l('Email')),
+                message: this.ls.l('DeleteContactMessage', this.ls.l('Email').toLowerCase())
             }
         }).afterClosed().subscribe(result => {
             if (result) {
@@ -239,8 +238,8 @@ export class ContactsAreaComponent {
     deletePhoneNumber(phone, event, index) {
         this.dialog.open(ConfirmDialogComponent, {
             data: {
-                title: this.ls.l('DeleteContactHeader', AppConsts.localization.CRMLocalizationSourceName, this.ls.l('Phone')),
-                message: this.ls.l('DeleteContactMessage', AppConsts.localization.CRMLocalizationSourceName, this.ls.l('Phone').toLowerCase())
+                title: this.ls.l('DeleteContactHeader', this.ls.l('Phone')),
+                message: this.ls.l('DeleteContactMessage', this.ls.l('Phone').toLowerCase())
             }
         }).afterClosed().subscribe(result => {
             if (result) {

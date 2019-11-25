@@ -177,8 +177,9 @@ export class CompanyDialogComponent implements OnInit {
     }
 
     delete() {
-        abp.message.confirm(this.ls.l('CompanyRemovalConfirmationMessage',
-            AppConsts.localization.CRMLocalizationSourceName, this.company.fullName), (result) => {
+        abp.message.confirm(
+            this.ls.l('CompanyRemovalConfirmationMessage', this.company.fullName),
+            (result) => {
                 if (result) {
                     let personOrgRelationId = this.data.contactInfo.personContactInfo.orgRelationId;
                     this.organizationContactServiceProxy.delete(this.company.id, personOrgRelationId).subscribe(() => {

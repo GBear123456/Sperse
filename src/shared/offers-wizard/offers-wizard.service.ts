@@ -134,7 +134,6 @@ export class OffersWizardService {
             abp.message.confirm(
                 this.ls.l(
                     'EmailChangeText',
-                    AppConsts.localization.PFMLocalizationSourceName,
                     '<b>' + this.submitApplicationProfileInput.personalInformation.email + '</b>'
                 ),
                 this.ls.l('EmailChangeTitle'), result => {

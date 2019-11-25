@@ -388,27 +388,27 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
                                     items: [
                                         {
                                             action: this.download.bind(this, ImageFormat.PDF),
-                                            text: this.ls(AppConsts.localization.defaultLocalizationSourceName, 'SaveAs', ImageFormat.PDF),
+                                            text: this.l('SaveAs', ImageFormat.PDF),
                                             icon: 'pdf',
                                         },
                                         {
                                             action: this.download.bind(this, ImageFormat.PNG),
-                                            text: this.ls(AppConsts.localization.defaultLocalizationSourceName, 'SaveAs', ImageFormat.PNG),
+                                            text: this.l('SaveAs', ImageFormat.PNG),
                                             icon: 'png',
                                         },
                                         {
                                             action: this.download.bind(this, ImageFormat.JPEG),
-                                            text: this.ls(AppConsts.localization.defaultLocalizationSourceName, 'SaveAs', ImageFormat.JPEG),
+                                            text: this.l('SaveAs', ImageFormat.JPEG),
                                             icon: 'jpg',
                                         },
                                         {
                                             action: this.download.bind(this, ImageFormat.SVG),
-                                            text: this.ls(AppConsts.localization.defaultLocalizationSourceName, 'SaveAs', ImageFormat.SVG),
+                                            text: this.l('SaveAs', ImageFormat.SVG),
                                             icon: 'svg',
                                         },
                                         {
                                             action: this.download.bind(this, ImageFormat.GIF),
-                                            text: this.ls(AppConsts.localization.defaultLocalizationSourceName, 'SaveAs', ImageFormat.GIF),
+                                            text: this.l('SaveAs', ImageFormat.GIF),
                                             icon: 'gif',
                                         }
                                     ]

@@ -328,7 +328,7 @@ export class OffersComponent extends AppComponentBase implements OnInit, OnDestr
                                 items: [
                                     {
                                         action: Function(),
-                                        text: this.ls(AppConsts.localization.defaultLocalizationSourceName, 'SaveAs', 'PDF'),
+                                        text: this.l('SaveAs', 'PDF'),
                                         icon: 'pdf',
                                     }, {
                                         action: this.exportToXLS.bind(this),

@@ -249,11 +249,7 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
     removePersonOrgRelation(event) {
         let companyName = this.data['organizationContactInfo'].fullName;
         this.messageService.confirm(
-            this.ls.l(
-                'ContactRelationRemovalConfirmationMessage',
-                AppConsts.localization.CRMLocalizationSourceName,
-                companyName
-            ),
+            this.ls.l('ContactRelationRemovalConfirmationMessage', companyName),
             (result) => {
                 if (result) {
                     let orgRelationId = this.personContactInfo['personOrgRelationInfo'].id;
