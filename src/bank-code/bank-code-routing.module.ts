@@ -16,11 +16,11 @@ import { RedirectGuard } from '@shared/common/redirect-guard/redirect-guard';
                 children: [
                     {
                         path: '',
-                        redirectTo: 'dashboard',
+                        redirectTo: 'home',
                         pathMatch: 'full'
                     },
                     {
-                        path: 'dashboard',
+                        path: 'home',
                         component: DashboardComponent
                     },
                     {

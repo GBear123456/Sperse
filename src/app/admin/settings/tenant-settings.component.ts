@@ -96,6 +96,8 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
 
     defaultTimezoneScope: SettingScopes = AppTimezoneScope.Tenant;
 
+    masks = AppConsts.masks;
+
     private rootComponent;
     public headlineConfig = {
         names: [this.l('Settings')],

@@ -8,6 +8,7 @@ import { DxProgressBarModule } from 'devextreme-angular/ui/progress-bar';
 import { ChartModule } from 'angular2-chartjs';
 import 'chartjs-plugin-labels';
 import { NgCircleProgressModule } from 'ng-circle-progress';
+import { NgxPageScrollModule } from 'ngx-page-scroll';
 
 /** Application imports */
 import { CommonModule } from '@shared/common/common.module';
@@ -21,11 +22,10 @@ import { DashboardComponent } from '@root/bank-code/dashboard/dashboard.componen
 import { ResourcesComponent } from '@root/bank-code/resources/resources.component';
 import { WelcomeVideoComponent } from './dashboard/welcome-video/welcome-video.component';
 import { AnnouncementsComponent } from './dashboard/announcements/announcements.component';
-import { FooterComponent } from './shared/footer/footer.component';
 import { TotalCodesCrackedComponent } from './dashboard/total-codes-cracked/total-codes-cracked.component';
 import { GoalsCrackedComponent } from './dashboard/goals-cracked/goals-cracked.component';
 import { CountersComponent } from './dashboard/counters/counters.component';
-import {NgxPageScrollModule} from '@node_modules/ngx-page-scroll';
+
 
 @NgModule({
     declarations: [
@@ -34,7 +34,6 @@ import {NgxPageScrollModule} from '@node_modules/ngx-page-scroll';
         ResourcesComponent,
         WelcomeVideoComponent,
         AnnouncementsComponent,
-        FooterComponent,
         TotalCodesCrackedComponent,
         GoalsCrackedComponent,
         CountersComponent
