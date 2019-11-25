@@ -36,8 +36,8 @@ export class BankCodeHeaderComponent implements OnInit, OnDestroy {
     currentDate = new Date();
     memberAreaLinks: MemberAreaLink[] = [
         {
-            name: this.ls.l('BankCode_Dashboard'),
-            routerUrl: 'dashboard'
+            name: this.ls.l('Home'),
+            routerUrl: 'home'
         },
         {
             name: this.ls.l('BankCode_Products'),
