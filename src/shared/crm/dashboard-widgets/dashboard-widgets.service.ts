@@ -27,6 +27,7 @@ export class DashboardWidgetsService  {
     private totalsDataLoading: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
     totalsDataLoading$: Observable<boolean> = this.totalsDataLoading.asObservable();
     public period$: Observable<PeriodModel> = this._period.asObservable();
+    private isGrantedCustomers = this.permissionService.isGranted(AppPermissions.CRMCustomers);
     totalsDataFields = [
         {
             title: 'Sales',
@@ -34,21 +35,22 @@ export class DashboardWidgetsService  {
             name: 'totalOrderAmount',
             type: 'currency',
             percent:  '0%',
-            visible: this.permissionService.isGranted(AppPermissions.CRMOrders)
+            visible: this.isGrantedCustomers ||
+                this.permissionService.isGranted(AppPermissions.CRMOrders)
         }, {
             title: 'Leads',
             color: '#00aeef',
             name: 'totalLeadCount',
             type: 'number',
             percent: '0%',
-            visible: this.permissionService.isGranted(AppPermissions.CRMCustomers)
+            visible: this.isGrantedCustomers
        }, {
            title: 'Clients',
            color: '#f4ae55',
            name: 'totalClientCount',
            type: 'number',
            percent: '0%',
-           visible: this.permissionService.isGranted(AppPermissions.CRMCustomers)
+           visible: this.isGrantedCustomers
        }];
     private _refresh: BehaviorSubject<null> = new BehaviorSubject<null>(null);
     refresh$: Observable<null> = this._refresh.asObservable();
