@@ -9,10 +9,12 @@ import { UserManagementModule } from '@shared/common/layout/user-management-list
 import { BankCodeHeaderComponent, AdHeaderHostDirective } from './bank-code-header.component';
 import { BankCodeLayoutService } from './bank-code-layout.service';
 import { AreaNavigationModule } from '@shared/common/area-navigation/area-navigation.module';
+import { FooterComponent } from '../footer/footer.component';
 
 let COMPONENTS = [
     AdHeaderHostDirective,
-    BankCodeHeaderComponent
+    BankCodeHeaderComponent,
+    FooterComponent
 ];
 
 @NgModule({
