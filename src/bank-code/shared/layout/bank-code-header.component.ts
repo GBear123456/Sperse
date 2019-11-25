@@ -90,7 +90,7 @@ export class BankCodeHeaderComponent implements OnInit, OnDestroy {
 
     constructor(
         private layoutService: BankCodeLayoutService,
-        private appSession: AppSessionService,
+        public appSession: AppSessionService,
         private router: Router,
         private lifecycleService: LifecycleSubjectsService,
         private ls: AppLocalizationService,
