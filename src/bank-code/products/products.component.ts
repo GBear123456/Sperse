@@ -32,8 +32,8 @@ export class ProductsComponent implements OnInit {
             namePrefix: this.ls.l('BankCode_Bank'),
             name: this.ls.l('BankCode_Affiliate'),
             routerUrl: 'bank-affiliate'
-        },
-        {
+        }
+        /*{
             namePrefix: this.ls.l('BankCode_Bank'),
             name: this.ls.l('BankCode_Cards'),
             routerUrl: 'bank-cards'
@@ -42,7 +42,7 @@ export class ProductsComponent implements OnInit {
             namePrefix: this.ls.l('BankCode_Bank'),
             name: this.ls.l('BankCode_Gear'),
             routerUrl: 'bank-gear'
-        }
+        }*/
     ];
     constructor(public ls: AppLocalizationService) { }
 
