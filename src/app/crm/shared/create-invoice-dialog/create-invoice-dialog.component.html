@@ -40,44 +40,67 @@
                     [(value)]="description">
                 </dx-text-box>
             </div>
-            <div class="row">
-                <div class="col-sm-8">
-                    <div class="field-area profile">
-                        <label class="from-label">{{ls.l('From')}}<a (click)="openInvoiceSettings()"><i class="edit fa fa-pencil"></i>{{ls.l('Settings')}}</a></label>
-                        <div class="credentials">
+            <div class="field-area flex-space-between">
+                <div class="bill-to">
+                    <label class="bold-label">{{ls.l('Invoice_BillTo')}}<a (click)="createClient()" [hidden]="disabledForUpdate || data?.contactInfo">+ {{ls.l('New') + ' ' + ls.l('Client')}}</a></label>
+                    <dx-select-box #contact
+                        name="customer"
+                        width="220px"
+                        height="40px"
+                        displayExpr="display"
+                        valueExpr="name"
+                        [disabled]="data?.invoice || data?.contactInfo"
+                        [acceptCustomValue]="true"
+                        [placeholder]="ls.lr('Enter Client Details')"
+                        [(value)]="customer"
+                        [dataSource]="customers"
+                        [searchEnabled]="true"
+                        [searchTimeout]="0"
+                        (onFocusIn)="onFieldFocus($event)"
+                        (onInput)="customerLookupItems($event)"
+                        (onSelectionChanged)="selectContact($event)">
+                    </dx-select-box>
+                    <div class="selected-contact-info">
+                        {{ selectedContact?.address?.streetAddress }}<br *ngIf="selectedContact?.address?.streetAddress">
+                        {{ selectedContact?.address?.city }}<br *ngIf="selectedContact?.address?.city">
+                        {{ selectedContact?.address?.state }} {{ selectedContact?.address?.zip }}<br *ngIf="selectedContact?.address?.state || selectedContact?.address?.zip">
+                        {{ selectedContact?.address?.countryCode == 'US' ? '' : selectedContact?.address?.countryCode }}
+                    </div>
+                </div>
+                <div class="ship-to">
+                    <label class="bold-label">{{ls.l('Invoice_ShipTo')}}</label>
+                    <dx-select-box #contact
+                        name="customer"
+                        width="220px"
+                        height="40px"
+                        displayExpr="display"
+                        valueExpr="name"
+                        [disabled]="data?.invoice || data?.contactInfo"
+                        [acceptCustomValue]="true"
+                        [placeholder]="ls.lr('Enter Client Details')"
+                        [(value)]="customer"
+                        [dataSource]="customers"
+                        [searchEnabled]="true"
+                        [searchTimeout]="0"
+                        (onFocusIn)="onFieldFocus($event)"
+                        (onInput)="customerLookupItems($event)"
+                        (onSelectionChanged)="selectContact($event)">
+                    </dx-select-box>
+                    <div class="selected-contact-info">
+                        {{ selectedContact?.address?.streetAddress }}<br *ngIf="selectedContact?.address?.streetAddress">
+                        {{ selectedContact?.address?.city }}<br *ngIf="selectedContact?.address?.city">
+                        {{ selectedContact?.address?.state }} {{ selectedContact?.address?.zip }}<br *ngIf="selectedContact?.address?.state || selectedContact?.address?.zip">
+                        {{ selectedContact?.address?.countryCode == 'US' ? '' : selectedContact?.address?.countryCode }}
+                    </div>
+                </div>
+                <div class="billed-from">
+                    <label class="bold-label">{{ls.l('Invoice_BilledFrom')}}<a (click)="openInvoiceSettings()"><i class="edit fa fa-pencil"></i>{{ls.l('Settings')}}</a></label>
+                    <div class="credentials">
+                        <div class="address-container">
                             <span>{{invoiceSettings?.legalName || ''}} {{invoiceSettings?.taxVatNo || ''}}</span>
                             <pre>{{invoiceSettings?.address || ''}}</pre>
                         </div>
-                    </div>
-                    <div class="field-area customer">
-                        <label class="customer-label">{{ls.l('To')}}<a (click)="createClient()" [hidden]="disabledForUpdate || data?.contactInfo">+ {{ls.l('New') + ' ' + ls.l('Client')}}</a></label>
-                        <dx-select-box #contact
-                            name="customer"
-                            width="500px"
-                            height="90px"
-                            displayExpr="display"
-                            valueExpr="name"
-                            [disabled]="data?.invoice || data?.contactInfo"
-                            [acceptCustomValue]="true"
-                            [placeholder]="ls.lr('Enter Client Details')"
-                            [(value)]="customer"
-                            [dataSource]="customers"
-                            [searchEnabled]="true"
-                            [searchTimeout]="0"
-                            (onFocusIn)="onFieldFocus($event)"
-                            (onInput)="customerLookupItems($event)"
-                            (onSelectionChanged)="selectContact($event)">
-                        </dx-select-box>
-                        <div class="selected-contact-info">
-                            {{ selectedContact?.address?.streetAddress }}<br *ngIf="selectedContact?.address?.streetAddress">
-                            {{ selectedContact?.address?.city }}<br *ngIf="selectedContact?.address?.city">
-                            {{ selectedContact?.address?.state }} {{ selectedContact?.address?.zip }}<br *ngIf="selectedContact?.address?.state || selectedContact?.address?.zip">
-                            {{ selectedContact?.address?.countryCode == 'US' ? '' : selectedContact?.address?.countryCode }}
-                        </div>
-                    </div>
-                </div>
-                <div class="col-sm-4">
-                    <div class="field-area">
+
                         <div class="logo-container">
                             <img [src]="appSession.tenant && appSession.tenant.logoId ? remoteServiceBaseUrl + '/api/TenantCustomization/GetLogo?logoId=' + appSession.tenant.logoId : './assets/common/images/sperse-logo.png'" alt="logo"/>
                         </div>
