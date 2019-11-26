@@ -124,12 +124,23 @@ export class BusinessEntityEditDialogComponent implements OnInit {
                 if (!this.isNew)
                     businessEntities = businessEntities.map(item => {
                         item['disabled'] = (item.id === this.data.id)
-                            || (item.parentId === this.data.id);
+                            || this.checkParentForbidden(businessEntities, item);
                         return item;
                     });
                 return businessEntities;
             })
         );
+    }
+
+    checkParentForbidden(entities, item) {
+        if (!item || !item.parentId)
+            return false;
+        else if (item.parentId === this.data.id)
+            return true;
+        else
+            return this.checkParentForbidden(entities,
+                _.findWhere(entities, {id: item.parentId})
+            );
     }
 
     loadTypes() {
