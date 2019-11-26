@@ -164,7 +164,7 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
     onCellClick(event) {
         if (event.rowType === 'data' && this.isGranted(AppPermissions.CRMOrdersInvoicesManage)) {
             /** If user click on actions icon */
-            if (event.columnIndex && event.data) {
+            if (event.columnIndex > 1 && event.data) {
                 this.actionRecordData = event.data;
                 setTimeout(() => this.editInvoice());
             } else {

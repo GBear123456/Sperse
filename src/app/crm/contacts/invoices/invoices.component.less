@@ -24,5 +24,38 @@
                 width: 19px !important;
             }
         }
+        div.status {
+            width: 92px;
+            height: 26px;
+            background: #f3f7fa;
+            padding: 2px 15px;
+            border-radius: 15px;
+            font-size: 11px;
+            font-weight: 600;
+            font-stretch: normal;
+            font-style: normal;
+            line-height: 2.18;
+            letter-spacing: 0.88px;
+            text-transform: uppercase;
+            text-align: center;
+            color: #40596b;
+            &:before {
+                content: "\A";
+                width: 7px;
+                height: 7px;
+                border-radius: 50%;
+                display: inline-block;
+                margin-right: 5px;
+            }
+            &.final:before {
+                background: #1fb430;
+            }
+            &.pending:before {
+                background: #f1a72d;
+            }
+            &.draft:before {
+                background: rgba(64, 89, 107, 0.28);
+            }
+        }
     }
 }
