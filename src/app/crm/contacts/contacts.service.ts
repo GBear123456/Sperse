@@ -1,12 +1,12 @@
 /** Core imports */
 import { Injectable, Injector } from '@angular/core';
-import { Router } from '@angular/router';
 import { Location } from '@angular/common';
+import { Router } from '@angular/router';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
 import { Observable, ReplaySubject, Subject, of } from 'rxjs';
-import { tap, switchMap, catchError, finalize } from 'rxjs/operators';
+import { filter, finalize, tap, switchMap, catchError, mapTo } from 'rxjs/operators';
 import invert from 'lodash/invert';
 
 /** Application imports */
@@ -19,7 +19,9 @@ import {
     ContactServiceProxy,
     ContactCommunicationServiceProxy,
     SendEmailInput,
-    CreatePersonOrgRelationOutput
+    CreatePersonOrgRelationOutput,
+    CreateContactPhotoInput,
+    ContactPhotoServiceProxy
 } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { EmailTemplateDialogComponent } from '@app/crm/shared/email-template-dialog/email-template-dialog.component';
@@ -28,6 +30,9 @@ import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { ContactGroup, ContactGroupPermission } from '@shared/AppEnums';
 import { AppPermissions } from '@shared/AppPermissions';
 import { NotifyService } from '@abp/notify/notify.service';
+import { StringHelper } from '@shared/helpers/StringHelper';
+import { UploadPhotoDialogComponent } from '@app/shared/common/upload-photo-dialog/upload-photo-dialog.component';
+import { UploadPhoto } from '@app/shared/common/upload-photo-dialog/upload-photo.model';
 
 @Injectable()
 export class ContactsService {
@@ -59,6 +64,7 @@ export class ContactsService {
         private ls: AppLocalizationService,
         private router: Router,
         private location: Location,
+        private contactPhotoServiceProxy: ContactPhotoServiceProxy,
         public dialog: MatDialog
     ) {}
 
@@ -196,6 +202,42 @@ export class ContactsService {
                     setTimeout(() => this.invalidateUserData(), 300);
             })
         );
+    }
+
+    showUploadPhotoDialog(company: any, event): Observable<any> {
+        event.stopPropagation();
+        return this.dialog.open(UploadPhotoDialogComponent, {
+            data: { ...company, ...this.getCompanyPhoto(company) },
+            hasBackdrop: true
+        }).afterClosed().pipe(
+            filter(Boolean),
+            switchMap((result: UploadPhoto) => {
+                let action$: Observable<any>;
+                if (result.clearPhoto) {
+                    action$ = this.contactPhotoServiceProxy.clearContactPhoto(company.id).pipe(
+                        mapTo(null)
+                    );
+                } else {
+                    let base64OrigImage = StringHelper.getBase64(result.origImage);
+                    let base64ThumbImage = StringHelper.getBase64(result.thumImage);
+                    action$ = this.contactPhotoServiceProxy.createContactPhoto(
+                        CreateContactPhotoInput.fromJS({
+                            contactId: company.id,
+                            original: base64OrigImage,
+                            thumbnail: base64ThumbImage,
+                            source: result.source
+                        })
+                    ).pipe(
+                        mapTo(base64OrigImage)
+                    );
+                }
+                return action$;
+            })
+        );
+    }
+
+    private getCompanyPhoto(company): { source?: string } {
+        return company.primaryPhoto ? { source: 'data:image/jpeg;base64,' + company.primaryPhoto } : {};
     }
 
     updateLocation(contactId?, leadId?, companyId?, userId?) {

@@ -1,20 +1,26 @@
-import { AppConsts } from '@shared/AppConsts';
+/** Core imports */
 import {
     ChangeDetectionStrategy,
     ChangeDetectorRef,
     Component,
     Inject,
-    Injector,
     ViewChild,
     AfterViewInit,
     ElementRef
 } from '@angular/core';
-import { AppComponentBase } from '@shared/common/app-component-base';
+import { FormControl, Validators } from '@angular/forms';
+
+/** Third party imports */
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ImageCropperComponent, CropperSettings, Bounds } from 'ng2-img-cropper';
+
+/** Application imports */
+import { AppConsts } from '@shared/AppConsts';
 import { StringHelper } from '@shared/helpers/StringHelper';
-import { FormControl, Validators } from '@angular/forms';
 import { DownloadPictureInput, ProfileServiceProxy } from '@shared/service-proxies/service-proxies';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { LoadingService } from '@shared/common/loading-service/loading.service';
+import { NotifyService } from '@abp/notify/notify.service';
 
 @Component({
     selector: 'upload-photo-dialog',
@@ -22,16 +28,14 @@ import { DownloadPictureInput, ProfileServiceProxy } from '@shared/service-proxi
     styleUrls: ['upload-photo-dialog.less'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class UploadPhotoDialogComponent extends AppComponentBase implements AfterViewInit {
+export class UploadPhotoDialogComponent implements AfterViewInit {
     @ViewChild('cropper') cropper: ImageCropperComponent;
     @ViewChild('fileUrlInput') fileUrlInput: ElementRef;
 
     imageData: any = {};
     cropperSettings: CropperSettings;
-
     croppedWidth: number;
     croppedHeight: number;
-
     fileUrlFormControl = new FormControl('', [
         Validators.required,
         Validators.pattern(AppConsts.regexPatterns.url)
@@ -40,13 +44,14 @@ export class UploadPhotoDialogComponent extends AppComponentBase implements Afte
     private thumbData: string;
 
     constructor(
-        injector: Injector,
-        @Inject(MAT_DIALOG_DATA) public data: any,
-        public dialogRef: MatDialogRef<UploadPhotoDialogComponent>,
         private changeDetectorRef: ChangeDetectorRef,
-        private profileServiceProxy: ProfileServiceProxy
+        private profileServiceProxy: ProfileServiceProxy,
+        private loadingService: LoadingService,
+        private notifyService: NotifyService,
+        public dialogRef: MatDialogRef<UploadPhotoDialogComponent>,
+        public ls: AppLocalizationService,
+        @Inject(MAT_DIALOG_DATA) public data: any,
     ) {
-        super(injector);
         this.cropperSettings = this.getCropperSetting();
     }
 
@@ -94,7 +99,7 @@ export class UploadPhotoDialogComponent extends AppComponentBase implements Afte
     }
 
     imgResize(): Promise<any> {
-        return new Promise((resolve, rejevt) => {
+        return new Promise((resolve) => {
             let image = new Image(),
                 canvas = document.createElement('canvas'),
                 ctx = canvas.getContext('2d');
@@ -130,11 +135,11 @@ export class UploadPhotoDialogComponent extends AppComponentBase implements Afte
         this.croppedWidth = bounds.right - bounds.left;
     }
 
-    onSave(event) {
+    onSave() {
         if (this.data.maxSizeBytes && this.imageData.image) {
             const fileBytes = window.atob(StringHelper.getBase64(this.imageData.image)).length;
             if (fileBytes > this.data.maxSizeBytes) {
-                abp.message.error(this.l('ResizedProfilePicture_Warn_SizeLimit', (this.data.maxSizeBytes / 1024).toFixed(2)));
+                abp.message.error(this.ls.l('ResizedProfilePicture_Warn_SizeLimit', (this.data.maxSizeBytes / 1024).toFixed(2)));
                 return;
             }
         }
@@ -184,7 +189,7 @@ export class UploadPhotoDialogComponent extends AppComponentBase implements Afte
     }
 
     loadFile(paste = false) {
-        this.startLoading();
+        this.loadingService.startLoading();
         /** Load file into the croop */
         if (this.fileUrlFormControl.valid) {
             let image = new Image();
@@ -193,7 +198,7 @@ export class UploadPhotoDialogComponent extends AppComponentBase implements Afte
             image.onload = () => {
                 this.cropper.setImage(image);
                 this.changeDetectorRef.detectChanges();
-                this.finishLoading();
+                this.loadingService.finishLoading();
             };
             image.onerror = () => {
                 if (!paste) {
@@ -206,16 +211,17 @@ export class UploadPhotoDialogComponent extends AppComponentBase implements Afte
                             image.onload = () => {
                                 this.cropper.setImage(image);
                                 this.changeDetectorRef.detectChanges();
-                                this.finishLoading();
+                                this.loadingService.finishLoading();
                             };
                             image.onerror = () => {
-                                this.notify.error(this.l('PhotoIsNotReachable'));
-                                this.finishLoading();
+                                this.notifyService.error(this.ls.l('PhotoIsNotReachable'));
+                                this.loadingService.finishLoading();
                             };
-                        }, (e) => this.finishLoading()
+                        },
+                        () => this.loadingService.finishLoading()
                     );
                 } else
-                    this.finishLoading();
+                    this.loadingService.finishLoading();
             };
         }
     }

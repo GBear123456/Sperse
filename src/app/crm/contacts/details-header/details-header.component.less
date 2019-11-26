@@ -167,11 +167,24 @@
 
         .add-new-company {
             width: 250px;
+            @media (min-width: 992px) {
+                width: 489px;
+            }
+        }
+
+        .add-company-logo,
+        .add-new-company {
             display: inline-block;
             font-size: 16px;
-            padding: 10px;
+            text-align: center;
+            border: 1px dashed #cfd6db;
             a {
                 color: #00aeef;
+                display: block;
+                padding: 10px;
+                font-size: 13px;
+                line-height: 1.92;
+                letter-spacing: 0.26px;
             }
         }
 
@@ -187,6 +200,7 @@
             height: 36px;
             background-color: #e5e9ec;
             vertical-align: middle;
+            position: absolute;
         }
 
         .organization_logo {

@@ -17,7 +17,7 @@ import { MaskPipe } from 'ngx-mask';
 import { DxSelectBoxComponent, DxDateBoxComponent, DxValidatorComponent } from '@root/node_modules/devextreme-angular';
 import * as moment from 'moment';
 import { Observable } from 'rxjs';
-import { filter, finalize } from 'rxjs/operators';
+import { finalize } from 'rxjs/operators';
 import * as _ from 'underscore';
 
 /** Application imports */
@@ -25,9 +25,7 @@ import { AppConsts } from '@shared/AppConsts';
 import { RootStore } from '@root/store';
 import { CountriesStoreActions, CountriesStoreSelectors, OrganizationTypeStoreActions, OrganizationTypeSelectors } from '@app/store';
 import { StatesStoreActions, StatesStoreSelectors } from '@root/store';
-import { CountryDto, CountryStateDto, OrganizationContactInfoDto, OrganizationContactServiceProxy, UpdateOrganizationInfoInput, NotesServiceProxy, CreateNoteInput, ContactPhotoServiceProxy, CreateContactPhotoInput, NoteType } from '@shared/service-proxies/service-proxies';
-import { UploadPhotoDialogComponent } from '@app/shared/common/upload-photo-dialog/upload-photo-dialog.component';
-import { StringHelper } from '@shared/helpers/StringHelper';
+import { CountryDto, CountryStateDto, OrganizationContactInfoDto, OrganizationContactServiceProxy, UpdateOrganizationInfoInput, NotesServiceProxy, CreateNoteInput, ContactPhotoServiceProxy, NoteType } from '@shared/service-proxies/service-proxies';
 import { ContactsService } from '@app/crm/contacts/contacts.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { NotifyService } from '@abp/notify/notify.service';
@@ -119,7 +117,6 @@ export class CompanyDialogComponent implements OnInit {
 
     ngOnInit() {
         this.modalDialog.buttons = this.buttons;
-
         const company: OrganizationContactInfoDto = this.data.company;
         this.title = this.company.fullName = company.fullName;
         this.company = { ...this.company, ...company.organization };
@@ -221,44 +218,11 @@ export class CompanyDialogComponent implements OnInit {
         this.states$ = this.store$.pipe(select(StatesStoreSelectors.getState, { countryCode: countryCode }));
     }
 
-    showUploadPhotoDialog(event) {
-        this.dialog.open(UploadPhotoDialogComponent, {
-            data: { ...this.company, ...this.getCompanyPhoto(this.company) },
-            hasBackdrop: true
-        }).afterClosed()
-            .pipe(filter(result => result))
-            .subscribe(result => {
-                if (result.clearPhoto) {
-                    this.contactPhotoServiceProxy.clearContactPhoto(this.company.id)
-                        .subscribe(() => {
-                            this.handlePhotoChange(null);
-                        });
-                } else {
-                    let base64OrigImage = StringHelper.getBase64(result.origImage);
-                    let base64ThumbImage = StringHelper.getBase64(result.thumImage);
-
-                    this.contactPhotoServiceProxy.createContactPhoto(
-                        CreateContactPhotoInput.fromJS({
-                            contactId: this.company.id,
-                            original: base64OrigImage,
-                            thumbnail: base64ThumbImage,
-                            source: result.source
-                        })
-                    ).subscribe(() => {
-                        this.handlePhotoChange(base64OrigImage);
-                    });
-                }
-            });
-        event.stopPropagation();
-    }
-
-    private handlePhotoChange(photo: string) {
-        this.company.primaryPhoto = photo;
-        this.changeDetectorRef.detectChanges();
-    }
-
-    private getCompanyPhoto(company): { source?: string } {
-        return company.primaryPhoto ? { source: 'data:image/jpeg;base64,' + this.company.primaryPhoto } : {};
+    showUploadPhotoDialog(e) {
+        this.contactService.showUploadPhotoDialog(this.company, e).subscribe((photo: string) => {
+            this.company.primaryPhoto = photo;
+            this.changeDetectorRef.detectChanges();
+        });
     }
 
     onInput(e, maxLength: number, mask?: string) {

@@ -525,6 +525,17 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
             this.contactsService.addCompanyDialog(event, this.data).subscribe();
     }
 
+    addCompanyLogo(event) {
+        if (this.manageAllowed) {
+            this.contactsService.showUploadPhotoDialog(
+                this.data['organizationContactInfo'],
+                event
+            ).subscribe((logo: string) => {
+                this.data['organizationContactInfo'].primaryPhoto = logo;
+            });
+        }
+    }
+
     showCompanyList(event) {
         this.dialog.closeAll();
         this.dialog.open(RelationCompaniesDialogComponent, {

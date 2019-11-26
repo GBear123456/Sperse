@@ -89,9 +89,20 @@ import { OrganizationUnitsTreeComponent } from './organization-units-tree/organi
 import { PermissionTreeComponent } from './permission-tree/permission-tree.component';
 import { ContactsRoutingModule } from './contacts-routing.module';
 import {
-    ContactServiceProxy, MemberServiceProxy, OrganizationContactServiceProxy, DocumentServiceProxy,
-    PersonOrgRelationServiceProxy, PersonContactServiceProxy, DocumentTypeServiceProxy, ContactCommunicationServiceProxy,
-    PartnerServiceProxy, PartnerTypeServiceProxy, NotesServiceProxy, OrderSubscriptionServiceProxy, CustomerServiceProxy
+    ContactServiceProxy,
+    MemberServiceProxy,
+    OrganizationContactServiceProxy,
+    DocumentServiceProxy,
+    PersonOrgRelationServiceProxy,
+    PersonContactServiceProxy,
+    DocumentTypeServiceProxy,
+    ContactCommunicationServiceProxy,
+    PartnerServiceProxy,
+    PartnerTypeServiceProxy,
+    NotesServiceProxy,
+    OrderSubscriptionServiceProxy,
+    CustomerServiceProxy,
+    ContactPhotoServiceProxy
 } from '@shared/service-proxies/service-proxies';
 import { NameParserService } from '@app/crm/shared/name-parser/name-parser.service';
 import { PipelineModule } from '@app/shared/pipeline/pipeline.module';
@@ -242,6 +253,7 @@ import { CrmService } from '@app/crm/crm.service';
     providers: [
         DialogService,
         ContactsService,
+        ContactPhotoServiceProxy,
         ContactServiceProxy,
         CustomerServiceProxy,
         PartnerServiceProxy,
