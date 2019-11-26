@@ -12,13 +12,19 @@ import { AppConsts } from '@root/shared/AppConsts';
 export class ModulesEditionsSelectComponent {
     @Input() editionsModels: { [value: string]: TenantEditEditionDto };
     @Input() editionsGroups: SubscribableEditionComboboxItemDto[][];
+    private readonly incompatibleModules = {
+        'CRM': [ 'CFO_CRM', 'CFO_Partner' ],
+        'CFO': [ 'CFO_CRM', 'CFO_Partner' ],
+        'CFO_CRM': [ 'CRM', 'CFO', 'CFO_Partner' ],
+        'CFO_Partner': [ 'CRM', 'CFO', 'CFO_CRM' ]
+    };
 
     constructor(
         private notifyService: NotifyService,
         private ls: AppLocalizationService,
     ) {}
 
-    onEditionChange(e, moduleId: string) {
+    onEditionChange(moduleId: string) {
         /** if edition value 'Not Assigned' - clear max count */
         if (this.editionsModels[moduleId].editionId == 0) {
             this.editionsModels[moduleId].maxUserCount = null;
@@ -52,5 +58,16 @@ export class ModulesEditionsSelectComponent {
             editionModel.trialDayCount = null;
         }
         return result;
+    }
+
+    moduleIsDisabled(moduleId: string): boolean {
+        return this.incompatibleModules[moduleId] && this.incompatibleModules[moduleId].some((incompatibleModule: string) => {
+            const incompatibleModuleIsAssigned = this.editionsModels[incompatibleModule].editionId != 0;
+            if (incompatibleModuleIsAssigned) {
+                this.editionsModels[moduleId].maxUserCount = null;
+                this.editionsModels[moduleId].trialDayCount = null;
+            }
+            return incompatibleModuleIsAssigned;
+        });
     }
 }
