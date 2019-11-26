@@ -143,7 +143,7 @@ export class ResourcesComponent {
                     title: 'Women\'s Day',
                     fileName: 'BANKCODE+Policies+…res.pdf',
                     fileLink: 'https://new-resources-2019.s3-us-west-1.amazonaws.com/Art_Graphics/Social+Media+Ads/Women\'s+Day.zip',
-                    img: './assets/common/images/bank-code/thumbnails/ATM.png'
+                    img: './assets/common/images/bank-code/thumbnails/8_March_WomensDay.jpg'
                 }
             ]
         },
