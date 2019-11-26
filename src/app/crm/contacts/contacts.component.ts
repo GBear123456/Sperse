@@ -341,7 +341,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
                 label: 'Orders',
                 route: 'orders',
                 hidden: this.contactGroupId.value == ContactGroup.UserProfile ||
-                    this.contactInfo.statusId == ContactStatus.Prospective,
+                    this.contactInfo.statusId == ContactStatus.Prospective || true,
                 disabled: !this.permission.isGranted(AppPermissions.CRMOrders)
             },
             {

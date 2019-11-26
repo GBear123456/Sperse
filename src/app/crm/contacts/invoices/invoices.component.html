@@ -21,21 +21,23 @@
                                       [pager]="defaultGridPagerConfig"
                                       (onCellClick)="onCellClick($event)"
                                       (onContentReady)="onContentReady($event)"
-                                      (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">                
-                            <dxi-column alignment="center" width="90px" cellTemplate="actionsCellTemplate" headerCellTemplate="actionsCellTemplate"></dxi-column>
-                            <a class="dx-link dx-link-edit" *dxTemplate="let cellData of 'actionsCellTemplate'">Edit</a>
+                                      (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
+
+                            <dxi-column alignment="center" width="50px" cellTemplate="actionsCellTemplate" headerCellTemplate="actionsCellTemplate"></dxi-column>
 
                             <dxi-column dataField="Number" caption="{{l('Number')}}"></dxi-column>
-                            <dxi-column dataField="Status" caption="{{l('Status')}}"></dxi-column>
+                            <dxi-column dataField="Amount" dataType="string" caption="{{l('Amount')}}" cellTemplate="amountCell"></dxi-column>
+                            <dxi-column dataField="Status" caption="{{l('Status')}}" cellTemplate="statusCell"></dxi-column>
                             <dxi-column dataField="Date" caption="{{l('Date')}}" cellTemplate="datetimeCell"></dxi-column>
                             <dxi-column dataField="DueDate" caption="{{l('Due Date')}}" cellTemplate="dateCell"></dxi-column>
-                            <dxi-column dataField="Amount" alignment="right" caption="{{l('Amount')}}" cellTemplate="amountCell"></dxi-column>
 
                             <dxi-column [fixed]="true" [fixedPosition]="'right'" [showInColumnChooser]="false"></dxi-column>
 
-                            <dxo-sorting mode="multiple"></dxo-sorting>
-                            <dxo-group-panel [visible]="true"></dxo-group-panel>
-                            <dxo-paging [pageSize]="20"></dxo-paging>
+                            <a class="dx-link dx-link-edit" *dxTemplate="let cellData of 'actionsCellTemplate'">Edit</a>
+
+                            <div *dxTemplate="let cellData of 'statusCell'">
+                                <div class="status {{ cellData.value | lowercase }}">{{ cellData.value }}</div>
+                            </div>
                             <div *dxTemplate="let cellData of 'dateCell'">
                                 {{ cellData.value | date: formatting.date }}
                             </div>
@@ -46,9 +48,11 @@
                                 {{ cellData.value | currency: settings.currency }}
                             </div>
 
-                            <dxo-load-panel [enabled]="false"></dxo-load-panel>
+                            <dxo-paging [pageSize]="20"></dxo-paging>
                             <dxo-sorting mode="multiple"></dxo-sorting>
+                            <dxo-load-panel [enabled]="false"></dxo-load-panel>
                             <dxo-group-panel [visible]="false"></dxo-group-panel>
+                            <dxo-selection mode="multiple" showCheckBoxesMode="always"></dxo-selection>
                         </dx-data-grid>
                     </div>
               </div>
