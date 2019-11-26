@@ -1,12 +1,19 @@
+@import url('https://fonts.googleapis.com/css?family=IBM+Plex+Sans&display=swap');
 .swal-modal {
     background: #fff;
+    border-radius: 0 !important;
 }
-.swal-modal .swal-icon.swal-icon--error,
 .swal-modal .swal-icon.swal-icon--warning,
 .swal-modal .swal-icon.swal-icon--info {
     background: #FFF;
     border: 10px solid #f09e1f!important;
     box-shadow: 0 0 20px 20px #f09e1f!important;
+}
+.swal-modal .swal-icon.swal-icon--error {
+    background: #fff url('../../../icons/alert-icon.svg') 50% 50% no-repeat;
+    border: 0 !important;
+    box-shadow: none !important;
+    border-radius: 0;
 }
 .swal-modal .swal-icon.swal-icon--success {
     background: #FFF;
@@ -14,6 +21,9 @@
 }
 .swal-modal .swal-icon.swal-icon--success .swal-icon--success__hide-corners {
     height: 50px!important;
+}
+.swal-modal .swal-icon.swal-icon--error .swal-icon--error__x-mark:before {
+    content: none !important;
 }
 .swal-modal .swal-icon.swal-icon--success:before,
 .swal-modal .swal-icon.swal-icon--success:after {
@@ -26,22 +36,37 @@
     color: #000!important;
 }
 .swal-modal .swal-title {
-    color: #f09e1f !important;
-    font-size: 26px;
-    font-weight: bold;
+    font-size: 24px !important;
+    font-weight: normal;
+    letter-spacing: normal;
+    text-align: center;
+    color: #000000 !important;
     white-space: pre-line;
     font-family: 'AvianoSans-Bla', sans-serif !important;
 }
 .swal-modal .swal-text {
     color: #000;
     font-family: 'IBM Plex Sans', sans-serif !important;
+    opacity: 0.7;
+    font-size: 16px !important;
+    font-weight: normal;
+    line-height: 1.44;
+    letter-spacing: normal;
+    text-align: center;
 }
 .swal-modal .swal-button {
-    background-color: #f09e1f !important;
-    font-size: 18px;
-    font-weight: 600;
-    color: #000!important;
+    font-family: 'AvianoSans-Bla', sans-serif !important;
+    background-color: #ac1f22 !important;
+    font-size: 18px !important;
+    color: #fff !important;
     cursor: pointer;
+    font-weight: normal;
+    line-height: normal;
+    letter-spacing: normal;
+    text-align: center;
+    transition: .2s;
+    min-width: 200px;
+    border-radius: 0 !important;
 }
 .swal-modal .swal-button:hover {
     color: #FFF !important;
