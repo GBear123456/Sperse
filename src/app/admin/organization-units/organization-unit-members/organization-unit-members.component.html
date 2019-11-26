@@ -9,7 +9,7 @@
             </div>
         </div>
         <div class="m-portlet__head-tools" *ngIf="organizationUnit">
-            <button *ngIf="isGranted(permissions.AdministrationOrganizationUnitsManageMembers)" (click)="openAddModal()" class="btn btn-primary">
+            <button *ngIf="permission.isGranted(permissions.AdministrationOrganizationUnitsManageMembers)" (click)="openAddModal()" class="btn btn-primary">
                 <i class="fa fa-plus"></i> {{ls.l("AddMember")}}
             </button>
         </div>
@@ -21,7 +21,7 @@
                 <p-table #dataTable
                          (onLazyLoad)="getOrganizationUnitUsers($event)"
                          [value]="primengTableHelper.records"
-                         rows="{{primengTableHelper.defaultRecordsCountPerPage}}"
+                         [rows]="primengTableHelper.defaultRecordsCountPerPage"
                          [paginator]="false"
                          [lazy]="true"
                          [responsive]="primengTableHelper.isResponsive">
@@ -44,7 +44,7 @@
                             <td [hidden]="!permission.isGranted(permissions.AdministrationOrganizationUnitsManageMembers)">
                                 <button class="btn btn-outline-danger m-btn m-btn--icon m-btn--icon-only m-btn--pill"
                                         (click)="removeMember(record)"
-                                        title="{{ls.l('Delete')}}">
+                                        [title]="ls.l('Delete')">
                                     <i class="fa fa-times" [attr.aria-label]="ls.l('Delete')"></i>
                                 </button>
                             </td>
@@ -63,7 +63,7 @@
                     {{ls.l('NoData')}}
                 </div>
                 <div class="primeng-paging-container">
-                    <p-paginator rows="{{primengTableHelper.defaultRecordsCountPerPage}}"
+                    <p-paginator [rows]="primengTableHelper.defaultRecordsCountPerPage"
                                  #paginator
                                  (onPageChange)="getOrganizationUnitUsers($event)"
                                  [totalRecords]="primengTableHelper.totalRecordsCount"

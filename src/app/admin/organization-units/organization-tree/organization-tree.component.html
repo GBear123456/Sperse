@@ -8,17 +8,24 @@
             </div>
         </div>
         <div class="m-portlet__head-tools">
-            <button *ngIf="permissionChecker.isGranted(permissions.AdministrationOrganizationUnitsManageOrganizationTree)" (click)="addUnit(null)" class="btn btn-primary">
+            <button *ngIf="permissionChecker.isGranted(permissions.AdministrationOrganizationUnitsManageOrganizationTree)"
+                    class="btn btn-primary"
+                    (click)="addUnit(null)">
                 <i class="fa fa-plus"></i> {{ls.l("AddRootUnit")}}
             </button>
         </div>
     </div>
     <div class="m-portlet__body">
-        <div #tree></div>
-        <div *ngIf="!totalUnitCount" class="text-muted">
-            {{ls.l("NoOrganizationUnitDefinedYet")}}
-        </div>
+        <dx-scroll-view showScrollbar="onHover" [height]="organizationsListHeight">
+            <div #tree></div>
+            <div *ngIf="!totalUnitCount" class="text-muted">
+                {{ls.l("NoOrganizationUnitDefinedYet")}}
+            </div>
+        </dx-scroll-view>
     </div>
 </div>
 
-<createOrEditOrganizationUnitModal #createOrEditOrganizationUnitModal (unitCreated)="unitCreated($event)" (unitUpdated)="unitUpdated($event)"></createOrEditOrganizationUnitModal>
+<createOrEditOrganizationUnitModal #createOrEditOrganizationUnitModal
+                                   (unitCreated)="unitCreated($event)"
+                                   (unitUpdated)="unitUpdated($event)">
+</createOrEditOrganizationUnitModal>

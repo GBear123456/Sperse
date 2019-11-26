@@ -12,6 +12,7 @@ import { PrimengTableHelper } from '@shared/helpers/PrimengTableHelper';
 import { MessageService } from '@abp/message/message.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { NotifyService } from '@abp/notify/notify.service';
+import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
 
 @Component({
     selector: 'organization-unit-members',
@@ -35,6 +36,7 @@ export class OrganizationUnitMembersComponent {
         private message: MessageService,
         private notify: NotifyService,
         public ls: AppLocalizationService,
+        public permission: PermissionCheckerService,
         public primengTableHelper: PrimengTableHelper
     ) {}
 
