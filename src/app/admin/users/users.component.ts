@@ -32,7 +32,7 @@ import { AppService } from '@app/app.service';
 import { ItemTypeEnum } from '@shared/common/item-details-layout/item-type.enum';
 import { ItemDetailsService } from '@shared/common/item-details-layout/item-details.service';
 import { AppPermissions } from '@shared/AppPermissions';
-import { DataGridService } from '@app/shared/common/data-grid.service.ts/data-grid.service';
+import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
 
 @Component({
     templateUrl: './users.component.html',

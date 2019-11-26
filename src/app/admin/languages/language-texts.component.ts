@@ -18,7 +18,7 @@ import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { FilterModel } from '@shared/filters/models/filter.model';
 import { FilterDropDownComponent } from '@shared/filters/dropdown/filter-dropdown.component';
 import { FilterDropDownModel } from '@shared/filters/dropdown/filter-dropdown.model';
-import { DataGridService } from '@app/shared/common/data-grid.service.ts/data-grid.service';
+import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
 
 @Component({
     templateUrl: './language-texts.component.html',

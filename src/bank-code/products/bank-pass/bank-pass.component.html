@@ -1,7 +1,7 @@
 <header>
     <h1><span>{{ ls.l('BankCode_Bank') }}</span> {{ ls.l('BankCode_Pass') }}</h1>
 </header>
-<section class="content">
+<section class="content" *ngIf="!hasCrmCustomersPermission; else usersList">
     <header>
         <img src="./assets/common/images/bank-code/bankpass.png"
              srcset="./assets/common/images/bank-code/bankpass@2x.png 2x, ./assets/common/images/bank-code/bank-code-logo@3x.png 3x"
@@ -22,3 +22,53 @@
         </div>
     </footer>
 </section>
+<ng-template #usersList>
+    <section class="users-list">
+        <div [hidden]="dataIsLoading">
+            <dx-text-box [placeholder]="ls.l('Search')"
+                         [value]="searchValue"
+                         mode="search"
+                         (onValueChanged)="searchValueChange($event)">
+            </dx-text-box>
+            <dx-data-grid id="gridContainer"
+                          class="limitedPagerTotal"
+                          accessKey="narrowHeaderPanel"
+                          [noDataText]="''"
+                          [dataSource]="dataSource"
+                          [height]="dataGridHeight"
+                          [allowColumnReordering]="true"
+                          [columnAutoWidth]="true"
+                          [loadPanel]="{ enabled: false }"
+                          [allowColumnResizing]="true"
+                          [hoverStateEnabled]="true"
+                          [pager]="gridPagerConfig"
+                          (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
+                <dxo-paging [pageSize]="10"></dxo-paging>
+                <dxi-column dataField="PhotoPublicId" caption=" " cellTemplate="photoTemplate"
+                            [width]="50" [allowExporting]="false"
+                            [allowGrouping]="false" [allowSorting]="false"></dxi-column>
+                <div *dxTemplate="let data of 'photoTemplate'">
+                    <div [ngStyle]="{'background-image': 'url(' + profileService.getContactPhotoUrl(data.data.PhotoPublicId) + ')'}"
+                         class="img-circle">
+                    </div>
+                </div>
+                <dxi-column dataField="Name" [caption]="ls.l('Name')" [width]="150"></dxi-column>
+                <dxi-column dataField="Email" [caption]="ls.l('Email')" [width]="160"></dxi-column>
+                <dxi-column dataField="Phone" [caption]="ls.l('Phone')" cellTemplate="phoneCell" cssClass="tabular"></dxi-column>
+                <dxi-column dataField="BankCode" cellTemplate="bankCodeCell" [caption]="ls.l('BankCode')"></dxi-column>
+                <dxi-column dataField="CreationTime" [caption]="ls.l('Created')" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
+                <div *dxTemplate="let cellData of 'phoneCell'">
+                    {{cellData.value | phone}}
+                </div>
+                <div *dxTemplate="let cellData of 'dateCell'">
+                    {{cellData.value | date: formatting.dateTime : userTimezone}}
+                </div>
+                <div *dxTemplate="let cellData of 'bankCodeCell'">
+                    <bank-code-letters [bankCode]="cellData.value"></bank-code-letters>
+                </div>
+                <dxo-sorting mode="multiple"></dxo-sorting>
+            </dx-data-grid>
+        </div>
+        <loading-spinner [hidden]="!dataIsLoading"></loading-spinner>
+    </section>
+</ng-template>

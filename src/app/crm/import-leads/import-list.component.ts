@@ -14,7 +14,7 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { FileSizePipe } from '@shared/common/pipes/file-size.pipe';
 import { ImportServiceProxy } from '@shared/service-proxies/service-proxies';
 import { ImportLeadsService } from './import-leads.service';
-import { DataGridService } from '@app/shared/common/data-grid.service.ts/data-grid.service';
+import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
 
 @Component({
     templateUrl: './import-list.component.html',

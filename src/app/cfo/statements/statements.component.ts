@@ -58,7 +58,7 @@ import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/life
 import { CalendarValuesModel } from '@shared/common/widgets/calendar/calendar-values.model';
 import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calendar.component';
 import { FilterItemModel } from '@shared/filters/models/filter-item.model';
-import { DataGridService } from '@app/shared/common/data-grid.service.ts/data-grid.service';
+import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
 
 @Component({
     templateUrl: './statements.component.html',
