@@ -28,28 +28,33 @@
         </ng-template>
     </div>
     <div *ngIf="data" class="organization_info">
-        <div *ngIf="data?.primaryOrganizationContactId" class="company-details">
-            <div class="delimiter"></div>
-            <div class="info-icon" (click)="showCompanyDialog($event)">
-                <img *ngIf="!showRemovingOrgRelationProgress" src="./assets/common/icons/info-icon-blue.svg" alt="Organization Details">
-                <div *ngIf="showRemovingOrgRelationProgress" class="loadindicator"></div>
-            </div>
-            <div class="titles">
-                <h2 class="shift-top">
-                    <inplace-edit #companyName
-                                  [data]="getCompanyNameInplaceEditData() | async"
-                                  (valueChanged)="updateCompanyField($event)">
-                    </inplace-edit>
-                    <i class="fa fa-angle-down" *ngIf="!companyName.isEditModeEnabled && (data?.personContactInfo?.orgRelations?.length > 1)" (click)="showCompanyList($event)"></i>
-                    <div class="actions" [hidden]="!manageAllowed || companyName.isEditModeEnabled">
-                        <i class="edit fa fa-pencil" (click)="showCompanyDialog($event)"></i>
-                        <i class="add fa fa-plus" (click)="addCompanyDialog($event)"></i>
-                        <i class="delete fa fa-times" (click)="removePersonOrgRelation($event)"></i>
-                    </div>
-                </h2>
-                <h3>
-                    <inplace-edit #jobTitle [data]="getJobTitleInplaceEditData() | async" (valueChanged)="updateJobTitle($event)"></inplace-edit>
-                </h3>
+        <div *ngIf="!data?.primaryOrganizationContactId; else companyInfo" class="add-new-company">
+            <a (click)="addCompanyDialog($event)">+ {{ ls.l('AddCompany') }}</a>
+        </div>
+        <ng-template #companyInfo>
+            <div class="company-details">
+                <div class="delimiter"></div>
+                <div class="info-icon" (click)="showCompanyDialog($event)">
+                    <img *ngIf="!showRemovingOrgRelationProgress" src="./assets/common/icons/info-icon-blue.svg" alt="Organization Details">
+                    <div *ngIf="showRemovingOrgRelationProgress" class="loadindicator"></div>
+                </div>
+                <div class="titles">
+                    <h2 class="shift-top">
+                        <inplace-edit #companyName
+                                      [data]="getCompanyNameInplaceEditData() | async"
+                                      (valueChanged)="updateCompanyField($event)">
+                        </inplace-edit>
+                        <i class="fa fa-angle-down" *ngIf="!companyName.isEditModeEnabled && (data?.personContactInfo?.orgRelations?.length > 1)" (click)="showCompanyList($event)"></i>
+                        <div class="actions" [hidden]="!manageAllowed || companyName.isEditModeEnabled">
+                            <i class="edit fa fa-pencil" (click)="showCompanyDialog($event)"></i>
+                            <i class="add fa fa-plus" (click)="addCompanyDialog($event)"></i>
+                            <i class="delete fa fa-times" (click)="removePersonOrgRelation($event)"></i>
+                        </div>
+                    </h2>
+                    <h3>
+                        <inplace-edit #jobTitle [data]="getJobTitleInplaceEditData() | async" (valueChanged)="updateJobTitle($event)"></inplace-edit>
+                    </h3>
+                </div>
             </div>
             <div class="organization_logo" *ngIf="data?.organizationContactInfo?.primaryPhoto; else addCompanyPhoto">
                 <img (click)="addCompanyLogo($event)" [src]="'data:image/png;base64,' + data.organizationContactInfo.primaryPhoto" alt="Organization Logo">
@@ -59,10 +64,7 @@
                     <a (click)="addCompanyLogo($event)">+ {{ ls.l('AddCompanyLogo') }}</a>
                 </div>
             </ng-template>
-        </div>
-        <div *ngIf="!data?.primaryOrganizationContactId" class="add-new-company">
-            <a (click)="addCompanyDialog($event)">+ {{ ls.l('AddCompany') }}</a>
-        </div>
+        </ng-template>
     </div>
 
     <div class="header_buttons">
