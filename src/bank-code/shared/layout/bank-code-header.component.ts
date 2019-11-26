@@ -62,15 +62,15 @@ export class BankCodeHeaderComponent implements OnInit, OnDestroy {
                 {
                     name: this.ls.l('BankCode_BankAffiliate'),
                     routerUrl: 'products/bank-affiliate'
-                },
-                {
+                }
+                /*{
                     name: this.ls.l('BankCode_BankCards'),
                     routerUrl: 'products/bank-cards'
                 },
                 {
                     name: this.ls.l('BankCode_BankGear'),
                     routerUrl: 'products/bank-gear'
-                }
+                }*/
             ]
         },
         {
