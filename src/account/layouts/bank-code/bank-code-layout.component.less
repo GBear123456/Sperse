@@ -20,7 +20,7 @@ Login page
     background-size: cover;
     padding: 30px 0;
     height: 100%;
-    
+
     .header {
         margin-top: 69px;
 
@@ -630,4 +630,20 @@ input.form-control {
 .remaining-time-counter {
     margin-top: 15px;
     color: red;
+}
+
+/deep/ .bank-code .page-header.navbar .page-logo {
+    @media all and (min-width: 1024px) {
+        position: relative;
+        min-width: 250px !important;
+
+        a {
+            max-width: 100% !important;
+        }
+
+        img {
+            max-width: 100%;
+            max-height: 100% !important;
+        }
+    }
 }
