@@ -17,7 +17,6 @@ import { BankVaultComponent } from '@root/bank-code/products/bank-vault/bank-vau
 import { BankCardsComponent } from '@root/bank-code/products/bank-cards/bank-cards.component';
 import { SidebarModule } from '@root/bank-code/shared/sidebar/sidebar.module';
 import { BankCodeLettersModule } from '@app/shared/common/bank-code-letters/bank-code-letters.module';
-import { ToolbarModule } from '@app/shared/common/toolbar/toolbar.module';
 import { PhoneFormatModule } from '@shared/common/pipes/phone-format/phone-format.module';
 import { DxTextBoxModule } from '@root/node_modules/devextreme-angular';
 import { LoadingSpinnerModule } from '@app/shared/common/loading-spinner/loading-spinner.module';
@@ -30,7 +29,6 @@ import { LoadingSpinnerModule } from '@app/shared/common/loading-spinner/loading
         DxDataGridModule,
         DxTextBoxModule,
         BankCodeLettersModule,
-        ToolbarModule,
         PhoneFormatModule,
         LoadingSpinnerModule
     ],
