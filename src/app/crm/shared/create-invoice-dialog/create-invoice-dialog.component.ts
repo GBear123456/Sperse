@@ -198,6 +198,9 @@ export class CreateInvoiceDialogComponent implements OnInit {
             this.invoiceProxy.getInvoiceInfo(invoice.Id)
                 .pipe(finalize(() => this.modalDialog.finishLoading()))
                 .subscribe((res) => {
+                    this.subTotal =
+                    this.total =
+                    this.balance = res.grandTotal;
                     this.description = res.description;
                     this.notes = res.note;
                     this.orderNumber = res.orderNumber;
@@ -210,7 +213,6 @@ export class CreateInvoiceDialogComponent implements OnInit {
                             ...res
                         };
                     });
-                    this.calculateBalance();
                     this.changeDetectorRef.detectChanges();
                 });
         } else {
@@ -304,12 +306,14 @@ export class CreateInvoiceDialogComponent implements OnInit {
             let data = new UpdateInvoiceInput();
             this.setRequestCommonFields(data);
             data.id = this.invoiceId;
+            data.grandTotal = this.total;
             data.status = InvoiceStatus[this.status];
             data.lines = this.lines.map((row, index) => {
                 return new UpdateInvoiceLineInput({
                     id: row['id'],
                     quantity: row['quantity'],
                     rate: row['rate'],
+                    total: row['total'],
                     unitId: row['unitId'] as InvoiceLineUnit,
                     description: row['description'],
                     sortOrder: index
@@ -321,11 +325,13 @@ export class CreateInvoiceDialogComponent implements OnInit {
             this.setRequestCommonFields(data);
             data.contactId = this.contactId;
             data.orderId = this.orderId;
+            data.grandTotal = this.total;
             data.status = InvoiceStatus[this.status];
             data.lines = this.lines.map((row, index) => {
                 return new CreateInvoiceLineInput({
                     quantity: row['quantity'],
                     rate: row['rate'],
+                    total: row['total'],
                     unitId: row['unitId'] as InvoiceLineUnit,
                     description: row['description'],
                     sortOrder: index
@@ -492,10 +498,10 @@ export class CreateInvoiceDialogComponent implements OnInit {
             });
     }
 
-    calculateLineAmount(data) {
-        let amount = data.quantity * data.rate;
-        if (amount != data['amount']) {
-            data['amount'] = amount || 0;
+    calculateLineTotal(data) {
+        let total = data.quantity * data.rate;
+        if (total != data['total']) {
+            data['total'] = total || 0;
             this.calculateBalance();
         }
     }
@@ -505,11 +511,11 @@ export class CreateInvoiceDialogComponent implements OnInit {
         this.total =
         this.balance = 0;
         this.lines.forEach(line => {
-            let amount = line['quantity'] * line['rate'];
-            if (amount)
+            let total = line['quantity'] * line['rate'];
+            if (total)
                 this.subTotal =
                 this.total =
-                this.balance = this.total + amount;
+                this.balance = this.total + total;
         });
         this.changeDetectorRef.detectChanges();
     }
@@ -560,7 +566,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
         if (isNaN(value))
             value = value.replace(/(?!\.)\D/igm, '');
         cell.data.rate = value;
-        this.calculateLineAmount(cell.data);
+        this.calculateLineTotal(cell.data);
     }
 
     onOrderSelected(event, dropBox) {

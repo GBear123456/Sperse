@@ -149,7 +149,7 @@
                         <dxi-column dataField="Quantity" width="115" caption="{{ls.l('Quantity')}}" [allowSorting]="false" cellTemplate="quantity"></dxi-column>
                         <dxi-column dataField="Rate" width="115" caption="{{ls.l('Rate')}}" [allowSorting]="false" cellTemplate="rate"></dxi-column>
                         <dxi-column dataField="Unit" width="110" caption="{{ls.l('Unit')}}" [allowSorting]="false" cellTemplate="unit"></dxi-column>
-                        <dxi-column dataField="Amount" width="115" caption="{{ls.l('Amount')}}" [allowSorting]="false" [allowEditing]="false" cellTemplate="amount"></dxi-column>
+                        <dxi-column dataField="Total" width="115" caption="{{ls.l('Total')}}" [allowSorting]="false" [allowEditing]="false" cellTemplate="total"></dxi-column>
                         <dxi-column width="30" caption="" [allowSorting]="false" [allowEditing]="false" cellTemplate="actions"></dxi-column>
 
                         <div *dxTemplate="let cellData of 'description'">
@@ -173,7 +173,7 @@
                                 [showClearButton]="true"
                                 [(value)]="cellData.data.quantity"
                                 (onKeyDown)="allowDigitsOnly($event)"
-                                (onValueChanged)="calculateLineAmount(cellData.data)">
+                                (onValueChanged)="calculateLineTotal(cellData.data)">
                                 <dx-validator>
                                     <dxi-validation-rule type="required" message=""></dxi-validation-rule>
                                 </dx-validator>
@@ -203,13 +203,13 @@
                                 </dx-validator>
                             </dx-select-box>
                         </div>
-                        <div *dxTemplate="let cellData of 'amount'">
+                        <div *dxTemplate="let cellData of 'total'">
                             <dx-text-box
                                 width="110px"
                                 placeholder=""
                                 dataType="number"
                                 [readOnly]="true"
-                                [value]="cellData.data.amount | currency: invoiceSettings.currency">
+                                [value]="cellData.data.total | currency: invoiceSettings.currency">
                             </dx-text-box>
                         </div>
                         <div *dxTemplate="let cellData of 'actions'" class="row-actions">

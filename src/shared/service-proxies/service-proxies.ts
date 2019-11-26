@@ -47337,7 +47337,7 @@ export class InvoiceLine implements IInvoiceLine {
     quantity!: number | undefined;
     rate!: number | undefined;
     unitId!: InvoiceLineUnit;
-    amount!: number | undefined;
+    total!: number | undefined;
     description!: string | undefined;
     sortOrder!: number | undefined;
     invoice!: Invoice | undefined;
@@ -47366,7 +47366,7 @@ export class InvoiceLine implements IInvoiceLine {
             this.quantity = data["quantity"];
             this.rate = data["rate"];
             this.unitId = data["unitId"];
-            this.amount = data["amount"];
+            this.total = data["total"];
             this.description = data["description"];
             this.sortOrder = data["sortOrder"];
             this.invoice = data["invoice"] ? Invoice.fromJS(data["invoice"]) : <any>undefined;
@@ -47395,7 +47395,7 @@ export class InvoiceLine implements IInvoiceLine {
         data["quantity"] = this.quantity;
         data["rate"] = this.rate;
         data["unitId"] = this.unitId;
-        data["amount"] = this.amount;
+        data["total"] = this.total;
         data["description"] = this.description;
         data["sortOrder"] = this.sortOrder;
         data["invoice"] = this.invoice ? this.invoice.toJSON() : <any>undefined;
@@ -47417,7 +47417,7 @@ export interface IInvoiceLine {
     quantity: number | undefined;
     rate: number | undefined;
     unitId: InvoiceLineUnit;
-    amount: number | undefined;
+    total: number | undefined;
     description: string | undefined;
     sortOrder: number | undefined;
     invoice: Invoice | undefined;
@@ -47712,7 +47712,10 @@ export class Invoice implements IInvoice {
     orderId!: number | undefined;
     status!: InvoiceStatus;
     number!: string;
-    amount!: number | undefined;
+    grandTotal!: number | undefined;
+    discountTotal!: number | undefined;
+    shippingTotal!: number | undefined;
+    taxTotal!: number | undefined;
     date!: moment.Moment | undefined;
     dueDate!: moment.Moment | undefined;
     billingAddressId!: number | undefined;
@@ -47750,7 +47753,10 @@ export class Invoice implements IInvoice {
             this.orderId = data["orderId"];
             this.status = data["status"];
             this.number = data["number"];
-            this.amount = data["amount"];
+            this.grandTotal = data["grandTotal"];
+            this.discountTotal = data["discountTotal"];
+            this.shippingTotal = data["shippingTotal"];
+            this.taxTotal = data["taxTotal"];
             this.date = data["date"] ? moment(data["date"].toString()) : <any>undefined;
             this.dueDate = data["dueDate"] ? moment(data["dueDate"].toString()) : <any>undefined;
             this.billingAddressId = data["billingAddressId"];
@@ -47792,7 +47798,10 @@ export class Invoice implements IInvoice {
         data["orderId"] = this.orderId;
         data["status"] = this.status;
         data["number"] = this.number;
-        data["amount"] = this.amount;
+        data["grandTotal"] = this.grandTotal;
+        data["discountTotal"] = this.discountTotal;
+        data["shippingTotal"] = this.shippingTotal;
+        data["taxTotal"] = this.taxTotal;
         data["date"] = this.date ? this.date.toISOString() : <any>undefined;
         data["dueDate"] = this.dueDate ? this.dueDate.toISOString() : <any>undefined;
         data["billingAddressId"] = this.billingAddressId;
@@ -47827,7 +47836,10 @@ export interface IInvoice {
     orderId: number | undefined;
     status: InvoiceStatus;
     number: string;
-    amount: number | undefined;
+    grandTotal: number | undefined;
+    discountTotal: number | undefined;
+    shippingTotal: number | undefined;
+    taxTotal: number | undefined;
     date: moment.Moment | undefined;
     dueDate: moment.Moment | undefined;
     billingAddressId: number | undefined;
@@ -58970,6 +58982,7 @@ export interface IInvoiceAddressInput {
 export class CreateInvoiceLineInput implements ICreateInvoiceLineInput {
     quantity!: number;
     rate!: number;
+    total!: number;
     unitId!: InvoiceLineUnit;
     description!: string | undefined;
     sortOrder!: number;
@@ -58987,6 +59000,7 @@ export class CreateInvoiceLineInput implements ICreateInvoiceLineInput {
         if (data) {
             this.quantity = data["quantity"];
             this.rate = data["rate"];
+            this.total = data["total"];
             this.unitId = data["unitId"];
             this.description = data["description"];
             this.sortOrder = data["sortOrder"];
@@ -59004,6 +59018,7 @@ export class CreateInvoiceLineInput implements ICreateInvoiceLineInput {
         data = typeof data === 'object' ? data : {};
         data["quantity"] = this.quantity;
         data["rate"] = this.rate;
+        data["total"] = this.total;
         data["unitId"] = this.unitId;
         data["description"] = this.description;
         data["sortOrder"] = this.sortOrder;
@@ -59014,6 +59029,7 @@ export class CreateInvoiceLineInput implements ICreateInvoiceLineInput {
 export interface ICreateInvoiceLineInput {
     quantity: number;
     rate: number;
+    total: number;
     unitId: InvoiceLineUnit;
     description: string | undefined;
     sortOrder: number;
@@ -59023,10 +59039,15 @@ export class CreateInvoiceInput implements ICreateInvoiceInput {
     contactId!: number;
     orderId!: number | undefined;
     orderNumber!: string | undefined;
+    leadId!: number | undefined;
+    discountTotal!: number | undefined;
+    shippingTotal!: number | undefined;
+    taxTotal!: number | undefined;
     status!: InvoiceStatus;
     number!: string | undefined;
     date!: moment.Moment;
     dueDate!: moment.Moment;
+    grandTotal!: number;
     billingAddress!: InvoiceAddressInput;
     shippingAddress!: InvoiceAddressInput;
     description!: string | undefined;
@@ -59051,10 +59072,15 @@ export class CreateInvoiceInput implements ICreateInvoiceInput {
             this.contactId = data["contactId"];
             this.orderId = data["orderId"];
             this.orderNumber = data["orderNumber"];
+            this.leadId = data["leadId"];
+            this.discountTotal = data["discountTotal"];
+            this.shippingTotal = data["shippingTotal"];
+            this.taxTotal = data["taxTotal"];
             this.status = data["status"];
             this.number = data["number"];
             this.date = data["date"] ? moment(data["date"].toString()) : <any>undefined;
             this.dueDate = data["dueDate"] ? moment(data["dueDate"].toString()) : <any>undefined;
+            this.grandTotal = data["grandTotal"];
             this.billingAddress = data["billingAddress"] ? InvoiceAddressInput.fromJS(data["billingAddress"]) : new InvoiceAddressInput();
             this.shippingAddress = data["shippingAddress"] ? InvoiceAddressInput.fromJS(data["shippingAddress"]) : new InvoiceAddressInput();
             this.description = data["description"];
@@ -59079,10 +59105,15 @@ export class CreateInvoiceInput implements ICreateInvoiceInput {
         data["contactId"] = this.contactId;
         data["orderId"] = this.orderId;
         data["orderNumber"] = this.orderNumber;
+        data["leadId"] = this.leadId;
+        data["discountTotal"] = this.discountTotal;
+        data["shippingTotal"] = this.shippingTotal;
+        data["taxTotal"] = this.taxTotal;
         data["status"] = this.status;
         data["number"] = this.number;
         data["date"] = this.date ? this.date.toISOString() : <any>undefined;
         data["dueDate"] = this.dueDate ? this.dueDate.toISOString() : <any>undefined;
+        data["grandTotal"] = this.grandTotal;
         data["billingAddress"] = this.billingAddress ? this.billingAddress.toJSON() : <any>undefined;
         data["shippingAddress"] = this.shippingAddress ? this.shippingAddress.toJSON() : <any>undefined;
         data["description"] = this.description;
@@ -59100,10 +59131,15 @@ export interface ICreateInvoiceInput {
     contactId: number;
     orderId: number | undefined;
     orderNumber: string | undefined;
+    leadId: number | undefined;
+    discountTotal: number | undefined;
+    shippingTotal: number | undefined;
+    taxTotal: number | undefined;
     status: InvoiceStatus;
     number: string | undefined;
     date: moment.Moment;
     dueDate: moment.Moment;
+    grandTotal: number;
     billingAddress: InvoiceAddressInput;
     shippingAddress: InvoiceAddressInput;
     description: string | undefined;
@@ -59176,7 +59212,7 @@ export class InvoiceLineInfo implements IInvoiceLineInfo {
     quantity!: number | undefined;
     rate!: number | undefined;
     unitId!: InvoiceLineUnit | undefined;
-    amount!: number | undefined;
+    total!: number | undefined;
     description!: string | undefined;
     sortOrder!: number | undefined;
 
@@ -59195,7 +59231,7 @@ export class InvoiceLineInfo implements IInvoiceLineInfo {
             this.quantity = data["quantity"];
             this.rate = data["rate"];
             this.unitId = data["unitId"];
-            this.amount = data["amount"];
+            this.total = data["total"];
             this.description = data["description"];
             this.sortOrder = data["sortOrder"];
         }
@@ -59214,7 +59250,7 @@ export class InvoiceLineInfo implements IInvoiceLineInfo {
         data["quantity"] = this.quantity;
         data["rate"] = this.rate;
         data["unitId"] = this.unitId;
-        data["amount"] = this.amount;
+        data["total"] = this.total;
         data["description"] = this.description;
         data["sortOrder"] = this.sortOrder;
         return data; 
@@ -59226,7 +59262,7 @@ export interface IInvoiceLineInfo {
     quantity: number | undefined;
     rate: number | undefined;
     unitId: InvoiceLineUnit | undefined;
-    amount: number | undefined;
+    total: number | undefined;
     description: string | undefined;
     sortOrder: number | undefined;
 }
@@ -59238,6 +59274,7 @@ export class InvoiceInfo implements IInvoiceInfo {
     number!: string | undefined;
     date!: moment.Moment | undefined;
     dueDate!: moment.Moment | undefined;
+    grandTotal!: number | undefined;
     billingAddress!: InvoiceAddressInfo | undefined;
     shippingAddress!: InvoiceAddressInfo | undefined;
     description!: string | undefined;
@@ -59261,6 +59298,7 @@ export class InvoiceInfo implements IInvoiceInfo {
             this.number = data["number"];
             this.date = data["date"] ? moment(data["date"].toString()) : <any>undefined;
             this.dueDate = data["dueDate"] ? moment(data["dueDate"].toString()) : <any>undefined;
+            this.grandTotal = data["grandTotal"];
             this.billingAddress = data["billingAddress"] ? InvoiceAddressInfo.fromJS(data["billingAddress"]) : <any>undefined;
             this.shippingAddress = data["shippingAddress"] ? InvoiceAddressInfo.fromJS(data["shippingAddress"]) : <any>undefined;
             this.description = data["description"];
@@ -59288,6 +59326,7 @@ export class InvoiceInfo implements IInvoiceInfo {
         data["number"] = this.number;
         data["date"] = this.date ? this.date.toISOString() : <any>undefined;
         data["dueDate"] = this.dueDate ? this.dueDate.toISOString() : <any>undefined;
+        data["grandTotal"] = this.grandTotal;
         data["billingAddress"] = this.billingAddress ? this.billingAddress.toJSON() : <any>undefined;
         data["shippingAddress"] = this.shippingAddress ? this.shippingAddress.toJSON() : <any>undefined;
         data["description"] = this.description;
@@ -59308,6 +59347,7 @@ export interface IInvoiceInfo {
     number: string | undefined;
     date: moment.Moment | undefined;
     dueDate: moment.Moment | undefined;
+    grandTotal: number | undefined;
     billingAddress: InvoiceAddressInfo | undefined;
     shippingAddress: InvoiceAddressInfo | undefined;
     description: string | undefined;
@@ -59319,6 +59359,7 @@ export class UpdateInvoiceLineInput implements IUpdateInvoiceLineInput {
     id!: number | undefined;
     quantity!: number;
     rate!: number;
+    total!: number;
     unitId!: InvoiceLineUnit;
     description!: string | undefined;
     sortOrder!: number;
@@ -59337,6 +59378,7 @@ export class UpdateInvoiceLineInput implements IUpdateInvoiceLineInput {
             this.id = data["id"];
             this.quantity = data["quantity"];
             this.rate = data["rate"];
+            this.total = data["total"];
             this.unitId = data["unitId"];
             this.description = data["description"];
             this.sortOrder = data["sortOrder"];
@@ -59355,6 +59397,7 @@ export class UpdateInvoiceLineInput implements IUpdateInvoiceLineInput {
         data["id"] = this.id;
         data["quantity"] = this.quantity;
         data["rate"] = this.rate;
+        data["total"] = this.total;
         data["unitId"] = this.unitId;
         data["description"] = this.description;
         data["sortOrder"] = this.sortOrder;
@@ -59366,6 +59409,7 @@ export interface IUpdateInvoiceLineInput {
     id: number | undefined;
     quantity: number;
     rate: number;
+    total: number;
     unitId: InvoiceLineUnit;
     description: string | undefined;
     sortOrder: number;
@@ -59377,6 +59421,7 @@ export class UpdateInvoiceInput implements IUpdateInvoiceInput {
     number!: string | undefined;
     date!: moment.Moment;
     dueDate!: moment.Moment;
+    grandTotal!: number;
     billingAddress!: InvoiceAddressInput;
     shippingAddress!: InvoiceAddressInput;
     description!: string | undefined;
@@ -59403,6 +59448,7 @@ export class UpdateInvoiceInput implements IUpdateInvoiceInput {
             this.number = data["number"];
             this.date = data["date"] ? moment(data["date"].toString()) : <any>undefined;
             this.dueDate = data["dueDate"] ? moment(data["dueDate"].toString()) : <any>undefined;
+            this.grandTotal = data["grandTotal"];
             this.billingAddress = data["billingAddress"] ? InvoiceAddressInput.fromJS(data["billingAddress"]) : new InvoiceAddressInput();
             this.shippingAddress = data["shippingAddress"] ? InvoiceAddressInput.fromJS(data["shippingAddress"]) : new InvoiceAddressInput();
             this.description = data["description"];
@@ -59429,6 +59475,7 @@ export class UpdateInvoiceInput implements IUpdateInvoiceInput {
         data["number"] = this.number;
         data["date"] = this.date ? this.date.toISOString() : <any>undefined;
         data["dueDate"] = this.dueDate ? this.dueDate.toISOString() : <any>undefined;
+        data["grandTotal"] = this.grandTotal;
         data["billingAddress"] = this.billingAddress ? this.billingAddress.toJSON() : <any>undefined;
         data["shippingAddress"] = this.shippingAddress ? this.shippingAddress.toJSON() : <any>undefined;
         data["description"] = this.description;
@@ -59448,6 +59495,7 @@ export interface IUpdateInvoiceInput {
     number: string | undefined;
     date: moment.Moment;
     dueDate: moment.Moment;
+    grandTotal: number;
     billingAddress: InvoiceAddressInput;
     shippingAddress: InvoiceAddressInput;
     description: string | undefined;
