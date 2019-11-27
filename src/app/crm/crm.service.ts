@@ -7,6 +7,7 @@ import { Router } from '@angular/router';
 /** Third party imports */
 import { Observable, Subscription, combineLatest, fromEvent, of } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
+import flatten from 'lodash/flatten';
 
 /** Application imports */
 import { FiltersService } from '@shared/filters/filters.service';
@@ -114,8 +115,25 @@ export class CrmService {
     }
 
     loadSliceChartData(sourceUri: string, filters, summaryBy: SummaryBy, additionalParams?: { [name: string]: any}): Promise<{ items: any[], infoItems: InfoItem[] }> {
+        let group = [
+            {
+                selector: 'CreationTime',
+                groupInterval: summaryBy,
+                isExpanded: false,
+                desc: false
+            }
+        ];
+        /** Add grouping by year also to avoid grouping by month or quarters of different years */
+        if (summaryBy !== SummaryBy.Year) {
+            group.unshift({
+                selector: 'CreationTime',
+                groupInterval: SummaryBy.Year,
+                isExpanded: false,
+                desc: false
+            });
+        }
         const params = {
-            group: `[{"selector":"CreationTime","groupInterval":"${summaryBy}","isExpanded":false,"desc":false}]`,
+            group: JSON.stringify(group),
             groupSummary: '[{"selector":"CreationTime","summaryType":"min"}]',
             ...additionalParams
         };
@@ -131,7 +149,8 @@ export class CrmService {
         }).toPromise().then((result: any) => {
             const avgGroupValue = result.totalCount ? (result.totalCount / result.data.length).toFixed(0) : 0;
             let minGroupValue, maxGroupValue;
-            const items = result.data.map(contact => {
+            const data = result.data[0].items ? flatten(result.data.map(a => a.items)) : result.data;
+            const items = data.map(contact => {
                 minGroupValue = !minGroupValue || contact.count < minGroupValue ? contact.count : minGroupValue;
                 maxGroupValue = !maxGroupValue || contact.count > maxGroupValue ? contact.count : maxGroupValue;
                 return {
