@@ -124,7 +124,7 @@
                         (onKeyDown)="allowDigitsOnly($event, ['/'])"
                         width="200px"
                         height="41px"
-                        [max]="date"
+                        [min]="date"
                         [(value)]="dueDate"
                         (onContentReady)="onDateContentReady($event)">
                     </dx-date-box>

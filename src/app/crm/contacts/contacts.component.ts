@@ -346,7 +346,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
             },
             {
                 name: 'invoices',
-                label: 'Invoices',
+                label: 'Orders & Invoices',
                 route: 'invoices',
                 hidden: this.contactGroupId.value == ContactGroup.UserProfile ||
                     this.contactInfo.statusId == ContactStatus.Prospective,
