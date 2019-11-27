@@ -66,9 +66,7 @@ export class BankPassComponent {
         public ls: AppLocalizationService,
         public httpInterceptor: AppHttpInterceptor,
         public profileService: ProfileService
-    ) {
-        window['t'] = this;
-    }
+    ) {}
 
     getQuickSearchParam() {
         return this.searchValue ? { name: 'quickSearchString', value: this.searchValue } : null;

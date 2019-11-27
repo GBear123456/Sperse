@@ -1,4 +1,6 @@
-import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { AppPermissions } from '@shared/AppPermissions';
+import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
 
 @Component({
     selector: 'code-breaker-ai',
@@ -6,13 +8,9 @@ import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/
     styleUrls: ['./code-breaker-ai.component.less'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class CodeBreakerAiComponent implements OnInit, OnDestroy {
-    hasCrmCustomersPermission = false;
-    constructor() {}
+export class CodeBreakerAiComponent {
+    hasCrmCustomersPermission: boolean = this.permissionChecker.isGranted(AppPermissions.CRMCustomers);
+    offerId = 718;
 
-    ngOnInit(): void {}
-
-    getAccess() {}
-
-    ngOnDestroy() {}
+    constructor(private permissionChecker: PermissionCheckerService) {}
 }
