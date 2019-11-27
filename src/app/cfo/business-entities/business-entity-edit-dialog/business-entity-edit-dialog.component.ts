@@ -132,7 +132,7 @@ export class BusinessEntityEditDialogComponent implements OnInit {
         );
     }
 
-    checkParentForbidden(entities, item) {
+    checkParentForbidden(entities: BusinessEntityDto[], item: BusinessEntityDto) {
         if (!item || !item.parentId)
             return false;
         else if (item.parentId === this.data.id)
