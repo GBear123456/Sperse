@@ -1,4 +1,4 @@
-<section class="content">
+<section class="content" *ngIf="!hasCrmCustomersPermission; else usersList">
     <header>
         <img src="./assets/common/images/bank-code/bankpass.png"
              srcset="./assets/common/images/bank-code/bankpass@2x.png 2x, ./assets/common/images/bank-code/bank-code-logo@3x.png 3x"
@@ -11,7 +11,7 @@
         <h2>GENERATE, TRACK, AND CONVERT UNLIMITED LEADS USING B.A.N.K. PASS</h2>
         <p>Generate unlimited leads using our B.A.N.K. PASS tools. Leverage the custom B.A.N.K. PASS CRM to track your leads throughout the customer journey, all while making conversion a breeze thanks to B.A.N.K. PASS resources like custom guides and quick tips sheets on how to communicate, negotiate, and close the sale with each prospect.</p>
         <p class="price"><span>Only </span><span class="bold">$59</span><span class="per-month"> per month</span></p>
-        <a class="button arrow">Subscribe now!</a>
+        <a href="https://wp.bankcode.pro/ai/?add-to-cart=718" class="button arrow">Subscribe now!</a>
     </div>
 
     <div class="access">
@@ -25,9 +25,8 @@
         </div>
     </div>
 
-
     <footer>
-        <subscription></subscription>
+        <subscription [offerId]="718"></subscription>
     </footer>
 </section>
 <ng-template #usersList>
