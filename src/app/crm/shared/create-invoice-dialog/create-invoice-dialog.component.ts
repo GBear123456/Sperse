@@ -197,7 +197,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
             this.invoiceNo = invoice.InvoiceNumber;
             this.orderId = invoice.OrderId;
             this.status = invoice.InvoiceStatus;
-            this.date = DateHelper.addTimezoneOffset(new Date(invoice.InvoiceDate), true);
+            this.date = DateHelper.addTimezoneOffset(new Date(invoice.Date), true);
             this.dueDate = invoice.InvoiceDueDate;
             this.contactId = invoice.ContactId;
             this.initOrderDataSource();
