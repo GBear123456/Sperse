@@ -20,6 +20,7 @@ import { BankCodeLettersModule } from '@app/shared/common/bank-code-letters/bank
 import { PhoneFormatModule } from '@shared/common/pipes/phone-format/phone-format.module';
 import { DxTextBoxModule } from '@root/node_modules/devextreme-angular';
 import { LoadingSpinnerModule } from '@app/shared/common/loading-spinner/loading-spinner.module';
+import { BankCodeLayoutModule } from '@root/bank-code/shared/layout/bank-code-layout.module';
 
 @NgModule({
     imports: [
@@ -30,7 +31,8 @@ import { LoadingSpinnerModule } from '@app/shared/common/loading-spinner/loading
         DxTextBoxModule,
         BankCodeLettersModule,
         PhoneFormatModule,
-        LoadingSpinnerModule
+        LoadingSpinnerModule,
+        BankCodeLayoutModule
     ],
     declarations: [
         CodeBreakerAiComponent,

@@ -148,7 +148,7 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
                     this.resendInvoiceDisabled = 
                     this.markAsDraftDisabled = [InvoiceStatus.Final, InvoiceStatus.Canceled].indexOf(event.data.Status) < 0;
                     this.markAsCancelledDisabled = event.data.Status != InvoiceStatus.Sent;
-                    this.deleteDisabled = [InvoiceStatus.Paid, InvoiceStatus.Sent].indexOf(event.data.Status) >= 0;
+                    this.deleteDisabled = [InvoiceStatus.Paid, InvoiceStatus.PartiallyPaid, InvoiceStatus.Sent].indexOf(event.data.Status) >= 0;
 
                     this.actionRecordData = event.data;
                     this.showActionsMenu(event.event.target);

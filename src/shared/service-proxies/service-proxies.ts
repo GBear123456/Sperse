@@ -16008,6 +16008,58 @@ export class InvoiceServiceProxy {
         }
         return _observableOf<GetEmailDataOutput>(<any>null);
     }
+
+    /**
+     * @body (optional) 
+     * @return Success
+     */
+    addBankCardPayment(body: AddBankCardPaymentInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Invoice/AddBankCardPayment";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processAddBankCardPayment(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processAddBankCardPayment(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processAddBankCardPayment(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
 }
 
 @Injectable()
@@ -46469,912 +46521,13 @@ export interface IPaymentInfo {
     id: number | undefined;
 }
 
-export enum PaymentTransactionType {
-    _0 = 0, 
-    _1 = 1, 
-    _2 = 2, 
-    _3 = 3, 
-    _4 = 4, 
-    _5 = 5, 
-    _6 = 6, 
-}
-
-export enum PaymentTransactionStatus {
-    _0 = 0, 
-    _1 = 1, 
-    _2 = 2, 
-    _3 = 3, 
-    _4 = 4, 
-    _5 = 5, 
-    _6 = 6, 
-}
-
-export class TransactionLink implements ITransactionLink {
-    tenantId!: number | undefined;
-    linkType!: string;
-    linkRef!: string;
-    transactionId!: number | undefined;
-    transaction!: Transaction | undefined;
-    creationTime!: moment.Moment | undefined;
-    creatorUserId!: number | undefined;
-    id!: number | undefined;
-
-    constructor(data?: ITransactionLink) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.tenantId = data["tenantId"];
-            this.linkType = data["linkType"];
-            this.linkRef = data["linkRef"];
-            this.transactionId = data["transactionId"];
-            this.transaction = data["transaction"] ? Transaction.fromJS(data["transaction"]) : <any>undefined;
-            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
-            this.creatorUserId = data["creatorUserId"];
-            this.id = data["id"];
-        }
-    }
-
-    static fromJS(data: any): TransactionLink {
-        data = typeof data === 'object' ? data : {};
-        let result = new TransactionLink();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["tenantId"] = this.tenantId;
-        data["linkType"] = this.linkType;
-        data["linkRef"] = this.linkRef;
-        data["transactionId"] = this.transactionId;
-        data["transaction"] = this.transaction ? this.transaction.toJSON() : <any>undefined;
-        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
-        data["creatorUserId"] = this.creatorUserId;
-        data["id"] = this.id;
-        return data; 
-    }
-}
-
-export interface ITransactionLink {
-    tenantId: number | undefined;
-    linkType: string;
-    linkRef: string;
-    transactionId: number | undefined;
-    transaction: Transaction | undefined;
-    creationTime: moment.Moment | undefined;
-    creatorUserId: number | undefined;
-    id: number | undefined;
-}
-
-export class TransactionAction implements ITransactionAction {
-    tenantId!: number | undefined;
-    transactionId!: number | undefined;
-    transaction!: Transaction | undefined;
-    typeString!: string | undefined;
-    type!: PaymentTransactionType | undefined;
-    success!: boolean | undefined;
-    errors!: string | undefined;
-    gatewayTransactionId!: string | undefined;
-    statusString!: string | undefined;
-    status!: PaymentTransactionStatus | undefined;
-    authorizationCode!: string | undefined;
-    responseCode!: string | undefined;
-    responseMessage!: string | undefined;
-    messages!: string | undefined;
-    avsResponseCode!: string | undefined;
-    cvvResponseCode!: string | undefined;
-    gatewayCreationDate!: moment.Moment | undefined;
-    creationTime!: moment.Moment | undefined;
-    creatorUserId!: number | undefined;
-    id!: number | undefined;
-
-    constructor(data?: ITransactionAction) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.tenantId = data["tenantId"];
-            this.transactionId = data["transactionId"];
-            this.transaction = data["transaction"] ? Transaction.fromJS(data["transaction"]) : <any>undefined;
-            this.typeString = data["typeString"];
-            this.type = data["type"];
-            this.success = data["success"];
-            this.errors = data["errors"];
-            this.gatewayTransactionId = data["gatewayTransactionId"];
-            this.statusString = data["statusString"];
-            this.status = data["status"];
-            this.authorizationCode = data["authorizationCode"];
-            this.responseCode = data["responseCode"];
-            this.responseMessage = data["responseMessage"];
-            this.messages = data["messages"];
-            this.avsResponseCode = data["avsResponseCode"];
-            this.cvvResponseCode = data["cvvResponseCode"];
-            this.gatewayCreationDate = data["gatewayCreationDate"] ? moment(data["gatewayCreationDate"].toString()) : <any>undefined;
-            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
-            this.creatorUserId = data["creatorUserId"];
-            this.id = data["id"];
-        }
-    }
-
-    static fromJS(data: any): TransactionAction {
-        data = typeof data === 'object' ? data : {};
-        let result = new TransactionAction();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["tenantId"] = this.tenantId;
-        data["transactionId"] = this.transactionId;
-        data["transaction"] = this.transaction ? this.transaction.toJSON() : <any>undefined;
-        data["typeString"] = this.typeString;
-        data["type"] = this.type;
-        data["success"] = this.success;
-        data["errors"] = this.errors;
-        data["gatewayTransactionId"] = this.gatewayTransactionId;
-        data["statusString"] = this.statusString;
-        data["status"] = this.status;
-        data["authorizationCode"] = this.authorizationCode;
-        data["responseCode"] = this.responseCode;
-        data["responseMessage"] = this.responseMessage;
-        data["messages"] = this.messages;
-        data["avsResponseCode"] = this.avsResponseCode;
-        data["cvvResponseCode"] = this.cvvResponseCode;
-        data["gatewayCreationDate"] = this.gatewayCreationDate ? this.gatewayCreationDate.toISOString() : <any>undefined;
-        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
-        data["creatorUserId"] = this.creatorUserId;
-        data["id"] = this.id;
-        return data; 
-    }
-}
-
-export interface ITransactionAction {
-    tenantId: number | undefined;
-    transactionId: number | undefined;
-    transaction: Transaction | undefined;
-    typeString: string | undefined;
-    type: PaymentTransactionType | undefined;
-    success: boolean | undefined;
-    errors: string | undefined;
-    gatewayTransactionId: string | undefined;
-    statusString: string | undefined;
-    status: PaymentTransactionStatus | undefined;
-    authorizationCode: string | undefined;
-    responseCode: string | undefined;
-    responseMessage: string | undefined;
-    messages: string | undefined;
-    avsResponseCode: string | undefined;
-    cvvResponseCode: string | undefined;
-    gatewayCreationDate: moment.Moment | undefined;
-    creationTime: moment.Moment | undefined;
-    creatorUserId: number | undefined;
-    id: number | undefined;
-}
-
-export class OrderSubscriptionPayment implements IOrderSubscriptionPayment {
-    tenantId!: number | undefined;
-    orderSubscriptionId!: number | undefined;
-    startDate!: moment.Moment;
-    endDate!: moment.Moment | undefined;
-    status!: string | undefined;
-    transactionId!: number | undefined;
-    billingSubscriptionId!: number | undefined;
-    orderSubscription!: OrderSubscription | undefined;
-    transaction!: Transaction | undefined;
-    billingSubscription!: BillingSubscription | undefined;
-    isDeleted!: boolean | undefined;
-    deleterUserId!: number | undefined;
-    deletionTime!: moment.Moment | undefined;
-    lastModificationTime!: moment.Moment | undefined;
-    lastModifierUserId!: number | undefined;
-    creationTime!: moment.Moment | undefined;
-    creatorUserId!: number | undefined;
-    id!: number | undefined;
-
-    constructor(data?: IOrderSubscriptionPayment) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.tenantId = data["tenantId"];
-            this.orderSubscriptionId = data["orderSubscriptionId"];
-            this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
-            this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
-            this.status = data["status"];
-            this.transactionId = data["transactionId"];
-            this.billingSubscriptionId = data["billingSubscriptionId"];
-            this.orderSubscription = data["orderSubscription"] ? OrderSubscription.fromJS(data["orderSubscription"]) : <any>undefined;
-            this.transaction = data["transaction"] ? Transaction.fromJS(data["transaction"]) : <any>undefined;
-            this.billingSubscription = data["billingSubscription"] ? BillingSubscription.fromJS(data["billingSubscription"]) : <any>undefined;
-            this.isDeleted = data["isDeleted"];
-            this.deleterUserId = data["deleterUserId"];
-            this.deletionTime = data["deletionTime"] ? moment(data["deletionTime"].toString()) : <any>undefined;
-            this.lastModificationTime = data["lastModificationTime"] ? moment(data["lastModificationTime"].toString()) : <any>undefined;
-            this.lastModifierUserId = data["lastModifierUserId"];
-            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
-            this.creatorUserId = data["creatorUserId"];
-            this.id = data["id"];
-        }
-    }
-
-    static fromJS(data: any): OrderSubscriptionPayment {
-        data = typeof data === 'object' ? data : {};
-        let result = new OrderSubscriptionPayment();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["tenantId"] = this.tenantId;
-        data["orderSubscriptionId"] = this.orderSubscriptionId;
-        data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
-        data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
-        data["status"] = this.status;
-        data["transactionId"] = this.transactionId;
-        data["billingSubscriptionId"] = this.billingSubscriptionId;
-        data["orderSubscription"] = this.orderSubscription ? this.orderSubscription.toJSON() : <any>undefined;
-        data["transaction"] = this.transaction ? this.transaction.toJSON() : <any>undefined;
-        data["billingSubscription"] = this.billingSubscription ? this.billingSubscription.toJSON() : <any>undefined;
-        data["isDeleted"] = this.isDeleted;
-        data["deleterUserId"] = this.deleterUserId;
-        data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
-        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
-        data["lastModifierUserId"] = this.lastModifierUserId;
-        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
-        data["creatorUserId"] = this.creatorUserId;
-        data["id"] = this.id;
-        return data; 
-    }
-}
-
-export interface IOrderSubscriptionPayment {
-    tenantId: number | undefined;
-    orderSubscriptionId: number | undefined;
-    startDate: moment.Moment;
-    endDate: moment.Moment | undefined;
-    status: string | undefined;
-    transactionId: number | undefined;
-    billingSubscriptionId: number | undefined;
-    orderSubscription: OrderSubscription | undefined;
-    transaction: Transaction | undefined;
-    billingSubscription: BillingSubscription | undefined;
-    isDeleted: boolean | undefined;
-    deleterUserId: number | undefined;
-    deletionTime: moment.Moment | undefined;
-    lastModificationTime: moment.Moment | undefined;
-    lastModifierUserId: number | undefined;
-    creationTime: moment.Moment | undefined;
-    creatorUserId: number | undefined;
-    id: number | undefined;
-}
-
-export class Transaction implements ITransaction {
-    tenantId!: number | undefined;
-    userId!: number | undefined;
-    paymentInfoId!: number | undefined;
-    paymentInfo!: PaymentInfo | undefined;
-    ipAddress!: string | undefined;
-    originTransactionId!: number | undefined;
-    originTransaction!: Transaction | undefined;
-    amount!: number | undefined;
-    typeString!: string | undefined;
-    type!: PaymentTransactionType | undefined;
-    success!: boolean | undefined;
-    errors!: string | undefined;
-    gatewayName!: string | undefined;
-    gatewayTransactionId!: string | undefined;
-    gatewayOriginTransactionId!: string | undefined;
-    statusString!: string | undefined;
-    status!: PaymentTransactionStatus | undefined;
-    authorizationCode!: string | undefined;
-    responseCode!: string | undefined;
-    responseMessage!: string | undefined;
-    messages!: string | undefined;
-    avsResponseCode!: string | undefined;
-    cvvResponseCode!: string | undefined;
-    gatewayCreationDate!: moment.Moment | undefined;
-    originator!: string | undefined;
-    description!: string | undefined;
-    billingSubscriptionId!: number | undefined;
-    billingSubscription!: BillingSubscription | undefined;
-    childTransactions!: Transaction[] | undefined;
-    transactionLinks!: TransactionLink[] | undefined;
-    transactionActions!: TransactionAction[] | undefined;
-    orderSubscriptionPayments!: OrderSubscriptionPayment[] | undefined;
-    lastModificationTime!: moment.Moment | undefined;
-    lastModifierUserId!: number | undefined;
-    creationTime!: moment.Moment | undefined;
-    creatorUserId!: number | undefined;
-    id!: number | undefined;
-
-    constructor(data?: ITransaction) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.tenantId = data["tenantId"];
-            this.userId = data["userId"];
-            this.paymentInfoId = data["paymentInfoId"];
-            this.paymentInfo = data["paymentInfo"] ? PaymentInfo.fromJS(data["paymentInfo"]) : <any>undefined;
-            this.ipAddress = data["ipAddress"];
-            this.originTransactionId = data["originTransactionId"];
-            this.originTransaction = data["originTransaction"] ? Transaction.fromJS(data["originTransaction"]) : <any>undefined;
-            this.amount = data["amount"];
-            this.typeString = data["typeString"];
-            this.type = data["type"];
-            this.success = data["success"];
-            this.errors = data["errors"];
-            this.gatewayName = data["gatewayName"];
-            this.gatewayTransactionId = data["gatewayTransactionId"];
-            this.gatewayOriginTransactionId = data["gatewayOriginTransactionId"];
-            this.statusString = data["statusString"];
-            this.status = data["status"];
-            this.authorizationCode = data["authorizationCode"];
-            this.responseCode = data["responseCode"];
-            this.responseMessage = data["responseMessage"];
-            this.messages = data["messages"];
-            this.avsResponseCode = data["avsResponseCode"];
-            this.cvvResponseCode = data["cvvResponseCode"];
-            this.gatewayCreationDate = data["gatewayCreationDate"] ? moment(data["gatewayCreationDate"].toString()) : <any>undefined;
-            this.originator = data["originator"];
-            this.description = data["description"];
-            this.billingSubscriptionId = data["billingSubscriptionId"];
-            this.billingSubscription = data["billingSubscription"] ? BillingSubscription.fromJS(data["billingSubscription"]) : <any>undefined;
-            if (data["childTransactions"] && data["childTransactions"].constructor === Array) {
-                this.childTransactions = [];
-                for (let item of data["childTransactions"])
-                    this.childTransactions.push(Transaction.fromJS(item));
-            }
-            if (data["transactionLinks"] && data["transactionLinks"].constructor === Array) {
-                this.transactionLinks = [];
-                for (let item of data["transactionLinks"])
-                    this.transactionLinks.push(TransactionLink.fromJS(item));
-            }
-            if (data["transactionActions"] && data["transactionActions"].constructor === Array) {
-                this.transactionActions = [];
-                for (let item of data["transactionActions"])
-                    this.transactionActions.push(TransactionAction.fromJS(item));
-            }
-            if (data["orderSubscriptionPayments"] && data["orderSubscriptionPayments"].constructor === Array) {
-                this.orderSubscriptionPayments = [];
-                for (let item of data["orderSubscriptionPayments"])
-                    this.orderSubscriptionPayments.push(OrderSubscriptionPayment.fromJS(item));
-            }
-            this.lastModificationTime = data["lastModificationTime"] ? moment(data["lastModificationTime"].toString()) : <any>undefined;
-            this.lastModifierUserId = data["lastModifierUserId"];
-            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
-            this.creatorUserId = data["creatorUserId"];
-            this.id = data["id"];
-        }
-    }
-
-    static fromJS(data: any): Transaction {
-        data = typeof data === 'object' ? data : {};
-        let result = new Transaction();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["tenantId"] = this.tenantId;
-        data["userId"] = this.userId;
-        data["paymentInfoId"] = this.paymentInfoId;
-        data["paymentInfo"] = this.paymentInfo ? this.paymentInfo.toJSON() : <any>undefined;
-        data["ipAddress"] = this.ipAddress;
-        data["originTransactionId"] = this.originTransactionId;
-        data["originTransaction"] = this.originTransaction ? this.originTransaction.toJSON() : <any>undefined;
-        data["amount"] = this.amount;
-        data["typeString"] = this.typeString;
-        data["type"] = this.type;
-        data["success"] = this.success;
-        data["errors"] = this.errors;
-        data["gatewayName"] = this.gatewayName;
-        data["gatewayTransactionId"] = this.gatewayTransactionId;
-        data["gatewayOriginTransactionId"] = this.gatewayOriginTransactionId;
-        data["statusString"] = this.statusString;
-        data["status"] = this.status;
-        data["authorizationCode"] = this.authorizationCode;
-        data["responseCode"] = this.responseCode;
-        data["responseMessage"] = this.responseMessage;
-        data["messages"] = this.messages;
-        data["avsResponseCode"] = this.avsResponseCode;
-        data["cvvResponseCode"] = this.cvvResponseCode;
-        data["gatewayCreationDate"] = this.gatewayCreationDate ? this.gatewayCreationDate.toISOString() : <any>undefined;
-        data["originator"] = this.originator;
-        data["description"] = this.description;
-        data["billingSubscriptionId"] = this.billingSubscriptionId;
-        data["billingSubscription"] = this.billingSubscription ? this.billingSubscription.toJSON() : <any>undefined;
-        if (this.childTransactions && this.childTransactions.constructor === Array) {
-            data["childTransactions"] = [];
-            for (let item of this.childTransactions)
-                data["childTransactions"].push(item.toJSON());
-        }
-        if (this.transactionLinks && this.transactionLinks.constructor === Array) {
-            data["transactionLinks"] = [];
-            for (let item of this.transactionLinks)
-                data["transactionLinks"].push(item.toJSON());
-        }
-        if (this.transactionActions && this.transactionActions.constructor === Array) {
-            data["transactionActions"] = [];
-            for (let item of this.transactionActions)
-                data["transactionActions"].push(item.toJSON());
-        }
-        if (this.orderSubscriptionPayments && this.orderSubscriptionPayments.constructor === Array) {
-            data["orderSubscriptionPayments"] = [];
-            for (let item of this.orderSubscriptionPayments)
-                data["orderSubscriptionPayments"].push(item.toJSON());
-        }
-        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
-        data["lastModifierUserId"] = this.lastModifierUserId;
-        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
-        data["creatorUserId"] = this.creatorUserId;
-        data["id"] = this.id;
-        return data; 
-    }
-}
-
-export interface ITransaction {
-    tenantId: number | undefined;
-    userId: number | undefined;
-    paymentInfoId: number | undefined;
-    paymentInfo: PaymentInfo | undefined;
-    ipAddress: string | undefined;
-    originTransactionId: number | undefined;
-    originTransaction: Transaction | undefined;
-    amount: number | undefined;
-    typeString: string | undefined;
-    type: PaymentTransactionType | undefined;
-    success: boolean | undefined;
-    errors: string | undefined;
-    gatewayName: string | undefined;
-    gatewayTransactionId: string | undefined;
-    gatewayOriginTransactionId: string | undefined;
-    statusString: string | undefined;
-    status: PaymentTransactionStatus | undefined;
-    authorizationCode: string | undefined;
-    responseCode: string | undefined;
-    responseMessage: string | undefined;
-    messages: string | undefined;
-    avsResponseCode: string | undefined;
-    cvvResponseCode: string | undefined;
-    gatewayCreationDate: moment.Moment | undefined;
-    originator: string | undefined;
-    description: string | undefined;
-    billingSubscriptionId: number | undefined;
-    billingSubscription: BillingSubscription | undefined;
-    childTransactions: Transaction[] | undefined;
-    transactionLinks: TransactionLink[] | undefined;
-    transactionActions: TransactionAction[] | undefined;
-    orderSubscriptionPayments: OrderSubscriptionPayment[] | undefined;
-    lastModificationTime: moment.Moment | undefined;
-    lastModifierUserId: number | undefined;
-    creationTime: moment.Moment | undefined;
-    creatorUserId: number | undefined;
-    id: number | undefined;
-}
-
-export class BillingSubscription implements IBillingSubscription {
-    tenantId!: number | undefined;
-    userId!: number | undefined;
-    startDate!: moment.Moment;
-    endDate!: moment.Moment | undefined;
-    fee!: number;
-    frequencyString!: string;
-    frequency!: RecurringPaymentFrequency | undefined;
-    gatewayName!: string;
-    paymentInfoId!: number | undefined;
-    paymentInfo!: PaymentInfo | undefined;
-    gatewaySubscriptionId!: string | undefined;
-    originator!: string | undefined;
-    description!: string | undefined;
-    messages!: string | undefined;
-    errors!: string | undefined;
-    statusId!: string;
-    status!: SubscriptionStatus | undefined;
-    transactions!: Transaction[] | undefined;
-    isDeleted!: boolean | undefined;
-    deleterUserId!: number | undefined;
-    deletionTime!: moment.Moment | undefined;
-    lastModificationTime!: moment.Moment | undefined;
-    lastModifierUserId!: number | undefined;
-    creationTime!: moment.Moment | undefined;
-    creatorUserId!: number | undefined;
-    id!: number | undefined;
-
-    constructor(data?: IBillingSubscription) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.tenantId = data["tenantId"];
-            this.userId = data["userId"];
-            this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
-            this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
-            this.fee = data["fee"];
-            this.frequencyString = data["frequencyString"];
-            this.frequency = data["frequency"];
-            this.gatewayName = data["gatewayName"];
-            this.paymentInfoId = data["paymentInfoId"];
-            this.paymentInfo = data["paymentInfo"] ? PaymentInfo.fromJS(data["paymentInfo"]) : <any>undefined;
-            this.gatewaySubscriptionId = data["gatewaySubscriptionId"];
-            this.originator = data["originator"];
-            this.description = data["description"];
-            this.messages = data["messages"];
-            this.errors = data["errors"];
-            this.statusId = data["statusId"];
-            this.status = data["status"] ? SubscriptionStatus.fromJS(data["status"]) : <any>undefined;
-            if (data["transactions"] && data["transactions"].constructor === Array) {
-                this.transactions = [];
-                for (let item of data["transactions"])
-                    this.transactions.push(Transaction.fromJS(item));
-            }
-            this.isDeleted = data["isDeleted"];
-            this.deleterUserId = data["deleterUserId"];
-            this.deletionTime = data["deletionTime"] ? moment(data["deletionTime"].toString()) : <any>undefined;
-            this.lastModificationTime = data["lastModificationTime"] ? moment(data["lastModificationTime"].toString()) : <any>undefined;
-            this.lastModifierUserId = data["lastModifierUserId"];
-            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
-            this.creatorUserId = data["creatorUserId"];
-            this.id = data["id"];
-        }
-    }
-
-    static fromJS(data: any): BillingSubscription {
-        data = typeof data === 'object' ? data : {};
-        let result = new BillingSubscription();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["tenantId"] = this.tenantId;
-        data["userId"] = this.userId;
-        data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
-        data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
-        data["fee"] = this.fee;
-        data["frequencyString"] = this.frequencyString;
-        data["frequency"] = this.frequency;
-        data["gatewayName"] = this.gatewayName;
-        data["paymentInfoId"] = this.paymentInfoId;
-        data["paymentInfo"] = this.paymentInfo ? this.paymentInfo.toJSON() : <any>undefined;
-        data["gatewaySubscriptionId"] = this.gatewaySubscriptionId;
-        data["originator"] = this.originator;
-        data["description"] = this.description;
-        data["messages"] = this.messages;
-        data["errors"] = this.errors;
-        data["statusId"] = this.statusId;
-        data["status"] = this.status ? this.status.toJSON() : <any>undefined;
-        if (this.transactions && this.transactions.constructor === Array) {
-            data["transactions"] = [];
-            for (let item of this.transactions)
-                data["transactions"].push(item.toJSON());
-        }
-        data["isDeleted"] = this.isDeleted;
-        data["deleterUserId"] = this.deleterUserId;
-        data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
-        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
-        data["lastModifierUserId"] = this.lastModifierUserId;
-        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
-        data["creatorUserId"] = this.creatorUserId;
-        data["id"] = this.id;
-        return data; 
-    }
-}
-
-export interface IBillingSubscription {
-    tenantId: number | undefined;
-    userId: number | undefined;
-    startDate: moment.Moment;
-    endDate: moment.Moment | undefined;
-    fee: number;
-    frequencyString: string;
-    frequency: RecurringPaymentFrequency | undefined;
-    gatewayName: string;
-    paymentInfoId: number | undefined;
-    paymentInfo: PaymentInfo | undefined;
-    gatewaySubscriptionId: string | undefined;
-    originator: string | undefined;
-    description: string | undefined;
-    messages: string | undefined;
-    errors: string | undefined;
-    statusId: string;
-    status: SubscriptionStatus | undefined;
-    transactions: Transaction[] | undefined;
-    isDeleted: boolean | undefined;
-    deleterUserId: number | undefined;
-    deletionTime: moment.Moment | undefined;
-    lastModificationTime: moment.Moment | undefined;
-    lastModifierUserId: number | undefined;
-    creationTime: moment.Moment | undefined;
-    creatorUserId: number | undefined;
-    id: number | undefined;
-}
-
-export class SubscriptionStatus implements ISubscriptionStatus {
-    name!: string;
-    billingSubscriptions!: BillingSubscription[] | undefined;
-    isDeleted!: boolean | undefined;
-    deleterUserId!: number | undefined;
-    deletionTime!: moment.Moment | undefined;
-    lastModificationTime!: moment.Moment | undefined;
-    lastModifierUserId!: number | undefined;
-    creationTime!: moment.Moment | undefined;
-    creatorUserId!: number | undefined;
-    id!: string | undefined;
-
-    constructor(data?: ISubscriptionStatus) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.name = data["name"];
-            if (data["billingSubscriptions"] && data["billingSubscriptions"].constructor === Array) {
-                this.billingSubscriptions = [];
-                for (let item of data["billingSubscriptions"])
-                    this.billingSubscriptions.push(BillingSubscription.fromJS(item));
-            }
-            this.isDeleted = data["isDeleted"];
-            this.deleterUserId = data["deleterUserId"];
-            this.deletionTime = data["deletionTime"] ? moment(data["deletionTime"].toString()) : <any>undefined;
-            this.lastModificationTime = data["lastModificationTime"] ? moment(data["lastModificationTime"].toString()) : <any>undefined;
-            this.lastModifierUserId = data["lastModifierUserId"];
-            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
-            this.creatorUserId = data["creatorUserId"];
-            this.id = data["id"];
-        }
-    }
-
-    static fromJS(data: any): SubscriptionStatus {
-        data = typeof data === 'object' ? data : {};
-        let result = new SubscriptionStatus();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["name"] = this.name;
-        if (this.billingSubscriptions && this.billingSubscriptions.constructor === Array) {
-            data["billingSubscriptions"] = [];
-            for (let item of this.billingSubscriptions)
-                data["billingSubscriptions"].push(item.toJSON());
-        }
-        data["isDeleted"] = this.isDeleted;
-        data["deleterUserId"] = this.deleterUserId;
-        data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
-        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
-        data["lastModifierUserId"] = this.lastModifierUserId;
-        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
-        data["creatorUserId"] = this.creatorUserId;
-        data["id"] = this.id;
-        return data; 
-    }
-}
-
-export interface ISubscriptionStatus {
-    name: string;
-    billingSubscriptions: BillingSubscription[] | undefined;
-    isDeleted: boolean | undefined;
-    deleterUserId: number | undefined;
-    deletionTime: moment.Moment | undefined;
-    lastModificationTime: moment.Moment | undefined;
-    lastModifierUserId: number | undefined;
-    creationTime: moment.Moment | undefined;
-    creatorUserId: number | undefined;
-    id: string | undefined;
-}
-
-export class OrderSubscription implements IOrderSubscription {
-    tenantId!: number | undefined;
-    startDate!: moment.Moment;
-    endDate!: moment.Moment | undefined;
-    fee!: number;
-    serviceType!: string | undefined;
-    serviceId!: string | undefined;
-    serviceTypeId!: number | undefined;
-    serviceName!: string | undefined;
-    serviceCapacity!: number | undefined;
-    orderId!: number | undefined;
-    frequencyString!: string | undefined;
-    frequency!: RecurringPaymentFrequency | undefined;
-    trialDayCount!: number | undefined;
-    statusId!: string;
-    isTrial!: boolean | undefined;
-    isLocked!: boolean;
-    hasRecurringBilling!: boolean | undefined;
-    previousOrderSubscriptionId!: number | undefined;
-    lastExpiryNotificationDate!: moment.Moment | undefined;
-    order!: Order | undefined;
-    status!: SubscriptionStatus | undefined;
-    previousOrderSubscription!: OrderSubscription | undefined;
-    orderSubscriptionPayments!: OrderSubscriptionPayment[] | undefined;
-    isDeleted!: boolean | undefined;
-    deleterUserId!: number | undefined;
-    deletionTime!: moment.Moment | undefined;
-    lastModificationTime!: moment.Moment | undefined;
-    lastModifierUserId!: number | undefined;
-    creationTime!: moment.Moment | undefined;
-    creatorUserId!: number | undefined;
-    id!: number | undefined;
-
-    constructor(data?: IOrderSubscription) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.tenantId = data["tenantId"];
-            this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
-            this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
-            this.fee = data["fee"];
-            this.serviceType = data["serviceType"];
-            this.serviceId = data["serviceId"];
-            this.serviceTypeId = data["serviceTypeId"];
-            this.serviceName = data["serviceName"];
-            this.serviceCapacity = data["serviceCapacity"];
-            this.orderId = data["orderId"];
-            this.frequencyString = data["frequencyString"];
-            this.frequency = data["frequency"];
-            this.trialDayCount = data["trialDayCount"];
-            this.statusId = data["statusId"];
-            this.isTrial = data["isTrial"];
-            this.isLocked = data["isLocked"];
-            this.hasRecurringBilling = data["hasRecurringBilling"];
-            this.previousOrderSubscriptionId = data["previousOrderSubscriptionId"];
-            this.lastExpiryNotificationDate = data["lastExpiryNotificationDate"] ? moment(data["lastExpiryNotificationDate"].toString()) : <any>undefined;
-            this.order = data["order"] ? Order.fromJS(data["order"]) : <any>undefined;
-            this.status = data["status"] ? SubscriptionStatus.fromJS(data["status"]) : <any>undefined;
-            this.previousOrderSubscription = data["previousOrderSubscription"] ? OrderSubscription.fromJS(data["previousOrderSubscription"]) : <any>undefined;
-            if (data["orderSubscriptionPayments"] && data["orderSubscriptionPayments"].constructor === Array) {
-                this.orderSubscriptionPayments = [];
-                for (let item of data["orderSubscriptionPayments"])
-                    this.orderSubscriptionPayments.push(OrderSubscriptionPayment.fromJS(item));
-            }
-            this.isDeleted = data["isDeleted"];
-            this.deleterUserId = data["deleterUserId"];
-            this.deletionTime = data["deletionTime"] ? moment(data["deletionTime"].toString()) : <any>undefined;
-            this.lastModificationTime = data["lastModificationTime"] ? moment(data["lastModificationTime"].toString()) : <any>undefined;
-            this.lastModifierUserId = data["lastModifierUserId"];
-            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
-            this.creatorUserId = data["creatorUserId"];
-            this.id = data["id"];
-        }
-    }
-
-    static fromJS(data: any): OrderSubscription {
-        data = typeof data === 'object' ? data : {};
-        let result = new OrderSubscription();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["tenantId"] = this.tenantId;
-        data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
-        data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
-        data["fee"] = this.fee;
-        data["serviceType"] = this.serviceType;
-        data["serviceId"] = this.serviceId;
-        data["serviceTypeId"] = this.serviceTypeId;
-        data["serviceName"] = this.serviceName;
-        data["serviceCapacity"] = this.serviceCapacity;
-        data["orderId"] = this.orderId;
-        data["frequencyString"] = this.frequencyString;
-        data["frequency"] = this.frequency;
-        data["trialDayCount"] = this.trialDayCount;
-        data["statusId"] = this.statusId;
-        data["isTrial"] = this.isTrial;
-        data["isLocked"] = this.isLocked;
-        data["hasRecurringBilling"] = this.hasRecurringBilling;
-        data["previousOrderSubscriptionId"] = this.previousOrderSubscriptionId;
-        data["lastExpiryNotificationDate"] = this.lastExpiryNotificationDate ? this.lastExpiryNotificationDate.toISOString() : <any>undefined;
-        data["order"] = this.order ? this.order.toJSON() : <any>undefined;
-        data["status"] = this.status ? this.status.toJSON() : <any>undefined;
-        data["previousOrderSubscription"] = this.previousOrderSubscription ? this.previousOrderSubscription.toJSON() : <any>undefined;
-        if (this.orderSubscriptionPayments && this.orderSubscriptionPayments.constructor === Array) {
-            data["orderSubscriptionPayments"] = [];
-            for (let item of this.orderSubscriptionPayments)
-                data["orderSubscriptionPayments"].push(item.toJSON());
-        }
-        data["isDeleted"] = this.isDeleted;
-        data["deleterUserId"] = this.deleterUserId;
-        data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
-        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
-        data["lastModifierUserId"] = this.lastModifierUserId;
-        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
-        data["creatorUserId"] = this.creatorUserId;
-        data["id"] = this.id;
-        return data; 
-    }
-}
-
-export interface IOrderSubscription {
-    tenantId: number | undefined;
-    startDate: moment.Moment;
-    endDate: moment.Moment | undefined;
-    fee: number;
-    serviceType: string | undefined;
-    serviceId: string | undefined;
-    serviceTypeId: number | undefined;
-    serviceName: string | undefined;
-    serviceCapacity: number | undefined;
-    orderId: number | undefined;
-    frequencyString: string | undefined;
-    frequency: RecurringPaymentFrequency | undefined;
-    trialDayCount: number | undefined;
-    statusId: string;
-    isTrial: boolean | undefined;
-    isLocked: boolean;
-    hasRecurringBilling: boolean | undefined;
-    previousOrderSubscriptionId: number | undefined;
-    lastExpiryNotificationDate: moment.Moment | undefined;
-    order: Order | undefined;
-    status: SubscriptionStatus | undefined;
-    previousOrderSubscription: OrderSubscription | undefined;
-    orderSubscriptionPayments: OrderSubscriptionPayment[] | undefined;
-    isDeleted: boolean | undefined;
-    deleterUserId: number | undefined;
-    deletionTime: moment.Moment | undefined;
-    lastModificationTime: moment.Moment | undefined;
-    lastModifierUserId: number | undefined;
-    creationTime: moment.Moment | undefined;
-    creatorUserId: number | undefined;
-    id: number | undefined;
-}
-
 export enum InvoiceStatus {
     Draft = "Draft", 
     Final = "Final", 
     Sent = "Sent", 
     Paid = "Paid", 
     Canceled = "Canceled", 
+    PartiallyPaid = "PartiallyPaid", 
 }
 
 export enum InvoiceLineUnit {
@@ -47912,6 +47065,914 @@ export interface IInvoice {
     document: Document | undefined;
     billingAddress: InvoiceAddress | undefined;
     shippingAddress: InvoiceAddress | undefined;
+    isDeleted: boolean | undefined;
+    deleterUserId: number | undefined;
+    deletionTime: moment.Moment | undefined;
+    lastModificationTime: moment.Moment | undefined;
+    lastModifierUserId: number | undefined;
+    creationTime: moment.Moment | undefined;
+    creatorUserId: number | undefined;
+    id: number | undefined;
+}
+
+export enum PaymentTransactionType {
+    _0 = 0, 
+    _1 = 1, 
+    _2 = 2, 
+    _3 = 3, 
+    _4 = 4, 
+    _5 = 5, 
+    _6 = 6, 
+}
+
+export enum PaymentTransactionStatus {
+    _0 = 0, 
+    _1 = 1, 
+    _2 = 2, 
+    _3 = 3, 
+    _4 = 4, 
+    _5 = 5, 
+    _6 = 6, 
+}
+
+export class TransactionLink implements ITransactionLink {
+    tenantId!: number | undefined;
+    linkType!: string;
+    linkRef!: string;
+    transactionId!: number | undefined;
+    transaction!: Transaction | undefined;
+    creationTime!: moment.Moment | undefined;
+    creatorUserId!: number | undefined;
+    id!: number | undefined;
+
+    constructor(data?: ITransactionLink) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.tenantId = data["tenantId"];
+            this.linkType = data["linkType"];
+            this.linkRef = data["linkRef"];
+            this.transactionId = data["transactionId"];
+            this.transaction = data["transaction"] ? Transaction.fromJS(data["transaction"]) : <any>undefined;
+            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
+            this.creatorUserId = data["creatorUserId"];
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): TransactionLink {
+        data = typeof data === 'object' ? data : {};
+        let result = new TransactionLink();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["tenantId"] = this.tenantId;
+        data["linkType"] = this.linkType;
+        data["linkRef"] = this.linkRef;
+        data["transactionId"] = this.transactionId;
+        data["transaction"] = this.transaction ? this.transaction.toJSON() : <any>undefined;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        data["creatorUserId"] = this.creatorUserId;
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface ITransactionLink {
+    tenantId: number | undefined;
+    linkType: string;
+    linkRef: string;
+    transactionId: number | undefined;
+    transaction: Transaction | undefined;
+    creationTime: moment.Moment | undefined;
+    creatorUserId: number | undefined;
+    id: number | undefined;
+}
+
+export class TransactionAction implements ITransactionAction {
+    tenantId!: number | undefined;
+    transactionId!: number | undefined;
+    transaction!: Transaction | undefined;
+    typeString!: string | undefined;
+    type!: PaymentTransactionType | undefined;
+    success!: boolean | undefined;
+    errors!: string | undefined;
+    gatewayTransactionId!: string | undefined;
+    statusString!: string | undefined;
+    status!: PaymentTransactionStatus | undefined;
+    authorizationCode!: string | undefined;
+    responseCode!: string | undefined;
+    responseMessage!: string | undefined;
+    messages!: string | undefined;
+    avsResponseCode!: string | undefined;
+    cvvResponseCode!: string | undefined;
+    gatewayCreationDate!: moment.Moment | undefined;
+    creationTime!: moment.Moment | undefined;
+    creatorUserId!: number | undefined;
+    id!: number | undefined;
+
+    constructor(data?: ITransactionAction) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.tenantId = data["tenantId"];
+            this.transactionId = data["transactionId"];
+            this.transaction = data["transaction"] ? Transaction.fromJS(data["transaction"]) : <any>undefined;
+            this.typeString = data["typeString"];
+            this.type = data["type"];
+            this.success = data["success"];
+            this.errors = data["errors"];
+            this.gatewayTransactionId = data["gatewayTransactionId"];
+            this.statusString = data["statusString"];
+            this.status = data["status"];
+            this.authorizationCode = data["authorizationCode"];
+            this.responseCode = data["responseCode"];
+            this.responseMessage = data["responseMessage"];
+            this.messages = data["messages"];
+            this.avsResponseCode = data["avsResponseCode"];
+            this.cvvResponseCode = data["cvvResponseCode"];
+            this.gatewayCreationDate = data["gatewayCreationDate"] ? moment(data["gatewayCreationDate"].toString()) : <any>undefined;
+            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
+            this.creatorUserId = data["creatorUserId"];
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): TransactionAction {
+        data = typeof data === 'object' ? data : {};
+        let result = new TransactionAction();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["tenantId"] = this.tenantId;
+        data["transactionId"] = this.transactionId;
+        data["transaction"] = this.transaction ? this.transaction.toJSON() : <any>undefined;
+        data["typeString"] = this.typeString;
+        data["type"] = this.type;
+        data["success"] = this.success;
+        data["errors"] = this.errors;
+        data["gatewayTransactionId"] = this.gatewayTransactionId;
+        data["statusString"] = this.statusString;
+        data["status"] = this.status;
+        data["authorizationCode"] = this.authorizationCode;
+        data["responseCode"] = this.responseCode;
+        data["responseMessage"] = this.responseMessage;
+        data["messages"] = this.messages;
+        data["avsResponseCode"] = this.avsResponseCode;
+        data["cvvResponseCode"] = this.cvvResponseCode;
+        data["gatewayCreationDate"] = this.gatewayCreationDate ? this.gatewayCreationDate.toISOString() : <any>undefined;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        data["creatorUserId"] = this.creatorUserId;
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface ITransactionAction {
+    tenantId: number | undefined;
+    transactionId: number | undefined;
+    transaction: Transaction | undefined;
+    typeString: string | undefined;
+    type: PaymentTransactionType | undefined;
+    success: boolean | undefined;
+    errors: string | undefined;
+    gatewayTransactionId: string | undefined;
+    statusString: string | undefined;
+    status: PaymentTransactionStatus | undefined;
+    authorizationCode: string | undefined;
+    responseCode: string | undefined;
+    responseMessage: string | undefined;
+    messages: string | undefined;
+    avsResponseCode: string | undefined;
+    cvvResponseCode: string | undefined;
+    gatewayCreationDate: moment.Moment | undefined;
+    creationTime: moment.Moment | undefined;
+    creatorUserId: number | undefined;
+    id: number | undefined;
+}
+
+export class OrderSubscriptionPayment implements IOrderSubscriptionPayment {
+    tenantId!: number | undefined;
+    orderSubscriptionId!: number | undefined;
+    startDate!: moment.Moment;
+    endDate!: moment.Moment | undefined;
+    status!: string | undefined;
+    transactionId!: number | undefined;
+    billingSubscriptionId!: number | undefined;
+    orderSubscription!: OrderSubscription | undefined;
+    transaction!: Transaction | undefined;
+    billingSubscription!: BillingSubscription | undefined;
+    isDeleted!: boolean | undefined;
+    deleterUserId!: number | undefined;
+    deletionTime!: moment.Moment | undefined;
+    lastModificationTime!: moment.Moment | undefined;
+    lastModifierUserId!: number | undefined;
+    creationTime!: moment.Moment | undefined;
+    creatorUserId!: number | undefined;
+    id!: number | undefined;
+
+    constructor(data?: IOrderSubscriptionPayment) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.tenantId = data["tenantId"];
+            this.orderSubscriptionId = data["orderSubscriptionId"];
+            this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
+            this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
+            this.status = data["status"];
+            this.transactionId = data["transactionId"];
+            this.billingSubscriptionId = data["billingSubscriptionId"];
+            this.orderSubscription = data["orderSubscription"] ? OrderSubscription.fromJS(data["orderSubscription"]) : <any>undefined;
+            this.transaction = data["transaction"] ? Transaction.fromJS(data["transaction"]) : <any>undefined;
+            this.billingSubscription = data["billingSubscription"] ? BillingSubscription.fromJS(data["billingSubscription"]) : <any>undefined;
+            this.isDeleted = data["isDeleted"];
+            this.deleterUserId = data["deleterUserId"];
+            this.deletionTime = data["deletionTime"] ? moment(data["deletionTime"].toString()) : <any>undefined;
+            this.lastModificationTime = data["lastModificationTime"] ? moment(data["lastModificationTime"].toString()) : <any>undefined;
+            this.lastModifierUserId = data["lastModifierUserId"];
+            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
+            this.creatorUserId = data["creatorUserId"];
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): OrderSubscriptionPayment {
+        data = typeof data === 'object' ? data : {};
+        let result = new OrderSubscriptionPayment();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["tenantId"] = this.tenantId;
+        data["orderSubscriptionId"] = this.orderSubscriptionId;
+        data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
+        data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
+        data["status"] = this.status;
+        data["transactionId"] = this.transactionId;
+        data["billingSubscriptionId"] = this.billingSubscriptionId;
+        data["orderSubscription"] = this.orderSubscription ? this.orderSubscription.toJSON() : <any>undefined;
+        data["transaction"] = this.transaction ? this.transaction.toJSON() : <any>undefined;
+        data["billingSubscription"] = this.billingSubscription ? this.billingSubscription.toJSON() : <any>undefined;
+        data["isDeleted"] = this.isDeleted;
+        data["deleterUserId"] = this.deleterUserId;
+        data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
+        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
+        data["lastModifierUserId"] = this.lastModifierUserId;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        data["creatorUserId"] = this.creatorUserId;
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface IOrderSubscriptionPayment {
+    tenantId: number | undefined;
+    orderSubscriptionId: number | undefined;
+    startDate: moment.Moment;
+    endDate: moment.Moment | undefined;
+    status: string | undefined;
+    transactionId: number | undefined;
+    billingSubscriptionId: number | undefined;
+    orderSubscription: OrderSubscription | undefined;
+    transaction: Transaction | undefined;
+    billingSubscription: BillingSubscription | undefined;
+    isDeleted: boolean | undefined;
+    deleterUserId: number | undefined;
+    deletionTime: moment.Moment | undefined;
+    lastModificationTime: moment.Moment | undefined;
+    lastModifierUserId: number | undefined;
+    creationTime: moment.Moment | undefined;
+    creatorUserId: number | undefined;
+    id: number | undefined;
+}
+
+export class Transaction implements ITransaction {
+    tenantId!: number | undefined;
+    userId!: number | undefined;
+    paymentInfoId!: number | undefined;
+    paymentInfo!: PaymentInfo | undefined;
+    invoiceId!: number | undefined;
+    invoice!: Invoice | undefined;
+    ipAddress!: string | undefined;
+    originTransactionId!: number | undefined;
+    originTransaction!: Transaction | undefined;
+    amount!: number | undefined;
+    typeString!: string | undefined;
+    type!: PaymentTransactionType | undefined;
+    success!: boolean | undefined;
+    errors!: string | undefined;
+    gatewayName!: string | undefined;
+    gatewayTransactionId!: string | undefined;
+    gatewayOriginTransactionId!: string | undefined;
+    statusString!: string | undefined;
+    status!: PaymentTransactionStatus | undefined;
+    authorizationCode!: string | undefined;
+    responseCode!: string | undefined;
+    responseMessage!: string | undefined;
+    messages!: string | undefined;
+    avsResponseCode!: string | undefined;
+    cvvResponseCode!: string | undefined;
+    gatewayCreationDate!: moment.Moment | undefined;
+    originator!: string | undefined;
+    description!: string | undefined;
+    billingSubscriptionId!: number | undefined;
+    billingSubscription!: BillingSubscription | undefined;
+    childTransactions!: Transaction[] | undefined;
+    transactionLinks!: TransactionLink[] | undefined;
+    transactionActions!: TransactionAction[] | undefined;
+    orderSubscriptionPayments!: OrderSubscriptionPayment[] | undefined;
+    lastModificationTime!: moment.Moment | undefined;
+    lastModifierUserId!: number | undefined;
+    creationTime!: moment.Moment | undefined;
+    creatorUserId!: number | undefined;
+    id!: number | undefined;
+
+    constructor(data?: ITransaction) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.tenantId = data["tenantId"];
+            this.userId = data["userId"];
+            this.paymentInfoId = data["paymentInfoId"];
+            this.paymentInfo = data["paymentInfo"] ? PaymentInfo.fromJS(data["paymentInfo"]) : <any>undefined;
+            this.invoiceId = data["invoiceId"];
+            this.invoice = data["invoice"] ? Invoice.fromJS(data["invoice"]) : <any>undefined;
+            this.ipAddress = data["ipAddress"];
+            this.originTransactionId = data["originTransactionId"];
+            this.originTransaction = data["originTransaction"] ? Transaction.fromJS(data["originTransaction"]) : <any>undefined;
+            this.amount = data["amount"];
+            this.typeString = data["typeString"];
+            this.type = data["type"];
+            this.success = data["success"];
+            this.errors = data["errors"];
+            this.gatewayName = data["gatewayName"];
+            this.gatewayTransactionId = data["gatewayTransactionId"];
+            this.gatewayOriginTransactionId = data["gatewayOriginTransactionId"];
+            this.statusString = data["statusString"];
+            this.status = data["status"];
+            this.authorizationCode = data["authorizationCode"];
+            this.responseCode = data["responseCode"];
+            this.responseMessage = data["responseMessage"];
+            this.messages = data["messages"];
+            this.avsResponseCode = data["avsResponseCode"];
+            this.cvvResponseCode = data["cvvResponseCode"];
+            this.gatewayCreationDate = data["gatewayCreationDate"] ? moment(data["gatewayCreationDate"].toString()) : <any>undefined;
+            this.originator = data["originator"];
+            this.description = data["description"];
+            this.billingSubscriptionId = data["billingSubscriptionId"];
+            this.billingSubscription = data["billingSubscription"] ? BillingSubscription.fromJS(data["billingSubscription"]) : <any>undefined;
+            if (data["childTransactions"] && data["childTransactions"].constructor === Array) {
+                this.childTransactions = [];
+                for (let item of data["childTransactions"])
+                    this.childTransactions.push(Transaction.fromJS(item));
+            }
+            if (data["transactionLinks"] && data["transactionLinks"].constructor === Array) {
+                this.transactionLinks = [];
+                for (let item of data["transactionLinks"])
+                    this.transactionLinks.push(TransactionLink.fromJS(item));
+            }
+            if (data["transactionActions"] && data["transactionActions"].constructor === Array) {
+                this.transactionActions = [];
+                for (let item of data["transactionActions"])
+                    this.transactionActions.push(TransactionAction.fromJS(item));
+            }
+            if (data["orderSubscriptionPayments"] && data["orderSubscriptionPayments"].constructor === Array) {
+                this.orderSubscriptionPayments = [];
+                for (let item of data["orderSubscriptionPayments"])
+                    this.orderSubscriptionPayments.push(OrderSubscriptionPayment.fromJS(item));
+            }
+            this.lastModificationTime = data["lastModificationTime"] ? moment(data["lastModificationTime"].toString()) : <any>undefined;
+            this.lastModifierUserId = data["lastModifierUserId"];
+            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
+            this.creatorUserId = data["creatorUserId"];
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): Transaction {
+        data = typeof data === 'object' ? data : {};
+        let result = new Transaction();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["tenantId"] = this.tenantId;
+        data["userId"] = this.userId;
+        data["paymentInfoId"] = this.paymentInfoId;
+        data["paymentInfo"] = this.paymentInfo ? this.paymentInfo.toJSON() : <any>undefined;
+        data["invoiceId"] = this.invoiceId;
+        data["invoice"] = this.invoice ? this.invoice.toJSON() : <any>undefined;
+        data["ipAddress"] = this.ipAddress;
+        data["originTransactionId"] = this.originTransactionId;
+        data["originTransaction"] = this.originTransaction ? this.originTransaction.toJSON() : <any>undefined;
+        data["amount"] = this.amount;
+        data["typeString"] = this.typeString;
+        data["type"] = this.type;
+        data["success"] = this.success;
+        data["errors"] = this.errors;
+        data["gatewayName"] = this.gatewayName;
+        data["gatewayTransactionId"] = this.gatewayTransactionId;
+        data["gatewayOriginTransactionId"] = this.gatewayOriginTransactionId;
+        data["statusString"] = this.statusString;
+        data["status"] = this.status;
+        data["authorizationCode"] = this.authorizationCode;
+        data["responseCode"] = this.responseCode;
+        data["responseMessage"] = this.responseMessage;
+        data["messages"] = this.messages;
+        data["avsResponseCode"] = this.avsResponseCode;
+        data["cvvResponseCode"] = this.cvvResponseCode;
+        data["gatewayCreationDate"] = this.gatewayCreationDate ? this.gatewayCreationDate.toISOString() : <any>undefined;
+        data["originator"] = this.originator;
+        data["description"] = this.description;
+        data["billingSubscriptionId"] = this.billingSubscriptionId;
+        data["billingSubscription"] = this.billingSubscription ? this.billingSubscription.toJSON() : <any>undefined;
+        if (this.childTransactions && this.childTransactions.constructor === Array) {
+            data["childTransactions"] = [];
+            for (let item of this.childTransactions)
+                data["childTransactions"].push(item.toJSON());
+        }
+        if (this.transactionLinks && this.transactionLinks.constructor === Array) {
+            data["transactionLinks"] = [];
+            for (let item of this.transactionLinks)
+                data["transactionLinks"].push(item.toJSON());
+        }
+        if (this.transactionActions && this.transactionActions.constructor === Array) {
+            data["transactionActions"] = [];
+            for (let item of this.transactionActions)
+                data["transactionActions"].push(item.toJSON());
+        }
+        if (this.orderSubscriptionPayments && this.orderSubscriptionPayments.constructor === Array) {
+            data["orderSubscriptionPayments"] = [];
+            for (let item of this.orderSubscriptionPayments)
+                data["orderSubscriptionPayments"].push(item.toJSON());
+        }
+        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
+        data["lastModifierUserId"] = this.lastModifierUserId;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        data["creatorUserId"] = this.creatorUserId;
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface ITransaction {
+    tenantId: number | undefined;
+    userId: number | undefined;
+    paymentInfoId: number | undefined;
+    paymentInfo: PaymentInfo | undefined;
+    invoiceId: number | undefined;
+    invoice: Invoice | undefined;
+    ipAddress: string | undefined;
+    originTransactionId: number | undefined;
+    originTransaction: Transaction | undefined;
+    amount: number | undefined;
+    typeString: string | undefined;
+    type: PaymentTransactionType | undefined;
+    success: boolean | undefined;
+    errors: string | undefined;
+    gatewayName: string | undefined;
+    gatewayTransactionId: string | undefined;
+    gatewayOriginTransactionId: string | undefined;
+    statusString: string | undefined;
+    status: PaymentTransactionStatus | undefined;
+    authorizationCode: string | undefined;
+    responseCode: string | undefined;
+    responseMessage: string | undefined;
+    messages: string | undefined;
+    avsResponseCode: string | undefined;
+    cvvResponseCode: string | undefined;
+    gatewayCreationDate: moment.Moment | undefined;
+    originator: string | undefined;
+    description: string | undefined;
+    billingSubscriptionId: number | undefined;
+    billingSubscription: BillingSubscription | undefined;
+    childTransactions: Transaction[] | undefined;
+    transactionLinks: TransactionLink[] | undefined;
+    transactionActions: TransactionAction[] | undefined;
+    orderSubscriptionPayments: OrderSubscriptionPayment[] | undefined;
+    lastModificationTime: moment.Moment | undefined;
+    lastModifierUserId: number | undefined;
+    creationTime: moment.Moment | undefined;
+    creatorUserId: number | undefined;
+    id: number | undefined;
+}
+
+export class BillingSubscription implements IBillingSubscription {
+    tenantId!: number | undefined;
+    userId!: number | undefined;
+    startDate!: moment.Moment;
+    endDate!: moment.Moment | undefined;
+    fee!: number;
+    frequencyString!: string;
+    frequency!: RecurringPaymentFrequency | undefined;
+    gatewayName!: string;
+    paymentInfoId!: number | undefined;
+    paymentInfo!: PaymentInfo | undefined;
+    gatewaySubscriptionId!: string | undefined;
+    originator!: string | undefined;
+    description!: string | undefined;
+    messages!: string | undefined;
+    errors!: string | undefined;
+    statusId!: string;
+    status!: SubscriptionStatus | undefined;
+    transactions!: Transaction[] | undefined;
+    isDeleted!: boolean | undefined;
+    deleterUserId!: number | undefined;
+    deletionTime!: moment.Moment | undefined;
+    lastModificationTime!: moment.Moment | undefined;
+    lastModifierUserId!: number | undefined;
+    creationTime!: moment.Moment | undefined;
+    creatorUserId!: number | undefined;
+    id!: number | undefined;
+
+    constructor(data?: IBillingSubscription) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.tenantId = data["tenantId"];
+            this.userId = data["userId"];
+            this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
+            this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
+            this.fee = data["fee"];
+            this.frequencyString = data["frequencyString"];
+            this.frequency = data["frequency"];
+            this.gatewayName = data["gatewayName"];
+            this.paymentInfoId = data["paymentInfoId"];
+            this.paymentInfo = data["paymentInfo"] ? PaymentInfo.fromJS(data["paymentInfo"]) : <any>undefined;
+            this.gatewaySubscriptionId = data["gatewaySubscriptionId"];
+            this.originator = data["originator"];
+            this.description = data["description"];
+            this.messages = data["messages"];
+            this.errors = data["errors"];
+            this.statusId = data["statusId"];
+            this.status = data["status"] ? SubscriptionStatus.fromJS(data["status"]) : <any>undefined;
+            if (data["transactions"] && data["transactions"].constructor === Array) {
+                this.transactions = [];
+                for (let item of data["transactions"])
+                    this.transactions.push(Transaction.fromJS(item));
+            }
+            this.isDeleted = data["isDeleted"];
+            this.deleterUserId = data["deleterUserId"];
+            this.deletionTime = data["deletionTime"] ? moment(data["deletionTime"].toString()) : <any>undefined;
+            this.lastModificationTime = data["lastModificationTime"] ? moment(data["lastModificationTime"].toString()) : <any>undefined;
+            this.lastModifierUserId = data["lastModifierUserId"];
+            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
+            this.creatorUserId = data["creatorUserId"];
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): BillingSubscription {
+        data = typeof data === 'object' ? data : {};
+        let result = new BillingSubscription();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["tenantId"] = this.tenantId;
+        data["userId"] = this.userId;
+        data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
+        data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
+        data["fee"] = this.fee;
+        data["frequencyString"] = this.frequencyString;
+        data["frequency"] = this.frequency;
+        data["gatewayName"] = this.gatewayName;
+        data["paymentInfoId"] = this.paymentInfoId;
+        data["paymentInfo"] = this.paymentInfo ? this.paymentInfo.toJSON() : <any>undefined;
+        data["gatewaySubscriptionId"] = this.gatewaySubscriptionId;
+        data["originator"] = this.originator;
+        data["description"] = this.description;
+        data["messages"] = this.messages;
+        data["errors"] = this.errors;
+        data["statusId"] = this.statusId;
+        data["status"] = this.status ? this.status.toJSON() : <any>undefined;
+        if (this.transactions && this.transactions.constructor === Array) {
+            data["transactions"] = [];
+            for (let item of this.transactions)
+                data["transactions"].push(item.toJSON());
+        }
+        data["isDeleted"] = this.isDeleted;
+        data["deleterUserId"] = this.deleterUserId;
+        data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
+        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
+        data["lastModifierUserId"] = this.lastModifierUserId;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        data["creatorUserId"] = this.creatorUserId;
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface IBillingSubscription {
+    tenantId: number | undefined;
+    userId: number | undefined;
+    startDate: moment.Moment;
+    endDate: moment.Moment | undefined;
+    fee: number;
+    frequencyString: string;
+    frequency: RecurringPaymentFrequency | undefined;
+    gatewayName: string;
+    paymentInfoId: number | undefined;
+    paymentInfo: PaymentInfo | undefined;
+    gatewaySubscriptionId: string | undefined;
+    originator: string | undefined;
+    description: string | undefined;
+    messages: string | undefined;
+    errors: string | undefined;
+    statusId: string;
+    status: SubscriptionStatus | undefined;
+    transactions: Transaction[] | undefined;
+    isDeleted: boolean | undefined;
+    deleterUserId: number | undefined;
+    deletionTime: moment.Moment | undefined;
+    lastModificationTime: moment.Moment | undefined;
+    lastModifierUserId: number | undefined;
+    creationTime: moment.Moment | undefined;
+    creatorUserId: number | undefined;
+    id: number | undefined;
+}
+
+export class SubscriptionStatus implements ISubscriptionStatus {
+    name!: string;
+    billingSubscriptions!: BillingSubscription[] | undefined;
+    isDeleted!: boolean | undefined;
+    deleterUserId!: number | undefined;
+    deletionTime!: moment.Moment | undefined;
+    lastModificationTime!: moment.Moment | undefined;
+    lastModifierUserId!: number | undefined;
+    creationTime!: moment.Moment | undefined;
+    creatorUserId!: number | undefined;
+    id!: string | undefined;
+
+    constructor(data?: ISubscriptionStatus) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.name = data["name"];
+            if (data["billingSubscriptions"] && data["billingSubscriptions"].constructor === Array) {
+                this.billingSubscriptions = [];
+                for (let item of data["billingSubscriptions"])
+                    this.billingSubscriptions.push(BillingSubscription.fromJS(item));
+            }
+            this.isDeleted = data["isDeleted"];
+            this.deleterUserId = data["deleterUserId"];
+            this.deletionTime = data["deletionTime"] ? moment(data["deletionTime"].toString()) : <any>undefined;
+            this.lastModificationTime = data["lastModificationTime"] ? moment(data["lastModificationTime"].toString()) : <any>undefined;
+            this.lastModifierUserId = data["lastModifierUserId"];
+            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
+            this.creatorUserId = data["creatorUserId"];
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): SubscriptionStatus {
+        data = typeof data === 'object' ? data : {};
+        let result = new SubscriptionStatus();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        if (this.billingSubscriptions && this.billingSubscriptions.constructor === Array) {
+            data["billingSubscriptions"] = [];
+            for (let item of this.billingSubscriptions)
+                data["billingSubscriptions"].push(item.toJSON());
+        }
+        data["isDeleted"] = this.isDeleted;
+        data["deleterUserId"] = this.deleterUserId;
+        data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
+        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
+        data["lastModifierUserId"] = this.lastModifierUserId;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        data["creatorUserId"] = this.creatorUserId;
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface ISubscriptionStatus {
+    name: string;
+    billingSubscriptions: BillingSubscription[] | undefined;
+    isDeleted: boolean | undefined;
+    deleterUserId: number | undefined;
+    deletionTime: moment.Moment | undefined;
+    lastModificationTime: moment.Moment | undefined;
+    lastModifierUserId: number | undefined;
+    creationTime: moment.Moment | undefined;
+    creatorUserId: number | undefined;
+    id: string | undefined;
+}
+
+export class OrderSubscription implements IOrderSubscription {
+    tenantId!: number | undefined;
+    startDate!: moment.Moment;
+    endDate!: moment.Moment | undefined;
+    fee!: number;
+    serviceType!: string | undefined;
+    serviceId!: string | undefined;
+    serviceTypeId!: number | undefined;
+    serviceName!: string | undefined;
+    serviceCapacity!: number | undefined;
+    orderId!: number | undefined;
+    frequencyString!: string | undefined;
+    frequency!: RecurringPaymentFrequency | undefined;
+    trialDayCount!: number | undefined;
+    statusId!: string;
+    isTrial!: boolean | undefined;
+    isLocked!: boolean;
+    hasRecurringBilling!: boolean | undefined;
+    previousOrderSubscriptionId!: number | undefined;
+    lastExpiryNotificationDate!: moment.Moment | undefined;
+    order!: Order | undefined;
+    status!: SubscriptionStatus | undefined;
+    previousOrderSubscription!: OrderSubscription | undefined;
+    orderSubscriptionPayments!: OrderSubscriptionPayment[] | undefined;
+    isDeleted!: boolean | undefined;
+    deleterUserId!: number | undefined;
+    deletionTime!: moment.Moment | undefined;
+    lastModificationTime!: moment.Moment | undefined;
+    lastModifierUserId!: number | undefined;
+    creationTime!: moment.Moment | undefined;
+    creatorUserId!: number | undefined;
+    id!: number | undefined;
+
+    constructor(data?: IOrderSubscription) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.tenantId = data["tenantId"];
+            this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
+            this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
+            this.fee = data["fee"];
+            this.serviceType = data["serviceType"];
+            this.serviceId = data["serviceId"];
+            this.serviceTypeId = data["serviceTypeId"];
+            this.serviceName = data["serviceName"];
+            this.serviceCapacity = data["serviceCapacity"];
+            this.orderId = data["orderId"];
+            this.frequencyString = data["frequencyString"];
+            this.frequency = data["frequency"];
+            this.trialDayCount = data["trialDayCount"];
+            this.statusId = data["statusId"];
+            this.isTrial = data["isTrial"];
+            this.isLocked = data["isLocked"];
+            this.hasRecurringBilling = data["hasRecurringBilling"];
+            this.previousOrderSubscriptionId = data["previousOrderSubscriptionId"];
+            this.lastExpiryNotificationDate = data["lastExpiryNotificationDate"] ? moment(data["lastExpiryNotificationDate"].toString()) : <any>undefined;
+            this.order = data["order"] ? Order.fromJS(data["order"]) : <any>undefined;
+            this.status = data["status"] ? SubscriptionStatus.fromJS(data["status"]) : <any>undefined;
+            this.previousOrderSubscription = data["previousOrderSubscription"] ? OrderSubscription.fromJS(data["previousOrderSubscription"]) : <any>undefined;
+            if (data["orderSubscriptionPayments"] && data["orderSubscriptionPayments"].constructor === Array) {
+                this.orderSubscriptionPayments = [];
+                for (let item of data["orderSubscriptionPayments"])
+                    this.orderSubscriptionPayments.push(OrderSubscriptionPayment.fromJS(item));
+            }
+            this.isDeleted = data["isDeleted"];
+            this.deleterUserId = data["deleterUserId"];
+            this.deletionTime = data["deletionTime"] ? moment(data["deletionTime"].toString()) : <any>undefined;
+            this.lastModificationTime = data["lastModificationTime"] ? moment(data["lastModificationTime"].toString()) : <any>undefined;
+            this.lastModifierUserId = data["lastModifierUserId"];
+            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
+            this.creatorUserId = data["creatorUserId"];
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): OrderSubscription {
+        data = typeof data === 'object' ? data : {};
+        let result = new OrderSubscription();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["tenantId"] = this.tenantId;
+        data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
+        data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
+        data["fee"] = this.fee;
+        data["serviceType"] = this.serviceType;
+        data["serviceId"] = this.serviceId;
+        data["serviceTypeId"] = this.serviceTypeId;
+        data["serviceName"] = this.serviceName;
+        data["serviceCapacity"] = this.serviceCapacity;
+        data["orderId"] = this.orderId;
+        data["frequencyString"] = this.frequencyString;
+        data["frequency"] = this.frequency;
+        data["trialDayCount"] = this.trialDayCount;
+        data["statusId"] = this.statusId;
+        data["isTrial"] = this.isTrial;
+        data["isLocked"] = this.isLocked;
+        data["hasRecurringBilling"] = this.hasRecurringBilling;
+        data["previousOrderSubscriptionId"] = this.previousOrderSubscriptionId;
+        data["lastExpiryNotificationDate"] = this.lastExpiryNotificationDate ? this.lastExpiryNotificationDate.toISOString() : <any>undefined;
+        data["order"] = this.order ? this.order.toJSON() : <any>undefined;
+        data["status"] = this.status ? this.status.toJSON() : <any>undefined;
+        data["previousOrderSubscription"] = this.previousOrderSubscription ? this.previousOrderSubscription.toJSON() : <any>undefined;
+        if (this.orderSubscriptionPayments && this.orderSubscriptionPayments.constructor === Array) {
+            data["orderSubscriptionPayments"] = [];
+            for (let item of this.orderSubscriptionPayments)
+                data["orderSubscriptionPayments"].push(item.toJSON());
+        }
+        data["isDeleted"] = this.isDeleted;
+        data["deleterUserId"] = this.deleterUserId;
+        data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
+        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
+        data["lastModifierUserId"] = this.lastModifierUserId;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        data["creatorUserId"] = this.creatorUserId;
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface IOrderSubscription {
+    tenantId: number | undefined;
+    startDate: moment.Moment;
+    endDate: moment.Moment | undefined;
+    fee: number;
+    serviceType: string | undefined;
+    serviceId: string | undefined;
+    serviceTypeId: number | undefined;
+    serviceName: string | undefined;
+    serviceCapacity: number | undefined;
+    orderId: number | undefined;
+    frequencyString: string | undefined;
+    frequency: RecurringPaymentFrequency | undefined;
+    trialDayCount: number | undefined;
+    statusId: string;
+    isTrial: boolean | undefined;
+    isLocked: boolean;
+    hasRecurringBilling: boolean | undefined;
+    previousOrderSubscriptionId: number | undefined;
+    lastExpiryNotificationDate: moment.Moment | undefined;
+    order: Order | undefined;
+    status: SubscriptionStatus | undefined;
+    previousOrderSubscription: OrderSubscription | undefined;
+    orderSubscriptionPayments: OrderSubscriptionPayment[] | undefined;
     isDeleted: boolean | undefined;
     deleterUserId: number | undefined;
     deletionTime: moment.Moment | undefined;
@@ -59838,6 +59899,141 @@ export interface IGetEmailDataOutput {
     bcc: string[] | undefined;
     body: string | undefined;
     attachments: Attachment[] | undefined;
+}
+
+export class BankCardInput implements IBankCardInput {
+    holderName!: string;
+    cardNumber!: string;
+    expirationMonth!: string;
+    expirationYear!: string;
+    billingAddress!: string | undefined;
+    billingZip!: string;
+    billingCity!: string | undefined;
+    billingStateCode!: string | undefined;
+    billingCountryCode!: string | undefined;
+
+    constructor(data?: IBankCardInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.holderName = data["holderName"];
+            this.cardNumber = data["cardNumber"];
+            this.expirationMonth = data["expirationMonth"];
+            this.expirationYear = data["expirationYear"];
+            this.billingAddress = data["billingAddress"];
+            this.billingZip = data["billingZip"];
+            this.billingCity = data["billingCity"];
+            this.billingStateCode = data["billingStateCode"];
+            this.billingCountryCode = data["billingCountryCode"];
+        }
+    }
+
+    static fromJS(data: any): BankCardInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new BankCardInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["holderName"] = this.holderName;
+        data["cardNumber"] = this.cardNumber;
+        data["expirationMonth"] = this.expirationMonth;
+        data["expirationYear"] = this.expirationYear;
+        data["billingAddress"] = this.billingAddress;
+        data["billingZip"] = this.billingZip;
+        data["billingCity"] = this.billingCity;
+        data["billingStateCode"] = this.billingStateCode;
+        data["billingCountryCode"] = this.billingCountryCode;
+        return data; 
+    }
+}
+
+export interface IBankCardInput {
+    holderName: string;
+    cardNumber: string;
+    expirationMonth: string;
+    expirationYear: string;
+    billingAddress: string | undefined;
+    billingZip: string;
+    billingCity: string | undefined;
+    billingStateCode: string | undefined;
+    billingCountryCode: string | undefined;
+}
+
+export class AddBankCardPaymentInput implements IAddBankCardPaymentInput {
+    invoiceId!: number;
+    date!: moment.Moment | undefined;
+    description!: string | undefined;
+    orderStage!: string | undefined;
+    amount!: number | undefined;
+    gatewayName!: string | undefined;
+    gatewayTransactionId!: string | undefined;
+    bankCardInfo!: BankCardInput;
+
+    constructor(data?: IAddBankCardPaymentInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+        if (!data) {
+            this.bankCardInfo = new BankCardInput();
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.invoiceId = data["invoiceId"];
+            this.date = data["date"] ? moment(data["date"].toString()) : <any>undefined;
+            this.description = data["description"];
+            this.orderStage = data["orderStage"];
+            this.amount = data["amount"];
+            this.gatewayName = data["gatewayName"];
+            this.gatewayTransactionId = data["gatewayTransactionId"];
+            this.bankCardInfo = data["bankCardInfo"] ? BankCardInput.fromJS(data["bankCardInfo"]) : new BankCardInput();
+        }
+    }
+
+    static fromJS(data: any): AddBankCardPaymentInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new AddBankCardPaymentInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["invoiceId"] = this.invoiceId;
+        data["date"] = this.date ? this.date.toISOString() : <any>undefined;
+        data["description"] = this.description;
+        data["orderStage"] = this.orderStage;
+        data["amount"] = this.amount;
+        data["gatewayName"] = this.gatewayName;
+        data["gatewayTransactionId"] = this.gatewayTransactionId;
+        data["bankCardInfo"] = this.bankCardInfo ? this.bankCardInfo.toJSON() : <any>undefined;
+        return data; 
+    }
+}
+
+export interface IAddBankCardPaymentInput {
+    invoiceId: number;
+    date: moment.Moment | undefined;
+    description: string | undefined;
+    orderStage: string | undefined;
+    amount: number | undefined;
+    gatewayName: string | undefined;
+    gatewayTransactionId: string | undefined;
+    bankCardInfo: BankCardInput;
 }
 
 export class RequestKBAInput implements IRequestKBAInput {
