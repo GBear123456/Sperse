@@ -1,6 +1,7 @@
 :host {
     display: block;
     height: calc(100vh - 75px);
+    background: #fff;
 
     .iframe {
         @media (min-width: 960px) {
@@ -24,12 +25,20 @@
         border: none;
     }
 
+
+    .get-access,
+    .what-codebreaker-is,
+    .learn-more {
+        padding: 0 67px;
+    }
+
     .get-access {
+        display: flex;
         background: url("../../../assets/common/images/bank-code/codebreaker-ai.png");
         .content {
             max-width: 60%;
             h1 {
-                font-family: 'AvianoSans-Reg' !important;
+                font-family: 'AvianoSans-Bol' !important;
                 font-size: 44px;
                 font-weight: 900;
                 letter-spacing: -0.88px;
@@ -37,44 +46,54 @@
             }
             h2 {
                 font-family: 'AvianoSans-Reg' !important;
+                text-transform: uppercase;
                 font-size: 22px;
                 font-weight: 700;
                 line-height: 1.23;
                 letter-spacing: -0.44px;
                 color: #000000;
+                margin-bottom: 33px;
             }
-            button {
-                font-family: 'AvianoSans-Reg' !important;
-                font-size: 21px;
-                font-weight: 900;
-                text-align: center;
-                color: #ffffff;
-                background-color: #ac1f22;
-            }
-            p {
+            .price-block {
                 font-family: 'IBM Plex Sans';
                 font-size: 12px;
                 line-height: 1.5;
                 letter-spacing: -0.24px;
                 color: #7a7979;
-                &.price {
-                    text-transform: uppercase;
-                    font-family: 'AvianoSans-Reg' !important;
-                    font-size: 18px;
-                    letter-spacing: -0.36px;
-                    &.bold {
-                        font-size: 30px;
-                        font-weight: 900;
-                        letter-spacing: -0.6px;
-                        color: #000000;
+                .price {
+                    margin-bottom: 0;
+                    margin-top: 37px;
+                    line-height: 22px;
+                    span {
+                        font-family: 'AvianoSans-Reg' !important;
+                        font-size: 18px;
+                        letter-spacing: -0.36px;
+                        &.bold {
+                            font-size: 30px;
+                            font-weight: 900;
+                            letter-spacing: -0.6px;
+                            color: #000000;
+                            font-family: 'AvianoSans-Bol' !important;
+                        }
+                        &.per-month {
+                            text-transform: uppercase;
+                        }
                     }
                 }
             }
+        }
+
+        @media (min-width: 768px) {
+            height: 550px;
+            padding-top: 100px;
         }
     }
 
     .what-codebreaker-is {
         display: flex;
+        align-items: center;
+        padding-top: 27px;
+        padding-bottom: 88px;
         .description {
             margin-left: 80px;
             h2 {
@@ -96,12 +115,15 @@
 
     .learn-more {
         background-color: #104779;
+        padding-top: 57px;
+        padding-bottom: 57px;
         h2 {
             font-family: 'AvianoSans-Reg' !important;
             font-size: 26px;
             font-weight: 900;
             letter-spacing: -0.52px;
             color: #ffffff;
+            margin-bottom: 15px;
         }
         p {
             opacity: 0.7;
@@ -111,21 +133,22 @@
             line-height: 1.44;
             letter-spacing: normal;
             color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 28px;
         }
         button {
-            font-family: 'AvianoSans-Reg' !important;
+            font-family: 'AvianoSans-Bol' !important;
             font-size: 16px;
             font-weight: 900;
             letter-spacing: 0.5px;
             text-align: center;
             color: #ac1f22;
             background-color: #ffffff;
+            padding: 10px 40px;
         }
     }
 
-    .get-access,
-    .what-codebreaker-is,
-    .learn-more {
-        padding: 0 67px;
+    subscription {
+        padding-top: 30px;
     }
+
 }
