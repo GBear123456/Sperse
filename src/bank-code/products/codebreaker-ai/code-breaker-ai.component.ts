@@ -1,5 +1,4 @@
-import { ChangeDetectionStrategy, Component, Inject, OnDestroy, OnInit } from '@angular/core';
-import { DOCUMENT } from '@angular/common';
+import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
 
 @Component({
     selector: 'code-breaker-ai',
@@ -9,17 +8,11 @@ import { DOCUMENT } from '@angular/common';
 })
 export class CodeBreakerAiComponent implements OnInit, OnDestroy {
     hasCrmCustomersPermission = false;
-    constructor(
-        @Inject(DOCUMENT) private document
-    ) {}
+    constructor() {}
 
-    ngOnInit(): void {
-        this.document.body.classList.add('overflow-hidden');
-    }
+    ngOnInit(): void {}
 
     getAccess() {}
 
-    ngOnDestroy() {
-        this.document.body.classList.remove('overflow-hidden');
-    }
+    ngOnDestroy() {}
 }

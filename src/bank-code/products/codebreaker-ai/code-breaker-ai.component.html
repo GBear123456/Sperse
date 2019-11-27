@@ -1,14 +1,12 @@
-<iframe *ngIf="hasCrmCustomersPermission; else default"
-        id="theFrame"
-        src="https://v5.bankcode.pro"
-        frameborder="0" >
-</iframe>
+<div class="iframe" *ngIf="hasCrmCustomersPermission; else default">
+    <iframe id="theFrame" src="https://v5.bankcode.pro" frameborder="0"></iframe>
+</div>
 <ng-template #default>
     <div class="get-access">
         <div class="content">
             <h1>Codebreaker AI</h1>
             <h2>Accurately predict buying behavior in nanoseconds</h2>
-            <button (click)="getAccess()">Get access now!</button>
+            <button class="button" (click)="getAccess()">Get access now!</button>
             <p class="price">Only <span class="bold">$59</span><span class="per-month"></span></p>
             <p class="description">($59 per month bundled with B.A.N.K Pass)</p>
         </div>

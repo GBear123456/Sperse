@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 
 @Component({
     selector: 'subscription',
@@ -6,5 +6,7 @@ import { Component } from '@angular/core';
     styleUrls: ['./subscription.component.less']
 })
 export class SubscriptionComponent {
+    @Input() pricePerMonth = 59;
+    @Input() annualSave = 228;
     constructor() {}
 }
