@@ -21,6 +21,7 @@ import { PhoneFormatModule } from '@shared/common/pipes/phone-format/phone-forma
 import { DxTextBoxModule } from '@root/node_modules/devextreme-angular';
 import { LoadingSpinnerModule } from '@app/shared/common/loading-spinner/loading-spinner.module';
 import { BankCodeLayoutModule } from '@root/bank-code/shared/layout/bank-code-layout.module';
+import { SubscriptionComponent } from '@root/bank-code/products/shared/subscription.component/subscription.component';
 
 @NgModule({
     imports: [
@@ -42,7 +43,8 @@ import { BankCodeLayoutModule } from '@root/bank-code/shared/layout/bank-code-la
         BankGearComponent,
         BankPassComponent,
         BankTrainerComponent,
-        BankVaultComponent
+        BankVaultComponent,
+        SubscriptionComponent
     ]
 })
 export class ProductsModule {}

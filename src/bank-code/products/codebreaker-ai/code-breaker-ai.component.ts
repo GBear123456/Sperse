@@ -1,5 +1,4 @@
-import {ChangeDetectionStrategy, Component, Injector, OnDestroy, OnInit} from '@angular/core';
-import {AppComponentBase} from '@shared/common/app-component-base';
+import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
 
 @Component({
     selector: 'code-breaker-ai',
@@ -7,19 +6,13 @@ import {AppComponentBase} from '@shared/common/app-component-base';
     styleUrls: ['./code-breaker-ai.component.less'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class CodeBreakerAiComponent extends AppComponentBase implements OnInit, OnDestroy {
+export class CodeBreakerAiComponent implements OnInit, OnDestroy {
+    hasCrmCustomersPermission = false;
+    constructor() {}
 
-    constructor(
-        injector: Injector
-    ) {
-        super(injector);
-    }
+    ngOnInit(): void {}
 
-    ngOnInit(): void {
-        this.getRootComponent().overflowHidden(true);
-    }
+    getAccess() {}
 
-    ngOnDestroy() {
-        this.getRootComponent().overflowHidden();
-    }
+    ngOnDestroy() {}
 }

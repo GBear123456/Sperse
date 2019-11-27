@@ -193,18 +193,18 @@ export class CreateInvoiceDialogComponent implements OnInit {
         let invoice = this.data.invoice;
         if (invoice) {
             this.modalDialog.startLoading();
-            this.invoiceId = invoice.Id;
-            this.invoiceNo = invoice.Number;
+            this.invoiceId = invoice.InvoiceId;
+            this.invoiceNo = invoice.InvoiceNumber;
             this.orderId = invoice.OrderId;
-            this.status = invoice.Status;
-            this.date = DateHelper.addTimezoneOffset(new Date(invoice.Date), true);
-            this.dueDate = invoice.DueDate;
+            this.status = invoice.InvoiceStatus;
+            this.date = DateHelper.addTimezoneOffset(new Date(invoice.InvoiceDate), true);
+            this.dueDate = invoice.InvoiceDueDate;
             this.contactId = invoice.ContactId;
             this.initOrderDataSource();
             this.disabledForUpdate = [InvoiceStatus.Draft, InvoiceStatus.Final].indexOf(this.status) < 0;
             if (this.disabledForUpdate)
                 this.buttons[0].disabled = this.disabledForUpdate;
-            this.invoiceProxy.getInvoiceInfo(invoice.Id)
+            this.invoiceProxy.getInvoiceInfo(invoice.InvoiceId)
                 .pipe(finalize(() => this.modalDialog.finishLoading()))
                 .subscribe((res) => {
                     this.subTotal =
@@ -528,7 +528,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
         this.total =
         this.balance = 0;
         this.lines.forEach(line => {
-            let total = line['quantity'] * line['rate'];
+            let total = line['total'];
             if (total)
                 this.subTotal =
                 this.total =

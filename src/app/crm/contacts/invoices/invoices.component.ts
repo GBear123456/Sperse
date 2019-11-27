@@ -44,7 +44,7 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
 
     private actionRecordData;
     private settings = new InvoiceSettings();
-    private readonly dataSourceURI = 'Order';
+    private readonly dataSourceURI = 'OrderInvoices';
     private filters: FilterModel[];
     private formatting = AppConsts.formatting;
     invoiceStatus = InvoiceStatus;   
@@ -96,7 +96,7 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
             requireTotalCount: true,
             filter: [ 'ContactId', '=', this.contactId],
             store: {
-                key: 'Id',
+                key: 'Key',
                 type: 'odata',
                 url: this.getODataUrl(this.dataSourceURI),
                 version: AppConsts.ODataVersion,
@@ -146,9 +146,9 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
                 if (event.event.target.closest('.dx-link.dx-link-edit')) {
                     this.markAsPaidDisabled = false;
                     this.resendInvoiceDisabled = 
-                    this.markAsDraftDisabled = [InvoiceStatus.Final, InvoiceStatus.Canceled].indexOf(event.data.Status) < 0;
-                    this.markAsCancelledDisabled = event.data.Status != InvoiceStatus.Sent;
-                    this.deleteDisabled = [InvoiceStatus.Paid, InvoiceStatus.PartiallyPaid, InvoiceStatus.Sent].indexOf(event.data.Status) >= 0;
+                    this.markAsDraftDisabled = [InvoiceStatus.Final, InvoiceStatus.Canceled].indexOf(event.data.InvoiceStatus) < 0;
+                    this.markAsCancelledDisabled = event.data.InvoiceStatus != InvoiceStatus.Sent;
+                    this.deleteDisabled = [InvoiceStatus.Paid, InvoiceStatus.PartiallyPaid, InvoiceStatus.Sent].indexOf(event.data.InvoiceStatus) >= 0;
 
                     this.actionRecordData = event.data;
                     this.showActionsMenu(event.event.target);
@@ -159,11 +159,11 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
 
     deleteInvoice() {
         this.message.confirm(
-            this.l('InvoiceDeleteWarningMessage', this.actionRecordData.Number),
+            this.l('InvoiceDeleteWarningMessage', this.actionRecordData.InvoiceNumber),
             isConfirmed => {
                 if (isConfirmed) {
                     this.startLoading(true);
-                    this.invoiceService.deleteInvoice(this.actionRecordData.Id).pipe(
+                    this.invoiceService.deleteInvoice(this.actionRecordData.InvoiceId).pipe(
                         finalize(() => this.finishLoading(true))
                     ).subscribe(() => {
                         this.dataGrid.instance.refresh();
@@ -190,7 +190,7 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
 
     sendInvoice() {
         this.startLoading(true);
-        this.invoiceService.getEmailData(undefined, this.actionRecordData.Id).pipe(
+        this.invoiceService.getEmailData(undefined, this.actionRecordData.InvoiceId).pipe(
             finalize(() => this.finishLoading(true)),
             switchMap(data => {
                 data['contactId'] = this.contactId;
@@ -211,7 +211,7 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
 
     updateStatus(newStatus: InvoiceStatus) {
         this.startLoading(true);
-        this.invoicesService.updateStatus(this.actionRecordData.Id, newStatus).pipe(
+        this.invoicesService.updateStatus(this.actionRecordData.InvoiceId, newStatus).pipe(
             finalize(() => this.finishLoading(true))
         ).subscribe(() => this.invalidate());
     }
