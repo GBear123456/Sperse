@@ -48339,7 +48339,7 @@ export class Order implements IOrder {
     stageId!: number | undefined;
     sortOrder!: number | undefined;
     leadId!: number | undefined;
-    date!: moment.Moment | undefined;
+    orderDate!: moment.Moment | undefined;
     dateProcessed!: moment.Moment | undefined;
     amount!: number | undefined;
     systemType!: string | undefined;
@@ -48384,7 +48384,7 @@ export class Order implements IOrder {
             this.stageId = data["stageId"];
             this.sortOrder = data["sortOrder"];
             this.leadId = data["leadId"];
-            this.date = data["date"] ? moment(data["date"].toString()) : <any>undefined;
+            this.orderDate = data["orderDate"] ? moment(data["orderDate"].toString()) : <any>undefined;
             this.dateProcessed = data["dateProcessed"] ? moment(data["dateProcessed"].toString()) : <any>undefined;
             this.amount = data["amount"];
             this.systemType = data["systemType"];
@@ -48445,7 +48445,7 @@ export class Order implements IOrder {
         data["stageId"] = this.stageId;
         data["sortOrder"] = this.sortOrder;
         data["leadId"] = this.leadId;
-        data["date"] = this.date ? this.date.toISOString() : <any>undefined;
+        data["orderDate"] = this.orderDate ? this.orderDate.toISOString() : <any>undefined;
         data["dateProcessed"] = this.dateProcessed ? this.dateProcessed.toISOString() : <any>undefined;
         data["amount"] = this.amount;
         data["systemType"] = this.systemType;
@@ -48499,7 +48499,7 @@ export interface IOrder {
     stageId: number | undefined;
     sortOrder: number | undefined;
     leadId: number | undefined;
-    date: moment.Moment | undefined;
+    orderDate: moment.Moment | undefined;
     dateProcessed: moment.Moment | undefined;
     amount: number | undefined;
     systemType: string | undefined;
