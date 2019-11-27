@@ -511,7 +511,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
         this.total =
         this.balance = 0;
         this.lines.forEach(line => {
-            let total = line['quantity'] * line['rate'];
+            let total = line['total'];
             if (total)
                 this.subTotal =
                 this.total =
