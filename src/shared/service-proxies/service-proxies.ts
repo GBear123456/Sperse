@@ -46828,12 +46828,14 @@ export class InvoiceAddress implements IInvoiceAddress {
     zip!: string | undefined;
     address1!: string | undefined;
     address2!: string | undefined;
+    firstName!: string | undefined;
+    lastName!: string | undefined;
     company!: string | undefined;
+    email!: string | undefined;
+    phone!: string | undefined;
     contact!: Contact | undefined;
     country!: Country | undefined;
     state!: CountryState | undefined;
-    lastModificationTime!: moment.Moment | undefined;
-    lastModifierUserId!: number | undefined;
     creationTime!: moment.Moment | undefined;
     creatorUserId!: number | undefined;
     id!: number | undefined;
@@ -46857,12 +46859,14 @@ export class InvoiceAddress implements IInvoiceAddress {
             this.zip = data["zip"];
             this.address1 = data["address1"];
             this.address2 = data["address2"];
+            this.firstName = data["firstName"];
+            this.lastName = data["lastName"];
             this.company = data["company"];
+            this.email = data["email"];
+            this.phone = data["phone"];
             this.contact = data["contact"] ? Contact.fromJS(data["contact"]) : <any>undefined;
             this.country = data["country"] ? Country.fromJS(data["country"]) : <any>undefined;
             this.state = data["state"] ? CountryState.fromJS(data["state"]) : <any>undefined;
-            this.lastModificationTime = data["lastModificationTime"] ? moment(data["lastModificationTime"].toString()) : <any>undefined;
-            this.lastModifierUserId = data["lastModifierUserId"];
             this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
             this.creatorUserId = data["creatorUserId"];
             this.id = data["id"];
@@ -46886,12 +46890,14 @@ export class InvoiceAddress implements IInvoiceAddress {
         data["zip"] = this.zip;
         data["address1"] = this.address1;
         data["address2"] = this.address2;
+        data["firstName"] = this.firstName;
+        data["lastName"] = this.lastName;
         data["company"] = this.company;
+        data["email"] = this.email;
+        data["phone"] = this.phone;
         data["contact"] = this.contact ? this.contact.toJSON() : <any>undefined;
         data["country"] = this.country ? this.country.toJSON() : <any>undefined;
         data["state"] = this.state ? this.state.toJSON() : <any>undefined;
-        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
-        data["lastModifierUserId"] = this.lastModifierUserId;
         data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
         data["creatorUserId"] = this.creatorUserId;
         data["id"] = this.id;
@@ -46908,12 +46914,14 @@ export interface IInvoiceAddress {
     zip: string | undefined;
     address1: string | undefined;
     address2: string | undefined;
+    firstName: string | undefined;
+    lastName: string | undefined;
     company: string | undefined;
+    email: string | undefined;
+    phone: string | undefined;
     contact: Contact | undefined;
     country: Country | undefined;
     state: CountryState | undefined;
-    lastModificationTime: moment.Moment | undefined;
-    lastModifierUserId: number | undefined;
     creationTime: moment.Moment | undefined;
     creatorUserId: number | undefined;
     id: number | undefined;
@@ -59046,7 +59054,11 @@ export class InvoiceAddressInput implements IInvoiceAddressInput {
     zip!: string | undefined;
     address1!: string;
     address2!: string | undefined;
+    firstName!: string | undefined;
+    lastName!: string | undefined;
     company!: string | undefined;
+    email!: string | undefined;
+    phone!: string | undefined;
 
     constructor(data?: IInvoiceAddressInput) {
         if (data) {
@@ -59065,7 +59077,11 @@ export class InvoiceAddressInput implements IInvoiceAddressInput {
             this.zip = data["zip"];
             this.address1 = data["address1"];
             this.address2 = data["address2"];
+            this.firstName = data["firstName"];
+            this.lastName = data["lastName"];
             this.company = data["company"];
+            this.email = data["email"];
+            this.phone = data["phone"];
         }
     }
 
@@ -59084,7 +59100,11 @@ export class InvoiceAddressInput implements IInvoiceAddressInput {
         data["zip"] = this.zip;
         data["address1"] = this.address1;
         data["address2"] = this.address2;
+        data["firstName"] = this.firstName;
+        data["lastName"] = this.lastName;
         data["company"] = this.company;
+        data["email"] = this.email;
+        data["phone"] = this.phone;
         return data; 
     }
 }
@@ -59096,7 +59116,11 @@ export interface IInvoiceAddressInput {
     zip: string | undefined;
     address1: string;
     address2: string | undefined;
+    firstName: string | undefined;
+    lastName: string | undefined;
     company: string | undefined;
+    email: string | undefined;
+    phone: string | undefined;
 }
 
 export class CreateInvoiceLineInput implements ICreateInvoiceLineInput {
@@ -59160,14 +59184,14 @@ export class CreateInvoiceInput implements ICreateInvoiceInput {
     orderId!: number | undefined;
     orderNumber!: string | undefined;
     leadId!: number | undefined;
-    discountTotal!: number | undefined;
-    shippingTotal!: number | undefined;
-    taxTotal!: number | undefined;
     status!: InvoiceStatus;
     number!: string | undefined;
     date!: moment.Moment;
     dueDate!: moment.Moment;
     grandTotal!: number;
+    discountTotal!: number | undefined;
+    shippingTotal!: number | undefined;
+    taxTotal!: number | undefined;
     billingAddress!: InvoiceAddressInput;
     shippingAddress!: InvoiceAddressInput;
     description!: string | undefined;
@@ -59193,14 +59217,14 @@ export class CreateInvoiceInput implements ICreateInvoiceInput {
             this.orderId = data["orderId"];
             this.orderNumber = data["orderNumber"];
             this.leadId = data["leadId"];
-            this.discountTotal = data["discountTotal"];
-            this.shippingTotal = data["shippingTotal"];
-            this.taxTotal = data["taxTotal"];
             this.status = data["status"];
             this.number = data["number"];
             this.date = data["date"] ? moment(data["date"].toString()) : <any>undefined;
             this.dueDate = data["dueDate"] ? moment(data["dueDate"].toString()) : <any>undefined;
             this.grandTotal = data["grandTotal"];
+            this.discountTotal = data["discountTotal"];
+            this.shippingTotal = data["shippingTotal"];
+            this.taxTotal = data["taxTotal"];
             this.billingAddress = data["billingAddress"] ? InvoiceAddressInput.fromJS(data["billingAddress"]) : new InvoiceAddressInput();
             this.shippingAddress = data["shippingAddress"] ? InvoiceAddressInput.fromJS(data["shippingAddress"]) : new InvoiceAddressInput();
             this.description = data["description"];
@@ -59226,14 +59250,14 @@ export class CreateInvoiceInput implements ICreateInvoiceInput {
         data["orderId"] = this.orderId;
         data["orderNumber"] = this.orderNumber;
         data["leadId"] = this.leadId;
-        data["discountTotal"] = this.discountTotal;
-        data["shippingTotal"] = this.shippingTotal;
-        data["taxTotal"] = this.taxTotal;
         data["status"] = this.status;
         data["number"] = this.number;
         data["date"] = this.date ? this.date.toISOString() : <any>undefined;
         data["dueDate"] = this.dueDate ? this.dueDate.toISOString() : <any>undefined;
         data["grandTotal"] = this.grandTotal;
+        data["discountTotal"] = this.discountTotal;
+        data["shippingTotal"] = this.shippingTotal;
+        data["taxTotal"] = this.taxTotal;
         data["billingAddress"] = this.billingAddress ? this.billingAddress.toJSON() : <any>undefined;
         data["shippingAddress"] = this.shippingAddress ? this.shippingAddress.toJSON() : <any>undefined;
         data["description"] = this.description;
@@ -59252,14 +59276,14 @@ export interface ICreateInvoiceInput {
     orderId: number | undefined;
     orderNumber: string | undefined;
     leadId: number | undefined;
-    discountTotal: number | undefined;
-    shippingTotal: number | undefined;
-    taxTotal: number | undefined;
     status: InvoiceStatus;
     number: string | undefined;
     date: moment.Moment;
     dueDate: moment.Moment;
     grandTotal: number;
+    discountTotal: number | undefined;
+    shippingTotal: number | undefined;
+    taxTotal: number | undefined;
     billingAddress: InvoiceAddressInput;
     shippingAddress: InvoiceAddressInput;
     description: string | undefined;
@@ -59274,7 +59298,11 @@ export class InvoiceAddressInfo implements IInvoiceAddressInfo {
     zip!: string | undefined;
     address1!: string | undefined;
     address2!: string | undefined;
+    firstName!: string | undefined;
+    lastName!: string | undefined;
     company!: string | undefined;
+    email!: string | undefined;
+    phone!: string | undefined;
 
     constructor(data?: IInvoiceAddressInfo) {
         if (data) {
@@ -59293,7 +59321,11 @@ export class InvoiceAddressInfo implements IInvoiceAddressInfo {
             this.zip = data["zip"];
             this.address1 = data["address1"];
             this.address2 = data["address2"];
+            this.firstName = data["firstName"];
+            this.lastName = data["lastName"];
             this.company = data["company"];
+            this.email = data["email"];
+            this.phone = data["phone"];
         }
     }
 
@@ -59312,7 +59344,11 @@ export class InvoiceAddressInfo implements IInvoiceAddressInfo {
         data["zip"] = this.zip;
         data["address1"] = this.address1;
         data["address2"] = this.address2;
+        data["firstName"] = this.firstName;
+        data["lastName"] = this.lastName;
         data["company"] = this.company;
+        data["email"] = this.email;
+        data["phone"] = this.phone;
         return data; 
     }
 }
@@ -59324,7 +59360,11 @@ export interface IInvoiceAddressInfo {
     zip: string | undefined;
     address1: string | undefined;
     address2: string | undefined;
+    firstName: string | undefined;
+    lastName: string | undefined;
     company: string | undefined;
+    email: string | undefined;
+    phone: string | undefined;
 }
 
 export class InvoiceLineInfo implements IInvoiceLineInfo {
@@ -59395,6 +59435,9 @@ export class InvoiceInfo implements IInvoiceInfo {
     date!: moment.Moment | undefined;
     dueDate!: moment.Moment | undefined;
     grandTotal!: number | undefined;
+    discountTotal!: number | undefined;
+    shippingTotal!: number | undefined;
+    taxTotal!: number | undefined;
     billingAddress!: InvoiceAddressInfo | undefined;
     shippingAddress!: InvoiceAddressInfo | undefined;
     description!: string | undefined;
@@ -59419,6 +59462,9 @@ export class InvoiceInfo implements IInvoiceInfo {
             this.date = data["date"] ? moment(data["date"].toString()) : <any>undefined;
             this.dueDate = data["dueDate"] ? moment(data["dueDate"].toString()) : <any>undefined;
             this.grandTotal = data["grandTotal"];
+            this.discountTotal = data["discountTotal"];
+            this.shippingTotal = data["shippingTotal"];
+            this.taxTotal = data["taxTotal"];
             this.billingAddress = data["billingAddress"] ? InvoiceAddressInfo.fromJS(data["billingAddress"]) : <any>undefined;
             this.shippingAddress = data["shippingAddress"] ? InvoiceAddressInfo.fromJS(data["shippingAddress"]) : <any>undefined;
             this.description = data["description"];
@@ -59447,6 +59493,9 @@ export class InvoiceInfo implements IInvoiceInfo {
         data["date"] = this.date ? this.date.toISOString() : <any>undefined;
         data["dueDate"] = this.dueDate ? this.dueDate.toISOString() : <any>undefined;
         data["grandTotal"] = this.grandTotal;
+        data["discountTotal"] = this.discountTotal;
+        data["shippingTotal"] = this.shippingTotal;
+        data["taxTotal"] = this.taxTotal;
         data["billingAddress"] = this.billingAddress ? this.billingAddress.toJSON() : <any>undefined;
         data["shippingAddress"] = this.shippingAddress ? this.shippingAddress.toJSON() : <any>undefined;
         data["description"] = this.description;
@@ -59468,6 +59517,9 @@ export interface IInvoiceInfo {
     date: moment.Moment | undefined;
     dueDate: moment.Moment | undefined;
     grandTotal: number | undefined;
+    discountTotal: number | undefined;
+    shippingTotal: number | undefined;
+    taxTotal: number | undefined;
     billingAddress: InvoiceAddressInfo | undefined;
     shippingAddress: InvoiceAddressInfo | undefined;
     description: string | undefined;
@@ -59542,6 +59594,9 @@ export class UpdateInvoiceInput implements IUpdateInvoiceInput {
     date!: moment.Moment;
     dueDate!: moment.Moment;
     grandTotal!: number;
+    discountTotal!: number | undefined;
+    shippingTotal!: number | undefined;
+    taxTotal!: number | undefined;
     billingAddress!: InvoiceAddressInput;
     shippingAddress!: InvoiceAddressInput;
     description!: string | undefined;
@@ -59569,6 +59624,9 @@ export class UpdateInvoiceInput implements IUpdateInvoiceInput {
             this.date = data["date"] ? moment(data["date"].toString()) : <any>undefined;
             this.dueDate = data["dueDate"] ? moment(data["dueDate"].toString()) : <any>undefined;
             this.grandTotal = data["grandTotal"];
+            this.discountTotal = data["discountTotal"];
+            this.shippingTotal = data["shippingTotal"];
+            this.taxTotal = data["taxTotal"];
             this.billingAddress = data["billingAddress"] ? InvoiceAddressInput.fromJS(data["billingAddress"]) : new InvoiceAddressInput();
             this.shippingAddress = data["shippingAddress"] ? InvoiceAddressInput.fromJS(data["shippingAddress"]) : new InvoiceAddressInput();
             this.description = data["description"];
@@ -59596,6 +59654,9 @@ export class UpdateInvoiceInput implements IUpdateInvoiceInput {
         data["date"] = this.date ? this.date.toISOString() : <any>undefined;
         data["dueDate"] = this.dueDate ? this.dueDate.toISOString() : <any>undefined;
         data["grandTotal"] = this.grandTotal;
+        data["discountTotal"] = this.discountTotal;
+        data["shippingTotal"] = this.shippingTotal;
+        data["taxTotal"] = this.taxTotal;
         data["billingAddress"] = this.billingAddress ? this.billingAddress.toJSON() : <any>undefined;
         data["shippingAddress"] = this.shippingAddress ? this.shippingAddress.toJSON() : <any>undefined;
         data["description"] = this.description;
@@ -59616,6 +59677,9 @@ export interface IUpdateInvoiceInput {
     date: moment.Moment;
     dueDate: moment.Moment;
     grandTotal: number;
+    discountTotal: number | undefined;
+    shippingTotal: number | undefined;
+    taxTotal: number | undefined;
     billingAddress: InvoiceAddressInput;
     shippingAddress: InvoiceAddressInput;
     description: string | undefined;

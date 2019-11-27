@@ -17,42 +17,11 @@
         }
     }
 
-  /*  .actions {
-        margin-top: 25px !important;
-
-        button {
-            width: 100%;
-            max-width: 300px;
-            height: 56px;
-            border-radius: 0;
-            border: 0;
-            background-color: #ac1f22;
-            font-size: 20px;
-            line-height: normal;
-            letter-spacing: normal;
-            text-align: center;
-            color: #fff;
-            transition: .2s;
-            cursor: pointer;
-            font-family: 'AvianoSans-Bla', sans-serif !important;
-
-            img {
-                float: right;
-                margin-top: 7px;
-                margin-right: 7px;
-            }
-
-            &:hover {
-                background-color: darken(#ac1f22, 6%);
-                box-shadow: 0 0 3px rgba(#ac1f22, .5);
-            }
-
-            &[disabled] {
-                cursor: not-allowed;
-                opacity: .7;
-            }
-        }
-    }*/
+    .vault {
+        background: url('../../../assets/common/images/bank-code/vault-bg@2x.png') top center no-repeat;
+        background-size: cover;
+        min-height: 440px;
+    }
 
     .subscribe-block {
         background: #fff5e5;
@@ -88,7 +57,7 @@
         h2 {
             font-family: @title-font;
             font-size: 26px;
-            font-weight: 900;
+            font-weight: normal;
             line-height: normal;
             letter-spacing: -0.52px;
             text-align: center;
@@ -116,149 +85,16 @@
         }
     }
 
-/*    body {
-        color: white;
-        background: linear-gradient(to left, #606c88 , #3f4c6b);
-    }
-
-    a, a:visited {
-        color: inherit;
-        text-decoration: none;
-    }
-
-    h1, h2, h3 {
-        text-align: center;
-    }
-
-    h2 {
-        font-stretch: normal;
-        font-style: normal;
+    .footer-info {
+        background: #fff5e5;
+        padding: 15px 0;
+        font-size: 14px;
         font-weight: normal;
-        line-height: normal;
-        letter-spacing: -0.74px;
+        line-height: 1.29;
+        font-family: @text-font;
         text-align: center;
-        color: #000000;
-        margin-bottom: 20px;
+        color: #474747;
     }
-
-    p {
-        font-size: 15px;
-        font-weight: normal;
-        font-stretch: normal;
-        font-style: normal;
-        line-height: 1.53;
-        letter-spacing: -0.3px;
-        text-align: center;
-        color: rgba(0, 0, 0, 0.7);
-        font-family: "Lucida Console", Monaco, monospace;
-
-        .red {
-            display: block;
-            color: #ac1f22;
-            font-family: 'AvianoSans-Bla', sans-serif !important;
-        }
-    }
-
-    .demo {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-    }
-
-    section {
-        box-shadow: 0 20px 100px 0 rgba(0, 0, 0, 0.15);
-        border: solid 1px #ebecec;
-        background-color: #ffffff;
-        &.users-list {
-            height: calc(100vh - 180px);
-            padding: 15px 15px 0 15px;
-            position: relative;
-        }
-    }
-
-
-
-    section header {
-        height: 110px;
-        position: relative;
-
-        .header-image {
-            position: absolute;
-            top: 40px;
-        }
-    }
-
-    section footer {
-        text-align: center;
-        margin-top: 120px;
-
-        @media all and (min-width: 1024px) {
-            h2, p, div {
-                max-width: 70%;
-                margin: 0 auto;
-            }
-        }
-    }*/
-    section:not(.vertical) {
-        width: var(--width);
-    }
-    section.vertical {
-        position: relative;
-        display: flex;
-        height: var(--height);
-        width: calc(var(--width) * 3);
-    }
-
-    section.vertical header,
-    section.vertical footer {
-        height: 100%;
-        width: var(--width);
-    }
-
-    section header {
-        background: var(--top-color);
-    }
-
-    section footer {
-        background: var(--bottom-color);
-    }
-
-    .vertical {
-        --height: 300px;
-        --width: 100px;
-    }
-
-    .separator {
-        --svg: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none"%3E%3Cpolygon fill="%23f44336" points="0 100 0 0 100 0"/%3E%3Cpolygon fill="%232196F3" points="100 0 100 100 0 100"/%3E%3C/svg%3E');
-
-        width: var(--width);
-        height: var(--height);
-        background-image: var(--svg);
-        background-repeat: no-repeat;
-        background-size: 100% 100%;
-    }
-
-    .separator.external {
-        background-image: url(../../../assets/common/images/bank-code/source.svg);
-    }
-
-    .separator.reverse {
-        transform: rotateY(180deg);
-    }
-
-    .vertical .separator.reverse {
-        transform: rotateX(180deg);
-    }
-
-    .image.above .separator {
-        --svg: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none"%3E%3Cpolygon fill="%232196F3" points="100 0 100 100 0 100"/%3E%3C/svg%3E');
-    }
-
-    .image.below .separator {
-        --svg: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none"%3E%3Cpolygon fill="%23f44336" points="0 100 0 0 100 0"/%3E%3C/svg%3E');
-    }
-
-
 
     .price {
         font-size: 19px;
@@ -308,22 +144,6 @@
             font-weight: 300!important;
             letter-spacing: .3px!important;
         }
-    }
-
-    #gridContainer {
-        height: calc(100vh - 240px);
-    }
-
-    .vertical .separator.reverse {
-        transform: rotateX(180deg);
-    }
-
-    .image.above .separator {
-        --svg: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none"%3E%3Cpolygon fill="%232196F3" points="100 0 100 100 0 100"/%3E%3C/svg%3E');
-    }
-
-    .image.below .separator {
-        --svg: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none"%3E%3Cpolygon fill="%23f44336" points="0 100 0 0 100 0"/%3E%3C/svg%3E');
     }
 
     .price {
