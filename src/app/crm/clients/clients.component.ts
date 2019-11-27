@@ -74,9 +74,8 @@ import { ContactsService } from '@app/crm/contacts/contacts.service';
 import { ImpersonationService } from '@app/admin/users/impersonation.service';
 import { AppPermissions } from '@shared/AppPermissions';
 import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
-import { DataGridService } from '@app/shared/common/data-grid.service.ts/data-grid.service';
+import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
 import { OrganizationUnitsStoreActions, OrganizationUnitsStoreSelectors } from '@app/crm/store';
-import { DataGridHelper } from '@app/crm/shared/helpers/data-grid.helper';
 import { DataLayoutType } from '@app/shared/layout/data-layout-type';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { PivotGridComponent } from '@app/shared/common/slice/pivot-grid/pivot-grid.component';
@@ -1054,7 +1053,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     }
 
     getOrganizationUnitName = (e) => {
-        return DataGridHelper.getOrganizationUnitName(e.OrganizationUnitId, this.organizationUnits);
+        return DataGridService.getOrganizationUnitName(e.OrganizationUnitId, this.organizationUnits);
     }
 
     onCellClick($event) {

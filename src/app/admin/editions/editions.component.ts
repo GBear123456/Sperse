@@ -14,7 +14,7 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { EditionListDto, EditionServiceProxy } from '@shared/service-proxies/service-proxies';
 import { CreateOrEditEditionModalComponent } from './create-or-edit-edition-modal.component';
 import { AppPermissions } from '@shared/AppPermissions';
-import { DataGridService } from '@app/shared/common/data-grid.service.ts/data-grid.service';
+import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
 
 @Component({
     templateUrl: './editions.component.html',

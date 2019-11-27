@@ -15,31 +15,31 @@ export class ResourcesComponent {
             list: [
                 {
                     title: 'Akzidenz Berthold Font',
-                    fileName: 'Compensation+Plan…019.pdf',
+                    fileName: 'Akzidenz+…Font.zip',
                     fileLink: 'https://new-resources-2019.s3-us-west-1.amazonaws.com/Marketing+Materials/Akzidenz+Berthold+Font.zip',
                     img: './assets/common/images/bank-code/thumbnails/affiliate-marketing-tools/Akzidenz_Berthold_Font.png'
                 },
                 {
                     title: 'Aviano Font',
-                    fileName: 'BANKCODE+E-Sig_+C…ent.pdf',
+                    fileName: 'Aviano+Font.zip',
                     fileLink: 'https://new-resources-2019.s3-us-west-1.amazonaws.com/Marketing+Materials/Aviano+Font.zip',
                     img: './assets/common/images/bank-code/thumbnails/affiliate-marketing-tools/Aviano_Sans_Font.png'
                 },
                 {
                     title: 'BANK Style Guide',
-                    fileName: 'BANKCODE+E-Sign+_…ent.pdf',
+                    fileName: 'BANK+Style+Guide.zip',
                     fileLink: 'https://new-resources-2019.s3-us-west-1.amazonaws.com/Marketing+Materials/BANK+Style+Guide.zip',
                     img: './assets/common/images/bank-code/thumbnails/affiliate-marketing-tools/BANK_Style_Guide.png'
                 },
                 {
                     title: 'BANKCODE Style Guide',
-                    fileName: 'BANKCODE+E-Sign+…ent.pdf',
+                    fileName: 'BANKCODE+Style+Guide.zip',
                     fileLink: 'https://new-resources-2019.s3-us-west-1.amazonaws.com/Marketing+Materials/BANKCODE+Style+Guide.zip',
                     img: './assets/common/images/bank-code/thumbnails/affiliate-marketing-tools/CODEBREAKER_Style_Guide.png'
                 },
                 {
                     title: 'Media Kit',
-                    fileName: 'BANKCODE+E-Sign+_…ent.pdf',
+                    fileName: 'Media+Kit.pdf',
                     fileLink: 'https://new-resources-2019.s3-us-west-1.amazonaws.com/Media+Kit/Media+Kit.pdf',
                     img: './assets/common/images/bank-code/thumbnails/affiliate-marketing-tools/Media_Kit.png'
                 }
@@ -99,49 +99,49 @@ export class ResourcesComponent {
                 },
                 {
                     title: '300%',
-                    fileName: 'Compensation+Plan…019.pdf',
+                    fileName: 'Social+Media+Ads300%.zip',
                     fileLink: 'https://new-resources-2019.s3-us-west-1.amazonaws.com/Art_Graphics/Social+Media+Ads/300%25.zip',
                     img: './assets/common/images/bank-code/thumbnails/social-media-ads/300.png'
                 },
                 {
                     title: '90 Seconds',
-                    fileName: 'BANKCODE+E-Sign+_…ent.pdf',
+                    fileName: '90_Sec.zip',
                     fileLink: 'https://new-resources-2019.s3-us-west-1.amazonaws.com/Art_Graphics/Social+Media+Ads/90_Sec.zip',
                     img: './assets/common/images/bank-code/thumbnails/social-media-ads/90_Seconds.png'
                 },
                 {
                     title: 'Holiday Promotions',
-                    fileName: 'BANKCODE+IMA+Appl…ent.pdf',
+                    fileName: 'Holiday+Promotions.zip',
                     fileLink: 'https://new-resources-2019.s3-us-west-1.amazonaws.com/Art_Graphics/Social+Media+Ads/Holiday+Promotions.zip',
                     img: './assets/common/images/bank-code/thumbnails/social-media-ads/Holiday_Promotions.png'
                 },
                 {
                     title: 'One World',
-                    fileName: 'BANKCODE+Income…mer.pdf',
+                    fileName: 'One+World.zip',
                     fileLink: 'https://new-resources-2019.s3-us-west-1.amazonaws.com/Art_Graphics/Social+Media+Ads/One+World.zip',
                     img: './assets/common/images/bank-code/thumbnails/social-media-ads/One_World.png'
                 },
                 {
                     title: 'Read The Digital Book',
-                    fileName: 'BANKCODE+Policies+…res.pdf',
+                    fileName: 'Read+the+digital+book.zip',
                     fileLink: 'https://new-resources-2019.s3-us-west-1.amazonaws.com/Art_Graphics/Social+Media+Ads/Read+the+digital+book.zip',
                     img: './assets/common/images/bank-code/thumbnails/social-media-ads/Read_The_Digital_Book.png'
                 },
                 {
                     title: 'What\'s Your BANK Code',
-                    fileName: 'BANKCODE+IMA+App…ent.pdf',
+                    fileName: 'What\'s+your+BANK+code.zip',
                     fileLink: 'https://new-resources-2019.s3-us-west-1.amazonaws.com/Art_Graphics/Social+Media+Ads/What\'s+your+BANK+code.zip',
                     img: './assets/common/images/bank-code/thumbnails/social-media-ads/What_Your_BANK_Code.png'
                 },
                 {
                     title: 'Why They Buy Ad',
-                    fileName: 'BANKCODE+Income+…mer.pdf',
+                    fileName: 'Why+They+Buy.zip',
                     fileLink: 'https://new-resources-2019.s3-us-west-1.amazonaws.com/Art_Graphics/Social+Media+Ads/Why+They+Buy.zip',
                     img: './assets/common/images/bank-code/thumbnails/social-media-ads/Why_They_Buy_Ad.png'
                 },
                 {
                     title: 'Women\'s Day',
-                    fileName: 'BANKCODE+Policies+…res.pdf',
+                    fileName: 'Women\'s+Day.zip',
                     fileLink: 'https://new-resources-2019.s3-us-west-1.amazonaws.com/Art_Graphics/Social+Media+Ads/Women\'s+Day.zip',
                     img: './assets/common/images/bank-code/thumbnails/8_March_WomensDay.jpg'
                 }
@@ -183,19 +183,19 @@ export class ResourcesComponent {
                 },
                 {
                     title: 'BANKCODE Privacy Policy - Updated 2019',
-                    file: 'BANKCODE+IMA+Applic…ent.pdf',
+                    fileName: 'BANKCODE+Policies…d+2019.pdf',
                     fileLink: 'https://new-resources-2019.s3-us-west-1.amazonaws.com/Corporate+Docs/Legal+Docs/BANKCODE+Privacy+Policy+-+Updated+2019.pdf',
                     img: './assets/common/images/bank-code/thumbnails/legal-documents/Privacy_Policy.png'
                 },
                 {
                     title: 'BANKCODE Terms of Use - Updated 2019',
-                    fileName: 'BANKCODE+Income+…mer.pdf',
+                    fileName: 'BANKCODE+Term…ed+2019.pdf',
                     fileLink: 'https://new-resources-2019.s3-us-west-1.amazonaws.com/Corporate+Docs/Legal+Docs/BANKCODE+Terms+of+Use+-+Updated+2019.pdf',
                     img: './assets/common/images/bank-code/thumbnails/legal-documents/Terms_of_Use.png'
                 },
                 {
                     title: 'BANKCODE Advertising Guidelines',
-                    fileName: 'BANKCODE+Policies+…res.pdf',
+                    fileName: 'BANKCODEAdv…lines.pdf',
                     fileLink: 'https://new-resources-2019.s3-us-west-1.amazonaws.com/Corporate+Docs/Legal+Docs/BANKCODEAdvertisingGuidelines.pdf',
                     img: './assets/common/images/bank-code/thumbnails/legal-documents/Guideline.png'
                 }
@@ -207,25 +207,25 @@ export class ResourcesComponent {
             list: [
                 {
                     title: 'Trainer Application Form',
-                    fileName: 'Compensation+Plan…019.pdf',
+                    fileName: 'Trainer+Application+Form.pdf',
                     fileLink: 'https://new-resources-2019.s3-us-west-1.amazonaws.com/Corporate+Docs/Trainer+Application+Forms/Trainer+Application+Form.pdf',
                     img: './assets/common/images/bank-code/thumbnails/application-form/Trainer_Application_Form.png'
                 },
                 {
                     title: 'Trainer Application Form - Print Ready',
-                    fileName: 'BANKCODE+E-Sig_+C…ent.pdf',
+                    fileName: 'Trainer+App…Print+Ready.pdf',
                     fileLink: 'https://new-resources-2019.s3-us-west-1.amazonaws.com/Corporate+Docs/Trainer+Application+Forms/Trainer+Application+Form+-+Print+Ready.pdf',
                     img: './assets/common/images/bank-code/thumbnails/application-form/Trainer_Application_Form_Print_Ready.png'
                 },
                 {
                     title: 'Trainer Order Form',
-                    fileName: 'BANKCODE+IMA+Appl…ent.pdf',
+                    fileName: 'Trainer+Order+Form.pdf',
                     fileLink: 'https://new-resources-2019.s3-us-west-1.amazonaws.com/Corporate+Docs/Trainer+Order+Forms/Trainer+Order+Form.pdf',
                     img: './assets/common/images/bank-code/thumbnails/application-form/Trainer_Order_Form.png'
                 },
                 {
                     title: 'Trainer Order Form - Print Ready',
-                    fileName: 'BANKCODE+Income…mer.pdf',
+                    fileName: 'Trainer+O…r+F…m+-+P…t+R…y.pdf',
                     fileLink: 'https://new-resources-2019.s3-us-west-1.amazonaws.com/Corporate+Docs/Trainer+Order+Forms/Trainer+Order+Form+-+Print+Ready.pdf',
                     img: './assets/common/images/bank-code/thumbnails/application-form/Trainer_Order_Form_Print_Ready.png'
                 },
@@ -261,55 +261,55 @@ export class ResourcesComponent {
             list: [
                 {
                     title: 'L1: BANK Fundamentals Kit',
-                    fileName: 'Compensation+Plan…019.pdf',
+                    fileName: 'BANK+Fundamentals.zip',
                     fileLink: 'https://new-resources-2019.s3-us-west-1.amazonaws.com/Trainer+L1/BANK+Fundamentals.zip',
                     img: './assets/common/images/bank-code/thumbnails/trainer-kits/L1_BANK_Fundamentas_Kit.png'
                 },
                 {
                     title: 'L1: Intro to BANK Intelligences - Keynote',
-                    fileName: 'BANKCODE+E-Sign+_+C…ent.pdf',
+                    fileName: 'Intro+BANK+Int…219.key.zip',
                     fileLink: 'https://new-resources-2019.s3-us-west-1.amazonaws.com/Trainer+L1/Intro+to+BANK+Intelligences+090219.key.zip',
                     img: './assets/common/images/bank-code/thumbnails/trainer-kits/L1_Intro_to_Bank Intelligences_Keynote.png'
                 },
                 {
                     title: 'L1: Intro to BANK Why They Buy - Keynote',
-                    fileName: 'BANKCODE+IMA+Applic…ent.pdf',
+                    fileName: 'Intro+to+BANK…19.key.zip',
                     fileLink: 'https://new-resources-2019.s3-us-west-1.amazonaws.com/Trainer+L1/Intro+to+BANK+Why+They+Buy+090219.key.zip',
                     img: './assets/common/images/bank-code/thumbnails/trainer-kits/L1_Intro_to_Why_They_Buy_Keynote.png'
                 },
                 {
                     title: 'L2: Speed Coding Kit',
-                    fileName: 'BANKCODE+Income+Di…mer.pdf',
+                    fileName: 'Speed+Coding.zip',
                     fileLink: 'https://new-resources-2019.s3-us-west-1.amazonaws.com/Trainer+L2/Speed+Coding.zip',
                     img: './assets/common/images/bank-code/thumbnails/trainer-kits/L2_Speed_Coding_Kit.png'
                 },
                 {
                     title: 'L2: Speed Coding PNG',
-                    fileName: 'BANKCODE+Policies+a…res.pdf',
+                    fileName: 'SPEED+CODING_TK.png',
                     fileLink: 'https://new-resources-2019.s3-us-west-1.amazonaws.com/Trainer+L2/SPEED+CODING_TK.png',
                     img: './assets/common/images/bank-code/thumbnails/trainer-kits/L2_Speed_Coding_PNG.png'
                 },
                 {
                     title: 'L3: Power Scripting Kit',
-                    fileName: 'BANKCODE+IMA+Appl…ent.pdf',
+                    fileName: 'Power+Scripting+Kit.zip',
                     fileLink: 'https://new-resources-2019.s3-us-west-1.amazonaws.com/Trainer+L3/Power+Scripting+Kit.zip',
                     img: './assets/common/images/bank-code/thumbnails/trainer-kits/L3_Power_Scripting_Kit.png'
                 },
                 {
                     title: 'L3: Power Scripting PNG',
-                    fileName: 'BANKCODE+Income+…mer.pdf',
+                    fileName: 'POWER+SCRIPTING_TK.png',
                     fileLink: 'https://new-resources-2019.s3-us-west-1.amazonaws.com/Trainer+L3/POWER+SCRIPTING_TK.png',
                     img: './assets/common/images/bank-code/thumbnails/trainer-kits/L3_Power_Scripting_PNG.png'
                 },
                 {
                     title: 'L4: Communication Mastery Kit',
-                    fileName: 'BANKCODE+Policies+…res.pdf',
+                    fileName: 'L4_Com…n_Mastery_Kit.png',
                     fileLink: 'https://vo.bankcode.com/trainerkits#',
                     img: './assets/common/images/bank-code/thumbnails/trainer-kits/L4_Communication_Mastery_Kit.png'
                 },
                 {
                     title: 'L4: Communication Mastery PNG',
-                    fileName: 'BANKCODE+Policies+…res.pdf',
+                    fileName: 'COM…N+MASTERY_TK.png',
                     fileLink: 'https://new-resources-2019.s3-us-west-1.amazonaws.com/Trainer+L4/COMMUNICATION+MASTERY_TK.png',
                     img: './assets/common/images/bank-code/thumbnails/trainer-kits/L4_Communication_Mastery_PNG.png'
                 }
@@ -321,37 +321,37 @@ export class ResourcesComponent {
             list: [
                 {
                     title: 'Affiliate Opportunity',
-                    fileName: 'Compensation+Plan…019.pdf',
+                    fileName: 'AFFILIATE+Opportunity.zip',
                     fileLink: 'https://new-resources-2019.s3-us-west-1.amazonaws.com/Slide+Decks/AFFILIATE+Opportunity.zip',
                     img: './assets/common/images/bank-code/thumbnails/slide-decks/Affiliate_Opportunity.png'
                 },
                 {
                     title: 'BANKCODE Product Offers',
-                    fileName: 'BANKCODE+E-Sign+…ent.pdf',
+                    fileName: 'BANKCODEProdOffer.pptx.zip',
                     fileLink: 'https://new-resources-2019.s3-us-west-1.amazonaws.com/Slide+Decks/BANKCODE+Product+Offers+090319.pptx.zip',
                     img: './assets/common/images/bank-code/thumbnails/slide-decks/BANKCODE_Product_Offers.png'
                 },
                 {
                     title: 'Intro to BANK Intelligences',
-                    fileName: 'BANKCODE+E-Sign+…ent.pdf',
+                    fileName: 'IntroBANKIntelligence.pptx.zip',
                     fileLink: 'https://new-resources-2019.s3-us-west-1.amazonaws.com/Slide+Decks/Intro+to+BANK+Intelligences+090319.pptx.zip',
                     img: './assets/common/images/bank-code/thumbnails/slide-decks/Intro_to_Bank_Intelligences.png'
                 },
                 {
                     title: 'Intro to BANK Why They Buy',
-                    fileName: 'BANKCODE+E-Sign+…ent.pdf',
+                    fileName: 'IntroBANKWTB.pptx.zip',
                     fileLink: 'https://new-resources-2019.s3-us-west-1.amazonaws.com/Slide+Decks/Intro+to+BANK+Why+They+Buy+090319.pptx.zip',
                     img: './assets/common/images/bank-code/thumbnails/slide-decks/Intro_to_Why_They_Buy.png'
                 },
                 {
                     title: 'Quote Deck - Memes',
-                    fileName: 'BANKCODE+E-Sign+…ent.pdf',
+                    fileName: 'Quote+Deck+-+Memes.zip',
                     fileLink: 'https://new-resources-2019.s3-us-west-1.amazonaws.com/Slide+Decks/Quote+Deck+-+Memes.zip',
                     img: './assets/common/images/bank-code/thumbnails/slide-decks/Quote_Deck_Memes.png'
                 },
                 {
                     title: 'Trainer Opportunity',
-                    fileName: 'Compensation+Plan…019.pdf',
+                    fileName: 'Trainer+Opportunity.zip',
                     fileLink: 'https://new-resources-2019.s3-us-west-1.amazonaws.com/Slide+Decks/Trainer+Opportunity.zip',
                     img: './assets/common/images/bank-code/thumbnails/slide-decks/Trainer_Opportunity.png'
                 }
@@ -363,13 +363,13 @@ export class ResourcesComponent {
             list: [
                 {
                     title: 'Video - BANK Cryptex',
-                    fileName: 'Compensation+Plan…019.pdf',
+                    fileName: 'BANK+Cryptex+Video.mp4',
                     fileLink: 'https://new-resources-2019.s3-us-west-1.amazonaws.com/Videos/BANK+Cryptex+Video.mp4',
                     img: './assets/common/images/bank-code/thumbnails/videos/Video_BANK_Cryptex.png'
                 },
                 {
                     title: 'Video - BANKCODE One World',
-                    fileName: 'BANKCODE+E-Sig_+C…ent.pdf',
+                    fileName: 'BANKCODE+One+World.mp4',
                     fileLink: 'https://new-resources-2019.s3-us-west-1.amazonaws.com/Videos/BANKCODE+One+World.mp4',
                     img: './assets/common/images/bank-code/thumbnails/videos/Video_BANKCODE_One_World.png'
                 }

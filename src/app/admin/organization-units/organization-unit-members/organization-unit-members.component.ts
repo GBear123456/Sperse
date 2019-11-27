@@ -50,7 +50,7 @@ export class OrganizationUnitMembersComponent {
         }
 
         this._organizationUnit = ou;
-        this.addMemberModal.organizationUnitId = ou.id;
+        this.addMemberModal.organizationUnitId = ou ? ou.id : null;
         if (ou) {
             this.refreshMembers();
         }

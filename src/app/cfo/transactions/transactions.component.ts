@@ -61,7 +61,7 @@ import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 import { CalendarValuesModel } from '@shared/common/widgets/calendar/calendar-values.model';
 import { DateHelper } from '@shared/helpers/DateHelper';
-import { DataGridService } from '@app/shared/common/data-grid.service.ts/data-grid.service';
+import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
 import { Category } from '@app/cfo/transactions/categorization/category.model';
 import { BankAccountsState } from '@shared/cfo/bank-accounts-widgets/bank-accounts-state.model';
 import { AppFeatures } from '@shared/AppFeatures';
@@ -919,7 +919,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
 
         classifiedFilter.items['yes'].value = classified;
         classifiedFilter.items['no'].value = !classified;
-      
+
         if (amountFilter) {
             amountFilter.items['from'].value = credit ? '0' : '';
             amountFilter.items['to'].value = debit ? '0' : '';
