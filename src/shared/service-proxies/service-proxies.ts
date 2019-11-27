@@ -46828,12 +46828,14 @@ export class InvoiceAddress implements IInvoiceAddress {
     zip!: string | undefined;
     address1!: string | undefined;
     address2!: string | undefined;
+    firstName!: string | undefined;
+    lastName!: string | undefined;
     company!: string | undefined;
+    email!: string | undefined;
+    phone!: string | undefined;
     contact!: Contact | undefined;
     country!: Country | undefined;
     state!: CountryState | undefined;
-    lastModificationTime!: moment.Moment | undefined;
-    lastModifierUserId!: number | undefined;
     creationTime!: moment.Moment | undefined;
     creatorUserId!: number | undefined;
     id!: number | undefined;
@@ -46857,12 +46859,14 @@ export class InvoiceAddress implements IInvoiceAddress {
             this.zip = data["zip"];
             this.address1 = data["address1"];
             this.address2 = data["address2"];
+            this.firstName = data["firstName"];
+            this.lastName = data["lastName"];
             this.company = data["company"];
+            this.email = data["email"];
+            this.phone = data["phone"];
             this.contact = data["contact"] ? Contact.fromJS(data["contact"]) : <any>undefined;
             this.country = data["country"] ? Country.fromJS(data["country"]) : <any>undefined;
             this.state = data["state"] ? CountryState.fromJS(data["state"]) : <any>undefined;
-            this.lastModificationTime = data["lastModificationTime"] ? moment(data["lastModificationTime"].toString()) : <any>undefined;
-            this.lastModifierUserId = data["lastModifierUserId"];
             this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
             this.creatorUserId = data["creatorUserId"];
             this.id = data["id"];
@@ -46886,12 +46890,14 @@ export class InvoiceAddress implements IInvoiceAddress {
         data["zip"] = this.zip;
         data["address1"] = this.address1;
         data["address2"] = this.address2;
+        data["firstName"] = this.firstName;
+        data["lastName"] = this.lastName;
         data["company"] = this.company;
+        data["email"] = this.email;
+        data["phone"] = this.phone;
         data["contact"] = this.contact ? this.contact.toJSON() : <any>undefined;
         data["country"] = this.country ? this.country.toJSON() : <any>undefined;
         data["state"] = this.state ? this.state.toJSON() : <any>undefined;
-        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
-        data["lastModifierUserId"] = this.lastModifierUserId;
         data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
         data["creatorUserId"] = this.creatorUserId;
         data["id"] = this.id;
@@ -46908,12 +46914,14 @@ export interface IInvoiceAddress {
     zip: string | undefined;
     address1: string | undefined;
     address2: string | undefined;
+    firstName: string | undefined;
+    lastName: string | undefined;
     company: string | undefined;
+    email: string | undefined;
+    phone: string | undefined;
     contact: Contact | undefined;
     country: Country | undefined;
     state: CountryState | undefined;
-    lastModificationTime: moment.Moment | undefined;
-    lastModifierUserId: number | undefined;
     creationTime: moment.Moment | undefined;
     creatorUserId: number | undefined;
     id: number | undefined;
@@ -59046,7 +59054,11 @@ export class InvoiceAddressInput implements IInvoiceAddressInput {
     zip!: string | undefined;
     address1!: string;
     address2!: string | undefined;
+    firstName!: string | undefined;
+    lastName!: string | undefined;
     company!: string | undefined;
+    email!: string | undefined;
+    phone!: string | undefined;
 
     constructor(data?: IInvoiceAddressInput) {
         if (data) {
@@ -59065,7 +59077,11 @@ export class InvoiceAddressInput implements IInvoiceAddressInput {
             this.zip = data["zip"];
             this.address1 = data["address1"];
             this.address2 = data["address2"];
+            this.firstName = data["firstName"];
+            this.lastName = data["lastName"];
             this.company = data["company"];
+            this.email = data["email"];
+            this.phone = data["phone"];
         }
     }
 
@@ -59084,7 +59100,11 @@ export class InvoiceAddressInput implements IInvoiceAddressInput {
         data["zip"] = this.zip;
         data["address1"] = this.address1;
         data["address2"] = this.address2;
+        data["firstName"] = this.firstName;
+        data["lastName"] = this.lastName;
         data["company"] = this.company;
+        data["email"] = this.email;
+        data["phone"] = this.phone;
         return data; 
     }
 }
@@ -59096,7 +59116,11 @@ export interface IInvoiceAddressInput {
     zip: string | undefined;
     address1: string;
     address2: string | undefined;
+    firstName: string | undefined;
+    lastName: string | undefined;
     company: string | undefined;
+    email: string | undefined;
+    phone: string | undefined;
 }
 
 export class CreateInvoiceLineInput implements ICreateInvoiceLineInput {
@@ -59274,7 +59298,11 @@ export class InvoiceAddressInfo implements IInvoiceAddressInfo {
     zip!: string | undefined;
     address1!: string | undefined;
     address2!: string | undefined;
+    firstName!: string | undefined;
+    lastName!: string | undefined;
     company!: string | undefined;
+    email!: string | undefined;
+    phone!: string | undefined;
 
     constructor(data?: IInvoiceAddressInfo) {
         if (data) {
@@ -59293,7 +59321,11 @@ export class InvoiceAddressInfo implements IInvoiceAddressInfo {
             this.zip = data["zip"];
             this.address1 = data["address1"];
             this.address2 = data["address2"];
+            this.firstName = data["firstName"];
+            this.lastName = data["lastName"];
             this.company = data["company"];
+            this.email = data["email"];
+            this.phone = data["phone"];
         }
     }
 
@@ -59312,7 +59344,11 @@ export class InvoiceAddressInfo implements IInvoiceAddressInfo {
         data["zip"] = this.zip;
         data["address1"] = this.address1;
         data["address2"] = this.address2;
+        data["firstName"] = this.firstName;
+        data["lastName"] = this.lastName;
         data["company"] = this.company;
+        data["email"] = this.email;
+        data["phone"] = this.phone;
         return data; 
     }
 }
@@ -59324,7 +59360,11 @@ export interface IInvoiceAddressInfo {
     zip: string | undefined;
     address1: string | undefined;
     address2: string | undefined;
+    firstName: string | undefined;
+    lastName: string | undefined;
     company: string | undefined;
+    email: string | undefined;
+    phone: string | undefined;
 }
 
 export class InvoiceLineInfo implements IInvoiceLineInfo {
