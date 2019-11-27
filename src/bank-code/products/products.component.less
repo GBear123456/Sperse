@@ -33,4 +33,57 @@
         height: 100%;
     }
 
+    /deep/ .button {
+        width: 100%;
+        max-width: 300px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 56px;
+        border-radius: 0;
+        border: 0 !important;
+        background-color: #ac1f22;
+        font-size: 20px;
+        line-height: 56px;
+        letter-spacing: normal;
+        color: #fff;
+        transition: .2s;
+        cursor: pointer;
+        font-family: 'AvianoSans-Bla', sans-serif !important;
+        text-decoration: none;
+
+        + .button {
+            margin: 0 15px;
+        }
+
+        img {
+            margin-left: 7px;
+        }
+
+        &.small {
+            height: 44px;
+            max-width: 202px;
+            font-size: 16px;
+        }
+
+        &:hover {
+            background-color: darken(#ac1f22, 6%);
+            box-shadow: 0 0 3px rgba(#ac1f22, .5);
+        }
+
+        &.button-default {
+            background: #fff;
+            color: #ac1f22;
+
+            &:hover {
+                background-color: darken(#fff, 20%);
+                box-shadow: 0 0 3px rgba(#ac1f22, .5);
+            }
+        }
+
+        &[disabled] {
+            cursor: not-allowed;
+            opacity: .7;
+        }
+    }
 }
