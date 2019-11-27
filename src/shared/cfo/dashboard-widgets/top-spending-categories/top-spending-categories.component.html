@@ -1,27 +1,36 @@
 <h2 class="title">{{ ls.l('TopSpendingCategories') }}</h2>
 <ng-container *ngIf="topSpendingCategories$ | async as topSpendingCategories">
-    <ng-container *ngIf="topSpendingCategories && topSpendingCategories.length; else noData">
-        <dx-pie-chart
-            id="pie"
-            palette="bright"
-            type="donut"
-            [innerRadius]="0.7"
-            [dataSource]="topSpendingCategories"
-            (onPointClick)="onClick($event)"
-            (onLegendClick)="onClick($event)">
-            <dxi-series
-                argumentField="fullName"
-                valueField="amount">
-            </dxi-series>
-            <dxo-legend verticalAlignment="top"
-                        horizontalAlignment="right"
-                        [customizeText]="customizeLegendText">
-            </dxo-legend>
-            <dxo-size [width]="fullpage ? '100%' : '50%'"
-                      [height]="fullpage ? elementRef.nativeElement.offsetHeight : 180">
-            </dxo-size>
-        </dx-pie-chart>
-    </ng-container>
+    <div class="chart-block" *ngIf="topSpendingCategories && topSpendingCategories.length; else noData">
+        <div class="chart-container">
+            <dx-pie-chart
+                id="pie"
+                palette="bright"
+                type="donut"
+                [innerRadius]="0.7"
+                [dataSource]="topSpendingCategories"
+                (onPointClick)="onClick($event)"
+                (onDrawn)="onDrawn($event)">
+                <dxi-series
+                    argumentField="fullName"
+                    valueField="amount">
+                </dxi-series>
+                <dxo-legend [visible]="false"></dxo-legend>
+                <dxo-adaptive-layout [width]="20"></dxo-adaptive-layout>
+                <dxo-size [width]="fullpage ? '100%' : '50%'"
+                          [height]="fullpage ? elementRef.nativeElement.offsetHeight : 180">
+                </dxo-size>
+            </dx-pie-chart>
+        </div>
+        <ul class="legend" *ngIf="categoriesLegendColors">
+            <li *ngFor="let category of topSpendingCategories; let i = index;">
+                <span class="legend-square" [ngStyle]="{ backgroundColor: categoriesLegendColors[i] }"></span>
+                <a (click)="legendItemClick(category.id)">
+                    <span class="category-amount">{{ category.amount | currency:currencyId:'symbol-narrow':'1.2-2' }}</span>
+                    <span class="category-name" [title]="category.name">{{ category.name }}</span>
+                </a>
+            </li>
+        </ul>
+    </div>
     <ng-template #noData>
         <app-no-data></app-no-data>
     </ng-template>
