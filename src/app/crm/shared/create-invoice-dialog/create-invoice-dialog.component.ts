@@ -58,7 +58,7 @@ import { AppPermissions } from '@shared/AppPermissions';
     providers: [ CacheHelper, CustomerServiceProxy, DialogService, InvoiceServiceProxy ],
     host: {
         '(click)': 'closeAddressDialogs()'
-    }
+    },
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CreateInvoiceDialogComponent implements OnInit {
