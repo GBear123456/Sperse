@@ -2,6 +2,10 @@
     display: block;
     background: #fff;
 
+    .default-container {
+        box-shadow: 0 20px 100px 0 rgba(0, 0, 0, 0.15);
+    }
+
     .iframe {
         height: calc(100vh - 109px);
         @media (min-width: 960px) {
@@ -30,7 +34,7 @@
     .what-codebreaker-is,
     .learn-more {
         padding: 20px;
-        @media (min-width: 768px) {
+        @media (min-width: 992px) {
             padding: 0 67px;
         }
     }
@@ -39,6 +43,7 @@
         display: flex;
         background: url("../../../assets/common/images/bank-code/codebreaker-ai.png");
         .content {
+            text-align: center;
             h1 {
                 font-family: 'AvianoSans-Bol' !important;
                 font-weight: 900;
@@ -82,9 +87,18 @@
                     }
                 }
             }
+            a.button {
+                margin: auto;
+            }
+            @media (min-width: 992px) {
+                text-align: left;
+                a.button {
+                    margin: initial;
+                }
+            }
         }
 
-        @media (min-width: 768px) {
+        @media (min-width: 992px) {
             height: 550px;
             padding-top: 100px;
             .content {
@@ -116,7 +130,7 @@
                 color: #474747;
             }
         }
-        @media (min-width: 768px) {
+        @media (min-width: 992px) {
             padding-top: 27px;
             padding-bottom: 88px;
             flex-direction: row;
@@ -146,7 +160,7 @@
             color: rgba(255, 255, 255, 0.9);
             margin-bottom: 28px;
         }
-        button {
+        a.button {
             font-family: 'AvianoSans-Bol' !important;
             font-size: 16px;
             font-weight: 900;
@@ -156,11 +170,19 @@
             background-color: #ffffff;
             padding: 10px 40px;
             cursor: pointer;
+            text-decoration: none;
+            margin: auto;
+            &:hover {
+                background-color: darken(#ffffff, 6%);
+            }
         }
 
-        @media (min-width: 768px) {
+        @media (min-width: 992px) {
             padding-top: 57px;
             padding-bottom: 57px;
+            a.button {
+                margin: initial;
+            }
         }
     }
 
