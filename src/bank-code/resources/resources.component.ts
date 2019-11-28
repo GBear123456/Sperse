@@ -29,7 +29,7 @@ export class ResourcesComponent {
                     img: './assets/common/images/bank-code/thumbnails/affiliate-marketing-tools/BANK_Style_Guide.png'
                 },
                 {
-                    title: 'BANKCODE Style Guide',
+                    title: 'CODEBREAKER Style Guide',
                     fileLink: 'https://new-resources-2019.s3-us-west-1.amazonaws.com/Marketing+Materials/BANKCODE+Style+Guide.zip',
                     img: './assets/common/images/bank-code/thumbnails/affiliate-marketing-tools/CODEBREAKER_Style_Guide.png'
                 },
