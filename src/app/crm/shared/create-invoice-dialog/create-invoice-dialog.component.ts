@@ -56,6 +56,9 @@ import { AppPermissions } from '@shared/AppPermissions';
     templateUrl: 'create-invoice-dialog.component.html',
     styleUrls: [ '../../../shared/common/styles/form.less', 'create-invoice-dialog.component.less' ],
     providers: [ CacheHelper, CustomerServiceProxy, DialogService, InvoiceServiceProxy ],
+    host: {
+        '(click)': 'closeAddressDialogs()'
+    }
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CreateInvoiceDialogComponent implements OnInit {
@@ -153,6 +156,9 @@ export class CreateInvoiceDialogComponent implements OnInit {
             {text: this.ls.l('Invoice_SaveAndSend'), selected: false, status: InvoiceStatus.Final, email: true, disabled: this.disabledForUpdate},
             {text: this.ls.l('Invoice_SaveAndMarkSent'), selected: false, disabled: true}
         ];
+        this.dialogRef.afterClosed().subscribe(() => {
+            this.closeAddressDialogs();
+        });
     }
 
     ngOnInit() {
@@ -167,6 +173,17 @@ export class CreateInvoiceDialogComponent implements OnInit {
 
         this.initInvoiceData();
         this.saveOptionsInit();
+    }
+
+    checkCloseAddressDialog(name: string) {
+        let dialog = this.dialog.getDialogById(name);
+        if (dialog)
+            dialog.close();
+    }
+
+    closeAddressDialogs() {
+        this.checkCloseAddressDialog('selectedBillingAddress');
+        this.checkCloseAddressDialog('selectedShippingAddress');
     }
 
     initOrderDataSource() {
@@ -726,6 +743,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
                 phone: undefined
             });
         this.dialog.open(InvoiceAddressDialog, {
+            id: field,
             data: dialogData,
             hasBackdrop: false,
             disableClose: false,
@@ -736,5 +754,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
                 this[field] = dialogData;
             this.changeDetectorRef.detectChanges();
         });
+        event.stopPropagation();
+        event.preventDefault();
     }
 }
