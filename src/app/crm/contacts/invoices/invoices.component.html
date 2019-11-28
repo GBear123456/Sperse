@@ -3,18 +3,18 @@
         <div class="portlet-body">
               <div>
                     <div id="InvoicesTable">
-                        <dx-tooltip [elementAttr]="{name: 'invoice-actions'}" width="500px" height="202px">
+                        <dx-tooltip [elementAttr]="{name: 'invoice-actions'}" width="300px" height="172px">
                             <div *dxTemplate="let data of 'content'">
                                 <div class="invoice-actions-container">
                                     <div class="list">
                                         <div class="link" [ngClass]="{disabled: markAsPaidDisabled}" (click)="onMenuItemClick(updateStatus.bind(this, invoiceStatus.Paind))"><i class="s-check"></i>{{l('Mark as Paid')}}</div>
                                         <div class="link" [ngClass]="{disabled: markAsDraftDisabled}" (click)="onMenuItemClick(updateStatus.bind(this, invoiceStatus.Draft))"><i class="i-check"></i>{{l('Invoice_MarkAsDraft')}}</div>
-                                        <div class="link disabled"><i class="time-alarm"></i>{{l('Send Reminder')}}</div>
+                                        <div class="link disabled" [hidden]="true"><i class="time-alarm"></i>{{l('Send Reminder')}}</div>
                                         <div class="link" [ngClass]="{disabled: resendInvoiceDisabled}" (click)="onMenuItemClick(sendInvoice)"><i class="respond-arrow"></i>{{l('Resend Invoice')}}</div>
-                                        <div class="link disabled"><i class="move-layer-down"></i>{{l('Download as PDF')}}</div>
+                                        <div class="link disabled" [hidden]="true"><i class="move-layer-down"></i>{{l('Download as PDF')}}</div>
+                                        <div class="link" [ngClass]="{disabled: invoiceActivityDisabled}" (click)="onMenuItemClick(showHistory.bind(this, actionRecordData))"><i class="bullet-list-69"></i>{{l('OrderActivity')}}</div>
                                     </div>
-                                    <div class="list">
-                                        <div class="link" [ngClass]="{disabled: invoiceActivityDisabled}" (click)="onMenuItemClick(showHistory.bind(this, actionRecordData))"><i class="bullet-list-69"></i>{{l('Invoice Activity')}}</div>
+                                    <div class="list" [hidden]="true">
                                         <div class="link disabled"><i class="f-chat"></i>{{l('Post Comment')}}</div>
                                         <div class="link disabled"><i class="check-list"></i>{{l('Manage Payments')}}</div>
                                         <div class="link disabled"><i class="ungroup"></i>{{l('Duplicate Invoice')}}</div>
@@ -22,7 +22,7 @@
                                     </div>
                                     <div class="list">
                                         <div class="link" [ngClass]="{disabled: markAsCancelledDisabled}" (click)="onMenuItemClick(updateStatus.bind(this, invoiceStatus.Canceled))"><i class="e-remove"></i>{{l('Cancel')}}</div>
-                                        <div class="link disabled"><i class="folder-13"></i>{{l('Archive')}}</div>
+                                        <div class="link disabled" [hidden]="true"><i class="folder-13"></i>{{l('Archive')}}</div>
                                         <div class="link" [ngClass]="{disabled: deleteDisabled}" (click)="onMenuItemClick(deleteInvoice)"><i class="bin"></i>{{l('Delete')}}</div>
                                         <div class="link" [ngClass]="{disabled: previewDisabled}" (click)="onMenuItemClick(editInvoice)"><i class="preview"></i>{{l('Preview')}}</div>
                                         <div class="link" (click)="onMenuItemClick(addInvoice)"><i class="add"></i>{{l('Add Invoice')}}</div>

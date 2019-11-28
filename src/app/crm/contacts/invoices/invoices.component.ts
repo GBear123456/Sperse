@@ -11,7 +11,7 @@ import {
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { DxTooltipComponent } from 'devextreme-angular/ui/tooltip';
 import { MatDialog } from '@angular/material/dialog';
-import { finalize, switchMap, first } from 'rxjs/operators';
+import { finalize, switchMap, first, map } from 'rxjs/operators';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
@@ -47,7 +47,7 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
     formatting = AppConsts.formatting;
     invoiceStatus = InvoiceStatus;
 
-    markAsPaidDisabled = false;
+    markAsPaidDisabled = true;
     markAsDraftDisabled = false;
     resendInvoiceDisabled = false;
     markAsCancelledDisabled = false;
@@ -145,12 +145,14 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
             } else {
                 if (event.event.target.closest('.dx-link.dx-link-edit')) {
                     const isOrder: boolean = !event.data.InvoiceId;
-                    this.markAsPaidDisabled = this.previewDisabled = isOrder;
+                    this.previewDisabled = isOrder;
                     this.resendInvoiceDisabled =
                     this.invoiceActivityDisabled =
                     this.markAsDraftDisabled = isOrder || [InvoiceStatus.Final, InvoiceStatus.Canceled].indexOf(event.data.InvoiceStatus) < 0;
                     this.markAsCancelledDisabled = isOrder || event.data.InvoiceStatus != InvoiceStatus.Sent;
-                    this.deleteDisabled = isOrder || [InvoiceStatus.Paid, InvoiceStatus.PartiallyPaid, InvoiceStatus.Sent].indexOf(event.data.InvoiceStatus) >= 0;
+                    this.deleteDisabled = isOrder || [
+                        InvoiceStatus.Draft, InvoiceStatus.Final, InvoiceStatus.Canceled
+                    ].indexOf(event.data.InvoiceStatus) < 0;
 
                     this.actionRecordData = event.data;
                     this.showActionsMenu(event.event.target);
@@ -206,7 +208,14 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
             switchMap(data => {
                 data['contactId'] = this.contactId;
                 data['templateId'] = this.settings.defaultTemplateId;
-                return this.clientService.showEmailDialog(data);
+                return this.clientService.showEmailDialog(data, 'Email', (tmpId, emailData) => {
+                    return this.invoiceService.getEmailData(tmpId, this.actionRecordData.InvoiceId).pipe(map(email => {
+                        emailData.cc = email.cc;
+                        emailData.bcc = email.bcc;
+                        emailData.body = email.body;
+                        emailData.subject = email.subject;
+                    }));
+                });
             })
         ).subscribe(data => this.updateStatus(InvoiceStatus.Sent));
     }

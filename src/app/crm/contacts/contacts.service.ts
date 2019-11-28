@@ -261,7 +261,7 @@ export class ContactsService {
             : this.contactProxy.getContactInfo(contactId);
     }
 
-    showEmailDialog(data: any = {}, title = 'Email') {
+    showEmailDialog(data: any = {}, title = 'Email', onTemplateChange?) {
         let emailData: any = {
             saveTitle: this.ls.l('Send'),
             title: this.ls.l(title),
@@ -283,6 +283,16 @@ export class ContactsService {
             closeOnNavigation: false,
             data: emailData
         }).componentInstance;
+
+        if (onTemplateChange)
+            dialogComponent.onTemplateChange.pipe(
+                switchMap(tmpId => {
+                    dialogComponent.startLoading();
+                    return onTemplateChange(tmpId, emailData).pipe(
+                        finalize(() => dialogComponent.finishLoading())
+                    );
+                })
+            ).subscribe(() => dialogComponent.changeDetectorRef.markForCheck());
 
         return dialogComponent.onSave.pipe(
             switchMap(res => {

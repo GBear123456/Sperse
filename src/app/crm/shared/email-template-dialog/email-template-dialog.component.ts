@@ -187,17 +187,20 @@ export class EmailTemplateDialogComponent implements OnInit {
 
     onTemplateChanged(event) {
         if (event.value) {
-            this.startLoading();
-            this.emailTemplateProxy.getTemplate(event.value).pipe(
-                finalize(() => this.finishLoading())
-            ).subscribe(res => {
-                this.data.bcc = res.bcc;
-                this.data.body = res.body;
-                this.data.cc = res.cc;
-                this.data.subject = res.subject;
-                this.changeDetectorRef.markForCheck();
-                this.onTemplateChange.emit(res);
-            });
+            if (this.templateEditMode) {
+                this.startLoading();
+                this.emailTemplateProxy.getTemplate(event.value).pipe(
+                    finalize(() => this.finishLoading())
+                ).subscribe(res => {
+                    this.data.bcc = res.bcc;
+                    this.data.body = res.body;
+                    this.data.cc = res.cc;
+                    this.data.subject = res.subject;
+                    this.changeDetectorRef.markForCheck();
+                    this.onTemplateChange.emit(res);
+                });
+            } else 
+                this.onTemplateChange.emit(event.value);
         }
     }
 

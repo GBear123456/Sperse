@@ -583,7 +583,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
     selectContact(event) {
         this.selectedContact = event.selectedItem;
         this.contactId = event.selectedItem && event.selectedItem.id;
-        if (this.orderId && !this.invoiceId) {
+        if (this.orderId && !this.data.invoice) {
             this.orderId = undefined;
             this.orderNumber = undefined;
         }
