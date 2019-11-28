@@ -5,7 +5,7 @@
             <div class="col-lg-3 sidebar-nav">
                 <p class="quick-nav">Quick navigation </p>
                 <ul class="quick-nav-links">
-                    <li *ngFor="let category of data; let i = index;" (click)="isClicked=i" [class.active]="isClicked==i">
+                    <li *ngFor="let category of data; let i = index;" (click)="isClicked = i" [class.active]="isClicked ==i">
                         <a pageScroll [pageScrollOffset]="80" [pageScrollDuration]="700" [href]="'#' + category.anchor">
                             {{category.categoryName}}
                         </a>

@@ -6,7 +6,7 @@
         <div class="content">
             <h1>Codebreaker AI</h1>
             <h2>Accurately predict buying behavior in nanoseconds</h2>
-            <button class="button arrow" (click)="getAccess()">Get access now!</button>
+            <a class="button arrow" [href]="'https://wp.bankcode.pro/ai/?add-to-cart=' + offerId">Get access now!</a>
             <div class="price-block">
                 <p class="price"><span>Only </span><span class="bold">$59</span><span class="per-month"> per month</span></p>
                 <p class="description">($59 per month bundled with B.A.N.K Pass)</p>
@@ -23,7 +23,7 @@
     <div class="learn-more">
         <h2>Without studying in the VAULT or training at our Summits, you’re unlikely to have mastered each of the B.A.N.K. intelligences yourself.</h2>
         <p>That’s where CODEBREAKER AI comes in. You have the advantage of all this knowledge at your fingertips in nanoseconds, with the added benefit of eliminating human error and biases. It’s like getting the world’s best translation software for the language of sales! Instead of spending countless hours studying, you get the maximum results that come from mastering B.A.N.K. instantly.</p>
-        <button>Learn More</button>
+        <a href="https://wp.bankcode.pro/">Learn More</a>
     </div>
-    <subscription></subscription>
+    <subscription [offerId]="offerId"></subscription>
 </ng-template>

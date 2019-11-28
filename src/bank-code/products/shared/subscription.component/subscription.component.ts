@@ -8,5 +8,7 @@ import { Component, Input } from '@angular/core';
 export class SubscriptionComponent {
     @Input() pricePerMonth = 59;
     @Input() annualSave = 228;
+    @Input() offerId = 718;
+    @Input() productName = 'ai';
     constructor() {}
 }

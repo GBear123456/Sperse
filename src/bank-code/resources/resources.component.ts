@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef, HostListener } from '@angular/core';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 
 @Component({
@@ -7,7 +7,7 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
     styleUrls: ['resources.component.less']
 })
 export class ResourcesComponent {
-    isClicked: number;
+    isClicked = 0;
     data = [
         {
             categoryName: 'AFFILIATE TOOLS',
@@ -29,7 +29,7 @@ export class ResourcesComponent {
                     img: './assets/common/images/bank-code/thumbnails/affiliate-marketing-tools/BANK_Style_Guide.png'
                 },
                 {
-                    title: 'BANKCODE Style Guide',
+                    title: 'CODEBREAKER Style Guide',
                     fileLink: 'https://new-resources-2019.s3-us-west-1.amazonaws.com/Marketing+Materials/BANKCODE+Style+Guide.zip',
                     img: './assets/common/images/bank-code/thumbnails/affiliate-marketing-tools/CODEBREAKER_Style_Guide.png'
                 },
@@ -325,7 +325,17 @@ export class ResourcesComponent {
     ];
 
     constructor(
-        public ls: AppLocalizationService
-    ) {
+        public ls: AppLocalizationService,
+        private elementRef: ElementRef
+    ) {}
+
+    @HostListener('window:scroll')
+    onWindowScroll() {
+        const bottomHasReached = $(window).scrollTop() + $(window).height() == $(document).height();
+        this.isClicked = bottomHasReached
+            ? this.data.length - 1
+            : [].findIndex.call((this.elementRef.nativeElement.querySelectorAll('.card')), (card) => {
+                return card.getBoundingClientRect().bottom > 99;
+            });
     }
 }

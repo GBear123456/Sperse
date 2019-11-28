@@ -26,6 +26,7 @@ import { AppPermissions } from '@shared/AppPermissions';
 })
 export class BankPassComponent {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
+    offerId = 718;
     searchValue: '';
     dataSourceURI = 'Lead';
     gridPagerConfig = DataGridService.defaultGridPagerConfig;
@@ -55,7 +56,6 @@ export class BankPassComponent {
         }
     });
     formatting = AppConsts.formatting;
-    dataGridHeight = 'calc(100vh - 240px)';
     hasCrmCustomersPermission: boolean = this.permissionChecker.isGranted(AppPermissions.CRMCustomers);
     dataIsLoading = false;
 
@@ -66,9 +66,7 @@ export class BankPassComponent {
         public ls: AppLocalizationService,
         public httpInterceptor: AppHttpInterceptor,
         public profileService: ProfileService
-    ) {
-        window['t'] = this;
-    }
+    ) {}
 
     getQuickSearchParam() {
         return this.searchValue ? { name: 'quickSearchString', value: this.searchValue } : null;

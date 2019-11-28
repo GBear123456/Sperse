@@ -1,3 +1,5 @@
+@title-font: 'AvianoSans-Bla', sans-serif !important;
+@text-font: 'IBM Plex Sans', sans-serif;
 :host {
     --width: 100%;
     --height: 135px;
@@ -5,7 +7,6 @@
     --bottom-color: #fff;
 
     .content {
-        height: 700px;
         min-height: 745px;
     }
 
@@ -20,19 +21,26 @@
         justify-content: center;
     }
 
+    section:not(.vertical) {
+        width: var(--width);
+    }
+
     section {
         box-shadow: 0 20px 100px 0 rgba(0, 0, 0, 0.15);
         border: solid 1px #ebecec;
         background-color: #ffffff;
         &.users-list {
-            height: calc(100vh - 180px);
+            min-height: calc(100vh - 150px);
             padding: 15px 15px 0 15px;
             position: relative;
-        }
-    }
+            @media (min-width: 960px) {
+                width: calc(100vw - (100vw - 960px)/2 - 320px - 15px);
+            }
 
-    section:not(.vertical) {
-        width: var(--width);
+            @media (min-width: 1200px) {
+                width: calc(100vw - (100vw - 1140px)/2 - 285px - 24px);
+            }
+        }
     }
 
     section header {
@@ -45,7 +53,7 @@
         }
     }
 
-    /deep/ section footer {
+    /*/deep/ section footer {
         text-align: center;
         margin-top: 120px;
 
@@ -55,7 +63,7 @@
                 margin: 0 auto;
             }
         }
-    }
+    }*/
 
     section.vertical {
         position: relative;
@@ -151,7 +159,7 @@
     }
 
     #gridContainer {
-        height: calc(100vh - 240px);
+        height: initial;
     }
 
     .vertical .separator.reverse {
@@ -166,4 +174,90 @@
         --svg: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none"%3E%3Cpolygon fill="%23f44336" points="0 100 0 0 100 0"/%3E%3C/svg%3E');
     }
 
+    .top {
+        padding: 92px 30px 40px;
+        text-align: center;
+
+        h1 {
+            font-size: 44px;
+            letter-spacing: -0.88px;
+            text-align: center;
+            color: #000000;
+        }
+
+        h2 {
+            font-size: 22px;
+            font-family: 'AvianoSans-Bol', sans-serif !important;
+            font-weight: normal;
+            line-height: 1.23;
+            letter-spacing: -0.44px;
+            text-align: center;
+            color: #000000;
+            max-width: 530px;
+            margin: 15px auto;
+        }
+
+        p {
+            max-width: 672px;
+            margin: 0 auto;
+            font-size: 16px;
+        }
+
+        .price {
+            margin-bottom: 0;
+            margin-top: 37px;
+            line-height: 22px;
+            span {
+                font-family: 'AvianoSans-Reg', sans-serif !important;
+                font-size: 18px;
+                letter-spacing: -0.36px;
+                &.bold {
+                    font-size: 30px;
+                    letter-spacing: -0.6px;
+                    color: #000000;
+                    font-family: 'AvianoSans-Bla', sans-serif !important;
+                }
+                &.per-month {
+                    text-transform: uppercase;
+                }
+            }
+        }
+
+        .button {
+            margin: 20px auto 0;
+            color: #fff;
+        }
+    }
+
+    .access {
+        background: rgba(16, 71, 121, 0.07);
+        padding: 0 15px;
+
+        .section-content {
+            padding: 40px 20px;
+
+            h2 {
+                font-size: 23px;
+                font-family: @title-font;
+                font-weight: normal;
+                line-height: 1.04;
+                letter-spacing: -0.46px;
+                color: #000000;
+            }
+
+            p {
+                font-family: @text-font;
+                font-size: 16px;
+                font-weight: normal;
+                line-height: 1.44;
+                letter-spacing: normal;
+                color: #474747;
+            }
+        }
+    }
+
+    .bg-tablet {
+        background: url('../../../assets/common/images/bank-code/bg-tablet@2x.png') top right no-repeat;
+        background-size: cover;
+    }
 }

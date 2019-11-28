@@ -1,9 +1,9 @@
 :host {
     display: block;
-    height: calc(100vh - 75px);
     background: #fff;
 
     .iframe {
+        height: calc(100vh - 109px);
         @media (min-width: 960px) {
             max-width: initial;
             position: absolute;
@@ -29,17 +29,18 @@
     .get-access,
     .what-codebreaker-is,
     .learn-more {
-        padding: 0 67px;
+        padding: 20px;
+        @media (min-width: 768px) {
+            padding: 0 67px;
+        }
     }
 
     .get-access {
         display: flex;
         background: url("../../../assets/common/images/bank-code/codebreaker-ai.png");
         .content {
-            max-width: 60%;
             h1 {
                 font-family: 'AvianoSans-Bol' !important;
-                font-size: 44px;
                 font-weight: 900;
                 letter-spacing: -0.88px;
                 color: #000000;
@@ -86,16 +87,20 @@
         @media (min-width: 768px) {
             height: 550px;
             padding-top: 100px;
+            .content {
+                max-width: 60%;
+                h1 {
+                    font-size: 44px;
+                }
+            }
         }
     }
 
     .what-codebreaker-is {
         display: flex;
         align-items: center;
-        padding-top: 27px;
-        padding-bottom: 88px;
+        flex-direction: column;
         .description {
-            margin-left: 80px;
             h2 {
                 font-family: 'AvianoSans-Reg' !important;
                 font-size: 26px;
@@ -111,12 +116,18 @@
                 color: #474747;
             }
         }
+        @media (min-width: 768px) {
+            padding-top: 27px;
+            padding-bottom: 88px;
+            flex-direction: row;
+            .description {
+                margin-left: 80px;
+            }
+        }
     }
 
     .learn-more {
         background-color: #104779;
-        padding-top: 57px;
-        padding-bottom: 57px;
         h2 {
             font-family: 'AvianoSans-Reg' !important;
             font-size: 26px;
@@ -144,11 +155,14 @@
             color: #ac1f22;
             background-color: #ffffff;
             padding: 10px 40px;
+            cursor: pointer;
+        }
+
+        @media (min-width: 768px) {
+            padding-top: 57px;
+            padding-bottom: 57px;
         }
     }
 
-    subscription {
-        padding-top: 30px;
-    }
 
 }
