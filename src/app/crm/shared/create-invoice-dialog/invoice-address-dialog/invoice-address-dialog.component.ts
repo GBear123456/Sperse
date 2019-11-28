@@ -12,7 +12,6 @@ import { AppConsts } from '@shared/AppConsts';
 import { CountriesStoreActions, CountriesStoreSelectors } from '@app/store';
 import { RootStore, StatesStoreActions, StatesStoreSelectors } from '@root/store';
 import { CountryStateDto, CountryDto, InvoiceAddressInput } from '@shared/service-proxies/service-proxies';
-import { ContactsService } from '@app/crm/contacts/contacts.service';
 import { GooglePlaceHelper } from '@shared/helpers/GooglePlaceHelper';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 
@@ -35,11 +34,10 @@ export class InvoiceAddressDialog {
     state: string;
     country: string;
     googleAutoComplete: Boolean;
-    localization = AppConsts.localization;
+    emailRegEx = AppConsts.regexPatterns.email;
 
     constructor(
         private elementRef: ElementRef,
-        private contactsService: ContactsService,
         private angularGooglePlaceService: AngularGooglePlaceService,
         private store$: Store<RootStore.State>,
         private googlePlaceHelper: GooglePlaceHelper,

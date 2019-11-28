@@ -43,19 +43,16 @@
                     [(value)]="data.email">
                     <dx-validator>
                         <dxi-validation-rule type="required" message="{{ls.l('RequiredField', ls.l('Email'))}}"></dxi-validation-rule>
+                        <dxi-validation-rule type="pattern" [pattern]="emailRegEx" message="{{ls.l('EmailIsNotValid')}}."></dxi-validation-rule>
                     </dx-validator>
                 </dx-text-box>
             </div>
-            <div>
+            <div class="phone-container">
                 <label>{{ls.l('Phone')}}</label>
-                <dx-text-box
-                    name="phone"
-                    maxLength="50"
-                    [(value)]="data.phone">
-                    <dx-validator>
-                        <dxi-validation-rule type="required" message="{{ls.l('RequiredField', ls.l('Phone'))}}"></dxi-validation-rule>
-                    </dx-validator>
-                </dx-text-box>
+                <country-phone-number 
+                    [(phoneNumber)]="data.phone"
+                    [required]="false">
+                </country-phone-number>
             </div>
             <div>
                 <label>{{ls.l('Address')}}</label>
