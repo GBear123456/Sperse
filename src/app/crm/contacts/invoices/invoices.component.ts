@@ -11,7 +11,7 @@ import {
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { DxTooltipComponent } from 'devextreme-angular/ui/tooltip';
 import { MatDialog } from '@angular/material/dialog';
-import { finalize, switchMap, first } from 'rxjs/operators';
+import { finalize, switchMap, first, map } from 'rxjs/operators';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
@@ -208,7 +208,14 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
             switchMap(data => {
                 data['contactId'] = this.contactId;
                 data['templateId'] = this.settings.defaultTemplateId;
-                return this.clientService.showEmailDialog(data);
+                return this.clientService.showEmailDialog(data, 'Email', (tmpId, emailData) => {
+                    return this.invoiceService.getEmailData(tmpId, this.actionRecordData.InvoiceId).pipe(map(email => {
+                        emailData.cc = email.cc;
+                        emailData.bcc = email.bcc;
+                        emailData.body = email.body;
+                        emailData.subject = email.subject;
+                    }));
+                });
             })
         ).subscribe(data => this.updateStatus(InvoiceStatus.Sent));
     }
