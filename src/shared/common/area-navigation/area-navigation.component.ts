@@ -1,6 +1,6 @@
+/** Core imports */
 import {
     Component,
-    Injector,
     Input,
     HostListener,
     AfterViewInit,
@@ -10,19 +10,24 @@ import {
     QueryList,
     ElementRef,
     OnChanges,
-    SimpleChanges
+    SimpleChanges, OnDestroy
 } from '@angular/core';
+import { Router } from '@angular/router';
 
-import { AppComponentBase } from 'shared/common/app-component-base';
-import { takeUntil } from 'rxjs/operators';
+/** Third party imports */
+import { Subscription } from 'rxjs';
+
+/** Application imports */
 import { MemberAreaLink } from '@shared/common/area-navigation/member-area-link.enum';
+import { AppSessionService } from '@shared/common/session/app-session.service';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 
 @Component({
     selector: 'area-navigation',
     templateUrl: './area-navigation.component.html',
     styleUrls: ['./area-navigation.component.less']
 })
-export class AreaNavigationComponent extends AppComponentBase implements AfterViewInit, OnChanges {
+export class AreaNavigationComponent implements AfterViewInit, OnChanges, OnDestroy {
     @Input() memberAreaLinks: MemberAreaLink[];
     @Input() actionsButtons: any[];
     @ViewChildren('sublinks') sublinksRefs: QueryList<ElementRef>;
@@ -30,8 +35,11 @@ export class AreaNavigationComponent extends AppComponentBase implements AfterVi
     responsiveMemberAreaLinks = [];
     inlineMemberAreaLinks = [];
     resizeTimeout: any;
-    loggedUserId: number;
-    currentUrl = this._router.url;
+    loggedUserId: number = this.appSession.userId;
+    currentUrl = this.router.url;
+    routeEventsSubscription: Subscription = this.router.events.subscribe(() => {
+        this.currentUrl = this.router.url;
+    });
 
     @HostListener('window:click') onClick() {
         this.closeAllOpenedMenuItems();
@@ -43,15 +51,12 @@ export class AreaNavigationComponent extends AppComponentBase implements AfterVi
     }
 
     constructor(
-        injector: Injector,
-        private renderer: Renderer2
-    ) {
-        super(injector);
-        this._router.events.pipe(takeUntil(this.destroy$)).subscribe(() => {
-            this.currentUrl = this._router.url;
-        });
-        this.loggedUserId = this.appSession.userId;
-    }
+        private renderer: Renderer2,
+        private router: Router,
+        private appSession: AppSessionService,
+        private elementRef: ElementRef,
+        public ls: AppLocalizationService
+    ) {}
 
     ngOnChanges(changes: SimpleChanges) {
         if (changes.memberAreaLinks) {
@@ -93,7 +98,7 @@ export class AreaNavigationComponent extends AppComponentBase implements AfterVi
     }
 
     navigationItemLeave(e) {
-        if (!this.getElementRef().nativeElement.contains(e.relatedTarget) ||
+        if (!this.elementRef.nativeElement.contains(e.relatedTarget) ||
             this.linksList.nativeElement.contains(e.relatedTarget)
         ) {
             this.closeAllOpenedMenuItems();
@@ -110,5 +115,9 @@ export class AreaNavigationComponent extends AppComponentBase implements AfterVi
 
     private closeAllOpenedMenuItems() {
         this.sublinksRefs.toArray().forEach(sublinkRef => this.renderer.removeClass(sublinkRef.nativeElement.parentElement, 'opened'));
+    }
+
+    ngOnDestroy() {
+        this.routeEventsSubscription.unsubscribe();
     }
 }

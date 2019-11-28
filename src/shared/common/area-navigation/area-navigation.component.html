@@ -6,14 +6,14 @@
         (mouseenter)="navigationItemEnter($event, item)"
         (mouseleave)="navigationItemLeave($event, item)">
         <ng-container *ngIf="item.url; else internalBlock">
-            <a [href]="item.url">{{l(item.name)}}</a>
+            <a [href]="item.url">{{ls.l(item.name)}}</a>
         </ng-container>
         <ng-template #internalBlock>
             <a routerLinkActive="active"
                [routerLink]="item.routerUrl || getFirstVisibleLink(item.sublinks)"
                [ngClass]="{ active: currentUrl === item.routerUrl, disabled: !item.url && !item.routerUrl && (!item.sublinks || !item.sublinks.length)}"
                [routerLinkActiveOptions]="{exact:true}">
-               {{l(item.name)}} <span *ngIf="item.sublinks && item.sublinks.length" class="dropdown-mark"></span>
+               {{ls.l(item.name)}} <span *ngIf="item.sublinks && item.sublinks.length" class="dropdown-mark"></span>
             </a>
         </ng-template>
         <ul *ngIf="item.sublinks && item.sublinks.length" class="sublinks" #sublinks>
@@ -22,7 +22,7 @@
                    routerLinkActive="active"
                    [routerLinkActiveOptions]="{exact:true}"
                    #simlink>
-                    {{l(sublink.name)}}
+                    {{ls.l(sublink.name)}}
                 </a>
             </li>
         </ul>
@@ -37,7 +37,7 @@
     <ul class="app-responsive-menu dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
         <li *ngFor="let item of responsiveMemberAreaLinks" routerLinkActive="active" [hidden]="item.hidden">
             <ng-container *ngIf="item.url; else internalBlock">
-                <a [href]="item.url" class="dropdown-item">{{l(item.name)}}</a>
+                <a [href]="item.url" class="dropdown-item">{{ls.l(item.name)}}</a>
             </ng-container>
             <ng-template #internalBlock>
                 <a routerLinkActive="active"
@@ -46,13 +46,13 @@
                    [routerLink]="item.routerUrl || item.sublinks && item.sublinks[0].routerUrl"
                    class="dropdown-item"
                    [class.disable]="item.disabled || !item.url && !item.routerUrl && (!item.sublinks || !item.sublinks.length)">
-                    {{l(item.name)}}
+                    {{ls.l(item.name)}}
                 </a>
             </ng-template>
             <ul *ngIf="item.sublinks && item.sublinks.length" class="responsive-sublinks">
                 <li *ngFor="let sublink of item.sublinks" [hidden]="sublink.hidden">
                     <a [routerLink]="sublink.routerUrl" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}">
-                        {{l(sublink.name)}}
+                        {{ls.l(sublink.name)}}
                     </a>
                 </li>
             </ul>
@@ -65,7 +65,7 @@
         <a [href]="link.url" class="left-menu--link"
            [ngClass]="link.class"
            [class.disable]="link.disabled">
-            <span>{{l(link.name)}}</span>
+            <span>{{ls.l(link.name)}}</span>
         </a>
     </li>
 </ul>

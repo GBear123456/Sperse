@@ -1,9 +1,6 @@
 /** Core imports */
 import { Injectable } from '@angular/core';
 
-/** Third party imports */
-import invert from 'lodash/invert';
-
 /** Application imports */
 import { LocalizationService } from '@abp/localization/localization.service';
 import { AppConsts } from '@shared/AppConsts';
@@ -11,12 +8,8 @@ import { AppConsts } from '@shared/AppConsts';
 @Injectable()
 export class AppLocalizationService extends LocalizationService {
     localizationSourceName;
-    private readonly localizationSources = invert(AppConsts.localization);
     l(key: string, ...args: any[]): string {
         let source: string = AppConsts.localization.defaultLocalizationSourceName;
-        if (args && args[0] && this.localizationSources[args[0]]) {
-            source = args.shift();
-        }
         if (this.localizationSourceName)
             source = this.localizationSourceName;
 

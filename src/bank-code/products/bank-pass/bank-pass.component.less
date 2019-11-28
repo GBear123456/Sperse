@@ -30,7 +30,6 @@
         border: solid 1px #ebecec;
         background-color: #ffffff;
         &.users-list {
-            min-height: calc(100vh - 150px);
             padding: 15px 15px 0 15px;
             position: relative;
             @media (min-width: 960px) {
@@ -39,6 +38,13 @@
 
             @media (min-width: 1200px) {
                 width: calc(100vw - (100vw - 1140px)/2 - 285px - 24px);
+            }
+        }
+        loading-spinner {
+            display: block;
+            min-height: calc(100vh - 240px);
+            @media (min-width: 960px) {
+                min-height: calc(100vh - 165px);
             }
         }
     }

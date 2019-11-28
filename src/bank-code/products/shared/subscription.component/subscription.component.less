@@ -40,7 +40,7 @@
             font-size: 19px;
         }
 
-        @media (min-width: 992px) {
+        @media (min-width: 768px) {
             padding: 0 100px;
         }
     }
@@ -65,13 +65,15 @@
             font-size: 70px;
             text-align: center;
             color: #000000;
-            margin: 0 7px 0 38px
+            @media (min-width: 768px) {
+                margin: 0 7px 0 38px;
+            }
         }
         .code-breaker-offer {
             position: relative;
             top: 15px;
         }
-        @media (min-width: 992px) {
+        @media (min-width: 768px) {
             flex-direction: row;
         }
     }
