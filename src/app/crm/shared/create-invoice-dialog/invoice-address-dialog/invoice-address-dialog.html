@@ -9,11 +9,51 @@
                     maxLength="50"
                     [(value)]="data.company">
                     <dx-validator>
-                        <dxi-validation-rule type="required" message="{{ls.l('Company Required')}}"></dxi-validation-rule>
+                        <dxi-validation-rule type="required" message="{{ls.l('RequiredField', ls.l('Company'))}}"></dxi-validation-rule>
                     </dx-validator>
                 </dx-text-box>
             </div>
-
+            <div>
+                <label>{{ls.l('FirstName')}}</label>
+                <dx-text-box
+                    name="firstName"
+                    maxLength="50"
+                    [(value)]="data.firstName">
+                    <dx-validator>
+                        <dxi-validation-rule type="required" message="{{ls.l('RequiredField', ls.l('FirstName'))}}"></dxi-validation-rule>
+                    </dx-validator>
+                </dx-text-box>
+            </div>
+            <div>
+                <label>{{ls.l('LastName')}}</label>
+                <dx-text-box
+                    name="lastName"
+                    maxLength="50"
+                    [(value)]="data.lastName">
+                    <dx-validator>
+                        <dxi-validation-rule type="required" message="{{ls.l('RequiredField', ls.l('LastName'))}}"></dxi-validation-rule>
+                    </dx-validator>
+                </dx-text-box>
+            </div>
+            <div>
+                <label>{{ls.l('Email')}}</label>
+                <dx-text-box
+                    name="email"
+                    maxLength="50"
+                    [(value)]="data.email">
+                    <dx-validator>
+                        <dxi-validation-rule type="required" message="{{ls.l('RequiredField', ls.l('Email'))}}"></dxi-validation-rule>
+                        <dxi-validation-rule type="pattern" [pattern]="emailRegEx" message="{{ls.l('EmailIsNotValid')}}."></dxi-validation-rule>
+                    </dx-validator>
+                </dx-text-box>
+            </div>
+            <div class="phone-container">
+                <label>{{ls.l('Phone')}}</label>
+                <country-phone-number 
+                    [(phoneNumber)]="data.phone"
+                    [required]="false">
+                </country-phone-number>
+            </div>
             <div>
                 <label>{{ls.l('Address')}}</label>
                 <input *ngIf="!googleAutoComplete" type="text"
@@ -28,7 +68,7 @@
                        class="dx-texteditor-input"
                        (country)="updateCountryInfo($event)"
                        (street_number)='data.streetNumber=$event'
-                       (street)='data.streetAddress=$event'
+                       (street)='data.address1=$event'
                        (city)='data.city=$event'
                        (postal_code)='data.zip=$event'
                        (setAddress)="onAddressChanged($event)"
@@ -42,7 +82,7 @@
                     valueExpr="name"
                     name="country"
                     [searchEnabled]="true"
-                    [(value)]="data.country"
+                    [(value)]="country"
                     fieldTemplate="field"
                     (onValueChanged)="onCountryChange($event)">
                     <div *dxTemplate="let data of 'field'">
@@ -64,7 +104,7 @@
                     valueExpr="name"
                     name="state"
                     [searchEnabled]="true"
-                    [(value)]="data.state"
+                    [(value)]="state"
                     fieldTemplate="field">
                     <div *dxTemplate="let data of 'field'">
                         <div class="custom-item">
@@ -84,6 +124,9 @@
                     maxLength="50"
                     [(value)]="data.city">
                 </dx-text-box>
+                <dx-validator>
+                    <dxi-validation-rule type="required" message="{{ls.l('RequiredField', ls.l('City'))}}"></dxi-validation-rule>
+                </dx-validator>
             </div>
 
             <div>

@@ -19,9 +19,10 @@ import { ContactsService } from '@app/crm/contacts/contacts.service';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { DateHelper } from '@shared/helpers/DateHelper';
 import { DialogService } from '@app/shared/common/dialogs/dialog.service';
-import { ContactGroup } from '@shared/AppEnums';
+import { ContactGroup, AddressUsageType } from '@shared/AppEnums';
 import {
     InvoiceServiceProxy,
+    InvoiceAddressInput,
     CreateInvoiceInput,
     UpdateInvoiceLineInput,
     UpdateInvoiceInput,
@@ -33,7 +34,7 @@ import {
     InvoiceSettings,
     GetNewInvoiceInfoOutput,
     EntityContactInfo,
-    ContactAddressServiceProxy
+    ContactAddressInfo
 } from '@shared/service-proxies/service-proxies';
 import { NotifyService } from '@abp/notify/notify.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -52,6 +53,9 @@ import { AppPermissions } from '@shared/AppPermissions';
     templateUrl: 'create-invoice-dialog.component.html',
     styleUrls: [ '../../../shared/common/styles/form.less', 'create-invoice-dialog.component.less' ],
     providers: [ CacheHelper, CustomerServiceProxy, DialogService, InvoiceServiceProxy ],
+    host: {
+        '(click)': 'closeAddressDialogs()'
+    },
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CreateInvoiceDialogComponent implements OnInit {
@@ -59,6 +63,8 @@ export class CreateInvoiceDialogComponent implements OnInit {
     @ViewChild(ModalDialogComponent) modalDialog: ModalDialogComponent;
     @ViewChild(DxContextMenuComponent) saveContextComponent: DxContextMenuComponent;
     @ViewChild(DxDataGridComponent) linesComponent: DxDataGridComponent;
+    @ViewChild('billingAddress') billingAddressComponent: DxSelectBoxComponent;
+    @ViewChild('shippingAddress') shippingAddressComponent: DxSelectBoxComponent;
     @ViewChild('dueDateComponent') dueDateComponent: DxDateBoxComponent;
     @ViewChild('dateComponent') dateComponent: DxDateBoxComponent;
     @ViewChild('invoice') invoiceNoComponent: DxTextBoxComponent;
@@ -85,8 +91,8 @@ export class CreateInvoiceDialogComponent implements OnInit {
     remoteServiceBaseUrl: string = AppConsts.remoteServiceBaseUrl;
     selectedOption: any;
     selectedContact: any;
-    selectedBillingAddress: any;
-    selectedShippingAddress: any;
+    selectedBillingAddress: InvoiceAddressInput;
+    selectedShippingAddress: InvoiceAddressInput;
     customer: any;
     contactId: number;
     customers = [];
@@ -126,7 +132,6 @@ export class CreateInvoiceDialogComponent implements OnInit {
         private invoiceProxy: InvoiceServiceProxy,
         private invoicesService: InvoicesService,
         private customerProxy: CustomerServiceProxy,
-        private addressProxy: ContactAddressServiceProxy,
         private cacheService: CacheService,
         private notifyService: NotifyService,
         private messageService: MessageService,
@@ -147,6 +152,9 @@ export class CreateInvoiceDialogComponent implements OnInit {
             {text: this.ls.l('Invoice_SaveAndSend'), selected: false, status: InvoiceStatus.Final, email: true, disabled: this.disabledForUpdate},
             {text: this.ls.l('Invoice_SaveAndMarkSent'), selected: false, disabled: true}
         ];
+        this.dialogRef.afterClosed().subscribe(() => {
+            this.closeAddressDialogs();
+        });
     }
 
     ngOnInit() {
@@ -161,6 +169,17 @@ export class CreateInvoiceDialogComponent implements OnInit {
 
         this.initInvoiceData();
         this.saveOptionsInit();
+    }
+
+    checkCloseAddressDialog(name: string) {
+        let dialog = this.dialog.getDialogById(name);
+        if (dialog)
+            dialog.close();
+    }
+
+    closeAddressDialogs() {
+        this.checkCloseAddressDialog('selectedBillingAddress');
+        this.checkCloseAddressDialog('selectedShippingAddress');
     }
 
     initOrderDataSource() {
@@ -240,15 +259,24 @@ export class CreateInvoiceDialogComponent implements OnInit {
         if (contact) {
             this.contactId = contact.id;
             this.initOrderDataSource();
+            this.initContactAddresses(contact.id);
+            this.customer = contact.personContactInfo.fullName;
             let details = contact.personContactInfo.details,
                 emailAddress = details.emails.length ?
-                    details.emails[0].emailAddress : undefined;
+                    details.emails[0].emailAddress : undefined,
+                address = details.addresses[0];
             this.selectedContact =
                 new EntityContactInfo({
                     id: contact.id,
                     name: this.customer,
                     email: emailAddress,
-                    address: undefined,
+                    address: address ? new ContactAddressInfo({
+                        streetAddress: address.streetAddress,
+                        city: address.city,
+                        state: address.state,
+                        countryCode: address.country,
+                        zip: address.zip
+                    }) : new ContactAddressInfo(),
                     isActive: true
                 });
         }
@@ -291,6 +319,10 @@ export class CreateInvoiceDialogComponent implements OnInit {
         data.date = this.getDate(this.date, true, '');
         data.dueDate = this.getDate(this.dueDate);
         data.description = this.description;
+        data.billingAddress = new InvoiceAddressInput(
+            this.selectedBillingAddress);
+        data.shippingAddress = new InvoiceAddressInput(
+            this.selectedShippingAddress);
         data.note = this.notes;
     }
 
@@ -393,8 +425,8 @@ export class CreateInvoiceDialogComponent implements OnInit {
         });
     }
 
-    private validateDate(caption, value) {
-        return value || this.notifyService.error(this.ls.l('RequiredField', '', caption));
+    private validateField(caption, value) {
+        return value || this.notifyService.error(this.ls.l('RequiredField', caption));
     }
 
     save(event?): void {
@@ -409,10 +441,22 @@ export class CreateInvoiceDialogComponent implements OnInit {
             return this.contactComponent.instance.option('isValid', false);
         }
 
-        if (!this.validateDate(this.ls.l('Date'), this.date))
+        let isAddressValid = this.selectedBillingAddress &&
+            this.selectedBillingAddress.address1 &&
+            this.selectedBillingAddress.city;
+        if (!this.validateField(this.ls.l('Invoice_BillTo'), isAddressValid))
+            return this.billingAddressComponent.instance.option('isValid', false);
+
+        isAddressValid = this.selectedShippingAddress &&
+            this.selectedShippingAddress.address1 &&
+            this.selectedShippingAddress.city;
+        if (!this.validateField(this.ls.l('Invoice_ShipTo'), isAddressValid))
+            return this.shippingAddressComponent.instance.option('isValid', false);
+
+        if (!this.validateField(this.ls.l('Date'), this.date))
             return this.dateComponent.instance.option('isValid', false);
 
-        if (!this.validateDate(this.ls.l('Invoice_DueOnReceipt'), this.dueDate))
+        if (!this.validateField(this.ls.l('Invoice_DueOnReceipt'), this.dueDate))
             return this.dueDateComponent.instance.option('isValid', false);
 
         this.lines = this.getFilteredLines(false);
@@ -442,9 +486,9 @@ export class CreateInvoiceDialogComponent implements OnInit {
         event.component.option('isValid', true);
     }
 
-    getAddressesByType(addresses, types) {
+    getAddressesByType(addresses, condition) {
         return addresses.map(address => {
-            if (types.indexOf(address.usageTypeId) >= 0) {
+            if (condition.call(this, address)) {
                 address['display'] = [address.streetAddress, address.city,
                     address.stateId, address.zip, address.countryId].join(', ');
                 return address;
@@ -454,9 +498,11 @@ export class CreateInvoiceDialogComponent implements OnInit {
 
     initContactAddresses(contactId: number) {
         if (contactId)
-            this.addressProxy.getContactAddresses(contactId).subscribe(res => {
-                this.shippingAddresses = this.getAddressesByType(res, ['S']);
-                this.billingAddresses = this.getAddressesByType(res, ['H']);
+            this.invoiceProxy.getInvoiceAddresses(contactId).subscribe(res => {
+                this.shippingAddresses = this.getAddressesByType(res,
+                    addr => addr.usageTypeId == AddressUsageType.Shipping);
+                this.billingAddresses = this.getAddressesByType(res,
+                    addr => addr.usageTypeId != AddressUsageType.Shipping);
                 this.changeDetectorRef.markForCheck();
             });
     }
@@ -677,12 +723,35 @@ export class CreateInvoiceDialogComponent implements OnInit {
             setTimeout(() => event.event.target.focus(), 150);
     }
 
-    showEditAddressDialog(event, data) {
+    showEditAddressDialog(event, field) {
+        let address = this.selectedContact.address,
+            customerNameParts = (this.customer || '').split(' '),
+            dialogData = this[field] || new InvoiceAddressInput({
+                countryId: undefined,
+                stateId: undefined,
+                city:  address.city,
+                zip: address.zip,
+                address1: address.streetAddress,
+                address2: undefined,
+                firstName: customerNameParts.shift(),
+                lastName: customerNameParts.shift(),
+                company: undefined,
+                email: this.selectedContact.email,
+                phone: undefined
+            });
         this.dialog.open(InvoiceAddressDialog, {
-            data: data,
+            id: field,
+            data: dialogData,
             hasBackdrop: false,
+            disableClose: false,
+            closeOnNavigation: true,
             position: this.dialogService.calculateDialogPosition(event, event.target)
         }).afterClosed().subscribe(result => {
+            if (!this[field] && result)
+                this[field] = dialogData;
+            this.changeDetectorRef.detectChanges();
         });
+        event.stopPropagation();
+        event.preventDefault();
     }
 }

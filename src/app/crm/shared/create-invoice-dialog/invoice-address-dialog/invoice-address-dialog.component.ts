@@ -8,11 +8,10 @@ import { AngularGooglePlaceService } from 'angular-google-place';
 import * as _ from 'underscore';
 
 /** Application imports */
+import { AppConsts } from '@shared/AppConsts';
 import { CountriesStoreActions, CountriesStoreSelectors } from '@app/store';
 import { RootStore, StatesStoreActions, StatesStoreSelectors } from '@root/store';
-import { AppConsts } from '@shared/AppConsts';
-import { CountryStateDto, CountryDto } from '@shared/service-proxies/service-proxies';
-import { ContactsService } from '@app/crm/contacts/contacts.service';
+import { CountryStateDto, CountryDto, InvoiceAddressInput } from '@shared/service-proxies/service-proxies';
 import { GooglePlaceHelper } from '@shared/helpers/GooglePlaceHelper';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 
@@ -33,27 +32,27 @@ export class InvoiceAddressDialog {
     states: CountryStateDto[];
     countries: CountryDto[];
     state: string;
+    country: string;
     googleAutoComplete: Boolean;
-    localization = AppConsts.localization;
+    emailRegEx = AppConsts.regexPatterns.email;
 
     constructor(
         private elementRef: ElementRef,
-        private contactsService: ContactsService,
         private angularGooglePlaceService: AngularGooglePlaceService,
         private store$: Store<RootStore.State>,
         private googlePlaceHelper: GooglePlaceHelper,
         public dialogRef: MatDialogRef<InvoiceAddressDialog>,
         public ls: AppLocalizationService,
-        @Inject(MAT_DIALOG_DATA) public data: any
+        @Inject(MAT_DIALOG_DATA) public data: InvoiceAddressInput
     ) {
         if (this.validateAddress(data)) {
             this.address =
                 this.googleAutoComplete ? [
-                    data.streetAddress,
+                    data.address1,
                     data.city,
-                    data.state,
-                    data.country
-                ].join(',') : data.streetAddress;
+                    this.state,
+                    this.country
+                ].join(',') : data.address1;
         }
 
         this.googleAutoComplete = Boolean(window['google']);
@@ -64,9 +63,9 @@ export class InvoiceAddressDialog {
         this.store$.dispatch(new CountriesStoreActions.LoadRequestAction());
         this.store$.pipe(select(CountriesStoreSelectors.getCountries)).subscribe(result => {
             this.countries = result;
-            if (this.data.country)
+            if (this.country)
                 this.onCountryChange({
-                    value: this.data.country
+                    value: this.country
                 });
         });
     }
@@ -83,24 +82,24 @@ export class InvoiceAddressDialog {
     onAddressChanged(event) {
         let number = this.angularGooglePlaceService.street_number(event.address_components);
         let street = this.angularGooglePlaceService.street(event.address_components);
-        this.data.state = this.googlePlaceHelper.getState(event.address_components);
+        this.state = this.googlePlaceHelper.getState(event.address_components);
         this.address = number ? (number + ' ' + street) : street;
     }
 
     updateCountryInfo(countryName: string) {
         countryName == 'United States' ?
-            this.data.country = AppConsts.defaultCountryName :
-            this.data.country = countryName;
+            this.country = AppConsts.defaultCountryName :
+            this.country = countryName;
     }
 
     onSave(event) {
-        this.data.streetAddress = this.address;
+        this.data.address1 = this.address;
 
         if (this.validator.validate().isValid && this.validateAddress(this.data)) {
-            if (this.data.country)
-                this.data.countryId = _.findWhere(this.countries, {name: this.data.country})['code'];
-            if (this.data.state) {
-                let state = _.findWhere(this.states, {name: this.data.state});
+            if (this.country)
+                this.data.countryId = _.findWhere(this.countries, {name: this.country})['code'];
+            if (this.state) {
+                let state = _.findWhere(this.states, {name: this.state});
                 if (state)
                     this.data.stateId = state['code'];
             }
@@ -109,9 +108,9 @@ export class InvoiceAddressDialog {
     }
 
     validateAddress(data) {
-        return data.streetAddress ||
-            data.country ||
-            data.state ||
+        return data.address1 ||
+            this.country ||
+            this.state ||
             data.city ||
             data.zip;
     }

@@ -70,18 +70,18 @@
                         height="40px"
                         displayExpr="display"
                         [visible]="contactId && !selectedBillingAddress"
-                        [disabled]="data?.invoice || data?.contactInfo"
                         [placeholder]="ls.lr('Select Address')"
                         [(value)]="selectedBillingAddress"
                         [dataSource]="billingAddresses">
                     </dx-select-box>
-                    <div class="selected-contact-info" *ngIf="selectedBillingAddress"><i class="edit fa fa-pencil" (click)="showEditAddressDialog($event, selectedBillingAddress)"></i>
-                        {{ customer }}<br *ngIf="customer">
-                        {{ selectedContact?.email }}<br *ngIf="selectedContact?.email">
-                        {{ selectedBillingAddress?.streetAddress }}<br *ngIf="selectedBillingAddress?.streetAddress">
+                    <a *ngIf="contactId && !selectedBillingAddress" (click)="showEditAddressDialog($event, 'selectedBillingAddress')">{{ls.l('+ Add New Address')}}</a>
+                    <div class="selected-contact-info" *ngIf="selectedBillingAddress"><i class="edit fa fa-pencil" (click)="showEditAddressDialog($event, 'selectedBillingAddress')"></i>
+                        {{ selectedBillingAddress?.firstName + ' ' + selectedBillingAddress?.lastName }}<br *ngIf="customer">
+                        {{ [selectedBillingAddress?.email, selectedBillingAddress?.phone].join(', ') }}<br *ngIf="selectedBillingAddress?.email || selectedBillingAddress?.phone">
+                        {{ selectedBillingAddress?.address1 }}<br *ngIf="selectedBillingAddress?.address1">
                         {{ selectedBillingAddress?.city }}<br *ngIf="selectedContact?.address?.city">
                         {{ selectedBillingAddress?.state }} {{ selectedBillingAddress?.zip }}<br *ngIf="selectedBillingAddress?.state || selectedBillingAddress?.zip">
-                        {{ selectedBillingAddress?.countryCode == 'US' ? '' : selectedBillingAddress?.countryCode }}
+                        {{ selectedBillingAddress?.countryCode == 'US' ? '' : selectedBillingAddress?.countryId }}
                     </div>
                 </div>
                 <div class="ship-to">
@@ -92,18 +92,18 @@
                         height="40px"
                         displayExpr="display"
                         [visible]="contactId && !selectedShippingAddress"
-                        [disabled]="data?.invoice || data?.contactInfo"
                         [placeholder]="ls.lr('Select Address')"
                         [(value)]="selectedShippingAddress"
                         [dataSource]="shippingAddresses">
                     </dx-select-box>
-                    <div class="selected-contact-info" *ngIf="selectedShippingAddress"><i class="edit fa fa-pencil" (click)="showEditAddressDialog($event, selectedShippingAddress)"></i>
-                        {{ customer }}<br *ngIf="customer">
-                        {{ selectedContact?.email }}<br *ngIf="selectedContact?.email">
-                        {{ selectedShippingAddress?.streetAddress }}<br *ngIf="selectedContact?.address?.streetAddress">
-                        {{ selectedShippingAddress?.city }}<br *ngIf="selectedContact?.address?.city">
-                        {{ selectedShippingAddress?.state }} {{ selectedShippingAddress?.zip }}<br *ngIf="selectedContact?.address?.state || selectedContact?.address?.zip">
-                        {{ selectedShippingAddress?.countryCode == 'US' ? '' : selectedShippingAddress?.countryCode }}
+                    <a *ngIf="contactId && !selectedShippingAddress" (click)="showEditAddressDialog($event, 'selectedShippingAddress')">{{ls.l('+ Add New Address')}}</a>
+                    <div class="selected-contact-info" *ngIf="selectedShippingAddress"><i class="edit fa fa-pencil" (click)="showEditAddressDialog($event, 'selectedShippingAddress')"></i>
+                        {{ selectedShippingAddress?.firstName + ' ' + selectedShippingAddress?.lastName }}<br *ngIf="customer">
+                        {{ [selectedShippingAddress?.email, selectedShippingAddress?.phone].join(', ') }}<br *ngIf="selectedShippingAddress?.email || selectedShippingAddress?.phone">
+                        {{ selectedShippingAddress?.address1 }}<br *ngIf="selectedShippingAddress?.address1">
+                        {{ selectedShippingAddress?.city }}<br *ngIf="selectedShippingAddress?.city">
+                        {{ selectedShippingAddress?.zip }}<br *ngIf="selectedShippingAddress?.zip">
+                        {{ selectedShippingAddress?.countryCode == 'US' ? '' : selectedShippingAddress?.countryId }}
                     </div>
                 </div>
                 <div class="billed-from">
