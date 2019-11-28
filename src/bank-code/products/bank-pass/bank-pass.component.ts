@@ -55,7 +55,6 @@ export class BankPassComponent {
         }
     });
     formatting = AppConsts.formatting;
-    dataGridHeight = 'calc(100vh - 240px)';
     hasCrmCustomersPermission: boolean = this.permissionChecker.isGranted(AppPermissions.CRMCustomers);
     dataIsLoading = false;
 

@@ -42,7 +42,6 @@
                           accessKey="narrowHeaderPanel"
                           [noDataText]="''"
                           [dataSource]="dataSource"
-                          [height]="dataGridHeight"
                           [allowColumnReordering]="true"
                           [columnAutoWidth]="true"
                           [loadPanel]="{ enabled: false }"
@@ -62,7 +61,10 @@
                 <dxi-column dataField="Name" [caption]="ls.l('Name')" [width]="150"></dxi-column>
                 <dxi-column dataField="Email" [caption]="ls.l('Email')" [width]="160"></dxi-column>
                 <dxi-column dataField="Phone" [caption]="ls.l('Phone')" cellTemplate="phoneCell" cssClass="tabular"></dxi-column>
-                <dxi-column dataField="BankCode" cellTemplate="bankCodeCell" [caption]="ls.l('BankCode')"></dxi-column>
+                <dxi-column dataField="City" [caption]="ls.l('City')" [width]="90"></dxi-column>
+                <dxi-column dataField="StateId" [caption]="ls.l('State')"></dxi-column>
+                <dxi-column dataField="Stage" [caption]="ls.l('Stage')"></dxi-column>
+                <dxi-column dataField="BankCode" cellTemplate="bankCodeCell" [caption]="ls.l('BankCode')" [width]="105"></dxi-column>
                 <dxi-column dataField="CreationTime" [caption]="ls.l('Created')" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
                 <div *dxTemplate="let cellData of 'phoneCell'">
                     {{cellData.value | phone}}
