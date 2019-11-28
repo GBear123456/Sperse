@@ -56,7 +56,7 @@
                             <a class="dx-link dx-link-edit" *dxTemplate="let cellData of 'actionsCellTemplate'">&nbsp;</a>
 
                             <div *dxTemplate="let cellData of 'statusCell'">
-                                <div class="status {{ cellData.value | lowercase }}">{{ cellData.value }}</div>
+                                <div *ngIf="cellData.value" class="status {{ cellData.value | lowercase }}">{{ cellData.value }}</div>
                             </div>
                             <div *dxTemplate="let cellData of 'dateCell'">
                                 {{ cellData.value | date: formatting.date }}
