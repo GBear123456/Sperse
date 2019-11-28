@@ -14,7 +14,7 @@
                                         <div class="link disabled"><i class="move-layer-down"></i>{{l('Download as PDF')}}</div>
                                     </div>
                                     <div class="list">
-                                        <div class="link" (click)="onMenuItemClick(showHistory.bind(this, actionRecordData))"><i class="bullet-list-69"></i>{{l('Invoice Activity')}}</div>
+                                        <div class="link" [ngClass]="{disabled: invoiceActivityDisabled}" (click)="onMenuItemClick(showHistory.bind(this, actionRecordData))"><i class="bullet-list-69"></i>{{l('Invoice Activity')}}</div>
                                         <div class="link disabled"><i class="f-chat"></i>{{l('Post Comment')}}</div>
                                         <div class="link disabled"><i class="check-list"></i>{{l('Manage Payments')}}</div>
                                         <div class="link disabled"><i class="ungroup"></i>{{l('Duplicate Invoice')}}</div>
@@ -24,7 +24,8 @@
                                         <div class="link" [ngClass]="{disabled: markAsCancelledDisabled}" (click)="onMenuItemClick(updateStatus.bind(this, invoiceStatus.Canceled))"><i class="e-remove"></i>{{l('Cancel')}}</div>
                                         <div class="link disabled"><i class="folder-13"></i>{{l('Archive')}}</div>
                                         <div class="link" [ngClass]="{disabled: deleteDisabled}" (click)="onMenuItemClick(deleteInvoice)"><i class="bin"></i>{{l('Delete')}}</div>
-                                        <div class="link" (click)="onMenuItemClick(editInvoice)"><i class="preview"></i>{{l('Preview')}}</div>
+                                        <div class="link" [ngClass]="{disabled: previewDisabled}" (click)="onMenuItemClick(editInvoice)"><i class="preview"></i>{{l('Preview')}}</div>
+                                        <div class="link" (click)="onMenuItemClick(addInvoice)"><i class="add"></i>{{l('Add Invoice')}}</div>
                                     </div>
                                 </div>
                             </div>
@@ -37,7 +38,7 @@
                                       [hoverStateEnabled]="true"
                                       [pager]="defaultGridPagerConfig"
                                       (onCellClick)="onCellClick($event)"
-                                      (onContentReady)="onContentReady($event)"
+                                      (onContentReady)="onContentReady()"
                                       (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
 
                             <dxi-column alignment="center" width="50px" cellTemplate="actionsCellTemplate" headerCellTemplate="actionsCellTemplate"></dxi-column>

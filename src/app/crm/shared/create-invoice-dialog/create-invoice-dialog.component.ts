@@ -10,9 +10,7 @@ import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { DxTextBoxComponent } from 'devextreme-angular/ui/text-box';
 import { DxDateBoxComponent } from 'devextreme-angular/ui/date-box';
 import { CacheService } from 'ng2-cache-service';
-import { Store, select } from '@ngrx/store';
-import { finalize, filter, first, switchMap } from 'rxjs/operators';
-import { Observable } from 'rxjs';
+import { finalize, first, switchMap } from 'rxjs/operators';
 
 /** Application imports */
 import Inputmask from 'inputmask/dist/inputmask/inputmask.date.extensions';
@@ -27,11 +25,11 @@ import {
     InvoiceAddressInput,
     CreateInvoiceInput,
     UpdateInvoiceLineInput,
-    UpdateInvoiceStatusInput,
     UpdateInvoiceInput,
     CustomerServiceProxy,
     InvoiceStatus,
     CreateInvoiceLineInput,
+    InvoiceInfo,
     InvoiceLineUnit,
     InvoiceSettings,
     GetNewInvoiceInfoOutput,
@@ -210,10 +208,13 @@ export class CreateInvoiceDialogComponent implements OnInit {
     initInvoiceData() {
         let invoice = this.data.invoice;
         if (invoice) {
+            this.orderNumber = invoice.OrderNumber;
+            this.orderId = invoice.OrderId;
+        }
+        if (invoice && invoice.InvoiceId && !this.data.addNew) {
             this.modalDialog.startLoading();
             this.invoiceId = invoice.InvoiceId;
             this.invoiceNo = invoice.InvoiceNumber;
-            this.orderId = invoice.OrderId;
             this.status = invoice.InvoiceStatus;
             this.date = DateHelper.addTimezoneOffset(new Date(invoice.Date), true);
             this.dueDate = invoice.InvoiceDueDate;
@@ -224,21 +225,21 @@ export class CreateInvoiceDialogComponent implements OnInit {
                 this.buttons[0].disabled = this.disabledForUpdate;
             this.invoiceProxy.getInvoiceInfo(invoice.InvoiceId)
                 .pipe(finalize(() => this.modalDialog.finishLoading()))
-                .subscribe((res) => {
+                .subscribe((invoiceInfo: InvoiceInfo) => {
                     this.subTotal =
                     this.total =
-                    this.balance = res.grandTotal;
-                    this.description = res.description;
-                    this.notes = res.note;
-                    this.invoiceNo = res.number;
-                    this.orderNumber = res.orderNumber;
-                    this.customer = res.contactName;
-                    this.status = res.status;
-                    this.date = DateHelper.addTimezoneOffset(new Date(res.date), true);
-                    this.dueDate = res.dueDate;
-                    this.selectedBillingAddress = res.billingAddress;
-                    this.selectedShippingAddress = res.shippingAddress;
-                    this.lines = res.lines.map((res) => {
+                    this.balance = invoiceInfo.grandTotal;
+                    this.description = invoiceInfo.description;
+                    this.notes = invoiceInfo.note;
+                    this.invoiceNo = invoiceInfo.number;
+                    this.orderNumber = invoiceInfo.orderNumber;
+                    this.customer = invoiceInfo.contactName;
+                    this.status = invoiceInfo.status;
+                    this.date = DateHelper.addTimezoneOffset(new Date(invoiceInfo.date), true);
+                    this.dueDate = invoiceInfo.dueDate;
+                    this.selectedBillingAddress = invoiceInfo.billingAddress;
+                    this.selectedShippingAddress = invoiceInfo.shippingAddress;
+                    this.lines = invoiceInfo.lines.map(res => {
                         return {
                             Quantity: res.quantity,
                             Rate: res.rate,
@@ -250,10 +251,9 @@ export class CreateInvoiceDialogComponent implements OnInit {
                 });
         } else {
             this.resetNoteDefault();
-
-            this.invoiceProxy.getNewInvoiceInfo().subscribe(res => {
-                this.invoiceInfo = res;
-                this.invoiceNo = res.nextInvoiceNumber;
+            this.invoiceProxy.getNewInvoiceInfo().subscribe((newInvoiceInfo: GetNewInvoiceInfoOutput) => {
+                this.invoiceInfo = newInvoiceInfo;
+                this.invoiceNo = newInvoiceInfo.nextInvoiceNumber;
                 this.changeDetectorRef.detectChanges();
             });
         }
@@ -583,7 +583,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
     selectContact(event) {
         this.selectedContact = event.selectedItem;
         this.contactId = event.selectedItem && event.selectedItem.id;
-        if (this.orderId) {
+        if (this.orderId && !this.invoiceId) {
             this.orderId = undefined;
             this.orderNumber = undefined;
         }

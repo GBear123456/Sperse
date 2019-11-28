@@ -12,11 +12,9 @@ import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { DxTooltipComponent } from 'devextreme-angular/ui/tooltip';
 import { MatDialog } from '@angular/material/dialog';
 import { finalize, switchMap, first } from 'rxjs/operators';
-import { of } from 'rxjs';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
-import { ActionButtonType } from '@shared/AppEnums';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { FilterModel } from '@shared/filters/models/filter.model';
@@ -46,14 +44,16 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
     private settings = new InvoiceSettings();
     private readonly dataSourceURI = 'OrderInvoices';
     private filters: FilterModel[];
-    private formatting = AppConsts.formatting;
-    invoiceStatus = InvoiceStatus;   
+    formatting = AppConsts.formatting;
+    invoiceStatus = InvoiceStatus;
 
     markAsPaidDisabled = false;
     markAsDraftDisabled = false;
     resendInvoiceDisabled = false;
     markAsCancelledDisabled = false;
     deleteDisabled = false;
+    previewDisabled = false;
+    invoiceActivityDisabled = false;
 
     contactId = Number(this.contactService['data'].contactInfo.id);
 
@@ -81,13 +81,13 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
         });
     }
 
-    onContentReady(event) {
-        this.finishLoading(true);
-        this.setGridDataLoaded();
-    }
-
     ngOnInit(): void {
         this.processFilterInternal();
+    }
+
+    onContentReady() {
+        this.finishLoading(true);
+        this.setGridDataLoaded();
     }
 
     private getDataSource() {
@@ -144,11 +144,13 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
                 setTimeout(() => this.editInvoice());
             } else {
                 if (event.event.target.closest('.dx-link.dx-link-edit')) {
-                    this.markAsPaidDisabled = false;
-                    this.resendInvoiceDisabled = 
-                    this.markAsDraftDisabled = [InvoiceStatus.Final, InvoiceStatus.Canceled].indexOf(event.data.InvoiceStatus) < 0;
-                    this.markAsCancelledDisabled = event.data.InvoiceStatus != InvoiceStatus.Sent;
-                    this.deleteDisabled = [InvoiceStatus.Paid, InvoiceStatus.PartiallyPaid, InvoiceStatus.Sent].indexOf(event.data.InvoiceStatus) >= 0;
+                    const isOrder: boolean = !event.data.InvoiceId;
+                    this.markAsPaidDisabled = this.previewDisabled = isOrder;
+                    this.resendInvoiceDisabled =
+                    this.invoiceActivityDisabled =
+                    this.markAsDraftDisabled = isOrder || [InvoiceStatus.Final, InvoiceStatus.Canceled].indexOf(event.data.InvoiceStatus) < 0;
+                    this.markAsCancelledDisabled = isOrder || event.data.InvoiceStatus != InvoiceStatus.Sent;
+                    this.deleteDisabled = isOrder || [InvoiceStatus.Paid, InvoiceStatus.PartiallyPaid, InvoiceStatus.Sent].indexOf(event.data.InvoiceStatus) >= 0;
 
                     this.actionRecordData = event.data;
                     this.showActionsMenu(event.event.target);
@@ -173,12 +175,13 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
         );
     }
 
-    editInvoice() {
+    private openCreateInvoiceDialog(addNew = false) {
         this.dialog.open(CreateInvoiceDialogComponent, {
             panelClass: 'slider',
             disableClose: true,
             closeOnNavigation: false,
             data: {
+                addNew: addNew,
                 invoice: this.actionRecordData,
                 contactInfo: this.contactService['data'].contactInfo,
                 refreshParent: () => {
@@ -186,6 +189,14 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
                 }
             }
         });
+    }
+
+    editInvoice() {
+        this.openCreateInvoiceDialog();
+    }
+
+    addInvoice() {
+        this.openCreateInvoiceDialog(true);
     }
 
     sendInvoice() {
