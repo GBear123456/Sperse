@@ -9,7 +9,7 @@
                     maxLength="50"
                     [(value)]="data.company">
                     <dx-validator>
-                        <dxi-validation-rule type="required" message="{{ls.l('FieldRequired', ls.l('Company'))}}"></dxi-validation-rule>
+                        <dxi-validation-rule type="required" message="{{ls.l('RequiredField', ls.l('Company'))}}"></dxi-validation-rule>
                     </dx-validator>
                 </dx-text-box>
             </div>
@@ -20,7 +20,7 @@
                     maxLength="50"
                     [(value)]="data.firstName">
                     <dx-validator>
-                        <dxi-validation-rule type="required" message="{{ls.l('FieldRequired', ls.l('FirstName'))}}"></dxi-validation-rule>
+                        <dxi-validation-rule type="required" message="{{ls.l('RequiredField', ls.l('FirstName'))}}"></dxi-validation-rule>
                     </dx-validator>
                 </dx-text-box>
             </div>
@@ -31,7 +31,7 @@
                     maxLength="50"
                     [(value)]="data.lastName">
                     <dx-validator>
-                        <dxi-validation-rule type="required" message="{{ls.l('FieldRequired', ls.l('LastName'))}}"></dxi-validation-rule>
+                        <dxi-validation-rule type="required" message="{{ls.l('RequiredField', ls.l('LastName'))}}"></dxi-validation-rule>
                     </dx-validator>
                 </dx-text-box>
             </div>
@@ -42,7 +42,7 @@
                     maxLength="50"
                     [(value)]="data.email">
                     <dx-validator>
-                        <dxi-validation-rule type="required" message="{{ls.l('FieldRequired', ls.l('Email'))}}"></dxi-validation-rule>
+                        <dxi-validation-rule type="required" message="{{ls.l('RequiredField', ls.l('Email'))}}"></dxi-validation-rule>
                     </dx-validator>
                 </dx-text-box>
             </div>
@@ -53,7 +53,7 @@
                     maxLength="50"
                     [(value)]="data.phone">
                     <dx-validator>
-                        <dxi-validation-rule type="required" message="{{ls.l('FieldRequired', ls.l('Phone'))}}"></dxi-validation-rule>
+                        <dxi-validation-rule type="required" message="{{ls.l('RequiredField', ls.l('Phone'))}}"></dxi-validation-rule>
                     </dx-validator>
                 </dx-text-box>
             </div>
@@ -127,6 +127,9 @@
                     maxLength="50"
                     [(value)]="data.city">
                 </dx-text-box>
+                <dx-validator>
+                    <dxi-validation-rule type="required" message="{{ls.l('RequiredField', ls.l('City'))}}"></dxi-validation-rule>
+                </dx-validator>
             </div>
 
             <div>

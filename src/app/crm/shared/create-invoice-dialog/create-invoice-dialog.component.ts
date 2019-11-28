@@ -63,6 +63,8 @@ export class CreateInvoiceDialogComponent implements OnInit {
     @ViewChild(ModalDialogComponent) modalDialog: ModalDialogComponent;
     @ViewChild(DxContextMenuComponent) saveContextComponent: DxContextMenuComponent;
     @ViewChild(DxDataGridComponent) linesComponent: DxDataGridComponent;
+    @ViewChild('billingAddress') billingAddressComponent: DxSelectBoxComponent;
+    @ViewChild('shippingAddress') shippingAddressComponent: DxSelectBoxComponent;
     @ViewChild('dueDateComponent') dueDateComponent: DxDateBoxComponent;
     @ViewChild('dateComponent') dateComponent: DxDateBoxComponent;
     @ViewChild('invoice') invoiceNoComponent: DxTextBoxComponent;
@@ -246,7 +248,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
             this.initContactAddresses(contact.id);
             this.customer = contact.personContactInfo.fullName;
             let details = contact.personContactInfo.details,
-                emailAddress = details.emails.length ? 
+                emailAddress = details.emails.length ?
                     details.emails[0].emailAddress : undefined,
                 address = details.addresses[0];
             this.selectedContact =
@@ -409,8 +411,8 @@ export class CreateInvoiceDialogComponent implements OnInit {
         });
     }
 
-    private validateDate(caption, value) {
-        return value || this.notifyService.error(this.ls.l('RequiredField', '', caption));
+    private validateField(caption, value) {
+        return value || this.notifyService.error(this.ls.l('RequiredField', caption));
     }
 
     save(event?): void {
@@ -425,10 +427,22 @@ export class CreateInvoiceDialogComponent implements OnInit {
             return this.contactComponent.instance.option('isValid', false);
         }
 
-        if (!this.validateDate(this.ls.l('Date'), this.date))
+        let isAddressValid = this.selectedBillingAddress &&
+            this.selectedBillingAddress.address1 &&
+            this.selectedBillingAddress.city;
+        if (!this.validateField(this.ls.l('Invoice_BillTo'), isAddressValid))
+            return this.billingAddressComponent.instance.option('isValid', false);
+
+        isAddressValid = this.selectedShippingAddress &&
+            this.selectedShippingAddress.address1 &&
+            this.selectedShippingAddress.city;
+        if (!this.validateField(this.ls.l('Invoice_ShipTo'), isAddressValid))
+            return this.shippingAddressComponent.instance.option('isValid', false);
+
+        if (!this.validateField(this.ls.l('Date'), this.date))
             return this.dateComponent.instance.option('isValid', false);
 
-        if (!this.validateDate(this.ls.l('Invoice_DueOnReceipt'), this.dueDate))
+        if (!this.validateField(this.ls.l('Invoice_DueOnReceipt'), this.dueDate))
             return this.dueDateComponent.instance.option('isValid', false);
 
         this.lines = this.getFilteredLines(false);
@@ -461,7 +475,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
     getAddressesByType(addresses, condition) {
         return addresses.map(address => {
             if (condition.call(this, address)) {
-                address['display'] = [address.streetAddress, address.city, 
+                address['display'] = [address.streetAddress, address.city,
                     address.stateId, address.zip, address.countryId].join(', ');
                 return address;
             }
@@ -471,9 +485,9 @@ export class CreateInvoiceDialogComponent implements OnInit {
     initContactAddresses(contactId: number) {
         if (contactId)
             this.addressProxy.getContactAddresses(contactId).subscribe(res => {
-                this.shippingAddresses = this.getAddressesByType(res, 
+                this.shippingAddresses = this.getAddressesByType(res,
                     addr => addr.usageTypeId == AddressUsageType.Shipping);
-                this.billingAddresses = this.getAddressesByType(res, 
+                this.billingAddresses = this.getAddressesByType(res,
                     addr => addr.usageTypeId != AddressUsageType.Shipping);
                 this.changeDetectorRef.markForCheck();
             });
@@ -695,7 +709,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
             setTimeout(() => event.event.target.focus(), 150);
     }
 
-    showEditAddressDialog(event, field) {        
+    showEditAddressDialog(event, field) {
         let address = this.selectedContact.address,
             customerNameParts = (this.customer || '').split(' '),
             dialogData = this[field] || new InvoiceAddressInput({
