@@ -231,8 +231,15 @@ export class CreateInvoiceDialogComponent implements OnInit {
                     this.balance = invoiceInfo.grandTotal;
                     this.description = invoiceInfo.description;
                     this.notes = invoiceInfo.note;
+                    this.invoiceNo = invoiceInfo.number;
+                    this.orderNumber = invoiceInfo.orderNumber;
                     this.customer = invoiceInfo.contactName;
-                    this.lines = invoiceInfo.lines.map((res) => {
+                    this.status = invoiceInfo.status;
+                    this.date = DateHelper.addTimezoneOffset(new Date(invoiceInfo.date), true);
+                    this.dueDate = invoiceInfo.dueDate;
+                    this.selectedBillingAddress = invoiceInfo.billingAddress;
+                    this.selectedShippingAddress = invoiceInfo.shippingAddress;
+                    this.lines = invoiceInfo.lines.map(res => {
                         return {
                             Quantity: res.quantity,
                             Rate: res.rate,
@@ -486,23 +493,15 @@ export class CreateInvoiceDialogComponent implements OnInit {
         event.component.option('isValid', true);
     }
 
-    getAddressesByType(addresses, condition) {
-        return addresses.map(address => {
-            if (condition.call(this, address)) {
-                address['display'] = [address.streetAddress, address.city,
-                    address.stateId, address.zip, address.countryId].join(', ');
-                return address;
-            }
-        }).filter(Boolean);
-    }
-
     initContactAddresses(contactId: number) {
         if (contactId)
             this.invoiceProxy.getInvoiceAddresses(contactId).subscribe(res => {
-                this.shippingAddresses = this.getAddressesByType(res,
-                    addr => addr.usageTypeId == AddressUsageType.Shipping);
-                this.billingAddresses = this.getAddressesByType(res,
-                    addr => addr.usageTypeId != AddressUsageType.Shipping);
+                this.shippingAddresses =
+                this.billingAddresses = res.map(address => {
+                    address['display'] = [address.address1, address.address2, address.city,
+                        address.stateId, address.zip, address.countryId].filter(Boolean).join(', ');
+                    return address;
+                });
                 this.changeDetectorRef.markForCheck();
             });
     }

@@ -76,6 +76,7 @@
                     </dx-select-box>
                     <a *ngIf="contactId && !selectedBillingAddress" (click)="showEditAddressDialog($event, 'selectedBillingAddress')">{{ls.l('+ Add New Address')}}</a>
                     <div class="selected-contact-info" *ngIf="selectedBillingAddress"><i class="edit fa fa-pencil" (click)="showEditAddressDialog($event, 'selectedBillingAddress')"></i>
+                        {{ selectedBillingAddress?.company }}<br *ngIf="selectedBillingAddress?.company">
                         {{ selectedBillingAddress?.firstName + ' ' + selectedBillingAddress?.lastName }}<br *ngIf="customer">
                         {{ [selectedBillingAddress?.email, selectedBillingAddress?.phone].join(', ') }}<br *ngIf="selectedBillingAddress?.email || selectedBillingAddress?.phone">
                         {{ selectedBillingAddress?.address1 }}<br *ngIf="selectedBillingAddress?.address1">
@@ -98,6 +99,7 @@
                     </dx-select-box>
                     <a *ngIf="contactId && !selectedShippingAddress" (click)="showEditAddressDialog($event, 'selectedShippingAddress')">{{ls.l('+ Add New Address')}}</a>
                     <div class="selected-contact-info" *ngIf="selectedShippingAddress"><i class="edit fa fa-pencil" (click)="showEditAddressDialog($event, 'selectedShippingAddress')"></i>
+                        {{ selectedShippingAddress?.company }}<br *ngIf="selectedShippingAddress?.company">
                         {{ selectedShippingAddress?.firstName + ' ' + selectedShippingAddress?.lastName }}<br *ngIf="customer">
                         {{ [selectedShippingAddress?.email, selectedShippingAddress?.phone].join(', ') }}<br *ngIf="selectedShippingAddress?.email || selectedShippingAddress?.phone">
                         {{ selectedShippingAddress?.address1 }}<br *ngIf="selectedShippingAddress?.address1">
