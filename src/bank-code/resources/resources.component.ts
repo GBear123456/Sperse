@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef, HostListener } from '@angular/core';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 
 @Component({
@@ -7,7 +7,7 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
     styleUrls: ['resources.component.less']
 })
 export class ResourcesComponent {
-    isClicked: number;
+    isClicked = 0;
     data = [
         {
             categoryName: 'AFFILIATE TOOLS',
@@ -325,7 +325,17 @@ export class ResourcesComponent {
     ];
 
     constructor(
-        public ls: AppLocalizationService
-    ) {
+        public ls: AppLocalizationService,
+        private elementRef: ElementRef
+    ) {}
+
+    @HostListener('window:scroll')
+    onWindowScroll() {
+        const bottomHasReached = $(window).scrollTop() + $(window).height() == $(document).height();
+        this.isClicked = bottomHasReached
+            ? this.data.length - 1
+            : [].findIndex.call((this.elementRef.nativeElement.querySelectorAll('.card')), (card) => {
+                return card.getBoundingClientRect().bottom > 99;
+            });
     }
 }
