@@ -15,7 +15,7 @@
                 <div class="col-xs-12 col-md-7">
                     <h2>UNLOCK THE VAULT FOR EXCLUSIVE INSIDER ACCESS</h2>
                     <p>Unlock the vault to access cutting-edge virtual interactive training courses to supercharge your success so you can take it to the bank!</p>
-                    <a href="https://wp.bankcode.pro/vault/?add-to-cart=546" target="_blank" class="button arrow">Subscribe now</a>
+                    <a [href]="'https://wp.bankcode.pro/vault/?add-to-cart=' + offerId" target="_blank" class="button arrow">Subscribe now</a>
                 </div>
             </div>
         </div>
@@ -46,7 +46,7 @@
     </div>
 
     <div class="limited-offer">
-        <subscription [annualSave]="348" [offerId]="546" productName="vault"></subscription>
+        <subscription [annualSave]="348" [offerId]="offerId" productName="vault"></subscription>
     </div>
 
     <div class="footer-info">

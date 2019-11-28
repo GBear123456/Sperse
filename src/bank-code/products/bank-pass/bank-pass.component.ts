@@ -26,6 +26,7 @@ import { AppPermissions } from '@shared/AppPermissions';
 })
 export class BankPassComponent {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
+    offerId = 718;
     searchValue: '';
     dataSourceURI = 'Lead';
     gridPagerConfig = DataGridService.defaultGridPagerConfig;
