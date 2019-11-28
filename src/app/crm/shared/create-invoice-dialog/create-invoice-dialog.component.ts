@@ -36,8 +36,7 @@ import {
     InvoiceSettings,
     GetNewInvoiceInfoOutput,
     EntityContactInfo,
-    ContactAddressInfo,
-    ContactAddressServiceProxy
+    ContactAddressInfo
 } from '@shared/service-proxies/service-proxies';
 import { NotifyService } from '@abp/notify/notify.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -135,7 +134,6 @@ export class CreateInvoiceDialogComponent implements OnInit {
         private invoiceProxy: InvoiceServiceProxy,
         private invoicesService: InvoicesService,
         private customerProxy: CustomerServiceProxy,
-        private addressProxy: ContactAddressServiceProxy,
         private cacheService: CacheService,
         private notifyService: NotifyService,
         private messageService: MessageService,
@@ -501,7 +499,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
 
     initContactAddresses(contactId: number) {
         if (contactId)
-            this.addressProxy.getContactAddresses(contactId).subscribe(res => {
+            this.invoiceProxy.getInvoiceAddresses(contactId).subscribe(res => {
                 this.shippingAddresses = this.getAddressesByType(res,
                     addr => addr.usageTypeId == AddressUsageType.Shipping);
                 this.billingAddresses = this.getAddressesByType(res,

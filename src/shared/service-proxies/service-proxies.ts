@@ -7835,65 +7835,6 @@ export class ContactAddressServiceProxy {
     }
 
     /**
-     * @contactId (optional) 
-     * @return Success
-     */
-    getContactAddresses(contactId: number | null | undefined): Observable<AddressInfo[]> {
-        let url_ = this.baseUrl + "/api/services/CRM/ContactAddress/GetContactAddresses?";
-        if (contactId !== undefined)
-            url_ += "contactId=" + encodeURIComponent("" + contactId) + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetContactAddresses(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processGetContactAddresses(<any>response_);
-                } catch (e) {
-                    return <Observable<AddressInfo[]>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<AddressInfo[]>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processGetContactAddresses(response: HttpResponseBase): Observable<AddressInfo[]> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            if (resultData200 && resultData200.constructor === Array) {
-                result200 = [];
-                for (let item of resultData200)
-                    result200.push(AddressInfo.fromJS(item));
-            }
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<AddressInfo[]>(<any>null);
-    }
-
-    /**
      * @body (optional) 
      * @return Success
      */
@@ -16059,6 +16000,65 @@ export class InvoiceServiceProxy {
             }));
         }
         return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @contactId (optional) 
+     * @return Success
+     */
+    getInvoiceAddresses(contactId: number | null | undefined): Observable<InvoiceAddressInfo[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/Invoice/GetInvoiceAddresses?";
+        if (contactId !== undefined)
+            url_ += "contactId=" + encodeURIComponent("" + contactId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetInvoiceAddresses(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetInvoiceAddresses(<any>response_);
+                } catch (e) {
+                    return <Observable<InvoiceAddressInfo[]>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<InvoiceAddressInfo[]>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetInvoiceAddresses(response: HttpResponseBase): Observable<InvoiceAddressInfo[]> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(InvoiceAddressInfo.fromJS(item));
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<InvoiceAddressInfo[]>(<any>null);
     }
 }
 
@@ -42480,82 +42480,6 @@ export interface IUpdateSourceContactOutput {
     newOrganizationUnitId: number | undefined;
 }
 
-export class AddressInfo implements IAddressInfo {
-    id!: number | undefined;
-    streetAddress!: string | undefined;
-    city!: string | undefined;
-    stateId!: string | undefined;
-    state!: string | undefined;
-    zip!: string | undefined;
-    countryId!: string | undefined;
-    country!: string | undefined;
-    usageTypeId!: string | undefined;
-    startDate!: moment.Moment | undefined;
-    ownershipTypeId!: string | undefined;
-
-    constructor(data?: IAddressInfo) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.id = data["id"];
-            this.streetAddress = data["streetAddress"];
-            this.city = data["city"];
-            this.stateId = data["stateId"];
-            this.state = data["state"];
-            this.zip = data["zip"];
-            this.countryId = data["countryId"];
-            this.country = data["country"];
-            this.usageTypeId = data["usageTypeId"];
-            this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
-            this.ownershipTypeId = data["ownershipTypeId"];
-        }
-    }
-
-    static fromJS(data: any): AddressInfo {
-        data = typeof data === 'object' ? data : {};
-        let result = new AddressInfo();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["streetAddress"] = this.streetAddress;
-        data["city"] = this.city;
-        data["stateId"] = this.stateId;
-        data["state"] = this.state;
-        data["zip"] = this.zip;
-        data["countryId"] = this.countryId;
-        data["country"] = this.country;
-        data["usageTypeId"] = this.usageTypeId;
-        data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
-        data["ownershipTypeId"] = this.ownershipTypeId;
-        return data; 
-    }
-}
-
-export interface IAddressInfo {
-    id: number | undefined;
-    streetAddress: string | undefined;
-    city: string | undefined;
-    stateId: string | undefined;
-    state: string | undefined;
-    zip: string | undefined;
-    countryId: string | undefined;
-    country: string | undefined;
-    usageTypeId: string | undefined;
-    startDate: moment.Moment | undefined;
-    ownershipTypeId: string | undefined;
-}
-
 export class CreateContactAddressOutput implements ICreateContactAddressOutput {
     id!: number | undefined;
 
@@ -42918,6 +42842,82 @@ export interface IContactBusinessInfo {
     isActive: boolean;
     isConfirmed: boolean;
     comment: string | undefined;
+}
+
+export class AddressInfo implements IAddressInfo {
+    id!: number | undefined;
+    streetAddress!: string | undefined;
+    city!: string | undefined;
+    stateId!: string | undefined;
+    state!: string | undefined;
+    zip!: string | undefined;
+    countryId!: string | undefined;
+    country!: string | undefined;
+    usageTypeId!: string | undefined;
+    startDate!: moment.Moment | undefined;
+    ownershipTypeId!: string | undefined;
+
+    constructor(data?: IAddressInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.streetAddress = data["streetAddress"];
+            this.city = data["city"];
+            this.stateId = data["stateId"];
+            this.state = data["state"];
+            this.zip = data["zip"];
+            this.countryId = data["countryId"];
+            this.country = data["country"];
+            this.usageTypeId = data["usageTypeId"];
+            this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
+            this.ownershipTypeId = data["ownershipTypeId"];
+        }
+    }
+
+    static fromJS(data: any): AddressInfo {
+        data = typeof data === 'object' ? data : {};
+        let result = new AddressInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["streetAddress"] = this.streetAddress;
+        data["city"] = this.city;
+        data["stateId"] = this.stateId;
+        data["state"] = this.state;
+        data["zip"] = this.zip;
+        data["countryId"] = this.countryId;
+        data["country"] = this.country;
+        data["usageTypeId"] = this.usageTypeId;
+        data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
+        data["ownershipTypeId"] = this.ownershipTypeId;
+        return data; 
+    }
+}
+
+export interface IAddressInfo {
+    id: number | undefined;
+    streetAddress: string | undefined;
+    city: string | undefined;
+    stateId: string | undefined;
+    state: string | undefined;
+    zip: string | undefined;
+    countryId: string | undefined;
+    country: string | undefined;
+    usageTypeId: string | undefined;
+    startDate: moment.Moment | undefined;
+    ownershipTypeId: string | undefined;
 }
 
 export class ContactEmailInfo implements IContactEmailInfo {
@@ -60034,7 +60034,8 @@ export interface IBankCardInput {
 }
 
 export class AddBankCardPaymentInput implements IAddBankCardPaymentInput {
-    invoiceId!: number;
+    invoiceId!: number | undefined;
+    invoiceNumber!: string | undefined;
     date!: moment.Moment | undefined;
     description!: string | undefined;
     orderStage!: string | undefined;
@@ -60058,6 +60059,7 @@ export class AddBankCardPaymentInput implements IAddBankCardPaymentInput {
     init(data?: any) {
         if (data) {
             this.invoiceId = data["invoiceId"];
+            this.invoiceNumber = data["invoiceNumber"];
             this.date = data["date"] ? moment(data["date"].toString()) : <any>undefined;
             this.description = data["description"];
             this.orderStage = data["orderStage"];
@@ -60078,6 +60080,7 @@ export class AddBankCardPaymentInput implements IAddBankCardPaymentInput {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["invoiceId"] = this.invoiceId;
+        data["invoiceNumber"] = this.invoiceNumber;
         data["date"] = this.date ? this.date.toISOString() : <any>undefined;
         data["description"] = this.description;
         data["orderStage"] = this.orderStage;
@@ -60090,7 +60093,8 @@ export class AddBankCardPaymentInput implements IAddBankCardPaymentInput {
 }
 
 export interface IAddBankCardPaymentInput {
-    invoiceId: number;
+    invoiceId: number | undefined;
+    invoiceNumber: string | undefined;
     date: moment.Moment | undefined;
     description: string | undefined;
     orderStage: string | undefined;
