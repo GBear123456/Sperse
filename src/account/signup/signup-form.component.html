@@ -43,21 +43,17 @@
                         </div>
                         <div class="dx-field form-row zip-citizen-row align-items-center">
                             <div class="form-group col">
-                                <dx-text-box placeholder="Phone Number"
-                                             mask="+1 (999) 999-9999"
-                                             showMaskMode="onFocus"
-                                             [(value)]="registerData.phoneNumber">
-                                    <dx-validator>
-                                        <dxi-validation-rule type="pattern" [pattern]="patterns.phonePattern"
-                                                             message="Phone is incorrect"></dxi-validation-rule>
-                                        <dxi-validation-rule type="stringLength" [max]="15"
-                                                             message="Phone length is invalid"></dxi-validation-rule>
-                                    </dx-validator>
-                                </dx-text-box>
+                                <div class="phone-wrap">
+                                    <label>Phone Number</label>
+                                    <country-phone-number [(phoneNumber)]="registerData.phoneNumber"></country-phone-number>
+                                </div>
                             </div>
                             <div class="form-group zip-field col">
                                 <dx-text-box placeholder="Zip"
                                              [(value)]="registerData.postalCode"
+                                             (keydown)="validateNumber($event)"
+                                             valueChangeEvent="keyup"
+                                             (onValueChanged)="onZipCodeChanged($event)"
                                              minLength="5"
                                              maxLength="10">
                                     <dx-validator>
