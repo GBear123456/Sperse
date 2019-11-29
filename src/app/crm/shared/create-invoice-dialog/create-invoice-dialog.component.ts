@@ -18,7 +18,6 @@ import { ODataService } from '@shared/common/odata/odata.service';
 import { ContactsService } from '@app/crm/contacts/contacts.service';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { DateHelper } from '@shared/helpers/DateHelper';
-import { DialogService } from '@app/shared/common/dialogs/dialog.service';
 import { ContactGroup, AddressUsageType } from '@shared/AppEnums';
 import {
     InvoiceServiceProxy,
@@ -52,7 +51,7 @@ import { AppPermissions } from '@shared/AppPermissions';
 @Component({
     templateUrl: 'create-invoice-dialog.component.html',
     styleUrls: [ '../../../shared/common/styles/form.less', 'create-invoice-dialog.component.less' ],
-    providers: [ CacheHelper, CustomerServiceProxy, DialogService, InvoiceServiceProxy ],
+    providers: [ CacheHelper, CustomerServiceProxy, InvoiceServiceProxy ],
     host: {
         '(click)': 'closeAddressDialogs()'
     },
@@ -138,7 +137,6 @@ export class CreateInvoiceDialogComponent implements OnInit {
         private cacheHelper: CacheHelper,
         private dialogRef: MatDialogRef<CreateInvoiceDialogComponent>,
         private changeDetectorRef: ChangeDetectorRef,
-        private dialogService: DialogService,
         private permission: AppPermissionService,
         private contactsService: ContactsService,
         public appSession: AppSessionService,
@@ -500,8 +498,9 @@ export class CreateInvoiceDialogComponent implements OnInit {
             this.invoiceProxy.getInvoiceAddresses(contactId).subscribe(res => {
                 this.shippingAddresses =
                 this.billingAddresses = res.map(address => {
-                    address['display'] = [address.address1, address.address2, address.city,
-                        address.stateId, address.zip, address.countryId].filter(Boolean).join(', ');
+                    let fullName = [address.firstName, address.LastName].filter(Boolean).join(' ');
+                    address['display'] = [address.company, fullName, address.address1, address.address2,
+                        address.city, address.stateId, address.zip, address.countryId].filter(Boolean).join(', ');
                     return address;
                 });
                 this.changeDetectorRef.markForCheck();
@@ -745,8 +744,11 @@ export class CreateInvoiceDialogComponent implements OnInit {
             data: dialogData,
             hasBackdrop: false,
             disableClose: false,
-            closeOnNavigation: true,
-            position: this.dialogService.calculateDialogPosition(event, event.target)
+            closeOnNavigation: true
+            position: {
+                top: '100px',
+                left: innerWidth - 700 + 'px'
+            }
         }).afterClosed().subscribe(result => {
             if (!this[field] && result)
                 this[field] = dialogData;

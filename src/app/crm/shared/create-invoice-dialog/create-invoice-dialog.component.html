@@ -69,13 +69,17 @@
                         width="220px"
                         height="40px"
                         displayExpr="display"
+                        itemTemplate="addressTemplate"
                         [visible]="contactId && !selectedBillingAddress"
                         [placeholder]="ls.lr('Select Address')"
                         [(value)]="selectedBillingAddress"
                         [dataSource]="billingAddresses">
+                        <div *dxTemplate="let cellData of 'addressTemplate'" [title]="cellData.display">
+                            {{ cellData.display }}
+                        </div>
                     </dx-select-box>
                     <a *ngIf="contactId && !selectedBillingAddress" (click)="showEditAddressDialog($event, 'selectedBillingAddress')">{{ls.l('+ Add New Address')}}</a>
-                    <div class="selected-contact-info" *ngIf="selectedBillingAddress"><i class="edit fa fa-pencil" (click)="showEditAddressDialog($event, 'selectedBillingAddress')"></i>
+                    <div class="selected-contact-info" *ngIf="selectedBillingAddress"><i class="edit fa fa-pencil" (click)="showEditAddressDialog($event, 'selectedBillingAddress')"></i><i class="remove fa fa-remove" (click)="selectedBillingAddress = undefined"></i>
                         {{ selectedBillingAddress?.company }}<br *ngIf="selectedBillingAddress?.company">
                         {{ selectedBillingAddress?.firstName + ' ' + selectedBillingAddress?.lastName }}<br *ngIf="customer">
                         {{ [selectedBillingAddress?.email, selectedBillingAddress?.phone].join(', ') }}<br *ngIf="selectedBillingAddress?.email || selectedBillingAddress?.phone">
@@ -92,13 +96,17 @@
                         width="220px"
                         height="40px"
                         displayExpr="display"
+                        itemTemplate="addressTemplate"
                         [visible]="contactId && !selectedShippingAddress"
                         [placeholder]="ls.lr('Select Address')"
                         [(value)]="selectedShippingAddress"
                         [dataSource]="shippingAddresses">
+                        <div *dxTemplate="let cellData of 'addressTemplate'" [title]="cellData.display">
+                            {{ cellData.display }}
+                        </div>
                     </dx-select-box>
                     <a *ngIf="contactId && !selectedShippingAddress" (click)="showEditAddressDialog($event, 'selectedShippingAddress')">{{ls.l('+ Add New Address')}}</a>
-                    <div class="selected-contact-info" *ngIf="selectedShippingAddress"><i class="edit fa fa-pencil" (click)="showEditAddressDialog($event, 'selectedShippingAddress')"></i>
+                    <div class="selected-contact-info" *ngIf="selectedShippingAddress"><i class="edit fa fa-pencil" (click)="showEditAddressDialog($event, 'selectedShippingAddress')"></i><i class="remove fa fa-remove" (click)="selectedShippingAddress = undefined"></i>
                         {{ selectedShippingAddress?.company }}<br *ngIf="selectedShippingAddress?.company">
                         {{ selectedShippingAddress?.firstName + ' ' + selectedShippingAddress?.lastName }}<br *ngIf="customer">
                         {{ [selectedShippingAddress?.email, selectedShippingAddress?.phone].join(', ') }}<br *ngIf="selectedShippingAddress?.email || selectedShippingAddress?.phone">
