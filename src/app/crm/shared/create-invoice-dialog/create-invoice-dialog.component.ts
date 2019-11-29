@@ -498,7 +498,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
             this.invoiceProxy.getInvoiceAddresses(contactId).subscribe(res => {
                 this.shippingAddresses =
                 this.billingAddresses = res.map(address => {
-                    let fullName = [address.firstName, address.LastName].filter(Boolean).join(' ');
+                    let fullName = [address.firstName, address.lastName].filter(Boolean).join(' ');
                     address['display'] = [address.company, fullName, address.address1, address.address2,
                         address.city, address.stateId, address.zip, address.countryId].filter(Boolean).join(', ');
                     return address;
