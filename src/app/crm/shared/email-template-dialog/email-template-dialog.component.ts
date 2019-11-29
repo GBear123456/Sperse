@@ -99,24 +99,24 @@ export class EmailTemplateDialogComponent implements OnInit {
         if (this.templateEditMode) {
             if (!this.getTemplateName())
                 return this.notifyService.error(
-                    this.ls.l('RequiredField', '', this.ls.l('Template')));
+                    this.ls.l('RequiredField', this.ls.l('Template')));
         } else {
             if (!this.data.from)
                 return this.notifyService.error(
-                    this.ls.l('RequiredField', '', this.ls.l('From')));
+                    this.ls.l('RequiredField', this.ls.l('From')));
 
             if (!this.data.to)
                 return this.notifyService.error(
-                    this.ls.l('RequiredField', '', this.ls.l('To')));
+                    this.ls.l('RequiredField', this.ls.l('To')));
 
             if (!this.data.subject)
                 return this.notifyService.error(
-                    this.ls.l('RequiredField', '', this.ls.l('Subject')));
+                    this.ls.l('RequiredField', this.ls.l('Subject')));
         }
 
         if (!this.data.body)
             return this.notifyService.error(
-                this.ls.l('RequiredField', '', this.ls.l('Body')));
+                this.ls.l('RequiredField', this.ls.l('Body')));
 
         return true;
     }

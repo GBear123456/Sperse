@@ -25,6 +25,7 @@ export class BankCodeComponent extends AppComponentBase implements OnInit {
         super(injector);
         this.viewContainerRef = viewContainerRef;
         this.rootComponent = this.getRootComponent();
+        this.titleService.setTitle('');
     }
 
     closeUserMenuPopup(event) {

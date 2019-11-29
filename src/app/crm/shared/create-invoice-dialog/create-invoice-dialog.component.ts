@@ -444,7 +444,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
             return this.invoiceNoComponent.instance.option('isValid', false);
 
         if (isNaN(this.contactId)) {
-            this.notifyService.error(this.ls.l('RequiredField', '', this.ls.l('Client')));
+            this.notifyService.error(this.ls.l('RequiredField', this.ls.l('Client')));
             return this.contactComponent.instance.option('isValid', false);
         }
 

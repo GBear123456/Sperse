@@ -31,14 +31,14 @@ export class RecentClientsComponent implements OnInit {
     selectItems: IRecentClientsSelectItem[] = [
         {
             name: this.ls.l('CRMDashboard_RecentLeads'),
-            message: this.ls.l('CRMDashboard_LastNLeadsRecords', 'CRM',  [this.recordsCount]),
+            message: this.ls.ls('CRM', 'CRMDashboard_LastNLeadsRecords',  [this.recordsCount]),
             dataLink: '',
             allRecordsLink: '/app/crm/leads',
             dataSource: this.dashboardServiceProxy.getRecentlyCreatedCustomers(this.recordsCount, true)
         },
         {
             name: this.ls.l('CRMDashboard_RecentClients'),
-            message: this.ls.l('CRMDashboard_LastNClientsRecords', 'CRM',  [this.recordsCount]),
+            message: this.ls.ls('CRM', 'CRMDashboard_LastNClientsRecords', [this.recordsCount]),
             dataLink: 'app/crm/contact',
             allRecordsLink: '/app/crm/clients',
             dataSource: this.dashboardServiceProxy.getRecentlyCreatedCustomers(this.recordsCount, false)
