@@ -261,7 +261,7 @@ export class ContactsService {
             : this.contactProxy.getContactInfo(contactId);
     }
 
-    showEmailDialog(data: any = {}, title = 'Email', onTemplateChange?) {
+    showEmailDialog(data: any = {}, title = 'Email', onTemplateChange?: (templateId: number, emailData: any) => Observable<void>) {
         let emailData: any = {
             saveTitle: this.ls.l('Send'),
             title: this.ls.l(title),
