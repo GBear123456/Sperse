@@ -10,9 +10,9 @@
         </ng-container>
         <ng-template #internalBlock>
             <a routerLinkActive="active"
-               [routerLink]="item.routerUrl || getFirstVisibleLink(item.sublinks)"
                [ngClass]="{ active: currentUrl === item.routerUrl, disabled: !item.url && !item.routerUrl && (!item.sublinks || !item.sublinks.length)}"
-               [routerLinkActiveOptions]="{exact:true}">
+               [routerLinkActiveOptions]="{exact:true}"
+               (click)="handleLinkClick($event, item)">
                {{ls.l(item.name)}} <span *ngIf="item.sublinks && item.sublinks.length" class="dropdown-mark"></span>
             </a>
         </ng-template>

@@ -12,7 +12,7 @@ import {
     OnChanges,
     SimpleChanges, OnDestroy
 } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 /** Third party imports */
 import { Subscription } from 'rxjs';
@@ -21,6 +21,7 @@ import { Subscription } from 'rxjs';
 import { MemberAreaLink } from '@shared/common/area-navigation/member-area-link.enum';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { AppConsts } from '@shared/AppConsts';
 
 @Component({
     selector: 'area-navigation',
@@ -33,7 +34,7 @@ export class AreaNavigationComponent implements AfterViewInit, OnChanges, OnDest
     @ViewChildren('sublinks') sublinksRefs: QueryList<ElementRef>;
     @ViewChild('linksList') linksList: ElementRef;
     responsiveMemberAreaLinks = [];
-    inlineMemberAreaLinks = [];
+    inlineMemberAreaLinks: MemberAreaLink[] = [];
     resizeTimeout: any;
     loggedUserId: number = this.appSession.userId;
     currentUrl = this.router.url;
@@ -55,6 +56,7 @@ export class AreaNavigationComponent implements AfterViewInit, OnChanges, OnDest
         private router: Router,
         private appSession: AppSessionService,
         private elementRef: ElementRef,
+        private route: ActivatedRoute,
         public ls: AppLocalizationService
     ) {}
 
@@ -102,6 +104,17 @@ export class AreaNavigationComponent implements AfterViewInit, OnChanges, OnDest
             this.linksList.nativeElement.contains(e.relatedTarget)
         ) {
             this.closeAllOpenedMenuItems();
+        }
+    }
+
+    handleLinkClick(e, link: MemberAreaLink) {
+        if (AppConsts.isMobile && link.sublinks && link.sublinks.length) {
+            setTimeout(() => this.renderer.addClass(e.target.parentElement, 'opened'));
+        } else {
+            this.router.navigate(
+                [ link.routerUrl || this.getFirstVisibleLink(link.sublinks)],
+                { relativeTo: this.route }
+            );
         }
     }
 
