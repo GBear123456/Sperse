@@ -353,6 +353,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
                     rate: row['rate'],
                     total: row['total'],
                     unitId: row['unitId'] as InvoiceLineUnit,
+                    productCode: '',
                     description: row['description'],
                     sortOrder: index
                 });
@@ -371,6 +372,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
                     rate: row['rate'],
                     total: row['total'],
                     unitId: row['unitId'] as InvoiceLineUnit,
+                    productCode: '',
                     description: row['description'],
                     sortOrder: index
                 });
