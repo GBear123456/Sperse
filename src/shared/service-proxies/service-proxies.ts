@@ -20104,6 +20104,68 @@ export class OrderSubscriptionServiceProxy {
         }
         return _observableOf<void>(<any>null);
     }
+
+    /**
+     * @serviceType (optional) 
+     * @serviceTypeId (optional) 
+     * @return Success
+     */
+    getUserSubscriptions(serviceType: string | null | undefined, serviceTypeId: number | null | undefined): Observable<GetUserSubscriptionsOutput[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/OrderSubscription/GetUserSubscriptions?";
+        if (serviceType !== undefined)
+            url_ += "ServiceType=" + encodeURIComponent("" + serviceType) + "&"; 
+        if (serviceTypeId !== undefined)
+            url_ += "ServiceTypeId=" + encodeURIComponent("" + serviceTypeId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetUserSubscriptions(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetUserSubscriptions(<any>response_);
+                } catch (e) {
+                    return <Observable<GetUserSubscriptionsOutput[]>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<GetUserSubscriptionsOutput[]>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetUserSubscriptions(response: HttpResponseBase): Observable<GetUserSubscriptionsOutput[]> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(GetUserSubscriptionsOutput.fromJS(item));
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<GetUserSubscriptionsOutput[]>(<any>null);
+    }
 }
 
 @Injectable()
@@ -46543,6 +46605,114 @@ export enum InvoiceLineUnit {
     Year = "Year", 
 }
 
+export class Product implements IProduct {
+    tenantId!: number | undefined;
+    code!: string;
+    name!: string;
+    description!: string | undefined;
+    serviceTypeId!: number | undefined;
+    serviceType!: string | undefined;
+    serviceId!: string | undefined;
+    serviceName!: string | undefined;
+    invoiceLines!: InvoiceLine[] | undefined;
+    isDeleted!: boolean | undefined;
+    deleterUserId!: number | undefined;
+    deletionTime!: moment.Moment | undefined;
+    lastModificationTime!: moment.Moment | undefined;
+    lastModifierUserId!: number | undefined;
+    creationTime!: moment.Moment | undefined;
+    creatorUserId!: number | undefined;
+    id!: number | undefined;
+
+    constructor(data?: IProduct) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.tenantId = data["tenantId"];
+            this.code = data["code"];
+            this.name = data["name"];
+            this.description = data["description"];
+            this.serviceTypeId = data["serviceTypeId"];
+            this.serviceType = data["serviceType"];
+            this.serviceId = data["serviceId"];
+            this.serviceName = data["serviceName"];
+            if (data["invoiceLines"] && data["invoiceLines"].constructor === Array) {
+                this.invoiceLines = [];
+                for (let item of data["invoiceLines"])
+                    this.invoiceLines.push(InvoiceLine.fromJS(item));
+            }
+            this.isDeleted = data["isDeleted"];
+            this.deleterUserId = data["deleterUserId"];
+            this.deletionTime = data["deletionTime"] ? moment(data["deletionTime"].toString()) : <any>undefined;
+            this.lastModificationTime = data["lastModificationTime"] ? moment(data["lastModificationTime"].toString()) : <any>undefined;
+            this.lastModifierUserId = data["lastModifierUserId"];
+            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
+            this.creatorUserId = data["creatorUserId"];
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): Product {
+        data = typeof data === 'object' ? data : {};
+        let result = new Product();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["tenantId"] = this.tenantId;
+        data["code"] = this.code;
+        data["name"] = this.name;
+        data["description"] = this.description;
+        data["serviceTypeId"] = this.serviceTypeId;
+        data["serviceType"] = this.serviceType;
+        data["serviceId"] = this.serviceId;
+        data["serviceName"] = this.serviceName;
+        if (this.invoiceLines && this.invoiceLines.constructor === Array) {
+            data["invoiceLines"] = [];
+            for (let item of this.invoiceLines)
+                data["invoiceLines"].push(item.toJSON());
+        }
+        data["isDeleted"] = this.isDeleted;
+        data["deleterUserId"] = this.deleterUserId;
+        data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
+        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
+        data["lastModifierUserId"] = this.lastModifierUserId;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        data["creatorUserId"] = this.creatorUserId;
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface IProduct {
+    tenantId: number | undefined;
+    code: string;
+    name: string;
+    description: string | undefined;
+    serviceTypeId: number | undefined;
+    serviceType: string | undefined;
+    serviceId: string | undefined;
+    serviceName: string | undefined;
+    invoiceLines: InvoiceLine[] | undefined;
+    isDeleted: boolean | undefined;
+    deleterUserId: number | undefined;
+    deletionTime: moment.Moment | undefined;
+    lastModificationTime: moment.Moment | undefined;
+    lastModifierUserId: number | undefined;
+    creationTime: moment.Moment | undefined;
+    creatorUserId: number | undefined;
+    id: number | undefined;
+}
+
 export class InvoiceLine implements IInvoiceLine {
     tenantId!: number | undefined;
     invoiceId!: number | undefined;
@@ -46550,9 +46720,11 @@ export class InvoiceLine implements IInvoiceLine {
     rate!: number | undefined;
     unitId!: InvoiceLineUnit;
     total!: number | undefined;
+    productId!: number | undefined;
     description!: string | undefined;
     sortOrder!: number | undefined;
     invoice!: Invoice | undefined;
+    product!: Product | undefined;
     isDeleted!: boolean | undefined;
     deleterUserId!: number | undefined;
     deletionTime!: moment.Moment | undefined;
@@ -46579,9 +46751,11 @@ export class InvoiceLine implements IInvoiceLine {
             this.rate = data["rate"];
             this.unitId = data["unitId"];
             this.total = data["total"];
+            this.productId = data["productId"];
             this.description = data["description"];
             this.sortOrder = data["sortOrder"];
             this.invoice = data["invoice"] ? Invoice.fromJS(data["invoice"]) : <any>undefined;
+            this.product = data["product"] ? Product.fromJS(data["product"]) : <any>undefined;
             this.isDeleted = data["isDeleted"];
             this.deleterUserId = data["deleterUserId"];
             this.deletionTime = data["deletionTime"] ? moment(data["deletionTime"].toString()) : <any>undefined;
@@ -46608,9 +46782,11 @@ export class InvoiceLine implements IInvoiceLine {
         data["rate"] = this.rate;
         data["unitId"] = this.unitId;
         data["total"] = this.total;
+        data["productId"] = this.productId;
         data["description"] = this.description;
         data["sortOrder"] = this.sortOrder;
         data["invoice"] = this.invoice ? this.invoice.toJSON() : <any>undefined;
+        data["product"] = this.product ? this.product.toJSON() : <any>undefined;
         data["isDeleted"] = this.isDeleted;
         data["deleterUserId"] = this.deleterUserId;
         data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
@@ -46630,9 +46806,11 @@ export interface IInvoiceLine {
     rate: number | undefined;
     unitId: InvoiceLineUnit;
     total: number | undefined;
+    productId: number | undefined;
     description: string | undefined;
     sortOrder: number | undefined;
     invoice: Invoice | undefined;
+    product: Product | undefined;
     isDeleted: boolean | undefined;
     deleterUserId: number | undefined;
     deletionTime: moment.Moment | undefined;
@@ -59128,6 +59306,7 @@ export class CreateInvoiceLineInput implements ICreateInvoiceLineInput {
     rate!: number;
     total!: number;
     unitId!: InvoiceLineUnit;
+    productCode!: string | undefined;
     description!: string | undefined;
     sortOrder!: number;
 
@@ -59146,6 +59325,7 @@ export class CreateInvoiceLineInput implements ICreateInvoiceLineInput {
             this.rate = data["rate"];
             this.total = data["total"];
             this.unitId = data["unitId"];
+            this.productCode = data["productCode"];
             this.description = data["description"];
             this.sortOrder = data["sortOrder"];
         }
@@ -59164,6 +59344,7 @@ export class CreateInvoiceLineInput implements ICreateInvoiceLineInput {
         data["rate"] = this.rate;
         data["total"] = this.total;
         data["unitId"] = this.unitId;
+        data["productCode"] = this.productCode;
         data["description"] = this.description;
         data["sortOrder"] = this.sortOrder;
         return data; 
@@ -59175,6 +59356,7 @@ export interface ICreateInvoiceLineInput {
     rate: number;
     total: number;
     unitId: InvoiceLineUnit;
+    productCode: string | undefined;
     description: string | undefined;
     sortOrder: number;
 }
@@ -59373,6 +59555,7 @@ export class InvoiceLineInfo implements IInvoiceLineInfo {
     rate!: number | undefined;
     unitId!: InvoiceLineUnit | undefined;
     total!: number | undefined;
+    productCode!: string | undefined;
     description!: string | undefined;
     sortOrder!: number | undefined;
 
@@ -59392,6 +59575,7 @@ export class InvoiceLineInfo implements IInvoiceLineInfo {
             this.rate = data["rate"];
             this.unitId = data["unitId"];
             this.total = data["total"];
+            this.productCode = data["productCode"];
             this.description = data["description"];
             this.sortOrder = data["sortOrder"];
         }
@@ -59411,6 +59595,7 @@ export class InvoiceLineInfo implements IInvoiceLineInfo {
         data["rate"] = this.rate;
         data["unitId"] = this.unitId;
         data["total"] = this.total;
+        data["productCode"] = this.productCode;
         data["description"] = this.description;
         data["sortOrder"] = this.sortOrder;
         return data; 
@@ -59423,6 +59608,7 @@ export interface IInvoiceLineInfo {
     rate: number | undefined;
     unitId: InvoiceLineUnit | undefined;
     total: number | undefined;
+    productCode: string | undefined;
     description: string | undefined;
     sortOrder: number | undefined;
 }
@@ -59533,6 +59719,7 @@ export class UpdateInvoiceLineInput implements IUpdateInvoiceLineInput {
     rate!: number;
     total!: number;
     unitId!: InvoiceLineUnit;
+    productCode!: string | undefined;
     description!: string | undefined;
     sortOrder!: number;
 
@@ -59552,6 +59739,7 @@ export class UpdateInvoiceLineInput implements IUpdateInvoiceLineInput {
             this.rate = data["rate"];
             this.total = data["total"];
             this.unitId = data["unitId"];
+            this.productCode = data["productCode"];
             this.description = data["description"];
             this.sortOrder = data["sortOrder"];
         }
@@ -59571,6 +59759,7 @@ export class UpdateInvoiceLineInput implements IUpdateInvoiceLineInput {
         data["rate"] = this.rate;
         data["total"] = this.total;
         data["unitId"] = this.unitId;
+        data["productCode"] = this.productCode;
         data["description"] = this.description;
         data["sortOrder"] = this.sortOrder;
         return data; 
@@ -59583,6 +59772,7 @@ export interface IUpdateInvoiceLineInput {
     rate: number;
     total: number;
     unitId: InvoiceLineUnit;
+    productCode: string | undefined;
     description: string | undefined;
     sortOrder: number;
 }
@@ -65351,6 +65541,50 @@ export interface IOrderSubscriptionDto {
     statusCode: string | undefined;
     status: string | undefined;
     orderSubscriptionPayments: OrderSbuscriptionPaymentDto[] | undefined;
+}
+
+export class GetUserSubscriptionsOutput implements IGetUserSubscriptionsOutput {
+    serviceName!: string | undefined;
+    serviceType!: string | undefined;
+    endDate!: moment.Moment | undefined;
+
+    constructor(data?: IGetUserSubscriptionsOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.serviceName = data["serviceName"];
+            this.serviceType = data["serviceType"];
+            this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): GetUserSubscriptionsOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new GetUserSubscriptionsOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["serviceName"] = this.serviceName;
+        data["serviceType"] = this.serviceType;
+        data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
+        return data; 
+    }
+}
+
+export interface IGetUserSubscriptionsOutput {
+    serviceName: string | undefined;
+    serviceType: string | undefined;
+    endDate: moment.Moment | undefined;
 }
 
 export class OrganizationInfoDto implements IOrganizationInfoDto {
