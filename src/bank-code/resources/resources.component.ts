@@ -66,7 +66,7 @@ export class ResourcesComponent {
             anchor: 'graph',
             list: [
                 {
-                    title: 'BANKCODE Logos',
+                    title: 'BANK Logos',
                     fileLink: 'https://new-resources-2019.s3-us-west-1.amazonaws.com/Art_Graphics/BANK+Logos.zip',
                     img: './assets/common/images/bank-code/thumbnails/BANK-Logos.png'
                 },
