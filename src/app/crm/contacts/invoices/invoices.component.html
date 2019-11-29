@@ -3,12 +3,13 @@
         <div class="portlet-body">
               <div>
                     <div id="InvoicesTable">
-                        <dx-tooltip [elementAttr]="{name: 'invoice-actions'}" width="300px" height="202px">
+                        <dx-tooltip [elementAttr]="{name: 'invoice-actions'}" width="300px" height="237px">
                             <div *dxTemplate="let data of 'content'">
                                 <div class="invoice-actions-container">
                                     <div class="list">
-                                        <div class="link" [ngClass]="{disabled: markAsPaidDisabled}" (click)="onMenuItemClick(updateStatus.bind(this, invoiceStatus.Paind))"><i class="s-check"></i>{{l('Mark as Paid')}}</div>
+                                        <div class="link" [ngClass]="{disabled: markAsPaidDisabled}" (click)="onMenuItemClick(updateStatus.bind(this, invoiceStatus.Paid))"><i class="s-check"></i>{{l('Mark as Paid')}}</div>
                                         <div class="link" [ngClass]="{disabled: markAsDraftDisabled}" (click)="onMenuItemClick(updateStatus.bind(this, invoiceStatus.Draft))"><i class="i-check"></i>{{l('Invoice_MarkAsDraft')}}</div>
+                                        <div class="link" [ngClass]="{disabled: resendInvoiceDisabled}" (click)="onMenuItemClick(updateStatus.bind(this, invoiceStatus.Sent))"><i class="check-list"></i>{{l('Invoice_MarkAsSent')}}</div>
                                         <div class="link disabled" [hidden]="true"><i class="time-alarm"></i>{{l('Send Reminder')}}</div>
                                         <div class="link" [ngClass]="{disabled: resendInvoiceDisabled}" (click)="onMenuItemClick(sendInvoice)"><i class="respond-arrow"></i>{{l('Resend Invoice')}}</div>
                                         <div class="link" [ngClass]="{disabled: downloadPdfDisabled}" (click)="onMenuItemClick(downloadInvoicePdf)"><i class="move-layer-down"></i>{{l('Download as PDF')}}</div>
