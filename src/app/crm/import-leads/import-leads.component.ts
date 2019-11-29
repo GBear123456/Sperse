@@ -65,7 +65,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     private readonly PERSONAL_FULL_ADDRESS_ZIP_CODE = 'personalInfo_fullAddress_zipCode';
     private readonly PERSONAL_FULL_ADDRESS_COUNTRY_NAME = 'personalInfo_fullAddress_countryName';
     private readonly PERSONAL_FULL_ADDRESS_COUNTRY_CODE = 'personalInfo_fullAddress_countryCode';
-    private readonly BUSINESS_AFFILIATE_ID = 'businessInfo_affiliateId';
+    private readonly BUSINESS_AFFILIATE_CODE = 'businessInfo_affiliateCode';
     private readonly BUSINESS_COMPANY_FULL_ADDRESS = 'businessInfo_companyFullAddress';
     private readonly BUSINESS_COMPANY_FULL_ADDRESS_STREET = 'businessInfo_companyFullAddress_street';
     private readonly BUSINESS_COMPANY_FULL_ADDRESS_CITY = 'businessInfo_companyFullAddress_city';
@@ -98,7 +98,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     private readonly BUSINESS_WORK_EMAIL3 = 'businessInfo_workEmail3';
     private readonly PERSONAL_PREFERREDTOD = 'personalInfo_preferredToD';
     private readonly PERSONAL_CREDITSCORERATING = 'personalInfo_creditScoreRating';
-    private readonly PERSONAL_AFFILIATE_ID= 'personalInfo_affiliateId';
+    private readonly PERSONAL_AFFILIATE_CODE= 'personalInfo_affiliateCode';
 
     private readonly FIELDS_TO_CAPITALIZE = [
         this.FIRST_NAME_FIELD,
@@ -161,8 +161,8 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     ];
 
     private readonly AFFILIATE_FIELDS = [
-        this.PERSONAL_AFFILIATE_ID,
-        this.BUSINESS_AFFILIATE_ID
+        this.PERSONAL_AFFILIATE_CODE,
+        this.BUSINESS_AFFILIATE_CODE
     ];
 
     importStatuses: any = ImportStatus;

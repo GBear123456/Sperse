@@ -21645,7 +21645,7 @@ export class PersonContactServiceProxy {
      * @body (optional) 
      * @return Success
      */
-    createUserForContact(body: CreateUserForContactInput | null | undefined): Observable<void> {
+    createUserForContact(body: CreateUserForContactInput | null | undefined): Observable<CreateUserForContactOutput> {
         let url_ = this.baseUrl + "/api/services/CRM/PersonContact/CreateUserForContact";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -21657,6 +21657,7 @@ export class PersonContactServiceProxy {
             responseType: "blob",
             headers: new HttpHeaders({
                 "Content-Type": "application/json", 
+                "Accept": "application/json"
             })
         };
 
@@ -21667,14 +21668,14 @@ export class PersonContactServiceProxy {
                 try {
                     return this.processCreateUserForContact(<any>response_);
                 } catch (e) {
-                    return <Observable<void>><any>_observableThrow(e);
+                    return <Observable<CreateUserForContactOutput>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<void>><any>_observableThrow(response_);
+                return <Observable<CreateUserForContactOutput>><any>_observableThrow(response_);
         }));
     }
 
-    protected processCreateUserForContact(response: HttpResponseBase): Observable<void> {
+    protected processCreateUserForContact(response: HttpResponseBase): Observable<CreateUserForContactOutput> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -21683,14 +21684,17 @@ export class PersonContactServiceProxy {
         let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
         if (status === 200) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(<any>null);
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? CreateUserForContactOutput.fromJS(resultData200) : new CreateUserForContactOutput();
+            return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<void>(<any>null);
+        return _observableOf<CreateUserForContactOutput>(<any>null);
     }
 }
 
@@ -47842,7 +47846,8 @@ export class Note implements INote {
     contactId!: number | undefined;
     contactPhoneId!: number | undefined;
     orderId!: number | undefined;
-    text!: string | undefined;
+    leadId!: number | undefined;
+    text!: string;
     noteType!: NoteType | undefined;
     followUpDateTime!: moment.Moment | undefined;
     dateTime!: moment.Moment | undefined;
@@ -47850,6 +47855,7 @@ export class Note implements INote {
     contact!: Contact | undefined;
     contactPhone!: ContactPhone | undefined;
     order!: Order | undefined;
+    lead!: Lead | undefined;
     isDeleted!: boolean | undefined;
     deleterUserId!: number | undefined;
     deletionTime!: moment.Moment | undefined;
@@ -47874,6 +47880,7 @@ export class Note implements INote {
             this.contactId = data["contactId"];
             this.contactPhoneId = data["contactPhoneId"];
             this.orderId = data["orderId"];
+            this.leadId = data["leadId"];
             this.text = data["text"];
             this.noteType = data["noteType"];
             this.followUpDateTime = data["followUpDateTime"] ? moment(data["followUpDateTime"].toString()) : <any>undefined;
@@ -47882,6 +47889,7 @@ export class Note implements INote {
             this.contact = data["contact"] ? Contact.fromJS(data["contact"]) : <any>undefined;
             this.contactPhone = data["contactPhone"] ? ContactPhone.fromJS(data["contactPhone"]) : <any>undefined;
             this.order = data["order"] ? Order.fromJS(data["order"]) : <any>undefined;
+            this.lead = data["lead"] ? Lead.fromJS(data["lead"]) : <any>undefined;
             this.isDeleted = data["isDeleted"];
             this.deleterUserId = data["deleterUserId"];
             this.deletionTime = data["deletionTime"] ? moment(data["deletionTime"].toString()) : <any>undefined;
@@ -47906,6 +47914,7 @@ export class Note implements INote {
         data["contactId"] = this.contactId;
         data["contactPhoneId"] = this.contactPhoneId;
         data["orderId"] = this.orderId;
+        data["leadId"] = this.leadId;
         data["text"] = this.text;
         data["noteType"] = this.noteType;
         data["followUpDateTime"] = this.followUpDateTime ? this.followUpDateTime.toISOString() : <any>undefined;
@@ -47914,6 +47923,7 @@ export class Note implements INote {
         data["contact"] = this.contact ? this.contact.toJSON() : <any>undefined;
         data["contactPhone"] = this.contactPhone ? this.contactPhone.toJSON() : <any>undefined;
         data["order"] = this.order ? this.order.toJSON() : <any>undefined;
+        data["lead"] = this.lead ? this.lead.toJSON() : <any>undefined;
         data["isDeleted"] = this.isDeleted;
         data["deleterUserId"] = this.deleterUserId;
         data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
@@ -47931,7 +47941,8 @@ export interface INote {
     contactId: number | undefined;
     contactPhoneId: number | undefined;
     orderId: number | undefined;
-    text: string | undefined;
+    leadId: number | undefined;
+    text: string;
     noteType: NoteType | undefined;
     followUpDateTime: moment.Moment | undefined;
     dateTime: moment.Moment | undefined;
@@ -47939,6 +47950,7 @@ export interface INote {
     contact: Contact | undefined;
     contactPhone: ContactPhone | undefined;
     order: Order | undefined;
+    lead: Lead | undefined;
     isDeleted: boolean | undefined;
     deleterUserId: number | undefined;
     deletionTime: moment.Moment | undefined;
@@ -50527,7 +50539,7 @@ export class OrganizationBusinessInfo implements IOrganizationBusinessInfo {
     assignedUserId!: number | undefined;
     ratingId!: number | undefined;
     userId!: number | undefined;
-    affiliateId!: string | undefined;
+    affiliateCode!: string | undefined;
 
     constructor(data?: IOrganizationBusinessInfo) {
         if (data) {
@@ -50596,7 +50608,7 @@ export class OrganizationBusinessInfo implements IOrganizationBusinessInfo {
             this.assignedUserId = data["assignedUserId"];
             this.ratingId = data["ratingId"];
             this.userId = data["userId"];
-            this.affiliateId = data["affiliateId"];
+            this.affiliateCode = data["affiliateCode"];
         }
     }
 
@@ -50665,7 +50677,7 @@ export class OrganizationBusinessInfo implements IOrganizationBusinessInfo {
         data["assignedUserId"] = this.assignedUserId;
         data["ratingId"] = this.ratingId;
         data["userId"] = this.userId;
-        data["affiliateId"] = this.affiliateId;
+        data["affiliateCode"] = this.affiliateCode;
         return data; 
     }
 }
@@ -50703,7 +50715,7 @@ export interface IOrganizationBusinessInfo {
     assignedUserId: number | undefined;
     ratingId: number | undefined;
     userId: number | undefined;
-    affiliateId: string | undefined;
+    affiliateCode: string | undefined;
 }
 
 export class GetContactBusinessOutput implements IGetContactBusinessOutput {
@@ -57504,7 +57516,7 @@ export class ImportPersonalInput implements IImportPersonalInput {
     experience!: string | undefined;
     profileSummary!: string | undefined;
     interests!: string[] | undefined;
-    affiliateId!: string | undefined;
+    affiliateCode!: string | undefined;
 
     constructor(data?: IImportPersonalInput) {
         if (data) {
@@ -57550,7 +57562,7 @@ export class ImportPersonalInput implements IImportPersonalInput {
                 for (let item of data["interests"])
                     this.interests.push(item);
             }
-            this.affiliateId = data["affiliateId"];
+            this.affiliateCode = data["affiliateCode"];
         }
     }
 
@@ -57596,7 +57608,7 @@ export class ImportPersonalInput implements IImportPersonalInput {
             for (let item of this.interests)
                 data["interests"].push(item);
         }
-        data["affiliateId"] = this.affiliateId;
+        data["affiliateCode"] = this.affiliateCode;
         return data; 
     }
 }
@@ -57631,7 +57643,7 @@ export interface IImportPersonalInput {
     experience: string | undefined;
     profileSummary: string | undefined;
     interests: string[] | undefined;
-    affiliateId: string | undefined;
+    affiliateCode: string | undefined;
 }
 
 export class ImportBusinessInput implements IImportBusinessInput {
@@ -57667,7 +57679,7 @@ export class ImportBusinessInput implements IImportBusinessInput {
     workEmail2!: string | undefined;
     workEmail3!: string | undefined;
     workFullAddress!: ImportAddressInput | undefined;
-    affiliateId!: string | undefined;
+    affiliateCode!: string | undefined;
 
     constructor(data?: IImportBusinessInput) {
         if (data) {
@@ -57712,7 +57724,7 @@ export class ImportBusinessInput implements IImportBusinessInput {
             this.workEmail2 = data["workEmail2"];
             this.workEmail3 = data["workEmail3"];
             this.workFullAddress = data["workFullAddress"] ? ImportAddressInput.fromJS(data["workFullAddress"]) : <any>undefined;
-            this.affiliateId = data["affiliateId"];
+            this.affiliateCode = data["affiliateCode"];
         }
     }
 
@@ -57757,7 +57769,7 @@ export class ImportBusinessInput implements IImportBusinessInput {
         data["workEmail2"] = this.workEmail2;
         data["workEmail3"] = this.workEmail3;
         data["workFullAddress"] = this.workFullAddress ? this.workFullAddress.toJSON() : <any>undefined;
-        data["affiliateId"] = this.affiliateId;
+        data["affiliateCode"] = this.affiliateCode;
         return data; 
     }
 }
@@ -57795,7 +57807,7 @@ export interface IImportBusinessInput {
     workEmail2: string | undefined;
     workEmail3: string | undefined;
     workFullAddress: ImportAddressInput | undefined;
-    affiliateId: string | undefined;
+    affiliateCode: string | undefined;
 }
 
 export class ImportItemInput implements IImportItemInput {
@@ -57804,7 +57816,7 @@ export class ImportItemInput implements IImportItemInput {
     notes!: string | undefined;
     dateCreated!: moment.Moment | undefined;
     leadSource!: string | undefined;
-    affiliateId!: string | undefined;
+    affiliateCode!: string | undefined;
     campaignId!: string | undefined;
     channelId!: string | undefined;
     gclId!: string | undefined;
@@ -57840,7 +57852,7 @@ export class ImportItemInput implements IImportItemInput {
             this.notes = data["notes"];
             this.dateCreated = data["dateCreated"] ? moment(data["dateCreated"].toString()) : <any>undefined;
             this.leadSource = data["leadSource"];
-            this.affiliateId = data["affiliateId"];
+            this.affiliateCode = data["affiliateCode"];
             this.campaignId = data["campaignId"];
             this.channelId = data["channelId"];
             this.gclId = data["gclId"];
@@ -57876,7 +57888,7 @@ export class ImportItemInput implements IImportItemInput {
         data["notes"] = this.notes;
         data["dateCreated"] = this.dateCreated ? this.dateCreated.toISOString() : <any>undefined;
         data["leadSource"] = this.leadSource;
-        data["affiliateId"] = this.affiliateId;
+        data["affiliateCode"] = this.affiliateCode;
         data["campaignId"] = this.campaignId;
         data["channelId"] = this.channelId;
         data["gclId"] = this.gclId;
@@ -57905,7 +57917,7 @@ export interface IImportItemInput {
     notes: string | undefined;
     dateCreated: moment.Moment | undefined;
     leadSource: string | undefined;
-    affiliateId: string | undefined;
+    affiliateCode: string | undefined;
     campaignId: string | undefined;
     channelId: string | undefined;
     gclId: string | undefined;
@@ -58209,7 +58221,7 @@ export class ImportContactInput implements IImportContactInput {
     notes!: string | undefined;
     dateCreated!: moment.Moment | undefined;
     leadSource!: string | undefined;
-    affiliateId!: string | undefined;
+    affiliateCode!: string | undefined;
     campaignId!: string | undefined;
     channelId!: string | undefined;
     gclId!: string | undefined;
@@ -58267,7 +58279,7 @@ export class ImportContactInput implements IImportContactInput {
             this.notes = data["notes"];
             this.dateCreated = data["dateCreated"] ? moment(data["dateCreated"].toString()) : <any>undefined;
             this.leadSource = data["leadSource"];
-            this.affiliateId = data["affiliateId"];
+            this.affiliateCode = data["affiliateCode"];
             this.campaignId = data["campaignId"];
             this.channelId = data["channelId"];
             this.gclId = data["gclId"];
@@ -58322,7 +58334,7 @@ export class ImportContactInput implements IImportContactInput {
         data["notes"] = this.notes;
         data["dateCreated"] = this.dateCreated ? this.dateCreated.toISOString() : <any>undefined;
         data["leadSource"] = this.leadSource;
-        data["affiliateId"] = this.affiliateId;
+        data["affiliateCode"] = this.affiliateCode;
         data["campaignId"] = this.campaignId;
         data["channelId"] = this.channelId;
         data["gclId"] = this.gclId;
@@ -58362,7 +58374,7 @@ export interface IImportContactInput {
     notes: string | undefined;
     dateCreated: moment.Moment | undefined;
     leadSource: string | undefined;
-    affiliateId: string | undefined;
+    affiliateCode: string | undefined;
     campaignId: string | undefined;
     channelId: string | undefined;
     gclId: string | undefined;
@@ -59916,7 +59928,12 @@ export class CreateLeadInput implements ICreateLeadInput {
     leadTypeId!: number | undefined;
     stageId!: number | undefined;
     matchExisting!: boolean | undefined;
-    affiliateId!: string | undefined;
+    affiliateCode!: string | undefined;
+    referrerUrl!: string | undefined;
+    entryUrl!: string | undefined;
+    userAgent!: string | undefined;
+    notes!: string | undefined;
+    followUpDate!: moment.Moment | undefined;
     namePrefix!: string | undefined;
     firstName!: string | undefined;
     middleName!: string | undefined;
@@ -59961,7 +59978,12 @@ export class CreateLeadInput implements ICreateLeadInput {
             this.leadTypeId = data["leadTypeId"];
             this.stageId = data["stageId"];
             this.matchExisting = data["matchExisting"];
-            this.affiliateId = data["affiliateId"];
+            this.affiliateCode = data["affiliateCode"];
+            this.referrerUrl = data["referrerUrl"];
+            this.entryUrl = data["entryUrl"];
+            this.userAgent = data["userAgent"];
+            this.notes = data["notes"];
+            this.followUpDate = data["followUpDate"] ? moment(data["followUpDate"].toString()) : <any>undefined;
             this.namePrefix = data["namePrefix"];
             this.firstName = data["firstName"];
             this.middleName = data["middleName"];
@@ -60034,7 +60056,12 @@ export class CreateLeadInput implements ICreateLeadInput {
         data["leadTypeId"] = this.leadTypeId;
         data["stageId"] = this.stageId;
         data["matchExisting"] = this.matchExisting;
-        data["affiliateId"] = this.affiliateId;
+        data["affiliateCode"] = this.affiliateCode;
+        data["referrerUrl"] = this.referrerUrl;
+        data["entryUrl"] = this.entryUrl;
+        data["userAgent"] = this.userAgent;
+        data["notes"] = this.notes;
+        data["followUpDate"] = this.followUpDate ? this.followUpDate.toISOString() : <any>undefined;
         data["namePrefix"] = this.namePrefix;
         data["firstName"] = this.firstName;
         data["middleName"] = this.middleName;
@@ -60100,7 +60127,12 @@ export interface ICreateLeadInput {
     leadTypeId: number | undefined;
     stageId: number | undefined;
     matchExisting: boolean | undefined;
-    affiliateId: string | undefined;
+    affiliateCode: string | undefined;
+    referrerUrl: string | undefined;
+    entryUrl: string | undefined;
+    userAgent: string | undefined;
+    notes: string | undefined;
+    followUpDate: moment.Moment | undefined;
     namePrefix: string | undefined;
     firstName: string | undefined;
     middleName: string | undefined;
@@ -61176,6 +61208,9 @@ export class TrackingInfo implements ITrackingInfo {
     sourceCode!: string | undefined;
     channelCode!: string | undefined;
     affiliateCode!: string | undefined;
+    referrerUrl!: string | undefined;
+    entryUrl!: string | undefined;
+    userAgent!: string | undefined;
 
     constructor(data?: ITrackingInfo) {
         if (data) {
@@ -61191,6 +61226,9 @@ export class TrackingInfo implements ITrackingInfo {
             this.sourceCode = data["sourceCode"];
             this.channelCode = data["channelCode"];
             this.affiliateCode = data["affiliateCode"];
+            this.referrerUrl = data["referrerUrl"];
+            this.entryUrl = data["entryUrl"];
+            this.userAgent = data["userAgent"];
         }
     }
 
@@ -61206,6 +61244,9 @@ export class TrackingInfo implements ITrackingInfo {
         data["sourceCode"] = this.sourceCode;
         data["channelCode"] = this.channelCode;
         data["affiliateCode"] = this.affiliateCode;
+        data["referrerUrl"] = this.referrerUrl;
+        data["entryUrl"] = this.entryUrl;
+        data["userAgent"] = this.userAgent;
         return data; 
     }
 }
@@ -61214,6 +61255,9 @@ export interface ITrackingInfo {
     sourceCode: string | undefined;
     channelCode: string | undefined;
     affiliateCode: string | undefined;
+    referrerUrl: string | undefined;
+    entryUrl: string | undefined;
+    userAgent: string | undefined;
 }
 
 export class MemberInfoDto implements IMemberInfoDto {
@@ -61881,6 +61925,7 @@ export class CreateNoteInput implements ICreateNoteInput {
     text!: string;
     contactPhoneId!: number | undefined;
     orderId!: number | undefined;
+    leadId!: number | undefined;
     noteType!: NoteType;
     followUpDateTime!: moment.Moment | undefined;
     dateTime!: moment.Moment | undefined;
@@ -61901,6 +61946,7 @@ export class CreateNoteInput implements ICreateNoteInput {
             this.text = data["text"];
             this.contactPhoneId = data["contactPhoneId"];
             this.orderId = data["orderId"];
+            this.leadId = data["leadId"];
             this.noteType = data["noteType"];
             this.followUpDateTime = data["followUpDateTime"] ? moment(data["followUpDateTime"].toString()) : <any>undefined;
             this.dateTime = data["dateTime"] ? moment(data["dateTime"].toString()) : <any>undefined;
@@ -61921,6 +61967,7 @@ export class CreateNoteInput implements ICreateNoteInput {
         data["text"] = this.text;
         data["contactPhoneId"] = this.contactPhoneId;
         data["orderId"] = this.orderId;
+        data["leadId"] = this.leadId;
         data["noteType"] = this.noteType;
         data["followUpDateTime"] = this.followUpDateTime ? this.followUpDateTime.toISOString() : <any>undefined;
         data["dateTime"] = this.dateTime ? this.dateTime.toISOString() : <any>undefined;
@@ -61934,6 +61981,7 @@ export interface ICreateNoteInput {
     text: string;
     contactPhoneId: number | undefined;
     orderId: number | undefined;
+    leadId: number | undefined;
     noteType: NoteType;
     followUpDateTime: moment.Moment | undefined;
     dateTime: moment.Moment | undefined;
@@ -61982,6 +62030,7 @@ export class UpdateNoteInput implements IUpdateNoteInput {
     text!: string;
     contactPhoneId!: number | undefined;
     orderId!: number | undefined;
+    leadId!: number | undefined;
     noteType!: NoteType;
     followUpDateTime!: moment.Moment | undefined;
     dateTime!: moment.Moment | undefined;
@@ -62003,6 +62052,7 @@ export class UpdateNoteInput implements IUpdateNoteInput {
             this.text = data["text"];
             this.contactPhoneId = data["contactPhoneId"];
             this.orderId = data["orderId"];
+            this.leadId = data["leadId"];
             this.noteType = data["noteType"];
             this.followUpDateTime = data["followUpDateTime"] ? moment(data["followUpDateTime"].toString()) : <any>undefined;
             this.dateTime = data["dateTime"] ? moment(data["dateTime"].toString()) : <any>undefined;
@@ -62024,6 +62074,7 @@ export class UpdateNoteInput implements IUpdateNoteInput {
         data["text"] = this.text;
         data["contactPhoneId"] = this.contactPhoneId;
         data["orderId"] = this.orderId;
+        data["leadId"] = this.leadId;
         data["noteType"] = this.noteType;
         data["followUpDateTime"] = this.followUpDateTime ? this.followUpDateTime.toISOString() : <any>undefined;
         data["dateTime"] = this.dateTime ? this.dateTime.toISOString() : <any>undefined;
@@ -62038,6 +62089,7 @@ export interface IUpdateNoteInput {
     text: string;
     contactPhoneId: number | undefined;
     orderId: number | undefined;
+    leadId: number | undefined;
     noteType: NoteType;
     followUpDateTime: moment.Moment | undefined;
     dateTime: moment.Moment | undefined;
@@ -66736,6 +66788,7 @@ export class CreateUserForContactInput implements ICreateUserForContactInput {
     password!: string | undefined;
     changePasswordOnNextLogin!: boolean | undefined;
     sendActivationEmail!: boolean | undefined;
+    generateAutoLoginLink!: boolean | undefined;
     assignedRoleNames!: string[] | undefined;
     organizationUnitIds!: number[] | undefined;
 
@@ -66756,6 +66809,7 @@ export class CreateUserForContactInput implements ICreateUserForContactInput {
             this.password = data["password"];
             this.changePasswordOnNextLogin = data["changePasswordOnNextLogin"];
             this.sendActivationEmail = data["sendActivationEmail"];
+            this.generateAutoLoginLink = data["generateAutoLoginLink"];
             if (data["assignedRoleNames"] && data["assignedRoleNames"].constructor === Array) {
                 this.assignedRoleNames = [];
                 for (let item of data["assignedRoleNames"])
@@ -66784,6 +66838,7 @@ export class CreateUserForContactInput implements ICreateUserForContactInput {
         data["password"] = this.password;
         data["changePasswordOnNextLogin"] = this.changePasswordOnNextLogin;
         data["sendActivationEmail"] = this.sendActivationEmail;
+        data["generateAutoLoginLink"] = this.generateAutoLoginLink;
         if (this.assignedRoleNames && this.assignedRoleNames.constructor === Array) {
             data["assignedRoleNames"] = [];
             for (let item of this.assignedRoleNames)
@@ -66805,8 +66860,45 @@ export interface ICreateUserForContactInput {
     password: string | undefined;
     changePasswordOnNextLogin: boolean | undefined;
     sendActivationEmail: boolean | undefined;
+    generateAutoLoginLink: boolean | undefined;
     assignedRoleNames: string[] | undefined;
     organizationUnitIds: number[] | undefined;
+}
+
+export class CreateUserForContactOutput implements ICreateUserForContactOutput {
+    autoLoginLink!: string | undefined;
+
+    constructor(data?: ICreateUserForContactOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.autoLoginLink = data["autoLoginLink"];
+        }
+    }
+
+    static fromJS(data: any): CreateUserForContactOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateUserForContactOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["autoLoginLink"] = this.autoLoginLink;
+        return data; 
+    }
+}
+
+export interface ICreateUserForContactOutput {
+    autoLoginLink: string | undefined;
 }
 
 export class CreatePersonOrgRelationInput implements ICreatePersonOrgRelationInput {
