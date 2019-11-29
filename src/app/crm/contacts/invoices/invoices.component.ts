@@ -54,6 +54,7 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
     deleteDisabled = false;
     previewDisabled = false;
     invoiceActivityDisabled = false;
+    downloadPdfDisabled = false;
 
     contactId = Number(this.contactService['data'].contactInfo.id);
 
@@ -145,6 +146,7 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
             } else {
                 if (event.event.target.closest('.dx-link.dx-link-edit')) {
                     const isOrder: boolean = !event.data.InvoiceId;
+                    this.downloadPdfDisabled =
                     this.previewDisabled = isOrder;
                     this.resendInvoiceDisabled =
                     this.invoiceActivityDisabled =
@@ -246,5 +248,14 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
                 data: data
             })
         );
+    }
+
+    downloadInvoicePdf() {
+        this.startLoading(true);
+        this.invoiceService.generatePdf(this.actionRecordData.InvoiceId, false).pipe(
+            finalize(() => this.finishLoading(true))
+        ).subscribe(link => {
+            window.open(link);
+        });
     }
 }
