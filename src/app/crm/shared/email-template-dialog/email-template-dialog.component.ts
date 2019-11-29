@@ -68,8 +68,8 @@ export class EmailTemplateDialogComponent implements OnInit {
         private notifyService: NotifyService,
         private dialogRef: MatDialogRef<EmailTemplateDialogComponent>,
         private emailTemplateProxy: EmailTemplateServiceProxy,
-        private changeDetectorRef: ChangeDetectorRef,
         private sessionService: AppSessionService,
+        public changeDetectorRef: ChangeDetectorRef,
         public dialog: MatDialog,
         public ls: AppLocalizationService,
         @Inject(MAT_DIALOG_DATA) public data: any
@@ -199,7 +199,7 @@ export class EmailTemplateDialogComponent implements OnInit {
                     this.changeDetectorRef.markForCheck();
                     this.onTemplateChange.emit(res);
                 });
-            } else 
+            } else
                 this.onTemplateChange.emit(event.value);
         }
     }

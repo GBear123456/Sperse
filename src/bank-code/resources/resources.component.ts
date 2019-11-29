@@ -323,6 +323,7 @@ export class ResourcesComponent {
             ]
         },
     ];
+    autoScrollingIsWorking = false;
 
     constructor(
         public ls: AppLocalizationService,
@@ -331,11 +332,21 @@ export class ResourcesComponent {
 
     @HostListener('window:scroll')
     onWindowScroll() {
-        const bottomHasReached = $(window).scrollTop() + $(window).height() == $(document).height();
-        this.isClicked = bottomHasReached
-            ? this.data.length - 1
-            : [].findIndex.call((this.elementRef.nativeElement.querySelectorAll('.card')), (card) => {
-                return card.getBoundingClientRect().bottom > 99;
-            });
+        if (!this.autoScrollingIsWorking) {
+            const bottomHasReached = $(window).scrollTop() + $(window).height() == $(document).height();
+            this.isClicked = bottomHasReached
+                ? this.data.length - 1
+                : [].findIndex.call((this.elementRef.nativeElement.querySelectorAll('.card')), (card) => {
+                    return card.getBoundingClientRect().bottom > 99;
+                });
+        }
+    }
+
+    pageScrollStart() {
+        this.autoScrollingIsWorking = true;
+    }
+
+    pageScrollFinish() {
+        this.autoScrollingIsWorking = false;
     }
 }
