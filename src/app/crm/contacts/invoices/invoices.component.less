@@ -46,6 +46,7 @@
                 border-radius: 50%;
                 display: inline-block;
                 margin-right: 5px;
+                background: #dedede;
             }
             &.final:before {
                 background: #1fb430;
@@ -53,16 +54,19 @@
             &.pending:before {
                 background: #f1a72d;
             }
+            &.sent:before {
+                background: #fff939;
+            }
             &.draft:before {
                 background: rgba(64, 89, 107, 0.28);
-            }
+            }              
         }
     }
 }
 
 /deep/ .invoice-actions-container {
     width: 295px;
-    height: 200px;
+    height: 235px;
     display: flex;
     justify-content: space-between;
     .list {
