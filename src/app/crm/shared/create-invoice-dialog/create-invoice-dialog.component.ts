@@ -744,7 +744,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
             data: dialogData,
             hasBackdrop: false,
             disableClose: false,
-            closeOnNavigation: true
+            closeOnNavigation: true,
             position: {
                 top: '100px',
                 left: innerWidth - 700 + 'px'
