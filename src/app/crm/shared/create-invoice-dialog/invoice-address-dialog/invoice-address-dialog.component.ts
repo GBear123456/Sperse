@@ -9,10 +9,10 @@ import * as _ from 'underscore';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
+import { GooglePlaceHelper } from '@shared/helpers/GooglePlaceHelper';
 import { CountriesStoreActions, CountriesStoreSelectors } from '@app/store';
 import { RootStore, StatesStoreActions, StatesStoreSelectors } from '@root/store';
-import { CountryStateDto, CountryDto, InvoiceAddressInput } from '@shared/service-proxies/service-proxies';
-import { GooglePlaceHelper } from '@shared/helpers/GooglePlaceHelper';
+import { CountryStateDto, CountryDto } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 
 @Component({
@@ -22,8 +22,7 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
     host: {
         '(document:mouseup)': 'mouseUp($event)',
         '(document:mousemove)': 'mouseMove($event)'
-    },
-    providers: [ GooglePlaceHelper ]
+    }
 })
 export class InvoiceAddressDialog {
     validator: any;
@@ -31,8 +30,6 @@ export class InvoiceAddressDialog {
     movePos: any;
     states: CountryStateDto[];
     countries: CountryDto[];
-    state: string;
-    country: string;
     googleAutoComplete: Boolean;
     emailRegEx = AppConsts.regexPatterns.email;
 
@@ -40,18 +37,17 @@ export class InvoiceAddressDialog {
         private elementRef: ElementRef,
         private angularGooglePlaceService: AngularGooglePlaceService,
         private store$: Store<RootStore.State>,
-        private googlePlaceHelper: GooglePlaceHelper,
         public dialogRef: MatDialogRef<InvoiceAddressDialog>,
         public ls: AppLocalizationService,
-        @Inject(MAT_DIALOG_DATA) public data: InvoiceAddressInput
+        @Inject(MAT_DIALOG_DATA) public data: any
     ) {
         if (this.validateAddress(data)) {
             this.address =
                 this.googleAutoComplete ? [
                     data.address1,
                     data.city,
-                    this.state,
-                    this.country
+                    data.stateId,
+                    data.countryId
                 ].join(',') : data.address1;
         }
 
@@ -63,54 +59,48 @@ export class InvoiceAddressDialog {
         this.store$.dispatch(new CountriesStoreActions.LoadRequestAction());
         this.store$.pipe(select(CountriesStoreSelectors.getCountries)).subscribe(result => {
             this.countries = result;
-            if (this.country)
+            let country = this.data.country;
+            if (country = country && _.findWhere(result, {name: country}))
+                this.data.countryId = this.data.country['code'];
+
+            if (this.data.countryId)
                 this.onCountryChange({
-                    value: this.country
+                    value: this.data.countryId
                 });
         });
     }
 
     onCountryChange(event) {
-        const countryCode = _.findWhere(this.countries, {name: event.value})['code'];
+        const countryCode = event.value;
         this.store$.dispatch(new StatesStoreActions.LoadRequestAction(countryCode));
         this.store$.pipe(select(StatesStoreSelectors.getState, { countryCode: countryCode }))
             .subscribe(result => {
                 this.states = result;
+                let state = this.data.state;
+                if (state = state && _.findWhere(result, {name: state}))
+                    this.data.stateId = state['code'];
             });
     }
 
     onAddressChanged(event) {
         let number = this.angularGooglePlaceService.street_number(event.address_components);
         let street = this.angularGooglePlaceService.street(event.address_components);
-        this.state = this.googlePlaceHelper.getState(event.address_components);
+        this.data.stateId = GooglePlaceHelper.getStateCode(event.address_components);
+        this.data.countryId = GooglePlaceHelper.getCountryCode(event.address_components);
         this.address = number ? (number + ' ' + street) : street;
-    }
-
-    updateCountryInfo(countryName: string) {
-        countryName == 'United States' ?
-            this.country = AppConsts.defaultCountryName :
-            this.country = countryName;
     }
 
     onSave(event) {
         this.data.address1 = this.address;
 
-        if (this.validator.validate().isValid && this.validateAddress(this.data)) {
-            if (this.country)
-                this.data.countryId = _.findWhere(this.countries, {name: this.country})['code'];
-            if (this.state) {
-                let state = _.findWhere(this.states, {name: this.state});
-                if (state)
-                    this.data.stateId = state['code'];
-            }
+        if (this.validator.validate().isValid && this.validateAddress(this.data))
             this.dialogRef.close(true);
-        }
     }
 
     validateAddress(data) {
         return data.address1 ||
-            this.country ||
-            this.state ||
+            data.countryId ||
+            data.stateId ||
             data.city ||
             data.zip;
     }

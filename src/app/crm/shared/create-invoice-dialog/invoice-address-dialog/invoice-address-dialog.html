@@ -66,7 +66,6 @@
                        placeholder=""
                        [(ngModel)]="address"
                        class="dx-texteditor-input"
-                       (country)="updateCountryInfo($event)"
                        (street_number)='data.streetNumber=$event'
                        (street)='data.address1=$event'
                        (city)='data.city=$event'
@@ -77,12 +76,12 @@
             <div>
                 <label>{{ls.l('Country')}}</label>
                 <dx-select-box
+                    name="country"
                     [dataSource]="countries"
                     displayExpr="name"
-                    valueExpr="name"
-                    name="country"
+                    valueExpr="code"
                     [searchEnabled]="true"
-                    [(value)]="country"
+                    [(value)]="data.countryId"
                     fieldTemplate="field"
                     (onValueChanged)="onCountryChange($event)">
                     <div *dxTemplate="let data of 'field'">
@@ -101,10 +100,10 @@
                 <dx-select-box
                     [dataSource]="states"
                     displayExpr="name"
-                    valueExpr="name"
+                    valueExpr="code"
                     name="state"
                     [searchEnabled]="true"
-                    [(value)]="state"
+                    [(value)]="data.stateId"
                     fieldTemplate="field">
                     <div *dxTemplate="let data of 'field'">
                         <div class="custom-item">
