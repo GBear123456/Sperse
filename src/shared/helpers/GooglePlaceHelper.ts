@@ -8,11 +8,19 @@ export class GooglePlaceHelper {
         private angularGooglePlaceService: AngularGooglePlaceService
     ) {}
 
-    static getStateCode(components): string {
+    static getFieldValue(components, field, value): string {
         for (const attr of components)
             for (const type of attr.types)
-                if (type === 'administrative_area_level_1')
-                    return (<any>attr)['short_name'];
+                if (field === type)
+                    return (<any>attr)[value];
+    }
+
+    static getStateCode(components): string {
+        return GooglePlaceHelper.getFieldValue(components, 'administrative_area_level_1', 'short_name');
+    }
+
+    static getCountryCode(components): string {
+        return GooglePlaceHelper.getFieldValue(components, 'country', 'short_name');
     }
 
     getState(components): string {

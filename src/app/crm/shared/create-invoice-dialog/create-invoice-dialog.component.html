@@ -84,9 +84,9 @@
                         {{ selectedBillingAddress?.firstName + ' ' + selectedBillingAddress?.lastName }}<br *ngIf="customer">
                         {{ [selectedBillingAddress?.email, selectedBillingAddress?.phone].join(', ') }}<br *ngIf="selectedBillingAddress?.email || selectedBillingAddress?.phone">
                         {{ selectedBillingAddress?.address1 }}<br *ngIf="selectedBillingAddress?.address1">
-                        {{ selectedBillingAddress?.city }}<br *ngIf="selectedContact?.address?.city">
-                        {{ selectedBillingAddress?.state }} {{ selectedBillingAddress?.zip }}<br *ngIf="selectedBillingAddress?.state || selectedBillingAddress?.zip">
-                        {{ selectedBillingAddress?.countryCode == 'US' ? '' : selectedBillingAddress?.countryId }}
+                        {{ selectedBillingAddress?.city }}<br *ngIf="selectedBillingAddress?.city">
+                        {{ selectedBillingAddress?.stateId }} {{ selectedBillingAddress?.zip }}<br *ngIf="selectedBillingAddress?.stateId || selectedBillingAddress?.zip">
+                        {{ selectedBillingAddress?.countryId == 'US' ? '' : selectedBillingAddress?.countryId }}
                     </div>
                 </div>
                 <div class="ship-to">
@@ -112,8 +112,8 @@
                         {{ [selectedShippingAddress?.email, selectedShippingAddress?.phone].join(', ') }}<br *ngIf="selectedShippingAddress?.email || selectedShippingAddress?.phone">
                         {{ selectedShippingAddress?.address1 }}<br *ngIf="selectedShippingAddress?.address1">
                         {{ selectedShippingAddress?.city }}<br *ngIf="selectedShippingAddress?.city">
-                        {{ selectedShippingAddress?.zip }}<br *ngIf="selectedShippingAddress?.zip">
-                        {{ selectedShippingAddress?.countryCode == 'US' ? '' : selectedShippingAddress?.countryId }}
+                        {{ selectedShippingAddress?.stateId }} {{ selectedShippingAddress?.zip }}<br *ngIf="selectedShippingAddress?.stateId || selectedShippingAddress?.zip">
+                        {{ selectedShippingAddress?.countryId == 'US' ? '' : selectedShippingAddress?.countryId }}
                     </div>
                 </div>
                 <div class="billed-from">

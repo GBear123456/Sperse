@@ -270,20 +270,19 @@ export class CreateInvoiceDialogComponent implements OnInit {
                 emailAddress = details.emails.length ?
                     details.emails[0].emailAddress : undefined,
                 address = details.addresses[0];
-            this.selectedContact =
-                new EntityContactInfo({
-                    id: contact.id,
-                    name: this.customer,
-                    email: emailAddress,
-                    address: address ? new ContactAddressInfo({
-                        streetAddress: address.streetAddress,
-                        city: address.city,
-                        state: address.state,
-                        countryCode: address.country,
-                        zip: address.zip
-                    }) : new ContactAddressInfo(),
-                    isActive: true
-                });
+            this.selectedContact = {
+                id: contact.id,
+                name: this.customer,
+                email: emailAddress,
+                address: address ? {
+                    streetAddress: address.streetAddress,
+                    city: address.city,
+                    state: address.state,
+                    country: address.country,
+                    zip: address.zip
+                } : {},
+                isActive: true
+            };
         }
     }
 
@@ -726,10 +725,12 @@ export class CreateInvoiceDialogComponent implements OnInit {
     showEditAddressDialog(event, field) {
         let address = this.selectedContact.address,
             customerNameParts = (this.customer || '').split(' '),
-            dialogData = this[field] || new InvoiceAddressInput({
-                countryId: undefined,
+            dialogData: any = this[field] || {
+                countryId: address.countryCode,
                 stateId: undefined,
-                city:  address.city,
+                country: address.country,
+                state: address.state,
+                city: address.city,
                 zip: address.zip,
                 address1: address.streetAddress,
                 address2: undefined,
@@ -738,7 +739,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
                 company: undefined,
                 email: this.selectedContact.email,
                 phone: undefined
-            });
+            };
         this.dialog.open(InvoiceAddressDialog, {
             id: field,
             data: dialogData,
@@ -751,7 +752,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
             }
         }).afterClosed().subscribe(result => {
             if (!this[field] && result)
-                this[field] = dialogData;
+                this[field] = new InvoiceAddressInput(dialogData);
             this.changeDetectorRef.detectChanges();
         });
         event.stopPropagation();

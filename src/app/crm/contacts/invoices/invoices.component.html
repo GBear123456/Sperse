@@ -13,7 +13,7 @@
                                         <div class="link disabled" [hidden]="true"><i class="time-alarm"></i>{{l('Send Reminder')}}</div>
                                         <div class="link" [ngClass]="{disabled: resendInvoiceDisabled}" (click)="onMenuItemClick(sendInvoice)"><i class="respond-arrow"></i>{{l('Resend Invoice')}}</div>
                                         <div class="link" [ngClass]="{disabled: downloadPdfDisabled}" (click)="onMenuItemClick(downloadInvoicePdf)"><i class="move-layer-down"></i>{{l('Download as PDF')}}</div>
-                                        <div class="link" [ngClass]="{disabled: invoiceActivityDisabled}" (click)="onMenuItemClick(showHistory.bind(this, actionRecordData))"><i class="bullet-list-69"></i>{{l('OrderActivity')}}</div>
+                                        <div class="link" (click)="onMenuItemClick(showHistory)"><i class="bullet-list-69"></i>{{l('OrderActivity')}}</div>
                                     </div>
                                     <div class="list" [hidden]="true">
                                         <div class="link disabled"><i class="f-chat"></i>{{l('Post Comment')}}</div>
