@@ -39,6 +39,7 @@ import { FiltersService } from '@shared/filters/filters.service';
 import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
 import { DxoTooltipComponent } from '@root/node_modules/devextreme-angular/ui/nested/tooltip';
 import { Stage } from '@app/shared/pipeline/stage.model';
+import oDataUtils from "devextreme/data/odata/utils";
 
 @Component({
     selector: 'app-pipeline',
@@ -435,7 +436,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                     this.getDataSourceForStage(stage);
 
             if (!isNaN(stage.lastStageIndex) && page)
-                filter['SortOrder'] = {lt: stage.lastStageIndex};
+                filter['SortOrder'] = {lt: new oDataUtils.EdmLiteral(stage.lastStageIndex + 'd') };
             dataSource.pageSize(Math.max(!page && stage.entities
                 && stage.entities.length || 0, this.stagePageCount));
             dataSource.sort({getter: 'SortOrder', desc: true});
