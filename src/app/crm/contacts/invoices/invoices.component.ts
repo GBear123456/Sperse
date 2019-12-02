@@ -45,6 +45,7 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
     private settings = new InvoiceSettings();
     private readonly dataSourceURI = 'OrderInvoices';
     private filters: FilterModel[];
+
     formatting = AppConsts.formatting;
     invoiceStatus = InvoiceStatus;
 
@@ -54,8 +55,8 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
     markAsCancelledDisabled = false;
     deleteDisabled = false;
     previewDisabled = false;
-    invoiceActivityDisabled = false;
     downloadPdfDisabled = false;
+    duplicateInvoiceDisabled = false;
 
     contactId = Number(this.contactService['data'].contactInfo.id);
 
@@ -148,15 +149,14 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
                 if (event.event.target.closest('.dx-link.dx-link-edit')) {
                     const isOrder: boolean = !event.data.InvoiceId;
                     this.downloadPdfDisabled =
+                    this.duplicateInvoiceDisabled =
                     this.previewDisabled = isOrder;
                     this.resendInvoiceDisabled =
-                    this.invoiceActivityDisabled =
                     this.markAsDraftDisabled = isOrder || [InvoiceStatus.Final, InvoiceStatus.Canceled].indexOf(event.data.InvoiceStatus) < 0;
                     this.markAsCancelledDisabled = isOrder || event.data.InvoiceStatus != InvoiceStatus.Sent;
                     this.deleteDisabled = isOrder || [
                         InvoiceStatus.Draft, InvoiceStatus.Final, InvoiceStatus.Canceled
                     ].indexOf(event.data.InvoiceStatus) < 0;
-
                     this.actionRecordData = event.data;
                     this.showActionsMenu(event.event.target);
                 }
@@ -241,14 +241,14 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
         ).subscribe(() => this.invalidate());
     }
 
-    showHistory(data) {
+    showHistory() {
         setTimeout(() =>
             this.dialog.open(HistoryListDialogComponent, {
                 panelClass: ['slider'],
                 disableClose: false,
                 hasBackdrop: false,
                 closeOnNavigation: true,
-                data: data
+                data: { Id: this.actionRecordData.OrderId }
             })
         );
     }
@@ -260,5 +260,9 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
         ).subscribe(link => {
             window.open(link);
         });
+    }
+
+    duplicateInvoice() {
+        this.openCreateInvoiceDialog(true);
     }
 }

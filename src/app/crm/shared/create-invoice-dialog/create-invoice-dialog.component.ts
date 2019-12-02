@@ -209,18 +209,20 @@ export class CreateInvoiceDialogComponent implements OnInit {
             this.orderNumber = invoice.OrderNumber;
             this.orderId = invoice.OrderId;
         }
-        if (invoice && invoice.InvoiceId && !this.data.addNew) {
+        if (invoice && invoice.InvoiceId) {
             this.modalDialog.startLoading();
-            this.invoiceId = invoice.InvoiceId;
-            this.invoiceNo = invoice.InvoiceNumber;
-            this.status = invoice.InvoiceStatus;
-            this.date = DateHelper.addTimezoneOffset(new Date(invoice.Date), true);
-            this.dueDate = invoice.InvoiceDueDate;
+            if (!this.data.addNew) {
+                this.invoiceId = invoice.InvoiceId;
+                this.invoiceNo = invoice.InvoiceNumber;
+                this.disabledForUpdate = [InvoiceStatus.Draft, InvoiceStatus.Final].indexOf(this.status) < 0;
+                if (this.disabledForUpdate)
+                    this.buttons[0].disabled = this.disabledForUpdate;
+                this.date = DateHelper.addTimezoneOffset(new Date(invoice.Date), true);
+                this.dueDate = invoice.InvoiceDueDate;
+                this.status = invoice.InvoiceStatus;
+            }
             this.contactId = invoice.ContactId;
             this.initOrderDataSource();
-            this.disabledForUpdate = [InvoiceStatus.Draft, InvoiceStatus.Final].indexOf(this.status) < 0;
-            if (this.disabledForUpdate)
-                this.buttons[0].disabled = this.disabledForUpdate;
             this.invoiceProxy.getInvoiceInfo(invoice.InvoiceId)
                 .pipe(finalize(() => this.modalDialog.finishLoading()))
                 .subscribe((invoiceInfo: InvoiceInfo) => {
@@ -229,12 +231,14 @@ export class CreateInvoiceDialogComponent implements OnInit {
                     this.balance = invoiceInfo.grandTotal;
                     this.description = invoiceInfo.description;
                     this.notes = invoiceInfo.note;
-                    this.invoiceNo = invoiceInfo.number;
+                    if (!this.data.addNew) {
+                        this.invoiceNo = invoiceInfo.number;
+                        this.date = DateHelper.addTimezoneOffset(new Date(invoiceInfo.date), true);
+                        this.dueDate = invoiceInfo.dueDate;
+                        this.status = invoiceInfo.status;
+                    }
                     this.orderNumber = invoiceInfo.orderNumber;
                     this.customer = invoiceInfo.contactName;
-                    this.status = invoiceInfo.status;
-                    this.date = DateHelper.addTimezoneOffset(new Date(invoiceInfo.date), true);
-                    this.dueDate = invoiceInfo.dueDate;
                     this.selectedBillingAddress = invoiceInfo.billingAddress;
                     this.selectedShippingAddress = invoiceInfo.shippingAddress;
                     this.lines = invoiceInfo.lines.map(res => {
@@ -247,17 +251,20 @@ export class CreateInvoiceDialogComponent implements OnInit {
                     });
                     this.changeDetectorRef.detectChanges();
                 });
-        } else {
+        } else
             this.resetNoteDefault();
-            this.invoiceProxy.getNewInvoiceInfo().subscribe((newInvoiceInfo: GetNewInvoiceInfoOutput) => {
-                this.invoiceInfo = newInvoiceInfo;
-                this.invoiceNo = newInvoiceInfo.nextInvoiceNumber;
-                this.changeDetectorRef.detectChanges();
-            });
-        }
 
+        this.initNewInvoiceInfo();
         this.initContactInfo(this.data.contactInfo);
         this.changeDetectorRef.detectChanges();
+    }
+
+    initNewInvoiceInfo() {
+        this.invoiceProxy.getNewInvoiceInfo().subscribe((newInvoiceInfo: GetNewInvoiceInfoOutput) => {
+            this.invoiceInfo = newInvoiceInfo;
+            this.invoiceNo = newInvoiceInfo.nextInvoiceNumber;
+            this.changeDetectorRef.detectChanges();
+        });
     }
 
     initContactInfo(contact) {

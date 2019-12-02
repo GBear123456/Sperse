@@ -3,7 +3,7 @@
         <div class="portlet-body">
               <div>
                     <div id="InvoicesTable">
-                        <dx-tooltip [elementAttr]="{name: 'invoice-actions'}" width="300px" height="237px">
+                        <dx-tooltip width="300px" height="265px">
                             <div *dxTemplate="let data of 'content'">
                                 <div class="invoice-actions-container">
                                     <div class="list">
@@ -13,7 +13,8 @@
                                         <div class="link disabled" [hidden]="true"><i class="time-alarm"></i>{{l('Send Reminder')}}</div>
                                         <div class="link" [ngClass]="{disabled: resendInvoiceDisabled}" (click)="onMenuItemClick(sendInvoice)"><i class="respond-arrow"></i>{{l('Resend Invoice')}}</div>
                                         <div class="link" [ngClass]="{disabled: downloadPdfDisabled}" (click)="onMenuItemClick(downloadInvoicePdf)"><i class="move-layer-down"></i>{{l('Download as PDF')}}</div>
-                                        <div class="link" [ngClass]="{disabled: invoiceActivityDisabled}" (click)="onMenuItemClick(showHistory.bind(this, actionRecordData))"><i class="bullet-list-69"></i>{{l('OrderActivity')}}</div>
+                                        <div class="link" (click)="onMenuItemClick(showHistory)"><i class="bullet-list-69"></i>{{l('OrderActivity')}}</div>
+                                        <div class="link" [ngClass]="{disabled: duplicateInvoiceDisabled}" (click)="onMenuItemClick(duplicateInvoice)"><i class="ungroup"></i>{{l('Duplicate Invoice')}}</div>
                                     </div>
                                     <div class="list" [hidden]="true">
                                         <div class="link disabled"><i class="f-chat"></i>{{l('Post Comment')}}</div>
@@ -40,7 +41,7 @@
                                       [pager]="defaultGridPagerConfig"
                                       (onCellClick)="onCellClick($event)"
                                       (onContentReady)="onContentReady()"
-                                      (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
+                                      (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">                
 
                             <dxi-column alignment="center" width="50px" cellTemplate="actionsCellTemplate" headerCellTemplate="actionsCellTemplate"></dxi-column>
 
