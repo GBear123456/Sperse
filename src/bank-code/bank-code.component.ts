@@ -1,5 +1,9 @@
 /** Core imports */
-import { Component, ViewContainerRef, OnInit, Injector } from '@angular/core';
+import { Component, ViewContainerRef, OnInit, Injector, OnDestroy } from '@angular/core';
+import { NavigationEnd } from '@angular/router';
+
+/** Third party imports */
+import { filter, takeUntil } from 'rxjs/operators';
 
 /** Application imports */
 import { AppComponentBase } from '@shared/common/app-component-base';
@@ -15,7 +19,7 @@ import { AppComponentBase } from '@shared/common/app-component-base';
         '(window:blur)': 'closeUserMenuPopup($event)'
     }
 })
-export class BankCodeComponent extends AppComponentBase implements OnInit {
+export class BankCodeComponent extends AppComponentBase implements OnInit, OnDestroy {
     private viewContainerRef: ViewContainerRef;
     private rootComponent: any;
     public constructor(
@@ -36,6 +40,16 @@ export class BankCodeComponent extends AppComponentBase implements OnInit {
 
     ngOnInit(): void {
         this.rootComponent.addStyleSheet('', 'https://fonts.googleapis.com/css?family=IBM+Plex+Sans:400,700&display=swap');
+        this._router.events.pipe(
+            takeUntil(this.destroy$),
+            filter((event: Event) => event instanceof NavigationEnd)
+        ).subscribe((event: Event) => {
+            scrollTo(0, 0);
+        });
+    }
+
+    ngOnDestroy() {
+        super.ngOnDestroy();
     }
 
 }
