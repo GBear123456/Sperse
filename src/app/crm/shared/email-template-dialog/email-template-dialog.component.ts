@@ -14,7 +14,7 @@ import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
 import { EmailTemplateServiceProxy, GetTemplatesResponse, CreateEmailTemplateRequest,
-    UpdateEmailTemplateRequest } from '@shared/service-proxies/service-proxies';
+    UpdateEmailTemplateRequest, GetTemplateReponse } from '@shared/service-proxies/service-proxies';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 
 @Component({
@@ -47,7 +47,7 @@ export class EmailTemplateDialogComponent implements OnInit {
     @Input() templateNote = '';
     @Input() templateEditMode = false;
     @Output() onSave: EventEmitter<any> = new EventEmitter<any>();
-    @Output() onTemplateChange: EventEmitter<any> = new EventEmitter<any>();
+    @Output() onTemplateChange: EventEmitter<any> = new EventEmitter<number>();
 
     buttons: IDialogButton[] = [
         {
@@ -191,13 +191,13 @@ export class EmailTemplateDialogComponent implements OnInit {
                 this.startLoading();
                 this.emailTemplateProxy.getTemplate(event.value).pipe(
                     finalize(() => this.finishLoading())
-                ).subscribe(res => {
+                ).subscribe((res: GetTemplateReponse) => {
                     this.data.bcc = res.bcc;
                     this.data.body = res.body;
                     this.data.cc = res.cc;
                     this.data.subject = res.subject;
                     this.changeDetectorRef.markForCheck();
-                    this.onTemplateChange.emit(res);
+                    this.onTemplateChange.emit(event.value);
                 });
             } else
                 this.onTemplateChange.emit(event.value);

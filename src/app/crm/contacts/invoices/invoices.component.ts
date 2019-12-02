@@ -19,6 +19,7 @@ import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { FilterModel } from '@shared/filters/models/filter.model';
 import {
+    GetEmailDataOutput,
     ContactServiceProxy,
     InvoiceServiceProxy,
     InvoiceStatus,
@@ -211,12 +212,14 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
                 data['contactId'] = this.contactId;
                 data['templateId'] = this.settings.defaultTemplateId;
                 return this.clientService.showEmailDialog(data, 'Email', (tmpId, emailData) => {
-                    return this.invoiceService.getEmailData(tmpId, this.actionRecordData.InvoiceId).pipe(map(email => {
-                        emailData.cc = email.cc;
-                        emailData.bcc = email.bcc;
-                        emailData.body = email.body;
-                        emailData.subject = email.subject;
-                    }));
+                    return this.invoiceService.getEmailData(tmpId, this.actionRecordData.InvoiceId).pipe(
+                        map((email: GetEmailDataOutput) => {
+                            emailData.cc = email.cc;
+                            emailData.bcc = email.bcc;
+                            emailData.body = email.body;
+                            emailData.subject = email.subject;
+                        })
+                    );
                 });
             })
         ).subscribe(data => this.updateStatus(InvoiceStatus.Sent));
