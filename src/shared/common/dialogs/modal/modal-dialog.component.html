@@ -1,7 +1,7 @@
 <div class="close-button" (click)="close(true)"></div>
 <div class="mat-dialog-header">
     <div class="title-wrapper">
-        <dx-text-box
+        <dx-text-box #titleComponent
             *ngIf="title != undefined"
             name="title"
             [readOnly]="!editTitle"

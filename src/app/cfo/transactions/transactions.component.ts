@@ -61,7 +61,7 @@ import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 import { CalendarValuesModel } from '@shared/common/widgets/calendar/calendar-values.model';
 import { DateHelper } from '@shared/helpers/DateHelper';
-import { DataGridService } from '@app/shared/common/data-grid.service.ts/data-grid.service';
+import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
 import { Category } from '@app/cfo/transactions/categorization/category.model';
 import { BankAccountsState } from '@shared/cfo/bank-accounts-widgets/bank-accounts-state.model';
 import { AppFeatures } from '@shared/AppFeatures';
@@ -914,29 +914,16 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     }
 
     applyTotalFilters(classified: boolean, credit: boolean, debit: boolean) {
-        let classifiedFilter: FilterModel = _.find(this.filters, function (f: FilterModel) { return f.caption === 'classified'; });
-        let amountFilter: FilterModel = _.find(this.filters, function (f: FilterModel) { return f.caption === 'Amount'; });
+        let classifiedFilter: FilterModel = _.find(this.filters, (f: FilterModel) => f.caption === 'classified' );
+        let amountFilter: FilterModel = _.find(this.filters, (f: FilterModel) => f.caption === 'Amount' );
 
-        if (classified) {
-            classifiedFilter.items['yes'].value = true;
-            classifiedFilter.items['no'].value = false;
-        } else {
-            classifiedFilter.items['yes'].value = false;
-            classifiedFilter.items['no'].value = true;
-        }
+        classifiedFilter.items['yes'].value = classified;
+        classifiedFilter.items['no'].value = !classified;
 
-        if (credit) {
-            amountFilter.items['from'].value = '0';
-            amountFilter.items['to'].value = '';
+        if (amountFilter) {
+            amountFilter.items['from'].value = credit ? '0' : '';
+            amountFilter.items['to'].value = debit ? '0' : '';
             this.defaultCreditTooltipVisible = false;
-        } else if (debit) {
-            amountFilter.items['to'].value = '0';
-            amountFilter.items['from'].value = '';
-            this.defaultDebitTooltipVisible = false;
-        } else {
-            amountFilter.items['to'].value = '';
-            amountFilter.items['from'].value = '';
-            this.defaultTotalTooltipVisible = false;
         }
 
         this.filtersService.change(classifiedFilter);

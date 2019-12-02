@@ -95,7 +95,7 @@ export class PackageChooserComponent implements OnInit {
     ) {}
 
     l(key: string, ...args: any[]): string {
-        return this.localizationService.l(key, AppConsts.localization.defaultLocalizationSourceName, ...args);
+        return this.localizationService.l(key, ...args);
     }
 
     ngOnInit() {

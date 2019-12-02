@@ -1,28 +1,4 @@
 :host {
-    /deep/ inplace-edit {
-        .inplace-edit-view-mode {
-            height: 30px;
-
-            .actions i {
-                padding: 0 0 2px 7px;
-                vertical-align: middle;
-            }
-        }
-
-        .inplace-edit-edit-mode {
-            dx-text-box {
-                .dx-texteditor-input {
-                    background: #f3f7fa;
-                    color: #202b35;
-                    font-size: 28px !important;
-                    font-weight: 400;
-                }
-            }
-            dx-button {
-                background: inherit;
-            }
-        }
-    }
 
     .vertical-delimiter {
         width: 30px;
@@ -173,34 +149,6 @@
         }
     }
 
-    .organization_info,
-    .affiliate-code {
-        /deep/ inplace-edit {
-            .inplace-edit-view-mode {
-                height: auto;
-            }
-            i.dx-icon {
-                font-size: 14px !important;
-            }
-            i.edit {
-                display: none !important;
-            }
-            span {
-                display: inline-block;
-                white-space: nowrap;
-                @media (max-width: 1366px) {
-                    max-width: 260px;
-                }
-            }
-            input {
-                font-size: 16px !important;
-            }
-            dx-button.button-exit {
-                right: -50px;
-            }
-        }
-    }
-
     .organization_info {
         white-space: nowrap;
         display: flex;
@@ -219,11 +167,24 @@
 
         .add-new-company {
             width: 250px;
+            @media (min-width: 992px) {
+                width: 489px;
+            }
+        }
+
+        .add-company-logo,
+        .add-new-company {
             display: inline-block;
             font-size: 16px;
-            padding: 10px;
+            text-align: center;
+            border: 1px dashed #cfd6db;
             a {
                 color: #00aeef;
+                display: block;
+                padding: 10px;
+                font-size: 13px;
+                line-height: 1.92;
+                letter-spacing: 0.26px;
             }
         }
 
@@ -239,6 +200,7 @@
             height: 36px;
             background-color: #e5e9ec;
             vertical-align: middle;
+            position: absolute;
         }
 
         .organization_logo {

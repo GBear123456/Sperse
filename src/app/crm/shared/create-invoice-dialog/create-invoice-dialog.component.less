@@ -103,15 +103,15 @@
         }
 
         .logo-container {
-            width: 260px;
-            height: 150px;
+            width: 78px;
+            height: 78px;
             border: 1px solid #dedede;
             text-align: center;
             background: #FFF;
             overflow: hidden;
             position: relative;
             img {
-                width: 260px;
+                width: 75px;
                 margin: auto;
                 position: absolute;
                 top: 0;
@@ -148,6 +148,16 @@
         /deep/ .field-area {
             display: block;
             margin-bottom: 30px;
+            &.flex-space-between {
+                width: 810px;
+                display: flex;
+                justify-content: space-between;
+            }
+            .date-fields-area {
+                width: 440px;
+                display: flex;
+                justify-content: space-between;
+            }
             &.addr {
                 margin-bottom: 0px;
             }
@@ -178,9 +188,52 @@
             &.lines {
                 margin-bottom: 0;
             }
-            &.profile {
-                margin-bottom: 9px;
+            .bold-label {
+                font-size: 14px;
+                font-weight: bold;
+                font-stretch: normal;
+                font-style: normal;
+                line-height: 1.43;
+                letter-spacing: 0.28px;
+                text-transform: uppercase;
+                color: #202b35;
+            }
+            .ship-to, .bill-to {
+                min-width: 200px;
+                position: relative;
+                .selected-contact-info {
+                    top: 30px;
+                    position: absolute;
+                    font-size: 12px;
+                    color: #aaa;
+                    i.edit, i.remove {
+                        position: absolute;
+                        cursor: pointer;
+                        color: #00aeef;
+                        right: -20px;
+                        top: 0px;
+                    }
+                    i.remove {
+                        color: red;
+                        right: -40px;
+                    }
+                }
+                & > a {
+                    display: block;
+                    font-size: 10px;
+                    color: #58a3dc;                    
+                }
+                dx-select-box[name="customer"] {
+                    input {
+                        border-bottom: 0px;
+                    }
+                }
+            }
+            .billed-from {
+                width: 300px;
                 .credentials {
+                    display: flex;
+                    justify-content: space-between;
                     height: 141px;
                     span, pre {
                         font-family: Montserrat;
@@ -197,21 +250,11 @@
                         overflow-y: auto;
                         height: 130px;
                     }
-                }
-            }
-            &.customer {
-                position: relative;
-                .selected-contact-info {
-                    height: 78px;
-                    position: absolute;
-                    bottom: 0px;
-                    font-size: 12px;
-                    color: #aaa;
-                }
-
-                dx-select-box[name="customer"] {
-                    input {
-                        padding-bottom: 70px;
+                    span {
+                        font-weight: 500;
+                    }
+                    .address-container {
+                        max-width: 222px;
                     }
                 }
             }
@@ -234,6 +277,7 @@
                     font-style: normal;
                     font-stretch: normal;
                     letter-spacing: 0.3px;
+                    text-transform: initial;
                     text-align: right;
                     color: #00aeef;
                     i {
@@ -255,7 +299,6 @@
                 white-space: nowrap;
             }
 
-            dx-select-box[name="unit"],
             dx-text-box[name="description"], 
             dx-date-box, dx-drop-down-box {
                 .dx-placeholder.dx-state-invisible,
@@ -312,7 +355,7 @@
             }
             dx-date-box {
                 .dx-dropdowneditor-icon {
-                    background: url(../../../../assets/common/icons/calendar.svg) no-repeat center;
+                    background: url(../../../../assets/common/icons/calendar2.svg) no-repeat center;
                     &:before {
                         content: ''!important;
                     }
@@ -397,10 +440,23 @@
         }
         .dx-datagrid-rowsview {
             border: none;
+            td {
+                overflow: visible;
+            }
         }
         .dx-datagrid-headers {
             &, .dx-datagrid-content, td {
                 border: none!important;
+            }
+            .dx-datagrid-text-content {
+                font-size: 13px;
+                font-weight: bold;
+                font-stretch: normal;
+                font-style: normal;
+                line-height: 1.85;
+                letter-spacing: 0.52px;
+                text-transform: uppercase;
+                color: #202b35;
             }
         }
         .dx-datagrid-focus-overlay {
@@ -408,43 +464,40 @@
         }
         .row-actions {
             display: flex;
-            width: 350px;
             height: 43px;
-            background-color: rgba(243, 247, 250, 0.5);
             justify-content: space-between;
             align-items: center;
             span {
                 height: 40px;
                 padding: 0 10px;
-                font-size: 14px;
-                font-weight: 300;
-                font-style: normal;
-                font-stretch: normal;
-                letter-spacing: 0.3px;
-                color: #677380;
-                &.disabled {
-                    opacity: 0.5;
+                &.add-new {
+                    font-size: 14px;
+                    font-weight: 500;
+                    font-stretch: normal;
+                    font-style: normal;
+                    line-height: 1.79;
+                    letter-spacing: 0.28px;
                     cursor: pointer;
-                    pointer-events: none;
+                    color: #00aeef;
                 }
-                i {
-                    top: 6px;
-                    width: 24px;
-                    height: 24px;
-                    cursor: pointer;
-                    display: inline-block;
-                    position: relative;
-                    margin-right: 10px;
-                    background-repeat: no-repeat;
-                    background-size: 24px 24px;
-                    background-position: center;
-                    &.add-icon {
-                        background-image: url(../../../../assets/common/icons/add-circle-green.svg);
-                    }
-                    &.delete-icon {
-                        background-image: url(../../../../assets/common/icons/remove.svg);
-                    }
+            }
+            i {
+                width: 11px;
+                height: 11px;
+                cursor: pointer;
+                display: inline-block;
+                position: relative;
+                background-repeat: no-repeat;
+                background-size: 11px 11px;
+                background-position: center;
+                &.delete-icon {
+                    background-image: url(../../../../assets/common/icons/d-remove.svg);
                 }
+            }
+            .disabled {
+                opacity: 0.5;
+                cursor: pointer;
+                pointer-events: none;
             }
             div.icons {
                 display: flex;
@@ -462,7 +515,7 @@
                     background-size: 18px 18px;
                     background-position: center;
                     &.calendar {
-                        background-image: url(../../../../assets/common/icons/calendar.svg);
+                        background-image: url(../../../../assets/common/icons/calendar2.svg);
                     }
                     &.link {
                         background-image: url(../../../../assets/common/icons/link2.svg);
@@ -502,6 +555,6 @@
         }
     }
     .dx-datagrid-search-panel {
-        width: 260px!important;
+        width: 250px!important;
     }
 }

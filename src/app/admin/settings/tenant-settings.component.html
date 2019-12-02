@@ -573,7 +573,7 @@
                     <div>
                         <div class="form-group">
                             <label for="YTelFrom">{{l("YTelFrom")}}</label>
-                            <input id="YTelFrom" type="text" name="YTelFrom" class="form-control" [(ngModel)]="yTelSettings.from" maxlength="128">
+                            <dx-text-box type="tel" id="YTelFrom" name="YTelFrom" class="form-control" [(ngModel)]="yTelSettings.from" maxlength="128" [mask]="masks.phone" useMaskedValue="true" maskInvalidMessage=""></dx-text-box>
                         </div>
                     </div>
                 </dx-scroll-view>

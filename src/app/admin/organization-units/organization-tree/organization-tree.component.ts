@@ -42,6 +42,7 @@ export class OrganizationTreeComponent implements AfterViewInit {
     private _$tree: JQuery;
     private _updatingNode: any;
     permissions = AppPermissions;
+    organizationsListHeight = 'calc(100vh - 294px)';
 
     constructor(
         private organizationUnitService: OrganizationUnitServiceProxy,

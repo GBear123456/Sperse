@@ -1,15 +1,5 @@
 <bank-code-header></bank-code-header>
-<div class="login">    
-    <!--<div class="header">
-        <div class="logo">
-            <a [href]="originUrl">
-                <img *ngIf="!appSession.tenant || !appSession.tenant.logoId" src="./assets/common/images/bank-code/bank-code-logo@3x.png" alt="logo" class="logo-layout" width="200px" height="auto" />
-                <img *ngIf="appSession.tenant && appSession.tenant.logoId" [src]="remoteServiceBaseUrl + '/api/TenantCustomization/GetLogo?logoId=' + appSession.tenant.logoId" alt="logo" class="logo-layout" width="200px" height="auto"/>
-            </a>
-        </div>
-    </div>-->
-
-
+<div class="login">
     <main class="main-content">
         <div class="account-forms">
             <div class="row">
@@ -20,9 +10,7 @@
         </div>
     </main>
 
-    <!--<div class="footer">
-        <div class="copyright">
-            <span class="">Powered By</span> <i class="sperse-logo"></i>
-        </div>
-    </div>-->
+    <div class="footer">
+        <bank-code-footer></bank-code-footer>
+    </div>
 </div>

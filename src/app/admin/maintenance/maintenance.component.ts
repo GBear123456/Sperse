@@ -11,6 +11,7 @@ import { CachingServiceProxy, StringEntityDto, WebLogServiceProxy } from '@share
 import { FileDownloadService } from '@shared/utils/file-download.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { NotifyService } from '@abp/notify/notify.service';
+import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
 
 @Component({
     templateUrl: './maintenance.component.html',
@@ -27,12 +28,7 @@ export class MaintenanceComponent implements OnInit, AfterViewInit {
         icon: '',
         buttons: []
     };
-    public gridPagerConfig = {
-        showPageSizeSelector: true,
-        allowedPageSizes: [10, 20, 50, 100],
-        showInfo: true,
-        visible: true
-    };
+    public gridPagerConfig = DataGridService.defaultGridPagerConfig;
 
     constructor(
         private cacheService: CachingServiceProxy,

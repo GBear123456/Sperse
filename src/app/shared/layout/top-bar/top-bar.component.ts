@@ -95,7 +95,7 @@ export class TopBarComponent implements OnDestroy {
             let value = val.slice(0);
             if (val.length === 7)
                 value.push(this.initMenu(value.pop(), localizationSource, ++level));
-            let item = new PanelMenuItem(value[0] && this.ls.l('Navigation_' + value[0], localizationSource),
+            let item = new PanelMenuItem(value[0] && this.ls.ls(localizationSource, 'Navigation_' + value[0]),
                 value[1], value[2], value[3], value[4], value[5], value[6], value[7]);
             item.visible = this.showMenuItem(item);
             navList.push(item);

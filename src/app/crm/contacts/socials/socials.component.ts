@@ -186,8 +186,8 @@ export class SocialsComponent {
             isEditDialogEnabled: true,
             lEntityName: linkLocalization,
             lEditPlaceholder: linkLocalization,
-            lDeleteConfirmTitle: this.ls.l('DeleteContactHeader', AppConsts.localization.CRMLocalizationSourceName, linkLocalization),
-            lDeleteConfirmMessage: this.ls.l('DeleteContactMessage', AppConsts.localization.CRMLocalizationSourceName, linkLocalization.toLowerCase())
+            lDeleteConfirmTitle: this.ls.l('DeleteContactHeader', linkLocalization),
+            lDeleteConfirmMessage: this.ls.l('DeleteContactMessage', linkLocalization.toLowerCase())
         };
     }
 

@@ -3,7 +3,7 @@
               [buttons]="buttons"
               [editTitle]="false">
     <ng-container headerContent>
-        <label class="template">{{ls.l('Template')}}</label> 
+        <label class="template">{{ls.l('Template')}}</label>
         <dx-select-box
             name="template"
             width="250px"
@@ -20,7 +20,7 @@
             (onCustomItemCreating)="onNewTemplate($event)"
             (onValueChanged)="onTemplateChanged($event)">
             <dx-validator>
-                <dxi-validation-rule type="required" [message]="ls.l('RequiredField', '', ls.l('Template'))"></dxi-validation-rule>
+                <dxi-validation-rule type="required" [message]="ls.l('RequiredField', ls.l('Template'))"></dxi-validation-rule>
             </dx-validator>
         </dx-select-box>
     </ng-container>
@@ -29,7 +29,7 @@
         <dx-scroll-view showScrollbar="onHover">
             <div class="row">
                 <div class="field-area from" [hidden]="templateEditMode">
-                    <label class="caption from">{{ls.l('From')}}:</label> 
+                    <label class="caption from">{{ls.l('From')}}:</label>
                     <dx-tag-box
                         name="from"
                         width="calc(50% - 52px)"
@@ -44,7 +44,7 @@
                         (onFocusOut)="emailInputFocusOut($event)"
                         (onCustomItemCreating)="onCustomItemCreating($event)">
                     </dx-tag-box>
-                    <label class="caption">{{ls.l('replyTo')}}:</label> 
+                    <label class="caption">{{ls.l('replyTo')}}:</label>
                     <dx-tag-box
                         name="replyTo"
                         width="calc(50% - 62px)"
@@ -60,7 +60,7 @@
                     </dx-tag-box>
                 </div>
                 <div class="field-area" *ngIf="!templateEditMode">
-                    <label class="caption">{{ls.l('To')}}:</label> 
+                    <label class="caption">{{ls.l('To')}}:</label>
                     <dx-tag-box
                         name="to"
                         width="calc(100% - 31px)"
@@ -81,7 +81,7 @@
                     </div>
                 </div>
                 <div class="field-area" [hidden]="!showCC">
-                    <label class="caption">{{ls.l('CC')}}:</label> 
+                    <label class="caption">{{ls.l('CC')}}:</label>
                     <dx-tag-box #CCElement
                         name="cc"
                         height="40px"
@@ -97,7 +97,7 @@
                     </dx-tag-box>
                 </div>
                 <div class="field-area" [hidden]="!showBCC">
-                    <label class="caption">{{ls.l('BCC')}}:</label> 
+                    <label class="caption">{{ls.l('BCC')}}:</label>
                     <dx-tag-box #BCCElement
                         name="bcc"
                         height="40px"
@@ -113,7 +113,7 @@
                     </dx-tag-box>
                 </div>
                 <div class="field-area">
-                    <label class="caption">{{ls.l('Subject')}}:</label> 
+                    <label class="caption">{{ls.l('Subject')}}:</label>
                     <dx-text-box
                         name="subject"
                         width="calc(100% - 69px)"
@@ -126,8 +126,7 @@
                     <p>{{templateNote}}</p>
                     <ckeditor #ckeditor [(data)]="data.body" [config]="ckConfig"></ckeditor>
                 </div>
-                <div class="field-area attachments">                    
-                </div>              
+                <div class="field-area attachments"></div>
                 <ng-content *ngIf="data.templateType" select="[templateSettings]"></ng-content>
             </div>
         </dx-scroll-view>

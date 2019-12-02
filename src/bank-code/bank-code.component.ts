@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, ViewContainerRef, OnInit, OnDestroy, Injector } from '@angular/core';
+import { Component, ViewContainerRef, OnInit, Injector } from '@angular/core';
 
 /** Application imports */
 import { AppComponentBase } from '@shared/common/app-component-base';
@@ -15,7 +15,7 @@ import { AppComponentBase } from '@shared/common/app-component-base';
         '(window:blur)': 'closeUserMenuPopup($event)'
     }
 })
-export class BankCodeComponent extends AppComponentBase implements OnInit, OnDestroy {
+export class BankCodeComponent extends AppComponentBase implements OnInit {
     private viewContainerRef: ViewContainerRef;
     private rootComponent: any;
     public constructor(
@@ -25,6 +25,7 @@ export class BankCodeComponent extends AppComponentBase implements OnInit, OnDes
         super(injector);
         this.viewContainerRef = viewContainerRef;
         this.rootComponent = this.getRootComponent();
+        this.titleService.setTitle('');
     }
 
     closeUserMenuPopup(event) {
@@ -34,9 +35,7 @@ export class BankCodeComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     ngOnInit(): void {
-        this.rootComponent.addStyleSheet('', 'https://fonts.googleapis.com/css?family=IBM+Plex+Sans&display=swap');
+        this.rootComponent.addStyleSheet('', 'https://fonts.googleapis.com/css?family=IBM+Plex+Sans:400,700&display=swap');
     }
 
-    ngOnDestroy() {
-    }
 }

@@ -3,19 +3,25 @@
     display: block;
     .moduleEdition {
         display: flex;
-        align-items: center;
+        align-items: flex-end;
         label {
             margin-bottom: 0;
             @media (min-width: 768px) {
                 min-width: 95px;
             }
         }
+        & > label {
+            height: 37px;
+            line-height: 37px;
+        }
         select {
             margin: 0 20px 0 10px;
             width: 200px;
+            height: 38px;
         }
         input {
             width: 70px;
+            height: 38px;
         }
         div {
             margin-right: 15px;
@@ -25,7 +31,7 @@
         }
         &.first-row {
             div {
-                height: 68px;
+                height: 59px;
             }
         }
     }

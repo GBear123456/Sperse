@@ -9,7 +9,6 @@ import { first } from 'rxjs/operators';
 import { MessageService } from '@abp/message/message.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { AppStore, RatingsStoreSelectors } from '@app/store';
-import { AppConsts } from '@shared/AppConsts';
 import { FiltersService } from '@shared/filters/filters.service';
 
 @Component({
@@ -75,8 +74,7 @@ export class AppRatingComponent implements OnInit, AfterViewInit {
         if (this.sliderComponent && this.selectedKeys && this.selectedKeys.length) {
             if (this.bulkUpdateMode) {
                 this._message.confirm(
-                    this.ls.ls(AppConsts.localization.defaultLocalizationSourceName,
-                        'BulkUpdateConfirmation', this.selectedKeys.length),
+                    this.ls.l('BulkUpdateConfirmation', this.selectedKeys.length),
                     isConfirmed => {
                         if (isConfirmed)
                             this.process(processValue);

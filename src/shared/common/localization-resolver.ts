@@ -1,6 +1,6 @@
 /** Core imports */
 import { Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot, RouterStateSnapshot, CanActivateChild } from '@angular/router';
+import { ActivatedRouteSnapshot, RouterStateSnapshot, CanActivate, CanActivateChild } from '@angular/router';
 
 /** Third party imports */
 import { Observable, of } from 'rxjs';
@@ -14,12 +14,16 @@ import { AppConsts } from '@shared/AppConsts';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 
 @Injectable()
-export class LocalizationResolver implements CanActivateChild {
+export class LocalizationResolver implements CanActivate, CanActivateChild {
     constructor(
         private session: AppSessionService,
         private localizationServiceProxy: LocalizationServiceProxy,
         private ls: AppLocalizationService
     ) {}
+
+    canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
+        return this.canActivateChild(route, state);
+    }
 
     canActivateChild(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
         let defaultLocalization = AppConsts.localization.defaultLocalizationSourceName;
@@ -37,20 +41,23 @@ export class LocalizationResolver implements CanActivateChild {
     checkLoadLocalization(sourceName) {
         let cultureName = abp.localization.currentLanguage.name,
             source: any = abp.localization.sources.find(item => item.name == sourceName);
-        return abp.localization.values[sourceName] ? of(true) :
-            this.localizationServiceProxy.getLocalizationSource(
-                Number(this.session.tenantId),
-                sourceName,
-                source ? source.version : undefined,
-                cultureName,
-                cultureName
-            ).pipe(
-                    take(1),
-                    mergeMap(result => {
-                        if (result)
-                            abp.localization.values[result.name] = <any>result.values;
-                        return of(true);
-                    })
-                );
+        if (abp.localization.values[sourceName])
+            return of(true);
+
+        abp.localization.values[sourceName] = <any>{};
+        return this.localizationServiceProxy.getLocalizationSource(
+            Number(this.session.tenantId),
+            sourceName,
+            source ? source.version : undefined,
+            cultureName,
+            cultureName
+        ).pipe(
+            take(1),
+            mergeMap(result => {
+                if (result)
+                    abp.localization.values[result.name] = <any>result.values;
+                return of(true);
+            })
+        );
     }
 }

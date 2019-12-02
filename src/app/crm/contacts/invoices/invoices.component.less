@@ -24,5 +24,129 @@
                 width: 19px !important;
             }
         }
+        div.status {
+            width: 92px;
+            height: 26px;
+            background: #f3f7fa;
+            padding: 2px 15px;
+            border-radius: 15px;
+            font-size: 11px;
+            font-weight: 600;
+            font-stretch: normal;
+            font-style: normal;
+            line-height: 2.18;
+            letter-spacing: 0.88px;
+            text-transform: uppercase;
+            text-align: center;
+            color: #40596b;
+            &:before {
+                content: "\A";
+                width: 7px;
+                height: 7px;
+                border-radius: 50%;
+                display: inline-block;
+                margin-right: 5px;
+                background: #dedede;
+            }
+            &.final:before {
+                background: #1fb430;
+            }
+            &.pending:before {
+                background: #f1a72d;
+            }
+            &.sent:before {
+                background: #fff939;
+            }
+            &.draft:before {
+                background: rgba(64, 89, 107, 0.28);
+            }              
+        }
     }
+}
+
+/deep/ .invoice-actions-container {
+    width: 295px;
+    height: 235px;
+    display: flex;
+    justify-content: space-between;
+    .list {
+        width: 170px;
+        text-align: left;
+        padding: 14px 0 14px 10px;
+        &:last-child {
+            width: 125px;
+            background-color: rgba(243, 247, 250, 0.5);
+            border-left: solid 1px #e5e9ec;
+        }
+        .link {
+            cursor: pointer;
+            padding: 5px 0;
+            font-size: 13px;
+            font-weight: normal;
+            font-stretch: normal;
+            font-style: normal;
+            line-height: 1.85;
+            letter-spacing: 0.26px;
+            color: #424c56;
+            &.disabled {
+                opacity: 0.5;
+                cursor: default;
+                pointer-events: none;
+            }
+        }
+        i {
+            width: 22px;
+            height: 16px;
+            display: inline-block;
+            background-repeat: no-repeat;
+            background-position: left center;
+            vertical-align: sub;
+            &.s-check {
+                background-image: url(../../../../assets/common/icons/s-check.svg);
+            }
+            &.i-check {
+                background-image: url(../../../../assets/common/icons/i-check.svg);
+            }
+            &.time-alarm {
+                background-image: url(../../../../assets/common/icons/time-alarm.svg);
+            }
+            &.respond-arrow {
+                background-image: url(../../../../assets/common/icons/respond-arrow.svg);
+            }
+            &.move-layer-down {
+                background-image: url(../../../../assets/common/icons/move-layer-down.svg);
+            }
+            &.bullet-list-69 {
+                background-image: url(../../../../assets/common/icons/bullet-list-69.svg);
+            }
+            &.f-chat {
+                background-image: url(../../../../assets/common/icons/f-chat.svg);
+            }
+            &.check-list {
+                background-image: url(../../../../assets/common/icons/check-list.svg);
+            }
+            &.ungroup {
+                background-image: url(../../../../assets/common/icons/ungroup.svg);
+            }
+            &.e-remove {
+                background-image: url(../../../../assets/common/icons/e-remove.svg);
+            }
+            &.folder-13 {
+                background-image: url(../../../../assets/common/icons/folder-13.svg);
+            }
+            &.bin {
+                background-image: url(../../../../assets/common/icons/bin.svg);
+            }
+            &.preview {
+                background-image: url(../../../../assets/common/icons/preview.svg);
+            }
+            &.add {
+                background-image: url(../../../../assets/common/icons/add.svg);
+            }
+        }
+    }
+}
+
+/deep/ .dx-popup-content {
+    padding: 0!important;
 }

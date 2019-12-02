@@ -1,11 +1,15 @@
-import { LocalizationService } from '@abp/localization/localization.service';
+/** Core imports */
 import { Injectable } from '@angular/core';
+
+/** Application imports */
+import { LocalizationService } from '@abp/localization/localization.service';
 import { AppConsts } from '@shared/AppConsts';
 
 @Injectable()
 export class AppLocalizationService extends LocalizationService {
     localizationSourceName;
-    l(key: string, source: string = AppConsts.localization.defaultLocalizationSourceName, ...args: any[]): string {
+    l(key: string, ...args: any[]): string {
+        let source: string = AppConsts.localization.defaultLocalizationSourceName;
         if (this.localizationSourceName)
             source = this.localizationSourceName;
 

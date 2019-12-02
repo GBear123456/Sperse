@@ -10,9 +10,7 @@ import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { DxTextBoxComponent } from 'devextreme-angular/ui/text-box';
 import { DxDateBoxComponent } from 'devextreme-angular/ui/date-box';
 import { CacheService } from 'ng2-cache-service';
-import { Store, select } from '@ngrx/store';
-import { finalize, filter, first, switchMap } from 'rxjs/operators';
-import { Observable } from 'rxjs';
+import { finalize, first, switchMap } from 'rxjs/operators';
 
 /** Application imports */
 import Inputmask from 'inputmask/dist/inputmask/inputmask.date.extensions';
@@ -20,17 +18,17 @@ import { ODataService } from '@shared/common/odata/odata.service';
 import { ContactsService } from '@app/crm/contacts/contacts.service';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { DateHelper } from '@shared/helpers/DateHelper';
-import { DialogService } from '@app/shared/common/dialogs/dialog.service';
-import { ContactGroup } from '@shared/AppEnums';
+import { ContactGroup, AddressUsageType } from '@shared/AppEnums';
 import {
     InvoiceServiceProxy,
+    InvoiceAddressInput,
     CreateInvoiceInput,
     UpdateInvoiceLineInput,
-    UpdateInvoiceStatusInput,
     UpdateInvoiceInput,
     CustomerServiceProxy,
     InvoiceStatus,
     CreateInvoiceLineInput,
+    InvoiceInfo,
     InvoiceLineUnit,
     InvoiceSettings,
     GetNewInvoiceInfoOutput,
@@ -44,6 +42,7 @@ import { MessageService } from '@abp/message/message.service';
 import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
 import { CreateClientDialogComponent } from '../create-client-dialog/create-client-dialog.component';
+import { InvoiceAddressDialog } from './invoice-address-dialog/invoice-address-dialog.component';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 import { AppConsts } from '@shared/AppConsts';
@@ -52,7 +51,10 @@ import { AppPermissions } from '@shared/AppPermissions';
 @Component({
     templateUrl: 'create-invoice-dialog.component.html',
     styleUrls: [ '../../../shared/common/styles/form.less', 'create-invoice-dialog.component.less' ],
-    providers: [ CacheHelper, CustomerServiceProxy, DialogService, InvoiceServiceProxy ],
+    providers: [ CacheHelper, CustomerServiceProxy, InvoiceServiceProxy ],
+    host: {
+        '(click)': 'closeAddressDialogs()'
+    },
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CreateInvoiceDialogComponent implements OnInit {
@@ -60,6 +62,8 @@ export class CreateInvoiceDialogComponent implements OnInit {
     @ViewChild(ModalDialogComponent) modalDialog: ModalDialogComponent;
     @ViewChild(DxContextMenuComponent) saveContextComponent: DxContextMenuComponent;
     @ViewChild(DxDataGridComponent) linesComponent: DxDataGridComponent;
+    @ViewChild('billingAddress') billingAddressComponent: DxSelectBoxComponent;
+    @ViewChild('shippingAddress') shippingAddressComponent: DxSelectBoxComponent;
     @ViewChild('dueDateComponent') dueDateComponent: DxDateBoxComponent;
     @ViewChild('dateComponent') dateComponent: DxDateBoxComponent;
     @ViewChild('invoice') invoiceNoComponent: DxTextBoxComponent;
@@ -86,6 +90,8 @@ export class CreateInvoiceDialogComponent implements OnInit {
     remoteServiceBaseUrl: string = AppConsts.remoteServiceBaseUrl;
     selectedOption: any;
     selectedContact: any;
+    selectedBillingAddress: InvoiceAddressInput;
+    selectedShippingAddress: InvoiceAddressInput;
     customer: any;
     contactId: number;
     customers = [];
@@ -117,6 +123,9 @@ export class CreateInvoiceDialogComponent implements OnInit {
     invoiceUnits = Object.keys(InvoiceLineUnit);
     ordersDataSource;
 
+    billingAddresses = [];
+    shippingAddresses = [];
+
     constructor(
         private oDataService: ODataService,
         private invoiceProxy: InvoiceServiceProxy,
@@ -141,6 +150,9 @@ export class CreateInvoiceDialogComponent implements OnInit {
             {text: this.ls.l('Invoice_SaveAndSend'), selected: false, status: InvoiceStatus.Final, email: true, disabled: this.disabledForUpdate},
             {text: this.ls.l('Invoice_SaveAndMarkSent'), selected: false, disabled: true}
         ];
+        this.dialogRef.afterClosed().subscribe(() => {
+            this.closeAddressDialogs();
+        });
     }
 
     ngOnInit() {
@@ -155,6 +167,17 @@ export class CreateInvoiceDialogComponent implements OnInit {
 
         this.initInvoiceData();
         this.saveOptionsInit();
+    }
+
+    checkCloseAddressDialog(name: string) {
+        let dialog = this.dialog.getDialogById(name);
+        if (dialog)
+            dialog.close();
+    }
+
+    closeAddressDialogs() {
+        this.checkCloseAddressDialog('selectedBillingAddress');
+        this.checkCloseAddressDialog('selectedShippingAddress');
     }
 
     initOrderDataSource() {
@@ -183,26 +206,38 @@ export class CreateInvoiceDialogComponent implements OnInit {
     initInvoiceData() {
         let invoice = this.data.invoice;
         if (invoice) {
-            this.modalDialog.startLoading();
-            this.invoiceId = invoice.Id;
-            this.invoiceNo = invoice.Number;
+            this.orderNumber = invoice.OrderNumber;
             this.orderId = invoice.OrderId;
-            this.status = invoice.Status;
+        }
+        if (invoice && invoice.InvoiceId && !this.data.addNew) {
+            this.modalDialog.startLoading();
+            this.invoiceId = invoice.InvoiceId;
+            this.invoiceNo = invoice.InvoiceNumber;
+            this.status = invoice.InvoiceStatus;
             this.date = DateHelper.addTimezoneOffset(new Date(invoice.Date), true);
-            this.dueDate = invoice.DueDate;
+            this.dueDate = invoice.InvoiceDueDate;
             this.contactId = invoice.ContactId;
             this.initOrderDataSource();
             this.disabledForUpdate = [InvoiceStatus.Draft, InvoiceStatus.Final].indexOf(this.status) < 0;
             if (this.disabledForUpdate)
                 this.buttons[0].disabled = this.disabledForUpdate;
-            this.invoiceProxy.getInvoiceInfo(invoice.Id)
+            this.invoiceProxy.getInvoiceInfo(invoice.InvoiceId)
                 .pipe(finalize(() => this.modalDialog.finishLoading()))
-                .subscribe((res) => {
-                    this.description = res.description;
-                    this.notes = res.note;
-                    this.orderNumber = res.orderNumber;
-                    this.customer = res.contactName;
-                    this.lines = res.lines.map((res) => {
+                .subscribe((invoiceInfo: InvoiceInfo) => {
+                    this.subTotal =
+                    this.total =
+                    this.balance = invoiceInfo.grandTotal;
+                    this.description = invoiceInfo.description;
+                    this.notes = invoiceInfo.note;
+                    this.invoiceNo = invoiceInfo.number;
+                    this.orderNumber = invoiceInfo.orderNumber;
+                    this.customer = invoiceInfo.contactName;
+                    this.status = invoiceInfo.status;
+                    this.date = DateHelper.addTimezoneOffset(new Date(invoiceInfo.date), true);
+                    this.dueDate = invoiceInfo.dueDate;
+                    this.selectedBillingAddress = invoiceInfo.billingAddress;
+                    this.selectedShippingAddress = invoiceInfo.shippingAddress;
+                    this.lines = invoiceInfo.lines.map(res => {
                         return {
                             Quantity: res.quantity,
                             Rate: res.rate,
@@ -210,32 +245,31 @@ export class CreateInvoiceDialogComponent implements OnInit {
                             ...res
                         };
                     });
-                    this.calculateBalance();
                     this.changeDetectorRef.detectChanges();
                 });
         } else {
             this.resetNoteDefault();
-
-            this.invoiceProxy.getNewInvoiceInfo().subscribe(res => {
-                this.invoiceInfo = res;
-                this.invoiceNo = res.nextInvoiceNumber;
+            this.invoiceProxy.getNewInvoiceInfo().subscribe((newInvoiceInfo: GetNewInvoiceInfoOutput) => {
+                this.invoiceInfo = newInvoiceInfo;
+                this.invoiceNo = newInvoiceInfo.nextInvoiceNumber;
                 this.changeDetectorRef.detectChanges();
             });
         }
 
-        this.defineContactInfo(this.data.contactInfo);
+        this.initContactInfo(this.data.contactInfo);
         this.changeDetectorRef.detectChanges();
     }
 
-    defineContactInfo(contact) {
+    initContactInfo(contact) {
         if (contact) {
             this.contactId = contact.id;
             this.initOrderDataSource();
+            this.initContactAddresses(contact.id);
+            this.customer = contact.personContactInfo.fullName;
             let details = contact.personContactInfo.details,
-                emailAddress = details.emails.length ? details.emails[0].emailAddress : undefined,
+                emailAddress = details.emails.length ?
+                    details.emails[0].emailAddress : undefined,
                 address = details.addresses[0];
-            this.customer = contact.personContactInfo.fullName +
-                (emailAddress ? ' (' + emailAddress + ')' : '');
             this.selectedContact =
                 new EntityContactInfo({
                     id: contact.id,
@@ -247,7 +281,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
                         state: address.state,
                         countryCode: address.country,
                         zip: address.zip
-                    }) : undefined,
+                    }) : new ContactAddressInfo(),
                     isActive: true
                 });
         }
@@ -290,6 +324,10 @@ export class CreateInvoiceDialogComponent implements OnInit {
         data.date = this.getDate(this.date, true, '');
         data.dueDate = this.getDate(this.dueDate);
         data.description = this.description;
+        data.billingAddress = new InvoiceAddressInput(
+            this.selectedBillingAddress);
+        data.shippingAddress = new InvoiceAddressInput(
+            this.selectedShippingAddress);
         data.note = this.notes;
     }
 
@@ -304,13 +342,16 @@ export class CreateInvoiceDialogComponent implements OnInit {
             let data = new UpdateInvoiceInput();
             this.setRequestCommonFields(data);
             data.id = this.invoiceId;
+            data.grandTotal = this.total;
             data.status = InvoiceStatus[this.status];
             data.lines = this.lines.map((row, index) => {
                 return new UpdateInvoiceLineInput({
                     id: row['id'],
                     quantity: row['quantity'],
                     rate: row['rate'],
+                    total: row['total'],
                     unitId: row['unitId'] as InvoiceLineUnit,
+                    productCode: '',
                     description: row['description'],
                     sortOrder: index
                 });
@@ -321,12 +362,15 @@ export class CreateInvoiceDialogComponent implements OnInit {
             this.setRequestCommonFields(data);
             data.contactId = this.contactId;
             data.orderId = this.orderId;
+            data.grandTotal = this.total;
             data.status = InvoiceStatus[this.status];
             data.lines = this.lines.map((row, index) => {
                 return new CreateInvoiceLineInput({
                     quantity: row['quantity'],
                     rate: row['rate'],
+                    total: row['total'],
                     unitId: row['unitId'] as InvoiceLineUnit,
+                    productCode: '',
                     description: row['description'],
                     sortOrder: index
                 });
@@ -388,8 +432,8 @@ export class CreateInvoiceDialogComponent implements OnInit {
         });
     }
 
-    private validateDate(caption, value) {
-        return value || this.notifyService.error(this.ls.l('RequiredField', '', caption));
+    private validateField(caption, value) {
+        return value || this.notifyService.error(this.ls.l('RequiredField', caption));
     }
 
     save(event?): void {
@@ -400,14 +444,26 @@ export class CreateInvoiceDialogComponent implements OnInit {
             return this.invoiceNoComponent.instance.option('isValid', false);
 
         if (isNaN(this.contactId)) {
-            this.notifyService.error(this.ls.l('RequiredField', '', this.ls.l('Client')));
+            this.notifyService.error(this.ls.l('RequiredField', this.ls.l('Client')));
             return this.contactComponent.instance.option('isValid', false);
         }
 
-        if (!this.validateDate(this.ls.l('Date'), this.date))
+        let isAddressValid = this.selectedBillingAddress &&
+            this.selectedBillingAddress.address1 &&
+            this.selectedBillingAddress.city;
+        if (!this.validateField(this.ls.l('Invoice_BillTo'), isAddressValid))
+            return this.billingAddressComponent.instance.option('isValid', false);
+
+        isAddressValid = this.selectedShippingAddress &&
+            this.selectedShippingAddress.address1 &&
+            this.selectedShippingAddress.city;
+        if (!this.validateField(this.ls.l('Invoice_ShipTo'), isAddressValid))
+            return this.shippingAddressComponent.instance.option('isValid', false);
+
+        if (!this.validateField(this.ls.l('Date'), this.date))
             return this.dateComponent.instance.option('isValid', false);
 
-        if (!this.validateDate(this.ls.l('Invoice_DueOnReceipt'), this.dueDate))
+        if (!this.validateField(this.ls.l('Invoice_DueOnReceipt'), this.dueDate))
             return this.dueDateComponent.instance.option('isValid', false);
 
         this.lines = this.getFilteredLines(false);
@@ -437,13 +493,24 @@ export class CreateInvoiceDialogComponent implements OnInit {
         event.component.option('isValid', true);
     }
 
+    initContactAddresses(contactId: number) {
+        if (contactId)
+            this.invoiceProxy.getInvoiceAddresses(contactId).subscribe(res => {
+                this.shippingAddresses =
+                this.billingAddresses = res.map(address => {
+                    let fullName = [address.firstName, address.lastName].filter(Boolean).join(' ');
+                    address['display'] = [address.company, fullName, address.address1, address.address2,
+                        address.city, address.stateId, address.zip, address.countryId].filter(Boolean).join(', ');
+                    return address;
+                });
+                this.changeDetectorRef.markForCheck();
+            });
+    }
+
     customerLookupRequest(phrase = '', callback?) {
         this.customerProxy.getAllByPhrase(phrase, 10).subscribe(res => {
             if (!phrase || phrase == this.customer) {
-                this.customers = res.map(item => {
-                    item['display'] = item.name + (item.email ? ' (' + item.email + ')' : '');
-                    return item;
-                });
+                this.customers = res;
                 callback && callback(res);
                 this.changeDetectorRef.markForCheck();
             }
@@ -492,10 +559,10 @@ export class CreateInvoiceDialogComponent implements OnInit {
             });
     }
 
-    calculateLineAmount(data) {
-        let amount = data.quantity * data.rate;
-        if (amount != data['amount']) {
-            data['amount'] = amount || 0;
+    calculateLineTotal(data) {
+        let total = data.quantity * data.rate;
+        if (total != data['total']) {
+            data['total'] = total || 0;
             this.calculateBalance();
         }
     }
@@ -505,11 +572,11 @@ export class CreateInvoiceDialogComponent implements OnInit {
         this.total =
         this.balance = 0;
         this.lines.forEach(line => {
-            let amount = line['quantity'] * line['rate'];
-            if (amount)
+            let total = line['total'];
+            if (total)
                 this.subTotal =
                 this.total =
-                this.balance = this.total + amount;
+                this.balance = this.total + total;
         });
         this.changeDetectorRef.detectChanges();
     }
@@ -517,11 +584,20 @@ export class CreateInvoiceDialogComponent implements OnInit {
     selectContact(event) {
         this.selectedContact = event.selectedItem;
         this.contactId = event.selectedItem && event.selectedItem.id;
-        if (this.orderId) {
+        if (this.orderId && !this.data.invoice) {
             this.orderId = undefined;
             this.orderNumber = undefined;
         }
         this.initOrderDataSource();
+        this.initContactAddresses(this.contactId);
+        this.changeDetectorRef.detectChanges();
+    }
+
+    clearClient() {
+        this.contactId = undefined;
+        this.customer = undefined;
+        this.selectedBillingAddress = undefined;
+        this.selectedShippingAddress = undefined;
         this.changeDetectorRef.detectChanges();
     }
 
@@ -560,7 +636,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
         if (isNaN(value))
             value = value.replace(/(?!\.)\D/igm, '');
         cell.data.rate = value;
-        this.calculateLineAmount(cell.data);
+        this.calculateLineTotal(cell.data);
     }
 
     onOrderSelected(event, dropBox) {
@@ -593,9 +669,11 @@ export class CreateInvoiceDialogComponent implements OnInit {
     }
 
     deleteLine(data) {
-        this.lines.splice(data.rowIndex, 1);
-        this.linesGridHeight -= 100;
-        this.changeDetectorRef.detectChanges();
+        if (data.rowIndex || this.lines.length > 1) {
+            this.lines.splice(data.rowIndex, 1);
+            this.linesGridHeight -= 100;
+            this.calculateBalance();
+        }
     }
 
     createClient() {
@@ -609,7 +687,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
                 }
             }).afterClosed().subscribe(data => {
                 if (data) {
-                    this.defineContactInfo({
+                    this.initContactInfo({
                         id: data.id,
                         personContactInfo: {
                             fullName: [data.firstName, data.middleName, data.lastName].filter(Boolean).join(' '),
@@ -643,5 +721,40 @@ export class CreateInvoiceDialogComponent implements OnInit {
     orderFocusIn(event) {
         if (event.event.target.tagName == 'INPUT')
             setTimeout(() => event.event.target.focus(), 150);
+    }
+
+    showEditAddressDialog(event, field) {
+        let address = this.selectedContact.address,
+            customerNameParts = (this.customer || '').split(' '),
+            dialogData = this[field] || new InvoiceAddressInput({
+                countryId: undefined,
+                stateId: undefined,
+                city:  address.city,
+                zip: address.zip,
+                address1: address.streetAddress,
+                address2: undefined,
+                firstName: customerNameParts.shift(),
+                lastName: customerNameParts.shift(),
+                company: undefined,
+                email: this.selectedContact.email,
+                phone: undefined
+            });
+        this.dialog.open(InvoiceAddressDialog, {
+            id: field,
+            data: dialogData,
+            hasBackdrop: false,
+            disableClose: false,
+            closeOnNavigation: true,
+            position: {
+                top: '100px',
+                left: innerWidth - 700 + 'px'
+            }
+        }).afterClosed().subscribe(result => {
+            if (!this[field] && result)
+                this[field] = dialogData;
+            this.changeDetectorRef.detectChanges();
+        });
+        event.stopPropagation();
+        event.preventDefault();
     }
 }

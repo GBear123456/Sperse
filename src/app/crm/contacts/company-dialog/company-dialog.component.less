@@ -28,11 +28,12 @@
         width: 263px;
         height: 214px;
         margin-bottom: 15px;
-        border-color: darkgray;
-        border-style: dashed;
-        border-width: 1px;
+        border: 1px dashed #cfd6db;
         position: relative;
         cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
 
         img {
             max-height: 100%;
@@ -45,6 +46,15 @@
             right: 0;
             left: 0;
             margin: auto;
+        }
+
+        a {
+            color: #00aeef;
+            display: block;
+            padding: 10px;
+            font-size: 13px;
+            line-height: 1.92;
+            letter-spacing: 0.26px;
         }
     }
 
@@ -118,6 +128,7 @@
                 white-space: nowrap;
                 margin-right: 0;
                 flex: 1;
+                padding-left: 0;
             }
 
             &.productsAndServices,
@@ -286,4 +297,7 @@
             }
         }
     }
+
+
+
 }

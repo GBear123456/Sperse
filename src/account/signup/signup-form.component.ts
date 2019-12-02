@@ -6,6 +6,7 @@ import { ActivationEnd, Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import capitalize from 'underscore.string/capitalize';
 import { filter, takeUntil } from 'rxjs/operators';
+import { MaskPipe } from '@node_modules/ngx-mask';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
@@ -28,7 +29,6 @@ import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/life
 export class SignupFormComponent implements OnInit, OnDestroy {
     @ViewChild('agreeWithTermsCheckBox') agreeWithTermsCheckBox: DxCheckBoxComponent;
     @ViewChild('agreeToReceiveCallsCheckBox') agreeToReceiveCallsCheckBox: DxCheckBoxComponent;
-
     conditions = ConditionsType;
     patterns = {
         namePattern: AppConsts.regexPatterns.name,
@@ -45,7 +45,8 @@ export class SignupFormComponent implements OnInit, OnDestroy {
         public loginService: LoginService,
         private dialog: MatDialog,
         private router: Router,
-        private lifecycleService: LifecycleSubjectsService
+        private lifecycleService: LifecycleSubjectsService,
+        private maskPipe: MaskPipe
     ) {
         this.registerData.isUSCitizen = true;
     }
@@ -77,6 +78,15 @@ export class SignupFormComponent implements OnInit, OnDestroy {
     validateName(event) {
         if (!event.key.match(/^[a-zA-Z]+$/))
             event.preventDefault();
+    }
+
+    validateNumber(event) {
+        if (!event.key.match(/^[0-9]+$/) && event.key.length == 1)
+            event.preventDefault();
+    }
+
+    onZipCodeChanged (event) {
+        this.registerData.postalCode = this.maskPipe.transform(event.value, AppConsts.masks.zipCodeLong);
     }
 
     openConditionsDialog(type: any) {

@@ -36,8 +36,8 @@ export class BankCodeHeaderComponent implements OnInit, OnDestroy {
     currentDate = new Date();
     memberAreaLinks: MemberAreaLink[] = [
         {
-            name: this.ls.l('BankCode_Dashboard'),
-            routerUrl: 'dashboard'
+            name: this.ls.l('Home'),
+            routerUrl: 'home'
         },
         {
             name: this.ls.l('BankCode_Products'),
@@ -62,15 +62,15 @@ export class BankCodeHeaderComponent implements OnInit, OnDestroy {
                 {
                     name: this.ls.l('BankCode_BankAffiliate'),
                     routerUrl: 'products/bank-affiliate'
-                },
-                {
+                }
+                /*{
                     name: this.ls.l('BankCode_BankCards'),
                     routerUrl: 'products/bank-cards'
                 },
                 {
                     name: this.ls.l('BankCode_BankGear'),
                     routerUrl: 'products/bank-gear'
-                }
+                }*/
             ]
         },
         {
@@ -90,7 +90,7 @@ export class BankCodeHeaderComponent implements OnInit, OnDestroy {
 
     constructor(
         private layoutService: BankCodeLayoutService,
-        private appSession: AppSessionService,
+        public appSession: AppSessionService,
         private router: Router,
         private lifecycleService: LifecycleSubjectsService,
         private ls: AppLocalizationService,

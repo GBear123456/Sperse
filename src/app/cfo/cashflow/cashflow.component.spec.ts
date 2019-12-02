@@ -110,7 +110,6 @@ describe('CashflowComponent', () => {
                 DxiColumnComponent,
                 DxoLoadPanelComponent,
                 NoDataComponent,
-                DxoLoadPanelComponent,
                 DxSelectBoxComponent,
                 DxTemplateDirective,
                 DxoScrollingComponent,

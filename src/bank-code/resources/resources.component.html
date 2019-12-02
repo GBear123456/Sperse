@@ -1,12 +1,17 @@
 <!--<dx-scroll-view showScrollbar="onHover" [height]="'calc(100vh - 70px)'">-->
     <div class="container resources-container">
-        <div class="mt-5 mb-5"><h1>Resources</h1></div>
+        <!--<div class="mt-5 mb-5"><h1>Resources</h1></div>-->
         <div class="row">
             <div class="col-lg-3 sidebar-nav">
                 <p class="quick-nav">Quick navigation </p>
                 <ul class="quick-nav-links">
-                    <li *ngFor="let category of data; let i = index;" (click)="isClicked=i" [class.active]="isClicked==i">
-                        <a pageScroll [pageScrollOffset]="80" [pageScrollDuration]="700" [href]="'#' + category.anchor">
+                    <li *ngFor="let category of data; let i = index;" (click)="isClicked = i" [class.active]="isClicked === i">
+                        <a pageScroll
+                           [pageScrollOffset]="80"
+                           [pageScrollDuration]="700"
+                           [href]="'#' + category.anchor"
+                           (click)="pageScrollStart()"
+                           (pageScrollFinish)="pageScrollFinish()">
                             {{category.categoryName}}
                         </a>
                     </li>
@@ -22,9 +27,10 @@
                                 <h2>{{category.categoryName}}</h2>
                                 <div class="row resources">
                                     <div class="col-md-4 col-lg-3" *ngFor="let item of category.list">
-                                        <img [src]="item.img" [alt]="item.title">
-                                        <p class="title">{{item.title}}</p>
-                                        <p class="text">{{item.file}}</p>
+                                        <a [href]="item.fileLink" target="_blank" [title]="item.fileLink">
+                                            <img [src]="item.img" [alt]="item.title">
+                                            <p class="title">{{item.title}}</p>
+                                        </a>
                                     </div>
                                 </div>
                             </div>

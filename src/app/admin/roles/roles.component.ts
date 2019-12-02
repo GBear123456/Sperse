@@ -24,7 +24,7 @@ import { FilterRadioGroupModel } from '@shared/filters/radio-group/filter-radio-
 import { AppService } from '@app/app.service';
 import { AppConsts } from '@shared/AppConsts';
 import { AppPermissions } from '@shared/AppPermissions';
-import { DataGridService } from '@app/shared/common/data-grid.service.ts/data-grid.service';
+import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
 
 @Component({
     templateUrl: './roles.component.html',

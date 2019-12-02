@@ -1,6 +1,7 @@
 :host {
     display: flex;
     flex-direction: column;
+    height: 100%;
     &.fullpage {
         height: calc(100vh - 350px);
         h2 {
@@ -17,6 +18,61 @@
         float: left;
         line-height: 34px;
         margin-bottom: 20px;
+    }
+
+    .chart-block {
+        display: flex;
+        @media (max-width: 767px) {
+            flex-direction: column;
+        }
+    }
+
+
+    @media (min-width: 768px) {
+        .chart-container {
+            width: 35%;
+        }
+        .legend {
+            width: 65%;
+        }
+    }
+
+    ul.legend {
+        padding-left: 5px;
+        list-style: none;
+        margin-bottom: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        li {
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            color: #677380;
+            font-family: Montserrat;
+            .legend-square {
+                width: 10px;
+                height: 10px;
+                display: inline-block;
+                margin-right: 3px;
+            }
+            .category-amount {
+                font-family: Lato;
+                margin-right: 5px;
+            }
+            a {
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                overflow: hidden;
+                width: calc(100% - 13px);
+                display: inline-block;
+            }
+        }
+
+        @media (max-width: 767px) {
+            margin-top: 5px;
+        }
     }
     /deep/ app-no-data {
         .title {

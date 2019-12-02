@@ -15841,6 +15841,117 @@ export class InvoiceServiceProxy {
         }
         return _observableOf<GetEmailDataOutput>(<any>null);
     }
+
+    /**
+     * @body (optional) 
+     * @return Success
+     */
+    addBankCardPayment(body: AddBankCardPaymentInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Invoice/AddBankCardPayment";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processAddBankCardPayment(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processAddBankCardPayment(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processAddBankCardPayment(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @contactId (optional) 
+     * @return Success
+     */
+    getInvoiceAddresses(contactId: number | null | undefined): Observable<InvoiceAddressInfo[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/Invoice/GetInvoiceAddresses?";
+        if (contactId !== undefined)
+            url_ += "contactId=" + encodeURIComponent("" + contactId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetInvoiceAddresses(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetInvoiceAddresses(<any>response_);
+                } catch (e) {
+                    return <Observable<InvoiceAddressInfo[]>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<InvoiceAddressInfo[]>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetInvoiceAddresses(response: HttpResponseBase): Observable<InvoiceAddressInfo[]> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(InvoiceAddressInfo.fromJS(item));
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<InvoiceAddressInfo[]>(<any>null);
+    }
 }
 
 @Injectable()
@@ -19992,6 +20103,68 @@ export class OrderSubscriptionServiceProxy {
             }));
         }
         return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @serviceType (optional) 
+     * @serviceTypeId (optional) 
+     * @return Success
+     */
+    getUserSubscriptions(serviceType: string | null | undefined, serviceTypeId: number | null | undefined): Observable<GetUserSubscriptionsOutput[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/OrderSubscription/GetUserSubscriptions?";
+        if (serviceType !== undefined)
+            url_ += "ServiceType=" + encodeURIComponent("" + serviceType) + "&"; 
+        if (serviceTypeId !== undefined)
+            url_ += "ServiceTypeId=" + encodeURIComponent("" + serviceTypeId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetUserSubscriptions(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetUserSubscriptions(<any>response_);
+                } catch (e) {
+                    return <Observable<GetUserSubscriptionsOutput[]>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<GetUserSubscriptionsOutput[]>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetUserSubscriptions(response: HttpResponseBase): Observable<GetUserSubscriptionsOutput[]> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(GetUserSubscriptionsOutput.fromJS(item));
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<GetUserSubscriptionsOutput[]>(<any>null);
     }
 }
 
@@ -46298,6 +46471,684 @@ export interface IPaymentInfo {
     id: number | undefined;
 }
 
+export enum InvoiceStatus {
+    Draft = "Draft", 
+    Final = "Final", 
+    Sent = "Sent", 
+    Paid = "Paid", 
+    Canceled = "Canceled", 
+    PartiallyPaid = "PartiallyPaid", 
+}
+
+export enum InvoiceLineUnit {
+    Day = "Day", 
+    Feet = "Feet", 
+    Hour = "Hour", 
+    Kilogram = "Kilogram", 
+    Pound = "Pound", 
+    Month = "Month", 
+    Package = "Package", 
+    Piece = "Piece", 
+    Unit = "Unit", 
+    Year = "Year", 
+}
+
+export class Product implements IProduct {
+    tenantId!: number | undefined;
+    code!: string;
+    name!: string;
+    description!: string | undefined;
+    serviceTypeId!: number | undefined;
+    serviceType!: string | undefined;
+    serviceId!: string | undefined;
+    serviceName!: string | undefined;
+    invoiceLines!: InvoiceLine[] | undefined;
+    isDeleted!: boolean | undefined;
+    deleterUserId!: number | undefined;
+    deletionTime!: moment.Moment | undefined;
+    lastModificationTime!: moment.Moment | undefined;
+    lastModifierUserId!: number | undefined;
+    creationTime!: moment.Moment | undefined;
+    creatorUserId!: number | undefined;
+    id!: number | undefined;
+
+    constructor(data?: IProduct) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.tenantId = data["tenantId"];
+            this.code = data["code"];
+            this.name = data["name"];
+            this.description = data["description"];
+            this.serviceTypeId = data["serviceTypeId"];
+            this.serviceType = data["serviceType"];
+            this.serviceId = data["serviceId"];
+            this.serviceName = data["serviceName"];
+            if (data["invoiceLines"] && data["invoiceLines"].constructor === Array) {
+                this.invoiceLines = [];
+                for (let item of data["invoiceLines"])
+                    this.invoiceLines.push(InvoiceLine.fromJS(item));
+            }
+            this.isDeleted = data["isDeleted"];
+            this.deleterUserId = data["deleterUserId"];
+            this.deletionTime = data["deletionTime"] ? moment(data["deletionTime"].toString()) : <any>undefined;
+            this.lastModificationTime = data["lastModificationTime"] ? moment(data["lastModificationTime"].toString()) : <any>undefined;
+            this.lastModifierUserId = data["lastModifierUserId"];
+            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
+            this.creatorUserId = data["creatorUserId"];
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): Product {
+        data = typeof data === 'object' ? data : {};
+        let result = new Product();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["tenantId"] = this.tenantId;
+        data["code"] = this.code;
+        data["name"] = this.name;
+        data["description"] = this.description;
+        data["serviceTypeId"] = this.serviceTypeId;
+        data["serviceType"] = this.serviceType;
+        data["serviceId"] = this.serviceId;
+        data["serviceName"] = this.serviceName;
+        if (this.invoiceLines && this.invoiceLines.constructor === Array) {
+            data["invoiceLines"] = [];
+            for (let item of this.invoiceLines)
+                data["invoiceLines"].push(item.toJSON());
+        }
+        data["isDeleted"] = this.isDeleted;
+        data["deleterUserId"] = this.deleterUserId;
+        data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
+        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
+        data["lastModifierUserId"] = this.lastModifierUserId;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        data["creatorUserId"] = this.creatorUserId;
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface IProduct {
+    tenantId: number | undefined;
+    code: string;
+    name: string;
+    description: string | undefined;
+    serviceTypeId: number | undefined;
+    serviceType: string | undefined;
+    serviceId: string | undefined;
+    serviceName: string | undefined;
+    invoiceLines: InvoiceLine[] | undefined;
+    isDeleted: boolean | undefined;
+    deleterUserId: number | undefined;
+    deletionTime: moment.Moment | undefined;
+    lastModificationTime: moment.Moment | undefined;
+    lastModifierUserId: number | undefined;
+    creationTime: moment.Moment | undefined;
+    creatorUserId: number | undefined;
+    id: number | undefined;
+}
+
+export class InvoiceLine implements IInvoiceLine {
+    tenantId!: number | undefined;
+    invoiceId!: number | undefined;
+    quantity!: number | undefined;
+    rate!: number | undefined;
+    unitId!: InvoiceLineUnit;
+    total!: number | undefined;
+    productId!: number | undefined;
+    description!: string | undefined;
+    sortOrder!: number | undefined;
+    invoice!: Invoice | undefined;
+    product!: Product | undefined;
+    isDeleted!: boolean | undefined;
+    deleterUserId!: number | undefined;
+    deletionTime!: moment.Moment | undefined;
+    lastModificationTime!: moment.Moment | undefined;
+    lastModifierUserId!: number | undefined;
+    creationTime!: moment.Moment | undefined;
+    creatorUserId!: number | undefined;
+    id!: number | undefined;
+
+    constructor(data?: IInvoiceLine) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.tenantId = data["tenantId"];
+            this.invoiceId = data["invoiceId"];
+            this.quantity = data["quantity"];
+            this.rate = data["rate"];
+            this.unitId = data["unitId"];
+            this.total = data["total"];
+            this.productId = data["productId"];
+            this.description = data["description"];
+            this.sortOrder = data["sortOrder"];
+            this.invoice = data["invoice"] ? Invoice.fromJS(data["invoice"]) : <any>undefined;
+            this.product = data["product"] ? Product.fromJS(data["product"]) : <any>undefined;
+            this.isDeleted = data["isDeleted"];
+            this.deleterUserId = data["deleterUserId"];
+            this.deletionTime = data["deletionTime"] ? moment(data["deletionTime"].toString()) : <any>undefined;
+            this.lastModificationTime = data["lastModificationTime"] ? moment(data["lastModificationTime"].toString()) : <any>undefined;
+            this.lastModifierUserId = data["lastModifierUserId"];
+            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
+            this.creatorUserId = data["creatorUserId"];
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): InvoiceLine {
+        data = typeof data === 'object' ? data : {};
+        let result = new InvoiceLine();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["tenantId"] = this.tenantId;
+        data["invoiceId"] = this.invoiceId;
+        data["quantity"] = this.quantity;
+        data["rate"] = this.rate;
+        data["unitId"] = this.unitId;
+        data["total"] = this.total;
+        data["productId"] = this.productId;
+        data["description"] = this.description;
+        data["sortOrder"] = this.sortOrder;
+        data["invoice"] = this.invoice ? this.invoice.toJSON() : <any>undefined;
+        data["product"] = this.product ? this.product.toJSON() : <any>undefined;
+        data["isDeleted"] = this.isDeleted;
+        data["deleterUserId"] = this.deleterUserId;
+        data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
+        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
+        data["lastModifierUserId"] = this.lastModifierUserId;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        data["creatorUserId"] = this.creatorUserId;
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface IInvoiceLine {
+    tenantId: number | undefined;
+    invoiceId: number | undefined;
+    quantity: number | undefined;
+    rate: number | undefined;
+    unitId: InvoiceLineUnit;
+    total: number | undefined;
+    productId: number | undefined;
+    description: string | undefined;
+    sortOrder: number | undefined;
+    invoice: Invoice | undefined;
+    product: Product | undefined;
+    isDeleted: boolean | undefined;
+    deleterUserId: number | undefined;
+    deletionTime: moment.Moment | undefined;
+    lastModificationTime: moment.Moment | undefined;
+    lastModifierUserId: number | undefined;
+    creationTime: moment.Moment | undefined;
+    creatorUserId: number | undefined;
+    id: number | undefined;
+}
+
+export class DocumentType implements IDocumentType {
+    tenantId!: number | undefined;
+    name!: string;
+    documents!: Document[] | undefined;
+    isDeleted!: boolean | undefined;
+    deleterUserId!: number | undefined;
+    deletionTime!: moment.Moment | undefined;
+    lastModificationTime!: moment.Moment | undefined;
+    lastModifierUserId!: number | undefined;
+    creationTime!: moment.Moment | undefined;
+    creatorUserId!: number | undefined;
+    id!: number | undefined;
+
+    constructor(data?: IDocumentType) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.tenantId = data["tenantId"];
+            this.name = data["name"];
+            if (data["documents"] && data["documents"].constructor === Array) {
+                this.documents = [];
+                for (let item of data["documents"])
+                    this.documents.push(Document.fromJS(item));
+            }
+            this.isDeleted = data["isDeleted"];
+            this.deleterUserId = data["deleterUserId"];
+            this.deletionTime = data["deletionTime"] ? moment(data["deletionTime"].toString()) : <any>undefined;
+            this.lastModificationTime = data["lastModificationTime"] ? moment(data["lastModificationTime"].toString()) : <any>undefined;
+            this.lastModifierUserId = data["lastModifierUserId"];
+            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
+            this.creatorUserId = data["creatorUserId"];
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): DocumentType {
+        data = typeof data === 'object' ? data : {};
+        let result = new DocumentType();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["tenantId"] = this.tenantId;
+        data["name"] = this.name;
+        if (this.documents && this.documents.constructor === Array) {
+            data["documents"] = [];
+            for (let item of this.documents)
+                data["documents"].push(item.toJSON());
+        }
+        data["isDeleted"] = this.isDeleted;
+        data["deleterUserId"] = this.deleterUserId;
+        data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
+        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
+        data["lastModifierUserId"] = this.lastModifierUserId;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        data["creatorUserId"] = this.creatorUserId;
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface IDocumentType {
+    tenantId: number | undefined;
+    name: string;
+    documents: Document[] | undefined;
+    isDeleted: boolean | undefined;
+    deleterUserId: number | undefined;
+    deletionTime: moment.Moment | undefined;
+    lastModificationTime: moment.Moment | undefined;
+    lastModifierUserId: number | undefined;
+    creationTime: moment.Moment | undefined;
+    creatorUserId: number | undefined;
+    id: number | undefined;
+}
+
+export class Document implements IDocument {
+    tenantId!: number | undefined;
+    contactId!: number | undefined;
+    fileName!: string;
+    size!: number | undefined;
+    typeId!: number | undefined;
+    contact!: Contact | undefined;
+    documentType!: DocumentType | undefined;
+    isDeleted!: boolean | undefined;
+    deleterUserId!: number | undefined;
+    deletionTime!: moment.Moment | undefined;
+    lastModificationTime!: moment.Moment | undefined;
+    lastModifierUserId!: number | undefined;
+    creationTime!: moment.Moment | undefined;
+    creatorUserId!: number | undefined;
+    id!: string | undefined;
+
+    constructor(data?: IDocument) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.tenantId = data["tenantId"];
+            this.contactId = data["contactId"];
+            this.fileName = data["fileName"];
+            this.size = data["size"];
+            this.typeId = data["typeId"];
+            this.contact = data["contact"] ? Contact.fromJS(data["contact"]) : <any>undefined;
+            this.documentType = data["documentType"] ? DocumentType.fromJS(data["documentType"]) : <any>undefined;
+            this.isDeleted = data["isDeleted"];
+            this.deleterUserId = data["deleterUserId"];
+            this.deletionTime = data["deletionTime"] ? moment(data["deletionTime"].toString()) : <any>undefined;
+            this.lastModificationTime = data["lastModificationTime"] ? moment(data["lastModificationTime"].toString()) : <any>undefined;
+            this.lastModifierUserId = data["lastModifierUserId"];
+            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
+            this.creatorUserId = data["creatorUserId"];
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): Document {
+        data = typeof data === 'object' ? data : {};
+        let result = new Document();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["tenantId"] = this.tenantId;
+        data["contactId"] = this.contactId;
+        data["fileName"] = this.fileName;
+        data["size"] = this.size;
+        data["typeId"] = this.typeId;
+        data["contact"] = this.contact ? this.contact.toJSON() : <any>undefined;
+        data["documentType"] = this.documentType ? this.documentType.toJSON() : <any>undefined;
+        data["isDeleted"] = this.isDeleted;
+        data["deleterUserId"] = this.deleterUserId;
+        data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
+        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
+        data["lastModifierUserId"] = this.lastModifierUserId;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        data["creatorUserId"] = this.creatorUserId;
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface IDocument {
+    tenantId: number | undefined;
+    contactId: number | undefined;
+    fileName: string;
+    size: number | undefined;
+    typeId: number | undefined;
+    contact: Contact | undefined;
+    documentType: DocumentType | undefined;
+    isDeleted: boolean | undefined;
+    deleterUserId: number | undefined;
+    deletionTime: moment.Moment | undefined;
+    lastModificationTime: moment.Moment | undefined;
+    lastModifierUserId: number | undefined;
+    creationTime: moment.Moment | undefined;
+    creatorUserId: number | undefined;
+    id: string | undefined;
+}
+
+export class InvoiceAddress implements IInvoiceAddress {
+    tenantId!: number | undefined;
+    contactId!: number | undefined;
+    countryId!: string | undefined;
+    stateId!: string | undefined;
+    city!: string | undefined;
+    zip!: string | undefined;
+    address1!: string | undefined;
+    address2!: string | undefined;
+    firstName!: string | undefined;
+    lastName!: string | undefined;
+    company!: string | undefined;
+    email!: string | undefined;
+    phone!: string | undefined;
+    contact!: Contact | undefined;
+    country!: Country | undefined;
+    state!: CountryState | undefined;
+    creationTime!: moment.Moment | undefined;
+    creatorUserId!: number | undefined;
+    id!: number | undefined;
+
+    constructor(data?: IInvoiceAddress) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.tenantId = data["tenantId"];
+            this.contactId = data["contactId"];
+            this.countryId = data["countryId"];
+            this.stateId = data["stateId"];
+            this.city = data["city"];
+            this.zip = data["zip"];
+            this.address1 = data["address1"];
+            this.address2 = data["address2"];
+            this.firstName = data["firstName"];
+            this.lastName = data["lastName"];
+            this.company = data["company"];
+            this.email = data["email"];
+            this.phone = data["phone"];
+            this.contact = data["contact"] ? Contact.fromJS(data["contact"]) : <any>undefined;
+            this.country = data["country"] ? Country.fromJS(data["country"]) : <any>undefined;
+            this.state = data["state"] ? CountryState.fromJS(data["state"]) : <any>undefined;
+            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
+            this.creatorUserId = data["creatorUserId"];
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): InvoiceAddress {
+        data = typeof data === 'object' ? data : {};
+        let result = new InvoiceAddress();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["tenantId"] = this.tenantId;
+        data["contactId"] = this.contactId;
+        data["countryId"] = this.countryId;
+        data["stateId"] = this.stateId;
+        data["city"] = this.city;
+        data["zip"] = this.zip;
+        data["address1"] = this.address1;
+        data["address2"] = this.address2;
+        data["firstName"] = this.firstName;
+        data["lastName"] = this.lastName;
+        data["company"] = this.company;
+        data["email"] = this.email;
+        data["phone"] = this.phone;
+        data["contact"] = this.contact ? this.contact.toJSON() : <any>undefined;
+        data["country"] = this.country ? this.country.toJSON() : <any>undefined;
+        data["state"] = this.state ? this.state.toJSON() : <any>undefined;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        data["creatorUserId"] = this.creatorUserId;
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface IInvoiceAddress {
+    tenantId: number | undefined;
+    contactId: number | undefined;
+    countryId: string | undefined;
+    stateId: string | undefined;
+    city: string | undefined;
+    zip: string | undefined;
+    address1: string | undefined;
+    address2: string | undefined;
+    firstName: string | undefined;
+    lastName: string | undefined;
+    company: string | undefined;
+    email: string | undefined;
+    phone: string | undefined;
+    contact: Contact | undefined;
+    country: Country | undefined;
+    state: CountryState | undefined;
+    creationTime: moment.Moment | undefined;
+    creatorUserId: number | undefined;
+    id: number | undefined;
+}
+
+export class Invoice implements IInvoice {
+    tenantId!: number | undefined;
+    orderId!: number | undefined;
+    status!: InvoiceStatus;
+    number!: string;
+    grandTotal!: number | undefined;
+    discountTotal!: number | undefined;
+    shippingTotal!: number | undefined;
+    taxTotal!: number | undefined;
+    date!: moment.Moment | undefined;
+    dueDate!: moment.Moment | undefined;
+    billingAddressId!: number | undefined;
+    shippingAddressId!: number | undefined;
+    description!: string | undefined;
+    note!: string | undefined;
+    documentId!: string | undefined;
+    documentDataHash!: number | undefined;
+    order!: Order | undefined;
+    lines!: InvoiceLine[] | undefined;
+    document!: Document | undefined;
+    billingAddress!: InvoiceAddress | undefined;
+    shippingAddress!: InvoiceAddress | undefined;
+    isDeleted!: boolean | undefined;
+    deleterUserId!: number | undefined;
+    deletionTime!: moment.Moment | undefined;
+    lastModificationTime!: moment.Moment | undefined;
+    lastModifierUserId!: number | undefined;
+    creationTime!: moment.Moment | undefined;
+    creatorUserId!: number | undefined;
+    id!: number | undefined;
+
+    constructor(data?: IInvoice) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.tenantId = data["tenantId"];
+            this.orderId = data["orderId"];
+            this.status = data["status"];
+            this.number = data["number"];
+            this.grandTotal = data["grandTotal"];
+            this.discountTotal = data["discountTotal"];
+            this.shippingTotal = data["shippingTotal"];
+            this.taxTotal = data["taxTotal"];
+            this.date = data["date"] ? moment(data["date"].toString()) : <any>undefined;
+            this.dueDate = data["dueDate"] ? moment(data["dueDate"].toString()) : <any>undefined;
+            this.billingAddressId = data["billingAddressId"];
+            this.shippingAddressId = data["shippingAddressId"];
+            this.description = data["description"];
+            this.note = data["note"];
+            this.documentId = data["documentId"];
+            this.documentDataHash = data["documentDataHash"];
+            this.order = data["order"] ? Order.fromJS(data["order"]) : <any>undefined;
+            if (data["lines"] && data["lines"].constructor === Array) {
+                this.lines = [];
+                for (let item of data["lines"])
+                    this.lines.push(InvoiceLine.fromJS(item));
+            }
+            this.document = data["document"] ? Document.fromJS(data["document"]) : <any>undefined;
+            this.billingAddress = data["billingAddress"] ? InvoiceAddress.fromJS(data["billingAddress"]) : <any>undefined;
+            this.shippingAddress = data["shippingAddress"] ? InvoiceAddress.fromJS(data["shippingAddress"]) : <any>undefined;
+            this.isDeleted = data["isDeleted"];
+            this.deleterUserId = data["deleterUserId"];
+            this.deletionTime = data["deletionTime"] ? moment(data["deletionTime"].toString()) : <any>undefined;
+            this.lastModificationTime = data["lastModificationTime"] ? moment(data["lastModificationTime"].toString()) : <any>undefined;
+            this.lastModifierUserId = data["lastModifierUserId"];
+            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
+            this.creatorUserId = data["creatorUserId"];
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): Invoice {
+        data = typeof data === 'object' ? data : {};
+        let result = new Invoice();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["tenantId"] = this.tenantId;
+        data["orderId"] = this.orderId;
+        data["status"] = this.status;
+        data["number"] = this.number;
+        data["grandTotal"] = this.grandTotal;
+        data["discountTotal"] = this.discountTotal;
+        data["shippingTotal"] = this.shippingTotal;
+        data["taxTotal"] = this.taxTotal;
+        data["date"] = this.date ? this.date.toISOString() : <any>undefined;
+        data["dueDate"] = this.dueDate ? this.dueDate.toISOString() : <any>undefined;
+        data["billingAddressId"] = this.billingAddressId;
+        data["shippingAddressId"] = this.shippingAddressId;
+        data["description"] = this.description;
+        data["note"] = this.note;
+        data["documentId"] = this.documentId;
+        data["documentDataHash"] = this.documentDataHash;
+        data["order"] = this.order ? this.order.toJSON() : <any>undefined;
+        if (this.lines && this.lines.constructor === Array) {
+            data["lines"] = [];
+            for (let item of this.lines)
+                data["lines"].push(item.toJSON());
+        }
+        data["document"] = this.document ? this.document.toJSON() : <any>undefined;
+        data["billingAddress"] = this.billingAddress ? this.billingAddress.toJSON() : <any>undefined;
+        data["shippingAddress"] = this.shippingAddress ? this.shippingAddress.toJSON() : <any>undefined;
+        data["isDeleted"] = this.isDeleted;
+        data["deleterUserId"] = this.deleterUserId;
+        data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
+        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
+        data["lastModifierUserId"] = this.lastModifierUserId;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        data["creatorUserId"] = this.creatorUserId;
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface IInvoice {
+    tenantId: number | undefined;
+    orderId: number | undefined;
+    status: InvoiceStatus;
+    number: string;
+    grandTotal: number | undefined;
+    discountTotal: number | undefined;
+    shippingTotal: number | undefined;
+    taxTotal: number | undefined;
+    date: moment.Moment | undefined;
+    dueDate: moment.Moment | undefined;
+    billingAddressId: number | undefined;
+    shippingAddressId: number | undefined;
+    description: string | undefined;
+    note: string | undefined;
+    documentId: string | undefined;
+    documentDataHash: number | undefined;
+    order: Order | undefined;
+    lines: InvoiceLine[] | undefined;
+    document: Document | undefined;
+    billingAddress: InvoiceAddress | undefined;
+    shippingAddress: InvoiceAddress | undefined;
+    isDeleted: boolean | undefined;
+    deleterUserId: number | undefined;
+    deletionTime: moment.Moment | undefined;
+    lastModificationTime: moment.Moment | undefined;
+    lastModifierUserId: number | undefined;
+    creationTime: moment.Moment | undefined;
+    creatorUserId: number | undefined;
+    id: number | undefined;
+}
+
 export enum PaymentTransactionType {
     _0 = 0, 
     _1 = 1, 
@@ -46603,6 +47454,8 @@ export class Transaction implements ITransaction {
     userId!: number | undefined;
     paymentInfoId!: number | undefined;
     paymentInfo!: PaymentInfo | undefined;
+    invoiceId!: number | undefined;
+    invoice!: Invoice | undefined;
     ipAddress!: string | undefined;
     originTransactionId!: number | undefined;
     originTransaction!: Transaction | undefined;
@@ -46652,6 +47505,8 @@ export class Transaction implements ITransaction {
             this.userId = data["userId"];
             this.paymentInfoId = data["paymentInfoId"];
             this.paymentInfo = data["paymentInfo"] ? PaymentInfo.fromJS(data["paymentInfo"]) : <any>undefined;
+            this.invoiceId = data["invoiceId"];
+            this.invoice = data["invoice"] ? Invoice.fromJS(data["invoice"]) : <any>undefined;
             this.ipAddress = data["ipAddress"];
             this.originTransactionId = data["originTransactionId"];
             this.originTransaction = data["originTransaction"] ? Transaction.fromJS(data["originTransaction"]) : <any>undefined;
@@ -46717,6 +47572,8 @@ export class Transaction implements ITransaction {
         data["userId"] = this.userId;
         data["paymentInfoId"] = this.paymentInfoId;
         data["paymentInfo"] = this.paymentInfo ? this.paymentInfo.toJSON() : <any>undefined;
+        data["invoiceId"] = this.invoiceId;
+        data["invoice"] = this.invoice ? this.invoice.toJSON() : <any>undefined;
         data["ipAddress"] = this.ipAddress;
         data["originTransactionId"] = this.originTransactionId;
         data["originTransaction"] = this.originTransaction ? this.originTransaction.toJSON() : <any>undefined;
@@ -46775,6 +47632,8 @@ export interface ITransaction {
     userId: number | undefined;
     paymentInfoId: number | undefined;
     paymentInfo: PaymentInfo | undefined;
+    invoiceId: number | undefined;
+    invoice: Invoice | undefined;
     ipAddress: string | undefined;
     originTransactionId: number | undefined;
     originTransaction: Transaction | undefined;
@@ -47198,431 +48057,6 @@ export interface IOrderSubscription {
     id: number | undefined;
 }
 
-export enum InvoiceStatus {
-    Draft = "Draft", 
-    Final = "Final", 
-    Sent = "Sent", 
-    Paid = "Paid", 
-    Canceled = "Canceled", 
-}
-
-export enum InvoiceLineUnit {
-    Day = "Day", 
-    Feet = "Feet", 
-    Hour = "Hour", 
-    Kilogram = "Kilogram", 
-    Pound = "Pound", 
-    Month = "Month", 
-    Package = "Package", 
-    Piece = "Piece", 
-    Unit = "Unit", 
-    Year = "Year", 
-}
-
-export class InvoiceLine implements IInvoiceLine {
-    tenantId!: number | undefined;
-    invoiceId!: number | undefined;
-    quantity!: number | undefined;
-    rate!: number | undefined;
-    unitId!: InvoiceLineUnit;
-    amount!: number | undefined;
-    description!: string | undefined;
-    sortOrder!: number | undefined;
-    invoice!: Invoice | undefined;
-    isDeleted!: boolean | undefined;
-    deleterUserId!: number | undefined;
-    deletionTime!: moment.Moment | undefined;
-    lastModificationTime!: moment.Moment | undefined;
-    lastModifierUserId!: number | undefined;
-    creationTime!: moment.Moment | undefined;
-    creatorUserId!: number | undefined;
-    id!: number | undefined;
-
-    constructor(data?: IInvoiceLine) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.tenantId = data["tenantId"];
-            this.invoiceId = data["invoiceId"];
-            this.quantity = data["quantity"];
-            this.rate = data["rate"];
-            this.unitId = data["unitId"];
-            this.amount = data["amount"];
-            this.description = data["description"];
-            this.sortOrder = data["sortOrder"];
-            this.invoice = data["invoice"] ? Invoice.fromJS(data["invoice"]) : <any>undefined;
-            this.isDeleted = data["isDeleted"];
-            this.deleterUserId = data["deleterUserId"];
-            this.deletionTime = data["deletionTime"] ? moment(data["deletionTime"].toString()) : <any>undefined;
-            this.lastModificationTime = data["lastModificationTime"] ? moment(data["lastModificationTime"].toString()) : <any>undefined;
-            this.lastModifierUserId = data["lastModifierUserId"];
-            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
-            this.creatorUserId = data["creatorUserId"];
-            this.id = data["id"];
-        }
-    }
-
-    static fromJS(data: any): InvoiceLine {
-        data = typeof data === 'object' ? data : {};
-        let result = new InvoiceLine();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["tenantId"] = this.tenantId;
-        data["invoiceId"] = this.invoiceId;
-        data["quantity"] = this.quantity;
-        data["rate"] = this.rate;
-        data["unitId"] = this.unitId;
-        data["amount"] = this.amount;
-        data["description"] = this.description;
-        data["sortOrder"] = this.sortOrder;
-        data["invoice"] = this.invoice ? this.invoice.toJSON() : <any>undefined;
-        data["isDeleted"] = this.isDeleted;
-        data["deleterUserId"] = this.deleterUserId;
-        data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
-        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
-        data["lastModifierUserId"] = this.lastModifierUserId;
-        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
-        data["creatorUserId"] = this.creatorUserId;
-        data["id"] = this.id;
-        return data; 
-    }
-}
-
-export interface IInvoiceLine {
-    tenantId: number | undefined;
-    invoiceId: number | undefined;
-    quantity: number | undefined;
-    rate: number | undefined;
-    unitId: InvoiceLineUnit;
-    amount: number | undefined;
-    description: string | undefined;
-    sortOrder: number | undefined;
-    invoice: Invoice | undefined;
-    isDeleted: boolean | undefined;
-    deleterUserId: number | undefined;
-    deletionTime: moment.Moment | undefined;
-    lastModificationTime: moment.Moment | undefined;
-    lastModifierUserId: number | undefined;
-    creationTime: moment.Moment | undefined;
-    creatorUserId: number | undefined;
-    id: number | undefined;
-}
-
-export class DocumentType implements IDocumentType {
-    tenantId!: number | undefined;
-    name!: string;
-    documents!: Document[] | undefined;
-    isDeleted!: boolean | undefined;
-    deleterUserId!: number | undefined;
-    deletionTime!: moment.Moment | undefined;
-    lastModificationTime!: moment.Moment | undefined;
-    lastModifierUserId!: number | undefined;
-    creationTime!: moment.Moment | undefined;
-    creatorUserId!: number | undefined;
-    id!: number | undefined;
-
-    constructor(data?: IDocumentType) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.tenantId = data["tenantId"];
-            this.name = data["name"];
-            if (data["documents"] && data["documents"].constructor === Array) {
-                this.documents = [];
-                for (let item of data["documents"])
-                    this.documents.push(Document.fromJS(item));
-            }
-            this.isDeleted = data["isDeleted"];
-            this.deleterUserId = data["deleterUserId"];
-            this.deletionTime = data["deletionTime"] ? moment(data["deletionTime"].toString()) : <any>undefined;
-            this.lastModificationTime = data["lastModificationTime"] ? moment(data["lastModificationTime"].toString()) : <any>undefined;
-            this.lastModifierUserId = data["lastModifierUserId"];
-            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
-            this.creatorUserId = data["creatorUserId"];
-            this.id = data["id"];
-        }
-    }
-
-    static fromJS(data: any): DocumentType {
-        data = typeof data === 'object' ? data : {};
-        let result = new DocumentType();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["tenantId"] = this.tenantId;
-        data["name"] = this.name;
-        if (this.documents && this.documents.constructor === Array) {
-            data["documents"] = [];
-            for (let item of this.documents)
-                data["documents"].push(item.toJSON());
-        }
-        data["isDeleted"] = this.isDeleted;
-        data["deleterUserId"] = this.deleterUserId;
-        data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
-        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
-        data["lastModifierUserId"] = this.lastModifierUserId;
-        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
-        data["creatorUserId"] = this.creatorUserId;
-        data["id"] = this.id;
-        return data; 
-    }
-}
-
-export interface IDocumentType {
-    tenantId: number | undefined;
-    name: string;
-    documents: Document[] | undefined;
-    isDeleted: boolean | undefined;
-    deleterUserId: number | undefined;
-    deletionTime: moment.Moment | undefined;
-    lastModificationTime: moment.Moment | undefined;
-    lastModifierUserId: number | undefined;
-    creationTime: moment.Moment | undefined;
-    creatorUserId: number | undefined;
-    id: number | undefined;
-}
-
-export class Document implements IDocument {
-    tenantId!: number | undefined;
-    contactId!: number | undefined;
-    fileName!: string;
-    size!: number | undefined;
-    typeId!: number | undefined;
-    contact!: Contact | undefined;
-    documentType!: DocumentType | undefined;
-    isDeleted!: boolean | undefined;
-    deleterUserId!: number | undefined;
-    deletionTime!: moment.Moment | undefined;
-    lastModificationTime!: moment.Moment | undefined;
-    lastModifierUserId!: number | undefined;
-    creationTime!: moment.Moment | undefined;
-    creatorUserId!: number | undefined;
-    id!: string | undefined;
-
-    constructor(data?: IDocument) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.tenantId = data["tenantId"];
-            this.contactId = data["contactId"];
-            this.fileName = data["fileName"];
-            this.size = data["size"];
-            this.typeId = data["typeId"];
-            this.contact = data["contact"] ? Contact.fromJS(data["contact"]) : <any>undefined;
-            this.documentType = data["documentType"] ? DocumentType.fromJS(data["documentType"]) : <any>undefined;
-            this.isDeleted = data["isDeleted"];
-            this.deleterUserId = data["deleterUserId"];
-            this.deletionTime = data["deletionTime"] ? moment(data["deletionTime"].toString()) : <any>undefined;
-            this.lastModificationTime = data["lastModificationTime"] ? moment(data["lastModificationTime"].toString()) : <any>undefined;
-            this.lastModifierUserId = data["lastModifierUserId"];
-            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
-            this.creatorUserId = data["creatorUserId"];
-            this.id = data["id"];
-        }
-    }
-
-    static fromJS(data: any): Document {
-        data = typeof data === 'object' ? data : {};
-        let result = new Document();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["tenantId"] = this.tenantId;
-        data["contactId"] = this.contactId;
-        data["fileName"] = this.fileName;
-        data["size"] = this.size;
-        data["typeId"] = this.typeId;
-        data["contact"] = this.contact ? this.contact.toJSON() : <any>undefined;
-        data["documentType"] = this.documentType ? this.documentType.toJSON() : <any>undefined;
-        data["isDeleted"] = this.isDeleted;
-        data["deleterUserId"] = this.deleterUserId;
-        data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
-        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
-        data["lastModifierUserId"] = this.lastModifierUserId;
-        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
-        data["creatorUserId"] = this.creatorUserId;
-        data["id"] = this.id;
-        return data; 
-    }
-}
-
-export interface IDocument {
-    tenantId: number | undefined;
-    contactId: number | undefined;
-    fileName: string;
-    size: number | undefined;
-    typeId: number | undefined;
-    contact: Contact | undefined;
-    documentType: DocumentType | undefined;
-    isDeleted: boolean | undefined;
-    deleterUserId: number | undefined;
-    deletionTime: moment.Moment | undefined;
-    lastModificationTime: moment.Moment | undefined;
-    lastModifierUserId: number | undefined;
-    creationTime: moment.Moment | undefined;
-    creatorUserId: number | undefined;
-    id: string | undefined;
-}
-
-export class Invoice implements IInvoice {
-    tenantId!: number | undefined;
-    orderId!: number | undefined;
-    status!: InvoiceStatus;
-    number!: string;
-    amount!: number | undefined;
-    date!: moment.Moment | undefined;
-    dueDate!: moment.Moment | undefined;
-    description!: string | undefined;
-    note!: string | undefined;
-    documentId!: string | undefined;
-    documentDataHash!: number | undefined;
-    order!: Order | undefined;
-    lines!: InvoiceLine[] | undefined;
-    document!: Document | undefined;
-    isDeleted!: boolean | undefined;
-    deleterUserId!: number | undefined;
-    deletionTime!: moment.Moment | undefined;
-    lastModificationTime!: moment.Moment | undefined;
-    lastModifierUserId!: number | undefined;
-    creationTime!: moment.Moment | undefined;
-    creatorUserId!: number | undefined;
-    id!: number | undefined;
-
-    constructor(data?: IInvoice) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.tenantId = data["tenantId"];
-            this.orderId = data["orderId"];
-            this.status = data["status"];
-            this.number = data["number"];
-            this.amount = data["amount"];
-            this.date = data["date"] ? moment(data["date"].toString()) : <any>undefined;
-            this.dueDate = data["dueDate"] ? moment(data["dueDate"].toString()) : <any>undefined;
-            this.description = data["description"];
-            this.note = data["note"];
-            this.documentId = data["documentId"];
-            this.documentDataHash = data["documentDataHash"];
-            this.order = data["order"] ? Order.fromJS(data["order"]) : <any>undefined;
-            if (data["lines"] && data["lines"].constructor === Array) {
-                this.lines = [];
-                for (let item of data["lines"])
-                    this.lines.push(InvoiceLine.fromJS(item));
-            }
-            this.document = data["document"] ? Document.fromJS(data["document"]) : <any>undefined;
-            this.isDeleted = data["isDeleted"];
-            this.deleterUserId = data["deleterUserId"];
-            this.deletionTime = data["deletionTime"] ? moment(data["deletionTime"].toString()) : <any>undefined;
-            this.lastModificationTime = data["lastModificationTime"] ? moment(data["lastModificationTime"].toString()) : <any>undefined;
-            this.lastModifierUserId = data["lastModifierUserId"];
-            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
-            this.creatorUserId = data["creatorUserId"];
-            this.id = data["id"];
-        }
-    }
-
-    static fromJS(data: any): Invoice {
-        data = typeof data === 'object' ? data : {};
-        let result = new Invoice();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["tenantId"] = this.tenantId;
-        data["orderId"] = this.orderId;
-        data["status"] = this.status;
-        data["number"] = this.number;
-        data["amount"] = this.amount;
-        data["date"] = this.date ? this.date.toISOString() : <any>undefined;
-        data["dueDate"] = this.dueDate ? this.dueDate.toISOString() : <any>undefined;
-        data["description"] = this.description;
-        data["note"] = this.note;
-        data["documentId"] = this.documentId;
-        data["documentDataHash"] = this.documentDataHash;
-        data["order"] = this.order ? this.order.toJSON() : <any>undefined;
-        if (this.lines && this.lines.constructor === Array) {
-            data["lines"] = [];
-            for (let item of this.lines)
-                data["lines"].push(item.toJSON());
-        }
-        data["document"] = this.document ? this.document.toJSON() : <any>undefined;
-        data["isDeleted"] = this.isDeleted;
-        data["deleterUserId"] = this.deleterUserId;
-        data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
-        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
-        data["lastModifierUserId"] = this.lastModifierUserId;
-        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
-        data["creatorUserId"] = this.creatorUserId;
-        data["id"] = this.id;
-        return data; 
-    }
-}
-
-export interface IInvoice {
-    tenantId: number | undefined;
-    orderId: number | undefined;
-    status: InvoiceStatus;
-    number: string;
-    amount: number | undefined;
-    date: moment.Moment | undefined;
-    dueDate: moment.Moment | undefined;
-    description: string | undefined;
-    note: string | undefined;
-    documentId: string | undefined;
-    documentDataHash: number | undefined;
-    order: Order | undefined;
-    lines: InvoiceLine[] | undefined;
-    document: Document | undefined;
-    isDeleted: boolean | undefined;
-    deleterUserId: number | undefined;
-    deletionTime: moment.Moment | undefined;
-    lastModificationTime: moment.Moment | undefined;
-    lastModifierUserId: number | undefined;
-    creationTime: moment.Moment | undefined;
-    creatorUserId: number | undefined;
-    id: number | undefined;
-}
-
 export enum NoteType {
     Note = "Note", 
     IncomingCall = "IncomingCall", 
@@ -47971,6 +48405,7 @@ export class Order implements IOrder {
     stageId!: number | undefined;
     sortOrder!: number | undefined;
     leadId!: number | undefined;
+    orderDate!: moment.Moment | undefined;
     dateProcessed!: moment.Moment | undefined;
     amount!: number | undefined;
     systemType!: string | undefined;
@@ -48015,6 +48450,7 @@ export class Order implements IOrder {
             this.stageId = data["stageId"];
             this.sortOrder = data["sortOrder"];
             this.leadId = data["leadId"];
+            this.orderDate = data["orderDate"] ? moment(data["orderDate"].toString()) : <any>undefined;
             this.dateProcessed = data["dateProcessed"] ? moment(data["dateProcessed"].toString()) : <any>undefined;
             this.amount = data["amount"];
             this.systemType = data["systemType"];
@@ -48075,6 +48511,7 @@ export class Order implements IOrder {
         data["stageId"] = this.stageId;
         data["sortOrder"] = this.sortOrder;
         data["leadId"] = this.leadId;
+        data["orderDate"] = this.orderDate ? this.orderDate.toISOString() : <any>undefined;
         data["dateProcessed"] = this.dateProcessed ? this.dateProcessed.toISOString() : <any>undefined;
         data["amount"] = this.amount;
         data["systemType"] = this.systemType;
@@ -48128,6 +48565,7 @@ export interface IOrder {
     stageId: number | undefined;
     sortOrder: number | undefined;
     leadId: number | undefined;
+    orderDate: moment.Moment | undefined;
     dateProcessed: moment.Moment | undefined;
     amount: number | undefined;
     systemType: string | undefined;
@@ -48353,9 +48791,10 @@ export class CountryState implements ICountryState {
     id!: string | undefined;
     countryId!: string | undefined;
     name!: string | undefined;
+    country!: Country | undefined;
     contactAddresses!: ContactAddress[] | undefined;
     formedOrganizations!: Organization[] | undefined;
-    country!: Country | undefined;
+    invoiceAddresses!: InvoiceAddress[] | undefined;
     isDeleted!: boolean | undefined;
     deleterUserId!: number | undefined;
     deletionTime!: moment.Moment | undefined;
@@ -48378,6 +48817,7 @@ export class CountryState implements ICountryState {
             this.id = data["id"];
             this.countryId = data["countryId"];
             this.name = data["name"];
+            this.country = data["country"] ? Country.fromJS(data["country"]) : <any>undefined;
             if (data["contactAddresses"] && data["contactAddresses"].constructor === Array) {
                 this.contactAddresses = [];
                 for (let item of data["contactAddresses"])
@@ -48388,7 +48828,11 @@ export class CountryState implements ICountryState {
                 for (let item of data["formedOrganizations"])
                     this.formedOrganizations.push(Organization.fromJS(item));
             }
-            this.country = data["country"] ? Country.fromJS(data["country"]) : <any>undefined;
+            if (data["invoiceAddresses"] && data["invoiceAddresses"].constructor === Array) {
+                this.invoiceAddresses = [];
+                for (let item of data["invoiceAddresses"])
+                    this.invoiceAddresses.push(InvoiceAddress.fromJS(item));
+            }
             this.isDeleted = data["isDeleted"];
             this.deleterUserId = data["deleterUserId"];
             this.deletionTime = data["deletionTime"] ? moment(data["deletionTime"].toString()) : <any>undefined;
@@ -48411,6 +48855,7 @@ export class CountryState implements ICountryState {
         data["id"] = this.id;
         data["countryId"] = this.countryId;
         data["name"] = this.name;
+        data["country"] = this.country ? this.country.toJSON() : <any>undefined;
         if (this.contactAddresses && this.contactAddresses.constructor === Array) {
             data["contactAddresses"] = [];
             for (let item of this.contactAddresses)
@@ -48421,7 +48866,11 @@ export class CountryState implements ICountryState {
             for (let item of this.formedOrganizations)
                 data["formedOrganizations"].push(item.toJSON());
         }
-        data["country"] = this.country ? this.country.toJSON() : <any>undefined;
+        if (this.invoiceAddresses && this.invoiceAddresses.constructor === Array) {
+            data["invoiceAddresses"] = [];
+            for (let item of this.invoiceAddresses)
+                data["invoiceAddresses"].push(item.toJSON());
+        }
         data["isDeleted"] = this.isDeleted;
         data["deleterUserId"] = this.deleterUserId;
         data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
@@ -48437,9 +48886,10 @@ export interface ICountryState {
     id: string | undefined;
     countryId: string | undefined;
     name: string | undefined;
+    country: Country | undefined;
     contactAddresses: ContactAddress[] | undefined;
     formedOrganizations: Organization[] | undefined;
-    country: Country | undefined;
+    invoiceAddresses: InvoiceAddress[] | undefined;
     isDeleted: boolean | undefined;
     deleterUserId: number | undefined;
     deletionTime: moment.Moment | undefined;
@@ -48454,6 +48904,7 @@ export class Country implements ICountry {
     countryStates!: CountryState[] | undefined;
     contactAddresses!: ContactAddress[] | undefined;
     formedOrganizations!: Organization[] | undefined;
+    invoiceAddresses!: InvoiceAddress[] | undefined;
     isDeleted!: boolean | undefined;
     deleterUserId!: number | undefined;
     deletionTime!: moment.Moment | undefined;
@@ -48489,6 +48940,11 @@ export class Country implements ICountry {
                 this.formedOrganizations = [];
                 for (let item of data["formedOrganizations"])
                     this.formedOrganizations.push(Organization.fromJS(item));
+            }
+            if (data["invoiceAddresses"] && data["invoiceAddresses"].constructor === Array) {
+                this.invoiceAddresses = [];
+                for (let item of data["invoiceAddresses"])
+                    this.invoiceAddresses.push(InvoiceAddress.fromJS(item));
             }
             this.isDeleted = data["isDeleted"];
             this.deleterUserId = data["deleterUserId"];
@@ -48526,6 +48982,11 @@ export class Country implements ICountry {
             for (let item of this.formedOrganizations)
                 data["formedOrganizations"].push(item.toJSON());
         }
+        if (this.invoiceAddresses && this.invoiceAddresses.constructor === Array) {
+            data["invoiceAddresses"] = [];
+            for (let item of this.invoiceAddresses)
+                data["invoiceAddresses"].push(item.toJSON());
+        }
         data["isDeleted"] = this.isDeleted;
         data["deleterUserId"] = this.deleterUserId;
         data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
@@ -48543,6 +49004,7 @@ export interface ICountry {
     countryStates: CountryState[] | undefined;
     contactAddresses: ContactAddress[] | undefined;
     formedOrganizations: Organization[] | undefined;
+    invoiceAddresses: InvoiceAddress[] | undefined;
     isDeleted: boolean | undefined;
     deleterUserId: number | undefined;
     deletionTime: moment.Moment | undefined;
@@ -50054,6 +50516,7 @@ export class Contact implements IContact {
     primaryPhone!: ContactPhone | undefined;
     primaryPhoto!: ContactPhoto | undefined;
     contactOrders!: Order[] | undefined;
+    invoiceAddresses!: InvoiceAddress[] | undefined;
     leads!: Lead[] | undefined;
     notes!: Note[] | undefined;
     contactTagAssignments!: ContactTagAssignment[] | undefined;
@@ -50142,6 +50605,11 @@ export class Contact implements IContact {
                 this.contactOrders = [];
                 for (let item of data["contactOrders"])
                     this.contactOrders.push(Order.fromJS(item));
+            }
+            if (data["invoiceAddresses"] && data["invoiceAddresses"].constructor === Array) {
+                this.invoiceAddresses = [];
+                for (let item of data["invoiceAddresses"])
+                    this.invoiceAddresses.push(InvoiceAddress.fromJS(item));
             }
             if (data["leads"] && data["leads"].constructor === Array) {
                 this.leads = [];
@@ -50256,6 +50724,11 @@ export class Contact implements IContact {
             for (let item of this.contactOrders)
                 data["contactOrders"].push(item.toJSON());
         }
+        if (this.invoiceAddresses && this.invoiceAddresses.constructor === Array) {
+            data["invoiceAddresses"] = [];
+            for (let item of this.invoiceAddresses)
+                data["invoiceAddresses"].push(item.toJSON());
+        }
         if (this.leads && this.leads.constructor === Array) {
             data["leads"] = [];
             for (let item of this.leads)
@@ -50338,6 +50811,7 @@ export interface IContact {
     primaryPhone: ContactPhone | undefined;
     primaryPhoto: ContactPhoto | undefined;
     contactOrders: Order[] | undefined;
+    invoiceAddresses: InvoiceAddress[] | undefined;
     leads: Lead[] | undefined;
     notes: Note[] | undefined;
     contactTagAssignments: ContactTagAssignment[] | undefined;
@@ -57291,9 +57765,9 @@ export interface IHostSettingsEditDto {
 }
 
 export class YTelSettingsEditDto implements IYTelSettingsEditDto {
-    userName!: string | undefined;
-    password!: string | undefined;
-    from!: string | undefined;
+    userName!: string;
+    password!: string;
+    from!: string;
 
     constructor(data?: IYTelSettingsEditDto) {
         if (data) {
@@ -57329,9 +57803,9 @@ export class YTelSettingsEditDto implements IYTelSettingsEditDto {
 }
 
 export interface IYTelSettingsEditDto {
-    userName: string | undefined;
-    password: string | undefined;
-    from: string | undefined;
+    userName: string;
+    password: string;
+    from: string;
 }
 
 export class SendTestEmailInput implements ISendTestEmailInput {
@@ -58627,10 +59101,88 @@ export interface IGetUserInstanceInfoOutput {
     status: InstanceStatus | undefined;
 }
 
+export class InvoiceAddressInput implements IInvoiceAddressInput {
+    countryId!: string | undefined;
+    stateId!: string | undefined;
+    city!: string;
+    zip!: string | undefined;
+    address1!: string;
+    address2!: string | undefined;
+    firstName!: string | undefined;
+    lastName!: string | undefined;
+    company!: string | undefined;
+    email!: string | undefined;
+    phone!: string | undefined;
+
+    constructor(data?: IInvoiceAddressInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.countryId = data["countryId"];
+            this.stateId = data["stateId"];
+            this.city = data["city"];
+            this.zip = data["zip"];
+            this.address1 = data["address1"];
+            this.address2 = data["address2"];
+            this.firstName = data["firstName"];
+            this.lastName = data["lastName"];
+            this.company = data["company"];
+            this.email = data["email"];
+            this.phone = data["phone"];
+        }
+    }
+
+    static fromJS(data: any): InvoiceAddressInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new InvoiceAddressInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["countryId"] = this.countryId;
+        data["stateId"] = this.stateId;
+        data["city"] = this.city;
+        data["zip"] = this.zip;
+        data["address1"] = this.address1;
+        data["address2"] = this.address2;
+        data["firstName"] = this.firstName;
+        data["lastName"] = this.lastName;
+        data["company"] = this.company;
+        data["email"] = this.email;
+        data["phone"] = this.phone;
+        return data; 
+    }
+}
+
+export interface IInvoiceAddressInput {
+    countryId: string | undefined;
+    stateId: string | undefined;
+    city: string;
+    zip: string | undefined;
+    address1: string;
+    address2: string | undefined;
+    firstName: string | undefined;
+    lastName: string | undefined;
+    company: string | undefined;
+    email: string | undefined;
+    phone: string | undefined;
+}
+
 export class CreateInvoiceLineInput implements ICreateInvoiceLineInput {
     quantity!: number;
     rate!: number;
+    total!: number;
     unitId!: InvoiceLineUnit;
+    productCode!: string | undefined;
     description!: string | undefined;
     sortOrder!: number;
 
@@ -58647,7 +59199,9 @@ export class CreateInvoiceLineInput implements ICreateInvoiceLineInput {
         if (data) {
             this.quantity = data["quantity"];
             this.rate = data["rate"];
+            this.total = data["total"];
             this.unitId = data["unitId"];
+            this.productCode = data["productCode"];
             this.description = data["description"];
             this.sortOrder = data["sortOrder"];
         }
@@ -58664,7 +59218,9 @@ export class CreateInvoiceLineInput implements ICreateInvoiceLineInput {
         data = typeof data === 'object' ? data : {};
         data["quantity"] = this.quantity;
         data["rate"] = this.rate;
+        data["total"] = this.total;
         data["unitId"] = this.unitId;
+        data["productCode"] = this.productCode;
         data["description"] = this.description;
         data["sortOrder"] = this.sortOrder;
         return data; 
@@ -58674,7 +59230,9 @@ export class CreateInvoiceLineInput implements ICreateInvoiceLineInput {
 export interface ICreateInvoiceLineInput {
     quantity: number;
     rate: number;
+    total: number;
     unitId: InvoiceLineUnit;
+    productCode: string | undefined;
     description: string | undefined;
     sortOrder: number;
 }
@@ -58683,10 +59241,17 @@ export class CreateInvoiceInput implements ICreateInvoiceInput {
     contactId!: number;
     orderId!: number | undefined;
     orderNumber!: string | undefined;
+    leadId!: number | undefined;
     status!: InvoiceStatus;
     number!: string | undefined;
     date!: moment.Moment;
     dueDate!: moment.Moment;
+    grandTotal!: number;
+    discountTotal!: number | undefined;
+    shippingTotal!: number | undefined;
+    taxTotal!: number | undefined;
+    billingAddress!: InvoiceAddressInput;
+    shippingAddress!: InvoiceAddressInput;
     description!: string | undefined;
     note!: string | undefined;
     lines!: CreateInvoiceLineInput[] | undefined;
@@ -58698,6 +59263,10 @@ export class CreateInvoiceInput implements ICreateInvoiceInput {
                     (<any>this)[property] = (<any>data)[property];
             }
         }
+        if (!data) {
+            this.billingAddress = new InvoiceAddressInput();
+            this.shippingAddress = new InvoiceAddressInput();
+        }
     }
 
     init(data?: any) {
@@ -58705,10 +59274,17 @@ export class CreateInvoiceInput implements ICreateInvoiceInput {
             this.contactId = data["contactId"];
             this.orderId = data["orderId"];
             this.orderNumber = data["orderNumber"];
+            this.leadId = data["leadId"];
             this.status = data["status"];
             this.number = data["number"];
             this.date = data["date"] ? moment(data["date"].toString()) : <any>undefined;
             this.dueDate = data["dueDate"] ? moment(data["dueDate"].toString()) : <any>undefined;
+            this.grandTotal = data["grandTotal"];
+            this.discountTotal = data["discountTotal"];
+            this.shippingTotal = data["shippingTotal"];
+            this.taxTotal = data["taxTotal"];
+            this.billingAddress = data["billingAddress"] ? InvoiceAddressInput.fromJS(data["billingAddress"]) : new InvoiceAddressInput();
+            this.shippingAddress = data["shippingAddress"] ? InvoiceAddressInput.fromJS(data["shippingAddress"]) : new InvoiceAddressInput();
             this.description = data["description"];
             this.note = data["note"];
             if (data["lines"] && data["lines"].constructor === Array) {
@@ -58731,10 +59307,17 @@ export class CreateInvoiceInput implements ICreateInvoiceInput {
         data["contactId"] = this.contactId;
         data["orderId"] = this.orderId;
         data["orderNumber"] = this.orderNumber;
+        data["leadId"] = this.leadId;
         data["status"] = this.status;
         data["number"] = this.number;
         data["date"] = this.date ? this.date.toISOString() : <any>undefined;
         data["dueDate"] = this.dueDate ? this.dueDate.toISOString() : <any>undefined;
+        data["grandTotal"] = this.grandTotal;
+        data["discountTotal"] = this.discountTotal;
+        data["shippingTotal"] = this.shippingTotal;
+        data["taxTotal"] = this.taxTotal;
+        data["billingAddress"] = this.billingAddress ? this.billingAddress.toJSON() : <any>undefined;
+        data["shippingAddress"] = this.shippingAddress ? this.shippingAddress.toJSON() : <any>undefined;
         data["description"] = this.description;
         data["note"] = this.note;
         if (this.lines && this.lines.constructor === Array) {
@@ -58750,13 +59333,96 @@ export interface ICreateInvoiceInput {
     contactId: number;
     orderId: number | undefined;
     orderNumber: string | undefined;
+    leadId: number | undefined;
     status: InvoiceStatus;
     number: string | undefined;
     date: moment.Moment;
     dueDate: moment.Moment;
+    grandTotal: number;
+    discountTotal: number | undefined;
+    shippingTotal: number | undefined;
+    taxTotal: number | undefined;
+    billingAddress: InvoiceAddressInput;
+    shippingAddress: InvoiceAddressInput;
     description: string | undefined;
     note: string | undefined;
     lines: CreateInvoiceLineInput[] | undefined;
+}
+
+export class InvoiceAddressInfo implements IInvoiceAddressInfo {
+    countryId!: string | undefined;
+    stateId!: string | undefined;
+    city!: string | undefined;
+    zip!: string | undefined;
+    address1!: string | undefined;
+    address2!: string | undefined;
+    firstName!: string | undefined;
+    lastName!: string | undefined;
+    company!: string | undefined;
+    email!: string | undefined;
+    phone!: string | undefined;
+
+    constructor(data?: IInvoiceAddressInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.countryId = data["countryId"];
+            this.stateId = data["stateId"];
+            this.city = data["city"];
+            this.zip = data["zip"];
+            this.address1 = data["address1"];
+            this.address2 = data["address2"];
+            this.firstName = data["firstName"];
+            this.lastName = data["lastName"];
+            this.company = data["company"];
+            this.email = data["email"];
+            this.phone = data["phone"];
+        }
+    }
+
+    static fromJS(data: any): InvoiceAddressInfo {
+        data = typeof data === 'object' ? data : {};
+        let result = new InvoiceAddressInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["countryId"] = this.countryId;
+        data["stateId"] = this.stateId;
+        data["city"] = this.city;
+        data["zip"] = this.zip;
+        data["address1"] = this.address1;
+        data["address2"] = this.address2;
+        data["firstName"] = this.firstName;
+        data["lastName"] = this.lastName;
+        data["company"] = this.company;
+        data["email"] = this.email;
+        data["phone"] = this.phone;
+        return data; 
+    }
+}
+
+export interface IInvoiceAddressInfo {
+    countryId: string | undefined;
+    stateId: string | undefined;
+    city: string | undefined;
+    zip: string | undefined;
+    address1: string | undefined;
+    address2: string | undefined;
+    firstName: string | undefined;
+    lastName: string | undefined;
+    company: string | undefined;
+    email: string | undefined;
+    phone: string | undefined;
 }
 
 export class InvoiceLineInfo implements IInvoiceLineInfo {
@@ -58764,7 +59430,8 @@ export class InvoiceLineInfo implements IInvoiceLineInfo {
     quantity!: number | undefined;
     rate!: number | undefined;
     unitId!: InvoiceLineUnit | undefined;
-    amount!: number | undefined;
+    total!: number | undefined;
+    productCode!: string | undefined;
     description!: string | undefined;
     sortOrder!: number | undefined;
 
@@ -58783,7 +59450,8 @@ export class InvoiceLineInfo implements IInvoiceLineInfo {
             this.quantity = data["quantity"];
             this.rate = data["rate"];
             this.unitId = data["unitId"];
-            this.amount = data["amount"];
+            this.total = data["total"];
+            this.productCode = data["productCode"];
             this.description = data["description"];
             this.sortOrder = data["sortOrder"];
         }
@@ -58802,7 +59470,8 @@ export class InvoiceLineInfo implements IInvoiceLineInfo {
         data["quantity"] = this.quantity;
         data["rate"] = this.rate;
         data["unitId"] = this.unitId;
-        data["amount"] = this.amount;
+        data["total"] = this.total;
+        data["productCode"] = this.productCode;
         data["description"] = this.description;
         data["sortOrder"] = this.sortOrder;
         return data; 
@@ -58814,7 +59483,8 @@ export interface IInvoiceLineInfo {
     quantity: number | undefined;
     rate: number | undefined;
     unitId: InvoiceLineUnit | undefined;
-    amount: number | undefined;
+    total: number | undefined;
+    productCode: string | undefined;
     description: string | undefined;
     sortOrder: number | undefined;
 }
@@ -58826,6 +59496,12 @@ export class InvoiceInfo implements IInvoiceInfo {
     number!: string | undefined;
     date!: moment.Moment | undefined;
     dueDate!: moment.Moment | undefined;
+    grandTotal!: number | undefined;
+    discountTotal!: number | undefined;
+    shippingTotal!: number | undefined;
+    taxTotal!: number | undefined;
+    billingAddress!: InvoiceAddressInfo | undefined;
+    shippingAddress!: InvoiceAddressInfo | undefined;
     description!: string | undefined;
     note!: string | undefined;
     lines!: InvoiceLineInfo[] | undefined;
@@ -58847,6 +59523,12 @@ export class InvoiceInfo implements IInvoiceInfo {
             this.number = data["number"];
             this.date = data["date"] ? moment(data["date"].toString()) : <any>undefined;
             this.dueDate = data["dueDate"] ? moment(data["dueDate"].toString()) : <any>undefined;
+            this.grandTotal = data["grandTotal"];
+            this.discountTotal = data["discountTotal"];
+            this.shippingTotal = data["shippingTotal"];
+            this.taxTotal = data["taxTotal"];
+            this.billingAddress = data["billingAddress"] ? InvoiceAddressInfo.fromJS(data["billingAddress"]) : <any>undefined;
+            this.shippingAddress = data["shippingAddress"] ? InvoiceAddressInfo.fromJS(data["shippingAddress"]) : <any>undefined;
             this.description = data["description"];
             this.note = data["note"];
             if (data["lines"] && data["lines"].constructor === Array) {
@@ -58872,6 +59554,12 @@ export class InvoiceInfo implements IInvoiceInfo {
         data["number"] = this.number;
         data["date"] = this.date ? this.date.toISOString() : <any>undefined;
         data["dueDate"] = this.dueDate ? this.dueDate.toISOString() : <any>undefined;
+        data["grandTotal"] = this.grandTotal;
+        data["discountTotal"] = this.discountTotal;
+        data["shippingTotal"] = this.shippingTotal;
+        data["taxTotal"] = this.taxTotal;
+        data["billingAddress"] = this.billingAddress ? this.billingAddress.toJSON() : <any>undefined;
+        data["shippingAddress"] = this.shippingAddress ? this.shippingAddress.toJSON() : <any>undefined;
         data["description"] = this.description;
         data["note"] = this.note;
         if (this.lines && this.lines.constructor === Array) {
@@ -58890,6 +59578,12 @@ export interface IInvoiceInfo {
     number: string | undefined;
     date: moment.Moment | undefined;
     dueDate: moment.Moment | undefined;
+    grandTotal: number | undefined;
+    discountTotal: number | undefined;
+    shippingTotal: number | undefined;
+    taxTotal: number | undefined;
+    billingAddress: InvoiceAddressInfo | undefined;
+    shippingAddress: InvoiceAddressInfo | undefined;
     description: string | undefined;
     note: string | undefined;
     lines: InvoiceLineInfo[] | undefined;
@@ -58899,7 +59593,9 @@ export class UpdateInvoiceLineInput implements IUpdateInvoiceLineInput {
     id!: number | undefined;
     quantity!: number;
     rate!: number;
+    total!: number;
     unitId!: InvoiceLineUnit;
+    productCode!: string | undefined;
     description!: string | undefined;
     sortOrder!: number;
 
@@ -58917,7 +59613,9 @@ export class UpdateInvoiceLineInput implements IUpdateInvoiceLineInput {
             this.id = data["id"];
             this.quantity = data["quantity"];
             this.rate = data["rate"];
+            this.total = data["total"];
             this.unitId = data["unitId"];
+            this.productCode = data["productCode"];
             this.description = data["description"];
             this.sortOrder = data["sortOrder"];
         }
@@ -58935,7 +59633,9 @@ export class UpdateInvoiceLineInput implements IUpdateInvoiceLineInput {
         data["id"] = this.id;
         data["quantity"] = this.quantity;
         data["rate"] = this.rate;
+        data["total"] = this.total;
         data["unitId"] = this.unitId;
+        data["productCode"] = this.productCode;
         data["description"] = this.description;
         data["sortOrder"] = this.sortOrder;
         return data; 
@@ -58946,7 +59646,9 @@ export interface IUpdateInvoiceLineInput {
     id: number | undefined;
     quantity: number;
     rate: number;
+    total: number;
     unitId: InvoiceLineUnit;
+    productCode: string | undefined;
     description: string | undefined;
     sortOrder: number;
 }
@@ -58957,6 +59659,12 @@ export class UpdateInvoiceInput implements IUpdateInvoiceInput {
     number!: string | undefined;
     date!: moment.Moment;
     dueDate!: moment.Moment;
+    grandTotal!: number;
+    discountTotal!: number | undefined;
+    shippingTotal!: number | undefined;
+    taxTotal!: number | undefined;
+    billingAddress!: InvoiceAddressInput;
+    shippingAddress!: InvoiceAddressInput;
     description!: string | undefined;
     note!: string | undefined;
     lines!: UpdateInvoiceLineInput[] | undefined;
@@ -58968,6 +59676,10 @@ export class UpdateInvoiceInput implements IUpdateInvoiceInput {
                     (<any>this)[property] = (<any>data)[property];
             }
         }
+        if (!data) {
+            this.billingAddress = new InvoiceAddressInput();
+            this.shippingAddress = new InvoiceAddressInput();
+        }
     }
 
     init(data?: any) {
@@ -58977,6 +59689,12 @@ export class UpdateInvoiceInput implements IUpdateInvoiceInput {
             this.number = data["number"];
             this.date = data["date"] ? moment(data["date"].toString()) : <any>undefined;
             this.dueDate = data["dueDate"] ? moment(data["dueDate"].toString()) : <any>undefined;
+            this.grandTotal = data["grandTotal"];
+            this.discountTotal = data["discountTotal"];
+            this.shippingTotal = data["shippingTotal"];
+            this.taxTotal = data["taxTotal"];
+            this.billingAddress = data["billingAddress"] ? InvoiceAddressInput.fromJS(data["billingAddress"]) : new InvoiceAddressInput();
+            this.shippingAddress = data["shippingAddress"] ? InvoiceAddressInput.fromJS(data["shippingAddress"]) : new InvoiceAddressInput();
             this.description = data["description"];
             this.note = data["note"];
             if (data["lines"] && data["lines"].constructor === Array) {
@@ -59001,6 +59719,12 @@ export class UpdateInvoiceInput implements IUpdateInvoiceInput {
         data["number"] = this.number;
         data["date"] = this.date ? this.date.toISOString() : <any>undefined;
         data["dueDate"] = this.dueDate ? this.dueDate.toISOString() : <any>undefined;
+        data["grandTotal"] = this.grandTotal;
+        data["discountTotal"] = this.discountTotal;
+        data["shippingTotal"] = this.shippingTotal;
+        data["taxTotal"] = this.taxTotal;
+        data["billingAddress"] = this.billingAddress ? this.billingAddress.toJSON() : <any>undefined;
+        data["shippingAddress"] = this.shippingAddress ? this.shippingAddress.toJSON() : <any>undefined;
         data["description"] = this.description;
         data["note"] = this.note;
         if (this.lines && this.lines.constructor === Array) {
@@ -59018,6 +59742,12 @@ export interface IUpdateInvoiceInput {
     number: string | undefined;
     date: moment.Moment;
     dueDate: moment.Moment;
+    grandTotal: number;
+    discountTotal: number | undefined;
+    shippingTotal: number | undefined;
+    taxTotal: number | undefined;
+    billingAddress: InvoiceAddressInput;
+    shippingAddress: InvoiceAddressInput;
     description: string | undefined;
     note: string | undefined;
     lines: UpdateInvoiceLineInput[] | undefined;
@@ -59299,6 +60029,145 @@ export interface IGetEmailDataOutput {
     bcc: string[] | undefined;
     body: string | undefined;
     attachments: Attachment[] | undefined;
+}
+
+export class BankCardInput implements IBankCardInput {
+    holderName!: string;
+    cardNumber!: string;
+    expirationMonth!: string;
+    expirationYear!: string;
+    billingAddress!: string | undefined;
+    billingZip!: string;
+    billingCity!: string | undefined;
+    billingStateCode!: string | undefined;
+    billingCountryCode!: string | undefined;
+
+    constructor(data?: IBankCardInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.holderName = data["holderName"];
+            this.cardNumber = data["cardNumber"];
+            this.expirationMonth = data["expirationMonth"];
+            this.expirationYear = data["expirationYear"];
+            this.billingAddress = data["billingAddress"];
+            this.billingZip = data["billingZip"];
+            this.billingCity = data["billingCity"];
+            this.billingStateCode = data["billingStateCode"];
+            this.billingCountryCode = data["billingCountryCode"];
+        }
+    }
+
+    static fromJS(data: any): BankCardInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new BankCardInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["holderName"] = this.holderName;
+        data["cardNumber"] = this.cardNumber;
+        data["expirationMonth"] = this.expirationMonth;
+        data["expirationYear"] = this.expirationYear;
+        data["billingAddress"] = this.billingAddress;
+        data["billingZip"] = this.billingZip;
+        data["billingCity"] = this.billingCity;
+        data["billingStateCode"] = this.billingStateCode;
+        data["billingCountryCode"] = this.billingCountryCode;
+        return data; 
+    }
+}
+
+export interface IBankCardInput {
+    holderName: string;
+    cardNumber: string;
+    expirationMonth: string;
+    expirationYear: string;
+    billingAddress: string | undefined;
+    billingZip: string;
+    billingCity: string | undefined;
+    billingStateCode: string | undefined;
+    billingCountryCode: string | undefined;
+}
+
+export class AddBankCardPaymentInput implements IAddBankCardPaymentInput {
+    invoiceId!: number | undefined;
+    invoiceNumber!: string | undefined;
+    date!: moment.Moment | undefined;
+    description!: string | undefined;
+    orderStage!: string | undefined;
+    amount!: number | undefined;
+    gatewayName!: string | undefined;
+    gatewayTransactionId!: string | undefined;
+    bankCardInfo!: BankCardInput;
+
+    constructor(data?: IAddBankCardPaymentInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+        if (!data) {
+            this.bankCardInfo = new BankCardInput();
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.invoiceId = data["invoiceId"];
+            this.invoiceNumber = data["invoiceNumber"];
+            this.date = data["date"] ? moment(data["date"].toString()) : <any>undefined;
+            this.description = data["description"];
+            this.orderStage = data["orderStage"];
+            this.amount = data["amount"];
+            this.gatewayName = data["gatewayName"];
+            this.gatewayTransactionId = data["gatewayTransactionId"];
+            this.bankCardInfo = data["bankCardInfo"] ? BankCardInput.fromJS(data["bankCardInfo"]) : new BankCardInput();
+        }
+    }
+
+    static fromJS(data: any): AddBankCardPaymentInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new AddBankCardPaymentInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["invoiceId"] = this.invoiceId;
+        data["invoiceNumber"] = this.invoiceNumber;
+        data["date"] = this.date ? this.date.toISOString() : <any>undefined;
+        data["description"] = this.description;
+        data["orderStage"] = this.orderStage;
+        data["amount"] = this.amount;
+        data["gatewayName"] = this.gatewayName;
+        data["gatewayTransactionId"] = this.gatewayTransactionId;
+        data["bankCardInfo"] = this.bankCardInfo ? this.bankCardInfo.toJSON() : <any>undefined;
+        return data; 
+    }
+}
+
+export interface IAddBankCardPaymentInput {
+    invoiceId: number | undefined;
+    invoiceNumber: string | undefined;
+    date: moment.Moment | undefined;
+    description: string | undefined;
+    orderStage: string | undefined;
+    amount: number | undefined;
+    gatewayName: string | undefined;
+    gatewayTransactionId: string | undefined;
+    bankCardInfo: BankCardInput;
 }
 
 export class RequestKBAInput implements IRequestKBAInput {
@@ -64672,6 +65541,50 @@ export interface IOrderSubscriptionDto {
     statusCode: string | undefined;
     status: string | undefined;
     orderSubscriptionPayments: OrderSbuscriptionPaymentDto[] | undefined;
+}
+
+export class GetUserSubscriptionsOutput implements IGetUserSubscriptionsOutput {
+    serviceName!: string | undefined;
+    serviceType!: string | undefined;
+    endDate!: moment.Moment | undefined;
+
+    constructor(data?: IGetUserSubscriptionsOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.serviceName = data["serviceName"];
+            this.serviceType = data["serviceType"];
+            this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): GetUserSubscriptionsOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new GetUserSubscriptionsOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["serviceName"] = this.serviceName;
+        data["serviceType"] = this.serviceType;
+        data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
+        return data; 
+    }
+}
+
+export interface IGetUserSubscriptionsOutput {
+    serviceName: string | undefined;
+    serviceType: string | undefined;
+    endDate: moment.Moment | undefined;
 }
 
 export class OrganizationInfoDto implements IOrganizationInfoDto {

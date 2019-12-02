@@ -23,7 +23,6 @@ import { GenerateReportDialogComponent } from './generate-report-dialog/generate
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { AppService } from '@app/app.service';
 import { SendNotificationDialogComponent } from '@app/cfo/reports/send-notification-dialog/send-notification-dialog.component';
-import { DataGridService } from '@app/shared/common/data-grid.service.ts/data-grid.service';
 import { FilterCheckBoxesComponent } from '@shared/filters/check-boxes/filter-check-boxes.component';
 import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-boxes.model';
 import { FiltersService } from '@shared/filters/filters.service';
@@ -467,6 +466,7 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
         this.currentReportInfo = this.actionRecordData;
         $event.itemData.action.call(this);
         this.actionRecordData = null;
+        this.hideActionsMenu();
     }
 
     downloadReport() {

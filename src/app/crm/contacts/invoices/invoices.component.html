@@ -2,13 +2,32 @@
     <div [hidden]="isDataLoaded && !totalRowCount" class="portlet light no-padding margin-bottom-0">
         <div class="portlet-body">
               <div>
-                    <div id="ClientsTable">
-                        <dx-tooltip width="160px">
+                    <div id="InvoicesTable">
+                        <dx-tooltip [elementAttr]="{name: 'invoice-actions'}" width="300px" height="237px">
                             <div *dxTemplate="let data of 'content'">
-                                <div class="lists-tooltip-container">
-                                    <dx-list accessKey="actionsMenu" [dataSource]="filteredActionMenuItems"
-                                        (onItemClick)="onMenuItemClick($event)">
-                                    </dx-list>
+                                <div class="invoice-actions-container">
+                                    <div class="list">
+                                        <div class="link" [ngClass]="{disabled: markAsPaidDisabled}" (click)="onMenuItemClick(updateStatus.bind(this, invoiceStatus.Paid))"><i class="s-check"></i>{{l('Mark as Paid')}}</div>
+                                        <div class="link" [ngClass]="{disabled: markAsDraftDisabled}" (click)="onMenuItemClick(updateStatus.bind(this, invoiceStatus.Draft))"><i class="i-check"></i>{{l('Invoice_MarkAsDraft')}}</div>
+                                        <div class="link" [ngClass]="{disabled: resendInvoiceDisabled}" (click)="onMenuItemClick(updateStatus.bind(this, invoiceStatus.Sent))"><i class="check-list"></i>{{l('Invoice_MarkAsSent')}}</div>
+                                        <div class="link disabled" [hidden]="true"><i class="time-alarm"></i>{{l('Send Reminder')}}</div>
+                                        <div class="link" [ngClass]="{disabled: resendInvoiceDisabled}" (click)="onMenuItemClick(sendInvoice)"><i class="respond-arrow"></i>{{l('Resend Invoice')}}</div>
+                                        <div class="link" [ngClass]="{disabled: downloadPdfDisabled}" (click)="onMenuItemClick(downloadInvoicePdf)"><i class="move-layer-down"></i>{{l('Download as PDF')}}</div>
+                                        <div class="link" [ngClass]="{disabled: invoiceActivityDisabled}" (click)="onMenuItemClick(showHistory.bind(this, actionRecordData))"><i class="bullet-list-69"></i>{{l('OrderActivity')}}</div>
+                                    </div>
+                                    <div class="list" [hidden]="true">
+                                        <div class="link disabled"><i class="f-chat"></i>{{l('Post Comment')}}</div>
+                                        <div class="link disabled"><i class="check-list"></i>{{l('Manage Payments')}}</div>
+                                        <div class="link disabled"><i class="ungroup"></i>{{l('Duplicate Invoice')}}</div>
+                                        <div class="link disabled"><i class="ungroup"></i>{{l('Duplicate as Recurring')}}</div>
+                                    </div>
+                                    <div class="list">
+                                        <div class="link" [ngClass]="{disabled: markAsCancelledDisabled}" (click)="onMenuItemClick(updateStatus.bind(this, invoiceStatus.Canceled))"><i class="e-remove"></i>{{l('Cancel')}}</div>
+                                        <div class="link disabled" [hidden]="true"><i class="folder-13"></i>{{l('Archive')}}</div>
+                                        <div class="link" [ngClass]="{disabled: deleteDisabled}" (click)="onMenuItemClick(deleteInvoice)"><i class="bin"></i>{{l('Delete')}}</div>
+                                        <div class="link" [ngClass]="{disabled: previewDisabled}" (click)="onMenuItemClick(editInvoice)"><i class="preview"></i>{{l('Preview')}}</div>
+                                        <div class="link" (click)="onMenuItemClick(addInvoice)"><i class="add"></i>{{l('Add Invoice')}}</div>
+                                    </div>
                                 </div>
                             </div>
                         </dx-tooltip>
@@ -20,22 +39,27 @@
                                       [hoverStateEnabled]="true"
                                       [pager]="defaultGridPagerConfig"
                                       (onCellClick)="onCellClick($event)"
-                                      (onContentReady)="onContentReady($event)"
-                                      (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">                
-                            <dxi-column alignment="center" width="90px" cellTemplate="actionsCellTemplate" headerCellTemplate="actionsCellTemplate"></dxi-column>
-                            <a class="dx-link dx-link-edit" *dxTemplate="let cellData of 'actionsCellTemplate'">Edit</a>
+                                      (onContentReady)="onContentReady()"
+                                      (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
 
-                            <dxi-column dataField="Number" caption="{{l('Number')}}"></dxi-column>
-                            <dxi-column dataField="Status" caption="{{l('Status')}}"></dxi-column>
+                            <dxi-column alignment="center" width="50px" cellTemplate="actionsCellTemplate" headerCellTemplate="actionsCellTemplate"></dxi-column>
+
+                            <dxi-column dataField="OrderNumber" caption="{{l('OrderNumber')}}"></dxi-column>
+                            <dxi-column dataField="InvoiceId" caption="{{l('Invoice')}}"></dxi-column>
+                            <dxi-column dataField="Amount" dataType="string" caption="{{l('Amount')}}" cellTemplate="amountCell"></dxi-column>
+                            <dxi-column dataField="OrderType" caption="{{l('Type')}}"></dxi-column>
+                            <dxi-column dataField="InvoiceStatus" caption="{{l('Status')}}" cellTemplate="statusCell"></dxi-column>
+                            <dxi-column dataField="OrderStage" caption="{{l('Stage')}}"></dxi-column>
                             <dxi-column dataField="Date" caption="{{l('Date')}}" cellTemplate="datetimeCell"></dxi-column>
-                            <dxi-column dataField="DueDate" caption="{{l('Due Date')}}" cellTemplate="dateCell"></dxi-column>
-                            <dxi-column dataField="Amount" alignment="right" caption="{{l('Amount')}}" cellTemplate="amountCell"></dxi-column>
+                            <dxi-column dataField="InvoiceDueDate" caption="{{l('Due Date')}}" cellTemplate="dateCell"></dxi-column>
 
                             <dxi-column [fixed]="true" [fixedPosition]="'right'" [showInColumnChooser]="false"></dxi-column>
 
-                            <dxo-sorting mode="multiple"></dxo-sorting>
-                            <dxo-group-panel [visible]="true"></dxo-group-panel>
-                            <dxo-paging [pageSize]="20"></dxo-paging>
+                            <a class="dx-link dx-link-edit" *dxTemplate="let cellData of 'actionsCellTemplate'">&nbsp;</a>
+
+                            <div *dxTemplate="let cellData of 'statusCell'">
+                                <div *ngIf="cellData.value" class="status {{ cellData.value | lowercase }}">{{ cellData.value }}</div>
+                            </div>
                             <div *dxTemplate="let cellData of 'dateCell'">
                                 {{ cellData.value | date: formatting.date }}
                             </div>
@@ -46,9 +70,11 @@
                                 {{ cellData.value | currency: settings.currency }}
                             </div>
 
-                            <dxo-load-panel [enabled]="false"></dxo-load-panel>
+                            <dxo-paging [pageSize]="20"></dxo-paging>
                             <dxo-sorting mode="multiple"></dxo-sorting>
+                            <dxo-load-panel [enabled]="false"></dxo-load-panel>
                             <dxo-group-panel [visible]="false"></dxo-group-panel>
+                            <dxo-selection mode="multiple" showCheckBoxesMode="always"></dxo-selection>
                         </dx-data-grid>
                     </div>
               </div>

@@ -30,113 +30,158 @@
 
     <div class="form-content">
         <dx-scroll-view showScrollbar="onHover">
-            <div class="row">
-                <div class="col-sm-8">
-                    <div class="field-area description">
-                        <dx-text-box
-                            name="description"
-                            width="500px"
-                            height="40px"
-                            [placeholder]="ls.l('Invoice_AddDescription')"
-                            [disabled]="disabledForUpdate"
-                            [(value)]="description">
-                        </dx-text-box>
+            <div class="field-area description">
+                <dx-text-box
+                    name="description"
+                    width="810px"
+                    height="40px"
+                    [placeholder]="ls.l('Invoice_AddDescription')"
+                    [disabled]="disabledForUpdate"
+                    [(value)]="description">
+                </dx-text-box>
+            </div>
+            <div class="field-area flex-space-between">
+                <div class="bill-to">
+                    <label class="bold-label">{{ls.l('Invoice_BillTo')}}
+                        <a (click)="createClient()" [hidden]="contactId || disabledForUpdate || data?.contactInfo">+ {{ls.l('New') + ' ' + ls.l('Client')}}</a>
+                        <a (click)="clearClient()" [hidden]="!contactId || disabledForUpdate || data?.contactInfo">{{ls.l('Change') + ' ' + ls.l('Client')}}</a>
+                    </label>
+                    <dx-select-box #contact
+                        name="customer"
+                        width="220px"
+                        height="40px"
+                        displayExpr="name"
+                        valueExpr="name"
+                        [visible]="!contactId"
+                        [disabled]="data?.invoice || data?.contactInfo"
+                        [acceptCustomValue]="true"
+                        [placeholder]="ls.lr('Select Client')"
+                        [(value)]="customer"
+                        [dataSource]="customers"
+                        [searchEnabled]="true"
+                        [searchTimeout]="0"
+                        (onFocusIn)="onFieldFocus($event)"
+                        (onInput)="customerLookupItems($event)"
+                        (onSelectionChanged)="selectContact($event)">
+                    </dx-select-box>
+                    <dx-select-box #billingAddress
+                        name="billingAddress"
+                        width="220px"
+                        height="40px"
+                        displayExpr="display"
+                        itemTemplate="addressTemplate"
+                        [visible]="contactId && !selectedBillingAddress"
+                        [placeholder]="ls.lr('Select Address')"
+                        [(value)]="selectedBillingAddress"
+                        [dataSource]="billingAddresses">
+                        <div *dxTemplate="let cellData of 'addressTemplate'" [title]="cellData.display">
+                            {{ cellData.display }}
+                        </div>
+                    </dx-select-box>
+                    <a *ngIf="contactId && !selectedBillingAddress" (click)="showEditAddressDialog($event, 'selectedBillingAddress')">{{ls.l('+ Add New Address')}}</a>
+                    <div class="selected-contact-info" *ngIf="selectedBillingAddress"><i class="edit fa fa-pencil" (click)="showEditAddressDialog($event, 'selectedBillingAddress')"></i><i class="remove fa fa-remove" (click)="selectedBillingAddress = undefined"></i>
+                        {{ selectedBillingAddress?.company }}<br *ngIf="selectedBillingAddress?.company">
+                        {{ selectedBillingAddress?.firstName + ' ' + selectedBillingAddress?.lastName }}<br *ngIf="customer">
+                        {{ [selectedBillingAddress?.email, selectedBillingAddress?.phone].join(', ') }}<br *ngIf="selectedBillingAddress?.email || selectedBillingAddress?.phone">
+                        {{ selectedBillingAddress?.address1 }}<br *ngIf="selectedBillingAddress?.address1">
+                        {{ selectedBillingAddress?.city }}<br *ngIf="selectedContact?.address?.city">
+                        {{ selectedBillingAddress?.state }} {{ selectedBillingAddress?.zip }}<br *ngIf="selectedBillingAddress?.state || selectedBillingAddress?.zip">
+                        {{ selectedBillingAddress?.countryCode == 'US' ? '' : selectedBillingAddress?.countryId }}
                     </div>
-                    <div class="field-area profile">
-                        <label class="from-label">{{ls.l('From')}}<a (click)="openInvoiceSettings()"><i class="edit fa fa-pencil"></i>{{ls.l('Settings')}}</a></label>
-                        <div class="credentials">
+                </div>
+                <div class="ship-to">
+                    <label class="bold-label">{{ls.l('Invoice_ShipTo')}}</label>
+                    <dx-select-box #shippingAddress
+                        name="shippingAddress"
+                        width="220px"
+                        height="40px"
+                        displayExpr="display"
+                        itemTemplate="addressTemplate"
+                        [visible]="contactId && !selectedShippingAddress"
+                        [placeholder]="ls.lr('Select Address')"
+                        [(value)]="selectedShippingAddress"
+                        [dataSource]="shippingAddresses">
+                        <div *dxTemplate="let cellData of 'addressTemplate'" [title]="cellData.display">
+                            {{ cellData.display }}
+                        </div>
+                    </dx-select-box>
+                    <a *ngIf="contactId && !selectedShippingAddress" (click)="showEditAddressDialog($event, 'selectedShippingAddress')">{{ls.l('+ Add New Address')}}</a>
+                    <div class="selected-contact-info" *ngIf="selectedShippingAddress"><i class="edit fa fa-pencil" (click)="showEditAddressDialog($event, 'selectedShippingAddress')"></i><i class="remove fa fa-remove" (click)="selectedShippingAddress = undefined"></i>
+                        {{ selectedShippingAddress?.company }}<br *ngIf="selectedShippingAddress?.company">
+                        {{ selectedShippingAddress?.firstName + ' ' + selectedShippingAddress?.lastName }}<br *ngIf="customer">
+                        {{ [selectedShippingAddress?.email, selectedShippingAddress?.phone].join(', ') }}<br *ngIf="selectedShippingAddress?.email || selectedShippingAddress?.phone">
+                        {{ selectedShippingAddress?.address1 }}<br *ngIf="selectedShippingAddress?.address1">
+                        {{ selectedShippingAddress?.city }}<br *ngIf="selectedShippingAddress?.city">
+                        {{ selectedShippingAddress?.zip }}<br *ngIf="selectedShippingAddress?.zip">
+                        {{ selectedShippingAddress?.countryCode == 'US' ? '' : selectedShippingAddress?.countryId }}
+                    </div>
+                </div>
+                <div class="billed-from">
+                    <label class="bold-label">{{ls.l('Invoice_BilledFrom')}}<a (click)="openInvoiceSettings()"><i class="edit fa fa-pencil"></i>{{ls.l('Settings')}}</a></label>
+                    <div class="credentials">
+                        <div class="address-container">
                             <span>{{invoiceSettings?.legalName || ''}} {{invoiceSettings?.taxVatNo || ''}}</span>
                             <pre>{{invoiceSettings?.address || ''}}</pre>
                         </div>
-                    </div>
-                    <div class="field-area customer">
-                        <label class="customer-label">{{ls.l('To')}}<a (click)="createClient()" [hidden]="disabledForUpdate || data?.contactInfo">+ {{ls.l('New') + ' ' + ls.l('Client')}}</a></label>
-                        <dx-select-box #contact
-                            name="customer"
-                            width="500px"
-                            height="90px"
-                            displayExpr="display"
-                            valueExpr="name"
-                            [disabled]="data?.invoice || data?.contactInfo"
-                            [acceptCustomValue]="true"
-                            [placeholder]="ls.lr('Enter Client Details')"
-                            [(value)]="customer"
-                            [dataSource]="customers"
-                            [searchEnabled]="true"
-                            [searchTimeout]="0"
-                            (onFocusIn)="onFieldFocus($event)"
-                            (onInput)="customerLookupItems($event)"
-                            (onSelectionChanged)="selectContact($event)">
-                        </dx-select-box>
-                        <div class="selected-contact-info">
-                            {{ selectedContact?.address?.streetAddress }}<br *ngIf="selectedContact?.address?.streetAddress">
-                            {{ selectedContact?.address?.city }}<br *ngIf="selectedContact?.address?.city">
-                            {{ selectedContact?.address?.state }} {{ selectedContact?.address?.zip }}<br *ngIf="selectedContact?.address?.state || selectedContact?.address?.zip">
-                            {{ selectedContact?.address?.countryCode == 'US' ? '' : selectedContact?.address?.countryCode }}
-                        </div>
-                    </div>
-                </div>
-                <div class="col-sm-4">
-                    <div class="field-area">
+
                         <div class="logo-container">
                             <img [src]="appSession.tenant && appSession.tenant.logoId ? remoteServiceBaseUrl + '/api/TenantCustomization/GetLogo?logoId=' + appSession.tenant.logoId : './assets/common/images/sperse-logo.png'" alt="logo"/>
                         </div>
                     </div>
-                    <div class="field-area">
-                        <dx-date-box #dateComponent
-                            width="260px"
-                            height="41px"
-                            type="datetime"
-                            [(value)]="date"
-                            [placeholder]="ls.lr('Date')"
-                            [disabled]="disabledForUpdate"
-                            (onContentReady)="onDateContentReady($event)">
-                        </dx-date-box>
-                    </div>
-                    <div class="field-area">
-                        <dx-date-box #dueDateComponent
-                            [placeholder]="ls.lr('Invoice_DueOnReceipt')"
-                            [disabled]="disabledForUpdate"
-                            (onKeyDown)="allowDigitsOnly($event, ['/'])"
-                            width="260px"
-                            height="41px"
-                            [(value)]="dueDate"
-                            (onContentReady)="onDateContentReady($event)">
-                        </dx-date-box>
-                    </div>
-                    <div class="field-area">
-                        <dx-drop-down-box #orderDropBox
-                            width="260px"
-                            height="40px"
-                            [(value)]="orderNumber"
-                            [disabled]="data?.invoice"
-                            [acceptCustomValue]="true"
-                            [dataSource]="[orderNumber]"
-                            (onFocusIn)="orderFocusIn($event)"
-                            (onValueChanged)="onOrderNumberValueChanged($event)"
-                            [placeholder]="ls.l('Invoice_PurchaseOrderNumber')">
-                            <div *dxTemplate="let contentData of 'content'">
-                                <dx-data-grid #ordersGrid
-                                    height="350px"
-                                    accessKey="orderNumber"
-                                    [dataSource]="ordersDataSource"
-                                    [showColumnHeaders]="false"
-                                    [showColumnLines]="false"
-                                    [searchPanel]="{visible: true}"
-                                    [selection]="{mode: 'single'}"
-                                    (onRowClick)="onOrderSelected($event, orderDropBox)">
-                                    <dxi-column dataField="Number" dataType="string" caption="{{ls.l('Number')}}"></dxi-column>
-                                    <dxo-paging [pageSize]="20"></dxo-paging>
-                                </dx-data-grid>
-                            </div>
-                        </dx-drop-down-box>
-                    </div>
                 </div>
+            </div>
+            <div class="field-area flex-space-between">
+                <div class="date-fields-area">
+                    <dx-date-box #dateComponent
+                        width="200px"
+                        height="41px"
+                        type="datetime"
+                        [(value)]="date"
+                        [placeholder]="ls.lr('Date')"
+                        [disabled]="disabledForUpdate"
+                        (onContentReady)="onDateContentReady($event)">
+                    </dx-date-box>
+                    <dx-date-box #dueDateComponent
+                        [placeholder]="ls.lr('Invoice_DueOnReceipt')"
+                        [disabled]="disabledForUpdate"
+                        (onKeyDown)="allowDigitsOnly($event, ['/'])"
+                        width="200px"
+                        height="41px"
+                        [min]="date"
+                        [(value)]="dueDate"
+                        (onContentReady)="onDateContentReady($event)">
+                    </dx-date-box>
+                </div>
+                <dx-drop-down-box #orderDropBox
+                    width="250px"
+                    height="40px"
+                    [(value)]="orderNumber"
+                    [disabled]="data?.invoice"
+                    [acceptCustomValue]="true"
+                    [dataSource]="[orderNumber]"
+                    (onFocusIn)="orderFocusIn($event)"
+                    (onValueChanged)="onOrderNumberValueChanged($event)"
+                    [placeholder]="ls.l('Invoice_PurchaseOrderNumber')">
+                    <div *dxTemplate="let contentData of 'content'">
+                        <dx-data-grid #ordersGrid
+                            height="350px"
+                            accessKey="orderNumber"
+                            [dataSource]="ordersDataSource"
+                            [showColumnHeaders]="false"
+                            [showColumnLines]="false"
+                            [searchPanel]="{visible: true}"
+                            [selection]="{mode: 'single'}"
+                            (onRowClick)="onOrderSelected($event, orderDropBox)">
+                            <dxi-column dataField="Number" dataType="string" caption="{{ls.l('Number')}}"></dxi-column>
+                            <dxo-paging [pageSize]="20"></dxo-paging>
+                        </dx-data-grid>
+                    </div>
+                </dx-drop-down-box>
             </div>
             <div class="field-area lines">
                 <dx-validation-group>
                     <dx-data-grid
-                        width="820px"
+                        width="810px"
                         [height]="linesGridHeight"
                         [disabled]="disabledForUpdate"
                         [(dataSource)]="lines"
@@ -147,14 +192,16 @@
                         [scrolling]="{showScrollbar: 'never'}"
                         [allowColumnResizing]="false">
 
-                        <dxi-column dataField="Description" width="379" caption="{{ls.l('Description')}}" [allowSorting]="false" cellTemplate="description"></dxi-column>
-                        <dxi-column dataField="Quantity" width="147" caption="{{ls.l('Quantity')}}" [allowSorting]="false" cellTemplate="quantity"></dxi-column>
-                        <dxi-column dataField="Rate" width="147" caption="{{ls.l('Rate')}}" [allowSorting]="false" cellTemplate="rate"></dxi-column>
-                        <dxi-column dataField="Amount" width="147" caption="{{ls.l('Amount')}}" [allowSorting]="false" [allowEditing]="false" cellTemplate="amount"></dxi-column>
+                        <dxi-column dataField="Description" width="310" caption="{{ls.l('Description')}}" [allowSorting]="false" cellTemplate="description"></dxi-column>
+                        <dxi-column dataField="Quantity" width="115" caption="{{ls.l('Quantity')}}" [allowSorting]="false" cellTemplate="quantity"></dxi-column>
+                        <dxi-column dataField="Rate" width="115" caption="{{ls.l('Rate')}}" [allowSorting]="false" cellTemplate="rate"></dxi-column>
+                        <dxi-column dataField="Unit" width="110" caption="{{ls.l('Unit')}}" [allowSorting]="false" cellTemplate="unit"></dxi-column>
+                        <dxi-column dataField="Total" width="115" caption="{{ls.l('Total')}}" [allowSorting]="false" [allowEditing]="false" cellTemplate="total"></dxi-column>
+                        <dxi-column width="30" caption="" [allowSorting]="false" [allowEditing]="false" cellTemplate="actions"></dxi-column>
 
                         <div *dxTemplate="let cellData of 'description'">
                             <dx-text-box
-                                width="350px"
+                                width="300px"
                                 [placeholder]="ls.lr('Invoice_EnterDescription')"
                                 [showClearButton]="true"
                                 [(value)]="cellData.data.description">
@@ -162,20 +209,18 @@
                                     <dxi-validation-rule type="required" [message]="ls.l('RequiredAllFields')"></dxi-validation-rule>
                                 </dx-validator>
                             </dx-text-box>
-                            <div class="row-actions">
-                                <span *ngIf="cellData.rowIndex == lines.length - 1" [class.disabled]="lines.length != getFilteredLines().length" (click)="addNewLine(cellData)"><i class="add-icon"></i>{{ls.l('Add new line')}}</span>
-                                <span *ngIf="cellData.rowIndex || lines.length > 1" (click)="deleteLine(cellData)"><i class="delete-icon"></i>{{ls.l('Delete this line')}}</span>
-                                <div class="icons"><i class="link"></i><i class="tag"></i></div>
+                            <div class="row-actions" *ngIf="cellData.rowIndex == lines.length - 1">
+                                <span [class.disabled]="lines.length != getFilteredLines().length" class="add-new" (click)="addNewLine(cellData)">{{ls.l('+ Add new line')}}</span>
                             </div>
                         </div>
                         <div *dxTemplate="let cellData of 'quantity'">
                             <dx-text-box
-                                width="130px"
+                                width="110px"
                                 [placeholder]="ls.lr('EditValuePlaceholder')"
                                 [showClearButton]="true"
                                 [(value)]="cellData.data.quantity"
                                 (onKeyDown)="allowDigitsOnly($event)"
-                                (onValueChanged)="calculateLineAmount(cellData.data)">
+                                (onValueChanged)="calculateLineTotal(cellData.data)">
                                 <dx-validator>
                                     <dxi-validation-rule type="required" message=""></dxi-validation-rule>
                                 </dx-validator>
@@ -183,7 +228,7 @@
                         </div>
                         <div *dxTemplate="let cellData of 'rate'">
                             <dx-text-box
-                                width="130px"
+                                width="110px"
                                 [placeholder]="ls.lr('EditValuePlaceholder')"
                                 [showClearButton]="true"
                                 (onKeyDown)="allowDigitsOnly($event, ['.'])"
@@ -192,12 +237,12 @@
                                 <dx-validator>
                                     <dxi-validation-rule type="required" message=""></dxi-validation-rule>
                                 </dx-validator>
-                            </dx-text-box><br>
+                            </dx-text-box>
+                        </div>
+                        <div *dxTemplate="let cellData of 'unit'">
                             <dx-select-box
                                 name="unit"
-                                height="40px"
-                                width="130px"
-                                [placeholder]="ls.lr('Unit')"
+                                width="100px"
                                 [(value)]="cellData.data.unitId"
                                 [dataSource]="invoiceUnits">
                                 <dx-validator>
@@ -205,14 +250,17 @@
                                 </dx-validator>
                             </dx-select-box>
                         </div>
-                        <div *dxTemplate="let cellData of 'amount'">
+                        <div *dxTemplate="let cellData of 'total'">
                             <dx-text-box
-                                width="130px"
+                                width="110px"
                                 placeholder=""
                                 dataType="number"
                                 [readOnly]="true"
-                                [value]="cellData.data.amount | currency: invoiceSettings.currency">
+                                [value]="cellData.data.total | currency: invoiceSettings.currency">
                             </dx-text-box>
+                        </div>
+                        <div *dxTemplate="let cellData of 'actions'" class="row-actions">
+                            <i [class.disabled]="!cellData.rowIndex && lines.length == 1" (click)="deleteLine(cellData)" class="delete-icon"></i>
                         </div>
                     </dx-data-grid>
                 </dx-validation-group>

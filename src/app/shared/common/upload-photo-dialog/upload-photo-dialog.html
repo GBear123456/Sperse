@@ -1,25 +1,25 @@
 <header>
-    <h2 mat-dialog-title>{{l("ChangeProfilePicture")}}</h2>
+    <h2 mat-dialog-title>{{ ls.l('ChangeProfilePicture') }}</h2>
 </header>
 <mat-dialog-content>
     <mat-tab-group>
-        <mat-tab [label]="l('FromComputer').toUpperCase()">
+        <mat-tab [label]="ls.l('FromComputer').toUpperCase()">
             <div class="file-loading">
-                <span>{{ l('SelectPhotoToApply') }}</span>
-                <button mat-button class="fileInputButton" (click)="fileInput.click()">{{l('Open')}}</button>
+                <span>{{ ls.l('SelectPhotoToApply') }}</span>
+                <button mat-button class="fileInputButton" (click)="fileInput.click()">{{ls.l('Open')}}</button>
                 <input type="file" (change)="fileSelected($event)" accept="image/*" #fileInput>
             </div>
         </mat-tab>
-        <mat-tab [label]="l('FromUrl').toUpperCase()">
+        <mat-tab [label]="ls.l('FromUrl').toUpperCase()">
             <div class="file-loading link-loading">
                 <mat-form-field>
-                    <input matInput [placeholder]="l('EnterTheUrl')" [formControl]="fileUrlFormControl" (paste)="onPaste()">
+                    <input matInput [placeholder]="ls.l('EnterTheUrl')" [formControl]="fileUrlFormControl" (paste)="onPaste()">
                     <mat-error
                         *ngIf="fileUrlFormControl && fileUrlFormControl.hasError('pattern') && !fileUrlFormControl.hasError('required')">
                         Please enter a valid url
                     </mat-error>
                 </mat-form-field>
-                <button mat-button class="loadFile" (click)="loadFile()">{{ l('Load') }}</button>
+                <button mat-button class="loadFile" (click)="loadFile()">{{ ls.l('Load') }}</button>
             </div>
         </mat-tab>
     </mat-tab-group>
@@ -28,7 +28,7 @@
     </file-drop>
 </mat-dialog-content>
 <mat-dialog-actions>
-    <button mat-button class="button-layout button-default clear" [disabled]="clearDisabled" (click)="clearPhoto()">{{ l('Clear') }}</button>
-    <button mat-button mat-dialog-close class="button-layout button-default">{{ l('Cancel') }}</button>
-    <button mat-button class="button-layout button-primary" (click)="onSave($event)">{{ l('Save') }}</button>
+    <button mat-button class="button-layout button-default clear" [disabled]="clearDisabled" (click)="clearPhoto()">{{ ls.l('Clear') }}</button>
+    <button mat-button mat-dialog-close class="button-layout button-default">{{ ls.l('Cancel') }}</button>
+    <button mat-button class="button-layout button-primary" (click)="onSave()">{{ ls.l('Save') }}</button>
 </mat-dialog-actions>
