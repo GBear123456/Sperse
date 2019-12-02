@@ -10,12 +10,13 @@ import {
 } from '@angular/core';
 
 /** Third party imports */
+import { AngularGooglePlaceService } from 'angular-google-place';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { Store, select } from '@ngrx/store';
 import { DxContextMenuComponent } from 'devextreme-angular/ui/context-menu';
+import { Store, select } from '@ngrx/store';
 import { CacheService } from 'ng2-cache-service';
 import { finalize, filter } from 'rxjs/operators';
-import { AngularGooglePlaceService } from 'angular-google-place';
+import { Subscription } from 'rxjs';
 
 /** Application imports */
 import { NameParserService } from '@app/crm/shared/name-parser/name-parser.service';
@@ -97,6 +98,7 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
     private checkValidTimeout;
     private readonly SAVE_OPTION_DEFAULT = 2;
     private readonly SAVE_OPTION_CACHE_KEY = 'save_option_active_index';
+    private similarCustomersSubscription: Subscription;
     private similarCustomersTimeout: any;
     stages: any[] = [];
     stageId: number;
@@ -280,6 +282,7 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
             sourceContactId: this.sourceContactId
         };
 
+        this.clearSimilarCustomersCheck();
         let saveButton: any = document.getElementById(this.saveButtonId);
         saveButton.disabled = true;
         if (this.data.isInLeadMode)
@@ -484,9 +487,9 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
         if (isPhone && contact.number == contact.code)
             return false;
 
-        clearTimeout(this.similarCustomersTimeout);
+        this.clearSimilarCustomersCheck();
         this.similarCustomersTimeout = setTimeout(() => {
-            this.contactProxy.getSimilarContacts(
+            this.similarCustomersSubscription = this.contactProxy.getSimilarContacts(
                 field ? undefined : person.namePrefix || undefined,
                 field ? undefined : person.firstName || undefined,
                 field ? undefined : person.middleName || undefined,
@@ -511,6 +514,12 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
                 }
             });
         }, 1000);
+    }
+
+    clearSimilarCustomersCheck() {
+        if (this.similarCustomersSubscription)
+            this.similarCustomersSubscription.unsubscribe();
+        clearTimeout(this.similarCustomersTimeout);
     }
 
     getSimilarCustomers(field) {
