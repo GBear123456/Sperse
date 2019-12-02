@@ -73,7 +73,7 @@ export class BankAccountsGeneralComponent extends CFOComponentBase implements On
     private initHeadlineConfig() {
         this.headlineConfig = {
             names: [this.l('Setup_Title'), this.l('Accounts')],
-            iconSrc: './assets/common/icons/magic-stick-icon.svg',
+            iconSrc: '/assets/common/icons/magic-stick-icon.svg',
             onRefresh: this._cfoService.hasStaticInstance ? undefined : this.refresh.bind(this),
             buttons: []
         };

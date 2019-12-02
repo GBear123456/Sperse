@@ -13,26 +13,56 @@
                     <ul class="legend-list">
                         <li class="label legend-item">{{l('Historical')}}:</li>
                         <ng-container *ngIf="showInflowsOutflowsCharts$ | async" >
-                            <li class="legend-item inflow">{{l('Stats_Inflows')}}</li>
-                            <li class="legend-item outflows">{{l('Stats_Outflows')}}</li>
+                            <li class="legend-item">
+                                <span class="legend-icon" [ngStyle]="{ background: historicalCreditColor }"></span>
+                                {{l('Stats_Inflows')}}
+                            </li>
+                            <li class="legend-item">
+                                <span class="legend-icon" [ngStyle]="{ background: historicalDebitColor }"></span>
+                                {{l('Stats_Outflows')}}
+                            </li>
                         </ng-container>
-                        <li *ngIf="showNetChangeChart$" class="legend-item net-change">{{l('Net_Change')}}</li>
-                        <li *ngIf="showBalancesChart$ | async" class="legend-item endingBalance" >{{l('Stats_Ending_Balances')}}</li>
+                        <li *ngIf="showNetChangeChart$" class="legend-item">
+                            <span class="legend-icon" [ngStyle]="{ background: historicalNetChangeColor }"></span>
+                            {{l('Net_Change')}}
+                        </li>
+                        <li *ngIf="showBalancesChart$ | async" class="legend-item">
+                            <span class="legend-icon" [ngStyle]="{ background: endingBalanceColor }"></span>
+                            {{l('Stats_Ending_Balances')}}
+                        </li>
                     </ul>
                     <ul class="legend-list" *ngIf="isForecast">
                         <li class="label legend-item">{{l('Forecast')}}:</li>
                         <ng-container *ngIf="showInflowsOutflowsCharts$ | async" >
-                            <li class="legend-item forecast inflow">{{l('Stats_Inflows')}}</li>
-                            <li class="legend-item forecast outflows">{{l('Stats_Outflows')}}</li>
+                            <li class="legend-item">
+                                <span class="legend-icon" [ngStyle]="{ background: forecastCreditColor }"></span>
+                                {{l('Stats_Inflows')}}
+                            </li>
+                            <li class="legend-item">
+                                <span class="legend-icon" [ngStyle]="{ background: forecastDebitColor }"></span>
+                                {{l('Stats_Outflows')}}
+                            </li>
                         </ng-container>
-                        <li *ngIf="showNetChangeChart$" class="legend-item forecast net-change">{{l('Net_Change')}}</li>
-                        <li *ngIf="showBalancesChart$ | async" class="legend-item forecast endingBalance" >{{l('Stats_Ending_Balances')}}</li>
+                        <li *ngIf="showNetChangeChart$" class="legend-item">
+                            <span class="legend-icon" [ngStyle]="{ background: forecastNetChangeColor }"></span>
+                            {{l('Net_Change')}}
+                        </li>
+                        <li *ngIf="showBalancesChart$ | async" class="legend-item">
+                            <span class="legend-icon" [ngStyle]="{ background: forecastEndingBalanceColor }"></span>
+                            {{l('Stats_Ending_Balances')}}
+                        </li>
                     </ul>
                 </ng-container>
                 <ul class="legend-list" *ngIf="selectedChartType.value === chartType.CashBalancesTrends">
                     <li class="label legend-item">{{l('Stats_Ending_Balances')}}:</li>
-                    <li class="legend-item endingBalance">{{l('Historical')}}</li>
-                    <li class="legend-item endingBalance forecast" *ngIf="isForecast">{{l('Forecast')}}</li>
+                    <li class="legend-item">
+                        <span class="legend-icon" [ngStyle]="{ background: endingBalanceColor }"></span>
+                        {{l('Historical')}}
+                    </li>
+                    <li class="legend-item" *ngIf="isForecast">
+                        <span class="legend-icon" [ngStyle]="{ background: forecastEndingBalanceColor }"></span>
+                        {{l('Forecast')}}
+                    </li>
                 </ul>
             </div>
         </ng-container>
@@ -196,12 +226,11 @@
 
         <svg>
             <linearGradient id="ending-balance-gradient" x1="0" x2="0" y1="0" y2="1">
-                <stop offset="0%" stop-color="rgba(249, 231, 132, .5)"/>
+                <stop offset="0%" [attr.stop-color]="endingBalanceStopColor"/>
                 <stop offset="100%" stop-color="#fff"/>
             </linearGradient>
-
             <linearGradient id="forecast-ending-balance-gradient" x1="0" x2="0" y1="0" y2="1">
-                <stop offset="0%" stop-color="rgba(249, 196, 228, .5)"/>
+                <stop offset="0%" [attr.stop-color]="forecastEndingBalanceStopColor"/>
                 <stop offset="100%" stop-color="#fff"/>
             </linearGradient>
         </svg>

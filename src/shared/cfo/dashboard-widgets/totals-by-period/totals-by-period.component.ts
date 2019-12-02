@@ -58,9 +58,6 @@ export class TotalsByPeriodComponent extends CFOComponentBase implements OnInit 
     totalData: TotalDataModel;
     startDate;
     endDate;
-    creditColor = '#35bd9f';
-    debitColor = '#f2526a';
-    netChangeColor = '#35c8a8';
     loading = true;
     allPeriodLocalizationValue = this.l('All_Periods');
     currentPeriod: string;

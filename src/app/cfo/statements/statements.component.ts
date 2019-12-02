@@ -395,7 +395,7 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
             names: [this.l('Statements')],
             // onRefresh: this._cfoService.hasStaticInstance ? undefined : this.invalidate.bind(true),
             toggleToolbar: this.toggleToolbar.bind(this),
-            iconSrc: './assets/common/icons/credit-card-icon.svg'
+            iconSrc: '/assets/common/icons/credit-card-icon.svg'
         };
     }
 

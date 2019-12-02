@@ -13,16 +13,19 @@
                 </div>
             </div>
         </dx-tooltip>
-        <div class="value" id="valueTotal" *ngIf="bankAccountsService.accountsDataTotalNetWorthWithApply$ | async as accountsTotalNetWorth">
-            {{ accountsTotalNetWorth | customNumber : '1.0-0' | currency:cfoPreferencesService.selectedCurrencyId:cfoPreferencesService.selectedCurrencySymbol:'1.0-0'}}
-            <span>.{{ accountsTotalNetWorth | customNumber:'0.2-2'}}</span>
+        <div class="icon" inlineSVG="/assets/common/icons/coins-icon.svg"></div>
+        <div>
+            <div class="value" id="valueTotal" *ngIf="bankAccountsService.accountsDataTotalNetWorthWithApply$ | async as accountsTotalNetWorth">
+                {{ accountsTotalNetWorth | customNumber : '1.0-0' | currency:cfoPreferencesService.selectedCurrencyId:cfoPreferencesService.selectedCurrencySymbol:'1.0-0'}}
+                <span>.{{ accountsTotalNetWorth | customNumber:'0.2-2'}}</span>
+            </div>
+            <div class="name">{{l('Current_Balance')}}</div>
         </div>
-        <div class="name">{{l('Current_Balance')}}</div>
     </div>
     <div class="account-item dailyStats" #dailyStats>
         <div class="row">
             <div class="col-8">
-                 <dx-tooltip
+                <dx-tooltip
                      target="#valueDaily"
                      showEvent="dxhoverstart"
                      hideEvent="dxhoverend">
@@ -30,10 +33,13 @@
                          {{ dailyStatsAmount$ | async | currency: cfoPreferencesService.selectedCurrencyId : 'symbol' : '1.2-2'}}
                      </div>
                  </dx-tooltip>
-                <div class="value" id="valueDaily">
-                    {{ dailyStatsAmount$ | async | customNumber : '1.0-0' | currency:cfoPreferencesService.selectedCurrencyId:cfoPreferencesService.selectedCurrencySymbol:'1.0-0'}}<span>.{{ dailyStatsAmount$ | async | customNumber : '0.2-2' }}</span>
+                <div class="icon" inlineSVG="/assets/common/icons/coins-icon-2.svg"></div>
+                <div>
+                    <div class="value" id="valueDaily">
+                        {{ dailyStatsAmount$ | async | customNumber : '1.0-0' | currency:cfoPreferencesService.selectedCurrencyId:cfoPreferencesService.selectedCurrencySymbol:'1.0-0'}}<span>.{{ dailyStatsAmount$ | async | customNumber : '0.2-2' }}</span>
+                    </div>
+                    <div class="name">{{ dailyStatsText$ | async }}</div>
                 </div>
-                <div class="name">{{ dailyStatsText$ | async }}</div>
             </div>
             <div class="col-4">
                 <ul>
@@ -46,13 +52,16 @@
     </div>
     <div class="account-item total-accounts" id="totalaccounts" (click)="totalAccountsMouseEnter()">
         <a class="view-details">{{l('Select')}}</a>
-        <div class="value">{{ bankAccountsService.accountsAmountWithApply$ | async }}</div>
-        <div class="name">
-            {{ bankAccountsService.filteredBankAccountsStatus$ | async }}
-            {{l(((bankAccountsService.filteredBankAccounts$ | async)?.length ? '' : 'Total_') + 'Accounts')}}
-            <ng-container *ngIf="(bankAccountsService.filteredBankAccounts$ | async)?.length">
-                <span class="filtered">*</span>
-            </ng-container>
+        <div class="icon" inlineSVG="/assets/common/icons/total-icon.svg"></div>
+        <div>
+            <div class="value">{{ bankAccountsService.accountsAmountWithApply$ | async }}</div>
+            <div class="name">
+                {{ bankAccountsService.filteredBankAccountsStatus$ | async }}
+                {{l(((bankAccountsService.filteredBankAccounts$ | async)?.length ? '' : 'Total_') + 'Accounts')}}
+                <ng-container *ngIf="(bankAccountsService.filteredBankAccounts$ | async)?.length">
+                    <span class="filtered">*</span>
+                </ng-container>
+            </div>
         </div>
     </div>
 </div>

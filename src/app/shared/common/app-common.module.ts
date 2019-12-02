@@ -55,6 +55,8 @@ import { ImageCropperModule } from 'ng2-img-cropper';
 import { CreditCardDirectivesModule } from 'angular-cc-library';
 import { AngularGooglePlaceModule } from 'angular-google-place';
 import { TimeAgoPipe } from 'time-ago-pipe';
+import { InlineSVGModule } from 'ng-inline-svg';
+import { InlineSVGConfig } from 'ng-inline-svg/lib/inline-svg.config';
 
 /** Application imports */
 import { AbpModule } from '@abp/abp.module';
@@ -164,7 +166,8 @@ import { SetupStepsComponent } from './setup-steps/setup-steps.component';
         DxSliderModule,
         CreditCardDirectivesModule,
         AngularGooglePlaceModule,
-        LoadingSpinnerModule
+        LoadingSpinnerModule,
+        InlineSVGModule.forRoot(new InlineSVGConfig())
     ],
     declarations: [
         TimeAgoPipe,

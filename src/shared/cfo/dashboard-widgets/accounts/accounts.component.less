@@ -1,4 +1,4 @@
-:host {
+ :host {
     display: block;
 
     .accounts-list {
@@ -8,15 +8,23 @@
 
         .account-item {
             width: 100%;
-            padding: 5px 20px 5px 110px;
+            padding: 5px 20px 5px 50px;
             border: 1px solid #E5E9EC;
-            background: #FFFFFF url('../../../../assets/common/icons/total-icon.svg') 45px 50% no-repeat;
             border-radius: 4px;
             position: relative;
 
             .col-8,
             .col-4 {
                 padding-right: 0;
+            }
+
+            .col-8 {
+                display: flex;
+                align-items: center;
+            }
+
+            .icon {
+                margin-right: 50px;
             }
 
             @media (max-width: 1540px) {
@@ -36,7 +44,6 @@
             }
 
             &.dailyStats {
-                background-image: url('../../../../assets/common/icons/coins-icon-2.svg');
                 .value {
                     font-weight: 400;
                     color: #677380;
@@ -118,8 +125,6 @@
             }
 
             &.networth {
-                background-image: url('../../../../assets/common/icons/coins-icon.svg');
-
                 .value {
                     font-weight: 400;
                     color: #677380;
@@ -135,6 +140,12 @@
                         left: -4px;
                     }
                 }
+            }
+
+            &.networth,
+            &.total-accounts {
+                display: flex;
+                align-items: center;
             }
 
             .value {

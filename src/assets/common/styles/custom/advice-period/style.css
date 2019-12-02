@@ -12,17 +12,17 @@ body.advice-period app-header dx-drop-down-box input {
 }
 body.advice-period app-header dx-nav-bar .dx-item.dx-tab.dx-state-hover .dx-menu-item-text,
 body.advice-period app-header dx-nav-bar .dx-item.dx-tab.dx-tab-selected .dx-menu-item-text {
-  color: #F7931F!important;
+  color: #F7931F !important;
 }
 body.advice-period app-header dx-nav-bar .dx-item.dx-tab.dx-tab-selected {
   border-bottom: none!important;
 }
 body.advice-period app-header dx-nav-bar .dx-item.dx-tab .dx-menu-item-text {
-  color: #FFF!important;
+  color: #FFF !important;
   text-transform: uppercase;
 }
 body.advice-period .m-topbar__nav span.m-dropdown__arrow {
-  color: #423332!important;
+  color: #423332 !important;
 }
 body.advice-period .page-header.navbar .page-top #m_header_topbar .m-dropdown__header {
   box-shadow: none !important;
@@ -47,11 +47,11 @@ body.advice-period .page-top i[aria-label="Notifications"]:before {
   display: none;
 }
 body.advice-period contact-info-panel header {
-  background: #423332!important;
+  background: #423332 !important;
   color: #fff;
 }
 body.advice-period contact-info-panel .full_name h1 {
-  color: #fff!important;
+  color: #fff !important;
 }
 body.advice-period .swal-modal {
   background: #fee192;
@@ -78,7 +78,7 @@ body.advice-period .swal-modal .swal-icon.swal-icon--warning:before {
   content: "\2713";
 }
 body.advice-period .swal-modal .swal-icon > div:first-child:before {
-  color: #000!important;
+  color: #000 !important;
 }
 body.advice-period .swal-modal .swal-title {
   color: #000;
@@ -127,7 +127,7 @@ body.advice-period .cdk-overlay-pane.footer-slider modal-dialog .close-dialog,
 body.advice-period .cdk-overlay-pane.user-info modal-dialog .close-dialog,
 body.advice-period .cdk-overlay-pane.footer-slider app-modal-dialog .close-dialog,
 body.advice-period .cdk-overlay-pane.user-info app-modal-dialog .close-dialog {
-  background: #f0f0f0!important;
+  background: #f0f0f0 !important;
 }
 body.advice-period .cdk-overlay-pane.footer-slider modal-dialog .close-dialog:before,
 body.advice-period .cdk-overlay-pane.user-info modal-dialog .close-dialog:before,
@@ -137,13 +137,13 @@ body.advice-period .cdk-overlay-pane.footer-slider modal-dialog .close-dialog:af
 body.advice-period .cdk-overlay-pane.user-info modal-dialog .close-dialog:after,
 body.advice-period .cdk-overlay-pane.footer-slider app-modal-dialog .close-dialog:after,
 body.advice-period .cdk-overlay-pane.user-info app-modal-dialog .close-dialog:after {
-  background: #000!important;
+  background: #000 !important;
 }
 body.advice-period .cdk-overlay-pane.footer-slider modal-dialog .mat-dialog-header,
 body.advice-period .cdk-overlay-pane.user-info modal-dialog .mat-dialog-header,
 body.advice-period .cdk-overlay-pane.footer-slider app-modal-dialog .mat-dialog-header,
 body.advice-period .cdk-overlay-pane.user-info app-modal-dialog .mat-dialog-header {
-  background: #f0f0f0!important;
+  background: #f0f0f0 !important;
 }
 body.advice-period .cdk-overlay-pane.footer-slider modal-dialog .mat-dialog-header dx-text-box,
 body.advice-period .cdk-overlay-pane.user-info modal-dialog .mat-dialog-header dx-text-box,
@@ -155,7 +155,7 @@ body.advice-period .cdk-overlay-pane.footer-slider modal-dialog .mat-dialog-head
 body.advice-period .cdk-overlay-pane.user-info modal-dialog .mat-dialog-header input,
 body.advice-period .cdk-overlay-pane.footer-slider app-modal-dialog .mat-dialog-header input,
 body.advice-period .cdk-overlay-pane.user-info app-modal-dialog .mat-dialog-header input {
-  color: #000!important;
+  color: #000 !important;
   background: transparent!important;
 }
 @media all and (max-width: 600px) {
@@ -206,7 +206,7 @@ body.advice-period .cdk-overlay-pane.user-info app-modal-dialog .mat-dialog-head
   body.advice-period .cdk-overlay-pane.user-info .close-dialog:before,
   body.advice-period .cdk-overlay-pane.footer-slider .close-dialog:after,
   body.advice-period .cdk-overlay-pane.user-info .close-dialog:after {
-    background: #FFF!important;
+    background: #FFF !important;
   }
 }
 @media (max-width: 767px) {
@@ -221,4 +221,54 @@ body.advice-period /deep/ top-bar .adaptive-menu {
   body.advice-period /deep/ top-bar .adaptive-menu {
     display: block !important;
   }
+}
+body.advice-period .icon-light-color {
+  fill: #ffe6d2;
+  stroke: #ffe6d2;
+}
+body.advice-period .icon-medium-color {
+  fill: #fbcaa3;
+  stroke: #fbcaa3;
+}
+body.advice-period .icon-dark-color {
+  fill: #e47822;
+  stroke: #e47822;
+}
+body.advice-period .icon-green {
+  fill: #99c24d;
+}
+body.advice-period .icon-blue {
+  fill: #86c5dc;
+}
+body.advice-period icon-orange {
+  fill: #e47822;
+}
+body.advice-period .add-link,
+body.advice-period .view-details,
+body.advice-period .link-item .link,
+body.advice-period .category-synch-item .icon {
+  color: #e47822 !important;
+}
+body.advice-period .link-item .link:hover,
+body.advice-period .view-details:hover {
+  color: #e78639 !important;
+}
+body.advice-period .chart-head a.inflows {
+  color: #86c5dc !important;
+}
+body.advice-period .chart-head a.outflows {
+  color: #e47822 !important;
+}
+body.advice-period .chart-line.inflows div {
+  background-color: #86c5dc !important;
+}
+body.advice-period .chart-line.outflows div {
+  background-color: #e47822 !important;
+}
+body.advice-period .synch-status a {
+  border-bottom: #99c24d !important;
+}
+body.advice-period .small-button:hover {
+  background: #e78639 !important;
+  border-color: #e78639 !important;
 }

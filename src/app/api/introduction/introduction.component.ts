@@ -21,7 +21,7 @@ import { EditKeyDialog } from '@app/api/introduction/add-key-dialog/add-key-dial
 export class IntroductionComponent extends AppComponentBase implements OnInit, OnDestroy {
     public headlineConfig = {
         names: [this.l('Interactive API Documentation')],
-        iconSrc: './assets/common/icons/api-icon.svg',
+        iconSrc: '/assets/common/icons/api-icon.svg',
         buttons: []
     };
     toggleTooltip = true;

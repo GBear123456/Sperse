@@ -12,6 +12,8 @@ import { DxTooltipModule } from 'devextreme-angular/ui/tooltip';
 import { DxChartModule } from 'devextreme-angular/ui/chart';
 import { DxSliderModule } from 'devextreme-angular/ui/slider';
 import { DxPieChartModule } from 'devextreme-angular/ui/pie-chart';
+import { InlineSVGModule } from 'ng-inline-svg';
+import { InlineSVGConfig } from 'ng-inline-svg/lib/inline-svg.config';
 
 /** Application imports */
 import { CommonModule } from '@shared/common/common.module';
@@ -43,6 +45,7 @@ export function defaultPeriodFactory(cfoService: CFOService) {
         DxSliderModule,
         MatDialogModule,
         DxPieChartModule,
+        InlineSVGModule.forRoot(new InlineSVGConfig()),
         ngCommon.CommonModule
     ],
     declarations: [

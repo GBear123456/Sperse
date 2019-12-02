@@ -5571,6 +5571,10 @@ ng-circle-progress@^1.5.1:
   dependencies:
     tslib "^1.9.0"
 
+ng-inline-svg@7.0.0:
+  version "7.0.0"
+  resolved "https://registry.yarnpkg.com/ng-inline-svg/-/ng-inline-svg-7.0.0.tgz#4538864abf4589d334ad01a6d676794bb81682ac"
+
 ng-recaptcha@4.0.0-beta.1:
   version "4.0.0-beta.1"
   resolved "https://registry.yarnpkg.com/ng-recaptcha/-/ng-recaptcha-4.0.0-beta.1.tgz#68f80c8f136718230d401ff2d5486bc83e043e99"
