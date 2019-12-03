@@ -436,7 +436,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
     initHeadlineConfig() {
         this.headlineConfig = {
             names: [this.l('Daily Cash Balances')],
-            iconSrc: './assets/common/icons/pulse-icon.svg',
+            iconSrc: 'assets/common/icons/pulse-icon.svg',
             // onRefresh: this._cfoService.hasStaticInstance ? undefined : this.getUpdatedDataSource.bind(this),
             toggleToolbar: this.toggleToolbar.bind(this),
             buttons: [

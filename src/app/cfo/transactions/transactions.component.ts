@@ -484,7 +484,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             names: [this.l('Transactions')],
             // onRefresh: this._cfoService.hasStaticInstance ? undefined : this.refreshDataGrid.bind(this),
             toggleToolbar: this.toggleToolbar.bind(this),
-            iconSrc: './assets/common/icons/credit-card-icon.svg',
+            iconSrc: 'assets/common/icons/credit-card-icon.svg',
             class: this.noRefreshedAfterSync ? 'need-refresh' : 'no-need-refresh',
             buttons: [
                 {

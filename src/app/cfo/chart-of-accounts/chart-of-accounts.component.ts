@@ -48,7 +48,7 @@ export class ChartOfAccountsComponent extends CFOComponentBase implements OnInit
         this.getRootComponent().overflowHidden(true);
         this.headlineConfig = {
             names: [this.l('Setup_Title'), this.l('SetupStep_Chart')],
-            iconSrc: './assets/common/icons/magic-stick-icon.svg'
+            iconSrc: 'assets/common/icons/magic-stick-icon.svg'
         };
 
         //this.dataSource = {

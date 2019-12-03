@@ -37,6 +37,7 @@ import { ITotalOption } from '@app/crm/dashboard/total-options.interface';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { PipelineService } from '@app/shared/pipeline/pipeline.service';
 import { ContactGroup } from '@shared/AppEnums';
+import { LayoutService } from '@app/shared/layout/layout.service';
 
 @Component({
     selector: 'totals-by-source',
@@ -51,10 +52,10 @@ export class TotalsBySourceComponent implements OnInit, OnDestroy {
     totalCount$: Observable<number>;
     totalCount: string;
     rangeColors = [
-        '#00aeef',
-        '#8487e7',
-        '#86c45d',
-        '#f7d15e',
+        this.layoutService.getLayoutColor('blue'),
+        this.layoutService.getLayoutColor('purple'),
+        this.layoutService.getLayoutColor('green'),
+        this.layoutService.getLayoutColor('orange'),
         '#ecf0f3'
     ];
     rawData: any[];
@@ -129,6 +130,7 @@ export class TotalsBySourceComponent implements OnInit, OnDestroy {
         private changeDetectorRef: ChangeDetectorRef,
         private appSession: AppSessionService,
         private pipelineService: PipelineService,
+        private layoutService: LayoutService,
         public ls: AppLocalizationService
     ) {}
 

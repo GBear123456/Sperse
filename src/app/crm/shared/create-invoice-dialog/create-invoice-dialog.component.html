@@ -25,7 +25,7 @@
             [(value)]="invoiceNo"
             [showClearButton]="false">
         </dx-text-box>
-        <span>{{ status | uppercase }}</span>
+        <span>{{ startCase(status) | uppercase }}</span>
     </ng-container>
 
     <div class="form-content">

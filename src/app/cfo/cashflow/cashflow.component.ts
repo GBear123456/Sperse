@@ -938,7 +938,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             names: [this.l('Cashflow_mainTitle')],
             // onRefresh:  this._cfoService.hasStaticInstance ? undefined : this.refreshDataGrid.bind(this),
             toggleToolbar: this.toggleToolbar.bind(this),
-            iconSrc: './assets/common/icons/chart-icon.svg'
+            iconSrc: 'assets/common/icons/chart-icon.svg'
         };
     }
 
@@ -3533,7 +3533,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             onEnterKey: this.saveForecast.bind(this, cellObj)
         });
         this.functionButton = new Button(wrapperButton, {
-            iconSrc: './assets/common/icons/fx.svg',
+            iconSrc: '/assets/common/icons/fx.svg',
             onClick: this.toggelCalculator.bind(this, event),
             elementAttr: { 'class' : 'function-button'}
         });
@@ -4453,7 +4453,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             }
         });
         this.functionButton = new Button(wrapperButton, {
-            iconSrc: './assets/common/icons/fx.svg',
+            iconSrc: '/assets/common/icons/fx.svg',
             onClick: this.toggelCalculator.bind(this, event),
             elementAttr: { 'class': 'function-button' }
         });

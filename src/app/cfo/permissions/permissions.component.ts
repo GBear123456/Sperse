@@ -83,7 +83,7 @@ export class PermissionsComponent extends CFOComponentBase implements OnInit, Af
     };
     public headlineConfig = {
         names: [this.l('SetupStep_Permissions')],
-        iconSrc: './assets/common/icons/user-permissions.svg',
+        iconSrc: 'assets/common/icons/user-permissions.svg',
         onRefresh: this.onRefresh.bind(this),
     };
     constructor(injector: Injector,

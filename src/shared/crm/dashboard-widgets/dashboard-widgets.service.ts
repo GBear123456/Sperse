@@ -15,6 +15,7 @@ import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { PeriodService } from '@app/shared/common/period/period.service';
 import { AppPermissions } from '@shared/AppPermissions';
 import { Period } from '@app/shared/common/period/period.enum';
+import { LayoutService } from '@app/shared/layout/layout.service';
 
 @Injectable()
 export class DashboardWidgetsService  {
@@ -31,7 +32,7 @@ export class DashboardWidgetsService  {
     totalsDataFields = [
         {
             title: 'Sales',
-            color: '#8487e7',
+            color: this.layoutService.getLayoutColor('totalSales'),
             name: 'totalOrderAmount',
             type: 'currency',
             percent:  '0%',
@@ -39,14 +40,14 @@ export class DashboardWidgetsService  {
                 this.permissionService.isGranted(AppPermissions.CRMOrders)
         }, {
             title: 'Leads',
-            color: '#00aeef',
+            color: this.layoutService.getLayoutColor('totalLeads'),
             name: 'totalLeadCount',
             type: 'number',
             percent: '0%',
             visible: this.isGrantedCustomers
        }, {
            title: 'Clients',
-           color: '#f4ae55',
+           color: this.layoutService.getLayoutColor('totalClients'),
            name: 'totalClientCount',
            type: 'number',
            percent: '0%',
@@ -73,7 +74,8 @@ export class DashboardWidgetsService  {
         private dashboardServiceProxy: DashboardServiceProxy,
         private cacheService: CacheService,
         private ls: AppLocalizationService,
-        private periodService: PeriodService
+        private periodService: PeriodService,
+        private layoutService: LayoutService
     ) {
         combineLatest(
             this.period$,

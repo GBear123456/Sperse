@@ -13,31 +13,31 @@
 
             <div class="chart-head">
                 {{l('Cash_Inflows')}}
-                <a [routerLink]="['../transactions']"
-                   [queryParams]="{ cashflowTypeIds: 'I' }"
-                   [ngStyle]="{'color': creditColor}">
+                <a class="inflows"
+                   [routerLink]="['../transactions']"
+                   [queryParams]="{ cashflowTypeIds: 'I' }">
                     <ng-container *ngIf="totalData.credit > 0"><span class="plus">+</span></ng-container>
                     {{ totalData.credit | currency:cfoPreferencesService.selectedCurrencyId:cfoPreferencesService.selectedCurrencySymbol }}
                 </a>
             </div>
-            <div class="chart-line"><div [ngStyle]="{width: totalData.creditPercent + '%', 'background-color': creditColor}"></div></div>
+            <div class="chart-line inflows"><div [ngStyle]="{width: totalData.creditPercent + '%'}"></div></div>
+
             <div class="chart-head">
                 {{l('Cash_Outflows')}}
-                <a [routerLink]="['../transactions']"
-                   [queryParams]="{ cashflowTypeIds: 'E' }"
-                   [ngStyle]="{'color': debitColor}">
+                <a class="outflows"
+                   [routerLink]="['../transactions']"
+                   [queryParams]="{ cashflowTypeIds: 'E' }">
                     <ng-container *ngIf="totalData.debit > 0"><span class="plus">+</span></ng-container>
                     {{ totalData.debit | currency:cfoPreferencesService.selectedCurrencyId:cfoPreferencesService.selectedCurrencySymbol }}
                 </a>
             </div>
-            <div class="chart-line"><div [ngStyle]="{width: totalData.debitPercent + '%', 'background-color': debitColor}"></div></div>
-
+            <div class="chart-line outflows"><div [ngStyle]="{width: totalData.debitPercent + '%'}"></div></div>
 
             <div class="chart-head">
                 {{l('Net_Change')}}
                 <a [routerLink]="['../transactions']"
                    [queryParams]="{ cashflowTypeIds: 'I,E' }"
-                   [ngStyle]="{'color': totalData.netChange > 0 ? netChangeColor : debitColor}">
+                   [ngClass]="totalData.netChange > 0 ? 'inflows': 'outflows'">
                     <ng-container *ngIf="totalData.netChange > 0"><span class="plus">+</span></ng-container>
                     {{ totalData.netChange | currency:cfoPreferencesService.selectedCurrencyId:cfoPreferencesService.selectedCurrencySymbol }}
                 </a>

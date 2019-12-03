@@ -49,7 +49,7 @@
                             <dxi-column dataField="InvoiceId" caption="{{l('Invoice')}}"></dxi-column>
                             <dxi-column dataField="Amount" dataType="string" caption="{{l('Amount')}}" cellTemplate="amountCell"></dxi-column>
                             <dxi-column dataField="OrderType" caption="{{l('Type')}}"></dxi-column>
-                            <dxi-column dataField="InvoiceStatus" caption="{{l('Status')}}" cellTemplate="statusCell"></dxi-column>
+                            <dxi-column dataField="InvoiceStatus" caption="{{l('Status')}}" alignment="center" cellTemplate="statusCell"></dxi-column>
                             <dxi-column dataField="OrderStage" caption="{{l('Stage')}}"></dxi-column>
                             <dxi-column dataField="Date" caption="{{l('Date')}}" cellTemplate="datetimeCell"></dxi-column>
                             <dxi-column dataField="InvoiceDueDate" caption="{{l('Due Date')}}" cellTemplate="dateCell"></dxi-column>
@@ -58,8 +58,8 @@
 
                             <a class="dx-link dx-link-edit" *dxTemplate="let cellData of 'actionsCellTemplate'">&nbsp;</a>
 
-                            <div *dxTemplate="let cellData of 'statusCell'">
-                                <div *ngIf="cellData.value" class="status {{ cellData.value | lowercase }}">{{ cellData.value }}</div>
+                            <div *dxTemplate="let cellData of 'statusCell'" class="status-wrapper">
+                                <div *ngIf="cellData.value" class="status {{ cellData.value | lowercase }}">{{ startCase(cellData.value) }}</div>
                             </div>
                             <div *dxTemplate="let cellData of 'dateCell'">
                                 {{ cellData.value | date: formatting.date }}

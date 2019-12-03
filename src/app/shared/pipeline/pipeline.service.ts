@@ -15,7 +15,7 @@ import { CrmStore, PipelinesStoreSelectors } from '@app/crm/store';
 import {
     LeadServiceProxy, CancelLeadInfo, UpdateLeadStageInfo, ProcessLeadInput,
     PipelineServiceProxy, PipelineDto, ActivityServiceProxy, TransitionActivityDto,
-    OrderServiceProxy, UpdateOrderStageInfo, CancelOrderInfo, ProcessOrderInfo, StageDto
+    OrderServiceProxy, UpdateOrderStageInfo, CancelOrderInfo, ProcessOrderInfo, StageDto, LayoutType
 } from '@shared/service-proxies/service-proxies';
 import { EntityCancelDialogComponent } from './confirm-cancellation-dialog/confirm-cancellation-dialog.component';
 import { LeadCompleteDialogComponent } from './complete-lead-dialog/complete-lead-dialog.component';
@@ -25,6 +25,7 @@ import { AppConsts } from '@shared/AppConsts';
 import { ContactGroup } from '@shared/AppEnums';
 import { DataLayoutType } from '@app/shared/layout/data-layout-type';
 import { Stage } from '@app/shared/pipeline/stage.model';
+import { AppSessionService } from '@shared/common/session/app-session.service';
 
 interface StageColor {
     [stageSortOrder: string]: string;
@@ -35,16 +36,29 @@ export class PipelineService {
     private stageChange: Subject<any> = new Subject<any>();
     stageChange$: Observable<any> = this.stageChange.asObservable();
     private pipelineDefinitions: any = {};
-    private defaultStagesColors: StageColor = {
-        '-4': '#f02929',
-        '-3': '#f05b29',
-        '-2': '#f4ae55',
-        '-1': '#f7d15e',
-        '0': '#00aeef',
-        '1': '#b6cf5e',
-        '2': '#86c45d',
-        '3': '#46aa6e',
-        '4': '#0e9360'
+    private defaultStagesColors: { [layoutType: string]: StageColor } = {
+        [LayoutType.Default]: {
+            '-4': '#f02929',
+            '-3': '#f05b29',
+            '-2': '#f4ae55',
+            '-1': '#f7d15e',
+            '0': '#00aeef',
+            '1': '#b6cf5e',
+            '2': '#86c45d',
+            '3': '#46aa6e',
+            '4': '#0e9360'
+        },
+        [LayoutType.AdvicePeriod]: {
+            '-4': '#e47822',
+            '-3': '#c3dfe9',
+            '-2': '#a5cfdf',
+            '-1': '#3d8ba9',
+            '0': '#fed142',
+            '1': '#ffab3e',
+            '2': '#c4e18c',
+            '3': '#99c24d',
+            '4': '#0e9360'
+        }
     };
     private dataLayoutType: BehaviorSubject<DataLayoutType> = new BehaviorSubject<DataLayoutType>(DataLayoutType.Pipeline);
     dataLayoutType$: Observable<DataLayoutType> = this.dataLayoutType.asObservable();
@@ -61,7 +75,8 @@ export class PipelineService {
         private pipelineServiceProxy: PipelineServiceProxy,
         private ls: AppLocalizationService,
         private notify: NotifyService,
-        private store$: Store<CrmStore.State>
+        private store$: Store<CrmStore.State>,
+        private appSessionService: AppSessionService
     ) {}
 
     toggleDataLayoutType(dataLayoutType: DataLayoutType) {
@@ -387,13 +402,17 @@ export class PipelineService {
             complete && complete();
     }
 
-    getStageDefaultColorByStageSortOrder(stageSortOrder: number) {
+    getStageDefaultColorByStageSortOrder(stageSortOrder: number): string {
+        const layoutType = this.appSessionService.layoutType;
+        const stagesColors = this.defaultStagesColors[layoutType] || this.defaultStagesColors[LayoutType.Default];
         /** Get default or the closest color */
-        let color = this.defaultStagesColors[stageSortOrder] ;
+        let color = stagesColors[stageSortOrder];
         /** If there is not default color for the sort order - get the closest */
         if (!color) {
-            const defaultColorsKeys = Object.keys(this.defaultStagesColors);
-            color = +defaultColorsKeys[0] > stageSortOrder ? this.defaultStagesColors[defaultColorsKeys[0]] : this.defaultStagesColors[defaultColorsKeys[defaultColorsKeys.length]];
+            const defaultColorsKeys = Object.keys(stagesColors);
+            color = +defaultColorsKeys[0] > stageSortOrder
+                ? stagesColors[defaultColorsKeys[0]]
+                : stagesColors[defaultColorsKeys[defaultColorsKeys.length]];
         }
         return color;
     }

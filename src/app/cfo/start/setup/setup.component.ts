@@ -40,7 +40,7 @@ export class SetupComponent extends CFOComponentBase implements AfterViewInit, O
     ngOnInit(): void {
         this.headlineConfig = {
             names: [this.l('Setup_Title')],
-            iconSrc: './assets/common/icons/magic-stick-icon.svg',
+            iconSrc: 'assets/common/icons/magic-stick-icon.svg',
             buttons: []
         };
         this.rootComponent.overflowHidden(true);

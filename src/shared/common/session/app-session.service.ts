@@ -1,6 +1,12 @@
 import { AbpMultiTenancyService } from '@abp/multi-tenancy/abp-multi-tenancy.service';
 import { Injectable } from '@angular/core';
-import { ApplicationInfoDto, SessionServiceProxy, TenantLoginInfoDto, UserLoginInfoDto } from '@shared/service-proxies/service-proxies';
+import {
+    ApplicationInfoDto,
+    LayoutType,
+    SessionServiceProxy,
+    TenantLoginInfoDto,
+    UserLoginInfoDto
+} from '@shared/service-proxies/service-proxies';
 
 @Injectable()
 export class AppSessionService {
@@ -47,6 +53,10 @@ export class AppSessionService {
 
     get tenantId(): number {
         return this.tenant ? this.tenant.id : null;
+    }
+
+    get layoutType(): string {
+        return this.tenant && this.tenant.customLayoutType ? this.tenant.customLayoutType : LayoutType.Default;
     }
 
     getShownLoginName(): string {

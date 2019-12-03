@@ -61,6 +61,7 @@ import { ChartTypeModel } from '@shared/cfo/dashboard-widgets/trend-by-period/ch
 import { ChartType } from '@shared/cfo/dashboard-widgets/trend-by-period/chart-type.enum';
 import { AbpSessionService } from '@abp/session/abp-session.service';
 import { CacheService } from '@node_modules/ng2-cache-service';
+import { LayoutService } from '@app/shared/layout/layout.service';
 
 @Component({
     selector: 'app-trend-by-period',
@@ -77,14 +78,16 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit, 
     chartHeight = 245;
     chartWidth = 650;
     isForecast = false;
-    endingBalanceColor = '#F9E784';
-    forecastEndingBalanceColor = '#f9c4e4';
-    historicalCreditColor = '#00aeef';
-    historicalDebitColor = '#f05b2a';
-    forecastCreditColor = '#a9e3f9';
-    forecastDebitColor = '#fec6b3';
-    historicalNetChangeColor = '#fab800';
-    forecastNetChangeColor = '#a82aba';
+    historicalCreditColor = this.layoutService.getLayoutColor('historicalCredit');
+    historicalDebitColor = this.layoutService.getLayoutColor('historicalDebit');
+    historicalNetChangeColor = this.layoutService.getLayoutColor('historicalNetChange');
+    endingBalanceColor = this.layoutService.getLayoutColor('endingBalance');
+    endingBalanceStopColor = this.layoutService.colorLuminance(this.endingBalanceColor, 0.5);
+    forecastCreditColor = this.layoutService.getLayoutColor('forecastCredit');
+    forecastDebitColor = this.layoutService.getLayoutColor('forecastDebit');
+    forecastNetChangeColor = this.layoutService.getLayoutColor('forecastNetChange');
+    forecastEndingBalanceColor = this.layoutService.getLayoutColor('forecastEndingBalance');
+    forecastEndingBalanceStopColor = this.layoutService.colorLuminance(this.forecastEndingBalanceColor, 0.5);
     barChartTooltipFields = [
         {
             'name': 'startingBalance',
@@ -259,6 +262,7 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit, 
         private cfoStore$: Store<CfoStore.State>,
         private sessionService: AbpSessionService,
         private cacheService: CacheService,
+        private layoutService: LayoutService,
         public cfoPreferencesService: CfoPreferencesService
     ) {
         super(injector);

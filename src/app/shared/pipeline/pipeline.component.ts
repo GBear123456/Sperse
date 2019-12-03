@@ -16,6 +16,7 @@ import * as moment from 'moment';
 import extend from 'lodash/extend';
 import clone from 'lodash/clone';
 import uniqBy from 'lodash/uniqBy';
+import oDataUtils from "devextreme/data/odata/utils";
 
 /** Application imports */
 import { ODataService } from '@shared/common/odata/odata.service';
@@ -173,6 +174,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                     ...stage,
                     entities: [],
                     full: true,
+                    color: this.pipelineService.getStageDefaultColorByStageSortOrder(stage.sortOrder),
                     isLoading: true,
                     stageIndex: undefined,
                     total: undefined,
@@ -484,6 +486,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
             response.subscribe(
                 () => {},
                 (error) => {
+                    stage.isLoading = false;
                     if (error != 'canceled')
                         this.message.error(error);
                 }

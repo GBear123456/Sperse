@@ -24,6 +24,10 @@
                 width: 19px !important;
             }
         }
+        div.status-wrapper {
+            display: flex;
+            justify-content: center;
+        }
         div.status {
             width: 110px;
             height: 26px;
@@ -59,6 +63,15 @@
             }
             &.draft:before {
                 background: rgba(64, 89, 107, 0.28);
+            }
+            &.partiallypaid {
+                width: 145px;
+                &:before {
+                    background: #248392;
+                }
+            }
+            &.paid:before {
+                background: #3acddc;
             }              
         }
     }

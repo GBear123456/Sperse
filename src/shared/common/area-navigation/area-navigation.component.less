@@ -311,13 +311,16 @@
 
 /deep/ body.bank-code {
     .area-navigation li {
-        padding: 0 5px;
+        padding: 0 5px !important;
 
         &.app-list-item {
             & > a {
                 padding: 22px 10px 21px !important;
                 border-bottom: 2px solid transparent;
                 text-align: center;
+                @media (max-width: 991px) {
+                    padding: 22px 3px 21px !important;
+                }
             }
 
             &:hover, &.active {

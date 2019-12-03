@@ -1344,7 +1344,7 @@ export class CashflowService {
     }
 
     weekSorting(firstItem, secondItem) {
-        return JSON.parse(firstItem.value) > JSON.parse(secondItem.value) ? 1 : -1;
+        return JSON.parse(firstItem.value).weekNumber > JSON.parse(secondItem.value).weekNumber ? 1 : -1;
     }
 
     getWeekHeaderCustomizer(): any {

@@ -16,12 +16,13 @@ import { BankAccountsService } from '../../bank-accounts/helpers/bank-accounts.s
 import { DashboardService } from '../dashboard.service';
 import { LifecycleSubjectsService } from '@root/shared/common/lifecycle-subjects/lifecycle-subjects.service';
 import { CategorizationStatus } from '@shared/service-proxies/service-proxies';
+import { LayoutService } from '@app/shared/layout/layout.service';
 
 @Component({
     selector: 'app-categorization-status',
     templateUrl: './categorization-status.component.html',
     styleUrls: ['./categorization-status.component.less'],
-    providers: [DashboardServiceProxy, ClassificationServiceProxy, LifecycleSubjectsService]
+    providers: [ DashboardServiceProxy, ClassificationServiceProxy, LifecycleSubjectsService ]
 })
 export class CategorizationStatusComponent extends CFOComponentBase implements OnInit {
     categorySynchData: CategorizationStatus;
@@ -32,15 +33,18 @@ export class CategorizationStatusComponent extends CFOComponentBase implements O
         select(CurrenciesStoreSelectors.getSelectedCurrencyId),
         filter(Boolean)
     );
+    classifiedColor: string = this.layoutService.getLayoutColor('green');
+    unclassifiedColor: string = this.layoutService.getLayoutColor('orange');
 
     constructor(
         injector: Injector,
-        private _dashboardService: DashboardService,
-        private _bankAccountService: BankAccountsService,
-        private _dashboardServiceProxy: DashboardServiceProxy,
-        private _classificationService: ClassificationServiceProxy,
-        private _lifeCycleService: LifecycleSubjectsService,
+        private dashboardService: DashboardService,
+        private bankAccountService: BankAccountsService,
+        private dashboardServiceProxy: DashboardServiceProxy,
+        private classificationService: ClassificationServiceProxy,
+        private lifeCycleService: LifecycleSubjectsService,
         private store$: Store<RootStore.State>,
+        private layoutService: LayoutService,
         public dialog: MatDialog
     ) {
         super(injector);
@@ -51,18 +55,18 @@ export class CategorizationStatusComponent extends CFOComponentBase implements O
     }
 
     activate() {
-        this._lifeCycleService.activate.next();
+        this.lifeCycleService.activate.next();
     }
 
     load(): void {
         combineLatest(
-            this._dashboardService.refresh$,
+            this.dashboardService.refresh$,
             this.currencyId$,
-            this._bankAccountService.selectedBankAccountsIds$
+            this.bankAccountService.selectedBankAccountsIds$
         ).pipe(
-            switchMap((data) => this.componentIsActivated ? of(data) : this._lifeCycleService.activate$.pipe(first(), mapTo(data))),
+            switchMap((data) => this.componentIsActivated ? of(data) : this.lifeCycleService.activate$.pipe(first(), mapTo(data))),
             tap(() => this.startLoading()),
-            switchMap(([, currencyId, bankAccountIds]: [null,  string, number[]]) => this._dashboardServiceProxy.getCategorizationStatus(
+            switchMap(([, currencyId, bankAccountIds]: [null,  string, number[]]) => this.dashboardServiceProxy.getCategorizationStatus(
                 InstanceType[this.instanceType], this.instanceId, currencyId, bankAccountIds
             ).pipe(
                 catchError(() => of(new CategorizationStatus())),
@@ -77,7 +81,7 @@ export class CategorizationStatusComponent extends CFOComponentBase implements O
 
     autoClassify(): void {
         this.notify.info('Auto-classification has started');
-        this._classificationService.autoClassify(InstanceType[this.instanceType], this.instanceId, this.autoClassifyData)
+        this.classificationService.autoClassify(InstanceType[this.instanceType], this.instanceId, this.autoClassifyData)
             .subscribe((result) => {
                 this.load();
                 this.notify.info('Auto-classification has ended');
@@ -87,7 +91,7 @@ export class CategorizationStatusComponent extends CFOComponentBase implements O
 
     reset(): void {
         this.notify.info('Reset process has started');
-        this._classificationService.reset(InstanceType[this.instanceType], this.instanceId, this.resetRules)
+        this.classificationService.reset(InstanceType[this.instanceType], this.instanceId, this.resetRules)
             .subscribe((result) => {
                 this.load();
                 this.notify.info('Reset process has ended');
@@ -116,9 +120,9 @@ export class CategorizationStatusComponent extends CFOComponentBase implements O
             }
         };
 
-        if (this._bankAccountService.state.selectedBankAccountIds && this._bankAccountService.state.selectedBankAccountIds.length) {
+        if (this.bankAccountService.state.selectedBankAccountIds && this.bankAccountService.state.selectedBankAccountIds.length) {
             filter['Account'] = {
-                element: this._bankAccountService.state.selectedBankAccountIds
+                element: this.bankAccountService.state.selectedBankAccountIds
             };
         }
 

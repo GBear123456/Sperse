@@ -13,7 +13,7 @@
     &.collapsed {
         position: absolute;
         transform: translate(-100%);
-        .toggle-button img {
+        .toggle-button div {
             transform: rotate(180deg);
             left: 0;
         }
@@ -229,9 +229,11 @@
         display: flex;
         justify-content: center;
         cursor: pointer;
-        img {
+        div {
             position: relative;
             left: -3px;
+            height: 12px;
+            display: flex;
         }
         &:focus {
             outline: none;

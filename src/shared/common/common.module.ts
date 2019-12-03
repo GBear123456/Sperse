@@ -8,6 +8,8 @@ import { FormsModule } from '@angular/forms';
 import { MatDialogModule } from '@angular/material/dialog';
 import { DxTextBoxModule } from 'devextreme-angular/ui/text-box';
 import { DxCheckBoxModule } from 'devextreme-angular/ui/check-box';
+import { InlineSVGModule } from 'ng-inline-svg';
+import { InlineSVGConfig } from 'ng-inline-svg/lib/inline-svg.config';
 
 /** Application imports */
 import { ZipCodeFormatterPipe } from '@shared/common/pipes/zip-code-formatter/zip-code-formatter.pipe';
@@ -31,6 +33,7 @@ import { CacheHelper } from '@shared/common/cache-helper/cache-helper';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
 import { PrimengTableHelper } from '@shared/helpers/PrimengTableHelper';
 import { PhoneFormatModule } from '@shared/common/pipes/phone-format/phone-format.module';
+import { AppConsts } from '@shared/AppConsts';
 
 @NgModule({
     declarations: [
@@ -61,7 +64,8 @@ import { PhoneFormatModule } from '@shared/common/pipes/phone-format/phone-forma
 
         ModalDialogComponent,
         ConditionsModalComponent,
-        NoDataModule
+        NoDataModule,
+        InlineSVGModule
     ],
     imports: [
         ngCommon.CommonModule,
@@ -72,7 +76,8 @@ import { PhoneFormatModule } from '@shared/common/pipes/phone-format/phone-forma
         MatDialogModule,
         DxTextBoxModule,
         DxCheckBoxModule,
-        PhoneFormatModule
+        PhoneFormatModule,
+        InlineSVGModule
     ],
     entryComponents: [
         ModalDialogComponent,
@@ -88,4 +93,7 @@ import { PhoneFormatModule } from '@shared/common/pipes/phone-format/phone-forma
     ]
 })
 export class CommonModule {
+    constructor(private inlineSVGConfig: InlineSVGConfig) {
+        this.inlineSVGConfig.baseUrl = AppConsts.appBaseHref;
+    }
 }
