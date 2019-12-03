@@ -265,6 +265,9 @@ body.advice-period .chart-line.inflows div {
 body.advice-period .chart-line.outflows div {
   background-color: #e47822 !important;
 }
+body.advice-period .accounts-list .account-item.dailyStats ul li.selected {
+  border-right-color: #e47822 !important;
+}
 body.advice-period .synch-status a {
   border-bottom: #99c24d !important;
 }

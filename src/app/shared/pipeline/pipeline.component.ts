@@ -16,6 +16,7 @@ import * as moment from 'moment';
 import extend from 'lodash/extend';
 import clone from 'lodash/clone';
 import uniqBy from 'lodash/uniqBy';
+import oDataUtils from "devextreme/data/odata/utils";
 
 /** Application imports */
 import { ODataService } from '@shared/common/odata/odata.service';
@@ -435,7 +436,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                     this.getDataSourceForStage(stage);
 
             if (!isNaN(stage.lastStageIndex) && page)
-                filter['SortOrder'] = {lt: stage.lastStageIndex};
+                filter['SortOrder'] = {lt: new oDataUtils.EdmLiteral(stage.lastStageIndex + 'd') };
             dataSource.pageSize(Math.max(!page && stage.entities
                 && stage.entities.length || 0, this.stagePageCount));
             dataSource.sort({getter: 'SortOrder', desc: true});
