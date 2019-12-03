@@ -60,7 +60,7 @@ export class TopSpendingCategoriesComponent implements OnInit, OnDestroy {
             );
         })
     );
-    categoriesLegendColors: string[];
+    colorsPalette: string[] = [ '#e47822', '#3d8ba9', '#99c24d', '#fed142', '#a5cfdf' ];
 
     constructor(
         private dashboardServiceProxy: DashboardServiceProxy,
@@ -104,10 +104,6 @@ export class TopSpendingCategoriesComponent implements OnInit, OnDestroy {
                 relativeTo: this.route
             }
         );
-    }
-
-    onDrawn(e) {
-        this.categoriesLegendColors = e.component._legend._data.map(dataItem => dataItem.states.normal.fill);
     }
 
     ngOnDestroy() {

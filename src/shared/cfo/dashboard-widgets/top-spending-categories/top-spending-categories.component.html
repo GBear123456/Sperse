@@ -6,10 +6,10 @@
                 id="pie"
                 palette="bright"
                 type="donut"
+                [palette]="colorsPalette"
                 [innerRadius]="0.7"
                 [dataSource]="topSpendingCategories"
-                (onPointClick)="onClick($event)"
-                (onDrawn)="onDrawn($event)">
+                (onPointClick)="onClick($event)">
                 <dxi-series
                     argumentField="fullName"
                     valueField="amount">
@@ -21,9 +21,9 @@
                 </dxo-size>
             </dx-pie-chart>
         </div>
-        <ul class="legend" *ngIf="categoriesLegendColors">
+        <ul class="legend">
             <li *ngFor="let category of topSpendingCategories; let i = index;">
-                <span class="legend-square" [ngStyle]="{ backgroundColor: categoriesLegendColors[i] }"></span>
+                <span class="legend-square" [ngStyle]="{ backgroundColor: colorsPalette[i] }"></span>
                 <a (click)="legendItemClick(category.id)">
                     <span class="category-amount">{{ category.amount | currency:currencyId:'symbol-narrow':'1.2-2' }}</span>
                     <span class="category-name" [title]="category.name">{{ category.name }}</span>

@@ -47,7 +47,7 @@ export class LayoutService {
             clientsCount: '#5b5f97'
         }
     };
-    mapPallet = {
+    mapPalette = {
         [LayoutType.Default]: [ '#c1b9ff', '#b6abff', '#aa9eff', '#9e91ff', '#9383ff', '#8776ff', '#7b69ff', '#705bff' ],
         [LayoutType.AdvicePeriod]: [ '#9fcbdc', '#91c4d7', '#84bdd2', '#76b5cd', '#68aec9', '#5aa6c4', '#4d9fbf', '#4296b7' ]
     };
@@ -89,7 +89,7 @@ export class LayoutService {
         return rgb;
     }
 
-    getMapPallet(): string[] {
-        return this.mapPallet[this.appSessionService.layoutType];
+    getMapPalette(): string[] {
+        return this.mapPalette[this.appSessionService.layoutType];
     }
 }

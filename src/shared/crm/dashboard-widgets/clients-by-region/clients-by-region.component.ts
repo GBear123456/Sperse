@@ -37,7 +37,7 @@ export class ClientsByRegionComponent implements OnInit, OnDestroy {
     @ViewChild(MapComponent) mapComponent: MapComponent;
     data: MapData = {};
     pipe: any = new DecimalPipe('en-US');
-    palette: string[] = this.layoutService.getMapPallet();
+    palette: string[] = this.layoutService.getMapPalette();
 
     constructor(
         private dashboardWidgetsService: DashboardWidgetsService,
