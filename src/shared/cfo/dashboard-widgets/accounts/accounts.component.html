@@ -13,7 +13,7 @@
                 </div>
             </div>
         </dx-tooltip>
-        <div class="icon" inlineSVG="/assets/common/icons/coins-icon.svg"></div>
+        <div class="icon" inlineSVG="assets/common/icons/coins-icon.svg"></div>
         <div>
             <div class="value" id="valueTotal" *ngIf="bankAccountsService.accountsDataTotalNetWorthWithApply$ | async as accountsTotalNetWorth">
                 {{ accountsTotalNetWorth | customNumber : '1.0-0' | currency:cfoPreferencesService.selectedCurrencyId:cfoPreferencesService.selectedCurrencySymbol:'1.0-0'}}
@@ -33,7 +33,7 @@
                          {{ dailyStatsAmount$ | async | currency: cfoPreferencesService.selectedCurrencyId : 'symbol' : '1.2-2'}}
                      </div>
                  </dx-tooltip>
-                <div class="icon" inlineSVG="/assets/common/icons/coins-icon-2.svg"></div>
+                <div class="icon" inlineSVG="assets/common/icons/coins-icon-2.svg"></div>
                 <div>
                     <div class="value" id="valueDaily">
                         {{ dailyStatsAmount$ | async | customNumber : '1.0-0' | currency:cfoPreferencesService.selectedCurrencyId:cfoPreferencesService.selectedCurrencySymbol:'1.0-0'}}<span>.{{ dailyStatsAmount$ | async | customNumber : '0.2-2' }}</span>
@@ -52,7 +52,7 @@
     </div>
     <div class="account-item total-accounts" id="totalaccounts" (click)="totalAccountsMouseEnter()">
         <a class="view-details">{{l('Select')}}</a>
-        <div class="icon" inlineSVG="/assets/common/icons/total-icon.svg"></div>
+        <div class="icon" inlineSVG="assets/common/icons/total-icon.svg"></div>
         <div>
             <div class="value">{{ bankAccountsService.accountsAmountWithApply$ | async }}</div>
             <div class="name">

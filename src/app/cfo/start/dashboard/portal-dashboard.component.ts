@@ -55,7 +55,7 @@ export class PortalDashboardComponent extends CFOComponentBase implements OnInit
         this.rootComponent.overflowHidden(true);
         this.headlineConfig = {
             names: [ this.l('Dashboard_Title') ],
-            iconSrc: '/assets/common/icons/pie-chart.svg',
+            iconSrc: 'assets/common/icons/pie-chart.svg',
             onRefresh: this._cfoService.hasStaticInstance ? undefined : this.invalidate.bind(this),
             buttons: []
         };

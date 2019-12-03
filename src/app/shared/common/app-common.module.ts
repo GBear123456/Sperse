@@ -165,8 +165,7 @@ import { SetupStepsComponent } from './setup-steps/setup-steps.component';
         DxSliderModule,
         CreditCardDirectivesModule,
         AngularGooglePlaceModule,
-        LoadingSpinnerModule,
-        InlineSVGModule
+        LoadingSpinnerModule
     ],
     declarations: [
         TimeAgoPipe,

@@ -334,7 +334,7 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
     initHeadlineConfig() {
         this.headlineConfig = {
             names: [this.l('REPORTS')],
-            iconSrc: '/assets/common/icons/credit-card-icon.svg',
+            iconSrc: 'assets/common/icons/credit-card-icon.svg',
             buttons: [
                 {
                     action: this.showGenerateReportDialog.bind(this),

@@ -187,8 +187,7 @@ let COMPONENTS = [
         CfoStoreModule,
         SearchInputModule,
         SortButtonModule,
-        ExpandButtonModule,
-        InlineSVGModule
+        ExpandButtonModule
     ],
     declarations: COMPONENTS,
     exports: COMPONENTS,

@@ -22,7 +22,7 @@
             <h2 class="title">{{l('Transaction_Classification_Status')}}</h2>
             <ul class="category-synch-list">
                 <li class="category-synch-item">
-                    <span class="icon" inlineSVG="/assets/common/icons/completed-icon-light-green.svg"></span>
+                    <span class="icon" inlineSVG="assets/common/icons/completed-icon-light-green.svg"></span>
                     <span class="category-type">{{l('Classified_Transactions')}}</span>
                     <span class="synch-status count"><a (click)="filterTransactions(true)">{{categorySynchData?.classifiedTransactionCount | number : '1.0-2'}}</a></span>
                     <span class="synch-status percent">{{categorySynchData?.classifiedTransactionPercent | number : '1.0-0'}}%</span>

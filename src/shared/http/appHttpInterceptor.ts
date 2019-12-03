@@ -4,6 +4,7 @@ import { Injectable } from '@angular/core';
 import { HttpEvent, HttpRequest, HttpHandler, HttpHeaders } from '@angular/common/http';
 import { finalize } from 'rxjs/operators';
 import { Observable, Subject } from 'rxjs';
+import { AppConsts } from '@shared/AppConsts';
 
 @Injectable()
 export class AppHttpInterceptor extends AbpHttpInterceptor {
@@ -85,20 +86,23 @@ export class AppHttpInterceptor extends AbpHttpInterceptor {
     }
 
     protected normalizeRequestHeaders(request: HttpRequest<any>): HttpRequest<any> {
-        if (this.getKeyFromUrl(request.url) == 'api_Localization_GetLocalizationSource') {
+        const isAssetsRequest = request.url.indexOf(AppConsts.appBaseHref + 'assets') === 0;
+        if (isAssetsRequest || this.getKeyFromUrl(request.url) == 'api_Localization_GetLocalizationSource') {
             let modifiedHeaders = new HttpHeaders();
 
             this.addXRequestedWithHeader(modifiedHeaders);
-            this.addAuthorizationHeaders(modifiedHeaders);
+            if (!isAssetsRequest) {
+                this.addAuthorizationHeaders(modifiedHeaders);
+            }
             this.addAspNetCoreCultureHeader(modifiedHeaders);
             this.addAcceptLanguageHeader(modifiedHeaders);
             this.addTenantIdHeader(modifiedHeaders);
-
             return request.clone({
                 headers: modifiedHeaders
             });
-        } else
+        } else {
             return super.normalizeRequestHeaders(request);
+        }
     }
 
     protected handleErrorResponse(response, interceptObservable: Subject<HttpEvent<any>>): Observable<any> {
