@@ -142,7 +142,7 @@ export abstract class AppComponentBase implements OnDestroy {
     }
 
     l(key: string, ...args: any[]): string {
-        return this.localizationService.l(key, AppConsts.localization.defaultLocalizationSourceName, ...args);
+        return this.localizationService.l(key, ...args);
     }
 
     ls(sourcename: string, key: string, ...args: any[]): string {
