@@ -17846,6 +17846,85 @@ export class MemberServiceProxy {
 }
 
 @Injectable()
+export class MemberSubscriptionServiceProxy {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @serviceType (optional) 
+     * @return Success
+     */
+    getUserSubscriptions(systemType: string, serviceType: string | null | undefined, serviceTypeId: number): Observable<GetUserSubscriptionsOutput[]> {
+        let url_ = this.baseUrl + "/api/services/Platform/MemberSubscription/GetUserSubscriptions?";
+        if (systemType === undefined || systemType === null)
+            throw new Error("The parameter 'systemType' must be defined and cannot be null.");
+        else
+            url_ += "SystemType=" + encodeURIComponent("" + systemType) + "&"; 
+        if (serviceType !== undefined)
+            url_ += "ServiceType=" + encodeURIComponent("" + serviceType) + "&"; 
+        if (serviceTypeId === undefined || serviceTypeId === null)
+            throw new Error("The parameter 'serviceTypeId' must be defined and cannot be null.");
+        else
+            url_ += "ServiceTypeId=" + encodeURIComponent("" + serviceTypeId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetUserSubscriptions(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetUserSubscriptions(<any>response_);
+                } catch (e) {
+                    return <Observable<GetUserSubscriptionsOutput[]>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<GetUserSubscriptionsOutput[]>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetUserSubscriptions(response: HttpResponseBase): Observable<GetUserSubscriptionsOutput[]> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(GetUserSubscriptionsOutput.fromJS(item));
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<GetUserSubscriptionsOutput[]>(<any>null);
+    }
+}
+
+@Injectable()
 export class MyFinancesServiceProxy {
     private http: HttpClient;
     private baseUrl: string;
@@ -20103,68 +20182,6 @@ export class OrderSubscriptionServiceProxy {
             }));
         }
         return _observableOf<void>(<any>null);
-    }
-
-    /**
-     * @serviceType (optional) 
-     * @serviceTypeId (optional) 
-     * @return Success
-     */
-    getUserSubscriptions(serviceType: string | null | undefined, serviceTypeId: number | null | undefined): Observable<GetUserSubscriptionsOutput[]> {
-        let url_ = this.baseUrl + "/api/services/CRM/OrderSubscription/GetUserSubscriptions?";
-        if (serviceType !== undefined)
-            url_ += "ServiceType=" + encodeURIComponent("" + serviceType) + "&"; 
-        if (serviceTypeId !== undefined)
-            url_ += "ServiceTypeId=" + encodeURIComponent("" + serviceTypeId) + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetUserSubscriptions(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processGetUserSubscriptions(<any>response_);
-                } catch (e) {
-                    return <Observable<GetUserSubscriptionsOutput[]>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<GetUserSubscriptionsOutput[]>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processGetUserSubscriptions(response: HttpResponseBase): Observable<GetUserSubscriptionsOutput[]> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            if (resultData200 && resultData200.constructor === Array) {
-                result200 = [];
-                for (let item of resultData200)
-                    result200.push(GetUserSubscriptionsOutput.fromJS(item));
-            }
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<GetUserSubscriptionsOutput[]>(<any>null);
     }
 }
 
@@ -46610,11 +46627,11 @@ export class Product implements IProduct {
     code!: string;
     name!: string;
     description!: string | undefined;
+    systemType!: string | undefined;
     serviceTypeId!: number | undefined;
     serviceType!: string | undefined;
     serviceId!: string | undefined;
     serviceName!: string | undefined;
-    invoiceLines!: InvoiceLine[] | undefined;
     isDeleted!: boolean | undefined;
     deleterUserId!: number | undefined;
     deletionTime!: moment.Moment | undefined;
@@ -46639,15 +46656,11 @@ export class Product implements IProduct {
             this.code = data["code"];
             this.name = data["name"];
             this.description = data["description"];
+            this.systemType = data["systemType"];
             this.serviceTypeId = data["serviceTypeId"];
             this.serviceType = data["serviceType"];
             this.serviceId = data["serviceId"];
             this.serviceName = data["serviceName"];
-            if (data["invoiceLines"] && data["invoiceLines"].constructor === Array) {
-                this.invoiceLines = [];
-                for (let item of data["invoiceLines"])
-                    this.invoiceLines.push(InvoiceLine.fromJS(item));
-            }
             this.isDeleted = data["isDeleted"];
             this.deleterUserId = data["deleterUserId"];
             this.deletionTime = data["deletionTime"] ? moment(data["deletionTime"].toString()) : <any>undefined;
@@ -46672,15 +46685,11 @@ export class Product implements IProduct {
         data["code"] = this.code;
         data["name"] = this.name;
         data["description"] = this.description;
+        data["systemType"] = this.systemType;
         data["serviceTypeId"] = this.serviceTypeId;
         data["serviceType"] = this.serviceType;
         data["serviceId"] = this.serviceId;
         data["serviceName"] = this.serviceName;
-        if (this.invoiceLines && this.invoiceLines.constructor === Array) {
-            data["invoiceLines"] = [];
-            for (let item of this.invoiceLines)
-                data["invoiceLines"].push(item.toJSON());
-        }
         data["isDeleted"] = this.isDeleted;
         data["deleterUserId"] = this.deleterUserId;
         data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
@@ -46698,11 +46707,11 @@ export interface IProduct {
     code: string;
     name: string;
     description: string | undefined;
+    systemType: string | undefined;
     serviceTypeId: number | undefined;
     serviceType: string | undefined;
     serviceId: string | undefined;
     serviceName: string | undefined;
-    invoiceLines: InvoiceLine[] | undefined;
     isDeleted: boolean | undefined;
     deleterUserId: number | undefined;
     deletionTime: moment.Moment | undefined;
@@ -62645,6 +62654,50 @@ export interface IRegisterMemberRequest {
     trackingInfo: TrackingInfo | undefined;
 }
 
+export class GetUserSubscriptionsOutput implements IGetUserSubscriptionsOutput {
+    serviceName!: string | undefined;
+    serviceId!: string | undefined;
+    endDate!: moment.Moment | undefined;
+
+    constructor(data?: IGetUserSubscriptionsOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.serviceName = data["serviceName"];
+            this.serviceId = data["serviceId"];
+            this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): GetUserSubscriptionsOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new GetUserSubscriptionsOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["serviceName"] = this.serviceName;
+        data["serviceId"] = this.serviceId;
+        data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
+        return data; 
+    }
+}
+
+export interface IGetUserSubscriptionsOutput {
+    serviceName: string | undefined;
+    serviceId: string | undefined;
+    endDate: moment.Moment | undefined;
+}
+
 export class GetProviderUITokenOutput implements IGetProviderUITokenOutput {
     token!: string | undefined;
 
@@ -65541,50 +65594,6 @@ export interface IOrderSubscriptionDto {
     statusCode: string | undefined;
     status: string | undefined;
     orderSubscriptionPayments: OrderSbuscriptionPaymentDto[] | undefined;
-}
-
-export class GetUserSubscriptionsOutput implements IGetUserSubscriptionsOutput {
-    serviceName!: string | undefined;
-    serviceType!: string | undefined;
-    endDate!: moment.Moment | undefined;
-
-    constructor(data?: IGetUserSubscriptionsOutput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.serviceName = data["serviceName"];
-            this.serviceType = data["serviceType"];
-            this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
-        }
-    }
-
-    static fromJS(data: any): GetUserSubscriptionsOutput {
-        data = typeof data === 'object' ? data : {};
-        let result = new GetUserSubscriptionsOutput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["serviceName"] = this.serviceName;
-        data["serviceType"] = this.serviceType;
-        data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
-        return data; 
-    }
-}
-
-export interface IGetUserSubscriptionsOutput {
-    serviceName: string | undefined;
-    serviceType: string | undefined;
-    endDate: moment.Moment | undefined;
 }
 
 export class OrganizationInfoDto implements IOrganizationInfoDto {
