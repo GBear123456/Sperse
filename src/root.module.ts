@@ -36,6 +36,8 @@ import { ProfileService } from '@shared/common/profile-service/profile.service';
 import { BugsnagService } from '@shared/common/bugsnag/bugsnag.service';
 import { FullScreenService } from '@shared/common/fullscreen/fullscreen.service';
 import { TitleService } from '@shared/common/title/title.service';
+import { ImportWizardService } from '@app/shared/common/import-wizard/import-wizard.service';
+import { InlineSVGConfig } from '@node_modules/ng-inline-svg/lib/inline-svg.config';
 
 export function errorHandlerFactory(
     bugsnagService: BugsnagService
@@ -218,7 +220,8 @@ function handleLogoutRequest(authService: AppAuthService) {
             useFactory: errorHandlerFactory,
             deps: [ BugsnagService ]
         },
-        AppPermissionService
+        AppPermissionService,
+        InlineSVGConfig
     ],
     bootstrap: [ RootComponent ]
 })

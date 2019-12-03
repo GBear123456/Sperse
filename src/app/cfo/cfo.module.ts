@@ -43,7 +43,6 @@ import { ModalModule } from 'ngx-bootstrap';
 import { filter, map } from 'rxjs/operators';
 import { ImageViewerModule } from 'ng2-image-viewer';
 import { InlineSVGModule } from 'ng-inline-svg';
-import { InlineSVGConfig } from 'ng-inline-svg/lib/inline-svg.config';
 
 /** Application imports */
 import { ReportPeriodComponent } from '@app/cfo/shared/report-period/report-period.component';
@@ -189,7 +188,7 @@ let COMPONENTS = [
         SearchInputModule,
         SortButtonModule,
         ExpandButtonModule,
-        InlineSVGModule.forRoot(new InlineSVGConfig())
+        InlineSVGModule
     ],
     declarations: COMPONENTS,
     exports: COMPONENTS,
