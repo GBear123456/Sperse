@@ -13,6 +13,10 @@
             border-radius: 4px;
             position: relative;
 
+            &:not(:last-child) {
+                margin-bottom: 10px;
+            }
+
             .col-8,
             .col-4 {
                 padding-right: 0;
@@ -29,12 +33,21 @@
 
             @media (max-width: 1540px) {
                 padding-left: 60px !important;
-                background-position: 15px 50% !important;
             }
 
             @media (max-width: 1370px) {
                 padding-left: 46px !important;
-                background-position: 11px 50% !important;
+            }
+
+            @media (max-width: 1024px) {
+                padding-left: 30px !important;
+                .icon {
+                    margin-right: 20px;
+                }
+            }
+
+            @media (max-width: 991px) {
+                padding-left: 20px !important;
             }
 
             @media (max-width: 767px) {
@@ -200,7 +213,7 @@
                 }
             }
 
-            @media (min-width: 768px) {
+            @media (min-width: 769px) {
                 max-width: 32%;
                 margin-bottom: 0;
             }
