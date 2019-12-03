@@ -64,6 +64,7 @@ import { DateHelper } from '@shared/helpers/DateHelper';
 import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
 import { Category } from '@app/cfo/transactions/categorization/category.model';
 import { BankAccountsState } from '@shared/cfo/bank-accounts-widgets/bank-accounts-state.model';
+import { FilterInputsComponent } from '@shared/filters/inputs/filter-inputs.component';
 import { AppFeatures } from '@shared/AppFeatures';
 
 @Component({
@@ -416,14 +417,14 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                     caption: 'Description',
                     items: { Description: new FilterItemModel() }
                 }),
-
+*/
                 new FilterModel({
                     component: FilterInputsComponent,
                     operator: { from: 'ge', to: 'le' },
                     caption: 'Amount',
                     field: 'Amount',
                     items: { from: new FilterItemModel(), to: new FilterItemModel() }
-                }),*/
+                }),
                 this.categoriesFilter,
                 this.cashflowCategoriesFilter,
                 this.typesFilter,
@@ -917,16 +918,17 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         let classifiedFilter: FilterModel = _.find(this.filters, (f: FilterModel) => f.caption === 'classified' );
         let amountFilter: FilterModel = _.find(this.filters, (f: FilterModel) => f.caption === 'Amount' );
 
-        classifiedFilter.items['yes'].value = classified;
-        classifiedFilter.items['no'].value = !classified;
-
         if (amountFilter) {
             amountFilter.items['from'].value = credit ? '0' : '';
             amountFilter.items['to'].value = debit ? '0' : '';
             this.defaultCreditTooltipVisible = false;
         }
 
-        this.filtersService.change(classifiedFilter);
+        if (classifiedFilter) {
+            classifiedFilter.items['yes'].value = classified;
+            classifiedFilter.items['no'].value = !classified;
+            this.filtersService.change(classifiedFilter);
+        }
     }
 
     clearClassifiedFilter() {
