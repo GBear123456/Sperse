@@ -92,6 +92,6 @@ export class LayoutService {
     }
 
     getMapPalette(): string[] {
-        return this.mapPalette[this.appSessionService.layoutType];
+        return this.mapPalette[this.appSessionService.layoutType] || this.mapPalette[LayoutType.Default];
     }
 }

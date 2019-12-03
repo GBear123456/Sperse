@@ -404,14 +404,15 @@ export class PipelineService {
 
     getStageDefaultColorByStageSortOrder(stageSortOrder: number): string {
         const layoutType = this.appSessionService.layoutType;
+        const stagesColors = this.defaultStagesColors[layoutType] || this.defaultStagesColors[LayoutType.Default];
         /** Get default or the closest color */
-        let color = this.defaultStagesColors[layoutType][stageSortOrder];
+        let color = stagesColors[stageSortOrder];
         /** If there is not default color for the sort order - get the closest */
         if (!color) {
-            const defaultColorsKeys = Object.keys(this.defaultStagesColors);
+            const defaultColorsKeys = Object.keys(stagesColors);
             color = +defaultColorsKeys[0] > stageSortOrder
-                ? this.defaultStagesColors[layoutType][defaultColorsKeys[0]]
-                : this.defaultStagesColors[layoutType][defaultColorsKeys[defaultColorsKeys.length]];
+                ? stagesColors[defaultColorsKeys[0]]
+                : stagesColors[defaultColorsKeys[defaultColorsKeys.length]];
         }
         return color;
     }
