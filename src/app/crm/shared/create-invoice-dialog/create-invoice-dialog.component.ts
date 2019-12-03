@@ -9,8 +9,9 @@ import { DxSelectBoxComponent } from 'devextreme-angular/ui/select-box';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { DxTextBoxComponent } from 'devextreme-angular/ui/text-box';
 import { DxDateBoxComponent } from 'devextreme-angular/ui/date-box';
-import { CacheService } from 'ng2-cache-service';
 import { finalize, first, switchMap } from 'rxjs/operators';
+import { CacheService } from 'ng2-cache-service';
+import startCase from 'lodash/startCase';
 
 /** Application imports */
 import Inputmask from 'inputmask/dist/inputmask/inputmask.date.extensions';
@@ -82,6 +83,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
     orderNumber: string;
     statuses: any[] = [];
     status = InvoiceStatus.Draft;
+    startCase = startCase;
 
     saveButtonId = 'saveInvoiceOptions';
     saveContextMenuItems = [];

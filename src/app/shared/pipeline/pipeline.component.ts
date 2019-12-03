@@ -485,6 +485,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
             response.subscribe(
                 () => {},
                 (error) => {
+                    stage.isLoading = false;
                     if (error != 'canceled')
                         this.message.error(error);
                 }

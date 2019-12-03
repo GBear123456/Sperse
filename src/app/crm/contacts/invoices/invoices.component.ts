@@ -12,6 +12,7 @@ import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { DxTooltipComponent } from 'devextreme-angular/ui/tooltip';
 import { MatDialog } from '@angular/material/dialog';
 import { finalize, switchMap, first, map } from 'rxjs/operators';
+import startCase from 'lodash/startCase';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
@@ -38,8 +39,8 @@ import { AppPermissions } from '@shared/AppPermissions';
     providers: [ InvoiceServiceProxy ]
 })
 export class InvoicesComponent extends AppComponentBase implements OnInit, OnDestroy {
-    @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
     @ViewChild(DxTooltipComponent) actionsTooltip: DxTooltipComponent;
+    @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
 
     private actionRecordData;
     private settings = new InvoiceSettings();
@@ -47,6 +48,7 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
     private filters: FilterModel[];
     formatting = AppConsts.formatting;
     invoiceStatus = InvoiceStatus;
+    startCase = startCase;
 
     markAsPaidDisabled = true;
     markAsDraftDisabled = false;
@@ -209,7 +211,8 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
             switchMap(data => {
                 data['contactId'] = this.contactId;
                 data['templateId'] = this.settings.defaultTemplateId;
-                return this.clientService.showInvoiceEmailDialog(this.actionRecordData.InvoiceId, data);
+                return this.clientService.showInvoiceEmailDialog(
+                    this.actionRecordData.InvoiceId, data);
             })
         ).subscribe(data => this.updateStatus(InvoiceStatus.Sent));
     }

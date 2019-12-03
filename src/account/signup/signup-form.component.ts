@@ -29,6 +29,8 @@ import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/life
 export class SignupFormComponent implements OnInit, OnDestroy {
     @ViewChild('agreeWithTermsCheckBox') agreeWithTermsCheckBox: DxCheckBoxComponent;
     @ViewChild('agreeToReceiveCallsCheckBox') agreeToReceiveCallsCheckBox: DxCheckBoxComponent;
+    showZipMask = true;
+    defaultCountryCode: string;
     conditions = ConditionsType;
     patterns = {
         namePattern: AppConsts.regexPatterns.name,
@@ -81,13 +83,26 @@ export class SignupFormComponent implements OnInit, OnDestroy {
     }
 
     validateNumber(event) {
-        if (!event.key.match(/^[0-9]+$/) && event.key.length == 1)
+        if (!event.key.match(/^[0-9]+$/) && event.key.length == 1 && this.showZipMask)
             event.preventDefault();
     }
 
     onZipCodeChanged (event) {
-        this.registerData.postalCode = this.maskPipe.transform(event.value, AppConsts.masks.zipCodeLong);
+        if (this.showZipMask)
+            this.registerData.postalCode = this.maskPipe.transform(event.value, AppConsts.masks.zipCodeLong);
     }
+
+    getChangedCountry($event) {
+        this.showZipMask = this.defaultCountryCode == $event.countryCode;
+        this.showZipMask ? this.patterns.zipPattern = AppConsts.regexPatterns.zipUsPattern : this.patterns.zipPattern = /.*/;
+    }
+
+    getDefaultCode($event) {
+        setTimeout(() => {
+            this.defaultCountryCode = $event.intPhoneNumber.defaultCountry;
+        }, 100);
+    }
+
 
     openConditionsDialog(type: any) {
         this.dialog.open(ConditionsModalComponent, { panelClass: ['slider', 'footer-slider'], data: { type: type } });
