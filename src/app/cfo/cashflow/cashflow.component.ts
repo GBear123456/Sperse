@@ -938,7 +938,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             names: [this.l('Cashflow_mainTitle')],
             // onRefresh:  this._cfoService.hasStaticInstance ? undefined : this.refreshDataGrid.bind(this),
             toggleToolbar: this.toggleToolbar.bind(this),
-            iconSrc: '/assets/common/icons/chart-icon.svg'
+            iconSrc: 'assets/common/icons/chart-icon.svg'
         };
     }
 
