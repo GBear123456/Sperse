@@ -52,6 +52,7 @@ import { GetCustomerAndLeadStatsOutput } from '@shared/service-proxies/service-p
 import { PipelineService } from '@app/shared/pipeline/pipeline.service';
 import { PeriodModel } from '@app/shared/common/period/period.model';
 import { Period } from '@app/shared/common/period/period.enum';
+import { LayoutService } from '@app/shared/layout/layout.service';
 
 @Component({
     selector: 'totals-by-period',
@@ -68,7 +69,7 @@ export class TotalsByPeriodComponent extends AppComponentBase implements OnInit,
     endDate: any;
     chartWidth = 650;
     currency = 'USD';
-    clientColor = '#8487e7';
+    clientColor = this.layoutService.getLayoutColor('clientsCount');
     nativeElement: any;
     periods: TotalsByPeriodModel[] = [
          {
@@ -137,6 +138,7 @@ export class TotalsByPeriodComponent extends AppComponentBase implements OnInit,
         private cacheService: CacheService,
         private sessionService: AbpSessionService,
         private decimalPipe: DecimalPipe,
+        private layoutService: LayoutService,
         @Inject(DOCUMENT) private document: Document
     ) {
         super(injector);
@@ -170,7 +172,10 @@ export class TotalsByPeriodComponent extends AppComponentBase implements OnInit,
             filter(clickTarget => !clickTarget.closest('.legend'))
         ).subscribe(
             /** Close full legend */
-            () => this.showFullLegend = false
+            () => {
+                this.showFullLegend = false;
+                this.changeDetectorRef.detectChanges();
+            }
         );
 
         /** Save is cumulative change to cache */

@@ -173,6 +173,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                     ...stage,
                     entities: [],
                     full: true,
+                    color: this.pipelineService.getStageDefaultColorByStageSortOrder(stage.sortOrder),
                     isLoading: true,
                     stageIndex: undefined,
                     total: undefined,

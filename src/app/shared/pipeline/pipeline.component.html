@@ -1,9 +1,14 @@
 <div class="pipeline-wrapper">
     <div *ngFor="let stage of stages; let i = index;"
-         class="column column{{stage.index + ' ' + (stage.sortOrder && (stage.sortOrder > 0 ? 'positive': 'negative') || 'focused')}} color-{{stage.color}}">
+         class="column column{{stage.index + ' ' + (stage.sortOrder && (stage.sortOrder > 0 ? 'positive': 'negative') || 'focused')}}">
         <div class="column-title"
              [hidden]="loading && !disabled"
-             [ngStyle]="{width: columnItems.offsetWidth + 'px'}">
+             [ngStyle]="{
+                width: columnItems.offsetWidth + 'px',
+                backgroundColor: stage.color,
+                borderLeftColor: stage.color,
+                borderRightColor: stage.color
+             }">
             <span class="stageName">{{stage.name}}</span>
             <div>
                 <span>
@@ -63,6 +68,7 @@
              (click)="hideStageHighlighting()" #columnItems>
             <div *ngFor="let entity of stage.entities"
                  [ngClass]="{ card: true, locked: entity?.locked, selected: entity?.selected, compact: compactView }"
+                 [ngStyle]="{ borderTopColor: stage.color }"
                  [accessKey]="entity?.Id"
                  [attr.stage]="entity?.StageId"
                  (click)="onCardClickInternal(entity, $event)">

@@ -21,7 +21,12 @@ export class LayoutService {
             forecastEndingBalance: '#f9c4e4',
             green: '#8bd553',
             blue: '#00AEEF',
-            orange: '#F9B74B'
+            orange: '#F9B74B',
+            purple: '#8487e7',
+            totalSales: '#8487e7',
+            totalLeads: '#00AEEF',
+            totalClients: '#f4ae55',
+            clientsCount: '#8487e7'
         },
         [LayoutType.AdvicePeriod]: {
             historicalCredit: '#86c5dc',
@@ -34,8 +39,17 @@ export class LayoutService {
             forecastEndingBalance: '#817c97',
             green: '#99c24d',
             blue: '#86c5dc',
-            orange: '#e47822'
+            orange: '#e47822',
+            purple: '#3d8ba9',
+            totalSales: '#e47822',
+            totalLeads: '#86c5dc',
+            totalClients: '#99c24d',
+            clientsCount: '#5b5f97'
         }
+    };
+    mapPallet = {
+        [LayoutType.Default]: [ '#c1b9ff', '#b6abff', '#aa9eff', '#9e91ff', '#9383ff', '#8776ff', '#7b69ff', '#705bff' ],
+        [LayoutType.AdvicePeriod]: [ '#9fcbdc', '#91c4d7', '#84bdd2', '#76b5cd', '#68aec9', '#5aa6c4', '#4d9fbf', '#4296b7' ]
     };
 
     constructor(private appSessionService: AppSessionService) {}
@@ -45,10 +59,8 @@ export class LayoutService {
     }
 
     getLayoutColor(colorFor: string): string {
-        const layoutType = this.appSessionService.tenant && this.appSessionService.tenant.customLayoutType
-            ? this.appSessionService.tenant.customLayoutType
-            : LayoutType.Default;
-        return this.layoutColors[layoutType][colorFor];
+        const layoutType = this.appSessionService.layoutType;
+        return this.layoutColors[layoutType][colorFor] || this.layoutColors[LayoutType.Default][colorFor];
     }
 
     /**
@@ -75,5 +87,9 @@ export class LayoutService {
         }
 
         return rgb;
+    }
+
+    getMapPallet(): string[] {
+        return this.mapPallet[this.appSessionService.layoutType];
     }
 }

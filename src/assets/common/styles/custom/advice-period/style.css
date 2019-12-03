@@ -246,7 +246,8 @@ body.advice-period icon-orange {
 body.advice-period .add-link,
 body.advice-period .view-details,
 body.advice-period .link-item .link,
-body.advice-period .category-synch-item .icon {
+body.advice-period .category-synch-item .icon,
+body.advice-period /deep/ recent-clients .title a {
   color: #e47822 !important;
 }
 body.advice-period .link-item .link:hover,
