@@ -423,7 +423,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
                   this.close();
                   data['contactId'] = this.contactId;
                   data['templateId'] = this.invoiceSettings.defaultTemplateId;
-                  return this.contactsService.showEmailDialog(data);
+                  return this.contactsService.showInvoiceEmailDialog(this.invoiceId, data);
               })
         ).subscribe(() => {
             this.updateStatus(InvoiceStatus.Sent);

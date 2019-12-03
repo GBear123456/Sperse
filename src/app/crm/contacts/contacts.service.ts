@@ -6,7 +6,7 @@ import { Router } from '@angular/router';
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
 import { Observable, ReplaySubject, Subject, of } from 'rxjs';
-import { filter, finalize, tap, switchMap, catchError, mapTo } from 'rxjs/operators';
+import { filter, finalize, tap, switchMap, catchError, map, mapTo } from 'rxjs/operators';
 import invert from 'lodash/invert';
 
 /** Application imports */
@@ -14,6 +14,7 @@ import { DialogService } from '@app/shared/common/dialogs/dialog.service';
 import { AddCompanyDialogComponent } from './add-company-dialog/add-company-dialog.component';
 import {
     ContactInfoDto,
+    GetEmailDataOutput,
     OrganizationContactInfoDto,
     UserServiceProxy,
     ContactServiceProxy,
@@ -21,7 +22,8 @@ import {
     SendEmailInput,
     CreatePersonOrgRelationOutput,
     CreateContactPhotoInput,
-    ContactPhotoServiceProxy
+    ContactPhotoServiceProxy,
+    InvoiceServiceProxy
 } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { EmailTemplateDialogComponent } from '@app/crm/shared/email-template-dialog/email-template-dialog.component';
@@ -56,6 +58,7 @@ export class ContactsService {
 
     constructor(injector: Injector,
         private contactProxy: ContactServiceProxy,
+        private invoiceProxy: InvoiceServiceProxy,
         private emailProxy: ContactCommunicationServiceProxy,
         private permission: AppPermissionService,
         private userService: UserServiceProxy,
@@ -309,6 +312,19 @@ export class ContactsService {
                 }
             })
         );
+    }
+
+    showInvoiceEmailDialog(invoiceId: number, data: any = {}) {
+        return this.showEmailDialog(data, 'Email', (tmpId, emailData) => {
+            return this.invoiceProxy.getEmailData(tmpId, invoiceId).pipe(
+                map((email: GetEmailDataOutput) => {
+                    emailData.cc = email.cc;
+                    emailData.bcc = email.bcc;
+                    emailData.body = email.body;
+                    emailData.subject = email.subject;
+                })
+            );
+        });
     }
 
     showInvoiceSettingsDialog() {

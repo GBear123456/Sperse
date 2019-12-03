@@ -63,7 +63,7 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
         private invoicesService: InvoicesService,
         private contactService: ContactServiceProxy,
         private clientService: ContactsService,
-        private invoiceService: InvoiceServiceProxy
+        private invoiceProxy: InvoiceServiceProxy
     ) {
         super(injector);
         this.dataSource = this.getDataSource();
@@ -168,7 +168,7 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
             isConfirmed => {
                 if (isConfirmed) {
                     this.startLoading(true);
-                    this.invoiceService.deleteInvoice(this.actionRecordData.InvoiceId).pipe(
+                    this.invoiceProxy.deleteInvoice(this.actionRecordData.InvoiceId).pipe(
                         finalize(() => this.finishLoading(true))
                     ).subscribe(() => {
                         this.dataGrid.instance.refresh();
@@ -204,21 +204,12 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
 
     sendInvoice() {
         this.startLoading(true);
-        this.invoiceService.getEmailData(undefined, this.actionRecordData.InvoiceId).pipe(
+        this.invoiceProxy.getEmailData(undefined, this.actionRecordData.InvoiceId).pipe(
             finalize(() => this.finishLoading(true)),
             switchMap(data => {
                 data['contactId'] = this.contactId;
                 data['templateId'] = this.settings.defaultTemplateId;
-                return this.clientService.showEmailDialog(data, 'Email', (tmpId, emailData) => {
-                    return this.invoiceService.getEmailData(tmpId, this.actionRecordData.InvoiceId).pipe(
-                        map((email: GetEmailDataOutput) => {
-                            emailData.cc = email.cc;
-                            emailData.bcc = email.bcc;
-                            emailData.body = email.body;
-                            emailData.subject = email.subject;
-                        })
-                    );
-                });
+                return this.clientService.showInvoiceEmailDialog(this.actionRecordData.InvoiceId, data);
             })
         ).subscribe(data => this.updateStatus(InvoiceStatus.Sent));
     }
@@ -253,7 +244,7 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
 
     downloadInvoicePdf() {
         this.startLoading(true);
-        this.invoiceService.generatePdf(this.actionRecordData.InvoiceId, false).pipe(
+        this.invoiceProxy.generatePdf(this.actionRecordData.InvoiceId, false).pipe(
             finalize(() => this.finishLoading(true))
         ).subscribe(link => {
             window.open(link);
