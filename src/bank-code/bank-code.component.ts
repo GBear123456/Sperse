@@ -40,6 +40,7 @@ export class BankCodeComponent extends AppComponentBase implements OnInit, OnDes
 
     ngOnInit(): void {
         this.rootComponent.addStyleSheet('', 'https://fonts.googleapis.com/css?family=IBM+Plex+Sans:400,700&display=swap');
+        document.querySelector('body').classList.add('member-area');
         this._router.events.pipe(
             takeUntil(this.destroy$),
             filter((event: Event) => event instanceof NavigationEnd)
@@ -50,6 +51,7 @@ export class BankCodeComponent extends AppComponentBase implements OnInit, OnDes
 
     ngOnDestroy() {
         super.ngOnDestroy();
+        document.querySelector('body').classList.remove('member-area');
     }
 
 }
