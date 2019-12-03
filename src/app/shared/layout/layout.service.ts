@@ -60,7 +60,9 @@ export class LayoutService {
 
     getLayoutColor(colorFor: string): string {
         const layoutType = this.appSessionService.layoutType;
-        return this.layoutColors[layoutType][colorFor] || this.layoutColors[LayoutType.Default][colorFor];
+        return this.layoutColors[layoutType]
+            ? this.layoutColors[layoutType][colorFor]
+            : this.layoutColors[LayoutType.Default][colorFor];
     }
 
     /**
