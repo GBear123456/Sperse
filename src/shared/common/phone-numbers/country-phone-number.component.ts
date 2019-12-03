@@ -12,6 +12,7 @@ export class CountryPhoneNumberComponent extends AppComponentBase implements OnI
     @Input() phoneNumber: string;
     @Input() required = true;
     @Output() phoneNumberChange: EventEmitter<string> = new EventEmitter<string>();
+    @Output() phoneCountryChange = new EventEmitter();
     @Output() onInitialized = new EventEmitter();
     @Output() onKeyUp = new EventEmitter();
 
@@ -68,6 +69,7 @@ export class CountryPhoneNumberComponent extends AppComponentBase implements OnI
     ngAfterViewInit() {
         this.intPhoneNumber.registerOnChange((value) => {
             this.phoneNumberChange.emit(this.value = value);
+            this.phoneCountryChange.emit(this.intPhoneNumber.selectedCountry);
         });
         if (this.phoneNumber !== AppConsts.defaultCountryCode) {
             setTimeout(() => {
