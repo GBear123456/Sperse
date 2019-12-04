@@ -14,8 +14,8 @@
         input {
             border: none;
             font-family: Montserrat !important;
-        }    
-    }  
+        }
+    }
 
     /deep/ .ng-invalid.ng-touched {
         .input-group:after {
@@ -40,12 +40,12 @@
     /deep/ input.form-control:focus {
         border-color: #dfdfdf;
     }
-      
+
     .invalid-message-wrapper{
         position: relative;
         line-height: 1.35715;
     }
-    
+
     .invalid-message {
         position: absolute;
         width: auto;
@@ -62,5 +62,11 @@
         font-size: .85em;
         line-height: normal;
         word-wrap: break-word;
-    }  
+    }
+
+    /deep/ international-phone-number {
+        .btn.focus, .btn:focus {
+            box-shadow: none;
+        }
+    }
 }
