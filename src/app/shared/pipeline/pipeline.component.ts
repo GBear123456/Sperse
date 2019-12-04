@@ -8,6 +8,7 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import DataSource from 'devextreme/data/data_source';
+import oDataUtils from 'devextreme/data/odata/utils';
 import dxTooltip from 'devextreme/ui/tooltip';
 import { Observable, Subject, from, of, forkJoin } from 'rxjs';
 import { filter, finalize, delayWhen, map, mergeMap, switchMap, takeUntil } from 'rxjs/operators';
@@ -16,7 +17,6 @@ import * as moment from 'moment';
 import extend from 'lodash/extend';
 import clone from 'lodash/clone';
 import uniqBy from 'lodash/uniqBy';
-import oDataUtils from "devextreme/data/odata/utils";
 
 /** Application imports */
 import { ODataService } from '@shared/common/odata/odata.service';
@@ -40,7 +40,6 @@ import { FiltersService } from '@shared/filters/filters.service';
 import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
 import { DxoTooltipComponent } from '@root/node_modules/devextreme-angular/ui/nested/tooltip';
 import { Stage } from '@app/shared/pipeline/stage.model';
-import oDataUtils from "devextreme/data/odata/utils";
 
 @Component({
     selector: 'app-pipeline',
