@@ -103,6 +103,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
 
     rightPanelSetting: any = {
         id: RP_DEFAULT_ID,
+        width: '400px',
         clientScores: true,
         totalApproved: true,
         verification: true,
@@ -212,12 +213,14 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
             this.showToolbar = this.getCheckPropertyValue(data, 'showToolbar', true);
             if (rightPanelId === this.RP_CONTACT_INFO_ID) {
                 this.rightPanelSetting.opened = contactGroupId == ContactGroup.Partner;
+                this.rightPanelSetting.width = '200px';
             } else {
                 this.rightPanelSetting.opened = this.getCheckPropertyValue(
                     data,
                     'rightPanelOpened',
                     rightPanelId == RP_DEFAULT_ID && abp.features.isEnabled(AppFeatures.PFMCreditReport)
                 );
+                this.rightPanelSetting.width = '400px';
             }
             this.rightPanelSetting.id = rightPanelId;
         });
