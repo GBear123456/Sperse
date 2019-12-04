@@ -14,8 +14,7 @@ import { ContactGroup } from '@shared/AppEnums';
 import { ODataService } from '@shared/common/odata/odata.service';
 import { ProfileService } from '@shared/common/profile-service/profile.service';
 import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
-import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
-import { AppPermissions } from '@shared/AppPermissions';
+import { ProductsService } from '../products.service';
 
 @Component({
     selector: 'bank-pass',
@@ -56,13 +55,13 @@ export class BankPassComponent {
         }
     });
     formatting = AppConsts.formatting;
-    hasCrmCustomersPermission: boolean = this.permissionChecker.isGranted(AppPermissions.CRMCustomers);
+    hasSubscription: boolean = this.productsService.checkServiceSubscription();
     dataIsLoading = false;
 
     constructor(
         private oDataService: ODataService,
-        private permissionChecker: PermissionCheckerService,
         private changeDetectorRef: ChangeDetectorRef,
+        private productsService: ProductsService,
         public ls: AppLocalizationService,
         public httpInterceptor: AppHttpInterceptor,
         public profileService: ProfileService

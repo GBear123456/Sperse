@@ -1,4 +1,4 @@
-<div class="iframe" *ngIf="hasCrmCustomersPermission; else default">
+<div class="iframe" *ngIf="hasSubscription; else default">
     <iframe id="theFrame" src="https://v5.bankcode.pro" frameborder="0"></iframe>
 </div>
 <ng-template #default>

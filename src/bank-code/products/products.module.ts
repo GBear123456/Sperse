@@ -22,6 +22,8 @@ import { DxTextBoxModule } from '@root/node_modules/devextreme-angular';
 import { LoadingSpinnerModule } from '@app/shared/common/loading-spinner/loading-spinner.module';
 import { BankCodeLayoutModule } from '@root/bank-code/shared/layout/bank-code-layout.module';
 import { SubscriptionComponent } from '@root/bank-code/products/shared/subscription.component/subscription.component';
+import { MemberSubscriptionServiceProxy } from '@shared/service-proxies/service-proxies';
+import { ProductsService } from './products.service';
 
 @NgModule({
     imports: [
@@ -45,6 +47,10 @@ import { SubscriptionComponent } from '@root/bank-code/products/shared/subscript
         BankTrainerComponent,
         BankVaultComponent,
         SubscriptionComponent
+    ],
+    providers: [
+        MemberSubscriptionServiceProxy,
+        ProductsService
     ]
 })
 export class ProductsModule {}
