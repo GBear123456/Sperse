@@ -41830,6 +41830,7 @@ export class CreateContactInput implements ICreateContactInput {
     ratingId!: number | undefined;
     contactGroupId!: string;
     partnerTypeName!: string | undefined;
+    matchExisting!: boolean | undefined;
 
     constructor(data?: ICreateContactInput) {
         if (data) {
@@ -41899,6 +41900,7 @@ export class CreateContactInput implements ICreateContactInput {
             this.ratingId = data["ratingId"];
             this.contactGroupId = data["contactGroupId"];
             this.partnerTypeName = data["partnerTypeName"];
+            this.matchExisting = data["matchExisting"];
         }
     }
 
@@ -41968,6 +41970,7 @@ export class CreateContactInput implements ICreateContactInput {
         data["ratingId"] = this.ratingId;
         data["contactGroupId"] = this.contactGroupId;
         data["partnerTypeName"] = this.partnerTypeName;
+        data["matchExisting"] = this.matchExisting;
         return data; 
     }
 }
@@ -42002,6 +42005,7 @@ export interface ICreateContactInput {
     ratingId: number | undefined;
     contactGroupId: string;
     partnerTypeName: string | undefined;
+    matchExisting: boolean | undefined;
 }
 
 export class CreateContactOutput implements ICreateContactOutput {
@@ -60936,7 +60940,6 @@ export interface IUpdateLanguageTextInput {
 export class CreateLeadInput implements ICreateLeadInput {
     leadTypeId!: number | undefined;
     stageId!: number | undefined;
-    matchExisting!: boolean | undefined;
     affiliateId!: string | undefined;
     referrerUrl!: string | undefined;
     entryUrl!: string | undefined;
@@ -60971,6 +60974,7 @@ export class CreateLeadInput implements ICreateLeadInput {
     ratingId!: number | undefined;
     contactGroupId!: string;
     partnerTypeName!: string | undefined;
+    matchExisting!: boolean | undefined;
 
     constructor(data?: ICreateLeadInput) {
         if (data) {
@@ -60985,7 +60989,6 @@ export class CreateLeadInput implements ICreateLeadInput {
         if (data) {
             this.leadTypeId = data["leadTypeId"];
             this.stageId = data["stageId"];
-            this.matchExisting = data["matchExisting"];
             this.affiliateId = data["affiliateId"];
             this.referrerUrl = data["referrerUrl"];
             this.entryUrl = data["entryUrl"];
@@ -61048,6 +61051,7 @@ export class CreateLeadInput implements ICreateLeadInput {
             this.ratingId = data["ratingId"];
             this.contactGroupId = data["contactGroupId"];
             this.partnerTypeName = data["partnerTypeName"];
+            this.matchExisting = data["matchExisting"];
         }
     }
 
@@ -61062,7 +61066,6 @@ export class CreateLeadInput implements ICreateLeadInput {
         data = typeof data === 'object' ? data : {};
         data["leadTypeId"] = this.leadTypeId;
         data["stageId"] = this.stageId;
-        data["matchExisting"] = this.matchExisting;
         data["affiliateId"] = this.affiliateId;
         data["referrerUrl"] = this.referrerUrl;
         data["entryUrl"] = this.entryUrl;
@@ -61125,6 +61128,7 @@ export class CreateLeadInput implements ICreateLeadInput {
         data["ratingId"] = this.ratingId;
         data["contactGroupId"] = this.contactGroupId;
         data["partnerTypeName"] = this.partnerTypeName;
+        data["matchExisting"] = this.matchExisting;
         return data; 
     }
 }
@@ -61132,7 +61136,6 @@ export class CreateLeadInput implements ICreateLeadInput {
 export interface ICreateLeadInput {
     leadTypeId: number | undefined;
     stageId: number | undefined;
-    matchExisting: boolean | undefined;
     affiliateId: string | undefined;
     referrerUrl: string | undefined;
     entryUrl: string | undefined;
@@ -61167,6 +61170,7 @@ export interface ICreateLeadInput {
     ratingId: number | undefined;
     contactGroupId: string;
     partnerTypeName: string | undefined;
+    matchExisting: boolean | undefined;
 }
 
 export class CreateLeadOutput implements ICreateLeadOutput {
