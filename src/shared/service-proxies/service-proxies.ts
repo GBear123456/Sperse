@@ -31997,6 +31997,8 @@ export class SignUpMemberRequest implements ISignUpMemberRequest {
     lastName!: string;
     email!: string;
     postalCode!: string | undefined;
+    countryCode!: string | undefined;
+    countryCodeCalculated!: string | undefined;
     phoneNumber!: string | undefined;
     isUSCitizen!: boolean;
     pendingPasswordReset!: boolean | undefined;
@@ -32016,6 +32018,8 @@ export class SignUpMemberRequest implements ISignUpMemberRequest {
             this.lastName = data["lastName"];
             this.email = data["email"];
             this.postalCode = data["postalCode"];
+            this.countryCode = data["countryCode"];
+            this.countryCodeCalculated = data["countryCodeCalculated"];
             this.phoneNumber = data["phoneNumber"];
             this.isUSCitizen = data["isUSCitizen"];
             this.pendingPasswordReset = data["pendingPasswordReset"];
@@ -32035,6 +32039,8 @@ export class SignUpMemberRequest implements ISignUpMemberRequest {
         data["lastName"] = this.lastName;
         data["email"] = this.email;
         data["postalCode"] = this.postalCode;
+        data["countryCode"] = this.countryCode;
+        data["countryCodeCalculated"] = this.countryCodeCalculated;
         data["phoneNumber"] = this.phoneNumber;
         data["isUSCitizen"] = this.isUSCitizen;
         data["pendingPasswordReset"] = this.pendingPasswordReset;
@@ -32047,6 +32053,8 @@ export interface ISignUpMemberRequest {
     lastName: string;
     email: string;
     postalCode: string | undefined;
+    countryCode: string | undefined;
+    countryCodeCalculated: string | undefined;
     phoneNumber: string | undefined;
     isUSCitizen: boolean;
     pendingPasswordReset: boolean | undefined;
