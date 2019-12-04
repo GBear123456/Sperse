@@ -17858,9 +17858,10 @@ export class MemberSubscriptionServiceProxy {
 
     /**
      * @serviceType (optional) 
+     * @serviceTypeId (optional) 
      * @return Success
      */
-    getUserSubscriptions(systemType: string, serviceType: string | null | undefined, serviceTypeId: number): Observable<GetUserSubscriptionsOutput[]> {
+    getUserSubscriptions(systemType: string, serviceType: string | null | undefined, serviceTypeId: number | null | undefined): Observable<GetUserSubscriptionsOutput[]> {
         let url_ = this.baseUrl + "/api/services/Platform/MemberSubscription/GetUserSubscriptions?";
         if (systemType === undefined || systemType === null)
             throw new Error("The parameter 'systemType' must be defined and cannot be null.");
@@ -17868,9 +17869,7 @@ export class MemberSubscriptionServiceProxy {
             url_ += "SystemType=" + encodeURIComponent("" + systemType) + "&"; 
         if (serviceType !== undefined)
             url_ += "ServiceType=" + encodeURIComponent("" + serviceType) + "&"; 
-        if (serviceTypeId === undefined || serviceTypeId === null)
-            throw new Error("The parameter 'serviceTypeId' must be defined and cannot be null.");
-        else
+        if (serviceTypeId !== undefined)
             url_ += "ServiceTypeId=" + encodeURIComponent("" + serviceTypeId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
