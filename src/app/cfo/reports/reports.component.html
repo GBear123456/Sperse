@@ -1,6 +1,6 @@
 <div>
     <app-headline [names]="[ l('REPORTS') ]"
-                  iconSrc="./assets/common/icons/credit-card-icon.svg"
+                  iconSrc="assets/common/icons/credit-card-icon.svg"
                   [buttons]="headlineButtons"
                   [showToggleToolbarButton]="true">
         <synch-progress class="synch-progress"></synch-progress>
@@ -42,7 +42,7 @@
                     cellTemplate="actionsCellTemplate"
                     headerCellTemplate="actionsCellTemplate">
                 </dxi-column>
-                <dxi-column dataField="FileName" caption="{{l('Reports_FileName')}}" cssClass="clipboard-holder"></dxi-column>                                                                                                       
+                <dxi-column dataField="FileName" caption="{{l('Reports_FileName')}}" cssClass="clipboard-holder"></dxi-column>
                 <dxi-column dataField="Size" [calculateSortValue]="numerizeFileSizeSortValue" caption="{{l('Reports_Size')}}" [calculateCellValue]="calculateFileSizeValue" [allowSearch]="false" [allowFiltering]="false" cssClass="clipboard-holder"></dxi-column>
                 <dxi-column dataField="Departments" caption="{{l('Reports_Departments')}}" cellTemplate="deptCell" [allowSearch]="false" [allowSorting]="false" [allowFiltering]="false"></dxi-column>
                 <dxi-column dataField="CreationTime" caption="{{l('Reports_Created')}}" cssClass="tabular" cellTemplate="dateTimeCell" [allowSearch]="false" sortOrder="desc"></dxi-column>

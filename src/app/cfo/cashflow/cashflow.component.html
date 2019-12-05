@@ -1,6 +1,6 @@
 <app-headline *ngIf="!isFullscreenMode"
               [names]="[ l('Cashflow_mainTitle') ]"
-              iconSrc="./assets/common/icons/chart-icon.svg"
+              iconSrc="assets/common/icons/chart-icon.svg"
               [reloadIsNecessary]="noRefreshedAfterSync"
               [showReloadButton]="true"
               [showToggleToolbarButton]="true"
@@ -103,7 +103,7 @@
                         [minWidth]="30"
                         [allowEditing]="false">
             </dxi-column>
-            <dxi-column *ngIf="hasStaticInstance" 
+            <dxi-column *ngIf="hasStaticInstance"
                         dataField="businessEntityName"
                         dataType="string"
                         alignment="left"
@@ -112,7 +112,7 @@
                         caption="{{l('BusinessEntities')}}"
                         [cssClass]="tabularFontName + ' clipboard-holder'">
             </dxi-column>
-            <dxi-column *ngIf="hasStaticInstance" 
+            <dxi-column *ngIf="hasStaticInstance"
                         dataField="categoryName"
                         dataType="string"
                         alignment="left"
@@ -122,7 +122,7 @@
                         caption="{{l('Transactions_CashflowCategoryName')}}"
                         cssClass="category">
             </dxi-column>
-            <dxi-column *ngIf="hasStaticInstance" 
+            <dxi-column *ngIf="hasStaticInstance"
                         dataField="counterpartyName"
                         dataType="string"
                         alignment="left"
@@ -131,7 +131,7 @@
                         cssClass="clipboard-holder"
                         caption="{{l('Transactions_Vendor')}}">
             </dxi-column>
-            <dxi-column *ngIf="!hasStaticInstance" 
+            <dxi-column *ngIf="!hasStaticInstance"
                         dataField="status"
                         headerCellTemplate="twoRowsHeaderCellTemplate"
                         alignment="left"
@@ -139,7 +139,7 @@
                         [minWidth]="30"
                         [allowEditing]="false">
             </dxi-column>
-            <dxi-column *ngIf="!hasStaticInstance" 
+            <dxi-column *ngIf="!hasStaticInstance"
                         dataField="descriptor"
                         cellTemplate="descriptorCell"
                         [width]="detailsDescriptorColumnWidth()"
@@ -148,7 +148,7 @@
                         [caption]="l('DetailsHeaders_Descriptor')">
                 <dxo-header-filter [visible]="true"></dxo-header-filter>
             </dxi-column>
-            <dxi-column *ngIf="!hasStaticInstance" 
+            <dxi-column *ngIf="!hasStaticInstance"
                         dataField="debit"
                         [caption]="l('DetailsHeaders_Debit')"
                         [format]="customCurrency"
@@ -160,7 +160,7 @@
                         [minWidth]="30">
                 <dxi-validation-rule type="numeric"></dxi-validation-rule>
             </dxi-column>
-            <dxi-column *ngIf="!hasStaticInstance" 
+            <dxi-column *ngIf="!hasStaticInstance"
                         dataField="credit"
                         [caption]="l('DetailsHeaders_Credit')"
                         [format]="customCurrency"
@@ -172,7 +172,7 @@
                         alignment="right">
                 <dxi-validation-rule type="numeric"></dxi-validation-rule>
             </dxi-column>
-            <dxi-column *ngIf="!hasStaticInstance" 
+            <dxi-column *ngIf="!hasStaticInstance"
                         [caption]="l('DetailsHeaders_Account')"
                         dataField="accountNumber"
                         [allowSorting]="false"
@@ -182,7 +182,7 @@
                         [minWidth]="30"
                         editCellTemplate="accountsEditSelect">
             </dxi-column>
-            <dxi-column *ngIf="!hasStaticInstance" 
+            <dxi-column *ngIf="!hasStaticInstance"
                         dataField="accountId"
                         [allowSorting]="false"
                         [allowFiltering]="false"
@@ -191,7 +191,7 @@
                         [minWidth]="30"
                         [visible]="false">
             </dxi-column>
-            <dxi-column *ngIf="!hasStaticInstance" 
+            <dxi-column *ngIf="!hasStaticInstance"
                         [caption]="l('DetailsHeaders_Type')"
                         dataField="cashflowTypeId"
                         [allowSorting]="false"
@@ -210,7 +210,7 @@
                         [allowEditing]="false">
                 <dxo-header-filter [visible]="true"></dxo-header-filter>
             </dxi-column>
-            <dxi-column *ngIf="hasStaticInstance" 
+            <dxi-column *ngIf="hasStaticInstance"
                         dataField="amount"
                         alignment="left"
                         [minWidth]="30"
@@ -219,7 +219,7 @@
                         caption="{{l('Transactions_Amount')}}"
                         cssClass="tabular">
             </dxi-column>
-            <dxi-column *ngIf="hasStaticInstance" 
+            <dxi-column *ngIf="hasStaticInstance"
                         dataField="accountName"
                         alignment="left"
                         [minWidth]="30"
@@ -227,7 +227,7 @@
                         caption="{{l('Transactions_BankAccountNumber')}}"
                         cssClass="tabular clipboard-holder">
             </dxi-column>
-            <dxi-column *ngIf="hasStaticInstance" 
+            <dxi-column *ngIf="hasStaticInstance"
                         dataField="Comment"
                         dataType="string"
                         alignment="left"
