@@ -126,7 +126,12 @@
                 </div>
                 <div class="right col-md-5">
                     <div class="organization_logo" (click)="showUploadPhotoDialog($event)">
-                        <img src="{{ company.primaryPhoto ? 'data:image/png;base64,' + company.primaryPhoto : './assets/common/images/no-photo-Organization.png' }}" alt="Organization Logo">
+                        <img *ngIf="company.primaryPhoto; else addCompanyPhotoButton" [src]="'data:image/png;base64,' + company.primaryPhoto" alt="Organization Logo">
+                        <ng-template #addCompanyPhotoButton>
+                            <div class="add-company-logo">
+                                <a (click)="addCompanyLogo($event)">+ {{ ls.l('AddCompanyLogo') }}</a>
+                            </div>
+                        </ng-template>
                     </div>
                     <div class="field foundedIn">
                         <label for="foundedIn">{{ls.l('Company_FoundedIn')}}</label>

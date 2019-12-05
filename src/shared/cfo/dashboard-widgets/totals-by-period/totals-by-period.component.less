@@ -1,3 +1,6 @@
+@inflows: #35bd9f;
+@outflows: #f2526a;
+
 :host {
     display: block;
 
@@ -85,6 +88,26 @@
             .plus {
                 position: relative;
                 right: -4px;
+            }
+        }
+
+        .chart-head a {
+            &.inflows {
+                color: @inflows;
+            }
+
+            &.outflows {
+                color: @outflows;
+            }
+        }
+
+        .chart-line {
+            &.inflows div {
+                background-color: @inflows;
+            }
+
+            &.outflows div {
+                background-color: @outflows;
             }
         }
 

@@ -1,6 +1,7 @@
 <div class="headline-row">
     <div class="headline-title">
-        <i *ngIf="icon" class="icon-{{icon}}"></i><img *ngIf="iconSrc" [src]="iconSrc" alt="icon" />
+        <i *ngIf="icon" class="icon-{{icon}}"></i>
+        <div *ngIf="iconSrc" [inlineSVG]="iconSrc"></div>
         <div class="header-names">
             <ng-template ngFor let-item [ngForOf]="names" let-i="index">
                 <span class="header-name">{{item}}</span>

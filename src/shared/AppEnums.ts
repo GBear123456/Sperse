@@ -91,6 +91,10 @@ export class LinkUsageType {
     static Work = 'W';
 }
 
+export class AddressUsageType {
+    static Shipping = 'S';
+}
+
 export class ContactTypes {
     static Personal = 'personal';
     static Business = 'business';

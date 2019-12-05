@@ -6,7 +6,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { CacheService } from 'ng2-cache-service';
 import { DxContextMenuComponent } from 'devextreme-angular/ui/context-menu';
 import * as _ from 'underscore';
-import { BehaviorSubject, Observable, ReplaySubject } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { filter, finalize, takeUntil, map } from 'rxjs/operators';
 
 /** Application imports */
@@ -32,8 +32,7 @@ import {
     PersonOrgRelationShortInfo,
     UpdatePersonOrgRelationInput,
     UpdateOrganizationInfoInput,
-    UpdatePersonNameInput,
-    UpdateContactAffiliateCodeInput
+    UpdatePersonNameInput
 } from '@shared/service-proxies/service-proxies';
 import { NameParserService } from '@app/crm/shared/name-parser/name-parser.service';
 import { NoteAddDialogComponent } from '../notes/note-add-dialog/note-add-dialog.component';
@@ -102,33 +101,6 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
     addContextMenuItems: ContextMenuItem[] = [];
     addButtonTitle = '';
     isBankCodeLayout = this.userManagementService.checkBankCodeFeature();
-    private affiliateCode: ReplaySubject<string> = new ReplaySubject(1);
-    affiliateCode$: Observable<string> = this.affiliateCode.asObservable();
-    affiliateCodeInplaceEditData$: Observable<InplaceEditModel> = this.affiliateCode$.pipe(
-        map((affiliateCode: string) => {
-            return {
-                id: this.contactId,
-                isReadOnlyField: !this.manageAllowed,
-                value: (affiliateCode || '').trim(),
-                validationRules: [
-                    {
-                        type: 'pattern',
-                        pattern: AppConsts.regexPatterns.affiliateCode,
-                        message: this.ls.l('AffiliateCodeIsNotValid')
-                    },
-                    {
-                        type: 'stringLength',
-                        max: 50,
-                        message: this.ls.l('MaxLengthIs', AppConsts.localization.defaultLocalizationSourceName, 50)
-                    }
-                ],
-                isEditDialogEnabled: true,
-                lEntityName: 'Name',
-                lEditPlaceholder: this.ls.l('Affiliate')
-            };
-        })
-    );
-    isPartner: boolean;
 
     constructor(
         injector: Injector,
@@ -173,11 +145,7 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
             (contactInfo: ContactInfoDto) => {
                 this.contactId = contactInfo.id;
                 this.contactGroup = contactInfo.groupId;
-                this.isPartner = this.contactGroup === ContactGroup.Partner;
                 this.manageAllowed = this.contactsService.checkCGPermission(contactInfo.groupId);
-                if (contactInfo.id) {
-                    this.affiliateCode.next(contactInfo.affiliateCode);
-                }
                 this.addContextMenuItems = this.getDefaultContextMenuItems(contactInfo).filter(menuItem => {
                     return menuItem.contactGroups.indexOf(contactInfo.groupId) >= 0;
                 });
@@ -249,11 +217,7 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
     removePersonOrgRelation(event) {
         let companyName = this.data['organizationContactInfo'].fullName;
         this.messageService.confirm(
-            this.ls.l(
-                'ContactRelationRemovalConfirmationMessage',
-                AppConsts.localization.CRMLocalizationSourceName,
-                companyName
-            ),
+            this.ls.l('ContactRelationRemovalConfirmationMessage', companyName),
             (result) => {
                 if (result) {
                     let orgRelationId = this.personContactInfo['personOrgRelationInfo'].id;
@@ -453,19 +417,6 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
         ).subscribe(() => {});
     }
 
-    updateAffiliateCode(value) {
-        value = value.trim();
-        if (!value)
-            return;
-        this.contactServiceProxy.updateAffiliateCode(new UpdateContactAffiliateCodeInput({
-            contactId: this.contactId,
-            affiliateCode: value
-        })).subscribe(() => {
-            this.data.affiliateCode = value;
-            this.affiliateCode.next(value);
-        });
-    }
-
     get addOptionCacheKey() {
         return this.ADD_OPTION_CACHE_KEY + '_' + this.contactGroup;
     }
@@ -572,6 +523,17 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
     addCompanyDialog(event) {
         if (this.manageAllowed)
             this.contactsService.addCompanyDialog(event, this.data).subscribe();
+    }
+
+    addCompanyLogo(event) {
+        if (this.manageAllowed) {
+            this.contactsService.showUploadPhotoDialog(
+                this.data['organizationContactInfo'],
+                event
+            ).subscribe((logo: string) => {
+                this.data['organizationContactInfo'].primaryPhoto = logo;
+            });
+        }
     }
 
     showCompanyList(event) {

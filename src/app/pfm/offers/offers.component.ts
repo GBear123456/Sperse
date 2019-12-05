@@ -35,7 +35,7 @@ import { ItemDetailsService } from '@shared/common/item-details-layout/item-deta
 import { FilterHelpers } from '@app/crm/shared/helpers/filter.helper';
 import { FilterRangeComponent } from '@shared/filters/range/filter-range.component';
 import { AppStore, RatingsStoreSelectors } from '@app/store';
-import { DataGridService } from '@app/shared/common/data-grid.service.ts/data-grid.service';
+import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
 
 @Component({
@@ -304,7 +304,7 @@ export class OffersComponent extends AppComponentBase implements OnInit, OnDestr
                                 items: [
                                     {
                                         action: Function(),
-                                        text: this.ls(AppConsts.localization.defaultLocalizationSourceName, 'SaveAs', 'PDF'),
+                                        text: this.l('SaveAs', 'PDF'),
                                         icon: 'pdf',
                                     }, {
                                         action: this.exportToXLS.bind(this),

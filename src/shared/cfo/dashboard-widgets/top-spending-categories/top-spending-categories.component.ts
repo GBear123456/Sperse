@@ -60,6 +60,8 @@ export class TopSpendingCategoriesComponent implements OnInit, OnDestroy {
             );
         })
     );
+    colorsPalette: string[] = [ '#e47822', '#3d8ba9', '#99c24d', '#fed142', '#a5cfdf' ];
+
     constructor(
         private dashboardServiceProxy: DashboardServiceProxy,
         private dashboardService: DashboardService,
@@ -84,22 +86,21 @@ export class TopSpendingCategoriesComponent implements OnInit, OnDestroy {
             });
     }
 
-    customizeLegendText = (pointInfo) => {
-        let text = pointInfo.pointName;
-        if (this.topSpendingCategories && this.topSpendingCategories.length) {
-            const amount = this.topSpendingCategories[pointInfo.pointIndex].amount;
-            text = this.currencyPipe.transform(amount, this.currencyId, 'symbol-narrow', '1.2-2') + ' ' + pointInfo.pointName;
-        }
-        return text;
-    }
-
     onClick(e) {
         const pointInfo = e.points ? e.points[0] : e.target;
         const category: GetSpendingCategoriesOutput = this.topSpendingCategories[pointInfo.index];
+        this.redirectToTransactions(category.id);
+    }
+
+    legendItemClick(categoryId: number) {
+        this.redirectToTransactions(categoryId);
+    }
+
+    private redirectToTransactions(categoryId: number) {
         this.router.navigate(
             ['../transactions'],
             {
-                queryParams: { categoryIds: [ category.id ]},
+                queryParams: { categoryIds: [ categoryId ]},
                 relativeTo: this.route
             }
         );

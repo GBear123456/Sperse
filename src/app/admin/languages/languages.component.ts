@@ -16,7 +16,7 @@ import { ApplicationLanguageListDto, LanguageServiceProxy, SetDefaultLanguageInp
 import { CreateOrEditLanguageModalComponent } from './create-or-edit-language-modal/create-or-edit-language-modal.component';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { AppPermissions } from '@shared/AppPermissions';
-import { DataGridService } from '@app/shared/common/data-grid.service.ts/data-grid.service';
+import { DataGridService } from '@app/shared/common/data-grid.service./data-grid.service';
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
 
 @Component({

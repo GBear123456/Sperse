@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { MemberAreaLink } from '@shared/common/area-navigation/member-area-link.enum';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 
@@ -7,7 +7,7 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
     templateUrl: 'products.component.html',
     styleUrls: ['./products.component.less']
 })
-export class ProductsComponent implements OnInit {
+export class ProductsComponent {
     sidebarLinks: MemberAreaLink[] = [
         {
             name: this.ls.l('BankCode_CodebreakerAI'),
@@ -32,8 +32,8 @@ export class ProductsComponent implements OnInit {
             namePrefix: this.ls.l('BankCode_Bank'),
             name: this.ls.l('BankCode_Affiliate'),
             routerUrl: 'bank-affiliate'
-        },
-        {
+        }
+        /*{
             namePrefix: this.ls.l('BankCode_Bank'),
             name: this.ls.l('BankCode_Cards'),
             routerUrl: 'bank-cards'
@@ -42,9 +42,7 @@ export class ProductsComponent implements OnInit {
             namePrefix: this.ls.l('BankCode_Bank'),
             name: this.ls.l('BankCode_Gear'),
             routerUrl: 'bank-gear'
-        }
+        }*/
     ];
     constructor(public ls: AppLocalizationService) { }
-
-    ngOnInit() { }
 }

@@ -42,6 +42,7 @@ import { DxSelectBoxModule } from 'devextreme-angular/ui/select-box';
 import { ModalModule } from 'ngx-bootstrap';
 import { filter, map } from 'rxjs/operators';
 import { ImageViewerModule } from 'ng2-image-viewer';
+import { InlineSVGModule } from 'ng-inline-svg';
 
 /** Application imports */
 import { ReportPeriodComponent } from '@app/cfo/shared/report-period/report-period.component';

@@ -91,7 +91,8 @@ export class CfoActivateService implements CanActivate {
                     },
                     {
                         path: 'slice',
-                        redirectTo: 'crm'
+                        redirectTo: 'crm',
+                        data: { localizationSource: 'CRM' }
                     },
                     {
                         path: 'pfm',

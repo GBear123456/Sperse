@@ -17,11 +17,11 @@ import { LoadingService } from '@shared/common/loading-service/loading.service';
                 children: [
                     {
                         path: '',
-                        redirectTo: 'dashboard',
+                        redirectTo: 'home',
                         pathMatch: 'full'
                     },
                     {
-                        path: 'dashboard',
+                        path: 'home',
                         component: DashboardComponent
                     },
                     {

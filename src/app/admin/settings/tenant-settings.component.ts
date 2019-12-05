@@ -91,6 +91,8 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
     siteUrlRegexPattern = AppConsts.regexPatterns.siteUrl;
     defaultTimezoneScope: SettingScopes = AppTimezoneScope.Tenant;
 
+    masks = AppConsts.masks;
+
     private rootComponent;
     headlineButtons: HeadlineButton[] = [
         {

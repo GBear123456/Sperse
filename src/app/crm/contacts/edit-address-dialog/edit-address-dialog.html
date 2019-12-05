@@ -1,5 +1,5 @@
 <h2 mat-dialog-title (mousedown)="mouseDown($event)" *ngIf="data.title">{{data.title}}</h2>
-<h2 mat-dialog-title (mousedown)="mouseDown($event)" *ngIf="!data.title">{{ls.l('ContactInfoDialogTitle', localization.PFMLocalizationSourceName, ls.l(action), ls.l('Address'))}}</h2>
+<h2 mat-dialog-title (mousedown)="mouseDown($event)" *ngIf="!data.title">{{ls.l('ContactInfoDialogTitle', ls.l(action), ls.l('Address'))}}</h2>
 <dx-scroll-view showScrollbar="always">
     <mat-dialog-content>
         <dx-validation-group (onInitialized)="initValidationGroup($event)">

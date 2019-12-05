@@ -125,7 +125,7 @@ export class PlatformSelectComponent {
             } else if (module.name === 'CFO' && module.footerItem && this.permission.isGranted(AppPermissions.CFOMemberAccess)) {
                 return window.open(location.origin + '/app/cfo-portal', '_blank');
             } else if (module.name === 'BankCode' && this.userManagementService.checkBankCodeFeature()) {
-                return window.open(location.origin + '/code-breaker/dashboard', '_blank');
+                return window.open(location.origin + '/code-breaker/home', '_blank');
             } else {
                 navigate = this.router.navigate(['app/' + module.name.toLowerCase() + (module.uri ? '/' + module.uri.toLowerCase() : '')]);
             }

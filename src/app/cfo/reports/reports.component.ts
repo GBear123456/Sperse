@@ -458,6 +458,7 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
         this.currentReportInfo = this.actionRecordData;
         $event.itemData.action.call(this);
         this.actionRecordData = null;
+        this.hideActionsMenu();
     }
 
     downloadReport() {

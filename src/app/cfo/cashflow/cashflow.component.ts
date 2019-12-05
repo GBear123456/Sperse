@@ -3525,7 +3525,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             onEnterKey: this.saveForecast.bind(this, cellObj)
         });
         this.functionButton = new Button(wrapperButton, {
-            iconSrc: './assets/common/icons/fx.svg',
+            iconSrc: '/assets/common/icons/fx.svg',
             onClick: this.toggelCalculator.bind(this, event),
             elementAttr: { 'class' : 'function-button'}
         });
@@ -4445,7 +4445,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             }
         });
         this.functionButton = new Button(wrapperButton, {
-            iconSrc: './assets/common/icons/fx.svg',
+            iconSrc: '/assets/common/icons/fx.svg',
             onClick: this.toggelCalculator.bind(this, event),
             elementAttr: { 'class': 'function-button' }
         });

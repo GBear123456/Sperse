@@ -65,11 +65,10 @@ import { ItemDetailsService } from '@shared/common/item-details-layout/item-deta
 import { ItemTypeEnum } from '@shared/common/item-details-layout/item-type.enum';
 import { ContactsService } from '@app/crm/contacts/contacts.service';
 import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
-import { DataGridService } from '@app/shared/common/data-grid.service.ts/data-grid.service';
+import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
 import { AppPermissions } from '@shared/AppPermissions';
 import { OrganizationUnitsStoreActions, OrganizationUnitsStoreSelectors } from '@app/crm/store';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
-import { DataGridHelper } from '@app/crm/shared/helpers/data-grid.helper';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { PivotGridComponent } from '@app/shared/common/slice/pivot-grid/pivot-grid.component';
 import { CrmService } from '@app/crm/crm.service';
@@ -1004,7 +1003,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     getOrganizationUnitName = (e) => {
-        return DataGridHelper.getOrganizationUnitName(e.OrganizationUnitId, this.organizationUnits);
+        return DataGridService.getOrganizationUnitName(e.OrganizationUnitId, this.organizationUnits);
     }
 
     updatePartnerStatuses(status) {

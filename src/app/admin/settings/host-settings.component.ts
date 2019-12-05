@@ -16,6 +16,7 @@ import {
 } from '@shared/service-proxies/service-proxies';
 import { AppPermissions } from '@shared/AppPermissions';
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
+import { AppConsts } from '@root/shared/AppConsts';
 
 @Component({
     templateUrl: './host-settings.component.html',
@@ -41,6 +42,7 @@ export class HostSettingsComponent extends AppComponentBase implements OnInit, O
     usingDefaultTimeZone = false;
     initialTimeZone: string = undefined;
     private rootComponent;
+    masks = AppConsts.masks;
     headlineButtons: HeadlineButton[] = [
         {
             enabled: this.isGranted(AppPermissions.AdministrationLanguagesCreate),

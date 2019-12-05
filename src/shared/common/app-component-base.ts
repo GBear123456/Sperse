@@ -33,6 +33,7 @@ import { AppPermissions } from '@shared/AppPermissions';
 import { FullScreenService } from '@shared/common/fullscreen/fullscreen.service';
 import { FilterModel } from '@shared/filters/models/filter.model';
 import { TitleService } from '@shared/common/title/title.service';
+import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
 
 export abstract class AppComponentBase implements OnDestroy {
     @HostBinding('class.fullscreen') public isFullscreenMode;
@@ -87,12 +88,7 @@ export abstract class AppComponentBase implements OnDestroy {
     public userTimezone = '0000';
     public cacheHelper: CacheHelper;
     public loadingService: LoadingService;
-    public defaultGridPagerConfig = {
-        showPageSizeSelector: true,
-        allowedPageSizes: [10, 20, 50, 100],
-        showInfo: true,
-        visible: true
-    };
+    public defaultGridPagerConfig = DataGridService.defaultGridPagerConfig;
 
     constructor(
         private _injector: Injector
@@ -146,7 +142,7 @@ export abstract class AppComponentBase implements OnDestroy {
     }
 
     l(key: string, ...args: any[]): string {
-        return this.localizationService.l(key, AppConsts.localization.defaultLocalizationSourceName, ...args);
+        return this.localizationService.l(key, ...args);
     }
 
     ls(sourcename: string, key: string, ...args: any[]): string {

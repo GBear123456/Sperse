@@ -3,7 +3,7 @@
       <span class="swal-icon--warning__dot"></span>
     </span>
 </div>
-<h2>{{ls.l('You_Will_Sign_Up_With', 'Platform', data.authenticateResult.email)}}</h2>
+<h2>{{ls.l('You_Will_Sign_Up_With', data.authenticateResult.email)}}</h2>
 <form #confirmRegister="ngForm" novalidate>
     <mat-dialog-content class="mat-typography" *ngIf="data.routerUrl === 'login'">
         <div class="form-check">

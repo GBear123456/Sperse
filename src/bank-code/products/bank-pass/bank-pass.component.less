@@ -1,198 +1,269 @@
+@title-font: 'AvianoSans-Bla', sans-serif !important;
+@text-font: 'IBM Plex Sans', sans-serif;
 :host {
     --width: 100%;
     --height: 135px;
     --top-color: #104779;
     --bottom-color: #fff;
-    
+
     .content {
-        height: 700px;
+        min-height: 745px;
     }
-    
+
     body {
         color: white;
         background: linear-gradient(to left, #606c88 , #3f4c6b);
     }
-    
-    a, a:visited {
-        color: inherit;
-        text-decoration: none;
-    }
-    
-    h1, h2, h3 {
-        text-align: center;
-    }
-    
-    h2 {
-        font-stretch: normal;
-        font-style: normal;
-        font-weight: normal;
-        line-height: normal;
-        letter-spacing: -0.74px;
-        text-align: center;
-        color: #000000;
-        margin-bottom: 20px;
-    }
-    
-    p {
-        font-size: 15px;
-        font-weight: normal;
-        font-stretch: normal;
-        font-style: normal;
-        line-height: 1.53;
-        letter-spacing: -0.3px;
-        text-align: center;
-        color: rgba(0, 0, 0, 0.7);
-        font-family: "Lucida Console", Monaco, monospace;
-        
-        .red {
-            display: block;
-            color: #ac1f22;
-            font-family: 'AvianoSans-Bla', sans-serif !important;
-        }
-    }
-    
+
     .demo {
         display: flex;
         flex-wrap: wrap;
         justify-content: center;
     }
-    
-    section {
-        min-height: 745px;
-        box-shadow: 0 20px 100px 0 rgba(0, 0, 0, 0.15);
-        border: solid 1px #ebecec;
-        background-color: #ffffff;
-    }
-    
+
     section:not(.vertical) {
         width: var(--width);
     }
-    
+
+    section {
+        box-shadow: 0 20px 100px 0 rgba(0, 0, 0, 0.15);
+        border: solid 1px #ebecec;
+        background-color: #ffffff;
+        &.users-list {
+            padding: 15px 15px 0 15px;
+            position: relative;
+            @media (min-width: 960px) {
+                width: calc(100vw - (100vw - 960px)/2 - 320px - 15px);
+            }
+
+            @media (min-width: 1200px) {
+                width: calc(100vw - (100vw - 1140px)/2 - 285px - 24px);
+            }
+        }
+        loading-spinner {
+            display: block;
+            min-height: calc(100vh - 240px);
+            @media (min-width: 960px) {
+                min-height: calc(100vh - 165px);
+            }
+        }
+    }
+
     section header {
         height: 110px;
         position: relative;
-        
+
         .header-image {
             position: absolute;
             top: 40px;
         }
     }
-    
-    section footer {
+
+    /*/deep/ section footer {
         text-align: center;
         margin-top: 120px;
-        
+
         @media all and (min-width: 1024px) {
             h2, p, div {
                 max-width: 70%;
                 margin: 0 auto;
             }
         }
-    }
-    
+    }*/
+
     section.vertical {
         position: relative;
         display: flex;
         height: var(--height);
         width: calc(var(--width) * 3);
     }
-    
+
     section.vertical header,
     section.vertical footer {
         height: 100%;
         width: var(--width);
     }
-    
+
     section header {
         background: var(--top-color);
     }
-    
+
     section footer {
         background: var(--bottom-color);
     }
-    
+
     .vertical {
         --height: 300px;
         --width: 100px;
     }
-    
+
     .separator {
         --svg: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none"%3E%3Cpolygon fill="%23f44336" points="0 100 0 0 100 0"/%3E%3Cpolygon fill="%232196F3" points="100 0 100 100 0 100"/%3E%3C/svg%3E');
-        
+
         width: var(--width);
         height: var(--height);
         background-image: var(--svg);
         background-repeat: no-repeat;
         background-size: 100% 100%;
     }
-    
+
     .separator.external {
         background-image: url(../../../assets/common/images/bank-code/source.svg);
     }
-   
+
     .separator.reverse {
         transform: rotateY(180deg);
     }
-    
+
     .vertical .separator.reverse {
         transform: rotateX(180deg);
     }
-    
+
     .image.above .separator {
         --svg: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none"%3E%3Cpolygon fill="%232196F3" points="100 0 100 100 0 100"/%3E%3C/svg%3E');
     }
-    
+
     .image.below .separator {
         --svg: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none"%3E%3Cpolygon fill="%23f44336" points="0 100 0 0 100 0"/%3E%3C/svg%3E');
     }
-    
-    .actions {
-        margin-top: 25px !important;
-        
-        button {
+
+    /deep/ .dx-textbox {
+        width: 263px;
+        input {
             width: 100%;
-            max-width: 300px;
-            height: 56px;
-            border-radius: 0;
-            border: 0;
-            background-color: #ac1f22;
-            font-size: 20px;
-            line-height: normal;
-            letter-spacing: normal;
+            color: #677380;
+            font-weight: 300;
+            line-height: 1.71;
+            letter-spacing: 0.3px;
+            text-align: left;
+            padding-left: 36px;
+            border: 1px solid #dadee1;
+            border-radius: 3px;
+            font-size: 14px;
+            height: 39px;
+            outline: none;
+
+            @media screen and (max-width: 480px) {
+                width: auto;
+            }
+        }
+
+        .dx-icon-search,
+        .dx-icon-clear {
+            font: 14px/1 DXIcons !important;
+        }
+
+        &.dx-state-focused .dx-placeholder {
+            top: -25px!important;
+        }
+
+        .dx-placeholder {
+            font-size: 13px!important;
+            font-weight: 300!important;
+            letter-spacing: .3px!important;
+        }
+    }
+
+    #gridContainer {
+        height: initial;
+    }
+
+    .vertical .separator.reverse {
+        transform: rotateX(180deg);
+    }
+
+    .image.above .separator {
+        --svg: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none"%3E%3Cpolygon fill="%232196F3" points="100 0 100 100 0 100"/%3E%3C/svg%3E');
+    }
+
+    .image.below .separator {
+        --svg: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none"%3E%3Cpolygon fill="%23f44336" points="0 100 0 0 100 0"/%3E%3C/svg%3E');
+    }
+
+    .top {
+        padding: 92px 30px 40px;
+        text-align: center;
+
+        h1 {
+            font-size: 44px;
+            letter-spacing: -0.88px;
             text-align: center;
+            color: #000000;
+        }
+
+        h2 {
+            font-size: 22px;
+            font-family: 'AvianoSans-Bol', sans-serif !important;
+            font-weight: normal;
+            line-height: 1.23;
+            letter-spacing: -0.44px;
+            text-align: center;
+            color: #000000;
+            max-width: 530px;
+            margin: 15px auto;
+        }
+
+        p {
+            max-width: 672px;
+            margin: 0 auto;
+            font-size: 16px;
+        }
+
+        .price {
+            margin-bottom: 0;
+            margin-top: 37px;
+            line-height: 22px;
+            span {
+                font-family: 'AvianoSans-Reg', sans-serif !important;
+                font-size: 18px;
+                letter-spacing: -0.36px;
+                &.bold {
+                    font-size: 30px;
+                    letter-spacing: -0.6px;
+                    color: #000000;
+                    font-family: 'AvianoSans-Bla', sans-serif !important;
+                }
+                &.per-month {
+                    text-transform: uppercase;
+                }
+            }
+        }
+
+        .button {
+            margin: 20px auto 0;
             color: #fff;
-            transition: .2s;
-            cursor: pointer;
-            font-family: 'AvianoSans-Bla', sans-serif !important;
-        
-            img {
-                float: right;
-                margin-top: 7px;
-                margin-right: 7px;
+        }
+    }
+
+    .access {
+        background: rgba(16, 71, 121, 0.07);
+        padding: 0 15px;
+
+        .section-content {
+            padding: 40px 20px;
+
+            h2 {
+                font-size: 23px;
+                font-family: @title-font;
+                font-weight: normal;
+                line-height: 1.04;
+                letter-spacing: -0.46px;
+                color: #000000;
             }
-        
-            &:hover {
-                background-color: darken(#ac1f22, 6%);
-                box-shadow: 0 0 3px rgba(#ac1f22, .5);
-            }
-        
-            &[disabled] {
-                cursor: not-allowed;
-                opacity: .7;
+
+            p {
+                font-family: @text-font;
+                font-size: 16px;
+                font-weight: normal;
+                line-height: 1.44;
+                letter-spacing: normal;
+                color: #474747;
             }
         }
     }
-    
-    .price {
-        font-size: 19px;
-        
-        .number {
-            font-size: 38px;
-        }
-        
-        small {
-            font-size: 12px;
-            display: block;
-        }
+
+    .bg-tablet {
+        background: url('../../../assets/common/images/bank-code/bg-tablet@2x.png') top right no-repeat;
+        background-size: cover;
     }
 }

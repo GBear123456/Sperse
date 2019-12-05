@@ -7,7 +7,7 @@
             <div class="charts-wrapper" *ngIf="(totalsData$ | async) as totalsData">
                 <ng-container *ngFor="let field of fields">
                     <div *ngIf="field.visible" class="chart-head">
-                        {{ls.l('CRMDashboard_NewAdded', 'CRM', [ls.l(field.title).toLowerCase()])}}
+                        {{ls.ls('CRM', 'CRMDashboard_NewAdded', [ls.l(field.title).toLowerCase()])}}
                         <span [ngStyle]="{'color': field.color}">
                             <ng-container *ngIf="field.type == 'currency'">
                                 {{ totalsData[field.name.replace('total', 'new')] | currency: 'USD' : true : '1.0-0' }}

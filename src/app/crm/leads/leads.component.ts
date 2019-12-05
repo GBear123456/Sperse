@@ -75,9 +75,8 @@ import { ItemDetailsService } from '@shared/common/item-details-layout/item-deta
 import { ContactsService } from '@app/crm/contacts/contacts.service';
 import { AppPermissions } from '@shared/AppPermissions';
 import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
-import { DataGridService } from '@app/shared/common/data-grid.service.ts/data-grid.service';
+import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
 import { OrganizationUnitsStoreActions } from '@app/crm/store';
-import { DataGridHelper } from '@app/crm/shared/helpers/data-grid.helper';
 import { PivotGridComponent } from '@app/shared/common/slice/pivot-grid/pivot-grid.component';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { ChartComponent } from '@app/shared/common/slice/chart/chart.component';
@@ -538,7 +537,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     getOrganizationUnitName = (e) => {
-        return DataGridHelper.getOrganizationUnitName(e.OrganizationUnitId, this.organizationUnits);
+        return DataGridService.getOrganizationUnitName(e.OrganizationUnitId, this.organizationUnits);
     }
 
     toggleToolbar() {

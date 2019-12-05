@@ -14,7 +14,7 @@ import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
 import { EmailTemplateServiceProxy, GetTemplatesResponse, CreateEmailTemplateRequest,
-    UpdateEmailTemplateRequest } from '@shared/service-proxies/service-proxies';
+    UpdateEmailTemplateRequest, GetTemplateReponse } from '@shared/service-proxies/service-proxies';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 
 @Component({
@@ -47,7 +47,7 @@ export class EmailTemplateDialogComponent implements OnInit {
     @Input() templateNote = '';
     @Input() templateEditMode = false;
     @Output() onSave: EventEmitter<any> = new EventEmitter<any>();
-    @Output() onTemplateChange: EventEmitter<any> = new EventEmitter<any>();
+    @Output() onTemplateChange: EventEmitter<any> = new EventEmitter<number>();
 
     buttons: IDialogButton[] = [
         {
@@ -68,8 +68,8 @@ export class EmailTemplateDialogComponent implements OnInit {
         private notifyService: NotifyService,
         private dialogRef: MatDialogRef<EmailTemplateDialogComponent>,
         private emailTemplateProxy: EmailTemplateServiceProxy,
-        private changeDetectorRef: ChangeDetectorRef,
         private sessionService: AppSessionService,
+        public changeDetectorRef: ChangeDetectorRef,
         public dialog: MatDialog,
         public ls: AppLocalizationService,
         @Inject(MAT_DIALOG_DATA) public data: any
@@ -99,24 +99,24 @@ export class EmailTemplateDialogComponent implements OnInit {
         if (this.templateEditMode) {
             if (!this.getTemplateName())
                 return this.notifyService.error(
-                    this.ls.l('RequiredField', '', this.ls.l('Template')));
+                    this.ls.l('RequiredField', this.ls.l('Template')));
         } else {
             if (!this.data.from)
                 return this.notifyService.error(
-                    this.ls.l('RequiredField', '', this.ls.l('From')));
+                    this.ls.l('RequiredField', this.ls.l('From')));
 
             if (!this.data.to)
                 return this.notifyService.error(
-                    this.ls.l('RequiredField', '', this.ls.l('To')));
+                    this.ls.l('RequiredField', this.ls.l('To')));
 
             if (!this.data.subject)
                 return this.notifyService.error(
-                    this.ls.l('RequiredField', '', this.ls.l('Subject')));
+                    this.ls.l('RequiredField', this.ls.l('Subject')));
         }
 
         if (!this.data.body)
             return this.notifyService.error(
-                this.ls.l('RequiredField', '', this.ls.l('Body')));
+                this.ls.l('RequiredField', this.ls.l('Body')));
 
         return true;
     }
@@ -187,17 +187,20 @@ export class EmailTemplateDialogComponent implements OnInit {
 
     onTemplateChanged(event) {
         if (event.value) {
-            this.startLoading();
-            this.emailTemplateProxy.getTemplate(event.value).pipe(
-                finalize(() => this.finishLoading())
-            ).subscribe(res => {
-                this.data.bcc = res.bcc;
-                this.data.body = res.body;
-                this.data.cc = res.cc;
-                this.data.subject = res.subject;
-                this.changeDetectorRef.markForCheck();
-                this.onTemplateChange.emit(res);
-            });
+            if (this.templateEditMode) {
+                this.startLoading();
+                this.emailTemplateProxy.getTemplate(event.value).pipe(
+                    finalize(() => this.finishLoading())
+                ).subscribe((res: GetTemplateReponse) => {
+                    this.data.bcc = res.bcc;
+                    this.data.body = res.body;
+                    this.data.cc = res.cc;
+                    this.data.subject = res.subject;
+                    this.changeDetectorRef.markForCheck();
+                    this.onTemplateChange.emit(event.value);
+                });
+            } else
+                this.onTemplateChange.emit(event.value);
         }
     }
 

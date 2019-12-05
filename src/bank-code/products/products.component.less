@@ -1,6 +1,17 @@
 :host {
+
     sidebar {
-        margin-top: 117px;
+        margin-top: 40px;
+    }
+
+    .left-side {
+        @media (max-width: 768px) {
+            display: none;
+        }
+    }
+
+    .right-side {
+        padding-top: 40px;
     }
 
     /deep/ header {
@@ -28,4 +39,85 @@
         height: 100%;
     }
 
+    /deep/ .button {
+        width: 100%;
+        max-width: 300px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 56px;
+        border-radius: 0;
+        border: 0 !important;
+        background-color: #ac1f22;
+        font-size: 20px;
+        line-height: 56px;
+        letter-spacing: normal;
+        color: #fff;
+        transition: .2s;
+        cursor: pointer;
+        font-family: 'AvianoSans-Bla', sans-serif !important;
+        text-decoration: none;
+
+        + .button {
+            margin: 0 15px;
+        }
+
+        &.arrow {
+            &::after {
+                content: '';
+                display: inline-block;
+                width: 24px;
+                height: 11px;
+                margin-left: 12px;
+                background: url('../../assets/common/icons/arrow-right-long-icon.svg') right center no-repeat;
+            }
+        }
+
+        &.small {
+            height: 44px;
+            max-width: 202px;
+            font-size: 16px;
+        }
+
+        &:hover {
+            background-color: darken(#ac1f22, 6%);
+            box-shadow: 0 0 3px rgba(#ac1f22, .5);
+        }
+
+        &.button-default {
+            background: #fff;
+            color: #ac1f22;
+
+            &:hover {
+                background-color: darken(#fff, 20%);
+                box-shadow: 0 0 3px rgba(#ac1f22, .5);
+            }
+        }
+
+        &.bordered {
+            border: solid 1px #ac1f22 !important;
+            background-color: #ffffff;
+            font-size: 16px;
+            font-family: 'AvianoSans-Bla', sans-serif !important;
+            font-weight: normal;
+            letter-spacing: 0.5px;
+            text-align: center;
+            color: #ac1f22;
+            padding: 8px 10px !important;
+            max-width: 202px;
+            line-height: 1.4;
+            height: auto;
+
+            &:hover {
+                background-color: #ac1f22;
+                color: #fff;
+                box-shadow: 0 0 3px rgba(#ac1f22, .5);
+            }
+        }
+
+        &[disabled] {
+            cursor: not-allowed;
+            opacity: .7;
+        }
+    }
 }

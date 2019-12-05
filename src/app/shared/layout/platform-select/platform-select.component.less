@@ -411,6 +411,9 @@
         &__items {
             display: flex;
             margin-bottom: 0;
+            @media (max-width: 767px) {
+                flex-direction: column;
+            }
         }
         &__item {
             flex: 1;

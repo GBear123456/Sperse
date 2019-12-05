@@ -518,9 +518,7 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
     }
 
     openActionsMenu(cellObj) {
-        if (cellObj.data.syncTypeId === 'Q') {
-            this.contextMenuItems[this.contextMenuItems.findIndex(e => e.name === 'resync')]['hide'] = true;
-        }
+        this.contextMenuItems[this.contextMenuItems.findIndex(e => e.name === 'resync')]['hide'] = cellObj.data.syncTypeId === 'Q';
         this.syncAccount = cellObj.data;
         this.syncRef = cellObj.text;
         this.syncAccountId = cellObj.data.syncAccountId;

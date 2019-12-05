@@ -9,10 +9,10 @@ import { RouteReuseStrategy, Router } from '@angular/router';
 /** Third party imports */
 import { AbpModule } from '@abp/abp.module';
 import { GestureConfig } from '@angular/material';
+import { BugsnagErrorHandler } from '@bugsnag/plugin-angular';
 import { CacheService } from 'ng2-cache-service';
 import { CacheStorageAbstract } from 'ng2-cache-service/dist/src/services/storage/cache-storage-abstract.service';
 import { CacheLocalStorage } from 'ng2-cache-service/dist/src/services/storage/local-storage/cache-local-storage.service';
-import { BugsnagErrorHandler } from '@bugsnag/plugin-angular';
 
 /** Application imports */
 import { AppPermissionService } from '@shared/common/auth/permission.service';

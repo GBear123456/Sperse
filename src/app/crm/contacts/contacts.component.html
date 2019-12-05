@@ -2,6 +2,7 @@
     [navLinks]="navLinks"
     [referrerParams]="referrerParams"
     [rightPanelOpened]="rightPanelSetting.opened"
+    [rightPanelWidth]="rightPanelSetting.width"
     (onClose)="close()"
     (onChanged)="updateContextType($event)">
     <ng-container topHeader>
@@ -20,7 +21,7 @@
         </div>
         <operations-widget
             [enabled]="contactInfo && showToolbar"
-            [customerType]="contactGroup"
+            [customerType]="contactGroupId$ | async"
             [leadId]="leadId"
             [contactInfo]="contactInfo"
             [stages]="leadStages"
@@ -57,41 +58,50 @@
         </div>
     </ng-container>
     <ng-container rightPanel>
-        <mat-tab-group>
-            <mat-tab [label]="l('Overview')" *ngIf="rightPanelSetting.id == RP_DEFAULT_ID">
-                <span class="gear-icon" (click)="toggleConfigMode()"></span>
-                <dx-scroll-view showScrollbar="onHover">
-                    <div class="right-content" [ngClass]="{'config-mode': configMode}">
-                        <div class="right-panel-block" [hidden]="!configMode && !rightPanelSetting?.clientScores">
-                            <input *ngIf="configMode" type="checkbox"
-                                   (click)="toggleSectionVisibility($event, 'clientScores')"
-                                   class="cb-visible-section" [checked]="rightPanelSetting?.clientScores">
-                            <client-scores></client-scores>
+        <div class="affiliate-code" *ngIf="contactGroupId.value == contactGroups.Partner && rightPanelSetting.id === RP_CONTACT_INFO_ID; else matGroup">
+            <h3>{{ l('AffiliateInfo') }}</h3>
+            <h4>{{ l('AffiliateCode') }}</h4>
+            <inplace-edit [data]="affiliateCodeInplaceEditData$ | async"
+                          (valueChanged)="updateAffiliateCode($event)">
+            </inplace-edit>
+        </div>
+        <ng-template #matGroup>
+            <mat-tab-group>
+                <mat-tab [label]="l('Overview')" *ngIf="rightPanelSetting.id == RP_DEFAULT_ID">
+                    <span class="gear-icon" (click)="toggleConfigMode()"></span>
+                    <dx-scroll-view showScrollbar="onHover">
+                        <div class="right-content" [ngClass]="{'config-mode': configMode}">
+                            <div class="right-panel-block" [hidden]="!configMode && !rightPanelSetting?.clientScores">
+                                <input *ngIf="configMode" type="checkbox"
+                                       (click)="toggleSectionVisibility($event, 'clientScores')"
+                                       class="cb-visible-section" [checked]="rightPanelSetting?.clientScores">
+                                <client-scores></client-scores>
+                            </div>
+                            <div class="right-panel-block" [hidden]="!configMode && !rightPanelSetting?.totalApproved">
+                                <input *ngIf="configMode" type="checkbox"
+                                       (click)="toggleSectionVisibility($event, 'totalApproved')"
+                                       class="cb-visible-section" [checked]="rightPanelSetting?.totalApproved">
+                                <total-approved></total-approved>
+                            </div>
+                            <!-- credit-lines></credit-lines -->
+                            <div class="right-panel-block" [hidden]="!configMode && !rightPanelSetting?.verification">
+                                <input *ngIf="configMode" type="checkbox"
+                                       (click)="toggleSectionVisibility($event, 'verification')"
+                                       class="cb-visible-section" [checked]="rightPanelSetting?.verification">
+                                <verification-checklist [data]="verificationChecklist"></verification-checklist>
+                            </div>
+                            <!-- required-documents></required-documents -->
                         </div>
-                        <div class="right-panel-block" [hidden]="!configMode && !rightPanelSetting?.totalApproved">
-                            <input *ngIf="configMode" type="checkbox"
-                                   (click)="toggleSectionVisibility($event, 'totalApproved')"
-                                   class="cb-visible-section" [checked]="rightPanelSetting?.totalApproved">
-                            <total-approved></total-approved>
-                        </div>
-                        <!-- credit-lines></credit-lines -->
-                        <div class="right-panel-block" [hidden]="!configMode && !rightPanelSetting?.verification">
-                            <input *ngIf="configMode" type="checkbox"
-                                   (click)="toggleSectionVisibility($event, 'verification')"
-                                   class="cb-visible-section" [checked]="rightPanelSetting?.verification">
-                            <verification-checklist [data]="verificationChecklist"></verification-checklist>
-                        </div>
-                        <!-- required-documents></required-documents -->
-                    </div>
-                </dx-scroll-view>
-            </mat-tab>
-            <mat-tab label="Activity" *ngIf="rightPanelSetting.id == RP_DEFAULT_ID">Activity</mat-tab>
-            <mat-tab [label]="l('OrganizationUnits')" *ngIf="rightPanelSetting.id == RP_USER_INFO_ID">
-                <oranization-units-tree></oranization-units-tree>
-            </mat-tab>
-            <mat-tab [label]="l('Owner')" *ngIf="rightPanelSetting.id == RP_LEAD_INFO_ID">
-                <oranization-units-tree [selectionMode]="'single'"></oranization-units-tree>
-            </mat-tab>
-        </mat-tab-group>
+                    </dx-scroll-view>
+                </mat-tab>
+                <mat-tab label="Activity" *ngIf="rightPanelSetting.id == RP_DEFAULT_ID">Activity</mat-tab>
+                <mat-tab [label]="l('OrganizationUnits')" *ngIf="rightPanelSetting.id == RP_USER_INFO_ID">
+                    <oranization-units-tree></oranization-units-tree>
+                </mat-tab>
+                <mat-tab [label]="l('Owner')" *ngIf="rightPanelSetting.id == RP_LEAD_INFO_ID">
+                    <oranization-units-tree [selectionMode]="'single'"></oranization-units-tree>
+                </mat-tab>
+            </mat-tab-group>
+        </ng-template>
     </ng-container>
 </item-details-layout>

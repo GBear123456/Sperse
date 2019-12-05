@@ -19,7 +19,7 @@ import { OrdersComponent } from './orders/orders.component';
 import { InvoicesComponent } from './invoices/invoices.component';
 import { PersonalDetailsComponent } from './personal-details/personal-details.component';
 
-import { RP_USER_INFO_ID, RP_LEAD_INFO_ID } from './contacts.const';
+import { RP_USER_INFO_ID, RP_LEAD_INFO_ID, RP_CONTACT_INFO_ID } from './contacts.const';
 
 
 @NgModule({
@@ -45,7 +45,7 @@ import { RP_USER_INFO_ID, RP_LEAD_INFO_ID } from './contacts.const';
                     { path: 'referral-history', component: ReferralHistoryComponent },
                     { path: 'orders', component: OrdersComponent },
                     { path: 'invoices', component: InvoicesComponent },
-                    { path: 'subscriptions', component: SubscriptionsComponent },
+                    { path: 'subscriptions', component: SubscriptionsComponent, data: { rightPanelOpened: false }  },
                     { path: 'payment-information', component: PaymentInformationComponent, data: { rightPanelOpened: false } },
                     { path: 'activity-logs', component: ActivityLogsComponent },
                     { path: 'notes', component: NotesComponent, data: { rightPanelOpened: false } }
@@ -56,7 +56,7 @@ import { RP_USER_INFO_ID, RP_LEAD_INFO_ID } from './contacts.const';
                 component: ContactsComponent,
                 children: [
                     { path: '', redirectTo: 'contact-information', pathMatch: 'full' },
-                    { path: 'contact-information', component: ContactInformationComponent },
+                    { path: 'contact-information', component: ContactInformationComponent, data: { rightPanelId: RP_CONTACT_INFO_ID } },
                     { path: 'personal-details', component: PersonalDetailsComponent },
                     { path: 'user-inbox', component: UserInboxComponent, data: { rightPanelOpened: false, showToolbar: false } },
                     { path: 'user-information', component: UserInformationComponent, data: { rightPanelId: RP_USER_INFO_ID, rightPanelOpened: true } },
@@ -66,9 +66,9 @@ import { RP_USER_INFO_ID, RP_LEAD_INFO_ID } from './contacts.const';
                     { path: 'documents', component: DocumentsComponent, data: { rightPanelOpened: false } },
                     { path: 'application-status', component: ApplicationStatusComponent },
                     { path: 'referral-history', component: ReferralHistoryComponent },
-                    { path: 'orders', component: OrdersComponent },
-                    { path: 'invoices', component: InvoicesComponent },
-                    { path: 'subscriptions', component: SubscriptionsComponent },
+                    { path: 'orders', component: OrdersComponent, data: { rightPanelOpened: false }  },
+                    { path: 'invoices', component: InvoicesComponent, data: { rightPanelOpened: false } },
+                    { path: 'subscriptions', component: SubscriptionsComponent, data: { rightPanelOpened: false }  },
                     { path: 'payment-information', component: PaymentInformationComponent, data: { rightPanelOpened: false } },
                     { path: 'activity-logs', component: ActivityLogsComponent },
                     { path: 'notes', component: NotesComponent, data: { rightPanelOpened: false } }
@@ -79,7 +79,7 @@ import { RP_USER_INFO_ID, RP_LEAD_INFO_ID } from './contacts.const';
                 component: ContactsComponent,
                 children: [
                     { path: '', redirectTo: 'contact-information', pathMatch: 'full' },
-                    { path: 'contact-information', component: ContactInformationComponent },
+                    { path: 'contact-information', component: ContactInformationComponent, data: { rightPanelId: RP_CONTACT_INFO_ID } },
                     { path: 'personal-details', component: PersonalDetailsComponent },
                     { path: 'user-inbox', component: UserInboxComponent, data: { rightPanelOpened: false, showToolbar: false } },
                     { path: 'user-information', component: UserInformationComponent, data: { rightPanelId: RP_USER_INFO_ID, rightPanelOpened: true } },
@@ -90,9 +90,9 @@ import { RP_USER_INFO_ID, RP_LEAD_INFO_ID } from './contacts.const';
                     { path: 'referral-history', component: ReferralHistoryComponent },
                     { path: 'activity-logs', component: ActivityLogsComponent },
                     { path: 'notes', component: NotesComponent, data: { rightPanelOpened: false } },
-                    { path: 'orders', component: OrdersComponent },
-                    { path: 'invoices', component: InvoicesComponent },
-                    { path: 'subscriptions', component: SubscriptionsComponent },
+                    { path: 'orders', component: OrdersComponent, data: { rightPanelOpened: false }  },
+                    { path: 'invoices', component: InvoicesComponent, data: { rightPanelOpened: false }  },
+                    { path: 'subscriptions', component: SubscriptionsComponent, data: { rightPanelOpened: false }  },
                     { path: 'payment-information', component: PaymentInformationComponent, data: { rightPanelOpened: false } }
                 ]
             },
@@ -101,7 +101,7 @@ import { RP_USER_INFO_ID, RP_LEAD_INFO_ID } from './contacts.const';
                 component: ContactsComponent,
                 children: [
                     { path: '', redirectTo: 'contact-information', pathMatch: 'full' },
-                    { path: 'contact-information', component: ContactInformationComponent },
+                    { path: 'contact-information', component: ContactInformationComponent, data: { rightPanelId: RP_CONTACT_INFO_ID } },
                     { path: 'personal-details', component: PersonalDetailsComponent },
                     { path: 'user-inbox', component: UserInboxComponent, data: { rightPanelOpened: false, showToolbar: false } },
                     { path: 'user-information', component: UserInformationComponent, data: { rightPanelId: RP_USER_INFO_ID, rightPanelOpened: true } },
@@ -113,9 +113,9 @@ import { RP_USER_INFO_ID, RP_LEAD_INFO_ID } from './contacts.const';
                     { path: 'referral-history', component: ReferralHistoryComponent },
                     { path: 'activity-logs', component: ActivityLogsComponent },
                     { path: 'notes', component: NotesComponent, data: { rightPanelOpened: false } },
-                    { path: 'orders', component: OrdersComponent },
-                    { path: 'invoices', component: InvoicesComponent },
-                    { path: 'subscriptions', component: SubscriptionsComponent },
+                    { path: 'orders', component: OrdersComponent, data: { rightPanelOpened: false }  },
+                    { path: 'invoices', component: InvoicesComponent, data: { rightPanelOpened: false }  },
+                    { path: 'subscriptions', component: SubscriptionsComponent, data: { rightPanelOpened: false }  },
                     { path: 'payment-information', component: PaymentInformationComponent, data: { rightPanelOpened: false } }
                 ]
             },
@@ -124,7 +124,7 @@ import { RP_USER_INFO_ID, RP_LEAD_INFO_ID } from './contacts.const';
                 component: ContactsComponent,
                 children: [
                     { path: '', redirectTo: 'contact-information', pathMatch: 'full' },
-                    { path: 'contact-information', component: ContactInformationComponent },
+                    { path: 'contact-information', component: ContactInformationComponent, data: { rightPanelId: RP_CONTACT_INFO_ID } },
                     { path: 'personal-details', component: PersonalDetailsComponent },
                     { path: 'user-inbox', component: UserInboxComponent, data: { rightPanelOpened: false, showToolbar: false } },
                     { path: 'user-information', component: UserInformationComponent, data: { rightPanelId: RP_USER_INFO_ID, rightPanelOpened: true } },
@@ -135,9 +135,9 @@ import { RP_USER_INFO_ID, RP_LEAD_INFO_ID } from './contacts.const';
                     { path: 'referral-history', component: ReferralHistoryComponent },
                     { path: 'activity-logs', component: ActivityLogsComponent },
                     { path: 'notes', component: NotesComponent, data: { rightPanelOpened: false } },
-                    { path: 'orders', component: OrdersComponent },
-                    { path: 'invoices', component: InvoicesComponent },
-                    { path: 'subscriptions', component: SubscriptionsComponent },
+                    { path: 'orders', component: OrdersComponent, data: { rightPanelOpened: false }  },
+                    { path: 'invoices', component: InvoicesComponent, data: { rightPanelOpened: false }  },
+                    { path: 'subscriptions', component: SubscriptionsComponent, data: { rightPanelOpened: false }  },
                     { path: 'payment-information', component: PaymentInformationComponent, data: { rightPanelOpened: false } }
                 ]
             }

@@ -287,7 +287,7 @@ export class OfferEditComponent implements OnInit, OnDestroy, ICloseComponent {
 
         submit$.subscribe(
             () => {
-                this.notifyService.info(this.ls.l('SavedSuccessfully', 'Platform'));
+                this.notifyService.info(this.ls.l('SavedSuccessfully'));
                 this.updateInitialModel();
             },
             e => this.notifyService.error(e)

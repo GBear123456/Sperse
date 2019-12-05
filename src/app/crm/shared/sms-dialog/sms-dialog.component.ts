@@ -19,6 +19,7 @@ import {
 } from '@shared/service-proxies/service-proxies';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
 import { NotifyService } from '@abp/notify/notify.service';
+import { CountryPhoneNumberComponent } from '@shared/common/phone-numbers/country-phone-number.component';
 
 @Component({
     templateUrl: 'sms-dialog.component.html',
@@ -28,6 +29,7 @@ import { NotifyService } from '@abp/notify/notify.service';
 })
 export class SMSDialogComponent {
     @ViewChild(DxValidationGroupComponent) validationGroup: DxValidationGroupComponent;
+    @ViewChild(CountryPhoneNumberComponent) countryPhoneNumber: CountryPhoneNumberComponent;
     phonePattern = /^[\d\+\-\(\)\s]{10,24}$/;
     phoneNumber: string;
     phones: string[];
@@ -63,7 +65,7 @@ export class SMSDialogComponent {
     }
 
     save() {
-        if (this.validationGroup.instance.validate().isValid) {
+        if (this.validationGroup.instance.validate().isValid && this.countryPhoneNumber.isValid()) {
             this.loadingService.startLoading(this.validationGroup.instance.element());
             this.contactCommunicationServiceProxy.sendSMS(new SendSMSToContactInput({
                 contactId: this.data.contact.id,
@@ -75,5 +77,9 @@ export class SMSDialogComponent {
                 () => this.notifyService.success(this.ls.l('MessageSuccessfullySent'))
             );
         }
+    }
+
+    phoneNumberClick(e) {
+        e.stopPropagation();
     }
 }

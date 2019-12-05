@@ -1,4 +1,4 @@
-:host {
+ :host {
     display: block;
 
     .accounts-list {
@@ -8,25 +8,46 @@
 
         .account-item {
             width: 100%;
-            padding: 5px 20px 5px 110px;
+            padding: 5px 20px 5px 50px;
             border: 1px solid #E5E9EC;
-            background: #FFFFFF url('../../../../assets/common/icons/total-icon.svg') 45px 50% no-repeat;
             border-radius: 4px;
             position: relative;
+
+            &:not(:last-child) {
+                margin-bottom: 10px;
+            }
 
             .col-8,
             .col-4 {
                 padding-right: 0;
             }
 
+            .col-8 {
+                display: flex;
+                align-items: center;
+            }
+
+            .icon {
+                margin-right: 50px;
+            }
+
             @media (max-width: 1540px) {
                 padding-left: 60px !important;
-                background-position: 15px 50% !important;
             }
 
             @media (max-width: 1370px) {
                 padding-left: 46px !important;
-                background-position: 11px 50% !important;
+            }
+
+            @media (max-width: 1024px) {
+                padding-left: 30px !important;
+                .icon {
+                    margin-right: 20px;
+                }
+            }
+
+            @media (max-width: 991px) {
+                padding-left: 20px !important;
             }
 
             @media (max-width: 767px) {
@@ -36,7 +57,6 @@
             }
 
             &.dailyStats {
-                background-image: url('../../../../assets/common/icons/coins-icon-2.svg');
                 .value {
                     font-weight: 400;
                     color: #677380;
@@ -118,8 +138,6 @@
             }
 
             &.networth {
-                background-image: url('../../../../assets/common/icons/coins-icon.svg');
-
                 .value {
                     font-weight: 400;
                     color: #677380;
@@ -135,6 +153,12 @@
                         left: -4px;
                     }
                 }
+            }
+
+            &.networth,
+            &.total-accounts {
+                display: flex;
+                align-items: center;
             }
 
             .value {
@@ -189,7 +213,7 @@
                 }
             }
 
-            @media (min-width: 768px) {
+            @media (min-width: 769px) {
                 max-width: 32%;
                 margin-bottom: 0;
             }

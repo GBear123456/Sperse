@@ -36,13 +36,13 @@ export class SendNotificationDialogComponent implements OnInit {
     sendReportInAttachments = false;
     emailRegEx = AppConsts.regexPatterns.email;
     constructor(
-        public ls: AppLocalizationService,
         private instanceAppService: InstanceServiceProxy,
         private dialogRef: MatDialogRef<SendNotificationDialogComponent>,
         private reportsProxy: ReportsServiceProxy,
         private notifyService: NotifyService,
+        public ls: AppLocalizationService,
+        public cfoService: CFOService,
         @Inject(MAT_DIALOG_DATA) private data: any,
-        public cfoService: CFOService
     ) {
         this.dialogRef['_overlayRef'].hostElement.classList.add('generate-report');
     }

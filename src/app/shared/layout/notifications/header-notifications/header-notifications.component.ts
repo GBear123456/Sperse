@@ -93,7 +93,10 @@ export class HeaderNotificationsComponent implements OnInit {
                     const subscription = this.appService.getModuleSubscription(module);
                     if (subscription) {
                         this.subscriptionInfoText = this.ls.l('UpgradOrChangeYourPlanAnyTime');
-                        this.subscriptionInfoTitle = this.ls.l('YouAreUsingPlan', subscription.editionName);
+                        this.subscriptionInfoTitle = this.ls.l(
+                            'YouAreUsingPlan',
+                            subscription.editionName
+                        );
                     } else {
                         this.subscriptionExpiringDayCount = null;
                     }

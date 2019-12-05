@@ -7,7 +7,7 @@ export class SliceConfig {
     search = false;
     requiredFeature = AppFeatures.CRM;
     requiredPermission = AppPermissions.CRM;
-    localizationSource = 'Platform';
+    localizationSource = 'CRM';
     navigation = [
         [ 'Dashboard', '', 'icon-home', '/app/crm/dashboard' ],
         [ 'Contacts', AppPermissions.CRMCustomers, 'icon-globe', '/app/slice/leads' ],

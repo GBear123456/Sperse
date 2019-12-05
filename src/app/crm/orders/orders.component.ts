@@ -33,7 +33,7 @@ import { PipelineService } from '@app/shared/pipeline/pipeline.service';
 import { PipelineComponent } from '@app/shared/pipeline/pipeline.component';
 import { CreateInvoiceDialogComponent } from '../shared/create-invoice-dialog/create-invoice-dialog.component';
 import { AppPermissions } from '@shared/AppPermissions';
-import { DataGridService } from '@app/shared/common/data-grid.service.ts/data-grid.service';
+import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
 import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 import { ContactsService } from '@app/crm/contacts/contacts.service';
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
@@ -547,7 +547,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         if (order && order.ContactId) {
             this.searchClear = false;
             this._router.navigate(
-                ['app/crm/contact', order.ContactId, 'orders'], {
+                ['app/crm/contact', order.ContactId, 'invoices'], {
                     queryParams: {
                         referrer: 'app/crm/orders',
                         dataLayoutType: DataLayoutType.Pipeline

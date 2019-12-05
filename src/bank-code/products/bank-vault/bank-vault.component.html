@@ -1,3 +1,57 @@
-<header>
-    <h1><span>{{ ls.l('BankCode_Bank') }}</span> {{ ls.l('BankCode_Vault') }}</h1>
-</header>
+<section class="content">
+    <header class="vault"></header>
+
+    <div class="content-wrap">
+        <div class="subscribe-block">
+            <div class="row">
+                <div class="col-xs-12 col-md-5">
+                    <figure>
+                        <img src="./assets/common/images/bank-code/platinum.jpg"
+                             srcset="./assets/common/images/bank-code/platinum@2x.jpg 2x, ./assets/common/images/bank-code/platinum@3x.jpg 3x"
+                             alt="Platinum"
+                             class="img-fluid">
+                    </figure>
+                </div>
+                <div class="col-xs-12 col-md-7">
+                    <h2>UNLOCK THE VAULT FOR EXCLUSIVE INSIDER ACCESS</h2>
+                    <p>Unlock the vault to access cutting-edge virtual interactive training courses to supercharge your success so you can take it to the bank!</p>
+                    <a [href]="'https://wp.bankcode.pro/vault/?add-to-cart=' + offerId" target="_blank" class="button arrow">Subscribe now</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="access">
+        <div class="content-wrap">
+            <h2 class="text-center">Unlock the VAULT to optimize your business and maximize your results with B.A.N.K.</h2>
+            <p class="text-center">
+                The VAULT is your all-access pass to comprehensive B.A.N.K. virtual training resources! The VAULT provides all the interactive tools, the latest in e-learning technology, and gamified virtual training you need to become a B.A.N.K. expert in a fraction of the time!
+            </p>
+        </div>
+    </div>
+
+    <div class="resources">
+        <div class="content-wrap">
+            <h2 class="text-center">
+                Use our comprehensive resources in The VAULT to get even better results in less time.
+            </h2>
+            <p class="text-center">
+                Your all-access pass to the insider-only B.A.N.K. VAULT ensures maximum results possible. Plus, HD video presented by top trainers alongside interactive games, simulations, questions, review modules, and testing in The VAULT means you’ll quickly master B.A.N.K. – and have an amazing time following our system!
+            </p>
+            <div class="actions">
+                <a href="https://wp.bankcode.pro/vault/" target="_blank" class="button small">Vault Directory</a>
+                <a href="https://wp.bankcode.pro/vault/" target="_blank" class="button small button-default">Learn more</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="limited-offer">
+        <subscription [annualSave]="348" [offerId]="offerId" productName="vault"></subscription>
+    </div>
+
+    <div class="footer-info">
+        <div class="content-wrap">
+            After you’ve unlocked The VAULT, keep your unlimited VAULT access forever as long as you maintain an active bundle subscription to CODEBREAKER AI and B.A.N.K. PASS for <b>just $49/ month!</b>
+        </div>
+    </div>
+</section>

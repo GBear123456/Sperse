@@ -6,6 +6,7 @@
     align-items: center;
     justify-content: space-between;
     margin-left: auto;
+    height: 100%;
 
     @media all and (max-width: 529px) {
         width: auto !important;
@@ -27,6 +28,9 @@
         justify-content: center;
         li {
             padding: 0 15px 0 0;
+            height: 100%;
+            display: flex;
+            align-items: center;
             a {
                 padding: 12px 25px;
                 white-space: nowrap;
@@ -57,7 +61,6 @@
                 span.dropdown-mark {
                     transform: rotate(45deg);
                     -webkit-transform: rotate(45deg);
-                    border: solid #fff;
                     display: inline-block;
                     padding: 2px;
                     width: 0;
@@ -307,13 +310,16 @@
 
 /deep/ body.bank-code {
     .area-navigation li {
-        padding: 0 5px;
+        padding: 0 10px !important;
 
         &.app-list-item {
             & > a {
                 padding: 22px 10px 21px !important;
                 border-bottom: 2px solid transparent;
                 text-align: center;
+                @media (max-width: 991px) {
+                    padding: 22px 3px 21px !important;
+                }
             }
 
             &:hover, &.active {
@@ -323,8 +329,14 @@
             }
 
             .sublinks {
-                top: 74px;
+                top: 69px;
             }
+        }
+    }
+
+    .m-topbar .m-topbar__nav.m-nav {
+        @media (max-width: 768px) {
+            margin: 0;
         }
     }
 }

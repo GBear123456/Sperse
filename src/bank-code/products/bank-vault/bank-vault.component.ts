@@ -7,5 +7,6 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
     styleUrls: ['./bank-vault.component.less']
 })
 export class BankVaultComponent {
+    offerId = 546;
     constructor(public ls: AppLocalizationService) {}
 }

@@ -5,10 +5,11 @@
         <label [for]="moduleId">{{ moduleId }}: </label>
         <select [id]="moduleId"
                 name="edition"
+                [disabled]="moduleIsDisabled(moduleId)"
                 class="form-control"
                 [(ngModel)]="editionsModels[moduleId].editionId"
                 [ngModelOptions]="{standalone: true}"
-                (change)="onEditionChange($event, moduleId)">
+                (change)="onEditionChange(moduleId)">
             <option *ngFor="let edition of editionGroup" [value]="edition.value">{{edition.displayText}}</option>
         </select>
         <div>
@@ -16,15 +17,17 @@
             <input type="number"
                    class="form-control"
                    min="1"
+                   [disabled]="moduleIsDisabled(moduleId)"
                    [(ngModel)]="editionsModels[moduleId].maxUserCount"
                    [ngModelOptions]="{standalone: true}">
         </div>
         <div>
             <label *ngIf="i === 0">{{ ls.l('Trial') }} ({{ ls.l('days')}})</label>
-            <input *ngIf="editionIsNotFreeOrNotAssigned(editionsModels[moduleId].editionId, i)"
+            <input *ngIf="editionIsNotFreeOrNotAssigned(editionsModels[moduleId], i)"
                    type="number"
                    class="form-control"
                    min="1"
+                   [disabled]="moduleIsDisabled(moduleId)"
                    [(ngModel)]="editionsModels[moduleId].trialDayCount"
                    [ngModelOptions]="{standalone: true}">
         </div>

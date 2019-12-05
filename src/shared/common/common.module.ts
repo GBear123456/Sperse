@@ -8,6 +8,8 @@ import { FormsModule } from '@angular/forms';
 import { MatDialogModule } from '@angular/material/dialog';
 import { DxTextBoxModule } from 'devextreme-angular/ui/text-box';
 import { DxCheckBoxModule } from 'devextreme-angular/ui/check-box';
+import { InlineSVGModule } from 'ng-inline-svg';
+import { InlineSVGConfig } from 'ng-inline-svg/lib/inline-svg.config';
 
 /** Application imports */
 import { ZipCodeFormatterPipe } from '@shared/common/pipes/zip-code-formatter/zip-code-formatter.pipe';
@@ -31,13 +33,14 @@ import { NoDataModule } from '@shared/common/widgets/no-data/no-data.module';
 import { CacheHelper } from '@shared/common/cache-helper/cache-helper';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
 import { PrimengTableHelper } from '@shared/helpers/PrimengTableHelper';
+import { PhoneFormatModule } from '@shared/common/pipes/phone-format/phone-format.module';
+import { AppConsts } from '@shared/AppConsts';
 
 @NgModule({
     declarations: [
         CalendarComponent,
         CustomNumberPipe,
         NumberToWordsPipe,
-        PhoneFormatPipe,
         AddressFormatPipe,
         FileSizePipe,
         ZipCodeFormatterPipe,
@@ -63,7 +66,8 @@ import { PrimengTableHelper } from '@shared/helpers/PrimengTableHelper';
         DxDataGridClipboardDirective,
         ModalDialogComponent,
         ConditionsModalComponent,
-        NoDataModule
+        NoDataModule,
+        InlineSVGModule
     ],
     imports: [
         ngCommon.CommonModule,
@@ -73,7 +77,9 @@ import { PrimengTableHelper } from '@shared/helpers/PrimengTableHelper';
         InternationalPhoneNumberModule,
         MatDialogModule,
         DxTextBoxModule,
-        DxCheckBoxModule
+        DxCheckBoxModule,
+        PhoneFormatModule,
+        InlineSVGModule
     ],
     entryComponents: [
         ModalDialogComponent,
@@ -88,4 +94,7 @@ import { PrimengTableHelper } from '@shared/helpers/PrimengTableHelper';
     ]
 })
 export class CommonModule {
+    constructor(private inlineSVGConfig: InlineSVGConfig) {
+        this.inlineSVGConfig.baseUrl = AppConsts.appBaseHref;
+    }
 }

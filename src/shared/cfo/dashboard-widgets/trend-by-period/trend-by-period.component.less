@@ -48,11 +48,10 @@
                             margin-right: 0;
                         }
 
-                        &::before {
+                        .legend-icon {
                             content: '';
                             width: 8px;
                             height: 8px;
-                            background: #00aeef;
                             display: inline-block;
                             margin-right: 3px;
                             position: relative;
@@ -60,45 +59,6 @@
                             @media (min-width: 768px) {
                                 margin-right: 5px;
                                 top: -1px;
-                            }
-                        }
-
-                        &.endingBalance {
-                            &::before {
-                                background: #F9E784;
-                            }
-                            &.forecast::before {
-                                background: #f9c4e4;
-                            }
-                        }
-
-                        &.outflows::before {
-                            background: #f05b2a;
-                        }
-
-                        &.net-change::before {
-                            background: #fab800;
-                        }
-                        &.forecast {
-                            &::before {
-                                background: #a9e3f9;
-                            }
-                            &.outflows {
-                                &::before {
-                                    background: #fec6b3;
-                                }
-                            }
-
-                            &.net-change {
-                                &::before {
-                                    background: #a82aba;
-                                }
-                            }
-                        }
-
-                        &.label {
-                            &::before{
-                                content: none;
                             }
                         }
 

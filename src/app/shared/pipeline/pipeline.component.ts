@@ -8,6 +8,7 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import DataSource from 'devextreme/data/data_source';
+import oDataUtils from 'devextreme/data/odata/utils';
 import dxTooltip from 'devextreme/ui/tooltip';
 import { Observable, Subject, from, of, forkJoin } from 'rxjs';
 import { filter, finalize, delayWhen, map, mergeMap, switchMap, takeUntil } from 'rxjs/operators';
@@ -171,6 +172,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                     ...stage,
                     entities: [],
                     full: true,
+                    color: this.pipelineService.getStageDefaultColorByStageSortOrder(stage.sortOrder),
                     isLoading: true,
                     stageIndex: undefined,
                     total: undefined,
@@ -434,7 +436,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                     this.getDataSourceForStage(stage);
 
             if (!isNaN(stage.lastStageIndex) && page)
-                filter['SortOrder'] = {lt: stage.lastStageIndex};
+                filter['SortOrder'] = {lt: new oDataUtils.EdmLiteral(stage.lastStageIndex + 'd') };
             dataSource.pageSize(Math.max(!page && stage.entities
                 && stage.entities.length || 0, this.stagePageCount));
             dataSource.sort({getter: 'SortOrder', desc: true});
@@ -482,6 +484,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
             response.subscribe(
                 () => {},
                 (error) => {
+                    stage.isLoading = false;
                     if (error != 'canceled')
                         this.message.error(error);
                 }

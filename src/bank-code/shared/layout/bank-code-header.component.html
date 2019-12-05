@@ -1,11 +1,11 @@
 <div class="page-header navbar navbar-fixed-top navbar-light">
     <div class="page-logo">
         <a href="javascript:void(0);" (click)="logoClick()">
-            <img src="./assets/common/images/bank-code/cb-technologies.png"
-                 srcset="./assets/common/images/bank-code/cb-technologies@2x.png 2x, ./assets/common/images/bank-code/cb-technologies@3x.png 3x"
-                 alt="logo" class="logo-default" height="auto"/>
-            <!--<img *ngIf="!appSession.tenant || !appSession.tenant.logoId" src="./assets/common/images/bank-code/bank-code-logo@3x.png" alt="logo" class="logo-layout" width="200px" height="auto" />
-            <img *ngIf="appSession.tenant && appSession.tenant.logoId" [src]="remoteServiceBaseUrl + '/api/TenantCustomization/GetLogo?logoId=' + appSession.tenant.logoId" alt="logo" class="logo-layout" width="200px" height="auto"/>-->
+            <img *ngIf="!appSession.tenant || !appSession.tenant.logoId" src="./assets/common/images/bank-code/CodebreakerWideLogo.png" alt="logo" class="logo-default" height="auto"/>
+            <img *ngIf="appSession.tenant && appSession.tenant.logoId"
+                 [src]="remoteServiceBaseUrl + '/api/TenantCustomization/GetLogo?logoId=' + appSession.tenant.logoId"
+                 alt="logo"
+                 class="logo-layout"/>
         </a>
     </div>
 
@@ -15,11 +15,6 @@
 
     <div *ngIf="!loggedUserId" class="navigation btns">
         <ul class="buttons">
-            <!--<li class="app-list-item">
-                <a href="https://www.bankcode.pro/" class="try-free">
-                    Try it Free
-                </a>
-            </li>-->
             <li class="item">
                 <a routerLink="signup" class="sign-up">
                     Sign Up

@@ -24,6 +24,7 @@ import { GetContactsByRegionOutput } from '@shared/service-proxies/service-proxi
 import { MapComponent } from '@app/shared/common/slice/map/map.component';
 import { MapData } from '@app/shared/common/slice/map/map-data.model';
 import { MapService } from '@app/shared/common/slice/map/map.service';
+import { LayoutService } from '@app/shared/layout/layout.service';
 
 @Component({
     selector: 'clients-by-region',
@@ -36,7 +37,7 @@ export class ClientsByRegionComponent implements OnInit, OnDestroy {
     @ViewChild(MapComponent) mapComponent: MapComponent;
     data: MapData = {};
     pipe: any = new DecimalPipe('en-US');
-    palette: string[] = ['#c1b9ff', '#b6abff', '#aa9eff', '#9e91ff', '#9383ff', '#8776ff', '#7b69ff', '#705bff'];
+    palette: string[] = this.layoutService.getMapPalette();
 
     constructor(
         private dashboardWidgetsService: DashboardWidgetsService,
@@ -45,7 +46,8 @@ export class ClientsByRegionComponent implements OnInit, OnDestroy {
         private ls: AppLocalizationService,
         private elementRef: ElementRef,
         private lifeCycleService: LifecycleSubjectsService,
-        private changeDetectorRef: ChangeDetectorRef
+        private changeDetectorRef: ChangeDetectorRef,
+        private layoutService: LayoutService
     ) {}
 
     ngOnInit() {

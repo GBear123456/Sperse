@@ -1,5 +1,8 @@
+/** Core imports */
 import { Component } from '@angular/core';
 import { Location } from '@angular/common';
+
+/** Application imports */
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { LayoutType } from '@shared/service-proxies/service-proxies';
 
@@ -9,13 +12,14 @@ import { LayoutType } from '@shared/service-proxies/service-proxies';
   styleUrls: ['./not-found.component.less'],
 })
 export class NotFoundComponent {
-    lendSpaceLayout = this._appSession.tenant && this._appSession.tenant.customLayoutType === LayoutType.LendSpace;
+    lendSpaceLayout = this.location.path().includes('personal-finance') &&
+        this.appSession.tenant && this.appSession.tenant.customLayoutType === LayoutType.LendSpace;
     constructor(
-        private _location: Location,
-        private _appSession: AppSessionService
+        private location: Location,
+        private appSession: AppSessionService
     ) { }
 
     goBack() {
-        this._location.back();
+        this.location.back();
     }
 }

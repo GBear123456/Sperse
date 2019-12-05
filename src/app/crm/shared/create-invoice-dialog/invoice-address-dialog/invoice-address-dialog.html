@@ -1,0 +1,145 @@
+<h2 mat-dialog-title (mousedown)="mouseDown($event)">{{ls.l('Update Address')}}</h2>
+<dx-scroll-view showScrollbar="always">
+    <mat-dialog-content>
+        <dx-validation-group (onInitialized)="initValidationGroup($event)">
+            <div>
+                <label>{{ls.l('Company')}}</label>
+                <dx-text-box
+                    name="company"
+                    maxLength="50"
+                    [(value)]="data.company">
+                    <dx-validator>
+                        <dxi-validation-rule type="required" message="{{ls.l('RequiredField', ls.l('Company'))}}"></dxi-validation-rule>
+                    </dx-validator>
+                </dx-text-box>
+            </div>
+            <div>
+                <label>{{ls.l('FirstName')}}</label>
+                <dx-text-box
+                    name="firstName"
+                    maxLength="50"
+                    [(value)]="data.firstName">
+                    <dx-validator>
+                        <dxi-validation-rule type="required" message="{{ls.l('RequiredField', ls.l('FirstName'))}}"></dxi-validation-rule>
+                    </dx-validator>
+                </dx-text-box>
+            </div>
+            <div>
+                <label>{{ls.l('LastName')}}</label>
+                <dx-text-box
+                    name="lastName"
+                    maxLength="50"
+                    [(value)]="data.lastName">
+                    <dx-validator>
+                        <dxi-validation-rule type="required" message="{{ls.l('RequiredField', ls.l('LastName'))}}"></dxi-validation-rule>
+                    </dx-validator>
+                </dx-text-box>
+            </div>
+            <div>
+                <label>{{ls.l('Email')}}</label>
+                <dx-text-box
+                    name="email"
+                    maxLength="50"
+                    [(value)]="data.email">
+                    <dx-validator>
+                        <dxi-validation-rule type="required" message="{{ls.l('RequiredField', ls.l('Email'))}}"></dxi-validation-rule>
+                        <dxi-validation-rule type="pattern" [pattern]="emailRegEx" message="{{ls.l('EmailIsNotValid')}}."></dxi-validation-rule>
+                    </dx-validator>
+                </dx-text-box>
+            </div>
+            <div class="phone-container">
+                <label>{{ls.l('Phone')}}</label>
+                <country-phone-number 
+                    [(phoneNumber)]="data.phone"
+                    [required]="true">
+                </country-phone-number>
+            </div>
+            <div>
+                <label>{{ls.l('Address')}}</label>
+                <input *ngIf="!googleAutoComplete" type="text"
+                       name="Address"
+                       placeholder=""
+                       [(ngModel)]="address"
+                       class="dx-texteditor-input"/>
+                <input *ngIf="googleAutoComplete" type="text"
+                       name="Address"
+                       placeholder=""
+                       [(ngModel)]="address"
+                       class="dx-texteditor-input"
+                       (street_number)='data.streetNumber=$event'
+                       (street)='data.address1=$event'
+                       (city)='data.city=$event'
+                       (postal_code)='data.zip=$event'
+                       (setAddress)="onAddressChanged($event)"
+                       angularGooglePlace/>
+            </div>
+            <div>
+                <label>{{ls.l('Country')}}</label>
+                <dx-select-box
+                    name="country"
+                    [dataSource]="countries"
+                    displayExpr="name"
+                    valueExpr="code"
+                    [searchEnabled]="true"
+                    [(value)]="data.countryId"
+                    fieldTemplate="field"
+                    (onValueChanged)="onCountryChange($event)">
+                    <div *dxTemplate="let data of 'field'">
+                        <div class="custom-item">
+                            <dx-text-box class="state"
+                                         [value]="data?.name"
+                                         [readOnly]="true">
+                            </dx-text-box>
+                        </div>
+                    </div>
+                </dx-select-box>
+            </div>
+
+            <div>
+                <label>{{ls.l('State')}}</label>
+                <dx-select-box
+                    [dataSource]="states"
+                    displayExpr="name"
+                    valueExpr="code"
+                    name="state"
+                    [searchEnabled]="true"
+                    [(value)]="data.stateId"
+                    fieldTemplate="field">
+                    <div *dxTemplate="let data of 'field'">
+                        <div class="custom-item">
+                            <dx-text-box class="state"
+                                         [value]="data?.name"
+                                         [readOnly]="true">
+                            </dx-text-box>
+                        </div>
+                    </div>
+                </dx-select-box>
+            </div>
+
+            <div>
+                <label>{{ls.l('City')}}</label>
+                <dx-text-box
+                    name="city"
+                    maxLength="50"
+                    [(value)]="data.city">
+                    <dx-validator>
+                        <dxi-validation-rule type="required" message="{{ls.l('RequiredField', ls.l('City'))}}"></dxi-validation-rule>
+                    </dx-validator>
+                </dx-text-box>
+            </div>
+
+            <div>
+                <label>{{ls.l('ZipCode')}}</label>
+                <dx-text-box
+                    name="zip"
+                    maxLength="10"
+                    [(value)]="data.zip">
+                </dx-text-box>
+            </div>
+        </dx-validation-group>
+    </mat-dialog-content>
+</dx-scroll-view>
+<mat-dialog-actions>
+    <button mat-button mat-dialog-close class="button-layout button-default">{{ls.l('Cancel')}}</button>
+    <button mat-button class="button-layout button-primary" (click)="onSave($event)">{{ls.l('Update')}}</button>
+</mat-dialog-actions>

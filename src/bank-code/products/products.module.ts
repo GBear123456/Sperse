@@ -1,9 +1,14 @@
+/** Core imports */
 import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
 
+/** Third party imports */
+import { DxDataGridModule } from 'devextreme-angular/ui/data-grid';
+
+/** Application imports */
 import { ProductsComponent } from './products.component';
 import { ProductsRoutingModule } from '@root/bank-code/products/products-routing.module';
 import { CodeBreakerAiComponent } from '@root/bank-code/products/codebreaker-ai/code-breaker-ai.component';
-import { CommonModule } from '@angular/common';
 import { BankAffiliateComponent } from '@root/bank-code/products/bank-affiliate/bank-affiliate.component';
 import { BankGearComponent } from '@root/bank-code/products/bank-gear/bank-gear.component';
 import { BankPassComponent } from '@root/bank-code/products/bank-pass/bank-pass.component';
@@ -11,14 +16,27 @@ import { BankTrainerComponent } from '@root/bank-code/products/bank-trainer/bank
 import { BankVaultComponent } from '@root/bank-code/products/bank-vault/bank-vault.component';
 import { BankCardsComponent } from '@root/bank-code/products/bank-cards/bank-cards.component';
 import { SidebarModule } from '@root/bank-code/shared/sidebar/sidebar.module';
+import { BankCodeLettersModule } from '@app/shared/common/bank-code-letters/bank-code-letters.module';
+import { PhoneFormatModule } from '@shared/common/pipes/phone-format/phone-format.module';
+import { DxTextBoxModule } from '@root/node_modules/devextreme-angular';
+import { LoadingSpinnerModule } from '@app/shared/common/loading-spinner/loading-spinner.module';
+import { BankCodeLayoutModule } from '@root/bank-code/shared/layout/bank-code-layout.module';
+import { SubscriptionComponent } from '@root/bank-code/products/shared/subscription.component/subscription.component';
+import { MemberSubscriptionServiceProxy } from '@shared/service-proxies/service-proxies';
+import { ProductsService } from './products.service';
 
 @NgModule({
     imports: [
         CommonModule,
         ProductsRoutingModule,
-        SidebarModule
+        SidebarModule,
+        DxDataGridModule,
+        DxTextBoxModule,
+        BankCodeLettersModule,
+        PhoneFormatModule,
+        LoadingSpinnerModule,
+        BankCodeLayoutModule
     ],
-    exports: [],
     declarations: [
         CodeBreakerAiComponent,
         ProductsComponent,
@@ -27,8 +45,12 @@ import { SidebarModule } from '@root/bank-code/shared/sidebar/sidebar.module';
         BankGearComponent,
         BankPassComponent,
         BankTrainerComponent,
-        BankVaultComponent
+        BankVaultComponent,
+        SubscriptionComponent
     ],
-    providers: [],
+    providers: [
+        MemberSubscriptionServiceProxy,
+        ProductsService
+    ]
 })
 export class ProductsModule {}

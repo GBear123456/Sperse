@@ -17,7 +17,7 @@ import { CalendarDialogComponent } from '@app/shared/common/dialogs/calendar/cal
 import { DateHelper } from '@root/shared/helpers/DateHelper';
 import { AppConsts } from '@root/shared/AppConsts';
 import { SetupStepsComponent } from '@app/shared/common/setup-steps/setup-steps.component';
-import { DataGridService } from '@app/shared/common/data-grid.service.ts/data-grid.service';
+import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
 import { CFOService } from '@shared/cfo/cfo.service';
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
 

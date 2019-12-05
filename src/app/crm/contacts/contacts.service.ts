@@ -1,12 +1,12 @@
 /** Core imports */
 import { Injectable, Injector } from '@angular/core';
-import { Router } from '@angular/router';
 import { Location } from '@angular/common';
+import { Router } from '@angular/router';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
 import { Observable, ReplaySubject, Subject, of } from 'rxjs';
-import { tap, switchMap, catchError, finalize } from 'rxjs/operators';
+import { filter, finalize, tap, switchMap, catchError, map, mapTo } from 'rxjs/operators';
 import invert from 'lodash/invert';
 
 /** Application imports */
@@ -14,12 +14,16 @@ import { DialogService } from '@app/shared/common/dialogs/dialog.service';
 import { AddCompanyDialogComponent } from './add-company-dialog/add-company-dialog.component';
 import {
     ContactInfoDto,
+    GetEmailDataOutput,
     OrganizationContactInfoDto,
     UserServiceProxy,
     ContactServiceProxy,
     ContactCommunicationServiceProxy,
     SendEmailInput,
-    CreatePersonOrgRelationOutput
+    CreatePersonOrgRelationOutput,
+    CreateContactPhotoInput,
+    ContactPhotoServiceProxy,
+    InvoiceServiceProxy
 } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { EmailTemplateDialogComponent } from '@app/crm/shared/email-template-dialog/email-template-dialog.component';
@@ -28,6 +32,9 @@ import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { ContactGroup, ContactGroupPermission } from '@shared/AppEnums';
 import { AppPermissions } from '@shared/AppPermissions';
 import { NotifyService } from '@abp/notify/notify.service';
+import { StringHelper } from '@shared/helpers/StringHelper';
+import { UploadPhotoDialogComponent } from '@app/shared/common/upload-photo-dialog/upload-photo-dialog.component';
+import { UploadPhoto } from '@app/shared/common/upload-photo-dialog/upload-photo.model';
 
 @Injectable()
 export class ContactsService {
@@ -51,6 +58,7 @@ export class ContactsService {
 
     constructor(injector: Injector,
         private contactProxy: ContactServiceProxy,
+        private invoiceProxy: InvoiceServiceProxy,
         private emailProxy: ContactCommunicationServiceProxy,
         private permission: AppPermissionService,
         private userService: UserServiceProxy,
@@ -59,6 +67,7 @@ export class ContactsService {
         private ls: AppLocalizationService,
         private router: Router,
         private location: Location,
+        private contactPhotoServiceProxy: ContactPhotoServiceProxy,
         public dialog: MatDialog
     ) {}
 
@@ -198,6 +207,42 @@ export class ContactsService {
         );
     }
 
+    showUploadPhotoDialog(company: any, event): Observable<any> {
+        event.stopPropagation();
+        return this.dialog.open(UploadPhotoDialogComponent, {
+            data: { ...company, ...this.getCompanyPhoto(company) },
+            hasBackdrop: true
+        }).afterClosed().pipe(
+            filter(Boolean),
+            switchMap((result: UploadPhoto) => {
+                let action$: Observable<any>;
+                if (result.clearPhoto) {
+                    action$ = this.contactPhotoServiceProxy.clearContactPhoto(company.id).pipe(
+                        mapTo(null)
+                    );
+                } else {
+                    let base64OrigImage = StringHelper.getBase64(result.origImage);
+                    let base64ThumbImage = StringHelper.getBase64(result.thumImage);
+                    action$ = this.contactPhotoServiceProxy.createContactPhoto(
+                        CreateContactPhotoInput.fromJS({
+                            contactId: company.id,
+                            original: base64OrigImage,
+                            thumbnail: base64ThumbImage,
+                            source: result.source
+                        })
+                    ).pipe(
+                        mapTo(base64OrigImage)
+                    );
+                }
+                return action$;
+            })
+        );
+    }
+
+    private getCompanyPhoto(company): { source?: string } {
+        return company.primaryPhoto ? { source: 'data:image/jpeg;base64,' + company.primaryPhoto } : {};
+    }
+
     updateLocation(contactId?, leadId?, companyId?, userId?) {
         this.location.replaceState(
             this.router.createUrlTree(
@@ -219,7 +264,7 @@ export class ContactsService {
             : this.contactProxy.getContactInfo(contactId);
     }
 
-    showEmailDialog(data: any = {}, title = 'Email') {
+    showEmailDialog(data: any = {}, title = 'Email', onTemplateChange?: (templateId: number, emailData: any) => Observable<void>) {
         let emailData: any = {
             saveTitle: this.ls.l('Send'),
             title: this.ls.l(title),
@@ -242,6 +287,16 @@ export class ContactsService {
             data: emailData
         }).componentInstance;
 
+        if (onTemplateChange)
+            dialogComponent.onTemplateChange.pipe(
+                switchMap(tmpId => {
+                    dialogComponent.startLoading();
+                    return onTemplateChange(tmpId, emailData).pipe(
+                        finalize(() => dialogComponent.finishLoading())
+                    );
+                })
+            ).subscribe(() => dialogComponent.changeDetectorRef.markForCheck());
+
         return dialogComponent.onSave.pipe(
             switchMap(res => {
                 dialogComponent.startLoading();
@@ -257,6 +312,19 @@ export class ContactsService {
                 }
             })
         );
+    }
+
+    showInvoiceEmailDialog(invoiceId: number, data: any = {}) {
+        return this.showEmailDialog(data, 'Email', (tmpId, emailData) => {
+            return this.invoiceProxy.getEmailData(tmpId, invoiceId).pipe(
+                map((email: GetEmailDataOutput) => {
+                    emailData.cc = email.cc;
+                    emailData.bcc = email.bcc;
+                    emailData.body = email.body;
+                    emailData.subject = email.subject;
+                })
+            );
+        });
     }
 
     showInvoiceSettingsDialog() {

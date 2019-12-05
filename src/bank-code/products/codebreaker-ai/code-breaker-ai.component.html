@@ -1,1 +1,31 @@
-<iframe id="theFrame" src="https://v5.bankcode.pro" frameborder="0"></iframe>
+<div class="iframe" *ngIf="hasSubscription; else default">
+    <iframe id="theFrame" src="https://v5.bankcode.pro" frameborder="0"></iframe>
+</div>
+<ng-template #default>
+    <div class="default-container">
+        <div class="get-access">
+            <div class="content">
+                <h1>Codebreaker AI</h1>
+                <h2>Accurately predict buying behavior in nanoseconds</h2>
+                <a class="button arrow" [href]="'https://wp.bankcode.pro/ai/?add-to-cart=' + offerId" target="_blank">Get access now!</a>
+                <div class="price-block">
+                    <p class="price"><span>Only </span><span class="bold">$59</span><span class="per-month"> per month</span></p>
+                    <p class="description">($59 per month bundled with B.A.N.K Pass)</p>
+                </div>
+            </div>
+        </div>
+        <div class="what-codebreaker-is">
+            <img src="./assets/common/images/bank-code/codebreaker-ai.svg" alt="Code breaker">
+            <div class="description">
+                <h2>What's Codebreaker AI?</h2>
+                <p>CODEBREAKER AI analyzes anything written by your prospect to immediately and accurately identify their buying personality, coach you on the best way to communicate, negotiate, and close the sale with them, and even tell you whether or not your proposed response is effective!</p>
+            </div>
+        </div>
+        <div class="learn-more">
+            <h2>Without studying in the VAULT or training at our Summits, you’re unlikely to have mastered each of the B.A.N.K. intelligences yourself.</h2>
+            <p>That’s where CODEBREAKER AI comes in. You have the advantage of all this knowledge at your fingertips in nanoseconds, with the added benefit of eliminating human error and biases. It’s like getting the world’s best translation software for the language of sales! Instead of spending countless hours studying, you get the maximum results that come from mastering B.A.N.K. instantly.</p>
+            <a href="https://wp.bankcode.pro/" target="_blank" class="button">Learn More</a>
+        </div>
+        <subscription [offerId]="offerId"></subscription>
+    </div>
+</ng-template>

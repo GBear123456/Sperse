@@ -95,7 +95,7 @@ export class PackageChooserComponent implements OnInit {
     ) {}
 
     l(key: string, ...args: any[]): string {
-        return this.localizationService.l(key, AppConsts.localization.defaultLocalizationSourceName, ...args);
+        return this.localizationService.l(key, ...args);
     }
 
     ngOnInit() {
@@ -2361,7 +2361,7 @@ export class PackageChooserComponent implements OnInit {
     }
 
     private getSubscriptionFrequency(): PaymentPeriodType {
-        return this.selectedPackageCardComponent.billingPeriod === BillingPeriod.Monthly
+        return this.selectedBillingPeriod === BillingPeriod.Monthly
             ? PaymentPeriodType._30
             : PaymentPeriodType._365;
     }
@@ -2383,7 +2383,7 @@ export class PackageChooserComponent implements OnInit {
     getFreePlan() {
         return {
             name: this.freePackages[0].editions[0].displayName,
-            billingPeriod: this.selectedPackageCardComponent.billingPeriod,
+            billingPeriod: this.selectedBillingPeriod,
             subscriptionFrequency: this.getSubscriptionFrequency(),
             pricePerUserPerMonth: 0,
             subtotal: 0,
@@ -2400,7 +2400,7 @@ export class PackageChooserComponent implements OnInit {
         const totalPrice = this.selectedPackageCardComponent.totalPrice;
         const plan: PackageOptions = {
             name: this.selectedPackageCardComponent.name,
-            billingPeriod: this.selectedPackageCardComponent.billingPeriod,
+            billingPeriod: this.selectedBillingPeriod,
             subscriptionFrequency: this.getSubscriptionFrequency(),
             pricePerUserPerMonth: this.selectedPackageCardComponent.pricePerUserPerMonth,
             subtotal: this.selectedBillingPeriod === BillingPeriod.Yearly ? this.selectedPackageCardComponent.monthlyPricePerYear : totalPrice,

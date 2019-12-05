@@ -15,7 +15,6 @@ export class ClientService {
     private appLocalizationService: AppLocalizationService;
     private message: MessageService;
     private contactServiceProxy: ContactServiceProxy;
-
     private crmLocalizationSourceName = AppConsts.localization.CRMLocalizationSourceName;
 
     constructor(injector: Injector) {

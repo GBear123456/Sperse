@@ -1,3 +1,5 @@
+@import './colors';
+
 body.advice-period {
     app-header {
         background: #423332;
@@ -203,4 +205,70 @@ body.advice-period {
             }
         }
     }
+    .icon-light-color {
+        fill: @light;
+        stroke: @light;
+    }
+    .icon-medium-color {
+        fill: @medium;
+        stroke: @medium;
+    }
+    .icon-dark-color {
+        fill: @orange;
+        stroke: @orange;
+    }
+    .icon-green {
+        fill: @green;
+    }
+    .icon-blue {
+        fill: @blue;
+    }
+    icon-orange {
+        fill: @orange;
+    }
+    .add-link,
+    .view-details,
+    .link-item .link,
+    .category-synch-item .icon,
+    /deep/ recent-clients .title a {
+        color: @orange !important;
+    }
+    .link-item .link,
+    .view-details {
+        &:hover {
+            color: lighten(@orange, 5%) !important;
+        }
+    }
+    .chart-head a {
+        &.inflows {
+            color: @blue !important;
+        }
+
+        &.outflows {
+            color: @orange !important;
+        }
+    }
+    .chart-line {
+        &.inflows div {
+            background-color: @blue !important;
+        }
+
+        &.outflows div {
+            background-color: @orange !important;
+        }
+    }
+
+    .accounts-list .account-item.dailyStats ul li.selected {
+        border-right-color: @orange !important;
+    }
+
+    .synch-status a {
+        border-bottom: @green !important;
+    }
+
+    .small-button:hover {
+        background: lighten(@orange, 5%) !important;
+        border-color: lighten(@orange, 5%) !important;
+    }
+
 }

@@ -85,7 +85,7 @@
                             mode="multiple">
                         </dxo-selection>
                         <dxo-editing mode="popup" [popup]="{onShowing: onShowingPopup, height: '0', width: '0'}" [allowUpdating]="true"></dxo-editing>
-                        <dxi-column [width]="40" [fixed]="true" [fixedPosition]="'left'" [showInColumnChooser]="false" [allowExporting]="false"></dxi-column>
+                        <dxi-column [width]="40" [fixed]="true" fixedPosition="left" [showInColumnChooser]="false" [allowExporting]="false"></dxi-column>
                         <dxi-column dataField="Id" [caption]="l('Id')" cssClass="tabular clipboard-holder" [visible]="false" sortOrder="desc"></dxi-column>
                         <dxi-column dataField="OrganizationUnitId" [calculateDisplayValue]="getOrganizationUnitName" [caption]="l('Abp.Organizations.OrganizationUnit')" cssClass="tabular clipboard-holder" [visible]="false"></dxi-column>
                         <dxi-column dataField="PhotoPublicId" caption=" " cellTemplate="photoTemplate"
@@ -131,7 +131,7 @@
                         <div *dxTemplate="let cellData of 'bankCodeCell'">
                             <bank-code-letters [bankCode]="cellData.value"></bank-code-letters>
                         </div>
-                        <dxi-column [fixed]="true" [fixedPosition]="'right'" [showInColumnChooser]="false"></dxi-column>
+                        <dxi-column [fixed]="true" fixedPosition="right" [showInColumnChooser]="false"></dxi-column>
                         <dxo-group-panel [visible]="true"></dxo-group-panel>
                         <dxo-sorting mode="multiple"></dxo-sorting>
                     </dx-data-grid>

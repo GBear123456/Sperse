@@ -15,6 +15,7 @@ import {
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Observable, forkJoin } from 'rxjs';
 import { finalize } from 'rxjs/operators';
+import cloneDeep from 'lodash/cloneDeep';
 
 /** Application imports */
 import {
@@ -52,6 +53,7 @@ export class EditTenantModalComponent implements OnInit {
     @Output() modalSave: EventEmitter<any> = new EventEmitter<any>();
 
     tenant: TenantEditDto;
+    initialTenant: TenantEditDto;
     editionsModels: { [value: string]: TenantEditEditionDto } = {};
     editionsGroups: SubscribableEditionComboboxItemDto[][];
     title = this.ls.l('EditTenant');
@@ -86,7 +88,8 @@ export class EditTenantModalComponent implements OnInit {
             finalize(() => this.modalDialog.finishLoading())
         ).subscribe(([editionsGroups, tenantResult]) => {
             this.editionsGroups = editionsGroups;
-            this.tenant = tenantResult;
+            this.initialTenant = tenantResult;
+            this.tenant = cloneDeep(tenantResult);
             this.editionsModels = this.tenantsService.getEditionsModels(editionsGroups, tenantResult);
             this.changeDetectorRef.detectChanges();
         });
@@ -122,7 +125,13 @@ export class EditTenantModalComponent implements OnInit {
 
         this.modalDialog.startLoading();
         this.tenant.editions = this.tenantsService.getTenantEditions();
-        const savings: Observable<any>[] = [ this.tenantService.updateTenant(this.tenant) ];
+        const savings: Observable<any>[] = [];
+        /** If tenant properties changed */
+        const tenantChanged = JSON.stringify(this.initialTenant) !== JSON.stringify(this.tenant);
+        if (tenantChanged) {
+            savings.push(this.tenantService.updateTenant(this.tenant));
+        }
+
         /** if features changed */
         const featureValues = this.featureTree.getGrantedFeatures();
         if (ArrayHelper.dataChanged(this.featureTree.initialGrantedFeatures, featureValues)) {
@@ -135,13 +144,18 @@ export class EditTenantModalComponent implements OnInit {
             updateFeaturesInput.featureValues = featureValues;
             savings.push(this.tenantService.updateTenantFeatures(updateFeaturesInput));
         }
+
         forkJoin(savings).pipe(
             finalize(() => this.modalDialog.finishLoading())
-        ).subscribe(() => {
-            this.notifyService.info(this.ls.l('SavedSuccessfully'));
-            this.dialogRef.close(true);
-            this.modalSave.emit(null);
-        });
+        ).subscribe(
+            () => {},
+            () => {},
+            () => {
+                this.notifyService.info(this.ls.l('SavedSuccessfully'));
+                this.dialogRef.close(tenantChanged);
+                this.modalSave.emit(null);
+            }
+        );
     }
 
 }

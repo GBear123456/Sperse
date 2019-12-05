@@ -133,6 +133,7 @@
     "morris.js": "^0.5.0",
     "mustache": "^2.3.0",
     "ng-circle-progress": "^1.5.1",
+    "ng-inline-svg": "7.0.0",
     "ng-recaptcha": "4.0.0-beta.1",
     "ng2-cache-service": "^1.1.1",
     "ng2-charts": "^2.3.0",
@@ -188,13 +189,13 @@
     "underscore": "^1.8.3",
     "underscore.string": "^3.3.4",
     "urijs": "^1.19.0",
+    "uuid": "^3.0.1",
     "videogular2": "^6.3.0",
     "waypoints": "^4.0.1",
     "xlsx": "^0.13.2",
     "xml-js": "^1.6.9",
     "xmlhttprequest": "^1.8.0",
-    "zone.js": "^0.8.26",
-    "uuid": "^3.0.1"
+    "zone.js": "^0.8.26"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^0.7.0-rc.0",
