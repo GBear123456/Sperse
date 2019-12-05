@@ -32,7 +32,7 @@
             <a (click)="addCompanyDialog($event)">+ {{ ls.l('AddCompany') }}</a>
         </div>
         <ng-template #companyInfo>
-            <div class="company-details">
+            <div class="company-details" [ngClass]="{ 'with-company-logo': data?.organizationContactInfo?.primaryPhoto }">
                 <div class="delimiter"></div>
                 <div class="info-icon" (click)="showCompanyDialog($event)">
                     <img *ngIf="!showRemovingOrgRelationProgress" src="./assets/common/icons/info-icon-blue.svg" alt="Organization Details">
@@ -66,7 +66,6 @@
             </ng-template>
         </ng-template>
     </div>
-
     <div class="header_buttons">
         <button id="addEntity" *ngIf="manageAllowed && addContextMenuItems.length" class="button-layout button-primary menu" (click)="addEntity($event)">
             + {{addButtonTitle}}

@@ -4,7 +4,7 @@
     <div class="under-header">
         <ng-content select="[underHeader]"></ng-content>
     </div>
-    <mat-sidenav-container>
+    <mat-sidenav-container [ngStyle]="rightPanelWidth ? { marginRight: rightPanelWidth } : null">
         <mat-sidenav mode="side" [opened]="true" [disableClose]="true" position="start">
             <ng-content select="[aboveNavigation]"></ng-content>
             <dx-scroll-view showScrollbar="onHover">
@@ -17,11 +17,15 @@
                 </nav>
             </dx-scroll-view>
         </mat-sidenav>
-        <div class="main-content" [ngClass]="{'right-side-opened' : rightSideVisible && rightPanelOpened}">
+        <div class="main-content" [ngClass]="{ 'right-side-opened' : rightSideVisible && rightPanelOpened }">
             <ng-content select="[mainContent]"></ng-content>
             <router-outlet></router-outlet>
         </div>
-        <mat-sidenav class="right_sidenav" mode="side" position="end" [opened]="rightSideVisible && rightPanelOpened">
+        <mat-sidenav class="right_sidenav"
+                     [ngStyle]="rightPanelWidth ? { width: rightPanelWidth } : null"
+                     mode="side"
+                     position="end"
+                     [opened]="rightSideVisible && rightPanelOpened">
             <ng-content select="[rightPanel]"></ng-content>
         </mat-sidenav>
     </mat-sidenav-container>

@@ -275,7 +275,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
 
     private updateAfterActivation: boolean;
     categoriesRowsData: Category[] = [];
-    private showDataGridToolbar = true;
+    private showDataGridToolbar = !AppConsts.isMobile;
     departmentFeatureEnabled: boolean = this.feature.isEnabled(AppFeatures.CFODepartmentsManagement);
 
     constructor(injector: Injector,

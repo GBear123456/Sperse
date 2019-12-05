@@ -1,6 +1,6 @@
 <section class="categorization-status">
     <div class="row">
-        <div class="col-sm-4 round-progress">
+        <div class="col-sm-3 col-xl-4 round-progress">
             <div class="progress-wrap">
                 <round-progress [current]="categorySynchData?.classifiedTransactionPercent"
                                 [max]="100"
@@ -18,7 +18,7 @@
                 <span class="total-synch-progress">{{totalCount | number : '1.0-2'}}</span>
             </div>
         </div>
-        <div class="col-sm-8">
+        <div class="col-sm-9 col-xl-8">
             <h2 class="title">{{l('Transaction_Classification_Status')}}</h2>
             <ul class="category-synch-list">
                 <li class="category-synch-item">
@@ -26,6 +26,7 @@
                     <span class="category-type">{{l('Classified_Transactions')}}</span>
                     <span class="synch-status count"><a (click)="filterTransactions(true)">{{categorySynchData?.classifiedTransactionCount | number : '1.0-2'}}</a></span>
                     <span class="synch-status percent">{{categorySynchData?.classifiedTransactionPercent | number : '1.0-0'}}%</span>
+                    <div class="break"></div>
                     <a *ngIf="isInstanceAdmin" (click)="openDialog();" class="small-button btn-layout">
                         {{l('Reset_Сlassifications')}}
                     </a>
@@ -35,6 +36,7 @@
                     <span class="category-type">{{l('Unclassified_Transactions')}}</span>
                     <span class="synch-status count"><a (click)="filterTransactions(false)">{{categorySynchData?.unclassifiedTransactionCount | number : '1.0-2'}}</a></span>
                     <span class="synch-status percent">{{categorySynchData?.unclassifiedTransactionPercent | number : '1.0-0'}}%</span>
+                    <div class="break"></div>
                     <a *ngIf="isInstanceAdmin" (click)="autoClassify();" class="small-button btn-layout">
                         {{l('Auto_Сlassify')}}
                     </a>

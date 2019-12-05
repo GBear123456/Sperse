@@ -1,6 +1,5 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { AppPermissions } from '@shared/AppPermissions';
-import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
+import { ProductsService } from '../products.service';
 
 @Component({
     selector: 'code-breaker-ai',
@@ -9,8 +8,8 @@ import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CodeBreakerAiComponent {
-    hasCrmCustomersPermission: boolean = this.permissionChecker.isGranted(AppPermissions.CRMCustomers);
+    hasSubscription: boolean = this.productsService.checkServiceSubscription();
     offerId = 718;
 
-    constructor(private permissionChecker: PermissionCheckerService) {}
+    constructor(private productsService: ProductsService) {}
 }
