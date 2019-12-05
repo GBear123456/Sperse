@@ -100,10 +100,10 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
     private initialData: string;
 
     navLinks: NavLink[] = [];
-
+    readonly rightPanelDefaultWidth = '400px';
     rightPanelSetting: any = {
         id: RP_DEFAULT_ID,
-        width: '400px',
+        width: this.rightPanelDefaultWidth,
         clientScores: true,
         totalApproved: true,
         verification: true,
@@ -213,14 +213,14 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
             this.showToolbar = this.getCheckPropertyValue(data, 'showToolbar', true);
             if (rightPanelId === this.RP_CONTACT_INFO_ID) {
                 this.rightPanelSetting.opened = contactGroupId == ContactGroup.Partner;
-                this.rightPanelSetting.width = '200px';
+                this.rightPanelSetting.width = this.rightPanelSetting.opened ? '200px' : '0';
             } else {
                 this.rightPanelSetting.opened = this.getCheckPropertyValue(
                     data,
                     'rightPanelOpened',
                     rightPanelId == RP_DEFAULT_ID && abp.features.isEnabled(AppFeatures.PFMCreditReport)
                 );
-                this.rightPanelSetting.width = '400px';
+                this.rightPanelSetting.width = this.rightPanelSetting.opened ? this.rightPanelDefaultWidth : '0';
             }
             this.rightPanelSetting.id = rightPanelId;
         });
