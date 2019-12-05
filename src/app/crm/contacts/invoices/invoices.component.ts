@@ -251,7 +251,7 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
         this.startLoading(true);
         this.invoiceProxy.generatePdf(this.actionRecordData.InvoiceId, false).pipe(
             finalize(() => this.finishLoading(true))
-        ).subscribe(link => {
+        ).subscribe((link: string) => {
             window.open(link);
         });
     }
