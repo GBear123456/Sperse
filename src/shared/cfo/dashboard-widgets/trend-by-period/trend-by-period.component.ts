@@ -83,12 +83,12 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit, 
     historicalDebitColor = this.layoutService.getLayoutColor('historicalDebit');
     historicalNetChangeColor = this.layoutService.getLayoutColor('historicalNetChange');
     endingBalanceColor = this.layoutService.getLayoutColor('endingBalance');
-    endingBalanceStopColor = color(this.endingBalanceColor).lighten(0.5);
+    endingBalanceStopColor = color(this.endingBalanceColor).lighten(0.1).hex();
     forecastCreditColor = this.layoutService.getLayoutColor('forecastCredit');
     forecastDebitColor = this.layoutService.getLayoutColor('forecastDebit');
     forecastNetChangeColor = this.layoutService.getLayoutColor('forecastNetChange');
     forecastEndingBalanceColor = this.layoutService.getLayoutColor('forecastEndingBalance');
-    forecastEndingBalanceStopColor = color(this.forecastEndingBalanceColor).lighten(0.5);
+    forecastEndingBalanceStopColor = color(this.forecastEndingBalanceColor).lighten(0.1).hex();
     barChartTooltipFields = [
         {
             'name': 'startingBalance',
