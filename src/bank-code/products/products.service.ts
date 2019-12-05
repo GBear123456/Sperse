@@ -20,7 +20,7 @@ export class ProductsService {
 
     constructor(
         private subscriptionProxy: MemberSubscriptionServiceProxy
-    ) {   }
+    ) {}
 
     loadSubscriptions(): Observable<GetUserSubscriptionsOutput[]> {
         return this.subscriptionProxy.getUserSubscriptions(this.systemType, undefined, undefined)

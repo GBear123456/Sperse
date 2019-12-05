@@ -25,8 +25,7 @@ export class SubscriptionsResolver implements CanActivateChild {
 
     canActivateChild(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
         return this.productsService.subscriptions ?
-            of(true) : this.productsService.loadSubscriptions().pipe(
-                map(subscriptions => Boolean(subscriptions)));
+            of(true) : this.productsService.loadSubscriptions().pipe(map(Boolean));
     }
 }
 
