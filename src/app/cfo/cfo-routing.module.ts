@@ -58,11 +58,21 @@ import { ReportsComponent } from './reports/reports.component';
                     },
                     { path: 'cashflow', component: CashflowComponent, data: { permission: '', reuse: true } },
                     { path: 'stats', component: StatsComponent, data: { permission: '', reuse: true } },
-                    { path: 'transactions', component: TransactionsComponent, data: { permission: '', reuse: true } },
+                    {
+                        path: 'transactions',
+                        component: TransactionsComponent,
+                        canActivate: [ CfoInstanceStatusGuard ],
+                        data: { permission: '', reuse: true }
+                    },
                     { path: 'rules', component: RulesComponent, data: { permission: '' } },
                     { path: 'permissions', component: PermissionsComponent, data: { permission: '' } },
                     { path: 'statements', component: StatementsComponent, data: { permission: '', reuse: true } },
-                    { path: 'reports', component: ReportsComponent, data: { permission: '', reuse: true } }
+                    {
+                        path: 'reports',
+                        component: ReportsComponent,
+                        canActivate: [ CfoInstanceStatusGuard ],
+                        data: { permission: '', reuse: true }
+                    }
                 ]
             }
         ])

@@ -54,8 +54,8 @@ export class LayoutService {
 
     constructor(private appSessionService: AppSessionService) {}
 
-    hideDefaultPageHeader() {
-        this.showPageLogo = this.showPlatformSelectMenu = this.showNotificationsButton = this.showChatButton = this.showUserProfileMenu = false;
+    displayDefaultPageHeader(value: boolean = false) {
+        this.showPageLogo = this.showPlatformSelectMenu = this.showNotificationsButton = this.showChatButton = this.showUserProfileMenu = value;
     }
 
     getLayoutColor(colorFor: string): string {

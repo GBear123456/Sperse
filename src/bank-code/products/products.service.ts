@@ -1,5 +1,5 @@
 /** Core imports */
-import { Injector, Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
 
 /** Third party imports */
 import { Observable } from 'rxjs';
@@ -19,7 +19,6 @@ export class ProductsService {
     public subscriptions: GetUserSubscriptionsOutput[];
 
     constructor(
-        injector: Injector,
         private subscriptionProxy: MemberSubscriptionServiceProxy
     ) {   }
 
