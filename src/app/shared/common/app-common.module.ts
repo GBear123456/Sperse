@@ -55,7 +55,6 @@ import { ImageCropperModule } from 'ng2-img-cropper';
 import { CreditCardDirectivesModule } from 'angular-cc-library';
 import { AngularGooglePlaceModule } from 'angular-google-place';
 import { TimeAgoPipe } from 'time-ago-pipe';
-import { InlineSVGModule } from 'ng-inline-svg';
 
 /** Application imports */
 import { AbpModule } from '@abp/abp.module';

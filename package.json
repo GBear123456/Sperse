@@ -85,6 +85,7 @@
     "chartjs-plugin-labels": "^1.1.0",
     "ckeditor4-angular": "^1.0.0-beta.2",
     "codelyzer": "^4.0.1",
+    "color": "^3.1.2",
     "concat": "^1.0.3",
     "core-js": "^2.4.1",
     "css-toggle-switch": "^4.0.3",
