@@ -54,8 +54,8 @@ export class LayoutService {
 
     constructor(private appSessionService: AppSessionService) {}
 
-    hideDefaultPageHeader() {
-        this.showPageLogo = this.showPlatformSelectMenu = this.showNotificationsButton = this.showChatButton = this.showUserProfileMenu = false;
+    displayDefaultPageHeader(value: boolean = false) {
+        this.showPageLogo = this.showPlatformSelectMenu = this.showNotificationsButton = this.showChatButton = this.showUserProfileMenu = value;
     }
 
     getLayoutColor(colorFor: string): string {
@@ -63,32 +63,6 @@ export class LayoutService {
         return this.layoutColors[layoutType]
             ? this.layoutColors[layoutType][colorFor]
             : this.layoutColors[LayoutType.Default][colorFor];
-    }
-
-    /**
-     * hex — a hex color value such as “#abc” or “#123456” (the hash is optional)
-       lum — the luminosity factor, i.e. -0.1 is 10% darker, 0.2 is 20% lighter, etc.
-     * @param hex
-     * @param lum
-     */
-    colorLuminance(hex, lum) {
-
-        // validate hex string
-        hex = String(hex).replace(/[^0-9a-f]/gi, '');
-        if (hex.length < 6) {
-            hex = hex[0] + hex[0] + hex[1] + hex[1] + hex[2] + hex[2];
-        }
-        lum = lum || 0;
-
-        // convert to decimal and change luminosity
-        let rgb = '#', c, i;
-        for (i = 0; i < 3; i++) {
-            c = parseInt(hex.substr(i * 2, 2), 16);
-            c = Math.round(Math.min(Math.max(0, c + (c * lum)), 255)).toString(16);
-            rgb += ('00' + c).substr(c.length);
-        }
-
-        return rgb;
     }
 
     getMapPalette(): string[] {

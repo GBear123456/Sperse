@@ -1,5 +1,6 @@
 /** Core imports */
 import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
 
 /** Third party imports */
 import { BehaviorSubject, Subject, Observable } from 'rxjs';
@@ -25,9 +26,10 @@ export class CFOService extends CFOServiceBase {
     instanceChanged$: Observable<InstanceModel> = this.instanceChanged.asObservable();
     instanceStatus$: Observable<boolean>;
     constructor(
+        private router: Router,
         private appService: AppService,
-        private appLocalizationService: AppLocalizationService,
         private layoutService: LayoutService,
+        private appLocalizationService: AppLocalizationService,
         private instanceServiceProxy: InstanceServiceProxy,
         private contactService: ContactServiceProxy,
         private permission: AppPermissionService,
@@ -148,18 +150,20 @@ export class CFOService extends CFOServiceBase {
     }
 
     instanceChangeProcess(invalidateServerCache: boolean = false): Observable<boolean> {
-        if (this.instanceId) {
-            this.appService.setContactInfoVisibility(true);
-            this.layoutService.hideDefaultPageHeader();
-        }
+        if (this.instanceId)
+            this.layoutService.displayDefaultPageHeader();
         if (!this.instanceStatus$)
             this.instanceStatus$ = this.instanceServiceProxy
                 .getStatus(InstanceType[this.instanceType], this.instanceId, invalidateServerCache)
                 .pipe(
                     finalize(() => this.instanceStatus$ = undefined),
                     map((data: GetStatusOutput) => {
-                        if (this.instanceId && data.userId)
+                        this.userId = data.userId;
+                        if (this.instanceId && data.userId && data.userId != abp.session.userId) {
+                            this.appService.setContactInfoVisibility(true);
                             this.initContactInfo(data.userId);
+                        } else
+                            this.layoutService.displayDefaultPageHeader(true);
                         const status = data.status == InstanceStatus.Active;
                         this.statusActive.next(status);
                         this.initialized = status && data.hasSyncAccounts;

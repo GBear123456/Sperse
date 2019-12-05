@@ -4,7 +4,7 @@ import { RouterModule, ActivatedRouteSnapshot, RouterStateSnapshot, CanActivateC
 
 /** Third party imports */
 import { Observable, of } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 
 /** Application imports */
 import { CodeBreakerAiComponent } from '@root/bank-code/products/codebreaker-ai/code-breaker-ai.component';
@@ -25,8 +25,7 @@ export class SubscriptionsResolver implements CanActivateChild {
 
     canActivateChild(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
         return this.productsService.subscriptions ?
-            of(true) : this.productsService.loadSubscriptions().pipe(
-                switchMap(subscriptions => of(Boolean(subscriptions))));
+            of(true) : this.productsService.loadSubscriptions().pipe(map(Boolean));
     }
 }
 

@@ -31,6 +31,7 @@ export class SignupFormComponent implements OnInit, OnDestroy {
     @ViewChild('agreeToReceiveCallsCheckBox') agreeToReceiveCallsCheckBox: DxCheckBoxComponent;
     showZipMask = true;
     defaultCountryCode: string;
+    selectedCountryCode: string;
     conditions = ConditionsType;
     patterns = {
         namePattern: AppConsts.regexPatterns.name,
@@ -74,6 +75,7 @@ export class SignupFormComponent implements OnInit, OnDestroy {
     signUpMember() {
         this.registerData.firstName = capitalize(this.registerData.firstName);
         this.registerData.lastName = capitalize(this.registerData.lastName);
+        this.registerData.countryCode = this.selectedCountryCode;
         this.loginService.signUpMember(this.registerData);
     }
 
@@ -93,13 +95,14 @@ export class SignupFormComponent implements OnInit, OnDestroy {
     }
 
     getChangedCountry($event) {
-        this.showZipMask = this.defaultCountryCode == $event.countryCode;
+        this.selectedCountryCode = $event.countryCode;
+        this.showZipMask = this.defaultCountryCode == this.selectedCountryCode;
         this.showZipMask ? this.patterns.zipPattern = AppConsts.regexPatterns.zipUsPattern : this.patterns.zipPattern = /.*/;
     }
 
     getDefaultCode($event) {
         setTimeout(() => {
-            this.defaultCountryCode = $event.intPhoneNumber.defaultCountry;
+            this.selectedCountryCode = this.defaultCountryCode = $event.intPhoneNumber.defaultCountry;
         }, 100);
     }
 

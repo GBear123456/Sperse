@@ -3,6 +3,7 @@ import { InstanceType } from '@shared/service-proxies/service-proxies';
 import { InstanceModel } from '@shared/cfo/instance.model';
 
 export abstract class CFOServiceBase {
+    userId: number;
     instanceId: number;
     instanceType: InstanceType;
     initialized: boolean;

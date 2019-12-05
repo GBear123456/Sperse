@@ -78,8 +78,7 @@ import { AppConsts } from '@shared/AppConsts';
         MatDialogModule,
         DxTextBoxModule,
         DxCheckBoxModule,
-        PhoneFormatModule,
-        InlineSVGModule
+        PhoneFormatModule
     ],
     entryComponents: [
         ModalDialogComponent,
