@@ -1,4 +1,4 @@
-<h2 mat-dialog-title (mousedown)="mouseDown($event)">{{ls.ls(localization.PFMLocalizationSourceName, 'ContactInfoDialogTitle',  ls.l(action), data.name)}}</h2>
+<h2 mat-dialog-title (mousedown)="mouseDown($event)">{{ls.l('ContactInfoDialogTitle',  ls.l(action), data.name)}}</h2>
 <mat-dialog-content>
     <dx-validation-group (onInitialized)="initValidationGroup($event)">
         <label>{{ls.l('Type')}}</label>

@@ -14,6 +14,7 @@ export class ItemDetailsLayoutComponent implements OnInit {
     @Input() navLinks: NavLink[];
     @Input() referrerParams: Params;
     @Input() rightPanelOpened: boolean;
+    @Input() rightPanelWidth: string;
     @Output() onClose: EventEmitter<null> = new EventEmitter<null>();
     @Output() onChanged: EventEmitter<NavLink> = new EventEmitter<NavLink>();
 

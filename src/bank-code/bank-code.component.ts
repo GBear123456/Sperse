@@ -1,6 +1,7 @@
 /** Core imports */
-import { Component, ViewContainerRef, OnInit, Injector, OnDestroy, Renderer2 } from '@angular/core';
+import { Component, ViewContainerRef, OnInit, Injector, OnDestroy, Renderer2, Inject } from '@angular/core';
 import { NavigationEnd } from '@angular/router';
+import { DOCUMENT } from '@angular/common';
 
 /** Third party imports */
 import { filter, takeUntil } from 'rxjs/operators';
@@ -25,6 +26,7 @@ export class BankCodeComponent extends AppComponentBase implements OnInit, OnDes
     public constructor(
         injector: Injector,
         viewContainerRef: ViewContainerRef,
+        @Inject(DOCUMENT) private document: any,
         private renderer: Renderer2
     ) {
         super(injector);
@@ -41,7 +43,7 @@ export class BankCodeComponent extends AppComponentBase implements OnInit, OnDes
 
     ngOnInit(): void {
         this.rootComponent.addStyleSheet('', 'https://fonts.googleapis.com/css?family=IBM+Plex+Sans:400,700&display=swap');
-        this.renderer.addClass(document.body, 'member-area');
+        this.renderer.addClass(this.document.body, 'member-area');
         this._router.events.pipe(
             takeUntil(this.destroy$),
             filter((event: Event) => event instanceof NavigationEnd)
@@ -52,6 +54,6 @@ export class BankCodeComponent extends AppComponentBase implements OnInit, OnDes
 
     ngOnDestroy() {
         super.ngOnDestroy();
-        this.renderer.removeClass(document.body, 'member-area');
+        this.renderer.removeClass(this.document.body, 'member-area');
     }
 }

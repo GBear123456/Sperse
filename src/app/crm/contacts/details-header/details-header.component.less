@@ -188,11 +188,34 @@
             }
         }
 
+        .add-new-company {
+            width: 250px;
+            @media (min-width: 992px) {
+                width: 489px;
+            }
+        }
+
+        .add-company-logo {
+            @media (max-width: 1200px) {
+                width: 80px;
+                a {
+                    white-space: pre-wrap;
+                    line-height: 15px;
+                }
+            }
+        }
+
         .company-details {
             align-items: center;
-            width: calc(100% - 115px);
+            width: calc(100% - 165px);
             padding-right: 75px;
             display: flex;
+            @media (max-width: 1200px) {
+                width: calc(100% - 81px);
+            }
+            &.with-company-logo {
+                width: calc(100% - 70px);
+            }
         }
         .delimiter {
             display: inline-block;
