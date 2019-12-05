@@ -15,7 +15,7 @@ export class OrganizationUnitsComponent implements OnInit, OnDestroy {
     @ViewChild('ouTree') ouTree: OrganizationTreeComponent;
 
     constructor(
-        private ls: AppLocalizationService,
+        public ls: AppLocalizationService,
         @Inject(DOCUMENT) private document: any
     ) {}
 

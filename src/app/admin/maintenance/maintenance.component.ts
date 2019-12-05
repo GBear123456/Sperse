@@ -23,12 +23,6 @@ export class MaintenanceComponent implements OnInit, AfterViewInit {
     loading = false;
     caches: any = null;
     logs: any = '';
-    public gridPagerConfig = {
-        showPageSizeSelector: true,
-        allowedPageSizes: [10, 20, 50, 100],
-        showInfo: true,
-        visible: true
-    };
     public gridPagerConfig = DataGridService.defaultGridPagerConfig;
 
     constructor(

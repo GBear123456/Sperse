@@ -28,6 +28,13 @@ export class DataGridService {
         grid.instance.showColumnChooser();
     }
 
+    static toggleCompactRowsHeight(dataGrid, updateDimensions = false) {
+        dataGrid.instance.element().classList.toggle('grid-compact-view');
+        if (updateDimensions) {
+            dataGrid.instance.updateDimensions();
+        }
+    }
+
     static getGridOption(dataGrid, option: string) {
         return dataGrid && dataGrid.instance && dataGrid.instance.option(option);
     }
