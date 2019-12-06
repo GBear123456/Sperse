@@ -26,7 +26,7 @@ import { AppConsts } from '@shared/AppConsts';
 import { DialogService } from '@app/shared/common/dialogs/dialog.service';
 import { UploadPhotoDialogComponent } from '@app/shared/common/upload-photo-dialog/upload-photo-dialog.component';
 import { StringHelper } from '@shared/helpers/StringHelper';
-import { IOrganizationUnitsTreeComponentData } from '../../shared/organization-unit-tree.component';
+import { IOrganizationUnitsTreeComponentData } from '../../shared/organization-units-tree/organization-units-tree.component';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { NotifyService } from '@abp/notify/notify.service';
 import { MessageService } from '@abp/message/message.service';
