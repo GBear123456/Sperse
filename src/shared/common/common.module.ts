@@ -31,7 +31,6 @@ import { ConditionsModalComponent } from '@shared/common/conditions-modal/condit
 import { DxDataGridClipboardDirective } from '@shared/common/clipboard/dx-data-grid.directive';
 import { NoDataModule } from '@shared/common/widgets/no-data/no-data.module';
 import { CacheHelper } from '@shared/common/cache-helper/cache-helper';
-import { LoadingService } from '@shared/common/loading-service/loading.service';
 import { PrimengTableHelper } from '@shared/helpers/PrimengTableHelper';
 import { PhoneFormatModule } from '@shared/common/pipes/phone-format/phone-format.module';
 import { AppConsts } from '@shared/AppConsts';

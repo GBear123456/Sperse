@@ -59,7 +59,7 @@ export class DxDataGridClipboardDirective implements AfterViewInit, OnDestroy {
     ngOnDestroy() {
         this.observer.disconnect();
         this.pool.forEach(elm => {
-            elm.removeEventListener(this.copyToClipboard);
+            elm.removeEventListener('click', this.copyToClipboard);
             this.renderer.removeClass(elm, 'fa-clone');
             this.renderer.removeClass(elm, 'fa');
             this.renderer.destroyNode(elm);
