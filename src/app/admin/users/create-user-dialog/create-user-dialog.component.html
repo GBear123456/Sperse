@@ -20,10 +20,10 @@
     <div *dxTemplate="let data of 'content'">
         <dx-scroll-view showScrollbar="onHover">
             <div class="create-user-dialog-tooltip">
-                <organization-unit-tree #organizationUnitTree
+                <organization-units-tree #organizationUnitTree
                                         [data]="organizationUnits"
                                         (onSelectedOrganizationUnitsChange)="selectedOrgUnitsChanged($event)">
-                </organization-unit-tree>
+                </organization-units-tree>
             </div>
         </dx-scroll-view>
     </div>
