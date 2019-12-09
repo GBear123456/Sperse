@@ -2,7 +2,7 @@
     <div *ngFor="let address of contactInfoData?.addresses; let i = index" class="address-wrapper"
          (click)="inPlaceEdit(address, $event, i)">
         <div *ngIf="isEditAllowed" class="actions"><i class="copy fa fa-clone" aria-hidden="true" (click)="copyToClipbord($event, address)"></i><i class="edit fa fa-pencil" aria-hidden="true" (click)="showDialog(address, $event, i)"></i><i class="delete fa fa-times" aria-hidden="true" (click)="deleteAddress(address, $event, i)"></i></div>
-        <i class="icons type-{{address.usageTypeId || 'H'}}"></i>
+        <i class="address-icons type-{{address.usageTypeId || 'H'}}"></i>
         <div class="address">
             <h4>{{types[address.usageTypeId] || ls.l("Undefined")}}</h4>
             <p *ngIf="!address.inplaceEdit">{{address | address:

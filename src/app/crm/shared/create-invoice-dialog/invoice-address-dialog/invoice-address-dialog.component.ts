@@ -12,13 +12,17 @@ import { AppConsts } from '@shared/AppConsts';
 import { GooglePlaceHelper } from '@shared/helpers/GooglePlaceHelper';
 import { CountriesStoreActions, CountriesStoreSelectors } from '@app/store';
 import { RootStore, StatesStoreActions, StatesStoreSelectors } from '@root/store';
-import { CountryStateDto, CountryDto } from '@shared/service-proxies/service-proxies';
+import { CountryStateDto, CountryDto, ContactServiceProxy,
+    PersonOrgRelationShortInfo, ContactDetailsDto, OrganizationShortInfo } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 
 @Component({
     selector: 'invoice-address-dialog',
     templateUrl: 'invoice-address-dialog.html',
-    styleUrls: ['invoice-address-dialog.less'],
+    styleUrls: [
+        './invoice-address-dialog.less',
+        '../../../contacts/addresses/addresses.styles.less'
+    ],
     host: {
         '(document:mouseup)': 'mouseUp($event)',
         '(document:mousemove)': 'mouseMove($event)'
@@ -32,9 +36,14 @@ export class InvoiceAddressDialog {
     countries: CountryDto[];
     googleAutoComplete: Boolean;
     emailRegEx = AppConsts.regexPatterns.email;
+    contactDetails: ContactDetailsDto = new ContactDetailsDto();
+    organizations: OrganizationShortInfo[] = [];
+    phones: string[] = [];
+    addresses: any[] = [];
 
     constructor(
         private elementRef: ElementRef,
+        private contactProxy: ContactServiceProxy,
         private angularGooglePlaceService: AngularGooglePlaceService,
         private store$: Store<RootStore.State>,
         public dialogRef: MatDialogRef<InvoiceAddressDialog>,
@@ -52,28 +61,49 @@ export class InvoiceAddressDialog {
         }
 
         this.googleAutoComplete = Boolean(window['google']);
+        this.contactDetailsLoad();
         this.countriesStateLoad();
+    }
+
+    contactDetailsLoad() {
+        this.contactProxy.getContactDetails(this.data.contactId).subscribe((data: ContactDetailsDto) => {
+            this.contactDetails = data;
+            this.organizations = data.orgRelations.map((rel: PersonOrgRelationShortInfo) => {
+                return rel.organization;
+            });
+            this.phones = data.phones.map(item => item.phoneNumber);
+            this.addresses = data.addresses.map(item => {
+                item['text'] = [
+                    item.streetAddress,
+                    item.city,
+                    item.state,
+                    item.country
+                ].filter(Boolean).join(',');
+                return item;
+            });
+        });
     }
 
     countriesStateLoad(): void {
         this.store$.dispatch(new CountriesStoreActions.LoadRequestAction());
         this.store$.pipe(select(CountriesStoreSelectors.getCountries)).subscribe(result => {
             this.countries = result;
-            let country = this.data.country;
-            if (country = country && _.findWhere(result, {name: country}))
-                this.data.countryId = this.data.country['code'];
-
-            if (this.data.countryId)
-                this.onCountryChange({
-                    value: this.data.countryId
-                });
+            this.checkCountryByName();
         });
+    }
+
+    checkCountryByName(forcedChange = true) {
+        let country = this.data.country && this.data.country.trim();
+        if (country = country && _.findWhere(this.countries, {name: country}))
+            this.data.countryId = country['code'];
+        if ((country || forcedChange) && this.data.countryId)
+            this.onCountryChange({value: this.data.countryId});
     }
 
     onCountryChange(event) {
         const countryCode = event.value;
         this.store$.dispatch(new StatesStoreActions.LoadRequestAction(countryCode));
-        this.store$.pipe(select(StatesStoreSelectors.getState, { countryCode: countryCode }))
+        this.store$.pipe(select(StatesStoreSelectors.getState, {countryCode: countryCode}))
             .subscribe(result => {
                 this.states = result;
                 let state = this.data.state;
@@ -134,5 +164,30 @@ export class InvoiceAddressDialog {
 
             this.mouseDown(event);
         }
+    }
+
+    onFieldFocus(event) {
+        event.component.option('isValid', true);
+    }
+
+    onCustomItemCreating(event, field) {
+        if (event.text)
+            return event.customItem = {[field]: event.text};
+    }
+
+    selectPhoneNumber(event, component) {
+        this.data.phone = event.itemData;
+        component.instance.hide();
+    }
+
+    onAddressSelected(event, component) {
+        let address = this.contactDetails.addresses[event.itemIndex];
+        this.data.country = address.country;
+        this.data.state = address.state;
+        this.data.city = address.city;
+        this.data.zip = address.zip;
+        this.data.address1 = address.streetAddress;
+        setTimeout(() => this.checkCountryByName(false));
+        component.instance.hide();
     }
 }

@@ -60,7 +60,7 @@ import { HostSettingsComponent } from './settings/host-settings/host-settings.co
 import { TenantSettingsComponent } from './settings/tenant-settings/tenant-settings.component';
 import { EditionComboComponent } from './shared/edition-combo.component';
 import { FeatureTreeComponent } from './shared/feature-tree.component';
-import { OrganizationUnitsTreeComponent } from './shared/organization-unit-tree.component';
+import { OrganizationUnitsTreeComponent } from './shared/organization-units-tree/organization-units-tree.component';
 import { PermissionComboComponent } from './shared/permission-combo.component';
 import { PermissionTreeComponent } from './shared/permission-tree.component';
 import { RoleComboComponent } from './shared/role-combo.component';

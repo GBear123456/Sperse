@@ -16,13 +16,9 @@ export interface IOrganizationUnitsTreeComponentData {
 }
 
 @Component({
-    selector: 'organization-unit-tree',
-    template:
-    `<div class='form-group'>
-        <input id='OrganizationUnitsTreeFilter' type='text' class='form-control' [placeholder]='ls.l("SearchWithThreeDot")' >
-    </div>
-    <div class="organization-unit-tree"></div>
-    `
+    selector: 'organization-units-tree',
+    templateUrl: './organization-units-tree.component.html',
+    styleUrls: [ './organization-units-tree.component.less' ]
 })
 export class OrganizationUnitsTreeComponent implements AfterViewInit {
     @Input() set data(data: IOrganizationUnitsTreeComponentData) {

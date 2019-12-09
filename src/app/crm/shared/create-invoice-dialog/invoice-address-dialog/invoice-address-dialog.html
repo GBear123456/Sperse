@@ -4,14 +4,21 @@
         <dx-validation-group (onInitialized)="initValidationGroup($event)">
             <div>
                 <label>{{ls.l('Company')}}</label>
-                <dx-text-box
+                <dx-select-box
                     name="company"
                     maxLength="50"
-                    [(value)]="data.company">
+                    [placeholder]="ls.l('EditValuePlaceholder')"
+                    displayExpr="name"
+                    valueExpr="name"
+                    [(value)]="data.company"
+                    [acceptCustomValue]="true"
+                    [dataSource]="organizations"
+                    (onCustomItemCreating)="onCustomItemCreating($event, 'name')"
+                    (onFocusIn)="onFieldFocus($event)">
                     <dx-validator>
                         <dxi-validation-rule type="required" message="{{ls.l('RequiredField', ls.l('Company'))}}"></dxi-validation-rule>
                     </dx-validator>
-                </dx-text-box>
+                </dx-select-box>
             </div>
             <div>
                 <label>{{ls.l('FirstName')}}</label>
@@ -37,31 +44,55 @@
             </div>
             <div>
                 <label>{{ls.l('Email')}}</label>
-                <dx-text-box
+                <dx-select-box
                     name="email"
                     maxLength="50"
-                    [(value)]="data.email">
+                    [placeholder]="ls.l('EditValuePlaceholder')"
+                    displayExpr="emailAddress"
+                    valueExpr="emailAddress"
+                    [(value)]="data.email"
+                    [acceptCustomValue]="true"
+                    [dataSource]="contactDetails.emails"
+                    (onCustomItemCreating)="onCustomItemCreating($event, 'emailAddress')"
+                    (onFocusIn)="onFieldFocus($event)">
                     <dx-validator>
                         <dxi-validation-rule type="required" message="{{ls.l('RequiredField', ls.l('Email'))}}"></dxi-validation-rule>
                         <dxi-validation-rule type="pattern" [pattern]="emailRegEx" message="{{ls.l('EmailIsNotValid')}}."></dxi-validation-rule>
                     </dx-validator>
-                </dx-text-box>
+                </dx-select-box>
             </div>
             <div class="phone-container">
                 <label>{{ls.l('Phone')}}</label>
-                <country-phone-number 
+                <country-phone-number id="togglePhone"
                     [(phoneNumber)]="data.phone"
                     [required]="true">
                 </country-phone-number>
+                <dx-tooltip #phoneTooltip
+                    width="200px"                    
+                    position="right" 
+                    target="#togglePhone" 
+                    showEvent="dxclick" 
+                    hideEvent="dxoverend">
+                    <div *dxTemplate="let data of 'content'">
+                        <dx-list 
+                            [dataSource]="phones"
+                            (onItemClick)="selectPhoneNumber($event, phoneTooltip)">
+                        </dx-list>
+                    </div>
+                </dx-tooltip>
             </div>
             <div>
                 <label>{{ls.l('Address')}}</label>
-                <input *ngIf="!googleAutoComplete" type="text"
+                <input *ngIf="!googleAutoComplete" 
+                       id="toggleAddress"
+                       type="text"
                        name="Address"
                        placeholder=""
                        [(ngModel)]="address"
                        class="dx-texteditor-input"/>
-                <input *ngIf="googleAutoComplete" type="text"
+                <input *ngIf="googleAutoComplete"
+                       id="toggleAddress" 
+                       type="text"
                        name="Address"
                        placeholder=""
                        [(ngModel)]="address"
@@ -72,6 +103,23 @@
                        (postal_code)='data.zip=$event'
                        (setAddress)="onAddressChanged($event)"
                        angularGooglePlace/>
+                <dx-tooltip #addressTooltip
+                    width="300px"
+                    position="right" 
+                    target="#toggleAddress" 
+                    showEvent="dxclick" 
+                    hideEvent="dxoverend">
+                    <div *dxTemplate="let data of 'content'">
+                        <dx-list 
+                            [dataSource]="addresses"
+                            itemTemplate="addressType"
+                            (onItemClick)="onAddressSelected($event, addressTooltip)">
+                            <div *dxTemplate="let data of 'addressType'" class="address-template">
+                                 <i class="address-icons type-{{data.usageTypeId || 'H'}}"></i><span>{{data.text}}</span>
+                            </div>
+                        </dx-list>
+                    </div>
+                </dx-tooltip>
             </div>
             <div>
                 <label>{{ls.l('Country')}}</label>
