@@ -26,7 +26,7 @@
             (pathParts.pop() == 'login')
         )
     ) {
-        showSpinner(abp.session.multiTenancySide == abp.multiTenancy.sides.HOST > 0 ? 'sperse-spinner' : 'spinner');
+        showSpinner(abp.session.multiTenancySide == abp.multiTenancy.sides.HOST ? 'sperse-spinner' : 'spinner');
         window.loginPageHandler = function(context, boot, environment) {
             appContext = context;
             appBootstrap = boot;
