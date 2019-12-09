@@ -1,13 +1,14 @@
-import { Component } from '@angular/core';
+import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { MemberAreaLink } from '@shared/common/area-navigation/member-area-link.enum';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { DOCUMENT } from '@angular/common';
 
 @Component({
     selector: 'products',
     templateUrl: 'products.component.html',
     styleUrls: ['./products.component.less']
 })
-export class ProductsComponent {
+export class ProductsComponent implements OnInit, OnDestroy {
     sidebarLinks: MemberAreaLink[] = [
         {
             name: this.ls.l('BankCode_CodebreakerAI'),
@@ -44,5 +45,16 @@ export class ProductsComponent {
             routerUrl: 'bank-gear'
         }*/
     ];
-    constructor(public ls: AppLocalizationService) { }
+    constructor(
+        public ls: AppLocalizationService,
+        @Inject(DOCUMENT) private document
+    ) {}
+
+    ngOnInit() {
+        this.document.body.classList.add('overflow-hidden');
+    }
+
+    ngOnDestroy() {
+        this.document.body.classList.remove('overflow-hidden');
+    }
 }

@@ -1,17 +1,19 @@
 :host {
     display: block;
+    max-width: 300px;
     .title {
         font-size: 15px;
         color: #7a7979;
         margin-bottom: 17px;
-        padding-left: 15px;
+        padding-left: 50px;
         text-transform: uppercase;
         font-family: 'AvianoSans-Reg', sans-serif !important;
     }
     ul {
-        padding-left: 0;
         list-style: none;
+        padding-left: 35px;
         li {
+            padding-right: 19.1px;
             + li {
                 margin-top: 16px;
             }
@@ -52,6 +54,10 @@
                         right: -19.1px;
                         top: 0;
                     }
+                }
+
+                @media (max-width: 1200px) {
+                    font-size: 14px;
                 }
 
                 @media (max-width: 768px) {
