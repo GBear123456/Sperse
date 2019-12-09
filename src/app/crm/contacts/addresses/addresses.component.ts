@@ -34,7 +34,10 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 @Component({
     selector: 'addresses',
     templateUrl: './addresses.component.html',
-    styleUrls: ['./addresses.component.less'],
+    styleUrls: [
+        './addresses.component.less',
+        './addresses.styles.less'
+    ],
     providers: [ DialogService, GooglePlaceHelper ]
 })
 export class AddressesComponent implements OnInit {

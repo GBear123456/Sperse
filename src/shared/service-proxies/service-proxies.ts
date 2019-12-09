@@ -6887,6 +6887,61 @@ export class ContactServiceProxy {
     }
 
     /**
+     * @contactId (optional) 
+     * @return Success
+     */
+    getContactDetails(contactId: number | null | undefined): Observable<ContactDetailsDto> {
+        let url_ = this.baseUrl + "/api/services/CRM/Contact/GetContactDetails?";
+        if (contactId !== undefined)
+            url_ += "contactId=" + encodeURIComponent("" + contactId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetContactDetails(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetContactDetails(<any>response_);
+                } catch (e) {
+                    return <Observable<ContactDetailsDto>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<ContactDetailsDto>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetContactDetails(response: HttpResponseBase): Observable<ContactDetailsDto> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? ContactDetailsDto.fromJS(resultData200) : new ContactDetailsDto();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<ContactDetailsDto>(<any>null);
+    }
+
+    /**
      * @userId (optional) 
      * @return Success
      */
@@ -41306,6 +41361,98 @@ export interface IContactInfoDto {
     personContactInfo: PersonContactInfoDto | undefined;
     primaryOrganizationContactId: number | undefined;
     affiliateCode: string | undefined;
+}
+
+export class ContactDetailsDto implements IContactDetailsDto {
+    groupId!: string | undefined;
+    firstName!: string | undefined;
+    lastName!: string | undefined;
+    orgRelations!: PersonOrgRelationShortInfo[] | undefined;
+    emails!: ContactEmailDto[] | undefined;
+    phones!: ContactPhoneDto[] | undefined;
+    addresses!: ContactAddressDto[] | undefined;
+
+    constructor(data?: IContactDetailsDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.groupId = data["groupId"];
+            this.firstName = data["firstName"];
+            this.lastName = data["lastName"];
+            if (data["orgRelations"] && data["orgRelations"].constructor === Array) {
+                this.orgRelations = [];
+                for (let item of data["orgRelations"])
+                    this.orgRelations.push(PersonOrgRelationShortInfo.fromJS(item));
+            }
+            if (data["emails"] && data["emails"].constructor === Array) {
+                this.emails = [];
+                for (let item of data["emails"])
+                    this.emails.push(ContactEmailDto.fromJS(item));
+            }
+            if (data["phones"] && data["phones"].constructor === Array) {
+                this.phones = [];
+                for (let item of data["phones"])
+                    this.phones.push(ContactPhoneDto.fromJS(item));
+            }
+            if (data["addresses"] && data["addresses"].constructor === Array) {
+                this.addresses = [];
+                for (let item of data["addresses"])
+                    this.addresses.push(ContactAddressDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): ContactDetailsDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new ContactDetailsDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["groupId"] = this.groupId;
+        data["firstName"] = this.firstName;
+        data["lastName"] = this.lastName;
+        if (this.orgRelations && this.orgRelations.constructor === Array) {
+            data["orgRelations"] = [];
+            for (let item of this.orgRelations)
+                data["orgRelations"].push(item.toJSON());
+        }
+        if (this.emails && this.emails.constructor === Array) {
+            data["emails"] = [];
+            for (let item of this.emails)
+                data["emails"].push(item.toJSON());
+        }
+        if (this.phones && this.phones.constructor === Array) {
+            data["phones"] = [];
+            for (let item of this.phones)
+                data["phones"].push(item.toJSON());
+        }
+        if (this.addresses && this.addresses.constructor === Array) {
+            data["addresses"] = [];
+            for (let item of this.addresses)
+                data["addresses"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface IContactDetailsDto {
+    groupId: string | undefined;
+    firstName: string | undefined;
+    lastName: string | undefined;
+    orgRelations: PersonOrgRelationShortInfo[] | undefined;
+    emails: ContactEmailDto[] | undefined;
+    phones: ContactPhoneDto[] | undefined;
+    addresses: ContactAddressDto[] | undefined;
 }
 
 export class ContactPhotoInfo implements IContactPhotoInfo {
