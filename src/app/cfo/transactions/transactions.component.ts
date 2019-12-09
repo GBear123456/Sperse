@@ -426,7 +426,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                     field: 'Amount',
                     items: { from: new FilterItemModel(), to: new FilterItemModel() }
                 }),
-                this.categoriesFilter,                
+                this.categoriesFilter,
                 this.typesFilter,
                 this.classifiedFilter,
                 this.currencyFilter,
