@@ -153,8 +153,12 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
                     this.downloadPdfDisabled =
                     this.duplicateInvoiceDisabled =
                     this.previewDisabled = isOrder;
-                    this.resendInvoiceDisabled =
-                    this.markAsDraftDisabled = isOrder || [InvoiceStatus.Final, InvoiceStatus.Canceled].indexOf(event.data.InvoiceStatus) < 0;
+                    this.markAsDraftDisabled = isOrder || [
+                        InvoiceStatus.Final, InvoiceStatus.Canceled
+                    ].indexOf(event.data.InvoiceStatus) < 0;
+                    this.resendInvoiceDisabled = isOrder || [
+                        InvoiceStatus.Final, InvoiceStatus.Canceled, InvoiceStatus.Sent
+                    ].indexOf(event.data.InvoiceStatus) < 0;
                     this.markAsCancelledDisabled = isOrder || event.data.InvoiceStatus != InvoiceStatus.Sent;
                     this.deleteDisabled = isOrder || [
                         InvoiceStatus.Draft, InvoiceStatus.Final, InvoiceStatus.Canceled
