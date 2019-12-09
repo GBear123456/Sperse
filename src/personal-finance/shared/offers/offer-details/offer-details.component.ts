@@ -44,7 +44,6 @@ import {
     GetAllInput
 } from '@shared/service-proxies/service-proxies';
 import { CreditScoreInterface } from '@root/personal-finance/shared/offers/interfaces/credit-score.interface';
-import { RootComponent } from '@root/root.components';
 
 @Component({
     templateUrl: 'offer-details.component.html',
@@ -67,7 +66,6 @@ export class OfferDetailsComponent implements OnInit, OnDestroy {
     private deactivateSubject: Subject<null> = new Subject<null>();
     private deactivate$: Observable<null> = this.deactivateSubject.asObservable();
     buttonCaption = 'Apply';
-    private rootComponent: RootComponent;
     scrollHeight: number;
     constructor(
         injector: Injector,
@@ -81,9 +79,7 @@ export class OfferDetailsComponent implements OnInit, OnDestroy {
         private renderer: Renderer2,
         private changeDetectorRef: ChangeDetectorRef,
         @Inject(DOCUMENT) private document: Document
-    ) {
-        this.rootComponent = injector.get(applicationRef.componentTypes[0]);
-    }
+    ) { }
 
     ngOnInit() {
         this.activate();
@@ -142,7 +138,7 @@ export class OfferDetailsComponent implements OnInit, OnDestroy {
     }
 
     calcScrollHeight() {
-        const footerElement = this.rootComponent.hostElement.nativeElement.querySelector('personal-finance-footer');
+        const footerElement = this.document.body.querySelector('personal-finance-footer');
         let footerVisibleHeight = 0;
         if (footerElement) {
             const footerTopPosition = footerElement.getBoundingClientRect().top;

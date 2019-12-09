@@ -47,15 +47,4 @@ import { LoadingService } from '@shared/common/loading-service/loading.service';
     exports: [ RouterModule ],
     providers: [ RedirectGuard ]
 })
-export class BankCodeRoutingModule {
-    constructor(
-        private router: Router,
-        private loadingService: LoadingService
-    ) {
-        router.events.subscribe((event) => {
-            if (event instanceof RouteConfigLoadEnd) {
-                this.loadingService.showInitialSpinner = false;
-            }
-        });
-    }
-}
+export class BankCodeRoutingModule { }

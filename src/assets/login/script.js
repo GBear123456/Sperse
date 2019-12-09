@@ -16,7 +16,9 @@
     var appContext, appBootstrap, appEnvironment;
     var pathParts = location.pathname.split('/').filter(Boolean);
     var cookie = queryString(document.cookie, ';');
+
     setOriginalReferer(cookie);
+    checkShowInitialSpinner();
 
     var params = queryString(document.location.search.substr(1), '&');
     if (
@@ -26,7 +28,6 @@
             (pathParts.pop() == 'login')
         )
     ) {
-        showSpinner(abp.session.multiTenancySide == abp.multiTenancy.sides.HOST > 0 ? 'sperse-spinner' : 'spinner');
         window.loginPageHandler = function(context, boot, environment) {
             appContext = context;
             appBootstrap = boot;
@@ -112,18 +113,23 @@
         }
     }
 
+    function checkShowInitialSpinner() {
+        var config = window['generalInfo'].userConfig,
+            showSperseSpinner = location.port || config && 
+                config.session.multiTenancySide == config.multiTenancy.sides.host;
+        showSpinner((showSperseSpinner ? 'sperse-' : '' ) + 'spinner');
+    }
+
     function showSpinner(spinnerClass) {
         var spinner = document.body.querySelector('.' + spinnerClass);
-        if (spinner) {
+        if (spinner)
             spinner.style.display = 'flex';
-        }
     }
 
     function handleGetCurrentLoginInformations(response) {
         var loginInformations = window.loginInfo = response;
         tenant = loginInformations && loginInformations.tenant;
         if (tenant && tenant.customLayoutType != 'Default') {
-            showSpinner('spinner');
             window.loginPageHandler = undefined;
             appBootstrap && appBootstrap.call(appContext);
         } else {

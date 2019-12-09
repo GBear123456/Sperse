@@ -124,29 +124,12 @@ export class CfoActivateService implements CanActivate {
     providers: [ ModulePathResolverService, CfoActivateService ]
 })
 export class AppRoutingModule {
-    constructor(
-        private router: Router,
-        private loadingService: LoadingService
-    ) {
+    constructor(private router: Router) {
         router.events.subscribe((event) => {
-
-            if (event instanceof RouteConfigLoadStart) {
-                /** If initial spinner is showing - then avoid showing of the default one */
-                if (!this.loadingService.showInitialSpinner) {
-                    abp.ui.setBusy();
-                }
-            }
-
-            if (event instanceof RouteConfigLoadEnd) {
-                this.loadingService.showInitialSpinner = false;
-                abp.ui.clearBusy();
-            }
-
             if (event instanceof NavigationEnd) {
                 $('meta[property=og\\:url]').attr('content', window.location.href);
                 $('#m_aside_left').mOffcanvas().hide();
             }
-
         });
     }
 }

@@ -1,7 +1,7 @@
 /** Core imports */
 import { Component, Inject, ElementRef, AfterViewInit, OnInit } from '@angular/core';
+import { Router, NavigationEnd } from '@angular/router';
 import { DOCUMENT } from '@angular/common';
-import { Router } from '@angular/router';
 
 /** Third party imports */
 import kebabCase from 'lodash/kebabCase';
@@ -15,23 +15,59 @@ import { LayoutType } from '@shared/service-proxies/service-proxies';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
 
 /*
-	Root Document Component (Body Selector)
+	Root App Component (App Selector)
 */
 @Component({
-    selector: 'body',
-    template: '<app-root></app-root>'
+    selector: 'app-root',
+    template: '<router-outlet></router-outlet>',
+    styleUrls: ['./root.component.less']
 })
-export class RootComponent implements AfterViewInit {
+export class RootComponent implements OnInit {
     constructor(
-        @Inject(DOCUMENT) private document,
-        public hostElement: ElementRef,
-        private uiCustomizationService: AppUiCustomizationService
+        public loadingService: LoadingService,
+        private router: Router,
+        private uiCustomizationService: AppUiCustomizationService,
+        @Inject(AppSessionService) private SS,
+        @Inject(DOCUMENT) private document
     ) {
         this.pageHeaderFixed(true);
+        let subscription = router.events.subscribe((event) => {
+            if (event instanceof NavigationEnd) {
+                this.document.body.querySelectorAll('div.initial').forEach(elm => {
+                    setTimeout(() => this.document.body.removeChild(elm), 1000);
+                });
+                subscription.unsubscribe();
+            }
+        });
+    }
+
+    ngOnInit() {
+        if (abp && abp.setting && abp.setting.values && abp.setting.values['Integrations:Google:MapsJavascriptApiKey'] && this.SS.userId)
+            this.addScriptLink(AppConsts.googleMapsApiUrl.replace('{KEY}', abp.setting.values['Integrations:Google:MapsJavascriptApiKey']));
+
+        //tenant specific custom css
+        let tenant = this.SS.tenant;
+        if (tenant) {
+            if (tenant.customCssId)
+                this.addStyleSheet('TenantCustomCss', AppConsts.remoteServiceBaseUrl + '/api/TenantCustomization/GetCustomCss/' + tenant.customCssId + '/' + tenant.id);
+
+            if (tenant.customLayoutType && tenant.customLayoutType !== LayoutType.Default) {
+                let layoutName = kebabCase(tenant.customLayoutType);
+                this.document.body.classList.add(layoutName);
+                this.addStyleSheet(tenant.customLayoutType + 'Styles', AppConsts.appBaseHref +
+                    'assets/common/styles/custom/' + layoutName + '/style.css');
+            }
+
+            this.checkSetGoogleAnalyticsCode(tenant);
+        }
+    }
+
+    ngAfterViewInit() {
+        this.checkSetClasses(abp.session.userId);
     }
 
     public checkSetClasses(loggedUser) {
-        let classList = this.hostElement.nativeElement.classList,
+        let classList = this.document.body.classList,
             loggedClass = this.uiCustomizationService.getAppModuleBodyClass().split(' ').filter(Boolean),
             accountClass = this.uiCustomizationService.getAccountModuleBodyClass().split(' ').filter(Boolean);
         classList.remove.apply(classList, accountClass.concat(accountClass));
@@ -39,12 +75,12 @@ export class RootComponent implements AfterViewInit {
     }
 
     public pageHeaderFixed(value?: boolean) {
-        this.hostElement.nativeElement.classList[
+        this.document.body.classList[
             value ? 'add' : 'remove']('page-header-fixed');
     }
 
     public overflowHidden(value?: boolean) {
-        this.hostElement.nativeElement.classList[
+        this.document.body.classList[
             value ? 'add' : 'remove']('overflow-hidden');
     }
 
@@ -76,58 +112,10 @@ export class RootComponent implements AfterViewInit {
         this.document.head.append(link);
     }
 
-    ngAfterViewInit() {
-        this.checkSetClasses(abp.session.userId);
-    }
-}
-
-/*
-	Root App Component (App Selector)
-*/
-@Component({
-    selector: 'app-root',
-    template: `<router-outlet>
-                  <loading-spinner [spinner]="spinner" *ngIf="loadingService.showInitialSpinner"></loading-spinner>
-               </router-outlet>`,
-    styleUrls: ['./root.component.less']
-})
-export class AppRootComponent implements OnInit {
-    spinner: 'default' | 'sperse' = !this.SS.tenant || (this.SS.tenant.customLayoutType && this.SS.tenant.customLayoutType === LayoutType.Default)
-        ? 'sperse'
-        : 'default';
-    constructor(
-        public loadingService: LoadingService,
-        private router: Router,
-        @Inject(AppSessionService) private SS,
-        @Inject(RootComponent) private parent
-    ) {}
-
-    ngOnInit() {
-        this.loadingService.showInitialSpinner = true;
-        if (abp && abp.setting && abp.setting.values && abp.setting.values['Integrations:Google:MapsJavascriptApiKey'] && this.SS.userId)
-            this.parent.addScriptLink(AppConsts.googleMapsApiUrl.replace('{KEY}', abp.setting.values['Integrations:Google:MapsJavascriptApiKey']));
-
-        //tenant specific custom css
-        let tenant = this.SS.tenant;
-        if (tenant) {
-            if (tenant.customCssId)
-                this.parent.addStyleSheet('TenantCustomCss', AppConsts.remoteServiceBaseUrl + '/api/TenantCustomization/GetCustomCss/' + tenant.customCssId + '/' + tenant.id);
-
-            if (tenant.customLayoutType && tenant.customLayoutType !== LayoutType.Default) {
-                let layoutName = kebabCase(tenant.customLayoutType);
-                this.parent.hostElement.nativeElement.classList.add(layoutName);
-                this.parent.addStyleSheet(tenant.customLayoutType + 'Styles', AppConsts.appBaseHref +
-                    'assets/common/styles/custom/' + layoutName + '/style.css');
-            }
-
-            this.checkSetGoogleAnalyticsCode(tenant);
-        }
-    }
-
     checkSetGoogleAnalyticsCode(tenant) {
         if (tenant.customLayoutType == LayoutType.LendSpace) {
             let tenantGACode = 'UA-129828500-1'; //!!VP should be used some tenant property
-            this.parent.addScriptLink('https://www.googletagmanager.com/gtag/js?id=' + tenantGACode, '', () => {
+            this.addScriptLink('https://www.googletagmanager.com/gtag/js?id=' + tenantGACode, '', () => {
                 let dataLayer = window['dataLayer'] = window['dataLayer'] || [];
                 dataLayer.push(['js', new Date()]);
                 dataLayer.push(['config', tenantGACode]);

@@ -9,6 +9,4 @@ import { Component, Input } from '@angular/core';
         './loading-spinner.component.less'
     ]
 })
-export class LoadingSpinnerComponent {
-    @Input() spinner: 'default' | 'sperse' = 'default';
-}
+export class LoadingSpinnerComponent { }

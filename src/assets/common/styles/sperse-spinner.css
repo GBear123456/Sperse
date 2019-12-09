@@ -5,65 +5,67 @@
     align-content: center;
     justify-content: center;
     align-items: center;
-    background-color: white;
-}
-.sperse-spinner svg {
-    transform: scale(0.4);
-}
-
-#lines {
-    stroke-width: 10px;
-    stroke-dasharray: 100 3783;
-    stroke-dashoffset: 3783;
-    stroke-linejoin: round;
-    stroke: none;
+    background: transparent;
+    position: absolute;
+    top: 0;
 }
 
-.rotate {
+.sperse-spinner .rotate {
     transform-origin: center;
     animation: rotate 1.6s linear 0s infinite;
 }
 
-.cells path:not(.rotate) {
+.sperse-spinner .cells path:not(.rotate) {
     opacity: 0.3;
     animation: cell-anim 1.6s linear 0s infinite;
 }
 
-#path24, #path26, #path28, #path36, #path60 {
+.sperse-spinner #path24, 
+.sperse-spinner #path26, 
+.sperse-spinner #path28, 
+.sperse-spinner #path36, 
+.sperse-spinner #path60 {
     animation-delay: 0.0s;
 }
-#path42, #path58, #path54, #path68, #path56, #path52, #path20 {
+.sperse-spinner #path42, 
+.sperse-spinner #path58, 
+.sperse-spinner #path54, 
+.sperse-spinner #path68, 
+.sperse-spinner #path56, 
+.sperse-spinner #path52, 
+.sperse-spinner #path20 {
     animation-delay: 0.2s;
 }
-#path44, #path46, #path18 {
+.sperse-spinner #path44, 
+.sperse-spinner #path46, 
+.sperse-spinner #path18 {
     animation-delay: 0.4s;
 }
-#path40, #path66, #path38, #path30, #path31 {
+.sperse-spinner #path40, 
+.sperse-spinner #path66, 
+.sperse-spinner #path38, 
+.sperse-spinner #path30, 
+.sperse-spinner #path31 {
     animation-delay: 0.6s;
 }
-#path50, #path70, #path31 {
+.sperse-spinner #path50, 
+.sperse-spinner #path70, 
+.sperse-spinner #path31 {
     animation-delay: 0.8s;
 }
-#path48, #path34 {
+.sperse-spinner #path48, 
+.sperse-spinner #path34 {
     animation-delay: 1s;
 }
-#path14, #path62, #path64, #path32, #path16 {
+.sperse-spinner #path14, 
+.sperse-spinner #path62, 
+.sperse-spinner #path64, 
+.sperse-spinner #path32, 
+.sperse-spinner #path16 {
     animation-delay: 1.2s;
 }
-#path22 {
+.sperse-spinner #path22 {
     animation-delay: 1.4s;
-}
-
-@keyframes line-flow {
-    0% {
-        stroke-dashoffset: 3783;
-        stroke: red;
-    }
-
-    100% {
-        stroke: blue;
-        stroke-dashoffset: 0;
-    }
 }
 
 @keyframes rotate {
@@ -86,7 +88,6 @@
     0% {
         opacity: 0.3;
     }
-
     10% {
         opacity: 1;
     }
@@ -96,24 +97,5 @@
     }
     100% {
         opacity: 0.3;
-    }
-}
-@keyframes color
-{
-    0%
-    {
-        background-color: darkslategray;
-    }
-    25%
-    {
-        background-color: darkorchid;
-    }
-    50%
-    {
-        background-color: white;
-    }
-    75%
-    {
-        background-color: black;
     }
 }

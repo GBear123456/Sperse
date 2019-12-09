@@ -107,15 +107,4 @@ import { LoadingService } from '@shared/common/loading-service/loading.service';
     exports: [ RouterModule ],
     providers: [ LoggedOutCreditReportGuard, LoggedInCreditReportGuard ]
 })
-export class PersonalFinanceRoutingModule {
-    constructor(
-        private router: Router,
-        private loadingService: LoadingService
-    ) {
-        router.events.subscribe((event) => {
-            if (event instanceof RouteConfigLoadEnd) {
-                this.loadingService.showInitialSpinner = false;
-            }
-        });
-    }
-}
+export class PersonalFinanceRoutingModule { }
