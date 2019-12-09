@@ -65,13 +65,16 @@
         <div class="portlet-body">
             <div>
                 <div id="LeadsTable">
+                    <ghost-list [hidden]="isDataLoaded"></ghost-list>
                     <dx-data-grid id="gridContainer"
                                 class="limitedPagerTotal"
                                 accessKey="narrowHeaderPanel"
+                                [hidden]="!isDataLoaded"
                                 [noDataText]="''"
                                 [allowColumnReordering]="true"
                                 [columnAutoWidth]="true"
                                 [allowColumnResizing]="true"
+                                [loadPanel]="{ enabled: false }"
                                 [hoverStateEnabled]="true"
                                 [pager]="defaultGridPagerConfig"
                                 (onContentReady)="onContentReady($event)"

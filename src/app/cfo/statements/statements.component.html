@@ -9,9 +9,12 @@
         <calendar-button></calendar-button>
     </app-headline>
     <div class="main-wrapper">
+        <ghost-list [hidden]="isDataLoaded"></ghost-list>
         <dx-data-grid id="gridContainer"
                       [columnAutoWidth]="true"
                       [hoverStateEnabled]="true"
+                      [hidden]="!isDataLoaded"
+                      [loadPanel]="{ enabled: false }"
                       [pager]="defaultGridPagerConfig"
                       [dataSource]="statementsData"
                       [masterDetail]="{ enabled: false, template: 'detail' }"
@@ -78,6 +81,7 @@
             <div *dxTemplate="let statement of 'detail'">
                 <dx-data-grid [dataSource]="statement.data.sourceData"
                               [showBorders]="true"
+                              [loadPanel]="{ enabled: false }"
                               [columnAutoWidth]="true">
                     <dxi-column dataField="itemType" caption="" cssClass="clipboard-holder"></dxi-column>
                     <dxi-column dataField="startingBalance" [caption]="l('Statements_StartingPosition')" [format]="currencyFormat" [customizeText]="updateCurrencySymbol" cssClass="clipboard-holder"></dxi-column>

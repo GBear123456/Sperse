@@ -13,14 +13,18 @@
         <div class="portlet-body">
             <dx-scroll-view showScrollbar="onHover">
                 <div id="operationsLogsGridContainer">
+                    <ghost-list [hidden]="isDataLoaded"></ghost-list>
                     <dx-data-grid id="operationsLogsGrid"
+                                  [hidden]="!isDataLoaded"
                                   [remoteOperations]="true"
                                   [dataSource]="operationLogsDataSource"
                                   [allowColumnReordering]="true"
                                   [columnAutoWidth]="true"
                                   [allowColumnResizing]="true"
+                                  [loadPanel]="{ enabled: false }"
                                   [hoverStateEnabled]="true"
-                                  [pager]="defaultGridPagerConfig">
+                                  [pager]="defaultGridPagerConfig"
+                                  (onContentReady)="contentReady()">
                         <dxi-column [caption]="l('Browser')" width="350px" dataField="browserInfo" cellTemplate="browserInfoTemplate"></dxi-column>
                         <dxi-column [caption]="l('Client')" dataField="clientName" cssClass="clipboard-holder"></dxi-column>
                         <dxi-column [caption]="l('IpAddress')" dataField="clientIpAddress" cssClass="clipboard-holder"></dxi-column>

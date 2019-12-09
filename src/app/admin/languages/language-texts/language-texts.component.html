@@ -14,13 +14,17 @@
     <div id="admin-languages-text" class="portlet light no-padding margin-bottom-0">
         <div class="portlet-body">
             <div>
+                <ghost-list [hidden]="isDataLoaded"></ghost-list>
                 <dx-data-grid id="gridContainer"
+                              [hidden]="!isDataLoaded"
                               [allowColumnReordering]="true"
                               [columnAutoWidth]="true"
                               [allowColumnResizing]="true"
                               [hoverStateEnabled]="true"
+                              [loadPanel]="{ enabled: false }"
                               [pager]="defaultGridPagerConfig"
-                              [dataSource]="dataSource">
+                              [dataSource]="dataSource"
+                              (onContentReady)="contentReady()">
                     <dxi-column [caption]="l('Key')" width="25%" dataField="key" cssClass="clipboard-holder"></dxi-column>
                     <dxi-column [caption]="l('BaseValue')" width="34%" dataField="baseValue" cssClass="clipboard-holder"></dxi-column>
                     <dxi-column [caption]="l('TargetValue')" width="34%" dataField="targetValue" cssClass="clipboard-holder"></dxi-column>

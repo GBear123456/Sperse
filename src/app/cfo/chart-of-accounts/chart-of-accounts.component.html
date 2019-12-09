@@ -3,7 +3,7 @@
                   iconSrc="assets/common/icons/magic-stick-icon.svg"></app-headline>
     <div class="content-wrap">
         <setup-steps #setupStep SelectedStepIndex="2"></setup-steps>
-        <div class="grid-wrapper" [ngStyle]="{flex: isInstanceAdmin ? 'unset': 1}">
+        <div class="grid-wrapper" [ngStyle]="{ flex: isInstanceAdmin ? 'unset': 1 }">
             <categorization [width]="'calc(100vw - ' + (setupStep.collapsed ? 420 : 744) + 'px)'"
                             [height]="'calc(100vh - 218px)'"
                             [showTitle]="false"

@@ -27,12 +27,15 @@
         <div class="portlet-body">
             <div>
                 <div id="ClientsTable">
+                    <ghost-list [hidden]="isDataLoaded"></ghost-list>
                     <dx-data-grid id="gridContainer"
                                   class="limitedPagerTotal"
+                                  [hidden]="!isDataLoaded"
                                   [remoteOperations]="true"
                                   [dataSource]="dataSource"
                                   [allowColumnReordering]="true"
                                   [columnAutoWidth]="true"
+                                  [loadPanel]="{ enabled: false }"
                                   [allowColumnResizing]="true"
                                   [hoverStateEnabled]="true"
                                   [pager]="defaultGridPagerConfig"

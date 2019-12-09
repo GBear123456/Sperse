@@ -18,12 +18,15 @@
             </div>
         </dx-tooltip>
         <div [hidden]="openReportMode" class="reports">
+            <ghost-list [hidden]="isDataLoaded"></ghost-list>
             <dx-data-grid id="gridContainer"
                         height="100%"
+                        [hidden]="!isDataLoaded"
                         [dataSource]="dataSource"
                         [allowColumnReordering]="true"
                         [columnAutoWidth]="true"
                         [allowColumnResizing]="true"
+                        [loadPanel]="{ enabled: false }"
                         [hoverStateEnabled]="true"
                         [pager]="defaultGridPagerConfig"
                         (onCellClick)="onCellClick($event)"

@@ -15,15 +15,17 @@
                 <dx-scroll-view showScrollbar="onHover">
                     <div class="row">
                         <div class="col-xl-12">
+                            <ghost-list [hidden]="!loading"></ghost-list>
                             <dx-data-grid id="gridContainer"
                                           accesskey="cachesGrid"
+                                          [hidden]="loading"
                                           [dataSource]="caches"
                                           [allowColumnReordering]="true"
+                                          [loadPanel]="{ enabled: false }"
                                           [columnAutoWidth]="true"
                                           [allowColumnResizing]="true"
                                           [hoverStateEnabled]="true"
                                           [pager]="gridPagerConfig">
-
                                 <dxi-column [caption]="ls.l('Name')" dataField="name" cssClass="clipboard-holder"></dxi-column>
                                 <dxi-column [caption]="ls.l('Actions')" width="220px" cellTemplate="clearTemplate"></dxi-column>
                                 <ng-container *dxTemplate="let item of 'clearTemplate'">

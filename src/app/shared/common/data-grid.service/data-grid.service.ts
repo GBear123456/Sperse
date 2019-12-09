@@ -3,7 +3,6 @@ import { OrganizationUnitDto } from '@shared/service-proxies/service-proxies';
 
 @Injectable()
 export class DataGridService {
-
     static defaultGridPagerConfig = {
         showPageSizeSelector: true,
         allowedPageSizes: [10, 20, 50, 100],

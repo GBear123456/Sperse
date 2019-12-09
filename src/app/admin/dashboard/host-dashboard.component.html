@@ -195,8 +195,8 @@
                             </div>
                         </div>
                         <div class="m-portlet__body">
-                            <ng-container *ngIf="!refreshing; else loadingSpinner">
-                                <ng-container *ngIf="(incomeStatistics$ | async) as incomeStatistic; else loadingSpinner">
+                            <ng-container *ngIf="!refreshing; else ghostList">
+                                <ng-container *ngIf="(incomeStatistics$ | async) as incomeStatistic; else ghostList">
                                     <dx-chart *ngIf="incomeStatistic && incomeStatistic.length; else noData"
                                               id="chart"
                                               [dataSource]="incomeStatistic"
@@ -267,8 +267,8 @@
                             </div>
                         </div>
                         <div class="m-portlet__body">
-                            <ng-container *ngIf="!refreshing; else loadingSpinner">
-                                <ng-container *ngIf="(productStatisticData$ | async) as productStatisticData; else loadingSpinner">
+                            <ng-container *ngIf="!refreshing; else ghostList">
+                                <ng-container *ngIf="(productStatisticData$ | async) as productStatisticData; else ghostList">
                                     <dx-pie-chart *ngIf="productStatisticData && productStatisticData.length; else noData"
                                                   [dataSource]="productStatisticData"
                                                   type="donut">
@@ -303,9 +303,9 @@
                         </div>
                         <div class="m-portlet__body">
                             <div class="scroller chart m-scrollable" data-always-visible="1" data-rail-visible="0" data-scrollable="true">
-                                <ng-container *ngIf="!refreshing; else loadingSpinner">
-                                    <ng-container *ngIf="(expiringTenantsData$ | async) as expiringTenantsData; else loadingSpinner">
-                                        <dx-data-grid [dataSource]="expiringTenantsData" *ngIf="expiringTenantsData && expiringTenantsData.length; else noData">
+                                <ng-container *ngIf="!refreshing; else ghostList">
+                                    <ng-container *ngIf="(expiringTenantsData$ | async) as expiringTenantsData; else ghostList">
+                                        <dx-data-grid [dataSource]="expiringTenantsData" *ngIf="expiringTenantsData && expiringTenantsData.length; else noData" [loadPanel]="{ enabled: false }">
                                             <dxo-paging [pageSize]="10"></dxo-paging>
                                             <dxi-column dataField="tenantName" cssClass="clipboard-holder"></dxi-column>
                                             <dxi-column dataField="remainingDayCount" alignment="left" cssClass="clipboard-holder"></dxi-column>
@@ -341,9 +341,9 @@
                         </div>
                         <div class="m-portlet__body">
                             <div class="scroller chart m-scrollable" data-always-visible="1" data-rail-visible="0" data-scrollable="true">
-                                <ng-container *ngIf="!refreshing; else loadingSpinner">
-                                    <ng-container *ngIf="(recentTenantsData$ | async) as recentTenantsData; else loadingSpinner">
-                                        <dx-data-grid [dataSource]="recentTenantsData" *ngIf="recentTenantsData && recentTenantsData.length; else noData">
+                                <ng-container *ngIf="!refreshing; else ghostList">
+                                    <ng-container *ngIf="(recentTenantsData$ | async) as recentTenantsData; else ghostList">
+                                        <dx-data-grid [dataSource]="recentTenantsData" *ngIf="recentTenantsData && recentTenantsData.length; else noData" [loadPanel]="{ enabled: false }">
                                             <dxo-paging [pageSize]="10"></dxo-paging>
                                             <dxi-column dataField="name" cssClass="clipboard-holder"></dxi-column>
                                             <dxi-column dataField="creationTime" [calculateDisplayValue]="reformatCreationTime" cssClass="clipboard-holder"></dxi-column>
@@ -374,4 +374,4 @@
 
 <ng-template #treeDots>...</ng-template>
 <ng-template #noData><app-no-data></app-no-data></ng-template>
-<ng-template #loadingSpinner><loading-spinner></loading-spinner></ng-template>
+<ng-template #ghostList><ghost-list [itemsCount]="8"></ghost-list></ng-template>

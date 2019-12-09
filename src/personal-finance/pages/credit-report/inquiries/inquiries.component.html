@@ -12,7 +12,6 @@
             <dxi-column dataField="creditorName"></dxi-column>
             <dxi-column dataField="industry"></dxi-column>
             <dxi-column dataField="dateOfInquiry" sortOrder="desc" cellTemplate="dateCell">
-                >
                 <div *dxTemplate="let data of 'dateCell'">
                     {{data.value?.utc().format('MMM DD, YYYY')}}
                 </div>

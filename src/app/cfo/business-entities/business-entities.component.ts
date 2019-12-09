@@ -59,7 +59,8 @@ export class BusinessEntitiesComponent extends CFOComponentBase implements OnIni
                 url: this.getODataUrl(this.dataSourceURI),
                 version: AppConsts.ODataVersion,
                 deserializeDates: false,
-                beforeSend: function (request) {
+                beforeSend: (request) => {
+                    this.isDataLoaded = false;
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                 }
             }
@@ -249,5 +250,9 @@ export class BusinessEntitiesComponent extends CFOComponentBase implements OnIni
         if (businessEntityId && !this.isAddButtonDisabled) {
             this.showEditDialog(businessEntityId);
         }
+    }
+
+    onContentReady() {
+        this.setGridDataLoaded();
     }
 }

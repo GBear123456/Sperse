@@ -59,6 +59,8 @@ export class CellsCopyingService {
             this.elem = document.createElement('div');
             this.elem.id = 'crossMovingTriangle';
             Object.assign(this.elem.style, this.crossMovingTriangleDefaultStyles, styles);
+            document.removeEventListener('mousedown', this.onMouseDown, true);
+            document.removeEventListener('mousedown', this.onMouseUp);
             document.addEventListener('mousedown', this.onMouseDown, true);
             document.addEventListener('mouseup', this.onMouseUp);
         }

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { trigger } from '@angular/animations';
 import { fadeIn } from '@shared/animations/fade-animations';
 
@@ -9,7 +9,16 @@ import { fadeIn } from '@shared/animations/fade-animations';
     animations: [ trigger('fadeIn', fadeIn(':enter')) ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class GhostListComponent {
+export class GhostListComponent implements OnChanges {
     @Input() itemsCount = 12;
-    ghosts = new Array(this.itemsCount);
+    ghosts: number[] = new Array(this.itemsCount);
+
+    constructor(private changeDetectorRef: ChangeDetectorRef) {}
+
+    ngOnChanges(changes: SimpleChanges) {
+        if (changes && changes.itemsCount) {
+            this.ghosts = new Array(changes.itemsCount.currentValue);
+            this.changeDetectorRef.detectChanges();
+        }
+    }
 }

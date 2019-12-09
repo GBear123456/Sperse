@@ -11,7 +11,11 @@ import { takeUntil } from 'rxjs/operators';
 import { AuditLogDetailModalComponent } from '@app/admin/audit-logs/audit-log-detail/audit-log-detail-modal.component';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { AuditLogListDto, AuditLogServiceProxy } from '@shared/service-proxies/service-proxies';
+import {
+    AuditLogListDto,
+    AuditLogListDtoPagedResultDto,
+    AuditLogServiceProxy
+} from '@shared/service-proxies/service-proxies';
 import { FileDownloadService } from '@shared/utils/file-download.service';
 import DataSource from 'devextreme/data/data_source';
 import { AppService } from '@app/app.service';
@@ -59,7 +63,7 @@ export class AuditLogsComponent extends AppComponentBase implements OnInit, OnDe
             from: new FilterItemModel(DateHelper.addTimezoneOffset(this.filtersValues.date.startDate.toDate(), true)),
             to: new FilterItemModel(DateHelper.addTimezoneOffset(this.filtersValues.date.endDate.toDate(), true))
         },
-        options: {method: 'getFilterByDate', params: { useUserTimezone: true }}
+        options: { method: 'getFilterByDate', params: { useUserTimezone: true } }
     });
     private filtersModels: FilterModel[] = [
         this.dateFilterModel,
@@ -119,6 +123,7 @@ export class AuditLogsComponent extends AppComponentBase implements OnInit, OnDe
         })
     ];
     operationLogsDataSource: DataSource;
+    isDataLoaded = false;
 
     constructor(
         injector: Injector,
@@ -146,6 +151,7 @@ export class AuditLogsComponent extends AppComponentBase implements OnInit, OnDe
         this.operationLogsDataSource = new DataSource({
             key: 'id',
             load: (loadOptions) => {
+                this.isDataLoaded = false;
                 return this.auditLogService.getAuditLogs(
                     this.filtersValues.date.startDate,
                     this.filtersValues.date.endDate,
@@ -162,12 +168,14 @@ export class AuditLogsComponent extends AppComponentBase implements OnInit, OnDe
                     }).join(','),
                     loadOptions.take,
                     loadOptions.skip
-                ).toPromise().then(response => {
-                    return {
-                        data: response.items,
-                        totalCount: response.totalCount
-                    };
-                });
+                ).toPromise().then(
+                    (response: AuditLogListDtoPagedResultDto) => {
+                        return {
+                            data: response.items,
+                            totalCount: response.totalCount
+                        };
+                    }
+                );
             }
         });
     }
@@ -336,6 +344,10 @@ export class AuditLogsComponent extends AppComponentBase implements OnInit, OnDe
 
     refreshData(): void {
         this.dataGrid.instance.refresh();
+    }
+
+    contentReady() {
+        this.setGridDataLoaded();
     }
 
     ngOnDestroy() {

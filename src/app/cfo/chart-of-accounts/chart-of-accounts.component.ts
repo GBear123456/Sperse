@@ -28,8 +28,8 @@ class UploadCategoryModel {
     selector: 'chart-of-accounts',
     templateUrl: './chart-of-accounts.component.html',
     styleUrls: ['./chart-of-accounts.component.less'],
-    providers: [ClassificationServiceProxy, CategoryTreeServiceProxy],
-    animations: [appModuleAnimation()]
+    providers: [ ClassificationServiceProxy, CategoryTreeServiceProxy ],
+    animations: [ appModuleAnimation() ]
 })
 export class ChartOfAccountsComponent extends CFOComponentBase implements OnInit, OnDestroy {
     @ViewChild(CategorizationComponent) categorizationComponent: CategorizationComponent;
@@ -108,7 +108,7 @@ export class ChartOfAccountsComponent extends CFOComponentBase implements OnInit
                 this.override,
                 accTypes
             )
-                .pipe(finalize(() => { abp.ui.clearBusy(); }))
+                .pipe(finalize(() => abp.ui.clearBusy()))
                 .subscribe(() => {
                     this.refreshCategories();
                 });

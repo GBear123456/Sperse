@@ -162,7 +162,17 @@ export class CellOptions {
     selector: 'app-cashflow',
     templateUrl: './cashflow.component.html',
     styleUrls: ['./cashflow.component.less'],
-    providers: [ CashFlowForecastServiceProxy, CategoryTreeServiceProxy, ClassificationServiceProxy, UserPreferencesService, BankAccountsServiceProxy, CellsCopyingService, CashflowService, CurrencyPipe, LifecycleSubjectsService ]
+    providers: [
+        CashFlowForecastServiceProxy,
+        CategoryTreeServiceProxy,
+        ClassificationServiceProxy,
+        UserPreferencesService,
+        BankAccountsServiceProxy,
+        CellsCopyingService,
+        CashflowService,
+        CurrencyPipe,
+        LifecycleSubjectsService
+    ]
 })
 export class CashflowComponent extends CFOComponentBase implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(DxPivotGridComponent) pivotGrid: DxPivotGridComponent;
@@ -743,8 +753,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
     ngOnInit() {
         this.initCategoryToolbar();
-        this.displayedStatsDetails$.subscribe((details) => this.displayedStatsDetails = details);
-        this.statsDetailResult$.subscribe(details => {
+        this.displayedStatsDetails$.subscribe((details: CashFlowStatsDetailDto[]) => this.displayedStatsDetails = details);
+        this.statsDetailResult$.subscribe((details: CashFlowStatsDetailDto[]) => {
             let detailsAllowed = this.isInstanceAdmin || this.isMemberAccessManage;
             this.detailsContainsHistorical = detailsAllowed && details.some(item => !!item.date);
             this.detailsContainsForecasts = detailsAllowed && details.some(item => !!item.forecastId);

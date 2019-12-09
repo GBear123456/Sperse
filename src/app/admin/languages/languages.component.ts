@@ -55,6 +55,7 @@ export class LanguagesComponent extends AppComponentBase implements OnDestroy {
         this.dataSource = new DataSource({
             key: 'id',
             load: () => {
+                this.isDataLoaded = false;
                 return this.languageService.getLanguages().toPromise().then(response => {
                     this.defaultLanguageName = response.defaultLanguageName;
                     return {
@@ -231,5 +232,9 @@ export class LanguagesComponent extends AppComponentBase implements OnDestroy {
         if (e.rowType === 'data' && e.data.name === this.defaultLanguageName) {
             e.rowElement.classList.add('default');
         }
+    }
+
+    contentReady() {
+        this.setGridDataLoaded();
     }
 }

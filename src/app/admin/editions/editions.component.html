@@ -27,21 +27,24 @@
         <div class="portlet-body">
             <div>
                 <div id="productsGrid">
+                    <ghost-list [hidden]="isDataLoaded"></ghost-list>
                     <dx-data-grid id="gridContainer"
+                                  [hidden]="!isDataLoaded"
                                   [allowColumnReordering]="true"
                                   [columnAutoWidth]="true"
                                   [allowColumnResizing]="true"
                                   [hoverStateEnabled]="true"
+                                  [loadPanel]="{ enabled: false }"
                                   [pager]="defaultGridPagerConfig"
                                   (onContentReady)="onContentReady()"
                                   (onCellClick)="this.openCreateOrEditDialog($event.data.id)"
                                   (onEditingStart)="showActionsMenu($event)"
                                   [dataSource]="dataSource">
                         <dxo-editing mode="popup" [allowUpdating]="true"></dxo-editing>
-                        <dxi-column caption="{{l('CreationTime')}}" dataField="creationTime" dataType="date" cssClass="clipboard-holder"></dxi-column>
-                        <dxi-column caption="{{l('EditionName')}}" dataField="displayName" cssClass="clipboard-holder"></dxi-column>
-                        <dxi-column caption="{{l('PackageName')}}" dataField="packageName" cssClass="clipboard-holder"></dxi-column>
-                        <dxi-column caption="{{l('ModuleName')}}" dataField="module" cssClass="clipboard-holder"></dxi-column>
+                        <dxi-column [caption]="l('CreationTime')" dataField="creationTime" dataType="date" cssClass="clipboard-holder"></dxi-column>
+                        <dxi-column [caption]="l('EditionName')" dataField="displayName" cssClass="clipboard-holder"></dxi-column>
+                        <dxi-column [caption]="l('PackageName')" dataField="packageName" cssClass="clipboard-holder"></dxi-column>
+                        <dxi-column [caption]="l('ModuleName')" dataField="module" cssClass="clipboard-holder"></dxi-column>
                     </dx-data-grid>
                 </div>
             </div>

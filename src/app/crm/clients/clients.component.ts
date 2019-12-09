@@ -1,39 +1,43 @@
 /** Core imports */
-import { Component, OnInit, OnDestroy, Injector, ViewChild } from '@angular/core';
+import {
+    Component,
+    Injector,
+    OnDestroy,
+    OnInit,
+    ViewChild
+} from '@angular/core';
 import { RouteReuseStrategy } from '@angular/router';
-
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import 'devextreme/data/odata/store';
-import { Store, select } from '@ngrx/store';
-import { BehaviorSubject, Observable, Subscription, combineLatest, merge, of } from 'rxjs';
+import { select, Store } from '@ngrx/store';
+import { BehaviorSubject, combineLatest, merge, Observable, of, Subscription } from 'rxjs';
 import {
-    first,
     filter,
     finalize,
-    takeUntil,
-    startWith,
+    first,
     map,
     mapTo,
     pluck,
     publishReplay,
     refCount,
+    startWith,
     switchMap,
+    takeUntil,
     tap
 } from 'rxjs/operators';
 import * as _ from 'underscore';
-
 /** Application imports */
 import { AppService } from '@app/app.service';
 import {
     AppStore,
     ContactAssignedUsersStoreSelectors,
-    TagsStoreSelectors,
     ListsStoreSelectors,
+    RatingsStoreSelectors,
     StarsStoreSelectors,
     StatusesStoreSelectors,
-    RatingsStoreSelectors
+    TagsStoreSelectors
 } from '@app/store';
 import { ClientService } from '@app/crm/clients/clients.service';
 import { PipelineService } from '@app/shared/pipeline/pipeline.service';
@@ -58,10 +62,10 @@ import { FilterCheckBoxesComponent } from '@shared/filters/check-boxes/filter-ch
 import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-boxes.model';
 import { FilterRangeComponent } from '@shared/filters/range/filter-range.component';
 import {
-    CreateContactEmailInput,
-    ContactServiceProxy,
     ContactEmailServiceProxy,
+    ContactServiceProxy,
     ContactStatusDto,
+    CreateContactEmailInput,
     OrganizationUnitDto
 } from '@shared/service-proxies/service-proxies';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
@@ -100,7 +104,8 @@ import { HeadlineButton } from '@app/shared/common/headline/headline-button.mode
         MapService,
         LifecycleSubjectsService,
         ImpersonationService
-    ]
+    ],
+    //changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ClientsComponent extends AppComponentBase implements OnInit, OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
@@ -326,7 +331,6 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     contentHeight$: Observable<number> = this.crmService.contentHeight$;
     mapHeight$: Observable<number> = this.crmService.mapHeight$;
     private usersInstancesLoadingSubscription: Subscription;
-    dataGridLoading = false;
 
     constructor(
         injector: Injector,
@@ -370,7 +374,6 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 version: AppConsts.ODataVersion,
                 deserializeDates: false,
                 beforeSend: (request) => {
-                    this.dataGridLoading = true;
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                     request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
                 },
@@ -384,7 +387,6 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                     if (this.appService.isCfoLinkOrVerifyEnabled) {
                         this.usersInstancesLoadingSubscription = this.crmService.getUsersWithInstances(userIds);
                     }
-                    this.dataGridLoading = false;
                 }
             }
         };

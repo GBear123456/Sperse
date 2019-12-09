@@ -56,8 +56,8 @@ import { OrganizationUnitMembersComponent } from './organization-units/organizat
 import { OrganizationUnitsComponent } from './organization-units/organization-units.component';
 import { CreateOrEditRoleModalComponent } from './roles/create-or-edit-role-modal/create-or-edit-role-modal.component';
 import { RolesComponent } from './roles/roles.component';
-import { HostSettingsComponent } from './settings/host-settings.component';
-import { TenantSettingsComponent } from './settings/tenant-settings.component';
+import { HostSettingsComponent } from './settings/host-settings/host-settings.component';
+import { TenantSettingsComponent } from './settings/tenant-settings/tenant-settings.component';
 import { EditionComboComponent } from './shared/edition-combo.component';
 import { FeatureTreeComponent } from './shared/feature-tree.component';
 import { OrganizationUnitsTreeComponent } from './shared/organization-unit-tree.component';
@@ -71,7 +71,7 @@ import { UiCustomizationComponent } from './ui-customization/ui-customization.co
 import { ImpersonationService } from './users/impersonation.service';
 import { UsersComponent } from './users/users.component';
 import { JobsComponent } from './jobs/jobs.component';
-import { SystemSettingsComponent } from './settings/system-settings.component';
+import { SystemSettingsComponent } from './settings/system-settings/system-settings.component';
 import { UploadSSLCertificateModalComponent } from './settings/modals/upload-ssl-cert-modal.component';
 import { AddOrEditSSLBindingModal } from './settings/modals/add-or-edit-ssl-binding-modal.component';
 import { CreateUserDialogComponent } from './users/create-user-dialog/create-user-dialog.component';

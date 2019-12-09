@@ -34,6 +34,7 @@ import { CacheHelper } from '@shared/common/cache-helper/cache-helper';
 import { PrimengTableHelper } from '@shared/helpers/PrimengTableHelper';
 import { PhoneFormatModule } from '@shared/common/pipes/phone-format/phone-format.module';
 import { AppConsts } from '@shared/AppConsts';
+import { GhostListModule } from '@app/shared/common/ghost-list/ghost-list.module';
 
 @NgModule({
     declarations: [
@@ -66,7 +67,8 @@ import { AppConsts } from '@shared/AppConsts';
         ModalDialogComponent,
         ConditionsModalComponent,
         NoDataModule,
-        InlineSVGModule
+        InlineSVGModule,
+        GhostListModule
     ],
     imports: [
         ngCommon.CommonModule,

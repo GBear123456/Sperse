@@ -85,13 +85,16 @@
     <div [hidden]="hideDataGrid$ | async" class="portlet light no-padding margin-bottom-0">
         <div class="portlet-body">
             <div id="ClientsTable">
+                <ghost-list [hidden]="isDataLoaded"></ghost-list>
                 <dx-data-grid id="gridContainer"
                               accesskey="narrowHeaderPanel"
+                              [hidden]="!isDataLoaded"
                               [dataSource]="dataSource"
                               [allowColumnReordering]="true"
                               [columnAutoWidth]="true"
                               [allowColumnResizing]="true"
                               [hoverStateEnabled]="true"
+                              [loadPanel]="{ enabled: false }"
                               [pager]="defaultGridPagerConfig"
                               (onContentReady)="onContentReady($event)"
                               (onCellClick)="onCellClick($event)"

@@ -62,10 +62,12 @@
     </div>
 </div>
 <div [ngClass]="{ 'grid-container': true, 'highlight-used-rows' : highlightUsedRows }">
+    <ghost-list [hidden]="isDataLoaded"></ghost-list>
     <dx-data-grid id="gridContainer"
-                  [width]="'99.9%'"
+                  width="99.9%"
                   [height]="calculateHeight()"
                   [dataSource]="dataSource"
+                  [hidden]="!isDataLoaded"
                   [masterDetail]="{ enabled: false, template: 'detail' }"
                   keyExpr="syncAccountId"
                   [showColumnHeaders]="showColumnHeaders"
@@ -74,14 +76,7 @@
                   [showColumnLines]="false"
                   [showRowLines]="false"
                   [scrolling]="{ showScrollbar: 'onHover' }"
-                  [loadPanel]="{
-                                enabled: true,
-                                showPane: false,
-                                showIndicator: true,
-                                minHeight: 150,
-                                minWidth: 150,
-                                indicatorSrc: './assets/common/images/spinner-32px.gif'
-                              }"
+                  [loadPanel]="{ enabled: false }"
                   [elementAttr]="{ class: 'with-custom-loader' }"
                   (onRowPrepared)="rowPrepared($event)"
                   (onContentReady)="contentReady()"
