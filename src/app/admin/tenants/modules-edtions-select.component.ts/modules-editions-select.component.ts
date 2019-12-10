@@ -60,6 +60,14 @@ export class ModulesEditionsSelectComponent {
         return result;
     }
 
+    editionIsAssigned(editionModel: TenantEditEditionDto, editionGroupIndex: number): boolean {
+        const editionId = editionModel.editionId;
+        const edition = this.editionsGroups[editionGroupIndex].find((edition: SubscribableEditionComboboxItemDto) => {
+            return +edition.value === +editionId;
+        });
+        return edition && edition.value !== '0';
+    }
+
     moduleIsDisabled(moduleId: string): boolean {
         return this.incompatibleModules[moduleId] && this.incompatibleModules[moduleId].some((incompatibleModule: string) => {
             const incompatibleModuleIsAssigned = this.editionsModels[incompatibleModule].editionId != 0;
@@ -69,5 +77,16 @@ export class ModulesEditionsSelectComponent {
             }
             return incompatibleModuleIsAssigned;
         });
+    }
+
+    showCleanIcon(editionModel: TenantEditEditionDto, editionGroupIndex: number): boolean {
+        return editionModel.maxUserCount != null || editionModel.trialDayCount != null ||
+            this.editionIsAssigned(editionModel, editionGroupIndex);
+    }
+
+    clearEdition(editionModel: TenantEditEditionDto): void {
+        editionModel.maxUserCount = null;
+        editionModel.trialDayCount = null;
+        editionModel.editionId = 0;
     }
 }

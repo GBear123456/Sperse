@@ -29,7 +29,12 @@
                    min="1"
                    [disabled]="moduleIsDisabled(moduleId)"
                    [(ngModel)]="editionsModels[moduleId].trialDayCount"
-                   [ngModelOptions]="{standalone: true}">
+                   [ngModelOptions]="{ standalone: true }">
+        </div>
+        <div *ngIf="showCleanIcon(editionsModels[moduleId], i)"
+             class="clean-icon"
+             inlineSVG="assets/common/icons/close.svg"
+             (click)="clearEdition(editionsModels[moduleId])">
         </div>
     </ng-container>
 </div>
