@@ -121,7 +121,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
             disabled: !this.permission.isGranted(AppPermissions.CRMOrdersInvoicesManage)
         }
     ];
-    linesGridHeight = 200;
+
     invoiceUnits = Object.keys(InvoiceLineUnit);
     ordersDataSource;
 
@@ -672,14 +672,12 @@ export class CreateInvoiceDialogComponent implements OnInit {
 
     addNewLine(data) {
         this.lines.push({});
-        this.linesGridHeight += 100;
         this.changeDetectorRef.detectChanges();
     }
 
     deleteLine(data) {
         if (data.rowIndex || this.lines.length > 1) {
             this.lines.splice(data.rowIndex, 1);
-            this.linesGridHeight -= 100;
             this.calculateBalance();
         }
     }

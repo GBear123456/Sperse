@@ -94,7 +94,7 @@
     .form-content {
         display: flex;
         flex-direction: column;
-        padding: 30px 0px 30px 50px;
+        padding: 20px 0px 20px 50px;
         height: calc(~"100vh - 82px");
         width: 900px;
 
@@ -147,10 +147,11 @@
 
         /deep/ .field-area {
             display: block;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
             &.flex-space-between {
                 width: 810px;
                 display: flex;
+                margin-bottom: 10px;
                 justify-content: space-between;
             }
             .date-fields-area {
@@ -163,6 +164,7 @@
             }
             &.notes {
                 margin-top: 20px;
+                margin-bottom: 0px;
                 span.clear-contact {
                     align-self: flex-start;
                 }
@@ -202,8 +204,7 @@
                 min-width: 200px;
                 position: relative;
                 .selected-contact-info {
-                    top: 30px;
-                    position: absolute;
+                    position: relative;
                     font-size: 12px;
                     color: #aaa;
                     i.edit, i.remove {
@@ -234,7 +235,7 @@
                 .credentials {
                     display: flex;
                     justify-content: space-between;
-                    height: 141px;
+                    max-height: 141px;
                     span, pre {
                         font-family: Montserrat;
                         display: block;
@@ -248,7 +249,7 @@
                     }
                     pre {
                         overflow-y: auto;
-                        height: 130px;
+                        max-height: 130px;
                     }
                     span {
                         font-weight: 500;
@@ -407,6 +408,7 @@
     }
 
     /deep/ dx-data-grid {
+        max-width: 810px!important;
         .dx-command-edit {
             .dx-link-delete {
                 width: 16px;
@@ -441,10 +443,26 @@
         .dx-datagrid-rowsview {
             border: none;
             td {
+                margin: 0px;
+                padding: 0px 7px;
                 overflow: visible;
+            }
+            tr:nth-child(odd) td { 
+                background: rgba(243, 247, 250, 0.7);
+                /deep/ dx-text-box, /deep/ dx-select-box {
+                    &, input {
+                        background: transparent;
+                    }
+                }
+            }
+            tr:last-child td {
+                background: initial!important;
             }
         }
         .dx-datagrid-headers {
+            td {
+                padding: 14px 7px 0px;
+            }
             &, .dx-datagrid-content, td {
                 border: none!important;
             }
@@ -467,6 +485,13 @@
             height: 43px;
             justify-content: space-between;
             align-items: center;
+            &.add-new {
+                width: 810px;
+                left: -7px;
+                margin-top: 5px;
+                position: relative;
+                background: #FFF;
+            }
             span {
                 height: 40px;
                 padding: 0 10px;

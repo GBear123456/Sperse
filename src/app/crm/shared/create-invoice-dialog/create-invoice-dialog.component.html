@@ -182,7 +182,7 @@
                 <dx-validation-group>
                     <dx-data-grid
                         width="810px"
-                        [height]="linesGridHeight"
+                        height="auto"
                         [disabled]="disabledForUpdate"
                         [(dataSource)]="lines"
                         [allowColumnReordering]="false"
@@ -200,8 +200,9 @@
                         <dxi-column width="30" caption="" [allowSorting]="false" [allowEditing]="false" cellTemplate="actions"></dxi-column>
 
                         <div *dxTemplate="let cellData of 'description'">
-                            <dx-text-box
+                            <dx-text-box                                
                                 width="300px"
+                                height="32px"
                                 [placeholder]="ls.lr('Invoice_EnterDescription')"
                                 [showClearButton]="true"
                                 [(value)]="cellData.data.description">
@@ -209,13 +210,14 @@
                                     <dxi-validation-rule type="required" [message]="ls.l('RequiredAllFields')"></dxi-validation-rule>
                                 </dx-validator>
                             </dx-text-box>
-                            <div class="row-actions" *ngIf="cellData.rowIndex == lines.length - 1">
+                            <div class="row-actions add-new" *ngIf="cellData.rowIndex == lines.length - 1">
                                 <span [class.disabled]="lines.length != getFilteredLines().length" class="add-new" (click)="addNewLine(cellData)">{{ls.l('+ Add new line')}}</span>
                             </div>
                         </div>
                         <div *dxTemplate="let cellData of 'quantity'">
                             <dx-text-box
                                 width="110px"
+                                height="32px"
                                 [placeholder]="ls.lr('EditValuePlaceholder')"
                                 [showClearButton]="true"
                                 [(value)]="cellData.data.quantity"
@@ -229,6 +231,7 @@
                         <div *dxTemplate="let cellData of 'rate'">
                             <dx-text-box
                                 width="110px"
+                                height="32px"
                                 [placeholder]="ls.lr('EditValuePlaceholder')"
                                 [showClearButton]="true"
                                 (onKeyDown)="allowDigitsOnly($event, ['.'])"
@@ -243,6 +246,7 @@
                             <dx-select-box
                                 name="unit"
                                 width="100px"
+                                height="32px"
                                 [(value)]="cellData.data.unitId"
                                 [dataSource]="invoiceUnits">
                                 <dx-validator>
@@ -253,6 +257,7 @@
                         <div *dxTemplate="let cellData of 'total'">
                             <dx-text-box
                                 width="110px"
+                                height="32px"
                                 placeholder=""
                                 dataType="number"
                                 [readOnly]="true"
