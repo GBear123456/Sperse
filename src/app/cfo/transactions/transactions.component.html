@@ -39,7 +39,9 @@
                     </categorization>
                 </div>
                 <div class="transactions">
+                    <ghost-list [hidden]="isDataLoaded"></ghost-list>
                     <dx-data-grid id="gridContainer"
+                                  [hidden]="!isDataLoaded"
                                   [noDataText]="!dataGrid?.dataSource || dataSource?.isLoading() ? '' : l('NoData')"
                                   [allowColumnReordering]="true"
                                   [columnAutoWidth]="true"
@@ -48,18 +50,9 @@
                                   [columnMinWidth]="'125px'"
                                   [headerFilter]="{ allowSearch: true, visible: false }"
                                   [pager]="defaultGridPagerConfig"
-                                  [loadPanel]="{
-                                    enabled: true,
-                                    showPane: false,
-                                    showIndicator: true,
-                                    minHeight: 150,
-                                    minWidth: 150,
-                                    indicatorSrc: './assets/common/images/spinner-32px.gif'
-                                  }"
+                                  [loadPanel]="{ enabled: false }"
                                   [height]="gridHeight"
-                                  [elementAttr]="{
-                                    class: 'with-custom-loader'
-                                  }"
+                                  [elementAttr]="{ class: 'with-custom-loader' }"
                                   [columnResizingMode]="'widget'"
                                   (onContentReady)="onContentReady($event)"
                                   (onDataErrorOccurred)="httpInterceptor.handleError($event.error)"

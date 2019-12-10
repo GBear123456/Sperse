@@ -7,6 +7,7 @@ import {
     ViewChild,
     OnInit,
     OnChanges,
+    OnDestroy,
     EventEmitter,
     ElementRef,
     SimpleChanges
@@ -16,7 +17,7 @@ import {
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import Form from 'devextreme/ui/form';
 import { BehaviorSubject, Observable, combineLatest, forkJoin } from 'rxjs';
-import { distinctUntilChanged, finalize, map } from 'rxjs/operators';
+import { distinctUntilChanged, map, takeUntil } from 'rxjs/operators';
 
 /** Application imports */
 import { BankAccountsService } from '@shared/cfo/bank-accounts/helpers/bank-accounts.service';
@@ -45,7 +46,7 @@ import { ArrayHelper } from '@shared/helpers/ArrayHelper';
     styleUrls: ['./bank-accounts-widget.component.less'],
     providers: [ BankAccountsServiceProxy, BusinessEntityServiceProxy, SyncAccountServiceProxy, SyncServiceProxy ]
 })
-export class BankAccountsWidgetComponent extends CFOComponentBase implements OnInit, OnChanges {
+export class BankAccountsWidgetComponent extends CFOComponentBase implements OnInit, OnChanges, OnDestroy {
     @ViewChild(DxDataGridComponent) mainDataGrid: DxDataGridComponent;
     @ViewChild('header', { read: ElementRef }) header: ElementRef;
     @Input() showSyncDate = false;
@@ -160,9 +161,11 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
     }
 
     ngOnInit(): void {
-        this.syncAccounts$.subscribe((syncAccounts) => {
-            this.dataSource = syncAccounts;
-        });
+        this.syncAccounts$
+            .pipe(takeUntil(this.destroy$))
+            .subscribe((syncAccounts: SyncAccountBankDto[]) => {
+                this.dataSource = syncAccounts;
+            });
 
         if (!this.isInstanceAdmin && !this.isMemberAccessManage) {
             this.contextMenuItems = [];
@@ -176,9 +179,8 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
     }
 
     refresh() {
-        this.loadingService.startLoading(this.getElementRef().nativeElement);
+        this.isDataLoaded = false;
         this.bankAccountsService.load(false)
-            .pipe(finalize(() => this.loadingService.finishLoading(this.getElementRef().nativeElement)))
             .subscribe();
     }
 
@@ -317,6 +319,7 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
 
     contentReady() {
         this.calculateHeight();
+        this.isDataLoaded = true;
     }
 
     dataRowClick(e) {
@@ -597,5 +600,9 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
             }
         });
         return syncAccountBalance;
+    }
+
+    ngOnDestroy() {
+        super.ngOnDestroy();
     }
 }

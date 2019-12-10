@@ -21,7 +21,7 @@ import { AppConsts } from '@root/shared/AppConsts';
 @Component({
     templateUrl: './host-settings.component.html',
     animations: [appModuleAnimation()],
-    styleUrls: ['../../shared/common/styles/checkbox-radio.less', './host-settings.component.less'],
+    styleUrls: ['../../../shared/common/styles/checkbox-radio.less', './host-settings.component.less'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     providers: [TenantPaymentSettingsServiceProxy]
 })

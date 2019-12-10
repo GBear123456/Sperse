@@ -18,7 +18,6 @@ import { SettingService } from '@abp/settings/setting.service';
 import { MessageService } from '@abp/message/message.service';
 import { AbpMultiTenancyService } from '@abp/multi-tenancy/abp-multi-tenancy.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
-import { AppConsts } from '@shared/AppConsts';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { ExportService } from '@shared/common/export/export.service';
 import { PrimengTableHelper } from 'shared/helpers/PrimengTableHelper';

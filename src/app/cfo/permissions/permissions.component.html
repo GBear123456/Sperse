@@ -7,6 +7,7 @@
 <div class="content-wrap">
     <setup-steps SelectedStepIndex="4"></setup-steps>
     <div class="frame-wrap">
+        <ghost-list [hidden]="isDataLoaded"></ghost-list>
         <dx-data-grid
             [hidden]="isDataLoaded && (!dataSource || (dataSource && !dataSource.totalCount()))"
             [dataSource]="dataSource"
@@ -14,6 +15,7 @@
             [customizeColumns]="customizeColumns"
             [rowAlternationEnabled]="true"
             [showColumnLines]="false"
+            [loadPanel]="{ enabled: false }"
             [showRowLines]="false"
             noDataText=""
             [width]="calculatePermissionsTableWidth()"

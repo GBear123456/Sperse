@@ -504,11 +504,12 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
 
     onContentReady() {
         this.setGridDataLoaded();
+        this.changeDetector.detectChanges();
     }
 
     getFilters() {
         return [
-            {Period: this.selectedPeriod}
+            { Period: this.selectedPeriod }
         ];
     }
 

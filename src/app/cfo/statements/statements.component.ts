@@ -155,7 +155,10 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
         ).pipe(
             takeUntil(this.destroy$),
             switchMap(data => this.componentIsActivated ? of(data) : this.lifecycleService.activate$.pipe(first(), mapTo(data))),
-            tap(() => abp.ui.setBusy()),
+            tap(() => {
+                this.isDataLoaded = false;
+                abp.ui.setBusy();
+            }),
             switchMap(([forecastModelId, currencyId, requestFilter]:
                               [number, string, StatsFilter]) => {
                 return this.bankAccountService.getStats(
@@ -172,45 +175,46 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
                     finalize(() => abp.ui.clearBusy())
                 );
             })
-        ).subscribe((result: BankAccountDailyStatDto[]) => {
-            if (result && result.length) {
-                let currentPeriodTransaction: BankAccountDailyStatDto;
-                let currentPeriodForecast: BankAccountDailyStatDto;
+        ).subscribe(
+            (result: BankAccountDailyStatDto[]) => {
+                if (result && result.length) {
+                    let currentPeriodTransaction: BankAccountDailyStatDto;
+                    let currentPeriodForecast: BankAccountDailyStatDto;
 
-                for (let i = result.length - 1; i >= 0; i--) {
-                    let statsItem: BankAccountDailyStatDto = result[i];
-
-                    Object.defineProperties(statsItem, {
-                        'netChange': { value: statsItem.credit + statsItem.debit, enumerable: true },
-                    });
-
-                    if (!currentPeriodTransaction && !statsItem.isForecast) {
-                        currentPeriodForecast = result[i + 1];
-                        currentPeriodTransaction = statsItem;
-
-                        if (currentPeriodForecast) {
-                            let clone = Object.assign({}, currentPeriodTransaction);
-                            clone.credit += currentPeriodForecast.credit;
-                            clone.creditCount += currentPeriodForecast.creditCount;
-                            clone.debit += currentPeriodForecast.debit;
-                            clone.debitCount += currentPeriodForecast.debitCount;
-                            clone['netChange'] = clone.credit + clone.debit;
-                            clone.averageDailyBalance = (clone.averageDailyBalance + currentPeriodForecast.averageDailyBalance) / 2;
-                            clone.endingBalance = currentPeriodForecast.endingBalance;
-
-                            currentPeriodTransaction['itemType'] = 'MTD';
-                            currentPeriodForecast['itemType'] = 'Forecast';
-                            clone['sourceData'] = [currentPeriodTransaction, currentPeriodForecast];
-                            result.splice(i, 2, clone);
+                    for (let i = result.length - 1; i >= 0; i--) {
+                        let statsItem: BankAccountDailyStatDto = result[i];
+                        Object.defineProperties(statsItem, {
+                            'netChange': { value: statsItem.credit + statsItem.debit, enumerable: true },
+                        });
+                        if (!currentPeriodTransaction && !statsItem.isForecast) {
+                            currentPeriodForecast = result[i + 1];
+                            currentPeriodTransaction = statsItem;
+                            if (currentPeriodForecast) {
+                                let clone = Object.assign({}, currentPeriodTransaction);
+                                clone.credit += currentPeriodForecast.credit;
+                                clone.creditCount += currentPeriodForecast.creditCount;
+                                clone.debit += currentPeriodForecast.debit;
+                                clone.debitCount += currentPeriodForecast.debitCount;
+                                clone['netChange'] = clone.credit + clone.debit;
+                                clone.averageDailyBalance = (clone.averageDailyBalance + currentPeriodForecast.averageDailyBalance) / 2;
+                                clone.endingBalance = currentPeriodForecast.endingBalance;
+                                currentPeriodTransaction['itemType'] = 'MTD';
+                                currentPeriodForecast['itemType'] = 'Forecast';
+                                clone['sourceData'] = [currentPeriodTransaction, currentPeriodForecast];
+                                result.splice(i, 2, clone);
+                            }
                         }
                     }
+                    this.statementsData = result;
+                } else {
+                    this.statementsData = null;
                 }
-
-                this.statementsData = result;
-            } else {
-                this.statementsData = null;
+                this.isDataLoaded = true;
+            },
+            () => {
+                this.isDataLoaded = true;
             }
-        });
+        );
 
         combineLatest(
             this.forecastModels$,

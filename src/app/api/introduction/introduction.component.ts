@@ -59,7 +59,6 @@ export class IntroductionComponent extends AppComponentBase implements OnInit, O
         this.apiKeyService.getAll(undefined)
             .subscribe((apiKeys) => {
                 abp.ui.clearBusy(this.elementForBlocking);
-
                 this.apiKeys = apiKeys && apiKeys.length ? apiKeys : null;
             });
     }

@@ -111,6 +111,7 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
         this.dataSource = new DataSource({
             key: 'id',
             load: (loadOptions) => {
+                this.isDataLoaded = false;
                 return this.userServiceProxy.getUsers(
                     this.searchValue || undefined,
                     this.selectedPermissions || undefined,

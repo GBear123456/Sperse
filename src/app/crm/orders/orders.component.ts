@@ -144,12 +144,10 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         let instance = this.dataGrid && this.dataGrid.instance;
         if (instance && !instance.option('dataSource')) {
             instance.option('dataSource', this.dataSource);
-            this.startLoading();
         }
     }
 
     onContentReady(event) {
-        this.finishLoading();
         this.setGridDataLoaded();
         event.component.columnOption('command:edit', {
             visibleIndex: -1,

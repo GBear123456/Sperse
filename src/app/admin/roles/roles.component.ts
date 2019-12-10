@@ -87,6 +87,7 @@ export class RolesComponent extends AppComponentBase implements OnDestroy {
         this.dataSource = new DataSource({
             key: 'id',
             load: () => {
+                this.isDataLoaded = false;
                 return this.roleService.getRoles(
                     this.selectedPermission,
                     this.selectedModule

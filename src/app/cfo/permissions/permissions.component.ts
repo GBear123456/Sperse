@@ -18,7 +18,8 @@ import {
     SecurityManagementServiceProxy,
     Permissions,
     UserServiceProxy,
-    UserListDto
+    UserListDto,
+    UserListDtoPagedResultDto
 } from 'shared/service-proxies/service-proxies';
 import { AccountPermission } from './account-permission.model';
 import { UsersDialogComponent } from './users-dialog/users-dialog.component';
@@ -96,8 +97,8 @@ export class PermissionsComponent extends CFOComponentBase implements OnInit, Af
     }
 
     loadData() {
-        this.startLoading(true);
         this.showenUsersIds = [];
+        this.isDataLoaded = false;
         const instanceType = <any>this.instanceType;
         const usersObservable = this.userServiceProxy.getUsers(
             undefined,
@@ -117,13 +118,12 @@ export class PermissionsComponent extends CFOComponentBase implements OnInit, Af
             bankAccountsObservable,
             usersPermissionsObservable
         ).subscribe(
-            res => {
-                this.users = res[0] && res[0].items ? res[0].items : null;
-                this.syncAccounts = res[1];
-                this.bankAccountsUsers = res[2];
+            ([ users, syncAccounts, usersPermissions ]: [ UserListDtoPagedResultDto, SyncAccountBankDto[], BankAccountUsers[]]) => {
+                this.users = users && users.items ? users.items : null;
+                this.syncAccounts = syncAccounts;
+                this.bankAccountsUsers = usersPermissions;
             },
             () => {
-                this.finishLoading(true);
                 this._router.navigate(['app/cfo/main/start']);
             },
             () => {
@@ -138,7 +138,6 @@ export class PermissionsComponent extends CFOComponentBase implements OnInit, Af
                     })
                 );
                 this.isDataLoaded = true;
-                this.finishLoading(true);
             }
         );
     }

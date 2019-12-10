@@ -562,7 +562,6 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     onContentReady(event) {
-        this.finishLoading();
         if (this.exportCallback)
             this.exportCallback();
         else {
@@ -1163,7 +1162,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         let instance = this.dataGrid && this.dataGrid.instance;
         if (instance && !instance.option('dataSource')) {
             instance.option('dataSource', this.dataSource);
-            this.startLoading();
+            this.isDataLoaded = false;
         }
     }
 

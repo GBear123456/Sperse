@@ -1,5 +1,5 @@
 /** Core imports */
-import { ChangeDetectionStrategy, Component, Injector, OnDestroy, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Injector, OnDestroy, ViewChild } from '@angular/core';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
@@ -45,6 +45,8 @@ export class EditionsComponent extends AppComponentBase implements OnDestroy {
     dataSource: DataSource = new DataSource({
         key: 'id',
         load: () => {
+            this.isDataLoaded = false;
+            this.changeDetectorRef.detectChanges();
             return  this.editionService.getEditions().toPromise().then(response => {
                 return {
                     data: response.items,
@@ -66,7 +68,8 @@ export class EditionsComponent extends AppComponentBase implements OnDestroy {
         injector: Injector,
         private appService: AppService,
         private editionService: EditionServiceProxy,
-        private dialog: MatDialog
+        private dialog: MatDialog,
+        private changeDetectorRef: ChangeDetectorRef
     ) {
         super(injector);
         this.rootComponent = this.getRootComponent();
@@ -193,6 +196,7 @@ export class EditionsComponent extends AppComponentBase implements OnDestroy {
 
     onContentReady() {
         this.setGridDataLoaded();
+        this.changeDetectorRef.detectChanges();
     }
 
     searchValueChange(e: object) {

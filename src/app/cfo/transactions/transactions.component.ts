@@ -335,6 +335,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                 url: this.getODataUrl(this.dataSourceURI),
                 version: AppConsts.ODataVersion,
                 beforeSend: (request) => {
+                    this.isDataLoaded = false;
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                     if (request.params.$filter && request.url.indexOf('$filter')) {
                         let parts = request.url.split('?');
@@ -955,7 +956,8 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     applyTotalBankAccountFilter(emitFilterChange = false) {
         this.setDataSource();
         this.bankAccountsService.setBankAccountsFilter(
-            this.filters, this.syncAccounts, emitFilterChange);
+            this.filters, this.syncAccounts, emitFilterChange
+        );
     }
 
     setCurrenciesFilter(currencyId: string) {
@@ -1187,6 +1189,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
 
     onContentReady(event) {
         this.storeGridState(event.component);
+        this.setGridDataLoaded();
         this.onSelectionChanged(event, true);
     }
 

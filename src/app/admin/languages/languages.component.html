@@ -25,15 +25,19 @@
     </dx-tooltip>
 
     <div id="admin-languages" class="portlet light no-padding margin-bottom-0">
+        <ghost-list [hidden]="isDataLoaded"></ghost-list>
         <dx-data-grid id="gridContainer"
+                      [hidden]="!isDataLoaded"
                       [dataSource]="dataSource"
                       [allowColumnReordering]="true"
                       [columnAutoWidth]="true"
                       [allowColumnResizing]="true"
                       [hoverStateEnabled]="true"
+                      [loadPanel]="{ enabled: false }"
                       [pager]="defaultGridPagerConfig"
                       (onEditingStart)="showActionsMenu($event)"
                       (onRowPrepared)="onRowPrepared($event)"
+                      (onContentReady)="contentReady()"
                       (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
             <dxo-editing mode="popup" [allowUpdating]="true"></dxo-editing>
             <dxi-column dataField="isEnabled" [caption]="l('IsEnabled')" cellTemplate="isEnabledTemplate"></dxi-column>

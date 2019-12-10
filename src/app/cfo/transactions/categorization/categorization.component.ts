@@ -118,11 +118,11 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
 
     constructor(
         injector: Injector,
-        public dialog: MatDialog,
         private filtersService: FiltersService,
         private cacheService: CacheService,
         private categoryTreeServiceProxy: CategoryTreeServiceProxy,
-        private changeDetectionRef: ChangeDetectorRef
+        private changeDetectionRef: ChangeDetectorRef,
+        public dialog: MatDialog
     ) {
         super(injector);
     }
@@ -219,7 +219,8 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
                         }
                     }
                 ]
-            }, {
+            },
+            {
                 location: 'after', items: [
                     {
                         name: 'addEntity',
@@ -645,7 +646,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
             InstanceType[this._cfoService.instanceType],
             this._cfoService.instanceId,
             this.includeNonCashflowNodes
-        ).subscribe((data) => {
+        ).subscribe((data: GetCategoryTreeOutput) => {
             let categories: Category[] = [];
             this.categorization = data;
             if (this.settings.showAT && data.accountingTypes) {

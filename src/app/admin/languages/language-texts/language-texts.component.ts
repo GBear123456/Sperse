@@ -87,6 +87,7 @@ export class LanguageTextsComponent extends AppComponentBase implements AfterVie
         this.dataSource = new DataSource({
             key: 'id',
             load: (loadOptions) => {
+                this.isDataLoaded = false;
                 return this.languageService.getLanguageTexts(
                     loadOptions.take,
                     loadOptions.skip,
@@ -301,6 +302,10 @@ export class LanguageTextsComponent extends AppComponentBase implements AfterVie
         dialogRef.componentInstance.modalSave.subscribe(() => {
             this.refreshDataGrid();
         });
+    }
+
+    contentReady() {
+        this.setGridDataLoaded();
     }
 
     ngOnDestroy() {
