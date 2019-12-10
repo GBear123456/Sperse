@@ -125,7 +125,7 @@ export class CreateActivityDialogComponent implements OnInit {
             { text: this.ls.l('SaveAndClose'), selected: false }
         ];
 
-        if (this.data.appointment.Id) {
+        if (this.data.appointment && this.data.appointment.Id) {
             this.isAllDay = Boolean(this.data.appointment.AllDay);
             if (this.data.appointment.StartDate)
                 this.startDate = this.getDateWithTimezone(this.data.appointment.StartDate);

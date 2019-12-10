@@ -522,7 +522,7 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
                 stages: this.stages,
                 appointment: appointment instanceof Date ? {
                     startDate: appointment
-                } : appointment,
+                } : (appointment.entity || appointment),
                 refreshParent: this.refresh.bind(this)
             }
         });
