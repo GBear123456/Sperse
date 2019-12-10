@@ -212,8 +212,8 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
                 rightPanelId = this.getCheckPropertyValue(data, 'rightPanelId', RP_DEFAULT_ID);
             this.showToolbar = this.getCheckPropertyValue(data, 'showToolbar', true);
             if (rightPanelId === this.RP_CONTACT_INFO_ID) {
-                this.rightPanelSetting.opened = contactGroupId == ContactGroup.Partner;
-                this.rightPanelSetting.width = this.rightPanelSetting.opened ? '200px' : '0';
+                this.rightPanelSetting.opened = true;
+                this.rightPanelSetting.width = '200px';
             } else {
                 this.rightPanelSetting.opened = this.getCheckPropertyValue(
                     data,
