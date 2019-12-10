@@ -549,7 +549,11 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         if (col && col.command)
             return;
 
-        this.onCardClick(event.data);
+        this.onCardClick({
+            entity: event.data,
+            entityStageDataSource: null,
+            loadMethod: null
+        });
     }
 
     onCardClick({entity, entityStageDataSource, loadMethod}) {
@@ -563,7 +567,9 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                     }
                 }
             );
-            this.itemDetailsService.setItemsSource(ItemTypeEnum.Order, entityStageDataSource, loadMethod);
+            if (entityStageDataSource)
+                this.itemDetailsService.setItemsSource(
+                    ItemTypeEnum.Order, entityStageDataSource, loadMethod);
         }
     }
 
