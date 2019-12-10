@@ -38,13 +38,13 @@ import { AppPermissions } from '@shared/AppPermissions';
 export class PaymentWizardComponent extends AppComponentBase implements OnInit {
     @ViewChild('stepper') stepper: MatStepper;
     @ViewChild('wizard') wizardRef: ElementRef;
-    plan$: Observable<PackageOptions>;
+    plan$: Observable<PackageOptions> = this.paymentService.plan$;
     paymentStatus: PaymentStatusEnum;
     paymentStatusData: StatusInfo;
     refreshAfterClose = false;
-    module: ModuleType;
-    subscriptionIsLocked: boolean;
-    subscriptionIsFree: boolean;
+    module: ModuleType = this.data.module;
+    subscriptionIsLocked: boolean = this.appService.subscriptionIsLocked(this.module);
+    subscriptionIsFree: boolean = this.appService.checkSubscriptionIsFree(this.module);
     trackingCode: string;
 
     constructor(
@@ -57,13 +57,9 @@ export class PaymentWizardComponent extends AppComponentBase implements OnInit {
         @Inject(MAT_DIALOG_DATA) public data: any
     ) {
         super(injector);
-        this.module = data.module;
     }
 
     ngOnInit() {
-        this.plan$ = this.paymentService.plan$;
-        this.subscriptionIsLocked = this.appService.subscriptionIsLocked(this.module);
-        this.subscriptionIsFree = this.appService.checkSubscriptionIsFree(this.module);
         if (this.subscriptionIsLocked) {
             this.trackingCode = this.appService.getSubscriptionTrackingCode(this.module);
         }
