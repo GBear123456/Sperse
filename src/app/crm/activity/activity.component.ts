@@ -65,15 +65,18 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
             fieldExpr: 'Type',
             useColorAsDefault: true,
             allowMultiple: false,
-            dataSource: [{
-                  text: this.l('Event'),
-                id: ActivityType.Event,
-                  color: '#727bd2'
-              }, {
-                  text: this.l('Task'),
+            dataSource: [
+                {
+                    text: this.l('Event'),
+                    id: ActivityType.Event,
+                    color: '#727bd2'
+                },
+                {
+                    text: this.l('Task'),
                     id: ActivityType.Task,
-                  color: '#32c9ed'
-            }],
+                    color: '#32c9ed'
+                }
+            ],
             label: this.l('Type')
         }
     ];
@@ -160,7 +163,7 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
 //                                    {AssignedUserIds: {any: {Id: this.appSession.userId}}},
                                     {
                                         or: [
-                                            {and: [{StartDate: {le: this.getEndDate()}}, {EndDate: {ge: this.getStartDate()}}]}
+                                            {and: [{StartDate: {ge: this.getStartDate()}}, {EndDate: {le: this.getEndDate()}}]}
                                         ]
                                     }
                                 ]
@@ -214,13 +217,13 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
     getStartDate() {
         let period = <any>this.getPeriodType();
         return this.getCurrentDate().startOf(period)
-            .add(period == 'month' ? -10 : 0, 'days').toDate();
+            .add(!this.showPipeline && period == 'month' ? -10 : 0, 'days').toDate();
     }
 
     getEndDate() {
         let period = <any>this.getPeriodType();
         return this.getCurrentDate().endOf(period)
-            .add(period == 'month' ? 10 : 0, 'days').toDate();
+            .add( !this.showPipeline && period == 'month' ? 10 : 0, 'days').toDate();
     }
 
     initToolbarConfig() {
@@ -504,7 +507,7 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
             }
         };
         if (this.pipelineView)
-            dataSource['customFilter'] = { and: [{ StartDate: { le: this.getEndDate() } }, { EndDate: { ge: this.getStartDate() } }] };
+            dataSource['customFilter'] = { and: [{ StartDate: { ge: this.getStartDate() } }, { EndDate: { le: this.getEndDate() } }] };
 
         this.pipelineDataSource = dataSource;
 
