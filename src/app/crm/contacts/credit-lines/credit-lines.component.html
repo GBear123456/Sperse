@@ -1,20 +1,20 @@
 <div class="title" (click)="changeColupsStatus()">
-  <h4>Credit Lines </h4>
-  <div class="credit_lines_amounts">
-    <ul>
-      <li class="green">{{statuses.success_amount}}</li>/
-      <li class="red">{{statuses.unsuccess_amount}}</li>/
-      <li class="grey">{{statuses.pending_amount}}</li>
-    </ul>
-  </div>
-  <img src="./assets/common/icons/arrow-{{credit_lines_colupsed ? 'down': 'up'}}.svg" align="right">
+    <h4>Credit Lines </h4>
+    <div class="credit_lines_amounts">
+        <ul>
+            <li class="green">{{statuses.success_amount}}</li>/
+            <li class="red">{{statuses.unsuccess_amount}}</li>/
+            <li class="grey">{{statuses.pending_amount}}</li>
+        </ul>
+    </div>
+    <img src="./assets/common/icons/arrow-{{credit_lines_colupsed ? 'down': 'up'}}.svg" align="right">
 </div>
 <div class="credit_lines_banks" [hidden]="credit_lines_colupsed">
-  <ul>
-    <li *ngFor="let bank of banks">
-      <i class="fa fa-{{getCheckStyle(bank.status)}}"></i>
-      {{bank.name}}
-      <span>{{bank.amount !== '-' ? '$' : ''}}{{bank.amount}}</span>
-    </li>
-  </ul>
+    <ul>
+        <li *ngFor="let bank of banks">
+            <i class="fa fa-{{getCheckStyle(bank.status)}}"></i>
+            {{bank.name}}
+            <span>{{bank.amount !== '-' ? '$' : ''}}{{bank.amount}}</span>
+        </li>
+    </ul>
 </div>
