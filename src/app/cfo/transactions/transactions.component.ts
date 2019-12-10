@@ -403,6 +403,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                             })
                     }
                 }),
+                this.cashflowCategoriesFilter,
                 this.businessEntityFilter = new FilterModel({
                     component: FilterCheckBoxesComponent,
                     field: 'BusinessEntityId',
@@ -417,7 +418,9 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                         })
                     },
                     options: { method: 'filterByFilterElement' }
-                })].concat(this._cfoService.hasStaticInstance ? [] : [
+                })
+            ].concat(
+                this._cfoService.hasStaticInstance ? [] : [
 /*
                 new FilterModel({
                     component: FilterInputsComponent,
@@ -434,7 +437,6 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                     items: { from: new FilterItemModel(), to: new FilterItemModel() }
                 }),
                 this.categoriesFilter,
-                this.cashflowCategoriesFilter,
                 this.typesFilter,
                 this.classifiedFilter,
                 this.currencyFilter,

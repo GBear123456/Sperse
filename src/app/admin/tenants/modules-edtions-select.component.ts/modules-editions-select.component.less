@@ -24,6 +24,7 @@
             height: 38px;
         }
         div {
+            min-width: 70px;
             margin-right: 15px;
             & > label {
                 min-width: initial;
@@ -33,6 +34,15 @@
             div {
                 height: 59px;
             }
+        }
+    }
+
+    .clean-icon {
+        height: 38px !important;
+        display: flex;
+        align-items: center;
+        /deep/ .close-icon {
+            fill: red;
         }
     }
 }

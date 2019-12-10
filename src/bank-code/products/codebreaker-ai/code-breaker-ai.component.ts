@@ -9,7 +9,6 @@ import { ProductsService } from '../products.service';
 })
 export class CodeBreakerAiComponent {
     hasSubscription: boolean = this.productsService.checkServiceSubscription();
-    offerId = 718;
 
     constructor(private productsService: ProductsService) {}
 }

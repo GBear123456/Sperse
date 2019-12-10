@@ -58,7 +58,10 @@
         <div class="footer" [ngClass]="'nextButtonPosition-' + nextButtonPosition">
             <button [disabled]="nextButtonDisabled" (click)="goToNextStep()">{{ nextStepButtonText }}</button>
             <div>
-                <p class="downgrade" *ngIf="showDowngradeLink" (click)="downGradeToFree()">{{ l('DowngradeToFree') }}</p>
+                <p *ngIf="showDowngradeLink && this.freePackages && this.freePackages.length"
+                   class="downgrade"
+                   (click)="downGradeToFree()">{{ l('DowngradeToFree') }}
+                </p>
                 <div class="free-version-available">
                     <div class="downgrade-info">
                         Free version available with limited features.

@@ -23,73 +23,69 @@
     </app-static-list>
     <div [hidden]="isDataLoaded && !totalRowCount || showPipeline" class="portlet light no-padding margin-bottom-0">
         <div class="portlet-body">
-            <div>
-                <div id="ClientsTable">
-                    <ghost-list [hidden]="isDataLoaded"></ghost-list>
-                    <dx-data-grid id="gridContainer"
-                                  accesskey="narrowHeaderPanel"
-                                  [hidden]="!isDataLoaded"
-                                  [allowColumnReordering]="true"
-                                  [columnAutoWidth]="true"
-                                  [allowColumnResizing]="true"
-                                  [hoverStateEnabled]="true"
-                                  [loadPanel]="{ enabled: false }"
-                                  [pager]="defaultGridPagerConfig"
-                                  (onEditingStart)="onCardClick($event.data)"
-                                  (onCellClick)="onCellClick($event)"
-                                  (onContentReady)="onContentReady($event)"
-                                  (onSelectionChanged)="onSelectionChanged($event)"
-                                  (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
-                        <dxo-selection selectAllMode="page"
-                                       showCheckBoxesMode="always"
-                                       mode="multiple">
-                        </dxo-selection>
-                        <dxo-editing mode="popup"
-                                     [popup]="{onShowing: onShowingPopup, height: '0px', width: '0px'}"
-                                     [allowUpdating]="true">
-                        </dxo-editing>
-                        <dxi-column [width]="40" [fixed]="true" [fixedPosition]="'left'" [showInColumnChooser]="false" [allowExporting]="false"></dxi-column>
-                        <dxi-column dataField="Id" caption="{{l('Id')}}" [visible]="false" sortOrder="asc" cssClass="clipboard-holder"></dxi-column>
-                        <dxi-column dataField="PhotoPublicId" caption=" " cellTemplate="photoTemplate"
-                                    [width]="50" [showInColumnChooser]="false" [allowExporting]="false"
-                                    [allowGrouping]="false" [allowSorting]="false"></dxi-column>
-                        <div *dxTemplate="let data of 'photoTemplate'">
-                            <div [ngStyle]="{'background-image': 'url(' + profileService.getContactPhotoUrl(data.data.PhotoPublicId) + ')'}" class="img-circle"></div>
-                        </div>
-                        <dxi-column dataField="Name" caption="{{l('Customer.Name')}}" cssClass="clipboard-holder"></dxi-column>
-                        <dxi-column dataField="State" caption="{{l('Contact.State')}}" [visible]="false" cssClass="clipboard-holder"></dxi-column>
-                        <dxi-column dataField="Email" caption="{{l('Contact.Email')}}" [visible]="false" cssClass="clipboard-holder"></dxi-column>
-                        <dxi-column dataField="Phone" caption="{{l('Contact.Phone')}}" [visible]="false" cellTemplate="phoneCell"
-                                    [editorOptions]="{
-                                        mask: masks.phone,
-                                        maskInvalidMessage: l('PhoneValidationError')
-                                    }">
-                        </dxi-column>
-                        <dxi-column dataField="Number" caption="{{l('Number')}}" cssClass="clipboard-holder"></dxi-column>
-                        <dxi-column dataField="Stage" caption="{{l('Stage')}}" cssClass="clipboard-holder"></dxi-column>
-                        <dxi-column dataField="Amount" caption="{{l('Amount')}}" cellTemplate="amountCell"></dxi-column>
-                        <dxi-column dataField="OrderType" caption="{{l('Type')}}" cssClass="clipboard-holder"></dxi-column>
-                        <dxi-column dataField="CurrentNumber" caption="{{l('CurrentNumber')}}" [visible]="false" cssClass="clipboard-holder"></dxi-column>
-                        <dxi-column dataField="TotalNumber" caption="{{l('TotalNumber')}}" [visible]="false" cssClass="clipboard-holder"></dxi-column>
-                        <dxi-column dataField="NoteCount" caption="{{l('NoteCount')}}" [visible]="false" cssClass="clipboard-holder"></dxi-column>
-                        <dxi-column dataField="DocumentCount" caption="{{l('DocumentCount')}}" [visible]="false" cssClass="clipboard-holder"></dxi-column>
-                        <dxi-column dataField="CreationTime" caption="{{l('Created')}}" cellTemplate="dateCell"></dxi-column>
-                        <dxi-column [fixed]="true" [fixedPosition]="'right'" [showInColumnChooser]="false"></dxi-column>
-                        <dxo-sorting mode="multiple"></dxo-sorting>
-                        <dxo-group-panel [visible]="true"></dxo-group-panel>
-                        <dxo-paging [pageSize]="20"></dxo-paging>
-                        <div *dxTemplate="let cellData of 'phoneCell'" class="clipboard-holder">
-                            {{cellData.value | phone}}
-                        </div>
-                        <div *dxTemplate="let cellData of 'amountCell'" class="clipboard-holder">
-                            {{cellData.value | currency: currency}}
-                        </div>
-                        <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
-                            {{cellData.value | date: formatting.dateTime : userTimezone}}
-                        </div>
-                    </dx-data-grid>
-                </div>
-            </div>
+              <div>
+                    <div id="ClientsTable">
+                        <dx-data-grid id="gridContainer"
+                                      accesskey="narrowHeaderPanel"
+                                      [allowColumnReordering]="true"
+                                      [columnAutoWidth]="true"
+                                      [allowColumnResizing]="true"
+                                      [hoverStateEnabled]="true"
+                                      (onEditingStart)="onCellClick($event)"
+                                      (onCellClick)="onCellClick($event)"
+                                      [pager]="defaultGridPagerConfig"
+                                      (onContentReady)="onContentReady($event)"
+                                      (onSelectionChanged)="onSelectionChanged($event)"
+                                      (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
+                            <dxo-selection selectAllMode="page"
+                                           showCheckBoxesMode="always"
+                                           mode="multiple">
+                            </dxo-selection>
+                            <dxo-editing mode="popup"
+                                [popup]="{onShowing: onShowingPopup, height: '0px', width: '0px'}" [allowUpdating]="true">
+                            </dxo-editing>
+                            <dxi-column [width]="40" [fixed]="true" [fixedPosition]="'left'" [showInColumnChooser]="false" [allowExporting]="false"></dxi-column>
+                            <dxi-column dataField="Id" caption="{{l('Id')}}" [visible]="false" sortOrder="asc"></dxi-column>
+                            <dxi-column dataField="PhotoPublicId" caption=" " cellTemplate="photoTemplate"
+                                [width]="50"[showInColumnChooser]="false" [allowExporting]="false"
+                                [allowGrouping]="false" [allowSorting]="false"></dxi-column>
+                            <div *dxTemplate="let data of 'photoTemplate'">
+                                <div [ngStyle]="{'background-image': 'url(' + profileService.getContactPhotoUrl(data.data.PhotoPublicId) + ')'}" class="img-circle"></div>
+                            </div>
+                            <dxi-column dataField="Name" caption="{{l('Customer.Name')}}"></dxi-column>                      
+                            <dxi-column dataField="State" caption="{{l('Contact.State')}}" [visible]="false"></dxi-column>
+                            <dxi-column dataField="Email" caption="{{l('Contact.Email')}}" [visible]="false"></dxi-column>
+                            <dxi-column dataField="Phone" caption="{{l('Contact.Phone')}}" [visible]="false" cellTemplate="phoneCell"
+                                [editorOptions]="{
+                                    mask: masks.phone,
+                                    maskInvalidMessage: l('PhoneValidationError')
+                                }">
+                            </dxi-column>
+                            <dxi-column dataField="Number" caption="{{l('Number')}}"></dxi-column>
+                            <dxi-column dataField="Stage" caption="{{l('Stage')}}"></dxi-column>
+                            <dxi-column dataField="Amount" caption="{{l('Amount')}}" cellTemplate="amountCell"></dxi-column>
+                            <dxi-column dataField="OrderType" caption="{{l('Type')}}"></dxi-column>
+                            <dxi-column dataField="CurrentNumber" caption="{{l('CurrentNumber')}}" [visible]="false"></dxi-column>
+                            <dxi-column dataField="TotalNumber" caption="{{l('TotalNumber')}}" [visible]="false"></dxi-column>
+                            <dxi-column dataField="NoteCount" caption="{{l('NoteCount')}}" [visible]="false"></dxi-column>
+                            <dxi-column dataField="DocumentCount" caption="{{l('DocumentCount')}}" [visible]="false"></dxi-column>
+                            <dxi-column dataField="CreationTime" caption="{{l('Created')}}" cellTemplate="dateCell"></dxi-column>
+                            <dxi-column [fixed]="true" [fixedPosition]="'right'" [showInColumnChooser]="false"></dxi-column>
+                            <dxo-sorting mode="multiple"></dxo-sorting>
+                            <dxo-group-panel [visible]="true"></dxo-group-panel>
+                            <dxo-paging [pageSize]="20"></dxo-paging>
+                            <div *dxTemplate="let cellData of 'phoneCell'">
+                                {{cellData.value | phone}}
+                            </div>
+                            <div *dxTemplate="let cellData of 'amountCell'">
+                                {{cellData.value | currency: currency}}
+                            </div>
+                            <div *dxTemplate="let cellData of 'dateCell'">
+                                {{cellData.value | date: formatting.dateTime : userTimezone}}
+                            </div>
+                        </dx-data-grid>
+                    </div>
+              </div>
         </div>
     </div>
 
@@ -107,7 +103,7 @@
                     [(selectedEntities)]="selectedOrders"
                     (onEntityStageChanged)="onOrderStageChanged($event)"
                     (onStagesLoaded)="onStagesLoaded($event)"
-                    (onCardClick)="onCardClick($event.entity)">
+                    (onCardClick)="onCardClick($event)">
                     Loading...
                 </app-pipeline>
             </div>

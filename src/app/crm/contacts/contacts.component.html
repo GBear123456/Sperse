@@ -58,7 +58,7 @@
         </div>
     </ng-container>
     <ng-container rightPanel>
-        <div class="affiliate-code" *ngIf="contactGroupId.value == contactGroups.Partner && rightPanelSetting.id === RP_CONTACT_INFO_ID; else matGroup">
+        <div class="affiliate-code" *ngIf="rightPanelSetting.id === RP_CONTACT_INFO_ID; else matGroup">
             <h3>{{ l('AffiliateInfo') }}</h3>
             <h4>{{ l('AffiliateCode') }}</h4>
             <inplace-edit [data]="affiliateCodeInplaceEditData$ | async"
