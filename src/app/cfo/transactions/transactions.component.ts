@@ -410,7 +410,9 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                         })
                     },
                     options: { method: 'filterByFilterElement' }
-                })].concat(this._cfoService.hasStaticInstance ? [] : [
+                })
+            ].concat(
+                this._cfoService.hasStaticInstance ? [] : [
 /*
                 new FilterModel({
                     component: FilterInputsComponent,

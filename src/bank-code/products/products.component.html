@@ -1,11 +1,10 @@
-<div class="container">
+<div class="container-fluid">
     <div class="row">
-        <div class="col-lg-4 col-xl-3 left-side">
+        <div class="col-lg-3 left-side">
             <sidebar [sidebarTitle]="ls.l('BankCode_Products')" [items]="sidebarLinks"></sidebar>
         </div>
-        <div class="col-lg-8 col-xl-9 right-side">
+        <div class="col-lg-9 right-side">
             <router-outlet></router-outlet>
         </div>
     </div>
 </div>
-<bank-code-footer></bank-code-footer>
