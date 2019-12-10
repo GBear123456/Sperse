@@ -262,11 +262,12 @@ export class CreateInvoiceDialogComponent implements OnInit {
     }
 
     initNewInvoiceInfo() {
-        this.invoiceProxy.getNewInvoiceInfo().subscribe((newInvoiceInfo: GetNewInvoiceInfoOutput) => {
-            this.invoiceInfo = newInvoiceInfo;
-            this.invoiceNo = newInvoiceInfo.nextInvoiceNumber;
-            this.changeDetectorRef.detectChanges();
-        });
+        if (this.data.addNew)
+            this.invoiceProxy.getNewInvoiceInfo().subscribe((newInvoiceInfo: GetNewInvoiceInfoOutput) => {
+                this.invoiceInfo = newInvoiceInfo;
+                this.invoiceNo = newInvoiceInfo.nextInvoiceNumber;
+                this.changeDetectorRef.detectChanges();
+            });
     }
 
     initContactInfo(contact) {
