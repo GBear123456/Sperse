@@ -20,6 +20,7 @@ import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { FilterModel } from '@shared/filters/models/filter.model';
 import {
+    ContactInfoDto,
     GetEmailDataOutput,
     ContactServiceProxy,
     InvoiceServiceProxy,
@@ -60,7 +61,7 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
     downloadPdfDisabled = false;
     duplicateInvoiceDisabled = false;
 
-    contactId = Number(this.contactService['data'].contactInfo.id);
+    contactId: number;
 
     constructor(injector: Injector,
         private dialog: MatDialog,
@@ -70,16 +71,17 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
         private invoiceProxy: InvoiceServiceProxy
     ) {
         super(injector);
-        this.dataSource = this.getDataSource();
         this.clientService.invalidateSubscribe((area) => {
-            if (area == 'invoices') {
+            if (area == 'invoices')
                 this.dataSource = this.getDataSource();
-                const dataSource = this.dataGrid.instance.getDataSource();
-                if (dataSource) {
-                    dataSource.load();
-                }
-            }
         });
+
+        this.clientService.contactInfoSubscribe((data: ContactInfoDto) => {
+            if (!this.contactId || data.id != this.contactId) {
+                this.contactId = data.id;
+                this.dataSource = this.getDataSource();
+            }
+        }, this.constructor.name);
 
         this.invoicesService.settings$.pipe(first()).subscribe(res => {
             this.settings = res;

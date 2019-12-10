@@ -47,6 +47,10 @@ export class ItemDetailsService {
                 let itemIndex = 0;
                 let itemData = items.find((item, index) => {
                     if (item[itemSearchProperty] == itemId) {
+                        if (itemDirection == TargetDirectionEnum.Next && items[index + 1]
+                            && items[index + 1][itemSearchProperty] == itemId
+                        ) return false;
+
                         itemIndex = index;
                         return true;
                     }

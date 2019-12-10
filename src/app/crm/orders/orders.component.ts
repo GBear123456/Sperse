@@ -19,6 +19,8 @@ import { AppService } from '@app/app.service';
 import { DataLayoutType } from '@app/shared/layout/data-layout-type';
 import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
+import { ItemTypeEnum } from '@shared/common/item-details-layout/item-type.enum';
+import { ItemDetailsService } from '@shared/common/item-details-layout/item-details.service';
 import { StaticListComponent } from '@app/shared/common/static-list/static-list.component';
 import { FiltersService } from '@shared/filters/filters.service';
 import { FilterModel, FilterModelBase } from '@shared/filters/models/filter.model';
@@ -96,6 +98,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         private filtersService: FiltersService,
         private appService: AppService,
         private pipelineService: PipelineService,
+        private itemDetailsService: ItemDetailsService,
         private store$: Store<CrmStore.State>
     ) {
         super(injector);
@@ -549,17 +552,18 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         this.onCardClick(event.data);
     }
 
-    onCardClick(order) {
-        if (order && order.ContactId) {
+    onCardClick({entity, entityStageDataSource, loadMethod}) {
+        if (entity && entity.ContactId) {
             this.searchClear = false;
             this._router.navigate(
-                ['app/crm/contact', order.ContactId, 'invoices'], {
+                ['app/crm/contact', entity.ContactId, 'invoices'], {
                     queryParams: {
                         referrer: 'app/crm/orders',
                         dataLayoutType: DataLayoutType.Pipeline
                     }
                 }
             );
+            this.itemDetailsService.setItemsSource(ItemTypeEnum.Order, entityStageDataSource, loadMethod);
         }
     }
 
@@ -633,6 +637,8 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         this.appService.updateToolbar(null);
         this.filtersService.unsubscribe();
         this.rootComponent.overflowHidden();
+        if (!this.showPipeline)
+            this.itemDetailsService.setItemsSource(ItemTypeEnum.Order, this.dataGrid.instance.getDataSource());
 
         this.hideHostElement();
     }

@@ -3,5 +3,6 @@ export enum ItemTypeEnum {
     Customer = 'Customer',
     Lead = 'Lead',
     User = 'User',
-    Partner = 'Partner'
+    Partner = 'Partner',
+    Order = 'Order'
 }

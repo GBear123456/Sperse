@@ -226,12 +226,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
         });
     }
 
-    initNavButtons() {
-        this.rootComponent.overflowHidden(true);
-        this.rootComponent.pageHeaderFixed();
-        let key = this.getCacheKey(abp.session.userId.toString());
-        if (this.cacheService.exists(key))
-            this.rightPanelSetting = this.cacheService.get(key);
+    initNavigatorProperties() {
         switch (this.getSection()) {
             case 'leads':
                 this.dataSourceURI = 'Lead';
@@ -249,10 +244,26 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
                 this.dataSourceURI = 'User';
                 this.currentItemId = this.params.userId;
                 break;
+            case 'orders':
+                this.dataSourceURI = 'Order';
+                this.currentItemId = this.params.contactId;
+                break;
             default:
                 break;
         }
-        const itemIdProperty = this.dataSourceURI === 'User' ? 'id' : 'Id';
+    }
+
+    initNavButtons() {
+        this.rootComponent.overflowHidden(true);
+        this.rootComponent.pageHeaderFixed();
+        let key = this.getCacheKey(abp.session.userId.toString());
+        if (this.cacheService.exists(key))
+            this.rightPanelSetting = this.cacheService.get(key);
+        this.initNavigatorProperties();
+        const itemIdProperty = {
+            User: 'id',
+            Order: 'ContactId'
+        }[this.dataSourceURI] || 'Id';
         this.targetEntity$.pipe(
             /** To avoid fast next/prev clicking */
             debounceTime(100),
@@ -279,7 +290,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
                     userId: this.dataSourceURI === 'User'
                             ? itemFullInfo.itemData[itemIdProperty]
                             : (this.dataSourceURI != 'Lead' ? itemFullInfo.itemData.UserId : undefined),
-                    contactId: this.dataSourceURI == 'Customer' || this.dataSourceURI == 'Partner' ?
+                    contactId: ['Customer', 'Partner', 'Order'].indexOf(this.dataSourceURI) >= 0 ?
                         itemFullInfo.itemData[itemIdProperty] : this.dataSourceURI == 'Lead' ? itemFullInfo.itemData.CustomerId : undefined,
                     customerId: this.dataSourceURI == 'Lead' ? itemFullInfo.itemData.CustomerId : undefined,
                     leadId: this.dataSourceURI == 'Lead' ? itemFullInfo.itemData[itemIdProperty] : undefined,
@@ -316,6 +327,9 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
                 break;
             case 'users':
                 this.contactsService.updateLocation(null, null, null, itemFullInfo.itemData.id);
+                break;
+            case 'orders':
+                this.contactsService.updateLocation(itemFullInfo.itemData.ContactId);
                 break;
             default:
                 break;
