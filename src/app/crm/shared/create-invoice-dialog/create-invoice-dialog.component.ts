@@ -336,10 +336,10 @@ export class CreateInvoiceDialogComponent implements OnInit {
         data.date = this.getDate(this.date, true, '');
         data.dueDate = this.getDate(this.dueDate);
         data.description = this.description;
-        data.billingAddress = new InvoiceAddressInput(
-            this.selectedBillingAddress);
-        data.shippingAddress = new InvoiceAddressInput(
-            this.selectedShippingAddress);
+        data.billingAddress = this.selectedBillingAddress &&
+            new InvoiceAddressInput(this.selectedBillingAddress);
+        data.shippingAddress = this.selectedShippingAddress &&
+            new InvoiceAddressInput(this.selectedShippingAddress);
         data.note = this.notes;
     }
 
@@ -460,6 +460,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
             return this.contactComponent.instance.option('isValid', false);
         }
 
+/*
         let isAddressValid = this.selectedBillingAddress &&
             this.selectedBillingAddress.address1 &&
             this.selectedBillingAddress.city;
@@ -471,6 +472,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
             this.selectedShippingAddress.city;
         if (!this.validateField(this.ls.l('Invoice_ShipTo'), isAddressValid))
             return this.shippingAddressComponent.instance.option('isValid', false);
+*/
 
         if (!this.validateField(this.ls.l('Date'), this.date))
             return this.dateComponent.instance.option('isValid', false);
