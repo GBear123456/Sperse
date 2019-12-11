@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 
 @Component({
     selector: 'bank-vault',
@@ -8,5 +7,5 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 })
 export class BankVaultComponent {
     offerId = 546;
-    constructor(public ls: AppLocalizationService) {}
+    constructor() {}
 }
