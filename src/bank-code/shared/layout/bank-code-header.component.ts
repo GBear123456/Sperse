@@ -3,6 +3,7 @@ import { Component, ViewChild, ViewContainerRef, Directive, OnInit, OnDestroy } 
 import { Router } from '@angular/router';
 
 /** Third party imports */
+import { forkJoin } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 /** Application imports */
@@ -33,60 +34,8 @@ export class BankCodeHeaderComponent implements OnInit, OnDestroy {
     loggedUserId = abp.session.userId;
     remoteServiceBaseUrl: string = AppConsts.remoteServiceBaseUrl;
     currentDate = new Date();
-    memberAreaLinks: MemberAreaLink[] = [
-        {
-            name: this.ls.l('Home'),
-            routerUrl: 'home'
-        },
-        {
-            name: this.ls.l('BankCode_Products'),
-            routerUrl: 'products',
-            sublinks: [
-                {
-                    name: this.ls.l('BankCode_CodebreakerAI'),
-                    routerUrl: 'products/codebreaker-ai'
-                },
-                {
-                    name: this.ls.l('BankCode_BankPass'),
-                    routerUrl: 'products/bank-pass'
-                },
-                {
-                    name: this.ls.l('BankCode_BankVault'),
-                    routerUrl: 'products/bank-vault'
-                },
-                {
-                    name: this.ls.l('BankCode_BankTrainer'),
-                    routerUrl: 'products/bank-trainer'
-                },
-                {
-                    name: this.ls.l('BankCode_BankAffiliate'),
-                    routerUrl: 'products/bank-affiliate'
-                }
-                /*{
-                    name: this.ls.l('BankCode_BankCards'),
-                    routerUrl: 'products/bank-cards'
-                },
-                {
-                    name: this.ls.l('BankCode_BankGear'),
-                    routerUrl: 'products/bank-gear'
-                }*/
-            ]
-        },
-        {
-            name: this.ls.l('BankCode_Resources'),
-            routerUrl: 'resources'
-        },
-        {
-            name: this.ls.l('BankCode_Events'),
-            routerUrl: 'events'
-        },
-        {
-            name: this.ls.l('BankCode_BCRM'),
-            routerUrl: '../app/crm',
-            hidden: !this.productsService.checkServiceSubscription('BANKPass')
-                 && !this.productsService.checkServiceSubscription('BANKAffiliate')
-        }
-    ];
+    hideBCRMLink = true;
+    memberAreaLinks: MemberAreaLink[] = this.getMemberAreaLinks();
 
     constructor(
         private layoutService: BankCodeLayoutService,
@@ -107,6 +56,69 @@ export class BankCodeHeaderComponent implements OnInit, OnDestroy {
                     this.adHeaderHost.viewContainerRef.createComponent(component);
                 });
             });
+        forkJoin(
+            this.productsService.checkServiceSubscription('BANKPass'),
+            this.productsService.checkServiceSubscription('BANKAffiliate')
+        ).subscribe(([hasBankPassSubscription, hasBankAffiliateSubscription]: [ boolean, boolean ]) => {
+            this.hideBCRMLink = !hasBankPassSubscription && !hasBankAffiliateSubscription;
+            this.memberAreaLinks = this.getMemberAreaLinks();
+        });
+    }
+
+    private getMemberAreaLinks() {
+        return [
+            {
+                name: this.ls.l('Home'),
+                routerUrl: 'home'
+            },
+            {
+                name: this.ls.l('BankCode_Products'),
+                routerUrl: 'products',
+                sublinks: [
+                    {
+                        name: this.ls.l('BankCode_CodebreakerAI'),
+                        routerUrl: 'products/codebreaker-ai'
+                    },
+                    {
+                        name: this.ls.l('BankCode_BankPass'),
+                        routerUrl: 'products/bank-pass'
+                    },
+                    {
+                        name: this.ls.l('BankCode_BankVault'),
+                        routerUrl: 'products/bank-vault'
+                    },
+                    {
+                        name: this.ls.l('BankCode_BankTrainer'),
+                        routerUrl: 'products/bank-trainer'
+                    },
+                    {
+                        name: this.ls.l('BankCode_BankAffiliate'),
+                        routerUrl: 'products/bank-affiliate'
+                    }
+                    /*{
+                        name: this.ls.l('BankCode_BankCards'),
+                        routerUrl: 'products/bank-cards'
+                    },
+                    {
+                        name: this.ls.l('BankCode_BankGear'),
+                        routerUrl: 'products/bank-gear'
+                    }*/
+                ]
+            },
+            {
+                name: this.ls.l('BankCode_Resources'),
+                routerUrl: 'resources'
+            },
+            {
+                name: this.ls.l('BankCode_Events'),
+                routerUrl: 'events'
+            },
+            {
+                name: this.ls.l('BankCode_BCRM'),
+                routerUrl: '../app/crm',
+                hidden: this.hideBCRMLink
+            }
+        ];
     }
 
     logoClick() {

@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { ProductsService } from '../products.service';
+import { Observable } from 'rxjs';
 
 @Component({
     selector: 'code-breaker-ai',
@@ -8,7 +9,7 @@ import { ProductsService } from '../products.service';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CodeBreakerAiComponent {
-    hasSubscription: boolean = this.productsService.checkServiceSubscription('BANKPass');
+    hasSubscription$: Observable<boolean> = this.productsService.checkServiceSubscription('BANKPass');
 
     constructor(private productsService: ProductsService) {}
 }

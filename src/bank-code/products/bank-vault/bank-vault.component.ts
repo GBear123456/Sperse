@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { ProductsService } from '@root/bank-code/products/products.service';
+import { Observable } from 'rxjs';
 
 @Component({
     selector: 'bank-vault',
@@ -8,7 +9,7 @@ import { ProductsService } from '@root/bank-code/products/products.service';
 })
 export class BankVaultComponent {
     offerId = 546;
-    hasSubscription: boolean = this.productsService.checkServiceSubscription('BANKVault');
+    hasSubscription$: Observable<boolean> = this.productsService.checkServiceSubscription('BANKVault');
 
     constructor(private productsService: ProductsService) {}
 }

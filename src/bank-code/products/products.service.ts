@@ -2,8 +2,8 @@
 import { Injectable } from '@angular/core';
 
 /** Third party imports */
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
+import { map, publishReplay, refCount } from 'rxjs/operators';
 import * as moment from 'moment-timezone';
 
 /** Application imports */
@@ -16,23 +16,22 @@ import {
 export class ProductsService {
 
     private readonly systemType = 'BankCode';
-    public subscriptions: GetUserSubscriptionsOutput[];
+    public subscriptions$: Observable<GetUserSubscriptionsOutput[]> = this.subscriptionProxy.getUserSubscriptions(this.systemType, undefined, undefined).pipe(
+        publishReplay(),
+        refCount()
+    );
 
     constructor(
         private subscriptionProxy: MemberSubscriptionServiceProxy
     ) {}
 
-    loadSubscriptions(): Observable<GetUserSubscriptionsOutput[]> {
-        return this.subscriptionProxy.getUserSubscriptions(this.systemType, undefined, undefined)
-            .pipe(map((subscriptions: GetUserSubscriptionsOutput[]) => {
-                return this.subscriptions = subscriptions;
+    checkServiceSubscription(serviceName: string): Observable<boolean> {
+        return this.subscriptions$.pipe(
+            map((subscriptions: GetUserSubscriptionsOutput[]) => {
+                return subscriptions.some((sub: GetUserSubscriptionsOutput) => {
+                    return sub.serviceName == serviceName && sub.endDate.diff(moment()) > 0;
+                });
             })
         );
-    }
-
-    checkServiceSubscription(serviceName: string): boolean {
-        return (this.subscriptions || []).some((sub: GetUserSubscriptionsOutput) => {
-            return sub.serviceName == serviceName && sub.endDate.diff(moment()) > 0;
-        });
     }
 }

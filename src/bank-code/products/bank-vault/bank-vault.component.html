@@ -1,6 +1,8 @@
 <section class="iframe">
-    <iframe *ngIf="!hasSubscription"
-            src="https://wp.bankcode.pro/the-vault-landing/"
-            frameborder="0">
-    </iframe>
+    <ng-container *ngIf="hasSubscription$ | async; else noSubscription"></ng-container>
+    <ng-template #noSubscription>
+        <iframe src="https://wp.bankcode.pro/the-vault-landing/"
+                frameborder="0">
+        </iframe>
+    </ng-template>
 </section>

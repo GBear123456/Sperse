@@ -1,6 +1,8 @@
 <section class="iframe">
-    <iframe *ngIf="!hasWTBBookSubscription"
-            src="https://wp.bankcode.pro/why-they-buy-landing/"
-            frameborder="0">
-    </iframe>
+    <ng-container *ngIf="hasSubscription$ | async; else noSubscription"></ng-container>
+    <ng-template #noSubscription>
+        <iframe src="https://wp.bankcode.pro/why-they-buy-landing/"
+                frameborder="0">
+        </iframe>
+    </ng-template>
 </section>

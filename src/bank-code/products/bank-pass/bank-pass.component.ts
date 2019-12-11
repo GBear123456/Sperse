@@ -5,6 +5,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ViewChild } from
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import DataSource from 'devextreme/data/data_source';
 import 'devextreme/data/odata/store';
+import { Observable } from 'rxjs';
 
 /** Application imports */
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -55,7 +56,7 @@ export class BankPassComponent {
         }
     });
     formatting = AppConsts.formatting;
-    hasSubscription: boolean = this.productsService.checkServiceSubscription('BANKPass');
+    hasSubscription$: Observable<boolean> = this.productsService.checkServiceSubscription('BANKPass');
     dataIsLoading = false;
 
     constructor(
