@@ -6,8 +6,8 @@ import { Router } from '@angular/router';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material';
-import { Observable } from 'rxjs';
-import { first, filter, switchMap } from 'rxjs/operators';
+import { Observable, of, timer } from 'rxjs';
+import { delayWhen, first, filter, switchMap, tap } from 'rxjs/operators';
 import swal from 'sweetalert';
 import cloneDeep from 'lodash/cloneDeep';
 
@@ -99,7 +99,8 @@ export class RegisterComponent implements AfterViewInit, OnInit {
         this.offersService.incompleteApplicationId$.pipe(
             first(),
             filter(Boolean),
-            switchMap((applicationId: number) => this.offerServiceProxy.finalizeApplication(applicationId))
+            tap((applicationId: number) => this.offerServiceProxy.startFinalizeApplication(applicationId)),
+            switchMap((applicationId: number) => this.getFinalizeApplicationStatus(applicationId))
         ).subscribe(
             (response: FinalizeApplicationResponse) => {
                 this.sendDecisionToLS(response.status);
@@ -157,6 +158,22 @@ export class RegisterComponent implements AfterViewInit, OnInit {
                 this.document.body.classList.remove('overflow-hidden');
                 applyOfferDialog.close();
             }
+        );
+    }
+
+    /**
+     * If getFinalizeApplicationStatus returns empty object - then call it again after 5 sec and do it until
+     * response comes
+     * @param applicationId
+     */
+    private getFinalizeApplicationStatus(applicationId: number): Observable<FinalizeApplicationResponse> {
+        return this.offerServiceProxy.getFinalizeApplicationStatus(applicationId).pipe(
+            delayWhen(() => timer(5000)),
+            switchMap((finalizeResponse: FinalizeApplicationResponse) => {
+                return !finalizeResponse
+                    ? this.getFinalizeApplicationStatus(applicationId)
+                    : of(finalizeResponse);
+            })
         );
     }
 
