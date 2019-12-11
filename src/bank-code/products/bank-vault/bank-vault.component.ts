@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { ProductsService } from '@root/bank-code/products/products.service';
 
 @Component({
     selector: 'bank-vault',
@@ -7,5 +8,7 @@ import { Component } from '@angular/core';
 })
 export class BankVaultComponent {
     offerId = 546;
-    constructor() {}
+    hasSubscription: boolean = this.productsService.checkServiceSubscription('BANKVault');
+
+    constructor(private productsService: ProductsService) {}
 }

@@ -1,3 +1,6 @@
 <section class="iframe">
-    <iframe src="https://wp.bankcode.pro/affiliate-landing/" frameborder="0"></iframe>
+    <iframe *ngIf="!hasSubscription"
+            src="https://wp.bankcode.pro/affiliate-landing/"
+            frameborder="0">
+    </iframe>
 </section>

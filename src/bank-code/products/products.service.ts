@@ -30,7 +30,7 @@ export class ProductsService {
         );
     }
 
-    checkServiceSubscription(serviceName: string = 'BankPass'): boolean {
+    checkServiceSubscription(serviceName: string): boolean {
         return (this.subscriptions || []).some((sub: GetUserSubscriptionsOutput) => {
             return sub.serviceName == serviceName && sub.endDate.diff(moment()) > 0;
         });

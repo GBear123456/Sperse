@@ -12,8 +12,7 @@ import { AppSessionService } from '@shared/common/session/app-session.service';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 import { MemberAreaLink } from '@shared/common/area-navigation/member-area-link.enum';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
-import { AppPermissionService } from '@shared/common/auth/permission.service';
-import { AppPermissions } from '@shared/AppPermissions';
+import { ProductsService } from '@root/bank-code/products/products.service';
 
 @Directive({
     selector: '[ad-header-host]'
@@ -84,7 +83,8 @@ export class BankCodeHeaderComponent implements OnInit, OnDestroy {
         {
             name: this.ls.l('BankCode_BCRM'),
             routerUrl: '../app/crm',
-            hidden: !this.permissionService.isGranted(AppPermissions.CRM)
+            hidden: !this.productsService.checkServiceSubscription('BANKPass')
+                 && !this.productsService.checkServiceSubscription('BANKAffiliate')
         }
     ];
 
@@ -94,7 +94,7 @@ export class BankCodeHeaderComponent implements OnInit, OnDestroy {
         private router: Router,
         private lifecycleService: LifecycleSubjectsService,
         private ls: AppLocalizationService,
-        private permissionService: AppPermissionService,
+        private productsService: ProductsService,
         public sessionService: AppSessionService
     ) {}
 

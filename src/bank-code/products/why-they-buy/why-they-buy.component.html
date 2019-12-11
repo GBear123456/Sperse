@@ -1,3 +1,6 @@
 <section class="iframe">
-    <iframe src="https://wp.bankcode.pro/why-they-buy-landing/" frameborder="0"></iframe>
+    <iframe *ngIf="!hasWTBBookSubscription"
+            src="https://wp.bankcode.pro/why-they-buy-landing/"
+            frameborder="0">
+    </iframe>
 </section>
