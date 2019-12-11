@@ -24,6 +24,7 @@ import { BankCodeLayoutModule } from '@root/bank-code/shared/layout/bank-code-la
 import { SubscriptionComponent } from '@root/bank-code/products/shared/subscription.component/subscription.component';
 import { MemberSubscriptionServiceProxy } from '@shared/service-proxies/service-proxies';
 import { ProductsService } from './products.service';
+import { WhyTheyBuyComponent } from './why-they-buy/why-they-buy.component';
 
 @NgModule({
     imports: [
@@ -46,7 +47,8 @@ import { ProductsService } from './products.service';
         BankPassComponent,
         BankTrainerComponent,
         BankVaultComponent,
-        SubscriptionComponent
+        SubscriptionComponent,
+        WhyTheyBuyComponent
     ],
     providers: [
         MemberSubscriptionServiceProxy,

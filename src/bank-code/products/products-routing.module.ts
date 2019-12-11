@@ -16,6 +16,7 @@ import { BankAffiliateComponent } from '@root/bank-code/products/bank-affiliate/
 import { BankCardsComponent } from '@root/bank-code/products/bank-cards/bank-cards.component';
 import { BankGearComponent } from '@root/bank-code/products/bank-gear/bank-gear.component';
 import { ProductsService } from './products.service';
+import { WhyTheyBuyComponent } from '@root/bank-code/products/why-they-buy/why-they-buy.component';
 
 @Injectable()
 export class SubscriptionsResolver implements CanActivateChild {
@@ -69,6 +70,10 @@ export class SubscriptionsResolver implements CanActivateChild {
                     {
                         path: 'bank-gear',
                         component: BankGearComponent
+                    },
+                    {
+                        path: 'why-they-buy',
+                        component: WhyTheyBuyComponent
                     }
                 ]
             }

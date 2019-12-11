@@ -31,11 +31,9 @@
     <dx-chart
         id="bar"
         [barWidth]="1"
-        [size]="{ height: 280, width: nativeElement ? nativeElement.offsetWidth - 60 : 0 }"
+        [size]="{ height: 280, width: elementRef.nativeElement ? elementRef.nativeElement - 60 : 0 }"
         [series]="allSeries$ | async"
         [dataSource]="totalsData">
-
-        <dxo-size [height]="356" [width]="chartWidth"></dxo-size>
         <!-- common settings for charts -->
         <dxo-common-series-settings
             argumentField="date"

@@ -33,12 +33,13 @@ export class ProductsComponent implements OnInit, OnDestroy {
             namePrefix: this.ls.l('BankCode_Bank'),
             name: this.ls.l('BankCode_Affiliate'),
             routerUrl: 'bank-affiliate'
-        }
-        /*{
-            namePrefix: this.ls.l('BankCode_Bank'),
-            name: this.ls.l('BankCode_Cards'),
-            routerUrl: 'bank-cards'
         },
+        {
+            namePrefix: this.ls.l('Why'),
+            name: this.ls.l('They Buy'),
+            routerUrl: 'why-they-buy'
+        }
+        /*
         {
             namePrefix: this.ls.l('BankCode_Bank'),
             name: this.ls.l('BankCode_Gear'),

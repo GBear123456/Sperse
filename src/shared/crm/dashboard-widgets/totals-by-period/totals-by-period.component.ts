@@ -3,12 +3,12 @@ import {
     ChangeDetectionStrategy,
     Component,
     OnInit,
-    AfterViewInit,
     Injector,
     Inject,
     OnDestroy,
     ViewChild,
-    ChangeDetectorRef
+    ChangeDetectorRef,
+    ElementRef
 } from '@angular/core';
 import { DOCUMENT, DecimalPipe } from '@angular/common';
 
@@ -61,16 +61,14 @@ import { LayoutService } from '@app/shared/layout/layout.service';
     providers: [ DashboardServiceProxy, DecimalPipe ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class TotalsByPeriodComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy {
+export class TotalsByPeriodComponent extends AppComponentBase implements OnInit, OnDestroy {
     @ViewChild(DxChartComponent) chartComponent: DxChartComponent;
     totalsData: any[] = [];
     totalsData$: Observable<GetCustomerAndLeadStatsOutput[]>;
     startDate: any;
     endDate: any;
-    chartWidth = 650;
     currency = 'USD';
     clientColor = this.layoutService.getLayoutColor('clientsCount');
-    nativeElement: any;
     periods: TotalsByPeriodModel[] = [
          {
              key: GroupByPeriod.Daily,
@@ -139,6 +137,7 @@ export class TotalsByPeriodComponent extends AppComponentBase implements OnInit,
         private sessionService: AbpSessionService,
         private decimalPipe: DecimalPipe,
         private layoutService: LayoutService,
+        public elementRef: ElementRef,
         @Inject(DOCUMENT) private document: Document
     ) {
         super(injector);
@@ -203,12 +202,7 @@ export class TotalsByPeriodComponent extends AppComponentBase implements OnInit,
             series.forEach(seria => {
                 this.allSeriesColors[seria.name] = seria.color;
             });
-            this.render();
         });
-    }
-
-    ngAfterViewInit() {
-        this.render();
     }
 
     changeCumulative(e) {
@@ -340,10 +334,6 @@ export class TotalsByPeriodComponent extends AppComponentBase implements OnInit,
     getDailyBottomAxisCustomizer(elem) {
         const [ , date, month ] = elem.value.toUTCString().split(' ');
         return `${date}<br/>${month}`;
-    }
-
-    render(component?: any) {
-        this.nativeElement = this.getElementRef().nativeElement;
     }
 
     toggleFullLegend() {
