@@ -7,9 +7,11 @@
                   [showToggleFullScreenButton]="true"
                   [showReloadButton]="true"
                   [showToggleToolbarButton]="true"
+                  [showToggleTotalsButton]="true"
                   (onReload)="reload()"
                   (onToggleCompactView)="toggleCompactView()"
                   (onToggleFullScreen)="repaintDataGrid(100)"
+                  (onToggleTotals)="toggleDataGridToolbar()"
                   (onToggleToolbar)="toggleToolbar()">
         <business-entities-chooser (onChanged)="applyTotalBankAccountFilter(true)"
             (onFilterButtonClick)="openBankAccountsSelectDialog()">

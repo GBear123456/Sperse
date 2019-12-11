@@ -21,7 +21,7 @@
         </ng-template>
         <div class="vertical-delimiter"></div>
         <ng-container *ngIf="showReloadButton || showToggleToolbarButton || showToggleCompactViewButton || showToggleFullScreenButton">
-            <button class="toggle-button" title="Toggle toolbar" (click)="toggleHeadlineButtons($event)"></button>
+            <button class="toggle-button" title="Toggle toolbar" (click)="toggleHeadlineButtons()"></button>
             <ul *ngIf="showHeadlineButtons" class="buttons">
                 <li *ngIf="showReloadButton">
                     <span class="text">{{ ls.l('ReloadTheCurrentPage') }}</span>
@@ -30,6 +30,10 @@
                 <li *ngIf="showToggleToolbarButton">
                     <span class="text">{{ toolbarMenuToggleButtonText$ | async }}</span>
                     <div class="right"><span class="icon toggleToolbar" (click)="toggleToolbar()"></span></div>
+                </li>
+                <li *ngIf="showToggleTotalsButton">
+                    <span class="text">{{ showTotals ? ls.l('HideTotals') : ls.l('ShowTotals') }}</span>
+                    <div class="right"><span class="icon toggleTotals" (click)="toggleTotals()"></span></div>
                 </li>
                 <li *ngIf="showToggleCompactViewButton">
                     <span class="text">{{ showCompactView ? ls.l('HideCompactView') : ls.l('ShowCompactView') }}</span>

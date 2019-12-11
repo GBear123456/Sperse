@@ -1400,6 +1400,11 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         return window.innerHeight - (AppConsts.isMobile ? 160 : 150) - (this.appService.toolbarIsHidden.value ? 0 : 62) + 'px';
     }
 
+    toggleDataGridToolbar() {
+        this.showDataGridToolbar = !this.showDataGridToolbar;
+        this.repaintDataGrid();
+    }
+
     ngOnDestroy() {
         this.appService.updateToolbar(null);
         this.filtersService.unsubscribe();

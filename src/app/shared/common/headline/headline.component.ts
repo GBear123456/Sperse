@@ -22,6 +22,7 @@ import { AppService } from '@app/app.service';
 import { FullScreenService } from '@shared/common/fullscreen/fullscreen.service';
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
+import { AppConsts } from '@shared/AppConsts';
 
 @Component({
     selector: 'app-headline',
@@ -41,10 +42,12 @@ export class HeadLineComponent implements OnInit, OnDestroy {
     @Input() showToggleToolbarButton = false;
     @Input() showToggleCompactViewButton = false;
     @Input() showToggleFullScreenButton = false;
+    @Input() showToggleTotalsButton = false;
     @Output() onReload: EventEmitter<null> = new EventEmitter<null>();
     @Output() onToggleToolbar: EventEmitter<null> = new EventEmitter<null>();
     @Output() onToggleCompactView: EventEmitter<null> = new EventEmitter<null>();
     @Output() onToggleFullScreen: EventEmitter<null> = new EventEmitter<null>();
+    @Output() onToggleTotals: EventEmitter<null> = new EventEmitter<null>();
     @HostBinding('class.fullscreen') isFullScreenMode = false;
     data: HeadLineConfigModel;
     showHeadlineButtons = false;
@@ -57,6 +60,7 @@ export class HeadLineComponent implements OnInit, OnDestroy {
             return isFullScreenMode ? this.ls.l('CloseFullScreenMode') : this.ls.l('OpenPageInFullScreen');
         })
     );
+    showTotals = !AppConsts.isMobile;
 
     constructor(
         private appService: AppService,
@@ -101,6 +105,11 @@ export class HeadLineComponent implements OnInit, OnDestroy {
     toggleFullScreen() {
         this.fullScreenService.toggleFullscreen(document.documentElement);
         this.onToggleFullScreen.emit();
+    }
+
+    toggleTotals() {
+        this.showTotals = !this.showTotals;
+        this.onToggleTotals.emit();
     }
 
     ngOnDestroy() {
