@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 
 /** Third party imports */
 import { DxDataGridModule } from 'devextreme-angular/ui/data-grid';
+import { NgxExtendedPdfViewerModule } from 'ngx-extended-pdf-viewer';
 
 /** Application imports */
 import { ProductsComponent } from './products.component';
@@ -34,7 +35,8 @@ import { WhyTheyBuyComponent } from './why-they-buy/why-they-buy.component';
         BankCodeLettersModule,
         PhoneFormatModule,
         LoadingSpinnerModule,
-        BankCodeLayoutModule
+        BankCodeLayoutModule,
+        NgxExtendedPdfViewerModule
     ],
     declarations: [
         CodeBreakerAiComponent,
