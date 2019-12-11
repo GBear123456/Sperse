@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { ProductsService } from '@root/bank-code/products/products.service';
 
 @Component({
     selector: 'bank-affiliate',
@@ -7,5 +8,10 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
     styleUrls: ['./bank-affiliate.component.less']
 })
 export class BankAffiliateComponent {
-    constructor(public ls: AppLocalizationService) { }
+    hasSubscription: boolean = this.productsService.checkServiceSubscription('BANKAffiliate');
+
+    constructor(
+        private productsService: ProductsService,
+        public ls: AppLocalizationService
+    ) {}
 }

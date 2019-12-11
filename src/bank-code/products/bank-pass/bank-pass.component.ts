@@ -55,7 +55,7 @@ export class BankPassComponent {
         }
     });
     formatting = AppConsts.formatting;
-    hasSubscription: boolean = this.productsService.checkServiceSubscription();
+    hasSubscription: boolean = this.productsService.checkServiceSubscription('BANKPass');
     dataIsLoading = false;
 
     constructor(

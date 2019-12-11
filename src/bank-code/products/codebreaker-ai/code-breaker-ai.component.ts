@@ -8,7 +8,7 @@ import { ProductsService } from '../products.service';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CodeBreakerAiComponent {
-    hasSubscription: boolean = this.productsService.checkServiceSubscription();
+    hasSubscription: boolean = this.productsService.checkServiceSubscription('BANKPass');
 
     constructor(private productsService: ProductsService) {}
 }
