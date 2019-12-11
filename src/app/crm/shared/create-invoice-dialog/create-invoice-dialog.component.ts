@@ -73,6 +73,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
     private lookupTimeout;
 
     private readonly SAVE_OPTION_DEFAULT = 0;
+    private readonly SAVE_OPTION_DRAFT   = 1;
     private readonly SAVE_OPTION_CACHE_KEY = 'save_option_active_index';
 
     private validationError: string;
@@ -262,7 +263,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
     }
 
     initNewInvoiceInfo() {
-        if (this.data.addNew)
+        if (!this.data.invoice || this.data.addNew)
             this.invoiceProxy.getNewInvoiceInfo().subscribe((newInvoiceInfo: GetNewInvoiceInfoOutput) => {
                 this.invoiceInfo = newInvoiceInfo;
                 this.invoiceNo = newInvoiceInfo.nextInvoiceNumber;
@@ -298,9 +299,11 @@ export class CreateInvoiceDialogComponent implements OnInit {
 
     saveOptionsInit() {
         let cacheKey = this.cacheHelper.getCacheKey(this.SAVE_OPTION_CACHE_KEY, this.constructor.name);
-        this.selectedOption = this.saveContextMenuItems[this.cacheService.exists(cacheKey)
+        this.selectedOption = this.saveContextMenuItems[
+            this.cacheService.exists(cacheKey)
                 ? this.cacheService.get(cacheKey)
-                : this.SAVE_OPTION_DEFAULT];
+                : this.data.saveAsDraft ? this.SAVE_OPTION_DRAFT : this.SAVE_OPTION_DEFAULT
+        ];
         this.selectedOption.selected = true;
         this.buttons[0].title = this.selectedOption.text;
         this.status = this.selectedOption.status;

@@ -188,13 +188,14 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
         );
     }
 
-    private openCreateInvoiceDialog(addNew = false) {
+    private openCreateInvoiceDialog(addNew = false, saveAsDraft = false) {
         this.dialog.open(CreateInvoiceDialogComponent, {
             panelClass: 'slider',
             disableClose: true,
             closeOnNavigation: false,
             data: {
                 addNew: addNew,
+                saveAsDraft: saveAsDraft,
                 invoice: this.actionRecordData,
                 contactInfo: this.contactService['data'].contactInfo,
                 refreshParent: () => {
@@ -263,6 +264,6 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     duplicateInvoice() {
-        this.openCreateInvoiceDialog(true);
+        this.openCreateInvoiceDialog(true, true);
     }
 }
