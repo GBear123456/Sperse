@@ -112,7 +112,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
 
     params: any;
     private rootComponent: any;
-    referrerParams: Params;
+    queryParams: Params;
 
     showToolbar;
     currentItemId;
@@ -186,7 +186,8 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
         });
         this._activatedRoute.queryParams
             .pipe(takeUntil(this.destroy$))
-            .subscribe((params: Params) => this.referrerParams = params);
+            .subscribe((params: Params) => this.queryParams = params);
+
         contactsService.verificationSubscribe(
             this.initVerificationChecklist.bind(this)
         );
@@ -246,7 +247,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
                 break;
             case 'orders':
                 this.dataSourceURI = 'Order';
-                this.currentItemId = this.params.contactId;
+                this.currentItemId = this.queryParams.id;
                 break;
             default:
                 break;
@@ -260,10 +261,8 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
         if (this.cacheService.exists(key))
             this.rightPanelSetting = this.cacheService.get(key);
         this.initNavigatorProperties();
-        const itemIdProperty = {
-            User: 'id',
-            Order: 'ContactId'
-        }[this.dataSourceURI] || 'Id';
+        const itemKeyField = this.dataSourceURI == 'User' ? 'id' : 'Id',
+              itemDistinctField = this.dataSourceURI == 'Order' ? 'ContactId' : itemKeyField;
         this.targetEntity$.pipe(
             /** To avoid fast next/prev clicking */
             debounceTime(100),
@@ -277,25 +276,25 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
                 this.dataSourceURI as ItemTypeEnum,
                 this.currentItemId,
                 direction,
-                itemIdProperty
+                itemKeyField,
+                itemDistinctField
             ).pipe(
                 finalize(() => this.finishLoading(true)))
             )
         ).subscribe((itemFullInfo: ItemFullInfo) => {
             let res$ = of(null);
-            if (itemFullInfo && this.currentItemId != itemFullInfo.itemData[itemIdProperty]) {
-                const currentItemId = itemFullInfo.itemData[itemIdProperty];
+            if (itemFullInfo && this.currentItemId != itemFullInfo.itemData[itemKeyField]) {
                 /** New current item Id */
                 res$ = this.reloadCurrentSection({
                     userId: this.dataSourceURI === 'User'
-                            ? itemFullInfo.itemData[itemIdProperty]
+                            ? itemFullInfo.itemData[itemKeyField]
                             : (this.dataSourceURI != 'Lead' ? itemFullInfo.itemData.UserId : undefined),
-                    contactId: ['Customer', 'Partner', 'Order'].indexOf(this.dataSourceURI) >= 0 ?
-                        itemFullInfo.itemData[itemIdProperty] : this.dataSourceURI == 'Lead' ? itemFullInfo.itemData.CustomerId : undefined,
+                    contactId: ['Customer', 'Partner'].indexOf(this.dataSourceURI) >= 0 ? itemFullInfo.itemData[itemKeyField] :
+                        this.dataSourceURI == 'Lead' ? itemFullInfo.itemData.CustomerId : itemFullInfo.itemData.ContactId,
                     customerId: this.dataSourceURI == 'Lead' ? itemFullInfo.itemData.CustomerId : undefined,
-                    leadId: this.dataSourceURI == 'Lead' ? itemFullInfo.itemData[itemIdProperty] : undefined,
+                    leadId: this.dataSourceURI == 'Lead' ? itemFullInfo.itemData[itemKeyField] : undefined,
                     companyId: itemFullInfo.itemData.OrganizationId
-                }).pipe(tap(() => this.currentItemId = currentItemId));
+                }).pipe(tap(() => this.currentItemId = itemFullInfo.itemData[itemKeyField]));
                 this.updateLocation(itemFullInfo);
             }
             res$.subscribe(() => {
@@ -310,7 +309,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
     }
 
     private getSection() {
-        return this.referrerParams && this.referrerParams.referrer && this.referrerParams.referrer.split('/').pop()
+        return this.queryParams && this.queryParams.referrer && this.queryParams.referrer.split('/').pop()
             || (this.contactGroupId.value == ContactGroup.Partner ? 'partners' : 'clients');
     }
 
@@ -714,11 +713,11 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
         this.dialog.closeAll();
         let data = force || JSON.stringify(<any>this.contactService['data']);
         this._router.navigate(
-            [this.referrerParams.referrer || 'app/crm/clients'],
+            [this.queryParams.referrer || 'app/crm/clients'],
             {
                 queryParams: _.extend(
                     _.mapObject(
-                        this.referrerParams,
+                        this.queryParams,
                         (val, key) => key == 'referrer' ? undefined : val
                     ),
                     !force && this.initialData != data ? {refresh: true} : {}
