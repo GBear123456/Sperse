@@ -1,11 +1,9 @@
 /** Core imports */
-import { Component, ViewChild, ViewContainerRef, Directive, OnInit, OnDestroy, Injector } from '@angular/core';
+import { Component, Directive, Injector, OnDestroy, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
 import { Router } from '@angular/router';
-
 /** Third party imports */
 import { forkJoin } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-
 /** Application imports */
 import { AppConsts } from 'shared/AppConsts';
 import { BankCodeLayoutService } from './bank-code-layout.service';
@@ -14,6 +12,7 @@ import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/life
 import { MemberAreaLink } from '@shared/common/area-navigation/member-area-link.enum';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { ProductsService } from '@root/bank-code/products/products.service';
+import { BankCodeServiceType } from '@root/bank-code/products/bank-code-service-type.enum';
 
 @Directive({
     selector: '[ad-header-host]'
@@ -61,8 +60,8 @@ export class BankCodeHeaderComponent implements OnInit, OnDestroy {
             });
         if (this.productsService) {
             forkJoin(
-                this.productsService.checkServiceSubscription('BANKPass'),
-                this.productsService.checkServiceSubscription('BANKAffiliate')
+                this.productsService.checkServiceSubscription(BankCodeServiceType.BANKPass),
+                this.productsService.checkServiceSubscription(BankCodeServiceType.BANKAffiliate)
             ).subscribe(([hasBankPassSubscription, hasBankAffiliateSubscription]: [ boolean, boolean ]) => {
                 this.hideBCRMLink = !hasBankPassSubscription && !hasBankAffiliateSubscription;
                 this.memberAreaLinks = this.getMemberAreaLinks();
