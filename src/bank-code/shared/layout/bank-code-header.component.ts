@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, ViewChild, ViewContainerRef, Directive, OnInit, OnDestroy } from '@angular/core';
+import { Component, ViewChild, ViewContainerRef, Directive, OnInit, OnDestroy, Injector } from '@angular/core';
 import { Router } from '@angular/router';
 
 /** Third party imports */
@@ -36,16 +36,19 @@ export class BankCodeHeaderComponent implements OnInit, OnDestroy {
     currentDate = new Date();
     hideBCRMLink = true;
     memberAreaLinks: MemberAreaLink[] = this.getMemberAreaLinks();
+    private productsService: ProductsService;
 
     constructor(
+        injector: Injector,
         private layoutService: BankCodeLayoutService,
         public appSession: AppSessionService,
         private router: Router,
         private lifecycleService: LifecycleSubjectsService,
         private ls: AppLocalizationService,
-        private productsService: ProductsService,
         public sessionService: AppSessionService
-    ) {}
+    ) {
+        this.productsService = injector.get(ProductsService, null);
+    }
 
     ngOnInit() {
         this.layoutService.headerSubject$
@@ -56,13 +59,15 @@ export class BankCodeHeaderComponent implements OnInit, OnDestroy {
                     this.adHeaderHost.viewContainerRef.createComponent(component);
                 });
             });
-        forkJoin(
-            this.productsService.checkServiceSubscription('BANKPass'),
-            this.productsService.checkServiceSubscription('BANKAffiliate')
-        ).subscribe(([hasBankPassSubscription, hasBankAffiliateSubscription]: [ boolean, boolean ]) => {
-            this.hideBCRMLink = !hasBankPassSubscription && !hasBankAffiliateSubscription;
-            this.memberAreaLinks = this.getMemberAreaLinks();
-        });
+        if (this.productsService) {
+            forkJoin(
+                this.productsService.checkServiceSubscription('BANKPass'),
+                this.productsService.checkServiceSubscription('BANKAffiliate')
+            ).subscribe(([hasBankPassSubscription, hasBankAffiliateSubscription]: [ boolean, boolean ]) => {
+                this.hideBCRMLink = !hasBankPassSubscription && !hasBankAffiliateSubscription;
+                this.memberAreaLinks = this.getMemberAreaLinks();
+            });
+        }
     }
 
     private getMemberAreaLinks() {
