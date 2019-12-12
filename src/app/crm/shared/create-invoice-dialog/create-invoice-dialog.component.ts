@@ -147,12 +147,6 @@ export class CreateInvoiceDialogComponent implements OnInit {
         public ls: AppLocalizationService,
         @Inject(MAT_DIALOG_DATA) public data: any
     ) {
-        this.saveContextMenuItems = [
-            {text: this.ls.l('Save'), selected: false, status: InvoiceStatus.Final, disabled: this.disabledForUpdate},
-            {text: this.ls.l('Invoice_SaveAsDraft'), selected: false, disabled: this.disabledForUpdate, status: InvoiceStatus.Draft},
-            {text: this.ls.l('Invoice_SaveAndSend'), selected: false, status: InvoiceStatus.Final, email: true, disabled: this.disabledForUpdate},
-            {text: this.ls.l('Invoice_SaveAndMarkSent'), selected: false, disabled: true}
-        ];
         this.dialogRef.afterClosed().subscribe(() => {
             this.closeAddressDialogs();
         });
@@ -169,7 +163,6 @@ export class CreateInvoiceDialogComponent implements OnInit {
         });
 
         this.initInvoiceData();
-        this.saveOptionsInit();
     }
 
     checkCloseAddressDialog(name: string) {
@@ -217,12 +210,10 @@ export class CreateInvoiceDialogComponent implements OnInit {
             if (!this.data.addNew) {
                 this.invoiceId = invoice.InvoiceId;
                 this.invoiceNo = invoice.InvoiceNumber;
+                this.status = invoice.InvoiceStatus;
                 this.disabledForUpdate = [InvoiceStatus.Draft, InvoiceStatus.Final].indexOf(this.status) < 0;
-                if (this.disabledForUpdate)
-                    this.buttons[0].disabled = this.disabledForUpdate;
                 this.date = DateHelper.addTimezoneOffset(new Date(invoice.Date), true);
                 this.dueDate = invoice.InvoiceDueDate;
-                this.status = invoice.InvoiceStatus;
             }
             this.contactId = invoice.ContactId;
             this.initOrderDataSource();
@@ -258,8 +249,20 @@ export class CreateInvoiceDialogComponent implements OnInit {
             this.resetNoteDefault();
 
         this.initNewInvoiceInfo();
+        this.initContextMenuItems();
         this.initContactInfo(this.data.contactInfo);
         this.changeDetectorRef.detectChanges();
+    }
+
+    initContextMenuItems() {
+        this.buttons.forEach(item => item.disabled = this.disabledForUpdate);
+        this.saveContextMenuItems = [
+            {text: this.ls.l('Save'), selected: false, status: InvoiceStatus.Final, disabled: this.disabledForUpdate},
+            {text: this.ls.l('Invoice_SaveAsDraft'), selected: false, disabled: this.disabledForUpdate, status: InvoiceStatus.Draft},
+            {text: this.ls.l('Invoice_SaveAndSend'), selected: false, status: InvoiceStatus.Final, email: true, disabled: this.disabledForUpdate},
+            {text: this.ls.l('Invoice_SaveAndMarkSent'), selected: false, disabled: true}
+        ];
+        this.saveOptionsInit();
     }
 
     initNewInvoiceInfo() {
