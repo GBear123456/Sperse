@@ -61,7 +61,6 @@ import { NavLink } from '@app/crm/contacts/nav-link.model';
 import { ContextType } from '@app/crm/contacts/details-header/context-type.enum';
 import { DetailsHeaderComponent } from '@app/crm/contacts/details-header/details-header.component';
 import { SMSDialogComponent } from '@app/crm/shared/sms-dialog/sms-dialog.component';
-import { InplaceEditModel } from '@app/shared/common/inplace-edit/inplace-edit.model';
 
 @Component({
     templateUrl: './contacts.component.html',
@@ -81,7 +80,6 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
     readonly RP_CONTACT_INFO_ID = RP_CONTACT_INFO_ID;
 
     customerId: number;
-    contactGroups = ContactGroup;
     assignedUsersSelector: (source$: Observable<any>) => Observable<any>;
     contactInfo: ContactInfoDto = new ContactInfoDto();
     personContactInfo: PersonContactInfoDto;
@@ -124,31 +122,21 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
     isCommunicationHistoryAllowed = false;
     isSendSmsAndEmailAllowed = false;
     private affiliateCode: ReplaySubject<string> = new ReplaySubject(1);
-    affiliateCode$: Observable<string> = this.affiliateCode.asObservable();
-    affiliateCodeInplaceEditData$: Observable<InplaceEditModel> = this.affiliateCode$.pipe(
-        map((affiliateCode: string) => {
-            return {
-                id: this.contactInfo.id,
-                isReadOnlyField: !this.contactsService.checkCGPermission(this.contactInfo.groupId),
-                value: (affiliateCode || '').trim(),
-                validationRules: [
-                    {
-                        type: 'pattern',
-                        pattern: AppConsts.regexPatterns.affiliateCode,
-                        message: this.l('AffiliateCodeIsNotValid')
-                    },
-                    {
-                        type: 'stringLength',
-                        max: 50,
-                        message: this.l('MaxLengthIs', 50)
-                    }
-                ],
-                isEditDialogEnabled: true,
-                lEntityName: 'Name',
-                lEditPlaceholder: this.l('Affiliate')
-            };
-        })
+    affiliateCode$: Observable<string> = this.affiliateCode.asObservable().pipe(
+        map((affiliateCode: string) => (affiliateCode || '').trim())
     );
+    affiliateValidationRules = [
+        {
+            type: 'pattern',
+            pattern: AppConsts.regexPatterns.affiliateCode,
+            message: this.l('AffiliateCodeIsNotValid')
+        },
+        {
+            type: 'stringLength',
+            max: 50,
+            message: this.l('MaxLengthIs', 50)
+        }
+    ];
     public contactGroupId: BehaviorSubject<string> = new BehaviorSubject<string>(null);
     public contactGroupId$: Observable<string> = this.contactGroupId.asObservable().pipe(filter(Boolean));
 
@@ -163,12 +151,12 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
         private partnerService: PartnerServiceProxy,
         private leadService: LeadServiceProxy,
         private pipelineService: PipelineService,
-        private contactsService: ContactsService,
         private store$: Store<AppStore.State>,
         private appStoreService: AppStoreService,
         private customerService: CustomerServiceProxy,
         private itemDetailsService: ItemDetailsService,
-        private contactServiceProxy: ContactServiceProxy
+        private contactServiceProxy: ContactServiceProxy,
+        public contactsService: ContactsService
     ) {
         super(injector);
         this.appStoreService.loadUserDictionaries();

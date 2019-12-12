@@ -11,6 +11,7 @@ import { UserManagementListComponent } from '@shared/common/layout/user-manageme
 import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
 import { ImpersonationService } from '@admin/users/impersonation.service';
 import { BankCodeLettersModule } from '@app/shared/common/bank-code-letters/bank-code-letters.module';
+import { InplaceEditModule } from '@app/shared/common/inplace-edit/inplace-edit.module';
 
 @NgModule({
     declarations: [
@@ -20,7 +21,8 @@ import { BankCodeLettersModule } from '@app/shared/common/bank-code-letters/bank
     imports: [
         CommonModule,
         DxScrollViewModule,
-        BankCodeLettersModule
+        BankCodeLettersModule,
+        InplaceEditModule
     ],
     exports: [
         UserManagementListComponent,

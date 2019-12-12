@@ -26,16 +26,6 @@ export class PersonInfoComponent extends AppComponentBase implements OnInit {
         this.isEditAllowed = this._contactsService.checkCGPermission(this.groupId);
     }
 
-    getPropData(propName) {
-        return {
-            id: this.data.id,
-            value: this.data.person[propName],
-            validationRules: [],
-            lEntityName: propName,
-            lEditPlaceholder: this.l('EditValuePlaceholder')
-        };
-    }
-
     getFullName(person) {
         return [person.namePrefix, person.firstName, person.middleName, person.lastName,
             person.nameSuffix && (', ' + person.nameSuffix), person.nickName && ('(' + person.nickName + ')')].filter(Boolean).join(' ');

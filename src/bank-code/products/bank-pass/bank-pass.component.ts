@@ -1,12 +1,10 @@
 /** Core imports */
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ViewChild } from '@angular/core';
-
 /** Third party imports */
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import DataSource from 'devextreme/data/data_source';
 import 'devextreme/data/odata/store';
 import { Observable } from 'rxjs';
-
 /** Application imports */
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { AppHttpInterceptor } from '@shared/http/appHttpInterceptor';
@@ -16,6 +14,7 @@ import { ODataService } from '@shared/common/odata/odata.service';
 import { ProfileService } from '@shared/common/profile-service/profile.service';
 import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
 import { ProductsService } from '../products.service';
+import { BankCodeServiceType } from '@root/bank-code/products/bank-code-service-type.enum';
 
 @Component({
     selector: 'bank-pass',
@@ -56,7 +55,7 @@ export class BankPassComponent {
         }
     });
     formatting = AppConsts.formatting;
-    hasSubscription$: Observable<boolean> = this.productsService.checkServiceSubscription('BANKPass');
+    hasSubscription$: Observable<boolean> = this.productsService.checkServiceSubscription(BankCodeServiceType.BANKPass);
     dataIsLoading = false;
 
     constructor(

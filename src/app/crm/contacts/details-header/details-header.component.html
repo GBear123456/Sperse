@@ -6,7 +6,13 @@
     <div class="personal_info">
         <div class="full_name">
             <h1 *ngIf="data && data?.personContactInfo">
-                <inplace-edit [data]="getNameInplaceEditData() | async"
+                <inplace-edit [id]="personId$ | async"
+                              [value]="personFullName$ | async"
+                              [validationRules]="nameValidationRules"
+                              [isReadOnlyField]="!manageAllowed"
+                              lEntityName="Name"
+                              [editPlaceholder]="ls.l('ClientNamePlaceholder')"
+                              [isEditDialogEnabled]="true"
                               (valueChanged)="updatePrimaryContactName($event)"
                               (openDialog)="showEditPersonDialog($event)">
                 </inplace-edit>
@@ -41,7 +47,12 @@
                 <div class="titles">
                     <h2 class="shift-top">
                         <inplace-edit #companyName
-                                      [data]="getCompanyNameInplaceEditData() | async"
+                                      [id]="companyId$ | async"
+                                      [value]="companyTitle$ | async"
+                                      [isReadOnlyField]="!manageAllowed"
+                                      lEntityName="Name"
+                                      [editPlaceholder]="ls.l('ClientNamePlaceholder')"
+                                      [isEditDialogEnabled]="true"
                                       (valueChanged)="updateCompanyField($event)">
                         </inplace-edit>
                         <i class="fa fa-angle-down" *ngIf="!companyName.isEditModeEnabled && (data?.personContactInfo?.orgRelations?.length > 1)" (click)="showCompanyList($event)"></i>
@@ -52,7 +63,15 @@
                         </div>
                     </h2>
                     <h3>
-                        <inplace-edit #jobTitle [data]="getJobTitleInplaceEditData() | async" (valueChanged)="updateJobTitle($event)"></inplace-edit>
+                        <inplace-edit #jobTitle
+                                      lEntityName="JobTitle"
+                                      [id]="personOrganizationId$ | async"
+                                      [value]="personJobTitle$ | async"
+                                      [isReadOnlyField]="!manageAllowed"
+                                      [editPlaceholder]="ls.l('JobTitle')"
+                                      [validationRules]="companyValidationRules"
+                                      (valueChanged)="updateJobTitle($event)">
+                        </inplace-edit>
                     </h3>
                 </div>
             </div>

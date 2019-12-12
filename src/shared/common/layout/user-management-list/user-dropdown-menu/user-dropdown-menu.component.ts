@@ -4,16 +4,20 @@ import {
     ApplicationRef,
     ChangeDetectorRef,
     Component,
-    OnInit,
-    Input,
-    Injector,
     ElementRef,
+    Injector,
+    Input,
+    OnInit,
     ViewChild
 } from '@angular/core';
-
 /** Application imports */
 import { ImpersonationService } from 'app/admin/users/impersonation.service';
-import { CommonUserInfoServiceProxy, LinkedUserDto } from 'shared/service-proxies/service-proxies';
+import {
+    CommonUserInfoServiceProxy,
+    LayoutType,
+    LinkedUserDto,
+    MemberSettingsServiceProxy
+} from 'shared/service-proxies/service-proxies';
 import { UserManagementService } from 'shared/common/layout/user-management-list/user-management.service';
 import { UserDropdownMenuItemType } from 'shared/common/layout/user-management-list/user-dropdown-menu/user-dropdown-menu-item-type';
 import { UserDropdownMenuItemModel } from 'shared/common/layout/user-management-list/user-dropdown-menu/user-dropdown-menu-item.model';
@@ -24,6 +28,8 @@ import { AppSessionService } from '@shared/common/session/app-session.service';
 import { AppFeatures } from '@shared/AppFeatures';
 import { BankCodeService } from '@app/shared/common/bank-code/bank-code.service';
 import { FeatureCheckerService } from '@abp/features/feature-checker.service';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { BankCodeLetter } from '@app/shared/common/bank-code-letters/bank-code-letter.enum';
 
 @Component({
     selector: 'user-dropdown-menu',
@@ -33,7 +39,7 @@ import { FeatureCheckerService } from '@abp/features/feature-checker.service';
         '../../../../metronic/m-nav.less',
         './user-dropdown-menu.component.less'
     ],
-    providers: [ CommonUserInfoServiceProxy, ImpersonationService ]
+    providers: [ CommonUserInfoServiceProxy, MemberSettingsServiceProxy, ImpersonationService, ]
 })
 export class UserDropdownMenuComponent implements AfterViewInit, OnInit {
     @ViewChild('topBarUserProfile') topBarUserProfile: ElementRef;
@@ -45,6 +51,12 @@ export class UserDropdownMenuComponent implements AfterViewInit, OnInit {
     shownLoginInfo: { fullName, email, tenantName? };
     menuItemTypes = UserDropdownMenuItemType;
     bankCode: string = this.appSession.user.bankCode;
+    bankCodeColor: string = this.bankCode
+        ? this.bankCodeService.getColorsByLetter(this.bankCode[0] as BankCodeLetter).background
+        : '#000';
+    accessCode = this.appSession.user.affiliateCode;
+    hasBankCodeFeature: boolean = this.userManagementService.checkBankCodeFeature();
+    hasBankCodeLayout: boolean = this.appSession.tenant && this.appSession.tenant.customLayoutType === LayoutType.BankCode;
 
     constructor(
         injector: Injector,
@@ -52,9 +64,11 @@ export class UserDropdownMenuComponent implements AfterViewInit, OnInit {
         private elementRef: ElementRef,
         private featureCheckerService: FeatureCheckerService,
         private changeDetectorRef: ChangeDetectorRef,
-        public bankCodeService: BankCodeService,
+        private bankCodeService: BankCodeService,
+        private memberSettingsService: MemberSettingsServiceProxy,
         public appSession: AppSessionService,
-        public userManagementService: UserManagementService
+        public userManagementService: UserManagementService,
+        public ls: AppLocalizationService
     ) {
         this.impersonationService = injector.get(ImpersonationService);
         this.commonUserInfoService = injector.get(CommonUserInfoServiceProxy);
@@ -92,4 +106,21 @@ export class UserDropdownMenuComponent implements AfterViewInit, OnInit {
         let height = innerHeight - 170 - (this.userManagementService.checkBankCodeFeature() ? 38 : 0);
         return height > 490 ? '100%' : height;
     }
+
+    accessCodeChanged(accessCode: string) {
+        this.accessCode = accessCode;
+        this.memberSettingsService.updateAffiliateCode(accessCode).subscribe(
+            () => {
+                abp.notify.info(this.ls.l('AccessCodeUpdated'));
+                this.appSession.user.affiliateCode = this.accessCode;
+            },
+            /** Update back if error comes */
+            () => this.accessCode = this.appSession.user.affiliateCode
+        );
+    }
+
+    onClick(e) {
+        e.stopPropagation();
+    }
+
 }

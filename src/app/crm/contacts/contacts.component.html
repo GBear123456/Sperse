@@ -61,7 +61,12 @@
         <div class="affiliate-code" *ngIf="rightPanelSetting.id === RP_CONTACT_INFO_ID; else matGroup">
             <h3>{{ l('AffiliateInfo') }}</h3>
             <h4>{{ l('AffiliateCode') }}</h4>
-            <inplace-edit [data]="affiliateCodeInplaceEditData$ | async"
+            <inplace-edit [id]="contactInfo.id"
+                          lEntityName="Name"
+                          [editPlaceholder]="l('Affiliate')"
+                          [value]="affiliateCode$ | async"
+                          [validationRules]="affiliateValidationRules"
+                          [isReadOnlyField]="!contactsService.checkCGPermission(this.contactInfo.groupId)"
                           (valueChanged)="updateAffiliateCode($event)">
             </inplace-edit>
         </div>

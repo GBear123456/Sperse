@@ -10,6 +10,7 @@ import { Observable } from 'rxjs';
 /** Application imports */
 import { ProductsService } from '@root/bank-code/products/products.service';
 import { AppConsts } from '@shared/AppConsts';
+import { BankCodeServiceType } from '@root/bank-code/products/bank-code-service-type.enum';
 
 @Component({
     selector: 'why-they-buy',
@@ -17,7 +18,7 @@ import { AppConsts } from '@shared/AppConsts';
     styleUrls: ['./why-they-buy.component.less']
 })
 export class WhyTheyBuyComponent {
-    hasSubscription$: Observable<boolean> = this.productsService.checkServiceSubscription('WTBeBook');
+    hasSubscription$: Observable<boolean> = this.productsService.checkServiceSubscription(BankCodeServiceType.WTBeBook);
     bookSrc = AppConsts.appBaseHref + 'assets/documents/Why+They+Buy+eBook+-+Black.pdf';
 
     constructor(private productsService: ProductsService) {}

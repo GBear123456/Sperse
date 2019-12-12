@@ -103,7 +103,7 @@ export class PersonalDetailsComponent implements OnDestroy {
             id: field,
             value: value,
             displayValue: field == 'ssn' ?
-                this.getSsnMasked(value): '',
+                this.getSsnMasked(value) : '',
             isEditDialogEnabled: false,
             lEntityName: field,
             lEditPlaceholder: this.ls.l('EditValuePlaceholder')
