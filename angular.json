@@ -71,9 +71,9 @@
               "node_modules/abp-web-resources/Abp/Framework/scripts/libs/abp.blockUI.js",
               "node_modules/abp-web-resources/Abp/Framework/scripts/libs/abp.spin.js",
               "node_modules/abp-web-resources/Abp/Framework/scripts/libs/abp.sweet-alert.js",
-              "node_modules/ngx-extended-pdf-viewer/assets/pdf.js",
-              "node_modules/ngx-extended-pdf-viewer/assets/pdf.worker.js",
-              "node_modules/ngx-extended-pdf-viewer/assets/viewer.js"
+              "node_modules/ngx-extended-pdf-viewer/assets/pdf-es5.js",
+              "node_modules/ngx-extended-pdf-viewer/assets/viewer-es5.js",
+              "node_modules/ngx-extended-pdf-viewer/assets/pdf.worker-es5.js",
             ]
           },
           "configurations": {
