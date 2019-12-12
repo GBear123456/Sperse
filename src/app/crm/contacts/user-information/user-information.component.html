@@ -150,7 +150,7 @@
                     </div>
                     <ul class="items-list">
                         <li *ngFor="let role of data?.roles">
-                            <dx-check-box [disabled]="!changeRolesAllowed" [(value)]="role.isAssigned" text="{{role.roleDisplayName}}" (onValueChanged)="roleUpdate(role)"></dx-check-box>
+                            <dx-check-box [disabled]="!changeRolesAllowed" [(value)]="role.isAssigned" text="{{role.roleDisplayName}}" (onValueChanged)="roleUpdate($event, role)"></dx-check-box>
                         </li>
                     </ul>
                 </div>
