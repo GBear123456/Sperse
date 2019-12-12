@@ -72,7 +72,6 @@ import { TimeZoneComboComponent } from './timing/timezone-combo.component';
 import { JqPluginDirective } from './libs/jq-plugin.directive';
 import { CommonLookupModalComponent } from './lookup/common-lookup-modal.component';
 import { DateRangePickerComponent } from './timing/date-range-picker.component';
-import { InplaceEditComponent } from './inplace-edit/inplace-edit.component';
 import { DatePickerDirective } from './timing/date-picker.component';
 import { PeriodComponent } from './period/period.component';
 import { DateTimeService } from './timing/date-time.service';
@@ -99,6 +98,7 @@ import { TypesListComponent } from '@app/crm/shared/types-list/types-list.compon
 import { StaticListComponent } from './static-list/static-list.component';
 import { LoadingSpinnerModule } from '@app/shared/common/loading-spinner/loading-spinner.module';
 import { SetupStepsComponent } from './setup-steps/setup-steps.component';
+import { InplaceEditModule } from '@app/shared/common/inplace-edit/inplace-edit.module';
 
 @NgModule({
     imports: [
@@ -175,7 +175,6 @@ import { SetupStepsComponent } from './setup-steps/setup-steps.component';
         DatePickerDirective,
         ToolBarComponent,
         HeadLineComponent,
-        InplaceEditComponent,
         InplaceSelectBoxComponent,
         PeriodComponent,
         ImportWizardComponent,
@@ -214,7 +213,7 @@ import { SetupStepsComponent } from './setup-steps/setup-steps.component';
         DatePickerDirective,
         HeadLineComponent,
         ToolBarComponent,
-        InplaceEditComponent,
+        InplaceEditModule,
         InplaceSelectBoxComponent,
         PeriodComponent,
         ImportWizardComponent,

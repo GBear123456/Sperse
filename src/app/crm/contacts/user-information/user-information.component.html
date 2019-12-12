@@ -115,7 +115,16 @@
                 <div class="col-md-7" [ngClass]="{ onecolum: row.offsetWidth < 600 }">
                     <div class="section-item clearfix">
                         <div class="item-edit-label">{{ls.l("EmailAddress")}}:</div>
-                        <inplace-edit #InPlaceEmail [data]="this.getPropData(EMAIL_FIELD)" (valueChanged)="updateValue($event, EMAIL_FIELD)" (openDialog)="InPlaceEmail.showInput(true)"></inplace-edit>
+                        <inplace-edit #InPlaceEmail
+                                      [id]="null"
+                                      [value]="data && data.user && data.user[EMAIL_FIELD]"
+                                      [isEditDialogEnabled]="true"
+                                      [validationRules]="validationRules[EMAIL_FIELD] || []"
+                                      [lEntityName]="EMAIL_FIELD"
+                                      [editPlaceholder]="ls.l('EditValuePlaceholder')"
+                                      (valueChanged)="updateValue($event, EMAIL_FIELD)"
+                                      (openDialog)="InPlaceEmail.showInput(true)">
+                        </inplace-edit>
                     </div>
                     <div class="section-item clearfix">
                         <div class="item-edit-label">{{ls.l("PhoneNumber")}}:</div>

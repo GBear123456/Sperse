@@ -272,19 +272,6 @@ export class UserInformationComponent implements OnInit, OnDestroy {
             this.inviteData.assignedRoleNames.splice(roleIndex, 1);
     }
 
-    getPropData(field: string) {
-        let validationRules = this.validationRules[field] || [];
-
-        return {
-            id: null,
-            value: this.data && this.data.user && this.data.user[field],
-            isEditDialogEnabled: true,
-            validationRules: validationRules,
-            lEntityName: field,
-            lEditPlaceholder: this.ls.l('EditValuePlaceholder')
-        } as InplaceEditModel;
-    }
-
     updateValue(value, fieldName) {
         this.update(fieldName, value);
     }

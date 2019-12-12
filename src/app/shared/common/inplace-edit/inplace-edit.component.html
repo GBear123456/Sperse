@@ -1,30 +1,42 @@
-<div *ngIf="data?.value && label">{{ label }}</div>
-<div [hidden]="isEditModeEnabled" class="inplace-edit-view-mode {{multiline ? 'multiline': ''}}">
-    <span class="link" [ngClass]="{ 'placeholder': !data?.value }" [attr.title]="data?.link" (click)="setEditModeEnabled(true, $event)">
-        <a (click)="data?.link && $event.stopPropagation()" [attr.href]="data?.link" [attr.title]="data?.displayValue || data?.value || data?.lEditPlaceholder" target="_blank" #editText>{{data?.displayValue || data?.value || data?.lEditPlaceholder}}</a>
+<div *ngIf="value && label">{{ label }}</div>
+<div [hidden]="isEditModeEnabled"
+     class="inplace-edit-view-mode {{multiline ? 'multiline': ''}}"
+     (click)="setEditModeEnabled(true, $event)">
+    <span class="link" [ngClass]="{ 'placeholder': !value }" [attr.title]="link">
+        <a (click)="link && $event.stopPropagation()" [attr.href]="link" [attr.title]="displayValue || value || editPlaceholder" target="_blank" #editText>{{displayValue || value || editPlaceholder}}</a>
     </span>
-    <div class="actions" [ngClass]="{ hidden: data?.isReadOnlyField }">
-        <i *ngIf="data?.isEditDialogEnabled" class="edit fa fa-pencil" aria-hidden="true" (click)="showDialog($event)"></i>
-        <i *ngIf="data?.isDeleteEnabled" class="delete fa fa-times" aria-hidden="true" (click)="deleteItem($event)"></i>
+    <div class="actions" [ngClass]="{ hidden: isReadOnlyField }">
+        <i *ngIf="isEditDialogEnabled" class="edit fa fa-pencil" aria-hidden="true" (click)="showDialog($event)"></i>
+        <i *ngIf="isDeleteEnabled" class="delete fa fa-times" aria-hidden="true" (click)="deleteItem($event)"></i>
+        <i *ngIf="isCopyEnabled && value" class="copy fa fa-copy" aria-hidden="true" (click)="copyItem($event)"></i>
     </div>
 </div>
-<div *ngIf="!data?.isReadOnlyField && isEditModeEnabled" class="inplace-edit-edit-mode {{multiline ? 'multiline': ''}}">
+<div *ngIf="!isReadOnlyField && isEditModeEnabled" class="inplace-edit-edit-mode {{multiline ? 'multiline': ''}}">
     <dx-text-area *ngIf="multiline"
-        [placeholder]="data?.lEditPlaceholder"
+        [placeholder]="editPlaceholder"
         [(value)]="valueOriginal"
         [autoResizeEnabled]="true"
         (onInitialized)="onTextAreaInitialized($event)">
-        <dx-validator [validationRules]="data?.validationRules || []"></dx-validator>
+        <dx-validator [validationRules]="validationRules || []"></dx-validator>
     </dx-text-area>
     <dx-text-box *ngIf="!multiline"
-        [placeholder]="data?.lEditPlaceholder"
+        [placeholder]="editPlaceholder"
         [(value)]="valueOriginal"
         [maskInvalidMessage]="maskInvalidMessage"
         [maxLength]="maxLength"
         (onFocusIn)="onFocusIn($event)"
+        (onEnterKey)="updateItem()"
         (onFocusOut)="onFocusOut($event)">
-        <dx-validator [validationRules]="data?.validationRules || []"></dx-validator>
+        <dx-validator [validationRules]="validationRules || []"></dx-validator>
     </dx-text-box>
-    <dx-button class="button-update" icon="todo" (onClick)="updateItem()"></dx-button>
-    <dx-button class="button-exit" icon="refresh" (onClick)="setEditModeEnabled(false)"></dx-button>
+    <dx-button *ngIf="showUpdateButton"
+               class="button-update"
+               icon="todo"
+               (onClick)="updateItem()">
+    </dx-button>
+    <dx-button *ngIf="showRefreshButton"
+               class="button-exit"
+               icon="refresh"
+               (onClick)="setEditModeEnabled(false)">
+    </dx-button>
 </div>

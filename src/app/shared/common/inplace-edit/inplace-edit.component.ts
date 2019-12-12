@@ -15,6 +15,7 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 import { DxTextBoxComponent } from 'devextreme-angular/ui/text-box';
 import { DxTextAreaComponent } from 'devextreme-angular/ui/text-area';
+import { ClipboardService } from 'ngx-clipboard';
 
 /** Application imports */
 import { AppComponentBase } from '@shared/common/app-component-base';
@@ -25,6 +26,7 @@ import { InplaceEditModel } from './inplace-edit.model';
     selector: 'inplace-edit',
     templateUrl: './inplace-edit.component.html',
     styleUrls: ['./inplace-edit.component.less'],
+    providers: [ ClipboardService ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class InplaceEditComponent extends AppComponentBase {
@@ -35,7 +37,19 @@ export class InplaceEditComponent extends AppComponentBase {
     @Input() set data(model: InplaceEditModel) {
         if (model && (!this._data || this._data.value != model.value)) {
             this._data = model;
-            this.valueOriginal = model.value;
+            this.value = this.valueOriginal = model.value;
+            this.id = model.id;
+            this.displayValue = model.displayValue;
+            this.value = model.value;
+            this.link = model.link;
+            this.validationRules = model.validationRules;
+            this.isReadOnlyField = model.isReadOnlyField;
+            this.isEditDialogEnabled = model.isEditDialogEnabled;
+            this.isDeleteEnabled = model.isDeleteEnabled;
+            this.lEntityName = model.lEntityName;
+            this.editPlaceholder = model.editPlaceholder;
+            this.lDeleteConfirmTitle = model.lDeleteConfirmTitle;
+            this.lDeleteConfirmMessage = model.lDeleteConfirmMessage;
             this.changeDetector.detectChanges();
         }
     }
@@ -43,20 +57,37 @@ export class InplaceEditComponent extends AppComponentBase {
         return this._data;
     }
 
+    @Input() id: number;
     @Input() mask: string;
     @Input() multiline = false;
     @Input() maskInvalidMessage: string;
     @Input() maxLength;
     @Input() isOptional;
     @Input() label: string;
-
+    @Input() value: string;
+    @Input() displayValue: string;
+    @Input() link: string;
+    @Input() validationRules: object[];
+    @Input() isReadOnlyField = false;
+    @Input() isEditDialogEnabled = false;
+    @Input() isDeleteEnabled = false;
+    @Input() isCopyEnabled = false;
+    @Input() lEntityName: string;
+    @Input() editPlaceholder: string;
+    @Input() lDeleteConfirmTitle: string;
+    @Input() lDeleteConfirmMessage: string;
+    @Input() allowCopy = false;
+    @Input() showUpdateButton = true;
+    @Input() showRefreshButton = true;
+    @Input() saveOnClose = false;
+    @Input() saveOnFocusOut = false;
+    @Input() saveOnEnter = false;
     @Output() valueChanged: EventEmitter<any> = new EventEmitter();
     @Output() itemDeleted: EventEmitter<any> = new EventEmitter();
     @Output() openDialog: EventEmitter<any> = new EventEmitter();
 
     isEditModeEnabled = false;
     valueOriginal = '';
-
     private _data: InplaceEditModel;
     private _clickTimeout;
     private _clickCounter = 0;
@@ -64,23 +95,24 @@ export class InplaceEditComponent extends AppComponentBase {
     constructor(
         injector: Injector,
         public dialog: MatDialog,
-        private changeDetector: ChangeDetectorRef
+        private changeDetector: ChangeDetectorRef,
+        private clipboardService: ClipboardService
     ) {
         super(injector);
     }
 
     deleteItem(event) {
-        if (!this._data.isReadOnlyField)
+        if (!this.isReadOnlyField)
             this.dialog.open(ConfirmDialogComponent, {
                 data: {
-                  title: this.l(this._data.lDeleteConfirmTitle, this.l(this._data.lEntityName)),
-                  message: this.l(this._data.lDeleteConfirmMessage, this.l(this._data.lEntityName).toLowerCase())
+                  title: this.l(this.lDeleteConfirmTitle, this.l(this.lEntityName)),
+                  message: this.l(this.lDeleteConfirmMessage, this.l(this.lEntityName).toLowerCase())
                 }
             }).afterClosed().subscribe(result => {
                 if (result) {
                     this.dialog.closeAll();
                     if (this.itemDeleted)
-                        this.itemDeleted.emit(this._data.id);
+                        this.itemDeleted.emit(this.id);
                 }
             });
         event.stopPropagation();
@@ -88,7 +120,7 @@ export class InplaceEditComponent extends AppComponentBase {
 
     updateItem() {
         if (this.multiline || this.textBox.instance.option('isValid')) {
-            if (this._data.value != this.valueOriginal && this.valueChanged)
+            if (this.value != this.valueOriginal && this.valueChanged)
                 this.valueChanged.emit(this.valueOriginal);
             this.isEditModeEnabled = false;
             this.changeDetector.detectChanges();
@@ -96,10 +128,10 @@ export class InplaceEditComponent extends AppComponentBase {
     }
 
     setEditModeEnabled(isEnabled: boolean, event?: MouseEvent) {
-        if (this._data.isReadOnlyField)
+        if (this.isReadOnlyField)
             return ;
 
-        if (this._data.value) {
+        if (this.value) {
             this._clickCounter++;
             clearTimeout(this._clickTimeout);
             this._clickTimeout = setTimeout(() => {
@@ -119,7 +151,7 @@ export class InplaceEditComponent extends AppComponentBase {
 
     showInput(enabled) {
         this.isEditModeEnabled = enabled;
-        this.valueOriginal = this._data.value;
+        this.valueOriginal = this.value;
         enabled && setTimeout(() => {
             if (this.multiline)
                 this.textArea.instance.focus();
@@ -138,6 +170,9 @@ export class InplaceEditComponent extends AppComponentBase {
             event.component.option('mask', '');
             event.component.option('isValid', true);
         }
+        if (this.saveOnFocusOut) {
+            this.updateItem();
+        }
     }
 
     onFocusIn(event) {
@@ -149,5 +184,11 @@ export class InplaceEditComponent extends AppComponentBase {
 
     onTextAreaInitialized(event) {
         setTimeout(() => event.component.repaint());
+    }
+
+    copyItem(event) {
+        this.clipboardService.copyFromContent(this.value);
+        abp.notify.info(this.l('Copied'));
+        event.stopPropagation();
     }
 }
