@@ -65997,7 +65997,7 @@ export class UpdateOrderSubscriptionInput implements IUpdateOrderSubscriptionInp
     contactId!: number;
     orderNumber!: string | undefined;
     systemType!: string;
-    subscription!: SubscriptionInput;
+    subscriptions!: SubscriptionInput[];
 
     constructor(data?: IUpdateOrderSubscriptionInput) {
         if (data) {
@@ -66007,7 +66007,7 @@ export class UpdateOrderSubscriptionInput implements IUpdateOrderSubscriptionInp
             }
         }
         if (!data) {
-            this.subscription = new SubscriptionInput();
+            this.subscriptions = [];
         }
     }
 
@@ -66016,7 +66016,11 @@ export class UpdateOrderSubscriptionInput implements IUpdateOrderSubscriptionInp
             this.contactId = data["contactId"];
             this.orderNumber = data["orderNumber"];
             this.systemType = data["systemType"];
-            this.subscription = data["subscription"] ? SubscriptionInput.fromJS(data["subscription"]) : new SubscriptionInput();
+            if (data["subscriptions"] && data["subscriptions"].constructor === Array) {
+                this.subscriptions = [];
+                for (let item of data["subscriptions"])
+                    this.subscriptions.push(SubscriptionInput.fromJS(item));
+            }
         }
     }
 
@@ -66032,7 +66036,11 @@ export class UpdateOrderSubscriptionInput implements IUpdateOrderSubscriptionInp
         data["contactId"] = this.contactId;
         data["orderNumber"] = this.orderNumber;
         data["systemType"] = this.systemType;
-        data["subscription"] = this.subscription ? this.subscription.toJSON() : <any>undefined;
+        if (this.subscriptions && this.subscriptions.constructor === Array) {
+            data["subscriptions"] = [];
+            for (let item of this.subscriptions)
+                data["subscriptions"].push(item.toJSON());
+        }
         return data; 
     }
 }
@@ -66041,7 +66049,7 @@ export interface IUpdateOrderSubscriptionInput {
     contactId: number;
     orderNumber: string | undefined;
     systemType: string;
-    subscription: SubscriptionInput;
+    subscriptions: SubscriptionInput[];
 }
 
 export class OrganizationInfoDto implements IOrganizationInfoDto {
