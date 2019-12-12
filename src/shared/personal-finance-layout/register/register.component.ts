@@ -104,7 +104,7 @@ export class RegisterComponent implements AfterViewInit, OnInit {
         ).subscribe(
             (response: FinalizeApplicationResponse) => {
                 this.sendDecisionToLS(response.status);
-                if (response.status === FinalizeApplicationStatus.Approved) {
+                if (response.status === FinalizeApplicationStatus._0) {
                     applyOfferDialog.close();
                     let messageContent = {
                         button: {
@@ -130,7 +130,7 @@ export class RegisterComponent implements AfterViewInit, OnInit {
                             this.completeApprove(swal);
                         }
                     });
-                } else if (response.status === FinalizeApplicationStatus.Declined) {
+                } else if (response.status === FinalizeApplicationStatus._1) {
                     let messageContent = {
                         button: {
                             text: this.ls.l('GetMoreOptions'),
@@ -185,7 +185,7 @@ export class RegisterComponent implements AfterViewInit, OnInit {
 
     private sendDecisionToLS(status: FinalizeApplicationStatus) {
         if (this.clickId) {
-            const evt = status === FinalizeApplicationStatus.Approved ? 'LSAP' : 'LSDP';
+            const evt = status === FinalizeApplicationStatus._0 ? 'LSAP' : 'LSDP';
             this.http.get(`https://offer.lendspace.com/pxl.php?rxid=${this.clickId}&tdat=&evt=${evt}`).subscribe();
         }
     }
