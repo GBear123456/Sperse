@@ -17901,6 +17901,121 @@ export class MemberServiceProxy {
 }
 
 @Injectable()
+export class MemberSettingsServiceProxy {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @return Success
+     */
+    getAffiliateCode(): Observable<string> {
+        let url_ = this.baseUrl + "/api/services/CRM/MemberSettings/GetAffiliateCode";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetAffiliateCode(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetAffiliateCode(<any>response_);
+                } catch (e) {
+                    return <Observable<string>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<string>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetAffiliateCode(response: HttpResponseBase): Observable<string> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 !== undefined ? resultData200 : <any>null;
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<string>(<any>null);
+    }
+
+    /**
+     * @affiliateCode (optional) 
+     * @return Success
+     */
+    updateAffiliateCode(affiliateCode: string | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/MemberSettings/UpdateAffiliateCode?";
+        if (affiliateCode !== undefined)
+            url_ += "affiliateCode=" + encodeURIComponent("" + affiliateCode) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUpdateAffiliateCode(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUpdateAffiliateCode(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processUpdateAffiliateCode(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+}
+
+@Injectable()
 export class MemberSubscriptionServiceProxy {
     private http: HttpClient;
     private baseUrl: string;
@@ -60405,7 +60520,7 @@ export class AddBankCardPaymentInput implements IAddBankCardPaymentInput {
     amount!: number | undefined;
     gatewayName!: string | undefined;
     gatewayTransactionId!: string | undefined;
-    bankCardInfo!: BankCardInput;
+    bankCardInfo!: BankCardInput | undefined;
 
     constructor(data?: IAddBankCardPaymentInput) {
         if (data) {
@@ -60413,9 +60528,6 @@ export class AddBankCardPaymentInput implements IAddBankCardPaymentInput {
                 if (data.hasOwnProperty(property))
                     (<any>this)[property] = (<any>data)[property];
             }
-        }
-        if (!data) {
-            this.bankCardInfo = new BankCardInput();
         }
     }
 
@@ -60429,7 +60541,7 @@ export class AddBankCardPaymentInput implements IAddBankCardPaymentInput {
             this.amount = data["amount"];
             this.gatewayName = data["gatewayName"];
             this.gatewayTransactionId = data["gatewayTransactionId"];
-            this.bankCardInfo = data["bankCardInfo"] ? BankCardInput.fromJS(data["bankCardInfo"]) : new BankCardInput();
+            this.bankCardInfo = data["bankCardInfo"] ? BankCardInput.fromJS(data["bankCardInfo"]) : <any>undefined;
         }
     }
 
@@ -60464,7 +60576,7 @@ export interface IAddBankCardPaymentInput {
     amount: number | undefined;
     gatewayName: string | undefined;
     gatewayTransactionId: string | undefined;
-    bankCardInfo: BankCardInput;
+    bankCardInfo: BankCardInput | undefined;
 }
 
 export class RequestKBAInput implements IRequestKBAInput {
@@ -61090,14 +61202,16 @@ export interface IUpdateLanguageTextInput {
     value: string;
 }
 
-export class LeadTrackingInformation implements ILeadTrackingInformation {
+export class TrackingInfo implements ITrackingInfo {
+    sourceCode!: string | undefined;
+    channelCode!: string | undefined;
     affiliateCode!: string | undefined;
     referrerUrl!: string | undefined;
     entryUrl!: string | undefined;
     userAgent!: string | undefined;
-    ipAddress!: string | undefined;
+    clientIp!: string | undefined;
 
-    constructor(data?: ILeadTrackingInformation) {
+    constructor(data?: ITrackingInfo) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -61108,45 +61222,51 @@ export class LeadTrackingInformation implements ILeadTrackingInformation {
 
     init(data?: any) {
         if (data) {
+            this.sourceCode = data["sourceCode"];
+            this.channelCode = data["channelCode"];
             this.affiliateCode = data["affiliateCode"];
             this.referrerUrl = data["referrerUrl"];
             this.entryUrl = data["entryUrl"];
             this.userAgent = data["userAgent"];
-            this.ipAddress = data["ipAddress"];
+            this.clientIp = data["clientIp"];
         }
     }
 
-    static fromJS(data: any): LeadTrackingInformation {
+    static fromJS(data: any): TrackingInfo {
         data = typeof data === 'object' ? data : {};
-        let result = new LeadTrackingInformation();
+        let result = new TrackingInfo();
         result.init(data);
         return result;
     }
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["sourceCode"] = this.sourceCode;
+        data["channelCode"] = this.channelCode;
         data["affiliateCode"] = this.affiliateCode;
         data["referrerUrl"] = this.referrerUrl;
         data["entryUrl"] = this.entryUrl;
         data["userAgent"] = this.userAgent;
-        data["ipAddress"] = this.ipAddress;
+        data["clientIp"] = this.clientIp;
         return data; 
     }
 }
 
-export interface ILeadTrackingInformation {
+export interface ITrackingInfo {
+    sourceCode: string | undefined;
+    channelCode: string | undefined;
     affiliateCode: string | undefined;
     referrerUrl: string | undefined;
     entryUrl: string | undefined;
     userAgent: string | undefined;
-    ipAddress: string | undefined;
+    clientIp: string | undefined;
 }
 
 export class CreateLeadInput implements ICreateLeadInput {
     leadTypeId!: number | undefined;
     stageId!: number | undefined;
     followUpDate!: moment.Moment | undefined;
-    trackingInformation!: LeadTrackingInformation | undefined;
+    trackingInfo!: TrackingInfo | undefined;
     namePrefix!: string | undefined;
     firstName!: string | undefined;
     middleName!: string | undefined;
@@ -61192,7 +61312,7 @@ export class CreateLeadInput implements ICreateLeadInput {
             this.leadTypeId = data["leadTypeId"];
             this.stageId = data["stageId"];
             this.followUpDate = data["followUpDate"] ? moment(data["followUpDate"].toString()) : <any>undefined;
-            this.trackingInformation = data["trackingInformation"] ? LeadTrackingInformation.fromJS(data["trackingInformation"]) : <any>undefined;
+            this.trackingInfo = data["trackingInfo"] ? TrackingInfo.fromJS(data["trackingInfo"]) : <any>undefined;
             this.namePrefix = data["namePrefix"];
             this.firstName = data["firstName"];
             this.middleName = data["middleName"];
@@ -61266,7 +61386,7 @@ export class CreateLeadInput implements ICreateLeadInput {
         data["leadTypeId"] = this.leadTypeId;
         data["stageId"] = this.stageId;
         data["followUpDate"] = this.followUpDate ? this.followUpDate.toISOString() : <any>undefined;
-        data["trackingInformation"] = this.trackingInformation ? this.trackingInformation.toJSON() : <any>undefined;
+        data["trackingInfo"] = this.trackingInfo ? this.trackingInfo.toJSON() : <any>undefined;
         data["namePrefix"] = this.namePrefix;
         data["firstName"] = this.firstName;
         data["middleName"] = this.middleName;
@@ -61333,7 +61453,7 @@ export interface ICreateLeadInput {
     leadTypeId: number | undefined;
     stageId: number | undefined;
     followUpDate: moment.Moment | undefined;
-    trackingInformation: LeadTrackingInformation | undefined;
+    trackingInfo: TrackingInfo | undefined;
     namePrefix: string | undefined;
     firstName: string | undefined;
     middleName: string | undefined;
@@ -62410,66 +62530,6 @@ export interface IUTMParameterInfo {
     name: string | undefined;
 }
 
-export class TrackingInfo implements ITrackingInfo {
-    sourceCode!: string | undefined;
-    channelCode!: string | undefined;
-    affiliateCode!: string | undefined;
-    referrerUrl!: string | undefined;
-    entryUrl!: string | undefined;
-    userAgent!: string | undefined;
-    clientIp!: string | undefined;
-
-    constructor(data?: ITrackingInfo) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.sourceCode = data["sourceCode"];
-            this.channelCode = data["channelCode"];
-            this.affiliateCode = data["affiliateCode"];
-            this.referrerUrl = data["referrerUrl"];
-            this.entryUrl = data["entryUrl"];
-            this.userAgent = data["userAgent"];
-            this.clientIp = data["clientIp"];
-        }
-    }
-
-    static fromJS(data: any): TrackingInfo {
-        data = typeof data === 'object' ? data : {};
-        let result = new TrackingInfo();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["sourceCode"] = this.sourceCode;
-        data["channelCode"] = this.channelCode;
-        data["affiliateCode"] = this.affiliateCode;
-        data["referrerUrl"] = this.referrerUrl;
-        data["entryUrl"] = this.entryUrl;
-        data["userAgent"] = this.userAgent;
-        data["clientIp"] = this.clientIp;
-        return data; 
-    }
-}
-
-export interface ITrackingInfo {
-    sourceCode: string | undefined;
-    channelCode: string | undefined;
-    affiliateCode: string | undefined;
-    referrerUrl: string | undefined;
-    entryUrl: string | undefined;
-    userAgent: string | undefined;
-    clientIp: string | undefined;
-}
-
 export class MemberInfoDto implements IMemberInfoDto {
     registrationId!: string;
     name!: string;
@@ -62987,6 +63047,8 @@ export interface IRegisterMemberRequest {
 }
 
 export class GetUserSubscriptionsOutput implements IGetUserSubscriptionsOutput {
+    serviceType!: string | undefined;
+    serviceTypeId!: string | undefined;
     serviceName!: string | undefined;
     serviceId!: string | undefined;
     endDate!: moment.Moment | undefined;
@@ -63002,6 +63064,8 @@ export class GetUserSubscriptionsOutput implements IGetUserSubscriptionsOutput {
 
     init(data?: any) {
         if (data) {
+            this.serviceType = data["serviceType"];
+            this.serviceTypeId = data["serviceTypeId"];
             this.serviceName = data["serviceName"];
             this.serviceId = data["serviceId"];
             this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
@@ -63017,6 +63081,8 @@ export class GetUserSubscriptionsOutput implements IGetUserSubscriptionsOutput {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["serviceType"] = this.serviceType;
+        data["serviceTypeId"] = this.serviceTypeId;
         data["serviceName"] = this.serviceName;
         data["serviceId"] = this.serviceId;
         data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
@@ -63025,6 +63091,8 @@ export class GetUserSubscriptionsOutput implements IGetUserSubscriptionsOutput {
 }
 
 export interface IGetUserSubscriptionsOutput {
+    serviceType: string | undefined;
+    serviceTypeId: string | undefined;
     serviceName: string | undefined;
     serviceId: string | undefined;
     endDate: moment.Moment | undefined;
@@ -64644,8 +64712,9 @@ export interface ISubmitApplicationOutput {
 }
 
 export enum FinalizeApplicationStatus {
-    Approved = "Approved", 
-    Declined = "Declined", 
+    _0 = 0, 
+    _1 = 1, 
+    _2 = 2, 
 }
 
 export class FinalizeApplicationResponse implements IFinalizeApplicationResponse {
