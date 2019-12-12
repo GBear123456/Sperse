@@ -1,13 +1,14 @@
 <section class="iframe">
     <ng-container *ngIf="hasSubscription$ | async; else noSubscription">
         <ngx-extended-pdf-viewer
-            [src]="'/assets/documents/Why+They+Buy+eBook+-+Black.pdf'"
+            [src]="bookSrc"
             backgroundColor="#ffffff"
             [height]="'calc(100vh - 70px)'"
             [delayFirstView]="250"
             [showDownloadButton]="false"
             [showOpenFileButton]="false"
             [showPrintButton]="false"
+            [showBookmarkButton]="false"
             [showPresentationModeButton]="true"
             [ignoreResponsiveCSS]="true"
             [contextMenuAllowed]="false"

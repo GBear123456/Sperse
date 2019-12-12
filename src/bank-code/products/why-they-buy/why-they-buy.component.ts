@@ -1,6 +1,15 @@
+/** Core imports */
 import { Component } from '@angular/core';
-import { ProductsService } from '@root/bank-code/products/products.service';
+
+/** Third party imports */
 import { Observable } from 'rxjs';
+// import '@node_modules/ngx-extended-pdf-viewer/assets/pdf-es5.js';
+// import '@node_modules/ngx-extended-pdf-viewer/assets/pdf.worker-es5.js';
+// import '@node_modules/ngx-extended-pdf-viewer/assets/viewer-es5.js';
+
+/** Application imports */
+import { ProductsService } from '@root/bank-code/products/products.service';
+import { AppConsts } from '@shared/AppConsts';
 
 @Component({
     selector: 'why-they-buy',
@@ -9,6 +18,7 @@ import { Observable } from 'rxjs';
 })
 export class WhyTheyBuyComponent {
     hasSubscription$: Observable<boolean> = this.productsService.checkServiceSubscription('WTBeBook');
+    bookSrc = AppConsts.appBaseHref + 'assets/documents/Why+They+Buy+eBook+-+Black.pdf';
 
     constructor(private productsService: ProductsService) {}
 }
