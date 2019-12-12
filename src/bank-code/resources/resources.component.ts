@@ -37,6 +37,21 @@ export class ResourcesComponent {
                     title: 'Media Kit',
                     fileLink: 'https://new-resources-2019.s3-us-west-1.amazonaws.com/Media+Kit/Media+Kit.pdf',
                     img: './assets/common/images/bank-code/thumbnails/affiliate-marketing-tools/Media_Kit.png'
+                },
+                {
+                    title: 'Affiliate Business Card Images',
+                    fileLink: 'https://new-resources-2019.s3-us-west-1.amazonaws.com/Affiliate+Business+Cards/Affiliate.zip',
+                    img: './assets/common/images/bank-code/thumbnails/BANK-Affiliate-Sample.jpg'
+                },
+                {
+                    title: 'Affilaite Supplies',
+                    fileLink: 'https://new-resources-2019.s3-us-west-1.amazonaws.com/Corporate+Docs/Affiliate+Supplies/Affiliate+Supplies.pdf',
+                    img: './assets/common/images/bank-code/no_image.png'
+                },
+                {
+                    title: 'Weekly Deposit Affiliate Calls',
+                    fileLink: 'https://vo.bankcode.com/weeklydepositaffiliates',
+                    img: './assets/common/images/bank-code/no_image.png'
                 }
             ]
         },
@@ -179,22 +194,22 @@ export class ResourcesComponent {
             list: [
                 {
                     title: 'Trainer Application Form',
-                    fileLink: 'https://new-resources-2019.s3-us-west-1.amazonaws.com/Corporate+Docs/Trainer+Application+Forms/Trainer+Application+Form.pdf',
+                    fileLink: 'https://new-resources-2019.s3-us-west-1.amazonaws.com/Corporate+Docs/Trainer+Application+Forms/Trainer+Application+Form+(1).pdf',
                     img: './assets/common/images/bank-code/thumbnails/application-form/Trainer_Application_Form.png'
                 },
                 {
                     title: 'Trainer Application Form - Print Ready',
-                    fileLink: 'https://new-resources-2019.s3-us-west-1.amazonaws.com/Corporate+Docs/Trainer+Application+Forms/Trainer+Application+Form+-+Print+Ready.pdf',
+                    fileLink: 'https://new-resources-2019.s3-us-west-1.amazonaws.com/Corporate+Docs/Trainer+Application+Forms/Trainer+Application+Form_Print.pdf',
                     img: './assets/common/images/bank-code/thumbnails/application-form/Trainer_Application_Form_Print_Ready.png'
                 },
                 {
                     title: 'Trainer Order Form',
-                    fileLink: 'https://new-resources-2019.s3-us-west-1.amazonaws.com/Corporate+Docs/Trainer+Order+Forms/Trainer+Order+Form.pdf',
+                    fileLink: 'https://new-resources-2019.s3-us-west-1.amazonaws.com/Corporate+Docs/Trainer+Order+Forms/Trainer+Order+Form+(1).pdf',
                     img: './assets/common/images/bank-code/thumbnails/application-form/Trainer_Order_Form.png'
                 },
                 {
                     title: 'Trainer Order Form - Print Ready',
-                    fileLink: 'https://new-resources-2019.s3-us-west-1.amazonaws.com/Corporate+Docs/Trainer+Order+Forms/Trainer+Order+Form+-+Print+Ready.pdf',
+                    fileLink: 'https://new-resources-2019.s3-us-west-1.amazonaws.com/Corporate+Docs/Trainer+Order+Forms/Trainer+Order+Form_Print.pdf',
                     img: './assets/common/images/bank-code/thumbnails/application-form/Trainer_Order_Form_Print_Ready.png'
                 },
                 {
@@ -267,6 +282,11 @@ export class ResourcesComponent {
                     title: 'L4: Communication Mastery PNG',
                     fileLink: 'https://new-resources-2019.s3-us-west-1.amazonaws.com/Trainer+L4/COMMUNICATION+MASTERY_TK.png',
                     img: './assets/common/images/bank-code/thumbnails/trainer-kits/L4_Communication_Mastery_PNG.png'
+                },
+                {
+                    title: 'Trainer Business Card Images',
+                    fileLink: 'https://new-resources-2019.s3-us-west-1.amazonaws.com/Trainer+Business+Cards/Trainer.zip',
+                    img: './assets/common/images/bank-code/thumbnails/BANK-Trainer-Sample.jpg'
                 }
             ]
         },
