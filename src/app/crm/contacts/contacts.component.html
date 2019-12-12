@@ -1,6 +1,6 @@
 <item-details-layout
     [navLinks]="navLinks"
-    [referrerParams]="referrerParams"
+    [queryParams]="queryParams"
     [rightPanelOpened]="rightPanelSetting.opened"
     [rightPanelWidth]="rightPanelSetting.width"
     (onClose)="close()"
@@ -15,7 +15,7 @@
     </ng-container>
     <ng-container underHeader>
         <div class="general-links">
-            <a routerLink="user-inbox" routerLinkActive="general-active-link" [queryParams]="referrerParams" [class.disabled]="!isCommunicationHistoryAllowed"><i class="inbox-icon" aria-hidden="true"></i></a>
+            <a routerLink="user-inbox" routerLinkActive="general-active-link" [queryParams]="queryParams" [class.disabled]="!isCommunicationHistoryAllowed"><i class="inbox-icon" aria-hidden="true"></i></a>
             <i class="phone-icon" aria-hidden="true" [class.disabled]="true"></i>
             <a (click)="showSMSDialog()" [class.disabled]="!isSendSmsAndEmailAllowed"><i class="sms-icon"></i></a>
         </div>
