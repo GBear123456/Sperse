@@ -17912,58 +17912,6 @@ export class MemberSettingsServiceProxy {
     }
 
     /**
-     * @return Success
-     */
-    getAffiliateCode(): Observable<string> {
-        let url_ = this.baseUrl + "/api/services/CRM/MemberSettings/GetAffiliateCode";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetAffiliateCode(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processGetAffiliateCode(<any>response_);
-                } catch (e) {
-                    return <Observable<string>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<string>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processGetAffiliateCode(response: HttpResponseBase): Observable<string> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 !== undefined ? resultData200 : <any>null;
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<string>(<any>null);
-    }
-
-    /**
      * @affiliateCode (optional) 
      * @return Success
      */
@@ -69836,6 +69784,14 @@ export interface IBankAccountUsers {
     userIds: number[] | undefined;
 }
 
+export enum UserGroup {
+    Employee = "Employee", 
+    Member = "Member", 
+    Partner = "Partner", 
+    Investor = "Investor", 
+    Vendor = "Vendor", 
+}
+
 export class UserLoginInfoDto implements IUserLoginInfoDto {
     name!: string | undefined;
     surname!: string | undefined;
@@ -69844,6 +69800,8 @@ export class UserLoginInfoDto implements IUserLoginInfoDto {
     profilePictureId!: string | undefined;
     profileThumbnailId!: string | undefined;
     bankCode!: string | undefined;
+    affiliateCode!: string | undefined;
+    group!: UserGroup | undefined;
     id!: number | undefined;
 
     constructor(data?: IUserLoginInfoDto) {
@@ -69864,6 +69822,8 @@ export class UserLoginInfoDto implements IUserLoginInfoDto {
             this.profilePictureId = data["profilePictureId"];
             this.profileThumbnailId = data["profileThumbnailId"];
             this.bankCode = data["bankCode"];
+            this.affiliateCode = data["affiliateCode"];
+            this.group = data["group"];
             this.id = data["id"];
         }
     }
@@ -69884,6 +69844,8 @@ export class UserLoginInfoDto implements IUserLoginInfoDto {
         data["profilePictureId"] = this.profilePictureId;
         data["profileThumbnailId"] = this.profileThumbnailId;
         data["bankCode"] = this.bankCode;
+        data["affiliateCode"] = this.affiliateCode;
+        data["group"] = this.group;
         data["id"] = this.id;
         return data; 
     }
@@ -69897,6 +69859,8 @@ export interface IUserLoginInfoDto {
     profilePictureId: string | undefined;
     profileThumbnailId: string | undefined;
     bankCode: string | undefined;
+    affiliateCode: string | undefined;
+    group: UserGroup | undefined;
     id: number | undefined;
 }
 
@@ -74371,14 +74335,6 @@ export interface IUiCustomizationSettingsEditDto {
     header: UiCustomizationHeaderSettingsEditDto | undefined;
     menu: UiCustomizationMenuSettingsEditDto | undefined;
     footer: UiCustomizationFooterSettingsEditDto | undefined;
-}
-
-export enum UserGroup {
-    Employee = "Employee", 
-    Member = "Member", 
-    Partner = "Partner", 
-    Investor = "Investor", 
-    Vendor = "Vendor", 
 }
 
 export class UserListRoleDto implements IUserListRoleDto {
