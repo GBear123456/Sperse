@@ -86,11 +86,12 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
 
     private contactInfo: BehaviorSubject<ContactInfoDto> = new BehaviorSubject<ContactInfoDto>(new ContactInfoDto());
     contactInfo$: Observable<ContactInfoDto> = this.contactInfo.asObservable();
-    companyId$: Observable<number> = this.contactsService.organizationContactInfo.pipe(
-        map((organizationContactInfo: OrganizationContactInfoDto) => organizationContactInfo.id)
+    companyId$: Observable<number> = this.contactInfo$.pipe(
+        map((contactInfo: ContactInfoDto) => contactInfo && contactInfo['organizationContactInfo']
+            && contactInfo['organizationContactInfo'].id)
     );
-    companyTitle$: Observable<string> = this.contactsService.organizationContactInfo.pipe(
-        map((organizationContactInfo: OrganizationContactInfoDto) => organizationContactInfo.fullName)
+    companyTitle$: Observable<string> = this.contactInfo$.pipe(
+        map((contactInfo: ContactInfoDto) => contactInfo && contactInfo['organizationContactInfo'].fullName)
     );
 
     private _personContactInfo: BehaviorSubject<PersonContactInfoDto> = new BehaviorSubject<PersonContactInfoDto>(new PersonContactInfoDto());
@@ -389,7 +390,7 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
             UpdateOrganizationInfoInput.fromJS(_.extend({id: data.id}, data.organization))
         ).subscribe(() => {
             data.fullName = value;
-            this.contactsService.organizationInfoUpdate(this.data['organizationContactInfo']);
+            this.contactInfo.next(this.data);
             this.contactsService.invalidateUserData();
         });
     }
