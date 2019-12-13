@@ -372,7 +372,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
     }
 
     isClientDetailPage() {
-        return this.contactGroupId.value != ContactGroup.Partner && this.contactInfo.statusId != ContactStatus.Prospective;
+        return this.contactInfo.statusId != ContactStatus.Prospective;
     }
 
     private storeInitialData() {

@@ -4,7 +4,7 @@ import { Component, AfterViewInit, OnDestroy, Injector, ViewChild } from '@angul
 /** Third party imports */
 import { DxSchedulerComponent } from 'devextreme-angular/ui/scheduler';
 import { MatDialog } from '@angular/material/dialog';
-import * as moment from 'moment';
+import * as moment from 'moment-timezone';
 import buildQuery from 'odata-query';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -174,17 +174,7 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
                 deserializeDates: false,
                 onLoaded: (res) => {
                     res.forEach((record) => {
-                        if (record.AllDay) {
-                            record.fieldTimeZone = this.timezone;
-
-                            let startDate = moment(record.StartDate.substring(0, 19)).format();
-                            record.StartDate = startDate;
-
-                            let endDate = moment(record.EndDate.substring(0, 19)).format();
-                            record.EndDate = endDate;
-                        } else {
-                            record.fieldTimeZone = 'Etc/UTC';
-                        }
+                        record.fieldTimeZone = 'Etc/UTC';
                     });
                 },
                 paginate: false
@@ -432,30 +422,11 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
     }
 
     onContentReady($event) {
-        //!!VP this part fix scroll appearance for month view
         setTimeout(() => this.finishLoading(), 2000);
-/*
-        if (this.currentView == 'month')
-            setTimeout(() => {
-                let scroll = $event.element.getElementsByClassName('dx-scrollable-content')[0];
-                if (scroll) {
-                    scroll.classList.remove('dx-scheduler-scrollable-fixed-content');
-                }
-                $event.component.getWorkSpaceScrollable().update();
-            }, 100);
-*/
     }
 
     onAppointmentFormCreated(event) {
         event.component.hideAppointmentPopup(false);
-
-        let startDate = event.appointmentData.StartDate.substring(0, 11) + '00:00:00Z';
-        event.appointmentData.StartDate = startDate;
-
-        let endDate = event.appointmentData.StartDate.substring(0, 11) + '00:00:00Z';
-        event.appointmentData.EndDate = endDate;
-        event.appointmentData.AllDay = true;
-
         this.showActivityDialog(event.appointmentData);
     }
 
