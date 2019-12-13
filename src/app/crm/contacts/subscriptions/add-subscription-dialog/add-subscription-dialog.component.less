@@ -1,0 +1,63 @@
+:host {
+    padding: 20px 30px 20px 30px;
+    display: block;
+    header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 20px;
+        .mat-dialog-title {
+            margin-bottom: 0;
+            font: 600 18px Montserrat;
+        }
+        /deep/ .mat-dialog-actions {
+            padding: 0;
+            margin-bottom: 0;
+            margin-left: auto;
+            .button {
+                margin: 0;
+            }
+        }
+    }
+    .field {
+        align-items: center;
+        label {
+            width: 40%;
+            padding-left: 0;
+            cursor: pointer;
+        }
+        .dx-textbox, .dx-datebox {
+            width: 60% !important;
+        }
+        &.system-type {
+            margin-bottom: 15px;
+        }
+    }
+
+    .remove-button {
+        position: absolute;
+        right: 0;
+        top: 0;
+    }
+
+    .mat-dialog-content {
+        max-height: initial;
+        height: calc(100vh - 180px);
+    }
+
+    .subscription {
+        padding: 10px 25px 15px 20px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        margin-bottom: 15px;
+        position: relative;
+        .fa-close {
+            position: absolute;
+            font-size: 22px;
+            top: -13px;
+            right: -9px;
+            color: red;
+            cursor: pointer;
+            z-index: 1;
+        }
+    }
+}
