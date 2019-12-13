@@ -14,7 +14,7 @@ export class ProfileService {
             return 'assets/common/images/no-photo-' + gender + '.png';
 
         const tenant = this.appSession.tenant;
-        return tenant.customLayoutType === LayoutType.AdvicePeriod
+        return tenant && tenant.customLayoutType === LayoutType.AdvicePeriod
             ? AppConsts.imageUrls.noPhotoAdvicePeriod
             : AppConsts.imageUrls.noPhoto;
     }
