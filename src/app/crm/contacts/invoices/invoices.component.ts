@@ -13,6 +13,7 @@ import { DxTooltipComponent } from 'devextreme-angular/ui/tooltip';
 import { MatDialog } from '@angular/material/dialog';
 import { finalize, switchMap, first, map } from 'rxjs/operators';
 import startCase from 'lodash/startCase';
+import { Observable } from 'rxjs';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
@@ -254,16 +255,30 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
         );
     }
 
-    downloadInvoicePdf() {
+    getPdfLink(): Observable<string> {
         this.startLoading(true);
-        this.invoiceProxy.generatePdf(this.actionRecordData.InvoiceId, false).pipe(
+        return this.invoiceProxy.generatePdf(this.actionRecordData.InvoiceId, false).pipe(
             finalize(() => this.finishLoading(true))
-        ).subscribe((link: string) => {
-            window.open(link);
+        );
+    }
+
+    downloadInvoicePdf() {
+        this.getPdfLink().subscribe((pdfUrl: string) => {
+            let link = document.createElement('a');
+            link.href = pdfUrl;
+            link.target = '_blank';
+            link.download = this.actionRecordData.InvoiceNumber + '.pdf';
+            link.dispatchEvent(new MouseEvent('click'));
         });
     }
 
     duplicateInvoice() {
         this.openCreateInvoiceDialog(true, true);
+    }
+
+    previewInvoice() {
+        this.getPdfLink().subscribe((pdfUrl: string) => {
+            window.open(pdfUrl, '_blank');
+        });
     }
 }
