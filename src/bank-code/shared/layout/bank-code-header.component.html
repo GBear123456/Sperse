@@ -12,19 +12,4 @@
     <ng-template ad-header-host></ng-template>
 
     <area-navigation [memberAreaLinks]="memberAreaLinks" *ngIf="loggedUserId"></area-navigation>
-
-    <div *ngIf="!loggedUserId" class="navigation btns">
-        <ul class="buttons">
-            <li class="item">
-                <a routerLink="signup" class="sign-up">
-                    Sign Up
-                </a>
-            </li>
-            <li class="item">
-                <a routerLink="login" class="login">
-                    Log In
-                </a>
-            </li>
-        </ul>
-    </div>
 </div>
