@@ -50855,8 +50855,6 @@ export class Contact implements IContact {
     comment!: string | undefined;
     userId!: number | undefined;
     affiliateCode!: string | undefined;
-    old_SourceContactId!: number | undefined;
-    old_OrganizationUnitId!: number | undefined;
     primaryAddressId!: number | undefined;
     primaryEmailId!: number | undefined;
     primaryPhoneId!: number | undefined;
@@ -50921,8 +50919,6 @@ export class Contact implements IContact {
             this.comment = data["comment"];
             this.userId = data["userId"];
             this.affiliateCode = data["affiliateCode"];
-            this.old_SourceContactId = data["old_SourceContactId"];
-            this.old_OrganizationUnitId = data["old_OrganizationUnitId"];
             this.primaryAddressId = data["primaryAddressId"];
             this.primaryEmailId = data["primaryEmailId"];
             this.primaryPhoneId = data["primaryPhoneId"];
@@ -51039,8 +51035,6 @@ export class Contact implements IContact {
         data["comment"] = this.comment;
         data["userId"] = this.userId;
         data["affiliateCode"] = this.affiliateCode;
-        data["old_SourceContactId"] = this.old_SourceContactId;
-        data["old_OrganizationUnitId"] = this.old_OrganizationUnitId;
         data["primaryAddressId"] = this.primaryAddressId;
         data["primaryEmailId"] = this.primaryEmailId;
         data["primaryPhoneId"] = this.primaryPhoneId;
@@ -51150,8 +51144,6 @@ export interface IContact {
     comment: string | undefined;
     userId: number | undefined;
     affiliateCode: string | undefined;
-    old_SourceContactId: number | undefined;
-    old_OrganizationUnitId: number | undefined;
     primaryAddressId: number | undefined;
     primaryEmailId: number | undefined;
     primaryPhoneId: number | undefined;
@@ -58658,7 +58650,7 @@ export class ImportItemInput implements IImportItemInput {
     campaignId!: string | undefined;
     channelId!: string | undefined;
     gclId!: string | undefined;
-    referrerURL!: string | undefined;
+    refererURL!: string | undefined;
     applicantId!: string | undefined;
     applicationId!: string | undefined;
     ipAddress!: string | undefined;
@@ -58694,7 +58686,7 @@ export class ImportItemInput implements IImportItemInput {
             this.campaignId = data["campaignId"];
             this.channelId = data["channelId"];
             this.gclId = data["gclId"];
-            this.referrerURL = data["referrerURL"];
+            this.refererURL = data["refererURL"];
             this.applicantId = data["applicantId"];
             this.applicationId = data["applicationId"];
             this.ipAddress = data["ipAddress"];
@@ -58730,7 +58722,7 @@ export class ImportItemInput implements IImportItemInput {
         data["campaignId"] = this.campaignId;
         data["channelId"] = this.channelId;
         data["gclId"] = this.gclId;
-        data["referrerURL"] = this.referrerURL;
+        data["refererURL"] = this.refererURL;
         data["applicantId"] = this.applicantId;
         data["applicationId"] = this.applicationId;
         data["ipAddress"] = this.ipAddress;
@@ -58759,7 +58751,7 @@ export interface IImportItemInput {
     campaignId: string | undefined;
     channelId: string | undefined;
     gclId: string | undefined;
-    referrerURL: string | undefined;
+    refererURL: string | undefined;
     applicantId: string | undefined;
     applicationId: string | undefined;
     ipAddress: string | undefined;
@@ -59063,7 +59055,7 @@ export class ImportContactInput implements IImportContactInput {
     campaignId!: string | undefined;
     channelId!: string | undefined;
     gclId!: string | undefined;
-    referrerURL!: string | undefined;
+    refererURL!: string | undefined;
     applicantId!: string | undefined;
     applicationId!: string | undefined;
     ipAddress!: string | undefined;
@@ -59121,7 +59113,7 @@ export class ImportContactInput implements IImportContactInput {
             this.campaignId = data["campaignId"];
             this.channelId = data["channelId"];
             this.gclId = data["gclId"];
-            this.referrerURL = data["referrerURL"];
+            this.refererURL = data["refererURL"];
             this.applicantId = data["applicantId"];
             this.applicationId = data["applicationId"];
             this.ipAddress = data["ipAddress"];
@@ -59176,7 +59168,7 @@ export class ImportContactInput implements IImportContactInput {
         data["campaignId"] = this.campaignId;
         data["channelId"] = this.channelId;
         data["gclId"] = this.gclId;
-        data["referrerURL"] = this.referrerURL;
+        data["refererURL"] = this.refererURL;
         data["applicantId"] = this.applicantId;
         data["applicationId"] = this.applicationId;
         data["ipAddress"] = this.ipAddress;
@@ -59216,7 +59208,7 @@ export interface IImportContactInput {
     campaignId: string | undefined;
     channelId: string | undefined;
     gclId: string | undefined;
-    referrerURL: string | undefined;
+    refererURL: string | undefined;
     applicantId: string | undefined;
     applicationId: string | undefined;
     ipAddress: string | undefined;
@@ -61154,7 +61146,7 @@ export class TrackingInfo implements ITrackingInfo {
     sourceCode!: string | undefined;
     channelCode!: string | undefined;
     affiliateCode!: string | undefined;
-    referrerUrl!: string | undefined;
+    refererUrl!: string | undefined;
     entryUrl!: string | undefined;
     userAgent!: string | undefined;
     clientIp!: string | undefined;
@@ -61173,7 +61165,7 @@ export class TrackingInfo implements ITrackingInfo {
             this.sourceCode = data["sourceCode"];
             this.channelCode = data["channelCode"];
             this.affiliateCode = data["affiliateCode"];
-            this.referrerUrl = data["referrerUrl"];
+            this.refererUrl = data["refererUrl"];
             this.entryUrl = data["entryUrl"];
             this.userAgent = data["userAgent"];
             this.clientIp = data["clientIp"];
@@ -61192,7 +61184,7 @@ export class TrackingInfo implements ITrackingInfo {
         data["sourceCode"] = this.sourceCode;
         data["channelCode"] = this.channelCode;
         data["affiliateCode"] = this.affiliateCode;
-        data["referrerUrl"] = this.referrerUrl;
+        data["refererUrl"] = this.refererUrl;
         data["entryUrl"] = this.entryUrl;
         data["userAgent"] = this.userAgent;
         data["clientIp"] = this.clientIp;
@@ -61204,7 +61196,7 @@ export interface ITrackingInfo {
     sourceCode: string | undefined;
     channelCode: string | undefined;
     affiliateCode: string | undefined;
-    referrerUrl: string | undefined;
+    refererUrl: string | undefined;
     entryUrl: string | undefined;
     userAgent: string | undefined;
     clientIp: string | undefined;
