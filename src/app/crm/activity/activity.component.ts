@@ -163,7 +163,7 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
 //                                    {AssignedUserIds: {any: {Id: this.appSession.userId}}},
                                     {
                                         or: [
-                                            {and: [{StartDate: {ge: this.getStartDate()}}, {EndDate: {le: this.getEndDate()}}]}
+                                            {and: [{StartDate: {le: this.getEndDate()}}, {EndDate: {ge: this.getStartDate()}}]}
                                         ]
                                     }
                                 ]
@@ -507,7 +507,7 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
             }
         };
         if (this.pipelineView)
-            dataSource['customFilter'] = { and: [{ StartDate: { ge: this.getStartDate() } }, { EndDate: { le: this.getEndDate() } }] };
+            dataSource['customFilter'] = { and: [{ StartDate: { le: this.getEndDate() } }, { EndDate: { ge: this.getStartDate() } }] };
 
         this.pipelineDataSource = dataSource;
 
