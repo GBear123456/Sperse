@@ -5,9 +5,9 @@
     </div>
     <div class="personal_info">
         <div class="full_name">
-            <h1 *ngIf="data && data?.personContactInfo">
-                <inplace-edit [id]="personId$ | async"
-                              [value]="personFullName$ | async"
+            <h1 *ngIf="data && data?.personContactInfo as personContactInfo">
+                <inplace-edit [id]="personContactInfo.id"
+                              [value]="trim(personContactInfo.fullName)"
                               [validationRules]="nameValidationRules"
                               [isReadOnlyField]="!manageAllowed"
                               lEntityName="Name"
@@ -45,10 +45,10 @@
                     <div *ngIf="showRemovingOrgRelationProgress" class="loadindicator"></div>
                 </div>
                 <div class="titles">
-                    <h2 class="shift-top">
+                    <h2 *ngIf="data && data?.organizationContactInfo as organizationContactInfo" class="shift-top">
                         <inplace-edit #companyName
-                                      [id]="companyId$ | async"
-                                      [value]="companyTitle$ | async"
+                                      [id]="organizationContactInfo.id"
+                                      [value]="trim(organizationContactInfo.fullName)"
                                       [isReadOnlyField]="!manageAllowed"
                                       lEntityName="Name"
                                       [editPlaceholder]="ls.l('ClientNamePlaceholder')"

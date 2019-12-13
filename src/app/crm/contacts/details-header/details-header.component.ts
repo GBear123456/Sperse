@@ -32,8 +32,7 @@ import {
     PersonOrgRelationShortInfo,
     UpdatePersonOrgRelationInput,
     UpdateOrganizationInfoInput,
-    UpdatePersonNameInput,
-    OrganizationContactInfoDto
+    UpdatePersonNameInput
 } from '@shared/service-proxies/service-proxies';
 import { NameParserService } from '@app/crm/shared/name-parser/name-parser.service';
 import { NoteAddDialogComponent } from '../notes/note-add-dialog/note-add-dialog.component';
@@ -86,23 +85,9 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
 
     private contactInfo: BehaviorSubject<ContactInfoDto> = new BehaviorSubject<ContactInfoDto>(new ContactInfoDto());
     contactInfo$: Observable<ContactInfoDto> = this.contactInfo.asObservable();
-    companyId$: Observable<number> = this.contactInfo$.pipe(
-        map((contactInfo: ContactInfoDto) => contactInfo && contactInfo['organizationContactInfo']
-            && contactInfo['organizationContactInfo'].id)
-    );
-    companyTitle$: Observable<string> = this.contactInfo$.pipe(
-        map((contactInfo: ContactInfoDto) => contactInfo && contactInfo['organizationContactInfo'].fullName)
-    );
 
     private _personContactInfo: BehaviorSubject<PersonContactInfoDto> = new BehaviorSubject<PersonContactInfoDto>(new PersonContactInfoDto());
     personContactInfo$: Observable<PersonContactInfoDto> = this._personContactInfo.asObservable();
-    personId$: Observable<number> = this.personContactInfo$.pipe(
-        map((personContactInfo: PersonContactInfoDto) => personContactInfo && personContactInfo.id)
-    );
-    personFullName$: Observable<string> = this.contactInfo$.pipe(
-        filter(Boolean),
-        map((contactInfoDto: ContactInfoDto) => contactInfoDto.personContactInfo && (contactInfoDto.personContactInfo.fullName || '').trim())
-    );
     personOrganizationInfo$: Observable<PersonOrgRelationShortInfo> = this.personContactInfo$.pipe(
         map((personContactInfo: PersonContactInfoDto) => personContactInfo['personOrgRelationInfo'])
     );
@@ -249,7 +234,6 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
 
     removePersonOrgRelation(event) {
         let companyName = this.data['organizationContactInfo'].fullName;
-        this.contactInfo.next(this.data);
         this.messageService.confirm(
             this.ls.l('ContactRelationRemovalConfirmationMessage', companyName),
             (result) => {
@@ -265,7 +249,6 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
                                 this.data['organizationContactInfo'] = undefined;
                                 this.data.primaryOrganizationContactId = orgRelations.length ?
                                     orgRelations.reverse()[0].organization.id : undefined;
-                                this.contactInfo.next(this.data);
                             }
                             orgRelations.splice(orgRelations.indexOf(orgRelationToDelete), 1);
                             this.displayOrgRelation(orgRelationToDelete.organization.id);
@@ -367,7 +350,6 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
 
     private handlePhotoChange(dataField: string, photo: string, thumbnailId: string) {
         this.data[dataField].primaryPhoto = photo;
-        this.contactInfo.next(this.data);
         if (this.data[dataField].userId == abp.session.userId)
             abp.event.trigger('profilePictureChanged', thumbnailId);
     }
@@ -390,7 +372,6 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
             UpdateOrganizationInfoInput.fromJS(_.extend({id: data.id}, data.organization))
         ).subscribe(() => {
             data.fullName = value;
-            this.contactInfo.next(this.data);
             this.contactsService.invalidateUserData();
         });
     }
@@ -405,7 +386,6 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
             UpdatePersonNameInput.fromJS(_.extend({ id: person.contactId}, person))
         ).subscribe(() => {
             this.data.personContactInfo.fullName = value;
-            this.contactInfo.next(this.data);
         });
     }
 
@@ -524,7 +504,6 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
                 event
             ).subscribe((logo: string) => {
                 this.data['organizationContactInfo'].primaryPhoto = logo;
-                this.contactInfo.next(this.data);
             });
         }
     }
@@ -552,7 +531,6 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
             .pipe(finalize(() => this.loadingService.finishLoading()))
             .subscribe((result) => {
                 this.data['organizationContactInfo'] = result;
-                this.contactInfo.next(this.data);
                 this.contactsService.updateLocation(this.data.id, this.data['leadId'], result && result.id);
             });
     }
@@ -563,5 +541,9 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
 
     refresh() {
         this.onInvalidate.emit();
+    }
+
+    trim(value: string): string {
+        return (value || '').trim();
     }
 }
