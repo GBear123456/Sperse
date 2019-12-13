@@ -81,6 +81,7 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
     public showViewerType: DocumentViewerType;
     public documentViewerTypes = DocumentViewerType;
     public clickedCellKey: string;
+    public currentDocumentURL: string;
     private defaultNoDataText = this.ls('Platform', 'NoData');
     public noDataText = '';
     public validTextExtensions: String[] = ['txt', 'text'];
@@ -438,6 +439,7 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
                 case DocumentViewerType.VIDEO:
                     this.documentsService.getDocumentUrlInfoObservable(this.currentDocumentInfo.id).subscribe((urlInfo) => {
                         super.finishLoading(true);
+                        this.currentDocumentURL = urlInfo.url;
                         this.showViewerType = viewerType;
                         this.openDocumentMode = true;
                     });
