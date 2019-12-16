@@ -1,5 +1,5 @@
 <!--<dx-scroll-view showScrollbar="onHover" [height]="'calc(100vh - 70px)'">-->
-    <div class="container-fluid resources-container">
+    <div class="container-fluid resources-container" *ngIf="data$ | async as data">
         <!--<div class="mt-5 mb-5"><h1>Resources</h1></div>-->
         <div class="row">
             <div class="col-lg-3 sidebar-nav">
