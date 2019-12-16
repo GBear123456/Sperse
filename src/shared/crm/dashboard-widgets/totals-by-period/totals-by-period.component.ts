@@ -2,6 +2,7 @@
 import {
     ChangeDetectionStrategy,
     Component,
+    DoCheck,
     OnInit,
     Injector,
     Inject,
@@ -61,7 +62,7 @@ import { LayoutService } from '@app/shared/layout/layout.service';
     providers: [ DashboardServiceProxy, DecimalPipe ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class TotalsByPeriodComponent extends AppComponentBase implements OnInit, OnDestroy {
+export class TotalsByPeriodComponent extends AppComponentBase implements DoCheck, OnInit, OnDestroy {
     @ViewChild(DxChartComponent) chartComponent: DxChartComponent;
     totalsData: any[] = [];
     totalsData$: Observable<GetCustomerAndLeadStatsOutput[]>;
@@ -125,6 +126,7 @@ export class TotalsByPeriodComponent extends AppComponentBase implements OnInit,
     leadStagesSeries$: Observable<any>;
     showFullLegend = false;
     startCase = startCase;
+    widgetWidth: number;
 
     constructor(
         injector: Injector,
@@ -203,6 +205,16 @@ export class TotalsByPeriodComponent extends AppComponentBase implements OnInit,
                 this.allSeriesColors[seria.name] = seria.color;
             });
         });
+    }
+
+    ngDoCheck() {
+        if (this.elementRef.nativeElement.offsetWidth) {
+            const newWidgetWidth = this.elementRef.nativeElement.offsetWidth - 60;
+            if (newWidgetWidth !== this.widgetWidth) {
+                this.widgetWidth = newWidgetWidth;
+                this.changeDetectorRef.detectChanges();
+            }
+        }
     }
 
     changeCumulative(e) {

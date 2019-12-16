@@ -28,7 +28,6 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { DashboardWidgetsService } from '@shared/crm/dashboard-widgets/dashboard-widgets.service';
 import { RecentClientsComponent } from '@shared/crm/dashboard-widgets/recent-clients/recent-clients.component';
-import { TotalsByPeriodComponent } from '@shared/crm/dashboard-widgets/totals-by-period/totals-by-period.component';
 import { TotalsBySourceComponent } from '@shared/crm/dashboard-widgets/totals-by-source/totals-by-source.component';
 import { ClientsByRegionComponent } from '@shared/crm/dashboard-widgets/clients-by-region/clients-by-region.component';
 import { CrmIntroComponent } from '../shared/crm-intro/crm-intro.component';
@@ -48,7 +47,6 @@ import { AppPermissions } from '@shared/AppPermissions';
 export class DashboardComponent extends AppComponentBase implements AfterViewInit, OnInit, OnDestroy {
     @ViewChild(ClientsByRegionComponent) clientsByRegion: ClientsByRegionComponent;
     @ViewChild(RecentClientsComponent) recentClientsComponent: RecentClientsComponent;
-    @ViewChild(TotalsByPeriodComponent) totalsByPeriod: TotalsByPeriodComponent;
     @ViewChild(TotalsBySourceComponent) totalsBySource: TotalsBySourceComponent;
     @ViewChild(PeriodComponent) periodComponent: PeriodComponent;
     private rootComponent: any;
