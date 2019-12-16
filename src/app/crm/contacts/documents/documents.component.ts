@@ -101,7 +101,7 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
         private _documentService: DocumentServiceProxy,
         private _documentTypeService: DocumentTypeServiceProxy,
         private _contactService: ContactServiceProxy,
-        private _clientService: ContactsService,
+        private clientService: ContactsService,
         private printerService: PrinterService,
         private cacheService: CacheService,
         private renderer: Renderer2,
@@ -124,7 +124,7 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
             }
         ];
         this.data = this._contactService['data'];
-        _clientService.invalidateSubscribe((area) => {
+        clientService.invalidateSubscribe((area) => {
             if (area == 'documents') {
                 this._documentService['data'] = undefined;
                 this.loadDocuments();
@@ -255,7 +255,7 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
                 ]
             }
         ];
-        this._clientService.toolbarUpdate(this.viewerToolbarConfig);
+        this.clientService.toolbarUpdate(this.viewerToolbarConfig);
     }
 
     getViewedDocumentElement() {
@@ -278,7 +278,9 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
     }
 
     ngAfterViewInit() {
-        this.loadDocuments();
+        this.clientService.contactInfoSubscribe(() => {
+            this.loadDocuments();
+        })
     }
 
     loadDocumentTypes() {
@@ -354,7 +356,7 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
     }
 
     ngOnDestroy() {
-        this._clientService.toolbarUpdate();
+        this.clientService.toolbarUpdate();
         if (this.openDocumentMode) {
             this.closeDocument();
         }
@@ -641,7 +643,7 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
 
     closeDocument() {
         this.openDocumentMode = false;
-        this._clientService.toolbarUpdate();
+        this.clientService.toolbarUpdate();
     }
 
     @HostListener('document:keydown', ['$event'])

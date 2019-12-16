@@ -408,7 +408,7 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
     }
 
     updateSaveOption(option: ContextMenuItem) {
-        if (option.visible) {
+        if (option && option.visible) {
             this.addButtonTitle = option.text;
             option.selected = true;
             this.addContextComponent.instance.option('selectedItem', option);
