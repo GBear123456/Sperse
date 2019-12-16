@@ -58650,7 +58650,7 @@ export class ImportItemInput implements IImportItemInput {
     campaignId!: string | undefined;
     channelId!: string | undefined;
     gclId!: string | undefined;
-    refererURL!: string | undefined;
+    refererUrl!: string | undefined;
     applicantId!: string | undefined;
     applicationId!: string | undefined;
     ipAddress!: string | undefined;
@@ -58686,7 +58686,7 @@ export class ImportItemInput implements IImportItemInput {
             this.campaignId = data["campaignId"];
             this.channelId = data["channelId"];
             this.gclId = data["gclId"];
-            this.refererURL = data["refererURL"];
+            this.refererUrl = data["refererUrl"];
             this.applicantId = data["applicantId"];
             this.applicationId = data["applicationId"];
             this.ipAddress = data["ipAddress"];
@@ -58722,7 +58722,7 @@ export class ImportItemInput implements IImportItemInput {
         data["campaignId"] = this.campaignId;
         data["channelId"] = this.channelId;
         data["gclId"] = this.gclId;
-        data["refererURL"] = this.refererURL;
+        data["refererUrl"] = this.refererUrl;
         data["applicantId"] = this.applicantId;
         data["applicationId"] = this.applicationId;
         data["ipAddress"] = this.ipAddress;
@@ -58751,7 +58751,7 @@ export interface IImportItemInput {
     campaignId: string | undefined;
     channelId: string | undefined;
     gclId: string | undefined;
-    refererURL: string | undefined;
+    refererUrl: string | undefined;
     applicantId: string | undefined;
     applicationId: string | undefined;
     ipAddress: string | undefined;
@@ -59055,7 +59055,7 @@ export class ImportContactInput implements IImportContactInput {
     campaignId!: string | undefined;
     channelId!: string | undefined;
     gclId!: string | undefined;
-    refererURL!: string | undefined;
+    refererUrl!: string | undefined;
     applicantId!: string | undefined;
     applicationId!: string | undefined;
     ipAddress!: string | undefined;
@@ -59113,7 +59113,7 @@ export class ImportContactInput implements IImportContactInput {
             this.campaignId = data["campaignId"];
             this.channelId = data["channelId"];
             this.gclId = data["gclId"];
-            this.refererURL = data["refererURL"];
+            this.refererUrl = data["refererUrl"];
             this.applicantId = data["applicantId"];
             this.applicationId = data["applicationId"];
             this.ipAddress = data["ipAddress"];
@@ -59168,7 +59168,7 @@ export class ImportContactInput implements IImportContactInput {
         data["campaignId"] = this.campaignId;
         data["channelId"] = this.channelId;
         data["gclId"] = this.gclId;
-        data["refererURL"] = this.refererURL;
+        data["refererUrl"] = this.refererUrl;
         data["applicantId"] = this.applicantId;
         data["applicationId"] = this.applicationId;
         data["ipAddress"] = this.ipAddress;
@@ -59208,7 +59208,7 @@ export interface IImportContactInput {
     campaignId: string | undefined;
     channelId: string | undefined;
     gclId: string | undefined;
-    refererURL: string | undefined;
+    refererUrl: string | undefined;
     applicantId: string | undefined;
     applicationId: string | undefined;
     ipAddress: string | undefined;
@@ -64652,9 +64652,9 @@ export interface ISubmitApplicationOutput {
 }
 
 export enum FinalizeApplicationStatus {
-    _0 = 0, 
-    _1 = 1, 
-    _2 = 2, 
+    Approved = "Approved", 
+    Declined = "Declined", 
+    Finalizing = "Finalizing", 
 }
 
 export class FinalizeApplicationResponse implements IFinalizeApplicationResponse {
