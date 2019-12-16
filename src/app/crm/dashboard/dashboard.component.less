@@ -3,7 +3,6 @@
     position: relative;
 
     .wrapper {
-        padding: 20px 0px 20px 20px!important;
         max-width: 100%!important;
         height: 100%;
     }
@@ -13,40 +12,61 @@
         margin-top: 76px;
 
         @media (max-width: 991px) {
-            margin-left: 0px;
+            margin-left: 0;
         }
     }
 
     .add-client {
-        padding: 0px 40px;
+        padding: 0 40px;
+    }
+
+    .left-side,
+    .right-side {
+        padding-left: 24px;
+        padding-right: 24px;
+    }
+
+    .right-side {
+        &.first {
+            padding-bottom: 30px;
+            border-bottom: 1px solid #e5e9ec;
+        }
+        &.recent-clients {
+            padding-left: 14px;
+            padding-right: 14px;
+        }
     }
 
     .dashboard-widgets {
         height: calc(~"100vh - 200px");
-        padding-right: 20px;
+        .counts-and-totals {
+            border-bottom: 1px solid #e5e9ec;
+        }
         .analytics-wrap {
             display: flex;
             flex-flow: row wrap;
             justify-content: space-between;
             align-items: flex-start;
 
-            .left-side,
             .right-side {
-                & > * {
-                    margin-bottom: 20px;
-                }
+                border-left: 1px solid #e5e9ec;
             }
 
             .left-side > * {
-                border: 1px solid #E5E9EC;
                 background-color: #FFFFFF;
-                border-radius: 4px;
                 position: relative;
-                padding: 10px 30px;
                 @media (min-width: 1200px) {
                     min-height: 330px;
                 }
             }
+        }
+        /deep/ new-items-totals .content-wrap {
+            border-bottom: 1px solid #E5E9EC;
+            padding-bottom: 30px;
+        }
+        new-items-totals,
+        totals-by-period {
+            padding-top: 25px;
         }
     }
 

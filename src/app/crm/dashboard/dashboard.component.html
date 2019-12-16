@@ -10,7 +10,7 @@
 <div [@routerTransition]>
   <left-menu (openIntro)="openDialog()" [class.hidden]="leftMenuHidden" (openPaymentWizard)="openPaymentWizardDialog()"></left-menu>
   <div class="widgets-wrapper">
-      <div class="col-lg-6 col-xs-12 col-sm-12 wrapper">
+      <div class="wrapper">
           <div class="dashboard-stub" *ngIf="showWelcomeSection$ | async">
               <div>
                   <img class="logo-crm" alt="CRM Logo" src="./assets/common/icons/cfo.png" />
@@ -26,19 +26,19 @@
           <dx-scroll-view *ngIf="showDefaultSection$ | async" showScrollbar="onHover">
               <div class="dashboard-widgets">
                   <counts-and-totals *ngIf="isGrantedCustomers || isGrantedOrders"></counts-and-totals>
-                  <div class="analytics-wrap row">
+                  <div class="analytics-wrap">
                       <div class="left-side col-xl-4">
                           <new-items-totals *ngIf="isGrantedCustomers || isGrantedOrders"></new-items-totals>
                       </div>
-                      <div class="right-side col-xl-8">
+                      <div class="first right-side col-xl-8">
                           <totals-by-period *ngIf="isGrantedCustomers"></totals-by-period>
                       </div>
                   </div>
-                  <div class="analytics-wrap row">
+                  <div class="analytics-wrap">
                       <div class="left-side col-lg-6 col-xl-4">
                           <totals-by-source *ngIf="isGrantedCustomers"></totals-by-source>
                       </div>
-                      <div class="right-side col-lg-6 col-xl-8">
+                      <div class="right-side recent-clients col-lg-6 col-xl-8">
                           <recent-clients *ngIf="isGrantedCustomers"></recent-clients>
                       </div>
                   </div>

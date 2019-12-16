@@ -209,7 +209,7 @@ export class TotalsByPeriodComponent extends AppComponentBase implements DoCheck
 
     ngDoCheck() {
         if (this.elementRef.nativeElement.offsetWidth) {
-            const newWidgetWidth = this.elementRef.nativeElement.offsetWidth - 60;
+            const newWidgetWidth = this.elementRef.nativeElement.offsetWidth;
             if (newWidgetWidth !== this.widgetWidth) {
                 this.widgetWidth = newWidgetWidth;
                 this.changeDetectorRef.detectChanges();
