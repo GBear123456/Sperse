@@ -1,20 +1,19 @@
 <section class="iframe">
-    <ng-container *ngIf="hasSubscription$ | async; else noSubscription">
-        <ngx-extended-pdf-viewer
-            [src]="bookSrc"
-            backgroundColor="#ffffff"
-            [height]="'calc(100vh - 70px)'"
-            [delayFirstView]="250"
-            [showDownloadButton]="false"
-            [showOpenFileButton]="false"
-            [showPrintButton]="false"
-            [showBookmarkButton]="false"
-            [showPresentationModeButton]="true"
-            [ignoreResponsiveCSS]="true"
-            [contextMenuAllowed]="false"
-            [useBrowserLocale]="true">
-        </ngx-extended-pdf-viewer>
-    </ng-container>
+    <ngx-extended-pdf-viewer
+        *ngIf="hasSubscription$ | async; else noSubscription"
+        [src]="bookSrc"
+        backgroundColor="#ffffff"
+        [height]="'calc(100vh - 70px)'"
+        [delayFirstView]="250"
+        [showDownloadButton]="false"
+        [showOpenFileButton]="false"
+        [showPrintButton]="false"
+        [showBookmarkButton]="false"
+        [showPresentationModeButton]="true"
+        [ignoreResponsiveCSS]="true"
+        [contextMenuAllowed]="false"
+        [useBrowserLocale]="true">
+    </ngx-extended-pdf-viewer>
     <ng-template #noSubscription>
         <iframe src="https://wp.bankcode.pro/why-they-buy-digital-landing/"
                 frameborder="0">
