@@ -22,7 +22,7 @@
                                 name="companyType"
                                 displayExpr="name"
                                 valueExpr="id"
-                                placeholder="{{ls.l('Select')}}"
+                                [placeholder]="ls.l('Select')"
                                 [dataSource]="companyTypes$ | async"
                                 [(value)]="company.typeId">
                             </dx-select-box>

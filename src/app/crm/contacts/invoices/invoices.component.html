@@ -27,7 +27,8 @@
                                         <div class="link" [ngClass]="{disabled: markAsCancelledDisabled}" (click)="onMenuItemClick(updateStatus.bind(this, invoiceStatus.Canceled))"><i class="e-remove"></i>{{l('Cancel')}}</div>
                                         <div class="link disabled" [hidden]="true"><i class="folder-13"></i>{{l('Archive')}}</div>
                                         <div class="link" [ngClass]="{disabled: deleteDisabled}" (click)="onMenuItemClick(deleteInvoice)"><i class="bin"></i>{{l('Delete')}}</div>
-                                        <div class="link" [ngClass]="{disabled: previewDisabled}" (click)="onMenuItemClick(editInvoice)"><i class="preview"></i>{{l('Preview')}}</div>
+                                        <div class="link" [ngClass]="{disabled: deleteDisabled}" (click)="onMenuItemClick(editInvoice)"><i style="font-size: 18px;" class="fa fa-edit"></i>{{l('Edit')}}</div>
+                                        <div class="link" [ngClass]="{disabled: previewDisabled}" (click)="onMenuItemClick(previewInvoice)"><i class="preview"></i>{{l('Preview')}}</div>
                                         <div class="link" (click)="onMenuItemClick(addInvoice)"><i class="add"></i>{{l('Add Invoice')}}</div>
                                     </div>
                                 </div>

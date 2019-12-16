@@ -61,7 +61,6 @@ import { NavLink } from '@app/crm/contacts/nav-link.model';
 import { ContextType } from '@app/crm/contacts/details-header/context-type.enum';
 import { DetailsHeaderComponent } from '@app/crm/contacts/details-header/details-header.component';
 import { SMSDialogComponent } from '@app/crm/shared/sms-dialog/sms-dialog.component';
-import { InplaceEditModel } from '@app/shared/common/inplace-edit/inplace-edit.model';
 
 @Component({
     templateUrl: './contacts.component.html',
@@ -81,7 +80,6 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
     readonly RP_CONTACT_INFO_ID = RP_CONTACT_INFO_ID;
 
     customerId: number;
-    contactGroups = ContactGroup;
     assignedUsersSelector: (source$: Observable<any>) => Observable<any>;
     contactInfo: ContactInfoDto = new ContactInfoDto();
     personContactInfo: PersonContactInfoDto;
@@ -112,7 +110,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
 
     params: any;
     private rootComponent: any;
-    referrerParams: Params;
+    queryParams: Params;
 
     showToolbar;
     currentItemId;
@@ -124,31 +122,21 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
     isCommunicationHistoryAllowed = false;
     isSendSmsAndEmailAllowed = false;
     private affiliateCode: ReplaySubject<string> = new ReplaySubject(1);
-    affiliateCode$: Observable<string> = this.affiliateCode.asObservable();
-    affiliateCodeInplaceEditData$: Observable<InplaceEditModel> = this.affiliateCode$.pipe(
-        map((affiliateCode: string) => {
-            return {
-                id: this.contactInfo.id,
-                isReadOnlyField: !this.contactsService.checkCGPermission(this.contactInfo.groupId),
-                value: (affiliateCode || '').trim(),
-                validationRules: [
-                    {
-                        type: 'pattern',
-                        pattern: AppConsts.regexPatterns.affiliateCode,
-                        message: this.l('AffiliateCodeIsNotValid')
-                    },
-                    {
-                        type: 'stringLength',
-                        max: 50,
-                        message: this.l('MaxLengthIs', 50)
-                    }
-                ],
-                isEditDialogEnabled: true,
-                lEntityName: 'Name',
-                lEditPlaceholder: this.l('Affiliate')
-            };
-        })
+    affiliateCode$: Observable<string> = this.affiliateCode.asObservable().pipe(
+        map((affiliateCode: string) => (affiliateCode || '').trim())
     );
+    affiliateValidationRules = [
+        {
+            type: 'pattern',
+            pattern: AppConsts.regexPatterns.affiliateCode,
+            message: this.l('AffiliateCodeIsNotValid')
+        },
+        {
+            type: 'stringLength',
+            max: 50,
+            message: this.l('MaxLengthIs', 50)
+        }
+    ];
     public contactGroupId: BehaviorSubject<string> = new BehaviorSubject<string>(null);
     public contactGroupId$: Observable<string> = this.contactGroupId.asObservable().pipe(filter(Boolean));
 
@@ -163,12 +151,12 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
         private partnerService: PartnerServiceProxy,
         private leadService: LeadServiceProxy,
         private pipelineService: PipelineService,
-        private contactsService: ContactsService,
         private store$: Store<AppStore.State>,
         private appStoreService: AppStoreService,
         private customerService: CustomerServiceProxy,
         private itemDetailsService: ItemDetailsService,
-        private contactServiceProxy: ContactServiceProxy
+        private contactServiceProxy: ContactServiceProxy,
+        public contactsService: ContactsService
     ) {
         super(injector);
         this.appStoreService.loadUserDictionaries();
@@ -186,7 +174,8 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
         });
         this._activatedRoute.queryParams
             .pipe(takeUntil(this.destroy$))
-            .subscribe((params: Params) => this.referrerParams = params);
+            .subscribe((params: Params) => this.queryParams = params);
+
         contactsService.verificationSubscribe(
             this.initVerificationChecklist.bind(this)
         );
@@ -246,7 +235,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
                 break;
             case 'orders':
                 this.dataSourceURI = 'Order';
-                this.currentItemId = this.params.contactId;
+                this.currentItemId = this.queryParams.id;
                 break;
             default:
                 break;
@@ -260,10 +249,8 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
         if (this.cacheService.exists(key))
             this.rightPanelSetting = this.cacheService.get(key);
         this.initNavigatorProperties();
-        const itemIdProperty = {
-            User: 'id',
-            Order: 'ContactId'
-        }[this.dataSourceURI] || 'Id';
+        const itemKeyField = this.dataSourceURI == 'User' ? 'id' : 'Id',
+              itemDistinctField = this.dataSourceURI == 'Order' ? 'ContactId' : itemKeyField;
         this.targetEntity$.pipe(
             /** To avoid fast next/prev clicking */
             debounceTime(100),
@@ -277,25 +264,25 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
                 this.dataSourceURI as ItemTypeEnum,
                 this.currentItemId,
                 direction,
-                itemIdProperty
+                itemKeyField,
+                itemDistinctField
             ).pipe(
                 finalize(() => this.finishLoading(true)))
             )
         ).subscribe((itemFullInfo: ItemFullInfo) => {
             let res$ = of(null);
-            if (itemFullInfo && this.currentItemId != itemFullInfo.itemData[itemIdProperty]) {
-                const currentItemId = itemFullInfo.itemData[itemIdProperty];
+            if (itemFullInfo && this.currentItemId != itemFullInfo.itemData[itemKeyField]) {
                 /** New current item Id */
                 res$ = this.reloadCurrentSection({
                     userId: this.dataSourceURI === 'User'
-                            ? itemFullInfo.itemData[itemIdProperty]
+                            ? itemFullInfo.itemData[itemKeyField]
                             : (this.dataSourceURI != 'Lead' ? itemFullInfo.itemData.UserId : undefined),
-                    contactId: ['Customer', 'Partner', 'Order'].indexOf(this.dataSourceURI) >= 0 ?
-                        itemFullInfo.itemData[itemIdProperty] : this.dataSourceURI == 'Lead' ? itemFullInfo.itemData.CustomerId : undefined,
+                    contactId: ['Customer', 'Partner'].indexOf(this.dataSourceURI) >= 0 ? itemFullInfo.itemData[itemKeyField] :
+                        this.dataSourceURI == 'Lead' ? itemFullInfo.itemData.CustomerId : itemFullInfo.itemData.ContactId,
                     customerId: this.dataSourceURI == 'Lead' ? itemFullInfo.itemData.CustomerId : undefined,
-                    leadId: this.dataSourceURI == 'Lead' ? itemFullInfo.itemData[itemIdProperty] : undefined,
+                    leadId: this.dataSourceURI == 'Lead' ? itemFullInfo.itemData[itemKeyField] : undefined,
                     companyId: itemFullInfo.itemData.OrganizationId
-                }).pipe(tap(() => this.currentItemId = currentItemId));
+                }).pipe(tap(() => this.currentItemId = itemFullInfo.itemData[itemKeyField]));
                 this.updateLocation(itemFullInfo);
             }
             res$.subscribe(() => {
@@ -310,7 +297,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
     }
 
     private getSection() {
-        return this.referrerParams && this.referrerParams.referrer && this.referrerParams.referrer.split('/').pop()
+        return this.queryParams && this.queryParams.referrer && this.queryParams.referrer.split('/').pop()
             || (this.contactGroupId.value == ContactGroup.Partner ? 'partners' : 'clients');
     }
 
@@ -385,7 +372,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
     }
 
     isClientDetailPage() {
-        return this.contactGroupId.value != ContactGroup.Partner && this.contactInfo.statusId != ContactStatus.Prospective;
+        return this.contactInfo.statusId != ContactStatus.Prospective;
     }
 
     private storeInitialData() {
@@ -714,11 +701,11 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
         this.dialog.closeAll();
         let data = force || JSON.stringify(<any>this.contactService['data']);
         this._router.navigate(
-            [this.referrerParams.referrer || 'app/crm/clients'],
+            [this.queryParams.referrer || 'app/crm/clients'],
             {
                 queryParams: _.extend(
                     _.mapObject(
-                        this.referrerParams,
+                        this.queryParams,
                         (val, key) => key == 'referrer' ? undefined : val
                     ),
                     !force && this.initialData != data ? {refresh: true} : {}

@@ -1,0 +1,71 @@
+<header>
+    <h2 mat-dialog-title>{{ls.l('AddSubscription')}}</h2>
+    <mat-dialog-actions>
+        <button mat-button (click)="saveSubscription()" class="button-layout button-primary">{{ls.l('Save')}}</button>
+    </mat-dialog-actions>
+    <span class="close" (click)="close()"></span>
+</header>
+<span class="close" (click)="close()"></span>
+<mat-dialog-content>
+    <dx-validation-group>
+        <div class="field">
+            <label for="orderNumber">{{ls.l('OrderNumber')}}</label>
+            <dx-text-box name="orderNumber"
+                         [inputAttr]="{ id: 'orderNumber' }"
+                         [(value)]="subscription.orderNumber">
+            </dx-text-box>
+        </div>
+
+        <div class="field system-type">
+            <label for="systemType">{{ls.l('SystemType')}}</label>
+            <dx-text-box name="systemType"
+                         [inputAttr]="{ id: 'systemType' }"
+                         [(value)]="subscription.systemType">
+                <dx-validator>
+                    <dxi-validation-rule type="required" message="{{ls.l('TypeIsRequired')}}."></dxi-validation-rule>
+                </dx-validator>
+            </dx-text-box>
+        </div>
+        <div class="subscription" *ngFor="let subscription of subscription.subscriptions; let i = index">
+            <i *ngIf="i !== 0" class="fa fa-close" (click)="removeSubscriptionFields(i)"></i>
+            <div class="field">
+                <label for="code">{{ls.l('Code')}}</label>
+                <dx-text-box name="code"
+                             [inputAttr]="{ id: 'code' }"
+                             [(value)]="subscription.code">
+                    <dx-validator>
+                        <dxi-validation-rule type="required" message="{{ls.l('CodeIsRequired')}}."></dxi-validation-rule>
+                    </dx-validator>
+                </dx-text-box>
+            </div>
+            <div class="field">
+                <label for="name">{{ls.l('Name')}}</label>
+                <dx-text-box name="name"
+                             [inputAttr]="{ id: 'name' }"
+                             [(value)]="subscription.name">
+                    <dx-validator>
+                        <dxi-validation-rule type="required" message="{{ls.l('NameIsRequired')}}."></dxi-validation-rule>
+                    </dx-validator>
+                </dx-text-box>
+            </div>
+            <div class="field">
+                <label for="endDate">{{ls.l('EndDate') }}</label>
+                <dx-date-box
+                    #endDateDateBox
+                    type="date"
+                    [(value)]="subscription.endDate">
+                </dx-date-box>
+            </div>
+            <div class="field">
+                <label for="amount">{{ls.l('Amount')}}</label>
+                <dx-number-box name="amount"
+                               [inputAttr]="{ id: 'amount' }"
+                               [(value)]="subscription.amount">
+                </dx-number-box>
+            </div>
+        </div>
+        <div class="field">
+            <div class="add-new-button" (click)="addNewSubscriptionFields()"><span>+ Add</span></div>
+        </div>
+    </dx-validation-group>
+</mat-dialog-content>

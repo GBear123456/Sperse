@@ -73,6 +73,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
     private lookupTimeout;
 
     private readonly SAVE_OPTION_DEFAULT = 0;
+    private readonly SAVE_OPTION_DRAFT   = 1;
     private readonly SAVE_OPTION_CACHE_KEY = 'save_option_active_index';
 
     private validationError: string;
@@ -146,12 +147,6 @@ export class CreateInvoiceDialogComponent implements OnInit {
         public ls: AppLocalizationService,
         @Inject(MAT_DIALOG_DATA) public data: any
     ) {
-        this.saveContextMenuItems = [
-            {text: this.ls.l('Save'), selected: false, status: InvoiceStatus.Final, disabled: this.disabledForUpdate},
-            {text: this.ls.l('Invoice_SaveAsDraft'), selected: false, disabled: this.disabledForUpdate, status: InvoiceStatus.Draft},
-            {text: this.ls.l('Invoice_SaveAndSend'), selected: false, status: InvoiceStatus.Final, email: true, disabled: this.disabledForUpdate},
-            {text: this.ls.l('Invoice_SaveAndMarkSent'), selected: false, disabled: true}
-        ];
         this.dialogRef.afterClosed().subscribe(() => {
             this.closeAddressDialogs();
         });
@@ -168,7 +163,6 @@ export class CreateInvoiceDialogComponent implements OnInit {
         });
 
         this.initInvoiceData();
-        this.saveOptionsInit();
     }
 
     checkCloseAddressDialog(name: string) {
@@ -216,12 +210,10 @@ export class CreateInvoiceDialogComponent implements OnInit {
             if (!this.data.addNew) {
                 this.invoiceId = invoice.InvoiceId;
                 this.invoiceNo = invoice.InvoiceNumber;
+                this.status = invoice.InvoiceStatus;
                 this.disabledForUpdate = [InvoiceStatus.Draft, InvoiceStatus.Final].indexOf(this.status) < 0;
-                if (this.disabledForUpdate)
-                    this.buttons[0].disabled = this.disabledForUpdate;
                 this.date = DateHelper.addTimezoneOffset(new Date(invoice.Date), true);
                 this.dueDate = invoice.InvoiceDueDate;
-                this.status = invoice.InvoiceStatus;
             }
             this.contactId = invoice.ContactId;
             this.initOrderDataSource();
@@ -257,12 +249,24 @@ export class CreateInvoiceDialogComponent implements OnInit {
             this.resetNoteDefault();
 
         this.initNewInvoiceInfo();
+        this.initContextMenuItems();
         this.initContactInfo(this.data.contactInfo);
         this.changeDetectorRef.detectChanges();
     }
 
+    initContextMenuItems() {
+        this.buttons.forEach(item => item.disabled = this.disabledForUpdate);
+        this.saveContextMenuItems = [
+            {text: this.ls.l('Save'), selected: false, status: InvoiceStatus.Final, disabled: this.disabledForUpdate},
+            {text: this.ls.l('Invoice_SaveAsDraft'), selected: false, disabled: this.disabledForUpdate, status: InvoiceStatus.Draft},
+            {text: this.ls.l('Invoice_SaveAndSend'), selected: false, status: InvoiceStatus.Final, email: true, disabled: this.disabledForUpdate},
+            {text: this.ls.l('Invoice_SaveAndMarkSent'), selected: false, disabled: true}
+        ];
+        this.saveOptionsInit();
+    }
+
     initNewInvoiceInfo() {
-        if (this.data.addNew)
+        if (!this.data.invoice || this.data.addNew)
             this.invoiceProxy.getNewInvoiceInfo().subscribe((newInvoiceInfo: GetNewInvoiceInfoOutput) => {
                 this.invoiceInfo = newInvoiceInfo;
                 this.invoiceNo = newInvoiceInfo.nextInvoiceNumber;
@@ -298,9 +302,11 @@ export class CreateInvoiceDialogComponent implements OnInit {
 
     saveOptionsInit() {
         let cacheKey = this.cacheHelper.getCacheKey(this.SAVE_OPTION_CACHE_KEY, this.constructor.name);
-        this.selectedOption = this.saveContextMenuItems[this.cacheService.exists(cacheKey)
+        this.selectedOption = this.saveContextMenuItems[
+            this.cacheService.exists(cacheKey)
                 ? this.cacheService.get(cacheKey)
-                : this.SAVE_OPTION_DEFAULT];
+                : this.data.saveAsDraft ? this.SAVE_OPTION_DRAFT : this.SAVE_OPTION_DEFAULT
+        ];
         this.selectedOption.selected = true;
         this.buttons[0].title = this.selectedOption.text;
         this.status = this.selectedOption.status;
@@ -333,10 +339,10 @@ export class CreateInvoiceDialogComponent implements OnInit {
         data.date = this.getDate(this.date, true, '');
         data.dueDate = this.getDate(this.dueDate);
         data.description = this.description;
-        data.billingAddress = new InvoiceAddressInput(
-            this.selectedBillingAddress);
-        data.shippingAddress = new InvoiceAddressInput(
-            this.selectedShippingAddress);
+        data.billingAddress = this.selectedBillingAddress &&
+            new InvoiceAddressInput(this.selectedBillingAddress);
+        data.shippingAddress = this.selectedShippingAddress &&
+            new InvoiceAddressInput(this.selectedShippingAddress);
         data.note = this.notes;
     }
 
@@ -457,6 +463,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
             return this.contactComponent.instance.option('isValid', false);
         }
 
+/*
         let isAddressValid = this.selectedBillingAddress &&
             this.selectedBillingAddress.address1 &&
             this.selectedBillingAddress.city;
@@ -468,6 +475,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
             this.selectedShippingAddress.city;
         if (!this.validateField(this.ls.l('Invoice_ShipTo'), isAddressValid))
             return this.shippingAddressComponent.instance.option('isValid', false);
+*/
 
         if (!this.validateField(this.ls.l('Date'), this.date))
             return this.dateComponent.instance.option('isValid', false);

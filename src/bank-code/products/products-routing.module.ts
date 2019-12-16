@@ -1,10 +1,6 @@
 /** Core imports */
-import { Injectable, NgModule } from '@angular/core';
-import { RouterModule, ActivatedRouteSnapshot, RouterStateSnapshot, CanActivateChild } from '@angular/router';
-
-/** Third party imports */
-import { Observable, of } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { NgModule } from '@angular/core';
+import { RouterModule } from '@angular/router';
 
 /** Application imports */
 import { CodeBreakerAiComponent } from '@root/bank-code/products/codebreaker-ai/code-breaker-ai.component';
@@ -15,19 +11,7 @@ import { BankTrainerComponent } from '@root/bank-code/products/bank-trainer/bank
 import { BankAffiliateComponent } from '@root/bank-code/products/bank-affiliate/bank-affiliate.component';
 import { BankCardsComponent } from '@root/bank-code/products/bank-cards/bank-cards.component';
 import { BankGearComponent } from '@root/bank-code/products/bank-gear/bank-gear.component';
-import { ProductsService } from './products.service';
-
-@Injectable()
-export class SubscriptionsResolver implements CanActivateChild {
-    constructor(
-        private productsService: ProductsService
-    ) {}
-
-    canActivateChild(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
-        return this.productsService.subscriptions ?
-            of(true) : this.productsService.loadSubscriptions().pipe(map(Boolean));
-    }
-}
+import { WhyTheyBuyComponent } from '@root/bank-code/products/why-they-buy/why-they-buy.component';
 
 @NgModule({
     imports: [
@@ -35,7 +19,6 @@ export class SubscriptionsResolver implements CanActivateChild {
             {
                 path: '',
                 component: ProductsComponent,
-                canActivateChild: [ SubscriptionsResolver ],
                 children: [
                     {
                         path: '',
@@ -69,6 +52,10 @@ export class SubscriptionsResolver implements CanActivateChild {
                     {
                         path: 'bank-gear',
                         component: BankGearComponent
+                    },
+                    {
+                        path: 'why-they-buy',
+                        component: WhyTheyBuyComponent
                     }
                 ]
             }
@@ -76,9 +63,6 @@ export class SubscriptionsResolver implements CanActivateChild {
     ],
     exports: [
         RouterModule
-    ],
-    providers: [
-        SubscriptionsResolver
     ]
 })
 export class ProductsRoutingModule { }

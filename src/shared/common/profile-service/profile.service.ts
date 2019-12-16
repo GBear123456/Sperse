@@ -13,15 +13,19 @@ export class ProfileService {
         if (gender)
             return 'assets/common/images/no-photo-' + gender + '.png';
 
-        return AppConsts.imageUrls.noPhoto;
+        const tenant = this.appSession.tenant;
+        return tenant && tenant.customLayoutType === LayoutType.AdvicePeriod
+            ? AppConsts.imageUrls.noPhotoAdvicePeriod
+            : AppConsts.imageUrls.noPhoto;
     }
 
     getProfilePictureUrl(id, defaultUrl = AppConsts.imageUrls.profileDefault) {
-        let tenant = this.appSession.tenant;
-        if (!id)
-            return tenant && [LayoutType.LendSpace,
-                LayoutType.AdvicePeriod].indexOf(tenant.customLayoutType) >= 0
-                ? AppConsts.imageUrls.profileLendSpace : defaultUrl;
+        if (!id) {
+            let tenant = this.appSession.tenant;
+            return tenant && [LayoutType.LendSpace, LayoutType.AdvicePeriod].indexOf(tenant.customLayoutType) >= 0
+                ? AppConsts.imageUrls.profileLendSpace
+                : defaultUrl;
+        }
 
         let tenantId = this.appSession.tenantId;
         return AppConsts.remoteServiceBaseUrl + '/api/Profile/Picture/' + (tenantId || 0) + '/' + id;

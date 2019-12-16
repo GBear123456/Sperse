@@ -125,6 +125,7 @@ import { InvoiceSettingsDialogComponent } from './invoice-settings-dialog/invoic
 import { EmailTemplateDialogComponent } from '@app/crm/shared/email-template-dialog/email-template-dialog.component';
 import { SourceContactListComponent } from './source-contact-list/source-contact-list.component';
 import { CrmService } from '@app/crm/crm.service';
+import { AddSubscriptionDialogComponent } from './subscriptions/add-subscription-dialog/add-subscription-dialog.component';
 
 @NgModule({
     declarations: [
@@ -180,7 +181,8 @@ import { CrmService } from '@app/crm/crm.service';
         InvoicesComponent,
         PersonalDetailsComponent,
         SMSDialogComponent,
-        SourceContactListComponent
+        SourceContactListComponent,
+        AddSubscriptionDialogComponent
     ],
     imports: [
         FormsModule,
@@ -248,7 +250,8 @@ import { CrmService } from '@app/crm/crm.service';
         InvoiceSettingsDialogComponent,
         EmailTemplateDialogComponent,
         HistoryListDialogComponent,
-        SMSDialogComponent
+        SMSDialogComponent,
+        AddSubscriptionDialogComponent
     ],
     providers: [
         DialogService,

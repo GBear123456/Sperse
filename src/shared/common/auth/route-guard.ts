@@ -11,7 +11,7 @@ import {
 import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { UrlHelper } from '@shared/helpers/UrlHelper';
-import { LayoutType } from '@shared/service-proxies/service-proxies';
+import { LayoutType, UserGroup } from '@shared/service-proxies/service-proxies';
 import { FeatureCheckerService } from '@abp/features/feature-checker.service';
 import { CacheService } from 'ng2-cache-service';
 import { AppPermissions } from '@shared/AppPermissions';
@@ -37,11 +37,12 @@ export class RouteGuard implements CanActivate, CanActivateChild {
 
         if (!this.sessionService.user) {
             let tenant = this.sessionService.tenant,
-                uri = '/account/' + (tenant && tenant.customLayoutType == LayoutType.BankCode ? 'signup' : 'login');
+                // uri = '/account/' + (tenant && tenant.customLayoutType == LayoutType.BankCode ? 'signup' : 'login');
+                uri = '/account/login';
             if (abp.session.impersonatorTenantId) {
                 location.pathname = uri;
                 location.search = '';
-            } else 
+            } else
                 this.router.navigate([uri]);
             return false;
         }
@@ -80,6 +81,13 @@ export class RouteGuard implements CanActivate, CanActivateChild {
                 return 'app/' + lastModuleName;
         }
 
+        let tenant = this.sessionService.tenant,
+            user = this.sessionService.user;
+        if (tenant && tenant.customLayoutType == LayoutType.BankCode
+            && user && user.group == UserGroup.Member
+        )
+            return '/code-breaker';
+
         if ((!preferedModule || preferedModule == 'CRM') && this.feature.isEnabled(AppFeatures.CRM) && this.permissionChecker.isGranted(AppPermissions.CRM))
             return 'app/crm';
 
@@ -113,10 +121,6 @@ export class RouteGuard implements CanActivate, CanActivateChild {
                 return '/personal-finance/home';
             }
         }
-
-        let tenant = this.sessionService.tenant;
-        if (tenant && tenant.customLayoutType == LayoutType.BankCode)
-            return '/code-breaker';
 
         return null;
     }

@@ -117,27 +117,63 @@
         }
     }
 
-    /deep/ bank-code-letters {
-        display: flex;
-        align-items: center;
-        padding: 5px 11px 5px 30px;
-        bank-code-letter {
-            span {
-                width: 25px;
-                height: 25px;
-                line-height: 25px;
+    .bank-code-block {
+        padding: 5px 30px;
+        /deep/ bank-code-letters {
+            display: flex;
+            align-items: center;
+            padding: 5px 0;
+            bank-code-letter {
+                span {
+                    width: 25px;
+                    height: 25px;
+                    line-height: 25px;
+                }
+                &:not(:last-child) {
+                    margin-right: 6px;
+                }
             }
-            &:not(:last-child) {
-                margin-right: 6px;
+            .bankCodeDefinition {
+                margin-left: auto;
+            }
+            a.reportLink {
+                img {
+                    max-width: 25px;
+                    max-height: 25px;
+                }
             }
         }
-        .bankCodeDefinition {
-            margin-left: auto;
-        }
-        a.reportLink {
-            img {
-                max-width: 25px;
-                max-height: 25px;
+
+        .access-code {
+            display: flex;
+            align-items: center;
+            overflow: hidden;
+            label {
+                margin-bottom: 0;
+                min-width: 142px;
+            }
+            /deep/ inplace-edit {
+                width: 122px;
+                .inplace-edit-view-mode {
+                    display: flex;
+                    justify-content: space-between;
+                    .actions i.copy {
+                        padding: 0;
+                    }
+                }
+                .inplace-edit-view-mode .link,
+                .dx-textbox input {
+                    font-size: 14px;
+                    font-weight: 600;
+                }
+                .inplace-edit-view-mode .link {
+                    text-transform: uppercase;
+                }
+                .inplace-edit-view-mode .link,
+                .dx-textbox input,
+                .dx-textbox {
+                    color: inherit;
+                }
             }
         }
     }

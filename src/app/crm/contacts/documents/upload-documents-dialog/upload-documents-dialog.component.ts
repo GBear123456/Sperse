@@ -8,16 +8,17 @@ import { finalize } from 'rxjs/operators';
 
 /** Application imports */
 import { DocumentServiceProxy, UploadDocumentInput } from '@shared/service-proxies/service-proxies';
-import { AppComponentBase } from '@shared/common/app-component-base';
 import { StringHelper } from '@shared/helpers/StringHelper';
 import { ContactsService } from '../../contacts.service';
 import { AppConsts } from '@shared/AppConsts';
+import { NotifyService } from '@abp/notify/notify.service';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 
 @Component({
     templateUrl: 'upload-documents-dialog.html',
     styleUrls: ['upload-documents-dialog.less']
 })
-export class UploadDocumentsDialogComponent extends AppComponentBase implements OnInit, AfterViewInit {
+export class UploadDocumentsDialogComponent implements OnInit, AfterViewInit {
     public files = [];
     private slider: any;
     private uploadSubscribers = [];
@@ -26,14 +27,14 @@ export class UploadDocumentsDialogComponent extends AppComponentBase implements 
     totalCount    = 0;
 
     constructor(injector: Injector,
-        private _clientService: ContactsService,
-        private _documentService: DocumentServiceProxy,
-        @Inject(MAT_DIALOG_DATA) public data: any,
+        private clientService: ContactsService,
+        private documentService: DocumentServiceProxy,
         private elementRef: ElementRef,
+        private notify: NotifyService,
         public dialogRef: MatDialogRef<UploadDocumentsDialogComponent>,
+        public ls: AppLocalizationService,
+        @Inject(MAT_DIALOG_DATA) public data: any,
     ) {
-        super(injector);
-
         this.dialogRef.beforeClose().subscribe(() => {
             this.dialogRef.updatePosition({
                 top: '75px',
@@ -128,13 +129,13 @@ export class UploadDocumentsDialogComponent extends AppComponentBase implements 
 
     uploadFile(input, index) {
         if (AppConsts.regexPatterns.notSupportedDocuments.test(input.name)) {
-            this.notify.error(this.l('FileTypeIsNotAllowed'));
+            this.notify.error(this.ls.l('FileTypeIsNotAllowed'));
             this.updateUploadedCounter();
             return;
         }
 
         if (input.size > AppConsts.maxDocumentSizeBytes) {
-            this.notify.error(this.l('FilesizeLimitWarn', AppConsts.maxDocumentSizeMB));
+            this.notify.error(this.ls.l('FilesizeLimitWarn', AppConsts.maxDocumentSizeMB));
             this.updateUploadedCounter();
             return;
         }
@@ -144,7 +145,7 @@ export class UploadDocumentsDialogComponent extends AppComponentBase implements 
             Math.round(input.size / 10000)
         );
         this.uploadSubscribers.push(
-            this._documentService.upload(UploadDocumentInput.fromJS({
+            this.documentService.upload(UploadDocumentInput.fromJS({
                 contactId: this.data.contactId,
                 fileName: input.name,
                 size: input.size,
@@ -152,7 +153,7 @@ export class UploadDocumentsDialogComponent extends AppComponentBase implements 
             })).pipe(finalize(() => {
                 this.finishUploading(progressInterval, index);
             })).subscribe(() => {
-                this._clientService.invalidate('documents');
+                this.clientService.invalidate('documents');
             })
         );
     }

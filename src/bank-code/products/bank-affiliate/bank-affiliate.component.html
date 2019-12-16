@@ -1,3 +1,11 @@
-<header>
-    <h1><span>{{ ls.l('BankCode_Bank') }}</span> {{ ls.l('BankCode_Affiliate') }}</h1>
-</header>
+<section class="iframe">
+    <iframe src="https://wp.bankcode.pro/affiliate-stats/"
+            *ngIf="hasSubscription$ | async; else noSubscription"
+            frameborder="0">
+    </iframe>
+    <ng-template #noSubscription>
+        <iframe src="https://wp.bankcode.pro/affiliate-landing/"
+                frameborder="0">
+        </iframe>
+    </ng-template>
+</section>

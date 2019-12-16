@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
-import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { ProductsService } from '@root/bank-code/products/products.service';
+import { Observable } from 'rxjs';
+import { BankCodeServiceType } from '@root/bank-code/products/bank-code-service-type.enum';
 
 @Component({
     selector: 'bank-vault',
@@ -8,5 +10,7 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 })
 export class BankVaultComponent {
     offerId = 546;
-    constructor(public ls: AppLocalizationService) {}
+    hasSubscription$: Observable<boolean> = this.productsService.checkServiceSubscription(BankCodeServiceType.BANKVault);
+
+    constructor(private productsService: ProductsService) {}
 }

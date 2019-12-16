@@ -31,17 +31,14 @@
     <dx-chart
         id="bar"
         [barWidth]="1"
-        [size]="{ height: 280, width: nativeElement ? nativeElement.offsetWidth - 60 : 0 }"
         [series]="allSeries$ | async"
         [dataSource]="totalsData">
-
-        <dxo-size [height]="356" [width]="chartWidth"></dxo-size>
         <!-- common settings for charts -->
         <dxo-common-series-settings
             argumentField="date"
             [ignoreEmptyPoints]="true">
         </dxo-common-series-settings>
-
+        <dxo-size [height]="280" [width]="widgetWidth"></dxo-size>
         <!-- Bottom axis -->
         <dxo-argument-axis
             argumentType="datetime"

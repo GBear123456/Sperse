@@ -7,7 +7,7 @@ import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dial
 import { DxDateBoxComponent } from 'devextreme-angular/ui/date-box';
 import { Store, select } from '@ngrx/store';
 import { of } from 'rxjs';
-import { map, mergeAll, pluck, toArray } from 'rxjs/operators';
+import { map, mergeAll, toArray } from 'rxjs/operators';
 import * as _ from 'underscore';
 
 /** Application imports */
@@ -76,15 +76,15 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
     constructor(
         injector: Injector,
         @Inject(MAT_DIALOG_DATA) public data: any,
-        private _dialog: MatDialog,
+        private dialog: MatDialog,
         private elementRef: ElementRef,
-        public dialogRef: MatDialogRef<NoteAddDialogComponent>,
-        private _phoneFormatPipe: PhoneFormatPipe,
-        private _notesService: NotesServiceProxy,
-        private _userService: UserServiceProxy,
-        private _contactPhoneService: ContactPhoneServiceProxy,
+        private phoneFormatPipe: PhoneFormatPipe,
+        private notesService: NotesServiceProxy,
+        private userService: UserServiceProxy,
+        private contactPhoneService: ContactPhoneServiceProxy,
         private store$: Store<AppStore.State>,
-        private clientService: ContactsService
+        private clientService: ContactsService,
+        public dialogRef: MatDialogRef<NoteAddDialogComponent>
     ) {
         super(injector);
 
@@ -182,7 +182,7 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
 
     saveNote() {
         if (this.validator.validate().isValid)
-            this._notesService.createNote(CreateNoteInput.fromJS({
+            this.notesService.createNote(CreateNoteInput.fromJS({
                 contactId: this.contactId || this._contactInfo.id,
                 text: this.summary,
                 contactPhoneId: this.phone || undefined,
@@ -211,7 +211,7 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
         clearTimeout(this.searchTimeout);
         this.searchTimeout = setTimeout(() => {
             if ($event.text)
-                this._userService.getUsers($event.text, [ AppPermissions.CRM ], undefined, false, undefined, undefined, undefined, 10, 0).subscribe((result) => {
+                this.userService.getUsers($event.text, [ AppPermissions.CRM ], undefined, false, undefined, undefined, undefined, 10, 0).subscribe((result) => {
                     this.users = result.items.map((user) => {
                         return {
                             id: user.id,
@@ -229,14 +229,14 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
     onContactChanged($event) {
         let contact = this.getContactById($event.value);
         const contactPhones$ = contact.phones ? of(contact.phones) :
-            this._contactPhoneService.getContactPhones(contact.id)
+            this.contactPhoneService.getContactPhones(contact.id)
                 .pipe(map(phones => phones || []));
 
         contactPhones$.pipe(
             mergeAll(),
             map((phone: ContactPhoneDto) => ({
                 id: phone.id,
-                phoneNumber: this._phoneFormatPipe.transform(phone.phoneNumber, undefined)
+                phoneNumber: this.phoneFormatPipe.transform(phone.phoneNumber, undefined)
             })),
             toArray()
         ).subscribe(phones => {
@@ -279,7 +279,7 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
             isActive: false,
             isCompany: contact.hasOwnProperty('organization')
         }, shift = '50px';
-        this._dialog.open(EditContactDialog, {
+        this.dialog.open(EditContactDialog, {
             data: dialogData,
             hasBackdrop: true,
             position: {
@@ -294,7 +294,7 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
     }
 
     addNewPhone(data) {
-        this._contactPhoneService.createContactPhone(
+        this.contactPhoneService.createContactPhone(
             CreateContactPhoneInput.fromJS(data)
         ).subscribe(result => {
             if (result.id) {
