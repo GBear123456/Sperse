@@ -163,7 +163,7 @@ export class LeadInformationComponent extends AppComponentBase implements OnInit
                 this.contactsService.orgUnitsUpdate({
                     allOrganizationUnits: organizationUnits,
                     selectedOrgUnits: [organizationUnits.find((organizationUnit: OrganizationUnitShortDto) => {
-                        return organizationUnit.id === (leadInfo.organizationUnitId || this.data.leadInfo.sourceOrganizationUnitId);
+                        return organizationUnit.id === (leadInfo.sourceOrganizationUnitId || this.data.leadInfo.sourceOrganizationUnitId);
                     })].filter(Boolean).map(item => item.id)
                 });
             }, this.constructor.name);
