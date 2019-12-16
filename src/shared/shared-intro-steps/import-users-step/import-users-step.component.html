@@ -4,7 +4,7 @@
         With Assigned Roles
     </h3>
     <div class="invite-list">
-        <dx-scroll-view height="350" showScrollbar="onHover">
+        <dx-scroll-view [height]="scrollHeight" showScrollbar="onHover">
             <div style="position:relative">
                 <dx-validation-group *ngFor="let user of importUsers; let i = index"
                                      (onInitialized)="onInviteUserValidationGroupInitialized($event)">
@@ -13,7 +13,7 @@
                                      placeholder="Email"
                                      (onKeyPress)="onEmailKeyPress(i)"
                                      (onValueChanged)="validateUsers(true)"
-                                     class="col-4">
+                                     class="col-sm-4">
                             <dx-validator>
                                 <dxi-validation-rule type="custom" [validationCallback]="validateInviteUserRow" [reevaluate]="true"
                                                      message="{{ls.l('EmailIsRequired')}}."></dxi-validation-rule>
@@ -26,7 +26,7 @@
                         <dx-text-box [(value)]="user.fullName"
                                      placeholder="Full name"
                                      (onValueChanged)="validateInviteUserGroup(i)"
-                                     class="col-4">
+                                     class="col-sm-4">
                             <dx-validator>
                                 <dxi-validation-rule type="custom" [validationCallback]="validateInviteUserRow" [reevaluate]="true"
                                                      message="{{ls.l('NameIsRequired')}}."></dxi-validation-rule>
@@ -46,7 +46,7 @@
                                     [showMultiTagOnly]="true"
                                     (onMultiTagPreparing)="onMultiTagPreparing($event)"
                                     (onValueChanged)="validateInviteUserGroup($event, i)"
-                                    class="col-4">
+                                    class="col-sm-4">
                             <div *dxTemplate="let tag of 'customTagTemplate'">
                                 <span class="tag-value">{{tag}}</span>
                             </div>
