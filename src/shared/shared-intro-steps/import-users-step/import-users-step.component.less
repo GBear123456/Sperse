@@ -15,6 +15,10 @@
             letter-spacing: normal;
             text-align: center;
             color: #202b35;
+            @media (max-width: 350px) {
+                margin-bottom: 0;
+                font-size: 20px;
+            }
         }
 
         .invite-list {
@@ -43,12 +47,18 @@
                     top: 20px;
                     color: red;
                     cursor: pointer;
+                    @media (max-width: 767px) {
+                        left: 20px;
+                    }
                 }
 
                 &:hover {
                     .remove-import-user {
                         display: block;
                     }
+                }
+                @media (max-width: 767px) {
+                    padding: 5px 20px 5px 35px;
                 }
             }
 

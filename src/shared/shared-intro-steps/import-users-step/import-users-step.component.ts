@@ -33,6 +33,7 @@ export class ImportUsersStepComponent implements OnInit {
     validationResult: boolean;
     emailRegEx = AppConsts.regexPatterns.email;
     skipUserGroupValidation = false;
+    scrollHeight = AppConsts.isMobile ? 300 : 350;
 
     constructor(
         private roleService: RoleServiceProxy,
