@@ -15,7 +15,7 @@
         [useBrowserLocale]="true">
     </ngx-extended-pdf-viewer>
     <ng-template #noSubscription>
-        <iframe src="https://wp.bankcode.pro/why-they-buy-digital-landing/"
+        <iframe [src]="sanitizer.bypassSecurityTrustResourceUrl(environmentLink)"
                 frameborder="0">
         </iframe>
     </ng-template>

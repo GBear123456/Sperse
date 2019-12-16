@@ -50,6 +50,6 @@
 </section>
 <ng-template #noSubscription>
     <section class="iframe">
-        <iframe src="https://wp.bankcode.pro/b-a-n-k-pass/" frameborder="0"></iframe>
+        <iframe [src]="sanitizer.bypassSecurityTrustResourceUrl(environmentLink)" frameborder="0"></iframe>
     </section>
 </ng-template>
