@@ -104,7 +104,7 @@ export class RegisterComponent implements AfterViewInit, OnInit {
         ).subscribe(
             (response: FinalizeApplicationResponse) => {
                 this.sendDecisionToLS(response.status);
-                if (response.status === FinalizeApplicationStatus._0) {
+                if (response.status === FinalizeApplicationStatus.Approved) {
                     applyOfferDialog.close();
                     let messageContent = {
                         button: {
@@ -130,7 +130,7 @@ export class RegisterComponent implements AfterViewInit, OnInit {
                             this.completeApprove(swal);
                         }
                     });
-                } else if (response.status === FinalizeApplicationStatus._1) {
+                } else if (response.status === FinalizeApplicationStatus.Declined) {
                     let messageContent = {
                         button: {
                             text: this.ls.l('GetMoreOptions'),
@@ -170,7 +170,7 @@ export class RegisterComponent implements AfterViewInit, OnInit {
         return this.offerServiceProxy.getFinalizeApplicationStatus(applicationId).pipe(
             delayWhen(() => timer(5000)),
             switchMap((finalizeResponse: FinalizeApplicationResponse) => {
-                return !finalizeResponse
+                return finalizeResponse.status === FinalizeApplicationStatus.Finalizing
                     ? this.getFinalizeApplicationStatus(applicationId)
                     : of(finalizeResponse);
             })
@@ -185,7 +185,7 @@ export class RegisterComponent implements AfterViewInit, OnInit {
 
     private sendDecisionToLS(status: FinalizeApplicationStatus) {
         if (this.clickId) {
-            const evt = status === FinalizeApplicationStatus._0 ? 'LSAP' : 'LSDP';
+            const evt = status === FinalizeApplicationStatus.Approved ? 'LSAP' : 'LSDP';
             this.http.get(`https://offer.lendspace.com/pxl.php?rxid=${this.clickId}&tdat=&evt=${evt}`).subscribe();
         }
     }
