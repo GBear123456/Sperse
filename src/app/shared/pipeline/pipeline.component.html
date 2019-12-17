@@ -2,6 +2,7 @@
     <div *ngFor="let stage of stages; let i = index;"
          class="column column{{stage.index + ' ' + (stage.sortOrder && (stage.sortOrder > 0 ? 'positive': 'negative') || 'focused')}}">
         <div class="column-title"
+             title="{{stage.name}}"
              [hidden]="loading && !disabled"
              [ngStyle]="{
                 width: columnItems.offsetWidth + 'px',
