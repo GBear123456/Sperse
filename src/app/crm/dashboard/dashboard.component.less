@@ -27,10 +27,6 @@
     }
 
     .right-side {
-        &.first {
-            padding-bottom: 30px;
-            border-bottom: 1px solid #e5e9ec;
-        }
         &.recent-clients {
             padding-left: 14px;
             padding-right: 14px;
@@ -56,7 +52,7 @@
                 background-color: #FFFFFF;
                 position: relative;
                 @media (min-width: 1200px) {
-                    min-height: 330px;
+                    min-height: 295px;
                 }
             }
         }
@@ -68,6 +64,15 @@
         totals-by-period {
             padding-top: 25px;
         }
+
+        totals-by-period {
+            border-bottom: 1px solid #e5e9ec;
+            padding-bottom: 30px;
+        };
+
+        totals-by-source {
+            padding-top: 25px;
+        };
     }
 
     .dashboard-stub {
