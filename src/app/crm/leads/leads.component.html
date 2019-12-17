@@ -8,26 +8,29 @@
                   (onToggleToolbar)="toggleToolbar()"
                   (onToggleCompactView)="toggleCompactView()"
                   (onToggleFullScreen)="repaintDataGrid(100)">
-        <dx-select-box
-            accessKey="contactGroup"
-            displayExpr="text"
-            valueExpr="value"
-            [items]="contactGroups"
-            [width]="'160px'"
-            fieldTemplate="selectTemplate"
-            [(value)]="selectedContactGroup"
-            (onValueChanged)="onContactGroupChanged($event)">
-            <div *dxTemplate="let data of 'selectTemplate'">
-                <div class="select-header">
-                    <span>{{data.text}}</span> <i class="dx-dropdowneditor-icon"></i>
-                    <dx-text-box style="display: none" [readOnly]="true"></dx-text-box>
+        <div class="contact-group">
+            <dx-select-box
+                    accessKey="contactGroup"
+                    displayExpr="text"
+                    valueExpr="value"
+                    [items]="contactGroups"
+                    [width]="'160px'"
+                    fieldTemplate="selectTemplate"
+                    [(value)]="selectedContactGroup"
+                    (onValueChanged)="onContactGroupChanged($event)">
+                <div *dxTemplate="let data of 'selectTemplate'">
+                    <div class="select-header">
+                        <span>{{data.text}}</span> <i class="dx-dropdowneditor-icon"></i>
+                        <dx-text-box style="display: none" [readOnly]="true"></dx-text-box>
+                    </div>
                 </div>
-            </div>
-        </dx-select-box>
+            </dx-select-box>
+            <span *ngIf="totalsCount" class="total-count">({{ totalsCount }})</span>
+        </div>
         <import-progress-bar></import-progress-bar>
     </app-headline>
     <dx-tooltip width="200px"
-                [target]="'.dx-state-hover .dx-link.dx-link-edit'"
+                target=".dx-state-hover .dx-link.dx-link-edit"
                 [visible]="actionEvent">
         <div *dxTemplate="let data of 'content'">
             <div class="lists-tooltip-container">
@@ -157,7 +160,8 @@
                     [moveDisabled]="manageDisabled"
                     (onEntityStageChanged)="onLeadStageChanged($event)"
                     (onStagesLoaded)="onStagesLoaded($event)"
-                    (onCardClick)="onCardClick($event)">
+                    (onCardClick)="onCardClick($event)"
+                    (onTotalChange)="totalsCount = $event">
                     Loading...
                 </app-pipeline>
             </div>

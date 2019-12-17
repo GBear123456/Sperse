@@ -390,6 +390,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         ContactAssignedUsersStoreSelectors.getContactGroupAssignedUsers,
         { contactGroup: ContactGroup.Client }
     );
+    totalsCount: number;
 
     constructor(
         injector: Injector,

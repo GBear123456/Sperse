@@ -57,6 +57,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
     @Output() onStagesLoaded: EventEmitter<any> = new EventEmitter<any>();
     @Output() onCardClick: EventEmitter<any> = new EventEmitter<any>();
     @Output() onEntityStageChanged: EventEmitter<any> = new EventEmitter<any>();
+    @Output() onTotalChange: EventEmitter<number> = new EventEmitter<number>();
 
     private _selectedEntities: any;
     private _dataSource: any;
@@ -538,6 +539,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                             this.allStagesEntitiesTotal += stage.total;
                             this.detectChanges();
                         });
+                        this.onTotalChange.emit(this.allStagesEntitiesTotal);
                     }
                 },
                 () => this.notify.error(this.l('AnErrorOccurred'))
