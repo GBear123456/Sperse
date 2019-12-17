@@ -734,7 +734,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
             data: {
                 dialogTitle: this.l(actionType + '_Stage_Title'),
                 placeholder: this.l(actionType + '_Stage_Placeholder'),
-                newStageName: null,
+                newStageName: stage.name,
                 entities: stage.entities,
                 stages: this.stages,
                 currentStageId: stage.id,
@@ -753,7 +753,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                     }
                     break;
                 case 'Rename':
-                    if (result && result.newStageName) {
+                    if (result && result.newStageName && result.newStageName != stage.name) {
                         this.renameStageInput.name = result.newStageName;
                         this.stageServiceProxy.renameStage(this.renameStageInput).subscribe(() => {
                             this.store$.dispatch(new PipelinesStoreActions.LoadRequestAction(true));
