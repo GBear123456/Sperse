@@ -284,7 +284,7 @@ export class LoginService {
                 delete params.redirect;
                 delete params.switchAccountToken;
 
-                redirectUrl = redirectUrl.split('?').shift() + 
+                redirectUrl = redirectUrl.split('?').shift() +
                     '?' + toPairs(params).map(pair => pair.join('='));
             }
         }
