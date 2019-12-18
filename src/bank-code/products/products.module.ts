@@ -23,6 +23,7 @@ import { DxTextBoxModule } from '@root/node_modules/devextreme-angular';
 import { LoadingSpinnerModule } from '@app/shared/common/loading-spinner/loading-spinner.module';
 import { SubscriptionComponent } from '@root/bank-code/products/shared/subscription.component/subscription.component';
 import { WhyTheyBuyComponent } from './why-they-buy/why-they-buy.component';
+import { NoDataModule } from '@shared/common/widgets/no-data/no-data.module';
 
 @NgModule({
     imports: [
@@ -34,7 +35,8 @@ import { WhyTheyBuyComponent } from './why-they-buy/why-they-buy.component';
         BankCodeLettersModule,
         PhoneFormatModule,
         LoadingSpinnerModule,
-        NgxExtendedPdfViewerModule
+        NgxExtendedPdfViewerModule,
+        NoDataModule
     ],
     declarations: [
         CodeBreakerAiComponent,
