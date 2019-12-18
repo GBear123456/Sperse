@@ -70,12 +70,14 @@
                                 {{ls.l("ThereIsNoNotification")}}
                             </span>
                         </div>
-                        <div *ngIf="notifications.length" class="m-nav__separator m-nav__separator--fit"></div>
-                        <div *ngIf="notifications.length" class="external notifications-footer">
-                            <div class="text-left">
-                                <a (click)="openNotificationSettingsModal($event)" href="javascript:;">{{ls.l("Preferences")}}</a>
+                        <ng-container *ngIf="notifications.length" >
+                            <div class="m-nav__separator m-nav__separator--fit"></div>
+                            <div class="external notifications-footer">
+                                <div class="text-left">
+                                    <a (click)="openNotificationSettingsModal($event)" href="javascript:;">{{ls.l("Preferences")}}</a>
+                                </div>
                             </div>
-                        </div>
+                        </ng-container>
                     </div>
                 </div>
             </div>
