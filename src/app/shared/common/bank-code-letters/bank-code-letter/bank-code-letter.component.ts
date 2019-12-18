@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { BankCodeService } from '@app/shared/common/bank-code/bank-code.service';
 import { BankCodeLetter } from '@app/shared/common/bank-code-letters/bank-code-letter.enum';
 
@@ -11,7 +11,12 @@ export class BankCodeLetterComponent {
     @Input() letter: BankCodeLetter;
     @Input() showDescriptionOnHover = false;
     @Input() allowEdit = false;
-    @Input() key: string;
+    @Input() key = '';
+    @Output() onClick: EventEmitter<null> = new EventEmitter<null>();
 
     constructor(public bankCodeService: BankCodeService) {}
+
+    click(e) {
+        this.onClick.emit(e);
+    }
 }

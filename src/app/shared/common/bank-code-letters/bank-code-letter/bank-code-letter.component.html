@@ -1,5 +1,6 @@
-<span [class]="key + letter"
-      [ngStyle]="bankCodeService.getColorsByLetter(letter)">
+<span [class]="letter === '?' ? 'empty' : key + letter"
+      [ngStyle]="bankCodeService.getColorsByLetter(letter)"
+      (click)="click($event)">
     {{ letter }}
 </span>
 <dx-tooltip *ngIf="showDescriptionOnHover"

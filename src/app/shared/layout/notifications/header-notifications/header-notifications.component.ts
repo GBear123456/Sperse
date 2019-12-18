@@ -149,6 +149,7 @@ export class HeaderNotificationsComponent implements OnInit {
     }
 
     openNotificationSettingsModal(e): void {
+        this.hideDropDown();
         this.userNotificationHelper.openSettingsModal(e);
     }
 
@@ -190,6 +191,7 @@ export class HeaderNotificationsComponent implements OnInit {
     }
 
     openAllNotifications(e): void {
+        this.hideDropDown();
         this.dialog.open(NotificationsComponent, {
             panelClass: ['slider', 'notification-modal'],
             disableClose: true,
