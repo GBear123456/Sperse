@@ -409,12 +409,9 @@ export class PipelineService {
         let color = stagesColors[stageSortOrder];
         /** If there is not default color for the sort order - get the closest */
         if (!color) {
-            const defaultColorsKeys = Object.keys(stagesColors);
-            color = +defaultColorsKeys[0] > stageSortOrder
-                ? stagesColors[defaultColorsKeys[0]]
-                : stagesColors[defaultColorsKeys[defaultColorsKeys.length]];
+            let maxSortOrder = Math.floor(Object.keys(stagesColors).length / 2);
+            color = stagesColors[maxSortOrder > stageSortOrder ? maxSortOrder * -1 : maxSortOrder];
         }
         return color;
     }
-
 }

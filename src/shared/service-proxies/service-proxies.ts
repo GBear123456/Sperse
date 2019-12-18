@@ -682,6 +682,62 @@ export class AccountServiceProxy {
     }
 
     /**
+     * @body (optional) 
+     * @return Success
+     */
+    sendAutoLoginLink(body: SendAutoLoginLinkInput | null | undefined): Observable<SendAutoLoginLinkOutput> {
+        let url_ = this.baseUrl + "/api/services/Platform/Account/SendAutoLoginLink";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processSendAutoLoginLink(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processSendAutoLoginLink(<any>response_);
+                } catch (e) {
+                    return <Observable<SendAutoLoginLinkOutput>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<SendAutoLoginLinkOutput>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processSendAutoLoginLink(response: HttpResponseBase): Observable<SendAutoLoginLinkOutput> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? SendAutoLoginLinkOutput.fromJS(resultData200) : new SendAutoLoginLinkOutput();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<SendAutoLoginLinkOutput>(<any>null);
+    }
+
+    /**
      * @return Success
      */
     cancelUserAccount(): Observable<void> {
@@ -7055,8 +7111,8 @@ export class ContactServiceProxy {
      * @body (optional) 
      * @return Success
      */
-    createContact(body: CreateContactInput | null | undefined): Observable<CreateContactOutput> {
-        let url_ = this.baseUrl + "/api/services/CRM/Contact/CreateContact";
+    create(body: CreateContactInput | null | undefined): Observable<CreateContactOutput> {
+        let url_ = this.baseUrl + "/api/services/CRM/Contact/Create";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(body);
@@ -7072,11 +7128,11 @@ export class ContactServiceProxy {
         };
 
         return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processCreateContact(response_);
+            return this.processCreate(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processCreateContact(<any>response_);
+                    return this.processCreate(<any>response_);
                 } catch (e) {
                     return <Observable<CreateContactOutput>><any>_observableThrow(e);
                 }
@@ -7085,7 +7141,7 @@ export class ContactServiceProxy {
         }));
     }
 
-    protected processCreateContact(response: HttpResponseBase): Observable<CreateContactOutput> {
+    protected processCreate(response: HttpResponseBase): Observable<CreateContactOutput> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -16542,62 +16598,6 @@ export class LeadServiceProxy {
     constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
         this.http = http;
         this.baseUrl = baseUrl ? baseUrl : "";
-    }
-
-    /**
-     * @body (optional) 
-     * @return Success
-     */
-    createLead(body: CreateLeadInput | null | undefined): Observable<CreateLeadOutput> {
-        let url_ = this.baseUrl + "/api/services/CRM/Lead/CreateLead";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(body);
-
-        let options_ : any = {
-            body: content_,
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processCreateLead(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processCreateLead(<any>response_);
-                } catch (e) {
-                    return <Observable<CreateLeadOutput>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<CreateLeadOutput>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processCreateLead(response: HttpResponseBase): Observable<CreateLeadOutput> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? CreateLeadOutput.fromJS(resultData200) : new CreateLeadOutput();
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<CreateLeadOutput>(<any>null);
     }
 
     /**
@@ -33061,6 +33061,105 @@ export interface ISwitchToLinkedAccountOutput {
     tenancyName: string | undefined;
 }
 
+export class SendAutoLoginLinkInput implements ISendAutoLoginLinkInput {
+    emailAddress!: string;
+    autoDetectTenancy!: boolean | undefined;
+    features!: string[] | undefined;
+
+    constructor(data?: ISendAutoLoginLinkInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+        if (!data) {
+            this.autoDetectTenancy = false;
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.emailAddress = data["emailAddress"];
+            this.autoDetectTenancy = data["autoDetectTenancy"] !== undefined ? data["autoDetectTenancy"] : false;
+            if (data["features"] && data["features"].constructor === Array) {
+                this.features = [];
+                for (let item of data["features"])
+                    this.features.push(item);
+            }
+        }
+    }
+
+    static fromJS(data: any): SendAutoLoginLinkInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new SendAutoLoginLinkInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["emailAddress"] = this.emailAddress;
+        data["autoDetectTenancy"] = this.autoDetectTenancy;
+        if (this.features && this.features.constructor === Array) {
+            data["features"] = [];
+            for (let item of this.features)
+                data["features"].push(item);
+        }
+        return data; 
+    }
+}
+
+export interface ISendAutoLoginLinkInput {
+    emailAddress: string;
+    autoDetectTenancy: boolean | undefined;
+    features: string[] | undefined;
+}
+
+export class SendAutoLoginLinkOutput implements ISendAutoLoginLinkOutput {
+    detectedTenancies!: TenantModel[] | undefined;
+
+    constructor(data?: ISendAutoLoginLinkOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            if (data["detectedTenancies"] && data["detectedTenancies"].constructor === Array) {
+                this.detectedTenancies = [];
+                for (let item of data["detectedTenancies"])
+                    this.detectedTenancies.push(TenantModel.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): SendAutoLoginLinkOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new SendAutoLoginLinkOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (this.detectedTenancies && this.detectedTenancies.constructor === Array) {
+            data["detectedTenancies"] = [];
+            for (let item of this.detectedTenancies)
+                data["detectedTenancies"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface ISendAutoLoginLinkOutput {
+    detectedTenancies: TenantModel[] | undefined;
+}
+
 export enum ActivityType {
     Task = "Task", 
     Event = "Event", 
@@ -41584,6 +41683,7 @@ export class ContactDetailsDto implements IContactDetailsDto {
     groupId!: string | undefined;
     firstName!: string | undefined;
     lastName!: string | undefined;
+    primaryOrgRelationId!: number | undefined;
     orgRelations!: PersonOrgRelationShortInfo[] | undefined;
     emails!: ContactEmailDto[] | undefined;
     phones!: ContactPhoneDto[] | undefined;
@@ -41603,6 +41703,7 @@ export class ContactDetailsDto implements IContactDetailsDto {
             this.groupId = data["groupId"];
             this.firstName = data["firstName"];
             this.lastName = data["lastName"];
+            this.primaryOrgRelationId = data["primaryOrgRelationId"];
             if (data["orgRelations"] && data["orgRelations"].constructor === Array) {
                 this.orgRelations = [];
                 for (let item of data["orgRelations"])
@@ -41638,6 +41739,7 @@ export class ContactDetailsDto implements IContactDetailsDto {
         data["groupId"] = this.groupId;
         data["firstName"] = this.firstName;
         data["lastName"] = this.lastName;
+        data["primaryOrgRelationId"] = this.primaryOrgRelationId;
         if (this.orgRelations && this.orgRelations.constructor === Array) {
             data["orgRelations"] = [];
             for (let item of this.orgRelations)
@@ -41666,6 +41768,7 @@ export interface IContactDetailsDto {
     groupId: string | undefined;
     firstName: string | undefined;
     lastName: string | undefined;
+    primaryOrgRelationId: number | undefined;
     orgRelations: PersonOrgRelationShortInfo[] | undefined;
     emails: ContactEmailDto[] | undefined;
     phones: ContactPhoneDto[] | undefined;
@@ -42156,6 +42259,66 @@ export interface IContactListInput {
     name: string;
 }
 
+export class TrackingInfo implements ITrackingInfo {
+    sourceCode!: string | undefined;
+    channelCode!: string | undefined;
+    affiliateCode!: string | undefined;
+    refererUrl!: string | undefined;
+    entryUrl!: string | undefined;
+    userAgent!: string | undefined;
+    clientIp!: string | undefined;
+
+    constructor(data?: ITrackingInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.sourceCode = data["sourceCode"];
+            this.channelCode = data["channelCode"];
+            this.affiliateCode = data["affiliateCode"];
+            this.refererUrl = data["refererUrl"];
+            this.entryUrl = data["entryUrl"];
+            this.userAgent = data["userAgent"];
+            this.clientIp = data["clientIp"];
+        }
+    }
+
+    static fromJS(data: any): TrackingInfo {
+        data = typeof data === 'object' ? data : {};
+        let result = new TrackingInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["sourceCode"] = this.sourceCode;
+        data["channelCode"] = this.channelCode;
+        data["affiliateCode"] = this.affiliateCode;
+        data["refererUrl"] = this.refererUrl;
+        data["entryUrl"] = this.entryUrl;
+        data["userAgent"] = this.userAgent;
+        data["clientIp"] = this.clientIp;
+        return data; 
+    }
+}
+
+export interface ITrackingInfo {
+    sourceCode: string | undefined;
+    channelCode: string | undefined;
+    affiliateCode: string | undefined;
+    refererUrl: string | undefined;
+    entryUrl: string | undefined;
+    userAgent: string | undefined;
+    clientIp: string | undefined;
+}
+
 export class CreateContactInput implements ICreateContactInput {
     namePrefix!: string | undefined;
     firstName!: string | undefined;
@@ -42185,8 +42348,15 @@ export class CreateContactInput implements ICreateContactInput {
     assignedUserId!: number | undefined;
     ratingId!: number | undefined;
     contactGroupId!: string;
+    statusId!: string | undefined;
     partnerTypeName!: string | undefined;
+    leadTypeId!: number | undefined;
+    stageId!: number | undefined;
+    followUpDate!: moment.Moment | undefined;
+    trackingInfo!: TrackingInfo | undefined;
     matchExisting!: boolean | undefined;
+    inviteUser!: boolean | undefined;
+    createAutoLoginLink!: boolean | undefined;
 
     constructor(data?: ICreateContactInput) {
         if (data) {
@@ -42255,8 +42425,15 @@ export class CreateContactInput implements ICreateContactInput {
             this.assignedUserId = data["assignedUserId"];
             this.ratingId = data["ratingId"];
             this.contactGroupId = data["contactGroupId"];
+            this.statusId = data["statusId"];
             this.partnerTypeName = data["partnerTypeName"];
+            this.leadTypeId = data["leadTypeId"];
+            this.stageId = data["stageId"];
+            this.followUpDate = data["followUpDate"] ? moment(data["followUpDate"].toString()) : <any>undefined;
+            this.trackingInfo = data["trackingInfo"] ? TrackingInfo.fromJS(data["trackingInfo"]) : <any>undefined;
             this.matchExisting = data["matchExisting"];
+            this.inviteUser = data["inviteUser"];
+            this.createAutoLoginLink = data["createAutoLoginLink"];
         }
     }
 
@@ -42325,8 +42502,15 @@ export class CreateContactInput implements ICreateContactInput {
         data["assignedUserId"] = this.assignedUserId;
         data["ratingId"] = this.ratingId;
         data["contactGroupId"] = this.contactGroupId;
+        data["statusId"] = this.statusId;
         data["partnerTypeName"] = this.partnerTypeName;
+        data["leadTypeId"] = this.leadTypeId;
+        data["stageId"] = this.stageId;
+        data["followUpDate"] = this.followUpDate ? this.followUpDate.toISOString() : <any>undefined;
+        data["trackingInfo"] = this.trackingInfo ? this.trackingInfo.toJSON() : <any>undefined;
         data["matchExisting"] = this.matchExisting;
+        data["inviteUser"] = this.inviteUser;
+        data["createAutoLoginLink"] = this.createAutoLoginLink;
         return data; 
     }
 }
@@ -42360,12 +42544,22 @@ export interface ICreateContactInput {
     assignedUserId: number | undefined;
     ratingId: number | undefined;
     contactGroupId: string;
+    statusId: string | undefined;
     partnerTypeName: string | undefined;
+    leadTypeId: number | undefined;
+    stageId: number | undefined;
+    followUpDate: moment.Moment | undefined;
+    trackingInfo: TrackingInfo | undefined;
     matchExisting: boolean | undefined;
+    inviteUser: boolean | undefined;
+    createAutoLoginLink: boolean | undefined;
 }
 
 export class CreateContactOutput implements ICreateContactOutput {
     id!: number | undefined;
+    leadId!: number | undefined;
+    userId!: number | undefined;
+    autoLoginLink!: string | undefined;
 
     constructor(data?: ICreateContactOutput) {
         if (data) {
@@ -42379,6 +42573,9 @@ export class CreateContactOutput implements ICreateContactOutput {
     init(data?: any) {
         if (data) {
             this.id = data["id"];
+            this.leadId = data["leadId"];
+            this.userId = data["userId"];
+            this.autoLoginLink = data["autoLoginLink"];
         }
     }
 
@@ -42392,12 +42589,18 @@ export class CreateContactOutput implements ICreateContactOutput {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
+        data["leadId"] = this.leadId;
+        data["userId"] = this.userId;
+        data["autoLoginLink"] = this.autoLoginLink;
         return data; 
     }
 }
 
 export interface ICreateContactOutput {
     id: number | undefined;
+    leadId: number | undefined;
+    userId: number | undefined;
+    autoLoginLink: string | undefined;
 }
 
 export class SimilarContactOutput implements ISimilarContactOutput {
@@ -42462,9 +42665,11 @@ export interface ISimilarContactOutput {
 
 export class SourceContactInfo implements ISourceContactInfo {
     id!: number | undefined;
-    name!: string | undefined;
     groupId!: string | undefined;
     affiliateCode!: string | undefined;
+    companyName!: string | undefined;
+    personName!: string | undefined;
+    jobTitle!: string | undefined;
 
     constructor(data?: ISourceContactInfo) {
         if (data) {
@@ -42478,9 +42683,11 @@ export class SourceContactInfo implements ISourceContactInfo {
     init(data?: any) {
         if (data) {
             this.id = data["id"];
-            this.name = data["name"];
             this.groupId = data["groupId"];
             this.affiliateCode = data["affiliateCode"];
+            this.companyName = data["companyName"];
+            this.personName = data["personName"];
+            this.jobTitle = data["jobTitle"];
         }
     }
 
@@ -42494,18 +42701,22 @@ export class SourceContactInfo implements ISourceContactInfo {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
-        data["name"] = this.name;
         data["groupId"] = this.groupId;
         data["affiliateCode"] = this.affiliateCode;
+        data["companyName"] = this.companyName;
+        data["personName"] = this.personName;
+        data["jobTitle"] = this.jobTitle;
         return data; 
     }
 }
 
 export interface ISourceContactInfo {
     id: number | undefined;
-    name: string | undefined;
     groupId: string | undefined;
     affiliateCode: string | undefined;
+    companyName: string | undefined;
+    personName: string | undefined;
+    jobTitle: string | undefined;
 }
 
 export class UpdateContactStatusInput implements IUpdateContactStatusInput {
@@ -61140,334 +61351,6 @@ export interface IUpdateLanguageTextInput {
     sourceName: string;
     key: string;
     value: string;
-}
-
-export class TrackingInfo implements ITrackingInfo {
-    sourceCode!: string | undefined;
-    channelCode!: string | undefined;
-    affiliateCode!: string | undefined;
-    refererUrl!: string | undefined;
-    entryUrl!: string | undefined;
-    userAgent!: string | undefined;
-    clientIp!: string | undefined;
-
-    constructor(data?: ITrackingInfo) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.sourceCode = data["sourceCode"];
-            this.channelCode = data["channelCode"];
-            this.affiliateCode = data["affiliateCode"];
-            this.refererUrl = data["refererUrl"];
-            this.entryUrl = data["entryUrl"];
-            this.userAgent = data["userAgent"];
-            this.clientIp = data["clientIp"];
-        }
-    }
-
-    static fromJS(data: any): TrackingInfo {
-        data = typeof data === 'object' ? data : {};
-        let result = new TrackingInfo();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["sourceCode"] = this.sourceCode;
-        data["channelCode"] = this.channelCode;
-        data["affiliateCode"] = this.affiliateCode;
-        data["refererUrl"] = this.refererUrl;
-        data["entryUrl"] = this.entryUrl;
-        data["userAgent"] = this.userAgent;
-        data["clientIp"] = this.clientIp;
-        return data; 
-    }
-}
-
-export interface ITrackingInfo {
-    sourceCode: string | undefined;
-    channelCode: string | undefined;
-    affiliateCode: string | undefined;
-    refererUrl: string | undefined;
-    entryUrl: string | undefined;
-    userAgent: string | undefined;
-    clientIp: string | undefined;
-}
-
-export class CreateLeadInput implements ICreateLeadInput {
-    leadTypeId!: number | undefined;
-    stageId!: number | undefined;
-    followUpDate!: moment.Moment | undefined;
-    trackingInfo!: TrackingInfo | undefined;
-    namePrefix!: string | undefined;
-    firstName!: string | undefined;
-    middleName!: string | undefined;
-    lastName!: string | undefined;
-    nameSuffix!: string | undefined;
-    nickName!: string | undefined;
-    emailAddresses!: CreateContactEmailInput[] | undefined;
-    phoneNumbers!: CreateContactPhoneInput[] | undefined;
-    addresses!: CreateContactAddressInput[] | undefined;
-    links!: CreateContactLinkInput[] | undefined;
-    dob!: moment.Moment | undefined;
-    bankCode!: string | undefined;
-    gender!: Gender | undefined;
-    experience!: string | undefined;
-    profileSummary!: string | undefined;
-    note!: string | undefined;
-    interests!: string[] | undefined;
-    companyName!: string | undefined;
-    industry!: string | undefined;
-    photo!: ContactPhotoInput | undefined;
-    sourceContactId!: number | undefined;
-    sourceOrganizationUnitId!: number | undefined;
-    title!: string | undefined;
-    tags!: ContactTagInput[] | undefined;
-    lists!: ContactListInput[] | undefined;
-    assignedUserId!: number | undefined;
-    ratingId!: number | undefined;
-    contactGroupId!: string;
-    partnerTypeName!: string | undefined;
-    matchExisting!: boolean | undefined;
-
-    constructor(data?: ICreateLeadInput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.leadTypeId = data["leadTypeId"];
-            this.stageId = data["stageId"];
-            this.followUpDate = data["followUpDate"] ? moment(data["followUpDate"].toString()) : <any>undefined;
-            this.trackingInfo = data["trackingInfo"] ? TrackingInfo.fromJS(data["trackingInfo"]) : <any>undefined;
-            this.namePrefix = data["namePrefix"];
-            this.firstName = data["firstName"];
-            this.middleName = data["middleName"];
-            this.lastName = data["lastName"];
-            this.nameSuffix = data["nameSuffix"];
-            this.nickName = data["nickName"];
-            if (data["emailAddresses"] && data["emailAddresses"].constructor === Array) {
-                this.emailAddresses = [];
-                for (let item of data["emailAddresses"])
-                    this.emailAddresses.push(CreateContactEmailInput.fromJS(item));
-            }
-            if (data["phoneNumbers"] && data["phoneNumbers"].constructor === Array) {
-                this.phoneNumbers = [];
-                for (let item of data["phoneNumbers"])
-                    this.phoneNumbers.push(CreateContactPhoneInput.fromJS(item));
-            }
-            if (data["addresses"] && data["addresses"].constructor === Array) {
-                this.addresses = [];
-                for (let item of data["addresses"])
-                    this.addresses.push(CreateContactAddressInput.fromJS(item));
-            }
-            if (data["links"] && data["links"].constructor === Array) {
-                this.links = [];
-                for (let item of data["links"])
-                    this.links.push(CreateContactLinkInput.fromJS(item));
-            }
-            this.dob = data["dob"] ? moment(data["dob"].toString()) : <any>undefined;
-            this.bankCode = data["bankCode"];
-            this.gender = data["gender"];
-            this.experience = data["experience"];
-            this.profileSummary = data["profileSummary"];
-            this.note = data["note"];
-            if (data["interests"] && data["interests"].constructor === Array) {
-                this.interests = [];
-                for (let item of data["interests"])
-                    this.interests.push(item);
-            }
-            this.companyName = data["companyName"];
-            this.industry = data["industry"];
-            this.photo = data["photo"] ? ContactPhotoInput.fromJS(data["photo"]) : <any>undefined;
-            this.sourceContactId = data["sourceContactId"];
-            this.sourceOrganizationUnitId = data["sourceOrganizationUnitId"];
-            this.title = data["title"];
-            if (data["tags"] && data["tags"].constructor === Array) {
-                this.tags = [];
-                for (let item of data["tags"])
-                    this.tags.push(ContactTagInput.fromJS(item));
-            }
-            if (data["lists"] && data["lists"].constructor === Array) {
-                this.lists = [];
-                for (let item of data["lists"])
-                    this.lists.push(ContactListInput.fromJS(item));
-            }
-            this.assignedUserId = data["assignedUserId"];
-            this.ratingId = data["ratingId"];
-            this.contactGroupId = data["contactGroupId"];
-            this.partnerTypeName = data["partnerTypeName"];
-            this.matchExisting = data["matchExisting"];
-        }
-    }
-
-    static fromJS(data: any): CreateLeadInput {
-        data = typeof data === 'object' ? data : {};
-        let result = new CreateLeadInput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["leadTypeId"] = this.leadTypeId;
-        data["stageId"] = this.stageId;
-        data["followUpDate"] = this.followUpDate ? this.followUpDate.toISOString() : <any>undefined;
-        data["trackingInfo"] = this.trackingInfo ? this.trackingInfo.toJSON() : <any>undefined;
-        data["namePrefix"] = this.namePrefix;
-        data["firstName"] = this.firstName;
-        data["middleName"] = this.middleName;
-        data["lastName"] = this.lastName;
-        data["nameSuffix"] = this.nameSuffix;
-        data["nickName"] = this.nickName;
-        if (this.emailAddresses && this.emailAddresses.constructor === Array) {
-            data["emailAddresses"] = [];
-            for (let item of this.emailAddresses)
-                data["emailAddresses"].push(item.toJSON());
-        }
-        if (this.phoneNumbers && this.phoneNumbers.constructor === Array) {
-            data["phoneNumbers"] = [];
-            for (let item of this.phoneNumbers)
-                data["phoneNumbers"].push(item.toJSON());
-        }
-        if (this.addresses && this.addresses.constructor === Array) {
-            data["addresses"] = [];
-            for (let item of this.addresses)
-                data["addresses"].push(item.toJSON());
-        }
-        if (this.links && this.links.constructor === Array) {
-            data["links"] = [];
-            for (let item of this.links)
-                data["links"].push(item.toJSON());
-        }
-        data["dob"] = this.dob ? this.dob.toISOString() : <any>undefined;
-        data["bankCode"] = this.bankCode;
-        data["gender"] = this.gender;
-        data["experience"] = this.experience;
-        data["profileSummary"] = this.profileSummary;
-        data["note"] = this.note;
-        if (this.interests && this.interests.constructor === Array) {
-            data["interests"] = [];
-            for (let item of this.interests)
-                data["interests"].push(item);
-        }
-        data["companyName"] = this.companyName;
-        data["industry"] = this.industry;
-        data["photo"] = this.photo ? this.photo.toJSON() : <any>undefined;
-        data["sourceContactId"] = this.sourceContactId;
-        data["sourceOrganizationUnitId"] = this.sourceOrganizationUnitId;
-        data["title"] = this.title;
-        if (this.tags && this.tags.constructor === Array) {
-            data["tags"] = [];
-            for (let item of this.tags)
-                data["tags"].push(item.toJSON());
-        }
-        if (this.lists && this.lists.constructor === Array) {
-            data["lists"] = [];
-            for (let item of this.lists)
-                data["lists"].push(item.toJSON());
-        }
-        data["assignedUserId"] = this.assignedUserId;
-        data["ratingId"] = this.ratingId;
-        data["contactGroupId"] = this.contactGroupId;
-        data["partnerTypeName"] = this.partnerTypeName;
-        data["matchExisting"] = this.matchExisting;
-        return data; 
-    }
-}
-
-export interface ICreateLeadInput {
-    leadTypeId: number | undefined;
-    stageId: number | undefined;
-    followUpDate: moment.Moment | undefined;
-    trackingInfo: TrackingInfo | undefined;
-    namePrefix: string | undefined;
-    firstName: string | undefined;
-    middleName: string | undefined;
-    lastName: string | undefined;
-    nameSuffix: string | undefined;
-    nickName: string | undefined;
-    emailAddresses: CreateContactEmailInput[] | undefined;
-    phoneNumbers: CreateContactPhoneInput[] | undefined;
-    addresses: CreateContactAddressInput[] | undefined;
-    links: CreateContactLinkInput[] | undefined;
-    dob: moment.Moment | undefined;
-    bankCode: string | undefined;
-    gender: Gender | undefined;
-    experience: string | undefined;
-    profileSummary: string | undefined;
-    note: string | undefined;
-    interests: string[] | undefined;
-    companyName: string | undefined;
-    industry: string | undefined;
-    photo: ContactPhotoInput | undefined;
-    sourceContactId: number | undefined;
-    sourceOrganizationUnitId: number | undefined;
-    title: string | undefined;
-    tags: ContactTagInput[] | undefined;
-    lists: ContactListInput[] | undefined;
-    assignedUserId: number | undefined;
-    ratingId: number | undefined;
-    contactGroupId: string;
-    partnerTypeName: string | undefined;
-    matchExisting: boolean | undefined;
-}
-
-export class CreateLeadOutput implements ICreateLeadOutput {
-    id!: number | undefined;
-    contactId!: number | undefined;
-    userId!: number | undefined;
-
-    constructor(data?: ICreateLeadOutput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.id = data["id"];
-            this.contactId = data["contactId"];
-            this.userId = data["userId"];
-        }
-    }
-
-    static fromJS(data: any): CreateLeadOutput {
-        data = typeof data === 'object' ? data : {};
-        let result = new CreateLeadOutput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["contactId"] = this.contactId;
-        data["userId"] = this.userId;
-        return data; 
-    }
-}
-
-export interface ICreateLeadOutput {
-    id: number | undefined;
-    contactId: number | undefined;
-    userId: number | undefined;
 }
 
 export class CancelLeadInfo implements ICancelLeadInfo {
