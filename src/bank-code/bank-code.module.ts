@@ -25,7 +25,6 @@ import { AnnouncementsComponent } from './dashboard/announcements/announcements.
 import { TotalCodesCrackedComponent } from './dashboard/total-codes-cracked/total-codes-cracked.component';
 import { GoalsCrackedComponent } from './dashboard/goals-cracked/goals-cracked.component';
 import { CountersComponent } from './dashboard/counters/counters.component';
-import { ProductsService } from '@root/bank-code/products/products.service';
 import { MemberSubscriptionServiceProxy } from '@shared/service-proxies/service-proxies';
 
 @NgModule({
@@ -65,10 +64,7 @@ import { MemberSubscriptionServiceProxy } from '@shared/service-proxies/service-
             'startFromZero': false
         })
     ],
-    providers: [
-        MemberSubscriptionServiceProxy,
-        ProductsService
-    ]
+    providers: [ MemberSubscriptionServiceProxy ]
 })
 export class BankCodeModule {
     constructor(

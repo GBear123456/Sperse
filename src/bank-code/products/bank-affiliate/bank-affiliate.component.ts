@@ -4,10 +4,10 @@ import { DomSanitizer } from '@angular/platform-browser';
 
 /** Application imports */
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
-import { ProductsService } from '@root/bank-code/products/products.service';
 import { Observable } from 'rxjs';
 import { BankCodeServiceType } from '@root/bank-code/products/bank-code-service-type.enum';
 import { environment } from '@root/environments/environment';
+import { ProfileService } from '@shared/common/profile-service/profile.service';
 
 @Component({
     selector: 'bank-affiliate',
@@ -16,7 +16,7 @@ import { environment } from '@root/environments/environment';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class BankAffiliateComponent {
-    hasSubscription$: Observable<boolean> = this.productsService.checkServiceSubscription(BankCodeServiceType.BANKAffiliate);
+    hasSubscription$: Observable<boolean> = this.profileService.checkServiceSubscription(BankCodeServiceType.BANKAffiliate);
 
     environmentLink = {
         development: 'https://wp.bankcode.pro/affiliate-landing/',
@@ -26,7 +26,7 @@ export class BankAffiliateComponent {
     }[environment.releaseStage];
 
     constructor(
-        private productsService: ProductsService,
+        private profileService: ProfileService,
         public ls: AppLocalizationService,
         public sanitizer: DomSanitizer
     ) {}

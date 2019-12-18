@@ -8,7 +8,7 @@ import { Observable } from 'rxjs';
 /** Application imports */
 import { BankCodeServiceType } from '@root/bank-code/products/bank-code-service-type.enum';
 import { environment } from '@root/environments/environment';
-import { ProductsService } from '../products.service';
+import { ProfileService } from '@shared/common/profile-service/profile.service';
 
 @Component({
     selector: 'code-breaker-ai',
@@ -17,7 +17,7 @@ import { ProductsService } from '../products.service';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CodeBreakerAiComponent {
-    hasSubscription$: Observable<boolean> = this.productsService.checkServiceSubscription(BankCodeServiceType.BANKPass);
+    hasSubscription$: Observable<boolean> = this.profileService.checkServiceSubscription(BankCodeServiceType.BANKPass);
 
     environmentLink = {
         development: 'https://wp.bankcode.pro/codebreaker-ai-landing/',
@@ -27,7 +27,7 @@ export class CodeBreakerAiComponent {
     }[environment.releaseStage];
 
     constructor(
-        private productsService: ProductsService,
+        private profileService: ProfileService,
         public sanitizer: DomSanitizer
     ) {}
 }

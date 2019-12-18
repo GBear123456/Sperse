@@ -11,8 +11,8 @@ import { AppSessionService } from '@shared/common/session/app-session.service';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 import { MemberAreaLink } from '@shared/common/area-navigation/member-area-link.enum';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
-import { ProductsService } from '@root/bank-code/products/products.service';
 import { BankCodeServiceType } from '@root/bank-code/products/bank-code-service-type.enum';
+import { ProfileService } from '@shared/common/profile-service/profile.service';
 
 @Directive({
     selector: '[ad-header-host]'
@@ -35,19 +35,17 @@ export class BankCodeHeaderComponent implements OnInit, OnDestroy {
     currentDate = new Date();
     hideBCRMLink = true;
     memberAreaLinks: MemberAreaLink[] = this.getMemberAreaLinks();
-    private productsService: ProductsService;
 
     constructor(
         injector: Injector,
         private layoutService: BankCodeLayoutService,
-        public appSession: AppSessionService,
         private router: Router,
         private lifecycleService: LifecycleSubjectsService,
         private ls: AppLocalizationService,
-        public sessionService: AppSessionService
-    ) {
-        this.productsService = injector.get(ProductsService, null);
-    }
+        private profileService: ProfileService,
+        public sessionService: AppSessionService,
+        public appSession: AppSessionService,
+    ) {}
 
     ngOnInit() {
         this.layoutService.headerSubject$
@@ -58,15 +56,13 @@ export class BankCodeHeaderComponent implements OnInit, OnDestroy {
                     this.adHeaderHost.viewContainerRef.createComponent(component);
                 });
             });
-        if (this.productsService) {
-            forkJoin(
-                this.productsService.checkServiceSubscription(BankCodeServiceType.BANKPass),
-                this.productsService.checkServiceSubscription(BankCodeServiceType.BANKAffiliate)
-            ).subscribe(([hasBankPassSubscription, hasBankAffiliateSubscription]: [ boolean, boolean ]) => {
-                this.hideBCRMLink = !hasBankPassSubscription && !hasBankAffiliateSubscription;
-                this.memberAreaLinks = this.getMemberAreaLinks();
-            });
-        }
+        forkJoin(
+            this.profileService.checkServiceSubscription(BankCodeServiceType.BANKPass),
+            this.profileService.checkServiceSubscription(BankCodeServiceType.BANKAffiliate)
+        ).subscribe(([hasBankPassSubscription, hasBankAffiliateSubscription]: [ boolean, boolean ]) => {
+            this.hideBCRMLink = !hasBankPassSubscription && !hasBankAffiliateSubscription;
+            this.memberAreaLinks = this.getMemberAreaLinks();
+        });
     }
 
     private getMemberAreaLinks() {

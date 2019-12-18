@@ -16,7 +16,6 @@ import { ContactGroup } from '@shared/AppEnums';
 import { ODataService } from '@shared/common/odata/odata.service';
 import { ProfileService } from '@shared/common/profile-service/profile.service';
 import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
-import { ProductsService } from '../products.service';
 import { BankCodeServiceType } from '@root/bank-code/products/bank-code-service-type.enum';
 import { environment } from '@root/environments/environment';
 
@@ -59,7 +58,7 @@ export class BankPassComponent {
         }
     });
     formatting = AppConsts.formatting;
-    hasSubscription$: Observable<boolean> = this.productsService.checkServiceSubscription(BankCodeServiceType.BANKPass);
+    hasSubscription$: Observable<boolean> = this.profileService.checkServiceSubscription(BankCodeServiceType.BANKPass);
     dataIsLoading = false;
 
     environmentLink = {
@@ -72,7 +71,6 @@ export class BankPassComponent {
     constructor(
         private oDataService: ODataService,
         private changeDetectorRef: ChangeDetectorRef,
-        private productsService: ProductsService,
         public ls: AppLocalizationService,
         public httpInterceptor: AppHttpInterceptor,
         public profileService: ProfileService,

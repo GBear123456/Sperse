@@ -10,6 +10,11 @@ import {
     OnInit,
     ViewChild
 } from '@angular/core';
+
+/** Third party imports */
+import { Observable, forkJoin, of } from 'rxjs';
+import { first, map } from 'rxjs/operators';
+
 /** Application imports */
 import { ImpersonationService } from 'app/admin/users/impersonation.service';
 import {
@@ -31,6 +36,8 @@ import { FeatureCheckerService } from '@abp/features/feature-checker.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { BankCodeLetter } from '@app/shared/common/bank-code-letters/bank-code-letter.enum';
 import { BankCodeLettersComponent } from '@app/shared/common/bank-code-letters/bank-code-letters.component';
+import { BankCodeServiceType } from '@root/bank-code/products/bank-code-service-type.enum';
+import { ProfileService } from '@shared/common/profile-service/profile.service';
 
 @Component({
     selector: 'user-dropdown-menu',
@@ -50,7 +57,7 @@ export class UserDropdownMenuComponent implements AfterViewInit, OnInit {
     private impersonationService: ImpersonationService;
     private commonUserInfoService: CommonUserInfoServiceProxy;
     profileThumbnailId = this.appSession.user.profileThumbnailId;
-    shownLoginInfo: { fullName, email, tenantName? };
+    shownLoginInfo: { fullName, email, tenantName? } = this.appSession.getShownLoginInfo();
     menuItemTypes = UserDropdownMenuItemType;
     bankCode: string = this.appSession.user.bankCode;
     bankCodeColor: string = this.bankCode
@@ -58,8 +65,18 @@ export class UserDropdownMenuComponent implements AfterViewInit, OnInit {
         : '#000';
     accessCode = this.appSession.user.affiliateCode;
     hasBankCodeFeature: boolean = this.userManagementService.checkBankCodeFeature();
-    hasBankCodeLayout: boolean = this.appSession.tenant && this.appSession.tenant.customLayoutType === LayoutType.BankCode;
+    showAccessCode$: Observable<boolean> = this.appSession.tenant && this.appSession.tenant.customLayoutType === LayoutType.BankCode
+        ? forkJoin(
+            this.profileService.checkServiceSubscription(BankCodeServiceType.BANKPass),
+            this.profileService.checkServiceSubscription(BankCodeServiceType.BANKAffiliate),
+            this.profileService.checkServiceSubscription(BankCodeServiceType.BANKVault)
+        ).pipe(
+            map((res: boolean[]) => res.some(Boolean))
+        )
+        : of(false);
+    showAccessCode = false;
     isAccessCodeTooltipVisible = false;
+    dropdownHeaderStyle: { [key: string]: string } = this.getDropdownHeaderStyle();
 
     constructor(
         injector: Injector,
@@ -69,6 +86,7 @@ export class UserDropdownMenuComponent implements AfterViewInit, OnInit {
         private changeDetectorRef: ChangeDetectorRef,
         private bankCodeService: BankCodeService,
         private memberSettingsService: MemberSettingsServiceProxy,
+        private profileService: ProfileService,
         public appSession: AppSessionService,
         public userManagementService: UserManagementService,
         public ls: AppLocalizationService
@@ -78,7 +96,9 @@ export class UserDropdownMenuComponent implements AfterViewInit, OnInit {
     }
 
     ngOnInit() {
-        this.shownLoginInfo = this.appSession.getShownLoginInfo();
+        this.showAccessCode$.pipe(first()).subscribe((showAccessCode: boolean) => {
+            this.showAccessCode = showAccessCode;
+        });
     }
 
     ngAfterViewInit() {
