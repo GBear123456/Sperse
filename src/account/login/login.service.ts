@@ -117,6 +117,9 @@ export class LoginService {
             .subscribe((result: AuthenticateResultModel) => {
                 this.processAuthenticateResult(result, redirectUrl);
                 this.authService.startTokenCheck();
+            }, () => {
+                abp.multiTenancy.setTenantIdCookie();
+                this.router.navigate(['account/login']);
             });
     }
 
