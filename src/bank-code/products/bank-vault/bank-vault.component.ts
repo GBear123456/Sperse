@@ -6,9 +6,9 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { Observable } from 'rxjs';
 
 /** Application imports */
-import { ProductsService } from '@root/bank-code/products/products.service';
 import { BankCodeServiceType } from '@root/bank-code/products/bank-code-service-type.enum';
 import { environment } from '@root/environments/environment';
+import { ProfileService } from '@shared/common/profile-service/profile.service';
 
 @Component({
     selector: 'bank-vault',
@@ -18,7 +18,7 @@ import { environment } from '@root/environments/environment';
 })
 export class BankVaultComponent {
     offerId = 546;
-    hasSubscription$: Observable<boolean> = this.productsService.checkServiceSubscription(BankCodeServiceType.BANKVault);
+    hasSubscription$: Observable<boolean> = this.profileService.checkServiceSubscription(BankCodeServiceType.BANKVault);
 
     environmentLink = {
         development: 'https://wp.bankcode.pro/the-vault-landing/',
@@ -28,7 +28,7 @@ export class BankVaultComponent {
     }[environment.releaseStage];
 
     constructor(
-        private productsService: ProductsService,
+        private profileService: ProfileService,
         public sanitizer: DomSanitizer
     ) {}
 }

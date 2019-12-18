@@ -112,6 +112,4 @@ import { BankCodeLayoutModule } from '@root/bank-code/shared/layout/bank-code-la
         ApplicationServiceProxy
     ]
 })
-export class AccountModule {
-
-}
+export class AccountModule {}

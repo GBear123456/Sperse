@@ -9,10 +9,10 @@ import { Observable } from 'rxjs';
 // import '@node_modules/ngx-extended-pdf-viewer/assets/viewer-es5.js';
 
 /** Application imports */
-import { ProductsService } from '@root/bank-code/products/products.service';
 import { AppConsts } from '@shared/AppConsts';
 import { BankCodeServiceType } from '@root/bank-code/products/bank-code-service-type.enum';
 import { environment } from '@root/environments/environment';
+import { ProfileService } from '@shared/common/profile-service/profile.service';
 
 @Component({
     selector: 'why-they-buy',
@@ -21,7 +21,7 @@ import { environment } from '@root/environments/environment';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class WhyTheyBuyComponent {
-    hasSubscription$: Observable<boolean> = this.productsService.checkServiceSubscription(BankCodeServiceType.WTBeBook);
+    hasSubscription$: Observable<boolean> = this.profileService.checkServiceSubscription(BankCodeServiceType.WTBeBook);
     bookSrc = AppConsts.appBaseHref + 'assets/documents/Why+They+Buy+eBook+-+Black.pdf';
 
     environmentLink = {
@@ -32,7 +32,7 @@ export class WhyTheyBuyComponent {
     }[environment.releaseStage];
 
     constructor(
-        private productsService: ProductsService,
+        private profileService: ProfileService,
         public sanitizer: DomSanitizer
     ) {}
 }

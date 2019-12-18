@@ -7,10 +7,10 @@
                  [src]="userManagementService.getProfilePictureUrl(appSession?.user?.profileThumbnailId)"/>
         </span>
     </a>
-    <div class="m-dropdown__wrapper" [ngClass]="hasBankCodeFeature && bankCode || hasBankCodeLayout ? 'bank-code' : ''" (click)="onClick($event)">
+    <div class="m-dropdown__wrapper" [ngClass]="hasBankCodeFeature && bankCode || showAccessCode ? 'bank-code' : ''" (click)="onClick($event)">
         <span class="m-dropdown__arrow m-dropdown__arrow--right m-dropdown__arrow--adjust user-info-drop-down-arrow"></span>
         <div class="m-dropdown__inner">
-            <div class="m-dropdown__header m--align-center" [ngStyle]="getDropdownHeaderStyle()">
+            <div class="m-dropdown__header m--align-center" [ngStyle]="dropdownHeaderStyle">
                 <div [ngStyle]="{ maxWidth: hasBankCodeFeature && bankCode ? '200px' : 'initial' }">
                     <div class="m-card-user m-card-user--skin-dark">
                         <div class="m-card-user__details">
@@ -33,7 +33,7 @@
                        download>{{ ls.l('GetReport') }}</a>
                 </div>
             </div>
-            <div *ngIf="hasBankCodeFeature || hasBankCodeLayout" class="bank-code-block">
+            <div *ngIf="hasBankCodeFeature || showAccessCode" class="bank-code-block">
                 <div>
                     <div *ngIf="hasBankCodeFeature" class="bank-code">
                         <label>{{ ls.l('MyBANKCODE') }}</label>
@@ -42,7 +42,7 @@
                                            [showDescriptionsOnHover]="true">
                         </bank-code-letters>
                     </div>
-                    <ng-container *ngIf="hasBankCodeLayout">
+                    <ng-container *ngIf="showAccessCode">
                         <div class="access-code">
                             <label>{{ ls.l('MyAccessCode') }}</label>
                             <inplace-edit [value]="accessCode"

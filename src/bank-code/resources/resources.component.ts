@@ -7,8 +7,8 @@ import { map } from 'rxjs/operators';
 
 /** Application imports */
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
-import { ProductsService } from '@root/bank-code/products/products.service';
 import { BankCodeServiceType } from '@root/bank-code/products/bank-code-service-type.enum';
+import { ProfileService } from '@shared/common/profile-service/profile.service';
 
 @Component({
     selector: 'resources',
@@ -17,7 +17,7 @@ import { BankCodeServiceType } from '@root/bank-code/products/bank-code-service-
 })
 export class ResourcesComponent {
     isClicked = 0;
-    data$: Observable<any> = this.productsService.checkServiceSubscription(BankCodeServiceType.BANKAffiliate).pipe(map(isGranted => {
+    data$: Observable<any> = this.profileService.checkServiceSubscription(BankCodeServiceType.BANKAffiliate).pipe(map(isGranted => {
         return (isGranted ? [
             {
                 categoryName: 'AFFILIATE TOOLS',
@@ -356,9 +356,9 @@ export class ResourcesComponent {
     autoScrollingIsWorking = false;
 
     constructor(
-        public ls: AppLocalizationService,
-        public productsService: ProductsService,
-        private elementRef: ElementRef
+        private profileService: ProfileService,
+        private elementRef: ElementRef,
+        public ls: AppLocalizationService
     ) {}
 
     @HostListener('window:scroll')
