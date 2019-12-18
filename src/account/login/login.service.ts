@@ -119,7 +119,6 @@ export class LoginService {
                 this.authService.startTokenCheck();
             }, () => {
                 abp.multiTenancy.setTenantIdCookie();
-                this.router.navigate(['account/login']);
             });
     }
 
