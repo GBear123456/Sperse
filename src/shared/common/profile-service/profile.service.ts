@@ -15,13 +15,14 @@ import * as moment from 'moment-timezone';
 export class ProfileService {
 
     public bankCodeSubscriptions$: Observable<GetUserSubscriptionsOutput[]> = this.subscriptionProxy.getUserSubscriptions('BankCode', undefined, undefined).pipe(
-        map(() => [ new GetUserSubscriptionsOutput({
-            serviceType: BankCodeServiceType.BANKVault,
-            serviceTypeId: BankCodeServiceType.BANKVault,
-            serviceName: null,
-            serviceId: null,
-            endDate: moment('2031-12-15T10:10:09Z')
-        }) ]),
+        /** For debug purpose */
+        // map(() => [ new GetUserSubscriptionsOutput({
+        //     serviceType: BankCodeServiceType.BANKVault,
+        //     serviceTypeId: BankCodeServiceType.BANKVault,
+        //     serviceName: null,
+        //     serviceId: null,
+        //     endDate: moment('2031-12-15T10:10:09Z')
+        // }) ]),
         publishReplay(),
         refCount()
     );
