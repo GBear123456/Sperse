@@ -52,7 +52,16 @@ export class SourceContactListComponent {
                 let searchBox = this.sourceComponent.dxSearch;
                 if (searchBox)
                     searchBox.instance.option('value', searchPhrase);
-                this.onDataLoaded.emit(this.contacts = res);
+                this.onDataLoaded.emit(this.contacts = res.map(item => {
+                    let person = item.personName.trim();
+                    return {
+                        id: item.id,
+                        name: person || item.companyName,
+                        addition: person ?
+                            [item.jobTitle, item.companyName].filter(Boolean).join('@') :
+                            this.ls.l('Company')
+                    };
+                }));
                 this.changeDetectorRef.detectChanges();
             });
     }
