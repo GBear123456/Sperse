@@ -69,7 +69,7 @@ export class BankCodeLettersComponent implements OnChanges, OnDestroy {
 
     onLetterClick(e) {
         if (this.allowAdd && this.bankCode === this.emptyBankCode) {
-            this.showEditPopup(e);
+            this.showEditPopup(e, 350);
         }
     }
 

@@ -153,7 +153,7 @@
         padding: 0 25px;
         & > div {
             border-bottom: 1px solid #dfdfdf;
-            padding: 15px 0 20px;
+            padding: 15px 0;
         }
         /deep/ bank-code-letters {
             display: flex;
@@ -181,7 +181,9 @@
         }
 
         .bank-code {
-            margin-bottom: 18px;
+            & + * {
+                margin-top: 18px;
+            }
         }
 
         .bank-code,

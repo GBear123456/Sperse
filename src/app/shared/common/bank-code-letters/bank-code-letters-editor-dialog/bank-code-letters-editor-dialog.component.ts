@@ -20,7 +20,12 @@ import { DragulaService } from 'ng2-dragula';
 /** Application imports */
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { BankCodeService } from '@app/shared/common/bank-code/bank-code.service';
-import { PersonContactServiceProxy, UpdatePersonBANKCodeInput } from '@shared/service-proxies/service-proxies';
+import {
+    MemberSettingsServiceProxy,
+    PersonContactServiceProxy,
+    UpdatePersonBANKCodeInput,
+    UpdateUserBANKCodeDto
+} from '@shared/service-proxies/service-proxies';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
 import { BankCodeDefinition } from '@app/shared/common/bank-code-letters/bank-code-definition.model';
 import { BankCodeLetter } from '@app/shared/common/bank-code-letters/bank-code-letter.enum';
@@ -29,6 +34,7 @@ import { BankCodeLetter } from '@app/shared/common/bank-code-letters/bank-code-l
     selector: 'bank-code-letters-editor',
     templateUrl: './bank-code-letters-editor-dialog.component.html',
     styleUrls: ['./bank-code-letters-editor-dialog.component.less'],
+    providers: [ MemberSettingsServiceProxy ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class BankCodeLettersEditorDialogComponent implements OnInit, OnDestroy {
@@ -51,6 +57,7 @@ export class BankCodeLettersEditorDialogComponent implements OnInit, OnDestroy {
         private personContactServiceProxy: PersonContactServiceProxy,
         private changeDetectorRef: ChangeDetectorRef,
         private dragulaService: DragulaService,
+        private memberSettingsService: MemberSettingsServiceProxy,
         public bankCodeService: BankCodeService,
         @Inject(MAT_DIALOG_DATA) data: any
     ) {
@@ -78,10 +85,13 @@ export class BankCodeLettersEditorDialogComponent implements OnInit, OnDestroy {
             this.bankCode.indexOf(bankCodeDefinitionLetter.toString()),
             i
         );
-        this.personContactServiceProxy.updatePersonBANKCode(new UpdatePersonBANKCodeInput({
-            id: this.personId,
-            bankCode: newBankCode
-        })).pipe(
+        const updateMethod = this.personId
+            ? this.personContactServiceProxy.updatePersonBANKCode(new UpdatePersonBANKCodeInput({
+                id: this.personId,
+                bankCode: newBankCode
+            }))
+            : this.memberSettingsService.updateBANKCode(new UpdateUserBANKCodeDto({ bankCode: newBankCode }));
+        updateMethod.pipe(
             finalize(() => this.loadingService.finishLoading(this.elementRef.nativeElement))
         ).subscribe(
             () => {

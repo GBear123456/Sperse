@@ -112,7 +112,7 @@ export class UserDropdownMenuComponent implements AfterViewInit, OnInit {
                 });
             }
         });
-        $(this.topBarUserProfile.nativeElement)['mDropdown']().on('afterHide', () => {
+        $(this.topBarUserProfile.nativeElement)['mDropdown']().on('beforeHide', () => {
             this.closeBankCodeDialogs();
         });
     }
