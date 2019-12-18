@@ -7,47 +7,76 @@
                  [src]="userManagementService.getProfilePictureUrl(appSession?.user?.profileThumbnailId)"/>
         </span>
     </a>
-    <div class="m-dropdown__wrapper" (click)="onClick($event)">
+    <div class="m-dropdown__wrapper" [ngClass]="hasBankCodeFeature && bankCode || hasBankCodeLayout ? 'bank-code' : ''" (click)="onClick($event)">
         <span class="m-dropdown__arrow m-dropdown__arrow--right m-dropdown__arrow--adjust user-info-drop-down-arrow"></span>
         <div class="m-dropdown__inner">
-            <div class="m-dropdown__header m--align-center">
-                <div class="m-card-user m-card-user--skin-dark">
-                    <div class="m-card-user__details">
+            <div class="m-dropdown__header m--align-center" [ngStyle]="getDropdownHeaderStyle()">
+                <div [ngStyle]="{ maxWidth: hasBankCodeFeature && bankCode ? '200px' : 'initial' }">
+                    <div class="m-card-user m-card-user--skin-dark">
+                        <div class="m-card-user__details">
                         <span class="user-info fullName">
                             {{ shownLoginInfo.fullName }}
                         </span>
-                        <span class="user-info email" title="{{ shownLoginInfo.email }}">
+                            <span class="user-info email" title="{{ shownLoginInfo.email }}">
                             {{ shownLoginInfo.email }}
                         </span>
+                        </div>
+                    </div>
+                    <div *ngIf="subtitle" class="user-info tenantName">
+                        {{ subtitle }}
                     </div>
                 </div>
-                <div class="user-info tenantName">
-                    {{ subtitle }}
+                <div *ngIf="hasBankCodeFeature && bankCode" class="bank-code-section">
+                    <div>{{ bankCodeService.getBankCodeDefinition(bankCode[0]) }}</div>
+                    <a [href]="'https://www.crackmycode.com/ProfileReportFiles/' + bankCode + 'ProfileReport.pdf'"
+                       target="_blank"
+                       download>{{ ls.l('GetReport') }}</a>
                 </div>
             </div>
-            <div *ngIf="hasBankCodeFeature && bankCode || hasBankCodeLayout"
-                 class="bank-code-block"
-                 [ngStyle]="{ borderBottom: '3px solid ' + bankCodeColor }">
-                <bank-code-letters *ngIf="hasBankCodeFeature && bankCode"
-                                   [bankCode]="bankCode"
-                                   [showDescriptionsOnHover]="true"
-                                   [showBankCodeDefinition]="true"
-                                   [showReportLink]="true"
-                                   reportLinkType="Profile">
-                </bank-code-letters>
-                <div *ngIf="hasBankCodeLayout" class="access-code">
-                    <label>{{ ls.l('MyAccessCode') }}:</label>
-                    <inplace-edit [allowCopy]="true"
-                                  [value]="accessCode"
-                                  [showRefreshButton]="false"
-                                  [showUpdateButton]="false"
-                                  [saveOnClose]="true"
-                                  [saveOnFocusOut]="true"
-                                  [saveOnEnter]="true"
-                                  [isCopyEnabled]="true"
-                                  [ngStyle]="{ color: bankCodeColor }"
-                                  (valueChanged)="accessCodeChanged($event)">
-                    </inplace-edit>
+            <div *ngIf="hasBankCodeFeature || hasBankCodeLayout" class="bank-code-block">
+                <div>
+                    <div *ngIf="hasBankCodeFeature" class="bank-code">
+                        <label>{{ ls.l('MyBANKCODE') }}</label>
+                        <bank-code-letters [bankCode]="bankCode"
+                                           [allowAdd]="true"
+                                           [showDescriptionsOnHover]="true">
+                        </bank-code-letters>
+                    </div>
+                    <ng-container *ngIf="hasBankCodeLayout">
+                        <div class="access-code">
+                            <label>{{ ls.l('MyAccessCode') }}</label>
+                            <inplace-edit [value]="accessCode"
+                                          [isCopyEnabled]="true"
+                                          [isEditDialogEnabled]="true"
+                                          [showEditModeOnEditButtonClick]="true"
+                                          buttonsPosition="below"
+                                          [ngStyle]="{ color: bankCodeColor }"
+                                          (valueChanged)="accessCodeChanged($event)">
+                            </inplace-edit>
+                        </div>
+                        <img src="./assets/common/icons/info-icon-blue.svg"
+                             id="accessCodeTooltip"
+                             (mouseleave)="isAccessCodeTooltipVisible = false"
+                             (mouseenter)="isAccessCodeTooltipVisible = true">
+                        <dx-tooltip [position]="{
+                                        my: 'left top',
+                                        at: 'right bottom',
+                                        of: '#accessCodeTooltip',
+                                        offset: '-19 5'
+                                    }"
+                                    [(visible)]="isAccessCodeTooltipVisible"
+                                    [height]="184"
+                                    [width]="310">
+                            <div *dxTemplate="let data of 'content'">
+                                <div style="white-space: normal">
+                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                                    Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+                                    Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+                                    Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+                                </div>
+                            </div>
+                        </dx-tooltip>
+                    </ng-container>
                 </div>
             </div>
             <dx-scroll-view showScrollbar="onHover" [height]="getScrollHeight()" [width]="'100%'">

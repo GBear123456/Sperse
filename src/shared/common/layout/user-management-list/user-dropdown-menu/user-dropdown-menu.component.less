@@ -55,8 +55,32 @@
 
         .m-dropdown__header {
             padding: 30px 25px 26px;
+            display: flex;
+            justify-content: space-between;
             background: linear-gradient(to right, #43383b 60%, gray);
             box-shadow: inset 2px 5px 12px 2px #43383b;
+            .bank-code-section {
+                text-align: right;
+                div {
+                    text-transform: uppercase;
+                    font-size: 14px;
+                    font-weight: bold;
+                    letter-spacing: 0.4px;
+                    color: #ffffff;
+                    margin-bottom: 4px;
+                }
+                a {
+                    font-size: 13px;
+                    font-weight: 500;
+                    line-height: 1.85;
+                    letter-spacing: normal;
+                    color: #ffffff;
+                    &:after {
+                        content: url('../../../../../assets/common/images/bank-code/arrow-down.svg');
+                        margin-left: 3px;
+                    }
+                }
+            }
         }
     }
 
@@ -103,6 +127,14 @@
         }
     }
 
+    .m-dropdown__wrapper {
+        &.bank-code {
+            @media (min-width: 1025px) {
+                width: 350px;
+            }
+        }
+    }
+
     @media (max-width: 768px) {
         .m-dropdown__wrapper {
             left: auto;
@@ -118,19 +150,23 @@
     }
 
     .bank-code-block {
-        padding: 5px 30px;
+        padding: 0 25px;
+        & > div {
+            border-bottom: 1px solid #dfdfdf;
+            padding: 15px 0 20px;
+        }
         /deep/ bank-code-letters {
             display: flex;
             align-items: center;
-            padding: 5px 0;
             bank-code-letter {
                 span {
-                    width: 25px;
-                    height: 25px;
-                    line-height: 25px;
+                    width: 37px;
+                    height: 37px;
+                    line-height: 37px;
+                    font-size: 28px;
                 }
                 &:not(:last-child) {
-                    margin-right: 6px;
+                    margin-right: 7px;
                 }
             }
             .bankCodeDefinition {
@@ -144,30 +180,42 @@
             }
         }
 
+        .bank-code {
+            margin-bottom: 18px;
+        }
+
+        .bank-code,
         .access-code {
             display: flex;
             align-items: center;
-            overflow: hidden;
+            justify-content: space-between;
             label {
                 margin-bottom: 0;
-                min-width: 142px;
+                font-size: 15px;
+                font-weight: 500;
+                color: #677380;
             }
+        }
+
+        .access-code {
             /deep/ inplace-edit {
-                width: 122px;
+                width: 169px;
+                border-radius: 4px;
+                border: solid 1px #e5e9ec;
+                background-color: #f3f7fa;
                 .inplace-edit-view-mode {
                     display: flex;
                     justify-content: space-between;
-                    .actions i.copy {
-                        padding: 0;
-                    }
+                }
+                .inplace-edit-view-mode .link a {
+                    padding-right: 0;
                 }
                 .inplace-edit-view-mode .link,
                 .dx-textbox input {
-                    font-size: 14px;
-                    font-weight: 600;
-                }
-                .inplace-edit-view-mode .link {
-                    text-transform: uppercase;
+                    padding-left: 5px;
+                    font-size: 16px;
+                    font-weight: 700;
+                    padding-right: 5px;
                 }
                 .inplace-edit-view-mode .link,
                 .dx-textbox input,

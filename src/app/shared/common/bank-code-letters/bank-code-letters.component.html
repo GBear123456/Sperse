@@ -1,24 +1,23 @@
-<ng-container *ngIf="bankCode">
-    <ng-container *ngFor="let letter of bankCode.split('')">
-        <bank-code-letter [letter]="letter"
-                          [key]="key"
-                          [showDescriptionOnHover]="showDescriptionsOnHover">
-        </bank-code-letter>
-    </ng-container>
-    <i *ngIf="allowEdit"
-       class="edit fa fa-pencil bank-code-edit"
-       (click)="showEditPopup($event)">
-    </i>
-    <span *ngIf="showBankCodeDefinition"
-          class="bankCodeDefinition"
-          [ngStyle]="{ color: bankCodeService.getColorsByLetter(bankCode[0]).background}">
-        {{ bankCodeDefinition }}
-    </span>
-    <a *ngIf="showReportLink"
-       class="reportLink"
-       [href]="'https://www.crackmycode.com/' + reportLinkType + 'ReportFiles/' + bankCode + reportLinkType + 'Report.pdf'"
-       target="_blank"
-       download>
-        <img src="./assets/common/images/bank-code/download-icon-{{reportIconSrc}}.png" [alt]="bankCodeDefinition">
-    </a>
+<ng-container *ngFor="let letter of bankCode.split('')">
+    <bank-code-letter [letter]="letter"
+                      [key]="key"
+                      [showDescriptionOnHover]="showDescriptionsOnHover && bankCode !== emptyBankCode"
+                      (onClick)="onLetterClick($event)">
+    </bank-code-letter>
 </ng-container>
+<i *ngIf="allowEdit"
+   class="edit fa fa-pencil bank-code-edit"
+   (click)="showEditPopup($event)">
+</i>
+<span *ngIf="showBankCodeDefinition"
+      class="bankCodeDefinition"
+      [ngStyle]="{ color: bankCodeService.getBackgroundColorByLetter(bankCode[0])}">
+    {{ bankCodeDefinition }}
+</span>
+<a *ngIf="showReportLink"
+   class="reportLink"
+   [href]="'https://www.crackmycode.com/' + reportLinkType + 'ReportFiles/' + bankCode + reportLinkType + 'Report.pdf'"
+   target="_blank"
+   download>
+    <img src="./assets/common/images/bank-code/download-icon-{{reportIconSrc}}.png" [alt]="bankCodeDefinition">
+</a>

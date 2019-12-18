@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 
 /** Third party imports */
 import { DxScrollViewModule } from 'devextreme-angular/ui/scroll-view';
+import { DxTooltipModule } from 'devextreme-angular/ui/tooltip';
 
 /** Application imports */
 import { UserDropdownMenuComponent } from '@shared/common/layout/user-management-list/user-dropdown-menu/user-dropdown-menu.component';
@@ -21,6 +22,7 @@ import { InplaceEditModule } from '@app/shared/common/inplace-edit/inplace-edit.
     imports: [
         CommonModule,
         DxScrollViewModule,
+        DxTooltipModule,
         BankCodeLettersModule,
         InplaceEditModule
     ],

@@ -7,6 +7,7 @@
         display: inline-flex;
         align-items: center;
         max-width: 100%;
+        position: relative;
 
         &.multiline {
             a {
@@ -20,7 +21,7 @@
             left: 5px;
             visibility: hidden;
 
-            i {
+            i, img {
                 font-size: 18px;
                 padding: 7px;
                 cursor: pointer;
@@ -34,8 +35,11 @@
                 color: #f44336;
             }
 
-            i.copy {
-                font-size: 22px;
+            &.below {
+                position: absolute;
+                bottom: -33px;
+                left: initial;
+                right: 0;
             }
         }
 
@@ -86,6 +90,21 @@
 
         &.multiline {
             height: auto;
+        }
+
+        .edit-buttons.below {
+            .dx-button {
+                bottom: -35px;
+                background: transparent;
+                height: 35px;
+                top: initial;
+                &.button-update {
+                    right: 25px;
+                }
+                &.button-exit {
+                    right: -5px;
+                }
+            }
         }
 
         /deep/ dx-text-box, /deep/ dx-text-area {
