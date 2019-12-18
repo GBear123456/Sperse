@@ -29,6 +29,7 @@ import { environment } from '@root/environments/environment';
 export class BankPassComponent {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
     offerId = 718;
+    totalCount: number;
     searchValue: '';
     dataSourceURI = 'Lead';
     gridPagerConfig = DataGridService.defaultGridPagerConfig;
@@ -55,6 +56,9 @@ export class BankPassComponent {
             },
             deserializeDates: false,
             paginate: true
+        },
+        onChanged: () => {
+            this.totalCount = this.dataSource.totalCount();
         }
     });
     formatting = AppConsts.formatting;
