@@ -682,6 +682,62 @@ export class AccountServiceProxy {
     }
 
     /**
+     * @body (optional) 
+     * @return Success
+     */
+    sendAutoLoginLink(body: SendAutoLoginLinkInput | null | undefined): Observable<SendAutoLoginLinkOutput> {
+        let url_ = this.baseUrl + "/api/services/Platform/Account/SendAutoLoginLink";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processSendAutoLoginLink(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processSendAutoLoginLink(<any>response_);
+                } catch (e) {
+                    return <Observable<SendAutoLoginLinkOutput>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<SendAutoLoginLinkOutput>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processSendAutoLoginLink(response: HttpResponseBase): Observable<SendAutoLoginLinkOutput> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? SendAutoLoginLinkOutput.fromJS(resultData200) : new SendAutoLoginLinkOutput();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<SendAutoLoginLinkOutput>(<any>null);
+    }
+
+    /**
      * @return Success
      */
     cancelUserAccount(): Observable<void> {
@@ -33005,6 +33061,105 @@ export interface ISwitchToLinkedAccountOutput {
     tenancyName: string | undefined;
 }
 
+export class SendAutoLoginLinkInput implements ISendAutoLoginLinkInput {
+    emailAddress!: string;
+    autoDetectTenancy!: boolean | undefined;
+    features!: string[] | undefined;
+
+    constructor(data?: ISendAutoLoginLinkInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+        if (!data) {
+            this.autoDetectTenancy = false;
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.emailAddress = data["emailAddress"];
+            this.autoDetectTenancy = data["autoDetectTenancy"] !== undefined ? data["autoDetectTenancy"] : false;
+            if (data["features"] && data["features"].constructor === Array) {
+                this.features = [];
+                for (let item of data["features"])
+                    this.features.push(item);
+            }
+        }
+    }
+
+    static fromJS(data: any): SendAutoLoginLinkInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new SendAutoLoginLinkInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["emailAddress"] = this.emailAddress;
+        data["autoDetectTenancy"] = this.autoDetectTenancy;
+        if (this.features && this.features.constructor === Array) {
+            data["features"] = [];
+            for (let item of this.features)
+                data["features"].push(item);
+        }
+        return data; 
+    }
+}
+
+export interface ISendAutoLoginLinkInput {
+    emailAddress: string;
+    autoDetectTenancy: boolean | undefined;
+    features: string[] | undefined;
+}
+
+export class SendAutoLoginLinkOutput implements ISendAutoLoginLinkOutput {
+    detectedTenancies!: TenantModel[] | undefined;
+
+    constructor(data?: ISendAutoLoginLinkOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            if (data["detectedTenancies"] && data["detectedTenancies"].constructor === Array) {
+                this.detectedTenancies = [];
+                for (let item of data["detectedTenancies"])
+                    this.detectedTenancies.push(TenantModel.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): SendAutoLoginLinkOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new SendAutoLoginLinkOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (this.detectedTenancies && this.detectedTenancies.constructor === Array) {
+            data["detectedTenancies"] = [];
+            for (let item of this.detectedTenancies)
+                data["detectedTenancies"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface ISendAutoLoginLinkOutput {
+    detectedTenancies: TenantModel[] | undefined;
+}
+
 export enum ActivityType {
     Task = "Task", 
     Event = "Event", 
@@ -42510,9 +42665,11 @@ export interface ISimilarContactOutput {
 
 export class SourceContactInfo implements ISourceContactInfo {
     id!: number | undefined;
-    name!: string | undefined;
     groupId!: string | undefined;
     affiliateCode!: string | undefined;
+    companyName!: string | undefined;
+    personName!: string | undefined;
+    jobTitle!: string | undefined;
 
     constructor(data?: ISourceContactInfo) {
         if (data) {
@@ -42526,9 +42683,11 @@ export class SourceContactInfo implements ISourceContactInfo {
     init(data?: any) {
         if (data) {
             this.id = data["id"];
-            this.name = data["name"];
             this.groupId = data["groupId"];
             this.affiliateCode = data["affiliateCode"];
+            this.companyName = data["companyName"];
+            this.personName = data["personName"];
+            this.jobTitle = data["jobTitle"];
         }
     }
 
@@ -42542,18 +42701,22 @@ export class SourceContactInfo implements ISourceContactInfo {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
-        data["name"] = this.name;
         data["groupId"] = this.groupId;
         data["affiliateCode"] = this.affiliateCode;
+        data["companyName"] = this.companyName;
+        data["personName"] = this.personName;
+        data["jobTitle"] = this.jobTitle;
         return data; 
     }
 }
 
 export interface ISourceContactInfo {
     id: number | undefined;
-    name: string | undefined;
     groupId: string | undefined;
     affiliateCode: string | undefined;
+    companyName: string | undefined;
+    personName: string | undefined;
+    jobTitle: string | undefined;
 }
 
 export class UpdateContactStatusInput implements IUpdateContactStatusInput {
