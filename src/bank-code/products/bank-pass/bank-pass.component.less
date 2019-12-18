@@ -1,8 +1,19 @@
 @title-font: 'AvianoSans-Bla', sans-serif !important;
 @text-font: 'IBM Plex Sans', sans-serif;
 :host {
+    
+    .users-list {
+        height: calc(~"100vh - 69px");
+        
+        > div {
+            height: 100%;
+        }
+    }
+    
     /deep/ .dx-textbox {
         width: 263px;
+        margin-top: 30px;
+        
         input {
             width: 100%;
             color: #677380;
@@ -39,6 +50,6 @@
     }
 
     #gridContainer {
-        height: initial;
+        height: calc(~"100vh - 138px");
     }
 }

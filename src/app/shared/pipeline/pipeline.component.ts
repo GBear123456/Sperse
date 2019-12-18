@@ -216,7 +216,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                                         });
                                     }
                                 })
-                            ).subscribe();
+                            ).subscribe(() => this.detectChanges());
                     };
                     this.getSelectedEntities().forEach((entity) => {
                         let oldStage = this.stages.find(stage => stage.id == entity.StageId);
@@ -248,12 +248,18 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                         targetEntity,
                         newStage,
                         stage,
-                        () => {
-                            this.reloadStagesInternal([newStage.stageIndex]).pipe(
-                                finalize(() => stage.isLoading = false)
-                            ).subscribe();
-                            this.onEntityStageChanged && this.onEntityStageChanged
-                                .emit(this.getEntityById(entityId, newStage));
+                        (cancelled: boolean) => {
+                            if (cancelled) {
+                                newStage.isLoading =
+                                stage.isLoading = false;
+                                this.detectChanges();
+                            } else {
+                                this.reloadStagesInternal([newStage.stageIndex]).pipe(
+                                    finalize(() => stage.isLoading = false)
+                                ).subscribe(() => this.detectChanges());
+                                this.onEntityStageChanged && this.onEntityStageChanged
+                                    .emit(this.getEntityById(entityId, newStage));
+                            }
                         }
                     );
                 }
@@ -483,7 +489,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                 })
             );
             response.subscribe(
-                () => {},
+                () => this.detectChanges(),
                 (error) => {
                     stage.isLoading = false;
                     if (error != 'canceled')
@@ -604,6 +610,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                     );
                 } else
                     this.pipelineService.updateEntitySortOrder(this.pipeline.id, entity, complete);
+                this.detectChanges();
             });
         }
     }
@@ -683,11 +690,11 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     private getStageSelectedEntities(stage) {
-        return stage.entities.filter(entity => entity.selected);
+        return stage.entities.filter(entity => entity && entity.selected);
     }
 
     allEntitiesAreSelected(stage): boolean {
-        return stage.entities.every(entity => entity.selected);
+        return stage.entities.every(entity => entity && entity.selected);
     }
 
     toggleAllEntitiesInStage(e, stage) {

@@ -17912,16 +17912,17 @@ export class MemberSettingsServiceProxy {
     }
 
     /**
-     * @affiliateCode (optional) 
+     * @body (optional) 
      * @return Success
      */
-    updateAffiliateCode(affiliateCode: string | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CRM/MemberSettings/UpdateAffiliateCode?";
-        if (affiliateCode !== undefined)
-            url_ += "affiliateCode=" + encodeURIComponent("" + affiliateCode) + "&"; 
+    updateAffiliateCode(body: UpdateUserAffiliateCodeDto | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/MemberSettings/UpdateAffiliateCode";
         url_ = url_.replace(/[?&]$/, "");
 
+        const content_ = JSON.stringify(body);
+
         let options_ : any = {
+            body: content_,
             observe: "response",
             responseType: "blob",
             headers: new HttpHeaders({
@@ -17944,6 +17945,58 @@ export class MemberSettingsServiceProxy {
     }
 
     protected processUpdateAffiliateCode(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @body (optional) 
+     * @return Success
+     */
+    updateBANKCode(body: UpdateUserBANKCodeDto | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/MemberSettings/UpdateBANKCode";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUpdateBANKCode(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUpdateBANKCode(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processUpdateBANKCode(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -62867,6 +62920,78 @@ export interface IRegisterMemberRequest {
     packageId: number;
     utmParameter: UTMParameterInfo | undefined;
     trackingInfo: TrackingInfo | undefined;
+}
+
+export class UpdateUserAffiliateCodeDto implements IUpdateUserAffiliateCodeDto {
+    affiliateCode!: string;
+
+    constructor(data?: IUpdateUserAffiliateCodeDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.affiliateCode = data["affiliateCode"];
+        }
+    }
+
+    static fromJS(data: any): UpdateUserAffiliateCodeDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateUserAffiliateCodeDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["affiliateCode"] = this.affiliateCode;
+        return data; 
+    }
+}
+
+export interface IUpdateUserAffiliateCodeDto {
+    affiliateCode: string;
+}
+
+export class UpdateUserBANKCodeDto implements IUpdateUserBANKCodeDto {
+    bankCode!: string;
+
+    constructor(data?: IUpdateUserBANKCodeDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.bankCode = data["bankCode"];
+        }
+    }
+
+    static fromJS(data: any): UpdateUserBANKCodeDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateUserBANKCodeDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["bankCode"] = this.bankCode;
+        return data; 
+    }
+}
+
+export interface IUpdateUserBANKCodeDto {
+    bankCode: string;
 }
 
 export class GetUserSubscriptionsOutput implements IGetUserSubscriptionsOutput {
