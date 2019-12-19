@@ -14,6 +14,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { finalize, switchMap, first } from 'rxjs/operators';
 import startCase from 'lodash/startCase';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
