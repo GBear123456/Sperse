@@ -72,7 +72,7 @@
                         itemTemplate="addressTemplate"
                         [disabled]="disabledForUpdate"
                         [visible]="contactId && !selectedBillingAddress"
-                        [placeholder]="ls.lr('Select Address')"
+                        [placeholder]="ls.l('Select Address')"
                         [(value)]="selectedBillingAddress"
                         [dataSource]="billingAddresses">
                         <div *dxTemplate="let cellData of 'addressTemplate'" [title]="cellData.display">
@@ -100,7 +100,7 @@
                         itemTemplate="addressTemplate"
                         [disabled]="disabledForUpdate"
                         [visible]="contactId && !selectedShippingAddress"
-                        [placeholder]="ls.lr('Select Address')"
+                        [placeholder]="ls.l('Select Address')"
                         [(value)]="selectedShippingAddress"
                         [dataSource]="shippingAddresses">
                         <div *dxTemplate="let cellData of 'addressTemplate'" [title]="cellData.display">
@@ -144,7 +144,7 @@
                         (onContentReady)="onDateContentReady($event)">
                     </dx-date-box>
                     <dx-date-box #dueDateComponent
-                        [placeholder]="ls.lr('Invoice_DueOnReceipt')"
+                        [placeholder]="ls.l('Invoice_DueOnReceipt')"
                         [disabled]="disabledForUpdate"
                         (onKeyDown)="allowDigitsOnly($event, ['/'])"
                         width="200px"
