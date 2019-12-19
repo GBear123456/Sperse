@@ -126,6 +126,7 @@ import { EmailTemplateDialogComponent } from '@app/crm/shared/email-template-dia
 import { SourceContactListComponent } from './source-contact-list/source-contact-list.component';
 import { CrmService } from '@app/crm/crm.service';
 import { AddSubscriptionDialogComponent } from './subscriptions/add-subscription-dialog/add-subscription-dialog.component';
+import { OrderDropdownModule } from '@app/crm/shared/order-dropdown/order-dropfown.module';
 
 @NgModule({
     declarations: [
@@ -229,7 +230,8 @@ import { AddSubscriptionDialogComponent } from './subscriptions/add-subscription
         ItemDetailsLayoutModule,
         CRMDashboardWidgetsModule,
         BankCodeLettersModule,
-        CKEditorModule
+        CKEditorModule,
+        OrderDropdownModule
     ],
     entryComponents: [
         EditContactDialog,
