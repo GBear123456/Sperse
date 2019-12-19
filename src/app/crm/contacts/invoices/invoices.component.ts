@@ -17,6 +17,7 @@ import { Observable } from 'rxjs';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
+import { PipelineService } from '@app/shared/pipeline/pipeline.service';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { FilterModel } from '@shared/filters/models/filter.model';
@@ -62,9 +63,15 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
     duplicateInvoiceDisabled = false;
 
     contactId: number;
+    stages$ = this.pipelineService.getPipelineDefinitionObservable(
+        AppConsts.PipelinePurposeIds.order).pipe(map(pipeline => {
+            return pipeline.stages;
+        })
+    );
 
     constructor(injector: Injector,
         private dialog: MatDialog,
+        private pipelineService: PipelineService,
         private invoicesService: InvoicesService,
         private contactService: ContactServiceProxy,
         private clientService: ContactsService,
@@ -144,7 +151,9 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     onCellClick(event) {
-        if (event.rowType === 'data' && this.isGranted(AppPermissions.CRMOrdersInvoicesManage)) {
+        if (event.rowType === 'data' && event.column.caption != 'Stage'
+            && this.isGranted(AppPermissions.CRMOrdersInvoicesManage)
+        ) {
             /** If user click on actions icon */
             if (event.columnIndex > 1 && event.data) {
                 this.actionRecordData = event.data;
@@ -278,6 +287,24 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
     previewInvoice() {
         this.getPdfLink().subscribe((pdfUrl: string) => {
             window.open(pdfUrl, '_blank');
+        });
+    }
+
+    updateOrderStage(event) {
+        this.startLoading(true);
+        this.pipelineService.updateEntitiesStage(
+            AppConsts.PipelinePurposeIds.order, [{
+                Id: event.data.OrderId,
+                ContactId: event.data.ContactId,
+                CreationTime: event.data.Date,
+                Stage: event.data.OrderStage
+            }], event.value
+        ).subscribe(declinedList => {
+            this.finishLoading(true);
+            if (declinedList.length)
+                event.value = event.data.OrderStage;
+            else
+                this.notify.success(this.l('StageSuccessfullyUpdated'));
         });
     }
 }

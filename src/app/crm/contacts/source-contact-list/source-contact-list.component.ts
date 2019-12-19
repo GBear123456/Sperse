@@ -39,7 +39,7 @@ export class SourceContactListComponent {
         public ls: AppLocalizationService,
         private changeDetectorRef: ChangeDetectorRef,
         private contactProxy: ContactServiceProxy
-    ) {  }
+    ) {}
 
     loadSourceContacts(searchPhrase?: string, elm?: any) {
         let dxList  = this.sourceComponent.dxList;
@@ -53,7 +53,7 @@ export class SourceContactListComponent {
                 if (searchBox)
                     searchBox.instance.option('value', searchPhrase);
                 this.onDataLoaded.emit(this.contacts = res.map(item => {
-                    let person = item.personName.trim();
+                    let person = item.personName && item.personName.trim();
                     return {
                         id: item.id,
                         name: person || item.companyName,
