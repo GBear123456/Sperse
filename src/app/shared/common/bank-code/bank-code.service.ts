@@ -33,6 +33,7 @@ export class BankCodeService {
             color: '#3e9c61'
         }
     };
+    readonly emptyBankCode = '????';
 
     getColorsByLetter(bankCodeLetter: BankCodeLetter) {
         const colors = this.bankCodeConfig[bankCodeLetter];

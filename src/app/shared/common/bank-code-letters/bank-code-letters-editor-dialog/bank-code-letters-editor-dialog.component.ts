@@ -40,7 +40,7 @@ import { BankCodeLetter } from '@app/shared/common/bank-code-letters/bank-code-l
 export class BankCodeLettersEditorDialogComponent implements OnInit, OnDestroy {
     @Output() bankCodeChange: EventEmitter<string> = new EventEmitter<string>();
     bankCode: string;
-    personId: number;
+    personId: number= this.data.personId;
     dragDropSubscription: Subscription = new Subscription();
     bankCodeDefinitions: BankCodeDefinition[] = [
         { letter: BankCodeLetter.B, name: this.ls.l('Blueprint') },
@@ -49,9 +49,9 @@ export class BankCodeLettersEditorDialogComponent implements OnInit, OnDestroy {
         { letter: BankCodeLetter.K, name: this.ls.l('Knowledge') }
     ];
     dragDropName = 'bankCodeDefinitions';
+    bankCodeIsEmpty: boolean;
 
     constructor(
-        private ls: AppLocalizationService,
         private elementRef: ElementRef,
         private loadingService: LoadingService,
         private personContactServiceProxy: PersonContactServiceProxy,
@@ -59,11 +59,12 @@ export class BankCodeLettersEditorDialogComponent implements OnInit, OnDestroy {
         private dragulaService: DragulaService,
         private memberSettingsService: MemberSettingsServiceProxy,
         public bankCodeService: BankCodeService,
-        @Inject(MAT_DIALOG_DATA) data: any
+        public ls: AppLocalizationService,
+        @Inject(MAT_DIALOG_DATA) private data: any
     ) {
-        this.bankCode = data.bankCode;
+        this.bankCodeIsEmpty = this.data.bankCode === this.bankCodeService.emptyBankCode;
+        this.bankCode = this.bankCodeIsEmpty ? 'BANK' : this.data.bankCode;
         this.resortDefinitions();
-        this.personId = data.personId;
     }
 
     ngOnInit() {
@@ -85,17 +86,22 @@ export class BankCodeLettersEditorDialogComponent implements OnInit, OnDestroy {
             this.bankCode.indexOf(bankCodeDefinitionLetter.toString()),
             i
         );
+        this.updateBankCode(newBankCode);
+    }
+
+    updateBankCode(bankCode: string) {
         const updateMethod = this.personId
             ? this.personContactServiceProxy.updatePersonBANKCode(new UpdatePersonBANKCodeInput({
                 id: this.personId,
-                bankCode: newBankCode
+                bankCode: bankCode
             }))
-            : this.memberSettingsService.updateBANKCode(new UpdateUserBANKCodeDto({ bankCode: newBankCode }));
+            : this.memberSettingsService.updateBANKCode(new UpdateUserBANKCodeDto({ bankCode: bankCode }));
         updateMethod.pipe(
             finalize(() => this.loadingService.finishLoading(this.elementRef.nativeElement))
         ).subscribe(
             () => {
-                this.bankCode = newBankCode;
+                this.bankCode = bankCode;
+                this.bankCodeIsEmpty = false;
                 this.bankCodeChange.emit(this.bankCode);
                 this.changeDetectorRef.detectChanges();
             },
