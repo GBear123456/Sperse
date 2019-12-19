@@ -1,4 +1,4 @@
-<span [class]="letter == '?' ? 'empty' : key + letter"
+<span [class]="letter === letters.Empty ? 'empty' : key + letter"
       [ngStyle]="bankCodeService.getColorsByLetter(letter)"
       (click)="click($event)">
     {{ letter }}
