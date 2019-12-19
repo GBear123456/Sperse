@@ -28,7 +28,7 @@
                         'unclicked': !selectedKeys?.length || (!highlightSelected && !checkPermissions()),
                         'disableHindmost': disableHindmost
                      }"
-                     [searchEnabled]="searchEnabled"
+                     [searchEnabled]="searchEnabled && !customSearchEnabled"
                      [searchExpr]="searchExprType"
                      [searchTimeout]="1000"
                      [selectionMode]="selectionMode || (selectedKeys?.length ? 'single': 'none')"

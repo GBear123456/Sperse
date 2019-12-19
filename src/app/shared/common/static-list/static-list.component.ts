@@ -108,6 +108,8 @@ export class StaticListComponent extends AppComponentBase {
         this.listComponent = $event.component;
         if (this.height)
             this.listHeight = this.searchEnabled ? this.height - 90 : this.height - 65;
+        else
+            this.listHeight = 'calc(100% - 75px)';
     }
 
     highlightSelectedFilters() {
