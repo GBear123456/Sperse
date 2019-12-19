@@ -440,25 +440,8 @@ export class CreateInvoiceDialogComponent implements OnInit {
             return this.contactComponent.instance.option('isValid', false);
         }
 
-/*
-        let isAddressValid = this.selectedBillingAddress &&
-            this.selectedBillingAddress.address1 &&
-            this.selectedBillingAddress.city;
-        if (!this.validateField(this.ls.l('Invoice_BillTo'), isAddressValid))
-            return this.billingAddressComponent.instance.option('isValid', false);
-
-        isAddressValid = this.selectedShippingAddress &&
-            this.selectedShippingAddress.address1 &&
-            this.selectedShippingAddress.city;
-        if (!this.validateField(this.ls.l('Invoice_ShipTo'), isAddressValid))
-            return this.shippingAddressComponent.instance.option('isValid', false);
-*/
-
         if (!this.validateField(this.ls.l('Date'), this.date))
             return this.dateComponent.instance.option('isValid', false);
-
-        if (!this.validateField(this.ls.l('Invoice_DueOnReceipt'), this.dueDate))
-            return this.dueDateComponent.instance.option('isValid', false);
 
         this.lines = this.getFilteredLines(false);
         if (!this.lines.length)

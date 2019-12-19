@@ -54,7 +54,7 @@
                             <dxi-column dataField="InvoiceStatus" caption="{{l('Status')}}" alignment="center" cellTemplate="statusCell"></dxi-column>
                             <dxi-column dataField="OrderStage" caption="{{l('Stage')}}" cellTemplate="stageCell" width="160px"></dxi-column>
                             <dxi-column dataField="Date" caption="{{l('Date')}}" cellTemplate="datetimeCell"></dxi-column>
-                            <dxi-column dataField="InvoiceDueDate" caption="{{l('Due Date')}}" cellTemplate="dateCell"></dxi-column>
+                            <dxi-column dataField="InvoiceDueDate" caption="{{l('Due Date')}}" cellTemplate="dueDateCell"></dxi-column>
 
                             <dxi-column [fixed]="true" [fixedPosition]="'right'" [showInColumnChooser]="false"></dxi-column>
 
@@ -72,8 +72,8 @@
                             <div *dxTemplate="let cellData of 'statusCell'" class="status-wrapper">
                                 <div *ngIf="cellData.value" class="status {{ cellData.value | lowercase }}">{{ startCase(cellData.value) }}</div>
                             </div>
-                            <div *dxTemplate="let cellData of 'dateCell'">
-                                {{ cellData.value | date: formatting.date }}
+                            <div *dxTemplate="let cellData of 'dueDateCell'">
+                                {{ (cellData.value | date: formatting.date) || l('Invoice_DueOnReceipt') }}
                             </div>
                             <div *dxTemplate="let cellData of 'datetimeCell'">
                                 {{ cellData.value | date: formatting.dateTime : userTimezone }}
