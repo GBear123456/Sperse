@@ -56,13 +56,15 @@ export class BankCodeHeaderComponent implements OnInit, OnDestroy {
                     this.adHeaderHost.viewContainerRef.createComponent(component);
                 });
             });
-        forkJoin(
-            this.profileService.checkServiceSubscription(BankCodeServiceType.BANKPass),
-            this.profileService.checkServiceSubscription(BankCodeServiceType.BANKAffiliate)
-        ).subscribe(([hasBankPassSubscription, hasBankAffiliateSubscription]: [ boolean, boolean ]) => {
-            this.hideBCRMLink = !hasBankPassSubscription && !hasBankAffiliateSubscription;
-            this.memberAreaLinks = this.getMemberAreaLinks();
-        });
+        if (this.appSession.user) {
+            forkJoin(
+                this.profileService.checkServiceSubscription(BankCodeServiceType.BANKPass),
+                this.profileService.checkServiceSubscription(BankCodeServiceType.BANKAffiliate)
+            ).subscribe(([hasBankPassSubscription, hasBankAffiliateSubscription]: [ boolean, boolean ]) => {
+                this.hideBCRMLink = !hasBankPassSubscription && !hasBankAffiliateSubscription;
+                this.memberAreaLinks = this.getMemberAreaLinks();
+            });
+        }
     }
 
     private getMemberAreaLinks() {
