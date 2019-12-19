@@ -1,0 +1,17 @@
+<div [@routerTransition]>
+    <h1 class="sign-in">{{ls.l("Auto Login")}}</h1>
+    <form #loginForm="ngForm" class="login-form" method="post" novalidate (ngSubmit)="login()">
+        <div class="form-group clearfix">
+            Use the below button to send the {{tenantName}} login link to your {{userEmail}} email.
+        </div>
+        <div class="form-actions">
+            <button type="submit" class="submit teal" [disabled]="loginInProgress">
+                {{ls.l("Auto Login")}}
+                <img src="./assets/common/icons/arrow-right-long-icon.svg" alt="right arrow" class="pull-right">
+            </button>
+        </div>
+    </form>
+    <div class="login-terms-and-condition">
+        <span>{{ls.l('ByContinuingYouAgree')}} <a (click)="openConditionsDialog(conditions.Terms)">{{ls.l('TermsOfUse')}}</a> {{ls.l('and')}} <a (click)="openConditionsDialog(conditions.Policies)">{{ls.l('PrivacyPolicy')}}</a></span>
+    </div>
+</div>

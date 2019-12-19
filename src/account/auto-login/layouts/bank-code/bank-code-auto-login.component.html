@@ -1,0 +1,34 @@
+<div [@routerTransition]>
+    <div class="login-box">
+        <form #loginForm="ngForm" class="login-form" method="post" novalidate (ngSubmit)="login()">
+            <h3>{{ls.l('Auto Login')}}</h3>
+            <div class="form-group clearfix">
+                Use the below button to send the {{tenantName}} login link to your {{userEmail}} email.
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="submit" [disabled]="loginInProgress">
+                    {{ls.l("Auto Login")}}
+                </button>
+            </div>
+        </form>
+        <div class="login-terms-and-condition">
+            <span>{{ls.l('ByContinuingYouAgree')}} <br><a (click)="openConditionsDialog(conditions.Terms)">{{ls.l('TermsOfUse')}}</a> {{ls.l('and')}} <a (click)="openConditionsDialog(conditions.Policies)">{{ls.l('PrivacyPolicy')}}</a></span>
+        </div>
+        <div class="login-box-footer">
+            <ul class="logos">
+                <li class="logo-item active">
+                    <img src="./assets/common/images/bank-code/cb_logo-gray.png" alt="Code Breaker">
+                </li>
+                <li class="logo-item">
+                    <img src="./assets/common/images/bank-code/bcrm_logo.png" alt="BCRM">
+                </li>
+                <li class="logo-item">
+                    <img src="./assets/common/images/bank-code/vo.svg" alt="VO">
+                </li>
+                <li class="logo-item">
+                    <img src="./assets/common/images/bank-code/v_logo.png" alt="Vault">
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
