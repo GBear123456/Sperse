@@ -21,11 +21,14 @@ import { DxValidationGroupComponent } from '@root/node_modules/devextreme-angula
 })
 export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
     @ViewChild(DxValidationGroupComponent) validationGroup: DxValidationGroupComponent;
+    @ViewChild(OrderDropdownComponent) orderDropdownComponent: OrderDropdownComponent;
     private slider: any;
+    isBankCodeLayout: boolean = this.userManagementService.checkBankCodeFeature();
+    bankCodeServiceTypes = values(BankCodeServiceType);
     subscription: UpdateOrderSubscriptionInput = new UpdateOrderSubscriptionInput({
         contactId: this.data.contactId,
         orderNumber: this.data.orderNumber,
-        systemType: this.data.systemType,
+        systemType: this.data.systemType || (this.isBankCodeLayout ? 'BANKCODE' : undefined),
         subscriptions: [
             new SubscriptionInput({
                 name: this.data.name,
@@ -35,11 +38,18 @@ export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
             })
         ]
     });
+    amountFormat$: Observable<string> = this.invoicesService.settings$.pipe(
+        map((settings: InvoiceSettings) => getCurrencySymbol(settings.currency, 'narrow') + ' #,##0.##')
+    );
+
     constructor(
         private elementRef: ElementRef,
         private orderSubscriptionService: OrderSubscriptionServiceProxy,
         private notify: NotifyService,
         private contactsService: ContactsService,
+        private userManagementService: UserManagementService,
+        private invoicesService: InvoicesService,
+        private currencyPipe: CurrencyPipe,
         public dialogRef: MatDialogRef<AddSubscriptionDialogComponent>,
         public ls: AppLocalizationService,
         @Inject(MAT_DIALOG_DATA) private data: any
@@ -61,6 +71,7 @@ export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
             top: '75px',
             right: '-100vw'
         });
+        this.orderDropdownComponent.initOrderDataSource();
     }
 
     ngAfterViewInit() {
@@ -79,6 +90,13 @@ export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
     saveSubscription() {
         if (this.validationGroup.instance.validate().isValid) {
             const subscription = new UpdateOrderSubscriptionInput(this.subscription);
+            subscription.subscriptions.forEach((subscription: SubscriptionInput) => {
+                subscription.endDate = DateHelper.removeTimezoneOffset(
+                    new Date(subscription.endDate),
+                    false,
+                    'from'
+                );
+            });
             this.orderSubscriptionService.update(subscription).subscribe(() => {
                 this.notify.info(this.ls.l('SavedSuccessfully'));
                 this.contactsService.invalidate('subscriptions');

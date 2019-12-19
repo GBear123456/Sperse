@@ -11,7 +11,7 @@ import {
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { DxTooltipComponent } from 'devextreme-angular/ui/tooltip';
 import { MatDialog } from '@angular/material/dialog';
-import { finalize, switchMap, first, map } from 'rxjs/operators';
+import { finalize, switchMap, first } from 'rxjs/operators';
 import startCase from 'lodash/startCase';
 import { Observable } from 'rxjs';
 
@@ -23,7 +23,6 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { FilterModel } from '@shared/filters/models/filter.model';
 import {
     ContactInfoDto,
-    GetEmailDataOutput,
     ContactServiceProxy,
     InvoiceServiceProxy,
     InvoiceStatus,
