@@ -7,7 +7,7 @@
                  [src]="userManagementService.getProfilePictureUrl(appSession?.user?.profileThumbnailId)"/>
         </span>
     </a>
-    <div class="m-dropdown__wrapper" [ngClass]="hasBankCodeFeature && bankCode || showAccessCode ? 'bank-code' : ''" (click)="onClick($event)">
+    <div class="m-dropdown__wrapper" [ngClass]="hasBankCodeFeature || showAccessCode ? 'bank-code' : ''" (click)="onClick($event)">
         <span class="m-dropdown__arrow m-dropdown__arrow--right m-dropdown__arrow--adjust user-info-drop-down-arrow"></span>
         <div class="m-dropdown__inner">
             <div class="m-dropdown__header m--align-center" [ngStyle]="dropdownHeaderStyle">
@@ -39,6 +39,9 @@
                         <label>{{ ls.l('MyBANKCODE') }}</label>
                         <bank-code-letters [bankCode]="bankCode"
                                            [allowAdd]="true"
+                                           [allowEdit]="true"
+                                           [closeAfterEdit]="true"
+                                           [editDialogPosition]="{ x: 400 }"
                                            [showDescriptionsOnHover]="true">
                         </bank-code-letters>
                     </div>

@@ -1,9 +1,18 @@
 /** Core imports */
-import { Component, Input, OnInit } from '@angular/core';
-
+import {
+    ChangeDetectionStrategy,
+    ChangeDetectorRef,
+    Component,
+    DoCheck,
+    ElementRef,
+    HostListener,
+    Input,
+    OnInit
+} from '@angular/core';
 /** Third party imports */
 import * as nameParser from 'parse-full-name';
-
+import { Observable } from 'rxjs';
+import { pluck } from 'rxjs/operators';
 /** Application imports */
 import {
     InviteUserInput,
@@ -21,37 +30,58 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
     selector: 'app-import-users-step',
     templateUrl: './import-users-step.component.html',
     styleUrls: ['./import-users-step.component.less'],
-    providers: [ RoleServiceProxy, UserServiceProxy ]
+    providers: [ RoleServiceProxy, UserServiceProxy ],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ImportUsersStepComponent implements OnInit {
+export class ImportUsersStepComponent implements DoCheck, OnInit {
     @Input() showImportUsersStep: boolean;
     @Input() maxAvailableUserCount: number;
     @Input() moduleType: ModuleType;
     importUsers: ImportUserData[] = [];
     importValidators: any[] = [];
-    roles: RoleListDto[] = [];
+    roles$: Observable<RoleListDto[]> = this.roleService.getRoles(undefined, this.moduleType).pipe(
+        pluck('items')
+    );
     validationResult: boolean;
     emailRegEx = AppConsts.regexPatterns.email;
     skipUserGroupValidation = false;
-    scrollHeight = AppConsts.isMobile ? 300 : 350;
+    scrollHeight = this.getScrollHeight();
+    isMobile: boolean = AppConsts.isMobile;
 
     constructor(
         private roleService: RoleServiceProxy,
         private userService: UserServiceProxy,
+        private elementRef: ElementRef,
+        private changeDetectorRef: ChangeDetectorRef,
         public ls: AppLocalizationService
     ) {}
 
     ngOnInit() {
-        this.roleService.getRoles(undefined, this.moduleType).subscribe(result => {
-            this.roles = result.items;
-        });
         this.setImportUsers();
+    }
+
+    ngDoCheck() {
+        this.updateScrollHeight();
+    }
+
+    private updateScrollHeight() {
+        const newScrollHeight = this.getScrollHeight();
+        if (newScrollHeight !== this.scrollHeight) {
+            this.scrollHeight = newScrollHeight;
+            this.changeDetectorRef.detectChanges();
+        }
+    }
+
+    private getScrollHeight() {
+        const inviteListElement = this.elementRef.nativeElement.querySelector('.invite-list');
+        return inviteListElement ? inviteListElement.offsetHeight - (AppConsts.isMobile ? 29 : 0) : 0;
     }
 
     setImportUsers() {
         while (this.maxAvailableUserCount > 0 && this.importUsers.length < 3) {
             this.importUsers.push(new ImportUserData());
             this.maxAvailableUserCount--;
+            this.changeDetectorRef.detectChanges();
         }
     }
 
@@ -127,7 +157,7 @@ export class ImportUsersStepComponent implements OnInit {
         return true;
     }
 
-    validateInviteUserGroup(e, index) {
+    validateInviteUserGroup(index) {
         if (!this.skipUserGroupValidation) {
             this.importValidators[index].validate();
         } else {
@@ -146,18 +176,21 @@ export class ImportUsersStepComponent implements OnInit {
     addImportUser() {
         this.importUsers.push(new ImportUserData());
         this.maxAvailableUserCount--;
+        this.changeDetectorRef.detectChanges();
     }
 
     removeImportUser(index: number) {
         this.importUsers.splice(index, 1);
         this.importValidators.splice(index, 1);
         this.validateUsers();
+        this.changeDetectorRef.detectChanges();
     }
 
     onEmailKeyPress(i: number) {
         if (!this.importUsers[i].roleNames) {
             this.skipUserGroupValidation = true;
             this.importUsers[i].roleNames = [this.moduleType + ' User'];
+            this.changeDetectorRef.detectChanges();
         }
     }
 }

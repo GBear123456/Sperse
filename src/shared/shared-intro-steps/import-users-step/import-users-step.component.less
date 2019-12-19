@@ -6,6 +6,8 @@
 
     .wrapper {
         height: 100%;
+        display: flex;
+        flex-direction: column;
 
         h3 {
             font-family: Montserrat;
@@ -25,6 +27,8 @@
             max-width: 90%;
             margin: 0 auto;
             text-align: left;
+            flex-grow: 1;
+            width: 100%;
 
             .add-import-user {
                 display: inline-block;
@@ -41,7 +45,6 @@
                 padding: 5px 40px;
 
                 .remove-import-user {
-                    display: none;
                     position: absolute;
                     left: 40px;
                     top: 20px;
@@ -54,7 +57,7 @@
 
                 &:hover {
                     .remove-import-user {
-                        display: block;
+                        display: block !important;
                     }
                 }
                 @media (max-width: 767px) {
@@ -78,6 +81,7 @@
                         font-weight: 600;
                         color: #171c1d;
                         padding-left: 9px;
+                        vertical-align: bottom;
                     }
                 }
 
@@ -95,6 +99,10 @@
                 }
             }
         }
+    }
+
+    dx-scroll-view {
+        overflow: hidden;
     }
 
     /deep/ dx-tag-box {

@@ -24,10 +24,11 @@ export class BankCodeLettersComponent implements OnChanges, OnDestroy {
     @Input() showReportLink = false;
     @Input() reportLinkType: 'Sales' | 'Profile';
     @Input() reportIconName: string;
+    @Input() editDialogPosition: { x?: number, y?: number };
+    @Input() closeAfterEdit = false;
     @HostBinding('class.allow-add') @Input() allowAdd = false;
     @HostBinding('class.allow-edit') @Input() allowEdit = false;
     bankCodeDefinition: string;
-    readonly emptyBankCode = '????';
 
     constructor(
         private dialogService: DialogService,
@@ -40,23 +41,31 @@ export class BankCodeLettersComponent implements OnChanges, OnDestroy {
             this.bankCodeDefinition = this.bankCodeService.getBankCodeDefinition(change.bankCode.currentValue[0]);
         }
         if (change.allowAdd && change.allowAdd.currentValue && !this.bankCode) {
-            this.bankCode = this.emptyBankCode;
+            this.bankCode = this.bankCodeService.emptyBankCode;
         }
     }
 
-    showEditPopup(e, xPosition = 200) {
+    showEditPopup(e) {
         if (!this.dialog.getDialogById('bankCodeLettersEditorDialog')) {
             const editDialog = this.dialog.open(BankCodeLettersEditorDialogComponent, {
                 id: 'bankCodeLettersEditorDialog',
                 hasBackdrop: false,
-                position: this.dialogService.calculateDialogPosition(e, e.target.closest('div'), xPosition, -12),
+                position: this.dialogService.calculateDialogPosition(
+                    e,
+                    e.target.closest('div'),
+                    this.editDialogPosition && this.editDialogPosition.x || 200,
+                    this.editDialogPosition && this.editDialogPosition.y || -12
+                ),
                 data: {
-                    bankCode: this.bankCode === this.emptyBankCode ? 'BANK' : this.bankCode,
+                    bankCode: this.bankCode,
                     personId: this.personId
                 }
             });
             editDialog.componentInstance.bankCodeChange.subscribe((bankCode: string) => {
                 this.bankCode = bankCode;
+                if (this.closeAfterEdit) {
+                    editDialog.close();
+                }
             });
             e.stopPropagation();
             e.preventDefault();
@@ -68,7 +77,7 @@ export class BankCodeLettersComponent implements OnChanges, OnDestroy {
     }
 
     onLetterClick(e) {
-        if (this.allowAdd && this.bankCode === this.emptyBankCode) {
+        if (this.allowAdd && this.bankCode === this.bankCodeService.emptyBankCode) {
             this.showEditPopup(e);
         }
     }

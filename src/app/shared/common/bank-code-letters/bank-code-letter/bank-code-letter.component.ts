@@ -13,6 +13,7 @@ export class BankCodeLetterComponent {
     @Input() allowEdit = false;
     @Input() key = '';
     @Output() onClick: EventEmitter<null> = new EventEmitter<null>();
+    letters = BankCodeLetter;
 
     constructor(public bankCodeService: BankCodeService) {}
 
