@@ -10,6 +10,7 @@ import { ConfirmEmailComponent } from './email-activation/confirm-email.componen
 import { EmailActivationComponent } from './email-activation/email-activation.component';
 import { LanguageSwitchComponent } from './language-switch.component';
 import { LoginComponent, AdLoginHostDirective } from './login/login.component';
+import { AutoLoginComponent, AdAutoLoginHostDirective } from './auto-login/auto-login.component';
 import { LoginService } from './login/login.service';
 import { SendTwoFactorCodeComponent } from './login/send-two-factor-code.component';
 import { ValidateTwoFactorCodeComponent } from './login/validate-two-factor-code.component';
@@ -24,6 +25,10 @@ import { HostLoginComponent } from './login/layouts/host/host-login.component';
 import { LendSpaceLoginComponent } from './login/layouts/lend-space/lend-space-login.component';
 import { AdvicePeriodLoginComponent } from './login/layouts/advice-period/advice-period-login.component';
 import { BankCodeLoginComponent } from './login/layouts/bank-code/bank-code-login.component';
+import { HostAutoLoginComponent } from './auto-login/layouts/host/host-auto-login.component';
+import { LendSpaceAutoLoginComponent } from './auto-login/layouts/lend-space/lend-space-auto-login.component';
+import { AdvicePeriodAutoLoginComponent } from './auto-login/layouts/advice-period/advice-period-auto-login.component';
+import { BankCodeAutoLoginComponent } from './auto-login/layouts/bank-code/bank-code-auto-login.component';
 import { HostLayoutComponent } from './layouts/host/host-layout.component';
 import { LendSpaceLayoutComponent } from './layouts/lend-space/lend-space-layout.component';
 import { AdvicePeriodLayoutComponent } from './layouts/advice-period/advice-period-layout.component';
@@ -64,11 +69,17 @@ import { BankCodeLayoutModule } from '@root/bank-code/shared/layout/bank-code-la
         TenantChangeComponent,
         TenantChangeModalComponent,
         LoginComponent,
+        AutoLoginComponent,
         AdvicePeriodLoginComponent,
         BankCodeLoginComponent,
         HostLoginComponent,
         LendSpaceLoginComponent,
+        AdvicePeriodAutoLoginComponent,
+        BankCodeAutoLoginComponent,
+        HostAutoLoginComponent,
+        LendSpaceAutoLoginComponent,
         AdLoginHostDirective,
+        AdAutoLoginHostDirective,
         AdResetPasswordHostDirective,
         AdForgotPasswordHostDirective,
         ForgotPasswordComponent,
@@ -92,12 +103,16 @@ import { BankCodeLayoutModule } from '@root/bank-code/shared/layout/bank-code-la
     entryComponents: [
         HostLayoutComponent,
         HostLoginComponent,
+        HostAutoLoginComponent,
         LendSpaceLoginComponent,
+        LendSpaceAutoLoginComponent,
         LendSpaceLayoutComponent,
         AdvicePeriodLoginComponent,
+        AdvicePeriodAutoLoginComponent,
         AdvicePeriodLayoutComponent,
         BankCodeLayoutComponent,
         BankCodeLoginComponent,
+        BankCodeAutoLoginComponent,
         HostForgotPasswordComponent,
         LendSpaceForgotPasswordComponent,
         HostResetPasswordComponent,
