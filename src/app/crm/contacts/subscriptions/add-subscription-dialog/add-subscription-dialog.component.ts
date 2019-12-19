@@ -1,6 +1,23 @@
-import { AfterViewInit, Component, ElementRef, Inject, OnInit, ViewChild } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+/** Core imports */
 import {
+    AfterViewInit,
+    ChangeDetectionStrategy,
+    Component,
+    ElementRef,
+    Inject,
+    OnInit,
+    ViewChild
+} from '@angular/core';
+
+/** Third party imports */
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import values from 'lodash/values';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+
+/** Application imports */
+import {
+    InvoiceSettings,
     OrderSubscriptionServiceProxy,
     SubscriptionInput,
     UpdateOrderSubscriptionInput
@@ -9,6 +26,12 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 import { NotifyService } from '@abp/notify/notify.service';
 import { ContactsService } from '@app/crm/contacts/contacts.service';
 import { DxValidationGroupComponent } from '@root/node_modules/devextreme-angular';
+import { OrderDropdownComponent } from '@app/crm/shared/order-dropdown/order-dropdown.component';
+import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
+import { BankCodeServiceType } from '@root/bank-code/products/bank-code-service-type.enum';
+import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
+import { DateHelper } from '@shared/helpers/DateHelper';
+import { CurrencyPipe, getCurrencySymbol } from '@angular/common';
 
 @Component({
     selector: 'add-subscription-dialog',
@@ -17,15 +40,20 @@ import { DxValidationGroupComponent } from '@root/node_modules/devextreme-angula
         '../../../../../shared/common/styles/close-button.less',
         '../../../../shared/common/styles/form.less',
         './add-subscription-dialog.component.less'
-    ]
+    ],
+    providers: [ CurrencyPipe ],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
     @ViewChild(DxValidationGroupComponent) validationGroup: DxValidationGroupComponent;
+    @ViewChild(OrderDropdownComponent) orderDropdownComponent: OrderDropdownComponent;
     private slider: any;
+    isBankCodeLayout: boolean = this.userManagementService.checkBankCodeFeature();
+    bankCodeServiceTypes = values(BankCodeServiceType);
     subscription: UpdateOrderSubscriptionInput = new UpdateOrderSubscriptionInput({
         contactId: this.data.contactId,
         orderNumber: this.data.orderNumber,
-        systemType: this.data.systemType,
+        systemType: this.data.systemType || (this.isBankCodeLayout ? 'BANKCODE' : undefined),
         subscriptions: [
             new SubscriptionInput({
                 name: this.data.name,
@@ -35,11 +63,18 @@ export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
             })
         ]
     });
+    amountFormat$: Observable<string> = this.invoicesService.settings$.pipe(
+        map((settings: InvoiceSettings) => getCurrencySymbol(settings.currency, 'narrow') + ' #,##0.##')
+    );
+
     constructor(
         private elementRef: ElementRef,
         private orderSubscriptionService: OrderSubscriptionServiceProxy,
         private notify: NotifyService,
         private contactsService: ContactsService,
+        private userManagementService: UserManagementService,
+        private invoicesService: InvoicesService,
+        private currencyPipe: CurrencyPipe,
         public dialogRef: MatDialogRef<AddSubscriptionDialogComponent>,
         public ls: AppLocalizationService,
         @Inject(MAT_DIALOG_DATA) private data: any
@@ -61,24 +96,28 @@ export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
             top: '75px',
             right: '-100vw'
         });
+        this.orderDropdownComponent.initOrderDataSource();
     }
 
     ngAfterViewInit() {
-        setTimeout(() => {
-            this.slider.classList.remove('hide');
-            this.dialogRef.updateSize(undefined, '100vh');
-            setTimeout(() => {
-                this.dialogRef.updatePosition({
-                    top: '75px',
-                    right: '0px'
-                });
-            }, 100);
-        });
+        this.slider.classList.remove('hide');
+        this.dialogRef.updateSize(undefined, '100vh');
+            this.dialogRef.updatePosition({
+                top: '75px',
+                right: '0px'
+            });
     }
 
     saveSubscription() {
         if (this.validationGroup.instance.validate().isValid) {
             const subscription = new UpdateOrderSubscriptionInput(this.subscription);
+            subscription.subscriptions.forEach((subscription: SubscriptionInput) => {
+                subscription.endDate = DateHelper.removeTimezoneOffset(
+                    new Date(subscription.endDate),
+                    false,
+                    'from'
+                );
+            });
             this.orderSubscriptionService.update(subscription).subscribe(() => {
                 this.notify.info(this.ls.l('SavedSuccessfully'));
                 this.contactsService.invalidate('subscriptions');

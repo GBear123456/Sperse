@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject, ViewEncapsulation } from '@angular/core';
+import { Component, Inject, ViewEncapsulation } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 @Component({
@@ -7,11 +7,9 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
     styleUrls: ['./users-dialog.component.less'],
     encapsulation: ViewEncapsulation.None
 })
-export class UsersDialogComponent implements OnInit {
+export class UsersDialogComponent {
     constructor(public dialogRef: MatDialogRef<UsersDialogComponent>,
                 @Inject(MAT_DIALOG_DATA) public data: any) {}
-
-    ngOnInit() {}
 
     userChosen(userId: number) {
         this.dialogRef.close(userId);

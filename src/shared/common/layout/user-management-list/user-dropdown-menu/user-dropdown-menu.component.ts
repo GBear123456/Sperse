@@ -10,13 +10,19 @@ import {
     OnInit,
     ViewChild
 } from '@angular/core';
+
+/** Third party imports */
+import { Observable, forkJoin, of } from 'rxjs';
+import { first, map } from 'rxjs/operators';
+
 /** Application imports */
 import { ImpersonationService } from 'app/admin/users/impersonation.service';
 import {
     CommonUserInfoServiceProxy,
     LayoutType,
     LinkedUserDto,
-    MemberSettingsServiceProxy
+    MemberSettingsServiceProxy,
+    UpdateUserAffiliateCodeDto
 } from 'shared/service-proxies/service-proxies';
 import { UserManagementService } from 'shared/common/layout/user-management-list/user-management.service';
 import { UserDropdownMenuItemType } from 'shared/common/layout/user-management-list/user-dropdown-menu/user-dropdown-menu-item-type';
@@ -30,6 +36,9 @@ import { BankCodeService } from '@app/shared/common/bank-code/bank-code.service'
 import { FeatureCheckerService } from '@abp/features/feature-checker.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { BankCodeLetter } from '@app/shared/common/bank-code-letters/bank-code-letter.enum';
+import { BankCodeLettersComponent } from '@app/shared/common/bank-code-letters/bank-code-letters.component';
+import { BankCodeServiceType } from '@root/bank-code/products/bank-code-service-type.enum';
+import { ProfileService } from '@shared/common/profile-service/profile.service';
 
 @Component({
     selector: 'user-dropdown-menu',
@@ -43,20 +52,32 @@ import { BankCodeLetter } from '@app/shared/common/bank-code-letters/bank-code-l
 })
 export class UserDropdownMenuComponent implements AfterViewInit, OnInit {
     @ViewChild('topBarUserProfile') topBarUserProfile: ElementRef;
+    @ViewChild(BankCodeLettersComponent) bankCodeLetters: BankCodeLettersComponent;
     @Input() subtitle: string;
     @Input() dropdownMenuItems: UserDropdownMenuItemModel[] = this.getDropDownItems();
     private impersonationService: ImpersonationService;
     private commonUserInfoService: CommonUserInfoServiceProxy;
     profileThumbnailId = this.appSession.user.profileThumbnailId;
-    shownLoginInfo: { fullName, email, tenantName? };
+    shownLoginInfo: { fullName, email, tenantName? } = this.appSession.getShownLoginInfo();
     menuItemTypes = UserDropdownMenuItemType;
     bankCode: string = this.appSession.user.bankCode;
     bankCodeColor: string = this.bankCode
-        ? this.bankCodeService.getColorsByLetter(this.bankCode[0] as BankCodeLetter).background
+        ? this.bankCodeService.getBackgroundColorByLetter(this.bankCode[0] as BankCodeLetter)
         : '#000';
     accessCode = this.appSession.user.affiliateCode;
     hasBankCodeFeature: boolean = this.userManagementService.checkBankCodeFeature();
-    hasBankCodeLayout: boolean = this.appSession.tenant && this.appSession.tenant.customLayoutType === LayoutType.BankCode;
+    showAccessCode$: Observable<boolean> = this.appSession.tenant && this.appSession.tenant.customLayoutType === LayoutType.BankCode
+        ? forkJoin(
+            this.profileService.checkServiceSubscription(BankCodeServiceType.BANKPass),
+            this.profileService.checkServiceSubscription(BankCodeServiceType.BANKAffiliate),
+            this.profileService.checkServiceSubscription(BankCodeServiceType.BANKVault)
+        ).pipe(
+            map((res: boolean[]) => res.some(Boolean))
+        )
+        : of(false);
+    showAccessCode = false;
+    isAccessCodeTooltipVisible = false;
+    dropdownHeaderStyle: { [key: string]: string } = this.getDropdownHeaderStyle();
 
     constructor(
         injector: Injector,
@@ -66,6 +87,7 @@ export class UserDropdownMenuComponent implements AfterViewInit, OnInit {
         private changeDetectorRef: ChangeDetectorRef,
         private bankCodeService: BankCodeService,
         private memberSettingsService: MemberSettingsServiceProxy,
+        private profileService: ProfileService,
         public appSession: AppSessionService,
         public userManagementService: UserManagementService,
         public ls: AppLocalizationService
@@ -75,7 +97,9 @@ export class UserDropdownMenuComponent implements AfterViewInit, OnInit {
     }
 
     ngOnInit() {
-        this.shownLoginInfo = this.appSession.getShownLoginInfo();
+        this.showAccessCode$.pipe(first()).subscribe((showAccessCode: boolean) => {
+            this.showAccessCode = showAccessCode;
+        });
     }
 
     ngAfterViewInit() {
@@ -88,6 +112,15 @@ export class UserDropdownMenuComponent implements AfterViewInit, OnInit {
                 });
             }
         });
+        $(this.topBarUserProfile.nativeElement)['mDropdown']().on('beforeHide', () => {
+            this.closeBankCodeDialogs();
+        });
+    }
+
+    private closeBankCodeDialogs() {
+        if (this.bankCodeLetters) {
+            this.bankCodeLetters.closeDialog();
+        }
     }
 
     private getDropDownItems() {
@@ -97,6 +130,7 @@ export class UserDropdownMenuComponent implements AfterViewInit, OnInit {
     }
 
     menuItemClick(menuItem, event) {
+        this.closeBankCodeDialogs();
         menuItem.onClick(event);
         this.elementRef.nativeElement.childNodes[0]
             .classList.remove('m-dropdown--open');
@@ -109,7 +143,7 @@ export class UserDropdownMenuComponent implements AfterViewInit, OnInit {
 
     accessCodeChanged(accessCode: string) {
         this.accessCode = accessCode;
-        this.memberSettingsService.updateAffiliateCode(accessCode).subscribe(
+        this.memberSettingsService.updateAffiliateCode(new UpdateUserAffiliateCodeDto({ affiliateCode: accessCode })).subscribe(
             () => {
                 abp.notify.info(this.ls.l('AccessCodeUpdated'));
                 this.appSession.user.affiliateCode = this.accessCode;
@@ -120,7 +154,22 @@ export class UserDropdownMenuComponent implements AfterViewInit, OnInit {
     }
 
     onClick(e) {
+        this.closeBankCodeDialogs();
         e.stopPropagation();
+    }
+
+    getDropdownHeaderStyle(): { [key: string]: string; } {
+        let style;
+        if (this.hasBankCodeFeature) {
+            style = {
+                background: (this.bankCode
+                    ? this.bankCodeService.getBackgroundColorByLetter(this.bankCode[0] as BankCodeLetter)
+                    : '#00aeef'
+                ),
+                boxShadow: 'none'
+            };
+        }
+        return style;
     }
 
 }

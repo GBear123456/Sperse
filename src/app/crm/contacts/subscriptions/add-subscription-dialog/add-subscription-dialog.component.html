@@ -10,16 +10,17 @@
     <dx-validation-group>
         <div class="field">
             <label for="orderNumber">{{ls.l('OrderNumber')}}</label>
-            <dx-text-box name="orderNumber"
-                         [inputAttr]="{ id: 'orderNumber' }"
-                         [(value)]="subscription.orderNumber">
-            </dx-text-box>
+            <order-dropdown [(orderNumber)]="subscription.orderNumber"
+                            placeholder=""
+                            width="100%"
+                            [contactId]="data.contactId">
+            </order-dropdown>
         </div>
-
         <div class="field system-type">
             <label for="systemType">{{ls.l('SystemType')}}</label>
             <dx-text-box name="systemType"
                          [inputAttr]="{ id: 'systemType' }"
+                         [disabled]="isBankCodeLayout"
                          [(value)]="subscription.systemType">
                 <dx-validator>
                     <dxi-validation-rule type="required" message="{{ls.l('TypeIsRequired')}}."></dxi-validation-rule>
@@ -30,13 +31,20 @@
             <i *ngIf="i !== 0" class="fa fa-close" (click)="removeSubscriptionFields(i)"></i>
             <div class="field">
                 <label for="code">{{ls.l('Code')}}</label>
-                <dx-text-box name="code"
-                             [inputAttr]="{ id: 'code' }"
-                             [(value)]="subscription.code">
-                    <dx-validator>
-                        <dxi-validation-rule type="required" message="{{ls.l('CodeIsRequired')}}."></dxi-validation-rule>
-                    </dx-validator>
-                </dx-text-box>
+                <dx-select-box *ngIf="isBankCodeLayout; else textBox"
+                               [inputAttr]="{ id: 'code' }"
+                               [items]="bankCodeServiceTypes"
+                               [(value)]="subscription.code">
+                </dx-select-box>
+                <ng-template #textBox>
+                    <dx-text-box name="code"
+                                 [inputAttr]="{ id: 'code' }"
+                                 [(value)]="subscription.code">
+                        <dx-validator>
+                            <dxi-validation-rule type="required" message="{{ls.l('CodeIsRequired')}}."></dxi-validation-rule>
+                        </dx-validator>
+                    </dx-text-box>
+                </ng-template>
             </div>
             <div class="field">
                 <label for="name">{{ls.l('Name')}}</label>
@@ -60,6 +68,7 @@
                 <label for="amount">{{ls.l('Amount')}}</label>
                 <dx-number-box name="amount"
                                [inputAttr]="{ id: 'amount' }"
+                               [format]="amountFormat$ | async"
                                [(value)]="subscription.amount">
                 </dx-number-box>
             </div>

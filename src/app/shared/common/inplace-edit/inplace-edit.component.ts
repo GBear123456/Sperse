@@ -22,6 +22,7 @@ import { ClipboardService } from 'ngx-clipboard';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { ConfirmDialogComponent } from '@app/shared/common/dialogs/confirm/confirm-dialog.component';
 import { InplaceEditModel } from './inplace-edit.model';
+import { NotifyService } from '@abp/notify/notify.service';
 
 @Component({
     selector: 'inplace-edit',
@@ -83,6 +84,8 @@ export class InplaceEditComponent extends AppComponentBase {
     @Input() saveOnClose = false;
     @Input() saveOnFocusOut = false;
     @Input() saveOnEnter = false;
+    @Input() showEditModeOnEditButtonClick = false;
+    @Input() buttonsPosition: 'right' | 'below' = 'right';
     @Output() valueChanged: EventEmitter<any> = new EventEmitter();
     @Output() itemDeleted: EventEmitter<any> = new EventEmitter();
     @Output() openDialog: EventEmitter<any> = new EventEmitter();
@@ -95,10 +98,10 @@ export class InplaceEditComponent extends AppComponentBase {
 
     constructor(
         injector: Injector,
-        public dialog: MatDialog,
-        private notifyService: NotifyService,
+        private changeDetector: ChangeDetectorRef,
         private clipboardService: ClipboardService,
-        private changeDetector: ChangeDetectorRef
+        private notifyService: NotifyService,
+        public dialog: MatDialog,
     ) {
         super(injector);
     }
@@ -140,7 +143,7 @@ export class InplaceEditComponent extends AppComponentBase {
                 if (isEnabled) {
                     if (this._clickCounter > 1)
                         this.showInput(isEnabled);
-                    else
+                    else if (!this.showEditModeOnEditButtonClick)
                         this.showDialog(event);
                 } else
                     this.showInput(isEnabled);
@@ -170,8 +173,16 @@ export class InplaceEditComponent extends AppComponentBase {
     }
 
     showDialog(event) {
-        if (this.openDialog)
-            this.openDialog.emit(event);
+        if (this.showEditModeOnEditButtonClick) {
+            this.showInput(true);
+        }
+        this.openDialog.emit(event);
+    }
+
+    onEnterKey() {
+        if (this.saveOnEnter) {
+            this.updateItem();
+        }
     }
 
     onFocusOut(event) {
@@ -195,4 +206,9 @@ export class InplaceEditComponent extends AppComponentBase {
         setTimeout(() => event.component.repaint());
     }
 
+    copyItem(event) {
+        this.clipboardService.copyFromContent(this.value);
+        this.notifyService.info(this.l('Copied'));
+        event.stopPropagation();
+    }
 }

@@ -48,7 +48,7 @@ export class CreditReportsRouteGuard implements CanActivate, CanActivateChild {
         if (abp.session.impersonatorTenantId) {
              location.pathname = uri;
              location.search = '';
-         } else 
+         } else
              this.router.navigate([uri]);
     }
 
@@ -59,7 +59,7 @@ export class CreditReportsRouteGuard implements CanActivate, CanActivateChild {
             ) {
                 if (this.sessionService.user)
                     this.router.navigate(['/personal-finance/home']);
-                else 
+                else
                     this.checkNavigateLoginPage();
             } else
                 this.router.navigate(['/']);

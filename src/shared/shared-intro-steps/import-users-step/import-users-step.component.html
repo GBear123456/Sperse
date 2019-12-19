@@ -35,7 +35,7 @@
                                 <dxi-validation-rule type="stringLength" [max]="32"></dxi-validation-rule>
                             </dx-validator>
                         </dx-text-box>
-                        <dx-tag-box [dataSource]="roles"
+                        <dx-tag-box [dataSource]="roles$ | async"
                                     valueExpr="name"
                                     displayExpr="displayName"
                                     placeholder="Role"
@@ -45,17 +45,25 @@
                                     [maxDisplayedTags]="0"
                                     [showMultiTagOnly]="true"
                                     (onMultiTagPreparing)="onMultiTagPreparing($event)"
-                                    (onValueChanged)="validateInviteUserGroup($event, i)"
+                                    (onValueChanged)="validateInviteUserGroup(i)"
                                     class="col-sm-4">
                             <div *dxTemplate="let tag of 'customTagTemplate'">
                                 <span class="tag-value">{{tag}}</span>
                             </div>
                             <dx-validator>
-                                <dxi-validation-rule type="custom" [validationCallback]="validateInviteUserRow" [reevaluate]="true"
-                                                     [message]="ls.l('RequiredField', ls.l('Role'))"></dxi-validation-rule>
+                                <dxi-validation-rule type="custom"
+                                                     [validationCallback]="validateInviteUserRow"
+                                                     [reevaluate]="true"
+                                                     [message]="ls.l('RequiredField', ls.l('Role'))">
+                                </dxi-validation-rule>
                             </dx-validator>
                         </dx-tag-box>
-                        <div class="remove-import-user" (click)="removeImportUser(i)"><i class="fa fa-minus"></i></div>
+                        <div *ngIf="i > 2"
+                             class="remove-import-user"
+                             [ngStyle]="{ display: isMobile ? 'block' : 'none' }"
+                             (click)="removeImportUser(i)">
+                            <i class="fa fa-minus"></i>
+                        </div>
                     </div>
                 </dx-validation-group>
                 <div class="add-import-user" (click)="addImportUser()" *ngIf="maxAvailableUserCount > 0">+ADD</div>

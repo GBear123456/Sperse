@@ -1,11 +1,35 @@
 import { Injectable } from '@angular/core';
 import { AppConsts } from '@shared/AppConsts';
-import { LayoutType } from '@shared/service-proxies/service-proxies';
+import {
+    GetUserSubscriptionsOutput,
+    LayoutType,
+    MemberSubscriptionServiceProxy
+} from '@shared/service-proxies/service-proxies';
 import { AppSessionService } from '@shared/common/session/app-session.service';
+import { Observable } from '@node_modules/rxjs';
+import { map, publishReplay, refCount } from '@node_modules/rxjs/internal/operators';
+import { BankCodeServiceType } from '@root/bank-code/products/bank-code-service-type.enum';
+import * as moment from 'moment-timezone';
 
 @Injectable()
 export class ProfileService {
-    constructor(private appSession: AppSessionService) {}
+
+    public bankCodeSubscriptions$: Observable<GetUserSubscriptionsOutput[]> = this.subscriptionProxy.getUserSubscriptions('BankCode', undefined, undefined).pipe(
+        /** For debug purpose */
+        // map(() => [ new GetUserSubscriptionsOutput({
+        //     serviceType: BankCodeServiceType.BANKVault,
+        //     serviceTypeId: BankCodeServiceType.BANKVault,
+        //     serviceName: null,
+        //     serviceId: null,
+        //     endDate: moment('2031-12-15T10:10:09Z')
+        // }) ]),
+        publishReplay(),
+        refCount()
+    );
+    constructor(
+        private appSession: AppSessionService,
+        private subscriptionProxy: MemberSubscriptionServiceProxy
+    ) {}
 
     getPhoto(photo, gender = null): string {
         if (photo)
@@ -39,5 +63,15 @@ export class ProfileService {
         }
 
         return AppConsts.imageUrls.noPhoto;
+    }
+
+    checkServiceSubscription(serviceTypeId: BankCodeServiceType): Observable<boolean> {
+        return this.bankCodeSubscriptions$.pipe(
+            map((subscriptions: GetUserSubscriptionsOutput[]) => {
+                return subscriptions.some((sub: GetUserSubscriptionsOutput) => {
+                    return sub.serviceTypeId == serviceTypeId && sub.endDate.diff(moment()) > 0;
+                });
+            })
+        );
     }
 }

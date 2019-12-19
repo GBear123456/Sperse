@@ -5,10 +5,10 @@
     <span class="link" [ngClass]="{ 'placeholder': !value }" [attr.title]="link">
         <a (click)="link && $event.stopPropagation()" [attr.href]="link" [attr.title]="displayValue || value || editPlaceholder" target="_blank" #editText>{{displayValue || value || editPlaceholder}}</a>
     </span>
-    <div class="actions" [ngClass]="{ hidden: isReadOnlyField }">
-        <i *ngIf="isCopyEnabled && value" class="copy fa fa-clone" aria-hidden="true" (click)="copyToClipbord()"></i>
+    <div class="actions {{ buttonsPosition }}" [ngClass]="{ hidden: isReadOnlyField }">
         <i *ngIf="isEditDialogEnabled" class="edit fa fa-pencil" aria-hidden="true" (click)="showDialog($event)"></i>
         <i *ngIf="isDeleteEnabled" class="delete fa fa-times" aria-hidden="true" (click)="deleteItem($event)"></i>
+        <img *ngIf="isCopyEnabled && value" src="./assets/common/icons/copy.svg" (click)="copyItem($event)"/>
     </div>
 </div>
 <div *ngIf="!isReadOnlyField && isEditModeEnabled" class="inplace-edit-edit-mode {{multiline ? 'multiline': ''}}">
@@ -25,18 +25,20 @@
         [maskInvalidMessage]="maskInvalidMessage"
         [maxLength]="maxLength"
         (onFocusIn)="onFocusIn($event)"
-        (onEnterKey)="updateItem()"
+        (onEnterKey)="onEnterKey()"
         (onFocusOut)="onFocusOut($event)">
         <dx-validator [validationRules]="validationRules || []"></dx-validator>
     </dx-text-box>
-    <dx-button *ngIf="showUpdateButton"
-               class="button-update"
-               icon="todo"
-               (onClick)="updateItem()">
-    </dx-button>
-    <dx-button *ngIf="showRefreshButton"
-               class="button-exit"
-               icon="refresh"
-               (onClick)="setEditModeEnabled(false)">
-    </dx-button>
+    <div class="edit-buttons" [ngClass]="buttonsPosition">
+        <dx-button *ngIf="showUpdateButton"
+                   class="button-update"
+                   icon="todo"
+                   (onClick)="updateItem()">
+        </dx-button>
+        <dx-button *ngIf="showRefreshButton"
+                   class="button-exit"
+                   icon="refresh"
+                   (onClick)="setEditModeEnabled(false)">
+        </dx-button>
+    </div>
 </div>

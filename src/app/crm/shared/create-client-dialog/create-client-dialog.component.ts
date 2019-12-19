@@ -37,11 +37,12 @@ import { DialogService } from '@app/shared/common/dialogs/dialog.service';
 import { PipelineService } from '@app/shared/pipeline/pipeline.service';
 import { AppConsts } from '@shared/AppConsts';
 import { ContactGroup } from '@shared/AppEnums';
+import { ContactStatus } from '@shared/AppEnums';
 import {
     ContactServiceProxy, CreateContactInput, ContactAddressServiceProxy, CreateContactEmailInput,
     CreateContactPhoneInput, ContactPhotoServiceProxy, CreateContactAddressInput, ContactEmailServiceProxy,
     ContactPhoneServiceProxy, SimilarContactOutput, ContactPhotoInput, OrganizationContactServiceProxy,
-    PersonInfoDto, LeadServiceProxy, CreateLeadInput, CreateContactLinkInput
+    PersonInfoDto, CreateContactLinkInput
 } from '@shared/service-proxies/service-proxies';
 import { UploadPhotoDialogComponent } from '@app/shared/common/upload-photo-dialog/upload-photo-dialog.component';
 import { SimilarCustomersDialogComponent } from '../similar-customers-dialog/similar-customers-dialog.component';
@@ -73,7 +74,7 @@ import { SourceContactListComponent } from '@app/crm/contacts/source-contact-lis
         '../../../shared/common/toolbar/toolbar.component.less',
         'create-client-dialog.component.less'
     ],
-    providers: [ CacheHelper, ContactServiceProxy, ContactPhotoServiceProxy, DialogService, GooglePlaceHelper, LeadServiceProxy, ToolbarService ],
+    providers: [ CacheHelper, ContactServiceProxy, ContactPhotoServiceProxy, DialogService, GooglePlaceHelper, ToolbarService ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CreateClientDialogComponent implements OnInit, OnDestroy {
@@ -181,7 +182,6 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
         private contactPhoneService: ContactPhoneServiceProxy,
         private contactEmailService: ContactEmailServiceProxy,
         private contactAddressService: ContactAddressServiceProxy,
-        private leadService: LeadServiceProxy,
         private nameParser: NameParserService,
         private pipelineService: PipelineService,
         private dialogService: DialogService,
@@ -285,21 +285,14 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
         this.clearSimilarCustomersCheck();
         let saveButton: any = document.getElementById(this.saveButtonId);
         saveButton.disabled = true;
-        if (this.data.isInLeadMode)
-            this.leadService.createLead(CreateLeadInput.fromJS(dataObj))
-                .pipe(finalize(() => { saveButton.disabled = false; this.modalDialog.finishLoading(); }))
-                .subscribe(result => {
-                    dataObj.id = result.contactId;
-                    dataObj.leadId = result.id;
-                    this.afterSave(dataObj);
-                });
-        else
-            this.contactProxy.createContact(CreateContactInput.fromJS(dataObj))
-                .pipe(finalize(() => { saveButton.disabled = false; this.modalDialog.finishLoading(); }))
-                .subscribe(result => {
-                    dataObj.id = result.id;
-                    this.afterSave(dataObj);
-                });
+        let createContactInput = CreateContactInput.fromJS(dataObj);
+        createContactInput.statusId = this.data.isInLeadMode ? ContactStatus.Prospective : ContactStatus.Active;
+        this.contactProxy.create(createContactInput)
+            .pipe(finalize(() => { saveButton.disabled = false; this.modalDialog.finishLoading(); }))
+            .subscribe(result => {
+                dataObj.id = result.id;
+                this.afterSave(dataObj);
+            });
     }
 
     private afterSave(data): void {

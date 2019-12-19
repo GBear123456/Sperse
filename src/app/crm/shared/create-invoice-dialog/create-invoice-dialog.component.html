@@ -72,7 +72,7 @@
                         itemTemplate="addressTemplate"
                         [disabled]="disabledForUpdate"
                         [visible]="contactId && !selectedBillingAddress"
-                        [placeholder]="ls.lr('Select Address')"
+                        [placeholder]="ls.l('Select Address')"
                         [(value)]="selectedBillingAddress"
                         [dataSource]="billingAddresses">
                         <div *dxTemplate="let cellData of 'addressTemplate'" [title]="cellData.display">
@@ -100,7 +100,7 @@
                         itemTemplate="addressTemplate"
                         [disabled]="disabledForUpdate"
                         [visible]="contactId && !selectedShippingAddress"
-                        [placeholder]="ls.lr('Select Address')"
+                        [placeholder]="ls.l('Select Address')"
                         [(value)]="selectedShippingAddress"
                         [dataSource]="shippingAddresses">
                         <div *dxTemplate="let cellData of 'addressTemplate'" [title]="cellData.display">
@@ -144,7 +144,7 @@
                         (onContentReady)="onDateContentReady($event)">
                     </dx-date-box>
                     <dx-date-box #dueDateComponent
-                        [placeholder]="ls.lr('Invoice_DueOnReceipt')"
+                        [placeholder]="ls.l('Invoice_DueOnReceipt')"
                         [disabled]="disabledForUpdate"
                         (onKeyDown)="allowDigitsOnly($event, ['/'])"
                         width="200px"
@@ -154,31 +154,11 @@
                         (onContentReady)="onDateContentReady($event)">
                     </dx-date-box>
                 </div>
-                <dx-drop-down-box #orderDropBox
-                    width="250px"
-                    height="40px"
-                    [(value)]="orderNumber"
-                    [disabled]="data?.invoice"
-                    [acceptCustomValue]="true"
-                    [dataSource]="[orderNumber]"
-                    (onFocusIn)="orderFocusIn($event)"
-                    (onValueChanged)="onOrderNumberValueChanged($event)"
-                    [placeholder]="ls.l('Invoice_PurchaseOrderNumber')">
-                    <div *dxTemplate="let contentData of 'content'">
-                        <dx-data-grid #ordersGrid
-                            height="350px"
-                            accessKey="orderNumber"
-                            [dataSource]="ordersDataSource"
-                            [showColumnHeaders]="false"
-                            [showColumnLines]="false"
-                            [searchPanel]="{visible: true}"
-                            [selection]="{mode: 'single'}"
-                            (onRowClick)="onOrderSelected($event, orderDropBox)">
-                            <dxi-column dataField="Number" dataType="string" caption="{{ls.l('Number')}}"></dxi-column>
-                            <dxo-paging [pageSize]="20"></dxo-paging>
-                        </dx-data-grid>
-                    </div>
-                </dx-drop-down-box>
+                <order-dropdown [(orderId)]="orderId"
+                                [(orderNumber)]="orderNumber"
+                                [contactId]="contactId"
+                                [disabled]="data?.invoice">
+                </order-dropdown>
             </div>
             <div class="field-area lines">
                 <dx-validation-group>

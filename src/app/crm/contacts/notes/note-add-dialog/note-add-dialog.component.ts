@@ -61,7 +61,6 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
     followupDate: any;
     phone: string;
     contactId: number;
-    primaryOrgId: number;
     addedBy: string;
     defaultType: string;
     type: string;

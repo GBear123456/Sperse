@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, HostBinding, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, HostBinding, Input, OnChanges, OnDestroy, SimpleChanges } from '@angular/core';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
@@ -7,8 +7,6 @@ import { MatDialog } from '@angular/material/dialog';
 /** Application imports */
 import { BankCodeLettersEditorDialogComponent } from '@app/shared/common/bank-code-letters/bank-code-letters-editor-dialog/bank-code-letters-editor-dialog.component';
 import { DialogService } from '@app/shared/common/dialogs/dialog.service';
-import { BankCodeLetter } from '@app/shared/common/bank-code-letters/bank-code-letter.enum';
-import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { BankCodeService } from '@app/shared/common/bank-code/bank-code.service';
 
 @Component({
@@ -17,28 +15,33 @@ import { BankCodeService } from '@app/shared/common/bank-code/bank-code.service'
     styleUrls: ['./bank-code-letters.component.less'],
     providers: [ DialogService ]
 })
-export class BankCodeLettersComponent implements OnChanges {
+export class BankCodeLettersComponent implements OnChanges, OnDestroy {
     @Input() bankCode: string;
     @Input() showDescriptionsOnHover = false;
     @Input() personId: number;
-    @Input() key: string;
+    @Input() key = '';
     @Input() showBankCodeDefinition = false;
     @Input() showReportLink = false;
     @Input() reportLinkType: 'Sales' | 'Profile';
     @Input() reportIconName: string;
+    @Input() editDialogPosition: { x?: number, y?: number };
+    @Input() closeAfterEdit = false;
+    @HostBinding('class.allow-add') @Input() allowAdd = false;
     @HostBinding('class.allow-edit') @Input() allowEdit = false;
     bankCodeDefinition: string;
 
     constructor(
-        private dialog: MatDialog,
         private dialogService: DialogService,
-        private ls: AppLocalizationService,
+        public dialog: MatDialog,
         public bankCodeService: BankCodeService
     ) {}
 
     ngOnChanges(change: SimpleChanges) {
         if (change.bankCode && (this.showBankCodeDefinition || this.showReportLink)) {
-            this.bankCodeDefinition = this.getBankCodeDefinition(change.bankCode.currentValue[0]);
+            this.bankCodeDefinition = this.bankCodeService.getBankCodeDefinition(change.bankCode.currentValue[0]);
+        }
+        if (change.allowAdd && change.allowAdd.currentValue && !this.bankCode) {
+            this.bankCode = this.bankCodeService.emptyBankCode;
         }
     }
 
@@ -47,7 +50,12 @@ export class BankCodeLettersComponent implements OnChanges {
             const editDialog = this.dialog.open(BankCodeLettersEditorDialogComponent, {
                 id: 'bankCodeLettersEditorDialog',
                 hasBackdrop: false,
-                position: this.dialogService.calculateDialogPosition(e, e.target.closest('div'), 200, -12),
+                position: this.dialogService.calculateDialogPosition(
+                    e,
+                    e.target.closest('div'),
+                    this.editDialogPosition && this.editDialogPosition.x || 200,
+                    this.editDialogPosition && this.editDialogPosition.y || -12
+                ),
                 data: {
                     bankCode: this.bankCode,
                     personId: this.personId
@@ -55,24 +63,33 @@ export class BankCodeLettersComponent implements OnChanges {
             });
             editDialog.componentInstance.bankCodeChange.subscribe((bankCode: string) => {
                 this.bankCode = bankCode;
+                if (this.closeAfterEdit) {
+                    editDialog.close();
+                }
             });
             e.stopPropagation();
             e.preventDefault();
         }
     }
 
-    private getBankCodeDefinition(bankCodeLetter: BankCodeLetter): string {
-        let definition: string;
-        switch (bankCodeLetter) {
-            case BankCodeLetter.B: definition = this.ls.l('BankCode_Blueprint'); break;
-            case BankCodeLetter.A: definition = this.ls.l('BankCode_Action'); break;
-            case BankCodeLetter.N: definition = this.ls.l('BankCode_Nurturing'); break;
-            case BankCodeLetter.K: definition = this.ls.l('BankCode_Knowledge'); break;
-        }
-        return definition;
-    }
-
     get reportIconSrc() {
         return this.reportIconName || this.bankCode[0];
+    }
+
+    onLetterClick(e) {
+        if (this.allowAdd && this.bankCode === this.bankCodeService.emptyBankCode) {
+            this.showEditPopup(e);
+        }
+    }
+
+    closeDialog() {
+        const dialog = this.dialog.getDialogById('bankCodeLettersEditorDialog');
+        if (dialog) {
+            dialog.close();
+        }
+    }
+
+    ngOnDestroy(): void {
+        this.closeDialog();
     }
 }

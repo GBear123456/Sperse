@@ -17,6 +17,27 @@
                 margin: 0;
             }
         }
+        .close {
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            position: relative;
+            &:after, &:before {
+                position: absolute;
+                top: 10px;
+                left: 20px;
+                content: ' ';
+                height: 20px;
+                width: 2px;
+                background-color: #202b35;
+            }
+            &:before {
+                transform: rotate(45deg);
+            }
+            &:after {
+                transform: rotate(-45deg);
+            }
+        }
     }
     .field {
         align-items: center;
@@ -31,6 +52,7 @@
         &.system-type {
             margin-bottom: 15px;
         }
+
     }
 
     .remove-button {

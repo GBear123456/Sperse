@@ -1,0 +1,26 @@
+<dx-drop-down-box #orderDropBox
+                  [width]="width"
+                  height="40px"
+                  [(value)]="orderNumber"
+                  [disabled]="disabled"
+                  [acceptCustomValue]="true"
+                  [inputAttr]="{ id: 'orderNumber' }"
+                  [dataSource]="[orderNumber]"
+                  (onFocusIn)="orderFocusIn($event)"
+                  (onValueChanged)="onOrderNumberValueChanged($event)"
+                  [placeholder]="placeholder">
+    <div *dxTemplate="let contentData of 'content'">
+        <dx-data-grid #ordersGrid
+                      height="350px"
+                      accessKey="orderNumber"
+                      [dataSource]="ordersDataSource"
+                      [showColumnHeaders]="false"
+                      [showColumnLines]="false"
+                      [searchPanel]="{ visible: true }"
+                      [selection]="{ mode: 'single' }"
+                      (onRowClick)="onOrderSelected($event, orderDropBox)">
+            <dxi-column dataField="Number" dataType="string" [caption]="ls.l('Number')"></dxi-column>
+            <dxo-paging [pageSize]="20"></dxo-paging>
+        </dx-data-grid>
+    </div>
+</dx-drop-down-box>
