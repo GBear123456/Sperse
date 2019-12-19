@@ -59,7 +59,7 @@ export class StaticListComponent extends AppComponentBase {
     @Input() selectionMode;
 
     listComponent: any;
-    listHeight: number;
+    listHeight: string;
     tooltipVisible: boolean;
     bottomInputValue: string;
     @Input() selectedItems: any = [];
@@ -107,7 +107,7 @@ export class StaticListComponent extends AppComponentBase {
     onInitialized($event) {
         this.listComponent = $event.component;
         if (this.height)
-            this.listHeight = this.searchEnabled ? this.height - 90 : this.height - 65;
+            this.listHeight = (this.searchEnabled ? this.height - 90 : this.height - 65) + 'px';
         else
             this.listHeight = 'calc(100% - 75px)';
     }
