@@ -1,12 +1,12 @@
 <div [@routerTransition]>
     <i class="name"></i>
     <h1 class="sign-in">{{ls.l("Auto Login")}}</h1>
-    <form #loginForm="ngForm" class="login-form" method="post" novalidate (ngSubmit)="login()">
+    <form #loginForm="ngForm" class="login-form" method="post" novalidate (ngSubmit)="sendLoginLink()">
         <div class="form-group clearfix options row">
-            Use the below button to send the {{tenantName}} login link to your {{userEmail}} email.
+            {{ ls.l(isLinkSent ? 'AutoLoginMailSentMessage' : 'AutoLoginMessage', userEmail, tenantName) }}
         </div>
         <div class="form-actions">
-            <button type="submit" class="submit">
+            <button type="submit" class="submit" [hidden]="isLinkSent">
                 {{ls.l("Auto Login")}}
                 <img src="./assets/common/icons/arrow-right-long-icon.svg" alt="right arrow" class="pull-right">
             </button>
