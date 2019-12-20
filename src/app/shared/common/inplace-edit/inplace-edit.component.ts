@@ -13,7 +13,6 @@ import {
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
-import { NotifyService } from '@abp/notify/notify.service';
 import { DxTextBoxComponent } from 'devextreme-angular/ui/text-box';
 import { DxTextAreaComponent } from 'devextreme-angular/ui/text-area';
 import { ClipboardService } from 'ngx-clipboard';
