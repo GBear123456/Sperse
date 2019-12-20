@@ -128,11 +128,13 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     actionMenuItems = [
         {
             text: this.l('Edit'),
+            class: 'edit',
             visible: true,
             action: () => this.showLeadDetails(this.actionEvent)
         },
         {
             text: this.l('LoginAsThisUser'),
+            class: 'login',
             visible: this.permission.isGranted(AppPermissions.AdministrationUsersImpersonation),
             action: () => this.impersonationService.impersonate(this.actionEvent.data.UserId, this.appSession.tenantId)
         }

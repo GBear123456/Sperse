@@ -4,7 +4,6 @@ import { Component, Injector, OnInit, AfterViewInit, OnDestroy, ViewChild, Chang
 /** Third party imports */
 import { MatDialog } from '@angular/material';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
-import { DxTooltipComponent } from 'devextreme-angular/ui/tooltip';
 import { Observable, of } from 'rxjs';
 import { CacheService } from 'ng2-cache-service';
 import { ImageViewerComponent } from 'ng2-image-viewer';
@@ -29,6 +28,7 @@ import { FiltersService } from '@shared/filters/filters.service';
 import { FilterModel } from '@shared/filters/models/filter.model';
 import { AppFeatures } from '@shared/AppFeatures';
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
+import { ActionMenuComponent } from '@app/shared/common/action-menu/action-menu.component';
 
 @Component({
     templateUrl: './reports.component.html',
@@ -38,7 +38,7 @@ import { HeadlineButton } from '@app/shared/common/headline/headline-button.mode
 })
 export class ReportsComponent extends CFOComponentBase implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
-    @ViewChild(DxTooltipComponent) actionsTooltip: DxTooltipComponent;
+    @ViewChild(ActionMenuComponent) actionMenu: ActionMenuComponent;
     @ViewChild(ImageViewerComponent) imageViewer: ImageViewerComponent;
 
     headlineButtons: HeadlineButton[] = [
@@ -444,14 +444,12 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
     showActionsMenu(data, target) {
         this.actionRecordData = data;
         setTimeout(() => {
-            this.actionsTooltip.instance.show(target);
+            this.actionMenu.show(target);
         });
     }
 
     hideActionsMenu() {
-        if (this.actionsTooltip && this.actionsTooltip.instance) {
-            this.actionsTooltip.instance.hide();
-        }
+        this.actionMenu.hide();
     }
 
     onMenuItemClick($event) {
@@ -484,7 +482,7 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
                         .pipe(finalize(() => super.finishLoading(true)))
                         .subscribe(() => {
                             this.dataGrid.instance.refresh();
-                            if (this.actionsTooltip && this.actionsTooltip.visible) {
+                            if (this.actionMenu && this.actionMenu.visible) {
                                 this.hideActionsMenu();
                             }
                             this.closeReport();

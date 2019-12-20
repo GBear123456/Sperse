@@ -1,0 +1,17 @@
+<dx-tooltip [width]="width"
+            [target]="target"
+            [visible]="visible"
+            (onHidden)="onHidden.emit($event)">
+    <div *dxTemplate="let data of 'content'">
+        <div class="lists-tooltip-container">
+            <dx-list [dataSource]="items"
+                     accessKey="actionsMenu"
+                     itemTemplate="actionsMenu"
+                     (onItemClick)="onItemClick.next($event)">
+                <div *dxTemplate="let item of 'actionsMenu'">
+                    <div [ngClass]="item.class">{{item.text}}</div>
+                </div>
+            </dx-list>
+        </div>
+    </div>
+</dx-tooltip>

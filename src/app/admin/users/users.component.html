@@ -11,18 +11,11 @@
                   (onToggleFullScreen)="repaintDataGrid(100)"
                   (onReload)="invalidate()">
     </app-headline>
-    <dx-tooltip width="200px"
-                [target]="'.dx-state-hover .dx-link.dx-link-edit'"
-                [visible]="actionRecord"
-                (onHidden)="actionRecord = null">
-        <div *dxTemplate="let data of 'content'">
-            <div class="lists-tooltip-container">
-                <dx-list [dataSource]="actionMenuItems"
-                    (onItemClick)="onMenuItemClick($event)">
-                </dx-list>
-            </div>
-        </div>
-    </dx-tooltip>
+    <action-menu [items]="actionMenuItems"
+                 [visible]="actionRecord"
+                 (onItemClick)="onMenuItemClick($event)"
+                 (onHidden)="actionRecord = null">
+    </action-menu>
     <div [hidden]="isDataLoaded && !totalRowCount" class="portlet light no-padding margin-bottom-0">
         <div class="portlet-body">
             <div>

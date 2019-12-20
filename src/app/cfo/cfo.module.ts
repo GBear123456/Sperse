@@ -95,6 +95,7 @@ import { CalendarButtonComponent } from '@app/cfo/shared/common/calendar-button/
 import { SendNotificationDialogComponent } from '@app/cfo/reports/send-notification-dialog/send-notification-dialog.component';
 import { GenerateReportDialogComponent } from '@app/cfo/reports/generate-report-dialog/generate-report-dialog.component';
 import { SetupStepsService } from '@app/cfo/shared/common/setup-steps/setup-steps.service';
+import { ActionMenuModule } from '@app/shared/common/action-menu/action-menu.module';
 
 let COMPONENTS = [
     StartComponent,
@@ -186,7 +187,8 @@ let COMPONENTS = [
         CfoStoreModule,
         SearchInputModule,
         SortButtonModule,
-        ExpandButtonModule
+        ExpandButtonModule,
+        ActionMenuModule
     ],
     declarations: COMPONENTS,
     exports: COMPONENTS,

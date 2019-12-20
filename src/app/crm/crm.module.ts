@@ -80,6 +80,7 @@ import { BankCodeLettersModule } from '@app/shared/common/bank-code-letters/bank
 import { SliceModule } from '@app/shared/common/slice/slice.module';
 import { MapModule } from '@app/shared/common/slice/map/map.module';
 import { OrderDropdownModule } from '@app/crm/shared/order-dropdown/order-dropfown.module';
+import { ActionMenuModule } from '@app/shared/common/action-menu/action-menu.module';
 
 @NgModule({
     imports: [
@@ -135,7 +136,8 @@ import { OrderDropdownModule } from '@app/crm/shared/order-dropdown/order-dropfo
         BankCodeLettersModule,
         SliceModule,
         MapModule,
-        OrderDropdownModule
+        OrderDropdownModule,
+        ActionMenuModule
     ],
     declarations: [
         ClientsComponent,

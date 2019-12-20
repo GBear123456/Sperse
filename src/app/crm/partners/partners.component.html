@@ -12,17 +12,10 @@
                   (onReload)="invalidate()">
         <import-progress-bar></import-progress-bar>
     </app-headline>
-    <dx-tooltip width="200px"
-                [target]="'.dx-state-hover .dx-link.dx-link-edit'"
-                [visible]="actionEvent">
-        <div *dxTemplate="let data of 'content'">
-            <div class="lists-tooltip-container">
-                <dx-list [dataSource]="actionMenuItems"
-                         (onItemClick)="onMenuItemClick($event)">
-                </dx-list>
-            </div>
-        </div>
-    </dx-tooltip>
+    <action-menu [items]="actionMenuItems"
+                 [visible]="actionEvent"
+                 (onItemClick)="onMenuItemClick($event)">
+    </action-menu>
     <app-static-list #statusesList
         [width]="'180px'"
         [title]="l('Status')"

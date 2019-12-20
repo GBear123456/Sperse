@@ -140,11 +140,13 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     actionMenuItems = [
         {
             text: this.l('Edit'),
+            class: 'edit',
             visible: true,
             action: () => this.showPartnerDetails(this.actionEvent)
         },
         {
             text: this.l('LoginAsThisUser'),
+            class: 'login',
             visible: this.permission.isGranted(AppPermissions.AdministrationUsersImpersonation),
             action: () => this.impersonationService.impersonate(this.actionEvent.data.UserId, this.appSession.tenantId)
         }

@@ -164,11 +164,13 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     actionMenuItems = [
         {
             text: this.l('Edit'),
+            class: 'edit',
             visible: true,
             action: () => this.showClientDetails(this.actionEvent)
         },
         {
             text: this.l('LoginAsThisUser'),
+            class: 'login',
             visible: this.permission.isGranted(AppPermissions.AdministrationUsersImpersonation),
             action: () => this.impersonationService.impersonate(this.actionEvent.data.UserId, this.appSession.tenantId)
         }

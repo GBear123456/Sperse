@@ -8,15 +8,11 @@
     <app-toolbar [config]="toolbarConfig"></app-toolbar>
     <div class="main-wrapper">
         <setup-steps [SetupSteps]="menuItems" [SelectedStepIndex]="0" [HeaderTitle]="''"></setup-steps>
-        <dx-tooltip width="180px">
-            <div *dxTemplate="let data of 'content'">
-                <div class="lists-tooltip-container">
-                    <dx-list accessKey="actionsMenu" [dataSource]="actionMenuItems"
-                        (onItemClick)="onMenuItemClick($event)">
-                    </dx-list>
-                </div>
-            </div>
-        </dx-tooltip>
+        <action-menu width="180px"
+                     target=""
+                     [items]="actionMenuItems"
+                     (onItemClick)="onMenuItemClick($event)">
+        </action-menu>
         <div [hidden]="openReportMode" class="reports">
             <ghost-list [hidden]="isDataLoaded"></ghost-list>
             <dx-data-grid id="gridContainer"

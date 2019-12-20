@@ -746,6 +746,42 @@ dx-data-grid[accessKey="detailGrid"] {
     height: auto;
 }
 
+.dx-list[accesskey="actionsMenu"] {
+    .dx-state-invisible + .dx-list-item {
+        border-top: none;
+    }
+    .dx-list-item  {
+        border: none !important;
+        text-align: left !important;
+        .dx-item-content {
+            div {
+                font-size: 13px;
+                letter-spacing: 0.26px;
+                color: #424c56;
+                display: flex;
+                align-items: center;
+                &:before {
+                    margin-right: 10px;
+                }
+
+                &.edit:before {
+                    content: url("../../assets/common/icons/d-edit.svg");
+                    height: 17px;
+                }
+
+                &.login:before {
+                    content: url("../../assets/common/icons/login.svg");
+                    height: 15px;
+                }
+            }
+        }
+        &.dx-state-focused {
+            color: initial !important;
+            background-color: #f5f5f5 !important;
+        }
+    }
+}
+
 .modal {
     button.close {
         -webkit-appearance: none;

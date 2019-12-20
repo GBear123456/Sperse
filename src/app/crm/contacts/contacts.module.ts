@@ -127,6 +127,7 @@ import { SourceContactListComponent } from './source-contact-list/source-contact
 import { CrmService } from '@app/crm/crm.service';
 import { AddSubscriptionDialogComponent } from './subscriptions/add-subscription-dialog/add-subscription-dialog.component';
 import { OrderDropdownModule } from '@app/crm/shared/order-dropdown/order-dropfown.module';
+import { ActionMenuModule } from '@app/shared/common/action-menu/action-menu.module';
 
 @NgModule({
     declarations: [
@@ -231,7 +232,8 @@ import { OrderDropdownModule } from '@app/crm/shared/order-dropdown/order-dropfo
         CRMDashboardWidgetsModule,
         BankCodeLettersModule,
         CKEditorModule,
-        OrderDropdownModule
+        OrderDropdownModule,
+        ActionMenuModule
     ],
     entryComponents: [
         EditContactDialog,

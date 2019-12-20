@@ -16,7 +16,6 @@ import {
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
-import { DxTooltipComponent } from 'devextreme-angular/ui/tooltip';
 import 'devextreme/data/odata/store';
 import { ImageViewerComponent } from 'ng2-image-viewer';
 import { Observable, from, of } from 'rxjs';
@@ -46,6 +45,7 @@ import { NotSupportedTypeDialogComponent } from '@app/crm/contacts/documents/not
 import { DocumentsService } from '@app/crm/contacts/documents/documents.service';
 import { DocumentViewerType } from '@app/crm/contacts/documents/document-viewer-type.enum';
 import { RequestHelper } from '@root/shared/helpers/RequestHelper';
+import { ActionMenuComponent } from '@app/shared/common/action-menu/action-menu.component';
 
 @Component({
     templateUrl: './documents.component.html',
@@ -55,7 +55,7 @@ import { RequestHelper } from '@root/shared/helpers/RequestHelper';
 export class DocumentsComponent extends AppComponentBase implements AfterViewInit, OnInit, OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
     @ViewChild(ImageViewerComponent) imageViewer: ImageViewerComponent;
-    @ViewChild(DxTooltipComponent) actionsTooltip: DxTooltipComponent;
+    @ViewChild(ActionMenuComponent) actionMenu: ActionMenuComponent;
     @ViewChild('xmlContainer') xmlContainerElementRef: ElementRef;
     @ViewChild('documentViewContainer') documentViewContainerElementRef: ElementRef;
     private _frameHolderElementRef: HTMLElement;
@@ -280,7 +280,7 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
     ngAfterViewInit() {
         this.clientService.contactInfoSubscribe(() => {
             this.loadDocuments();
-        })
+        });
     }
 
     loadDocumentTypes() {
@@ -366,7 +366,7 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
         this.actionRecordData = data;
         this.actionMenuItems.find(menuItem => menuItem.text === this.l('Edit')).visible = data.isEditSupportedByWopi;
         setTimeout(() => {
-            this.actionsTooltip.instance.show(target);
+            this.actionMenu.show(target);
         });
     }
 
@@ -615,9 +615,9 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
                     this.openDocumentMode = false;
                     this._documentService.delete(this.currentDocumentInfo.id)
                         .pipe(finalize(() => super.finishLoading(true)))
-                        .subscribe((response) => {
+                        .subscribe(() => {
                             this.loadDocuments(() => {
-                                if (this.actionsTooltip && this.actionsTooltip.visible) {
+                                if (this.actionMenu && this.actionMenu.visible) {
                                     this.hideActionsMenu();
                                 }
                                 this.closeDocument();
@@ -676,9 +676,7 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
     }
 
     hideActionsMenu() {
-        if (this.actionsTooltip && this.actionsTooltip.instance) {
-            this.actionsTooltip.instance.hide();
-        }
+        this.actionMenu.hide();
     }
 
     onTypeListUpdated(list) {

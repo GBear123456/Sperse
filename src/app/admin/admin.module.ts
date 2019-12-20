@@ -80,6 +80,7 @@ import { ContactsModule } from '../crm/contacts/contacts.module';
 import { ModulesEditionsSelectComponent } from '@admin/tenants/modules-edtions-select.component.ts/modules-editions-select.component';
 import { ItemDetailsLayoutModule } from '@shared/common/item-details-layout/item-details-layout.module';
 import { LoadingSpinnerModule } from '@app/shared/common/loading-spinner/loading-spinner.module';
+import { ActionMenuModule } from '@app/shared/common/action-menu/action-menu.module';
 
 @NgModule({
     imports: [
@@ -132,7 +133,8 @@ import { LoadingSpinnerModule } from '@app/shared/common/loading-spinner/loading
         InputMaskModule,
         PaymentInfoModule,
         ItemDetailsLayoutModule,
-        LoadingSpinnerModule
+        LoadingSpinnerModule,
+        ActionMenuModule
     ],
     declarations: [
         UsersComponent,

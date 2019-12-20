@@ -217,7 +217,7 @@ export class ToolBarComponent implements OnDestroy {
             },
             fullscreen: {
                 hint: this.ls.l('Fullpage'),
-                icon: this.getImgURI('expand-fullscreen-icon')
+                icon: this.getImgURI('toggle-fullscreen')
             },
             slider: {
                 hint: this.ls.l('Slider')
