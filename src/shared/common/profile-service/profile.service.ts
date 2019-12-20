@@ -32,7 +32,8 @@ export class ProfileService {
         private appSession: AppSessionService,
         private subscriptionProxy: MemberSubscriptionServiceProxy
     ) {
-        this.bankCodeMemberInfo$.subscribe(res => { this.secureId = res.secureId; });
+        if (abp.session.userId)
+            this.bankCodeMemberInfo$.subscribe(res => { this.secureId = res.secureId; });
     }
 
     getPhoto(photo, gender = null): string {
