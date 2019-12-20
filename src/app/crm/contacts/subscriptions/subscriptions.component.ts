@@ -9,10 +9,14 @@ import * as _ from 'underscore';
 
 /** Application imports */
 import {
-    ContactServiceProxy, OrderSubscriptionServiceProxy, OrderSubscriptionDto, ContactInfoDto,
+    ContactServiceProxy,
+    OrderSubscriptionServiceProxy,
+    OrderSubscriptionDto,
+    ContactInfoDto,
     NameValueDto,
-    CommonLookupServiceProxy
-} from 'shared/service-proxies/service-proxies';
+    CommonLookupServiceProxy,
+    CancelOrderSubscriptionInput
+} from '@shared/service-proxies/service-proxies';
 import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 import { CommonLookupModalComponent } from '@app/shared/common/lookup/common-lookup-modal.component';
 import { ImpersonationService } from '@app/admin/users/impersonation.service';
@@ -22,7 +26,7 @@ import { AppPermissions } from '@shared/AppPermissions';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
 import { AddSubscriptionDialogComponent } from '@app/crm/contacts/subscriptions/add-subscription-dialog/add-subscription-dialog.component';
-import { CancelOrderSubscriptionInput } from '@shared/service-proxies/service-proxies';
+import { CancelSubscriptionDialogComponent } from '@app/crm/contacts/subscriptions/cancel-subscription-dialog/cancel-subscription-dialog.component';
 
 @Component({
     selector: 'subscriptions',
@@ -96,13 +100,20 @@ export class SubscriptionsComponent implements OnInit {
                 });
     }
 
-    cancelSubscription(id: number) {
-        abp.message.confirm('', this.ls.l('CancelBillingConfirm'), result => {
+    cancelSubscription(id: number, $event) {
+        this.dialog.closeAll();
+        $event.stopPropagation();
+        this.dialog.open(CancelSubscriptionDialogComponent, {
+            width: '400px',
+            data: {
+                title: this.ls.l('CancelBillingConfirm')
+            }
+        }).afterClosed().subscribe(result => {
             if (result) {
                 this.orderSubscriptionService
                     .cancel(new CancelOrderSubscriptionInput({
                         orderSubscriptionId: id,
-                        cancelationReason: ''
+                        cancelationReason: result.cancellationReason
                     }))
                     .subscribe(() => {
                         abp.notify.success(this.ls.l('Cancelled'));
