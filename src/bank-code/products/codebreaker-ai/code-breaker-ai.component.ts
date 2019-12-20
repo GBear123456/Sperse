@@ -20,10 +20,10 @@ export class CodeBreakerAiComponent {
     hasSubscription$: Observable<boolean> = this.profileService.checkServiceSubscription(BankCodeServiceType.BANKPass);
 
     environmentLink = {
-        development: 'https://wp.bankcode.pro/codebreaker-ai-landing/',
-        production: 'https://codebreakertech.com/codebreaker-ai-landing/',
-        staging: 'https://wp.bankcode.pro/codebreaker-ai-landing/',
-        beta: 'https://wp.bankcode.pro/codebreaker-ai-landing/'
+        development: 'https://wp.bankcode.pro/codebreaker-ai-landing/?WPSecureID=' + this.profileService.secureId,
+        production: 'https://codebreakertech.com/codebreaker-ai-landing/?WPSecureID=' + this.profileService.secureId,
+        staging: 'https://wp.bankcode.pro/codebreaker-ai-landing/?WPSecureID=' + this.profileService.secureId,
+        beta: 'https://wp.bankcode.pro/codebreaker-ai-landing/?WPSecureID=' + this.profileService.secureId
     }[environment.releaseStage];
 
     constructor(

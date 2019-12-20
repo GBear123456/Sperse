@@ -4,9 +4,6 @@ import { DomSanitizer } from '@angular/platform-browser';
 
 /** Third party imports */
 import { Observable } from 'rxjs';
-// import '@node_modules/ngx-extended-pdf-viewer/assets/pdf-es5.js';
-// import '@node_modules/ngx-extended-pdf-viewer/assets/pdf.worker-es5.js';
-// import '@node_modules/ngx-extended-pdf-viewer/assets/viewer-es5.js';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
@@ -25,10 +22,10 @@ export class WhyTheyBuyComponent {
     bookSrc = AppConsts.appBaseHref + 'assets/documents/Why+They+Buy+eBook+-+Black.pdf';
 
     environmentLink = {
-        development: 'https://wp.bankcode.pro/why-they-buy-digital-landing/',
-        production: 'https://codebreakertech.com/why-they-buy-digital-landing/',
-        staging: 'https://wp.bankcode.pro/why-they-buy-digital-landing/',
-        beta: 'https://wp.bankcode.pro/why-they-buy-digital-landing/'
+        development: 'https://wp.bankcode.pro/why-they-buy-digital-landing/?WPSecureID=' + this.profileService.secureId,
+        production: 'https://codebreakertech.com/why-they-buy-digital-landing/?WPSecureID=' + this.profileService.secureId,
+        staging: 'https://wp.bankcode.pro/why-they-buy-digital-landing/?WPSecureID=' + this.profileService.secureId,
+        beta: 'https://wp.bankcode.pro/why-they-buy-digital-landing/?WPSecureID=' + this.profileService.secureId
     }[environment.releaseStage];
 
     constructor(
