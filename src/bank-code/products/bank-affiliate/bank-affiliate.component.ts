@@ -19,10 +19,10 @@ export class BankAffiliateComponent {
     hasSubscription$: Observable<boolean> = this.profileService.checkServiceSubscription(BankCodeServiceType.BANKAffiliate);
 
     environmentLink = {
-        development: 'https://wp.bankcode.pro/affiliate-landing/',
-        production: 'https://codebreakertech.com/affiliate-landing/',
-        staging: 'https://wp.bankcode.pro/affiliate-landing/',
-        beta: 'https://wp.bankcode.pro/affiliate-landing/'
+        development: 'https://wp.bankcode.pro/affiliate-landing?WPSecureID=' + this.profileService.secureId,
+        production: 'https://codebreakertech.com/affiliate-landing/?WPSecureID=' + this.profileService.secureId,
+        staging: 'https://wp.bankcode.pro/affiliate-landing/?WPSecureID=' + this.profileService.secureId,
+        beta: 'https://wp.bankcode.pro/affiliate-landing/?WPSecureID=' + this.profileService.secureId
     }[environment.releaseStage];
 
     constructor(

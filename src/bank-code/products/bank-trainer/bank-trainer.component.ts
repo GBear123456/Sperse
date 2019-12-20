@@ -5,6 +5,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 /** Application imports */
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { environment } from '@root/environments/environment';
+import { ProfileService } from '@shared/common/profile-service/profile.service';
 
 @Component({
     selector: 'bank-trainer',
@@ -14,14 +15,15 @@ import { environment } from '@root/environments/environment';
 })
 export class BankTrainerComponent {
     environmentLink = {
-        development: 'https://wp.bankcode.pro/become-a-trainer-landing/',
-        production: 'https://codebreakertech.com/become-a-trainer-landing/',
-        staging: 'https://wp.bankcode.pro/become-a-trainer-landing/',
-        beta: 'https://wp.bankcode.pro/become-a-trainer-landing/'
+        development: 'https://wp.bankcode.pro/become-a-trainer-landing/?WPSecureID=' + this.profileService.secureId,
+        production: 'https://codebreakertech.com/become-a-trainer-landing/?WPSecureID=' + this.profileService.secureId,
+        staging: 'https://wp.bankcode.pro/become-a-trainer-landing/?WPSecureID=' + this.profileService.secureId,
+        beta: 'https://wp.bankcode.pro/become-a-trainer-landing/?WPSecureID=' + this.profileService.secureId
     }[environment.releaseStage];
 
     constructor(
         public ls: AppLocalizationService,
+        private profileService: ProfileService,
         public sanitizer: DomSanitizer
     ) {}
 }

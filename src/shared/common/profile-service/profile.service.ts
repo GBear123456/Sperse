@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { AppConsts } from '@shared/AppConsts';
 import {
-    GetUserSubscriptionsOutput,
+    GetMemberInfoOutput,
+    SubscriptionShortInfoOutput,
     LayoutType,
     MemberSubscriptionServiceProxy
 } from '@shared/service-proxies/service-proxies';
@@ -13,8 +14,8 @@ import * as moment from 'moment-timezone';
 
 @Injectable()
 export class ProfileService {
-
-    public bankCodeSubscriptions$: Observable<GetUserSubscriptionsOutput[]> = this.subscriptionProxy.getUserSubscriptions('BankCode', undefined, undefined).pipe(
+    secureId: string;
+    public bankCodeMemberInfo$: Observable<GetMemberInfoOutput> = this.subscriptionProxy.getMemberInfo('BankCode', undefined, undefined).pipe(
         /** For debug purpose */
         // map(() => [ new GetUserSubscriptionsOutput({
         //     serviceType: BankCodeServiceType.BANKVault,
@@ -26,10 +27,13 @@ export class ProfileService {
         publishReplay(),
         refCount()
     );
+
     constructor(
         private appSession: AppSessionService,
         private subscriptionProxy: MemberSubscriptionServiceProxy
-    ) {}
+    ) {
+        this.bankCodeMemberInfo$.subscribe(res => { this.secureId = res.secureId; });
+    }
 
     getPhoto(photo, gender = null): string {
         if (photo)
@@ -66,9 +70,9 @@ export class ProfileService {
     }
 
     checkServiceSubscription(serviceTypeId: BankCodeServiceType): Observable<boolean> {
-        return this.bankCodeSubscriptions$.pipe(
-            map((subscriptions: GetUserSubscriptionsOutput[]) => {
-                return subscriptions.some((sub: GetUserSubscriptionsOutput) => {
+        return this.bankCodeMemberInfo$.pipe(
+            map((memberInfo: GetMemberInfoOutput) => {
+                return memberInfo.subscriptions.some((sub: SubscriptionShortInfoOutput) => {
                     return sub.serviceTypeId == serviceTypeId && sub.endDate.diff(moment()) > 0;
                 });
             })

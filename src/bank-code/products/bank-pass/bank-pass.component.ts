@@ -66,10 +66,10 @@ export class BankPassComponent {
     dataIsLoading = false;
 
     environmentLink = {
-        development: 'https://wp.bankcode.pro/b-a-n-k-pass/',
-        production: 'https://codebreakertech.com/bank-pass-landing/',
-        staging: 'https://wp.bankcode.pro/b-a-n-k-pass/',
-        beta: 'https://wp.bankcode.pro/b-a-n-k-pass/'
+        development: 'https://wp.bankcode.pro/b-a-n-k-pass/?WPSecureID=' + this.profileService.secureId,
+        production: 'https://codebreakertech.com/bank-pass-landing/?WPSecureID=' + this.profileService.secureId,
+        staging: 'https://wp.bankcode.pro/b-a-n-k-pass/?WPSecureID=' + this.profileService.secureId,
+        beta: 'https://wp.bankcode.pro/b-a-n-k-pass/?WPSecureID=' + this.profileService.secureId
     }[environment.releaseStage];
 
     constructor(
