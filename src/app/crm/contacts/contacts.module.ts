@@ -9,6 +9,7 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
+import { MatInputModule } from '@angular/material/input';
 import { AngularGooglePlaceModule } from 'angular-google-place';
 import { RoundProgressModule } from 'angular-svg-round-progressbar';
 
@@ -126,6 +127,7 @@ import { EmailTemplateDialogComponent } from '@app/crm/shared/email-template-dia
 import { SourceContactListComponent } from './source-contact-list/source-contact-list.component';
 import { CrmService } from '@app/crm/crm.service';
 import { AddSubscriptionDialogComponent } from './subscriptions/add-subscription-dialog/add-subscription-dialog.component';
+import { CancelSubscriptionDialogComponent } from './subscriptions/cancel-subscription-dialog/cancel-subscription-dialog.component';
 import { OrderDropdownModule } from '@app/crm/shared/order-dropdown/order-dropfown.module';
 
 @NgModule({
@@ -183,7 +185,8 @@ import { OrderDropdownModule } from '@app/crm/shared/order-dropdown/order-dropfo
         PersonalDetailsComponent,
         SMSDialogComponent,
         SourceContactListComponent,
-        AddSubscriptionDialogComponent
+        AddSubscriptionDialogComponent,
+        CancelSubscriptionDialogComponent
     ],
     imports: [
         FormsModule,
@@ -196,6 +199,7 @@ import { OrderDropdownModule } from '@app/crm/shared/order-dropdown/order-dropfo
         MatDialogModule,
         MatProgressSpinnerModule,
         MatSelectModule,
+        MatInputModule,
         ContactsRoutingModule,
         AngularGooglePlaceModule,
         DxContextMenuModule,
@@ -253,7 +257,8 @@ import { OrderDropdownModule } from '@app/crm/shared/order-dropdown/order-dropfo
         EmailTemplateDialogComponent,
         HistoryListDialogComponent,
         SMSDialogComponent,
-        AddSubscriptionDialogComponent
+        AddSubscriptionDialogComponent,
+        CancelSubscriptionDialogComponent
     ],
     providers: [
         DialogService,

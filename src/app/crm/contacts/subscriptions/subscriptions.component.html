@@ -31,8 +31,8 @@
     <div *dxTemplate="let cell of 'actionsTemplate'" class="billing-actions">
         <a *ngIf="cell.data.tenantId && permission.isGranted(permissions.TenantsImpersonation)"
            (click)="cell.data.status == 'Active' && showUserImpersonateLookUpModal($event, cell.data)">{{ls.l('LoginAsThisTenant')}}</a>
-        <br />
-        <a *ngIf="cell.data.statusCode === 'A' && permission.isGranted(permissions.CRMOrdersManage)" (click)="cancelSubscription(cell.data.id)">{{ls.l('cancel')}}</a>
+        <!-- <br /> -->
+        <button class="btn-link" *ngIf="cell.data.statusCode === 'A' && permission.isGranted(permissions.CRMOrdersManage)" (click)="cancelSubscription(cell.data.id, $event)">{{ls.l('cancel')}}</button>
     </div>
     <div *dxTemplate="let cell of 'amountTemplate'">
         <span> {{ cell.text | currency:currency:'symbol':'1.2-2' }} </span>

@@ -1,0 +1,14 @@
+<h1 mat-dialog-title class="text-center">{{data.title}}</h1>
+<div mat-dialog-content>
+    <mat-form-field appearance="legacy">
+        <mat-label>{{ls.l('Cancellation reason')}}</mat-label>
+        <input matInput
+               [(ngModel)]="data.cancellationReason"
+               maxlength="512"
+               placeholder="Please enter cancellation reason">
+    </mat-form-field>
+</div>
+<div mat-dialog-actions>
+    <button mat-button class="button-layout button-primary" (click)="onNoClick()">{{ls.l('Cancel')}}</button>
+    <button mat-button class="button-layout button-primary" [mat-dialog-close]="data" cdkFocusInitial>{{ls.l('Yes')}}</button>
+</div>
