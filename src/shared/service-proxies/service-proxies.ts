@@ -20352,16 +20352,17 @@ export class OrderSubscriptionServiceProxy {
     }
 
     /**
-     * @orderSubscriptionId (optional) 
+     * @body (optional) 
      * @return Success
      */
-    cancel(orderSubscriptionId: number | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CRM/OrderSubscription/Cancel?";
-        if (orderSubscriptionId !== undefined)
-            url_ += "orderSubscriptionId=" + encodeURIComponent("" + orderSubscriptionId) + "&"; 
+    cancel(body: CancelOrderSubscriptionInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/OrderSubscription/Cancel";
         url_ = url_.replace(/[?&]$/, "");
 
+        const content_ = JSON.stringify(body);
+
         let options_ : any = {
+            body: content_,
             observe: "response",
             responseType: "blob",
             headers: new HttpHeaders({
@@ -33118,6 +33119,7 @@ export class SendAutoLoginLinkInput implements ISendAutoLoginLinkInput {
     emailAddress!: string;
     autoDetectTenancy!: boolean | undefined;
     features!: string[] | undefined;
+    appRoute!: string | undefined;
 
     constructor(data?: ISendAutoLoginLinkInput) {
         if (data) {
@@ -33140,6 +33142,7 @@ export class SendAutoLoginLinkInput implements ISendAutoLoginLinkInput {
                 for (let item of data["features"])
                     this.features.push(item);
             }
+            this.appRoute = data["appRoute"];
         }
     }
 
@@ -33159,6 +33162,7 @@ export class SendAutoLoginLinkInput implements ISendAutoLoginLinkInput {
             for (let item of this.features)
                 data["features"].push(item);
         }
+        data["appRoute"] = this.appRoute;
         return data; 
     }
 }
@@ -33167,6 +33171,7 @@ export interface ISendAutoLoginLinkInput {
     emailAddress: string;
     autoDetectTenancy: boolean | undefined;
     features: string[] | undefined;
+    appRoute: string | undefined;
 }
 
 export class SendAutoLoginLinkOutput implements ISendAutoLoginLinkOutput {
@@ -42409,7 +42414,7 @@ export class CreateContactInput implements ICreateContactInput {
     trackingInfo!: TrackingInfo | undefined;
     matchExisting!: boolean | undefined;
     inviteUser!: boolean | undefined;
-    createAutoLoginLink!: boolean | undefined;
+    generateAutoLoginLink!: boolean | undefined;
 
     constructor(data?: ICreateContactInput) {
         if (data) {
@@ -42486,7 +42491,7 @@ export class CreateContactInput implements ICreateContactInput {
             this.trackingInfo = data["trackingInfo"] ? TrackingInfo.fromJS(data["trackingInfo"]) : <any>undefined;
             this.matchExisting = data["matchExisting"];
             this.inviteUser = data["inviteUser"];
-            this.createAutoLoginLink = data["createAutoLoginLink"];
+            this.generateAutoLoginLink = data["generateAutoLoginLink"];
         }
     }
 
@@ -42563,7 +42568,7 @@ export class CreateContactInput implements ICreateContactInput {
         data["trackingInfo"] = this.trackingInfo ? this.trackingInfo.toJSON() : <any>undefined;
         data["matchExisting"] = this.matchExisting;
         data["inviteUser"] = this.inviteUser;
-        data["createAutoLoginLink"] = this.createAutoLoginLink;
+        data["generateAutoLoginLink"] = this.generateAutoLoginLink;
         return data; 
     }
 }
@@ -42605,13 +42610,14 @@ export interface ICreateContactInput {
     trackingInfo: TrackingInfo | undefined;
     matchExisting: boolean | undefined;
     inviteUser: boolean | undefined;
-    createAutoLoginLink: boolean | undefined;
+    generateAutoLoginLink: boolean | undefined;
 }
 
 export class CreateContactOutput implements ICreateContactOutput {
     id!: number | undefined;
     leadId!: number | undefined;
     userId!: number | undefined;
+    userCode!: string | undefined;
     autoLoginLink!: string | undefined;
 
     constructor(data?: ICreateContactOutput) {
@@ -42628,6 +42634,7 @@ export class CreateContactOutput implements ICreateContactOutput {
             this.id = data["id"];
             this.leadId = data["leadId"];
             this.userId = data["userId"];
+            this.userCode = data["userCode"];
             this.autoLoginLink = data["autoLoginLink"];
         }
     }
@@ -42644,6 +42651,7 @@ export class CreateContactOutput implements ICreateContactOutput {
         data["id"] = this.id;
         data["leadId"] = this.leadId;
         data["userId"] = this.userId;
+        data["userCode"] = this.userCode;
         data["autoLoginLink"] = this.autoLoginLink;
         return data; 
     }
@@ -42653,6 +42661,7 @@ export interface ICreateContactOutput {
     id: number | undefined;
     leadId: number | undefined;
     userId: number | undefined;
+    userCode: string | undefined;
     autoLoginLink: string | undefined;
 }
 
@@ -48541,6 +48550,7 @@ export class OrderSubscription implements IOrderSubscription {
     hasRecurringBilling!: boolean | undefined;
     previousOrderSubscriptionId!: number | undefined;
     lastExpiryNotificationDate!: moment.Moment | undefined;
+    cancelationReason!: string | undefined;
     order!: Order | undefined;
     status!: SubscriptionStatus | undefined;
     previousOrderSubscription!: OrderSubscription | undefined;
@@ -48584,6 +48594,7 @@ export class OrderSubscription implements IOrderSubscription {
             this.hasRecurringBilling = data["hasRecurringBilling"];
             this.previousOrderSubscriptionId = data["previousOrderSubscriptionId"];
             this.lastExpiryNotificationDate = data["lastExpiryNotificationDate"] ? moment(data["lastExpiryNotificationDate"].toString()) : <any>undefined;
+            this.cancelationReason = data["cancelationReason"];
             this.order = data["order"] ? Order.fromJS(data["order"]) : <any>undefined;
             this.status = data["status"] ? SubscriptionStatus.fromJS(data["status"]) : <any>undefined;
             this.previousOrderSubscription = data["previousOrderSubscription"] ? OrderSubscription.fromJS(data["previousOrderSubscription"]) : <any>undefined;
@@ -48631,6 +48642,7 @@ export class OrderSubscription implements IOrderSubscription {
         data["hasRecurringBilling"] = this.hasRecurringBilling;
         data["previousOrderSubscriptionId"] = this.previousOrderSubscriptionId;
         data["lastExpiryNotificationDate"] = this.lastExpiryNotificationDate ? this.lastExpiryNotificationDate.toISOString() : <any>undefined;
+        data["cancelationReason"] = this.cancelationReason;
         data["order"] = this.order ? this.order.toJSON() : <any>undefined;
         data["status"] = this.status ? this.status.toJSON() : <any>undefined;
         data["previousOrderSubscription"] = this.previousOrderSubscription ? this.previousOrderSubscription.toJSON() : <any>undefined;
@@ -48671,6 +48683,7 @@ export interface IOrderSubscription {
     hasRecurringBilling: boolean | undefined;
     previousOrderSubscriptionId: number | undefined;
     lastExpiryNotificationDate: moment.Moment | undefined;
+    cancelationReason: string | undefined;
     order: Order | undefined;
     status: SubscriptionStatus | undefined;
     previousOrderSubscription: OrderSubscription | undefined;
@@ -65866,6 +65879,7 @@ export class OrderSubscriptionDto implements IOrderSubscriptionDto {
     trialEndDate!: moment.Moment | undefined;
     statusCode!: string | undefined;
     status!: string | undefined;
+    cancelationReason!: string | undefined;
     orderSubscriptionPayments!: OrderSbuscriptionPaymentDto[] | undefined;
 
     constructor(data?: IOrderSubscriptionDto) {
@@ -65891,6 +65905,7 @@ export class OrderSubscriptionDto implements IOrderSubscriptionDto {
             this.trialEndDate = data["trialEndDate"] ? moment(data["trialEndDate"].toString()) : <any>undefined;
             this.statusCode = data["statusCode"];
             this.status = data["status"];
+            this.cancelationReason = data["cancelationReason"];
             if (data["orderSubscriptionPayments"] && data["orderSubscriptionPayments"].constructor === Array) {
                 this.orderSubscriptionPayments = [];
                 for (let item of data["orderSubscriptionPayments"])
@@ -65920,6 +65935,7 @@ export class OrderSubscriptionDto implements IOrderSubscriptionDto {
         data["trialEndDate"] = this.trialEndDate ? this.trialEndDate.toISOString() : <any>undefined;
         data["statusCode"] = this.statusCode;
         data["status"] = this.status;
+        data["cancelationReason"] = this.cancelationReason;
         if (this.orderSubscriptionPayments && this.orderSubscriptionPayments.constructor === Array) {
             data["orderSubscriptionPayments"] = [];
             for (let item of this.orderSubscriptionPayments)
@@ -65942,6 +65958,7 @@ export interface IOrderSubscriptionDto {
     trialEndDate: moment.Moment | undefined;
     statusCode: string | undefined;
     status: string | undefined;
+    cancelationReason: string | undefined;
     orderSubscriptionPayments: OrderSbuscriptionPaymentDto[] | undefined;
 }
 
@@ -66050,6 +66067,46 @@ export interface IUpdateOrderSubscriptionInput {
     orderNumber: string | undefined;
     systemType: string;
     subscriptions: SubscriptionInput[];
+}
+
+export class CancelOrderSubscriptionInput implements ICancelOrderSubscriptionInput {
+    orderSubscriptionId!: number;
+    cancelationReason!: string | undefined;
+
+    constructor(data?: ICancelOrderSubscriptionInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.orderSubscriptionId = data["orderSubscriptionId"];
+            this.cancelationReason = data["cancelationReason"];
+        }
+    }
+
+    static fromJS(data: any): CancelOrderSubscriptionInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new CancelOrderSubscriptionInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["orderSubscriptionId"] = this.orderSubscriptionId;
+        data["cancelationReason"] = this.cancelationReason;
+        return data; 
+    }
+}
+
+export interface ICancelOrderSubscriptionInput {
+    orderSubscriptionId: number;
+    cancelationReason: string | undefined;
 }
 
 export class OrganizationInfoDto implements IOrganizationInfoDto {
