@@ -58,7 +58,7 @@ export class SourceContactListComponent {
                         id: item.id,
                         name: person || item.companyName,
                         addition: person ?
-                            [item.jobTitle, item.companyName].filter(Boolean).join('@') :
+                            [item.jobTitle, item.companyName].filter(Boolean).join(' @ ') :
                             this.ls.l('Company')
                     };
                 }));
