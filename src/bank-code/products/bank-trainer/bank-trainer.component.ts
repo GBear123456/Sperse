@@ -23,7 +23,7 @@ export class BankTrainerComponent {
 
     constructor(
         public ls: AppLocalizationService,
-        private profileService: ProfileService,
+        public profileService: ProfileService,
         public sanitizer: DomSanitizer
     ) {}
 }
