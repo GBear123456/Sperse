@@ -22,6 +22,7 @@ import { AppPermissions } from '@shared/AppPermissions';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
 import { AddSubscriptionDialogComponent } from '@app/crm/contacts/subscriptions/add-subscription-dialog/add-subscription-dialog.component';
+import { CancelOrderSubscriptionInput } from '@shared/service-proxies/service-proxies';
 
 @Component({
     selector: 'subscriptions',
@@ -99,7 +100,10 @@ export class SubscriptionsComponent implements OnInit {
         abp.message.confirm('', this.ls.l('CancelBillingConfirm'), result => {
             if (result) {
                 this.orderSubscriptionService
-                    .cancel(id)
+                    .cancel(new CancelOrderSubscriptionInput({
+                        orderSubscriptionId: id,
+                        cancelationReason: ''
+                    }))
                     .subscribe(() => {
                         abp.notify.success(this.ls.l('Cancelled'));
                         this.refreshData(true);
