@@ -1,4 +1,12 @@
+/** Core imports */
 import { Injectable } from '@angular/core';
+
+/** Third party imports */
+import { Observable } from 'rxjs';
+import { map, publishReplay, refCount } from 'rxjs/operators';
+import * as moment from 'moment-timezone';
+
+/** Application imports */
 import { AppConsts } from '@shared/AppConsts';
 import {
     GetUserSubscriptionsOutput,
@@ -6,10 +14,7 @@ import {
     MemberSubscriptionServiceProxy
 } from '@shared/service-proxies/service-proxies';
 import { AppSessionService } from '@shared/common/session/app-session.service';
-import { Observable } from '@node_modules/rxjs';
-import { map, publishReplay, refCount } from '@node_modules/rxjs/internal/operators';
 import { BankCodeServiceType } from '@root/bank-code/products/bank-code-service-type.enum';
-import * as moment from 'moment-timezone';
 
 @Injectable()
 export class ProfileService {
