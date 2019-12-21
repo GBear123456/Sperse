@@ -1,8 +1,9 @@
 /** Core imports */
 import { Component, Injector } from '@angular/core';
+import { ActivatedRoute, Params } from '@angular/router';
 
 /** Third party imports */
-import { finalize } from 'rxjs/operators';
+import { finalize, first } from 'rxjs/operators';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
@@ -37,10 +38,12 @@ export class HostAutoLoginComponent {
         injector: Injector,
         public dialog: MatDialog,
         public ls: AppLocalizationService,
+        private activatedRoute: ActivatedRoute,
         private accountProxy: AccountServiceProxy,
         private appSession: AppSessionService
     ) {
-
+        this.activatedRoute.queryParams.pipe(first())
+            .subscribe((params: Params) => this.userEmail = params.email);
     }
 
     sendloginLink(): void {

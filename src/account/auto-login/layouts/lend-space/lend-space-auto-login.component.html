@@ -1,6 +1,6 @@
 <div [@routerTransition]>
     <h1 class="sign-in">{{ls.l("Auto Login")}}</h1>
-    <form #loginForm="ngForm" class="login-form" method="post" novalidate (ngSubmit)="sendLoginLink()">
+    <form #loginForm="ngForm" class="login-form" method="post" novalidate (ngSubmit)="sendloginLink()">
         <div class="form-group clearfix">
             {{ ls.l(isLinkSent ? 'AutoLoginMailSentMessage' : 'AutoLoginMessage', userEmail, tenantName) }}
         </div>

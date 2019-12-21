@@ -21,10 +21,10 @@ export class BankVaultComponent {
     hasSubscription$: Observable<boolean> = this.profileService.checkServiceSubscription(BankCodeServiceType.BANKVault);
 
     environmentLink = {
-        development: 'https://wp.bankcode.pro/the-vault-landing/',
-        production: 'https://codebreakertech.com/the-vault-landing/',
-        staging: 'https://wp.bankcode.pro/the-vault-landing/',
-        beta: 'https://wp.bankcode.pro/the-vault-landing/'
+        development: 'https://wp.bankcode.pro/the-vault-landing/?WPSecureID=' + this.profileService.secureId,
+        production: 'https://codebreakertech.com/the-vault-landing/?WPSecureID=' + this.profileService.secureId,
+        staging: 'https://wp.bankcode.pro/the-vault-landing/?WPSecureID=' + this.profileService.secureId,
+        beta: 'https://wp.bankcode.pro/the-vault-landing/?WPSecureID=' + this.profileService.secureId
     }[environment.releaseStage];
 
     constructor(

@@ -66,6 +66,7 @@
                                     valueExpr="name"
                                     [(value)]="cellData.value"
                                     [dataSource]="stages$ | async"
+                                    (onOptionChanged)="onStageOptionChanged(cellData, $event)"
                                     (onValueChanged)="updateOrderStage(cellData)">
                                 </dx-select-box>
                             </div>

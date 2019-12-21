@@ -42,7 +42,7 @@ import {
     ContactServiceProxy, CreateContactInput, ContactAddressServiceProxy, CreateContactEmailInput,
     CreateContactPhoneInput, ContactPhotoServiceProxy, CreateContactAddressInput, ContactEmailServiceProxy,
     ContactPhoneServiceProxy, SimilarContactOutput, ContactPhotoInput, OrganizationContactServiceProxy,
-    PersonInfoDto, CreateContactLinkInput
+    PersonInfoDto, CreateContactLinkInput, TrackingInfo
 } from '@shared/service-proxies/service-proxies';
 import { UploadPhotoDialogComponent } from '@app/shared/common/upload-photo-dialog/upload-photo-dialog.component';
 import { SimilarCustomersDialogComponent } from '../similar-customers-dialog/similar-customers-dialog.component';
@@ -253,6 +253,8 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
         let tags = this.tagsComponent.selectedItems;
         let partnerTypeName = this.partnerTypesComponent.selectedItems.length ? this.partnerTypesComponent.selectedItems[0].name : undefined;
         let ratingId = this.ratingComponent.ratingValue;
+        let trackingInfo = new TrackingInfo();
+        trackingInfo.channelCode = 'CRM';
         let dataObj: any = {
             firstName: this.person.firstName,
             middleName: this.person.middleName,
@@ -279,7 +281,8 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
             ratingId: this.isRatingAndStarsDisabled ? undefined : ratingId,
             contactGroupId: this.data.customerType,
             partnerTypeName: partnerTypeName,
-            sourceContactId: this.sourceContactId
+            sourceContactId: this.sourceContactId,
+            trackingInfo: trackingInfo
         };
 
         this.clearSimilarCustomersCheck();

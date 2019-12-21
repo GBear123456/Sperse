@@ -99,9 +99,11 @@ export class RegisterComponent implements AfterViewInit, OnInit {
         this.offersService.incompleteApplicationId$.pipe(
             first(),
             filter(Boolean),
-            tap((applicationId: number) => this.offerServiceProxy.startFinalizeApplication(applicationId)),
-            switchMap((applicationId: number) => this.getFinalizeApplicationStatus(applicationId))
-        ).subscribe(
+            switchMap((applicationId: number) => {
+                return this.offerServiceProxy.startFinalizeApplication(applicationId).pipe(
+                    switchMap(() => this.getFinalizeApplicationStatus(applicationId))
+                );
+        })).subscribe(
             (response: FinalizeApplicationResponse) => {
                 this.sendDecisionToLS(response.status);
                 if (response.status === FinalizeApplicationStatus.Approved) {
