@@ -307,4 +307,9 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
                 this.notify.success(this.l('StageSuccessfullyUpdated'));
         });
     }
+
+    onStageOptionChanged(data, event) {
+        event.component.option('disabled', event.component.option('dataSource')
+            .some(item => data.value == item.name && item.isFinal));
+    }
 }

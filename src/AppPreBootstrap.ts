@@ -112,6 +112,10 @@ export class AppPreBootstrap {
             abp.auth.setToken(result.accessToken);
             AppPreBootstrap.setEncryptedTokenCookie(result.encryptedAccessToken);
             abp.multiTenancy.setTenantIdCookie();
+            if (result.shouldVerifyEmail && result.userEmail)
+                AppPreBootstrap.processRegularBootstrap(queryStringObj, () => {
+                    callback(() => router.navigate(['account/auto-login'], {queryParams: {email: result.userEmail}}));
+                });
             if (result.shouldResetPassword) {
                 let params = {
                     resetCode: result.passwordResetCode,

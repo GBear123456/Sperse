@@ -387,6 +387,16 @@
                 <dx-scroll-view showScrollbar="onHover">
                     <div>
                         <div class="form-group">
+                            <br />
+                            <label for="YTelIsEnabled" class="m-checkbox">
+                                <input id="YTelIsEnabled" type="checkbox" name="YTelIsEnabled" [(ngModel)]="yTelSettings.isEnabled">
+                                {{l("YTelIsEnabled")}}
+                                <span></span>
+                            </label>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="form-group">
                             <label for="YTelUserName">{{l("YTelUserName")}}</label>
                             <input id="YTelUserName" type="text" name="YTelUserName" class="form-control" [(ngModel)]="yTelSettings.userName" maxlength="128">
                         </div>
