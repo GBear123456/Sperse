@@ -338,9 +338,8 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
         let ident = this.getUniqueIdent(raw),
             count = this.duplicateCounts[ident];
 
-        row.uniqueIdent = ident;
-        return (this.duplicateCounts[ident] =
-            (count || 0) + 1) > 1;
+        return !(row.uniqueIdent = ident) ||
+            (this.duplicateCounts[ident] = (count || 0) + 1) > 1;
     }
 
     checkSimilarGroups(row) {
