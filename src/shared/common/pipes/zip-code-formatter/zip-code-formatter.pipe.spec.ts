@@ -12,5 +12,6 @@ describe('ZipCodeFormatterPipe', () => {
         expect(pipe.transform('334-45')).toBe('00334-0045');
         expect(pipe.transform('3344563')).toBe('33445-0063');
         expect(pipe.transform('3344563546')).toBe('33445-6354');
+        expect(pipe.transform('3344563546234234')).toBe('3344563546234234');
     });
 });
