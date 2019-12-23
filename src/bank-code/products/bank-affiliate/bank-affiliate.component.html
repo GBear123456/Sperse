@@ -4,7 +4,7 @@
             frameborder="0">
     </iframe>
     <ng-template #noSubscription>
-        <iframe [src]="sanitizer.bypassSecurityTrustResourceUrl(environmentLink)"
+        <iframe [src]="environmentLink$ | async"
                 frameborder="0">
         </iframe>
     </ng-template>

@@ -15,7 +15,7 @@
         [useBrowserLocale]="true">
     </ngx-extended-pdf-viewer>
     <ng-template #noSubscription>
-        <iframe [src]="sanitizer.bypassSecurityTrustResourceUrl(environmentLink)"
+        <iframe [src]="environmentLink$ | async"
                 frameborder="0">
         </iframe>
     </ng-template>

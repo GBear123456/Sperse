@@ -50,7 +50,7 @@ export class ProductsComponent implements OnInit, OnDestroy {
         public ls: AppLocalizationService,
         @Inject(DOCUMENT) private document
     ) {}
-
+    
     ngOnInit() {
         this.document.body.classList.add('overflow-hidden');
     }

@@ -20,6 +20,7 @@ import { BankCodeServiceType } from '@root/bank-code/products/bank-code-service-
 @Injectable()
 export class ProfileService {
     secureId: string;
+    
     public bankCodeMemberInfo$: Observable<GetMemberInfoOutput> = this.subscriptionProxy.getMemberInfo('BankCode', undefined, undefined).pipe(
         /** For debug purpose */
         // map(() => [ new GetUserSubscriptionsOutput({
@@ -32,14 +33,14 @@ export class ProfileService {
         publishReplay(),
         refCount()
     );
+    secureId$: Observable<string> = this.bankCodeMemberInfo$.pipe(map((bankCodeMemberInfo: GetMemberInfoOutput) => {
+        return bankCodeMemberInfo.secureId;
+    }));
 
     constructor(
         private appSession: AppSessionService,
         private subscriptionProxy: MemberSubscriptionServiceProxy
-    ) {
-        if (abp.session.userId)
-            this.bankCodeMemberInfo$.subscribe(res => { this.secureId = res.secureId; });
-    }
+    ) {}
 
     getPhoto(photo, gender = null): string {
         if (photo)

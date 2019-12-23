@@ -7,6 +7,7 @@ import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import DataSource from 'devextreme/data/data_source';
 import 'devextreme/data/odata/store';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 /** Application imports */
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -65,12 +66,16 @@ export class BankPassComponent {
     hasSubscription$: Observable<boolean> = this.profileService.checkServiceSubscription(BankCodeServiceType.BANKPass);
     dataIsLoading = false;
 
-    environmentLink = {
-        development: 'https://wp.bankcode.pro/b-a-n-k-pass/?WPSecureID=' + this.profileService.secureId,
-        production: 'https://codebreakertech.com/bank-pass-landing/?WPSecureID=' + this.profileService.secureId,
-        staging: 'https://wp.bankcode.pro/b-a-n-k-pass/?WPSecureID=' + this.profileService.secureId,
-        beta: 'https://wp.bankcode.pro/b-a-n-k-pass/?WPSecureID=' + this.profileService.secureId
-    }[environment.releaseStage];
+    environmentLink$: Observable<any> = this.profileService.secureId$.pipe((
+        map((secureId: string) => {
+            return this.sanitizer.bypassSecurityTrustResourceUrl({
+                development: 'https://wp.bankcode.pro/b-a-n-k-pass/?WPSecureID=' + secureId,
+                production: 'https://codebreakertech.com/bank-pass-landing/?WPSecureID=' + secureId,
+                staging: 'https://wp.bankcode.pro/b-a-n-k-pass/?WPSecureID=' + secureId,
+                beta: 'https://wp.bankcode.pro/b-a-n-k-pass/?WPSecureID=' + secureId
+            }[environment.releaseStage]);
+        })
+    ));
 
     constructor(
         private oDataService: ODataService,
