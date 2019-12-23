@@ -43,7 +43,6 @@
                 <div class="transactions">
                     <ghost-list [hidden]="isDataLoaded"></ghost-list>
                     <dx-data-grid id="gridContainer"
-                                  [hidden]="!isDataLoaded"
                                   [noDataText]="!dataGrid?.dataSource || dataSource?.isLoading() ? '' : l('NoData')"
                                   [allowColumnReordering]="true"
                                   [columnAutoWidth]="true"
