@@ -15,6 +15,7 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 import { MatDialog } from '@angular/material/dialog';
 import { UrlHelper } from '@shared/helpers/UrlHelper';
 import {
+    TenantModel,
     SendAutoLoginLinkInput,
     AccountServiceProxy
 } from '@shared/service-proxies/service-proxies';
@@ -29,6 +30,7 @@ import {
 export class HostAutoLoginComponent {
     isLinkSent = false;
     conditions = ConditionsType;
+    detectedTenancies: TenantModel[] = [];
     tenantName = this.appSession.tenant
         ? this.appSession.tenant.name
         : AppConsts.defaultTenantName;
@@ -46,16 +48,28 @@ export class HostAutoLoginComponent {
             .subscribe((params: Params) => this.userEmail = params.email);
     }
 
-    sendloginLink(): void {
+    sendloginLink(tenantId?: number): void {
         abp.ui.setBusy();
+        if (this.appSession.tenantId)
+            tenantId = this.appSession.tenantId;
+        abp.multiTenancy.setTenantIdCookie(tenantId);
         this.accountProxy.sendAutoLoginLink(new SendAutoLoginLinkInput({
             emailAddress: this.userEmail,
-            autoDetectTenancy: true,
-            appRoute: UrlHelper.getInitialUrlRelativePath(),
+            autoDetectTenancy: isNaN(tenantId),
+            appRoute: this.getAppRoute(),
             features: [],
         })).pipe(
             finalize(() => abp.ui.clearBusy())
-        ).subscribe(() => this.isLinkSent = true);
+        ).subscribe(res => {
+            if (res && res.detectedTenancies && res.detectedTenancies.length)
+                this.detectedTenancies = res.detectedTenancies;
+            this.isLinkSent = !isNaN(tenantId);
+        });
+    }
+
+    getAppRoute() {
+        let path = UrlHelper.getInitialUrlRelativePath();
+        return path.indexOf('auto-login') > 0 ? '' : path;
     }
 
     openConditionsDialog(type: ConditionsType) {
