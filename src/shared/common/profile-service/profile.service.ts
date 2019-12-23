@@ -19,8 +19,6 @@ import { BankCodeServiceType } from '@root/bank-code/products/bank-code-service-
 
 @Injectable()
 export class ProfileService {
-    secureId: string;
-    
     public bankCodeMemberInfo$: Observable<GetMemberInfoOutput> = this.subscriptionProxy.getMemberInfo('BankCode', undefined, undefined).pipe(
         /** For debug purpose */
         // map(() => [ new GetUserSubscriptionsOutput({

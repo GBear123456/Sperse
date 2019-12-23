@@ -29,7 +29,6 @@ import { environment } from '@root/environments/environment';
 })
 export class BankPassComponent {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
-    offerId = 718;
     totalCount: number;
     searchValue: '';
     dataSourceURI = 'Lead';
@@ -51,15 +50,13 @@ export class BankPassComponent {
                 request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                 request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
             },
-            onLoaded: () => {
-                this.dataIsLoading = false;
-                this.changeDetectorRef.detectChanges();
-            },
             deserializeDates: false,
             paginate: true
         },
         onChanged: () => {
+            this.dataIsLoading = false;
             this.totalCount = this.dataSource.totalCount();
+            this.changeDetectorRef.detectChanges();
         }
     });
     formatting = AppConsts.formatting;
