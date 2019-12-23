@@ -18032,8 +18032,8 @@ export class MemberSubscriptionServiceProxy {
      * @serviceTypeId (optional) 
      * @return Success
      */
-    getUserSubscriptions(systemType: string, serviceType: string | null | undefined, serviceTypeId: string | null | undefined): Observable<GetUserSubscriptionsOutput[]> {
-        let url_ = this.baseUrl + "/api/services/Platform/MemberSubscription/GetUserSubscriptions?";
+    getMemberInfo(systemType: string, serviceType: string | null | undefined, serviceTypeId: string | null | undefined): Observable<GetMemberInfoOutput> {
+        let url_ = this.baseUrl + "/api/services/Platform/MemberSubscription/GetMemberInfo?";
         if (systemType === undefined || systemType === null)
             throw new Error("The parameter 'systemType' must be defined and cannot be null.");
         else
@@ -18054,20 +18054,20 @@ export class MemberSubscriptionServiceProxy {
         };
 
         return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetUserSubscriptions(response_);
+            return this.processGetMemberInfo(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processGetUserSubscriptions(<any>response_);
+                    return this.processGetMemberInfo(<any>response_);
                 } catch (e) {
-                    return <Observable<GetUserSubscriptionsOutput[]>><any>_observableThrow(e);
+                    return <Observable<GetMemberInfoOutput>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<GetUserSubscriptionsOutput[]>><any>_observableThrow(response_);
+                return <Observable<GetMemberInfoOutput>><any>_observableThrow(response_);
         }));
     }
 
-    protected processGetUserSubscriptions(response: HttpResponseBase): Observable<GetUserSubscriptionsOutput[]> {
+    protected processGetMemberInfo(response: HttpResponseBase): Observable<GetMemberInfoOutput> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -18078,11 +18078,7 @@ export class MemberSubscriptionServiceProxy {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            if (resultData200 && resultData200.constructor === Array) {
-                result200 = [];
-                for (let item of resultData200)
-                    result200.push(GetUserSubscriptionsOutput.fromJS(item));
-            }
+            result200 = resultData200 ? GetMemberInfoOutput.fromJS(resultData200) : new GetMemberInfoOutput();
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -18090,7 +18086,7 @@ export class MemberSubscriptionServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<GetUserSubscriptionsOutput[]>(<any>null);
+        return _observableOf<GetMemberInfoOutput>(<any>null);
     }
 }
 
@@ -20352,16 +20348,17 @@ export class OrderSubscriptionServiceProxy {
     }
 
     /**
-     * @orderSubscriptionId (optional) 
+     * @body (optional) 
      * @return Success
      */
-    cancel(orderSubscriptionId: number | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CRM/OrderSubscription/Cancel?";
-        if (orderSubscriptionId !== undefined)
-            url_ += "orderSubscriptionId=" + encodeURIComponent("" + orderSubscriptionId) + "&"; 
+    cancel(body: CancelOrderSubscriptionInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/OrderSubscription/Cancel";
         url_ = url_.replace(/[?&]$/, "");
 
+        const content_ = JSON.stringify(body);
+
         let options_ : any = {
+            body: content_,
             observe: "response",
             responseType: "blob",
             headers: new HttpHeaders({
@@ -33118,6 +33115,7 @@ export class SendAutoLoginLinkInput implements ISendAutoLoginLinkInput {
     emailAddress!: string;
     autoDetectTenancy!: boolean | undefined;
     features!: string[] | undefined;
+    appRoute!: string | undefined;
 
     constructor(data?: ISendAutoLoginLinkInput) {
         if (data) {
@@ -33140,6 +33138,7 @@ export class SendAutoLoginLinkInput implements ISendAutoLoginLinkInput {
                 for (let item of data["features"])
                     this.features.push(item);
             }
+            this.appRoute = data["appRoute"];
         }
     }
 
@@ -33159,6 +33158,7 @@ export class SendAutoLoginLinkInput implements ISendAutoLoginLinkInput {
             for (let item of this.features)
                 data["features"].push(item);
         }
+        data["appRoute"] = this.appRoute;
         return data; 
     }
 }
@@ -33167,6 +33167,7 @@ export interface ISendAutoLoginLinkInput {
     emailAddress: string;
     autoDetectTenancy: boolean | undefined;
     features: string[] | undefined;
+    appRoute: string | undefined;
 }
 
 export class SendAutoLoginLinkOutput implements ISendAutoLoginLinkOutput {
@@ -42409,7 +42410,7 @@ export class CreateContactInput implements ICreateContactInput {
     trackingInfo!: TrackingInfo | undefined;
     matchExisting!: boolean | undefined;
     inviteUser!: boolean | undefined;
-    createAutoLoginLink!: boolean | undefined;
+    generateAutoLoginLink!: boolean | undefined;
 
     constructor(data?: ICreateContactInput) {
         if (data) {
@@ -42486,7 +42487,7 @@ export class CreateContactInput implements ICreateContactInput {
             this.trackingInfo = data["trackingInfo"] ? TrackingInfo.fromJS(data["trackingInfo"]) : <any>undefined;
             this.matchExisting = data["matchExisting"];
             this.inviteUser = data["inviteUser"];
-            this.createAutoLoginLink = data["createAutoLoginLink"];
+            this.generateAutoLoginLink = data["generateAutoLoginLink"];
         }
     }
 
@@ -42563,7 +42564,7 @@ export class CreateContactInput implements ICreateContactInput {
         data["trackingInfo"] = this.trackingInfo ? this.trackingInfo.toJSON() : <any>undefined;
         data["matchExisting"] = this.matchExisting;
         data["inviteUser"] = this.inviteUser;
-        data["createAutoLoginLink"] = this.createAutoLoginLink;
+        data["generateAutoLoginLink"] = this.generateAutoLoginLink;
         return data; 
     }
 }
@@ -42605,13 +42606,14 @@ export interface ICreateContactInput {
     trackingInfo: TrackingInfo | undefined;
     matchExisting: boolean | undefined;
     inviteUser: boolean | undefined;
-    createAutoLoginLink: boolean | undefined;
+    generateAutoLoginLink: boolean | undefined;
 }
 
 export class CreateContactOutput implements ICreateContactOutput {
     id!: number | undefined;
     leadId!: number | undefined;
     userId!: number | undefined;
+    userCode!: string | undefined;
     autoLoginLink!: string | undefined;
 
     constructor(data?: ICreateContactOutput) {
@@ -42628,6 +42630,7 @@ export class CreateContactOutput implements ICreateContactOutput {
             this.id = data["id"];
             this.leadId = data["leadId"];
             this.userId = data["userId"];
+            this.userCode = data["userCode"];
             this.autoLoginLink = data["autoLoginLink"];
         }
     }
@@ -42644,6 +42647,7 @@ export class CreateContactOutput implements ICreateContactOutput {
         data["id"] = this.id;
         data["leadId"] = this.leadId;
         data["userId"] = this.userId;
+        data["userCode"] = this.userCode;
         data["autoLoginLink"] = this.autoLoginLink;
         return data; 
     }
@@ -42653,6 +42657,7 @@ export interface ICreateContactOutput {
     id: number | undefined;
     leadId: number | undefined;
     userId: number | undefined;
+    userCode: string | undefined;
     autoLoginLink: string | undefined;
 }
 
@@ -47632,6 +47637,7 @@ export class Invoice implements IInvoice {
     taxTotal!: number | undefined;
     date!: moment.Moment | undefined;
     dueDate!: moment.Moment | undefined;
+    formattedDueDate!: string | undefined;
     billingAddressId!: number | undefined;
     shippingAddressId!: number | undefined;
     description!: string | undefined;
@@ -47673,6 +47679,7 @@ export class Invoice implements IInvoice {
             this.taxTotal = data["taxTotal"];
             this.date = data["date"] ? moment(data["date"].toString()) : <any>undefined;
             this.dueDate = data["dueDate"] ? moment(data["dueDate"].toString()) : <any>undefined;
+            this.formattedDueDate = data["formattedDueDate"];
             this.billingAddressId = data["billingAddressId"];
             this.shippingAddressId = data["shippingAddressId"];
             this.description = data["description"];
@@ -47718,6 +47725,7 @@ export class Invoice implements IInvoice {
         data["taxTotal"] = this.taxTotal;
         data["date"] = this.date ? this.date.toISOString() : <any>undefined;
         data["dueDate"] = this.dueDate ? this.dueDate.toISOString() : <any>undefined;
+        data["formattedDueDate"] = this.formattedDueDate;
         data["billingAddressId"] = this.billingAddressId;
         data["shippingAddressId"] = this.shippingAddressId;
         data["description"] = this.description;
@@ -47756,6 +47764,7 @@ export interface IInvoice {
     taxTotal: number | undefined;
     date: moment.Moment | undefined;
     dueDate: moment.Moment | undefined;
+    formattedDueDate: string | undefined;
     billingAddressId: number | undefined;
     shippingAddressId: number | undefined;
     description: string | undefined;
@@ -48541,6 +48550,7 @@ export class OrderSubscription implements IOrderSubscription {
     hasRecurringBilling!: boolean | undefined;
     previousOrderSubscriptionId!: number | undefined;
     lastExpiryNotificationDate!: moment.Moment | undefined;
+    cancelationReason!: string | undefined;
     order!: Order | undefined;
     status!: SubscriptionStatus | undefined;
     previousOrderSubscription!: OrderSubscription | undefined;
@@ -48584,6 +48594,7 @@ export class OrderSubscription implements IOrderSubscription {
             this.hasRecurringBilling = data["hasRecurringBilling"];
             this.previousOrderSubscriptionId = data["previousOrderSubscriptionId"];
             this.lastExpiryNotificationDate = data["lastExpiryNotificationDate"] ? moment(data["lastExpiryNotificationDate"].toString()) : <any>undefined;
+            this.cancelationReason = data["cancelationReason"];
             this.order = data["order"] ? Order.fromJS(data["order"]) : <any>undefined;
             this.status = data["status"] ? SubscriptionStatus.fromJS(data["status"]) : <any>undefined;
             this.previousOrderSubscription = data["previousOrderSubscription"] ? OrderSubscription.fromJS(data["previousOrderSubscription"]) : <any>undefined;
@@ -48631,6 +48642,7 @@ export class OrderSubscription implements IOrderSubscription {
         data["hasRecurringBilling"] = this.hasRecurringBilling;
         data["previousOrderSubscriptionId"] = this.previousOrderSubscriptionId;
         data["lastExpiryNotificationDate"] = this.lastExpiryNotificationDate ? this.lastExpiryNotificationDate.toISOString() : <any>undefined;
+        data["cancelationReason"] = this.cancelationReason;
         data["order"] = this.order ? this.order.toJSON() : <any>undefined;
         data["status"] = this.status ? this.status.toJSON() : <any>undefined;
         data["previousOrderSubscription"] = this.previousOrderSubscription ? this.previousOrderSubscription.toJSON() : <any>undefined;
@@ -48671,6 +48683,7 @@ export interface IOrderSubscription {
     hasRecurringBilling: boolean | undefined;
     previousOrderSubscriptionId: number | undefined;
     lastExpiryNotificationDate: moment.Moment | undefined;
+    cancelationReason: string | undefined;
     order: Order | undefined;
     status: SubscriptionStatus | undefined;
     previousOrderSubscription: OrderSubscription | undefined;
@@ -58385,9 +58398,10 @@ export interface IHostSettingsEditDto {
 }
 
 export class YTelSettingsEditDto implements IYTelSettingsEditDto {
-    userName!: string;
-    password!: string;
-    from!: string;
+    isEnabled!: string | undefined;
+    userName!: string | undefined;
+    password!: string | undefined;
+    from!: string | undefined;
 
     constructor(data?: IYTelSettingsEditDto) {
         if (data) {
@@ -58400,6 +58414,7 @@ export class YTelSettingsEditDto implements IYTelSettingsEditDto {
 
     init(data?: any) {
         if (data) {
+            this.isEnabled = data["isEnabled"];
             this.userName = data["userName"];
             this.password = data["password"];
             this.from = data["from"];
@@ -58415,6 +58430,7 @@ export class YTelSettingsEditDto implements IYTelSettingsEditDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["isEnabled"] = this.isEnabled;
         data["userName"] = this.userName;
         data["password"] = this.password;
         data["from"] = this.from;
@@ -58423,9 +58439,10 @@ export class YTelSettingsEditDto implements IYTelSettingsEditDto {
 }
 
 export interface IYTelSettingsEditDto {
-    userName: string;
-    password: string;
-    from: string;
+    isEnabled: string | undefined;
+    userName: string | undefined;
+    password: string | undefined;
+    from: string | undefined;
 }
 
 export class SendTestEmailInput implements ISendTestEmailInput {
@@ -62994,14 +63011,14 @@ export interface IUpdateUserBANKCodeDto {
     bankCode: string;
 }
 
-export class GetUserSubscriptionsOutput implements IGetUserSubscriptionsOutput {
+export class SubscriptionShortInfoOutput implements ISubscriptionShortInfoOutput {
     serviceType!: string | undefined;
     serviceTypeId!: string | undefined;
     serviceName!: string | undefined;
     serviceId!: string | undefined;
     endDate!: moment.Moment | undefined;
 
-    constructor(data?: IGetUserSubscriptionsOutput) {
+    constructor(data?: ISubscriptionShortInfoOutput) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -63020,9 +63037,9 @@ export class GetUserSubscriptionsOutput implements IGetUserSubscriptionsOutput {
         }
     }
 
-    static fromJS(data: any): GetUserSubscriptionsOutput {
+    static fromJS(data: any): SubscriptionShortInfoOutput {
         data = typeof data === 'object' ? data : {};
-        let result = new GetUserSubscriptionsOutput();
+        let result = new SubscriptionShortInfoOutput();
         result.init(data);
         return result;
     }
@@ -63038,12 +63055,60 @@ export class GetUserSubscriptionsOutput implements IGetUserSubscriptionsOutput {
     }
 }
 
-export interface IGetUserSubscriptionsOutput {
+export interface ISubscriptionShortInfoOutput {
     serviceType: string | undefined;
     serviceTypeId: string | undefined;
     serviceName: string | undefined;
     serviceId: string | undefined;
     endDate: moment.Moment | undefined;
+}
+
+export class GetMemberInfoOutput implements IGetMemberInfoOutput {
+    subscriptions!: SubscriptionShortInfoOutput[] | undefined;
+    secureId!: string | undefined;
+
+    constructor(data?: IGetMemberInfoOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            if (data["subscriptions"] && data["subscriptions"].constructor === Array) {
+                this.subscriptions = [];
+                for (let item of data["subscriptions"])
+                    this.subscriptions.push(SubscriptionShortInfoOutput.fromJS(item));
+            }
+            this.secureId = data["secureId"];
+        }
+    }
+
+    static fromJS(data: any): GetMemberInfoOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new GetMemberInfoOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (this.subscriptions && this.subscriptions.constructor === Array) {
+            data["subscriptions"] = [];
+            for (let item of this.subscriptions)
+                data["subscriptions"].push(item.toJSON());
+        }
+        data["secureId"] = this.secureId;
+        return data; 
+    }
+}
+
+export interface IGetMemberInfoOutput {
+    subscriptions: SubscriptionShortInfoOutput[] | undefined;
+    secureId: string | undefined;
 }
 
 export class GetProviderUITokenOutput implements IGetProviderUITokenOutput {
@@ -65866,6 +65931,7 @@ export class OrderSubscriptionDto implements IOrderSubscriptionDto {
     trialEndDate!: moment.Moment | undefined;
     statusCode!: string | undefined;
     status!: string | undefined;
+    cancelationReason!: string | undefined;
     orderSubscriptionPayments!: OrderSbuscriptionPaymentDto[] | undefined;
 
     constructor(data?: IOrderSubscriptionDto) {
@@ -65891,6 +65957,7 @@ export class OrderSubscriptionDto implements IOrderSubscriptionDto {
             this.trialEndDate = data["trialEndDate"] ? moment(data["trialEndDate"].toString()) : <any>undefined;
             this.statusCode = data["statusCode"];
             this.status = data["status"];
+            this.cancelationReason = data["cancelationReason"];
             if (data["orderSubscriptionPayments"] && data["orderSubscriptionPayments"].constructor === Array) {
                 this.orderSubscriptionPayments = [];
                 for (let item of data["orderSubscriptionPayments"])
@@ -65920,6 +65987,7 @@ export class OrderSubscriptionDto implements IOrderSubscriptionDto {
         data["trialEndDate"] = this.trialEndDate ? this.trialEndDate.toISOString() : <any>undefined;
         data["statusCode"] = this.statusCode;
         data["status"] = this.status;
+        data["cancelationReason"] = this.cancelationReason;
         if (this.orderSubscriptionPayments && this.orderSubscriptionPayments.constructor === Array) {
             data["orderSubscriptionPayments"] = [];
             for (let item of this.orderSubscriptionPayments)
@@ -65942,6 +66010,7 @@ export interface IOrderSubscriptionDto {
     trialEndDate: moment.Moment | undefined;
     statusCode: string | undefined;
     status: string | undefined;
+    cancelationReason: string | undefined;
     orderSubscriptionPayments: OrderSbuscriptionPaymentDto[] | undefined;
 }
 
@@ -66050,6 +66119,46 @@ export interface IUpdateOrderSubscriptionInput {
     orderNumber: string | undefined;
     systemType: string;
     subscriptions: SubscriptionInput[];
+}
+
+export class CancelOrderSubscriptionInput implements ICancelOrderSubscriptionInput {
+    orderSubscriptionId!: number;
+    cancelationReason!: string | undefined;
+
+    constructor(data?: ICancelOrderSubscriptionInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.orderSubscriptionId = data["orderSubscriptionId"];
+            this.cancelationReason = data["cancelationReason"];
+        }
+    }
+
+    static fromJS(data: any): CancelOrderSubscriptionInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new CancelOrderSubscriptionInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["orderSubscriptionId"] = this.orderSubscriptionId;
+        data["cancelationReason"] = this.cancelationReason;
+        return data; 
+    }
+}
+
+export interface ICancelOrderSubscriptionInput {
+    orderSubscriptionId: number;
+    cancelationReason: string | undefined;
 }
 
 export class OrganizationInfoDto implements IOrganizationInfoDto {

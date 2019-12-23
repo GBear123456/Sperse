@@ -1,5 +1,6 @@
 /** Core imports */
-import { Component, Injector, Input, HostBinding, OnDestroy, ViewChild } from '@angular/core';
+import { Component, Injector, Input, HostBinding,
+    OnDestroy, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 
 /** Third party imports */
 import cloneDeep from 'lodash/cloneDeep';
@@ -15,7 +16,8 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 @Component({
     selector: 'app-toolbar',
     templateUrl: './toolbar.component.html',
-    styleUrls: ['./toolbar.component.less']
+    styleUrls: ['./toolbar.component.less'],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ToolBarComponent implements OnDestroy {
     @ViewChild(DxToolbarComponent) toolbarComponent: DxToolbarComponent;
@@ -31,6 +33,7 @@ export class ToolBarComponent implements OnDestroy {
     public items = [];
     public options = {};
     private subscription: any;
+    private repaintTimeout: any;
 
     constructor(
         injector: Injector,
@@ -403,6 +406,13 @@ export class ToolBarComponent implements OnDestroy {
                 });
             });
         this.items = items;
+        this.repaint();
+    }
+
+    repaint() {
+        clearTimeout(this.repaintTimeout);
+        this.repaintTimeout = setTimeout(() =>
+            this.toolbarComponent.instance.repaint(), 500);
     }
 
     updateToolbarItemAttribute(itemName: string, property: string, value: any) {

@@ -59,23 +59,28 @@
                         </div>
                         <img src="./assets/common/icons/info-icon-blue.svg"
                              id="accessCodeTooltip"
-                             (mouseleave)="isAccessCodeTooltipVisible = false"
                              (mouseenter)="isAccessCodeTooltipVisible = true">
                         <dx-tooltip [position]="{
                                         my: 'left top',
                                         at: 'right bottom',
                                         of: '#accessCodeTooltip',
-                                        offset: '-19 5'
+                                        offset: '-38 5'
                                     }"
                                     [(visible)]="isAccessCodeTooltipVisible"
-                                    [height]="184"
-                                    [width]="310">
+                                    (click)="onInstructionsClick($event)"
+                                    [width]="345">
                             <div *dxTemplate="let data of 'content'">
-                                <div style="white-space: normal">
-                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                                    Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-                                    Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
-                                    Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+                                <div class="access-code-instructions" (click)="onInstructionsClick($event)">
+                                    <h6>{{ ls.l('AccessCodeInstructionsTitle') }}:</h6>
+                                    <p>{{ ls.l('AccessCodeInstructionsDescription') }}:</p>
+                                    <div class="link">
+                                        <a href="https://www.MyBankcode.com/?ref={{accessCode}}">https://www.MyBankcode.com/?ref={{accessCode}}</a>
+                                        <img src="./assets/common/icons/copy.svg" (click)="copy('https://www.MyBankcode.com/?ref=' + accessCode)"/>
+                                    </div>
+                                    <div class="link">
+                                        <a href="https://www.CodebreakerTech.com/?ref={{accessCode}}">https://www.CodebreakerTech.com/?ref={{accessCode}}</a>
+                                        <img src="./assets/common/icons/copy.svg" (click)="copy('https://www.CodebreakerTech.com/?ref=' + accessCode)"/>
+                                    </div>
                                 </div>
                             </div>
                         </dx-tooltip>

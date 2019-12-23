@@ -9,6 +9,7 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
+import { MatInputModule } from '@angular/material/input';
 import { AngularGooglePlaceModule } from 'angular-google-place';
 import { RoundProgressModule } from 'angular-svg-round-progressbar';
 
@@ -126,6 +127,7 @@ import { EmailTemplateDialogComponent } from '@app/crm/shared/email-template-dia
 import { SourceContactListComponent } from './source-contact-list/source-contact-list.component';
 import { CrmService } from '@app/crm/crm.service';
 import { AddSubscriptionDialogComponent } from './subscriptions/add-subscription-dialog/add-subscription-dialog.component';
+import { CancelSubscriptionDialogComponent } from './subscriptions/cancel-subscription-dialog/cancel-subscription-dialog.component';
 import { OrderDropdownModule } from '@app/crm/shared/order-dropdown/order-dropfown.module';
 import { ActionMenuModule } from '@app/shared/common/action-menu/action-menu.module';
 
@@ -184,7 +186,8 @@ import { ActionMenuModule } from '@app/shared/common/action-menu/action-menu.mod
         PersonalDetailsComponent,
         SMSDialogComponent,
         SourceContactListComponent,
-        AddSubscriptionDialogComponent
+        AddSubscriptionDialogComponent,
+        CancelSubscriptionDialogComponent
     ],
     imports: [
         FormsModule,
@@ -197,6 +200,7 @@ import { ActionMenuModule } from '@app/shared/common/action-menu/action-menu.mod
         MatDialogModule,
         MatProgressSpinnerModule,
         MatSelectModule,
+        MatInputModule,
         ContactsRoutingModule,
         AngularGooglePlaceModule,
         DxContextMenuModule,
@@ -255,7 +259,8 @@ import { ActionMenuModule } from '@app/shared/common/action-menu/action-menu.mod
         EmailTemplateDialogComponent,
         HistoryListDialogComponent,
         SMSDialogComponent,
-        AddSubscriptionDialogComponent
+        AddSubscriptionDialogComponent,
+        CancelSubscriptionDialogComponent
     ],
     providers: [
         DialogService,

@@ -250,3 +250,34 @@
         }
     }
 }
+
+.access-code-instructions {
+    white-space: normal;
+    text-align: left;
+    h6 {
+        text-transform: uppercase;
+    }
+    p {
+        margin-bottom: 5px;
+    }
+    .link {
+        position: relative;
+        display: flex;
+        align-items: center;
+        max-width: 311px;
+        &:not(:last-child) {
+            margin-bottom: 5px;
+        }
+        a {
+            margin-right: 5px;
+            font-size: 11px;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+        img {
+            cursor: pointer;
+        }
+    }
+
+}

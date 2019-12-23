@@ -1,15 +1,24 @@
 /** Core imports */
-import { Component, Injector, OnInit } from '@angular/core';
+import { Component, Injector } from '@angular/core';
+import { ActivatedRoute, Params } from '@angular/router';
+
+/** Third party imports */
+import { finalize, first } from 'rxjs/operators';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
 import { ConditionsType } from '@shared/AppEnums';
 import { accountModuleAnimation } from '@shared/animations/routerTransition';
 import { ConditionsModalComponent } from '@shared/common/conditions-modal/conditions-modal.component';
-import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { MatDialog } from '@angular/material/dialog';
+import { UrlHelper } from '@shared/helpers/UrlHelper';
+import {
+    TenantModel,
+    SendAutoLoginLinkInput,
+    AccountServiceProxy
+} from '@shared/service-proxies/service-proxies';
 
 @Component({
     templateUrl: './host-auto-login.component.html',
@@ -18,8 +27,10 @@ import { MatDialog } from '@angular/material/dialog';
     ],
     animations: [accountModuleAnimation()]
 })
-export class HostAutoLoginComponent implements OnInit {
+export class HostAutoLoginComponent {
+    isLinkSent = false;
     conditions = ConditionsType;
+    detectedTenancies: TenantModel[] = [];
     tenantName = this.appSession.tenant
         ? this.appSession.tenant.name
         : AppConsts.defaultTenantName;
@@ -29,15 +40,36 @@ export class HostAutoLoginComponent implements OnInit {
         injector: Injector,
         public dialog: MatDialog,
         public ls: AppLocalizationService,
+        private activatedRoute: ActivatedRoute,
+        private accountProxy: AccountServiceProxy,
         private appSession: AppSessionService
     ) {
-
+        this.activatedRoute.queryParams.pipe(first())
+            .subscribe((params: Params) => this.userEmail = params.email);
     }
 
-    ngOnInit(): void {
+    sendloginLink(tenantId?: number): void {
+        abp.ui.setBusy();
+        if (this.appSession.tenantId)
+            tenantId = this.appSession.tenantId;
+        abp.multiTenancy.setTenantIdCookie(tenantId);
+        this.accountProxy.sendAutoLoginLink(new SendAutoLoginLinkInput({
+            emailAddress: this.userEmail,
+            autoDetectTenancy: isNaN(tenantId),
+            appRoute: this.getAppRoute(),
+            features: [],
+        })).pipe(
+            finalize(() => abp.ui.clearBusy())
+        ).subscribe(res => {
+            if (res && res.detectedTenancies && res.detectedTenancies.length)
+                this.detectedTenancies = res.detectedTenancies;
+            this.isLinkSent = !isNaN(tenantId);
+        });
     }
 
-    login(): void {
+    getAppRoute() {
+        let path = UrlHelper.getInitialUrlRelativePath();
+        return path.indexOf('auto-login') > 0 ? '' : path;
     }
 
     openConditionsDialog(type: ConditionsType) {

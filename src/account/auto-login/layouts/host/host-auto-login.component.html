@@ -3,14 +3,21 @@
         <div class="col-md-12 col-sm-12 col-xs-12 text-center form-wrapper">
             <h1 class="d-none d-md-block">{{tenantName}} {{ls.l("Auto Login")}}</h1>
 
-            <form #loginForm="ngForm" class="login-form" method="post" novalidate (ngSubmit)="login()">
-
+            <form #loginForm="ngForm" class="login-form" method="post" novalidate (ngSubmit)="sendloginLink()">
                 <div class="form-group clearfix">
-                    Use the below button to send the {{tenantName}} login link to your {{userEmail}} email.
+                    {{ ls.l(isLinkSent ? 'AutoLoginMailSentMessage' : 'AutoLoginMessage', userEmail, tenantName) }}
+                    <div *ngIf="!isLinkSent && detectedTenancies.length">
+                        <p>{{ls.l('SelectTenant_Information')}}</p>
+                        <div class="list-group">
+                            <a class="list-group-item list-group-item-action" *ngFor="let tenant of detectedTenancies" (click)="sendloginLink(tenant.id)">
+                                <h5 class="mb-1">{{tenant.name}}</h5>
+                            </a>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="form-actions">
-                    <button type="submit" class="submit">
+                    <button type="submit" class="submit" [hidden]="isLinkSent || detectedTenancies.length">
                         {{ls.l("Auto Login")}}
                         <img src="./assets/common/icons/arrow-right-long-icon.svg" alt="right arrow" class="pull-right">
                     </button>

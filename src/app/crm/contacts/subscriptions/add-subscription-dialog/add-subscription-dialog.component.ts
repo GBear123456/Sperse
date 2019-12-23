@@ -8,6 +8,7 @@ import {
     OnInit,
     ViewChild
 } from '@angular/core';
+import { getCurrencySymbol } from '@angular/common';
 
 /** Third party imports */
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
@@ -31,7 +32,6 @@ import { UserManagementService } from '@shared/common/layout/user-management-lis
 import { BankCodeServiceType } from '@root/bank-code/products/bank-code-service-type.enum';
 import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 import { DateHelper } from '@shared/helpers/DateHelper';
-import { CurrencyPipe, getCurrencySymbol } from '@angular/common';
 
 @Component({
     selector: 'add-subscription-dialog',
@@ -41,7 +41,6 @@ import { CurrencyPipe, getCurrencySymbol } from '@angular/common';
         '../../../../shared/common/styles/form.less',
         './add-subscription-dialog.component.less'
     ],
-    providers: [ CurrencyPipe ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
@@ -74,10 +73,9 @@ export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
         private contactsService: ContactsService,
         private userManagementService: UserManagementService,
         private invoicesService: InvoicesService,
-        private currencyPipe: CurrencyPipe,
         public dialogRef: MatDialogRef<AddSubscriptionDialogComponent>,
         public ls: AppLocalizationService,
-        @Inject(MAT_DIALOG_DATA) private data: any
+        @Inject(MAT_DIALOG_DATA) public data: any
     ) {
         this.dialogRef.beforeClose().subscribe(() => {
             this.dialogRef.updatePosition({

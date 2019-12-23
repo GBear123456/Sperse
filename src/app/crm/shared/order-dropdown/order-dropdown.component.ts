@@ -55,6 +55,7 @@ export class OrderDropdownComponent {
     onOrderNumberValueChanged(event) {
         if (event.event)
             this.orderId = undefined;
+        this.orderNumberChange.emit(this.orderNumber);
     }
 
 
