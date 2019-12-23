@@ -160,11 +160,6 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         this.PERSONAL_CREDITSCORERATING
     ];
 
-    private readonly AFFILIATE_FIELDS = [
-        this.PERSONAL_AFFILIATE_CODE,
-        this.BUSINESS_AFFILIATE_CODE
-    ];
-
     importStatuses: any = ImportStatus;
     importStatus: ImportStatus;
     hideLeftMenu = false;
@@ -470,9 +465,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
                 });
                 this.setMappingFields(this.mappingObjectNames[v], combinedName);
             } else {
-                if (this.FIELDS_TO_IGNORE.indexOf(combinedName) > -1
-                    || (this.contactGroupId !== ContactGroup.Partner && this.AFFILIATE_FIELDS.indexOf(combinedName) > -1)
-                )
+                if (this.FIELDS_TO_IGNORE.indexOf(combinedName) > -1)
                     return;
 
                 this.mappingFields.push({
