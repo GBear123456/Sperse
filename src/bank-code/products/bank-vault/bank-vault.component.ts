@@ -4,6 +4,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 
 /** Third party imports */
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 /** Application imports */
 import { BankCodeServiceType } from '@root/bank-code/products/bank-code-service-type.enum';
@@ -19,13 +20,16 @@ import { ProfileService } from '@shared/common/profile-service/profile.service';
 export class BankVaultComponent {
     offerId = 546;
     hasSubscription$: Observable<boolean> = this.profileService.checkServiceSubscription(BankCodeServiceType.BANKVault);
-
-    environmentLink = {
-        development: 'https://wp.bankcode.pro/the-vault-landing/?WPSecureID=' + this.profileService.secureId,
-        production: 'https://codebreakertech.com/the-vault-landing/?WPSecureID=' + this.profileService.secureId,
-        staging: 'https://wp.bankcode.pro/the-vault-landing/?WPSecureID=' + this.profileService.secureId,
-        beta: 'https://wp.bankcode.pro/the-vault-landing/?WPSecureID=' + this.profileService.secureId
-    }[environment.releaseStage];
+    environmentLink$: Observable<any> = this.profileService.secureId$.pipe((
+        map((secureId: string) => {
+            return this.sanitizer.bypassSecurityTrustResourceUrl({
+                development: 'https://wp.bankcode.pro/the-vault-landing/?WPSecureID=' + secureId,
+                production: 'https://codebreakertech.com/the-vault-landing/?WPSecureID=' + secureId,
+                staging: 'https://wp.bankcode.pro/the-vault-landing/?WPSecureID=' + secureId,
+                beta: 'https://wp.bankcode.pro/the-vault-landing/?WPSecureID=' + secureId
+            }[environment.releaseStage]);
+        })
+    ));
 
     constructor(
         private profileService: ProfileService,

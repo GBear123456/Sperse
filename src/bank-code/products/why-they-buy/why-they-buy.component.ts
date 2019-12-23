@@ -4,6 +4,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 
 /** Third party imports */
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
@@ -20,13 +21,16 @@ import { ProfileService } from '@shared/common/profile-service/profile.service';
 export class WhyTheyBuyComponent {
     hasSubscription$: Observable<boolean> = this.profileService.checkServiceSubscription(BankCodeServiceType.WTBeBook);
     bookSrc = AppConsts.appBaseHref + 'assets/documents/Why+They+Buy+eBook+-+Black.pdf';
-
-    environmentLink = {
-        development: 'https://wp.bankcode.pro/why-they-buy-digital-landing/?WPSecureID=' + this.profileService.secureId,
-        production: 'https://codebreakertech.com/why-they-buy-digital-landing/?WPSecureID=' + this.profileService.secureId,
-        staging: 'https://wp.bankcode.pro/why-they-buy-digital-landing/?WPSecureID=' + this.profileService.secureId,
-        beta: 'https://wp.bankcode.pro/why-they-buy-digital-landing/?WPSecureID=' + this.profileService.secureId
-    }[environment.releaseStage];
+    environmentLink$: Observable<any> = this.profileService.secureId$.pipe((
+        map((secureId: string) => {
+            return this.sanitizer.bypassSecurityTrustResourceUrl({
+                development: 'https://wp.bankcode.pro/why-they-buy-digital-landing/?WPSecureID=' + secureId,
+                production: 'https://codebreakertech.com/why-they-buy-digital-landing/?WPSecureID=' + secureId,
+                staging: 'https://wp.bankcode.pro/why-they-buy-digital-landing/?WPSecureID=' + secureId,
+                beta: 'https://wp.bankcode.pro/why-they-buy-digital-landing/?WPSecureID=' + secureId
+            }[environment.releaseStage]);
+        })
+    ));
 
     constructor(
         private profileService: ProfileService,
