@@ -9,7 +9,7 @@
     <h1><i class="{{icon}}"></i>{{title}}</h1>
     <div class="actions" [hidden]="selectedStepIndex == FINISH_STEP_INDEX">
         <button class="button-layout button-default" (click)="cancel()">{{l('Cancel')}}</button>
-        <button class="button-layout button-primary" (click)="next()">{{selectedStepIndex == REVIEW_STEP_INDEX ? l('Import'): l('Next')}}</button>
+        <button class="button-layout button-primary" (click)="next()" [hidden]="isNextButtonHiden">{{selectedStepIndex == REVIEW_STEP_INDEX ? l('Import'): l('Next')}}</button>
         <div class="separator"></div>
         <button class="refresh-button"></button>
     </div>
@@ -134,9 +134,10 @@
         </mat-step>
         <mat-step [label]="l('Review')"
                   [editable]="selectedStepIndex != FINISH_STEP_INDEX">
-            <app-toolbar [config]="_toolbarConfig" *ngIf="selectedStepIndex == REVIEW_STEP_INDEX"></app-toolbar>
+            <app-toolbar [config]="_toolbarConfig" *ngIf="selectedStepIndex == REVIEW_STEP_INDEX && !isNextButtonHiden"></app-toolbar>
             <dx-data-grid id="gridContainer" #reviewGrid
                           [noDataText]="''"
+                          [visible]="!isNextButtonHiden"
                           [keyExpr]="'uniqueIdent'"
                           [pager]="defaultGridPagerConfig"
                           [dataSource]="reviewDataSource"
