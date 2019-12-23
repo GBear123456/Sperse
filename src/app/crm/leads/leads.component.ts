@@ -219,7 +219,10 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 this.filters,
                 loadOptions,
                 { contactGroupId: this.contactGroupId.value.toString() },
-            );
+            ).then((data, additionalData) => {
+                this.totalCount = additionalData.totalCount;
+                return data;
+            });
         },
         onChanged: () => {
             this.pivotGridDataIsLoading = false;
@@ -338,6 +341,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 { contactGroupId: this.contactGroupId.value.toString() }
             ).then((result) => {
                 this.chartInfoItems = result.infoItems;
+                this.totalCount = result.infoItems[0].value;
                 return result.items;
             });
         }
@@ -392,7 +396,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         ContactAssignedUsersStoreSelectors.getContactGroupAssignedUsers,
         { contactGroup: ContactGroup.Client }
     );
-    totalsCount: number;
+    totalCount: number;
 
     constructor(
         injector: Injector,
@@ -434,6 +438,23 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 paginate: true
             }
         };
+        this.totalDataSource = new DataSource({
+            requireTotalCount: true,
+            store: {
+                key: 'Id',
+                type: 'odata',
+                url: this.getODataUrl(this.dataSourceURI),
+                version: AppConsts.ODataVersion,
+                beforeSend: (request) => {
+                    request.params.contactGroupId = this.contactGroupId.value;
+                    request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
+                    request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
+                },
+                deserializeDates: false,
+                paginate: true
+            },
+            select: [ 'Count' ],
+        });
         this.searchValue = '';
         if (this.userManagementService.checkBankCodeFeature()) {
             this.pivotGridDataSource.fields.unshift({
@@ -494,6 +515,13 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             takeUntil(this.destroy$)
         ).subscribe(() => {
             this.crmService.handleModuleChange(this.dataLayoutType.value);
+        });
+
+        this.mapInfoItems$.pipe(
+            takeUntil(this.destroy$),
+            map((mapInfoItems) => mapInfoItems[0].value)
+        ).subscribe((totalCount: number) => {
+            this.totalCount = totalCount;
         });
     }
 
@@ -1136,13 +1164,17 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             let contexts = cxts && cxts.length ? cxts : [ this.showPipeline ? this.pipelineComponent : this ];
             contexts.forEach(context => {
                 if (context && context.processODataFilter) {
-                    context.processODataFilter.call(
+                    const filterQuery = context.processODataFilter.call(
                         context,
                         this.showPivotGrid ? this.pivotGridComponent.pivotGrid.instance : this.dataGrid.instance,
                         this.dataSourceURI,
                         this.filters,
                         this.filtersService.getCheckCustom
                     );
+                    if (this.showDataGrid) {
+                        this.totalDataSource['_store']['_url'] = this.getODataUrl(this.dataSourceURI, filterQuery);
+                        this.totalDataSource.load();
+                    }
                 }
             });
         }
@@ -1382,6 +1414,10 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             if (!this.showPipeline)
                 this.refresh(false);
         }
+    }
+
+    updateTotalCount(totalCount: number) {
+        this.totalCount = totalCount;
     }
 
 }

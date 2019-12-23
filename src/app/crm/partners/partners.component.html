@@ -10,6 +10,7 @@
                   (onToggleCompactView)="toggleCompactView()"
                   (onToggleFullScreen)="repaintDataGrid(100)"
                   (onReload)="invalidate()">
+        <span *ngIf="totalCount" class="total-count"> ({{ totalCount }})</span>
         <import-progress-bar></import-progress-bar>
     </app-headline>
     <action-menu [items]="actionMenuItems"

@@ -10,6 +10,7 @@
                   (onToggleCompactView)="toggleCompactView()"
                   (onToggleFullScreen)="toggleFullScreen()"
                   (onReload)="refresh()">
+        <span *ngIf="totalCount" class="total-count"> ({{ totalCount }})</span>
         <import-progress-bar></import-progress-bar>
     </app-headline>
     <div [hidden]="showPipeline" class="portlet light no-padding margin-bottom-0">
@@ -23,15 +24,15 @@
                 [(currentView)]="scheduleView"
                 [(currentDate)]="scheduleDate"
                 [showAllDayPanel]="true"
-                [textExpr]="'Title'"
-                [allDayExpr]="'AllDay'"
-                [startDateExpr]="'StartDate'"
-                [endDateExpr]="'EndDate'"
+                textExpr="Title"
+                allDayExpr="AllDay"
+                startDateExpr="StartDate"
+                endDateExpr="EndDate"
                 [remoteFiltering]="false"
-                [descriptionExpr]="'Description'"
-                [startDateTimeZoneExpr]="'fieldTimeZone'"
-                [endDateTimeZoneExpr]="'fieldTimeZone'"
-                [dropDownAppointmentTemplate]="'appointmentDropDown'"
+                descriptionExpr="Description"
+                startDateTimeZoneExpr="fieldTimeZone"
+                endDateTimeZoneExpr="fieldTimeZone"
+                dropDownAppointmentTemplate="appointmentDropDown"
                 (onContentReady)="onContentReady($event)"
                 (onAppointmentUpdating)="onAppointmentUpdating($event)"
                 (onAppointmentFormCreated)="onAppointmentFormCreated($event)">
@@ -54,13 +55,14 @@
         <div class="portlet-body">
             <div class="funnel-wrapper">
                 <app-pipeline
-                    [totalsURI]="'ActivityCount'"
+                    totalsURI="ActivityCount"
                     [dataSource]="pipelineDataSource"
-                    [dragulaName]="'activityStages'"
+                    dragulaName="activityStages"
                     [selectFields]="['Id', 'Title', 'Description', 'StartDate', 'EndDate']"
                     [pipelinePurposeId]="pipelinePurposeId"
                     [(selectedEntities)]="selectedEntities"
-                    (onCardClick)="showActivityDialog($event)">
+                    (onCardClick)="showActivityDialog($event)"
+                    (onTotalChange)="updateTotalCount($event)">
                     Loading...
                 </app-pipeline>
             </div>

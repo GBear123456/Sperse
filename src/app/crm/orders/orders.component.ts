@@ -85,6 +85,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     ];
     permissions = AppPermissions;
     currency: string;
+    totalCount: number;
 
     constructor(injector: Injector,
         public dialog: MatDialog,
@@ -152,6 +153,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
 
     onContentReady(event) {
         this.setGridDataLoaded();
+        this.totalCount = this.totalRowCount;
         event.component.columnOption('command:edit', {
             visibleIndex: -1,
             width: 40
@@ -629,6 +631,10 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
 
     onSelectionChanged($event) {
         this.selectedOrders = $event.component.getSelectedRowsData();
+    }
+
+    updateTotalCount(totalCount: number) {
+        this.totalCount = totalCount;
     }
 
     deactivate() {

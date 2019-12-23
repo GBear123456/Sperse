@@ -7,7 +7,7 @@ import * as canadaMap from 'devextreme/dist/js/vectormap-data/canada.js';
 import * as usaMap from 'devextreme/dist/js/vectormap-data/usa.js';
 import * as worldMap from 'devextreme/dist/js/vectormap-data/world.js';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { pluck } from 'rxjs/operators';
+import { pluck, publishReplay, refCount } from 'rxjs/operators';
 
 /** Application imports */
 import { MapArea } from '@app/shared/common/slice/map/map-area.enum';
@@ -130,12 +130,17 @@ export class MapService {
                 /** Add total data without null key */
                 if (itemWithoutKey) {
                     mapInfoItems.splice(1, 0, {
-                        label: this.ls.l('TotalsBy') + ' ' + (mapArea === MapArea.World ? this.ls.l('Countries') : this.ls.l('States')),
+                        label: this.ls.l('TotalsBy') + ' ' + (mapArea === MapArea.World
+                            ? this.ls.l('Countries')
+                            : this.ls.l('States')
+                        ),
                         value: mapData.totalCount - itemWithoutKey.count
                     });
                 }
                 return mapInfoItems;
-            })
+            }),
+            publishReplay(),
+            refCount()
         );
     }
 }

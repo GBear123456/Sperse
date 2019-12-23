@@ -91,6 +91,7 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
         }
     ];
     public searchValue: string;
+    public totalCount: number;
 
     constructor(
         injector: Injector,
@@ -160,6 +161,7 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
                 },
                 deserializeDates: false,
                 onLoaded: (res) => {
+                    this.totalCount = res && res.length;
                     res.forEach((record) => {
                         record.fieldTimeZone = 'Etc/UTC';
                     });
@@ -634,5 +636,9 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
             default:
                 this.calendarCaption = 'All period';
         }
+    }
+
+    updateTotalCount(totalCount: number) {
+        this.totalCount = totalCount;
     }
 }

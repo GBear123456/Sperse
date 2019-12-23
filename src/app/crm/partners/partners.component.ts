@@ -185,7 +185,10 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                 this.getODataUrl(this.groupDataSourceURI),
                 this.filters,
                 loadOptions
-            );
+            ).then((data, additionalData) => {
+                this.totalCount = additionalData.totalCount;
+                return data;
+            });
         },
         onChanged: () => {
             this.pivotGridDataIsLoading = false;
@@ -280,6 +283,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                 this.chartComponent.summaryBy.value
             ).then((result) => {
                 this.chartInfoItems = result.infoItems;
+                this.totalCount = this.chartInfoItems[0].value;
                 return result.items;
             });
         }
@@ -318,6 +322,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     mapData$: Observable<MapData> = this.mapService.getAdjustedMapData(this.partnersData$);
     mapInfoItems$: Observable<InfoItem[]> = this.mapService.getMapInfoItems(this.partnersData$, this.selectedMapArea$);
     assignedUsersSelector = select(ContactAssignedUsersStoreSelectors.getContactGroupAssignedUsers, { contactGroup: ContactGroup.Partner });
+    totalCount: number;
 
     constructor(
         injector: Injector,
@@ -396,6 +401,13 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         ).subscribe((dataLayoutType) => {
             this.toggleDataLayout(+dataLayoutType);
         });
+
+        this.mapInfoItems$.pipe(
+            takeUntil(this.destroy$),
+            map((mapInfoItems) => mapInfoItems[0].value)
+        ).subscribe((totalCount: number) => {
+            this.totalCount = totalCount;
+        });
     }
 
     toggleToolbar() {
@@ -420,6 +432,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
 
     onContentReady(event) {
         this.setGridDataLoaded();
+        this.totalCount = this.totalRowCount;
         event.component.columnOption('command:edit', {
             visibleIndex: -1,
             width: 40

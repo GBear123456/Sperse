@@ -188,7 +188,10 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 this.getODataUrl(this.groupDataSourceURI),
                 this.filters,
                 loadOptions
-            );
+            ).then((data, additionalData) => {
+                this.totalCount = additionalData.totalCount;
+                return data;
+            });
         },
         onChanged: () => {
             this.pivotGridDataIsLoading = false;
@@ -323,6 +326,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 this.chartComponent.summaryBy.value
             ).then((result) => {
                 this.chartInfoItems = result.infoItems;
+                this.totalCount = this.chartInfoItems[0].value;
                 return result.items;
             });
         }
@@ -333,6 +337,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     contentHeight$: Observable<number> = this.crmService.contentHeight$;
     mapHeight$: Observable<number> = this.crmService.mapHeight$;
     private usersInstancesLoadingSubscription: Subscription;
+    totalCount: number;
 
     constructor(
         injector: Injector,
@@ -424,6 +429,13 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         ).subscribe((dataLayoutType) => {
             this.toggleDataLayout(+dataLayoutType);
         });
+
+        this.mapInfoItems$.pipe(
+            takeUntil(this.destroy$),
+            map((mapInfoItems) => mapInfoItems[0].value)
+        ).subscribe((totalCount: number) => {
+            this.totalCount = totalCount;
+        });
     }
 
     get isSlice() {
@@ -455,6 +467,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
 
     onContentReady(event) {
         this.setGridDataLoaded();
+        this.totalCount = this.totalRowCount;
         event.component.columnOption('command:edit', {
             visibleIndex: -1,
             width: 40

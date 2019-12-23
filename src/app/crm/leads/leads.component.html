@@ -20,12 +20,13 @@
                     (onValueChanged)="onContactGroupChanged($event)">
                 <div *dxTemplate="let data of 'selectTemplate'">
                     <div class="select-header">
-                        <span>{{data.text}}</span> <i class="dx-dropdowneditor-icon"></i>
+                        <span>{{data.text}}</span>
+                        <span *ngIf="totalCount" class="total-count"> ({{ totalCount }})</span>
+                        <i class="dx-dropdowneditor-icon"></i>
                         <dx-text-box style="display: none" [readOnly]="true"></dx-text-box>
                     </div>
                 </div>
             </dx-select-box>
-            <span *ngIf="totalsCount" class="total-count">({{ totalsCount }})</span>
         </div>
         <import-progress-bar></import-progress-bar>
     </app-headline>
@@ -142,8 +143,8 @@
         <div class="portlet-body">
             <div class="funnel-wrapper">
                 <app-pipeline
-                    [totalsURI]="'LeadCount'"
-                    [dragulaName]="'leadStages'"
+                    totalsURI="LeadCount"
+                    dragulaName="leadStages"
                     [dataSource]="pipelineDataSource"
                     [selectFields]="pipelineSelectFields"
                     [pipelinePurposeId]="pipelinePurposeId"
@@ -154,7 +155,7 @@
                     (onEntityStageChanged)="onLeadStageChanged($event)"
                     (onStagesLoaded)="onStagesLoaded($event)"
                     (onCardClick)="onCardClick($event)"
-                    (onTotalChange)="totalsCount = $event">
+                    (onTotalChange)="updateTotalCount($event)">
                     Loading...
                 </app-pipeline>
             </div>

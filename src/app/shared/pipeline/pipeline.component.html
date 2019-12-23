@@ -11,13 +11,9 @@
                 borderRightColor: stage.color
              }">
             <span class="stageName">{{stage.name}}</span>
-            <div>
-                <span>
-                    (<ng-container *ngIf="getStageSelectedEntitiesCount(stage) as selectedEntitiesCount">{{ selectedEntitiesCount | number }} of </ng-container>{{ stage?.total | number }})
-                </span>
-                <span *ngIf="stage.total && allStagesEntitiesTotal">
-                    {{ getStageRatio(stage.total) }}
-                </span>
+            <div *ngIf="getStageSelectedEntitiesCount(stage) as selectedEntitiesCount">
+                <span>({{ selectedEntitiesCount | number }} of {{ stage?.total | number }})</span>
+                <span *ngIf="stage.total && allStagesEntitiesTotal">{{ getStageRatio(stage.total) }}</span>
             </div>
             <button [id]="'ident' + stage.id" class="edit-button">
                 <img src="./assets/common/icons/edit-icon.svg" alt="Edit">
