@@ -4,7 +4,6 @@ import { Router } from '@angular/router';
 
 /** Application imports */
 import { accountModuleAnimation } from '@shared/animations/routerTransition';
-import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppUrlService } from '@shared/common/nav/app-url.service';
 import { RegisterTenantOutput } from '@shared/service-proxies/service-proxies';
 import { TenantRegistrationHelperService } from './tenant-registration-helper.service';
