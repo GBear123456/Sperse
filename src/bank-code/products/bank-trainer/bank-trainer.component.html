@@ -1,3 +1,3 @@
-<section class="iframe" *ngIf="profileService.bankCodeMemberInfo$ | async">
-    <iframe [src]="environmentLink$ | async" frameborder="0"></iframe>
+<section class="iframe" *ngIf="environmentLink$ | async as environmentLink">
+    <iframe [src]="environmentLink" frameborder="0"></iframe>
 </section>
