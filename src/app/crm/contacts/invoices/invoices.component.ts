@@ -29,6 +29,7 @@ import {
     InvoiceSettings
 } from '@shared/service-proxies/service-proxies';
 import { ContactsService } from '@app/crm/contacts/contacts.service';
+import { MarkAsPaidDialogComponent } from '@app/crm/contacts/invoices/mark-paid-dialog/mark-paid-dialog.component';
 import { CreateInvoiceDialogComponent } from '@app/crm/shared/create-invoice-dialog/create-invoice-dialog.component';
 import { HistoryListDialogComponent } from '../orders/history-list-dialog/history-list-dialog.component';
 import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
@@ -164,6 +165,9 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
                     this.downloadPdfDisabled =
                     this.duplicateInvoiceDisabled =
                     this.previewDisabled = isOrder;
+                    this.markAsPaidDisabled = isOrder || [
+                        InvoiceStatus.Final, InvoiceStatus.Sent, InvoiceStatus.PartiallyPaid
+                    ].indexOf(event.data.InvoiceStatus) < 0;
                     this.markAsDraftDisabled = isOrder || [
                         InvoiceStatus.Final, InvoiceStatus.Canceled
                     ].indexOf(event.data.InvoiceStatus) < 0;
@@ -305,6 +309,22 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
                 event.value = event.data.OrderStage;
             else
                 this.notify.success(this.l('StageSuccessfullyUpdated'));
+        });
+    }
+
+    markAsPaidDialog() {
+        this.dialog.open(MarkAsPaidDialogComponent, {
+            disableClose: true,
+            closeOnNavigation: false,
+            data: {
+                stages$: this.stages$,
+                invoice: this.actionRecordData
+            }
+        }).beforeClose().subscribe(successed => {
+            if (successed) {
+                this.notify.success(this.l('SuccessfullyUpdated'));
+                this.dataGrid.instance.refresh();
+            }
         });
     }
 

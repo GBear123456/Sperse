@@ -243,7 +243,8 @@ export class CreateInvoiceDialogComponent implements OnInit {
     }
 
     initNewInvoiceInfo() {
-        if (!this.data.invoice || this.data.addNew)
+        let invoice = this.data.invoice;
+        if (!invoice || !invoice.InvoiceId || this.data.addNew)
             this.invoiceProxy.getNewInvoiceInfo().subscribe((newInvoiceInfo: GetNewInvoiceInfoOutput) => {
                 this.invoiceInfo = newInvoiceInfo;
                 this.invoiceNo = newInvoiceInfo.nextInvoiceNumber;
