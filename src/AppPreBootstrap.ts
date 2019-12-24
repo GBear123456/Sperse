@@ -116,7 +116,7 @@ export class AppPreBootstrap {
                 AppPreBootstrap.processRegularBootstrap(queryStringObj, () => {
                     callback(() => router.navigate(['account/auto-login'], {queryParams: {email: result.userEmail}}));
                 });
-            if (result.shouldResetPassword) {
+            else if (result.shouldResetPassword) {
                 let params = {
                     resetCode: result.passwordResetCode,
                     userId: result.userId
