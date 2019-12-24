@@ -67,6 +67,8 @@ export class UserDropdownMenuComponent implements AfterViewInit, OnInit {
         ? this.bankCodeService.getBackgroundColorByLetter(this.bankCode[0] as BankCodeLetter)
         : '#000';
     accessCode = this.appSession.user.affiliateCode;
+    trackingLink = 'https://www.CrackMyCode.com/?ref=' + this.accessCode;
+    affiliateLink = 'https://www.CodebreakerTech.com/?ref=' + this.accessCode;
     hasBankCodeFeature: boolean = this.userManagementService.checkBankCodeFeature();
     showAccessCode$: Observable<boolean> = this.appSession.tenant && this.appSession.tenant.customLayoutType === LayoutType.BankCode
         ? forkJoin(
