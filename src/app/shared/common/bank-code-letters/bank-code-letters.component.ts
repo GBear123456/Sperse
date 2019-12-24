@@ -1,5 +1,15 @@
 /** Core imports */
-import { Component, HostBinding, Input, OnChanges, OnDestroy, SimpleChanges } from '@angular/core';
+import {
+    ChangeDetectionStrategy, ChangeDetectorRef,
+    Component,
+    EventEmitter,
+    HostBinding,
+    Input,
+    OnChanges,
+    OnDestroy,
+    Output,
+    SimpleChanges
+} from '@angular/core';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
@@ -13,7 +23,8 @@ import { BankCodeService } from '@app/shared/common/bank-code/bank-code.service'
     selector: 'bank-code-letters',
     templateUrl: './bank-code-letters.component.html',
     styleUrls: ['./bank-code-letters.component.less'],
-    providers: [ DialogService ]
+    providers: [ DialogService ],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class BankCodeLettersComponent implements OnChanges, OnDestroy {
     @Input() bankCode: string;
@@ -26,12 +37,14 @@ export class BankCodeLettersComponent implements OnChanges, OnDestroy {
     @Input() reportIconName: string;
     @Input() editDialogPosition: { x?: number, y?: number };
     @Input() closeAfterEdit = false;
+    @Output() bankCodeChange: EventEmitter<string> = new EventEmitter<string>();
     @HostBinding('class.allow-add') @Input() allowAdd = false;
     @HostBinding('class.allow-edit') @Input() allowEdit = false;
     bankCodeDefinition: string;
 
     constructor(
         private dialogService: DialogService,
+        private changeDetectorRef: ChangeDetectorRef,
         public dialog: MatDialog,
         public bankCodeService: BankCodeService
     ) {}
@@ -39,9 +52,11 @@ export class BankCodeLettersComponent implements OnChanges, OnDestroy {
     ngOnChanges(change: SimpleChanges) {
         if (change.bankCode && (this.showBankCodeDefinition || this.showReportLink)) {
             this.bankCodeDefinition = this.bankCodeService.getBankCodeDefinition(change.bankCode.currentValue[0]);
+            this.changeDetectorRef.detectChanges();
         }
         if (change.allowAdd && change.allowAdd.currentValue && !this.bankCode) {
             this.bankCode = this.bankCodeService.emptyBankCode;
+            this.changeDetectorRef.detectChanges();
         }
     }
 
@@ -63,6 +78,8 @@ export class BankCodeLettersComponent implements OnChanges, OnDestroy {
             });
             editDialog.componentInstance.bankCodeChange.subscribe((bankCode: string) => {
                 this.bankCode = bankCode;
+                this.bankCodeChange.emit(this.bankCode);
+                this.changeDetectorRef.detectChanges();
                 if (this.closeAfterEdit) {
                     editDialog.close();
                 }

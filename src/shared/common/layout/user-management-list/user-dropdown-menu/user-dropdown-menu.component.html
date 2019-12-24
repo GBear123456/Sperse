@@ -37,12 +37,13 @@
                 <div>
                     <div *ngIf="hasBankCodeFeature" class="bank-code">
                         <label>{{ ls.l('MyBANKCODE') }}</label>
-                        <bank-code-letters [bankCode]="bankCode"
+                        <bank-code-letters [(bankCode)]="bankCode"
                                            [allowAdd]="true"
                                            [allowEdit]="true"
                                            [closeAfterEdit]="true"
                                            [editDialogPosition]="{ x: 400 }"
-                                           [showDescriptionsOnHover]="true">
+                                           [showDescriptionsOnHover]="true"
+                                           (bankCodeChange)="bankCodeChange()">
                         </bank-code-letters>
                     </div>
                     <ng-container *ngIf="showAccessCode">

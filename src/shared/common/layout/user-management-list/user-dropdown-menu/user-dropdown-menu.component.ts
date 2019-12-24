@@ -182,6 +182,10 @@ export class UserDropdownMenuComponent implements AfterViewInit, OnInit {
         return style;
     }
 
+    bankCodeChange() {
+        this.dropdownHeaderStyle = this.getDropdownHeaderStyle();
+    }
+
     copy(value: string) {
         this.clipboardService.copyFromContent(value);
         this.notifyService.info(this.ls.l('Copied'));
