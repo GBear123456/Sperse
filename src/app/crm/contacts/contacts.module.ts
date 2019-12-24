@@ -117,6 +117,7 @@ import { NotSupportedTypeDialogComponent } from '@app/crm/contacts/documents/not
 import { DocumentsService } from '@app/crm/contacts/documents/documents.service';
 import { OrdersComponent } from '@app/crm/contacts/orders/orders.component';
 import { InvoicesComponent } from '@app/crm/contacts/invoices/invoices.component';
+import { MarkAsPaidDialogComponent } from '@app/crm/contacts/invoices/mark-paid-dialog/mark-paid-dialog.component';
 import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 import { PersonalDetailsComponent } from './personal-details/personal-details.component';
 import { CRMDashboardWidgetsModule } from '@shared/crm/dashboard-widgets/dashboard-widgets.module';
@@ -186,7 +187,8 @@ import { OrderDropdownModule } from '@app/crm/shared/order-dropdown/order-dropfo
         SMSDialogComponent,
         SourceContactListComponent,
         AddSubscriptionDialogComponent,
-        CancelSubscriptionDialogComponent
+        CancelSubscriptionDialogComponent,
+        MarkAsPaidDialogComponent
     ],
     imports: [
         FormsModule,
@@ -258,7 +260,8 @@ import { OrderDropdownModule } from '@app/crm/shared/order-dropdown/order-dropfo
         HistoryListDialogComponent,
         SMSDialogComponent,
         AddSubscriptionDialogComponent,
-        CancelSubscriptionDialogComponent
+        CancelSubscriptionDialogComponent,
+        MarkAsPaidDialogComponent
     ],
     providers: [
         DialogService,
