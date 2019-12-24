@@ -8,7 +8,8 @@ import {
     ElementRef,
     ChangeDetectorRef,
     OnDestroy,
-    OnInit
+    OnInit,
+    AfterViewInit
 } from '@angular/core';
 
 /** Third party imports */
@@ -37,10 +38,10 @@ import { BankCodeLetter } from '@app/shared/common/bank-code-letters/bank-code-l
     providers: [ MemberSettingsServiceProxy ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class BankCodeLettersEditorDialogComponent implements OnInit, OnDestroy {
+export class BankCodeLettersEditorDialogComponent implements OnInit, AfterViewInit, OnDestroy {
     @Output() bankCodeChange: EventEmitter<string> = new EventEmitter<string>();
     bankCode: string;
-    personId: number= this.data.personId;
+    personId: number = this.data.personId;
     dragDropSubscription: Subscription = new Subscription();
     bankCodeDefinitions: BankCodeDefinition[] = [
         { letter: BankCodeLetter.B, name: this.ls.l('Blueprint') },
@@ -77,6 +78,12 @@ export class BankCodeLettersEditorDialogComponent implements OnInit, OnDestroy {
         this.dragDropSubscription.add(this.dragulaService.setOptions(this.dragDropName, {
             direction: 'horizontal'
         }));
+    }
+
+    ngAfterViewInit() {
+        this.elementRef.nativeElement.closest(
+            '.cdk-overlay-container'
+        ).style.zIndex = 1001;
     }
 
     changeBankCode(bankCodeDefinitionLetter: BankCodeLetter, i: number) {
