@@ -58924,6 +58924,7 @@ export interface IImportBusinessInput {
 export class ImportItemInput implements IImportItemInput {
     personalInfo!: ImportPersonalInput | undefined;
     businessInfo!: ImportBusinessInput | undefined;
+    contactXref!: string | undefined;
     notes!: string | undefined;
     dateCreated!: moment.Moment | undefined;
     leadSource!: string | undefined;
@@ -58960,6 +58961,7 @@ export class ImportItemInput implements IImportItemInput {
         if (data) {
             this.personalInfo = data["personalInfo"] ? ImportPersonalInput.fromJS(data["personalInfo"]) : <any>undefined;
             this.businessInfo = data["businessInfo"] ? ImportBusinessInput.fromJS(data["businessInfo"]) : <any>undefined;
+            this.contactXref = data["contactXref"];
             this.notes = data["notes"];
             this.dateCreated = data["dateCreated"] ? moment(data["dateCreated"].toString()) : <any>undefined;
             this.leadSource = data["leadSource"];
@@ -58996,6 +58998,7 @@ export class ImportItemInput implements IImportItemInput {
         data = typeof data === 'object' ? data : {};
         data["personalInfo"] = this.personalInfo ? this.personalInfo.toJSON() : <any>undefined;
         data["businessInfo"] = this.businessInfo ? this.businessInfo.toJSON() : <any>undefined;
+        data["contactXref"] = this.contactXref;
         data["notes"] = this.notes;
         data["dateCreated"] = this.dateCreated ? this.dateCreated.toISOString() : <any>undefined;
         data["leadSource"] = this.leadSource;
@@ -59025,6 +59028,7 @@ export class ImportItemInput implements IImportItemInput {
 export interface IImportItemInput {
     personalInfo: ImportPersonalInput | undefined;
     businessInfo: ImportBusinessInput | undefined;
+    contactXref: string | undefined;
     notes: string | undefined;
     dateCreated: moment.Moment | undefined;
     leadSource: string | undefined;
