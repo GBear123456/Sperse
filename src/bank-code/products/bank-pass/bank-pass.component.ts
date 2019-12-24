@@ -23,7 +23,6 @@ import { ProductsService } from '@root/bank-code/products/products.service';
     selector: 'bank-pass',
     templateUrl: 'bank-pass.component.html',
     styleUrls: ['./bank-pass.component.less'],
-    providers: [ ProfileService ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class BankPassComponent {
@@ -62,6 +61,7 @@ export class BankPassComponent {
     hasSubscription$: Observable<boolean> = this.profileService.checkServiceSubscription(BankCodeServiceType.BANKPass);
     dataIsLoading = false;
     environmentLink$: Observable<SafeUrl> = this.productsService.getResourceLink('b-a-n-k-pass');
+    userTimezone = '0000';
 
     constructor(
         private oDataService: ODataService,

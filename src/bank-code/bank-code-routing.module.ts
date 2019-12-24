@@ -11,7 +11,7 @@ import { RedirectGuard } from '@shared/common/redirect-guard/redirect-guard';
             {
                 path: '',
                 component: BankCodeComponent,
-                canActivate: [ ],
+                canActivate: [],
                 canActivateChild: [ ],
                 children: [
                     {

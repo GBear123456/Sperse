@@ -105,6 +105,11 @@ const routes: Routes = [
                 path: 'app',
                 loadChildren: 'app/app.module#AppModule', //Lazy load desktop module
                 data: { localizationSource: 'Platform' }
+            },
+            {
+                path: 'bank-pass',
+                loadChildren: 'bank-pass-host/bank-pass-host.module#BankPassHostModule',
+                data: { localizationSource: 'Platform' }
             }
         ]
     },
