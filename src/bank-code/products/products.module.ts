@@ -24,6 +24,7 @@ import { LoadingSpinnerModule } from '@app/shared/common/loading-spinner/loading
 import { SubscriptionComponent } from '@root/bank-code/products/shared/subscription.component/subscription.component';
 import { WhyTheyBuyComponent } from './why-they-buy/why-they-buy.component';
 import { NoDataModule } from '@shared/common/widgets/no-data/no-data.module';
+import { ProductsService } from '@root/bank-code/products/products.service';
 
 @NgModule({
     imports: [
@@ -49,6 +50,9 @@ import { NoDataModule } from '@shared/common/widgets/no-data/no-data.module';
         BankVaultComponent,
         SubscriptionComponent,
         WhyTheyBuyComponent
+    ],
+    providers: [
+        ProductsService
     ]
 })
 export class ProductsModule {}

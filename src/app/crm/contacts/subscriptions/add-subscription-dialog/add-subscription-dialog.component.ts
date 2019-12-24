@@ -110,11 +110,13 @@ export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
         if (this.validationGroup.instance.validate().isValid) {
             const subscription = new UpdateOrderSubscriptionInput(this.subscription);
             subscription.subscriptions.forEach((subscription: SubscriptionInput) => {
-                subscription.endDate = DateHelper.removeTimezoneOffset(
-                    new Date(subscription.endDate),
-                    false,
-                    'from'
-                );
+                if (subscription.endDate) {
+                    subscription.endDate = DateHelper.removeTimezoneOffset(
+                        new Date(subscription.endDate),
+                        false,
+                        'from'
+                    );
+                }
             });
             this.orderSubscriptionService.update(subscription).subscribe(() => {
                 this.notify.info(this.ls.l('SavedSuccessfully'));
