@@ -3,8 +3,12 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 /** Third party imports */
+import { MatTabsModule } from '@angular/material/tabs';
 import { DxDataGridModule } from 'devextreme-angular/ui/data-grid';
 import { NgxExtendedPdfViewerModule } from 'ngx-extended-pdf-viewer';
+import { DxSelectBoxModule } from 'devextreme-angular/ui/select-box';
+import { DxTextBoxModule } from 'devextreme-angular/ui/text-box';
+import { NgCircleProgressModule } from 'ng-circle-progress';
 
 /** Application imports */
 import { ProductsComponent } from './products.component';
@@ -19,24 +23,28 @@ import { BankCardsComponent } from '@root/bank-code/products/bank-cards/bank-car
 import { SidebarModule } from '@root/bank-code/shared/sidebar/sidebar.module';
 import { BankCodeLettersModule } from '@app/shared/common/bank-code-letters/bank-code-letters.module';
 import { PhoneFormatModule } from '@shared/common/pipes/phone-format/phone-format.module';
-import { DxTextBoxModule } from '@root/node_modules/devextreme-angular';
 import { LoadingSpinnerModule } from '@app/shared/common/loading-spinner/loading-spinner.module';
 import { SubscriptionComponent } from '@root/bank-code/products/shared/subscription.component/subscription.component';
 import { WhyTheyBuyComponent } from './why-they-buy/why-they-buy.component';
 import { NoDataModule } from '@shared/common/widgets/no-data/no-data.module';
 import { ProductsService } from '@root/bank-code/products/products.service';
+import { AccessCodeInstructionsModule } from '@shared/common/access-code-instructions/access-code-instructions.module';
 
 @NgModule({
     imports: [
+        AccessCodeInstructionsModule,
         CommonModule,
         ProductsRoutingModule,
         SidebarModule,
         DxDataGridModule,
         DxTextBoxModule,
+        DxSelectBoxModule,
+        MatTabsModule,
         BankCodeLettersModule,
         PhoneFormatModule,
         LoadingSpinnerModule,
         NgxExtendedPdfViewerModule,
+        NgCircleProgressModule,
         NoDataModule
     ],
     declarations: [
@@ -44,8 +52,8 @@ import { ProductsService } from '@root/bank-code/products/products.service';
         ProductsComponent,
         BankAffiliateComponent,
         BankCardsComponent,
-        BankGearComponent,
         BankPassComponent,
+        BankGearComponent,
         BankTrainerComponent,
         BankVaultComponent,
         SubscriptionComponent,

@@ -49,7 +49,7 @@
                     <ng-container *ngIf="showAccessCode">
                         <div class="access-code">
                             <label>{{ ls.l('MyAccessCode') }}</label>
-                            <inplace-edit [value]="accessCode"
+                            <inplace-edit [value]="accessCode$ | async"
                                           [isCopyEnabled]="true"
                                           [isEditDialogEnabled]="true"
                                           [showEditModeOnEditButtonClick]="true"
@@ -71,20 +71,7 @@
                                     (click)="onInstructionsClick($event)"
                                     [width]="345">
                             <div *dxTemplate="let data of 'content'">
-                                <div class="access-code-instructions" (click)="onInstructionsClick($event)">
-                                    <h6>{{ ls.l('AccessCodeInstructionsTitle') }}:</h6>
-                                    <p>{{ ls.l('AccessCodeInstructionsDescription') }}:</p>
-                                    <p>{{ ls.l('TrackingLink') }}:</p>
-                                    <div class="link">
-                                        <a [href]="trackingLink" target="_blank">{{trackingLink}}</a>
-                                        <img src="./assets/common/icons/copy.svg" (click)="copy(trackingLink)"/>
-                                    </div>
-                                    <p>{{ ls.l('AffiliateLink') }}:</p>
-                                    <div class="link">
-                                        <a [href]="affiliateLink" target="_blank">{{affiliateLink}}}</a>
-                                        <img src="./assets/common/icons/copy.svg" (click)="copy(affiliateLink)"/>
-                                    </div>
-                                </div>
+                                <access-code-instructions (click)="onInstructionsClick($event)"></access-code-instructions>
                             </div>
                         </dx-tooltip>
                     </ng-container>

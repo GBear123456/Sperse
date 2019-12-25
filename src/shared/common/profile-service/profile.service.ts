@@ -2,7 +2,7 @@
 import { Injectable } from '@angular/core';
 
 /** Third party imports */
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { map, publishReplay, refCount } from 'rxjs/operators';
 import * as moment from 'moment-timezone';
 
@@ -34,6 +34,8 @@ export class ProfileService {
     secureId$: Observable<string> = this.bankCodeMemberInfo$.pipe(map((bankCodeMemberInfo: GetMemberInfoOutput) => {
         return bankCodeMemberInfo.secureId;
     }));
+    private accessCode: BehaviorSubject<string> = new BehaviorSubject<string>(this.appSession.user.affiliateCode);
+    accessCode$: Observable<string> = this.accessCode.asObservable();
 
     constructor(
         private appSession: AppSessionService,
@@ -82,5 +84,9 @@ export class ProfileService {
                 });
             })
         );
+    }
+
+    updateAccessCode(newAccessCode: string) {
+        this.accessCode.next(newAccessCode);
     }
 }
