@@ -37,12 +37,13 @@
                 <div>
                     <div *ngIf="hasBankCodeFeature" class="bank-code">
                         <label>{{ ls.l('MyBANKCODE') }}</label>
-                        <bank-code-letters [bankCode]="bankCode"
+                        <bank-code-letters [(bankCode)]="bankCode"
                                            [allowAdd]="true"
                                            [allowEdit]="true"
                                            [closeAfterEdit]="true"
                                            [editDialogPosition]="{ x: 400 }"
-                                           [showDescriptionsOnHover]="true">
+                                           [showDescriptionsOnHover]="true"
+                                           (bankCodeChange)="bankCodeChange()">
                         </bank-code-letters>
                     </div>
                     <ng-container *ngIf="showAccessCode">
@@ -73,13 +74,15 @@
                                 <div class="access-code-instructions" (click)="onInstructionsClick($event)">
                                     <h6>{{ ls.l('AccessCodeInstructionsTitle') }}:</h6>
                                     <p>{{ ls.l('AccessCodeInstructionsDescription') }}:</p>
+                                    <p>{{ ls.l('TrackingLink') }}:</p>
                                     <div class="link">
-                                        <a href="https://www.MyBankcode.com/?ref={{accessCode}}">https://www.MyBankcode.com/?ref={{accessCode}}</a>
-                                        <img src="./assets/common/icons/copy.svg" (click)="copy('https://www.MyBankcode.com/?ref=' + accessCode)"/>
+                                        <a [href]="trackingLink" target="_blank">{{trackingLink}}</a>
+                                        <img src="./assets/common/icons/copy.svg" (click)="copy(trackingLink)"/>
                                     </div>
+                                    <p>{{ ls.l('AffiliateLink') }}:</p>
                                     <div class="link">
-                                        <a href="https://www.CodebreakerTech.com/?ref={{accessCode}}">https://www.CodebreakerTech.com/?ref={{accessCode}}</a>
-                                        <img src="./assets/common/icons/copy.svg" (click)="copy('https://www.CodebreakerTech.com/?ref=' + accessCode)"/>
+                                        <a [href]="affiliateLink" target="_blank">{{affiliateLink}}}</a>
+                                        <img src="./assets/common/icons/copy.svg" (click)="copy(affiliateLink)"/>
                                     </div>
                                 </div>
                             </div>
