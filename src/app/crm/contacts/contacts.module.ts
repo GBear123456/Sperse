@@ -9,6 +9,7 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
+import { MatInputModule } from '@angular/material/input';
 import { AngularGooglePlaceModule } from 'angular-google-place';
 import { RoundProgressModule } from 'angular-svg-round-progressbar';
 
@@ -126,6 +127,10 @@ import { InvoiceSettingsDialogComponent } from './invoice-settings-dialog/invoic
 import { EmailTemplateDialogComponent } from '@app/crm/shared/email-template-dialog/email-template-dialog.component';
 import { SourceContactListComponent } from './source-contact-list/source-contact-list.component';
 import { CrmService } from '@app/crm/crm.service';
+import { AddSubscriptionDialogComponent } from './subscriptions/add-subscription-dialog/add-subscription-dialog.component';
+import { CancelSubscriptionDialogComponent } from './subscriptions/cancel-subscription-dialog/cancel-subscription-dialog.component';
+import { OrderDropdownModule } from '@app/crm/shared/order-dropdown/order-dropfown.module';
+import { ActionMenuModule } from '@app/shared/common/action-menu/action-menu.module';
 
 @NgModule({
     declarations: [
@@ -182,7 +187,9 @@ import { CrmService } from '@app/crm/crm.service';
         PersonalDetailsComponent,
         PersonalDetailsDialogComponent,
         SMSDialogComponent,
-        SourceContactListComponent
+        SourceContactListComponent,
+        AddSubscriptionDialogComponent,
+        CancelSubscriptionDialogComponent
     ],
     imports: [
         FormsModule,
@@ -195,6 +202,7 @@ import { CrmService } from '@app/crm/crm.service';
         MatDialogModule,
         MatProgressSpinnerModule,
         MatSelectModule,
+        MatInputModule,
         ContactsRoutingModule,
         AngularGooglePlaceModule,
         DxContextMenuModule,
@@ -229,7 +237,9 @@ import { CrmService } from '@app/crm/crm.service';
         ItemDetailsLayoutModule,
         CRMDashboardWidgetsModule,
         BankCodeLettersModule,
-        CKEditorModule
+        CKEditorModule,
+        OrderDropdownModule,
+        ActionMenuModule
     ],
     entryComponents: [
         EditContactDialog,
@@ -251,7 +261,9 @@ import { CrmService } from '@app/crm/crm.service';
         EmailTemplateDialogComponent,
         HistoryListDialogComponent,
         PersonalDetailsDialogComponent,
-        SMSDialogComponent
+        SMSDialogComponent,
+        AddSubscriptionDialogComponent,
+        CancelSubscriptionDialogComponent
     ],
     providers: [
         DialogService,

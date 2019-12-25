@@ -21,6 +21,10 @@ export class UrlHelper {
         return '';
     }
 
+    static getInitialUrlRelativePath() {
+        return (this.initialUrl.split('?').shift().match(/^http[s]?:\/\/[a-z0-9-]+(\.[a-z0-9-]+)*(:[0-9]+)?(\/.+)+$/) || []).pop();
+    }
+
     static getReturnUrl(): string {
         const queryStringObj = UrlHelper.getQueryParametersUsingParameters(UrlHelper.getInitialUrlParameters());
         if (queryStringObj.returnUrl) {

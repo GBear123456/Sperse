@@ -31,4 +31,4 @@ let COMPONENTS = [
         BankCodeLayoutService
     ]
 })
-export class BankCodeLayoutModule { }
+export class BankCodeLayoutModule {}

@@ -31,6 +31,7 @@ import { MessageService } from '@abp/message/message.service';
 import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
 import { AppPermissions } from '@shared/AppPermissions';
+import { DateHelper } from '@shared/helpers/DateHelper';
 
 @Component({
     templateUrl: 'create-activity-dialog.component.html',
@@ -116,15 +117,21 @@ export class CreateActivityDialogComponent implements OnInit {
         public ls: AppLocalizationService,
         @Inject(MAT_DIALOG_DATA) public data: any
     ) {
-        if (this.data.appointment.Id) {
+        this.saveContextMenuItems = [
+            { text: this.ls.l('SaveAndAddNew'), selected: false },
+            { text: this.ls.l('SaveAndClose'), selected: false }
+        ];
+
+        if (this.data.appointment && this.data.appointment.Id) {
             this.isAllDay = Boolean(this.data.appointment.AllDay);
             if (this.data.appointment.StartDate)
-                this.startDate = this.getDateWithTimezone(this.data.appointment.StartDate);
+                this.startDate = this.getDateWithTimezone(new Date(this.data.appointment.StartDate));
             if (this.data.appointment.EndDate)
-                this.endDate = this.getDateWithTimezone(this.data.appointment.EndDate);
+                this.endDate = this.getDateWithTimezone(new Date(this.data.appointment.EndDate));
 
             this.activityProxy.get(this.data.appointment.Id).subscribe((res) => {
                 this.data.appointment.AssignedUserIds = res.assignedUserIds || [];
+                this.changeDetectorRef.detectChanges();
             });
         } else
             this.initAppointmentDate();
@@ -369,25 +376,13 @@ export class CreateActivityDialogComponent implements OnInit {
         );
     }
 
-    getDateWithoutTimezone(date, propertyName = null) {
-        if (this.isAllDay) {
-            date = date.getFullYear() + '/' + (date.getMonth() + 1) + '/' + date.getDate();
-            date = moment.utc(date);
-
-            if (propertyName === 'startDate')
-                date = date.startOf('day');
-            if (propertyName === 'endDate')
-                date = date.endOf('day');
-
-            return date;
-        } else {
-            date.setTime(date.getTime() - ((date.getTimezoneOffset() + moment().utcOffset()) * 60 * 1000));
-            return moment.utc(date);
-        }
+    getDateWithoutTimezone(date: Date, propertyName = null) {
+        return moment.utc(DateHelper.removeTimezoneOffset(date, true, this.isAllDay ?
+            (propertyName === 'startDate' ? 'from' : 'to') : undefined));
     }
 
-    getDateWithTimezone(date) {
-        return new Date(moment(date).format('YYYY/MM/DD HH:mm:ss'));
+    getDateWithTimezone(date: Date) {
+        return DateHelper.addTimezoneOffset(date, true);
     }
 
     private afterSave(): void {

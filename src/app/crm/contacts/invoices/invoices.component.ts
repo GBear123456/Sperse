@@ -13,15 +13,16 @@ import { DxTooltipComponent } from 'devextreme-angular/ui/tooltip';
 import { MatDialog } from '@angular/material/dialog';
 import { finalize, switchMap, first, map } from 'rxjs/operators';
 import startCase from 'lodash/startCase';
+import { Observable } from 'rxjs';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
+import { PipelineService } from '@app/shared/pipeline/pipeline.service';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { FilterModel } from '@shared/filters/models/filter.model';
 import {
     ContactInfoDto,
-    GetEmailDataOutput,
     ContactServiceProxy,
     InvoiceServiceProxy,
     InvoiceStatus,
@@ -62,9 +63,15 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
     duplicateInvoiceDisabled = false;
 
     contactId: number;
+    stages$ = this.pipelineService.getPipelineDefinitionObservable(
+        AppConsts.PipelinePurposeIds.order).pipe(map(pipeline => {
+            return pipeline.stages;
+        })
+    );
 
     constructor(injector: Injector,
         private dialog: MatDialog,
+        private pipelineService: PipelineService,
         private invoicesService: InvoicesService,
         private contactService: ContactServiceProxy,
         private clientService: ContactsService,
@@ -144,7 +151,9 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     onCellClick(event) {
-        if (event.rowType === 'data' && this.isGranted(AppPermissions.CRMOrdersInvoicesManage)) {
+        if (event.rowType === 'data' && event.column.caption != 'Stage'
+            && this.isGranted(AppPermissions.CRMOrdersInvoicesManage)
+        ) {
             /** If user click on actions icon */
             if (event.columnIndex > 1 && event.data) {
                 this.actionRecordData = event.data;
@@ -188,13 +197,14 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
         );
     }
 
-    private openCreateInvoiceDialog(addNew = false) {
+    private openCreateInvoiceDialog(addNew = false, saveAsDraft = false) {
         this.dialog.open(CreateInvoiceDialogComponent, {
             panelClass: 'slider',
             disableClose: true,
             closeOnNavigation: false,
             data: {
                 addNew: addNew,
+                saveAsDraft: saveAsDraft,
                 invoice: this.actionRecordData,
                 contactInfo: this.contactService['data'].contactInfo,
                 refreshParent: () => {
@@ -253,16 +263,53 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
         );
     }
 
-    downloadInvoicePdf() {
+    getPdfLink(): Observable<string> {
         this.startLoading(true);
-        this.invoiceProxy.generatePdf(this.actionRecordData.InvoiceId, false).pipe(
+        return this.invoiceProxy.generatePdf(this.actionRecordData.InvoiceId, false).pipe(
             finalize(() => this.finishLoading(true))
-        ).subscribe((link: string) => {
-            window.open(link);
+        );
+    }
+
+    downloadInvoicePdf() {
+        this.getPdfLink().subscribe((pdfUrl: string) => {
+            let link = document.createElement('a');
+            link.href = pdfUrl;
+            link.target = '_blank';
+            link.download = this.actionRecordData.InvoiceNumber + '.pdf';
+            link.dispatchEvent(new MouseEvent('click'));
         });
     }
 
     duplicateInvoice() {
-        this.openCreateInvoiceDialog(true);
+        this.openCreateInvoiceDialog(true, true);
+    }
+
+    previewInvoice() {
+        this.getPdfLink().subscribe((pdfUrl: string) => {
+            window.open(pdfUrl, '_blank');
+        });
+    }
+
+    updateOrderStage(event) {
+        this.startLoading(true);
+        this.pipelineService.updateEntitiesStage(
+            AppConsts.PipelinePurposeIds.order, [{
+                Id: event.data.OrderId,
+                ContactId: event.data.ContactId,
+                CreationTime: event.data.Date,
+                Stage: event.data.OrderStage
+            }], event.value
+        ).subscribe(declinedList => {
+            this.finishLoading(true);
+            if (declinedList.length)
+                event.value = event.data.OrderStage;
+            else
+                this.notify.success(this.l('StageSuccessfullyUpdated'));
+        });
+    }
+
+    onStageOptionChanged(data, event) {
+        event.component.option('disabled', event.component.option('dataSource')
+            .some(item => data.value == item.name && item.isFinal));
     }
 }

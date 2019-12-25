@@ -1,11 +1,11 @@
 :host {
     display: block;
     min-height: 71px;
-    margin-bottom: 20px;
+    padding: 28px 0;
+    border-bottom: 1px solid #e5e9ec;
     .totals-list {
         .total-item {
-            padding: 5px 20px 22px 20px;
-            border: 1px solid #E5E9EC;
+            padding: 0 24px;
             border-radius: 4px;
             position: relative;
 
@@ -16,24 +16,37 @@
                 vertical-align: bottom;
                 span:first-child {
                     padding-top: 6px;
-                    color: #D4D4D4;
                     float: left;
+                    font-size: 17px;
+                    font-weight: bold;
+                    letter-spacing: normal;
+                    color: #212c36;
                 }
                 span:last-child {
-                    font-size: 22px;
                     float: right;
+                    font-size: 25px;
+                    font-weight: 600;
+                    line-height: 0.96;
+                    letter-spacing: normal;
                 }
             }
 
             .chart-progress {
                 color: #D4D4D4;
                 span:first-child {
-                    font-size: 12px;
                     float: left;
+                    font-size: 13px;
+                    line-height: 1.46;
+                    letter-spacing: 0.26px;
+                    color: #677380;
                 }
                 span:last-child {
-                    font-size: 12px;
                     float: right;
+                    font-size: 15px;
+                    font-weight: 600;
+                    line-height: 1.27;
+                    letter-spacing: 0.3px;
+                    color: #677380;
                 }
             }
 
@@ -58,11 +71,12 @@
             .chart-line {
                 width: 100%;
                 background-color: #F1F5F6;
-                border-radius: 6px;
+                border-radius: 6.5px;
+                margin-bottom: 6px;
+                margin-top: 8px;
                 div {
-                    height: 8px;
-                    border-radius: 6px;
-
+                    height: 10px;
+                    border-radius: 6.5px;
                 }
             }
         }

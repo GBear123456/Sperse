@@ -3,9 +3,9 @@
         <header>
             <ng-container *ngIf="(offerDetails$ | async) as offerDetails">
                 <img [src]="offerDetails.logoUrl">
-                <ng-container *ngIf="getInplaceEditData() as data">
+                <ng-container *ngIf="getOfferTitle() as offerTitle">
                     <inplace-edit
-                        [data]="data"
+                        [value]="offerTitle"
                         (valueChanged)="updateCustomName($event)">
                     </inplace-edit>
                 </ng-container>

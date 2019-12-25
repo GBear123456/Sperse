@@ -10,7 +10,7 @@
             <dx-scroll-view showScrollbar="onHover">
                 <nav mat-tab-nav-bar>
                     <a mat-tab-link *ngFor="let link of navLinks" [hidden]="link.hidden" [disabled]="link.disabled"
-                       [routerLink]="link.route" routerLinkActive="active" [queryParams]="referrerParams"
+                       [routerLink]="link.route" routerLinkActive="active" [queryParams]="queryParams"
                        (click)="navChanged(link)">
                         {{link.label}}
                     </a>

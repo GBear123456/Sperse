@@ -1,14 +1,28 @@
 <div class="socials">
-  <div class="social">
-    <ul>
-      <li *ngFor="let social of contactInfoData?.links; let i = index">
-        <a href="{{social.url}}" target="_blank">
-          <!-- i class="fa fa-{{LINK_TYPES[social.linkTypeId] || 'share-square-o'}}" aria-hidden="true"></i -->
-            <img src="./assets/common/icons/social/{{LINK_TYPES[social.linkTypeId]}}.svg" onError="this.src='./assets/common/icons/social/OtherLink.svg';" width="25px" height="25px">
-        </a>
-        <inplace-edit [data]="getLinkInplaceEditData(social)" (valueChanged)="updateLink(social, $event)" (openDialog)="showEditDialog(social, $event, i)" (itemDeleted)="deleteLink($event)"></inplace-edit>
-      </li>
-    </ul>
-  </div>
-  <div *ngIf="isEditAllowed" class="add-contact" (click)="showEditDialog(null, $event)">+ {{ls.l('Add') + ' ' + ls.l('Link')}}</div>
+    <div class="social">
+        <ul>
+            <li *ngFor="let social of contactInfoData?.links; let i = index">
+                <a href="{{social.url}}" target="_blank">
+                    <!-- i class="fa fa-{{LINK_TYPES[social.linkTypeId] || 'share-square-o'}}" aria-hidden="true"></i -->
+                    <img src="./assets/common/icons/social/{{LINK_TYPES[social.linkTypeId]}}.svg" onError="this.src='./assets/common/icons/social/OtherLink.svg';" width="25px" height="25px">
+                </a>
+                <inplace-edit [id]="social.id"
+                              [value]="social.url"
+                              [link]="normalizeLink(social.url)"
+                              [validationRules]="[ { type: 'required', message: ls.l('LinkIsRequired') } ]"
+                              [isDeleteEnabled]="true"
+                              [isEditDialogEnabled]="true"
+                              [lEntityName]="ls.l('Link')"
+                              [editPlaceholder]="ls.l('Link')"
+                              [lDeleteConfirmTitle]="ls.l('DeleteContactHeader', ls.l('Link'))"
+                              [lDeleteConfirmMessage]="ls.l('DeleteContactMessage', ls.l('Link').toLowerCase())"
+                              (valueChanged)="updateLink(social, $event)"
+                              (openDialog)="showEditDialog(social, $event)"
+                              (itemDeleted)="deleteLink($event)">
+                </inplace-edit>
+            </li>
+        </ul>
+    </div>
+    <div *ngIf="isEditAllowed" class="add-contact" (click)="showEditDialog(null, $event)">+ {{ls.l('Add') + ' ' +
+    ls.l('Link')}}</div>
 </div>

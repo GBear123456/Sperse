@@ -272,19 +272,6 @@ export class UserInformationComponent implements OnInit, OnDestroy {
             this.inviteData.assignedRoleNames.splice(roleIndex, 1);
     }
 
-    getPropData(field: string) {
-        let validationRules = this.validationRules[field] || [];
-
-        return {
-            id: null,
-            value: this.data && this.data.user && this.data.user[field],
-            isEditDialogEnabled: true,
-            validationRules: validationRules,
-            lEntityName: field,
-            lEditPlaceholder: this.ls.l('EditValuePlaceholder')
-        } as InplaceEditModel;
-    }
-
     updateValue(value, fieldName) {
         this.update(fieldName, value);
     }
@@ -307,7 +294,10 @@ export class UserInformationComponent implements OnInit, OnDestroy {
         this.initialPhoneNumber = this.data.user.phoneNumber;
     }
 
-    roleUpdate(role) {
+    roleUpdate(event, role) {
+        if (!event.event)
+            return;
+        
         let sub;
         if (role.isAssigned)
             sub = this.userService.addToRole(UpdateUserRoleInput.fromJS({
@@ -318,9 +308,10 @@ export class UserInformationComponent implements OnInit, OnDestroy {
             sub = this.userService.removeFromRole(this.userData.user.id, role.roleName);
 
         this.loadingService.startLoading(this.elementRef.nativeElement);
-        sub.pipe(finalize(() => this.loadingService.finishLoading(this.elementRef.nativeElement))).subscribe(() => {
-            this.notify.info(this.ls.l('SavedSuccessfully'));
-        });
+        sub.pipe(finalize(() => this.loadingService.finishLoading(this.elementRef.nativeElement))).subscribe(
+            () => { this.notify.info(this.ls.l('SavedSuccessfully')); },
+            () => { role.isAssigned = !role.isAssigned; }
+        );
     }
 
     isActiveChanged(event) {

@@ -10,19 +10,14 @@
                   (onToggleCompactView)="toggleCompactView()"
                   (onToggleFullScreen)="repaintDataGrid(100)"
                   (onReload)="refresh()">
+        <span *ngIf="totalCount" class="total-count"> ({{ totalCount }})</span>
         <import-progress-bar></import-progress-bar>
     </app-headline>
-    <dx-tooltip width="200px"
-                [target]="'.dx-state-hover .dx-link.dx-link-edit'"
-                [visible]="actionEvent">
-        <div *dxTemplate="let data of 'content'">
-            <div class="lists-tooltip-container">
-                <dx-list [dataSource]="actionMenuItems"
-                    (onItemClick)="onMenuItemClick($event)">
-                </dx-list>
-            </div>
-        </div>
-    </dx-tooltip>
+    <action-menu [items]="actionMenuItems"
+                 [visible]="actionEvent"
+                 target=".dx-state-hover .dx-link.dx-link-edit"
+                 (onItemClick)="onMenuItemClick($event)">
+    </action-menu>
     <app-static-list
         [width]="'180px'"
         [title]="l('Status')"
@@ -49,8 +44,7 @@
         <div class="portlet-body">
             <div id="ClientsTable">
                 <ghost-list [hidden]="isDataLoaded"></ghost-list>
-                <dx-data-grid [hidden]="!isDataLoaded"
-                              id="gridContainer"
+                <dx-data-grid id="gridContainer"
                               class="limitedPagerTotal"
                               accesskey="narrowHeaderPanel"
                               [dataSource]="dataSource"

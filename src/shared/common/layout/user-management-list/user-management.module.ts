@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 
 /** Third party imports */
 import { DxScrollViewModule } from 'devextreme-angular/ui/scroll-view';
+import { DxTooltipModule } from 'devextreme-angular/ui/tooltip';
 
 /** Application imports */
 import { UserDropdownMenuComponent } from '@shared/common/layout/user-management-list/user-dropdown-menu/user-dropdown-menu.component';
@@ -11,6 +12,7 @@ import { UserManagementListComponent } from '@shared/common/layout/user-manageme
 import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
 import { ImpersonationService } from '@admin/users/impersonation.service';
 import { BankCodeLettersModule } from '@app/shared/common/bank-code-letters/bank-code-letters.module';
+import { InplaceEditModule } from '@app/shared/common/inplace-edit/inplace-edit.module';
 
 @NgModule({
     declarations: [
@@ -20,7 +22,9 @@ import { BankCodeLettersModule } from '@app/shared/common/bank-code-letters/bank
     imports: [
         CommonModule,
         DxScrollViewModule,
-        BankCodeLettersModule
+        DxTooltipModule,
+        BankCodeLettersModule,
+        InplaceEditModule
     ],
     exports: [
         UserManagementListComponent,

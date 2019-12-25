@@ -16,7 +16,7 @@ class ItemsDataSource {
 @Injectable()
 export class ItemDetailsService {
     private itemsListSource: ItemsDataSource = new ItemsDataSource();
-    constructor() {}
+
     setItemsSource(itemType: ItemTypeEnum, dataSource: any, loadMethod?: () => Observable<any>) {
         this.itemsListSource[itemType] = {
             dataSource: dataSource,
@@ -38,24 +38,14 @@ export class ItemDetailsService {
      * @param {TargetDirectionEnum} itemDirection
      * @return {Observable<ItemFullInfo>}
      */
-    getItemFullInfo(itemType: ItemTypeEnum, itemId: number, itemDirection: TargetDirectionEnum, itemSearchProperty = 'Id'): Observable<ItemFullInfo> {
+    getItemFullInfo(itemType: ItemTypeEnum, itemId: number, itemDirection: TargetDirectionEnum, itemKeyField = 'Id', itemDistinctField = 'Id'): Observable<ItemFullInfo> {
         const dataSource$ = this.getItemsSource(itemType);
         return dataSource$.pipe(switchMap(dataSource => {
             let fullInfo$ = of(null);
             if (dataSource) {
-                let items = dataSource['entities'] || dataSource.items();
-                let itemIndex = 0;
-                let itemData = items.find((item, index) => {
-                    if (item[itemSearchProperty] == itemId) {
-                        if (itemDirection == TargetDirectionEnum.Next && items[index + 1]
-                            && items[index + 1][itemSearchProperty] == itemId
-                        ) return false;
-
-                        itemIndex = index;
-                        return true;
-                    }
-                    return false;
-                });
+                let items = dataSource['entities'] || dataSource.items(),
+                    itemIndex = this.getDistinctItemIndex(items, itemId, itemDirection, itemKeyField, itemDistinctField),
+                    itemData = items[itemIndex];
                 const isFirstOnPage = itemIndex === 0;
                 const itemsCountOnTheLastPage = this.getItemsCountOnLastPage(dataSource['total'] || dataSource.totalCount(), dataSource.pageSize(), dataSource.pageIndex());
                 const isLastOnPage = itemIndex + 1 === items.length || dataSource.isLastPage() && itemIndex + 1 === itemsCountOnTheLastPage;
@@ -72,17 +62,19 @@ export class ItemDetailsService {
                     if (itemDirection === TargetDirectionEnum.Prev) {
                         if (isFirstOnPage) {
                             /** Update data sourse page */
-                            dataSource.pageIndex(dataSource.pageIndex() - 1);
-                            fullInfo$ = from(dataSource.reload()).pipe(
-                                switchMap(() => {
-                                    const newItems = dataSource.items();
-                                    const newItemId = newItems[newItems.length - 1][itemSearchProperty];
-                                    /** Get data of the last item from the previous page */
-                                    return this.getItemFullInfo(itemType, newItemId, TargetDirectionEnum.Current, itemSearchProperty);
-                                })
-                            );
+                            if (dataSource.pageIndex() > 0) {
+                                dataSource.pageIndex(dataSource.pageIndex() - 1);
+                                fullInfo$ = from(dataSource.reload()).pipe(
+                                    switchMap(() => {
+                                        const newItems = dataSource.items();
+                                        const newItemId = newItems[newItems.length - 1][itemKeyField];
+                                        /** Get data of the last item from the previous page */
+                                        return this.getItemFullInfo(itemType, newItemId, TargetDirectionEnum.Current, itemKeyField, itemDistinctField);
+                                    })
+                                );
+                            }
                         } else {
-                            fullInfo$ = this.getItemFullInfo(itemType, items[itemIndex - 1][itemSearchProperty], TargetDirectionEnum.Current, itemSearchProperty);
+                            fullInfo$ = this.getItemFullInfo(itemType, items[itemIndex - 1][itemKeyField], TargetDirectionEnum.Current, itemKeyField, itemDistinctField);
                         }
                     } else if (itemDirection === TargetDirectionEnum.Next) {
                         if (isLastOnPage) {
@@ -95,21 +87,42 @@ export class ItemDetailsService {
                                 : from(dataSource.reload());
                             fullInfo$ = method$.pipe(
                                 switchMap(() => {
-                                    const newItemId = dataSource['entities']
-                                        ? dataSource['entities'][dataSource['entities'].length - dataSource.pageSize()][itemSearchProperty]
-                                        : dataSource.items()[0][itemSearchProperty];
+                                    let entities = dataSource['entities'],
+                                        newItemId = entities
+                                            ? entities[entities.length - dataSource.pageSize() - 1][itemKeyField]
+                                            : dataSource.items()[0][itemKeyField];
                                     /** Get data of the first item from the next page */
-                                    return this.getItemFullInfo(itemType, newItemId, TargetDirectionEnum.Current, itemSearchProperty);
+                                    return this.getItemFullInfo(itemType, newItemId, entities ? TargetDirectionEnum.Next : TargetDirectionEnum.Current, itemKeyField, itemDistinctField);
                                 })
                             );
                         } else {
-                            fullInfo$ = this.getItemFullInfo(itemType, items[itemIndex + 1][itemSearchProperty], TargetDirectionEnum.Current, itemSearchProperty);
+                            fullInfo$ = this.getItemFullInfo(itemType, items[itemIndex + 1][itemKeyField], TargetDirectionEnum.Current, itemKeyField, itemDistinctField);
                         }
                     }
                 }
             }
             return fullInfo$;
         }));
+    }
+
+    private getDistinctItemIndex(items: any[], itemId: number, itemDirection: TargetDirectionEnum, itemKeyField: string, itemDistinctField: string): any {
+        let reverse = itemDirection == TargetDirectionEnum.Prev;
+        for (let index = reverse ? items.length - 1 : 0 ; index >= 0 && index < items.length; reverse ? index-- : index++) {
+            let item = items[index];
+            if (item[itemKeyField] == itemId) {
+                if (itemDirection == TargetDirectionEnum.Next && items[index + 1]
+                    && item[itemDistinctField] == items[index + 1][itemDistinctField]
+                ) {
+                    itemId = items[index + 1][itemKeyField];
+                } else if (reverse && items[index - 1]
+                    && item[itemDistinctField] == items[index - 1][itemDistinctField]
+                ) {
+                    itemId = items[index - 1][itemKeyField];
+                } else
+                    return index;
+            }
+        }
+        return 0;
     }
 
     private getItemsCountOnLastPage(total, pageSize, pageIndex) {

@@ -299,10 +299,8 @@ export class OfferEditComponent implements OnInit, OnDestroy, ICloseComponent {
         this.initialModel = cloneDeep(this.model);
     }
 
-    getInplaceEditData() {
-        return {
-            value: this.model && (this.model.extendedInfo.customName || this.model.name)
-        };
+    getOfferTitle() {
+        return this.model && (this.model.extendedInfo.customName || this.model.name);
     }
 
     updateCustomName(value: string) {

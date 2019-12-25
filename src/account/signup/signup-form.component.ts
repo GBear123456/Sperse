@@ -6,7 +6,8 @@ import { ActivationEnd, Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import capitalize from 'underscore.string/capitalize';
 import { filter, takeUntil } from 'rxjs/operators';
-import { MaskPipe } from '@node_modules/ngx-mask';
+import { DxValidatorComponent } from 'devextreme-angular/ui/validator';
+import { MaskPipe } from 'ngx-mask';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
@@ -29,6 +30,7 @@ import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/life
 export class SignupFormComponent implements OnInit, OnDestroy {
     @ViewChild('agreeWithTermsCheckBox') agreeWithTermsCheckBox: DxCheckBoxComponent;
     @ViewChild('agreeToReceiveCallsCheckBox') agreeToReceiveCallsCheckBox: DxCheckBoxComponent;
+    @ViewChild('zipValidator') zipValidator: DxValidatorComponent;
     showZipMask = true;
     defaultCountryCode: string;
     selectedCountryCode: string;
@@ -89,15 +91,23 @@ export class SignupFormComponent implements OnInit, OnDestroy {
             event.preventDefault();
     }
 
-    onZipCodeChanged (event) {
-        if (this.showZipMask)
-            this.registerData.postalCode = this.maskPipe.transform(event.value, AppConsts.masks.zipCodeLong);
+    onZipCodeInput (e) {
+        if (this.showZipMask) {
+            if (e.event.target.value.length > 10)
+                e.event.target.value = e.event.target.value.slice(0, 10);
+            e.event.target.value = this.maskPipe.transform(e.event.target.value, AppConsts.masks.zipCodeLong);
+        }
+    }
+
+    zipCodeChange(e) {
+        this.registerData.postalCode = e.value;
     }
 
     getChangedCountry($event) {
         this.selectedCountryCode = $event.countryCode;
         this.showZipMask = this.defaultCountryCode == this.selectedCountryCode;
         this.showZipMask ? this.patterns.zipPattern = AppConsts.regexPatterns.zipUsPattern : this.patterns.zipPattern = /.*/;
+        this.zipValidator.validationRules[0]['reevaluate'] = true;
     }
 
     getDefaultCode($event) {

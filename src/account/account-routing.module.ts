@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { LoginComponent } from './login/login.component';
+import { AutoLoginComponent } from './auto-login/auto-login.component';
 //import { RegisterComponent } from './register/register.component';
 //import { BuyComponent } from './payment/buy.component';
 //import { UpgradeOrExtendComponent } from './payment/upgrade-or-extend.component';
@@ -27,6 +28,7 @@ import { SignupComponent } from './signup/signup.component';
                 component: AccountComponent,
                 children: [
                     { path: 'login', component: LoginComponent },
+                    { path: 'auto-login', component: AutoLoginComponent },
 //                    { path: 'register', component: RegisterComponent },
 //                    { path: 'buy', component: BuyComponent },
 //                    { path: 'extend', component: UpgradeOrExtendComponent },

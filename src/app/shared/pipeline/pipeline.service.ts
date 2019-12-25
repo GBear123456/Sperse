@@ -238,8 +238,8 @@ export class PipelineService {
                         if (data)
                             this.processLeadInternal(entity, {...data, fromStage, toStage}, complete);
                         else {
-                            this.moveEntityTo(entity, fromStage, toStage);
-                            complete && complete();
+                            this.moveEntityTo(entity, toStage, fromStage);
+                            complete && complete(true);
                         }
                     });
                 }
@@ -275,8 +275,8 @@ export class PipelineService {
                 if (data)
                     this.cancelLeadInternal(entity, {...data, fromStage, toStage}, complete);
                 else {
-                    this.moveEntityTo(entity, fromStage, toStage);
-                    complete && complete();
+                    this.moveEntityTo(entity, toStage, fromStage);
+                    complete && complete(true);
                 }
             });
     }
@@ -335,8 +335,8 @@ export class PipelineService {
                 if (data)
                     this.cancelOrderInternal(entity, {...data, fromStage, toStage}, complete);
                 else {
-                    this.moveEntityTo(entity, fromStage, toStage);
-                    complete && complete();
+                    this.moveEntityTo(entity, toStage, fromStage);
+                    complete && complete(true);
                 }
             });
     }
@@ -356,10 +356,14 @@ export class PipelineService {
     }
 
     moveEntityTo(entity, sourceStage: Stage, targetStage: Stage) {
-        if (sourceStage.entities && targetStage.entities)
-            targetStage.entities.unshift(
-                sourceStage.entities.splice(sourceStage.entities.indexOf(entity), 1).pop()
-            );
+        if (sourceStage.entities && targetStage.entities) {
+            let index = sourceStage.entities.indexOf(entity);
+            if (index >= 0)
+                sourceStage.entities.splice(index, 1);
+            if (targetStage.entities.indexOf(entity) < 0)
+                targetStage.entities.unshift(entity);
+        }
+
         entity.StageId = targetStage.id;
         entity.stage = entity.Stage = targetStage.name;
         entity.locked = false;
@@ -409,12 +413,9 @@ export class PipelineService {
         let color = stagesColors[stageSortOrder];
         /** If there is not default color for the sort order - get the closest */
         if (!color) {
-            const defaultColorsKeys = Object.keys(stagesColors);
-            color = +defaultColorsKeys[0] > stageSortOrder
-                ? stagesColors[defaultColorsKeys[0]]
-                : stagesColors[defaultColorsKeys[defaultColorsKeys.length]];
+            let maxSortOrder = Math.floor(Object.keys(stagesColors).length / 2);
+            color = stagesColors[maxSortOrder > stageSortOrder ? maxSortOrder * -1 : maxSortOrder];
         }
         return color;
     }
-
 }

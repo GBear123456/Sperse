@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 
 /** Third party imports */
 import { DxDataGridModule } from 'devextreme-angular/ui/data-grid';
+import { NgxExtendedPdfViewerModule } from 'ngx-extended-pdf-viewer';
 
 /** Application imports */
 import { ProductsComponent } from './products.component';
@@ -20,10 +21,9 @@ import { BankCodeLettersModule } from '@app/shared/common/bank-code-letters/bank
 import { PhoneFormatModule } from '@shared/common/pipes/phone-format/phone-format.module';
 import { DxTextBoxModule } from '@root/node_modules/devextreme-angular';
 import { LoadingSpinnerModule } from '@app/shared/common/loading-spinner/loading-spinner.module';
-import { BankCodeLayoutModule } from '@root/bank-code/shared/layout/bank-code-layout.module';
 import { SubscriptionComponent } from '@root/bank-code/products/shared/subscription.component/subscription.component';
-import { MemberSubscriptionServiceProxy } from '@shared/service-proxies/service-proxies';
-import { ProductsService } from './products.service';
+import { WhyTheyBuyComponent } from './why-they-buy/why-they-buy.component';
+import { NoDataModule } from '@shared/common/widgets/no-data/no-data.module';
 
 @NgModule({
     imports: [
@@ -35,7 +35,8 @@ import { ProductsService } from './products.service';
         BankCodeLettersModule,
         PhoneFormatModule,
         LoadingSpinnerModule,
-        BankCodeLayoutModule
+        NgxExtendedPdfViewerModule,
+        NoDataModule
     ],
     declarations: [
         CodeBreakerAiComponent,
@@ -46,11 +47,8 @@ import { ProductsService } from './products.service';
         BankPassComponent,
         BankTrainerComponent,
         BankVaultComponent,
-        SubscriptionComponent
-    ],
-    providers: [
-        MemberSubscriptionServiceProxy,
-        ProductsService
+        SubscriptionComponent,
+        WhyTheyBuyComponent
     ]
 })
 export class ProductsModule {}

@@ -21,6 +21,7 @@ import { PersonContactServiceProxy, UpdatePersonInfoInput, MaritalStatus, Gender
 import { PersonalDetailsDialogComponent } from './personal-details-dialog/personal-details-dialog.component';
 import { ContactsService } from '../contacts.service';
 import { AppPermissions } from '@shared/AppPermissions';
+import { InplaceEditModel } from '@app/shared/common/inplace-edit/inplace-edit.model';
 
 @Component({
     templateUrl: './personal-details.component.html',
@@ -108,7 +109,7 @@ export class PersonalDetailsComponent implements OnDestroy {
         this._store$.dispatch(new StatesStoreActions.LoadRequestAction(AppConsts.defaultCountry));
     }
 
-    getInputData(field) {
+    getInputData(field): InplaceEditModel {
         let value = (this.person[field] || '').trim();
         return {
             id: field,
@@ -117,7 +118,7 @@ export class PersonalDetailsComponent implements OnDestroy {
                 this.getSsnMasked(value) : '',
             isEditDialogEnabled: false,
             lEntityName: field,
-            lEditPlaceholder: this.ls.l('EditValuePlaceholder')
+            editPlaceholder: this.ls.l('EditValuePlaceholder')
         };
     }
 

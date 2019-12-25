@@ -21,8 +21,7 @@ import { FullScreenService } from '@shared/common/fullscreen/fullscreen.service'
     styleUrls: ['./app.component.less',
         '../shared/common/clipboard/clipboard.directive.less',
         '../../node_modules/ng2-image-viewer/imageviewer.scss',
-        '../assets/common/styles/spinner.css',
-        '../shared/metronic/m-toast.less'
+        '../assets/common/styles/spinner.css'
     ],
     encapsulation: ViewEncapsulation.None
 })

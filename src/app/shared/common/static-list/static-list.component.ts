@@ -28,6 +28,7 @@ export class StaticListComponent extends AppComponentBase {
     @Output() onBottomInputApplyValue: EventEmitter<any> = new EventEmitter();
     @Input() width: string;
     @Input() height: number;
+    @Input() listHeight: string;
     @Input() template: string;
     @Input() accessKey: string;
     @Input() title: string;
@@ -59,7 +60,6 @@ export class StaticListComponent extends AppComponentBase {
     @Input() selectionMode;
 
     listComponent: any;
-    listHeight: number;
     tooltipVisible: boolean;
     bottomInputValue: string;
     @Input() selectedItems: any = [];
@@ -106,8 +106,9 @@ export class StaticListComponent extends AppComponentBase {
 
     onInitialized($event) {
         this.listComponent = $event.component;
-        if (this.height)
-            this.listHeight = this.searchEnabled ? this.height - 90 : this.height - 65;
+        if (!this.listHeight && this.height) {
+            this.listHeight = (this.searchEnabled ? this.height - 90 : this.height - 65) + 'px';
+        }
     }
 
     highlightSelectedFilters() {

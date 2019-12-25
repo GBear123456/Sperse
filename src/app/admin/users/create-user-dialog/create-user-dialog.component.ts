@@ -290,9 +290,13 @@ export class CreateUserDialogComponent implements OnInit {
     resetFullDialog(forced = true) {
         let resetInternal = () => {
             this.title = '';
+            this.modalDialog.clear();
             this.setRandomPassword = false;
-            this.sendActivationEmail = true;
+            this.sendActivationEmail = false;
             this.user = new UserEditDto();
+            this.user.shouldChangePasswordOnNextLogin = false;
+            this.user.isActive = false;
+            this.user.isLockoutEnabled = false;
             this.photoOriginalData = undefined;
             this.photoThumbnailData = undefined;
             this.photoSourceData = undefined;

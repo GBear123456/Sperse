@@ -1,9 +1,6 @@
-<section class="iframe" *ngIf="!hasSubscription; else usersList">
-    <iframe src="https://wp.bankcode.pro/b-a-n-k-pass/" frameborder="0"></iframe>
-</section>
-<ng-template #usersList>
-    <section class="users-list">
-        <div [hidden]="dataIsLoading">
+<section *ngIf="hasSubscription$ | async; else noSubscription" class="users-list">
+    <div [hidden]="dataIsLoading">
+        <div class="grid" [hidden]="totalCount <= 0">
             <dx-text-box [placeholder]="ls.l('Search')"
                          [value]="searchValue"
                          mode="search"
@@ -50,6 +47,17 @@
                 <dxo-sorting mode="multiple"></dxo-sorting>
             </dx-data-grid>
         </div>
-        <loading-spinner [hidden]="!dataIsLoading"></loading-spinner>
+        <app-no-data
+            [hidden]="totalCount > 0"
+            height="calc(100vh - 69px)"
+            title="No contacts added yet"
+            [showLink]="false">
+        </app-no-data>
+    </div>
+    <loading-spinner [hidden]="!dataIsLoading"></loading-spinner>
+</section>
+<ng-template #noSubscription>
+    <section class="iframe">
+        <iframe [src]="environmentLink$ | async" frameborder="0"></iframe>
     </section>
 </ng-template>

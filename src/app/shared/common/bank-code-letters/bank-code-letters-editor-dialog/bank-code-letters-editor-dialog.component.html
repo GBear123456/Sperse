@@ -7,4 +7,9 @@
             <span class="first-letter">{{ bankCodeDefinition.name[0] }}</span>{{ bankCodeDefinition.name.slice(1) }}
         </li>
     </ul>
+    <button *ngIf="bankCodeIsEmpty"
+            class="button-layout button-primary"
+            (click)="updateBankCode(bankCode)">
+        {{ ls.l('Save') }}
+    </button>
 </mat-dialog-content>

@@ -32,7 +32,6 @@ export interface Country {
 })
 export class CreditCardComponent implements OnInit {
     @Output() onSubmit: EventEmitter<BankCardDataModel> = new EventEmitter<BankCardDataModel>();
-    googleAutoComplete: boolean;
     countryCode: string;
     states: CountryStateDto[];
     countries: Country[] = [];
@@ -68,7 +67,6 @@ export class CreditCardComponent implements OnInit {
         public ls: AppLocalizationService
     ) {
         this.creditCardData.get('billingStateCode').disable();
-        this.googleAutoComplete = Boolean(window['google']);
         this.getCountries();
     }
 
@@ -212,6 +210,7 @@ export class CreditCardComponent implements OnInit {
 
     onCountryChange(event) {
         this.countryCode = event.option.value.code;
+        this.updateCountryInfo(event.option.value.name);
         this.store$.dispatch(new StatesStoreActions.LoadRequestAction(this.countryCode));
         this.store$.pipe(select(StatesStoreSelectors.getState, { countryCode: this.countryCode }))
             .subscribe(result => {

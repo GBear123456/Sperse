@@ -4,7 +4,7 @@ import { Component, AfterViewInit, OnDestroy, Injector, ViewChild } from '@angul
 /** Third party imports */
 import { DxSchedulerComponent } from 'devextreme-angular/ui/scheduler';
 import { MatDialog } from '@angular/material/dialog';
-import * as moment from 'moment';
+import * as moment from 'moment-timezone';
 import buildQuery from 'odata-query';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -66,15 +66,18 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
             fieldExpr: 'Type',
             useColorAsDefault: true,
             allowMultiple: false,
-            dataSource: [{
-                  text: this.l('Event'),
-                id: ActivityType.Event,
-                  color: '#727bd2'
-              }, {
-                  text: this.l('Task'),
+            dataSource: [
+                {
+                    text: this.l('Event'),
+                    id: ActivityType.Event,
+                    color: '#727bd2'
+                },
+                {
+                    text: this.l('Task'),
                     id: ActivityType.Task,
-                  color: '#32c9ed'
-            }],
+                    color: '#32c9ed'
+                }
+            ],
             label: this.l('Type')
         }
     ];
@@ -88,6 +91,7 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
         }
     ];
     public searchValue: string;
+    public totalCount: number;
 
     constructor(
         injector: Injector,
@@ -157,14 +161,9 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
                 },
                 deserializeDates: false,
                 onLoaded: (res) => {
+                    this.totalCount = res && res.length;
                     res.forEach((record) => {
-                        if (record.AllDay) {
-                            record.fieldTimeZone = this.timezone;
-                            record.StartDate = moment(record.StartDate.substring(0, 19)).format();
-                            record.EndDate = moment(record.EndDate.substring(0, 19)).format();
-                        } else {
-                            record.fieldTimeZone = 'Etc/UTC';
-                        }
+                        record.fieldTimeZone = 'Etc/UTC';
                     });
                 },
                 paginate: false
@@ -197,13 +196,13 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
     getStartDate() {
         let period = <any>this.getPeriodType();
         return this.getCurrentDate().startOf(period)
-            .add(period == 'month' ? -10 : 0, 'days').toDate();
+            .add(!this.showPipeline && period == 'month' ? -10 : 0, 'days').toDate();
     }
 
     getEndDate() {
         let period = <any>this.getPeriodType();
         return this.getCurrentDate().endOf(period)
-            .add(period == 'month' ? 10 : 0, 'days').toDate();
+            .add( !this.showPipeline && period == 'month' ? 10 : 0, 'days').toDate();
     }
 
     initToolbarConfig() {
@@ -402,25 +401,11 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
     }
 
     onContentReady($event) {
-        //!!VP this part fix scroll appearance for month view
         setTimeout(() => this.finishLoading(), 2000);
-/*
-        if (this.currentView == 'month')
-            setTimeout(() => {
-                let scroll = $event.element.getElementsByClassName('dx-scrollable-content')[0];
-                if (scroll) {
-                    scroll.classList.remove('dx-scheduler-scrollable-fixed-content');
-                }
-                $event.component.getWorkSpaceScrollable().update();
-            }, 100);
-*/
     }
 
     onAppointmentFormCreated(event) {
         event.component.hideAppointmentPopup(false);
-        event.appointmentData.StartDate = event.appointmentData.StartDate.substring(0, 11) + '00:00:00Z';
-        event.appointmentData.EndDate = event.appointmentData.StartDate.substring(0, 11) + '00:00:00Z';
-        event.appointmentData.AllDay = true;
         this.showActivityDialog(event.appointmentData);
     }
 
@@ -490,7 +475,7 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
                 stages: this.stages,
                 appointment: appointment instanceof Date ? {
                     startDate: appointment
-                } : appointment,
+                } : (appointment.entity || appointment),
                 refreshParent: this.refresh.bind(this)
             }
         });
@@ -651,5 +636,9 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
             default:
                 this.calendarCaption = 'All period';
         }
+    }
+
+    updateTotalCount(totalCount: number) {
+        this.totalCount = totalCount;
     }
 }

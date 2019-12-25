@@ -1,10 +1,13 @@
 /** Core imports */
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ViewChild } from '@angular/core';
+import { DomSanitizer } from '@angular/platform-browser';
 
 /** Third party imports */
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import DataSource from 'devextreme/data/data_source';
 import 'devextreme/data/odata/store';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 /** Application imports */
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -14,7 +17,8 @@ import { ContactGroup } from '@shared/AppEnums';
 import { ODataService } from '@shared/common/odata/odata.service';
 import { ProfileService } from '@shared/common/profile-service/profile.service';
 import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
-import { ProductsService } from '../products.service';
+import { BankCodeServiceType } from '@root/bank-code/products/bank-code-service-type.enum';
+import { environment } from '@root/environments/environment';
 
 @Component({
     selector: 'bank-pass',
@@ -26,6 +30,7 @@ import { ProductsService } from '../products.service';
 export class BankPassComponent {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
     offerId = 718;
+    totalCount: number;
     searchValue: '';
     dataSourceURI = 'Lead';
     gridPagerConfig = DataGridService.defaultGridPagerConfig;
@@ -52,19 +57,33 @@ export class BankPassComponent {
             },
             deserializeDates: false,
             paginate: true
+        },
+        onChanged: () => {
+            this.totalCount = this.dataSource.totalCount();
         }
     });
     formatting = AppConsts.formatting;
-    hasSubscription: boolean = this.productsService.checkServiceSubscription();
+    hasSubscription$: Observable<boolean> = this.profileService.checkServiceSubscription(BankCodeServiceType.BANKPass);
     dataIsLoading = false;
+
+    environmentLink$: Observable<any> = this.profileService.secureId$.pipe((
+        map((secureId: string) => {
+            return this.sanitizer.bypassSecurityTrustResourceUrl({
+                development: 'https://wp.bankcode.pro/b-a-n-k-pass/?WPSecureID=' + secureId,
+                production: 'https://codebreakertech.com/bank-pass-landing/?WPSecureID=' + secureId,
+                staging: 'https://wp.bankcode.pro/b-a-n-k-pass/?WPSecureID=' + secureId,
+                beta: 'https://wp.bankcode.pro/b-a-n-k-pass/?WPSecureID=' + secureId
+            }[environment.releaseStage]);
+        })
+    ));
 
     constructor(
         private oDataService: ODataService,
         private changeDetectorRef: ChangeDetectorRef,
-        private productsService: ProductsService,
         public ls: AppLocalizationService,
         public httpInterceptor: AppHttpInterceptor,
-        public profileService: ProfileService
+        public profileService: ProfileService,
+        public sanitizer: DomSanitizer
     ) {}
 
     getQuickSearchParam() {

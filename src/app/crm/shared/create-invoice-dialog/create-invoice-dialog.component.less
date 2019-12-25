@@ -12,7 +12,7 @@
     /deep/ .mat-dialog-header {
         label {
             color: #8a969b;
-            padding: 20px 0px;
+            padding: 20px 0;
             font-size: 28px;
             position: relative;
         }
@@ -50,7 +50,7 @@
         }
         dx-text-box {
             &[name="invoiceNo"] {
-                margin: 23px 0px;
+                margin: 23px 0;
                 &.dx-texteditor-empty.dx-state-focused .dx-placeholder {
                     top: -25px!important;
                 }
@@ -94,7 +94,7 @@
     .form-content {
         display: flex;
         flex-direction: column;
-        padding: 20px 0px 20px 50px;
+        padding: 20px 0 20px 50px;
         height: calc(~"100vh - 82px");
         width: 900px;
 
@@ -127,14 +127,14 @@
             overflow: hidden;
             display: inline-block;
             /deep/ .dx-widget {
-                margin: 0px;
+                margin: 0;
                 input {
                     font-size: 15px;
                     font-weight: 400;
                     line-height: 1.79;
                     letter-spacing: 0.3px;
                     color: #424c56;
-                    padding: 0px;
+                    padding: 0;
                 }
                 .dx-texteditor-buttons-container {
                     left: 97px;
@@ -160,11 +160,11 @@
                 justify-content: space-between;
             }
             &.addr {
-                margin-bottom: 0px;
+                margin-bottom: 0;
             }
             &.notes {
                 margin-top: 20px;
-                margin-bottom: 0px;
+                margin-bottom: 0;
                 span.clear-contact {
                     align-self: flex-start;
                 }
@@ -212,7 +212,7 @@
                         cursor: pointer;
                         color: #00aeef;
                         right: -10px;
-                        top: 0px;
+                        top: 0;
                     }
                     i.remove {
                         color: red;
@@ -226,7 +226,7 @@
                 }
                 dx-select-box[name="customer"] {
                     input {
-                        border-bottom: 0px;
+                        border-bottom: 0;
                     }
                 }
             }
@@ -308,7 +308,7 @@
                     top: -17px!important;
                 }
                 .dx-placeholder {
-                    padding: 0px;
+                    padding: 0;
                     &.dx-state-invisible {
                         display: block!important;
                         font-size: 11px!important;
@@ -343,7 +343,7 @@
                     font-weight: 400;
                     line-height: 1.79;
                     letter-spacing: 0.3px;
-                    padding: 0px;
+                    padding: 0;
                 }
             }
             dx-select-box[name="customer"] {
@@ -379,7 +379,7 @@
                     line-height: 1.47;
                     letter-spacing: 0.3px;
                     color: #424c56;
-                    margin: 10px 0px;
+                    margin: 10px 0;
                 }
                 &.total {                    
                     span {
@@ -399,7 +399,7 @@
                 }
                 &.balance {
                     margin-top: 5px;
-                    padding: 0px 10px;
+                    padding: 0 10px;
                     background-color: #f3f7fa;
                     border-bottom: none;
                 }
@@ -443,8 +443,8 @@
         .dx-datagrid-rowsview {
             border: none;
             td {
-                margin: 0px;
-                padding: 0px 7px;
+                margin: 0;
+                padding: 0 7px;
                 overflow: visible;
             }
             tr:nth-child(odd) td { 
@@ -461,7 +461,7 @@
         }
         .dx-datagrid-headers {
             td {
-                padding: 14px 7px 0px;
+                padding: 14px 7px 0;
             }
             &, .dx-datagrid-content, td {
                 border: none!important;
@@ -565,21 +565,5 @@
                 }
             }
         }
-    }
-}
-
-/deep/ dx-data-grid[accessKey="orderNumber"] {
-    .dx-datagrid-pager {
-        display: flex;
-        height: 70px;
-        justify-content: center;
-        .dx-light-pages {
-            position: relative;
-            bottom: 5px;
-            font-size: 16px!important;
-        }
-    }
-    .dx-datagrid-search-panel {
-        width: 250px!important;
     }
 }

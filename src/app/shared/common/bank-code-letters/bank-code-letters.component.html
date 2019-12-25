@@ -2,16 +2,17 @@
     <ng-container *ngFor="let letter of bankCode.split('')">
         <bank-code-letter [letter]="letter"
                           [key]="key"
-                          [showDescriptionOnHover]="showDescriptionsOnHover">
+                          [showDescriptionOnHover]="showDescriptionsOnHover && bankCode !== bankCodeService.emptyBankCode"
+                          (onClick)="onLetterClick($event)">
         </bank-code-letter>
     </ng-container>
-    <i *ngIf="allowEdit"
+    <i *ngIf="allowEdit && bankCode !== bankCodeService.emptyBankCode"
        class="edit fa fa-pencil bank-code-edit"
        (click)="showEditPopup($event)">
     </i>
     <span *ngIf="showBankCodeDefinition"
           class="bankCodeDefinition"
-          [ngStyle]="{ color: bankCodeService.getColorsByLetter(bankCode[0]).background}">
+          [ngStyle]="{ color: bankCodeService.getBackgroundColorByLetter(bankCode[0])}">
         {{ bankCodeDefinition }}
     </span>
     <a *ngIf="showReportLink"

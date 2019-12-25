@@ -6,6 +6,7 @@
                   [showReloadButton]="true"
                   (onToggleToolbar)="toggleToolbar()"
                   (onReload)="processFilterInternal()">
+        <span *ngIf="totalCount" class="total-count"> ({{ totalCount }})</span>
         <import-progress-bar></import-progress-bar>
     </app-headline>
     <app-static-list
@@ -103,7 +104,8 @@
                     [(selectedEntities)]="selectedOrders"
                     (onEntityStageChanged)="onOrderStageChanged($event)"
                     (onStagesLoaded)="onStagesLoaded($event)"
-                    (onCardClick)="onCardClick($event)">
+                    (onCardClick)="onCardClick($event)"
+                    (onTotalChange)="updateTotalCount($event)">
                     Loading...
                 </app-pipeline>
             </div>

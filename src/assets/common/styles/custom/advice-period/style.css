@@ -276,3 +276,6 @@ body.advice-period .small-button:hover {
   background: #e78639 !important;
   border-color: #e78639 !important;
 }
+body.advice-period .avatar img {
+  background-color: #433332;
+}

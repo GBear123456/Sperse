@@ -8,25 +8,32 @@ import { map, first } from 'rxjs/operators';
 import * as _ from 'underscore';
 
 /** Application imports */
-import { AppComponentBase } from '@shared/common/app-component-base';
 import {
-    ContactServiceProxy, OrderSubscriptionServiceProxy, OrderSubscriptionDto, ContactInfoDto,
+    ContactServiceProxy,
+    OrderSubscriptionServiceProxy,
+    OrderSubscriptionDto,
+    ContactInfoDto,
     NameValueDto,
-    CommonLookupServiceProxy
-} from 'shared/service-proxies/service-proxies';
+    CommonLookupServiceProxy,
+    CancelOrderSubscriptionInput
+} from '@shared/service-proxies/service-proxies';
 import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 import { CommonLookupModalComponent } from '@app/shared/common/lookup/common-lookup-modal.component';
 import { ImpersonationService } from '@app/admin/users/impersonation.service';
 import { ContactsService } from '../contacts.service';
 import { DxDataGridComponent } from 'devextreme-angular';
 import { AppPermissions } from '@shared/AppPermissions';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
+import { AddSubscriptionDialogComponent } from '@app/crm/contacts/subscriptions/add-subscription-dialog/add-subscription-dialog.component';
+import { CancelSubscriptionDialogComponent } from '@app/crm/contacts/subscriptions/cancel-subscription-dialog/cancel-subscription-dialog.component';
 
 @Component({
     selector: 'subscriptions',
     templateUrl: './subscriptions.component.html',
     styleUrls: ['./subscriptions.component.less']
 })
-export class SubscriptionsComponent extends AppComponentBase implements OnInit {
+export class SubscriptionsComponent implements OnInit {
     @ViewChild('mainGrid') dataGrid: DxDataGridComponent;
     public data: {
         contactInfo: ContactInfoDto
@@ -40,15 +47,16 @@ export class SubscriptionsComponent extends AppComponentBase implements OnInit {
     constructor(
         injector: Injector,
         private invoicesService: InvoicesService,
-        private _contactService: ContactServiceProxy,
-        private _contactsService: ContactsService,
-        private _orderSubscriptionService: OrderSubscriptionServiceProxy,
-        private _commonLookupService: CommonLookupServiceProxy,
-        private _impersonationService: ImpersonationService,
-        private _dialog: MatDialog
+        private contactService: ContactServiceProxy,
+        private contactsService: ContactsService,
+        private orderSubscriptionService: OrderSubscriptionServiceProxy,
+        private commonLookupService: CommonLookupServiceProxy,
+        private impersonationService: ImpersonationService,
+        private dialog: MatDialog,
+        public permission: PermissionCheckerService,
+        public ls: AppLocalizationService
     ) {
-        super(injector);
-        _contactsService.invalidateSubscribe((area) => {
+        contactsService.invalidateSubscribe((area) => {
             if (area == 'subscriptions') {
                 this.refreshData(true);
             }
@@ -57,7 +65,7 @@ export class SubscriptionsComponent extends AppComponentBase implements OnInit {
     }
 
     ngOnInit() {
-        this.data = this._contactService['data'];
+        this.data = this.contactService['data'];
         this.refreshData();
     }
 
@@ -73,17 +81,17 @@ export class SubscriptionsComponent extends AppComponentBase implements OnInit {
     }
 
     refreshData(forced = false) {
-        let subData = this._orderSubscriptionService['data'],
+        let subData = this.orderSubscriptionService['data'],
             groupId = this.data.contactInfo.id;
         if (!forced && subData && subData.groupId == groupId)
             this.setDataSource(subData.source);
         else
-            this._orderSubscriptionService
+            this.orderSubscriptionService
                 .getSubscriptionHistory(groupId)
                 /** Filter draft subscriptions */
                 .pipe(map(subscriptions => subscriptions.filter(subscription => subscription.statusCode !== 'D')))
                 .subscribe(result => {
-                    this._orderSubscriptionService['data'] = {
+                    this.orderSubscriptionService['data'] = {
                         groupId: groupId,
                         source: result
                     };
@@ -92,13 +100,23 @@ export class SubscriptionsComponent extends AppComponentBase implements OnInit {
                 });
     }
 
-    cancelSubscription(id: number) {
-        abp.message.confirm('', this.l('CancelBillingConfirm'), result => {
+    cancelSubscription(id: number, $event) {
+        this.dialog.closeAll();
+        $event.stopPropagation();
+        this.dialog.open(CancelSubscriptionDialogComponent, {
+            width: '400px',
+            data: {
+                title: this.ls.l('CancelBillingConfirm')
+            }
+        }).afterClosed().subscribe(result => {
             if (result) {
-                this._orderSubscriptionService
-                    .cancel(id)
+                this.orderSubscriptionService
+                    .cancel(new CancelOrderSubscriptionInput({
+                        orderSubscriptionId: id,
+                        cancelationReason: result.cancellationReason
+                    }))
                     .subscribe(() => {
-                        abp.notify.success(this.l('Cancelled'));
+                        abp.notify.success(this.ls.l('Cancelled'));
                         this.refreshData(true);
                     });
             }
@@ -107,7 +125,7 @@ export class SubscriptionsComponent extends AppComponentBase implements OnInit {
 
     showUserImpersonateLookUpModal(e, record: any): void {
         this.impersonateTenantId = record.tenantId;
-        const impersonateDialog = this._dialog.open(CommonLookupModalComponent, {
+        const impersonateDialog = this.dialog.open(CommonLookupModalComponent, {
             panelClass: [ 'slider' ],
             data: { tenantId: this.impersonateTenantId }
         });
@@ -118,7 +136,7 @@ export class SubscriptionsComponent extends AppComponentBase implements OnInit {
     }
 
     impersonateUser(item: NameValueDto): void {
-        this._impersonationService.impersonate(
+        this.impersonationService.impersonate(
             parseInt(item.value),
             this.impersonateTenantId
         );
@@ -139,5 +157,28 @@ export class SubscriptionsComponent extends AppComponentBase implements OnInit {
             this.dataGrid.instance.clearSorting();
         this.dataSource.sort(['serviceType', { getter: 'id', desc: true }]);
         this.dataSource.load();
+    }
+
+    openSubscriptionDialog(e?: any) {
+        this.dialog.closeAll();
+        let data: any = { contactId: this.data.contactInfo.id };
+        if (e && e.data) {
+            const subscription: OrderSubscriptionDto = e.data;
+            data = {
+                ...data,
+                endDate: subscription.endDate,
+                systemType: subscription.systemType,
+                code: subscription.statusCode,
+                name: subscription.serviceTypeName
+            };
+        }
+        this.dialog.open(AddSubscriptionDialogComponent, {
+            panelClass: ['slider'],
+            disableClose: false,
+            hasBackdrop: false,
+            closeOnNavigation: true,
+            data: data
+        });
+        e.stopPropagation ? e.stopPropagation() : e.event.stopPropagation();
     }
 }

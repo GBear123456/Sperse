@@ -12,7 +12,7 @@ import { NavLink } from '@app/crm/contacts/nav-link.model';
 })
 export class ItemDetailsLayoutComponent implements OnInit {
     @Input() navLinks: NavLink[];
-    @Input() referrerParams: Params;
+    @Input() queryParams: Params;
     @Input() rightPanelOpened: boolean;
     @Input() rightPanelWidth: string;
     @Output() onClose: EventEmitter<null> = new EventEmitter<null>();

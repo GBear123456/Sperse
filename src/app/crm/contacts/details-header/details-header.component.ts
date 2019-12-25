@@ -46,7 +46,6 @@ import { UserManagementService } from '@shared/common/layout/user-management-lis
 import { ContextType } from '@app/crm/contacts/details-header/context-type.enum';
 import { ContextMenuItem } from '@app/crm/contacts/details-header/context-menu-item.interface';
 import { AppPermissions } from '@shared/AppPermissions';
-import { InplaceEditModel } from '@app/shared/common/inplace-edit/inplace-edit.model';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { CacheHelper } from '@shared/common/cache-helper/cache-helper';
 import { MessageService } from '@abp/message/message.service';
@@ -86,8 +85,18 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
 
     private contactInfo: BehaviorSubject<ContactInfoDto> = new BehaviorSubject<ContactInfoDto>(new ContactInfoDto());
     contactInfo$: Observable<ContactInfoDto> = this.contactInfo.asObservable();
+
     private _personContactInfo: BehaviorSubject<PersonContactInfoDto> = new BehaviorSubject<PersonContactInfoDto>(new PersonContactInfoDto());
     personContactInfo$: Observable<PersonContactInfoDto> = this._personContactInfo.asObservable();
+    personOrganizationInfo$: Observable<PersonOrgRelationShortInfo> = this.personContactInfo$.pipe(
+        map((personContactInfo: PersonContactInfoDto) => personContactInfo['personOrgRelationInfo'])
+    );
+    personOrganizationId$: Observable<number> = this.personOrganizationInfo$.pipe(
+        map((personOrganizationInfo: PersonOrgRelationShortInfo) => personOrganizationInfo && personOrganizationInfo.id)
+    );
+    personJobTitle$: Observable<string> = this.personOrganizationInfo$.pipe(
+        map((personOrganizationInfo: PersonOrgRelationShortInfo) => personOrganizationInfo && personOrganizationInfo.jobTitle)
+    );
     contactId: number;
 
     private readonly ADD_OPTION_CACHE_KEY = 'add_option_active_index';
@@ -101,6 +110,13 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
     addContextMenuItems: ContextMenuItem[] = [];
     addButtonTitle = '';
     isBankCodeLayout = this.userManagementService.checkBankCodeFeature();
+    nameValidationRules = [
+        { type: 'required', message: this.ls.l('FullNameIsRequired') },
+        { type: 'pattern', pattern: AppConsts.regexPatterns.fullName, message: this.ls.l('FullNameIsNotValid') }
+    ];
+    companyValidationRules = [
+        { type: 'required', message: this.ls.l('CompanyNameIsRequired') }
+    ];
 
     constructor(
         injector: Injector,
@@ -211,7 +227,9 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
             id: orgRelationInfo.id,
             relationshipType: orgRelationInfo.relationType.id,
             jobTitle: orgRelationInfo.jobTitle
-        })).subscribe(() => {});
+        })).subscribe(() => {
+            this._personContactInfo.next(this.personContactInfo);
+        });
     }
 
     removePersonOrgRelation(event) {
@@ -231,7 +249,6 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
                                 this.data['organizationContactInfo'] = undefined;
                                 this.data.primaryOrganizationContactId = orgRelations.length ?
                                     orgRelations.reverse()[0].organization.id : undefined;
-                                this.contactInfo.next(this.data);
                             }
                             orgRelations.splice(orgRelations.indexOf(orgRelationToDelete), 1);
                             this.displayOrgRelation(orgRelationToDelete.organization.id);
@@ -333,54 +350,8 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
 
     private handlePhotoChange(dataField: string, photo: string, thumbnailId: string) {
         this.data[dataField].primaryPhoto = photo;
-
         if (this.data[dataField].userId == abp.session.userId)
             abp.event.trigger('profilePictureChanged', thumbnailId);
-    }
-
-    /** @todo refactor as there is infinite calling after mouse move */
-    getNameInplaceEditData(): Observable<InplaceEditModel> {
-        return this.getInplaceEditData('personContactInfo', [
-            {type: 'required', message: this.ls.l('FullNameIsRequired')},
-            {type: 'pattern', pattern: AppConsts.regexPatterns.fullName, message: this.ls.l('FullNameIsNotValid')}
-        ]);
-    }
-
-    /** @todo refactor as there is infinite calling after mouse move */
-    getCompanyNameInplaceEditData(): Observable<InplaceEditModel> {
-        return this.getInplaceEditData('organizationContactInfo', [
-            {type: 'required', message: this.ls.l('CompanyNameIsRequired')}
-        ]);
-    }
-
-    getInplaceEditData(field, validationRules): Observable<InplaceEditModel> {
-        return this.contactInfo$.pipe(map(() => {
-            let contactInfo = this.data && this.data[field];
-            if (contactInfo)
-                return {
-                    id: contactInfo.id,
-                    isReadOnlyField: !this.manageAllowed,
-                    value: (contactInfo.fullName || '').trim(),
-                    validationRules: validationRules,
-                    isEditDialogEnabled: true,
-                    lEntityName: 'Name',
-                    lEditPlaceholder: this.ls.l('ClientNamePlaceholder')
-                };
-        }));
-    }
-
-    getJobTitleInplaceEditData() {
-        return this.personContactInfo$.pipe(map((data) => {
-            let orgRelationInfo = data && data['personOrgRelationInfo'];
-            if (orgRelationInfo)
-                return {
-                    id: orgRelationInfo.id,
-                    isReadOnlyField: !this.manageAllowed,
-                    value: (orgRelationInfo.jobTitle || '').trim(),
-                    lEntityName: 'JobTitle',
-                    lEditPlaceholder: this.ls.l('JobTitle')
-                };
-        }));
     }
 
     showEditPersonDialog(event) {
@@ -409,12 +380,13 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
         value = value.trim();
         if (!value)
             return;
-        this.data.personContactInfo.fullName = value;
         let person = this.data.personContactInfo.person;
         this.nameParserService.parseIntoPerson(value, person);
         this.personContactServiceProxy.updatePersonName(
-            UpdatePersonNameInput.fromJS(_.extend({id:  person.contactId}, person))
-        ).subscribe(() => {});
+            UpdatePersonNameInput.fromJS(_.extend({ id: person.contactId}, person))
+        ).subscribe(() => {
+            this.data.personContactInfo.fullName = value;
+        });
     }
 
     get addOptionCacheKey() {
@@ -436,7 +408,7 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
     }
 
     updateSaveOption(option: ContextMenuItem) {
-        if (option.visible) {
+        if (option && option.visible) {
             this.addButtonTitle = option.text;
             option.selected = true;
             this.addContextComponent.instance.option('selectedItem', option);
@@ -569,5 +541,9 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
 
     refresh() {
         this.onInvalidate.emit();
+    }
+
+    trim(value: string): string {
+        return (value || '').trim();
     }
 }

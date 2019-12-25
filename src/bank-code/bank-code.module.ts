@@ -25,7 +25,7 @@ import { AnnouncementsComponent } from './dashboard/announcements/announcements.
 import { TotalCodesCrackedComponent } from './dashboard/total-codes-cracked/total-codes-cracked.component';
 import { GoalsCrackedComponent } from './dashboard/goals-cracked/goals-cracked.component';
 import { CountersComponent } from './dashboard/counters/counters.component';
-
+import { MemberSubscriptionServiceProxy } from '@shared/service-proxies/service-proxies';
 
 @NgModule({
     declarations: [
@@ -63,7 +63,8 @@ import { CountersComponent } from './dashboard/counters/counters.component';
             'titleFontSize': '13',
             'startFromZero': false
         })
-    ]
+    ],
+    providers: [ MemberSubscriptionServiceProxy ]
 })
 export class BankCodeModule {
     constructor(

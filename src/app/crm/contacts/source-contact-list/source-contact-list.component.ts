@@ -33,26 +33,35 @@ export class SourceContactListComponent {
     contacts: any = [];
     private lookupTimeout: any;
     private _leadId: number;
+    private lookupSubscription: any;
 
     constructor(
         injector: Injector,
         public ls: AppLocalizationService,
         private changeDetectorRef: ChangeDetectorRef,
         private contactProxy: ContactServiceProxy
-    ) {  }
+    ) {}
 
     loadSourceContacts(searchPhrase?: string, elm?: any) {
         let dxList  = this.sourceComponent.dxList;
         if (dxList && !elm)
             elm = dxList.instance.element();
         elm && abp.ui.setBusy(elm);
-        this.contactProxy.getSourceContacts(searchPhrase, this._leadId, 10)
+        this.lookupSubscription && this.lookupSubscription.unsubscribe();
+        this.lookupSubscription = this.contactProxy.getSourceContacts(searchPhrase, this._leadId, 10)
             .pipe(finalize(() => elm && abp.ui.clearBusy(elm)))
             .subscribe(res => {
-                let searchBox = this.sourceComponent.dxSearch;
-                if (searchBox)
-                    searchBox.instance.option('value', searchPhrase);
-                this.onDataLoaded.emit(this.contacts = res);
+                this.onDataLoaded.emit(this.contacts = res.map(item => {
+                    let person = item.personName && item.personName.trim();
+                    return {
+                        id: item.id,
+                        name: person || item.companyName,
+                        sufix: item.affiliateCode ? ' (' + item.affiliateCode + ')' : '',
+                        addition: person ?
+                            [item.jobTitle, item.companyName].filter(Boolean).join(' @ ') :
+                            this.ls.l('Company')
+                    };
+                }));
                 this.changeDetectorRef.detectChanges();
             });
     }

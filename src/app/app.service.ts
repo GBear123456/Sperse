@@ -58,7 +58,7 @@ export class AppService extends AppServiceBase {
     private personContactServiceProxy: PersonContactServiceProxy;
     private notify: NotifyService;
     private appLocalizationService: AppLocalizationService;
-    private setToolbarTimeout: number;
+    private setToolbarTimeout: any;
     private tenantSubscriptionProxy: TenantSubscriptionServiceProxy;
     private subscriptionBarsClosed = {};
     private subscriptionBarVisible: Boolean;
@@ -348,7 +348,8 @@ export class AppService extends AppServiceBase {
 
     updateToolbar(config) {
         clearTimeout(this.setToolbarTimeout);
-        this.setToolbarTimeout = setTimeout(() => { this.toolbarConfig = config; });
+        this.setToolbarTimeout = setTimeout(
+            () => this.toolbarConfig = config, 500);
     }
 
     setContactInfoVisibility(value: boolean) {

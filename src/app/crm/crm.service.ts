@@ -106,7 +106,10 @@ export class CrmService {
             })
         }).subscribe((result) => {
             if ('data' in result) {
-                d.resolve(result['data'], { summary: result['summary'] });
+                d.resolve(result['data'], {
+                    summary: result['summary'],
+                    totalCount: result['totalCount']
+                });
             } else {
                 d.resolve(result);
             }

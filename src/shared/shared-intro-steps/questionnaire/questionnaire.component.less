@@ -15,6 +15,10 @@
             text-align: center;
             color: #202b35;
             margin-bottom: 30px;
+            @media (max-width: 350px) {
+                margin-bottom: 0;
+                font-size: 20px;
+            }
         }
 
         .questions {
@@ -86,6 +90,22 @@
                 input:checked ~ .checkmark {
                     background-color: #35aeee;
                     border-color: #35aeee;
+                }
+
+                @media (max-width: 767px) {
+                    padding: 5px 5px 5px 40px;
+                    margin-bottom: 5px;
+                    font-size: 14px;
+                    .checkmark {
+                        top: 0;
+                        bottom: 0;
+                        left: 7px;
+                        margin: auto;
+                    }
+                }
+
+                @media (max-width: 350px) {
+                    font-size: 12px;
                 }
             }
         }

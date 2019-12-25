@@ -1,11 +1,9 @@
 :host {
     width: 100%;
     min-height: 330px;
-    border: 1px solid #E5E9EC;
     background-color: #FFFFFF;
-    border-radius: 4px;
     position: relative;
-    padding: 8px 30px;
+    padding-top: 30px;
     display: block;
 
     header {
@@ -24,21 +22,22 @@
             }
 
             .title {
-                font-size: 18px;
+                font-size: 20px;
                 font-weight: 700;
-                letter-spacing: 0.4px;
+                letter-spacing: normal;
                 color: #212c36;
                 margin: 0 23px 0 0;
-                line-height: 1;
+                line-height: 1.2;
                 padding: 5px 0;
+                line-height: 1.2;
             }
 
             .legend {
                 display: none;
                 flex-direction: column;
                 position: absolute;
-                top: 6px;
-                right: 20px;
+                top: 23px;
+                right: 0;
                 padding: 5px 5px 0 10px;
                 background: #fff;
                 border: 2px solid transparent;
@@ -59,7 +58,9 @@
                     span.legendText {
                         font-size: 12px;
                         margin-right: 5px;
-                        color: #677380;
+                    }
+                    span.legendText, i {
+                        color: rgba(103, 115, 128, .6);
                     }
                 }
 
@@ -117,9 +118,9 @@
                     min-height: 24px;
                     text-align: right;
                     border: 0;
-                    font-size: 10.7px;
+                    font-size: 14px;
                     font-weight: 500;
-                    letter-spacing: 0.2px;
+                    letter-spacing: normal;
                 }
 
                 .dx-dropdowneditor-button {

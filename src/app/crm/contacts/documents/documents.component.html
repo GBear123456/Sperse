@@ -1,13 +1,9 @@
 <div [hidden]="openDocumentMode" class="wrapper">
-    <dx-tooltip width="130px">
-        <div *dxTemplate="let data of 'content'">
-            <div class="lists-tooltip-container">
-                <dx-list accessKey="actionsMenu" [dataSource]="actionMenuItems"
-                    (onItemClick)="onMenuItemClick($event)">
-                </dx-list>
-            </div>
-        </div>
-    </dx-tooltip>
+    <action-menu width="130px"
+                 [items]="actionMenuItems"
+                 target=""
+                 (onItemClick)="onMenuItemClick($event)">
+    </action-menu>
     <div class="grid-view">
         <dx-data-grid id="gridContainer"
                     height="100%"

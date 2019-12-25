@@ -79,6 +79,8 @@ import { AppPermissions } from '@shared/AppPermissions';
 import { BankCodeLettersModule } from '@app/shared/common/bank-code-letters/bank-code-letters.module';
 import { SliceModule } from '@app/shared/common/slice/slice.module';
 import { MapModule } from '@app/shared/common/slice/map/map.module';
+import { OrderDropdownModule } from '@app/crm/shared/order-dropdown/order-dropfown.module';
+import { ActionMenuModule } from '@app/shared/common/action-menu/action-menu.module';
 
 @NgModule({
     imports: [
@@ -133,7 +135,9 @@ import { MapModule } from '@app/shared/common/slice/map/map.module';
         LoadingSpinnerModule,
         BankCodeLettersModule,
         SliceModule,
-        MapModule
+        MapModule,
+        OrderDropdownModule,
+        ActionMenuModule
     ],
     declarations: [
         ClientsComponent,

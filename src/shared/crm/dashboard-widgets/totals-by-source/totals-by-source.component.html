@@ -9,7 +9,7 @@
     </header>
     <ng-container *ngIf="data$ | async as data">
         <div *ngIf="totalCount$ | async as totalCount; else noData">
-            <div *ngIf="!loading" class="totalsNumbers" [ngStyle]="{top: totalNumbersTop}">
+            <div *ngIf="!loading" class="totalsNumbers" [ngStyle]="{ top: totalNumbersTop }">
                 <span class="range-name" [ngStyle]="{color: rangeColor}">{{percentage && rangeName}}</span>
                 <span class="total-count" [ngStyle]="{color: rangeColor}">{{rangeCount || totalCount}}</span>
                 <span class="percentage" [ngStyle]="{color: rangeColor}">{{percentage}}</span>

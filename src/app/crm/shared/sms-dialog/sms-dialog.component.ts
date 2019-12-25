@@ -65,6 +65,10 @@ export class SMSDialogComponent {
     }
 
     save() {
+        if (this.countryPhoneNumber.isEmpty()) {
+            /** Clear select box widget value */
+            this.phoneNumber = '';
+        }
         if (this.validationGroup.instance.validate().isValid && this.countryPhoneNumber.isValid()) {
             this.loadingService.startLoading(this.validationGroup.instance.element());
             this.contactCommunicationServiceProxy.sendSMS(new SendSMSToContactInput({

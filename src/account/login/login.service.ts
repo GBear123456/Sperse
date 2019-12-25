@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { Observable } from 'rxjs';
 import { finalize, map, publishReplay, refCount } from 'rxjs/operators';
+import toPairs from 'lodash/toPairs';
 
 /** Application imports */
 import { AppAuthService } from '@shared/common/auth/app-auth.service';
@@ -116,6 +117,8 @@ export class LoginService {
             .subscribe((result: AuthenticateResultModel) => {
                 this.processAuthenticateResult(result, redirectUrl);
                 this.authService.startTokenCheck();
+            }, () => {
+                abp.multiTenancy.setTenantIdCookie();
             });
     }
 
@@ -273,9 +276,19 @@ export class LoginService {
             sessionStorage.removeItem('redirectUrl');
         else {
             redirectUrl = UrlHelper.initialUrl;
-
             if (redirectUrl.indexOf('/account') > 0)
                 redirectUrl = AppConsts.appBaseUrl;
+            else {
+                let params = UrlHelper.getQueryParametersUsingParameters(
+                    UrlHelper.getInitialUrlParameters()
+                );
+                delete params.secureId;
+                delete params.redirect;
+                delete params.switchAccountToken;
+
+                redirectUrl = redirectUrl.split('?').shift() +
+                    '?' + toPairs(params).map(pair => pair.join('='));
+            }
         }
 
         setTimeout(() => location.href = redirectUrl, 300);

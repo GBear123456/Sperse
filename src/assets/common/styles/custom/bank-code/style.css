@@ -9,25 +9,21 @@
   background: #fff;
   border-radius: 0 !important;
   width: 508px;
-  height: 323px;
   max-width: 98%;
   max-height: 98%;
 }
 .swal-modal .swal-icon.swal-icon--warning,
-.swal-modal .swal-icon.swal-icon--info {
+.swal-modal .swal-icon.swal-icon--info,
+.swal-modal .swal-icon.swal-icon--success {
   background: #FFF;
-  border: 10px solid #f09e1f !important;
-  box-shadow: 0 0 20px 20px #f09e1f !important;
+  border: 10px solid rgba(240, 158, 31, 0.2) !important;
+  box-shadow: 0 0 20px 20px rgba(240, 158, 31, 0.2) !important;
 }
 .swal-modal .swal-icon.swal-icon--error {
   background: #fff url('../../../icons/alert-icon.svg') 50% 50% no-repeat;
   border: 0 !important;
   box-shadow: none !important;
   border-radius: 0;
-}
-.swal-modal .swal-icon.swal-icon--success {
-  background: #FFF;
-  border: 10px solid #f09e1f;
 }
 .swal-modal .swal-icon.swal-icon--success .swal-icon--success__hide-corners {
   height: 50px!important;
@@ -41,8 +37,6 @@
 }
 .swal-modal .swal-icon.swal-icon--warning:before {
   content: "\2713";
-}
-.swal-modal .swal-icon > div:first-child:before {
   color: #000 !important;
 }
 .swal-modal .swal-title {

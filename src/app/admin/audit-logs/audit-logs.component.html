@@ -15,7 +15,6 @@
                 <div id="operationsLogsGridContainer">
                     <ghost-list [hidden]="isDataLoaded"></ghost-list>
                     <dx-data-grid id="operationsLogsGrid"
-                                  [hidden]="!isDataLoaded"
                                   [remoteOperations]="true"
                                   [dataSource]="operationLogsDataSource"
                                   [allowColumnReordering]="true"

@@ -15,9 +15,6 @@
                     [dataSource]="organizations"
                     (onCustomItemCreating)="onCustomItemCreating($event, 'name')"
                     (onFocusIn)="onFieldFocus($event)">
-                    <dx-validator>
-                        <dxi-validation-rule type="required" message="{{ls.l('RequiredField', ls.l('Company'))}}"></dxi-validation-rule>
-                    </dx-validator>
                 </dx-select-box>
             </div>
             <div>
@@ -26,9 +23,6 @@
                     name="firstName"
                     maxLength="50"
                     [(value)]="data.firstName">
-                    <dx-validator>
-                        <dxi-validation-rule type="required" message="{{ls.l('RequiredField', ls.l('FirstName'))}}"></dxi-validation-rule>
-                    </dx-validator>
                 </dx-text-box>
             </div>
             <div>
@@ -37,9 +31,6 @@
                     name="lastName"
                     maxLength="50"
                     [(value)]="data.lastName">
-                    <dx-validator>
-                        <dxi-validation-rule type="required" message="{{ls.l('RequiredField', ls.l('LastName'))}}"></dxi-validation-rule>
-                    </dx-validator>
                 </dx-text-box>
             </div>
             <div>
@@ -56,7 +47,6 @@
                     (onCustomItemCreating)="onCustomItemCreating($event, 'emailAddress')"
                     (onFocusIn)="onFieldFocus($event)">
                     <dx-validator>
-                        <dxi-validation-rule type="required" message="{{ls.l('RequiredField', ls.l('Email'))}}"></dxi-validation-rule>
                         <dxi-validation-rule type="pattern" [pattern]="emailRegEx" message="{{ls.l('EmailIsNotValid')}}."></dxi-validation-rule>
                     </dx-validator>
                 </dx-select-box>

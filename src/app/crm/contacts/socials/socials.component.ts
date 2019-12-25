@@ -85,7 +85,7 @@ export class SocialsComponent {
         return shift;
     }
 
-    showEditDialog(data, event, index) {
+    showEditDialog(data, event) {
         if (!this.isCompany || this.contactInfoData && this.contactInfoData.contactId)
             this.showSocialDialog(data, event);
         else
@@ -171,24 +171,6 @@ export class SocialsComponent {
                 });
             }
         });
-    }
-
-    getLinkInplaceEditData(link) {
-        let linkLocalization = this.ls.l('Link');
-        return {
-            id: link.id,
-            value: link.url,
-            link: this.normalizeLink(link.url),
-            validationRules: [
-                {type: 'required', message: this.ls.l('LinkIsRequired')}
-            ],
-            isDeleteEnabled: true,
-            isEditDialogEnabled: true,
-            lEntityName: linkLocalization,
-            lEditPlaceholder: linkLocalization,
-            lDeleteConfirmTitle: this.ls.l('DeleteContactHeader', linkLocalization),
-            lDeleteConfirmMessage: this.ls.l('DeleteContactMessage', linkLocalization.toLowerCase())
-        };
     }
 
     normalizeLink(link) {

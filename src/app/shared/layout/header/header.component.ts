@@ -94,7 +94,6 @@ export class HeaderComponent implements OnInit {
         });
     }
 
-
     get chatEnabled(): boolean {
         return !this.abpSessionService.tenantId || this.feature.isEnabled(AppFeatures.AppChatFeature);
     }

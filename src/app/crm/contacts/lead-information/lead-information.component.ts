@@ -22,6 +22,7 @@ import { AppPermissions } from '@shared/AppPermissions';
 import { CrmStore, OrganizationUnitsStoreActions, OrganizationUnitsStoreSelectors } from '@app/crm/store';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 import { SourceContactListComponent } from '../source-contact-list/source-contact-list.component';
+import { InplaceEditModel } from '@app/shared/common/inplace-edit/inplace-edit.model';
 
 @Component({
     selector: 'lead-information',
@@ -162,7 +163,7 @@ export class LeadInformationComponent extends AppComponentBase implements OnInit
                 this.contactsService.orgUnitsUpdate({
                     allOrganizationUnits: organizationUnits,
                     selectedOrgUnits: [organizationUnits.find((organizationUnit: OrganizationUnitShortDto) => {
-                        return organizationUnit.id === (leadInfo.organizationUnitId || this.data.leadInfo.sourceOrganizationUnitId);
+                        return organizationUnit.id === (leadInfo.sourceOrganizationUnitId || this.data.leadInfo.sourceOrganizationUnitId);
                     })].filter(Boolean).map(item => item.id)
                 });
             }, this.constructor.name);
@@ -183,7 +184,7 @@ export class LeadInformationComponent extends AppComponentBase implements OnInit
         this.selectedTabIndex = this.APP_TAB_INDEX;
     }
 
-    getPropData(item) {
+    getPropData(item): InplaceEditModel {
         if (item.data)
             return item.data;
 
@@ -193,7 +194,7 @@ export class LeadInformationComponent extends AppComponentBase implements OnInit
             value: this.getPropValue(field),
             isEditDialogEnabled: false,
             lEntityName: field,
-            lEditPlaceholder: this.l('EditValuePlaceholder')
+            editPlaceholder: this.l('EditValuePlaceholder')
         };
     }
 
