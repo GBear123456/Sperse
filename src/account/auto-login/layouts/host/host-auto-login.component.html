@@ -5,7 +5,7 @@
 
             <form #loginForm="ngForm" class="login-form" method="post" novalidate (ngSubmit)="sendloginLink()">
                 <div class="form-group clearfix">
-                    {{ ls.l(isLinkSent ? 'AutoLoginMailSentMessage' : 'AutoLoginMessage', userEmail, tenantName) }}
+                    <p [innerHTML]="ls.l(isLinkSent ? 'AutoLoginMailSentMessage' : 'AutoLoginMessage', '<b>' + userEmail + '</b>', tenantName)"></p>
                     <div *ngIf="!isLinkSent && detectedTenancies.length">
                         <p>{{ls.l('SelectTenant_Information')}}</p>
                         <div class="list-group">
