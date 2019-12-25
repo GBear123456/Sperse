@@ -2,9 +2,7 @@
     <div class="login-box">
         <form #loginForm="ngForm" class="login-form" method="post" novalidate (ngSubmit)="sendloginLink()">
             <h3>{{ls.l('Auto Login')}}</h3>
-            <div class="form-group clearfix">
-                {{ ls.l(isLinkSent ? 'AutoLoginMailSentMessage' : 'AutoLoginMessage', userEmail, tenantName) }}
-            </div>
+            <div class="form-group clearfix" [innerHTML]="ls.l(isLinkSent ? 'AutoLoginMailSentMessage' : 'AutoLoginMessage', '<b>' + userEmail + '</b>', tenantName)"></div>
             <div class="form-actions">
                 <button type="submit" class="submit" [hidden]="isLinkSent">
                     {{ls.l("Auto Login")}}
