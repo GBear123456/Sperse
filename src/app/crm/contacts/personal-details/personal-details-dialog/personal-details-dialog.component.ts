@@ -5,14 +5,15 @@ import { Component, OnInit, AfterViewInit, Inject, Injector, ElementRef } from '
 import { CacheService } from 'ng2-cache-service';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { FileSystemFileEntry } from 'ngx-file-drop';
-import { finalize } from 'rxjs/operators';
+import { Observable, ReplaySubject } from 'rxjs';
+import { finalize, map } from 'rxjs/operators';
 
 /** Application imports */
 import { CacheHelper } from '@shared/common/cache-helper/cache-helper';
 import { VerificationChecklistItemType, VerificationChecklistItem,
     VerificationChecklistItemStatus } from '../../verification-checklist/verification-checklist.model';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
-import { UploadDocumentInput } from '@shared/service-proxies/service-proxies';
+import { ContactServiceProxy, ContactInfoDto, UpdateContactAffiliateCodeInput } from '@shared/service-proxies/service-proxies';
 import { StringHelper } from '@shared/helpers/StringHelper';
 import { ContactsService } from '../../contacts.service';
 import { AppFeatures } from '@shared/AppFeatures';
@@ -25,7 +26,7 @@ import { AppConsts } from '@shared/AppConsts';
 export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit {
     showOverviewTab = abp.features.isEnabled(AppFeatures.PFMCreditReport);
     verificationChecklist: VerificationChecklistItem[];
-    private slider: any;
+    contactInfo: ContactInfoDto;
     configMode: boolean;
     overviewPanelSetting = {
         clientScores: true,
@@ -33,10 +34,29 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit {
         verification: true
     };
 
+    private slider: any;
+    private affiliateCode: ReplaySubject<string> = new ReplaySubject(1);
+    affiliateCode$: Observable<string> = this.affiliateCode.asObservable().pipe(
+        map((affiliateCode: string) => (affiliateCode || '').trim())
+    );
+    affiliateValidationRules = [
+        {
+            type: 'pattern',
+            pattern: AppConsts.regexPatterns.affiliateCode,
+            message: this.ls.l('AffiliateCodeIsNotValid')
+        },
+        {
+            type: 'stringLength',
+            max: 50,
+            message: this.ls.l('MaxLengthIs', 50)
+        }
+    ];
+
     constructor(
         private cacheHelper: CacheHelper,
         private cacheService: CacheService,
         private contactsService: ContactsService,
+        private contactProxy: ContactServiceProxy,
         private elementRef: ElementRef,
         public ls: AppLocalizationService,
         public dialogRef: MatDialogRef<PersonalDetailsDialogComponent>,
@@ -48,6 +68,13 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit {
                 right: '-100vw'
             });
         });
+
+        contactsService.contactInfoSubscribe(contactInfo => {
+            if (contactInfo && contactInfo.id) {
+                this.contactInfo = contactInfo;
+                this.affiliateCode.next(contactInfo.affiliateCode);
+            }
+        }, this.constructor.name);
 
         if (this.showOverviewTab) {
             contactsService.verificationSubscribe(
@@ -87,8 +114,8 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit {
     }
 
     initVerificationChecklist(): void {
-        let person = this.data.personContactInfo.person;
-        let contactDetails = this.data.personContactInfo.details;
+        let person = this.contactInfo.personContactInfo.person;
+        let contactDetails = this.contactInfo.personContactInfo.details;
         this.verificationChecklist = [
             this.getVerificationChecklistItem(
                 VerificationChecklistItemType.Identity,
@@ -141,6 +168,19 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit {
 
     toggleConfigMode() {
         this.configMode = !this.configMode;
+    }
+
+    updateAffiliateCode(value) {
+        value = value.trim();
+        if (!value)
+            return;
+        this.contactProxy.updateAffiliateCode(new UpdateContactAffiliateCodeInput({
+            contactId: this.contactInfo.personContactInfo.id,
+            affiliateCode: value
+        })).subscribe(() => {
+            this.contactInfo.affiliateCode = value;
+            this.affiliateCode.next(value);
+        });
     }
 
     close() {

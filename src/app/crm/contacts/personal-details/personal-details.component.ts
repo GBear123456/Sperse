@@ -203,9 +203,7 @@ export class PersonalDetailsComponent implements OnDestroy {
                 disableClose: false,
                 hasBackdrop: false,
                 closeOnNavigation: true,
-                data: {
-                    personContactInfo: this.personContactInfo
-                }
+                data: {}
             })
         );
     }

@@ -2,7 +2,18 @@
 <mat-dialog-content>
     <mat-tab-group>
         <mat-tab [label]="ls.l('General')">
-            
+            <div class="affiliate-code">
+                <h3>{{ ls.l('AffiliateInfo') }}</h3>
+                <h4>{{ ls.l('AffiliateCode') }}</h4>
+                <inplace-edit [id]="contactInfo.id"
+                              lEntityName="Name"
+                              [editPlaceholder]="ls.l('Affiliate')"
+                              [value]="affiliateCode$ | async"
+                              [validationRules]="affiliateValidationRules"
+                              [isReadOnlyField]="!contactsService.checkCGPermission(contactInfo.groupId)"
+                              (valueChanged)="updateAffiliateCode($event)">
+                </inplace-edit>
+            </div>            
         </mat-tab>    
         <mat-tab [label]="ls.l('Overview')" *ngIf="showOverviewTab">
             <span class="gear-icon" (click)="toggleConfigMode()"></span>

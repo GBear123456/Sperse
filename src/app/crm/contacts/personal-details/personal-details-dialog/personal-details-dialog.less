@@ -65,4 +65,41 @@
             }
         }
     }
+
+    .affiliate-code {
+        padding: 30px;
+        h3 {
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: 0.56px;
+            color: #202b35;
+            text-transform: uppercase;
+            margin-bottom: 25px;
+        }
+        h4 {
+            font-size: 14px;
+            line-height: 1.43;
+            letter-spacing: 0.28px;
+            color: #677380;
+            margin-bottom: 0;
+        }
+        /deep/ inplace-edit {
+            .inplace-edit-edit-mode {
+                width: 80%;
+                dx-text-box input {
+                    font-size: 14px !important;
+                    background: none;
+                }
+            }
+            .inplace-edit-view-mode {
+                min-height: 33px;
+                .link a {
+                    font-size: 15px;
+                    letter-spacing: 0.3px;
+                    color: #424c56;
+                }
+            }
+        }
+
+    }
 }

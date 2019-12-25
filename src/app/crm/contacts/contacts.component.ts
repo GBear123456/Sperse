@@ -40,8 +40,7 @@ import {
     CustomerServiceProxy,
     PersonContactInfoDto,
     OrganizationContactServiceProxy,
-    OrganizationContactInfoDto,
-    UpdateContactAffiliateCodeInput
+    OrganizationContactInfoDto
 } from '@shared/service-proxies/service-proxies';
 import { OperationsWidgetComponent } from './operations-widget/operations-widget.component';
 import { ContactsService } from './contacts.service';
@@ -118,22 +117,6 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
 
     isCommunicationHistoryAllowed = false;
     isSendSmsAndEmailAllowed = false;
-    private affiliateCode: ReplaySubject<string> = new ReplaySubject(1);
-    affiliateCode$: Observable<string> = this.affiliateCode.asObservable().pipe(
-        map((affiliateCode: string) => (affiliateCode || '').trim())
-    );
-    affiliateValidationRules = [
-        {
-            type: 'pattern',
-            pattern: AppConsts.regexPatterns.affiliateCode,
-            message: this.l('AffiliateCodeIsNotValid')
-        },
-        {
-            type: 'stringLength',
-            max: 50,
-            message: this.l('MaxLengthIs', 50)
-        }
-    ];
     public contactGroupId: BehaviorSubject<string> = new BehaviorSubject<string>(null);
     public contactGroupId$: Observable<string> = this.contactGroupId.asObservable().pipe(filter(Boolean));
 
@@ -372,9 +355,6 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
 
     private fillContactDetails(result: ContactInfoDto, contactId = null) {
         this.contactService['data'].contactInfo = result;
-        if (result.id) {
-            this.affiliateCode.next(result.affiliateCode);
-        }
         this.contactsService.contactInfoUpdate(result);
         this.contactGroupId.next(result.groupId);
         this.assignedUsersSelector = select(
@@ -838,18 +818,5 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
 
     loadTargetEntity(event, direction) {
         this.targetEntity.next(direction);
-    }
-
-    updateAffiliateCode(value) {
-        value = value.trim();
-        if (!value)
-            return;
-        this.contactServiceProxy.updateAffiliateCode(new UpdateContactAffiliateCodeInput({
-            contactId: this.contactInfo.id,
-            affiliateCode: value
-        })).subscribe(() => {
-            this.contactInfo.affiliateCode = value;
-            this.affiliateCode.next(value);
-        });
     }
 }
