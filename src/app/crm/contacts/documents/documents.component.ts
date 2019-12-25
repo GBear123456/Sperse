@@ -255,7 +255,7 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
                 ]
             }
         ];
-        this._clientService.toolbarUpdate({ customToolbar: this.viewerToolbarConfig });
+        this.clientService.toolbarUpdate({ customToolbar: this.viewerToolbarConfig });
     }
 
     getViewedDocumentElement() {
