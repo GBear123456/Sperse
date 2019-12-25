@@ -58597,6 +58597,58 @@ export interface IImportAddressInput {
     countryCode: string | undefined;
 }
 
+export class ImportCustomFieldsInput implements IImportCustomFieldsInput {
+    customField1!: string | undefined;
+    customField2!: string | undefined;
+    customField3!: string | undefined;
+    customField4!: string | undefined;
+    customField5!: string | undefined;
+
+    constructor(data?: IImportCustomFieldsInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.customField1 = data["customField1"];
+            this.customField2 = data["customField2"];
+            this.customField3 = data["customField3"];
+            this.customField4 = data["customField4"];
+            this.customField5 = data["customField5"];
+        }
+    }
+
+    static fromJS(data: any): ImportCustomFieldsInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new ImportCustomFieldsInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["customField1"] = this.customField1;
+        data["customField2"] = this.customField2;
+        data["customField3"] = this.customField3;
+        data["customField4"] = this.customField4;
+        data["customField5"] = this.customField5;
+        return data; 
+    }
+}
+
+export interface IImportCustomFieldsInput {
+    customField1: string | undefined;
+    customField2: string | undefined;
+    customField3: string | undefined;
+    customField4: string | undefined;
+    customField5: string | undefined;
+}
+
 export class ImportPersonalInput implements IImportPersonalInput {
     fullName!: ImportFullName | undefined;
     doB!: moment.Moment | undefined;
@@ -58628,6 +58680,7 @@ export class ImportPersonalInput implements IImportPersonalInput {
     profileSummary!: string | undefined;
     interests!: string[] | undefined;
     affiliateCode!: string | undefined;
+    customFields!: ImportCustomFieldsInput | undefined;
 
     constructor(data?: IImportPersonalInput) {
         if (data) {
@@ -58674,6 +58727,7 @@ export class ImportPersonalInput implements IImportPersonalInput {
                     this.interests.push(item);
             }
             this.affiliateCode = data["affiliateCode"];
+            this.customFields = data["customFields"] ? ImportCustomFieldsInput.fromJS(data["customFields"]) : <any>undefined;
         }
     }
 
@@ -58720,6 +58774,7 @@ export class ImportPersonalInput implements IImportPersonalInput {
                 data["interests"].push(item);
         }
         data["affiliateCode"] = this.affiliateCode;
+        data["customFields"] = this.customFields ? this.customFields.toJSON() : <any>undefined;
         return data; 
     }
 }
@@ -58755,6 +58810,7 @@ export interface IImportPersonalInput {
     profileSummary: string | undefined;
     interests: string[] | undefined;
     affiliateCode: string | undefined;
+    customFields: ImportCustomFieldsInput | undefined;
 }
 
 export class ImportBusinessInput implements IImportBusinessInput {
@@ -58947,6 +59003,7 @@ export class ImportItemInput implements IImportItemInput {
     utmKeyword!: string | undefined;
     utmAdGroup!: string | undefined;
     utmName!: string | undefined;
+    requestCustomInfo!: ImportCustomFieldsInput | undefined;
 
     constructor(data?: IImportItemInput) {
         if (data) {
@@ -58984,6 +59041,7 @@ export class ImportItemInput implements IImportItemInput {
             this.utmKeyword = data["utmKeyword"];
             this.utmAdGroup = data["utmAdGroup"];
             this.utmName = data["utmName"];
+            this.requestCustomInfo = data["requestCustomInfo"] ? ImportCustomFieldsInput.fromJS(data["requestCustomInfo"]) : <any>undefined;
         }
     }
 
@@ -59021,6 +59079,7 @@ export class ImportItemInput implements IImportItemInput {
         data["utmKeyword"] = this.utmKeyword;
         data["utmAdGroup"] = this.utmAdGroup;
         data["utmName"] = this.utmName;
+        data["requestCustomInfo"] = this.requestCustomInfo ? this.requestCustomInfo.toJSON() : <any>undefined;
         return data; 
     }
 }
@@ -59051,6 +59110,7 @@ export interface IImportItemInput {
     utmKeyword: string | undefined;
     utmAdGroup: string | undefined;
     utmName: string | undefined;
+    requestCustomInfo: ImportCustomFieldsInput | undefined;
 }
 
 export class ImportFieldInfoDto implements IImportFieldInfoDto {
@@ -59355,6 +59415,7 @@ export class ImportContactInput implements IImportContactInput {
     utmKeyword!: string | undefined;
     utmAdGroup!: string | undefined;
     utmName!: string | undefined;
+    requestCustomInfo!: ImportCustomFieldsInput | undefined;
 
     constructor(data?: IImportContactInput) {
         if (data) {
@@ -59413,6 +59474,7 @@ export class ImportContactInput implements IImportContactInput {
             this.utmKeyword = data["utmKeyword"];
             this.utmAdGroup = data["utmAdGroup"];
             this.utmName = data["utmName"];
+            this.requestCustomInfo = data["requestCustomInfo"] ? ImportCustomFieldsInput.fromJS(data["requestCustomInfo"]) : <any>undefined;
         }
     }
 
@@ -59468,6 +59530,7 @@ export class ImportContactInput implements IImportContactInput {
         data["utmKeyword"] = this.utmKeyword;
         data["utmAdGroup"] = this.utmAdGroup;
         data["utmName"] = this.utmName;
+        data["requestCustomInfo"] = this.requestCustomInfo ? this.requestCustomInfo.toJSON() : <any>undefined;
         return data; 
     }
 }
@@ -59508,6 +59571,7 @@ export interface IImportContactInput {
     utmKeyword: string | undefined;
     utmAdGroup: string | undefined;
     utmName: string | undefined;
+    requestCustomInfo: ImportCustomFieldsInput | undefined;
 }
 
 export enum InstanceType {

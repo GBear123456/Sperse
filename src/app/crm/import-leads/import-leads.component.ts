@@ -27,7 +27,7 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { ZipCodeFormatterPipe } from '@shared/common/pipes/zip-code-formatter/zip-code-formatter.pipe';
 import {
     ImportItemInput, ImportInput, ImportPersonalInput, ImportBusinessInput, ImportFullName, ImportAddressInput,
-    ImportServiceProxy, ImportTypeInput, PartnerServiceProxy, GetImportStatusOutput
+    ImportCustomFieldsInput, ImportServiceProxy, ImportTypeInput, PartnerServiceProxy, GetImportStatusOutput
 } from '@shared/service-proxies/service-proxies';
 import { ImportLeadsService } from './import-leads.service';
 import { ImportStatus, ContactGroup } from '@shared/AppEnums';
@@ -196,7 +196,9 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         fullAddress: ImportAddressInput.fromJS({}),
         businessInfo: ImportBusinessInput.fromJS({}),
         companyFullAddress: ImportAddressInput.fromJS({}),
-        workFullAddress: ImportAddressInput.fromJS({})
+        workFullAddress: ImportAddressInput.fromJS({}),
+        customFields: ImportCustomFieldsInput.fromJS({}),
+        requestCustomInfo: ImportCustomFieldsInput.fromJS({}),
     };
 
     public readonly compareFields: any = [
