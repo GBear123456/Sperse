@@ -278,6 +278,10 @@ export class ToolBarComponent implements OnDestroy {
                 hint: this.ls.l('Category'),
                 text: this.ls.l('Category'),
                 icon: this.getImgURI('folder')
+            },
+            options: {
+                hint: this.ls.l('Options'),
+                icon: this.getImgURI('gear-icon')
             }
         };
     }

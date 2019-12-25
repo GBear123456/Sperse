@@ -4,7 +4,6 @@ import { ActivationEnd, Params, Event, NavigationEnd } from '@angular/router';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
-import { CacheService } from 'ng2-cache-service';
 import { Store, select } from '@ngrx/store';
 import { BehaviorSubject, Observable, ReplaySubject, combineLatest, forkJoin, of } from 'rxjs';
 import {
@@ -44,7 +43,6 @@ import {
     OrganizationContactInfoDto,
     UpdateContactAffiliateCodeInput
 } from '@shared/service-proxies/service-proxies';
-import { VerificationChecklistItemType, VerificationChecklistItem, VerificationChecklistItemStatus } from './verification-checklist/verification-checklist.model';
 import { OperationsWidgetComponent } from './operations-widget/operations-widget.component';
 import { ContactsService } from './contacts.service';
 import { AppStoreService } from '@app/store/app-store.service';
@@ -86,7 +84,6 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
     contactInfo: ContactInfoDto = new ContactInfoDto();
     personContactInfo: PersonContactInfoDto;
     primaryContact: any;
-    verificationChecklist: VerificationChecklistItem[];
     leadInfo: LeadInfoDto;
     leadId: number;
     leadStages = [];
@@ -156,7 +153,6 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
         injector: Injector,
         private dialog: MatDialog,
         private dialogService: DialogService,
-        private cacheService: CacheService,
         private userService: UserServiceProxy,
         private contactService: ContactServiceProxy,
         private orgContactService: OrganizationContactServiceProxy,
@@ -187,9 +183,6 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
         this._activatedRoute.queryParams
             .pipe(takeUntil(this.destroy$))
             .subscribe((params: Params) => this.referrerParams = params);
-        contactsService.verificationSubscribe(
-            this.initVerificationChecklist.bind(this)
-        );
         contactsService.invalidateSubscribe(area => this.invalidate(area));
         contactsService.loadLeadInfoSubscribe(() => this.loadLeadData());
 
@@ -256,9 +249,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
     initNavButtons() {
         this.rootComponent.overflowHidden(true);
         this.rootComponent.pageHeaderFixed();
-        let key = this.getCacheKey(abp.session.userId.toString());
-        if (this.cacheService.exists(key))
-            this.rightPanelSetting = this.cacheService.get(key);
+
         this.initNavigatorProperties();
         const itemIdProperty = {
             User: 'id',
@@ -417,7 +408,6 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
         this.primaryContact = result.personContactInfo;
         this.contactInfo = result;
         this.personContactInfo = result.personContactInfo;
-        this.initVerificationChecklist();
 
         this.contactsService.updateUserId(
             this.userService['data'].userId = this.primaryContact.userId
@@ -651,33 +641,6 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
         }));
     }
 
-    private getVerificationChecklistItem(type: VerificationChecklistItemType,
-        status?: VerificationChecklistItemStatus, confirmedCount?, totalCount?): VerificationChecklistItem {
-        return {
-            type: type,
-            status: status,
-            confirmedCount: confirmedCount,
-            totalCount: totalCount
-        } as VerificationChecklistItem;
-    }
-
-    private getVerificationChecklistItemByMultipleValues(items: any[],
-        type: VerificationChecklistItemType
-    ): VerificationChecklistItem {
-        let confirmedCount = 0;
-        items.forEach(i => {
-            if (i.isConfirmed)
-                confirmedCount++;
-        });
-        return this.getVerificationChecklistItem(
-            type,
-            confirmedCount > 0 ? VerificationChecklistItemStatus.success
-                : VerificationChecklistItemStatus.unsuccess,
-            confirmedCount,
-            items.length
-        );
-    }
-
     showContactPersons(event) {
         this.dialog.closeAll();
         this.dialog.open(ContactPersonsDialogComponent, {
@@ -776,24 +739,6 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
         this.ratingId = ratingId;
     }
 
-    initVerificationChecklist(): void {
-        let person = this.primaryContact.person;
-        let contactDetails = this.primaryContact.details;
-        this.verificationChecklist = [
-            this.getVerificationChecklistItem(
-                VerificationChecklistItemType.Identity,
-                person && person.identityConfirmationDate
-                    ? VerificationChecklistItemStatus.success
-                    : VerificationChecklistItemStatus.unsuccess
-            ),
-            this.getVerificationChecklistItemByMultipleValues(contactDetails.emails, VerificationChecklistItemType.Email),
-            this.getVerificationChecklistItemByMultipleValues(contactDetails.phones, VerificationChecklistItemType.Phone),
-            this.getVerificationChecklistItemByMultipleValues(contactDetails.addresses, VerificationChecklistItemType.Address),
-            this.getVerificationChecklistItem(VerificationChecklistItemType.Employment),
-            this.getVerificationChecklistItem(VerificationChecklistItemType.Income)
-        ];
-    }
-
     updateLeadStage($event) {
         if (!this.leadId || !this.leadInfo)
             return;
@@ -842,13 +787,6 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
 
     toggleConfigMode() {
         this.configMode = !this.configMode;
-    }
-
-    toggleSectionVisibility(event, section) {
-        event.stopPropagation();
-
-        this.rightPanelSetting[section] = event.target.checked;
-        this.cacheService.set(this.getCacheKey(abp.session.userId.toString()), this.rightPanelSetting);
     }
 
     onContactSelected(contact) {

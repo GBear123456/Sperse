@@ -118,6 +118,7 @@ import { OrdersComponent } from '@app/crm/contacts/orders/orders.component';
 import { InvoicesComponent } from '@app/crm/contacts/invoices/invoices.component';
 import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 import { PersonalDetailsComponent } from './personal-details/personal-details.component';
+import { PersonalDetailsDialogComponent } from './personal-details/personal-details-dialog/personal-details-dialog.component';
 import { CRMDashboardWidgetsModule } from '@shared/crm/dashboard-widgets/dashboard-widgets.module';
 import { BankCodeLettersModule } from '@app/shared/common/bank-code-letters/bank-code-letters.module';
 import { SMSDialogComponent } from '@app/crm/shared/sms-dialog/sms-dialog.component';
@@ -179,6 +180,7 @@ import { CrmService } from '@app/crm/crm.service';
         OrdersComponent,
         InvoicesComponent,
         PersonalDetailsComponent,
+        PersonalDetailsDialogComponent,
         SMSDialogComponent,
         SourceContactListComponent
     ],
@@ -248,6 +250,7 @@ import { CrmService } from '@app/crm/crm.service';
         InvoiceSettingsDialogComponent,
         EmailTemplateDialogComponent,
         HistoryListDialogComponent,
+        PersonalDetailsDialogComponent,
         SMSDialogComponent
     ],
     providers: [

@@ -1,0 +1,38 @@
+<h2 mat-dialog-title>{{ls.l('Personal Settings')}}<span class="close" (click)="close()"></span></h2>
+<mat-dialog-content>
+    <mat-tab-group>
+        <mat-tab [label]="ls.l('General')">
+            
+        </mat-tab>    
+        <mat-tab [label]="ls.l('Overview')" *ngIf="showOverviewTab">
+            <span class="gear-icon" (click)="toggleConfigMode()"></span>
+            <dx-scroll-view showScrollbar="onHover">
+                <div class="overview-content" [ngClass]="{'config-mode': configMode}">
+                    <div class="right-panel-block" [hidden]="!configMode && !overviewPanelSetting?.clientScores">
+                        <input *ngIf="configMode" type="checkbox"
+                               (click)="toggleSectionVisibility($event, 'clientScores')"
+                               class="cb-visible-section" [checked]="overviewPanelSetting?.clientScores">
+                        <client-scores></client-scores>
+                    </div>
+                    <div class="right-panel-block" [hidden]="!configMode && !overviewPanelSetting?.totalApproved">
+                        <input *ngIf="configMode" type="checkbox"
+                               (click)="toggleSectionVisibility($event, 'totalApproved')"
+                               class="cb-visible-section" [checked]="overviewPanelSetting?.totalApproved">
+                        <total-approved></total-approved>
+                    </div>
+                    <!-- credit-lines></credit-lines -->
+                    <div class="right-panel-block" [hidden]="!configMode && !overviewPanelSetting?.verification">
+                        <input *ngIf="configMode" type="checkbox"
+                               (click)="toggleSectionVisibility($event, 'verification')"
+                               class="cb-visible-section" [checked]="overviewPanelSetting?.verification">
+                        <verification-checklist [data]="verificationChecklist"></verification-checklist>
+                    </div>
+                    <!-- required-documents></required-documents -->
+                </div>
+            </dx-scroll-view>
+        </mat-tab>
+        <mat-tab label="Activity">
+            Activity
+        </mat-tab>    
+    </mat-tab-group>
+</mat-dialog-content>

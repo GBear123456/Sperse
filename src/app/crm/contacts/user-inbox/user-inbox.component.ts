@@ -93,7 +93,7 @@ export class UserInboxComponent extends AppComponentBase implements OnDestroy {
             this.isSendSmsAndEmailAllowed = this.contactsService.checkCGPermission(
                 res.groupId, 'ViewCommunicationHistory.SendSMSAndEmail');
             setTimeout(() => {
-                contactsService.toolbarUpdate([{
+                contactsService.toolbarUpdate({ customToolbar: [{
                     location: 'before',
                     items: [{
                         widget: 'dxTextBox',
@@ -113,7 +113,7 @@ export class UserInboxComponent extends AppComponentBase implements OnDestroy {
                         visible: this.isSendSmsAndEmailAllowed,
                         action: () => this.showNewEmailDialog()
                     }]
-                }]);
+                }]});
             });
         }, this.constructor.name);
     }

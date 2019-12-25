@@ -92,6 +92,7 @@ export class OperationsWidgetComponent extends AppComponentBase implements OnCha
 
     toolbarConfig = [];
     customToolbarConfig;
+    optionButtonConfig;
     printButtonConfig = {
         location: 'after',
         locateInMenu: 'auto',
@@ -114,7 +115,14 @@ export class OperationsWidgetComponent extends AppComponentBase implements OnCha
     ) {
         super(injector);
         contactService.toolbarSubscribe(config => {
-            this.customToolbarConfig = config;
+            if (config) {
+                this.customToolbarConfig = config.customToolbar;
+                this.optionButtonConfig = config.optionButton;
+            } else {
+                this.customToolbarConfig = undefined;
+                this.optionButtonConfig = undefined;
+            }
+
             this.initToolbarConfig();
         });
     }
@@ -138,52 +146,6 @@ export class OperationsWidgetComponent extends AppComponentBase implements OnCha
             if (this.customToolbarConfig)
                 return (this.toolbarConfig = this.customToolbarConfig);
 
-            let items = [
-                {
-                    name: 'assign',
-                    action: this.toggleUserAssignment.bind(this),
-                    disabled: !this.contactService.checkCGPermission(this.customerType, 'ManageAssignments')
-                },
-                this.leadId ? {
-                    name: 'stage',
-                    action: this.toggleStages.bind(this),
-                    disabled: !this.contactService.checkCGPermission(this.customerType)
-                } :
-                {
-                    name: 'status',
-                    action: this.toggleStatus.bind(this),
-                    disabled: !this.contactService.checkCGPermission(this.customerType)
-                }
-            ];
-            if (this.customerType == ContactGroup.Partner) {
-                items.push({
-                    name: 'partnerType',
-                    action: this.togglePartnerTypes.bind(this),
-                    disabled: !this.contactService.checkCGPermission(this.customerType)
-                });
-            }
-            items = items.concat([
-                {
-                    name: 'lists',
-                    action: this.toggleLists.bind(this),
-                    disabled: !this.contactService.checkCGPermission(this.customerType, 'ManageListsAndTags')
-                },
-                {
-                    name: 'tags',
-                    action: this.toggleTags.bind(this),
-                    disabled: !this.contactService.checkCGPermission(this.customerType, 'ManageListsAndTags')
-                },
-                {
-                    name: 'rating',
-                    action: this.toggleRating.bind(this),
-                    disabled: !this.contactService.checkCGPermission(this.customerType, 'ManageRatingAndStars')
-                },
-                {
-                    name: 'star',
-                    action: this.toggleStars.bind(this),
-                    disabled: !this.contactService.checkCGPermission(this.customerType, 'ManageRatingAndStars')
-                }
-            ]);
             let impersonationItem = {
                 location: 'before',
                 locateInMenu: 'auto',
@@ -199,14 +161,58 @@ export class OperationsWidgetComponent extends AppComponentBase implements OnCha
                             this.impersonationService.impersonate(this.contactInfo.personContactInfo.userId, this.appSession.tenantId);
                         }
                     }
-                ]
+                ].concat(this.optionButtonConfig || [])
             };
 
             this.toolbarConfig = this._enabled ? [
                 {
                     location: 'before',
                     locateInMenu: 'auto',
-                    items: items
+                    items: [
+                        {
+                            name: 'assign',
+                            action: this.toggleUserAssignment.bind(this),
+                            disabled: !this.contactService.checkCGPermission(this.customerType, 'ManageAssignments')
+                        },
+                        {
+                            name: 'stage',
+                            action: this.toggleStages.bind(this),
+                            disabled: !this.contactService.checkCGPermission(this.customerType),
+                            visible: this.leadId
+                        },
+                        {
+                            name: 'status',
+                            action: this.toggleStatus.bind(this),
+                            disabled: !this.contactService.checkCGPermission(this.customerType),
+                            visible: !this.leadId
+                        },
+                        {
+                            name: 'partnerType',
+                            action: this.togglePartnerTypes.bind(this),
+                            disabled: !this.contactService.checkCGPermission(this.customerType),
+                            visible: this.customerType == ContactGroup.Partner
+                        },
+                        {
+                            name: 'lists',
+                            action: this.toggleLists.bind(this),
+                            disabled: !this.contactService.checkCGPermission(this.customerType, 'ManageListsAndTags')
+                        },
+                        {
+                            name: 'tags',
+                            action: this.toggleTags.bind(this),
+                            disabled: !this.contactService.checkCGPermission(this.customerType, 'ManageListsAndTags')
+                        },
+                        {
+                            name: 'rating',
+                            action: this.toggleRating.bind(this),
+                            disabled: !this.contactService.checkCGPermission(this.customerType, 'ManageRatingAndStars')
+                        },
+                        {
+                            name: 'star',
+                            action: this.toggleStars.bind(this),
+                            disabled: !this.contactService.checkCGPermission(this.customerType, 'ManageRatingAndStars')
+                        }
+                    ]
                 },
                 {
                     location: 'before',
@@ -222,12 +228,12 @@ export class OperationsWidgetComponent extends AppComponentBase implements OnCha
                 },
                 impersonationItem,
                 this.printButtonConfig,
-                this.getNavigationConfig(this.isPrevDisabled, this.isNextDisabled)
+                this.getNavigationConfig()
             ] : [
-                    impersonationItem,
-                    this.printButtonConfig,
-                    this.getNavigationConfig(this.isPrevDisabled, this.isNextDisabled)
-                ];
+                impersonationItem,
+                this.printButtonConfig,
+                this.getNavigationConfig()
+            ];
 
             if (this.cfoLinkOrVerifyEnabled) {
                 this.toolbarConfig.push(
@@ -255,7 +261,7 @@ export class OperationsWidgetComponent extends AppComponentBase implements OnCha
         }, ms);
     }
 
-    getNavigationConfig(isPrevDisabled: boolean, isNextDisabled: boolean) {
+    getNavigationConfig() {
         return {
             location: 'after',
             locateInMenu: 'auto',
@@ -263,12 +269,12 @@ export class OperationsWidgetComponent extends AppComponentBase implements OnCha
                 {
                     name: 'prev',
                     action: this.loadPrevItem.bind(this),
-                    disabled: isPrevDisabled
+                    disabled: this.isPrevDisabled
                 },
                 {
                     name: 'next',
                     action: this.loadNextItem.bind(this),
-                    disabled: isNextDisabled
+                    disabled: this.isNextDisabled
                 }
             ]
         };

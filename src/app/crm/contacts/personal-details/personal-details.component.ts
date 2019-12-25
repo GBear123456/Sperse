@@ -3,6 +3,7 @@ import { Component, OnDestroy, ChangeDetectorRef, ChangeDetectionStrategy } from
 import { AsyncPipe } from '@angular/common';
 
 /** Third party imports */
+import { MatDialog } from '@angular/material/dialog';
 import startCase from 'lodash/startCase';
 import { Store, select } from '@ngrx/store';
 import { map } from 'rxjs/operators';
@@ -15,8 +16,9 @@ import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { CountriesStoreActions, CountriesStoreSelectors } from '@app/store';
 import { RootStore, StatesStoreActions, StatesStoreSelectors } from '@root/store';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
-import { PersonContactServiceProxy, UpdatePersonInfoInput, MaritalStatus, Gender,
+import { PersonContactServiceProxy, UpdatePersonInfoInput, MaritalStatus, Gender, PersonContactInfoDto,
     DictionaryServiceProxy, PersonInfoDto, TimeOfDay, TimingServiceProxy } from 'shared/service-proxies/service-proxies';
+import { PersonalDetailsDialogComponent } from './personal-details-dialog/personal-details-dialog.component';
 import { ContactsService } from '../contacts.service';
 import { AppPermissions } from '@shared/AppPermissions';
 
@@ -30,6 +32,7 @@ export class PersonalDetailsComponent implements OnDestroy {
     person: PersonInfoDto;
     isEditAllowed = false;
     startCase = startCase;
+    personContactInfo: PersonContactInfoDto;
     interests$ = this._dictionaryProxy.getInterests();
     accessConfidentialData = this._permission.isGranted(AppPermissions.CRMAccessConfidentialData);
 
@@ -71,20 +74,28 @@ export class PersonalDetailsComponent implements OnDestroy {
     };
 
     constructor(
+        public dialog: MatDialog,
         public ls: AppLocalizationService,
         private notifyService: NotifyService,
         private _store$: Store<RootStore.State>,
         private _timingService: TimingServiceProxy,
-        private _contactsService: ContactsService,
+        private contactsService: ContactsService,
         private _changeDetector: ChangeDetectorRef,
         private _permission: AppPermissionService,
         private _personContactService: PersonContactServiceProxy,
         private _dictionaryProxy: DictionaryServiceProxy,
         private _asyncPipe: AsyncPipe
     ) {
-        this._contactsService.contactInfoSubscribe((contactInfo) => {
+        this.contactsService.contactInfoSubscribe((contactInfo) => {
+            this.personContactInfo = contactInfo.personContactInfo;
             this.person = contactInfo.personContactInfo.person;
-            this.isEditAllowed = this._contactsService.checkCGPermission(contactInfo.groupId);
+            this.isEditAllowed = this.contactsService.checkCGPermission(contactInfo.groupId);
+            setTimeout(() => this.contactsService.toolbarUpdate({
+                optionButton: {
+                    name: 'options',
+                    action: this.showPersonalDetailsDialog.bind(this)
+                }
+            }));
             this._changeDetector.markForCheck();
         }, this.constructor.name);
 
@@ -103,7 +114,7 @@ export class PersonalDetailsComponent implements OnDestroy {
             id: field,
             value: value,
             displayValue: field == 'ssn' ?
-                this.getSsnMasked(value): '',
+                this.getSsnMasked(value) : '',
             isEditDialogEnabled: false,
             lEntityName: field,
             lEditPlaceholder: this.ls.l('EditValuePlaceholder')
@@ -184,7 +195,22 @@ export class PersonalDetailsComponent implements OnDestroy {
         }
     }
 
+    showPersonalDetailsDialog() {
+        setTimeout(() =>
+            this.dialog.open(PersonalDetailsDialogComponent, {
+                panelClass: ['slider'],
+                disableClose: false,
+                hasBackdrop: false,
+                closeOnNavigation: true,
+                data: {
+                    personContactInfo: this.personContactInfo
+                }
+            })
+        );
+    }
+
     ngOnDestroy() {
-        this._contactsService.unsubscribe(this.constructor.name);
+        this.contactsService.toolbarUpdate();
+        this.contactsService.unsubscribe(this.constructor.name);
     }
 }

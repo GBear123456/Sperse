@@ -1,0 +1,68 @@
+/deep/ .hide {
+    display: none;
+}
+:host {
+    display: block;
+    min-width: 400px;
+    padding: 20px;
+
+    h2 {
+        position: relative;
+        padding-left: 10px;
+
+        .close {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            top: 5px;
+            right: 15px;
+            cursor: pointer;
+            display: block;
+            background-color: #FFF;
+            &:after, &:before {
+                position: absolute;
+                top: 0;
+                left: 9px;
+                content: ' ';
+                height: 20px;
+                width: 2px;
+                background-color: #202b35;
+            }
+            &:before {
+                transform: rotate(45deg);
+            }
+            &:after {
+                transform: rotate(-45deg);
+            }
+        }
+    }
+
+    /deep/ .mat-tab-label {
+        min-width: 100px!important;
+    }
+
+    mat-dialog-content {
+        overflow: hidden;
+        max-height: 100%!important;
+        min-height: 300px;
+        padding-left: 30px;
+
+        .gear-icon {
+            z-index: 999;
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            position: absolute;
+            right: 20px;
+            top: 10px;
+            background: url("../../../../../assets/common/icons/gear-icon.svg") no-repeat center;
+        }
+    
+        .overview-content {
+            padding: 10px;
+            .right-panel-block {
+                position: relative;
+            }
+        }
+    }
+}
