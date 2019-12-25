@@ -41,6 +41,7 @@ export class BankCodeLettersComponent implements OnChanges, OnDestroy {
     @HostBinding('class.allow-add') @Input() allowAdd = false;
     @HostBinding('class.allow-edit') @Input() allowEdit = false;
     bankCodeDefinition: string;
+    editPopupIsOpened = false;
 
     constructor(
         private dialogService: DialogService,
@@ -62,6 +63,7 @@ export class BankCodeLettersComponent implements OnChanges, OnDestroy {
 
     showEditPopup(e) {
         if (!this.dialog.getDialogById('bankCodeLettersEditorDialog')) {
+            this.editPopupIsOpened = true;
             const editDialog = this.dialog.open(BankCodeLettersEditorDialogComponent, {
                 id: 'bankCodeLettersEditorDialog',
                 hasBackdrop: false,
@@ -75,6 +77,10 @@ export class BankCodeLettersComponent implements OnChanges, OnDestroy {
                     bankCode: this.bankCode,
                     personId: this.personId
                 }
+            });
+            editDialog.afterClosed().subscribe(() => {
+                this.editPopupIsOpened = false;
+                this.changeDetectorRef.detectChanges();
             });
             editDialog.componentInstance.bankCodeChange.subscribe((bankCode: string) => {
                 this.bankCode = bankCode;
