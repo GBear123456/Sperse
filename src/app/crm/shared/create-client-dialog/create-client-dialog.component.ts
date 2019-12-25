@@ -293,7 +293,7 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
         this.contactProxy.create(createContactInput)
             .pipe(finalize(() => { saveButton.disabled = false; this.modalDialog.finishLoading(); }))
             .subscribe(result => {
-                dataObj.id = result.id;
+                dataObj.id = result.contactId;
                 this.afterSave(dataObj);
             });
     }
