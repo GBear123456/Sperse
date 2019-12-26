@@ -87,6 +87,7 @@ import { UploadDocumentDialogComponent } from './upload-document-dialog/upload-d
 import { UploadDocumentsDialogComponent } from './documents/upload-documents-dialog/upload-documents-dialog.component';
 import { DocumentTypesListComponent } from './document-types-list/document-types-list.component';
 import { OrganizationUnitsTreeComponent } from './organization-units-tree/organization-units-tree.component';
+import { OrganizationUnitsDialogComponent } from './organization-units-tree/organization-units-dialog/organization-units-dialog.component';
 import { PermissionTreeComponent } from './permission-tree/permission-tree.component';
 import { ContactsRoutingModule } from './contacts-routing.module';
 import {
@@ -170,6 +171,7 @@ import { ActionMenuModule } from '@app/shared/common/action-menu/action-menu.mod
         UploadDocumentsDialogComponent,
         DocumentTypesListComponent,
         OrganizationUnitsTreeComponent,
+        OrganizationUnitsDialogComponent,
         PermissionTreeComponent,
         AddContactDialogComponent,
         AddCompanyDialogComponent,
@@ -263,7 +265,8 @@ import { ActionMenuModule } from '@app/shared/common/action-menu/action-menu.mod
         PersonalDetailsDialogComponent,
         SMSDialogComponent,
         AddSubscriptionDialogComponent,
-        CancelSubscriptionDialogComponent
+        CancelSubscriptionDialogComponent,
+        OrganizationUnitsDialogComponent
     ],
     providers: [
         DialogService,

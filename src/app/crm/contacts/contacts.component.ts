@@ -94,13 +94,9 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
     private initialData: string;
 
     navLinks: NavLink[] = [];
-    readonly rightPanelDefaultWidth = '400px';
     rightPanelSetting: any = {
         id: RP_DEFAULT_ID,
-        width: this.rightPanelDefaultWidth,
-        clientScores: true,
-        totalApproved: true,
-        verification: true,
+        width: '0px',
         opened: false
     };
 
@@ -173,22 +169,12 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
             routeData$,
             this.contactGroupId$
         ).subscribe(([event, contactGroupId]: [ActivationEnd, string]) => {
-            let data = event.snapshot.data,
-                rightPanelId = this.getCheckPropertyValue(data, 'rightPanelId', RP_DEFAULT_ID);
-            this.showToolbar = this.getCheckPropertyValue(data, 'showToolbar', true);
-            if (rightPanelId === this.RP_CONTACT_INFO_ID) {
-                this.rightPanelSetting.opened = true;
-                this.rightPanelSetting.width = '200px';
-            } else {
-                this.rightPanelSetting.opened = this.getCheckPropertyValue(
-                    data,
-                    'rightPanelOpened',
-                    rightPanelId == RP_DEFAULT_ID && abp.features.isEnabled(AppFeatures.PFMCreditReport)
-                );
-                this.rightPanelSetting.width = this.rightPanelSetting.opened ? this.rightPanelDefaultWidth : '0';
-            }
-            this.rightPanelSetting.id = rightPanelId;
+            this.showToolbar = this.getCheckPropertyValue(event.snapshot.data, 'showToolbar', true);
         });
+    }
+
+    private getCheckPropertyValue(obj, prop, def) {
+        return obj.hasOwnProperty(prop) ? obj[prop] : def;
     }
 
     initNavigatorProperties() {
@@ -295,10 +281,6 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
             default:
                 break;
         }
-    }
-
-    private getCheckPropertyValue(obj, prop, def) {
-        return obj.hasOwnProperty(prop) ? obj[prop] : def;
     }
 
     private initNavLinks(contact) {

@@ -4,7 +4,6 @@ import { Component, OnInit, AfterViewInit, Inject, Injector, ElementRef } from '
 /** Third party imports */
 import { CacheService } from 'ng2-cache-service';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { FileSystemFileEntry } from 'ngx-file-drop';
 import { Observable, ReplaySubject } from 'rxjs';
 import { finalize, map } from 'rxjs/operators';
 

@@ -17,6 +17,7 @@ import {
     UpdateUserOptionsDto, UpdateUserRoleInput, ContactServiceProxy, PersonContactServiceProxy,
     CreateOrUpdateUserInput, TenantHostType, UpdateUserEmailDto, CreateUserForContactInput, RoleListDto, UserRoleDto
 } from '@shared/service-proxies/service-proxies';
+import { OrganizationUnitsDialogComponent } from '../organization-units-tree/organization-units-dialog/organization-units-dialog.component';
 import { PhoneFormatPipe } from '@shared/common/pipes/phone-format/phone-format.pipe';
 import { InplaceEditModel } from '@app/shared/common/inplace-edit/inplace-edit.model';
 import { ContactsService } from '../contacts.service';
@@ -78,7 +79,7 @@ export class UserInformationComponent implements OnInit, OnDestroy {
     inviteSetRandomPassword = true;
     showInviteUserForm$: Observable<boolean> = this.contactsService.userId$.pipe(
         startWith(null),
-        map((userId) => !userId && this.permissionService.isGranted(AppPermissions.AdministrationUsersCreate))
+        map(userId => !userId && this.permissionService.isGranted(AppPermissions.AdministrationUsersCreate))
     );
     userData: GetUserForEditOutput = new GetUserForEditOutput();
     selectedOrgUnits: number[] = [];
@@ -123,9 +124,10 @@ export class UserInformationComponent implements OnInit, OnDestroy {
             (userId) => {
                 this.data = this.userService['data'];
                 this.data.userId = userId;
-                if (userId)
+                if (userId) {
                     this.loadData();
-                else
+                    this.updateToolbarOptions();
+                } else
                     this.getPhonesAndEmails();
             },
             this.constructor.name
@@ -133,7 +135,7 @@ export class UserInformationComponent implements OnInit, OnDestroy {
         setTimeout(() => this.getPhonesAndEmails(), 500);
 
         this.contactsService.orgUnitsSaveSubscribe(
-            (data) => {
+            data => {
                 this.data.raw.memberedOrganizationUnits = [];
                 (this.selectedOrgUnits = data).forEach((item) => {
                     this.data.raw.memberedOrganizationUnits.push(
@@ -152,6 +154,15 @@ export class UserInformationComponent implements OnInit, OnDestroy {
                 this.updateInviteDataRoles();
             });
         this.updateInviteDataRoles();
+    }
+
+    private updateToolbarOptions() {
+        setTimeout(() => this.contactsService.toolbarUpdate({
+            optionButton: {
+                name: 'options',
+                action: this.showOrgUnitsDialog.bind(this)
+            }
+        }));
     }
 
     private updateInviteDataRoles() {
@@ -297,7 +308,7 @@ export class UserInformationComponent implements OnInit, OnDestroy {
     roleUpdate(event, role) {
         if (!event.event)
             return;
-        
+
         let sub;
         if (role.isAssigned)
             sub = this.userService.addToRole(UpdateUserRoleInput.fromJS({
@@ -402,7 +413,23 @@ export class UserInformationComponent implements OnInit, OnDestroy {
         event.stopPropagation();
     }
 
+    showOrgUnitsDialog() {
+        setTimeout(() =>
+            this.dialog.open(OrganizationUnitsDialogComponent, {
+                panelClass: ['slider'],
+                disableClose: false,
+                hasBackdrop: false,
+                closeOnNavigation: true,
+                data: {
+                    title: this.ls.l('OrganizationUnits'),
+                    selectionMode: 'multiple'
+                }
+            })
+        );
+    }
+
     ngOnDestroy() {
+        this.contactsService.toolbarUpdate();
         this.contactsService.unsubscribe(this.constructor.name);
         if (this.dependencyChanged)
             this.contactsService.invalidate();

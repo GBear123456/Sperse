@@ -2,6 +2,7 @@
 import { Component, OnInit, Injector, ViewChild, ElementRef, OnDestroy } from '@angular/core';
 
 /** Third party imports */
+import { MatDialog } from '@angular/material/dialog';
 import { Store, select } from '@ngrx/store';
 import { finalize, filter, takeUntil } from 'rxjs/operators';
 import * as moment from 'moment-timezone';
@@ -22,6 +23,7 @@ import { AppPermissions } from '@shared/AppPermissions';
 import { CrmStore, OrganizationUnitsStoreActions, OrganizationUnitsStoreSelectors } from '@app/crm/store';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 import { SourceContactListComponent } from '../source-contact-list/source-contact-list.component';
+import { OrganizationUnitsDialogComponent } from '../organization-units-tree/organization-units-dialog/organization-units-dialog.component';
 import { InplaceEditModel } from '@app/shared/common/inplace-edit/inplace-edit.model';
 
 @Component({
@@ -110,6 +112,7 @@ export class LeadInformationComponent extends AppComponentBase implements OnInit
     ];
 
     constructor(injector: Injector,
+        private dialog: MatDialog,
         private route: ActivatedRoute,
         private contactProxy: ContactServiceProxy,
         private leadService: LeadServiceProxy,
@@ -119,6 +122,15 @@ export class LeadInformationComponent extends AppComponentBase implements OnInit
         private lifeCycleService: LifecycleSubjectsService
     ) {
         super(injector);
+
+        contactsService.contactInfoSubscribe((contactInfo) => {
+            setTimeout(() => contactsService.toolbarUpdate({
+                optionButton: {
+                    name: 'options',
+                    action: this.showOrgUnitsDialog.bind(this)
+                }
+            }));
+        }, this.constructor.name);
 
         this.contactsService.loadLeadInfo();
         contactsService.orgUnitsSaveSubscribe((data) => {
@@ -261,7 +273,23 @@ export class LeadInformationComponent extends AppComponentBase implements OnInit
         this.sourceComponent.toggle();
     }
 
+    showOrgUnitsDialog() {
+        setTimeout(() =>
+            this.dialog.open(OrganizationUnitsDialogComponent, {
+                panelClass: ['slider'],
+                disableClose: false,
+                hasBackdrop: false,
+                closeOnNavigation: true,
+                data: {
+                    title: this.l('Owner'),
+                    selectionMode: 'single'
+                }
+            })
+        );
+    }
+
     ngOnDestroy() {
+        this.contactsService.toolbarUpdate();
         this.contactsService.unsubscribe(this.constructor.name);
     }
 }
