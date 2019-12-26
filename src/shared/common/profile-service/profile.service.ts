@@ -34,7 +34,7 @@ export class ProfileService {
     secureId$: Observable<string> = this.bankCodeMemberInfo$.pipe(map((bankCodeMemberInfo: GetMemberInfoOutput) => {
         return bankCodeMemberInfo.secureId;
     }));
-    private accessCode: BehaviorSubject<string> = new BehaviorSubject<string>(this.appSession.user.affiliateCode);
+    private accessCode: BehaviorSubject<string> = new BehaviorSubject<string>(this.appSession.user ? this.appSession.user.affiliateCode : null);
     accessCode$: Observable<string> = this.accessCode.asObservable();
 
     constructor(
