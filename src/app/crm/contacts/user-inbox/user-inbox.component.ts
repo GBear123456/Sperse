@@ -102,7 +102,7 @@ export class UserInboxComponent extends AppComponentBase implements OnDestroy {
                             inputAttr: {view: 'headline'},
                             readOnly: true
                         }
-                    }]        
+                    }]
                 }, {
                     location: 'after',
                     items: [{
@@ -136,6 +136,7 @@ export class UserInboxComponent extends AppComponentBase implements OnDestroy {
 
     showNewEmailDialog(title = 'NewEmail', data = {}) {
         data['contactId'] = this.contactId;
+        data['switchTemplate'] = true;
         this.contactsService.showEmailDialog(data, title)
             .subscribe(error => error || this.invalidate());
     }
