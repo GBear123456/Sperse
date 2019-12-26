@@ -2,7 +2,7 @@
 import { Injectable } from '@angular/core';
 
 /** Third party imports */
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, of } from 'rxjs';
 import { map, publishReplay, refCount } from 'rxjs/operators';
 import * as moment from 'moment-timezone';
 
@@ -19,22 +19,29 @@ import { BankCodeServiceType } from '@root/bank-code/products/bank-code-service-
 
 @Injectable()
 export class ProfileService {
-    public bankCodeMemberInfo$: Observable<GetMemberInfoOutput> = this.subscriptionProxy.getMemberInfo('BankCode', undefined, undefined).pipe(
-        /** For debug purpose */
-        // map(() => [ new GetUserSubscriptionsOutput({
-        //     serviceType: BankCodeServiceType.BANKVault,
-        //     serviceTypeId: BankCodeServiceType.BANKVault,
-        //     serviceName: null,
-        //     serviceId: null,
-        //     endDate: moment('2031-12-15T10:10:09Z')
-        // }) ]),
-        publishReplay(),
-        refCount()
-    );
+    public bankCodeMemberInfo$: Observable<GetMemberInfoOutput> = this.subscriptionProxy.getMemberInfo(
+        'BankCode',
+        undefined,
+        undefined
+    )
+        /**of(new GetMemberInfoOutput({
+            subscriptions: [ new SubscriptionShortInfoOutput({
+                serviceType: BankCodeServiceType.BANKPass,
+                serviceTypeId: BankCodeServiceType.BANKPass,
+                serviceName: null,
+                serviceId: null,
+                endDate: null
+            })],
+            secureId: 'sadasdg'
+        }))*/
+        .pipe(
+            publishReplay(),
+            refCount()
+        );
     secureId$: Observable<string> = this.bankCodeMemberInfo$.pipe(map((bankCodeMemberInfo: GetMemberInfoOutput) => {
         return bankCodeMemberInfo.secureId;
     }));
-    private accessCode: BehaviorSubject<string> = new BehaviorSubject<string>(this.appSession.user.affiliateCode);
+    private accessCode: BehaviorSubject<string> = new BehaviorSubject<string>(this.appSession.user ? this.appSession.user.affiliateCode : null);
     accessCode$: Observable<string> = this.accessCode.asObservable();
 
     constructor(
