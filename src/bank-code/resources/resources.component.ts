@@ -54,7 +54,7 @@ export class ResourcesComponent {
                         img: './assets/common/images/bank-code/thumbnails/BANK-Affiliate-Sample.jpg'
                     },
                     {
-                        title: 'Affilaite Supplies',
+                        title: 'Affiliate Supplies',
                         fileLink: 'https://new-resources-2019.s3-us-west-1.amazonaws.com/Corporate+Docs/Affiliate+Supplies/Affiliate+Supplies.pdf',
                         img: './assets/common/images/bank-code/no_image.png'
                     },
