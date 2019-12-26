@@ -60,6 +60,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     private readonly COMPANY_NAME_FIELD = 'businessInfo_companyName';
     private readonly PERSONAL_FULL_ADDRESS = 'personalInfo_fullAddress';
     private readonly PERSONAL_FULL_ADDRESS_STREET = 'personalInfo_fullAddress_street';
+    private readonly PERSONAL_FULL_ADDRESS_ADDRESSLINE2 = 'personalInfo_fullAddress_addressline2';
     private readonly PERSONAL_FULL_ADDRESS_CITY = 'personalInfo_fullAddress_city';
     private readonly PERSONAL_FULL_ADDRESS_STATE_NAME = 'personalInfo_fullAddress_stateName';
     private readonly PERSONAL_FULL_ADDRESS_STATE_CODE = 'personalInfo_fullAddress_stateCode';
@@ -69,6 +70,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     private readonly BUSINESS_AFFILIATE_CODE = 'businessInfo_affiliateCode';
     private readonly BUSINESS_COMPANY_FULL_ADDRESS = 'businessInfo_companyFullAddress';
     private readonly BUSINESS_COMPANY_FULL_ADDRESS_STREET = 'businessInfo_companyFullAddress_street';
+    private readonly BUSINESS_COMPANY_FULL_ADDRESS_ADDRESSLINE2 = 'businessInfo_companyFullAddress_addressline2';
     private readonly BUSINESS_COMPANY_FULL_ADDRESS_CITY = 'businessInfo_companyFullAddress_city';
     private readonly BUSINESS_COMPANY_FULL_ADDRESS_STATE_NAME = 'businessInfo_companyFullAddress_stateName';
     private readonly BUSINESS_COMPANY_FULL_ADDRESS_STATE_CODE = 'businessInfo_companyFullAddress_stateCode';
@@ -77,6 +79,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     private readonly BUSINESS_COMPANY_FULL_ADDRESS_COUNTRY_CODE = 'businessInfo_companyFullAddress_countryCode';
     private readonly BUSINESS_WORK_FULL_ADDRESS = 'businessInfo_workFullAddress';
     private readonly BUSINESS_WORK_FULL_ADDRESS_STREET = 'businessInfo_workFullAddress_street';
+    private readonly BUSINESS_WORK_FULL_ADDRESS_ADDRESSLINE2 = 'businessInfo_workFullAddress_addressline2';
     private readonly BUSINESS_WORK_FULL_ADDRESS_CITY = 'businessInfo_workFullAddress_city';
     private readonly BUSINESS_WORK_FULL_ADDRESS_STATE_NAME = 'businessInfo_workFullAddress_stateName';
     private readonly BUSINESS_WORK_FULL_ADDRESS_STATE_CODE = 'businessInfo_workFullAddress_stateCode';
@@ -134,6 +137,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
 
     private readonly FIELDS_CAPTIONS = [
         this.PERSONAL_FULL_ADDRESS_STREET,
+        this.PERSONAL_FULL_ADDRESS_ADDRESSLINE2,
         this.PERSONAL_FULL_ADDRESS_CITY,
         this.PERSONAL_FULL_ADDRESS_STATE_NAME,
         this.PERSONAL_FULL_ADDRESS_STATE_CODE,
@@ -141,6 +145,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         this.PERSONAL_FULL_ADDRESS_COUNTRY_NAME,
         this.PERSONAL_FULL_ADDRESS_COUNTRY_CODE,
         this.BUSINESS_COMPANY_FULL_ADDRESS_STREET,
+        this.BUSINESS_COMPANY_FULL_ADDRESS_ADDRESSLINE2,
         this.BUSINESS_COMPANY_FULL_ADDRESS_CITY,
         this.BUSINESS_COMPANY_FULL_ADDRESS_STATE_NAME,
         this.BUSINESS_COMPANY_FULL_ADDRESS_STATE_CODE,
@@ -148,6 +153,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         this.BUSINESS_COMPANY_FULL_ADDRESS_COUNTRY_NAME,
         this.BUSINESS_COMPANY_FULL_ADDRESS_COUNTRY_CODE,
         this.BUSINESS_WORK_FULL_ADDRESS_STREET,
+        this.BUSINESS_WORK_FULL_ADDRESS_ADDRESSLINE2,
         this.BUSINESS_WORK_FULL_ADDRESS_CITY,
         this.BUSINESS_WORK_FULL_ADDRESS_STATE_NAME,
         this.BUSINESS_WORK_FULL_ADDRESS_STATE_CODE,

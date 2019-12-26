@@ -58663,6 +58663,7 @@ export interface IImportFullName {
 
 export class ImportAddressInput implements IImportAddressInput {
     street!: string | undefined;
+    addressLine2!: string | undefined;
     city!: string | undefined;
     stateName!: string | undefined;
     stateCode!: string | undefined;
@@ -58682,6 +58683,7 @@ export class ImportAddressInput implements IImportAddressInput {
     init(data?: any) {
         if (data) {
             this.street = data["street"];
+            this.addressLine2 = data["addressLine2"];
             this.city = data["city"];
             this.stateName = data["stateName"];
             this.stateCode = data["stateCode"];
@@ -58701,6 +58703,7 @@ export class ImportAddressInput implements IImportAddressInput {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["street"] = this.street;
+        data["addressLine2"] = this.addressLine2;
         data["city"] = this.city;
         data["stateName"] = this.stateName;
         data["stateCode"] = this.stateCode;
@@ -58713,6 +58716,7 @@ export class ImportAddressInput implements IImportAddressInput {
 
 export interface IImportAddressInput {
     street: string | undefined;
+    addressLine2: string | undefined;
     city: string | undefined;
     stateName: string | undefined;
     stateCode: string | undefined;
