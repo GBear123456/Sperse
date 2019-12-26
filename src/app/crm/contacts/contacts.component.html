@@ -57,17 +57,4 @@
             </div>
         </div>
     </ng-container>
-    <ng-container rightPanel>
-        <ng-template #matGroup>
-            <mat-tab-group>
-                <mat-tab label="Activity" *ngIf="rightPanelSetting.id == RP_DEFAULT_ID">Activity</mat-tab>
-                <mat-tab [label]="l('OrganizationUnits')" *ngIf="rightPanelSetting.id == RP_USER_INFO_ID">
-                    <oranization-units-tree></oranization-units-tree>
-                </mat-tab>
-                <mat-tab [label]="l('Owner')" *ngIf="rightPanelSetting.id == RP_LEAD_INFO_ID">
-                    <oranization-units-tree [selectionMode]="'single'"></oranization-units-tree>
-                </mat-tab>
-            </mat-tab-group>
-        </ng-template>
-    </ng-container>
 </item-details-layout>
