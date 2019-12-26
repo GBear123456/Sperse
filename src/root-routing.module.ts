@@ -110,6 +110,11 @@ const routes: Routes = [
                 path: 'bank-pass',
                 loadChildren: 'bank-pass-host/bank-pass-host.module#BankPassHostModule',
                 data: { localizationSource: 'Platform' }
+            },
+            {
+                path: 'why-they-buy',
+                loadChildren: 'why-they-buy-host/why-they-buy-host.module#WhyTheyBuyHostModule',
+                data: { localizationSource: 'Platform' }
             }
         ]
     },
