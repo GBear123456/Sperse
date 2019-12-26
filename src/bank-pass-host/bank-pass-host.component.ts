@@ -1,5 +1,6 @@
 import { Component, ViewEncapsulation } from '@angular/core';
 import { BankPassComponent } from '@root/bank-code/products/bank-pass/bank-pass.component';
+import {LifecycleSubjectsService} from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 
 @Component({
     selector: 'bank-pass-host',
@@ -11,6 +12,7 @@ import { BankPassComponent } from '@root/bank-code/products/bank-pass/bank-pass.
         '../node_modules/devextreme/dist/css/dx.light.css',
         '../bank-code/products/bank-pass/bank-pass.component.less'
     ],
-    encapsulation: ViewEncapsulation.None
+    encapsulation: ViewEncapsulation.None,
+    providers: [ LifecycleSubjectsService ]
 })
 export class BankPassHostComponent extends BankPassComponent {}
