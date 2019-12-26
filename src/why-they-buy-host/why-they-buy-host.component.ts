@@ -1,18 +1,24 @@
+/** Core imports */
 import { Component, ViewEncapsulation } from '@angular/core';
-import { BankPassComponent } from '@root/bank-code/products/bank-pass/bank-pass.component';
+
+/** Third party imports */
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 
+/** Application imports */
+import { WhyTheyBuyComponent } from '@root/bank-code/products/why-they-buy/why-they-buy.component';
+
 @Component({
-    selector: 'bank-pass-host',
-    templateUrl: '../bank-code/products/bank-pass/bank-pass.component.html',
+    selector: 'why-they-buy-host',
+    templateUrl: '../bank-code/products/why-they-buy/why-they-buy.component.html',
     styleUrls: [
         '../app/shared/core.less',
+        './why-they-buy-host.component.less',
         '../assets/metronic/dist/html/blue/assets/demo/blue/base/style.bundle.light.css',
         '../node_modules/devextreme/dist/css/dx.common.css',
         '../node_modules/devextreme/dist/css/dx.light.css',
-        '../bank-code/products/bank-pass/bank-pass.component.less'
+        '../bank-code/products/why-they-buy/why-they-buy.component.less'
     ],
     encapsulation: ViewEncapsulation.None,
     providers: [ LifecycleSubjectsService ]
 })
-export class BankPassHostComponent extends BankPassComponent {}
+export class WhyTheyBuyHostComponent extends WhyTheyBuyComponent {}
