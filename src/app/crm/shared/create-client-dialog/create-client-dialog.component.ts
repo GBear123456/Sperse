@@ -39,7 +39,7 @@ import { AppConsts } from '@shared/AppConsts';
 import { ContactGroup } from '@shared/AppEnums';
 import { ContactStatus } from '@shared/AppEnums';
 import {
-    ContactServiceProxy, CreateContactInput, ContactAddressServiceProxy, CreateContactEmailInput,
+    ContactServiceProxy, CreateOrUpdateContactInput, ContactAddressServiceProxy, CreateContactEmailInput,
     CreateContactPhoneInput, ContactPhotoServiceProxy, CreateContactAddressInput, ContactEmailServiceProxy,
     ContactPhoneServiceProxy, SimilarContactOutput, ContactPhotoInput, OrganizationContactServiceProxy,
     PersonInfoDto, CreateContactLinkInput, TrackingInfo
@@ -288,7 +288,7 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
         this.clearSimilarCustomersCheck();
         let saveButton: any = document.getElementById(this.saveButtonId);
         saveButton.disabled = true;
-        let createContactInput = CreateContactInput.fromJS(dataObj);
+        let createContactInput = CreateOrUpdateContactInput.fromJS(dataObj);
         createContactInput.statusId = this.data.isInLeadMode ? ContactStatus.Prospective : ContactStatus.Active;
         this.contactProxy.createOrUpdateContact(createContactInput)
             .pipe(finalize(() => { saveButton.disabled = false; this.modalDialog.finishLoading(); }))
