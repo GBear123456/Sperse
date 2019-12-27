@@ -225,7 +225,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             },
             {
                 area: 'column',
-                dataField: 'CreationTime',
+                dataField: 'ContactDate',
                 dataType: 'date',
                 groupInterval: 'year',
                 name: 'year',
@@ -233,14 +233,14 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             },
             {
                 area: 'column',
-                dataField: 'CreationTime',
+                dataField: 'ContactDate',
                 dataType: 'date',
                 groupInterval: 'quarter',
                 showTotals: false,
             },
             {
                 area: 'column',
-                dataField: 'CreationTime',
+                dataField: 'ContactDate',
                 dataType: 'date',
                 groupInterval: 'month',
                 showTotals: false
@@ -552,7 +552,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                         component: FilterCalendarComponent,
                         operator: {from: 'ge', to: 'le'},
                         caption: 'creation',
-                        field: 'CreationTime',
+                        field: 'ContactDate',
                         items: {from: new FilterItemModel(), to: new FilterItemModel()},
                         options: {method: 'getFilterByDate', params: { useUserTimezone: true }}
                     }),

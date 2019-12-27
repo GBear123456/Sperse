@@ -193,7 +193,7 @@ export class EmailTemplateDialogComponent implements OnInit {
 
     onTemplateChanged(event) {
         if (event.value) {
-            if (this.templateEditMode) {
+            if (this.templateEditMode || this.data.switchTemplate) {
                 this.startLoading();
                 this.emailTemplateProxy.getTemplate(event.value).pipe(
                     finalize(() => this.finishLoading())

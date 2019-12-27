@@ -16708,6 +16708,62 @@ export class LeadServiceProxy {
      * @body (optional) 
      * @return Success
      */
+    create(body: CreateLeadInput | null | undefined): Observable<CreateLeadOutput> {
+        let url_ = this.baseUrl + "/api/services/CRM/Lead/Create";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processCreate(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processCreate(<any>response_);
+                } catch (e) {
+                    return <Observable<CreateLeadOutput>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<CreateLeadOutput>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processCreate(response: HttpResponseBase): Observable<CreateLeadOutput> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? CreateLeadOutput.fromJS(resultData200) : new CreateLeadOutput();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<CreateLeadOutput>(<any>null);
+    }
+
+    /**
+     * @body (optional) 
+     * @return Success
+     */
     submitTenancyRequest(body: SubmitTenancyRequestInput | null | undefined): Observable<SubmitTenancyRequestOutput> {
         let url_ = this.baseUrl + "/api/services/CRM/Lead/SubmitTenancyRequest";
         url_ = url_.replace(/[?&]$/, "");
@@ -42374,6 +42430,8 @@ export interface ITrackingInfo {
 }
 
 export class CreateContactInput implements ICreateContactInput {
+    matchExisting!: boolean | undefined;
+    contactXRef!: string | undefined;
     namePrefix!: string | undefined;
     firstName!: string | undefined;
     middleName!: string | undefined;
@@ -42408,9 +42466,9 @@ export class CreateContactInput implements ICreateContactInput {
     stageId!: number | undefined;
     followUpDate!: moment.Moment | undefined;
     trackingInfo!: TrackingInfo | undefined;
-    matchExisting!: boolean | undefined;
     inviteUser!: boolean | undefined;
     generateAutoLoginLink!: boolean | undefined;
+    newUserPassword!: string | undefined;
 
     constructor(data?: ICreateContactInput) {
         if (data) {
@@ -42423,6 +42481,8 @@ export class CreateContactInput implements ICreateContactInput {
 
     init(data?: any) {
         if (data) {
+            this.matchExisting = data["matchExisting"];
+            this.contactXRef = data["contactXRef"];
             this.namePrefix = data["namePrefix"];
             this.firstName = data["firstName"];
             this.middleName = data["middleName"];
@@ -42485,9 +42545,9 @@ export class CreateContactInput implements ICreateContactInput {
             this.stageId = data["stageId"];
             this.followUpDate = data["followUpDate"] ? moment(data["followUpDate"].toString()) : <any>undefined;
             this.trackingInfo = data["trackingInfo"] ? TrackingInfo.fromJS(data["trackingInfo"]) : <any>undefined;
-            this.matchExisting = data["matchExisting"];
             this.inviteUser = data["inviteUser"];
             this.generateAutoLoginLink = data["generateAutoLoginLink"];
+            this.newUserPassword = data["newUserPassword"];
         }
     }
 
@@ -42500,6 +42560,8 @@ export class CreateContactInput implements ICreateContactInput {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["matchExisting"] = this.matchExisting;
+        data["contactXRef"] = this.contactXRef;
         data["namePrefix"] = this.namePrefix;
         data["firstName"] = this.firstName;
         data["middleName"] = this.middleName;
@@ -42562,14 +42624,16 @@ export class CreateContactInput implements ICreateContactInput {
         data["stageId"] = this.stageId;
         data["followUpDate"] = this.followUpDate ? this.followUpDate.toISOString() : <any>undefined;
         data["trackingInfo"] = this.trackingInfo ? this.trackingInfo.toJSON() : <any>undefined;
-        data["matchExisting"] = this.matchExisting;
         data["inviteUser"] = this.inviteUser;
         data["generateAutoLoginLink"] = this.generateAutoLoginLink;
+        data["newUserPassword"] = this.newUserPassword;
         return data; 
     }
 }
 
 export interface ICreateContactInput {
+    matchExisting: boolean | undefined;
+    contactXRef: string | undefined;
     namePrefix: string | undefined;
     firstName: string | undefined;
     middleName: string | undefined;
@@ -42604,13 +42668,13 @@ export interface ICreateContactInput {
     stageId: number | undefined;
     followUpDate: moment.Moment | undefined;
     trackingInfo: TrackingInfo | undefined;
-    matchExisting: boolean | undefined;
     inviteUser: boolean | undefined;
     generateAutoLoginLink: boolean | undefined;
+    newUserPassword: string | undefined;
 }
 
 export class CreateContactOutput implements ICreateContactOutput {
-    id!: number | undefined;
+    contactId!: number | undefined;
     leadId!: number | undefined;
     userId!: number | undefined;
     userCode!: string | undefined;
@@ -42627,7 +42691,7 @@ export class CreateContactOutput implements ICreateContactOutput {
 
     init(data?: any) {
         if (data) {
-            this.id = data["id"];
+            this.contactId = data["contactId"];
             this.leadId = data["leadId"];
             this.userId = data["userId"];
             this.userCode = data["userCode"];
@@ -42644,7 +42708,7 @@ export class CreateContactOutput implements ICreateContactOutput {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
+        data["contactId"] = this.contactId;
         data["leadId"] = this.leadId;
         data["userId"] = this.userId;
         data["userCode"] = this.userCode;
@@ -42654,7 +42718,7 @@ export class CreateContactOutput implements ICreateContactOutput {
 }
 
 export interface ICreateContactOutput {
-    id: number | undefined;
+    contactId: number | undefined;
     leadId: number | undefined;
     userId: number | undefined;
     userCode: string | undefined;
@@ -45536,6 +45600,11 @@ export class LeadRequest implements ILeadRequest {
     siteUrl!: string | undefined;
     isHelpNeeded!: boolean | undefined;
     comments!: string | undefined;
+    customField1!: string | undefined;
+    customField2!: string | undefined;
+    customField3!: string | undefined;
+    customField4!: string | undefined;
+    customField5!: string | undefined;
     lead!: Lead | undefined;
     leadInterests!: LeadInterest[] | undefined;
     leadPersonalInfo!: LeadPersonalInfo | undefined;
@@ -45583,6 +45652,11 @@ export class LeadRequest implements ILeadRequest {
             this.siteUrl = data["siteUrl"];
             this.isHelpNeeded = data["isHelpNeeded"];
             this.comments = data["comments"];
+            this.customField1 = data["customField1"];
+            this.customField2 = data["customField2"];
+            this.customField3 = data["customField3"];
+            this.customField4 = data["customField4"];
+            this.customField5 = data["customField5"];
             this.lead = data["lead"] ? Lead.fromJS(data["lead"]) : <any>undefined;
             if (data["leadInterests"] && data["leadInterests"].constructor === Array) {
                 this.leadInterests = [];
@@ -45634,6 +45708,11 @@ export class LeadRequest implements ILeadRequest {
         data["siteUrl"] = this.siteUrl;
         data["isHelpNeeded"] = this.isHelpNeeded;
         data["comments"] = this.comments;
+        data["customField1"] = this.customField1;
+        data["customField2"] = this.customField2;
+        data["customField3"] = this.customField3;
+        data["customField4"] = this.customField4;
+        data["customField5"] = this.customField5;
         data["lead"] = this.lead ? this.lead.toJSON() : <any>undefined;
         if (this.leadInterests && this.leadInterests.constructor === Array) {
             data["leadInterests"] = [];
@@ -45678,6 +45757,11 @@ export interface ILeadRequest {
     siteUrl: string | undefined;
     isHelpNeeded: boolean | undefined;
     comments: string | undefined;
+    customField1: string | undefined;
+    customField2: string | undefined;
+    customField3: string | undefined;
+    customField4: string | undefined;
+    customField5: string | undefined;
     lead: Lead | undefined;
     leadInterests: LeadInterest[] | undefined;
     leadPersonalInfo: LeadPersonalInfo | undefined;
@@ -47637,7 +47721,6 @@ export class Invoice implements IInvoice {
     taxTotal!: number | undefined;
     date!: moment.Moment | undefined;
     dueDate!: moment.Moment | undefined;
-    formattedDueDate!: string | undefined;
     billingAddressId!: number | undefined;
     shippingAddressId!: number | undefined;
     description!: string | undefined;
@@ -47679,7 +47762,6 @@ export class Invoice implements IInvoice {
             this.taxTotal = data["taxTotal"];
             this.date = data["date"] ? moment(data["date"].toString()) : <any>undefined;
             this.dueDate = data["dueDate"] ? moment(data["dueDate"].toString()) : <any>undefined;
-            this.formattedDueDate = data["formattedDueDate"];
             this.billingAddressId = data["billingAddressId"];
             this.shippingAddressId = data["shippingAddressId"];
             this.description = data["description"];
@@ -47725,7 +47807,6 @@ export class Invoice implements IInvoice {
         data["taxTotal"] = this.taxTotal;
         data["date"] = this.date ? this.date.toISOString() : <any>undefined;
         data["dueDate"] = this.dueDate ? this.dueDate.toISOString() : <any>undefined;
-        data["formattedDueDate"] = this.formattedDueDate;
         data["billingAddressId"] = this.billingAddressId;
         data["shippingAddressId"] = this.shippingAddressId;
         data["description"] = this.description;
@@ -47764,7 +47845,6 @@ export interface IInvoice {
     taxTotal: number | undefined;
     date: moment.Moment | undefined;
     dueDate: moment.Moment | undefined;
-    formattedDueDate: string | undefined;
     billingAddressId: number | undefined;
     shippingAddressId: number | undefined;
     description: string | undefined;
@@ -51140,6 +51220,12 @@ export class Contact implements IContact {
     starId!: number | undefined;
     ratingId!: number | undefined;
     xref!: string | undefined;
+    contactDate!: moment.Moment | undefined;
+    customField1!: string | undefined;
+    customField2!: string | undefined;
+    customField3!: string | undefined;
+    customField4!: string | undefined;
+    customField5!: string | undefined;
     contactAddresses!: ContactAddress[] | undefined;
     contactEmails!: ContactEmail[] | undefined;
     contactLinks!: ContactLink[] | undefined;
@@ -51204,6 +51290,12 @@ export class Contact implements IContact {
             this.starId = data["starId"];
             this.ratingId = data["ratingId"];
             this.xref = data["xref"];
+            this.contactDate = data["contactDate"] ? moment(data["contactDate"].toString()) : <any>undefined;
+            this.customField1 = data["customField1"];
+            this.customField2 = data["customField2"];
+            this.customField3 = data["customField3"];
+            this.customField4 = data["customField4"];
+            this.customField5 = data["customField5"];
             if (data["contactAddresses"] && data["contactAddresses"].constructor === Array) {
                 this.contactAddresses = [];
                 for (let item of data["contactAddresses"])
@@ -51320,6 +51412,12 @@ export class Contact implements IContact {
         data["starId"] = this.starId;
         data["ratingId"] = this.ratingId;
         data["xref"] = this.xref;
+        data["contactDate"] = this.contactDate ? this.contactDate.toISOString() : <any>undefined;
+        data["customField1"] = this.customField1;
+        data["customField2"] = this.customField2;
+        data["customField3"] = this.customField3;
+        data["customField4"] = this.customField4;
+        data["customField5"] = this.customField5;
         if (this.contactAddresses && this.contactAddresses.constructor === Array) {
             data["contactAddresses"] = [];
             for (let item of this.contactAddresses)
@@ -51429,6 +51527,12 @@ export interface IContact {
     starId: number | undefined;
     ratingId: number | undefined;
     xref: string | undefined;
+    contactDate: moment.Moment | undefined;
+    customField1: string | undefined;
+    customField2: string | undefined;
+    customField3: string | undefined;
+    customField4: string | undefined;
+    customField5: string | undefined;
     contactAddresses: ContactAddress[] | undefined;
     contactEmails: ContactEmail[] | undefined;
     contactLinks: ContactLink[] | undefined;
@@ -51647,6 +51751,13 @@ export class OrganizationBusinessInfo implements IOrganizationBusinessInfo {
     ratingId!: number | undefined;
     userId!: number | undefined;
     affiliateCode!: string | undefined;
+    xref!: string | undefined;
+    contactDate!: moment.Moment | undefined;
+    customField1!: string | undefined;
+    customField2!: string | undefined;
+    customField3!: string | undefined;
+    customField4!: string | undefined;
+    customField5!: string | undefined;
 
     constructor(data?: IOrganizationBusinessInfo) {
         if (data) {
@@ -51716,6 +51827,13 @@ export class OrganizationBusinessInfo implements IOrganizationBusinessInfo {
             this.ratingId = data["ratingId"];
             this.userId = data["userId"];
             this.affiliateCode = data["affiliateCode"];
+            this.xref = data["xref"];
+            this.contactDate = data["contactDate"] ? moment(data["contactDate"].toString()) : <any>undefined;
+            this.customField1 = data["customField1"];
+            this.customField2 = data["customField2"];
+            this.customField3 = data["customField3"];
+            this.customField4 = data["customField4"];
+            this.customField5 = data["customField5"];
         }
     }
 
@@ -51785,6 +51903,13 @@ export class OrganizationBusinessInfo implements IOrganizationBusinessInfo {
         data["ratingId"] = this.ratingId;
         data["userId"] = this.userId;
         data["affiliateCode"] = this.affiliateCode;
+        data["xref"] = this.xref;
+        data["contactDate"] = this.contactDate ? this.contactDate.toISOString() : <any>undefined;
+        data["customField1"] = this.customField1;
+        data["customField2"] = this.customField2;
+        data["customField3"] = this.customField3;
+        data["customField4"] = this.customField4;
+        data["customField5"] = this.customField5;
         return data; 
     }
 }
@@ -51823,6 +51948,13 @@ export interface IOrganizationBusinessInfo {
     ratingId: number | undefined;
     userId: number | undefined;
     affiliateCode: string | undefined;
+    xref: string | undefined;
+    contactDate: moment.Moment | undefined;
+    customField1: string | undefined;
+    customField2: string | undefined;
+    customField3: string | undefined;
+    customField4: string | undefined;
+    customField5: string | undefined;
 }
 
 export class GetContactBusinessOutput implements IGetContactBusinessOutput {
@@ -58398,7 +58530,7 @@ export interface IHostSettingsEditDto {
 }
 
 export class YTelSettingsEditDto implements IYTelSettingsEditDto {
-    isEnabled!: string | undefined;
+    isEnabled!: boolean | undefined;
     userName!: string | undefined;
     password!: string | undefined;
     from!: string | undefined;
@@ -58439,7 +58571,7 @@ export class YTelSettingsEditDto implements IYTelSettingsEditDto {
 }
 
 export interface IYTelSettingsEditDto {
-    isEnabled: string | undefined;
+    isEnabled: boolean | undefined;
     userName: string | undefined;
     password: string | undefined;
     from: string | undefined;
@@ -58539,6 +58671,7 @@ export interface IImportFullName {
 
 export class ImportAddressInput implements IImportAddressInput {
     street!: string | undefined;
+    addressLine2!: string | undefined;
     city!: string | undefined;
     stateName!: string | undefined;
     stateCode!: string | undefined;
@@ -58558,6 +58691,7 @@ export class ImportAddressInput implements IImportAddressInput {
     init(data?: any) {
         if (data) {
             this.street = data["street"];
+            this.addressLine2 = data["addressLine2"];
             this.city = data["city"];
             this.stateName = data["stateName"];
             this.stateCode = data["stateCode"];
@@ -58577,6 +58711,7 @@ export class ImportAddressInput implements IImportAddressInput {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["street"] = this.street;
+        data["addressLine2"] = this.addressLine2;
         data["city"] = this.city;
         data["stateName"] = this.stateName;
         data["stateCode"] = this.stateCode;
@@ -58589,12 +58724,65 @@ export class ImportAddressInput implements IImportAddressInput {
 
 export interface IImportAddressInput {
     street: string | undefined;
+    addressLine2: string | undefined;
     city: string | undefined;
     stateName: string | undefined;
     stateCode: string | undefined;
     zipCode: string | undefined;
     countryName: string | undefined;
     countryCode: string | undefined;
+}
+
+export class ImportCustomFieldsInput implements IImportCustomFieldsInput {
+    customField1!: string | undefined;
+    customField2!: string | undefined;
+    customField3!: string | undefined;
+    customField4!: string | undefined;
+    customField5!: string | undefined;
+
+    constructor(data?: IImportCustomFieldsInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.customField1 = data["customField1"];
+            this.customField2 = data["customField2"];
+            this.customField3 = data["customField3"];
+            this.customField4 = data["customField4"];
+            this.customField5 = data["customField5"];
+        }
+    }
+
+    static fromJS(data: any): ImportCustomFieldsInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new ImportCustomFieldsInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["customField1"] = this.customField1;
+        data["customField2"] = this.customField2;
+        data["customField3"] = this.customField3;
+        data["customField4"] = this.customField4;
+        data["customField5"] = this.customField5;
+        return data; 
+    }
+}
+
+export interface IImportCustomFieldsInput {
+    customField1: string | undefined;
+    customField2: string | undefined;
+    customField3: string | undefined;
+    customField4: string | undefined;
+    customField5: string | undefined;
 }
 
 export class ImportPersonalInput implements IImportPersonalInput {
@@ -58628,6 +58816,7 @@ export class ImportPersonalInput implements IImportPersonalInput {
     profileSummary!: string | undefined;
     interests!: string[] | undefined;
     affiliateCode!: string | undefined;
+    customFields!: ImportCustomFieldsInput | undefined;
 
     constructor(data?: IImportPersonalInput) {
         if (data) {
@@ -58674,6 +58863,7 @@ export class ImportPersonalInput implements IImportPersonalInput {
                     this.interests.push(item);
             }
             this.affiliateCode = data["affiliateCode"];
+            this.customFields = data["customFields"] ? ImportCustomFieldsInput.fromJS(data["customFields"]) : <any>undefined;
         }
     }
 
@@ -58720,6 +58910,7 @@ export class ImportPersonalInput implements IImportPersonalInput {
                 data["interests"].push(item);
         }
         data["affiliateCode"] = this.affiliateCode;
+        data["customFields"] = this.customFields ? this.customFields.toJSON() : <any>undefined;
         return data; 
     }
 }
@@ -58755,6 +58946,7 @@ export interface IImportPersonalInput {
     profileSummary: string | undefined;
     interests: string[] | undefined;
     affiliateCode: string | undefined;
+    customFields: ImportCustomFieldsInput | undefined;
 }
 
 export class ImportBusinessInput implements IImportBusinessInput {
@@ -58922,6 +59114,9 @@ export interface IImportBusinessInput {
 }
 
 export class ImportItemInput implements IImportItemInput {
+    contactId!: number | undefined;
+    contactXref!: string | undefined;
+    userPassword!: string | undefined;
     personalInfo!: ImportPersonalInput | undefined;
     businessInfo!: ImportBusinessInput | undefined;
     notes!: string | undefined;
@@ -58932,6 +59127,7 @@ export class ImportItemInput implements IImportItemInput {
     channelId!: string | undefined;
     gclId!: string | undefined;
     refererUrl!: string | undefined;
+    entryUrl!: string | undefined;
     applicantId!: string | undefined;
     applicationId!: string | undefined;
     ipAddress!: string | undefined;
@@ -58946,6 +59142,7 @@ export class ImportItemInput implements IImportItemInput {
     utmKeyword!: string | undefined;
     utmAdGroup!: string | undefined;
     utmName!: string | undefined;
+    requestCustomInfo!: ImportCustomFieldsInput | undefined;
 
     constructor(data?: IImportItemInput) {
         if (data) {
@@ -58958,6 +59155,9 @@ export class ImportItemInput implements IImportItemInput {
 
     init(data?: any) {
         if (data) {
+            this.contactId = data["contactId"];
+            this.contactXref = data["contactXref"];
+            this.userPassword = data["userPassword"];
             this.personalInfo = data["personalInfo"] ? ImportPersonalInput.fromJS(data["personalInfo"]) : <any>undefined;
             this.businessInfo = data["businessInfo"] ? ImportBusinessInput.fromJS(data["businessInfo"]) : <any>undefined;
             this.notes = data["notes"];
@@ -58968,6 +59168,7 @@ export class ImportItemInput implements IImportItemInput {
             this.channelId = data["channelId"];
             this.gclId = data["gclId"];
             this.refererUrl = data["refererUrl"];
+            this.entryUrl = data["entryUrl"];
             this.applicantId = data["applicantId"];
             this.applicationId = data["applicationId"];
             this.ipAddress = data["ipAddress"];
@@ -58982,6 +59183,7 @@ export class ImportItemInput implements IImportItemInput {
             this.utmKeyword = data["utmKeyword"];
             this.utmAdGroup = data["utmAdGroup"];
             this.utmName = data["utmName"];
+            this.requestCustomInfo = data["requestCustomInfo"] ? ImportCustomFieldsInput.fromJS(data["requestCustomInfo"]) : <any>undefined;
         }
     }
 
@@ -58994,6 +59196,9 @@ export class ImportItemInput implements IImportItemInput {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["contactId"] = this.contactId;
+        data["contactXref"] = this.contactXref;
+        data["userPassword"] = this.userPassword;
         data["personalInfo"] = this.personalInfo ? this.personalInfo.toJSON() : <any>undefined;
         data["businessInfo"] = this.businessInfo ? this.businessInfo.toJSON() : <any>undefined;
         data["notes"] = this.notes;
@@ -59004,6 +59209,7 @@ export class ImportItemInput implements IImportItemInput {
         data["channelId"] = this.channelId;
         data["gclId"] = this.gclId;
         data["refererUrl"] = this.refererUrl;
+        data["entryUrl"] = this.entryUrl;
         data["applicantId"] = this.applicantId;
         data["applicationId"] = this.applicationId;
         data["ipAddress"] = this.ipAddress;
@@ -59018,11 +59224,15 @@ export class ImportItemInput implements IImportItemInput {
         data["utmKeyword"] = this.utmKeyword;
         data["utmAdGroup"] = this.utmAdGroup;
         data["utmName"] = this.utmName;
+        data["requestCustomInfo"] = this.requestCustomInfo ? this.requestCustomInfo.toJSON() : <any>undefined;
         return data; 
     }
 }
 
 export interface IImportItemInput {
+    contactId: number | undefined;
+    contactXref: string | undefined;
+    userPassword: string | undefined;
     personalInfo: ImportPersonalInput | undefined;
     businessInfo: ImportBusinessInput | undefined;
     notes: string | undefined;
@@ -59033,6 +59243,7 @@ export interface IImportItemInput {
     channelId: string | undefined;
     gclId: string | undefined;
     refererUrl: string | undefined;
+    entryUrl: string | undefined;
     applicantId: string | undefined;
     applicationId: string | undefined;
     ipAddress: string | undefined;
@@ -59047,6 +59258,7 @@ export interface IImportItemInput {
     utmKeyword: string | undefined;
     utmAdGroup: string | undefined;
     utmName: string | undefined;
+    requestCustomInfo: ImportCustomFieldsInput | undefined;
 }
 
 export class ImportFieldInfoDto implements IImportFieldInfoDto {
@@ -59316,8 +59528,6 @@ export interface IGetFileUrlOutput {
 }
 
 export class ImportContactInput implements IImportContactInput {
-    contactId!: number | undefined;
-    contactXref!: string | undefined;
     lists!: string[] | undefined;
     tags!: string[] | undefined;
     rating!: number | undefined;
@@ -59327,6 +59537,9 @@ export class ImportContactInput implements IImportContactInput {
     partnerTypeName!: string | undefined;
     ignoreInvalidValues!: boolean | undefined;
     overrideLists!: boolean | undefined;
+    contactId!: number | undefined;
+    contactXref!: string | undefined;
+    userPassword!: string | undefined;
     personalInfo!: ImportPersonalInput | undefined;
     businessInfo!: ImportBusinessInput | undefined;
     notes!: string | undefined;
@@ -59337,6 +59550,7 @@ export class ImportContactInput implements IImportContactInput {
     channelId!: string | undefined;
     gclId!: string | undefined;
     refererUrl!: string | undefined;
+    entryUrl!: string | undefined;
     applicantId!: string | undefined;
     applicationId!: string | undefined;
     ipAddress!: string | undefined;
@@ -59351,6 +59565,7 @@ export class ImportContactInput implements IImportContactInput {
     utmKeyword!: string | undefined;
     utmAdGroup!: string | undefined;
     utmName!: string | undefined;
+    requestCustomInfo!: ImportCustomFieldsInput | undefined;
 
     constructor(data?: IImportContactInput) {
         if (data) {
@@ -59366,8 +59581,6 @@ export class ImportContactInput implements IImportContactInput {
 
     init(data?: any) {
         if (data) {
-            this.contactId = data["contactId"];
-            this.contactXref = data["contactXref"];
             if (data["lists"] && data["lists"].constructor === Array) {
                 this.lists = [];
                 for (let item of data["lists"])
@@ -59385,6 +59598,9 @@ export class ImportContactInput implements IImportContactInput {
             this.partnerTypeName = data["partnerTypeName"];
             this.ignoreInvalidValues = data["ignoreInvalidValues"];
             this.overrideLists = data["overrideLists"] !== undefined ? data["overrideLists"] : false;
+            this.contactId = data["contactId"];
+            this.contactXref = data["contactXref"];
+            this.userPassword = data["userPassword"];
             this.personalInfo = data["personalInfo"] ? ImportPersonalInput.fromJS(data["personalInfo"]) : <any>undefined;
             this.businessInfo = data["businessInfo"] ? ImportBusinessInput.fromJS(data["businessInfo"]) : <any>undefined;
             this.notes = data["notes"];
@@ -59395,6 +59611,7 @@ export class ImportContactInput implements IImportContactInput {
             this.channelId = data["channelId"];
             this.gclId = data["gclId"];
             this.refererUrl = data["refererUrl"];
+            this.entryUrl = data["entryUrl"];
             this.applicantId = data["applicantId"];
             this.applicationId = data["applicationId"];
             this.ipAddress = data["ipAddress"];
@@ -59409,6 +59626,7 @@ export class ImportContactInput implements IImportContactInput {
             this.utmKeyword = data["utmKeyword"];
             this.utmAdGroup = data["utmAdGroup"];
             this.utmName = data["utmName"];
+            this.requestCustomInfo = data["requestCustomInfo"] ? ImportCustomFieldsInput.fromJS(data["requestCustomInfo"]) : <any>undefined;
         }
     }
 
@@ -59421,8 +59639,6 @@ export class ImportContactInput implements IImportContactInput {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["contactId"] = this.contactId;
-        data["contactXref"] = this.contactXref;
         if (this.lists && this.lists.constructor === Array) {
             data["lists"] = [];
             for (let item of this.lists)
@@ -59440,6 +59656,9 @@ export class ImportContactInput implements IImportContactInput {
         data["partnerTypeName"] = this.partnerTypeName;
         data["ignoreInvalidValues"] = this.ignoreInvalidValues;
         data["overrideLists"] = this.overrideLists;
+        data["contactId"] = this.contactId;
+        data["contactXref"] = this.contactXref;
+        data["userPassword"] = this.userPassword;
         data["personalInfo"] = this.personalInfo ? this.personalInfo.toJSON() : <any>undefined;
         data["businessInfo"] = this.businessInfo ? this.businessInfo.toJSON() : <any>undefined;
         data["notes"] = this.notes;
@@ -59450,6 +59669,7 @@ export class ImportContactInput implements IImportContactInput {
         data["channelId"] = this.channelId;
         data["gclId"] = this.gclId;
         data["refererUrl"] = this.refererUrl;
+        data["entryUrl"] = this.entryUrl;
         data["applicantId"] = this.applicantId;
         data["applicationId"] = this.applicationId;
         data["ipAddress"] = this.ipAddress;
@@ -59464,13 +59684,12 @@ export class ImportContactInput implements IImportContactInput {
         data["utmKeyword"] = this.utmKeyword;
         data["utmAdGroup"] = this.utmAdGroup;
         data["utmName"] = this.utmName;
+        data["requestCustomInfo"] = this.requestCustomInfo ? this.requestCustomInfo.toJSON() : <any>undefined;
         return data; 
     }
 }
 
 export interface IImportContactInput {
-    contactId: number | undefined;
-    contactXref: string | undefined;
     lists: string[] | undefined;
     tags: string[] | undefined;
     rating: number | undefined;
@@ -59480,6 +59699,9 @@ export interface IImportContactInput {
     partnerTypeName: string | undefined;
     ignoreInvalidValues: boolean | undefined;
     overrideLists: boolean | undefined;
+    contactId: number | undefined;
+    contactXref: string | undefined;
+    userPassword: string | undefined;
     personalInfo: ImportPersonalInput | undefined;
     businessInfo: ImportBusinessInput | undefined;
     notes: string | undefined;
@@ -59490,6 +59712,7 @@ export interface IImportContactInput {
     channelId: string | undefined;
     gclId: string | undefined;
     refererUrl: string | undefined;
+    entryUrl: string | undefined;
     applicantId: string | undefined;
     applicationId: string | undefined;
     ipAddress: string | undefined;
@@ -59504,6 +59727,7 @@ export interface IImportContactInput {
     utmKeyword: string | undefined;
     utmAdGroup: string | undefined;
     utmName: string | undefined;
+    requestCustomInfo: ImportCustomFieldsInput | undefined;
 }
 
 export enum InstanceType {
@@ -59883,7 +60107,7 @@ export class CreateInvoiceInput implements ICreateInvoiceInput {
     status!: InvoiceStatus;
     number!: string | undefined;
     date!: moment.Moment;
-    dueDate!: moment.Moment;
+    dueDate!: moment.Moment | undefined;
     grandTotal!: number;
     discountTotal!: number | undefined;
     shippingTotal!: number | undefined;
@@ -59974,7 +60198,7 @@ export interface ICreateInvoiceInput {
     status: InvoiceStatus;
     number: string | undefined;
     date: moment.Moment;
-    dueDate: moment.Moment;
+    dueDate: moment.Moment | undefined;
     grandTotal: number;
     discountTotal: number | undefined;
     shippingTotal: number | undefined;
@@ -60295,7 +60519,7 @@ export class UpdateInvoiceInput implements IUpdateInvoiceInput {
     status!: InvoiceStatus;
     number!: string | undefined;
     date!: moment.Moment;
-    dueDate!: moment.Moment;
+    dueDate!: moment.Moment | undefined;
     grandTotal!: number;
     discountTotal!: number | undefined;
     shippingTotal!: number | undefined;
@@ -60374,7 +60598,7 @@ export interface IUpdateInvoiceInput {
     status: InvoiceStatus;
     number: string | undefined;
     date: moment.Moment;
-    dueDate: moment.Moment;
+    dueDate: moment.Moment | undefined;
     grandTotal: number;
     discountTotal: number | undefined;
     shippingTotal: number | undefined;
@@ -61565,6 +61789,302 @@ export class LeadCancellationReasonDtoListResultDto implements ILeadCancellation
 
 export interface ILeadCancellationReasonDtoListResultDto {
     items: LeadCancellationReasonDto[] | undefined;
+}
+
+export class CreateLeadInput implements ICreateLeadInput {
+    contactId!: number | undefined;
+    contactXRef!: string | undefined;
+    namePrefix!: string | undefined;
+    firstName!: string | undefined;
+    middleName!: string | undefined;
+    lastName!: string | undefined;
+    nameSuffix!: string | undefined;
+    nickName!: string | undefined;
+    emailAddresses!: CreateContactEmailInput[] | undefined;
+    phoneNumbers!: CreateContactPhoneInput[] | undefined;
+    addresses!: CreateContactAddressInput[] | undefined;
+    links!: CreateContactLinkInput[] | undefined;
+    dob!: moment.Moment | undefined;
+    bankCode!: string | undefined;
+    gender!: Gender | undefined;
+    experience!: string | undefined;
+    profileSummary!: string | undefined;
+    note!: string | undefined;
+    interests!: string[] | undefined;
+    companyName!: string | undefined;
+    industry!: string | undefined;
+    photo!: ContactPhotoInput | undefined;
+    sourceContactId!: number | undefined;
+    sourceOrganizationUnitId!: number | undefined;
+    title!: string | undefined;
+    tags!: ContactTagInput[] | undefined;
+    lists!: ContactListInput[] | undefined;
+    assignedUserId!: number | undefined;
+    ratingId!: number | undefined;
+    contactGroupId!: string;
+    statusId!: string | undefined;
+    partnerTypeName!: string | undefined;
+    leadTypeId!: number | undefined;
+    stageId!: number | undefined;
+    followUpDate!: moment.Moment | undefined;
+    trackingInfo!: TrackingInfo | undefined;
+    inviteUser!: boolean | undefined;
+    generateAutoLoginLink!: boolean | undefined;
+    newUserPassword!: string | undefined;
+
+    constructor(data?: ICreateLeadInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.contactId = data["contactId"];
+            this.contactXRef = data["contactXRef"];
+            this.namePrefix = data["namePrefix"];
+            this.firstName = data["firstName"];
+            this.middleName = data["middleName"];
+            this.lastName = data["lastName"];
+            this.nameSuffix = data["nameSuffix"];
+            this.nickName = data["nickName"];
+            if (data["emailAddresses"] && data["emailAddresses"].constructor === Array) {
+                this.emailAddresses = [];
+                for (let item of data["emailAddresses"])
+                    this.emailAddresses.push(CreateContactEmailInput.fromJS(item));
+            }
+            if (data["phoneNumbers"] && data["phoneNumbers"].constructor === Array) {
+                this.phoneNumbers = [];
+                for (let item of data["phoneNumbers"])
+                    this.phoneNumbers.push(CreateContactPhoneInput.fromJS(item));
+            }
+            if (data["addresses"] && data["addresses"].constructor === Array) {
+                this.addresses = [];
+                for (let item of data["addresses"])
+                    this.addresses.push(CreateContactAddressInput.fromJS(item));
+            }
+            if (data["links"] && data["links"].constructor === Array) {
+                this.links = [];
+                for (let item of data["links"])
+                    this.links.push(CreateContactLinkInput.fromJS(item));
+            }
+            this.dob = data["dob"] ? moment(data["dob"].toString()) : <any>undefined;
+            this.bankCode = data["bankCode"];
+            this.gender = data["gender"];
+            this.experience = data["experience"];
+            this.profileSummary = data["profileSummary"];
+            this.note = data["note"];
+            if (data["interests"] && data["interests"].constructor === Array) {
+                this.interests = [];
+                for (let item of data["interests"])
+                    this.interests.push(item);
+            }
+            this.companyName = data["companyName"];
+            this.industry = data["industry"];
+            this.photo = data["photo"] ? ContactPhotoInput.fromJS(data["photo"]) : <any>undefined;
+            this.sourceContactId = data["sourceContactId"];
+            this.sourceOrganizationUnitId = data["sourceOrganizationUnitId"];
+            this.title = data["title"];
+            if (data["tags"] && data["tags"].constructor === Array) {
+                this.tags = [];
+                for (let item of data["tags"])
+                    this.tags.push(ContactTagInput.fromJS(item));
+            }
+            if (data["lists"] && data["lists"].constructor === Array) {
+                this.lists = [];
+                for (let item of data["lists"])
+                    this.lists.push(ContactListInput.fromJS(item));
+            }
+            this.assignedUserId = data["assignedUserId"];
+            this.ratingId = data["ratingId"];
+            this.contactGroupId = data["contactGroupId"];
+            this.statusId = data["statusId"];
+            this.partnerTypeName = data["partnerTypeName"];
+            this.leadTypeId = data["leadTypeId"];
+            this.stageId = data["stageId"];
+            this.followUpDate = data["followUpDate"] ? moment(data["followUpDate"].toString()) : <any>undefined;
+            this.trackingInfo = data["trackingInfo"] ? TrackingInfo.fromJS(data["trackingInfo"]) : <any>undefined;
+            this.inviteUser = data["inviteUser"];
+            this.generateAutoLoginLink = data["generateAutoLoginLink"];
+            this.newUserPassword = data["newUserPassword"];
+        }
+    }
+
+    static fromJS(data: any): CreateLeadInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateLeadInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["contactId"] = this.contactId;
+        data["contactXRef"] = this.contactXRef;
+        data["namePrefix"] = this.namePrefix;
+        data["firstName"] = this.firstName;
+        data["middleName"] = this.middleName;
+        data["lastName"] = this.lastName;
+        data["nameSuffix"] = this.nameSuffix;
+        data["nickName"] = this.nickName;
+        if (this.emailAddresses && this.emailAddresses.constructor === Array) {
+            data["emailAddresses"] = [];
+            for (let item of this.emailAddresses)
+                data["emailAddresses"].push(item.toJSON());
+        }
+        if (this.phoneNumbers && this.phoneNumbers.constructor === Array) {
+            data["phoneNumbers"] = [];
+            for (let item of this.phoneNumbers)
+                data["phoneNumbers"].push(item.toJSON());
+        }
+        if (this.addresses && this.addresses.constructor === Array) {
+            data["addresses"] = [];
+            for (let item of this.addresses)
+                data["addresses"].push(item.toJSON());
+        }
+        if (this.links && this.links.constructor === Array) {
+            data["links"] = [];
+            for (let item of this.links)
+                data["links"].push(item.toJSON());
+        }
+        data["dob"] = this.dob ? this.dob.toISOString() : <any>undefined;
+        data["bankCode"] = this.bankCode;
+        data["gender"] = this.gender;
+        data["experience"] = this.experience;
+        data["profileSummary"] = this.profileSummary;
+        data["note"] = this.note;
+        if (this.interests && this.interests.constructor === Array) {
+            data["interests"] = [];
+            for (let item of this.interests)
+                data["interests"].push(item);
+        }
+        data["companyName"] = this.companyName;
+        data["industry"] = this.industry;
+        data["photo"] = this.photo ? this.photo.toJSON() : <any>undefined;
+        data["sourceContactId"] = this.sourceContactId;
+        data["sourceOrganizationUnitId"] = this.sourceOrganizationUnitId;
+        data["title"] = this.title;
+        if (this.tags && this.tags.constructor === Array) {
+            data["tags"] = [];
+            for (let item of this.tags)
+                data["tags"].push(item.toJSON());
+        }
+        if (this.lists && this.lists.constructor === Array) {
+            data["lists"] = [];
+            for (let item of this.lists)
+                data["lists"].push(item.toJSON());
+        }
+        data["assignedUserId"] = this.assignedUserId;
+        data["ratingId"] = this.ratingId;
+        data["contactGroupId"] = this.contactGroupId;
+        data["statusId"] = this.statusId;
+        data["partnerTypeName"] = this.partnerTypeName;
+        data["leadTypeId"] = this.leadTypeId;
+        data["stageId"] = this.stageId;
+        data["followUpDate"] = this.followUpDate ? this.followUpDate.toISOString() : <any>undefined;
+        data["trackingInfo"] = this.trackingInfo ? this.trackingInfo.toJSON() : <any>undefined;
+        data["inviteUser"] = this.inviteUser;
+        data["generateAutoLoginLink"] = this.generateAutoLoginLink;
+        data["newUserPassword"] = this.newUserPassword;
+        return data; 
+    }
+}
+
+export interface ICreateLeadInput {
+    contactId: number | undefined;
+    contactXRef: string | undefined;
+    namePrefix: string | undefined;
+    firstName: string | undefined;
+    middleName: string | undefined;
+    lastName: string | undefined;
+    nameSuffix: string | undefined;
+    nickName: string | undefined;
+    emailAddresses: CreateContactEmailInput[] | undefined;
+    phoneNumbers: CreateContactPhoneInput[] | undefined;
+    addresses: CreateContactAddressInput[] | undefined;
+    links: CreateContactLinkInput[] | undefined;
+    dob: moment.Moment | undefined;
+    bankCode: string | undefined;
+    gender: Gender | undefined;
+    experience: string | undefined;
+    profileSummary: string | undefined;
+    note: string | undefined;
+    interests: string[] | undefined;
+    companyName: string | undefined;
+    industry: string | undefined;
+    photo: ContactPhotoInput | undefined;
+    sourceContactId: number | undefined;
+    sourceOrganizationUnitId: number | undefined;
+    title: string | undefined;
+    tags: ContactTagInput[] | undefined;
+    lists: ContactListInput[] | undefined;
+    assignedUserId: number | undefined;
+    ratingId: number | undefined;
+    contactGroupId: string;
+    statusId: string | undefined;
+    partnerTypeName: string | undefined;
+    leadTypeId: number | undefined;
+    stageId: number | undefined;
+    followUpDate: moment.Moment | undefined;
+    trackingInfo: TrackingInfo | undefined;
+    inviteUser: boolean | undefined;
+    generateAutoLoginLink: boolean | undefined;
+    newUserPassword: string | undefined;
+}
+
+export class CreateLeadOutput implements ICreateLeadOutput {
+    contactId!: number | undefined;
+    leadId!: number | undefined;
+    userId!: number | undefined;
+    userCode!: string | undefined;
+    autoLoginLink!: string | undefined;
+
+    constructor(data?: ICreateLeadOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.contactId = data["contactId"];
+            this.leadId = data["leadId"];
+            this.userId = data["userId"];
+            this.userCode = data["userCode"];
+            this.autoLoginLink = data["autoLoginLink"];
+        }
+    }
+
+    static fromJS(data: any): CreateLeadOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateLeadOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["contactId"] = this.contactId;
+        data["leadId"] = this.leadId;
+        data["userId"] = this.userId;
+        data["userCode"] = this.userCode;
+        data["autoLoginLink"] = this.autoLoginLink;
+        return data; 
+    }
+}
+
+export interface ICreateLeadOutput {
+    contactId: number | undefined;
+    leadId: number | undefined;
+    userId: number | undefined;
+    userCode: string | undefined;
+    autoLoginLink: string | undefined;
 }
 
 export class PackageInfoDto implements IPackageInfoDto {
@@ -73316,6 +73836,8 @@ export class ImpersonatedAuthenticateResultModel implements IImpersonatedAuthent
     expireInSeconds!: number | undefined;
     shouldResetPassword!: boolean | undefined;
     passwordResetCode!: string | undefined;
+    shouldVerifyEmail!: boolean | undefined;
+    userEmail!: string | undefined;
 
     constructor(data?: IImpersonatedAuthenticateResultModel) {
         if (data) {
@@ -73334,6 +73856,8 @@ export class ImpersonatedAuthenticateResultModel implements IImpersonatedAuthent
             this.expireInSeconds = data["expireInSeconds"];
             this.shouldResetPassword = data["shouldResetPassword"];
             this.passwordResetCode = data["passwordResetCode"];
+            this.shouldVerifyEmail = data["shouldVerifyEmail"];
+            this.userEmail = data["userEmail"];
         }
     }
 
@@ -73352,6 +73876,8 @@ export class ImpersonatedAuthenticateResultModel implements IImpersonatedAuthent
         data["expireInSeconds"] = this.expireInSeconds;
         data["shouldResetPassword"] = this.shouldResetPassword;
         data["passwordResetCode"] = this.passwordResetCode;
+        data["shouldVerifyEmail"] = this.shouldVerifyEmail;
+        data["userEmail"] = this.userEmail;
         return data; 
     }
 }
@@ -73363,6 +73889,8 @@ export interface IImpersonatedAuthenticateResultModel {
     expireInSeconds: number | undefined;
     shouldResetPassword: boolean | undefined;
     passwordResetCode: string | undefined;
+    shouldVerifyEmail: boolean | undefined;
+    userEmail: string | undefined;
 }
 
 export class SwitchedAccountAuthenticateResultModel implements ISwitchedAccountAuthenticateResultModel {

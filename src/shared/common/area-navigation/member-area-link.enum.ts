@@ -4,6 +4,7 @@ export class MemberAreaLink {
     routerUrl?: string;
     imgUrl?: string;
     activeImgUrl?: string;
+    url?: string;
     sublinks?: MemberAreaLink[];
     hidden?: boolean;
 }

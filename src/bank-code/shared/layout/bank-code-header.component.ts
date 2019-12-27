@@ -1,6 +1,6 @@
 /** Core imports */
 import { Component, Directive, Injector, OnDestroy, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 /** Third party imports */
 import { forkJoin } from 'rxjs';
@@ -35,7 +35,7 @@ export class BankCodeHeaderComponent implements OnInit, OnDestroy {
     loggedUserId = abp.session.userId;
     remoteServiceBaseUrl: string = AppConsts.remoteServiceBaseUrl;
     currentDate = new Date();
-    hideBCRMLink = true;
+    BCRMLink: string;
     memberAreaLinks: MemberAreaLink[] = this.getMemberAreaLinks();
 
     constructor(
@@ -62,8 +62,10 @@ export class BankCodeHeaderComponent implements OnInit, OnDestroy {
             forkJoin(
                 this.profileService.checkServiceSubscription(BankCodeServiceType.BANKPass),
                 this.profileService.checkServiceSubscription(BankCodeServiceType.BANKAffiliate)
-            ).subscribe(([hasBankPassSubscription, hasBankAffiliateSubscription]: [ boolean, boolean ]) => {
-                this.hideBCRMLink = !hasBankPassSubscription && !hasBankAffiliateSubscription;
+            ).subscribe((subcriptions: boolean[]) => {
+                this.BCRMLink = subcriptions.some(Boolean)
+                    ? '../app/crm'
+                    : './products/bank-pass';
                 this.memberAreaLinks = this.getMemberAreaLinks();
             });
         }
@@ -123,8 +125,8 @@ export class BankCodeHeaderComponent implements OnInit, OnDestroy {
             },
             {
                 name: this.ls.l('BankCode_BCRM'),
-                routerUrl: '../app/crm',
-                hidden: this.hideBCRMLink
+                routerUrl: this.BCRMLink,
+                hidden: !this.BCRMLink
             }
         ];
     }

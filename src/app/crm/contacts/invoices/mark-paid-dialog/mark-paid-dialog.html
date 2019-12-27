@@ -1,0 +1,51 @@
+<h2 mat-dialog-title>{{ls.l('Invoice_MarkAsPaid')}}</h2>
+<mat-dialog-content>
+    <div>
+        <label>{{ls.l('Invoice #')}}</label>
+        <dx-text-box
+            name="invoiceNumber"
+            [readOnly]="true"
+            [(value)]="data.invoice.InvoiceNumber">
+        </dx-text-box>
+    </div>
+    <div>
+        <label>{{ls.l('Date')}}</label>
+        <dx-date-box #dateComponent
+            name="date"
+            width="250px"
+            [placeholder]="ls.l('Date')"
+            (onKeyDown)="allowDigitsOnly($event, ['/'])"
+            [(value)]="date">
+        </dx-date-box>
+    </div>
+    <div>
+        <label>{{ls.l('Description')}}</label>
+        <dx-text-box
+            name="description"
+            [(value)]="description">
+        </dx-text-box>
+    </div>
+    <div>
+        <label>{{ls.l('Stage')}}</label>
+        <dx-select-box
+            name="stage"
+            width="250px"
+            displayExpr="name"
+            valueExpr="name"
+            [dataSource]="data.stages$ | async"
+            [(value)]="stage">
+        </dx-select-box>
+    </div>
+    <div>
+        <label>{{ls.l('Amount')}}</label>
+        <dx-number-box
+            name="amount"
+            [format]="currency + ' #,##0.##'"
+            [(value)]="amount">
+        </dx-number-box>
+    </div>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-button mat-dialog-close class="button-layout button-default">{{ls.l('Cancel')}}</button>
+  <button mat-button class="button-layout button-primary" (click)="markAsPaid(dateComponent)">{{ls.l('Invoice_MarkAsPaid')}}</button>
+</mat-dialog-actions>

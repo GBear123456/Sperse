@@ -12,7 +12,7 @@ export class GoalsCrackedComponent implements OnInit {
         { name: this.ls.l('Weekly goal'), class: 'weekly-goal', progress: 28 },
         { name: this.ls.l('Monthly goal'), class: 'monthly-goal', progress: 88 },
         { name: this.ls.l('Quarterly goal'), class: 'quarterly-goal', progress: 56 },
-        { name: this.ls.l('Annualy goal'), class: 'annualy-goal', progress: 34 }
+        { name: this.ls.l('Annual goal'), class: 'annual-goal', progress: 34 }
     ];
 
     constructor(

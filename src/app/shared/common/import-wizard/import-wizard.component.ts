@@ -94,6 +94,7 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
     reviewDataSource: any;
     mapDataSource: any;
     selectedMapRowKeys: number[] = [];
+    isNextButtonHiden = false;
 
     selectModeItems = [
         { text: 'Affect on page items', mode: 'page' },
@@ -253,6 +254,7 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
     }
 
     initReviewDataSource(mappedFields) {
+        this.isNextButtonHiden = true;
         this.emptyReviewData();
         setTimeout(() => {
             let dataSource = [], progress = 0, totalCount = this.fileData.data.length - (this.fileHasHeader ? 0 : 1),
@@ -293,6 +295,7 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
                     this.reviewDataSource = dataSource;
                     this.reviewProgress.instance.option('value', 100);
                     this.reviewProgress.instance.option('visible', false);
+                    this.isNextButtonHiden = false;
                 }
             };
 
@@ -335,9 +338,8 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
         let ident = this.getUniqueIdent(raw),
             count = this.duplicateCounts[ident];
 
-        row.uniqueIdent = ident;
-        return (this.duplicateCounts[ident] =
-            (count || 0) + 1) > 1;
+        return !(row.uniqueIdent = ident) ||
+            (this.duplicateCounts[ident] = (count || 0) + 1) > 1;
     }
 
     checkSimilarGroups(row) {

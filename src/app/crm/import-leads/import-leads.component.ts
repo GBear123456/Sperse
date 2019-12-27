@@ -27,7 +27,7 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { ZipCodeFormatterPipe } from '@shared/common/pipes/zip-code-formatter/zip-code-formatter.pipe';
 import {
     ImportItemInput, ImportInput, ImportPersonalInput, ImportBusinessInput, ImportFullName, ImportAddressInput,
-    ImportServiceProxy, ImportTypeInput, PartnerServiceProxy, GetImportStatusOutput
+    ImportCustomFieldsInput, ImportServiceProxy, ImportTypeInput, PartnerServiceProxy, GetImportStatusOutput
 } from '@shared/service-proxies/service-proxies';
 import { ImportLeadsService } from './import-leads.service';
 import { ImportStatus, ContactGroup } from '@shared/AppEnums';
@@ -49,6 +49,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     @ViewChild(StarsListComponent) starsListComponent: StarsListComponent;
     @ViewChild('stagesList') stagesComponent: StaticListComponent;
 
+    private readonly MAX_REQUEST_SIZE = 55;
     private readonly FULL_NAME_FIELD = 'personalInfo_fullName';
     private readonly NAME_PREFIX_FIELD = 'personalInfo_fullName_prefix';
     private readonly FIRST_NAME_FIELD = 'personalInfo_fullName_firstName';
@@ -59,6 +60,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     private readonly COMPANY_NAME_FIELD = 'businessInfo_companyName';
     private readonly PERSONAL_FULL_ADDRESS = 'personalInfo_fullAddress';
     private readonly PERSONAL_FULL_ADDRESS_STREET = 'personalInfo_fullAddress_street';
+    private readonly PERSONAL_FULL_ADDRESS_ADDRESSLINE2 = 'personalInfo_fullAddress_addressline2';
     private readonly PERSONAL_FULL_ADDRESS_CITY = 'personalInfo_fullAddress_city';
     private readonly PERSONAL_FULL_ADDRESS_STATE_NAME = 'personalInfo_fullAddress_stateName';
     private readonly PERSONAL_FULL_ADDRESS_STATE_CODE = 'personalInfo_fullAddress_stateCode';
@@ -68,6 +70,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     private readonly BUSINESS_AFFILIATE_CODE = 'businessInfo_affiliateCode';
     private readonly BUSINESS_COMPANY_FULL_ADDRESS = 'businessInfo_companyFullAddress';
     private readonly BUSINESS_COMPANY_FULL_ADDRESS_STREET = 'businessInfo_companyFullAddress_street';
+    private readonly BUSINESS_COMPANY_FULL_ADDRESS_ADDRESSLINE2 = 'businessInfo_companyFullAddress_addressline2';
     private readonly BUSINESS_COMPANY_FULL_ADDRESS_CITY = 'businessInfo_companyFullAddress_city';
     private readonly BUSINESS_COMPANY_FULL_ADDRESS_STATE_NAME = 'businessInfo_companyFullAddress_stateName';
     private readonly BUSINESS_COMPANY_FULL_ADDRESS_STATE_CODE = 'businessInfo_companyFullAddress_stateCode';
@@ -76,6 +79,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     private readonly BUSINESS_COMPANY_FULL_ADDRESS_COUNTRY_CODE = 'businessInfo_companyFullAddress_countryCode';
     private readonly BUSINESS_WORK_FULL_ADDRESS = 'businessInfo_workFullAddress';
     private readonly BUSINESS_WORK_FULL_ADDRESS_STREET = 'businessInfo_workFullAddress_street';
+    private readonly BUSINESS_WORK_FULL_ADDRESS_ADDRESSLINE2 = 'businessInfo_workFullAddress_addressline2';
     private readonly BUSINESS_WORK_FULL_ADDRESS_CITY = 'businessInfo_workFullAddress_city';
     private readonly BUSINESS_WORK_FULL_ADDRESS_STATE_NAME = 'businessInfo_workFullAddress_stateName';
     private readonly BUSINESS_WORK_FULL_ADDRESS_STATE_CODE = 'businessInfo_workFullAddress_stateCode';
@@ -98,7 +102,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     private readonly BUSINESS_WORK_EMAIL3 = 'businessInfo_workEmail3';
     private readonly PERSONAL_PREFERREDTOD = 'personalInfo_preferredToD';
     private readonly PERSONAL_CREDITSCORERATING = 'personalInfo_creditScoreRating';
-    private readonly PERSONAL_AFFILIATE_CODE= 'personalInfo_affiliateCode';
+    private readonly PERSONAL_AFFILIATE_CODE = 'personalInfo_affiliateCode';
 
     private readonly FIELDS_TO_CAPITALIZE = [
         this.FIRST_NAME_FIELD,
@@ -133,6 +137,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
 
     private readonly FIELDS_CAPTIONS = [
         this.PERSONAL_FULL_ADDRESS_STREET,
+        this.PERSONAL_FULL_ADDRESS_ADDRESSLINE2,
         this.PERSONAL_FULL_ADDRESS_CITY,
         this.PERSONAL_FULL_ADDRESS_STATE_NAME,
         this.PERSONAL_FULL_ADDRESS_STATE_CODE,
@@ -140,6 +145,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         this.PERSONAL_FULL_ADDRESS_COUNTRY_NAME,
         this.PERSONAL_FULL_ADDRESS_COUNTRY_CODE,
         this.BUSINESS_COMPANY_FULL_ADDRESS_STREET,
+        this.BUSINESS_COMPANY_FULL_ADDRESS_ADDRESSLINE2,
         this.BUSINESS_COMPANY_FULL_ADDRESS_CITY,
         this.BUSINESS_COMPANY_FULL_ADDRESS_STATE_NAME,
         this.BUSINESS_COMPANY_FULL_ADDRESS_STATE_CODE,
@@ -147,6 +153,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         this.BUSINESS_COMPANY_FULL_ADDRESS_COUNTRY_NAME,
         this.BUSINESS_COMPANY_FULL_ADDRESS_COUNTRY_CODE,
         this.BUSINESS_WORK_FULL_ADDRESS_STREET,
+        this.BUSINESS_WORK_FULL_ADDRESS_ADDRESSLINE2,
         this.BUSINESS_WORK_FULL_ADDRESS_CITY,
         this.BUSINESS_WORK_FULL_ADDRESS_STATE_NAME,
         this.BUSINESS_WORK_FULL_ADDRESS_STATE_CODE,
@@ -158,11 +165,6 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     private readonly FIELDS_TO_IGNORE = [
         this.PERSONAL_PREFERREDTOD,
         this.PERSONAL_CREDITSCORERATING
-    ];
-
-    private readonly AFFILIATE_FIELDS = [
-        this.PERSONAL_AFFILIATE_CODE,
-        this.BUSINESS_AFFILIATE_CODE
     ];
 
     importStatuses: any = ImportStatus;
@@ -201,7 +203,9 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         fullAddress: ImportAddressInput.fromJS({}),
         businessInfo: ImportBusinessInput.fromJS({}),
         companyFullAddress: ImportAddressInput.fromJS({}),
-        workFullAddress: ImportAddressInput.fromJS({})
+        workFullAddress: ImportAddressInput.fromJS({}),
+        customFields: ImportCustomFieldsInput.fromJS({}),
+        requestCustomInfo: ImportCustomFieldsInput.fromJS({}),
     };
 
     public readonly compareFields: any = [
@@ -384,28 +388,33 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
             isConfirmed => {
                 if (isConfirmed) {
                     this.startLoading(true);
-                    let leadsInput = this.createLeadsInput(data);
-                    this.importProxy.import(leadsInput).pipe(
-                        finalize(() => this.finishLoading(true))
-                    ).subscribe((importId: number) => {
-                        if (importId && !isNaN(importId))
-                            this.importProxy.getStatuses(importId).subscribe((res: GetImportStatusOutput[]) => {
-                                let importStatus: GetImportStatusOutput = res[0];
-                                this.updateImportStatus(importStatus);
-                                if (!this.showedFinishStep())
-                                     this.wizard.showFinishStep();
-                                if (<ImportStatus>importStatus.statusId == ImportStatus.InProgress) {
-                                    this.importLeadsService.setupImportCheck(
-                                        importId,
-                                        (importStatus: GetImportStatusOutput) => {
-                                            this.updateImportStatus(importStatus);
-                                        },
-                                        uri
-                                    );
-                                }
-                            });
-                        this.clearToolbarSelectedItems();
-                    });
+                    let leadsInput = this.createLeadsInput(data),
+                        requestSize = Math.ceil(JSON.stringify(leadsInput).length / 1024 / 1024);
+                    if (requestSize > this.MAX_REQUEST_SIZE) {
+                        this.finishLoading(true);
+                        this.message.info(this.l('LeadsImportSizeExceeds', requestSize, this.MAX_REQUEST_SIZE));
+                    } else
+                        this.importProxy.import(leadsInput).pipe(
+                            finalize(() => this.finishLoading(true))
+                        ).subscribe((importId: number) => {
+                            if (importId && !isNaN(importId))
+                                this.importProxy.getStatuses(importId).subscribe((res: GetImportStatusOutput[]) => {
+                                    let importStatus: GetImportStatusOutput = res[0];
+                                    this.updateImportStatus(importStatus);
+                                    if (!this.showedFinishStep())
+                                         this.wizard.showFinishStep();
+                                    if (<ImportStatus>importStatus.statusId == ImportStatus.InProgress) {
+                                        this.importLeadsService.setupImportCheck(
+                                            importId,
+                                            (importStatus: GetImportStatusOutput) => {
+                                                this.updateImportStatus(importStatus);
+                                            },
+                                            uri
+                                        );
+                                    }
+                                });
+                            this.clearToolbarSelectedItems();
+                        });
                 }
             }
         );
@@ -430,9 +439,9 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         result.lists = this.listsComponent.selectedItems;
         result.tags = this.tagsComponent.selectedItems;
 
-        data.records.forEach(v => {
+        data.records.forEach(row => {
             let lead = new ImportItemInput();
-            let keys = Object.keys(v);
+            let keys = Object.keys(row);
             keys.forEach(key => {
                 let path = key.split(ImportWizardComponent.FieldSeparator);
                 if (path.length) {
@@ -446,7 +455,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
                         currentObj = currentObj[path[i]];
                     }
 
-                    currentObj[path[path.length - 1]] = v[key];
+                    currentObj[path[path.length - 1]] = row[key];
                 }
             });
 
@@ -470,9 +479,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
                 });
                 this.setMappingFields(this.mappingObjectNames[v], combinedName);
             } else {
-                if (this.FIELDS_TO_IGNORE.indexOf(combinedName) > -1
-                    || (this.contactGroupId !== ContactGroup.Partner && this.AFFILIATE_FIELDS.indexOf(combinedName) > -1)
-                )
+                if (this.FIELDS_TO_IGNORE.indexOf(combinedName) > -1)
                     return;
 
                 this.mappingFields.push({

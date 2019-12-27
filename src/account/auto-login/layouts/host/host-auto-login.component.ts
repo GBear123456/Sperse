@@ -69,7 +69,7 @@ export class HostAutoLoginComponent {
 
     getAppRoute() {
         let path = UrlHelper.getInitialUrlRelativePath();
-        return path.indexOf('auto-login') > 0 ? '' : path;
+        return !path || path.indexOf('auto-login') > 0 ? '' : path;
     }
 
     openConditionsDialog(type: ConditionsType) {

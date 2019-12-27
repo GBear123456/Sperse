@@ -66,7 +66,7 @@ export class UserDropdownMenuComponent implements AfterViewInit, OnInit {
     bankCodeColor: string = this.bankCode
         ? this.bankCodeService.getBackgroundColorByLetter(this.bankCode[0] as BankCodeLetter)
         : '#000';
-    accessCode = this.appSession.user.affiliateCode;
+    accessCode$ = this.profileService.accessCode$;
     hasBankCodeFeature: boolean = this.userManagementService.checkBankCodeFeature();
     showAccessCode$: Observable<boolean> = this.appSession.tenant && this.appSession.tenant.customLayoutType === LayoutType.BankCode
         ? forkJoin(
@@ -146,14 +146,14 @@ export class UserDropdownMenuComponent implements AfterViewInit, OnInit {
     }
 
     accessCodeChanged(accessCode: string) {
-        this.accessCode = accessCode;
+        this.profileService.updateAccessCode(accessCode);
         this.memberSettingsService.updateAffiliateCode(new UpdateUserAffiliateCodeDto({ affiliateCode: accessCode })).subscribe(
             () => {
                 abp.notify.info(this.ls.l('AccessCodeUpdated'));
-                this.appSession.user.affiliateCode = this.accessCode;
+                this.appSession.user.affiliateCode = accessCode;
             },
             /** Update back if error comes */
-            () => this.accessCode = this.appSession.user.affiliateCode
+            () => this.profileService.updateAccessCode(this.appSession.user.affiliateCode)
         );
     }
 
@@ -180,9 +180,8 @@ export class UserDropdownMenuComponent implements AfterViewInit, OnInit {
         return style;
     }
 
-    copy(value: string) {
-        this.clipboardService.copyFromContent(value);
-        this.notifyService.info(this.ls.l('Copied'));
+    bankCodeChange() {
+        this.dropdownHeaderStyle = this.getDropdownHeaderStyle();
     }
 
 }

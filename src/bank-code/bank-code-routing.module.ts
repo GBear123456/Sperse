@@ -12,7 +12,7 @@ import { LoadingService } from '@shared/common/loading-service/loading.service';
             {
                 path: '',
                 component: BankCodeComponent,
-                canActivate: [ ],
+                canActivate: [],
                 canActivateChild: [ ],
                 children: [
                     {

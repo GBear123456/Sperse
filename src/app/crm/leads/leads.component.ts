@@ -256,7 +256,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             },
             {
                 area: 'column',
-                dataField: 'CreationTime',
+                dataField: 'ContactDate',
                 dataType: 'date',
                 groupInterval: 'year',
                 name: 'year',
@@ -264,14 +264,14 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             },
             {
                 area: 'column',
-                dataField: 'CreationTime',
+                dataField: 'ContactDate',
                 dataType: 'date',
                 groupInterval: 'quarter',
                 showTotals: false,
             },
             {
                 area: 'column',
-                dataField: 'CreationTime',
+                dataField: 'ContactDate',
                 dataType: 'date',
                 groupInterval: 'month',
                 showTotals: false
@@ -294,7 +294,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             },
             {
                 area: 'filter',
-                dataField: 'CreationTime'
+                dataField: 'ContactDate'
             },
             {
                 area: 'filter',
@@ -387,7 +387,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     contentWidth$: Observable<number> = this.crmService.contentWidth$;
     contentHeight$: Observable<number> = this.crmService.contentHeight$;
     mapHeight$: Observable<number> = this.crmService.mapHeight$;
-    pipelineSelectFields: string[] = ['Id', 'CustomerId', 'Name', 'CompanyName', 'CreationTime', 'PhotoPublicId', 'Email'];
+    pipelineSelectFields: string[] = ['Id', 'CustomerId', 'Name', 'CompanyName', 'ContactDate', 'PhotoPublicId', 'Email'];
     private queryParams$: Observable<Params> = this._activatedRoute.queryParams.pipe(
         takeUntil(this.destroy$),
         filter(() => this.componentIsActivated)
@@ -676,7 +676,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     component: FilterCalendarComponent,
                     operator: { from: 'ge', to: 'le' },
                     caption: 'creation',
-                    field: 'CreationTime',
+                    field: 'ContactDate',
                     items: { from: new FilterItemModel(), to: new FilterItemModel() },
                     options: { method: 'getFilterByDate', params: { useUserTimezone: true } }
                 }),

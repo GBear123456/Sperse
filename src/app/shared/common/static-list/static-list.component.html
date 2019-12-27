@@ -46,7 +46,7 @@
                      (onItemClick)="onItemClick($event)">
                 <div *dxTemplate="let data of 'item'">
                     <div class="item-row {{data.name.replace(whiteSpaceRegExp, '-') | lowercase}}" data-id="{{data.id}}" [attr.index]="data.index">
-                        <div>
+                        <div title="{{data.name + ' ' + data.sufix + ' ' + data.addition}}" class="item-text">
                             <span [ngClass]="{'head-line': data.hasOwnProperty('addition')}">{{data.name}}</span><span class="sufix">{{data.sufix}}</span>
                             <div *ngIf="data.addition" class="addition-line">{{data.addition}}</div>
                         </div>

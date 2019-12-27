@@ -193,7 +193,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                     component: FilterCalendarComponent,
                     operator: { from: 'ge', to: 'le' },
                     caption: 'creation',
-                    field: 'CreationTime',
+                    field: 'OrderDate',
                     items: { from: new FilterItemModel(), to: new FilterItemModel() },
                     options: { method: 'getFilterByDate', params: { useUserTimezone: true } }
                 }),

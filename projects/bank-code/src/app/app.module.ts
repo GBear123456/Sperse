@@ -19,7 +19,7 @@ import { BankCodeWizzardModule } from '@shared/bank-code-wizzard/bank-code-wizza
         BankCodeWizzardModule
     ],
     providers: [],
-    bootstrap: [AppComponent]
+    bootstrap: [ AppComponent ]
 })
 export class AppModule {
     constructor() {

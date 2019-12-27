@@ -1,0 +1,37 @@
+:host {
+    display: block;
+    padding: 10px;
+
+    mat-dialog-actions {
+      justify-content: flex-end;
+    }
+
+    mat-dialog-content {
+      width: 400px;
+      min-height: 160px;
+    }
+
+    label {
+        right: -4px;
+        width: 90px;
+        height: 48px;
+        position: relative;
+        color: #BDC6C7;
+        line-height: 46px;
+        vertical-align: top;
+        border-bottom: 1px solid #dfdfdf;
+        margin-bottom: 0px;
+        padding-bottom: 0px;
+        font-size: 12px;
+    }
+
+    dx-number-box,
+    dx-select-box,
+    dx-date-box,
+    dx-text-box {
+        display: inline-block;
+        /deep/ input {
+            height: 48px;
+        }
+    }
+}

@@ -31,7 +31,9 @@ export class RouteGuard implements CanActivate, CanActivateChild {
     canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
         let stateUrl = state && state.url.split('?').shift(),
             isStateRoot = stateUrl == '/';
-        if (state && (UrlHelper.isInstallUrl(stateUrl) || UrlHelper.isAccountModuleUrl(stateUrl) || UrlHelper.isPFMUrl(stateUrl))) {
+        if (state && (UrlHelper.isInstallUrl(stateUrl) || UrlHelper.isAccountModuleUrl(stateUrl) || UrlHelper.isPFMUrl(stateUrl))
+            || UrlHelper.isPublicUrl(stateUrl)
+        ) {
             return true;
         }
 

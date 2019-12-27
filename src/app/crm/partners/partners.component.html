@@ -130,7 +130,7 @@
                             {{cellData.value}}
                         </div>
                     </div>
-                    <dxi-column dataField="CreationTime" [caption]="l('Created')" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
+                    <dxi-column dataField="ContactDate" [caption]="l('Created')" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
                     <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
                         {{cellData.value | date: formatting.dateTime : userTimezone}}
                     </div>

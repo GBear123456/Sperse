@@ -8,7 +8,7 @@
                             <div *dxTemplate="let data of 'content'">
                                 <div class="invoice-actions-container">
                                     <div class="list">
-                                        <div class="link" [ngClass]="{disabled: markAsPaidDisabled}" (click)="onMenuItemClick(updateStatus.bind(this, invoiceStatus.Paid))"><i class="s-check"></i>{{l('Mark as Paid')}}</div>
+                                        <div class="link" [ngClass]="{disabled: markAsPaidDisabled}" (click)="onMenuItemClick(markAsPaidDialog)"><i class="s-check"></i>{{l('Invoice_MarkAsPaid')}}</div>
                                         <div class="link" [ngClass]="{disabled: markAsDraftDisabled}" (click)="onMenuItemClick(updateStatus.bind(this, invoiceStatus.Draft))"><i class="i-check"></i>{{l('Invoice_MarkAsDraft')}}</div>
                                         <div class="link" [ngClass]="{disabled: resendInvoiceDisabled}" (click)="onMenuItemClick(updateStatus.bind(this, invoiceStatus.Sent))"><i class="check-list"></i>{{l('Invoice_MarkAsSent')}}</div>
                                         <div class="link disabled" [hidden]="true"><i class="time-alarm"></i>{{l('Send Reminder')}}</div>

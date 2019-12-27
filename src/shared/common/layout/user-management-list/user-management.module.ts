@@ -13,6 +13,7 @@ import { UserManagementService } from '@shared/common/layout/user-management-lis
 import { ImpersonationService } from '@admin/users/impersonation.service';
 import { BankCodeLettersModule } from '@app/shared/common/bank-code-letters/bank-code-letters.module';
 import { InplaceEditModule } from '@app/shared/common/inplace-edit/inplace-edit.module';
+import { AccessCodeInstructionsModule } from '@shared/common/access-code-instructions/access-code-instructions.module';
 
 @NgModule({
     declarations: [
@@ -24,7 +25,8 @@ import { InplaceEditModule } from '@app/shared/common/inplace-edit/inplace-edit.
         DxScrollViewModule,
         DxTooltipModule,
         BankCodeLettersModule,
-        InplaceEditModule
+        InplaceEditModule,
+        AccessCodeInstructionsModule
     ],
     exports: [
         UserManagementListComponent,

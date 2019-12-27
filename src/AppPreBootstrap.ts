@@ -8,6 +8,8 @@ import * as moment from 'moment-timezone';
 import { LocalizedResourcesHelper } from './shared/helpers/LocalizedResourcesHelper';
 import { UrlHelper } from './shared/helpers/UrlHelper';
 import { environment } from './environments/environment';
+import { Observable, from, of } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 
 export class AppPreBootstrap {
     static run(appRootUrl: string, callback: (sessionCallback?) => void, resolve: any, reject: any, router: Router): void {
@@ -49,7 +51,7 @@ export class AppPreBootstrap {
         if (queryStringObj.hasOwnProperty('tenantId'))
             abp.multiTenancy.setTenantIdCookie(queryStringObj.tenantId);
 
-        AppPreBootstrap.getUserConfiguration(callback);
+        AppPreBootstrap.getUserConfiguration(callback).subscribe();
     }
 
     private static updateAppConsts(appConfig) {
@@ -116,7 +118,7 @@ export class AppPreBootstrap {
                 AppPreBootstrap.processRegularBootstrap(queryStringObj, () => {
                     callback(() => router.navigate(['account/auto-login'], {queryParams: {email: result.userEmail}}));
                 });
-            if (result.shouldResetPassword) {
+            else if (result.shouldResetPassword) {
                 let params = {
                     resetCode: result.passwordResetCode,
                     userId: result.userId
@@ -162,10 +164,10 @@ export class AppPreBootstrap {
         });
     }
 
-    static getUserConfiguration(callback: () => void, loadThemeResources: boolean = true) {
+    static getUserConfiguration(callback: () => void, loadThemeResources: boolean = true): Observable<any> {
         let generalInfo = window['generalInfo'];
         if (generalInfo && generalInfo.userConfig) {
-            this.handleGetAll(generalInfo.userConfig, callback, loadThemeResources);
+            return this.handleGetAll(generalInfo.userConfig, callback, loadThemeResources);
         } else {
             const cookieLangValue = abp.utils.getCookieValue('Abp.Localization.CultureName');
             const token = abp.auth.getToken();
@@ -182,13 +184,15 @@ export class AppPreBootstrap {
                 requestHeaders['Authorization'] = 'Bearer ' + token;
             }
 
-            abp.ajax({
+            return from(abp.ajax({
                 url: AppConsts.remoteServiceBaseUrl + '/AbpUserConfiguration/GetAll',
                 method: 'GET',
                 headers: requestHeaders
-            }).done(result => {
-                this.handleGetAll(result, callback, loadThemeResources);
-            });
+            })).pipe(
+                switchMap(result => {
+                    return this.handleGetAll(result, callback, loadThemeResources);
+                })
+            );
         }
     }
 
@@ -205,6 +209,7 @@ export class AppPreBootstrap {
         AppConsts.subscriptionExpireNootifyDayCount = parseInt(abp.setting.get('App.TenantManagement.SubscriptionExpireNotifyDayCount'));
 
         loadThemeResources ? LocalizedResourcesHelper.loadResources(callback) : callback();
+        return of(true);
     }
 
     private static setEncryptedTokenCookie(encryptedToken: string) {

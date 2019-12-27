@@ -70,7 +70,7 @@
                             <dxi-column dataField="TotalNumber" caption="{{l('TotalNumber')}}" [visible]="false"></dxi-column>
                             <dxi-column dataField="NoteCount" caption="{{l('NoteCount')}}" [visible]="false"></dxi-column>
                             <dxi-column dataField="DocumentCount" caption="{{l('DocumentCount')}}" [visible]="false"></dxi-column>
-                            <dxi-column dataField="CreationTime" caption="{{l('Created')}}" cellTemplate="dateCell"></dxi-column>
+                            <dxi-column dataField="OrderDate" caption="{{l('Created')}}" cellTemplate="dateCell"></dxi-column>
                             <dxi-column [fixed]="true" [fixedPosition]="'right'" [showInColumnChooser]="false"></dxi-column>
                             <dxo-sorting mode="multiple"></dxo-sorting>
                             <dxo-group-panel [visible]="true"></dxo-group-panel>
@@ -97,7 +97,7 @@
                     [totalsURI]="'OrderCount'"
                     [dragulaName]="'orderStages'"
                     [dataSource]="pipelineDataSource"
-                    [selectFields]="['Id', 'ContactId', 'Name', 'CompanyName', 'CreationTime', 'PhotoPublicId']"
+                    [selectFields]="['Id', 'ContactId', 'Name', 'CompanyName', 'OrderDate', 'PhotoPublicId']"
                     [pipelinePurposeId]="pipelinePurposeId"
                     [filterModelStages]="filterModelStages"
                     [moveDisabled]="manageDisabled"

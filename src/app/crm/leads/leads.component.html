@@ -108,7 +108,8 @@
                                         [showInColumnChooser]="tenantHasBankCodeFeature">
                             </dxi-column>
                         </ng-container>
-                        <dxi-column dataField="CreationTime" [caption]="l('Created')" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
+
+                        <dxi-column dataField="ContactDate" [caption]="l('Created')" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
                         <dxi-column dataField="AffiliateCode" [caption]="l('AffiliateCode')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
                         <dxi-column dataField="CampaignCode" [caption]="l('CampaignCode')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
                         <dxi-column dataField="ChannelCode" [caption]="l('ChannelCode')" [visible]="false" cssClass="clipboard-holder"></dxi-column>

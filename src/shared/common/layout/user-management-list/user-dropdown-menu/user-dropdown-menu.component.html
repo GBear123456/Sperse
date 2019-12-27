@@ -37,18 +37,18 @@
                 <div>
                     <div *ngIf="hasBankCodeFeature" class="bank-code">
                         <label>{{ ls.l('MyBANKCODE') }}</label>
-                        <bank-code-letters [bankCode]="bankCode"
+                        <bank-code-letters [(bankCode)]="bankCode"
                                            [allowAdd]="true"
                                            [allowEdit]="true"
-                                           [closeAfterEdit]="true"
                                            [editDialogPosition]="{ x: 400 }"
-                                           [showDescriptionsOnHover]="true">
+                                           [showDescriptionsOnHover]="true"
+                                           (bankCodeChange)="bankCodeChange()">
                         </bank-code-letters>
                     </div>
                     <ng-container *ngIf="showAccessCode">
                         <div class="access-code">
                             <label>{{ ls.l('MyAccessCode') }}</label>
-                            <inplace-edit [value]="accessCode"
+                            <inplace-edit [value]="accessCode$ | async"
                                           [isCopyEnabled]="true"
                                           [isEditDialogEnabled]="true"
                                           [showEditModeOnEditButtonClick]="true"
@@ -70,18 +70,7 @@
                                     (click)="onInstructionsClick($event)"
                                     [width]="345">
                             <div *dxTemplate="let data of 'content'">
-                                <div class="access-code-instructions" (click)="onInstructionsClick($event)">
-                                    <h6>{{ ls.l('AccessCodeInstructionsTitle') }}:</h6>
-                                    <p>{{ ls.l('AccessCodeInstructionsDescription') }}:</p>
-                                    <div class="link">
-                                        <a href="https://www.MyBankcode.com/?ref={{accessCode}}">https://www.MyBankcode.com/?ref={{accessCode}}</a>
-                                        <img src="./assets/common/icons/copy.svg" (click)="copy('https://www.MyBankcode.com/?ref=' + accessCode)"/>
-                                    </div>
-                                    <div class="link">
-                                        <a href="https://www.CodebreakerTech.com/?ref={{accessCode}}">https://www.CodebreakerTech.com/?ref={{accessCode}}</a>
-                                        <img src="./assets/common/icons/copy.svg" (click)="copy('https://www.CodebreakerTech.com/?ref=' + accessCode)"/>
-                                    </div>
-                                </div>
+                                <access-code-instructions (click)="onInstructionsClick($event)"></access-code-instructions>
                             </div>
                         </dx-tooltip>
                     </ng-container>

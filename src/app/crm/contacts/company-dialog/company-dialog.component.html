@@ -100,7 +100,7 @@
                         </dx-number-box>
                         <span [class]="company.businessSicCode && 'clear-contact' || 'hidden'" (click)="company.businessSicCode = ''"><i class="minus-icon"></i></span>
                     </div>
-                    <div *ngIf="company.rootOrganizationUnitId" class="field affiliateCode">
+                    <div class="field affiliateCode">
                         <label for="affiliateCode">{{ls.l('Company_affiliateCode')}}</label>
                         <dx-text-box name="affiliateCode"
                                      (onInput)="onInput($event, 50)"

@@ -2,7 +2,7 @@
     <ng-container *ngFor="let letter of bankCode.split('')">
         <bank-code-letter [letter]="letter"
                           [key]="key"
-                          [showDescriptionOnHover]="showDescriptionsOnHover && bankCode !== bankCodeService.emptyBankCode"
+                          [showDescriptionOnHover]="showDescriptionsOnHover && !editPopupIsOpened && bankCode !== bankCodeService.emptyBankCode"
                           (onClick)="onLetterClick($event)">
         </bank-code-letter>
     </ng-container>

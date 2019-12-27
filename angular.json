@@ -524,6 +524,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
+            "sourceMap": false,
             "outputPath": "dist/bank-code",
             "index": "projects/bank-code/src/index.html",
             "main": "projects/bank-code/src/main.ts",

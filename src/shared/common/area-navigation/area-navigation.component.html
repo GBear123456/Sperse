@@ -4,7 +4,7 @@
         routerLinkActive="active"
         [hidden]="item.hidden"
         (mouseenter)="navigationItemEnter($event, item)"
-        (mouseleave)="navigationItemLeave($event, item)">
+        (mouseleave)="navigationItemLeave($event)">
         <ng-container *ngIf="item.url; else internalBlock">
             <a [href]="item.url">{{ls.l(item.name)}}</a>
         </ng-container>
