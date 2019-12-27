@@ -51220,6 +51220,7 @@ export class Contact implements IContact {
     starId!: number | undefined;
     ratingId!: number | undefined;
     xref!: string | undefined;
+    contactDate!: moment.Moment | undefined;
     customField1!: string | undefined;
     customField2!: string | undefined;
     customField3!: string | undefined;
@@ -51289,6 +51290,7 @@ export class Contact implements IContact {
             this.starId = data["starId"];
             this.ratingId = data["ratingId"];
             this.xref = data["xref"];
+            this.contactDate = data["contactDate"] ? moment(data["contactDate"].toString()) : <any>undefined;
             this.customField1 = data["customField1"];
             this.customField2 = data["customField2"];
             this.customField3 = data["customField3"];
@@ -51410,6 +51412,7 @@ export class Contact implements IContact {
         data["starId"] = this.starId;
         data["ratingId"] = this.ratingId;
         data["xref"] = this.xref;
+        data["contactDate"] = this.contactDate ? this.contactDate.toISOString() : <any>undefined;
         data["customField1"] = this.customField1;
         data["customField2"] = this.customField2;
         data["customField3"] = this.customField3;
@@ -51524,6 +51527,7 @@ export interface IContact {
     starId: number | undefined;
     ratingId: number | undefined;
     xref: string | undefined;
+    contactDate: moment.Moment | undefined;
     customField1: string | undefined;
     customField2: string | undefined;
     customField3: string | undefined;
@@ -51748,6 +51752,7 @@ export class OrganizationBusinessInfo implements IOrganizationBusinessInfo {
     userId!: number | undefined;
     affiliateCode!: string | undefined;
     xref!: string | undefined;
+    contactDate!: moment.Moment | undefined;
     customField1!: string | undefined;
     customField2!: string | undefined;
     customField3!: string | undefined;
@@ -51823,6 +51828,7 @@ export class OrganizationBusinessInfo implements IOrganizationBusinessInfo {
             this.userId = data["userId"];
             this.affiliateCode = data["affiliateCode"];
             this.xref = data["xref"];
+            this.contactDate = data["contactDate"] ? moment(data["contactDate"].toString()) : <any>undefined;
             this.customField1 = data["customField1"];
             this.customField2 = data["customField2"];
             this.customField3 = data["customField3"];
@@ -51898,6 +51904,7 @@ export class OrganizationBusinessInfo implements IOrganizationBusinessInfo {
         data["userId"] = this.userId;
         data["affiliateCode"] = this.affiliateCode;
         data["xref"] = this.xref;
+        data["contactDate"] = this.contactDate ? this.contactDate.toISOString() : <any>undefined;
         data["customField1"] = this.customField1;
         data["customField2"] = this.customField2;
         data["customField3"] = this.customField3;
@@ -51942,6 +51949,7 @@ export interface IOrganizationBusinessInfo {
     userId: number | undefined;
     affiliateCode: string | undefined;
     xref: string | undefined;
+    contactDate: moment.Moment | undefined;
     customField1: string | undefined;
     customField2: string | undefined;
     customField3: string | undefined;
