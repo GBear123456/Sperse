@@ -1,6 +1,7 @@
 <div class="pipeline-wrapper">
     <div *ngFor="let stage of stages; let i = index;"
-         class="column column{{stage.index + ' ' + (stage.sortOrder && (stage.sortOrder > 0 ? 'positive': 'negative') || 'focused')}}">
+         class="column column{{stage.index + ' ' + (stage.sortOrder && (stage.sortOrder > 0 ? 'positive': 'negative') || 'focused')}}"
+        [ngStyle]="{ flexGrow: stage.width * 3, width: 'calc(100% / ' + (stages.length + 1.5) + ')' }">
         <div class="column-title"
              title="{{stage.name}}"
              [hidden]="loading && !disabled"
@@ -38,6 +39,17 @@
                                     [value]="allEntitiesAreSelected(stage)"
                                     (onValueChanged)="toggleAllEntitiesInStage($event, stage)">
                                 </dx-check-box>
+                            </a>
+                        </li>
+                        <li class="list-group-item width-change">
+                            <a [ngClass]="{ hidden: stage.width === stageWidths.Narrow }"
+                               (click)="changeWidth(stage, -1)">
+                                <i class="delete-stage"></i>
+                            </a>
+                            <span>{{ l(stageWidths[stage.width]) }}</span>
+                            <a [ngClass]="{ hidden: stage.width === stageWidths.Wide }"
+                               (click)="changeWidth(stage, 1)">
+                                <i class="add-stage"></i>
                             </a>
                         </li>
                         <li class="list-group-item" [hidden]="stage.isFinal">
