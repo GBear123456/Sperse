@@ -43,8 +43,7 @@ export class EmailTemplateDialogComponent implements OnInit {
             { name: 'paragraph', groups: [ 'list', 'align' ] },
             { name: 'styles', groups: [ 'styles' ] },
             { name: 'other', groups: [ 'simplebutton' ] },
-            { name: 'clipboard', groups: [ 'clipboard', 'undo' ] },
-            { name: 'test', groups: ['custom'] }
+            { name: 'clipboard', groups: [ 'clipboard', 'undo' ] }
         ],
         removeButtons: 'Anchor,Subscript,Superscript'
     };
