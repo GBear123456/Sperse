@@ -59120,6 +59120,7 @@ export interface IImportBusinessInput {
 export class ImportItemInput implements IImportItemInput {
     contactId!: number | undefined;
     contactXref!: string | undefined;
+    userPassword!: string | undefined;
     personalInfo!: ImportPersonalInput | undefined;
     businessInfo!: ImportBusinessInput | undefined;
     notes!: string | undefined;
@@ -59160,6 +59161,7 @@ export class ImportItemInput implements IImportItemInput {
         if (data) {
             this.contactId = data["contactId"];
             this.contactXref = data["contactXref"];
+            this.userPassword = data["userPassword"];
             this.personalInfo = data["personalInfo"] ? ImportPersonalInput.fromJS(data["personalInfo"]) : <any>undefined;
             this.businessInfo = data["businessInfo"] ? ImportBusinessInput.fromJS(data["businessInfo"]) : <any>undefined;
             this.notes = data["notes"];
@@ -59200,6 +59202,7 @@ export class ImportItemInput implements IImportItemInput {
         data = typeof data === 'object' ? data : {};
         data["contactId"] = this.contactId;
         data["contactXref"] = this.contactXref;
+        data["userPassword"] = this.userPassword;
         data["personalInfo"] = this.personalInfo ? this.personalInfo.toJSON() : <any>undefined;
         data["businessInfo"] = this.businessInfo ? this.businessInfo.toJSON() : <any>undefined;
         data["notes"] = this.notes;
@@ -59233,6 +59236,7 @@ export class ImportItemInput implements IImportItemInput {
 export interface IImportItemInput {
     contactId: number | undefined;
     contactXref: string | undefined;
+    userPassword: string | undefined;
     personalInfo: ImportPersonalInput | undefined;
     businessInfo: ImportBusinessInput | undefined;
     notes: string | undefined;
@@ -59539,6 +59543,7 @@ export class ImportContactInput implements IImportContactInput {
     overrideLists!: boolean | undefined;
     contactId!: number | undefined;
     contactXref!: string | undefined;
+    userPassword!: string | undefined;
     personalInfo!: ImportPersonalInput | undefined;
     businessInfo!: ImportBusinessInput | undefined;
     notes!: string | undefined;
@@ -59599,6 +59604,7 @@ export class ImportContactInput implements IImportContactInput {
             this.overrideLists = data["overrideLists"] !== undefined ? data["overrideLists"] : false;
             this.contactId = data["contactId"];
             this.contactXref = data["contactXref"];
+            this.userPassword = data["userPassword"];
             this.personalInfo = data["personalInfo"] ? ImportPersonalInput.fromJS(data["personalInfo"]) : <any>undefined;
             this.businessInfo = data["businessInfo"] ? ImportBusinessInput.fromJS(data["businessInfo"]) : <any>undefined;
             this.notes = data["notes"];
@@ -59656,6 +59662,7 @@ export class ImportContactInput implements IImportContactInput {
         data["overrideLists"] = this.overrideLists;
         data["contactId"] = this.contactId;
         data["contactXref"] = this.contactXref;
+        data["userPassword"] = this.userPassword;
         data["personalInfo"] = this.personalInfo ? this.personalInfo.toJSON() : <any>undefined;
         data["businessInfo"] = this.businessInfo ? this.businessInfo.toJSON() : <any>undefined;
         data["notes"] = this.notes;
@@ -59698,6 +59705,7 @@ export interface IImportContactInput {
     overrideLists: boolean | undefined;
     contactId: number | undefined;
     contactXref: string | undefined;
+    userPassword: string | undefined;
     personalInfo: ImportPersonalInput | undefined;
     businessInfo: ImportBusinessInput | undefined;
     notes: string | undefined;
