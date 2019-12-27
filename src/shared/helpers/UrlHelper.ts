@@ -4,6 +4,10 @@ export class UrlHelper {
      */
     static readonly initialUrl = location.href;
 
+    static publicUrls = [
+        'bank-pass'
+    ];
+
     static getQueryParameters(): any {
         return UrlHelper.getQueryParametersUsingParameters(document.location.search);
     }
@@ -60,5 +64,9 @@ export class UrlHelper {
 
     static isPfmSignUpUrl(url): boolean {
         return url && url.indexOf('personal-finance/sign-up') >= 0;
+    }
+
+    static isPublicUrl(url) {
+        return url && UrlHelper.getQueryParameters()['user-key'] && UrlHelper.publicUrls.some(publicUrl => url.indexOf(publicUrl) >= 0);
     }
 }
