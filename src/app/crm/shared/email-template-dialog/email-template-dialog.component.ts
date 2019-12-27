@@ -6,6 +6,7 @@ import { Observable } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { DxSelectBoxComponent } from 'devextreme-angular/ui/select-box';
+import startCase from 'lodash/startCase';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
@@ -28,10 +29,13 @@ export class EmailTemplateDialogComponent implements OnInit {
     @ViewChild(ModalDialogComponent) modalDialog: ModalDialogComponent;
     @ViewChild(DxSelectBoxComponent) templateComponent: DxSelectBoxComponent;
 
+    ckEditor: any;
     showCC = false;
     showBCC = false;
 
-    ckConfig = {
+    startCase = startCase;
+    tagsTooltipVisible = false;
+    ckConfig: any = {
         toolbarGroups: [
             { name: 'document', groups: [ 'mode' ] },
             { name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ] },
@@ -39,15 +43,18 @@ export class EmailTemplateDialogComponent implements OnInit {
             { name: 'paragraph', groups: [ 'list', 'align' ] },
             { name: 'styles', groups: [ 'styles' ] },
             { name: 'other', groups: [ 'simplebutton' ] },
-            { name: 'clipboard', groups: [ 'clipboard', 'undo' ] }
+            { name: 'clipboard', groups: [ 'clipboard', 'undo' ] },
+            { name: 'test', groups: ['custom'] }
         ],
         removeButtons: 'Anchor,Subscript,Superscript'
     };
 
+    @Input() tagsList = [];
     @Input() templateNote = '';
     @Input() templateEditMode = false;
     @Output() onSave: EventEmitter<any> = new EventEmitter<any>();
     @Output() onTemplateChange: EventEmitter<any> = new EventEmitter<number>();
+    @Output() onTagItemClick: EventEmitter<any> = new EventEmitter<number>();
 
     buttons: IDialogButton[] = [
         {
@@ -244,6 +251,27 @@ export class EmailTemplateDialogComponent implements OnInit {
                 event.component.focus();
             });
         }
+    }
+
+    onCKReady(event) {
+        this.ckEditor = event.editor;
+    }
+
+    onTagClick(event) {
+        console.log(event, this.ckEditor, this.onTagItemClick);
+        if (this.onTagItemClick.observers.length)
+            this.onTagItemClick.emit(event.itemData);
+        else
+            this.addTextTag(event.itemData);
+        this.tagsTooltipVisible = false;
+    }
+
+    addTextTag(tag: string) {
+        this.ckEditor.insertText('#' + tag + '#');
+    }
+
+    addLinkTag(tag: string, link: string) {
+        this.ckEditor.insertHtml('<a href="#' + tag + '#">' + link + '</a>');
     }
 
     close() {

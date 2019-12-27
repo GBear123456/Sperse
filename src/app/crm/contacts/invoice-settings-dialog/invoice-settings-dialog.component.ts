@@ -30,6 +30,17 @@ export class InvoiceSettingsDialogComponent implements AfterViewInit {
         };
     });
 
+    tagsList = [
+        'InvoiceNumber',
+        'InvoiceGrandTotal',
+        'InvoiceDueDate',
+        'InvoiceLink',
+        'InvoiceAnchor',
+        'LegalName',
+        'ClientFirstName',
+        'ClientLastName'
+    ];
+
     constructor(
         public dialog: MatDialog,
         private notifyService: NotifyService,
@@ -76,6 +87,13 @@ export class InvoiceSettingsDialogComponent implements AfterViewInit {
             closeOnNavigation: false,
             data: {}
         });
+    }
+
+    onTagItemClick(tag: string) {
+        if (tag == 'InvoiceAnchor')
+            this.modalDialog.addLinkTag('InvoiceLink', this.ls.l('Invoice'));
+        else
+            this.modalDialog.addTextTag(tag);
     }
 
     templateChanged(data) {

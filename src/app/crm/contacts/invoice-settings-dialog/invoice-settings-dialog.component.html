@@ -1,4 +1,10 @@
-<email-template-dialog (onSave)="save()" (onTemplateChange)="templateChanged($event)" [templateEditMode]="true" [templateNote]="ls.l('InvoiceEmail_SupportedTags')">
+<email-template-dialog
+    [tagsList]="tagsList"
+    [templateEditMode]="true" 
+    [templateNote]="ls.l('InvoiceEmail_SupportedTags')"
+    (onTemplateChange)="templateChanged($event)" 
+    (onTagItemClick)="onTagItemClick($event)"
+    (onSave)="save()">
     <ng-container templateSettings>
         <div class="settings-wrapper">
             <div class="left-side">

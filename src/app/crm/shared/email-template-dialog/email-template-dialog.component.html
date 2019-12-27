@@ -124,7 +124,23 @@
                 </div>
                 <div class="field-area ckeditor">
                     <p>{{templateNote}}</p>
-                    <ckeditor #ckeditor [(data)]="data.body" [config]="ckConfig"></ckeditor>
+                    <dx-tooltip [width]="200"
+                         [(visible)]="tagsTooltipVisible"
+                         [target]="'#tagsButton'">
+                        <div *dxTemplate="let data of 'content'">
+                            <dx-list
+                                [selectionMode]="'single'"
+                                [dataSource]="tagsList"
+                                [itemTemplate]="startCase"
+                                (onItemClick)="onTagClick($event)">
+                                <div *dxTemplate="let data of 'startCase'">
+                                    {{ startCase(data) }}
+                                </div>                
+                            </dx-list>
+                        </div>
+                    </dx-tooltip>
+                    <a id="tagsButton" class="tags-button" *ngIf="tagsList.length" (click)="tagsTooltipVisible = true">Tags</a>
+                    <ckeditor [(data)]="data.body" [config]="ckConfig" (ready)="onCKReady($event)"></ckeditor>
                 </div>
                 <div class="field-area attachments"></div>
                 <ng-content *ngIf="data.templateType" select="[templateSettings]"></ng-content>

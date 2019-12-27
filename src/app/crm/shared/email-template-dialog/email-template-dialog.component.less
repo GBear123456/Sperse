@@ -82,6 +82,26 @@
         }
     }
 
+    .tags-button {
+        font-size: 12px;
+        position: absolute;
+        right: 10px;
+        padding: 10px;
+        &:after {
+            content: "";
+            position: relative;
+            left: 4px;
+            bottom: 2px;
+            cursor: default;
+            height: 0;
+            width: 0;
+            font-size: 0;
+            border-left: 3px solid transparent;
+            border-right: 3px solid transparent;
+            border-top: 3px solid #484848;
+        }
+    }
+
     ::ng-deep ckeditor {
         .cke_chrome {
             border: none!important;
@@ -97,7 +117,7 @@
             .cke_contents {
                 min-height: 380px;
             }
-        }
+        }    
     }
 
     .form-content {
